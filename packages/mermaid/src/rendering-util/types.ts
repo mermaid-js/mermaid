@@ -165,6 +165,7 @@ export interface Edge {
   thickness?: 'normal' | 'thick' | 'invisible' | 'dotted';
   look?: string;
   isUserDefinedId?: boolean;
+  constraint?: boolean;
   showPoints?: boolean;
   width?: number;
   height?: number;

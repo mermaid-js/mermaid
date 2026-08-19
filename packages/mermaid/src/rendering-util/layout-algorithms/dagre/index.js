@@ -501,7 +501,7 @@ const normalizeDagreEdge = (edge, start, end, edgeOffsetY) => ({
  * Consumers of the normalized LayoutData must not assume it is a complete description of the
  * rendered output for cluster diagrams — the recursive paint path owns the nested content.
  */
-export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
+export const applyDagreLayoutResult = (data4Layout, measuredLayout, constraintFalseEdges = []) => {
   const { graph, mergeSelfLoops, subGraphTitleTotalMargin = 0 } = measuredLayout;
   const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
 
@@ -523,6 +523,26 @@ export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
   data4Layout.edges = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops }).map(
     ({ edge, start, end }) => normalizeDagreEdge(edge, start, end, edgeOffsetY)
   );
+
+  // `constraint: false` edges were excluded from the dagre graph so they don't affect rank
+  // assignment. Draw them as straight edges between the final node positions and append them
+  // to the render list so the common paint path renders them like any other edge.
+  for (const edge of constraintFalseEdges) {
+    const startNode = graph.node(edge.start);
+    const endNode = graph.node(edge.end);
+    if (!startNode || !endNode) {
+      continue;
+    }
+    data4Layout.edges.push({
+      ...edge,
+      x: (startNode.x + endNode.x) / 2,
+      y: (startNode.y + endNode.y) / 2,
+      points: [
+        { x: startNode.x, y: startNode.y },
+        { x: endNode.x, y: endNode.y },
+      ],
+    });
+  }
 
   return data4Layout;
 };
@@ -682,6 +702,7 @@ export const prepareLayoutForDagre = (data4Layout) => {
   });
 
   log.debug('Edges:', data4Layout.edges);
+  const constraintFalseEdges = [];
   data4Layout.edges.forEach((edge) => {
     if (edge.start === edge.end) {
       // Keep the dagre dummy-node workaround for layout, then merge these segments before rendering.
@@ -755,6 +776,10 @@ export const prepareLayoutForDagre = (data4Layout) => {
       graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
       graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
       graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyclic-special-2');
+    } else if (edge.constraint === false) {
+      // Exclude from dagre layout entirely so it doesn't affect rank assignment.
+      // Drawn after layout in applyDagreLayoutResult using the final node positions.
+      constraintFalseEdges.push({ ...edge });
     } else {
       graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
     }
@@ -766,7 +791,7 @@ export const prepareLayoutForDagre = (data4Layout) => {
   // perf: skip eager graphlibJson.write() serialization (the arg runs every render even when the log is a no-op)
   // log.warn('Graph after XAX:', JSON.stringify(graphlibJson.write(graph)));
 
-  return { graph };
+  return { graph, constraintFalseEdges };
 };
 
 export const measureDagreLayout = async (data4Layout, { element, preparedLayout }) => {
@@ -792,7 +817,7 @@ export const runDagreLayoutCore = (data4Layout, context) => {
   }
 
   runDagreGraphLayout(measuredLayout.graph);
-  applyDagreLayoutResult(data4Layout, measuredLayout);
+  applyDagreLayoutResult(data4Layout, measuredLayout, context.preparedLayout?.constraintFalseEdges);
   return measuredLayout;
 };
 

@@ -660,8 +660,14 @@ export const insertEdge = function (
   } else if (head.intersect && tail.intersect && !skipIntersect) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
     points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
-    points.push(head.intersect(points[points.length - 1]));
+    if (points.length > 0) {
+      points.unshift(tail.intersect(points[0]));
+      points.push(head.intersect(points[points.length - 1]));
+    } else {
+      // 2-point edge (e.g. constraint:false): compute border intersections directly
+      const [startPoint, endPoint] = edge.points;
+      points = [tail.intersect(endPoint), head.intersect(startPoint)];
+    }
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {

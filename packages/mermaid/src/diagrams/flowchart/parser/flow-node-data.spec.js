@@ -400,6 +400,29 @@ describe('when parsing directions', function () {
     expect(data4Layout.edges[2].animate).toEqual(false);
   });
 
+  it('should support constraint: false on an edge via annotation', function () {
+    flow.parser.parse(`flowchart TB
+      A --> B
+      A --> C
+      B e1@--> C
+      e1@{ constraint: false }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    const e1 = data4Layout.edges.find((e) => e.id === 'e1');
+    expect(e1).toBeDefined();
+    expect(e1.constraint).toBe(false);
+    // e1 should not appear as a node
+    expect(data4Layout.nodes.find((n) => n.id === 'e1')).toBeUndefined();
+  });
+
+  it('should not set constraint on edges without annotation', function () {
+    flow.parser.parse(`flowchart TB
+      A --> B`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.edges[0].constraint).toBeUndefined();
+  });
+
   it.skip('should be possible to use @  syntax to add labels with trail spaces', function () {
     const res = flow.parser.parse(
       `flowchart TB

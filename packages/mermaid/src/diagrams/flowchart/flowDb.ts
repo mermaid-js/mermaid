@@ -126,7 +126,7 @@ export class FlowDB implements DiagramDB {
    */
   public addVertex(
     id: string,
-    textObj: FlowText,
+    textObj: FlowText | undefined,
     type: FlowVertexTypeParam,
     style: string[],
     classes: string[],
@@ -172,6 +172,9 @@ export class FlowDB implements DiagramDB {
       }
       if (edgeDoc?.curve !== undefined) {
         edge.interpolate = edgeDoc.curve;
+      }
+      if (edgeDoc?.constraint !== undefined) {
+        edge.constraint = edgeDoc.constraint;
       }
       return;
     }
@@ -1272,6 +1275,7 @@ You have to call mermaid.initialize.`
         animate: rawEdge.animate,
         animation: rawEdge.animation,
         curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
+        constraint: rawEdge.constraint,
       };
 
       edges.push(edge);
