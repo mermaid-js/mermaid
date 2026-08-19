@@ -32,6 +32,8 @@ interface Point {
   y: number;
 }
 type Rect = ReturnType<typeof rectForNode>;
+// cspell:ignore Hegemann Biedl
+
 type Side = 'N' | 'S' | 'E' | 'W';
 interface Issue {
   type: string;
@@ -467,6 +469,82 @@ function sidePort(r: Rect, side: Side, t: number): Point {
   return { x: side === 'W' ? r.left : r.right, y: r.top + (r.bottom - r.top) * clamped };
 }
 
+/**
+ * Where the centre-to-centre segment leaves a rectangle: which side, and the
+ * normalised offset along it.
+ *
+ * This is the geometry behind the constructive port rule below — no search, no
+ * candidates, closed form.
+ */
+function centreSegmentExit(from: Rect, to: Rect): { side: Side; t: number } {
+  const dx = to.cx - from.cx;
+  const dy = to.cy - from.cy;
+  const halfW = (from.right - from.left) / 2;
+  const halfH = (from.bottom - from.top) / 2;
+  // Which side the ray leaves through: compare the ray's slope against the
+  // rectangle's corner slope. Guard the degenerate co-centred case as vertical.
+  const leavesVerticalSide = Math.abs(dx) * halfH >= Math.abs(dy) * halfW && dx !== 0;
+  if (leavesVerticalSide) {
+    const exitY = from.cy + (dy * halfW) / Math.abs(dx);
+    const span = from.bottom - from.top;
+    return { side: dx >= 0 ? 'E' : 'W', t: span > 0 ? (exitY - from.top) / span : 0.5 };
+  }
+  if (dy === 0) {
+    return { side: 'E', t: 0.5 };
+  }
+  const exitX = from.cx + (dx * halfH) / Math.abs(dy);
+  const span = from.right - from.left;
+  return { side: dy >= 0 ? 'S' : 'N', t: span > 0 ? (exitX - from.left) / span : 0.5 };
+}
+
+/** The side perpendicular to `side` that faces `towards`. */
+function perpendicularSideTowards(side: Side, from: Rect, towards: Rect): Side {
+  if (side === 'E' || side === 'W') {
+    return towards.cy >= from.cy ? 'S' : 'N';
+  }
+  return towards.cx >= from.cx ? 'E' : 'W';
+}
+
+/**
+ * Constructive port assignment, in the shape the literature prescribes.
+ *
+ * Hegemann and Wolff assign ports from geometry alone, before any routing: take the
+ * centre-to-centre segment s_uv, put the ports on the sides it intersects, then
+ * "split each side evenly into four pieces. If s_uv intersects a side in the first
+ * or last piece of the side, we instead reassign one of the two ports such that uv
+ * can be drawn as an L-shape that bends away from the barycenter" — and they are
+ * explicit that this is not a search: "(We do not actually route uv now, we just
+ * use geometry to place its ports.)"
+ *
+ * An exit landing in an outer quarter means s_uv leaves near a corner, where a
+ * straight-through route would grazes the corner; the L-variant moves that port to
+ * the perpendicular side facing the other node so the edge bends once, away from
+ * the two nodes' shared centre. Both the direct pair and the L-variant are offered,
+ * because this pass produces candidates and the validator decides.
+ */
+function geometricPortPairs(rS: Rect, rE: Rect): { start: [Side, number]; end: [Side, number] }[] {
+  const exitS = centreSegmentExit(rS, rE);
+  const exitE = centreSegmentExit(rE, rS);
+  const pairs: { start: [Side, number]; end: [Side, number] }[] = [
+    { start: [exitS.side, exitS.t], end: [exitE.side, exitE.t] },
+  ];
+
+  const inOuterQuarter = (t: number): boolean => t < 0.25 || t > 0.75;
+  if (inOuterQuarter(exitS.t)) {
+    pairs.push({
+      start: [perpendicularSideTowards(exitS.side, rS, rE), 0.5],
+      end: [exitE.side, exitE.t],
+    });
+  }
+  if (inOuterQuarter(exitE.t)) {
+    pairs.push({
+      start: [exitS.side, exitS.t],
+      end: [perpendicularSideTowards(exitE.side, rE, rS), 0.5],
+    });
+  }
+  return pairs;
+}
+
 function sidePreference(rS: Rect, rE: Rect): [Side, Side][] {
   const dx = rE.cx - rS.cx;
   const dy = rE.cy - rS.cy;
@@ -566,25 +644,6 @@ function* sideRouteCandidates(
     routerNodes.set(id, n);
   }
 
-  // This crosses ~12 side pairs with 4 start x 4 end port offsets = 192 route
-  // queries for ONE flagged edge, all against the same obstacles — the largest
-  // single cost in a DOMUS render.
-  //
-  // Truncating the sweep is tempting and was measured: the leading 6 pairs x 2x2
-  // offsets is 1.5x faster again, but `domus/svelte5-code` goes invalid — its
-  // validity rests on the very last candidates the exhaustive sweep tries, and every
-  // truncation tried (12x3, 12x2, 6x4, 4x4, 3x4) breaks it. So the enumeration stays
-  // complete and the queries are made cheap instead.
-  //
-  // The routing graph is built ONCE, with every candidate stub already a vertex.
-  // That is what the literature prescribes: Wybrow et al. construct the orthogonal
-  // visibility graph once per obstacle configuration and query it per connector,
-  // with ports part of the generating point set ("the set of interesting points
-  // (x,y) in the diagram, i.e. the connector points and corners of the bounding box
-  // cspell:ignore Hegemann
-  // of each object"), and Hegemann/Wolff likewise route between endpoints that "are
-  // ports and thus vertices in the routing graph H". Rebuilding per candidate made
-  // construction 5411 ms of the 21230 ms remediation cost on `domus/triage2`.
   const sidePairs = sidePreference(rS, rE);
   const startTsFor = (side: Side): number[] =>
     side === 'N' || side === 'S'
@@ -594,62 +653,177 @@ function* sideRouteCandidates(
     side === 'N' || side === 'S'
       ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5, 0.25, 0.75]
       : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5, 0.25, 0.75];
-
   const stubFor = (r: Rect, side: Side, t: number): { port: Point; stub: Point } => {
     const port = sidePort(r, side, t);
     const d = OUTWARD[side];
     return { port, stub: { x: port.x + d.x * STUB, y: port.y + d.y * STUB } };
   };
 
-  // Granularity matters and was measured. Putting ALL 192 candidate stubs into one
-  // graph is the wrong reading of "build once": the stubs contribute their own
-  // rails, so the grid grew by ~8 x-lines and ~32 y-lines, and since construction
-  // and search cost about the same on `domus/triage2` (5411 ms vs 5637 ms), paying
-  // ~2.6x per search 192 times to save 191 builds made that fixture 21% SLOWER
-  // (33868 -> 40924 ms).
+  // Ports come from geometry, and search is only for what geometry leaves in conflict.
   //
-  // One graph per side PAIR is the sweet spot: 12 builds instead of 192, and each
-  // graph gains only the 4 start and 4 end offsets of that pair — one extra rail on
-  // the port axis plus four on the other, per endpoint.
-  const obstacleRects = collectObstacleRects(routerNodes, startId, endId, 8);
+  // This used to cross ~12 side pairs with 4 start x 4 end offsets — 192 route
+  // queries for ONE flagged edge — and enumerating candidate ports that way is not a
+  // technique the literature describes at all. Every router in the corpus assigns
+  // ports constructively and then searches only where that leaves a conflict:
+  // Hegemann/Wolff "just use geometry to place its ports", and Biedl et al. decline
+  // to test port feasibility exhaustively ("we also may not want to spend the time to
+  // find out, since testing some of the conditions is NP-complete"), repairing a
+  // conflicting edge with a bounded reroute instead.
+  //
+  // So the candidate ports are now:
+  //   tier 1  the constructive pair from `geometricPortPairs` (plus its L-variant
+  //           when the centre segment exits through an outer quarter)
+  //   tier 2  one pair per side preference, each at its geometrically implied
+  //           offset only — the bounded search for edges tier 1 cannot fix
+  // Both tiers share ONE routing graph: at ~10 distinct stubs it is small enough
+  // that batching them together wins, which is the opposite of what happens with all
+  // 192 stubs (each stub is a rail, and rails cost every later search).
+  const portPairs: { start: [Side, number]; end: [Side, number] }[] = [
+    ...geometricPortPairs(rS, rE),
+    ...sidePairs.map(([startSide, endSide]): { start: [Side, number]; end: [Side, number] } => ({
+      start: [startSide, startTsFor(startSide)[0]],
+      end: [endSide, endTsFor(endSide)[0]],
+    })),
+  ];
 
-  for (const [startSide, endSide] of sidePairs) {
+  const pairKey = (pair: { start: [Side, number]; end: [Side, number] }): string =>
+    `${pair.start[0]}${Math.round(pair.start[1] * 1000)}|${pair.end[0]}${Math.round(pair.end[1] * 1000)}`;
+  const seenPairs = new Set<string>();
+  const uniquePairs = portPairs.filter((pair) => {
+    const key = pairKey(pair);
+    if (seenPairs.has(key)) {
+      return false;
+    }
+    seenPairs.add(key);
+    return true;
+  });
+
+  const obstacleRects = collectObstacleRects(routerNodes, startId, endId, 8);
+  const allStubs = uniquePairs.flatMap((pair) => [
+    stubFor(rS, pair.start[0], pair.start[1]).stub,
+    stubFor(rE, pair.end[0], pair.end[1]).stub,
+  ]);
+  const prepared =
+    obstacleRects.length > 0 && allStubs.length > 0
+      ? buildChannelRoutingGraphForPorts(allStubs, obstacleRects, 10, 8)
+      : null;
+
+  // Group by start stub so one search answers every end stub sharing it.
+  const byStart = new Map<
+    string,
+    { startSide: Side; startT: number; ends: { endSide: Side; endT: number }[] }
+  >();
+  for (const pair of uniquePairs) {
+    const key = `${pair.start[0]}${Math.round(pair.start[1] * 1000)}`;
+    const entry = byStart.get(key) ?? {
+      startSide: pair.start[0],
+      startT: pair.start[1],
+      ends: [],
+    };
+    entry.ends.push({ endSide: pair.end[0], endT: pair.end[1] });
+    byStart.set(key, entry);
+  }
+
+  for (const { startSide, startT, ends } of byStart.values()) {
+    const startHoriz = startSide === 'N' || startSide === 'S';
+    const { port: ps, stub: startStub } = stubFor(rS, startSide, startT);
+    const endStubs = ends.map((e) => stubFor(rE, e.endSide, e.endT));
+    const mids = prepared
+      ? findPathsOnPreparedChannelGraph(
+          prepared,
+          startStub,
+          endStubs.map((e) => e.stub),
+          { avoid }
+        )
+      : endStubs.map(() => null);
+
+    for (const [ei] of ends.entries()) {
+      const { port: pe, stub: endStub } = endStubs[ei];
+      const mid = mids[ei];
+      const routes: Point[][] = [];
+      if (mid && mid.length >= 2) {
+        // The router snaps the stub endpoints to its grid, so the joints
+        // ps->mid[0] and mid[-1]->pe are often slightly off-axis; stitch them
+        // orthogonally or the candidate self-defeats on corner-connection /
+        // non-orthogonal checks.
+        const raw = [{ ...ps }, ...mid.map((p) => ({ ...p })), { ...pe }];
+        const stitched: Point[] = [raw[0]];
+        for (let ri = 1; ri < raw.length; ri++) {
+          const prev = stitched[stitched.length - 1];
+          const cur = raw[ri];
+          if (Math.abs(prev.x - cur.x) > EPS && Math.abs(prev.y - cur.y) > EPS) {
+            if (startHoriz && ri === 1) {
+              stitched.push({ x: cur.x, y: prev.y });
+            } else {
+              stitched.push({ x: prev.x, y: cur.y });
+            }
+          }
+          stitched.push(cur);
+        }
+        routes.push(stitched);
+      }
+      if (Math.abs(startStub.x - endStub.x) <= EPS || Math.abs(startStub.y - endStub.y) <= EPS) {
+        routes.push([{ ...ps }, { ...startStub }, { ...endStub }, { ...pe }]);
+      }
+      for (const route of routes) {
+        const key = route
+          .map((p) => `${Math.round(p.x * 10) / 10},${Math.round(p.y * 10) / 10}`)
+          .join('|');
+        if (seen.has(key)) {
+          continue;
+        }
+        seen.add(key);
+        yield route;
+      }
+    }
+  }
+
+  // Tier 3: the offset cross-product, for edges the constructive ports and the
+  // one-offset-per-side search both failed to repair. This generator is consumed
+  // lazily and abandoned the moment a candidate is accepted, so a well-behaved edge
+  // never reaches this loop — only an edge still in conflict pays for it, which is
+  // the trade Biedl et al. describe (assign constructively, then spend effort only
+  // on the conflicts). It is bounded to the leading side pairs: on this corpus tiers
+  // 1-2 alone cost 3 fixtures their validity (aggregate 55012 -> 52327, invalid 7 ->
+  // 10), so some cross-product is needed — but not much of it. Measured across the
+  // corpus, widening this tier past the two leading side pairs buys nothing:
+  //     pairs   aggregate   invalid   perf median-sum
+  //         0       52327        10          50461 ms
+  //         2       55014         7          67979 ms
+  //         4       55009         7               —
+  //        12       55009         7          87615 ms
+  // Two pairs is the knee: full quality at a quarter of the cost of twelve.
+  const CONFLICT_TIER_PAIRS = 2;
+  for (const [startSide, endSide] of sidePairs.slice(0, CONFLICT_TIER_PAIRS)) {
     const startTs = startTsFor(startSide);
     const endTs = endTsFor(endSide);
     const pairStubs: Point[] = [
       ...startTs.map((t) => stubFor(rS, startSide, t).stub),
       ...endTs.map((t) => stubFor(rE, endSide, t).stub),
     ];
-    const prepared =
+    const pairGraph =
       obstacleRects.length > 0
         ? buildChannelRoutingGraphForPorts(pairStubs, obstacleRects, 10, 8)
         : null;
-
     const startHoriz = startSide === 'N' || startSide === 'S';
     const endStubs = endTs.map((t) => stubFor(rE, endSide, t));
+
     for (const st of startTs) {
       const { port: ps, stub: startStub } = stubFor(rS, startSide, st);
-      // One search, four targets: the four end offsets sit in the same graph and
-      // share this start stub, so re-running the search per offset re-explored the
-      // same graph four times (6516 ms of `domus/triage2`'s 16016 ms remediation).
-      const mids = prepared
+      const mids = pairGraph
         ? findPathsOnPreparedChannelGraph(
-            prepared,
+            pairGraph,
             startStub,
             endStubs.map((e) => e.stub),
             { avoid }
           )
         : endStubs.map(() => null);
-      for (const [ei, et] of endTs.entries()) {
+
+      for (const [ei] of endTs.entries()) {
         const { port: pe, stub: endStub } = endStubs[ei];
-        void et;
         const mid = mids[ei];
         const routes: Point[][] = [];
         if (mid && mid.length >= 2) {
-          // The router snaps the stub endpoints to its grid, so the joints
-          // ps->mid[0] and mid[-1]->pe are often slightly off-axis; stitch
-          // them orthogonally or the candidate self-defeats on
-          // corner-connection / non-orthogonal checks.
           const raw = [{ ...ps }, ...mid.map((p) => ({ ...p })), { ...pe }];
           const stitched: Point[] = [raw[0]];
           for (let ri = 1; ri < raw.length; ri++) {
