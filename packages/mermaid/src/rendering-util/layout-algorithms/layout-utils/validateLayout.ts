@@ -1184,7 +1184,45 @@ export function validateLayout(
     // obstacle check so those threaded paths aren't flagged as violations.
     const ownLabelId = (e as { labelNodeId?: string }).labelNodeId;
 
+    // Bounding box of this polyline, to reject rectangles it cannot possibly touch.
+    //
+    // The three rectangle scans below each walk EVERY node rect and test EVERY
+    // segment against it: O(edges x nodes x segments) per validation, and the
+    // score-gated passes run thousands of validations per render. On
+    // `domus/architecture` (≈130 rects) that made `validateLayout` the single
+    // largest self-time item in the whole layout at 7614 ms.
+    //
+    // The reject is exact, not a heuristic. `segmentIntersectsRectInterior` needs
+    // `max(segMin, rect.left) < min(segMax, rect.right)` on the parallel axis and
+    // `rect.top <= y <= rect.bottom` on the other, so a rect lying STRICTLY outside
+    // the polyline's extent cannot satisfy either for any segment of it. Only strict
+    // comparisons are used, which keeps the boundary-touching cases the checks
+    // deliberately treat as hits.
+    let polyMinX = Infinity;
+    let polyMaxX = -Infinity;
+    let polyMinY = Infinity;
+    let polyMaxY = -Infinity;
+    for (const p of points) {
+      if (p.x < polyMinX) {
+        polyMinX = p.x;
+      }
+      if (p.x > polyMaxX) {
+        polyMaxX = p.x;
+      }
+      if (p.y < polyMinY) {
+        polyMinY = p.y;
+      }
+      if (p.y > polyMaxY) {
+        polyMaxY = p.y;
+      }
+    }
+    const outsidePolylineExtent = (r: Rect): boolean =>
+      r.right < polyMinX || r.left > polyMaxX || r.bottom < polyMinY || r.top > polyMaxY;
+
     for (const [obstacleId, obstacleRect] of obstacleRects) {
+      if (outsidePolylineExtent(obstacleRect)) {
+        continue;
+      }
       // NOTE: we do NOT blanket-exclude the edge's own src/dst nodes here.
       // A legitimate edge only touches its own endpoint nodes at the
       // attach point (the polyline's first and last points); any segment
@@ -1213,6 +1251,9 @@ export function validateLayout(
 
     let hitGroupTitle = false;
     for (const [groupId, titleRect] of groupTitleRects) {
+      if (outsidePolylineExtent(titleRect)) {
+        continue;
+      }
       const hit = firstInteriorRectHit(points, titleRect, startAttach, endAttach, (a, b) => {
         const touchesStartAttach =
           distance(a, startAttach) <= EPS || distance(b, startAttach) <= EPS;
@@ -1443,6 +1484,9 @@ export function validateLayout(
     // Note: We also check start/end nodes because an edge can hug its target's border
     // (e.g., run along the left side of the target before entering)
     for (const [obstacleId, obstacleRect] of borderHugRects) {
+      if (outsidePolylineExtent(obstacleRect)) {
+        continue;
+      }
       // Same exception as edge-intersects-obstacle: the edge's own label
       // node is a waypoint, not an obstacle to be avoided.
       if (ownLabelId && obstacleId === ownLabelId) {
