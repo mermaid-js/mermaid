@@ -26,7 +26,7 @@ jobs:
     # Same image as the e2e job so the capture matches what CI produces. Keep the
     # tag in sync with @playwright/test in package.json (Renovate bumps both).
     container:
-      image: mcr.microsoft.com/playwright:v1.61.0-noble
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
     # Full single-shard capture of the whole suite — generous bound for a weekly job.
     timeout-minutes: 90
     steps:

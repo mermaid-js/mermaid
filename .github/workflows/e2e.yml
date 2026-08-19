@@ -206,7 +206,7 @@ jobs:
     # `playwright install` / `install-deps` is needed at runtime. Keep this tag in
     # sync with the @playwright/test version in package.json (Renovate bumps both).
     container:
-      image: mcr.microsoft.com/playwright:v1.61.0-noble
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
     # Bound the job so a hung dev server / wait-on fails in minutes, not at
     # GitHub's 6h default.
     timeout-minutes: 30
