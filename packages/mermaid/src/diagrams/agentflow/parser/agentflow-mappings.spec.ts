@@ -31,9 +31,9 @@ describe('agentflow element mappings', () => {
   // ──────────────────────────────────────────────────────────────
 
   describe('DB surface', () => {
-    it('exposes setSourceText so Diagram.ts detects inline-position support', () => {
+    it('opts into source-faithful parsing so Diagram.ts keeps comments and offsets', () => {
       const db = agentflow.parser.yy as AgentFlowDB;
-      expect(typeof db.setSourceText).toBe('function');
+      expect(db.preserveCommentsWhenParsing).toBe(true);
       expect(typeof db.setFrontmatterLineOffset).toBe('function');
     });
 

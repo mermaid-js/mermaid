@@ -13,7 +13,7 @@
  *
  * The runner is intentionally small: fixture format, parse + drive, match.
  * PR 5 fills the `fixtures/` directory with the full wave-1 corpus and
- * ports every example from `AGENTFLOW-SYNTAX.md`.
+ * ports every example from the agentflow syntax specification.
  *
  * Fixture format
  * --------------
@@ -133,9 +133,8 @@ export function runFixture(source: string): FixtureResult {
   agentflow.parser.yy = db;
   db.clear();
   db.setGen('gen-2');
-  // Signal to Diagram.ts that we support inline positions. Here we call
-  // setSourceText directly since we're bypassing the Diagram.fromText path.
-  db.setSourceText(source);
+  // Fixtures carry no frontmatter, so parser line numbers already match the
+  // source. `Diagram.fromText` would set the offset for us; we bypass it here.
   try {
     agentflow.parser.parse(source);
   } catch (err) {

@@ -50,26 +50,16 @@ export class Diagram {
     if (metadata.title) {
       db.setDiagramTitle?.(metadata.title);
     }
-    // Diagrams that opt into inline-position capture signal by exposing a
-    // `setSourceText` method on their DB. For those we prefer the text with
-    // comments preserved so that Jison `@$` positions remain meaningful in
-    // original-source space. Everything else keeps today's behaviour.
-    const dbAny = db as Record<string, unknown>;
-    const supportsInlinePositions = typeof dbAny.setSourceText === 'function';
-    let textToParse: string;
-    if (supportsInlinePositions && code.withComments) {
-      textToParse = encodeEntities(code.withComments) + '\n';
-    } else {
-      textToParse = encodeEntities(code.cleaned) + '\n';
-    }
-    // Pass frontmatter line offset so AST positions can be adjusted to match
-    // the original source (which includes frontmatter) shown in the editor.
-    if (
-      supportsInlinePositions &&
-      code.frontmatterLineOffset &&
-      typeof dbAny.setFrontmatterLineOffset === 'function'
-    ) {
-      (dbAny.setFrontmatterLineOffset as (offset: number) => void)(code.frontmatterLineOffset);
+    // Diagrams that report source positions set `preserveCommentsWhenParsing`
+    // so that parser positions stay meaningful in original-source space. Every
+    // other diagram parses the comment-stripped text, as before.
+    const source =
+      db.preserveCommentsWhenParsing && code.withComments ? code.withComments : code.cleaned;
+    const textToParse = encodeEntities(source) + '\n';
+    // Pass frontmatter line offset so positions can be adjusted to match the
+    // original source (which includes frontmatter) shown in the editor.
+    if (code.frontmatterLineOffset) {
+      db.setFrontmatterLineOffset?.(code.frontmatterLineOffset);
     }
     await parser.parse(textToParse);
     return new Diagram(type, textToParse, db, parser, renderer);
