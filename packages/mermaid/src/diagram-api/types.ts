@@ -10,6 +10,22 @@ export interface DiagramMetadata {
   config?: MermaidConfig;
 }
 
+/**
+ * Preprocessed code produced by `preprocessDiagram`. Diagrams that opt into
+ * inline-position capture read `withComments` and `frontmatterLineOffset` via
+ * the DB hooks; all other diagrams read `cleaned` and behave as before.
+ */
+export interface DiagramCode {
+  /** Original source text, untouched. */
+  raw: string;
+  /** Fully processed text: CRLF normalised, frontmatter removed, directives removed, comments stripped. */
+  cleaned: string;
+  /** Text after frontmatter/directive removal but before comment cleanup. */
+  withComments?: string;
+  /** Number of lines occupied by YAML frontmatter (0 if none). */
+  frontmatterLineOffset?: number;
+}
+
 export interface InjectUtils {
   _log: any;
   _setLogLevel: any;

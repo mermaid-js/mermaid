@@ -92,7 +92,7 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
   addDiagrams();
   try {
     const { code, config } = processAndSetConfigs(text);
-    const diagram = await getDiagramFromText(code);
+    const diagram = await getDiagramFromText(code.cleaned);
     return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
@@ -472,7 +472,7 @@ const render = async function (
   }
 
   const processed = processAndSetConfigs(text);
-  text = processed.code;
+  text = processed.code.cleaned;
 
   const config = configApi.getConfig();
   log.debug(config);
@@ -691,6 +691,7 @@ function initialize(userOptions: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
+  // `code` is now a DiagramCode object; Diagram.fromText accepts either shape.
   return Diagram.fromText(code, metadata);
 };
 
