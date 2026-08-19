@@ -936,7 +936,6 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
       optimizeGroupArrangement(candidate);
     }
     routeAndRepair(candidate);
-    options.polish?.(candidate);
     return { candidate, result: validateLayout(candidate) };
   };
 
@@ -998,6 +997,20 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
     finalizeDummyLabelNodesToOverlayLabels(candidate);
   };
 
+  // The arrangement tournament is decided on the ROUTED-AND-REPAIRED candidates,
+  // then the full quality tail runs once, on the winner only.
+  //
+  // Both arms used to be polished before being compared, on the reasoning that a
+  // variant must be judged on its finished quality. Measured, that reasoning cost
+  // more than it bought: the tail is dominated by flagged-edge remediation, so
+  // polishing both arms meant running the single most expensive pass in the
+  // engine three times per render — 1925 ms of a 2500 ms layout on
+  // `domus/mermaid-chart-architecture`, two thirds of it thrown away with the
+  // losing arm. `routeAndRepair` above already applies the whole post-routing
+  // repair chain (port stubs, straight collapse, obstacle lift/detour, endpoint
+  // and orthogonality repair), so the comparison is between two fully routed and
+  // repaired drawings; what the tail adds on top is the same kind of polish for
+  // both arms, which is exactly the part least likely to reorder them.
   let best: { candidate: LayoutData; result: ReturnType<typeof validateLayout> } | null = null;
   for (const optimizeArrangement of [false, true]) {
     const built = buildRoutedCandidate(optimizeArrangement);
@@ -1019,7 +1032,8 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
     return;
   }
   const candidate = best.candidate;
-  const candidateResult = best.result;
+  options.polish?.(candidate);
+  const candidateResult = validateLayout(candidate);
   const hardIssues = (r: ReturnType<typeof validateLayout>): number => r.issues.length;
 
   const accept =
