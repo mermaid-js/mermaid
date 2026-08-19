@@ -887,4 +887,45 @@ State9_____________ --> State10_____________   : Transition9_____
       {}
     );
   });
+  it('v2 should render nested composite states referenced by transitions in an outer document (#6337)', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram-v2
+    direction TB
+    state Client {
+      direction TB
+      state ClientMobX {
+        direction LR
+        state WebSocketStore {
+          isConnected
+          connect
+        }
+        state ChatStore {
+          messages
+          sendMessage
+        }
+        state GraphStore {
+          nodes
+          edges
+        }
+      }
+      state ClientUI {
+        direction TB
+        state ChatComponent {
+          ChatStreamMultimodalGraphMobX
+        }
+        state GraphComponent {
+          GraphVisualization
+        }
+      }
+      WebSocketStore --> ChatStore: Provides events
+      WebSocketStore --> GraphStore: Updates data
+      ChatStore --> ClientUI: Updates Chat UI
+      GraphStore --> ClientUI: Updates Graph UI
+      ClientUI --> WebSocketStore: Triggers events
+    }
+      `,
+      { logLevel: 0, fontFamily: 'courier' }
+    );
+  });
 });
