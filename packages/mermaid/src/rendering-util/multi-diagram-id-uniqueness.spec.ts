@@ -172,6 +172,11 @@ union A, B`,
     service db(database)[DB]
     api:R -- L:db`,
 
+  agentflow: `agentflow-beta TB
+    a["Alpha"]
+    b["Beta"]
+    a --> b`,
+
   wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]
