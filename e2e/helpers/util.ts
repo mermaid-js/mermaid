@@ -142,9 +142,7 @@ export const openURLAndVerifyRendering = async (
   const name: string = shortenScreenshotName(options.name ?? testInfo.titlePath.join(' '));
 
   // Capture browser-side errors so a render failure reports the real cause
-  // instead of a bare "svg not visible" timeout. Uncaught exceptions are also
-  // checked after a successful render — xssAttack() throws while still leaving
-  // an SVG, so a catch-only check would miss it.
+  // instead of a bare "svg not visible" timeout.
   const pageErrors: string[] = [];
   const consoleErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(`[pageerror] ${error.message}`));
@@ -176,8 +174,12 @@ export const openURLAndVerifyRendering = async (
     }
   }
 
-  if (pageErrors.length > 0) {
-    throw new Error(`Uncaught page errors during render:\n${pageErrors.join('\n')}`);
+  // xssAttack() throws after injecting #the-malware and still leaves an SVG, so a
+  // catch-only check misses it. Do not fail on every pageerror: error-diagram
+  // tests and "render after error" cases throw mermaid parse errors on purpose.
+  const xssErrors = pageErrors.filter((msg) => msg.includes('XSS Succeeded'));
+  if (xssErrors.length > 0) {
+    throw new Error(`XSS payload executed during render:\n${xssErrors.join('\n')}`);
   }
 
   if (options.securityLevel === 'sandbox') {
