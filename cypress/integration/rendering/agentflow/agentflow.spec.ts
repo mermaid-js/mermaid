@@ -1,6 +1,6 @@
 import { imgSnapshotTest } from '../../../helpers/util.ts';
 
-// Diagrams below use agentflow v0.8.2 syntax (AGENTFLOW-SYNTAX.md): `flow` is
+// Diagrams below use agentflow v0.8.2 syntax: `flow` is
 // the single container kind; the edge set is `-->` (sequence), `-.-`
 // (reference), `--x` (failure); shapes are authored via the v0.8.1 aliases
 // (task, tool, input, decision, refdoc, action); connectors are declared with
@@ -73,7 +73,7 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('4b: should render the input-value pattern (§10, input nodes)', () => {
+  it('4b: should render the input-value pattern (input nodes)', () => {
     imgSnapshotTest(
       `agentflow-beta TB
         file_path["file_path"]
@@ -161,7 +161,7 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('7a: should render a connector declaration with a bound tool (§8)', () => {
+  it('7a: should render a connector declaration with a bound tool', () => {
     imgSnapshotTest(
       `agentflow-beta LR
         connector github["GitHub API"]
@@ -195,7 +195,7 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('8: should redirect cross-boundary edges to the collapsed parent (#53)', () => {
+  it('8: should redirect cross-boundary edges to the collapsed parent', () => {
     imgSnapshotTest(
       `agentflow-beta TB
         flow researcher["Research Agent"]
@@ -219,7 +219,7 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('9: should treat an empty/whitespace metadata block as a no-op (#83)', () => {
+  it('9: should treat an empty/whitespace metadata block as a no-op', () => {
     // An empty multi-line `@{` `}` block used to crash the whole diagram with
     // "Cannot read properties of null (reading 'shape')".
     imgSnapshotTest(
@@ -235,7 +235,7 @@ describe('Agentflow diagram', () => {
     );
   });
 
-  it('10: should keep a global-scoped node outside the flow container (#80)', () => {
+  it('10: should keep a global-scoped node outside the flow container', () => {
     // Without the `global` block, referencing A inside the flow would pull it
     // into the container. Declaring it global anchors it at root level.
     imgSnapshotTest(
@@ -250,6 +250,65 @@ describe('Agentflow diagram', () => {
         end
       `,
       {}
+    );
+  });
+  // A diagram exercising every container kind that has its own cluster shape
+  // and collapsed style, so the theme and handdrawn cases below cover the whole
+  // agentflow visual vocabulary rather than one shape.
+  const containerShowcase = `agentflow-beta TB
+        flow orchestrator["Orchestrator"]
+          gather["Gather Input"]@{ shape: input }
+          plan["Plan"]@{ shape: task }
+          decide["Ready?"]@{ shape: decision }
+          gather --> plan --> decide
+        end
+
+        flow workers["Workers"]
+          search["web_search"]@{ shape: tool }
+          notes["Notes"]@{ shape: refdoc }
+          search -.- notes
+        end
+
+        flow archive["Archive"]
+          store["Store"]
+        end
+        archive@{ view: "collapsed" }
+
+        decide --> search
+        notes --> archive
+        decide --x archive
+      `;
+
+  for (const theme of ['default', 'dark', 'forest', 'neutral', 'base']) {
+    it(`11: should render every container kind with the ${theme} theme`, () => {
+      imgSnapshotTest(containerShowcase, { theme });
+    });
+  }
+
+  it('12: should render every container kind in handdrawn mode', () => {
+    // Covers the `look: handDrawn` branches of the flow container cluster shape
+    // and of the collapsed-group shape.
+    imgSnapshotTest(containerShowcase, { look: 'handDrawn' });
+  });
+
+  it('13: should render several collapsed containers in handdrawn mode', () => {
+    // Exercises the rough.js branch of collapsedGroup, including the separator
+    // and ellipsis rows, with more than one collapsed container in the graph.
+    imgSnapshotTest(
+      `agentflow-beta TB
+        flow tasks["Tasks"]
+          t1["One"]@{ shape: task }
+        end
+        tasks@{ view: "collapsed" }
+
+        flow more["More"]
+          t2["Two"]@{ shape: task }
+        end
+        more@{ view: "collapsed" }
+
+        tasks --> more
+      `,
+      { look: 'handDrawn' }
     );
   });
 });

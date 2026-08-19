@@ -50,6 +50,7 @@ describe('examples', () => {
       'flowchart',
       'state',
       'swimlane', // reuses flowchart parser/db/renderer; examples covered by flowchart
+      'agentflow', // beta diagram, not listed in the example registry yet
     ];
     const diagrams = mermaid
       .getRegisteredDiagramsMetadata()
