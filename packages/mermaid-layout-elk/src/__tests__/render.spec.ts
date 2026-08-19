@@ -82,11 +82,7 @@ describe('buildSubgraphLayoutOptions', () => {
   });
 
   it('passes through nodePlacementAlignment from config', () => {
-    const opts = buildSubgraphLayoutOptions(
-      {},
-      { nodePlacementAlignment: 'BALANCED' },
-      'layered'
-    );
+    const opts = buildSubgraphLayoutOptions({}, { nodePlacementAlignment: 'BALANCED' }, 'layered');
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('BALANCED');
   });
 
