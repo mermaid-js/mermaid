@@ -11,6 +11,7 @@ test.describe('XSS', () => {
     await page.goto(url);
     await page.waitForTimeout(1000);
     await expect(page.locator('.mermaid')).toHaveCount(1);
+    await expect(page.locator('#the-malware')).toHaveCount(0);
   });
 
   test('should not allow tags in the css', async ({ page }, testInfo) => {

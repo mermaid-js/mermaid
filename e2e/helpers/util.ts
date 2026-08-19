@@ -142,12 +142,15 @@ export const openURLAndVerifyRendering = async (
   const name: string = shortenScreenshotName(options.name ?? testInfo.titlePath.join(' '));
 
   // Capture browser-side errors so a render failure reports the real cause
-  // instead of a bare "svg not visible" timeout.
+  // instead of a bare "svg not visible" timeout. Uncaught exceptions are also
+  // checked after a successful render — xssAttack() throws while still leaving
+  // an SVG, so a catch-only check would miss it.
   const pageErrors: string[] = [];
+  const consoleErrors: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(`[pageerror] ${error.message}`));
   page.on('console', (msg) => {
     if (msg.type() === 'error') {
-      pageErrors.push(`[console.error] ${msg.text()}`);
+      consoleErrors.push(`[console.error] ${msg.text()}`);
     }
   });
 
@@ -163,13 +166,18 @@ export const openURLAndVerifyRendering = async (
     try {
       await diagramSvg(page).first().waitFor({ state: 'visible', timeout: 15_000 });
     } catch (error) {
-      if (pageErrors.length > 0) {
+      const details = [...pageErrors, ...consoleErrors];
+      if (details.length > 0) {
         throw new Error(
-          `Diagram did not render (window.rendered never set, no SVG). Browser errors:\n${pageErrors.join('\n')}`
+          `Diagram did not render (window.rendered never set, no SVG). Browser errors:\n${details.join('\n')}`
         );
       }
       throw error;
     }
+  }
+
+  if (pageErrors.length > 0) {
+    throw new Error(`Uncaught page errors during render:\n${pageErrors.join('\n')}`);
   }
 
   if (options.securityLevel === 'sandbox') {

@@ -39,17 +39,4 @@ test.describe('Git Graph diagram', () => {
       { flowchart: { subGraphTitleMargin: { top: 10, bottom: 5 } } }
     );
   });
-  // test(`ultraFastTest`, function () {
-  //   // Navigate to the url we want to test
-  //   // ⭐️ Note to see visual bugs, run the test using the above URL for the 1st run.
-  //   // but then change the above URL to https://demo.applitools.com/index_v2.html
-  //   // (for the 2nd run)
-  //   await page.goto('https://demo.applitools.com');
-  //   // Applitools visual testing is not yet wired for Playwright.
-  //   await page.getByRole('button', { name: 'Log in' }).click();
-  // });
-  // test('works', async ({ page }, testInfo) => {
-  //   await page.goto('https://applitools.com/helloworld');
-  //   await page.getByRole('button').click();
-  // });
 });
