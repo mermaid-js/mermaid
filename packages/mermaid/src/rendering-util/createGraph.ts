@@ -41,10 +41,16 @@ export function createLayoutElementGroups(
 
 export async function measureGroupLabel(
   nodesGroup: D3Selection<SVGGElement>,
-  node: ClusterNode
+  node: ClusterNode,
+  measureWidth?: number
 ): Promise<void> {
   if (node.label) {
-    const { shapeSvg, bbox } = await labelHelper(nodesGroup, node);
+    // `measureWidth` overrides the width used purely for measuring. The result is
+    // still written back to the real `node`, so callers must not pass a copy.
+    const { shapeSvg, bbox } = await labelHelper(
+      nodesGroup,
+      measureWidth === undefined ? node : { ...node, width: measureWidth }
+    );
     node.labelBBox = { width: bbox.width, height: bbox.height };
     shapeSvg.remove();
   } else {
@@ -113,7 +119,15 @@ export async function createGraphWithElements(
     data4Layout.nodes.map(async (node) => {
       if (node.isGroup) {
         if (hasDom) {
-          await measureGroupLabel(nodesGroup, node);
+          // ELK sizes compound nodes from this measurement, and cluster labels
+          // are painted unwrapped (insertCluster renders via createLabel with
+          // infinite width). labelHelper falls back to flowchart.wrappingWidth
+          // (200px) when node.width is undefined, which artificially caps the
+          // measurement — so for ELK measure with an infinite width so the
+          // label-derived minimum size matches what is painted. Other layouts
+          // (dagre) only consume the label height and keep wrapped measuring.
+          const isElk = (data4Layout.layoutAlgorithm as string | undefined)?.startsWith('elk');
+          await measureGroupLabel(nodesGroup, node, isElk ? Number.POSITIVE_INFINITY : undefined);
         }
         graph.setNode(node.id, { ...node });
       } else {
