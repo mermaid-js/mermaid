@@ -395,8 +395,7 @@ export const draw = function (text, id, version, diagObj) {
     taskRectangles
       .append('title')
       .text(
-        (d) =>
-          `${dayjs(d.startTime).format(dateFormat)} - ${dayjs(d.endTime).format(dateFormat)}`
+        (d) => `${dayjs(d.startTime).format(dateFormat)} - ${dayjs(d.endTime).format(dateFormat)}`
       );
 
     // Append task labels
