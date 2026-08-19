@@ -27,6 +27,26 @@ const elkRenderContext = {
 } as any;
 
 describe('buildSubgraphLayoutOptions', () => {
+  it('derives a label-based minimum size for containers with their own algorithm', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      { mergeEdges: true },
+      'layered'
+    );
+    expect(opts['nodeSize.constraints']).toBe('[MINIMUM_SIZE, NODE_LABELS]');
+    expect(opts['nodeSize.minimum']).toBe('(60, 14)');
+  });
+
+  it('leaves the size of a plain subgraph to ELK, as before', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 } },
+      { mergeEdges: true },
+      'layered'
+    );
+    expect(opts['nodeSize.constraints']).toBeUndefined();
+    expect(opts['nodeSize.minimum']).toBeUndefined();
+  });
+
   it('propagates mergeEdges to subgraphs without an explicit direction', () => {
     const opts = buildSubgraphLayoutOptions({}, { mergeEdges: true }, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBe(true);
@@ -62,8 +82,12 @@ describe('buildSubgraphLayoutOptions', () => {
   });
 
   it('passes through nodePlacementAlignment from config', () => {
-    const opts = buildSubgraphLayoutOptions({}, { nodePlacementAlignment: 'NONE' }, 'layered');
-    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+    const opts = buildSubgraphLayoutOptions(
+      {},
+      { nodePlacementAlignment: 'BALANCED' },
+      'layered'
+    );
+    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('BALANCED');
   });
 
   it('handles undefined elkConfig gracefully', () => {
@@ -71,6 +95,37 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
     expect(opts['nodePlacement.strategy']).toBeUndefined();
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+  });
+
+  it('applies a per-group algorithm from metadata with SEPARATE_CHILDREN', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { labelData: { width: 30, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.algorithm']).toBe('elk.box');
+    expect(opts['elk.hierarchyHandling']).toBe('SEPARATE_CHILDREN');
+    expect(opts['elk.padding']).toBe('[top=29,left=15,bottom=15,right=15]');
+  });
+
+  it('metadata algorithm takes precedence over dir', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { dir: 'LR', metadata: { algorithm: 'elk.box' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.algorithm']).toBe('elk.box');
+    expect(opts['elk.direction']).toBeUndefined();
+  });
+
+  it('applies tighter rectpacking options for elk.rectpacking groups', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { labelData: { width: 30, height: 14 }, metadata: { algorithm: 'elk.rectpacking' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.rectpacking.trybox']).toBe('true');
+    expect(opts['elk.padding']).toBe('[top=24,left=10,bottom=10,right=10]');
   });
 });
 
@@ -123,6 +178,29 @@ describe('findCyclicEntryNodes', () => {
     // The orphan has in-degree 0, so its component already has a source.
     expect(entries.has('format_output')).toBe(false);
     expect(entries.size).toBe(1);
+  });
+
+  it('pins the true entry when a back-edge feeds it and it is not declared first (#79)', () => {
+    // The chain starts at stockholm, but end_decision -> stockholm gives the
+    // entry an in-degree of 1 while san_francisco is declared first. The
+    // nomination must follow edge declaration order, not node declaration order.
+    const nodes = [
+      'san_francisco',
+      'stockholm',
+      'new_york',
+      'decide',
+      'end_decision',
+      'format_json',
+    ].map((id) => ({ id, parentId: 'world-clock' }));
+    const edges = [
+      { source: 'stockholm', target: 'new_york' },
+      { source: 'new_york', target: 'san_francisco' },
+      { source: 'san_francisco', target: 'decide' },
+      { source: 'decide', target: 'end_decision' },
+      { source: 'end_decision', target: 'format_json' },
+      { source: 'end_decision', target: 'stockholm' },
+    ];
+    expect([...findCyclicEntryNodes(nodes, edges)]).toEqual(['stockholm']);
   });
 
   it('scopes detection per container (parentId)', () => {

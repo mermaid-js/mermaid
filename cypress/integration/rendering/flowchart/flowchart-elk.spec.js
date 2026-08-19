@@ -1193,6 +1193,29 @@ flowchart TD
     );
   });
 
+  it('elk: should keep the true entry on top when a back-edge feeds it and it is not declared first with elk.keepEntryNodeOnTop=true (#79)', () => {
+    imgSnapshotTest(
+      `---
+config:
+    layout: elk
+    elk:
+        keepEntryNodeOnTop: true
+---
+flowchart TD
+    san_francisco[Check San Francisco time]
+    stockholm[Check the current local time in Stockholm]
+    new_york[Check New York time]
+    decide[Propose a meeting slot]
+    end_decision{"End?"}
+    format_json["Format JSON"]
+    stockholm --> new_york --> san_francisco --> decide --> end_decision
+    end_decision -->|Yes| format_json
+    end_decision -->|No| stockholm
+      `,
+      {}
+    );
+  });
+
   it('elk: should keep the entry node on top of a recursive flow nested in a subgraph with elk.keepEntryNodeOnTop=true (#7827)', () => {
     imgSnapshotTest(
       `---
