@@ -63,7 +63,7 @@ interface LinkData {
 const MERMAID_DOM_ID_PREFIX = 'agentflow-';
 
 /**
- * Metadata keys that are presentation-only per `AGENTFLOW-SYNTAX.md` §11 and
+ * Metadata keys that are presentation-only per the agentflow syntax specification §11 and
  * therefore stripped from the semantic model projection. Everything else
  * in `@{...}` metadata carries semantic weight and flows through.
  */
@@ -80,7 +80,7 @@ const SEMANTIC_METADATA_SKIP_KEYS = new Set([
 ]);
 
 /**
- * Shape ids that mark a node as a tool definition per `AGENTFLOW-SYNTAX.md`
+ * Shape ids that mark a node as a tool definition per the agentflow syntax specification
  * §7: the canonical name plus the accepted aliases. v0.8.1 adds `tool` as
  * an alias. Membership in this set is the source of truth for
  * `isToolDefinition()`.
@@ -130,6 +130,33 @@ function resolveShapeAlias(shape: string | undefined): string | undefined {
     return shape;
   }
   return SHAPE_ALIASES.get(shape) ?? shape;
+}
+
+/**
+ * Remove `__proto__` / `constructor` / `prototype` own keys from parsed `@{ }`
+ * metadata, recursively.
+ *
+ * js-yaml defines `__proto__` with `Object.defineProperty` and the metadata
+ * spreads copy it as an own property, so nothing is polluted inside mermaid.
+ * But `metadata` and `getSemanticModel()` are consumer-facing, and a downstream
+ * `merge(target, node.metadata)` over an authored `__proto__` key would
+ * pollute. Strip it at the parse boundary so no consumer inherits the hazard.
+ */
+function stripPrototypeKeys<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((entry) => stripPrototypeKeys(entry)) as T;
+  }
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+  const clean: Record<string, unknown> = {};
+  for (const key of Object.keys(value)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
+    clean[key] = stripPrototypeKeys((value as Record<string, unknown>)[key]);
+  }
+  return clean as T;
 }
 
 /**
@@ -223,12 +250,12 @@ export class AgentFlowDB implements DiagramDB {
   private posCrossRef: number[] = [];
 
   // ── Element-mapping infrastructure (PR 2a) ───────────────────────────
-  // `setSourceText` is the signal Diagram.ts duck-types on to decide whether
-  // the DB opts into inline-position capture. `setFrontmatterLineOffset`
-  // receives the offset computed by `preprocessDiagram` so that captured
-  // JISON `@$` positions are reported in original-source space (including
-  // any YAML frontmatter the parser never saw).
-  private sourceText: string | undefined;
+  // Agentflow reports source positions, so it opts into source-faithful
+  // parsing: `Diagram.fromText` keeps `%%` comments in the parsed text and
+  // hands over the frontmatter line offset, letting captured JISON `@$`
+  // positions be reported in original-source space (including any YAML
+  // frontmatter the parser never saw).
+  public readonly preserveCommentsWhenParsing = true;
   private frontmatterLineOffset = 0;
   private elementMappings: AgentflowElementMapping[] = [];
   // Vertex mappings pushed for bare `id` references (no label/shape
@@ -277,7 +304,6 @@ export class AgentFlowDB implements DiagramDB {
     this.bindFunctions = this.bindFunctions.bind(this);
 
     // Element-mapping hooks (see ./types.ts ElementPosition / AgentflowElementMapping)
-    this.setSourceText = this.setSourceText.bind(this);
     this.setFrontmatterLineOffset = this.setFrontmatterLineOffset.bind(this);
     this.addVertexMapping = this.addVertexMapping.bind(this);
     this.extendVertexMapping = this.extendVertexMapping.bind(this);
@@ -382,6 +408,7 @@ export class AgentFlowDB implements DiagramDB {
           this.rethrowMetadataYamlError(err, metadata, metadataLoc);
         }
       }
+      doc = stripPrototypeKeys(doc);
     }
 
     // Resolve shape alias (§4.3.2) before any other shape handling. Keep the
@@ -1011,7 +1038,7 @@ You have to call mermaid.initialize.`
 
   /**
    * Returns true when `vertex` is a **tool definition** per
-   * `AGENTFLOW-SYNTAX.md` §8 — its resolved shape is `subroutine` or one
+   * the agentflow syntax specification §8 — its resolved shape is `subroutine` or one
    * of the accepted aliases (`subprocess`, `subproc`, `framed-rectangle`).
    *
    * This is the source of truth for "is this a tool?" — there is no
@@ -1095,7 +1122,6 @@ You have to call mermaid.initialize.`
     this.firstGraphFlag = true;
     this.version = ver;
     this.config = getConfig();
-    this.sourceText = undefined;
     this.frontmatterLineOffset = 0;
     this.elementMappings = [];
     this.bareVertexMappings = new WeakSet();
@@ -1365,7 +1391,7 @@ You have to call mermaid.initialize.`
 
   /**
    * Maps the post-`destructLink` `(type, stroke)` pair onto the canonical
-   * `edgeSemantic` value defined by `AGENTFLOW-SYNTAX.md` §5.1 (v0.8.1).
+   * `edgeSemantic` value defined by the agentflow syntax specification §5.1 (v0.8.1).
    * The three-way table:
    *   - `-->` → arrow_point + normal → sequence
    *   - `-.-` → arrow_open  + dotted → reference
@@ -1825,7 +1851,7 @@ You have to call mermaid.initialize.`
   // ── Semantic-model projection (PR 3) ─────────────────────────────────
   //
   // `getSemanticModel()` returns a presentation-stripped view of the
-  // diagram state for downstream tooling. Per AGENTFLOW-SYNTAX.md §13
+  // diagram state for downstream tooling. Per the agentflow syntax specification §13
   // `view`, `classDef` / `class` / `style` / `linkStyle`, `icon`, `img`,
   // `w`, `h`, collapsed/expanded state, element mappings, and interactivity
   // bindings are presentation-only and MUST NOT influence semantic
@@ -1983,15 +2009,6 @@ You have to call mermaid.initialize.`
   // does not expose these methods the JISON guard `if (yy.addVertexMapping)`
   // simply skips them, so the mapping layer is opt-in and has no effect on
   // diagrams that don't consume positions.
-  //
-  // `setSourceText` is both the presence signal Diagram.ts uses for inline-
-  // position capture AND a place for downstream tooling to read back the
-  // original source for render-to-source lookups.
-
-  public setSourceText(text: string): void {
-    this.sourceText = text;
-  }
-
   public setFrontmatterLineOffset(offset: number): void {
     this.frontmatterLineOffset = offset ?? 0;
   }
