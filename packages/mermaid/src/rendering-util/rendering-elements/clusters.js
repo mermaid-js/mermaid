@@ -469,131 +469,13 @@ const divider = (parent, node) => {
   return { cluster: shapeSvg, labelBBox: {} };
 };
 
-const taskGroup = async (parent, node) => {
-  log.info('Creating task group for ', node.id, node);
-  const siteConfig = getConfig();
-  const { themeVariables, handDrawnSeed } = siteConfig;
-  const { clusterBorder } = themeVariables;
-
-  const { labelStyles, borderStyles } = styles2String(node);
-
-  // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', 'cluster task-cluster ' + node.cssClasses)
-    .attr('id', node.id)
-    .attr('data-look', node.look);
-
-  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
-
-  // Create the label element
-  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label');
-
-  // Only create label text if a non-empty label is provided
-  let bbox = { width: 0, height: 0 };
-  const hasLabel = node.label?.trim();
-  if (hasLabel) {
-    let text;
-    if (node.labelType === 'markdown') {
-      text = await createText(labelEl, node.label, {
-        style: node.labelStyle,
-        useHtmlLabels,
-        isNode: true,
-        width: node.width,
-      });
-    } else {
-      text = await createLabel(labelEl, node.label, node.labelStyle || '', false, true);
-    }
-
-    bbox = text.getBBox();
-
-    if (getEffectiveHtmlLabels(siteConfig)) {
-      const div = text.children[0];
-      const dv = select(text);
-      bbox = div.getBoundingClientRect();
-      dv.attr('width', bbox.width);
-      dv.attr('height', bbox.height);
-    }
-  }
-
-  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
-  if (node.width <= bbox.width + node.padding) {
-    node.diff = (width - node.width) / 2 - node.padding;
-  } else {
-    node.diff = -node.padding;
-  }
-
-  const height = node.height;
-  const x = node.x - width / 2;
-  const y = node.y - height / 2;
-  const rx = 10;
-
-  log.trace('Task group data ', node, JSON.stringify(node));
-  let rect;
-  if (node.look === 'handDrawn') {
-    // @ts-ignore TODO: Fix rough typings
-    const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {
-      roughness: 0.7,
-      fill: 'transparent',
-      stroke: clusterBorder,
-      fillWeight: 0,
-      seed: handDrawnSeed,
-      strokeLineDash: [8, 4],
-    });
-    const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, rx), options);
-    rect = shapeSvg.insert(() => {
-      log.debug('Rough task group insert', roughNode);
-      return roughNode;
-    }, ':first-child');
-    rect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
-  } else {
-    // add the rect with rounded corners, dashed border, no fill
-    rect = shapeSvg.insert('rect', ':first-child');
-    rect
-      .attr('rx', rx)
-      .attr('ry', rx)
-      .attr('x', x)
-      .attr('y', y)
-      .attr('width', width)
-      .attr('height', height)
-      .attr('fill', 'none')
-      .attr('stroke-dasharray', '8, 4');
-  }
-
-  // Position label top-center when present
-  if (hasLabel) {
-    const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-    labelEl.attr(
-      'transform',
-      `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
-    );
-
-    if (labelStyles) {
-      const span = labelEl.select('span');
-      if (span) {
-        span.attr('style', labelStyles);
-      }
-    }
-  }
-
-  const rectBox = rect.node().getBBox();
-  node.offsetX = 0;
-  node.width = rectBox.width;
-  node.height = rectBox.height;
-  // Used by layout engine to position subgraph in parent
-  node.offsetY = bbox.height - node.padding / 2;
-
-  node.intersect = function (point) {
-    return intersectRect(node, point);
-  };
-
-  return { cluster: shapeSvg, labelBBox: bbox };
-};
-
 /**
  * Shared helper for agentflow container cluster shapes.
  * Renders a labeled rounded-rect cluster with configurable visual style.
+ *
+ * Agentflow's grammar has a single container kind (`flow`), so `flowGroup`
+ * below is the only caller today. The options object is kept so a second
+ * container kind does not have to re-derive the label/rough/separator logic.
  *
  * @param {object} opts
  * @param {string} opts.cssClass    - CSS class suffix (e.g. 'agent-cluster')
@@ -601,10 +483,8 @@ const taskGroup = async (parent, node) => {
  * @param {string} opts.fill        - Fill color (or 'none'/'transparent')
  * @param {string} opts.stroke      - Stroke color
  * @param {number} opts.strokeWidth - Stroke width in px
- * @param {number[]} [opts.strokeDash] - Optional dash array for rough.js
+ * @param {number[]} [opts.strokeDash] - Optional dash array
  * @param {number} opts.roughness   - rough.js roughness
- * @param {string} [opts.fillStyle] - rough.js fill style (default: none)
- * @param {boolean} [opts.separatorLine] - Whether to draw a header separator line
  */
 const createContainerGroup = async (parent, node, opts) => {
   log.info(`Creating ${opts.cssClass} for `, node.id, node);
@@ -666,25 +546,12 @@ const createContainerGroup = async (parent, node, opts) => {
       stroke: opts.stroke,
       strokeWidth: opts.strokeWidth,
       seed: handDrawnSeed,
-      ...(opts.fillStyle ? { fillStyle: opts.fillStyle } : { fillWeight: 0 }),
+      ...(opts.fill === 'none' ? { fillWeight: 0 } : { fillStyle: 'solid' }),
       ...(opts.strokeDash ? { strokeLineDash: opts.strokeDash } : {}),
     });
     const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, opts.rx), roughOpts);
     rectEl = shapeSvg.insert(() => roughNode, ':first-child');
     rectEl.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
-
-    // Draw separator line for agent header if requested
-    if (opts.separatorLine && hasLabel) {
-      const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-      const separatorY = node.y - node.height / 2 + subGraphTitleTopMargin + bbox.height + 4;
-      const line = rc.line(x + 4, separatorY, x + width - 4, separatorY, {
-        stroke: opts.stroke,
-        strokeWidth: 0.75,
-        roughness: 0.5,
-        seed: handDrawnSeed,
-      });
-      shapeSvg.insert(() => line);
-    }
   } else {
     rectEl = shapeSvg.insert('rect', ':first-child');
     rectEl
@@ -699,20 +566,6 @@ const createContainerGroup = async (parent, node, opts) => {
       .attr('stroke-width', opts.strokeWidth + 'px');
     if (opts.strokeDash) {
       rectEl.attr('stroke-dasharray', opts.strokeDash.join(', '));
-    }
-
-    // Draw separator line for agent header if requested
-    if (opts.separatorLine && hasLabel) {
-      const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
-      const separatorY = node.y - node.height / 2 + subGraphTitleTopMargin + bbox.height + 4;
-      shapeSvg
-        .insert('line')
-        .attr('x1', x + 4)
-        .attr('y1', separatorY)
-        .attr('x2', x + width - 4)
-        .attr('y2', separatorY)
-        .attr('stroke', opts.stroke)
-        .attr('stroke-width', '0.75px');
     }
   }
 
@@ -743,23 +596,6 @@ const createContainerGroup = async (parent, node, opts) => {
   return { cluster: shapeSvg, labelBBox: bbox };
 };
 
-/** Agent group: top-level identity container. Filled, solid 1.5px, rx=14, header separator. */
-const agentGroup = async (parent, node) => {
-  const { themeVariables } = getConfig();
-  const stroke = themeVariables.agentContainerStroke || themeVariables.primaryBorderColor;
-  const fill = themeVariables.agentContainerFill || themeVariables.primaryColor;
-  return createContainerGroup(parent, node, {
-    cssClass: 'agent-cluster',
-    rx: 14,
-    fill,
-    stroke,
-    strokeWidth: 1.5,
-    roughness: 0.5,
-    fillStyle: 'solid',
-    separatorLine: true,
-  });
-};
-
 /** Flow group: organizational grouping. Transparent, solid 0.75px, rx=10. */
 const flowGroup = async (parent, node) => {
   const { themeVariables } = getConfig();
@@ -771,84 +607,6 @@ const flowGroup = async (parent, node) => {
     stroke,
     strokeWidth: 0.75,
     roughness: 0.7,
-  });
-};
-
-/** Skill group: composed capability container. Pill-shaped (rx=20), filled, solid 1px. */
-const skillGroup = async (parent, node) => {
-  const { themeVariables } = getConfig();
-  const stroke = themeVariables.skillContainerStroke || themeVariables.primaryBorderColor;
-  const fill = themeVariables.skillContainerFill || themeVariables.primaryColor;
-  return createContainerGroup(parent, node, {
-    cssClass: 'skill-cluster',
-    rx: 20,
-    fill,
-    stroke,
-    strokeWidth: 1,
-    roughness: 0.5,
-    fillStyle: 'solid',
-  });
-};
-
-/** Test group: verification container. Thick solid 2px border, sharp corners (rx=0), no fill. */
-const testGroup = async (parent, node) => {
-  const { themeVariables } = getConfig();
-  const stroke = themeVariables.testContainerStroke || themeVariables.secondaryBorderColor;
-  return createContainerGroup(parent, node, {
-    cssClass: 'test-cluster',
-    rx: 0,
-    fill: 'none',
-    stroke,
-    strokeWidth: 2,
-    roughness: 0.3,
-  });
-};
-
-/** Directive group: behavioral constraint container. Dot-dash border, light fill, sharp corners. */
-const directiveGroup = async (parent, node) => {
-  const { themeVariables } = getConfig();
-  const stroke = themeVariables.directiveContainerStroke || themeVariables.tertiaryBorderColor;
-  const fill = themeVariables.directiveContainerFill || themeVariables.tertiaryColor || '#f0f0f0';
-  return createContainerGroup(parent, node, {
-    cssClass: 'directive-cluster',
-    rx: 2,
-    fill,
-    stroke,
-    strokeWidth: 1.5,
-    roughness: 0.7,
-    strokeDash: [8, 3, 2, 3],
-  });
-};
-
-/** Factory for declaration group clusters (types, templates). Light background, subtle dashed border. */
-const createDeclarationGroup = (cssClass) => async (parent, node) => {
-  const { themeVariables } = getConfig();
-  const stroke = themeVariables.clusterBorder || themeVariables.secondaryBorderColor;
-  const fill = themeVariables.tertiaryColor || '#f0f0f0';
-  return createContainerGroup(parent, node, {
-    cssClass,
-    rx: 6,
-    fill,
-    stroke,
-    strokeWidth: 0.75,
-    roughness: 0.7,
-    strokeDash: [4, 4],
-  });
-};
-
-const typesGroup = createDeclarationGroup('types-cluster');
-const templatesGroup = createDeclarationGroup('templates-cluster');
-const connectorsGroup = createDeclarationGroup('connectors-cluster');
-
-/** Group cluster: invisible container, purely for layout grouping. No fill, no stroke. */
-const groupGroup = async (parent, node) => {
-  return createContainerGroup(parent, node, {
-    cssClass: 'group-cluster',
-    rx: 0,
-    fill: 'none',
-    stroke: 'none',
-    strokeWidth: 0,
-    roughness: 0,
   });
 };
 
@@ -1002,16 +760,7 @@ const shapes = {
   noteGroup,
   divider,
   kanbanSection,
-  taskGroup,
-  agentGroup,
   flowGroup,
-  skillGroup,
-  testGroup,
-  directiveGroup,
-  groupGroup,
-  typesGroup,
-  templatesGroup,
-  connectorsGroup,
   usecaseSystemBoundary,
   swimlane,
 };

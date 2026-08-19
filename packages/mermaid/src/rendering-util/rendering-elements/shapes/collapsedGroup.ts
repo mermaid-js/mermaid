@@ -24,10 +24,7 @@ interface CollapsedStyle {
   stroke: string;
   /** Omitted for the default look, which inherits the stylesheet's stroke width. */
   strokeWidth?: number;
-  strokeDash?: string;
   cssClass: string;
-  /** Agent containers use a solid separator; everything else uses a dashed one. */
-  separatorSolid: boolean;
 }
 
 /**
@@ -43,15 +40,8 @@ function getCollapsedStyle(containerType: string | undefined): CollapsedStyle {
   const clusterBorder = themeVariables.clusterBorder;
 
   switch (containerType) {
-    case 'agent':
-      return {
-        rx: 14,
-        fill: themeVariables.agentContainerFill || themeVariables.primaryColor,
-        stroke: themeVariables.agentContainerStroke || themeVariables.primaryBorderColor,
-        strokeWidth: 1.5,
-        cssClass: 'agent-collapsed',
-        separatorSolid: true,
-      };
+    // Agentflow's grammar has a single container kind (`flow`); a collapsed
+    // flow keeps the visual identity of its expanded cluster (see clusters.js).
     case 'flow':
       return {
         rx: 10,
@@ -59,28 +49,6 @@ function getCollapsedStyle(containerType: string | undefined): CollapsedStyle {
         stroke: themeVariables.flowContainerStroke || themeVariables.secondaryBorderColor,
         strokeWidth: 0.75,
         cssClass: 'flow-collapsed',
-        separatorSolid: false,
-      };
-    case 'task':
-      return {
-        rx: 10,
-        fill: 'none',
-        stroke: clusterBorder || themeVariables.secondaryBorderColor,
-        strokeWidth: 0.75,
-        strokeDash: '8, 4',
-        cssClass: 'task-collapsed',
-        separatorSolid: false,
-      };
-    case 'types':
-    case 'templates':
-      return {
-        rx: 6,
-        fill: themeVariables.tertiaryColor || '#f0f0f0',
-        stroke: clusterBorder || themeVariables.secondaryBorderColor,
-        strokeWidth: 0.75,
-        strokeDash: '4, 4',
-        cssClass: containerType === 'types' ? 'types-collapsed' : 'templates-collapsed',
-        separatorSolid: false,
       };
     default:
       return {
@@ -88,7 +56,6 @@ function getCollapsedStyle(containerType: string | undefined): CollapsedStyle {
         fill: clusterBkg,
         stroke: clusterBorder,
         cssClass: 'collapsed-group',
-        separatorSolid: false,
       };
   }
 }
@@ -148,7 +115,6 @@ export async function collapsedGroup<T extends SVGGraphicsElement>(
       stroke,
       ...(style.strokeWidth === undefined ? {} : { strokeWidth: style.strokeWidth }),
       ...(fill === 'none' ? { fillWeight: 0 } : { fillStyle: 'solid' }),
-      ...(style.strokeDash ? { strokeLineDash: [8, 4] } : {}),
     });
     const roughNode = rc.path(
       createRoundedRectPathD(x, y, totalWidth, totalHeight, style.rx),
@@ -175,9 +141,6 @@ export async function collapsedGroup<T extends SVGGraphicsElement>(
     if (style.strokeWidth !== undefined) {
       rect.attr('stroke-width', style.strokeWidth + 'px');
     }
-    if (style.strokeDash) {
-      rect.attr('stroke-dasharray', style.strokeDash);
-    }
   }
 
   // -- Separator line between the title and the indicator row --
@@ -190,7 +153,7 @@ export async function collapsedGroup<T extends SVGGraphicsElement>(
     .attr('x2', x + totalWidth - 8)
     .attr('y2', separatorY)
     .attr('stroke', stroke)
-    .attr('stroke-dasharray', style.separatorSolid ? 'none' : '3, 3');
+    .attr('stroke-dasharray', '3, 3');
 
   // -- Ellipsis dots (• • •) centered in the indicator row --
   const dotY = separatorY + INDICATOR_ROW_HEIGHT / 2;

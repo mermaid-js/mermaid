@@ -200,18 +200,7 @@ class Theme {
     this.titleColor = this.text;
 
     /* Agentflow variables */
-    this.agentContainerFill = this.agentContainerFill || lighten(this.primaryColor, 60);
-    this.agentContainerStroke = this.agentContainerStroke || this.primaryBorderColor;
-    this.agentContainerTextColor = this.agentContainerTextColor || this.primaryTextColor;
     this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
-    this.taskContainerStroke = this.taskContainerStroke || this.tertiaryBorderColor;
-    this.skillContainerFill = this.skillContainerFill || lighten(this.primaryColor, 50);
-    this.skillContainerStroke = this.skillContainerStroke || this.primaryBorderColor;
-    this.testContainerStroke = this.testContainerStroke || this.secondaryBorderColor;
-    this.directiveContainerFill = this.directiveContainerFill || lighten(this.tertiaryColor, 30);
-    this.directiveContainerStroke = this.directiveContainerStroke || this.tertiaryBorderColor;
-    this.referenceNodeFill = this.referenceNodeFill || lighten(this.primaryColor, 70);
-    this.referenceNodeStroke = this.referenceNodeStroke || this.primaryBorderColor;
 
     /* Gantt chart variables */
 
