@@ -2285,6 +2285,108 @@ end`;
   });
 });
 
+describe('nested boxes', () => {
+  it('should be supported', async () => {
+    const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      box rgb(34, 56, 0) Group1
+        participant Alice
+        box rgb(34, 56, 0) Group2
+          participant Bob
+        end
+      end
+      Alice->Bob: Hello Bob, how are you?`);
+
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toEqual('Group1');
+    expect(boxes[0].actorKeys).toEqual(['Alice']);
+    expect(boxes[0].fill).toEqual('rgb(34, 56, 0)');
+    expect(boxes[1].name).toEqual('Group2');
+    expect(boxes[1].actorKeys).toEqual(['Bob']);
+    expect(boxes[1].fill).toEqual('rgb(34, 56, 0)');
+  });
+  it('multiple nested boxes should be supported', async () => {
+    const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      box rgb(34, 56, 0) Group1
+        participant Alice
+        box rgb(34, 56, 0) Group2
+          participant Bob
+          box rgb(34, 56, 0) Group3
+            participant Carl
+          end
+        end
+      end
+      Alice->Bob: Hello Bob, how are you?`);
+
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toEqual('Group1');
+    expect(boxes[0].actorKeys).toEqual(['Alice']);
+    expect(boxes[0].fill).toEqual('rgb(34, 56, 0)');
+    expect(boxes[1].name).toEqual('Group2');
+    expect(boxes[1].actorKeys).toEqual(['Bob']);
+    expect(boxes[1].fill).toEqual('rgb(34, 56, 0)');
+    expect(boxes[2].name).toEqual('Group3');
+    expect(boxes[2].actorKeys).toEqual(['Carl']);
+    expect(boxes[2].fill).toEqual('rgb(34, 56, 0)');
+  });
+  it('more than one child box should be supported', async () => {
+    const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      box rgb(34, 56, 0) Group1
+        participant Alice
+        box rgb(34, 56, 0) Group2
+          participant Bob
+        end
+        box rgb(34, 56, 0) Group3
+          participant Carl
+        end
+      end
+      Alice->Bob: Hello Bob, how are you?`);
+
+    const boxes = diagram.db.getBoxes();
+    expect(boxes[0].name).toEqual('Group1');
+    expect(boxes[0].actorKeys).toEqual(['Alice']);
+    expect(boxes[0].fill).toEqual('rgb(34, 56, 0)');
+    expect(boxes[1].name).toEqual('Group2');
+    expect(boxes[1].actorKeys).toEqual(['Bob']);
+    expect(boxes[1].fill).toEqual('rgb(34, 56, 0)');
+    expect(boxes[2].name).toEqual('Group3');
+    expect(boxes[2].actorKeys).toEqual(['Carl']);
+    expect(boxes[2].fill).toEqual('rgb(34, 56, 0)');
+  });
+
+  it('parent box with only child boxes should have empty actorKeys', async () => {
+    const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      box Outer
+        box LightBlue Inner
+          participant Alice
+          participant Bob
+        end
+      end
+      Alice->Bob: Hi`);
+
+    const boxes = diagram.db.getBoxes();
+    const outer = boxes.find((b) => b.name === 'Outer');
+    expect(outer.actorKeys).toEqual([]);
+  });
+
+  it('should throw when a participant is assigned to two different boxes', async () => {
+    await expect(
+      Diagram.fromText(`
+      sequenceDiagram
+      box Group1
+        participant Alice
+        box Group2
+          participant Alice
+        end
+      end
+      Alice->Alice: Hi`)
+    ).rejects.toThrow();
+  });
+});
+
 describe('when rendering a sequenceDiagram with actor mirror activated', () => {
   beforeAll(() => {
     let conf = {

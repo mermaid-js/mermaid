@@ -21,12 +21,12 @@ interface SequenceState {
   actors: Map<string, Actor>;
   createdActors: Map<string, number>;
   destroyedActors: Map<string, number>;
-  boxes: Box[];
+  boxes: Box[]; //Supports nested boxes (stack for ease of tracking during parsing)
   messages: Message[];
   notes: Note[];
   sequenceNumbersEnabled: boolean;
   wrapEnabled?: boolean;
-  currentBox?: Box;
+  currentBoxGroup: Box[];
   lastCreated?: Actor;
   lastDestroyed?: Actor;
 }
@@ -123,7 +123,7 @@ export class SequenceDB implements DiagramDB {
     notes: [],
     sequenceNumbersEnabled: false,
     wrapEnabled: undefined,
-    currentBox: undefined,
+    currentBoxGroup: [],
     lastCreated: undefined,
     lastDestroyed: undefined,
   }));
@@ -142,14 +142,39 @@ export class SequenceDB implements DiagramDB {
     this.PLACEMENT = PLACEMENT;
   }
 
+  /**
+   * Adds a new sequence diagram box to the current box hierarchy.
+   *
+   * If another box is currently active, the new box is added as a child of that
+   * box. Otherwise, it is added as a root-level box. The new box is then pushed
+   * onto the box stack so subsequent participants and boxes are scoped inside it.
+   *
+   * @param data - Parsed box data containing the box text, color, and wrap setting.
+   * @returns Nothing.
+   */
   public addBox(data: { text: string; color: string; wrap: boolean }) {
-    this.state.records.boxes.push({
+    const parentBox = this.getCurrentBox();
+
+    const newBox: Box = {
       name: data.text,
       wrap: data.wrap ?? this.autoWrap(),
       fill: data.color,
       actorKeys: [],
-    });
-    this.state.records.currentBox = this.state.records.boxes.slice(-1)[0];
+      children: [],
+      parent: parentBox,
+    };
+
+    // If inside another box, attach as a child.
+    // Otherwise treat as a root-level box.
+    if (parentBox) {
+      parentBox.children.push(newBox);
+    } else {
+      this.state.records.boxes.push(newBox);
+    }
+
+    // Enter new box scope by pushing it onto the stack.
+    // All subsequent elements belong to this box until "end".
+    this.state.records.currentBoxGroup.push(newBox);
   }
 
   public addActor(
@@ -159,7 +184,7 @@ export class SequenceDB implements DiagramDB {
     type: string,
     metadata?: any
   ) {
-    let assignedBox = this.state.records.currentBox;
+    let assignedBox = this.getCurrentBox(); // Assign actor to the currently active box scope (if any).
     let doc;
     if (metadata !== undefined) {
       let yamlData;
@@ -181,14 +206,15 @@ export class SequenceDB implements DiagramDB {
     const old = this.state.records.actors.get(id);
     if (old) {
       // If already set and trying to set to a new one throw error
-      if (this.state.records.currentBox && old.box && this.state.records.currentBox !== old.box) {
+      const currentBox = this.getCurrentBox();
+      if (currentBox && old.box && old.box !== currentBox) {
         throw new Error(
-          `A same participant should only be defined in one Box: ${old.name} can't be in '${old.box.name}' and in '${this.state.records.currentBox.name}' at the same time.`
+          `A same participant should only be defined in one Box: ${old.name} can't be in '${old.box.name}' and in '${currentBox.name}' at the same time.`
         );
       }
 
       // Don't change the box if already
-      assignedBox = old.box ? old.box : this.state.records.currentBox;
+      assignedBox = old.box ? old.box : this.getCurrentBox();
       old.box = assignedBox;
 
       // Don't allow description nulling
@@ -224,8 +250,9 @@ export class SequenceDB implements DiagramDB {
       }
     }
 
-    if (this.state.records.currentBox) {
-      this.state.records.currentBox.actorKeys.push(id);
+    const currentBox = this.getCurrentBox();
+    if (currentBox) {
+      currentBox.actorKeys.push(id); // Register actor inside current box so rendering can group it visually.
     }
     this.state.records.prevActor = id;
   }
@@ -251,6 +278,44 @@ export class SequenceDB implements DiagramDB {
       }
     }
     return count;
+  }
+
+  /**
+   * Returns the currently active box scope.
+   *
+   * The active box is the last box pushed onto the box stack, which represents
+   * the innermost currently open box.
+   *
+   * @returns The currently active box, or `undefined` if no box is active.
+   */
+  private getCurrentBox() {
+    return this.state.records.currentBoxGroup.at(-1);
+  }
+
+  /**
+   * Converts a nested box hierarchy into a flat, depth-first list.
+   *
+   * Nested sequence boxes are stored internally as a tree using each box's
+   * `children` field. Existing renderer logic expects boxes as a flat
+   * array, so this helper provides a compatibility view of the hierarchy.
+   *
+   * Parent boxes are returned before their child boxes.
+   *
+   * @param boxes - Root boxes or child boxes to flatten.
+   * @returns A flat array containing each box and all nested child boxes.
+   */
+  private flattenBoxes(boxes: Box[]): Box[] {
+    const result: Box[] = [];
+
+    for (const box of boxes) {
+      result.push(box);
+
+      if (box.children.length > 0) {
+        result.push(...this.flattenBoxes(box.children));
+      }
+    }
+
+    return result;
   }
 
   public addMessage(
@@ -320,7 +385,7 @@ export class SequenceDB implements DiagramDB {
   }
 
   public getBoxes() {
-    return this.state.records.boxes;
+    return this.flattenBoxes(this.state.records.boxes);
   }
   public getActors() {
     return this.state.records.actors;
@@ -519,8 +584,16 @@ export class SequenceDB implements DiagramDB {
     }
   }
 
+  /**
+   * Closes the currently active box scope.
+   *
+   * Removes the innermost box from the box stack so that parsing continues in
+   * the parent box scope, or outside any box if the closed box was root-level.
+   *
+   * @returns Nothing.
+   */
   private boxEnd() {
-    this.state.records.currentBox = undefined;
+    this.state.records.currentBoxGroup.pop();
   }
 
   public addDetails(actorId: string, text: { text: string }) {

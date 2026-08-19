@@ -1291,4 +1291,44 @@ describe('Sequence diagram', () => {
       }
     );
   });
+
+  it('should render nested boxes (one level of nesting)', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+        box Outer
+          box LightBlue Inner
+            participant Alice
+            participant Bob
+          end
+        end
+        participant John
+        Alice->>Bob: Hello Bob!
+        Bob-->>Alice: Hi Alice!
+        Alice->>John: Hey John!
+      `,
+      { sequence: { useMaxWidth: false } }
+    );
+  });
+
+  it('should render nested boxes with sibling inner boxes', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+        box Outer
+          box LightBlue Team A
+            participant Alice
+            participant Bob
+          end
+          box LightGreen Team B
+            participant Carol
+            participant Dave
+          end
+        end
+        Alice->>Carol: Cross-team message
+        Carol-->>Alice: Reply
+      `,
+      { sequence: { useMaxWidth: false } }
+    );
+  });
 });

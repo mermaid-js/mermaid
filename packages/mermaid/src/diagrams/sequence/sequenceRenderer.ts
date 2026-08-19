@@ -762,7 +762,11 @@ const addActorRenderingData = function (
       if (!isFooter) {
         bounds.models.addBox(prevBox);
       }
-      prevMargin += conf.boxMargin + prevBox.margin;
+      let boxTransitionMargin = conf.boxMargin + prevBox.margin;
+      if (prevBox.parent && box?.parent && prevBox.parent !== box.parent) {
+        boxTransitionMargin += conf.boxMargin * 4;
+      }
+      prevMargin += boxTransitionMargin;
     }
 
     // new box
@@ -1032,6 +1036,64 @@ function adjustCreatedDestroyedData(
 }
 
 /**
+ * Compute parent-box rendering coordinates bottom-up.
+ *
+ * Mutates each parent box in `boxes` (DFS order, parent before child) so that
+ * every parent's startx/starty/stopx/stopy/x/y/width expand to fully wrap its
+ * child boxes AND its own directly-contained actors (whose leaf-pass coordinates
+ * are already set on the box when it also appears in bounds.models.boxes).
+ *
+ * Exported so it can be unit-tested independently of the full draw() pipeline.
+ *
+ * @param boxes - All boxes in DFS order (from db.getBoxes())
+ * @param cnf - The sequence diagram config (needs boxMargin, boxTextMargin)
+ */
+export function computeParentBoxBounds(boxes: any[], cnf: any): void {
+  for (const box of [...boxes].reverse()) {
+    if (!box.children || box.children.length === 0) {
+      continue;
+    }
+
+    let minStartx = box.startx !== undefined ? box.startx : Infinity;
+    let maxStopx = box.startx !== undefined ? box.stopx : -Infinity;
+    let minStarty = box.startx !== undefined ? box.starty : Infinity;
+    let maxStopy = box.startx !== undefined ? box.stopy : -Infinity;
+
+    for (const child of box.children) {
+      if (child.startx !== undefined) {
+        minStartx = Math.min(minStartx, child.startx);
+        maxStopx = Math.max(maxStopx, child.stopx);
+        minStarty = Math.min(minStarty, child.starty);
+        maxStopy = Math.max(maxStopy, child.stopy);
+      }
+    }
+    if (minStartx === Infinity) {
+      continue;
+    }
+    const nestPaddingHoriz = cnf.boxMargin * 2;
+    const nestPaddingTop = (box.textMaxHeight ?? 0) + cnf.boxTextMargin + cnf.boxMargin;
+    const nestPaddingBottom = cnf.boxMargin * 3;
+    box.startx = minStartx - nestPaddingHoriz;
+    box.starty = minStarty - nestPaddingTop;
+    box.stopx = maxStopx + nestPaddingHoriz;
+    box.stopy = maxStopy + nestPaddingBottom;
+
+    let minChildX = Infinity;
+    let maxChildRight = -Infinity;
+    for (const child of box.children) {
+      if (child.x !== undefined) {
+        minChildX = Math.min(minChildX, child.x);
+        maxChildRight = Math.max(maxChildRight, child.x + child.width);
+      }
+    }
+    box.x = minChildX !== Infinity ? minChildX : box.startx + nestPaddingHoriz;
+    box.width = minChildX !== Infinity ? maxChildRight - minChildX : box.stopx - box.startx;
+    box.y = box.starty;
+    box.stroke = 'rgb(0,0,0, 0.5)';
+  }
+}
+
+/**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
  * @param _text - The text of the diagram
@@ -1080,6 +1142,11 @@ export const draw = async function (_text: string, id: string, _version: string,
     bounds.bumpVerticalPos(conf.boxMargin);
     if (hasBoxTitles) {
       bounds.bumpVerticalPos(boxes[0].textMaxHeight);
+      // Extra space for the parent box title row when nesting exists
+      const hasNestedBoxes = boxes.some((b) => b.children && b.children.length > 0);
+      if (hasNestedBoxes) {
+        bounds.bumpVerticalPos(boxes[0].textMaxHeight + conf.boxMargin);
+      }
     }
   }
 
@@ -1394,6 +1461,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   backgrounds.forEach((e) => svgDraw.drawBackgroundRect(diagram, e));
   fixLifeLineHeights(diagram, actors, actorKeys, conf);
 
+  // Compute leaf box rendering coordinates
   for (const box of bounds.models.boxes) {
     box.height = bounds.getVerticalPos() - box.y;
     bounds.insert(box.x, box.y, box.x + box.width, box.height);
@@ -1403,7 +1471,27 @@ export const draw = async function (_text: string, id: string, _version: string,
     box.stopx = box.startx + box.width + 2 * boxPadding;
     box.stopy = box.starty + box.height + boxPadding * 0.75;
     box.stroke = 'rgb(0,0,0, 0.5)';
-    svgDraw.drawBox(diagram, box, conf);
+  }
+
+  // Compute parent box coordinates bottom-up so each parent wraps its children
+  const allBoxes = diagObj.db.getBoxes(); // DFS order: parent before children
+  computeParentBoxBounds(allBoxes, conf);
+
+  for (const box of allBoxes) {
+    if (box.children && box.children.length > 0 && box.startx !== undefined) {
+      bounds.insert(box.startx, box.starty, box.stopx, box.stopy);
+    }
+  }
+
+  const boxesToDraw = allBoxes.filter((b) => b.startx !== undefined);
+  if (boxesToDraw.length > 0) {
+    const boxBg =
+      typeof diagram.insert === 'function'
+        ? diagram.insert('g', ':first-child')
+        : diagram.append('g');
+    for (const box of boxesToDraw) {
+      svgDraw.drawBox(boxBg, box, conf);
+    }
   }
 
   if (hasBoxes) {
@@ -1454,20 +1542,17 @@ export const draw = async function (_text: string, id: string, _version: string,
       .attr('y', -25);
   }
 
-  configureSvgSize(diagram, height, width, conf.useMaxWidth);
-
   const extraVertForTitle = title ? 40 : 0;
   const extraHeightForNeoActors = actors.size && look === 'neo' ? 30 : 0;
+
+  const viewBoxMinY = box.starty - conf.diagramMarginY - extraVertForTitle;
+  const viewBoxHeight = height + extraVertForTitle + extraHeightForNeoActors;
+
+  configureSvgSize(diagram, height, width, conf.useMaxWidth);
+
   diagram.attr(
     'viewBox',
-    box.startx -
-      conf.diagramMarginX +
-      ' -' +
-      (conf.diagramMarginY + extraVertForTitle) +
-      ' ' +
-      width +
-      ' ' +
-      (height + extraVertForTitle + extraHeightForNeoActors)
+    box.startx - conf.diagramMarginX + ' ' + viewBoxMinY + ' ' + width + ' ' + viewBoxHeight
   );
 
   log.debug(`models:`, bounds.models);
@@ -1662,6 +1747,9 @@ async function calculateActorMargins(
 
   let maxBoxHeight = 0;
   boxes.forEach((box) => {
+    if (!box.actorKeys || box.actorKeys.length === 0) {
+      return;
+    }
     const textFont = messageFont(conf);
     let totalWidth = box.actorKeys.reduce((total, aKey) => {
       return (total += actors.get(aKey).width + (actors.get(aKey).margin || 0));

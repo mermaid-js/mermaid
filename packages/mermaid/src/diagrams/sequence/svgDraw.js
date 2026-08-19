@@ -1313,8 +1313,7 @@ export const drawActor = async function (
 };
 
 export const drawBox = function (elem, box, conf) {
-  const boxplusTextGroup = elem.append('g');
-  const g = boxplusTextGroup;
+  const g = elem.append('g');
   drawBackgroundRect(g, box);
   if (box.name) {
     _drawTextCandidateFunc(conf)(
@@ -1328,7 +1327,6 @@ export const drawBox = function (elem, box, conf) {
       conf
     );
   }
-  g.lower();
 };
 
 export const anchorElement = function (elem) {

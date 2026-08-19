@@ -409,6 +409,91 @@ end
     B->>C: Hello Charley, how are you?
 ```
 
+### Nested Grouping (v\<MERMAID_RELEASE_VERSION>+)
+
+Boxes can be nested inside other boxes to represent hierarchical groupings. Nesting can go as many levels deep as needed. Each box can have its own color and label, and inner boxes are visually drawn inside their parent.
+
+```
+box Outer Group
+  ... actors ...
+  box Inner Group
+    ... actors ...
+  end
+end
+```
+
+Multiple boxes can be assigned as children of a single parent box.
+
+```mermaid-example
+    sequenceDiagram
+    box Outer
+      box LightBlue Team A
+        participant Alice
+        participant Bob
+      end
+      box LightGreen Team B
+        participant Carol
+        participant Dave
+      end
+    end
+    Alice->>Carol: Cross-team request
+    Carol-->>Alice: Response
+    Bob->>Dave: Another request
+```
+
+```mermaid
+    sequenceDiagram
+    box Outer
+      box LightBlue Team A
+        participant Alice
+        participant Bob
+      end
+      box LightGreen Team B
+        participant Carol
+        participant Dave
+      end
+    end
+    Alice->>Carol: Cross-team request
+    Carol-->>Alice: Response
+    Bob->>Dave: Another request
+```
+
+Deeper nesting and mixing actors with child boxes at the same level are also supported:
+
+```mermaid-example
+    sequenceDiagram
+    box LightYellow Organisation
+      participant Manager
+      box LightBlue Team A
+        participant Alice
+        box Pink Sub-team
+          participant Carl
+        end
+      end
+    end
+    Manager->>Alice: Assignment
+    Alice->>Carl: Delegate
+    Carl-->>Alice: Done
+    Alice-->>Manager: Complete
+```
+
+```mermaid
+    sequenceDiagram
+    box LightYellow Organisation
+      participant Manager
+      box LightBlue Team A
+        participant Alice
+        box Pink Sub-team
+          participant Carl
+        end
+      end
+    end
+    Manager->>Alice: Assignment
+    Alice->>Carl: Delegate
+    Carl-->>Alice: Done
+    Alice-->>Manager: Complete
+```
+
 ## Messages
 
 Messages can be of two displayed either solid or with a dotted line.
