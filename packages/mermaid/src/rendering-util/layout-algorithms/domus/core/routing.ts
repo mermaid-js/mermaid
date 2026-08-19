@@ -815,6 +815,228 @@ function channelRepresentativeLines(
   return lines;
 }
 
+/**
+ * A channel routing graph built for a WHOLE SET of ports, ready to answer many
+ * source/target queries without being rebuilt.
+ *
+ * This is the shape the literature actually prescribes. Wybrow, Marriott and
+ * cspell:ignore Stuckey Hegemann
+ * Stuckey build the orthogonal visibility graph once per obstacle configuration
+ * and query it per connector — their benchmark table separates "time to construct
+ * the orthogonal visibility graph" from "route all connectors" — and the ports
+ * are not spliced in at query time: they are part of the generating point set,
+ * "the set of interesting points (x,y) in the diagram, i.e. the connector points
+ * and corners of the bounding box of each object". Hegemann and Wolff say the
+ * same for the channel/representative-line variant this module implements:
+ * endpoints "are ports and thus vertices in the routing graph H".
+ *
+ * `sideRouteCandidates` asks for up to 192 routes for one flagged edge — every
+ * combination of side pair and port offset — against one unchanging obstacle set.
+ * Rebuilding the graph per combination made construction 5411 ms of the 21230 ms
+ * that flagged-edge remediation cost on `domus/triage2`. Materialising every
+ * candidate port up front turns that into a single build.
+ */
+export interface PreparedChannelGraph {
+  nodes: RouteGraphNode[];
+  adj: RouteGraphEdge[][];
+  /** `${x},${y}` of every requested port, mapped to its node index (absent if the port sits inside an obstacle). */
+  portIndex: Map<string, number>;
+}
+
+function portKey(p: Point): string {
+  return `${p.x},${p.y}`;
+}
+
+/**
+ * Build the channel graph over `obstacleRects` with every point in `ports` present
+ * as a vertex (and its x/y contributing a rail, as the ports always did).
+ */
+export function buildChannelRoutingGraphForPorts(
+  ports: Point[],
+  obstacleRects: Rect[],
+  spacing: number,
+  clearance: number = spacing
+): PreparedChannelGraph | null {
+  const c = Math.max(0, clearance);
+  // Build a loose boundary around everything to ensure outer channels exist.
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  for (const p of ports) {
+    if (p.x < minX) {
+      minX = p.x;
+    }
+    if (p.x > maxX) {
+      maxX = p.x;
+    }
+    if (p.y < minY) {
+      minY = p.y;
+    }
+    if (p.y > maxY) {
+      maxY = p.y;
+    }
+  }
+  for (const r of obstacleRects) {
+    if (r.left < minX) {
+      minX = r.left;
+    }
+    if (r.right > maxX) {
+      maxX = r.right;
+    }
+    if (r.top < minY) {
+      minY = r.top;
+    }
+    if (r.bottom > maxY) {
+      maxY = r.bottom;
+    }
+  }
+  if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+    return null;
+  }
+  minX -= c * 5;
+  maxX += c * 5;
+  minY -= c * 5;
+  maxY += c * 5;
+
+  const lines = channelRepresentativeLines(obstacleRects, c, minX, maxX, minY, maxY);
+
+  // Ports first, then channel centre lines (paper: prefer reps starting at a port).
+  const xCoords = uniqSorted([...ports.map((p) => p.x), ...lines.xLines]);
+  const yCoords = uniqSorted([...ports.map((p) => p.y), ...lines.yLines]);
+  if (xCoords.length === 0 || yCoords.length === 0) {
+    return null;
+  }
+
+  // Grid cells are addressed by (row, column) into a flat Int32Array instead of
+  // by a `"x,y"` string key in a Map: the adjacency build does two lookups per
+  // cell, and string keys cost an allocation per cell.
+  const cols = xCoords.length;
+  const cellIndex = new Int32Array(cols * yCoords.length).fill(-1);
+  const nodes: RouteGraphNode[] = [];
+
+  for (const [yi, y] of yCoords.entries()) {
+    // Same narrowing as the adjacency loops below: `pointInRectInterior` requires
+    // `p.y > rect.top && p.y < rect.bottom`, so only rects strictly spanning this
+    // row can contain any point on it.
+    const rowRects = obstacleRects.filter((r) => r.top < y && r.bottom > y);
+    const rowBase = yi * cols;
+    for (const [xi, x] of xCoords.entries()) {
+      if (pointInsideAnyRectInterior({ x, y }, rowRects)) {
+        continue;
+      }
+      cellIndex[rowBase + xi] = nodes.length;
+      nodes.push({ id: `${x},${y}`, x, y });
+    }
+  }
+
+  const xPos = new Map<number, number>();
+  for (let xi = 0; xi < cols; xi++) {
+    xPos.set(xCoords[xi], xi);
+  }
+  const yPos = new Map<number, number>();
+  for (const [yi, y] of yCoords.entries()) {
+    yPos.set(y, yi);
+  }
+
+  const adj: RouteGraphEdge[][] = Array.from({ length: nodes.length }, () => []);
+
+  for (const [yi, y] of yCoords.entries()) {
+    // A horizontal segment at height `y` can only be blocked by a rect whose
+    // vertical span contains `y`: `segmentIntersectsRectInterior` requires
+    // `y >= rect.top && y <= rect.bottom`. Narrowing the obstacle list once per
+    // row is therefore exactly equivalent to scanning every rect per segment.
+    const rowRects = obstacleRects.filter((r) => r.top <= y && r.bottom >= y);
+    const rowBase = yi * cols;
+    let prevIdx = -1;
+    let prevX = 0;
+    for (const [xi, x] of xCoords.entries()) {
+      const idx = cellIndex[rowBase + xi];
+      if (idx < 0) {
+        prevIdx = -1;
+        continue;
+      }
+      if (prevIdx >= 0) {
+        const a = { x: prevX, y };
+        const b = { x, y };
+        if (!segmentCrossesAnyRectInterior(a, b, rowRects)) {
+          const len = Math.abs(x - prevX);
+          adj[prevIdx].push({ to: idx, length: len, dir: 'h' });
+          adj[idx].push({ to: prevIdx, length: len, dir: 'h' });
+        }
+      }
+      prevIdx = idx;
+      prevX = x;
+    }
+  }
+
+  for (const [xi, x] of xCoords.entries()) {
+    // Dual of the row filter: a vertical segment at `x` can only be blocked by a
+    // rect with `x >= rect.left && x <= rect.right`.
+    const colRects = obstacleRects.filter((r) => r.left <= x && r.right >= x);
+    let prevIdx = -1;
+    let prevY = 0;
+    for (const [yi, y] of yCoords.entries()) {
+      const idx = cellIndex[yi * cols + xi];
+      if (idx < 0) {
+        prevIdx = -1;
+        continue;
+      }
+      if (prevIdx >= 0) {
+        const a = { x, y: prevY };
+        const b = { x, y };
+        if (!segmentCrossesAnyRectInterior(a, b, colRects)) {
+          const len = Math.abs(y - prevY);
+          adj[prevIdx].push({ to: idx, length: len, dir: 'v' });
+          adj[idx].push({ to: prevIdx, length: len, dir: 'v' });
+        }
+      }
+      prevIdx = idx;
+      prevY = y;
+    }
+  }
+
+  const portIndex = new Map<string, number>();
+  for (const p of ports) {
+    const xi = xPos.get(p.x);
+    const yi = yPos.get(p.y);
+    if (xi === undefined || yi === undefined) {
+      continue;
+    }
+    const idx = cellIndex[yi * cols + xi];
+    if (idx >= 0) {
+      portIndex.set(portKey(p), idx);
+    }
+  }
+
+  return { nodes, adj, portIndex };
+}
+
+/**
+ * Answer one source/target query against a graph built by
+ * `buildChannelRoutingGraphForPorts`. The nodes and adjacency are shared by
+ * reference; only the two endpoint indices differ per query.
+ */
+export function findPathOnPreparedChannelGraph(
+  prepared: PreparedChannelGraph,
+  startPort: Point,
+  endPort: Point,
+  options: {
+    prefer?: 'ESWN' | 'ENWS';
+    avoid?: { segments: Point[][]; costPerCrossing: number };
+  } = {}
+): Point[] | null {
+  const startIdx = prepared.portIndex.get(portKey(startPort));
+  const endIdx = prepared.portIndex.get(portKey(endPort));
+  if (startIdx === undefined || endIdx === undefined) {
+    return null;
+  }
+  return findShortestOrthogonalPathOnGraph(
+    { nodes: prepared.nodes, adj: prepared.adj, startIdx, endIdx },
+    { prefer: options.prefer ?? 'ESWN', avoid: options.avoid }
+  );
+}
+
 export function buildRoutingGraphFromChannels(
   startPort: Point,
   endPort: Point,

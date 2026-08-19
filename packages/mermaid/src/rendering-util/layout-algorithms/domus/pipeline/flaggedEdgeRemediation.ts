@@ -18,7 +18,12 @@
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import { validateLayout } from '../validateLayoutProxy.js';
-import { createRoutingQueryCache, findRoutingGraphPathBetweenPorts } from '../core/routing.js';
+import {
+  buildChannelRoutingGraphForPorts,
+  collectObstacleRects,
+  findPathOnPreparedChannelGraph,
+  findRoutingGraphPathBetweenPorts,
+} from '../core/routing.js';
 import { findDirectCompoundRoute } from './directCompoundRoute.js';
 import { ancestorGroupIds } from './groups.js';
 
@@ -561,49 +566,73 @@ function* sideRouteCandidates(
     routerNodes.set(id, n);
   }
 
-  // Up to 12 side pairs x 4 start offsets x 4 end offsets = 192 router calls for
-  // this one edge, every one of them against the same obstacles. Nodes do not
-  // move anywhere in this pass — only edge polylines do — so one cache for the
-  // whole sweep is sound, and it collapses 192 obstacle-inflation + channel
-  // builds into one. The cache dies with this generator.
-  const routingCache = createRoutingQueryCache();
-
-  // This crosses ~12 side pairs with 4 start x 4 end port offsets: 192 shortest-path
-  // searches through a routing graph, for ONE flagged edge — the largest single cost
-  // in a DOMUS render, and the reason the graph construction it calls is cached.
+  // This crosses ~12 side pairs with 4 start x 4 end port offsets = 192 route
+  // queries for ONE flagged edge, all against the same obstacles — the largest
+  // single cost in a DOMUS render.
   //
   // Truncating the sweep is tempting and was measured: the leading 6 pairs x 2x2
   // offsets is 1.5x faster again, but `domus/svelte5-code` goes invalid — its
   // validity rests on the very last candidates the exhaustive sweep tries, and every
   // truncation tried (12x3, 12x2, 6x4, 4x4, 3x4) breaks it. So the enumeration stays
-  // complete and the speedup comes from making each query cheap instead.
-  for (const [startSide, endSide] of sidePreference(rS, rE)) {
-    const startHoriz = startSide === 'N' || startSide === 'S';
-    const endHoriz = endSide === 'N' || endSide === 'S';
-    const startTs = startHoriz
+  // complete and the queries are made cheap instead.
+  //
+  // The routing graph is built ONCE, with every candidate stub already a vertex.
+  // That is what the literature prescribes: Wybrow et al. construct the orthogonal
+  // visibility graph once per obstacle configuration and query it per connector,
+  // with ports part of the generating point set ("the set of interesting points
+  // (x,y) in the diagram, i.e. the connector points and corners of the bounding box
+  // cspell:ignore Hegemann
+  // of each object"), and Hegemann/Wolff likewise route between endpoints that "are
+  // ports and thus vertices in the routing graph H". Rebuilding per candidate made
+  // construction 5411 ms of the 21230 ms remediation cost on `domus/triage2`.
+  const sidePairs = sidePreference(rS, rE);
+  const startTsFor = (side: Side): number[] =>
+    side === 'N' || side === 'S'
       ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5, 0.25, 0.75]
       : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5, 0.25, 0.75];
-    const endTs = endHoriz
+  const endTsFor = (side: Side): number[] =>
+    side === 'N' || side === 'S'
       ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5, 0.25, 0.75]
       : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5, 0.25, 0.75];
 
+  const stubFor = (r: Rect, side: Side, t: number): { port: Point; stub: Point } => {
+    const port = sidePort(r, side, t);
+    const d = OUTWARD[side];
+    return { port, stub: { x: port.x + d.x * STUB, y: port.y + d.y * STUB } };
+  };
+
+  // Granularity matters and was measured. Putting ALL 192 candidate stubs into one
+  // graph is the wrong reading of "build once": the stubs contribute their own
+  // rails, so the grid grew by ~8 x-lines and ~32 y-lines, and since construction
+  // and search cost about the same on `domus/triage2` (5411 ms vs 5637 ms), paying
+  // ~2.6x per search 192 times to save 191 builds made that fixture 21% SLOWER
+  // (33868 -> 40924 ms).
+  //
+  // One graph per side PAIR is the sweet spot: 12 builds instead of 192, and each
+  // graph gains only the 4 start and 4 end offsets of that pair — one extra rail on
+  // the port axis plus four on the other, per endpoint.
+  const obstacleRects = collectObstacleRects(routerNodes, startId, endId, 8);
+
+  for (const [startSide, endSide] of sidePairs) {
+    const startTs = startTsFor(startSide);
+    const endTs = endTsFor(endSide);
+    const pairStubs: Point[] = [
+      ...startTs.map((t) => stubFor(rS, startSide, t).stub),
+      ...endTs.map((t) => stubFor(rE, endSide, t).stub),
+    ];
+    const prepared =
+      obstacleRects.length > 0
+        ? buildChannelRoutingGraphForPorts(pairStubs, obstacleRects, 10, 8)
+        : null;
+
+    const startHoriz = startSide === 'N' || startSide === 'S';
     for (const st of startTs) {
-      const ps = sidePort(rS, startSide, st);
-      const ds = OUTWARD[startSide];
-      const startStub = { x: ps.x + ds.x * STUB, y: ps.y + ds.y * STUB };
+      const { port: ps, stub: startStub } = stubFor(rS, startSide, st);
       for (const et of endTs) {
-        const pe = sidePort(rE, endSide, et);
-        const de = OUTWARD[endSide];
-        const endStub = { x: pe.x + de.x * STUB, y: pe.y + de.y * STUB };
-        const mid = findRoutingGraphPathBetweenPorts(
-          startStub,
-          endStub,
-          routerNodes,
-          startId,
-          endId,
-          10,
-          { model: 'channels', clearance: 8, avoid, cache: routingCache }
-        );
+        const { port: pe, stub: endStub } = stubFor(rE, endSide, et);
+        const mid = prepared
+          ? findPathOnPreparedChannelGraph(prepared, startStub, endStub, { avoid })
+          : null;
         const routes: Point[][] = [];
         if (mid && mid.length >= 2) {
           // The router snaps the stub endpoints to its grid, so the joints
