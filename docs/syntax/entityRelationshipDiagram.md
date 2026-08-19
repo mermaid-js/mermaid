@@ -448,7 +448,7 @@ Possible diagram orientations are:
 - RL - Right to left
 - LR - Left to right
 
-### Subgraphs (v\<MERMAID_RELEASE_VERSION>+)
+### Subgraphs (v11.17.0+)
 
 Subgraphs allow grouping entities into logical sections within an ER diagram. They are useful for organizing
 complex diagrams and improving readability.
