@@ -1,5 +1,5 @@
 ---
-'@mermaid-js/layout-elk': minor
+'@mermaid-js/layout-elk': patch
 'mermaid': minor
 ---
 
