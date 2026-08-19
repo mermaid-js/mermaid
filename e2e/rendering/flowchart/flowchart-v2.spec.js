@@ -97,9 +97,13 @@ flowchart TD
     });
   });
 
-  describe('Collapsible subgraphs (@{ view: collapsed })', () => {
-    it('should render a collapsed subgraph as a single node with edges redirected to it', () => {
-      imgSnapshotTest(
+  test.describe('Collapsible subgraphs (@{ view: collapsed })', () => {
+    test('should render a collapsed subgraph as a single node with edges redirected to it', async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(
+        page,
+        testInfo,
         `flowchart TD
         Start --> one
         subgraph one [My Group]
@@ -113,8 +117,12 @@ flowchart TD
       );
     });
 
-    it('should render a collapsed subgraph alongside an expanded one', () => {
-      imgSnapshotTest(
+    test('should render a collapsed subgraph alongside an expanded one', async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(
+        page,
+        testInfo,
         `flowchart LR
         subgraph g1 [Collapsed]
           A1 --> A2
@@ -129,8 +137,12 @@ flowchart TD
       );
     });
 
-    it('should redirect a collapsed subgraph using the handDrawn look', () => {
-      imgSnapshotTest(
+    test('should redirect a collapsed subgraph using the handDrawn look', async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(
+        page,
+        testInfo,
         `flowchart TD
         X --> grp
         subgraph grp [Hand Drawn Group]
@@ -142,8 +154,12 @@ flowchart TD
       );
     });
 
-    it('should collapse nested subgraphs to the outermost collapsed ancestor', () => {
-      imgSnapshotTest(
+    test('should collapse nested subgraphs to the outermost collapsed ancestor', async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(
+        page,
+        testInfo,
         `flowchart TD
         Start --> inner
         subgraph outer [Outer]
@@ -157,8 +173,12 @@ flowchart TD
       );
     });
 
-    it('should redirect an edge targeting a deeply nested node to the outermost collapsed subgraph', () => {
-      imgSnapshotTest(
+    test('should redirect an edge targeting a deeply nested node to the outermost collapsed subgraph', async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(
+        page,
+        testInfo,
         `flowchart TD
         subgraph outer [Outer]
           subgraph inner [Inner]
