@@ -1830,6 +1830,50 @@ export function validateLayout(
     return abortedResult();
   }
   const sortedEdges = [...edgeMetas].sort((a, b) => a.id.localeCompare(b.id));
+
+  // Extent of each edge's normalised polyline, so the two pairwise sections below
+  // can skip pairs that cannot interact at all. Both are O(edges^2 x segments^2)
+  // without it, and after the per-edge rect scans were bounded this is what is left:
+  // `validateLayout` self time is still the largest single item on
+  // `domus/architecture`.
+  //
+  // The margin is what keeps the reject exact. Crossing detection needs the extents
+  // to actually overlap, but the shared/parallel checks fire on PROXIMITY, up to
+  // `EPS_PARALLEL_EDGE_GAP` apart, so two polylines that far apart can still be a
+  // finding. Inflating by that gap (the largest tolerance either section applies)
+  // means a rejected pair provably cannot produce any issue from these loops.
+  const PAIR_MARGIN = EPS_PARALLEL_EDGE_GAP;
+  const edgeExtents = sortedEdges.map((em) => {
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (const p of em.normalized.points) {
+      if (p.x < minX) {
+        minX = p.x;
+      }
+      if (p.x > maxX) {
+        maxX = p.x;
+      }
+      if (p.y < minY) {
+        minY = p.y;
+      }
+      if (p.y > maxY) {
+        maxY = p.y;
+      }
+    }
+    return { minX, maxX, minY, maxY };
+  });
+  const extentsApart = (i: number, j: number): boolean => {
+    const a = edgeExtents[i];
+    const b = edgeExtents[j];
+    return (
+      a.maxX + PAIR_MARGIN < b.minX ||
+      b.maxX + PAIR_MARGIN < a.minX ||
+      a.maxY + PAIR_MARGIN < b.minY ||
+      b.maxY + PAIR_MARGIN < a.minY
+    );
+  };
   const segmentTouchesPoint = (seg: Segment, p: Point): boolean =>
     distance(seg.a, p) <= EPS || distance(seg.b, p) <= EPS;
   const isTerminalSegmentForNode = (em: EdgeMeta, seg: Segment, nodeId: string): boolean => {
@@ -1932,6 +1976,9 @@ export function validateLayout(
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
+      if (extentsApart(i, j)) {
+        continue;
+      }
       if (focused && !inFocus(e1.id) && !inFocus(e2.id)) {
         continue;
       }
@@ -2057,6 +2104,9 @@ export function validateLayout(
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
+      if (extentsApart(i, j)) {
+        continue;
+      }
 
       let pairCrossings = 0;
       for (const s1 of e1.normalized.segments) {
