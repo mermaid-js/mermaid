@@ -359,6 +359,7 @@ xychart-beta
       {}
     );
 
-    await expect(page.locator('g.plot g.line-plot-0 path')).toBeVisible();
+    // Zero-width vertical line: Playwright's toBeVisible() treats a 0-bbox as hidden.
+    await expect(page.locator('g.plot g.line-plot-0 path')).toHaveCount(1);
   });
 });
