@@ -189,6 +189,37 @@ function layoutLibDuration(tree: ProfileSpanLike): number | undefined {
   return layoutSpan.children.find((c) => c.name === 'layoutCore')?.duration;
 }
 
+// DOMUS pipeline stages, emitted by packages/mermaid/src/rendering-util/
+// layout-algorithms/domus/index.ts and .../domus/pipeline.ts as `domus:*` spans
+// inside the layout phase. Rendered as sub-rows under "layout"; other layouts
+// simply have no such spans and show "–".
+const DOMUS_STAGES: { key: string; span: string; label: string }[] = [
+  { key: 'domusCore', span: 'domus:core', label: '↳ core placement + routing' },
+  { key: 'domusFallback', span: 'domus:fallback', label: '↳ layered fallback' },
+  { key: 'domusCompound', span: 'domus:compound', label: '↳ compound candidates' },
+  { key: 'domusPolish', span: 'domus:polish', label: '↳ late quality passes' },
+  // The three below are re-entered once per placement candidate, so they are
+  // summed over every arm and DO overlap the four stages above — e.g. edge
+  // remediation runs inside each compound candidate as well as in the final
+  // late-quality pass, which is why its total can exceed any single stage.
+  { key: 'domusRemediate', span: 'domus:remediate', label: '   ↳ edge remediation (all arms)' },
+  { key: 'domusPlace', span: 'domus:place', label: '   ↳ shape construction (all arms)' },
+  { key: 'domusRoute', span: 'domus:route', label: '   ↳ routing graph (all arms)' },
+];
+
+// Total time in every span with this name, at any depth. The nested stages
+// (`domus:sat`, `domus:route`, `domus:remediate`, and the polish run inside a
+// compound candidate) are entered repeatedly per render — once per placement
+// candidate — so a single findSpan would report one occurrence and understate
+// them by the number of candidates tried.
+function sumSpans(tree: ProfileSpanLike, name: string): number {
+  let total = tree.name === name ? tree.duration : 0;
+  for (const child of tree.children) {
+    total += sumSpans(child, name);
+  }
+  return total;
+}
+
 function mean(values: number[]): number {
   return values.length ? values.reduce((a, b) => a + b, 0) / values.length : NaN;
 }
@@ -207,6 +238,11 @@ function sampleFromTree(tree: ProfileSpanLike, buckets: Record<string, number> =
     if (typeof phases.layout === 'number') {
       phases.layoutOurs = Math.max(0, phases.layout - lib);
     }
+  }
+  // DOMUS pipeline stages (absent for other layouts).
+  for (const stage of DOMUS_STAGES) {
+    const d = sumSpans(tree, stage.span);
+    if (d > 0) phases[stage.key] = d;
   }
   // Flat accumulators summed across the render (e.g. getBBox, getBoundingClientRect).
   for (const [name, value] of Object.entries(buckets)) {
@@ -1630,10 +1666,14 @@ export class DevDiagramViewer extends LitElement {
             // Break "layout" into the external library call vs. our wrapper, and
             // "measure" into the DOM reflow queries (getBBox / getBoundingClientRect).
             if (phase === 'layout') {
+              const domusRows = DOMUS_STAGES.filter((stage) =>
+                results.some((r) => (r.phaseTotals[stage.key] ?? 0) > 0)
+              ).map((stage) => subRow(stage.label, stage.key));
               return [
                 row,
                 subRow('↳ lib (external)', 'layoutLib'),
                 subRow('↳ ours (wrapper)', 'layoutOurs'),
+                ...domusRows,
               ];
             }
             if (phase === 'measure') {

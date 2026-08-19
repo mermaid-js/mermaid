@@ -25,6 +25,7 @@ export type {
 } from './types.js';
 
 import type { OrthogonalOptions } from './types.js';
+import { profiler } from '../../../profiler.js';
 
 // Re-export layoutOrthogonalNodes from core module for backwards compatibility
 export { layoutOrthogonalNodes } from './core/nodeLayout.js';
@@ -66,21 +67,35 @@ export function runOrthogonalEdgePipeline(
   const hasGroups = ctx.hasGroups;
   const requestedBackend = ctx.requestedBackend;
 
-  const domusHandled = maybeHandleDomusBackend({
-    data,
-    options,
-    ctx: {
-      analysis,
-      spacing: ctx.spacing,
-      preferAxisForVerticalFlow: ctx.preferAxisForVerticalFlow,
-    },
-    backend,
-    routeWithRoutingGraph: (overrides) => {
-      const nextOptions = { ...options, ...overrides };
-      const nextCtx = buildOrthoPipelineContext(data, nextOptions);
-      return runNonDomusPipeline({ data, options: nextOptions, ctx: nextCtx });
-    },
-  });
+  // `domus:place` covers DOMUS proper: shape construction (the SAT solve and its
+  // edge-splitting loop) plus the placement and the routing it drives — so a
+  // `domus:route` span normally sits INSIDE it. `domus:route` on its own covers
+  // the routing-graph path taken when the DOMUS backend is not used. Both are
+  // entered from the initial placement AND from every compound candidate, so they
+  // appear nested under `domus:core` / `domus:compound`, not as siblings.
+  const runDomusBackend = () =>
+    maybeHandleDomusBackend({
+      data,
+      options,
+      ctx: {
+        analysis,
+        spacing: ctx.spacing,
+        preferAxisForVerticalFlow: ctx.preferAxisForVerticalFlow,
+      },
+      backend,
+      routeWithRoutingGraph: (overrides) => {
+        const nextOptions = { ...options, ...overrides };
+        const nextCtx = buildOrthoPipelineContext(data, nextOptions);
+        return injected.profiling
+          ? profiler.spanSync('domus:route', () =>
+              runNonDomusPipeline({ data, options: nextOptions, ctx: nextCtx })
+            )
+          : runNonDomusPipeline({ data, options: nextOptions, ctx: nextCtx });
+      },
+    });
+  const domusHandled = injected.profiling
+    ? profiler.spanSync('domus:place', runDomusBackend)
+    : runDomusBackend();
   if (domusHandled) {
     return domusHandled;
   }
@@ -93,5 +108,7 @@ export function runOrthogonalEdgePipeline(
     backend,
   });
 
-  return runNonDomusPipeline({ data, options, ctx });
+  return injected.profiling
+    ? profiler.spanSync('domus:route', () => runNonDomusPipeline({ data, options, ctx }))
+    : runNonDomusPipeline({ data, options, ctx });
 }

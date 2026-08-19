@@ -53,6 +53,13 @@ const DEVTOOLS_TRACK_GROUP = 'Mermaid';
 
 /** DevTools palette colour per phase, for at-a-glance separation. */
 const PHASE_COLORS: Record<string, string> = {
+  'domus:core': 'error',
+  'domus:fallback': 'warning',
+  'domus:compound': 'error-light',
+  'domus:polish': 'secondary',
+  'domus:remediate': 'secondary-dark',
+  'domus:place': 'tertiary',
+  'domus:route': 'tertiary-light',
   parse: 'tertiary',
   prepare: 'secondary',
   measure: 'primary',
@@ -245,6 +252,28 @@ class Profiler {
     this.begin(name);
     try {
       return await fn();
+    } finally {
+      this.end();
+    }
+  }
+
+  /**
+   * Synchronous counterpart to {@link span}, for phases that are not async.
+   *
+   * `span` returns a promise, so using it inside a synchronous pipeline would
+   * force the caller to become async and change the code being measured. DOMUS's
+   * `layout()` is deliberately DOM-free and synchronous, and its stages are what
+   * a profile of that layout needs to break down. Same guarantees as `span`: the
+   * result is returned, errors are rethrown after the span closes, and there is
+   * no measurement overhead unless enabled.
+   */
+  public spanSync<T>(name: string, fn: () => T): T {
+    if (!this.enabled) {
+      return fn();
+    }
+    this.begin(name);
+    try {
+      return fn();
     } finally {
       this.end();
     }

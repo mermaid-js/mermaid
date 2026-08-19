@@ -27,6 +27,7 @@ import {
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
+import { profiler } from '../../../profiler.js';
 import { validateLayout } from './validateLayoutProxy.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
 import {
@@ -463,7 +464,14 @@ export function runLateQualityPasses(
   // General monotone remediation for multi-defect invalid layouts: chips one
   // validator issue at a time (clean re-routes / rail shifts) until valid. A
   // no-op on valid layouts; never adds an issue, so it cannot regress.
-  remediateFlaggedEdgesWhenMonotone(data4Layout);
+  // Spanned separately: this one pass is over half of layout time on broken
+  // layouts (it searches reroutes for every flagged edge), so a `domus:polish`
+  // total without it split out hides where the time actually goes.
+  if (injected.profiling) {
+    profiler.spanSync('domus:remediate', () => remediateFlaggedEdgesWhenMonotone(data4Layout));
+  } else {
+    remediateFlaggedEdgesWhenMonotone(data4Layout);
+  }
 
   // Bend reduction for exponential-tier routes (8+ points). The score-gated
   // simplifiers below are dormant while the score is clamped at 0, so this
@@ -569,12 +577,35 @@ function stripDegenerateEdgePoints(data4Layout: LayoutData): void {
   }
 }
 
+/**
+ * Profiling seams for `layout()`.
+ *
+ * The layout is one synchronous block with four distinct stages, and which of
+ * them dominates depends entirely on the diagram — on
+ * `layout-tests/domus/mermaid-chart-architecture.mmd` the compound-placement
+ * tournament is ~64% of layout while the initial placement is ~5%, and on a
+ * simple flowchart it is the other way round. A single `layout` number cannot
+ * show that, so each stage gets its own span. `spanSync` keeps `layout()`
+ * synchronous and costs nothing when the profiler is off (and nothing at all in
+ * production builds, where `injected.profiling` folds the branch away).
+ *
+ * Names are prefixed `domus:` so they cannot collide with the generic phase
+ * names (`measure`, `layout`, `paint`) that consumers resolve by searching the
+ * span tree — see `.esbuild/dev-explorer/diagram-viewer.ts`.
+ */
+function domusStage<T>(name: string, fn: () => T): T {
+  return injected.profiling ? profiler.spanSync(name, fn) : fn();
+}
+
 export function layout(data4Layout: LayoutData): void {
-  runRP1OrthogonalPipeline(data4Layout, {
-    spacing: 10,
-    routingBackend: 'domus',
-    useExistingPositions: false,
-  });
+  // Stage 1: flat DOMUS placement (SAT shape construction) + initial routing.
+  domusStage('domus:core', () =>
+    runRP1OrthogonalPipeline(data4Layout, {
+      spacing: 10,
+      routingBackend: 'domus',
+      useExistingPositions: false,
+    })
+  );
 
   const preFinalizeLayout = cloneLayoutForFallbackCandidate(data4Layout);
 
@@ -582,26 +613,36 @@ export function layout(data4Layout: LayoutData): void {
   // paint's `adjustLayout` will treat labels as overlays and draw a single
   // semantic edge per `(start, end)` pair.
   finalizeDummyLabelNodesToOverlayLabels(data4Layout);
-  tryLayeredFallbackCandidateWhenScoreImproves(data4Layout, preFinalizeLayout);
+  // Stage 2: layered fallback candidate (score-gated).
+  domusStage('domus:fallback', () =>
+    tryLayeredFallbackCandidateWhenScoreImproves(data4Layout, preFinalizeLayout)
+  );
 
   // Compound (per-group) DOMUS placement candidate for multi-group layouts the
   // flat placement left invalid or weak. Score-gated inside; see
   // `pipeline/compoundPlacement.ts` for the paper trail.
-  tryCompoundGroupPlacementCandidateWhenScoreImproves(data4Layout, preFinalizeLayout, {
-    spacing: 10,
-    routeWithRoutingGraph: (candidate) => {
-      runRP1OrthogonalPipeline(candidate, {
-        spacing: 10,
-        routingBackend: 'routing-graph',
-        routingGraphModel: 'channels',
-        useExistingPositions: true,
-        groupPadding: COMPOUND_GROUP_PAD,
-      });
-    },
-    polish: (candidate: LayoutData) => runLateQualityPasses(candidate, { skipSwingReroutes: true }),
-  });
+  // Stage 3: compound (per-group) placement tournament. Each variant is routed
+  // AND polished, so this span contains nested `domus:route` / `domus:polish`
+  // spans — which is exactly what makes it the biggest entry on grouped diagrams.
+  domusStage('domus:compound', () =>
+    tryCompoundGroupPlacementCandidateWhenScoreImproves(data4Layout, preFinalizeLayout, {
+      spacing: 10,
+      routeWithRoutingGraph: (candidate) => {
+        runRP1OrthogonalPipeline(candidate, {
+          spacing: 10,
+          routingBackend: 'routing-graph',
+          routingGraphModel: 'channels',
+          useExistingPositions: true,
+          groupPadding: COMPOUND_GROUP_PAD,
+        });
+      },
+      polish: (candidate: LayoutData) =>
+        runLateQualityPasses(candidate, { skipSwingReroutes: true }),
+    })
+  );
 
-  runLateQualityPasses(data4Layout);
+  // Stage 4: the quality tail on the winning geometry.
+  domusStage('domus:polish', () => runLateQualityPasses(data4Layout));
 
   // Final safety net: no zero-length segments reach the renderer (NaN paths).
   stripDegenerateEdgePoints(data4Layout);
@@ -647,7 +688,18 @@ export async function paint(
 
 /** Public `LayoutAlgorithm.render` entry: orchestrates the three stages with shared context. */
 export async function render(data4Layout: LayoutData, svg: SVG) {
-  const ctx = await measure(data4Layout, svg);
-  layout(data4Layout);
-  await paint(data4Layout, svg, ctx);
+  // Phase names match the shared harness in `layout-algorithms/common/index.ts`
+  // (`measure` / `layout` / `paint`) so DOMUS populates the same profile columns
+  // as dagre and elk instead of showing blanks. DOMUS does not go through that
+  // harness — it owns its three-stage measure/layout/paint split — so the spans
+  // have to be emitted here.
+  if (!injected.profiling) {
+    const ctx = await measure(data4Layout, svg);
+    layout(data4Layout);
+    await paint(data4Layout, svg, ctx);
+    return;
+  }
+  const ctx = await profiler.span('measure', () => measure(data4Layout, svg));
+  profiler.spanSync('layout', () => layout(data4Layout));
+  await profiler.span('paint', () => paint(data4Layout, svg, ctx));
 }
