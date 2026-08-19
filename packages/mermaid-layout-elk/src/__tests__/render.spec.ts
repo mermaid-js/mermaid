@@ -6,6 +6,7 @@ import {
   ensureEndMarkerSegmentLength,
   findCyclicEntryNodes,
   prepareLayoutForElk,
+  resolveContainerAlgorithm,
   runElkLayoutCore,
 } from '../render.js';
 
@@ -25,6 +26,30 @@ const elkRenderContext = {
   },
   options: { algorithm: 'elk.layered' },
 } as any;
+
+describe('resolveContainerAlgorithm', () => {
+  it('accepts the supported ELK algorithms', () => {
+    for (const algo of ['elk.layered', 'elk.box', 'elk.rectpacking', 'elk.mrtree']) {
+      expect(resolveContainerAlgorithm(algo)).toBe(algo);
+    }
+  });
+
+  it('rejects an unknown algorithm and warns instead of handing it to ELK', () => {
+    const warnings: unknown[] = [];
+    const spyLog = { ...log, warn: (...args: unknown[]) => warnings.push(args[0]) };
+    expect(resolveContainerAlgorithm('garbage', spyLog)).toBeUndefined();
+    expect(warnings).toHaveLength(1);
+    expect(String(warnings[0])).toContain('garbage');
+  });
+
+  it('rejects non-string values without warning', () => {
+    const warnings: unknown[] = [];
+    const spyLog = { ...log, warn: (...args: unknown[]) => warnings.push(args[0]) };
+    expect(resolveContainerAlgorithm(undefined, spyLog)).toBeUndefined();
+    expect(resolveContainerAlgorithm({ elk: 'box' }, spyLog)).toBeUndefined();
+    expect(warnings).toHaveLength(0);
+  });
+});
 
 describe('buildSubgraphLayoutOptions', () => {
   it('derives a label-based minimum size for containers with their own algorithm', () => {
@@ -58,6 +83,17 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.direction']).toBe('RIGHT');
     expect(opts['elk.algorithm']).toBe('layered');
     expect(opts['elk.hierarchyHandling']).toBe('SEPARATE_CHILDREN');
+  });
+
+  it('ignores an unsupported metadata algorithm and falls back to the dir branch', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { dir: 'LR', labelData: { width: 30, height: 14 }, metadata: { algorithm: 'elk.garbage' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.algorithm']).toBe('layered');
+    expect(opts['elk.direction']).toBe('RIGHT');
+    expect(opts['nodeSize.minimum']).toBeUndefined();
   });
 
   it('omits direction-specific options when node has no dir', () => {

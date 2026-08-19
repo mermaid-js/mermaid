@@ -127,6 +127,45 @@ const RECTPACKING_OPTIONS: Record<string, string | number> = {
   'elk.rectpacking.widthApproximation.strategy': 'SCANLINE',
 };
 
+/**
+ * ELK algorithm ids a container may select through `@{ algorithm: … }`.
+ *
+ * The value comes from user-authored diagram metadata and would otherwise be
+ * handed to ELK verbatim; an id ELK doesn't know aborts the whole layout and
+ * blanks the diagram. Anything outside this list is ignored with a warning, so
+ * a typo degrades to the default layout instead of losing the render.
+ */
+const CONTAINER_ALGORITHMS = new Set([
+  'elk.layered',
+  'elk.box',
+  'elk.rectpacking',
+  'elk.stress',
+  'elk.force',
+  'elk.mrtree',
+  'elk.radial',
+  'elk.sporeOverlap',
+]);
+
+/**
+ * Resolve a container's requested layout algorithm, or `undefined` when the
+ * request is absent, not a string, or not a supported ELK algorithm.
+ */
+export function resolveContainerAlgorithm(
+  requested: unknown,
+  log?: ElkLayoutContext['log']
+): string | undefined {
+  if (typeof requested !== 'string') {
+    return undefined;
+  }
+  if (!CONTAINER_ALGORITHMS.has(requested)) {
+    log?.warn(
+      `Unknown container layout algorithm "${requested}". Supported values: ${[...CONTAINER_ALGORITHMS].join(', ')}. Falling back to the diagram's layout algorithm.`
+    );
+    return undefined;
+  }
+  return requested;
+}
+
 export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP' {
   switch (dir) {
     case 'LR':
@@ -151,7 +190,8 @@ export function buildSubgraphLayoutOptions(
     metadata?: { algorithm?: unknown } & Record<string, unknown>;
   },
   elkConfig: ElkSubgraphConfig | undefined,
-  algorithm: string | undefined
+  algorithm: string | undefined,
+  log?: ElkLayoutContext['log']
 ): Record<string, unknown> {
   // Compute label-based minimum width so ELK sizes compound nodes to fit their
   // labels. nodeSize.minimum acts as a label-derived floor while ELK computes
@@ -176,8 +216,8 @@ export function buildSubgraphLayoutOptions(
   // Apply per-group algorithm from metadata (e.g. @{algorithm: elk.box}).
   // SEPARATE_CHILDREN is required so the subgraph's algorithm actually
   // runs instead of being swallowed by the root INCLUDE_CHILDREN policy.
-  const algo = node.metadata?.algorithm;
-  if (algo && typeof algo === 'string') {
+  const algo = resolveContainerAlgorithm(node.metadata?.algorithm, log);
+  if (algo) {
     // Label-derived minimum size, so ELK sizes the container to fit its label.
     // Scoped to containers that opt into their own algorithm: applying it to
     // every subgraph changes the dimensions of existing flowchart subgraphs.
@@ -740,7 +780,8 @@ function configureSubgraphNodes(
     node.layoutOptions = buildSubgraphLayoutOptions(
       node,
       data4Layout.config.elk,
-      elkContext.algorithm
+      elkContext.algorithm,
+      elkContext.log
     );
     delete node.x;
     delete node.y;
@@ -791,7 +832,7 @@ function setIncludeChildrenPolicy(
   // (set via the dir branch) keep theirs so they still lay out correctly.
   if (
     node.layoutOptions['elk.hierarchyHandling'] === 'SEPARATE_CHILDREN' &&
-    node.metadata?.algorithm
+    resolveContainerAlgorithm(node.metadata?.algorithm)
   ) {
     log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
     delete node.layoutOptions['elk.algorithm'];
