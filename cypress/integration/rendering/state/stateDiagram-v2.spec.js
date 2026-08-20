@@ -887,4 +887,18 @@ State9_____________ --> State10_____________   : Transition9_____
       {}
     );
   });
+
+  it('should render default and indexed transition styles', () => {
+    imgSnapshotTest(
+      `stateDiagram-v2
+        [*] --> Idle : boot
+        Idle --> Running : start
+        Running --> Idle : stop
+        Running --> [*] : shutdown
+
+        linkStyle default stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+        linkStyle 1,3 stroke:#dc2626,stroke-width:4px,color:#dc2626`,
+      { fontFamily: 'courier' }
+    );
+  });
 });
