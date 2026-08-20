@@ -485,9 +485,22 @@ const render = async function (
   log.debug(config);
 
   // Check the maximum allowed text size
-  if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
+  const maxTextSize = config?.maxTextSize ?? MAX_TEXTLENGTH;
+  if (text.length > maxTextSize) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
     code = { raw: text, cleaned: text };
+  } else if ((code.withComments?.length ?? 0) > maxTextSize) {
+    // `cleaned` is under the cap but the comment-preserving variant is not, and
+    // that is the string a position-reporting DB actually parses — so a diagram
+    // padded with `%%` comments would otherwise walk straight past this guard.
+    // Drop `withComments` instead of truncating the whole diagram: capping on
+    // the larger of the two would newly truncate comment-heavy diagrams for
+    // every other diagram type, none of which ever parse it. Positions fall
+    // back to comment-stripped space for this render.
+    log.warn(
+      `Comment-preserving source exceeds maxTextSize (${code.withComments?.length} > ${maxTextSize}); parsing the comment-stripped text instead. Reported source positions will not account for comment lines.`
+    );
+    code = { ...code, withComments: undefined };
   }
 
   const idSelector = `#${id}` as const;
