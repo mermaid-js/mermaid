@@ -385,7 +385,7 @@ Shape defaults to 'rect'
 
 #### insertNode()
 
-> **insertNode**: (`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGAElement`>>
+> **insertNode**: (`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGGElement`> | `D3Selection`<`SVGAElement`>>
 
 ##### Parameters
 
@@ -403,7 +403,7 @@ Shape defaults to 'rect'
 
 ##### Returns
 
-`Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGAElement`>>
+`Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGGElement`> | `D3Selection`<`SVGAElement`>>
 
 #### interpolateToCurve()
 
