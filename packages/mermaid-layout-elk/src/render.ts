@@ -1052,8 +1052,18 @@ function applyElkEdgeLayout(
       startNode.y = from.y;
       endNode.x = to.x;
       endNode.y = to.y;
-      layoutEdge.points = sanitizeElkEdgePoints([from, to], startNode, endNode, log);
+      const straightPoints = sanitizeElkEdgePoints([from, to], startNode, endNode, log);
+      layoutEdge.points = straightPoints;
       layoutEdge.curve = 'linear';
+      // No routing means no label position either: ELK only fills in
+      // `edge.labels[*].x/y` for edges it laid out. `positionEdgeLabel` reads
+      // `edge.x` / `edge.y` straight into a `translate(...)`, so leaving them
+      // unset emits `translate(undefined, NaN)` — dropped by the browser, which
+      // parks the label at the group origin. Put it on the line's midpoint.
+      const lineStart = straightPoints[0];
+      const lineEnd = straightPoints[straightPoints.length - 1];
+      layoutEdge.x = (lineStart.x + lineEnd.x) / 2;
+      layoutEdge.y = (lineStart.y + lineEnd.y) / 2;
       log.debug('APA18 no edge sections, using a straight line', edge.id, layoutEdge.points);
       return;
     }

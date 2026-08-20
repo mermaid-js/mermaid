@@ -669,6 +669,30 @@ describe('algorithms that place nodes but do not route edges', () => {
       expect(onNodeBorder(nodeById.B, points[points.length - 1])).toBe(true);
     }
   );
+
+  // ELK never routed the edge, so it produced no label position either.
+  // `positionEdgeLabel` reads `edge.x` / `edge.y` straight into
+  // `translate(${x}, ${y + margin})`, so leaving them unset rendered
+  // `translate(undefined, NaN)` — an invalid transform that browsers drop,
+  // dumping the label at the group origin instead of on the edge.
+  it.each(['elk.box', 'elk.rectpacking'])(
+    'positions the label of an unrouted edge under %s',
+    async (algorithm) => {
+      const data = nonRoutingData();
+      data.edges[0].label = 'hello';
+      await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm } });
+
+      const edge = data.edges[0];
+      expect(Number.isFinite(edge.x)).toBe(true);
+      expect(Number.isFinite(edge.y)).toBe(true);
+
+      // On the line it labels: midway between the two clipped endpoints.
+      const [first] = edge.points;
+      const last = edge.points[edge.points.length - 1];
+      expect(edge.x).toBeCloseTo((first.x + last.x) / 2);
+      expect(edge.y).toBeCloseTo((first.y + last.y) / 2);
+    }
+  );
 });
 
 describe('clearContainerAlgorithmOptions', () => {
