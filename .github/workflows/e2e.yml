@@ -452,44 +452,14 @@ jobs:
       # body limit ("request entity too large", HTTP 413). Each parallel index PUTs
       # only its slice; --files globs stay relative to the same root so names are
       # preserved, and Argos combines the indices into one build once all K report.
+      # Merges sheets + screenshots into one upload root and splits the upload
+      # into size-balanced parallel slices so no finalize body trips Argos's
+      # request limit (HTTP 413) — see scripts/argos-upload-baseline.ts.
       - name: Upload images to Argos
         if: env.ARGOS_UPLOAD_BOTH == 'true'
         env:
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
-        run: |
-          set -euo pipefail
-          mkdir -p e2e/argos-baseline
-          cp -r e2e/sheets/. e2e/argos-baseline/
-          cp -r e2e/screenshots/. e2e/argos-baseline/
-
-          # Round-robin the leaf directories (those that directly hold images)
-          # into K buckets so each upload's finalize body carries only ~1/K of the
-          # suite. Bucketing by top-level folder instead put all of rendering/
-          # (~60% of the suite) into one bucket whose finalize body exceeded
-          # Argos's limit (HTTP 413) regardless of K; balancing at the leaf level
-          # keeps the biggest bucket to ~1/K.
-          mapfile -t groups < <(
-            cd e2e/argos-baseline &&
-              find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
-              sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
-          )
-          K=5
-          for i in $(seq 1 "$K"); do
-            globs=()
-            for j in "${!groups[@]}"; do
-              # Glob each leaf dir non-recursively (`/*` not `/**`) so the buckets
-              # stay a disjoint partition, and match only images: a `/**` glob would
-              # also pick up the `<name>.png.argos.json` metadata sidecars, which
-              # Argos treats as screenshots and whose doubled `<sidecar>.argos.json`
-              # path overflows the 255-byte filename limit (ENAMETOOLONG, surfaced
-              # as "Failed to read metadata").
-              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
-            done
-            [ ${#globs[@]} -eq 0 ] && continue
-            pnpm exec argos upload e2e/argos-baseline \
-              --files "${globs[@]}" \
-              --parallel --parallel-total "$K" --parallel-index "$i"
-          done
+        run: pnpm run argos:upload-baseline
 
       # PR / merge-queue / manual grouped runs: upload only the composite sheets.
       - name: Upload grouped sheets to Argos
