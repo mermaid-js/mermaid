@@ -4,7 +4,7 @@
 
 feat: add the `agentflow-beta` diagram type for describing agentic workflows — agents, the flows they run, the tasks and tools inside them, and how control and data move between them.
 
-```
+```mermaid
 agentflow-beta TB
   flow reviewer["Review Agent"]
     changes["Gather changes"]@{ shape: input }

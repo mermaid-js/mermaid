@@ -1,7 +1,7 @@
 # Agentflow (v<MERMAID_RELEASE_VERSION>+)
 
 > An agentflow diagram describes an agentic workflow: the agents that do the work, the flows they run, the tasks and tools inside those flows, and how control and data move between them.
-
+>
 > **Warning**
 > Agentflow is in **beta**. The diagram type is selected with the `agentflow-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 
@@ -32,7 +32,7 @@ agentflow-beta TB
 
 Every diagram starts with the `agentflow-beta` keyword, optionally followed by a direction — `TB`, `TD`, `BT`, `LR`, or `RL`.
 
-```
+```txt
 agentflow-beta LR
 ```
 
@@ -40,7 +40,7 @@ agentflow-beta LR
 
 Nodes are declared exactly as in a flowchart: an id, optionally followed by a label in brackets.
 
-```
+```txt
 research["Research the topic"]
 ```
 
@@ -167,11 +167,11 @@ agentflow-beta TB
 
 Any node, edge, or container can carry an `@{ … }` block. The contents are YAML, so both the single-line form and a multi-line block work:
 
-```
+```txt
 researcher@{ model: "claude-sonnet-4-20250514", instruction: "Research and cite sources." }
 ```
 
-```
+```txt
 fetch@{
   shape: tool
   params: "city :: String"
@@ -181,6 +181,8 @@ fetch@{
 ```
 
 Keys mermaid itself acts on are `shape` and `view`. Everything else is carried through untouched and surfaced to consumers, so the vocabulary below is a convention rather than a closed list — an unknown key is preserved, never rejected.
+
+The one exception is prototype-shaped keys: `__proto__`, `constructor`, and `prototype` are stripped from parsed metadata, at every level of nesting. They are dropped rather than carried so that a consumer merging `node.metadata` into its own object cannot be made to pollute a prototype.
 
 | Key            | Applies to        | Purpose                                        |
 | -------------- | ----------------- | ---------------------------------------------- |
@@ -249,7 +251,7 @@ Agentflow has its own config namespace, so it can be tuned without moving flowch
 | `rankSpacing`    | Spacing between nodes on different levels        | `50`    |
 | `useMaxWidth`    | Scale the diagram to the available width         | `true`  |
 
-```
+```mermaid
 ---
 config:
   agentflow:
@@ -262,15 +264,15 @@ agentflow-beta TB
 
 ### Theme variables
 
-Containers are themed with `flowContainerStroke`, available in every built-in
-theme; it falls back to `secondaryBorderColor` when unset. Everything else on an
+Containers are themed with `flowContainerStroke`, defined by every theme mermaid
+registers; it falls back to `secondaryBorderColor` when unset. Everything else on an
 agentflow diagram uses the standard node, edge, and cluster theme variables.
 
 ### Layout
 
 Agentflow renders through the unified renderer, so it works with any registered layout engine. With `@mermaid-js/layout-elk` installed, an individual container can also select its own ELK algorithm:
 
-```
+```mermaid
 ---
 config:
   layout: elk
