@@ -96,13 +96,11 @@ export const addRel = function (
     return;
   }
 
-  let rel = {} as C4Rel;
-  const old = rels.find((rel) => rel.from === from && rel.to === to);
-  if (old) {
-    rel = old;
-  } else {
-    rels.push(rel);
-  }
+  // Each statement is its own relationship, even when it repeats a from/to pair. Reusing
+  // the earlier entry meant a second `Rel(a, b, ...)` overwrote the first instead of
+  // adding to it, so only the last of several interactions survived (#7183).
+  const rel = {} as C4Rel;
+  rels.push(rel);
 
   rel.type = type;
   rel.from = from;
@@ -587,40 +585,41 @@ export const updateRelStyle = function (
   offsetX?: ParserAttribute | null,
   offsetY?: ParserAttribute | null
 ) {
-  const old = rels.find((rel) => rel.from === from && rel.to === to);
-  if (old === undefined) {
-    return;
-  }
-  if (textColor !== undefined && textColor !== null) {
-    if (typeof textColor === 'object') {
-      const [key, value] = Object.entries(textColor)[0];
-      old[key] = value;
-    } else {
-      old.textColor = textColor;
+  // The statement names a from/to pair, which may now cover more than one relationship,
+  // so the style applies to every relationship between them.
+  const matching = rels.filter((rel) => rel.from === from && rel.to === to);
+  for (const old of matching) {
+    if (textColor !== undefined && textColor !== null) {
+      if (typeof textColor === 'object') {
+        const [key, value] = Object.entries(textColor)[0];
+        old[key] = value;
+      } else {
+        old.textColor = textColor;
+      }
     }
-  }
-  if (lineColor !== undefined && lineColor !== null) {
-    if (typeof lineColor === 'object') {
-      const [key, value] = Object.entries(lineColor)[0];
-      old[key] = value;
-    } else {
-      old.lineColor = lineColor;
+    if (lineColor !== undefined && lineColor !== null) {
+      if (typeof lineColor === 'object') {
+        const [key, value] = Object.entries(lineColor)[0];
+        old[key] = value;
+      } else {
+        old.lineColor = lineColor;
+      }
     }
-  }
-  if (offsetX !== undefined && offsetX !== null) {
-    if (typeof offsetX === 'object') {
-      const [key, value] = Object.entries(offsetX)[0];
-      old[key] = parseInt(value);
-    } else {
-      old.offsetX = parseInt(offsetX);
+    if (offsetX !== undefined && offsetX !== null) {
+      if (typeof offsetX === 'object') {
+        const [key, value] = Object.entries(offsetX)[0];
+        old[key] = parseInt(value);
+      } else {
+        old.offsetX = parseInt(offsetX);
+      }
     }
-  }
-  if (offsetY !== undefined && offsetY !== null) {
-    if (typeof offsetY === 'object') {
-      const [key, value] = Object.entries(offsetY)[0];
-      old[key] = parseInt(value);
-    } else {
-      old.offsetY = parseInt(offsetY);
+    if (offsetY !== undefined && offsetY !== null) {
+      if (typeof offsetY === 'object') {
+        const [key, value] = Object.entries(offsetY)[0];
+        old[key] = parseInt(value);
+      } else {
+        old.offsetY = parseInt(offsetY);
+      }
     }
   }
 };
