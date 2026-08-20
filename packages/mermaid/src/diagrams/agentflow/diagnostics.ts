@@ -11,13 +11,10 @@
  * flow-no-input validation.
  *
  * v0.8.2 (issue #64): the parser no longer performs property-level metadata
- * validation or semantic checks. It still emits the structural `SHAPE_*`
- * codes (and would emit `EDGE_OPERATOR_UNSUPPORTED`). The remaining IDs below
- * stay part of the shared diagnostic vocabulary, but are now emitted by the
- * **semantics module**, not the parser: `METADATA_KEY_MISAPPLIED`,
- * `CONNECTOR_REF_*`, `DUPLICATE_ID_NODE`, `RESERVED_SYNTHETIC_ID`,
- * `CONTAINMENT_VIOLATION`, `EDGE_SEMANTIC_CONTRADICTION`,
- * `REFERENCE_EDGE_LABEL_REJECTED`, and `FLOW_NO_INPUT`.
+ * validation or semantic checks. The IDs it still raises are enumerated in
+ * {@link PARSER_EMITTED_DIAGNOSTICS}; everything else stays part of the shared
+ * diagnostic vocabulary but is **reserved** — emitted by the semantics module,
+ * not by anything in this package. See {@link RESERVED_DIAGNOSTICS}.
  *
  * v0.8.2 (issue #66): `METADATA_KEY_LEGACY_PROMPT` is removed from the
  * vocabulary. `prompt` is not an agentflow metadata key — the canonical key
@@ -52,18 +49,24 @@ export const AgentflowWarning = {
   /**
    * Edge operator removed in v0.8.1 (§5.1): `==>`, `~~`, `-.->`, plus
    * marker variants of `--` (`<-->`, `o--o`, `--o`, `-->>`). Hard error.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   EDGE_OPERATOR_UNSUPPORTED: 'EDGE_OPERATOR_UNSUPPORTED',
   /**
    * A label was authored on a `-.-` reference edge. Per §5.2 reference
    * edges carry no parameter/channel meaning so a label "would not mean
    * anything"; the label is ignored. Warn tier.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   REFERENCE_EDGE_LABEL_REJECTED: 'REFERENCE_EDGE_LABEL_REJECTED',
   /**
    * A `connectorRef` value's prefix (or whole bare-id form) doesn't
    * resolve to a declared `connector`. Per §8.1. Warn-only pre-1.0;
    * error from v1.0.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   CONNECTOR_REF_UNRESOLVED: 'CONNECTOR_REF_UNRESOLVED',
   /**
@@ -71,6 +74,8 @@ export const AgentflowWarning = {
    * connector declaration (it's a vertex, flow, etc.). Per §8.1
    * connectors must be declared with the `connector` keyword. Warn pre-
    * 1.0; error from v1.0.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   CONNECTOR_REF_NOT_A_CONNECTOR: 'CONNECTOR_REF_NOT_A_CONNECTOR',
   /**
@@ -79,6 +84,8 @@ export const AgentflowWarning = {
    * `refdoc`, or `protocol` on a `flow`). Universal keys (`description`,
    * `instruction`, plus structural and presentation controls) are
    * excluded. Warn pre-1.0; error from v1.0.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   METADATA_KEY_MISAPPLIED: 'METADATA_KEY_MISAPPLIED',
   /**
@@ -87,6 +94,8 @@ export const AgentflowWarning = {
    * container with the same id. Implicit vertices created by edge
    * resolution do not count as declarations. Warn-only pre-1.0; error
    * from v1.0 behind `agentflow.strictIds`.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   DUPLICATE_ID_NODE: 'DUPLICATE_ID_NODE',
   /**
@@ -94,6 +103,8 @@ export const AgentflowWarning = {
    * v0.8.1 keeps `connectors` reserved through pre-1.0 even though the
    * real `connector` keyword removes the synthesised group; reservation
    * stays for forward compat. Warn-only.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   RESERVED_SYNTHETIC_ID: 'RESERVED_SYNTHETIC_ID',
   /**
@@ -113,6 +124,8 @@ export const AgentflowWarning = {
    *
    * Warn-only pre-1.0; error from v1.0 behind the future
    * `agentflow.strictEdgeSemantics` flag.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   EDGE_SEMANTIC_CONTRADICTION: 'EDGE_SEMANTIC_CONTRADICTION',
   /**
@@ -120,11 +133,40 @@ export const AgentflowWarning = {
    * canonical `lean-right`). Per §10.2 a flow must declare its required
    * inputs; the runtime / editor prompts the user for any missing
    * values. Warn pre-1.0; error from v1.0.
+   *
+   * Reserved — emitted by the semantics module, never by this package.
    */
   FLOW_NO_INPUT: 'FLOW_NO_INPUT',
 } as const;
 
 export type AgentflowWarningId = (typeof AgentflowWarning)[keyof typeof AgentflowWarning];
+
+/**
+ * The IDs this package actually raises. Everything else in
+ * {@link AgentflowWarning} is **reserved**: part of the shared vocabulary, with
+ * a stable meaning, but emitted by the semantics module rather than by the
+ * parser/DB shipped here.
+ *
+ * The split is explicit so downstream tooling can tell "will never fire from
+ * mermaid" from "may fire from mermaid" instead of building matchers against
+ * codes this package cannot produce. `diagnostics.spec.ts` keeps this set
+ * honest against the source.
+ */
+export const PARSER_EMITTED_DIAGNOSTICS: ReadonlySet<AgentflowWarningId> = new Set([
+  AgentflowWarning.SHAPE_UNSUPPORTED,
+  AgentflowWarning.SHAPE_REMOVED,
+  AgentflowWarning.CONTAINMENT_VIOLATION,
+]);
+
+/**
+ * IDs reserved for the semantics module. Listed here so the reservation is
+ * data, not prose: nothing in this package emits them today.
+ */
+export const RESERVED_DIAGNOSTICS: ReadonlySet<AgentflowWarningId> = new Set(
+  (Object.values(AgentflowWarning) as AgentflowWarningId[]).filter(
+    (id) => !PARSER_EMITTED_DIAGNOSTICS.has(id)
+  )
+);
 
 /**
  * A single diagnostic. `nodeId` / `edgeId` and `position` are best-effort

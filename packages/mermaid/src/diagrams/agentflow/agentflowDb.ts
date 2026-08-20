@@ -37,6 +37,8 @@ import type {
   SemanticSubGraph,
   SemanticVertex,
 } from './types.js';
+import { AgentflowWarning } from './diagnostics.js';
+import { normaliseNodeShapes, resolveShapeAlias } from './shapes.js';
 import type {
   AgentflowDiagnostic,
   AgentflowDiagnosticContext,
@@ -104,33 +106,6 @@ const SUBROUTINE_ALIASES = new Set<string>([
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   flow: 'flowGroup',
 };
-
-/**
- * v0.8.1 shape aliases (§4.3.2). Author-friendly names map to canonical
- * Mermaid shape IDs.
- */
-const SHAPE_ALIASES: ReadonlyMap<string, string> = new Map([
-  ['task', 'roundedRect'],
-  ['tool', 'subroutine'],
-  ['input', 'lean-right'],
-  ['decision', 'diamond'],
-  ['refdoc', 'lin-doc'],
-  ['action', 'hexagon'],
-  // Forgiving: `round` is an alias of `rect` (legacy).
-  ['round', 'rect'],
-]);
-
-/**
- * Resolve a v0.8.1 shape name (alias or canonical) to its canonical
- * Mermaid shape ID. Returns the input unchanged when no alias matches
- * (so existing canonical names are preserved).
- */
-function resolveShapeAlias(shape: string | undefined): string | undefined {
-  if (!shape) {
-    return shape;
-  }
-  return SHAPE_ALIASES.get(shape) ?? shape;
-}
 
 /**
  * Remove `__proto__` / `constructor` / `prototype` own keys from parsed `@{ }`
@@ -248,6 +223,7 @@ export class AgentFlowDB implements DiagramDB {
   private version: string | undefined; // As in graph
   private secCount = -1;
   private posCrossRef: number[] = [];
+  private diagramId = '';
 
   // ── Element-mapping infrastructure (PR 2a) ───────────────────────────
   // Agentflow reports source positions, so it opts into source-faithful
@@ -339,17 +315,26 @@ export class AgentFlowDB implements DiagramDB {
   }
 
   /**
+   * Sets the diagram's SVG element ID, used to prefix domIds for uniqueness
+   * across multiple diagrams on the same page.
+   */
+  public setDiagramId(svgElementId: string) {
+    this.diagramId = svgElementId;
+  }
+
+  /**
    * Function to lookup domId from id in the graph definition.
+   * When diagramId is set, returns the prefixed version for DOM uniqueness.
    *
    * @param id - id of the node
    */
   public lookUpDomId(id: string) {
     for (const vertex of this.vertices.values()) {
       if (vertex.id === id) {
-        return vertex.domId;
+        return this.diagramId ? `${this.diagramId}-${vertex.domId}` : vertex.domId;
       }
     }
-    return id;
+    return this.diagramId ? `${this.diagramId}-${id}` : id;
   }
 
   /**
@@ -530,21 +515,36 @@ export class AgentFlowDB implements DiagramDB {
       vertex.metadata = { ...vertex.metadata, ...(doc as unknown as Record<string, unknown>) };
       if (doc.shape) {
         const authored = authoredShape ?? doc.shape;
+        // An unknown shape stays a hard error, matching flowchart — accepting
+        // something flowchart rejects is the divergence this grammar exists to
+        // avoid. What it gains here is a source position, so an editor can
+        // point at the `@{ … }` block instead of just blanking the diagram.
+        //
         // A non-string value (e.g. `shape: 123`) is an ordinary unknown shape,
         // not an uncaught TypeError on `.toLowerCase` (issue #83).
         if (typeof authored !== 'string') {
-          throw new Error(`No such shape: ${JSON.stringify(authored)}.`);
+          throw this.positionedShapeError(
+            `No such shape: ${JSON.stringify(authored)}.`,
+            metadataLoc
+          );
         }
         if (authored !== authored.toLowerCase() || authored.includes('_')) {
-          throw new Error(`No such shape: ${authored}. Shape names should be lowercase.`);
+          throw this.positionedShapeError(
+            `No such shape: ${authored}. Shape names should be lowercase.`,
+            metadataLoc
+          );
         } else if (!isValidShape(doc.shape)) {
-          throw new Error(`No such shape: ${doc.shape}.`);
+          throw this.positionedShapeError(`No such shape: ${doc.shape}.`, metadataLoc);
         }
         vertex.type = doc?.shape;
       }
 
       if (doc?.label) {
-        vertex.text = doc?.label;
+        // Sanitize like the bracket-label and edge-label paths do. Not
+        // currently exploitable — `createText` sanitizes before writing and the
+        // finished SVG is DOMPurify'd — but the metadata path should not be the
+        // one place a label reaches the DB unsanitized.
+        vertex.text = this.sanitizeText(doc.label);
         vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
       }
       if (doc?.icon) {
@@ -594,6 +594,34 @@ export class AgentFlowDB implements DiagramDB {
    * the block location, the original error propagates untouched — translation
    * never makes a failure harder to read than it already was.
    */
+  /**
+   * Build a shape error carrying a JISON-shaped `hash.loc`, so the position is
+   * readable structurally rather than only as prose. Mirrors what
+   * `rethrowMetadataYamlError` attaches for YAML failures.
+   */
+  private positionedShapeError(message: string, metadataLoc: JisonLocation | undefined): Error {
+    const error = new Error(message);
+    if (!metadataLoc) {
+      return error;
+    }
+    const line = metadataLoc.first_line + this.frontmatterLineOffset;
+    Object.assign(error, {
+      hash: {
+        text: '',
+        token: null,
+        line: line - 1,
+        loc: {
+          first_line: line,
+          last_line: metadataLoc.last_line + this.frontmatterLineOffset,
+          first_column: metadataLoc.first_column,
+          last_column: metadataLoc.last_column,
+        },
+        expected: [],
+      },
+    });
+    return error;
+  }
+
   private rethrowMetadataYamlError(
     err: unknown,
     metadata: string,
@@ -812,9 +840,18 @@ You have to call mermaid.initialize.`
     positions.forEach((pos) => {
       if (pos === 'default') {
         this.edges.defaultInterpolate = interpolate;
-      } else {
-        this.edges[pos].interpolate = interpolate;
+        return;
       }
+      // Same bounds message as `updateLink`. Without it an out-of-range index
+      // surfaced as `TypeError: Cannot set properties of undefined`.
+      if (typeof pos === 'number' && pos >= this.edges.length) {
+        throw new Error(
+          `The index ${pos} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
+            this.edges.length - 1
+          }. (Help: Ensure that the index is within the range of existing edges.)`
+        );
+      }
+      this.edges[pos].interpolate = interpolate;
     });
   }
 
@@ -930,7 +967,6 @@ You have to call mermaid.initialize.`
   }
 
   private setClickFun(id: string, functionName: string, functionArgs: string) {
-    const domId = this.lookUpDomId(id);
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (getConfig().securityLevel !== 'loose') {
       return;
@@ -962,6 +998,8 @@ You have to call mermaid.initialize.`
     if (vertex) {
       vertex.haveCallback = true;
       this.funs.push(() => {
+        // Defer lookUpDomId to bind time so it includes the diagramId prefix
+        const domId = this.lookUpDomId(id);
         const elem = document.querySelector(`[id="${domId}"]`);
         if (elem !== null) {
           elem.addEventListener(
@@ -1122,6 +1160,11 @@ You have to call mermaid.initialize.`
     this.firstGraphFlag = true;
     this.version = ver;
     this.config = getConfig();
+    this.diagramId = '';
+    this.vertexCounter = 0;
+    this.direction = undefined;
+    this.secCount = -1;
+    this.posCrossRef = [];
     this.frontmatterLineOffset = 0;
     this.elementMappings = [];
     this.bareVertexMappings = new WeakSet();
@@ -1134,6 +1177,11 @@ You have to call mermaid.initialize.`
     this.version = ver || 'gen-2';
   }
 
+  /**
+   * Legacy `linkStyle default` colours, byte-identical to `flowDb`. Hardcoded
+   * rather than theme-derived on purpose: nothing in the repo calls this, and
+   * changing the values would diverge from flowchart for no visible gain.
+   */
   public defaultStyle() {
     return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
   }
@@ -1372,6 +1420,13 @@ You have to call mermaid.initialize.`
     return id;
   }
 
+  /**
+   * Live array. `getData()` and the JISON actions read it on the hot path and a
+   * per-call copy would be wasted work; unlike `getDiagnostics()` this is not an
+   * accessor built for external consumers. Same for `getVertices()` /
+   * `getEdges()`, whose `defaultStyle` / `defaultInterpolate` side-properties a
+   * copy would drop.
+   */
   public getSubGraphs() {
     return this.subGraphs;
   }
@@ -1689,16 +1744,30 @@ You have to call mermaid.initialize.`
     // constant during recursion.
     const hiddenIds = new Set<string>();
     const collapsedAncestorMap = new Map<string, string>();
-    const collectDescendants = (sgId: string, ancestor: string) => {
+    //
+    // Containment can be cyclic: an edge written inside one container that
+    // names another container folds that container into the first one's member
+    // list, so `A` can contain `B` while `B` contains `A`. Without the `seen`
+    // guard the recursion never terminated and `getData()` blew the stack,
+    // blanking the diagram. The collapse root itself is excluded so a back-edge
+    // cannot hide the very node the collapse is supposed to draw.
+    const collectDescendants = (sgId: string, ancestor: string, seen = new Set<string>()) => {
+      if (seen.has(sgId)) {
+        return;
+      }
+      seen.add(sgId);
       const sg = this.subGraphLookup.get(sgId);
       if (!sg) {
         return;
       }
       for (const childId of sg.nodes) {
+        if (childId === ancestor || seen.has(childId)) {
+          continue;
+        }
         hiddenIds.add(childId);
         collapsedAncestorMap.set(childId, ancestor);
         // Recurse into child subgraphs
-        collectDescendants(childId, ancestor);
+        collectDescendants(childId, ancestor, seen);
       }
     };
     for (const sg of subGraphs) {
@@ -1708,6 +1777,24 @@ You have to call mermaid.initialize.`
     }
 
     // Setup the subgraph data for adding nodes
+    //
+    // A parent assignment that closes a containment cycle (`A` contains `B`
+    // and `B` contains `A`, which two cross-boundary edges are enough to
+    // produce) is refused: graphlib rejects `setParent` on a cycle and the
+    // whole diagram would fail to render. The first assignment wins and the
+    // one that would close the loop is reported as a containment violation.
+    const wouldCloseContainmentCycle = (childId: string, parentId: string) => {
+      const seen = new Set<string>();
+      let current: string | undefined = parentId;
+      while (current !== undefined && !seen.has(current)) {
+        if (current === childId) {
+          return true;
+        }
+        seen.add(current);
+        current = parentDB.get(current);
+      }
+      return false;
+    };
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
       if (hiddenIds.has(subGraph.id)) {
@@ -1717,6 +1804,14 @@ You have to call mermaid.initialize.`
         subGraphDB.set(subGraph.id, true);
       }
       for (const id of subGraph.nodes) {
+        if (wouldCloseContainmentCycle(id, subGraph.id)) {
+          this.emitWarning(
+            AgentflowWarning.CONTAINMENT_VIOLATION,
+            `Container "${subGraph.id}" cannot contain "${id}" because "${id}" already contains it. The nesting that would close the loop is dropped.`,
+            { nodeId: id }
+          );
+          continue;
+        }
         parentDB.set(id, subGraph.id);
       }
     }
@@ -1818,6 +1913,8 @@ You have to call mermaid.initialize.`
             : arrowTypeStart,
         arrowTypeEnd:
           rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open' ? 'none' : arrowTypeEnd,
+        // Inert: `Edge.arrowheadStyle` is declared but never read by the
+        // renderer. Kept at flowchart parity rather than theme-derived.
         arrowheadStyle: 'fill: #333',
         cssCompiledStyles: this.getCompiledStyles(rawEdge.classes),
         labelStyle: styles,
@@ -1834,6 +1931,13 @@ You have to call mermaid.initialize.`
 
       edges.push(edge);
     });
+
+    // Shape validation runs here, not only at render time. `getDiagnostics()`
+    // is built for editor tooling, and tooling calls `parse()` — it never
+    // renders — so leaving the only two live diagnostics behind `renderer.draw`
+    // meant `mermaid.parse(text)` followed by `getDiagnostics()` always
+    // returned `[]`.
+    normaliseNodeShapes(nodes, this);
 
     return {
       nodes,
@@ -2181,7 +2285,8 @@ You have to call mermaid.initialize.`
   }
 
   public getElementMappings(): readonly AgentflowElementMapping[] {
-    return this.elementMappings;
+    // Copy, for the same reason as `getDiagnostics()`.
+    return [...this.elementMappings];
   }
 
   public getElementById(id: string): AgentflowElementMapping | undefined {
@@ -2214,14 +2319,20 @@ You have to call mermaid.initialize.`
     if (candidates.length === 0) {
       return undefined;
     }
+    // Compare [lineSpan, columnSpan] lexicographically. Folding the two into
+    // `lineSpan * 1000 + columnSpan` mis-ranked lines wider than 1000 columns,
+    // and the column term goes negative whenever a span crosses a line break.
+    const span = ({ position }: AgentflowElementMapping): [number, number] => [
+      position.endLine - position.startLine,
+      position.endColumn - position.startColumn,
+    ];
     return candidates.reduce((smallest, cur) => {
-      const smallSpan =
-        (smallest.position.endLine - smallest.position.startLine) * 1000 +
-        (smallest.position.endColumn - smallest.position.startColumn);
-      const curSpan =
-        (cur.position.endLine - cur.position.startLine) * 1000 +
-        (cur.position.endColumn - cur.position.startColumn);
-      return curSpan < smallSpan ? cur : smallest;
+      const [smallLines, smallColumns] = span(smallest);
+      const [curLines, curColumns] = span(cur);
+      if (curLines !== smallLines) {
+        return curLines < smallLines ? cur : smallest;
+      }
+      return curColumns < smallColumns ? cur : smallest;
     });
   }
 
@@ -2286,6 +2397,20 @@ You have to call mermaid.initialize.`
       ...(ctx?.edgeId && !ctx?.nodeId ? { edgeId: ctx.edgeId } : {}),
       ...(mapping ? { position: mapping.position } : {}),
     };
+    // `getData()` is idempotent and may be called more than once (parse-then-
+    // render, or tooling probing the DB). Re-emitting the same finding each
+    // time would inflate the diagnostics list, so record each one once.
+    const alreadyRecorded = this.diagnostics.some(
+      (existing) =>
+        existing.id === diagnostic.id &&
+        existing.severity === diagnostic.severity &&
+        existing.message === diagnostic.message &&
+        existing.nodeId === diagnostic.nodeId &&
+        existing.edgeId === diagnostic.edgeId
+    );
+    if (alreadyRecorded) {
+      return;
+    }
     this.diagnostics.push(diagnostic);
     const formatted = `agentflow[${id}]: ${message}`;
     if (severity === 'error') {
@@ -2311,8 +2436,13 @@ You have to call mermaid.initialize.`
     this.emitDiagnostic(id, 'error', message, ctx);
   }
 
+  /**
+   * `readonly` is erased at runtime, so hand back a copy — this is a
+   * consumer-facing accessor and a caller sorting the result in place would
+   * otherwise reorder the DB's own list.
+   */
   public getDiagnostics(): readonly AgentflowDiagnostic[] {
-    return this.diagnostics;
+    return [...this.diagnostics];
   }
 
   public setAccTitle = setAccTitle;

@@ -63,3 +63,35 @@ describe('issue #59: sibling subgraph span overlap', () => {
     expect(db.getVertices().has('b')).toBe(true);
   });
 });
+
+// `getElementAtPosition` returns the innermost candidate. The ranking compares
+// [lineSpan, columnSpan] lexicographically; it used to fold them into
+// `lineSpan * 1000 + columnSpan`, which cannot order a 1-line/1200-column span
+// against a 2-line/3-column span correctly and produces a negative column term
+// whenever a span crosses a line break. No diagram the current grammar accepts
+// puts those two shapes at the same point, so this is a latent ordering bug
+// rather than a reproducible one — these tests pin the behaviour the exact
+// comparison guarantees.
+describe('innermost-match ranking', () => {
+  it('prefers the tighter span when a nested container shares the point', () => {
+    const db = parse(`agentflow-beta TB
+  flow outer["Outer"]
+    flow inner["Inner"]
+      a["Alpha"]
+    end
+  end`);
+    expect(db.getElementAtPosition(4, 8)?.id).toBe('a');
+    // One column left of the vertex, only the containers cover the point.
+    expect(db.getElementAtPosition(3, 5)?.id).toBe('inner');
+  });
+
+  it('still resolves the innermost element when a label is wider than 1000 columns', () => {
+    const wide = 'W'.repeat(1200);
+    const db = parse(`agentflow-beta TB
+  flow outer["Outer"]
+    a["${wide}"] --> b["B"]
+  end`);
+    expect(db.getElementAtPosition(3, 10)?.id).toBe('a');
+    expect(db.getElementAtPosition(3, 1216)?.id).toBe('b');
+  });
+});

@@ -6,7 +6,6 @@ import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/rende
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
-import { transformData } from './transformData.js';
 
 export const getClasses = function (
   text: string,
@@ -19,16 +18,18 @@ export const draw = async function (text: string, id: string, _version: string, 
   log.debug('Drawing agentflow diagram', id);
   const { securityLevel, agentflow: conf, layout } = getConfig();
 
+  // Scope generated domIds to this diagram's svg id so click handlers bind to
+  // this diagram's nodes and not to an identically-named node in another
+  // diagram on the same page.
+  diag.db.setDiagramId(id);
+
   // The getData method provided in all supported diagrams is used to extract the data from the parsed structure
   // into the Layout data format
   log.debug('Before getData: ');
+  // `getData()` already applies the agentflow shape transformations and emits
+  // the SHAPE_* diagnostics, so the data arrives render-ready.
   const data4Layout = diag.db.getData() as LayoutData;
   log.debug('Data: ', data4Layout);
-
-  // Apply agentflow-specific transformations to the layout data.
-  // Passing the DB lets `transformData` emit SHAPE_UNSUPPORTED as a
-  // structured diagnostic (PR 2b) rather than just a log.warn.
-  transformData(data4Layout, diag.db);
 
   // Create the root SVG
   const svg = getDiagramElement(id, securityLevel);

@@ -104,14 +104,20 @@ describe('issue #56 part 2: YAML @{ } errors report source coordinates', () => {
     expect(err.message).toContain('(5:31)');
   });
 
-  it('does not touch non-YAML errors raised after a block parses', () => {
-    // A well-formed block with an invalid shape throws a plain Error from
-    // addVertex *after* yaml.load succeeds — it must pass through unchanged,
-    // with no (R:C) reference or hash attached by the YAML translator.
+  it('leaves the message of a non-YAML error alone but still locates it', () => {
+    // A well-formed block with an invalid shape throws from addVertex *after*
+    // yaml.load succeeds. The YAML translator must not rewrite the message —
+    // no `(R:C)` reference, no gutter excerpt — but the error still carries the
+    // block's position structurally so an editor can point at it.
     const err = parseExpectingError('agentflow-beta TB\n  a["A"]@{ shape: Rounded }');
     expect(err.message).toContain('No such shape');
     expect(err.message).not.toMatch(/\(\d+:\d+\)/);
-    expect(err.hash).toBeUndefined();
+    expect(err.hash?.loc.first_line).toBe(2);
+  });
+
+  it('applies the frontmatter offset to a shape error too', () => {
+    const err = parseExpectingError('agentflow-beta TB\n  a["A"]@{ shape: Rounded }', 3);
+    expect(err.hash?.loc.first_line).toBe(5);
   });
 
   it('a well-formed @{ } block parses without throwing', () => {

@@ -64,8 +64,8 @@ const getStyles = (options: AgentflowStyleOptions) =>
     text-anchor: middle;
   }
   .node .katex path {
-    fill: #000;
-    stroke: #000;
+    fill: ${options.nodeTextColor || options.textColor};
+    stroke: ${options.nodeTextColor || options.textColor};
     stroke-width: 1px;
   }
 
@@ -113,7 +113,6 @@ const getStyles = (options: AgentflowStyleOptions) =>
   /* For html labels only */
   .labelBkg {
     background-color: ${fade(options.edgeLabelBackground, 0.5)};
-    // background-color:
   }
 
   .cluster rect {
