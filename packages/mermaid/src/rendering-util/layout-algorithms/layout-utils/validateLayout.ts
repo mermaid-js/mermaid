@@ -25,6 +25,8 @@ const EPS_PORT = 2;
 const EPS_BORDER = 2;
 /** Minimum overlap length to count as shared subpath */
 const L_MIN_SHARED = 8;
+/** Minimum perpendicular gap between long parallel edge sections. */
+const EPS_PARALLEL_EDGE_GAP = 7;
 /** Minimum near-border length to count as border hugging */
 const L_MIN_BORDER = 12;
 /** Exemption corridor near endpoints for certain checks */
@@ -63,6 +65,10 @@ const MAX_SCORE = 1000;
 
 /** Final/first segment shorter than this trips `edge-bend-near-endpoint`. */
 const EPS_FINAL_APPROACH = 10;
+/** Conservative marker body length used for label-vs-arrowhead clearance. */
+const EPS_MARKER_CLEARANCE_LENGTH = 10;
+/** Half-width of the marker clearance corridor around the terminal segment. */
+const EPS_MARKER_CLEARANCE_HALF_WIDTH = 7;
 /** A parallel rail closer than this to an endpoint side is still a near-end bend/band. */
 const EPS_ENDPOINT_BAND = 18;
 /** Two distinct edges sharing an attach point on a node within this distance trips `edge-shared-attachment-point`. */
@@ -94,6 +100,7 @@ export type LayoutIssueType =
   | 'edge-non-orthogonal'
   | 'edge-intersects-node'
   | 'edge-intersects-obstacle'
+  | 'edge-intersects-group-title'
   | 'edge-port-direction-mismatch'
   | 'edge-same-port-departure'
   | 'edge-shared-attachment-point'
@@ -101,11 +108,13 @@ export type LayoutIssueType =
   | 'edge-bend-near-endpoint'
   | 'edge-corner-connection'
   | 'edge-shared-subpath'
+  | 'edge-parallel-segment-too-close'
   | 'edge-border-hugging'
   | 'node-border-hugging'
   | 'edge-label-off-edge'
   | 'edge-endpoint-inside-node'
   | 'edge-label-overlaps-foreign-edge'
+  | 'edge-label-overlaps-own-arrowhead'
   | 'edge-label-overlaps-group-border';
 
 export interface Issue {
@@ -179,6 +188,10 @@ function isObstacle(node: Node): boolean {
   return false;
 }
 
+function isSwimlaneGroup(node: Node | undefined): boolean {
+  return Boolean(node?.isGroup && (node as { shape?: string }).shape === 'swimlane');
+}
+
 /** Direction from point a to point b */
 function direction(a: Point, b: Point): 'E' | 'W' | 'N' | 'S' | null {
   const dx = b.x - a.x;
@@ -231,6 +244,24 @@ function collinearOverlap(s1: Segment, s2: Segment): number {
     }
     return rangeOverlap(s1.a.y, s1.b.y, s2.a.y, s2.b.y);
   }
+}
+
+/** Projected overlap for same-orientation parallel segments, regardless of gap. */
+function parallelProjectedOverlap(s1: Segment, s2: Segment): number {
+  if (s1.orientation !== s2.orientation || s1.orientation === 'Z') {
+    return 0;
+  }
+  return s1.orientation === 'H'
+    ? rangeOverlap(s1.a.x, s1.b.x, s2.a.x, s2.b.x)
+    : rangeOverlap(s1.a.y, s1.b.y, s2.a.y, s2.b.y);
+}
+
+/** Perpendicular distance between same-orientation parallel segments. */
+function parallelSegmentGap(s1: Segment, s2: Segment): number | null {
+  if (s1.orientation !== s2.orientation || s1.orientation === 'Z') {
+    return null;
+  }
+  return s1.orientation === 'H' ? Math.abs(s1.a.y - s2.a.y) : Math.abs(s1.a.x - s2.a.x);
 }
 
 /** Check if a segment runs near a rect border for a significant length */
@@ -288,6 +319,50 @@ function withinAttachCorridor(p: Point, ref: Point): boolean {
   return distance(p, ref) <= L_ATTACH;
 }
 
+function segmentWithinSameAttachCorridor(a: Point, b: Point, start: Point, end: Point): boolean {
+  return (
+    (withinAttachCorridor(a, start) && withinAttachCorridor(b, start)) ||
+    (withinAttachCorridor(a, end) && withinAttachCorridor(b, end))
+  );
+}
+
+function pointWithinEitherAttachCorridor(p: Point, start: Point, end: Point): boolean {
+  return withinAttachCorridor(p, start) || withinAttachCorridor(p, end);
+}
+
+function segmentEndpointsWithinAttachCorridors(seg: Segment, start: Point, end: Point): boolean {
+  return (
+    pointWithinEitherAttachCorridor(seg.a, start, end) &&
+    pointWithinEitherAttachCorridor(seg.b, start, end)
+  );
+}
+
+interface SegmentHit {
+  segmentIndex: number;
+  a: Point;
+  b: Point;
+}
+
+function firstInteriorRectHit(
+  points: Point[],
+  rect: Rect,
+  startAttach: Point,
+  endAttach: Point,
+  skip?: (a: Point, b: Point) => boolean
+): SegmentHit | undefined {
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i];
+    const b = points[i + 1];
+    if (segmentWithinSameAttachCorridor(a, b, startAttach, endAttach) || skip?.(a, b)) {
+      continue;
+    }
+    if (segmentIntersectsRectInterior(a, b, rect)) {
+      return { segmentIndex: i, a, b };
+    }
+  }
+  return undefined;
+}
+
 function isAncestorGroup(ancestorId: string, node: Node, byId: Map<string, Node>): boolean {
   const seen = new Set<string>();
   let cur: Node | undefined = node;
@@ -312,6 +387,32 @@ function rectsOverlap(a: Rect, b: Rect): { overlapX: number; overlapY: number } 
     return null;
   }
   return { overlapX, overlapY };
+}
+
+function groupTitleRectForNode(node: Node): Rect | null {
+  const raw = node.groupTitleRect;
+  if (!raw) {
+    return null;
+  }
+  const { left, right, top, bottom } = raw;
+  if (
+    !Number.isFinite(left) ||
+    !Number.isFinite(right) ||
+    !Number.isFinite(top) ||
+    !Number.isFinite(bottom) ||
+    right <= left ||
+    bottom <= top
+  ) {
+    return null;
+  }
+  return {
+    cx: (left + right) / 2,
+    cy: (top + bottom) / 2,
+    left,
+    right,
+    top,
+    bottom,
+  };
 }
 
 /**
@@ -342,6 +443,73 @@ function labelRectForEdge(e: unknown): Rect | null {
     return null;
   }
   return { cx: x, cy: y, left: x - w / 2, right: x + w / 2, top: y - h / 2, bottom: y + h / 2 };
+}
+
+type EdgeTerminal = 'start' | 'end';
+
+function hasTerminalMarker(e: _Edge, terminal: EdgeTerminal): boolean {
+  const markerType = terminal === 'start' ? e.arrowTypeStart : e.arrowTypeEnd;
+  if (typeof markerType === 'string') {
+    const trimmed = markerType.trim();
+    if (trimmed.length > 0 && trimmed !== 'none' && trimmed !== 'arrow_open') {
+      return true;
+    }
+  }
+
+  if (typeof e.type !== 'string') {
+    return false;
+  }
+  // Flowchart/swimlane edges often carry marker semantics in `type`.
+  if (terminal === 'start' && e.type.startsWith('double_')) {
+    return true;
+  }
+  return terminal === 'end' && /arrow_(point|cross|circle|barb)|double_arrow/.test(e.type);
+}
+
+function terminalMarkerClearanceRect(points: Point[], terminal: EdgeTerminal): Rect | null {
+  if (points.length < 2) {
+    return null;
+  }
+
+  const tip = terminal === 'end' ? points[points.length - 1] : points[0];
+  const inner = terminal === 'end' ? points[points.length - 2] : points[1];
+  const dx = inner.x - tip.x;
+  const dy = inner.y - tip.y;
+
+  if (Math.abs(dx) <= EPS && Math.abs(dy) <= EPS) {
+    return null;
+  }
+
+  const len = EPS_MARKER_CLEARANCE_LENGTH;
+  const half = EPS_MARKER_CLEARANCE_HALF_WIDTH;
+  if (Math.abs(dy) <= EPS) {
+    const x2 = tip.x + Math.sign(dx) * len;
+    const left = Math.min(tip.x, x2);
+    const right = Math.max(tip.x, x2);
+    return {
+      cx: (left + right) / 2,
+      cy: tip.y,
+      left,
+      right,
+      top: tip.y - half,
+      bottom: tip.y + half,
+    };
+  }
+  if (Math.abs(dx) <= EPS) {
+    const y2 = tip.y + Math.sign(dy) * len;
+    const top = Math.min(tip.y, y2);
+    const bottom = Math.max(tip.y, y2);
+    return {
+      cx: tip.x,
+      cy: (top + bottom) / 2,
+      left: tip.x - half,
+      right: tip.x + half,
+      top,
+      bottom,
+    };
+  }
+
+  return null;
 }
 
 function _polylineIsOrthogonal(points: Point[]): boolean {
@@ -437,6 +605,12 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   const issues: Issue[] = [];
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
+  const edgeById = new Map<string, _Edge>();
+  for (const e of edges) {
+    if (e?.id != null) {
+      edgeById.set(String(e.id), e);
+    }
+  }
   const byId = new Map<string, Node>();
   for (const n of nodes) {
     if (n?.id != null) {
@@ -456,6 +630,7 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   // Build obstacle rects (leaf nodes + label dummy nodes)
   const obstacleRects = new Map<string, Rect>();
   const groupBorderRects = new Map<string, Rect>();
+  const groupTitleRects = new Map<string, Rect>();
   for (const n of nodes) {
     if (n?.id == null) {
       continue;
@@ -463,7 +638,12 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     if (isObstacle(n)) {
       obstacleRects.set(String(n.id), rectForNode(n));
     } else if (n.isGroup) {
-      groupBorderRects.set(String(n.id), rectForNode(n));
+      const groupId = String(n.id);
+      groupBorderRects.set(groupId, rectForNode(n));
+      const groupTitleRect = groupTitleRectForNode(n);
+      if (groupTitleRect) {
+        groupTitleRects.set(groupId, groupTitleRect);
+      }
     }
   }
   const borderHugRects = new Map<string, Rect>([...obstacleRects, ...groupBorderRects]);
@@ -529,17 +709,17 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // 1b) Node-vs-foreign-group border-hugging
+  // 1b) Node-vs-group border-hugging
   //
-  // A non-group node whose own border runs ALONG the rendered border of a
-  // group it does not belong to (a sibling / foreign subgraph) for a
-  // significant length is a visual defect: the node visually merges into the
-  // subgraph frame. This is the node analogue of `edge-border-hugging` and
-  // reuses the same EPS_BORDER (proximity) / L_MIN_BORDER (run length)
-  // thresholds via `segmentBorderHugLength`. The node's four sides are tested
-  // as segments against each foreign group's border rect. The node's own
-  // ancestor (containing) groups are excluded — a child legitimately sits
-  // inside its parent group's frame.
+  // A non-group node whose own border runs ALONG a rendered group border for
+  // a significant length is a visual defect: the node visually merges into the
+  // frame. For ordinary groups this catches sibling / foreign subgraphs; for
+  // swimlanes it also catches collapsed padding against the containing lane.
+  // This is the node analogue of `edge-border-hugging` and reuses the same
+  // EPS_BORDER (proximity) / L_MIN_BORDER (run length) thresholds via
+  // `segmentBorderHugLength`. The node's own ordinary ancestor groups are
+  // excluded — a child legitimately sits inside its parent frame — but
+  // swimlanes still need visible lane/content padding.
   // ─────────────────────────────────────────────────────────────────────────────
   for (const n of nodes) {
     if (n?.id == null || n.isGroup || isLabelDummy(n)) {
@@ -557,7 +737,9 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       { a: { x: nr.right, y: nr.top }, b: { x: nr.right, y: nr.bottom }, orientation: 'V' },
     ];
     for (const [gId, gRect] of groupBorderRects) {
-      if (isAncestorGroup(gId, n, byId)) {
+      const groupNode = byId.get(gId);
+      const ownAncestor = isAncestorGroup(gId, n, byId);
+      if (ownAncestor && !isSwimlaneGroup(groupNode)) {
         continue;
       }
       let maxHug = 0;
@@ -605,6 +787,8 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     const edgeId = e?.id != null ? String(e.id) : '';
     const startId = e.start != null ? String(e.start) : '';
     const endId = e.end != null ? String(e.end) : '';
+    const sNode = byId.get(startId);
+    const tNode = byId.get(endId);
 
     if (
       !Array.isArray((e as { points?: Point[] }).points) ||
@@ -652,7 +836,6 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         });
       }
 
-      const tNode = byId.get(endId);
       if (tNode && normalized.segments.length >= 2 && lastLen >= EPS_FINAL_APPROACH) {
         const endSide = sideFromBoundaryPoint(points[points.length - 1], rectForNode(tNode));
         const endBand = endSide
@@ -709,34 +892,45 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         continue;
       }
 
-      for (let i = 0; i < points.length - 1; i++) {
-        const a = points[i];
-        const b = points[i + 1];
-        // Skip if segment is within attachment corridor of endpoints
-        const isNearStart =
-          withinAttachCorridor(a, startAttach) && withinAttachCorridor(b, startAttach);
-        const isNearEnd = withinAttachCorridor(a, endAttach) && withinAttachCorridor(b, endAttach);
-        if (isNearStart || isNearEnd) {
-          continue;
-        }
+      const hit = firstInteriorRectHit(points, obstacleRect, startAttach, endAttach);
+      if (hit) {
+        issues.push({
+          type: 'edge-intersects-obstacle',
+          message: `Edge "${edgeId}" intersects obstacle "${obstacleId}"`,
+          edgeId,
+          nodeIds: [obstacleId],
+          details: { ...hit },
+        });
+      }
+    }
 
-        if (segmentIntersectsRectInterior(a, b, obstacleRect)) {
-          issues.push({
-            type: 'edge-intersects-obstacle',
-            message: `Edge "${edgeId}" intersects obstacle "${obstacleId}"`,
-            edgeId,
-            nodeIds: [obstacleId],
-            details: { segmentIndex: i, a, b },
-          });
-          break;
-        }
+    let hitGroupTitle = false;
+    for (const [groupId, titleRect] of groupTitleRects) {
+      const hit = firstInteriorRectHit(points, titleRect, startAttach, endAttach, (a, b) => {
+        const touchesStartAttach =
+          distance(a, startAttach) <= EPS || distance(b, startAttach) <= EPS;
+        const touchesEndAttach = distance(a, endAttach) <= EPS || distance(b, endAttach) <= EPS;
+        return (
+          (touchesStartAttach && sNode ? isAncestorGroup(groupId, sNode, byId) : false) ||
+          (touchesEndAttach && tNode ? isAncestorGroup(groupId, tNode, byId) : false)
+        );
+      });
+      if (hit) {
+        issues.push({
+          type: 'edge-intersects-group-title',
+          message: `Edge "${edgeId}" intersects title section of group "${groupId}"`,
+          edgeId,
+          nodeIds: [groupId],
+          details: { ...hit, titleRect },
+        });
+        hitGroupTitle = true;
+      }
+      if (hitGroupTitle) {
+        break;
       }
     }
 
     // Check edge-corner-connection for start and end nodes
-    const sNode = byId.get(startId);
-    const tNode = byId.get(endId);
-
     if (sNode && points.length >= 1) {
       const r = rectForNode(sNode);
       if (minDistanceToCorners(points[0], r) <= EPS_CORNER) {
@@ -868,11 +1062,7 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       }
       for (const seg of normalized.segments) {
         // Skip segments where BOTH endpoints are near same edge endpoint
-        const bothNearStart =
-          withinAttachCorridor(seg.a, startAttach) && withinAttachCorridor(seg.b, startAttach);
-        const bothNearEnd =
-          withinAttachCorridor(seg.a, endAttach) && withinAttachCorridor(seg.b, endAttach);
-        if (bothNearStart || bothNearEnd) {
+        if (segmentWithinSameAttachCorridor(seg.a, seg.b, startAttach, endAttach)) {
           continue;
         }
 
@@ -948,6 +1138,38 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
 
     for (const { rect: labelRect, ownerEdgeId, labelNodeId } of labelEntries) {
       const who = labelNodeId ? `node "${labelNodeId}"` : `of edge "${ownerEdgeId}"`;
+      const ownerEdge = ownerEdgeId ? edgeById.get(ownerEdgeId) : undefined;
+      const ownerMeta = ownerEdgeId ? edgeMetas.find((em) => em.id === ownerEdgeId) : undefined;
+
+      // edge-label-overlaps-own-arrowhead: labels should not sit on top of
+      // their own start/end marker. This complements `edge-label-off-edge`:
+      // a label can be on its edge and still visually cover the arrowhead.
+      if (ownerEdge && ownerMeta) {
+        for (const terminal of ['start', 'end'] as const) {
+          if (!hasTerminalMarker(ownerEdge, terminal)) {
+            continue;
+          }
+          const markerRect = terminalMarkerClearanceRect(ownerMeta.normalized.points, terminal);
+          const overlap = markerRect ? rectsOverlap(labelRect, markerRect) : null;
+          if (overlap) {
+            issues.push({
+              type: 'edge-label-overlaps-own-arrowhead',
+              message: `Label ${who} overlaps ${terminal} arrowhead marker of edge "${ownerEdgeId}"`,
+              edgeId: ownerEdgeId,
+              nodeIds: labelNodeId ? [labelNodeId] : [],
+              details: {
+                terminal,
+                labelRect,
+                markerRect,
+                overlapX: overlap.overlapX,
+                overlapY: overlap.overlapY,
+                markerClearanceLength: EPS_MARKER_CLEARANCE_LENGTH,
+              },
+            });
+            break; // one marker-overlap issue per label
+          }
+        }
+      }
 
       // edge-label-overlaps-foreign-edge: any OTHER edge's polyline through it.
       for (const em of edgeMetas) {
@@ -1121,9 +1343,34 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // 4) Shared subpath check (pairwise edges)
+  // 4) Shared / crowded parallel subpath checks (pairwise edges)
   // ─────────────────────────────────────────────────────────────────────────────
   const sortedEdges = [...edgeMetas].sort((a, b) => a.id.localeCompare(b.id));
+  const segmentTouchesPoint = (seg: Segment, p: Point): boolean =>
+    distance(seg.a, p) <= EPS || distance(seg.b, p) <= EPS;
+  const isTerminalSegmentForNode = (em: EdgeMeta, seg: Segment, nodeId: string): boolean => {
+    if (em.startId === nodeId && segmentTouchesPoint(seg, em.normalized.points[0])) {
+      return true;
+    }
+    return (
+      em.endId === nodeId &&
+      segmentTouchesPoint(seg, em.normalized.points[em.normalized.points.length - 1])
+    );
+  };
+  const closeSectionsAreSharedNodeTerminalStubs = (
+    e1: EdgeMeta,
+    s1: Segment,
+    e2: EdgeMeta,
+    s2: Segment
+  ): boolean => {
+    const sharedNodeIds = [e1.startId, e1.endId].filter(
+      (id) => id.length > 0 && (id === e2.startId || id === e2.endId)
+    );
+    return sharedNodeIds.some(
+      (nodeId) =>
+        isTerminalSegmentForNode(e1, s1, nodeId) && isTerminalSegmentForNode(e2, s2, nodeId)
+    );
+  };
   for (let i = 0; i < sortedEdges.length; i++) {
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
@@ -1132,24 +1379,49 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       for (const s1 of e1.normalized.segments) {
         for (const s2 of e2.normalized.segments) {
           const overlap = collinearOverlap(s1, s2);
+          const e1Start = e1.points[0];
+          const e1End = e1.points[e1.points.length - 1];
+          const e2Start = e2.points[0];
+          const e2End = e2.points[e2.points.length - 1];
           if (overlap >= L_MIN_SHARED) {
             // Check if overlap is within attachment corridors of either edge
-            const e1Start = e1.points[0];
-            const e1End = e1.points[e1.points.length - 1];
-            const e2Start = e2.points[0];
-            const e2End = e2.points[e2.points.length - 1];
-
             const allInCorridor =
-              (withinAttachCorridor(s1.a, e1Start) || withinAttachCorridor(s1.a, e1End)) &&
-              (withinAttachCorridor(s1.b, e1Start) || withinAttachCorridor(s1.b, e1End)) &&
-              (withinAttachCorridor(s2.a, e2Start) || withinAttachCorridor(s2.a, e2End)) &&
-              (withinAttachCorridor(s2.b, e2Start) || withinAttachCorridor(s2.b, e2End));
+              segmentEndpointsWithinAttachCorridors(s1, e1Start, e1End) &&
+              segmentEndpointsWithinAttachCorridors(s2, e2Start, e2End);
 
             if (!allInCorridor) {
               issues.push({
                 type: 'edge-shared-subpath',
                 message: `Edges "${e1.id}" and "${e2.id}" share a subpath of length ${overlap.toFixed(1)}`,
                 details: { edgeIds: [e1.id, e2.id], overlapLength: overlap },
+              });
+            }
+          }
+
+          const projectedOverlap = parallelProjectedOverlap(s1, s2);
+          const gap = parallelSegmentGap(s1, s2);
+          if (
+            projectedOverlap >= L_MIN_SHARED &&
+            gap != null &&
+            gap > EPS &&
+            gap < EPS_PARALLEL_EDGE_GAP
+          ) {
+            const allInCorridor =
+              segmentEndpointsWithinAttachCorridors(s1, e1Start, e1End) &&
+              segmentEndpointsWithinAttachCorridors(s2, e2Start, e2End);
+
+            if (!allInCorridor && !closeSectionsAreSharedNodeTerminalStubs(e1, s1, e2, s2)) {
+              issues.push({
+                type: 'edge-parallel-segment-too-close',
+                message: `Edges "${e1.id}" and "${e2.id}" have parallel sections ${gap.toFixed(1)}px apart over ${projectedOverlap.toFixed(1)}px`,
+                details: {
+                  edgeIds: [e1.id, e2.id],
+                  gap,
+                  threshold: EPS_PARALLEL_EDGE_GAP,
+                  overlapLength: projectedOverlap,
+                  minOverlap: L_MIN_SHARED,
+                  segments: [s1, s2],
+                },
               });
             }
           }

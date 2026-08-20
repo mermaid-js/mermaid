@@ -2,24 +2,14 @@ import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 const SWIMLANE_FIXTURE_DIR = 'cypress/platform/dev-diagrams/layout-tests/swimlanes';
 
-const SWIMLANE_FIXTURES = [
-  '1-simple.mmd',
-  '10-node-placement.mmd',
-  '2-decisions-lr.mmd',
-  '3-decisions-tb.mmd',
-  '4-car-fun-sales-tb.mmd',
-  '5-car-fun-sales-wide-tb.mmd',
-  '6-legal-constr-sales.mmd',
-  '7-car-sales-constr.mmd',
-  '8-query-process-2.mmd',
-  '9-edge-labels.mmd',
-  'commant.mmd',
-  'intake-review-complete.mmd',
-  'mermaid-work.mmd',
-  'query-process.mmd',
-  'sales-process.mmd',
-  'simple-2.mmd',
-];
+const readSwimlaneFixtures = (): string[] => {
+  const fixtures = Cypress.env('swimlaneFixtures');
+  return Array.isArray(fixtures) && fixtures.every((fixture) => typeof fixture === 'string')
+    ? fixtures
+    : [];
+};
+
+const SWIMLANE_FIXTURES = readSwimlaneFixtures();
 
 // A representative subset additionally rendered in handdrawn/rough mode. Swimlanes
 // inherits rough rendering from the flowchart node shapes and the shared cluster
@@ -40,7 +30,7 @@ const asStandaloneSwimlanes = (source: string): string => {
   // diagram type directly, so it is rendered as-is. This guard keeps that
   // invariant — a fixture authored as flowchart/graph would fail here.
   expect(source, 'fixture should declare the standalone swimlane diagram type').to.match(
-    /^\s*swimlane\s/m
+    /^\s*swimlane-beta\s/m
   );
   return source;
 };
@@ -101,6 +91,7 @@ const nodeShape = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {
 
 describe('Swimlanes diagram', () => {
   it('covers every swimlanes layout-test fixture', () => {
+    expect(SWIMLANE_FIXTURES.length, 'generated swimlane fixture inventory').to.be.greaterThan(0);
     cy.task('listSwimlaneFixtures').should('deep.equal', SWIMLANE_FIXTURES);
   });
 
@@ -126,7 +117,7 @@ describe('Swimlanes diagram', () => {
 
   it('defaults to the swimlanes layout without an explicit layout config', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph Intake
           A[Request]
         end
@@ -144,7 +135,7 @@ describe('Swimlanes diagram', () => {
 
   it('applies custom theme variables', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph ThemeLane
           A[Themed node]
           B[Next node]
@@ -176,7 +167,7 @@ describe('Swimlanes diagram', () => {
 
   it('applies flowchart style and linkStyle statements', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph StyledLane
           A[Styled node]
           B[Linked node]
@@ -204,7 +195,7 @@ describe('Swimlanes diagram', () => {
 
   it('applies classDef and class statements', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph ClassLane
           A[Classed node]
           B[Default node]
@@ -227,7 +218,7 @@ describe('Swimlanes diagram', () => {
 
   it('puts nodes without an explicit subgraph into a default swimlane', () => {
     renderSwimlanes(
-      `swimlane LR
+      `swimlane-beta LR
         subgraph OwnedLane
           A[Owned node]
         end

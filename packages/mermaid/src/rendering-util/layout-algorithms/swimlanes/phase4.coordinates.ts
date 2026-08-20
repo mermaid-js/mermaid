@@ -1,12 +1,13 @@
 import type { Graph, OrderedLayers, Coordinates, NodeId, EdgeRef } from './helpers.js';
 import { COORDINATES } from './config.js';
-import { buildTopLaneOrder, createTopLaneResolver } from './phase2.options.js';
+import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
 
 export interface CoordOptions {
   layerGap?: number; // vertical distance between layers
   nodeGap?: number; // horizontal gap between siblings inside a lane
   laneGap?: number; // horizontal gap between lanes (clusters)
   direction?: 'TB' | 'LR' | 'BT' | 'RL'; // layout direction for proper spacing
+  laneOrder?: string[];
 }
 
 export function assignCoordinates(
@@ -29,7 +30,7 @@ export function assignCoordinates(
   const getWidth = (id: NodeId) => getNode(id)?.width ?? 0;
   const getHeight = (id: NodeId) => getNode(id)?.height ?? 0;
   const topLaneOf = createTopLaneResolver(gWithDummies);
-  const laneOrderGlobal = buildTopLaneOrder(gWithDummies);
+  const laneOrderGlobal = resolveTopLaneOrder(gWithDummies, opts?.laneOrder);
 
   const layerHeights: number[] = layers.map((layer) =>
     layer.reduce((m, v) => Math.max(m, getHeight(v)), 0)

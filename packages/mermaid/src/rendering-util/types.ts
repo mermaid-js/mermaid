@@ -15,6 +15,8 @@ interface BaseNode {
   id: string;
   label?: string;
   description?: string[];
+  /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */
+  stereotype?: string;
   parentId?: string;
   position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
   cssStyles?: string[]; // Renamed from `styles` to `cssStyles`
@@ -34,7 +36,6 @@ interface BaseNode {
   domId?: string; // When you create the node in the getData function you do not have the domId yet
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
-  explicitDir?: boolean; // true only when the user wrote an explicit 'direction X' keyword
   haveCallback?: boolean;
   link?: string;
   linkTarget?: string;
@@ -47,6 +48,8 @@ interface BaseNode {
     width: number;
     height: number;
   };
+  /** Optional rendered title/header region for group-like containers. */
+  groupTitleRect?: GroupTitleRect;
   // Specific properties for State Diagram nodes TODO remove and use generic properties
   intersect?: (point: any) => any;
   calcIntersect?: (bounds: Bounds, point: Point) => any;
@@ -98,6 +101,13 @@ interface BaseNode {
  * Group/cluster nodes, e.g. nodes that contain other nodes.
  */
 export type NodeChildren = Node[];
+
+export interface GroupTitleRect {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
 
 export interface ClusterNode extends BaseNode {
   shape?: ClusterShapeID;

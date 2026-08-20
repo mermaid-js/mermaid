@@ -9,7 +9,7 @@ export default {
     {
       title: 'Expression Grammar',
       isDefault: true,
-      code: `railroad-diagram
+      code: `railroad-beta
     title Expression Grammar
 
     expression = sequence(
@@ -35,7 +35,7 @@ export default {
     },
     {
       title: 'JSON Grammar',
-      code: `railroad-diagram
+      code: `railroad-beta
     title JSON Grammar
 
     json = nonterminal("element") ;

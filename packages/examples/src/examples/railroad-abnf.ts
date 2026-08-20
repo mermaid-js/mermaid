@@ -8,7 +8,7 @@ export default {
     {
       title: 'Email Address',
       isDefault: true,
-      code: `railroad-abnf
+      code: `railroad-abnf-beta
     title Email Address
 
     address = local-part "@" domain ;
@@ -18,7 +18,7 @@ export default {
     },
     {
       title: 'Phone Number',
-      code: `railroad-abnf
+      code: `railroad-abnf-beta
     title Phone Number
 
     phone = [ "+" country-code ] subscriber ;

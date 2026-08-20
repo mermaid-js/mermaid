@@ -123,6 +123,20 @@ describe('XY Chart', () => {
       {}
     );
   });
+  it('x-axis range with same values is supported', () => {
+    imgSnapshotTest(
+      `---
+title: Dirac delta function
+---
+xychart-beta
+  x-axis "Only 0 matters" 0 --> 0
+  line "dirac" [0, 0.5, 1]
+`,
+      {}
+    );
+
+    cy.get('g.plot g.line-plot-0 path').should('exist');
+  });
   it('Render spark line with "plotReservedSpacePercent"', () => {
     imgSnapshotTest(
       `
@@ -668,8 +682,10 @@ describe('XY Chart', () => {
             expect(textProps.x).to.be.greaterThan(barProps.x);
             expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
 
-            expect(textProps.y).to.be.greaterThan(barProps.y);
-            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            // Allow 1px tolerance: getBBox() height can be 1.2-1.45x the nominal font size,
+            // so the rendered text may marginally overflow the bar edge by a fraction of a pixel.
+            expect(textProps.y).to.be.greaterThan(barProps.y - 1);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height + 1);
             expect(textProps.y + textProps.height / 2).to.be.closeTo(
               barProps.y + barProps.height / 2,
               5
@@ -779,8 +795,10 @@ describe('XY Chart', () => {
             expect(textProps.x).to.be.greaterThan(barProps.x);
             expect(textProps.x + textProps.width).to.be.lessThan(barProps.x + barProps.width);
 
-            expect(textProps.y).to.be.greaterThan(barProps.y);
-            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height);
+            // Allow 1px tolerance: getBBox() height can be 1.2-1.45x the nominal font size,
+            // so the rendered text may marginally overflow the bar edge by a fraction of a pixel.
+            expect(textProps.y).to.be.greaterThan(barProps.y - 1);
+            expect(textProps.y + textProps.height).to.be.lessThan(barProps.y + barProps.height + 1);
             expect(textProps.y + textProps.height / 2).to.be.closeTo(
               barProps.y + barProps.height / 2,
               5

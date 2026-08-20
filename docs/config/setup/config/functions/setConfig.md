@@ -8,21 +8,13 @@
 
 ---
 
-# Function: setConfig()
+# ~~Function: setConfig()~~
 
 > **setConfig**(`conf`): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:122](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L122)
+Defined in: packages/mermaid/src/config.ts:106
 
-## setConfig
-
-| Function      | Description                           | Type        | Values                                  |
-| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
-| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
-
-**Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
-keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
-corresponding siteConfig value.
+Updates the `currentConfig` with the provided `conf` after sanitization.
 
 ## Parameters
 
@@ -37,3 +29,8 @@ The potential currentConfig
 [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
 The currentConfig merged with the sanitized conf
+
+## Deprecated
+
+Any changes to the `currentConfig` would be overwritten by the
+next call to [addDirective](addDirective.md) or [reset](reset.md).

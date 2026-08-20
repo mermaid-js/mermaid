@@ -34,6 +34,7 @@ const MERMAID_CONFIG_SUBSCHEMA_KEYS = [
   'architecture',
   'eventmodeling',
   'radar',
+  'usecase',
   'icons',
   'venn',
   'cynefin',

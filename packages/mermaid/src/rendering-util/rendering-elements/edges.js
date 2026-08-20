@@ -2,6 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
 import { createText } from '../createText.js';
+import fastdom from '../fastdom.js';
 import { computeLabelTransform } from '../labelTransform.js';
 import utils, { handleUndefinedAttr } from '../../utils.js';
 import {
@@ -103,21 +104,28 @@ export const insertEdgeLabel = async (elem, edge) => {
   log.info('abc82', edge, edge.labelType);
 
   // Center the label
-  let bbox = labelElement.getBBox();
-  let transformBbox = bbox;
+  /** @type {DOMRect} */
+  let bbox;
+  /** @type {DOMRect} */
+  let transformBbox;
   if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
-    bbox = div.getBoundingClientRect();
+    bbox = await fastdom.measure(() => div.getBoundingClientRect());
     transformBbox = bbox;
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
     // For SVG labels, use text element's bbox so the text is centered on the edge
     const textEl = select(labelElement).select('text').node();
-    if (textEl && typeof textEl.getBBox === 'function') {
-      transformBbox = textEl.getBBox();
-    }
+    await fastdom.measure(() => {
+      bbox = labelElement.getBBox();
+      if (textEl && typeof textEl.getBBox === 'function') {
+        transformBbox = textEl.getBBox();
+      } else {
+        transformBbox = bbox;
+      }
+    });
   }
   label.attr('transform', computeLabelTransform(transformBbox, useHtmlLabels));
 
@@ -625,13 +633,16 @@ export const insertEdge = function (
         const innerPoints = points.slice(1, -1);
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
+        const TOLERANCE = 0.5;
+        const lastIsPinned =
+          Math.abs(points[points.length - 1].x - lastInner.x) < TOLERANCE &&
+          Math.abs(points[points.length - 1].y - lastInner.y) < TOLERANCE;
 
         const newFirst = tail.intersect(firstInner);
-        const newLast = head.intersect(lastInner);
+        const newLast = lastIsPinned ? lastInner : head.intersect(lastInner);
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
-        const TOLERANCE = 0.5;
         const lastIsDuplicate =
           Math.abs(newLast.x - lastInner.x) < TOLERANCE &&
           Math.abs(newLast.y - lastInner.y) < TOLERANCE;
