@@ -240,6 +240,15 @@ function groupRelative(source: string, groupKey: string): string {
   return groupKey && source.startsWith(`${groupKey}/`) ? source.slice(groupKey.length + 1) : source;
 }
 
+/**
+ * Inverse of {@link groupRelative}: the full source path for a manifest entry.
+ * `root` is {@link deriveGroupKey}'s synthetic key for top-level screenshots, not
+ * a real path segment, so it must not be prefixed back on.
+ */
+function groupSource(groupKey: string, rel: string): string {
+  return groupKey === 'root' ? rel : `${groupKey}/${rel}`;
+}
+
 /** A slot in a group's layout: a captured screenshot, or a blank placeholder. */
 interface TileSlot {
   source: string;
@@ -277,7 +286,7 @@ function layoutGroup(sources: string[], groupKey: string, order?: OrderManifest)
   const presentSet = new Set(sources);
   const canonicalSet = new Set(canonical);
   const slots: TileSlot[] = canonical.map((rel) => {
-    const source = `${groupKey}/${rel}`;
+    const source = groupSource(groupKey, rel);
     return { source, missing: !presentSet.has(source) };
   });
   const appended = sources
@@ -363,7 +372,7 @@ export function updateOrder(
   const present = new Set(relPaths);
   const next: OrderManifest = {};
   for (const [key, rels] of Object.entries(extendOrder(previous, relPaths, origins))) {
-    const kept = rels.filter((rel) => present.has(`${key}/${rel}`));
+    const kept = rels.filter((rel) => present.has(groupSource(key, rel)));
     if (kept.length > 0) {
       next[key] = kept;
     }

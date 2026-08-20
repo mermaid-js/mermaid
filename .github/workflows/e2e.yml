@@ -428,9 +428,10 @@ jobs:
       # cell, so adding/removing a test changes only that group's last/affected
       # sheet instead of cascading. Groups the manifest doesn't cover yet are tiled
       # in test-declaration order (read from the capture sidecars), so a test added
-      # at the end of its spec still appends instead of re-sorting the group. The
-      # manifest is compacted periodically by the "Refresh screenshot sheet order"
-      # workflow (opens a PR), not on every run.
+      # at the end of its spec still appends instead of re-sorting the group; tiles
+      # whose sidecar is missing or unreadable fall back to source-path order at
+      # the group's tail. The manifest is compacted periodically by the "Refresh
+      # screenshot sheet order" workflow (opens a PR), not on every run.
       - name: Composite screenshots into per-spec sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
         run: pnpm run screenshots:sheets

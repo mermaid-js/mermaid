@@ -597,6 +597,17 @@ describe('declaration-order tail for unpinned tiles', () => {
     ]);
   });
 
+  it('round-trips a root-level screenshot without blanking or pruning it', () => {
+    // deriveGroupKey('tile.png') is the synthetic 'root' key; rebuilding sources
+    // must not prefix it back on, or the tile turns into a blank 'root/tile.png'
+    // cell and drops out of the refreshed manifest.
+    const order = extendOrder({}, ['tile.png']);
+    expect(order).toEqual({ root: ['tile.png'] });
+    const [sheet] = planSheets(['tile.png'], { tilesPerSheet: 12, cols: 3, order });
+    expect(sheet.tiles.map((t) => [t.source, t.missing ?? false])).toEqual([['tile.png', false]]);
+    expect(updateOrder(['tile.png'], order)).toEqual({ root: ['tile.png'] });
+  });
+
   it('reads declaration positions from the capture sidecars on disk', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'argos-origins-'));
     const source = `${FC_MAIN}/a.png`;
