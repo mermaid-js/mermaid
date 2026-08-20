@@ -12,7 +12,7 @@ import { DDLT_SIZE_CAPTURE_VERSION } from './captureContract.js';
 // When enabled, it records the measured bounding-box dimensions of every leaf
 // node and edge-label dummy node, matching the `.sizes.json` fixture format used
 // by DOM-Decoupled Layout Testing (see
-// cypress/platform/dev-diagrams/layout-tests/*.sizes.json).
+// e2e/platform/dev-diagrams/layout-tests/*.sizes.json).
 //
 // Toggle from the browser devtools:
 //
