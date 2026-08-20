@@ -113,6 +113,7 @@ function parseInlineMarkdown(
  * Uses ownerDocument for sandbox/iframe compatibility.
  * Caches results by (text, fontSize, bold, italic) for performance.
  */
+const MEASURE_CACHE_LIMIT = 5000;
 const measureCache = new Map<string, number>();
 function measureText(
   svgRoot: SVGElement,
@@ -121,7 +122,10 @@ function measureText(
   bold = false,
   italic = false
 ): number {
-  const cacheKey = `${text}\0${fontSize}\0${bold}\0${italic}`;
+  const doc = svgRoot.ownerDocument || document;
+  // Include doc identity to avoid cross-document cache collisions
+  const docId = doc === document ? '' : String(doc.hashCode ?? 0);
+  const cacheKey = `${text}\0${fontSize}\0${bold}\0${italic}\0${docId}`;
   if (measureCache.has(cacheKey)) {
     return measureCache.get(cacheKey)!;
   }
@@ -151,6 +155,15 @@ function measureText(
   }
 
   measureCache.set(cacheKey, width);
+
+  // Evict oldest entries when cache exceeds limit
+  if (measureCache.size > MEASURE_CACHE_LIMIT) {
+    const firstKey = measureCache.keys().next().value;
+    if (firstKey) {
+      measureCache.delete(firstKey);
+    }
+  }
+
   return width;
 }
 
