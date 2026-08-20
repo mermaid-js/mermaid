@@ -13,6 +13,7 @@
  */
 import { beforeAll, describe, expect, vi } from 'vitest';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
+import { log } from '../../logger.js';
 import { mermaidAPI } from '../../mermaidAPI.js';
 import { jsdomIt } from '../../tests/util.js';
 import { AgentFlowDB } from './agentflowDb.js';
@@ -71,5 +72,30 @@ describe('agentflow under maxTextSize', () => {
 
     // Three comment lines survive, so `a` is on line 5.
     expect(seen.at(-1)!.getElementById('a')?.position.startLine).toBe(5);
+  });
+
+  jsdomIt('caps the parse() path too, not only render()', async () => {
+    // `parse()` has no truncation path of its own, and it is what editor
+    // tooling calls — so the cap has to live where the parsed string is
+    // chosen, not in `render()`.
+    const seen = captureDbs();
+    await mermaidAPI.parse(padded(4000));
+    vi.restoreAllMocks();
+
+    expect(seen.at(-1)!.getElementById('a')?.position.startLine).toBe(2);
+  });
+
+  jsdomIt('says nothing for a comment-heavy diagram that never parses comments', async () => {
+    // A flowchart does not set `preserveCommentsWhenParsing`, so the
+    // comment-preserving variant is irrelevant to it. Warning about "reported
+    // source positions" there would be noise about a feature it does not have.
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    const comments = Array.from({ length: 4000 }, () => COMMENT_LINE).join('\n');
+    await mermaidAPI.render('flowchart-maxsize', `flowchart TD\n${comments}\n  A --> B`);
+
+    expect(
+      warn.mock.calls.filter((call) => String(call[0]).includes('Comment-preserving source'))
+    ).toHaveLength(0);
+    vi.restoreAllMocks();
   });
 });
