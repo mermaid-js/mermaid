@@ -24,6 +24,7 @@ Doctave
 DokuWiki
 dompurify
 elkjs
+fastdom
 fcose
 fontawesome
 Fonticons
@@ -77,6 +78,7 @@ tsbuildinfo
 tseslint
 Tuleap
 Typora
+uninstrumented
 unocss
 unplugin
 unstub
