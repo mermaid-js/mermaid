@@ -462,6 +462,18 @@ export const draw = function (text, id, version, diagObj) {
           return (endX - startX) / 2 + startX + theSidePad;
         }
       })
+      .each(function (d) {
+        if (!d.vert) {
+          return;
+        }
+        // Row spacing has to be settled before any label is positioned, so
+        // measure them all first and keep the tallest.
+        const { height } = this.getBBox();
+        vertLabelStack.lineHeight = Math.max(
+          vertLabelStack.lineHeight,
+          height > 0 ? height : conf.fontSize
+        );
+      })
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
@@ -478,12 +490,6 @@ export const draw = function (text, id, version, diagObj) {
           const right = centerX + bbox.width / 2 + VERT_LABEL_GAP;
 
           const row = placeInFirstFreeRow(vertLabelStack.rows, left, right);
-          // getBBox() reports 0 when the text hasn't been laid out (e.g. jsdom),
-          // in which case fall back to the configured font size.
-          vertLabelStack.lineHeight = Math.max(
-            vertLabelStack.lineHeight,
-            bbox.height > 0 ? bbox.height : conf.fontSize
-          );
           vertLabelStack.extraRows = Math.max(vertLabelStack.extraRows, row);
 
           return baseY + row * vertLabelStack.lineHeight;
