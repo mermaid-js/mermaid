@@ -129,13 +129,21 @@ agentflow-beta TB
   // ──────────────────────────────────────────────────────────────
 
   describe('inside node shapes', () => {
+    // Each rule swallows `%%` to the end of the line, so the label has to span
+    // a line break for the comment to be inside the label span at all — a
+    // single-line label with no `%%` in it exercises none of these rules.
     it('strips %% comment inside a square label (text state)', () => {
       expect(() =>
         agentflow.parser.parse(`agentflow-beta TB
-  a["Plain label"]
+  a[Plain %% not part of the label
+label]
   b --> a`)
       ).not.toThrow();
-      expect(agentflow.parser.yy.getVertices().get('a')?.text).toBe('Plain label');
+      const text = agentflow.parser.yy.getVertices().get('a')?.text;
+      expect(text).not.toContain('%%');
+      expect(text).not.toContain('not part of the label');
+      expect(text).toContain('Plain');
+      expect(text).toContain('label');
     });
 
     it('strips %% comment inside an ellipse label (ellipseText state)', () => {
@@ -143,19 +151,27 @@ agentflow-beta TB
       // in that state must be silently skipped.
       expect(() =>
         agentflow.parser.parse(`agentflow-beta TB
-  a(-ellipse label-)
+  a(-ellipse %% not part of the label
+label-)
   b --> a`)
       ).not.toThrow();
-      expect(agentflow.parser.yy.getVertices().get('a')).toBeDefined();
+      const text = agentflow.parser.yy.getVertices().get('a')?.text;
+      expect(text).not.toContain('%%');
+      expect(text).not.toContain('not part of the label');
+      expect(text).toContain('ellipse');
     });
 
     it('strips %% comment inside a trapezoid label (trapText state)', () => {
       expect(() =>
         agentflow.parser.parse(`agentflow-beta TB
-  a[/trap label/]
+  a[/trap %% not part of the label
+label/]
   b --> a`)
       ).not.toThrow();
-      expect(agentflow.parser.yy.getVertices().get('a')).toBeDefined();
+      const text = agentflow.parser.yy.getVertices().get('a')?.text;
+      expect(text).not.toContain('%%');
+      expect(text).not.toContain('not part of the label');
+      expect(text).toContain('trap');
     });
   });
 

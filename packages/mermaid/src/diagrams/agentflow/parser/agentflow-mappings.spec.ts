@@ -223,17 +223,17 @@ describe('agentflow element mappings', () => {
       agentflow.parser.parse(`agentflow-beta TB
   a --> b`);
       expect(db.getElementMappings().length).toBeGreaterThan(0);
+      expect(db.getElementById('a')!.position.startLine).toBe(6); // 2 + offset 4
+
       db.clear();
       expect(db.getElementMappings()).toHaveLength(0);
-      // A subsequent parse without calling setFrontmatterLineOffset again
-      // should report positions relative to the parsed source, not shifted.
-      agentflow.parser.yy = new AgentFlowDB();
-      agentflow.parser.yy.clear();
-      agentflow.parser.yy.setGen('gen-2');
+
+      // Re-parse on the SAME instance. Constructing a fresh AgentFlowDB here
+      // would have passed whether or not clear() reset the offset.
+      db.setGen('gen-2');
       agentflow.parser.parse(`agentflow-beta TB
   c --> d`);
-      const c = (agentflow.parser.yy as AgentFlowDB).getElementById('c');
-      expect(c!.position.startLine).toBe(2);
+      expect(db.getElementById('c')!.position.startLine).toBe(2);
     });
   });
 });

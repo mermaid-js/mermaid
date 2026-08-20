@@ -2,7 +2,9 @@
 //
 // `flow <id>@{ ... }` (and the labelled `flow <id>["..."]@{ ... }`) attach the
 // metadata to the flow's subgraph, identically to the standalone
-// `<id>@{ ... }` attachment, including §10 applicability validation.
+// `<id>@{ ... }` attachment. No applicability validation happens here: since
+// issue #64 the parser carries every key verbatim and §10 applicability is the
+// semantics module's concern — see the last test in this file.
 import { describe, it, expect } from 'vitest';
 import { AgentFlowDB } from '../agentflowDb.js';
 import agentflow from './agentflowParser.js';

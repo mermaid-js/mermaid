@@ -1,3 +1,17 @@
 {
-  "outcome": "valid"
+  "outcome": "valid",
+  "semanticAssertions": {
+    "vertices": [
+      { "id": "query", "vertexKind": "input" },
+      { "id": "search" },
+      { "id": "analyze" },
+      { "id": "validate" }
+    ],
+    "edges": [
+      { "start": "query", "end": "orchestrator", "edgeSemantic": "sequence" },
+      { "start": "orchestrator", "end": "search", "edgeSemantic": "sequence" },
+      { "start": "orchestrator", "end": "analyze", "edgeSemantic": "sequence" },
+      { "start": "orchestrator", "end": "validate", "edgeSemantic": "sequence" }
+    ]
+  }
 }

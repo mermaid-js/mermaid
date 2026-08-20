@@ -45,10 +45,13 @@
  * }
  * ```
  *
- * `diagnostics` is additive: an actual run may surface additional
- * diagnostics without failing, but every listed expectation must match at
- * least one actual entry. Strict-match mode can be added later via an
- * `exact: true` flag — not needed for wave-1.
+ * `diagnostics` pins the full set: every listed expectation must match at
+ * least one actual entry, and every actual diagnostic must be anticipated by
+ * some listed entry. Set `"allowExtraDiagnostics": true` to fall back to
+ * subset matching.
+ *
+ * `parse-error` fixtures may add `"parseErrorContains"` to pin which error was
+ * raised rather than only that one was.
  *
  * `semanticAssertions` uses partial-subset matching: every listed
  * vertex/edge must exist in the semantic model, and every listed field
@@ -58,8 +61,6 @@
 import { AgentFlowDB } from '../agentflowDb.js';
 import type { AgentflowDiagnostic } from '../diagnostics.js';
 import agentflow from '../parser/agentflowParser.js';
-import { transformData } from '../transformData.js';
-import type { LayoutData } from '../../../rendering-util/types.js';
 import type { AgentflowSemanticModel } from '../types.js';
 
 export interface ExpectedDiagnostic {
@@ -108,6 +109,16 @@ export interface FixtureExpectation {
   outcome: 'valid' | 'warning' | 'error' | 'parse-error';
   diagnostics?: ExpectedDiagnostic[];
   /**
+   * Allow diagnostics the fixture did not list. Off by default: a declared
+   * `diagnostics` array pins the full set.
+   */
+  allowExtraDiagnostics?: boolean;
+  /**
+   * For `parse-error` fixtures: a substring the thrown parser message must
+   * contain, so the fixture pins *which* error, not merely that one occurred.
+   */
+  parseErrorContains?: string;
+  /**
    * Optional assertions against `getSemanticModel()` output. Every listed
    * vertex and edge must be present and every listed field must match;
    * unlisted vertices/edges/fields are not constrained.
@@ -144,11 +155,10 @@ export function runFixture(source: string): FixtureResult {
       parseError: err instanceof Error ? err.message : String(err),
     };
   }
-  // Trigger post-parse validators (e.g. HEXAGON_MULTI_BRANCH) and the
-  // render-time shape validation (SHAPE_UNSUPPORTED). Both funnel into
-  // the same diagnostic layer so fixtures can match either via `id`.
-  const data = db.getData() as LayoutData;
-  transformData(data, db);
+  // Trigger the post-parse validators and the shape validation
+  // (SHAPE_REMOVED / SHAPE_UNSUPPORTED). Both run inside `getData()` and funnel
+  // into the same diagnostic layer, so fixtures can match either via `id`.
+  db.getData();
   const diagnostics = db.getDiagnostics();
   const semanticModel = db.getSemanticModel();
   const outcome = classify(diagnostics);
@@ -166,7 +176,12 @@ function classify(diagnostics: readonly AgentflowDiagnostic[]): 'valid' | 'warni
 }
 
 export interface MatchFailure {
-  kind: 'outcome-mismatch' | 'missing-diagnostic' | 'semantic-mismatch';
+  kind:
+    | 'outcome-mismatch'
+    | 'missing-diagnostic'
+    | 'unexpected-diagnostic'
+    | 'semantic-mismatch'
+    | 'parse-error-mismatch';
   message: string;
 }
 
@@ -187,6 +202,17 @@ export function matchExpected(result: FixtureResult, expected: FixtureExpectatio
       message: `expected outcome "${expected.outcome}", got "${result.outcome}"${parseDetail}`,
     });
   }
+  if (
+    expected.parseErrorContains !== undefined &&
+    !result.parseError?.includes(expected.parseErrorContains)
+  ) {
+    failures.push({
+      kind: 'parse-error-mismatch',
+      message: `expected the parse error to contain "${expected.parseErrorContains}", got ${
+        result.parseError === undefined ? 'no parse error' : `"${result.parseError}"`
+      }`,
+    });
+  }
   for (const expectedDiag of expected.diagnostics ?? []) {
     const found = result.diagnostics.some((actual) => diagnosticMatches(actual, expectedDiag));
     if (!found) {
@@ -196,8 +222,31 @@ export function matchExpected(result: FixtureResult, expected: FixtureExpectatio
       });
     }
   }
+  // A fixture that declares diagnostics pins the whole set: a diagnostic the
+  // fixture didn't ask for is a change in behaviour and should fail here rather
+  // than pass unnoticed. Opt out with `"allowExtraDiagnostics": true`.
+  if (expected.diagnostics && !expected.allowExtraDiagnostics) {
+    for (const actual of result.diagnostics) {
+      const anticipated = expected.diagnostics.some((expectedDiag) =>
+        diagnosticMatches(actual, expectedDiag)
+      );
+      if (!anticipated) {
+        failures.push({
+          kind: 'unexpected-diagnostic',
+          message: `unexpected diagnostic id=${actual.id} nodeId=${actual.nodeId ?? '-'} edgeId=${actual.edgeId ?? '-'}: "${actual.message}"`,
+        });
+      }
+    }
+  }
   if (expected.semanticAssertions && result.semanticModel) {
     failures.push(...matchSemanticAssertions(result.semanticModel, expected.semanticAssertions));
+  } else if (expected.semanticAssertions) {
+    // Fail closed. Silently dropping the assertions would let the whole corpus
+    // go green while asserting nothing.
+    failures.push({
+      kind: 'semantic-mismatch',
+      message: 'semanticAssertions were declared but no semantic model was produced',
+    });
   }
   return failures;
 }
