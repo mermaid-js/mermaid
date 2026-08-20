@@ -1,0 +1,8 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  1 ||--|| ORDER : places
+  ORDER ||--|{ 2 : contains
+  2 ||--o{ 3.5 : references

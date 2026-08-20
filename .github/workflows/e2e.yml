@@ -9,61 +9,67 @@ on:
   pull_request:
   merge_group:
   workflow_dispatch:
-    inputs: &workflow_inputs
+    inputs:
       group_argos_images:
         description: Composite screenshots into batched sheets before Argos upload
         type: boolean
         default: true
       spec_pattern:
-        description: Cypress spec glob (empty = full suite)
+        description: Playwright spec glob (empty = full suite)
         type: string
         default: ''
-  workflow_call:
-    inputs: *workflow_inputs
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # Cancel superseded runs for the same PR; never cancel push / merge_group.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
+# The e2e job runs inside the Playwright container, whose default shell is
+# sh (dash). Force bash everywhere so the run steps' bash-isms (here-strings,
+# mapfile, brace expansion, `set -euo pipefail`) parse correctly.
+defaults:
+  run:
+    shell: bash
+
 env:
-  # For PRs and MergeQueues, the target commit is used, and for push events to non-develop branches, github.event.previous is used if available. Otherwise, 'develop' is used.
+  # For PRs and MergeQueues, the target commit is used, and for push events to non-develop branches, github.event.previous is used if available. Otherwise, the repo default branch is used.
   targetHash: >-
     ${{
-      github.event_name == 'workflow_dispatch' && 'develop' ||
+      github.event_name == 'workflow_dispatch' && github.event.repository.default_branch ||
       github.event.pull_request.base.sha ||
       github.event.merge_group.base_sha ||
       (
         (
-          (github.event_name == 'push' && github.ref == 'refs/heads/develop') ||
+          (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)) ||
           github.event.before == '0000000000000000000000000000000000000000'
-        ) && 'develop'
+        ) && github.event.repository.default_branch
       ) ||
       github.event.before
     }}
   RUN_VISUAL_TEST: >-
-    ${{
-      github.repository == 'mermaid-js/mermaid' && (
-        github.event_name == 'workflow_dispatch' ||
-        (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/'))
-      )
-    }}
+    ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name == 'workflow_dispatch' || github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
   # Automatic runs always batch; manual runs can upload per-screenshot instead.
-  # `inputs.group_argos_images` is `null` for non-manual runs, so treat it like `true`.
   GROUP_ARGOS_IMAGES: >-
-    ${{ format('{0}', inputs.group_argos_images) == 'false' && 'false' || 'true' }}
+    ${{
+      github.event_name != 'workflow_dispatch' && 'true' ||
+      (inputs.group_argos_images && 'true' || 'false')
+    }}
   # On a push to the baseline branch (develop), upload BOTH the grouped sheets
   # and the individual per-test screenshots in a single Argos build, so the
   # default build's baseline is a superset. Scoped grouped PRs and manual
   # per-screenshot runs then both diff cleanly against it (each marked --subset).
   ARGOS_UPLOAD_BOTH: >-
     ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+  # Shard JSON for a full-suite run vs a scoped (single-container) run.
+  E2E_FULL_MATRIX: '[1,2,3,4,5,6,7,8]'
+  E2E_SCOPED_MATRIX: '[1]'
+
 jobs:
   cache:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1
-      options: --user 1001
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
@@ -75,7 +81,7 @@ jobs:
         id: cache-snapshot
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          path: ./cypress/snapshots
+          path: ./e2e/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       # If a snapshot for a given Hash is not found, we checkout that commit, run the tests and cache the snapshots.
@@ -87,20 +93,17 @@ jobs:
 
       - name: Install dependencies
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true' }}
-        uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
-        with:
-          # just perform install
-          runTests: false
+        run: pnpm install --ignore-scripts
 
       - name: Calculate bundle size
         if: ${{ steps.cache-snapshot.outputs.cache-hit != 'true'}}
         run: |
           pnpm run build:viz
-          mkdir -p cypress/snapshots/stats/base
-          mv stats cypress/snapshots/stats/base
+          mkdir -p e2e/snapshots/stats/base
+          mv stats e2e/snapshots/stats/base
 
   # Detect which diagram(s) the PR touches and determine the minimal set of
-  # Cypress specs to run.
+  # specs to run.
   detect-scope:
     runs-on: ubuntu-latest
     outputs:
@@ -119,94 +122,131 @@ jobs:
 
       - name: Detect e2e scope
         id: scope
+        env:
+          # Manual-dispatch spec glob, passed via env to avoid interpolating
+          # user input directly into the shell script.
+          SPEC_PATTERN_INPUT: ${{ github.event.inputs.spec_pattern }}
+          TARGET_HASH: ${{ env.targetHash }}
+          # PRs use base.ref (`master` / `develop`); merge_group uses `refs/heads/...`.
+          BASE_REF: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref || '' }}
+          # Scoping is ON by default.  To disable, set this repository variable
+          # to 'false' (GitHub → Settings → Secrets and variables → Actions → Variables).
+          # Using == 'false' (instead of == 'true') ensures fork PRs — where
+          # repository variables are not exposed — still get scoped runs.
+          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'false' && 'false' || 'true' }}"
         run: |
-          if [ "$SPEC" != 'null' ]; then
-            SPEC=$(node -e '
-              // `SPEC` should be a JSON string, so unwrap it
-              const assert = require("node:assert");
-              const parsed = JSON.parse(process.env.SPEC);
-              assert.strictEqual(typeof parsed, "string", "SPEC must be a JSON string");
-              console.log(parsed);
-            ')
-            if [ -n "$SPEC" ]; then
-              echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
-              echo "matrix=[1]" >> "$GITHUB_OUTPUT"
-              echo "[detect-scope] Manual run — scoped to: ${SPEC}"
+          # Multiline GITHUB_OUTPUT so a glob can't inject extra keys. Empty
+          # values use `key=` — a heredoc with a blank line is a non-empty
+          # newline and would look like a spec pattern to the e2e job.
+          set_output() {
+            local key="$1"
+            local value="$2"
+            if [ -z "$value" ]; then
+              printf '%s=\n' "$key" >> "$GITHUB_OUTPUT"
+              return
+            fi
+            local delim
+            delim="ghadelim_$(openssl rand -hex 16)"
+            {
+              printf '%s<<%s\n' "$key" "$delim"
+              printf '%s\n' "$value"
+              printf '%s\n' "$delim"
+            } >> "$GITHUB_OUTPUT"
+          }
+
+          emit_full() {
+            set_output spec_pattern ""
+            set_output matrix "$E2E_FULL_MATRIX"
+          }
+
+          emit_skip() {
+            set_output spec_pattern "SKIP"
+            set_output matrix "$E2E_SCOPED_MATRIX"
+          }
+
+          emit_scoped() {
+            set_output spec_pattern "$1"
+            set_output matrix "$E2E_SCOPED_MATRIX"
+          }
+
+          # Manual runs can target a specific spec glob via the workflow_dispatch
+          # input; an empty pattern runs the full suite.
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ -n "$SPEC_PATTERN_INPUT" ]; then
+              emit_scoped "$SPEC_PATTERN_INPUT"
+              echo "[detect-scope] Manual run scoped to: ${SPEC_PATTERN_INPUT}"
             else
-              echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-              echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+              emit_full
               echo "[detect-scope] Manual run — full suite."
             fi
             exit 0
           fi
 
-          # Feature flag off → always use full matrix
-          if [ "${E2E_SCOPE_BY_DIAGRAM}" != "true" ]; then
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
-            echo "[detect-scope] Feature flag disabled — full suite."
+          # Kill-switch: set the repo variable E2E_SCOPE_BY_DIAGRAM to 'false'
+          # to disable scoping.  Scoping is ON by default so that fork PRs
+          # (where repository variables are unavailable) still benefit from it.
+          if [ "${E2E_SCOPE_BY_DIAGRAM}" = "false" ]; then
+            emit_full
+            echo "[detect-scope] Scoping disabled via kill-switch — full suite."
             exit 0
           fi
 
-          BASE="${{ env.targetHash }}"
-
-          # For direct pushes to the main development branch, always run the
-          # full suite (no PR diff to scope against).
-          if [ "$BASE" = "develop" ] || [ "$BASE" = "master" ]; then
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
-            echo "[detect-scope] Direct push to ${BASE} — full suite."
+          # For direct pushes to a long-lived branch, always run the full suite
+          # (no PR diff to scope against).
+          if [ "$TARGET_HASH" = "develop" ] || [ "$TARGET_HASH" = "master" ]; then
+            emit_full
+            echo "[detect-scope] Direct push to ${TARGET_HASH} — full suite."
             exit 0
           fi
 
-          # Fetch the target branch so we can find the true merge-base.
-          git fetch origin develop --depth=1 2>/dev/null || true
-          MERGE_BASE=$(git merge-base HEAD origin/develop 2>/dev/null || echo "")
+          # Fetch the PR/merge-group base (not hardcoded develop) so scoping
+          # works for PRs targeting master.
+          BASE_REF="${BASE_REF#refs/heads/}"
+          if [ -n "$BASE_REF" ]; then
+            git fetch origin "$BASE_REF" --depth=1 2>/dev/null || true
+          fi
+          git fetch origin "$TARGET_HASH" --depth=1 2>/dev/null || true
+          MERGE_BASE=$(git merge-base HEAD "$TARGET_HASH" 2>/dev/null || true)
+          if [ -z "$MERGE_BASE" ] && [ -n "$BASE_REF" ]; then
+            MERGE_BASE=$(git merge-base HEAD "origin/${BASE_REF}" 2>/dev/null || true)
+          fi
 
           if [ -z "$MERGE_BASE" ]; then
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+            emit_full
             echo "[detect-scope] Could not determine merge-base — full suite."
             exit 0
           fi
 
-          echo "[detect-scope] merge-base: ${MERGE_BASE}"
+          echo "[detect-scope] merge-base: ${MERGE_BASE} (base ref: ${BASE_REF:-none})"
 
           # Get changed files and run the detection script.
           SPEC=$(git diff --name-only "$MERGE_BASE" HEAD 2>/dev/null \
                  | node scripts/e2e-diagram-scope.mjs \
                  || echo "")
 
-          # Check and set required no of containers to run
           if [ "$SPEC" = "SKIP" ]; then
-            echo "spec_pattern=SKIP" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
+            emit_skip
             echo "[detect-scope] Only docs/ignorable files changed — e2e can be skipped."
           elif [ -n "$SPEC" ]; then
-            echo "spec_pattern=${SPEC}" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1]" >> "$GITHUB_OUTPUT"
+            emit_scoped "$SPEC"
             echo "[detect-scope] Scoped to: ${SPEC}"
           else
-            echo "spec_pattern=" >> "$GITHUB_OUTPUT"
-            echo "matrix=[1,2,3,4,5,6,7,8]" >> "$GITHUB_OUTPUT"
+            emit_full
             echo "[detect-scope] Cannot scope — full suite."
           fi
-          echo "[detect-scope] matrix output: $(grep '^matrix=' "$GITHUB_OUTPUT" | tail -1)"
-        env:
-          # Toggle diagram-scoped e2e: set this repository variable to 'true'
-          # (GitHub → Settings → Secrets and variables → Actions → Variables)
-          E2E_SCOPE_BY_DIAGRAM: "${{ vars.E2E_SCOPE_BY_DIAGRAM == 'true' }}"
-          # Either `null` (no inputs), or a JSON string to the spec_pattern.
-          # Empty JSON string (i.e. `""`) means run the full suite.
-          SPEC: ${{ toJSON( inputs.spec_pattern ) }}
 
   e2e:
     # Skip the entire e2e job when only docs/ignorable files changed.
     if: needs.detect-scope.outputs.spec_pattern != 'SKIP'
     runs-on: ubuntu-latest
+    # Browsers + OS libraries are baked into the official Playwright image, so no
+    # `playwright install` / `install-deps` is needed at runtime. Keep this tag in
+    # sync with the @playwright/test version in package.json (Renovate bumps both).
     container:
-      image: cypress/browsers:node-20.16.0-chrome-127.0.6533.88-1-ff-128.0.3-edge-127.0.2651.74-1
-      options: --user 1001
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    # Bound the job so a hung dev server / wait-on fails in minutes, not at
+    # GitHub's 6h default.
+    timeout-minutes: 30
     needs: [cache, detect-scope]
     strategy:
       fail-fast: false
@@ -216,7 +256,6 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
-        # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
@@ -225,76 +264,96 @@ jobs:
 
       # These cached snapshots are downloaded, providing the reference snapshots.
       - name: Cache snapshots
-        id: cache-snapshot
         uses: actions/cache/restore@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          path: ./cypress/snapshots
+          path: ./e2e/snapshots
           key: ${{ runner.os }}-snapshots-${{ env.targetHash }}
 
       - name: Install dependencies
-        uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
-        with:
-          runTests: false
+        run: pnpm install --ignore-scripts
+
+      # install ran with --ignore-scripts, so the package bundles the dev server
+      # serves (mermaid.esm.mjs, mermaid-layout-elk.esm.mjs, …) aren't built.
+      # Build them on every shard; shard 1 builds via build:viz in size-diff below.
+      - name: Build
+        if: ${{ matrix.containers != 1 }}
+        run: pnpm build
 
       - name: Output size diff
         if: ${{ matrix.containers == 1 }}
         run: |
           pnpm run build:viz
-          mv stats cypress/snapshots/stats/head
+          # `stats` (head) is always produced by build:viz; the base lives in the
+          # restored snapshot cache. On a cache miss the dir is absent, so create
+          # it before moving and treat the diff as informational — a missing
+          # baseline must not fail the e2e shard.
+          mkdir -p e2e/snapshots/stats
+          mv stats e2e/snapshots/stats/head
           echo '## Bundle size difference' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
-          npx tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY"
+          pnpm exec tsx scripts/size.ts >> "$GITHUB_STEP_SUMMARY" || echo '_Bundle size baseline unavailable (snapshot cache miss)._' >> "$GITHUB_STEP_SUMMARY"
 
-      # Rebuild the served bundle with istanbul instrumentation so the Cypress
-      # run can collect coverage. Gated to runs whose coverage is uploaded.
-      - name: Build instrumented bundle for e2e coverage
+      # Rebuild the served bundle with inline source maps so the Playwright run
+      # can collect native V8 coverage and map it back to source (no
+      # instrumentation). Gated to runs whose coverage is uploaded.
+      - name: Build coverage bundle for e2e coverage
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/develop' }}
         run: pnpm build:coverage
 
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests (or a scoped subset when detect-scope fires).
-      - name: Cypress run
-        uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
-        id: cypress
-        with:
-          install: false
-          start: pnpm run dev:coverage
-          wait-on: 'http://localhost:9000'
-          browser: chrome
-          # When detect-scope produced a pattern, run only those specs.
-          spec: ${{ needs.detect-scope.outputs.spec_pattern }}
-          # Disable recording if we don't have an API key
-          # e.g. if this action was run from a fork
-          record: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY != '' }}
+      - name: Playwright run
+        id: playwright
         env:
-          CYPRESS_COMMIT: ${{ github.sha }}
-          CYPRESS_RECORD_KEY: ${{ env.RUN_VISUAL_TEST == 'true' && secrets.CYPRESS_RECORD_KEY || ''}}
-          SPLIT: ${{ strategy.job-total }}
-          SPLIT_INDEX: ${{ strategy.job-index }}
-          SPLIT_FILE: 'cypress/timings.json'
-          VITEST_COVERAGE: true
+          MERMAID_PORT: 9000
+          PLAYWRIGHT_COMMIT: ${{ github.sha }}
+          # Enables native V8 coverage collection (page.coverage) on coverage runs.
+          E2E_COVERAGE: ${{ (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') && 'true' || '' }}
+          # Job output via env — never interpolate spec globs into the shell via ${{ }}.
+          SPEC_PATTERN: ${{ needs.detect-scope.outputs.spec_pattern }}
+          SHARD: ${{ matrix.containers }}
+          SHARD_TOTAL: ${{ strategy.job-total }}
+        run: |
+          if [ -n "$SPEC_PATTERN" ]; then
+            IFS=',' read -ra SPECS <<< "$SPEC_PATTERN"
+            pnpm exec playwright test "${SPECS[@]}" --shard="${SHARD}/${SHARD_TOTAL}"
+          else
+            pnpm exec playwright test --shard="${SHARD}/${SHARD_TOTAL}"
+          fi
 
-      # Stash each shard's lcov; the host-based `codecov-upload` job uploads them.
-      - name: Upload e2e coverage artifact
-        if: ${{ steps.cypress.conclusion == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') }}
+      # On failure, surface why a diagram didn't render: traces (with browser
+      # console), failure screenshots, and error-context snapshots.
+      - name: Upload Playwright failure artifacts
+        if: ${{ failure() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: e2e-coverage-${{ matrix.containers }}
-          path: coverage/cypress/lcov.info
+          name: playwright-results-${{ matrix.containers }}
+          path: test-results/
+          retention-days: 3
           if-no-files-found: ignore
-          retention-days: 1
 
-      - name: Upload raw screenshots for Argos batching
+      # Hand the captured PNGs (grouped per spec under e2e/screenshots/) to the
+      # argos-batch job, which composites + uploads them once.
+      - name: Upload captured screenshots
         if: ${{ env.RUN_VISUAL_TEST == 'true' && !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: argos-screenshots-${{ matrix.containers }}
-          path: cypress/screenshots
+          name: screenshots-${{ matrix.containers }}
+          path: e2e/screenshots/
+          retention-days: 1
+          if-no-files-found: ignore
+
+      # Stash each shard's lcov; the host-based codecov-upload job uploads it
+      # (the Playwright container lacks curl + gpg to upload directly).
+      - name: Upload e2e coverage artifact
+        if: ${{ steps.playwright.outcome == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: e2e-coverage-${{ matrix.containers }}
+          path: coverage/playwright/lcov.info
           if-no-files-found: ignore
           retention-days: 1
 
   # Upload coverage from the host, where curl + gpg are available; the
-  # cypress/browsers container lacks them and can't install them (non-root).
+  # Playwright container lacks them and can't install them (non-root).
   codecov-upload:
     needs: e2e
     if: ${{ !cancelled() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') }}
@@ -332,8 +391,7 @@ jobs:
     if: >-
       ${{
         github.repository == 'mermaid-js/mermaid' &&
-        (github.event_name == 'workflow_dispatch' ||
-          (github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/'))) &&
+        (github.event_name == 'workflow_dispatch' || github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) &&
         needs.detect-scope.outputs.spec_pattern != 'SKIP' &&
         needs.e2e.result == 'success'
       }}
@@ -356,21 +414,27 @@ jobs:
       - name: Download screenshot artifacts
         uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
         with:
-          pattern: argos-screenshots-*
+          pattern: screenshots-*
           merge-multiple: true
-          path: cypress/screenshots
+          path: e2e/screenshots
 
-      # cypress-split gives each shard a different spec subset, so Cypress names
-      # screenshots relative to that shard's spec common-ancestor (the rendering/
-      # prefix is kept or stripped depending on the mix). Re-root every screenshot
-      # under its spec's true cypress/integration path so names are deterministic
-      # across runs — otherwise the same diagram churns the Argos baseline.
-      - name: Canonicalize screenshot paths
-        run: pnpm run argos:canonicalize
-
-      - name: Build composite sheets
+      # Automatic runs batch into sheets; a manual run with group_argos_images=false
+      # uploads the per-screenshot PNGs instead. (No canonicalize step needed:
+      # verifyScreenshot names each PNG by its spec-relative path, which is already
+      # shard-independent — unlike Cypress's cypress-split shard naming.)
+      #
+      # Sheets are tiled in the committed order (e2e/sheet-order.json): new
+      # screenshots append at their group's tail and removed ones leave a blank
+      # cell, so adding/removing a test changes only that group's last/affected
+      # sheet instead of cascading. Groups the manifest doesn't cover yet are tiled
+      # in test-declaration order (read from the capture sidecars), so a test added
+      # at the end of its spec still appends instead of re-sorting the group; tiles
+      # whose sidecar is missing or unreadable fall back to source-path order at
+      # the group's tail. The manifest is compacted periodically by the "Refresh
+      # screenshot sheet order" workflow (opens a PR), not on every run.
+      - name: Composite screenshots into per-spec sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
-        run: pnpm run argos:batch
+        run: pnpm run screenshots:sheets
 
       # Baseline branch (develop): merge the grouped sheets and the individual
       # screenshots into one tree and upload them as a SINGLE Argos build. The CLI
@@ -389,23 +453,14 @@ jobs:
       # only its slice; --files globs stay relative to the same root so names are
       # preserved, and Argos combines the indices into one build once all K report.
       - name: Upload images to Argos
+        if: env.ARGOS_UPLOAD_BOTH == 'true'
         env:
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -euo pipefail
-          mkdir -p cypress/argos-baseline
-          if [ "$ARGOS_UPLOAD_BOTH" = 'true' ]; then
-            cp -r cypress/argos-sheets/. cypress/argos-baseline/
-            cp -r cypress/screenshots/. cypress/argos-baseline/
-          elif [ "$GROUP_ARGOS_IMAGES" = 'true' ]; then
-            # PR / merge-queue / manual grouped runs: upload only the composite sheets.
-            cp -r cypress/argos-sheets/. cypress/argos-baseline/
-            export ARGOS_SUBSET=true
-          else
-            # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
-            cp -r cypress/screenshots/. cypress/argos-baseline/
-            export ARGOS_SUBSET=true
-          fi
+          mkdir -p e2e/argos-baseline
+          cp -r e2e/sheets/. e2e/argos-baseline/
+          cp -r e2e/screenshots/. e2e/argos-baseline/
 
           # Round-robin the leaf directories (those that directly hold images)
           # into K buckets so each upload's finalize body carries only ~1/K of the
@@ -414,7 +469,7 @@ jobs:
           # Argos's limit (HTTP 413) regardless of K; balancing at the leaf level
           # keeps the biggest bucket to ~1/K.
           mapfile -t groups < <(
-            cd cypress/argos-baseline &&
+            cd e2e/argos-baseline &&
               find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
               sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
           )
@@ -431,10 +486,24 @@ jobs:
               if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
             done
             [ ${#globs[@]} -eq 0 ] && continue
-            npx argos upload cypress/argos-baseline \
+            pnpm exec argos upload e2e/argos-baseline \
               --files "${globs[@]}" \
               --parallel --parallel-total "$K" --parallel-index "$i"
           done
+
+      # PR / merge-queue / manual grouped runs: upload only the composite sheets.
+      - name: Upload grouped sheets to Argos
+        if: env.GROUP_ARGOS_IMAGES == 'true' && env.ARGOS_UPLOAD_BOTH != 'true'
+        env:
+          ARGOS_SUBSET: true
+        run: pnpm run argos:upload-sheets
+
+      # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
+      - name: Upload individual screenshots to Argos
+        if: env.GROUP_ARGOS_IMAGES != 'true'
+        env:
+          ARGOS_SUBSET: true
+        run: pnpm exec argos upload e2e/screenshots
 
   e2e-required:
     if: always()
