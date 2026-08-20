@@ -5,8 +5,7 @@ import { imgSnapshotTest } from '../../helpers/util.ts';
 // These specs feed deliberately-broken input and assert that mermaid renders
 // its error diagram (verified by imgSnapshotTest). The page errors mermaid
 // raises for invalid syntax are expected; Playwright does not fail a test on
-// page errors, so no handler is needed (the Cypress original used
-// `cy.on('uncaught:exception', …, return false)` to ignore them).
+// page errors, so no handler is needed.
 test.describe('Error Diagrams', () => {
   test('should render a simple ER diagram', async ({ page }, testInfo) => {
     await imgSnapshotTest(

@@ -50,8 +50,8 @@ test.describe('Configuration', () => {
       const markerEnd = await path.getAttribute('marker-end');
       expect(markerEnd).toContain('url(#');
     });
-    // This has been broken for a long time, but something about the Cypress environment was
-    // rewriting the URL to be relative, causing the test to incorrectly pass.
+    // This has been broken for a long time, but something about the previous e2e environment
+    // was rewriting the URL to be relative, causing the test to incorrectly pass.
     test.skip('should handle arrowMarkerAbsolute explicitly set to "false" as false', async ({
       page,
     }, testInfo) => {

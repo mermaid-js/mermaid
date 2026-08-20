@@ -7,7 +7,7 @@ const main = async () => {
     (dir) => `${coverageDir}/${dir}/coverage-final.json`
   );
 
-  //copy coverage files from vitest and cypress to coverage folder
+  //copy coverage files from vitest and playwright to coverage folder
   await Promise.all(
     coverageFiles.map((file) => cp(file, `${coverageDir}/combined/${file.split('/')[1]}.json`))
   );

@@ -866,7 +866,7 @@ graph TD;A--x|text including URL space|B;`)
 
   describe('render', () => {
     // These are more like integration tests right now because nothing is mocked.
-    // But it is faster that a cypress test and there's no real reason to actually evaluate an image pixel by pixel.
+    // But it is faster than an e2e test and there's no real reason to actually evaluate an image pixel by pixel.
 
     // render(id, text, cb?, svgContainingElement?)
 

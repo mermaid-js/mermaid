@@ -421,7 +421,7 @@ jobs:
       # Automatic runs batch into sheets; a manual run with group_argos_images=false
       # uploads the per-screenshot PNGs instead. (No canonicalize step needed:
       # verifyScreenshot names each PNG by its spec-relative path, which is already
-      # shard-independent — unlike Cypress's cypress-split shard naming.)
+      # shard-independent.)
       #
       # Sheets are tiled in the committed order (e2e/sheet-order.json): new
       # screenshots append at their group's tail and removed ones leave a blank

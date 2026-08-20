@@ -118,7 +118,7 @@ describe('planSheets', () => {
 });
 
 describe('formatTileTitle', () => {
-  it('restores spaces from hyphenated Cypress screenshot names', () => {
+  it('restores spaces from hyphenated screenshot names', () => {
     expect(formatTileTitle('1-should-render-a-basic-treemap')).toBe(
       '1 should render a basic treemap'
     );
@@ -206,7 +206,7 @@ describe('compositor', () => {
     expect(withHuge.manifest.grid).toStrictEqual(small.manifest.grid);
   });
 
-  it('defaults to the Cypress viewport slot size', () => {
+  it('defaults to the e2e viewport slot size', () => {
     expect(DEFAULT_TILE_WIDTH).toBe(1440);
     expect(DEFAULT_TILE_IMAGE_HEIGHT).toBe(1024);
   });

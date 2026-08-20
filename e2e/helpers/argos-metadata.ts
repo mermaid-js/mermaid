@@ -60,7 +60,7 @@ export function repoRelativePath(absPath: string): string {
   return relative(repoRoot, absPath).split(sep).join('/');
 }
 
-/** Restore spaces from sanitized Playwright / Cypress screenshot slugs. */
+/** Restore spaces from sanitized Playwright screenshot slugs. */
 export function formatTileTitle(name: string): string {
   return name.replace(/-/g, ' ');
 }

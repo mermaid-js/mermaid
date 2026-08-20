@@ -30,8 +30,6 @@ jobs:
           # Use hoisted mode to avoid `bundleDependencies` issues
           echo 'nodeLinker: "hoisted"' >> pnpm-workspace.yaml
           pnpm install --frozen-lockfile
-        env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Install Json
         run: npm i json@11.0.0 --global

@@ -34,12 +34,12 @@ import type {
 
 export { formatTileTitle };
 
-// Matches a Cypress spec-file path segment: foo.spec.js / foo.spec.ts / .cjs / .mts
+// Matches a spec-file path segment: foo.spec.js / foo.spec.ts / .cjs / .mts
 const SPEC_SEGMENT_RE = /\.spec\.[cm]?[jt]s$/;
 
 /** Fixed label band under each screenshot tile (deterministic grid sizing). */
 export const LABEL_HEIGHT = 48;
-/** Matches cypress.config.ts viewport — every cell uses this slot, not max(tile). */
+/** Matches the playwright.config.ts viewport — every cell uses this slot, not max(tile). */
 export const DEFAULT_TILE_WIDTH = 1440;
 export const DEFAULT_TILE_IMAGE_HEIGHT = 1024;
 // Sized for the 1440px-wide cell: a small font has too few pixels per glyph and
@@ -104,7 +104,7 @@ export interface Tile {
   missing?: boolean;
 }
 
-/** Cypress screenshot names use hyphens instead of spaces; restore for display. */
+/** Screenshot names use hyphens instead of spaces; restore for display. */
 
 function escapeXml(text: string): string {
   return text
@@ -201,9 +201,9 @@ export interface ComposeSheetOptions {
   background?: { r: number; g: number; b: number; alpha: number };
   /** Output scale factor (1 = native screenshot size, 2 = 2× pixels). */
   scale?: number;
-  /** Fixed image slot width in pixels before scale (default: Cypress viewport width). */
+  /** Fixed image slot width in pixels before scale (default: e2e viewport width). */
   tileWidth?: number;
-  /** Fixed image slot height in pixels before scale (default: Cypress viewport height). */
+  /** Fixed image slot height in pixels before scale (default: e2e viewport height). */
   tileImageHeight?: number;
 }
 

@@ -15,7 +15,7 @@ jobs:
     with:
       group_argos_images: false
     # Fork PRs receive no secrets either way; for same-repo PRs this passes
-    # CYPRESS_RECORD_KEY through so Cypress Cloud recording keeps working.
+    # the repo secrets through so screenshot uploads keep working.
     secrets: inherit
 
   remove-label:

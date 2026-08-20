@@ -61,7 +61,7 @@ You may also need to reload `.shrc` or `.bashrc` afterwards.
 
 [Install Docker](https://docs.docker.com/engine/install/). And that is pretty much all you need.
 
-Optionally, to run GUI (Cypress) within Docker you will also need an X11 server installed.
+Optionally, to run the Playwright UI within Docker you will also need an X11 server installed.
 You might already have it installed, so check this by running:
 
 ```bash
@@ -364,24 +364,27 @@ To start working with the E2E tests:
 
 **Host**
 
-- Run `pnpm dev` to start the dev server
-- Start **Cypress** by running `pnpm cypress:open`
+- Install the Playwright browser by running `pnpm playwright:install` (first time only)
+- Start **Playwright** by running `pnpm playwright:ui`, or run the whole suite headless with `pnpm e2e`
+
+Playwright starts the dev server automatically, and reuses an already-running `pnpm dev` server when there is one.
 
 **Docker**
 
 - Enable local connections for x11 server `xhost +local:`
-- Run `./run pnpm dev` to start the dev server
-- Start **Cypress** by running `./run pnpm cypress:open --project .`
+- Start **Playwright** by running `./run pnpm playwright:ui`
 
-The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
+The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Playwright.
 
 When running in CI it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag it for review if it differs. When the changes in PR only apply to specific diagrams, only the rendering tests for those diagrams will be run in CI. If a change is not related to a specific diagram, the full test-suite will be run.
 
 This is what a rendering test looks like:
 
 ```js
-it('should render forks and joins', () => {
-  imgSnapshotTest(
+test('should render forks and joins', async ({ page }, testInfo) => {
+  await imgSnapshotTest(
+    page,
+    testInfo,
     `
     stateDiagram
     state fork_state &lt;&lt;fork&gt;&gt;

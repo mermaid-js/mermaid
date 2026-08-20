@@ -23,8 +23,6 @@ jobs:
       - name: Install Packages
         run: |
           pnpm install --frozen-lockfile
-        env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Run Unit Tests
         run: |

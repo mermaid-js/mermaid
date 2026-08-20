@@ -3,9 +3,9 @@ import type { Page, TestInfo } from '@playwright/test';
 
 const COVERAGE = process.env.E2E_COVERAGE === 'true';
 
-// Mirrors the Cypress cypress-monocart-coverage config: collect native V8
-// coverage of the mermaid bundle (no instrumentation) and map it back to source
-// via the bundle's inline source maps (build:coverage emits inline maps).
+// Collect native V8 coverage of the mermaid bundle (no instrumentation) and
+// map it back to source via the bundle's inline source maps (build:coverage
+// emits inline maps).
 // Per-test `add()` caches raw V8 under outputDir; global-teardown `generate()`
 // merges the cache into an istanbul lcov.
 export const coverageOptions = {

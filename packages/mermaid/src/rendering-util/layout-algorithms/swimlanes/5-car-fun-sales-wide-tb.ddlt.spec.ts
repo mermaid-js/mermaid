@@ -5,7 +5,7 @@
  * Parses the real `.mmd` file via `Diagram.fromText` so the LayoutData the
  * pipeline sees matches what the browser produces, then applies pre-captured
  * node/label sizes from the fixture:
- *   cypress/platform/dev-diagrams/layout-tests/swimlanes/5-car-fun-sales-wide-tb.sizes.json
+ *   e2e/platform/dev-diagrams/layout-tests/swimlanes/5-car-fun-sales-wide-tb.sizes.json
  *
  * The fixture is a 16-node TD flowchart across 5 subgraphs (Car, Sales, Constr,
  * Legal, Fun) with two labeled edges (I→J "Yes but with a long label…",

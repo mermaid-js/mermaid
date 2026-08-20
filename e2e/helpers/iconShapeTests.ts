@@ -19,7 +19,7 @@ export type IconShapeForm = undefined | 'square' | 'circle' | 'rounded';
  *
  * The matrix is large (~84 tests per form), so it is split across one spec file
  * per form (iconShape*.spec.ts) to keep any single spec well under the heaviest
- * other specs — this lets cypress-split balance it across shards and keeps the
+ * other specs — this lets CI sharding balance it across shards and keeps the
  * per-spec coverage payload small. Titles are produced exactly as before so the
  * rendered screenshots are unchanged.
  */

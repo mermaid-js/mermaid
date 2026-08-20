@@ -1,0 +1,17 @@
+name: No Cypress references
+
+on: [push, pull_request, merge_group]
+
+permissions:
+  contents: read
+
+jobs:
+  check-no-cypress-references:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # We've moved on from Cypress to Playwright (see e2e/). Fail if any
+      # tracked file path or content still references Cypress.
+      - name: Check for Cypress references
+        run: ./scripts/check-no-cypress-references.sh

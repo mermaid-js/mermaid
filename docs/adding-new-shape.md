@@ -194,9 +194,9 @@ const intersection = intersectPolygon(node, polyPoints, point);
   - `polyPoints`: Array of points defining the polygon.
   - `point`: The point from which the intersection is calculated.
 
-## Cypress Tests
+## E2E Tests
 
-To ensure the robustness of the flowchart shapes, there are implementation of comprehensive Cypress test cases in `newShapes.spec.ts` file. These tests cover various aspects such as:
+To ensure the robustness of the flowchart shapes, there are implementation of comprehensive Playwright test cases in `e2e/rendering/newShapes.spec.ts` file. These tests cover various aspects such as:
 
 - **Shapes**: Testing new shapes like `bowTieRect`, `waveRectangle`, `trapezoidalPentagon`, etc.
 - **Looks**: Verifying shapes under different visual styles (`classic` and `handDrawn`).
@@ -215,19 +215,19 @@ To ensure the robustness of the flowchart shapes, there are implementation of co
 
 ### Running the Tests
 
-To run the Cypress tests, follow these steps:
+To run the Playwright tests, follow these steps:
 
 1. Ensure you have all dependencies installed by running:
 
    ```bash
    pnpm install
+   pnpm playwright:install
    ```
 
-2. Start the Cypress test runner:
+2. Run the flowchart shape tests:
 
    ```bash
-   cypress open --env updateSnapshots=true
-
+   pnpm e2e e2e/rendering/newShapes.spec.ts
    ```
 
-3. Select the test suite from the Cypress interface to run all the flowchart shape tests.
+3. Alternatively, start the Playwright UI by running `pnpm playwright:ui` and run the tests from there.

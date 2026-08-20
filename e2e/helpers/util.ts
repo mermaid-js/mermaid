@@ -228,9 +228,9 @@ export const verifyScreenshot = async (
   const target = hasSvg ? svg : page;
 
   if (useAppli) {
-    // Mirrors the Cypress eyes integration: one Applitools batch per spec file,
-    // a check per screenshot scoped to the diagram SVG (full window when there
-    // is none). API key, branch, and parent branch are read from the APPLITOOLS_*
+    // One Applitools batch per spec file, a check per screenshot scoped to the
+    // diagram SVG (full window when there is none). API key, branch, and
+    // parent branch are read from the APPLITOOLS_*
     // env vars by the SDK. Imported lazily so the SDK is only loaded for
     // Applitools runs, not for Argos/local snapshot runs.
     const { Eyes, ClassicRunner, Target } = await import('@applitools/eyes-playwright');
