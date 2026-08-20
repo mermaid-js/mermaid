@@ -2557,6 +2557,20 @@ Bob->>Alice:Got it!
     });
   });
   describe('participant type parsing', () => {
+    it('should parse hyphenated participant names with config objects', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant shop-db@{ "type" : "database" }
+        actor user-service@{ "type" : "actor" }
+        shop-db->>user-service: Query
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('shop-db').type).toBe('database');
+      expect(actors.get('shop-db').description).toBe('shop-db');
+      expect(actors.get('user-service').type).toBe('actor');
+      expect(actors.get('user-service').description).toBe('user-service');
+    });
+
     it('should parse boundary participant', async () => {
       const diagram = await Diagram.fromText(`
           sequenceDiagram
