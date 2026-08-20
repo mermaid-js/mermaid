@@ -130,7 +130,6 @@ function measureText(
     return measureCache.get(cacheKey)!;
   }
 
-  const doc = svgRoot.ownerDocument || document;
   const testEl = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
   testEl.setAttribute('font-size', String(fontSize));
   if (bold) {
