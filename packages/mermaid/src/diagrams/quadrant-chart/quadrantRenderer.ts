@@ -24,6 +24,14 @@ interface StyledSegment {
 }
 
 /**
+ * Escape all special regex characters in a string so it can be used as a literal pattern.
+ * Used to safely build regex from markdown markers (*, **, ***).
+ */
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
  * Recursively parse inline markdown formatting into styled segments.
  * Supports nesting: **bold *italic* bold**, *italic **bold** italic*, ***both***.
  */
@@ -58,8 +66,8 @@ function parseInlineMarkdown(
     });
   }
 
-  // Find the matching closing marker — use escaped literal pattern (not user input)
-  const escapedMarker = marker.replace(/\*/g, '\\*');
+  // Find the matching closing marker — escape all regex-special chars for safety
+  const escapedMarker = escapeRegExp(marker);
   const closeRegex = new RegExp(escapedMarker + '(?![*])', 'g');
   closeRegex.lastIndex = markerStart + marker.length;
   const closeMatch = closeRegex.exec(text);
