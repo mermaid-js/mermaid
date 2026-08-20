@@ -33,6 +33,8 @@
 %x STYLE_IDS
 %x STYLEDEF_STYLES
 %x STYLEDEF_STYLEOPTS
+%x LINKSTYLE
+%x LINKSTYLE_STYLE
 
 %x NOTE
 %x NOTE_ID
@@ -106,6 +108,11 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <INITIAL,struct>"style"\s+   { this.pushState('STYLE'); return 'style'; }
 <STYLE>[\w,]+\s+                 { this.popState(); this.pushState('STYLEDEF_STYLES'); return 'STYLE_IDS' }
 <STYLEDEF_STYLES>[^\n]*              { this.popState(); return 'STYLEDEF_STYLEOPTS' }
+
+<INITIAL,struct>"linkStyle"[ \t]+       { this.pushState('LINKSTYLE'); return 'linkStyle'; }
+<LINKSTYLE>"default"[ \t]+               { this.popState(); this.pushState('LINKSTYLE_STYLE'); return 'LINKSTYLE_DEFAULT'; }
+<LINKSTYLE>\d+([ \t]*","[ \t]*\d+)*[ \t]+     { this.popState(); this.pushState('LINKSTYLE_STYLE'); return 'LINKSTYLE_IDS'; }
+<LINKSTYLE_STYLE>[^\n]+                { this.popState(); return 'LINKSTYLE_STYLEOPTS'; }
 
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
@@ -201,6 +208,7 @@ line
 statement
 	: classDefStatement
     | styleStatement
+    | linkStyleStatement
     | cssClassStatement
 	| idStatement { /* console.log('got id', $1); */
             $$=$1;
@@ -300,6 +308,19 @@ classDefStatement
 styleStatement
     : style STYLE_IDS STYLEDEF_STYLEOPTS {
         $$ = { stmt: 'style', id: $2.trim(), styleClass: $3.trim() };
+        }
+    ;
+
+linkStyleStatement
+    : linkStyle LINKSTYLE_DEFAULT LINKSTYLE_STYLEOPTS {
+        $$ = { stmt: 'linkStyle', targets: 'default', style: $3.trim() };
+        }
+    | linkStyle LINKSTYLE_IDS LINKSTYLE_STYLEOPTS {
+        $$ = {
+            stmt: 'linkStyle',
+            targets: $2.trim().split(',').map(function (index) { return Number(index.trim()); }),
+            style: $3.trim()
+        };
         }
     ;
 
