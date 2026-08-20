@@ -497,6 +497,40 @@ export function solveSAT(
   const clauses0 = clauses;
   let lastConflictClause: CNFClause | null = null;
 
+  // Flat mirror of the ORIGINAL clauses, for the propagation scan.
+  //
+  // Propagation walks every clause and every literal of it, repeatedly, and measured
+  // on `domus/triage2` it does so ~97,000 times per layout: 54 solves at ~1,800 CDCL
+  // iterations each over 252 variables and ~770 clauses. (Measured, not assumed — and
+  // notably NO solve hits the 2 s limit, so this is steady scanning cost, not
+  // thrashing.) Reading literals from one `Int32Array` removes an indirection and a
+  // bounds check per literal.
+  //
+  // Only the original clauses are mirrored, deliberately. Mirroring learned clauses as
+  // well costs an append per conflict plus a full rebuild whenever clause deletion
+  // fires, and that maintenance was a net LOSS on the largest formulas:
+  // `domus/architecture` went 14134 ms -> 16119 ms (confirmed over repeat runs) while
+  // the SAT-bound fixtures improved. Originals never change, so mirroring just those
+  // needs no maintenance; the learned tail is scanned from the array of arrays, in the
+  // same order it already had.
+  const originalClauseCount = clauses.length;
+  const clauseStart = new Int32Array(originalClauseCount + 1);
+  let flatTotal = 0;
+  for (const clause of clauses) {
+    flatTotal += clause.length;
+  }
+  const litFlat = new Int32Array(flatTotal);
+  {
+    let at = 0;
+    for (const [ci, clause] of clauses.entries()) {
+      clauseStart[ci] = at;
+      for (const lit of clause) {
+        litFlat[at++] = lit;
+      }
+    }
+    clauseStart[originalClauseCount] = at;
+  }
+
   // decisionStack: stores the literals assigned at each level
   // levelStack: literal -> level
   const literalStack: number[] = [];
@@ -529,15 +563,18 @@ export function solveSAT(
     let changed = true;
     while (changed) {
       changed = false;
-      for (const clause of clauses) {
+      for (const [ci, clause] of clauses.entries()) {
+        const mirrored = ci < originalClauseCount;
+        const tail = mirrored ? undefined : clause;
+        const from = mirrored ? clauseStart[ci] : 0;
+        const to = mirrored ? clauseStart[ci + 1] : tail!.length;
         let unassignedLit: number | null = null;
         let isSatisfied = false;
 
-        for (const lit of clause) {
-          const v = Math.abs(lit);
-          const assigned = value[v];
-          const val = assigned === UNASSIGNED ? undefined : assigned === TRUE;
-          if (val === undefined) {
+        for (let li = from; li < to; li++) {
+          const lit = mirrored ? litFlat[li] : tail![li];
+          const assigned = value[lit > 0 ? lit : -lit];
+          if (assigned === UNASSIGNED) {
             if (unassignedLit === null) {
               unassignedLit = lit;
             } else {
@@ -545,7 +582,7 @@ export function solveSAT(
               unassignedLit = 0; // Marker: 0 is never a valid literal
               break;
             }
-          } else if (val === lit > 0) {
+          } else if ((assigned === TRUE) === lit > 0) {
             isSatisfied = true;
             break;
           }
