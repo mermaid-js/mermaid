@@ -46,9 +46,11 @@ export const c4LabelHelper = async <T extends SVGGraphicsElement>(
   const wrapWidth = node.width
     ? Math.max(node.width - 2 * (node.padding ?? 0), MIN_WRAP_WIDTH)
     : (getConfig().flowchart?.wrappingWidth ?? 200);
-  // Wrapping is opt-in via the root `wrap` config, matching the legacy C4
-  // renderer; the (currently ignored) c4.wrap option is tracked in #7949.
-  const width = config.wrap ? wrapWidth : Number.POSITIVE_INFINITY;
+  // `c4.wrap` (schema default true) is this diagram's own auto-wrap flag, and is what
+  // the legacy renderer gated on. The root-level `wrap` has no schema default, so
+  // reading it here left every C4 label unwrapped.
+  const shouldWrap = config.c4?.wrap ?? true;
+  const width = shouldWrap ? wrapWidth : Number.POSITIVE_INFINITY;
 
   const rendered = await Promise.all(
     sections.map(async (section) => {
