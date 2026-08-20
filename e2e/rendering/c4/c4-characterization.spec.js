@@ -57,9 +57,7 @@ Rel(p, s, "Uses")
     await expect(diagramSvg(page)).not.toContainText('v1.0');
   });
 
-  test('CHAR.link should render $link on an element as a hyperlink', async ({
-    page,
-  }, testInfo) => {
+  test('CHAR.link should render $link on an element as a hyperlink', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,
       testInfo,
