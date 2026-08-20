@@ -55,14 +55,14 @@ export interface FlowVertex {
   styles: string[];
   text?: string;
   type?: ShapeID | FlowVertexTypeParam;
-  icon?: string;
-  form?: string;
-  pos?: 't' | 'b';
-  img?: string;
-  assetWidth?: number;
-  assetHeight?: number;
-  defaultWidth?: number;
-  imageAspectRatio?: number;
+  // No `icon` / `img` / `form` / `pos` / asset-size fields: agentflow's shape
+  // catalogue (§4.3) is the six domain shapes, so the icon and image shapes
+  // those fields select are not part of it. They were inherited from the
+  // flowchart copy, and the shape they produced was warned away as
+  // SHAPE_UNSUPPORTED before it ever reached the renderer. `icon`, `img`, `w`
+  // and `h` remain authorable as ordinary metadata — carried on
+  // `vertex.metadata` like any other unknown key, and stripped from the
+  // semantic model as presentation-only per §11.
   metadata?: Record<string, unknown>;
   /** Set by `addConnector` to mark a node declared with the `connector` keyword. */
   isConnector?: boolean;

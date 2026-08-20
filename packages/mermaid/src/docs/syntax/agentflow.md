@@ -180,7 +180,17 @@ fetch@{
 }
 ```
 
-Keys mermaid itself acts on are `shape` and `view`. Everything else is carried through untouched and surfaced to consumers, so the vocabulary below is a convention rather than a closed list — an unknown key is preserved, never rejected.
+Mermaid itself acts on a small, fixed set of keys:
+
+| Key                             | Applies to | Effect                                                     |
+| ------------------------------- | ---------- | ---------------------------------------------------------- |
+| `shape`                         | nodes      | Selects the node shape (see the table above)               |
+| `label`, `labelType`            | nodes      | Overrides the node's label and how it is parsed            |
+| `view`                          | containers | `collapsed` folds the container down to a summary node     |
+| `algorithm`                     | containers | Per-container ELK algorithm, with `@mermaid-js/layout-elk` |
+| `curve`, `animate`, `animation` | edges      | Edge interpolation and animation                           |
+
+Everything else is carried through untouched and surfaced to consumers, so the vocabulary below is a convention rather than a closed list — an unknown key is preserved, never rejected.
 
 The one exception is prototype-shaped keys: `__proto__`, `constructor`, and `prototype` are stripped from parsed metadata, at every level of nesting. They are dropped rather than carried so that a consumer merging `node.metadata` into its own object cannot be made to pollute a prototype.
 

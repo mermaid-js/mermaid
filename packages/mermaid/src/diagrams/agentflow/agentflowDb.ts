@@ -547,30 +547,12 @@ export class AgentFlowDB implements DiagramDB {
         vertex.text = this.sanitizeText(doc.label);
         vertex.labelType = this.sanitizeNodeLabelType(doc?.labelType);
       }
-      if (doc?.icon) {
-        vertex.icon = doc?.icon;
-        if (!doc.label?.trim() && vertex.text === id) {
-          vertex.text = '';
-        }
-      }
-      if (doc?.form) {
-        vertex.form = doc?.form;
-      }
-      if (doc?.pos) {
-        vertex.pos = doc?.pos;
-      }
-      if (doc?.img) {
-        vertex.img = doc?.img;
-        if (!doc.label?.trim() && vertex.text === id) {
-          vertex.text = '';
-        }
-      }
-      if (doc.w) {
-        vertex.assetWidth = Number(doc.w);
-      }
-      if (doc.h) {
-        vertex.assetHeight = Number(doc.h);
-      }
+      // `icon`, `img`, `form`, `pos`, `w` and `h` are deliberately not promoted
+      // onto the vertex. Agentflow's shape catalogue (§4.3) is the six domain
+      // shapes; the icon and image shapes these keys select are outside it, so
+      // the shape they produced was replaced with the default and reported as
+      // SHAPE_UNSUPPORTED before it ever reached the renderer. They stay
+      // available as ordinary metadata on `vertex.metadata`.
     }
   }
 
@@ -1583,21 +1565,6 @@ You have to call mermaid.initialize.`
   public lex: { firstGraph: typeof AgentFlowDB.prototype.firstGraph };
 
   private getTypeFromVertex(vertex: FlowVertex): ShapeID {
-    if (vertex.img) {
-      return 'imageSquare';
-    }
-    if (vertex.icon) {
-      if (vertex.form === 'circle') {
-        return 'iconCircle';
-      }
-      if (vertex.form === 'square') {
-        return 'iconSquare';
-      }
-      if (vertex.form === 'rounded') {
-        return 'iconRounded';
-      }
-      return 'icon';
-    }
     // Resolve v0.8.1 alias (e.g. `task` → `roundedRect`, `action` → `hexagon`)
     // before mapping to the canonical Mermaid shape id.
     const resolved = typeof vertex.type === 'string' ? resolveShapeAlias(vertex.type) : vertex.type;
@@ -1672,11 +1639,6 @@ You have to call mermaid.initialize.`
         link: vertex.link,
         linkTarget: vertex.linkTarget,
         tooltip: this.getTooltip(vertex.id),
-        icon: vertex.icon,
-        pos: vertex.pos,
-        img: vertex.img,
-        assetWidth: vertex.assetWidth,
-        assetHeight: vertex.assetHeight,
         metadata: vertex.metadata,
       };
       if (isGroup) {
