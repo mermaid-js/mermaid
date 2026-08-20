@@ -1032,13 +1032,16 @@ function applyElkEdgeLayout(
     }
 
     // `elk.box` and `elk.rectpacking` place nodes but never route edges, so ELK
-    // returns no sections. `points` is not optional downstream — the paint step
+    // returns no sections. Guarded on length, not presence: an empty array would
+    // otherwise skip the fallback and hand `undefined` to
+    // `createEdgePointsFromSection`, which dereferences `section.startPoint`.
+    // `points` is not optional downstream — the paint step
     // filters it — so fall back to a straight line between the two node centres
     // rather than leaving the edge unlaid. The centres are then clipped back to
     // the node borders: this renderer paints with `skipIntersect`, so nothing
     // downstream would do it, and an unclipped line runs under both nodes with
     // its end marker buried inside the target.
-    if (!edge.sections) {
+    if (!edge.sections?.length) {
       const centre = (node: NodeWithVertex) => ({
         x: (node.offset?.posX ?? node.x ?? 0) + (node.width ?? 0) / 2,
         y: (node.offset?.posY ?? node.y ?? 0) + (node.height ?? 0) / 2,

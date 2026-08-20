@@ -646,11 +646,27 @@ describe('algorithms that place nodes but do not route edges', () => {
 
       const nodeById = Object.fromEntries(data.nodes.map((node: any) => [node.id, node]));
       const points = data.edges[0].points;
-      const insideBox = (node: any, point: { x: number; y: number }) =>
-        Math.abs(point.x - node.x) < node.width / 2 && Math.abs(point.y - node.y) < node.height / 2;
 
-      expect(insideBox(nodeById.A, points[0])).toBe(false);
-      expect(insideBox(nodeById.B, points[points.length - 1])).toBe(false);
+      // "Not strictly inside" is too weak on its own — a point at (1e9, 1e9)
+      // would satisfy it. Require the endpoint to sit *on* the node's boundary:
+      // flush against one edge of the box and within the span of the other.
+      const onNodeBorder = (node: any, point: { x: number; y: number }, tolerance = 0.5) => {
+        if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+          return false;
+        }
+        const dx = Math.abs(point.x - node.x);
+        const dy = Math.abs(point.y - node.y);
+        const halfWidth = node.width / 2;
+        const halfHeight = node.height / 2;
+        const onVerticalEdge =
+          Math.abs(dx - halfWidth) <= tolerance && dy <= halfHeight + tolerance;
+        const onHorizontalEdge =
+          Math.abs(dy - halfHeight) <= tolerance && dx <= halfWidth + tolerance;
+        return onVerticalEdge || onHorizontalEdge;
+      };
+
+      expect(onNodeBorder(nodeById.A, points[0])).toBe(true);
+      expect(onNodeBorder(nodeById.B, points[points.length - 1])).toBe(true);
     }
   );
 });
