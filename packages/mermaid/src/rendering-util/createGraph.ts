@@ -81,9 +81,21 @@ export async function insertMeasuredNode(
  * @param data4Layout - The layout data containing nodes and edges.
  * @returns A promise resolving to an object containing the graph and the inserted groups.
  */
+export interface CreateGraphOptions {
+  /**
+   * Measure cluster labels at their natural width rather than wrapping them at
+   * `flowchart.wrappingWidth`. Layouts that derive a compound node's size from
+   * this measurement (ELK) opt in, so measurement matches what `insertCluster`
+   * actually paints. Markdown labels are always measured wrapped — they are the
+   * ones meant to wrap, and they are painted wrapped too.
+   */
+  unwrapGroupLabels?: boolean;
+}
+
 export async function createGraphWithElements(
   element: D3Selection,
-  data4Layout: LayoutData
+  data4Layout: LayoutData,
+  options: CreateGraphOptions = {}
 ): Promise<{
   graph: graphlib.Graph;
   groups: {
@@ -119,15 +131,15 @@ export async function createGraphWithElements(
     data4Layout.nodes.map(async (node) => {
       if (node.isGroup) {
         if (hasDom) {
-          // ELK sizes compound nodes from this measurement, and cluster labels
-          // are painted unwrapped (insertCluster renders via createLabel with
-          // infinite width). labelHelper falls back to flowchart.wrappingWidth
-          // (200px) when node.width is undefined, which artificially caps the
-          // measurement — so for ELK measure with an infinite width so the
-          // label-derived minimum size matches what is painted. Other layouts
-          // (dagre) only consume the label height and keep wrapped measuring.
-          const isElk = (data4Layout.layoutAlgorithm as string | undefined)?.startsWith('elk');
-          await measureGroupLabel(nodesGroup, node, isElk ? Number.POSITIVE_INFINITY : undefined);
+          // `insertCluster` paints plain cluster labels through `createLabel`,
+          // which uses an infinite width, while `labelHelper` falls back to
+          // `flowchart.wrappingWidth` (200px) when `node.width` is undefined —
+          // so measure and paint disagree. Layouts that size compound nodes
+          // from this measurement opt into measuring the way it is painted.
+          // Markdown labels are painted wrapped (`width: node.width`), so they
+          // keep wrapped measurement either way.
+          const unwrap = options.unwrapGroupLabels && node.labelType !== 'markdown';
+          await measureGroupLabel(nodesGroup, node, unwrap ? Number.POSITIVE_INFINITY : undefined);
         }
         graph.setNode(node.id, { ...node });
       } else {

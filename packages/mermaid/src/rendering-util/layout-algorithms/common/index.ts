@@ -7,6 +7,7 @@ import { getConfig } from '../../../config.js';
 import utils from '../../../utils.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { createGraphWithElements } from '../../createGraph.js';
+import type { CreateGraphOptions } from '../../createGraph.js';
 import { clear as clearClusters, insertCluster } from '../../rendering-elements/clusters.js';
 import {
   clear as clearEdges,
@@ -202,9 +203,10 @@ export function clearLayoutRenderState(): void {
 
 export async function defaultMeasureLayout(
   data4Layout: LayoutData,
-  { element }: CommonLayoutRenderContext
+  { element }: CommonLayoutRenderContext,
+  options?: CreateGraphOptions
 ): Promise<CommonLayoutMeasure> {
-  return await createGraphWithElements(element, data4Layout);
+  return await createGraphWithElements(element, data4Layout, options);
 }
 
 export async function paintLayoutData(

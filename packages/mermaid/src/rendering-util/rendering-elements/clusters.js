@@ -496,7 +496,10 @@ const createContainerGroup = async (parent, node, opts) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster ' + opts.cssClass + ' ' + node.cssClasses)
-    .attr('id', node.id)
+    // `domId` is generated per render (render.ts prefixes it with the diagram's
+    // svg id). Using the raw, author-supplied `node.id` here collided across two
+    // diagrams on the same page, like every other cluster shape in this file.
+    .attr('id', node.domId ?? node.id)
     .attr('data-look', node.look);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);

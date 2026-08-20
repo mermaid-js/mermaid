@@ -173,9 +173,11 @@ union A, B`,
     api:R -- L:db`,
 
   agentflow: `agentflow-beta TB
-    a["Alpha"]
-    b["Beta"]
-    a --> b`,
+    flow grp["Group"]
+      a["Alpha"]
+      b["Beta"]
+      a --> b
+    end`,
 
   wardley: `wardley-beta
     title Kettle Evolution Pipeline
