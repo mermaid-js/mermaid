@@ -28,6 +28,7 @@ mermaidchart
 mermaidjs
 mindmap
 mindmaps
+mmdc
 mrtree
 multigraph
 nodesep

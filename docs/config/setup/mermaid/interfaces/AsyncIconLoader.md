@@ -10,7 +10,7 @@
 
 # Interface: AsyncIconLoader
 
-Defined in: [packages/mermaid/src/rendering-util/icons.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L8)
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:9](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L9)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: [packages/mermaid/src/rendering-util/icons.ts:8](https://github.com/
 
 > **loader**: () => `Promise`<`IconifyJSON`>
 
-Defined in: [packages/mermaid/src/rendering-util/icons.ts:10](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L10)
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:11](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L11)
 
 #### Returns
 
@@ -30,4 +30,4 @@ Defined in: [packages/mermaid/src/rendering-util/icons.ts:10](https://github.com
 
 > **name**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/icons.ts:9](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L9)
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:10](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L10)
