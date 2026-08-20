@@ -26,12 +26,6 @@ interface StyledSegment {
 /**
  * Recursively parse inline markdown formatting into styled segments.
  * Supports nesting: **bold *italic* bold**, *italic **bold** italic*, ***both***.
- *
- * Algorithm:
- *   1. Find the first unescaped `*` or `**` marker
- *   2. Find the matching closing marker
- *   3. Recurse into the inner content with inherited + new styles
- *   4. Continue parsing the rest
  */
 function parseInlineMarkdown(
   text: string,
@@ -40,20 +34,19 @@ function parseInlineMarkdown(
 ): StyledSegment[] {
   const segments: StyledSegment[] = [];
 
-  // Find first occurrence of ** or * (but not *** which is ** then *)
-  // We match ** first (greedy) so *** is handled as bold wrapping italic
+  // Find first occurrence of ***, **, or *
+  // Order matters: match *** first so it's not split into ** + *
   const regex = /(\*\*\*|\*\*|\*)/g;
   const match = regex.exec(text);
 
   if (!match) {
-    // No more markers — emit the remaining text with inherited styles
     if (text) {
       segments.push({ text, bold: inheritedBold, italic: inheritedItalic });
     }
     return segments;
   }
 
-  const marker = match[0]; // '***', '**', or '*'
+  const marker = match[0];
   const markerStart = match.index;
 
   // Emit text before this marker with inherited styles
@@ -65,11 +58,9 @@ function parseInlineMarkdown(
     });
   }
 
-  // Find the matching closing marker (same marker string)
-  const closeRegex = new RegExp(
-    marker.replace(/\*/g, '\\*') + '(?![*])',
-    'g'
-  );
+  // Find the matching closing marker — use escaped literal pattern (not user input)
+  const escapedMarker = marker.replace(/\*/g, '\\*');
+  const closeRegex = new RegExp(escapedMarker + '(?![*])', 'g');
   closeRegex.lastIndex = markerStart + marker.length;
   const closeMatch = closeRegex.exec(text);
 
@@ -95,7 +86,6 @@ function parseInlineMarkdown(
   } else if (marker === '**') {
     newBold = true;
   } else {
-    // '*'
     newItalic = true;
   }
 
@@ -103,7 +93,7 @@ function parseInlineMarkdown(
   const innerSegments = parseInlineMarkdown(innerContent, newBold, newItalic);
   segments.push(...innerSegments);
 
-  // Continue parsing the rest with inherited styles (marker is consumed)
+  // Continue parsing the rest with inherited styles
   const restSegments = parseInlineMarkdown(afterContent, inheritedBold, inheritedItalic);
   segments.push(...restSegments);
 
@@ -112,32 +102,45 @@ function parseInlineMarkdown(
 
 /**
  * Measure the width of a text string using a temporary SVG text element.
+ * Uses ownerDocument for sandbox/iframe compatibility.
+ * Caches results by (text, fontSize, bold, italic) for performance.
  */
-function measureText(svgRoot: SVGGElement, text: string, fontSize: number): number {
-  const testEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+const measureCache = new Map<string, number>();
+function measureText(
+  svgRoot: SVGElement,
+  text: string,
+  fontSize: number,
+  bold = false,
+  italic = false
+): number {
+  const cacheKey = `${text}\0${fontSize}\0${bold}\0${italic}`;
+  if (measureCache.has(cacheKey)) {
+    return measureCache.get(cacheKey)!;
+  }
+
+  const doc = svgRoot.ownerDocument || document;
+  const testEl = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
   testEl.setAttribute('font-size', String(fontSize));
+  if (bold) testEl.setAttribute('font-weight', 'bold');
+  if (italic) testEl.setAttribute('font-style', 'italic');
   testEl.textContent = text;
   svgRoot.appendChild(testEl);
   const width = testEl.getComputedTextLength();
   svgRoot.removeChild(testEl);
+
+  measureCache.set(cacheKey, width);
   return width;
 }
 
 /**
  * Wrap a single styled line into multiple lines that fit within maxWidth.
- * This preserves markdown formatting across line breaks.
- *
- * Algorithm:
- * 1. Build a flat list of (char, bold, italic) triples
- * 2. Greedily add chars to the current line until width exceeds maxWidth
- * 3. Break at the last space to avoid breaking mid-word
- * 4. Reconstruct styled segments for each output line
+ * Preserves markdown formatting across line breaks.
  */
 function wrapStyledLine(
   segments: StyledSegment[],
   maxWidth: number,
   fontSize: number,
-  svgRoot: SVGGElement
+  svgRoot: SVGElement
 ): StyledSegment[][] {
   if (maxWidth <= 0) {
     return [segments];
@@ -167,41 +170,47 @@ function wrapStyledLine(
   }
 
   // Greedy wrap by character
-  const lines: CharInfo[][] = [[]];
+  // FIX: lines starts empty, currentLineChars accumulates, then gets pushed on break
+  const lines: CharInfo[][] = [];
   let currentLineChars: CharInfo[] = [];
   let currentWidth = 0;
   let lastSpaceIndex = -1; // index in currentLineChars where last space was
 
   for (const ch of chars) {
-    const charWidth = measureText(svgRoot, ch.char, fontSize);
-    const newWidth = currentWidth + charWidth;
+    const charWidth = measureText(svgRoot, ch.char, fontSize, ch.bold, ch.italic);
 
-    if (newWidth > maxWidth && currentLineChars.length > 0) {
+    if (currentWidth + charWidth > maxWidth && currentLineChars.length > 0) {
       // Need to break. Prefer breaking at last space.
-      if (lastSpaceIndex >= 0) {
-        // Break at last space: chars after space go to next line
-        const nextLineChars = currentLineChars.slice(lastSpaceIndex + 1);
-        currentLineChars = currentLineChars.slice(0, lastSpaceIndex);
-        // Remove the space itself from end of current line
-        if (currentLineChars.length > 0 && currentLineChars[currentLineChars.length - 1].char === ' ') {
-          currentLineChars.pop();
-        }
-        lines.push(nextLineChars);
-        currentLineChars = nextLineChars;
-      } else {
-        // No space found, just break here
-        lines.push([ch]);
-        currentLineChars = lines[lines.length - 1];
-      }
+      const breakIndex =
+        lastSpaceIndex >= 0 ? lastSpaceIndex : currentLineChars.length;
+
+      // Push the current line up to the break point
+      lines.push(currentLineChars.slice(0, breakIndex));
+
+      // Start next line with chars after the break point
+      const nextStart = lastSpaceIndex >= 0 ? breakIndex + 1 : breakIndex;
+      currentLineChars = currentLineChars.slice(nextStart);
       lastSpaceIndex = -1;
-      currentWidth = measureText(svgRoot, currentLineChars.map((c) => c.char).join(''), fontSize);
-    } else {
-      currentLineChars.push(ch);
-      currentWidth = newWidth;
-      if (ch.char === ' ') {
-        lastSpaceIndex = currentLineChars.length - 1;
-      }
+
+      // Recalculate width of the new current line
+      currentWidth = measureText(
+        svgRoot,
+        currentLineChars.map((c) => c.char).join(''),
+        fontSize
+      );
     }
+
+    // Always push the character onto the current line
+    currentLineChars.push(ch);
+    currentWidth += charWidth;
+    if (ch.char === ' ') {
+      lastSpaceIndex = currentLineChars.length - 1;
+    }
+  }
+
+  // Push the final remaining line
+  if (currentLineChars.length > 0) {
+    lines.push(currentLineChars);
   }
 
   // Convert CharInfo[][] back to StyledSegment[][]
@@ -210,7 +219,11 @@ function wrapStyledLine(
       return [{ text: '', bold: false, italic: false }];
     }
     const result: StyledSegment[] = [];
-    let current = { text: lineChars[0].char, bold: lineChars[0].bold, italic: lineChars[0].italic };
+    let current = {
+      text: lineChars[0].char,
+      bold: lineChars[0].bold,
+      italic: lineChars[0].italic,
+    };
     for (let i = 1; i < lineChars.length; i++) {
       const ch = lineChars[i];
       if (ch.bold === current.bold && ch.italic === current.italic) {
@@ -226,7 +239,7 @@ function wrapStyledLine(
 }
 
 /**
- * Render text with word wrap and basic markdown support.
+ * Render text with word wrap and markdown support.
  * Creates tspan elements for multi-line text, preserving the original
  * positioning system (transform, text-anchor, dominant-baseline).
  */
@@ -238,7 +251,7 @@ function renderWrappedText(
   horizontalPos: TextHorizontalPos,
   verticalPos: TextVerticalPos,
   maxWidth: number,
-  svgRoot: SVGGElement
+  svgRoot: SVGElement
 ) {
   const textEl = groupEl.append('text');
   textEl
@@ -255,7 +268,12 @@ function renderWrappedText(
   for (const explicitLine of explicitLines) {
     const trimmed = explicitLine.trim();
     if (!trimmed) {
-      // Empty line from <br> — still add a tspan for vertical spacing
+      // Blank line from <br> — emit empty tspan for vertical spacing
+      textEl
+        .append('tspan')
+        .attr('class', 'text-outer-tspan')
+        .attr('x', 0)
+        .attr('dy', lineIndex === 0 ? '0em' : `${lineHeight}em`);
       lineIndex++;
       continue;
     }
@@ -273,15 +291,16 @@ function renderWrappedText(
         .attr('x', 0)
         .attr('dy', lineIndex === 0 ? '0em' : `${lineHeight}em`);
 
-      // Render each styled segment as a child tspan
-      lineSegments.forEach((seg, j) => {
-        if (!seg.text) return;
-        const innerTspan = tspan.append('tspan')
+      // Render each styled segment — NO extra space injected
+      for (const seg of lineSegments) {
+        if (!seg.text) continue;
+        tspan
+          .append('tspan')
           .attr('class', 'text-inner-tspan')
           .attr('font-weight', seg.bold ? 'bold' : 'normal')
           .attr('font-style', seg.italic ? 'italic' : 'normal')
-          .text(j === 0 ? seg.text : ` ${seg.text}`);
-      });
+          .text(seg.text);
+      }
 
       lineIndex++;
     }
@@ -306,7 +325,6 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   log.debug('Rendering quadrant chart\n' + txt);
 
   const securityLevel = conf.securityLevel;
-  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -341,11 +359,13 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const labelGroup = group.append('g').attr('class', 'labels');
   const titleGroup = group.append('g').attr('class', 'title');
 
-  // Get SVG root for text measurement
-  const svgRoot = svg.node()! as unknown as SVGGElement;
+  // SVG root for text measurement — typed as SVGElement for flexibility
+  const svgRoot = svg.node()! as SVGElement;
 
   if (quadrantData.title) {
     const titleG = titleGroup.append('g').attr('transform', getTransformation(quadrantData.title));
+    // FIX: Title is centered, so max width should be half the chart width
+    const titleMaxWidth = width * 0.9;
     renderWrappedText(
       titleG,
       quadrantData.title.text,
@@ -353,7 +373,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
       quadrantData.title.fontSize,
       quadrantData.title.horizontalPos,
       quadrantData.title.verticalPos,
-      width,
+      titleMaxWidth,
       svgRoot
     );
   }
