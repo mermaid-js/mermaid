@@ -396,6 +396,39 @@ stateDiagram
    Crash:::badBadEvent --> [*]
 ```
 
+### Styling transitions with `linkStyle` (v<MERMAID_RELEASE_VERSION>+)
+
+You can style one or more transitions with the `linkStyle` keyword. Transitions are numbered from `0` in the order
+they appear in the diagram, including transitions inside composite states. Connectors between notes and states are not
+included in this numbering.
+
+To style selected transitions, provide a comma-separated list of their indexes followed by one or more CSS properties:
+
+```txt
+linkStyle 1,3 stroke:#dc2626,stroke-width:4px,color:#dc2626
+```
+
+Use `default` instead of an index to apply a style to every transition:
+
+```txt
+linkStyle default stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+```
+
+An indexed style is applied after the default style, so it can override individual properties. If the same default or
+index is declared more than once, the last declaration for that target is used. A `linkStyle` declaration may appear
+before or after the transitions it styles.
+
+```mermaid-example
+stateDiagram-v2
+    [*] --> Idle : boot
+    Idle --> Running : start
+    Running --> Idle : stop
+    Running --> [*] : shutdown
+
+    linkStyle default stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+    linkStyle 1,3 stroke:#dc2626,stroke-width:4px,color:#dc2626
+```
+
 ## Spaces in state names
 
 Spaces can be added to a state by first defining the state with an id and then referencing the id later.

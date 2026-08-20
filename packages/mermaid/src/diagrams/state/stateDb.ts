@@ -17,14 +17,17 @@ import { createTooltip } from '../common/svgDrawCommon.js';
 import { dataFetcher, reset as resetDataFetcher } from './dataFetcher.js';
 import { getDir } from './stateRenderer-v3-unified.js';
 import {
+  CSS_EDGE,
   DEFAULT_DIAGRAM_DIRECTION,
   DEFAULT_STATE_TYPE,
   DIVIDER_TYPE,
+  G_EDGE_STYLE,
   STMT_APPLYCLASS,
   STMT_CLASSDEF,
+  STMT_DIRECTION,
+  STMT_LINKSTYLE,
   STMT_RELATION,
   STMT_ROOT,
-  STMT_DIRECTION,
   STMT_STATE,
   STMT_STYLEDEF,
 } from './stateCommon.js';
@@ -49,6 +52,7 @@ interface BaseStmt {
     | 'relation'
     | 'state'
     | 'style'
+    | 'linkStyle'
     | 'root'
     | 'default'
     | 'click';
@@ -98,6 +102,12 @@ interface StyleStmt extends BaseStmt {
   styleClass: string;
 }
 
+interface LinkStyleStmt extends BaseStmt {
+  stmt: 'linkStyle';
+  targets: 'default' | number[];
+  style: string;
+}
+
 export interface RootStmt {
   id: 'root';
   stmt: 'root';
@@ -123,6 +133,7 @@ export type Stmt =
   | RelationStmt
   | StateStmt
   | StyleStmt
+  | LinkStyleStmt
   | RootStmt
   | ClickStmt;
 
@@ -173,8 +184,8 @@ export interface Edge {
   end: string;
   arrowhead: string;
   arrowTypeEnd: string;
-  style: string;
-  labelStyle: string;
+  style: string | string[];
+  labelStyle: string | string[];
   label?: string;
   arrowheadStyle: string;
   labelpos: string;
@@ -262,10 +273,12 @@ export class StateDB {
     const diagramStates = this.getStates();
     const config = getConfig();
 
+    const rootDoc = this.getRootDocV2() as StateStmt;
+
     resetDataFetcher();
     dataFetcher(
       undefined,
-      this.getRootDocV2() as StateStmt,
+      rootDoc,
       diagramStates,
       this.nodes,
       this.edges,
@@ -273,6 +286,7 @@ export class StateDB {
       config.look,
       this.classes
     );
+    this.applyLinkStyles(rootDoc.doc ?? []);
 
     // Process node labels
     for (const node of this.nodes) {
@@ -305,6 +319,88 @@ export class StateDB {
         state.styles = styles.map((s) => s.replace(/;/g, '')?.trim());
       }
     }
+  }
+
+  private applyLinkStyles(statements: Stmt[]) {
+    const directives: LinkStyleStmt[] = [];
+
+    const collectDirectives = (doc: Stmt[]) => {
+      for (const statement of doc) {
+        if (statement.stmt === STMT_LINKSTYLE) {
+          directives.push(statement);
+        } else if (statement.stmt === STMT_STATE && statement.doc) {
+          collectDirectives(statement.doc);
+        }
+      }
+    };
+
+    collectDirectives(statements);
+    if (directives.length === 0) {
+      return;
+    }
+
+    const transitions = this.edges.filter((edge) => edge.classes === CSS_EDGE);
+    let defaultStyles: string[] = [];
+    const indexedStyles = new Map<number, string[]>();
+
+    for (const directive of directives) {
+      const styles = this.parseLinkStyle(directive.style);
+      if (directive.targets === 'default') {
+        defaultStyles = styles;
+        continue;
+      }
+
+      for (const index of directive.targets) {
+        if (index >= transitions.length) {
+          if (transitions.length === 0) {
+            throw new Error(
+              `The index ${index} for linkStyle is out of bounds because the state diagram has no transitions.`
+            );
+          }
+          throw new Error(
+            `The index ${index} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
+              transitions.length - 1
+            }. (Help: Ensure that the index is within the range of existing transitions.)`
+          );
+        }
+        indexedStyles.set(index, styles);
+      }
+    }
+
+    transitions.forEach((edge, index) => {
+      const styles = this.mergeLinkStyles(defaultStyles, indexedStyles.get(index) ?? []);
+      if (styles.length === 0) {
+        return;
+      }
+      edge.style = [G_EDGE_STYLE, ...styles];
+      edge.labelStyle = styles;
+    });
+  }
+
+  private parseLinkStyle(style: string): string[] {
+    return style
+      .replace(/\\,/g, '§§§')
+      .split(',')
+      .map((part) =>
+        part
+          .replace(/§§§/g, ',')
+          .replace(/;+\s*$/, '')
+          .trim()
+      )
+      .filter(Boolean);
+  }
+
+  private mergeLinkStyles(...styleGroups: string[][]): string[] {
+    const stylesByProperty = new Map<string, string>();
+
+    for (const style of styleGroups.flat()) {
+      const separator = style.indexOf(':');
+      const property = separator === -1 ? style : style.slice(0, separator).trim();
+      stylesByProperty.delete(property);
+      stylesByProperty.set(property, style);
+    }
+
+    return [...stylesByProperty.values()];
   }
 
   setRootDoc(o: Stmt[]) {
