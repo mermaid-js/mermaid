@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Wireframe Diagram Demo</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        padding: 20px;
+        background: #f4f5f7;
+        color: #172b4d;
+      }
+      h1,
+      h2 {
+        color: #091e42;
+      }
+      .demo-card {
+        background: #ffffff;
+        border: 1px solid #dfe1e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Wireframe Diagram Demos</h1>
+
+    <div class="demo-card">
+      <h2>User Profile Settings (Desktop)</h2>
+      <pre class="mermaid">
+wireframe-beta "User Profile Settings" size=desktop
+actions [Cancel] ["*Save Changes"]
+
+section "Personal Information"
+  columns
+    col
+      textfield "First Name"
+    end
+    col
+      textfield "Last Name"
+    end
+  end
+  textfield "Email Address"
+  select "Role" [Admin, Developer, Designer, Viewer]
+end
+
+section "Preferences"
+  checkbox "Subscribe to newsletter" checked
+  radiogroup "Theme" [Light, *Dark, System]
+end
+      </pre>
+    </div>
+
+    <div class="demo-card">
+      <h2>Analytics Dashboard (Grid & Panels)</h2>
+      <pre class="mermaid">
+wireframe-beta "Analytics Dashboard" size=desktop
+columns
+  col
+    titlewindow "System Metrics"
+      icon "Server Status" glyph="server"
+      heading "System Metrics Overview"
+      paragraph "All servers running normally."
+    end
+  end
+  col
+    titlewindow "Quick Actions"
+      button "Export Data"
+      button "Refresh Feed"
+    end
+  end
+end
+      </pre>
+    </div>
+
+    <div class="demo-card">
+      <h2>Login Dialog</h2>
+      <pre class="mermaid">
+wireframe-beta "User Login" size=dialog
+actions ["*Login"]
+
+textfield "Username or Email"
+password "Password"
+checkbox "Remember me on this device" checked
+      </pre>
+    </div>
+
+    <div class="demo-card">
+      <h2>Multi-Tab Side-by-Side Preview (showTabs)</h2>
+      <pre class="mermaid">
+wireframe-beta "Multi-Tab Settings" size=panel
+tabs ["General", "Security", "Notifications"] showTabs="general,security"
+  tab "General"
+    textfield "Username"
+    select "Language" [English, Spanish, French]
+  end
+  tab "Security"
+    password "Current Password"
+    password "New Password"
+  end
+  tab "Notifications"
+    checkbox "Email Alerts" checked
+  end
+end
+      </pre>
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        theme: 'default',
+        logLevel: 1,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>

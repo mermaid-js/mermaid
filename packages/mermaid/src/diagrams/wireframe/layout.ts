@@ -1,0 +1,596 @@
+import {
+  type WireframeComponent,
+  type ContentTabs,
+  isWireframeSection,
+  isFieldSet,
+  isTitleWindow,
+  isColumns,
+  isColBlock,
+  isContentTabs,
+  isTabPane,
+  isAccordion,
+  isButton,
+  isTextField,
+  isTextArea,
+  isSelectField,
+  isComboBox,
+  isCheckboxField,
+  isCheckboxGroup,
+  isRadioGroup,
+  isHeading,
+  isSubTitle,
+  isParagraph,
+  isRichText,
+  isTextElement,
+  isList,
+  isTree,
+  isMenu,
+  isIcon,
+  isImageField,
+  isVRule,
+  isVCurly,
+  isArrow,
+  isTabBar,
+  isCanvas,
+} from '@mermaid-js/parser';
+import { LAYOUT_METRICS, type WireframeRenderNode, type WireframeDiagramConfig } from './types.js';
+import { hasShowTabs, resolveActiveTabIdx, slugify, stripQuotes } from './renderers/utils.js';
+
+export function measureComponentHeight(
+  comp: WireframeComponent,
+  containerWidth: number
+): { width: number; height: number } {
+  if (isButton(comp)) {
+    const metrics = LAYOUT_METRICS.button;
+    const label = comp.label ?? 'Button';
+    const btnWidth = Math.min(
+      containerWidth,
+      Math.max(metrics.minWidth, label.length * 8.5 + metrics.paddingX * 2)
+    );
+    return { width: btnWidth, height: metrics.height };
+  }
+
+  if (isTextField(comp)) {
+    const metrics = LAYOUT_METRICS.input;
+    const hasLabel = Boolean(comp.label ?? comp.type);
+    const fieldWidth = Math.min(metrics.maxWidth, containerWidth);
+    return { width: fieldWidth, height: metrics.height + (hasLabel ? 20 : 0) };
+  }
+
+  if (isTextArea(comp)) {
+    const metrics = LAYOUT_METRICS.textarea;
+    const hasLabel = Boolean(comp.label);
+    const fieldWidth = Math.min(metrics.maxWidth, containerWidth);
+    let val = comp.value ?? '';
+    if (
+      (val.startsWith('`') && val.endsWith('`')) ||
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
+      val = val.slice(1, -1);
+    }
+    const lineCount = val ? val.split('\n').length : 0;
+    const rows = comp.rows ?? Math.max(3, lineCount);
+    const rowsHeight = rows * 20;
+    const toolbarHeight = comp.richtext ? 30 : 0;
+    return { width: fieldWidth, height: rowsHeight + toolbarHeight + (hasLabel ? 20 : 0) };
+  }
+
+  if (isSelectField(comp) || isComboBox(comp)) {
+    const metrics = LAYOUT_METRICS.select;
+    const fieldWidth = Math.min(metrics.maxWidth, containerWidth);
+    return { width: fieldWidth, height: metrics.height };
+  }
+
+  if (isCheckboxField(comp)) {
+    const metrics = LAYOUT_METRICS.checkbox;
+    const label = comp.label ?? '';
+    const width = Math.min(containerWidth, metrics.size + label.length * 8 + metrics.labelGap);
+    return { width, height: metrics.size };
+  }
+
+  if (isCheckboxGroup(comp)) {
+    const optionsCount = comp.options?.length ?? 0;
+    const hasLabel = Boolean(comp.label);
+    const height = (hasLabel ? 22 : 0) + optionsCount * 24;
+    return { width: containerWidth, height: Math.max(28, height) };
+  }
+
+  if (isRadioGroup(comp)) {
+    const optionsCount = comp.options?.length ?? 0;
+    const hasLabel = Boolean(comp.label);
+    const height = (hasLabel ? 22 : 0) + optionsCount * 24;
+    return { width: containerWidth, height: Math.max(28, height) };
+  }
+
+  if (isHeading(comp) || isSubTitle(comp)) {
+    const metrics = LAYOUT_METRICS.heading;
+    return { width: containerWidth, height: metrics.height };
+  }
+
+  if (isParagraph(comp) || isRichText(comp) || isTextElement(comp)) {
+    const metrics = LAYOUT_METRICS.paragraph;
+    return { width: containerWidth, height: metrics.height };
+  }
+
+  if (isList(comp)) {
+    const itemsCount = comp.items?.length ?? 1;
+    return { width: containerWidth, height: itemsCount * 22 };
+  }
+
+  if (isTree(comp)) {
+    let lineCount = 0;
+    if (comp.nodes) {
+      for (const node of comp.nodes) {
+        lineCount++;
+        const hasChildren = Boolean(node.children && node.children.length > 0);
+        const isExpanded = hasChildren && node.expanded !== false;
+        if (hasChildren && isExpanded && node.children) {
+          lineCount += node.children.length;
+        }
+      }
+    }
+    return { width: containerWidth, height: Math.max(1, lineCount) * 22 };
+  }
+
+  if (isMenu(comp)) {
+    const itemsCount = comp.items?.length ?? 1;
+    return { width: Math.min(180, containerWidth), height: itemsCount * 26 + 8 };
+  }
+
+  if (isIcon(comp)) {
+    const metrics = LAYOUT_METRICS.icon;
+    return { width: metrics.size, height: metrics.size };
+  }
+
+  if (isImageField(comp)) {
+    return { width: Math.min(300, containerWidth), height: 120 };
+  }
+
+  if (isVRule(comp) || isVCurly(comp)) {
+    const h = comp.height ?? 60;
+    return { width: containerWidth, height: h };
+  }
+
+  if (isArrow(comp)) {
+    const isVertical = comp.direction === 'up' || comp.direction === 'down';
+    const h = isVertical ? 60 : 30;
+    return { width: containerWidth, height: h };
+  }
+
+  if (isTabBar(comp)) {
+    return { width: containerWidth, height: LAYOUT_METRICS.tabBar.height };
+  }
+
+  if (isCanvas(comp)) {
+    return { width: containerWidth, height: comp.height ?? 120 };
+  }
+
+  const defaultMetrics = LAYOUT_METRICS.defaultComponent;
+  return {
+    width: Math.min(defaultMetrics.maxWidth, containerWidth),
+    height: defaultMetrics.height,
+  };
+}
+
+export { slugify };
+
+export function findTargetNode(
+  alignTo: string,
+  idMap: Map<string, WireframeRenderNode>
+): WireframeRenderNode | undefined {
+  if (!alignTo) {
+    return undefined;
+  }
+  const cleaned = stripQuotes(alignTo);
+  if (!cleaned) {
+    return undefined;
+  }
+  if (idMap.has(cleaned)) {
+    return idMap.get(cleaned);
+  }
+  const lower = cleaned.toLowerCase();
+  if (idMap.has(lower)) {
+    return idMap.get(lower);
+  }
+  const slug = slugify(cleaned);
+  if (slug && idMap.has(slug)) {
+    return idMap.get(slug);
+  }
+  return undefined;
+}
+
+export function registerNodeInIdMap(
+  node: WireframeRenderNode,
+  idMap: Map<string, WireframeRenderNode>
+): void {
+  const comp = node.astNode;
+
+  if (comp.id) {
+    const rawId = stripQuotes(comp.id);
+    if (rawId) {
+      idMap.set(rawId, node);
+      idMap.set(rawId.toLowerCase(), node);
+      const idSlug = slugify(rawId);
+      if (idSlug) {
+        idMap.set(idSlug, node);
+      }
+    }
+  }
+
+  const rawLabel =
+    comp.label ?? (comp as { value?: string }).value ?? (comp as { glyph?: string }).glyph;
+  if (rawLabel && typeof rawLabel === 'string') {
+    const trimmed = stripQuotes(rawLabel);
+    if (trimmed) {
+      if (!idMap.has(trimmed)) {
+        idMap.set(trimmed, node);
+      }
+      const lower = trimmed.toLowerCase();
+      if (!idMap.has(lower)) {
+        idMap.set(lower, node);
+      }
+      const labelSlug = slugify(trimmed);
+      if (labelSlug && !idMap.has(labelSlug)) {
+        idMap.set(labelSlug, node);
+      }
+    }
+  }
+}
+
+export function parseShowTabs(comp: ContentTabs, totalTabs: number): number[] {
+  if (comp.showTabsValue) {
+    const items = Array.isArray(comp.showTabsValue) ? comp.showTabsValue : [comp.showTabsValue];
+    const rawTargets = items
+      .flatMap((item) => String(item).replace(/["']/g, '').split(','))
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (rawTargets.length > 0) {
+      const selectedIndices: number[] = [];
+      const tabs = comp.tabs ?? [];
+      const tabBlocks = comp.tabBlocks ?? [];
+
+      rawTargets.forEach((targetKey) => {
+        const targetSlug = slugify(targetKey);
+        const numericVal = parseInt(targetKey, 10);
+
+        for (let idx = 0; idx < totalTabs; idx++) {
+          const tabLabel = tabs[idx]?.value ?? tabBlocks[idx]?.label ?? `Tab ${idx + 1}`;
+          const tabSlug = slugify(tabLabel);
+          const explicitId = tabBlocks[idx]?.id?.toLowerCase();
+
+          if (
+            (explicitId && explicitId === targetKey) ||
+            tabSlug === targetKey ||
+            tabSlug === targetSlug ||
+            (!isNaN(numericVal) && numericVal === idx + 1)
+          ) {
+            if (!selectedIndices.includes(idx)) {
+              selectedIndices.push(idx);
+            }
+            break;
+          }
+        }
+      });
+
+      if (selectedIndices.length > 0) {
+        return selectedIndices;
+      }
+    }
+  }
+  return Array.from({ length: totalTabs }, (_, i) => i);
+}
+
+function layoutChildComponents(
+  components: unknown[] | undefined,
+  containerWidth: number,
+  startX: number,
+  startY: number,
+  idMap: Map<string, WireframeRenderNode>,
+  config?: Partial<WireframeDiagramConfig>
+): { nodes: WireframeRenderNode[]; totalHeight: number } {
+  if (!components || components.length === 0) {
+    return { nodes: [], totalHeight: 0 };
+  }
+  return computeWireframeLayout(
+    components as unknown as WireframeComponent[],
+    containerWidth,
+    startX,
+    startY,
+    idMap,
+    config
+  );
+}
+
+export function computeWireframeLayout(
+  components: WireframeComponent[],
+  containerWidth: number,
+  startX: number,
+  startY: number,
+  idMap = new Map<string, WireframeRenderNode>(),
+  config?: Partial<WireframeDiagramConfig>
+): { nodes: WireframeRenderNode[]; totalHeight: number } {
+  const gapX = config?.gapX ?? 16;
+  const gapY = config?.gapY ?? 16;
+  const cPadding = config?.containerPadding ?? 20;
+  const outerPadding = config?.padding ?? 15;
+
+  const nodes: WireframeRenderNode[] = [];
+  let currentY = startY;
+  let rowMaxBottom = startY;
+
+  for (const comp of components) {
+    const initialSize = measureComponentHeight(comp, containerWidth);
+    let x = startX;
+    let y = currentY;
+
+    // Resolve alignTo relative positioning
+    const targetNode = comp.alignTo ? findTargetNode(comp.alignTo, idMap) : undefined;
+    if (targetNode) {
+      x = targetNode.x + targetNode.width + gapX;
+      y = targetNode.y;
+    } else if (nodes.length > 0) {
+      currentY = rowMaxBottom > startY ? rowMaxBottom + gapY : startY;
+      y = currentY;
+    }
+
+    let childNodes: WireframeRenderNode[] | undefined;
+    let nodeWidth = initialSize.width;
+    let nodeHeight = initialSize.height;
+
+    // Handle container components recursively
+    if (isWireframeSection(comp)) {
+      const metrics = LAYOUT_METRICS.section;
+      const headerHeight = comp.label ? metrics.headerHeight : 0;
+      const topPadding = comp.label ? 16 : cPadding;
+
+      const childRes = layoutChildComponents(
+        comp.components,
+        containerWidth - cPadding * 2,
+        x + cPadding,
+        y + headerHeight + topPadding,
+        idMap,
+        config
+      );
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
+      nodeWidth = containerWidth;
+      nodeHeight = headerHeight + childRes.totalHeight + topPadding + cPadding;
+    } else if (isFieldSet(comp)) {
+      const metrics = LAYOUT_METRICS.fieldset;
+      const contentStartY = y + metrics.headerPaddingY;
+
+      const childRes = layoutChildComponents(
+        comp.components,
+        containerWidth - cPadding * 2,
+        x + cPadding,
+        contentStartY,
+        idMap,
+        config
+      );
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
+      const childrenHeight = childRes.nodes.length ? childRes.totalHeight : metrics.baseHeight;
+      nodeWidth = containerWidth;
+      nodeHeight = childrenHeight + metrics.baseHeight;
+    } else if (isTitleWindow(comp)) {
+      const metrics = LAYOUT_METRICS.titleWindow;
+      const contentStartY = y + metrics.titleBarHeight + 10;
+
+      const childRes = layoutChildComponents(
+        comp.components,
+        containerWidth - cPadding * 2,
+        x + cPadding,
+        contentStartY,
+        idMap,
+        config
+      );
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
+      const childrenHeight = childRes.nodes.length ? childRes.totalHeight : metrics.baseHeight;
+      nodeWidth = containerWidth;
+      nodeHeight = metrics.titleBarHeight + childrenHeight + 16;
+    } else if (isContentTabs(comp)) {
+      const tabHeaderHeight = LAYOUT_METRICS.tabBar.height;
+      const tabs = comp.tabs ?? [];
+
+      if (hasShowTabs(comp) && tabs.length > 0) {
+        const selectedIndices = parseShowTabs(comp, tabs.length);
+        const numStates = selectedIndices.length;
+        const variantWidth = containerWidth;
+        const fullCanvasWidth = containerWidth + outerPadding * 2;
+        let maxVariantHeight = 0;
+        const variantNodes: WireframeRenderNode[] = [];
+
+        selectedIndices.forEach((tabIdx, colIdx) => {
+          const variantX = x + colIdx * (fullCanvasWidth + gapX);
+          const variantComp = {
+            ...comp,
+            activeTab: tabIdx + 1,
+            showTabs: false,
+            showTabsValue: undefined,
+          };
+          let childrenHeight = 40;
+          let variantChildNodes: WireframeRenderNode[] = [];
+
+          if (comp.tabBlocks?.length) {
+            const activeBlock = comp.tabBlocks[tabIdx];
+            const childRes = layoutChildComponents(
+              activeBlock?.components,
+              Math.max(0, variantWidth - cPadding),
+              variantX + cPadding / 2,
+              y + tabHeaderHeight + 10,
+              idMap,
+              config
+            );
+            if (childRes.nodes.length) {
+              variantChildNodes = childRes.nodes;
+              childrenHeight = childRes.totalHeight + 20;
+            }
+          }
+
+          const vHeight = tabHeaderHeight + childrenHeight;
+          maxVariantHeight = Math.max(maxVariantHeight, vHeight);
+          variantNodes.push({
+            astNode: variantComp,
+            x: variantX,
+            y,
+            width: variantWidth,
+            height: vHeight,
+            children: variantChildNodes,
+          });
+        });
+
+        childNodes = variantNodes;
+        nodeWidth = numStates * fullCanvasWidth + (numStates - 1) * gapX - outerPadding * 2;
+        nodeHeight = maxVariantHeight;
+      } else {
+        const activeIdx = resolveActiveTabIdx(comp, comp.tabBlocks?.length ?? tabs.length);
+        let childrenHeight = 40;
+        if (comp.tabBlocks?.length) {
+          const activeBlock = comp.tabBlocks[activeIdx] ?? comp.tabBlocks[0];
+          const childRes = layoutChildComponents(
+            activeBlock?.components,
+            containerWidth - cPadding,
+            x + cPadding / 2,
+            y + tabHeaderHeight + 10,
+            idMap,
+            config
+          );
+          if (childRes.nodes.length) {
+            childNodes = childRes.nodes;
+            childrenHeight = childRes.totalHeight + 20;
+          }
+        }
+        nodeWidth = containerWidth;
+        nodeHeight = tabHeaderHeight + childrenHeight;
+      }
+    } else if (isTabPane(comp)) {
+      const childRes = layoutChildComponents(comp.components, containerWidth, x, y, idMap, config);
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
+      nodeWidth = containerWidth;
+      nodeHeight = childRes.totalHeight;
+    } else if (isAccordion(comp)) {
+      const headerHeight = 36;
+      const isCollapsed = comp.collapsed ?? false;
+      let childrenHeight = 0;
+
+      if (!isCollapsed) {
+        const childRes = layoutChildComponents(
+          comp.components,
+          containerWidth - cPadding,
+          x + cPadding / 2,
+          y + headerHeight + 10,
+          idMap,
+          config
+        );
+        if (childRes.nodes.length) {
+          childNodes = childRes.nodes;
+          childrenHeight = childRes.totalHeight + 20;
+        }
+      }
+      nodeWidth = containerWidth;
+      nodeHeight = headerHeight + childrenHeight;
+    } else if (isColumns(comp)) {
+      const cols = comp.cols ?? [];
+      const numCols = Math.max(1, cols.length);
+      const totalGap = (numCols - 1) * gapX;
+      const availableWidth = Math.max(0, containerWidth - totalGap);
+
+      // Parse column width specifications (% or px)
+      const widths: number[] = new Array(numCols).fill(0);
+      let allocatedWidth = 0;
+      let unassignedCols = 0;
+
+      cols.forEach((col, idx) => {
+        if (col.width) {
+          const wStr = col.width.trim();
+          if (wStr.endsWith('%')) {
+            const pct = parseFloat(wStr) / 100;
+            widths[idx] = availableWidth * pct;
+            allocatedWidth += widths[idx];
+          } else if (wStr.endsWith('px')) {
+            const px = parseFloat(wStr);
+            widths[idx] = px;
+            allocatedWidth += widths[idx];
+          } else {
+            const val = parseFloat(wStr);
+            if (!isNaN(val)) {
+              widths[idx] = val;
+              allocatedWidth += widths[idx];
+            } else {
+              unassignedCols++;
+            }
+          }
+        } else {
+          unassignedCols++;
+        }
+      });
+
+      if (unassignedCols > 0) {
+        const remainingWidth = Math.max(0, availableWidth - allocatedWidth);
+        const defaultColWidth = remainingWidth / unassignedCols;
+        cols.forEach((_, idx) => {
+          if (widths[idx] === 0) {
+            widths[idx] = defaultColWidth;
+          }
+        });
+      }
+
+      let maxColHeight = 0;
+      const allColNodes: WireframeRenderNode[] = [];
+      let currentColX = x;
+
+      cols.forEach((col, colIdx) => {
+        const colWidth = widths[colIdx] || availableWidth / numCols;
+        const childRes = layoutChildComponents(
+          col.components,
+          colWidth,
+          currentColX,
+          y,
+          idMap,
+          config
+        );
+        if (childRes.nodes.length) {
+          allColNodes.push(...childRes.nodes);
+          maxColHeight = Math.max(maxColHeight, childRes.totalHeight);
+        }
+        currentColX += colWidth + gapX;
+      });
+
+      childNodes = allColNodes;
+      nodeWidth = containerWidth;
+      nodeHeight = maxColHeight;
+    } else if (isColBlock(comp)) {
+      let colWidth = containerWidth;
+      if (comp.width) {
+        const wStr = comp.width.trim();
+        if (wStr.endsWith('%')) {
+          colWidth = containerWidth * (parseFloat(wStr) / 100);
+        } else if (wStr.endsWith('px')) {
+          colWidth = parseFloat(wStr);
+        }
+      }
+      const childRes = layoutChildComponents(comp.components, colWidth, x, y, idMap, config);
+      childNodes = childRes.nodes.length ? childRes.nodes : undefined;
+      nodeWidth = colWidth;
+      nodeHeight = childRes.totalHeight;
+    }
+
+    const node: WireframeRenderNode = {
+      astNode: comp,
+      x,
+      y,
+      width: nodeWidth,
+      height: nodeHeight,
+      children: childNodes,
+    };
+
+    registerNodeInIdMap(node, idMap);
+
+    nodes.push(node);
+
+    // Track the bottom boundary of current layout row/block
+    rowMaxBottom = Math.max(rowMaxBottom, y + nodeHeight);
+  }
+
+  return { nodes, totalHeight: Math.max(0, rowMaxBottom - startY) };
+}

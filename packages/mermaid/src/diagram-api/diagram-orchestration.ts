@@ -40,6 +40,7 @@ import { railroad } from '../diagrams/railroad/railroadDetector.js';
 import { railroadEbnf } from '../diagrams/railroad/ebnfDetector.js';
 import { railroadAbnf } from '../diagrams/railroad/abnfDetector.js';
 import { railroadPeg } from '../diagrams/railroad/pegDetector.js';
+import wireframe from '../diagrams/wireframe/detector.js';
 import '../type.d.ts';
 
 let hasLoadedDiagrams = false;
@@ -125,6 +126,7 @@ export const addDiagrams = () => {
     venn,
     wardley,
     cynefin,
-    usecase
+    usecase,
+    wireframe
   );
 };

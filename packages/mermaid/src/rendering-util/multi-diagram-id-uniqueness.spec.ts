@@ -135,6 +135,10 @@ set A
 set B
 union A, B`,
 
+  wireframe: `wireframe-beta "Title"
+    button "Click me"
+    textfield "Name"`,
+
   sequence: `sequenceDiagram
     Alice->>Bob: Hello
     Bob-->>Alice: Hi

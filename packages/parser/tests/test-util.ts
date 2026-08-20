@@ -17,6 +17,8 @@ import type {
   EventModelingServices,
   TreeView,
   TreeViewServices,
+  WireframeDiagram,
+  WireframeServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -27,6 +29,7 @@ import {
   createGitGraphServices,
   createEventModelingServices,
   createTreeViewServices,
+  createWireframeServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -133,3 +136,14 @@ export function createTreeViewTestServices() {
   return { services: treeViewServices, parse };
 }
 export const treeViewParse = createTreeViewTestServices().parse;
+
+const wireframeServices: WireframeServices = createWireframeServices().Wireframe;
+const wireframeParser: LangiumParser = wireframeServices.parser.LangiumParser;
+export function createWireframeTestServices() {
+  const parse = (input: string) => {
+    return wireframeParser.parse<WireframeDiagram>(input);
+  };
+
+  return { services: wireframeServices, parse };
+}
+export const wireframeParse = createWireframeTestServices().parse;
