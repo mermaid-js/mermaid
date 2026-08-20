@@ -477,9 +477,24 @@ export function solveSAT(
   options: SolveSatOptions = {}
 ): SATResult {
   const clauses = formula.clauses.map((c) => [...c]);
-  const assignment = new Map<number, boolean>();
-  const decisionLevelMap = new Map<number, number>();
-  const reasonMap = new Map<number, CNFClause | null>();
+  // Solver state in typed arrays indexed by variable, not `Map`s.
+  //
+  // Unit propagation reads the value of every literal of every clause on every
+  // fixed point round, and `pickVariable` reads the value and activity of every
+  // variable on every decision, so these are the innermost reads in the solver.
+  // As `Map`s they made shape construction the largest cost in the layout on
+  // `domus/triage2` — solveSAT 4818 ms self plus unitPropagate 2412 ms of a 17 s
+  // layout. The algorithm, the iteration order and every decision are unchanged;
+  // only the container is.
+  const UNASSIGNED = 0;
+  const TRUE = 1;
+  const FALSE = 2;
+  const varCount = formula.numVars;
+  const value = new Uint8Array(varCount + 1);
+  const varLevel = new Int32Array(varCount + 1).fill(-1);
+  const reasonOf: (CNFClause | null)[] = new Array(varCount + 1).fill(null);
+  const activity = new Float64Array(varCount + 1);
+  const clauses0 = clauses;
   let lastConflictClause: CNFClause | null = null;
 
   // decisionStack: stores the literals assigned at each level
@@ -489,21 +504,21 @@ export function solveSAT(
   let currentLevel = 0;
 
   function getLevel(v: number): number {
-    return decisionLevelMap.get(v) ?? -1;
+    return v <= varCount ? varLevel[v] : -1;
   }
 
   function assign(lit: number, reason: CNFClause | null): void {
     const v = Math.abs(lit);
-    assignment.set(v, lit > 0);
-    decisionLevelMap.set(v, currentLevel);
-    reasonMap.set(v, reason);
+    value[v] = lit > 0 ? TRUE : FALSE;
+    varLevel[v] = currentLevel;
+    reasonOf[v] = reason;
     literalStack.push(lit);
   }
 
   function unassign(v: number): void {
-    assignment.delete(v);
-    decisionLevelMap.delete(v);
-    reasonMap.delete(v);
+    value[v] = UNASSIGNED;
+    varLevel[v] = -1;
+    reasonOf[v] = null;
   }
 
   /**
@@ -520,7 +535,8 @@ export function solveSAT(
 
         for (const lit of clause) {
           const v = Math.abs(lit);
-          const val = assignment.get(v);
+          const assigned = value[v];
+          const val = assigned === UNASSIGNED ? undefined : assigned === TRUE;
           if (val === undefined) {
             if (unassignedLit === null) {
               unassignedLit = lit;
@@ -575,7 +591,7 @@ export function solveSAT(
         }
         visitedVar.add(v);
 
-        const reason = reasonMap.get(v);
+        const reason = reasonOf[v];
         if (reason && reason.length > 0) {
           queue.push(reason);
         }
@@ -617,7 +633,7 @@ export function solveSAT(
       }
 
       const litToResolve = literalStack[i];
-      const reason = reasonMap.get(Math.abs(litToResolve));
+      const reason = reasonOf[Math.abs(litToResolve)];
 
       if (reason) {
         // Resolve learned clause with the reason clause
@@ -664,11 +680,11 @@ export function solveSAT(
     let bestVar: number | null = null;
     let maxActivity = -1;
 
-    for (let v = 1; v <= formula.numVars; v++) {
-      if (!assignment.has(v)) {
-        const activity = variableActivity.get(v) ?? 0;
-        if (activity > maxActivity) {
-          maxActivity = activity;
+    for (let v = 1; v <= varCount; v++) {
+      if (value[v] === UNASSIGNED) {
+        const act = activity[v];
+        if (act > maxActivity) {
+          maxActivity = act;
           bestVar = v;
         }
       }
@@ -676,18 +692,21 @@ export function solveSAT(
     return bestVar;
   }
 
-  const variableActivity = new Map<number, number>();
   // Initialize activity with frequency
-  for (const clause of clauses) {
+  for (const clause of clauses0) {
     for (const lit of clause) {
       const v = Math.abs(lit);
-      variableActivity.set(v, (variableActivity.get(v) ?? 0) + 1);
+      if (v <= varCount) {
+        activity[v] += 1;
+      }
     }
   }
   // Apply optional bias (preferences).
   if (options.variableBias) {
     for (const [v, bias] of options.variableBias.entries()) {
-      variableActivity.set(v, (variableActivity.get(v) ?? 0) + bias);
+      if (v <= varCount) {
+        activity[v] += bias;
+      }
     }
   }
 
@@ -754,12 +773,14 @@ export function solveSAT(
       // Update activity for variables in learned clause
       for (const lit of learnedClause) {
         const v = Math.abs(lit);
-        variableActivity.set(v, (variableActivity.get(v) ?? 0) + 1);
+        if (v <= varCount) {
+          activity[v] += 1;
+        }
       }
       // Decay activity periodically
       if (clauses.length % 50 === 0) {
-        for (const [v, act] of variableActivity) {
-          variableActivity.set(v, act * 0.95);
+        for (let v = 1; v <= varCount; v++) {
+          activity[v] *= 0.95;
         }
       }
 
@@ -771,6 +792,13 @@ export function solveSAT(
 
     const v = pickVariable();
     if (v === null) {
+      // Materialise the assignment only on success; callers consume it as a Map.
+      const assignment = new Map<number, boolean>();
+      for (let i = 1; i <= varCount; i++) {
+        if (value[i] !== UNASSIGNED) {
+          assignment.set(i, value[i] === TRUE);
+        }
+      }
       return { satisfiable: true, assignment };
     }
 
