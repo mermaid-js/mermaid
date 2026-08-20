@@ -27,6 +27,11 @@
       "fileExtensions": [".mmd", ".mermaid"]
     },
     {
+      "id": "c4",
+      "grammar": "src/language/c4/c4.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
       "id": "gitGraph",
       "grammar": "src/language/gitGraph/gitGraph.langium",
       "fileExtensions": [".mmd", ".mermaid"]
