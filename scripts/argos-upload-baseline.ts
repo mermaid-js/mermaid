@@ -93,6 +93,20 @@ export function sliceGlobs(dirs: readonly LeafDir[]): string[] {
   return dirs.map(({ dir }) => (dir === '.' ? '*.{png,jpg,jpeg}' : `${dir}/*.{png,jpg,jpeg}`));
 }
 
+/**
+ * Merge each source directory's contents into the baseline root. Node's
+ * cpSync(src, dest) copies src's *contents* into dest — unlike shell
+ * `cp -r src dest`, which would nest src under dest — so the merged tree
+ * keeps the exact layout the slice globs expect (`diagrams/...`,
+ * `rendering/...`), with no `sheets/` or `screenshots/` prefix.
+ */
+export function mergeIntoBaseline(sources: readonly string[], baselineDir: string): void {
+  mkdirSync(baselineDir, { recursive: true });
+  for (const source of sources) {
+    cpSync(source, baselineDir, { recursive: true });
+  }
+}
+
 function main(): void {
   const dryRun = process.argv.includes('--dry-run');
   const baselineDir = process.env.BASELINE_DIR ?? 'e2e/argos-baseline';
@@ -101,11 +115,8 @@ function main(): void {
     throw new Error('neither e2e/sheets nor e2e/screenshots exists — nothing to upload');
   }
 
-  mkdirSync(baselineDir, { recursive: true });
-  for (const source of sources) {
-    cpSync(source, baselineDir, { recursive: true });
-    log(`merged ${source} into ${baselineDir}`);
-  }
+  mergeIntoBaseline(sources, baselineDir);
+  log(`merged ${sources.join(' + ')} into ${baselineDir}`);
 
   const images = collectImageRelPaths(resolve(baselineDir));
   const leafDirs = countLeafDirs(images);

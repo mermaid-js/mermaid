@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   collectImageRelPaths,
   countLeafDirs,
+  mergeIntoBaseline,
   planSlices,
   sliceGlobs,
   type LeafDir,
@@ -71,6 +72,35 @@ describe('sliceGlobs', () => {
     expect(sliceGlobs([leaf('.', 1), leaf('diagrams/pie', 2)])).toEqual([
       '*.{png,jpg,jpeg}',
       'diagrams/pie/*.{png,jpg,jpeg}',
+    ]);
+  });
+});
+
+describe('mergeIntoBaseline', () => {
+  let root: string | undefined;
+  afterEach(() => {
+    if (root) {
+      rmSync(root, { recursive: true, force: true });
+      root = undefined;
+    }
+  });
+
+  it('merges source contents flat — no sheets/ or screenshots/ prefix in the tree', () => {
+    root = mkdtempSync(join(tmpdir(), 'argos-merge-'));
+    mkdirSync(join(root, 'sheets/diagrams/pie'), { recursive: true });
+    mkdirSync(join(root, 'screenshots/diagrams/pie'), { recursive: true });
+    mkdirSync(join(root, 'screenshots/rendering/theme.spec.js'), { recursive: true });
+    writeFileSync(join(root, 'sheets/diagrams/pie/pie-001.png'), 'sheet');
+    writeFileSync(join(root, 'screenshots/diagrams/pie/a.png'), 'shot');
+    writeFileSync(join(root, 'screenshots/rendering/theme.spec.js/t.png'), 'shot');
+
+    const baseline = join(root, 'baseline');
+    mergeIntoBaseline([join(root, 'sheets'), join(root, 'screenshots')], baseline);
+
+    expect(collectImageRelPaths(baseline)).toEqual([
+      'diagrams/pie/a.png',
+      'diagrams/pie/pie-001.png',
+      'rendering/theme.spec.js/t.png',
     ]);
   });
 });
