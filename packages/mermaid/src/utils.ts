@@ -566,7 +566,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
         { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
         config
       );
-      if (common.lineBreakRegex.test(label)) {
+      if (common.hasBreaks(label)) {
         return label;
       }
       const words = label.split(' ').filter(Boolean);

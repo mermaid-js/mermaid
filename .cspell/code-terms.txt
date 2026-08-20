@@ -70,6 +70,7 @@ grammr
 graphtype
 halign
 iife
+instrumenter
 interp
 introdcued
 INVTRAPEND
@@ -164,10 +165,12 @@ ts-nocheck
 tsdoc
 typeof
 typestr
-uninstrumented
 unrouted
 unshift
 urlsafe
+usecase
+Usecase
+USECASE
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH

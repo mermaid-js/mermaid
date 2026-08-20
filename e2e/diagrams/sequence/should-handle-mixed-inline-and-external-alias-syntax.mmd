@@ -1,0 +1,15 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant A@{ "type" : "boundary", "alias": "Service A" }
+  participant B@{ "type" : "control" } as Service B
+  participant C@{ "type" : "database" }
+  A ->> B: Request
+  B ->> C: Query
+  C -->> B: Data
+  B -->> A: Response

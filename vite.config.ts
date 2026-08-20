@@ -15,6 +15,14 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    exclude: [
+      ...defaultExclude,
+      'e2e/rendering/**',
+      'e2e/other/**',
+      './tests/**',
+      '**/__mocks__/**',
+      '**/generated/',
+    ],
     // TODO: should we move this to a mermaid-core package?
     coverage: {
       provider: 'v8',
@@ -25,7 +33,14 @@ export default defineConfig({
       all: false,
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage/vitest',
-      exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
+      exclude: [
+        ...defaultExclude,
+        './tests/**',
+        'e2e/rendering/**',
+        'e2e/other/**',
+        '**/__mocks__/**',
+        '**/generated/',
+      ],
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
     clearMocks: true,

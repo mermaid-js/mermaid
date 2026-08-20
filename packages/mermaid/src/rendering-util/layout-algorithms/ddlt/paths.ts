@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-/** Repo-root `cypress/platform/dev-diagrams/layout-tests` directory. */
+/** Repo-root `e2e/platform/dev-diagrams/layout-tests` directory. */
 export function layoutTestsDir(): string {
-  return join(__dirname, '../../../../../../cypress/platform/dev-diagrams/layout-tests');
+  return join(__dirname, '../../../../../../e2e/platform/dev-diagrams/layout-tests');
 }

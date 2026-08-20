@@ -1,0 +1,12 @@
+gitGraph BT:
+  commit id: "A"
+  branch develop order: 3
+  checkout develop
+  commit id: "B"
+  branch release/1.0.0 order: 2
+  checkout release/1.0.0
+  commit id: "C"
+  commit id: "D"
+  checkout main
+  merge release/1.0.0 tag: "v1.0.0"
+  checkout develop
