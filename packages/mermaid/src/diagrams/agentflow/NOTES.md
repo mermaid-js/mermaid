@@ -25,19 +25,19 @@ anything _not_ below is drift and should be reconciled.
 
 Reproduce the comparison with:
 
-```sh
+```bash
 diff <(sed -n '/%lex/,/\/lex/p' packages/mermaid/src/diagrams/flowchart/parser/flow.jison) \
      <(sed -n '/%lex/,/\/lex/p' packages/mermaid/src/diagrams/agentflow/parser/agentflow.jison)
 ```
 
 | Divergence                                                                                                                                  | Why                                                                                                                                                                                                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Keywords: `agentflow-beta` / `flow` / `connector` / `global` instead of `graph`\|`flowchart`\|`flowchart-elk`\|`swimlane-beta` / `subgraph` | Different diagram type and container vocabulary.                                                                                                                                                                                         |
 | `--`-family operators narrowed to `-->`, `--x`, `--` + label; no `[xo<]` marker prefixes                                                    | §5.1 removed the marker variants (`<-->`, `o--o`, `--o`, `-->>`).                                                                                                                                                                        |
 | Thick (`==>`) and dotted-arrow (`-.->`) edge families removed, along with the `thickEdgeText` / `dottedEdgeText` states                     | §5.1 removed those operators. `-.-` (reference) is kept as a single unparameterised `LINK`.                                                                                                                                              |
 | `~~` (invisible link) removed                                                                                                               | §5.1.                                                                                                                                                                                                                                    |
 | `%%` comment rules added inside `<text>`, `<ellipseText>`, `<trapText>`, plus a top-level `COMMENT` token                                   | Agentflow parses the comment-preserving source (`preserveCommentsWhenParsing`) so reported positions line up with the author's file; the lexer therefore has to swallow comments itself. Covered by `parser/agentflow-comments.spec.ts`. |
-| `TEXT` rules exclude `%` unless doubled — `(?:[^…%]+                                                                                        | %(?!%))+`                                                                                                                                                                                                                                | Same reason: a lone `%` stays label text, `%%` starts a comment. |
+| `TEXT` rules exclude `%` unless doubled — `(?:[^…%]+\|%(?!%))+`                                                                             | Same reason: a lone `%` stays label text, `%%` starts a comment.                                                                                                                                                                         |
 
 Parity on everything else is pinned by
 [`parser/agentflow-flowchart-parity.spec.ts`](./parser/agentflow-flowchart-parity.spec.ts).
