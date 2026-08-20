@@ -36,7 +36,7 @@ function parseInlineMarkdown(
 
   // Find first occurrence of ***, **, or *
   // Order matters: match *** first so it's not split into ** + *
-  const regex = /(\*\*\*|\*\*|\*)/g;
+  const regex = /(\*{3}|\*{2}|\*)/g;
   const match = regex.exec(text);
 
   if (!match) {
@@ -121,8 +121,12 @@ function measureText(
   const doc = svgRoot.ownerDocument || document;
   const testEl = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
   testEl.setAttribute('font-size', String(fontSize));
-  if (bold) testEl.setAttribute('font-weight', 'bold');
-  if (italic) testEl.setAttribute('font-style', 'italic');
+  if (bold) {
+    testEl.setAttribute('font-weight', 'bold');
+  }
+  if (italic) {
+    testEl.setAttribute('font-style', 'italic');
+  }
   testEl.textContent = text;
   svgRoot.appendChild(testEl);
   const width = testEl.getComputedTextLength();
@@ -181,8 +185,7 @@ function wrapStyledLine(
 
     if (currentWidth + charWidth > maxWidth && currentLineChars.length > 0) {
       // Need to break. Prefer breaking at last space.
-      const breakIndex =
-        lastSpaceIndex >= 0 ? lastSpaceIndex : currentLineChars.length;
+      const breakIndex = lastSpaceIndex >= 0 ? lastSpaceIndex : currentLineChars.length;
 
       // Push the current line up to the break point
       lines.push(currentLineChars.slice(0, breakIndex));
@@ -193,11 +196,7 @@ function wrapStyledLine(
       lastSpaceIndex = -1;
 
       // Recalculate width of the new current line
-      currentWidth = measureText(
-        svgRoot,
-        currentLineChars.map((c) => c.char).join(''),
-        fontSize
-      );
+      currentWidth = measureText(svgRoot, currentLineChars.map((c) => c.char).join(''), fontSize);
     }
 
     // Always push the character onto the current line
@@ -293,7 +292,9 @@ function renderWrappedText(
 
       // Render each styled segment — NO extra space injected
       for (const seg of lineSegments) {
-        if (!seg.text) continue;
+        if (!seg.text) {
+          continue;
+        }
         tspan
           .append('tspan')
           .attr('class', 'text-inner-tspan')
@@ -408,9 +409,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
     .attr('fill', (data: QuadrantQuadrantsType) => data.fill);
 
   quadrants.each(function (data: QuadrantQuadrantsType) {
-    const quadrantG = select(this)
-      .append('g')
-      .attr('transform', getTransformation(data.text));
+    const quadrantG = select(this).append('g').attr('transform', getTransformation(data.text));
     const wrapWidth = data.width * 0.8;
     renderWrappedText(
       quadrantG,
@@ -459,9 +458,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
     .attr('stroke-width', (data: QuadrantPointType) => data.strokeWidth);
 
   dataPoints.each(function (data: QuadrantPointType) {
-    const pointG = select(this)
-      .append('g')
-      .attr('transform', getTransformation(data.text));
+    const pointG = select(this).append('g').attr('transform', getTransformation(data.text));
     const wrapWidth = Math.min(width * 0.2, 120);
     renderWrappedText(
       pointG,
