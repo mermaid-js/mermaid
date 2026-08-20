@@ -24,7 +24,7 @@ import * as configApi from './config.js';
 import { getEffectiveHtmlLabels } from './config.js';
 import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import type { DiagramCode, DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
 import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
@@ -92,7 +92,9 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
   addDiagrams();
   try {
     const { code, config } = processAndSetConfigs(text);
-    const diagram = await getDiagramFromText(code.cleaned);
+    // Pass the whole DiagramCode object so diagrams that report source
+    // positions see the same text (and frontmatter offset) that render() uses.
+    const diagram = await Diagram.fromText(code);
     return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
@@ -472,7 +474,12 @@ const render = async function (
   }
 
   const processed = processAndSetConfigs(text);
-  text = processed.code.cleaned;
+  // Keep the DiagramCode object, not just the cleaned string: diagrams that
+  // report source positions need `withComments` and `frontmatterLineOffset`,
+  // and dropping them here silently disabled that on the render path while
+  // `parse()` still had them.
+  let code: DiagramCode = processed.code;
+  text = code.cleaned;
 
   const config = configApi.getConfig();
   log.debug(config);
@@ -480,6 +487,7 @@ const render = async function (
   // Check the maximum allowed text size
   if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+    code = { raw: text, cleaned: text };
   }
 
   const idSelector = `#${id}` as const;
@@ -553,8 +561,8 @@ const render = async function (
 
   try {
     diag = injected.profiling
-      ? await profiler.span('parse', () => Diagram.fromText(text, { title: processed.title }))
-      : await Diagram.fromText(text, { title: processed.title });
+      ? await profiler.span('parse', () => Diagram.fromText(code, { title: processed.title }))
+      : await Diagram.fromText(code, { title: processed.title });
   } catch (error) {
     if (config.suppressErrorRendering) {
       removeTempElements();
