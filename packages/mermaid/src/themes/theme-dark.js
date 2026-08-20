@@ -439,6 +439,20 @@ class Theme {
     /* -------------------------------------------------- */
 
     this.nodeBorder = this.nodeBorder || '#999';
+    /* c4 */
+    this.c4PersonBkg = this.c4PersonBkg || lighten('#08427B', 10);
+    this.c4PersonBorder = this.c4PersonBorder || lighten('#073B6F', 10);
+    this.c4SystemBkg = this.c4SystemBkg || lighten('#1168BD', 8);
+    this.c4SystemBorder = this.c4SystemBorder || lighten('#3C7FC0', 8);
+    this.c4ContainerBkg = this.c4ContainerBkg || lighten('#438DD5', 5);
+    this.c4ContainerBorder = this.c4ContainerBorder || lighten('#3C7FC0', 5);
+    this.c4ComponentBkg = this.c4ComponentBkg || darken('#85BBF0', 5);
+    this.c4ComponentBorder = this.c4ComponentBorder || darken('#78A8D8', 5);
+    this.c4ExternalBkg = this.c4ExternalBkg || lighten('#999999', 15);
+    this.c4ExternalBorder = this.c4ExternalBorder || lighten('#8A8A8A', 15);
+    this.c4InfrastructureBkg = this.c4InfrastructureBkg || lighten('#6b6b6b', 20);
+    this.c4InfrastructureBorder = this.c4InfrastructureBorder || lighten('#5a5a5a', 20);
+    this.c4BoundaryBorder = this.c4BoundaryBorder || lighten('#444444', 40);
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
