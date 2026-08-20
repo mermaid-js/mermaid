@@ -137,8 +137,18 @@ function measureText(
   }
   testEl.textContent = text;
   svgRoot.appendChild(testEl);
-  const width = testEl.getComputedTextLength();
+  let width = testEl.getComputedTextLength();
   svgRoot.removeChild(testEl);
+
+  // Fallback: if getComputedTextLength returns 0 (sandbox/iframe environments
+  // where the SVG isn't fully rendered), estimate based on character count and
+  // a conservative per-character width (~0.65 * fontSize, roughly matching Latin text).
+  if (width === 0 && text.length > 0) {
+    width = text.length * fontSize * 0.65;
+    if (bold) {
+      width *= 1.05;
+    }
+  }
 
   measureCache.set(cacheKey, width);
   return width;
