@@ -262,6 +262,8 @@ function renderWrappedText(
 ) {
   const textEl = groupEl.append('text');
   textEl
+    .attr('x', 0)
+    .attr('y', 0)
     .attr('fill', fill)
     .attr('font-size', fontSize)
     .attr('dominant-baseline', horizontalPos === 'top' ? 'hanging' : 'middle')
