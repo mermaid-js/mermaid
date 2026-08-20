@@ -197,7 +197,9 @@ function sidebarSyntax() {
         { text: 'Wardley 🔥', link: '/syntax/wardley' },
         { text: 'Cynefin 🔥', link: '/syntax/cynefin' },
         { text: 'TreeView 🔥', link: '/syntax/treeView' },
-        { text: 'Agentflow 🔥', link: '/syntax/agentflow' },
+        // Agentflow is deliberately not listed while it is beta. The page at
+        // `/syntax/agentflow` still builds and is reachable by URL; it is just
+        // not announced in the nav until the syntax is declared stable.
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
