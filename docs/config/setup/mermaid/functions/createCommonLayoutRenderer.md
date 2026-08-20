@@ -145,7 +145,7 @@ Instead, store the result in a variable and use it, and pass it down to function
 
 ##### insertNode
 
-(`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGAElement`>>
+(`elem`, `node`, `renderOptions`) => `Promise`<`Selection`<`SVGGElement`, `unknown`, `Element` | `null`, `unknown`> | `D3Selection`<`SVGGElement`> | `D3Selection`<`SVGAElement`>>
 
 ##### interpolateToCurve
 

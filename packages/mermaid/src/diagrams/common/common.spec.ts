@@ -1,4 +1,11 @@
-import { sanitizeText, removeScript, parseGenericTypes, countOccurrence } from './common.js';
+import {
+  sanitizeText,
+  removeScript,
+  parseGenericTypes,
+  countOccurrence,
+  hasBreaks,
+  splitBreaks,
+} from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
   /**
@@ -124,3 +131,31 @@ it.each([
     expect(countOccurrence(str, substring)).toEqual(count);
   }
 );
+
+describe('line breaks', () => {
+  // `</br>` is malformed but common in the wild, and HTML parsers already treat it as a
+  // `<br>`. It previously survived as literal text wherever labels render as SVG text.
+  it.each(['<br>', '<br/>', '<br />', '<br  />', '</br>', '</br >', '<BR>', '</BR>'])(
+    'splits on %s',
+    (br) => {
+      expect(splitBreaks(`first${br}second`)).toEqual(['first', 'second']);
+      expect(hasBreaks(`first${br}second`)).toBe(true);
+    }
+  );
+
+  it('does not treat unrelated markup as a break', () => {
+    expect(hasBreaks('no breaks here')).toBe(false);
+    expect(hasBreaks('<brochure>')).toBe(false);
+    expect(splitBreaks('a<b>c')).toEqual(['a<b>c']);
+  });
+
+  it('reports the same result when called repeatedly', () => {
+    // lineBreakRegex is global; testing it directly would advance lastIndex and alternate.
+    expect([
+      hasBreaks('a<br>b'),
+      hasBreaks('<br>'),
+      hasBreaks('a<br>b'),
+      hasBreaks('<br>'),
+    ]).toEqual([true, true, true, true]);
+  });
+});

@@ -14,9 +14,19 @@ import type { Diagram } from '../../Diagram.js';
 import type { C4DiagramConfig } from '../../config.type.js';
 import type { SVG } from '../../diagram-api/types.js';
 import type { TextDimensionConfig } from '../../types.js';
-import type { C4Boundary, C4DrawConfig, C4Font, C4Rel, C4Shape, C4Text } from './c4Types.js';
+import type {
+  C4Boundary,
+  C4DrawConfig,
+  C4Element,
+  C4Font,
+  C4Point,
+  C4Rel,
+  C4Shape,
+  C4Text,
+} from './c4Types.js';
 import { shapes } from '../../rendering-util/rendering-elements/shapes.js';
 import { buildC4Node } from './c4ShapeAdapter.js';
+import intersect from '../../rendering-util/rendering-elements/intersect/index.js';
 
 type C4DB = typeof c4Db;
 
@@ -245,6 +255,18 @@ export const drawBoundary = function (diagram: SVG, boundary: C4Boundary, bounds
   boundary.y = starty;
   boundary.width = bounds.data.stopx! - startx;
   boundary.height = bounds.data.stopy! - starty;
+  // A boundary can be a relationship endpoint, and its box is a plain rectangle.
+  // intersect.rect measures from the centre, while the C4 grid stores the top-left corner.
+  boundary.intersect = (point: C4Point) =>
+    intersect.rect(
+      {
+        x: boundary.x + boundary.width / 2,
+        y: boundary.y + boundary.height / 2,
+        width: boundary.width,
+        height: boundary.height,
+      },
+      point
+    );
 
   boundary.label.y = conf.c4ShapeMargin - 35;
 
@@ -344,17 +366,17 @@ class Point {
 /*
  * Get the intersection of the line between the center point of a rectangle and a point outside the rectangle.
  */
-const getIntersectPoint = function (fromNode: C4Shape, endPoint: Point): Point | null {
+const getIntersectPoint = function (fromNode: C4Element, endPoint: Point): Point | null {
   if (!fromNode.intersect) {
     throw new Error(
-      `C4 shape "${fromNode.alias}" has no intersect function. Please report this to https://github.com/mermaid-js/mermaid/issues`
+      `C4 element "${fromNode.alias}" has no intersect function. Please report this to https://github.com/mermaid-js/mermaid/issues`
     );
   }
   const { x, y } = fromNode.intersect(endPoint);
   return new Point(x, y);
 };
 
-const getIntersectPoints = function (fromNode: C4Shape, endNode: C4Shape) {
+const getIntersectPoints = function (fromNode: C4Element, endNode: C4Element) {
   const endIntersectPoint = { x: 0, y: 0 };
   endIntersectPoint.x = endNode.x + endNode.width / 2;
   endIntersectPoint.y = endNode.y + endNode.height / 2;
@@ -369,7 +391,7 @@ const getIntersectPoints = function (fromNode: C4Shape, endNode: C4Shape) {
 export const drawRels = function (
   diagram: SVG,
   rels: C4Rel[],
-  getC4ShapeObj: (alias: string) => C4Shape | undefined,
+  getC4ShapeObj: (alias: string) => C4Element | undefined,
   diagObj: Diagram,
   diagramId: string
 ) {
@@ -398,7 +420,9 @@ export const drawRels = function (
     const fromNode = getC4ShapeObj(rel.from);
     const endNode = getC4ShapeObj(rel.to);
     if (!fromNode || !endNode) {
-      throw new Error(`C4 rel "${rel.from}" -> "${rel.to}" references an unknown shape`);
+      throw new Error(
+        `C4 rel "${rel.from}" -> "${rel.to}" references an unknown shape or boundary`
+      );
     }
     const points = getIntersectPoints(fromNode, endNode);
     if (!points.startPoint || !points.endPoint) {

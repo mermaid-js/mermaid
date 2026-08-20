@@ -1,6 +1,5 @@
 import cspell from '@cspell/eslint-plugin';
 import eslint from '@eslint/js';
-import cypress from 'eslint-plugin-cypress';
 import jsdoc from 'eslint-plugin-jsdoc';
 import json from 'eslint-plugin-json';
 import lodash from 'eslint-plugin-lodash';
@@ -44,8 +43,6 @@ export default tseslint.config(
         ...globals.node,
         ...globals.es2020,
         ...globals.jest,
-        cy: 'readonly',
-        Cypress: 'readonly',
       },
     },
   },
@@ -56,7 +53,6 @@ export default tseslint.config(
       'no-only-tests': noOnlyTests,
       lodash,
       unicorn,
-      cypress,
       markdown,
       tsdoc,
       jsdoc,
@@ -66,7 +62,6 @@ export default tseslint.config(
       'no-console': 'error',
       'no-prototype-builtins': 'off',
       'no-unused-vars': 'off',
-      'cypress/no-async-tests': 'off',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-floating-promises': 'error',
@@ -168,7 +163,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['cypress/**', 'demos/**', '.esbuild/**'],
+    files: ['e2e/**', 'demos/**', '.esbuild/**'],
     rules: {
       'no-console': 'off',
       // Dev tooling files often use lower-friction style (single-line ifs,
@@ -253,14 +248,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.spec.{ts,js}', 'cypress/**', 'demos/**', '**/docs/**'],
+    files: ['**/*.spec.{ts,js}', 'e2e/**', 'demos/**', '**/docs/**'],
     rules: {
       'jsdoc/require-jsdoc': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
     },
   },
   {
-    files: ['**/*.spec.{ts,js}', 'tests/**', 'cypress/**/*.js'],
+    files: ['**/*.spec.{ts,js}', 'tests/**', 'e2e/**/*.js'],
     rules: {
       '@cspell/spellchecker': [
         'error',

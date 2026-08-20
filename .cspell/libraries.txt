@@ -78,6 +78,7 @@ tsbuildinfo
 tseslint
 Tuleap
 Typora
+uninstrumented
 unocss
 unplugin
 unstub

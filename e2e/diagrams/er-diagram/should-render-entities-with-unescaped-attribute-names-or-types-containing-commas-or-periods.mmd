@@ -1,0 +1,15 @@
+---
+config:
+  loglevel: 1
+---
+erDiagram
+  HOTEL {
+  string               address
+  GEOMETRY(point,4326) location
+  DECIMAL(10,2)        price_per_night
+  }
+  HOTEL ||--o{ ROOM : has
+  ROOM {
+  int room.number
+  string bed.type
+  }
