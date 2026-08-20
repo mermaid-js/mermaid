@@ -57,8 +57,8 @@ async function main(): Promise<void> {
     return;
   }
 
-  // Newly-seen screenshots are folded in in test-declaration order (from the
-  // capture sidecars), matching how the compositor appends them at runtime.
+  // Newly-seen screenshots fold into the manifest in test-declaration order
+  // (from the capture sidecars), matching how the compositor appends them.
   const next = updateOrder(relPaths, previous, readTileOrigins(screenshotDir, relPaths));
   await writeFile(orderFile, JSON.stringify(next, null, 2) + '\n');
   log(`wrote ${orderFile} (${countTiles(next)} tiles across ${Object.keys(next).length} groups).`);

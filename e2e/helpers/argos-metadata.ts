@@ -185,31 +185,34 @@ export function annotateTilePosition(
   };
 }
 
-/**
- * Declaration position of the test that captured a tile, read from its sidecar.
- * Undefined when the sidecar is missing or unreadable (e.g. artifacts captured
- * before sidecars were written).
- */
-export function readTileOrigin(inputDir: string, source: string): ArgosLocation | undefined {
-  const sidecarPath = join(inputDir, argosMetadataSidecarPath(source));
+/** Parse a capture's sidecar; undefined when it is missing or unreadable. */
+function readSidecarMetadata(
+  inputDir: string,
+  source: string
+): ArgosScreenshotMetadata | undefined {
   try {
-    const meta = JSON.parse(readFileSync(sidecarPath, 'utf8')) as ArgosScreenshotMetadata;
-    return meta.test?.location;
+    return JSON.parse(
+      readFileSync(join(inputDir, argosMetadataSidecarPath(source)), 'utf8')
+    ) as ArgosScreenshotMetadata;
   } catch {
     return undefined;
   }
 }
 
-/** Declaration positions for every source with a readable sidecar, keyed by source path. */
+/**
+ * Declaration position of each screenshot's test — `test.location` (spec file
+ * plus line/column of the `test()` call) from its capture sidecar — keyed by
+ * source path. Sources without a readable sidecar are omitted.
+ */
 export function readTileOrigins(
   inputDir: string,
   sources: readonly string[]
 ): Map<string, ArgosLocation> {
   const origins = new Map<string, ArgosLocation>();
   for (const source of sources) {
-    const origin = readTileOrigin(inputDir, source);
-    if (origin) {
-      origins.set(source, origin);
+    const location = readSidecarMetadata(inputDir, source)?.test?.location;
+    if (location) {
+      origins.set(source, location);
     }
   }
   return origins;
@@ -217,27 +220,21 @@ export function readTileOrigins(
 
 /** Read a tile's sidecar if present; otherwise infer from the PNG path. */
 export function readTileAnnotation(inputDir: string, source: string): ArgosTestAnnotation {
-  const sidecarPath = join(inputDir, argosMetadataSidecarPath(source));
-  try {
-    const meta = JSON.parse(readFileSync(sidecarPath, 'utf8')) as ArgosScreenshotMetadata;
-    const fixture = meta.test?.annotations?.find((a) => a.type === 'mmd-fixture');
-    if (fixture) {
-      return fixture;
-    }
-    const testAnnotation = meta.test?.annotations?.find((a) => a.type === 'test');
-    if (testAnnotation) {
-      return testAnnotation;
-    }
-    if (meta.test?.title) {
-      return {
-        type: 'test',
-        description: meta.test.titlePath?.join(' › ') ?? meta.test.title,
-        location: meta.test.location,
-      };
-    }
-  } catch {
-    // Fall back to path inference when no sidecar exists (older artifacts).
+  const meta = readSidecarMetadata(inputDir, source);
+  const annotation =
+    meta?.test?.annotations?.find((a) => a.type === 'mmd-fixture') ??
+    meta?.test?.annotations?.find((a) => a.type === 'test');
+  if (annotation) {
+    return annotation;
   }
+  if (meta?.test?.title) {
+    return {
+      type: 'test',
+      description: meta.test.titlePath?.join(' › ') ?? meta.test.title,
+      location: meta.test.location,
+    };
+  }
+  // Fall back to path inference when no sidecar exists (older artifacts).
   return annotationFromScreenshotRelPath(source);
 }
 

@@ -15,6 +15,7 @@ import {
   DEFAULT_TILE_WIDTH,
   deriveGroupKey,
   ensureSheetMetadataSidecars,
+  extendOrder,
   findUnordered,
   formatTileTitle,
   LABEL_HEIGHT,
@@ -22,6 +23,7 @@ import {
   updateOrder,
   writeSheets,
 } from './screenshot-sheets.js';
+import type { OrderManifest, TileOrigins } from './screenshot-sheets.js';
 
 const SLOT_WIDTH = 40;
 const SLOT_HEIGHT = 30;
@@ -444,14 +446,16 @@ describe('append-only tile order', () => {
   });
 });
 
-describe('declaration-order fallback for unpinned tiles', () => {
+describe('declaration-order tail for unpinned tiles', () => {
   // Every *.spec.* group is missing from the committed manifest today (it only
-  // covers the mmd `diagrams/*` folders), so these groups take layoutGroup's
-  // fallback on every run. Alphabetical there means a new test can take cell 1
-  // and push every other tile one cell along; declaration order appends instead.
+  // covers the mmd `diagrams/*` folders), so alphabetical layout let a new test
+  // whose slug sorts early take cell 1 and shift every other tile. The CLI now
+  // extends the manifest over all captured screenshots before planning
+  // (extendOrder): unpinned tiles are pinned in test-declaration order, so a
+  // test added at the end of its spec appends at its group's tail.
   const SPEC_FILE = `e2e/${FC_MAIN}`;
 
-  /** Sources with their `test()` call line, as the capture sidecars record it. */
+  /** Sources with the `test()` call line their capture sidecars would record. */
   const declared = (entries: [string, number][]) => ({
     sources: entries.map(([name]) => `${FC_MAIN}/${name}`),
     origins: new Map(
@@ -459,13 +463,13 @@ describe('declaration-order fallback for unpinned tiles', () => {
     ),
   });
 
-  const cells = (
-    sources: string[],
-    origins?: Map<string, { file: string; line: number; column: number }>
-  ) =>
-    planSheets(sources, { tilesPerSheet: 12, cols: 3, origins }).flatMap((sheet) =>
-      sheet.tiles.map((t) => t.name)
-    );
+  /** Tile names as the CLI lays them out: manifest extended, then planned. */
+  const cells = (sources: string[], origins?: TileOrigins, previous: OrderManifest = {}) =>
+    planSheets(sources, {
+      tilesPerSheet: 12,
+      cols: 3,
+      order: extendOrder(previous, sources, origins),
+    }).flatMap((sheet) => sheet.tiles.map((t) => t.name));
 
   it('lays an unpinned group out in declaration order, not alphabetically', () => {
     const { sources, origins } = declared([
@@ -474,7 +478,9 @@ describe('declaration-order fallback for unpinned tiles', () => {
       ['mango.png', 30],
     ]);
     expect(cells(sources, origins)).toEqual(['zebra', 'apple', 'mango']);
-    expect(cells(sources)).toEqual(['apple', 'mango', 'zebra']); // today's fallback
+    // Without the extend pass the same group re-sorts alphabetically.
+    const [bare] = planSheets(sources, { tilesPerSheet: 12, cols: 3 });
+    expect(bare.tiles.map((t) => t.name)).toEqual(['apple', 'mango', 'zebra']);
   });
 
   it('a test added at the end of its spec appends, leaving every other tile in place', () => {
@@ -493,7 +499,6 @@ describe('declaration-order fallback for unpinned tiles', () => {
     );
 
     expect(after).toEqual([...before, 'aaa-newly-added-test']);
-    expect(after.slice(0, before.length)).toEqual(before); // nothing shifted
   });
 
   it('keeps earlier sheets byte-identical when a test is appended to a multi-sheet group', () => {
@@ -502,8 +507,8 @@ describe('declaration-order fallback for unpinned tiles', () => {
       (i + 1) * 10,
     ]);
     const { sources, origins } = declared(entries);
-    const sig = (paths: string[], o: typeof origins) =>
-      planSheets(paths, { tilesPerSheet: 12, cols: 3, origins: o }).map(
+    const sig = (paths: string[], o: TileOrigins) =>
+      planSheets(paths, { tilesPerSheet: 12, cols: 3, order: extendOrder({}, paths, o) }).map(
         (sheet) => `${sheet.group}#${sheet.index}:${sheet.tiles.map((t) => t.source).join(',')}`
       );
 
@@ -520,64 +525,72 @@ describe('declaration-order fallback for unpinned tiles', () => {
     expect(after[2]).toBe(`${before[2]},${added}`);
   });
 
-  it('falls back to path order for tiles sharing one call site (loop-registered tests)', () => {
+  it('breaks call-site ties (loop-registered tests) and sidecar-less tiles by path order', () => {
     const { sources, origins } = declared([
       ['loop-b.png', 12],
-      ['loop-a.png', 12],
+      ['loop-a.png', 12], // same test() line as loop-b
       ['later.png', 20],
     ]);
-    expect(cells(sources, origins)).toEqual(['loop-a', 'loop-b', 'later']);
-  });
-
-  it('leaves mmd fixture groups on alphabetical order (one runner call site for all)', () => {
-    // mmd-snapshots.spec.ts registers every fixture from a single test() call, so
-    // all of its captures report the same declaration position and tie — the mmd
-    // `diagrams/*` groups (the only ones the committed manifest covers) keep the
-    // layout they have today.
-    const runner = { file: 'e2e/rendering/mmd-snapshots.spec.ts', line: 26, column: 5 };
-    const fixtures = ['diagrams/packet/zebra.png', 'diagrams/packet/apple.png'];
-    const origins = new Map(fixtures.map((f) => [f, runner]));
-    const tiles = planSheets(fixtures, { tilesPerSheet: 12, cols: 3, origins })[0].tiles;
-    expect(tiles.map((t) => t.source)).toEqual([...fixtures].sort());
-  });
-
-  it('sorts sidecar-less tiles after placed ones, alphabetically among themselves', () => {
-    const { sources, origins } = declared([['declared.png', 10]]);
     const orphans = [`${FC_MAIN}/no-sidecar-b.png`, `${FC_MAIN}/no-sidecar-a.png`];
     expect(cells([...orphans, ...sources], origins)).toEqual([
-      'declared',
-      'no-sidecar-a',
+      'loop-a',
+      'loop-b',
+      'later',
+      'no-sidecar-a', // sidecar-less tiles sort after located ones
       'no-sidecar-b',
     ]);
   });
 
-  it('appends the unpinned tail of a manifest-pinned group in declaration order too', () => {
+  it('leaves mmd fixture groups alphabetical (one runner call site registers all)', () => {
+    // mmd-snapshots.spec.ts registers every fixture from a single test() call, so
+    // all of its captures tie on declaration position — the mmd `diagrams/*`
+    // groups (the only ones the committed manifest covers) keep today's layout.
+    const runner = { file: 'e2e/rendering/mmd-snapshots.spec.ts', line: 26, column: 5 };
+    const fixtures = ['diagrams/packet/zebra.png', 'diagrams/packet/apple.png'];
+    const origins = new Map(fixtures.map((f) => [f, runner]));
+    expect(extendOrder({}, fixtures, origins)['diagrams/packet']).toEqual([
+      'apple.png',
+      'zebra.png',
+    ]);
+  });
+
+  it('extendOrder keeps committed entries verbatim, appending only unpinned tiles', () => {
     const { sources, origins } = declared([
       ['pinned-a.png', 10],
-      ['pinned-b.png', 20],
       ['new-zebra.png', 30],
       ['new-apple.png', 40],
     ]);
-    const order = { [FC_MAIN]: ['pinned-a.png', 'pinned-b.png'] };
-    const [sheet] = planSheets(sources, { tilesPerSheet: 12, cols: 3, order, origins });
-    expect(sheet.tiles.map((t) => t.name)).toEqual([
+    // pinned-b has no capture this run: its entry (and thus its blank slot) stays.
+    const previous = { [FC_MAIN]: ['pinned-a.png', 'pinned-b.png'] };
+    expect(extendOrder(previous, sources, origins)[FC_MAIN]).toEqual([
+      'pinned-a.png',
+      'pinned-b.png',
+      'new-zebra.png', // declared before new-apple, so it appends first
+      'new-apple.png',
+    ]);
+    expect(cells(sources, origins, previous)).toEqual([
       'pinned-a',
-      'pinned-b',
-      'new-zebra', // declared before new-apple, so it appends first
+      'pinned-b', // blank cell — slot kept
+      'new-zebra',
       'new-apple',
     ]);
   });
 
-  it('updateOrder folds newly-seen screenshots in declaration order', () => {
+  it('updateOrder folds newly-seen screenshots in declaration order and prunes removals', () => {
     const { sources, origins } = declared([
       ['kept.png', 10],
       ['new-zebra.png', 20],
       ['new-apple.png', 30],
     ]);
-    const next = updateOrder(sources, { [FC_MAIN]: ['kept.png'] }, origins);
-    expect(next[FC_MAIN]).toEqual(['kept.png', 'new-zebra.png', 'new-apple.png']);
-    // Without origins the same input sorts the new pair alphabetically.
-    expect(updateOrder(sources, { [FC_MAIN]: ['kept.png'] })[FC_MAIN]).toEqual([
+    const previous = {
+      [FC_MAIN]: ['removed.png', 'kept.png'],
+      'gone/entirely.spec.js': ['x.png'],
+    };
+    expect(updateOrder(sources, previous, origins)).toEqual({
+      [FC_MAIN]: ['kept.png', 'new-zebra.png', 'new-apple.png'],
+    });
+    // Without origins the new pair falls back to alphabetical order.
+    expect(updateOrder(sources, previous)[FC_MAIN]).toEqual([
       'kept.png',
       'new-apple.png',
       'new-zebra.png',
