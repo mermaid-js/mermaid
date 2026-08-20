@@ -1,0 +1,16 @@
+---
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+%%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+flowchart LR
+  subgraph A
+  a --> b
+  end
+  subgraph B
+  i -->f
+  end
+  A --> B

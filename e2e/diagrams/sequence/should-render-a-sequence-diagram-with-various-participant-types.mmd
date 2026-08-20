@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant User@{ "type": "actor" }
+  participant AuthService@{ "type": "control" }
+  participant UI@{ "type": "boundary" }
+  participant OrderController@{ "type": "control" }
+  participant Product@{ "type": "entity" }
+  participant MongoDB@{ "type": "database" }
+  participant Products@{ "type": "collections" }
+  participant OrderQueue@{ "type": "queue" }
+  User ->> UI: Login request
+  UI ->> AuthService: Validate credentials
+  AuthService -->> UI: Authentication token
+  UI ->> OrderController: Place order
+  OrderController ->> Product: Check availability
+  Product -->> OrderController: Available
+  OrderController ->> MongoDB: Save order
+  MongoDB -->> OrderController: Order saved
+  OrderController ->> OrderQueue: Process payment
+  OrderQueue -->> User: Order confirmation
