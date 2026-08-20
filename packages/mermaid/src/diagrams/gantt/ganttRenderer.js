@@ -35,6 +35,31 @@ export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
 };
 
+/** Horizontal breathing room between two vert labels sharing a row (#8026). */
+const VERT_LABEL_GAP = 4;
+
+/**
+ * First-fit packing for horizontal label extents.
+ *
+ * Returns the index of the first row in which `[left, right]` overlaps nothing
+ * already placed, recording the placement in `rows`. Used to stack vert labels
+ * that would otherwise be drawn on top of each other.
+ *
+ * @param {[number, number][][]} rows - Extents already placed, per row. Mutated.
+ * @param {number} left - Left edge of the label to place.
+ * @param {number} right - Right edge of the label to place.
+ * @returns {number} Index of the row the label was placed in.
+ */
+export function placeInFirstFreeRow(rows, left, right) {
+  let row = 0;
+  while (rows[row]?.some(([takenLeft, takenRight]) => left < takenRight && right > takenLeft)) {
+    row++;
+  }
+  rows[row] ??= [];
+  rows[row].push([left, right]);
+  return row;
+}
+
 /**
  * This will map any day of the week that can be set in the `weekday` option to
  * the corresponding d3-time function that is used to calculate the ticks.
@@ -187,7 +212,18 @@ export const draw = function (text, id, version, diagObj) {
   // tasks are created based on their order of startTime
   taskArray.sort(taskCompare);
 
+  // Every vert label used to be drawn at the same y, so verts close together in
+  // time overlapped each other (#8026). drawRects stacks them into rows and
+  // records what it used, so the viewBox can grow to fit the extra rows -- the
+  // default layout leaves only a few px below the first row.
+  const vertLabelStack = { rows: [], extraRows: 0, lineHeight: 0 };
+
   makeGantt(taskArray, w, h);
+
+  if (vertLabelStack.extraRows > 0) {
+    h += vertLabelStack.extraRows * vertLabelStack.lineHeight;
+    elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+  }
 
   configureSvgSize(svg, h, w, conf.useMaxWidth);
 
@@ -429,11 +465,28 @@ export const draw = function (text, id, version, diagObj) {
       .attr('y', function (d, i) {
         // Ignore the incoming i value and use our order instead
         if (d.vert) {
-          return (
+          const baseY =
             conf.gridLineStartPadding +
             tasksWithoutVert.length * (conf.barHeight + conf.barGap) +
-            60
+            60;
+          // Labels are text-anchor: middle, so they span x +/- half their width.
+          // Drop each one to the first row where it clears the labels already
+          // placed, leaving a small gap so neighbours don't touch.
+          const bbox = this.getBBox();
+          const centerX = timeScale(d.startTime) + theSidePad;
+          const left = centerX - bbox.width / 2 - VERT_LABEL_GAP;
+          const right = centerX + bbox.width / 2 + VERT_LABEL_GAP;
+
+          const row = placeInFirstFreeRow(vertLabelStack.rows, left, right);
+          // getBBox() reports 0 when the text hasn't been laid out (e.g. jsdom),
+          // in which case fall back to the configured font size.
+          vertLabelStack.lineHeight = Math.max(
+            vertLabelStack.lineHeight,
+            bbox.height > 0 ? bbox.height : conf.fontSize
           );
+          vertLabelStack.extraRows = Math.max(vertLabelStack.extraRows, row);
+
+          return baseY + row * vertLabelStack.lineHeight;
         }
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
