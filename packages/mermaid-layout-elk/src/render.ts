@@ -1,5 +1,6 @@
 import mermaid, {
   createCommonLayoutRenderer,
+  defaultMeasureLayout,
   type CommonLayoutRenderContext,
   type LayoutData,
 } from 'mermaid';
@@ -107,6 +108,12 @@ const ARROW_MAP: Record<string, [string, string]> = {
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
+/** Default `spacing.baseValue` for a subgraph that has no algorithm of its own. */
+const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 30;
+/** Inner padding reserved around a container that runs its own algorithm. */
+const CONTAINER_PADDING = 15;
+/** Same, for `elk.rectpacking`, which packs tighter. */
+const RECTPACKING_CONTAINER_PADDING = 10;
 
 /**
  * Shared layout options for elk.rectpacking — applied at both root level
@@ -126,6 +133,37 @@ const RECTPACKING_OPTIONS: Record<string, string | number> = {
   'elk.rectpacking.whiteSpaceElimination.strategy': 'EQUAL_BETWEEN_STRUCTURES',
   'elk.rectpacking.widthApproximation.strategy': 'SCANLINE',
 };
+
+/**
+ * Every option `buildSubgraphLayoutOptions` sets *because* a container asked for
+ * its own algorithm. When cross-boundary edges force the container back onto the
+ * inherited algorithm, all of these have to go — they are not inert under
+ * `elk.layered`, so leaving them behind produced a hybrid rather than the
+ * documented fallback.
+ */
+const CONTAINER_ALGORITHM_SCOPED_OPTIONS = [
+  'nodeSize.constraints',
+  'nodeSize.minimum',
+  'elk.algorithm',
+  'elk.aspectRatio',
+  'elk.contentAlignment',
+  'elk.expandNodes',
+  'elk.padding',
+  ...Object.keys(RECTPACKING_OPTIONS),
+];
+
+/**
+ * Undo the algorithm-scoped options on a container, restoring the values a
+ * plain subgraph would have had.
+ */
+export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unknown>): void {
+  for (const key of CONTAINER_ALGORITHM_SCOPED_OPTIONS) {
+    delete layoutOptions[key];
+  }
+  // `spacing.baseValue` is a base option that the rectpacking overrides stomp
+  // on, so restore the default rather than leaving it unset.
+  layoutOptions['spacing.baseValue'] = DEFAULT_SUBGRAPH_SPACING_BASE_VALUE;
+}
 
 /**
  * ELK algorithm ids a container may select through `@{ algorithm: … }`.
@@ -202,11 +240,8 @@ export function buildSubgraphLayoutOptions(
   const labelH = node.labelData?.height ?? 0;
 
   const layoutOptions: Record<string, unknown> = {
-    'spacing.baseValue': 30,
+    'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-    // These apply to every subgraph, not just directional ones. Scoping them to
-    // the `node.dir` branch silently dropped edge merging and node alignment for
-    // subgraphs without an explicit direction, which is the common case.
     'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'elk.layered.nodePlacement.bk.fixedAlignment':
@@ -221,20 +256,27 @@ export function buildSubgraphLayoutOptions(
     // Label-derived minimum size, so ELK sizes the container to fit its label.
     // Scoped to containers that opt into their own algorithm: applying it to
     // every subgraph changes the dimensions of existing flowchart subgraphs.
+    const padTop = labelH + CONTAINER_PADDING;
     layoutOptions['nodeSize.constraints'] = '[MINIMUM_SIZE, NODE_LABELS]';
-    layoutOptions['nodeSize.minimum'] = `(${minWidth}, ${labelH})`;
+    // The minimum has to clear the whole reserved strip — the label plus the
+    // padding above and below it — not just the label height, or a container
+    // whose children are shorter than its own chrome comes out too short.
+    layoutOptions['nodeSize.minimum'] = `(${minWidth}, ${padTop + CONTAINER_PADDING})`;
     layoutOptions['elk.algorithm'] = algo;
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
     layoutOptions['elk.aspectRatio'] = '2.0';
     layoutOptions['elk.contentAlignment'] = 'H_CENTER V_TOP';
     layoutOptions['elk.expandNodes'] = 'true';
     // Reserve top padding for the label so children don't overlap it
-    layoutOptions['elk.padding'] = `[top=${labelH + 15},left=15,bottom=15,right=15]`;
+    layoutOptions['elk.padding'] =
+      `[top=${padTop},left=${CONTAINER_PADDING},bottom=${CONTAINER_PADDING},right=${CONTAINER_PADDING}]`;
 
     // Tighter spacing for rectpacking — uses smaller padding for nested containers.
     if (algo === 'elk.rectpacking') {
+      const rectPadTop = labelH + RECTPACKING_CONTAINER_PADDING;
       Object.assign(layoutOptions, RECTPACKING_OPTIONS, {
-        'elk.padding': `[top=${labelH + 10},left=10,bottom=10,right=10]`,
+        'elk.padding': `[top=${rectPadTop},left=${RECTPACKING_CONTAINER_PADDING},bottom=${RECTPACKING_CONTAINER_PADDING},right=${RECTPACKING_CONTAINER_PADDING}]`,
+        'nodeSize.minimum': `(${minWidth}, ${rectPadTop + RECTPACKING_CONTAINER_PADDING})`,
       });
     }
   } else if (node.dir) {
@@ -470,8 +512,14 @@ export function buildElkGraphFromLayoutData(
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
-  // Note that defaultMeasureLayout and createGraphWithElements is called by the factory function
   prepareLayout: prepareLayoutForElk,
+  // ELK derives a compound node's minimum size from the measured cluster label,
+  // so the label has to be measured the way `insertCluster` paints it —
+  // unwrapped — rather than at the 200px flowchart wrapping width. Requested
+  // here rather than sniffed for in core: core has no business knowing which
+  // layout it is running.
+  measureLayout: (data4Layout, context) =>
+    defaultMeasureLayout(data4Layout, context, { unwrapGroupLabels: true }),
   runLayoutCore: runElkLayoutCore,
   paintOptions: {
     skipIntersect: true,
@@ -835,7 +883,7 @@ function setIncludeChildrenPolicy(
     resolveContainerAlgorithm(node.metadata?.algorithm)
   ) {
     log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
-    delete node.layoutOptions['elk.algorithm'];
+    clearContainerAlgorithmOptions(node.layoutOptions);
   }
 
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
@@ -868,7 +916,9 @@ async function runElkLayout(
       profiler?.end();
     }
     log.debug('APA01 after - success');
-    log.info('APA01 layout result:', JSON.stringify(graph, null, 2));
+    // Pass the object, not a pre-serialised string: `JSON.stringify` of the
+    // whole laid-out graph ran on every render regardless of log level.
+    log.debug('APA01 layout result:', graph);
     return graph;
   } catch (error) {
     log.error('ELK layout error:', error);
@@ -977,7 +1027,28 @@ function applyElkEdgeLayout(
     const endId = edge.targets?.[0] ?? edge.end;
     const startNode = layoutState.nodeDb[startId];
     const endNode = layoutState.nodeDb[endId];
-    if (!startNode || !endNode || !edge.sections) {
+    if (!startNode || !endNode) {
+      return;
+    }
+
+    // `elk.box` and `elk.rectpacking` place nodes but never route edges, so ELK
+    // returns no sections. `points` is not optional downstream — the paint step
+    // filters it — so fall back to a straight line between the two node centres
+    // rather than leaving the edge unlaid.
+    if (!edge.sections) {
+      const centre = (node: NodeWithVertex) => ({
+        x: (node.offset?.posX ?? node.x ?? 0) + (node.width ?? 0) / 2,
+        y: (node.offset?.posY ?? node.y ?? 0) + (node.height ?? 0) / 2,
+      });
+      const from = centre(startNode);
+      const to = centre(endNode);
+      startNode.x = from.x;
+      startNode.y = from.y;
+      endNode.x = to.x;
+      endNode.y = to.y;
+      layoutEdge.points = [from, to];
+      layoutEdge.curve = 'linear';
+      log.debug('APA18 no edge sections, using a straight line', edge.id, layoutEdge.points);
       return;
     }
 

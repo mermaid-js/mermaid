@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   buildElkGraphFromLayoutData,
   buildSubgraphLayoutOptions,
+  clearContainerAlgorithmOptions,
   dir2ElkDirection,
   ensureEndMarkerSegmentLength,
   findCyclicEntryNodes,
@@ -59,7 +60,10 @@ describe('buildSubgraphLayoutOptions', () => {
       'layered'
     );
     expect(opts['nodeSize.constraints']).toBe('[MINIMUM_SIZE, NODE_LABELS]');
-    expect(opts['nodeSize.minimum']).toBe('(60, 14)');
+    // Height clears the whole reserved strip — label (14) plus the 15px
+    // padding above it and the 15px below — not just the label height.
+    expect(opts['nodeSize.minimum']).toBe('(60, 44)');
+    expect(opts['elk.padding']).toBe('[top=29,left=15,bottom=15,right=15]');
   });
 
   it('leaves the size of a plain subgraph to ELK, as before', () => {
@@ -158,6 +162,8 @@ describe('buildSubgraphLayoutOptions', () => {
     );
     expect(opts['elk.rectpacking.trybox']).toBe('true');
     expect(opts['elk.padding']).toBe('[top=24,left=10,bottom=10,right=10]');
+    // Minimum height clears the tighter rectpacking strip, not the default one.
+    expect(opts['nodeSize.minimum']).toBe('(30, 34)');
   });
 });
 
@@ -595,5 +601,95 @@ describe('ensureEndMarkerSegmentLength', () => {
     ];
 
     expect(ensureEndMarkerSegmentLength(points, circleBounds, 4, log)).toEqual(points);
+  });
+});
+
+describe('algorithms that place nodes but do not route edges', () => {
+  // `elk.box` and `elk.rectpacking` are selectable as top-level `layout` values,
+  // but neither routes edges, so ELK returns no `edge.sections`. Leaving
+  // `edge.points` unset then crashed the paint step with
+  // "Cannot read properties of undefined (reading 'filter')" — every diagram
+  // with a single edge blanked.
+  const nonRoutingData = () =>
+    ({
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        { id: 'A', isGroup: false, width: 40, height: 20, label: 'A', shape: 'rect' },
+        { id: 'B', isGroup: false, width: 40, height: 20, label: 'B', shape: 'rect' },
+      ],
+      edges: [{ id: 'L_A_B_0', start: 'A', end: 'B', type: 'arrow_point' }],
+    }) as any;
+
+  it.each(['elk.box', 'elk.rectpacking'])('assigns edge points under %s', async (algorithm) => {
+    const data = nonRoutingData();
+    await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm } });
+
+    const edge = data.edges[0];
+    expect(edge.points).toBeDefined();
+    expect(edge.points.length).toBeGreaterThanOrEqual(2);
+    for (const point of edge.points) {
+      expect(Number.isFinite(point.x)).toBe(true);
+      expect(Number.isFinite(point.y)).toBe(true);
+    }
+  });
+});
+
+describe('clearContainerAlgorithmOptions', () => {
+  // A container whose edges cross its boundary falls back to the inherited
+  // algorithm. Deleting only `elk.algorithm` left the rest of the algorithm's
+  // options in place — none of which are inert under `elk.layered` — so the
+  // container got a hybrid rather than the documented fallback.
+  it('removes every option the algorithm branch added', () => {
+    const options = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      { mergeEdges: true },
+      'elk.layered'
+    );
+    clearContainerAlgorithmOptions(options);
+
+    for (const key of [
+      'elk.algorithm',
+      'nodeSize.constraints',
+      'nodeSize.minimum',
+      'elk.aspectRatio',
+      'elk.contentAlignment',
+      'elk.expandNodes',
+      'elk.padding',
+    ]) {
+      expect(options).not.toHaveProperty(key);
+    }
+  });
+
+  it('removes the rectpacking overrides and restores the default base spacing', () => {
+    const options = buildSubgraphLayoutOptions(
+      {
+        padding: 8,
+        labelData: { width: 44, height: 14 },
+        metadata: { algorithm: 'elk.rectpacking' },
+      },
+      { mergeEdges: true },
+      'elk.layered'
+    );
+    expect(options['spacing.baseValue']).toBe(15);
+
+    clearContainerAlgorithmOptions(options);
+
+    expect(options['spacing.baseValue']).toBe(30);
+    expect(options).not.toHaveProperty('spacing.nodeNode');
+    expect(options).not.toHaveProperty('elk.rectpacking.trybox');
+  });
+
+  it('leaves the base options alone', () => {
+    const options = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      { mergeEdges: true, nodePlacementStrategy: 'BRANDES_KOEPF' },
+      'elk.layered'
+    );
+    clearContainerAlgorithmOptions(options);
+
+    expect(options['elk.layered.mergeEdges']).toBe(true);
+    expect(options['nodePlacement.strategy']).toBe('BRANDES_KOEPF');
+    expect(options['nodeLabels.placement']).toBe('[H_CENTER V_TOP, INSIDE]');
   });
 });

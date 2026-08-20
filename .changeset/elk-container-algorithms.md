@@ -8,6 +8,6 @@ A subgraph carrying `@{ algorithm: elk.box }` is laid out with that algorithm in
 
 Also in this release:
 
-- `elk.layered.mergeEdges` and `nodePlacement.strategy` now apply to every subgraph. They were previously scoped to subgraphs with an explicit direction, so subgraphs without one — the common case — silently lost edge merging and node alignment. **This changes the layout of existing diagrams that use ELK with subgraphs.**
-- ELK cluster labels are measured unwrapped, so a compound node is sized to fit its label.
+- ELK cluster labels are measured unwrapped, so a compound node is sized to fit its label instead of to a 200px wrapping width. **This changes the size — and therefore the layout — of existing ELK diagrams that have labelled subgraphs.**
+- `elk.box` and `elk.rectpacking` place nodes but never route edges. Edges they leave unrouted now fall back to a straight line between the two node centres instead of failing the render.
 - `keepEntryNodeOnTop` pins a cycle's true entry rather than the first-declared node when a back-edge feeds the entry, so recursive flows read from where they actually start.

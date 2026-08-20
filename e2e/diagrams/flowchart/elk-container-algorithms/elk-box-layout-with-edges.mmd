@@ -1,0 +1,10 @@
+---
+config:
+  layout: elk.box
+---
+%% elk.box places nodes but does not route edges. Every edge here relies on the
+%% straight-line fallback; without it the render throws on `points.filter`.
+flowchart TD
+  A[Start] --> B[Middle]
+  B --> C[End]
+  A --> C
