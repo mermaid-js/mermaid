@@ -17,6 +17,7 @@
 
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { readTileOrigins } from '../e2e/helpers/argos-metadata.ts';
 import {
   collectScreenshots,
   findUnordered,
@@ -56,7 +57,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  const next = updateOrder(relPaths, previous);
+  // Newly-seen screenshots are folded in in test-declaration order (from the
+  // capture sidecars), matching how the compositor appends them at runtime.
+  const next = updateOrder(relPaths, previous, readTileOrigins(screenshotDir, relPaths));
   await writeFile(orderFile, JSON.stringify(next, null, 2) + '\n');
   log(`wrote ${orderFile} (${countTiles(next)} tiles across ${Object.keys(next).length} groups).`);
 }

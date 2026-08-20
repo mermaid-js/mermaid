@@ -5,6 +5,7 @@ import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   argosMetadataSidecarPath,
+  readTileOrigins,
   writeArgosMetadataSidecar,
 } from '../e2e/helpers/argos-metadata.js';
 import {
@@ -440,6 +441,170 @@ describe('append-only tile order', () => {
     const empty = planSheets(paths, { tilesPerSheet: 12, cols: 3, order: {} });
     expect(fallback[0].tiles.map((t) => t.source)).toEqual(empty[0].tiles.map((t) => t.source));
     expect(fallback[0].tiles.map((t) => t.source)).toEqual([...paths].sort());
+  });
+});
+
+describe('declaration-order fallback for unpinned tiles', () => {
+  // Every *.spec.* group is missing from the committed manifest today (it only
+  // covers the mmd `diagrams/*` folders), so these groups take layoutGroup's
+  // fallback on every run. Alphabetical there means a new test can take cell 1
+  // and push every other tile one cell along; declaration order appends instead.
+  const SPEC_FILE = `e2e/${FC_MAIN}`;
+
+  /** Sources with their `test()` call line, as the capture sidecars record it. */
+  const declared = (entries: [string, number][]) => ({
+    sources: entries.map(([name]) => `${FC_MAIN}/${name}`),
+    origins: new Map(
+      entries.map(([name, line]) => [`${FC_MAIN}/${name}`, { file: SPEC_FILE, line, column: 3 }])
+    ),
+  });
+
+  const cells = (
+    sources: string[],
+    origins?: Map<string, { file: string; line: number; column: number }>
+  ) =>
+    planSheets(sources, { tilesPerSheet: 12, cols: 3, origins }).flatMap((sheet) =>
+      sheet.tiles.map((t) => t.name)
+    );
+
+  it('lays an unpinned group out in declaration order, not alphabetically', () => {
+    const { sources, origins } = declared([
+      ['zebra.png', 10],
+      ['apple.png', 20],
+      ['mango.png', 30],
+    ]);
+    expect(cells(sources, origins)).toEqual(['zebra', 'apple', 'mango']);
+    expect(cells(sources)).toEqual(['apple', 'mango', 'zebra']); // today's fallback
+  });
+
+  it('a test added at the end of its spec appends, leaving every other tile in place', () => {
+    const { sources, origins } = declared([
+      ['basic-er-diagram.png', 10],
+      ['crows-foot-notation.png', 20],
+      ['zzz-last-one.png', 30],
+    ]);
+    const before = cells(sources, origins);
+
+    // Alphabetically first, but declared last — the case that used to take cell 1.
+    const added = `${FC_MAIN}/aaa-newly-added-test.png`;
+    const after = cells(
+      [...sources, added],
+      new Map([...origins, [added, { file: SPEC_FILE, line: 40, column: 3 }]])
+    );
+
+    expect(after).toEqual([...before, 'aaa-newly-added-test']);
+    expect(after.slice(0, before.length)).toEqual(before); // nothing shifted
+  });
+
+  it('keeps earlier sheets byte-identical when a test is appended to a multi-sheet group', () => {
+    const entries: [string, number][] = Array.from({ length: 26 }, (_, i) => [
+      `t-${String(i).padStart(3, '0')}.png`,
+      (i + 1) * 10,
+    ]);
+    const { sources, origins } = declared(entries);
+    const sig = (paths: string[], o: typeof origins) =>
+      planSheets(paths, { tilesPerSheet: 12, cols: 3, origins: o }).map(
+        (sheet) => `${sheet.group}#${sheet.index}:${sheet.tiles.map((t) => t.source).join(',')}`
+      );
+
+    const before = sig(sources, origins);
+    const added = `${FC_MAIN}/aaa-appended.png`; // sorts first, declared last
+    const after = sig(
+      [...sources, added],
+      new Map([...origins, [added, { file: SPEC_FILE, line: 999, column: 3 }]])
+    );
+
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).toBe(before[1]);
+    expect(after).toHaveLength(before.length); // 27 tiles still fit in 3 sheets
+    expect(after[2]).toBe(`${before[2]},${added}`);
+  });
+
+  it('falls back to path order for tiles sharing one call site (loop-registered tests)', () => {
+    const { sources, origins } = declared([
+      ['loop-b.png', 12],
+      ['loop-a.png', 12],
+      ['later.png', 20],
+    ]);
+    expect(cells(sources, origins)).toEqual(['loop-a', 'loop-b', 'later']);
+  });
+
+  it('leaves mmd fixture groups on alphabetical order (one runner call site for all)', () => {
+    // mmd-snapshots.spec.ts registers every fixture from a single test() call, so
+    // all of its captures report the same declaration position and tie — the mmd
+    // `diagrams/*` groups (the only ones the committed manifest covers) keep the
+    // layout they have today.
+    const runner = { file: 'e2e/rendering/mmd-snapshots.spec.ts', line: 26, column: 5 };
+    const fixtures = ['diagrams/packet/zebra.png', 'diagrams/packet/apple.png'];
+    const origins = new Map(fixtures.map((f) => [f, runner]));
+    const tiles = planSheets(fixtures, { tilesPerSheet: 12, cols: 3, origins })[0].tiles;
+    expect(tiles.map((t) => t.source)).toEqual([...fixtures].sort());
+  });
+
+  it('sorts sidecar-less tiles after placed ones, alphabetically among themselves', () => {
+    const { sources, origins } = declared([['declared.png', 10]]);
+    const orphans = [`${FC_MAIN}/no-sidecar-b.png`, `${FC_MAIN}/no-sidecar-a.png`];
+    expect(cells([...orphans, ...sources], origins)).toEqual([
+      'declared',
+      'no-sidecar-a',
+      'no-sidecar-b',
+    ]);
+  });
+
+  it('appends the unpinned tail of a manifest-pinned group in declaration order too', () => {
+    const { sources, origins } = declared([
+      ['pinned-a.png', 10],
+      ['pinned-b.png', 20],
+      ['new-zebra.png', 30],
+      ['new-apple.png', 40],
+    ]);
+    const order = { [FC_MAIN]: ['pinned-a.png', 'pinned-b.png'] };
+    const [sheet] = planSheets(sources, { tilesPerSheet: 12, cols: 3, order, origins });
+    expect(sheet.tiles.map((t) => t.name)).toEqual([
+      'pinned-a',
+      'pinned-b',
+      'new-zebra', // declared before new-apple, so it appends first
+      'new-apple',
+    ]);
+  });
+
+  it('updateOrder folds newly-seen screenshots in declaration order', () => {
+    const { sources, origins } = declared([
+      ['kept.png', 10],
+      ['new-zebra.png', 20],
+      ['new-apple.png', 30],
+    ]);
+    const next = updateOrder(sources, { [FC_MAIN]: ['kept.png'] }, origins);
+    expect(next[FC_MAIN]).toEqual(['kept.png', 'new-zebra.png', 'new-apple.png']);
+    // Without origins the same input sorts the new pair alphabetically.
+    expect(updateOrder(sources, { [FC_MAIN]: ['kept.png'] })[FC_MAIN]).toEqual([
+      'kept.png',
+      'new-apple.png',
+      'new-zebra.png',
+    ]);
+  });
+
+  it('reads declaration positions from the capture sidecars on disk', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'argos-origins-'));
+    const source = `${FC_MAIN}/a.png`;
+    await mkdir(join(dir, FC_MAIN), { recursive: true });
+    await writeArgosMetadataSidecar(join(dir, source), {
+      $schema: 'https://api.argos-ci.com/v2/screenshot-metadata.json',
+      test: {
+        title: 'a',
+        location: { file: SPEC_FILE, line: 42, column: 3 },
+        annotations: [],
+      },
+      automationLibrary: { name: 'playwright', version: '1' },
+      sdk: { name: '@argos-ci/cli', version: '1' },
+    });
+    await writeFile(join(dir, FC_MAIN, 'b.png.argos.json'), 'not json');
+
+    const origins = readTileOrigins(dir, [source, `${FC_MAIN}/b.png`, `${FC_MAIN}/c.png`]);
+    expect(origins.get(source)).toEqual({ file: SPEC_FILE, line: 42, column: 3 });
+    expect(origins.has(`${FC_MAIN}/b.png`)).toBe(false); // corrupt sidecar
+    expect(origins.has(`${FC_MAIN}/c.png`)).toBe(false); // no sidecar
+    await rm(dir, { recursive: true, force: true });
   });
 });
 

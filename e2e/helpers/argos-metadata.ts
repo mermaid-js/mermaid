@@ -185,6 +185,36 @@ export function annotateTilePosition(
   };
 }
 
+/**
+ * Declaration position of the test that captured a tile, read from its sidecar.
+ * Undefined when the sidecar is missing or unreadable (e.g. artifacts captured
+ * before sidecars were written).
+ */
+export function readTileOrigin(inputDir: string, source: string): ArgosLocation | undefined {
+  const sidecarPath = join(inputDir, argosMetadataSidecarPath(source));
+  try {
+    const meta = JSON.parse(readFileSync(sidecarPath, 'utf8')) as ArgosScreenshotMetadata;
+    return meta.test?.location;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Declaration positions for every source with a readable sidecar, keyed by source path. */
+export function readTileOrigins(
+  inputDir: string,
+  sources: readonly string[]
+): Map<string, ArgosLocation> {
+  const origins = new Map<string, ArgosLocation>();
+  for (const source of sources) {
+    const origin = readTileOrigin(inputDir, source);
+    if (origin) {
+      origins.set(source, origin);
+    }
+  }
+  return origins;
+}
+
 /** Read a tile's sidecar if present; otherwise infer from the PNG path. */
 export function readTileAnnotation(inputDir: string, source: string): ArgosTestAnnotation {
   const sidecarPath = join(inputDir, argosMetadataSidecarPath(source));
