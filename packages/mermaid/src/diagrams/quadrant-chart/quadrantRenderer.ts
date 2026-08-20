@@ -467,7 +467,9 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
 
   dataPoints.each(function (data: QuadrantPointType) {
     const pointG = select(this).append('g').attr('transform', getTransformation(data.text));
-    const wrapWidth = Math.min(width * 0.2, 120);
+    // Use 25% of chart width (capped at 150px) for data point labels
+    // This allows labels like "Universities and Schools" to wrap properly
+    const wrapWidth = Math.min(width * 0.25, 150);
     renderWrappedText(
       pointG,
       data.text.text,
