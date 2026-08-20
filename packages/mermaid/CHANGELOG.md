@@ -1,5 +1,52 @@
 # mermaid
 
+## 11.17.0
+
+### Minor Changes
+
+- [#7842](https://github.com/mermaid-js/mermaid/pull/7842) [`3670b4e`](https://github.com/mermaid-js/mermaid/commit/3670b4e2d99b27945240dd3fe71da9175fddcaec) Thanks [@filipsajdak](https://github.com/filipsajdak)! - feat(c4): render C4 elements through the unified shape system, using the new person shape
+
+- [#7812](https://github.com/mermaid-js/mermaid/pull/7812) [`cdfc0ea`](https://github.com/mermaid-js/mermaid/commit/cdfc0ea65f47bc8f9605a2a646ed87c25a692216) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(class): route `classDiagram` to the unified (v2) renderer by default
+
+  Set `class: { defaultRenderer: 'dagre-d3' }` in the config to restore the legacy renderer.
+
+- [#7785](https://github.com/mermaid-js/mermaid/pull/7785) [`c45cde9`](https://github.com/mermaid-js/mermaid/commit/c45cde9582ede4add658f62b771ba2a7efadde83) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(flowchart): add collapsible flowchart subgraphs via `subgraphId@{ view: collapsed }`
+
+- [#7828](https://github.com/mermaid-js/mermaid/pull/7828) [`8eb3afc`](https://github.com/mermaid-js/mermaid/commit/8eb3afc08c64e0f5d2b2447daac417250a202c13) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(elk): add `elk.keepEntryNodeOnTop` config option to keep a recursive flow's entry node on top
+
+- [#7803](https://github.com/mermaid-js/mermaid/pull/7803) [`74e44eb`](https://github.com/mermaid-js/mermaid/commit/74e44ebf86d293cee1f2314c8b8a163284ea3911) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(elk): add `elk.nodePlacementAlignment` config option
+
+- [#7792](https://github.com/mermaid-js/mermaid/pull/7792) [`ea55b31`](https://github.com/mermaid-js/mermaid/commit/ea55b31bcfb36cfdfbc31a531058ee8c4ee53a4f) Thanks [@RodrigojndSantos](https://github.com/RodrigojndSantos)! - feat(er): add subgraph support to ER diagrams.
+
+- [#7970](https://github.com/mermaid-js/mermaid/pull/7970) [`a2c0fb6`](https://github.com/mermaid-js/mermaid/commit/a2c0fb6cdf8073b8feb10595ea3cccff0237049b) Thanks [@filipsajdak](https://github.com/filipsajdak)! - feat(flowchart): add `folder`, `bucket`, `console` (terminal window) and `browser` shapes
+
+- [#7842](https://github.com/mermaid-js/mermaid/pull/7842) [`ae3e115`](https://github.com/mermaid-js/mermaid/commit/ae3e1157c166fab7520d9ee2ed67b16613f6c243) Thanks [@filipsajdak](https://github.com/filipsajdak)! - feat(flowchart): add `person` shape (circular head above a rounded body), usable in flowcharts via `A@{ shape: person }`
+
+- [#7724](https://github.com/mermaid-js/mermaid/pull/7724) [`0fd7a9f`](https://github.com/mermaid-js/mermaid/commit/0fd7a9fe0d10a1ac39359bc5cb5341b5010a624e) Thanks [@xdumaine](https://github.com/xdumaine)! - feat(xyChart): add legends for named line and bar series
+
+### Patch Changes
+
+- [#7847](https://github.com/mermaid-js/mermaid/pull/7847) [`215fe89`](https://github.com/mermaid-js/mermaid/commit/215fe89d3ecfb47cf0836cb52bf272b14fc99f29) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(c4): named attributes such as `$tags`, `$link` and `$sprite` are no longer clobbered to undefined when they arrive in an earlier positional slot of Person/System/Container/Component/Boundary/Rel statements.
+
+- [#7871](https://github.com/mermaid-js/mermaid/pull/7871) [`8d874c4`](https://github.com/mermaid-js/mermaid/commit/8d874c49fa1699cf22e99d4936b16f16dde1fc7f) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix(flowchart): stop dagre layout from spamming `warn`-level logs on every node/edge/cluster
+
+- [#8071](https://github.com/mermaid-js/mermaid/pull/8071) [`b3d1f63`](https://github.com/mermaid-js/mermaid/commit/b3d1f6316717faf099cbe21c9fb9f41c2e0bc069) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix(block): sibling blocks overlapping in block diagrams when one has a label wider than 200px
+
+- [#7870](https://github.com/mermaid-js/mermaid/pull/7870) [`71b8843`](https://github.com/mermaid-js/mermaid/commit/71b8843fb5ae25d7b884f5cc7ba856d978e0420b) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: a `RangeError: Invalid array length` crash when rendering certain edges.
+
+- [#7924](https://github.com/mermaid-js/mermaid/pull/7924) [`9cbef5d`](https://github.com/mermaid-js/mermaid/commit/9cbef5d94f3aa6bea04b44f23ad81c1b8d7ca2b7) Thanks [@nightt5879](https://github.com/nightt5879)! - fix(treeView): icons disappearing after strict security sanitization.
+
+- [#7850](https://github.com/mermaid-js/mermaid/pull/7850) [`a34cbf0`](https://github.com/mermaid-js/mermaid/commit/a34cbf02d9b5d88ac03f7792c8779ba2fd850378) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(block): allow classdefs to update text color
+
+- [#7937](https://github.com/mermaid-js/mermaid/pull/7937) [`f9cbe1e`](https://github.com/mermaid-js/mermaid/commit/f9cbe1ef3dcbb74b425d811c6dcf415953711544) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(dagre): let a diagram's own nodeSpacing/rankSpacing take effect in the unified dagre layout
+
+- [#8005](https://github.com/mermaid-js/mermaid/pull/8005) [`90eeece`](https://github.com/mermaid-js/mermaid/commit/90eeeced88b8bc38b449ed01535b812b498f2b7d) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix(flowchart): reverts the behavior change from #7672 (fix/4648-directions), since arrows between subgraphs are broken
+
+- [#7951](https://github.com/mermaid-js/mermaid/pull/7951) [`afa2f80`](https://github.com/mermaid-js/mermaid/commit/afa2f80e658fe351ea73233a13787f7c3e2e433d) Thanks [@aloisklink](https://github.com/aloisklink)! - perf: use `fastdom` to batch DOM measurements (up to 25% speedup)
+
+- Updated dependencies [[`e848423`](https://github.com/mermaid-js/mermaid/commit/e848423d8841c6bd4651ee1e6e4833b5b573ac97)]:
+  - @mermaid-js/parser@1.2.1
+
 ## 11.16.1
 
 ### Patch Changes
