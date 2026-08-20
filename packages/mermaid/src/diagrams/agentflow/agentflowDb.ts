@@ -74,6 +74,8 @@ const SEMANTIC_METADATA_SKIP_KEYS = new Set([
   'view',
   'icon',
   'img',
+  'form',
+  'pos',
   'w',
   'h',
   'class',

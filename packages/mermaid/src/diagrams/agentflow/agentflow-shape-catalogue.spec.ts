@@ -90,13 +90,16 @@ describe('agentflow shape catalogue', () => {
 
   it('strips presentation keys from the semantic model', () => {
     const db = parse(`agentflow-beta TB
-  a["A"]@{ icon: "fa:bell", img: "x.png", w: 40, h: 40, description: "kept" }
+  a["A"]@{ icon: "fa:bell", img: "x.png", form: circle, pos: t, w: 40, h: 40, description: "kept" }
   b["B"]
   a --> b`);
 
     const vertex = db.getSemanticModel().vertices.find((v) => v.id === 'a');
     expect(vertex?.metadata).toMatchObject({ description: 'kept' });
-    for (const key of ['icon', 'img', 'w', 'h']) {
+    // `form` and `pos` are as presentation-only as `icon` and `img` — they only
+    // ever selected the icon variant and its label position — so they belong in
+    // the §11 skip set alongside them.
+    for (const key of ['icon', 'img', 'form', 'pos', 'w', 'h']) {
       expect(vertex?.metadata).not.toHaveProperty(key);
     }
   });
