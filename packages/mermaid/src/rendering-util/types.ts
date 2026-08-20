@@ -44,6 +44,7 @@ interface BaseNode {
   isGroup?: boolean;
   width?: number;
   height?: number;
+  wrappingWidth?: number;
   labelBBox?: {
     width: number;
     height: number;
