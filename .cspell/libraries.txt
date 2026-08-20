@@ -49,6 +49,7 @@ matplotlib
 mdbook
 Mermerd
 mkdocs
+monocart
 Nextra
 nodenext
 npmjs
@@ -80,6 +81,7 @@ tsbuildinfo
 tseslint
 Tuleap
 Typora
+uninstrumented
 unocss
 unplugin
 unstub

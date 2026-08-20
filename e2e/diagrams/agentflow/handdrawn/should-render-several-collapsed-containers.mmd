@@ -1,0 +1,17 @@
+---
+config:
+  look: handDrawn
+  handDrawnSeed: 1
+---
+agentflow-beta TB
+  flow tasks["Tasks"]
+    t1["One"]@{ shape: task }
+  end
+  tasks@{ view: "collapsed" }
+
+  flow more["More"]
+    t2["Two"]@{ shape: task }
+  end
+  more@{ view: "collapsed" }
+
+  tasks --> more

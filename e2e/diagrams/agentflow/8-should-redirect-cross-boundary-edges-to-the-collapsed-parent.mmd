@@ -1,0 +1,17 @@
+agentflow-beta TB
+  flow researcher["Research Agent"]
+    patterns["Pattern Research"]@{ shape: refdoc }
+  end
+
+  flow reviewer["Review Agent"]
+    validate["validate_patterns"]@{ shape: tool }
+    reviewed["Reviewed Patterns"]
+    patterns --> validate --> reviewed
+  end
+
+  flow reporter["Report Agent"]
+    compile["compile_report"]@{ shape: tool }
+    reviewed --> compile
+  end
+
+  reviewer@{ view: "collapsed" }
