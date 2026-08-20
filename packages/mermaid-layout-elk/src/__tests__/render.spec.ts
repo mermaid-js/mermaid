@@ -633,6 +633,26 @@ describe('algorithms that place nodes but do not route edges', () => {
       expect(Number.isFinite(point.y)).toBe(true);
     }
   });
+
+  // The straight line runs centre to centre, but this renderer paints with
+  // `skipIntersect`, so nothing downstream clips it: unclipped, the line runs
+  // under both nodes and the end marker sits inside the target instead of on
+  // its border. The endpoints have to be on (or outside) the node boxes.
+  it.each(['elk.box', 'elk.rectpacking'])(
+    'clips the fallback endpoints back to the node borders under %s',
+    async (algorithm) => {
+      const data = nonRoutingData();
+      await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm } });
+
+      const nodeById = Object.fromEntries(data.nodes.map((node: any) => [node.id, node]));
+      const points = data.edges[0].points;
+      const insideBox = (node: any, point: { x: number; y: number }) =>
+        Math.abs(point.x - node.x) < node.width / 2 && Math.abs(point.y - node.y) < node.height / 2;
+
+      expect(insideBox(nodeById.A, points[0])).toBe(false);
+      expect(insideBox(nodeById.B, points[points.length - 1])).toBe(false);
+    }
+  );
 });
 
 describe('clearContainerAlgorithmOptions', () => {

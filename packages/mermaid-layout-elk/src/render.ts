@@ -1034,7 +1034,10 @@ function applyElkEdgeLayout(
     // `elk.box` and `elk.rectpacking` place nodes but never route edges, so ELK
     // returns no sections. `points` is not optional downstream — the paint step
     // filters it — so fall back to a straight line between the two node centres
-    // rather than leaving the edge unlaid.
+    // rather than leaving the edge unlaid. The centres are then clipped back to
+    // the node borders: this renderer paints with `skipIntersect`, so nothing
+    // downstream would do it, and an unclipped line runs under both nodes with
+    // its end marker buried inside the target.
     if (!edge.sections) {
       const centre = (node: NodeWithVertex) => ({
         x: (node.offset?.posX ?? node.x ?? 0) + (node.width ?? 0) / 2,
@@ -1046,7 +1049,7 @@ function applyElkEdgeLayout(
       startNode.y = from.y;
       endNode.x = to.x;
       endNode.y = to.y;
-      layoutEdge.points = [from, to];
+      layoutEdge.points = sanitizeElkEdgePoints([from, to], startNode, endNode, log);
       layoutEdge.curve = 'linear';
       log.debug('APA18 no edge sections, using a straight line', edge.id, layoutEdge.points);
       return;
