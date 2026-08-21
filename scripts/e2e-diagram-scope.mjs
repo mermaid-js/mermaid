@@ -20,10 +20,19 @@
  * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
  *   const spec = detectScope(['packages/mermaid/src/diagrams/flowchart/flowchart.ts']);
- *   // => 'e2e/rendering/flowchart/**'
+ *   // => 'e2e/rendering/flowchart/'
  */
 
 import { createInterface } from 'readline';
+
+/*
+ * Patterns are matched by Playwright as REGULAR EXPRESSIONS against each test
+ * file's path, not as globs - `playwright test <pattern>` compiles its
+ * positional arguments with `new RegExp()`. A glob such as `.../c4/**` is not a
+ * valid regex ("Nothing to repeat") and aborts the run before any test starts,
+ * so a directory pattern ends at the separator and matches every file beneath
+ * it by virtue of being a substring match.
+ */
 import { existsSync, readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 
@@ -223,7 +232,7 @@ export function detectScope(files, options = {}) {
 
       // File inside a diagram subfolder → scope to that subfolder.
       const subFolder = rest.slice(0, slashIdx);
-      directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/**`);
+      directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/`);
       continue;
     }
 
@@ -277,7 +286,7 @@ export function detectScope(files, options = {}) {
   for (const name of diagramNames) {
     const folder = `${specBaseDir}/${name}`;
     if (existsSync(folder)) {
-      specs.add(`${folder}/**`);
+      specs.add(`${folder}/`);
     } else if (hasFixtures(name)) {
       // Fixtures-only diagram (no per-diagram spec subfolder) — the global mmd
       // snapshot runner exercises it.

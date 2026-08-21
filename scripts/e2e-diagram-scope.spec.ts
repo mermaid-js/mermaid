@@ -20,7 +20,7 @@ describe('detectScope', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -66,8 +66,8 @@ describe('detectScope', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/gantt/**`,
-        `${SPEC_BASE_DIR}/pie/**`,
+        `${SPEC_BASE_DIR}/gantt/`,
+        `${SPEC_BASE_DIR}/pie/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -85,7 +85,7 @@ describe('detectScope', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -112,10 +112,7 @@ describe('detectScope', () => {
   it('scopes to the subfolder when a spec file in that subfolder is modified', () => {
     const result = detectScope([`${SPEC_BASE_DIR}/gantt/gantt.spec.js`]);
     expect(result.split(',')).toEqual(
-      expect.arrayContaining([
-        `${SPEC_BASE_DIR}/gantt/**`,
-        `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
-      ])
+      expect.arrayContaining([`${SPEC_BASE_DIR}/gantt/`, `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`])
     );
   });
 
@@ -136,7 +133,7 @@ describe('detectScope', () => {
       `${SPEC_BASE_DIR}/gantt/gantt.spec.js`,
     ]);
     // Both point to the same subfolder — should deduplicate
-    expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/**`).length).toBe(1);
+    expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/`).length).toBe(1);
   });
 });
 
@@ -183,7 +180,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -196,7 +193,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -244,5 +241,44 @@ describe('diagram coverage', () => {
       missing,
       `Diagrams with no spec subfolder and no fixtures: ${missing.join(', ')}`
     ).toEqual([]);
+  });
+
+  // The patterns are handed to `playwright test` as positional arguments, which it
+  // compiles with `new RegExp()`. A glob such as `.../c4/**` is not a valid regex and
+  // aborts the whole run before any test starts, so every pattern this can return has
+  // to compile.
+  describe('every emitted pattern is a valid regular expression', () => {
+    const changeSets: [string, string[]][] = [
+      ['a single diagram', ['packages/mermaid/src/diagrams/c4/c4Db.ts']],
+      ['another diagram', ['packages/mermaid/src/diagrams/flowchart/flowchartDb.ts']],
+      [
+        'two diagrams',
+        [
+          'packages/mermaid/src/diagrams/gantt/ganttDb.js',
+          'packages/mermaid/src/diagrams/pie/pieDb.ts',
+        ],
+      ],
+      ['a spec file', [`${SPEC_BASE_DIR}/gantt/gantt.spec.js`]],
+      ['an mmd fixture', ['e2e/diagrams/c4/c4-1-should-render-a-simple-c4context-diagram.mmd']],
+    ];
+
+    it.each(changeSets)('compiles for %s', (_name, files) => {
+      const result = detectScope(files);
+      for (const pattern of result.split(',').filter(Boolean)) {
+        expect(() => new RegExp(pattern)).not.toThrow();
+      }
+    });
+
+    it('matches the files it is meant to scope to', () => {
+      const [pattern] = detectScope(['packages/mermaid/src/diagrams/c4/c4Db.ts']).split(',');
+
+      // a directory pattern still reaches every spec beneath it, as the glob did
+      expect(new RegExp(pattern).test(`${SPEC_BASE_DIR}/c4/c4-characterization.spec.js`)).toBe(
+        true
+      );
+      expect(new RegExp(pattern).test(`${SPEC_BASE_DIR}/c4/nested/deep.spec.js`)).toBe(true);
+      // and does not leak into a sibling folder with the same prefix
+      expect(new RegExp(pattern).test(`${SPEC_BASE_DIR}/c4-beta/other.spec.js`)).toBe(false);
+    });
   });
 });
