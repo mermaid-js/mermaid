@@ -221,4 +221,81 @@ Rel(a, b, "Uses", "HTTPS", "to read accounts")`);
     expect(edges[0].label).toBe('Uses<br/>[HTTPS]<br/>to read accounts');
     expect(edges[0].label).not.toContain('<b>');
   });
+
+  describe('tags', () => {
+    it('styles an element from a tag it names', () => {
+      const db = parse(`C4Context
+AddElementTag(legacy, $bgColor="#eeeeee", $borderColor="#999999", $fontColor="#333333")
+System(a, "A", $tags="legacy")
+System(b, "B")`);
+
+      const { nodes } = getData(db, config());
+      const stylesOf = (id: string) => nodes.find((n) => n.id === id)?.cssStyles ?? [];
+
+      expect(stylesOf('a')).toEqual(
+        expect.arrayContaining(['fill:#eeeeee', 'stroke:#999999', 'color:#333333'])
+      );
+      // an untagged element keeps the palette
+      expect(stylesOf('b')).not.toEqual(expect.arrayContaining(['fill:#eeeeee']));
+    });
+
+    it('lets an explicit UpdateElementStyle win over a tag', () => {
+      const db = parse(`C4Context
+AddElementTag(legacy, $bgColor="#eeeeee")
+System(a, "A", $tags="legacy")
+UpdateElementStyle(a, $bgColor="red")`);
+
+      expect(getData(db, config()).nodes.find((n) => n.id === 'a')?.cssStyles).toEqual(
+        expect.arrayContaining(['fill:red'])
+      );
+    });
+
+    it('takes the shape from a defined tag', () => {
+      const db = parse(`C4Context
+AddElementTag(store, $shape="cylinder")
+System(a, "A", $tags="store")`);
+
+      expect(getData(db, config()).nodes.find((n) => n.id === 'a')?.shape).toBe('cylinder');
+    });
+
+    it('ignores a tag name that was never defined', () => {
+      const db = parse(`C4Context\nSystem(a, "A", $tags="nosuchtag")`);
+
+      const node = getData(db, config()).nodes.find((n) => n.id === 'a');
+      expect(node?.shape).toBe('rounded');
+      expect(node?.cssStyles?.join(' ')).not.toContain('nosuchtag');
+    });
+
+    // Tag colours reach a CSS declaration, so they go through the same guard as the
+    // relationship colours: a value that is not a colour on its own is dropped.
+    it('drops a tag colour that is not a colour on its own', () => {
+      const db = parse(`C4Context
+AddElementTag(bad, $bgColor="red;background:url(x)")
+System(a, "A", $tags="bad")`);
+
+      const styles = (getData(db, config()).nodes.find((n) => n.id === 'a')?.cssStyles ?? []).join(
+        ' '
+      );
+      expect(styles).not.toContain('url(');
+      expect(styles).not.toContain(';');
+    });
+
+    it('styles a relationship from a tag it names, and lets UpdateRelStyle win', () => {
+      const db = parse(`C4Context
+AddRelTag(async, $lineColor="green", $textColor="olive")
+Person(a, "A")
+Person(b, "B")
+Person(c, "C")
+Person(d, "D")
+Rel(a, b, "queued", $tags="async")
+Rel(c, d, "queued too", $tags="async")
+UpdateRelStyle(c, d, $lineColor="red")`);
+
+      const { edges } = getData(db, config());
+      expect(edges[0].style).toEqual(expect.arrayContaining(['stroke:green']));
+      expect(edges[0].labelStyle).toEqual(expect.arrayContaining(['color:olive']));
+      // the explicit style wins for the second pair
+      expect(edges[1].style).toEqual(expect.arrayContaining(['stroke:red']));
+    });
+  });
 });

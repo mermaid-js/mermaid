@@ -1,7 +1,8 @@
 import type { MermaidConfig } from '../../config.type.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
-import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
+import type { C4Boundary, C4ElementTag, C4Rel, C4RelTag, C4Shape } from './c4Types.js';
+import type { C4TagStyle } from './c4ShapeAdapter.js';
 import { asColor, buildC4Node, buildEdgeLabel } from './c4ShapeAdapter.js';
 
 /**
@@ -19,7 +20,40 @@ interface C4Db {
   getRels: () => C4Rel[];
   getC4Type: () => string | undefined;
   getDirection: () => string;
+  getElementTags: () => C4ElementTag[];
+  getRelTags: () => C4RelTag[];
 }
+
+/**
+ * The tags an element or relationship names in `$tags`, resolved against the tags the
+ * diagram defined. Later tags win, so a list reads left to right like a CSS class list.
+ * A name with no matching definition contributes nothing.
+ */
+const resolveTags = <T extends { tagName: string }>(
+  tags: string | undefined,
+  defined: Map<string, T>
+): T[] =>
+  tags
+    ? tags
+        .split(',')
+        .map((tag) => defined.get(tag.trim()))
+        .filter((tag): tag is T => tag !== undefined)
+    : [];
+
+/** Merges the matched tags into one style, later tags overriding earlier ones. */
+const mergeTagStyle = (tags: C4ElementTag[]): C4TagStyle | undefined => {
+  if (tags.length === 0) {
+    return undefined;
+  }
+  const merged: C4TagStyle = {};
+  for (const tag of tags) {
+    merged.bgColor = tag.bgColor ?? merged.bgColor;
+    merged.fontColor = tag.fontColor ?? merged.fontColor;
+    merged.borderColor = tag.borderColor ?? merged.borderColor;
+    merged.shape = tag.shape ?? merged.shape;
+  }
+  return merged;
+};
 
 /**
  * A boundary's own type is only worth showing when it is not the implied one:
@@ -67,6 +101,8 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const useHtmlLabels = getEffectiveHtmlLabels(config);
   // C4Dynamic numbers each relationship in declaration order (1: ..., 2: ...).
   const isDynamic = db.getC4Type() === 'C4Dynamic';
+  const elementTags = new Map(db.getElementTags().map((tag) => [tag.tagName, tag]));
+  const relTags = new Map(db.getRelTags().map((tag) => [tag.tagName, tag]));
 
   // 'global' is the implicit root boundary; it is a container in the db, not a drawn box.
   const boundaries = db.getBoundaries().filter((boundary) => boundary.alias !== 'global');
@@ -94,8 +130,9 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   }
 
   for (const shape of db.getC4ShapeArray()) {
+    const tagStyle = mergeTagStyle(resolveTags(shape.tags, elementTags));
     nodes.push({
-      ...buildC4Node(shape, c4Config, padding, look, elementWidth),
+      ...buildC4Node(shape, c4Config, padding, look, elementWidth, tagStyle),
       parentId: parentIdOf(shape.parentBoundary),
       link: shape.link,
     });
@@ -112,8 +149,12 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
     );
     const style: string[] = [];
     const labelStyle: string[] = [];
-    const lineColor = asColor(rel.lineColor);
-    const textColor = asColor(rel.textColor);
+    // An explicit `UpdateRelStyle` on this relationship wins over any tag it carries.
+    const tags = resolveTags(rel.tags, relTags);
+    const taggedLine = tags.reduce<string | undefined>((c, tag) => tag.lineColor ?? c, undefined);
+    const taggedText = tags.reduce<string | undefined>((c, tag) => tag.textColor ?? c, undefined);
+    const lineColor = asColor(rel.lineColor) ?? asColor(taggedLine);
+    const textColor = asColor(rel.textColor) ?? asColor(taggedText);
     if (lineColor) {
       style.push(`stroke:${lineColor}`);
     }
