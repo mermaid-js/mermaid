@@ -79,4 +79,68 @@ Rel(a, b, "uses", $descr="how it is used")`);
 
     expect(c4.parser.yy.getRels()[0].descr.text).toBe('how it is used');
   });
+
+  /**
+   * Every kind of declaration, given exactly one named attribute so that it lands in the
+   * first optional slot - which is rarely its own. Each bug found in this area so far
+   * only showed up for one such combination, so they are enumerated rather than sampled.
+   *
+   * `descr`, `techn` and `type` are stored as `{ text }`; `tags`, `sprite` and `link` are
+   * plain strings. Which slot the value travelled through must not change that.
+   */
+  describe('one named attribute, whichever slot it lands in', function () {
+    const TEXT_FIELDS = new Set(['descr', 'techn', 'type']);
+
+    const expectField = (subject: Record<string, unknown>, field: string) => {
+      if (TEXT_FIELDS.has(field)) {
+        expect(subject[field]).toEqual({ text: 'V' });
+      } else {
+        expect(subject[field]).toBe('V');
+      }
+    };
+
+    const shape = () => c4.parser.yy.getC4ShapeArray()[0];
+    const boundary = () =>
+      c4.parser.yy.getBoundaries().find((b: { alias: string }) => b.alias !== 'global');
+
+    const elements: [string, string, string[]][] = [
+      ['C4Context', 'System(x, "L", $F="V")', ['descr', 'tags', 'sprite', 'link']],
+      ['C4Context', 'Person(x, "L", $F="V")', ['descr', 'tags', 'sprite', 'link']],
+      ['C4Container', 'Container(x, "L", $F="V")', ['descr', 'techn', 'tags', 'sprite', 'link']],
+      ['C4Component', 'Component(x, "L", $F="V")', ['descr', 'techn', 'tags', 'sprite', 'link']],
+    ];
+    for (const [header, template, fields] of elements) {
+      it.each(fields)(`${template.replace('$F', '$%s')}`, function (field) {
+        c4.parser.parse(`${header}\n${template.replace('$F', `$${field}`)}`);
+        expectField(shape(), field);
+      });
+    }
+
+    // `System_Boundary` and `Container_Boundary` splice their kind in as a positional
+    // argument, so an explicit `$type` shifts one slot along into `tags`.
+    const boundaries: [string, string, string[]][] = [
+      ['C4Context', 'System_Boundary(x, "L", $F="V")', ['type', 'tags', 'link']],
+      ['C4Container', 'Container_Boundary(x, "L", $F="V")', ['type', 'tags', 'link']],
+      ['C4Deployment', 'Node(x, "L", $F="V")', ['type', 'descr', 'tags', 'sprite', 'link']],
+    ];
+    for (const [header, template, fields] of boundaries) {
+      it.each(fields)(`${template.replace('$F', '$%s')}`, function (field) {
+        c4.parser.parse(
+          `${header}\n${template.replace('$F', `$${field}`)} {\nContainer(i, "I")\n}`
+        );
+        expectField(boundary(), field);
+      });
+    }
+
+    it.each(['techn', 'descr', 'tags', 'sprite', 'link'])(
+      'Rel(a, b, "uses", $%s="V")',
+      function (field) {
+        c4.parser.parse(`C4Context
+Person(a, "A")
+Person(b, "B")
+Rel(a, b, "uses", $${field}="V")`);
+        expectField(c4.parser.yy.getRels()[0], field);
+      }
+    );
+  });
 });

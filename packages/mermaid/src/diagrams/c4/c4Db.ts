@@ -38,7 +38,12 @@ const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
     }
     if (typeof value === 'object') {
       const [key, val] = Object.entries(value)[0];
-      bag[key] = val;
+      // Same rule as the positional text slots: a text field is stored as `{ text }`
+      // whichever slot it arrived through. `System_Boundary` and friends splice their
+      // kind in as a positional argument, so an explicit `$type` shifts along into this
+      // one and would otherwise land here as a bare string and overwrite the wrapped
+      // value the type slot just set.
+      bag[key] = TEXT_FIELDS.has(key) ? { text: val } : val;
     } else {
       bag[field] = value;
     }
