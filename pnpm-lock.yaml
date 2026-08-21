@@ -28,8 +28,8 @@ importers:
         specifier: ^1.47.8
         version: 1.48.1(@playwright/test@1.62.1)(@types/node@22.20.1)(encoding@0.1.13)(playwright@1.62.1)(webdriver@7.31.1(typescript@5.8.3))
       '@argos-ci/cli':
-        specifier: ^5.0.5
-        version: 5.0.5
+        specifier: ^5.1.0
+        version: 5.1.3(@types/node@22.20.1)
       '@changesets/changelog-github':
         specifier: ^0.5.2
         version: 0.5.2(encoding@0.1.13)
@@ -858,17 +858,17 @@ packages:
     resolution: {integrity: sha512-LrqHBTuI/e219Ly+Fn4pEREzDVXhrhb0oF1gOAvMhblGFq0AAoSbzobuzlKwufySYfHoKNxnR1vurT4Y7ZRWbQ==}
     engines: {node: '>=12.13.0'}
 
-  '@argos-ci/api-client@0.22.0':
-    resolution: {integrity: sha512-CzMDTZXT6+0fvtfdwUwu4NIzyS0zhEJoGd/0m/zSFIK+kXvWIJyIl/eZqyGRr5+B6OPFR1cRtOI9pX5w3u4i8A==}
+  '@argos-ci/api-client@0.22.1':
+    resolution: {integrity: sha512-RnJvhCcdHJb0h5HoLSlGWnmRnRn2zgY0jq6ynS2506sd2drAeYJV03dSi3tX5TN7janQOPfMDR9DJeFudiyeqw==}
     engines: {node: '>=22.0.0'}
 
-  '@argos-ci/cli@5.0.5':
-    resolution: {integrity: sha512-ZeAmYjwSmQadW2yP6QyFP5Wj4LaV0xuN0VN8OYDNYJRbMC6LHDMNlkbbftMNq77o5oTjYBf9hdvR1ZupSe0+pw==}
+  '@argos-ci/cli@5.1.3':
+    resolution: {integrity: sha512-JIomOedMxnymrZupLbwUFUwrMZ64qYXJ1Y7PxRyyxtHIfB7Gcwze/uIGlN7tkGVQ91EGs6LPP3sV5tS4cG5rBg==}
     engines: {node: '>=22.0.0'}
     hasBin: true
 
-  '@argos-ci/core@6.1.1':
-    resolution: {integrity: sha512-8W8GYhnMAaxr3HKydsCmLN21PSExEMI+iBerzEoFXRlKgFilCg3HssVBxLKCXrhh/IBPYyQnspgRll5n9QsNeQ==}
+  '@argos-ci/core@6.2.3':
+    resolution: {integrity: sha512-aju16U7mSjVKw7LWld0DXD0j8DPeEjXH2vFIrvwlZamWs7hFyJkjXU0xew1i390mi0+6D25vGXxSHRkWHSUbQg==}
     engines: {node: '>=22.0.0'}
 
   '@argos-ci/util@4.0.0':
@@ -5431,6 +5431,10 @@ packages:
     resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
     engines: {node: '>=20'}
 
+  commander@15.0.0:
+    resolution: {integrity: sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==}
+    engines: {node: '>=22.12.0'}
+
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
@@ -9785,8 +9789,8 @@ packages:
     resolution: {integrity: sha512-WMi/OQ2axVTf/ykqCQgXiIct+mSQDFdH2fkwhPwgEwvJ1kSzZRiinb0zF2Xb8u4+OqPChmyI6MEu4EezNJz+FQ==}
     hasBin: true
 
-  tmp@0.2.5:
-    resolution: {integrity: sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==}
+  tmp@0.2.7:
+    resolution: {integrity: sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13ZeIcZnDg/QpSuU2zfZ3rzwY8ukEnaXw==}
     engines: {node: '>=14.14'}
 
   tmpl@1.0.5:
@@ -11111,7 +11115,7 @@ snapshots:
 
   '@applitools/utils@1.15.2': {}
 
-  '@argos-ci/api-client@0.22.0':
+  '@argos-ci/api-client@0.22.1':
     dependencies:
       debug: 4.4.3
       openapi-fetch: 0.17.0
@@ -11119,28 +11123,31 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@argos-ci/cli@5.0.5':
+  '@argos-ci/cli@5.1.3(@types/node@22.20.1)':
     dependencies:
-      '@argos-ci/api-client': 0.22.0
-      '@argos-ci/core': 6.1.1
-      commander: 14.0.3
+      '@argos-ci/api-client': 0.22.1
+      '@argos-ci/core': 6.2.3(@types/node@22.20.1)
+      commander: 15.0.0
       open: 11.0.0
       ora: 9.4.0
       update-notifier: 7.3.1
     transitivePeerDependencies:
+      - '@types/node'
       - supports-color
 
-  '@argos-ci/core@6.1.1':
+  '@argos-ci/core@6.2.3(@types/node@22.20.1)':
     dependencies:
-      '@argos-ci/api-client': 0.22.0
+      '@argos-ci/api-client': 0.22.1
       '@argos-ci/util': 4.0.0
       convict: 6.2.5
       debug: 4.4.3
       fast-glob: 3.3.3
       mime-types: 3.0.2
-      sharp: 0.34.5
-      tmp: 0.2.5
+      p-retry: 8.0.0
+      sharp: 0.35.3(@types/node@22.20.1)
+      tmp: 0.2.7
     transitivePeerDependencies:
+      - '@types/node'
       - supports-color
 
   '@argos-ci/util@4.0.0': {}
@@ -16041,6 +16048,8 @@ snapshots:
   commander@14.0.2: {}
 
   commander@14.0.3: {}
+
+  commander@15.0.0: {}
 
   commander@2.20.3: {}
 
@@ -21282,7 +21291,7 @@ snapshots:
     dependencies:
       tldts-core: 6.1.86
 
-  tmp@0.2.5: {}
+  tmp@0.2.7: {}
 
   tmpl@1.0.5: {}
 

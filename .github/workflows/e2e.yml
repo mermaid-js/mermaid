@@ -57,11 +57,16 @@ env:
       github.event_name != 'workflow_dispatch' && 'true' ||
       (inputs.group_argos_images && 'true' || 'false')
     }}
-  # On a push to the baseline branch (develop), upload BOTH the grouped sheets
-  # and the individual per-test screenshots in a single Argos build, so the
-  # default build's baseline is a superset. Scoped grouped PRs and manual
-  # per-screenshot runs then both diff cleanly against it (each marked --subset).
-  ARGOS_UPLOAD_BOTH: >-
+  # Grouped sheets and individual per-test screenshots upload to SEPARATE Argos
+  # projects, so each project keeps a clean, complete baseline of its own
+  # representation (no superset build, no --subset on full-suite uploads). With
+  # two projects linked to this repo, tokenless authentication is ambiguous, so
+  # every upload must name its project (ARGOS_PROJECT, read by the CLI).
+  ARGOS_PROJECT_SHEETS: mermaid-js/mermaid
+  ARGOS_PROJECT_INDIVIDUAL: mermaid-js/mermaid-screenshots
+  # A push to the baseline branch (develop) uploads BOTH representations —
+  # sheets and per-test screenshots — seeding each project's full baseline.
+  ARGOS_BASELINE_PUSH: >-
     ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
   # Shard JSON for a full-suite run vs a scoped (single-container) run.
   E2E_FULL_MATRIX: '[1,2,3,4,5,6,7,8]'
@@ -378,9 +383,11 @@ jobs:
           token: 6845cc80-77ee-4e17-85a1-026cd95e0766
 
   # Batch all per-container screenshots into folder-wise composite sheets and
-  # upload them to Argos in a single build. PR / merge-queue runs upload only the
-  # sheets; a push to develop additionally uploads the individual screenshots so
-  # the baseline is a superset (see ARGOS_UPLOAD_BOTH).
+  # upload them to Argos. Sheets and individual per-test screenshots go to
+  # separate Argos projects (ARGOS_PROJECT_SHEETS / ARGOS_PROJECT_INDIVIDUAL):
+  # PR / merge-queue runs upload sheets, manual per-screenshot runs upload
+  # individuals, and a push to develop uploads both — seeding each project's
+  # full baseline (see ARGOS_BASELINE_PUSH).
   #
   # Only runs when the e2e matrix fully succeeded: a failed/partial e2e run would
   # otherwise upload an incomplete or wrong set of screenshots — and on develop
@@ -436,31 +443,39 @@ jobs:
         if: env.GROUP_ARGOS_IMAGES == 'true'
         run: pnpm run screenshots:sheets
 
-      # Baseline branch (develop): merge the grouped sheets and the individual
-      # screenshots into one tree and upload them as a SINGLE Argos build. The CLI
-      # uploads one directory and names each screenshot relative to it, so merging
-      # preserves both naming schemes — sheet names (<group>/<group>-NNN.png) and
-      # individual names (<group>/<spec>.spec.js/<name>.png) never collide and match
-      # exactly what grouped PR / manual runs upload. The default build thus becomes
-      # a superset baseline both modes can diff against (each marked --subset).
-      # No --subset here: a develop push runs the full suite and uploads both
-      # representations, so this is the complete, authoritative baseline.
+      # Sheets go to the sheets project. A scoped run captured only the affected
+      # specs, so its upload is marked --subset (missing screenshots aren't
+      # reported as removed); full-suite runs — develop pushes, unscoped PR /
+      # merge-queue runs, manual full runs — upload complete builds, which lets
+      # Argos flag removed screenshots on PRs (previously develop-only).
+      - name: Upload sheets to Argos
+        if: env.GROUP_ARGOS_IMAGES == 'true'
+        env:
+          ARGOS_PROJECT: ${{ env.ARGOS_PROJECT_SHEETS }}
+          ARGOS_SUBSET: ${{ needs.detect-scope.outputs.spec_pattern != '' && 'true' || 'false' }}
+        run: pnpm run argos:upload-sheets
+
+      # Individual per-test screenshots go to the individual project: on develop
+      # pushes (baseline) and on manual full-suite per-screenshot runs
+      # (workflow_dispatch with group_argos_images=false).
       #
       # Sent as a single Argos build, but split into K parallel uploads sharing one
       # nonce. Argos's PUT /builds/{buildId} finalize body inlines metadata for every
-      # screenshot, so uploading the whole superset in one request exceeds the API
+      # screenshot, so uploading the full per-test set in one request exceeds the API
       # body limit ("request entity too large", HTTP 413). Each parallel index PUTs
       # only its slice; --files globs stay relative to the same root so names are
       # preserved, and Argos combines the indices into one build once all K report.
-      - name: Upload images to Argos
-        if: env.ARGOS_UPLOAD_BOTH == 'true'
+      - name: Upload individual screenshots to Argos (full suite)
+        if: >-
+          ${{
+            env.ARGOS_BASELINE_PUSH == 'true' ||
+            (env.GROUP_ARGOS_IMAGES != 'true' && needs.detect-scope.outputs.spec_pattern == '')
+          }}
         env:
+          ARGOS_PROJECT: ${{ env.ARGOS_PROJECT_INDIVIDUAL }}
           ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -euo pipefail
-          mkdir -p e2e/argos-baseline
-          cp -r e2e/sheets/. e2e/argos-baseline/
-          cp -r e2e/screenshots/. e2e/argos-baseline/
 
           # Round-robin the leaf directories (those that directly hold images)
           # into K buckets so each upload's finalize body carries only ~1/K of the
@@ -469,7 +484,7 @@ jobs:
           # Argos's limit (HTTP 413) regardless of K; balancing at the leaf level
           # keeps the biggest bucket to ~1/K.
           mapfile -t groups < <(
-            cd e2e/argos-baseline &&
+            cd e2e/screenshots &&
               find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
               sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
           )
@@ -486,22 +501,17 @@ jobs:
               if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
             done
             [ ${#globs[@]} -eq 0 ] && continue
-            pnpm exec argos upload e2e/argos-baseline \
+            pnpm exec argos upload e2e/screenshots \
               --files "${globs[@]}" \
               --parallel --parallel-total "$K" --parallel-index "$i"
           done
 
-      # PR / merge-queue / manual grouped runs: upload only the composite sheets.
-      - name: Upload grouped sheets to Argos
-        if: env.GROUP_ARGOS_IMAGES == 'true' && env.ARGOS_UPLOAD_BOTH != 'true'
+      # Manual per-screenshot runs scoped to a spec glob upload a partial set,
+      # marked --subset via ARGOS_SUBSET.
+      - name: Upload individual screenshots to Argos (scoped)
+        if: env.GROUP_ARGOS_IMAGES != 'true' && needs.detect-scope.outputs.spec_pattern != ''
         env:
-          ARGOS_SUBSET: true
-        run: pnpm run argos:upload-sheets
-
-      # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
-      - name: Upload individual screenshots to Argos
-        if: env.GROUP_ARGOS_IMAGES != 'true'
-        env:
+          ARGOS_PROJECT: ${{ env.ARGOS_PROJECT_INDIVIDUAL }}
           ARGOS_SUBSET: true
         run: pnpm exec argos upload e2e/screenshots
 
