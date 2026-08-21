@@ -16,6 +16,13 @@ import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
 type ParserAttribute = string | Record<string, string>;
 
 /**
+ * The fields a C4 element, boundary or relationship stores as `{ text }`. Everything else
+ * a named attribute can set - `$tags`, `$sprite`, `$link`, colours, `$shape` - is a plain
+ * string.
+ */
+const TEXT_FIELDS = new Set(['label', 'descr', 'techn', 'type']);
+
+/**
  * Apply optional C4 attributes to `bag` from the parser.
  *
  * Values may arrive as a raw positional value or a single `{ key: value }` named
@@ -114,7 +121,7 @@ export const addRel = function (
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
-      rel[key] = { text: value };
+      rel[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       rel.techn = { text: techn };
     }
@@ -125,7 +132,7 @@ export const addRel = function (
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      rel[key] = { text: value };
+      rel[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       rel.descr = { text: descr };
     }
@@ -171,7 +178,7 @@ export const addPersonOrSystem = function (
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      personOrSystem[key] = { text: value };
+      personOrSystem[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       personOrSystem.descr = { text: descr };
     }
@@ -220,7 +227,7 @@ export const addContainer = function (
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
-      container[key] = { text: value };
+      container[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       container.techn = { text: techn };
     }
@@ -231,7 +238,7 @@ export const addContainer = function (
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      container[key] = { text: value };
+      container[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       container.descr = { text: descr };
     }
@@ -280,7 +287,7 @@ export const addComponent = function (
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
-      component[key] = { text: value };
+      component[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       component.techn = { text: techn };
     }
@@ -291,7 +298,7 @@ export const addComponent = function (
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      component[key] = { text: value };
+      component[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       component.descr = { text: descr };
     }
@@ -339,7 +346,7 @@ export const addPersonOrSystemBoundary = function (
   } else {
     if (typeof type === 'object') {
       const [key, value] = Object.entries(type)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.type = { text: type };
     }
@@ -390,7 +397,7 @@ export const addContainerBoundary = function (
   } else {
     if (typeof type === 'object') {
       const [key, value] = Object.entries(type)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.type = { text: type };
     }
@@ -444,7 +451,7 @@ export const addDeploymentNode = function (
   } else {
     if (typeof type === 'object') {
       const [key, value] = Object.entries(type)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.type = { text: type };
     }
@@ -455,7 +462,7 @@ export const addDeploymentNode = function (
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.descr = { text: descr };
     }
