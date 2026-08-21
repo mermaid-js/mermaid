@@ -280,4 +280,60 @@ root
     });
   });
   /* The end */
+  test('Formatted label with linebreak and a wrapping label and emojis', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `mindmap
+    id1["**Start** with
+    a second line 😎"]
+      id2["The dog in **the** hog... a *very long text* about it Word!"]`
+    );
+  });
+
+  test('has a label with char sequence "graph"', async ({ page }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      ` mindmap
+          root
+            Photograph
+              Waterfall
+              Landscape
+            Geography
+              Mountains
+              Rocks`,
+      { flowchart: { defaultRenderer: 'elk' } }
+    );
+  });
+
+  test('all shapes with mdi:fire icon', async ({ page }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `mindmap
+  root((MindMap))
+  ::icon(mdi:fire)
+    square[I am a square]
+    ::icon(mdi:fire)
+    rounded(I am a rounded square)
+    ::icon(mdi:fire)
+    circle((I am a circle))
+    ::icon(mdi:fire)
+    bang))I am a bang((
+    ::icon(mdi:fire)
+    cloud)I am a cloud(
+    ::icon(mdi:fire)
+    hex{{I am a hexagon}}
+    ::icon(mdi:fire)
+    I am the default shape
+    ::icon(mdi:fire)
+    `,
+      {},
+      undefined,
+      shouldHaveRoot
+    );
+  });
 });
