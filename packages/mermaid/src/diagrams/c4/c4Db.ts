@@ -117,7 +117,7 @@ export const addRel = function (
   rel.label = { text: label };
 
   if (techn === undefined || techn === null) {
-    rel.techn = { text: '' };
+    rel.techn ??= { text: '' };
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
@@ -128,7 +128,7 @@ export const addRel = function (
   }
 
   if (descr === undefined || descr === null) {
-    rel.descr = { text: '' };
+    rel.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
@@ -174,7 +174,7 @@ export const addPersonOrSystem = function (
   }
 
   if (descr === undefined || descr === null) {
-    personOrSystem.descr = { text: '' };
+    personOrSystem.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
@@ -223,7 +223,7 @@ export const addContainer = function (
   }
 
   if (techn === undefined || techn === null) {
-    container.techn = { text: '' };
+    container.techn ??= { text: '' };
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
@@ -234,7 +234,7 @@ export const addContainer = function (
   }
 
   if (descr === undefined || descr === null) {
-    container.descr = { text: '' };
+    container.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
@@ -283,7 +283,7 @@ export const addComponent = function (
   }
 
   if (techn === undefined || techn === null) {
-    component.techn = { text: '' };
+    component.techn ??= { text: '' };
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
@@ -294,7 +294,7 @@ export const addComponent = function (
   }
 
   if (descr === undefined || descr === null) {
-    component.descr = { text: '' };
+    component.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
@@ -458,7 +458,7 @@ export const addDeploymentNode = function (
   }
 
   if (descr === undefined || descr === null) {
-    boundary.descr = { text: '' };
+    boundary.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];

@@ -52,4 +52,31 @@ Rel(a, b, "uses", $tags="async")`);
 
     expect(c4.parser.yy.getRels()[0].tags).toBe('async');
   });
+
+  // `Container` takes `techn` before `descr`, so a named `$descr` here lands in the
+  // `techn` slot. The techn handler assigned it correctly, and then the descr handler's
+  // "argument absent" branch overwrote it with an empty default - the description was
+  // silently lost rather than misshaped.
+  it('keeps a named $descr that lands in an earlier slot', function () {
+    c4.parser.parse(`C4Container\nContainer(c, "C", $descr="a description")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0].descr.text).toBe('a description');
+  });
+
+  it('still defaults descr to empty when it is genuinely absent', function () {
+    c4.parser.parse(`C4Container\nContainer(c, "C", $techn="Java")`);
+
+    const [shape] = c4.parser.yy.getC4ShapeArray();
+    expect(shape.techn.text).toBe('Java');
+    expect(shape.descr.text).toBe('');
+  });
+
+  it('keeps a named $descr on a relationship, where techn also comes first', function () {
+    c4.parser.parse(`C4Context
+Person(a, "A")
+Person(b, "B")
+Rel(a, b, "uses", $descr="how it is used")`);
+
+    expect(c4.parser.yy.getRels()[0].descr.text).toBe('how it is used');
+  });
 });
