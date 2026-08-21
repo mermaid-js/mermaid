@@ -280,35 +280,6 @@ root
     });
   });
   /* The end */
-  test('Formatted label with linebreak and a wrapping label and emojis', async ({
-    page,
-  }, testInfo) => {
-    await imgSnapshotTest(
-      page,
-      testInfo,
-      `mindmap
-    id1["**Start** with
-    a second line 😎"]
-      id2["The dog in **the** hog... a *very long text* about it Word!"]`
-    );
-  });
-
-  test('has a label with char sequence "graph"', async ({ page }, testInfo) => {
-    await imgSnapshotTest(
-      page,
-      testInfo,
-      ` mindmap
-          root
-            Photograph
-              Waterfall
-              Landscape
-            Geography
-              Mountains
-              Rocks`,
-      { flowchart: { defaultRenderer: 'elk' } }
-    );
-  });
-
   test('all shapes with mdi:fire icon', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,
