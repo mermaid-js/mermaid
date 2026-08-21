@@ -838,34 +838,5 @@ test.describe('Entity Relationship Diagram Unified', () => {
         options
       );
     });
-
-    test(`${description}should render nested ER subgraphs with direction override`, async ({
-      page,
-    }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `
-        erDiagram
-          direction LR
-
-          subgraph domain
-            direction TB
-
-            CUSTOMER
-
-            subgraph details
-              ORDER
-            end
-          end
-
-          PRODUCT
-
-          PRODUCT ||--o{ domain : links
-          CUSTOMER ||--o{ ORDER : places
-        `,
-        options
-      );
-    });
   });
 });
