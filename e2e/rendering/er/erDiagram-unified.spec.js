@@ -868,4 +868,21 @@ test.describe('Entity Relationship Diagram Unified', () => {
       );
     });
   });
+
+  // Grid-order canary: declared last in this file but slugs alphabetically
+  // first in the group, so declaration-order tiling must APPEND it at the
+  // group's tail — Argos should flag only this group's last sheet. Under the
+  // old alphabetical layout it would have taken cell 1 and re-tiled every
+  // sheet of rendering/er/erDiagram-unified.spec.js.
+  test('aaa grid order canary appends at the group tail', async ({ page }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+      erDiagram
+          CANARY ||--o{ TILE : appends
+        `,
+      { logLevel: 1 }
+    );
+  });
 });
