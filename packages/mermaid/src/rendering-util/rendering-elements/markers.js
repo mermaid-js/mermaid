@@ -947,6 +947,42 @@ const requirement_contains_neo = (elem, type, id) => {
   containsNode.append('line').attr('y1', 1).attr('y2', 19).attr('x1', 10).attr('x2', 10);
   containsNode.selectAll('*').attr('stroke-width', `${strokeWidth}`);
 };
+const hierarchy = (elem, type, id) => {
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-hierarchyEnd')
+    .attr('class', 'marker hierarchy ' + type)
+    .attr('viewBox', '0 0 12 10')
+    .attr('refX', 10)
+    .attr('refY', 5)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 10)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0 0 L 6 5 L 0 10 M 4 0 L 10 5 L 4 10')
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-hierarchyStart')
+    .attr('class', 'marker hierarchy ' + type)
+    .attr('viewBox', '0 0 12 10')
+    .attr('refX', 2)
+    .attr('refY', 5)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 10)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 12 0 L 6 5 L 12 10 M 8 0 L 2 5 L 8 10')
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+};
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
@@ -960,6 +996,7 @@ const markers = {
   cross,
   barb,
   barbNeo,
+  hierarchy,
   only_one,
   zero_or_one,
   one_or_more,
