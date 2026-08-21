@@ -6,6 +6,12 @@ export {
   Pie,
   PieSection,
   Architecture,
+  C4,
+  C4Element,
+  C4Relationship,
+  isC4,
+  isC4Element,
+  isC4Relationship,
   GitGraph,
   Radar,
   Railroad,
@@ -105,6 +111,7 @@ export {
   PacketGrammarGeneratedModule as PacketGeneratedModule,
   PieGrammarGeneratedModule as PieGeneratedModule,
   ArchitectureGrammarGeneratedModule as ArchitectureGeneratedModule,
+  C4GrammarGeneratedModule as C4GeneratedModule,
   GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
   EventModelingGeneratedModule,
   RadarGrammarGeneratedModule as RadarGeneratedModule,
@@ -125,6 +132,7 @@ export * from './packet/index.js';
 export * from './pie/index.js';
 export * from './treeView/index.js';
 export * from './architecture/index.js';
+export * from './c4/index.js';
 export * from './eventmodeling/index.js';
 export * from './radar/index.js';
 export * from './railroad/index.js';

@@ -70,6 +70,7 @@ sparkline
 speccharts
 sphinxcontrib
 ssim
+Structurizr
 stylis
 Swimm
 Tachi
