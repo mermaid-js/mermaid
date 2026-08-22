@@ -1,0 +1,19 @@
+architecture-beta
+  group left
+  group right
+  service left_disk(disk)[Disk] in left
+  service top_disk(disk)[Disk] in left
+  service bottom_disk(disk)[Disk] in left
+  service top_gateway(internet)[Gateway] in right
+  service bottom_gateway(internet)[Gateway] in right
+  junction juncC in left
+  junction juncR in right
+
+  left_disk:R -- L:juncC
+  top_disk:B -- T:juncC
+  bottom_disk:T -- B:juncC
+
+  top_gateway:B --> T:juncR
+  bottom_gateway:T --> B:juncR
+
+  juncC{group}:R --> L:juncR{group}
