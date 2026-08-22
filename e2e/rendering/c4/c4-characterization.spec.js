@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { diagramSvg, imgSnapshotTest } from '../../helpers/util.ts';
+import { diagramSvg, imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 test.describe('C4 characterization', () => {
   test('CHAR.update-element-shape should apply supported shape overrides', async ({
@@ -23,24 +23,41 @@ UpdateElementStyle(c, $shape="cylinder")
     await expect(svg.locator('.node > rect')).toHaveCount(2);
   });
 
-  for (const shapesInRow of [2, 4]) {
-    test(`CHAR.update-layout-config should render ${shapesInRow} shapes per row`, async ({
-      page,
-    }, testInfo) => {
-      await imgSnapshotTest(
-        page,
-        testInfo,
-        `C4Context
+  // `UpdateLayoutConfig` is a no-op once the layout is dagre's: the pipeline never reads
+  // `$c4ShapeInRow`/`$c4BoundaryInRow`, so the same source lays out identically whatever
+  // they say. Asserted as an absence rather than left as two snapshots that happened to
+  // match, so that implementing the option - or restoring a grid - fails here loudly.
+  test('CHAR.update-layout-config does not change the layout (no longer honoured)', async ({
+    page,
+  }, testInfo) => {
+    const diagram = (shapesInRow) => `C4Context
 title UpdateLayoutConfig ($c4ShapeInRow=${shapesInRow})
 System(a, "A")
 System(b, "B")
 System(c, "C")
 System(d, "D")
 UpdateLayoutConfig($c4ShapeInRow="${shapesInRow}", $c4BoundaryInRow="1")
-        `
-      );
-    });
-  }
+      `;
+
+    const positions = () =>
+      diagramSvg(page)
+        .locator('.node')
+        .evaluateAll((nodes) =>
+          nodes.map((node) => {
+            const { x, y } = node.getBoundingClientRect();
+            return `${Math.round(x)},${Math.round(y)}`;
+          })
+        );
+
+    // one baseline for the visual record, then the other value rendered without a
+    // second snapshot - two `imgSnapshotTest` calls in one test would collide on name
+    await imgSnapshotTest(page, testInfo, diagram(2));
+    const atTwo = await positions();
+    expect(atTwo.length).toBe(4);
+
+    await renderGraph(page, testInfo, diagram(4));
+    expect(await positions()).toEqual(atTwo);
+  });
 
   test('CHAR.tags should accept but not render $tags', async ({ page }, testInfo) => {
     await imgSnapshotTest(
