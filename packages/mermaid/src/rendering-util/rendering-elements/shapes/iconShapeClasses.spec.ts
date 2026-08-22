@@ -74,6 +74,26 @@ describe('icon shapes and node classes', () => {
     expect(iconNode?.split(/\s+/)).not.toContain('node');
   });
 
+  // `:::` is a separate assignment path from `class X y`, and it is the one the icon
+  // e2e cases use, so it is worth covering rather than assuming the two converge.
+  it('applies a user class assigned with :::', async () => {
+    const classes = await renderNodeClasses(
+      'icon-classes-inline',
+      `flowchart TD
+  A@{ icon: "fa:bell", label: "Iconic" }
+  B[Plain]:::hot
+  A --> B
+  classDef hot fill:#f96,stroke:#333
+  A:::hot`
+    );
+
+    const iconNode = classes.find((c) => c.includes('icon-shape'));
+    expect(classes.find((c) => !c.includes('icon-shape'))).toContain('hot');
+    expect(iconNode).toContain('hot');
+    expect(iconNode).toContain('icon-shape');
+    expect(iconNode?.split(/\s+/)).not.toContain('node');
+  });
+
   // `form` picks the icon variant, so this reaches iconRounded/iconSquare/iconCircle -
   // the shapes are not addressable by name from flowchart syntax.
   it.each([undefined, 'rounded', 'square', 'circle'])(
