@@ -10,7 +10,7 @@ import fastdomModule from 'fastdom';
  * ```
  */
 
-type FastDomTask = { cancel(): void };
+type FastDomTask = { cancelled?: boolean };
 
 type FastDomCore = {
   extend(extension: Record<string, unknown>): FastDomCore;
@@ -26,6 +26,53 @@ export type FastDomPromised = {
   clear(promise: Promise<unknown>): void;
 };
 
+// Minimal drop-in replacement for fastdom's core singleton: batches measures
+// before mutates within one microtask and supports cancellation.
+const createFallbackCore = (): FastDomCore => {
+  let batches: { measure: Array<() => void>; mutate: Array<() => void> } | null = null;
+  const schedule = () => {
+    if (batches) {
+      return;
+    }
+    batches = { measure: [], mutate: [] };
+    queueMicrotask(() => {
+      const current = batches!;
+      batches = null;
+      for (const fn of current.measure) {
+        fn();
+      }
+      for (const fn of current.mutate) {
+        fn();
+      }
+    });
+  };
+  const run =
+    (type: 'measure' | 'mutate') =>
+    (fn: () => void, ctx?: unknown): FastDomTask => {
+      const task: Task = { cancelled: false };
+      schedule();
+      batches![type].push(() => {
+        if (!task.cancelled) {
+          ctx ? (fn as (this: unknown) => void).call(ctx) : fn();
+        }
+      });
+      return task;
+    };
+  const core: FastDomCore = {
+    extend(extension: Record<string, unknown>): FastDomCore {
+      Object.assign(core, extension);
+      (extension as { initialize?: () => void }).initialize?.call(core);
+      return core;
+    },
+    measure: run('measure'),
+    mutate: run('mutate'),
+    clear(task: FastDomTask) {
+      task.cancelled = true;
+    },
+  };
+  return core;
+};
+
 // fastdom ships only a UMD build whose export tail prefers an AMD `define`
 // over CommonJS `module.exports`. When the host page defines a global
 // `define` function (legacy AMD loaders, analytics snippets, ...), the
@@ -34,20 +81,25 @@ export type FastDomPromised = {
 // `.extend` (https://github.com/mermaid-js/mermaid/issues/8095).
 // fastdom always publishes its singleton on the global scope *before* that
 // branch (`window.fastdom`), so fall back to it when the module default does
-// not look like a FastDom instance.
-const resolveBase = (
-  module: unknown,
-  globalScope: Record<string, unknown>,
-): FastDomCore => {
-  const fromModule = (module as { default?: FastDomCore } | undefined)?.default;
-  if (fromModule && typeof fromModule.extend === 'function') {
-    return fromModule;
+// not look like a FastDom instance, and to a locally built core as a last
+// resort (e.g. Node SSR, where neither export shape carries the singleton).
+const resolveBase = (module: unknown, globalScope: Record<string, unknown>): FastDomCore => {
+  const candidates = [
+    module,
+    (module as { default?: unknown } | undefined)?.default,
+    ((module as { default?: { default?: unknown } } | undefined)?.default as { default?: unknown })
+      ?.default,
+  ];
+  for (const candidate of candidates) {
+    if (candidate && typeof (candidate as FastDomCore).extend === 'function') {
+      return candidate as FastDomCore;
+    }
   }
   const fromGlobal = globalScope.fastdom as FastDomCore | undefined;
   if (fromGlobal && typeof fromGlobal.extend === 'function') {
     return fromGlobal;
   }
-  throw new Error('Unable to initialize fastdom');
+  return createFallbackCore();
 };
 
 // The `fastdom/extensions/fastdom-promised.js` file has the same UMD problem,
@@ -63,7 +115,7 @@ const createPromisedExtension = () => ({
   mutate<T>(
     this: { _tasks: Map<Promise<T>, FastDomTask>; fastdom: FastDomCore },
     fn: () => T,
-    ctx?: unknown,
+    ctx?: unknown
   ): Promise<T> {
     return createPromisedTask(this, 'mutate', fn, ctx);
   },
@@ -71,12 +123,15 @@ const createPromisedExtension = () => ({
   measure<T>(
     this: { _tasks: Map<Promise<T>, FastDomTask>; fastdom: FastDomCore },
     fn: () => T,
-    ctx?: unknown,
+    ctx?: unknown
   ): Promise<T> {
     return createPromisedTask(this, 'measure', fn, ctx);
   },
 
-  clear<T>(this: { _tasks: Map<Promise<T>, FastDomTask>; fastdom: FastDomCore }, promise: Promise<T>) {
+  clear<T>(
+    this: { _tasks: Map<Promise<T>, FastDomTask>; fastdom: FastDomCore },
+    promise: Promise<T>
+  ) {
     const tasks = this._tasks;
     const task = tasks.get(promise);
     this.fastdom.clear(task!);
@@ -88,7 +143,7 @@ function createPromisedTask<T>(
   promised: { _tasks: Map<Promise<T>, FastDomTask>; fastdom: FastDomCore },
   type: 'measure' | 'mutate',
   fn: () => T,
-  ctx?: unknown,
+  ctx?: unknown
 ): Promise<T> {
   const tasks = promised._tasks;
   let task!: FastDomTask;
@@ -112,7 +167,7 @@ export const createFastdomWrapper = (
   module: unknown = fastdomModule,
   globalScope: Record<string, unknown> = (typeof window !== 'undefined'
     ? window
-    : globalThis) as unknown as Record<string, unknown>,
+    : globalThis) as unknown as Record<string, unknown>
 ): FastDomPromised => {
   return resolveBase(module, globalScope)
     .extend({

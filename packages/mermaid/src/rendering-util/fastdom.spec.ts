@@ -12,36 +12,44 @@ import { createFastdomWrapper } from './fastdom.js';
 // depend on the equally affected `fastdom-promised` UMD export at all.
 
 describe('fastdom wrapper', () => {
-	it('works with a healthy module default export', async () => {
-		const fastdom = createFastdomWrapper({ default: fastdomRaw });
-		expect(typeof fastdom.measure).toBe('function');
-		expect(typeof fastdom.mutate).toBe('function');
-		await expect(fastdom.measure(() => 42)).resolves.toBe(42);
-	});
+  it('works with a healthy module default export', async () => {
+    const fastdom = createFastdomWrapper({ default: fastdomRaw });
+    expect(typeof fastdom.measure).toBe('function');
+    expect(typeof fastdom.mutate).toBe('function');
+    await expect(fastdom.measure(() => 42)).resolves.toBe(42);
+  });
 
-	it('recovers via the window.fastdom singleton when the interop default is empty', async () => {
-		// Simulates the AMD branch having swallowed `module.exports`.
-		const globalScope = { fastdom: fastdomRaw };
-		const fastdom = createFastdomWrapper({}, globalScope);
-		expect(typeof fastdom.measure).toBe('function');
-		expect(typeof fastdom.mutate).toBe('function');
-		await expect(fastdom.measure(() => 'ok')).resolves.toBe('ok');
-	});
+  it('recovers via the window.fastdom singleton when the interop default is empty', async () => {
+    // Simulates the AMD branch having swallowed `module.exports`.
+    const globalScope = { fastdom: fastdomRaw };
+    const fastdom = createFastdomWrapper({}, globalScope);
+    expect(typeof fastdom.measure).toBe('function');
+    expect(typeof fastdom.mutate).toBe('function');
+    await expect(fastdom.measure(() => 'ok')).resolves.toBe('ok');
+  });
 
-	it('applies the promised extension even when the extension module export is lost', async () => {
-		// The promised extension is vendored, so a broken UMD export for it
-		// cannot affect the wrapper - verified by measure/mutate returning
-		// promises on the recovered instance.
-		const globalScope = { fastdom: fastdomRaw };
-		const fastdom = createFastdomWrapper(undefined, globalScope);
-		await expect(fastdom.measure(() => null)).resolves.toBeNull();
-		await expect(fastdom.mutate(() => null)).resolves.toBeNull();
-	});
+  it('applies the promised extension even when the extension module export is lost', async () => {
+    // The promised extension is vendored, so a broken UMD export for it
+    // cannot affect the wrapper - verified by measure/mutate returning
+    // promises on the recovered instance.
+    const globalScope = { fastdom: fastdomRaw };
+    const fastdom = createFastdomWrapper(undefined, globalScope);
+    await expect(fastdom.measure(() => null)).resolves.toBeNull();
+    await expect(fastdom.mutate(() => null)).resolves.toBeNull();
+  });
 
-	it('the real module-level wrapper exposes the promisified API', async () => {
-		vi.resetModules();
-		const { default: fastdom } = await import('./fastdom.js');
-		expect(typeof fastdom.measure).toBe('function');
-		await expect(fastdom.measure(() => 1)).resolves.toBe(1);
-	});
+  it('falls back to a local core when neither the module nor the global provides one', async () => {
+    // e.g. Node SSR during the docs build, where neither export shape
+    // carries the singleton.
+    const fastdom = createFastdomWrapper(undefined, {});
+    await expect(fastdom.measure(() => 'fallback')).resolves.toBe('fallback');
+    await expect(fastdom.mutate(() => 'done')).resolves.toBe('done');
+  });
+
+  it('the real module-level wrapper exposes the promisified API', async () => {
+    vi.resetModules();
+    const { default: fastdom } = await import('./fastdom.js');
+    expect(typeof fastdom.measure).toBe('function');
+    await expect(fastdom.measure(() => 1)).resolves.toBe(1);
+  });
 });
