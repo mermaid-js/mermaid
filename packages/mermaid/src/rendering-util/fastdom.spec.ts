@@ -11,43 +11,37 @@ import { createFastdomWrapper } from './fastdom.js';
 // the `window.fastdom` singleton fastdom always publishes, and must not
 // depend on the equally affected `fastdom-promised` UMD export at all.
 
-const asCore = (value: unknown) => value as Parameters<typeof createFastdomWrapper>[0];
-
 describe('fastdom wrapper', () => {
-	it('works with a healthy module default export', () => {
-		const fastdom = createFastdomWrapper(asCore({ default: fastdomRaw }));
+	it('works with a healthy module default export', async () => {
+		const fastdom = createFastdomWrapper({ default: fastdomRaw });
 		expect(typeof fastdom.measure).toBe('function');
 		expect(typeof fastdom.mutate).toBe('function');
-		const result = fastdom.measure(() => 42) as unknown as Promise<number>;
-		expect(result).toBeInstanceOf(Promise);
-		return (result as Promise<number>).then((value) => expect(value).toBe(42));
+		await expect(fastdom.measure(() => 42)).resolves.toBe(42);
 	});
 
-	it('recovers via the window.fastdom singleton when the interop default is empty', () => {
+	it('recovers via the window.fastdom singleton when the interop default is empty', async () => {
 		// Simulates the AMD branch having swallowed `module.exports`.
-		const globalScope = { fastdom: fastdomRaw as unknown as Record<string, never> };
-		const fastdom = createFastdomWrapper(asCore({}), globalScope);
+		const globalScope = { fastdom: fastdomRaw };
+		const fastdom = createFastdomWrapper({}, globalScope);
 		expect(typeof fastdom.measure).toBe('function');
 		expect(typeof fastdom.mutate).toBe('function');
-		return Promise.resolve(fastdom.measure(() => 'ok') as unknown as Promise<string>).then((value) =>
-			expect(value).toBe('ok'),
-		);
+		await expect(fastdom.measure(() => 'ok')).resolves.toBe('ok');
 	});
 
-	it('applies the promised extension even when the extension module export is lost', () => {
+	it('applies the promised extension even when the extension module export is lost', async () => {
 		// The promised extension is vendored, so a broken UMD export for it
 		// cannot affect the wrapper - verified by measure/mutate returning
 		// promises on the recovered instance.
-		const globalScope = { fastdom: fastdomRaw as unknown as Record<string, never> };
-		const fastdom = createFastdomWrapper(asCore(undefined), globalScope);
-		expect(fastdom.measure(() => null)).toBeInstanceOf(Promise);
-		expect(fastdom.mutate(() => null)).toBeInstanceOf(Promise);
+		const globalScope = { fastdom: fastdomRaw };
+		const fastdom = createFastdomWrapper(undefined, globalScope);
+		await expect(fastdom.measure(() => null)).resolves.toBeNull();
+		await expect(fastdom.mutate(() => null)).resolves.toBeNull();
 	});
 
 	it('the real module-level wrapper exposes the promisified API', async () => {
 		vi.resetModules();
 		const { default: fastdom } = await import('./fastdom.js');
 		expect(typeof fastdom.measure).toBe('function');
-		expect(fastdom.measure(() => 1)).toBeInstanceOf(Promise);
+		await expect(fastdom.measure(() => 1)).resolves.toBe(1);
 	});
 });

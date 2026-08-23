@@ -19,6 +19,13 @@ type FastDomCore = {
   clear(task: FastDomTask): void;
 };
 
+/** The public API mermaid consumes: every scheduling call returns a promise. */
+export type FastDomPromised = {
+  measure<T>(fn: () => T, ctx?: unknown): Promise<T>;
+  mutate<T>(fn: () => T, ctx?: unknown): Promise<T>;
+  clear(promise: Promise<unknown>): void;
+};
+
 // fastdom ships only a UMD build whose export tail prefers an AMD `define`
 // over CommonJS `module.exports`. When the host page defines a global
 // `define` function (legacy AMD loaders, analytics snippets, ...), the
@@ -30,13 +37,13 @@ type FastDomCore = {
 // not look like a FastDom instance.
 const resolveBase = (
   module: unknown,
-  globalScope: Record<string, FastDomCore | undefined>,
+  globalScope: Record<string, unknown>,
 ): FastDomCore => {
   const fromModule = (module as { default?: FastDomCore } | undefined)?.default;
   if (fromModule && typeof fromModule.extend === 'function') {
     return fromModule;
   }
-  const fromGlobal = globalScope.fastdom;
+  const fromGlobal = globalScope.fastdom as FastDomCore | undefined;
   if (fromGlobal && typeof fromGlobal.extend === 'function') {
     return fromGlobal;
   }
@@ -103,10 +110,10 @@ function createPromisedTask<T>(
 
 export const createFastdomWrapper = (
   module: unknown = fastdomModule,
-  globalScope: Record<string, FastDomCore | undefined> = (typeof window !== 'undefined'
+  globalScope: Record<string, unknown> = (typeof window !== 'undefined'
     ? window
-    : globalThis) as unknown as Record<string, FastDomCore | undefined>,
-): FastDomCore & { clear(promise: Promise<unknown>): void } => {
+    : globalThis) as unknown as Record<string, unknown>,
+): FastDomPromised => {
   return resolveBase(module, globalScope)
     .extend({
       /**
@@ -120,11 +127,9 @@ export const createFastdomWrapper = (
         }
       },
     })
-    .extend(createPromisedExtension()) as FastDomCore & {
-    clear(promise: Promise<unknown>): void;
-  };
+    .extend(createPromisedExtension()) as unknown as FastDomPromised;
 };
 
-const fastdom = createFastdomWrapper();
+const fastdom: FastDomPromised = createFastdomWrapper();
 
 export default fastdom;
