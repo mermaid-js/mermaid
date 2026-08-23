@@ -20,10 +20,18 @@ describe('detectScope', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
+  });
+
+  it('returns patterns that Playwright can compile as regular expressions', () => {
+    const result = detectScope(['packages/mermaid/src/diagrams/sequence/sequenceRenderer.ts']);
+
+    for (const pattern of result.split(',')) {
+      expect(() => new RegExp(pattern, 'gi')).not.toThrow();
+    }
   });
 
   it('falls back to full suite when rendering-util is touched', () => {
@@ -66,8 +74,8 @@ describe('detectScope', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/gantt/**`,
-        `${SPEC_BASE_DIR}/pie/**`,
+        `${SPEC_BASE_DIR}/gantt/`,
+        `${SPEC_BASE_DIR}/pie/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -85,7 +93,7 @@ describe('detectScope', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -112,10 +120,7 @@ describe('detectScope', () => {
   it('scopes to the subfolder when a spec file in that subfolder is modified', () => {
     const result = detectScope([`${SPEC_BASE_DIR}/gantt/gantt.spec.js`]);
     expect(result.split(',')).toEqual(
-      expect.arrayContaining([
-        `${SPEC_BASE_DIR}/gantt/**`,
-        `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
-      ])
+      expect.arrayContaining([`${SPEC_BASE_DIR}/gantt/`, `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`])
     );
   });
 
@@ -136,7 +141,7 @@ describe('detectScope', () => {
       `${SPEC_BASE_DIR}/gantt/gantt.spec.js`,
     ]);
     // Both point to the same subfolder — should deduplicate
-    expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/**`).length).toBe(1);
+    expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/`).length).toBe(1);
   });
 });
 
@@ -183,7 +188,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
@@ -196,7 +201,7 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
     ]);
     expect(result.split(',')).toEqual(
       expect.arrayContaining([
-        `${SPEC_BASE_DIR}/flowchart/**`,
+        `${SPEC_BASE_DIR}/flowchart/`,
         `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
       ])
     );
