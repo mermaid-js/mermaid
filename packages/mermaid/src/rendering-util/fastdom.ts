@@ -10,21 +10,23 @@ import fastdomModule from 'fastdom';
  * ```
  */
 
-interface FastDomTask { cancelled?: boolean }
+interface FastDomTask {
+  cancelled?: boolean;
+}
 
 interface FastDomCore {
   extend(extension: Record<string, unknown>): FastDomCore;
   measure<T>(fn: () => T, ctx?: unknown): FastDomTask | T;
   mutate<T>(fn: () => T, ctx?: unknown): FastDomTask | T;
   clear(task: FastDomTask): void;
-};
+}
 
 /** The public API mermaid consumes: every scheduling call returns a promise. */
 export interface FastDomPromised {
   measure<T>(fn: () => T, ctx?: unknown): Promise<T>;
   mutate<T>(fn: () => T, ctx?: unknown): Promise<T>;
   clear(promise: Promise<unknown>): void;
-};
+}
 
 // Minimal drop-in replacement for fastdom's core singleton: batches measures
 // before mutates within one microtask and supports cancellation.
@@ -53,7 +55,11 @@ const createFallbackCore = (): FastDomCore => {
       schedule();
       batches![type].push(() => {
         if (!task.cancelled) {
-          if (ctx) { (fn as (this: unknown) => void).call(ctx); } else { fn(); }
+          if (ctx) {
+            (fn as (this: unknown) => void).call(ctx);
+          } else {
+            fn();
+          }
         }
       });
       return task;
