@@ -49,7 +49,7 @@ const createFallbackCore = (): FastDomCore => {
   const run =
     (type: 'measure' | 'mutate') =>
     (fn: () => void, ctx?: unknown): FastDomTask => {
-      const task: Task = { cancelled: false };
+      const task: { cancelled: boolean } = { cancelled: false };
       schedule();
       batches![type].push(() => {
         if (!task.cancelled) {
