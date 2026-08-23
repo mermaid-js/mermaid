@@ -10,9 +10,9 @@ import fastdomModule from 'fastdom';
  * ```
  */
 
-type FastDomTask = { cancelled?: boolean };
+interface FastDomTask { cancelled?: boolean }
 
-type FastDomCore = {
+interface FastDomCore {
   extend(extension: Record<string, unknown>): FastDomCore;
   measure<T>(fn: () => T, ctx?: unknown): FastDomTask | T;
   mutate<T>(fn: () => T, ctx?: unknown): FastDomTask | T;
@@ -20,7 +20,7 @@ type FastDomCore = {
 };
 
 /** The public API mermaid consumes: every scheduling call returns a promise. */
-export type FastDomPromised = {
+export interface FastDomPromised {
   measure<T>(fn: () => T, ctx?: unknown): Promise<T>;
   mutate<T>(fn: () => T, ctx?: unknown): Promise<T>;
   clear(promise: Promise<unknown>): void;
@@ -29,7 +29,7 @@ export type FastDomPromised = {
 // Minimal drop-in replacement for fastdom's core singleton: batches measures
 // before mutates within one microtask and supports cancellation.
 const createFallbackCore = (): FastDomCore => {
-  let batches: { measure: Array<() => void>; mutate: Array<() => void> } | null = null;
+  let batches: { measure: (() => void)[]; mutate: (() => void)[] } | null = null;
   const schedule = () => {
     if (batches) {
       return;
@@ -53,7 +53,7 @@ const createFallbackCore = (): FastDomCore => {
       schedule();
       batches![type].push(() => {
         if (!task.cancelled) {
-          ctx ? (fn as (this: unknown) => void).call(ctx) : fn();
+          if (ctx) { (fn as (this: unknown) => void).call(ctx); } else { fn(); }
         }
       });
       return task;
@@ -105,7 +105,7 @@ const resolveBase = (module: unknown, globalScope: Record<string, unknown>): Fas
 // The `fastdom/extensions/fastdom-promised.js` file has the same UMD problem,
 // and unlike the core it publishes its export only on the final `else`
 // branch, so it cannot be recovered from the global scope either. It is a
-// small, stable piece of MIT-licensed code (wilsonpage/fastdom), vendored
+// small, stable piece of MIT-licensed code from the fastdom project, vendored
 // here so mermaid does not depend on either UMD tail at all.
 const createPromisedExtension = () => ({
   initialize(this: { _tasks?: Map<Promise<unknown>, FastDomTask> }) {
@@ -154,7 +154,7 @@ function createPromisedTask<T>(
       try {
         resolve(ctx ? (fn as (this: unknown) => T).call(ctx) : fn());
       } catch (error) {
-        reject(error);
+        reject(error instanceof Error ? error : new Error(String(error)));
       }
     }, ctx) as FastDomTask;
   });
