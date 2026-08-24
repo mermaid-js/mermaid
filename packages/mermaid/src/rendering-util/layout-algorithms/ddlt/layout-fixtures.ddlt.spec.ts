@@ -48,12 +48,22 @@ const SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE = 11754;
  * way; a score floor plus a cost ceiling ratchets both.
  *
  * Counted work, not milliseconds, so this number is reproducible across
- * machines and moves only when the algorithm's work moves. Measured baseline is
- * 823,596,068 over 37 fixtures; the ceiling carries ~10% headroom so ordinary
- * layout changes do not trip it while a real blow-up does. Raise it only with
- * the measurement that justifies it in the commit message.
+ * machines and moves only when the algorithm's work moves. The ceiling carries
+ * ~10% headroom so ordinary layout changes do not trip it while a real blow-up
+ * does. Raise it only with the measurement that justifies it in the commit
+ * message.
+ *
+ * Baseline history:
+ *   823,596,068  initial measurement over 37 fixtures
+ *   905,008,667  after d2d5cbf9e made the compaction constraint graph acyclic.
+ *                Compaction previously bailed out via Kahn's algorithm on the
+ *                hardest fixtures and emitted untouched coordinates, which was
+ *                cheap precisely because it did no work. Running it costs more
+ *                and bought +899 aggregate with two fixtures made valid, so the
+ *                rise is the gate working as intended rather than a regression
+ *                it failed to catch.
  */
-const DOMUS_TOTAL_COST_CEILING = 906_000_000;
+const DOMUS_TOTAL_COST_CEILING = 996_000_000;
 
 function issueSummary(issues: { type: string }[]): string {
   return issues

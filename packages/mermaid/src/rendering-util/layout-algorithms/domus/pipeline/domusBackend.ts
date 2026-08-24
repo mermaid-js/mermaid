@@ -1030,6 +1030,15 @@ export function maybeHandleDomusBackend(args: {
         maxIterations: 60,
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
+      // Finish with the convergent sweep. This safety net only ran the greedy
+      // nudger, which has no convergence guarantee and leaves whatever it
+      // cannot untangle — and the routing above can displace a node the
+      // pre-routing sweep had already separated, so a residue arrives here even
+      // on layouts that were clean going in. One leftover pair is enough:
+      // node-overlap is a hard issue, so it clamps the whole fixture's score to
+      // zero however good the rest of the drawing is. The reroute below repairs
+      // the endpoints of anything this moves.
+      separateOverlapsBySweep(data, { padding: pad, preferAxis: ctx.preferAxisForVerticalFlow });
       refreshClustersAfterLeafPlacement(data, options);
       routeWithRoutingGraph({
         routingBackend: 'routing-graph',
