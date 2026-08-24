@@ -90,7 +90,28 @@ const EPS_SELF_LOOP_EXTENT = 4;
  * as a GRADED SOFT penalty (the closer, the larger), so it never invalidates a
  * layout — it just rewards spacing the node out.
  */
-const NODE_GROUP_CLEARANCE = 20;
+/**
+ * Fallback gap between a node and a foreign group frame, used when the diagram
+ * does not configure one. The live value comes from
+ * `flowchart.nodeGroupClearance` — see {@link nodeGroupClearanceOf}.
+ */
+const NODE_GROUP_CLEARANCE_DEFAULT = 20;
+
+/**
+ * The configured node-to-foreign-group gap for this layout.
+ *
+ * Read from config rather than hardcoded so the checker and the passes that
+ * repair against it cannot drift apart. They already had: the validator wanted
+ * 20 while a nudger was aiming at 10, so every node it "fixed" landed at half
+ * the required gap and was re-flagged immediately.
+ */
+export function nodeGroupClearanceOf(layout: LayoutData): number {
+  const configured = (layout.config as { flowchart?: { nodeGroupClearance?: number } } | undefined)
+    ?.flowchart?.nodeGroupClearance;
+  return typeof configured === 'number' && configured >= 0
+    ? configured
+    : NODE_GROUP_CLEARANCE_DEFAULT;
+}
 /** Soft penalty per crowded node↔group pair: round((CLEARANCE - gap) * SCALE). */
 const NODE_GROUP_CROWD_SCALE = 3;
 /** Cap a single crowded pair's soft penalty. */
@@ -857,6 +878,7 @@ export function validateLayout(
   options: ValidateLayoutOptions = {}
 ): ValidateLayoutResult {
   LAYOUT_COST.validations++;
+  const nodeGroupClearance = nodeGroupClearanceOf(layout);
   const issues: Issue[] = [];
   // See `abortAboveIssueCount`. `undefined` (the default) makes both no-ops, so
   // every abort point below is dead code unless a caller opts in.
@@ -1071,20 +1093,20 @@ export function validateLayout(
         continue;
       }
       const gap = rectFacingGap(nr, gRect);
-      if (gap == null || gap <= 0 || gap >= NODE_GROUP_CLEARANCE) {
+      if (gap == null || gap <= 0 || gap >= nodeGroupClearance) {
         continue;
       }
       const penalty = Math.min(
         NODE_GROUP_CROWD_MAX,
-        Math.round((NODE_GROUP_CLEARANCE - gap) * NODE_GROUP_CROWD_SCALE)
+        Math.round((nodeGroupClearance - gap) * NODE_GROUP_CROWD_SCALE)
       );
       issues.push({
         type: 'node-too-close-to-group',
         message: diag
-          ? `Node "${nId}" is only ${gap.toFixed(1)} from group "${gId}" frame (< ${NODE_GROUP_CLEARANCE})`
+          ? `Node "${nId}" is only ${gap.toFixed(1)} from group "${gId}" frame (< ${nodeGroupClearance})`
           : '',
         nodeIds: [nId, gId],
-        details: { gap, clearance: NODE_GROUP_CLEARANCE, softPenalty: penalty },
+        details: { gap, clearance: nodeGroupClearance, softPenalty: penalty },
       });
     }
   }

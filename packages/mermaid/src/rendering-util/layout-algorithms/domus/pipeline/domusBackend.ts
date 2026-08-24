@@ -1,3 +1,4 @@
+import { nodeGroupClearanceOf } from '../../layout-utils/validateLayout.js';
 import type { LayoutData, Node } from '../../../types.js';
 import { log } from '../../../../logger.js';
 import { ORTHO_DEBUG } from '../debug.js';
@@ -262,9 +263,6 @@ function isConventionalCenterEndpointIssue(
   }
   return true;
 }
-
-/** Mirrors `validateLayout`'s NODE_GROUP_CLEARANCE — the gap it actually checks. */
-const GROUP_CLEARANCE_PADDING = 20;
 
 export function refreshClustersAfterLeafPlacement(
   data: LayoutData,
@@ -953,14 +951,12 @@ export function maybeHandleDomusBackend(args: {
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
       nudgeLeafNodesAwayFromNonAncestorGroups(data, {
-        // The gap `validateLayout` actually checks is NODE_GROUP_CLEARANCE (20).
-        // This was passed the generic spacing pad (10), so the repair aimed at
-        // half the required clearance: every offender it moved landed at exactly
-        // 10.0 and was re-flagged immediately. A repair pointed at a threshold
-        // its checker does not use cannot succeed, whatever any single fixture's
-        // issue count happens to do — `nodeGroupSpacing.ts` already keeps its own
-        // `CLEARANCE = 20` for precisely this reason.
-        padding: GROUP_CLEARANCE_PADDING,
+        // The gap the validator checks, read from the same place it reads it.
+        // This used to be passed the generic spacing pad (10) against a checker
+        // wanting 20, so every offender the repair moved landed at exactly half
+        // the required clearance and was re-flagged immediately. A repair aimed
+        // at a threshold its checker does not use cannot succeed.
+        padding: nodeGroupClearanceOf(data),
         maxIterations: 60,
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
@@ -1052,14 +1048,12 @@ export function maybeHandleDomusBackend(args: {
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
       nudgeLeafNodesAwayFromNonAncestorGroups(data, {
-        // The gap `validateLayout` actually checks is NODE_GROUP_CLEARANCE (20).
-        // This was passed the generic spacing pad (10), so the repair aimed at
-        // half the required clearance: every offender it moved landed at exactly
-        // 10.0 and was re-flagged immediately. A repair pointed at a threshold
-        // its checker does not use cannot succeed, whatever any single fixture's
-        // issue count happens to do — `nodeGroupSpacing.ts` already keeps its own
-        // `CLEARANCE = 20` for precisely this reason.
-        padding: GROUP_CLEARANCE_PADDING,
+        // The gap the validator checks, read from the same place it reads it.
+        // This used to be passed the generic spacing pad (10) against a checker
+        // wanting 20, so every offender the repair moved landed at exactly half
+        // the required clearance and was re-flagged immediately. A repair aimed
+        // at a threshold its checker does not use cannot succeed.
+        padding: nodeGroupClearanceOf(data),
         maxIterations: 60,
         preferAxis: ctx.preferAxisForVerticalFlow,
       });

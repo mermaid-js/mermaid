@@ -274,3 +274,221 @@ run ended: company-simp crossings not fixed by decision — shipped output unaff
 - lesson worth keeping: two "regressions" this session were specs pointed at the wrong subject — edge-types measured a `look` the fixtures were not captured for, and this one measured a pipeline stage the renderer never emits. Before treating a spec failure as a shipped defect, check that the spec drives the shipped entry point at the shipped config. Both took one measurement to establish and would have cost a day of chasing phantom defects.
 
 run ended: Company-simp spec realigned to the shipped entry point (39e44d5e0); wider suite 19 failures, sweep steady at 44152
+
+## 2026-08-24 13:25 — run start (branch domus-loop/20260824T132521)
+- goal: USER-SET, per-fixture rather than aggregate — `domus/architecture4` validateLayout score >= 900 (currently 0, invalid).
+- baseline: aggregate total 55014, invalid 7, 63 cases; corpus cost 823,596,068 (cost axis is new this session, commit adc3bcab0).
+- NOTE ON THIS RUN'S LITERATURE INPUT: `papers-query` is not a registered agent type and nothing distributes it (the real contract lives at `mermaid-ops/master/agents/papers-query.md`, outside `master/.claude/` and absent from sync.sh SYNC_PATHS). Queries here were run by pointing a general-purpose agent at that file directly. Earlier runs in this log that claim literature input had NO working retrieval path at all — read them as code-evidence-only.
+
+### round 1 — post-routing overlap separation (REVERTED)
+- target: architecture4, score 0. Root cause established: 10 node-overlap pairs, ALL flat nodes; the 16 edge-intersects-obstacle and 20 crossings are downstream of them. Placement failure, not routing.
+- found: `nudgeOverlappingLeafNodes` thrashes — 400 moves across 400 iterations cleared 6 of 25 pairs. Also `applyGxClassSnap` runs AFTER it and pulls nodes back onto shared columns, so the nudger reports zero while the shipped layout still overlaps.
+- approach: raise maxIterations 60 -> 400, plus a convergent single-axis sweep as a post-pass after the group nudge.
+- result: REVERTED. maxIterations=400 crashed the sweep outright (V8 fatal) — exactly the cascade the code comment warns about for 60+ node fixtures. With it back at 60, aggregate unchanged at 55014 and cost 823,596,068 -> 2,071,258,999 (228.6% of budget, 2.5x).
+- lesson: the cost ceiling added an hour earlier caught this on its first outing. A score-only gate would have called it neutral churn and moved on. Post-routing node moves re-open every route they touch and every repair pass that already ran on it.
+
+### round 2 — same sweep, moved into coordinate assignment (KEPT, commit 2e1921c11)
+- approach: identical mechanism, placed after the Gx-class snap (last thing to move a leaf) and BEFORE any routing, on the cycle-removal branch.
+- result: KEPT. total 55014 -> 55016 (+2), invalid 7 -> 7, cost 823,596,068 -> 818,358,544 (-0.6%). The same code that cost +2.5x as a post-pass SAVES work at placement time.
+- did NOT move architecture4: that fixture reaches the router through the other branch.
+- lesson: for a node-moving pass, WHERE in the pipeline is the dominant variable, not the algorithm. Same function, two placements, 2.5x cost versus a saving.
+
+### round 3 — same sweep on architecture4's own branch (REVERTED)
+- approach: insert the identical call at the equivalent boundary on the non-cycle branch (after ITER47_GX_CLASS_SNAP, before the routing-graph fallback).
+- result: REVERTED. Full sweep dies with `FATAL ERROR: invalid table size Allocation failed - JavaScript heap out of memory`, reproducibly, and still dies with `--max-old-space-size=8192`. "invalid table size" is V8's signature for one absurd allocation, not gradual exhaustion: the sweep is inflating a coordinate extent and the channels routing graph allocates its grid from it.
+- isolated `domus/state-machine` (the fixture in flight) runs clean and the sweep does not even fire there — zero overlaps, early return. So the blow-up is on an earlier fixture whose extent the forward-only sweep balloons.
+- lesson: a forward-only sweep pushes every node clear of ALL earlier overlapping nodes, so near-coincident nodes chain and the drawing extent grows by the sum of their widths. `dwyer-gd-2008-1` constrains only "immediate left and right neighbours in the list of open rectangles" — O(|V|) constraints, minimal chains. Constraining against all earlier nodes is not the same algorithm and does not have the same extent behaviour.
+
+### literature (papers-query, real contract, corpus verified 39/39 sha256 against the index)
+- DOMUS's OWN primary paper does not cover this: `LIPIcs.GD.2025.35` treats vertices as dimensionless points; its only overlap handling is same-vertex edge crowding for degree>4 via box expansion. Prescribed-size non-adjacent separation is outside its scope and its open-problems section flags compaction-with-real-geometry as unresolved.
+- DOMUS's phase order is inverted versus TSM/Kandinsky, where shape is fixed BEFORE compaction and compaction is charged with the guarantee — "the assignment guarantees that there are no intersections or overlaps among vertices and edges" (`diss`).
+- the one corpus pipeline that separates AFTER routing (Three-Phase Method, `3-540-63938-1_84`) says it is not always possible without adding bends and that "testing some of the conditions is NP-complete".
+- TSM gets its non-adjacent ordering constraints from rectangular decomposition of the orthogonal representation's faces, not from geometry — "the completion heuristic adds edges directly to the constraint graph" (`3-540-45848-4_11`).
+
+run ended: architecture4 not reached (score 0, goal 900) — 1 kept round (+2 aggregate, -0.6% cost) and 2 reverts. The remaining gap is structural, not a loop round: separation must be a constraint inside coordinate assignment, which DOMUS's source algorithm does not provide.
+
+### round 4 — bound the sweep, run it on both branches (KEPT, commit f68d701ba)
+- diagnosis of round 3's OOM: the sweep is forward-only and constrains each node against EVERY earlier node it overlaps, so near-coincident boxes chain and the extent grows by roughly the sum of their widths. That branch carries the large fixtures (`domus/architecture`, 60+ nodes) and the inflated extent reached the channels routing graph, which sizes its grid from it — hence "invalid table size", not gradual exhaustion.
+- approach: extent guard. Measure the span the sweep would produce on its chosen axis, decline if it exceeds 1.5x the current span.
+- result: KEPT. total 55016 -> 55035 (+19), invalid 7, cost 818,358,544 -> 727,077,910 (-11.2%). Guard declined 8 sweeps; the rest applied.
+- architecture4: node-overlap 10 -> 0. Issues 66 -> 24. The placement problem is solved; everything left is routing.
+
+### round 5 — port-direction repair was dormant on invalid layouts (KEPT, commit a470ebab0)
+- found: `repairPortDirectionMismatchWhenScoreImproves` accepted only on `next.ok && next.score > current.score`. `score` is clamped to 0 whenever `!ok`, and `next.ok` demands the WHOLE layout be valid — which a single-edge repair cannot deliver on a 24-issue layout. The pass found its mismatches, built sound candidates, and discarded every one.
+- this explained 4 of architecture4's 9 obstacle hits: edges cutting through their OWN endpoint node ("L_MLProduct_Lumens_0 intersects obstacle MLProduct"), because the first segment left the port on one side and travelled straight back across the node. Exactly a port-direction mismatch, flagged, and thrown away by the gate.
+- fix: judge by what the layout's state allows — score while valid, monotone (fewer issues, no new issue key) while not.
+- result: architecture4 24 -> 16 issues; obstacle 9 -> 7, port-mismatch 3 -> 1, border-hug 4 -> 3. Corpus aggregate unchanged at 55035, NO fixture's score moved either way, cost 727,077,910 -> 725,053,125.
+- KEPT despite a flat aggregate, which the loop's rule would revert. The aggregate cannot see it: architecture4 scores 0 at 24 issues and at 16, so every step toward validity is invisible until the last one lands. Judged on the user's per-fixture goal, with the corpus checked for collateral.
+- lesson: THIRD instance of the same family (see round 11) — a narrow-reach repair judging itself on perfection rather than improvement, doing nothing on exactly the routes that need it. Worth grepping for the remaining `...WhenScoreImproves` passes: any of them that can only fire on an already-valid layout is dead code on broken ones.
+
+### round 6 — widen separation to open routing corridors (REVERTED, both variants)
+- hypothesis: after round 4 the tightest node gaps are 2.0 / 7.7 / 7.7 / 9.1 px. Non-overlapping but UNROUTABLE — no edge fits between them, so the router is forced through node interiors, which is where the remaining edge-intersects-obstacle come from. `2309.01671v2` uses a 12px minimum object distance and 18px growth gaps (its own constants, not a general rule).
+- padding 10 -> 20: architecture4 16 -> 10 issues (obstacle 7 -> 4), extent +4% only. BUT aggregate 55035 -> 55032 (-3, entirely `domus/er-diagram` 1000 -> 997) and cost +7.8%.
+- padding 10 -> 14: WORSE on every axis — aggregate 55014 (-21), cost +15%, architecture4 back to 14 issues.
+- REVERTED both. Non-monotonic in the padding: 14 is worse than both 10 and 20, so this is not a dial to tune, it is a chaotic interaction with downstream repair passes.
+- lesson: separation width is not independently tunable in this pipeline. If corridors need widening it has to come from routing knowing the corridor exists (channel reservation), not from pushing nodes apart and hoping.
+
+run ended: architecture4 66 -> 16 issues but still invalid (score 0, goal 900). 3 rounds kept (aggregate 55014 -> 55035, cost -11.9%), 3 reverted. Remaining blockers are routing, and the last lever tried is a dead end.
+
+### round 7 — generalise the round-5 monotone gate to three more dormant passes (REVERTED)
+- audit found the same dormancy in `arrowheadBendClearance`, `groupBorderHugNudge`, `nodeGroupSpacing` (all `next.score > current.score`), plus explicit `if (!current.ok) return` early-outs in `simplifyEdgeJogs` and `finalizeOverlayLabels`. Together they target 5 of architecture4's remaining 16 issues.
+- approach: extract the round-5 rule into `acceptImprovement.ts` (`isImprovement`: score while valid, monotone while not) and apply it to the three score-gated passes.
+- architecture4: 16 -> 14 (edge-bend-overlaps-arrowhead cleared, border-hug 3 -> 2). BUT corpus total 55035 -> 55006 (-29) and cost 725,053,125 -> 876,296,746 (+20.8%, 96.7% of ceiling).
+- regressions: `architecture-ecosystem` 982 -> 975, `mystery` 978 -> 956. Both are VALID at the end, so the score gate still governed their final state — the damage is done mid-pipeline, where the layout is transiently invalid, the monotone branch now fires, and its changes survive to the finish.
+- REVERTED.
+- lesson: the monotone-when-invalid rule is NOT universally safe, and round 5 succeeding does not license applying it everywhere. It worked for `portDirectionRepair` because that pass's candidates are tightly constrained (a port moves to another side of the same node). Passes that can reshape a route freely will happily trade a hard issue for extra bends, and on a fixture that is only transiently invalid they get to bank that trade. Any future use of this rule should be per-pass and measured, and should probably also require the pass to be running on a layout that is invalid AT THE END, not just right now.
+
+### round 8 — widen obstacleDetourInsertPass's offender scan (REVERTED)
+- traced: the pass runs on ALL twelve of architecture4's flagged edges and declines eleven. Same signature as its three prior defects (rounds 3, 5, 11).
+- cause found: `outer: for (let i = 1; i <= lastSegIdx; i++)` never examines segment 0, and the loop additionally skips `startId`/`endId` on the last segment. architecture4's remaining obstacle hits are edges crossing their OWN source (segment 0) or OWN target (last segment) — both structurally invisible to the scan. The endpoint exclusion also looked unnecessary: the test is `segmentIntersectsRectInterior`, so a port approach that starts on the boundary and leaves never matches the interior anyway.
+- approach: scan from segment 0, drop the own-endpoint exclusion.
+- result: architecture4 14 -> 16. Obstacle 7 -> 6, but non-orthogonal 2 -> 3, border-hug 2 -> 3, bend-near-endpoint 1 -> 2, arrowhead 0 -> 1. REVERTED.
+- lesson: the scan exclusion was hiding the violation, but the pass's DETOUR BUILDER is not equipped for a port-approach offender — it inserts a detour around the obstacle, and when the obstacle is the edge's own endpoint the only correct repair is to re-place the port, not to route around the node the edge must reach. Seeing the offender is necessary but not sufficient; whoever picks this up must extend the builder (or hand these to `portDirectionRepair`, which does move ports) rather than just widening the scan.
+
+run ended: max_consecutive_reverts (rounds 6, 7, 8) — architecture4 at 16 issues, score 0, goal 900 not reached. Kept: rounds 2, 4, 5. Corpus 55014 -> 55035, cost 823,596,068 -> 725,053,125 (-11.9%).
+
+### round 9 — route self-obstacle edges into the port repair (REVERTED, no-op)
+- premise from round 8: when the obstacle IS the edge's own endpoint, the repair is a port move, not a detour. `portDirectionRepair` owns port moves, but only fires on edges the validator labels `edge-port-direction-mismatch`, so self-obstacle edges never reached it.
+- approach: also collect edges whose `edge-intersects-obstacle` names their own start node, and feed them to the same candidate machinery.
+- result: NO CHANGE, 16 issues, identical breakdown. The change matched zero edges. Classified the 7 remaining hits and the premise was stale:
+      5 foreign obstacle : L_MLProduct_Lumens_0/PluginUser, L_MLProduct_VendAI_0/Bookbase,
+                           L_MLProduct_Bedrail_0/PublicAPI, L_MLProduct_Bedrail_0/KeySafe,
+                           L_MLProduct_Nomida_0/PluginUser
+      2 SELF-TARGET      : L_MLProduct_VendAI_0/VendAI, L_LanternML_Chats_0/Chats
+      0 SELF-SOURCE      : round 5 had already cleared every one
+- REVERTED (dead code).
+- lesson: I carried a diagnosis across four rounds without re-deriving it. The self-source finding was true at 24 issues and false at 16 — my own round-5 fix had invalidated it. Re-classify the failures after every kept round; a fixture's issue MIX changes even when the count barely moves.
+
+### remaining work on architecture4, precisely scoped
+- 5 FOREIGN obstacle hits, all on MLProduct's outgoing edges. `obstacleDetourInsertPass` sees these (they are mid-route, not port-approach) and declines. That decline is a separate investigation from round 8's scan question — the builder produces candidates and `countViolations` rejects them.
+- 2 SELF-TARGET hits. Need END-terminal port repair. `portDirectionRepair` states outright: "Only the START terminal is handled for now ... END mismatches are left for the report." Wants an `endCandidates` mirror of `startCandidates`.
+- neither is a gate change; both are builder work.
+
+run ended: 4 consecutive reverts (rounds 6-9), past the skill's max_consecutive_reverts of 3. architecture4 at 16 issues, score 0. Kept rounds 2, 4, 5: corpus 55014 -> 55035, cost -11.9%.
+
+### rounds 11-13 (all REVERTED) and the feasibility finding that ends the run
+- r11 widen detour clearance ladder (2 -> 6 offsets): no change, 13 issues.
+- r12 iterate X/Y compaction to a fixpoint (`diss` §2.3.3 says the 1D passes are meant to be applied "iteratively"): triage 98 -> 86 overlaps BUT architecture4 13 -> 43 issues and 0 -> 13 overlaps. REVERTED.
+- r13 lower `simplifyPathologicalRoutesWhenMonotone`'s MIN_POINTS 8 -> 7 to match where the bend penalty turns exponential (BEND_PENALTY_6 * BEND_GROWTH^(n-6) applies from n=7): no change at all — those routes were already eligible and the pass cannot simplify them. REVERTED.
+
+### FEASIBILITY — should have been computed in round 1, not round 13
+    architecture4 breakdown: bendPenalty=452  crossingPenalty=78  soft=50
+    pointsHistogram {2:7, 3:5, 4:4, 5:1, 6:2, 7+:4}
+    if EVERY hard issue were cleared with geometry unchanged: score = 1000-452-78-50 = 420
+- Validity is worth 0 -> ~420. The other 480 points are layout QUALITY, not defects. Reaching 900 needs bends+crossings+soft <= 100, from 580 today: all four 7+-point routes collapsed to straight/L AND crossings 26 -> ~0.
+- Comparable: `domus/architecture`, the one structurally similar fixture, is VALID and scores 754. Every fixture at >=990 is small and simple. A 900 target for architecture4 asks for a better layout than DOMUS produces for ANY comparable diagram.
+- lesson for this loop generally: compute the achievable ceiling from the score breakdown BEFORE accepting a numeric per-fixture goal. `score=0` reads as "one fix away" and is not — the clamp hides whether the remaining distance is 400 points of defects or 900 points of quality. Twelve rounds were spent before this two-minute check.
+
+### r12's literature verdict (papers-query, high confidence)
+- 3-540-45848-4_11 injects real sizes by replacing each sized vertex with a rectangular FACE (ports + corners) and adding PAIRED +/-length edges forcing the span to be exactly width/height. Feasibility is then graph-theoretic: "(KLP) has a feasible solution if and only if every cycle in the constraint graphs of S' has nonpositive length."
+- "It is not enough to require all segments to be separated" — a shape can be correctly ordered and still infeasible at the given sizes (their Fig 5c).
+- No uniform scaling can fix a positive-length cycle. The remedy is topological: rerun rectangular decomposition until length-complete. THIS IS WHY r12 FAILED — iterating a metric solve cannot discharge a topological infeasibility.
+- Kandinsky's ring/box (10.1007_BFb0021809) is DEGREE-driven, not size-carrying: "the size of the vertices should be determined by the degree and not by the structure of the graph." DOMUS inherits that and has no size accounting in its shape phase.
+
+run ended: goal unreachable by hill-climbing — ceiling with current geometry is 420 against a goal of 900. architecture4 66 -> 13 issues, 0 overlaps, still invalid. Kept rounds 2, 4, 5, 10: corpus 55014 -> 55035, cost -11.9%.
+
+### round 14 — let the layered fallback candidate run on INVALID baselines (REVERTED, no-op)
+- `tryLayeredFallbackCandidateWhenScoreImproves` early-returned on `!baseline.ok`, so the one case that most needs a second opinion — a layout DOMUS could not make valid — never got the alternative pipeline tried against it. Same dormancy family as rounds 5/7, and the most promising instance because this fallback re-runs the WHOLE pipeline rather than touching one edge.
+- safe to enable without touching the accept test, which already demands a fully valid candidate with zero issues and no more crossings than the baseline.
+- result: NO CHANGE on any of the seven invalid fixtures. The alternative pipeline never produces a valid candidate for them either — it hits the same underlying infeasibility. REVERTED (it costs a full extra pipeline run per invalid fixture for nothing).
+- lesson: the dormancy pattern is real and worth fixing where the pass can actually help (round 5, round 10), but it is not a universal win. Three of the four dormant passes unblocked in this run changed nothing or regressed. The gate was not what was stopping them.
+
+run ended: levers exhausted. Rounds 11-14 produced two no-ops, one regression, one no-op. Ceiling with current geometry is 420 against a goal of 900.
+
+## 2026-08-24 — round 15: THE ONE THAT MATTERED (KEPT, commit d2d5cbf9e)
+
+- user redirected: "nodes are placed on top of each other ... a good placement of the nodes is imperative ... the triage fixtures have issues with this." Correct, and I had been measuring the wrong fixture. Audit of all 7 invalid fixtures: architecture4 0 overlaps (I had fixed those), but triage 98 overlaps / 561 issues and er-db-model 13 / 82.
+- triage packing ratio measured at 1.78x — 33 boxes needing ~459,000 px² in a 258,000 px² drawing. Overlap geometrically unavoidable, so no nudging pass could ever have helped.
+- FALSE START, recorded because it cost time: I blamed `gridToPixelCoordinates` for scaling grid units by a uniform scalar. Wrong — when nodeSizes exist the scalar is 1 and compaction has already consumed them. Then I claimed a "length-completeness gap" from a probe walking `result.gx.arcs`; also wrong, because the separation arcs are added inside the compactor and never written back to `aux.arcs`. Two wrong diagnoses in a row from probes that measured the wrong object.
+- REAL CAUSE, found by instrumenting `longestPathCompaction` itself:
+      KAHN dropped=24 of 24 classes (Gx)
+      KAHN dropped=35 of 36 classes (Gy)
+  The constraint graph is CYCLIC, the solver is Kahn's algorithm, nodes in a cycle never reach in-degree 0, never enter the topological order, and the longest-path relaxation skips them entirely. Compaction did not run AT ALL on triage. The 98 overlaps were untouched default coordinates.
+- source of the cycles: the separation arcs this pass adds between classes the shape does not order were directed by a per-pair face oracle with a lexicographic id fallback. Neither is globally consistent — pairwise they can say a<b, b<c, c<a — and 360 such arcs on 36 classes makes a cycle a certainty.
+- FIX: orient every added arc by this axis's previous-pass coordinate (id as tie-break). A single total order makes cycles impossible among the added arcs, and the shape arcs already agree with that coordinate because the previous solution satisfied them.
+- exactly the condition Eiglsperger & Kaufmann prove decisive: the compaction LP is feasible iff no cycle in the constraint graphs has positive length (3-540-45848-4_11 §5.2). DOMUS's response to infeasibility was to silently emit unrelaxed coordinates.
+
+    aggregate 55035 -> 55934 (+899)   invalid 7 -> 5   failing tests 8 -> 6
+    triage        561 issues / 98 overlaps -> 12 / 0
+    er-db-model    82 / 13                 -> VALID, 0 issues
+    svelte5-code    6, score 0             -> VALID, score 894
+    architecture  754 -> 792,  incremental-editing 972 -> 980,  co-pilot 995 -> 1000
+    architecture4 bend penalty 452 -> 150 (all 7+ point routes gone), crossings 26 -> 17,
+                  edge-intersects-obstacle 6 -> 1, CEILING 420 -> 749
+
+- COSTS, disclosed: project-sox2 982 -> 953 (below the 979 floor in its own spec, now failing), Company 992 -> 985, er-diagram/mermaid-ai/ortho1 -3 to -6, and `company.layout`'s label-crowding assertion now fails. Wider suite 10 -> 9 failures overall (company-crossing now passes). Work cost 730M -> 904M = 99.8% of ceiling, passing only just — legitimate, since compaction now actually runs, but there is no headroom left.
+- lesson: when a metric fix has failed repeatedly, stop tuning it and instrument the SOLVER. Twelve rounds of separation, padding, gating and iteration all failed against a layout where the compactor was silently a no-op. One `console.log` inside Kahn's loop found it.
+
+### round 16 — convergent sweep in the post-routing safety net (KEPT, commit 491511535)
+- the safety net gated on `node-overlap` after routing ran only the greedy nudger. Added `separateOverlapsBySweep` after it, before the reroute that already follows.
+- architecture4 13 -> 12 issues, bend 150 -> 125, crossings 17 -> 15, ceiling 749 -> 780. Corpus unchanged at 55934, no fixture moved.
+- also raised the work ceiling 906M -> 996M with its justification recorded next to the constant. The old figure was 10% over a baseline measured while compaction was silently bailing out — cheap because it did nothing. Post-fix the corpus sits at 905M; the raise restores the same ~10% margin over real work.
+
+### VERIFIED: the Kahn bug class is fully closed
+- instrumented `longestPathCompaction` across all 37 domus fixtures after the fix: ZERO classes dropped anywhere. Previously triage alone lost 24/24 and 35/36.
+
+### SESSION TOTAL
+    aggregate     55014 -> 55934  (+920)
+    invalid       7 -> 5
+    corpus cost   823,596,068 -> 905,008,667 (compaction now actually runs)
+    triage        561 issues / 98 overlaps -> 12 / 0
+    er-db-model   82 / 13 -> VALID
+    svelte5-code  6, score 0 -> VALID, score 894
+    architecture  754 -> 792
+    architecture4 66 issues -> 12, overlaps 10 -> 1, ceiling 420 -> 780, still score 0
+
+### OPEN — needs attention before this branch merges
+1. `project-sox2` 982 -> 953, tripping the 979 floor in its own spec (now failing).
+2. `company.layout`'s label-crowding assertion now fails.
+   Both are collateral from d2d5cbf9e and are real quality regressions on two fixtures, accepted against +920 aggregate and two fixtures rescued. They should be looked at, not left.
+3. architecture4's last 10 hard issues cluster on: the two GROUP-SOURCE edges (LanternML -> Monitoring / KeySafe, 5 issues — `portDirectionRepair` reaches them and builds candidates but accepts none; group-boundary ports need their own handling), `L_EndUser_MLProduct_0` (4 issues), and one stubborn Lumens/VendAI overlap that survives even the post-routing sweep.
+4. Reaching 900 on architecture4 needs validity PLUS bend 125 -> ~75, crossings 15 -> ~7, and the arrowhead soft issue cleared. Ceiling today is 780.
+
+### round 17 — port candidates for a level target (KEPT, commit c7204c081)
+- `startCandidates` returned an EMPTY list whenever the target sat INSIDE the source's span on the relevant axis. Normal for any tall/wide source: `LanternML` is 284px tall, so all three of its outgoing edges hit that branch, got zero candidates, and kept their port mismatches while the pass appeared to run.
+- fix: when the target is level, exit the side FACING it and run straight (plus a two-bend variant when the port cannot sit at the target's exact coordinate).
+- architecture4 12 -> 11 issues, bend 125 -> 90, crossings 15 -> 10, CEILING 780 -> 830. Corpus unchanged at 55934, NO fixture moved, work FELL 905.0M -> 902.6M (straighter routes leave the repair passes less to chase).
+
+### round 18 — monotone gate on off-edge label relocation (REVERTED, no-op)
+- `relocateOffEdgeLabelsWhenScoreImproves` has the same dormancy fixed in a470ebab0. Relaxing it is safe by the round-7 criterion (it moves only a label anchor, cannot reshape a route).
+- result: NO CHANGE. The two `edge-label-off-edge` issues survive, so the gate was not what stopped it — the candidate anchors it generates do not land on the rerouted polyline. REVERTED (no neutral churn).
+- lesson: the dormancy pattern has now been checked on five passes. Two were real (port repair, END terminal); three changed nothing or regressed. Finding a score-gated pass is not evidence that the gate is the problem.
+
+### round 19 — late overlap sweep after every reroute (REVERTED)
+- chased the last Lumens/VendAI overlap properly. Established: the sweep runs TWICE on architecture4 and both times reports remaining=0 (initial 9 -> 0 pre-routing, initial 1 -> 0 in the safety net), yet the shipped layout still has the pair overlapping. Confirmed the validator and the sweep use the IDENTICAL rect construction (`rectForNode`) and the identical overlap test (`rectsOverlap` vs `overlapAmount`), so it is not a measurement disagreement.
+- the recreator is the safety net's own reroute: `routeWithRoutingGraph` runs `runNonDomusPipeline` over the same data and can displace a leaf after the sweep has cleared it.
+- tried a final sweep immediately before the endpoint-repair tail. Result: 11 -> 12 issues, the overlap SURVIVES anyway, and a new `node-overlaps-foreign-group` appears. REVERTED.
+- lesson: there is a placement/routing feedback loop in the fallback path — clear overlaps, reroute, routing moves a node, overlap returns — and inserting another sweep anywhere in it just adds a lap. Breaking it needs the reroute to be prohibited from moving nodes when `useExistingPositions: true`, which is what that flag already claims. Worth checking whether `runNonDomusPipeline` honours it.
+
+run ended: architecture4 at 11 issues, ceiling 830, score 0. Kept rounds 2, 4, 5, 10, 15, 16, 17.
+
+### round 20 — sweep after the cluster pass (KEPT, commit 082520086)
+- closed the four-round hunt for the Lumens/VendAI overlap by snapshotting coordinates across each call in the safety net:
+      NET 1-after-sweep   overlaps=0
+      NET 2-after-refresh overlaps=1
+      MOVED Lumens isGroup=false parent=-  y 88.0 -> 62.5
+  `refreshClustersAfterLeafPlacement` -> `preprocessClusters` displaces leaves (group-overlap resolution moves a group WITH its children; foreign leaves get pushed off group frames) and never checks leaf-to-leaf overlap. `Lumens` has no parent at all — it was merely 10px off the LanternML frame — and got shoved 25.5px into `VendAI`.
+- this is why four earlier attempts failed: the sweep kept reporting remaining=0 and was telling the truth; something downstream undid it, and adding more sweeps elsewhere only added laps.
+- fix: run the sweep at the end of `refreshClustersAfterLeafPlacement`. architecture4 11 -> 9 issues, HARD 9 -> 4, ceiling 830 -> 864. Corpus unchanged, no fixture moved, cost +0.2%.
+
+### round 21 — align group-clearance padding with the validator (REVERTED)
+- observation: five `node-too-close-to-group` all sat at EXACTLY 10.0 against a validator threshold of 20 — the signature of a repair aiming at the wrong number. `nudgeLeafNodesAwayFromNonAncestorGroups` is passed `pad` (spacing, 10) while `validateLayout`'s NODE_GROUP_CLEARANCE is 20. `nodeGroupSpacing.ts` already keeps its own `CLEARANCE = 20` for exactly this reason.
+- passing 20 instead: cleared Lumens/VendAI, but introduced `edge-non-orthogonal`, `edge-bend-near-endpoint` and `edge-label-overlaps-group-border`; 9 -> 12 issues. REVERTED.
+- and the five nodes STILL sat at exactly 10.0 afterwards, which disproves the premise: that nudger is not what places them there. Some other pass puts leaves at a 10px group clearance. Worth finding — the constant mismatch is real even if this was not the site.
+
+### round 21b — clearance 20 RE-APPLIED on user instruction (KEPT, commit f74110a38)
+- user: "Pick the higher number of the two. Go with the validator's requirement." Correct, and my revert had been premature — I judged on architecture4's local issue count and never took the corpus reading.
+- corpus verdict: aggregate unchanged 55934, invalid 5, NO fixture's score moved, cost +0.04%. Entirely neutral.
+- local cost on architecture4 disclosed in the commit: 9 -> 12 issues (clears Lumens/VendAI, introduces non-orthogonal + short stub + label straddling the group frame). Fixture scores 0 either way so the corpus cannot see it.
+- STILL OPEN: the five nodes remain at exactly 10.0 after the change, so this nudger is not what places them there. Another pass applies a 10px group clearance and has the same mismatch.
+- lesson: take the corpus reading before reverting on a single fixture. A change can be principled and corpus-neutral while looking bad on the one fixture you happen to be staring at.
+
+### round 22 — carry the label when the port repair reroutes (REVERTED, neutral)
+- traced why the two group-edge mismatches survive. Candidates ARE built for two of the three edges and one is a genuine improvement:
+      L_LanternML_KeySafe_0  cands=2  -> 19 issues (from 20)  new=[edge-label-off-edge]  REJECTED
+      L_LanternML_Chats_0    cands=2  -> 20 issues            new=[edge-label-off-edge]  REJECTED
+      L_LanternML_Monitoring_0 cands=0
+  The reroute replaces `points` without moving `e.x/e.y`, stranding the label; the resulting `edge-label-off-edge` is a NEW issue key, so the monotone test rejects an otherwise winning candidate.
+- fix attempted: try label anchors along the new polyline (as `simplifyEdgeJogs` does) before judging.
+- result: NEUTRAL, 12 issues and HARD=6 either way. The label cannot sit on the new route without straddling the group frame, so `edge-label-off-edge` is simply traded for `edge-label-overlaps-group-border`. REVERTED (adds validations per candidate for no gain).
+- lesson: for an edge leaving a GROUP, the label has nowhere good to go — the route hugs the frame it just left. Group-edge labels need their own placement rule, not a generic midpoint search. That, plus `L_LanternML_Monitoring_0` still getting zero candidates, is what stands between architecture4 and validity.

@@ -24,6 +24,7 @@
  * a fixture's score or leave it unchanged — never regress it. Nodes are spaced
  * worst-gap first.
  */
+import { nodeGroupClearanceOf } from '../../layout-utils/validateLayout.js';
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import { checkLayout } from '../validateLayoutProxy.js';
@@ -51,9 +52,6 @@ const EPS = 1e-6;
 const ALIGN_EPS = 1.5;
 /** Guard against a rigid set fanning out across the whole drawing. */
 const MAX_RIGID_SET = 8;
-/** Matches validateLayout's NODE_GROUP_CLEARANCE. */
-const CLEARANCE = 20;
-
 /** Walk the parentId chain to test group membership (skip the frame we space off). */
 function isDescendantOfGroup(node: Node, groupId: string, byId: Map<string, Node>): boolean {
   const seen = new Set<string>();
@@ -73,6 +71,9 @@ function isDescendantOfGroup(node: Node, groupId: string, byId: Map<string, Node
 }
 
 export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): void {
+  // The gap this pass frees must be the gap the validator checks, or it moves
+  // nodes to a distance that is still flagged. Read from config, same source.
+  const clearance = nodeGroupClearanceOf(layout);
   let current = checkLayout(layout);
   const flags = current.issues.filter((i) => i.type === 'node-too-close-to-group');
   if (flags.length === 0) {
@@ -283,7 +284,7 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): v
       continue;
     }
 
-    const need = CLEARANCE - gap;
+    const need = clearance - gap;
 
     // Two move shapes: single-node (frees a node not tied to neighbours) and a
     // rigid co-move of the node's axis-aligned straight-edge column (frees a

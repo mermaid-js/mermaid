@@ -1,3 +1,4 @@
+import { nodeGroupClearanceOf } from '../layout-utils/validateLayout.js';
 import type { LayoutData, Node } from '../../types.js';
 import type { OrthogonalOptions } from './types.js';
 import { rectForNode } from './core/helpers.js';
@@ -372,7 +373,8 @@ function checkAllChildrenInGroup(
   // clearance, so the node clears both this hard overlap and the soft
   // node-too-close-to-group threshold.
   const groups = [...groupsById.values()].sort((a, b) => String(a.id).localeCompare(String(b.id)));
-  const CLEARANCE = 20;
+  // Same gap the validator scores against, read from config so the two agree.
+  const CLEARANCE = nodeGroupClearanceOf(data);
   for (const node of nodes) {
     if (node.isGroup) {
       continue;

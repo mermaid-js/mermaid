@@ -2368,6 +2368,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         default: 50
         minimum: 0
+      nodeGroupClearance:
+        description: |
+          Minimum gap between a node and the frame of a subgraph it does not belong to.
+
+          A node sitting closer than this to a foreign subgraph border reads as though it
+          were part of that subgraph, and leaves no corridor for an edge to route between
+          the two. Layout engines that support it both enforce this gap when placing nodes
+          and score a layout down for violating it, so the two agree by construction.
+        type: integer
+        default: 20
+        minimum: 0
       curve:
         description: |
           Defines how mermaid renders curves for flowcharts.

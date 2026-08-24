@@ -326,6 +326,16 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   rankSpacing?: number;
   /**
+   * Minimum gap between a node and the frame of a subgraph it does not belong to.
+   *
+   * A node sitting closer than this to a foreign subgraph border reads as though it
+   * were part of that subgraph, and leaves no corridor for an edge to route between
+   * the two. Layout engines that support it both enforce this gap when placing nodes
+   * and score a layout down for violating it, so the two agree by construction.
+   *
+   */
+  nodeGroupClearance?: number;
+  /**
    * Defines how mermaid renders curves for flowcharts.
    *
    */
