@@ -163,9 +163,11 @@ export function attachTrees(input: AttachInput): AttachResult {
     return a.id < b.id ? -1 : 1;
   });
 
+  // The core's routes are orthogonal and already clipped to the node boundaries,
+  // so every piece of them is drawn and every piece is an obstacle.
   const obstacles: Segment[] = input.coreSegments.map((segment) => ({
-    a: segment.drawnA,
-    b: segment.drawnB,
+    a: segment.a,
+    b: segment.b,
   }));
   const coreBounds = unionBounds([...input.coreRects.values()].map((rect) => nodeBounds(rect))) ?? {
     minX: 0,

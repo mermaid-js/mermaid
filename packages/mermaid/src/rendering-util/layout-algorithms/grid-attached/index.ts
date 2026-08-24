@@ -41,8 +41,15 @@ export { resolveGridAttachedOptions } from './options.js';
 export type { GridAttachedOptions } from './options.js';
 export { attachTrees } from './attachTrees.js';
 export type { Attachment, AttachInput, AttachResult } from './attachTrees.js';
-export { applyCoreScale, coreRects, coreSegments, drawCore } from './coreDrawing.js';
+export {
+  applyCoreScale,
+  coreRects,
+  coreSegments,
+  drawCore,
+  routeCoreEdges,
+  routedCoreEdges,
+} from './coreDrawing.js';
 export type { CoreDrawing, CoreSegment } from './coreDrawing.js';
-export { planariseStraightCore } from './corePlanarisation.js';
+export { planariseRoutedCore } from './corePlanarisation.js';
 export { routeTreeEdges } from './treeConnectors.js';
 export type { TreeConnector } from './treeConnectors.js';

@@ -55,9 +55,16 @@ import { layoutForGrowth, ROTATION_FOR_GROWTH } from '../hola-faithful/placement
 import { layoutTree, transformTreeLayout } from '../hola-faithful/trees/symmetricTreeLayout.js';
 import { attachTrees } from './attachTrees.js';
 import type { AttachableTree, Attachment, AttachResult } from './attachTrees.js';
-import { applyCoreScale, coreRects, coreSegments, drawCore } from './coreDrawing.js';
+import {
+  applyCoreScale,
+  coreRects,
+  coreSegments,
+  drawCore,
+  routeCoreEdges,
+  routedCoreEdges,
+} from './coreDrawing.js';
 import type { CoreDrawing } from './coreDrawing.js';
-import { planariseStraightCore } from './corePlanarisation.js';
+import { planariseRoutedCore } from './corePlanarisation.js';
 import type { GridAttachedOptions } from './options.js';
 import { resolveGridAttachedOptions } from './options.js';
 import { prepareGridAttachedLayout } from './prepareLayout.js';
@@ -206,20 +213,25 @@ function layoutComponent(
   const chosen = climbEnlargementLadder(
     drawing,
     decomposition.core,
+    flat,
     placeable,
     sources,
     flowGrowth,
-    options
+    options,
+    diagnostics
   );
 
   reportPlacementDiagnostics(diagnostics, componentId, chosen.attempt, sources);
 
   const nodes = [...drawing.nodes];
-  const edges = [...drawing.edges];
   const rects = coreRects(drawing, decomposition.core);
   const trees: GridAttachedTreeResult[] = [];
   const labelRequests: { originalEdgeId: string; width: number; height: number; route: Point[] }[] =
     [];
+
+  const core = writeCoreEdges(flat, drawing);
+  const edges = [...core.edges];
+  labelRequests.push(...core.labelRequests);
 
   const drawnById = new Map(placeable.map((tree) => [tree.id, tree]));
   const routeRequests: TreeRouteRequest[] = [];
@@ -482,10 +494,12 @@ interface LadderRung {
 function climbEnlargementLadder(
   drawing: CoreDrawing,
   core: Parameters<typeof coreRects>[1],
+  flat: FlattenResult,
   trees: AttachableTree[],
   sources: Map<string, DecomposedTree>,
   flowGrowth: Cardinal,
-  options: GridAttachedOptions
+  options: GridAttachedOptions,
+  diagnostics: DiagnosticCollector
 ): LadderRung {
   // What one unit of enlargement costs: the core's own extent, so a 25% stretch
   // of a wide core is priced as more than a 25% stretch of a small one.
@@ -498,13 +512,17 @@ function climbEnlargementLadder(
   for (let rung = 0; ; rung++) {
     const scale = Math.min(1 + rung * options.coreScaleStep, options.maxCoreScale);
     applyCoreScale(drawing, scale);
+    // A route is only as good as the positions it was found for, so each rung is
+    // routed afresh. Everything downstream — the faces, the obstacles a tree has
+    // to clear, the corridor its connector runs through — then sees the geometry
+    // that is actually drawn rather than a straight line between two centres.
+    routeCoreEdges(drawing, core, flat, options, diagnostics);
 
     const rects = coreRects(drawing, core);
-    const segments = coreSegments(drawing, core);
     const attempt = attachTrees({
       coreRects: rects,
-      coreSegments: segments,
-      planar: planariseStraightCore(rects, segments),
+      coreSegments: coreSegments(drawing, core),
+      planar: planariseRoutedCore(rects, routedCoreEdges(drawing, core)),
       trees,
       sources,
       flowGrowth,
@@ -530,6 +548,7 @@ function climbEnlargementLadder(
   // Leave the core at the geometry the winning rung was measured against, so the
   // attachments and the core agree.
   applyCoreScale(drawing, best.scale);
+  routeCoreEdges(drawing, core, flat, options, diagnostics);
   return best;
 }
 
@@ -653,6 +672,44 @@ function writeTree(
   }
 
   return { nodes, edges };
+}
+
+/**
+ * The core's routed edges, written back.
+ *
+ * Both endpoints of an orthogonal route already sit on a node boundary, so the
+ * route is marked as carrying its own intersection points and the painter leaves
+ * it alone; re-clipping would bend the terminal segment the arrowhead is drawn
+ * along. An edge the router gave up on keeps the straight endpoint pair it fell
+ * back to, which is still a drawable line — `routeCoreEdges` has already reported
+ * it.
+ */
+function writeCoreEdges(flat: FlattenResult, drawing: CoreDrawing): WrittenConnectors {
+  const edges: Edge[] = [];
+  const labelRequests: WrittenConnectors['labelRequests'] = [];
+
+  for (const edge of drawing.edges) {
+    const route = drawing.routes.get(edge.id);
+    if (!route || route.length < 2) {
+      continue;
+    }
+    edge.points = route;
+    edge.curve = 'linear';
+    edge.hasIntersectionPoints = true;
+    edges.push(edge);
+
+    const label = flat.labels.get(edge.id);
+    if (label) {
+      labelRequests.push({
+        originalEdgeId: edge.id,
+        width: label.width,
+        height: label.height,
+        route,
+      });
+    }
+  }
+
+  return { edges, labelRequests };
 }
 
 interface WrittenConnectors {

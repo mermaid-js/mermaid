@@ -189,7 +189,7 @@ export function polylineCrossesSegment(points: Point[], segment: Segment): boole
   return false;
 }
 
-export function inflate(bounds: Bounds, amount: number): Bounds {
+function inflate(bounds: Bounds, amount: number): Bounds {
   return {
     minX: bounds.minX - amount,
     minY: bounds.minY - amount,
@@ -224,7 +224,7 @@ function segmentHitsBounds(segment: Segment, bounds: Bounds): boolean {
 }
 
 /** Proper crossing: a shared point strictly interior to both segments. */
-export function segmentsCross(first: Segment, second: Segment): boolean {
+function segmentsCross(first: Segment, second: Segment): boolean {
   const r = { x: first.b.x - first.a.x, y: first.b.y - first.a.y };
   const s = { x: second.b.x - second.a.x, y: second.b.y - second.a.y };
   const denominator = r.x * s.y - r.y * s.x;
@@ -235,24 +235,4 @@ export function segmentsCross(first: Segment, second: Segment): boolean {
   const t = (d.x * s.y - d.y * s.x) / denominator;
   const u = (d.x * r.y - d.y * r.x) / denominator;
   return t > EPSILON && t < 1 - EPSILON && u > EPSILON && u < 1 - EPSILON;
-}
-
-/**
- * Where the segment from `inside` towards `towards` leaves the rectangle around
- * `inside`. Used to shorten a core edge to the part that is actually drawn: the
- * painter clips both ends against the node shapes, so the segment between the two
- * centres is not an obstacle along its whole length.
- */
-export function exitPoint(inside: Rect, towards: Point): Point {
-  const dx = towards.x - inside.x;
-  const dy = towards.y - inside.y;
-  if (Math.abs(dx) < EPSILON && Math.abs(dy) < EPSILON) {
-    return { x: inside.x, y: inside.y };
-  }
-  const scaleX =
-    Math.abs(dx) > EPSILON ? inside.width / 2 / Math.abs(dx) : Number.POSITIVE_INFINITY;
-  const scaleY =
-    Math.abs(dy) > EPSILON ? inside.height / 2 / Math.abs(dy) : Number.POSITIVE_INFINITY;
-  const t = Math.min(1, Math.min(scaleX, scaleY));
-  return { x: inside.x + t * dx, y: inside.y + t * dy };
 }

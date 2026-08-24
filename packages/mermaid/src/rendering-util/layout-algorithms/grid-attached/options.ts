@@ -5,11 +5,13 @@ import { resolveGridLikeOptions } from '../grid-like/options.js';
 /**
  * Tunables for the attached grid-like layout.
  *
- * Everything about drawing the *core* is inherited from grid-like and nothing
- * here changes it — the one lever this layout has over the core is
- * `coreScaleStep`/`maxCoreScale`, which stretch the core's edges without
- * touching its shape. The remaining fields describe the trees: how each one is
- * drawn on its own, and how the placement search around the core is scored.
+ * The core's *layout* is inherited from grid-like and nothing here changes it:
+ * every core node stays exactly where grid-like put it, so every ACA alignment
+ * and the grid structure survive. Two things about the core are this layout's
+ * own — `coreScaleStep`/`maxCoreScale`, which stretch its edges without
+ * touching its shape, and the `routing*` fields, which decide how those edges
+ * are *drawn*. The rest describe the trees: how each is drawn on its own, and
+ * how the placement search around the core is scored.
  */
 export interface GridAttachedOptions extends GridLikeOptions {
   /** Clear gap left between two packed connected components. */
@@ -72,8 +74,14 @@ export interface GridAttachedOptions extends GridLikeOptions {
   /** Rungs without improvement before the ladder gives up and keeps the best. */
   coreScalePatience: number;
 
-  /** Clearance a tree node's self-loop detour keeps from the node. */
+  /** Clearance the core router keeps from node rectangles. */
   routingClearance: number;
+  /** A* penalty per bend, so a route with fewer corners wins. */
+  routingBendPenalty: number;
+  /** A* penalty per crossing of an already routed edge. */
+  routingCrossingPenalty: number;
+  /** Hard cap on A* expansions per core route. */
+  routingMaxExpansions: number;
 }
 
 export function resolveGridAttachedOptions(
@@ -113,6 +121,9 @@ export function resolveGridAttachedOptions(
     coreScalePatience: overrides?.coreScalePatience ?? 2,
 
     routingClearance: overrides?.routingClearance ?? 12,
+    routingBendPenalty: overrides?.routingBendPenalty ?? 40,
+    routingCrossingPenalty: overrides?.routingCrossingPenalty ?? 200,
+    routingMaxExpansions: overrides?.routingMaxExpansions ?? 40_000,
 
     ...overrides,
   };

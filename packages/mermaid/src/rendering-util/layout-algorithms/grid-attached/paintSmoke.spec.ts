@@ -184,20 +184,44 @@ describe('grid-attached paint path', () => {
     expect(document.querySelectorAll('path.flowchart-link').length).toBe(9);
   });
 
-  it('clips core edges against the node shapes but leaves tree connectors alone', async () => {
+  it('marks every route as carrying its own endpoints, so the painter re-clips none', async () => {
     const layoutData = await parse('core-with-two-trees', DIAGRAMS['core-with-two-trees']);
     document.body.innerHTML = '<svg><g></g></svg>';
 
     await render(layoutData, select('svg') as never);
 
-    const byId = new Map(layoutData.edges.map((edge) => [edge.id, edge]));
-    const coreEdge = [...byId.values()].find((edge) => edge.start === 'A' && edge.end === 'B');
-    const treeEdge = [...byId.values()].find((edge) => edge.start === 't1' && edge.end === 't2');
+    // Core routes come from HOLA's orthogonal router and tree connectors from its
+    // rank connector, but both now end on a node boundary — so both must be left
+    // alone at paint time. Re-clipping would bend the terminal segment the
+    // arrowhead is drawn along.
+    for (const edge of layoutData.edges) {
+      expect(edge.hasIntersectionPoints, `${edge.id} would be re-clipped`).toBe(true);
+      expect(edge.curve, `${edge.id} would be smoothed into a spline`).toBe('linear');
+    }
+  });
 
-    // A core edge keeps grid-like's centre-to-centre route, so the painter has to
-    // clip it; a tree connector is already settled on the boundaries.
-    expect(coreEdge?.hasIntersectionPoints).not.toBe(true);
-    expect(treeEdge?.hasIntersectionPoints).toBe(true);
-    expect(treeEdge?.curve).toBe('linear');
+  it('routes every edge orthogonally', async () => {
+    const layoutData = await parse(
+      'bushy-trees-on-a-dense-core',
+      DIAGRAMS['bushy-trees-on-a-dense-core']
+    );
+    document.body.innerHTML = '<svg><g></g></svg>';
+
+    await render(layoutData, select('svg') as never);
+
+    const diagonal: string[] = [];
+    for (const edge of layoutData.edges) {
+      const points = edge.points ?? [];
+      for (let i = 1; i < points.length; i++) {
+        if (
+          Math.abs(points[i].x - points[i - 1].x) > 1e-6 &&
+          Math.abs(points[i].y - points[i - 1].y) > 1e-6
+        ) {
+          diagonal.push(edge.id);
+          break;
+        }
+      }
+    }
+    expect(diagonal).toEqual([]);
   });
 });

@@ -1,25 +1,38 @@
 /**
- * The core, drawn by grid-like — and the one lever this layout has over it.
+ * The core: its layout from grid-like, its edges routed orthogonally.
  *
- * The core drawing itself is not this layout's business: it is produced by
- * `grid-decomposed`'s core pass, unchanged, so a core looks exactly the same
- * whether its trees are packed beside it (`grid-decomposed`) or attached to it
- * (this layout). Nothing here re-solves, re-aligns or re-routes it.
+ * The core's *layout* is not this layout's business. It is produced by
+ * `grid-decomposed`'s core pass, unchanged — the same grid-like solve, the same
+ * choice between drawing the cycle with and without the flow ordering — so every
+ * core node ends up exactly where grid-like put it and every ACA alignment
+ * survives. Nothing here re-solves or re-aligns it.
  *
- * The single permitted change is **enlargement**: every core node is moved away
- * from the core's centre by a common factor. That stretches every core edge and
- * nothing else —
+ * Two things about the core *are* this layout's own.
+ *
+ * **Enlargement.** Every core node may be moved away from the core's centre by a
+ * common factor. That stretches every core edge and changes nothing else —
  *
  *   - a uniform scale is separable per axis, so two nodes grid-like aligned on
- *     `x` still share an `x`: the grid structure, every ACA alignment and every
- *     orthogonal edge survive exactly;
+ *     `x` still share an `x`: the grid structure and every alignment survive
+ *     exactly;
  *   - node sizes are untouched, so distances only grow and the drawing cannot
  *     develop an overlap it did not have;
  *   - the drawing is therefore the same picture with longer edges, which is
  *     precisely the room a tree needs.
  *
- * Every scale is derived from the *same* base geometry, so the ladder in
+ * Every scale is derived from the *same* base positions, so the ladder in
  * `layoutCore.ts` can walk up and down it without drift.
+ *
+ * **Routing.** grid-like's write-back draws each edge as a straight line between
+ * two node centres. On a grid-like drawing many of those are axis-aligned, but
+ * any pair of nodes the alignment pass did not align gets a diagonal — and a
+ * diagonal is free to pass straight through a third node's box, which it does.
+ * So the routes are replaced (the positions are not) by orthogonal ones from
+ * HOLA's own router, which avoids the node rectangles, prefers few bends, and
+ * penalises both crossing and running along an edge already routed. This is also
+ * what HOLA itself does: an orthogonally routed core is its Step 2c, and the
+ * straight centre-to-centre line is an IPSEP-COLA convention rather than a HOLA
+ * one.
  */
 
 import type { Point } from '../../../types.js';
@@ -29,16 +42,13 @@ import { drawCyclicPart } from '../grid-decomposed/layoutCore.js';
 import { buildPartLayoutData } from '../grid-decomposed/parts.js';
 import type { DecomposedPart } from '../grid-decomposed/parts.js';
 import type { FlattenResult } from '../hola-faithful/adapter/flattenFlowchart.js';
-import type { Bounds, HolaGraph, HolaNode } from '../hola-faithful/model.js';
+import type { DiagnosticCollector } from '../hola-faithful/diagnostics.js';
+import type { Bounds, HolaEdge, HolaGraph, HolaNode } from '../hola-faithful/model.js';
 import { nodeBounds, unionBounds } from '../hola-faithful/model.js';
-import { exitPoint } from './geometry.js';
+import { resolveOptions as resolveHolaOptions } from '../hola-faithful/options.js';
+import { routeFinalEdges } from '../hola-faithful/routing/finalRouting.js';
+import type { FinalEdge } from '../hola-faithful/routing/finalRouting.js';
 import type { GridAttachedOptions } from './options.js';
-
-/** Geometry as grid-like left it: the drawing every enlargement is derived from. */
-interface BaseGeometry {
-  nodes: Map<string, Point>;
-  edges: Map<string, { points: Point[]; x?: number; y?: number }>;
-}
 
 export interface CoreDrawing {
   componentId: string;
@@ -46,15 +56,18 @@ export interface CoreDrawing {
   nodes: Node[];
   /** The real Mermaid edges drawn inside the core. */
   edges: Edge[];
-  /** Edges that start and end on the same node: translated with it, never scaled. */
-  selfLoopEdgeIds: Set<string>;
   /** What grid-like reported for the core. */
   grid: GridLikeLayoutResult;
   /** Enlargement currently applied. 1 is grid-like's own drawing. */
   scale: number;
-  base: BaseGeometry;
+  /** Node positions as grid-like left them; every scale is derived from these. */
+  base: Map<string, Point>;
   /** Point every enlargement scales about. */
   centre: Point;
+  /** Orthogonal routes at the current scale, by original Mermaid edge id. */
+  routes: Map<string, Point[]>;
+  /** Edges the router could not route; drawn as a straight endpoint pair. */
+  unroutedEdgeIds: string[];
 }
 
 /**
@@ -84,29 +97,21 @@ export function drawCore(
   const layoutData = buildPartLayoutData(data, flat, part);
   const grid = drawCyclicPart(layoutData, options);
 
-  const base: BaseGeometry = {
-    nodes: new Map(layoutData.nodes.map((node) => [node.id, { x: node.x ?? 0, y: node.y ?? 0 }])),
-    edges: new Map(
-      layoutData.edges.map((edge) => [
-        edge.id,
-        { points: (edge.points ?? []).map((p) => ({ ...p })), x: edge.x, y: edge.y },
-      ])
-    ),
-  };
-
+  const base = new Map(
+    layoutData.nodes.map((node) => [node.id, { x: node.x ?? 0, y: node.y ?? 0 }])
+  );
   const bounds = coreBoundsOf(layoutData.nodes);
 
   return {
     componentId,
     nodes: layoutData.nodes,
     edges: layoutData.edges,
-    selfLoopEdgeIds: new Set(
-      layoutData.edges.filter((edge) => edge.start === edge.end).map((edge) => edge.id)
-    ),
     grid,
     scale: 1,
     base,
     centre: { x: (bounds.minX + bounds.maxX) / 2, y: (bounds.minY + bounds.maxY) / 2 },
+    routes: new Map(),
+    unroutedEdgeIds: [],
   };
 }
 
@@ -131,52 +136,90 @@ function coreEdgeIds(core: HolaGraph, flat: FlattenResult): string[] {
 /**
  * Stretch every core edge by `scale`, keeping the drawing's shape.
  *
- * Always applied to the base geometry rather than to whatever is currently on the
- * nodes, so walking the ladder is exact and reversible.
+ * Positions only — the routes are re-derived afterwards rather than scaled, so a
+ * wider core gets the shorter route the extra room allows instead of a stretched
+ * copy of the tighter one.
  */
 export function applyCoreScale(drawing: CoreDrawing, scale: number): void {
   const { centre, base } = drawing;
-  const at = (p: Point): Point => ({
-    x: centre.x + scale * (p.x - centre.x),
-    y: centre.y + scale * (p.y - centre.y),
-  });
 
-  const displacement = new Map<string, Point>();
   for (const node of drawing.nodes) {
-    const from = base.nodes.get(node.id);
+    const from = base.get(node.id);
     if (!from) {
       continue;
     }
-    const to = at(from);
-    displacement.set(node.id, { x: to.x - from.x, y: to.y - from.y });
-    node.x = to.x;
-    node.y = to.y;
-  }
-
-  for (const edge of drawing.edges) {
-    const from = base.edges.get(edge.id);
-    if (!from) {
-      continue;
-    }
-    // A self-loop is a fixed detour hugging its own node, not an edge between two
-    // nodes: scaling it would grow the loop, which is a change to how the core is
-    // drawn rather than a longer edge. It travels with its node instead.
-    const shift = drawing.selfLoopEdgeIds.has(edge.id)
-      ? (displacement.get(edge.start ?? '') ?? { x: 0, y: 0 })
-      : undefined;
-    const move = shift
-      ? (p: Point): Point => ({ x: p.x + shift.x, y: p.y + shift.y })
-      : (p: Point): Point => at(p);
-
-    edge.points = from.points.map(move);
-    if (from.x !== undefined && from.y !== undefined) {
-      const label = move({ x: from.x, y: from.y });
-      edge.x = label.x;
-      edge.y = label.y;
-    }
+    node.x = centre.x + scale * (from.x - centre.x);
+    node.y = centre.y + scale * (from.y - centre.y);
   }
 
   drawing.scale = scale;
+}
+
+/**
+ * Route the core's edges orthogonally at the current positions.
+ *
+ * `routeFinalEdges` is HOLA's own final router, used exactly as HOLA uses it: one
+ * pass to discover which side of each node an edge wants, a port assignment along
+ * those sides, then a second pass with both locked, so two edges arriving at the
+ * same side attach at different points instead of on top of each other. It also
+ * handles self-loops and bundles of parallel edges, and an edge it cannot route
+ * falls back to a straight endpoint pair with a diagnostic rather than vanishing.
+ *
+ * Called once per rung of the enlargement ladder, because a route is only as good
+ * as the positions it was found for.
+ */
+export function routeCoreEdges(
+  drawing: CoreDrawing,
+  core: HolaGraph,
+  flat: FlattenResult,
+  options: GridAttachedOptions,
+  diagnostics: DiagnosticCollector
+): void {
+  const rects = coreRects(drawing, core);
+  const finalEdges: FinalEdge[] = [];
+
+  for (const edge of core.edges.values()) {
+    const originals = edge.originalEdgeIds;
+    originals.forEach((originalEdgeId, index) => {
+      finalEdges.push({
+        originalEdgeId,
+        source: edge.source,
+        target: edge.target,
+        mandatoryWaypoints: [],
+        parallelIndex: index,
+        parallelCount: originals.length,
+      });
+    });
+  }
+  for (const loop of flat.selfLoops) {
+    if (!rects.has(loop.source)) {
+      continue;
+    }
+    finalEdges.push({
+      originalEdgeId: loop.originalEdgeId,
+      source: loop.source,
+      target: loop.target,
+      mandatoryWaypoints: [],
+      parallelIndex: 0,
+      parallelCount: 1,
+    });
+  }
+
+  const routed = routeFinalEdges(
+    rects,
+    finalEdges,
+    resolveHolaOptions({
+      routingClearance: options.routingClearance,
+      routingBendPenalty: options.routingBendPenalty,
+      routingCrossingPenalty: options.routingCrossingPenalty,
+      routingMaxExpansions: options.routingMaxExpansions,
+    }),
+    diagnostics,
+    drawing.componentId
+  );
+
+  drawing.routes = new Map(routed.edges.map((edge) => [edge.originalEdgeId, edge.points]));
+  drawing.unroutedEdgeIds = routed.failed;
 }
 
 /** The core nodes as HOLA rectangles at their current positions. */
@@ -199,32 +242,27 @@ export function coreRects(drawing: CoreDrawing, core: HolaGraph): Map<string, Ho
 }
 
 /**
- * The core's edges as straight segments between node centres, which is what
- * grid-like's write-back draws. They are obstacles for tree placement and the
- * geometry the core's faces are read from.
+ * The drawn core edges, as the axis-aligned pieces of their routes.
+ *
+ * These are what a tree has to keep clear of, and what the core's faces are read
+ * from. Both used to work off straight centre-to-centre lines; now that the core
+ * is routed, both see the geometry that is actually drawn.
  */
 export function coreSegments(drawing: CoreDrawing, core: HolaGraph): CoreSegment[] {
-  const rects = coreRects(drawing, core);
   const segments: CoreSegment[] = [];
 
   for (const edge of core.edges.values()) {
-    const a = rects.get(edge.source);
-    const b = rects.get(edge.target);
-    if (!a || !b || (a.x === b.x && a.y === b.y)) {
-      continue;
+    const route = routeOf(drawing, edge);
+    for (let i = 1; i < route.length; i++) {
+      segments.push({
+        edgeId: edge.id,
+        source: edge.source,
+        target: edge.target,
+        a: route[i - 1],
+        b: route[i],
+        originalEdgeIds: [...edge.originalEdgeIds],
+      });
     }
-    segments.push({
-      edgeId: edge.id,
-      source: edge.source,
-      target: edge.target,
-      a: { x: a.x, y: a.y },
-      b: { x: b.x, y: b.y },
-      // The painter clips both ends against the node shapes, so only the part
-      // between the two boundaries is drawn — and only that part is an obstacle.
-      drawnA: exitPoint(a, { x: b.x, y: b.y }),
-      drawnB: exitPoint(b, { x: a.x, y: a.y }),
-      originalEdgeIds: [...edge.originalEdgeIds],
-    });
   }
 
   return segments;
@@ -234,13 +272,32 @@ export interface CoreSegment {
   edgeId: string;
   source: string;
   target: string;
-  /** Node centres: the vertices the core's faces are read from. */
   a: Point;
   b: Point;
-  /** The part actually drawn, clipped at both node boundaries. */
-  drawnA: Point;
-  drawnB: Point;
   originalEdgeIds: string[];
+}
+
+/**
+ * The core's topological edges carrying their routes, which is the shape HOLA's
+ * planariser reads.
+ */
+export function routedCoreEdges(drawing: CoreDrawing, core: HolaGraph): HolaEdge[] {
+  return [...core.edges.values()].map((edge) => ({ ...edge, route: routeOf(drawing, edge) }));
+}
+
+/**
+ * One route per topological edge. A bundle of parallel edges is drawn as several
+ * routes; the first stands for the bundle, because the faces and the obstacles
+ * care where the connection runs, not how many lines run there.
+ */
+function routeOf(drawing: CoreDrawing, edge: HolaEdge): Point[] {
+  for (const originalEdgeId of edge.originalEdgeIds) {
+    const route = drawing.routes.get(originalEdgeId);
+    if (route && route.length >= 2) {
+      return route;
+    }
+  }
+  return [];
 }
 
 export function coreBoundsOf(nodes: Node[]): Bounds {

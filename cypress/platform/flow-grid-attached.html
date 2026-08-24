@@ -28,12 +28,22 @@
       before internal.
     </p>
     <p class="note">
-      The one liberty taken with the core is <strong>enlargement</strong>. HOLA makes room for a
-      tree by expanding the face around it, which moves core nodes and would destroy the alignments
-      that make a grid-like drawing grid-like. So instead every core node is moved away from the
-      core's centre by a common factor: every core edge gets longer and nothing else changes — the
-      same picture, more room. That factor is raised only as far as it pays for itself against the
-      dead stubs it saves.
+      The core's <strong>edges</strong> are this layout's own, though its node positions are not.
+      grid-like draws each edge as a straight line between two node centres; on a grid-like drawing
+      many of those are axis-aligned, but any pair the alignment pass did not align gets a diagonal
+      — and a diagonal is free to run straight through a third node's box, which it does. So the
+      routes are replaced, and the positions are not, by orthogonal ones from HOLA's own router,
+      which avoids the node rectangles, prefers few bends and penalises both crossing an edge
+      already routed and running along one. This is what HOLA itself does: an orthogonally routed
+      core is its Step 2c, and the straight centre-to-centre line is an IPSEP-COLA convention.
+    </p>
+    <p class="note">
+      The one liberty taken with the core's <em>layout</em> is <strong>enlargement</strong>. HOLA
+      makes room for a tree by expanding the face around it, which moves core nodes and would
+      destroy the alignments that make a grid-like drawing grid-like. So instead every core node is
+      moved away from the core's centre by a common factor: every core edge gets longer and nothing
+      else changes — the same picture, more room. That factor is raised only as far as it pays for
+      itself against the dead stubs it saves.
     </p>
 
     <h3>Core with two trees (TB)</h3>
@@ -143,6 +153,40 @@ flowchart LR
   c1 --> c3
   E --> e1
   e1 --> e2
+    </pre>
+
+    <h3>Diagonals gone — a core whose alignment pass left pairs unaligned</h3>
+    <p class="note">
+      Twelve of these sixteen nodes survive leaf peeling, so most of this diagram is core. Under
+      <code>grid-like</code> five of its core edges come out diagonal, one of them a long slanted
+      run carrying the <code>yes</code> label, and the <code>classify → full</code> edge passes
+      straight through the <code>SAME-GRAPH RELAYOUT</code> box. Every node here sits exactly where
+      grid-like put it; only the routes differ.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TD
+    edit["Editor text edit"] --> classify["Editor classifies edit"]
+    classify --> noop["NOOP: keep current SVG"]
+    classify --> local["LOCAL PATCH: update live SVG"]
+    classify --> relayout["SAME-GRAPH RELAYOUT"]
+    classify --> full["FULL MERMAID FALLBACK"]
+    local --> patch["Patch label/node/edge label"]
+    patch --> resize["Resize local box and retarget edges"]
+    resize --> overlap{"Overlap or invalid geometry?"}
+    overlap -->|no| done["Done without Mermaid render"]
+    overlap -->|yes| relayout
+    relayout --> sizes["Reuse known sizes where valid"]
+    sizes --> worker["Run pure layout, preferably in worker"]
+    worker --> move["Move existing SVG nodes, edges, labels"]
+    move --> compare{"Supported and valid?"}
+    compare -->|yes| done
+    compare -->|no| full
+    full --> fallback["Render from parsed data without parsing twice"]
+    fallback --> replace["Replace SVG from Mermaid render"]
     </pre>
 
     <h3>Two components, each decomposed and reassembled on its own</h3>

@@ -109,6 +109,7 @@ keyify
 Kieffer
 Klau
 koren
+Kuratowski
 LABELPOS
 LABELTYPE
 layoutstop

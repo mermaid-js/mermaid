@@ -133,7 +133,33 @@ describe('Flowchart grid-attached', () => {
     );
   });
 
-  it('8-grid-attached: should draw every node and every edge exactly once', () => {
+  it('8-grid-attached: should route a mostly-core diagram without diagonals', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      edit["Editor text edit"] --> classify["Editor classifies edit"]
+      classify --> noop["NOOP: keep current SVG"]
+      classify --> local["LOCAL PATCH: update live SVG"]
+      classify --> relayout["SAME-GRAPH RELAYOUT"]
+      classify --> full["FULL MERMAID FALLBACK"]
+      local --> patch["Patch label/node/edge label"]
+      patch --> resize["Resize local box and retarget edges"]
+      resize --> overlap{"Overlap or invalid geometry?"}
+      overlap -->|no| done["Done without Mermaid render"]
+      overlap -->|yes| relayout
+      relayout --> sizes["Reuse known sizes where valid"]
+      sizes --> worker["Run pure layout, preferably in worker"]
+      worker --> move["Move existing SVG nodes, edges, labels"]
+      move --> compare{"Supported and valid?"}
+      compare -->|yes| done
+      compare -->|no| full
+      full --> fallback["Render from parsed data without parsing twice"]
+      fallback --> replace["Replace SVG from Mermaid render"]
+      `,
+      gridAttached
+    );
+  });
+
+  it('9-grid-attached: should draw every node and every edge exactly once', () => {
     renderGraph(CORE_WITH_TWO_TREES, { ...gridAttached, screenshot: false });
 
     // Nine declared nodes, nothing duplicated — the trees hang off the real core
