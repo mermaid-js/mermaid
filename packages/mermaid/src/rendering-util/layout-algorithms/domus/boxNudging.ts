@@ -460,3 +460,142 @@ export function nudgeOverlappingLeafNodes(
   log.debug(ORTHO_DEBUG, 'BOX_NUDGE', payload, JSON.stringify(payload));
   return { changed: moves > 0, moves, iterations, remainingOverlaps: remaining };
 }
+
+/**
+ * Convergent overlap removal, run once at the end of coordinate assignment.
+ *
+ * `nudgeOverlappingLeafNodes` picks the single worst overlapping pair and pushes
+ * both halfway apart, repeatedly. That has no convergence guarantee: separating
+ * A from B can drive either into C, which becomes the next worst pair and pushes
+ * back. On `domus/architecture4` it made 400 moves across 400 iterations and
+ * cleared 6 of 25 pairs — not slow progress, oscillation.
+ *
+ * This is a single-axis sweep. Sort by centre along one axis, walk in that order,
+ * and push each node just clear of every earlier node it still overlaps. Nodes
+ * only ever move forward and are visited in sorted order, so a pair separated at
+ * step i cannot be re-overlapped at step j \> i: one pass removes every overlap,
+ * with no iteration limit involved.
+ *
+ * Two rectangles overlap only if they overlap on BOTH axes, so separating on
+ * either axis alone suffices; which one is purely aesthetic, so both are computed
+ * and the smaller total displacement wins — the choice that disturbs DOMUS's
+ * arrangement least.
+ *
+ * WHERE this runs matters as much as what it does. It belongs at the end of
+ * coordinate assignment, before any edge is routed: routing then sees final,
+ * non-overlapping geometry, and the repair passes downstream have nothing to
+ * chase. Run instead as a post-pass after routing, it has to fight the Gx-class
+ * snap (which pulls nodes back onto shared columns and silently undoes it) and
+ * it re-opens every route it moves an endpoint of — measured at 2.5x the corpus
+ * work budget for no score gain.
+ */
+export function separateOverlapsBySweep(
+  layout: LayoutData,
+  opts: { padding?: number; preferAxis?: 'x' | 'y' } = {}
+): BoxNudgeResult {
+  const padding = opts.padding ?? 10;
+  const nodes = (layout.nodes ?? []).filter((n) => n?.id != null && isLeaf(n));
+  if (nodes.length < 2) {
+    return { changed: false, moves: 0, iterations: 0, remainingOverlaps: 0 };
+  }
+
+  let initial = 0;
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i];
+      const b = nodes[j];
+      if (a && b && overlapAmount(rectForNode(a), rectForNode(b))) {
+        initial++;
+      }
+    }
+  }
+  if (initial === 0) {
+    return { changed: false, moves: 0, iterations: 0, remainingOverlaps: 0 };
+  }
+
+  const origin = new Map<string, { x: number; y: number }>();
+  for (const n of nodes) {
+    origin.set(String(n.id), { x: Number((n as any).x ?? 0), y: Number((n as any).y ?? 0) });
+  }
+
+  const sweep = (axis: 'x' | 'y'): { pos: Map<string, number>; displacement: number } => {
+    const other = axis === 'x' ? 'y' : 'x';
+    const halfOn = (n: Node) => Number((axis === 'x' ? n.width : n.height) ?? 0) / 2;
+    const halfOff = (n: Node) => Number((other === 'x' ? n.width : n.height) ?? 0) / 2;
+
+    const pos = new Map<string, number>();
+    for (const n of nodes) {
+      pos.set(String(n.id), origin.get(String(n.id))![axis]);
+    }
+    const order = [...nodes].sort((a, b) => {
+      const d = origin.get(String(a.id))![axis] - origin.get(String(b.id))![axis];
+      return d !== 0 ? d : String(a.id).localeCompare(String(b.id));
+    });
+
+    for (let i = 1; i < order.length; i++) {
+      const cur = order[i];
+      const curId = String(cur.id);
+      const curOff = origin.get(curId)![other];
+      let lowestAllowed = pos.get(curId)!;
+      for (let j = 0; j < i; j++) {
+        const prev = order[j];
+        const prevId = String(prev.id);
+        if (Math.abs(curOff - origin.get(prevId)![other]) >= halfOff(cur) + halfOff(prev)) {
+          continue;
+        }
+        const required = pos.get(prevId)! + halfOn(prev) + padding + halfOn(cur);
+        if (required > lowestAllowed) {
+          lowestAllowed = required;
+        }
+      }
+      pos.set(curId, lowestAllowed);
+    }
+
+    let displacement = 0;
+    for (const n of nodes) {
+      displacement += Math.abs(pos.get(String(n.id))! - origin.get(String(n.id))![axis]);
+    }
+    return { pos, displacement };
+  };
+
+  const candidates: { axis: 'x' | 'y'; pos: Map<string, number>; displacement: number }[] = [];
+  if (opts.preferAxis !== 'y') {
+    candidates.push({ axis: 'x', ...sweep('x') });
+  }
+  if (opts.preferAxis !== 'x') {
+    candidates.push({ axis: 'y', ...sweep('y') });
+  }
+  candidates.sort((a, b) => a.displacement - b.displacement || a.axis.localeCompare(b.axis));
+  const chosen = candidates[0];
+
+  let moves = 0;
+  for (const n of nodes) {
+    const id = String(n.id);
+    const next = chosen.pos.get(id)!;
+    if (Math.abs(next - origin.get(id)![chosen.axis]) > 1e-6) {
+      (n as any)[chosen.axis] = next;
+      moves++;
+    }
+  }
+
+  let remaining = 0;
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const a = nodes[i];
+      const b = nodes[j];
+      if (a && b && overlapAmount(rectForNode(a), rectForNode(b))) {
+        remaining++;
+      }
+    }
+  }
+
+  log.debug(ORTHO_DEBUG, 'SWEEP_SEPARATE', {
+    axis: chosen.axis,
+    displacement: Math.round(chosen.displacement),
+    initialOverlaps: initial,
+    moves,
+    remainingOverlaps: remaining,
+  });
+
+  return { changed: moves > 0, moves, iterations: 1, remainingOverlaps: remaining };
+}

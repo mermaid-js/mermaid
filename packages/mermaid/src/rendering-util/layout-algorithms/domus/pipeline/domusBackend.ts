@@ -12,6 +12,7 @@ import { nudgeConnectedPairsForMinGap } from '../edgeGapNudging.js';
 import {
   nudgeLeafNodesAwayFromNonAncestorGroups,
   nudgeOverlappingLeafNodes,
+  separateOverlapsBySweep,
 } from '../boxNudging.js';
 import { nudgeEdgeLabelNodesToAvoidOverlaps } from '../labelNudging.js';
 import { applyPortDirectionStubs } from './portStubs.js';
@@ -568,6 +569,16 @@ export function maybeHandleDomusBackend(args: {
         threshold: snapThreshold,
       });
     }
+
+    // Coordinate assignment is finished here — the Gx snap above was the last
+    // thing to move a leaf — and nothing has been routed yet, so this is the one
+    // point where residual overlap can be cleared for free. Later is worse in
+    // two ways: the snap undoes the separation, and moving an endpoint after
+    // routing re-opens the route and every repair pass that already ran on it.
+    separateOverlapsBySweep(data, {
+      padding: Math.max(4, Math.min(40, ctx.spacing)),
+      preferAxis: ctx.preferAxisForVerticalFlow,
+    });
 
     // DOMUS moves only leaf vertices; refresh group rectangles from their
     // descendants before any routing pass reads group endpoints/boundaries.
