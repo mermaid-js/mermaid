@@ -492,3 +492,47 @@ run ended: architecture4 at 11 issues, ceiling 830, score 0. Kept rounds 2, 4, 5
 - fix attempted: try label anchors along the new polyline (as `simplifyEdgeJogs` does) before judging.
 - result: NEUTRAL, 12 issues and HARD=6 either way. The label cannot sit on the new route without straddling the group frame, so `edge-label-off-edge` is simply traded for `edge-label-overlaps-group-border`. REVERTED (adds validations per candidate for no gain).
 - lesson: for an edge leaving a GROUP, the label has nowhere good to go — the route hugs the frame it just left. Group-edge labels need their own placement rule, not a generic midpoint search. That, plus `L_LanternML_Monitoring_0` still getting zero candidates, is what stands between architecture4 and validity.
+
+### round 23 — bendless routes exempt from MIN_STUB (KEPT, commit 2f6cc4c2f)
+- MIN_STUB (11) guards the segment before a BEND; a straight two-point route has none, but the guard was applied to it anyway. `Monitoring` sits 10px left of the LanternML frame and level with it, so the ideal route is the straight hop (294,444)->(284,444) — discarded before it was scored, leaving a six-point detour back INTO the group.
+- architecture4 bend 95 -> 90. Corpus neutral, no fixture moved. The mismatch survives (candidate now built, still rejected downstream), so this removed one of two blockers on that edge.
+
+### round 24 — nodeGroupClearance made configurable (KEPT, commit 99c476724), user-requested
+- the gap was hardcoded in FOUR places and one disagreed: validateLayout 20, nodeGroupSpacing 20, cluster.ts 20, and the domusBackend nudger calls passing the generic spacing pad of 10.
+- schema-first per repo rule: added `flowchart.nodeGroupClearance` (integer, min 0, default 20) to config.schema.yaml, regenerated config.type.ts, `types:verify-config` passes. All four sites now call `nodeGroupClearanceOf(layout)`.
+- verified default 20 / override 35 / explicit 0 / negative-falls-back. Corpus BYTE-IDENTICAL at the default (55934, invalid 5, work 904,684,014 to the unit) — pure refactor plus a knob. Changeset added (minor).
+
+### round 25 — in-place squaring for non-orthogonal segments (REVERTED, no-op)
+- `candidateRoutes` discards the whole polyline and rebuilds a naive four-point L, obstacle-blind. `L_EndUser_MLProduct_0` is orthogonal for its first two segments and only its tail goes diagonal, so the rebuild throws away good geometry. Added minimal-edit candidates: route the diagonal through either corner, leaving every other segment untouched.
+- result: NO CHANGE. `repairNonOrthogonalEdgesWhenIssuesImprove` runs in the BACKEND, not in `runLateQualityPasses` — the diagonal is introduced after it has already run, so the pass never sees the defect. Improving its candidate set cannot help. REVERTED.
+- lesson (fourth time this session): before improving a pass, confirm it actually RUNS at the point the defect exists. Rounds 9, 18, 22 and 25 all failed this way — a sound fix aimed at a pass that was not in the relevant part of the pipeline.
+
+run ended: 25 rounds, 11 kept, 14 reverted. architecture4 66 -> 12 issues, 6 hard, ceiling ~864, score 0. Corpus 55014 -> 55934, invalid 7 -> 5.
+
+### round 26 — run the non-orthogonal repair in the late stage too (REVERTED, no-op)
+- direct consequence of round 25: the pass only ran in the DOMUS backend, so a diagonal introduced later was never seen. Wired it into `runLateQualityPasses` as well, together with the in-place squaring candidates.
+- result: STILL NO CHANGE. `L_EndUser_MLProduct_0` remains diagonal. So the defect is introduced even later than the late passes.
+- NEXT LEAD (untested): `stripDegenerateEdgePoints` runs immediately after `runLateQualityPasses` in `layout()`. Removing a point it judges redundant would turn an orthogonal L into a diagonal — which matches the symptom exactly (an orthogonal layout emitting a non-orthogonal edge with nothing downstream able to repair it). Check whether it preserves orthogonality before deleting a point.
+- REVERTED.
+- LEAD REFUTED, same session: `stripDegenerateEdgePoints` only drops points COINCIDENT within 1e-3 and never removes a corner, so it cannot turn an orthogonal route into a diagonal. Do not chase it.
+- what remains true: `L_EndUser_MLProduct_0` ships with two diagonal tail segments; the only pass that repairs `edge-non-orthogonal` cannot clear it even when run in the late stage with minimal-edit candidates. Either the diagonal predates every repair and all candidates fail the accept gate, or something between the backend and paint rewrites those points. Bisect `layout()` between `runLateQualityPasses` and paint with a per-edge orthogonality assertion — that is the one measurement nobody has taken.
+
+## RUN CLOSED — 26 rounds, 11 kept, 15 reverted
+    corpus     55014 -> 55934 (+920), invalid 7 -> 5, cost 823.6M -> 904.7M (ceiling 996M)
+    triage     561 issues / 98 overlaps -> 12 / 0
+    er-db-model, svelte5-code -> VALID
+    architecture 754 -> 792
+    architecture4 66 issues -> 12 (6 hard), ceiling 420 -> 864, score 0 — GOAL NOT MET
+
+### the four lessons worth carrying
+1. Compute the achievable CEILING from the score breakdown before accepting a numeric per-fixture goal. `score=0` hides whether the gap is 400 points of defects or 900 of quality. Cost: twelve rounds.
+2. When a metric fix keeps failing, instrument the SOLVER, not the geometry. One console.log inside Kahn's loop found what twelve rounds of separation/padding/gating tuning missed.
+3. Before improving a pass, confirm it RUNS where the defect exists. Rounds 9, 18, 22, 25, 26 all failed this way.
+4. Take the corpus reading before reverting on one fixture's issue count. The clearance fix looked bad on architecture4 and was corpus-neutral and correct.
+
+### round 27 — group-aware label anchoring (REVERTED) — but it SETTLES handover item 1
+- implemented properly: carry the label onto the rerouted polyline AND reject any anchor whose label rect would be cut by a group frame (the validator's rule is `segmentIntersectsRectInterior` against all four border segments, so a label must be ENTIRELY inside a group or ENTIRELY outside — never across the line).
+- result: NO improvement, 12 issues / HARD 6, bend 90 -> 95. REVERTED.
+- WHY, and this is the useful part: the filter returns ZERO legal anchors for `L_LanternML_KeySafe_0`. Every sampled point on every candidate route straddles the frame, because the route hugs the LanternML border along its whole length. There is no label position to find.
+- CONCLUSION for handover item 1: this is NOT a label-placement problem and no anchoring strategy can solve it. The label needs the ROUTE to stand off the group frame by at least half the label's extent. That is a routing-clearance constraint — group frames need a label-width keep-out margin when an edge leaving the group carries a label — and it belongs in routing, not in any label pass.
+- three attempts in this area (18, 22, 27) all failed for the same underlying reason; only this one measured why.
