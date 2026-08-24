@@ -275,6 +275,22 @@ export function refreshClustersAfterLeafPlacement(
     return;
   }
   preprocessClusters(data, options);
+  // Clean up after the cluster pass, because it moves leaves and does not check
+  // whether it has just stacked them.
+  //
+  // `preprocessClusters` resolves group overlaps by displacing a group with its
+  // children, and pushes foreign leaves clear of group frames. Neither step
+  // looks at leaf-to-leaf overlap. On `domus/architecture4` that put `Lumens`
+  // — a flat node with no parent, merely sitting 10px off the `LanternML`
+  // frame — 25.5px down and straight into `VendAI`, recreating an overlap the
+  // sweep had cleared three lines earlier. That single pair was enough to hold
+  // the whole fixture at score 0, since node-overlap is a hard issue.
+  //
+  // The sweep returns immediately when there is nothing overlapping, so this
+  // costs nothing on the overwhelming majority of calls.
+  separateOverlapsBySweep(data, {
+    padding: Math.max(4, Math.min(40, options.spacing ?? 10)),
+  });
 }
 
 interface DomusBackendContext {
