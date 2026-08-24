@@ -12,6 +12,7 @@ Backjumping
 bary
 Bary
 Bekos
+Biedl
 Bigdecimal
 birel
 BIREL
@@ -79,6 +80,7 @@ flatmap
 forwardable
 frontmatter
 funs
+Gansner
 gantt
 GENERICTYPE
 grammr
@@ -188,6 +190,7 @@ TESTSTR
 TEXTDATA
 TEXTLENGTH
 titlevalue
+Tollis
 topbar
 topo
 TRAPEND
@@ -221,3 +224,4 @@ yaxis
 yfunc
 yytext
 zenuml
+Zink

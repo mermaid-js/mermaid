@@ -32,6 +32,10 @@ import { repairShortEndpointStubs } from './endpointStubRepair.js';
 import { repairEndpointApproachesWhenIssuesImprove } from './endpointExteriorRepair.js';
 import { repairNonOrthogonalEdgesWhenIssuesImprove } from './nonOrthogonalRepairPass.js';
 import { applyLayeredPlacementFallback } from './layeredPlacementFallback.js';
+import {
+  separateDisconnectedComponents,
+  type ComponentSeparationResult,
+} from './componentSeparation.js';
 import { snapEndpointsToBoundaries } from './snapEndpointsToBoundaries.js';
 import {
   applyEdgePathsToLayout,
@@ -307,6 +311,23 @@ interface DomusBackendContext {
    * `preferAxis?: 'x' | 'y'` so undefined is the "no preference" sentinel.
    */
   preferAxisForVerticalFlow?: 'x' | 'y';
+}
+
+/**
+ * Gap left between packed component drawings. Generous relative to node
+ * spacing on purpose: the boundary between two components is the one place in
+ * the drawing where no edge ever needs to cross, so a wide, obviously empty
+ * channel there reads as "these are separate graphs" and costs nothing in
+ * routing space.
+ */
+function componentGapOf(spacing: number): number {
+  return Math.max(40, spacing * 6);
+}
+
+function logComponentSeparation(result: ComponentSeparationResult): void {
+  if (result.changed) {
+    log.debug(ORTHO_DEBUG, 'COMPONENT_SEPARATION', result);
+  }
 }
 
 export function maybeHandleDomusBackend(args: {
@@ -596,6 +617,14 @@ export function maybeHandleDomusBackend(args: {
       padding: Math.max(4, Math.min(40, ctx.spacing)),
       preferAxis: ctx.preferAxisForVerticalFlow,
     });
+
+    // Disconnected components carry no mutual constraint through the shape, so
+    // DOMUS is free to overlay them (see `componentSeparation.ts`). Pack them
+    // apart here, on the same boundary and for the same reason as the sweep
+    // above: coordinate assignment is finished, nothing is routed yet.
+    logComponentSeparation(
+      separateDisconnectedComponents(data, { gap: componentGapOf(ctx.spacing) })
+    );
 
     // DOMUS moves only leaf vertices; refresh group rectangles from their
     // descendants before any routing pass reads group endpoints/boundaries.
@@ -1019,6 +1048,11 @@ export function maybeHandleDomusBackend(args: {
       padding: Math.max(4, Math.min(40, options.spacing ?? 10)),
       preferAxis: ctx.preferAxisForVerticalFlow,
     });
+
+    // Same boundary, same reason as the cycle-removal branch above.
+    logComponentSeparation(
+      separateDisconnectedComponents(data, { gap: componentGapOf(options.spacing ?? 10) })
+    );
 
     // Re-run routing using the routing-graph backend while keeping node positions fixed.
     // This is a conservative fallback that aims to satisfy orthogonality + obstacle avoidance.
