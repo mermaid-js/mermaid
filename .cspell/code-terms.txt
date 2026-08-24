@@ -87,6 +87,7 @@ grammr
 graphtype
 halign
 Hanan
+Hegemann
 hseg
 hsegs
 Idxs
@@ -218,6 +219,7 @@ wildside
 Wirth
 worktree
 worktrees
+wueortho
 Wybrow
 xhost
 yaxis

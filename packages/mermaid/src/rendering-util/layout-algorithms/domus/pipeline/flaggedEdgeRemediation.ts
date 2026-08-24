@@ -1122,8 +1122,211 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
  * grow the total issue count. Runs after issue remediation; a clean, already
  * simple layout is a no-op.
  */
+/**
+ * Replace a self-retracing stretch of a route with a direct orthogonal connector
+ * between two vertices the polyline already visits.
+ *
+ * `simplifyPathologicalRoutesWhenMonotone` above rebuilds a fat route from
+ * scratch out of canonical L/Z shapes and compound routes between the two
+ * PORTS. That works when a simple shape exists end to end, and cannot help when
+ * the route legitimately has to weave — most of a weaving route is doing useful
+ * work, and only one stretch of it is waste.
+ *
+ * `domus/er-db-model` is the case. One edge shipped a 13-point polyline:
+ *
+ *   (1922,908) (1892,908) (1892,1088) (1269,1088) (1269,969)
+ *   (1095,969) (1095,908) (1075,908) (1075,919) (968,919) (968,979)
+ *   (1199,979) (1199,999)
+ *
+ * The first five points are necessary — they get the route below
+ * CHARTER_INVITE and back up. The tail then wanders out to x=968 and returns to
+ * x=1199 to enter the target, achieving nothing. Splicing one L between
+ * (1269,969) and the final point yields a clean 7-point route. That matters far
+ * more than the point count suggests: the per-edge bend penalty is exponential
+ * past six points, so 13 points cost 3840 against a 1000-point budget and held
+ * an otherwise VALID fixture at score 0. The 7-point route scores 912.
+ *
+ * Paper background. The rewrite-by-splicing shape is wueortho's: it replaces
+ * "the section between the first and last shared vertex in one path with the
+ * corresponding section of the other" (Hegemann & Wolff, §Edge Routing). The
+ * difference here is that our connector is synthesised rather than borrowed from
+ * another valid path, so it inherits no clearance guarantee and gets a full
+ * obstacle sweep before it is considered — `candidateCutsLeafInterior` over
+ * every non-endpoint leaf.
+ *
+ * Two invariants the corpus does pin down are enforced explicitly:
+ *
+ * - **Terminal exemption is scoped to the edge's OWN endpoints.** Dwyer,
+ *   Marriott and Wybrow define a valid path as one where "no segment passes
+ *   through a node rectangle, except the first and last segments in a path
+ *   corresponding to an edge which must terminate at the centre of rectangles"
+ *   (§3). The exemption covers a segment against its own endpoint box and
+ *   nothing else, which is why the sweep excludes only `startId`/`endId`.
+ * - **Port entry direction is fixed upstream and may not be rewritten.** A port
+ *   carries a direction of visibility and the routing search is keyed on it, so
+ *   a shortcut that reverses which side the route enters is not a
+ *   simplification, it is a different route. The first and last segment
+ *   directions of the spliced polyline must match the original's.
+ *
+ * Everything else is left to the same monotone gate the sibling pass uses: the
+ * layout may not gain an issue, and a labelled edge gets its anchor tried along
+ * the new polyline before the candidate is judged.
+ */
+function shortcutRetracingStretchesWhenMonotone(layout: LayoutData): void {
+  const MIN_POINTS = 8;
+  /** Cap on spliced candidates examined per edge per round; see cost note below. */
+  const MAX_TRIALS_PER_EDGE = 48;
+
+  let current = checkLayout(layout);
+
+  const nodeById = new Map<string, Node>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null) {
+      nodeById.set(String(n.id), n);
+    }
+  }
+
+  const edges = (layout.edges ?? []) as {
+    id?: string;
+    start?: string;
+    end?: string;
+    points?: Point[];
+    x?: number;
+    y?: number;
+    label?: unknown;
+  }[];
+
+  const dirOf = (a: Point, b: Point): string => {
+    if (Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6) {
+      return '0';
+    }
+    if (Math.abs(a.y - b.y) < 1e-6) {
+      return b.x > a.x ? 'R' : 'L';
+    }
+    if (Math.abs(a.x - b.x) < 1e-6) {
+      return b.y > a.y ? 'D' : 'U';
+    }
+    return '?';
+  };
+  const endpointDirs = (pts: Point[]): string =>
+    `${dirOf(pts[0], pts[1])}|${dirOf(pts[pts.length - 2], pts[pts.length - 1])}`;
+
+  const isOrthogonal = (pts: Point[]): boolean => {
+    for (let i = 0; i < pts.length - 1; i++) {
+      const d = dirOf(pts[i], pts[i + 1]);
+      if (d === '?') {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  for (let round = 0; round < MAX_ROUNDS; round++) {
+    let improvedThisRound = false;
+
+    const fat = edges
+      .filter((e) => Array.isArray(e.points) && e.points.length >= MIN_POINTS)
+      .sort((a, b) => (b.points?.length ?? 0) - (a.points?.length ?? 0));
+    if (fat.length === 0) {
+      return;
+    }
+
+    for (const e of fat) {
+      const old = e.points!;
+      const oldX = e.x;
+      const oldY = e.y;
+      const startId = e.start != null ? String(e.start) : '';
+      const endId = e.end != null ? String(e.end) : '';
+      const wantDirs = endpointDirs(old);
+      const hasLabel = e.label != null && Number.isFinite(e.x) && Number.isFinite(e.y);
+      const curKeys = new Set((current.issues as Issue[]).map(issueKey));
+
+      // Build the splice candidates, largest saving first. A pair (i, j) keeps
+      // pts[0..i] and pts[j..], joining them with a straight run or a single
+      // corner, so it removes (j - i - 1) or (j - i - 2) points respectively.
+      const trials: { pts: Point[]; saved: number }[] = [];
+      for (let i = 0; i + 3 < old.length; i++) {
+        for (let j = old.length - 1; j - i >= 3; j--) {
+          const a = old[i];
+          const b = old[j];
+          const head = old.slice(0, i + 1);
+          const tail = old.slice(j);
+          if (Math.abs(a.x - b.x) < 1e-6 || Math.abs(a.y - b.y) < 1e-6) {
+            trials.push({ pts: [...head, ...tail], saved: j - i - 1 });
+            continue;
+          }
+          for (const corner of [
+            { x: a.x, y: b.y },
+            { x: b.x, y: a.y },
+          ]) {
+            trials.push({ pts: [...head, corner, ...tail], saved: j - i - 2 });
+          }
+        }
+      }
+      trials.sort((p, q) => q.saved - p.saved);
+
+      let accepted = false;
+      let examined = 0;
+      for (const trial of trials) {
+        if (accepted || examined >= MAX_TRIALS_PER_EDGE) {
+          break;
+        }
+        const cand = trial.pts;
+        if (cand.length >= old.length || cand.length < 2) {
+          continue;
+        }
+        // Cheap geometric rejects first — a full `checkLayout` is the expensive
+        // part of this pass, so nothing reaches it that cannot possibly pass.
+        if (!isOrthogonal(cand)) {
+          continue;
+        }
+        if (endpointDirs(cand) !== wantDirs) {
+          continue;
+        }
+        if (candidateCutsLeafInterior(cand, nodeById, startId, endId)) {
+          continue;
+        }
+        examined++;
+
+        e.points = cand;
+        const anchors = hasLabel ? labelAnchors(cand) : [{ x: oldX ?? 0, y: oldY ?? 0 }];
+        for (const anchor of anchors) {
+          if (hasLabel) {
+            e.x = anchor.x;
+            e.y = anchor.y;
+          }
+          const next = checkLayout(layout);
+          const notWorse = next.issues.length <= current.issues.length;
+          const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
+          if (notWorse && noNew) {
+            current = next;
+            improvedThisRound = true;
+            accepted = true;
+            break;
+          }
+        }
+        if (!accepted) {
+          e.points = old;
+          e.x = oldX;
+          e.y = oldY;
+        }
+      }
+    }
+
+    if (!improvedThisRound) {
+      return;
+    }
+  }
+}
+
 export function simplifyPathologicalRoutesWhenMonotone(layout: LayoutData): void {
   const MIN_POINTS = 8;
+
+  // Whole-route rebuilds first: when a canonical shape spans the two ports it
+  // is the better answer, and it leaves nothing for the splicer to do. What
+  // survives is the genuinely weaving route, where only one stretch is waste.
+  shortcutRetracingStretchesWhenMonotone(layout);
+
   let current = checkLayout(layout);
 
   const nodeById = new Map<string, Node>();
