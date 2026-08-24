@@ -172,7 +172,7 @@ Arrowheads occupy roughly ten pixels of the final segment. A bend inside that st
 
 ### Self-loops and parallel edges
 
-An edge with `start === end` has no direction to follow and needs its own route, usually a small rectangle off one side of the node. Parallel edges between the same pair need to be separated by hand, or they render as one line. Fixtures for both live in `cypress/platform/dev-diagrams/layout-tests/` as `self-loop-2.mmd`, `self-loop-multi.mmd`, and `identical-edges.mmd`.
+An edge with `start === end` has no direction to follow and needs its own route, usually a small rectangle off one side of the node. Parallel edges between the same pair need to be separated by hand, or they render as one line. Fixtures for both live in `e2e/platform/dev-diagrams/layout-tests/` as `self-loop-2.mmd`, `self-loop-multi.mmd`, and `identical-edges.mmd`.
 
 ## Validating the result
 
@@ -250,7 +250,7 @@ When a fixture passes in Node but looks broken on screen, run `validateLayout` o
 
 ### Fixtures
 
-A fixture is a pair of files under `cypress/platform/dev-diagrams/layout-tests/`:
+A fixture is a pair of files under `e2e/platform/dev-diagrams/layout-tests/`:
 
 ```
 layout-tests/

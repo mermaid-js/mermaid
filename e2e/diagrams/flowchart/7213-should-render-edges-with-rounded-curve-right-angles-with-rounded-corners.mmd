@@ -1,0 +1,11 @@
+---
+config:
+  flowchart:
+    curve: rounded
+---
+flowchart TD
+  A[Start] --> B{Decision}
+  B -->|Yes| C[Process 1]
+  B -->|No| D[Process 2]
+  C --> E[End]
+  D --> E

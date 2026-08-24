@@ -6,7 +6,7 @@
  * (A-to-B "AB", E-to-B "EB") — deliberately exercising the sibling-inbound
  * label class where two edges enter the same node (B), both carrying labels.
  * Exists to expose tightly-packed inbound ports and label / foreign-edge
- * overlap. See `cypress/platform/dev-diagrams/layout-tests/swimlanes/simple-2.mmd`
+ * overlap. See `e2e/platform/dev-diagrams/layout-tests/swimlanes/simple-2.mmd`
  * for the actual Mermaid source.
  *
  * Structure mirrors `query-process.ddlt.spec.ts` — canonical DDLT pattern.

@@ -36,7 +36,7 @@ describe('Orthogonal layout regression: self-loop.mmd', () => {
 
     try {
       const diagram = readFileSync(
-        resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus/self-loop.mmd'),
+        resolve(process.cwd(), 'e2e/platform/dev-diagrams/layout-tests/domus/self-loop.mmd'),
         'utf8'
       );
 

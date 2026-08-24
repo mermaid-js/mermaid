@@ -4,6 +4,7 @@ browserlist
 Buzan
 circo
 DDLT
+GHSA
 handDrawn
 KOEPF
 MMLU

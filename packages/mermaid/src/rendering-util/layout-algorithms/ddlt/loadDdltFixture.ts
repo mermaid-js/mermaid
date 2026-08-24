@@ -6,7 +6,7 @@ import { parseApplySizesAndLayout } from './backends.js';
 import { loadFreshSizesFixture } from './fixtureSizes.js';
 import type { LayoutTestBackendId, OrthogonalTrace } from './types.js';
 
-const FIXTURES_DIR = 'cypress/platform/dev-diagrams/layout-tests';
+const FIXTURES_DIR = 'e2e/platform/dev-diagrams/layout-tests';
 
 let diagramsRegistered = false;
 function registerDiagramsOnce(): void {
@@ -28,7 +28,7 @@ export interface LoadDdltFixtureOptions {
  * Run a DDLT layout for a named fixture using the canonical pipeline.
  *
  * The fixture name is the basename used for both the `.mmd` source and the
- * captured `.sizes.json` under `cypress/platform/dev-diagrams/layout-tests/`.
+ * captured `.sizes.json` under `e2e/platform/dev-diagrams/layout-tests/`.
  * Example: `loadDdltFixture('Company')` reads `Company.mmd` + `Company.sizes.json`.
  *
  * Pipeline used: `parseApplySizesAndLayout` → `runDomusOrthogonalDdlt` (the

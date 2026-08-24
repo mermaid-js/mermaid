@@ -1,6 +1,6 @@
 /**
  * Parameterized DDLT sweep: every `*.sizes.json` + sibling `.mmd` under
- * `cypress/platform/dev-diagrams/layout-tests` (see `discoverLayoutTestFixtures`).
+ * `e2e/platform/dev-diagrams/layout-tests` (see `discoverLayoutTestFixtures`).
  *
  * Profile defaults: `swimlanes/` → swimlanes backend; otherwise flowchart DOMUS.
  * Override via `ddlt-manifest.json` in that folder (`allowLevel1Failure`, `profile`).

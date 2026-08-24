@@ -43,7 +43,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function fixtureBaseDir() {
-  return resolve(__dirname, '../../../../../../cypress/platform/dev-diagrams/layout-tests/domus');
+  return resolve(__dirname, '../../../../../../e2e/platform/dev-diagrams/layout-tests/domus');
 }
 function loadFixture(name: string): SizesFixture {
   const path = resolve(fixtureBaseDir(), `${name}.sizes.json`);

@@ -1,0 +1,10 @@
+---
+config:
+  layout: elk.rectpacking
+---
+%% Same as the elk.box fixture: rectpacking returns no edge sections. The
+%% labelled edge covers the label position, which the fallback must also set.
+flowchart TD
+  A[Start] -->|labelled| B[Middle]
+  B --> C[End]
+  A --> C

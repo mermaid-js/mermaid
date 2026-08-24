@@ -5,7 +5,7 @@
  * Parses the real `.mmd` file via `Diagram.fromText` so the LayoutData the
  * pipeline sees matches what the browser produces, then applies pre-captured
  * node/label sizes from the fixture:
- *   cypress/platform/dev-diagrams/layout-tests/swimlanes/query-process.sizes.json
+ *   e2e/platform/dev-diagrams/layout-tests/swimlanes/query-process.sizes.json
  *
  * The test runs the swimlanes layout pipeline (createEdgeLabelNodes → sugiyama →
  * orthogonal routing → direction transform) and validates with the unified

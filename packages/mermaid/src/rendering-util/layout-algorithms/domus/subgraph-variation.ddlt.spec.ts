@@ -57,7 +57,7 @@ function rectContains(
 
 async function loadSyntheticFixture(name: string): Promise<LayoutData> {
   const layout = await parseMmdFileToLayoutData(
-    resolve(process.cwd(), `cypress/platform/dev-diagrams/layout-tests/domus/${name}.mmd`),
+    resolve(process.cwd(), `e2e/platform/dev-diagrams/layout-tests/domus/${name}.mmd`),
     { stampFlowchartRendererFields: true }
   );
   applySyntheticContentSizes(layout, { minWidth: 60, height: 45, charWidth: 8, padding: 16 });
@@ -75,7 +75,7 @@ async function loadBrowserSizedSubgraphVariation(): Promise<LayoutData> {
   return await parseApplySizesAndLayout(
     resolve(
       process.cwd(),
-      'cypress/platform/dev-diagrams/layout-tests/domus/subgraph-variation.mmd'
+      'e2e/platform/dev-diagrams/layout-tests/domus/subgraph-variation.mmd'
     ),
     SUBGRAPH_VARIATION_BROWSER_SIZES,
     'domus-orthogonal'

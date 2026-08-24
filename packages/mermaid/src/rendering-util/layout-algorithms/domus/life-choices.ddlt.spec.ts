@@ -33,11 +33,11 @@ const __dirname = dirname(__filename);
 
 const FIXTURE_PATH = resolve(
   __dirname,
-  '../../../../../../cypress/platform/dev-diagrams/layout-tests/domus/life-choices.sizes.json'
+  '../../../../../../e2e/platform/dev-diagrams/layout-tests/domus/life-choices.sizes.json'
 );
 const MMD_PATH = resolve(
   __dirname,
-  '../../../../../../cypress/platform/dev-diagrams/layout-tests/domus/life-choices.mmd'
+  '../../../../../../e2e/platform/dev-diagrams/layout-tests/domus/life-choices.mmd'
 );
 
 function loadFixture(): SizesFixture {

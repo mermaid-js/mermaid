@@ -1,0 +1,31 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  box rgb(200,220,255) Frontend Layer
+  actor User@{ "type" : "actor" } as End User
+  participant UI@{ "type" : "boundary" } as User Interface
+  end
+  box rgb(255,220,200) Backend Layer
+  participant API@{ "type" : "boundary" } as REST API
+  participant Svc@{ "type" : "control" } as Business Logic
+  end
+  box rgb(220,255,200) Data Layer
+  participant DB@{ "type" : "database" } as Primary DB
+  participant Cache@{ "type" : "entity" } as Cache Store
+  end
+  User ->> UI: Click button
+  UI ->> API: HTTP request
+  API ->> Svc: Process
+  Svc ->> Cache: Check cache
+  Cache -->> Svc: Cache miss
+  Svc ->> DB: Query data
+  DB -->> Svc: Data
+  Svc ->> Cache: Update cache
+  Svc -->> API: Response
+  API -->> UI: Data
+  UI -->> User: Display

@@ -5,7 +5,7 @@
  * This fixture exercises routing around a very large obstacle node (J)
  * while a sibling edge from the same source (I) must escape past J to reach K
  * and onward to L/M/N in neighbour lanes. See
- * `cypress/platform/dev-diagrams/layout-tests/swimlanes/6-legal-constr-sales.mmd`.
+ * `e2e/platform/dev-diagrams/layout-tests/swimlanes/6-legal-constr-sales.mmd`.
  *
  * Iteration 17 symptom (user, 2026-04-16): edge I→K runs "almost hugging"
  * node J before turning away — aesthetic only, not an L1 violation.

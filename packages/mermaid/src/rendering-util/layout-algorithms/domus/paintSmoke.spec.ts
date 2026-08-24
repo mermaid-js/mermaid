@@ -23,7 +23,7 @@ import flow from '../../../diagrams/flowchart/parser/flowParser.js';
 import { render } from './index.js';
 import { setLogLevel } from '../../../logger.js';
 
-const FIXTURE_DIR = resolve(process.cwd(), 'cypress/platform/dev-diagrams/layout-tests/domus');
+const FIXTURE_DIR = resolve(process.cwd(), 'e2e/platform/dev-diagrams/layout-tests/domus');
 
 function domusFixtureNames(): string[] {
   return readdirSync(FIXTURE_DIR)

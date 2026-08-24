@@ -20,7 +20,16 @@ export default defineConfig({
     // without this every unfiltered run collects their specs too: the suite runs
     // twice, timings double, and a sweep reports two different aggregates — one
     // of them measuring whatever branch that worktree happens to be on.
-    exclude: [...defaultExclude, '**/.claude/**', '**/.codex/**'],
+    exclude: [
+      ...defaultExclude,
+      'e2e/rendering/**',
+      'e2e/other/**',
+      './tests/**',
+      '**/__mocks__/**',
+      '**/generated/',
+      '**/.claude/**',
+      '**/.codex/**',
+    ],
     // TODO: should we move this to a mermaid-core package?
     coverage: {
       provider: 'v8',
@@ -31,7 +40,14 @@ export default defineConfig({
       all: false,
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage/vitest',
-      exclude: [...defaultExclude, './tests/**', '**/__mocks__/**', '**/generated/'],
+      exclude: [
+        ...defaultExclude,
+        './tests/**',
+        'e2e/rendering/**',
+        'e2e/other/**',
+        '**/__mocks__/**',
+        '**/generated/',
+      ],
     },
     includeSource: ['packages/*/src/**/*.{js,ts}'],
     clearMocks: true,

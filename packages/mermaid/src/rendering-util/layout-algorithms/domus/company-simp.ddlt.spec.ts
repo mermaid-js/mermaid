@@ -41,12 +41,12 @@ const __dirname = dirname(__filename);
 
 const FIXTURE_PATH = resolve(
   __dirname,
-  '../../../../../../cypress/platform/dev-diagrams/layout-tests/domus/Company-simp.sizes.json'
+  '../../../../../../e2e/platform/dev-diagrams/layout-tests/domus/Company-simp.sizes.json'
 );
 
 const MMD_PATH = resolve(
   __dirname,
-  '../../../../../../cypress/platform/dev-diagrams/layout-tests/domus/Company-simp.mmd'
+  '../../../../../../e2e/platform/dev-diagrams/layout-tests/domus/Company-simp.mmd'
 );
 
 function loadFixture(): SizesFixture {

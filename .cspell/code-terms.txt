@@ -89,6 +89,7 @@ hseg
 hsegs
 Idxs
 iife
+instrumenter
 interp
 introdcued
 INVTRAPEND
@@ -196,7 +197,6 @@ ts-nocheck
 tsdoc
 typeof
 typestr
-uninstrumented
 unrouted
 unsat
 Unsat
@@ -204,6 +204,9 @@ UNSAT
 unsatisfiability
 unshift
 urlsafe
+usecase
+Usecase
+USECASE
 verifymethod
 VERIFYMTHD
 VSIDS
