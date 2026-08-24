@@ -9,6 +9,7 @@
  * Reference: (DOMUS, p.9, §4.1)
  */
 
+import { LAYOUT_COST } from '../../layout-utils/layoutCost.js';
 import type {
   DomusGraph,
   CycleSet,
@@ -560,6 +561,14 @@ export function solveSAT(
    * Returns null if successful, or the conflicting clause if a conflict is found.
    */
   function unitPropagate(): CNFClause | null {
+    // Clause visits are DERIVED, not counted. A pass walks every clause unless
+    // it hits a conflict and returns, so the total is completed passes times the
+    // clause count plus however far the aborted pass got — exact, and without an
+    // increment in a loop that runs ~127M times on domus/triage2 alone.
+    // Counting it directly cost +13.6% on the corpus; a local counter still cost
+    // +2%, which is not a price instrumentation should make a render pay.
+    const clauseCount = clauses.length;
+    let passes = 0;
     let changed = true;
     while (changed) {
       changed = false;
@@ -594,6 +603,7 @@ export function solveSAT(
 
         if (unassignedLit === null) {
           // Conflict: all literals are false
+          LAYOUT_COST.satPropagations += passes * clauseCount + ci + 1;
           return clause;
         }
 
@@ -603,7 +613,9 @@ export function solveSAT(
           changed = true;
         }
       }
+      passes++;
     }
+    LAYOUT_COST.satPropagations += passes * clauseCount;
     return null;
   }
 

@@ -1,3 +1,4 @@
+import { LAYOUT_COST } from './layoutCost.js';
 import type { LayoutData, Node, Edge as _Edge } from '../../types.js';
 import { log } from '../../../logger.js';
 import { DEBUG_KEY } from './debug.js';
@@ -855,6 +856,7 @@ export function validateLayout(
   layout: LayoutData,
   options: ValidateLayoutOptions = {}
 ): ValidateLayoutResult {
+  LAYOUT_COST.validations++;
   const issues: Issue[] = [];
   // See `abortAboveIssueCount`. `undefined` (the default) makes both no-ops, so
   // every abort point below is dead code unless a caller opts in.
@@ -940,6 +942,7 @@ export function validateLayout(
     const aNode = byId.get(aId);
     const aRect = nodeRects.get(aId)!;
     for (let j = i + 1; j < nodeIds.length; j++) {
+      LAYOUT_COST.pairChecks++;
       const bId = nodeIds[j];
       const bNode = byId.get(bId);
       const bRect = nodeRects.get(bId)!;
@@ -1301,6 +1304,7 @@ export function validateLayout(
       if (outsidePolylineExtent(obstacleRect)) {
         continue;
       }
+      LAYOUT_COST.rectScans++;
       // NOTE: we do NOT blanket-exclude the edge's own src/dst nodes here.
       // A legitimate edge only touches its own endpoint nodes at the
       // attach point (the polyline's first and last points); any segment
@@ -1332,6 +1336,7 @@ export function validateLayout(
       if (outsidePolylineExtent(titleRect)) {
         continue;
       }
+      LAYOUT_COST.rectScans++;
       const hit = firstInteriorRectHit(points, titleRect, startAttach, endAttach, (a, b) => {
         const touchesStartAttach =
           distance(a, startAttach) <= EPS || distance(b, startAttach) <= EPS;
@@ -1581,6 +1586,7 @@ export function validateLayout(
       if (outsideBorderHugExtent(obstacleRect)) {
         continue;
       }
+      LAYOUT_COST.rectScans++;
       // Same exception as edge-intersects-obstacle: the edge's own label
       // node is a waypoint, not an obstacle to be avoided.
       if (ownLabelId && obstacleId === ownLabelId) {
@@ -1824,6 +1830,7 @@ export function validateLayout(
   for (const [nodeId, nodeEdges] of edgesByNode) {
     for (let i = 0; i < nodeEdges.length; i++) {
       for (let j = i + 1; j < nodeEdges.length; j++) {
+        LAYOUT_COST.pairChecks++;
         const e1 = nodeEdges[i];
         const e2 = nodeEdges[j];
         if (focused && !inFocus(e1.id) && !inFocus(e2.id)) {
@@ -2082,6 +2089,7 @@ export function validateLayout(
       return abortedResult();
     }
     for (let j = i + 1; j < sortedEdges.length; j++) {
+      LAYOUT_COST.pairChecks++;
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
       if (extentsApart(i, j)) {
@@ -2214,6 +2222,7 @@ export function validateLayout(
   };
   for (let i = 0; i < sortedEdges.length; i++) {
     for (let j = i + 1; j < sortedEdges.length; j++) {
+      LAYOUT_COST.pairChecks++;
       const e1 = sortedEdges[i];
       const e2 = sortedEdges[j];
       if (extentsApart(i, j)) {

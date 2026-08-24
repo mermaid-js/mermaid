@@ -9,6 +9,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
 import { log, setLogLevel } from '../../../logger.js';
 import { validateLayout, type ValidateLayoutResult } from '../layout-utils/validateLayout.js';
+import { readLayoutCost, resetLayoutCost, totalLayoutCost } from '../layout-utils/layoutCost.js';
 import { DOMUS_VALIDATION_EXTENSIONS } from '../domus/validateLayoutProxy.js';
 
 /**
@@ -34,6 +35,25 @@ import {
 // sweep that previously lived here). Adding the domus backend must not change
 // swimlanes scoring, so this floor must continue to hold.
 const SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE = 11754;
+
+/**
+ * Work ceiling for the domus corpus, in `totalLayoutCost` units.
+ *
+ * Quality and cost are tracked as two axes, never blended: a single number
+ * would need an exchange rate between score points and work units that nothing
+ * can justify, and it would hide which side of a trade moved. Hiding that is
+ * precisely the failure this ceiling exists to catch — 7d69c42a1 bought a 14.5x
+ * speedup and silently gave up layout quality, and with only a score gate in
+ * place the loss went unnoticed for months. A score floor alone ratchets one
+ * way; a score floor plus a cost ceiling ratchets both.
+ *
+ * Counted work, not milliseconds, so this number is reproducible across
+ * machines and moves only when the algorithm's work moves. Measured baseline is
+ * 823,596,068 over 37 fixtures; the ceiling carries ~10% headroom so ordinary
+ * layout changes do not trip it while a real blow-up does. Raise it only with
+ * the measurement that justifies it in the commit message.
+ */
+const DOMUS_TOTAL_COST_CEILING = 906_000_000;
 
 function issueSummary(issues: { type: string }[]): string {
   return issues
@@ -74,6 +94,9 @@ describe('DDLT layout-tests fixture sweep', () => {
   it('aggregate validateLayout report across all fixtures', { timeout: 600_000 }, async () => {
     const items: NamedValidateResult[] = [];
     const exemptIds = new Set<string>();
+    let domusCostTotal = 0;
+    const costByFixture: { id: string; total: number; cost: Readonly<Record<string, number>> }[] =
+      [];
     for (const fx of fixtures) {
       if (fx.allowLevel1Failure) {
         exemptIds.add(fx.id);
@@ -82,7 +105,17 @@ describe('DDLT layout-tests fixture sweep', () => {
       for (const backendId of backendIds) {
         let result: ValidateLayoutResult;
         try {
+          // Bracket the layout only. The grading validation below is the
+          // harness's own work, not the algorithm's, and counting it would make
+          // the budget depend on how the sweep is written.
+          resetLayoutCost();
           const layout = await parseApplySizesAndLayout(fx.mmdPath, fx.sizes, backendId);
+          if (backendId === 'domus-orthogonal') {
+            const cost = readLayoutCost();
+            const total = totalLayoutCost(cost);
+            domusCostTotal += total;
+            costByFixture.push({ id: fx.id, total, cost });
+          }
           result = validateForBackend(layout, backendId);
         } catch (err) {
           // Surface backend errors as a synthetic "invalid" entry instead of
@@ -137,6 +170,28 @@ describe('DDLT layout-tests fixture sweep', () => {
     }
 
     expect(report.byCase.length).toBeGreaterThan(0);
+
+    // Reported and gated BEFORE the validity assertion below: that one currently
+    // fails on the fixtures added in 2b91d67ed, and anything after it would be
+    // dead code — a cost ceiling that never runs is worse than none, because it
+    // reads as covered.
+    // Second axis: counted work. Reported per fixture so a regression names
+    // itself, and gated in aggregate so no single fixture has to carry a budget.
+    for (const row of [...costByFixture].sort((a, b) => b.total - a.total)) {
+      log.debug(
+        `DDLT-COST: ${row.id} total=${row.total} ${Object.entries(row.cost)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(' ')}`
+      );
+    }
+    log.debug(
+      `DDLT-COST: domus total=${domusCostTotal} ceiling=${DOMUS_TOTAL_COST_CEILING} (${(
+        (domusCostTotal / DOMUS_TOTAL_COST_CEILING) *
+        100
+      ).toFixed(1)}% of budget)`
+    );
+    expect(domusCostTotal).toBeGreaterThan(0);
+    expect(domusCostTotal).toBeLessThanOrEqual(DOMUS_TOTAL_COST_CEILING);
 
     // Non-exempt fixtures must stay valid. Exempt fixtures (per
     // `ddlt-manifest.json`) are tracked in their own dedicated specs; here we
