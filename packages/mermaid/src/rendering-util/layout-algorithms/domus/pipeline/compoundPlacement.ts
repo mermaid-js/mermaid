@@ -35,7 +35,7 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import type { LayoutData, Node } from '../../../types.js';
 import { log } from '../../../../logger.js';
 import { ORTHO_DEBUG } from '../debug.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
 import { runDomusRouting } from '../domus/index.js';
 import { applyLayeredPlacementFallback } from './layeredPlacementFallback.js';
 import { inferEdgeLabelParentIds } from './labelParents.js';
@@ -911,7 +911,7 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
     return;
   }
 
-  const baseline = validateLayout(data);
+  const baseline = checkLayout(data);
   if (baseline.ok && baseline.score >= 953) {
     return;
   }
@@ -921,7 +921,7 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
   // estimator). Each is routed and repaired fully; the final validator picks.
   const buildRoutedCandidate = (
     optimizeArrangement: boolean
-  ): { candidate: LayoutData; result: ReturnType<typeof validateLayout> } | null => {
+  ): { candidate: LayoutData; result: ValidateLayoutResult } | null => {
     const candidate = cloneLayoutForCandidate(preFinalizeLayout);
     let placed = false;
     try {
@@ -936,7 +936,7 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
       optimizeGroupArrangement(candidate);
     }
     routeAndRepair(candidate);
-    return { candidate, result: validateLayout(candidate) };
+    return { candidate, result: checkLayout(candidate) };
   };
 
   const routeAndRepair = (candidate: LayoutData): void => {
@@ -947,7 +947,7 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
     // Same post-routing repair chain the cycle-removal path applies after its
     // routing-graph pass; without it the candidate is compared unrepaired
     // against a fully repaired baseline.
-    const postRoute = validateLayout(candidate);
+    const postRoute = checkLayout(candidate);
     const portMismatchEdgeIds = new Set<string>(
       postRoute.issues
         .filter((iss) => iss.type === 'edge-port-direction-mismatch' && iss.edgeId)
@@ -1011,7 +1011,7 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
   // and orthogonality repair), so the comparison is between two fully routed and
   // repaired drawings; what the tail adds on top is the same kind of polish for
   // both arms, which is exactly the part least likely to reorder them.
-  let best: { candidate: LayoutData; result: ReturnType<typeof validateLayout> } | null = null;
+  let best: { candidate: LayoutData; result: ValidateLayoutResult } | null = null;
   for (const optimizeArrangement of [false, true]) {
     const built = buildRoutedCandidate(optimizeArrangement);
     if (!built) {
@@ -1033,8 +1033,8 @@ export function tryCompoundGroupPlacementCandidateWhenScoreImproves(
   }
   const candidate = best.candidate;
   options.polish?.(candidate);
-  const candidateResult = validateLayout(candidate);
-  const hardIssues = (r: ReturnType<typeof validateLayout>): number => r.issues.length;
+  const candidateResult = checkLayout(candidate);
+  const hardIssues = (r: ValidateLayoutResult): number => r.issues.length;
 
   const accept =
     (candidateResult.ok && !baseline.ok) ||

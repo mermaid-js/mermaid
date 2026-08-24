@@ -235,6 +235,22 @@ export interface ValidateLayoutOptions {
   readonly abortAboveIssueCount?: number;
 
   /**
+   * Build the human-readable `Issue.message` for every issue found. Default true.
+   *
+   * The messages exist to diagnose a layout, and nothing that consumes a result
+   * programmatically reads them — issue identity, the repair passes and the score
+   * all work off `type`, `edgeId`, `nodeIds` and `details`. They are not free,
+   * though: a single `domus/er-db-model` layout raises ~306k issues across its
+   * score-gated passes, and formatting a template literal with `toFixed` calls
+   * for each one costs real time on the render path.
+   *
+   * Set false via {@link checkLayout} to skip that formatting. Every other
+   * field, the issue list, and the score are bit-identical either way — this
+   * changes what a result can TELL you, never what it says about the layout.
+   */
+  readonly diagnostics?: boolean;
+
+  /**
    * Validate only what the given edges can affect.
    *
    * Every check here is a pure function of geometry, so when a single edge's
@@ -802,6 +818,39 @@ const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
   'node-too-close-to-group': 0,
 };
 
+/**
+ * Render-time layout check: the same checks, the same issues and the same score
+ * as {@link validateLayout}, minus the human-readable `Issue.message`.
+ *
+ * ## Why this exists as a separate entry point
+ *
+ * `validateLayout` was built as a development instrument for the DDLT sweep — a
+ * way to grade a layout offline and say, in English, what is wrong with it. It
+ * then became the objective function DOMUS hill-climbs on during a real render:
+ * the score-gated passes call it thousands of times per diagram, and on some
+ * fixtures it is the majority of layout time. Those two jobs want opposite
+ * things. Grading a layout for a human wants every detail it can produce;
+ * ranking two candidate routes wants the answer and nothing else.
+ *
+ * ## Why it is not a cheaper set of checks
+ *
+ * It would be easy to make the render-time path skip expensive checks. That
+ * would be a mistake, and this function deliberately does not do it: DOMUS
+ * optimises against whatever this returns, and DDLT grades against
+ * `validateLayout`. If the two disagreed about what a good layout is, DOMUS
+ * would climb one hill while the sweep measured another, and the sweep would
+ * stop predicting what ships. The split here is in what a result can TELL you,
+ * never in what it says about the layout — see the equivalence spec next to
+ * this module, which pins the two to identical `ok`, `score` and issue types
+ * across every DDLT fixture.
+ */
+export function checkLayout(
+  layout: LayoutData,
+  options: Omit<ValidateLayoutOptions, 'diagnostics'> = {}
+): ValidateLayoutResult {
+  return validateLayout(layout, { ...options, diagnostics: false });
+}
+
 export function validateLayout(
   layout: LayoutData,
   options: ValidateLayoutOptions = {}
@@ -814,6 +863,8 @@ export function validateLayout(
   // See `focusEdgeIds`. `focused` is false by default, so every focus guard below
   // is dead code unless a caller opts in.
   const focusEdgeIds = options.focusEdgeIds;
+  // See `diagnostics`. Default true keeps every existing caller bit-identical.
+  const diag = options.diagnostics !== false;
   const focused = focusEdgeIds !== undefined;
   const inFocus = (id: string): boolean => focusEdgeIds!.has(id);
   const abortedResult = (): ValidateLayoutResult => ({
@@ -907,7 +958,7 @@ export function validateLayout(
       if (ov) {
         issues.push({
           type: 'node-overlap',
-          message: `Nodes "${aId}" and "${bId}" overlap`,
+          message: diag ? `Nodes "${aId}" and "${bId}" overlap` : '',
           nodeIds: [aId, bId],
           details: { overlapX: ov.overlapX, overlapY: ov.overlapY },
         });
@@ -975,7 +1026,9 @@ export function validateLayout(
       if (maxHug >= L_MIN_BORDER) {
         issues.push({
           type: 'node-border-hugging',
-          message: `Node "${nId}" hugs border of group "${gId}" for ${maxHug.toFixed(1)} units`,
+          message: diag
+            ? `Node "${nId}" hugs border of group "${gId}" for ${maxHug.toFixed(1)} units`
+            : '',
           nodeIds: [nId, gId],
           details: { hugLength: maxHug },
         });
@@ -1024,7 +1077,9 @@ export function validateLayout(
       );
       issues.push({
         type: 'node-too-close-to-group',
-        message: `Node "${nId}" is only ${gap.toFixed(1)} from group "${gId}" frame (< ${NODE_GROUP_CLEARANCE})`,
+        message: diag
+          ? `Node "${nId}" is only ${gap.toFixed(1)} from group "${gId}" frame (< ${NODE_GROUP_CLEARANCE})`
+          : '',
         nodeIds: [nId, gId],
         details: { gap, clearance: NODE_GROUP_CLEARANCE, softPenalty: penalty },
       });
@@ -1070,7 +1125,7 @@ export function validateLayout(
       if (!focused || inFocus(edgeId)) {
         issues.push({
           type: 'edge-missing-points',
-          message: `Edge "${edgeId}" is missing points`,
+          message: diag ? `Edge "${edgeId}" is missing points` : '',
           edgeId,
         });
       }
@@ -1106,7 +1161,9 @@ export function validateLayout(
       if (maxOutside < EPS_SELF_LOOP_EXTENT) {
         issues.push({
           type: 'edge-self-loop-not-rendered',
-          message: `Edge "${edgeId}" is a self-loop on node "${startId}" that does not leave the node (max ${maxOutside.toFixed(1)}px outside, needs ${EPS_SELF_LOOP_EXTENT})`,
+          message: diag
+            ? `Edge "${edgeId}" is a self-loop on node "${startId}" that does not leave the node (max ${maxOutside.toFixed(1)}px outside, needs ${EPS_SELF_LOOP_EXTENT})`
+            : '',
           edgeId,
           nodeIds: [startId],
           details: { maxOutside, threshold: EPS_SELF_LOOP_EXTENT, points },
@@ -1129,7 +1186,9 @@ export function validateLayout(
       if (firstLen < EPS_FINAL_APPROACH) {
         issues.push({
           type: 'edge-bend-near-endpoint',
-          message: `Edge "${edgeId}" first segment is ${firstLen.toFixed(1)} (< ${EPS_FINAL_APPROACH})`,
+          message: diag
+            ? `Edge "${edgeId}" first segment is ${firstLen.toFixed(1)} (< ${EPS_FINAL_APPROACH})`
+            : '',
           edgeId,
           details: { which: 'start', length: firstLen, threshold: EPS_FINAL_APPROACH },
         });
@@ -1137,7 +1196,9 @@ export function validateLayout(
       if (lastLen < EPS_FINAL_APPROACH) {
         issues.push({
           type: 'edge-bend-near-endpoint',
-          message: `Edge "${edgeId}" last segment is ${lastLen.toFixed(1)} (< ${EPS_FINAL_APPROACH})`,
+          message: diag
+            ? `Edge "${edgeId}" last segment is ${lastLen.toFixed(1)} (< ${EPS_FINAL_APPROACH})`
+            : '',
           edgeId,
           details: { which: 'end', length: lastLen, threshold: EPS_FINAL_APPROACH },
         });
@@ -1155,7 +1216,9 @@ export function validateLayout(
         if (endBand != null) {
           issues.push({
             type: 'edge-bend-near-endpoint',
-            message: `Edge "${edgeId}" has a parallel band ${endBand.toFixed(1)} from end node "${endId}"`,
+            message: diag
+              ? `Edge "${edgeId}" has a parallel band ${endBand.toFixed(1)} from end node "${endId}"`
+              : '',
             edgeId,
             nodeIds: [endId],
             details: { which: 'end-band', distance: endBand, threshold: EPS_ENDPOINT_BAND },
@@ -1169,7 +1232,7 @@ export function validateLayout(
     if (nonOrtho) {
       issues.push({
         type: 'edge-non-orthogonal',
-        message: `Edge "${edgeId}" has a non-orthogonal segment`,
+        message: diag ? `Edge "${edgeId}" has a non-orthogonal segment` : '',
         edgeId,
         details: { segmentIndex: nonOrtho.i, a: nonOrtho.a, b: nonOrtho.b, points },
       });
@@ -1256,7 +1319,7 @@ export function validateLayout(
       if (hit) {
         issues.push({
           type: 'edge-intersects-obstacle',
-          message: `Edge "${edgeId}" intersects obstacle "${obstacleId}"`,
+          message: diag ? `Edge "${edgeId}" intersects obstacle "${obstacleId}"` : '',
           edgeId,
           nodeIds: [obstacleId],
           details: { ...hit },
@@ -1281,7 +1344,7 @@ export function validateLayout(
       if (hit) {
         issues.push({
           type: 'edge-intersects-group-title',
-          message: `Edge "${edgeId}" intersects title section of group "${groupId}"`,
+          message: diag ? `Edge "${edgeId}" intersects title section of group "${groupId}"` : '',
           edgeId,
           nodeIds: [groupId],
           details: { ...hit, titleRect },
@@ -1299,7 +1362,7 @@ export function validateLayout(
       if (minDistanceToCorners(points[0], r) <= EPS_CORNER) {
         issues.push({
           type: 'edge-corner-connection',
-          message: `Edge "${edgeId}" connects at corner of node "${startId}"`,
+          message: diag ? `Edge "${edgeId}" connects at corner of node "${startId}"` : '',
           edgeId,
           nodeIds: [startId],
           details: { point: points[0] },
@@ -1311,7 +1374,7 @@ export function validateLayout(
       if (minDistanceToCorners(points[points.length - 1], r) <= EPS_CORNER) {
         issues.push({
           type: 'edge-corner-connection',
-          message: `Edge "${edgeId}" connects at corner of node "${endId}"`,
+          message: diag ? `Edge "${edgeId}" connects at corner of node "${endId}"` : '',
           edgeId,
           nodeIds: [endId],
           details: { point: points[points.length - 1] },
@@ -1330,7 +1393,9 @@ export function validateLayout(
         if (dir && dir !== sSide) {
           issues.push({
             type: 'edge-port-direction-mismatch',
-            message: `Edge "${edgeId}" leaves start port on side ${sSide} but first segment goes ${dir}`,
+            message: diag
+              ? `Edge "${edgeId}" leaves start port on side ${sSide} but first segment goes ${dir}`
+              : '',
             edgeId,
             nodeIds: [startId],
             details: {
@@ -1348,7 +1413,9 @@ export function validateLayout(
         if (dir && dir !== tSide) {
           issues.push({
             type: 'edge-port-direction-mismatch',
-            message: `Edge "${edgeId}" enters end port on side ${tSide} but last segment comes from ${dir}`,
+            message: diag
+              ? `Edge "${edgeId}" enters end port on side ${tSide} but last segment comes from ${dir}`
+              : '',
             edgeId,
             nodeIds: [endId],
             details: { terminal: 'end', endSide: tSide, lastDirTowardPort: dir },
@@ -1367,7 +1434,9 @@ export function validateLayout(
       if (labelRect && !polylineIntersectsRect(points, labelRect)) {
         issues.push({
           type: 'edge-label-off-edge',
-          message: `Edge "${edgeId}" does not pass through its label node "${ownLabelId}"`,
+          message: diag
+            ? `Edge "${edgeId}" does not pass through its label node "${ownLabelId}"`
+            : '',
           edgeId,
           nodeIds: [ownLabelId],
           details: { labelRect, points },
@@ -1383,7 +1452,7 @@ export function validateLayout(
       if (overlayRect && !polylineIntersectsRect(points, overlayRect)) {
         issues.push({
           type: 'edge-label-off-edge',
-          message: `Edge "${edgeId}" label does not sit on the edge polyline`,
+          message: diag ? `Edge "${edgeId}" label does not sit on the edge polyline` : '',
           edgeId,
           details: { labelRect: overlayRect, points },
         });
@@ -1415,7 +1484,9 @@ export function validateLayout(
         if (d > EPS_DETACHED) {
           issues.push({
             type: 'edge-endpoint-detached-from-node',
-            message: `Edge "${edgeId}" ${which} point is ${d.toFixed(1)}px from node "${nodeId}" (not attached)`,
+            message: diag
+              ? `Edge "${edgeId}" ${which} point is ${d.toFixed(1)}px from node "${nodeId}" (not attached)`
+              : '',
             edgeId,
             nodeIds: [nodeId],
             details: { which, distance: d, point: endpoint },
@@ -1447,7 +1518,7 @@ export function validateLayout(
         if (insideMarker) {
           issues.push({
             type: 'edge-bend-overlaps-arrowhead',
-            message: `Edge "${edgeId}" ${terminal} bend overlaps its arrowhead marker`,
+            message: diag ? `Edge "${edgeId}" ${terminal} bend overlaps its arrowhead marker` : '',
             edgeId,
             details: { terminal, innerVertex, markerRect },
           });
@@ -1488,7 +1559,9 @@ export function validateLayout(
         if (isStrictlyInside(endpoint, r)) {
           issues.push({
             type: 'edge-endpoint-inside-node',
-            message: `Edge "${edgeId}" ${which} point lies inside node "${nodeIdForRect}"`,
+            message: diag
+              ? `Edge "${edgeId}" ${which} point lies inside node "${nodeIdForRect}"`
+              : '',
             edgeId,
             nodeIds: [nodeIdForRect],
             details: { which, point: endpoint, rect: r },
@@ -1523,7 +1596,9 @@ export function validateLayout(
         if (hugLen >= L_MIN_BORDER) {
           issues.push({
             type: 'edge-border-hugging',
-            message: `Edge "${edgeId}" hugs border of node "${obstacleId}" for ${hugLen.toFixed(1)} units`,
+            message: diag
+              ? `Edge "${edgeId}" hugs border of node "${obstacleId}" for ${hugLen.toFixed(1)} units`
+              : '',
             edgeId,
             nodeIds: [obstacleId],
             details: { segment: seg, hugLength: hugLen },
@@ -1617,7 +1692,9 @@ export function validateLayout(
           if (overlap) {
             issues.push({
               type: 'edge-label-overlaps-own-arrowhead',
-              message: `Label ${who} overlaps ${terminal} arrowhead marker of edge "${ownerEdgeId}"`,
+              message: diag
+                ? `Label ${who} overlaps ${terminal} arrowhead marker of edge "${ownerEdgeId}"`
+                : '',
               edgeId: ownerEdgeId,
               nodeIds: labelNodeId ? [labelNodeId] : [],
               details: {
@@ -1644,7 +1721,7 @@ export function validateLayout(
           if (segmentIntersectsRectInterior(em.points[i], em.points[i + 1], labelRect)) {
             issues.push({
               type: 'edge-label-overlaps-foreign-edge',
-              message: `Label ${who} overlaps edge "${em.id}" (not its own edge)`,
+              message: diag ? `Label ${who} overlaps edge "${em.id}" (not its own edge)` : '',
               edgeId: em.id,
               nodeIds: labelNodeId ? [labelNodeId] : [],
               details: { ownerEdgeId, segmentIndex: i, a: em.points[i], b: em.points[i + 1] },
@@ -1679,7 +1756,7 @@ export function validateLayout(
           if (ov && ov.overlapX > EPS_LABEL_NODE_OVERLAP && ov.overlapY > EPS_LABEL_NODE_OVERLAP) {
             issues.push({
               type: 'edge-label-overlaps-node',
-              message: `Label ${who} overlaps node "${String(n.id)}"`,
+              message: diag ? `Label ${who} overlaps node "${String(n.id)}"` : '',
               edgeId: ownerEdgeId || undefined,
               nodeIds: labelNodeId ? [labelNodeId, String(n.id)] : [String(n.id)],
               details: {
@@ -1714,7 +1791,7 @@ export function validateLayout(
         if (straddles) {
           issues.push({
             type: 'edge-label-overlaps-group-border',
-            message: `Label ${who} straddles border of group "${gId}"`,
+            message: diag ? `Label ${who} straddles border of group "${gId}"` : '',
             edgeId: ownerEdgeId || undefined,
             nodeIds: labelNodeId ? [labelNodeId, gId] : [gId],
             details: { groupId: gId },
@@ -1772,7 +1849,9 @@ export function validateLayout(
         if (attachDistance <= EPS_PORT && dir1 === dir2 && dir1 !== null) {
           issues.push({
             type: 'edge-same-port-departure',
-            message: `Edges "${e1.id}" and "${e2.id}" depart from same port on node "${nodeId}"`,
+            message: diag
+              ? `Edges "${e1.id}" and "${e2.id}" depart from same port on node "${nodeId}"`
+              : '',
             nodeIds: [nodeId],
             details: { edgeIds: [e1.id, e2.id], attachPoints: [p1, p2], direction: dir1 },
           });
@@ -1791,7 +1870,9 @@ export function validateLayout(
             attachDistance <= EPS_PORT && dir1 === dir2 && dir1 !== null;
           issues.push({
             type: 'edge-shared-attachment-point',
-            message: `Edges "${e1.id}" and "${e2.id}" share an attachment point on node "${nodeId}"`,
+            message: diag
+              ? `Edges "${e1.id}" and "${e2.id}" share an attachment point on node "${nodeId}"`
+              : '',
             nodeIds: [nodeId],
             details: {
               edgeIds: [e1.id, e2.id],
@@ -1827,7 +1908,9 @@ export function validateLayout(
             if (projectedDistance <= EPS_SHARED_ATTACH) {
               issues.push({
                 type: 'edge-shared-projected-port',
-                message: `Edges "${e1.id}" and "${e2.id}" resolve to the same boundary port on node "${nodeId}" (raw stubs ${attachDistance.toFixed(1)}px apart, projected ${projectedDistance.toFixed(1)}px)`,
+                message: diag
+                  ? `Edges "${e1.id}" and "${e2.id}" resolve to the same boundary port on node "${nodeId}" (raw stubs ${attachDistance.toFixed(1)}px apart, projected ${projectedDistance.toFixed(1)}px)`
+                  : '',
                 nodeIds: [nodeId],
                 details: {
                   edgeIds: [e1.id, e2.id],
@@ -1944,7 +2027,9 @@ export function validateLayout(
         if (overlap >= L_MIN_SHARED) {
           issues.push({
             type: 'edge-self-shared-subpath',
-            message: `Edge "${em.id}" overlaps its own route along a shared lane (length ${overlap.toFixed(1)})`,
+            message: diag
+              ? `Edge "${em.id}" overlaps its own route along a shared lane (length ${overlap.toFixed(1)})`
+              : '',
             edgeId: em.id,
             details: { overlapLength: overlap, segmentIndices: [a, b] },
           });
@@ -1981,7 +2066,9 @@ export function validateLayout(
       if (backtrack >= L_MIN_SHARED) {
         issues.push({
           type: 'edge-self-shared-subpath',
-          message: `Edge "${em.id}" backtracks over its own lane (length ${backtrack.toFixed(1)})`,
+          message: diag
+            ? `Edge "${em.id}" backtracks over its own lane (length ${backtrack.toFixed(1)})`
+            : '',
           edgeId: em.id,
           details: { overlapLength: backtrack, reversalAt: i },
         });
@@ -2020,7 +2107,9 @@ export function validateLayout(
             if (!allInCorridor) {
               issues.push({
                 type: 'edge-shared-subpath',
-                message: `Edges "${e1.id}" and "${e2.id}" share a subpath of length ${overlap.toFixed(1)}`,
+                message: diag
+                  ? `Edges "${e1.id}" and "${e2.id}" share a subpath of length ${overlap.toFixed(1)}`
+                  : '',
                 details: { edgeIds: [e1.id, e2.id], overlapLength: overlap },
               });
             }
@@ -2041,7 +2130,9 @@ export function validateLayout(
             if (!allInCorridor && !closeSectionsAreSharedNodeTerminalStubs(e1, s1, e2, s2)) {
               issues.push({
                 type: 'edge-parallel-segment-too-close',
-                message: `Edges "${e1.id}" and "${e2.id}" have parallel sections ${gap.toFixed(1)}px apart over ${projectedOverlap.toFixed(1)}px`,
+                message: diag
+                  ? `Edges "${e1.id}" and "${e2.id}" have parallel sections ${gap.toFixed(1)}px apart over ${projectedOverlap.toFixed(1)}px`
+                  : '',
                 details: {
                   edgeIds: [e1.id, e2.id],
                   gap,

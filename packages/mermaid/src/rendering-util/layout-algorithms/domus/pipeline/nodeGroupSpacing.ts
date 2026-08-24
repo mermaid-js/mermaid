@@ -26,7 +26,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;
@@ -73,7 +73,7 @@ function isDescendantOfGroup(node: Node, groupId: string, byId: Map<string, Node
 }
 
 export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   const flags = current.issues.filter((i) => i.type === 'node-too-close-to-group');
   if (flags.length === 0) {
     return;
@@ -229,7 +229,7 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): v
       }
     }
 
-    const next = validateLayout(layout);
+    const next = checkLayout(layout);
     if (commit && next.score > current.score) {
       current = next;
       return next.score;

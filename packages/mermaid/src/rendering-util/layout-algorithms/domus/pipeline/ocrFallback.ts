@@ -2,7 +2,7 @@ import type { LayoutData, Node } from '../../../types.js';
 import { log } from '../../../../logger.js';
 import { ORTHO_DEBUG } from '../debug.js';
 import type { OrthogonalOptions } from '../types.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 import { assignPortsForEdge, chooseBoundaryPortOutsideOtherNodes } from '../core/portAssignment.js';
 import { computeBoundaryPortAtT } from '../core/geometry.js';
 import { rectForNode } from '../core/helpers.js';
@@ -57,7 +57,7 @@ export function applyOcrFallbackIfNeeded(args: {
   // Validation-gated OCR fallback (non-invasive):
   // - Only applies to routing-graph backend.
   // - Keeps primary routing as-is for happy cases.
-  // - Uses validateLayout() unchanged as the oracle.
+  // - Uses checkLayout() unchanged as the oracle.
   if (incrementalEnabled || backend !== 'routing-graph' || !(options.ocrFallback ?? true)) {
     return;
   }
@@ -66,7 +66,7 @@ export function applyOcrFallbackIfNeeded(args: {
     return;
   }
 
-  const before = validateLayout(data);
+  const before = checkLayout(data);
   const scoreGate =
     options.ocrScoreThreshold != null && before.ok && before.score < options.ocrScoreThreshold;
   const hardIssue =
@@ -158,7 +158,7 @@ export function applyOcrFallbackIfNeeded(args: {
     const prevPoints = edge.points;
     const candidate = normalizePolyline(ocr.points, groupsById);
     edge.points = candidate;
-    const after = validateLayout(data);
+    const after = checkLayout(data);
     const afterEdgeIssues = issuesForEdge(after, edgeId);
 
     // Accept OCR reroute only if it improves validation for this edge or fixes the whole layout.
@@ -215,7 +215,7 @@ export function applyOcrFallbackIfNeeded(args: {
     applyNudgingConstraintsLocal(data, nodesByIdNoGroups, spacing, neighborhood);
   }
 
-  const after = validateLayout(data);
+  const after = checkLayout(data);
   log.debug(ORTHO_DEBUG, 'OCR_FALLBACK_VALIDATION', {
     primaryModel,
     rerouteAll,

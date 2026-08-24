@@ -2,8 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { LayoutData, Node, Edge } from '../../types.js';
 
 const validateMock = vi.fn();
+// Both entry points route to the same mock: the render path calls `checkLayout`
+// and the diagnostic path `validateLayout`, but they are one objective by
+// contract (see checkLayout-equivalence.ddlt.spec.ts), so a test that stubs the
+// verdict must stub it for both or it would be asserting against a split brain.
 vi.mock('./validateLayoutProxy.js', () => ({
   validateLayout: (...args: any[]) => validateMock(...args),
+  checkLayout: (...args: any[]) => validateMock(...args),
 }));
 
 const ocrMock = vi.fn();
@@ -23,7 +28,7 @@ beforeEach(() => {
   validateMock.mockReset();
   ocrMock.mockReset();
   // Default: validator returns "ok" so tests that don't care about validation
-  // don't need to explicitly stub it (pipeline may call validateLayout for repairs).
+  // don't need to explicitly stub it (pipeline may call checkLayout for repairs).
   validateMock.mockReturnValue({
     ok: true,
     issues: [],

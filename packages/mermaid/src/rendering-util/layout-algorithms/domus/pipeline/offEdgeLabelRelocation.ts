@@ -15,7 +15,7 @@
  * off-edge flag without parking the label on a node or another edge.
  */
 import type { LayoutData } from '../../../types.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;
@@ -41,7 +41,7 @@ function offEdgeLabelEdgeIds(issues: { type: string; edgeId?: string }[]): Set<s
 }
 
 export function relocateOffEdgeLabelsWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   const flagged = offEdgeLabelEdgeIds(current.issues);
   if (flagged.size === 0) {
     return;
@@ -76,7 +76,7 @@ export function relocateOffEdgeLabelsWhenScoreImproves(layout: LayoutData): void
     for (const c of candidates) {
       anchored.x = c.x;
       anchored.y = c.y;
-      const next = validateLayout(layout);
+      const next = checkLayout(layout);
       if (next.ok && next.score > current.score) {
         current = next;
         placed = true;

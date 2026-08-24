@@ -13,6 +13,7 @@
  */
 import type { LayoutData } from '../../types.js';
 import {
+  checkLayout as checkLayoutCore,
   validateLayout as validateLayoutCore,
   type Issue,
   type LayoutIssueType,
@@ -46,6 +47,25 @@ export function validateLayout(
   options: { abortAboveIssueCount?: number; focusEdgeIds?: ReadonlySet<string> } = {}
 ): ValidateLayoutResult {
   return validateLayoutCore(layout, {
+    extensions: DOMUS_VALIDATION_EXTENSIONS,
+    abortAboveIssueCount: options.abortAboveIssueCount,
+    focusEdgeIds: options.focusEdgeIds,
+  });
+}
+
+/**
+ * The DOMUS render path's entry point — same extensions, same objective, no
+ * diagnostic prose. See `checkLayout` in the core validator for why this is a
+ * result-shape split and not a cheaper set of checks.
+ *
+ * Prefer this anywhere DOMUS is ranking or gating during a render. Reach for
+ * `validateLayout` when a human or a spec has to read what came back.
+ */
+export function checkLayout(
+  layout: LayoutData,
+  options: { abortAboveIssueCount?: number; focusEdgeIds?: ReadonlySet<string> } = {}
+): ValidateLayoutResult {
+  return checkLayoutCore(layout, {
     extensions: DOMUS_VALIDATION_EXTENSIONS,
     abortAboveIssueCount: options.abortAboveIssueCount,
     focusEdgeIds: options.focusEdgeIds,

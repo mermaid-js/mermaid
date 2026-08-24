@@ -19,7 +19,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 import { findRoutingGraphPathBetweenPorts } from '../core/routing.js';
 
 interface Point {
@@ -177,7 +177,7 @@ interface PortRef {
 }
 
 export function reorderSiblingPortsToUncrossWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (current.breakdown.crossings === 0) {
     return;
   }
@@ -335,7 +335,7 @@ export function reorderSiblingPortsToUncrossWhenScoreImproves(layout: LayoutData
               ref.edge.x = a.x;
               ref.edge.y = a.y;
             }
-            const probe = validateLayout(layout);
+            const probe = checkLayout(layout);
             if (probe.score > bs) {
               bs = probe.score;
               bx = hasLabel ? a.x : savedX;
@@ -399,7 +399,7 @@ export function reorderSiblingPortsToUncrossWhenScoreImproves(layout: LayoutData
         }
       });
 
-      const next = validateLayout(layout);
+      const next = checkLayout(layout);
       if (allOk && next.ok && next.score > current.score) {
         current = next;
       } else {

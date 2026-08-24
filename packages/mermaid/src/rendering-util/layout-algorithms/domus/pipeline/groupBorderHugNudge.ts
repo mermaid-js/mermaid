@@ -17,7 +17,7 @@
  */
 import type { LayoutData } from '../../../types.js';
 import { approxEqual, rectForNode } from '../core/helpers.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;
@@ -72,7 +72,7 @@ export function nudgeSegmentsOffGroupBordersWhenScoreImproves(
   }
 
   const margin = Math.max(3, spacing / 2);
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok && current.issues.every((i) => i.type !== 'edge-border-hugging')) {
     // Nothing for this pass to fix; avoid churn on unrelated invalid layouts.
     return;
@@ -144,7 +144,7 @@ export function nudgeSegmentsOffGroupBordersWhenScoreImproves(
           pts[i] = { x: a.x, y: newCoord };
           pts[i + 1] = { x: b.x, y: newCoord };
         }
-        const next = validateLayout(layout);
+        const next = checkLayout(layout);
         if (next.score > current.score) {
           current = next;
           break;

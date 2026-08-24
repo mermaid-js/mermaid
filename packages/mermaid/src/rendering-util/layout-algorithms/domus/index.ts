@@ -28,7 +28,7 @@ import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupS
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
-import { validateLayout } from './validateLayoutProxy.js';
+import { checkLayout } from './validateLayoutProxy.js';
 import { reduceCrossingsWithPortSideCandidatesWhenScoreImproves } from './pipeline/crossingPortRepair.js';
 import {
   COMPOUND_GROUP_PAD,
@@ -420,7 +420,7 @@ function tryLayeredFallbackCandidateWhenScoreImproves(
   data4Layout: LayoutData,
   preFinalizeLayout: LayoutData
 ): void {
-  const baseline = validateLayout(data4Layout);
+  const baseline = checkLayout(data4Layout);
   if (!baseline.ok || baseline.breakdown.crossings === 0 || baseline.score >= 953) {
     return;
   }
@@ -441,7 +441,7 @@ function tryLayeredFallbackCandidateWhenScoreImproves(
   finalizeDummyLabelNodesToOverlayLabels(candidate);
   reduceCrossingsWithPortSideCandidatesWhenScoreImproves(candidate, { spacing: 10 });
 
-  const candidateResult = validateLayout(candidate);
+  const candidateResult = checkLayout(candidate);
   if (
     candidateResult.ok &&
     candidateResult.issues.length === 0 &&

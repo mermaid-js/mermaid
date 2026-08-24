@@ -2,7 +2,7 @@ import type { LayoutData } from '../../../types.js';
 import { log } from '../../../../logger.js';
 import { ORTHO_DEBUG } from '../debug.js';
 import type { OrthogonalOptions } from '../types.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 import { applyPortDirectionStubs } from './portStubs.js';
 
 export function applyPortStubRepairIfNeeded(args: {
@@ -23,7 +23,7 @@ export function applyPortStubRepairIfNeeded(args: {
     return;
   }
 
-  const afterRouting = validateLayout(data);
+  const afterRouting = checkLayout(data);
   const portMismatchEdgeIds = new Set<string>(
     afterRouting.issues
       .filter((iss) => iss.type === 'edge-port-direction-mismatch' && iss.edgeId)
@@ -32,7 +32,7 @@ export function applyPortStubRepairIfNeeded(args: {
   if (!afterRouting.ok && portMismatchEdgeIds.size > 0) {
     const stubLen = Math.max(2, Math.min(20, options.spacing ?? 10));
     const { changed } = applyPortDirectionStubs(data, portMismatchEdgeIds, stubLen);
-    const afterStubs = validateLayout(data);
+    const afterStubs = checkLayout(data);
     log.debug(ORTHO_DEBUG, 'ROUTING_GRAPH_PORT_STUBS', {
       edgeCount: portMismatchEdgeIds.size,
       changed,

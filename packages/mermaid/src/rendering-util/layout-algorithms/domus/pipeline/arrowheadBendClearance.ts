@@ -16,7 +16,7 @@
  * interior vertex we may move (a 3-point L's far end is the fixed target port).
  */
 import type { LayoutData } from '../../../types.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;
@@ -54,7 +54,7 @@ function hasTerminalMarker(
 }
 
 export function clearArrowheadBendsWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
 
   for (const e of layout.edges ?? []) {
     const pts = e?.points as Point[] | undefined;
@@ -107,7 +107,7 @@ export function clearArrowheadBendsWhenScoreImproves(layout: LayoutData): void {
           inner.y += delta;
           rail.y += delta;
         }
-        const next = validateLayout(layout);
+        const next = checkLayout(layout);
         if (next.score > current.score) {
           current = next;
           break;

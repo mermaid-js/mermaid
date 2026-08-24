@@ -1,5 +1,5 @@
 import type { Edge, LayoutData } from '../../../types.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 import type { Point } from '../types.js';
 
 function copyPoint(point: Point): Point {
@@ -45,7 +45,7 @@ function normalizeCandidate(points: readonly Point[]): Point[] {
 }
 
 function issueCountForEdge(layout: LayoutData, edgeId: string): number {
-  return validateLayout(layout).issues.filter((issue) => issue.edgeId === edgeId).length;
+  return checkLayout(layout).issues.filter((issue) => issue.edgeId === edgeId).length;
 }
 
 function cloneLayoutWithEdgePoints(
@@ -110,7 +110,7 @@ export function repairNonOrthogonalEdgesWhenIssuesImprove(
   options: { spacing?: number } = {}
 ): { changed: number } {
   const spacing = options.spacing ?? 10;
-  let currentValidation = validateLayout(layout);
+  let currentValidation = checkLayout(layout);
   const candidateEdgeIds = new Set(
     currentValidation.issues
       .filter((issue) => issue.type === 'edge-non-orthogonal' && issue.edgeId)
@@ -137,7 +137,7 @@ export function repairNonOrthogonalEdgesWhenIssuesImprove(
         continue;
       }
       const trial = cloneLayoutWithEdgePoints(layout, edgeId, candidate);
-      const trialValidation = validateLayout(trial);
+      const trialValidation = checkLayout(trial);
       const trialEdgeIssues = issueCountForEdge(trial, edgeId);
       const trialTotalIssues = trialValidation.issues.length;
       if (trialEdgeIssues >= bestEdgeIssues || trialTotalIssues > beforeTotalIssues) {
@@ -155,7 +155,7 @@ export function repairNonOrthogonalEdgesWhenIssuesImprove(
     }
     edge.points = copyPoints(bestPoints);
     changed++;
-    currentValidation = validateLayout(layout);
+    currentValidation = checkLayout(layout);
   }
 
   return { changed };

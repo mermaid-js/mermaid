@@ -2,7 +2,7 @@ import type { LayoutData, Node } from '../../../types.js';
 import { log } from '../../../../logger.js';
 import { ORTHO_DEBUG } from '../debug.js';
 import type { OrthogonalOptions, Point } from '../types.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
 import type { Issue } from '../validateLayoutProxy.js';
 import { runDomusRouting } from '../domus/index.js';
 import { layoutDataToDomusInput } from '../domus/conversion.js';
@@ -117,10 +117,10 @@ function flipVerticalPortSide(side: string): string {
   return side;
 }
 
-function postFinalizeValidationScore(data: LayoutData): ReturnType<typeof validateLayout> {
+function postFinalizeValidationScore(data: LayoutData): ValidateLayoutResult {
   const finalized = cloneLayoutForCyclicShapeScoring(data);
   finalizeDummyLabelNodesToOverlayLabels(finalized);
-  return validateLayout(finalized);
+  return checkLayout(finalized);
 }
 
 function createCyclicShapeCandidatePaths(
@@ -581,7 +581,7 @@ export function maybeHandleDomusBackend(args: {
     });
 
     // Validate and apply the existing Step-4 safety net if needed.
-    let after = validateLayout(data);
+    let after = checkLayout(data);
     if (!after.ok) {
       if (after.issues.some((iss) => iss.type === 'node-overlap')) {
         const pad = Math.max(4, Math.min(40, ctx.spacing));
@@ -621,7 +621,7 @@ export function maybeHandleDomusBackend(args: {
         routingGraphModel: options.routingGraphModel ?? 'channels',
         useExistingPositions: true,
       });
-      after = validateLayout(data);
+      after = checkLayout(data);
     }
 
     // Port-stub repair for any remaining port-direction mismatches.
@@ -634,7 +634,7 @@ export function maybeHandleDomusBackend(args: {
     if (!after.ok && portMismatchEdgeIds.size > 0) {
       const stubLen = Math.max(2, Math.min(20, options.spacing ?? 10));
       const { changed } = applyPortDirectionStubs(data, portMismatchEdgeIds, stubLen);
-      const afterStubs = validateLayout(data);
+      const afterStubs = checkLayout(data);
       log.debug(ORTHO_DEBUG, 'CYCLE_REMOVAL_PORT_STUBS', {
         edgeCount: portMismatchEdgeIds.size,
         changed,
@@ -822,7 +822,7 @@ export function maybeHandleDomusBackend(args: {
   // (the mismatch check skips `dir === null`). The helper's extended
   // condition (firstDir !== sSide, null included) inserts the L-stub.
   // Paper anchor: Siebenhaller §5.2.2 "insert two additional bends".
-  const preStubValidation = validateLayout(data);
+  const preStubValidation = checkLayout(data);
   const portMismatchEdgeIds = new Set<string>(
     preStubValidation.issues
       .filter((iss) => iss.type === 'edge-port-direction-mismatch' && iss.edgeId)
@@ -866,7 +866,7 @@ export function maybeHandleDomusBackend(args: {
   // failures; without this split, R1/Phase A1's shape-walked output is
   // unconditionally wiped by the fallback. See `partitionDomusValidationIssues`
   // above for the rule.
-  const domusValidation = validateLayout(data);
+  const domusValidation = checkLayout(data);
   const partitioned = partitionDomusValidationIssues(domusValidation.issues, data);
 
   // Log node positions before any nudging for overlap analysis
@@ -992,7 +992,7 @@ export function maybeHandleDomusBackend(args: {
       routingGraphModel: fallbackModel,
       useExistingPositions: true,
     });
-    const after = validateLayout(data);
+    const after = checkLayout(data);
 
     // If overlaps still remain after routing fallback, nudge boxes once more and reroute.
     // This stays within Step 4’s “full nudging safety net” and is gated on validator failure.
@@ -1015,7 +1015,7 @@ export function maybeHandleDomusBackend(args: {
         useExistingPositions: true,
       });
     }
-    const after2 = validateLayout(data);
+    const after2 = checkLayout(data);
 
     // If we still have any "port direction mismatch" issues, add short orthogonal
     // "stubs" outside the node boundary so the first/last segment direction
@@ -1031,7 +1031,7 @@ export function maybeHandleDomusBackend(args: {
       const stubLen = Math.max(2, Math.min(20, spacing));
       const { changed } = applyPortDirectionStubs(data, portMismatchEdgeIds, stubLen);
 
-      const afterStubs = validateLayout(data);
+      const afterStubs = checkLayout(data);
       log.debug(ORTHO_DEBUG, 'DOMUS_FALLBACK_PORT_STUBS', {
         edgeCount: portMismatchEdgeIds.size,
         changed,

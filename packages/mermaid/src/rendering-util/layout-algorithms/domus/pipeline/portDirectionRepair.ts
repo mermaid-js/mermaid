@@ -17,7 +17,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;
@@ -157,7 +157,7 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
 }
 
 export function repairPortDirectionMismatchWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   const mismatches = collectMismatches(current.issues);
   if (mismatches.length === 0) {
     return;
@@ -203,7 +203,7 @@ export function repairPortDirectionMismatchWhenScoreImproves(layout: LayoutData)
     for (const candidate of candidates) {
       const old = e!.points;
       e!.points = candidate;
-      const next = validateLayout(layout);
+      const next = checkLayout(layout);
       if (next.ok && next.score > current.score) {
         current = next;
         break;

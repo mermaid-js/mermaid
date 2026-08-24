@@ -1,5 +1,5 @@
 import type { Edge, LayoutData, Node } from '../../../types.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 import { approxEqual, rectForNode } from '../core/helpers.js';
 import type { Point } from '../types.js';
 
@@ -370,7 +370,7 @@ export function repairEndpointApproachesWhenIssuesImprove(
   layout: LayoutData,
   options: { spacing?: number } = {}
 ): { changed: number } {
-  const validation = validateLayout(layout);
+  const validation = checkLayout(layout);
   const candidateIds = new Set(
     validation.issues
       .filter(
@@ -422,7 +422,7 @@ export function repairEndpointApproachesWhenIssuesImprove(
     let bestTotalIssues = beforeTotalIssues;
     for (const candidate of candidatePoints) {
       const trial = cloneLayoutWithEdgePoints(layout, edgeId, candidate);
-      const trialValidation = validateLayout(trial);
+      const trialValidation = checkLayout(trial);
       const trialEdgeIssues = trialValidation.issues.filter(
         (issue) => issue.edgeId === edgeId
       ).length;

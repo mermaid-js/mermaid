@@ -16,7 +16,7 @@ import { snapPortsToCenterWhenPaintDiagonal } from './pipeline/snapPortToCenter.
 import { rebuildPathologicalLabelEdges } from './pipeline/labelDetourRebuild.js';
 import { repairShortEndpointStubs } from './pipeline/endpointStubRepair.js';
 import { nudgeSegmentsOffGroupBordersWhenScoreImproves } from './pipeline/groupBorderHugNudge.js';
-import { validateLayout } from './validateLayoutProxy.js';
+import { checkLayout } from './validateLayoutProxy.js';
 
 /** Arc-length midpoint of an orthogonal polyline (the point halfway along its
  * total length). Returns null for a polyline with fewer than 2 finite points. */
@@ -97,7 +97,7 @@ export function finalizeDummyLabelNodesToOverlayLabels(layoutData: LayoutData): 
     // gentle score-gated simplifyEdgeJogs pass in index.ts; perturbing its
     // clean routes here can strand it in a worse local optimum that the later
     // pass cannot recover.
-    if (!validateLayout(layoutData).ok) {
+    if (!checkLayout(layoutData).ok) {
       runGenericOrthogonalCleanup(layoutData, 10);
     }
     (layoutData.config as any).isLabelNode = false;
@@ -627,7 +627,7 @@ function runGenericOrthogonalCleanup(layoutData: LayoutData, spacing: number): v
   // they can trade one clean shape for a different-but-worse one. Guarding the
   // batch keeps the net effect monotone: cleanup only ships when it does not
   // lower the unified validator score.
-  const before = validateLayout(layoutData);
+  const before = checkLayout(layoutData);
   const snapshot = new Map<any, { x: number; y: number }[]>();
   for (const e of (layoutData.edges ?? []) as any[]) {
     if (Array.isArray(e?.points)) {
@@ -657,7 +657,7 @@ function runGenericOrthogonalCleanup(layoutData: LayoutData, spacing: number): v
   snapPortsToCenterWhenPaintDiagonal(layoutData, { spacing });
   nudgeSegmentsOffGroupBordersWhenScoreImproves(layoutData, spacing);
 
-  const after = validateLayout(layoutData);
+  const after = checkLayout(layoutData);
   if (after.score < before.score) {
     for (const e of (layoutData.edges ?? []) as any[]) {
       const orig = snapshot.get(e);
@@ -669,7 +669,7 @@ function runGenericOrthogonalCleanup(layoutData: LayoutData, spacing: number): v
 }
 
 function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData): void {
-  let current = validateLayout(layoutData);
+  let current = checkLayout(layoutData);
   const offenders = current.issues.filter(
     (i) =>
       i.type === 'edge-label-overlaps-foreign-edge' &&
@@ -775,7 +775,7 @@ function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData
       owner.x = c.x;
       owner.y = c.y;
       validations += 1;
-      const next = validateLayout(layoutData);
+      const next = checkLayout(layoutData);
       const improved =
         next.score > current.score || (!current.ok && next.issues.length < current.issues.length);
       if (improved) {
@@ -789,7 +789,7 @@ function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData
 }
 
 function shortcutFinalLabelSideRailsWhenScoreImproves(layoutData: LayoutData): void {
-  let current = validateLayout(layoutData);
+  let current = checkLayout(layoutData);
   if (!current.ok) {
     return;
   }
@@ -847,7 +847,7 @@ function shortcutFinalLabelSideRailsWhenScoreImproves(layoutData: LayoutData): v
 
       const oldPoints = e.points;
       e.points = candidate as any;
-      const next = validateLayout(layoutData);
+      const next = checkLayout(layoutData);
       if (next.ok && next.score > current.score) {
         current = next;
         break;
@@ -858,7 +858,7 @@ function shortcutFinalLabelSideRailsWhenScoreImproves(layoutData: LayoutData): v
 }
 
 function snapCrossingRailsWhenScoreImproves(layoutData: LayoutData, spacing: number): void {
-  let current = validateLayout(layoutData);
+  let current = checkLayout(layoutData);
   if (!current.ok) {
     return;
   }
@@ -959,7 +959,7 @@ function snapCrossingRailsWhenScoreImproves(layoutData: LayoutData, spacing: num
           }
           vertical.edge.points = nextV;
           horizontal.edge.points = nextH;
-          const next = validateLayout(layoutData);
+          const next = checkLayout(layoutData);
           if (next.ok && next.score > current.score) {
             current = next;
           } else {
@@ -976,7 +976,7 @@ function straightenCenterAlignedVerticalEdgesWhenScoreImproves(
   layoutData: LayoutData,
   nodesByIdNoGroups: Map<string, any>
 ): void {
-  let current = validateLayout(layoutData);
+  let current = checkLayout(layoutData);
   if (!current.ok) {
     return;
   }
@@ -1007,7 +1007,7 @@ function straightenCenterAlignedVerticalEdgesWhenScoreImproves(
 
     const oldPoints = e.points;
     e.points = candidate as any;
-    const next = validateLayout(layoutData);
+    const next = checkLayout(layoutData);
     if (next.ok && next.score > current.score) {
       current = next;
     } else {
@@ -1017,7 +1017,7 @@ function straightenCenterAlignedVerticalEdgesWhenScoreImproves(
 }
 
 function nudgeFirstDoglegRailsWhenScoreImproves(layoutData: LayoutData, spacing: number): void {
-  let current = validateLayout(layoutData);
+  let current = checkLayout(layoutData);
   if (!current.ok) {
     return;
   }
@@ -1053,7 +1053,7 @@ function nudgeFirstDoglegRailsWhenScoreImproves(layoutData: LayoutData, spacing:
 
     const oldPoints = e.points;
     e.points = candidate as any;
-    const next = validateLayout(layoutData);
+    const next = checkLayout(layoutData);
     if (next.ok && next.score > current.score) {
       current = next;
     } else {

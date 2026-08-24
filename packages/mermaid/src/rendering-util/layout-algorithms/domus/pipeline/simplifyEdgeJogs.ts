@@ -20,7 +20,7 @@
  */
 import type { LayoutData } from '../../../types.js';
 import { approxEqual, rectForNode, segmentIntersectsRectInterior } from '../core/helpers.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;
@@ -344,7 +344,7 @@ function labelAnchors(pts: Point[], oldX: number, oldY: number): Point[] {
 }
 
 export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok) {
     return;
   }
@@ -530,7 +530,7 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
             e.x = anchor.x;
             e.y = anchor.y;
           }
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;
             changedThisPass = true;

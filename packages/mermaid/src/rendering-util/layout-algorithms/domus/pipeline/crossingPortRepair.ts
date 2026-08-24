@@ -1,7 +1,7 @@
 import type { Edge, LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import type { Point, Rect } from '../types.js';
-import { validateLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
+import { checkLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
 import { sanitizeOrthogonalPolylineForRendering } from './sanitize.js';
 
 const EPS = 1e-6;
@@ -164,7 +164,7 @@ function tryCandidate(
 ): ValidateLayoutResult | null {
   const original = edge.points;
   edge.points = candidate.map(clonePoint);
-  const next = validateLayout(layout);
+  const next = checkLayout(layout);
   if (shouldAccept(next, current)) {
     return next;
   }
@@ -330,7 +330,7 @@ function applyEndpointDetours(
         for (const candidate of endpointDetourCandidates(segment, rects, spacing)) {
           const original = segment.edge.points;
           segment.edge.points = candidate.map(clonePoint);
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           if (next.ok && next.issues.length === 0 && next.score > current.score) {
             return next;
           }
@@ -489,7 +489,7 @@ function applySidePortCandidates(
         (edge as Edge & { y?: number }).y = candidate.labelAnchor.y;
       }
 
-      const next = validateLayout(layout);
+      const next = checkLayout(layout);
       if (shouldAccept(next, current) && (!best || next.score > best.result.score)) {
         best = {
           edge,
@@ -537,7 +537,7 @@ export function reduceCrossingsWithPortSideCandidatesWhenScoreImproves(
 ): { changed: number } {
   const maxPasses = options.maxPasses ?? 4;
   const spacing = options.spacing ?? 10;
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok || (current.breakdown.crossings <= 0 && !hasBentSidePortCandidate(current))) {
     return { changed: 0 };
   }

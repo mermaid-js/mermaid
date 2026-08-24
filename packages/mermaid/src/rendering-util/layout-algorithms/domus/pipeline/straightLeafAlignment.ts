@@ -1,5 +1,5 @@
 import type { Edge, LayoutData, Node } from '../../../types.js';
-import { validateLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
+import { checkLayout, type ValidateLayoutResult } from '../validateLayoutProxy.js';
 import { approxEqual, rectForNode } from '../core/helpers.js';
 import type { Point } from '../types.js';
 
@@ -207,7 +207,7 @@ function tryAlignCandidate(
   }
   edge.points = nextPoints;
 
-  const next = validateLayout(layout);
+  const next = checkLayout(layout);
   if (shouldAccept(next, current)) {
     return next;
   }
@@ -231,7 +231,7 @@ export function alignStraightLeafEdgesWhenValid(
   layout: LayoutData,
   options: StraightLeafAlignmentOptions = {}
 ): StraightLeafAlignmentStats {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   const stats: StraightLeafAlignmentStats = { aligned: 0, rejected: 0 };
   if (!current.ok || current.issues.length > 0) {
     return stats;

@@ -17,7 +17,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
-import { validateLayout } from '../validateLayoutProxy.js';
+import { checkLayout } from '../validateLayoutProxy.js';
 import {
   buildChannelRoutingGraphForPorts,
   collectObstacleRects,
@@ -887,7 +887,7 @@ function labelAnchors(pts: Point[]): Point[] {
 }
 
 export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (current.ok) {
     return;
   }
@@ -1031,7 +1031,7 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
       // threshold on a badly broken layout is the whole issue list. Focused, the
       // threshold is this edge's own handful.
       const focusEdgeIds = new Set([edgeId]);
-      const focusBefore = validateLayout(layout, { focusEdgeIds }).issues.length;
+      const focusBefore = checkLayout(layout, { focusEdgeIds }).issues.length;
       const old = e!.points;
       const oldX = e!.x;
       const oldY = e!.y;
@@ -1080,7 +1080,7 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
             // candidate reaches the count the current route already has, the
             // answer is no. 7,356 of the 7,374 candidates tried on
             // `domus/architecture` are rejects, and this is what they cost.
-            const next = validateLayout(layout, {
+            const next = checkLayout(layout, {
               focusEdgeIds,
               abortAboveIssueCount: focusBefore,
             });
@@ -1092,7 +1092,7 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
               // The accepted route is a real improvement, so pay for one full
               // validation to refresh the whole-layout baseline the next edge
               // and the next round are judged against.
-              current = validateLayout(layout);
+              current = checkLayout(layout);
               improvedThisRound = true;
               accepted = true;
               break;
@@ -1124,7 +1124,7 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
  */
 export function simplifyPathologicalRoutesWhenMonotone(layout: LayoutData): void {
   const MIN_POINTS = 8;
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
 
   const nodeById = new Map<string, Node>();
   for (const n of layout.nodes ?? []) {
@@ -1220,7 +1220,7 @@ export function simplifyPathologicalRoutesWhenMonotone(layout: LayoutData): void
             e.x = anchor.x;
             e.y = anchor.y;
           }
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           const notWorse = next.issues.length <= current.issues.length;
           const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
           if (notWorse && noNew) {
@@ -1261,7 +1261,7 @@ function segmentsCross(a1: Point, a2: Point, b1: Point, b2: Point): boolean {
  * crossing budget. No-op on layouts scoring 0 or with no crossing-heavy edge.
  */
 export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok || current.score <= 0 || current.breakdown.crossings === 0) {
     return;
   }
@@ -1455,7 +1455,7 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
             return false;
           }
           evaluations++;
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;
             improvedThisRound = true;
@@ -1516,7 +1516,7 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
  * validator score strictly improves.
  */
 export function reorderPortFansWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok || current.score <= 0) {
     return;
   }
@@ -1684,7 +1684,7 @@ export function reorderPortFansWhenScoreImproves(layout: LayoutData): void {
       }
 
       if (!failed) {
-        const next = validateLayout(layout);
+        const next = checkLayout(layout);
         if (next.ok && next.score > current.score) {
           current = next;
           improvedThisRound = true;
@@ -1714,7 +1714,7 @@ export function reorderPortFansWhenScoreImproves(layout: LayoutData): void {
  * strictly improves.
  */
 export function untangleSharedTerminalPairsWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok || current.score <= 0 || current.breakdown.crossings === 0) {
     return;
   }
@@ -1838,7 +1838,7 @@ export function untangleSharedTerminalPairsWhenScoreImproves(layout: LayoutData)
             b.points![idx] = { x: b.points![idx].x, y: trackA.coord };
           }
         }
-        const next = validateLayout(layout);
+        const next = checkLayout(layout);
         if (next.ok && next.score > current.score) {
           current = next;
           improved = true;
@@ -1864,7 +1864,7 @@ export function untangleSharedTerminalPairsWhenScoreImproves(layout: LayoutData)
  * route, which the gate rejects).
  */
 export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok || current.score <= 0) {
     return;
   }
@@ -1959,7 +1959,7 @@ export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void 
             e.x = candidate[1].x;
             e.y = candidate[1].y;
           }
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;
             improved = true;
@@ -2005,7 +2005,7 @@ export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void 
             e.x = x;
             e.y = (startY + endY) / 2;
           }
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;
             improved = true;
@@ -2048,7 +2048,7 @@ export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void 
             e.x = (startX + endX) / 2;
             e.y = y;
           }
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;
             improved = true;
@@ -2080,7 +2080,7 @@ export function straightenParallelZsWhenScoreImproves(layout: LayoutData): void 
  * when the full validator score strictly improves.
  */
 export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
-  let current = validateLayout(layout);
+  let current = checkLayout(layout);
   if (!current.ok || current.score <= 0) {
     return;
   }
@@ -2288,7 +2288,7 @@ export function swingReroutesWhenScoreImproves(layout: LayoutData): void {
           }
           evaluations++;
           edgeEvaluations++;
-          const next = validateLayout(layout);
+          const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;
             improvedThisRound = true;
