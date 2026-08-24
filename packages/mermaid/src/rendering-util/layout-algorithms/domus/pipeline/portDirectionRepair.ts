@@ -223,6 +223,17 @@ function endCandidates(rE: Rect, ps: Point, startSide: Side): Point[][] {
   return candidates;
 }
 
+/** Distinct finite coordinates, order preserved. */
+function uniqueCoords(values: number[]): number[] {
+  const out: number[] = [];
+  for (const v of values) {
+    if (Number.isFinite(v) && !out.some((e) => Math.abs(e - v) < 1e-6)) {
+      out.push(v);
+    }
+  }
+  return out;
+}
+
 function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
   const candidates: Point[][] = [];
   const horizApproach = endSide === 'E' || endSide === 'W';
@@ -237,6 +248,45 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
       sideY = rS.bottom; // exit S (down)
     }
     if (sideY == null) {
+      // The target sits INSIDE the source's vertical span, so there is no
+      // "exit upward or downward and come back" route — and returning nothing
+      // here is why this pass was a no-op on every edge leaving a tall source.
+      // A group is the common case: `LanternML` is 284px tall on
+      // `domus/architecture4`, so all three of its outgoing edges reached this
+      // line, got zero candidates, and kept the port mismatch the validator
+      // was reporting the whole time.
+      //
+      // When the target is level with the source, the natural exit is the
+      // horizontal side FACING it and the route is a straight line — no bend,
+      // which is also the cheapest thing the bend penalty can score.
+      const facingX = pe.x > rS.right ? rS.right : pe.x < rS.left ? rS.left : null;
+      if (facingX == null) {
+        return candidates;
+      }
+      const loY = rS.top + CORNER_MARGIN;
+      const hiY = rS.bottom - CORNER_MARGIN;
+      if (Math.abs(facingX - pe.x) < MIN_STUB) {
+        return candidates;
+      }
+      for (const py of uniqueCoords([pe.y, (loY + hiY) / 2])) {
+        if (py < loY || py > hiY) {
+          continue;
+        }
+        if (Math.abs(py - pe.y) < 1e-6) {
+          candidates.push([
+            { x: facingX, y: py },
+            { x: pe.x, y: pe.y },
+          ]);
+        } else {
+          const mid = (facingX + pe.x) / 2;
+          candidates.push([
+            { x: facingX, y: py },
+            { x: mid, y: py },
+            { x: mid, y: pe.y },
+            { x: pe.x, y: pe.y },
+          ]);
+        }
+      }
       return candidates;
     }
     // Last segment approaches pe from the side `endSide` faces.
@@ -269,6 +319,37 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
       sideX = rS.right; // exit E (right)
     }
     if (sideX == null) {
+      // Mirror of the level-target case in the horizontal branch: the target is
+      // inside the source's horizontal span, so exit the vertical side facing
+      // it and run straight.
+      const facingY = pe.y > rS.bottom ? rS.bottom : pe.y < rS.top ? rS.top : null;
+      if (facingY == null) {
+        return candidates;
+      }
+      const loX = rS.left + CORNER_MARGIN;
+      const hiX = rS.right - CORNER_MARGIN;
+      if (Math.abs(facingY - pe.y) < MIN_STUB) {
+        return candidates;
+      }
+      for (const px of uniqueCoords([pe.x, (loX + hiX) / 2])) {
+        if (px < loX || px > hiX) {
+          continue;
+        }
+        if (Math.abs(px - pe.x) < 1e-6) {
+          candidates.push([
+            { x: px, y: facingY },
+            { x: pe.x, y: pe.y },
+          ]);
+        } else {
+          const mid = (facingY + pe.y) / 2;
+          candidates.push([
+            { x: px, y: facingY },
+            { x: px, y: mid },
+            { x: pe.x, y: mid },
+            { x: pe.x, y: pe.y },
+          ]);
+        }
+      }
       return candidates;
     }
     const approachSign = endSide === 'S' ? 1 : -1; // S: from the south (py > pe.y)
