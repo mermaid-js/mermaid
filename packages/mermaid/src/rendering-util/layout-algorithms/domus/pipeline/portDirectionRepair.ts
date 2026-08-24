@@ -46,6 +46,42 @@ interface Mismatch {
  * substring-matching diagnostic English, so rewording the message would have
  * silently repaired the wrong end of every edge.
  */
+/**
+ * Edges whose route crosses the interior of their own TARGET node.
+ *
+ * Reported by the validator as `edge-intersects-obstacle` where the obstacle is
+ * the edge's own `end`. Repairable only by moving the end port, which is what
+ * `endCandidates` builds.
+ */
+function collectSelfTargetEdges(
+  issues: readonly Issue[],
+  edges: readonly { id?: string; start?: string; end?: string }[]
+): Mismatch[] {
+  const endById = new Map<string, string>();
+  for (const e of edges) {
+    if (e?.id != null) {
+      endById.set(String(e.id), String(e.end ?? ''));
+    }
+  }
+  const out: Mismatch[] = [];
+  const seen = new Set<string>();
+  for (const issue of issues) {
+    if (issue.type !== 'edge-intersects-obstacle' || issue.edgeId == null) {
+      continue;
+    }
+    const edgeId = String(issue.edgeId);
+    const endId = endById.get(edgeId);
+    if (!endId || seen.has(edgeId)) {
+      continue;
+    }
+    if ((issue.nodeIds ?? []).some((n) => String(n) === endId)) {
+      seen.add(edgeId);
+      out.push({ edgeId, terminal: 'end' });
+    }
+  }
+  return out;
+}
+
 function collectMismatches(
   issues: { type: string; edgeId?: string; details?: Record<string, unknown> }[]
 ): Mismatch[] {
@@ -102,6 +138,91 @@ function sideOfPoint(r: Rect, p: Point): Side | null {
  * perpendicular side and run to the fixed end port `pe`. `endSide` fixes the
  * final approach axis; the start must exit on the perpendicular axis.
  */
+/**
+ * Mirror of {@link startCandidates} for the END terminal.
+ *
+ * The start version keeps the far port fixed and re-exits the near one. This is
+ * the same construction reflected: `ps` (the edge's fixed start point) is the
+ * anchor, and the END port slides along a perpendicular side of its own node so
+ * the last segment arrives facing that side instead of crossing the body.
+ *
+ * The pass previously handled `start` only — "END mismatches are left for the
+ * report" — which left `L_MLProduct_VendAI_0` and `L_LanternML_Chats_0` on
+ * `domus/architecture4` routed through the interior of the very node they
+ * terminate at, with no pass able to repair them: `obstacleDetourInsertPass`
+ * routes AROUND obstacles and the obstacle here is the destination.
+ */
+function endCandidates(rE: Rect, ps: Point, startSide: Side): Point[][] {
+  const candidates: Point[][] = [];
+  const horizDeparture = startSide === 'E' || startSide === 'W';
+
+  if (horizDeparture) {
+    // Start leaves horizontally → end must be entered vertically (N or S).
+    let sideY: number | null = null;
+    if (ps.y < rE.top) {
+      sideY = rE.top; // enter from the north
+    } else if (ps.y > rE.bottom) {
+      sideY = rE.bottom; // enter from the south
+    }
+    if (sideY == null) {
+      return candidates;
+    }
+    const lo = rE.left + CORNER_MARGIN;
+    const hi = rE.right - CORNER_MARGIN;
+    const departSign = startSide === 'E' ? 1 : -1;
+    for (const px of [
+      departSign > 0 ? Math.max(lo, ps.x + MIN_STUB) : Math.min(hi, ps.x - MIN_STUB),
+      (lo + hi) / 2,
+      departSign > 0 ? hi : lo,
+    ]) {
+      if (px < lo - ON_SIDE || px > hi + ON_SIDE) {
+        continue;
+      }
+      if (Math.abs(px - ps.x) < MIN_STUB) {
+        continue;
+      }
+      candidates.push([
+        { x: ps.x, y: ps.y },
+        { x: px, y: ps.y },
+        { x: px, y: sideY },
+      ]);
+    }
+  } else {
+    // Start leaves vertically → end must be entered horizontally (E or W).
+    let sideX: number | null = null;
+    if (ps.x < rE.left) {
+      sideX = rE.left;
+    } else if (ps.x > rE.right) {
+      sideX = rE.right;
+    }
+    if (sideX == null) {
+      return candidates;
+    }
+    const lo = rE.top + CORNER_MARGIN;
+    const hi = rE.bottom - CORNER_MARGIN;
+    const departSign = startSide === 'S' ? 1 : -1;
+    for (const py of [
+      departSign > 0 ? Math.max(lo, ps.y + MIN_STUB) : Math.min(hi, ps.y - MIN_STUB),
+      (lo + hi) / 2,
+      departSign > 0 ? hi : lo,
+    ]) {
+      if (py < lo - ON_SIDE || py > hi + ON_SIDE) {
+        continue;
+      }
+      if (Math.abs(py - ps.y) < MIN_STUB) {
+        continue;
+      }
+      candidates.push([
+        { x: ps.x, y: ps.y },
+        { x: ps.x, y: py },
+        { x: sideX, y: py },
+      ]);
+    }
+  }
+
+  return candidates;
+}
+
 function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
   const candidates: Point[][] = [];
   const horizApproach = endSide === 'E' || endSide === 'W';
@@ -176,7 +297,16 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
 
 export function repairPortDirectionMismatchWhenScoreImproves(layout: LayoutData): void {
   let current = checkLayout(layout);
-  const mismatches = collectMismatches(current.issues);
+  const mismatches = [...collectMismatches(current.issues)];
+  const seenTargets = new Set(mismatches.map((m) => `${m.edgeId}|${m.terminal}`));
+  // A route through its own target is the same defect wearing a different
+  // label, and it is only repairable from the end terminal.
+  for (const m of collectSelfTargetEdges(current.issues, layout.edges ?? [])) {
+    if (!seenTargets.has(`${m.edgeId}|${m.terminal}`)) {
+      seenTargets.add(`${m.edgeId}|${m.terminal}`);
+      mismatches.push(m);
+    }
+  }
   if (mismatches.length === 0) {
     return;
   }
@@ -195,11 +325,6 @@ export function repairPortDirectionMismatchWhenScoreImproves(layout: LayoutData)
   }
 
   for (const { edgeId, terminal } of mismatches) {
-    // Only the START terminal is handled for now (the case the producer emits
-    // when facing sides are too close); END mismatches are left for the report.
-    if (terminal !== 'start') {
-      continue;
-    }
     const e = edgeById.get(edgeId);
     const pts = e?.points;
     if (!Array.isArray(pts) || pts.length < 2) {
@@ -210,14 +335,24 @@ export function repairPortDirectionMismatchWhenScoreImproves(layout: LayoutData)
     if (!startNode || !endNode) {
       continue;
     }
-    const rS = rectForNode(startNode);
-    const pe = pts[pts.length - 1];
-    const endSide = sideOfPoint(rectForNode(endNode), pe);
-    if (!endSide) {
-      continue;
+    let candidates: Point[][];
+    if (terminal === 'start') {
+      const rS = rectForNode(startNode);
+      const pe = pts[pts.length - 1];
+      const endSide = sideOfPoint(rectForNode(endNode), pe);
+      if (!endSide) {
+        continue;
+      }
+      candidates = startCandidates(rS, pe, endSide);
+    } else {
+      const rE = rectForNode(endNode);
+      const ps = pts[0];
+      const startSide = sideOfPoint(rectForNode(startNode), ps);
+      if (!startSide) {
+        continue;
+      }
+      candidates = endCandidates(rE, ps, startSide);
     }
-
-    const candidates = startCandidates(rS, pe, endSide);
     const currentKeys = new Set(current.issues.map(issueKey));
     for (const candidate of candidates) {
       const old = e!.points;
