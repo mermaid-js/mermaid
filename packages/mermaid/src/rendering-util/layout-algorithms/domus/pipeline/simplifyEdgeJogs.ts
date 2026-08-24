@@ -409,6 +409,9 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
       const startId = e?.start != null ? String(e.start) : '';
       const endId = e?.end != null ? String(e.end) : '';
 
+      // Validity pre-screen set for the accept test below.
+      const focusEdgeIds = e?.id != null ? new Set([String(e.id)]) : undefined;
+
       const candidates: Point[][] = [];
       if (approxEqual(p0.x, pn.x) || approxEqual(p0.y, pn.y)) {
         candidates.push([p0, pn]);
@@ -529,6 +532,16 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
           if (hasLabel) {
             e.x = anchor.x;
             e.y = anchor.y;
+          }
+          // Acceptance needs `next.ok`, and `current` is always an ok result,
+          // so only an issue involving THIS edge can invalidate the layout —
+          // every check is a pure function of geometry and nothing else moved.
+          // A focused run answers that over this edge's handful of issues
+          // instead of re-deriving `domus/architecture`'s ~200, and only the
+          // survivors pay for the full run, which is the only thing that can
+          // produce a score comparable with the baseline's.
+          if (focusEdgeIds && !checkLayout(layout, { focusEdgeIds }).ok) {
+            continue;
           }
           const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
