@@ -263,6 +263,9 @@ function isConventionalCenterEndpointIssue(
   return true;
 }
 
+/** Mirrors `validateLayout`'s NODE_GROUP_CLEARANCE — the gap it actually checks. */
+const GROUP_CLEARANCE_PADDING = 20;
+
 export function refreshClustersAfterLeafPlacement(
   data: LayoutData,
   options: OrthogonalOptions
@@ -950,7 +953,14 @@ export function maybeHandleDomusBackend(args: {
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
       nudgeLeafNodesAwayFromNonAncestorGroups(data, {
-        padding: pad,
+        // The gap `validateLayout` actually checks is NODE_GROUP_CLEARANCE (20).
+        // This was passed the generic spacing pad (10), so the repair aimed at
+        // half the required clearance: every offender it moved landed at exactly
+        // 10.0 and was re-flagged immediately. A repair pointed at a threshold
+        // its checker does not use cannot succeed, whatever any single fixture's
+        // issue count happens to do — `nodeGroupSpacing.ts` already keeps its own
+        // `CLEARANCE = 20` for precisely this reason.
+        padding: GROUP_CLEARANCE_PADDING,
         maxIterations: 60,
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
@@ -1042,7 +1052,14 @@ export function maybeHandleDomusBackend(args: {
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
       nudgeLeafNodesAwayFromNonAncestorGroups(data, {
-        padding: pad,
+        // The gap `validateLayout` actually checks is NODE_GROUP_CLEARANCE (20).
+        // This was passed the generic spacing pad (10), so the repair aimed at
+        // half the required clearance: every offender it moved landed at exactly
+        // 10.0 and was re-flagged immediately. A repair pointed at a threshold
+        // its checker does not use cannot succeed, whatever any single fixture's
+        // issue count happens to do — `nodeGroupSpacing.ts` already keeps its own
+        // `CLEARANCE = 20` for precisely this reason.
+        padding: GROUP_CLEARANCE_PADDING,
         maxIterations: 60,
         preferAxis: ctx.preferAxisForVerticalFlow,
       });
