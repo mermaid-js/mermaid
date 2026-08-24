@@ -265,9 +265,17 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
       }
       const loY = rS.top + CORNER_MARGIN;
       const hiY = rS.bottom - CORNER_MARGIN;
-      if (Math.abs(facingX - pe.x) < MIN_STUB) {
-        return candidates;
-      }
+      // MIN_STUB guards the first segment before a BEND — a short stub then a
+      // turn reads badly and the validator flags it. A straight two-point route
+      // has no bend, so the rule does not apply to it, and applying it anyway
+      // rejected the best route available.
+      //
+      // `domus/architecture4`: `Monitoring` sits 10px to the left of the
+      // `LanternML` frame and level with it, so the ideal route is the straight
+      // 10px hop (294,444) -> (284,444). MIN_STUB is 11, so that candidate was
+      // discarded and the edge kept a six-point detour back INTO the group it
+      // was leaving — the port mismatch the pass exists to repair.
+      const straightOnly = Math.abs(facingX - pe.x) < MIN_STUB;
       for (const py of uniqueCoords([pe.y, (loY + hiY) / 2])) {
         if (py < loY || py > hiY) {
           continue;
@@ -277,7 +285,7 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
             { x: facingX, y: py },
             { x: pe.x, y: pe.y },
           ]);
-        } else {
+        } else if (!straightOnly) {
           const mid = (facingX + pe.x) / 2;
           candidates.push([
             { x: facingX, y: py },
@@ -328,9 +336,9 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
       }
       const loX = rS.left + CORNER_MARGIN;
       const hiX = rS.right - CORNER_MARGIN;
-      if (Math.abs(facingY - pe.y) < MIN_STUB) {
-        return candidates;
-      }
+      // Same reasoning as the horizontal branch: the stub rule is about the
+      // segment before a bend, and a straight route has none.
+      const straightOnly = Math.abs(facingY - pe.y) < MIN_STUB;
       for (const px of uniqueCoords([pe.x, (loX + hiX) / 2])) {
         if (px < loX || px > hiX) {
           continue;
@@ -340,7 +348,7 @@ function startCandidates(rS: Rect, pe: Point, endSide: Side): Point[][] {
             { x: px, y: facingY },
             { x: pe.x, y: pe.y },
           ]);
-        } else {
+        } else if (!straightOnly) {
           const mid = (facingY + pe.y) / 2;
           candidates.push([
             { x: px, y: facingY },
