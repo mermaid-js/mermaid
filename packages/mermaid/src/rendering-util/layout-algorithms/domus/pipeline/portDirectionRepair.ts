@@ -17,7 +17,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
-import { checkLayout } from '../validateLayoutProxy.js';
+import { checkLayout, type Issue } from '../validateLayoutProxy.js';
 
 interface Point {
   x: number;
@@ -58,6 +58,24 @@ function collectMismatches(
     out.push({ edgeId: String(issue.edgeId), terminal });
   }
   return out;
+}
+
+/** Structured identity of an issue, so "no NEW issue" can be tested by key. */
+function issueKey(issue: Issue): string {
+  const ids: string[] = [];
+  if (issue.edgeId != null) {
+    ids.push(String(issue.edgeId));
+  }
+  const detailIds = issue.details?.edgeIds;
+  if (Array.isArray(detailIds)) {
+    for (const id of detailIds) {
+      ids.push(String(id));
+    }
+  }
+  for (const id of issue.nodeIds ?? []) {
+    ids.push(String(id));
+  }
+  return `${issue.type}|${[...new Set(ids)].sort().join(',')}`;
 }
 
 /** Which side of `r` point `p` attaches to (within ON_SIDE), else null. */
@@ -200,11 +218,28 @@ export function repairPortDirectionMismatchWhenScoreImproves(layout: LayoutData)
     }
 
     const candidates = startCandidates(rS, pe, endSide);
+    const currentKeys = new Set(current.issues.map(issueKey));
     for (const candidate of candidates) {
       const old = e!.points;
       e!.points = candidate;
       const next = checkLayout(layout);
-      if (next.ok && next.score > current.score) {
+      // Accept on a strict improvement, judged the way the layout's own state
+      // allows. On a VALID layout the score is the objective, as before. On an
+      // INVALID one it is not available: `score` is clamped to 0 whenever
+      // `!ok`, and `next.ok` asks the WHOLE layout to be valid — which a
+      // single-edge port repair cannot deliver on a layout with two dozen
+      // issues. So the old gate could never fire on exactly the layouts this
+      // pass exists to repair, and it sat dormant while `domus/architecture4`
+      // kept four edges routed back through their own endpoint nodes.
+      //
+      // Invalid case: fewer issues than before and no issue key the baseline
+      // did not already have. Monotone, so a candidate can never make the
+      // layout worse — the same rule `remediateFlaggedEdgesWhenMonotone` uses.
+      const improved = current.ok
+        ? next.ok && next.score > current.score
+        : next.issues.length < current.issues.length &&
+          next.issues.every((iss) => currentKeys.has(issueKey(iss)));
+      if (improved) {
         current = next;
         break;
       }
