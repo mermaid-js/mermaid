@@ -55,7 +55,19 @@ const OUTWARD: Record<Side, Point> = {
 };
 
 /** Stable identity for an issue: type + the elements it implicates. */
-function issueKey(issue: Issue): string {
+/**
+ * Every id an issue implicates, from structured fields only.
+ *
+ * These two helpers used to scrape ids out of `issue.message` with
+ * `/"([^"]+)"/g` on top of the structured fields, which made the optimiser's
+ * notion of issue identity depend on diagnostic prose. Every id any message
+ * quotes is already carried structurally — `edgeId` for the subject edge,
+ * `details.edgeIds` for the pairwise checks, `nodeIds` for every node the text
+ * names — across all 32 core pushes and all four DOMUS extensions, so reading
+ * the fields yields the same set the regex did and frees the message to become
+ * optional for render-time callers.
+ */
+function implicatedIds(issue: Issue): string[] {
   const ids: string[] = [];
   if (issue.edgeId != null) {
     ids.push(String(issue.edgeId));
@@ -63,15 +75,17 @@ function issueKey(issue: Issue): string {
   for (const id of issue.details?.edgeIds ?? []) {
     ids.push(String(id));
   }
-  if (typeof issue.message === 'string') {
-    for (const m of issue.message.matchAll(/"([^"]+)"/g)) {
-      ids.push(m[1]);
-    }
+  for (const id of issue.nodeIds ?? []) {
+    ids.push(String(id));
   }
-  return `${issue.type}|${[...new Set(ids)].sort().join(',')}`;
+  return ids;
 }
 
-/** Edge ids each issue implicates (structured fields + quoted message ids). */
+function issueKey(issue: Issue): string {
+  return `${issue.type}|${[...new Set(implicatedIds(issue))].sort().join(',')}`;
+}
+
+/** Edge ids each issue implicates. */
 function edgeIdsOfIssue(issue: Issue, knownEdgeIds: Set<string>): string[] {
   const ids = new Set<string>();
   if (issue.edgeId != null) {
@@ -80,11 +94,11 @@ function edgeIdsOfIssue(issue: Issue, knownEdgeIds: Set<string>): string[] {
   for (const id of issue.details?.edgeIds ?? []) {
     ids.add(String(id));
   }
-  if (typeof issue.message === 'string') {
-    for (const m of issue.message.matchAll(/"([^"]+)"/g)) {
-      if (knownEdgeIds.has(m[1])) {
-        ids.add(m[1]);
-      }
+  // Node-bearing fields can legitimately name an edge (e.g. a label node's own
+  // edge), so keep the known-edge filter the message scrape applied.
+  for (const id of issue.nodeIds ?? []) {
+    if (knownEdgeIds.has(String(id))) {
+      ids.add(String(id));
     }
   }
   return [...ids];

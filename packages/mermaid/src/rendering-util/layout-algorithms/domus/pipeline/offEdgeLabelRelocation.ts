@@ -22,15 +22,19 @@ interface Point {
   y: number;
 }
 
-/** Edge ids the validator reports as having an off-edge label. */
-function offEdgeLabelEdgeIds(issues: { type: string; message?: string }[]): Set<string> {
+/**
+ * Edge ids the validator reports as having an off-edge label.
+ *
+ * Reads `issue.edgeId`. This used to pull the id out of the first quoted run in
+ * `issue.message`, which made a human-readable diagnostic string load-bearing:
+ * both `edge-label-off-edge` messages lead with the edge, so the regex happened
+ * to work, but rewording either one would silently empty this set.
+ */
+function offEdgeLabelEdgeIds(issues: { type: string; edgeId?: string }[]): Set<string> {
   const ids = new Set<string>();
   for (const issue of issues) {
-    if (issue.type === 'edge-label-off-edge' && typeof issue.message === 'string') {
-      const m = /"([^"]+)"/.exec(issue.message);
-      if (m) {
-        ids.add(m[1]);
-      }
+    if (issue.type === 'edge-label-off-edge' && issue.edgeId != null && issue.edgeId !== '') {
+      ids.add(String(issue.edgeId));
     }
   }
   return ids;

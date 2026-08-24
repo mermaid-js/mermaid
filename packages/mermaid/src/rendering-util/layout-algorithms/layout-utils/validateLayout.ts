@@ -1333,7 +1333,13 @@ export function validateLayout(
             message: `Edge "${edgeId}" leaves start port on side ${sSide} but first segment goes ${dir}`,
             edgeId,
             nodeIds: [startId],
-            details: { startSide: sSide, firstDir: dir, p0: points[0], p1: points[1] },
+            details: {
+              terminal: 'start',
+              startSide: sSide,
+              firstDir: dir,
+              p0: points[0],
+              p1: points[1],
+            },
           });
         }
       }
@@ -1345,7 +1351,7 @@ export function validateLayout(
             message: `Edge "${edgeId}" enters end port on side ${tSide} but last segment comes from ${dir}`,
             edgeId,
             nodeIds: [endId],
-            details: { endSide: tSide, lastDirTowardPort: dir },
+            details: { terminal: 'end', endSide: tSide, lastDirTowardPort: dir },
           });
         }
       }

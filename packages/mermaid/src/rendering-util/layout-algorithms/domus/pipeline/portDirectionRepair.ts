@@ -37,18 +37,25 @@ interface Mismatch {
   terminal: 'start' | 'end';
 }
 
-/** Parse `edge-port-direction-mismatch` rows: which edge + which terminal. */
-function collectMismatches(issues: { type: string; message?: string }[]): Mismatch[] {
+/**
+ * Read `edge-port-direction-mismatch` rows: which edge + which terminal.
+ *
+ * Both come from structured fields. This used to take the edge from the first
+ * quoted run of `issue.message` and the terminal from
+ * `issue.message.includes('end port')` — a control-flow decision made by
+ * substring-matching diagnostic English, so rewording the message would have
+ * silently repaired the wrong end of every edge.
+ */
+function collectMismatches(
+  issues: { type: string; edgeId?: string; details?: Record<string, unknown> }[]
+): Mismatch[] {
   const out: Mismatch[] = [];
   for (const issue of issues) {
-    if (issue.type !== 'edge-port-direction-mismatch' || typeof issue.message !== 'string') {
+    if (issue.type !== 'edge-port-direction-mismatch' || issue.edgeId == null) {
       continue;
     }
-    const idMatch = /"([^"]+)"/.exec(issue.message);
-    const terminal = issue.message.includes('end port') ? 'end' : 'start';
-    if (idMatch) {
-      out.push({ edgeId: idMatch[1], terminal });
-    }
+    const terminal = issue.details?.terminal === 'end' ? 'end' : 'start';
+    out.push({ edgeId: String(issue.edgeId), terminal });
   }
   return out;
 }
