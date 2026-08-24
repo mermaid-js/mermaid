@@ -1,4 +1,4 @@
-import type { CstNode, CstParser, Lexer } from 'chevrotain';
+import type { CstNode, CstParser, ILexingResult, Lexer } from 'chevrotain';
 
 interface ChevrotainParseConfig {
   diagramType: string;
@@ -6,6 +6,12 @@ interface ChevrotainParseConfig {
   parser: CstParser;
   entry: () => CstNode;
   visit: (cst: CstNode) => void;
+  /**
+   * Optional check on the token stream, run after lexing succeeds and before parsing. Throw to
+   * reject the input. Diagrams with lexer modes use this to reject input that ended with a mode
+   * still open, which Chevrotain does not report as a lexing error on its own.
+   */
+  checkLexerResult?: (result: ILexingResult) => void;
 }
 
 /** Runs a singleton lexer/parser pair and visits the resulting CST. */
@@ -24,6 +30,8 @@ export function runChevrotainParse(config: ChevrotainParseConfig, input: string)
       }, column ${lexError.column ?? 1} [${start},${end})`
     );
   }
+
+  config.checkLexerResult?.(lexResult);
 
   config.parser.input = lexResult.tokens;
   const cst = config.entry();

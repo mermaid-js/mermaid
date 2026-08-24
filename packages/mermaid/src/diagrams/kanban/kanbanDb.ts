@@ -5,18 +5,21 @@ import { log } from '../../logger.js';
 import type { Edge, KanbanNode } from '../../rendering-util/types.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { NodeMetaData } from '../../types.js';
+import type { KanbanAST } from './kanbanTypes.js';
 import * as yaml from 'js-yaml';
 
 let nodes: KanbanNode[] = [];
 let sections: KanbanNode[] = [];
 let cnt = 0;
 let elements: Record<number, D3Element> = {};
+let ast: KanbanAST | undefined;
 
 const clear = () => {
   nodes = [];
   sections = [];
   cnt = 0;
   elements = {};
+  ast = undefined;
 };
 /*
  * if your level is the section level return null - then you do not belong to a level
@@ -238,11 +241,22 @@ const type2Str = (type: number) => {
 const getLogger = () => log;
 const getElementById = (id: number) => elements[id];
 
+/**
+ * The source-mapped read-model the parser builds alongside the graph. Nothing in the rendering
+ * path reads it; it is here for tooling that needs to map diagram elements back to source text.
+ */
+const setAST = (next: KanbanAST | undefined) => {
+  ast = next;
+};
+const getAST = (): KanbanAST | undefined => ast;
+
 const db = {
   clear,
   addNode,
   getSections,
   getData,
+  setAST,
+  getAST,
   nodeType,
   getType,
   setElementForId,

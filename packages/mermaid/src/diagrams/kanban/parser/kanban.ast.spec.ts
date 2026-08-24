@@ -1,0 +1,200 @@
+// cspell:ignore knsv
+/**
+ * The source-mapped read-model the parser records on the db. Nothing in the rendering path reads
+ * it, so these assertions are what keep it honest — above all that every span slices back to the
+ * text it claims to describe.
+ */
+import kanbanDb from '../kanbanDb.js';
+import type { KanbanAST, KanbanGraphStatement, Span } from '../kanbanTypes.js';
+import { kanbanCorpus } from './kanban.corpus.js';
+import { parser as kanbanParser } from './kanban.chevrotain.js';
+
+const DIAGRAM = `kanban
+  %% a comment
+  id1[Todo]
+    id2[Create tests]@{ ticket: MC-2038, assigned: 'knsv', priority: 'High' }
+    :::hot
+    ::icon(bomb)
+
+  Doing
+    (no id here)
+`;
+
+function parse(text: string): KanbanAST {
+  kanbanParser.yy = kanbanDb;
+  kanbanDb.clear();
+  kanbanParser.parse(text);
+  const ast = kanbanDb.getAST();
+  if (!ast) {
+    throw new Error('parse produced no AST');
+  }
+  return ast;
+}
+
+/** Every span in a statement, so the round-trip check cannot miss one. */
+function spansOf(statement: KanbanGraphStatement): Span[] {
+  const spans: Span[] = [statement.span];
+  if (statement.valueSpan) {
+    spans.push(statement.valueSpan);
+  }
+  for (const node of statement.nodes ?? []) {
+    spans.push(node.span);
+    for (const span of [node.idSpan, node.labelSpan, node.metadataSpan]) {
+      if (span) {
+        spans.push(span);
+      }
+    }
+    for (const entry of node.metadata ?? []) {
+      spans.push(entry.span, entry.keySpan, entry.valueSpan);
+    }
+  }
+  return spans;
+}
+
+describe('kanban AST', () => {
+  it('records the header and the resolved graph', () => {
+    const ast = parse(DIAGRAM);
+
+    expect(ast.version).toBe(1);
+    expect(ast.diagramType).toBe('kanban');
+    expect(ast.source).toBe(DIAGRAM);
+    expect(ast.header.keyword).toBe('kanban');
+    expect(DIAGRAM.slice(...ast.header.span)).toBe('kanban');
+    expect(ast.edges).toStrictEqual([]);
+
+    expect(Object.keys(ast.groups)).toStrictEqual(['id1', 'Doing']);
+    expect(ast.groups.id1).toStrictEqual({
+      title: 'Todo',
+      nodes: ['id2'],
+      attrs: { kind: 'kanbanSection', level: 2 },
+    });
+    expect(Object.keys(ast.nodes)).toStrictEqual(['id1', 'id2', 'Doing', 'no id here']);
+    expect(ast.nodes.id2).toStrictEqual({
+      label: 'Create tests',
+      shape: 'kanbanItem',
+      attrs: {
+        level: 4,
+        icon: 'bomb',
+        assigned: 'knsv',
+        ticket: 'MC-2038',
+        priority: 'High',
+        parentId: 'id1',
+      },
+    });
+  });
+
+  it('records the statements in source order', () => {
+    const ast = parse(DIAGRAM);
+    // The empty line after `::icon(bomb)` terminates that statement rather than becoming one of
+    // its own — a blank line is only a statement when nothing precedes it on the line before.
+    expect(ast.statements.map((statement) => statement.kind)).toStrictEqual([
+      'comment',
+      'node',
+      'node',
+      'classAssign',
+      'icon',
+      'node',
+      'node',
+    ]);
+    expect(ast.statements.map((statement) => statement.level)).toStrictEqual([
+      undefined,
+      2,
+      4,
+      4,
+      4,
+      2,
+      4,
+    ]);
+  });
+
+  it('folds blank lines between statements into the preceding terminator', () => {
+    const ast = parse('kanban\nroot\n A\n \n\n B');
+    expect(ast.statements.map((statement) => statement.kind)).toStrictEqual([
+      'node',
+      'node',
+      'node',
+    ]);
+  });
+
+  it('records a blank line that is the whole document', () => {
+    const ast = parse('kanban\n\n');
+    expect(ast.statements.map((statement) => statement.kind)).toStrictEqual(['blank']);
+    expect(ast.nodes).toStrictEqual({});
+  });
+
+  it('spans the id, label and metadata of a node', () => {
+    const [, , item] = parse(DIAGRAM).statements;
+    const [node] = item.nodes!;
+
+    expect(node.id).toBe('id2');
+    expect(node.defines).toBe(true);
+    expect(DIAGRAM.slice(...node.span)).toBe(
+      "id2[Create tests]@{ ticket: MC-2038, assigned: 'knsv', priority: 'High' }"
+    );
+    expect(DIAGRAM.slice(...node.idSpan!)).toBe('id2');
+    expect(DIAGRAM.slice(...node.labelSpan!)).toBe('Create tests');
+    expect(DIAGRAM.slice(...node.metadataSpan!)).toBe(
+      "@{ ticket: MC-2038, assigned: 'knsv', priority: 'High' }"
+    );
+    expect(
+      node.metadata!.map((entry) => [
+        entry.key,
+        DIAGRAM.slice(...entry.keySpan),
+        DIAGRAM.slice(...entry.valueSpan),
+      ])
+    ).toStrictEqual([
+      ['ticket', 'ticket', 'MC-2038'],
+      ['assigned', 'assigned', "'knsv'"],
+      ['priority', 'priority', "'High'"],
+    ]);
+  });
+
+  it('marks a shape written without an id, but still resolves it', () => {
+    const ast = parse(DIAGRAM);
+    const [node] = ast.statements.at(-1)!.nodes!;
+
+    expect(node.id).toBe('no id here');
+    expect(node.idSpan).toBeUndefined();
+    expect(DIAGRAM.slice(...node.labelSpan!)).toBe('no id here');
+    expect(ast.nodes[node.id]).toBeDefined();
+  });
+
+  it('spans a multi-line metadata block', () => {
+    const source = 'kanban\n  root@{\n    icon: star\n    assigned: knsv\n  }\n';
+    const [node] = parse(source).statements[0].nodes!;
+
+    expect(source.slice(...node.metadataSpan!)).toBe('@{\n    icon: star\n    assigned: knsv\n  }');
+    expect(
+      node.metadata!.map((entry) => [entry.key, source.slice(...entry.valueSpan)])
+    ).toStrictEqual([
+      ['icon', 'star'],
+      ['assigned', 'knsv'],
+    ]);
+  });
+
+  it('keeps every span sliceable across the whole corpus', () => {
+    for (const { name, text } of kanbanCorpus) {
+      let ast: KanbanAST;
+      try {
+        ast = parse(text);
+      } catch {
+        continue; // Rejected inputs produce no AST; parity covers those.
+      }
+      for (const statement of ast.statements) {
+        for (const [start, end] of spansOf(statement)) {
+          expect(
+            { name, start, end, valid: start >= 0 && start <= end && end <= text.length },
+            `span [${start},${end}) is outside ${name}`
+          ).toMatchObject({ valid: true });
+        }
+      }
+    }
+  });
+
+  it('is cleared with the rest of the db', () => {
+    parse(DIAGRAM);
+    expect(kanbanDb.getAST()).toBeDefined();
+    kanbanDb.clear();
+    expect(kanbanDb.getAST()).toBeUndefined();
+  });
+});

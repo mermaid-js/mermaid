@@ -1,0 +1,7862 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`kanban parser corpus > parses apostrophe-in-descr 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id12",
+        "isGroup": true,
+        "label": "Can't reproduce",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id12",
+        "isGroup": false,
+        "label": "Can't reproduce",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id12[Can't reproduce]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses bang 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "d",
+        "isGroup": true,
+        "label": "bang",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "d",
+        "isGroup": false,
+        "label": "bang",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  d))bang((",
+}
+`;
+
+exports[`kanban parser corpus > parses bare-keyword 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 1, column 7: Expecting: expecting at least one iteration which starts with one of these possible Token sequences::",
+  },
+  "text": "kanban",
+}
+`;
+
+exports[`kanban parser corpus > parses blank-lines-after-keyword 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 4, column 1: Expecting: one of these possible Token sequences:",
+  },
+  "text": "kanban
+
+
+  root",
+}
+`;
+
+exports[`kanban parser corpus > parses brace-in-description 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 7: "[" is never closed",
+  },
+  "text": "kanban
+  root[a}b]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses circle 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "a",
+        "isGroup": true,
+        "label": "circle",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "a",
+        "isGroup": false,
+        "label": "circle",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  a((circle))",
+}
+`;
+
+exports[`kanban parser corpus > parses class 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": "m-4 p-8",
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+    :::m-4 p-8
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses class-empty 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 4, column 1: Expecting: one of these possible Token sequences:",
+  },
+  "text": "kanban
+  root
+  :::
+  child",
+}
+`;
+
+exports[`kanban parser corpus > parses class-marker-at-eof 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 3, column 3: ":::" is never closed",
+  },
+  "text": "kanban
+  root
+  :::",
+}
+`;
+
+exports[`kanban parser corpus > parses class-then-child 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "Root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Child",
+        "isGroup": false,
+        "label": "Child",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "a",
+        "isGroup": false,
+        "label": "a",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "New Stuff",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "Root",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root(Root)
+    Child(Child)
+    :::hot
+      a(a)
+      b[New Stuff]",
+}
+`;
+
+exports[`kanban parser corpus > parses closed-string-open-shape 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 7: "[" is never closed",
+  },
+  "text": "kanban
+  root["done"
+",
+}
+`;
+
+exports[`kanban parser corpus > parses cloud-close 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "f",
+        "isGroup": true,
+        "label": "cloud",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "f",
+        "isGroup": false,
+        "label": "cloud",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  f)cloud(",
+}
+`;
+
+exports[`kanban parser corpus > parses cloud-open 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "c",
+        "isGroup": true,
+        "label": "cloud-",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "c",
+        "isGroup": false,
+        "label": "cloud-",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  c(-cloud-)",
+}
+`;
+
+exports[`kanban parser corpus > parses comment-after-bare-id 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root %% swallowed by the id",
+        "isGroup": true,
+        "label": "root %% swallowed by the id",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root %% swallowed by the id",
+        "isGroup": false,
+        "label": "root %% swallowed by the id",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root %% swallowed by the id
+",
+}
+`;
+
+exports[`kanban parser corpus > parses comment-end-of-line 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "Root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "a",
+        "isGroup": false,
+        "label": "a",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "x",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "Root",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root(Root)
+      a(a) %% This is a comment
+      b[x]",
+}
+`;
+
+exports[`kanban parser corpus > parses comment-own-line 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "Root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "New Stuff",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "Root",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root(Root)
+
+      %% This is a comment
+      b[New Stuff]",
+}
+`;
+
+exports[`kanban parser corpus > parses deep-hierarchy 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child1",
+        "isGroup": false,
+        "label": "child1",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "leaf1",
+        "isGroup": false,
+        "label": "leaf1",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child2",
+        "isGroup": false,
+        "label": "child2",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root
+    child1
+      leaf1
+    child2",
+}
+`;
+
+exports[`kanban parser corpus > parses descr-after-string 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 8: Expecting token of type --> NodeDEnd <-- but found --> ' y' <--",
+  },
+  "text": "kanban
+  a["x" y]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses docs-0 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "column1",
+        "isGroup": true,
+        "label": "Column Title",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "task1",
+        "isGroup": false,
+        "label": "Task Description",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "column1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "column1",
+        "isGroup": false,
+        "label": "Column Title",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  column1[Column Title]
+    task1[Task Description]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses docs-1 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "todo",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Update Database Function",
+        "level": 2,
+        "padding": undefined,
+        "parentId": "todo",
+        "priority": "High",
+        "shape": "kanbanItem",
+        "ticket": "MC-2037",
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "todo",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 0,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+todo[Todo]
+  id3[Update Database Function]@{ ticket: MC-2037, assigned: 'knsv', priority: 'High' }
+",
+}
+`;
+
+exports[`kanban parser corpus > parses docs-2 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "Todo",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Create Documentation",
+        "isGroup": false,
+        "label": "Create Documentation",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "Todo",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Blog about the new diagram",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "Todo",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "In progress",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id6",
+        "isGroup": false,
+        "label": "Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "In progress",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id9",
+        "isGroup": true,
+        "label": "Ready for deploy",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id9",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id10",
+        "isGroup": true,
+        "label": "Ready for test",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": "K.Sveidqvist",
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": false,
+        "label": "Create parsing tests",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id10",
+        "priority": "High",
+        "shape": "kanbanItem",
+        "ticket": "MC-2038",
+        "width": undefined,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id66",
+        "isGroup": false,
+        "label": "last item",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id10",
+        "priority": "Very Low",
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id11",
+        "isGroup": true,
+        "label": "Done",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id5",
+        "isGroup": false,
+        "label": "define getData",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id11",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id11",
+        "priority": "Very High",
+        "shape": "kanbanItem",
+        "ticket": "MC-2036",
+        "width": undefined,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Update DB function",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id11",
+        "priority": "High",
+        "shape": "kanbanItem",
+        "ticket": "MC-2037",
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id12",
+        "isGroup": true,
+        "label": "Can't reproduce",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Weird flickering in Firefox",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id12",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "Todo",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "In progress",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id9",
+        "isGroup": false,
+        "label": "Ready for deploy",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id10",
+        "isGroup": false,
+        "label": "Ready for test",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id11",
+        "isGroup": false,
+        "label": "Done",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id12",
+        "isGroup": false,
+        "label": "Can't reproduce",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  Todo
+    [Create Documentation]
+    docs[Create Blog about the new diagram]
+  [In progress]
+    id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
+  id9[Ready for deploy]
+    id8[Design grammar]@{ assigned: 'knsv' }
+  id10[Ready for test]
+    id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
+    id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
+  id11[Done]
+    id5[define getData]
+    id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
+    id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
+
+  id12[Can't reproduce]
+    id3[Weird flickering in Firefox]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-1-should-render-a-kanban-with-a-single-section 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  docs[Create Documentation]
+  docs[Create Blog about the new diagram]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-2-should-render-a-kanban-with-multiple-sections 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "id2",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "id2",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  docs[Create Documentation]
+  id2
+  docs[Create Blog about the new diagram]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-3-should-render-a-kanban-with-a-single-wrapping-node 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-4-should-handle-the-height-of-a-section-with-a-wrapping-node-at-the-end 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "One line",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": true,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "One line",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  id2[One line]
+  id3[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-5-should-handle-the-height-of-a-section-with-a-wrapping-node-at-the-top 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": true,
+        "label": "One line",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "One line",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+  id3[One line]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-6-should-handle-assignments 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  docs[Create Documentation]
+  id2[In progress]
+  docs[Create Blog about the new diagram]@{ assigned: 'knsv' }
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-6-should-handle-the-height-of-a-section-with-a-wrapping-node-in-the-middle 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "One line",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": true,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": true,
+        "label": "One line",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "One line",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": false,
+        "label": "One line",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  id2[One line]
+  id3[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+  id4[One line]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-7-should-handle-external-tickets 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": "MC-2037",
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": "MC-2037",
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  docs[Create Documentation]
+  id2[In progress]
+  docs[Create Blog about the new diagram]@{ ticket: MC-2037 }
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-7-should-handle-prioritization 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "vh",
+        "isGroup": true,
+        "label": "Very High",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "h",
+        "isGroup": true,
+        "label": "High",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "m",
+        "isGroup": true,
+        "label": "Default priority",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "l",
+        "isGroup": true,
+        "label": "Low",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "vl",
+        "isGroup": true,
+        "label": "Very Low",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "vh",
+        "isGroup": false,
+        "label": "Very High",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "Very High",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "h",
+        "isGroup": false,
+        "label": "High",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "High",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "m",
+        "isGroup": false,
+        "label": "Default priority",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "l",
+        "isGroup": false,
+        "label": "Low",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "Low",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "vl",
+        "isGroup": false,
+        "label": "Very Low",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "Very Low",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id2[In progress]
+  vh[Very High]@{ priority: 'Very High' }
+  h[High]@{ priority: 'High' }
+  m[Default priority]
+  l[Low]@{ priority: 'Low' }
+  vl[Very Low]@{ priority: 'Very Low' }
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-8-should-handle-assignments-prioritization-and-tickets-ids-in-the-same-item 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": "MC-2037",
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "Very Low",
+        "shape": undefined,
+        "ticket": "MC-2037",
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id2[In progress]
+  docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
+",
+}
+`;
+
+exports[`kanban parser corpus > parses e2e-10-full-example 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": true,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id6",
+        "isGroup": true,
+        "label": "Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": true,
+        "label": "Design grammar",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id9",
+        "isGroup": true,
+        "label": "Ready for deploy",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id10",
+        "isGroup": true,
+        "label": "Ready for test",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id11",
+        "isGroup": true,
+        "label": "Done",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id5",
+        "isGroup": true,
+        "label": "define getData",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": "MC-2036",
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": true,
+        "label": "Update DB function",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": "MC-2037",
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": true,
+        "label": "Create parsing tests",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": "MC-2038",
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id66",
+        "isGroup": true,
+        "label": "last item",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id12",
+        "isGroup": true,
+        "label": "Can't reproduce",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Documentation",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "docs",
+        "isGroup": false,
+        "label": "Create Blog about the new diagram",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id6",
+        "isGroup": false,
+        "label": "Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id9",
+        "isGroup": false,
+        "label": "Ready for deploy",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id10",
+        "isGroup": false,
+        "label": "Ready for test",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id11",
+        "isGroup": false,
+        "label": "Done",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id5",
+        "isGroup": false,
+        "label": "define getData",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Title of diagram is more than 100 chars when user duplicates diagram with 100 char",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "Very High",
+        "shape": undefined,
+        "ticket": "MC-2036",
+        "width": 200,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Update DB function",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "High",
+        "shape": undefined,
+        "ticket": "MC-2037",
+        "width": 200,
+      },
+      {
+        "assigned": "K.Sveidqvist",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": false,
+        "label": "Create parsing tests",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "High",
+        "shape": undefined,
+        "ticket": "MC-2038",
+        "width": 200,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id66",
+        "isGroup": false,
+        "label": "last item",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": "Very Low",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id12",
+        "isGroup": false,
+        "label": "Can't reproduce",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+  docs[Create Documentation]
+  docs[Create Blog about the new diagram]
+  id7[In progress]
+  id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
+  id8[Design grammar]@{ assigned: 'knsv' }
+  id9[Ready for deploy]
+  id10[Ready for test]
+  id11[Done]
+  id5[define getData]
+  id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
+  id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
+  id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
+  id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
+  id12[Can't reproduce]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses hexagon 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "b",
+        "isGroup": true,
+        "label": "hex",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "hex",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  b{{hex}}",
+}
+`;
+
+exports[`kanban parser corpus > parses hierarchy 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child1",
+        "isGroup": false,
+        "label": "child1",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child2",
+        "isGroup": false,
+        "label": "child2",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root
+      child1
+      child2
+ ",
+}
+`;
+
+exports[`kanban parser corpus > parses icon 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "bomb",
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+    ::icon(bomb)
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses icon-upper 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "bomb",
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root
+  ::ICON(bomb)",
+}
+`;
+
+exports[`kanban parser corpus > parses id-is-keyword 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 3: Expecting: one of these possible Token sequences:",
+  },
+  "text": "kanban
+  kanban",
+}
+`;
+
+exports[`kanban parser corpus > parses id-prefixed-keyword 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "kanbanesque",
+        "isGroup": true,
+        "label": "kanbanesque",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "kanbanesque",
+        "isGroup": false,
+        "label": "kanbanesque",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  kanbanesque",
+}
+`;
+
+exports[`kanban parser corpus > parses items-without-section 1`] = `
+{
+  "result": {
+    "rejected": "Items without section detected, found section ("fakeRoot")",
+  },
+  "text": "kanban
+          root
+        fakeRoot
+    realRootWrongPlace",
+}
+`;
+
+exports[`kanban parser corpus > parses keyword-cased 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "KanBan
+  root",
+}
+`;
+
+exports[`kanban parser corpus > parses keyword-newline 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 1: Expecting: expecting at least one iteration which starts with one of these possible Token sequences::",
+  },
+  "text": "kanban
+",
+}
+`;
+
+exports[`kanban parser corpus > parses leading-blank-rows 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "A",
+        "isGroup": false,
+        "label": "A",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "B",
+        "isGroup": false,
+        "label": "B",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 0,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "
+ 
+kanban
+root
+ A
+ 
+
+ B",
+}
+`;
+
+exports[`kanban parser corpus > parses leading-newlines 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "A",
+        "isGroup": false,
+        "label": "A",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "B",
+        "isGroup": false,
+        "label": "B",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 0,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "
+
+
+kanban
+root
+ A
+ 
+
+ B",
+}
+`;
+
+exports[`kanban parser corpus > parses markdown-descr 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "bold **text**",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "bold **text**",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root["\`bold **text**\`"]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-after-shape 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": true,
+        "label": "Design grammar",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id8[Design grammar]@{ assigned: 'knsv' }
+",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-double-quoted 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "id2",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "id2",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id2@{
+    descr: "Lorem ipsum,
+      dolor sit"
+  }
+",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-empty 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root@{}
+",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-inline 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": "high",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ priority: high }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-multiline 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{
+          icon: star
+          assigned: knsv
+        }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-single-quoted 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "fix things",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "fix things",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ icon: star, label: 'fix things' }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-ticket 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": "MC-1234",
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": "MC-1234",
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ ticket: MC-1234 }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses metadata-two-keys 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ icon: star, assigned: knsv }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses no-id-shape 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    (root)",
+}
+`;
+
+exports[`kanban parser corpus > parses quoted-descr 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "String containing []",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "String containing []",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root["String containing []"]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses quoted-descr-parens 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "String containing ()",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "String containing ()",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root["String containing ()"]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses rect 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+      ",
+}
+`;
+
+exports[`kanban parser corpus > parses rounded 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "e",
+        "isGroup": true,
+        "label": "rounded",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "e",
+        "isGroup": false,
+        "label": "rounded",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  e(rounded)",
+}
+`;
+
+exports[`kanban parser corpus > parses same-line 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 1,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 1,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban root",
+}
+`;
+
+exports[`kanban parser corpus > parses samples-0 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "New",
+        "isGroup": true,
+        "label": "New",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Sometimes wrong Shape type is highlighted",
+        "isGroup": false,
+        "label": "Sometimes wrong Shape type is highlighted",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "New",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "In progress",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "New",
+        "isGroup": false,
+        "label": "New",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "In progress",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  New
+    Sometimes wrong Shape type is highlighted
+  In progress
+
+
+",
+}
+`;
+
+exports[`kanban parser corpus > parses samples-1 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "Todo",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Create JISON",
+        "isGroup": false,
+        "label": "Create JISON",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "Todo",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Update DB function",
+        "isGroup": false,
+        "label": "Update DB function",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "Todo",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Create parsing tests",
+        "isGroup": false,
+        "label": "Create parsing tests",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "Todo",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "define getData",
+        "isGroup": false,
+        "label": "define getData",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "Todo",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Create renderer",
+        "isGroup": false,
+        "label": "Create renderer",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "Todo",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "In progress",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Design grammar",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "In progress",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "Todo",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "In progress",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  Todo
+    Create JISON
+    Update DB function
+    Create parsing tests
+    define getData
+    Create renderer
+  In progress
+    Design grammar
+
+",
+}
+`;
+
+exports[`kanban parser corpus > parses samples-2 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Create JISON",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Update DB function",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": false,
+        "label": "Create parsing tests",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id5",
+        "isGroup": false,
+        "label": "define getData",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id6",
+        "isGroup": false,
+        "label": "Create renderer",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id7",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+    id2[Create JISON]
+    id3[Update DB function]
+    id4[Create parsing tests]
+    id5[define getData]
+    id6[Create renderer]
+  id7[In progress]
+    id8[Design grammar]
+
+",
+}
+`;
+
+exports[`kanban parser corpus > parses samples-3 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Create JISON",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Update DB function",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": false,
+        "label": "Create parsing tests",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id5",
+        "isGroup": false,
+        "label": "define getData",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id6",
+        "isGroup": false,
+        "label": "Create renderer",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id7",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": true,
+        "label": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": false,
+        "label": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+    id2[Create JISON]
+    id3[Update DB function]
+    id4[Create parsing tests]
+    id5[define getData]
+    id6[Create renderer]
+  id7[In progress]
+    id8[Design grammar]
+
+  style n2 stroke:#AA00FF,fill:#E1BEE7
+",
+}
+`;
+
+exports[`kanban parser corpus > parses samples-4 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Create JISON",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Update DB function",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": false,
+        "label": "Create parsing tests",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id5",
+        "isGroup": false,
+        "label": "define getData",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id6",
+        "isGroup": false,
+        "label": "Create renderer",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id7",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "id2",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": true,
+        "label": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "heart",
+        "id": "id2",
+        "isGroup": false,
+        "label": "id2",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": "high",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": false,
+        "label": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+    id2[Create JISON]
+    id3[Update DB function]
+    id4[Create parsing tests]
+    id5[define getData]
+    id6[Create renderer]
+  id7[In progress]
+    id8[Design grammar]
+
+  id2@{
+    assigned: knsv
+    icon: heart
+    priority: high
+    descr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  }
+  style n1 stroke:#AA00FF,fill:#E1BEE7
+",
+}
+`;
+
+exports[`kanban parser corpus > parses samples-5 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": false,
+        "label": "Create JISON",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id3",
+        "isGroup": false,
+        "label": "Update DB function",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id4",
+        "isGroup": false,
+        "label": "Create parsing tests",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id5",
+        "isGroup": false,
+        "label": "define getData",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id6",
+        "isGroup": false,
+        "label": "Create renderer",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id1",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": true,
+        "label": "In progress",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "id8",
+        "isGroup": false,
+        "label": "Design grammar",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "id7",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id2",
+        "isGroup": true,
+        "label": "id2",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": true,
+        "label": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id7",
+        "isGroup": false,
+        "label": "In progress",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "heart",
+        "id": "id2",
+        "isGroup": false,
+        "label": "id2",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": "high",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": false,
+        "label": "style n1 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+    id2[Create JISON]
+    id3[Update DB function]
+    id4[Create parsing tests]
+    id5[define getData]
+    id6[Create renderer]
+  id7[In progress]
+    id8[Design grammar]
+
+  id2@{
+    assigned: knsv
+    icon: heart
+    priority: high
+    descr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  }
+  style n1 stroke:#AA00FF,fill:#E1BEE7
+",
+}
+`;
+
+exports[`kanban parser corpus > parses simple 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root",
+}
+`;
+
+exports[`kanban parser corpus > parses single-leading-newline 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 1, column 1: Expecting token of type --> Kanban <-- but found --> '",
+  },
+  "text": "
+kanban
+root
+ A",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-str-28 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "A",
+        "isGroup": false,
+        "label": "A",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "B",
+        "isGroup": false,
+        "label": "B",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 0,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+root
+ A
+ 
+
+ B",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-str-29 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "A",
+        "isGroup": false,
+        "label": "A",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "B",
+        "isGroup": false,
+        "label": "B",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 0,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "
+ 
+kanban
+root
+ A
+ 
+
+ B",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-str-30 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "A",
+        "isGroup": false,
+        "label": "A",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "B",
+        "isGroup": false,
+        "label": "B",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 0,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "
+
+
+kanban
+root
+ A
+ 
+
+ B",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-0 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-1 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child1",
+        "isGroup": false,
+        "label": "child1",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child2",
+        "isGroup": false,
+        "label": "child2",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root
+      child1
+      child2
+ ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-2 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    (root)",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-3 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child1",
+        "isGroup": false,
+        "label": "child1",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "leaf1",
+        "isGroup": false,
+        "label": "leaf1",
+        "level": 8,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child2",
+        "isGroup": false,
+        "label": "child2",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root
+      child1
+        leaf1
+      child2",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-4 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "section1",
+        "isGroup": true,
+        "label": "section1",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "section2",
+        "isGroup": true,
+        "label": "section2",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "section1",
+        "isGroup": false,
+        "label": "section1",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "section2",
+        "isGroup": false,
+        "label": "section2",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    section1
+    section2",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-5 1`] = `
+{
+  "result": {
+    "rejected": "Items without section detected, found section ("fakeRoot")",
+  },
+  "text": "kanban
+          root
+        fakeRoot
+    realRootWrongPlace",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-6 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+      ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-7 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "theId",
+        "isGroup": false,
+        "label": "child1",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root
+      theId(child1)",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-8 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "theId",
+        "isGroup": false,
+        "label": "child1",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 0,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+root
+      theId(child1)",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-9 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "bomb",
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+    ::icon(bomb)
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-10 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": "m-4 p-8",
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+    :::m-4 p-8
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-11 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": "m-4 p-8",
+        "cssStyles": undefined,
+        "icon": "bomb",
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+    :::m-4 p-8
+    ::icon(bomb)
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-12 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "The root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": "m-4 p-8",
+        "cssStyles": undefined,
+        "icon": "bomb",
+        "id": "root",
+        "isGroup": false,
+        "label": "The root",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root[The root]
+    ::icon(bomb)
+    :::m-4 p-8
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-13 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "String containing []",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "String containing []",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root["String containing []"]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-14 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "String containing []",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child1",
+        "isGroup": false,
+        "label": "String containing ()",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "String containing []",
+        "level": 4,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root["String containing []"]
+      child1["String containing ()"]
+",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-15 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "Root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Child",
+        "isGroup": false,
+        "label": "Child",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "a",
+        "isGroup": false,
+        "label": "a",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "New Stuff",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "Root",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root(Root)
+    Child(Child)
+    :::hot
+      a(a)
+      b[New Stuff]",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-16 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "Root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Child",
+        "isGroup": false,
+        "label": "Child",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "a",
+        "isGroup": false,
+        "label": "a",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "New Stuff",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "Root",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root(Root)
+    Child(Child)
+      a(a)
+
+      b[New Stuff]",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-17 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "Root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Child",
+        "isGroup": false,
+        "label": "Child",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "a",
+        "isGroup": false,
+        "label": "a",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "New Stuff",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "Root",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root(Root)
+    Child(Child)
+      a(a)
+
+      %% This is a comment
+      b[New Stuff]",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-18 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "Root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "Child",
+        "isGroup": false,
+        "label": "Child",
+        "level": 4,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "a",
+        "isGroup": false,
+        "label": "a",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "b",
+        "isGroup": false,
+        "label": "New Stuff",
+        "level": 6,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "Root",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root(Root)
+    Child(Child)
+      a(a) %% This is a comment
+      b[New Stuff]",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-19 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 4,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 4,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+    root
+  ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-20 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": "high",
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ priority: high }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-21 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ assigned: knsv }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-22 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ icon: star }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-23 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ icon: star }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-24 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{
+          icon: star
+          assigned: knsv
+        }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-25 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": "knsv",
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ icon: star, assigned: knsv }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-26 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "fix things",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": "star",
+        "id": "root",
+        "isGroup": false,
+        "label": "fix things",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ icon: star, label: 'fix things' }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses spec-tpl-27 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 8,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": "MC-1234",
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 8,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": "MC-1234",
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+        root@{ ticket: MC-1234 }
+    ",
+}
+`;
+
+exports[`kanban parser corpus > parses style-statement 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": true,
+        "label": "Todo",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": true,
+        "label": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "id1",
+        "isGroup": false,
+        "label": "Todo",
+        "level": 2,
+        "padding": 20,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "isGroup": false,
+        "label": "style n2 stroke:#AA00FF,fill:#E1BEE7",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  id1[Todo]
+
+  style n2 stroke:#AA00FF,fill:#E1BEE7
+",
+}
+`;
+
+exports[`kanban parser corpus > parses tabs-for-indent 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 1,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "child",
+        "isGroup": false,
+        "label": "child",
+        "level": 2,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 1,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+	root
+		child",
+}
+`;
+
+exports[`kanban parser corpus > parses trailing-blank-lines 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 2,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 2,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+  root
+
+
+",
+}
+`;
+
+exports[`kanban parser corpus > parses unclosed-icon 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 3, column 3: "::icon(" is never closed",
+  },
+  "text": "kanban
+  root
+  ::icon(bomb",
+}
+`;
+
+exports[`kanban parser corpus > parses unclosed-markdown-string 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 7: "[" is never closed",
+  },
+  "text": "kanban
+  root["\`unclosed
+",
+}
+`;
+
+exports[`kanban parser corpus > parses unclosed-metadata 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 7: "@{" is never closed",
+  },
+  "text": "kanban
+  root@{ icon: star
+",
+}
+`;
+
+exports[`kanban parser corpus > parses unclosed-metadata-string 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 7: "@{" is never closed",
+  },
+  "text": "kanban
+  root@{ label: "unclosed
+",
+}
+`;
+
+exports[`kanban parser corpus > parses unclosed-shape 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 7: "[" is never closed",
+  },
+  "text": "kanban
+  root[unclosed
+",
+}
+`;
+
+exports[`kanban parser corpus > parses unclosed-string 1`] = `
+{
+  "result": {
+    "rejected": "Error parsing kanban diagram at line 2, column 7: "[" is never closed",
+  },
+  "text": "kanban
+  root["unclosed
+",
+}
+`;
+
+exports[`kanban parser corpus > parses whitespace-only-rows 1`] = `
+{
+  "result": {
+    "nodes": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": true,
+        "label": "root",
+        "level": 0,
+        "padding": undefined,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": "kanbanSection",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "A",
+        "isGroup": false,
+        "label": "A",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": [
+          "text-align: left",
+        ],
+        "icon": undefined,
+        "id": "B",
+        "isGroup": false,
+        "label": "B",
+        "level": 1,
+        "padding": undefined,
+        "parentId": "root",
+        "priority": undefined,
+        "shape": "kanbanItem",
+        "ticket": undefined,
+        "width": undefined,
+      },
+    ],
+    "sections": [
+      {
+        "assigned": undefined,
+        "cssClasses": undefined,
+        "cssStyles": undefined,
+        "icon": undefined,
+        "id": "root",
+        "isGroup": false,
+        "label": "root",
+        "level": 0,
+        "padding": 10,
+        "parentId": undefined,
+        "priority": undefined,
+        "shape": undefined,
+        "ticket": undefined,
+        "width": 200,
+      },
+    ],
+  },
+  "text": "kanban
+root
+ A
+ 
+
+ B",
+}
+`;
