@@ -1219,6 +1219,21 @@ export function validateLayout(
     const outsidePolylineExtent = (r: Rect): boolean =>
       r.right < polyMinX || r.left > polyMaxX || r.bottom < polyMinY || r.top > polyMaxY;
 
+    // edge-border-hugging needs a LOOSER reject than the two interior-hit scans.
+    // Those ask whether a segment enters the rect, so a rect strictly outside the
+    // polyline's extent is exactly rejectable. Hugging asks the opposite question —
+    // does the path run alongside a border it never enters — and matches within
+    // EPS_BORDER of it. A rect can therefore sit just outside the polyline's extent
+    // and still be a real hug, so inflate the box by that same tolerance before
+    // rejecting. Sharing the exact reject here (as this scan did) silently dropped
+    // every hug lying beyond the bounding box, including a node whose border the
+    // edge parallels from EPS_BORDER away for its entire length.
+    const outsideBorderHugExtent = (r: Rect): boolean =>
+      r.right < polyMinX - EPS_BORDER ||
+      r.left > polyMaxX + EPS_BORDER ||
+      r.bottom < polyMinY - EPS_BORDER ||
+      r.top > polyMaxY + EPS_BORDER;
+
     for (const [obstacleId, obstacleRect] of obstacleRects) {
       if (outsidePolylineExtent(obstacleRect)) {
         continue;
@@ -1484,7 +1499,7 @@ export function validateLayout(
     // Note: We also check start/end nodes because an edge can hug its target's border
     // (e.g., run along the left side of the target before entering)
     for (const [obstacleId, obstacleRect] of borderHugRects) {
-      if (outsidePolylineExtent(obstacleRect)) {
+      if (outsideBorderHugExtent(obstacleRect)) {
         continue;
       }
       // Same exception as edge-intersects-obstacle: the edge's own label
