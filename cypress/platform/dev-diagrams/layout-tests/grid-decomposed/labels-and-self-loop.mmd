@@ -1,0 +1,7 @@
+flowchart TB
+  Start --> Parse
+  Parse -- ok --> Layout
+  Layout --> Render
+  Render --> Start
+  Parse -- error --> Report
+  Report --> Report

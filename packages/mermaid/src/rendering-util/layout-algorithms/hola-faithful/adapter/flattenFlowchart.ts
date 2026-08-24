@@ -20,6 +20,8 @@ import type { DeferredEdge, HolaGraph } from '../model.js';
 import { addEdge, addNode, createGraph } from '../model.js';
 import { topologicalEdgeId } from '../ids.js';
 import type { DiagnosticCollector } from '../diagnostics.js';
+import { sampleSilhouette } from './silhouette.js';
+import type { IntersectableNode } from './silhouette.js';
 
 export interface EdgeLabelInfo {
   originalEdgeId: string;
@@ -76,6 +78,11 @@ export function flattenFlowchart(
       height: node.height ?? DEFAULT_HEIGHT,
       inputOrder: inputOrder++,
       original: node,
+      // Measurement has already run, so a rendered shape carries its
+      // `intersect` function and its outline can be recovered now. A plain
+      // rectangle — and the DOM-free entry point, where there is no shape at
+      // all — yields `undefined` and every later stage stays rectangular.
+      silhouette: sampleSilhouette(node as IntersectableNode),
     });
   }
 

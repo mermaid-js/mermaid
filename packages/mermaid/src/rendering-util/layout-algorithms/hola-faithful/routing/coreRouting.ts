@@ -33,13 +33,18 @@ export function routerConfigFrom(state: CoreLayoutState): RouterConfig {
     bendPenalty: state.options.routingBendPenalty,
     crossingPenalty: state.options.routingCrossingPenalty,
     maxExpansions: state.options.routingMaxExpansions,
+    minTerminalLegLength: state.options.minTerminalLegLength,
   };
 }
 
 export function obstaclesFrom(entities: Map<string, HolaNode>): RouterObstacle[] {
   return [...entities.values()]
     .filter((n) => n.width > 0 && n.height > 0)
-    .map((n) => ({ id: n.id, rect: { x: n.x, y: n.y, width: n.width, height: n.height } }));
+    .map((n) => ({
+      id: n.id,
+      rect: { x: n.x, y: n.y, width: n.width, height: n.height },
+      silhouette: n.silhouette,
+    }));
 }
 
 /**

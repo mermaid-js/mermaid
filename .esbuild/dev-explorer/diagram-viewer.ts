@@ -106,12 +106,33 @@ type MermaidTheme =
   | 'redux'
   | 'redux-dark'
   | 'redux-color';
-type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'hola-faithful' | 'swimlane';
+type MermaidLayout =
+  | 'dagre'
+  | 'elk'
+  | 'domus'
+  | 'hola'
+  | 'hola-faithful'
+  | 'ipsep-cola'
+  | 'grid-like'
+  | 'grid-decomposed'
+  | 'grid-attached'
+  | 'swimlane';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 type ViewerTab = 'diagram' | 'code' | 'profile';
 
-const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'hola-faithful', 'swimlane'];
+const ALL_LAYOUTS: MermaidLayout[] = [
+  'dagre',
+  'elk',
+  'domus',
+  'hola',
+  'hola-faithful',
+  'ipsep-cola',
+  'grid-like',
+  'grid-decomposed',
+  'grid-attached',
+  'swimlane',
+];
 
 // mermaid's `maxTextSize` (default 50_000) and `maxEdges` (default 500) are
 // *secure* config keys, so they can't be raised from a diagram's frontmatter/
@@ -305,6 +326,10 @@ function isLayout(v: unknown): v is MermaidLayout {
     v === 'domus' ||
     v === 'hola' ||
     v === 'hola-faithful' ||
+    v === 'ipsep-cola' ||
+    v === 'grid-like' ||
+    v === 'grid-decomposed' ||
+    v === 'grid-attached' ||
     v === 'swimlane'
   );
 }
@@ -1266,6 +1291,10 @@ export class DevDiagramViewer extends LitElement {
               <sl-option value="domus">domus</sl-option>
               <sl-option value="hola">hola</sl-option>
               <sl-option value="hola-faithful">hola-faithful</sl-option>
+              <sl-option value="ipsep-cola">ipsep-cola</sl-option>
+              <sl-option value="grid-like">grid-like</sl-option>
+              <sl-option value="grid-decomposed">grid-decomposed</sl-option>
+              <sl-option value="grid-attached">grid-attached</sl-option>
               <sl-option value="swimlane">swimlane</sl-option>
             </sl-select>
           </div>

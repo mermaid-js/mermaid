@@ -1,0 +1,814 @@
+/**
+ * Attached grid-like layout: a grid-like core with its trees hung back onto it.
+ *
+ *     decompose (HOLA's undirected leaf peeling) → draw the core with grid-like →
+ *     draw every peeled tree on its own with HOLA's symmetric tree layout →
+ *     place the trees around the core with HOLA's face search → route the
+ *     connectors → pack the components
+ *
+ * This is `grid-decomposed` with the last step reversed. There the parts were
+ * packed beside each other as separate islands, which is what made the
+ * decomposition visible but left the diagram in pieces. Here the trees go back
+ * where they belong, and *which* place that is comes from HOLA (guide §17):
+ * largest tree first, into the angular wedge of a face at its root, cardinal
+ * before ordinal, external face before internal.
+ *
+ * Neither half is reimplemented:
+ *
+ *   - the core is `grid-decomposed`'s core pass, verbatim — the same grid-like
+ *     drawing, the same choice between drawing it with and without the flow
+ *     ordering. Nothing here re-solves, re-aligns or re-routes it;
+ *   - the trees are HOLA's: its decomposition, its symmetric tree layout, its
+ *     candidate wedges, its selection order, its rank connectors.
+ *
+ * The one liberty taken with the core is **enlargement**. HOLA makes room for a
+ * tree by expanding the face around it, which moves core nodes and would destroy
+ * the alignments that make a grid-like drawing grid-like. So instead every core
+ * node is moved away from the core's centre by a common factor: every core edge
+ * gets longer, and nothing else about the drawing changes. The ladder below walks
+ * that factor up only as far as it has to — until every tree fits without being
+ * pushed away from its root, or until enlarging stops helping.
+ *
+ * DOM-free by contract: it reads sizes measured earlier and writes `node.x/y` and
+ * `edge.points`, so the same entry point drives the browser renderer and the
+ * DOM-decoupled tests.
+ */
+
+import { log } from '../../../logger.js';
+import type { Point } from '../../../types.js';
+import type { Edge, LayoutData, Node } from '../../types.js';
+import type { GridLikeLayoutResult } from '../grid-like/layoutCore.js';
+import { flattenFlowchart } from '../hola-faithful/adapter/flattenFlowchart.js';
+import type { FlattenResult } from '../hola-faithful/adapter/flattenFlowchart.js';
+import { placeEdgeLabels } from '../hola-faithful/adapter/labels.js';
+import {
+  packComponentsLeftToRight,
+  weaklyConnectedComponents,
+} from '../hola-faithful/components/components.js';
+import { decompose } from '../hola-faithful/decomposition/peelCoreAndTrees.js';
+import type { DecomposedTree } from '../hola-faithful/decomposition/peelCoreAndTrees.js';
+import { DiagnosticCollector } from '../hola-faithful/diagnostics.js';
+import type { HolaDiagnostic } from '../hola-faithful/diagnostics.js';
+import type { Bounds, Cardinal, Direction, HolaGraph, Rect } from '../hola-faithful/model.js';
+import { nodeBounds, pointBounds, unionBounds } from '../hola-faithful/model.js';
+import { layoutForGrowth, ROTATION_FOR_GROWTH } from '../hola-faithful/placement/placeTrees.js';
+import { layoutTree, transformTreeLayout } from '../hola-faithful/trees/symmetricTreeLayout.js';
+import { attachTrees } from './attachTrees.js';
+import type { AttachableTree, Attachment, AttachResult } from './attachTrees.js';
+import { applyCoreScale, coreRects, coreSegments, drawCore } from './coreDrawing.js';
+import type { CoreDrawing } from './coreDrawing.js';
+import { planariseStraightCore } from './corePlanarisation.js';
+import type { GridAttachedOptions } from './options.js';
+import { resolveGridAttachedOptions } from './options.js';
+import { prepareGridAttachedLayout } from './prepareLayout.js';
+import { combLevelsNeeded, routeComponentTrees, routeTreeSelfLoop } from './treeConnectors.js';
+import type { TreeRouteRequest } from './treeConnectors.js';
+
+/** One tree, as attached. */
+export interface GridAttachedTreeResult {
+  treeId: string;
+  /** Core node the tree hangs from. */
+  coreNodeId: string;
+  growth: Cardinal;
+  placementDirection: Direction;
+  isExternalFace: boolean;
+  flip: boolean;
+  /** Dead stub on the root connector; zero when the tree sits at its natural distance. */
+  slide: number;
+  /** Root connectors that run into something they should have cleared. */
+  violations: number;
+  /** The placement kept a flaw rather than leave the tree undrawn (guide §25). */
+  relaxed: boolean;
+  nodeIds: string[];
+  footprint: Bounds;
+}
+
+export interface GridAttachedComponentResult {
+  id: string;
+  /** `pure-tree` is a component with no cycle, so peeling left no core. */
+  kind: 'core-with-trees' | 'pure-tree';
+  /** Nodes drawn as the core. Empty for a pure tree. */
+  coreNodeIds: string[];
+  /** Enlargement the core needed. 1 means grid-like's drawing was used as-is. */
+  coreScale: number;
+  /** What grid-like reported for the core. Absent for a pure tree. */
+  grid?: GridLikeLayoutResult;
+  trees: GridAttachedTreeResult[];
+  bounds: Bounds;
+}
+
+export interface GridAttachedResult {
+  components: GridAttachedComponentResult[];
+  componentCount: number;
+  /**
+   * Edges that reached no route. Normally empty: every edge is either inside the
+   * core, inside a tree, or the peeling cut between the two.
+   */
+  droppedEdgeIds: string[];
+  bounds?: Bounds;
+  diagnostics: HolaDiagnostic[];
+  options: GridAttachedOptions;
+}
+
+export function runGridAttachedLayoutCore(
+  data: LayoutData,
+  overrides?: Partial<GridAttachedOptions>
+): GridAttachedResult {
+  // The browser path has already done this before measuring; repeating it keeps
+  // the DOM-free entry point on exactly the same graph.
+  const prepared = prepareGridAttachedLayout(data);
+
+  const options = resolveGridAttachedOptions(data, overrides);
+  const diagnostics = new DiagnosticCollector();
+  const flat = flattenFlowchart(data, diagnostics);
+
+  if (flat.graph.nodes.size === 0) {
+    return {
+      components: [],
+      componentCount: 0,
+      droppedEdgeIds: [],
+      diagnostics: [...prepared.diagnostics, ...diagnostics.all()],
+      options,
+    };
+  }
+
+  const flowGrowth = growthForDirection((data as { direction?: string }).direction);
+  const laidOut = weaklyConnectedComponents(flat.graph).map((component) =>
+    layoutComponent(data, flat, component.id, component.graph, flowGrowth, options, diagnostics)
+  );
+
+  const bounds = packComponentsLeftToRight(
+    laidOut.map((component) => ({
+      bounds: component.bounds,
+      translate: (dx: number, dy: number) => translateComponent(component, dx, dy),
+    })),
+    options.componentGap
+  );
+
+  // Packing leaves the drawing against the origin; the margin every layout keeps
+  // between content and origin is re-applied once, to the whole thing.
+  for (const component of laidOut) {
+    translateComponent(component, options.margin, options.margin);
+  }
+
+  const droppedEdgeIds = pruneToDrawn(data, laidOut);
+
+  log.debug(
+    `GRID-ATTACHED: ${laidOut.length} component(s), ` +
+      `${laidOut.reduce((total, c) => total + c.result.trees.length, 0)} tree(s) attached, ` +
+      `core scales ${laidOut.map((c) => c.result.coreScale.toFixed(2)).join(', ')}`
+  );
+
+  return {
+    components: laidOut.map((component) => component.result),
+    componentCount: laidOut.length,
+    droppedEdgeIds,
+    bounds: bounds && shiftBounds(bounds, options.margin, options.margin),
+    diagnostics: [...prepared.diagnostics, ...diagnostics.all()],
+    options,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// One connected component
+// ---------------------------------------------------------------------------
+
+/** A component after layout, with everything a rigid translation has to move. */
+interface LaidOutComponent {
+  result: GridAttachedComponentResult;
+  bounds: Bounds;
+  nodes: Node[];
+  edges: Edge[];
+  labels: { originalEdgeId: string; x: number; y: number }[];
+}
+
+function layoutComponent(
+  data: LayoutData,
+  flat: FlattenResult,
+  componentId: string,
+  graph: Parameters<typeof decompose>[0],
+  flowGrowth: Cardinal,
+  options: GridAttachedOptions,
+  diagnostics: DiagnosticCollector
+): LaidOutComponent {
+  const decomposition = decompose(graph);
+
+  if (decomposition.pureTree) {
+    return layoutPureTreeComponent(flat, componentId, decomposition.pureTree, flowGrowth, options);
+  }
+
+  const drawing = drawCore(data, flat, componentId, decomposition.core, options);
+  const sources = new Map(decomposition.trees.map((tree) => [tree.id, tree]));
+  const placeable = decomposition.trees.map((tree) =>
+    drawTree(tree.id, tree.graph, tree.rootCopyId, tree.coreNodeId, options)
+  );
+
+  const chosen = climbEnlargementLadder(
+    drawing,
+    decomposition.core,
+    placeable,
+    sources,
+    flowGrowth,
+    options
+  );
+
+  reportPlacementDiagnostics(diagnostics, componentId, chosen.attempt, sources);
+
+  const nodes = [...drawing.nodes];
+  const edges = [...drawing.edges];
+  const rects = coreRects(drawing, decomposition.core);
+  const trees: GridAttachedTreeResult[] = [];
+  const labelRequests: { originalEdgeId: string; width: number; height: number; route: Point[] }[] =
+    [];
+
+  const drawnById = new Map(placeable.map((tree) => [tree.id, tree]));
+  const routeRequests: TreeRouteRequest[] = [];
+
+  for (const attachment of chosen.attempt.attachments) {
+    const tree = sources.get(attachment.treeId);
+    const root = rects.get(attachment.coreNodeId);
+    if (!tree || !root) {
+      continue;
+    }
+    routeRequests.push({
+      tree,
+      transformed: attachment.transformed,
+      rootRect: { x: root.x, y: root.y, width: root.width, height: root.height },
+      growth: attachment.growth,
+      rankGap: drawnById.get(attachment.treeId)?.rankGap ?? options.treeRankGap,
+    });
+    const written = writeTree(flat, tree, attachment, options);
+    nodes.push(...written.nodes);
+    edges.push(...written.edges);
+    trees.push({
+      treeId: attachment.treeId,
+      coreNodeId: attachment.coreNodeId,
+      growth: attachment.growth,
+      placementDirection: attachment.placementDirection,
+      isExternalFace: attachment.isExternalFace,
+      flip: attachment.flip,
+      slide: attachment.slide,
+      violations: attachment.violations,
+      relaxed: attachment.relaxed,
+      nodeIds: written.nodes.map((node) => node.id),
+      footprint: attachment.footprint,
+    });
+  }
+
+  // Connectors are routed once, for the whole component: two of the three ways two
+  // of them end up drawn as one line are collisions *between* trees.
+  const connected = writeConnectors(flat, routeRequests, options);
+  edges.push(...connected.edges);
+  labelRequests.push(...connected.labelRequests);
+
+  const labels = placeEdgeLabels(labelRequests, 0);
+  for (const label of labels) {
+    const edge = flat.originalEdges.get(label.originalEdgeId);
+    if (edge) {
+      edge.x = label.x;
+      edge.y = label.y;
+    }
+  }
+
+  const bounds = boundsOfDrawing(nodes, edges);
+
+  return {
+    result: {
+      id: componentId,
+      kind: 'core-with-trees',
+      coreNodeIds: drawing.nodes.map((node) => node.id),
+      coreScale: chosen.scale,
+      grid: drawing.grid,
+      trees,
+      bounds,
+    },
+    bounds,
+    nodes,
+    edges,
+    labels,
+  };
+}
+
+/**
+ * A component with no cycle has no core to attach anything to, so HOLA draws the
+ * whole component as one tree (guide §10.1) — its symmetric tree layout, rooted at
+ * the tree centre, grown in the diagram's declared direction.
+ */
+function layoutPureTreeComponent(
+  flat: FlattenResult,
+  componentId: string,
+  pureTree: { graph: Parameters<typeof decompose>[0]; rootId: string },
+  flowGrowth: Cardinal,
+  options: GridAttachedOptions
+): LaidOutComponent {
+  const drawn = drawTree(
+    `${componentId}/pure-tree`,
+    pureTree.graph,
+    pureTree.rootId,
+    pureTree.rootId,
+    options
+  );
+  const transformed = transformTreeLayout(
+    layoutForGrowth(drawn, flowGrowth),
+    ROTATION_FOR_GROWTH[flowGrowth],
+    false,
+    { x: 0, y: 0 }
+  );
+
+  // A pure tree has no copied root: the root *is* a real node, so it is written
+  // like every other node and stands in for itself when its connectors are routed.
+  const pseudoTree: DecomposedTree = {
+    id: `${componentId}/pure-tree`,
+    graph: pureTree.graph,
+    rootCopyId: pureTree.rootId,
+    coreNodeId: pureTree.rootId,
+  };
+  const rootNode = transformed.nodes.get(pureTree.rootId);
+  const rootRect: Rect = rootNode
+    ? { x: rootNode.x, y: rootNode.y, width: rootNode.width, height: rootNode.height }
+    : { x: 0, y: 0, width: 0, height: 0 };
+
+  const attachment: Attachment = {
+    treeId: pseudoTree.id,
+    coreNodeId: pureTree.rootId,
+    placementDirection: flowGrowth,
+    growth: flowGrowth,
+    flip: false,
+    faceIndex: -1,
+    isExternalFace: true,
+    anchor: { x: 0, y: 0 },
+    slide: 0,
+    violations: 0,
+    transformed,
+    footprint: { minX: 0, minY: 0, maxX: 0, maxY: 0 },
+    relaxed: false,
+    cost: 0,
+  };
+
+  const written = writeTree(flat, pseudoTree, attachment, options);
+  const connected = writeConnectors(
+    flat,
+    [
+      {
+        tree: pseudoTree,
+        transformed,
+        rootRect,
+        growth: flowGrowth,
+        rankGap: drawn.rankGap,
+      },
+    ],
+    options
+  );
+  const edges = [...written.edges, ...connected.edges];
+  const labels = placeEdgeLabels(connected.labelRequests, 0);
+  for (const label of labels) {
+    const edge = flat.originalEdges.get(label.originalEdgeId);
+    if (edge) {
+      edge.x = label.x;
+      edge.y = label.y;
+    }
+  }
+
+  const bounds = boundsOfDrawing(written.nodes, edges);
+
+  return {
+    result: {
+      id: componentId,
+      kind: 'pure-tree',
+      coreNodeIds: [],
+      coreScale: 1,
+      trees: [
+        {
+          treeId: pseudoTree.id,
+          coreNodeId: pureTree.rootId,
+          growth: flowGrowth,
+          placementDirection: flowGrowth,
+          isExternalFace: true,
+          flip: false,
+          slide: 0,
+          violations: 0,
+          relaxed: false,
+          nodeIds: written.nodes.map((node) => node.id),
+          footprint: bounds,
+        },
+      ],
+      bounds,
+    },
+    bounds,
+    nodes: written.nodes,
+    edges,
+    labels,
+  };
+}
+
+/**
+ * Draw one tree on its own (HOLA Step 3a), with a rank gap wide enough for the
+ * connectors that will have to run through it.
+ *
+ * `layoutTree` reserves `rankGap` between the boundaries of two successive ranks,
+ * and that gap is also the corridor the rank connectors turn in. A chain needs
+ * almost none of it; a parent with a fan of eight children needs room for four
+ * nested levels of comb, or the levels are squeezed together and the arrows end up
+ * on top of each other again. The gap is therefore *derived*, not configured: draw
+ * once, count the levels the fans actually need, and redraw with a gap that holds
+ * them. The count is stable across the redraw because sibling packing — which is
+ * what decides the fan shapes — does not depend on the rank gap at all.
+ *
+ * Both of HOLA's two drawings are built with the same derived gap, so a tree looks
+ * the same whichever axis placement ends up turning it onto.
+ */
+function drawTree(
+  id: string,
+  graph: HolaGraph,
+  rootId: string,
+  coreNodeId: string,
+  options: GridAttachedOptions
+): AttachableTree {
+  const draw = (rankGap: number): AttachableTree => ({
+    id,
+    coreNodeId,
+    rootCopyId: rootId,
+    rankGap,
+    layout: layoutTree(graph, rootId, {
+      rankGap,
+      siblingGap: options.treeSiblingGap,
+      growthAxis: 'vertical',
+    }),
+    layoutForHorizontalGrowth: layoutTree(graph, rootId, {
+      rankGap,
+      siblingGap: options.treeSiblingGap,
+      growthAxis: 'horizontal',
+    }),
+  });
+
+  const first = draw(options.treeRankGap);
+  const levels = Math.max(
+    combLevelsNeeded(first.layout, graph, 'S'),
+    combLevelsNeeded(first.layoutForHorizontalGrowth, graph, 'E')
+  );
+
+  // `levels` turns plus the leg into the rank itself, each at least one bend
+  // spacing apart.
+  const needed = (levels + 1) * options.treeBendSpacing;
+  return needed > options.treeRankGap ? draw(needed) : first;
+}
+
+// ---------------------------------------------------------------------------
+// The enlargement ladder
+// ---------------------------------------------------------------------------
+
+interface LadderRung {
+  scale: number;
+  attempt: AttachResult;
+  /** Dead stubs plus what this much enlargement costs, in pixels. */
+  penalty: number;
+}
+
+/**
+ * Stretch the core's edges only as far as the trees actually pay for.
+ *
+ * Rung 0 is grid-like's own drawing. Each rung is scored on three keys, in order:
+ * trees drawn at all, trees drawn without a flaw, then a genuine trade — the dead
+ * stubs the placement had to leave against the size the enlargement costs. Both
+ * sides of that trade are pixels, so it is a real comparison rather than a tuned
+ * threshold: a tree 30px off its root is not worth widening the whole core for, a
+ * tree pushed a screen away is.
+ *
+ * The climb stops as soon as a rung needs nothing (every tree placed, none
+ * relaxed, no stub at all), when the cap is reached, or when stretching has failed
+ * to improve anything `coreScalePatience` times — a core that is already big
+ * enough does not get better by growing.
+ */
+function climbEnlargementLadder(
+  drawing: CoreDrawing,
+  core: Parameters<typeof coreRects>[1],
+  trees: AttachableTree[],
+  sources: Map<string, DecomposedTree>,
+  flowGrowth: Cardinal,
+  options: GridAttachedOptions
+): LadderRung {
+  // What one unit of enlargement costs: the core's own extent, so a 25% stretch
+  // of a wide core is priced as more than a 25% stretch of a small one.
+  const baseBounds = boundsOfDrawing(drawing.nodes, []);
+  const coreSpan = baseBounds.maxX - baseBounds.minX + (baseBounds.maxY - baseBounds.minY);
+
+  let best: LadderRung = { scale: 1, attempt: EMPTY_ATTEMPT, penalty: Number.POSITIVE_INFINITY };
+  let sinceImprovement = 0;
+
+  for (let rung = 0; ; rung++) {
+    const scale = Math.min(1 + rung * options.coreScaleStep, options.maxCoreScale);
+    applyCoreScale(drawing, scale);
+
+    const rects = coreRects(drawing, core);
+    const segments = coreSegments(drawing, core);
+    const attempt = attachTrees({
+      coreRects: rects,
+      coreSegments: segments,
+      planar: planariseStraightCore(rects, segments),
+      trees,
+      sources,
+      flowGrowth,
+      options,
+    });
+    const penalty = attempt.stubPenalty + options.enlargementPenaltyWeight * (scale - 1) * coreSpan;
+    const rungResult: LadderRung = { scale, attempt, penalty };
+
+    if (rung === 0 || isBetterRung(rungResult, best)) {
+      best = rungResult;
+      sinceImprovement = 0;
+    } else {
+      sinceImprovement++;
+    }
+
+    const settled =
+      attempt.unplaced.length === 0 && attempt.relaxedCount === 0 && attempt.stubPenalty <= 0;
+    if (settled || scale >= options.maxCoreScale || sinceImprovement >= options.coreScalePatience) {
+      break;
+    }
+  }
+
+  // Leave the core at the geometry the winning rung was measured against, so the
+  // attachments and the core agree.
+  applyCoreScale(drawing, best.scale);
+  return best;
+}
+
+/** Placeholder incumbent, so rung 0 has something to beat. */
+const EMPTY_ATTEMPT: AttachResult = {
+  attachments: [],
+  unplaced: [],
+  relaxedCount: Number.POSITIVE_INFINITY,
+  maxSlide: 0,
+  stubPenalty: Number.POSITIVE_INFINITY,
+};
+
+/** Lexicographic: trees drawn at all, then drawn without a flaw, then the trade. */
+function isBetterRung(candidate: LadderRung, incumbent: LadderRung): boolean {
+  if (candidate.attempt.unplaced.length !== incumbent.attempt.unplaced.length) {
+    return candidate.attempt.unplaced.length < incumbent.attempt.unplaced.length;
+  }
+  if (candidate.attempt.relaxedCount !== incumbent.attempt.relaxedCount) {
+    return candidate.attempt.relaxedCount < incumbent.attempt.relaxedCount;
+  }
+  return candidate.penalty < incumbent.penalty - 1e-6;
+}
+
+function reportPlacementDiagnostics(
+  diagnostics: DiagnosticCollector,
+  componentId: string,
+  attempt: AttachResult,
+  sources: Map<string, DecomposedTree>
+): void {
+  for (const treeId of attempt.unplaced) {
+    diagnostics.report({
+      code: 'HOLA_TREE_PLACEMENT_FAILED',
+      stage: 'tree-placement',
+      componentId,
+      nodeIds: [sources.get(treeId)?.coreNodeId ?? treeId],
+      message:
+        `No placement could be evaluated for tree ${treeId}, so it is not drawn. ` +
+        'The core was already enlarged as far as it may be.',
+    });
+  }
+  for (const attachment of attempt.attachments) {
+    if (attachment.relaxed) {
+      diagnostics.report({
+        code: 'HOLA_TREE_SLID_FROM_ROOT',
+        stage: 'tree-placement',
+        componentId,
+        nodeIds: [attachment.coreNodeId],
+        message:
+          `Tree ${attachment.treeId} was attached with a flaw kept rather than left ` +
+          `undrawn: it sits ${attachment.slide.toFixed(1)}px beyond its natural ` +
+          'attachment, or its connector passes something it should clear.',
+        detail: { slide: attachment.slide, growth: attachment.growth },
+      });
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Write-back
+// ---------------------------------------------------------------------------
+
+interface WrittenTree {
+  nodes: Node[];
+  /** Self-loops only; a tree's connectors are written for the whole component. */
+  edges: Edge[];
+}
+
+/**
+ * The geometry that belongs to one tree alone: where its nodes sit, and its
+ * self-loops.
+ *
+ * Its connectors are deliberately *not* written here. Two trees can hang off the
+ * same core node, and their connectors then compete for room on the same side of
+ * it, so the ports and the turns have to be settled across the whole component at
+ * once — see `writeConnectors`.
+ */
+function writeTree(
+  flat: FlattenResult,
+  tree: DecomposedTree,
+  attachment: Attachment,
+  options: GridAttachedOptions
+): WrittenTree {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  const rootIsReal = tree.rootCopyId === tree.coreNodeId;
+  for (const node of attachment.transformed.nodes.values()) {
+    if (!rootIsReal && node.id === tree.rootCopyId) {
+      continue;
+    }
+    const mermaidNode = flat.originalNodes.get(node.id);
+    if (!mermaidNode) {
+      continue;
+    }
+    mermaidNode.x = node.x;
+    mermaidNode.y = node.y;
+    nodes.push(mermaidNode);
+  }
+
+  // Self-loops never took part in the topology, so nothing has routed them yet.
+  const loopIndexByNode = new Map<string, number>();
+  for (const loop of flat.selfLoops) {
+    const node = attachment.transformed.nodes.get(loop.source);
+    if (!node || (!rootIsReal && loop.source === tree.rootCopyId)) {
+      continue;
+    }
+    const edge = flat.originalEdges.get(loop.originalEdgeId);
+    if (!edge) {
+      continue;
+    }
+    const index = loopIndexByNode.get(loop.source) ?? 0;
+    loopIndexByNode.set(loop.source, index + 1);
+    edge.points = routeTreeSelfLoop(node, attachment.growth, index, options.routingClearance);
+    edge.curve = 'linear';
+    edge.hasIntersectionPoints = true;
+    // The label goes on the middle of the detour's outer run, which is the one
+    // segment of the loop that no connector can be running along.
+    edge.x = (edge.points[1].x + edge.points[2].x) / 2;
+    edge.y = (edge.points[1].y + edge.points[2].y) / 2;
+    edges.push(edge);
+  }
+
+  return { nodes, edges };
+}
+
+interface WrittenConnectors {
+  edges: Edge[];
+  labelRequests: { originalEdgeId: string; width: number; height: number; route: Point[] }[];
+}
+
+/** Every tree connector in one component, routed together and written back. */
+function writeConnectors(
+  flat: FlattenResult,
+  requests: TreeRouteRequest[],
+  options: GridAttachedOptions
+): WrittenConnectors {
+  const edges: Edge[] = [];
+  const labelRequests: WrittenConnectors['labelRequests'] = [];
+
+  for (const connector of routeComponentTrees(requests, options)) {
+    const edge = flat.originalEdges.get(connector.originalEdgeId);
+    if (!edge) {
+      continue;
+    }
+    edge.points = orientRoute(connector.points, edge, connector.parentId, connector.childId);
+    // Every route is a deliberate orthogonal polyline whose vertices are its bends;
+    // Mermaid's default `basis` curve would smooth them into a spline.
+    edge.curve = 'linear';
+    // Both endpoints already sit on a node boundary, so re-clipping at paint time
+    // would bend the terminal segment that carries the arrowhead.
+    edge.hasIntersectionPoints = true;
+    edges.push(edge);
+
+    const label = flat.labels.get(connector.originalEdgeId);
+    if (label) {
+      labelRequests.push({
+        originalEdgeId: connector.originalEdgeId,
+        width: label.width,
+        height: label.height,
+        route: edge.points,
+      });
+    }
+  }
+
+  return { edges, labelRequests };
+}
+
+/**
+ * A route runs from the parent node to the child node. An original Mermaid edge
+ * declared the other way round must still be handed back running from its own
+ * start to its own end: the first point is the tail and the last is where the
+ * arrowhead goes.
+ */
+function orientRoute(points: Point[], edge: Edge, parentId: string, childId: string): Point[] {
+  return edge.start === childId && edge.end === parentId ? [...points].reverse() : points;
+}
+
+// ---------------------------------------------------------------------------
+// Packing and write-back
+// ---------------------------------------------------------------------------
+
+/** Rigid translation. Nothing is re-laid-out or re-routed across components. */
+function translateComponent(component: LaidOutComponent, dx: number, dy: number): void {
+  for (const node of component.nodes) {
+    node.x = (node.x ?? 0) + dx;
+    node.y = (node.y ?? 0) + dy;
+  }
+  for (const edge of component.edges) {
+    edge.points = (edge.points ?? []).map((point) => ({ x: point.x + dx, y: point.y + dy }));
+    if (edge.x !== undefined) {
+      edge.x += dx;
+    }
+    if (edge.y !== undefined) {
+      edge.y += dy;
+    }
+  }
+  for (const label of component.labels) {
+    label.x += dx;
+    label.y += dy;
+  }
+
+  component.bounds = shiftBounds(component.bounds, dx, dy);
+  component.result.bounds = component.bounds;
+  for (const tree of component.result.trees) {
+    tree.footprint = shiftBounds(tree.footprint, dx, dy);
+  }
+}
+
+function boundsOfDrawing(nodes: Node[], edges: Edge[]): Bounds {
+  const parts: Bounds[] = nodes.map((node) =>
+    nodeBounds({
+      x: node.x ?? 0,
+      y: node.y ?? 0,
+      width: node.width ?? 0,
+      height: node.height ?? 0,
+    })
+  );
+  for (const edge of edges) {
+    const bounds = pointBounds(edge.points ?? []);
+    if (bounds) {
+      parts.push(bounds);
+    }
+  }
+  return unionBounds(parts) ?? { minX: 0, minY: 0, maxX: 0, maxY: 0 };
+}
+
+function shiftBounds(bounds: Bounds, dx: number, dy: number): Bounds {
+  return {
+    minX: bounds.minX + dx,
+    maxX: bounds.maxX + dx,
+    minY: bounds.minY + dy,
+    maxY: bounds.maxY + dy,
+  };
+}
+
+/**
+ * Safety net: keep only what was actually drawn.
+ *
+ * Every node belongs to exactly one component and every edge is either inside the
+ * core, inside a tree, or the peeling cut between them, so this normally removes
+ * nothing. It still runs, because an edge with no route would be painted as a line
+ * from nowhere — and because an edge that lands here is a decomposition bug worth
+ * reporting rather than hiding.
+ */
+function pruneToDrawn(data: LayoutData, components: LaidOutComponent[]): string[] {
+  const drawnNodeIds = new Set(components.flatMap((c) => c.nodes.map((node) => node.id)));
+  const drawnEdgeIds = new Set(components.flatMap((c) => c.edges.map((edge) => edge.id)));
+
+  const droppedEdgeIds: string[] = [];
+  data.edges = (data.edges ?? []).filter((edge) => {
+    if (drawnEdgeIds.has(edge.id)) {
+      return true;
+    }
+    droppedEdgeIds.push(edge.id);
+    return false;
+  });
+
+  data.nodes = (data.nodes ?? []).filter((node) => drawnNodeIds.has(node.id));
+  for (const node of data.nodes) {
+    node.parentId = undefined;
+  }
+
+  if (droppedEdgeIds.length > 0) {
+    log.debug(`GRID-ATTACHED: ${droppedEdgeIds.length} edge(s) reached no route and are not drawn`);
+  }
+
+  return droppedEdgeIds;
+}
+
+/** The direction a tree grows in when it follows the diagram's declared flow. */
+export function growthForDirection(direction: string | undefined): Cardinal {
+  switch (direction) {
+    case 'BT':
+      return 'N';
+    case 'LR':
+      return 'E';
+    case 'RL':
+      return 'W';
+    default:
+      return 'S';
+  }
+}

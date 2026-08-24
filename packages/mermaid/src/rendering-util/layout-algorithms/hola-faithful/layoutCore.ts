@@ -202,6 +202,15 @@ function writeBack(
     }
     edge.points = orientRoute(route, edge.start, edge.end);
     edge.hasIntersectionPoints = true;
+    // Every route is an orthogonal polyline whose vertices are deliberate: chain
+    // bends are mandatory waypoints and the terminal legs carry the arrowheads.
+    // Mermaid's default `flowchart.curve` is `basis`, which would smooth all of
+    // that into a spline. `linear` is also what keeps the painter from
+    // recomputing the label position: `insertEdge` only reports an `updatedPath`
+    // — which makes `paintLayoutData` override `edge.x/y` — when the polyline's
+    // vertices are absent from the rendered `d` attribute, and under linear
+    // interpolation they are exactly its coordinates.
+    edge.curve = 'linear';
     const label = labelPositions.get(edge.id);
     if (label) {
       edge.x = label.x;

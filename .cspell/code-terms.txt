@@ -32,6 +32,7 @@ callsites
 cand
 Cand
 CDCL
+cfdl
 classdef
 classdefid
 classentity
@@ -96,14 +97,18 @@ hsegs
 Idxs
 iife
 interp
+Intersectable
 introdcued
 INVTRAPEND
 INVTRAPSTART
+ipsep
 JDBC
 jison
 Kaufmann
 keyify
+Kieffer
 Klau
+koren
 LABELPOS
 LABELTYPE
 layoutstop
@@ -124,6 +129,7 @@ lookaheads
 LPAREN
 lshape
 majorisation
+majorising
 mdast
 metafile
 minlen
@@ -136,6 +142,7 @@ NODIR
 nonterminal
 NSTR
 nums
+obliqueness
 OGDF
 outdir
 planarisation
@@ -146,6 +153,7 @@ planarization
 podavsnef
 posn
 Qcontrolx
+qpsc
 QSTR
 raykov
 Raykov
@@ -212,6 +220,7 @@ TRAPSTART
 treemap
 ts-nocheck
 tsdoc
+tunables
 typeof
 typestr
 uninstrumented

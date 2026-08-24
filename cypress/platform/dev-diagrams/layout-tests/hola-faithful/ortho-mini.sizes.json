@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "B",
+      "width": 230,
+      "height": 134.97158813476562
+    },
+    {
+      "id": "D",
+      "width": 232,
+      "height": 86.98295593261719
+    },
+    {
+      "id": "E",
+      "width": 232,
+      "height": 65.98863983154297
+    },
+    {
+      "id": "F",
+      "width": 232,
+      "height": 149.9658966064453
+    },
+    {
+      "id": "K",
+      "width": 106.76846313476562,
+      "height": 50.99431610107422
+    },
+    {
+      "id": "L",
+      "width": 230,
+      "height": 92.98295593261719
+    },
+    {
+      "id": "J",
+      "width": 156.05824279785156,
+      "height": 50.99431610107422
+    },
+    {
+      "id": "edge-label-F-K-L_F_K_0",
+      "width": 199.9857940673828,
+      "height": 20.99431800842285
+    },
+    {
+      "id": "edge-label-D-L-L_D_L_0",
+      "width": 106.6335220336914,
+      "height": 20.99431800842285
+    },
+    {
+      "id": "edge-label-E-J-L_E_J_0",
+      "width": 200,
+      "height": 41.9886360168457
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "1057549ca6ee4ead74fcbfc52b3882f2e12916be834a61f0d4a6e6f887ccf8f8",
+    "capturedAt": "2026-06-10T07:00:54.043Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/ortho-mini.mmd theme=redux look=neo layout=swimlane"
+  }
+}

@@ -17,12 +17,19 @@
  *     (§19.5).
  */
 
-import type { Bounds, Point, Rect, Side } from '../model.js';
+import type { Bounds, Point, Rect, Side, Silhouette } from '../model.js';
 import { nodeBounds } from '../model.js';
+import { silhouetteBand, silhouettePort } from '../adapter/silhouette.js';
 
 export interface RouterObstacle {
   id: string;
   rect: Rect;
+  /**
+   * Outline of a non-rectangular shape. Only ever used to place *ports*: the
+   * obstacle a route must avoid stays the bounding box, which is conservative
+   * and keeps the grid unchanged.
+   */
+  silhouette?: Silhouette;
 }
 
 export interface OrthogonalRouteRequest {
@@ -66,6 +73,12 @@ export interface RouterConfig {
   bendPenalty: number;
   crossingPenalty: number;
   maxExpansions: number;
+  /**
+   * Shortest run the first and last segment of a route may have. Arrowheads are
+   * drawn along the terminal segment, so one shorter than the marker points the
+   * wrong way. Defaults to `clearance` when omitted.
+   */
+  minTerminalLegLength?: number;
 }
 
 const ALL_SIDES: Side[] = ['top', 'right', 'bottom', 'left'];
@@ -84,6 +97,57 @@ export function portPoint(rect: Rect, side: Side, offset = 0): Point {
       return { x: rect.x - rect.width / 2, y: rect.y + alongY };
     case 'right':
       return { x: rect.x + rect.width / 2, y: rect.y + alongY };
+  }
+}
+
+/**
+ * Where an edge attaches to an obstacle: on the shape boundary when the shape is
+ * not a rectangle, on the bounding-box side when it is.
+ *
+ * The port only ever moves along the approach axis, so the terminal leg stays
+ * axis-aligned. Clipping with the shape's own centre ray would not: it returns a
+ * point on the centre–port line, which is not the line the route travels.
+ */
+export function obstaclePort(obstacle: RouterObstacle, side: Side, offset = 0): Point {
+  if (!obstacle.silhouette) {
+    return portPoint(obstacle.rect, side, offset);
+  }
+  return silhouettePort(obstacle.silhouette, obstacle.rect, side, offset);
+}
+
+/**
+ * The offsets along `side` that `obstaclePort` will honour, as a signed range
+ * about the side's centre. Callers that distribute several ports over one side
+ * use it so they spread within what the shape can actually accept.
+ */
+export function obstaclePortBand(
+  obstacle: RouterObstacle,
+  side: Side
+): { min: number; max: number } {
+  if (!obstacle.silhouette) {
+    const half =
+      side === 'top' || side === 'bottom' ? obstacle.rect.width / 2 : obstacle.rect.height / 2;
+    const usable = Math.max(0, half - 1);
+    return { min: -usable, max: usable };
+  }
+  return silhouetteBand(obstacle.silhouette, obstacle.rect, side);
+}
+
+/** How far a port sits inside its own bounding-box side. Zero for a rectangle. */
+function insetOf(obstacle: RouterObstacle, side: Side, port: Point): number {
+  if (!obstacle.silhouette) {
+    return 0;
+  }
+  const box = nodeBounds(obstacle.rect);
+  switch (side) {
+    case 'top':
+      return Math.max(0, port.y - box.minY);
+    case 'bottom':
+      return Math.max(0, box.maxY - port.y);
+    case 'left':
+      return Math.max(0, port.x - box.minX);
+    case 'right':
+      return Math.max(0, box.maxX - port.x);
   }
 }
 
@@ -469,15 +533,28 @@ export function routeWithSides(
   targetSide: Side,
   config: RouterConfig
 ): OrthogonalRouteResult | null {
-  const start = portPoint(request.source.rect, sourceSide, request.sourcePortOffset ?? 0);
-  const end = portPoint(request.target.rect, targetSide, request.targetPortOffset ?? 0);
+  const start = obstaclePort(request.source, sourceSide, request.sourcePortOffset ?? 0);
+  const end = obstaclePort(request.target, targetSide, request.targetPortOffset ?? 0);
   const waypoints = request.mandatoryWaypoints ?? [];
 
-  // A short stub outside each port guarantees the route leaves and enters
-  // through the intended side instead of sliding along the node boundary.
-  const stub = Math.max(config.clearance, 1);
-  const startStub = addPoint(start, outwardStep(sourceSide, stub));
-  const endStub = addPoint(end, outwardStep(targetSide, stub));
+  // A stub outside each port guarantees the route leaves and enters through the
+  // intended side instead of sliding along the node boundary, and gives the
+  // arrowhead a straight run to sit on. A marker drawn on a leg shorter than
+  // itself points in whatever direction the path had before it.
+  //
+  // The stub is measured from the *bounding box*, not from the port: on a
+  // non-rectangular shape the port has been pulled inwards, and the leg has to
+  // clear the box as well as the boundary or the arrowhead is drawn inside the
+  // silhouette's shoulder.
+  const minimumLeg = Math.max(config.clearance, config.minTerminalLegLength ?? 0, 1);
+  const startStub = addPoint(
+    start,
+    outwardStep(sourceSide, minimumLeg + insetOf(request.source, sourceSide, start))
+  );
+  const endStub = addPoint(
+    end,
+    outwardStep(targetSide, minimumLeg + insetOf(request.target, targetSide, end))
+  );
 
   const legPoints = [startStub, ...waypoints, endStub];
   const grid = buildGrid(request, config, [start, end, ...legPoints]);
@@ -512,6 +589,14 @@ export function routeWithSides(
 
   const points = simplifyCollinear(dedupe(assembled), waypoints);
   if (!isOrthogonal(points)) {
+    return null;
+  }
+  // The stubs are placed `minimumLeg` out from each port and `simplifyCollinear`
+  // only ever merges interior points — which lengthens a terminal leg, never
+  // shortens it — so this holds by construction. Checked rather than assumed: a
+  // violation means another side pair should be tried instead of an arrowhead
+  // being drawn along a stub too short to orient it.
+  if (Math.min(...terminalLegLengths(points)) < minimumLeg - EPSILON) {
     return null;
   }
 
@@ -594,6 +679,21 @@ export function isOrthogonal(points: Point[]): boolean {
     }
   }
   return true;
+}
+
+/**
+ * Length of the first and last segment of a route — the runs the start and end
+ * arrowheads are drawn along.
+ */
+export function terminalLegLengths(points: Point[]): [number, number] {
+  if (points.length < 2) {
+    return [0, 0];
+  }
+  const first = Math.abs(points[1].x - points[0].x) + Math.abs(points[1].y - points[0].y);
+  const n = points.length;
+  const last =
+    Math.abs(points[n - 1].x - points[n - 2].x) + Math.abs(points[n - 1].y - points[n - 2].y);
+  return [first, last];
 }
 
 export function segmentsOf(points: Point[]): Segment[] {

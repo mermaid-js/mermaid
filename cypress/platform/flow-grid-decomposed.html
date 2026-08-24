@@ -1,0 +1,180 @@
+<html>
+  <head>
+    <title>Grid-decomposed layout</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      .mermaid {
+        border: 1px solid #ddd;
+        margin-bottom: 1em;
+        padding: 0.5em;
+      }
+      p.note {
+        color: #555;
+        max-width: 60em;
+        margin: 0 0 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Grid-decomposed layout</h1>
+    <p class="note">
+      HOLA's topological decomposition (undirected leaf peeling: trees removed from the core), with
+      every resulting part drawn on its own by <code>grid-like</code> and packed beside the others.
+      Each peeled tree is re-rooted on a <strong>duplicate</strong> of the core node it hung from,
+      drawn with a dashed outline: the edge peeling cut is still drawn, from the duplicate, so no
+      edge ever runs between two parts and nothing is lost. A core always contains a cycle, so it is
+      laid out without the flow ordering — otherwise the cycle collapses into a single column with
+      its closing edge running back through the nodes in between.
+    </p>
+
+    <h3>Core with two trees (TB)</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-decomposed
+---
+flowchart TB
+  A --> B
+  B --> C
+  C --> D
+  D --> A
+  A --> t1
+  t1 --> t2
+  t2 --> t3
+  C --> s1
+  s1 --> s2
+    </pre>
+
+    <h3>The same graph with grid-like, for comparison</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-like
+---
+flowchart TB
+  A --> B
+  B --> C
+  C --> D
+  D --> A
+  A --> t1
+  t1 --> t2
+  t2 --> t3
+  C --> s1
+  s1 --> s2
+    </pre>
+
+    <h3>Pure tree — no cycle, so nothing is peeled (LR)</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-decomposed
+---
+flowchart LR
+  root --> a
+  root --> b
+  b --> c
+  b --> d
+  a --> e
+    </pre>
+
+    <h3>Two components: a dense core with a fringe, and a separate cycle</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-decomposed
+---
+flowchart TB
+  A --> B
+  B --> C
+  C --> A
+  B --> D
+  D --> E
+  E --> B
+  A --> p1
+  C --> p2
+  p2 --> p3
+  E --> p4
+  X --> Y
+  Y --> Z
+  Z --> X
+    </pre>
+
+    <h3>Edge labels and a self-loop</h3>
+    <p class="note">
+      <code>Parse -- error --&gt; Report</code> is the edge peeling cuts, so it is drawn inside the
+      tree part, running from the duplicated <code>Parse</code> — label included. The self-loop
+      travels with the tree part that owns <code>Report</code>.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-decomposed
+---
+flowchart TB
+  Start --> Parse
+  Parse -- ok --> Layout
+  Layout --> Render
+  Render --> Start
+  Parse -- error --> Report
+  Report --> Report
+    </pre>
+
+    <h3>Busy core, many single-node trees</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-decomposed
+---
+flowchart LR
+  hub --> a
+  a --> b
+  b --> hub
+  hub --> c
+  c --> d
+  d --> hub
+  hub --> leaf1
+  hub --> leaf2
+  hub --> leaf3
+  a --> leaf4
+  b --> leaf5
+    </pre>
+
+    <h3>HOLA paper graph 8 — a four-cycle core with one subtree</h3>
+    <p class="note">
+      The paper's own example, and the case that showed up the two bugs this layout had: the core
+      must read as the cycle <code>A—B—C—D—A</code>, and the peeled subtree must carry a duplicate
+      of <code>D</code> as its root.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-decomposed
+---
+flowchart TB
+  A --- B
+  B --- C
+  C --- D
+  D --- A
+  D --- E
+  E --- F
+  E --- G
+  E --- H
+  G --- I
+  G --- L
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 3,
+      });
+    </script>
+
+    <!-- Live reload, shared with the /dev/ pages: the dev server exposes it at
+         the root as well, so a page under cypress/platform can use it too. -->
+    <script src="/dev/reload.js"></script>
+  </body>
+</html>

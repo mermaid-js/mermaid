@@ -30,6 +30,16 @@ export interface Bounds {
 
 export type Side = 'top' | 'bottom' | 'left' | 'right';
 
+/**
+ * The outline of a non-rectangular node, in node-local coordinates with the
+ * centre at the origin. Recovered from the shape's `intersect` function by
+ * `adapter/silhouette.ts`; absent for a plain rectangle, which is the case every
+ * rectangle-based code path already handles.
+ */
+export interface Silhouette {
+  points: Point[];
+}
+
 /** Compass direction. `y` grows downward, so NORTH is -y. */
 export type Cardinal = 'N' | 'S' | 'E' | 'W';
 export type Ordinal = 'NE' | 'NW' | 'SE' | 'SW';
@@ -51,6 +61,11 @@ export interface HolaNode {
   y: number;
   /** Opaque handle back to the Mermaid node, used only for write-back. */
   original: unknown;
+  /**
+   * Outline of a non-rectangular shape, so ports land on the shape rather than
+   * on its bounding box. Obstacles stay rectangular either way.
+   */
+  silhouette?: Silhouette;
 }
 
 export interface MandatoryWaypoint {

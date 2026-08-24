@@ -60,6 +60,33 @@ const registerDefaultLayoutLoaders = () => {
       name: 'hola-faithful',
       loader: async () => await import('./layout-algorithms/hola-faithful/index.js'),
     },
+    {
+      // IPSEP-COLA (Dwyer, Koren & Marriott 2006): stress majorisation under
+      // separation constraints.
+      name: 'ipsep-cola',
+      loader: async () => await import('./layout-algorithms/ipsep-cola/index.js'),
+    },
+    {
+      // Grid-like layout (Kieffer, Dwyer, Marriott & Wybrow 2013): IPSEP-COLA
+      // plus adaptive constrained alignment and grid snapping.
+      name: 'grid-like',
+      loader: async () => await import('./layout-algorithms/grid-like/index.js'),
+    },
+    {
+      // HOLA's topological decomposition (trees peeled off the core) with every
+      // resulting part drawn on its own by grid-like and packed beside the
+      // others. Diagnostic: the edges peeling cut are not drawn.
+      name: 'grid-decomposed',
+      loader: async () => await import('./layout-algorithms/grid-decomposed/index.js'),
+    },
+    {
+      // The same decomposition, put back together: a grid-like core with every
+      // peeled tree attached to it in the place HOLA's face search chooses. The
+      // core is grid-like's drawing untouched, save for a uniform enlargement of
+      // its edges when the trees need the room.
+      name: 'grid-attached',
+      loader: async () => await import('./layout-algorithms/grid-attached/index.js'),
+    },
     ...(injected.includeLargeFeatures
       ? [
           {

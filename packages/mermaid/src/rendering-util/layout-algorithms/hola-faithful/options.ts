@@ -42,6 +42,12 @@ export interface HolaOptions {
   routingCrossingPenalty: number;
   /** Hard cap on A* expansions per route. */
   routingMaxExpansions: number;
+  /**
+   * Shortest run the first and last segment of a route may have. Arrowheads are
+   * drawn along the terminal segment, so a leg shorter than the marker leaves it
+   * pointing in whatever direction the path had before it.
+   */
+  minTerminalLegLength: number;
 
   /** Vertical gap between successive tree ranks. */
   treeRankGap: number;
@@ -87,6 +93,7 @@ export const DEFAULT_HOLA_OPTIONS: HolaOptions = {
   routingBendPenalty: 40,
   routingCrossingPenalty: 200,
   routingMaxExpansions: 40000,
+  minTerminalLegLength: 12,
 
   treeRankGap: 70,
   treeSiblingGap: 40,

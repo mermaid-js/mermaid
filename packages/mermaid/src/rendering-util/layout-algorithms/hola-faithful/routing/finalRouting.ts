@@ -18,6 +18,7 @@ import type {
   Segment,
 } from './orthogonalRouter.js';
 import { routeAlternatives, segmentsOf, simplifyCollinear } from './orthogonalRouter.js';
+import { silhouetteBand } from '../adapter/silhouette.js';
 
 export interface FinalEdge {
   /** The original Mermaid edge id. */
@@ -129,7 +130,11 @@ function routePass(
   const config = finalRouterConfig(options);
   const obstacles: RouterObstacle[] = [...nodes.values()]
     .filter((n) => n.width > 0 && n.height > 0)
-    .map((n) => ({ id: n.id, rect: { x: n.x, y: n.y, width: n.width, height: n.height } }));
+    .map((n) => ({
+      id: n.id,
+      rect: { x: n.x, y: n.y, width: n.width, height: n.height },
+      silhouette: n.silhouette,
+    }));
   const obstacleById = new Map(obstacles.map((o) => [o.id, o]));
 
   const existing: Segment[] = [];
@@ -269,13 +274,19 @@ function planPorts(
       continue;
     }
 
-    // `portPoint` offsets along y on the left and right sides, along x otherwise.
+    // `obstaclePort` offsets along y on the left and right sides, along x otherwise.
     const vertical = group.side === 'left' || group.side === 'right';
     const sideLength = vertical ? node.height : node.width;
     const centre = vertical ? node.y : node.x;
     const margin = Math.min(FAN_PORT_MARGIN, sideLength / 4);
-    const low = centre - sideLength / 2 + margin;
-    const high = centre + sideLength / 2 - margin;
+    // A non-rectangular shape does not reach its own corners, so the usable part
+    // of the side is narrower than the box. Spreading over the box instead would
+    // put ports where the boundary has receded and the approach only grazes it.
+    const band = node.silhouette
+      ? silhouetteBand(node.silhouette, node, group.side)
+      : { min: -sideLength / 2, max: sideLength / 2 };
+    const low = centre + Math.max(-sideLength / 2 + margin, band.min);
+    const high = centre + Math.min(sideLength / 2 - margin, band.max);
     if (high <= low) {
       continue;
     }

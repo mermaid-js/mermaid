@@ -1,0 +1,246 @@
+<html>
+  <head>
+    <title>Grid-attached layout</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      .mermaid {
+        border: 1px solid #ddd;
+        margin-bottom: 1em;
+        padding: 0.5em;
+      }
+      p.note {
+        color: #555;
+        max-width: 60em;
+        margin: 0 0 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Grid-attached layout</h1>
+    <p class="note">
+      <code>grid-decomposed</code> with the decomposition put back together. The core is the same
+      <code>grid-like</code> drawing — same solve, same alignments, same straight centre-to-centre
+      edges — and every tree HOLA's leaf peeling removed is hung back onto the core node it came
+      from. <strong>Where</strong> it hangs is HOLA's answer (guide §17): largest tree first, into
+      the angular wedge of a face at its root, cardinal direction before ordinal, external face
+      before internal.
+    </p>
+    <p class="note">
+      The one liberty taken with the core is <strong>enlargement</strong>. HOLA makes room for a
+      tree by expanding the face around it, which moves core nodes and would destroy the alignments
+      that make a grid-like drawing grid-like. So instead every core node is moved away from the
+      core's centre by a common factor: every core edge gets longer and nothing else changes — the
+      same picture, more room. That factor is raised only as far as it pays for itself against the
+      dead stubs it saves.
+    </p>
+
+    <h3>Core with two trees (TB)</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TB
+  A --> B
+  B --> C
+  C --> D
+  D --> A
+  A --> t1
+  t1 --> t2
+  t2 --> t3
+  C --> s1
+  s1 --> s2
+    </pre>
+
+    <h3>The same graph with grid-decomposed, for comparison</h3>
+    <p class="note">
+      The parts drawn beside each other, each tree on a dashed duplicate of its core node. Same
+      core, same trees — only the last step differs.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-decomposed
+---
+flowchart TB
+  A --> B
+  B --> C
+  C --> D
+  D --> A
+  A --> t1
+  t1 --> t2
+  t2 --> t3
+  C --> s1
+  s1 --> s2
+    </pre>
+
+    <h3>Pure tree — no cycle, so there is no core (LR)</h3>
+    <p class="note">
+      Peeling leaves nothing behind, so HOLA draws the whole component as one tree with its
+      symmetric tree layout, grown along the declared direction.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart LR
+  root --> a
+  root --> b
+  b --> c
+  b --> d
+  a --> e
+    </pre>
+
+    <h3>Several trees on one core node</h3>
+    <p class="note">
+      The four sides of <code>hub</code> cannot hold them all, so the search reaches for the corners
+      and steps the later trees sideways past the earlier ones.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TB
+  hub --> a
+  a --> b
+  b --> hub
+  hub --> leaf1
+  hub --> leaf2
+  hub --> leaf3
+  hub --> leaf4
+  hub --> leaf5
+    </pre>
+
+    <h3>Bushy trees on a dense core — this is what enlarges the core</h3>
+    <p class="note">
+      Six wide trees around a six-cycle with a chord. At grid-like's own scale one of them has
+      nowhere to go but a long way out; stretching the core's edges buys most of that back.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart LR
+  A --> B
+  B --> C
+  C --> D
+  D --> E
+  E --> F
+  F --> A
+  A --> D
+  A --> a1
+  a1 --> a2
+  a1 --> a3
+  B --> b1
+  b1 --> b2
+  C --> c1
+  c1 --> c2
+  c1 --> c3
+  E --> e1
+  e1 --> e2
+    </pre>
+
+    <h3>Two components, each decomposed and reassembled on its own</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TB
+  A --> B
+  B --> C
+  C --> A
+  B --> D
+  D --> E
+  E --> B
+  A --> p1
+  C --> p2
+  p2 --> p3
+  E --> p4
+  X --> Y
+  Y --> Z
+    </pre>
+
+    <h3>A wide fan — one node, many connectors</h3>
+    <p class="note">
+      Every connector leaving one side of one node gets its own attachment point, and the fan's
+      turns are nested into a <strong>comb</strong> so each run sits on its own line. Without
+      either, all eight arrive as one thick stem and one thick bar and no reader can tell which
+      arrow goes where. The rank gap is widened to hold the comb rather than being fixed, so a chain
+      still gets a tight gap and only a fan pays for the room it needs.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TD
+  L1 --- L2
+  L2 --- C
+  M1 ---> C
+  R1 .-> R2
+  R2 <.-> C
+  C -->|Label 1| E1
+  C <-- Label 2 ---> E2
+  C ----> E3
+  C <-...-> E4
+  C ======> E5
+    </pre>
+
+    <h3>Edge labels, self-loops and parallel edges</h3>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TB
+  Start --> Check
+  Check -->|no| Retry
+  Retry --> Check
+  Check -->|yes| Done
+  Done --> Archive
+  Archive --> Notify
+  Retry --> Retry
+    </pre>
+
+    <h3>HOLA paper graph 8 — a four-cycle core with one subtree</h3>
+    <p class="note">
+      The paper's own example. The core must read as the cycle <code>A—B—C—D—A</code>, and the
+      peeled subtree must hang off <code>D</code> itself.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TB
+  A --- B
+  B --- C
+  C --- D
+  D --- A
+  D --- E
+  E --- F
+  E --- G
+  E --- H
+  G --- I
+  G --- L
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 3,
+      });
+    </script>
+
+    <!-- Live reload, shared with the /dev/ pages: the dev server exposes it at
+         the root as well, so a page under cypress/platform can use it too. -->
+    <script src="/dev/reload.js"></script>
+  </body>
+</html>
