@@ -713,7 +713,7 @@ export function computeCoordinatesFromShape(
     // needs some perpCoords to look at.
 
     // Pass 1: Initial compaction (may have overlaps)
-    const _initialXCoord = computeCompactedCoordinates(result.gx, nodeSizes, 'width', nodePadding);
+    const initialXCoord = computeCompactedCoordinates(result.gx, nodeSizes, 'width', nodePadding);
     const initialYCoord = computeCompactedCoordinates(result.gy, nodeSizes, 'height', nodePadding);
 
     // B1 wedge 3 / iter-15: extract the planar embedding's faces once so
@@ -730,7 +730,8 @@ export function computeCoordinatesFromShape(
       nodeSizes,
       'width',
       nodePadding,
-      faces
+      faces,
+      initialXCoord
     );
     // Pass-2 Y — Gauss-Seidel coupling (B2): pass `xCoord` (the pass-2 X
     // result), NOT `_initialXCoord`. Reading pass-2 X lets Y's perp-overlap
@@ -745,7 +746,8 @@ export function computeCoordinatesFromShape(
       nodeSizes,
       'height',
       nodePadding,
-      faces
+      faces,
+      initialYCoord
     );
   } else {
     // Fallback: simple topological ordering
@@ -975,7 +977,13 @@ export function computeCompactedCoordinatesWithOverlapConstraints(
   nodeSizes?: Map<string, { width: number; height: number }>,
   dimension?: 'width' | 'height',
   nodePadding = 40,
-  faces?: SimpleCycle[]
+  faces?: SimpleCycle[],
+  /**
+   * Coordinates on THIS axis from the previous pass, used only to orient the
+   * separation arcs added below. Supplying it is what keeps the constraint
+   * graph acyclic — see the direction rule for why that is not optional.
+   */
+  parallelOrder?: Map<string, number>
 ): Map<string, number> {
   const perpDimension = dimension === 'width' ? 'height' : 'width';
 
@@ -1109,7 +1117,36 @@ export function computeCompactedCoordinatesWithOverlapConstraints(
       // Sorted-ID is `a < b` lexicographically because `i < j` in the
       // sorted-keys outer loop — keeps determinism as a backstop.
       let direction: 'a-to-b' | 'b-to-a' = 'a-to-b';
-      if (faces && faces.length > 0) {
+      if (parallelOrder) {
+        // Orient by this axis's previous coordinates, id as the tie-break.
+        //
+        // This has to be a TOTAL ORDER, and that is the whole point. The
+        // previous rule asked a face oracle per pair and fell back to
+        // lexicographic id, neither of which is globally consistent: pair by
+        // pair it can answer a<b, b<c and c<a. With hundreds of these arcs the
+        // result is a cyclic constraint graph, and `longestPathCompaction`
+        // solves by Kahn's algorithm — nodes inside a cycle never reach
+        // in-degree zero, never enter the topological order, and are silently
+        // skipped by the longest-path relaxation. They keep a default
+        // coordinate and land on top of each other.
+        //
+        // That is not a corner case. On `domus/triage` it dropped 24 of 24
+        // classes in Gx and 35 of 36 in Gy — compaction did not run AT ALL, and
+        // the 98 overlapping pairs in that fixture are those untouched defaults.
+        // It is also exactly the condition Eiglsperger and Kaufmann prove is
+        // decisive: the compaction LP is feasible iff no cycle in the constraint
+        // graphs has positive length (3-540-45848-4_11, §5.2).
+        //
+        // Ordering every added arc by one coordinate makes cycles impossible
+        // among them, and the shape arcs already agree with that coordinate
+        // because the previous pass's solution satisfied them — so the union
+        // stays acyclic and every class gets relaxed.
+        const oa = parallelOrder.get(a);
+        const ob = parallelOrder.get(b);
+        if (oa !== undefined && ob !== undefined && Math.abs(oa - ob) > 1e-9) {
+          direction = oa < ob ? 'a-to-b' : 'b-to-a';
+        }
+      } else if (faces && faces.length > 0) {
         const auxNodeA = aux.nodes.get(a);
         const auxNodeB = aux.nodes.get(b);
         if (auxNodeA && auxNodeB) {
