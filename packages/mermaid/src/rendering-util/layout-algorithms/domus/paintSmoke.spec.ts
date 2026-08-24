@@ -12,14 +12,22 @@
  * throw. We deliberately assert only "does not crash" — not pixel geometry —
  * because jsdom cannot measure real SVG text metrics, but a crash like the
  * intersect bug throws regardless of measurement fidelity.
+ *
+ * Fixtures are parsed with the DDLT loader (`preprocessDiagram` -\>
+ * `Diagram.fromText`), the same path the fixture sweep uses. Parsing them with
+ * the flowchart JISON parser directly would skip frontmatter extraction and
+ * comment stripping and assume every fixture is a flowchart, which throws a
+ * parse error on the `---`/`%%`/`erDiagram`/`mindmap` fixtures in this corpus
+ * long before `paint()` is ever reached — the harness would fail where the
+ * renderer is fine.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { select } from 'd3';
 import type { LayoutData } from '../../types.js';
-import { FlowDB } from '../../../diagrams/flowchart/flowDb.js';
-import flow from '../../../diagrams/flowchart/parser/flowParser.js';
+import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
+import { parseMmdFileToLayoutData } from '../ddlt/parseToLayoutData.js';
 import { render } from './index.js';
 import { setLogLevel } from '../../../logger.js';
 
@@ -32,6 +40,15 @@ function domusFixtureNames(): string[] {
     .sort();
 }
 
+/** Parse a fixture the way the DDLT sweep does, then tag it for the paint pass. */
+async function loadFixture(name: string, diagramId: string): Promise<LayoutData> {
+  const layoutData = await parseMmdFileToLayoutData(join(FIXTURE_DIR, `${name}.mmd`), {
+    stampFlowchartRendererFields: true,
+  });
+  (layoutData as LayoutData & { diagramId?: string }).diagramId = diagramId;
+  return layoutData;
+}
+
 describe('DOMUS paint-path smoke (render does not crash)', () => {
   let proto: any;
   let originalGetBBox: any;
@@ -39,6 +56,9 @@ describe('DOMUS paint-path smoke (render does not crash)', () => {
 
   beforeAll(() => {
     setLogLevel('fatal');
+    // Diagram.fromText() detects the fixture's type; without registration the
+    // non-flowchart fixtures in this corpus cannot resolve a parser.
+    addDiagrams();
     // Hard-disable DDLT size capture for this spec. render() goes through
     // createGraphWithElements, whose capture guard reads globalThis.
     // mermaidCaptureSizes; a leaked truthy flag (e.g. from a dev page) must
@@ -69,13 +89,7 @@ describe('DOMUS paint-path smoke (render does not crash)', () => {
 
   for (const name of fixtures) {
     it(`renders ${name} without throwing`, async () => {
-      const diagram = readFileSync(join(FIXTURE_DIR, `${name}.mmd`), 'utf8');
-
-      flow.parser.yy = new FlowDB();
-      flow.parser.yy.clear();
-      await flow.parse(diagram);
-      const layoutData = flow.parser.yy.getData() as LayoutData;
-      (layoutData as any).diagramId = `paint-smoke-${name}`;
+      const layoutData = await loadFixture(name, `paint-smoke-${name}`);
 
       document.body.innerHTML = '<svg><g></g></svg>';
       const svg = select('svg') as any;
@@ -89,12 +103,7 @@ describe('DOMUS paint-path smoke (render does not crash)', () => {
   // node) score a position the browser never draws. With label-dummy injection
   // (A), DOMUS produces a finite anchor and paint must honor it.
   it('paints each edge label at its validated edge.x/edge.y anchor', async () => {
-    const diagram = readFileSync(join(FIXTURE_DIR, 'Company-simp.mmd'), 'utf8');
-    flow.parser.yy = new FlowDB();
-    flow.parser.yy.clear();
-    await flow.parse(diagram);
-    const layoutData = flow.parser.yy.getData() as LayoutData;
-    (layoutData as any).diagramId = 'paint-anchor-company-simp';
+    const layoutData = await loadFixture('Company-simp', 'paint-anchor-company-simp');
 
     document.body.innerHTML = '<svg><g></g></svg>';
     const svg = select('svg') as any;
