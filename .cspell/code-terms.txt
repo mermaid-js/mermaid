@@ -12,6 +12,7 @@ Backjumping
 bary
 Bary
 Bekos
+Bereg
 Biedl
 Bigdecimal
 birel
@@ -125,6 +126,7 @@ minlen
 Mstartx
 MULT
 Mutzel
+Nachmanson
 Naur
 NODIR
 nonterminal
@@ -134,6 +136,7 @@ OGDF
 outdir
 planarization
 podavsnef
+Pupyrev
 Qcontrolx
 QSTR
 raykov

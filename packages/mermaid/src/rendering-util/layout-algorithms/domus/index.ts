@@ -23,6 +23,7 @@ import {
   simplifyPathologicalRoutesWhenMonotone,
   straightenParallelZsWhenScoreImproves,
   swingReroutesWhenScoreImproves,
+  rerouteTopCrossersWhenScoreImproves,
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
@@ -544,6 +545,29 @@ export function runLateQualityPasses(
   // final polish below always runs it.
   if (!opts.skipSwingReroutes) {
     swingReroutesWhenScoreImproves(data4Layout);
+
+    // Crossing reduction, wired back on its own out of the group that was
+    // unwired together. It is the only one of those passes whose objective the
+    // corpus ranks ABOVE the metric DOMUS optimises for: the readability study
+    // `diss` §2.2 reports "CROSSING was found to be the most important,
+    // followed by BEND and SYMMETRY", and both libavoid papers state the
+    // post-routing rule as a conjunction — an adjustment must not introduce
+    // "unnecessary crossings or bends" — never as a trade of one for the other.
+    // Giving crossings away during ROUTING is DOMUS's bargain; it is not a
+    // reason to decline a free clean-up afterwards.
+    //
+    // It sits inside this guard for the same reason `swingReroutes` does, and
+    // that placement is the whole difference between affordable and not.
+    // `runLateQualityPasses` runs once per variant of the compound-placement
+    // tournament, and this pass re-validates the entire layout per candidate
+    // route. Run per variant it cost +43% of the corpus's total routing work
+    // for +55 aggregate — 111% of the cost ceiling, an automatic revert.
+    // Restricting its candidate set instead was measured and was worse on both
+    // axes at once (+25 aggregate, 113% of ceiling), because the cost is not in
+    // its own search but in what the geometry it changes does to every pass
+    // downstream. Running it once, on the winning variant only, is the version
+    // that pays.
+    rerouteTopCrossersWhenScoreImproves(data4Layout);
   }
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
