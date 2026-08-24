@@ -491,9 +491,19 @@ export function nudgeOverlappingLeafNodes(
  */
 export function separateOverlapsBySweep(
   layout: LayoutData,
-  opts: { padding?: number; preferAxis?: 'x' | 'y' } = {}
+  opts: { padding?: number; preferAxis?: 'x' | 'y'; maxExtentGrowth?: number } = {}
 ): BoxNudgeResult {
   const padding = opts.padding ?? 10;
+  // Refuse to apply a sweep that inflates the drawing past this factor. A
+  // forward-only sweep chains: each node is pushed clear of the earlier nodes it
+  // overlaps, so a cluster of near-coincident boxes spreads by roughly the sum of
+  // their widths. On a 60-node fixture that grew the extent enough that the
+  // channels routing graph tried to allocate a grid from it and V8 died with
+  // "invalid table size" — reproducibly, and still at --max-old-space-size=8192.
+  // Overlap is a validity failure worth some displacement, but not any amount:
+  // past this factor the layout is no longer the one DOMUS chose, and the caller
+  // is better served by the overlaps than by an unbounded drawing.
+  const maxExtentGrowth = opts.maxExtentGrowth ?? 1.5;
   const nodes = (layout.nodes ?? []).filter((n) => n?.id != null && isLeaf(n));
   if (nodes.length < 2) {
     return { changed: false, moves: 0, iterations: 0, remainingOverlaps: 0 };
@@ -567,6 +577,34 @@ export function separateOverlapsBySweep(
   }
   candidates.sort((a, b) => a.displacement - b.displacement || a.axis.localeCompare(b.axis));
   const chosen = candidates[0];
+
+  // Extent guard. Measured on the sweep axis only — the other axis is untouched.
+  const half = (n: Node) => Number((chosen.axis === 'x' ? n.width : n.height) ?? 0) / 2;
+  let beforeLo = Infinity;
+  let beforeHi = -Infinity;
+  let afterLo = Infinity;
+  let afterHi = -Infinity;
+  for (const n of nodes) {
+    const id = String(n.id);
+    const h = half(n);
+    beforeLo = Math.min(beforeLo, origin.get(id)![chosen.axis] - h);
+    beforeHi = Math.max(beforeHi, origin.get(id)![chosen.axis] + h);
+    afterLo = Math.min(afterLo, chosen.pos.get(id)! - h);
+    afterHi = Math.max(afterHi, chosen.pos.get(id)! + h);
+  }
+  const beforeSpan = Math.max(1, beforeHi - beforeLo);
+  const afterSpan = Math.max(1, afterHi - afterLo);
+  if (afterSpan > beforeSpan * maxExtentGrowth) {
+    log.debug(ORTHO_DEBUG, 'SWEEP_SEPARATE_SKIPPED', {
+      axis: chosen.axis,
+      beforeSpan: Math.round(beforeSpan),
+      afterSpan: Math.round(afterSpan),
+      growth: Number((afterSpan / beforeSpan).toFixed(2)),
+      maxExtentGrowth,
+      initialOverlaps: initial,
+    });
+    return { changed: false, moves: 0, iterations: 1, remainingOverlaps: initial };
+  }
 
   let moves = 0;
   for (const n of nodes) {

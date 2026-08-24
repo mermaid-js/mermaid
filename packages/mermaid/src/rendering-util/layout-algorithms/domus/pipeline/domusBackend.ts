@@ -987,6 +987,17 @@ export function maybeHandleDomusBackend(args: {
       log.debug(ORTHO_DEBUG, 'ITER47_GX_CLASS_SNAP', { ...snapStats, threshold: snapThreshold });
     }
 
+    // Same boundary as the cycle-removal branch: the snap was the last thing to
+    // move a leaf, nothing is routed yet. `domus/architecture4` reaches the
+    // router through here, which is why clearing overlap on that branch alone
+    // left it untouched. Bounded by the sweep's own extent guard — this branch
+    // carries the large fixtures, and an unbounded sweep on those is what made
+    // the routing graph allocate itself to death.
+    separateOverlapsBySweep(data, {
+      padding: Math.max(4, Math.min(40, options.spacing ?? 10)),
+      preferAxis: ctx.preferAxisForVerticalFlow,
+    });
+
     // Re-run routing using the routing-graph backend while keeping node positions fixed.
     // This is a conservative fallback that aims to satisfy orthogonality + obstacle avoidance.
     // For graphs with cycles/multi-edges, prefer a stronger routing-graph model.
