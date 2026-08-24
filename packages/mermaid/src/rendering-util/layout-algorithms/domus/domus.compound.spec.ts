@@ -50,12 +50,24 @@ flowchart TD
 `;
 
 describe('DOMUS placement with compound (cluster) flowcharts', () => {
-  it('exposes flowchart direction on LayoutData (used for orthogonal fallbacks)', async () => {
+  // `getData()` returns parsed graph data only — it has never carried `direction`.
+  // The caller stamps it: `flowRenderer-v3-unified.ts` does
+  // `data4Layout.direction = diag.db.getDirection()` on the browser path, and
+  // `ddlt/parseToLayoutData.ts` mirrors that for DOM-free runs. DOMUS's orthogonal
+  // fallbacks read `layout.direction`, so what actually needs guarding is the
+  // normalization that stamp depends on: `flowchart TD` must reach DOMUS as 'TB',
+  // because `core/direction.ts` only understands TB/BT/LR/RL.
+  it('normalizes flowchart TD to the TB direction DOMUS fallbacks read', async () => {
     flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
 
     await flow.parse('flowchart TD\n  A --> B\n');
-    const layoutData = flow.parser.yy.getData();
+    const db = flow.parser.yy as FlowDB;
+    expect(db.getDirection()).toBe('TB');
+
+    // Stamp exactly as flowRenderer-v3-unified.ts does before handing off to DOMUS.
+    const layoutData = db.getData() as LayoutData & { direction?: string };
+    layoutData.direction = db.getDirection();
     expect(layoutData.direction).toBe('TB');
   });
 

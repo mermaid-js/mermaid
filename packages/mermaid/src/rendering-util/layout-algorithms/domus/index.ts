@@ -132,15 +132,21 @@ export async function renderPreAdjustLayout(
   groups: Awaited<ReturnType<typeof createGraphWithElements>>['groups'];
 }> {
   // Ensure edge labels are represented as dummy label nodes for orthogonal layout.
-  // `createGraphWithElements` uses this flag to decide whether to inject edge-label nodes/edges.
   (data4Layout as any).layoutAlgorithm = 'domus';
-  // R12: turn on edge-label dummy-node injection. Without this, createGraph's
-  // `createGraph.ts:159` gate is false and DOMUS compacts the primary nodes
-  // with no knowledge of label widths, so labels wider than the inter-node
-  // gap paint on top of the flanking rectangles. `finalizeOverlayLabels.ts`
-  // resets this flag to `false` after DOMUS finishes.
+  // R12: turn on edge-label dummy-node handling. Without this, DOMUS compacts
+  // the primary nodes with no knowledge of label widths, so labels wider than
+  // the inter-node gap paint on top of the flanking rectangles.
+  // `finalizeOverlayLabels.ts` resets this flag to `false` after DOMUS finishes.
   (data4Layout as any).config ??= {};
   (data4Layout as any).config.isLabelNode = true;
+
+  // Inject the edge-label dummy nodes explicitly, exactly as `measure()` does.
+  // The flag above is read by `adjustLayout.ts`, not by `createGraphWithElements`
+  // — nothing in `createGraph.ts` injects label nodes on its own. Without this
+  // call this stage produced a LayoutData with no `edge-label-*` nodes while the
+  // browser path produced one with them, so the two seams laid out different
+  // graphs and pre-adjustLayout assertions could not see what ships.
+  injectDomusEdgeLabelNodes(data4Layout);
 
   const element = svg.select('g') as unknown as D3Selection<SVGElement>;
   // Insert markers and clear previous elements
