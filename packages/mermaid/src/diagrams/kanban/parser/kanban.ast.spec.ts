@@ -6,7 +6,7 @@
  */
 import kanbanDb from '../kanbanDb.js';
 import type { KanbanAST, KanbanGraphStatement, Span } from '../kanbanTypes.js';
-import { kanbanCorpus } from './kanban.corpus.js';
+import { kanbanFixtures } from './kanban.fixtures.js';
 import { parser as kanbanParser } from './kanban.chevrotain.js';
 
 const DIAGRAM = `kanban
@@ -172,8 +172,8 @@ describe('kanban AST', () => {
     ]);
   });
 
-  it('keeps every span sliceable across the whole corpus', () => {
-    for (const { name, text } of kanbanCorpus) {
+  it('keeps every span sliceable across every fixture', () => {
+    for (const { name, text } of kanbanFixtures) {
       let ast: KanbanAST;
       try {
         ast = parse(text);

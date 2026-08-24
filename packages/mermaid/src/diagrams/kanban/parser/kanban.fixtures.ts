@@ -1,13 +1,13 @@
 // cspell:ignore knsv Sveidqvist kanbanesque
 /**
- * The shared kanban parser corpus.
+ * The shared kanban parser fixtures.
  *
  * Test-only. Combines hand-picked edge cases with every kanban snippet already committed to the
  * repo — the diagram's own spec file, `samples.md`, and the published docs — so the suites built
  * on it re-sync themselves whenever any of those grow.
  *
  * It was assembled to diff this parser against the jison grammar it replaced, input by input, and
- * outlives that grammar as the snapshot corpus in `kanban.corpus.spec.ts`.
+ * outlives that grammar as the snapshot suite in `kanban.fixtures.spec.ts`.
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-export interface CorpusEntry {
+export interface KanbanFixture {
   name: string;
   text: string;
 }
@@ -24,7 +24,7 @@ export interface CorpusEntry {
  * Hand-picked inputs. These deliberately include shapes, delimiters and malformed lines that the
  * committed examples never exercise — the committed examples alone are not a sufficient oracle.
  */
-const CURATED: CorpusEntry[] = [
+const CURATED: KanbanFixture[] = [
   ['bare-keyword', 'kanban'],
   ['keyword-newline', 'kanban\n'],
   ['simple', 'kanban\n    root'],
@@ -92,8 +92,8 @@ const CURATED: CorpusEntry[] = [
 ].map(([name, text]) => ({ name, text }));
 
 /** Pulls every fenced mermaid block out of a markdown file. */
-function fencedKanbanBlocks(markdown: string, label: string): CorpusEntry[] {
-  const blocks: CorpusEntry[] = [];
+function fencedKanbanBlocks(markdown: string, label: string): KanbanFixture[] {
+  const blocks: KanbanFixture[] = [];
   const fence = /```mermaid(?:-example)?\n([\S\s]*?)```/g;
   let match;
   let index = 0;
@@ -109,8 +109,8 @@ function fencedKanbanBlocks(markdown: string, label: string): CorpusEntry[] {
 }
 
 /** Pulls every diagram string literal out of the diagram's own spec file. */
-function specLiterals(source: string): CorpusEntry[] {
-  const entries: CorpusEntry[] = [];
+function specLiterals(source: string): KanbanFixture[] {
+  const entries: KanbanFixture[] = [];
   let index = 0;
   for (const match of source.matchAll(/`((?:[^\\`]|\\.)*)`/g)) {
     const text = match[1].replace(/\\([$\\`nrt])/g, (_, c: string) =>
@@ -136,7 +136,7 @@ function read(relative: string): string {
 }
 
 /** The `.mmd` fixtures the e2e rendering suite snapshots. */
-function e2eFixtures(): CorpusEntry[] {
+function e2eFixtures(): KanbanFixture[] {
   const directory = resolve(here, '../../../../../../e2e/diagrams/kanban');
   return readdirSync(directory)
     .filter((file) => file.endsWith('.mmd'))
@@ -147,7 +147,7 @@ function e2eFixtures(): CorpusEntry[] {
     }));
 }
 
-export const kanbanCorpus: CorpusEntry[] = [
+export const kanbanFixtures: KanbanFixture[] = [
   ...CURATED,
   ...specLiterals(read('../kanban.spec.ts')),
   ...fencedKanbanBlocks(read('../samples.md'), 'samples'),

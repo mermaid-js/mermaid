@@ -1,0 +1,1504 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`kanban parser fixtures > parses apostrophe-in-descr 1`] = `
+"input:
+| kanban
+|   id12[Can't reproduce]
+| 
+sections:
+  id12 level=2 label="Can't reproduce" width=200 padding=20
+nodes:
+  id12 group level=2 shape="kanbanSection" label="Can't reproduce""
+`;
+
+exports[`kanban parser fixtures > parses bang 1`] = `
+"input:
+| kanban
+|   d))bang((
+sections:
+  d level=2 label="bang" width=200 padding=10
+nodes:
+  d group level=2 shape="kanbanSection" label="bang""
+`;
+
+exports[`kanban parser fixtures > parses bare-keyword 1`] = `
+"input:
+| kanban
+REJECTED: Error parsing kanban diagram at line 1, column 7: Expecting: expecting at least one iteration which starts with one of these possible Token sequences::"
+`;
+
+exports[`kanban parser fixtures > parses blank-lines-after-keyword 1`] = `
+"input:
+| kanban
+| 
+| 
+|   root
+REJECTED: Error parsing kanban diagram at line 4, column 1: Expecting: one of these possible Token sequences:"
+`;
+
+exports[`kanban parser fixtures > parses brace-in-description 1`] = `
+"input:
+| kanban
+|   root[a}b]
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 7: "[" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses circle 1`] = `
+"input:
+| kanban
+|   a((circle))
+sections:
+  a level=2 label="circle" width=200 padding=10
+nodes:
+  a group level=2 shape="kanbanSection" label="circle""
+`;
+
+exports[`kanban parser fixtures > parses class 1`] = `
+"input:
+| kanban
+|     root[The root]
+|     :::m-4 p-8
+|     
+sections:
+  root level=4 label="The root" classes="m-4 p-8" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses class-empty 1`] = `
+"input:
+| kanban
+|   root
+|   :::
+|   child
+REJECTED: Error parsing kanban diagram at line 4, column 1: Expecting: one of these possible Token sequences:"
+`;
+
+exports[`kanban parser fixtures > parses class-marker-at-eof 1`] = `
+"input:
+| kanban
+|   root
+|   :::
+REJECTED: Error parsing kanban diagram at line 3, column 3: ":::" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses class-then-child 1`] = `
+"input:
+| kanban
+|   root(Root)
+|     Child(Child)
+|     :::hot
+|       a(a)
+|       b[New Stuff]
+sections:
+  root level=2 label="Root" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="Root"
+    Child parent="root" level=4 shape="kanbanItem" label="Child" styles="text-align: left"
+    a parent="root" level=6 shape="kanbanItem" label="a" styles="text-align: left"
+    b parent="root" level=6 shape="kanbanItem" label="New Stuff" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses closed-string-open-shape 1`] = `
+"input:
+| kanban
+|   root["done"
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 7: "[" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses cloud-close 1`] = `
+"input:
+| kanban
+|   f)cloud(
+sections:
+  f level=2 label="cloud" width=200 padding=10
+nodes:
+  f group level=2 shape="kanbanSection" label="cloud""
+`;
+
+exports[`kanban parser fixtures > parses cloud-open 1`] = `
+"input:
+| kanban
+|   c(-cloud-)
+sections:
+  c level=2 label="cloud-" width=200 padding=10
+nodes:
+  c group level=2 shape="kanbanSection" label="cloud-""
+`;
+
+exports[`kanban parser fixtures > parses comment-after-bare-id 1`] = `
+"input:
+| kanban
+|   root %% swallowed by the id
+| 
+sections:
+  root %% swallowed by the id level=2 label="root %% swallowed by the id" width=200 padding=10
+nodes:
+  root %% swallowed by the id group level=2 shape="kanbanSection" label="root %% swallowed by the id""
+`;
+
+exports[`kanban parser fixtures > parses comment-end-of-line 1`] = `
+"input:
+| kanban
+|   root(Root)
+|       a(a) %% This is a comment
+|       b[x]
+sections:
+  root level=2 label="Root" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="Root"
+    a parent="root" level=6 shape="kanbanItem" label="a" styles="text-align: left"
+    b parent="root" level=6 shape="kanbanItem" label="x" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses comment-own-line 1`] = `
+"input:
+| kanban
+|   root(Root)
+| 
+|       %% This is a comment
+|       b[New Stuff]
+sections:
+  root level=2 label="Root" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="Root"
+    b parent="root" level=6 shape="kanbanItem" label="New Stuff" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses deep-hierarchy 1`] = `
+"input:
+| kanban
+|   root
+|     child1
+|       leaf1
+|     child2
+sections:
+  root level=2 label="root" width=200 padding=10
+nodes:
+  root group level=2 shape="kanbanSection" label="root"
+    child1 parent="root" level=4 shape="kanbanItem" label="child1" styles="text-align: left"
+    leaf1 parent="root" level=6 shape="kanbanItem" label="leaf1" styles="text-align: left"
+    child2 parent="root" level=4 shape="kanbanItem" label="child2" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses descr-after-string 1`] = `
+"input:
+| kanban
+|   a["x" y]
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 8: Expecting token of type --> NodeDEnd <-- but found --> ' y' <--"
+`;
+
+exports[`kanban parser fixtures > parses docs-0 1`] = `
+"input:
+| kanban
+|   column1[Column Title]
+|     task1[Task Description]
+| 
+sections:
+  column1 level=2 label="Column Title" width=200 padding=20
+nodes:
+  column1 group level=2 shape="kanbanSection" label="Column Title"
+    task1 parent="column1" level=4 shape="kanbanItem" label="Task Description" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses docs-1 1`] = `
+"input:
+| kanban
+| todo[Todo]
+|   id3[Update Database Function]@{ ticket: MC-2037, assigned: 'knsv', priority: 'High' }
+| 
+sections:
+  todo level=0 label="Todo" width=200 padding=20
+nodes:
+  todo group level=0 shape="kanbanSection" label="Todo"
+    id3 parent="todo" level=2 shape="kanbanItem" label="Update Database Function" assigned="knsv" ticket="MC-2037" priority="High" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses docs-2 1`] = `
+"input:
+| kanban
+|   Todo
+|     [Create Documentation]
+|     docs[Create Blog about the new diagram]
+|   [In progress]
+|     id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
+|   id9[Ready for deploy]
+|     id8[Design grammar]@{ assigned: 'knsv' }
+|   id10[Ready for test]
+|     id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
+|     id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
+|   id11[Done]
+|     id5[define getData]
+|     id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
+|     id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
+| 
+|   id12[Can't reproduce]
+|     id3[Weird flickering in Firefox]
+| 
+sections:
+  Todo level=2 label="Todo" width=200 padding=10
+  In progress level=2 label="In progress" width=200 padding=20
+  id9 level=2 label="Ready for deploy" width=200 padding=20
+  id10 level=2 label="Ready for test" width=200 padding=20
+  id11 level=2 label="Done" width=200 padding=20
+  id12 level=2 label="Can't reproduce" width=200 padding=20
+nodes:
+  Todo group level=2 shape="kanbanSection" label="Todo"
+    Create Documentation parent="Todo" level=4 shape="kanbanItem" label="Create Documentation" styles="text-align: left"
+    docs parent="Todo" level=4 shape="kanbanItem" label="Create Blog about the new diagram" styles="text-align: left"
+  In progress group level=2 shape="kanbanSection" label="In progress"
+    id6 parent="In progress" level=4 shape="kanbanItem" label="Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare." styles="text-align: left"
+  id9 group level=2 shape="kanbanSection" label="Ready for deploy"
+    id8 parent="id9" level=4 shape="kanbanItem" label="Design grammar" assigned="knsv" styles="text-align: left"
+  id10 group level=2 shape="kanbanSection" label="Ready for test"
+    id4 parent="id10" level=4 shape="kanbanItem" label="Create parsing tests" assigned="K.Sveidqvist" ticket="MC-2038" priority="High" styles="text-align: left"
+    id66 parent="id10" level=4 shape="kanbanItem" label="last item" assigned="knsv" priority="Very Low" styles="text-align: left"
+  id11 group level=2 shape="kanbanSection" label="Done"
+    id5 parent="id11" level=4 shape="kanbanItem" label="define getData" styles="text-align: left"
+    id2 parent="id11" level=4 shape="kanbanItem" label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char" ticket="MC-2036" priority="Very High" styles="text-align: left"
+    id3 parent="id11" level=4 shape="kanbanItem" label="Update DB function" assigned="knsv" ticket="MC-2037" priority="High" styles="text-align: left"
+  id12 group level=2 shape="kanbanSection" label="Can't reproduce"
+    id3 parent="id12" level=4 shape="kanbanItem" label="Weird flickering in Firefox" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses e2e-1-should-render-a-kanban-with-a-single-section 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   docs[Create Documentation]
+|   docs[Create Blog about the new diagram]
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  docs level=2 label="Create Documentation" width=200 padding=20
+  docs level=2 label="Create Blog about the new diagram" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  docs group level=2 shape="kanbanSection" label="Create Documentation"
+  docs group level=2 shape="kanbanSection" label="Create Blog about the new diagram""
+`;
+
+exports[`kanban parser fixtures > parses e2e-2-should-render-a-kanban-with-multiple-sections 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   docs[Create Documentation]
+|   id2
+|   docs[Create Blog about the new diagram]
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  docs level=2 label="Create Documentation" width=200 padding=20
+  id2 level=2 label="id2" width=200 padding=10
+  docs level=2 label="Create Blog about the new diagram" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  docs group level=2 shape="kanbanSection" label="Create Documentation"
+  id2 group level=2 shape="kanbanSection" label="id2"
+  docs group level=2 shape="kanbanSection" label="Create Blog about the new diagram""
+`;
+
+exports[`kanban parser fixtures > parses e2e-3-should-render-a-kanban-with-a-single-wrapping-node 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id2 level=2 label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  id2 group level=2 shape="kanbanSection" label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping""
+`;
+
+exports[`kanban parser fixtures > parses e2e-4-should-handle-the-height-of-a-section-with-a-wrapping-node-at-the-end 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   id2[One line]
+|   id3[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id2 level=2 label="One line" width=200 padding=20
+  id3 level=2 label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  id2 group level=2 shape="kanbanSection" label="One line"
+  id3 group level=2 shape="kanbanSection" label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping""
+`;
+
+exports[`kanban parser fixtures > parses e2e-5-should-handle-the-height-of-a-section-with-a-wrapping-node-at-the-top 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+|   id3[One line]
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id2 level=2 label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping" width=200 padding=20
+  id3 level=2 label="One line" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  id2 group level=2 shape="kanbanSection" label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping"
+  id3 group level=2 shape="kanbanSection" label="One line""
+`;
+
+exports[`kanban parser fixtures > parses e2e-6-should-handle-assignments 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   docs[Create Documentation]
+|   id2[In progress]
+|   docs[Create Blog about the new diagram]@{ assigned: 'knsv' }
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  docs level=2 label="Create Documentation" width=200 padding=20
+  id2 level=2 label="In progress" width=200 padding=20
+  docs level=2 label="Create Blog about the new diagram" assigned="knsv" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  docs group level=2 shape="kanbanSection" label="Create Documentation"
+  id2 group level=2 shape="kanbanSection" label="In progress"
+  docs group level=2 shape="kanbanSection" label="Create Blog about the new diagram""
+`;
+
+exports[`kanban parser fixtures > parses e2e-6-should-handle-the-height-of-a-section-with-a-wrapping-node-in-the-middle 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   id2[One line]
+|   id3[Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping]
+|   id4[One line]
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id2 level=2 label="One line" width=200 padding=20
+  id3 level=2 label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping" width=200 padding=20
+  id4 level=2 label="One line" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  id2 group level=2 shape="kanbanSection" label="One line"
+  id3 group level=2 shape="kanbanSection" label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char, wrapping"
+  id4 group level=2 shape="kanbanSection" label="One line""
+`;
+
+exports[`kanban parser fixtures > parses e2e-7-should-handle-external-tickets 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   docs[Create Documentation]
+|   id2[In progress]
+|   docs[Create Blog about the new diagram]@{ ticket: MC-2037 }
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  docs level=2 label="Create Documentation" width=200 padding=20
+  id2 level=2 label="In progress" width=200 padding=20
+  docs level=2 label="Create Blog about the new diagram" ticket="MC-2037" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  docs group level=2 shape="kanbanSection" label="Create Documentation"
+  id2 group level=2 shape="kanbanSection" label="In progress"
+  docs group level=2 shape="kanbanSection" label="Create Blog about the new diagram" ticket="MC-2037""
+`;
+
+exports[`kanban parser fixtures > parses e2e-7-should-handle-prioritization 1`] = `
+"input:
+| kanban
+|   id2[In progress]
+|   vh[Very High]@{ priority: 'Very High' }
+|   h[High]@{ priority: 'High' }
+|   m[Default priority]
+|   l[Low]@{ priority: 'Low' }
+|   vl[Very Low]@{ priority: 'Very Low' }
+| 
+sections:
+  id2 level=2 label="In progress" width=200 padding=20
+  vh level=2 label="Very High" priority="Very High" width=200 padding=20
+  h level=2 label="High" priority="High" width=200 padding=20
+  m level=2 label="Default priority" width=200 padding=20
+  l level=2 label="Low" priority="Low" width=200 padding=20
+  vl level=2 label="Very Low" priority="Very Low" width=200 padding=20
+nodes:
+  id2 group level=2 shape="kanbanSection" label="In progress"
+  vh group level=2 shape="kanbanSection" label="Very High"
+  h group level=2 shape="kanbanSection" label="High"
+  m group level=2 shape="kanbanSection" label="Default priority"
+  l group level=2 shape="kanbanSection" label="Low"
+  vl group level=2 shape="kanbanSection" label="Very Low""
+`;
+
+exports[`kanban parser fixtures > parses e2e-8-should-handle-assignments-prioritization-and-tickets-ids-in-the-same-item 1`] = `
+"input:
+| kanban
+|   id2[In progress]
+|   docs[Create Blog about the new diagram]@{ priority: 'Very Low', ticket: MC-2037, assigned: 'knsv' }
+| 
+sections:
+  id2 level=2 label="In progress" width=200 padding=20
+  docs level=2 label="Create Blog about the new diagram" assigned="knsv" ticket="MC-2037" priority="Very Low" width=200 padding=20
+nodes:
+  id2 group level=2 shape="kanbanSection" label="In progress"
+  docs group level=2 shape="kanbanSection" label="Create Blog about the new diagram" ticket="MC-2037""
+`;
+
+exports[`kanban parser fixtures > parses e2e-10-full-example 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|   docs[Create Documentation]
+|   docs[Create Blog about the new diagram]
+|   id7[In progress]
+|   id6[Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare.]
+|   id8[Design grammar]@{ assigned: 'knsv' }
+|   id9[Ready for deploy]
+|   id10[Ready for test]
+|   id11[Done]
+|   id5[define getData]
+|   id2[Title of diagram is more than 100 chars when user duplicates diagram with 100 char]@{ ticket: MC-2036, priority: 'Very High'}
+|   id3[Update DB function]@{ ticket: MC-2037, assigned: knsv, priority: 'High' }
+|   id4[Create parsing tests]@{ ticket: MC-2038, assigned: 'K.Sveidqvist', priority: 'High' }
+|   id66[last item]@{ priority: 'Very Low', assigned: 'knsv' }
+|   id12[Can't reproduce]
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  docs level=2 label="Create Documentation" width=200 padding=20
+  docs level=2 label="Create Blog about the new diagram" width=200 padding=20
+  id7 level=2 label="In progress" width=200 padding=20
+  id6 level=2 label="Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare." width=200 padding=20
+  id8 level=2 label="Design grammar" assigned="knsv" width=200 padding=20
+  id9 level=2 label="Ready for deploy" width=200 padding=20
+  id10 level=2 label="Ready for test" width=200 padding=20
+  id11 level=2 label="Done" width=200 padding=20
+  id5 level=2 label="define getData" width=200 padding=20
+  id2 level=2 label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char" ticket="MC-2036" priority="Very High" width=200 padding=20
+  id3 level=2 label="Update DB function" assigned="knsv" ticket="MC-2037" priority="High" width=200 padding=20
+  id4 level=2 label="Create parsing tests" assigned="K.Sveidqvist" ticket="MC-2038" priority="High" width=200 padding=20
+  id66 level=2 label="last item" assigned="knsv" priority="Very Low" width=200 padding=20
+  id12 level=2 label="Can't reproduce" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  docs group level=2 shape="kanbanSection" label="Create Documentation"
+  docs group level=2 shape="kanbanSection" label="Create Blog about the new diagram"
+  id7 group level=2 shape="kanbanSection" label="In progress"
+  id6 group level=2 shape="kanbanSection" label="Create renderer so that it works in all cases. We also add some extra text here for testing purposes. And some more just for the extra flare."
+  id8 group level=2 shape="kanbanSection" label="Design grammar"
+  id9 group level=2 shape="kanbanSection" label="Ready for deploy"
+  id10 group level=2 shape="kanbanSection" label="Ready for test"
+  id11 group level=2 shape="kanbanSection" label="Done"
+  id5 group level=2 shape="kanbanSection" label="define getData"
+  id2 group level=2 shape="kanbanSection" label="Title of diagram is more than 100 chars when user duplicates diagram with 100 char" ticket="MC-2036"
+  id3 group level=2 shape="kanbanSection" label="Update DB function" ticket="MC-2037"
+  id4 group level=2 shape="kanbanSection" label="Create parsing tests" ticket="MC-2038"
+  id66 group level=2 shape="kanbanSection" label="last item"
+  id12 group level=2 shape="kanbanSection" label="Can't reproduce""
+`;
+
+exports[`kanban parser fixtures > parses hexagon 1`] = `
+"input:
+| kanban
+|   b{{hex}}
+sections:
+  b level=2 label="hex" width=200 padding=20
+nodes:
+  b group level=2 shape="kanbanSection" label="hex""
+`;
+
+exports[`kanban parser fixtures > parses hierarchy 1`] = `
+"input:
+| kanban
+|     root
+|       child1
+|       child2
+|  
+sections:
+  root level=4 label="root" width=200 padding=10
+nodes:
+  root group level=4 shape="kanbanSection" label="root"
+    child1 parent="root" level=6 shape="kanbanItem" label="child1" styles="text-align: left"
+    child2 parent="root" level=6 shape="kanbanItem" label="child2" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses icon 1`] = `
+"input:
+| kanban
+|     root[The root]
+|     ::icon(bomb)
+|     
+sections:
+  root level=4 label="The root" icon="bomb" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses icon-upper 1`] = `
+"input:
+| kanban
+|   root
+|   ::ICON(bomb)
+sections:
+  root level=2 label="root" icon="bomb" width=200 padding=10
+nodes:
+  root group level=2 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses id-is-keyword 1`] = `
+"input:
+| kanban
+|   kanban
+REJECTED: Error parsing kanban diagram at line 2, column 3: Expecting: one of these possible Token sequences:"
+`;
+
+exports[`kanban parser fixtures > parses id-prefixed-keyword 1`] = `
+"input:
+| kanban
+|   kanbanesque
+sections:
+  kanbanesque level=2 label="kanbanesque" width=200 padding=10
+nodes:
+  kanbanesque group level=2 shape="kanbanSection" label="kanbanesque""
+`;
+
+exports[`kanban parser fixtures > parses items-without-section 1`] = `
+"input:
+| kanban
+|           root
+|         fakeRoot
+|     realRootWrongPlace
+REJECTED: Items without section detected, found section ("fakeRoot")"
+`;
+
+exports[`kanban parser fixtures > parses keyword-cased 1`] = `
+"input:
+| KanBan
+|   root
+sections:
+  root level=2 label="root" width=200 padding=10
+nodes:
+  root group level=2 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses keyword-newline 1`] = `
+"input:
+| kanban
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 1: Expecting: expecting at least one iteration which starts with one of these possible Token sequences::"
+`;
+
+exports[`kanban parser fixtures > parses leading-blank-rows 1`] = `
+"input:
+| 
+|  
+| kanban
+| root
+|  A
+|  
+| 
+|  B
+sections:
+  root level=0 label="root" width=200 padding=10
+nodes:
+  root group level=0 shape="kanbanSection" label="root"
+    A parent="root" level=1 shape="kanbanItem" label="A" styles="text-align: left"
+    B parent="root" level=1 shape="kanbanItem" label="B" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses leading-newlines 1`] = `
+"input:
+| 
+| 
+| 
+| kanban
+| root
+|  A
+|  
+| 
+|  B
+sections:
+  root level=0 label="root" width=200 padding=10
+nodes:
+  root group level=0 shape="kanbanSection" label="root"
+    A parent="root" level=1 shape="kanbanItem" label="A" styles="text-align: left"
+    B parent="root" level=1 shape="kanbanItem" label="B" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses markdown-descr 1`] = `
+"input:
+| kanban
+|   root["\`bold **text**\`"]
+| 
+sections:
+  root level=2 label="bold **text**" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="bold **text**""
+`;
+
+exports[`kanban parser fixtures > parses metadata-after-shape 1`] = `
+"input:
+| kanban
+|   id8[Design grammar]@{ assigned: 'knsv' }
+| 
+sections:
+  id8 level=2 label="Design grammar" assigned="knsv" width=200 padding=20
+nodes:
+  id8 group level=2 shape="kanbanSection" label="Design grammar""
+`;
+
+exports[`kanban parser fixtures > parses metadata-double-quoted 1`] = `
+"input:
+| kanban
+|   id2@{
+|     descr: "Lorem ipsum,
+|       dolor sit"
+|   }
+| 
+sections:
+  id2 level=2 label="id2" width=200 padding=10
+nodes:
+  id2 group level=2 shape="kanbanSection" label="id2""
+`;
+
+exports[`kanban parser fixtures > parses metadata-empty 1`] = `
+"input:
+| kanban
+|   root@{}
+| 
+sections:
+  root level=2 label="root" width=200 padding=10
+nodes:
+  root group level=2 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses metadata-inline 1`] = `
+"input:
+| kanban
+|         root@{ priority: high }
+|     
+sections:
+  root level=8 label="root" priority="high" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses metadata-multiline 1`] = `
+"input:
+| kanban
+|         root@{
+|           icon: star
+|           assigned: knsv
+|         }
+|     
+sections:
+  root level=8 label="root" icon="star" assigned="knsv" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses metadata-single-quoted 1`] = `
+"input:
+| kanban
+|         root@{ icon: star, label: 'fix things' }
+|     
+sections:
+  root level=8 label="fix things" icon="star" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="fix things""
+`;
+
+exports[`kanban parser fixtures > parses metadata-ticket 1`] = `
+"input:
+| kanban
+|         root@{ ticket: MC-1234 }
+|     
+sections:
+  root level=8 label="root" ticket="MC-1234" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root" ticket="MC-1234""
+`;
+
+exports[`kanban parser fixtures > parses metadata-two-keys 1`] = `
+"input:
+| kanban
+|         root@{ icon: star, assigned: knsv }
+|     
+sections:
+  root level=8 label="root" icon="star" assigned="knsv" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses no-id-shape 1`] = `
+"input:
+| kanban
+|     (root)
+sections:
+  root level=4 label="root" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses quoted-descr 1`] = `
+"input:
+| kanban
+|     root["String containing []"]
+| 
+sections:
+  root level=4 label="String containing []" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="String containing []""
+`;
+
+exports[`kanban parser fixtures > parses quoted-descr-parens 1`] = `
+"input:
+| kanban
+|   root["String containing ()"]
+| 
+sections:
+  root level=2 label="String containing ()" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="String containing ()""
+`;
+
+exports[`kanban parser fixtures > parses rect 1`] = `
+"input:
+| kanban
+|     root[The root]
+|       
+sections:
+  root level=4 label="The root" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses rounded 1`] = `
+"input:
+| kanban
+|   e(rounded)
+sections:
+  e level=2 label="rounded" width=200 padding=20
+nodes:
+  e group level=2 shape="kanbanSection" label="rounded""
+`;
+
+exports[`kanban parser fixtures > parses same-line 1`] = `
+"input:
+| kanban root
+sections:
+  root level=1 label="root" width=200 padding=10
+nodes:
+  root group level=1 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses samples-0 1`] = `
+"input:
+| kanban
+|   New
+|     Sometimes wrong Shape type is highlighted
+|   In progress
+| 
+| 
+| 
+sections:
+  New level=2 label="New" width=200 padding=10
+  In progress level=2 label="In progress" width=200 padding=10
+nodes:
+  New group level=2 shape="kanbanSection" label="New"
+    Sometimes wrong Shape type is highlighted parent="New" level=4 shape="kanbanItem" label="Sometimes wrong Shape type is highlighted" styles="text-align: left"
+  In progress group level=2 shape="kanbanSection" label="In progress""
+`;
+
+exports[`kanban parser fixtures > parses samples-1 1`] = `
+"input:
+| kanban
+|   Todo
+|     Create JISON
+|     Update DB function
+|     Create parsing tests
+|     define getData
+|     Create renderer
+|   In progress
+|     Design grammar
+| 
+| 
+sections:
+  Todo level=2 label="Todo" width=200 padding=10
+  In progress level=2 label="In progress" width=200 padding=10
+nodes:
+  Todo group level=2 shape="kanbanSection" label="Todo"
+    Create JISON parent="Todo" level=4 shape="kanbanItem" label="Create JISON" styles="text-align: left"
+    Update DB function parent="Todo" level=4 shape="kanbanItem" label="Update DB function" styles="text-align: left"
+    Create parsing tests parent="Todo" level=4 shape="kanbanItem" label="Create parsing tests" styles="text-align: left"
+    define getData parent="Todo" level=4 shape="kanbanItem" label="define getData" styles="text-align: left"
+    Create renderer parent="Todo" level=4 shape="kanbanItem" label="Create renderer" styles="text-align: left"
+  In progress group level=2 shape="kanbanSection" label="In progress"
+    Design grammar parent="In progress" level=4 shape="kanbanItem" label="Design grammar" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses samples-2 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|     id2[Create JISON]
+|     id3[Update DB function]
+|     id4[Create parsing tests]
+|     id5[define getData]
+|     id6[Create renderer]
+|   id7[In progress]
+|     id8[Design grammar]
+| 
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id7 level=2 label="In progress" width=200 padding=20
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+    id2 parent="id1" level=4 shape="kanbanItem" label="Create JISON" styles="text-align: left"
+    id3 parent="id1" level=4 shape="kanbanItem" label="Update DB function" styles="text-align: left"
+    id4 parent="id1" level=4 shape="kanbanItem" label="Create parsing tests" styles="text-align: left"
+    id5 parent="id1" level=4 shape="kanbanItem" label="define getData" styles="text-align: left"
+    id6 parent="id1" level=4 shape="kanbanItem" label="Create renderer" styles="text-align: left"
+  id7 group level=2 shape="kanbanSection" label="In progress"
+    id8 parent="id7" level=4 shape="kanbanItem" label="Design grammar" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses samples-3 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|     id2[Create JISON]
+|     id3[Update DB function]
+|     id4[Create parsing tests]
+|     id5[define getData]
+|     id6[Create renderer]
+|   id7[In progress]
+|     id8[Design grammar]
+| 
+|   style n2 stroke:#AA00FF,fill:#E1BEE7
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id7 level=2 label="In progress" width=200 padding=20
+  style n2 stroke:#AA00FF,fill:#E1BEE7 level=2 label="style n2 stroke:#AA00FF,fill:#E1BEE7" width=200 padding=10
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+    id2 parent="id1" level=4 shape="kanbanItem" label="Create JISON" styles="text-align: left"
+    id3 parent="id1" level=4 shape="kanbanItem" label="Update DB function" styles="text-align: left"
+    id4 parent="id1" level=4 shape="kanbanItem" label="Create parsing tests" styles="text-align: left"
+    id5 parent="id1" level=4 shape="kanbanItem" label="define getData" styles="text-align: left"
+    id6 parent="id1" level=4 shape="kanbanItem" label="Create renderer" styles="text-align: left"
+  id7 group level=2 shape="kanbanSection" label="In progress"
+    id8 parent="id7" level=4 shape="kanbanItem" label="Design grammar" styles="text-align: left"
+  style n2 stroke:#AA00FF,fill:#E1BEE7 group level=2 shape="kanbanSection" label="style n2 stroke:#AA00FF,fill:#E1BEE7""
+`;
+
+exports[`kanban parser fixtures > parses samples-4 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|     id2[Create JISON]
+|     id3[Update DB function]
+|     id4[Create parsing tests]
+|     id5[define getData]
+|     id6[Create renderer]
+|   id7[In progress]
+|     id8[Design grammar]
+| 
+|   id2@{
+|     assigned: knsv
+|     icon: heart
+|     priority: high
+|     descr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+|   }
+|   style n1 stroke:#AA00FF,fill:#E1BEE7
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id7 level=2 label="In progress" width=200 padding=20
+  id2 level=2 label="id2" icon="heart" assigned="knsv" priority="high" width=200 padding=10
+  style n1 stroke:#AA00FF,fill:#E1BEE7 level=2 label="style n1 stroke:#AA00FF,fill:#E1BEE7" width=200 padding=10
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+    id2 parent="id1" level=4 shape="kanbanItem" label="Create JISON" styles="text-align: left"
+    id3 parent="id1" level=4 shape="kanbanItem" label="Update DB function" styles="text-align: left"
+    id4 parent="id1" level=4 shape="kanbanItem" label="Create parsing tests" styles="text-align: left"
+    id5 parent="id1" level=4 shape="kanbanItem" label="define getData" styles="text-align: left"
+    id6 parent="id1" level=4 shape="kanbanItem" label="Create renderer" styles="text-align: left"
+  id7 group level=2 shape="kanbanSection" label="In progress"
+    id8 parent="id7" level=4 shape="kanbanItem" label="Design grammar" styles="text-align: left"
+  id2 group level=2 shape="kanbanSection" label="id2"
+  style n1 stroke:#AA00FF,fill:#E1BEE7 group level=2 shape="kanbanSection" label="style n1 stroke:#AA00FF,fill:#E1BEE7""
+`;
+
+exports[`kanban parser fixtures > parses samples-5 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+|     id2[Create JISON]
+|     id3[Update DB function]
+|     id4[Create parsing tests]
+|     id5[define getData]
+|     id6[Create renderer]
+|   id7[In progress]
+|     id8[Design grammar]
+| 
+|   id2@{
+|     assigned: knsv
+|     icon: heart
+|     priority: high
+|     descr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+|   }
+|   style n1 stroke:#AA00FF,fill:#E1BEE7
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  id7 level=2 label="In progress" width=200 padding=20
+  id2 level=2 label="id2" icon="heart" assigned="knsv" priority="high" width=200 padding=10
+  style n1 stroke:#AA00FF,fill:#E1BEE7 level=2 label="style n1 stroke:#AA00FF,fill:#E1BEE7" width=200 padding=10
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+    id2 parent="id1" level=4 shape="kanbanItem" label="Create JISON" styles="text-align: left"
+    id3 parent="id1" level=4 shape="kanbanItem" label="Update DB function" styles="text-align: left"
+    id4 parent="id1" level=4 shape="kanbanItem" label="Create parsing tests" styles="text-align: left"
+    id5 parent="id1" level=4 shape="kanbanItem" label="define getData" styles="text-align: left"
+    id6 parent="id1" level=4 shape="kanbanItem" label="Create renderer" styles="text-align: left"
+  id7 group level=2 shape="kanbanSection" label="In progress"
+    id8 parent="id7" level=4 shape="kanbanItem" label="Design grammar" styles="text-align: left"
+  id2 group level=2 shape="kanbanSection" label="id2"
+  style n1 stroke:#AA00FF,fill:#E1BEE7 group level=2 shape="kanbanSection" label="style n1 stroke:#AA00FF,fill:#E1BEE7""
+`;
+
+exports[`kanban parser fixtures > parses simple 1`] = `
+"input:
+| kanban
+|     root
+sections:
+  root level=4 label="root" width=200 padding=10
+nodes:
+  root group level=4 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses single-leading-newline 1`] = `
+"input:
+| 
+| kanban
+| root
+|  A
+REJECTED: Error parsing kanban diagram at line 1, column 1: Expecting token of type --> Kanban <-- but found --> '"
+`;
+
+exports[`kanban parser fixtures > parses spec-str-28 1`] = `
+"input:
+| kanban
+| root
+|  A
+|  
+| 
+|  B
+sections:
+  root level=0 label="root" width=200 padding=10
+nodes:
+  root group level=0 shape="kanbanSection" label="root"
+    A parent="root" level=1 shape="kanbanItem" label="A" styles="text-align: left"
+    B parent="root" level=1 shape="kanbanItem" label="B" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-str-29 1`] = `
+"input:
+| 
+|  
+| kanban
+| root
+|  A
+|  
+| 
+|  B
+sections:
+  root level=0 label="root" width=200 padding=10
+nodes:
+  root group level=0 shape="kanbanSection" label="root"
+    A parent="root" level=1 shape="kanbanItem" label="A" styles="text-align: left"
+    B parent="root" level=1 shape="kanbanItem" label="B" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-str-30 1`] = `
+"input:
+| 
+| 
+| 
+| kanban
+| root
+|  A
+|  
+| 
+|  B
+sections:
+  root level=0 label="root" width=200 padding=10
+nodes:
+  root group level=0 shape="kanbanSection" label="root"
+    A parent="root" level=1 shape="kanbanItem" label="A" styles="text-align: left"
+    B parent="root" level=1 shape="kanbanItem" label="B" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-0 1`] = `
+"input:
+| kanban
+|     root
+sections:
+  root level=4 label="root" width=200 padding=10
+nodes:
+  root group level=4 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-1 1`] = `
+"input:
+| kanban
+|     root
+|       child1
+|       child2
+|  
+sections:
+  root level=4 label="root" width=200 padding=10
+nodes:
+  root group level=4 shape="kanbanSection" label="root"
+    child1 parent="root" level=6 shape="kanbanItem" label="child1" styles="text-align: left"
+    child2 parent="root" level=6 shape="kanbanItem" label="child2" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-2 1`] = `
+"input:
+| kanban
+|     (root)
+sections:
+  root level=4 label="root" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-3 1`] = `
+"input:
+| kanban
+|     root
+|       child1
+|         leaf1
+|       child2
+sections:
+  root level=4 label="root" width=200 padding=10
+nodes:
+  root group level=4 shape="kanbanSection" label="root"
+    child1 parent="root" level=6 shape="kanbanItem" label="child1" styles="text-align: left"
+    leaf1 parent="root" level=8 shape="kanbanItem" label="leaf1" styles="text-align: left"
+    child2 parent="root" level=6 shape="kanbanItem" label="child2" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-4 1`] = `
+"input:
+| kanban
+|     section1
+|     section2
+sections:
+  section1 level=4 label="section1" width=200 padding=10
+  section2 level=4 label="section2" width=200 padding=10
+nodes:
+  section1 group level=4 shape="kanbanSection" label="section1"
+  section2 group level=4 shape="kanbanSection" label="section2""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-5 1`] = `
+"input:
+| kanban
+|           root
+|         fakeRoot
+|     realRootWrongPlace
+REJECTED: Items without section detected, found section ("fakeRoot")"
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-6 1`] = `
+"input:
+| kanban
+|     root[The root]
+|       
+sections:
+  root level=4 label="The root" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-7 1`] = `
+"input:
+| kanban
+|     root
+|       theId(child1)
+sections:
+  root level=4 label="root" width=200 padding=10
+nodes:
+  root group level=4 shape="kanbanSection" label="root"
+    theId parent="root" level=6 shape="kanbanItem" label="child1" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-8 1`] = `
+"input:
+| kanban
+| root
+|       theId(child1)
+sections:
+  root level=0 label="root" width=200 padding=10
+nodes:
+  root group level=0 shape="kanbanSection" label="root"
+    theId parent="root" level=6 shape="kanbanItem" label="child1" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-9 1`] = `
+"input:
+| kanban
+|     root[The root]
+|     ::icon(bomb)
+|     
+sections:
+  root level=4 label="The root" icon="bomb" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-10 1`] = `
+"input:
+| kanban
+|     root[The root]
+|     :::m-4 p-8
+|     
+sections:
+  root level=4 label="The root" classes="m-4 p-8" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-11 1`] = `
+"input:
+| kanban
+|     root[The root]
+|     :::m-4 p-8
+|     ::icon(bomb)
+|     
+sections:
+  root level=4 label="The root" icon="bomb" classes="m-4 p-8" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-12 1`] = `
+"input:
+| kanban
+|     root[The root]
+|     ::icon(bomb)
+|     :::m-4 p-8
+|     
+sections:
+  root level=4 label="The root" icon="bomb" classes="m-4 p-8" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="The root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-13 1`] = `
+"input:
+| kanban
+|     root["String containing []"]
+| 
+sections:
+  root level=4 label="String containing []" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="String containing []""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-14 1`] = `
+"input:
+| kanban
+|     root["String containing []"]
+|       child1["String containing ()"]
+| 
+sections:
+  root level=4 label="String containing []" width=200 padding=20
+nodes:
+  root group level=4 shape="kanbanSection" label="String containing []"
+    child1 parent="root" level=6 shape="kanbanItem" label="String containing ()" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-15 1`] = `
+"input:
+| kanban
+|   root(Root)
+|     Child(Child)
+|     :::hot
+|       a(a)
+|       b[New Stuff]
+sections:
+  root level=2 label="Root" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="Root"
+    Child parent="root" level=4 shape="kanbanItem" label="Child" styles="text-align: left"
+    a parent="root" level=6 shape="kanbanItem" label="a" styles="text-align: left"
+    b parent="root" level=6 shape="kanbanItem" label="New Stuff" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-16 1`] = `
+"input:
+| kanban
+|   root(Root)
+|     Child(Child)
+|       a(a)
+| 
+|       b[New Stuff]
+sections:
+  root level=2 label="Root" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="Root"
+    Child parent="root" level=4 shape="kanbanItem" label="Child" styles="text-align: left"
+    a parent="root" level=6 shape="kanbanItem" label="a" styles="text-align: left"
+    b parent="root" level=6 shape="kanbanItem" label="New Stuff" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-17 1`] = `
+"input:
+| kanban
+|   root(Root)
+|     Child(Child)
+|       a(a)
+| 
+|       %% This is a comment
+|       b[New Stuff]
+sections:
+  root level=2 label="Root" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="Root"
+    Child parent="root" level=4 shape="kanbanItem" label="Child" styles="text-align: left"
+    a parent="root" level=6 shape="kanbanItem" label="a" styles="text-align: left"
+    b parent="root" level=6 shape="kanbanItem" label="New Stuff" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-18 1`] = `
+"input:
+| kanban
+|   root(Root)
+|     Child(Child)
+|       a(a) %% This is a comment
+|       b[New Stuff]
+sections:
+  root level=2 label="Root" width=200 padding=20
+nodes:
+  root group level=2 shape="kanbanSection" label="Root"
+    Child parent="root" level=4 shape="kanbanItem" label="Child" styles="text-align: left"
+    a parent="root" level=6 shape="kanbanItem" label="a" styles="text-align: left"
+    b parent="root" level=6 shape="kanbanItem" label="New Stuff" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-19 1`] = `
+"input:
+| kanban
+|     root
+|   
+sections:
+  root level=4 label="root" width=200 padding=10
+nodes:
+  root group level=4 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-20 1`] = `
+"input:
+| kanban
+|         root@{ priority: high }
+|     
+sections:
+  root level=8 label="root" priority="high" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-21 1`] = `
+"input:
+| kanban
+|         root@{ assigned: knsv }
+|     
+sections:
+  root level=8 label="root" assigned="knsv" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-22 1`] = `
+"input:
+| kanban
+|         root@{ icon: star }
+|     
+sections:
+  root level=8 label="root" icon="star" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-23 1`] = `
+"input:
+| kanban
+|         root@{ icon: star }
+|     
+sections:
+  root level=8 label="root" icon="star" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-24 1`] = `
+"input:
+| kanban
+|         root@{
+|           icon: star
+|           assigned: knsv
+|         }
+|     
+sections:
+  root level=8 label="root" icon="star" assigned="knsv" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-25 1`] = `
+"input:
+| kanban
+|         root@{ icon: star, assigned: knsv }
+|     
+sections:
+  root level=8 label="root" icon="star" assigned="knsv" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-26 1`] = `
+"input:
+| kanban
+|         root@{ icon: star, label: 'fix things' }
+|     
+sections:
+  root level=8 label="fix things" icon="star" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="fix things""
+`;
+
+exports[`kanban parser fixtures > parses spec-tpl-27 1`] = `
+"input:
+| kanban
+|         root@{ ticket: MC-1234 }
+|     
+sections:
+  root level=8 label="root" ticket="MC-1234" width=200 padding=10
+nodes:
+  root group level=8 shape="kanbanSection" label="root" ticket="MC-1234""
+`;
+
+exports[`kanban parser fixtures > parses style-statement 1`] = `
+"input:
+| kanban
+|   id1[Todo]
+| 
+|   style n2 stroke:#AA00FF,fill:#E1BEE7
+| 
+sections:
+  id1 level=2 label="Todo" width=200 padding=20
+  style n2 stroke:#AA00FF,fill:#E1BEE7 level=2 label="style n2 stroke:#AA00FF,fill:#E1BEE7" width=200 padding=10
+nodes:
+  id1 group level=2 shape="kanbanSection" label="Todo"
+  style n2 stroke:#AA00FF,fill:#E1BEE7 group level=2 shape="kanbanSection" label="style n2 stroke:#AA00FF,fill:#E1BEE7""
+`;
+
+exports[`kanban parser fixtures > parses tabs-for-indent 1`] = `
+"input:
+| kanban
+| 	root
+| 		child
+sections:
+  root level=1 label="root" width=200 padding=10
+nodes:
+  root group level=1 shape="kanbanSection" label="root"
+    child parent="root" level=2 shape="kanbanItem" label="child" styles="text-align: left""
+`;
+
+exports[`kanban parser fixtures > parses trailing-blank-lines 1`] = `
+"input:
+| kanban
+|   root
+| 
+| 
+| 
+sections:
+  root level=2 label="root" width=200 padding=10
+nodes:
+  root group level=2 shape="kanbanSection" label="root""
+`;
+
+exports[`kanban parser fixtures > parses unclosed-icon 1`] = `
+"input:
+| kanban
+|   root
+|   ::icon(bomb
+REJECTED: Error parsing kanban diagram at line 3, column 3: "::icon(" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses unclosed-markdown-string 1`] = `
+"input:
+| kanban
+|   root["\`unclosed
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 7: "[" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses unclosed-metadata 1`] = `
+"input:
+| kanban
+|   root@{ icon: star
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 7: "@{" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses unclosed-metadata-string 1`] = `
+"input:
+| kanban
+|   root@{ label: "unclosed
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 7: "@{" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses unclosed-shape 1`] = `
+"input:
+| kanban
+|   root[unclosed
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 7: "[" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses unclosed-string 1`] = `
+"input:
+| kanban
+|   root["unclosed
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 7: "[" is never closed"
+`;
+
+exports[`kanban parser fixtures > parses whitespace-only-rows 1`] = `
+"input:
+| kanban
+| root
+|  A
+|  
+| 
+|  B
+sections:
+  root level=0 label="root" width=200 padding=10
+nodes:
+  root group level=0 shape="kanbanSection" label="root"
+    A parent="root" level=1 shape="kanbanItem" label="A" styles="text-align: left"
+    B parent="root" level=1 shape="kanbanItem" label="B" styles="text-align: left""
+`;
