@@ -107,6 +107,31 @@ describe('kanban AST', () => {
     ]);
   });
 
+  it('records every comment, including those folded into a statement terminator', () => {
+    // `stop` greedily consumes the terminators after a statement, so all but the first comment in
+    // a document reaches the visitor through the terminator rather than as a statement.
+    const source = 'kanban\n  %% first\n  a\n  %% second\n  b\n  %% third\n';
+    const ast = parse(source);
+
+    expect(ast.statements.map((statement) => statement.kind)).toStrictEqual([
+      'comment',
+      'node',
+      'comment',
+      'node',
+      'comment',
+    ]);
+    expect(
+      ast.statements
+        .filter((statement) => statement.kind === 'comment')
+        .map((statement) => source.slice(...statement.span).trim())
+    ).toStrictEqual(['%% first', '%% second', '%% third']);
+  });
+
+  it('records a comment written above the kanban keyword', () => {
+    const ast = parse('%% a preamble\nkanban\n  a\n');
+    expect(ast.statements.map((statement) => statement.kind)).toStrictEqual(['comment', 'node']);
+  });
+
   it('folds blank lines between statements into the preceding terminator', () => {
     const ast = parse('kanban\nroot\n A\n \n\n B');
     expect(ast.statements.map((statement) => statement.kind)).toStrictEqual([
@@ -188,6 +213,26 @@ describe('kanban AST', () => {
           ).toMatchObject({ valid: true });
         }
       }
+    }
+  });
+
+  it('is not assembled during the parse, and is assembled only once after it', () => {
+    // Building the model re-reads the resolved graph, which re-sanitizes every label. The render
+    // path and `mermaid.parse()` must not pay for that.
+    kanbanParser.yy = kanbanDb;
+    kanbanDb.clear();
+    const getData = vi.spyOn(kanbanDb, 'getData');
+    try {
+      kanbanParser.parse('kanban\n  id1[Todo]\n    id2[Card]\n');
+      expect(getData).not.toHaveBeenCalled();
+
+      expect(kanbanDb.getAST()?.nodes.id2).toBeDefined();
+      expect(getData).toHaveBeenCalledTimes(1);
+
+      kanbanDb.getAST();
+      expect(getData).toHaveBeenCalledTimes(1);
+    } finally {
+      getData.mockRestore();
     }
   });
 

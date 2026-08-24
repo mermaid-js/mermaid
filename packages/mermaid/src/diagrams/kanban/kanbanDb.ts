@@ -5,13 +5,15 @@ import { log } from '../../logger.js';
 import type { Edge, KanbanNode } from '../../rendering-util/types.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { NodeMetaData } from '../../types.js';
-import type { KanbanAST } from './kanbanTypes.js';
+import { buildKanbanAST } from './kanbanAst.js';
+import type { KanbanAST, KanbanAstSource } from './kanbanTypes.js';
 import * as yaml from 'js-yaml';
 
 let nodes: KanbanNode[] = [];
 let sections: KanbanNode[] = [];
 let cnt = 0;
 let elements: Record<number, D3Element> = {};
+let astSource: KanbanAstSource | undefined;
 let ast: KanbanAST | undefined;
 
 const clear = () => {
@@ -19,6 +21,7 @@ const clear = () => {
   sections = [];
   cnt = 0;
   elements = {};
+  astSource = undefined;
   ast = undefined;
 };
 /*
@@ -242,20 +245,35 @@ const getLogger = () => log;
 const getElementById = (id: number) => elements[id];
 
 /**
- * The source-mapped read-model the parser builds alongside the graph. Nothing in the rendering
- * path reads it; it is here for tooling that needs to map diagram elements back to source text.
+ * The spans the parser collected, kept for {@link getAST}. Cheap to store: the parser has them
+ * already, and holding them costs nothing on a render that never asks for the read-model.
  */
-const setAST = (next: KanbanAST | undefined) => {
-  ast = next;
+const setAstSource = (next: KanbanAstSource | undefined) => {
+  astSource = next;
+  ast = undefined;
 };
-const getAST = (): KanbanAST | undefined => ast;
+
+/**
+ * The source-mapped read-model, for tooling that needs to map diagram elements back to source
+ * text. Nothing in the rendering path reads it, so it is assembled on the first call rather than
+ * on every parse — building it re-reads the whole resolved graph, and `mermaid.parse()` runs per
+ * keystroke in a live editor. Memoized because the db does not change after a parse.
+ */
+const getAST = (): KanbanAST | undefined => {
+  if (!ast && astSource) {
+    // `db` rather than a bare `getData`, so a caller can observe (and a test can assert) that the
+    // resolved graph is read here and not during the parse.
+    ast = buildKanbanAST(db, astSource.source, astSource.headerSpan, astSource.statements);
+  }
+  return ast;
+};
 
 const db = {
   clear,
   addNode,
   getSections,
   getData,
-  setAST,
+  setAstSource,
   getAST,
   nodeType,
   getType,

@@ -6,13 +6,15 @@
  * (levels from indentation width, node types from the shape delimiters, the metadata string) are
  * computed exactly as the legacy actions computed them.
  *
- * Alongside the db it records a source-mapped {@link KanbanAST}, following `usecaseModelBuilder`.
+ * Alongside the db it collects the source spans for the read-model, following
+ * `usecaseModelBuilder`. It hands them to the db rather than assembling the model here, so that
+ * a render — or a bare `mermaid.parse()` — never pays for a model nothing on that path reads.
  * Spans are offsets into the text handed to `parse`, which in the render pipeline is the
  * preprocessed source rather than the author's original.
  */
 import type { CstNode, IToken } from 'chevrotain';
 import { log } from '../../../logger.js';
-import { buildKanbanAST, metadataOccurrences } from '../kanbanAst.js';
+import { metadataOccurrences } from '../kanbanAst.js';
 import type {
   KanbanGraphStatement,
   KanbanDB,
@@ -102,16 +104,37 @@ class KanbanVisitor extends BaseVisitor {
     this.statements = [];
     this.headerSpan = [0, 0];
     this.visit(cst as never);
-    this.yy.setAST(buildKanbanAST(this.yy, source, this.headerSpan, this.statements));
+    this.yy.setAstSource({
+      source,
+      headerSpan: this.headerSpan,
+      // Terminators are visited after the statement they close, so comments folded into a
+      // terminator arrive in source order without a sort.
+      statements: this.statements,
+    });
   }
 
-  start(ctx: { Kanban: IToken[]; document?: CstNode[] }): void {
+  /** Records a `%%` line. Blank lines are not statements unless nothing precedes them. */
+  private recordComments(tokens: IToken[] | undefined): void {
+    for (const token of tokens ?? []) {
+      if (token.tokenType.name === 'CommentLine') {
+        this.statements.push({ kind: 'comment', span: tokenSpan(token) });
+      }
+    }
+  }
+
+  start(ctx: { Kanban: IToken[]; leadingSpaceLines?: CstNode[]; document?: CstNode[] }): void {
     this.headerSpan = tokenSpan(ctx.Kanban[0]);
+    // Visited first so anything written above the keyword keeps its place in source order.
+    if (ctx.leadingSpaceLines) {
+      this.visit(ctx.leadingSpaceLines as never);
+    }
     this.visit(ctx.document as never);
   }
 
-  leadingSpaceLines(): void {
-    // Blank lines ahead of the `kanban` keyword carry no data.
+  leadingSpaceLines(ctx: { SpaceLine?: IToken[] }): void {
+    // Blank lines ahead of the `kanban` keyword carry no data, but comments there are still
+    // comments, and a source map that dropped them would be lying about the file.
+    this.recordComments(ctx.SpaceLine);
   }
 
   document(ctx: { documentLine?: CstNode[] }): void {
@@ -120,12 +143,18 @@ class KanbanVisitor extends BaseVisitor {
     }
   }
 
-  documentLine(ctx: { statement?: CstNode[] }): void {
+  documentLine(ctx: { statement?: CstNode[]; stop?: CstNode[] }): void {
     this.visit(ctx.statement as never);
+    this.visit(ctx.stop as never);
   }
 
-  stop(): void {
-    // Statement terminators carry no data.
+  /**
+   * `stop` greedily consumes every terminator that follows a statement, so all but the first
+   * comment in a document arrives here rather than through {@link statement}. Recording them keeps
+   * `kind: 'comment'` complete — a consumer mapping source ranges can rely on it.
+   */
+  stop(ctx: { SpaceLine?: IToken[] }): void {
+    this.recordComments(ctx.SpaceLine);
   }
 
   statement(ctx: { SpaceLine?: IToken[]; SpaceList?: IToken[]; content?: CstNode[] }): void {

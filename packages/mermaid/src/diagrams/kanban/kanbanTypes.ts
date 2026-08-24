@@ -42,6 +42,11 @@ export interface KanbanNodeOccurrence {
 }
 
 export interface KanbanGraphStatement {
+  /**
+   * `comment` covers every `%%` line, including those the grammar folds into a statement
+   * terminator. `blank` is rarer than it looks: consecutive blank lines lex as one token and are
+   * usually consumed as a terminator, so one is only recorded when nothing precedes it.
+   */
   kind: 'node' | 'icon' | 'classAssign' | 'comment' | 'blank';
   span: Span;
   /** Indentation width, which is what decides whether a node is a column or a card. */
@@ -53,9 +58,23 @@ export interface KanbanGraphStatement {
 }
 
 /**
+ * What the parser hands the db so the read-model can be assembled on demand. Kept instead of a
+ * built {@link KanbanAST} because assembling one re-reads the whole resolved graph, and the render
+ * path — and `mermaid.parse()`, which runs per keystroke in a live editor — never needs it.
+ */
+export interface KanbanAstSource {
+  source: string;
+  headerSpan: Span;
+  statements: KanbanGraphStatement[];
+}
+
+/**
  * A read-model of a parsed kanban diagram: the resolved graph plus a source-mapped record of the
- * statements that produced it. Built by the parser and kept on the db; nothing in the rendering
- * path reads it.
+ * statements that produced it. Assembled on the first `getAST()` call, not during the parse;
+ * nothing in the rendering path reads it.
+ *
+ * `source` is the raw text handed to `parse`, held verbatim — consumers must sanitize it before
+ * putting any of it in the DOM.
  */
 export interface KanbanAST {
   version: 1;

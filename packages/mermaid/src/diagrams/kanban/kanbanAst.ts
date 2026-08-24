@@ -44,6 +44,19 @@ export const buildKanbanAST = (
 ): KanbanAST => {
   const { nodes: layoutNodes } = model.getData();
 
+  // Children are collected in one pass; scanning per group would be O(sections x nodes).
+  const childIds = new Map<string, string[]>();
+  for (const node of layoutNodes) {
+    if (node.parentId !== undefined) {
+      const siblings = childIds.get(node.parentId);
+      if (siblings) {
+        siblings.push(node.id);
+      } else {
+        childIds.set(node.parentId, [node.id]);
+      }
+    }
+  }
+
   const nodes: Record<string, KanbanGraphNode> = {};
   const groups: Record<string, KanbanGraphGroup> = {};
   for (const node of layoutNodes) {
@@ -51,7 +64,7 @@ export const buildKanbanAST = (
     if (node.isGroup) {
       groups[node.id] = {
         ...(node.label === undefined ? {} : { title: node.label }),
-        nodes: layoutNodes.filter((child) => child.parentId === node.id).map((child) => child.id),
+        nodes: childIds.get(node.id) ?? [],
         attrs: { kind: 'kanbanSection', level: node.level },
       };
     }
