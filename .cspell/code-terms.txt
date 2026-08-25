@@ -79,11 +79,13 @@ eslint
 ESWN
 flatmap
 forwardable
+Freivalds
 frontmatter
 funs
 Gansner
 gantt
 GENERICTYPE
+Glagolevs
 grammr
 graphtype
 halign
