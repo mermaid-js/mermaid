@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { Point } from '../../../types.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { runGridAttachedLayoutCore } from './layoutCore.js';
 import type { GridAttachedResult } from './layoutCore.js';
@@ -593,6 +594,189 @@ describe('grid-attached layout', () => {
     // Two distinct rows and two distinct columns — a rectangle, not a column of four.
     expect(new Set([a, b, c, d].map((p) => Math.round(p.x))).size).toBe(2);
     expect(new Set([a, b, c, d].map((p) => Math.round(p.y))).size).toBe(2);
+  });
+
+  /**
+   * A label is drawn centred on its connector, so the gap between two ranks has to
+   * hold the label *and* clearance at both ends. Without the reservation a tall
+   * label fills the gap and ends up touching both nodes, with no room left for the
+   * arrowhead.
+   */
+  it('widens a tree rank gap to hold a big edge label', () => {
+    const tall = { label: 'Differential Gene Expression Analysis', width: 200, height: 44 };
+    const data = layoutData(
+      ['A', 'B', 'C', 't1', 't2'].map((id) => node(id)),
+      [edge('A', 'B'), edge('B', 'C'), edge('C', 'A'), edge('A', 't1'), edge('t1', 't2', tall)]
+    );
+
+    const result = runGridAttachedLayoutCore(data);
+    const at = nodeById(data);
+    const first = at.get('t1')!;
+    const second = at.get('t2')!;
+    const growth = result.components[0].trees[0].growth;
+
+    // Boundary to boundary along the rank axis: the label plus clearance at each end.
+    const gap =
+      growth === 'N' || growth === 'S'
+        ? Math.abs((second.y ?? 0) - (first.y ?? 0)) -
+          (first.height ?? 0) / 2 -
+          (second.height ?? 0) / 2
+        : Math.abs((second.x ?? 0) - (first.x ?? 0)) -
+          (first.width ?? 0) / 2 -
+          (second.width ?? 0) / 2;
+    const along = growth === 'N' || growth === 'S' ? tall.height : tall.width;
+    expect(gap).toBeGreaterThanOrEqual(along + 2 * result.options.labelClearance - 0.5);
+
+    // And the label really does clear both nodes it sits between.
+    const labelled = data.edges.find((e) => e.id === 't1-t2')!;
+    for (const box of [first, second]) {
+      const overlaps =
+        Math.abs(labelled.x! - (box.x ?? 0)) < (tall.width + (box.width ?? 0)) / 2 - 0.5 &&
+        Math.abs(labelled.y! - (box.y ?? 0)) < (tall.height + (box.height ?? 0)) / 2 - 0.5;
+      expect(overlaps, `the label overlaps ${box.id}`).toBe(false);
+    }
+  });
+
+  /**
+   * Two edges crossing under a label make it ambiguous: a reader cannot tell which
+   * of them it names. Sliding it along its own route costs nothing else, so the
+   * crossing is avoided outright.
+   */
+  it('slides a label away from a crossing rather than sitting on it', () => {
+    // `A` reaches both `t2` and `t3`, and one of those connectors crosses the other,
+    // so the naive midpoint of at least one route lands near the crossing.
+    const data = layoutData(
+      ['A', 'B', 'C', 't1', 't2', 't3'].map((id) => node(id)),
+      [
+        edge('A', 'B'),
+        edge('B', 'C'),
+        edge('C', 'A'),
+        edge('A', 't1'),
+        edge('t1', 't2'),
+        edge('t1', 't3', { label: 'assay', width: 60, height: 20 }),
+        edge('t2', 't3', { label: 'sequencing', width: 90, height: 20 }),
+      ]
+    );
+
+    runGridAttachedLayoutCore(data);
+
+    const segments: { id: string; a: Point; b: Point }[] = [];
+    for (const e of data.edges) {
+      const points = e.points ?? [];
+      for (let i = 1; i < points.length; i++) {
+        segments.push({ id: e.id, a: points[i - 1], b: points[i] });
+      }
+    }
+    const crossings: Point[] = [];
+    for (let i = 0; i < segments.length; i++) {
+      for (let j = i + 1; j < segments.length; j++) {
+        if (segments[i].id === segments[j].id) {
+          continue;
+        }
+        const p = segments[i];
+        const q = segments[j];
+        const r = { x: p.b.x - p.a.x, y: p.b.y - p.a.y };
+        const t2 = { x: q.b.x - q.a.x, y: q.b.y - q.a.y };
+        const den = r.x * t2.y - r.y * t2.x;
+        if (Math.abs(den) < 1e-9) {
+          continue;
+        }
+        const d = { x: q.a.x - p.a.x, y: q.a.y - p.a.y };
+        const t = (d.x * t2.y - d.y * t2.x) / den;
+        const u = (d.x * r.y - d.y * r.x) / den;
+        if (t <= 1e-6 || t >= 1 - 1e-6 || u <= 1e-6 || u >= 1 - 1e-6) {
+          continue;
+        }
+        crossings.push({ x: p.a.x + t * r.x, y: p.a.y + t * r.y });
+      }
+    }
+
+    for (const id of ['t1-t3', 't2-t3']) {
+      const labelled = data.edges.find((e) => e.id === id)!;
+      for (const crossing of crossings) {
+        const inside =
+          Math.abs(crossing.x - labelled.x!) < (labelled.width ?? 0) / 2 &&
+          Math.abs(crossing.y - labelled.y!) < (labelled.height ?? 0) / 2;
+        expect(inside, `${id}'s label sits on a crossing`).toBe(false);
+      }
+      // It stayed on its own edge: the label centre lies on one of the route's runs.
+      const onOwnRoute = (labelled.points ?? []).some((point, index, all) => {
+        if (index === 0) {
+          return false;
+        }
+        const previous = all[index - 1];
+        const withinX =
+          labelled.x! >= Math.min(previous.x, point.x) - 0.5 &&
+          labelled.x! <= Math.max(previous.x, point.x) + 0.5;
+        const withinY =
+          labelled.y! >= Math.min(previous.y, point.y) - 0.5 &&
+          labelled.y! <= Math.max(previous.y, point.y) + 0.5;
+        return withinX && withinY;
+      });
+      expect(onOwnRoute, `${id}'s label drifted off its own route`).toBe(true);
+    }
+  });
+
+  /**
+   * A diamond does not reach the corners of its own bounding box, so a connector
+   * given a port out along a bounding-box side starts in the empty gap between the
+   * box and the shape — the arrow appears to come from nowhere. This is the case a
+   * fan makes unavoidable: two children means two ports, and neither can be at the
+   * centre.
+   *
+   * Silhouettes come from the shape's rendered `intersect` function, which only
+   * exists once a node has been measured, so the test installs a real diamond one.
+   */
+  it('starts a tree connector on a diamond, not on its bounding box', () => {
+    const halfWidth = 90;
+    const halfHeight = 45;
+    // |dx| / a + |dy| / b = 1 is the diamond; a ray from the centre meets it once.
+    const diamond = (node: Node) => (target: { x: number; y: number }) => {
+      const dx = target.x - (node.x ?? 0);
+      const dy = target.y - (node.y ?? 0);
+      const denominator = Math.abs(dx) / halfWidth + Math.abs(dy) / halfHeight;
+      if (denominator === 0) {
+        return { x: node.x ?? 0, y: node.y ?? 0 };
+      }
+      return { x: (node.x ?? 0) + dx / denominator, y: (node.y ?? 0) + dy / denominator };
+    };
+
+    const gate = node('gate', { width: halfWidth * 2, height: halfHeight * 2 });
+    (gate as Node & { intersect?: unknown }).intersect = diamond(gate);
+
+    const data = layoutData(
+      [node('A'), node('B'), node('C'), gate, node('yes'), node('no')],
+      [
+        edge('A', 'B'),
+        edge('B', 'C'),
+        edge('C', 'A'),
+        edge('A', 'gate'),
+        edge('gate', 'yes'),
+        edge('gate', 'no'),
+      ]
+    );
+
+    runGridAttachedLayoutCore(data);
+
+    const at = nodeById(data);
+    const placed = at.get('gate')!;
+    const onDiamond = (point: Point): number =>
+      Math.abs(point.x - (placed.x ?? 0)) / halfWidth +
+      Math.abs(point.y - (placed.y ?? 0)) / halfHeight;
+
+    let offCentrePorts = 0;
+    for (const id of ['gate-yes', 'gate-no']) {
+      const route = data.edges.find((e) => e.id === id)!.points!;
+      const start = route[0];
+      // On the diamond's boundary, not merely inside its box.
+      expect(onDiamond(start), `${id} does not start on the diamond`).toBeCloseTo(1, 1);
+      if (Math.abs(start.x - (placed.x ?? 0)) > 1 && Math.abs(start.y - (placed.y ?? 0)) > 1) {
+        offCentrePorts++;
+      }
+    }
+    // Both ports are off the diamond's vertices — which is exactly the case that
+    // used to leave the connector hanging in the corner of the bounding box.
+    expect(offCentrePorts).toBeGreaterThan(0);
   });
 
   it('handles an empty diagram', () => {

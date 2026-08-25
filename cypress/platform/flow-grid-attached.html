@@ -245,6 +245,58 @@ flowchart TD
   C ======> E5
     </pre>
 
+    <h3>Edge labels — room to sit, and clear of crossings</h3>
+    <p class="note">
+      Two things decide where a label goes. A tree's rank gap is
+      <strong>widened to hold</strong> the labels it carries, because a label is drawn centred on
+      its connector and so needs clearance at both ends — without it a tall label fills the gap and
+      touches both nodes, leaving no room for the arrowhead. Then the label may
+      <strong>slide along any run of its own route</strong>, never off it, to keep clear of node
+      boxes, other labels, foreign routes, and above all the point where two edges cross: a label
+      sitting on a crossing belongs, as far as a reader can tell, to either of them.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TD
+  A["A:RNA Sequencing"] -- Differential Gene Expression Analysis --> C("Five Candidates")
+  C -- Methylation Array Quantitive PCR --> H("Identification of Sox2")
+  H --> D["Investigate and isolate migratory glioblastoma with regards to phenotype"]
+  D -- Transwell migration assay --> I("Isolation of migratory cells")
+  I --> L("L: Expression of markers for stemness, EMT and invasion pattern")
+  D -- RNA Sequencing --> L
+    </pre>
+
+    <h3>Non-rectangular shapes — connectors land on the shape, not on its box</h3>
+    <p class="note">
+      The layout works in rectangles, but a diamond does not reach the corners of its own bounding
+      box. A fan forces the issue: two children means two ports and neither can sit at a vertex, so
+      a port placed out along a bounding-box side leaves the arrow starting in the empty gap between
+      the box and the shape. Both diamonds below carry a fan of two, and both fans spread only over
+      what the shape can accept.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TD
+  A[Start Build] --> B[Compile Source]
+  B --> C[Test Suite]
+  C --> D{Tests Passed?}
+  D -->|No| E[Notify Developer]
+  E --> A
+  D -->|Yes| F[Build Docker Image]
+  F --> G[Deploy to Staging]
+  G --> H[Run Integration Tests]
+  H --> I{Tests Passed?}
+  I -->|No| J[Rollback &amp; Alert]
+  I -->|Yes| K[Deploy to Production]
+  K --> L([Success])
+    </pre>
+
     <h3>Edge labels, self-loops and parallel edges</h3>
     <pre class="mermaid">
 ---

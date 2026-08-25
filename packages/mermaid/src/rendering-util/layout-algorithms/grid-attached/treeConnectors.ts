@@ -33,16 +33,33 @@
  *
  * All of which is why routing is a single pass over a whole component rather than
  * per tree: the collisions are between trees, so no per-tree pass can see them.
+ *
+ * One more thing decides where a connector meets a node. The layout works in
+ * rectangles, but a diamond or a circle does not reach the corners of its own
+ * bounding box, so a port placed out along a bounding-box side lands in the empty
+ * gap between the box and the shape and the connector appears to start in mid-air.
+ * HOLA already solves this for its router — `silhouetteBand` says how much of a side
+ * a shape can actually accept, `silhouettePort` moves the port inwards along the
+ * approach axis onto the boundary — and both are used here for the same reason. The
+ * port only ever moves along that axis, so the terminal leg stays orthogonal; it
+ * just starts on the shape instead of on its box.
  */
 
 import type { Point } from '../../../types.js';
-import type { Cardinal, HolaGraph, Rect } from '../hola-faithful/model.js';
+import type { Cardinal, HolaGraph, Rect, Side, Silhouette } from '../hola-faithful/model.js';
+import { oppositeSide, sideOfCardinal } from '../hola-faithful/model.js';
+import { silhouetteBand, silhouettePort } from '../hola-faithful/adapter/silhouette.js';
 import { spreadPorts } from '../hola-faithful/routing/finalRouting.js';
 import { routeRankEdgeTowards, rootTree } from '../hola-faithful/trees/symmetricTreeLayout.js';
 import type { TreeLayout } from '../hola-faithful/trees/symmetricTreeLayout.js';
 import type { DecomposedTree } from '../hola-faithful/decomposition/peelCoreAndTrees.js';
 import { findTopologicalEdge } from '../hola-faithful/decomposition/peelCoreAndTrees.js';
 import type { GridAttachedOptions } from './options.js';
+
+/** A node rectangle, plus the outline of its shape when it is not a rectangle. */
+export interface ShapedRect extends Rect {
+  silhouette?: Silhouette;
+}
 
 export interface TreeConnector {
   /** The original Mermaid edge this route belongs to. */
@@ -67,7 +84,7 @@ export interface TreeRouteRequest {
    * rectangle; for a corner placement the copy sits beside it and only the core
    * node's boundary is a legitimate place for an arrow to start.
    */
-  rootRect: Rect;
+  rootRect: ShapedRect;
   growth: Cardinal;
   /** The gap this tree was drawn with; its fans' combs have to fit inside it. */
   rankGap: number;
@@ -106,6 +123,12 @@ export function routeComponentTrees(
     );
   }
   assignTurns(legs, options);
+  // Last, so the comb above reasoned about the bounding-box spans every leg shares.
+  // Moving a terminal onto its shape only lengthens the leg it is on: it slides
+  // *inwards* along the approach axis, away from the bend, never past it.
+  for (const leg of legs) {
+    insetTerminals(leg);
+  }
 
   return legs.map((leg) => ({
     originalEdgeId: leg.originalEdgeId,
@@ -143,8 +166,8 @@ interface Leg {
   parentId: string;
   childId: string;
   fromRoot: boolean;
-  parent: Rect;
-  child: Rect;
+  parent: ShapedRect;
+  child: ShapedRect;
   growth: Cardinal;
   rankGap: number;
   /** Which fan this leg belongs to: one parent, one side. */
@@ -158,12 +181,23 @@ interface Leg {
 function collectLegs(request: TreeRouteRequest): Leg[] {
   const { tree, transformed, rootRect, growth, rankGap } = request;
   const rooted = rootTree(tree.graph, tree.rootCopyId);
-  const rectOf = (id: string): Rect | undefined => {
+  const rectOf = (id: string): ShapedRect | undefined => {
     if (id === tree.rootCopyId) {
       return rootRect;
     }
     const node = transformed.nodes.get(id);
-    return node ? { x: node.x, y: node.y, width: node.width, height: node.height } : undefined;
+    if (!node) {
+      return undefined;
+    }
+    return {
+      x: node.x,
+      y: node.y,
+      width: node.width,
+      height: node.height,
+      // The tree layout works in plain rectangles; the shape's outline comes from
+      // the node the adapter measured.
+      silhouette: tree.graph.nodes.get(id)?.silhouette,
+    };
   };
 
   const legs: Leg[] = [];
@@ -223,6 +257,39 @@ function acrossExtent(rect: Rect, growth: Cardinal): number {
   return vertical(growth) ? rect.width : rect.height;
 }
 
+/**
+ * Move a route's two terminals from their bounding-box sides onto the shapes
+ * themselves.
+ *
+ * Only the along-axis coordinate changes, so the terminal legs stay axis-aligned and
+ * the bends do not move. For a rectangle both insets are zero and nothing happens.
+ */
+function insetTerminals(leg: Leg): void {
+  const parentSide = sideOfCardinal(leg.growth);
+  const childSide = oppositeSide(parentSide);
+  const last = leg.points.length - 1;
+  if (last < 1) {
+    return;
+  }
+
+  if (leg.parent.silhouette) {
+    leg.points[0] = silhouettePort(
+      leg.parent.silhouette,
+      leg.parent,
+      parentSide,
+      leg.parentPort - across(leg.parent, leg.growth)
+    );
+  }
+  if (leg.child.silhouette) {
+    leg.points[last] = silhouettePort(
+      leg.child.silhouette,
+      leg.child,
+      childSide,
+      leg.childPort - across(leg.child, leg.growth)
+    );
+  }
+}
+
 /** The rectangle `routeRankEdgeTowards` should treat as the endpoint's own. */
 function portedRect(rect: Rect, port: number, growth: Cardinal): Rect {
   return vertical(growth) ? { ...rect, x: port } : { ...rect, y: port };
@@ -250,6 +317,7 @@ function assignPorts(legs: Leg[], options: GridAttachedOptions): void {
     legs,
     (leg) => `${leg.parentId}|out|${leg.growth}`,
     (leg) => leg.parent,
+    (leg) => sideOfCardinal(leg.growth),
     (leg) => across(leg.child, leg.growth),
     (leg, port) => (leg.parentPort = port),
     options
@@ -261,6 +329,7 @@ function assignPorts(legs: Leg[], options: GridAttachedOptions): void {
     legs,
     (leg) => `${leg.childId}|in|${leg.growth}`,
     (leg) => leg.child,
+    (leg) => oppositeSide(sideOfCardinal(leg.growth)),
     (leg) => across(leg.parent, leg.growth),
     (leg, port) => (leg.childPort = port),
     options
@@ -270,7 +339,8 @@ function assignPorts(legs: Leg[], options: GridAttachedOptions): void {
 function spreadGroups(
   legs: Leg[],
   keyOf: (leg: Leg) => string,
-  rectOf: (leg: Leg) => Rect,
+  rectOf: (leg: Leg) => ShapedRect,
+  sideOf: (leg: Leg) => Side,
   wishOf: (leg: Leg) => number,
   assign: (leg: Leg, port: number) => void,
   options: GridAttachedOptions
@@ -295,8 +365,13 @@ function spreadGroups(
     const sideLength = acrossExtent(rect, growth);
     const centre = across(rect, growth);
     const margin = Math.min(FAN_PORT_MARGIN, sideLength / 4);
-    const low = centre - sideLength / 2 + margin;
-    const high = centre + sideLength / 2 - margin;
+    // A shape that does not reach the corners of its box cannot take a port there,
+    // so the fan spreads over what the shape actually offers.
+    const band = rect.silhouette
+      ? silhouetteBand(rect.silhouette, rect, sideOf(group[0]))
+      : { min: -sideLength / 2, max: sideLength / 2 };
+    const low = centre + Math.max(-sideLength / 2 + margin, band.min);
+    const high = centre + Math.min(sideLength / 2 - margin, band.max);
     if (high <= low) {
       continue;
     }
@@ -577,30 +652,31 @@ export function combLevelsNeeded(layout: TreeLayout, graph: HolaGraph, growth: C
  * `index` separates several loops on the same node by pushing each one further out.
  */
 export function routeTreeSelfLoop(
-  node: Rect,
+  node: ShapedRect,
   growth: Cardinal,
   index: number,
   clearance: number
 ): Point[] {
   const depth = clearance * 2 + index * clearance;
+  const upright = vertical(growth);
+  // A loop leaves and re-enters one side, so both of its feet are ports on that
+  // side and both have to sit on the shape rather than on its box.
+  const side: Side = upright ? 'right' : 'bottom';
+  const halfSpan = Math.max((upright ? node.height : node.width) / 4, 8);
+  const foot = (offset: number): Point =>
+    node.silhouette
+      ? silhouettePort(node.silhouette, node, side, offset)
+      : upright
+        ? { x: node.x + node.width / 2, y: node.y + offset }
+        : { x: node.x + offset, y: node.y + node.height / 2 };
 
-  if (vertical(growth)) {
-    const side = node.x + node.width / 2;
-    const halfSpan = Math.max(node.height / 4, 8);
-    return [
-      { x: side, y: node.y - halfSpan },
-      { x: side + depth, y: node.y - halfSpan },
-      { x: side + depth, y: node.y + halfSpan },
-      { x: side, y: node.y + halfSpan },
-    ];
-  }
+  const near = foot(-halfSpan);
+  const far = foot(halfSpan);
+  // The detour reaches out from the *box*, so the loop clears the shape whatever
+  // its feet were pulled in to.
+  const out = upright ? node.x + node.width / 2 + depth : node.y + node.height / 2 + depth;
 
-  const side = node.y + node.height / 2;
-  const halfSpan = Math.max(node.width / 4, 8);
-  return [
-    { x: node.x - halfSpan, y: side },
-    { x: node.x - halfSpan, y: side + depth },
-    { x: node.x + halfSpan, y: side + depth },
-    { x: node.x + halfSpan, y: side },
-  ];
+  return upright
+    ? [near, { x: out, y: near.y }, { x: out, y: far.y }, far]
+    : [near, { x: near.x, y: out }, { x: far.x, y: out }, far];
 }

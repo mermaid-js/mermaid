@@ -74,6 +74,28 @@ export interface GridAttachedOptions extends GridLikeOptions {
   /** Rungs without improvement before the ladder gives up and keeps the best. */
   coreScalePatience: number;
 
+  /**
+   * Clear space kept around an edge label.
+   *
+   * Reserved twice over in a tree's rank gap — a label is drawn centred on its
+   * connector, so it needs room at both ends or it ends up touching the two ranks
+   * it sits between — and used again when a label is placed, to keep it off nodes
+   * and off other edges.
+   *
+   * The default is the shortest run an arrowhead can be drawn along, because that
+   * is what the gap between a label and the node it points at has to hold: any less
+   * and the label eats the arrow.
+   */
+  labelClearance: number;
+  /**
+   * How far a label is kept from a point where two edges cross.
+   *
+   * A label sitting on a crossing belongs, as far as a reader can tell, to either
+   * edge. Moving it along its own route costs nothing else, so the crossing is
+   * treated as something to avoid outright rather than as one cost among many.
+   */
+  labelCrossingClearance: number;
+
   /** Clearance the core router keeps from node rectangles. */
   routingClearance: number;
   /** A* penalty per bend, so a route with fewer corners wins. */
@@ -119,6 +141,9 @@ export function resolveGridAttachedOptions(
     coreScaleStep: overrides?.coreScaleStep ?? 0.25,
     maxCoreScale: overrides?.maxCoreScale ?? 3,
     coreScalePatience: overrides?.coreScalePatience ?? 2,
+
+    labelClearance: overrides?.labelClearance ?? 12,
+    labelCrossingClearance: overrides?.labelCrossingClearance ?? 24,
 
     routingClearance: overrides?.routingClearance ?? 12,
     routingBendPenalty: overrides?.routingBendPenalty ?? 40,

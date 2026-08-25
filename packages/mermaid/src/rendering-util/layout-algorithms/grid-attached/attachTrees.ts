@@ -108,12 +108,29 @@ export interface Attachment {
 }
 
 /**
- * A tree ready to be placed: HOLA's `PlaceableTree` plus the rank gap its two
- * drawings were built with. The connectors are re-derived from the final positions,
- * and they need the same gap the drawing reserved.
+ * A tree ready to be placed: HOLA's `PlaceableTree` plus the rank gap each of its
+ * two drawings was built with. The connectors are re-derived from the final
+ * positions, and they need the same gap the drawing reserved.
+ *
+ * One gap per drawing, because the two are used for different growth directions and
+ * what has to fit in the gap differs: a label's height for a tree grown vertically,
+ * its width for one grown horizontally.
  */
 export interface AttachableTree extends PlaceableTree {
-  rankGap: number;
+  rankGapVertical: number;
+  rankGapHorizontal: number;
+}
+
+/** The rank gap the drawing for this growth direction was built with. */
+export function rankGapFor(
+  tree: AttachableTree | undefined,
+  growth: Cardinal,
+  options: GridAttachedOptions
+): number {
+  if (!tree) {
+    return options.treeRankGap;
+  }
+  return growth === 'E' || growth === 'W' ? tree.rankGapHorizontal : tree.rankGapVertical;
 }
 
 export interface AttachInput {
@@ -471,7 +488,7 @@ function countConnectorViolations(
     rootRect,
     growth,
     input.options,
-    tree.rankGap
+    rankGapFor(tree, growth, input.options)
   ).filter((connector) => connector.fromRoot);
 
   let violations = 0;

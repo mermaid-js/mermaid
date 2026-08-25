@@ -159,7 +159,27 @@ describe('Flowchart grid-attached', () => {
     );
   });
 
-  it('9-grid-attached: should draw every node and every edge exactly once', () => {
+  it('9-grid-attached: should start connectors on a diamond, not on its bounding box', () => {
+    imgSnapshotTest(
+      `flowchart TD
+      A[Start Build] --> B[Compile Source]
+      B --> C[Test Suite]
+      C --> D{Tests Passed?}
+      D -->|No| E[Notify Developer]
+      E --> A
+      D -->|Yes| F[Build Docker Image]
+      F --> G[Deploy to Staging]
+      G --> H[Run Integration Tests]
+      H --> I{Tests Passed?}
+      I -->|No| J[Rollback & Alert]
+      I -->|Yes| K[Deploy to Production]
+      K --> L([Success])
+      `,
+      gridAttached
+    );
+  });
+
+  it('10-grid-attached: should draw every node and every edge exactly once', () => {
     renderGraph(CORE_WITH_TWO_TREES, { ...gridAttached, screenshot: false });
 
     // Nine declared nodes, nothing duplicated — the trees hang off the real core

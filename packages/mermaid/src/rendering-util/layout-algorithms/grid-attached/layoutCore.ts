@@ -53,8 +53,7 @@ import type { Point } from '../../../types.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import type { GridLikeLayoutResult } from '../grid-like/layoutCore.js';
 import { flattenFlowchart } from '../hola-faithful/adapter/flattenFlowchart.js';
-import type { FlattenResult } from '../hola-faithful/adapter/flattenFlowchart.js';
-import { placeEdgeLabels } from '../hola-faithful/adapter/labels.js';
+import type { EdgeLabelInfo, FlattenResult } from '../hola-faithful/adapter/flattenFlowchart.js';
 import {
   packComponentsLeftToRight,
   weaklyConnectedComponents,
@@ -67,7 +66,8 @@ import type { Bounds, Cardinal, Direction, HolaGraph, Rect } from '../hola-faith
 import { nodeBounds, pointBounds, unionBounds } from '../hola-faithful/model.js';
 import { layoutForGrowth, ROTATION_FOR_GROWTH } from '../hola-faithful/placement/placeTrees.js';
 import { layoutTree, transformTreeLayout } from '../hola-faithful/trees/symmetricTreeLayout.js';
-import { attachTrees } from './attachTrees.js';
+import type { TreeLayout } from '../hola-faithful/trees/symmetricTreeLayout.js';
+import { attachTrees, rankGapFor } from './attachTrees.js';
 import type { AttachableTree, Attachment, AttachResult } from './attachTrees.js';
 import {
   applyCoreScale,
@@ -82,6 +82,8 @@ import { planariseRoutedCore } from './corePlanarisation.js';
 import type { GridAttachedOptions } from './options.js';
 import { resolveGridAttachedOptions } from './options.js';
 import { prepareGridAttachedLayout } from './prepareLayout.js';
+import { placeLabels } from './labelPlacement.js';
+import type { LabelObstacles, RouteSegment } from './labelPlacement.js';
 import { combLevelsNeeded, routeComponentTrees, routeTreeSelfLoop } from './treeConnectors.js';
 import type { TreeRouteRequest } from './treeConnectors.js';
 
@@ -221,7 +223,7 @@ function layoutComponent(
   const drawing = drawCore(data, flat, componentId, decomposition.core, options);
   const sources = new Map(decomposition.trees.map((tree) => [tree.id, tree]));
   const placeable = decomposition.trees.map((tree) =>
-    drawTree(tree.id, tree.graph, tree.rootCopyId, tree.coreNodeId, options)
+    drawTree(tree.id, tree.graph, tree.rootCopyId, tree.coreNodeId, flat.labels, options)
   );
 
   const chosen = climbEnlargementLadder(
@@ -259,9 +261,15 @@ function layoutComponent(
     routeRequests.push({
       tree,
       transformed: attachment.transformed,
-      rootRect: { x: root.x, y: root.y, width: root.width, height: root.height },
+      rootRect: {
+        x: root.x,
+        y: root.y,
+        width: root.width,
+        height: root.height,
+        silhouette: root.silhouette,
+      },
       growth: attachment.growth,
-      rankGap: drawnById.get(attachment.treeId)?.rankGap ?? options.treeRankGap,
+      rankGap: rankGapFor(drawnById.get(attachment.treeId), attachment.growth, options),
     });
     const written = writeTree(flat, tree, attachment, options);
     nodes.push(...written.nodes);
@@ -287,14 +295,9 @@ function layoutComponent(
   edges.push(...connected.edges);
   labelRequests.push(...connected.labelRequests);
 
-  const labels = placeEdgeLabels(labelRequests, 0);
-  for (const label of labels) {
-    const edge = flat.originalEdges.get(label.originalEdgeId);
-    if (edge) {
-      edge.x = label.x;
-      edge.y = label.y;
-    }
-  }
+  // Labels last, and for the whole component at once: a label has to keep off every
+  // node and every route in the drawing, not just the ones on its own side of it.
+  const labels = writeLabels(flat, labelRequests, nodes, edges, options);
 
   const bounds = boundsOfDrawing(nodes, edges);
 
@@ -332,6 +335,7 @@ function layoutPureTreeComponent(
     pureTree.graph,
     pureTree.rootId,
     pureTree.rootId,
+    flat.labels,
     options
   );
   const transformed = transformTreeLayout(
@@ -380,20 +384,13 @@ function layoutPureTreeComponent(
         transformed,
         rootRect,
         growth: flowGrowth,
-        rankGap: drawn.rankGap,
+        rankGap: rankGapFor(drawn, flowGrowth, options),
       },
     ],
     options
   );
   const edges = [...written.edges, ...connected.edges];
-  const labels = placeEdgeLabels(connected.labelRequests, 0);
-  for (const label of labels) {
-    const edge = flat.originalEdges.get(label.originalEdgeId);
-    if (edge) {
-      edge.x = label.x;
-      edge.y = label.y;
-    }
-  }
+  const labels = writeLabels(flat, connected.labelRequests, written.nodes, edges, options);
 
   const bounds = boundsOfDrawing(written.nodes, edges);
 
@@ -448,35 +445,60 @@ function drawTree(
   graph: HolaGraph,
   rootId: string,
   coreNodeId: string,
+  labels: Map<string, EdgeLabelInfo>,
   options: GridAttachedOptions
 ): AttachableTree {
-  const draw = (rankGap: number): AttachableTree => ({
+  const drawOne = (rankGap: number, growthAxis: 'vertical' | 'horizontal'): TreeLayout =>
+    layoutTree(graph, rootId, { rankGap, siblingGap: options.treeSiblingGap, growthAxis });
+
+  // Room a label needs *along* the rank axis, which is its height for a tree grown
+  // vertically and its width for one grown horizontally. A label is drawn centred on
+  // the connector, so the gap has to hold the label plus clearance at both ends or
+  // the label ends up touching the two ranks it sits between.
+  let labelHeight = 0;
+  let labelWidth = 0;
+  for (const edge of graph.edges.values()) {
+    for (const originalEdgeId of edge.originalEdgeIds) {
+      const label = labels.get(originalEdgeId);
+      if (label) {
+        labelHeight = Math.max(labelHeight, label.height);
+        labelWidth = Math.max(labelWidth, label.width);
+      }
+    }
+  }
+  const forLabel = (extent: number): number =>
+    extent > 0 ? extent + 2 * options.labelClearance : 0;
+
+  // One draw at the base gap, to count the comb levels the fans need. The count is
+  // stable across a redraw because sibling packing — which is what decides the fan
+  // shapes — does not depend on the rank gap at all.
+  const probeVertical = drawOne(options.treeRankGap, 'vertical');
+  const probeHorizontal = drawOne(options.treeRankGap, 'horizontal');
+  const combVertical = (combLevelsNeeded(probeVertical, graph, 'S') + 1) * options.treeBendSpacing;
+  const combHorizontal =
+    (combLevelsNeeded(probeHorizontal, graph, 'E') + 1) * options.treeBendSpacing;
+
+  // The two drawings get their own gaps: they are used for different growth
+  // directions, so reserving a tall label's height in the horizontal drawing — where
+  // its *width* is what has to fit — would stretch it for nothing.
+  const rankGapVertical = Math.max(options.treeRankGap, combVertical, forLabel(labelHeight));
+  const rankGapHorizontal = Math.max(options.treeRankGap, combHorizontal, forLabel(labelWidth));
+
+  return {
     id,
     coreNodeId,
     rootCopyId: rootId,
-    rankGap,
-    layout: layoutTree(graph, rootId, {
-      rankGap,
-      siblingGap: options.treeSiblingGap,
-      growthAxis: 'vertical',
-    }),
-    layoutForHorizontalGrowth: layoutTree(graph, rootId, {
-      rankGap,
-      siblingGap: options.treeSiblingGap,
-      growthAxis: 'horizontal',
-    }),
-  });
-
-  const first = draw(options.treeRankGap);
-  const levels = Math.max(
-    combLevelsNeeded(first.layout, graph, 'S'),
-    combLevelsNeeded(first.layoutForHorizontalGrowth, graph, 'E')
-  );
-
-  // `levels` turns plus the leg into the rank itself, each at least one bend
-  // spacing apart.
-  const needed = (levels + 1) * options.treeBendSpacing;
-  return needed > options.treeRankGap ? draw(needed) : first;
+    rankGapVertical,
+    rankGapHorizontal,
+    layout:
+      rankGapVertical === options.treeRankGap
+        ? probeVertical
+        : drawOne(rankGapVertical, 'vertical'),
+    layoutForHorizontalGrowth:
+      rankGapHorizontal === options.treeRankGap
+        ? probeHorizontal
+        : drawOne(rankGapHorizontal, 'horizontal'),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -675,7 +697,12 @@ function writeTree(
     }
     const index = loopIndexByNode.get(loop.source) ?? 0;
     loopIndexByNode.set(loop.source, index + 1);
-    edge.points = routeTreeSelfLoop(node, attachment.growth, index, options.routingClearance);
+    edge.points = routeTreeSelfLoop(
+      { ...node, silhouette: tree.graph.nodes.get(loop.source)?.silhouette },
+      attachment.growth,
+      index,
+      options.routingClearance
+    );
     edge.curve = 'linear';
     edge.hasIntersectionPoints = true;
     // The label goes on the middle of the detour's outer run, which is the one
@@ -776,6 +803,54 @@ function writeConnectors(
  */
 function orientRoute(points: Point[], edge: Edge, parentId: string, childId: string): Point[] {
   return edge.start === childId && edge.end === parentId ? [...points].reverse() : points;
+}
+
+/**
+ * Place every label of one component and write it onto its edge.
+ *
+ * The obstacle set is the whole component — every node box, every route — because a
+ * label belonging to a tree connector can just as easily land on a core edge as on
+ * one of its own.
+ */
+function writeLabels(
+  flat: FlattenResult,
+  requests: { originalEdgeId: string; width: number; height: number; route: Point[] }[],
+  nodes: Node[],
+  edges: Edge[],
+  options: GridAttachedOptions
+): { originalEdgeId: string; x: number; y: number }[] {
+  if (requests.length === 0) {
+    return [];
+  }
+
+  const segments: RouteSegment[] = [];
+  for (const edge of edges) {
+    const points = edge.points ?? [];
+    for (let i = 1; i < points.length; i++) {
+      segments.push({ edgeId: edge.id, a: points[i - 1], b: points[i] });
+    }
+  }
+  const obstacles: LabelObstacles = {
+    nodes: nodes.map((node) =>
+      nodeBounds({
+        x: node.x ?? 0,
+        y: node.y ?? 0,
+        width: node.width ?? 0,
+        height: node.height ?? 0,
+      })
+    ),
+    segments,
+  };
+
+  const labels = placeLabels(requests, obstacles, options);
+  for (const label of labels) {
+    const edge = flat.originalEdges.get(label.originalEdgeId);
+    if (edge) {
+      edge.x = label.x;
+      edge.y = label.y;
+    }
+  }
+  return labels;
 }
 
 // ---------------------------------------------------------------------------

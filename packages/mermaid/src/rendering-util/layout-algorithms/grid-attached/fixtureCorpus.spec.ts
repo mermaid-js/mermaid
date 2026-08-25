@@ -63,6 +63,21 @@ const KNOWN_CORE_OVERLAPS: Record<string, string[]> = {
  * These are a ratchet: any core that gets *worse* fails, and one that improves
  * fails too, so the number has to be updated deliberately.
  */
+/**
+ * Labels that still sit on a crossing, and why moving them cannot help.
+ *
+ * A label may only be moved along its own route, so when every position on that
+ * route contains a crossing there is nowhere left to go. The one case in the corpus
+ * is a tree connector with a single 50px run — the redeploy lambda into the CDN —
+ * which two core edges cross 16px apart in the middle of that run; the label is
+ * 21px tall, so it covers one crossing or the other wherever it sits. Fixing it
+ * would mean moving a *route*, which label placement deliberately never does. Any
+ * entry not listed here is a regression.
+ */
+const KNOWN_LABELS_ON_CROSSINGS: Record<string, number> = {
+  architecture: 2,
+};
+
 const UNALIGNED_CORE_EDGES: Record<string, number> = {
   'GRAPH - Bipartite Graph k3,3': 2,
   'GRAPH - complete_graph_k4': 8,
@@ -191,6 +206,73 @@ function entersRect(edge: Edge, rect: Rect): boolean {
   return false;
 }
 
+interface LabelBox {
+  edgeId: string;
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
+
+/** Where each label was placed, as a box. Edges with no label are skipped. */
+function labelBoxes(layout: LayoutData): LabelBox[] {
+  const boxes: LabelBox[] = [];
+  for (const edge of layout.edges) {
+    if (!edge.label || !Number.isFinite(edge.x) || !Number.isFinite(edge.y)) {
+      continue;
+    }
+    const width = edge.width ?? 0;
+    const height = edge.height ?? 0;
+    if (width <= 0 || height <= 0) {
+      continue;
+    }
+    boxes.push({
+      edgeId: edge.id,
+      minX: edge.x! - width / 2,
+      maxX: edge.x! + width / 2,
+      minY: edge.y! - height / 2,
+      maxY: edge.y! + height / 2,
+    });
+  }
+  return boxes;
+}
+
+/** Points where two different edges properly cross. */
+function crossingPoints(edges: Edge[]): { x: number; y: number }[] {
+  const segs: { id: string; a: { x: number; y: number }; b: { x: number; y: number } }[] = [];
+  for (const edge of edges) {
+    const points = edge.points ?? [];
+    for (let i = 1; i < points.length; i++) {
+      segs.push({ id: edge.id, a: points[i - 1], b: points[i] });
+    }
+  }
+
+  const hits: { x: number; y: number }[] = [];
+  for (let i = 0; i < segs.length; i++) {
+    for (let j = i + 1; j < segs.length; j++) {
+      if (segs[i].id === segs[j].id) {
+        continue;
+      }
+      const p = segs[i];
+      const q = segs[j];
+      const r = { x: p.b.x - p.a.x, y: p.b.y - p.a.y };
+      const t2 = { x: q.b.x - q.a.x, y: q.b.y - q.a.y };
+      const den = r.x * t2.y - r.y * t2.x;
+      if (Math.abs(den) < 1e-9) {
+        continue;
+      }
+      const d = { x: q.a.x - p.a.x, y: q.a.y - p.a.y };
+      const t = (d.x * t2.y - d.y * t2.x) / den;
+      const u = (d.x * r.y - d.y * r.x) / den;
+      if (t <= 1e-6 || t >= 1 - 1e-6 || u <= 1e-6 || u >= 1 - 1e-6) {
+        continue;
+      }
+      hits.push({ x: p.a.x + t * r.x, y: p.a.y + t * r.y });
+    }
+  }
+  return hits;
+}
+
 interface Laid {
   layout: LayoutData;
   result: GridAttachedResult;
@@ -268,6 +350,55 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
         }
       }
       expect(offenders).toEqual([]);
+    });
+
+    it(`keeps every edge label off every node box in ${name}`, async () => {
+      const { layout } = await lay(name);
+      const boxes = layout.nodes.map((node) => ({
+        id: node.id,
+        minX: (node.x ?? 0) - (node.width ?? 0) / 2,
+        maxX: (node.x ?? 0) + (node.width ?? 0) / 2,
+        minY: (node.y ?? 0) - (node.height ?? 0) / 2,
+        maxY: (node.y ?? 0) + (node.height ?? 0) / 2,
+      }));
+
+      const offenders: string[] = [];
+      for (const label of labelBoxes(layout)) {
+        for (const box of boxes) {
+          if (
+            Math.min(label.maxX, box.maxX) - Math.max(label.minX, box.minX) > EPSILON &&
+            Math.min(label.maxY, box.maxY) - Math.max(label.minY, box.minY) > EPSILON
+          ) {
+            offenders.push(`${label.edgeId} over ${box.id}`);
+          }
+        }
+      }
+      expect(offenders).toEqual([]);
+    });
+
+    it(`keeps every edge label off the point where two edges cross in ${name}`, async () => {
+      const { layout } = await lay(name);
+      const crossings = crossingPoints(layout.edges);
+
+      // A label containing a crossing belongs, as far as a reader can tell, to
+      // either edge. That is the ambiguity the placement pass exists to remove.
+      const offenders: string[] = [];
+      for (const label of labelBoxes(layout)) {
+        for (const crossing of crossings) {
+          if (
+            crossing.x > label.minX &&
+            crossing.x < label.maxX &&
+            crossing.y > label.minY &&
+            crossing.y < label.maxY
+          ) {
+            offenders.push(
+              `${label.edgeId} contains the crossing at ` +
+                `(${crossing.x.toFixed(0)}, ${crossing.y.toFixed(0)})`
+            );
+          }
+        }
+      }
+      expect(offenders).toHaveLength(KNOWN_LABELS_ON_CROSSINGS[name] ?? 0);
     });
 
     it(`leaves no core edge unaligned that grid-like could align in ${name}`, async () => {
