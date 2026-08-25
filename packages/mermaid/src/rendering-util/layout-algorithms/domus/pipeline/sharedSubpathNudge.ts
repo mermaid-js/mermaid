@@ -26,6 +26,7 @@
  */
 import type { LayoutData } from '../../../types.js';
 import { rectForNode, segmentIntersectsRectInterior } from '../core/helpers.js';
+import { EPS } from '../../layout-utils/geometry.js';
 
 interface Options {
   spacing?: number;
@@ -58,6 +59,26 @@ interface HSeg {
   startId: string | null;
   endId: string | null;
 }
+
+/**
+ * Collinearity tolerance for PAIRING two segments as sharing a subpath.
+ *
+ * This must match `validateLayout`'s and does not. The checker's
+ * `collinearOverlap` treats two same-orientation segments as collinear when
+ * their offsets differ by at most `EPS` (one unit); this pass demanded 1e-6,
+ * i.e. exact equality. Every pair between those two numbers is reported as a
+ * shared subpath and is invisible to the pass that exists to fix it.
+ *
+ * `domus/architecture5-components` sits in that gap: two long horizontal rails
+ * at y=1459 and y=1460, overlapping for 1515px — flagged by the checker, whose
+ * tolerance is exactly one unit, and skipped here. A repair aimed at a
+ * threshold its checker does not use cannot succeed.
+ *
+ * Orientation detection above still uses 1e-6 and should: whether a segment is
+ * horizontal or vertical is exact, and widening THAT would start classifying
+ * gently sloped segments as axis-aligned.
+ */
+const COLLINEAR_EPS = EPS;
 
 export function applySharedSubpathNudge(
   layout: LayoutData,
@@ -134,7 +155,7 @@ export function applySharedSubpathNudge(
       if (s1.edgeIdx === s2.edgeIdx) {
         continue;
       }
-      if (Math.abs(s1.x - s2.x) > 1e-6) {
+      if (Math.abs(s1.x - s2.x) > COLLINEAR_EPS) {
         continue;
       }
       const ymin = Math.max(s1.y1, s2.y1);
@@ -199,7 +220,7 @@ export function applySharedSubpathNudge(
       if (s1.edgeIdx === s2.edgeIdx) {
         continue;
       }
-      if (Math.abs(s1.y - s2.y) > 1e-6) {
+      if (Math.abs(s1.y - s2.y) > COLLINEAR_EPS) {
         continue;
       }
       const xmin = Math.max(s1.x1, s2.x1);
