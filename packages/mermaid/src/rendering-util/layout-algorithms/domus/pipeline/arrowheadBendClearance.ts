@@ -17,6 +17,7 @@
  */
 import type { LayoutData } from '../../../types.js';
 import { checkLayout } from '../validateLayoutProxy.js';
+import { acceptsRepair, issueKeySet } from './clampedAcceptance.js';
 
 interface Point {
   x: number;
@@ -55,6 +56,7 @@ function hasTerminalMarker(
 
 export function clearArrowheadBendsWhenScoreImproves(layout: LayoutData): void {
   let current = checkLayout(layout);
+  let currentKeys = issueKeySet(current);
 
   for (const e of layout.edges ?? []) {
     const pts = e?.points as Point[] | undefined;
@@ -108,8 +110,12 @@ export function clearArrowheadBendsWhenScoreImproves(layout: LayoutData): void {
           rail.y += delta;
         }
         const next = checkLayout(layout);
-        if (next.score > current.score) {
+        // Not `next.score > current.score`: on an invalid layout the score is
+        // clamped at 0 on both sides, so that test can never fire on the very
+        // layouts whose arrowhead bends need clearing. See `clampedAcceptance`.
+        if (acceptsRepair(current, next, currentKeys)) {
           current = next;
+          currentKeys = issueKeySet(current);
           break;
         }
         inner.x = oldInner.x;
