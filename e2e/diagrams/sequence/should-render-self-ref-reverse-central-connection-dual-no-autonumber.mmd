@@ -1,0 +1,19 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice()/|-()Alice: Circles at both ends with solid top reverse
+  Bob()\|-()Bob: Circles at both ends with solid bottom reverse
+  Charlie()//-()Charlie: Circles at both ends with stick top reverse
+  Alice()\\-()Alice: Circles at both ends with stick bottom reverse
+  Bob()/|--()Bob: Circles at both ends with dotted solid top reverse
+  Charlie()\|--()Charlie: Circles at both ends with dotted solid bottom reverse
+  Alice()//--()Alice: Circles at both ends with dotted stick top reverse
+  Bob()\\--()Bob: Circles at both ends with dotted stick bottom reverse

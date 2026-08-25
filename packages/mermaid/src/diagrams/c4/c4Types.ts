@@ -87,7 +87,12 @@ export interface C4Boundary {
   width: number;
   height: number;
   image: C4Image;
+  /* Should be set by the renderer once the boundary's box is known */
+  intersect?: (point: C4Point) => C4Point;
 }
+
+/** A relationship endpoint: shapes and boundaries share the geometry used to draw relations. */
+export type C4Element = C4Shape | C4Boundary;
 
 export interface C4Rel {
   /** The parser may set additional keys via `{ key: value }` shaped arguments. */
