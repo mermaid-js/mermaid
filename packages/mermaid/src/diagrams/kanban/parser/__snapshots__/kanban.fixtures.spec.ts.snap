@@ -641,6 +641,59 @@ nodes:
   root group level=2 shape="kanbanSection" label="bold **text**""
 `;
 
+exports[`kanban parser fixtures > parses markdown-descr-delimiters 1`] = `
+"input:
+| kanban
+|   docs["\`a [b] (c) d\`"]
+| 
+sections:
+  docs level=2 label="a [b] (c) d" width=200 padding=20
+nodes:
+  docs group level=2 shape="kanbanSection" label="a [b] (c) d""
+`;
+
+exports[`kanban parser fixtures > parses markdown-descr-empty 1`] = `
+"input:
+| kanban
+|   docs["\`\`"]
+| 
+REJECTED: Error parsing kanban diagram at line 2, column 12: Expecting token of type --> NodeDescr <-- but found --> ']' <--"
+`;
+
+exports[`kanban parser fixtures > parses markdown-descr-multiline 1`] = `
+"input:
+| kanban
+|   docs["\`line one
+|   line two\`"]
+| 
+sections:
+  docs level=2 label="line one\\n  line two" width=200 padding=20
+nodes:
+  docs group level=2 shape="kanbanSection" label="line one\\n  line two""
+`;
+
+exports[`kanban parser fixtures > parses markdown-descr-no-id 1`] = `
+"input:
+| kanban
+|   ["\`**Create** Documentation\`"]
+| 
+sections:
+  **Create** Documentation level=2 label="**Create** Documentation" width=200 padding=20
+nodes:
+  **Create** Documentation group level=2 shape="kanbanSection" label="**Create** Documentation""
+`;
+
+exports[`kanban parser fixtures > parses markdown-descr-rounded 1`] = `
+"input:
+| kanban
+|   docs("\`**x**\`")
+| 
+sections:
+  docs level=2 label="**x**" width=200 padding=20
+nodes:
+  docs group level=2 shape="kanbanSection" label="**x**""
+`;
+
 exports[`kanban parser fixtures > parses metadata-after-shape 1`] = `
 "input:
 | kanban
