@@ -519,6 +519,36 @@ function assignTurns(legs: Leg[], options: GridAttachedOptions): void {
   for (const fan of fans.values()) {
     plans.push(...planFan(fan));
   }
+
+  // Every run of every route counts as occupied, not just the turns. A connector
+  // whose child is straight ahead is one long run with no turn at all, so it never
+  // gets a plan — and left out of the reckoning it is exactly what a turn lands on
+  // top of. Its line is fixed, so it is claimed first, along with every other run no
+  // choice here can move.
+  const occupied = new Map<Orientation, Run[]>([
+    ['horizontal', []],
+    ['vertical', []],
+  ]);
+  const claim = (leg: Leg): void => {
+    for (const run of runsOfRoute(leg.points)) {
+      occupied.get(run.orientation)!.push(run.run);
+    }
+  };
+
+  const planned = new Set(plans.map((plan) => plan.leg));
+  for (const leg of legs) {
+    if (planned.has(leg)) {
+      // The two legs into the ranks sit on lines the *ports* fixed, so they are known
+      // before any turn is chosen even though their length is not. Claiming them now,
+      // at the longest they could be, is what stops a turn landing on one: a turn is
+      // always across the ranks and a terminal leg always along them, so these never
+      // block the very leg they belong to — only other trees' turns, which is the
+      // point.
+      claimTerminalLines(leg, occupied);
+    } else {
+      claim(leg);
+    }
+  }
   if (plans.length === 0) {
     return;
   }
@@ -538,13 +568,8 @@ function assignTurns(legs: Leg[], options: GridAttachedOptions): void {
     return a.leg.originalEdgeId.localeCompare(b.leg.originalEdgeId);
   });
 
-  const occupied = new Map<'horizontal' | 'vertical', Run[]>([
-    ['horizontal', []],
-    ['vertical', []],
-  ]);
-
   for (const plan of plans) {
-    const orientation = vertical(plan.leg.growth) ? 'horizontal' : 'vertical';
+    const orientation: Orientation = vertical(plan.leg.growth) ? 'horizontal' : 'vertical';
     const taken = occupied.get(orientation)!;
     const run = { from: plan.from, to: plan.to, at: 0 };
 
@@ -558,8 +583,64 @@ function assignTurns(legs: Leg[], options: GridAttachedOptions): void {
     }
 
     applyTurn(plan.leg, chosen);
+    // Only the turn is new; the terminal lines were claimed before the loop.
     taken.push({ ...run, at: chosen });
   }
+}
+
+/**
+ * Reserve the lines a leg's two terminal runs sit on, for their whole possible
+ * extent.
+ *
+ * For a tree grown vertically those runs are vertical, on the two ports' `x`; for one
+ * grown horizontally they are horizontal, on the two ports' `y`. Either way they are
+ * the opposite orientation to the turn between them, so a leg never blocks its own
+ * turn — and the span claimed is the full distance between the two ranks, which is
+ * the most either run can reach once the turn settles somewhere between them.
+ */
+function claimTerminalLines(leg: Leg, occupied: Map<Orientation, Run[]>): void {
+  if (leg.points.length < 2) {
+    return;
+  }
+  const upright = vertical(leg.growth);
+  const orientation: Orientation = upright ? 'vertical' : 'horizontal';
+  const first = leg.points[0];
+  const last = leg.points[leg.points.length - 1];
+  const from = Math.min(upright ? first.y : first.x, upright ? last.y : last.x);
+  const to = Math.max(upright ? first.y : first.x, upright ? last.y : last.x);
+  if (to - from <= EPSILON) {
+    return;
+  }
+
+  const lines = occupied.get(orientation)!;
+  for (const at of [leg.parentPort, leg.childPort]) {
+    lines.push({ at, from, to });
+  }
+}
+
+type Orientation = 'horizontal' | 'vertical';
+
+/** Every axis-aligned run of a settled route, tagged with its orientation. */
+function runsOfRoute(points: Point[]): { orientation: Orientation; run: Run }[] {
+  const runs: { orientation: Orientation; run: Run }[] = [];
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const horizontal = Math.abs(a.y - b.y) < EPSILON;
+    const upright = Math.abs(a.x - b.x) < EPSILON;
+    if (horizontal === upright) {
+      continue;
+    }
+    const [from, to] = horizontal ? [a.x, b.x] : [a.y, b.y];
+    if (Math.abs(to - from) <= EPSILON) {
+      continue;
+    }
+    runs.push({
+      orientation: horizontal ? 'horizontal' : 'vertical',
+      run: { at: horizontal ? a.y : a.x, from: Math.min(from, to), to: Math.max(from, to) },
+    });
+  }
+  return runs;
 }
 
 interface TurnPlan {
@@ -637,13 +718,29 @@ function planFan(fan: Leg[]): TurnPlan[] {
     );
     const between = fractions.slice(1).map((fraction) => fraction - 0.5 / (levels + 1));
 
+    // A fan of one has a single level, so the two lists above offer it a single
+    // place to turn and it cannot move at all — which is how a lone connector ends
+    // up sharing a line with another tree's. These are the fallbacks: no longer the
+    // tidy nesting, but anywhere between the ranks beats being drawn as one line.
+    const anywhere = [0.5, 0.35, 0.65, 0.25, 0.75, 0.15, 0.85];
+
+    const seen = new Set<number>();
+    const candidates: number[] = [];
+    for (const fraction of [...fractions, ...between, ...anywhere]) {
+      const key = Math.round(fraction * 1e4);
+      if (fraction > 0 && fraction < 1 && !seen.has(key)) {
+        seen.add(key);
+        candidates.push(at(fraction));
+      }
+    }
+
     return {
       leg,
       levels,
       level: preferred,
       from: Math.min(leg.parentPort, leg.childPort),
       to: Math.max(leg.parentPort, leg.childPort),
-      candidates: [...fractions, ...between].map(at),
+      candidates,
     };
   });
 }

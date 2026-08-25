@@ -66,16 +66,31 @@ const KNOWN_CORE_OVERLAPS: Record<string, string[]> = {
 /**
  * Labels that still sit on a crossing, and why moving them cannot help.
  *
- * A label may only be moved along its own route, so when every position on that
- * route contains a crossing there is nowhere left to go. The one case in the corpus
- * is a tree connector with a single 50px run — the redeploy lambda into the CDN —
- * which two core edges cross 16px apart in the middle of that run; the label is
- * 21px tall, so it covers one crossing or the other wherever it sits. Fixing it
- * would mean moving a *route*, which label placement deliberately never does. Any
- * entry not listed here is a regression.
+ * A label may only be moved along its own route, so if every position on that route
+ * contained a crossing there would be nowhere left to go. Nothing in the corpus is
+ * in that position any more — gathering each core node's pendants into one tree
+ * removed the crossings that used to trap one — so this is empty and any entry
+ * appearing in it is a regression.
  */
-const KNOWN_LABELS_ON_CROSSINGS: Record<string, number> = {
-  architecture: 2,
+const KNOWN_LABELS_ON_CROSSINGS: Record<string, number> = {};
+
+/**
+ * Tree connectors still drawn along each other, and why no choice here can separate
+ * them.
+ *
+ * A turn can be moved and a port can be spread, but only before the route is known:
+ * ports are assigned first, then routes derived from them. So when two runs collide
+ * and *neither* is a turn, nothing downstream can help. That is this pair — one
+ * connector reaches a child exactly in line with its parent, so its route is a single
+ * straight run with no bend to shift, and the other's colliding run is a terminal leg
+ * sitting on the line its port fixed.
+ *
+ * Separating them would need what HOLA's own router does for the core: route once,
+ * re-plan the ports against the routes, then route again. The tree connectors have no
+ * such second pass. Any pair not listed here is a regression.
+ */
+const KNOWN_TREE_CONNECTOR_OVERLAPS: Record<string, string[]> = {
+  '___ Hola paper main example algorithm': ['L_BetaF_BetaF3_0 ~ L_BetaG_BetaG1_0'],
 };
 
 /**
@@ -101,6 +116,7 @@ const KNOWN_SHARED_CORE_PORTS: Record<string, string[]> = {
 };
 
 const UNALIGNED_CORE_EDGES: Record<string, number> = {
+  '___ Hola paper main example algorithm': 6,
   'GRAPH - Bipartite Graph k3,3': 2,
   'GRAPH - complete_graph_k4': 8,
   domus1: 4,
@@ -109,16 +125,29 @@ const UNALIGNED_CORE_EDGES: Record<string, number> = {
   'project-sox2': 12,
 };
 
-function fixtureNames(): string[] {
+/**
+ * Fixtures that can be laid out DOM-free, with the file holding their captured
+ * sizes.
+ *
+ * Most are named `<fixture>.sizes.json`; one predates the convention and is just
+ * `<fixture>.json`. Accepting both is what brings HOLA's own main example — the
+ * largest graph in the corpus, and the one most likely to show a tangle — under
+ * these assertions instead of quietly skipping it.
+ */
+function fixtures(): { name: string; sizes: string }[] {
   const files = readdirSync(FIXTURE_DIR);
-  return (
-    files
-      .filter((file) => file.endsWith('.mmd'))
-      .map((file) => file.replace(/\.mmd$/, ''))
-      // A `.mmd` with no captured sizes cannot be laid out DOM-free.
-      .filter((name) => files.includes(`${name}.sizes.json`))
-      .sort()
-  );
+  return files
+    .filter((file) => file.endsWith('.mmd'))
+    .map((file) => file.replace(/\.mmd$/, ''))
+    .flatMap((name) => {
+      for (const sizes of [`${name}.sizes.json`, `${name}.json`]) {
+        if (files.includes(sizes)) {
+          return [{ name, sizes }];
+        }
+      }
+      return [];
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 interface Run {
@@ -303,11 +332,30 @@ interface Laid {
   treeEdges: Edge[];
 }
 
-async function lay(name: string): Promise<Laid> {
+/**
+ * One layout per fixture, shared by every assertion about it.
+ *
+ * The assertions only read, and the corpus now includes HOLA's 170-node main
+ * example — laying it out once per assertion would mean routing its 76 core edges
+ * through A\* eight times over.
+ */
+const cache = new Map<string, Promise<Laid>>();
+
+function lay(name: string, sizesFile: string): Promise<Laid> {
+  const hit = cache.get(name);
+  if (hit) {
+    return hit;
+  }
+  const pending = layOnce(name, sizesFile);
+  cache.set(name, pending);
+  return pending;
+}
+
+async function layOnce(name: string, sizesFile: string): Promise<Laid> {
   const layout = await parseMmdFileToLayoutData(join(FIXTURE_DIR, `${name}.mmd`), {
     stampFlowchartRendererFields: true,
   });
-  const sizes = loadSizesFixture(join(FIXTURE_DIR, `${name}.sizes.json`));
+  const sizes = loadSizesFixture(join(FIXTURE_DIR, sizesFile));
   applyFixtureContentSizesStrict(layout, sizes);
   applyFixtureEdgeLabelSizes(layout, sizes);
 
@@ -331,25 +379,25 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
     addDiagrams();
   });
 
-  const names = fixtureNames();
+  const all = fixtures();
 
   it('finds fixtures to run', () => {
-    expect(names.length).toBeGreaterThan(5);
+    expect(all.length).toBeGreaterThan(5);
   });
 
-  for (const name of names) {
+  for (const { name, sizes } of all) {
     it(`draws no two tree connectors along each other in ${name}`, async () => {
-      const { treeEdges } = await lay(name);
-      expect(overlappingPairs(treeEdges)).toEqual([]);
+      const { treeEdges } = await lay(name, sizes);
+      expect(overlappingPairs(treeEdges)).toEqual(KNOWN_TREE_CONNECTOR_OVERLAPS[name] ?? []);
     });
 
     it(`routes every core edge orthogonally in ${name}`, async () => {
-      const { coreEdges } = await lay(name);
+      const { coreEdges } = await lay(name, sizes);
       expect(coreEdges.filter((edge) => !isOrthogonal(edge)).map((edge) => edge.id)).toEqual([]);
     });
 
     it(`runs no core edge through a node it does not touch in ${name}`, async () => {
-      const { layout, coreEdges } = await lay(name);
+      const { layout, coreEdges } = await lay(name, sizes);
       const boxes = layout.nodes.map((node) => ({
         id: node.id,
         rect: {
@@ -375,7 +423,7 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
     });
 
     it(`gives every edge touching one node its own attachment point in ${name}`, async () => {
-      const { layout, treeEdges } = await lay(name);
+      const { layout, treeEdges } = await lay(name, sizes);
       const isTreeConnector = new Set(treeEdges.map((edge) => edge.id));
 
       // Every end of every edge, grouped by the node it lands on. Two ends at the
@@ -433,7 +481,7 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
     });
 
     it(`keeps every edge label off every node box in ${name}`, async () => {
-      const { layout } = await lay(name);
+      const { layout } = await lay(name, sizes);
       const boxes = layout.nodes.map((node) => ({
         id: node.id,
         minX: (node.x ?? 0) - (node.width ?? 0) / 2,
@@ -457,7 +505,7 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
     });
 
     it(`keeps every edge label off the point where two edges cross in ${name}`, async () => {
-      const { layout } = await lay(name);
+      const { layout } = await lay(name, sizes);
       const crossings = crossingPoints(layout.edges);
 
       // A label containing a crossing belongs, as far as a reader can tell, to
@@ -482,7 +530,7 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
     });
 
     it(`leaves no core edge unaligned that grid-like could align in ${name}`, async () => {
-      const { layout, coreIds } = await lay(name);
+      const { layout, coreIds } = await lay(name, sizes);
       const core = {
         ...layout,
         nodes: layout.nodes.filter((node) => coreIds.has(node.id)),
@@ -492,7 +540,7 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
     });
 
     it(`draws no two core edges along each other in ${name}`, async () => {
-      const { coreEdges } = await lay(name);
+      const { coreEdges } = await lay(name, sizes);
       // Two routes that meet at a node converge on its boundary, so a shared stub
       // there is the drawing being correct rather than two edges merging.
       const meetAtANode = (a: Edge, b: Edge): boolean =>

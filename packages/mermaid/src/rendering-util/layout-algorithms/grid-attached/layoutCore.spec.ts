@@ -416,9 +416,14 @@ describe('grid-attached layout', () => {
     expect(ports.size).toBe(3);
   });
 
-  it('separates several trees hanging off the very same core node', () => {
-    // Six wide pendants on one node: the four sides of `A` cannot hold them, so
-    // the search has to use the corners and step them sideways past each other.
+  /**
+   * Six pendants on one node are six components of the pruned forest, so HOLA's
+   * decomposition returns six trees. Placing them separately means six independent
+   * decisions competing for the same wedges at the same node, each committing a
+   * footprint the next has to avoid; gathered into one tree they are laid out as one
+   * balanced fan and placed once.
+   */
+  it('gathers everything hanging off one core node into a single fanned-out tree', () => {
     const wide = (id: string): Node => node(id, { width: 260 });
     const pendants = ['k1', 'k2', 'k3', 'k4', 'k5', 'k6'];
     const data = layoutData(
@@ -429,25 +434,29 @@ describe('grid-attached layout', () => {
     const result = runGridAttachedLayoutCore(data);
     const trees = result.components[0].trees;
 
-    expect(trees).toHaveLength(6);
+    expect(trees).toHaveLength(1);
+    expect(trees[0].coreNodeId).toBe('A');
+    expect([...trees[0].nodeIds].sort()).toEqual(pendants);
     expect(trees.filter((tree) => tree.relaxed)).toEqual([]);
-    for (let i = 0; i < trees.length; i++) {
-      for (let j = i + 1; j < trees.length; j++) {
+
+    // And the six leaves are still drawn clear of each other.
+    const at = nodeById(data);
+    for (let i = 0; i < pendants.length; i++) {
+      for (let j = i + 1; j < pendants.length; j++) {
         expect(
-          overlaps(trees[i].footprint, trees[j].footprint),
-          `${trees[i].treeId} overlaps ${trees[j].treeId}`
+          overlaps(rectOf(at.get(pendants[i])!), rectOf(at.get(pendants[j])!)),
+          `${pendants[i]} overlaps ${pendants[j]}`
         ).toBe(false);
       }
     }
   });
 
   /**
-   * Leaf peeling can hang several trees off one core node, and each is placed on
-   * its own — so nothing but a shared fan stops all their connectors leaving
-   * through the same point on that node.
+   * Everything hanging off one core node is one tree, so its connectors are one fan
+   * and all leave the same side of that node. Each still needs its own attachment
+   * point, or they are drawn as one thick stem.
    */
-  it('gives every connector leaving one core node its own port, across trees', () => {
-    // `k1`, `k2` and `k3` are three separate trees, all attached to `A`.
+  it('gives every connector leaving one core node its own port', () => {
     const data = layoutData(
       ['A', 'B', 'C', 'k1', 'k2', 'k3'].map((id) => node(id)),
       [
@@ -461,7 +470,7 @@ describe('grid-attached layout', () => {
     );
 
     const result = runGridAttachedLayoutCore(data);
-    expect(result.components[0].trees).toHaveLength(3);
+    expect(result.components[0].trees).toHaveLength(1);
 
     const starts = ['A-k1', 'A-k2', 'A-k3'].map(
       (id) => data.edges.find((e) => e.id === id)!.points![0]

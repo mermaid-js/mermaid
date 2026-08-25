@@ -363,8 +363,13 @@ function evaluate(context: EvaluationContext, candidate: Candidate): Evaluated |
   // the quadrant is genuinely free, which is what makes a corner a real
   // alternative when the four sides of a node are already taken: the tree steps
   // sideways past whatever holds the side, instead of being slid outwards past it.
-  // Sideways is free — a corner connector is an L either way — so it is not
-  // charged as a stub.
+  //
+  // Every pixel of that step is charged, exactly like a slide. A corner connector is
+  // an L either way, so a *short* step really is free — but the step is a fixed
+  // point that keeps going while anything blocks, and left uncharged it once carried
+  // a leaf two thousand pixels clear of its own core node while still scoring a
+  // perfect nothing.
+  let sideways = 0;
   if (!isCardinal(candidate.placementDirection)) {
     const other = ordinalComponents(candidate.placementDirection as Ordinal).find(
       (component) => component !== candidate.growth
@@ -372,15 +377,17 @@ function evaluate(context: EvaluationContext, candidate: Candidate): Evaluated |
     if (other) {
       const corner = clearanceShift(other, root, placed.footprint, options.treeClearance);
       shift = { x: shift.x + corner.x, y: shift.y + corner.y };
+      sideways += Math.abs(corner.x) + Math.abs(corner.y);
       placed = draw() ?? placed;
 
-      const sideways = stepOf(other);
+      const step = stepOf(other);
       for (let pass = 0; pass < MAX_SLIDE_PASSES; pass++) {
         const push = requiredPush(context, placed.footprint, other);
         if (push <= EPSILON) {
           break;
         }
-        shift = { x: shift.x + sideways.x * push, y: shift.y + sideways.y * push };
+        sideways += push;
+        shift = { x: shift.x + step.x * push, y: shift.y + step.y * push };
         const moved = draw();
         if (!moved) {
           return null;
@@ -392,6 +399,7 @@ function evaluate(context: EvaluationContext, candidate: Candidate): Evaluated |
 
   // Slide outwards until the footprint is clear of everything. Each pass advances
   // strictly along one direction, so the loop settles.
+  //
   let slide = 0;
   let clear = false;
   for (let pass = 0; pass < MAX_SLIDE_PASSES; pass++) {
@@ -417,6 +425,11 @@ function evaluate(context: EvaluationContext, candidate: Candidate): Evaluated |
 
   const cost =
     slide +
+    // The corner step is connector too, so it competes on the same terms — but only
+    // here. It deliberately stays out of `slide`, which feeds the enlargement
+    // ladder: stretching the core is not what fixes a tree that had to go round a
+    // corner, and pricing it there made the ladder inflate the whole drawing.
+    sideways +
     options.compactnessWeight * outlineGrowth(context.drawn, placed.footprint) +
     (input.flowGrowth && candidate.growth !== input.flowGrowth ? options.flowPenalty : 0);
 

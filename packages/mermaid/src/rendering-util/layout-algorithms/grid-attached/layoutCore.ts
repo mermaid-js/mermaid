@@ -82,6 +82,7 @@ import { planariseRoutedCore } from './corePlanarisation.js';
 import type { GridAttachedOptions } from './options.js';
 import { resolveGridAttachedOptions } from './options.js';
 import { prepareGridAttachedLayout } from './prepareLayout.js';
+import { mergeTreesByRoot } from './treeGrouping.js';
 import { placeLabels } from './labelPlacement.js';
 import type { LabelObstacles, RouteSegment } from './labelPlacement.js';
 import { combLevelsNeeded, routeComponentTrees, routeTreeSelfLoop } from './treeConnectors.js';
@@ -221,8 +222,12 @@ function layoutComponent(
   }
 
   const drawing = drawCore(data, flat, componentId, decomposition.core, options);
-  const sources = new Map(decomposition.trees.map((tree) => [tree.id, tree]));
-  const placeable = decomposition.trees.map((tree) =>
+  // Everything hanging off one core node is one tree. HOLA's decomposition returns
+  // one per forest component, so a node with five pendant leaves would otherwise get
+  // five independent placements all competing for the same wedges.
+  const peeled = mergeTreesByRoot(decomposition.trees);
+  const sources = new Map(peeled.map((tree) => [tree.id, tree]));
+  const placeable = peeled.map((tree) =>
     drawTree(tree.id, tree.graph, tree.rootCopyId, tree.coreNodeId, flat.labels, options)
   );
 

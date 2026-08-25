@@ -269,6 +269,35 @@ flowchart TD
   D -- RNA Sequencing --> L
     </pre>
 
+    <h3>One tree per core node</h3>
+    <p class="note">
+      HOLA's decomposition returns one tree per component of the pruned forest, so a node with five
+      pendant leaves yields <em>five</em> trees. Placed separately they make five independent
+      decisions competing for the same wedges at the same node, each committing a footprint the next
+      has to avoid — and the later ones end up pushed a long way out, with connectors crossing the
+      drawing. Gathered into one tree they are laid out as one balanced fan and placed once. On
+      HOLA's own main example that took 97 trees down to 39 and edge crossings from 207 to 96.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TB
+  A --- B
+  B --- C
+  C --- D
+  D --- A
+  A --- A1
+  A --- A2
+  A --- A3
+  A --- A4
+  A --- A5
+  C --- C1
+  C --- C2
+  C --- C3
+    </pre>
+
     <h3>A tree on a busy core node — attaching beside what is already there</h3>
     <p class="note">
       <code>E</code> is where the two cycles meet, so it carries a core edge on each of its four
