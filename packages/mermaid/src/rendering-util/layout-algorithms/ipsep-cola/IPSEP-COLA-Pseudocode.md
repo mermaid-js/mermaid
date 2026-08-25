@@ -43,8 +43,24 @@ Each is documented at its call site; collected here for review.
 3. **Deterministic initial layout (§1).** Reference implementations randomise `INITIAL_LAYOUT`.
    Mermaid renders must be reproducible, so the starting point is a BFS ranking along the flow
    axis (`adapter/initialLayout.ts`).
-4. **Groups.** Subgraphs take no part in the constraint system; their frames are fitted around
-   the placed leaf nodes afterwards.
+4. **Subgraphs.** A group is not a point, so it cannot be a single variable. Each one gets two
+   per axis — the low and high edge of its frame — and everything a subgraph needs then falls
+   out of the solver's existing vocabulary: containment is
+   `frame.min + padding <= child` and `child + padding <= frame.max`, and keeping two
+   subgraphs apart is one separation between their frame variables. A zero-length spring
+   between a frame's two variables (added straight into `A`) is what makes it close back up
+   on its contents; without it a frame has an all-zero row in `A`, so only a constraint could
+   ever move it and it would grow to fit a child and never shrink again.
+
+   Two consequences worth naming. Non-overlap is generated **only between siblings** — that
+   is sufficient, because containment puts every node inside its frame, and it keeps the
+   system close to acyclic. And where the union of containment, flow and separation does
+   close a cycle, the cycle is broken at its cheapest constraint, so a flow constraint is
+   given up before a separation and containment never is (`removeCyclicConstraints`).
+
+   A subgraph with no leaf descendants is left out of the constraint system and keeps the
+   size it was measured with; an edge between a frame and its own child is dropped, since the
+   frame already contains it and ordering against it would fight containment.
 
 ---
 

@@ -60,15 +60,35 @@ export function idealDistances(
 }
 
 /**
+ * A zero-length spring between two variables, added straight into `A`.
+ *
+ * Used for the two boundary variables of a subgraph frame: pulling them
+ * together is what makes the frame close on its contents, while the containment
+ * constraints stop it collapsing past them. The result is a frame that tracks
+ * its children in both directions instead of only ever growing.
+ */
+export interface Spring {
+  a: number;
+  b: number;
+  weight: number;
+}
+
+/**
  * §1 BUILD_STRESS_MATRIX — the weighted Laplacian of the stress model.
  *
  * `A_ij = -w_ij` off the diagonal and `A_ii = Σ_{j≠i} w_ij`, so `A` depends
  * only on the target distances: it is built once and reused for both axes and
  * every majorisation iteration.
  */
-export function buildStressMatrix(distances: Matrix): Matrix {
+export function buildStressMatrix(
+  distances: Matrix,
+  variableCount = distances.length,
+  springs: readonly Spring[] = []
+): Matrix {
   const n = distances.length;
-  const A: Matrix = Array.from({ length: n }, () => new Array<number>(n).fill(0));
+  const A: Matrix = Array.from({ length: variableCount }, () =>
+    new Array<number>(variableCount).fill(0)
+  );
 
   for (let i = 0; i < n; i++) {
     let diagonal = 0;
@@ -81,6 +101,17 @@ export function buildStressMatrix(distances: Matrix): Matrix {
       diagonal += weight;
     }
     A[i][i] = diagonal;
+  }
+
+  // Springs occupy the rows the graph-distance model never reaches. Without one
+  // a variable has an all-zero row and an all-zero `b`, so the objective has no
+  // opinion about it at all and only a constraint can ever move it — which for a
+  // group frame means it grows to fit a child and then never shrinks again.
+  for (const spring of springs) {
+    A[spring.a][spring.a] += spring.weight;
+    A[spring.b][spring.b] += spring.weight;
+    A[spring.a][spring.b] -= spring.weight;
+    A[spring.b][spring.a] -= spring.weight;
   }
 
   return A;
@@ -107,10 +138,13 @@ export function buildStressMatrix(distances: Matrix): Matrix {
 export function buildMajorisationVector(
   distances: Matrix,
   positions: readonly Position[],
-  axis: Axis
+  axis: Axis,
+  variableCount = distances.length
 ): number[] {
   const n = distances.length;
-  const b = new Array<number>(n).fill(0);
+  // Variables past the graph-distance model (group frames) keep `b = 0`: their
+  // springs have a natural length of zero, so they contribute no target term.
+  const b = new Array<number>(variableCount).fill(0);
 
   for (let i = 0; i < n; i++) {
     let total = 0;

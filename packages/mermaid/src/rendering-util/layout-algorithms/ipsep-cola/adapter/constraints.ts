@@ -3,9 +3,27 @@ import type { Axis, Position } from '../solver/stress.js';
 import type { SeparationConstraint } from '../solver/types.js';
 import type { IpsepColaOptions } from '../options.js';
 import type { IpsepColaGraph } from './graph.js';
+import type { Entity, GroupEntry } from './groups.js';
+import { childrenOf, siblingSets } from './groups.js';
 
 export const X_AXIS: Axis = 0;
 export const Y_AXIS: Axis = 1;
+
+/**
+ * What a constraint is worth when the system turns out to be cyclic.
+ *
+ * Containment is structural — dropping it lets a node escape its subgraph — so
+ * it outranks everything. A flow constraint is the cheapest thing to give up:
+ * the edge is still drawn, it just stops dictating an order.
+ */
+export const PRIORITY_FLOW = 0;
+export const PRIORITY_SEPARATION = 1;
+export const PRIORITY_CONTAINMENT = 2;
+
+/** A constraint carrying what it costs to drop it. The solver ignores this field. */
+export interface PrioritisedConstraint extends SeparationConstraint {
+  priority: number;
+}
 
 /** Which axis the diagram flows along, and whether edges run along it or against it. */
 export interface FlowAxis {
@@ -29,72 +47,142 @@ export function resolveFlowAxis(direction: string | undefined): FlowAxis {
   }
 }
 
-/** Size of a variable along one axis. */
-function extent(graph: IpsepColaGraph, index: number, axis: Axis): number {
-  const variable = graph.variables[index];
-  return axis === X_AXIS ? variable.width : variable.height;
+// ---------------------------------------------------------------------------
+// Entity edges
+//
+// Every requirement below is "this edge of A must sit at least `gap` before
+// that edge of B". A leaf's edges are its centre variable displaced by half its
+// size; a group's edges *are* variables. Expressing both as a
+// (variable, offset) pair lets one function emit the constraint for any mix.
+// ---------------------------------------------------------------------------
+
+interface EdgeRef {
+  variable: number;
+  offset: number;
 }
 
-/** Centre-to-centre distance below which two boxes touch on `axis`. */
-function requiredSeparation(
+function halfExtent(graph: IpsepColaGraph, leaf: number, axis: Axis): number {
+  const variable = graph.variables[leaf];
+  return (axis === X_AXIS ? variable.width : variable.height) / 2;
+}
+
+function lowEdge(graph: IpsepColaGraph, entity: Entity, axis: Axis): EdgeRef {
+  return entity.kind === 'leaf'
+    ? { variable: entity.index, offset: -halfExtent(graph, entity.index, axis) }
+    : { variable: graph.groups.groups[entity.index].minIndex, offset: 0 };
+}
+
+function highEdge(graph: IpsepColaGraph, entity: Entity, axis: Axis): EdgeRef {
+  return entity.kind === 'leaf'
+    ? { variable: entity.index, offset: halfExtent(graph, entity.index, axis) }
+    : { variable: graph.groups.groups[entity.index].maxIndex, offset: 0 };
+}
+
+function edgeValue(positions: readonly Position[], ref: EdgeRef, axis: Axis): number {
+  return positions[ref.variable][axis] + ref.offset;
+}
+
+/** `before` ends at least `gap` before `after` starts, on `axis`. */
+function separate(
   graph: IpsepColaGraph,
-  i: number,
-  j: number,
+  before: Entity,
+  after: Entity,
   axis: Axis,
-  options: IpsepColaOptions
-): number {
-  return extent(graph, i, axis) / 2 + extent(graph, j, axis) / 2 + options.nodeSpacing;
+  gap: number,
+  priority: number
+): PrioritisedConstraint {
+  const from = highEdge(graph, before, axis);
+  const to = lowEdge(graph, after, axis);
+  return {
+    left: from.variable,
+    right: to.variable,
+    gap: from.offset + gap - to.offset,
+    priority,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Containment
+// ---------------------------------------------------------------------------
+
+/** Padding inside a group's frame on the low side of `axis`. */
+function lowPadding(group: GroupEntry, axis: Axis, options: IpsepColaOptions): number {
+  // The cluster title is drawn along the top of the frame, so on the vertical
+  // axis the low side has to clear it as well as the ordinary padding.
+  return options.groupPadding + (axis === Y_AXIS ? group.titleHeight : 0);
 }
 
 /**
- * Whether any pair of node boxes still overlaps.
+ * Keep every child inside its group's frame.
  *
- * Pairs in `skipPairs` are joined by a flow constraint whose gap already covers
- * their half-extents, so a satisfied constraint system keeps them clear.
+ * These are the constraints that make a subgraph a subgraph. They are static —
+ * they never depend on where anything currently is — so they are built once and
+ * reused for every iteration, and they carry the highest drop priority.
  */
-export function hasOverlaps(
+export function buildContainmentConstraints(
   graph: IpsepColaGraph,
-  positions: readonly Position[],
-  options: IpsepColaOptions,
-  skipPairs: ReadonlySet<string>
-): boolean {
-  const count = graph.variables.length;
-  for (let i = 0; i < count; i++) {
-    for (let j = i + 1; j < count; j++) {
-      if (skipPairs.has(pairKey(i, j))) {
-        continue;
-      }
-      const overlapX =
-        requiredSeparation(graph, i, j, X_AXIS, options) -
-        Math.abs(positions[i][X_AXIS] - positions[j][X_AXIS]);
-      const overlapY =
-        requiredSeparation(graph, i, j, Y_AXIS, options) -
-        Math.abs(positions[i][Y_AXIS] - positions[j][Y_AXIS]);
-      if (overlapX > 1e-6 && overlapY > 1e-6) {
-        return true;
-      }
+  axis: Axis,
+  options: IpsepColaOptions
+): PrioritisedConstraint[] {
+  const constraints: PrioritisedConstraint[] = [];
+
+  for (const group of graph.groups.groups) {
+    const padLow = lowPadding(group, axis, options);
+    const padHigh = options.groupPadding;
+
+    for (const child of childrenOf(group)) {
+      const low = lowEdge(graph, child, axis);
+      const high = highEdge(graph, child, axis);
+      // frame.min + padLow <= child.low
+      constraints.push({
+        left: group.minIndex,
+        right: low.variable,
+        gap: padLow - low.offset,
+        priority: PRIORITY_CONTAINMENT,
+      });
+      // child.high + padHigh <= frame.max
+      constraints.push({
+        left: high.variable,
+        right: group.maxIndex,
+        gap: high.offset + padHigh,
+        priority: PRIORITY_CONTAINMENT,
+      });
     }
+
+    // A frame never collapses below its own padding, which also keeps the two
+    // boundary variables strictly ordered for the tightening spring to pull on.
+    constraints.push({
+      left: group.minIndex,
+      right: group.maxIndex,
+      gap: padLow + padHigh,
+      priority: PRIORITY_CONTAINMENT,
+    });
   }
-  return false;
+
+  return constraints;
 }
+
+// ---------------------------------------------------------------------------
+// Flow
+// ---------------------------------------------------------------------------
 
 /**
  * Directed separation constraints along the flow axis, one per edge.
  *
- * The gap is the two half-extents plus `rankSpacing`, so a satisfied flow
- * constraint already guarantees the pair does not overlap on that axis — which
- * is why `buildNonOverlapConstraints` skips these pairs.
+ * The gap covers both endpoints' extents plus `rankSpacing`, so a satisfied
+ * flow constraint already keeps the pair apart on that axis — which is why
+ * `buildSeparationConstraints` skips these pairs.
  *
- * Cycles in the edge set would make the constraint system infeasible, so back
- * edges are dropped: the cycle still exists in the drawing, its edge simply
- * does not dictate an ordering.
+ * Cycles in the edge set would make the system infeasible, so back edges are
+ * dropped: the cycle still exists in the drawing, its edge simply does not
+ * dictate an ordering.
  */
 export function buildFlowConstraints(
   graph: IpsepColaGraph,
   flow: FlowAxis,
   options: IpsepColaOptions
-): { constraints: SeparationConstraint[]; constrainedPairs: Set<string> } {
-  const constraints: SeparationConstraint[] = [];
+): { constraints: PrioritisedConstraint[]; constrainedPairs: Set<string> } {
+  const constraints: PrioritisedConstraint[] = [];
   const constrainedPairs = new Set<string>();
 
   if (!options.respectDirection) {
@@ -103,65 +191,96 @@ export function buildFlowConstraints(
 
   for (const link of acyclicLinks(graph)) {
     const [low, high] = flow.forward ? [link.source, link.target] : [link.target, link.source];
-
-    constraints.push({
-      left: low,
-      right: high,
-      gap:
-        extent(graph, low, flow.axis) / 2 +
-        extent(graph, high, flow.axis) / 2 +
-        options.rankSpacing,
-    });
-    constrainedPairs.add(pairKey(link.source, link.target));
+    constraints.push(separate(graph, low, high, flow.axis, options.rankSpacing, PRIORITY_FLOW));
+    constrainedPairs.add(entityPairKey(link.source, link.target));
   }
 
   return { constraints, constrainedPairs };
 }
 
+// ---------------------------------------------------------------------------
+// Separation between siblings
+//
+// Non-overlap is only ever generated between entities that share a parent.
+// That is enough: containment puts every node inside its group's frame, so
+// separating the frames separates everything they hold. It is also what keeps
+// the system close to acyclic — siblings are ordered by their current position,
+// which is a total order, and containment is a forest.
+// ---------------------------------------------------------------------------
+
+interface Box {
+  low: number;
+  high: number;
+}
+
+function boxOf(
+  graph: IpsepColaGraph,
+  positions: readonly Position[],
+  entity: Entity,
+  axis: Axis
+): Box {
+  return {
+    low: edgeValue(positions, lowEdge(graph, entity, axis), axis),
+    high: edgeValue(positions, highEdge(graph, entity, axis), axis),
+  };
+}
+
+/** How deeply two boxes interpenetrate on one axis, including the spacing. */
+function penetration(a: Box, b: Box, spacing: number): number {
+  return Math.min(a.high + spacing - b.low, b.high + spacing - a.low);
+}
+
 /**
  * Non-overlap constraints for one axis, regenerated from the current layout.
  *
- * For every pair whose bounding boxes currently overlap on both axes, the pair
- * is separated along whichever axis needs the smaller correction — pushing on
- * the other one would move the nodes further than necessary. The constraint is
- * oriented by the pair's current order along the axis, which is what keeps a
- * freshly generated set free of cycles.
+ * A pair that currently overlaps on both axes is separated along whichever axis
+ * needs the smaller correction; pushing on the other would move things further
+ * than necessary. Orientation follows the pair's current order, which is what
+ * keeps a freshly generated set free of cycles.
  */
-export function buildNonOverlapConstraints(
+export function buildSeparationConstraints(
   graph: IpsepColaGraph,
   positions: readonly Position[],
   axis: Axis,
   options: IpsepColaOptions,
   skipPairs: ReadonlySet<string>
-): SeparationConstraint[] {
-  const constraints: SeparationConstraint[] = [];
-  const count = graph.variables.length;
+): PrioritisedConstraint[] {
+  const constraints: PrioritisedConstraint[] = [];
+  const spacing = options.nodeSpacing;
 
-  for (let i = 0; i < count; i++) {
-    for (let j = i + 1; j < count; j++) {
-      if (skipPairs.has(pairKey(i, j))) {
-        continue;
+  for (const siblings of siblingSets(graph.groups)) {
+    for (let i = 0; i < siblings.length; i++) {
+      for (let j = i + 1; j < siblings.length; j++) {
+        const a = siblings[i];
+        const b = siblings[j];
+        if (skipPairs.has(entityPairKey(a, b))) {
+          continue;
+        }
+
+        const overlapX = penetration(
+          boxOf(graph, positions, a, X_AXIS),
+          boxOf(graph, positions, b, X_AXIS),
+          spacing
+        );
+        const overlapY = penetration(
+          boxOf(graph, positions, a, Y_AXIS),
+          boxOf(graph, positions, b, Y_AXIS),
+          spacing
+        );
+        if (overlapX <= 0 || overlapY <= 0) {
+          continue;
+        }
+
+        const separateOnX = overlapX <= overlapY;
+        if ((axis === X_AXIS) !== separateOnX) {
+          continue;
+        }
+
+        const boxA = boxOf(graph, positions, a, axis);
+        const boxB = boxOf(graph, positions, b, axis);
+        const [before, after] = boxA.low <= boxB.low ? [a, b] : [b, a];
+        constraints.push(separate(graph, before, after, axis, spacing, PRIORITY_SEPARATION));
       }
-
-      const requiredX = requiredSeparation(graph, i, j, X_AXIS, options);
-      const requiredY = requiredSeparation(graph, i, j, Y_AXIS, options);
-
-      const overlapX = requiredX - Math.abs(positions[i][X_AXIS] - positions[j][X_AXIS]);
-      const overlapY = requiredY - Math.abs(positions[i][Y_AXIS] - positions[j][Y_AXIS]);
-      if (overlapX <= 0 || overlapY <= 0) {
-        continue;
-      }
-
-      // Separate along the cheaper axis only; the other pass sees the pair as
-      // already resolved.
-      const separateOnX = overlapX <= overlapY;
-      if ((axis === X_AXIS) !== separateOnX) {
-        continue;
-      }
-
-      const gap = axis === X_AXIS ? requiredX : requiredY;
-      const [low, high] = positions[i][axis] <= positions[j][axis] ? [i, j] : [j, i];
-      constraints.push({ left: low, right: high, gap });
     }
   }
 
@@ -169,50 +288,49 @@ export function buildNonOverlapConstraints(
 }
 
 /**
- * A constraint set whose projection removes **every** node overlap in one pass.
+ * A constraint set whose projection removes **every** overlap in one pass.
  *
- * `buildNonOverlapConstraints` only constrains pairs that overlap on both axes,
+ * `buildSeparationConstraints` only constrains pairs that overlap on both axes,
  * which is the right touch during majorisation but does not converge as a
- * repair: separating one pair along an axis shoves its neighbours into fresh
- * overlaps, and the next round plays the same game with different pairs.
+ * repair: separating one pair shoves its neighbours into fresh overlaps, and
+ * the next round plays the same game with different pairs.
  *
  * This is the standard construction instead (Dwyer, Marriott & Stuckey, *Fast
- * Node Overlap Removal*): constrain every pair that shares a band on the
- * **other** axis, whether or not it currently overlaps. Because the projection
- * moves `axis` only, the set of band-sharing pairs cannot change while it runs,
- * so afterwards each pair is either clear on the other axis or separated on
- * this one — no overlaps, guaranteed, with no iteration. Pairs that are already
- * far enough apart yield satisfied constraints, which cost the projection
- * nothing.
- *
- * Ordering each constraint by the pair's current position along `axis` makes
- * the set a total order, and therefore always feasible.
+ * Node Overlap Removal*): constrain every sibling pair that shares a band on
+ * the **other** axis, whether or not it currently overlaps. Because the
+ * projection moves `axis` only, the set of band-sharing pairs cannot change
+ * while it runs, so afterwards each pair is either clear on the other axis or
+ * separated on this one. Pairs already far enough apart yield satisfied
+ * constraints, which cost the projection nothing.
  */
 export function buildOverlapRemovalConstraints(
   graph: IpsepColaGraph,
   positions: readonly Position[],
   axis: Axis,
   options: IpsepColaOptions
-): SeparationConstraint[] {
+): PrioritisedConstraint[] {
   const otherAxis = axis === X_AXIS ? Y_AXIS : X_AXIS;
-  const constraints: SeparationConstraint[] = [];
-  const count = graph.variables.length;
+  const constraints: PrioritisedConstraint[] = [];
+  const spacing = options.nodeSpacing;
 
-  for (let i = 0; i < count; i++) {
-    for (let j = i + 1; j < count; j++) {
-      const bandOverlap =
-        requiredSeparation(graph, i, j, otherAxis, options) -
-        Math.abs(positions[i][otherAxis] - positions[j][otherAxis]);
-      if (bandOverlap <= 0) {
-        continue;
+  for (const siblings of siblingSets(graph.groups)) {
+    for (let i = 0; i < siblings.length; i++) {
+      for (let j = i + 1; j < siblings.length; j++) {
+        const a = siblings[i];
+        const b = siblings[j];
+        const band = penetration(
+          boxOf(graph, positions, a, otherAxis),
+          boxOf(graph, positions, b, otherAxis),
+          spacing
+        );
+        if (band <= 0) {
+          continue;
+        }
+        const boxA = boxOf(graph, positions, a, axis);
+        const boxB = boxOf(graph, positions, b, axis);
+        const [before, after] = boxA.low <= boxB.low ? [a, b] : [b, a];
+        constraints.push(separate(graph, before, after, axis, spacing, PRIORITY_SEPARATION));
       }
-
-      const [low, high] = positions[i][axis] <= positions[j][axis] ? [i, j] : [j, i];
-      constraints.push({
-        left: low,
-        right: high,
-        gap: requiredSeparation(graph, i, j, axis, options),
-      });
     }
   }
 
@@ -220,122 +338,214 @@ export function buildOverlapRemovalConstraints(
 }
 
 /**
- * Drop constraints that close a cycle in the `left → right` digraph.
+ * Whether any two leaf boxes still overlap.
+ *
+ * Deliberately checked over *all* leaf pairs rather than siblings only: with
+ * containment satisfied the two are equivalent, so a difference means
+ * containment itself was not met, and that is worth catching.
+ */
+export function hasOverlaps(
+  graph: IpsepColaGraph,
+  positions: readonly Position[],
+  options: IpsepColaOptions,
+  skipPairs: ReadonlySet<string>
+): boolean {
+  const spacing = options.nodeSpacing;
+  const count = graph.variables.length;
+
+  for (let i = 0; i < count; i++) {
+    for (let j = i + 1; j < count; j++) {
+      const a: Entity = { kind: 'leaf', index: i };
+      const b: Entity = { kind: 'leaf', index: j };
+      if (skipPairs.has(entityPairKey(a, b))) {
+        continue;
+      }
+      const overlapX = penetration(
+        boxOf(graph, positions, a, X_AXIS),
+        boxOf(graph, positions, b, X_AXIS),
+        spacing
+      );
+      const overlapY = penetration(
+        boxOf(graph, positions, a, Y_AXIS),
+        boxOf(graph, positions, b, Y_AXIS),
+        spacing
+      );
+      if (overlapX > 1e-6 && overlapY > 1e-6) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Feasibility
+// ---------------------------------------------------------------------------
+
+/**
+ * Drop constraints until the `left → right` digraph is acyclic.
  *
  * A cyclic separation system has no feasible point, and PROJECT (§4) would keep
- * repairing constraints that break each other. Flow constraints alone are made
- * acyclic upstream and non-overlap constraints agree with the current ordering,
- * but the union of the two can still close a cycle once a flow constraint is
- * violated at the current layout. Dropping the closing edge is the cheapest way
- * to guarantee feasibility, and it self-heals: the next iteration regenerates
- * the non-overlap set from the repaired layout.
+ * repairing constraints that break each other. Containment is a forest and a
+ * freshly generated separation set follows the current ordering, but their
+ * union with the flow constraints can still close a cycle — a node ordered
+ * *below* another by an edge while their two subgraph frames are stacked the
+ * other way round, for instance.
+ *
+ * Each cycle is broken at its cheapest constraint, so a flow constraint goes
+ * before a separation and containment is never what gives way. Cycles are rare,
+ * so the repeated scan costs nothing in practice.
  */
 export function removeCyclicConstraints(
-  constraints: readonly SeparationConstraint[],
+  constraints: readonly PrioritisedConstraint[],
   variableCount: number
-): SeparationConstraint[] {
-  const outgoing: number[][] = Array.from({ length: variableCount }, () => []);
-  const constraintsByIndex: SeparationConstraint[][] = Array.from(
-    { length: variableCount },
-    () => []
-  );
+): PrioritisedConstraint[] {
+  let remaining = [...constraints];
+  let dropped = 0;
+
+  for (;;) {
+    const cycle = findCycle(remaining, variableCount);
+    if (!cycle) {
+      break;
+    }
+    let weakest = cycle[0];
+    for (const constraint of cycle) {
+      if (constraint.priority <= weakest.priority) {
+        weakest = constraint;
+      }
+    }
+    remaining = remaining.filter((constraint) => constraint !== weakest);
+    dropped++;
+  }
+
+  if (dropped > 0) {
+    log.debug(`IPSEP-COLA: dropped ${dropped} cyclic separation constraint(s)`);
+  }
+  return remaining;
+}
+
+/** One cycle in the constraint digraph, as the constraints along it. */
+function findCycle(
+  constraints: readonly PrioritisedConstraint[],
+  variableCount: number
+): PrioritisedConstraint[] | undefined {
+  const outgoing: PrioritisedConstraint[][] = Array.from({ length: variableCount }, () => []);
   for (const constraint of constraints) {
-    outgoing[constraint.left].push(constraint.right);
-    constraintsByIndex[constraint.left].push(constraint);
+    outgoing[constraint.left].push(constraint);
   }
 
   const UNVISITED = 0;
   const ON_STACK = 1;
   const DONE = 2;
   const state = new Array<number>(variableCount).fill(UNVISITED);
-  const dropped = new Set<SeparationConstraint>();
 
   for (let root = 0; root < variableCount; root++) {
     if (state[root] !== UNVISITED) {
       continue;
     }
-    // Iterative DFS: graphs are small, but a recursive walk would still be a
-    // stack-depth hazard on a long chain.
-    const stack: { node: number; edge: number }[] = [{ node: root, edge: 0 }];
+    // Iterative DFS; `via` is the constraint that entered this frame's node, so
+    // the stack doubles as the current path.
+    const stack: { node: number; next: number; via?: PrioritisedConstraint }[] = [
+      { node: root, next: 0 },
+    ];
     state[root] = ON_STACK;
 
     while (stack.length > 0) {
       const frame = stack[stack.length - 1];
-      if (frame.edge >= outgoing[frame.node].length) {
+      if (frame.next >= outgoing[frame.node].length) {
         state[frame.node] = DONE;
         stack.pop();
         continue;
       }
 
-      const edgeIndex = frame.edge++;
-      const constraint = constraintsByIndex[frame.node][edgeIndex];
-      if (dropped.has(constraint)) {
-        continue;
-      }
-      const next = outgoing[frame.node][edgeIndex];
+      const constraint = outgoing[frame.node][frame.next++];
+      const next = constraint.right;
 
       if (state[next] === ON_STACK) {
-        dropped.add(constraint);
-      } else if (state[next] === UNVISITED) {
+        const start = stack.findIndex((entry) => entry.node === next);
+        const path = stack
+          .slice(start + 1)
+          .map((entry) => entry.via)
+          .filter((via): via is PrioritisedConstraint => via !== undefined);
+        return [...path, constraint];
+      }
+      if (state[next] === UNVISITED) {
         state[next] = ON_STACK;
-        stack.push({ node: next, edge: 0 });
+        stack.push({ node: next, next: 0, via: constraint });
       }
     }
   }
 
-  if (dropped.size > 0) {
-    log.debug(`IPSEP-COLA: dropped ${dropped.size} cyclic separation constraint(s)`);
-  }
-
-  return constraints.filter((constraint) => !dropped.has(constraint));
+  return undefined;
 }
 
+/**
+ * Key for a pair of leaf variables.
+ *
+ * Kept in its numeric form because the `grid-like` layout builds on this
+ * adapter and keys its own skip sets the same way; {@link entityPairKey} agrees
+ * with it exactly for two leaves.
+ */
 export function pairKey(a: number, b: number): string {
   return a < b ? `${a}|${b}` : `${b}|${a}`;
+}
+
+export function entityPairKey(a: Entity, b: Entity): string {
+  if (a.kind === 'leaf' && b.kind === 'leaf') {
+    return pairKey(a.index, b.index);
+  }
+  const left = `${a.kind}:${a.index}`;
+  const right = `${b.kind}:${b.index}`;
+  return left < right ? `${left}|${right}` : `${right}|${left}`;
 }
 
 /**
  * The link set with cycles broken, as a DFS spanning structure minus its back
  * edges. Deterministic: links are visited in `data4Layout.edges` order.
  */
-function acyclicLinks(graph: IpsepColaGraph): { source: number; target: number }[] {
-  const outgoing: number[][] = graph.variables.map(() => []);
-  for (const [index, link] of graph.links.entries()) {
-    outgoing[link.source].push(index);
+function acyclicLinks(graph: IpsepColaGraph): { source: Entity; target: Entity }[] {
+  const linkList = graph.entityLinks;
+  const nodeCount = graph.variableCount;
+  const keyOf = (entity: Entity): number =>
+    entity.kind === 'leaf' ? entity.index : graph.groups.groups[entity.index].minIndex;
+
+  const outgoing: number[][] = Array.from({ length: nodeCount }, () => []);
+  for (const [index, link] of linkList.entries()) {
+    outgoing[keyOf(link.source)].push(index);
   }
 
   const UNVISITED = 0;
   const ON_STACK = 1;
   const DONE = 2;
-  const state = new Array<number>(graph.variables.length).fill(UNVISITED);
-  const isBackEdge = new Array<boolean>(graph.links.length).fill(false);
+  const state = new Array<number>(nodeCount).fill(UNVISITED);
+  const isBackEdge = new Array<boolean>(linkList.length).fill(false);
 
-  for (let root = 0; root < graph.variables.length; root++) {
+  for (let root = 0; root < nodeCount; root++) {
     if (state[root] !== UNVISITED) {
       continue;
     }
-    const stack: { node: number; edge: number }[] = [{ node: root, edge: 0 }];
+    const stack: { node: number; next: number }[] = [{ node: root, next: 0 }];
     state[root] = ON_STACK;
 
     while (stack.length > 0) {
       const frame = stack[stack.length - 1];
-      if (frame.edge >= outgoing[frame.node].length) {
+      if (frame.next >= outgoing[frame.node].length) {
         state[frame.node] = DONE;
         stack.pop();
         continue;
       }
 
-      const linkIndex = outgoing[frame.node][frame.edge++];
-      const next = graph.links[linkIndex].target;
+      const linkIndex = outgoing[frame.node][frame.next++];
+      const next = keyOf(linkList[linkIndex].target);
 
       if (state[next] === ON_STACK) {
         isBackEdge[linkIndex] = true;
       } else if (state[next] === UNVISITED) {
         state[next] = ON_STACK;
-        stack.push({ node: next, edge: 0 });
+        stack.push({ node: next, next: 0 });
       }
     }
   }
 
-  return graph.links.filter((_, index) => !isBackEdge[index]);
+  return linkList.filter((_, index) => !isBackEdge[index]);
 }

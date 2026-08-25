@@ -3,7 +3,7 @@ import { BlockState } from './blocks.js';
 import type { Matrix } from './linalg.js';
 import type { QpscOptions } from './qpsc.js';
 import { solveQpsc } from './qpsc.js';
-import type { Axis, Position } from './stress.js';
+import type { Axis, Position, Spring } from './stress.js';
 import { buildMajorisationVector, buildStressMatrix, stress } from './stress.js';
 import type { SeparationConstraint } from './types.js';
 
@@ -20,8 +20,17 @@ export interface IpsepColaOptions {
 export interface IpsepColaProblem {
   /** INITIAL_LAYOUT(G) — mutated in place and returned. */
   positions: Position[];
-  /** Target distance `d_ij` for every pair. */
+  /**
+   * Target distance `d_ij` for every pair of graph nodes.
+   *
+   * This may cover fewer variables than `positions` holds: subgraph frames add
+   * two boundary variables each, and a frame is not a point, so it has no graph
+   * distances. Those variables sit past the end of the matrix and are driven by
+   * their springs and constraints instead.
+   */
   distances: Matrix;
+  /** Zero-length springs added straight into `A`; see {@link Spring}. */
+  springs?: readonly Spring[];
   /**
    * §1 CONSTRAINTS_FOR_AXIS — the separation constraints for one axis at the
    * current layout. Called once per axis per outer iteration.
@@ -65,7 +74,7 @@ export function ipsepCola(problem: IpsepColaProblem, options: IpsepColaOptions):
     return { positions, iterations: 0, stress: 0 };
   }
 
-  const A = buildStressMatrix(distances);
+  const A = buildStressMatrix(distances, variableCount, problem.springs ?? []);
 
   // §11 INITIALIZE_QPSC_STATE — one block per variable, per axis.
   const states: BlockState[] = AXES.map(
@@ -77,7 +86,7 @@ export function ipsepCola(problem: IpsepColaProblem, options: IpsepColaOptions):
 
   for (; iterations < options.maxIterations; iterations++) {
     for (const axis of AXES) {
-      const b = buildMajorisationVector(distances, positions, axis);
+      const b = buildMajorisationVector(distances, positions, axis, variableCount);
       const C = problem.constraintsForAxis(axis, positions);
 
       const x = positions.map((position) => position[axis]);

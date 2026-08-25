@@ -26,6 +26,15 @@ export interface IpsepColaOptions {
   margin: number;
   /** Padding between a group's frame and its children's bounding box. */
   groupPadding: number;
+  /**
+   * Pull on a subgraph frame's two boundary variables, as a multiple of the
+   * stress weight of a one-hop pair.
+   *
+   * The frame's containment constraints stop it shrinking past its contents, so
+   * this only has to be non-zero: it is what makes the frame close back up when
+   * a child moves inwards, rather than keeping the widest box it ever needed.
+   */
+  frameTightness: number;
 }
 
 export const DEFAULT_IPSEP_COLA_OPTIONS: IpsepColaOptions = {
@@ -39,6 +48,7 @@ export const DEFAULT_IPSEP_COLA_OPTIONS: IpsepColaOptions = {
   respectDirection: true,
   margin: 8,
   groupPadding: 12,
+  frameTightness: 1,
 };
 
 /**
