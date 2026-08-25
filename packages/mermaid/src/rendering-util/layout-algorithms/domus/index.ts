@@ -31,6 +31,7 @@ import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
 import { checkLayout } from './validateLayoutProxy.js';
 import { widenEndpointApproachBands } from './pipeline/endpointBandWidening.js';
+import { escapeCornerConnections } from './pipeline/cornerEscapeRepair.js';
 import { preprocessClusters } from './cluster.js';
 import { compactGroupSlack } from './pipeline/groupSlackCompaction.js';
 import { nodeGroupClearanceOf } from '../layout-utils/validateLayout.js';
@@ -582,6 +583,11 @@ export function runLateQualityPasses(
     // runs once per tournament variant — paying that per variant measured
     // +100M work units, most of the 113.3% of ceiling this pass first cost.
     widenEndpointApproachBands(data4Layout);
+
+    // Slide any endpoint sitting on a node corner onto a free slot on the side
+    // the edge actually uses. Winner-only for the same reason as the two passes
+    // above: it opens with a full `checkLayout` to find its candidates.
+    escapeCornerConnections(data4Layout);
   }
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
