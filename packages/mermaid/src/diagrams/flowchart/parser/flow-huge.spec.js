@@ -25,5 +25,30 @@ describe('[Text] when parsing', () => {
       expect(edges.length).toBe(47917);
       expect(vert.size).toBe(2);
     });
+
+    it('should handle a long run of whitespace', function () {
+      // The lexer used to emit one SPACE token per whitespace character, which made
+      // parsing quadratic in the length of the run: 24 KiB of them took over 5 seconds.
+      const run = ' \t'.repeat(12_000);
+      const text = `graph LR;A-->B;\n${run}`;
+
+      // The invariant behind the fix: the whole run reaches the parser as a single
+      // SPACE token instead of one per character. The lexer gets its own FlowDB
+      // because the `graph` rules consume `yy.firstGraph()`.
+      const { lexer, symbols_ } = flow.parser;
+      lexer.setInput(text, new FlowDB());
+      const spaces = [];
+      for (let token = lexer.lex(); token !== symbols_.EOF; token = lexer.lex()) {
+        if (token === symbols_.SPACE) {
+          spaces.push(lexer.yytext);
+        }
+      }
+      expect(spaces).toEqual([run]);
+
+      flow.parser.parse(text);
+
+      expect(flow.parser.yy.getEdges().length).toBe(1);
+      expect(flow.parser.yy.getVertices().size).toBe(2);
+    });
   });
 });
