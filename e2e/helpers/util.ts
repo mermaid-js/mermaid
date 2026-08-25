@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { basename, dirname, join, relative, sep } from 'node:path';
+import { dirname, join, relative, sep } from 'node:path';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { Buffer } from 'buffer';
 import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
+import { applitoolsBatch, applitoolsTestName } from './applitools.ts';
 import { buildCaptureMetadata, writeArgosMetadataSidecar } from './argos-metadata.ts';
 import { collectCoverage, startCoverage } from './coverage.js';
 
@@ -33,12 +34,6 @@ interface CodeObject {
 export const utf8ToB64 = (str: string): string => {
   return Buffer.from(decodeURIComponent(encodeURIComponent(str))).toString('base64');
 };
-
-const batchId: string =
-  'mermaid-batch-' +
-  (process.env.USE_APPLI
-    ? Date.now().toString()
-    : (process.env.PLAYWRIGHT_COMMIT ?? Date.now().toString()));
 
 /** Keep screenshot names within filesystem limits (ENAMETOOLONG on long test titles). */
 const shortenScreenshotName = (name: string, maxLen = 180): string => {
@@ -226,21 +221,32 @@ export const verifyScreenshot = async (
   const svg = diagramSvg(page).first();
   const hasSvg = (await svg.count()) > 0;
   const target = hasSvg ? svg : page;
+  // Spec path relative to the e2e dir (e.g. rendering/flowchart/flowchart.spec.js);
+  // the grouping unit for both Applitools batches and Argos sheets.
+  const specRelPath = relative(testInfo.project.testDir, testInfo.file).split(sep).join('/');
 
   if (useAppli) {
-    // Mirrors the Cypress eyes integration: one Applitools batch per spec file,
-    // a check per screenshot scoped to the diagram SVG (full window when there
-    // is none). API key, branch, and parent branch are read from the APPLITOOLS_*
+    // One Applitools batch per diagram folder (mmd fixtures) or spec file, a
+    // check per screenshot scoped to the diagram SVG (full window when there is
+    // none). API key, branch, and parent branch are read from the APPLITOOLS_*
     // env vars by the SDK. Imported lazily so the SDK is only loaded for
     // Applitools runs, not for Argos/local snapshot runs.
     const { Eyes, ClassicRunner, Target } = await import('@applitools/eyes-playwright');
-    const specName = basename(testInfo.file);
+    // Shared by every worker: CI passes a per-dispatch id, otherwise
+    // playwright.config.ts seeds it once in the runner process before forking
+    // workers. A per-worker seed here would split each batch per worker.
+    const runId = process.env.APPLITOOLS_BATCH_ID;
+    if (!runId) {
+      throw new Error(
+        'APPLITOOLS_BATCH_ID is unset; playwright.config.ts should seed it for USE_APPLI runs'
+      );
+    }
     const eyes = new Eyes(new ClassicRunner());
     eyes.setConfiguration({
       appName: 'Mermaid',
-      batch: { id: batchId + specName, name: specName },
+      batch: applitoolsBatch(runId, specRelPath, screenshotPath),
     });
-    await eyes.open(page, 'Mermaid', name);
+    await eyes.open(page, 'Mermaid', applitoolsTestName(name, specRelPath, screenshotPath));
     await eyes.check(
       'Click!',
       hasSvg ? Target.region('svg[aria-roledescription]') : Target.window().fully()
@@ -266,7 +272,6 @@ export const verifyScreenshot = async (
       // GitHub artifacts reject (" : < > | * ?) or path separators; flatten it to
       // a safe slug. The spec folder lives in specRelPath, which the batch job
       // groups by, so the filename only needs to be unique within the spec.
-      const specRelPath = relative(testInfo.project.testDir, testInfo.file).split(sep).join('/');
       outPath = join(screenshotDir, specRelPath, `${sanitizeSegment(name)}.png`);
     }
     mkdirSync(dirname(outPath), { recursive: true });

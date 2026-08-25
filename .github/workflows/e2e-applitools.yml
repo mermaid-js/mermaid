@@ -49,7 +49,10 @@ jobs:
         env:
           MERMAID_PORT: 9000
           APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-          APPLITOOLS_BATCH_ID: ${{ github.sha }}
+          # Per-dispatch seed for the per-folder/spec batch ids (see
+          # e2e/helpers/applitools.ts). Includes run_id so re-dispatching on the
+          # same commit gets fresh batches instead of joining the previous ones.
+          APPLITOOLS_BATCH_ID: ${{ github.sha }}-${{ github.run_id }}
           # e.g. mermaid-js/mermaid/my-branch
           APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
           APPLITOOLS_PARENT_BRANCH: ${{ github.event.inputs.parent_branch }}
