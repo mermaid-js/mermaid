@@ -1,5 +1,11 @@
 # mermaid
 
+## 11.17.2
+
+### Patch Changes
+
+- [#8125](https://github.com/mermaid-js/mermaid/pull/8125) [`178d7c7`](https://github.com/mermaid-js/mermaid/commit/178d7c79fcbafcf0662b822ec34ed989372ee5c2) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: restore the `edgePaths` class on the edge group in rendered SVG, and point the flowchart, block and user journey stylesheets at it
+
 ## 11.17.1
 
 ### Patch Changes
