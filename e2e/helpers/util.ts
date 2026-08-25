@@ -221,20 +221,14 @@ export const verifyScreenshot = async (
   const svg = diagramSvg(page).first();
   const hasSvg = (await svg.count()) > 0;
   const target = hasSvg ? svg : page;
-  // Spec path relative to the e2e dir (e.g. rendering/flowchart/flowchart.spec.js);
-  // the grouping unit for both Applitools batches and Argos sheets.
   const specRelPath = relative(testInfo.project.testDir, testInfo.file).split(sep).join('/');
 
   if (useAppli) {
-    // One Applitools batch per diagram folder (mmd fixtures) or spec file, a
-    // check per screenshot scoped to the diagram SVG (full window when there is
-    // none). API key, branch, and parent branch are read from the APPLITOOLS_*
-    // env vars by the SDK. Imported lazily so the SDK is only loaded for
-    // Applitools runs, not for Argos/local snapshot runs.
+    // One Applitools batch per diagram folder or spec file, a check per screenshot
+    // scoped to the diagram SVG (full window when there is none). API key, branch,
+    // and parent branch are read from the APPLITOOLS_* env vars by the SDK.
+    // Imported lazily so the SDK is only loaded for Applitools runs.
     const { Eyes, ClassicRunner, Target } = await import('@applitools/eyes-playwright');
-    // Shared by every worker: CI passes a per-dispatch id, otherwise
-    // playwright.config.ts seeds it once in the runner process before forking
-    // workers. A per-worker seed here would split each batch per worker.
     const runId = process.env.APPLITOOLS_BATCH_ID;
     if (!runId) {
       throw new Error(
