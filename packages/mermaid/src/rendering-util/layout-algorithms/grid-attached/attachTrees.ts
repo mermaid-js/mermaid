@@ -140,6 +140,8 @@ export interface AttachInput {
   coreSegments: CoreSegment[];
   /** Faces of the core drawing. Absent when it could not be embedded. */
   planar?: PlanarisedCore;
+  /** Where the core's own edges attach, so a trial connector starts where the real one will. */
+  reservedPorts?: Map<string, number[]>;
   trees: AttachableTree[];
   /** The decomposed trees, by tree id, for connector routing. */
   sources: Map<string, DecomposedTree>;
@@ -488,7 +490,8 @@ function countConnectorViolations(
     rootRect,
     growth,
     input.options,
-    rankGapFor(tree, growth, input.options)
+    rankGapFor(tree, growth, input.options),
+    input.reservedPorts
   ).filter((connector) => connector.fromRoot);
 
   let violations = 0;

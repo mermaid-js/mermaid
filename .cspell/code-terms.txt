@@ -138,6 +138,7 @@ Mstartx
 MULT
 multiset
 Mutzel
+mzoom
 Naur
 NODIR
 nonterminal
@@ -248,4 +249,5 @@ yaxis
 yfunc
 yytext
 zenuml
+zoomable
 zshape

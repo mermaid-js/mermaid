@@ -291,7 +291,7 @@ function layoutComponent(
 
   // Connectors are routed once, for the whole component: two of the three ways two
   // of them end up drawn as one line are collisions *between* trees.
-  const connected = writeConnectors(flat, routeRequests, options);
+  const connected = writeConnectors(flat, routeRequests, options, drawing.ports);
   edges.push(...connected.edges);
   labelRequests.push(...connected.labelRequests);
 
@@ -559,6 +559,7 @@ function climbEnlargementLadder(
       coreRects: rects,
       coreSegments: coreSegments(drawing, core),
       planar: planariseRoutedCore(rects, routedCoreEdges(drawing, core)),
+      reservedPorts: drawing.ports,
       trees,
       sources,
       flowGrowth,
@@ -762,12 +763,14 @@ interface WrittenConnectors {
 function writeConnectors(
   flat: FlattenResult,
   requests: TreeRouteRequest[],
-  options: GridAttachedOptions
+  options: GridAttachedOptions,
+  /** Where the core's own edges attach; a tree connector must not land on one. */
+  reserved?: Map<string, number[]>
 ): WrittenConnectors {
   const edges: Edge[] = [];
   const labelRequests: WrittenConnectors['labelRequests'] = [];
 
-  for (const connector of routeComponentTrees(requests, options)) {
+  for (const connector of routeComponentTrees(requests, options, reserved)) {
     const edge = flat.originalEdges.get(connector.originalEdgeId);
     if (!edge) {
       continue;

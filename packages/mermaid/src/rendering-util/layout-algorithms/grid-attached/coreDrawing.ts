@@ -42,11 +42,11 @@ import { buildPartLayoutData } from '../grid-decomposed/parts.js';
 import type { DecomposedPart } from '../grid-decomposed/parts.js';
 import type { FlattenResult } from '../hola-faithful/adapter/flattenFlowchart.js';
 import type { DiagnosticCollector } from '../hola-faithful/diagnostics.js';
-import type { Bounds, HolaEdge, HolaGraph, HolaNode } from '../hola-faithful/model.js';
+import type { Bounds, HolaEdge, HolaGraph, HolaNode, Side } from '../hola-faithful/model.js';
 import { nodeBounds, unionBounds } from '../hola-faithful/model.js';
 import { resolveOptions as resolveHolaOptions } from '../hola-faithful/options.js';
 import { routeFinalEdges } from '../hola-faithful/routing/finalRouting.js';
-import type { FinalEdge } from '../hola-faithful/routing/finalRouting.js';
+import type { FinalEdge, RoutedFinalEdge } from '../hola-faithful/routing/finalRouting.js';
 import { drawBestCore } from './coreCandidates.js';
 import type { GridAttachedOptions } from './options.js';
 
@@ -66,6 +66,16 @@ export interface CoreDrawing {
   centre: Point;
   /** Orthogonal routes at the current scale, by original Mermaid edge id. */
   routes: Map<string, Point[]>;
+  /**
+   * Where the core's own edges attach, as offsets along a side, keyed
+   * `nodeId|side`.
+   *
+   * A tree hangs off a core node whose sides are already in use, and this layout
+   * may not move a core edge — so the tree's connectors have to be told what is
+   * taken. Without it a lone tree connector and a lone core edge both sit at the
+   * centre of the same side and are drawn on top of each other.
+   */
+  ports: Map<string, number[]>;
   /** Edges the router could not route; drawn as a straight endpoint pair. */
   unroutedEdgeIds: string[];
 }
@@ -111,6 +121,7 @@ export function drawCore(
     base,
     centre: { x: (bounds.minX + bounds.maxX) / 2, y: (bounds.minY + bounds.maxY) / 2 },
     routes: new Map(),
+    ports: new Map(),
     unroutedEdgeIds: [],
   };
 }
@@ -220,6 +231,73 @@ export function routeCoreEdges(
 
   drawing.routes = new Map(routed.edges.map((edge) => [edge.originalEdgeId, edge.points]));
   drawing.unroutedEdgeIds = routed.failed;
+  drawing.ports = collectPorts(routed.edges, rects);
+}
+
+/**
+ * Which offsets along which sides the core's edges occupy.
+ *
+ * The router reports the side it chose for each end, so the offset is exact even
+ * where the port was pulled inwards onto a non-rectangular shape. A self-loop is
+ * reported without sides — both of its feet sit on one side of the box — so its
+ * side is read back from the geometry.
+ */
+function collectPorts(
+  edges: RoutedFinalEdge[],
+  rects: Map<string, HolaNode>
+): Map<string, number[]> {
+  const ports = new Map<string, number[]>();
+  const add = (nodeId: string, side: Side, point: Point): void => {
+    const rect = rects.get(nodeId);
+    if (!rect) {
+      return;
+    }
+    const offset = side === 'top' || side === 'bottom' ? point.x - rect.x : point.y - rect.y;
+    const key = `${nodeId}|${side}`;
+    const list = ports.get(key);
+    if (list) {
+      list.push(offset);
+    } else {
+      ports.set(key, [offset]);
+    }
+  };
+
+  for (const edge of edges) {
+    const points = edge.points;
+    if (points.length < 2) {
+      continue;
+    }
+    if (edge.isSelfLoop) {
+      const side = sideNearest(rects.get(edge.source), points[0]);
+      if (side) {
+        add(edge.source, side, points[0]);
+        add(edge.source, side, points[points.length - 1]);
+      }
+      continue;
+    }
+    if (edge.sourceSide) {
+      add(edge.source, edge.sourceSide, points[0]);
+    }
+    if (edge.targetSide) {
+      add(edge.target, edge.targetSide, points[points.length - 1]);
+    }
+  }
+
+  return ports;
+}
+
+/** The side of the box a point sits closest to. */
+function sideNearest(rect: HolaNode | undefined, point: Point): Side | undefined {
+  if (!rect) {
+    return undefined;
+  }
+  const gaps: [Side, number][] = [
+    ['top', Math.abs(point.y - (rect.y - rect.height / 2))],
+    ['bottom', Math.abs(point.y - (rect.y + rect.height / 2))],
+    ['left', Math.abs(point.x - (rect.x - rect.width / 2))],
+    ['right', Math.abs(point.x - (rect.x + rect.width / 2))],
+  ];
+  return gaps.sort((a, b) => a[1] - b[1])[0][0];
 }
 
 /** The core nodes as HOLA rectangles at their current positions. */

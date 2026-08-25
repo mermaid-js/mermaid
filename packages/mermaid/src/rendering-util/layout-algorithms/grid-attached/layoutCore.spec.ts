@@ -779,6 +779,81 @@ describe('grid-attached layout', () => {
     expect(offCentrePorts).toBeGreaterThan(0);
   });
 
+  /**
+   * A core node's sides are already in use by the core's own edges, and this layout
+   * may not move those. So a tree hanging off it has to attach *beside* them — and
+   * the awkward case is a lone connector, which otherwise keeps the centre of its
+   * side and lands exactly where a lone core edge already is.
+   *
+   * This is HOLA's paper graph 5: two cycles meeting at `E`, so `E` carries a core
+   * edge on each of its four sides, and one tree hanging off it.
+   */
+  it('attaches a tree beside the core edges already on that side, not on top of them', () => {
+    const data = layoutData(
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N', 'O'].map((id) => node(id)),
+      [
+        edge('A', 'C'),
+        edge('B', 'C'),
+        edge('C', 'D'),
+        edge('D', 'E'),
+        edge('E', 'F'),
+        edge('F', 'G'),
+        edge('G', 'H'),
+        edge('H', 'E'),
+        edge('E', 'I'),
+        edge('I', 'L'),
+        edge('L', 'M'),
+        edge('M', 'N'),
+        edge('N', 'O'),
+        edge('O', 'E'),
+      ]
+    );
+
+    const result = runGridAttachedLayoutCore(data);
+    const coreIds = new Set(result.components.flatMap((component) => component.coreNodeIds));
+    // `E` is in the core with a tree hanging off it — the situation under test.
+    expect(coreIds.has('E')).toBe(true);
+    expect(coreIds.has('D')).toBe(false);
+
+    const ends = new Map<string, { edgeId: string; core: boolean; point: Point }[]>();
+    for (const e of data.edges) {
+      const points = e.points ?? [];
+      if (points.length < 2) {
+        continue;
+      }
+      const core = coreIds.has(e.start!) && coreIds.has(e.end!);
+      for (const [id, point] of [
+        [e.start, points[0]],
+        [e.end, points[points.length - 1]],
+      ] as const) {
+        const list = ends.get(id!) ?? [];
+        list.push({ edgeId: e.id, core, point });
+        ends.set(id!, list);
+      }
+    }
+
+    let treeVersusCore = 0;
+    for (const [nodeId, list] of ends) {
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          if (list[i].core === list[j].core) {
+            continue;
+          }
+          treeVersusCore++;
+          const apart =
+            Math.abs(list[i].point.x - list[j].point.x) +
+            Math.abs(list[i].point.y - list[j].point.y);
+          expect(
+            apart,
+            `${list[i].edgeId} and ${list[j].edgeId} attach at the same point on ${nodeId}`
+          ).toBeGreaterThan(0.5);
+        }
+      }
+    }
+    // The situation the test is about really did arise.
+    expect(treeVersusCore).toBeGreaterThan(0);
+  });
+
   it('handles an empty diagram', () => {
     const data = layoutData([], []);
 

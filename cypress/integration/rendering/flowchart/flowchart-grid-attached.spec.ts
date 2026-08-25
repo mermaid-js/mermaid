@@ -179,7 +179,29 @@ describe('Flowchart grid-attached', () => {
     );
   });
 
-  it('10-grid-attached: should draw every node and every edge exactly once', () => {
+  it('10-grid-attached: should attach a tree beside the core edges on that side', () => {
+    imgSnapshotTest(
+      `graph TD
+      A --- C
+      B --- C
+      C --- D
+      D --- E
+      E --- F
+      F --- G
+      G --- H
+      H --- E
+      E --- I
+      I --- L
+      L --- M
+      M --- N
+      N --- O
+      O --- E
+      `,
+      gridAttached
+    );
+  });
+
+  it('11-grid-attached: should draw every node and every edge exactly once', () => {
     renderGraph(CORE_WITH_TWO_TREES, { ...gridAttached, screenshot: false });
 
     // Nine declared nodes, nothing duplicated — the trees hang off the real core

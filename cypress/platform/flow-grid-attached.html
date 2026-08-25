@@ -269,6 +269,37 @@ flowchart TD
   D -- RNA Sequencing --> L
     </pre>
 
+    <h3>A tree on a busy core node — attaching beside what is already there</h3>
+    <p class="note">
+      <code>E</code> is where the two cycles meet, so it carries a core edge on each of its four
+      sides, and a tree hangs off it as well. The core's ports and the tree's are chosen by
+      different passes — the core's by HOLA's router, the tree's by this layout — so the tree's have
+      to be told what is already taken, or a lone connector keeps the centre of its side and lands
+      exactly where a lone core edge already is. Nothing about the core moves: the side is cut into
+      the stretches its edges leave free and the tree attaches in one of those.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+graph TD
+  A --- C
+  B --- C
+  C --- D
+  D --- E
+  E --- F
+  F --- G
+  G --- H
+  H --- E
+  E --- I
+  I --- L
+  L --- M
+  M --- N
+  N --- O
+  O --- E
+    </pre>
+
     <h3>Non-rectangular shapes — connectors land on the shape, not on its box</h3>
     <p class="note">
       The layout works in rectangles, but a diamond does not reach the corners of its own bounding
@@ -347,5 +378,9 @@ flowchart TB
     <!-- Live reload, shared with the /dev/ pages: the dev server exposes it at
          the root as well, so a page under cypress/platform can use it too. -->
     <script src="/dev/reload.js"></script>
+
+    <!-- Zoom / pan on every diagram on this page: toolbar, ctrl/cmd+scroll,
+         drag to pan, and a full-window view. -->
+    <script src="/dev/zoom.js"></script>
   </body>
 </html>

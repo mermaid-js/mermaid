@@ -141,6 +141,14 @@ const ALL_LAYOUTS: MermaidLayout[] = [
 const DEV_MAX_TEXT_SIZE = 50_000_000;
 const DEV_MAX_EDGES = 1_000_000;
 
+// Diagram-pane zoom. The pane is a fixed-height canvas with no scrollbars, so a
+// plain wheel zooms; `1` is the diagram's own size and the fit-on-render never
+// scales a small diagram up past it.
+const ZOOM_MIN = 0.05;
+const ZOOM_MAX = 40;
+const ZOOM_STEP = 1.3;
+const ZOOM_FIT_MARGIN = 24;
+
 // Phases emitted by the profiler tree, in display order. "total" is taken from
 // the root `render` span. See packages/mermaid/src/profiler.ts.
 const PROFILE_PHASES = ['parse', 'prepare', 'measure', 'layout', 'paint', 'serialize'] as const;
@@ -263,6 +271,10 @@ function fmtMs(n: number): string {
   return Number.isFinite(n) ? n.toFixed(1) : '–';
 }
 
+function clampZoom(scale: number): number {
+  return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, scale));
+}
+
 function baseName(path: string): string {
   const i = path.lastIndexOf('/');
   return i === -1 ? path : path.slice(i + 1);
@@ -378,6 +390,9 @@ export class DevDiagramViewer extends LitElement {
     savedSource: { state: true },
     editorSource: { state: true },
     svg: { state: true },
+    zoomScale: { state: true },
+    zoomX: { state: true },
+    zoomY: { state: true },
     splitPosition: { state: true },
     activeTab: { state: true },
     dirty: { state: true },
@@ -411,6 +426,9 @@ export class DevDiagramViewer extends LitElement {
   declare savedSource: string;
   declare editorSource: string;
   declare svg: string;
+  declare zoomScale: number;
+  declare zoomX: number;
+  declare zoomY: number;
   declare splitPosition: number;
   declare activeTab: ViewerTab;
   declare dirty: boolean;
@@ -429,6 +447,13 @@ export class DevDiagramViewer extends LitElement {
   declare profileCopyMsg: string;
 
   #renderSeq = 0;
+  /** Intrinsic size of the rendered svg, from its viewBox. */
+  #naturalSize = { width: 0, height: 0 };
+  /** True while the view is still showing an untouched fit, so a pane resize can refit. */
+  #zoomIsFitted = true;
+  #panPointerId: number | null = null;
+  #panFrom = { x: 0, y: 0 };
+  #paneResizeObserver?: ResizeObserver;
   #profileCancel = false;
   #consolePatched = false;
   #originalConsole?: {
@@ -503,6 +528,9 @@ export class DevDiagramViewer extends LitElement {
     this.savedSource = '';
     this.editorSource = '';
     this.svg = '';
+    this.zoomScale = 1;
+    this.zoomX = 0;
+    this.zoomY = 0;
     this.activeTab = 'diagram';
     this.dirty = false;
     this.saving = false;
@@ -540,6 +568,159 @@ export class DevDiagramViewer extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.#restoreConsoleCapture();
+    this.#paneResizeObserver?.disconnect();
+    this.#paneResizeObserver = undefined;
+  }
+
+  // --- Diagram zoom / pan ----------------------------------------------------
+
+  get #zoomViewport(): HTMLElement | null {
+    return this.querySelector('.diagram-inner');
+  }
+
+  /**
+   * Measure the freshly rendered svg and show all of it. The svg is pinned to
+   * its intrinsic size so the transform below is the only thing scaling it —
+   * otherwise mermaid's own `max-width` would fight the zoom.
+   */
+  #fitRenderedSvg() {
+    const svgEl = this.querySelector<SVGSVGElement>('.diagram-canvas > svg');
+    if (!svgEl) return;
+    const box = svgEl.viewBox?.baseVal;
+    let width = box?.width ?? 0;
+    let height = box?.height ?? 0;
+    if (!(width > 0 && height > 0)) {
+      const rect = svgEl.getBoundingClientRect();
+      width = rect.width > 0 ? rect.width : 400;
+      height = rect.height > 0 ? rect.height : 300;
+    }
+    this.#naturalSize = { width, height };
+    svgEl.style.maxWidth = 'none';
+    svgEl.style.maxHeight = 'none';
+    svgEl.style.width = `${width}px`;
+    svgEl.style.height = `${height}px`;
+    this.#observePaneResize();
+    // Whole diagram visible, but never blown up past its own size.
+    this.#zoomFit(1);
+  }
+
+  /** Refit while the view is untouched, so dragging the log-panel split keeps it framed. */
+  #observePaneResize() {
+    if (this.#paneResizeObserver || typeof ResizeObserver === 'undefined') return;
+    const viewport = this.#zoomViewport;
+    if (!viewport) return;
+    this.#paneResizeObserver = new ResizeObserver(() => {
+      if (this.#zoomIsFitted) this.#zoomFit(1);
+    });
+    this.#paneResizeObserver.observe(viewport);
+  }
+
+  #zoomCenter(scale: number) {
+    const viewport = this.#zoomViewport;
+    const { width, height } = this.#naturalSize;
+    if (!viewport || !(width > 0)) return;
+    const rect = viewport.getBoundingClientRect();
+    this.zoomScale = clampZoom(scale);
+    this.zoomX = (rect.width - width * this.zoomScale) / 2;
+    this.zoomY = (rect.height - height * this.zoomScale) / 2;
+  }
+
+  #zoomFit(cap = ZOOM_MAX) {
+    const viewport = this.#zoomViewport;
+    const { width, height } = this.#naturalSize;
+    if (!viewport || !(width > 0 && height > 0)) return;
+    const rect = viewport.getBoundingClientRect();
+    this.#zoomCenter(
+      Math.min(
+        (rect.width - ZOOM_FIT_MARGIN) / width,
+        (rect.height - ZOOM_FIT_MARGIN) / height,
+        cap
+      )
+    );
+    this.#zoomIsFitted = true;
+  }
+
+  #zoomActualSize() {
+    this.#zoomCenter(1);
+    this.#zoomIsFitted = false;
+  }
+
+  /** Zoom keeping the point under the cursor (viewport coordinates) put. */
+  #zoomAt(scale: number, x: number, y: number) {
+    const next = clampZoom(scale);
+    const factor = next / this.zoomScale;
+    this.zoomX = x - factor * (x - this.zoomX);
+    this.zoomY = y - factor * (y - this.zoomY);
+    this.zoomScale = next;
+    this.#zoomIsFitted = false;
+  }
+
+  #zoomByStep(factor: number) {
+    const viewport = this.#zoomViewport;
+    if (!viewport) return;
+    const rect = viewport.getBoundingClientRect();
+    this.#zoomAt(this.zoomScale * factor, rect.width / 2, rect.height / 2);
+  }
+
+  #pointInViewport(event: MouseEvent | WheelEvent | PointerEvent) {
+    const rect = this.#zoomViewport?.getBoundingClientRect();
+    return { x: event.clientX - (rect?.left ?? 0), y: event.clientY - (rect?.top ?? 0) };
+  }
+
+  #onDiagramWheel(event: WheelEvent) {
+    // The pane never scrolls, so a bare wheel is free to mean zoom.
+    event.preventDefault();
+    const { x, y } = this.#pointInViewport(event);
+    this.#zoomAt(this.zoomScale * Math.exp(-event.deltaY * 0.0015), x, y);
+  }
+
+  #onDiagramPointerDown(event: PointerEvent) {
+    if (event.button !== 0) return;
+    if ((event.target as Element | null)?.closest('.diagram-zoom')) return;
+    // Keep the browser from starting its own drag of the svg under the cursor.
+    event.preventDefault();
+    this.#panPointerId = event.pointerId;
+    this.#panFrom = { x: event.clientX, y: event.clientY };
+    this.#zoomViewport?.setPointerCapture(event.pointerId);
+    this.#zoomViewport?.classList.add('is-panning');
+  }
+
+  #onDiagramPointerMove(event: PointerEvent) {
+    if (this.#panPointerId !== event.pointerId) return;
+    this.zoomX += event.clientX - this.#panFrom.x;
+    this.zoomY += event.clientY - this.#panFrom.y;
+    this.#panFrom = { x: event.clientX, y: event.clientY };
+    this.#zoomIsFitted = false;
+  }
+
+  #onDiagramPointerUp(event: PointerEvent) {
+    if (this.#panPointerId !== event.pointerId) return;
+    this.#panPointerId = null;
+    this.#zoomViewport?.classList.remove('is-panning');
+  }
+
+  #onDiagramDoubleClick(event: MouseEvent) {
+    if ((event.target as Element | null)?.closest('.diagram-zoom')) return;
+    event.preventDefault();
+    const { x, y } = this.#pointInViewport(event);
+    const factor =
+      event.altKey || event.shiftKey ? 1 / (ZOOM_STEP * ZOOM_STEP) : ZOOM_STEP * ZOOM_STEP;
+    this.#zoomAt(this.zoomScale * factor, x, y);
+  }
+
+  #onDiagramKeyDown(event: KeyboardEvent) {
+    const step = 40;
+    if (event.key === '+' || event.key === '=') this.#zoomByStep(ZOOM_STEP);
+    else if (event.key === '-' || event.key === '_') this.#zoomByStep(1 / ZOOM_STEP);
+    else if (event.key === '0') this.#zoomFit();
+    else if (event.key === '1') this.#zoomActualSize();
+    else if (event.key === 'ArrowLeft') this.zoomX += step;
+    else if (event.key === 'ArrowRight') this.zoomX -= step;
+    else if (event.key === 'ArrowUp') this.zoomY += step;
+    else if (event.key === 'ArrowDown') this.zoomY -= step;
+    else return;
+    if (event.key.startsWith('Arrow')) this.#zoomIsFitted = false;
+    event.preventDefault();
   }
 
   updated(changed: Map<string, unknown>) {
@@ -1192,6 +1373,25 @@ export class DevDiagramViewer extends LitElement {
     }
     const container = this.querySelector('.diagram-inner');
     if (container && bindFunctions) bindFunctions(container);
+    this.#fitRenderedSvg();
+  }
+
+  #renderZoomControls() {
+    return html`
+      <div class="diagram-zoom" title="scroll to zoom · drag to pan · double-click to zoom in">
+        <button type="button" title="Zoom out (−)" @click=${() => this.#zoomByStep(1 / ZOOM_STEP)}>
+          −
+        </button>
+        <span class="zoom-level">${Math.round(this.zoomScale * 100)}%</span>
+        <button type="button" title="Zoom in (+)" @click=${() => this.#zoomByStep(ZOOM_STEP)}>
+          +
+        </button>
+        <button type="button" title="Fit in pane (0)" @click=${() => this.#zoomFit()}>Fit</button>
+        <button type="button" title="Actual size (1)" @click=${() => this.#zoomActualSize()}>
+          1:1
+        </button>
+      </div>
+    `;
   }
 
   render() {
@@ -1382,7 +1582,25 @@ export class DevDiagramViewer extends LitElement {
               }}
             >
               <div slot="start" class="diagram">
-                <div class="diagram-inner" data-theme=${this.theme} .innerHTML=${this.svg}></div>
+                <div
+                  class="diagram-inner"
+                  data-theme=${this.theme}
+                  tabindex="0"
+                  @wheel=${(e: WheelEvent) => this.#onDiagramWheel(e)}
+                  @pointerdown=${(e: PointerEvent) => this.#onDiagramPointerDown(e)}
+                  @pointermove=${(e: PointerEvent) => this.#onDiagramPointerMove(e)}
+                  @pointerup=${(e: PointerEvent) => this.#onDiagramPointerUp(e)}
+                  @pointercancel=${(e: PointerEvent) => this.#onDiagramPointerUp(e)}
+                  @dblclick=${(e: MouseEvent) => this.#onDiagramDoubleClick(e)}
+                  @keydown=${(e: KeyboardEvent) => this.#onDiagramKeyDown(e)}
+                >
+                  <div
+                    class="diagram-canvas"
+                    style=${`transform: translate(${this.zoomX}px, ${this.zoomY}px) scale(${this.zoomScale})`}
+                    .innerHTML=${this.svg}
+                  ></div>
+                  ${this.#renderZoomControls()}
+                </div>
               </div>
               <div slot="end" style="height: 100%;">
                 <dev-console-panel></dev-console-panel>

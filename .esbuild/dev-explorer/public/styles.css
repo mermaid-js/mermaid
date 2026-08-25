@@ -343,26 +343,82 @@ dev-explorer-app .diagram {
   box-sizing: border-box;
 }
 
+/* Zoom/pan viewport: the rendered SVG is transformed inside it, so it clips
+   rather than scrolls, and it is the coordinate space all zoom math uses. */
 dev-explorer-app .diagram-inner {
   /* Canvas background behind the rendered SVG (theme-dependent). */
   background: #fff;
   color: #111;
   border-radius: 10px;
-  padding: 12px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+  /* Dragging to pan must not sweep a text selection across the diagram. */
+  user-select: none;
 }
 
-/* Fit the rendered SVG within the available pane (no scrollbars). */
-dev-explorer-app .diagram-inner > svg {
-  width: auto;
-  height: auto;
-  max-width: 100% !important;
-  max-height: 100% !important;
+dev-explorer-app .diagram-inner.is-panning {
+  cursor: grabbing;
+}
+
+dev-explorer-app .diagram-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+/* The zoom transform is the only thing sizing the SVG — mermaid's own
+   max-width would otherwise fight it. */
+dev-explorer-app .diagram-canvas > svg {
+  display: block;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+dev-explorer-app .diagram-zoom {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--panel-bg) 88%, transparent);
+  backdrop-filter: blur(4px);
+  font-size: 12px;
+  color: var(--app-fg);
+  user-select: none;
+}
+
+dev-explorer-app .diagram-zoom button {
+  min-width: 26px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--panel-bg);
+  color: inherit;
+  font: inherit;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+dev-explorer-app .diagram-zoom button:hover {
+  border-color: #60a5fa;
+}
+
+dev-explorer-app .diagram-zoom .zoom-level {
+  min-width: 44px;
+  text-align: center;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 dev-explorer-app .diagram-inner[data-theme='dark'],

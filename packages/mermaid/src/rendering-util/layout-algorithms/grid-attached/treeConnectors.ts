@@ -106,14 +106,19 @@ const SAME_LINE = 2;
  */
 export function routeComponentTrees(
   requests: TreeRouteRequest[],
-  options: GridAttachedOptions
+  options: GridAttachedOptions,
+  /**
+   * Offsets along `nodeId|side` already taken by edges this layout may not move —
+   * the core's own. A tree hanging off a core node has to attach beside them.
+   */
+  reserved = new Map<string, number[]>()
 ): TreeConnector[] {
   const legs = requests.flatMap((request) => collectLegs(request));
   if (legs.length === 0) {
     return [];
   }
 
-  assignPorts(legs, options);
+  assignPorts(legs, reserved, options);
   for (const leg of legs) {
     leg.points = routeRankEdgeTowards(
       portedRect(leg.parent, leg.parentPort, leg.growth),
@@ -151,9 +156,10 @@ export function routeTreeEdges(
   rootRect: Rect,
   growth: Cardinal,
   options: GridAttachedOptions,
-  rankGap: number
+  rankGap: number,
+  reserved?: Map<string, number[]>
 ): TreeConnector[] {
-  return routeComponentTrees([{ tree, transformed, rootRect, growth, rankGap }], options);
+  return routeComponentTrees([{ tree, transformed, rootRect, growth, rankGap }], options, reserved);
 }
 
 // ---------------------------------------------------------------------------
@@ -310,7 +316,11 @@ function portedRect(rect: Rect, port: number, growth: Cardinal): Rect {
  * A side used by a single connector keeps its centre, which is what leaves a chain
  * of degree-one nodes perfectly straight.
  */
-function assignPorts(legs: Leg[], options: GridAttachedOptions): void {
+function assignPorts(
+  legs: Leg[],
+  reserved: Map<string, number[]>,
+  options: GridAttachedOptions
+): void {
   // Leaving side: the parent's rank-facing side. Each leg wants to leave nearest
   // its own child.
   spreadGroups(
@@ -320,6 +330,7 @@ function assignPorts(legs: Leg[], options: GridAttachedOptions): void {
     (leg) => sideOfCardinal(leg.growth),
     (leg) => across(leg.child, leg.growth),
     (leg, port) => (leg.parentPort = port),
+    (leg) => reserved.get(`${leg.parentId}|${sideOfCardinal(leg.growth)}`) ?? [],
     options
   );
 
@@ -332,6 +343,7 @@ function assignPorts(legs: Leg[], options: GridAttachedOptions): void {
     (leg) => oppositeSide(sideOfCardinal(leg.growth)),
     (leg) => across(leg.parent, leg.growth),
     (leg, port) => (leg.childPort = port),
+    (leg) => reserved.get(`${leg.childId}|${oppositeSide(sideOfCardinal(leg.growth))}`) ?? [],
     options
   );
 }
@@ -343,6 +355,7 @@ function spreadGroups(
   sideOf: (leg: Leg) => Side,
   wishOf: (leg: Leg) => number,
   assign: (leg: Leg, port: number) => void,
+  reservedFor: (leg: Leg) => number[],
   options: GridAttachedOptions
 ): void {
   const groups = new Map<string, Leg[]>();
@@ -357,7 +370,11 @@ function spreadGroups(
   }
 
   for (const group of groups.values()) {
-    if (group.length < 2) {
+    const taken = reservedFor(group[0]);
+    // A single connector normally keeps the centre of its side, which is what leaves
+    // a chain of degree-one nodes perfectly straight. Not when something already
+    // holds that centre: then even one connector has to move.
+    if (group.length < 2 && taken.length === 0) {
       continue;
     }
     const rect = rectOf(group[0]);
@@ -385,14 +402,95 @@ function spreadGroups(
       const delta = wishOf(a) - wishOf(b);
       return delta !== 0 ? delta : a.originalEdgeId.localeCompare(b.originalEdgeId);
     });
-    const spread = spreadPorts(
-      order.map((leg) => Math.max(low, Math.min(high, wishOf(leg)))),
-      low,
-      high,
-      options.treeFanPortSpacing
-    );
+    const wanted = order.map((leg) => Math.max(low, Math.min(high, wishOf(leg))));
+    const spread =
+      taken.length > 0
+        ? spreadAvoiding(
+            wanted,
+            low,
+            high,
+            options.treeFanPortSpacing,
+            taken.map((offset) => centre + offset)
+          )
+        : spreadPorts(wanted, low, high, options.treeFanPortSpacing);
     order.forEach((leg, index) => assign(leg, spread[index]));
   }
+}
+
+/**
+ * Positions in `[low, high]` at least `gap` apart from each other *and* from every
+ * reserved position, as close to `wanted` as those two conditions allow.
+ *
+ * `spreadPorts` cannot do this: it spreads a set of ports that may all move, and
+ * here some of them may not — a core edge's attachment point is fixed, because this
+ * layout is not allowed to change the core. So the side is cut into the stretches
+ * the reserved positions leave free, each stretch is divided into slots a gap apart,
+ * and the wanted ports are assigned to slots in order.
+ *
+ * Assigning in order is what keeps the fan from crossing itself: `wanted` arrives
+ * sorted by where each connector is going, so taking slots in the same order keeps a
+ * nearer branch inside a further one.
+ *
+ * A side with no room left falls back to `spreadPorts` over the whole band. That
+ * overlaps a reserved port, which is the very thing being avoided — but a drawing
+ * with one doubled port beats one where several connectors pile onto the same point.
+ */
+export function spreadAvoiding(
+  wanted: number[],
+  low: number,
+  high: number,
+  gap: number,
+  reserved: number[]
+): number[] {
+  const slots = freeSlots(low, high, gap, reserved);
+  if (slots.length < wanted.length) {
+    return spreadPorts(wanted, low, high, gap);
+  }
+
+  // Walk both lists forward together, taking the slot nearest each wish while
+  // leaving enough slots behind for everything still to come.
+  const chosen: number[] = [];
+  let next = 0;
+  wanted.forEach((wish, index) => {
+    const spare = slots.length - wanted.length + index;
+    while (next < spare && Math.abs(slots[next + 1] - wish) <= Math.abs(slots[next] - wish)) {
+      next++;
+    }
+    chosen.push(slots[next]);
+    next++;
+  });
+
+  return chosen;
+}
+
+/** Positions a gap apart inside `[low, high]`, skipping every reserved neighbourhood. */
+function freeSlots(low: number, high: number, gap: number, reserved: number[]): number[] {
+  const blocked = reserved
+    .map((position) => [position - gap, position + gap] as const)
+    .sort((a, b) => a[0] - b[0]);
+
+  const free: [number, number][] = [];
+  let cursor = low;
+  for (const [from, to] of blocked) {
+    if (from > cursor) {
+      free.push([cursor, Math.min(from, high)]);
+    }
+    cursor = Math.max(cursor, to);
+  }
+  if (cursor < high) {
+    free.push([cursor, high]);
+  }
+
+  const slots: number[] = [];
+  for (const [from, to] of free) {
+    if (to < from) {
+      continue;
+    }
+    for (let at = from; at <= to + EPSILON; at += gap) {
+      slots.push(Math.min(at, to));
+    }
+  }
+  return slots.sort((a, b) => a - b);
 }
 
 // ---------------------------------------------------------------------------

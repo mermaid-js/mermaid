@@ -78,6 +78,28 @@ const KNOWN_LABELS_ON_CROSSINGS: Record<string, number> = {
   architecture: 2,
 };
 
+/**
+ * Pairs of *core* edges that still share an attachment point, and why.
+ *
+ * Core ports come from HOLA's router, which routes once to discover each end's
+ * side, plans ports along those sides, then re-routes with both locked — and keeps
+ * the second pass only if it did not fail more edges than the first. On a core this
+ * cramped the locked pass cannot route everything, so the unplanned ports survive.
+ * Reassigning them would mean changing how the core is drawn, which this layout is
+ * not allowed to do.
+ *
+ * Both fixtures are complete or complete-bipartite graphs on small node counts —
+ * every node adjacent to almost every other, with no room to spread. Any pair not
+ * listed here is a regression.
+ */
+const KNOWN_SHARED_CORE_PORTS: Record<string, string[]> = {
+  'GRAPH - Bipartite Graph k3,3': ['L_A1_B3_0 and L_A2_B3_0 share a port on B3'],
+  'GRAPH - complete_graph_k4': [
+    'L_A_D_0 and L_B_D_0 share a port on D',
+    'L_B_C_0 and L_B_D_0 share a port on B',
+  ],
+};
+
 const UNALIGNED_CORE_EDGES: Record<string, number> = {
   'GRAPH - Bipartite Graph k3,3': 2,
   'GRAPH - complete_graph_k4': 8,
@@ -350,6 +372,64 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
         }
       }
       expect(offenders).toEqual([]);
+    });
+
+    it(`gives every edge touching one node its own attachment point in ${name}`, async () => {
+      const { layout, treeEdges } = await lay(name);
+      const isTreeConnector = new Set(treeEdges.map((edge) => edge.id));
+
+      // Every end of every edge, grouped by the node it lands on. Two ends at the
+      // same point are drawn on top of each other, and near a node that is exactly
+      // where a reader is trying to tell them apart.
+      const ends = new Map<string, { edgeId: string; x: number; y: number }[]>();
+      for (const edge of layout.edges) {
+        const points = edge.points ?? [];
+        if (points.length < 2) {
+          continue;
+        }
+        for (const [nodeId, point] of [
+          [edge.start, points[0]],
+          [edge.end, points[points.length - 1]],
+        ] as const) {
+          if (!nodeId) {
+            continue;
+          }
+          const list = ends.get(nodeId);
+          if (list) {
+            list.push({ edgeId: edge.id, x: point.x, y: point.y });
+          } else {
+            ends.set(nodeId, [{ edgeId: edge.id, x: point.x, y: point.y }]);
+          }
+        }
+      }
+
+      // Split by who owns the collision. A tree connector's port is this layout's to
+      // choose, so sharing one is a bug; two core ports come from HOLA's router on a
+      // core this layout may not redraw.
+      const withTree = new Set<string>();
+      const coreOnly = new Set<string>();
+      for (const [nodeId, list] of ends) {
+        for (let i = 0; i < list.length; i++) {
+          for (let j = i + 1; j < list.length; j++) {
+            if (list[i].edgeId === list[j].edgeId) {
+              continue;
+            }
+            if (
+              Math.abs(list[i].x - list[j].x) >= EPSILON ||
+              Math.abs(list[i].y - list[j].y) >= EPSILON
+            ) {
+              continue;
+            }
+            const message = `${list[i].edgeId} and ${list[j].edgeId} share a port on ${nodeId}`;
+            const involvesTree =
+              isTreeConnector.has(list[i].edgeId) || isTreeConnector.has(list[j].edgeId);
+            (involvesTree ? withTree : coreOnly).add(message);
+          }
+        }
+      }
+
+      expect([...withTree].sort()).toEqual([]);
+      expect([...coreOnly].sort()).toEqual(KNOWN_SHARED_CORE_PORTS[name] ?? []);
     });
 
     it(`keeps every edge label off every node box in ${name}`, async () => {
