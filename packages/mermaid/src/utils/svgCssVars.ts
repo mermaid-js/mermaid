@@ -156,10 +156,22 @@ export function rewriteMermaidSvgCssVars(
   return rewritePaintContexts(svg, (chunk) => applyColorBindings(chunk, bindings));
 }
 
+const PAINT_PROPERTIES = 'fill|stroke|stop-color|color|flood-color|lighting-color';
+
 /** CSS custom-property-safe ident (defense in depth vs directive injection). */
 function sanitizeCssIdent(value: string): string {
   const cleaned = value.replace(/[^\w-]/g, '');
-  return cleaned || DEFAULT_PREFIX;
+  if (!cleaned) {
+    return DEFAULT_PREFIX;
+  }
+  return cleaned.startsWith('--') ? cleaned : `--${cleaned}`;
+}
+
+function rewritePaintDeclarations(css: string, rewrite: (chunk: string) => string): string {
+  const paintDecl = new RegExp(`(^|[{;]\\s*)(${PAINT_PROPERTIES})\\s*:\\s*([^;}"']+)`, 'gi');
+  return css.replace(paintDecl, (_full, prefix: string, prop: string, value: string) => {
+    return `${prefix}${prop}: ${rewrite(value.trim())}`;
+  });
 }
 
 function applyColorBindings(chunk: string, bindings: ColorBinding[]): string {
@@ -183,9 +195,11 @@ function applyColorBindings(chunk: string, bindings: ColorBinding[]): string {
  * Never touch element text (labels like "Red Team").
  */
 function rewritePaintContexts(svg: string, rewrite: (chunk: string) => string): string {
-  let out = svg.replace(/<style\b[^>]*>[\S\s]*?<\/style>/gi, (block) => rewrite(block));
+  let out = svg.replace(/<style\b[^>]*>[\S\s]*?<\/style>/gi, (block) =>
+    rewritePaintDeclarations(block, rewrite)
+  );
   out = out.replace(
-    /\b(fill|stroke|stop-color|color|flood-color|lighting-color)\s*=\s*("[^"]*"|'[^']*')/gi,
+    new RegExp(`\\b(${PAINT_PROPERTIES})\\s*=\\s*("[^"]*"|'[^']*')`, 'gi'),
     (_full, name: string, quoted: string) => {
       const q = quoted[0];
       return `${name}=${q}${rewrite(quoted.slice(1, -1))}${q}`;
@@ -193,7 +207,7 @@ function rewritePaintContexts(svg: string, rewrite: (chunk: string) => string): 
   );
   out = out.replace(/\bstyle\s*=\s*("[^"]*"|'[^']*')/gi, (_full, quoted: string) => {
     const q = quoted[0];
-    return `style=${q}${rewrite(quoted.slice(1, -1))}${q}`;
+    return `style=${q}${rewritePaintDeclarations(quoted.slice(1, -1), rewrite)}${q}`;
   });
   return out;
 }

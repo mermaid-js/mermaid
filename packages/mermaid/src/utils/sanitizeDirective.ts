@@ -104,7 +104,7 @@ export const sanitizeDirective = (args: any): void => {
 
 /** Reject `"`, `<`, `>`, `)`, `;` so values cannot break out of SVG attrs / CSS `var()`. */
 const SAFE_OPTION_STRING = /^[^");<>]+$/;
-const CSS_VAR_PREFIX = /^(--)?[\w-]*$/;
+const CSS_VAR_PREFIX = /^--[\w-]+$/;
 
 const CSS_VARIABLE_THEME_NESTED = new Set(['prefix']);
 const WEB_COMPATIBILITY_NESTED = new Set([
@@ -134,13 +134,17 @@ const sanitizeSvgPostProcessOptions = (
       continue;
     }
     if (nested === 'prefix') {
-      if (
-        typeof value !== 'string' ||
-        !CSS_VAR_PREFIX.test(value) ||
-        !SAFE_OPTION_STRING.test(value)
-      ) {
+      if (typeof value !== 'string' || !SAFE_OPTION_STRING.test(value)) {
         log.debug('sanitize deleting invalid prefix:', value);
         delete opts[nested];
+        continue;
+      }
+      const normalized = value.startsWith('--') ? value : `--${value.replace(/[^\w-]/g, '')}`;
+      if (!CSS_VAR_PREFIX.test(normalized)) {
+        log.debug('sanitize deleting invalid prefix after normalization:', value);
+        delete opts[nested];
+      } else {
+        opts[nested] = normalized;
       }
       continue;
     }

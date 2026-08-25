@@ -51,6 +51,22 @@ describe('svgCssVars', () => {
     expect(out).toContain('fill="var(--mermaid-primaryColor, red)"');
   });
 
+  it('does not rewrite selectors that share a name with a theme color', () => {
+    const svg = `<svg><style>.red { fill: red; }</style></svg>`;
+    const out = rewriteMermaidSvgCssVars(svg, { primaryColor: 'red' });
+    expect(out).toContain('.red { fill: var(--mermaid-primaryColor, red); }');
+  });
+
+  it('normalizes prefix without leading -- for API options', () => {
+    const svg = `<svg><rect fill="#abcdef"/></svg>`;
+    const out = prepareMermaidSvgForWeb(svg, {
+      themeVariables: { primaryColor: '#abcdef' },
+      cssVariableTheme: { prefix: 'host-' },
+      webCompatibility: false,
+    });
+    expect(out).toContain('var(--host-primaryColor, #abcdef)');
+  });
+
   it('prepareMermaidSvgForWeb combines both options', () => {
     const svg = `<svg width="100" height="50"><rect fill="#111111"/></svg>`;
     const out = prepareMermaidSvgForWeb(svg, {

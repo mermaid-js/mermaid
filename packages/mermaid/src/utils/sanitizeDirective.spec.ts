@@ -72,6 +72,12 @@ describe('sanitizeDirective', () => {
       expect(args.webCompatibility).toEqual({});
     });
 
+    it('normalizes cssVariableTheme prefix without leading --', () => {
+      const args = { cssVariableTheme: { prefix: 'host-' } };
+      sanitizeDirective(args);
+      expect(args.cssVariableTheme).toEqual({ prefix: '--host-' });
+    });
+
     it('preserves valid nodeColors and deletes invalid ones', () => {
       const args = {
         sankey: {
