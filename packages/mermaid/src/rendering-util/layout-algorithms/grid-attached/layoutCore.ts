@@ -15,19 +15,33 @@
  *
  * Neither half is reimplemented:
  *
- *   - the core is `grid-decomposed`'s core pass, verbatim — the same grid-like
- *     drawing, the same choice between drawing it with and without the flow
- *     ordering. Nothing here re-solves, re-aligns or re-routes it;
+ *   - the core is laid out by grid-like. Nothing here solves, aligns or snaps
+ *     anything: every position a core node ends up at is one grid-like put it at,
+ *     with all of its alignments intact;
  *   - the trees are HOLA's: its decomposition, its symmetric tree layout, its
  *     candidate wedges, its selection order, its rank connectors.
  *
- * The one liberty taken with the core is **enlargement**. HOLA makes room for a
- * tree by expanding the face around it, which moves core nodes and would destroy
- * the alignments that make a grid-like drawing grid-like. So instead every core
- * node is moved away from the core's centre by a common factor: every core edge
- * gets longer, and nothing else about the drawing changes. The ladder below walks
- * that factor up only as far as it has to — until every tree fits without being
- * pushed away from its root, or until enlarging stops helping.
+ * Three things about the core are this layout's own, and none of them re-solves it.
+ *
+ * **Which drawing to keep.** grid-like's beautification is greedy and never undone,
+ * so on a small core the drawing it produces flips on sub-pixel changes to the
+ * derived grid spacing — a four-cycle came out four different ways, only one of them
+ * the obvious rectangle. So grid-like is asked several times, over the knobs the
+ * paper leaves open, and the drawing with the fewest flaws is kept
+ * (`coreCandidates.ts`). `grid-decomposed` keeps drawing its cores as it did.
+ *
+ * **How its edges are drawn.** grid-like joins two node centres with a straight
+ * line, which is diagonal for any pair its alignment pass did not align — and a
+ * diagonal is free to run through a third node's box. The routes are replaced with
+ * orthogonal ones from HOLA's own router; the positions are not (`coreDrawing.ts`).
+ *
+ * **Enlargement.** HOLA makes room for a tree by expanding the face around it, which
+ * moves core nodes and would destroy the alignments that make a grid-like drawing
+ * grid-like. So instead every core node is moved away from the core's centre by a
+ * common factor: every core edge gets longer, and nothing else about the drawing
+ * changes. The ladder below walks that factor up only as far as it has to — until
+ * every tree fits without being pushed away from its root, or until enlarging stops
+ * helping.
  *
  * DOM-free by contract: it reads sizes measured earlier and writes `node.x/y` and
  * `edge.points`, so the same entry point drives the browser renderer and the

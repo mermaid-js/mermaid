@@ -32,6 +32,7 @@ import { applyFixtureContentSizesStrict, loadSizesFixture } from '../ddlt/fixtur
 import { layoutTestsDir } from '../ddlt/paths.js';
 import { parseMmdFileToLayoutData } from '../ddlt/parseToLayoutData.js';
 import { applyFixtureEdgeLabelSizes } from '../ddlt/backends.js';
+import { countBentEdges } from './coreCandidates.js';
 import { runGridAttachedLayoutCore } from './layoutCore.js';
 import type { GridAttachedResult } from './layoutCore.js';
 
@@ -49,6 +50,26 @@ const EPSILON = 0.5;
  */
 const KNOWN_CORE_OVERLAPS: Record<string, string[]> = {
   'GRAPH - Bipartite Graph k3,3': ['L_A1_B1_0 ~ L_A2_B3_0'],
+};
+
+/**
+ * Core edges whose two nodes share neither a row nor a column, so however the edge
+ * is routed the reader follows a corner.
+ *
+ * Zero wherever grid-like can reach a fully aligned drawing of the core, which
+ * `coreCandidates` gives it several chances to do. The rest are cores where no
+ * setting aligns everything — a complete graph on four nodes has six edges and only
+ * four nodes to align them across, and `project-sox2`'s core is large and dense.
+ * These are a ratchet: any core that gets *worse* fails, and one that improves
+ * fails too, so the number has to be updated deliberately.
+ */
+const UNALIGNED_CORE_EDGES: Record<string, number> = {
+  'GRAPH - Bipartite Graph k3,3': 2,
+  'GRAPH - complete_graph_k4': 8,
+  domus1: 4,
+  'life-choices': 1,
+  'multiple-edges': 1,
+  'project-sox2': 12,
 };
 
 function fixtureNames(): string[] {
@@ -247,6 +268,16 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
         }
       }
       expect(offenders).toEqual([]);
+    });
+
+    it(`leaves no core edge unaligned that grid-like could align in ${name}`, async () => {
+      const { layout, coreIds } = await lay(name);
+      const core = {
+        ...layout,
+        nodes: layout.nodes.filter((node) => coreIds.has(node.id)),
+        edges: layout.edges.filter((edge) => coreIds.has(edge.start!) && coreIds.has(edge.end!)),
+      } as LayoutData;
+      expect(countBentEdges(core)).toBe(UNALIGNED_CORE_EDGES[name] ?? 0);
     });
 
     it(`draws no two core edges along each other in ${name}`, async () => {

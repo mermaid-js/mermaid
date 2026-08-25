@@ -20,12 +20,21 @@
   <body>
     <h1>Grid-attached layout</h1>
     <p class="note">
-      <code>grid-decomposed</code> with the decomposition put back together. The core is the same
-      <code>grid-like</code> drawing — same solve, same alignments, same straight centre-to-centre
-      edges — and every tree HOLA's leaf peeling removed is hung back onto the core node it came
+      <code>grid-decomposed</code> with the decomposition put back together. The core is laid out by
+      <code>grid-like</code> — every core node sits where grid-like put it, with all its alignments
+      intact — and every tree HOLA's leaf peeling removed is hung back onto the core node it came
       from. <strong>Where</strong> it hangs is HOLA's answer (guide §17): largest tree first, into
       the angular wedge of a face at its root, cardinal direction before ordinal, external face
       before internal.
+    </p>
+    <p class="note">
+      <strong>Which</strong> grid-like drawing of the core to keep is this layout's choice.
+      grid-like's beautification is greedy and never undone, so on a core this small the drawing
+      that comes out flips on sub-pixel changes to the derived grid spacing: the four-cycle below
+      came out four different ways, only one of them the obvious rectangle. So grid-like is asked
+      several times — over the knobs the paper leaves open, never a change to its algorithm — and
+      the drawing with the fewest edges through nodes, then crossings, then unaligned pairs is kept.
+      <code>grid-decomposed</code> keeps drawing its cores exactly as it did.
     </p>
     <p class="note">
       The core's <strong>edges</strong> are this layout's own, though its node positions are not.

@@ -1,11 +1,11 @@
 /**
  * The core: its layout from grid-like, its edges routed orthogonally.
  *
- * The core's *layout* is not this layout's business. It is produced by
- * `grid-decomposed`'s core pass, unchanged — the same grid-like solve, the same
- * choice between drawing the cycle with and without the flow ordering — so every
- * core node ends up exactly where grid-like put it and every ACA alignment
- * survives. Nothing here re-solves or re-aligns it.
+ * The core's *layout* is grid-like's. Nothing here solves, aligns or snaps
+ * anything: every position a core node ends up at is one grid-like put it at, with
+ * all of its alignments intact. What this layout does choose is *which* of
+ * grid-like's drawings to keep, because grid-like's beautification is greedy and
+ * therefore unstable on a small core — see `coreCandidates.ts`.
  *
  * Two things about the core *are* this layout's own.
  *
@@ -38,7 +38,6 @@
 import type { Point } from '../../../types.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import type { GridLikeLayoutResult } from '../grid-like/layoutCore.js';
-import { drawCyclicPart } from '../grid-decomposed/layoutCore.js';
 import { buildPartLayoutData } from '../grid-decomposed/parts.js';
 import type { DecomposedPart } from '../grid-decomposed/parts.js';
 import type { FlattenResult } from '../hola-faithful/adapter/flattenFlowchart.js';
@@ -48,6 +47,7 @@ import { nodeBounds, unionBounds } from '../hola-faithful/model.js';
 import { resolveOptions as resolveHolaOptions } from '../hola-faithful/options.js';
 import { routeFinalEdges } from '../hola-faithful/routing/finalRouting.js';
 import type { FinalEdge } from '../hola-faithful/routing/finalRouting.js';
+import { drawBestCore } from './coreCandidates.js';
 import type { GridAttachedOptions } from './options.js';
 
 export interface CoreDrawing {
@@ -74,9 +74,9 @@ export interface CoreDrawing {
  * Draw the core with grid-like.
  *
  * A core always contains a cycle — containing one is what surviving leaf peeling
- * means — so it goes through `grid-decomposed`'s cyclic pass, which draws it both
- * with and without the flow ordering and keeps the better drawing. That decision
- * is not revisited here.
+ * means — and grid-like's beautification is greedy, so which drawing it produces
+ * for one is unstable. `drawBestCore` therefore asks it several times and keeps the
+ * best; every candidate is still a grid-like drawing of the same nodes and edges.
  */
 export function drawCore(
   data: LayoutData,
@@ -95,7 +95,7 @@ export function drawCore(
   };
 
   const layoutData = buildPartLayoutData(data, flat, part);
-  const grid = drawCyclicPart(layoutData, options);
+  const grid = drawBestCore(layoutData, options);
 
   const base = new Map(
     layoutData.nodes.map((node) => [node.id, { x: node.x ?? 0, y: node.y ?? 0 }])

@@ -8,7 +8,7 @@
  *   - a candidate is a (face, placement direction, growth direction, flip)
  *     tuple, and a direction is only a candidate if it points into the angular
  *     **wedge** the face occupies at the tree's root (§17.2) — `faceWedgeAt`,
- *     unchanged, reading the faces of the straight-line core;
+ *     unchanged, reading the faces of the routed core;
  *   - an ordinal placement is a *corner* placement, offset clear of its own root
  *     along the ordinal's other component (§17.2), with HOLA's `clearanceShift`;
  *   - selection is **lexicographic, not a weighted score** (§17.6): cardinal

@@ -53,33 +53,23 @@ function coreWithTwoTrees(direction = 'TB'): LayoutData {
 }
 
 /**
- * A six-cycle with a chord and a wide two-child tree on every node. There is not
- * enough room around the core for six of those at grid-like's own scale.
+ * An eight-cycle with a chord and a wide three-child tree on every node. There is
+ * not enough room around the core for eight of those at grid-like's own scale.
  */
 function crowdedCore(): LayoutData {
-  const core = ['A', 'B', 'C', 'D', 'E', 'F'];
-  const nodes = core.map((id) => node(id));
-  const edges = [
-    edge('A', 'B'),
-    edge('B', 'C'),
-    edge('C', 'D'),
-    edge('D', 'E'),
-    edge('E', 'F'),
-    edge('F', 'A'),
-    edge('A', 'D'),
-  ];
-  core.forEach((id, index) => {
-    const prefix = 'abcdef'[index];
-    nodes.push(
-      node(`${prefix}1`, { width: 300 }),
-      node(`${prefix}2`, { width: 300 }),
-      node(`${prefix}3`, { width: 300 })
-    );
-    edges.push(
-      edge(id, `${prefix}1`),
-      edge(`${prefix}1`, `${prefix}2`),
-      edge(`${prefix}1`, `${prefix}3`)
-    );
+  const ring = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7'];
+  const nodes = ring.map((id) => node(id, { width: 100 }));
+  const edges = ring.map((id, index) => edge(id, ring[(index + 1) % ring.length]));
+  edges.push(edge(ring[0], ring[4]));
+
+  ring.forEach((id, index) => {
+    const prefix = `t${index}`;
+    nodes.push(node(`${prefix}1`, { width: 400 }));
+    edges.push(edge(id, `${prefix}1`));
+    for (const child of ['a', 'b', 'c']) {
+      nodes.push(node(`${prefix}${child}`, { width: 400 }));
+      edges.push(edge(`${prefix}1`, `${prefix}${child}`));
+    }
   });
 
   return layoutData(nodes, edges);
@@ -549,8 +539,60 @@ describe('grid-attached layout', () => {
     const result = runGridAttachedLayoutCore(data, { maxCoreScale: 1 });
 
     expect(result.components[0].coreScale).toBe(1);
-    expect(result.components[0].trees).toHaveLength(6);
+    expect(result.components[0].trees).toHaveLength(8);
     expectEverythingDrawn(data, result);
+  });
+
+  /**
+   * HOLA's paper graph 8. Its core is a four-cycle, and the obvious drawing of one
+   * is the rectangle: two rows, two columns, all four edges straight.
+   *
+   * grid-like reaches it only for some of its settings — the beautification is
+   * greedy, so on a core this small the drawing that comes out flips on sub-pixel
+   * changes to the derived grid spacing. Asking it several times and keeping the
+   * drawing with the fewest unaligned pairs is what pins it down.
+   */
+  it('draws a four-cycle core as a rectangle, with no edge left unaligned', () => {
+    const data = layoutData(
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L'].map((id) => node(id)),
+      [
+        edge('A', 'B'),
+        edge('B', 'C'),
+        edge('C', 'D'),
+        edge('D', 'A'),
+        edge('D', 'E'),
+        edge('E', 'F'),
+        edge('E', 'G'),
+        edge('E', 'H'),
+        edge('G', 'I'),
+        edge('G', 'L'),
+      ]
+    );
+
+    const result = runGridAttachedLayoutCore(data);
+    expect(result.components[0].coreNodeIds.sort()).toEqual(['A', 'B', 'C', 'D']);
+
+    const at = nodeById(data);
+    const near = (a: number, b: number) => Math.abs(a - b) < 1;
+    const corner = (id: string) => ({ x: at.get(id)!.x ?? 0, y: at.get(id)!.y ?? 0 });
+    const [a, b, c, d] = ['A', 'B', 'C', 'D'].map(corner);
+
+    // Every core edge joins a pair sharing a row or a column, so none of them has
+    // to bend: A—B, B—C, C—D and D—A are all straight.
+    for (const [from, to] of [
+      [a, b],
+      [b, c],
+      [c, d],
+      [d, a],
+    ] as const) {
+      expect(
+        near(from.x, to.x) || near(from.y, to.y),
+        'every edge of the four-cycle should be straight'
+      ).toBe(true);
+    }
+    // Two distinct rows and two distinct columns — a rectangle, not a column of four.
+    expect(new Set([a, b, c, d].map((p) => Math.round(p.x))).size).toBe(2);
+    expect(new Set([a, b, c, d].map((p) => Math.round(p.y))).size).toBe(2);
   });
 
   it('handles an empty diagram', () => {

@@ -27,7 +27,6 @@ import type { Point } from '../../../types.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { runGridLikeLayoutCore } from '../grid-like/layoutCore.js';
 import type { GridLikeLayoutResult } from '../grid-like/layoutCore.js';
-import type { GridLikeOptions } from '../grid-like/options.js';
 import { flattenFlowchart } from '../hola-faithful/adapter/flattenFlowchart.js';
 import type { FlattenResult } from '../hola-faithful/adapter/flattenFlowchart.js';
 import { packComponentsLeftToRight } from '../hola-faithful/components/components.js';
@@ -223,9 +222,9 @@ function layoutPart(
  * Acyclic parts are drawn once, with the ordering: it is satisfiable there, and it
  * is what makes a tree grow in the declared direction.
  */
-export function drawCyclicPart(
+function drawCyclicPart(
   layoutData: LayoutData,
-  options: GridLikeOptions
+  options: GridDecomposedOptions
 ): GridLikeLayoutResult {
   const withFlow = drawCandidate(layoutData, { ...options, respectDirection: true });
   if (withFlow.foreignNodeHits === 0 && withFlow.crossings === 0) {
@@ -252,7 +251,7 @@ interface PartCandidate {
   crossings: number;
 }
 
-function drawCandidate(layoutData: LayoutData, options: GridLikeOptions): PartCandidate {
+function drawCandidate(layoutData: LayoutData, options: GridDecomposedOptions): PartCandidate {
   // `computeInitialLayout` starts from a BFS ranking rather than from whatever is
   // currently on the nodes, so a second run is not influenced by the first.
   const grid = runGridLikeLayoutCore(layoutData, options);
