@@ -134,6 +134,52 @@ flowchart TB
   hub --> leaf5
     </pre>
 
+    <h3>Two trees fighting for one corner — the loop stretches instead</h3>
+    <p class="note">
+      A big tree on <code>C4</code> and a small one on the neighbouring <code>C3</code>, whose
+      corners of the loop sit close together. At grid-like's own scale the two trees' connectors
+      cross; the room to separate them is exactly what stretching the loop's edges buys. The ladder
+      scores each rung by routing it and counting the crossings that would actually be drawn, then
+      trades those against the room — so here it spends a quarter and the crossing goes away.
+    </p>
+    <pre class="mermaid">
+---
+config:
+  layout: grid-attached
+---
+flowchart TB
+  C1 --- C2
+  C2 --- C3
+  C3 --- C4
+  C4 --- C1
+  C1 --- C1_1
+  C1 --- C1_2
+  C1_1 --- C1_11
+  C1_1 --- C1_12
+  C1_1 --- C1_13
+  C1_11 --- C1_111
+  C1_2 --- C1_21
+  C2 --- C2_1
+  C2 --- C2_2
+  C2_1 --- C2_11
+  C2_1 --- C2_12
+  C3 --- C3_1
+  C3_1 --- C3_11
+  C3_1 --- C3_12
+  C4 --- C4_1
+  C4 --- C4_2
+  C4_1 --- C4_11
+  C4_1 --- C4_12
+  C4_2 --- C4_21
+  C4_2 --- C4_22
+  C4_11 --- C4_111
+  C4_11 --- C4_112
+  C4_12 --- C4_121
+  C4_12 --- C4_122
+  C4_21 --- C4_211
+  C4_22 --- C4_221
+    </pre>
+
     <h3>Bushy trees on a dense core — this is what enlarges the core</h3>
     <p class="note">
       Six wide trees around a six-cycle with a chord. At grid-like's own scale one of them has

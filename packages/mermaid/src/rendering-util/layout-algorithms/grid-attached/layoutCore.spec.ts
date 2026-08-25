@@ -863,6 +863,152 @@ describe('grid-attached layout', () => {
     expect(treeVersusCore).toBeGreaterThan(0);
   });
 
+  /**
+   * A four-node loop with a big tree on one corner and a small one on the next. At
+   * grid-like's own scale the two corners are close enough that the two trees'
+   * connectors cross; the room to separate them is exactly what stretching the loop's
+   * edges buys, so the ladder should spend it rather than leave the crossing.
+   */
+  it('stretches the core rather than leave two trees crossing each other', () => {
+    // HOLA's four-node loop with trees, node for node: a big deep tree on `C4` and a
+    // small one on the neighbouring `C3`, whose two corners of the loop sit close
+    // together with both trees wanting the space between them.
+    const loop = (): LayoutData =>
+      layoutData(
+        [
+          'C1',
+          'C2',
+          'C3',
+          'C4',
+          'C1_1',
+          'C1_2',
+          'C1_11',
+          'C1_12',
+          'C1_13',
+          'C1_111',
+          'C1_21',
+          'C2_1',
+          'C2_2',
+          'C2_11',
+          'C2_12',
+          'C3_1',
+          'C3_11',
+          'C3_12',
+          'C4_1',
+          'C4_2',
+          'C4_11',
+          'C4_12',
+          'C4_21',
+          'C4_22',
+          'C4_111',
+          'C4_112',
+          'C4_121',
+          'C4_122',
+          'C4_211',
+          'C4_221',
+          'C4_1111',
+          'C4_1121',
+        ].map((id) => node(id, { width: 100, height: 54 })),
+        [
+          edge('C1', 'C2'),
+          edge('C2', 'C3'),
+          edge('C3', 'C4'),
+          edge('C4', 'C1'),
+          edge('C1', 'C1_1'),
+          edge('C1', 'C1_2'),
+          edge('C1_1', 'C1_11'),
+          edge('C1_1', 'C1_12'),
+          edge('C1_1', 'C1_13'),
+          edge('C1_11', 'C1_111'),
+          edge('C1_2', 'C1_21'),
+          edge('C2', 'C2_1'),
+          edge('C2', 'C2_2'),
+          edge('C2_1', 'C2_11'),
+          edge('C2_1', 'C2_12'),
+          edge('C3', 'C3_1'),
+          edge('C3_1', 'C3_11'),
+          edge('C3_1', 'C3_12'),
+          edge('C4', 'C4_1'),
+          edge('C4', 'C4_2'),
+          edge('C4_1', 'C4_11'),
+          edge('C4_1', 'C4_12'),
+          edge('C4_2', 'C4_21'),
+          edge('C4_2', 'C4_22'),
+          edge('C4_11', 'C4_111'),
+          edge('C4_11', 'C4_112'),
+          edge('C4_12', 'C4_121'),
+          edge('C4_12', 'C4_122'),
+          edge('C4_21', 'C4_211'),
+          edge('C4_22', 'C4_221'),
+          edge('C4_111', 'C4_1111'),
+          edge('C4_112', 'C4_1121'),
+        ]
+      );
+
+    const crossings = (data: LayoutData): number => {
+      const segments: { id: string; a: Point; b: Point }[] = [];
+      for (const e of data.edges) {
+        const points = e.points ?? [];
+        for (let i = 1; i < points.length; i++) {
+          segments.push({ id: e.id, a: points[i - 1], b: points[i] });
+        }
+      }
+      let count = 0;
+      for (let i = 0; i < segments.length; i++) {
+        for (let j = i + 1; j < segments.length; j++) {
+          const p = segments[i];
+          const q = segments[j];
+          if (p.id === q.id) {
+            continue;
+          }
+          const r = { x: p.b.x - p.a.x, y: p.b.y - p.a.y };
+          const s2 = { x: q.b.x - q.a.x, y: q.b.y - q.a.y };
+          const den = r.x * s2.y - r.y * s2.x;
+          if (Math.abs(den) < 1e-9) {
+            continue;
+          }
+          const d = { x: q.a.x - p.a.x, y: q.a.y - p.a.y };
+          const t = (d.x * s2.y - d.y * s2.x) / den;
+          const u = (d.x * r.y - d.y * r.x) / den;
+          if (t <= 1e-6 || t >= 1 - 1e-6 || u <= 1e-6 || u >= 1 - 1e-6) {
+            continue;
+          }
+          count++;
+        }
+      }
+      return count;
+    };
+
+    const cramped = loop();
+    const crampedResult = runGridAttachedLayoutCore(cramped, { maxCoreScale: 1 });
+    const stretched = loop();
+    const stretchedResult = runGridAttachedLayoutCore(stretched);
+
+    // Denied the room, the drawing has crossings; given it, the ladder spends it.
+    expect(crampedResult.components[0].coreScale).toBe(1);
+    expect(crossings(cramped)).toBeGreaterThan(0);
+    expect(stretchedResult.components[0].coreScale).toBeGreaterThan(1);
+    expect(crossings(stretched)).toBeLessThan(crossings(cramped));
+
+    // And it really is the core's own edges that got longer, by one common factor.
+    const before = nodeById(cramped);
+    const after = nodeById(stretched);
+    const core = ['C1', 'C2', 'C3', 'C4'];
+    for (let i = 0; i < core.length; i++) {
+      for (let j = i + 1; j < core.length; j++) {
+        const a = before.get(core[i])!;
+        const b = before.get(core[j])!;
+        const p = after.get(core[i])!;
+        const q = after.get(core[j])!;
+        const was = Math.hypot((a.x ?? 0) - (b.x ?? 0), (a.y ?? 0) - (b.y ?? 0));
+        const is = Math.hypot((p.x ?? 0) - (q.x ?? 0), (p.y ?? 0) - (q.y ?? 0));
+        if (was > 1e-6) {
+          expect(is / was).toBeCloseTo(stretchedResult.components[0].coreScale, 5);
+        }
+      }
+    }
+  });
+
   it('handles an empty diagram', () => {
     const data = layoutData([], []);
 

@@ -76,6 +76,7 @@ import {
 import type { Segment } from './geometry.js';
 import type { GridAttachedOptions } from './options.js';
 import { routeTreeEdges } from './treeConnectors.js';
+import type { ShapedRect } from './treeConnectors.js';
 
 const EPSILON = 1e-6;
 
@@ -159,13 +160,14 @@ export interface AttachResult {
   /** Longest dead stub in the result. */
   maxSlide: number;
   /**
-   * What the dead stubs in this result are worth, in pixels.
+   * Total dead stub in this result, in pixels.
    *
-   * Quadratic in the stub's length, relative to one rank gap: a tree a few pixels
-   * off its natural distance is barely worth noticing, while one pushed a whole
-   * tree's width away is the thing the enlargement ladder exists to cure. This is
-   * the convention HOLA prices a slid tree with (guide §17.5), which charges the
-   * squared excess over the natural attachment distance.
+   * Plainly the sum of the slides, because this is what the enlargement ladder
+   * weighs against the room it would spend and the crossings that room removes —
+   * and those are both lengths. HOLA's own §17.5 prices a slide as a *squared*
+   * excess, which is right for ranking two candidate placements against each other
+   * but not for this: squared pixels are not pixels, and a 200px stub scoring in the
+   * high hundreds silently outvoted everything else the ladder was trying to trade.
    */
   stubPenalty: number;
 }
@@ -198,6 +200,11 @@ export function attachTrees(input: AttachInput): AttachResult {
   const attachments: Attachment[] = [];
   const unplaced: string[] = [];
   const committed: Bounds[] = [];
+  // The connectors of the trees already placed. A footprint says where a tree *sits*;
+  // it says nothing about the run that reaches it, and two trees on neighbouring core
+  // nodes growing the same way cross each other's connectors while both footprints
+  // stay perfectly clear.
+  const committedRoutes: Segment[] = [];
   let drawn = coreBounds;
 
   for (const tree of ordered) {
@@ -215,6 +222,7 @@ export function attachTrees(input: AttachInput): AttachResult {
       root,
       obstacles,
       committed,
+      committedRoutes,
       drawn,
     };
 
@@ -232,16 +240,13 @@ export function attachTrees(input: AttachInput): AttachResult {
 
     attachments.push(winner.attachment);
     committed.push(winner.attachment.footprint);
+    committedRoutes.push(...rootConnectorSegments(context, winner.attachment));
     drawn = unionBounds([drawn, winner.attachment.footprint]) ?? drawn;
   }
 
   const relaxedCount = attachments.filter((attachment) => attachment.relaxed).length;
   const maxSlide = attachments.reduce((most, attachment) => Math.max(most, attachment.slide), 0);
-  const stubPenalty = attachments.reduce(
-    (total, attachment) =>
-      total + (attachment.slide * attachment.slide) / Math.max(options.treeRankGap, 1),
-    0
-  );
+  const stubPenalty = attachments.reduce((total, attachment) => total + attachment.slide, 0);
 
   return { attachments, unplaced, relaxedCount, maxSlide, stubPenalty };
 }
@@ -320,6 +325,8 @@ interface EvaluationContext {
   root: HolaNode;
   obstacles: Segment[];
   committed: Bounds[];
+  /** Root connectors of the trees already placed. */
+  committedRoutes: Segment[];
   /** Everything drawn so far, for the compactness term. */
   drawn: Bounds;
 }
@@ -527,9 +534,45 @@ function countConnectorViolations(
         violations++;
       }
     }
+    for (const route of context.committedRoutes) {
+      if (polylineCrossesSegment(connector.points, route)) {
+        violations++;
+      }
+    }
   }
 
   return violations;
+}
+
+/** The root connectors of a committed placement, as segments for later candidates. */
+function rootConnectorSegments(context: EvaluationContext, attachment: Attachment): Segment[] {
+  const { input, source, root } = context;
+  const rootRect: ShapedRect = {
+    x: root.x,
+    y: root.y,
+    width: root.width,
+    height: root.height,
+    silhouette: root.silhouette,
+  };
+
+  const segments: Segment[] = [];
+  for (const connector of routeTreeEdges(
+    source,
+    attachment.transformed,
+    rootRect,
+    attachment.growth,
+    input.options,
+    rankGapFor(context.tree, attachment.growth, input.options),
+    input.reservedPorts
+  )) {
+    if (!connector.fromRoot) {
+      continue;
+    }
+    for (let i = 1; i < connector.points.length; i++) {
+      segments.push({ a: connector.points[i - 1], b: connector.points[i] });
+    }
+  }
+  return segments;
 }
 
 /** The space the tree's own nodes take. The copied root *is* the core node. */

@@ -224,7 +224,7 @@ function segmentHitsBounds(segment: Segment, bounds: Bounds): boolean {
 }
 
 /** Proper crossing: a shared point strictly interior to both segments. */
-function segmentsCross(first: Segment, second: Segment): boolean {
+export function segmentsCross(first: Segment, second: Segment): boolean {
   const r = { x: first.b.x - first.a.x, y: first.b.y - first.a.y };
   const s = { x: second.b.x - second.a.x, y: second.b.y - second.a.y };
   const denominator = r.x * s.y - r.y * s.x;

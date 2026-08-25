@@ -62,7 +62,14 @@ import { decompose } from '../hola-faithful/decomposition/peelCoreAndTrees.js';
 import type { DecomposedTree } from '../hola-faithful/decomposition/peelCoreAndTrees.js';
 import { DiagnosticCollector } from '../hola-faithful/diagnostics.js';
 import type { HolaDiagnostic } from '../hola-faithful/diagnostics.js';
-import type { Bounds, Cardinal, Direction, HolaGraph, Rect } from '../hola-faithful/model.js';
+import type {
+  Bounds,
+  Cardinal,
+  Direction,
+  HolaGraph,
+  HolaNode,
+  Rect,
+} from '../hola-faithful/model.js';
 import { nodeBounds, pointBounds, unionBounds } from '../hola-faithful/model.js';
 import { layoutForGrowth, ROTATION_FOR_GROWTH } from '../hola-faithful/placement/placeTrees.js';
 import { layoutTree, transformTreeLayout } from '../hola-faithful/trees/symmetricTreeLayout.js';
@@ -77,7 +84,7 @@ import {
   routeCoreEdges,
   routedCoreEdges,
 } from './coreDrawing.js';
-import type { CoreDrawing } from './coreDrawing.js';
+import type { CoreDrawing, CoreSegment } from './coreDrawing.js';
 import { planariseRoutedCore } from './corePlanarisation.js';
 import type { GridAttachedOptions } from './options.js';
 import { resolveGridAttachedOptions } from './options.js';
@@ -85,8 +92,9 @@ import { prepareGridAttachedLayout } from './prepareLayout.js';
 import { mergeTreesByRoot } from './treeGrouping.js';
 import { placeLabels } from './labelPlacement.js';
 import type { LabelObstacles, RouteSegment } from './labelPlacement.js';
+import { segmentsCross } from './geometry.js';
 import { combLevelsNeeded, routeComponentTrees, routeTreeSelfLoop } from './treeConnectors.js';
-import type { TreeRouteRequest } from './treeConnectors.js';
+import type { TreeConnector, TreeRouteRequest } from './treeConnectors.js';
 
 /** One tree, as attached. */
 export interface GridAttachedTreeResult {
@@ -513,7 +521,9 @@ function drawTree(
 interface LadderRung {
   scale: number;
   attempt: AttachResult;
-  /** Dead stubs plus what this much enlargement costs, in pixels. */
+  /** Crossings between the drawn edges at this scale. */
+  crossings: number;
+  /** Crossings and dead stubs, plus what this much enlargement costs, in pixels. */
   penalty: number;
 }
 
@@ -547,7 +557,13 @@ function climbEnlargementLadder(
   const baseBounds = boundsOfDrawing(drawing.nodes, []);
   const coreSpan = baseBounds.maxX - baseBounds.minX + (baseBounds.maxY - baseBounds.minY);
 
-  let best: LadderRung = { scale: 1, attempt: EMPTY_ATTEMPT, penalty: Number.POSITIVE_INFINITY };
+  const byId = new Map(trees.map((tree) => [tree.id, tree]));
+  let best: LadderRung = {
+    scale: 1,
+    attempt: EMPTY_ATTEMPT,
+    crossings: Number.POSITIVE_INFINITY,
+    penalty: Number.POSITIVE_INFINITY,
+  };
   let sinceImprovement = 0;
 
   for (let rung = 0; ; rung++) {
@@ -570,8 +586,30 @@ function climbEnlargementLadder(
       flowGrowth,
       options,
     });
-    const penalty = attempt.stubPenalty + options.enlargementPenaltyWeight * (scale - 1) * coreSpan;
-    const rungResult: LadderRung = { scale, attempt, penalty };
+    // Count the crossings in the geometry that would actually be *drawn*, which means
+    // routing this rung's connectors. Placement scores each tree against the ones
+    // already committed, but the final routing settles ports and turns across every
+    // tree at once, so a crossing can exist only in the finished drawing — and that is
+    // the one a reader sees.
+    const crossings = countDrawnCrossings(
+      coreSegments(drawing, core),
+      routeComponentTrees(
+        connectorRequests(attempt, rects, sources, byId, options),
+        options,
+        drawing.ports
+      )
+    );
+    const penalty =
+      attempt.stubPenalty +
+      crossings * options.crossingPenalty +
+      options.enlargementPenaltyWeight * (scale - 1) * coreSpan;
+    const rungResult: LadderRung = { scale, attempt, crossings, penalty };
+
+    log.debug(
+      `GRID-ATTACHED: rung scale=${scale.toFixed(2)} unplaced=${attempt.unplaced.length} ` +
+        `relaxed=${attempt.relaxedCount} crossings=${crossings} ` +
+        `stub=${attempt.stubPenalty.toFixed(0)} penalty=${penalty.toFixed(0)}`
+    );
 
     if (rung === 0 || isBetterRung(rungResult, best)) {
       best = rungResult;
@@ -581,7 +619,10 @@ function climbEnlargementLadder(
     }
 
     const settled =
-      attempt.unplaced.length === 0 && attempt.relaxedCount === 0 && attempt.stubPenalty <= 0;
+      attempt.unplaced.length === 0 &&
+      attempt.relaxedCount === 0 &&
+      attempt.stubPenalty <= 0 &&
+      crossings === 0;
     if (settled || scale >= options.maxCoreScale || sinceImprovement >= options.coreScalePatience) {
       break;
     }
@@ -592,6 +633,79 @@ function climbEnlargementLadder(
   applyCoreScale(drawing, best.scale);
   routeCoreEdges(drawing, core, flat, options, diagnostics);
   return best;
+}
+
+/**
+ * The requests that would route this rung's trees, so the ladder can count the
+ * crossings in the drawing it would produce.
+ */
+function connectorRequests(
+  attempt: AttachResult,
+  rects: Map<string, HolaNode>,
+  sources: Map<string, DecomposedTree>,
+  byId: Map<string, AttachableTree>,
+  options: GridAttachedOptions
+): TreeRouteRequest[] {
+  const requests: TreeRouteRequest[] = [];
+  for (const attachment of attempt.attachments) {
+    const tree = sources.get(attachment.treeId);
+    const drawn = byId.get(attachment.treeId);
+    const root = rects.get(attachment.coreNodeId);
+    if (!tree || !drawn || !root) {
+      continue;
+    }
+    requests.push({
+      tree,
+      transformed: attachment.transformed,
+      rootRect: {
+        x: root.x,
+        y: root.y,
+        width: root.width,
+        height: root.height,
+        silhouette: root.silhouette,
+      },
+      growth: attachment.growth,
+      rankGap: rankGapFor(drawn, attachment.growth, options),
+    });
+  }
+  return requests;
+}
+
+/**
+ * Crossings between drawn edges, counting only the pairs a bigger core could
+ * separate: two tree connectors, or a connector and a core edge. Two core edges
+ * crossing is the core's own business — a uniform scale moves every core node by the
+ * same factor, so those crossings scale along with it and never go away.
+ */
+function countDrawnCrossings(coreEdges: CoreSegment[], connectors: TreeConnector[]): number {
+  const treeSegments: { id: string; a: Point; b: Point }[] = [];
+  for (const connector of connectors) {
+    for (let i = 1; i < connector.points.length; i++) {
+      treeSegments.push({
+        id: connector.originalEdgeId,
+        a: connector.points[i - 1],
+        b: connector.points[i],
+      });
+    }
+  }
+
+  let crossings = 0;
+  for (let i = 0; i < treeSegments.length; i++) {
+    for (let j = i + 1; j < treeSegments.length; j++) {
+      if (treeSegments[i].id === treeSegments[j].id) {
+        continue;
+      }
+      if (segmentsCross(treeSegments[i], treeSegments[j])) {
+        crossings++;
+      }
+    }
+    for (const core of coreEdges) {
+      if (segmentsCross(treeSegments[i], { a: core.a, b: core.b })) {
+        crossings++;
+      }
+    }
+  }
+  return crossings;
 }
 
 /** Placeholder incumbent, so rung 0 has something to beat. */

@@ -73,6 +73,15 @@ export interface GridAttachedOptions extends GridLikeOptions {
   maxCoreScale: number;
   /** Rungs without improvement before the ladder gives up and keeps the best. */
   coreScalePatience: number;
+  /**
+   * What one crossing between drawn edges is worth, in pixels of enlargement.
+   *
+   * The enlargement ladder trades the room it spends against the defects that room
+   * removes, and a crossing is the defect a reader notices first. Priced in the same
+   * units as everything else the ladder weighs, so two crossings removed justify
+   * roughly `2 × this` of extra core.
+   */
+  crossingPenalty: number;
 
   /**
    * Clear space kept around an edge label.
@@ -141,6 +150,7 @@ export function resolveGridAttachedOptions(
     coreScaleStep: overrides?.coreScaleStep ?? 0.25,
     maxCoreScale: overrides?.maxCoreScale ?? 3,
     coreScalePatience: overrides?.coreScalePatience ?? 2,
+    crossingPenalty: overrides?.crossingPenalty ?? 200,
 
     labelClearance: overrides?.labelClearance ?? 12,
     labelCrossingClearance: overrides?.labelCrossingClearance ?? 24,
