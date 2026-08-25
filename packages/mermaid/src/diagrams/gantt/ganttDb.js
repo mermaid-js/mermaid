@@ -445,6 +445,34 @@ const parseId = function (idStr) {
 // endDate
 // length
 
+/**
+ * Trims a task's comma separated fields down to the forms the switches below handle.
+ *
+ * A trailing comma leaves an empty final field, which is a typo with only one sensible
+ * reading, so it is dropped. Any other overflow cannot be guessed at and is reported
+ * here — it used to fall through an empty `default:`, leaving the task with no
+ * `startTime` and surfacing much later as "Cannot read properties of undefined
+ * (reading 'type')" at render time, which says nothing about the line at fault.
+ *
+ * @param {string[]} data - The task's fields, already tag-stripped and trimmed.
+ * @param {string} dataStr - The raw task definition, for the error message.
+ * @returns {string[]} `data`, with any trailing empty field removed.
+ * @throws {Error} If more fields remain than a task definition can have.
+ */
+const normalizeTaskData = function (data, dataStr) {
+  while (data.length > 1 && data[data.length - 1] === '') {
+    data.pop();
+  }
+
+  if (data.length > 3) {
+    throw new Error(
+      `Invalid task definition "${dataStr}": a task takes at most 3 comma separated fields (id, start, end), but ${data.length} were given.`
+    );
+  }
+
+  return data;
+};
+
 const compileData = function (prevTask, dataStr) {
   let ds;
 
@@ -464,6 +492,8 @@ const compileData = function (prevTask, dataStr) {
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim();
   }
+
+  normalizeTaskData(data, dataStr);
 
   let endTimeData = '';
   switch (data.length) {
@@ -512,6 +542,8 @@ const parseData = function (prevTaskId, dataStr) {
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim();
   }
+
+  normalizeTaskData(data, dataStr);
 
   switch (data.length) {
     case 1:

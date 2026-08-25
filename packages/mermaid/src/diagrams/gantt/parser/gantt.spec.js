@@ -137,6 +137,50 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].id).toEqual('des1');
     expect(tasks[0].task).toEqual('Design jison grammar');
   });
+  it('should ignore a trailing comma on a task line', function () {
+    // The empty field left by the trailing comma pushed the field count past the three
+    // the parser handles, so the task was built without a startTime and only failed at
+    // render with "Cannot read properties of undefined (reading 'type')".
+    const str =
+      'gantt\n' + 'dateFormat YYYY-MM-DD\n' + 'section S\n' + 'Task A :a1, 2024-01-01, 30d,\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toEqual('a1');
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 1));
+  });
+
+  it('should ignore a trailing comma after a tagged task', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'section S\n' +
+      'Task A :crit, a1, 2024-01-01, 30d,\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+
+    const tasks = parser.yy.getTasks();
+
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].id).toEqual('a1');
+    expect(tasks[0].crit).toBe(true);
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 1));
+  });
+
+  it('should report a task carrying more fields than it can have', function () {
+    // Nothing sensible can be guessed here, so it fails with the line at fault named
+    // rather than falling through and crashing at render.
+    const str =
+      'gantt\n' + 'dateFormat YYYY-MM-DD\n' + 'section S\n' + 'Task A :a1, 2024-01-01, 30d, junk\n';
+
+    expect(parserFnConstructor(str)).toThrow(
+      'Invalid task definition ":a1, 2024-01-01, 30d, junk": a task takes at most 3 comma separated fields (id, start, end), but 4 were given.'
+    );
+  });
+
   it('should handle a task with start/end time relative to other tasks', function () {
     const str =
       'gantt\n' +
