@@ -89,7 +89,8 @@ export const buildKanbanAST = (
  * second parse: it splits on top-level commas and newlines, ignores anything it cannot read as a
  * pair, and never affects what the diagram renders.
  *
- * Separators inside a `[…]` flow sequence do not split, so `tags: [a, b]` stays one occurrence.
+ * Separators inside a `[…]` flow sequence do not split, so `tags: [a, b]` stays one occurrence,
+ * and neither do separators inside a quoted value, `\"` escapes included.
  * Unbalanced brackets need no handling: js-yaml rejects them ("missed comma between flow
  * collection entries"), so such a block throws in `addNode` and no read-model is ever produced. A
  * flow *mapping* likewise cannot reach here — the lexer ends the block at the first `}`.
@@ -132,6 +133,12 @@ export function metadataOccurrences(
   for (let index = bodyStart; index < bodyEnd; index++) {
     const character = source[index];
     if (quote) {
+      // Only double-quoted YAML scalars use backslash escapes; single-quoted ones escape a quote
+      // by doubling it, which this loop already handles by leaving and re-entering quote mode.
+      if (quote === '"' && character === '\\') {
+        index++;
+        continue;
+      }
       if (character === quote) {
         quote = undefined;
       }

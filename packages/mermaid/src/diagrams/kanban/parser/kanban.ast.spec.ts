@@ -189,6 +189,27 @@ describe('kanban AST', () => {
   });
 
   it.each([
+    // A backslash-escaped quote inside a double-quoted value does not end it, so the comma that
+    // follows separates nothing. Single-quoted YAML has no backslash escapes; it doubles instead.
+    ['double-quoted, with escapes', String.raw`a@{ label: "a\", b\"c", priority: high }`],
+    ['single-quoted, with a doubled quote', `a@{ label: 'it''s, fine', priority: high }`],
+  ])('keeps a %s value in one metadata occurrence', (_name, line) => {
+    const source = `kanban\n  ${line}\n`;
+    const [node] = parse(source).statements[0].nodes!;
+    const value = line.slice(
+      line.indexOf('label: ') + 'label: '.length,
+      line.indexOf(', priority')
+    );
+
+    expect(
+      node.metadata!.map((entry) => [entry.key, source.slice(...entry.valueSpan)])
+    ).toStrictEqual([
+      ['label', value],
+      ['priority', 'high'],
+    ]);
+  });
+
+  it.each([
     ['an id the db rewrites', 'kanban\n  a<b[Label]\n', 'a'],
     ['an id that sanitizes away entirely', 'kanban\n  ["<script>"]\n', 'kbn0'],
     ['an id the db keeps as written', 'kanban\n  a&b[Label]\n', 'a&b'],
