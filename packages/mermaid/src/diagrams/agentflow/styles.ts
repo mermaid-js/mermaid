@@ -87,7 +87,7 @@ const getStyles = (options: AgentflowStyleOptions) =>
     fill: ${options.arrowheadColor};
   }
 
-  .edgePath .path {
+  .edgePaths .path {
     stroke: ${options.lineColor};
     stroke-width: ${options.strokeWidth ?? 2}px;
   }
