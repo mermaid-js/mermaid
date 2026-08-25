@@ -102,7 +102,18 @@ const getData = function () {
   return { nodes: _nodes, edges, other: {}, config: getConfig() };
 };
 
-const addNode = (level: number, id: string, descr: string, type: number, shapeData: string) => {
+/**
+ * Returns the id the node was actually stored under. It is not always the id as written: the text
+ * is sanitized, and a node whose id sanitizes away is given a generated one. Callers that need to
+ * refer back to the node — the source-mapped read-model — must use this rather than the raw text.
+ */
+const addNode = (
+  level: number,
+  id: string,
+  descr: string,
+  type: number,
+  shapeData: string
+): string => {
   const conf = getConfig();
   let padding: number = conf.mindmap?.padding ?? defaultConfig.mindmap.padding;
   switch (type) {
@@ -168,6 +179,7 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
     sections.push(node);
   }
   nodes.push(node);
+  return node.id;
 };
 
 const nodeType = {

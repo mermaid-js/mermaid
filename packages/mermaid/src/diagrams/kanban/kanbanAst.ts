@@ -88,6 +88,11 @@ export const buildKanbanAST = (
  * The block itself is handed to a YAML parser, so this is a read-model for editors rather than a
  * second parse: it splits on top-level commas and newlines, ignores anything it cannot read as a
  * pair, and never affects what the diagram renders.
+ *
+ * Separators inside a `[…]` flow sequence do not split, so `tags: [a, b]` stays one occurrence.
+ * Unbalanced brackets need no handling: js-yaml rejects them ("missed comma between flow
+ * collection entries"), so such a block throws in `addNode` and no read-model is ever produced. A
+ * flow *mapping* likewise cannot reach here — the lexer ends the block at the first `}`.
  */
 export function metadataOccurrences(
   source: string,
@@ -97,6 +102,7 @@ export function metadataOccurrences(
   const occurrences: KanbanMetadataOccurrence[] = [];
   let quote: string | undefined;
   let itemStart = bodyStart;
+  let depth = 0;
 
   const flush = (end: number) => {
     const raw = source.slice(itemStart, end);
@@ -135,7 +141,11 @@ export function metadataOccurrences(
       quote = character;
       continue;
     }
-    if (character === ',' || character === '\n') {
+    if (character === '[' || character === ']') {
+      depth += character === '[' ? 1 : -1;
+      continue;
+    }
+    if (depth === 0 && (character === ',' || character === '\n')) {
       flush(index);
       itemStart = index + 1;
     }

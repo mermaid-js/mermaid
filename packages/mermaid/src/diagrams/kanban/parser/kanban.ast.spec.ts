@@ -174,6 +174,34 @@ describe('kanban AST', () => {
     ]);
   });
 
+  it('keeps a flow sequence in one metadata occurrence', () => {
+    // A comma inside `[…]` separates sequence entries, not metadata keys. Splitting on it would
+    // end the `tags` value span after `x`, so an editor could not rewrite the field.
+    const source = 'kanban\n  a@{ tags: [x, y], priority: high }\n';
+    const [node] = parse(source).statements[0].nodes!;
+
+    expect(
+      node.metadata!.map((entry) => [entry.key, source.slice(...entry.valueSpan)])
+    ).toStrictEqual([
+      ['tags', '[x, y]'],
+      ['priority', 'high'],
+    ]);
+  });
+
+  it.each([
+    ['an id the db rewrites', 'kanban\n  a<b[Label]\n', 'a'],
+    ['an id that sanitizes away entirely', 'kanban\n  ["<script>"]\n', 'kbn0'],
+    ['an id the db keeps as written', 'kanban\n  a&b[Label]\n', 'a&b'],
+  ])('resolves %s against the graph', (_name, source, expected) => {
+    // The db sanitizes ids and generates one when that leaves nothing, so an occurrence carrying
+    // the raw source text would not find its own node.
+    const ast = parse(source);
+    const [node] = ast.statements[0].nodes!;
+
+    expect(node.id).toBe(expected);
+    expect(ast.nodes[node.id]).toBeDefined();
+  });
+
   it('marks a shape written without an id, but still resolves it', () => {
     const ast = parse(DIAGRAM);
     const [node] = ast.statements.at(-1)!.nodes!;

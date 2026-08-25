@@ -197,25 +197,25 @@ class KanbanVisitor extends BaseVisitor {
     const shapeData = ctx.shapeData
       ? (this.visit(ctx.shapeData as never) as ParsedShapeData)
       : undefined;
-    if (shapeData) {
-      this.yy.addNode(level, node.id, node.descr, node.type, shapeData.value);
-    } else {
-      // Called with four arguments so the db still sees `shapeData === undefined`.
-      (this.yy.addNode as (l: number, i: string, d: string, t: number) => void)(
-        level,
-        node.id,
-        node.descr,
-        node.type
-      );
-    }
+    // The db sanitizes the id and substitutes a generated one when that leaves nothing, so the
+    // stored id can differ from the source text — `a<b` becomes `a`, `"<script>"` becomes `kbn0`.
+    // The occurrence has to carry the stored id or it will not resolve against `ast.nodes`.
+    const storedId = shapeData
+      ? this.yy.addNode(level, node.id, node.descr, node.type, shapeData.value)
+      : // Called with four arguments so the db still sees `shapeData === undefined`.
+        (this.yy.addNode as (l: number, i: string, d: string, t: number) => string)(
+          level,
+          node.id,
+          node.descr,
+          node.type
+        );
 
     // `@{ … }` closes with a token the grammar never sees, so the metadata span is the one that
     // reaches furthest right.
     const span: Span = [nodeSpan(ctx.node![0])[0], shapeData?.span[1] ?? nodeSpan(ctx.node![0])[1]];
     const occurrence: KanbanNodeOccurrence = {
-      // For a shape written without an id the db reuses the label as the id, so the occurrence
-      // still resolves against `ast.nodes`; the missing `idSpan` is what marks it implicit.
-      id: node.id,
+      // A shape written without an id is marked by the missing `idSpan`, not by an empty `id`.
+      id: storedId,
       span,
       defines: true,
       ...(node.idSpan ? { idSpan: node.idSpan } : {}),
