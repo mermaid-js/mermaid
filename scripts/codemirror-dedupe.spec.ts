@@ -15,7 +15,7 @@ import { describe, expect, it } from 'vitest';
 const readLockfile = () => readFileSync(resolve(process.cwd(), 'pnpm-lock.yaml'), 'utf8');
 
 const resolvedVersionsOf = (lockfile: string, packageName: string) => {
-  const escaped = packageName.replace(/[/@]/g, '\\$&');
+  const escaped = packageName.replace(/[\\^$.*+?()[\]{}|/]/g, '\\$&');
   const matches = lockfile.matchAll(new RegExp(`^  '?${escaped}@([^':]+)'?:`, 'gm'));
   return [...new Set([...matches].map((m) => m[1]))];
 };
