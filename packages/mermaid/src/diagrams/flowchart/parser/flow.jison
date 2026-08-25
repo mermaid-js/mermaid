@@ -286,7 +286,7 @@ that id.
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
-[^\S\n\r]+            return 'SPACE';
+[^\S\n]+              return 'SPACE';
 <<EOF>>               return 'EOF';
 
 /lex

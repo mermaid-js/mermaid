@@ -29,7 +29,7 @@ describe('[Text] when parsing', () => {
     it('should handle a long run of whitespace', function () {
       // The lexer used to emit one SPACE token per whitespace character, which made
       // parsing quadratic in the length of the run: 24 KiB of them took over 5 seconds.
-      const run = ' \t'.repeat(12_000);
+      const run = ' \t\r'.repeat(8_000);
       const text = `graph LR;A-->B;\n${run}`;
 
       // The invariant behind the fix: the whole run reaches the parser as a single
@@ -46,6 +46,15 @@ describe('[Text] when parsing', () => {
       expect(spaces).toEqual([run]);
 
       flow.parser.parse(text);
+
+      expect(flow.parser.yy.getEdges().length).toBe(1);
+      expect(flow.parser.yy.getVertices().size).toBe(2);
+    });
+
+    it('should treat a lone carriage return as whitespace', function () {
+      // `\s` used to cover it. The SPACE rule excludes `\n` only, so CR-only line
+      // endings keep lexing as whitespace instead of raising an unmatched-input error.
+      flow.parser.parse('graph LR;\rA-->B;');
 
       expect(flow.parser.yy.getEdges().length).toBe(1);
       expect(flow.parser.yy.getVertices().size).toBe(2);
