@@ -28,7 +28,7 @@ export interface CreateLayoutElementGroupsOptions {
 
 export function createLayoutElementGroups(
   element: D3Selection,
-  { edgePathsClass = 'edges edgePath' }: CreateLayoutElementGroupsOptions = {}
+  { edgePathsClass = 'edges edgePaths' }: CreateLayoutElementGroupsOptions = {}
 ): LayoutElementGroups {
   const rootGroups = element.insert('g').attr('class', 'root');
   const clusters = rootGroups.insert('g').attr('class', 'clusters');
