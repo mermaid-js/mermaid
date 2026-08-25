@@ -46,6 +46,12 @@ export interface BandWideningResult {
   /** Edges whose approach rail was pushed clear. */
   widened: number;
   changed: boolean;
+  /**
+   * The validation this pass finished on, so the next repair in the chain can
+   * reuse it instead of paying for its own. A full `checkLayout` per pass per
+   * fixture is not free at corpus scale.
+   */
+  validation: ReturnType<typeof checkLayout>;
 }
 
 /**
@@ -71,7 +77,7 @@ export function widenEndpointApproachBands(
     }
   }
   if (flagged.size === 0) {
-    return { widened: 0, changed: false };
+    return { widened: 0, changed: false, validation: current };
   }
 
   const nodesById = new Map<string, Node>();
@@ -142,5 +148,5 @@ export function widenEndpointApproachBands(
     }
   }
 
-  return { widened, changed: widened > 0 };
+  return { widened, changed: widened > 0, validation: current };
 }

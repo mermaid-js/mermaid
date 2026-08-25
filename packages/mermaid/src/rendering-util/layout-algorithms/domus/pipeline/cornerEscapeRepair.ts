@@ -48,8 +48,17 @@ const SIDE_FRACTIONS = [0.5, 0.35, 0.65, 0.25, 0.75, 0.15, 0.85, 0.4, 0.6, 0.3, 
  * For every endpoint the checker reports as sitting on a node corner, slide it
  * along the side the edge actually uses until the checker is satisfied.
  */
-export function escapeCornerConnections(layout: LayoutData): CornerEscapeResult {
-  let current = checkLayout(layout);
+export function escapeCornerConnections(
+  layout: LayoutData,
+  /**
+   * Validation to start from. The repair before this one in the chain has
+   * already paid for a full `checkLayout` and its result is still accurate when
+   * that pass changed nothing, so passing it in saves one whole validation per
+   * fixture.
+   */
+  known?: ReturnType<typeof checkLayout>
+): CornerEscapeResult {
+  let current = known ?? checkLayout(layout);
   const flagged = current.issues.filter((issue) => issue.type === 'edge-corner-connection');
   if (flagged.length === 0) {
     return { escaped: 0, changed: false };

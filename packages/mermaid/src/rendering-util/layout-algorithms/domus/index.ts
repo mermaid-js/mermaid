@@ -582,12 +582,14 @@ export function runLateQualityPasses(
     // with a full `checkLayout` to find its candidates, and `runLateQualityPasses`
     // runs once per tournament variant — paying that per variant measured
     // +100M work units, most of the 113.3% of ceiling this pass first cost.
-    widenEndpointApproachBands(data4Layout);
+    const bands = widenEndpointApproachBands(data4Layout);
 
     // Slide any endpoint sitting on a node corner onto a free slot on the side
-    // the edge actually uses. Winner-only for the same reason as the two passes
-    // above: it opens with a full `checkLayout` to find its candidates.
-    escapeCornerConnections(data4Layout);
+    // the edge actually uses. Winner-only for the same reason as the passes
+    // above. It reuses the band pass's validation when that pass changed
+    // nothing, which is the common case and saves a whole `checkLayout` per
+    // fixture.
+    escapeCornerConnections(data4Layout, bands.changed ? undefined : bands.validation);
   }
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
