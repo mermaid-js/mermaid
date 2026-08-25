@@ -59,8 +59,28 @@ import { repairNonOrthogonalEdgesWhenIssuesImprove } from './nonOrthogonalRepair
  * boundary hops with zero routable space (every segment search returns null
  * and falls back to a blind L-shape). This padding is passed to every
  * `preprocessClusters` call in the candidate pipeline.
+ *
+ * Was 40, which spent area without buying anything. Measured over every fixture
+ * that has a group (20 of them):
+ *
+ *     pad   groupedScore   cost   areaK   invalid
+ *      40       16562       558M    64886         3
+ *      35       16628       535M    63720         3    (chosen)
+ *      30       15707       484M    63425         4    svelte5-code breaks
+ *
+ * Below 35 the warning above comes true: `domus/svelte5-code` loses its nested
+ * boundary hops and goes invalid, costing 855 aggregate points on its own. 35
+ * is the last value that leaves the invalid set untouched, and it tightens
+ * every group frame in the corpus.
+ *
+ * Two traps if you retune this. The relationship to score is NOT monotonic —
+ * padding changes which variant wins the placement tournament, so intermediate
+ * values can score worse than both neighbours. And measure over ALL grouped
+ * fixtures: a subset chosen from the ones you expect to improve will miss the
+ * regression entirely, which is exactly how 30 looked like a win before
+ * `svelte5-code` was included.
  */
-export const COMPOUND_GROUP_PAD = 40;
+export const COMPOUND_GROUP_PAD = 35;
 const GROUP_PAD = COMPOUND_GROUP_PAD;
 
 /**

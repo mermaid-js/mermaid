@@ -536,3 +536,120 @@ run ended: 25 rounds, 11 kept, 14 reverted. architecture4 66 -> 12 issues, 6 har
 - WHY, and this is the useful part: the filter returns ZERO legal anchors for `L_LanternML_KeySafe_0`. Every sampled point on every candidate route straddles the frame, because the route hugs the LanternML border along its whole length. There is no label position to find.
 - CONCLUSION for handover item 1: this is NOT a label-placement problem and no anchoring strategy can solve it. The label needs the ROUTE to stand off the group frame by at least half the label's extent. That is a routing-clearance constraint — group frames need a label-width keep-out margin when an edge leaving the group carries a label — and it belongs in routing, not in any label pass.
 - three attempts in this area (18, 22, 27) all failed for the same underlying reason; only this one measured why.
+
+## RUN 2026-08-24T16 — branch domus-loop/20260824-160313 — baseline total 55934, invalid 5
+- user focus: `domus/triage` ONLY. "Graph-wise this is actually three graphs... the algorithm places the three graphs on top of each other."
+- goal: raise triage a lot; corpus must not regress.
+- NOTE on baseline: the sweep exits 1 at baseline (5 non-exempt fixtures invalid: architecture4, architecture5-components, mermaid-chart-architecture, triage, triage2). Pre-existing across the whole prior run. Verdict is therefore taken on `total` + `invalid` + the failing-fixture SET not growing, not on vitest exit code.
+- NOTE on tooling: `papers-query` agent type is NOT registered and `~/.claude/agents/papers-query.md` DOES NOT EXIST. The algorithm-expert fallback is broken. Worked around by inlining the contract + the corpus's own retrieval procedure (catalogue topic map -> Layer-1 index -> slice-read by line range) into a general-purpose agent. Corpus itself is intact. FIX THIS FILE.
+
+### round 1 — pack disconnected components (KEPT, commit 11a629837)
+- target: domus/triage (score 0, 12 issues). It is THREE graphs in one file; comp B's bbox sat entirely inside comp A's, third comp (single node n10) inside both.
+- root cause: a DOMUS shape constrains only ADJACENT vertices. No clause spans two components, so nothing has an opinion about their relative position. Gx/Gy take arcs exclusively from labelled edges (§3) -> no edge between components, no arc, no ordering, nothing to separate them. The one SAT run is equivalent to solving each component separately and overlaying at a shared origin.
+- literature (algorithm-expert / corpus): unanimous. DOMUS §2 "Unless otherwise specified, graphs are connected"; §5 its benchmark generator REJECTS disconnected instances. Biedl-Madden-Tollis §3.1 "If the input graph is not connected, then we draw each connected component separately", §3.5 "combine the drawings of connected components". Gansner et al. §1.2 same. GAP: no packing algorithm anywhere in the 39-paper corpus — it says THAT drawings are combined, never HOW. Ordering from HOLA §4.3: descending bounding-box PERIMETER (not vertex count). Aspect ratio target 1 (Zink §Metrics, PRALINE §4.3.1).
+- NOT taken: dummy connector edges (Siebenhaller §3.3.2 1(d) / 5(a)). In shape-first they take L/R/D/U vars, consume a direction per endpoint, join every cycle through them, and can be subdivided -> bends on REAL edges. Bends are the metric DOMUS exists to win.
+- approach: new pipeline/componentSeparation.ts. Union-find over edges (+ parentId, so groups travel as one rigid body), bbox per component, cheap exit if already disjoint, shelf-pack by descending perimeter targeting a square, translate each component RIGIDLY. Rigid translation preserves every intra-component distance and direction => shape stays satisfied, Gx/Gy classes stay aligned, zero intra-component quality spent.
+- placed at the same boundary as separateOverlapsBySweep on BOTH backend branches: coordinate assignment done, nothing routed yet.
+- result: KEPT. total 55934 -> 55945, invalid 5 (same set). triage 12 -> 6 issues. mermaid-ai-input-and-models 994 -> 1000, subgraph-variation-2 995 -> 1000 (both also disconnected). COST 904,684,014 -> 822,515,158 (-9.1%) — separated components are markedly cheaper to route.
+- lesson: when a fixture's issues are all "edge hits foreign node", check the CONNECTED COMPONENTS before touching the router. Three of the four issue types on triage were a placement artefact, not a routing failure.
+
+### round 2 — terminal segments must be obstacle-checked (REVERTED, -990 and over the cost ceiling)
+- target: the 6 survivors. 4 of them traced to ONE edge, L_S5_TypeCheck_0.
+- METHOD THAT WORKED (lesson 3 applied correctly): probe the edge's polyline between every pass instead of reasoning about which pass looks guilty. Bisected layout() -> finalizeDummyLabelNodesToOverlayLabels -> relocateLabelsForSimplification in three runs.
+- the router was NEVER at fault. EDGE_ROUTE_END shows a correct 12-point route weaving around S3 (jog to y=417), RouteA (down to 478), S8 (up to 387). relocateLabelsForSimplification then replaced it with a 4-bend candidate whose FIRST segment ran 1407px straight from S5 to TypeCheck, through all three.
+- root cause: `isInteriorClear` looped `for (let i = 1; i < pts.length - 2; i++)` — first and last segments exempt as "port stubs". Sound for a 10px hop off a boundary; catastrophic for a long terminal segment, and nothing else in the pass ever looks at one. The endpoint nodes are already excluded via obstacleRects, so the index exemption bought nothing.
+- fix: check every segment; renamed isRouteClear.
+- triage 6 -> 3 issues locally. All edge-intersects-obstacle and the shared subpath gone.
+- CORPUS VERDICT: REVERT on all three gates. total 55945 -> 54955 (-990), invalid 5 -> 6 (svelte5-code 894 -> 0, NEW edge-intersects-obstacle), architecture 792 -> 696, cost 822.5M -> 1063.3M = 106.8% of the 996M ceiling (+29%).
+- WHY, and this is the reusable part: this pass fires only when the CURRENT route is already a bad detour (ratio > 2). Rejecting a candidate therefore does not fall back to something good — it leaves the detour standing, and the downstream repair passes then chew through it. The laxity is LOAD-BEARING for ordinary stubs. Diagnosis correct, remedy too blunt.
+- lesson: for a candidate-acceptance gate, "make the check stricter" is not free. Ask what the fallback is when the candidate is rejected. Here the fallback is the pathology the pass exists to fix.
+
+### round 3 — same fix, exemption bounded by SEGMENT LENGTH instead of index (REVERTED, changed nothing)
+- variant of round 2: exempt a terminal segment from the obstacle check only while it is <= spacing*2 (20px), i.e. actually stub-length.
+- result: IDENTICAL to round 2 — total 54955, cost 1,063,291,909 to the unit, invalid 6. The threshold is inert: essentially every terminal segment in a generated candidate already exceeds 20px (the builders emit cx at spacing*2/4/6/8 = 20/40/60/80, and the accepted ones are the long ones).
+- per-fixture cost told the real story: the +240M blowup is ENTIRELY domus/triage itself, 41.5M -> 411.0M (10x). architecture actually got CHEAPER (226.6M -> 114.7M) while LOSING 96 points. The -990 decomposes exactly: svelte5-code 894 -> 0, architecture -96.
+- lesson: a threshold that "sounds conservative" is worth one measurement before a full sweep. This one never fired.
+
+### round 4 — relative terminal gate: candidate may not add terminal hits (REVERTED, identical to 2 and 3)
+- reframing after 2 and 3: the absolute test ("terminals must be clear") is the wrong SHAPE, because the fallback on rejection is the pathology the pass exists to fix. Switch to the idiom used everywhere else in this pipeline — monotone, not absolute.
+- interior segments: still must be clear outright (unchanged). Terminal segments: candidate's hit count must be <= the CURRENT route's terminal hit count.
+- triage's current terminals are clean, so budget 0 -> the 1407px straight shot is rejected, 3 issues as in rounds 2/3. Layouts whose terminals already clip something keep their simplification.
+- result: IDENTICAL AGAIN. total 54955, invalid 6, cost 1,063,291,909 — the same numbers to the unit as rounds 2 and 3. svelte5-code's and architecture's current routes ALSO have zero terminal hits, so the relative budget collapses onto the absolute test for them.
+- CONCLUSION, measured three ways: any gate that stops relocateLabelsForSimplification accepting the straight-shot candidate on triage also stops it on svelte5-code and architecture, and those two DEPEND on it. The pass's terminal-segment laxity is load-bearing corpus-wide. This is not a threshold to tune — it is the wrong lever.
+- the defect itself is real and stands: L_S5_TypeCheck_0 ships a 1407px first segment through S3, RouteA and S8, replacing a correct 12-point route. Fixing it needs the pass to produce a BETTER candidate (one that detours around the obstacles it currently ploughs through), not to reject the bad one. Generating an obstacle-aware candidate is a bigger change than this loop's one-focused-change rule allows.
+
+run ended: max_consecutive_reverts (3) — total 55934 -> 55945, invalid 5 (unchanged set), cost 904,684,014 -> 822,515,158 (-9.1%). triage 12 issues -> 6.
+
+### handover — what the next session should know
+1. THE LEVER THAT WORKED: connected-component packing. Three fixtures improved from one change and routing work dropped 9% corpus-wide. If another fixture shows "edge hits foreign node" everywhere, check components FIRST.
+2. THE LEVER THAT DOES NOT: tightening relocateLabelsForSimplification's obstacle test. Measured three ways (absolute / length-gated / relative-monotone), all three IDENTICAL: -990 aggregate, svelte5-code invalid, cost 6.8% over ceiling. Do not retry without a candidate GENERATOR change.
+3. triage's remaining 3 issues: L_TypeCheck_RouteF_0 (last segment 5.0 < 10, plus its bend overlapping the arrowhead) and one edge-label-overlaps-foreign-edge (L_S9_med_S8_0's label on L_TypeCheck_RouteC_0). None is a component or obstacle problem any more.
+4. TOOLING DEFECT, unfixed: `~/.claude/agents/papers-query.md` does not exist and the `papers-query` agent type is not registered, so the algorithm-expert skill's documented fallback points at a missing file. The corpus at ~/Documents/papers is fully intact (39 papers, catalogue topic map, per-paper Layer-1 section maps, meta/papers-retrieval-spec-v3.md). Workaround used this run: inline the contract + the corpus's own retrieval procedure into a general-purpose agent. Worth writing the file properly.
+5. CORPUS GAP worth recording: the 39-paper corpus contains NO packing algorithm. It states that component drawings are combined (Biedl-Madden-Tollis §3.5, Gansner §1.2) and never how. The shelf pack in componentSeparation.ts is our own choice; polyomino packing (Freivalds/Dogrusoz/Kobourov GD 2001) and Graphviz gvpack are outside this corpus.
+
+## RUN RESUMED — goal: aggregate 57,000 (user, /goal). Baseline at resume 55,945.
+- headroom check first: domus/ slice has 6,553 points to perfect, so +1,055 is reachable. Six fixtures at 0.
+- KEY OBSERVATION that redirected the run: `domus/er-db-model` scored 0 with valid=true. A fixture with NO hard issues sitting at zero means the QUALITY score is clamped, not that validity failed. Nobody had looked at it because "score=0" reads like an invalid fixture in the row dump.
+
+### round 5 — shortcut routes that retrace themselves (KEPT, commit 5e5085e9f)
+- er-db-model breakdown: bendPenalty 3855 total, of which ONE edge contributed 3840. 13 points. Penalty is BEND_PENALTY_6 * BEND_GROWTH^(n-6), exponential past 6, so a single fat route zeroes an otherwise perfect fixture. Other 15 edges: <=5 combined.
+- the route's first 5 points are necessary (down under CHARTER_INVITE and back up); the tail wanders to x=968 and returns to x=1199 for the entry. Pure waste.
+- DECISIVE EXPERIMENT before writing any code: hand-install candidate polylines and run validateLayout. exact-north-7pt -> score 912, valid, ZERO new issues. So the monotone gate would ACCEPT a good route; the generator never PRODUCES one. (First two hand-routes reported self-intersection — that was toFixed(0) rounding putting my endpoints a fraction inside their own node. Use exact endpoint coords when hand-probing.)
+- why the sibling pass can't help: simplifyPathologicalRoutesWhenMonotone rebuilds from canonical L/Z + compound routes spanning the two PORTS. Right when a simple shape exists end-to-end; no answer when the route genuinely has to weave and only ONE STRETCH is waste.
+- fix: splice a direct orthogonal connector between two vertices the polyline ALREADY visits, keep head and tail.
+- literature (papers-query, now working): wueortho's sub-route exchange is the shape — "we replace the section between the first and last shared vertex in one path with the corresponding section of the other" (Hegemann & Wolff, §Edge Routing). BUT theirs splices a section from another ALREADY-VALID path; ours is synthesised, so it inherits no clearance guarantee and needs a full obstacle sweep. Two enforced invariants: (1) Dwyer §3 valid-path — "no segment passes through a node rectangle, except the first and last segments ... which must terminate at the centre of rectangles" — the terminal exemption is scoped to the edge's OWN endpoint box ONLY (this is exactly the distinction rounds 2-4 got backwards); (2) port entry direction is fixed upstream and keyed into the routing search, so a splice changing entry side is rejected.
+- result: KEPT. total 55945 -> 56908 (+963), invalid 5 unchanged, cost 822.5M -> 773.2M (-6.0%, shorter routes are cheaper downstream). ONLY er-db-model moved: 0 -> 963, crossings 5 -> 2. Zero collateral.
+- lesson: a `score=0 valid=true` row is a DIFFERENT bug class from `score=0 valid=false` and is usually much cheaper to fix — no hard constraint to satisfy, just one pathological edge. Scan for that pattern first.
+- lesson: hand-install the target geometry and validate it BEFORE writing a pass. It tells you in one run whether you have a generator problem or a gate problem. Rounds 2-4 would have been three reverts shorter with this.
+
+### round 6 — splice pass widened to 6-point routes (REVERTED, no gain, +3.4% cost)
+- MIN_POINTS 8 -> 6. total unchanged 56908, cost 773.2M -> 799.5M, NO fixture moved. No 6/7-point route on any fixture has a spliceable shortcut. Splicing is exhausted at 8.
+
+### round 7 — rewire rerouteTopCrossersWhenScoreImproves (REVERTED, cost ceiling)
+- motive from corpus: `diss` §2.2 "CROSSING was found to be the most important, followed by BEND and SYMMETRY"; libavoid papers state the post-routing rule as a CONJUNCTION ("does not introduce unnecessary crossings or bends"), never a trade. papers_query_ok FALSE on whether a bend-reducing rewrite may ADD a crossing — corpus never poses it.
+- +55 aggregate (56963), NINE fixtures improved. But cost 773.2M -> 1063.3M = 111.1% of ceiling. HARD FAIL.
+
+### round 8 — same pass, candidate set restricted per literature (REVERTED, worse on BOTH axes)
+- Pupyrev's "fast restricted lookup" + Bereg's fixed pass count: 2 rounds, 8 targets, 3 side pairs.
+- +25 aggregate AND 112.6% cost — worse than round 7 on both. THE COST IS NOT IN THE PASS'S OWN SEARCH; it is in what the changed geometry does to every pass downstream. Restricting the search cannot touch that.
+
+### round 11 — crossing pass on the WINNING VARIANT ONLY (KEPT, commit 6e83bd4ae)
+- THE INSIGHT: `runLateQualityPasses` runs ONCE PER VARIANT of the compound-placement tournament. swingReroutesWhenScoreImproves already sits behind `skipSwingReroutes` for exactly this reason; the crossing pass had no such guard.
+  per variant      +55   111.1% of ceiling
+  restricted set   +25   112.6%
+  winner only      +32    92.1%   <- kept
+- total 56908 -> 56940. project-sox2 953->972, architecture 792->802, edge-types 977->980. No regressions.
+- lesson: when a pass is "too expensive", ask WHERE it runs before tuning WHAT it does.
+
+### rounds 9,10,12-18 — all REVERTED. The entangled-headroom wall.
+- 9 repair-after-relocation (lift+detour after relocateLabels): triage 6->7, architecture 792->713. WORSE.
+- 10 obstacle-aware rails + prefer-clean ranking in labelRelocation: exactly neutral. Safe but inert.
+- 12 crossing pass on small tournament variants too: +55 but 99.6% of ceiling. Too fragile to keep.
+- 13/14 clamped-acceptance (score is clamped at 0 on invalid layouts, so `next.score > current.score` can NEVER fire on the layouts these repair passes exist for). Arrowhead-only: architecture5-components 6->4, mermaid-chart 11->7, aggregate NEUTRAL. Broad rollout: -29/-30.
+- 15/16 sharedSubpathNudge collinearity tolerance: THE PASS DEMANDED 1e-6, THE VALIDATOR USES EPS=1. Segments exactly 1px apart are reported as shared and invisible to the pass meant to fix them (arch5: two 1515px rails at y=1459 and y=1460). Fixing it cleared shared-subpath on triage AND triage2 — and cost -30 corpus-wide. Gating it to invalid layouts did NOT help, because the compound tournament runs these passes on intermediate INVALID candidates.
+- 17/18 skip labelRelocation on already-obstacle-clear routes: triage 6 -> 2 ISSUES (all four obstacle intersections gone). Restricting to routes >= 8 points saved svelte5-code (894 kept). But architecture 802 -> 715 regardless of threshold, and the combination is -94 net.
+
+### THE WALL, stated precisely
+Every remaining lever that helps an invalid fixture perturbs the compound-placement tournament, because the tournament runs the late/finalize passes on candidates that are INVALID mid-flight. Change behaviour on invalid input and you change which variant wins, which costs valid fixtures roughly as much as the invalid one gains. Rounds 13-18 hit this four separate ways.
+
+### triage's LAST blocker is geometric, not a missing repair
+With the round-18 skip, triage reaches 2 issues, both on L_TypeCheck_RouteF_0: last segment 5.0 (< 10) and its bend inside the arrowhead marker. Probed by hand: RouteD (x 1493-1650, y 878-965) sits DIRECTLY ABOVE RouteF (x 1495-1582, top y=975) and spans its whole x-range, leaving a 10px corridor. A north approach CANNOT satisfy the 10px minimum stub — the route already uses the only space there is. Lengthening the stub to 20 leaves exactly one issue (cuts RouteD). Clearing it needs a PORT-SIDE change (approach RouteF from west/east/south), which is portSideReselect / crossingPortRepair territory, not a stub repair.
+
+run ended: goal 57,000 NOT reached. total 55,945 -> 56,940 (+995). invalid 5 (unchanged set). cost 773.2M -> 917.5M (92.1% of ceiling).
+
+### RUN CLOSED — user decision: land what's proven, stop at 56,940
+- `domus-loop/20260824-160313` holds the three verified commits. Aggregate 56,940, invalid 5 (unchanged set), cost 917,497,402 = 92.1% of the 996M ceiling.
+- `domus-loop/findings-20260824` holds the two diagnosed-but-cost-bearing findings as SEPARATE commits, each with its measured corpus effect in the message. Branched from the loop branch HEAD; NOT merged.
+    0814d49b5  sharedSubpathNudge collinearity tolerance   -30 aggregate (clears shared-subpath on triage AND triage2)
+    629e71a78  score-clamp escape for arrowhead repair      neutral, slightly cheaper (arch5 6->4, mermaid-chart 11->7)
+
+### why the last 60 was not reachable inside this loop's scope
+- domus valid-fixture headroom 558, swimlanes headroom 502. Either would cover it; swimlanes is out of scope per the skill's own rule.
+- EVERY domus lever found either yields nothing or is eaten by the compound-placement tournament. The tournament runs the late/finalize passes on candidate variants that are INVALID MID-FLIGHT, so any change to behaviour on invalid input changes which variant wins, and costs valid fixtures about what the invalid one gains. Rounds 13-18 hit this four separate ways.
+- triage CANNOT be lifted off 0 by routing. Proved it: with the round-18 weaving skip plus a hand-installed west approach to RouteF, triage reaches valid=true with ZERO issues — and still scores 0, because L_S5_TypeCheck_0 is an 11-point route costing 960 of the 1000-point budget on its own (bend penalty is exponential past 6 points). Its 11 points are load-bearing: it threads a corridor between S3, RouteA and S8, and a rail above all three hits RouteB_bot. That is a PLACEMENT defect — TypeCheck sits ~1400px from its predecessor S5 in an LR flowchart — not a routing one.
+
+### the four lessons this run adds
+1. A `score=0 valid=true` row is a DIFFERENT and much cheaper bug class than `score=0 valid=false`: no hard constraint to satisfy, usually one pathological edge. er-db-model was +963 from a single 13-point route. Scan for that pattern FIRST.
+2. Hand-install the target geometry and validate it BEFORE writing a pass. One run tells you whether you have a GENERATOR problem or a GATE problem. Rounds 2-4 were three reverts that this would have prevented.
+3. When a pass is "too expensive", ask WHERE it runs before tuning WHAT it does. The crossing pass went from 111% of the cost ceiling to 92.1% purely by moving it behind the existing `skipSwingReroutes` guard — restricting its candidate set, the literature's usual remedy, made it worse on BOTH axes.
+4. For a candidate-acceptance gate, "make the check stricter" is not free. Ask what the fallback is when the candidate is rejected. In labelRelocation the fallback is the very pathology the pass exists to fix, which is why three separate strictness variants all cost 990.
