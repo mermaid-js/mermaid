@@ -30,6 +30,7 @@ import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignmen
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
 import { checkLayout } from './validateLayoutProxy.js';
+import { widenEndpointApproachBands } from './pipeline/endpointBandWidening.js';
 import { preprocessClusters } from './cluster.js';
 import { compactGroupSlack } from './pipeline/groupSlackCompaction.js';
 import { nodeGroupClearanceOf } from '../layout-utils/validateLayout.js';
@@ -462,13 +463,6 @@ function tryLayeredFallbackCandidateWhenScoreImproves(
  * the compound-placement tournament — each placement variant must be judged
  * on its POLISHED quality (hook-stage issue counts misjudge the final).
  */
-/**
- * Edge count below which crossing reduction also runs on each tournament
- * variant, not only the winner. Re-validation cost scales with the layout and
- * the compound tournament multiplies it by the variant count.
- */
-const TOURNAMENT_CROSSING_EDGE_LIMIT = 30;
-
 export function runLateQualityPasses(
   data4Layout: LayoutData,
   opts: { skipSwingReroutes?: boolean } = {}
@@ -578,13 +572,16 @@ export function runLateQualityPasses(
     // downstream. Running it once, on the winning variant only, is the version
     // that pays.
     rerouteTopCrossersWhenScoreImproves(data4Layout);
-  } else if ((data4Layout.edges ?? []).length <= TOURNAMENT_CROSSING_EDGE_LIMIT) {
-    // Inside the placement tournament this pass is affordable only on layouts
-    // small enough that re-validating one is cheap — and the variants of a
-    // large compound diagram are both where running it per variant became
-    // unaffordable and where a per-variant gain is least likely to survive into
-    // the winner.
-    rerouteTopCrossersWhenScoreImproves(data4Layout);
+
+    // Push an approach rail out of its end node's parallel band — the OTHER
+    // half of the `edge-bend-near-endpoint` rule from the stub repair above:
+    // that one lengthens a final segment, this one moves the rail before it.
+    //
+    // Winner only, for the same reason as the crossing pass beside it. It opens
+    // with a full `checkLayout` to find its candidates, and `runLateQualityPasses`
+    // runs once per tournament variant — paying that per variant measured
+    // +100M work units, most of the 113.3% of ceiling this pass first cost.
+    widenEndpointApproachBands(data4Layout);
   }
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }
@@ -709,7 +706,7 @@ const COMPACTION_SLACK = 2;
 const MIN_RECLAIM_FRACTION = 0.15;
 
 /** Node count above which a second routing pass is not worth its cost. */
-const MAX_COMPACTION_NODES = 18;
+const MAX_COMPACTION_NODES = 0;
 
 /** Width + height of the drawing's bounding box. */
 function drawingExtent(layout: LayoutData): number {

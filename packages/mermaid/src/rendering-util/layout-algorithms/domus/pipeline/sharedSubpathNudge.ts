@@ -232,7 +232,7 @@ export function applySharedSubpathNudge(
       if (!pick) {
         continue;
       }
-      const { target, other } = pick;
+      const { target } = pick;
       const targetPts = (edges[target.edgeIdx] as { points: Point[] }).points;
       const desiredY = alleyMidpointHorizontal(
         target.y,
@@ -249,7 +249,7 @@ export function applySharedSubpathNudge(
         target.y + spacing,
         target.y - spacing * 1.5,
         target.y + spacing * 1.5,
-      ]).filter((y) => Math.abs(y - other.y) >= spacing - 1e-6);
+      ]).filter((y) => clearsAllParallelH(y, target, hSegs, spacing));
       let applied = false;
       for (const cy of candidates) {
         if (
@@ -275,6 +275,35 @@ export function applySharedSubpathNudge(
   }
 
   return { nudged };
+}
+
+/**
+ * True when `y` keeps `spacing` from EVERY horizontal segment the target
+ * overlaps in x, not merely from the one it is being separated from.
+ *
+ * Checking only the pair partner makes the pass oscillate. This pass runs
+ * several times, and on `domus/architecture5-components` it moved a rail ten
+ * units off its partner, landed it beside a THIRD edge, and the next call moved
+ * it straight back — traced, the rail alternated 1459.6 / 1469.6 / 1459.6 /
+ * 1469.6 and finished wherever the last call happened to leave it. That is how
+ * a 1500px overlap survived a pass built to remove it.
+ *
+ * Considering every neighbour makes each move one the next call agrees with, so
+ * the pass converges instead of cycling.
+ */
+function clearsAllParallelH(y: number, target: HSeg, hSegs: HSeg[], spacing: number): boolean {
+  for (const seg of hSegs) {
+    if (seg.edgeIdx === target.edgeIdx && seg.segIdx === target.segIdx) {
+      continue;
+    }
+    if (seg.x2 <= target.x1 + 1e-6 || seg.x1 >= target.x2 - 1e-6) {
+      continue;
+    }
+    if (Math.abs(y - seg.y) < spacing - 1e-6) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function pickNudgeTarget<T extends VSeg | HSeg>(
