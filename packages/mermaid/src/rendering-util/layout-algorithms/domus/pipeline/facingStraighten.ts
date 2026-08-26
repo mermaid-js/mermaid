@@ -69,6 +69,23 @@ export function straightenFacingPairsWhenScoreImproves(
     current ??= checkLayout(layout);
     return current.ok && current.score > 0;
   };
+  // Edge ids whose terminals the validator flags for port placement. A 3-point
+  // L is already bend-optimal, but when a terminal sits off the diamond vertex
+  // or hugs a corner, the center-line rebuild can clear the flag — so flagged
+  // 3-point routes join the L-rebuild candidate set (unflagged ones stay
+  // skipped: nothing to win, one checkLayout to lose).
+  const portFlaggedEdgeIds = (): Set<string> => {
+    const ids = new Set<string>();
+    for (const i of current?.issues ?? []) {
+      if (
+        (i.type === 'port-off-diamond-corner' || i.type === 'port-near-corner') &&
+        i.edgeId != null
+      ) {
+        ids.add(String(i.edgeId));
+      }
+    }
+    return ids;
+  };
 
   const nodeById = new Map<string, Node>();
   for (const n of layout.nodes ?? []) {
@@ -104,11 +121,16 @@ export function straightenFacingPairsWhenScoreImproves(
     // through the drawn vertices. Try both elbow orientations; only routes
     // with 2+ bends are worth rebuilding.
     if (disjointX && disjointY) {
-      if (shapes !== 'all' || pts.length <= 3) {
-        continue; // L-rebuild only at end-of-layout; 3-point routes are already optimal
+      if (shapes !== 'all' || pts.length <= 2) {
+        continue; // L-rebuild only at end-of-layout
       }
       if (!gateOpen()) {
         return current;
+      }
+      // A 3-point route is already bend-optimal — rebuild it only when one of
+      // its terminals carries a port flag the center-line L could clear.
+      if (pts.length === 3 && !portFlaggedEdgeIds().has(String(e.id))) {
+        continue;
       }
       const scx = s.x ?? 0;
       const scy = s.y ?? 0;

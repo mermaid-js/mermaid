@@ -1153,3 +1153,15 @@ run ended: max_consecutive_reverts (rounds 11, 12, 13) — total 52,808.1 -> 53,
 - MEASURED AND MOVED: run from the polish block the L-arm was NET NEGATIVE (-18: architecture4 -20 with a fresh grid-misalignment, co-pilot -3) despite every commit being a local win — mid-polish rebuilds steer the downstream passes onto worse endpoints (the round-11 path-dependence family). At END-OF-LAYOUT the same rebuilds are pure gain (+66). Rule of thumb: whole-route rebuilds belong where nothing downstream re-reads the geometry; port slides can run early.
 - COST paid for twice to fit the ceiling: (a) lazy entry validation — the pass pays checkLayout only on the first geometrically qualifying edge; (b) validation CHAINING into the diamond snap at both call sites (band/corner precedent). 803.55M (over!) -> 801.6M (99.8%).
 - result: incremental-editing +37 (L_n2_n3 etc. rebuilt, a diamond flag cleared), co-pilot +12, architecture2 +7 (port-near-corner cleared), triage +5, subgraph-variation +5. Sweep 65/65. Wider suite 561, 0 collateral.
+
+### round 3 (investigation only, no code) — the SAT refine spiral is the corpus's biggest cost pool
+
+- state-machine (7 nodes, 78M work = 10x its peers): 97% is satPropagations. Telemetry: 87 solveSAT calls, 78 UNSAT, ~1-2.5M propagations EACH at ~600 clauses — the paper's refine loop (UNSAT -> split one culprit edge -> fresh solve) re-proves UNSAT ~78 times, discarding all learned clauses every iteration because the encoding is rebuilt per split. triage2 same family (127M SAT props). Combined pool ~200M = 25% of the ceiling.
+- fixes are supervised-structural, not loop rounds: (a) incremental SAT across refinements (needs stable variable numbering across splits), (b) 2-watched-literal propagation (the current scan is passes x clauses; solver already carefully tuned — flat literal mirror, typed arrays — with documented trade-offs), (c) conflict-budgeted UNSAT with early culprit extraction (cheap but changes split choices = shape quality risk).
+- no code kept; telemetry removed. Named for the next supervised session — reclaiming even half opens ~100M of ceiling headroom, which is what currently blocks every expensive quality candidate.
+
+### round 3 (implemented) — flagged 3-point L rebuild (KEPT) — 53,522 -> 53,562 (+40), invalid 1, cost 99.8%
+
+- a 3-point L is bend-optimal but its PORTS can still be wrong; the L-rebuild now also takes 3-point routes whose edge carries a port-off-diamond-corner / port-near-corner flag (unflagged 3-pointers stay skipped — nothing to win, one checkLayout to lose).
+- result: incremental-editing 937 -> 977 and ISSUE-FREE (last diamond flag cleared). Sweep 65/65, cost flat 99.8%. Wider suite 561, 0 collateral.
+- also this round, investigation logged separately: triage's gap (755) is 50 crossings in the fan corridor — the structural class three runs have bounced off; not a loop target.
