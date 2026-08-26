@@ -37,6 +37,8 @@ interface Point {
 
 interface EdgeLike {
   id?: string | number;
+  start?: string | number;
+  end?: string | number;
   points?: Point[];
   x?: number;
   y?: number;
@@ -123,28 +125,73 @@ export function repairRailProximityWhenIssuesImprove(
       edgesById.set(String(e.id), e);
     }
   }
+  const nodesById = new Map<string, { x?: number; y?: number; width?: number; height?: number }>();
+  for (const n of layout.nodes ?? []) {
+    if (n?.id != null) {
+      nodesById.set(String(n.id), n as never);
+    }
+  }
 
   let progressed = false;
 
-  const tryTargets = (edge: EdgeLike, segIdx: number, targets: number[]): boolean => {
+  const tryTargets = (
+    edge: EdgeLike,
+    segIdx: number,
+    targets: number[],
+    goalGone?: (issues: readonly IssueLike[]) => boolean
+  ): boolean => {
     const pts = edge.points;
     if (!Array.isArray(pts)) {
       return false;
     }
     for (const target of targets) {
+      // The edge's own overlay label rides the rail it is anchored on, or the
+      // shift strands it (edge-label-off-edge kills every candidate).
+      const p0 = pts[segIdx];
+      const q0 = pts[segIdx + 1];
+      const railVertical = Math.abs(p0.x - q0.x) < 1e-6;
+      const labelOnRail =
+        Number.isFinite(edge.x) &&
+        Number.isFinite(edge.y) &&
+        (railVertical
+          ? Math.abs(edge.x! - p0.x) <= 1 &&
+            edge.y! >= Math.min(p0.y, q0.y) - 1 &&
+            edge.y! <= Math.max(p0.y, q0.y) + 1
+          : Math.abs(edge.y! - p0.y) <= 1 &&
+            edge.x! >= Math.min(p0.x, q0.x) - 1 &&
+            edge.x! <= Math.max(p0.x, q0.x) + 1);
+      const oldLabelX = edge.x;
+      const oldLabelY = edge.y;
       const undo = shiftRail(pts, segIdx, target);
+      if (undo && labelOnRail) {
+        if (railVertical) {
+          edge.x = target;
+        } else {
+          edge.y = target;
+        }
+      }
       if (!undo) {
         return false;
       }
       const next = checkLayout(layout);
       const beforeKeys = new Set(current.issues.map(keyOf));
       const grewNewKey = next.issues.some((k) => !beforeKeys.has(keyOf(k)));
-      if (next.issues.length < current.issues.length && !grewNewKey) {
+      // Strictly fewer is always a win. Equal count with NO new keys is
+      // accepted only when the caller's target issue is verifiably gone —
+      // the validator reports one crossing per label, so clearing one
+      // surfaces the label's next pre-existing crossing at equal count.
+      const accepted =
+        !grewNewKey &&
+        (next.issues.length < current.issues.length ||
+          (next.issues.length === current.issues.length && goalGone?.(next.issues) === true));
+      if (accepted) {
         current = next;
         progressed = true;
         return true;
       }
       undo();
+      edge.x = oldLabelX;
+      edge.y = oldLabelY;
     }
     return false;
   };
@@ -187,11 +234,25 @@ export function repairRailProximityWhenIssuesImprove(
       // Minimal legal separation first (the validator wants >= 7): these
       // corridors are tight, and a full-spacing push was measured to land on
       // the neighbours (border-hugging one way, bend-near-endpoint the
-      // other). Escalate only if the minimum fails.
+      // other). Escalate only if the minimum fails — and then try the FAR
+      // side of the partner rail (a lane swap): rails have different spans,
+      // so the space one rail cannot reach may be free for the other. On
+      // triage2's Done corridor every same-side lane for the long rail is
+      // blocked (border-hug at +10, an obstacle at +15) while the short
+      // rail's swap lane is open.
       const targets = [
         otherCoord + away * 8,
         otherCoord + away * spacing,
         otherCoord + away * spacing * 1.5,
+        // The corridor window can be narrower than 8 on both ends at once
+        // (triage2: band floor 493.2, obstacle top ~504, two rails to fit) —
+        // the minimal-legal rung, a hair over the validator's 7, is sometimes
+        // the only rung inside the window.
+        otherCoord + away * 7.2,
+        otherCoord - away * 7.2,
+        otherCoord - away * 8,
+        otherCoord - away * spacing,
+        otherCoord - away * spacing * 1.5,
       ];
       if (tryTargets(r.edge, r.idx, targets)) {
         return;
@@ -239,8 +300,88 @@ export function repairRailProximityWhenIssuesImprove(
     const lo = (vertical ? rect.left : rect.top) - 2;
     const hi = (vertical ? rect.right : rect.bottom) + 2;
     const sides = [hi, lo].sort((a, b) => Math.abs(a - coordinate) - Math.abs(b - coordinate));
-    if (tryTargets(crossed, i, sides)) {
+    // In a saturated pocket the spot just past the label is usually taken by
+    // the next neighbour (measured on triage2: a label at +2, a rail at +10);
+    // escalate well past the local traffic before giving up.
+    const shiftTargets = [
+      ...sides,
+      sides[0] + spacing,
+      sides[0] + spacing * 3,
+      sides[0] + spacing * 3.3,
+      sides[0] + spacing * 3.6,
+      sides[0] + spacing * 4.5,
+      sides[1] - spacing,
+      sides[1] - spacing * 3,
+      sides[1] - spacing * 4.5,
+    ];
+    const ownerId2 = String(d.ownerEdgeId);
+    const crossedId2 = String(iss.edgeId ?? '');
+    const thisCrossingGone = (issues: readonly IssueLike[]): boolean =>
+      !issues.some(
+        (n) =>
+          n.type === 'edge-label-overlaps-foreign-edge' &&
+          String(n.edgeId ?? '') === crossedId2 &&
+          String((n.details as { ownerEdgeId?: string })?.ownerEdgeId) === ownerId2
+      );
+    if (tryTargets(crossed, i, shiftTargets, thisCrossingGone)) {
       return;
+    }
+    // LAST RESORT for a shiftable rail with no free lane: the pocket is
+    // saturated — on triage2 the chain was a label at +2, a rail at +10, a
+    // parallel at +30, another label at +33, with under 1.1px between them.
+    // No per-edge move can help when the region holds more content than
+    // space, so MAKE space: insert a vertical whitespace strip (translate
+    // every node, point and label right of a cut by the strip width — an
+    // operation that preserves all relative geometry on each side and leaves
+    // the strip empty by construction), then retry the shift into the strip.
+    // The whole transaction is judged by the same monotone gate; on any
+    // failure the strip is undone.
+    if (i > 0 && i + 1 < pts.length - 1 && vertical) {
+      const stripW = spacing * 2;
+      for (const cutX of [hi + 1, hi + spacing * 3.05]) {
+        const nodeStraddles = [...nodesById.values()].some(
+          (n) => Number.isFinite(n.x) && Math.abs(n.x! - cutX) < (n.width ?? 0) / 2 + 1
+        );
+        if (nodeStraddles) {
+          continue;
+        }
+        const movedNodes: { n: { x?: number }; old: number }[] = [];
+        for (const n of nodesById.values()) {
+          if (Number.isFinite(n.x) && n.x! >= cutX) {
+            movedNodes.push({ n, old: n.x! });
+            n.x = n.x! + stripW;
+          }
+        }
+        const movedPts: { pt: Point; old: number }[] = [];
+        const movedLabels: { e: EdgeLike; old: number }[] = [];
+        for (const e2 of edgesById.values()) {
+          for (const pt of e2.points ?? []) {
+            if (pt.x >= cutX) {
+              movedPts.push({ pt, old: pt.x });
+              pt.x += stripW;
+            }
+          }
+          if (Number.isFinite(e2.x) && e2.x! >= cutX) {
+            movedLabels.push({ e: e2, old: e2.x! });
+            e2.x = e2.x! + stripW;
+          }
+        }
+        // The strip may have carried the rail itself; retry shifts into the
+        // opened space, judged against the PRE-strip issue state.
+        const stripTargets = [cutX + stripW / 2, cutX + stripW / 2 + 4, cutX + stripW / 2 - 4];
+        if (tryTargets(crossed, i, stripTargets, thisCrossingGone)) {
+          return;
+        }
+        for (const m of movedNodes) {
+          m.n.x = m.old;
+        }
+        for (const m of movedPts) {
+          m.pt.x = m.old;
+        }
+        for (const m of movedLabels) {
+          m.e.x = m.old;
+        }
+      }
     }
     // The crossing segment is often TERMINAL (a 3-point route's last leg),
     // which shiftRail refuses because it carries a port. Detour instead: keep
@@ -296,6 +437,117 @@ export function repairRailProximityWhenIssuesImprove(
       }
       pts.length = 0;
       pts.push(...oldPoints);
+    }
+
+    // Z-REBUILD for a straight 2-point crossed edge. Such an edge cannot be
+    // jogged in place: the `port-near-corner` waiver applies only to bendless
+    // routes, so a jog on an edge whose port sits near a corner (triage2's
+    // L_deps at t=0.88 on deps' bottom side) un-waives the port and every jog
+    // candidate dies on that instead. The rebuild moves the START port toward
+    // the middle of its side AND takes the clear column in one candidate:
+    //   (px, y0) -> (px, my) -> (qx, my) -> (qx, y1)
+    if (pts.length !== 2) {
+      return;
+    }
+    const startNode = nodesById.get(String(crossed.start ?? ''));
+    const endNode = nodesById.get(String(crossed.end ?? ''));
+    if (
+      !startNode ||
+      !endNode ||
+      !Number.isFinite(startNode.x) ||
+      !Number.isFinite(endNode.x) ||
+      !vertical
+    ) {
+      return;
+    }
+    const y0 = pts[0].y;
+    const y1 = pts[pts.length - 1].y;
+    const dirY = y1 >= y0 ? 1 : -1;
+    const sHalf = (startNode.width ?? 0) / 2;
+    const eHalf = (endNode.width ?? 0) / 2;
+    const pxOptions = [startNode.x!, (startNode.x! + pts[0].x) / 2];
+    const myOptions = [entry - dir * 2, y0 + dirY * 12];
+    const oldPts2 = pts.map((pt) => ({ ...pt }));
+    const oldLx = crossed.x;
+    const oldLy = crossed.y;
+    const qxOptions = [...jogSides, sides[0] + 4, sides[0] + 6, sides[1] - 4, sides[1] - 6];
+    for (const qx of qxOptions) {
+      if (Math.abs(qx - endNode.x!) > eHalf - 2) {
+        continue; // the end port must stay on the end node's side
+      }
+      for (const px of pxOptions) {
+        if (Math.abs(px - startNode.x!) > sHalf - 2) {
+          continue;
+        }
+        for (const my of myOptions) {
+          const between = dirY > 0 ? my > y0 + 1 && my < y1 - 1 : my < y0 - 1 && my > y1 + 1;
+          if (!between) {
+            continue;
+          }
+          pts.length = 0;
+          pts.push({ x: px, y: y0 }, { x: px, y: my }, { x: qx, y: my }, { x: qx, y: y1 });
+          // The edge's own overlay label must ride the rebuild or the
+          // candidate dies on edge-label-off-edge. A single anchor spot can
+          // itself land on a neighbour, so several positions along the new
+          // polyline are tried before the geometry is given up.
+          const anchorOptions: [number, number][] = Number.isFinite(crossed.x)
+            ? [
+                [px, (y0 + my) / 2],
+                [(px + qx) / 2, my],
+                [qx, (my + y1) / 2],
+                [qx, my + (y1 - my) * 0.25],
+                [qx, y1 - dirY * 16],
+              ]
+            : [[Number.NaN, Number.NaN]];
+          let accepted2 = false;
+          for (const [ax, ay] of anchorOptions) {
+            if (Number.isFinite(ax)) {
+              crossed.x = ax;
+              crossed.y = ay;
+            }
+            const next2 = checkLayout(layout);
+            const beforeKeys2 = new Set(current.issues.map(keyOf));
+            const fresh2 = next2.issues.filter((n2) => !beforeKeys2.has(keyOf(n2)));
+            // Only this edge's own label landing badly counts as recoverable
+            // damage; any other fresh issue means the geometry itself is wrong.
+            const onlyOwnLabel = fresh2.every(
+              (n2) =>
+                (n2.type === 'edge-label-overlaps-foreign-edge' &&
+                  String((n2.details as { ownerEdgeId?: string })?.ownerEdgeId) ===
+                    String(crossed.id ?? '')) ||
+                (n2.type === 'edge-label-overlaps-own-arrowhead' &&
+                  String(n2.edgeId ?? '') === String(crossed.id ?? '')) ||
+                (n2.type === 'edge-label-overlaps-node' &&
+                  String(n2.edgeId ?? '') === String(crossed.id ?? ''))
+            );
+            // Clean acceptance, or a REDUCING swap: strictly fewer issues
+            // where the only fresh damage is this label's next crossing —
+            // that crossing names a DIFFERENT edge whose rail the fixed-point
+            // loop's next round can shift (the whole reason the swap reduces:
+            // the old crossing sat on an unmovable 2-point straight, the new
+            // one sits on a mid rail).
+            if (
+              next2.issues.length < current.issues.length &&
+              (fresh2.length === 0 || onlyOwnLabel)
+            ) {
+              current = next2;
+              progressed = true;
+              accepted2 = true;
+              break;
+            }
+            if (!onlyOwnLabel) {
+              break;
+            }
+          }
+          if (accepted2) {
+            return;
+          }
+          pts.length = 0;
+          pts.push(...oldPts2.map((pt) => ({ ...pt })));
+          crossed.x = oldLx;
+          crossed.y = oldLy;
+        }
+      }
     }
   };
 
