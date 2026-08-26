@@ -995,3 +995,10 @@ Swimlane floor (11,754) untouched — still clears at 24,575.
 - lesson: a lever closed as "costs X, earns 0" must be re-priced whenever the SCORER changes — and when re-opening it, gate on the measured constraint (work ledger), not on a proxy (node count) that happens to correlate on today's corpus.
 
 run ended: stop condition = remaining invalid fixtures need work outside the loop's contract (architecture4: placement, 26 prior rounds; triage2: BSState fan placement + 2 hard; 14-messy-layout: instrument decision) — total 49,812 -> 51,966 (+2,154). invalid 7 -> 3. cost 730.7M -> 770.5M (95.9% of ceiling).
+
+## RUN 2026-08-26T18 — branch domus-loop/2026-08-26T18 — baseline 51,966, invalid 3, cost 770.5M (95.9%)
+
+- goal: USER-SET — architecture4 and triage2 VALID ("approve state"); swimlanes/14-messy-layout explicitly out of scope this run.
+- ceilings (lesson: compute before promising): architecture4 if valid ~700 (bend 110 + cross 42 + soft ~145); triage2 if valid ~0-30 (bend 473 + cross 339 + soft 155) — triage2's flip is validity-only by construction.
+- carried context: architecture4's issue mix CHANGED after the clearance-floor round (now ChatbotUser+Monitoring overlap, VendAI~LanternML frame crowding, one port-direction mismatch, one edge-border-hug, one label-off-edge). triage2's remaining hard: end-band L_assign_Done_0, non-orthogonal L_BSState_Classify_0, boxed-in label crossing L_deps_Review_0 in the BSState fan.
+- time_budget_sec: default 14400
