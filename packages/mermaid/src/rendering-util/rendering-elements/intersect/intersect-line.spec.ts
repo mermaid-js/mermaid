@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
-// @ts-expect-error -- untyped JS module
 import intersectLine from './intersect-line.js';
-// @ts-expect-error -- untyped JS module
 import intersectPolygon from './intersect-polygon.js';
 
 /**
@@ -46,10 +44,12 @@ describe('intersectLine', () => {
     // The case that shows up in real layouts: node centres are fractional, and
     // the attachment must stay on the vertical ray leaving the node.
     const x = 285.01588439941406;
+    // `intersectLine` returns undefined when the segments miss each other.
     const result = intersectLine({ x, y: 34.5 }, { x, y: 67 }, { x: 0, y: 57 }, { x: 400, y: 57 });
+    expect(result).toBeDefined();
 
-    expect(result.x).toBeCloseTo(x, 9);
-    expect(result.y).toBeCloseTo(57, 9);
+    expect(result!.x).toBeCloseTo(x, 9);
+    expect(result!.y).toBeCloseTo(57, 9);
   });
 });
 
