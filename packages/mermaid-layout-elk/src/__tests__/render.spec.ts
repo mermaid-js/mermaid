@@ -76,14 +76,18 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['nodeSize.minimum']).toBeUndefined();
   });
 
-  it('propagates mergeEdges to subgraphs without an explicit direction', () => {
+  // `elk.layered.mergeEdges` is deliberately never enabled, in a subgraph or at
+  // the root: it collapses arriving and leaving edges onto one handle, which
+  // lets a diagram assert a connection it does not have. `elk.mergeEdges: true`
+  // is honoured by giving each role its own port instead.
+  it('never hands mergeEdges to ELK for a subgraph without an explicit direction', () => {
     const opts = buildSubgraphLayoutOptions({}, { mergeEdges: true }, 'layered');
-    expect(opts['elk.layered.mergeEdges']).toBe(true);
+    expect(opts['elk.layered.mergeEdges']).toBe(false);
   });
 
-  it('propagates mergeEdges to subgraphs with an explicit direction', () => {
+  it('never hands mergeEdges to ELK for a subgraph with an explicit direction', () => {
     const opts = buildSubgraphLayoutOptions({ dir: 'LR' }, { mergeEdges: true }, 'layered');
-    expect(opts['elk.layered.mergeEdges']).toBe(true);
+    expect(opts['elk.layered.mergeEdges']).toBe(false);
     expect(opts['elk.direction']).toBe('RIGHT');
     expect(opts['elk.algorithm']).toBe('layered');
     expect(opts['elk.hierarchyHandling']).toBe('SEPARATE_CHILDREN');
@@ -128,7 +132,8 @@ describe('buildSubgraphLayoutOptions', () => {
 
   it('handles undefined elkConfig gracefully', () => {
     const opts = buildSubgraphLayoutOptions({}, undefined, 'layered');
-    expect(opts['elk.layered.mergeEdges']).toBeUndefined();
+    // Pinned off rather than left undefined — see the note above.
+    expect(opts['elk.layered.mergeEdges']).toBe(false);
     expect(opts['nodePlacement.strategy']).toBeUndefined();
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
   });
@@ -384,6 +389,67 @@ describe('buildElkGraphFromLayoutData', () => {
     const edge = state.elkGraph.edges[0];
     expect(edge.labels[0]).toMatchObject({ width: 22, height: 10, text: 'go' });
     expect(edge.labelEl).toBeUndefined();
+  });
+
+  it('routes each edge role through its own port when bundling is on', () => {
+    // `elk.mergeEdges` is honoured by giving every node a port for arriving
+    // edges and another for leaving ones. ELK's own mergeEdges is never used:
+    // it collapses both roles onto ONE handle, which lets a merged diagram read
+    // as though an edge exists between two nodes that only share that handle.
+    const data = {
+      direction: 'LR',
+      config: { elk: { mergeEdges: true } },
+      nodes: [
+        { id: 'A', isGroup: false, width: 40, height: 20, label: 'A' },
+        { id: 'B', isGroup: false, width: 40, height: 20, label: 'B' },
+      ],
+      edges: [
+        { id: 'A-B', start: 'A', end: 'B', type: 'arrow_point' },
+        { id: 'B-A', start: 'B', end: 'A', type: 'arrow_point' },
+      ],
+    } as any;
+
+    const state = buildElkGraphFromLayoutData(data, {
+      algorithm: 'layered',
+      common: { lineBreakRegex: /<br\s*\/?>/gi },
+      getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
+      interpolateToCurve: (curve: unknown) => curve,
+      log,
+    } as any);
+
+    expect(state.elkGraph.layoutOptions['elk.layered.mergeEdges']).toBe(false);
+
+    const ports = (state.nodeDb.A as { ports?: { id: string }[] }).ports;
+    expect(ports?.map((port) => port.id)).toEqual(['A__mmIn', 'A__mmOut']);
+
+    const forward = state.elkGraph.edges.find((e: any) => e.id === 'A-B');
+    const back = state.elkGraph.edges.find((e: any) => e.id === 'B-A');
+    // A's outgoing edge and A's incoming edge use DIFFERENT handles on A.
+    expect(forward.sources).toEqual(['A__mmOut']);
+    expect(back.targets).toEqual(['A__mmIn']);
+  });
+
+  it('leaves nodes portless when bundling is off', () => {
+    const data = {
+      direction: 'LR',
+      config: { elk: {} },
+      nodes: [
+        { id: 'A', isGroup: false, width: 40, height: 20, label: 'A' },
+        { id: 'B', isGroup: false, width: 40, height: 20, label: 'B' },
+      ],
+      edges: [{ id: 'A-B', start: 'A', end: 'B', type: 'arrow_point' }],
+    } as any;
+
+    const state = buildElkGraphFromLayoutData(data, {
+      algorithm: 'layered',
+      common: { lineBreakRegex: /<br\s*\/?>/gi },
+      getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
+      interpolateToCurve: (curve: unknown) => curve,
+      log,
+    } as any);
+
+    expect((state.nodeDb.A as { ports?: unknown }).ports).toBeUndefined();
+    expect(state.elkGraph.edges[0].sources).toEqual(['A']);
   });
 
   it('passes through nodePlacementAlignment to the root graph', () => {
@@ -748,7 +814,7 @@ describe('clearContainerAlgorithmOptions', () => {
     );
     clearContainerAlgorithmOptions(options);
 
-    expect(options['elk.layered.mergeEdges']).toBe(true);
+    expect(options['elk.layered.mergeEdges']).toBe(false);
     expect(options['nodePlacement.strategy']).toBe('BRANDES_KOEPF');
     expect(options['nodeLabels.placement']).toBe('[H_CENTER V_TOP, INSIDE]');
   });

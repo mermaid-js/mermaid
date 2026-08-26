@@ -110,7 +110,17 @@ export interface MermaidConfig {
   maxEdges?: number;
   elk?: {
     /**
-     * Elk specific option that allows edges to share path where it convenient. It can make for pretty diagrams but can also make it harder to read the diagram.
+     * Lets edges that meet at a node share a path, which can make a diagram
+     * with many edges much easier to follow.
+     *
+     * Edges are bundled by ROLE: everything arriving at a node shares one
+     * handle, everything leaving shares another. Merging the two together
+     * would let a diagram assert connections it does not have — an edge
+     * arriving where another leaves reads as a link between their far ends —
+     * so the two are always kept apart.
+     *
+     * A bundle still hides how many edges are inside it, so it is off by
+     * default.
      *
      */
     mergeEdges?: boolean;

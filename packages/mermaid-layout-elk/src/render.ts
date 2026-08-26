@@ -261,7 +261,9 @@ export function buildSubgraphLayoutOptions(
     'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
     'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
-    'elk.layered.mergeEdges': elkConfig?.mergeEdges,
+    // See the root graph: bundling is done with per-role ports, not with ELK's
+    // own mergeEdges, which collapses arriving and leaving edges onto one handle.
+    'elk.layered.mergeEdges': false,
     'elk.layered.nodePlacement.bk.fixedAlignment':
       elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
   };
@@ -524,7 +526,13 @@ export function buildElkGraphFromLayoutData(
   elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
 
   const parentLookupDb = addSubGraphs(data4Layout.nodes, elkContext.log);
-  addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
+  addVertices(
+    data4Layout.nodes,
+    elkGraph,
+    nodeDb,
+    elkContext,
+    usesSafeBundling(data4Layout.config)
+  );
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
@@ -627,7 +635,10 @@ function createRootElkGraph(
       'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
       'elk.layered.nodePlacement.bk.fixedAlignment':
         data4Layout.config.elk?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
-      'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
+      // Deliberately NOT forwarded: `elk.layered.mergeEdges` merges arriving
+      // and leaving edges onto one handle, which is the ambiguity. Bundling is
+      // done by giving each role its own port instead.
+      'elk.layered.mergeEdges': false,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 40,
       'elk.layered.crossingMinimization.forceNodeModelOrder':
@@ -711,13 +722,14 @@ function addVertices(
   graph: { children: NodeWithVertex[] },
   nodeDb: Record<string, NodeWithVertex>,
   elkContext: ElkLayoutContext,
+  bundling: boolean,
   parentId?: string
 ): { children: NodeWithVertex[] } {
   const siblings = nodeArr.filter((node) => node?.parentId === parentId);
   elkContext.log.info('addVertices APA12', siblings, parentId);
 
   siblings.forEach((node) => {
-    addVertex(graph, nodeArr, node, nodeDb, elkContext);
+    addVertex(graph, nodeArr, node, nodeDb, elkContext, bundling);
   });
   return graph;
 }
@@ -727,17 +739,62 @@ function addVertex(
   nodeArr: Node[],
   node: Node,
   nodeDb: Record<string, NodeWithVertex>,
-  elkContext: ElkLayoutContext
+  elkContext: ElkLayoutContext,
+  bundling: boolean
 ): void {
   const child = createElkNode(node);
+  if (!node.isGroup && bundling) {
+    addBundlingPorts(child, node.id);
+  }
   graph.children.push(child);
   nodeDb[node.id] = child;
 
   if (node.isGroup) {
     child.children = [];
-    addVertices(nodeArr, child as { children: NodeWithVertex[] }, nodeDb, elkContext, node.id);
+    addVertices(
+      nodeArr,
+      child as { children: NodeWithVertex[] },
+      nodeDb,
+      elkContext,
+      bundling,
+      node.id
+    );
     child.labelData = getMeasuredLabelData(node, elkContext.getConfig());
   }
+}
+
+/**
+ * Port id suffixes used by safe bundling.
+ *
+ * ELK's own `mergeEdges` collapses a node's edges onto ONE handle per side —
+ * arriving and leaving alike — which is what lets a merged diagram read as
+ * though an edge exists where none does. Declaring the two roles as separate
+ * ports keeps the bundling (edges that share a port share a trunk) while
+ * forcing ELK to give the two trunks different positions.
+ */
+/**
+ * Whether `elk.mergeEdges` should be honoured as SAFE bundling (own ports per
+ * role) rather than handed to ELK's own `mergeEdges`.
+ */
+function usesSafeBundling(config: { elk?: { mergeEdges?: boolean } } | undefined | null): boolean {
+  return Boolean(config?.elk?.mergeEdges);
+}
+
+const PORT_IN = '__mmIn';
+const PORT_OUT = '__mmOut';
+
+/** Node id an ELK endpoint refers to, whether it names a node or one of its ports. */
+export function nodeIdFromEndpoint(endpoint: string | undefined): string | undefined {
+  if (!endpoint) {
+    return endpoint;
+  }
+  if (endpoint.endsWith(PORT_IN)) {
+    return endpoint.slice(0, -PORT_IN.length);
+  }
+  if (endpoint.endsWith(PORT_OUT)) {
+    return endpoint.slice(0, -PORT_OUT.length);
+  }
+  return endpoint;
 }
 
 function createElkNode(node: Node): NodeWithVertex {
@@ -752,6 +809,14 @@ function createElkNode(node: Node): NodeWithVertex {
   }
 
   return child;
+}
+
+/** Give a node the two ports safe bundling routes through. */
+function addBundlingPorts(child: NodeWithVertex, nodeId: string): void {
+  (child as { ports?: unknown[] }).ports = [
+    { id: `${nodeId}${PORT_IN}`, width: 0, height: 0 },
+    { id: `${nodeId}${PORT_OUT}`, width: 0, height: 0 },
+  ];
 }
 
 function getMeasuredLabelData(node: Node, config: any): LabelData {
@@ -799,10 +864,20 @@ function addEdgesToElkGraph(
     const { source, target, sourceId, targetId } = getEdgeStartEndPoint(edge, nodeDb);
     elkContext.log.debug('abc78 source and target', source, target);
 
+    const bundling = usesSafeBundling(dataForLayout.config);
+    const sourceEndpoint =
+      bundling && source && nodeDb[source] && !nodeDb[source].isGroup
+        ? `${source}${PORT_OUT}`
+        : source;
+    const targetEndpoint =
+      bundling && target && nodeDb[target] && !nodeDb[target].isGroup
+        ? `${target}${PORT_IN}`
+        : target;
+
     graph.edges.push({
       ...edge,
-      sources: [source],
-      targets: [target],
+      sources: [sourceEndpoint],
+      targets: [targetEndpoint],
       sourceId,
       targetId,
       labels: [
@@ -882,8 +957,8 @@ function configureCrossHierarchyEdges(
   log.debug('APA01 processing edges, count:', elkGraph.edges.length);
   elkGraph.edges.forEach((edge: any, index: number) => {
     log.debug('APA01 processing edge', index, ':', edge);
-    const source = edge.sources[0];
-    const target = edge.targets[0];
+    const source = nodeIdFromEndpoint(edge.sources[0])!;
+    const target = nodeIdFromEndpoint(edge.targets[0])!;
     log.debug('APA01 source:', source, 'target:', target);
     log.debug('APA01 nodeDb[source]:', nodeDb[source]);
     log.debug('APA01 nodeDb[target]:', nodeDb[target]);
@@ -1058,8 +1133,8 @@ function applyElkEdgeLayout(
       return;
     }
 
-    const startId = edge.sources?.[0] ?? edge.start;
-    const endId = edge.targets?.[0] ?? edge.end;
+    const startId = nodeIdFromEndpoint(edge.sources?.[0]) ?? edge.start;
+    const endId = nodeIdFromEndpoint(edge.targets?.[0]) ?? edge.end;
     const startNode = layoutState.nodeDb[startId];
     const endNode = layoutState.nodeDb[endId];
     if (!startNode || !endNode) {
