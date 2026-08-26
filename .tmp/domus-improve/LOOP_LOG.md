@@ -1109,3 +1109,14 @@ run ended: GOAL REACHED — triage2 VALID. total 52,808 -> 52,808 (validity-only
 
 - the compaction clearance (minGap = SLACK \* nodeGroupClearance) kept frames 40px off the first obstacle; 30px still clears every validator floor, and per-fixture acceptance (score-gated, full polish since round 6) makes the knob safe — a fixture whose tighter candidate is worse just keeps its baseline.
 - result: ecosystem +32.7 (port-near-corner cleared too), mystery +20.1, payments1 +8.3, events +5.8, subgraph-variation +4.0, arch3 +3.4. Sweep 65/65, total 53,384.3, cost 798.4M (99.4%, slightly DOWN). Wider suite 561, 0 collateral.
+
+### round 9 — label rescue for compaction candidates (REVERTED — measured dead end)
+
+- hypothesis: arch2 (330, pen 647) and svelte5 (507, pen 375) candidates fail ONLY on stranded labels (`edge-label-off-edge` is HARD; the polish's label relocation is score-gated = dead on invalid candidates). Gave relocateOffEdgeLabels a monotone-on-invalid mode called from the candidate path, then added perpendicular-offset anchors (the T15 trick).
+- measured: arch2's stranded label rides L_VTA_ECR_0, an edge too SHORT for its label — every centered anchor overlaps its own arrowhead or the VTA node (11 -> 12), and the ±h/2 offsets don't clear it either. 330 -> 0 rejected in every variant. svelte5 same family. The label is not mis-anchored; the compacted route genuinely has no room for it.
+- everything reverted (incl. the 30M budget probe — svelte5's candidate is invalid the same way). lesson: a HARD label rule turns "compact the drawing" into "compact the drawing WITHOUT shrinking any labeled edge below its label" — the compactor knows nothing about labels; teaching it (min length for labeled edges during compaction) is the real fix, placement-scale.
+
+### round 10 — cross-side diamond vertex rebuild (KEPT) — 53,384 -> 53,412 (+28), invalid 1, cost 99.5%
+
+- when the own side's vertex is contested (every lateral rung rejected), rebuild the terminal as an L from a vertex on another side — the corpus's "reroute with 2-3 bends" arm of port-assignment repair (3-540-63938-1_84). Outwardness prunes vertices the neighbour point cannot serve; strict score gate arbitrates the +1 bend vs the 40 reclaimed.
+- result: ONE rebuild lands (co-pilot-extension 761.5 -> 789.5, +28 net of the bend cost); triage's five contested diamonds and incremental's two reject every vertex — their fans genuinely have no free attachment (all four sides collide with siblings). Sweep 65/65, total 53,412.3, cost 799.0M (99.5%). Wider suite 561, 0 collateral.

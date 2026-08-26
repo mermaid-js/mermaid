@@ -136,6 +136,7 @@ export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): v
       continue;
     }
 
+    let snapped = false;
     for (const target of targets) {
       // Re-read from the array each rung and restore IN PLACE: replacing array
       // entries with snapshot copies leaves the loop holding detached, mutated
@@ -161,6 +162,7 @@ export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): v
       const next = checkLayout(layout);
       if (next.ok && next.score > current.score) {
         current = next;
+        snapped = true;
         log.debug(
           `DIAMSNAP: commit ${issue.type} edge=${String(edge.id)} ${terminal} delta=${delta.toFixed(1)} score=${next.score.toFixed(1)}`
         );
@@ -173,6 +175,58 @@ export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): v
       p0.y = snap0.y;
       p1.x = snap1.x;
       p1.y = snap1.y;
+    }
+
+    // Cross-side re-assignment: when the own side's vertex is contested (the
+    // lateral slide rejected every rung), rebuild the terminal as an L from a
+    // vertex on ANOTHER side — the corpus's "reroute with 2–3 bends" arm of
+    // port-assignment repair. The +1 bend costs a few points against the 40
+    // the vertex reclaims; the strict score gate arbitrates, and outwardness
+    // (the exit segment must leave the box) prunes vertices the neighbour
+    // point cannot legally serve.
+    if (issue.type === 'port-off-diamond-corner' && !snapped) {
+      const cx = (rect.left + rect.right) / 2;
+      const cy = (rect.top + rect.bottom) / 2;
+      const q = pts[terminal === 'start' ? 1 : pts.length - 2];
+      const verts: { v: Point; outward: (b: Point) => boolean }[] = [
+        { v: { x: cx, y: rect.top }, outward: (b) => b.y < rect.top - EPS },
+        { v: { x: cx, y: rect.bottom }, outward: (b) => b.y > rect.bottom + EPS },
+        { v: { x: rect.left, y: cy }, outward: (b) => b.x < rect.left - EPS },
+        { v: { x: rect.right, y: cy }, outward: (b) => b.x > rect.right + EPS },
+      ].sort(
+        (m, n) =>
+          Math.abs(m.v.x - q.x) +
+          Math.abs(m.v.y - q.y) -
+          (Math.abs(n.v.x - q.x) + Math.abs(n.v.y - q.y))
+      );
+      for (const { v, outward } of verts) {
+        const ptsNow = edge.points!;
+        const qNow = ptsNow[terminal === 'start' ? 1 : ptsNow.length - 2];
+        // Vertical exit for top/bottom vertices, horizontal for left/right.
+        const vertical = Math.abs(v.x - cx) <= EPS;
+        const b: Point = vertical ? { x: v.x, y: qNow.y } : { x: qNow.x, y: v.y };
+        if (!outward(b)) {
+          continue;
+        }
+        const snapshot = ptsNow.map((p) => ({ ...p }));
+        const tail = [{ x: v.x, y: v.y }, b].filter(
+          (p, i, arr) => i === 0 || Math.abs(p.x - arr[0].x) > EPS || Math.abs(p.y - arr[0].y) > EPS
+        );
+        const rebuilt =
+          terminal === 'start'
+            ? [...tail, ...ptsNow.slice(1)]
+            : [...ptsNow.slice(0, -1), ...[...tail].reverse()];
+        edge.points = rebuilt;
+        const next = checkLayout(layout);
+        if (next.ok && next.score > current.score) {
+          current = next;
+          log.debug(
+            `DIAMSNAP: commit cross-side edge=${String(edge.id)} ${terminal} vertex=(${v.x.toFixed(0)},${v.y.toFixed(0)}) score=${next.score.toFixed(1)}`
+          );
+          break;
+        }
+        edge.points = snapshot;
+      }
     }
   }
 }
