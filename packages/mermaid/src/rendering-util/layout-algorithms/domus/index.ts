@@ -601,6 +601,12 @@ export function runLateQualityPasses(
     // can reach (see railShiftRepairs.ts). Winner-only, monotone.
     repairRailProximityWhenIssuesImprove(data4Layout, { spacing: 10 });
 
+    // Free leaves crowding a foreign group frame on layouts the score gate
+    // cannot see (score clamped at 0). Winner-only: the per-variant call at
+    // the top of this function keeps its plain score gate, which is what
+    // protects the tournament from the round-7 regression.
+    spaceNodesOffGroupFramesWhenScoreImproves(data4Layout, { acceptWhenInvalid: true });
+
     swingReroutesWhenScoreImproves(data4Layout);
 
     // Crossing reduction, wired back on its own out of the group that was

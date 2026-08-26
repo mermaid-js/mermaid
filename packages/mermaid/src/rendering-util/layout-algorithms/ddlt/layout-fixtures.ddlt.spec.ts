@@ -96,11 +96,7 @@ const DOMUS_TOTAL_COST_CEILING = 803_000_000;
  * They are here because node placement is the next piece of work, not because
  * the rules are wrong — see the commit that added them for the measurements.
  */
-const KNOWN_INVALID = new Set([
-  'domus/architecture4',
-  'domus/triage2',
-  'swimlanes/14-messy-layout',
-]);
+const KNOWN_INVALID = new Set(['domus/triage2', 'swimlanes/14-messy-layout']);
 
 function issueSummary(issues: { type: string }[]): string {
   return issues

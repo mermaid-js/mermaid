@@ -70,7 +70,10 @@ function isDescendantOfGroup(node: Node, groupId: string, byId: Map<string, Node
   return false;
 }
 
-export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): void {
+export function spaceNodesOffGroupFramesWhenScoreImproves(
+  layout: LayoutData,
+  opts: { acceptWhenInvalid?: boolean } = {}
+): void {
   // The gap this pass frees must be the gap the validator checks, or it moves
   // nodes to a distance that is still flagged. Read from config, same source.
   const clearance = nodeGroupClearanceOf(layout);
@@ -79,6 +82,47 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): v
   if (flags.length === 0) {
     return;
   }
+  // Monotone acceptance on INVALID layouts, opt-in per call site. The default
+  // score gate is dead code while any hard issue clamps the score to 0 — the
+  // round-5/a470ebab0 dormancy family. A broad rollout of monotone-on-invalid
+  // was measured at -29 (round 7): the placement tournament runs this pass on
+  // transiently-invalid variants and banks bad trades. The flag is therefore
+  // set ONLY from the winner-only validity-repair block, where the layout that
+  // is invalid now is invalid at the end too.
+  const acceptWhenInvalid = Boolean(opts.acceptWhenInvalid);
+  const keyOf = (i: { type: string; edgeId?: string; nodeIds?: string[] }): string =>
+    `${i.type}|${i.edgeId ?? ''}|${(i.nodeIds ?? []).join(',')}`;
+  /** Higher is better; -Infinity when the candidate introduces a new issue key. */
+  const evalResult = (
+    res: ReturnType<typeof checkLayout>,
+    moveIds: ReadonlySet<string>
+  ): { fit: number; paddingPartners: Set<string> | null } => {
+    if (current.ok) {
+      return { fit: res.score, paddingPartners: null };
+    }
+    const beforeKeys = new Set(current.issues.map(keyOf));
+    const fresh = res.issues.filter((i) => !beforeKeys.has(keyOf(i)));
+    if (fresh.length === 0) {
+      return { fit: -res.issues.length, paddingPartners: null };
+    }
+    // A rejected move whose ONLY fresh damage is a padding pair between a
+    // moved node and some other leaf names its own remedy: move that leaf
+    // along. Collect the partners so the caller can widen the move set.
+    const partners = new Set<string>();
+    for (const i of fresh) {
+      if (i.type !== 'node-node-padding') {
+        return { fit: -Infinity, paddingPartners: null };
+      }
+      const pair = i.nodeIds ?? [];
+      const outside = pair.filter((id) => !moveIds.has(String(id)));
+      if (outside.length !== 1) {
+        return { fit: -Infinity, paddingPartners: null };
+      }
+      partners.add(String(outside[0]));
+    }
+    return { fit: -Infinity, paddingPartners: partners };
+  };
+  const currentFitness = (): number => (current.ok ? current.score : -current.issues.length);
 
   const nodeById = new Map<string, Node>();
   for (const n of layout.nodes ?? []) {
@@ -142,7 +186,7 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): v
     delta: number,
     axis: 'x' | 'y',
     commit: boolean
-  ): number => {
+  ): { fit: number; paddingPartners: Set<string> | null } => {
     const snapPos = new Map<string, { x: number; y: number }>();
     for (const id of moveIds) {
       const n = nodeById.get(id);
@@ -231,9 +275,13 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): v
     }
 
     const next = checkLayout(layout);
-    if (commit && next.score > current.score) {
+    const detail = evalResult(next, moveIds);
+    const better = current.ok
+      ? next.score > current.score
+      : acceptWhenInvalid && detail.fit > currentFitness();
+    if (commit && better) {
       current = next;
-      return next.score;
+      return detail;
     }
     // Restore.
     for (const [id, pos] of snapPos) {
@@ -250,7 +298,7 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): v
       e.x = snapLabels[i].x;
       e.y = snapLabels[i].y;
     });
-    return next.score;
+    return detail;
   };
 
   // Worst (smallest gap) first.
@@ -303,12 +351,23 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(layout: LayoutData): v
     }
 
     let best: { ids: Set<string>; delta: number } | null = null;
-    let bestScore = current.score;
+    let bestScore = currentFitness();
     for (const c of candidates) {
-      const s = tryTranslate(c.ids, c.delta, axis, false);
-      if (s > bestScore) {
-        bestScore = s;
-        best = c;
+      let ids = c.ids;
+      // Widen the move set along named padding partners (at most twice): a
+      // node squeezed between a frame and another leaf cannot move alone, and
+      // the rejected probe's fresh issues name exactly who must come along.
+      for (let hop = 0; hop < 3; hop++) {
+        const probe = tryTranslate(ids, c.delta, axis, false);
+        if (probe.fit > bestScore) {
+          bestScore = probe.fit;
+          best = { ids, delta: c.delta };
+          break;
+        }
+        if (!probe.paddingPartners || probe.paddingPartners.size === 0) {
+          break;
+        }
+        ids = new Set([...ids, ...probe.paddingPartners]);
       }
     }
     if (best) {

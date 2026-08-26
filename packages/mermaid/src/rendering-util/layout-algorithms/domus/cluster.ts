@@ -1,4 +1,8 @@
-import { nodeGroupClearanceOf } from '../layout-utils/validateLayout.js';
+import {
+  NODE_NODE_PADDING,
+  isLabelDummy,
+  nodeGroupClearanceOf,
+} from '../layout-utils/validateLayout.js';
 import type { LayoutData, Node } from '../../types.js';
 import type { OrthogonalOptions } from './types.js';
 import { rectForNode } from './core/helpers.js';
@@ -404,20 +408,91 @@ function checkAllChildrenInGroup(
 
       // Minimal displacement to move the node's rect clear of the frame on each
       // side, plus clearance. Smallest wins; ties break left→right→up→down.
+      //
+      // LEAF-AWARE since the 2026-08-26 padding rules: the landing spot at
+      // frame edge + CLEARANCE is a POPULAR place — it is exactly where other
+      // clearance passes park nodes — and a push that lands on (or within the
+      // node-node-padding floor of) another leaf trades a frame violation for
+      // a leaf violation. Measured on architecture4: this push re-created the
+      // ChatbotUser/Monitoring overlap on EVERY reroute, undoing the overlap
+      // sweep's separation each time. Each direction's landing spot now slides
+      // further along its axis past any conflicting leaf; the cheapest
+      // conflict-free direction wins, and only if all four stay in conflict
+      // does the old minimal push apply.
       const pushLeft = r.right - gr.left + CLEARANCE;
       const pushRight = gr.right - r.left + CLEARANCE;
       const pushUp = r.bottom - gr.top + CLEARANCE;
       const pushDown = gr.bottom - r.top + CLEARANCE;
-      const minPush = Math.min(pushLeft, pushRight, pushUp, pushDown);
 
-      if (minPush === pushLeft) {
-        node.x -= pushLeft;
-      } else if (minPush === pushRight) {
-        node.x += pushRight;
-      } else if (minPush === pushUp) {
-        node.y -= pushUp;
-      } else {
-        node.y += pushDown;
+      const leafConflict = (cx: number, cy: number): Node | null => {
+        for (const other of nodes) {
+          if (other === node || other.isGroup || isLabelDummy(other) || isEdgeLabelNode(other)) {
+            continue;
+          }
+          if (typeof other.x !== 'number' || typeof other.y !== 'number') {
+            continue;
+          }
+          const or = rectForNode(other);
+          const halfW = (node.width ?? 0) / 2;
+          const halfH = (node.height ?? 0) / 2;
+          const xGap = Math.max(or.left - (cx + halfW), cx - halfW - or.right);
+          const yGap = Math.max(or.top - (cy + halfH), cy - halfH - or.bottom);
+          const facing = xGap < 0 !== yGap < 0;
+          const overlapping = xGap < 0 && yGap < 0;
+          if (overlapping || (facing && Math.max(xGap, yGap) < NODE_NODE_PADDING)) {
+            return other;
+          }
+        }
+        return null;
+      };
+
+      const candidates: { dx: number; dy: number; base: number }[] = [
+        { dx: -pushLeft, dy: 0, base: pushLeft },
+        { dx: pushRight, dy: 0, base: pushRight },
+        { dx: 0, dy: -pushUp, base: pushUp },
+        { dx: 0, dy: pushDown, base: pushDown },
+      ].sort((a, b) => a.base - b.base);
+
+      let applied = false;
+      for (const cand of candidates) {
+        let cx = node.x + cand.dx;
+        let cy = node.y + cand.dy;
+        let hops = 0;
+        let hit = leafConflict(cx, cy);
+        while (hit && hops < 3) {
+          const hr = rectForNode(hit);
+          const halfW = (node.width ?? 0) / 2;
+          const halfH = (node.height ?? 0) / 2;
+          if (cand.dx < 0) {
+            cx = hr.left - NODE_NODE_PADDING - halfW;
+          } else if (cand.dx > 0) {
+            cx = hr.right + NODE_NODE_PADDING + halfW;
+          } else if (cand.dy < 0) {
+            cy = hr.top - NODE_NODE_PADDING - halfH;
+          } else {
+            cy = hr.bottom + NODE_NODE_PADDING + halfH;
+          }
+          hops++;
+          hit = leafConflict(cx, cy);
+        }
+        if (!hit) {
+          node.x = cx;
+          node.y = cy;
+          applied = true;
+          break;
+        }
+      }
+      if (!applied) {
+        const minPush = Math.min(pushLeft, pushRight, pushUp, pushDown);
+        if (minPush === pushLeft) {
+          node.x -= pushLeft;
+        } else if (minPush === pushRight) {
+          node.x += pushRight;
+        } else if (minPush === pushUp) {
+          node.y -= pushUp;
+        } else {
+          node.y += pushDown;
+        }
       }
     }
   }
