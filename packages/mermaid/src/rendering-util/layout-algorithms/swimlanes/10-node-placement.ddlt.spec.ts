@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadDdltFixture } from '../ddlt/loadDdltFixture.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 const FIXTURE_ID = 'swimlanes/10-node-placement';
 const FIXTURE_PATH = resolve(
@@ -75,7 +76,7 @@ describe('Swimlanes DDLT — 10-node-placement.mmd', () => {
     }
 
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
   });
 
   it('Level 1: D4 loopback enters D2 from the approach-side boundary', async () => {

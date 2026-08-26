@@ -58,7 +58,7 @@ const BEND_PENALTY_5 = 12;
 /** Penalty for a 6-point edge — last "named" tier before exponential growth. */
 const BEND_PENALTY_6 = 30;
 /** Multiplicative growth past 6 polyline points: BEND_PENALTY_6 × BEND_GROWTH^(n−6). */
-const BEND_GROWTH = 2;
+const BEND_GROWTH = 2.5;
 /** Penalty per crossing event — kept lighter than even a 4-point edge bend. */
 const CROSSING_PENALTY = 3;
 /** Maximum (perfect) score returned by `validateLayout`. */
@@ -95,7 +95,17 @@ const EPS_SELF_LOOP_EXTENT = 4;
  * does not configure one. The live value comes from
  * `flowchart.nodeGroupClearance` — see {@link nodeGroupClearanceOf}.
  */
-const NODE_GROUP_CLEARANCE_DEFAULT = 20;
+const NODE_GROUP_CLEARANCE_DEFAULT = 30;
+
+/**
+ * Minimum clear gap between two leaf nodes that face each other.
+ *
+ * `node-overlap` only ever fired on actual intersection, so two boxes a pixel
+ * apart were reported as fine while reading as one shape. Facing pairs only —
+ * `rectFacingGap` returns null for boxes that merely meet diagonally, where a
+ * small gap is not a legibility problem.
+ */
+const NODE_NODE_PADDING = 30;
 
 /**
  * The configured node-to-foreign-group gap for this layout.
@@ -136,6 +146,197 @@ function rectFacingGap(a: Rect, b: Rect): number | null {
   }
   return null;
 }
+
+/**
+ * Which groups tile the drawing into bands?
+ *
+ * A lane is a group that runs the full width (or height) of the drawing while
+ * its siblings occupy disjoint slices of the other axis. That shape is the
+ * diagram's structure, not a placement outcome: a lane is SUPPOSED to be a long
+ * stripe, it is sparse because it holds only the steps that belong to one
+ * actor, and an edge from the first lane to the third has no way to reach it
+ * except through the second.
+ *
+ * So the frame-shape rules and the foreign-crossing rule have to know about
+ * lanes, or they charge a lane diagram for being a lane diagram. Measured on
+ * the swimlane corpus before this exemption existed: 44 `group-elongation`, 49
+ * `group-dead-space` and 93 `edge-crosses-foreign-group` on `14-messy-layout`
+ * alone, and 11,033 points of score across 26 fixtures — none of it describing
+ * anything a layout engine could or should fix.
+ *
+ * Detected from geometry rather than taken from the engine on purpose: if a set
+ * of ordinary subgraphs happens to tile the drawing into bands, they read as
+ * lanes and penalising their shape is just as wrong.
+ */
+function detectLaneGroups(groupRects: Map<string, Rect>): Set<string> {
+  const lanes = new Set<string>();
+  if (groupRects.size < 2) {
+    return lanes;
+  }
+  const entries = [...groupRects.entries()];
+  const left = Math.min(...entries.map(([, r]) => r.left));
+  const right = Math.max(...entries.map(([, r]) => r.right));
+  const top = Math.min(...entries.map(([, r]) => r.top));
+  const bottom = Math.max(...entries.map(([, r]) => r.bottom));
+  const unionW = Math.max(1, right - left);
+  const unionH = Math.max(1, bottom - top);
+
+  for (const axis of ['horizontal', 'vertical'] as const) {
+    // Horizontal lanes span the full width and stack vertically.
+    const spans = (r: Rect) =>
+      axis === 'horizontal'
+        ? (r.right - r.left) / unionW >= LANE_SPAN_FRACTION
+        : (r.bottom - r.top) / unionH >= LANE_SPAN_FRACTION;
+    const slice = (r: Rect): [number, number] =>
+      axis === 'horizontal' ? [r.top, r.bottom] : [r.left, r.right];
+
+    const candidates = entries.filter(([, r]) => spans(r));
+    if (candidates.length < 2) {
+      continue;
+    }
+    // Their slices must not overlap, or they are nested boxes rather than bands.
+    const sorted = candidates
+      .map(([id, r]) => ({ id, span: slice(r) }))
+      .sort((a, b) => a.span[0] - b.span[0]);
+    let disjoint = true;
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i].span[0] < sorted[i - 1].span[1] - EPS_BORDER) {
+        disjoint = false;
+        break;
+      }
+    }
+    if (disjoint) {
+      for (const c of sorted) {
+        lanes.add(c.id);
+      }
+    }
+  }
+  return lanes;
+}
+
+/** Share of the drawing's extent a group must span on one axis to read as a lane. */
+const LANE_SPAN_FRACTION = 0.9;
+
+/**
+ * How many separate times does a polyline occupy a rect's interior?
+ *
+ * Counted as runs of consecutive interior-touching segments rather than as
+ * inside/outside transitions of the POINTS, because a segment can cross the
+ * whole frame with both of its endpoints outside it — the exact shape a
+ * re-entering route takes — and a point-based count misses that entirely.
+ *
+ * Uses the shared `segmentIntersectsRectInterior`, which counts a segment
+ * running exactly along the border as inside. That is the right call here: an
+ * edge tracing a group's frame is inside that group's space as far as the
+ * reader is concerned.
+ */
+function countInteriorRuns(points: Point[], rect: Rect): number {
+  let runs = 0;
+  let inRun = false;
+  for (let i = 0; i < points.length - 1; i++) {
+    const inside = segmentIntersectsRectInterior(points[i], points[i + 1], rect);
+    if (inside && !inRun) {
+      runs++;
+    }
+    inRun = inside;
+  }
+  return runs;
+}
+
+/** Shapes whose outline is a diamond, where the vertices are the natural ports. */
+const DECISION_SHAPES = new Set(['diam', 'diamond', 'decision', 'question']);
+
+function isDecisionShape(node: Node): boolean {
+  const shape = (node as { shape?: string }).shape;
+  return shape != null && DECISION_SHAPES.has(String(shape));
+}
+
+/**
+ * Distance from a port to the nearest diamond vertex. The vertices sit at the
+ * midpoints of the bounding rect's sides, which is where the outline actually
+ * touches it.
+ */
+function decisionVertexOffset(port: Point, rect: Rect): number | null {
+  const cx = (rect.left + rect.right) / 2;
+  const cy = (rect.top + rect.bottom) / 2;
+  const vertices: Point[] = [
+    { x: cx, y: rect.top },
+    { x: rect.right, y: cy },
+    { x: cx, y: rect.bottom },
+    { x: rect.left, y: cy },
+  ];
+  let best: number | null = null;
+  for (const v of vertices) {
+    const d = Math.hypot(port.x - v.x, port.y - v.y);
+    if (best == null || d < best) {
+      best = d;
+    }
+  }
+  return best;
+}
+
+/**
+ * How far along its side does a port sit, expressed as the distance to the
+ * NEARER corner over the side length — so 0.5 is the centre of the side and 0
+ * is the corner itself. Returns null when the point is not on a side, which
+ * happens for endpoints the router placed inside the node.
+ */
+function portSideFraction(port: Point, rect: Rect): number | null {
+  const w = rect.right - rect.left;
+  const h = rect.bottom - rect.top;
+  if (w <= 0 || h <= 0) {
+    return null;
+  }
+  const onLeft = Math.abs(port.x - rect.left) <= EPS_BORDER;
+  const onRight = Math.abs(port.x - rect.right) <= EPS_BORDER;
+  const onTop = Math.abs(port.y - rect.top) <= EPS_BORDER;
+  const onBottom = Math.abs(port.y - rect.bottom) <= EPS_BORDER;
+
+  if (
+    (onLeft || onRight) &&
+    port.y >= rect.top - EPS_BORDER &&
+    port.y <= rect.bottom + EPS_BORDER
+  ) {
+    return Math.min(port.y - rect.top, rect.bottom - port.y) / h;
+  }
+  if (
+    (onTop || onBottom) &&
+    port.x >= rect.left - EPS_BORDER &&
+    port.x <= rect.right + EPS_BORDER
+  ) {
+    return Math.min(port.x - rect.left, rect.right - port.x) / w;
+  }
+  return null;
+}
+
+/**
+ * A port closer to a corner than this fraction of the side reads as an
+ * accident rather than a choice. Waived for bendless routes: a straight line is
+ * worth more than a tidy attachment point.
+ */
+const PORT_CORNER_FRACTION = 0.15;
+/** How near a diamond's vertex a port has to land to count as attached to it. */
+const DECISION_VERTEX_TOLERANCE = 8;
+/**
+ * Share of a group frame its members should cover. HOLA measures compactness
+ * the same way — nodes' area over total area — and finds it tracks preference.
+ * Half is deliberately undemanding: a frame also holds its title, its padding
+ * and the channels its own edges route through, so a "full" group is nowhere
+ * near 100%.
+ */
+const GROUP_FILL_TARGET = 0.5;
+/** Penalty per unit of missing fill: a frame at 25% costs (0.5-0.25)*200 = 50. */
+const GROUP_FILL_WEIGHT = 200;
+/** Aspect ratio past which a frame reads as a stripe rather than a box. */
+const GROUP_ASPECT_LIMIT = 3;
+/** Penalty per unit of aspect ratio past the limit. */
+const GROUP_ASPECT_WEIGHT = 10;
+/**
+ * Two connected nodes whose centres are within this of sharing a row or column,
+ * without sharing it, read as a failed alignment. Beyond it they read as simply
+ * being in different places, which is fine.
+ */
+const GRID_NEAR_MISS = 10;
 
 /** Per-edge bend penalty as a function of polyline POINT count (post-normalize). */
 function bendPenaltyForPoints(n: number): number {
@@ -187,7 +388,27 @@ export type LayoutIssueType =
   | 'edge-label-overlaps-foreign-edge'
   | 'edge-label-overlaps-own-arrowhead'
   | 'edge-label-overlaps-group-border'
-  | 'edge-label-overlaps-node';
+  | 'edge-label-overlaps-node'
+  // ── Added 2026-08-26. Hard: geometric defects that make a drawing wrong. ──
+  /** Edge leaves a group it has an endpoint in, then re-enters it. */
+  | 'edge-reenters-own-group'
+  /** The whole visible edge is consumed by its own arrowhead marker. */
+  | 'edge-invisible-under-marker'
+  /** Two leaf nodes closer than the minimum node-to-node padding. */
+  | 'node-node-padding'
+  // ── Added 2026-08-26. Soft: placement and port-choice quality. ──
+  /** Edge routes through a group it has no endpoint in. */
+  | 'edge-crosses-foreign-group'
+  /** Port on a rectangular node sits near a corner without earning it. */
+  | 'port-near-corner'
+  /** Port on a diamond sits mid-face when a vertex was available. */
+  | 'port-off-diamond-corner'
+  /** Group frame is mostly empty. */
+  | 'group-dead-space'
+  /** Group frame is stretched far beyond its content on one axis. */
+  | 'group-elongation'
+  /** Node nearly aligns with a connected neighbour, but not quite. */
+  | 'grid-misalignment';
 
 export interface Issue {
   type: LayoutIssueType;
@@ -834,10 +1055,44 @@ const EMPTY_BREAKDOWN = {
   pointsHistogram: { '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7+': 0 },
 } as const satisfies ValidateLayoutResult['breakdown'];
 
+/**
+ * A type is SOFT if and only if it appears here; everything else invalidates.
+ *
+ * The split is by kind, not by severity. A geometric defect that makes the
+ * drawing wrong invalidates; a judgement about placement or port choice is
+ * graded. That distinction is what keeps the score informative: any hard issue
+ * clamps the score to 0, so if the aesthetic rules invalidated too, a nearly
+ * perfect drawing and a catastrophic one would be worth the same and there
+ * would be nothing left for the layout engine to climb.
+ */
+/**
+ * Does this issue grade the score rather than invalidate the layout?
+ *
+ * Exported because callers need to ask the question with the SAME answer the
+ * scorer uses. A test that asserts "no issues at all" is asserting something
+ * stricter than validity, and once soft rules grade broadly the two stop being
+ * the same thing — which is exactly how a suite ends up red on layouts it
+ * considers fine.
+ */
+export function isSoftIssueType(type: LayoutIssueType): boolean {
+  return SOFT_PENALTY_BY_TYPE[type] !== undefined;
+}
+
 const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
   'edge-bend-overlaps-arrowhead': 50,
-  // Graded: the actual amount is carried per-issue in details.softPenalty.
-  'node-too-close-to-group': 0,
+  /** Per group traversed by an edge with no endpoint in it. */
+  'edge-crosses-foreign-group': 15,
+  'port-near-corner': 10,
+  /**
+   * Deliberately larger than any single bend (a 4-point route costs 5): on a
+   * decision shape the vertex is the natural attachment, and giving one up is
+   * meant to cost more than the bend it was traded for.
+   */
+  'port-off-diamond-corner': 40,
+  // Both graded per-issue; see details.softPenalty.
+  'group-dead-space': 0,
+  'group-elongation': 0,
+  'grid-misalignment': 5,
 };
 
 /**
@@ -995,6 +1250,28 @@ export function validateLayout(
           overlapX: ov.overlapX,
           overlapY: ov.overlapY,
         });
+        continue;
+      }
+
+      // Two leaves that do not overlap can still be too close to read as
+      // separate. Nothing checked this before: `node-overlap` above fires only
+      // on actual intersection, so a pair one pixel apart passed cleanly.
+      //
+      // Only leaf-to-leaf. A group frame's distance to things is already
+      // covered by `node-too-close-to-group` and `node-border-hugging`, and
+      // measuring a frame against its own members would flag every diagram.
+      if (!aNode.isGroup && !bNode.isGroup && !isLabelDummy(aNode) && !isLabelDummy(bNode)) {
+        const gap = rectFacingGap(aRect, bRect);
+        if (gap != null && gap < NODE_NODE_PADDING - EPS) {
+          issues.push({
+            type: 'node-node-padding',
+            message: diag
+              ? `Nodes "${aId}" and "${bId}" are ${gap.toFixed(1)} apart (< ${NODE_NODE_PADDING})`
+              : '',
+            nodeIds: [aId, bId],
+            details: { gap, threshold: NODE_NODE_PADDING },
+          });
+        }
       }
     }
   }
@@ -1551,6 +1828,31 @@ export function validateLayout(
           });
           break;
         }
+      }
+    }
+
+    // Check edge-invisible-under-marker (HARD): the arrowhead consumes the
+    // whole edge. `edge-bend-overlaps-arrowhead` above catches a BEND sitting
+    // inside the marker, which is a blemish on an otherwise visible edge; this
+    // catches the case where there is no edge left to see at all, because its
+    // entire drawn length fits inside its own marker. The reader is shown an
+    // arrowhead floating between two nodes with nothing connecting them, so it
+    // invalidates rather than scoring.
+    if (points.length >= 2) {
+      let drawn = 0;
+      for (let i = 0; i < points.length - 1; i++) {
+        drawn += Math.abs(points[i + 1].x - points[i].x) + Math.abs(points[i + 1].y - points[i].y);
+      }
+      const marked = hasTerminalMarker(e, 'start') || hasTerminalMarker(e, 'end');
+      if (marked && drawn <= EPS_MARKER_CLEARANCE_LENGTH + EPS) {
+        issues.push({
+          type: 'edge-invisible-under-marker',
+          message: diag
+            ? `Edge "${edgeId}" is ${drawn.toFixed(1)} long, entirely inside its own marker (${EPS_MARKER_CLEARANCE_LENGTH})`
+            : '',
+          edgeId,
+          details: { drawn, markerLength: EPS_MARKER_CLEARANCE_LENGTH },
+        });
       }
     }
 
@@ -2183,6 +2485,235 @@ export function validateLayout(
     return abortedResult();
   }
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Added 2026-08-26. Group traversal, port choice, and placement quality.
+  //
+  // These are node-and-group scoped, so they are skipped in a focused run for
+  // the same reason the other node-only checks are: a focused view exists to
+  // judge ONE edge's geometry, and a group's fill does not change when an edge
+  // moves.
+  // ─────────────────────────────────────────────────────────────────────────────
+  if (!focused) {
+    const groupsWithMembers = new Map<string, { rect: Rect; members: Node[] }>();
+    for (const [gId, gRect] of groupBorderRects) {
+      const members = nodes.filter(
+        (candidate) =>
+          candidate?.id != null &&
+          !candidate.isGroup &&
+          !isLabelDummy(candidate) &&
+          isAncestorGroup(gId, candidate, byId)
+      );
+      if (members.length > 0) {
+        groupsWithMembers.set(gId, { rect: gRect, members });
+      }
+    }
+
+    const laneGroups = detectLaneGroups(groupBorderRects);
+
+    // ── Edges crossing groups they do not belong to, and edges re-entering
+    // their own. An edge with no endpoint inside a group has no business
+    // routing through it: a detour exists in every case observed. Re-entering
+    // the group it started in is worse — the route leaves its own container and
+    // comes back, which reads as a mistake rather than a compromise, so that
+    // one invalidates while the foreign crossing is graded.
+    for (const em of edgeMetas) {
+      const pts = em.points;
+      if (!Array.isArray(pts) || pts.length < 2) {
+        continue;
+      }
+      const startNode = em.startId != null ? byId.get(em.startId) : undefined;
+      const endNode = em.endId != null ? byId.get(em.endId) : undefined;
+
+      for (const [gId, { rect }] of groupsWithMembers) {
+        const startsInside = startNode ? isAncestorGroup(gId, startNode, byId) : false;
+        const endsInside = endNode ? isAncestorGroup(gId, endNode, byId) : false;
+
+        // How many times does the polyline pass through the frame?
+        let entries = 0;
+        for (let i = 0; i < pts.length - 1; i++) {
+          if (segmentIntersectsRectInterior(pts[i], pts[i + 1], rect)) {
+            entries++;
+          }
+        }
+        if (entries === 0) {
+          continue;
+        }
+
+        if (startsInside && endsInside) {
+          continue; // wholly internal: expected
+        }
+
+        if (startsInside || endsInside) {
+          // One endpoint inside. Leaving is expected; coming BACK is not. The
+          // route should cross the frame once, so more than one crossing run
+          // means it re-entered.
+          const passes = countInteriorRuns(pts, rect);
+          if (passes > 1) {
+            issues.push({
+              type: 'edge-reenters-own-group',
+              message: diag
+                ? `Edge "${em.id}" leaves group "${gId}" and re-enters it (${passes} separate passes)`
+                : '',
+              edgeId: em.id,
+              nodeIds: [gId],
+              details: { passes },
+            });
+          }
+          continue;
+        }
+
+        if (laneGroups.has(gId)) {
+          continue; // crossing a lane to reach the next one is unavoidable
+        }
+        issues.push({
+          type: 'edge-crosses-foreign-group',
+          message: diag
+            ? `Edge "${em.id}" routes through group "${gId}", which it has no endpoint in`
+            : '',
+          edgeId: em.id,
+          nodeIds: [gId],
+          details: { segments: entries },
+        });
+      }
+    }
+
+    // ── Port placement. Rectangles want their ports near the middle of a side;
+    // a port crowded into a corner reads as an accident. Decision shapes invert
+    // that: the vertex IS the natural attachment, and a port part-way along a
+    // slanted face reads as a miss. The rectangle rule is waived when the
+    // corner buys a straight line, because removing a bend is worth more than
+    // the tidier attachment.
+    for (const em of edgeMetas) {
+      const pts = em.points;
+      if (!Array.isArray(pts) || pts.length < 2) {
+        continue;
+      }
+      const bendless = pts.length === 2;
+      for (const terminal of ['start', 'end'] as const) {
+        const nodeId = terminal === 'start' ? em.startId : em.endId;
+        const node = nodeId != null ? byId.get(nodeId) : undefined;
+        const rect = nodeId != null ? nodeRects.get(nodeId) : undefined;
+        if (!node || !rect || node.isGroup) {
+          continue;
+        }
+        const port = terminal === 'start' ? pts[0] : pts[pts.length - 1];
+
+        if (isDecisionShape(node)) {
+          const offset = decisionVertexOffset(port, rect);
+          if (offset != null && offset > DECISION_VERTEX_TOLERANCE) {
+            issues.push({
+              type: 'port-off-diamond-corner',
+              message: diag
+                ? `Edge "${em.id}" attaches to decision node "${nodeId}" ${offset.toFixed(1)} from its nearest vertex`
+                : '',
+              edgeId: em.id,
+              nodeIds: [nodeId],
+              details: { terminal, offset },
+            });
+          }
+          continue;
+        }
+
+        if (bendless) {
+          continue; // a straight edge has earned whatever port it uses
+        }
+        const fraction = portSideFraction(port, rect);
+        if (fraction != null && fraction < PORT_CORNER_FRACTION) {
+          issues.push({
+            type: 'port-near-corner',
+            message: diag
+              ? `Edge "${em.id}" attaches to "${nodeId}" ${(fraction * 100).toFixed(0)}% along its side, near a corner`
+              : '',
+            edgeId: em.id,
+            nodeIds: [nodeId],
+            details: { terminal, fraction },
+          });
+        }
+      }
+    }
+
+    // ── Group compaction. Ink fill is the share of a frame actually occupied
+    // by its members; HOLA measures compactness the same way ("ratio of the
+    // area occupied by the nodes to the total area of the graph") and reports
+    // it correlates with what people prefer. Elongation is scored separately
+    // and cumulatively: a frame can be both mostly empty AND stretched, and
+    // `domus/architecture2`'s top-left subgraph is both.
+    for (const [gId, { rect, members }] of groupsWithMembers) {
+      if (laneGroups.has(gId)) {
+        continue; // a lane's shape and fill are the diagram's, not the layout's
+      }
+      const frameArea = Math.max(1, (rect.right - rect.left) * (rect.bottom - rect.top));
+      const inkArea = members.reduce((acc, m) => {
+        const mr = nodeRects.get(String(m.id));
+        return acc + (mr ? (mr.right - mr.left) * (mr.bottom - mr.top) : 0);
+      }, 0);
+      const fill = inkArea / frameArea;
+      if (fill < GROUP_FILL_TARGET) {
+        issues.push({
+          type: 'group-dead-space',
+          message: diag
+            ? `Group "${gId}" is ${(fill * 100).toFixed(0)}% full (target ${GROUP_FILL_TARGET * 100}%)`
+            : '',
+          nodeIds: [gId],
+          details: {
+            fill,
+            softPenalty: (GROUP_FILL_TARGET - fill) * GROUP_FILL_WEIGHT,
+          },
+        });
+      }
+
+      const w = Math.max(1, rect.right - rect.left);
+      const h = Math.max(1, rect.bottom - rect.top);
+      const aspect = Math.max(w, h) / Math.min(w, h);
+      if (aspect > GROUP_ASPECT_LIMIT) {
+        issues.push({
+          type: 'group-elongation',
+          message: diag
+            ? `Group "${gId}" has aspect ratio ${aspect.toFixed(1)}:1 (limit ${GROUP_ASPECT_LIMIT}:1)`
+            : '',
+          nodeIds: [gId],
+          details: {
+            aspect,
+            softPenalty: (aspect - GROUP_ASPECT_LIMIT) * GROUP_ASPECT_WEIGHT,
+          },
+        });
+      }
+    }
+
+    // ── Grid alignment. A node that sits ALMOST in line with a neighbour it is
+    // connected to reads as a mistake, where either aligned or clearly apart
+    // reads as deliberate. Restricted to edge-connected pairs: over all pairs
+    // in a group this is quadratic and mostly noise, and it is the connected
+    // ones the eye actually tries to line up.
+    for (const em of edgeMetas) {
+      if (em.startId == null || em.endId == null || em.startId === em.endId) {
+        continue;
+      }
+      const a = nodeRects.get(em.startId);
+      const b = nodeRects.get(em.endId);
+      const aNode = byId.get(em.startId);
+      const bNode = byId.get(em.endId);
+      if (!a || !b || aNode?.isGroup || bNode?.isGroup) {
+        continue;
+      }
+      for (const axis of ['x', 'y'] as const) {
+        const av = axis === 'x' ? (a.left + a.right) / 2 : (a.top + a.bottom) / 2;
+        const bv = axis === 'x' ? (b.left + b.right) / 2 : (b.top + b.bottom) / 2;
+        const delta = Math.abs(av - bv);
+        if (delta > EPS && delta <= GRID_NEAR_MISS) {
+          issues.push({
+            type: 'grid-misalignment',
+            message: diag
+              ? `Nodes "${em.startId}" and "${em.endId}" miss ${axis}-alignment by ${delta.toFixed(1)}`
+              : '',
+            nodeIds: [em.startId, em.endId],
+            details: { axis, delta },
+          });
+        }
+      }
+    }
+  }
+
   // A focused run stops here. Everything below is whole-layout aggregation —
   // crossing counts, bend penalties, the 0–1000 score — and none of it can be
   // computed from a subset of the checks, so it is returned zeroed and flagged
@@ -2393,7 +2924,12 @@ function applyValidationExtensions(
     detail[ext.id] = { points, detail: result.detail };
   }
 
-  const ok = issues.length === 0;
+  // Soft issues grade the score; they do not invalidate. This has to match the
+  // core verdict exactly (see the `ok` derived from `hardIssues` above) — the
+  // two used to disagree, and because this wrapper is the one callers actually
+  // reach, ANY soft issue made a layout invalid here no matter what the core
+  // decided. It stayed hidden only because soft issues were rare.
+  const ok = issues.filter((issue) => SOFT_PENALTY_BY_TYPE[issue.type] === undefined).length === 0;
   const score = ok ? Math.max(0, Math.min(MAX_SCORE, core.score - penalty)) : 0;
 
   return {

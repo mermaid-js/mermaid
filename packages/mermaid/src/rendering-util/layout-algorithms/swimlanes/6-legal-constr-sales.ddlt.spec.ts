@@ -16,6 +16,7 @@ import { describe, it, expect } from 'vitest';
 import type { LayoutData } from '../../types.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { loadDdltFixture } from '../ddlt/loadDdltFixture.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 const FIXTURE_ID = 'swimlanes/6-legal-constr-sales';
 const DEBUG = process.env.SWIMLANE_DDLT_DEBUG === '1';
@@ -35,7 +36,7 @@ describe('Swimlanes DDLT — 6-legal-constr-sales.mmd', () => {
       );
     }
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
   });
 
   it('Level 1: L_I_K_0 does not hug J while routing toward K', async () => {

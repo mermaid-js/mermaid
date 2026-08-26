@@ -4,6 +4,7 @@ import { loadDdltFixture } from '../ddlt/index.js';
 import { segmentIntersectsRectInterior } from '../layout-utils/helpers.js';
 import { validateLayout } from './validateLayoutProxy.js';
 import { rectForNode } from './core/helpers.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 function nodeById(layout: LayoutData, id: string): Node {
   const node = (layout.nodes ?? []).find((n) => String(n.id) === id);
@@ -27,7 +28,7 @@ describe('Domus DDLT — Company.mmd', () => {
   it('produces validator-clean geometry', () => {
     const result = validateLayout(layout);
     expect(result.ok, JSON.stringify(result.issues)).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
   });
 
   it('centers Income and Tax on the same straight column', () => {

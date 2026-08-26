@@ -6,6 +6,7 @@ import { routeEdgesOrthogonal } from '../orthogonalRouter/router.js';
 import { postProcessSwimlaneLayout as applySwimlaneDirectionTransform } from '../postProcessing.js';
 import { createEdgeLabelNodes } from '../edgeLabelNodes.js';
 import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { isSoftIssueType } from '../../layout-utils/validateLayout.js';
 
 interface TestEdge extends Edge {
   start: string;
@@ -224,7 +225,7 @@ describe('Swimlanes LR HoE integration', () => {
       console.log('[SWIMLANE_HOE] validateLayout issues:', JSON.stringify(result.issues, null, 2));
     }
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
   });
 
   it('Level 2: every labelled edge has its label center on a polyline segment', () => {

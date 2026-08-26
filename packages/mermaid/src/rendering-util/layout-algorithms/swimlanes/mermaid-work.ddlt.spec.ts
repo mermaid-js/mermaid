@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { loadDdltFixture } from '../ddlt/loadDdltFixture.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 interface Point {
   x: number;
@@ -281,7 +282,7 @@ describe('DDLT swimlanes — mermaid-work browser parity', () => {
     const result = validateLayout(layout);
 
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
     expect(result.score).toBe(990);
     expect(result.breakdown.crossings).toBe(0);
     expect(result.breakdown.totalPoints).toBe(32);

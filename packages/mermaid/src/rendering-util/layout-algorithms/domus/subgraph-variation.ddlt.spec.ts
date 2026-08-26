@@ -9,6 +9,7 @@ import { applySyntheticContentSizes, applySyntheticLabelSizes } from '../ddlt/fi
 import { injectDomusEdgeLabelNodes } from './injectEdgeLabelNodes.js';
 import { validateLayout } from './validateLayoutProxy.js';
 import { layout as runDomusLayout } from './index.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 const SUBGRAPH_VARIATION_BROWSER_SIZES = {
   nodes: [
@@ -73,10 +74,7 @@ async function loadSyntheticSubgraphVariation(): Promise<LayoutData> {
 
 async function loadBrowserSizedSubgraphVariation(): Promise<LayoutData> {
   return await parseApplySizesAndLayout(
-    resolve(
-      process.cwd(),
-      'e2e/platform/dev-diagrams/layout-tests/domus/subgraph-variation.mmd'
-    ),
+    resolve(process.cwd(), 'e2e/platform/dev-diagrams/layout-tests/domus/subgraph-variation.mmd'),
     SUBGRAPH_VARIATION_BROWSER_SIZES,
     'domus-orthogonal'
   );
@@ -112,7 +110,9 @@ describe('Domus DDLT — subgraph-variation group overlap', () => {
   it('routes P2 to P4 without hugging the P1.5 subgraph border', async () => {
     const layout = await loadSyntheticSubgraphVariation();
     const result = validateLayout(layout);
-    const p2ToP4Issues = result.issues.filter((issue) => issue.edgeId === 'L_P2_P4_0');
+    const p2ToP4Issues = result.issues.filter(
+      (issue) => issue.edgeId === 'L_P2_P4_0' && !isSoftIssueType(issue.type)
+    );
 
     expect(p2ToP4Issues).toEqual([]);
   });
@@ -120,7 +120,9 @@ describe('Domus DDLT — subgraph-variation group overlap', () => {
   it('routes P1.5 to P5 without crossing into P5 after leaving the subgraph', async () => {
     const layout = await loadSyntheticSubgraphVariation();
     const result = validateLayout(layout);
-    const p15ToP5Issues = result.issues.filter((issue) => issue.edgeId === 'L_P1.5_P5_0');
+    const p15ToP5Issues = result.issues.filter(
+      (issue) => issue.edgeId === 'L_P1.5_P5_0' && !isSoftIssueType(issue.type)
+    );
 
     expect(p15ToP5Issues).toEqual([]);
   });
@@ -130,7 +132,9 @@ describe('Domus DDLT — subgraph-variation group overlap', () => {
     const result = validateLayout(layout);
 
     for (const edgeId of ['L_P2_P4_0', 'L_P1.5_P5_0']) {
-      const edgeIssues = result.issues.filter((issue) => issue.edgeId === edgeId);
+      const edgeIssues = result.issues.filter(
+        (issue) => issue.edgeId === edgeId && !isSoftIssueType(issue.type)
+      );
       expect(edgeIssues).toEqual([]);
     }
   });

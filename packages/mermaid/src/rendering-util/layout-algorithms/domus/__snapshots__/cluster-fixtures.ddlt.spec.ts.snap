@@ -3,20 +3,31 @@
 exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > deploy-pipeline-simplified.mmd (regular cluster-crossing edge F→I) > DOMUS-native (allowDomusWithGroups=true): pins current issue count > deploy-pipeline-simplified-domus-native-real-issues 1`] = `
 [
   "edge-border-hugging",
+  "grid-misalignment",
+  "group-dead-space",
+  "port-off-diamond-corner",
 ]
 `;
 
 exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > deploy-pipeline-simplified.mmd (regular cluster-crossing edge F→I) > fallback (allowDomusWithGroups=false): pins current issue count > deploy-pipeline-simplified-fallback-real-issues 1`] = `
 [
   "edge-border-hugging",
+  "grid-misalignment",
+  "group-dead-space",
+  "port-off-diamond-corner",
 ]
 `;
 
-exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > edge-from-subgraph.mmd (COMPOUND edge B2→X) > DOMUS-native (allowDomusWithGroups=true): compound edge stress test > edge-from-subgraph-domus-native-real-issues 1`] = `[]`;
+exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > edge-from-subgraph.mmd (COMPOUND edge B2→X) > DOMUS-native (allowDomusWithGroups=true): compound edge stress test > edge-from-subgraph-domus-native-real-issues 1`] = `
+[
+  "group-dead-space",
+]
+`;
 
 exports[`Domus cluster fixtures sweep — iter-26 D1-v1 widen coverage > edge-from-subgraph.mmd (COMPOUND edge B2→X) > fallback (allowDomusWithGroups=false): pins current issue count > edge-from-subgraph-fallback-real-issues 1`] = `
 [
   "edge-bend-near-endpoint",
   "edge-bend-overlaps-arrowhead",
+  "group-dead-space",
 ]
 `;

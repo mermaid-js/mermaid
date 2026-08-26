@@ -1,0 +1,29 @@
+| fixture                                   | before | after | delta |
+| ----------------------------------------- | -----: | ----: | ----: |
+| domus/deploy-pipeline                     |   1000 |     0 | -1000 |
+| domus/Company-simp                        |    995 |     0 |  -995 |
+| swimlanes/14-messy-layout                 |    899 |     0 |  -899 |
+| domus/mermaid-chart-architecture          |    897 |     0 |  -897 |
+| domus/architecture                        |    812 |     0 |  -812 |
+| domus/architecture5-components            |    780 |     0 |  -780 |
+| domus/architecture2                       |    987 |   330 |  -657 |
+| domus/triage                              |    641 |     0 |  -641 |
+| domus/svelte5-code                        |    962 |   474 |  -488 |
+| domus/events                              |    990 |   562 |  -428 |
+| domus/architecture-ecosystem              |    975 |   575 |  -400 |
+| domus/mystery                             |    978 |   600 |  -378 |
+| domus/co-pilot-extension                  |    970 |   786 |  -184 |
+| domus/mermaid-ai-input-and-models         |   1000 |   851 |  -149 |
+| domus/incremental-editing                 |    980 |   845 |  -135 |
+| domus/subgraph-variation                  |   1000 |   891 |  -109 |
+| domus/payments1                           |    985 |   877 |  -108 |
+| domus/state-machine                       |    990 |   902 |   -88 |
+| domus/architecture3                       |    979 |   894 |   -85 |
+| domus/edge-from-subgraph                  |   1000 |   935 |   -65 |
+| domus/deploy-pipeline-simplified          |   1000 |   940 |   -60 |
+| domus/auto-flow                           |    995 |   940 |   -55 |
+| domus/decoupled-subgraph                  |   1000 |   957 |   -43 |
+| swimlanes/pebr-3-process-too-wide-in-lane |   1000 |   976 |   -24 |
+| domus/er-db-model                         |    963 |   960 |    -3 |
+
+**total 59294 -> 49812 (-9482)**, 25 of 63 fixtures moved

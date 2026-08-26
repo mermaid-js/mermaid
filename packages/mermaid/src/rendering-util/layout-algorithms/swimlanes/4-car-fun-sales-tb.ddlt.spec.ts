@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { loadDdltFixture } from '../ddlt/loadDdltFixture.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 describe('Swimlanes DDLT — 4-car-fun-sales-tb.mmd', () => {
   it('Level 1: validateLayout — produces a valid orthogonal layout', async () => {
@@ -17,7 +18,7 @@ describe('Swimlanes DDLT — 4-car-fun-sales-tb.mmd', () => {
     }
 
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
   });
 
   it('Level 1: L_I_K_0 exits I from a side port, not along the node border', async () => {

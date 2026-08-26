@@ -18,6 +18,7 @@ import { describe, it, expect } from 'vitest';
 import type { LayoutData } from '../../types.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { loadDdltFixture } from '../ddlt/loadDdltFixture.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 const FIXTURE_ID = 'swimlanes/query-process';
 
@@ -36,7 +37,7 @@ describe('Swimlanes DDLT — query-process.mmd', () => {
       );
     }
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
   });
 
   it('Level 1: no sibling edge routes through a foreign edge-label', async () => {

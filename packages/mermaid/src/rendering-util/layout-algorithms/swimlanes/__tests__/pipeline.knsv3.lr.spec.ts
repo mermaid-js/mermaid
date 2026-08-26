@@ -6,6 +6,7 @@ import { routeEdgesOrthogonal } from '../orthogonalRouter/router.js';
 import { postProcessSwimlaneLayout as applySwimlaneDirectionTransform } from '../postProcessing.js';
 import { createEdgeLabelNodes } from '../edgeLabelNodes.js';
 import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { isSoftIssueType } from '../../layout-utils/validateLayout.js';
 
 // cspell:ignore Raykov
 
@@ -256,7 +257,7 @@ describe('Swimlanes LR knsv3 integration', () => {
       console.log(`${LOG_PREFIX} validateLayout issues:`, JSON.stringify(result.issues, null, 2));
     }
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
   });
 
   it('Level 1: I->K polyline does not intersect the I->J label rectangle', () => {

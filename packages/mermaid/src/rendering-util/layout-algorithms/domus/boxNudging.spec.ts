@@ -22,7 +22,11 @@ describe('box nudging', () => {
     expect(typeof before.score).toBe('number');
     expect(before.score).toBeGreaterThanOrEqual(0);
     expect(before.breakdown).toBeDefined();
-    const res1 = nudgeOverlappingLeafNodes(data, { padding: 10, maxIterations: 20 });
+    // Padding must be at least the validator's `NODE_NODE_PADDING` (30 since
+    // 2026-08-26) or the nudge trades an overlap for a gap that is still too
+    // tight to be valid, and this test would be asserting that a repair which
+    // does not repair anything succeeded.
+    const res1 = nudgeOverlappingLeafNodes(data, { padding: 30, maxIterations: 20 });
     expect(res1.changed).toBe(true);
     const after = validateLayout(data);
     expect(after.ok).toBe(true);
@@ -30,7 +34,7 @@ describe('box nudging', () => {
     expect(after.score).toBeGreaterThanOrEqual(0);
     expect(after.breakdown).toBeDefined();
 
-    const res2 = nudgeOverlappingLeafNodes(data, { padding: 10, maxIterations: 20 });
+    const res2 = nudgeOverlappingLeafNodes(data, { padding: 30, maxIterations: 20 });
     expect(res2.changed).toBe(false);
   });
 
