@@ -405,6 +405,10 @@ export type LayoutIssueType =
   | 'edge-port-direction-mismatch'
   | 'edge-same-port-departure'
   | 'edge-shared-attachment-point'
+  /** Two edges deliberately share a handle on a node: same role, same direction. */
+  | 'edge-bundled-attachment-point'
+  /** Two edges that meet at a node run together for a stretch, travelling the same way. */
+  | 'edge-bundled-subpath'
   | 'edge-shared-projected-port'
   | 'edge-bend-near-endpoint'
   | 'edge-corner-connection'
@@ -828,6 +832,38 @@ function firstInteriorRectHit(
   return undefined;
 }
 
+/**
+ * Whether two edges meet at a common node.
+ *
+ * A shared run only reads as a bundle when the edges have somewhere to split
+ * from or converge to. Two unrelated edges that happen to occupy the same lane
+ * are ambiguous no matter which way they travel.
+ */
+function edgesShareEndpointNode(
+  e1: { startId: string; endId: string },
+  e2: { startId: string; endId: string }
+): boolean {
+  const ids = [e1.startId, e1.endId].filter(Boolean);
+  return ids.some((id) => id === e2.startId || id === e2.endId);
+}
+
+/**
+ * Whether two collinear segments are travelled the same way.
+ *
+ * `normalizePolyline` rebuilds its segments in polyline order, so `a -> b` is
+ * still the direction of travel and its sign on the varying axis is the answer.
+ */
+function sameTravelDirection(s1: Segment, s2: Segment): boolean {
+  const d1x = Math.sign(s1.b.x - s1.a.x);
+  const d2x = Math.sign(s2.b.x - s2.a.x);
+  const d1y = Math.sign(s1.b.y - s1.a.y);
+  const d2y = Math.sign(s2.b.y - s2.a.y);
+  if (d1x !== 0 || d2x !== 0) {
+    return d1x === d2x;
+  }
+  return d1y === d2y;
+}
+
 function isAncestorGroup(ancestorId: string, node: Node, byId: Map<string, Node>): boolean {
   const seen = new Set<string>();
   let cur: Node | undefined = node;
@@ -1124,6 +1160,18 @@ const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
    * meant to cost more than the bend it was traded for.
    */
   'port-off-diamond-corner': 40,
+  /**
+   * Bundling is a legitimate way to draw a fan — one trunk that splits — but it
+   * is still a loss: the reader cannot count the edges inside the trunk. Priced
+   * so a layout that bundles gratuitously scores below one that does not, while
+   * a layout that bundles on purpose can still be scored at all. The pair that
+   * genuinely confuses — one edge arriving where another leaves, or two edges
+   * running the same lane in opposite directions — stays HARD as
+   * `edge-shared-attachment-point` / `edge-shared-subpath`.
+   */
+  'edge-bundled-attachment-point': 15,
+  /** A shared run hides more than a shared handle: it hides the count for longer. */
+  'edge-bundled-subpath': 20,
   // Both graded per-issue; see details.softPenalty.
   'group-dead-space': 0,
   'group-elongation': 0,
@@ -2254,7 +2302,35 @@ export function validateLayout(
           : direction(e2.points[e2.points.length - 1], e2.points[e2.points.length - 2]);
 
         const attachDistance = distance(p1, p2);
-        if (attachDistance <= EPS_PORT && dir1 === dir2 && dir1 !== null) {
+
+        // A BUNDLE rather than a collision: both edges play the same role at
+        // this node — both leaving it, or both arriving — and they run off in
+        // the same direction. That is one trunk that splits, which a reader can
+        // follow. The confusing pair is the mixed one, where an edge arrives
+        // exactly where another leaves and the handle no longer says which way
+        // anything goes; `dir` is measured AWAY from the node for both
+        // terminals, so equal roles plus equal directions is exactly that test.
+        const sameRole = e1IsStart === e2IsStart;
+        const bundled = sameRole && dir1 === dir2 && dir1 !== null;
+
+        if (bundled && attachDistance <= EPS_SHARED_ATTACH) {
+          issues.push({
+            type: 'edge-bundled-attachment-point',
+            message: diag
+              ? `Edges "${e1.id}" and "${e2.id}" are bundled at one handle on node "${nodeId}"`
+              : '',
+            nodeIds: [nodeId],
+            details: {
+              edgeIds: [e1.id, e2.id],
+              attachPoints: [p1, p2],
+              distance: attachDistance,
+              direction: dir1,
+              role: e1IsStart ? 'outgoing' : 'incoming',
+            },
+          });
+        }
+
+        if (!bundled && attachDistance <= EPS_PORT && dir1 === dir2 && dir1 !== null) {
           issues.push({
             type: 'edge-same-port-departure',
             message: diag
@@ -2273,7 +2349,7 @@ export function validateLayout(
         // direction-aware check happens to miss (e.g. non-orthogonal first
         // segment), with a `details.alsoSamePortDeparture` flag to hint at
         // the overlap.
-        if (attachDistance <= EPS_SHARED_ATTACH) {
+        if (!bundled && attachDistance <= EPS_SHARED_ATTACH) {
           const alsoSamePortDeparture =
             attachDistance <= EPS_PORT && dir1 === dir2 && dir1 !== null;
           issues.push({
@@ -2514,12 +2590,21 @@ export function validateLayout(
               segmentEndpointsWithinAttachCorridors(s2, e2Start, e2End);
 
             if (!allInCorridor) {
+              // Same distinction as `edge-bundled-attachment-point`: two edges
+              // that meet at a node and run the shared stretch the SAME way are
+              // a trunk the reader can follow to where it splits. Two edges
+              // running the same lane in OPPOSITE directions, or sharing a lane
+              // while having nothing to do with each other, are the ambiguity
+              // this check exists for.
+              const bundled = edgesShareEndpointNode(e1, e2) && sameTravelDirection(s1, s2);
               issues.push({
-                type: 'edge-shared-subpath',
+                type: bundled ? 'edge-bundled-subpath' : 'edge-shared-subpath',
                 message: diag
-                  ? `Edges "${e1.id}" and "${e2.id}" share a subpath of length ${overlap.toFixed(1)}`
+                  ? bundled
+                    ? `Edges "${e1.id}" and "${e2.id}" are bundled over ${overlap.toFixed(1)}`
+                    : `Edges "${e1.id}" and "${e2.id}" share a subpath of length ${overlap.toFixed(1)}`
                   : '',
-                details: { edgeIds: [e1.id, e2.id], overlapLength: overlap },
+                details: { edgeIds: [e1.id, e2.id], overlapLength: overlap, bundled },
               });
             }
           }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { LayoutData, Node, Edge } from '../../types.js';
-import { validateLayout } from './validateLayout.js';
+import { isSoftIssueType, validateLayout } from './validateLayout.js';
 
 interface Point {
   x: number;
@@ -538,7 +538,10 @@ describe('validateLayout new geometric issues', () => {
     expect(intersectObstacle).toEqual([]);
   });
 
-  it('flags edge-same-port-departure when two edges depart very close with same direction', () => {
+  it('treats two edges leaving one node the same way as a bundle, not a collision', () => {
+    // C fans out to B and D, both leaving C's east side together and splitting
+    // later. One trunk that splits is followable, so this is priced as a soft
+    // bundle rather than invalidating the layout.
     const c = mkNode('C', 0, 0, 40, 40);
     const b = mkNode('B', 100, 0, 40, 40);
     const d = mkNode('D', 100, 50, 40, 40);
@@ -555,7 +558,34 @@ describe('validateLayout new geometric issues', () => {
     const layout: LayoutData = { nodes: [c, b, d], edges: [e1, e2], config: {} as any };
 
     const types = getIssueTypes(layout);
-    expect(types).toContain('edge-same-port-departure');
+    expect(types).toContain('edge-bundled-attachment-point');
+    expect(types).not.toContain('edge-shared-attachment-point');
+    expect(types).not.toContain('edge-same-port-departure');
+    expect(isSoftIssueType('edge-bundled-attachment-point')).toBe(true);
+  });
+
+  it('still flags one edge arriving where another leaves', () => {
+    // Same handle on C, but A arrives there while C departs to B. The handle no
+    // longer says which way anything goes, which is the ambiguity the hard
+    // check exists for — so the bundle exception must not swallow it.
+    const c = mkNode('C', 0, 0, 40, 40);
+    const b = mkNode('B', 100, 0, 40, 40);
+    const a = mkNode('A', 100, 60, 40, 40);
+    const outgoing = mkEdge('out', 'C', 'B', [
+      { x: 20, y: 0 },
+      { x: 60, y: 0 },
+      { x: b.x!, y: b.y! },
+    ]);
+    const incoming = mkEdge('in', 'A', 'C', [
+      { x: a.x!, y: a.y! },
+      { x: 60, y: 0 },
+      { x: 21, y: 0 },
+    ]);
+    const layout: LayoutData = { nodes: [c, b, a], edges: [outgoing, incoming], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).toContain('edge-shared-attachment-point');
+    expect(types).not.toContain('edge-bundled-attachment-point');
   });
 
   it('flags edge-corner-connection when an edge endpoint attaches near a node corner', () => {
@@ -590,6 +620,53 @@ describe('validateLayout new geometric issues', () => {
 
     const types = getIssueTypes(layout);
     expect(types).toContain('edge-shared-subpath');
+  });
+
+  it('treats a shared lane travelled the same way by edges that meet as a bundle', () => {
+    // Both edges leave S and run east along y=10 before splitting. They meet at
+    // a node the reader can see them separate from, so the shared run reads as
+    // one trunk.
+    const sNode = mkNode('S', 0, 10, 20, 20);
+    const p = mkNode('P', 120, 0, 20, 20);
+    const q = mkNode('Q', 120, 60, 20, 20);
+    const e1 = mkEdge('e1', 'S', 'P', [
+      { x: 10, y: 10 },
+      { x: 100, y: 10 },
+      { x: 120, y: 0 },
+    ]);
+    const e2 = mkEdge('e2', 'S', 'Q', [
+      { x: 10, y: 10 },
+      { x: 100, y: 10 },
+      { x: 120, y: 60 },
+    ]);
+    const layout: LayoutData = { nodes: [sNode, p, q], edges: [e1, e2], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).toContain('edge-bundled-subpath');
+    expect(types).not.toContain('edge-shared-subpath');
+    expect(isSoftIssueType('edge-bundled-subpath')).toBe(true);
+  });
+
+  it('still flags a shared lane travelled in opposite directions', () => {
+    // Same node, same lane, but one edge runs east along it and the other west.
+    // Two arrows in one lane pointing opposite ways is exactly the ambiguity.
+    const sNode = mkNode('S', 0, 10, 20, 20);
+    const p = mkNode('P', 120, 0, 20, 20);
+    const e1 = mkEdge('e1', 'S', 'P', [
+      { x: 10, y: 10 },
+      { x: 100, y: 10 },
+      { x: 120, y: 0 },
+    ]);
+    const e2 = mkEdge('e2', 'P', 'S', [
+      { x: 120, y: 0 },
+      { x: 100, y: 10 },
+      { x: 10, y: 10 },
+    ]);
+    const layout: LayoutData = { nodes: [sNode, p], edges: [e1, e2], config: {} as any };
+
+    const types = getIssueTypes(layout);
+    expect(types).toContain('edge-shared-subpath');
+    expect(types).not.toContain('edge-bundled-subpath');
   });
 
   it('flags edge-parallel-segment-too-close for long nearby parallel sections', () => {
