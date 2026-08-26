@@ -1120,3 +1120,14 @@ run ended: GOAL REACHED — triage2 VALID. total 52,808 -> 52,808 (validity-only
 
 - when the own side's vertex is contested (every lateral rung rejected), rebuild the terminal as an L from a vertex on another side — the corpus's "reroute with 2-3 bends" arm of port-assignment repair (3-540-63938-1_84). Outwardness prunes vertices the neighbour point cannot serve; strict score gate arbitrates the +1 bend vs the 40 reclaimed.
 - result: ONE rebuild lands (co-pilot-extension 761.5 -> 789.5, +28 net of the bend cost); triage's five contested diamonds and incremental's two reject every vertex — their fans genuinely have no free attachment (all four sides collide with siblings). Sweep 65/65, total 53,412.3, cost 799.0M (99.5%). Wider suite 561, 0 collateral.
+
+### round 11 — COMPACTION_SLACK 1.5 -> 1.25 (REVERTED) — total 53,412 -> 52,981 (-432)
+
+- one more notch of compaction depth measured: minGap 25 packs below what the downstream repair chain can service — total collapses 432 points. 1.5 (=30px, exactly the node-node floor) is the measured optimum of this knob; do not retry below it.
+
+### rounds 12-13 — COMPOUND_GROUP_PAD 35 -> 25 / 30 (both REVERTED; 3rd consecutive revert = STOP)
+
+- pad 25: aggregate +163.5 (!) but mermaid-chart-architecture INVALID again (edge-endpoint-detached, border-hugging, group-group-padding back) and cost 813.6M = 101.3% of ceiling. pad 30: arch5 AND mcarch invalid, 100.9%. Both automatic reverts (invalid increased + sweep failed).
+- lesson, embarrassing and useful: the constant's own doc block already documented this exact experiment — "Below 35 the warning comes true: svelte5-code loses its nested boundary hops... 30 looked like a win before svelte5-code was included", including the non-monotonicity trap. READ THE CONSTANT'S DOC before re-tuning it; the corpus's frame-shape rules changed the reward side but not the breakage side. The +163 at pad 25 says the prize is real IF the border-hug/detach repairs learn to service tighter rings first — supervised work, queued as future.
+
+run ended: max_consecutive_reverts (rounds 11, 12, 13) — total 52,808.1 -> 53,412.3 (+604.2 of the +1000 goal). invalid 3 -> 1 (only out-of-scope swimlanes/14-messy-layout; both user-reported kissing-frame classes now priced by the validator AND repaired). cost 755.0M -> 799.0M (99.5% of ceiling).
