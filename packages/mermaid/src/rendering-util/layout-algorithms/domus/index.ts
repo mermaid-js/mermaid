@@ -32,6 +32,7 @@ import {
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { separateGroupFramesWhenIssuesImprove } from './pipeline/groupFrameSeparation.js';
+import { snapDiamondPortsToVertexWhenScoreImproves } from './pipeline/diamondVertexSnap.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
@@ -615,6 +616,11 @@ export function runLateQualityPasses(
     // protects the tournament from the round-7 regression.
     spaceNodesOffGroupFramesWhenScoreImproves(data4Layout, { acceptWhenInvalid: true });
 
+    // Slide a flagged decision-node port along its side to the vertex (side
+    // midpoint) — the `port-off-diamond-corner` repair. Winner-only for the
+    // same cost reason as its siblings; strictly score-gated per move.
+    snapDiamondPortsToVertexWhenScoreImproves(data4Layout);
+
     swingReroutesWhenScoreImproves(data4Layout);
 
     // Crossing reduction, wired back on its own out of the group that was
@@ -970,6 +976,13 @@ export function layout(data4Layout: LayoutData): void {
   // pure gain here, while the same move made mid-finalize changes the
   // monotone accounting of every route repair that follows it.
   relocateOverlayLabelsOffForeignEdgesFinal(data4Layout);
+
+  // A second diamond-vertex snap, for layouts that only BECOME valid at the
+  // label relocation above (domus/triage: its last hard issue is the label
+  // overlap that pass clears). The polish-time call skips invalid layouts —
+  // its score gate cannot grade a clamped 0 — so their flagged diamonds were
+  // never reachable. No-op when the polish call already snapped everything.
+  snapDiamondPortsToVertexWhenScoreImproves(data4Layout);
 
   // Final safety net: no zero-length segments reach the renderer (NaN paths).
   stripDegenerateEdgePoints(data4Layout);

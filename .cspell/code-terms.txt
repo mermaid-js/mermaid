@@ -57,6 +57,7 @@ dedup
 Dedup
 DEND
 descr
+DIAMSNAP
 distp
 distq
 divs
