@@ -1731,6 +1731,7 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
       const currentOwnCrossings = ownCrossings(old!);
 
       let budgetExhausted = false;
+      const focusEdgeIds = new Set([String(e.id)]);
       const tryCandidate = (candidate: Point[]): boolean => {
         if (
           e.start != null &&
@@ -1764,6 +1765,17 @@ export function rerouteTopCrossersWhenScoreImproves(layout: LayoutData): void {
             return false;
           }
           evaluations++;
+          // `current` is an ok result and only this edge moved, so the sole way
+          // the candidate can be invalid is an issue that involves it. Ask that
+          // question over this edge alone before paying for the whole-layout
+          // validation the score comparison needs: on `domus/architecture` the
+          // full run re-derives every issue in a 39-node drawing for each of
+          // hundreds of candidates, nearly all of which fail on validity rather
+          // than on score. Same pre-filter, same reasoning, as the jog
+          // simplifier beside it.
+          if (!checkLayout(layout, { focusEdgeIds }).ok) {
+            continue;
+          }
           const next = checkLayout(layout);
           if (next.ok && next.score > current.score) {
             current = next;

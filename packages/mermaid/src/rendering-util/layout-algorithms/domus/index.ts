@@ -549,6 +549,41 @@ export function runLateQualityPasses(
   // roughly equally from it, and it is too slow to run per variant); the
   // final polish below always runs it.
   if (!opts.skipSwingReroutes) {
+    // ── The two validity repairs run FIRST, ahead of everything score-gated ──
+    //
+    // They used to close this block, and that ordering silently disabled every
+    // score-gated pass in it on precisely the drawings that needed them most.
+    // Those passes accept a candidate only when the whole layout's score
+    // strictly improves, and the score is clamped to zero while any hard issue
+    // stands — so on a layout these two repairs are about to rescue, all of
+    // them run against a score of 0, can never improve on it, and return
+    // having done nothing. `domus/mermaid-chart-architecture` entered
+    // `untangleSharedTerminalPairs` at `ok=false score=0 crossings=50` and
+    // bailed on the first line, then became valid two passes later and shipped
+    // every one of those crossings.
+    //
+    // Repairing validity first costs nothing extra — same guard, same passes,
+    // same single run on the winning variant — and hands the score-gated
+    // passes a layout they can actually grade: mermaid-chart-architecture
+    // 298 -> 897, architecture5-components 595 -> 780, triage 563 -> 641.
+    //
+    // Push an approach rail out of its end node's parallel band — the OTHER
+    // half of the `edge-bend-near-endpoint` rule from the stub repair above:
+    // that one lengthens a final segment, this one moves the rail before it.
+    //
+    // Winner only, for the same reason as the crossing pass beside it. It opens
+    // with a full `checkLayout` to find its candidates, and `runLateQualityPasses`
+    // runs once per tournament variant — paying that per variant measured
+    // +100M work units, most of the 113.3% of ceiling this pass first cost.
+    const bands = widenEndpointApproachBands(data4Layout);
+
+    // Slide any endpoint sitting on a node corner onto a free slot on the side
+    // the edge actually uses. Winner-only for the same reason as the passes
+    // above. It reuses the band pass's validation when that pass changed
+    // nothing, which is the common case and saves a whole `checkLayout` per
+    // fixture.
+    escapeCornerConnections(data4Layout, bands.changed ? undefined : bands.validation);
+
     swingReroutesWhenScoreImproves(data4Layout);
 
     // Crossing reduction, wired back on its own out of the group that was
@@ -573,23 +608,6 @@ export function runLateQualityPasses(
     // downstream. Running it once, on the winning variant only, is the version
     // that pays.
     rerouteTopCrossersWhenScoreImproves(data4Layout);
-
-    // Push an approach rail out of its end node's parallel band — the OTHER
-    // half of the `edge-bend-near-endpoint` rule from the stub repair above:
-    // that one lengthens a final segment, this one moves the rail before it.
-    //
-    // Winner only, for the same reason as the crossing pass beside it. It opens
-    // with a full `checkLayout` to find its candidates, and `runLateQualityPasses`
-    // runs once per tournament variant — paying that per variant measured
-    // +100M work units, most of the 113.3% of ceiling this pass first cost.
-    const bands = widenEndpointApproachBands(data4Layout);
-
-    // Slide any endpoint sitting on a node corner onto a free slot on the side
-    // the edge actually uses. Winner-only for the same reason as the passes
-    // above. It reuses the band pass's validation when that pass changed
-    // nothing, which is the common case and saves a whole `checkLayout` per
-    // fixture.
-    escapeCornerConnections(data4Layout, bands.changed ? undefined : bands.validation);
   }
   simplifyEdgeJogsWhenScoreImproves(data4Layout);
 }

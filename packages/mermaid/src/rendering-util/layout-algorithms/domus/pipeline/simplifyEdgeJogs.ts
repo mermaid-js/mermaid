@@ -343,11 +343,53 @@ function labelAnchors(pts: Point[], oldX: number, oldY: number): Point[] {
   return out;
 }
 
+/**
+ * Geometry fingerprint used to skip a repeat run that cannot find anything.
+ *
+ * The pass already loops until a full sweep accepts nothing, so its own last
+ * round is a complete unproductive search. `runLateQualityPasses` then calls it
+ * twice more, and the tournament runs that whole sequence once per variant — on
+ * `domus/architecture` the repeats measured 79M work units out of the fixture's
+ * 292M, all of it re-deriving the same "nothing left to simplify".
+ *
+ * The result is a pure function of the geometry, so a repeat over unchanged
+ * geometry provably returns the same answer. Remembering the fingerprint of the
+ * last call that changed nothing turns those repeats into a comparison. A call
+ * that DID change something is always allowed to run again — more may have
+ * become available — so at most one unproductive sweep is ever paid for.
+ */
+function geometrySignature(layout: LayoutData): string {
+  const parts: string[] = [];
+  for (const n of (layout.nodes ?? []) as any[]) {
+    parts.push(
+      `${n?.id ?? ''}:${Math.round((n?.x ?? 0) * 8)},${Math.round((n?.y ?? 0) * 8)},${Math.round(
+        (n?.width ?? 0) * 8
+      )},${Math.round((n?.height ?? 0) * 8)}`
+    );
+  }
+  for (const e of (layout.edges ?? []) as any[]) {
+    parts.push(String(e?.id ?? ''));
+    for (const p of (e?.points ?? []) as { x: number; y: number }[]) {
+      parts.push(`${Math.round(p.x * 8)},${Math.round(p.y * 8)}`);
+    }
+  }
+  return parts.join('|');
+}
+
+/** Fingerprint of the last call on this layout that accepted nothing. */
+const barrenSignature = new WeakMap<object, string>();
+
 export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
-  let current = checkLayout(layout);
-  if (!current.ok) {
+  const signature = geometrySignature(layout);
+  if (barrenSignature.get(layout as unknown as object) === signature) {
     return;
   }
+  let current = checkLayout(layout);
+  if (!current.ok) {
+    barrenSignature.set(layout as unknown as object, signature);
+    return;
+  }
+  let acceptedAnything = false;
 
   const obstacles: { id: string; rect: ReturnType<typeof rectForNode> }[] = [];
   const rectById = new Map<string, ReturnType<typeof rectForNode>>();
@@ -547,6 +589,7 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
           if (next.ok && next.score > current.score) {
             current = next;
             changedThisPass = true;
+            acceptedAnything = true;
             accepted = true;
             break;
           }
@@ -562,5 +605,8 @@ export function simplifyEdgeJogsWhenScoreImproves(layout: LayoutData): void {
     if (!changedThisPass) {
       break;
     }
+  }
+  if (!acceptedAnything) {
+    barrenSignature.set(layout as unknown as object, signature);
   }
 }
