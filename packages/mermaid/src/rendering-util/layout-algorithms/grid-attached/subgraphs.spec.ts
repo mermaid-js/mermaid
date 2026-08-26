@@ -376,6 +376,63 @@ describe('grid-attached subgraphs', () => {
     });
   });
 
+  describe('taking containers into account from the decomposition', () => {
+    // `a-b-c` is a triangle, so it is the core; `d` hangs off `a` and `e` off `d`.
+    // `one` holds `a` (core) and `e` (the far end of the tree), so peeling would
+    // split it — which is what `modelCoreGroups` stops.
+    const split = (): LayoutData =>
+      layoutData(
+        [group('one'), node('a', 'one'), node('b'), node('c'), node('d'), node('e', 'one')],
+        [edge('a', 'b'), edge('b', 'c'), edge('c', 'a'), edge('a', 'd'), edge('d', 'e')]
+      );
+
+    it('splits the container between core and tree when left to topology', () => {
+      const data = split();
+      const result = runGridAttachedLayoutCore(data, { modelCoreGroups: false });
+
+      const core = new Set(result.components.flatMap((c) => c.coreNodeIds ?? []));
+      expect(core.has('a'), 'a is in the core').toBe(true);
+      expect(core.has('e'), 'e was peeled into a tree').toBe(false);
+    });
+
+    it('keeps the container whole when asked, branch and all', () => {
+      const data = split();
+      const result = runGridAttachedLayoutCore(data, { modelCoreGroups: true });
+
+      const core = new Set(result.components.flatMap((c) => c.coreNodeIds ?? []));
+      expect(core.has('a')).toBe(true);
+      // `e` is held in the core, and `d` comes with it: peeling cannot reach `e`, so
+      // `d` never becomes a leaf either. That is the branch, kept.
+      expect(core.has('e'), 'e is kept in the core').toBe(true);
+      expect(core.has('d'), 'the branch back to the core comes with it').toBe(true);
+    });
+
+    it('declines to grow the core beyond its allowance', () => {
+      const data = split();
+      const result = runGridAttachedLayoutCore(data, {
+        modelCoreGroups: true,
+        maxExtraCoreNodesForContainment: 0,
+      });
+
+      const core = new Set(result.components.flatMap((c) => c.coreNodeIds ?? []));
+      expect(core.has('e')).toBe(false);
+    });
+
+    it('leaves a diagram with no container decomposed exactly as before', () => {
+      const build = () =>
+        layoutData(
+          [node('a'), node('b'), node('c'), node('d')],
+          [edge('a', 'b'), edge('b', 'c'), edge('c', 'a'), edge('a', 'd')]
+        );
+      const off = build();
+      const on = build();
+      runGridAttachedLayoutCore(off, { modelCoreGroups: false });
+      runGridAttachedLayoutCore(on, { modelCoreGroups: true });
+
+      expect(on.nodes.map((n) => [n.id, n.x, n.y])).toEqual(off.nodes.map((n) => [n.id, n.x, n.y]));
+    });
+  });
+
   describe('the drawing as a whole', () => {
     it('keeps every frame in the positive quadrant', () => {
       const data = layoutData(

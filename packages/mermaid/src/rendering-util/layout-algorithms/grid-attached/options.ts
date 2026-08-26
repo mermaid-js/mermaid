@@ -106,21 +106,47 @@ export interface GridAttachedOptions extends GridLikeOptions {
   labelCrossingClearance: number;
 
   /**
-   * Solve the core with its subgraph containers modelled, so the members of a
-   * container are held together and inside a frame by the constraint system rather
-   * than being placed by topology alone.
+   * How many extra nodes the core may take on in order to keep a subgraph's members
+   * out of the trees.
    *
-   * Off, and measured rather than assumed. Turning it on does change the core — on
-   * `architecture` it costs 13 of the alignments grid-like had found, because
-   * containment and alignment want different things and containment must win — and
-   * across the corpus it changed the number of subgraphs that could be framed by
-   * exactly nothing. What decides a frame is whether a container's members ended up
-   * next to each other, and on these diagrams that is settled by which *component*
-   * each member landed in, not by how the core's own nodes are arranged.
+   * Leaf peeling cannot see a container, so it will happily pull one member into a
+   * tree and leave another in the core — a split no later stage can repair, since
+   * the halves are laid out by different algorithms and placed by different rules.
+   * Holding the members in the core prevents that, and costs core size: a bigger
+   * core is one grid-like aligns less of, and this layout asks grid-like for it once
+   * per candidate and once per rung.
    *
-   * Left here because the mechanism is the one that would matter on a diagram whose
-   * containers live inside a single dense core, and because the finding above is
-   * worth being able to re-measure.
+   * Counted in nodes rather than as a ratio, because a ratio is meaningless at both
+   * ends of the range: a three-node core going to five trips any ratio worth setting
+   * and costs nothing, while the same ratio would wave through seventeen becoming
+   * twenty-five. At 8 the diagrams where a container spans a few nodes keep their
+   * containers whole, and the ones whose containers cover nearly everything — where
+   * this turned a core of seventeen into thirty-four, its aligned edges from all but
+   * one into all but thirty, and seconds into minutes — do not.
+   */
+  maxExtraCoreNodesForContainment: number;
+
+  /**
+   * Take subgraph containers into account from the decomposition onwards, rather
+   * than fitting a frame around whatever the layout produced.
+   *
+   * Two things happen together, because neither is worth anything alone. Leaf
+   * peeling stops pulling a member out of a container that keeps another member in
+   * the core, up to `maxExtraCoreNodesForContainment` extra nodes; and the core is
+   * solved with the containers modelled, so its members are held together and
+   * everything else is held out. Measured over the subgraph fixtures:
+   *
+   *     neither                       48 frames drawn, 23 declined
+   *     containment in the core only  48 frames drawn, 23 declined
+   *     peeling held back only        47 frames drawn, 24 declined
+   *     both                          50 frames drawn, 21 declined
+   *
+   * Off, because the two extra frames are not the whole story. On `architecture`,
+   * whose thirteen nested containers cover nearly every node, containment and grid
+   * alignment want different things and containment wins: its unaligned core edges
+   * go from one to fifteen, and one tree connector ends up sharing a port. Those are
+   * a fair price for a diagram whose boxes matter more than its grid, and not a
+   * price to charge every diagram by default.
    */
   modelCoreGroups: boolean;
 
@@ -174,6 +200,7 @@ export function resolveGridAttachedOptions(
     labelClearance: overrides?.labelClearance ?? 12,
     labelCrossingClearance: overrides?.labelCrossingClearance ?? 24,
 
+    maxExtraCoreNodesForContainment: overrides?.maxExtraCoreNodesForContainment ?? 4,
     modelCoreGroups: overrides?.modelCoreGroups ?? false,
 
     routingClearance: overrides?.routingClearance ?? 12,

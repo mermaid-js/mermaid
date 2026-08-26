@@ -20,7 +20,7 @@
  * already known and the parent closes around them rather than around their contents.
  */
 
-import type { Bounds } from '../hola-faithful/model.js';
+import type { Bounds, HolaGraph } from '../hola-faithful/model.js';
 import type { LayoutData, Node } from '../../types.js';
 import type { GridAttachedOptions } from './options.js';
 
@@ -444,4 +444,100 @@ function containerPath(
     }
   }
   return best;
+}
+
+/**
+ * Which nodes leaf peeling must leave in the core, so no container is split
+ * between the core and a tree.
+ *
+ * A container split that way cannot be repaired later. The core is laid out by
+ * grid-like, the trees by HOLA's symmetric tree layout, and where a tree *goes* is
+ * decided by a face search that knows nothing about containers — so the two halves
+ * of one subgraph end up in different places by construction, and a frame around
+ * them has to reach across whatever lies between. Fitting the frame afterwards can
+ * only report the problem, which is what it was doing.
+ *
+ * So the split is prevented instead, at the only point where it is cheap: a
+ * container that keeps any member in the core keeps all of them. Naming the members
+ * is enough — `decompose` will not peel them, and a protected leaf holds its parent
+ * above degree one, so the branch back to the core survives with it.
+ *
+ * Found as a fixed point, because protecting one container's members grows the core,
+ * which can bring a second container into contact with it. Each round protects at
+ * least as much as the last and is bounded by the node count, so it settles.
+ *
+ * A container entirely inside the trees is left alone: it is not split, and forcing
+ * it into the core would inflate the core for nothing.
+ */
+export function nodesToKeepInCore(
+  graph: HolaGraph,
+  membership: ReadonlyMap<string, string[]>,
+  peel: (keepInCore: ReadonlySet<string>) => Iterable<string>,
+  maxExtraCoreNodes = Number.POSITIVE_INFINITY
+): Set<string> {
+  if (membership.size === 0) {
+    return new Set();
+  }
+
+  // Members present in this component, by container.
+  const membersOf = new Map<string, string[]>();
+  for (const nodeId of graph.nodes.keys()) {
+    for (const containerId of membership.get(nodeId) ?? []) {
+      const existing = membersOf.get(containerId);
+      if (existing) {
+        existing.push(nodeId);
+      } else {
+        membersOf.set(containerId, [nodeId]);
+      }
+    }
+  }
+  if (membersOf.size === 0) {
+    return new Set();
+  }
+
+  const unprotected = new Set(peel(new Set())).size;
+
+  let keep = new Set<string>();
+  for (let round = 0; round <= membersOf.size; round++) {
+    const core = new Set(peel(keep));
+    const next = new Set(keep);
+    for (const [, members] of membersOf) {
+      if (members.some((id) => core.has(id))) {
+        for (const id of members) {
+          next.add(id);
+        }
+      }
+    }
+    // Monotone, so a round that adds nothing is the fixed point.
+    if (next.size === keep.size) {
+      break;
+    }
+    keep = next;
+  }
+
+  if (keep.size === 0 || unprotected === 0) {
+    return keep;
+  }
+
+  // What holding the containers together costs, and whether it is worth paying.
+  //
+  // Every node kept out of a tree is a node the core has to lay out, and a core
+  // pays for its size twice: grid-like aligns less of it, and this layout asks
+  // grid-like for it several times over, once per candidate and once per rung of
+  // the enlargement ladder. On a diagram whose containers cover nearly everything
+  // — thirteen nested ones over fifty-two nodes — that turns a core of seventeen
+  // into a core of thirty-four, takes its aligned edges from all but one to all but
+  // thirty, and takes seconds into minutes. Two more frames are not worth that.
+  //
+  // So the trade is priced rather than assumed, and priced in nodes rather than as a
+  // ratio: a three-node core going to five is half again as large and completely
+  // harmless, while the ratio that permits it would permit seventeen becoming
+  // twenty-five. Keep the containers whole while the core gains no more than
+  // `maxExtraCoreNodes`, and report the split otherwise — which is what the frame
+  // fitting already does well.
+  const grown = new Set(peel(keep)).size;
+  if (grown - unprotected > maxExtraCoreNodes) {
+    return new Set();
+  }
+  return keep;
 }

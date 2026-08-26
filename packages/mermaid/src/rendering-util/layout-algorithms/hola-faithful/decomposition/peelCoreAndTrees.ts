@@ -84,7 +84,24 @@ export function selectPureTreeRoot(graph: HolaGraph): string {
   return firstByInputOrder(graph, centres);
 }
 
-export function decompose(graph: HolaGraph): Decomposition {
+export interface DecomposeOptions {
+  /**
+   * Nodes that must not be peeled, however few neighbours they have left.
+   *
+   * Peeling is a purely topological rule, and there are groupings it cannot see. A
+   * caller that draws subgraph containers has one: pulling a node out of a container
+   * whose other members stay in the core splits that container between the core and
+   * a tree, and no later stage can put it back together — the two halves are laid
+   * out by different algorithms and placed by different rules.
+   *
+   * Naming the members is enough to keep the whole branch: a protected leaf keeps
+   * its parent's degree above one, so nothing between it and the core becomes a leaf
+   * either. Empty by default, which is plain HOLA (guide §10).
+   */
+  keepInCore?: ReadonlySet<string>;
+}
+
+export function decompose(graph: HolaGraph, options?: DecomposeOptions): Decomposition {
   if (isPureTree(graph)) {
     return {
       core: createGraph(),
@@ -105,7 +122,9 @@ export function decompose(graph: HolaGraph): Decomposition {
   const rho = new Map<string, string>();
 
   for (;;) {
-    const leaves = [...active].filter((id) => liveDegree.get(id) === 1);
+    const leaves = [...active].filter(
+      (id) => liveDegree.get(id) === 1 && !options?.keepInCore?.has(id)
+    );
     if (leaves.length === 0) {
       break;
     }

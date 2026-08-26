@@ -156,6 +156,7 @@ const UNALIGNED_CORE_EDGES: Record<string, number> = {
   // A five-cycle with a tree on every node: grid-like can align a five-cycle's edges
   // no better than a pentagon.
   'GRAPH - hola 5 nodes loop + trees': 6,
+  'GRAPH - fuse 3 columns - scrumbling subgraphs': 8,
 };
 
 /**

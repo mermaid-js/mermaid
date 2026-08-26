@@ -1,12 +1,13 @@
 import { log } from '../../../logger.js';
 import type { LayoutData, Node } from '../../types.js';
 import {
+  PRIORITY_CONTAINMENT,
   X_AXIS,
   Y_AXIS,
-  PRIORITY_CONTAINMENT,
   buildContainmentConstraints,
   buildFlowConstraints,
   buildOverlapRemovalConstraints,
+  buildSeparationConstraints,
   hasOverlaps,
   removeCyclicConstraints,
   resolveFlowAxis,
@@ -114,12 +115,26 @@ export function runGridLikeLayoutCore(
   ]);
   const withContainment = (
     axis: Axis,
-    constraints: SeparationConstraint[]
+    constraints: SeparationConstraint[],
+    live: readonly Position[]
   ): SeparationConstraint[] => {
     const extra = containment.get(axis) ?? [];
     if (extra.length === 0) {
       return constraints;
     }
+    // Containment alone only says a frame holds its children. What keeps everything
+    // *else* out of it is separation between siblings, and this layout's own
+    // separations are between leaves: they cannot see a frame, so a node belonging
+    // nowhere near a container is free to sit inside its box. The adapter's
+    // entity-aware version treats a frame as one of the boxes to be separated, which
+    // is the half that was missing.
+    const entitySeparations = buildSeparationConstraints(
+      graph,
+      live,
+      axis,
+      options,
+      flowConstraints.constrainedPairs
+    );
     // Cycles are removed over the *union*, and counting every variable: a cycle can
     // run through a frame boundary, which is not one of the leaves. Assembled
     // constraints carry no priority of their own, and containment is the one thing
@@ -128,7 +143,10 @@ export function runGridLikeLayoutCore(
       ...constraint,
       priority: PRIORITY_ASSEMBLED,
     }));
-    return removeCyclicConstraints([...extra, ...ranked], graph.variableCount);
+    return removeCyclicConstraints(
+      [...extra, ...entitySeparations, ...ranked],
+      graph.variableCount
+    );
   };
   const springs = options.modelGroups ? frameSprings(graph, options) : undefined;
 
@@ -141,8 +159,8 @@ export function runGridLikeLayoutCore(
       positions,
       distances,
       springs,
-      constraintsForAxis: (axis) =>
-        withContainment(axis, axis === flow.axis ? [...flowConstraints.constraints] : []),
+      constraintsForAxis: (axis, live) =>
+        withContainment(axis, axis === flow.axis ? [...flowConstraints.constraints] : [], live),
       constraintsDependOnPositions: false,
     },
     {
@@ -166,7 +184,8 @@ export function runGridLikeLayoutCore(
           flowConstraints,
           alignments,
           options,
-        })
+        }),
+        live
       );
   };
 
@@ -224,7 +243,15 @@ export function runGridLikeLayoutCore(
     runCfdl(positions, distances, constraintsForAxis(alignments), options, undefined, springs);
   }
 
-  enforceSeparation(graph, positions, options, flow, flowConstraints.constrainedPairs, alignments);
+  enforceSeparation(
+    graph,
+    positions,
+    options,
+    flow,
+    flowConstraints.constrainedPairs,
+    alignments,
+    containment
+  );
 
   writeBackLayout(data4Layout, graph, positions, options);
 
@@ -286,7 +313,8 @@ function enforceSeparation(
   options: GridLikeOptions,
   flow: ReturnType<typeof resolveFlowAxis>,
   flowConstrainedPairs: ReadonlySet<string>,
-  alignments: readonly SeparatedAlignment[]
+  alignments: readonly SeparatedAlignment[],
+  containment?: ReadonlyMap<Axis, PrioritisedConstraint[]>
 ): void {
   if (!hasOverlaps(graph, positions, options, flowConstrainedPairs)) {
     return;
@@ -296,7 +324,11 @@ function enforceSeparation(
   const equalities = alignments
     .filter((alignment) => alignment.alignmentAxis === axis)
     .flatMap((alignment) => alignment.equality);
+  // Containment travels with the repair, so a frame cannot be left behind by the
+  // children it holds: this projection is free to move a leaf, and a frame whose
+  // boundaries stay put would no longer contain it.
   const constraints = [
+    ...(containment?.get(axis) ?? []),
     ...equalities,
     ...buildOverlapRemovalConstraints(graph, positions, axis, options),
   ];

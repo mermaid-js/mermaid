@@ -95,6 +95,7 @@ import {
   collectSubgraphs,
   fitSubgraphFrames,
   frameIsClean,
+  nodesToKeepInCore,
   orderComponentsBySubgraph,
   placeEmptyFrames,
   subgraphMembership,
@@ -311,7 +312,24 @@ function layoutComponent(
   options: GridAttachedOptions,
   diagnostics: DiagnosticCollector
 ): LaidOutComponent {
-  const decomposition = decompose(graph);
+  // Peeling is told about the containers before it runs. A container that keeps any
+  // member in the core keeps all of them, so no container is ever split between the
+  // core and a tree — a split nothing downstream could repair, because the two
+  // halves are laid out by different algorithms and placed by different rules.
+  const membership = subgraphMembership(data);
+  // Both halves of one feature, so one switch. Keeping a container's members in the
+  // core is only worth anything if the core then holds them together — on its own it
+  // grows the core and scatters them inside it, which is worse than the split it was
+  // meant to avoid.
+  const keepInCore = options.modelCoreGroups
+    ? nodesToKeepInCore(
+        graph,
+        membership,
+        (keep) => coreNodeIdsOf(decompose(graph, { keepInCore: keep })),
+        options.maxExtraCoreNodesForContainment
+      )
+    : new Set<string>();
+  const decomposition = decompose(graph, { keepInCore });
 
   if (decomposition.pureTree) {
     return layoutPureTreeComponent(flat, componentId, decomposition.pureTree, flowGrowth, options);
@@ -1236,4 +1254,9 @@ export function growthForDirection(direction: string | undefined): Cardinal {
     default:
       return 'S';
   }
+}
+
+/** The ids left in the core by one decomposition; a pure tree leaves none. */
+function coreNodeIdsOf(decomposition: ReturnType<typeof decompose>): string[] {
+  return [...decomposition.core.nodes.keys()];
 }
