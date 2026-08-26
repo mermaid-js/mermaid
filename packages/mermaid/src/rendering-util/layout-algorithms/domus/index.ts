@@ -825,6 +825,7 @@ function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
   // every repair pass iterate. What routing has already cost here is the best
   // available forecast of what routing again will cost.
   if (totalLayoutCost() > COMPACTION_REROUTE_WORK_BUDGET) {
+    log.debug(`CMPCT: ledger-blocked cost=${totalLayoutCost()}`);
     return;
   }
   const baselineArea = drawingArea(data4Layout);
@@ -834,6 +835,7 @@ function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
     minGap: COMPACTION_SLACK * nodeGroupClearanceOf(candidate),
   });
   if (!compaction.changed) {
+    log.debug('CMPCT: unchanged');
     return;
   }
   // Pay for the re-route only where there is real slack to reclaim.
@@ -846,6 +848,9 @@ function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
   // genuine void in them and skips it everywhere else.
   const extent = drawingExtent(data4Layout);
   if (compaction.reclaimed < MIN_RECLAIM_FRACTION * extent) {
+    log.debug(
+      `CMPCT: reclaim-blocked reclaimed=${compaction.reclaimed.toFixed(0)} need=${(MIN_RECLAIM_FRACTION * extent).toFixed(0)}`
+    );
     return;
   }
 
@@ -864,15 +869,28 @@ function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
 
   const result = checkLayout(candidate);
   const tighter = drawingArea(candidate) < baselineArea;
-  // Both-invalid needs its own arm. `score >= score` is `0 >= 0` while the
-  // score is clamped, so without it ANY invalid-but-tighter candidate would
-  // replace an invalid baseline — which is how a compacted `domus/state-machine`
-  // briefly shipped two issues it did not start with.
+  // Acceptance, two routes in:
+  //  - A strictly better VALID score stands on its own. The area test predates
+  //    the 2026-08-26 frame rules; now that `group-dead-space`/`group-elongation`
+  //    price frame shape INSIDE the score, requiring raw drawing area to shrink
+  //    as well vetoed real wins (`domus/mystery`: 600 -> 707, issues 12 -> 9,
+  //    rejected on `tighter=false` because the re-route spent the reclaimed
+  //    frame slack on cleaner routes).
+  //  - Otherwise the candidate must be genuinely tighter AND no worse — the
+  //    original gate. Both-invalid keeps its own arm: `score >= score` is
+  //    `0 >= 0` while the score is clamped, so without it ANY invalid-but-
+  //    tighter candidate would replace an invalid baseline — which is how a
+  //    compacted `domus/state-machine` briefly shipped two issues it did not
+  //    start with.
   const accept =
-    tighter &&
-    (result.ok
-      ? !baseline.ok || result.score >= baseline.score
-      : !baseline.ok && result.issues.length < baseline.issues.length);
+    (result.ok && result.score > baseline.score) ||
+    (tighter &&
+      (result.ok
+        ? !baseline.ok || result.score >= baseline.score
+        : !baseline.ok && result.issues.length < baseline.issues.length));
+  log.debug(
+    `CMPCT: verdict accept=${accept} tighter=${tighter} ok=${result.ok} score ${baseline.score.toFixed(0)}->${result.score.toFixed(0)} issues ${baseline.issues.length}->${result.issues.length}`
+  );
   if (!accept) {
     return;
   }

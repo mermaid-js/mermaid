@@ -36,6 +36,7 @@ classdefid
 classentity
 classname
 clazz
+CMPCT
 CODEOWNERS
 COLONSEP
 COMPOSIT_STATE
