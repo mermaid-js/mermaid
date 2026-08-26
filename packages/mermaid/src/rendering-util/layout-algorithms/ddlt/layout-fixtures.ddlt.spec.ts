@@ -96,7 +96,13 @@ const DOMUS_TOTAL_COST_CEILING = 803_000_000;
  * They are here because node placement is the next piece of work, not because
  * the rules are wrong — see the commit that added them for the measurements.
  */
-const KNOWN_INVALID = new Set(['swimlanes/14-messy-layout']);
+const KNOWN_INVALID = new Set([
+  'swimlanes/14-messy-layout',
+  // Made invalid by the 2026-08-26 frame-clearance rules (`group-group-padding`):
+  // errlog~metricly frames 0.7px apart, logio~coastal_cloud 14px. Real kissing
+  // the rule is right to name; group placement work, queued in this run.
+  'domus/mermaid-chart-architecture',
+]);
 
 function issueSummary(issues: { type: string }[]): string {
   return issues

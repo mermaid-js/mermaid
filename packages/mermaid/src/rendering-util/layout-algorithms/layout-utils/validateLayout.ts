@@ -108,6 +108,30 @@ const NODE_GROUP_CLEARANCE_DEFAULT = 30;
 export const NODE_NODE_PADDING = 30;
 
 /**
+ * Minimum clear gap between two group frames with no ancestry between them.
+ *
+ * Nothing priced frame-to-frame distance before: two sibling subgraph borders
+ * could sit 0.7px apart (mermaid-chart-architecture's errlog~metricly) and read
+ * as one merged container while every rule stayed quiet. Facing pairs only,
+ * same `rectFacingGap` contract as `node-node-padding`; overlap is already
+ * `node-overlap`. 20 matches the leaf↔group clearance the corpus is laid out
+ * to (`flowchart.nodeGroupClearance`); healthy fixtures sit at 26–30.
+ */
+export const GROUP_GROUP_PADDING = 20;
+
+/**
+ * Minimum inset of a nested group frame from every side of an ancestor frame.
+ *
+ * A child frame flush against its parent's border renders as a double line —
+ * the two containers read as one box with a stray title. Below this the frames
+ * visually merge; the corpus lays nested frames out at ≥35, so this is a
+ * backstop against the collapse (seen live at `look=classic`, whose larger
+ * labels crowd frames the neo-captured fixtures never exercise). A negative
+ * inset (child poking out of its ancestor) fails the same test.
+ */
+export const NESTED_GROUP_PADDING = 8;
+
+/**
  * The configured node-to-foreign-group gap for this layout.
  *
  * Read from config rather than hardcoded so the checker and the passes that
@@ -396,6 +420,11 @@ export type LayoutIssueType =
   | 'edge-invisible-under-marker'
   /** Two leaf nodes closer than the minimum node-to-node padding. */
   | 'node-node-padding'
+  // ── Added 2026-08-26 (frame clearance round). Hard: kissing frames. ──
+  /** Two unrelated group frames closer than the minimum group-to-group padding. */
+  | 'group-group-padding'
+  /** A nested group frame flush against (or poking out of) an ancestor frame. */
+  | 'group-inside-group-padding'
   // ── Added 2026-08-26. Soft: placement and port-choice quality. ──
   /** Edge routes through a group it has no endpoint in. */
   | 'edge-crosses-foreign-group'
@@ -1340,17 +1369,17 @@ export function validateLayout(
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
-  // 1c) Node-vs-group crowding (SOFT, graded)
+  // 1c) Node-vs-group crowding (HARD since 2026-08-26)
   //
   // A non-member leaf node parked right up against a foreign group's frame reads
   // as cramped (e.g. subgraph-variation's P5 only 10px off the P1.5 subgraph;
   // P1 15.8px above it). Unlike border-hugging (a node running flush ALONG the
-  // frame), this catches a node FACING the frame across too small a gap. The
-  // penalty is GRADED and SOFT: the closer below NODE_GROUP_CLEARANCE, the larger
-  // — so it never invalidates (a hard rule would mass-regress fixtures like
-  // deploy-pipeline, whose D/E sit ~9–12px off their subgraph), it just rewards
-  // spacing the node out. Swimlane lanes use a different spacing model and are
-  // excluded.
+  // frame), this catches a node FACING the frame across too small a gap —
+  // INCLUDING a gap of exactly zero: a node kissing the frame is the worst case
+  // of the defect, and the old `gap <= 0` skip made it the one case the rule
+  // could not see (architecture4's outside nodes sat flush on the platform
+  // frame and validated clean). Swimlane lanes use a different spacing model
+  // and are excluded.
   // ─────────────────────────────────────────────────────────────────────────────
   for (const n of nodes) {
     if (focused) {
@@ -1370,7 +1399,7 @@ export function validateLayout(
         continue;
       }
       const gap = rectFacingGap(nr, gRect);
-      if (gap == null || gap <= 0 || gap >= nodeGroupClearance) {
+      if (gap == null || gap >= nodeGroupClearance) {
         continue;
       }
       const penalty = Math.min(
@@ -2509,6 +2538,82 @@ export function validateLayout(
     }
 
     const laneGroups = detectLaneGroups(groupBorderRects);
+
+    // ── Frame-to-frame clearance. Two group borders that face each other
+    // across less than GROUP_GROUP_PADDING read as one merged container
+    // (kissing frames). Ancestry pairs are the nested rule's job below; lanes
+    // are adjacent bands by construction and are exempt, as are swimlane
+    // groups (their own spacing model).
+    const clearanceGroupIds = [...groupBorderRects.keys()].sort((a, b) => a.localeCompare(b));
+    for (let i = 0; i < clearanceGroupIds.length; i++) {
+      const aId = clearanceGroupIds[i];
+      const aNode = byId.get(aId);
+      const aRect = groupBorderRects.get(aId)!;
+      if (isSwimlaneGroup(aNode) || laneGroups.has(aId)) {
+        continue;
+      }
+      for (let j = i + 1; j < clearanceGroupIds.length; j++) {
+        const bId = clearanceGroupIds[j];
+        const bNode = byId.get(bId);
+        const bRect = groupBorderRects.get(bId)!;
+        if (isSwimlaneGroup(bNode) || laneGroups.has(bId)) {
+          continue;
+        }
+        if (
+          (aNode && isAncestorGroup(bId, aNode, byId)) ||
+          (bNode && isAncestorGroup(aId, bNode, byId))
+        ) {
+          continue;
+        }
+        const gap = rectFacingGap(aRect, bRect);
+        if (gap != null && gap < GROUP_GROUP_PADDING - EPS) {
+          issues.push({
+            type: 'group-group-padding',
+            message: diag
+              ? `Group frames "${aId}" and "${bId}" are ${gap.toFixed(1)} apart (< ${GROUP_GROUP_PADDING})`
+              : '',
+            nodeIds: [aId, bId],
+            details: { gap, threshold: GROUP_GROUP_PADDING },
+          });
+        }
+      }
+    }
+
+    // ── Nested frame inset. A child frame must keep NESTED_GROUP_PADDING of
+    // air from every side of every ancestor frame, or the two borders render
+    // as a double line and the containers read as one box. A negative inset
+    // (child poking outside its ancestor) fails the same test. The corpus
+    // lays nested frames out at ≥35, so this is a backstop against collapse.
+    for (const [cId, cRect] of groupBorderRects) {
+      const cNode = byId.get(cId);
+      if (isSwimlaneGroup(cNode) || laneGroups.has(cId) || !cNode) {
+        continue;
+      }
+      for (const [pId, pRect] of groupBorderRects) {
+        if (pId === cId || !isAncestorGroup(pId, cNode, byId)) {
+          continue;
+        }
+        if (isSwimlaneGroup(byId.get(pId)) || laneGroups.has(pId)) {
+          continue;
+        }
+        const minInset = Math.min(
+          cRect.left - pRect.left,
+          pRect.right - cRect.right,
+          cRect.top - pRect.top,
+          pRect.bottom - cRect.bottom
+        );
+        if (minInset < NESTED_GROUP_PADDING - EPS) {
+          issues.push({
+            type: 'group-inside-group-padding',
+            message: diag
+              ? `Group "${cId}" frame sits ${minInset.toFixed(1)} inside ancestor "${pId}" (min ${NESTED_GROUP_PADDING})`
+              : '',
+            nodeIds: [cId, pId],
+            details: { minInset, threshold: NESTED_GROUP_PADDING },
+          });
+        }
+      }
+    }
 
     // ── Edges crossing groups they do not belong to, and edges re-entering
     // their own. An edge with no endpoint inside a group has no business

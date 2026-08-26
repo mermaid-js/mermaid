@@ -1231,6 +1231,82 @@ describe('validateLayout new geometric issues', () => {
     expect(getIssueTypes(layout)).not.toContain('node-too-close-to-group');
   });
 
+  it('flags a node whose border touches the group frame exactly (gap 0)', () => {
+    // G frame left edge at x=150; N right edge at exactly x=150 — kissing. The
+    // old `gap <= 0` skip made this the one crowding case the rule could not
+    // see (architecture4's outside nodes sat flush on the platform frame).
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 130, 0, 40, 40);
+    const res = validateLayout({ nodes: [g, n], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'node-too-close-to-group');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.gap).toBe(0);
+    expect(res.ok).toBe(false);
+  });
+
+  // ---- group-group-padding: two unrelated frames kissing (HARD) ----
+
+  it('flags group-group-padding for two sibling frames 5px apart', () => {
+    // A frame right edge x=50, B frame left edge x=55 — facing across 5px.
+    // B is shorter and offset so the pair does not tile its union into two
+    // bands (lane-shaped pairs are exempt by design).
+    const a = mkGroup('A', 0, 0, 100, 100);
+    const b = mkGroup('B', 105, 40, 100, 60);
+    const res = validateLayout({ nodes: [a, b], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'group-group-padding');
+    expect(issue).toBeDefined();
+    expect(issue?.nodeIds).toEqual(['A', 'B']);
+    expect(issue?.details?.gap).toBeCloseTo(5);
+    expect(res.ok).toBe(false);
+    expect(res.score).toBe(0);
+  });
+
+  it('does NOT flag group-group-padding at the full 20px padding', () => {
+    const a = mkGroup('A', 0, 0, 100, 100);
+    const b = mkGroup('B', 120, 40, 100, 60); // gap exactly 20, non-lane-shaped
+    const res = validateLayout({ nodes: [a, b], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('group-group-padding');
+  });
+
+  it('does NOT flag group-group-padding for a parent/child frame pair', () => {
+    // Nesting is the inset rule's job; the pair rule must skip ancestry.
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 0, 0, 150, 150), parentId: 'G' } as unknown as Node;
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('group-group-padding');
+  });
+
+  // ---- group-inside-group-padding: nested frame flush with its ancestor (HARD) ----
+
+  it('flags group-inside-group-padding for a child frame 3px inside its parent', () => {
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 0, 0, 194, 194), parentId: 'G' } as unknown as Node;
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'group-inside-group-padding');
+    expect(issue).toBeDefined();
+    expect(issue?.nodeIds).toEqual(['C', 'G']);
+    expect(issue?.details?.minInset).toBeCloseTo(3);
+    expect(res.ok).toBe(false);
+  });
+
+  it('flags group-inside-group-padding when the child pokes outside its parent', () => {
+    // Child right edge 10px past the parent's — negative inset fails the same test.
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 30, 0, 160, 100), parentId: 'G' } as unknown as Node;
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'group-inside-group-padding');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.minInset).toBeCloseTo(-10);
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag group-inside-group-padding at a healthy inset', () => {
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 0, 0, 180, 180), parentId: 'G' } as unknown as Node; // inset 10
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('group-inside-group-padding');
+  });
+
   // ---- edge-self-shared-subpath: adjacent-reversal backtrack spike (raw points) ----
 
   it('flags edge-self-shared-subpath for an adjacent backtrack spike', () => {
