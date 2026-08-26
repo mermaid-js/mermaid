@@ -895,7 +895,7 @@ function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
         ? !baseline.ok || result.score >= baseline.score
         : !baseline.ok && result.issues.length < baseline.issues.length));
   log.debug(
-    `CMPCT: verdict accept=${accept} tighter=${tighter} ok=${result.ok} score ${baseline.score.toFixed(0)}->${result.score.toFixed(0)} issues ${baseline.issues.length}->${result.issues.length}`
+    `CMPCT: verdict accept=${accept} tighter=${tighter} ok=${result.ok} score ${baseline.score.toFixed(0)}->${result.score.toFixed(0)} issues ${baseline.issues.length}->${result.issues.length} types=${[...new Set(result.issues.map((i) => i.type))].join(',')}`
   );
   if (!accept) {
     return;

@@ -10,12 +10,16 @@
  * common (triage x6, co-pilot-extension x4, incremental-editing x3) and no
  * pass repaired them.
  *
- * The repair slides a flagged terminal ALONG its side to the side's midpoint,
+ * The repair slides a flagged terminal ALONG its side to a preferred position,
  * translating the perpendicular exit stub laterally with it so the departing
  * segment keeps its orientation (the segment after the stub absorbs the
  * shift). Each move is kept only when the unified score strictly improves, so
  * a snap that would collide two ports on the same vertex, deform a straight
- * edge, or trade the 40 for something worse is rejected wholesale.
+ * edge, or trade the penalty for something worse is rejected wholesale.
+ *
+ * The same slide also repairs `port-near-corner` (soft 10: a port in the
+ * outer 15% of a side "reads as an accident rather than a choice", waived for
+ * bendless routes): minimal inboard slide first, side midpoint as fallback.
  */
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
@@ -41,12 +45,23 @@ const EPS = 1e-6;
 /** Same tolerance the validator uses to locate a port on a box side. */
 const EPS_SIDE = 2;
 
+/** A near-corner port slides inboard to this fraction of its side — just past
+ * the validator's PORT_CORNER_FRACTION (0.15) with margin to spare. */
+const INBOARD_FRACTION = 0.2;
+
 export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): void {
   let current = checkLayout(layout);
-  const flagged = current.issues.filter((i) => i.type === 'port-off-diamond-corner');
+  const flagged = current.issues.filter(
+    (i) => i.type === 'port-off-diamond-corner' || i.type === 'port-near-corner'
+  );
   log.debug(`DIAMSNAP: enter ok=${current.ok} flags=${flagged.length}`);
-  if (!current.ok) {
-    return; // score-gated only — a clamped score cannot grade a candidate
+  if (!current.ok || current.score === 0) {
+    // Score-gated only. A clamped or zeroed score cannot grade a candidate:
+    // `next.score > 0` would need >1000 points of soft penalty reclaimed, and
+    // this pass's largest single lever is 40 — every rung would be a full
+    // checkLayout spent on a gate that cannot open (architecture and
+    // mermaid-chart-architecture carry 13 such flags between them).
+    return;
   }
   if (flagged.length === 0) {
     return;
@@ -66,11 +81,14 @@ export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): v
     }
   }
 
-  // Worst offset first — the farthest port has the most to gain and the least
-  // chance of fighting a sibling for the same vertex slot.
-  const sorted = [...flagged].sort(
-    (a, b) => ((b.details?.offset as number) ?? 0) - ((a.details?.offset as number) ?? 0)
-  );
+  // Diamonds first (their penalty is 4x a corner port's), then worst offender
+  // first within each type — the farthest port has the most to gain and the
+  // least chance of fighting a sibling for the same slot.
+  const severity = (i: (typeof flagged)[number]): number =>
+    i.type === 'port-off-diamond-corner'
+      ? 1000 + ((i.details?.offset as number) ?? 0)
+      : 1 - ((i.details?.fraction as number) ?? 0);
+  const sorted = [...flagged].sort((a, b) => severity(b) - severity(a));
 
   for (const issue of sorted) {
     const edge = issue.edgeId != null ? edgeById.get(String(issue.edgeId)) : undefined;
@@ -97,10 +115,18 @@ export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): v
     } else {
       continue; // corner or interior — not this pass's shape
     }
-    const target = lateral === 'y' ? (rect.top + rect.bottom) / 2 : (rect.left + rect.right) / 2;
-    const delta = target - (lateral === 'y' ? pN.y : pN.x);
-    if (Math.abs(delta) <= EPS) {
-      continue;
+    const lo = lateral === 'y' ? rect.top : rect.left;
+    const hi = lateral === 'y' ? rect.bottom : rect.right;
+    const cur = lateral === 'y' ? pN.y : pN.x;
+    const mid = (lo + hi) / 2;
+    // A diamond port belongs ON the vertex; a near-corner port only needs to
+    // clear the corner band — minimal slide first, midpoint as the fallback.
+    const targets: number[] = [];
+    if (issue.type === 'port-off-diamond-corner') {
+      targets.push(mid);
+    } else {
+      const inboard = INBOARD_FRACTION * (hi - lo);
+      targets.push(cur - lo < hi - cur ? lo + inboard : hi - inboard, mid);
     }
     // The exit stub must be perpendicular to the slide, or moving the port
     // sideways would need a whole rail restructure — skip those.
@@ -110,28 +136,43 @@ export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): v
       continue;
     }
 
-    const snapN = { ...pN };
-    const snapAdj = { ...pAdj };
-    if (lateral === 'y') {
-      pN.y += delta;
-      pAdj.y += delta;
-    } else {
-      pN.x += delta;
-      pAdj.x += delta;
-    }
+    for (const target of targets) {
+      // Re-read from the array each rung and restore IN PLACE: replacing array
+      // entries with snapshot copies leaves the loop holding detached, mutated
+      // objects, and the next rejected rung writes that stale geometry back —
+      // the exact stale-reference bug the endpoint-band ladder hit (silent
+      // no-ops there; minted diagonals here).
+      const p0 = pts[idx];
+      const p1 = pts[adjIdx];
+      const delta = target - (lateral === 'y' ? p0.y : p0.x);
+      if (Math.abs(delta) <= EPS) {
+        continue;
+      }
+      const snap0 = { x: p0.x, y: p0.y };
+      const snap1 = { x: p1.x, y: p1.y };
+      if (lateral === 'y') {
+        p0.y += delta;
+        p1.y += delta;
+      } else {
+        p0.x += delta;
+        p1.x += delta;
+      }
 
-    const next = checkLayout(layout);
-    if (next.ok && next.score > current.score) {
-      current = next;
+      const next = checkLayout(layout);
+      if (next.ok && next.score > current.score) {
+        current = next;
+        log.debug(
+          `DIAMSNAP: commit ${issue.type} edge=${String(edge.id)} ${terminal} delta=${delta.toFixed(1)} score=${next.score.toFixed(1)}`
+        );
+        break;
+      }
       log.debug(
-        `DIAMSNAP: commit edge=${String(edge.id)} ${terminal} delta=${delta.toFixed(1)} score=${next.score.toFixed(1)}`
+        `DIAMSNAP: reject ${issue.type} edge=${String(edge.id)} ${terminal} delta=${delta.toFixed(1)} ok=${next.ok} score ${current.score.toFixed(1)}->${next.score.toFixed(1)}`
       );
-    } else {
-      log.debug(
-        `DIAMSNAP: reject edge=${String(edge.id)} ${terminal} delta=${delta.toFixed(1)} ok=${next.ok} score ${current.score.toFixed(1)}->${next.score.toFixed(1)}`
-      );
-      pts[idx] = snapN;
-      pts[adjIdx] = snapAdj;
+      p0.x = snap0.x;
+      p0.y = snap0.y;
+      p1.x = snap1.x;
+      p1.y = snap1.y;
     }
   }
 }
