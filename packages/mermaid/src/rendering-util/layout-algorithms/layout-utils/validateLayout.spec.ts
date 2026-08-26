@@ -169,6 +169,50 @@ describe('validateLayout scoring (DDLT unified, 0–1000 fixed cap)', () => {
   });
 });
 
+describe('validateLayout self-loop rendering', () => {
+  // Node A centred at (0,0), 120x60 → borders x∈[-60,60], y∈[-30,30].
+  const a = () => mkNode('A', 0, 0, 120, 60);
+
+  it('flags edge-self-loop-not-rendered for a collapsed (zero-length) self-loop', () => {
+    // Both endpoints slid onto a single point on the right border — the exact
+    // degeneracy straightenParallelZs used to produce. Renders as a bare
+    // arrowhead with no visible loop.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: 0 },
+      { x: 60, y: 0 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).toContain('edge-self-loop-not-rendered');
+    expect(res.ok).toBe(false); // hard: the drawing is broken
+    expect(res.score).toBe(0);
+  });
+
+  it('flags edge-self-loop-not-rendered when the loop never leaves the node border', () => {
+    // Both ports on the right border at different offsets, no outward stub.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: -15 },
+      { x: 60, y: 15 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    expect(getIssueTypes(layout)).toContain('edge-self-loop-not-rendered');
+  });
+
+  it('does NOT flag a proper same-side U-bend self-loop that escapes the node', () => {
+    // right border → out 40px → over → back to right border: a visible loop.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: -15 },
+      { x: 100, y: -15 },
+      { x: 100, y: 15 },
+      { x: 60, y: 15 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).not.toContain('edge-self-loop-not-rendered');
+    expect(res.ok).toBe(true);
+  });
+});
+
 describe('validateLayout new hard-validation rules', () => {
   it('flags edge-bend-near-endpoint when the LAST segment is shorter than 10', () => {
     // Use node-free edges so only the new rule fires.
@@ -367,6 +411,25 @@ describe('validateLayout new geometric issues', () => {
     const e = mkEdge('e', 'S', 'T', [
       { x: s.x!, y: s.y! },
       { x: t.x!, y: t.y! },
+    ]);
+    const layout: LayoutData = { nodes: [s, t, o], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    expect(res.ok).toBe(false);
+    expect(getIssueTypes(layout)).toContain('edge-intersects-obstacle');
+  });
+
+  it('flags edge-intersects-obstacle for visually horizontal segments with subpixel endpoint drift', () => {
+    // Company.mmd regression: the route is visually horizontal through a
+    // third-party node, but the two y values differ by less than a millionth
+    // due to floating-point cleanup. Exact equality let it bypass the
+    // obstacle helper.
+    const s = mkNode('S', -100, 0);
+    const t = mkNode('T', 100, 0);
+    const o = mkNode('O', 0, 0, 40, 40);
+    const e = mkEdge('e', 'S', 'T', [
+      { x: -80, y: 0 },
+      { x: 80, y: 0.00000025 },
     ]);
     const layout: LayoutData = { nodes: [s, t, o], edges: [e], config: {} as any };
 
@@ -721,6 +784,83 @@ describe('validateLayout new geometric issues', () => {
     expect(types).not.toContain('edge-label-off-edge');
   });
 
+  it('flags edge-label-off-edge for an overlay label anchored off its own polyline', () => {
+    // Post-finalize / overlay representation: the label lives on the edge as
+    // edge.label + edge.x/y + edge.width/height (no labelNodeId). A label
+    // anchored away from its own polyline must still be flagged.
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'X',
+      x: 120, // far to the right of the x=0 polyline
+      y: 100,
+      width: 30,
+      height: 20,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const off = res.issues.find((i) => i.type === 'edge-label-off-edge');
+    expect(off, 'expected edge-label-off-edge for the overlay label').toBeTruthy();
+    expect(off?.edgeId).toBe('e');
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag edge-label-off-edge for an overlay label sitting on the polyline', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'X',
+      x: 0, // on the x=0 polyline
+      y: 100,
+      width: 30,
+      height: 20,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-label-off-edge');
+  });
+
+  it('flags edge-endpoint-detached-from-node when an endpoint floats off its node', () => {
+    // Start point floats 80px right of A instead of attaching to its boundary
+    // (the opposite of edge-endpoint-inside-node — the endpoint is outside).
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = mkEdge('e', 'A', 'B', [
+      { x: 100, y: 0 },
+      { x: 100, y: 180 },
+      { x: 0, y: 180 }, // end attaches to B's top border
+    ]);
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const det = res.issues.find((i) => i.type === 'edge-endpoint-detached-from-node');
+    expect(det, 'expected edge-endpoint-detached-from-node').toBeTruthy();
+    expect(det?.nodeIds).toContain('A');
+    expect((det?.details as { which?: string })?.which).toBe('start');
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag edge-endpoint-detached-from-node when endpoints sit on node boundaries', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 200);
+    const e = mkEdge('e', 'A', 'B', [
+      { x: 0, y: a.y! + 20 }, // on A's bottom border
+      { x: 0, y: b.y! - 20 }, // on B's top border
+    ]);
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-endpoint-detached-from-node');
+  });
+
   it('flags edge-endpoint-inside-node when an edge endpoint sits inside a non-endpoint node', () => {
     // Edge from S to T, but its end point lands inside an unrelated obstacle
     // node O rather than on T's boundary.
@@ -846,6 +986,50 @@ describe('validateLayout new geometric issues', () => {
     expect(types).not.toContain('edge-label-overlaps-foreign-edge');
   });
 
+  it('flags edge-label-overlaps-node when an overlay label sits on a node box', () => {
+    // A -> B with an intervening node C the label is dropped on top of.
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 300);
+    const c = mkNode('C', 0, 150, 80, 60); // rect [-40,120 .. 40,180]
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'On The Node',
+      x: 0,
+      y: 150, // label center coincides with C's center -> overlap
+      width: 56,
+      height: 21,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b, c], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const issue = res.issues.find((i) => i.type === 'edge-label-overlaps-node');
+    expect(issue, 'expected edge-label-overlaps-node').toBeTruthy();
+    expect(issue?.nodeIds).toContain('C');
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag edge-label-overlaps-node when the label sits in a clear gap', () => {
+    const a = mkNode('A', 0, 0);
+    const b = mkNode('B', 0, 300);
+    const e = {
+      ...mkEdge('e', 'A', 'B', [
+        { x: 0, y: a.y! + 20 },
+        { x: 0, y: b.y! - 20 },
+      ]),
+      label: 'In The Gap',
+      x: 0,
+      y: 150,
+      width: 56,
+      height: 21,
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, b], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-label-overlaps-node');
+  });
+
   it('flags edge-label-overlaps-own-arrowhead when an overlay label covers its end marker', () => {
     const a = mkNode('A', 0, 0);
     const b = mkNode('B', 200, 0);
@@ -889,5 +1073,192 @@ describe('validateLayout new geometric issues', () => {
 
     const types = getIssueTypes(layout);
     expect(types).not.toContain('edge-label-overlaps-own-arrowhead');
+  });
+
+  // ---- edge-self-shared-subpath: an edge that doubles back along its own lane ----
+
+  it('flags edge-self-shared-subpath when an edge overlaps its own route on a shared lane', () => {
+    // A roundabout polyline (e.g. an A*/detour route never cleaned up): two
+    // NON-ADJACENT vertical segments both ride x=0 and overlap in y.
+    //   seg0: (0,0)->(0,100)  rides x=0, y[0,100]
+    //   seg4: (0,50)->(0,150) rides x=0, y[50,150]  -> overlaps seg0 by 50px
+    const e = mkEdge('selfish', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+      { x: 60, y: 100 },
+      { x: 60, y: 50 },
+      { x: 0, y: 50 },
+      { x: 0, y: 150 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const selfIssue = res.issues.find((i) => i.type === 'edge-self-shared-subpath');
+    expect(selfIssue).toBeDefined();
+    expect(selfIssue?.edgeId).toBe('selfish');
+    expect(selfIssue?.details?.overlapLength).toBeGreaterThanOrEqual(8);
+    // Self-overlap is a hard routing defect -> invalidates.
+    expect(res.ok).toBe(false);
+    expect(res.score).toBe(0);
+  });
+
+  it('does NOT flag edge-self-shared-subpath for a normal single-bend route', () => {
+    // A plain L: no two non-adjacent segments share a lane.
+    const e = mkEdge('clean', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+      { x: 100, y: 100 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-self-shared-subpath');
+  });
+
+  // ---- edge-bend-overlaps-arrowhead: a turn sitting inside the arrowhead (SOFT) ----
+
+  // Geometry mirrors a real valid fixture edge (edge-types L_R2_C_0): a 10px
+  // start stub then a turn, so the bend lands inside the start arrowhead marker.
+  function mkArrowheadBendLayout(withStartMarker: boolean): LayoutData {
+    const a = mkNode('A', 400, 390, 40, 40); // left edge at x=380
+    const c = mkNode('C', 316, 310, 42, 44); // right edge at x=337, y in [288,332]
+    const e = {
+      ...mkEdge('L_A_C_0', 'A', 'C', [
+        { x: 380, y: 390 }, // on A's left edge (start)
+        { x: 370, y: 390 }, // 10px stub -> turn lands in the start marker
+        { x: 370, y: 318 },
+        { x: 337, y: 318 }, // on C's right edge (end)
+      ]),
+      ...(withStartMarker ? { arrowTypeStart: 'arrow_point' } : {}),
+    } as unknown as Edge;
+    return { nodes: [a, c], edges: [e], config: {} as any };
+  }
+
+  it('flags edge-bend-overlaps-arrowhead as a SOFT issue (penalty, still valid)', () => {
+    const res = validateLayout(mkArrowheadBendLayout(true));
+    const bendIssue = res.issues.find((i) => i.type === 'edge-bend-overlaps-arrowhead');
+    expect(bendIssue).toBeDefined();
+    expect(bendIssue?.edgeId).toBe('L_A_C_0');
+    expect(bendIssue?.details?.terminal).toBe('start');
+    // Soft: the overlap penalizes the score but does NOT invalidate the layout.
+    expect(res.ok).toBe(true);
+    expect(res.score).toBeLessThan(1000);
+  });
+
+  it('charges exactly 50 for an arrowhead-overlapping bend and nothing more', () => {
+    const withMarker = validateLayout(mkArrowheadBendLayout(true));
+    const withoutMarker = validateLayout(mkArrowheadBendLayout(false));
+    // Identical geometry; the only difference is the start marker, so the score
+    // delta is exactly the soft penalty (50). Both stay valid.
+    expect(withMarker.ok).toBe(true);
+    expect(withoutMarker.ok).toBe(true);
+    expect(withoutMarker.issues).not.toContainEqual(
+      expect.objectContaining({ type: 'edge-bend-overlaps-arrowhead' })
+    );
+    expect(withoutMarker.score - withMarker.score).toBe(50);
+  });
+
+  it('does NOT flag edge-bend-overlaps-arrowhead when the terminal segment clears the marker', () => {
+    // Same shape but the start stub is 40px (> the 10px marker clearance), so the
+    // turn sits well outside the arrowhead.
+    const a = mkNode('A', 400, 390, 40, 40);
+    const c = mkNode('C', 316, 310, 42, 44);
+    const e = {
+      ...mkEdge('L_A_C_0', 'A', 'C', [
+        { x: 380, y: 390 },
+        { x: 340, y: 390 }, // 40px stub -> turn is clear of the marker
+        { x: 340, y: 318 },
+        { x: 337, y: 318 },
+      ]),
+      arrowTypeStart: 'arrow_point',
+    } as unknown as Edge;
+    const layout: LayoutData = { nodes: [a, c], edges: [e], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-bend-overlaps-arrowhead');
+  });
+
+  // ---- node-too-close-to-group: a leaf crowding a foreign group frame (HARD) ----
+
+  function mkGroup(id: string, x: number, y: number, width: number, height: number): Node {
+    return { id, x, y, width, height, isGroup: true } as any;
+  }
+
+  it('flags node-too-close-to-group as a HARD issue', () => {
+    // Group G frame at x[150,250]; leaf N right edge at x=140 -> 10px gap, facing.
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 120, 0, 40, 40);
+    const layout: LayoutData = { nodes: [g, n], edges: [], config: {} as any };
+
+    const res = validateLayout(layout);
+    const issue = res.issues.find((i) => i.type === 'node-too-close-to-group');
+    expect(issue).toBeDefined();
+    expect(issue?.nodeIds).toEqual(['N', 'G']);
+    expect(issue?.details?.gap).toBeCloseTo(10);
+    // Promoted from a graded soft penalty on 2026-08-26: a node crowding a frame
+    // it does not belong to is a placement defect, and grading it let layouts
+    // keep a high score while looking wrong.
+    expect(res.ok).toBe(false);
+    expect(res.score).toBe(0);
+  });
+
+  it('flags a node that clears the old 20px clearance but not the new 30px one', () => {
+    // N right edge at x=125 -> 25px gap: fine under the old clearance, not now.
+    const res = validateLayout({
+      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 105, 0, 40, 40)],
+      edges: [],
+      config: {} as any,
+    });
+    const issue = res.issues.find((i) => i.type === 'node-too-close-to-group');
+    expect(issue?.details?.gap).toBeCloseTo(25);
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag a node that clears the group by the full clearance', () => {
+    // N right edge at x=115 -> 35px gap (>= the 30px clearance).
+    const layout: LayoutData = {
+      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 95, 0, 40, 40)],
+      edges: [],
+      config: {} as any,
+    };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).not.toContain('node-too-close-to-group');
+    expect(res.score).toBe(1000);
+  });
+
+  it('does NOT flag a node that is a member of the group it sits inside', () => {
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const member = { ...mkNode('M', 180, 0, 40, 40), parentId: 'G' } as unknown as Node;
+    const layout: LayoutData = { nodes: [g, member], edges: [], config: {} as any };
+    expect(getIssueTypes(layout)).not.toContain('node-too-close-to-group');
+  });
+
+  // ---- edge-self-shared-subpath: adjacent-reversal backtrack spike (raw points) ----
+
+  it('flags edge-self-shared-subpath for an adjacent backtrack spike', () => {
+    // Out to x=140 then straight back to x=30 at the same y — a 110px reversal
+    // that mergeCollinear would erase, so it is only visible on the raw points.
+    const e = mkEdge('spike', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 140, y: 0 },
+      { x: 30, y: 0 },
+      { x: 30, y: -100 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+
+    const res = validateLayout(layout);
+    const issue = res.issues.find((i) => i.type === 'edge-self-shared-subpath');
+    expect(issue).toBeDefined();
+    expect(issue?.message).toMatch(/backtracks/);
+    expect(issue?.details?.overlapLength).toBeCloseTo(110);
+    expect(res.ok).toBe(false); // hard
+  });
+
+  it('does NOT flag a clean L route as a backtrack', () => {
+    const e = mkEdge('clean', undefined, undefined, [
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+      { x: 100, y: -100 },
+    ]);
+    const layout: LayoutData = { nodes: [], edges: [e], config: {} as any };
+    expect(getIssueTypes(layout)).not.toContain('edge-self-shared-subpath');
   });
 });

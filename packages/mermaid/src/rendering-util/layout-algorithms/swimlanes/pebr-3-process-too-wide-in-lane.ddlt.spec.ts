@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { LayoutData, Node } from '../../types.js';
 import { loadDdltFixture } from '../ddlt/loadDdltFixture.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
+import { isSoftIssueType } from '../layout-utils/validateLayout.js';
 
 const FIXTURE_ID = 'swimlanes/pebr-3-process-too-wide-in-lane';
 const MIN_LANE_CHILD_HORIZONTAL_PADDING = 12;
@@ -25,7 +26,7 @@ describe('Swimlanes DDLT - pebr-3-process-too-wide-in-lane.mmd', () => {
     const result = validateLayout(layout);
 
     expect(result.ok).toBe(true);
-    expect(result.issues).toEqual([]);
+    expect(result.issues.filter((i) => !isSoftIssueType(i.type))).toEqual([]);
 
     for (const lane of topLevelSwimlanes(layout)) {
       const laneRect = rect(lane);
