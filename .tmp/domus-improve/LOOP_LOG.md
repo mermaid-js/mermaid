@@ -1104,3 +1104,8 @@ run ended: GOAL REACHED — triage2 VALID. total 52,808 -> 52,808 (validity-only
 
 - new pass `alignGridNearMissesWhenScoreImproves` (winner-only, strict score gate): nudge one of an almost-aligned connected leaf pair onto the other's center line, either node may move, incident terminals dragged, in-place restore (round-5 lesson applied from the start).
 - result: Company-simp 990 -> 1000 (PERFECT — first fixture at ceiling), auto-flow +15, ecosystem/architecture4/events +5 each. deploy-pipeline's two flags reject (its nodes are pinned by straight edges). Sweep 65/65, total 53,310.1, cost 798.9M (99.5%). Wider suite 561, 0 collateral.
+
+### round 8 — COMPACTION_SLACK 2 -> 1.5 (KEPT) — 53,310 -> 53,384 (+74), invalid 1, cost 99.4%
+
+- the compaction clearance (minGap = SLACK \* nodeGroupClearance) kept frames 40px off the first obstacle; 30px still clears every validator floor, and per-fixture acceptance (score-gated, full polish since round 6) makes the knob safe — a fixture whose tighter candidate is worse just keeps its baseline.
+- result: ecosystem +32.7 (port-near-corner cleared too), mystery +20.1, payments1 +8.3, events +5.8, subgraph-variation +4.0, arch3 +3.4. Sweep 65/65, total 53,384.3, cost 798.4M (99.4%, slightly DOWN). Wider suite 561, 0 collateral.

@@ -759,7 +759,7 @@ function drawingArea(layout: LayoutData): number {
  * longer tighter than the baseline, 4x valid and worse. The window is real and
  * it is narrow.
  */
-const COMPACTION_SLACK = 2;
+const COMPACTION_SLACK = 1.5;
 
 /**
  * Slack the compaction must reclaim, as a fraction of the drawing's own
