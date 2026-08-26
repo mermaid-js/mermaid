@@ -11,11 +11,11 @@
     },
     {
       "id": "githubIntegration",
-      "width": 161.9375,
-      "height": 87,
+      "width": 157,
+      "height": 108,
       "labelBBox": {
-        "width": 129.9375,
-        "height": 63
+        "width": 125,
+        "height": 84
       }
     },
     {
@@ -56,11 +56,11 @@
     },
     {
       "id": "workspaceService",
-      "width": 159.59375,
-      "height": 87,
+      "width": 157,
+      "height": 108,
       "labelBBox": {
-        "width": 127.59375,
-        "height": 63
+        "width": 125,
+        "height": 84
       }
     },
     {
@@ -101,11 +101,11 @@
     },
     {
       "id": "aiAssistant",
-      "width": 173.640625,
-      "height": 87,
+      "width": 157,
+      "height": 108,
       "labelBBox": {
-        "width": 141.640625,
-        "height": 63
+        "width": 125,
+        "height": 84
       }
     },
     {
@@ -155,11 +155,11 @@
     },
     {
       "id": "docs",
-      "width": 175.953125,
-      "height": 87,
+      "width": 157,
+      "height": 108,
       "labelBBox": {
-        "width": 143.953125,
-        "height": 63
+        "width": 125,
+        "height": 84
       }
     },
     {
@@ -191,11 +191,11 @@
     },
     {
       "id": "mermaidJs",
-      "width": 167.359375,
-      "height": 87,
+      "width": 157,
+      "height": 108,
       "labelBBox": {
-        "width": 135.359375,
-        "height": 63
+        "width": 125,
+        "height": 84
       }
     },
     {
@@ -273,8 +273,8 @@
   "edges": [],
   "metadata": {
     "captureVersion": 2,
-    "sourceSha256": "70323722abb0f5bc8244b4ac5a0aa8cc6bd9f589008846d75feb5d84d1ae754e",
-    "capturedAt": "2026-08-26T15:02:53.563Z",
+    "sourceSha256": "b5bef3433d7e8af63fa7d70e4d170b5dc4ed4164f1bcfca0503405cc66b2e2d3",
+    "capturedAt": "2026-08-26T17:48:50.651Z",
     "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/many-subgraphs-and-edges.mmd theme=redux-color look=neo layout=elk",
     "theme": "redux-color",
     "look": "neo"
