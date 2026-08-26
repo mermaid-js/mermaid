@@ -1,0 +1,17 @@
+     → edge-bend-near-endpoint, edge-label-overlaps-group-border, edge-non-orthogonal, edge-port-direction-mismatch, edge-port-direction-mismatch, node-overlap, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group: expected false to be true // Object.is equality
+     → edge-border-hugging, edge-intersects-obstacle, edge-intersects-obstacle, edge-intersects-obstacle, edge-label-overlaps-foreign-edge, edge-label-overlaps-foreign-edge, edge-non-orthogonal, edge-port-direction-mismatch, edge-shared-subpath, edge-shared-subpath: expected false to be true // Object.is equality
+     → expected [ …(2) ] to deeply equal []
+     → expected 111.5433235168457 to be less than or equal to 1
+     → expected 972 to be greater than or equal to 979
+      Tests  5 failed | 585 passed | 53 skipped (643)
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts > DDLT layout-tests fixture sweep > aggregate validateLayout report across all fixtures
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts > DDLT layout-tests fixture sweep > domus/architecture4 — domus-orthogonal
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts > DDLT layout-tests fixture sweep > domus/triage2 — domus-orthogonal
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/domus/company-simp.ddlt.spec.ts > Domus DDLT — Company-simp.mmd > Level 1: iter-48 Gx class — Customer/USC/HKC/Incomehk share one x-column
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/domus/project-sox2.ddlt.spec.ts > Domus DDLT — project-sox2 labelled dogleg cleanup > shortcuts the L_F_K_0 label-side rail while preserving validity
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+AssertionError: edge-bend-near-endpoint, edge-label-overlaps-group-border, edge-non-orthogonal, edge-port-direction-mismatch, edge-port-direction-mismatch, node-overlap, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group, node-too-close-to-group: expected false to be true // Object.is equality
+AssertionError: edge-border-hugging, edge-intersects-obstacle, edge-intersects-obstacle, edge-intersects-obstacle, edge-label-overlaps-foreign-edge, edge-label-overlaps-foreign-edge, edge-non-orthogonal, edge-port-direction-mismatch, edge-shared-subpath, edge-shared-subpath: expected false to be true // Object.is equality
+AssertionError: expected [ …(2) ] to deeply equal []
+AssertionError: expected 111.5433235168457 to be less than or equal to 1
+AssertionError: expected 972 to be greater than or equal to 979

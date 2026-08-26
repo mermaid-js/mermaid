@@ -78,7 +78,18 @@ mermaid-parser.tar.gz
 .gitnexus
 .agents/
 .ralph/
-.tmp
+.tmp/*
+
+# The DOMUS improvement loop keeps its round-by-round record here: what was
+# tried, what was measured, and — more usefully — what was measured and
+# reverted. That history is worth keeping in the repo.
+#
+# Its raw sweep logs are not. Each `ORTHO_TEST_DEBUG` run emits 100-160MB of
+# fixture geometry and there are dozens of them, ~3.9GB in total; GitHub
+# rejects any single file over 100MB, and git history is permanent. Only the
+# distilled results are tracked.
+!.tmp/domus-improve/
+.tmp/domus-improve/*.log
 .fallow/
 test-results/
 .playwright-mcp/

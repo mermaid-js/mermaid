@@ -1,0 +1,7 @@
+      Tests  5 failed | 585 passed | 53 skipped (643)
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts > DDLT layout-tests fixture sweep > aggregate validateLayout report across all fixtures
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts > DDLT layout-tests fixture sweep > domus/architecture4 — domus-orthogonal
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts > DDLT layout-tests fixture sweep > domus/triage2 — domus-orthogonal
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/domus/company-simp.ddlt.spec.ts > Domus DDLT — Company-simp.mmd > Level 1: iter-48 Gx class — Customer/USC/HKC/Incomehk share one x-column
+ FAIL  packages/mermaid/src/rendering-util/layout-algorithms/domus/project-sox2.ddlt.spec.ts > Domus DDLT — project-sox2 labelled dogleg cleanup > shortcuts the L_F_K_0 label-side rail while preserving validity
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯

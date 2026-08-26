@@ -1,0 +1,3 @@
+26.970 : DEBUG :  DDLT-AGG: aggregate report { total: 56981, avg: 904.4603174603175, min: 0, invalid: 5, cases: 63 }
+26.970 : DEBUG :  DDLT-COST: domus total=982974108 ceiling=996000000 (98.7% of budget)
+invalid=5
