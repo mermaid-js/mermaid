@@ -1050,3 +1050,10 @@ run ended: goal partially reached — architecture4 VALID (0 -> 847.4); triage2 
 - lesson: an equal-count trade rule NEEDS a memory. Without one, two mutually-exclusive targets under 1px apart turn the fixed point into a pendulum, and the 5-round bound becomes a coin flip on which defect ships. The cleared-pairs set is one line of state and it is the difference between "shuffles forever" and "walks the chain to the end".
 
 run ended: GOAL REACHED — triage2 VALID. total 52,808 -> 52,808 (validity-only by construction). invalid 2 -> 1. cost 755.7M -> 760.0M (94.6%). 2 rounds, both kept (flagged flat per the validity-goal precedent).
+
+## RUN 2026-08-26T21 — branch domus-loop/2026-08-26T21 — baseline 52,808.1, invalid 3 (new scale), cost 755.0M (94.0%)
+
+- goal: USER-SET — +1000 over 52,808 (target 53,808) on the post-instrument scale; swimlanes out of scope.
+- instrument round (user-authorized, commit bab683aac): two new HARD rules — `group-group-padding` (20px between non-ancestral frames; lanes/swimlanes exempt) and `group-inside-group-padding` (nested frame >= 8px inside every ancestor; negative inset fails) — plus the `gap <= 0` blind-spot fix in `node-too-close-to-group` (a node TOUCHING a foreign frame was invisible). From user screenshots: events nested frames + architecture4 outside nodes kissing the platform frame, both at look=classic.
+- instrument effect: total UNCHANGED 52,808.1 (both newly-invalid fixtures already scored 0). invalid 1 -> 3: mermaid-chart-architecture (errlog~metricly 0.69px, logio~coastal_cloud 14.0px — KNOWN_INVALID) and architecture (Private~Public 15.0px — manifest-exempt). Nested rule + gap-0 fix dormant at neo sizes (corpus min nested inset 35; no leaf at gap < 20). The SCREENSHOT defects live in the classic-size regime the neo-captured fixtures cannot exercise — known instrument gap (2026-08-12 round 6), out of this run's scope.
+- time_budget_sec: default 14400
