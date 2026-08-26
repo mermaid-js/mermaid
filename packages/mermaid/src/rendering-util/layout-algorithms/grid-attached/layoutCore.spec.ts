@@ -524,23 +524,28 @@ describe('grid-attached layout', () => {
   });
 
   /**
-   * A crowded core is the case enlargement exists for: at grid-like's own scale
-   * one tree has nowhere to go but a long way out, and stretching the core's
-   * edges buys back most of that distance.
+   * Enlargement is a trade, not a rule: the room it spends is priced against the dead
+   * stubs and crossings it removes, so whether a given drawing grows depends on which
+   * side is cheaper. What must hold is that the room *works* — given it for free, the
+   * ladder spends it and the trees sit closer to their roots.
+   *
+   * The default trade is asserted elsewhere, on a graph where enlarging removes a
+   * crossing; here every scale is already crossing-free, so only the stubs move.
    */
-  it('stretches the core edges when that is what stops a tree being pushed away', () => {
-    const crowded = crowdedCore();
-    const cramped = crowdedCore();
+  it('shortens the worst dead stub when the room to do it is free', () => {
+    const free = crowdedCore();
+    const priced = crowdedCore();
 
-    const enlarged = runGridAttachedLayoutCore(crowded);
-    const asDrawn = runGridAttachedLayoutCore(cramped, { maxCoreScale: 1 });
+    const freely = runGridAttachedLayoutCore(free, { enlargementPenaltyWeight: 0 });
+    const asPriced = runGridAttachedLayoutCore(priced, { maxCoreScale: 1 });
 
-    expect(asDrawn.components[0].coreScale).toBe(1);
-    expect(enlarged.components[0].coreScale).toBeGreaterThan(1);
+    const worst = (result: ReturnType<typeof runGridAttachedLayoutCore>): number =>
+      Math.max(0, ...result.components[0].trees.map((tree) => tree.slide));
 
-    const worstEnlarged = Math.max(...enlarged.components[0].trees.map((tree) => tree.slide));
-    const worstCramped = Math.max(...asDrawn.components[0].trees.map((tree) => tree.slide));
-    expect(worstEnlarged).toBeLessThan(worstCramped);
+    expect(asPriced.components[0].coreScale).toBe(1);
+    expect(freely.components[0].coreScale).toBeGreaterThan(1);
+    expect(worst(freely)).toBeLessThan(worst(asPriced));
+    expectEverythingDrawn(free, freely);
   });
 
   it('still produces a complete drawing when the core may not be enlarged', () => {

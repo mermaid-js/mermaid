@@ -618,11 +618,7 @@ function climbEnlargementLadder(
       sinceImprovement++;
     }
 
-    const settled =
-      attempt.unplaced.length === 0 &&
-      attempt.relaxedCount === 0 &&
-      attempt.stubPenalty <= 0 &&
-      crossings === 0;
+    const settled = attempt.unplaced.length === 0 && attempt.stubPenalty <= 0 && crossings === 0;
     if (settled || scale >= options.maxCoreScale || sinceImprovement >= options.coreScalePatience) {
       break;
     }
@@ -721,9 +717,6 @@ const EMPTY_ATTEMPT: AttachResult = {
 function isBetterRung(candidate: LadderRung, incumbent: LadderRung): boolean {
   if (candidate.attempt.unplaced.length !== incumbent.attempt.unplaced.length) {
     return candidate.attempt.unplaced.length < incumbent.attempt.unplaced.length;
-  }
-  if (candidate.attempt.relaxedCount !== incumbent.attempt.relaxedCount) {
-    return candidate.attempt.relaxedCount < incumbent.attempt.relaxedCount;
   }
   return candidate.penalty < incumbent.penalty - 1e-6;
 }
