@@ -933,3 +933,12 @@ Three findings worth carrying forward:
 Floors re-baselined: `DOMUS_TOTAL_COST_CEILING` 996M -> 803M (cost FELL to 730.7M),
 `KNOWN_INVALID` introduced to track the seven invalid fixtures in both directions.
 Swimlane floor (11,754) untouched — still clears at 24,575.
+
+## RUN 2026-08-26T15 — branch domus-loop/2026-08-26T15 — baseline 49,812 (new scale), invalid 7, cost 730.7M (91.0%)
+
+- goal: USER-SET — ALL 7 invalid fixtures valid (Company-simp, deploy-pipeline, triage, architecture5-components, architecture4, triage2, swimlanes/14-messy-layout) AND aggregate strictly above 49,812. Note triage2 is score-capped at 0 even when valid, so its flip buys validity only.
+- scope note: 14-messy-layout is a swimlanes fixture, normally out of scope; user explicitly included "all fixtures", so it is in scope for VALIDITY work only, with the swimlane floor as guard.
+- bookkeeping rule: when a KNOWN_INVALID fixture flips valid the sweep fails until it is removed from the list — that spec edit is the gate's own contract ("the list may only shrink") and is flagged per-commit, not an instrument change.
+- invalid breakdown at baseline:
+  Company-simp: node-node-padding | deploy-pipeline: node-node-padding + node-too-close-to-group | triage: node-node-padding (+ soft port-off-diamond-corner) | architecture5-components: edge-reenters-own-group | 14-messy-layout: edge-reenters-own-group | architecture4: bend-near-endpoint, non-orthogonal, port-direction-mismatch, node-node-padding, node-overlap, node-too-close-to-group | triage2: 9 hard types
+- time_budget_sec: default 14400
