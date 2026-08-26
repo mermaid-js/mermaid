@@ -47,11 +47,28 @@ const MIN_OVERLAP = 8;
 /** Centers within this distance count as one shared center line. */
 const CENTER_EPS = 1;
 
-export function straightenFacingPairsWhenScoreImproves(layout: LayoutData): void {
-  let current = checkLayout(layout);
-  if (!current.ok || current.score === 0) {
-    return; // strictly score-gated; a clamped/zero score cannot grade a candidate
-  }
+/** Returns the last validation it computed (current geometry), or null when no
+ * edge qualified geometrically — callers chain it into the next pass to save a
+ * full checkLayout (the shared-validation pattern from the band/corner pair). */
+export function straightenFacingPairsWhenScoreImproves(
+  layout: LayoutData,
+  opts: { shapes?: 'straight' | 'all' } = {}
+): ReturnType<typeof checkLayout> | null {
+  // The L-rebuild runs ONLY from the end-of-layout call site. Run from the
+  // polish block it wins its per-candidate gate and then steers every
+  // downstream pass onto worse endpoints (measured: architecture4 -20 with a
+  // fresh grid-misalignment, co-pilot -3 — net -18 corpus-wide while every
+  // individual commit was a local improvement). The straight arm has no such
+  // effect and stays early, where the diamond snap can build on it.
+  const shapes = opts.shapes ?? 'straight';
+  // The entry validation is paid LAZILY, on the first geometrically
+  // qualifying edge — most fixtures have none, and a full checkLayout per
+  // fixture per call site is real money on the cost ledger.
+  let current: ReturnType<typeof checkLayout> | null = null;
+  const gateOpen = (): boolean => {
+    current ??= checkLayout(layout);
+    return current.ok && current.score > 0;
+  };
 
   const nodeById = new Map<string, Node>();
   for (const n of layout.nodes ?? []) {
@@ -79,12 +96,74 @@ export function straightenFacingPairsWhenScoreImproves(layout: LayoutData): void
     const sr = rectForNode(s);
     const tr = rectForNode(t);
 
+    const disjointX = sr.right < tr.left || tr.right < sr.left;
+    const disjointY = sr.bottom < tr.top || tr.bottom < sr.top;
+
+    // Diagonal pair (disjoint on BOTH axes): the optimal orthogonal shape is a
+    // single-bend L through the two center lines — which on diamonds passes
+    // through the drawn vertices. Try both elbow orientations; only routes
+    // with 2+ bends are worth rebuilding.
+    if (disjointX && disjointY) {
+      if (shapes !== 'all' || pts.length <= 3) {
+        continue; // L-rebuild only at end-of-layout; 3-point routes are already optimal
+      }
+      if (!gateOpen()) {
+        return current;
+      }
+      const scx = s.x ?? 0;
+      const scy = s.y ?? 0;
+      const tcx = t.x ?? 0;
+      const tcy = t.y ?? 0;
+      const sLeft = sr.right < tr.left;
+      const sAbove = sr.bottom < tr.top;
+      const snapshotPtsL = pts.map((p) => ({ ...p }));
+      const snapshotAnchorL = { x: e.x, y: e.y };
+      const variants: Point[][] = [
+        // Exit horizontal from s, arrive vertical at t.
+        [
+          { x: sLeft ? sr.right : sr.left, y: scy },
+          { x: tcx, y: scy },
+          { x: tcx, y: sAbove ? tr.top : tr.bottom },
+        ],
+        // Exit vertical from s, arrive horizontal at t.
+        [
+          { x: scx, y: sAbove ? sr.bottom : sr.top },
+          { x: scx, y: tcy },
+          { x: sLeft ? tr.left : tr.right, y: tcy },
+        ],
+      ];
+      for (const cand of variants) {
+        e.points = cand.map((p) => ({ ...p }));
+        if (typeof e.label === 'string' && e.label.length > 0) {
+          // Anchor on the longer leg's midpoint — more room for the rect.
+          const leg1 = Math.abs(cand[1].x - cand[0].x) + Math.abs(cand[1].y - cand[0].y);
+          const leg2 = Math.abs(cand[2].x - cand[1].x) + Math.abs(cand[2].y - cand[1].y);
+          const a = leg1 >= leg2 ? cand[0] : cand[1];
+          const b = leg1 >= leg2 ? cand[1] : cand[2];
+          e.x = (a.x + b.x) / 2;
+          e.y = (a.y + b.y) / 2;
+        }
+        const next = checkLayout(layout);
+        if (next.ok && next.score > current!.score) {
+          current = next;
+          log.debug(
+            `FSTRAIGHT: commit-L edge=${String(e.id)} pts ${snapshotPtsL.length}->3 score=${next.score.toFixed(1)}`
+          );
+          break;
+        }
+        e.points = snapshotPtsL.map((p) => ({ ...p }));
+        e.x = snapshotAnchorL.x;
+        e.y = snapshotAnchorL.y;
+      }
+      continue;
+    }
+
     // Facing axis: boxes disjoint on `axis`, side spans overlapping on the
-    // other. Both orientations checked; at most one can hold.
+    // other. At most one orientation can hold.
     let axis: 'x' | 'y' | null = null;
-    if (sr.right < tr.left || tr.right < sr.left) {
+    if (disjointX) {
       axis = 'x';
-    } else if (sr.bottom < tr.top || tr.bottom < sr.top) {
+    } else if (disjointY) {
       axis = 'y';
     }
     if (axis === null) {
@@ -94,6 +173,9 @@ export function straightenFacingPairsWhenScoreImproves(layout: LayoutData): void
     const hi = axis === 'x' ? Math.min(sr.bottom, tr.bottom) : Math.min(sr.right, tr.right);
     if (hi - lo < MIN_OVERLAP) {
       continue;
+    }
+    if (!gateOpen()) {
+      return current;
     }
 
     const sc = axis === 'x' ? (s.y ?? 0) : (s.x ?? 0);
@@ -133,7 +215,7 @@ export function straightenFacingPairsWhenScoreImproves(layout: LayoutData): void
         e.y = (a.y + b.y) / 2;
       }
       const next = checkLayout(layout);
-      if (next.ok && next.score > current.score) {
+      if (next.ok && next.score > current!.score) {
         current = next;
         committed = true;
         log.debug(
@@ -149,4 +231,5 @@ export function straightenFacingPairsWhenScoreImproves(layout: LayoutData): void
       // restored above; nothing else to do
     }
   }
+  return current;
 }

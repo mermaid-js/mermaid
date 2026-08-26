@@ -49,8 +49,14 @@ const EPS_SIDE = 2;
  * the validator's PORT_CORNER_FRACTION (0.15) with margin to spare. */
 const INBOARD_FRACTION = 0.2;
 
-export function snapDiamondPortsToVertexWhenScoreImproves(layout: LayoutData): void {
-  let current = checkLayout(layout);
+export function snapDiamondPortsToVertexWhenScoreImproves(
+  layout: LayoutData,
+  opts: { validation?: ReturnType<typeof checkLayout> } = {}
+): void {
+  // A caller that just validated the SAME geometry may hand its result in —
+  // the shared-validation pattern from the band/corner pair — saving a full
+  // checkLayout per fixture per call site.
+  let current = opts.validation ?? checkLayout(layout);
   const flagged = current.issues.filter(
     (i) => i.type === 'port-off-diamond-corner' || i.type === 'port-near-corner'
   );

@@ -622,13 +622,15 @@ export function runLateQualityPasses(
     // segment their free corridor admits — runs BEFORE the diamond snap so a
     // straight through both side midpoints claims the vertices first and the
     // snap only handles the leftovers. Winner-only, strictly score-gated per
-    // candidate.
-    straightenFacingPairsWhenScoreImproves(data4Layout);
+    // candidate. Its final validation chains into the snap below.
+    const straightened = straightenFacingPairsWhenScoreImproves(data4Layout);
 
     // Slide a flagged decision-node port along its side to the vertex (side
     // midpoint) — the `port-off-diamond-corner` repair. Winner-only for the
     // same cost reason as its siblings; strictly score-gated per move.
-    snapDiamondPortsToVertexWhenScoreImproves(data4Layout);
+    snapDiamondPortsToVertexWhenScoreImproves(data4Layout, {
+      validation: straightened ?? undefined,
+    });
 
     // Nudge an almost-aligned connected pair onto one center line — the
     // `grid-misalignment` repair. Winner-only, strictly score-gated per move.
@@ -998,12 +1000,23 @@ export function layout(data4Layout: LayoutData): void {
   // monotone accounting of every route repair that follows it.
   relocateOverlayLabelsOffForeignEdgesFinal(data4Layout);
 
+  // Straighten/L-rebuild once more at the very end, L-arm included: run
+  // mid-polish the L-rebuild wins its per-candidate gate and then steers the
+  // downstream passes onto worse endpoints (architecture4 -20); here the
+  // geometry is final and a local win IS the final win. Its validation chains
+  // into the snap below.
+  const finalStraightened = straightenFacingPairsWhenScoreImproves(data4Layout, {
+    shapes: 'all',
+  });
+
   // A second diamond-vertex snap, for layouts that only BECOME valid at the
   // label relocation above (domus/triage: its last hard issue is the label
   // overlap that pass clears). The polish-time call skips invalid layouts —
   // its score gate cannot grade a clamped 0 — so their flagged diamonds were
   // never reachable. No-op when the polish call already snapped everything.
-  snapDiamondPortsToVertexWhenScoreImproves(data4Layout);
+  snapDiamondPortsToVertexWhenScoreImproves(data4Layout, {
+    validation: finalStraightened ?? undefined,
+  });
 
   // Final safety net: no zero-length segments reach the renderer (NaN paths).
   stripDegenerateEdgePoints(data4Layout);
