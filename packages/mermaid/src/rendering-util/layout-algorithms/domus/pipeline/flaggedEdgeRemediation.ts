@@ -630,6 +630,78 @@ function sidePreference(rS: Rect, rE: Rect): [Side, Side][] {
   ];
 }
 
+/**
+ * Port offsets taken from the obstacle boundaries that already define the
+ * router's channels.
+ *
+ * The fixed fractions above sample a side blindly. When the approach corridor
+ * is a narrow band between two obstacles, no fraction of 1/4, 1/2 or 3/4 need
+ * land inside it: `domus/triage` needs RouteF's west side entered at t≈0.87,
+ * the only slice of that side lying below `Report` and still on the node.
+ * Sampling finer is the wrong answer — the feasible offsets are not spread
+ * evenly along the side, they are exactly the lines the obstacles leave free,
+ * which is the same coordinate set `buildChannelRoutingGraphForPorts` derives
+ * its channels from. Reading the offsets off those lines finds the band in two
+ * candidates instead of missing it in twenty.
+ *
+ * Bounded to the two lines nearest the constructive offset so this stays a
+ * repair for edges already in conflict, not a wider cross-product.
+ */
+function channelLineOffsets(
+  r: Rect,
+  side: Side,
+  obstacles: readonly Rect[],
+  preferredT: number
+): number[] {
+  const horizontalSide = side === 'N' || side === 'S';
+  const spanLo = horizontalSide ? r.left : r.top;
+  const spanHi = horizontalSide ? r.right : r.bottom;
+  const span = spanHi - spanLo;
+  if (!(span > 0)) {
+    return [];
+  }
+  const ts: number[] = [];
+  for (const o of obstacles) {
+    // Only obstacles that actually shadow this side can block its approach.
+    const shadows = horizontalSide
+      ? o.left < r.right && r.left < o.right
+      : o.top < r.bottom && r.top < o.bottom;
+    if (!shadows) {
+      continue;
+    }
+    const onApproachSide =
+      side === 'N'
+        ? o.top < r.top
+        : side === 'S'
+          ? o.bottom > r.bottom
+          : side === 'W'
+            ? o.left < r.left
+            : o.right > r.right;
+    if (!onApproachSide) {
+      continue;
+    }
+    // The rects are already inflated by the router's clearance, so their own
+    // near/far edges ARE the free lines.
+    for (const line of horizontalSide ? [o.left, o.right] : [o.top, o.bottom]) {
+      const t = (line - spanLo) / span;
+      if (t > 0.02 && t < 0.98) {
+        ts.push(t);
+      }
+    }
+  }
+  ts.sort((a, b) => Math.abs(a - preferredT) - Math.abs(b - preferredT));
+  const out: number[] = [];
+  for (const t of ts) {
+    if (out.every((u) => Math.abs(u - t) > 0.01)) {
+      out.push(t);
+    }
+    if (out.length === 2) {
+      break;
+    }
+  }
+  return out;
+}
+
 function* sideRouteCandidates(
   rS: Rect,
   rE: Rect,
@@ -659,14 +731,21 @@ function* sideRouteCandidates(
   }
 
   const sidePairs = sidePreference(rS, rE);
-  const startTsFor = (side: Side): number[] =>
-    side === 'N' || side === 'S'
-      ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5, 0.25, 0.75]
-      : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5, 0.25, 0.75];
-  const endTsFor = (side: Side): number[] =>
-    side === 'N' || side === 'S'
-      ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5, 0.25, 0.75]
-      : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5, 0.25, 0.75];
+  const obstacleRects = collectObstacleRects(routerNodes, startId, endId, 8);
+  const startTsFor = (side: Side): number[] => {
+    const base =
+      side === 'N' || side === 'S'
+        ? [(rE.cx - rS.left) / (rS.right - rS.left), 0.5, 0.25, 0.75]
+        : [(rE.cy - rS.top) / (rS.bottom - rS.top), 0.5, 0.25, 0.75];
+    return [...base, ...channelLineOffsets(rS, side, obstacleRects, base[0])];
+  };
+  const endTsFor = (side: Side): number[] => {
+    const base =
+      side === 'N' || side === 'S'
+        ? [(rS.cx - rE.left) / (rE.right - rE.left), 0.5, 0.25, 0.75]
+        : [(rS.cy - rE.top) / (rE.bottom - rE.top), 0.5, 0.25, 0.75];
+    return [...base, ...channelLineOffsets(rE, side, obstacleRects, base[0])];
+  };
   const stubFor = (r: Rect, side: Side, t: number): { port: Point; stub: Point } => {
     const port = sidePort(r, side, t);
     const d = OUTWARD[side];
@@ -712,7 +791,6 @@ function* sideRouteCandidates(
     return true;
   });
 
-  const obstacleRects = collectObstacleRects(routerNodes, startId, endId, 8);
   const allStubs = uniquePairs.flatMap((pair) => [
     stubFor(rS, pair.start[0], pair.start[1]).stub,
     stubFor(rE, pair.end[0], pair.end[1]).stub,
@@ -1088,7 +1166,35 @@ export function remediateFlaggedEdgesWhenMonotone(layout: LayoutData): void {
             // Only reached when `fewer` holds, i.e. never on an aborted result —
             // whose issue list is deliberately partial.
             const noNew = (next.issues as Issue[]).every((iss) => curKeys.has(issueKey(iss)));
-            if (fewer && noNew) {
+            // `noNew` is the general gate: fewer issues AND not one key the
+            // baseline did not already carry. It is right for every defect that
+            // can be repaired in place, and wrong for the one that cannot.
+            //
+            // An edge routed THROUGH a node is not a local blemish — it is the
+            // route being in the wrong corridor, and every corridor that clears
+            // the obstacles reaches the target past different neighbours than
+            // the old one did. `domus/triage`'s S5->TypeCheck rail runs the
+            // width of the drawing through S3, RouteA and S8; the candidate
+            // that finally clears all three arrives beside three other edges
+            // and picks up a shared-subpath, a parallel-band and a label
+            // overlap. Four issues become three — monotone progress by the
+            // pass's own measure — and `noNew` rejected it, so the fixture kept
+            // three obstacle intersections instead of three repairable
+            // neighbour conflicts.
+            //
+            // So the relaxation is scoped to exactly that trade: an edge
+            // flagged as intersecting an obstacle may take a candidate with
+            // unfamiliar issue keys, but only one that leaves it with NO
+            // obstacle intersection at all. Clearing some obstacles and
+            // shuffling the rest around is not progress and stays rejected.
+            // Relaxing it for every defect instead was measured and costs 315
+            // aggregate points: `domus/mermaid-chart-architecture` trades its
+            // way out of validity entirely (321 -> 0).
+            const clearsAllObstacles =
+              types.has('edge-intersects-obstacle') &&
+              !next.aborted &&
+              (next.issues as Issue[]).every((iss) => iss.type !== 'edge-intersects-obstacle');
+            if (fewer && (noNew || clearsAllObstacles)) {
               // The accepted route is a real improvement, so pay for one full
               // validation to refresh the whole-layout baseline the next edge
               // and the next round are judged against.

@@ -102,22 +102,65 @@ export function escapeCornerConnections(
     const horizontal = Math.abs(pts[tipIdx].y - pts[nextIdx].y) < 1e-6;
     const before = pts.map((p) => ({ ...p }));
 
+    // A corner belongs to two sides, so there are two ways off it: slide along
+    // the side the departing segment implies, or leave through the other side
+    // of the same corner and turn one bend later. The second is not a fallback
+    // for tidiness — on `domus/triage` the first is closed outright. Every slot
+    // on TypeCheck's east side puts the rail that follows it alongside
+    // `L_TypeCheck_RouteC_0`'s rail, so all eleven fractions trade one
+    // `edge-corner-connection` for two `edge-shared-subpath`. Leaving through
+    // the south side instead moves the rail itself and the conflict never
+    // arises.
+    //
+    // The swap is exact, not approximate: for a horizontal departure the tip and
+    // its neighbour share a y and the neighbour and ITS neighbour share an x, so
+    // putting both the tip and the neighbour on a new x — the tip on the corner's
+    // own side line, the neighbour on the far vertex's y — leaves a vertical
+    // departure followed by a horizontal run, with the point count unchanged.
+    const afterIdx = atStart ? 2 : pts.length - 3;
+    const perpendicularAvailable =
+      pts.length >= 3 &&
+      (horizontal
+        ? Math.abs(pts[nextIdx].x - pts[afterIdx].x) < 1e-6
+        : Math.abs(pts[nextIdx].y - pts[afterIdx].y) < 1e-6);
+
     let fixed = false;
-    for (const fraction of SIDE_FRACTIONS) {
-      if (horizontal) {
-        const y = rect.top + (rect.bottom - rect.top) * fraction;
-        pts[tipIdx].y = y;
-        pts[nextIdx].y = y;
-      } else {
-        const x = rect.left + (rect.right - rect.left) * fraction;
-        pts[tipIdx].x = x;
-        pts[nextIdx].x = x;
+    for (const attempt of perpendicularAvailable ? ['side', 'perpendicular'] : ['side']) {
+      for (const fraction of SIDE_FRACTIONS) {
+        if (attempt === 'perpendicular') {
+          for (const [i, p] of before.entries()) {
+            pts[i].x = p.x;
+            pts[i].y = p.y;
+          }
+          if (horizontal) {
+            const x = rect.left + (rect.right - rect.left) * fraction;
+            pts[tipIdx].x = x;
+            pts[nextIdx].x = x;
+            pts[nextIdx].y = pts[afterIdx].y;
+          } else {
+            const y = rect.top + (rect.bottom - rect.top) * fraction;
+            pts[tipIdx].y = y;
+            pts[nextIdx].y = y;
+            pts[nextIdx].x = pts[afterIdx].x;
+          }
+        } else if (horizontal) {
+          const y = rect.top + (rect.bottom - rect.top) * fraction;
+          pts[tipIdx].y = y;
+          pts[nextIdx].y = y;
+        } else {
+          const x = rect.left + (rect.right - rect.left) * fraction;
+          pts[tipIdx].x = x;
+          pts[nextIdx].x = x;
+        }
+        const next = checkLayout(layout);
+        if (next.issues.length < current.issues.length) {
+          current = next;
+          escaped++;
+          fixed = true;
+          break;
+        }
       }
-      const next = checkLayout(layout);
-      if (next.issues.length < current.issues.length) {
-        current = next;
-        escaped++;
-        fixed = true;
+      if (fixed) {
         break;
       }
     }
