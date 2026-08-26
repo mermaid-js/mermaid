@@ -1,0 +1,59 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45,
+      "labelBBox": {
+        "width": 9.34375,
+        "height": 21
+      }
+    },
+    {
+      "id": "B",
+      "width": 41.34375,
+      "height": 45,
+      "labelBBox": {
+        "width": 9.34375,
+        "height": 21
+      }
+    },
+    {
+      "id": "C",
+      "width": 42.125,
+      "height": 45,
+      "labelBBox": {
+        "width": 10.125,
+        "height": 21
+      }
+    },
+    {
+      "id": "D",
+      "width": 42.125,
+      "height": 45,
+      "labelBBox": {
+        "width": 10.125,
+        "height": 21
+      }
+    },
+    {
+      "id": "F",
+      "width": 40.5625,
+      "height": 45,
+      "labelBBox": {
+        "width": 8.5625,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [],
+  "edges": [],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "ed83a5eb0467521739c1efc6484ba6ba97b8be59c3dbf45ea98fc8511ccacc54",
+    "capturedAt": "2026-08-26T15:59:17.085Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/merge-edge-ambiguity.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}
