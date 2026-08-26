@@ -93,7 +93,6 @@ const REQUIRED_CAPTURE_VERSION = 2;
 const KNOWN_INVALID = new Set<string>([
   'elk-edge-cases/many-subgraphs-and-edges',
   'elk-edge-cases/right-angles-not-curves',
-  'elk-edge-cases/styled-edge-labels',
 ]);
 
 function issueSummary(issues: { type: string }[]): string {

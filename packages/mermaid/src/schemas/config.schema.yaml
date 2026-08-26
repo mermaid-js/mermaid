@@ -132,7 +132,7 @@ properties:
           - NETWORK_SIMPLEX
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
-        default: BRANDES_KOEPF
+        default: NETWORK_SIMPLEX
       nodePlacementAlignment:
         description: |
           Elk specific option affecting Brandes-Koepf node placement alignment.

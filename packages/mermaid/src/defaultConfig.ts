@@ -23,7 +23,8 @@ const config: RequiredDeep<MermaidConfig> = {
   elk: {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
-    nodePlacementStrategy: 'BRANDES_KOEPF',
+    nodePlacementStrategy: 'NETWORK_SIMPLEX',
+    // Brandes-Koepf specific; inert unless nodePlacementStrategy is set back to it.
     nodePlacementAlignment: 'NONE',
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
