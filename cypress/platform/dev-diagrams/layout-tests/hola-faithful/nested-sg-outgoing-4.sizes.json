@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "a",
+      "width": 39.796875,
+      "height": 45
+    },
+    {
+      "id": "b",
+      "width": 39.796875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c4ef7a898772a55de82aeac6da3448f603d7a4f0bfcfa24d56774b6d61ef3187",
+    "capturedAt": "2026-08-26T09:20:54.988Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-sg-outgoing-4.mmd theme=redux look=neo layout=swimlane"
+  }
+}

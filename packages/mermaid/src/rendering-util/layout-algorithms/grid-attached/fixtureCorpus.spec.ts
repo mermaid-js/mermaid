@@ -123,6 +123,12 @@ const UNALIGNED_CORE_EDGES: Record<string, number> = {
   'life-choices': 1,
   'multiple-edges': 1,
   'project-sox2': 12,
+  // Cores that are dense for their size: `a3 --> a1 & a2 & a3 & a4` makes one node
+  // adjacent to every other, and `right-angles-not-curves` closes two cycles through
+  // the same pair.
+  'right-angles-not-curves': 1,
+  'subgraph-labels-2': 3,
+  'subgraph-labels-3': 2,
 };
 
 /**
@@ -482,13 +488,18 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
 
     it(`keeps every edge label off every node box in ${name}`, async () => {
       const { layout } = await lay(name, sizes);
-      const boxes = layout.nodes.map((node) => ({
-        id: node.id,
-        minX: (node.x ?? 0) - (node.width ?? 0) / 2,
-        maxX: (node.x ?? 0) + (node.width ?? 0) / 2,
-        minY: (node.y ?? 0) - (node.height ?? 0) / 2,
-        maxY: (node.y ?? 0) + (node.height ?? 0) / 2,
-      }));
+      // Subgraph frames are excluded. A frame is not a box the drawing has to keep
+      // clear of — it is drawn *around* content, and an edge between two nodes in
+      // the same subgraph has nowhere else to put its label than inside their frame.
+      const boxes = layout.nodes
+        .filter((node) => node.isGroup !== true)
+        .map((node) => ({
+          id: node.id,
+          minX: (node.x ?? 0) - (node.width ?? 0) / 2,
+          maxX: (node.x ?? 0) + (node.width ?? 0) / 2,
+          minY: (node.y ?? 0) - (node.height ?? 0) / 2,
+          maxY: (node.y ?? 0) + (node.height ?? 0) / 2,
+        }));
 
       const offenders: string[] = [];
       for (const label of labelBoxes(layout)) {

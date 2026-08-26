@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "a",
+      "width": 39.796875,
+      "height": 45
+    },
+    {
+      "id": "b",
+      "width": 39.796875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "9b82f2a5dbd8e098728386c4675c3c36bfc38d05984694923fc1fc59c38d8ca6",
+    "capturedAt": "2026-08-26T09:20:55.019Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-subgraphs.mmd theme=redux look=neo layout=swimlane"
+  }
+}

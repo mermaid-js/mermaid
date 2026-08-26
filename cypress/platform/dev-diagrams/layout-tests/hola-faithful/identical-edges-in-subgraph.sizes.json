@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 41.34375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "31184fe4f1e051a3ff1971eefac477b5a3373e774f66632053042f86fec684fa",
+    "capturedAt": "2026-08-26T09:20:54.827Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/identical-edges-in-subgraph.mmd theme=redux look=neo layout=swimlane"
+  }
+}

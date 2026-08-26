@@ -1,0 +1,65 @@
+{
+  "nodes": [
+    {
+      "id": "N00",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N11",
+      "width": 56.65625,
+      "height": 45
+    },
+    {
+      "id": "N12",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N13",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N21",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N22",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N01",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N02",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N03",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N04",
+      "width": 57.6875,
+      "height": 45
+    },
+    {
+      "id": "N05",
+      "width": 57.6875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "5d8344c85b5d2016e13537c7427e21fa651108187737662e70b653ae4aa21629",
+    "capturedAt": "2026-08-26T09:20:55.486Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/right-angles-not-curves.mmd theme=redux look=neo layout=swimlane"
+  }
+}

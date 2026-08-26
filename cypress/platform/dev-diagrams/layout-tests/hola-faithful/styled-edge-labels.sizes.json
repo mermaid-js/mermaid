@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 95.015625,
+      "height": 45
+    },
+    {
+      "id": "D",
+      "width": 42.125,
+      "height": 45
+    },
+    {
+      "id": "B",
+      "width": 109.40625,
+      "height": 51
+    },
+    {
+      "id": "C",
+      "width": 42.125,
+      "height": 45
+    },
+    {
+      "id": "edge-label-A-B-L_A_B_0",
+      "width": 68.484375,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "b89ce9e79fdece40221931bf42bb5d191e8a6989ce68ee7fa38e663e151cc58a",
+    "capturedAt": "2026-08-26T09:20:55.507Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/styled-edge-labels.mmd theme=redux look=neo layout=swimlane"
+  }
+}

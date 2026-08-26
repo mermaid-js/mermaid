@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "c",
+      "width": 39,
+      "height": 45
+    },
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "aa94a13398db5fe569e8dd7a72c058263041b70c0a9401b8ec6ac4306c1e07b9",
+    "capturedAt": "2026-08-26T09:20:54.776Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/edge-to-subgraph.mmd theme=redux look=neo layout=swimlane"
+  }
+}

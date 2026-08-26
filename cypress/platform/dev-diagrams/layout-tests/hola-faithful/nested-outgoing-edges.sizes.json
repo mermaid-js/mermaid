@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "subcontainer-child",
+      "width": 145.625,
+      "height": 45
+    },
+    {
+      "id": "subcontainer-sibling",
+      "width": 156.53125,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "e830b8fcf9d79e02ad62ad0237fec3ecd072a3688f16e06f1b000846b3656655",
+    "capturedAt": "2026-08-26T09:20:54.873Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-outgoing-edges.mmd theme=redux look=neo layout=swimlane"
+  }
+}

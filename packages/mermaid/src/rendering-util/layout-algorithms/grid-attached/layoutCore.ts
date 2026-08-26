@@ -91,6 +91,13 @@ import { resolveGridAttachedOptions } from './options.js';
 import { prepareGridAttachedLayout } from './prepareLayout.js';
 import { mergeTreesByRoot } from './treeGrouping.js';
 import { placeLabels } from './labelPlacement.js';
+import {
+  collectSubgraphs,
+  fitSubgraphFrames,
+  frameIsClean,
+  placeEmptyFrames,
+} from './subgraphs.js';
+import type { FittedFrame, SubgraphModel } from './subgraphs.js';
 import type { LabelObstacles, RouteSegment } from './labelPlacement.js';
 import { segmentsCross } from './geometry.js';
 import { combLevelsNeeded, routeComponentTrees, routeTreeSelfLoop } from './treeConnectors.js';
@@ -177,13 +184,47 @@ export function runGridAttachedLayoutCore(
     options.componentGap
   );
 
+  // Frames are fitted here, after packing, because a container's members can end up
+  // in different components and a frame is only meaningful once every member is at
+  // its final offset. It is still before the margin shift, so the frames travel with
+  // the content instead of needing a second correction.
+  const subgraphs = collectSubgraphs(data);
+  const drawnNodes = laidOut.flatMap((component) => component.nodes);
+  const frames = fitSubgraphFrames(subgraphs, drawnNodes, options);
+  const framed = keepCleanFrames(data, subgraphs, frames, diagnostics);
+
+  // A frame reaches outside its members by its padding and its title, so the shift
+  // that puts the drawing at `margin` has to be measured from the frames too.
+  const framedBoxes = frames.filter((frame) => framed.has(frame.id)).map((frame) => frame.bounds);
+  const overhangX = Math.min(0, ...framedBoxes.map((box) => box.minX));
+  const overhangY = Math.min(0, ...framedBoxes.map((box) => box.minY));
+
   // Packing leaves the drawing against the origin; the margin every layout keeps
   // between content and origin is re-applied once, to the whole thing.
+  const shiftX = options.margin - overhangX;
+  const shiftY = options.margin - overhangY;
   for (const component of laidOut) {
-    translateComponent(component, options.margin, options.margin);
+    translateComponent(component, shiftX, shiftY);
+  }
+  for (const frame of frames) {
+    const group = subgraphs.byId.get(frame.id);
+    if (group) {
+      group.node.x = (group.node.x ?? 0) + shiftX;
+      group.node.y = (group.node.y ?? 0) + shiftY;
+    }
   }
 
-  const droppedEdgeIds = pruneToDrawn(data, laidOut);
+  const droppedEdgeIds = pruneToDrawn(data, laidOut, framed);
+
+  // A frame invented for an empty container is positioned last, once the rest of the
+  // drawing has stopped moving and there is something for it to sit beside.
+  const drawnFrames = frames.filter((frame) => framed.has(frame.id));
+  const shifted =
+    bounds && unionWithFrames(shiftBounds(bounds, shiftX, shiftY), frames, framed, shiftX, shiftY);
+  const finalBounds =
+    shifted && drawnFrames.some((frame) => frame.needsPlacing)
+      ? placeEmptyFrames(subgraphs, drawnFrames, shifted, options)
+      : shifted;
 
   log.debug(
     `GRID-ATTACHED: ${laidOut.length} component(s), ` +
@@ -195,7 +236,7 @@ export function runGridAttachedLayoutCore(
     components: laidOut.map((component) => component.result),
     componentCount: laidOut.length,
     droppedEdgeIds,
-    bounds: bounds && shiftBounds(bounds, options.margin, options.margin),
+    bounds: finalBounds,
     diagnostics: [...prepared.diagnostics, ...diagnostics.all()],
     options,
   };
@@ -1035,7 +1076,82 @@ function shiftBounds(bounds: Bounds, dx: number, dy: number): Bounds {
  * from nowhere — and because an edge that lands here is a decomposition bug worth
  * reporting rather than hiding.
  */
-function pruneToDrawn(data: LayoutData, components: LaidOutComponent[]): string[] {
+/**
+ * Decide which fitted frames are drawn, and flatten the rest.
+ *
+ * A frame is kept when it holds only what its container owns. One that has
+ * swallowed a foreign node is not drawn at all: a box around the wrong nodes reads
+ * as a claim about the diagram's structure that is not true, and is worse than the
+ * container going unrepresented. The members of a flattened container keep their
+ * positions and are re-parented to the nearest ancestor that *is* drawn, so an
+ * outer frame still holds them.
+ */
+function keepCleanFrames(
+  data: LayoutData,
+  subgraphs: SubgraphModel,
+  frames: FittedFrame[],
+  diagnostics: DiagnosticCollector
+): Set<string> {
+  const kept = new Set<string>();
+  for (const frame of frames) {
+    if (frameIsClean(frame)) {
+      kept.add(frame.id);
+      continue;
+    }
+    const group = subgraphs.byId.get(frame.id);
+    diagnostics.report({
+      code: 'GRID_ATTACHED_SUBGRAPH_NOT_FRAMED',
+      stage: 'layout',
+      nodeIds: [frame.id, ...frame.foreign],
+      message:
+        `Subgraph "${frame.id}" holds ${group?.leafIds.length ?? 0} node(s) that ended up far ` +
+        `enough apart that a frame around them would also enclose ${frame.foreign.length} ` +
+        'node(s) it does not own, so no frame is drawn for it.',
+    });
+  }
+
+  // Re-parent past every container that is not drawn, so nesting still resolves.
+  for (const node of data.nodes ?? []) {
+    let parentId = node.parentId;
+    const seen = new Set<string>();
+    while (parentId !== undefined && !kept.has(parentId) && !seen.has(parentId)) {
+      seen.add(parentId);
+      parentId = subgraphs.byId.get(parentId)?.parentId;
+    }
+    node.parentId = parentId;
+  }
+
+  return kept;
+}
+
+/** The drawing's bounds, with every drawn frame folded in. */
+function unionWithFrames(
+  bounds: Bounds,
+  frames: FittedFrame[],
+  framed: ReadonlySet<string>,
+  shiftX: number,
+  shiftY: number
+): Bounds {
+  let result = bounds;
+  for (const frame of frames) {
+    if (!framed.has(frame.id)) {
+      continue;
+    }
+    result = {
+      minX: Math.min(result.minX, frame.bounds.minX + shiftX),
+      minY: Math.min(result.minY, frame.bounds.minY + shiftY),
+      maxX: Math.max(result.maxX, frame.bounds.maxX + shiftX),
+      maxY: Math.max(result.maxY, frame.bounds.maxY + shiftY),
+    };
+  }
+  return result;
+}
+
+function pruneToDrawn(
+  data: LayoutData,
+  components: LaidOutComponent[],
+  framed: ReadonlySet<string>
+): string[] {
   const drawnNodeIds = new Set(components.flatMap((c) => c.nodes.map((node) => node.id)));
   const drawnEdgeIds = new Set(components.flatMap((c) => c.edges.map((edge) => edge.id)));
 
@@ -1048,10 +1164,11 @@ function pruneToDrawn(data: LayoutData, components: LaidOutComponent[]): string[
     return false;
   });
 
-  data.nodes = (data.nodes ?? []).filter((node) => drawnNodeIds.has(node.id));
-  for (const node of data.nodes) {
-    node.parentId = undefined;
-  }
+  // A container is kept when its frame is drawn, even though no component owns it:
+  // it is not a node any component laid out, it is a box fitted around several.
+  data.nodes = (data.nodes ?? []).filter(
+    (node) => drawnNodeIds.has(node.id) || framed.has(node.id)
+  );
 
   if (droppedEdgeIds.length > 0) {
     log.debug(`GRID-ATTACHED: ${droppedEdgeIds.length} edge(s) reached no route and are not drawn`);

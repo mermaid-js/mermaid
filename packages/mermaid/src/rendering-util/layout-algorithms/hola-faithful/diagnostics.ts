@@ -2,6 +2,10 @@
  * Structured diagnostics (guide §25). A stage that cannot complete faithfully
  * reports here and returns the best valid partial result — it never silently
  * falls back to a different algorithm.
+ *
+ * The collector is shared by the layouts built on this one, so the code list is
+ * too. Codes are prefixed by the layout that raises them, and a layout only reads
+ * its own.
  */
 
 export const HOLA_DIAGNOSTIC_CODES = [
@@ -19,6 +23,7 @@ export const HOLA_DIAGNOSTIC_CODES = [
   'HOLA_FINAL_ROUTING_FAILED',
   'HOLA_NODE_CONFIG_TRUNCATED',
   'HOLA_CLOSED_CHAIN_CYCLE',
+  'GRID_ATTACHED_SUBGRAPH_NOT_FRAMED',
 ] as const;
 
 export type HolaDiagnosticCode = (typeof HOLA_DIAGNOSTIC_CODES)[number];

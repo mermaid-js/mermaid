@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "a1",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "a2",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "a3",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "a4",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "edge-label-a1-a2-L_a1_a2_0",
+      "width": 102.734375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-a1-a2-L_a1_a2_2",
+      "width": 112.875,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "5a9f44329d519e8bb3658d9ca2b179b228c20411b3b20213eb85e124a3d81043",
+    "capturedAt": "2026-08-26T09:20:55.553Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/subgraph-labels-2.mmd theme=redux look=neo layout=swimlane"
+  }
+}
