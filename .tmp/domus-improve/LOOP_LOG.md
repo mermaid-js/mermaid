@@ -653,3 +653,140 @@ run ended: goal 57,000 NOT reached. total 55,945 -> 56,940 (+995). invalid 5 (un
 2. Hand-install the target geometry and validate it BEFORE writing a pass. One run tells you whether you have a GENERATOR problem or a GATE problem. Rounds 2-4 were three reverts that this would have prevented.
 3. When a pass is "too expensive", ask WHERE it runs before tuning WHAT it does. The crossing pass went from 111% of the cost ceiling to 92.1% purely by moving it behind the existing `skipSwingReroutes` guard — restricting its candidate set, the literature's usual remedy, made it worse on BOTH axes.
 4. For a candidate-acceptance gate, "make the check stricter" is not free. Ask what the fallback is when the candidate is rejected. In labelRelocation the fallback is the very pathology the pass exists to fix, which is why three separate strictness variants all cost 990.
+
+## RUN 2026-08-25 — COMPACTION focus (state-machine, events). Baseline 56,910.
+- user: "Notice the gaps of unused space in the subgraphs. This makes it look bad... compaction needed, specially so that the score does not decrease."
+- FRAMING FIRST: the DDLT score has NO area/compactness term (breakdown = crossings + bends + soft). Compaction is INVISIBLE to it. Both target fixtures already score 990, so "improve the score a lot" is unavailable (max +20 combined). The real objective is visual, with score as a guard. Said so up front.
+- measured the defect with a slack harness (HOLA's compactness metric, corpus-backed: "ratio of the area occupied by the nodes to the total area of the graph"):
+    state-machine  Hot  frame 239x577  kids 209x523  fill 6.0%   <- 255px EMPTY band
+    events  busRoutingCueState  188x125 around ONE 108x45 node   fill 20.6%  pad[40,40,40,40]
+- TWO SEPARATE CAUSES, not one:
+    events        -> uniform COMPOUND_GROUP_PAD = 40 on every frame side
+    state-machine -> inter-node separation in the GLOBAL aux graph (46 height tracks for a 12-node graph, each hop 40 + h1/2 + h2/2). Does NOT use the compound path at all.
+
+### round 1 — COMPOUND_GROUP_PAD 40 -> 35 (KEPT, commit 9bbd3ad77)
+- pad curve over ALL 20 fixtures that contain a group:
+    40 -> 16562 / 558M / 64886k / 3 invalid
+    35 -> 16628 / 535M / 63720k / 3 invalid   (chosen)
+    30 -> 15707 / 484M / 63425k / 4 invalid   svelte5-code breaks
+- corpus: total 56910 -> 56976 (+66), invalid 5 unchanged, cost 915.5M -> 893.0M (-2.5%). svelte5-code 894 -> 962, architecture 802 -> 812, vs architecture-ecosystem -7 and payments1 -5.
+- METHOD ERROR WORTH REMEMBERING: my first subset was "group-heavy fixtures I expect to improve" and it measured pad 30 as +39. The full corpus said -855 — svelte5-code (6 subgraphs) had been left out and broke. Rebuilding the subset from EVERY fixture containing a group made it a faithful proxy (pad 30 then reproduced -855 exactly). A subset chosen for expected winners is not a guard.
+- also: score is NOT monotonic in this constant. 35 and 32 both scored worse than 30 on the flawed subset. Padding changes which variant wins the placement tournament.
+
+### round 2 — bend-only compaction hops (REVERTED, inert)
+- charged arcs joining two ZERO-SIZE aux nodes routing clearance instead of node padding. state-machine height graph: 50 arcs, 34 join two zero-size nodes = 1360px of node padding spent on points with no extent.
+- NO coordinate moved. Wrong function: `computeCompactedCoordinates` only produces the pass-1 ESTIMATE; the final coordinates come from `computeCompactedCoordinatesWithOverlapConstraints` (pass 2). Lesson 3 from the last run, again.
+
+### round 3 — nodePadding = spacing * 4 (REVERTED, catastrophic)
+- *4 (=40) is already optimal. *3 costs 5,730 points, *2 costs 7,036. Lever closed.
+
+### round 4 — non-overlapping arcs charged a FRACTION of node padding (REVERTED, chaotic)
+- THE REAL MECHANISM, found in pass 2: `distance = hasOverlap ? d : nodePadding`. When no vertex pair perp-overlaps, NO rectangle-rectangle separation is required, yet the arc still charges the full 40. Chain several and you get the 255px band. The comment even calls 40 "minimal", which it is not.
+- the compaction is REAL and dramatic. At ratio 0.25: state-machine's empty band 255px -> 45px, Hot frame 239x577 -> 209x356, whole drawing 181k -> 108k area (-40%), inkFill 5.6% -> 9.3%.
+- BUT the corpus cost is chaotic in the ratio:
+    1.0  31478 (baseline)     0.95 31411 (-67)    0.9  worse
+    0.85 30428 (-1050)        0.8  31468 (-10)    0.75 30473 (-1005)
+    0.6  31434 (-44)          0.5  30487 (-991)   0.375 29512 (-1966)
+  Neighbouring values swing by a THOUSAND points. Same tournament sensitivity as the padding constant, far more violent.
+- at ratio 0.5 the loss is 97% ONE fixture: er-db-model 963 -> 0, and NOT a bend blowup — 2 `edge-intersects-obstacle` on one edge (bendPen only 130). Compaction squeezed out the routing space that edge needed.
+- corpus predicted this exactly (Freivalds gamma, 1807.09368v1 §3.1): gamma=1 is maximum compaction, deliberately held back until the final iterations because "gamma > 1 leaves some empty places between nodes giving additional freedom for node movement to find a better solution". Compacting hard removes the freedom the router needs.
+- REVERTED: 0.8 measuring -10 is luck, not a principled optimum. Shipping a tuned constant whose score response is chaotic is not defensible.
+
+### literature (papers-query, corpus)
+- ATTRIBUTION CORRECTION: `3-540-45848-4_11` "Fast Compaction for Orthogonal Drawings with Vertices of Prescribed Size" is EIGLSPERGER & KAUFMANN (GD'01), not Klau/Klein/Mutzel. Klau/Mutzel is the exponential branch-and-cut it replaces. Fix this wherever cited.
+- GAP, confirmed by grep over all 39 papers: NO paper compacts a cluster frame to fit its contents. Siebenhaller makes frames RIGID rectangles (deletes the face-to-face arc from the Kandinsky flow network so no bend can be bought on the border) and aligns borders to one compaction-graph vertex — never shrinks one. Zero hits for per-cluster / recursive / bottom-up compaction.
+- the only frame-shrinking mechanism in the corpus is Dwyer's, and it is NOT compaction: a stress term pulling the boundary toward an ideal perimeter of 2*sqrt(pi * sum(w*h)).
+- KEY INFERRED LEAD (not a paper claim, but sound): a cluster frame is structurally EASIER than a prescribed-size vertex. A sized vertex needs a PAIRED +height/-height edge to pin it to exactly its extent, which introduces negative edges and cycles (this is why longest-path stops working). A frame wants only ">= large enough to contain the children" — a plain difference constraint, no negative edge, no cycle. So longest-path compaction should handle frames directly.
+- DOMUS defers its own compaction in ONE sentence ("uses a compaction algorithm similar to ogdf") and lists shape-preserving compaction as open problem 4. Its 25% area win is REPORTED, not explained — consistent with a better shape arriving at the compactor, not a better compactor.
+
+### round 5 (compaction run) — crossing reduction on small tournament variants (KEPT, commit 33d166727)
+- 57,000 target met: total 56981 -> 57004 (+23), invalid 5 unchanged, cost 983,807,586 = 98.8%.
+- events 995 -> 1000, payments1 985 -> 995, architecture-ecosystem 975 -> 980, architecture3 979 -> 982. No regressions.
+- the budget came from TRADING: MAX_COMPACTION_NODES 25 -> 18. At the old limits both together were 100.5% (5.4M over). events has 16 nodes and keeps its compaction; fixtures 19-25 were paying for a re-route that never showed in the score diff.
+- TOURNAMENT_CROSSING_EDGE_LIMIT 30 vs 22 differ by 114k work units out of a billion — the cost lives in the small fixtures themselves, not the band between. Don't bother tuning it.
+- node gate 40 was measured first: NO score change, cost 94.0% -> 98.7%. Nothing in the 26-40 node range benefits from compaction.
+
+### round 6 — sharedSubpathNudge OSCILLATES (REVERTED on cost, but the finding is important)
+- the pass was neither failing to fire nor rejecting candidates. It CYCLES. It runs several times in finalizeOverlayLabels and each call considers only the ONE edge in the current pair, so it moves a rail 10 units off its partner, lands it beside a THIRD edge, and the next call moves it straight back. Traced on architecture5-components: 1459.6 -> 1469.6 -> 1459.6 -> 1469.6, finishing wherever the last call left it. A 1515px overlap survived a pass designed to remove it, purely by parity.
+- fix: filter candidates against EVERY horizontal segment overlapping in x, not just the pair partner, so each move is one the next call agrees with.
+- ISSUE COUNTS FELL SHARPLY: architecture5-components 3 -> 2, mermaid-chart-architecture 9 -> 2. triage2 14 -> 20 (worse).
+- REVERTED: total unchanged at 57004 (both fixtures stay invalid so they score 0 either way), cost 983.8M -> 1028.2M = 103.2% of ceiling. Convergence costs more than parity.
+- WORTH RETRYING when either fixture is within ONE issue of valid — then the same change is worth ~900 instead of 0, and the cost is affordable against that.
+
+### the two fixtures now closest to valid, and what blocks them
+- architecture5-components: 3 issues. One is the 1515px shared subpath (fixable, see round 6). The other TWO are `edge-bend-near-endpoint` "parallel band 13.0 from end node" on L_CaptSum_DocSto_0 and L_MLPOD_DB_0 — a DIFFERENT rule from the short-stub one, needing its own repair. Hand-probe confirmed shifting the MLPOD rail +/-40 clears the shared subpath and leaves exactly those two.
+- mermaid-chart-architecture: 9 issues normally, 2 with the round-6 fix (edge-corner-connection + the same parallel-band rule).
+- BOTH are blocked by the same unaddressed rule. One repair for "parallel band from end node" would put two fixtures within reach of ~900 each.
+
+### round 7 — BAND REPAIR + oscillation fix (KEPT, commit 828f641fc) — FIRST FIXTURE FLIP OF THE RUN
+- architecture5-components 0 -> 595 VALID. invalid 5 -> 4. Corpus 57004 -> 57571 (+567), cost 942,356,027 = 94.6%.
+- TWO defects, both needed. Either alone leaves the fixture invalid = still zero.
+  (a) `edge-bend-near-endpoint` with `which: 'end-band'` had NO repair anywhere. The checker flags the RAIL BEFORE the final segment when it runs parallel to the entry side within EPS_ENDPOINT_BAND (18) while overlapping the node. repairEndpointApproachesWhenIssuesImprove collects these edges but its remedies target the SHORT-STUB form, which needs the opposite move.
+  (b) applySharedSubpathNudge CYCLES — see round 6. Fixed by filtering candidates against every parallel segment, not just the pair partner.
+- THE PUSH MUST BE GENEROUS, measured not guessed: +8 trades the band issues for four edge-shared-subpath, +12 for four edge-parallel-segment-too-close, +20 is clean. Clearing the threshold by a hair just lands the rail on a neighbour.
+- PLACEMENT AGAIN (4th time this session): the band pass opens with a full checkLayout, and runLateQualityPasses runs once per tournament variant. Per-variant = 113.3% of ceiling; behind the existing skipSwingReroutes guard = 103.7%. Per-variant scores the fixture 843 vs 595 winner-only — the cheap placement genuinely gives up quality, and is still the only affordable one.
+- REMOVED TWO OF MY OWN EARLIER COMMITS' EFFECTS. Re-measured in combination:
+    compaction on,  crossing on   57599  100.1%  over
+    compaction off, crossing on   57599  100.1%  over
+    compaction off, crossing off  57571   94.6%  KEPT
+  With the band repair in place the compaction candidate is worth 0 (was +5) and the tournament crossing variant buys 28 only by exceeding the ceiling. THE LESSON: a change that clearly earned its keep two rounds ago can stop earning it once something better lands, and only re-measuring IN COMBINATION reveals that. Carrying both forward on their original numbers would have failed the cost gate and looked like the band fix's fault.
+- COST: events drops 1000 -> 990 and loses its frame compaction; payments1 995 -> 985; architecture-ecosystem 980 -> 975; architecture3 982 -> 979. All of that is the removed crossing variant giving back what it had lent. Net still +567.
+- MAX_COMPACTION_NODES is left at 0 (pass retained but inert). Re-enabling costs ~36M work and 0 points — affordable at 94.6% if the VISUAL compaction on events is wanted back.
+
+## RUN TOTAL: 56,910 -> 57,571 (+661). invalid 5 -> 4. cost 94.6%.
+
+### round 8 — corner escape (KEPT, commit c5249138b) — SECOND FIXTURE FLIP
+- mermaid-chart-architecture 0 -> 321 VALID on a SINGLE defect. invalid 4 -> 3. Corpus 57571 -> 57892 (+321), cost 946,544,888 = 95.0%.
+- `edge-corner-connection` had NO repair. An endpoint on a corner belongs to two sides at once, so nothing downstream can say which side the edge uses.
+- WHY IT NEEDS A PASS, not a nudge: the obvious fix (move to the middle of the side) FAILS. app_server's west side is crowded — -10 collides with prerender_server, -22 with errorLogging, -30 with analytics, only -15 is free. The job is "find the gap", so the pass walks candidate positions (middle first, then outward) and lets the checker judge each. It found a slot scoring 321, better than the -15 a hand probe settled on.
+- endpoint moves WITH its neighbour so the departing segment keeps its orientation.
+- winner-only placement, same guard as the other two repairs.
+
+## RUN TOTAL: 56,910 -> 57,892 (+982). invalid 5 -> 3. cost 95.0%.
+- remaining invalid: architecture4 (6 types), triage (2 types), triage2 (8 types).
+
+### round 9 — chasing the last ~84 (all measured, all closed)
+- crossing variant re-enabled AFTER the two flips, on the theory that score-gated passes are inert at score 0 so the newly-valid fixtures had never been reachable. WRONG: it gave the same +28 (ecosystem +5, arch3 +3, events +10, payments1 +10) and touched NEITHER new fixture. Cost 100.5%.
+- shared one validation between the band and corner repairs (band returns its final checkLayout, corner accepts it when the band changed nothing). Saved 645k. Still 100.4% with the crossing variant. KEPT on its own as commit acdc4476b — pure cost saving, no behaviour change.
+- triage re-examined with fresh eyes. Its ceiling-if-valid is 660 NOW (bendPen 217) because the route is the FLATTENED one, not the 11-point weave — so the earlier "capped at 0" finding was specific to the weaving skip. But re-applying that skip puts bendPen at 1261 and the ceiling at MINUS 408. Confirmed dead end from both directions.
+- mermaid-chart-architecture's 321: its two 8-point edges (pen 120 each, 240 of 387) are GENUINE weaves, not slack. Points 1 and 5 sit at the same y, the splice pass considers joining them and correctly refuses because an obstacle occupies that corridor. That headroom is real drawing, not waste.
+
+## RUN CLOSED: 56,910 -> 57,892 (+982). invalid 5 -> 3. cost 95.0%.
+- two fixtures flipped from zero: architecture5-components 0 -> 595, mermaid-chart-architecture 0 -> 321.
+- five commits: 9bbd3ad77 (group padding, +66), 0e6606d68 (group compaction, now inert), 33d166727 (crossing on small variants, now removed), 828f641fc (band repair + oscillation fix, +567), c5249138b (corner escape, +321), acdc4476b (shared validation, cost).
+- REMAINING INVALID: architecture4 (6 types), triage (2 types, needs a port-side change on L_TypeCheck_RouteF_0), triage2 (8 types).
+- THE 4.25M PROBLEM: the per-variant crossing variant is worth +28 and misses the ceiling by 4.25M out of a billion. Anyone finding a real inefficiency of that size unlocks it immediately.
+- MAX_COMPACTION_NODES is 0: the compaction pass is retained but inert. Re-enabling costs ~36M and 0 points, and restores the visible frame tightening on domus/events (Deck 391x1277 -> 305x1135, Console fill 24.9% -> 37.7%).
+
+## RUN 2026-08-26T11:15 — branch domus-loop/20260826-plus1000 — baseline 57,892, goal +1000 (58,892), invalid 3
+
+### round 1 — TRIAGE FLIPPED (KEPT) — 57,892 -> 58,432 (+540), invalid 3 -> 2, cost 94.2%
+- target: domus/triage, score 0, 5 issues on 3 edges (4x edge-intersects-obstacle, 1 label-overlaps-foreign-edge).
+- THREE defects, all three needed. Any two of them leave the fixture invalid = still zero.
+  (a) `remediateFlaggedEdgesWhenMonotone`'s `noNew` gate. Instrumented it: on S5->TypeCheck the pass tried 49 candidates and round 1 FOUND one that cleared all four obstacle hits (4 issues -> 3) — rejected because the three it landed with were new keys (shared-subpath, parallel-band, label overlap). An edge routed THROUGH a node is not a local blemish; every corridor that clears it arrives past different neighbours, so `noNew` is structurally unsatisfiable for this defect. Relaxed ONLY when the candidate leaves zero obstacle intersections.
+  RELAXING IT FOR EVERY DEFECT COSTS 315: measured, mermaid-chart-architecture trades its way out of validity (321 -> 0), architecture +41, architecture5 -35. The narrow form costs 9 (mcarch 321 -> 312) and saves 3.7% of the cost ceiling.
+  (b) fixed-fraction port sampling in `sideRouteCandidates`. Tier 3's offsets are {projection, 0.5, 0.25, 0.75}; RouteF's west side is only enterable at t~0.87, the sliver below `Report` and still on the node. Added `channelLineOffsets`: candidate offsets read off the obstacle boundaries that already define the router's channels, two nearest the constructive offset. Finds the band in two candidates instead of missing it in twenty.
+  (c) `escapeCornerConnections` only slides along the side the departing segment implies. Instrumented: ALL ELEVEN fractions on TypeCheck's east side traded the corner for two `edge-shared-subpath`, because every slot puts the rail that follows alongside L_TypeCheck_RouteC_0's rail. A corner belongs to two sides — added the perpendicular exit (tip onto the corner's other side line, neighbour onto the far vertex's coordinate). Point count unchanged, and it moves the RAIL, so the conflict never arises.
+- LITERATURE (papers-query, papers_query_ok: true). (b) is supported in principle, not in formulation: Biedl/Madden/Tollis `3-540-63938-1_84` routes first and repairs conflicts at port assignment, where "each node v has a number of intersections with grid lines; these places are called the ports of v" — candidate ports ARE the routing lines. `diss` 2.3.2.1 same idea as Kandinsky pins. GAP: no paper derives candidates from the OBSTACLE-boundary set specifically, and no paper bounds how many a per-edge repair should try. The corpus is also split on ordering — every other router (`2309.01671v2`, libavoid, `jvlc13`) fixes ports before routing and never moves them.
+- METHOD NOTE: each of the three is a NO-OP ALONE. (a) alone -9, (b) alone 0 on triage, (c) alone 0 (never reached). Measuring them separately and reverting each would have thrown all three away.
+
+### round 2 — THE ORDERING BUG (KEPT) — 58,432 -> 59,294 (+862), invalid 2, cost 90.1% (938M -> 897M)
+- mermaid-chart-architecture 298 -> 897, architecture5-components 595 -> 780, triage 563 -> 641. Nothing else moved. GOAL PASSED: run total 57,892 -> 59,294 (+1402).
+- HOW IT WAS FOUND, and the finding generalises: I instrumented `untangleSharedTerminalPairs` expecting to learn why it could not fix mcarch's 37 hub crossings. It printed ONE line — `UNT-ENTER ok=false score=0 crossings=50` — and returned. The pass was not weak, it was running too early.
+- THE BUG: in `runLateQualityPasses` the two VALIDITY repairs (`widenEndpointApproachBands`, `escapeCornerConnections`) CLOSED the winner-only block, after every score-gated quality pass in it. A score-gated pass accepts only on a strict whole-layout score improvement, and the score is clamped to 0 while any hard issue stands. So on every layout those two repairs were about to rescue, swingReroutes / rerouteTopCrossers / straightenParallelZs / the jog simplifiers all ran against 0, could not beat it, and returned no-ops — then the fixture turned valid two lines later and shipped every defect they would have fixed.
+- FIX: move the two repairs to the TOP of the same block. Same guard, same passes, same single run on the winning variant — zero structural cost.
+- COST, and how it was paid. The reorder alone measured 1,150M = 115.5% of ceiling — an automatic revert. The unlocked passes are what cost, and they are also what earns. Two pure cost fixes covered it, both behaviour-neutral (score bit-identical at every step):
+    (a) `simplifyEdgeJogsWhenScoreImproves` runs THREE times per `runLateQualityPasses`, twice per layout via the tournament = 6 full searches. It already loops until a sweep accepts nothing, so a repeat over unchanged geometry provably finds nothing. Added a barren-geometry fingerprint: -23M.
+    (b) `rerouteTopCrossers` paid a full `checkLayout` per surviving candidate. `current` is ok and only one edge moved, so a FOCUSED check answers validity, and nearly every candidate fails on validity not on score. Same pre-filter the jog pass already had. architecture's share of that pass: 76M -> 10.5M. Corpus -230M.
+  Final: 897M = 90.1%, LOWER than the 938M this round started at, with +862 of quality.
+- MEASURED AND NOT TAKEN: dropping `rerouteTopCrossers` outright is 59,214 at 85.3% — -80 points for 47M. Keeping it with the focused pre-filter is strictly better on both axes.
+- DEAD ENDS THIS ROUND (all measured on the full sweep):
+    `reduceCrossingsWithPortSideCandidates` in the polish: +73 aggregate at 259.8% of ceiling. architecture ALONE is +1,160M of that for +28. Unaffordable by a factor of two, and no plausible cost saving covers it.
+    `reorderPortFans`: 0 on every fixture. All-or-nothing fan transaction, aborts if any member's reroute fails.
+    `untangleSharedTerminalPairs`: +6 (architecture +3, architecture3 +3) at +0.1% cost — real but tiny, and measured BEFORE the reorder. Worth re-testing now that it runs on valid geometry.
+    `reorderSiblingPortsToUncross`: 0.
+    `tryLayeredFallbackCandidateWhenScoreImproves`: reaches only 3 small fixtures (11/16/20 nodes) and its candidate is INVALID in all 3, so it has never once been accepted. Pure waste; not removed only because it was out of scope for this round.
+- architecture4 RE-EXAMINED and left alone. 6 hard issues; instrumented, `remediateFlaggedEdgesWhenMonotone` finds NO improving candidate at all for the non-orthogonal edge (55 tried) or the group port mismatch (52 tried), and the node-overlap is EndUser/KeySafe oscillating between the overlap nudger and the group-clearance nudger (each moves 22.5 in the opposite direction). Partial progress scores 0, so anything short of all six is worth nothing. Confirmed placement work, not a loop round.
+- triage2 is capped at 0 regardless of validity: bendPenalty 503 + crossingPenalty 342 + localCrossings on 114 crossings already exceeds 1000.
+
+run ended: goal reached — total 57,892 -> 59,294 (+1402 against a goal of +1000). invalid 3 -> 2. cost 906M -> 897M (90.1% of ceiling). 2 rounds, both kept.
