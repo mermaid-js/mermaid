@@ -31,6 +31,7 @@ import {
   rerouteTopCrossersWhenScoreImproves,
 } from './pipeline/flaggedEdgeRemediation.js';
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
+import { separateGroupFramesWhenIssuesImprove } from './pipeline/groupFrameSeparation.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
@@ -600,6 +601,13 @@ export function runLateQualityPasses(
     // label that has nowhere to go — the two pairwise rules no existing pass
     // can reach (see railShiftRepairs.ts). Winner-only, monotone.
     repairRailProximityWhenIssuesImprove(data4Layout, { spacing: 10 });
+
+    // Separate kissing group frames (`group-group-padding`, HARD) by sliding
+    // one offender's whole subtree away as a rigid unit. Runs BEFORE the leaf
+    // spacing pass below so frames settle first and leaves then space off the
+    // frames' final positions. Winner-only, monotone-on-invalid, same family
+    // as its siblings above.
+    separateGroupFramesWhenIssuesImprove(data4Layout, { acceptWhenInvalid: true });
 
     // Free leaves crowding a foreign group frame on layouts the score gate
     // cannot see (score clamped at 0). Winner-only: the per-variant call at
