@@ -1170,3 +1170,14 @@ run ended: max_consecutive_reverts (rounds 11, 12, 13) — total 52,808.1 -> 53,
 
 - a 2-point edge is straight but its LINE can be wrong: off the diamond center it misses the vertex, and the snap pass cannot slide it (the whole edge IS the stub, parallel to the slide — the exact skip case). The straight arm now re-lines port-flagged 2-pointers, adding each node's own center line to the candidates when the pair's centers disagree.
 - result: co-pilot-extension 825.5 -> 865.5 (+40, one diamond flag cleared). Sweep 65/65, cost flat 99.8%. Wider suite 561, 0 collateral.
+
+### round 5 — Z-rebuild fallback for blocked straights (REVERTED — zero commits)
+
+- when the straight rejects and the route has 3+ bends, a center-line Z with the jog at the gap middle was offered. NOT ONE candidate won corpus-wide (total unchanged to the decimal, +0.4M cost): routes that kept 3+ bends between facing nodes kept them because the corridor is occupied — the same reason the straight rejected. No-neutral-churn revert.
+
+### rounds 6-7 — rigid-column grid alignment / foreign-crossing rebuild flags (both REVERTED; 3rd consecutive = STOP)
+
+- round 6: gridNearMissAlign got the rigid-column co-move (nodeGroupSpacing's rigid-set idea) for pairs pinned by straight perpendicular edges. Zero commits corpus-wide — the pinned pairs (deploy-pipeline's two flags) reject even as columns; whatever blocks the single move blocks the column too.
+- round 7: edge-crosses-foreign-group flags joined the rebuild candidate set (an alternative line/elbow might dodge the frame). Zero commits — svelte5's L_PADSTAT_LINTER transit has no rebuild variant that clears Render's frame without worse damage.
+
+run ended: max_consecutive_reverts (rounds 5, 6, 7) — total 53,412.3 -> 53,602.3 (+190 of the +1000 goal). invalid 1 (out-of-scope). cost 799.0M -> 801.6M (99.8% of ceiling — the ceiling is now the run-limiting constraint; the SAT refine spiral holds ~200M of it).
