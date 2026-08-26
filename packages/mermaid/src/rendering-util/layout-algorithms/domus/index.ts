@@ -1,5 +1,6 @@
 import type { SVG } from '../../../mermaid.js';
 import { repairGroupReentryWhenIssuesImprove } from './pipeline/groupReentryRepair.js';
+import { repairRailProximityWhenIssuesImprove } from './pipeline/railShiftRepairs.js';
 import type { D3Selection } from '../../../types.js';
 import { createGraphWithElements } from '../../createGraph.js';
 import { injectDomusEdgeLabelNodes } from './injectEdgeLabelNodes.js';
@@ -593,6 +594,11 @@ export function runLateQualityPasses(
     // siblings above, and for the same cost reason: it opens with a full
     // checkLayout (the rule it repairs is only computed un-focused).
     repairGroupReentryWhenIssuesImprove(data4Layout, { spacing: 10 });
+
+    // Separate a too-close parallel rail pair, and shift a foreign rail off a
+    // label that has nowhere to go — the two pairwise rules no existing pass
+    // can reach (see railShiftRepairs.ts). Winner-only, monotone.
+    repairRailProximityWhenIssuesImprove(data4Layout, { spacing: 10 });
 
     swingReroutesWhenScoreImproves(data4Layout);
 
