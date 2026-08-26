@@ -101,6 +101,7 @@ import {
 } from './subgraphs.js';
 import type { FittedFrame, SubgraphModel } from './subgraphs.js';
 import type { LabelObstacles, RouteSegment } from './labelPlacement.js';
+import { redirectContainerEdges, restoreContainerEdges } from './containerEdges.js';
 import { segmentsCross } from './geometry.js';
 import { combLevelsNeeded, routeComponentTrees, routeTreeSelfLoop } from './treeConnectors.js';
 import type { TreeConnector, TreeRouteRequest } from './treeConnectors.js';
@@ -161,6 +162,21 @@ export function runGridAttachedLayoutCore(
 
   const options = resolveGridAttachedOptions(data, overrides);
   const diagnostics = new DiagnosticCollector();
+
+  // Before the topology: an edge naming a container is moved onto one of its members
+  // so the graph keeps it. Put back, and cut at the frame, once everything is drawn.
+  const containerEdges = redirectContainerEdges(data);
+  for (const edge of containerEdges.unresolvable) {
+    diagnostics.report({
+      code: 'GRID_ATTACHED_SUBGRAPH_EDGE_UNRESOLVED',
+      stage: 'prepare',
+      edgeIds: [edge.id],
+      message:
+        `Edge "${edge.id}" runs between a subgraph and something it already contains, or names ` +
+        'an empty one, so there are not two places for it to run between.',
+    });
+  }
+
   const flat = flattenFlowchart(data, diagnostics);
 
   if (flat.graph.nodes.size === 0) {
@@ -225,6 +241,25 @@ export function runGridAttachedLayoutCore(
       group.node.y = (group.node.y ?? 0) + shiftY;
     }
   }
+
+  // Read off the container nodes, not off `frames`: a fitted frame's bounds predate
+  // the shift that put the drawing at its margin, and a box in the wrong coordinate
+  // space contains nothing, so every trim would quietly do nothing.
+  const frameBoxes = new Map<string, Bounds>();
+  for (const frame of frames) {
+    const node = framed.has(frame.id) ? subgraphs.byId.get(frame.id)?.node : undefined;
+    if (node?.x !== undefined && node.y !== undefined) {
+      const width = node.width ?? 0;
+      const height = node.height ?? 0;
+      frameBoxes.set(frame.id, {
+        minX: node.x - width / 2,
+        minY: node.y - height / 2,
+        maxX: node.x + width / 2,
+        maxY: node.y + height / 2,
+      });
+    }
+  }
+  restoreContainerEdges(containerEdges.redirected, frameBoxes);
 
   const droppedEdgeIds = pruneToDrawn(data, laidOut, framed);
 

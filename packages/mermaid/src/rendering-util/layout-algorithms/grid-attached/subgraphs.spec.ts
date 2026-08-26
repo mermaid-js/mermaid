@@ -320,6 +320,62 @@ describe('grid-attached subgraphs', () => {
     });
   });
 
+  describe('an edge that names a container', () => {
+    it('draws it, ending on the frame rather than on a member', () => {
+      const data = layoutData([group('C'), node('c', 'C'), node('A')], [edge('A', 'C')]);
+      runGridAttachedLayoutCore(data);
+
+      const drawn = data.edges.find((e) => e.id === 'A-C');
+      expect(drawn?.points, 'the edge is drawn at all').toBeDefined();
+      expect(drawn!.end).toBe('C');
+
+      // The last point sits on the frame's border, not inside it and not on `c`.
+      const frame = boxOf(data, 'C');
+      const last = drawn!.points![drawn!.points!.length - 1];
+      const onBorder =
+        Math.abs(last.x - frame.minX) < 0.5 ||
+        Math.abs(last.x - frame.maxX) < 0.5 ||
+        Math.abs(last.y - frame.minY) < 0.5 ||
+        Math.abs(last.y - frame.maxY) < 0.5;
+      expect(
+        onBorder,
+        `last point (${last.x}, ${last.y}) is on frame ${JSON.stringify(frame)}`
+      ).toBe(true);
+    });
+
+    it('keeps the container as the declared endpoint', () => {
+      const data = layoutData([group('C'), node('c', 'C'), node('A')], [edge('C', 'A')]);
+      runGridAttachedLayoutCore(data);
+
+      const drawn = data.edges.find((e) => e.id === 'C-A');
+      expect(drawn?.start).toBe('C');
+      expect(drawn?.end).toBe('A');
+    });
+
+    it('reports an edge between a container and its own child instead of drawing one', () => {
+      const data = layoutData([group('C'), node('c', 'C')], [edge('C', 'c')]);
+      const result = runGridAttachedLayoutCore(data);
+
+      expect(
+        result.diagnostics.some((d) => d.code === 'GRID_ATTACHED_SUBGRAPH_EDGE_UNRESOLVED')
+      ).toBe(true);
+    });
+
+    it('holds a container together through the edge that names it', () => {
+      // Without the edge `x --> one` in the graph, `a` and `b` are unreachable from
+      // `x` and the drawing falls into three components.
+      const data = layoutData(
+        [group('one'), node('a', 'one'), node('b', 'one'), node('x')],
+        [edge('a', 'b'), edge('x', 'one')]
+      );
+      const result = runGridAttachedLayoutCore(data);
+
+      // One component is the claim being made here. Whether the frame then comes out
+      // clean is a placement question, and a separate one.
+      expect(result.componentCount).toBe(1);
+    });
+  });
+
   describe('the drawing as a whole', () => {
     it('keeps every frame in the positive quadrant', () => {
       const data = layoutData(
