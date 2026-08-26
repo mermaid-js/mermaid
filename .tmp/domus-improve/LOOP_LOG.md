@@ -1165,3 +1165,8 @@ run ended: max_consecutive_reverts (rounds 11, 12, 13) — total 52,808.1 -> 53,
 - a 3-point L is bend-optimal but its PORTS can still be wrong; the L-rebuild now also takes 3-point routes whose edge carries a port-off-diamond-corner / port-near-corner flag (unflagged 3-pointers stay skipped — nothing to win, one checkLayout to lose).
 - result: incremental-editing 937 -> 977 and ISSUE-FREE (last diamond flag cleared). Sweep 65/65, cost flat 99.8%. Wider suite 561, 0 collateral.
 - also this round, investigation logged separately: triage's gap (755) is 50 crossings in the fan corridor — the structural class three runs have bounced off; not a loop target.
+
+### round 4 — re-line flagged 2-point straights (KEPT) — 53,562 -> 53,602 (+40), invalid 1, cost flat
+
+- a 2-point edge is straight but its LINE can be wrong: off the diamond center it misses the vertex, and the snap pass cannot slide it (the whole edge IS the stub, parallel to the slide — the exact skip case). The straight arm now re-lines port-flagged 2-pointers, adding each node's own center line to the candidates when the pair's centers disagree.
+- result: co-pilot-extension 825.5 -> 865.5 (+40, one diamond flag cleared). Sweep 65/65, cost flat 99.8%. Wider suite 561, 0 collateral.

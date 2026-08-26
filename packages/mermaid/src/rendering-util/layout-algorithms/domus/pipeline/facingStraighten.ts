@@ -101,9 +101,24 @@ export function straightenFacingPairsWhenScoreImproves(
       e.end == null ||
       String(e.start) === String(e.end) ||
       !Array.isArray(pts) ||
-      pts.length <= 2 // already straight (or degenerate)
+      pts.length < 2
     ) {
       continue;
+    }
+    // A 2-point edge is already straight — but its LINE can still be wrong:
+    // a straight not on the diamond's center misses the vertex, and the snap
+    // pass cannot slide it (the whole edge is the stub, parallel to the
+    // slide). Re-line it only when the validator flags a port on it.
+    if (pts.length === 2) {
+      if (shapes !== 'all') {
+        continue;
+      }
+      if (!gateOpen()) {
+        return current;
+      }
+      if (!portFlaggedEdgeIds().has(String(e.id))) {
+        continue;
+      }
     }
     const s = nodeById.get(String(e.start));
     const t = nodeById.get(String(e.end));
@@ -203,10 +218,19 @@ export function straightenFacingPairsWhenScoreImproves(
     const sc = axis === 'x' ? (s.y ?? 0) : (s.x ?? 0);
     const tc = axis === 'x' ? (t.y ?? 0) : (t.x ?? 0);
     // Shared center line first (diamond vertices live there), overlap middle
-    // as the fallback for offset-but-overlapping pairs.
+    // as the fallback for offset-but-overlapping pairs. A port-flagged edge
+    // also tries each node's own center line — that is where a flagged
+    // diamond's vertex sits when the pair's centers disagree.
     const lineCandidates: number[] = [];
     if (Math.abs(sc - tc) <= CENTER_EPS && sc >= lo && sc <= hi) {
       lineCandidates.push((sc + tc) / 2);
+    }
+    if (portFlaggedEdgeIds().has(String(e.id))) {
+      for (const c of [sc, tc]) {
+        if (c >= lo && c <= hi) {
+          lineCandidates.push(c);
+        }
+      }
     }
     lineCandidates.push((lo + hi) / 2);
 
