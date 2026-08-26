@@ -668,7 +668,10 @@ function runGenericOrthogonalCleanup(layoutData: LayoutData, spacing: number): v
   }
 }
 
-function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData): void {
+function relocateLabelOverlaysOffForeignEdgesWhenImproves(
+  layoutData: LayoutData,
+  opts: { allowPerpendicularOffsets?: boolean } = {}
+): void {
   let current = checkLayout(layoutData);
   const offenders = current.issues.filter(
     (i) =>
@@ -749,15 +752,39 @@ function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData
       const b = pts[i + 1];
       const len = Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
       const steps = Math.max(1, Math.floor(len / SAMPLE_STEP));
-      for (let k = 0; k <= steps; k++) {
-        const t = k / steps;
-        const x = a.x + (b.x - a.x) * t;
-        const y = a.y + (b.y - a.y) * t;
+      const push = (x: number, y: number): void => {
         const dist =
           Number.isFinite(curX) && Number.isFinite(curY)
             ? Math.abs(x - curX) + Math.abs(y - curY)
             : 0;
         candidates.push({ x, y, dist });
+      };
+      for (let k = 0; k <= steps; k++) {
+        const t = k / steps;
+        const x = a.x + (b.x - a.x) * t;
+        const y = a.y + (b.y - a.y) * t;
+        push(x, y);
+        // Perpendicular offsets: on a dense drawing every centered anchor can
+        // be occupied (triage: 81 anchors, all hit ≥1 foreign edge — the
+        // routes share the label's own corridor). Anchoring the label a hair
+        // under half its extent off the segment keeps the polyline inside the
+        // rect (the `edge-label-off-edge` contract is intersection, not
+        // centering) while the rect's bulk leaves the corridor entirely.
+        // Only offered on the final end-of-layout call: mid-finalize label
+        // moves change the monotone accounting of the route repairs that run
+        // after finalize, and measured on triage that cost the repairs their
+        // acceptance (3 obstacle hits shipped) — labels must move LAST.
+        const horizontal = Math.abs(b.y - a.y) <= Math.abs(b.x - a.x);
+        const off = (horizontal ? h : w) / 2 - 1;
+        if (opts.allowPerpendicularOffsets && off > 1) {
+          if (horizontal) {
+            push(x, y - off);
+            push(x, y + off);
+          } else {
+            push(x - off, y);
+            push(x + off, y);
+          }
+        }
       }
     }
     candidates.sort((c1, c2) => c1.dist - c2.dist);
@@ -786,6 +813,18 @@ function relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData: LayoutData
       owner.y = oldY;
     }
   }
+}
+
+/**
+ * Final label-only cleanup, for the very end of `layout()`: every route is
+ * final, so sliding a label (with perpendicular offsets allowed) cannot
+ * disturb any repair pass's accounting — the geometry the validator grades is
+ * exactly the geometry the labels are placed against.
+ */
+export function relocateOverlayLabelsOffForeignEdgesFinal(layoutData: LayoutData): void {
+  relocateLabelOverlaysOffForeignEdgesWhenImproves(layoutData, {
+    allowPerpendicularOffsets: true,
+  });
 }
 
 function shortcutFinalLabelSideRailsWhenScoreImproves(layoutData: LayoutData): void {

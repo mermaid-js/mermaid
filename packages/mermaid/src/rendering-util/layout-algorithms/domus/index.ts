@@ -13,7 +13,10 @@ import { adjustLayout } from './adjustLayout.js';
 import { layoutOrthogonalNodes } from './pipeline.js';
 import { runRP1OrthogonalPipeline } from './rp1Pipeline.js';
 import { ORTHO_DEBUG } from './debug.js';
-import { finalizeDummyLabelNodesToOverlayLabels } from './finalizeOverlayLabels.js';
+import {
+  finalizeDummyLabelNodesToOverlayLabels,
+  relocateOverlayLabelsOffForeignEdgesFinal,
+} from './finalizeOverlayLabels.js';
 import { simplifyEdgeJogsWhenScoreImproves } from './pipeline/simplifyEdgeJogs.js';
 import { clearArrowheadBendsWhenScoreImproves } from './pipeline/arrowheadBendClearance.js';
 import { repairPortDirectionMismatchWhenScoreImproves } from './pipeline/portDirectionRepair.js';
@@ -890,6 +893,11 @@ export function layout(data4Layout: LayoutData): void {
   // baseline would flatter it — `domus/co-pilot-extension` was accepted that
   // way with two issues the baseline's own polish would have cleared.
   domusStage('domus:compact', () => tryGroupCompactionCandidate(data4Layout));
+
+  // Labels move LAST, on final geometry: a label slid off a foreign edge is
+  // pure gain here, while the same move made mid-finalize changes the
+  // monotone accounting of every route repair that follows it.
+  relocateOverlayLabelsOffForeignEdgesFinal(data4Layout);
 
   // Final safety net: no zero-length segments reach the renderer (NaN paths).
   stripDegenerateEdgePoints(data4Layout);

@@ -99,7 +99,6 @@ const DOMUS_TOTAL_COST_CEILING = 803_000_000;
 const KNOWN_INVALID = new Set([
   'domus/architecture4',
   'domus/triage2',
-  'domus/triage',
   'domus/architecture5-components',
   'swimlanes/14-messy-layout',
 ]);
