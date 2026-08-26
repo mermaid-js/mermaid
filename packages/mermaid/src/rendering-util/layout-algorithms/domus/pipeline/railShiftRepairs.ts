@@ -133,6 +133,11 @@ export function repairRailProximityWhenIssuesImprove(
   }
 
   let progressed = false;
+  // Label crossings cleared this invocation, as `owner->crossed` pairs. Two
+  // labels 0.8px apart let the rail oscillate between them — each equal-count
+  // trade is valid for ITS target while re-creating the previous one. A
+  // cleared pair may not come back.
+  const clearedPairs = new Set<string>();
 
   const tryTargets = (
     edge: EdgeLike,
@@ -316,14 +321,25 @@ export function repairRailProximityWhenIssuesImprove(
     ];
     const ownerId2 = String(d.ownerEdgeId);
     const crossedId2 = String(iss.edgeId ?? '');
-    const thisCrossingGone = (issues: readonly IssueLike[]): boolean =>
-      !issues.some(
-        (n) =>
-          n.type === 'edge-label-overlaps-foreign-edge' &&
-          String(n.edgeId ?? '') === crossedId2 &&
-          String((n.details as { ownerEdgeId?: string })?.ownerEdgeId) === ownerId2
-      );
+    const pairKey = (owner: string, crossedEdge: string): string => `${owner}->${crossedEdge}`;
+    const thisCrossingGone = (issues: readonly IssueLike[]): boolean => {
+      for (const n of issues) {
+        if (n.type !== 'edge-label-overlaps-foreign-edge') {
+          continue;
+        }
+        const nOwner = String((n.details as { ownerEdgeId?: string })?.ownerEdgeId);
+        const nCrossed = String(n.edgeId ?? '');
+        if (nOwner === ownerId2 && nCrossed === crossedId2) {
+          return false; // target still present
+        }
+        if (clearedPairs.has(pairKey(nOwner, nCrossed))) {
+          return false; // a previously-cleared crossing came back — cycle
+        }
+      }
+      return true;
+    };
     if (tryTargets(crossed, i, shiftTargets, thisCrossingGone)) {
+      clearedPairs.add(pairKey(ownerId2, crossedId2));
       return;
     }
     // LAST RESORT for a shiftable rail with no free lane: the pocket is
@@ -370,6 +386,7 @@ export function repairRailProximityWhenIssuesImprove(
         // opened space, judged against the PRE-strip issue state.
         const stripTargets = [cutX + stripW / 2, cutX + stripW / 2 + 4, cutX + stripW / 2 - 4];
         if (tryTargets(crossed, i, stripTargets, thisCrossingGone)) {
+          clearedPairs.add(pairKey(ownerId2, crossedId2));
           return;
         }
         for (const m of movedNodes) {
