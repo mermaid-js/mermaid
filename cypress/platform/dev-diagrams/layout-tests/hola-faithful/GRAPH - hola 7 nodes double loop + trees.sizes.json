@@ -1,0 +1,655 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 69.4375,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 69.0546875,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 69.5703125,
+      "height": 54
+    },
+    {
+      "id": "D",
+      "width": 69.8125,
+      "height": 54
+    },
+    {
+      "id": "E",
+      "width": 68.5703125,
+      "height": 54
+    },
+    {
+      "id": "F",
+      "width": 68.3984375,
+      "height": 54
+    },
+    {
+      "id": "G",
+      "width": 70.8203125,
+      "height": 54
+    },
+    {
+      "id": "A1",
+      "width": 77.828125,
+      "height": 54
+    },
+    {
+      "id": "A2",
+      "width": 77.828125,
+      "height": 54
+    },
+    {
+      "id": "A11",
+      "width": 86.21875,
+      "height": 54
+    },
+    {
+      "id": "A12",
+      "width": 86.21875,
+      "height": 54
+    },
+    {
+      "id": "A13",
+      "width": 86.21875,
+      "height": 54
+    },
+    {
+      "id": "A111",
+      "width": 94.609375,
+      "height": 54
+    },
+    {
+      "id": "A112",
+      "width": 94.609375,
+      "height": 54
+    },
+    {
+      "id": "A131",
+      "width": 94.609375,
+      "height": 54
+    },
+    {
+      "id": "A132",
+      "width": 94.609375,
+      "height": 54
+    },
+    {
+      "id": "A133",
+      "width": 94.609375,
+      "height": 54
+    },
+    {
+      "id": "B1",
+      "width": 77.4453125,
+      "height": 54
+    },
+    {
+      "id": "B2",
+      "width": 77.4453125,
+      "height": 54
+    },
+    {
+      "id": "B3",
+      "width": 77.4453125,
+      "height": 54
+    },
+    {
+      "id": "B4",
+      "width": 77.4453125,
+      "height": 54
+    },
+    {
+      "id": "B5",
+      "width": 77.4453125,
+      "height": 54
+    },
+    {
+      "id": "B6",
+      "width": 77.4453125,
+      "height": 54
+    },
+    {
+      "id": "B11",
+      "width": 85.8359375,
+      "height": 54
+    },
+    {
+      "id": "B12",
+      "width": 85.8359375,
+      "height": 54
+    },
+    {
+      "id": "B31",
+      "width": 85.8359375,
+      "height": 54
+    },
+    {
+      "id": "B32",
+      "width": 85.8359375,
+      "height": 54
+    },
+    {
+      "id": "B33",
+      "width": 85.8359375,
+      "height": 54
+    },
+    {
+      "id": "B34",
+      "width": 85.8359375,
+      "height": 54
+    },
+    {
+      "id": "B61",
+      "width": 85.8359375,
+      "height": 54
+    },
+    {
+      "id": "C1",
+      "width": 77.9609375,
+      "height": 54
+    },
+    {
+      "id": "C2",
+      "width": 77.9609375,
+      "height": 54
+    },
+    {
+      "id": "C11",
+      "width": 86.3515625,
+      "height": 54
+    },
+    {
+      "id": "C12",
+      "width": 86.3515625,
+      "height": 54
+    },
+    {
+      "id": "C111",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C112",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C1111",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C1112",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C1113",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C121",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C1211",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "D1",
+      "width": 78.203125,
+      "height": 54
+    },
+    {
+      "id": "D2",
+      "width": 78.203125,
+      "height": 54
+    },
+    {
+      "id": "D3",
+      "width": 78.203125,
+      "height": 54
+    },
+    {
+      "id": "D4",
+      "width": 78.203125,
+      "height": 54
+    },
+    {
+      "id": "D5",
+      "width": 78.203125,
+      "height": 54
+    },
+    {
+      "id": "D11",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D12",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D13",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D21",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D22",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D23",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D24",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D25",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D26",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D41",
+      "width": 86.59375,
+      "height": 54
+    },
+    {
+      "id": "D111",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D112",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D131",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D132",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D133",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D134",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D221",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D251",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D252",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "D253",
+      "width": 94.984375,
+      "height": 54
+    },
+    {
+      "id": "E1",
+      "width": 76.9609375,
+      "height": 54
+    },
+    {
+      "id": "E2",
+      "width": 76.9609375,
+      "height": 54
+    },
+    {
+      "id": "E3",
+      "width": 76.9609375,
+      "height": 54
+    },
+    {
+      "id": "E11",
+      "width": 85.3515625,
+      "height": 54
+    },
+    {
+      "id": "E12",
+      "width": 85.3515625,
+      "height": 54
+    },
+    {
+      "id": "E13",
+      "width": 85.3515625,
+      "height": 54
+    },
+    {
+      "id": "E14",
+      "width": 85.3515625,
+      "height": 54
+    },
+    {
+      "id": "E15",
+      "width": 85.3515625,
+      "height": 54
+    },
+    {
+      "id": "E16",
+      "width": 85.3515625,
+      "height": 54
+    },
+    {
+      "id": "E31",
+      "width": 85.3515625,
+      "height": 54
+    },
+    {
+      "id": "E111",
+      "width": 93.7421875,
+      "height": 54
+    },
+    {
+      "id": "E112",
+      "width": 93.7421875,
+      "height": 54
+    },
+    {
+      "id": "E141",
+      "width": 93.7421875,
+      "height": 54
+    },
+    {
+      "id": "E311",
+      "width": 93.7421875,
+      "height": 54
+    },
+    {
+      "id": "E312",
+      "width": 93.7421875,
+      "height": 54
+    },
+    {
+      "id": "E313",
+      "width": 93.7421875,
+      "height": 54
+    },
+    {
+      "id": "E1111",
+      "width": 102.1328125,
+      "height": 54
+    },
+    {
+      "id": "E1121",
+      "width": 102.1328125,
+      "height": 54
+    },
+    {
+      "id": "E1122",
+      "width": 102.1328125,
+      "height": 54
+    },
+    {
+      "id": "E3131",
+      "width": 102.1328125,
+      "height": 54
+    },
+    {
+      "id": "F1",
+      "width": 76.7890625,
+      "height": 54
+    },
+    {
+      "id": "F2",
+      "width": 76.7890625,
+      "height": 54
+    },
+    {
+      "id": "F3",
+      "width": 76.7890625,
+      "height": 54
+    },
+    {
+      "id": "F4",
+      "width": 76.7890625,
+      "height": 54
+    },
+    {
+      "id": "F11",
+      "width": 85.1796875,
+      "height": 54
+    },
+    {
+      "id": "F31",
+      "width": 85.1796875,
+      "height": 54
+    },
+    {
+      "id": "F32",
+      "width": 85.1796875,
+      "height": 54
+    },
+    {
+      "id": "F111",
+      "width": 93.5703125,
+      "height": 54
+    },
+    {
+      "id": "F311",
+      "width": 93.5703125,
+      "height": 54
+    },
+    {
+      "id": "F312",
+      "width": 93.5703125,
+      "height": 54
+    },
+    {
+      "id": "F313",
+      "width": 93.5703125,
+      "height": 54
+    },
+    {
+      "id": "F314",
+      "width": 93.5703125,
+      "height": 54
+    },
+    {
+      "id": "F315",
+      "width": 93.5703125,
+      "height": 54
+    },
+    {
+      "id": "F321",
+      "width": 93.5703125,
+      "height": 54
+    },
+    {
+      "id": "G1",
+      "width": 79.2109375,
+      "height": 54
+    },
+    {
+      "id": "G2",
+      "width": 79.2109375,
+      "height": 54
+    },
+    {
+      "id": "G3",
+      "width": 79.2109375,
+      "height": 54
+    },
+    {
+      "id": "G4",
+      "width": 79.2109375,
+      "height": 54
+    },
+    {
+      "id": "G5",
+      "width": 79.2109375,
+      "height": 54
+    },
+    {
+      "id": "G11",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G12",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G13",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G21",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G41",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G42",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G43",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G44",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G45",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G46",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G111",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G112",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G131",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G132",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G133",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G411",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G441",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G442",
+      "width": 95.9921875,
+      "height": 54
+    },
+    {
+      "id": "G1111",
+      "width": 104.3828125,
+      "height": 54
+    },
+    {
+      "id": "G1112",
+      "width": 104.3828125,
+      "height": 54
+    },
+    {
+      "id": "G1331",
+      "width": 104.3828125,
+      "height": 54
+    },
+    {
+      "id": "G4421",
+      "width": 104.3828125,
+      "height": 54
+    },
+    {
+      "id": "G4422",
+      "width": 104.3828125,
+      "height": 54
+    },
+    {
+      "id": "G4423",
+      "width": 104.3828125,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "6d68c842c1478531f7d98ba031aee2694861a1f8233253104b9597bedaeed259",
+    "capturedAt": "2026-08-26T12:02:12.327Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola 7 nodes double loop + trees.mmd theme=default look=classic layout=grid-attached"
+  }
+}

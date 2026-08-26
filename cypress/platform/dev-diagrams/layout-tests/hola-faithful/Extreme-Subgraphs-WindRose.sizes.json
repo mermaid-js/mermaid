@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "NW",
+      "width": 83.84375,
+      "height": 54
+    },
+    {
+      "id": "NE",
+      "width": 78.78125,
+      "height": 54
+    },
+    {
+      "id": "SW",
+      "width": 81.328125,
+      "height": 54
+    },
+    {
+      "id": "SE",
+      "width": 76.265625,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 69.5703125,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "2158bc08fcb46e1d38f05ea05c33ab47a7936dbd00d38bf2b0be03277471c99c",
+    "capturedAt": "2026-08-26T11:35:49.323Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/Extreme-Subgraphs-WindRose.mmd theme=default look=classic layout=grid-attached"
+  }
+}

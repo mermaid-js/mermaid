@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "C1",
+      "width": 77.9609375,
+      "height": 54
+    },
+    {
+      "id": "C2",
+      "width": 77.9609375,
+      "height": 54
+    },
+    {
+      "id": "C3",
+      "width": 77.9609375,
+      "height": 54
+    },
+    {
+      "id": "C4",
+      "width": 77.9609375,
+      "height": 54
+    },
+    {
+      "id": "C5",
+      "width": 77.9609375,
+      "height": 54
+    },
+    {
+      "id": "C1_1",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C1_2",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C1_11",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C1_12",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C1_13",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C1_111",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C1_21",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C2_1",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C2_2",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C2_11",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C2_12",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C3_1",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C3_11",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C3_12",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_1",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C4_2",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C4_11",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_12",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_21",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_22",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_111",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_112",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_121",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_122",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_211",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_221",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_1111",
+      "width": 119.9140625,
+      "height": 54
+    },
+    {
+      "id": "C4_1121",
+      "width": 119.9140625,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "788bcc2baca4b399430024eac2351c9ef82cb29caf0438133a1b498fe2db9a20",
+    "capturedAt": "2026-08-26T11:39:34.783Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola 5 nodes loop + trees.mmd theme=default look=classic layout=grid-attached"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 69.4375,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 69.0546875,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 69.5703125,
+      "height": 54
+    },
+    {
+      "id": "D",
+      "width": 69.8125,
+      "height": 54
+    },
+    {
+      "id": "E",
+      "width": 68.5703125,
+      "height": 54
+    },
+    {
+      "id": "F",
+      "width": 68.3984375,
+      "height": 54
+    },
+    {
+      "id": "G",
+      "width": 70.8203125,
+      "height": 54
+    },
+    {
+      "id": "A1",
+      "width": 77.828125,
+      "height": 54
+    },
+    {
+      "id": "A11",
+      "width": 86.21875,
+      "height": 54
+    },
+    {
+      "id": "A12",
+      "width": 86.21875,
+      "height": 54
+    },
+    {
+      "id": "A2",
+      "width": 77.828125,
+      "height": 54
+    },
+    {
+      "id": "A21",
+      "width": 86.21875,
+      "height": 54
+    },
+    {
+      "id": "A22",
+      "width": 86.21875,
+      "height": 54
+    },
+    {
+      "id": "F1",
+      "width": 76.7890625,
+      "height": 54
+    },
+    {
+      "id": "F11",
+      "width": 85.1796875,
+      "height": 54
+    },
+    {
+      "id": "F12",
+      "width": 85.1796875,
+      "height": 54
+    },
+    {
+      "id": "F2",
+      "width": 76.7890625,
+      "height": 54
+    },
+    {
+      "id": "F21",
+      "width": 85.1796875,
+      "height": 54
+    },
+    {
+      "id": "G1",
+      "width": 79.2109375,
+      "height": 54
+    },
+    {
+      "id": "G11",
+      "width": 87.6015625,
+      "height": 54
+    },
+    {
+      "id": "G12",
+      "width": 87.6015625,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "8279f0ffc72d9464d742d625f9590f1fde6585e0f3e742e1c26c6df716b4ffa7",
+    "capturedAt": "2026-08-26T12:10:56.535Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola 7 nodes double loop + trees - easy - subgraph1.mmd theme=default look=classic layout=grid-attached"
+  }
+}
