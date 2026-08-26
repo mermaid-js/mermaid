@@ -1019,3 +1019,10 @@ run ended: stop condition = remaining invalid fixtures need work outside the loo
 - result: sweep 65/65, total unchanged 52,808 to the decimal, invalid 2, cost 773.6M -> 755.7M (-17.9M, mostly triage2 settling faster). triage2 issues 11 -> 9, HARD 3 -> 2.
 - REMAINING on triage2, precisely: (a) parallel pair L_assign_Done~L_fixPR_Done 5.3px over 102px — Done's approach corridor holds four edges in ~8px of lanes; every shift lands on a sibling (measured, six candidates). (b) L_fixPR's label on L_deps_Review — 2-point straight in the BSState fan, jogs land on siblings in all four directions. BOTH are the "lane sharing for parallel runs" work the validation meeting explicitly deferred: corridor-level lane assignment, not per-edge repair.
 - verdict note: flat-total keep, flagged (round-5/a470ebab0 precedent) — hard-issue count on the goal fixture fell and corpus cost fell.
+
+### round 3 — triage2's last two: measured to the wall (REVERTED)
+
+- the shipped label overlap (L_fixPR's label on L_deps) exists only AFTER the end-of-layout label relocation, so a final-stage rail-repair pass was added after it, plus a "slide both ports of a 2-point straight edge" candidate. Both measured: the label rect is 108px WIDE (not the 2px clip a first read suggested), the right slide (38px) detaches deps' port, the left slide (74px) goes through fixPR's node, and every jog side lands on a fan sibling. All rejects, nothing moved — reverted per the no-neutral-churn rule.
+- CONFIRMED, three ways now: triage2's remaining two hard issues (the Done corridor's 4-edges-in-8px parallel pair, and the BSState fan boxing a 108px label) are corridor-capacity defects. No per-edge repair has a legal move; the fix is lane assignment for parallel runs into a shared node side — the work the validation meeting deferred, and placement-scale.
+
+run ended: goal partially reached — architecture4 VALID (0 -> 847.4); triage2 issues 13 -> 9, hard 4 -> 2, remaining work is the deferred lane-sharing feature (supervised structural). total 51,966 -> 52,808 (+842). invalid 3 -> 2 (triage2, 14-messy-layout[out of scope]). cost 770.5M -> 755.7M (94.1%).
