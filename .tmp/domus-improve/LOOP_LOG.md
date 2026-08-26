@@ -1131,3 +1131,11 @@ run ended: GOAL REACHED — triage2 VALID. total 52,808 -> 52,808 (validity-only
 - lesson, embarrassing and useful: the constant's own doc block already documented this exact experiment — "Below 35 the warning comes true: svelte5-code loses its nested boundary hops... 30 looked like a win before svelte5-code was included", including the non-monotonicity trap. READ THE CONSTANT'S DOC before re-tuning it; the corpus's frame-shape rules changed the reward side but not the breakage side. The +163 at pad 25 says the prize is real IF the border-hug/detach repairs learn to service tighter rings first — supervised work, queued as future.
 
 run ended: max_consecutive_reverts (rounds 11, 12, 13) — total 52,808.1 -> 53,412.3 (+604.2 of the +1000 goal). invalid 3 -> 1 (only out-of-scope swimlanes/14-messy-layout; both user-reported kissing-frame classes now priced by the validator AND repaired). cost 755.0M -> 799.0M (99.5% of ceiling).
+
+## RUN 2026-08-26T23 — branch domus-loop/2026-08-26T23 — baseline 53,412.3, invalid 1, cost 799.0M (99.5%)
+
+- goal: USER-SET — +1000 over 53,412.3 (target 54,412.3). swimlanes out of scope.
+- user lever to check first: PORT-SIDE choice vs bends — co-pilot-extension's "Hit max retries?" -> "Is kitchen codeblock..." runs 3 bends where a straight horizontal between facing sides exists; "same can be applied for next ones". A straight also earns the bendless waiver AND diamond-vertex attachment, so each conversion can clear port-off-diamond flags (40 each) on top of the bend pens.
+- action item recorded for later (memory: domus-look-variance-action-item): capture look=classic sizes as a second sweep regime; classic ships invalid today (architecture4 verified: EndUser/VendAI kiss the frame at ~1px) and is regression-tested nowhere.
+- CONSTRAINT carried from last run: cost ceiling 99.5% consumed — quality rounds must be ~cost-neutral or pay for themselves.
+- time_budget_sec: default 14400
