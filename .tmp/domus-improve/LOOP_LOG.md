@@ -965,3 +965,12 @@ Swimlane floor (11,754) untouched — still clears at 24,575.
 - fix part 2 (kept): run the label-overlap relocation ONCE at the very END of layout() (after polish/compact, before stripDegenerate), with offsets enabled only there. Routes are final; sliding a label is pure gain. The in-finalize call keeps its old candidate set.
 - result: sweep 65/65, total +200 (ONLY triage moved: 0 -> 200 VALID), invalid 5 -> 4, cost 756.4M -> 757.5M (+1.1M). KNOWN_INVALID shrunk by domus/triage (required bookkeeping).
 - lesson: WHERE a label pass runs is a validity question, not a cosmetic one — a label is an input to every monotone route-repair gate, so label moves belong strictly AFTER the last route change. And: a repair whose rejection leaves the pathology standing cannot be fixed by any gate, focused or not; the cost signature (chew spread over every downstream pass) identifies that family in one sweep.
+
+### round 3 — ARCH5 FLIPPED: group-reentry transit rail repair (KEPT) — 51,885 unchanged, invalid 4 -> 3, cost 94.9%
+
+- target: architecture5-components' one hard issue — `edge-reenters-own-group` on L_ALBs_Render_0. The route's mid rail at x=1373 sat 24px inside Core's right edge (1397.3): a transit pass through its own group before the real approach from below.
+- `edge-reenters-own-group` had NO repair (rule is new), and it is computed only UN-focused, so remediate's focused monotone accounting is structurally blind to it.
+- new pass `repairGroupReentryWhenIssuesImprove`: for each offender, find the interior runs, keep the run that carries the inside endpoint, and slide any other single-segment transit rail just outside the frame (nearest side first, spacing clearance). Judged per shift by full checkLayout — fewer issues, no new key. Wired winner-only next to widenEndpointApproachBands / escapeCornerConnections.
+- result: sweep 65/65, arch5 valid=true (score stays 0 — 5 groups of soft dead-space/elongation cap it; that is compaction work, separately visible now), total unchanged to the decimal, invalid 4 -> 3, cost 757.5M -> 762.2M (+0.6%). ONLY arch5's validity moved.
+- verdict note: flat-total keep, flagged. The loop's mechanical rule would revert an unchanged total; kept on the user's validity goal, same precedent as round 5/a470ebab0 of the 2026-08-24 run (the aggregate cannot see a 0 -> 0 validity flip).
+- KNOWN_INVALID shrunk by domus/architecture5-components. Remaining: architecture4, triage2, swimlanes/14-messy-layout.

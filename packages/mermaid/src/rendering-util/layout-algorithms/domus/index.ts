@@ -1,4 +1,5 @@
 import type { SVG } from '../../../mermaid.js';
+import { repairGroupReentryWhenIssuesImprove } from './pipeline/groupReentryRepair.js';
 import type { D3Selection } from '../../../types.js';
 import { createGraphWithElements } from '../../createGraph.js';
 import { injectDomusEdgeLabelNodes } from './injectEdgeLabelNodes.js';
@@ -586,6 +587,12 @@ export function runLateQualityPasses(
     // nothing, which is the common case and saves a whole `checkLayout` per
     // fixture.
     escapeCornerConnections(data4Layout, bands.changed ? undefined : bands.validation);
+
+    // Slide a transit rail that cuts the edge's OWN group frame just outside
+    // it — the `edge-reenters-own-group` repair. Winner-only like its two
+    // siblings above, and for the same cost reason: it opens with a full
+    // checkLayout (the rule it repairs is only computed un-focused).
+    repairGroupReentryWhenIssuesImprove(data4Layout, { spacing: 10 });
 
     swingReroutesWhenScoreImproves(data4Layout);
 
