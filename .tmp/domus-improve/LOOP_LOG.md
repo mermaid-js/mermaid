@@ -985,3 +985,13 @@ Swimlane floor (11,754) untouched — still clears at 24,575.
 - corpus: sweep 65/65, total unchanged 51,885, invalid 3, cost 762.2M -> 764.3M (+0.3%). ZERO fixture movement.
 - VERDICT, flagged: mechanical rule says unchanged total = revert; kept on the run's user-set validity goal per the round-5/a470ebab0 precedent — partial progress on a 0-clamped fixture is invisible to the aggregate by construction, and the machinery is the prerequisite for the flip.
 - lesson: in a fan corridor, the label-crossing repair hits a wall the moment every side of the label is another sibling's rail — at that density the defect is the FAN's placement, not any single route. Do not extend the jog machinery further; widen the corridor instead (placement work).
+
+### round 5 — group compaction re-enabled under the new frame rules (KEPT) — 51,885 -> 51,966 (+80), invalid 3, cost 95.9%
+
+- the `group-dead-space`/`group-elongation` rules price exactly what `tryGroupCompactionCandidate` reclaims, and the pass was inert (MAX_COMPACTION_NODES = 0) because pre-rules it measured ~36M for 0 points. That pricing is the material change that re-opens the lever.
+- MAX_COMPACTION_NODES 0 -> 18 alone: +80 (events 562 -> 577, payments1 877 -> 942) at 109.8% of ceiling — ALL of the +117M overrun was co-pilot-extension (+106M, 7x its own baseline routing) paying for a candidate it then rejected. Node-count gating cannot separate it from events (both 16 nodes).
+- kept form: two gates before the re-route — (a) baseline must carry a frame-shape issue (else nothing to reclaim; measured: saves nothing alone, non-frame fixtures already bail on MIN_RECLAIM), (b) the work LEDGER: skip when this drawing's layout has already cost > 10M units. What routing has already cost is the best forecast of what routing again will cost; co-pilot arrives at ~15M and is skipped, events/payments1 arrive well under.
+- result: sweep 65/65, total +80.4, invalid 3, cost 764.3M -> 770.5M (95.9%).
+- lesson: a lever closed as "costs X, earns 0" must be re-priced whenever the SCORER changes — and when re-opening it, gate on the measured constraint (work ledger), not on a proxy (node count) that happens to correlate on today's corpus.
+
+run ended: stop condition = remaining invalid fixtures need work outside the loop's contract (architecture4: placement, 26 prior rounds; triage2: BSState fan placement + 2 hard; 14-messy-layout: instrument decision) — total 49,812 -> 51,966 (+2,154). invalid 7 -> 3. cost 730.7M -> 770.5M (95.9% of ceiling).

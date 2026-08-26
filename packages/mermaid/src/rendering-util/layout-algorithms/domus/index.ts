@@ -34,6 +34,7 @@ import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupS
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
+import { totalLayoutCost } from '../layout-utils/layoutCost.js';
 import { checkLayout } from './validateLayoutProxy.js';
 import { widenEndpointApproachBands } from './pipeline/endpointBandWidening.js';
 import { escapeCornerConnections } from './pipeline/cornerEscapeRepair.js';
@@ -747,8 +748,25 @@ const COMPACTION_SLACK = 2;
  */
 const MIN_RECLAIM_FRACTION = 0.15;
 
-/** Node count above which a second routing pass is not worth its cost. */
-const MAX_COMPACTION_NODES = 0;
+/**
+ * Node count above which a second routing pass is not worth its cost.
+ *
+ * Was 0 (pass retained but inert) while the score had no area term: re-enabling
+ * measured ~36M work for 0 points. The 2026-08-26 `group-dead-space` /
+ * `group-elongation` rules price exactly what this candidate reclaims, so the
+ * gate is re-opened at the last value that earned its cost (18 — `domus/events`
+ * has 16 nodes and was the visible win).
+ */
+const MAX_COMPACTION_NODES = 18;
+
+/**
+ * Skip the compaction candidate when this drawing's layout has already cost
+ * more work than this — see the ledger gate in `tryGroupCompactionCandidate`.
+ * `domus/events` and `domus/payments1` arrive here well under 10M and earn
+ * +80 aggregate between them; `domus/co-pilot-extension` arrives at ~15M and
+ * its candidate measured +106M for nothing.
+ */
+const COMPACTION_REROUTE_WORK_BUDGET = 10_000_000;
 
 /** Width + height of the drawing's bounding box. */
 function drawingExtent(layout: LayoutData): number {
@@ -786,6 +804,28 @@ function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
   }
 
   const baseline = checkLayout(data4Layout);
+  // The candidate's entire cost is its re-route; only pay it when the score
+  // has something to reclaim here — a frame the validator says is too empty
+  // or too elongated. Without this, every small fixture paid a second
+  // routing pass whether or not compaction could earn anything (measured:
+  // +117M, 109.8% of the cost ceiling, for gains confined to fixtures that
+  // DO carry frame-shape issues).
+  const hasFrameShapeIssue = baseline.issues.some(
+    (i) => i.type === 'group-dead-space' || i.type === 'group-elongation'
+  );
+  if (!hasFrameShapeIssue) {
+    return;
+  }
+  // The candidate's price is a second full route of this drawing, and that
+  // price scales with how hostile the drawing already is to routing — which
+  // the work ledger has been measuring all along. co-pilot-extension (16
+  // nodes, same as events) spent 106M work units on a candidate it then
+  // rejected, 7x its whole baseline layout, purely because its geometry makes
+  // every repair pass iterate. What routing has already cost here is the best
+  // available forecast of what routing again will cost.
+  if (totalLayoutCost() > COMPACTION_REROUTE_WORK_BUDGET) {
+    return;
+  }
   const baselineArea = drawingArea(data4Layout);
 
   const candidate = cloneLayoutForFallbackCandidate(data4Layout);
