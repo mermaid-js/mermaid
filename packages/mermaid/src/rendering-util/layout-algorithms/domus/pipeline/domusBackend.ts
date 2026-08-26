@@ -570,7 +570,6 @@ export function maybeHandleDomusBackend(args: {
       // Prefer preserving vertical layering in flowchart TB/BT layouts.
       preferAxis: ctx.preferAxisForVerticalFlow,
     });
-
     // Ensure edge-label nodes have breathing room near their endpoints.
     nudgeEdgeLabelNodesAwayFromNeighbors(data, {
       minGap: Math.max(20, ctx.spacing * 2),
@@ -580,6 +579,17 @@ export function maybeHandleDomusBackend(args: {
     // Additional clearance for directly connected pairs so arrowheads have room.
     nudgeConnectedPairsForMinGap(data, {
       minGap: Math.max(50, ctx.spacing * 5),
+      preferAxis: ctx.preferAxisForVerticalFlow,
+    });
+    // Second pass of the min-gap net, AFTER the pair nudgers: the first run is
+    // structurally blind to pairs that still overlap (it only measures disjoint
+    // rects), and the pair nudgers above resolve overlaps and can land a moved
+    // node too close to a THIRD node they never look at. Re-running once the
+    // pairs are disjoint is what makes the validator's 30px floor actually
+    // hold; the Gx snap below is gap-guarded, so this separation now survives.
+    nudgeLeafNodesForMinimumSpacing(data, {
+      minGap: Math.max(30, ctx.spacing * 3),
+      maxIterations: 60,
       preferAxis: ctx.preferAxisForVerticalFlow,
     });
 
@@ -1003,6 +1013,12 @@ export function maybeHandleDomusBackend(args: {
     });
     nudgeConnectedPairsForMinGap(data, {
       minGap: Math.max(50, (options.spacing ?? 10) * 5),
+      preferAxis: ctx.preferAxisForVerticalFlow,
+    });
+    // Same second net pass as the cycle-removal branch, same reason.
+    nudgeLeafNodesForMinimumSpacing(data, {
+      minGap: Math.max(30, (options.spacing ?? 10) * 3),
+      maxIterations: 60,
       preferAxis: ctx.preferAxisForVerticalFlow,
     });
     refreshClustersAfterLeafPlacement(data, options);

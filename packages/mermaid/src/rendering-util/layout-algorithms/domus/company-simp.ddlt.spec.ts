@@ -487,11 +487,13 @@ describe('Domus DDLT — Company-simp.mmd', () => {
         offenders.push({ id: String(edge.id ?? ''), ratio: Math.round(ratio * 100) / 100 });
       }
     }
-    // Same cause as the Gx-column test below: the fixture is invalid under the
-    // 2026-08-26 spacing rules, so it routes on the validation-failure fallback
-    // and one edge comes out at 2.2 instead of clearing 2.0. Pinned to that one
-    // edge — any OTHER edge bloating still fails.
-    expect(offenders.map((o) => o.id)).toEqual(['L_HongKongCompany_USCompany_0']);
+    // This previously pinned L_HongKongCompany_USCompany_0 at ratio 2.2: the
+    // fixture was invalid under the 2026-08-26 spacing rules and routed on the
+    // validation-failure fallback. The fixture is valid again since the
+    // clearance-delivery fixes (guarded Gx snap, signed connected-pair gap,
+    // post-nudger min-gap net, validator-floor sweep padding), so every edge
+    // clears 2.0 and the pinned debt is retired.
+    expect(offenders.map((o) => o.id)).toEqual([]);
   });
 
   it('Level 1: no U-turn direction reversals on any edge', { timeout: 30_000 }, async () => {

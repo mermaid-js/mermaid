@@ -105,7 +105,7 @@ const NODE_GROUP_CLEARANCE_DEFAULT = 30;
  * `rectFacingGap` returns null for boxes that merely meet diagonally, where a
  * small gap is not a legibility problem.
  */
-const NODE_NODE_PADDING = 30;
+export const NODE_NODE_PADDING = 30;
 
 /**
  * The configured node-to-foreign-group gap for this layout.
@@ -582,7 +582,7 @@ export interface ValidateLayoutResult {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Check if a node is a label dummy node (edge label placeholder) */
-function isLabelDummy(node: Node): boolean {
+export function isLabelDummy(node: Node): boolean {
   // Check isEdgeLabel field (from types.ts)
   if (node.isEdgeLabel === true) {
     return true;

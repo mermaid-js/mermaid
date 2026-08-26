@@ -3,6 +3,7 @@ import { log } from '../../../logger.js';
 import { ORTHO_DEBUG } from './debug.js';
 import { rectForNode } from './core/helpers.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
+import { NODE_NODE_PADDING, isLabelDummy } from '../layout-utils/validateLayout.js';
 
 export interface BoxNudgeResult {
   changed: boolean;
@@ -553,7 +554,14 @@ export function separateOverlapsBySweep(
         if (Math.abs(curOff - origin.get(prevId)![other]) >= halfOff(cur) + halfOff(prev)) {
           continue;
         }
-        const required = pos.get(prevId)! + halfOn(prev) + padding + halfOn(cur);
+        // Two REAL leaves that face each other owe the validator's
+        // `node-node-padding` floor, not just the router's clearance — a sweep
+        // that separates an overlap to 10 has traded a hard `node-overlap` for
+        // a hard `node-node-padding` and the layout is invalid either way.
+        // Label dummies keep the smaller padding (the validator exempts them).
+        const pairPad =
+          isLabelDummy(cur) || isLabelDummy(prev) ? padding : Math.max(padding, NODE_NODE_PADDING);
+        const required = pos.get(prevId)! + halfOn(prev) + pairPad + halfOn(cur);
         if (required > lowestAllowed) {
           lowestAllowed = required;
         }

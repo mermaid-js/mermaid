@@ -23,6 +23,7 @@
  */
 import type { LayoutData, Node } from '../../../types.js';
 import type { Shape, DomusGraph } from '../domus/types.js';
+import { NODE_NODE_PADDING, isLabelDummy } from '../../layout-utils/validateLayout.js';
 
 type AxisLabel = 'U' | 'D' | 'L' | 'R';
 
@@ -159,6 +160,82 @@ export function applyGxClassSnap(
     return undefined;
   };
 
+  // The nudgers that run before this snap exist to buy clearance the
+  // validator demands (`node-node-padding`, 30 between facing leaves). A
+  // snap that re-aligns a class can spend exactly that clearance — measured
+  // on deploy-pipeline (I~K 30 -> 5.5) and triage (RouteD~RouteF 30 ->
+  // overlap) — so a class is snapped only when the median move does not
+  // create or deepen a facing gap below the validator's own threshold.
+  const realLeaves: Node[] = (data.nodes ?? []).filter(
+    (n) =>
+      n &&
+      !n.isGroup &&
+      !isLabelDummy(n) &&
+      Number.isFinite((n as { x?: number }).x) &&
+      Number.isFinite((n as { y?: number }).y)
+  );
+
+  /** Facing gap between two leaf rects, negative penetration on overlap, null when diagonal. */
+  const pairGap = (
+    ax: number,
+    ay: number,
+    an: Node,
+    bx: number,
+    by: number,
+    bn: Node
+  ): number | null => {
+    const aw = (an.width ?? 0) / 2;
+    const ah = (an.height ?? 0) / 2;
+    const bw = (bn.width ?? 0) / 2;
+    const bh = (bn.height ?? 0) / 2;
+    const xGap = Math.max(bx - bw - (ax + aw), ax - aw - (bx + bw));
+    const yGap = Math.max(by - bh - (ay + ah), ay - ah - (by + bh));
+    if (xGap < 0 && yGap < 0) {
+      return Math.max(xGap, yGap); // overlap: negative penetration depth
+    }
+    if (xGap >= 0 && yGap >= 0) {
+      return null; // diagonal, not facing
+    }
+    return Math.max(xGap, yGap);
+  };
+
+  const snapWouldCrowd = (axis: 'x' | 'y', nodes: Node[], target: number): boolean => {
+    const movedSet = new Set(nodes);
+    const proposed = (n: Node): { x: number; y: number } => ({
+      x: axis === 'x' && movedSet.has(n) ? target : (n as { x: number }).x,
+      y: axis === 'y' && movedSet.has(n) ? target : (n as { y: number }).y,
+    });
+    for (const m of nodes) {
+      if (m.isGroup || isLabelDummy(m)) {
+        continue;
+      }
+      const mNew = proposed(m);
+      for (const o of realLeaves) {
+        if (o === m) {
+          continue;
+        }
+        const oNew = proposed(o);
+        const before = pairGap(
+          (m as { x: number }).x,
+          (m as { y: number }).y,
+          m,
+          (o as { x: number }).x,
+          (o as { y: number }).y,
+          o
+        );
+        const after = pairGap(mNew.x, mNew.y, m, oNew.x, oNew.y, o);
+        if (
+          after != null &&
+          after < NODE_NODE_PADDING - 1e-6 &&
+          (before == null || after < before - 1e-6)
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   const snapAxis = (axis: 'x' | 'y'): void => {
     const classes = buildEquivalenceClasses(graph, shape, axis);
     for (const members of classes.values()) {
@@ -190,6 +267,9 @@ export function applyGxClassSnap(
         continue;
       } // nudger moved too far; leave alone
       const target = median(coords);
+      if (snapWouldCrowd(axis, nodes, target)) {
+        continue;
+      } // alignment must not spend validator-required clearance
       let moved = 0;
       let maxDelta = 0;
       for (const [i, node] of nodes.entries()) {

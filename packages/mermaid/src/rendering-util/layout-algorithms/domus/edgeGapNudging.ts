@@ -21,13 +21,13 @@ function horizontalGap(
   a: ReturnType<typeof rectForNode>,
   b: ReturnType<typeof rectForNode>
 ): number {
-  if (a.right <= b.left) {
-    return b.left - a.right;
-  }
-  if (b.right <= a.left) {
-    return a.left - b.right;
-  }
-  return 0; // overlap or touch
+  // Signed: negative while the rects interpenetrate in x. Clamping overlap to
+  // zero made `need = minGap - 0` while the boxes still had to travel the
+  // penetration depth before any gap opened, so every overlapping pair landed
+  // exactly `overlap` short of the promised clearance (Company-simp shipped
+  // 26.2 against a 50 target). Same defect family as boxNudging's
+  // `separationDeficit` fix (89a81612a).
+  return Math.max(b.left - a.right, a.left - b.right);
 }
 
 function overlapY(a: ReturnType<typeof rectForNode>, b: ReturnType<typeof rectForNode>): number {
