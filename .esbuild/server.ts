@@ -187,6 +187,23 @@ function hashDdltFixtureSource(source: string) {
   return createHash('sha256').update(source.replace(/\r\n/g, '\n')).digest('hex');
 }
 
+/** Existing fixture on disk, or undefined when there is none or it is unreadable. */
+async function readExistingFixture(sizesPath: string): Promise<
+  | {
+      nodes?: unknown;
+      groups?: unknown;
+      edges?: unknown;
+      metadata?: { capturedAt?: string };
+    }
+  | undefined
+> {
+  try {
+    return JSON.parse(await fs.readFile(sizesPath, 'utf-8'));
+  } catch {
+    return undefined;
+  }
+}
+
 function normalizeCapturedNodeSizes(value: unknown): DevExplorerCapturedNodeSize[] | null {
   if (!Array.isArray(value)) {
     return null;
@@ -572,6 +589,20 @@ async function createServer() {
       const mmdSource = await fs.readFile(absPath, 'utf-8');
       const sizesPath = absPath.replace(/\.mmd$/, '.sizes.json');
       const sizesRelPath = relPath.replace(/\.mmd$/, '.sizes.json');
+
+      // Preserve `capturedAt` when the measurements themselves have not moved.
+      // Re-capturing a directory is the normal response to editing ONE diagram,
+      // and stamping a fresh timestamp onto every sibling turns that into a
+      // diff touching every fixture in the folder — noise that hides the one
+      // file that actually changed.
+      const previous = await readExistingFixture(sizesPath);
+      const measurementsUnchanged =
+        previous !== undefined &&
+        JSON.stringify({
+          nodes: previous.nodes,
+          groups: previous.groups,
+          edges: previous.edges,
+        }) === JSON.stringify({ nodes, groups, edges });
       const capturedFrom =
         typeof body?.capturedFrom === 'string' ? body.capturedFrom : `dev-explorer ${relPath}`;
       const fixture = {
@@ -581,7 +612,9 @@ async function createServer() {
         metadata: {
           captureVersion: DDLT_SIZE_CAPTURE_VERSION,
           sourceSha256: hashDdltFixtureSource(mmdSource),
-          capturedAt: new Date().toISOString(),
+          capturedAt:
+            (measurementsUnchanged ? previous?.metadata?.capturedAt : undefined) ??
+            new Date().toISOString(),
           capturedFrom,
           // Recorded in their own fields so the sweep can assert them. Sizes and
           // shape outlines both depend on these, so a fixture captured at one
