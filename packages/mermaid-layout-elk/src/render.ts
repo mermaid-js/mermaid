@@ -14,6 +14,7 @@ import {
   type RectLike,
   outsideNode,
   computeNodeIntersection,
+  outlineAttachPoint,
   replaceEndpoint,
   onBorder,
 } from './geometry.js';
@@ -1538,6 +1539,33 @@ function applyEndIntersectionIfNeeded(
   }
 }
 
+/**
+ * Attachment point for the terminal at `portIndex`, on the axis the edge
+ * departs along.
+ *
+ * `step` is +1 at the start of the polyline and -1 at the end, i.e. the
+ * direction that walks AWAY from the node, which is what gives the departure
+ * direction. Groups are excluded: their frame already is their outline, and the
+ * caller has its own on-border handling for them.
+ */
+function attachAlongDepartureAxis(
+  node: NodeWithVertex,
+  bounds: RectLike,
+  points: P[],
+  portIndex: number,
+  step: 1 | -1
+): P | null {
+  if (node?.isGroup) {
+    return null;
+  }
+  const port = points[portIndex];
+  const next = points[portIndex + step];
+  if (!port || !next) {
+    return null;
+  }
+  return outlineAttachPoint(node, bounds, port, next);
+}
+
 function cutter2(
   startNode: NodeWithVertex,
   endNode: NodeWithVertex,
@@ -1568,12 +1596,12 @@ function cutter2(
 
   if (firstOutsideStartIndex !== -1) {
     const outsidePointForStart = points[firstOutsideStartIndex];
-    const startIntersection = computeNodeIntersection(
-      startNode,
-      startBounds,
-      outsidePointForStart,
-      startCenter
-    );
+    const startIntersection =
+      // Prefer an attachment on the edge's own departure axis; see
+      // `outlineAttachPoint`. Falls back to the centre-ray intersection, which
+      // is all a non-axis-aligned or shapeless endpoint can offer.
+      attachAlongDepartureAxis(startNode, startBounds, points, firstOutsideStartIndex, 1) ??
+      computeNodeIntersection(startNode, startBounds, outsidePointForStart, startCenter);
     log.debug('UIO cutter2: start intersection', startIntersection);
     replaceEndpoint(points, 'start', startIntersection);
   }
@@ -1595,12 +1623,9 @@ function cutter2(
   }
 
   if (outsidePointForEnd) {
-    const endIntersection = computeNodeIntersection(
-      endNode,
-      endBounds,
-      outsidePointForEnd,
-      endCenter
-    );
+    const endIntersection =
+      attachAlongDepartureAxis(endNode, endBounds, points, outsideIndexForEnd, -1) ??
+      computeNodeIntersection(endNode, endBounds, outsidePointForEnd, endCenter);
     log.debug('UIO cutter2: end intersection', { endIntersection, outsideIndexForEnd });
     replaceEndpoint(points, 'end', endIntersection);
   }

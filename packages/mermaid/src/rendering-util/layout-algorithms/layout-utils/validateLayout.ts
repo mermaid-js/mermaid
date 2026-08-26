@@ -243,6 +243,41 @@ function countInteriorRuns(points: Point[], rect: Rect): number {
   return runs;
 }
 
+/**
+ * Shapes whose outline IS their bounding box.
+ *
+ * Several checks reason about nodes as rectangles, which is exact for these and
+ * an over-approximation for everything else. A diamond, stadium or hexagon has
+ * an outline strictly inside its box, so an edge that correctly attaches to that
+ * outline has an endpoint inside the box and a terminal segment that crosses it
+ * — both legitimate, and both indistinguishable from a real defect if the node
+ * is treated as a plain rectangle.
+ *
+ * Listed positively, so a shape nobody has classified is assumed non-rect and
+ * merely loses some detection on its own endpoints, rather than being reported
+ * as broken for attaching correctly.
+ */
+const RECT_LIKE_SHAPES = new Set([
+  'rect',
+  'squareRect',
+  'roundedRect',
+  'labelRect',
+  'classBox',
+  'requirementBox',
+  'kanbanItem',
+  'note',
+  'rect_left_inv_arrow',
+  'text',
+]);
+
+function isRectLikeShape(node: Node | undefined): boolean {
+  if (!node) {
+    return true;
+  }
+  const shape = (node as { shape?: string }).shape;
+  return shape == null || RECT_LIKE_SHAPES.has(String(shape));
+}
+
 /** Shapes whose outline is a diamond, where the vertices are the natural ports. */
 const DECISION_SHAPES = new Set(['diam', 'diamond', 'decision', 'question']);
 
@@ -1599,6 +1634,22 @@ export function validateLayout(
       r.bottom < polyMinY - EPS_BORDER ||
       r.top > polyMaxY + EPS_BORDER;
 
+    const buildOwnTerminalStubSkip = (
+      obstacleId: string
+    ): ((a: Point, b: Point) => boolean) | undefined => {
+      const exemptStart = obstacleId === startId && !isRectLikeShape(sNode);
+      const exemptEnd = obstacleId === endId && !isRectLikeShape(tNode);
+      if (!exemptStart && !exemptEnd) {
+        return undefined;
+      }
+      const firstA = points[0];
+      const firstB = points[1];
+      const lastA = points[points.length - 2];
+      const lastB = points[points.length - 1];
+      return (a: Point, b: Point): boolean =>
+        (exemptStart && a === firstA && b === firstB) || (exemptEnd && a === lastA && b === lastB);
+    };
+
     for (const [obstacleId, obstacleRect] of obstacleRects) {
       if (outsidePolylineExtent(obstacleRect)) {
         continue;
@@ -1618,7 +1669,21 @@ export function validateLayout(
         continue;
       }
 
-      const hit = firstInteriorRectHit(points, obstacleRect, startAttach, endAttach);
+      // Same exception as `edge-endpoint-inside-node`, for the same reason. When
+      // the endpoint node's outline is inside its box, the terminal segment runs
+      // from that outline out across the box to reach the routed path, so it
+      // crosses the rect by construction. `L_ATTACH` is a fixed 8 and cannot
+      // cover it — the gap is as large as the shape's inset. Only the TERMINAL
+      // segment is exempt, so a path that later re-enters the node is still
+      // reported, which is the loop-back case the blanket skip was avoiding.
+      const skipOwnTerminalStub = buildOwnTerminalStubSkip(obstacleId);
+      const hit = firstInteriorRectHit(
+        points,
+        obstacleRect,
+        startAttach,
+        endAttach,
+        skipOwnTerminalStub
+      );
       if (hit) {
         issues.push({
           type: 'edge-intersects-obstacle',
@@ -1883,6 +1948,18 @@ export function validateLayout(
         }
         // The edge's own label node is a waypoint, not an obstacle — skip.
         if (ownLabelId && nodeIdForRect === ownLabelId) {
+          continue;
+        }
+        // The node this endpoint attaches to, when its outline sits inside its
+        // box: attaching correctly to a diamond or stadium PUTS the endpoint
+        // inside the box, so the rect test cannot tell a good attachment from a
+        // buried one. Only this endpoint's own node is exempt — an endpoint
+        // buried in any OTHER node is still a defect, which is what the check
+        // is for.
+        const isOwnTerminalNode =
+          (which === 'start' && nodeIdForRect === startId) ||
+          (which === 'end' && nodeIdForRect === endId);
+        if (isOwnTerminalNode && !isRectLikeShape(n)) {
           continue;
         }
         if (isStrictlyInside(endpoint, r)) {

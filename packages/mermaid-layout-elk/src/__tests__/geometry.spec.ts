@@ -5,6 +5,7 @@ import {
   makeInsidePoint,
   tryNodeIntersect,
   replaceEndpoint,
+  outlineAttachPoint,
   type RectLike,
   type P,
 } from '../geometry.js';
@@ -63,5 +64,74 @@ describe('geometry helpers', () => {
     // remove duplicate start
     replaceEndpoint(pts2, 'start', { x: 0, y: 0 });
     expect(pts2.length).toBe(1);
+  });
+
+  describe('outlineAttachPoint', () => {
+    // A diamond 105.48 wide and tall, centred like the `diamond-intersections`
+    // fixture: outline through the midpoints of its bounding box sides.
+    const half = 52.74;
+    const bounds: RectLike = { x: 76.74, y: 428.5, width: half * 2, height: half * 2 };
+    const diamond = {
+      intersect: (p: P): P => {
+        // Crossing of the ray centre -> p with |dx|/half + |dy|/half = 1.
+        const dx = p.x - bounds.x;
+        const dy = p.y - bounds.y;
+        const t = half / (Math.abs(dx) + Math.abs(dy));
+        return { x: bounds.x + dx * t, y: bounds.y + dy * t };
+      },
+    };
+
+    it('attaches on the outline at the port’s own offset along the side', () => {
+      // ELK's port sits on the bounding box at y = 454.87 and departs east. The
+      // attachment must keep that y, so the opening segment stays horizontal;
+      // the centre ray would instead land at y = 446.08 and open diagonally.
+      const port: P = { x: 129.48, y: 454.87 };
+      const next: P = { x: 144.48, y: 454.87 };
+
+      const attach = outlineAttachPoint(diamond, bounds, port, next)!;
+
+      expect(attach.y).toBe(port.y);
+      expect(approx(attach.x, 103.11, 0.01)).toBe(true);
+      // On the outline: |dx| + |dy| === half.
+      expect(
+        approx(Math.abs(attach.x - bounds.x) + Math.abs(attach.y - bounds.y), half, 0.01)
+      ).toBe(true);
+    });
+
+    it('keeps a vertical departure vertical', () => {
+      const port: P = { x: 60, y: 481.24 };
+      const next: P = { x: 60, y: 520 };
+
+      const attach = outlineAttachPoint(diamond, bounds, port, next)!;
+
+      expect(attach.x).toBe(port.x);
+      expect(
+        approx(Math.abs(attach.x - bounds.x) + Math.abs(attach.y - bounds.y), half, 0.01)
+      ).toBe(true);
+    });
+
+    it('returns the port unchanged for a shape whose outline is its box', () => {
+      const rect: RectLike = { x: 100, y: 100, width: 80, height: 40 };
+      const rectNode = {
+        intersect: (p: P): P => {
+          const dx = p.x - rect.x;
+          const dy = p.y - rect.y;
+          const t = Math.min(40 / Math.abs(dx || 1e-9), 20 / Math.abs(dy || 1e-9));
+          return { x: rect.x + dx * t, y: rect.y + dy * t };
+        },
+      };
+      const port: P = { x: 140, y: 112 };
+
+      const attach = outlineAttachPoint(rectNode, rect, port, { x: 180, y: 112 })!;
+
+      expect(approx(attach.x, port.x, 0.01)).toBe(true);
+      expect(approx(attach.y, port.y, 0.01)).toBe(true);
+    });
+
+    it('declines a shapeless node rather than guessing', () => {
+      expect(
+        outlineAttachPoint({}, bounds, { x: 129.48, y: 454.87 }, { x: 144.48, y: 454.87 })
+      ).toBe(null);
+    });
   });
 });

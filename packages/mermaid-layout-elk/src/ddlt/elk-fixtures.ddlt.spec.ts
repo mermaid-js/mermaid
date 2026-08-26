@@ -79,17 +79,19 @@ const REQUIRED_CAPTURE_VERSION = 2;
  * edge attachment. Removing it cleared `Render-stadium-shape` outright and took
  * the aggregate from 5748.5 to 6738.5.
  *
- * What survives is listed below. It is concentrated in the decision-shape
- * fixtures, where `intersect.polygon` computes the attachment along the line
- * from the node CENTRE to the query point, so a port that ELK placed off-centre
- * on the bounding box attaches part-way down a slanted face and opens with a
- * diagonal segment.
+ * The decision-shape fixtures that followed came from the adapter attaching
+ * along the ray from the node CENTRE, which lands on the outline at a different
+ * offset than the port ELK chose and so opened every edge with a diagonal
+ * segment. `outlineAttachPoint` now attaches along the edge's own departure
+ * axis instead, and `edge-endpoint-inside-node` / `edge-intersects-obstacle`
+ * no longer treat a correct attachment to a non-rect outline as a defect.
+ * Aggregate 6738.5 to 9128.5.
+ *
+ * What survives has nothing to do with shapes: bends landing too close to an
+ * endpoint, and group frames with more empty space than content.
  */
 const KNOWN_INVALID = new Set<string>([
-  'elk-edge-cases/diamond-intersections',
-  'elk-edge-cases/flowchart-edge-styling',
   'elk-edge-cases/many-subgraphs-and-edges',
-  'elk-edge-cases/non-rect-intersections',
   'elk-edge-cases/right-angles-not-curves',
   'elk-edge-cases/styled-edge-labels',
 ]);
