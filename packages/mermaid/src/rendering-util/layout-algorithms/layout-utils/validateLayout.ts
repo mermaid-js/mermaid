@@ -409,6 +409,8 @@ export type LayoutIssueType =
   | 'edge-bundled-attachment-point'
   /** Two edges that meet at a node run together for a stretch, travelling the same way. */
   | 'edge-bundled-subpath'
+  /** An edge passes exactly where another edge attaches to a node it has nothing to do with. */
+  | 'edge-passes-node-attachment'
   | 'edge-shared-projected-port'
   | 'edge-bend-near-endpoint'
   | 'edge-corner-connection'
@@ -839,6 +841,24 @@ function firstInteriorRectHit(
  * from or converge to. Two unrelated edges that happen to occupy the same lane
  * are ambiguous no matter which way they travel.
  */
+/** Shortest distance from a point to any segment of a polyline. */
+function distanceToPolyline(points: Point[], probe: Point): number {
+  let best = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i];
+    const b = points[i + 1];
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const lengthSquared = dx * dx + dy * dy;
+    const t =
+      lengthSquared === 0
+        ? 0
+        : Math.max(0, Math.min(1, ((probe.x - a.x) * dx + (probe.y - a.y) * dy) / lengthSquared));
+    best = Math.min(best, Math.hypot(probe.x - (a.x + t * dx), probe.y - (a.y + t * dy)));
+  }
+  return best;
+}
+
 function edgesShareEndpointNode(
   e1: { startId: string; endId: string },
   e2: { startId: string; endId: string }
@@ -2407,6 +2427,77 @@ export function validateLayout(
             }
           }
         }
+      }
+    }
+  }
+
+  // ─── edge-passes-node-attachment ───────────────────────────────────────────
+  // An edge that has nothing to do with node N, passing through the exact spot
+  // where some other edge attaches to N, is read as leaving N. The reader has
+  // no way to tell a line that touches a node from one that starts there, so
+  // the diagram asserts an edge that does not exist — the failure mode that
+  // makes bundled layouts untrustworthy, where a trunk from an upstream node
+  // brushes a node on its way past and its continuation looks like that node's
+  // own outgoing edge.
+  //
+  // Deliberately narrow. It is not about passing NEAR a node — `edge-border-hugging`
+  // covers running alongside one — but about coinciding with a real attachment
+  // point, within the same tolerance two attachment points must differ by.
+  const attachmentsByNode = new Map<string, { point: Point; edgeId: string }[]>();
+  const noteAttachment = (nodeId: string | undefined, point: Point, edgeId: string) => {
+    if (!nodeId || !point) {
+      return;
+    }
+    const list = attachmentsByNode.get(nodeId);
+    if (list) {
+      list.push({ point, edgeId });
+    } else {
+      attachmentsByNode.set(nodeId, [{ point, edgeId }]);
+    }
+  };
+  for (const em of edgeMetas) {
+    if (em.points.length >= 2) {
+      noteAttachment(em.startId, em.points[0], em.id);
+      noteAttachment(em.endId, em.points[em.points.length - 1], em.id);
+    }
+  }
+
+  for (const em of edgeMetas) {
+    if (shouldAbort()) {
+      return abortedResult();
+    }
+    if (em.points.length < 2) {
+      continue;
+    }
+    if (focused && !inFocus(em.id)) {
+      continue;
+    }
+    for (const [nodeId, attachments] of attachmentsByNode) {
+      // Its own endpoints attach there legitimately, and a group's frame
+      // contains edges by design.
+      if (nodeId === em.startId || nodeId === em.endId) {
+        continue;
+      }
+      const node = byId.get(nodeId);
+      if (!node || node.isGroup) {
+        continue;
+      }
+      const collision = attachments.find(
+        (attachment) =>
+          attachment.edgeId !== em.id &&
+          distanceToPolyline(em.points, attachment.point) <= EPS_SHARED_ATTACH
+      );
+      if (collision) {
+        issues.push({
+          type: 'edge-passes-node-attachment',
+          message: diag
+            ? `Edge "${em.id}" passes through where "${collision.edgeId}" attaches to node "${nodeId}", so it reads as leaving it`
+            : '',
+          edgeId: em.id,
+          nodeIds: [nodeId],
+          details: { throughPoint: collision.point, attachedEdgeId: collision.edgeId },
+        });
+        break;
       }
     }
   }

@@ -669,6 +669,72 @@ describe('validateLayout new geometric issues', () => {
     expect(types).not.toContain('edge-bundled-subpath');
   });
 
+  it('flags an edge that passes through where another edge attaches to a node', () => {
+    // U fans out to A and D. U->A ends on A's west border; U->D runs the SAME
+    // lane to that very point before turning away to D. Where the trunk stops
+    // being A's edge it visually carries on, so the continuation reads as
+    // "A --> D" — an edge the source never declared. This is the failure that
+    // makes bundled layouts untrustworthy, and it is invisible to the bundle
+    // checks, which only ask whether the two edges share a source.
+    const u = mkNode('U', 0, 100, 60, 40);
+    const a = mkNode('A', 240, 100, 60, 40);
+    const d = mkNode('D', 480, 100, 60, 40);
+    const uToA = mkEdge('U-A', 'U', 'A', [
+      { x: 30, y: 100 },
+      { x: 210, y: 100 },
+    ]);
+    const uToD = mkEdge('U-D', 'U', 'D', [
+      { x: 30, y: 100 },
+      { x: 210, y: 100 },
+      { x: 210, y: 160 },
+      { x: 450, y: 160 },
+      { x: 450, y: 100 },
+    ]);
+    const layout: LayoutData = { nodes: [u, a, d], edges: [uToA, uToD], config: {} as any };
+
+    expect(getIssueTypes(layout)).toContain('edge-passes-node-attachment');
+  });
+
+  it('leaves a bundle alone when it splits clear of the node', () => {
+    // The same pair, branching well before A. The split is visibly its own
+    // thing rather than something happening at A, so nothing is misattributed.
+    const u = mkNode('U', 0, 100, 60, 40);
+    const a = mkNode('A', 240, 100, 60, 40);
+    const d = mkNode('D', 480, 100, 60, 40);
+    const uToA = mkEdge('U-A', 'U', 'A', [
+      { x: 30, y: 100 },
+      { x: 210, y: 100 },
+    ]);
+    const uToD = mkEdge('U-D', 'U', 'D', [
+      { x: 30, y: 100 },
+      { x: 120, y: 100 },
+      { x: 120, y: 160 },
+      { x: 450, y: 160 },
+      { x: 450, y: 100 },
+    ]);
+    const layout: LayoutData = { nodes: [u, a, d], edges: [uToA, uToD], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-passes-node-attachment');
+  });
+
+  it('does not flag an edge for attaching to its own endpoint node', () => {
+    // Two edges meeting at N attach at the same place; that is
+    // edge-shared-attachment-point's business, not this check's.
+    const n = mkNode('N', 200, 100, 60, 40);
+    const x = mkNode('X', 0, 100, 60, 40);
+    const e1 = mkEdge('e1', 'X', 'N', [
+      { x: 30, y: 100 },
+      { x: 170, y: 100 },
+    ]);
+    const e2 = mkEdge('e2', 'N', 'X', [
+      { x: 170, y: 100 },
+      { x: 30, y: 100 },
+    ]);
+    const layout: LayoutData = { nodes: [n, x], edges: [e1, e2], config: {} as any };
+
+    expect(getIssueTypes(layout)).not.toContain('edge-passes-node-attachment');
+  });
+
   it('flags edge-parallel-segment-too-close for long nearby parallel sections', () => {
     // Regression shape from swimlanes/12 before the rail-separation fix:
     // `I -> exit` and `B -> exit` run vertically only ~1.94px apart over
