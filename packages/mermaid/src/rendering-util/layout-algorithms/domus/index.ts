@@ -33,6 +33,7 @@ import {
 import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupSpacing.js';
 import { separateGroupFramesWhenIssuesImprove } from './pipeline/groupFrameSeparation.js';
 import { snapDiamondPortsToVertexWhenScoreImproves } from './pipeline/diamondVertexSnap.js';
+import { alignGridNearMissesWhenScoreImproves } from './pipeline/gridNearMissAlign.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
@@ -620,6 +621,10 @@ export function runLateQualityPasses(
     // midpoint) — the `port-off-diamond-corner` repair. Winner-only for the
     // same cost reason as its siblings; strictly score-gated per move.
     snapDiamondPortsToVertexWhenScoreImproves(data4Layout);
+
+    // Nudge an almost-aligned connected pair onto one center line — the
+    // `grid-misalignment` repair. Winner-only, strictly score-gated per move.
+    alignGridNearMissesWhenScoreImproves(data4Layout);
 
     swingReroutesWhenScoreImproves(data4Layout);
 
