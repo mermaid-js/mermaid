@@ -1026,3 +1026,10 @@ run ended: stop condition = remaining invalid fixtures need work outside the loo
 - CONFIRMED, three ways now: triage2's remaining two hard issues (the Done corridor's 4-edges-in-8px parallel pair, and the BSState fan boxing a 108px label) are corridor-capacity defects. No per-edge repair has a legal move; the fix is lane assignment for parallel runs into a shared node side — the work the validation meeting deferred, and placement-scale.
 
 run ended: goal partially reached — architecture4 VALID (0 -> 847.4); triage2 issues 13 -> 9, hard 4 -> 2, remaining work is the deferred lane-sharing feature (supervised structural). total 51,966 -> 52,808 (+842). invalid 3 -> 2 (triage2, 14-messy-layout[out of scope]). cost 770.5M -> 755.7M (94.1%).
+
+## RUN 2026-08-26T20 — branch domus-loop/2026-08-26T20 — baseline 52,808, invalid 2, cost 755.7M (94.1%)
+
+- goal: USER-SET — triage2 VALID. swimlanes explicitly out of scope. This is the lane-sharing/corridor work two runs have converged on: (a) Done's approach corridor holds parallel rails of L_assign_Done/L_fixPR_Done (5.3px over 102px, four edges in ~8px of lanes), (b) the BSState fan boxes in L_fixPR_Review's 108px label, which L_deps_Review's 2-pt straight crosses.
+- ceiling note: triage2 valid still scores ~0 (bend 549 + cross 339 + soft > 1000) — this run buys validity, not points. Aggregate movement must come from zero collateral or side benefits.
+- TOOLING: the papers corpus is ABSENT in this environment (~/Documents/papers missing, MERMAID_GRAPH_PAPERS_PATH unset, no papers-query contract file). Literature input unavailable; proceeding on code evidence per rule 4, flagged per commit.
+- time_budget_sec: default 14400
