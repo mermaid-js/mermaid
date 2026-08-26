@@ -105,6 +105,25 @@ export interface GridAttachedOptions extends GridLikeOptions {
    */
   labelCrossingClearance: number;
 
+  /**
+   * Solve the core with its subgraph containers modelled, so the members of a
+   * container are held together and inside a frame by the constraint system rather
+   * than being placed by topology alone.
+   *
+   * Off, and measured rather than assumed. Turning it on does change the core — on
+   * `architecture` it costs 13 of the alignments grid-like had found, because
+   * containment and alignment want different things and containment must win — and
+   * across the corpus it changed the number of subgraphs that could be framed by
+   * exactly nothing. What decides a frame is whether a container's members ended up
+   * next to each other, and on these diagrams that is settled by which *component*
+   * each member landed in, not by how the core's own nodes are arranged.
+   *
+   * Left here because the mechanism is the one that would matter on a diagram whose
+   * containers live inside a single dense core, and because the finding above is
+   * worth being able to re-measure.
+   */
+  modelCoreGroups: boolean;
+
   /** Clearance the core router keeps from node rectangles. */
   routingClearance: number;
   /** A* penalty per bend, so a route with fewer corners wins. */
@@ -154,6 +173,8 @@ export function resolveGridAttachedOptions(
 
     labelClearance: overrides?.labelClearance ?? 12,
     labelCrossingClearance: overrides?.labelCrossingClearance ?? 24,
+
+    modelCoreGroups: overrides?.modelCoreGroups ?? false,
 
     routingClearance: overrides?.routingClearance ?? 12,
     routingBendPenalty: overrides?.routingBendPenalty ?? 40,

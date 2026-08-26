@@ -1,20 +1,25 @@
 import { log } from '../../../logger.js';
-import type { LayoutData } from '../../types.js';
+import type { LayoutData, Node } from '../../types.js';
 import {
+  X_AXIS,
+  Y_AXIS,
+  PRIORITY_CONTAINMENT,
+  buildContainmentConstraints,
   buildFlowConstraints,
   buildOverlapRemovalConstraints,
   hasOverlaps,
+  removeCyclicConstraints,
   resolveFlowAxis,
-  X_AXIS,
-  Y_AXIS,
 } from '../ipsep-cola/adapter/constraints.js';
+import type { PrioritisedConstraint } from '../ipsep-cola/adapter/constraints.js';
 import { buildIpsepColaGraph } from '../ipsep-cola/adapter/graph.js';
+import type { IpsepColaGraph } from '../ipsep-cola/adapter/graph.js';
 import { computeInitialLayout } from '../ipsep-cola/adapter/initialLayout.js';
 import { writeBackLayout } from '../ipsep-cola/adapter/writeBack.js';
 import { BlockState } from '../ipsep-cola/solver/blocks.js';
 import { ipsepCola } from '../ipsep-cola/solver/ipsepCola.js';
 import { project } from '../ipsep-cola/solver/project.js';
-import type { Axis, Position } from '../ipsep-cola/solver/stress.js';
+import type { Axis, Position, Spring } from '../ipsep-cola/solver/stress.js';
 import { idealDistances } from '../ipsep-cola/solver/stress.js';
 import type { SeparationConstraint } from '../ipsep-cola/solver/types.js';
 import { adaptiveConstrainedAlignment } from './aca/aca.js';
@@ -23,6 +28,13 @@ import { assembleAxisConstraints } from './gridConstraints.js';
 import type { GridLikeOptions } from './options.js';
 import { resolveGridLikeOptions, usesAca, usesGridSnap, usesNodeSnap } from './options.js';
 import { snapLayout } from './snap/snapLayout.js';
+
+/**
+ * Rank for the constraints `assembleAxisConstraints` produces, which carry none of
+ * their own. Below containment: a frame that loses its children is a worse drawing
+ * than one that loses an alignment.
+ */
+const PRIORITY_ASSEMBLED = PRIORITY_CONTAINMENT - 1;
 
 export interface GridLikeLayoutResult {
   /** Nodes handed to the solver (groups excluded). */
@@ -62,7 +74,14 @@ export function runGridLikeLayoutCore(
   overrides?: Partial<GridLikeOptions>
 ): GridLikeLayoutResult {
   const options = resolveGridLikeOptions(data4Layout, overrides);
-  const graph = buildIpsepColaGraph(data4Layout);
+  // Containers become frames with their own boundary variables only when the caller
+  // asks. Everything downstream copes either way: the penalty terms iterate leaves,
+  // so a boundary variable feels no snap and no stress, and is moved only by the
+  // projection that keeps a frame around its contents.
+  const graph = buildIpsepColaGraph(
+    data4Layout,
+    options.modelGroups ? { groups: true, titleHeightOf } : {}
+  );
 
   const empty: GridLikeLayoutResult = {
     variableCount: 0,
@@ -87,6 +106,32 @@ export function runGridLikeLayoutCore(
   );
   const flowConstraints = buildFlowConstraints(graph, flow, options);
 
+  // Fixed for the whole run, like the flow constraints, and — unlike them — needed
+  // on both axes: a frame has a low and a high edge along x and along y.
+  const containment = new Map<Axis, PrioritisedConstraint[]>([
+    [X_AXIS, options.modelGroups ? buildContainmentConstraints(graph, X_AXIS, options) : []],
+    [Y_AXIS, options.modelGroups ? buildContainmentConstraints(graph, Y_AXIS, options) : []],
+  ]);
+  const withContainment = (
+    axis: Axis,
+    constraints: SeparationConstraint[]
+  ): SeparationConstraint[] => {
+    const extra = containment.get(axis) ?? [];
+    if (extra.length === 0) {
+      return constraints;
+    }
+    // Cycles are removed over the *union*, and counting every variable: a cycle can
+    // run through a frame boundary, which is not one of the leaves. Assembled
+    // constraints carry no priority of their own, and containment is the one thing
+    // here that must not be dropped, so they are ranked below it.
+    const ranked = constraints.map((constraint) => ({
+      ...constraint,
+      priority: PRIORITY_ASSEMBLED,
+    }));
+    return removeCyclicConstraints([...extra, ...ranked], graph.variableCount);
+  };
+  const springs = options.modelGroups ? frameSprings(graph, options) : undefined;
+
   // §26 step 1 — untangle with the definite ordering constraints only. The
   // paper disables non-overlap here on purpose: overlaps at this stage are
   // cheap to fix and letting nodes pass through each other is what stops the
@@ -95,7 +140,9 @@ export function runGridLikeLayoutCore(
     {
       positions,
       distances,
-      constraintsForAxis: (axis) => (axis === flow.axis ? [...flowConstraints.constraints] : []),
+      springs,
+      constraintsForAxis: (axis) =>
+        withContainment(axis, axis === flow.axis ? [...flowConstraints.constraints] : []),
       constraintsDependOnPositions: false,
     },
     {
@@ -109,15 +156,18 @@ export function runGridLikeLayoutCore(
     alignments: readonly SeparatedAlignment[]
   ): ((axis: Axis, live: readonly Position[]) => SeparationConstraint[]) => {
     return (axis, live) =>
-      assembleAxisConstraints({
-        graph,
-        positions: live,
+      withContainment(
         axis,
-        flow,
-        flowConstraints,
-        alignments,
-        options,
-      });
+        assembleAxisConstraints({
+          graph,
+          positions: live,
+          axis,
+          flow,
+          flowConstraints,
+          alignments,
+          options,
+        })
+      );
   };
 
   // §26 step 2 — grid-like beautification.
@@ -136,14 +186,21 @@ export function runGridLikeLayoutCore(
       // Running it to full convergence once per accepted alignment costs |E|
       // full layouts and dominates everything else the algorithm does.
       (accepted) =>
-        runCfdl(positions, distances, constraintsForAxis(accepted), options, options.acaIterations),
+        runCfdl(
+          positions,
+          distances,
+          constraintsForAxis(accepted),
+          options,
+          options.acaIterations,
+          springs
+        ),
       options
     );
     alignments = aca.alignments;
     rejectedAlignments = aca.rejected;
 
     // One full solve at the end, now that the constraint set is settled.
-    runCfdl(positions, distances, constraintsForAxis(alignments), options);
+    runCfdl(positions, distances, constraintsForAxis(alignments), options, undefined, springs);
   }
 
   let snapIterations = 0;
@@ -164,7 +221,7 @@ export function runGridLikeLayoutCore(
   } else if (!usesAca(options.mode)) {
     // Nothing selected: run the constrained layout so the result is at least a
     // feasible IPSEP-COLA drawing rather than the untangled phase-1 one.
-    runCfdl(positions, distances, constraintsForAxis(alignments), options);
+    runCfdl(positions, distances, constraintsForAxis(alignments), options, undefined, springs);
   }
 
   enforceSeparation(graph, positions, options, flow, flowConstraints.constrainedPairs, alignments);
@@ -194,12 +251,14 @@ function runCfdl(
   distances: ReturnType<typeof idealDistances>,
   constraintsForAxis: (axis: Axis, live: readonly Position[]) => SeparationConstraint[],
   options: GridLikeOptions,
-  maxIterations = options.maxIterations
+  maxIterations = options.maxIterations,
+  springs?: Spring[]
 ): Position[] {
   return ipsepCola(
     {
       positions,
       distances,
+      springs,
       constraintsForAxis,
       constraintsDependOnPositions: true,
     },
@@ -254,4 +313,30 @@ function enforceSeparation(
   if (hasOverlaps(graph, positions, options, flowConstrainedPairs)) {
     log.debug('GRID-LIKE: overlaps remain after the separation pass');
   }
+}
+
+/**
+ * Clearance a container's title needs at the top of its frame.
+ *
+ * `measureGroupLabel` writes `labelBBox` during the measure stage, so this is a real
+ * measurement in the browser. A DOM-free run has no label box and falls back to
+ * plain padding, which is the right answer there — no title is drawn.
+ */
+function titleHeightOf(group: Node): number {
+  return group.labelBBox?.height ?? 0;
+}
+
+/**
+ * One zero-length spring per frame, pulling its two boundary variables together so
+ * the frame closes on its contents instead of keeping the widest extent it ever
+ * needed. Weighted in the stress model's own units — the weight of a one-hop pair —
+ * so it stays proportional as the ideal edge length changes.
+ */
+function frameSprings(graph: IpsepColaGraph, options: GridLikeOptions): Spring[] {
+  const unitWeight = 1 / (options.idealEdgeLength * options.idealEdgeLength);
+  return graph.groups.groups.map((group) => ({
+    a: group.minIndex,
+    b: group.maxIndex,
+    weight: unitWeight * options.frameTightness,
+  }));
 }

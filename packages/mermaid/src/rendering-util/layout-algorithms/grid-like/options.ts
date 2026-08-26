@@ -38,6 +38,17 @@ export type NodeSnapRadius = 'node-size' | 'snap-distance';
  */
 export interface GridLikeOptions extends IpsepColaOptions {
   mode: GridLikeMode;
+  /**
+   * Model subgraph containers as frames with their own boundary variables, so
+   * containment and sibling separation become constraints the solve honours.
+   *
+   * Off by default, and the default is the behaviour this layout has always had:
+   * every leaf a top-level sibling, no group variables, and frames fitted to
+   * whatever the layout produced. Turning it on changes where nodes end up — the
+   * members of a container are pulled together and held inside a frame — so it is
+   * a caller's decision, not something derived from the diagram.
+   */
+  modelGroups: boolean;
   /** `σ` — spacing of the virtual grid (§6). */
   gridSpacing: number;
   /** `τ` — snap radius of the quadratic penalty `q_σ` (§4). Defaults to `σ/2` (§6.2). */
@@ -77,6 +88,7 @@ export interface GridLikeOptions extends IpsepColaOptions {
 
 export const DEFAULT_GRID_LIKE_OPTIONS: Omit<GridLikeOptions, keyof IpsepColaOptions> = {
   mode: 'aca-grid-snap',
+  modelGroups: false,
   gridSpacing: 120,
   snapDistance: 60,
   nodeSnapWeight: 200,

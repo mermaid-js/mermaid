@@ -105,7 +105,24 @@ export function drawCore(
   };
 
   const layoutData = buildPartLayoutData(data, flat, part);
-  const grid = drawBestCore(layoutData, options);
+
+  // The core is solved with its subgraph containers present, so the members of a
+  // container are held together and inside a frame rather than scattered across the
+  // drawing by topology alone. Containers with no member in *this* core get no
+  // variables — `buildGroupModel` only models a container that encloses something —
+  // so passing them all is enough, and they stay out of `CoreDrawing.nodes`: this
+  // layout draws frames at the end, over every member wherever it ended up, and a
+  // frame in the core's node list would be an obstacle the router had to avoid.
+  const containers = (data.nodes ?? []).filter((node) => node.isGroup === true);
+  const solverData =
+    containers.length > 0
+      ? ({ ...layoutData, nodes: [...layoutData.nodes, ...containers] } as LayoutData)
+      : layoutData;
+  const grid = drawBestCore(
+    layoutData,
+    { ...options, modelGroups: options.modelCoreGroups && containers.length > 0 },
+    solverData
+  );
 
   const base = new Map(
     layoutData.nodes.map((node) => [node.id, { x: node.x ?? 0, y: node.y ?? 0 }])

@@ -337,3 +337,111 @@ function overlaps(a: Bounds, b: Bounds): boolean {
     Math.min(a.maxY, b.maxY) - Math.max(a.minY, b.minY) > eps
   );
 }
+
+/**
+ * Which containers enclose each leaf, innermost first.
+ *
+ * Wanted before anything is placed, which is why it does not come from
+ * {@link collectSubgraphs}: that reads positions and runs at the end, while
+ * placement needs membership at the start.
+ */
+export function subgraphMembership(data: LayoutData): Map<string, string[]> {
+  const nodes = data.nodes ?? [];
+  const byNodeId = new Map(nodes.map((node) => [node.id, node]));
+  const groupIds = new Set(nodes.filter((node) => node.isGroup === true).map((node) => node.id));
+  const membership = new Map<string, string[]>();
+  if (groupIds.size === 0) {
+    return membership;
+  }
+  for (const node of nodes) {
+    if (node.isGroup === true) {
+      continue;
+    }
+    const ancestors = ancestorsOf(node, byNodeId, groupIds);
+    if (ancestors.length > 0) {
+      membership.set(node.id, ancestors);
+    }
+  }
+  return membership;
+}
+
+/**
+ * Order components so that the ones sharing a container are packed side by side.
+ *
+ * This is where most of the scattering comes from, and it is nothing to do with how
+ * a tree is placed around a core. Dropping the edges that name a container splits a
+ * subgraph's members into separate components — `subgraph-variation`'s three members
+ * become three of them — and the packer then lays components out in discovery order,
+ * which has no reason to put a container's pieces together. A frame fitted around
+ * them afterwards has to reach across whatever the packer put in between.
+ *
+ * Sorting by the container path, outermost first, is enough to fix that: two
+ * components inside the same subgraph share a prefix and land next to each other,
+ * and nesting falls out of the same comparison, because a deeper path extends its
+ * parent's. Components in no container keep their discovery order among themselves
+ * and go last, where they cannot split a frame in half.
+ */
+export function orderComponentsBySubgraph<T>(
+  components: readonly T[],
+  nodeIdsOf: (component: T) => readonly string[],
+  membership: ReadonlyMap<string, string[]>
+): T[] {
+  if (membership.size === 0) {
+    return [...components];
+  }
+
+  const keyed = components.map((component, index) => ({
+    component,
+    index,
+    path: containerPath(nodeIdsOf(component), membership),
+  }));
+
+  keyed.sort((a, b) => {
+    // No container at all sorts last: such a component cannot break a frame, and
+    // moving it would reorder the drawing for nothing.
+    if (a.path.length === 0 || b.path.length === 0) {
+      if (a.path.length !== b.path.length) {
+        return a.path.length === 0 ? 1 : -1;
+      }
+      return a.index - b.index;
+    }
+    const compared = a.path.localeCompare(b.path);
+    return compared !== 0 ? compared : a.index - b.index;
+  });
+
+  return keyed.map((entry) => entry.component);
+}
+
+/**
+ * The container path shared by a component's nodes, outermost first.
+ *
+ * A component can straddle containers, so the path taken is the one most of its
+ * nodes agree on; ties go to the path that appears first, which keeps the result
+ * stable for a given input.
+ */
+function containerPath(
+  nodeIds: readonly string[],
+  membership: ReadonlyMap<string, string[]>
+): string {
+  const counts = new Map<string, number>();
+  for (const nodeId of nodeIds) {
+    const ancestors = membership.get(nodeId);
+    if (!ancestors || ancestors.length === 0) {
+      continue;
+    }
+    // Innermost first on the way in; a path reads outermost first so that a child's
+    // path extends its parent's and the two sort together.
+    const path = [...ancestors].reverse().join('\u0000');
+    counts.set(path, (counts.get(path) ?? 0) + 1);
+  }
+
+  let best = '';
+  let bestCount = 0;
+  for (const [path, count] of counts) {
+    if (count > bestCount) {
+      best = path;
+      bestCount = count;
+    }
+  }
+  return best;
+}

@@ -77,12 +77,13 @@ interface Candidate {
  */
 export function drawBestCore(
   layoutData: LayoutData,
-  options: GridAttachedOptions
+  options: GridAttachedOptions,
+  solverData: LayoutData = layoutData
 ): GridLikeLayoutResult {
   let best: Candidate | undefined;
 
   for (const { label, overrides } of CANDIDATES) {
-    const candidate = draw(layoutData, { ...options, ...overrides }, label);
+    const candidate = draw(layoutData, { ...options, ...overrides }, label, solverData);
     if (!best || isBetter(candidate, best)) {
       best = candidate;
     }
@@ -101,10 +102,22 @@ export function drawBestCore(
   return best!.grid;
 }
 
-function draw(layoutData: LayoutData, options: GridAttachedOptions, label: string): Candidate {
+/**
+ * `solverData` is what grid-like is asked to lay out; `layoutData` is what the
+ * candidate is *judged* on. They differ when the core's subgraph containers are
+ * modelled: the containers have to be in the solve to constrain it, and must stay
+ * out of the metrics, where a frame would read as a node and every edge leaving a
+ * subgraph would count as an edge through one.
+ */
+function draw(
+  layoutData: LayoutData,
+  options: GridAttachedOptions,
+  label: string,
+  solverData: LayoutData
+): Candidate {
   // `computeInitialLayout` starts from a BFS ranking rather than from whatever is
   // currently on the nodes, so one candidate cannot influence the next.
-  const grid = runGridLikeLayoutCore(layoutData, options);
+  const grid = runGridLikeLayoutCore(solverData, options);
 
   return {
     label,

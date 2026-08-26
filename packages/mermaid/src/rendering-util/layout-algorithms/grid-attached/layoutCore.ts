@@ -95,7 +95,9 @@ import {
   collectSubgraphs,
   fitSubgraphFrames,
   frameIsClean,
+  orderComponentsBySubgraph,
   placeEmptyFrames,
+  subgraphMembership,
 } from './subgraphs.js';
 import type { FittedFrame, SubgraphModel } from './subgraphs.js';
 import type { LabelObstacles, RouteSegment } from './labelPlacement.js';
@@ -176,8 +178,18 @@ export function runGridAttachedLayoutCore(
     layoutComponent(data, flat, component.id, component.graph, flowGrowth, options, diagnostics)
   );
 
+  // Packed in container order, not discovery order. An edge naming a container is
+  // not in the topology, so a container's members can fall into several components,
+  // and a frame can only close on them if the packer keeps those components
+  // together — this is where most of the scattering came from, not from how a tree
+  // is placed around a core.
+  const packOrder = orderComponentsBySubgraph(
+    laidOut,
+    (component) => component.nodes.map((node) => node.id),
+    subgraphMembership(data)
+  );
   const bounds = packComponentsLeftToRight(
-    laidOut.map((component) => ({
+    packOrder.map((component) => ({
       bounds: component.bounds,
       translate: (dx: number, dy: number) => translateComponent(component, dx, dy),
     })),

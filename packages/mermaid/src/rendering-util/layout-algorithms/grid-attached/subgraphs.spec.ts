@@ -277,6 +277,49 @@ describe('grid-attached subgraphs', () => {
     });
   });
 
+  describe('components of one container', () => {
+    it('packs the pieces of a container together, so a frame can close on them', () => {
+      // `a` and `b` are both in `one` and share no edge, so they are separate
+      // components; `z1 -> z2` is a third, declared between them. In discovery order
+      // the packer would put `z` in the middle and any frame around `a` and `b`
+      // would have to reach across it.
+      const data = layoutData(
+        [group('one'), node('a', 'one'), node('z1'), node('z2'), node('b', 'one')],
+        [edge('z1', 'z2')]
+      );
+      const result = runGridAttachedLayoutCore(data);
+
+      expect(
+        result.diagnostics.filter((d) => d.code === 'GRID_ATTACHED_SUBGRAPH_NOT_FRAMED')
+      ).toEqual([]);
+      const frame = boxOf(data, 'one');
+      expect(contains(frame, boxOf(data, 'a'))).toBe(true);
+      expect(contains(frame, boxOf(data, 'b'))).toBe(true);
+      for (const outsider of ['z1', 'z2']) {
+        const box = boxOf(data, outsider);
+        const overlaps =
+          Math.min(frame.maxX, box.maxX) - Math.max(frame.minX, box.minX) > 1e-6 &&
+          Math.min(frame.maxY, box.maxY) - Math.max(frame.minY, box.minY) > 1e-6;
+        expect(overlaps, `${outsider} is outside the frame`).toBe(false);
+      }
+    });
+
+    it('keeps sibling containers out of each other', () => {
+      const data = layoutData(
+        [group('one'), group('two'), node('a', 'one'), node('c', 'two'), node('b', 'one')],
+        []
+      );
+      runGridAttachedLayoutCore(data);
+
+      const one = boxOf(data, 'one');
+      const two = boxOf(data, 'two');
+      const overlaps =
+        Math.min(one.maxX, two.maxX) - Math.max(one.minX, two.minX) > 1e-6 &&
+        Math.min(one.maxY, two.maxY) - Math.max(one.minY, two.minY) > 1e-6;
+      expect(overlaps).toBe(false);
+    });
+  });
+
   describe('the drawing as a whole', () => {
     it('keeps every frame in the positive quadrant', () => {
       const data = layoutData(
