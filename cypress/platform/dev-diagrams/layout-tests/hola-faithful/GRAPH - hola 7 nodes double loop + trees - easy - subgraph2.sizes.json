@@ -108,8 +108,8 @@
   ],
   "metadata": {
     "captureVersion": 1,
-    "sourceSha256": "aab11984a190dd3c453b2acfbfa35add4e77ff6ad3c7f0267da975d0982e739a",
-    "capturedAt": "2026-08-26T12:52:35.886Z",
-    "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola 7 nodes double loop + trees - easy - subgraph1.mmd theme=default look=classic layout=grid-attached"
+    "sourceSha256": "3446566ec0200cb141ce8ce1687164039df540d89a34cacb335201a50f5d3b1b",
+    "capturedAt": "2026-08-26T12:54:12.632Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola 7 nodes double loop + trees - easy - subgraph2.mmd theme=default look=classic layout=grid-attached"
   }
 }
