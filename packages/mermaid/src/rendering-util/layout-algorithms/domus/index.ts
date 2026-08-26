@@ -763,17 +763,6 @@ const COMPACTION_SLACK = 2;
 const MIN_RECLAIM_FRACTION = 0.15;
 
 /**
- * Node count above which a second routing pass is not worth its cost.
- *
- * Was 0 (pass retained but inert) while the score had no area term: re-enabling
- * measured ~36M work for 0 points. The 2026-08-26 `group-dead-space` /
- * `group-elongation` rules price exactly what this candidate reclaims, so the
- * gate is re-opened at the last value that earned its cost (18 — `domus/events`
- * has 16 nodes and was the visible win).
- */
-const MAX_COMPACTION_NODES = 18;
-
-/**
  * Skip the compaction candidate when this drawing's layout has already cost
  * more work than this — see the ledger gate in `tryGroupCompactionCandidate`.
  * `domus/events` and `domus/payments1` arrive here well under 10M and earn
@@ -808,15 +797,13 @@ function drawingExtent(layout: LayoutData): number {
  */
 function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
   // Re-routing is the entire cost of this candidate and it scales with the
-  // drawing. The corpus's large fixtures are already 200M+ work units each, so
-  // paying a second routing pass on one of those swamps anything the compaction
-  // can earn: without these gates the candidate measured +5 aggregate for +452M work, 135%
-  // of the ceiling. Small drawings are where a re-route is affordable, and they
-  // are also where a single empty frame is most of what the reader sees.
-  if ((data4Layout.nodes ?? []).length > MAX_COMPACTION_NODES) {
-    return;
-  }
-
+  // drawing, so the gates below keep it for drawings where it is affordable
+  // and has something to earn. A node-count cap (18) used to sit here as well;
+  // it was a proxy for the same thing the work ledger measures directly, and
+  // it blocked exactly the fixtures with the largest reclaimable frame
+  // penalties at the smallest measured cost (mystery 23 nodes / 3.4M work,
+  // architecture-ecosystem 28 / 7.7M, mermaid-ai-input-and-models 27 / 2.2M)
+  // while everything genuinely expensive was already ledger-blocked.
   const baseline = checkLayout(data4Layout);
   // The candidate's entire cost is its re-route; only pay it when the score
   // has something to reclaim here — a frame the validator says is too empty
