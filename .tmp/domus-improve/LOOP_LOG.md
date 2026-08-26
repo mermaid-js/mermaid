@@ -1139,3 +1139,10 @@ run ended: max_consecutive_reverts (rounds 11, 12, 13) — total 52,808.1 -> 53,
 - action item recorded for later (memory: domus-look-variance-action-item): capture look=classic sizes as a second sweep regime; classic ships invalid today (architecture4 verified: EndUser/VendAI kiss the frame at ~1px) and is regression-tested nowhere.
 - CONSTRAINT carried from last run: cost ceiling 99.5% consumed — quality rounds must be ~cost-neutral or pay for themselves.
 - time_budget_sec: default 14400
+
+### round 1 — facing-pair straightening (KEPT) — 53,412 -> 53,456 (+44), invalid 1, cost 99.4%
+
+- USER-NAMED lever, verified in geometry first: co-pilot's n7 ("Is kitchen...") and n9 ("Hit max retries?") share center y=238.0 EXACTLY with a free 98px corridor, yet route over the top with 3 bends; n7~n11 same; n10~endNode share x=1593.7 with 4 bends.
+- new pass `straightenFacingPairsWhenScoreImproves` (winner-only, before the diamond snap): for a >2-point edge whose nodes are disjoint on one axis with side spans overlapping >= 8 on the other, replace the polyline with the straight between facing sides — shared center line first (diamond vertices live there), overlap middle as fallback; label rides to the midpoint. Strict score gate per candidate.
+- result: 5 edges straightened corpus-wide — co-pilot L_n7_n9 + L_n7_n11 (+24, the user's exact examples), Company L_USCompany_Expenses 5->2 (+5), architecture2 L_HOOK_ROUTES 4->2 (+5), deploy-pipeline L_I_J 4->2 (+10). L_n10_endNode's straight rejected by the gate (corridor not actually clean). Sweep 65/65, total 53,456.3, cost DOWN a touch (99.4%). Wider suite 561, 0 collateral.
+- literature: same family as round-4 (T21) port re-assignment citations — three-phase port phase, KLay local post-adjustments remove bends.

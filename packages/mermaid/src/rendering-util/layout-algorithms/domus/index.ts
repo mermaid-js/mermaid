@@ -34,6 +34,7 @@ import { spaceNodesOffGroupFramesWhenScoreImproves } from './pipeline/nodeGroupS
 import { separateGroupFramesWhenIssuesImprove } from './pipeline/groupFrameSeparation.js';
 import { snapDiamondPortsToVertexWhenScoreImproves } from './pipeline/diamondVertexSnap.js';
 import { alignGridNearMissesWhenScoreImproves } from './pipeline/gridNearMissAlign.js';
+import { straightenFacingPairsWhenScoreImproves } from './pipeline/facingStraighten.js';
 import { alignStraightLeafEdgesWhenValid } from './pipeline/straightLeafAlignment.js';
 import { isEdgeLabelNodeId } from './core/labels.js';
 import { profiler } from '../../../profiler.js';
@@ -616,6 +617,13 @@ export function runLateQualityPasses(
     // the top of this function keeps its plain score gate, which is what
     // protects the tournament from the round-7 regression.
     spaceNodesOffGroupFramesWhenScoreImproves(data4Layout, { acceptWhenInvalid: true });
+
+    // Replace a multi-bend route between two facing nodes with the straight
+    // segment their free corridor admits — runs BEFORE the diamond snap so a
+    // straight through both side midpoints claims the vertices first and the
+    // snap only handles the leftovers. Winner-only, strictly score-gated per
+    // candidate.
+    straightenFacingPairsWhenScoreImproves(data4Layout);
 
     // Slide a flagged decision-node port along its side to the vertex (side
     // midpoint) — the `port-off-diamond-corner` repair. Winner-only for the

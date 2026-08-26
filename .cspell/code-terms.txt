@@ -86,6 +86,7 @@ flatmap
 forwardable
 Freivalds
 frontmatter
+FSTRAIGHT
 funs
 Gansner
 gantt
@@ -109,6 +110,7 @@ INVTRAPEND
 INVTRAPSTART
 JDBC
 jison
+jvlc
 Kaufmann
 keyify
 Klau
