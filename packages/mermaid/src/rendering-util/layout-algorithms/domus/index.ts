@@ -871,7 +871,15 @@ function tryGroupCompactionCandidate(data4Layout: LayoutData): void {
     useExistingPositions: true,
     groupPadding: COMPOUND_GROUP_PAD,
   });
-  runLateQualityPasses(candidate, { skipSwingReroutes: true });
+  // FULL polish, unlike the tournament variants: `skipSwingReroutes: true`
+  // also skips the winner-only validity-repair block, and a compacted
+  // re-route routinely lands members a few px under the clearance floors
+  // (measured: deploy-pipeline's candidate minted node-node-padding +
+  // node-border-hugging + node-too-close-to-group and shipped 932 -> 0
+  // REJECTED). The repairs that clear exactly that family run only in that
+  // block, and the ledger gate above already restricts this candidate to
+  // cheap drawings, so the full polish is affordable here.
+  runLateQualityPasses(candidate);
 
   const result = checkLayout(candidate);
   const tighter = drawingArea(candidate) < baselineArea;
