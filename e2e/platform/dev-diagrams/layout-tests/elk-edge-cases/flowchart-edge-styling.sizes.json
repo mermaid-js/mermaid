@@ -1,0 +1,94 @@
+{
+  "nodes": [
+    {
+      "id": "Start",
+      "width": 80.80500793457031,
+      "height": 45,
+      "labelBBox": {
+        "width": 29.578125,
+        "height": 21
+      }
+    },
+    {
+      "id": "Parse",
+      "width": 103.609375,
+      "height": 45,
+      "labelBBox": {
+        "width": 71.609375,
+        "height": 21
+      }
+    },
+    {
+      "id": "Validate",
+      "width": 88.890625,
+      "height": 88.890625,
+      "labelBBox": {
+        "width": 37.890625,
+        "height": 21
+      }
+    },
+    {
+      "id": "Render",
+      "width": 111.375,
+      "height": 45,
+      "labelBBox": {
+        "width": 79.375,
+        "height": 21
+      }
+    },
+    {
+      "id": "Error",
+      "width": 114.03125,
+      "height": 33,
+      "labelBBox": {
+        "width": 70.03125,
+        "height": 21
+      }
+    },
+    {
+      "id": "Spacer",
+      "width": 152.640625,
+      "height": 45,
+      "labelBBox": {
+        "width": 120.640625,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [],
+  "edges": [
+    {
+      "id": "L_Start_Parse_0",
+      "width": 100.390625,
+      "height": 21
+    },
+    {
+      "id": "L_Start_Validate_0",
+      "width": 92.625,
+      "height": 21
+    },
+    {
+      "id": "L_Parse_Validate_0",
+      "width": 119.109375,
+      "height": 21
+    },
+    {
+      "id": "L_Validate_Render_0",
+      "width": 21.796875,
+      "height": 21
+    },
+    {
+      "id": "L_Validate_Error_0",
+      "width": 15.578125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "b8f8ff7f337ad6ba34fcf8b4172b5a20f98171badda82e7fa392b86ffb82bf83",
+    "capturedAt": "2026-08-26T15:02:53.428Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/flowchart-edge-styling.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

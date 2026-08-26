@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "Class01",
+      "width": 205.71875,
+      "height": 240
+    },
+    {
+      "id": "AveryLongClass",
+      "width": 133.96875,
+      "height": 81
+    },
+    {
+      "id": "Class03",
+      "width": 76.9375,
+      "height": 81
+    },
+    {
+      "id": "Class04",
+      "width": 76.9375,
+      "height": 81
+    },
+    {
+      "id": "Class05",
+      "width": 76.9375,
+      "height": 81
+    },
+    {
+      "id": "Class06",
+      "width": 76.9375,
+      "height": 81
+    },
+    {
+      "id": "Class07",
+      "width": 181.984375,
+      "height": 135
+    },
+    {
+      "id": "Class08",
+      "width": 76.9375,
+      "height": 81
+    },
+    {
+      "id": "Class09",
+      "width": 76.9375,
+      "height": 81
+    },
+    {
+      "id": "C2",
+      "width": 41.90625,
+      "height": 81
+    },
+    {
+      "id": "C3",
+      "width": 41.90625,
+      "height": 81
+    },
+    {
+      "id": "Class12",
+      "width": 76.9375,
+      "height": 81
+    },
+    {
+      "id": "Class11",
+      "width": 76.171875,
+      "height": 81
+    },
+    {
+      "id": "Class10",
+      "width": 85.8515625,
+      "height": 156
+    },
+    {
+      "id": "note0",
+      "width": 233.78125,
+      "height": 33,
+      "labelBBox": {
+        "width": 221.78125,
+        "height": 21
+      }
+    },
+    {
+      "id": "note1",
+      "width": 241.875,
+      "height": 33,
+      "labelBBox": {
+        "width": 229.875,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [],
+  "edges": [
+    {
+      "id": "id_Class01_AveryLongClass_1",
+      "width": 28.796875,
+      "height": 21
+    },
+    {
+      "id": "id_Class03_Class04_2",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "id": "id_Class05_Class06_3",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "id": "id_Class07_Class08_4",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "id": "id_Class09_C2_5",
+      "width": 79.359375,
+      "height": 21
+    },
+    {
+      "id": "id_Class09_C3_6",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "id": "id_Class09_Class07_7",
+      "width": 0,
+      "height": 0
+    },
+    {
+      "id": "id_Class08_C2_10",
+      "width": 62.265625,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "04c1f4dd182c1601a15face15cdce2f64b27096f3723130b431abc10c46cd0ff",
+    "capturedAt": "2026-08-26T15:02:53.492Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/full-class-diagram.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

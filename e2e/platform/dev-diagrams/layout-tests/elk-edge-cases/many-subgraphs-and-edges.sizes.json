@@ -1,0 +1,282 @@
+{
+  "nodes": [
+    {
+      "id": "publicApi",
+      "width": 137.828125,
+      "height": 87,
+      "labelBBox": {
+        "width": 105.828125,
+        "height": 63
+      }
+    },
+    {
+      "id": "githubIntegration",
+      "width": 161.9375,
+      "height": 87,
+      "labelBBox": {
+        "width": 129.9375,
+        "height": 63
+      }
+    },
+    {
+      "id": "slackIntegration",
+      "width": 133.9375,
+      "height": 87,
+      "labelBBox": {
+        "width": 101.9375,
+        "height": 63
+      }
+    },
+    {
+      "id": "jiraIntegration",
+      "width": 147.9375,
+      "height": 87,
+      "labelBBox": {
+        "width": 115.9375,
+        "height": 63
+      }
+    },
+    {
+      "id": "commentsService",
+      "width": 145.59375,
+      "height": 87,
+      "labelBBox": {
+        "width": 113.59375,
+        "height": 63
+      }
+    },
+    {
+      "id": "sharingService",
+      "width": 126.9375,
+      "height": 87,
+      "labelBBox": {
+        "width": 94.9375,
+        "height": 63
+      }
+    },
+    {
+      "id": "workspaceService",
+      "width": 159.59375,
+      "height": 87,
+      "labelBBox": {
+        "width": 127.59375,
+        "height": 63
+      }
+    },
+    {
+      "id": "authService",
+      "width": 146.390625,
+      "height": 87,
+      "labelBBox": {
+        "width": 114.390625,
+        "height": 63
+      }
+    },
+    {
+      "id": "app",
+      "width": 150.265625,
+      "height": 87,
+      "labelBBox": {
+        "width": 118.265625,
+        "height": 63
+      }
+    },
+    {
+      "id": "editor",
+      "width": 138.609375,
+      "height": 87,
+      "labelBBox": {
+        "width": 106.609375,
+        "height": 63
+      }
+    },
+    {
+      "id": "visualEditor",
+      "width": 146.40625,
+      "height": 87,
+      "labelBBox": {
+        "width": 114.40625,
+        "height": 63
+      }
+    },
+    {
+      "id": "aiAssistant",
+      "width": 173.640625,
+      "height": 87,
+      "labelBBox": {
+        "width": 141.640625,
+        "height": 63
+      }
+    },
+    {
+      "id": "infrastructure",
+      "width": 116.046875,
+      "height": 87,
+      "labelBBox": {
+        "width": 84.046875,
+        "height": 63
+      }
+    },
+    {
+      "id": "analytics",
+      "width": 142.53125,
+      "height": 87,
+      "labelBBox": {
+        "width": 110.53125,
+        "height": 63
+      }
+    },
+    {
+      "id": "billing",
+      "width": 116.8125,
+      "height": 87,
+      "labelBBox": {
+        "width": 84.8125,
+        "height": 63
+      }
+    },
+    {
+      "id": "designSystem",
+      "width": 130.0625,
+      "height": 87,
+      "labelBBox": {
+        "width": 98.0625,
+        "height": 63
+      }
+    },
+    {
+      "id": "blog",
+      "width": 145.640625,
+      "height": 87,
+      "labelBBox": {
+        "width": 113.640625,
+        "height": 63
+      }
+    },
+    {
+      "id": "docs",
+      "width": 175.953125,
+      "height": 87,
+      "labelBBox": {
+        "width": 143.953125,
+        "height": 63
+      }
+    },
+    {
+      "id": "marketing",
+      "width": 119.921875,
+      "height": 87,
+      "labelBBox": {
+        "width": 87.921875,
+        "height": 63
+      }
+    },
+    {
+      "id": "templates",
+      "width": 148.75,
+      "height": 87,
+      "labelBBox": {
+        "width": 116.75,
+        "height": 63
+      }
+    },
+    {
+      "id": "renderer",
+      "width": 145.625,
+      "height": 87,
+      "labelBBox": {
+        "width": 113.625,
+        "height": 63
+      }
+    },
+    {
+      "id": "mermaidJs",
+      "width": 167.359375,
+      "height": 87,
+      "labelBBox": {
+        "width": 135.359375,
+        "height": 63
+      }
+    },
+    {
+      "id": "parser",
+      "width": 148.734375,
+      "height": 87,
+      "labelBBox": {
+        "width": 116.734375,
+        "height": 63
+      }
+    },
+    {
+      "id": "ghorg",
+      "width": 124.59375,
+      "height": 66,
+      "labelBBox": {
+        "width": 92.59375,
+        "height": 42
+      }
+    },
+    {
+      "id": "n1",
+      "width": 91.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 59.9375,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "engine",
+      "labelBBox": {
+        "width": 130.75,
+        "height": 21
+      }
+    },
+    {
+      "id": "content",
+      "labelBBox": {
+        "width": 122.203125,
+        "height": 21
+      }
+    },
+    {
+      "id": "platform",
+      "labelBBox": {
+        "width": 164.96875,
+        "height": 21
+      }
+    },
+    {
+      "id": "product",
+      "labelBBox": {
+        "width": 120.640625,
+        "height": 21
+      }
+    },
+    {
+      "id": "collaboration",
+      "labelBBox": {
+        "width": 169.671875,
+        "height": 21
+      }
+    },
+    {
+      "id": "integrations",
+      "labelBBox": {
+        "width": 73.171875,
+        "height": 21
+      }
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "70323722abb0f5bc8244b4ac5a0aa8cc6bd9f589008846d75feb5d84d1ae754e",
+    "capturedAt": "2026-08-26T15:02:53.563Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/many-subgraphs-and-edges.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

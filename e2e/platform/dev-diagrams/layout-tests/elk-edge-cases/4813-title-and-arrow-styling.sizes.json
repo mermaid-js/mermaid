@@ -1,0 +1,41 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45,
+      "labelBBox": {
+        "width": 9.34375,
+        "height": 21
+      }
+    },
+    {
+      "id": "B",
+      "width": 41.34375,
+      "height": 45,
+      "labelBBox": {
+        "width": 9.34375,
+        "height": 21
+      }
+    },
+    {
+      "id": "C",
+      "width": 42.125,
+      "height": 45,
+      "labelBBox": {
+        "width": 10.125,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [],
+  "edges": [],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "4cad9aa8059ce281263aeb8d4448c2070aa8b2dea34ad4310acbb04677317db2",
+    "capturedAt": "2026-08-26T15:02:53.319Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/4813-title-and-arrow-styling.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

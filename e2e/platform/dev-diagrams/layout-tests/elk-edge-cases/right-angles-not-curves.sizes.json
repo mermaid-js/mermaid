@@ -1,0 +1,128 @@
+{
+  "nodes": [
+    {
+      "id": "N00",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N11",
+      "width": 56.65625,
+      "height": 45,
+      "labelBBox": {
+        "width": 24.65625,
+        "height": 21
+      }
+    },
+    {
+      "id": "N12",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N13",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N21",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N22",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N01",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N02",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N03",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N04",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "N05",
+      "width": 57.6875,
+      "height": 45,
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "G2",
+      "labelBBox": {
+        "width": 18.6875,
+        "height": 21
+      }
+    },
+    {
+      "id": "G1",
+      "labelBBox": {
+        "width": 18.6875,
+        "height": 21
+      }
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "5d8344c85b5d2016e13537c7427e21fa651108187737662e70b653ae4aa21629",
+    "capturedAt": "2026-08-26T15:02:53.680Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/right-angles-not-curves.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

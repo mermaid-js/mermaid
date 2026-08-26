@@ -3,6 +3,8 @@ export type {
   DdltManifest,
   DdltManifestEntry,
   FixtureNodeSize,
+  FixtureGroupLabelSize,
+  FixtureEdgeLabelSize,
   LayoutTestBackend,
   LayoutTestBackendId,
   LayoutTestFixture,
@@ -15,6 +17,8 @@ export {
   loadSizesFixture,
   applyFixtureContentSizesStrict,
   applyFixtureLabelSizesStrict,
+  applyFixtureGroupLabelSizesStrict,
+  applyFixtureEdgeLabelSizesStrict,
   applySyntheticContentSizes,
   applySyntheticLabelSizes,
 } from './fixtureSizes.js';
@@ -30,6 +34,8 @@ export {
   getLayoutTestBackend,
   backendsForProfile,
 } from './backends.js';
+export { measureLayoutWithFixture } from './jsdomMeasure.js';
+export type { JsdomMeasureOptions, JsdomMeasureResult } from './jsdomMeasure.js';
 export { loadDdltFixture } from './loadDdltFixture.js';
 export { baselineDdltSpec } from './baselineDdltSpec.js';
 export {

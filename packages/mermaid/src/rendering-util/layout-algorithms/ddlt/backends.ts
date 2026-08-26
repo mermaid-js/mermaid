@@ -90,5 +90,8 @@ export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBacke
   if (profile === 'swimlanes') {
     return ['swimlanes'];
   }
+  if (profile === 'flowchart-elk') {
+    return ['elk'];
+  }
   return ['domus-orthogonal'];
 }

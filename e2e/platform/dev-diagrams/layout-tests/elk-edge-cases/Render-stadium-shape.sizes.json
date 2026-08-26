@@ -1,0 +1,89 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 168.7425079345703,
+      "height": 45,
+      "labelBBox": {
+        "width": 117.515625,
+        "height": 21
+      }
+    },
+    {
+      "id": "B",
+      "width": 130.6331329345703,
+      "height": 45,
+      "labelBBox": {
+        "width": 79.40625,
+        "height": 21
+      }
+    },
+    {
+      "id": "C",
+      "width": 272.1837158203125,
+      "height": 129,
+      "labelBBox": {
+        "width": 200,
+        "height": 105
+      }
+    },
+    {
+      "id": "D",
+      "width": 94.05500793457031,
+      "height": 45,
+      "labelBBox": {
+        "width": 42.828125,
+        "height": 21
+      }
+    },
+    {
+      "id": "E",
+      "width": 94.82063293457031,
+      "height": 45,
+      "labelBBox": {
+        "width": 43.59375,
+        "height": 21
+      }
+    },
+    {
+      "id": "F",
+      "width": 144.37234497070312,
+      "height": 66,
+      "labelBBox": {
+        "width": 87.90625,
+        "height": 42
+      }
+    }
+  ],
+  "groups": [],
+  "edges": [
+    {
+      "id": "L_A_B_0",
+      "width": 72.5,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "L_C_D_0",
+      "width": 30.46875,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "L_C_E_0",
+      "width": 29.6875,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "L_C_F_0",
+      "width": 40.578125,
+      "height": 19.999998092651367
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "5da03003e985bb6c7b52631a4c530125b8f6f89b1a57229eb4f569bd4e2a11f3",
+    "capturedAt": "2026-08-26T15:02:53.629Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/Render-stadium-shape.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

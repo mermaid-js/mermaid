@@ -189,6 +189,12 @@ export default tseslint.config(
       'packages/mermaid/src/rendering-util/layout-algorithms/swimlanes/**',
       'packages/mermaid/src/rendering-util/layout-algorithms/ddlt/**',
       'packages/mermaid/src/rendering-util/layout-algorithms/layout-utils/**',
+      // The ELK DDLT harness is the same kind of code as the folders above —
+      // sweeps whose output IS a console report — it just lives in the ELK
+      // package because `mermaid` cannot depend on ELK.
+      'packages/mermaid-layout-elk/src/ddlt/**',
+      // Repo tooling: a CLI whose console output is its interface.
+      'scripts/**',
       'packages/mermaid/src/rendering-util/rendering-elements/lineJump*.spec.ts',
     ],
     rules: {

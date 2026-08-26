@@ -147,3 +147,78 @@ export function applyFixtureLabelSizesStrict(layout: LayoutData, fixture: SizesF
     (node as { width: number; height: number }).height = size.height;
   }
 }
+
+/**
+ * Apply captured cluster label boxes to group nodes (strict).
+ *
+ * ELK derives a compound node's minimum size from `labelBBox`, so a group left
+ * without one lays out at the wrong size — which reads as a layout bug rather
+ * than a missing fixture. Throwing keeps that distinction visible.
+ *
+ * Groups are matched by parser id. A fixture captured before group label boxes
+ * were recorded has no `groups` array at all; that is reported as its own
+ * message, because the fix is a re-capture rather than an id mismatch.
+ */
+export function applyFixtureGroupLabelSizesStrict(layout: LayoutData, fixture: SizesFixture): void {
+  const groupNodes = layout.nodes.filter((node) => node.isGroup);
+  if (groupNodes.length === 0) {
+    return;
+  }
+  if (!fixture.groups) {
+    throw new Error(
+      `Fixture has no "groups" array but the diagram has ${groupNodes.length} group node(s). ` +
+        'Re-capture the sizes fixture with a capture-enabled layout (swimlane, domus or elk).'
+    );
+  }
+  const known = fixture.groups.map((g) => g.id).join(', ');
+  for (const node of groupNodes) {
+    const size = fixture.groups.find((g) => g.id === node.id);
+    if (!size) {
+      throw new Error(
+        `Fixture missing label box for parser-produced group node "${node.id}". Known ids: ${known}`
+      );
+    }
+    (node as { labelBBox?: { width: number; height: number } }).labelBBox = {
+      width: size.labelBBox.width,
+      height: size.labelBBox.height,
+    };
+  }
+}
+
+/**
+ * Apply captured edge label sizes onto `edge.width` / `edge.height` (strict).
+ *
+ * This is the ELK-shaped counterpart to {@link applyFixtureLabelSizesStrict}:
+ * engines that inject dummy label nodes read label sizes off `layout.nodes`,
+ * while ELK reads them off the edge itself (see `addEdgesToElkGraph`).
+ *
+ * Only edges that actually carry a label are required to have a fixture row —
+ * `insertEdgeLabel` never runs for the others, so the browser never measured
+ * them either.
+ */
+export function applyFixtureEdgeLabelSizesStrict(layout: LayoutData, fixture: SizesFixture): void {
+  const labelled = layout.edges.filter((edge) => {
+    const label = (edge as { label?: unknown }).label;
+    return typeof label === 'string' && label.length > 0;
+  });
+  if (labelled.length === 0) {
+    return;
+  }
+  if (!fixture.edges) {
+    throw new Error(
+      `Fixture has no "edges" array but the diagram has ${labelled.length} labelled edge(s). ` +
+        'Re-capture the sizes fixture with a capture-enabled layout (swimlane, domus or elk).'
+    );
+  }
+  const known = fixture.edges.map((e) => e.id).join(', ');
+  for (const edge of labelled) {
+    const size = fixture.edges.find((e) => e.id === edge.id);
+    if (!size) {
+      throw new Error(
+        `Fixture missing edge label size for "${String(edge.id)}". Known ids: ${known}`
+      );
+    }
+    (edge as { width: number; height: number }).width = size.width;
+    (edge as { width: number; height: number }).height = size.height;
+  }
+}

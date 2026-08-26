@@ -1,0 +1,64 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 95.015625,
+      "height": 45,
+      "labelBBox": {
+        "width": 63.015625,
+        "height": 21
+      }
+    },
+    {
+      "id": "D",
+      "width": 42.125,
+      "height": 45,
+      "labelBBox": {
+        "width": 10.125,
+        "height": 21
+      }
+    },
+    {
+      "id": "B",
+      "width": 109.40625,
+      "height": 51,
+      "labelBBox": {
+        "width": 79.40625,
+        "height": 21
+      }
+    },
+    {
+      "id": "C",
+      "width": 42.125,
+      "height": 45,
+      "labelBBox": {
+        "width": 10.125,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "T",
+      "labelBBox": {
+        "width": 25.6875,
+        "height": 21
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "L_A_B_0",
+      "width": 72.5,
+      "height": 19.999998092651367
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "b89ce9e79fdece40221931bf42bb5d191e8a6989ce68ee7fa38e663e151cc58a",
+    "capturedAt": "2026-08-26T15:02:53.718Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/styled-edge-labels.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

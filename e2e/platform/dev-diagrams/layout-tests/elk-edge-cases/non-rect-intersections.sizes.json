@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "Start",
+      "width": 80.80500793457031,
+      "height": 45,
+      "labelBBox": {
+        "width": 29.578125,
+        "height": 21
+      }
+    },
+    {
+      "id": "Split",
+      "width": 169.296875,
+      "height": 169.296875,
+      "labelBBox": {
+        "width": 118.296875,
+        "height": 21
+      }
+    },
+    {
+      "id": "T1",
+      "width": 73.25,
+      "height": 45,
+      "labelBBox": {
+        "width": 41.25,
+        "height": 21
+      }
+    },
+    {
+      "id": "T2",
+      "width": 74.015625,
+      "height": 45,
+      "labelBBox": {
+        "width": 42.015625,
+        "height": 21
+      }
+    },
+    {
+      "id": "Merge",
+      "width": 140.265625,
+      "height": 140.265625,
+      "labelBBox": {
+        "width": 76.265625,
+        "height": 21
+      }
+    },
+    {
+      "id": "Done",
+      "width": 84.69563293457031,
+      "height": 45,
+      "labelBBox": {
+        "width": 33.46875,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [],
+  "edges": [
+    {
+      "id": "L_Split_T1_0",
+      "width": 21.796875,
+      "height": 21
+    },
+    {
+      "id": "L_Split_T2_0",
+      "width": 21.796875,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "1d757001b5e19389f2bf70b5f2898401b84213f519b56ecf94c7c07ec74e35bd",
+    "capturedAt": "2026-08-26T15:02:53.600Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/non-rect-intersections.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

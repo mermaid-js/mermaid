@@ -97,6 +97,16 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     );
   }
 
+  // Record the measured label box on the node. Clusters already get this from
+  // `measureGroupLabel`; leaf nodes did not, because nothing in the render path
+  // needs it — every shape derives its geometry from the local `bbox`. DDLT
+  // does need it: to attach a shape's real `intersect` outside a browser it has
+  // to re-run the shape handler, and the handler's point set is a function of
+  // this box. Recording it here keeps the capture reading a measured value
+  // rather than re-deriving one from the node's outer size, which is not
+  // invertible — padding differs per shape and per `look`.
+  node.labelBBox = { width: bbox.width, height: bbox.height };
+
   // Center the label
   if (useHtmlLabels) {
     labelEl.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');

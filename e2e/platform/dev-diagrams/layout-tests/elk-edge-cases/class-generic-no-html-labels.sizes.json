@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    {
+      "id": "Class10",
+      "width": 245.796875,
+      "height": 177
+    }
+  ],
+  "groups": [],
+  "edges": [],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "a6000788973f6c64221e9aa7683f6e5087822d4bf41046cab80ae45246585517",
+    "capturedAt": "2026-08-26T15:02:53.352Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/class-generic-no-html-labels.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

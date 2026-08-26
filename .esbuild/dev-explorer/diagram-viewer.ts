@@ -30,10 +30,17 @@ type CapturedNodeSize = {
   height: number;
 };
 
+type CapturedGroupLabelSize = {
+  id: string;
+  labelBBox: { width: number; height: number };
+};
+
 type CapturedSizesEntry = {
   svgId: string;
   sizes: {
     nodes: CapturedNodeSize[];
+    groups?: CapturedGroupLabelSize[];
+    edges?: CapturedNodeSize[];
     metadata?: Record<string, unknown>;
   };
 };
@@ -321,9 +328,16 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
   return null;
 }
 
+/**
+ * Layouts whose measure step runs `createGraphWithElements`, which is where the
+ * DDLT size capture hook lives. `dagre` and `hola` do not, so capturing under
+ * them would silently produce an empty fixture.
+ */
+const SIZE_CAPTURE_LAYOUTS: MermaidLayout[] = ['swimlane', 'domus', 'elk'];
+
 function sizeCaptureUnavailableReason(layout: MermaidLayout) {
-  if (layout !== 'swimlane') {
-    return 'No size data is available for this layout. Select swimlanes to capture DDLT sizes.';
+  if (!SIZE_CAPTURE_LAYOUTS.includes(layout)) {
+    return `No size data is available for the "${layout}" layout. Select one of ${SIZE_CAPTURE_LAYOUTS.join(', ')} to capture DDLT sizes.`;
   }
   return '';
 }
@@ -813,7 +827,11 @@ export class DevDiagramViewer extends LitElement {
         body: JSON.stringify({
           path: this.filePath,
           nodes,
+          groups: captured?.sizes.groups ?? [],
+          edges: captured?.sizes.edges ?? [],
           capturedFrom: `dev-explorer ${this.filePath} theme=${this.theme} look=${this.look} layout=${this.layout}`,
+          theme: this.theme,
+          look: this.look,
         }),
       });
       if (!res.ok) {

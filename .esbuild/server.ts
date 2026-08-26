@@ -159,6 +159,16 @@ interface DevExplorerCapturedNodeSize {
   id: string;
   width: number;
   height: number;
+  /**
+   * Measured label box. Optional: edge-label entries reuse this type and have
+   * no label box of their own, and a client on an older build may not send it.
+   */
+  labelBBox?: { width: number; height: number };
+}
+
+interface DevExplorerCapturedGroupLabelSize {
+  id: string;
+  labelBBox: { width: number; height: number };
 }
 
 const devExplorerRootAbs = resolve(
@@ -198,13 +208,87 @@ function normalizeCapturedNodeSizes(value: unknown): DevExplorerCapturedNodeSize
     ) {
       return null;
     }
+    const labelBBox = normalizeOptionalBox(candidate.labelBBox);
+    if (labelBBox === null) {
+      return null;
+    }
     nodes.push({
       id,
       width,
       height,
+      ...(labelBBox ? { labelBBox } : {}),
     });
   }
   return nodes;
+}
+
+/**
+ * Read an optional `{width, height}` pair, distinguishing "absent" from
+ * "present but malformed": absent yields `undefined` and is accepted, malformed
+ * yields `null` so the caller can reject the whole payload rather than write a
+ * fixture with a silently dropped field.
+ */
+function normalizeOptionalBox(
+  value: unknown
+): { width: number; height: number } | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value == null || typeof value !== 'object') {
+    return null;
+  }
+  const { width, height } = value as Record<string, unknown>;
+  if (
+    typeof width !== 'number' ||
+    typeof height !== 'number' ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height)
+  ) {
+    return null;
+  }
+  return { width, height };
+}
+
+function normalizeCapturedGroupLabelSizes(
+  value: unknown
+): DevExplorerCapturedGroupLabelSize[] | null {
+  if (value === undefined) {
+    // Absent is legal: a capture taken before group label boxes were recorded,
+    // or a diagram with no groups at all.
+    return [];
+  }
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const groups: DevExplorerCapturedGroupLabelSize[] = [];
+  for (const item of value) {
+    if (item == null || typeof item !== 'object') {
+      return null;
+    }
+    const { id, labelBBox } = item as Record<string, unknown>;
+    if (typeof id !== 'string' || labelBBox == null || typeof labelBBox !== 'object') {
+      return null;
+    }
+    const { width, height } = labelBBox as Record<string, unknown>;
+    if (
+      typeof width !== 'number' ||
+      typeof height !== 'number' ||
+      !Number.isFinite(width) ||
+      !Number.isFinite(height)
+    ) {
+      return null;
+    }
+    groups.push({ id, labelBBox: { width, height } });
+  }
+  return groups;
+}
+
+function normalizeCapturedEdgeLabelSizes(value: unknown): DevExplorerCapturedNodeSize[] | null {
+  if (value === undefined) {
+    return [];
+  }
+  return normalizeCapturedNodeSizes(value);
 }
 
 function resolveWithinDevExplorerRoot(requestedPath: unknown) {
@@ -473,6 +557,18 @@ async function createServer() {
         return;
       }
 
+      const groups = normalizeCapturedGroupLabelSizes(body?.groups);
+      if (!groups) {
+        res.status(400).json({ error: 'Invalid groups array' });
+        return;
+      }
+
+      const edges = normalizeCapturedEdgeLabelSizes(body?.edges);
+      if (!edges) {
+        res.status(400).json({ error: 'Invalid edges array' });
+        return;
+      }
+
       const mmdSource = await fs.readFile(absPath, 'utf-8');
       const sizesPath = absPath.replace(/\.mmd$/, '.sizes.json');
       const sizesRelPath = relPath.replace(/\.mmd$/, '.sizes.json');
@@ -480,11 +576,18 @@ async function createServer() {
         typeof body?.capturedFrom === 'string' ? body.capturedFrom : `dev-explorer ${relPath}`;
       const fixture = {
         nodes,
+        groups,
+        edges,
         metadata: {
           captureVersion: DDLT_SIZE_CAPTURE_VERSION,
           sourceSha256: hashDdltFixtureSource(mmdSource),
           capturedAt: new Date().toISOString(),
           capturedFrom,
+          // Recorded in their own fields so the sweep can assert them. Sizes and
+          // shape outlines both depend on these, so a fixture captured at one
+          // theme/look does not describe another.
+          ...(typeof body?.theme === 'string' ? { theme: body.theme } : {}),
+          ...(typeof body?.look === 'string' ? { look: body.look } : {}),
         },
       };
 
@@ -492,6 +595,8 @@ async function createServer() {
       res.json({
         path: sizesRelPath,
         nodes: nodes.length,
+        groups: groups.length,
+        edges: edges.length,
       });
     } catch (_e) {
       res.status(400).json({ error: 'Invalid sizes payload' });

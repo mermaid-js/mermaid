@@ -1,0 +1,206 @@
+{
+  "nodes": [
+    {
+      "id": "n1",
+      "width": 105.484375,
+      "height": 105.484375,
+      "labelBBox": {
+        "width": 54.484375,
+        "height": 21
+      }
+    },
+    {
+      "id": "n2",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "n3",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "n4",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "n5",
+      "width": 105.484375,
+      "height": 105.484375,
+      "labelBBox": {
+        "width": 54.484375,
+        "height": 21
+      }
+    },
+    {
+      "id": "n6",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "n7",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "n8",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "A",
+      "width": 61.578125,
+      "height": 45,
+      "labelBBox": {
+        "width": 29.578125,
+        "height": 21
+      }
+    },
+    {
+      "id": "B",
+      "width": 86.046875,
+      "height": 51,
+      "labelBBox": {
+        "width": 56.046875,
+        "height": 21
+      }
+    },
+    {
+      "id": "C",
+      "width": 105.484375,
+      "height": 105.484375,
+      "labelBBox": {
+        "width": 54.484375,
+        "height": 21
+      }
+    },
+    {
+      "id": "D",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "E",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    },
+    {
+      "id": "F",
+      "width": 84.9375,
+      "height": 45,
+      "labelBBox": {
+        "width": 52.9375,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "s2",
+      "labelBBox": {
+        "width": 109.75,
+        "height": 21
+      }
+    },
+    {
+      "id": "s1",
+      "labelBBox": {
+        "width": 109.75,
+        "height": 21
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "L_A_B_0",
+      "width": 63.03125,
+      "height": 21
+    },
+    {
+      "id": "L_C_D_0",
+      "width": 26.46875,
+      "height": 21
+    },
+    {
+      "id": "L_C_E_0",
+      "width": 25.6875,
+      "height": 21
+    },
+    {
+      "id": "L_C_F_0",
+      "width": 36.578125,
+      "height": 21
+    },
+    {
+      "id": "L_n1_n2_0",
+      "width": 26.46875,
+      "height": 21
+    },
+    {
+      "id": "L_n1_n3_0",
+      "width": 25.6875,
+      "height": 21
+    },
+    {
+      "id": "L_n1_n4_0",
+      "width": 36.578125,
+      "height": 21
+    },
+    {
+      "id": "L_n5_n6_0",
+      "width": 26.46875,
+      "height": 21
+    },
+    {
+      "id": "L_n5_n7_0",
+      "width": 25.6875,
+      "height": 21
+    },
+    {
+      "id": "L_n5_n8_0",
+      "width": 36.578125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "384c1f3e77c309d73759b03c2aa43a297024b04e4e63219ed11d3049166333fe",
+    "capturedAt": "2026-08-26T15:02:53.397Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/diamond-intersections.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

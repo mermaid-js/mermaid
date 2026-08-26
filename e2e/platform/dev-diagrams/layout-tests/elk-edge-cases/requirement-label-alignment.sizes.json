@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "req_login",
+      "width": 545.046875,
+      "height": 166
+    },
+    {
+      "id": "ui_form",
+      "width": 153.015625,
+      "height": 124
+    },
+    {
+      "id": "auth_service",
+      "width": 163.203125,
+      "height": 124
+    }
+  ],
+  "groups": [],
+  "edges": [
+    {
+      "id": "ui_form-req_login-0",
+      "width": 87.28125,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "auth_service-req_login-1",
+      "width": 74.828125,
+      "height": 19.999998092651367
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "7d46875685d3257802a7ad0e1858e09749f8d73eff5e0c718f3c4cd879679429",
+    "capturedAt": "2026-08-26T15:02:53.651Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/requirement-label-alignment.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

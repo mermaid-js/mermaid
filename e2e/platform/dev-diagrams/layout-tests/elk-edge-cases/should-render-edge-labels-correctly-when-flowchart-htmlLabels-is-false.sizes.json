@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "test_req",
+      "width": 132.859375,
+      "height": 166
+    },
+    {
+      "id": "test_req2",
+      "width": 201.34375,
+      "height": 166
+    },
+    {
+      "id": "test_entity",
+      "width": 121.171875,
+      "height": 103
+    },
+    {
+      "id": "test_entity2",
+      "width": 173.296875,
+      "height": 124
+    }
+  ],
+  "groups": [],
+  "edges": [
+    {
+      "id": "test_entity-test_req2-0",
+      "width": 87.28125,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "test_req-test_req2-1",
+      "width": 74.828125,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "test_req-test_req2-2",
+      "width": 88.859375,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "test_entity2-test_req-3",
+      "width": 81.0625,
+      "height": 19.999998092651367
+    },
+    {
+      "id": "test_entity2-test_req-4",
+      "width": 77.171875,
+      "height": 19.999998092651367
+    }
+  ],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "ef00b906f0cc6bfc3399a531ccb7ff17a0473cc6de053e4139120273c9021b5e",
+    "capturedAt": "2026-08-26T15:02:53.702Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/should-render-edge-labels-correctly-when-flowchart-htmlLabels-is-false.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

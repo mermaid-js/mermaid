@@ -1,0 +1,56 @@
+{
+  "nodes": [
+    {
+      "id": "a",
+      "width": 39.796875,
+      "height": 45,
+      "labelBBox": {
+        "width": 7.796875,
+        "height": 21
+      }
+    },
+    {
+      "id": "b",
+      "width": 39.796875,
+      "height": 45,
+      "labelBBox": {
+        "width": 7.796875,
+        "height": 21
+      }
+    },
+    {
+      "id": "c",
+      "width": 115.296875,
+      "height": 45,
+      "labelBBox": {
+        "width": 83.296875,
+        "height": 21
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "B",
+      "labelBBox": {
+        "width": 71.609375,
+        "height": 21
+      }
+    },
+    {
+      "id": "A",
+      "labelBBox": {
+        "width": 80.953125,
+        "height": 21
+      }
+    }
+  ],
+  "edges": [],
+  "metadata": {
+    "captureVersion": 2,
+    "sourceSha256": "b53616c079053c57a75058cbb51813e4a37b6ffe9ac6a02688bfe230a88a4f15",
+    "capturedAt": "2026-08-26T15:02:53.579Z",
+    "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/nested-subgraphs-reverse-order.mmd theme=redux-color look=neo layout=elk",
+    "theme": "redux-color",
+    "look": "neo"
+  }
+}

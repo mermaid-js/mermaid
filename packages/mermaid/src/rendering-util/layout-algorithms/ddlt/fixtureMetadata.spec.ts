@@ -13,10 +13,16 @@ describe('DDLT layout-test size fixture metadata', () => {
       .map((fixture) => {
         const metadata = fixture.sizes.metadata;
         const sourceSha256 = hashDdltFixtureSource(readFileSync(fixture.mmdPath, 'utf-8'));
-        if (
-          metadata?.captureVersion === DDLT_SIZE_CAPTURE_VERSION &&
-          metadata.sourceSha256 === sourceSha256
-        ) {
+        // A supported version, not the latest one: capture versions only add
+        // optional fields, so a swimlane fixture stays valid when a version is
+        // introduced for something it does not use. What must hold is that the
+        // sizes still describe the current `.mmd`.
+        const captureVersion = metadata?.captureVersion;
+        const versionSupported =
+          typeof captureVersion === 'number' &&
+          captureVersion >= 1 &&
+          captureVersion <= DDLT_SIZE_CAPTURE_VERSION;
+        if (versionSupported && metadata?.sourceSha256 === sourceSha256) {
           return undefined;
         }
         return {

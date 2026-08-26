@@ -1,0 +1,64 @@
+---
+config:
+  elk:
+    mergeEdges2: true
+---
+flowchart LR
+ subgraph integrations["Integrations"]
+        publicApi["public-api<br>External diagram<br>generation API"]
+        githubIntegration["github-integration<br>Repo, PR, and<br>markdown workflows"]
+        slackIntegration["slack-integration<br>Sharing and<br>notifications"]
+        jiraIntegration["jira-integration<br>Issue and<br>workflow diagrams"]
+  end
+ subgraph collaboration["Collaboration and accounts"]
+        commentsService["comments-service<br>Feedback and<br>review flows"]
+        sharingService["sharing-service<br>Links, embeds,<br>exports"]
+        workspaceService["workspace-service<br>Teams, permissions,<br>org settings"]
+        authService["auth-service<br>Login, SSO,<br>workspace access"]
+  end
+ subgraph product["Product experience"]
+        app["mermaid-chart-app<br>Main web<br>application"]
+        editor["editor<br>Diagram creation<br>and editing"]
+        visualEditor["visual-editor<br>Canvas and visual<br>diagram controls"]
+        aiAssistant["ai-assistant<br>Prompting, generation,<br>repair, editing"]
+  end
+ subgraph platform["Platform and infrastructure"]
+        infrastructure["infrastructure<br>IaC, CI/CD,<br>environments"]
+        analytics["analytics-pipeline<br>Product usage<br>and funnel events"]
+        billing["billing-service<br>Plans, seats,<br>invoices"]
+        designSystem["design-system<br>UI components,<br>tokens, icons"]
+  end
+ subgraph content["Content and growth"]
+        blog["blog-content<br>Launches, guides,<br>SEO content"]
+        docs["docs<br>Product docs and<br>Mermaid syntax guides"]
+        marketing["marketing-site<br>New public<br>website"]
+        templates["templates<br>Diagram examples<br>and starter content"]
+  end
+ subgraph engine["Core diagram engine"]
+        renderer["renderer-service<br>Server-side<br>diagram rendering"]
+        mermaidJs["mermaid-js / mermaid<br>Open-source<br>rendering engine"]
+        parser["diagram-parser<br>Syntax validation<br>and transformation"]
+  end
+    ghorg["GitHub org:<br>Mermaid Chart"] --> collaboration & product & platform & content & engine & integrations
+    designSystem --> app & marketing
+    infrastructure --> app & authService & renderer
+    app --> editor & visualEditor & aiAssistant & workspaceService & authService & billing & analytics
+    sharingService --> renderer
+    renderer --> mermaidJs
+    marketing --> templates
+    docs --> mermaidJs
+    slackIntegration --> sharingService
+    githubIntegration --> n1["public-api"]
+    jiraIntegration --> templates
+    editor --> mermaidJs
+    visualEditor --> parser
+    aiAssistant --> parser
+    n1@{ shape: rect}
+    style ghorg fill:#000000,color:#ffffff
+    style collaboration fill:#E1BEE7
+    style product fill:#BBDEFB
+    style platform fill:#E1BEE7
+    style content fill:#E1BEE7
+    style engine fill:#E1BEE7
+    style integrations fill:#E1BEE7
+    

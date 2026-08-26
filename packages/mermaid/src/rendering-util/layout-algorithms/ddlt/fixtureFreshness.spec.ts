@@ -41,7 +41,7 @@ describe('DDLT size fixture freshness guard', () => {
     ).toThrow(/stale DDLT size fixture "stale"/);
   });
 
-  it('rejects metadata captured by an old size-capture contract', () => {
+  it('accepts an older size-capture contract, which only lacks optional fields', () => {
     const fixture = fixtureFor(SOURCE);
     fixture.metadata = {
       ...fixture.metadata,
@@ -50,7 +50,48 @@ describe('DDLT size fixture freshness guard', () => {
 
     expect(() =>
       assertSizesFixtureFresh(fixture, { fixtureId: 'old-version', mmdSource: SOURCE })
-    ).toThrow(/unsupported DDLT size fixture "old-version"/);
+    ).not.toThrow();
+  });
+
+  it('rejects an older contract when the consumer needs a newer one', () => {
+    const fixture = fixtureFor(SOURCE);
+    fixture.metadata = {
+      ...fixture.metadata,
+      captureVersion: DDLT_SIZE_CAPTURE_VERSION - 1,
+    };
+
+    expect(() =>
+      assertSizesFixtureFresh(fixture, {
+        fixtureId: 'too-old',
+        mmdSource: SOURCE,
+        minCaptureVersion: DDLT_SIZE_CAPTURE_VERSION,
+      })
+    ).toThrow(/needs at least/);
+  });
+
+  it('rejects a capture contract newer than this build understands', () => {
+    const fixture = fixtureFor(SOURCE);
+    fixture.metadata = {
+      ...fixture.metadata,
+      captureVersion: DDLT_SIZE_CAPTURE_VERSION + 1,
+    };
+
+    expect(() =>
+      assertSizesFixtureFresh(fixture, { fixtureId: 'from-the-future', mmdSource: SOURCE })
+    ).toThrow(/unsupported DDLT size fixture "from-the-future"/);
+  });
+
+  it('rejects a capture taken at a different theme or look', () => {
+    const fixture = fixtureFor(SOURCE);
+    fixture.metadata = { ...fixture.metadata, theme: 'default', look: 'classic' };
+
+    expect(() =>
+      assertSizesFixtureFresh(fixture, {
+        fixtureId: 'wrong-look',
+        mmdSource: SOURCE,
+        expectedLook: 'neo',
+      })
+    ).toThrow(/captured at look=classic/);
   });
 
   it('allows legacy fixtures by default but can require metadata', () => {

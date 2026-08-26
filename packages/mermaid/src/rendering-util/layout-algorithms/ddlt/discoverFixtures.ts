@@ -16,7 +16,13 @@ function walkSizesFiles(dir: string, acc: string[]): void {
 }
 
 function defaultProfileForRelId(relId: string): DdltFixtureProfile {
-  return relId.startsWith('swimlanes/') ? 'swimlanes' : 'flowchart-domus';
+  if (relId.startsWith('swimlanes/')) {
+    return 'swimlanes';
+  }
+  if (relId.startsWith('elk-edge-cases/')) {
+    return 'flowchart-elk';
+  }
+  return 'flowchart-domus';
 }
 
 function loadManifest(baseDir: string): DdltManifest {

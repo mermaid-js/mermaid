@@ -69,6 +69,23 @@ interface ElkPreparedLayout {
 
 interface ElkLayoutContext {
   algorithm?: string;
+  /**
+   * Extra root-graph `layoutOptions`, merged last over
+   * {@link createRootElkGraph}'s defaults.
+   *
+   * NOT user-facing config: nothing in `config.schema.yaml` writes it and
+   * production `render()` never sets it. It exists so the DDLT configuration
+   * sweep can try ELK options that are currently hardcoded here — spacings,
+   * edge routing, node placement — WITHOUT forking the layout pipeline. A
+   * sweep that reimplemented `createRootElkGraph` would be measuring a graph
+   * the browser never builds, which is the exact failure the single-pipeline
+   * rule exists to prevent.
+   *
+   * Promote a winning option to a real default in `createRootElkGraph`, or to
+   * a `config.elk.*` key if it should be author-controlled. Do not reach for
+   * this from product code.
+   */
+  rootLayoutOptions?: Record<string, unknown>;
   common: { lineBreakRegex: RegExp };
   getConfig: () => any;
   interpolateToCurve: (interpolate: string | undefined, defaultCurve: unknown) => unknown;
@@ -496,7 +513,11 @@ export function buildElkGraphFromLayoutData(
   elkContext: ElkLayoutContext
 ): ElkLayoutState {
   const nodeDb: Record<string, NodeWithVertex> = {};
-  const elkGraph = createRootElkGraph(data4Layout, elkContext.algorithm);
+  const elkGraph = createRootElkGraph(
+    data4Layout,
+    elkContext.algorithm,
+    elkContext.rootLayoutOptions
+  );
 
   const dir = (data4Layout as { direction?: string }).direction ?? 'DOWN';
   elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
@@ -579,6 +600,9 @@ function getElkLayoutContext(
     algorithm:
       context.preparedLayout?.algorithm ??
       (context.options as { algorithm?: string } | undefined)?.algorithm,
+    rootLayoutOptions: (
+      context.options as { rootLayoutOptions?: Record<string, unknown> } | undefined
+    )?.rootLayoutOptions,
     common: helpers.common,
     getConfig: helpers.getConfig,
     interpolateToCurve: helpers.interpolateToCurve as (
@@ -589,7 +613,11 @@ function getElkLayoutContext(
   };
 }
 
-function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefined): any {
+function createRootElkGraph(
+  data4Layout: LayoutData,
+  algorithm: string | undefined,
+  rootLayoutOptions?: Record<string, unknown>
+): any {
   const graph = {
     id: 'root',
     layoutOptions: {
@@ -650,6 +678,12 @@ function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefin
       'elk.contentAlignment': 'H_CENTER V_TOP',
       'elk.padding': '[top=15,left=15,bottom=15,right=15]',
     });
+  }
+
+  // Last, so a sweep override beats every default above. See
+  // `ElkLayoutContext.rootLayoutOptions` for why this exists.
+  if (rootLayoutOptions) {
+    Object.assign(graph.layoutOptions, rootLayoutOptions);
   }
 
   return graph;
