@@ -71,11 +71,21 @@ const REQUIRED_CAPTURE_VERSION = 2;
  * layout.
  *
  * The measure step now runs for real under JSDOM (`measureLayoutWithFixture`),
- * and all 28 edge start points in that fixture match the browser exactly. What
- * survives is listed below.
+ * and all 28 edge start points in that fixture match the browser exactly.
+ *
+ * What that exposed, in turn, was a half-pixel displacement applied to every
+ * result of `intersectLine` — leftover integer-rounding arithmetic from the
+ * Graphics Gems original — which is how every non-rectangular shape finds its
+ * edge attachment. Removing it cleared `Render-stadium-shape` outright and took
+ * the aggregate from 5748.5 to 6738.5.
+ *
+ * What survives is listed below. It is concentrated in the decision-shape
+ * fixtures, where `intersect.polygon` computes the attachment along the line
+ * from the node CENTRE to the query point, so a port that ELK placed off-centre
+ * on the bounding box attaches part-way down a slanted face and opens with a
+ * diagonal segment.
  */
 const KNOWN_INVALID = new Set<string>([
-  'elk-edge-cases/Render-stadium-shape',
   'elk-edge-cases/diamond-intersections',
   'elk-edge-cases/flowchart-edge-styling',
   'elk-edge-cases/many-subgraphs-and-edges',
