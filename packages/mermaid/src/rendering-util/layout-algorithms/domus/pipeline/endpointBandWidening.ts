@@ -117,33 +117,76 @@ export function widenEndpointApproachBands(
     }
 
     const before = pts.map((p) => ({ ...p }));
-    const want = threshold + clearance;
+    // The +clearance push settles most drawings (see header), but a crowded
+    // margin can be occupied at exactly that offset while free a little
+    // nearer or further — so a small ladder of distances, generous first.
+    const wants = [
+      threshold + clearance,
+      threshold + 2,
+      threshold + clearance * 1.5,
+      threshold + clearance * 2.5,
+    ];
 
-    if (railIsVertical) {
-      const side = railA.x > rect.right - 1e-6 ? 1 : -1;
-      const edgeX = side === 1 ? rect.right : rect.left;
-      const target = edgeX + side * want;
-      if (Math.abs(target - railA.x) < 1e-6) {
-        continue;
+    let accepted = false;
+    for (const want of wants) {
+      // Work on a fresh copy per candidate — mutating the previous attempt's
+      // detached points would silently turn later rungs into no-ops.
+      const attempt = before.map((p) => ({ ...p }));
+      (edge as { points: Point[] }).points = attempt;
+      const aRail = attempt[n - 3];
+      const bRail = attempt[n - 2];
+      if (railIsVertical) {
+        const side = aRail.x > rect.right - 1e-6 ? 1 : -1;
+        const edgeX = side === 1 ? rect.right : rect.left;
+        const target = edgeX + side * want;
+        if (Math.abs(target - aRail.x) < 1e-6) {
+          continue;
+        }
+        aRail.x = target;
+        bRail.x = target;
+      } else {
+        const side = aRail.y > rect.bottom - 1e-6 ? 1 : -1;
+        const edgeY = side === 1 ? rect.bottom : rect.top;
+        const target = edgeY + side * want;
+        if (Math.abs(target - aRail.y) < 1e-6) {
+          continue;
+        }
+        aRail.y = target;
+        bRail.y = target;
       }
-      railA.x = target;
-      railB.x = target;
-    } else {
-      const side = railA.y > rect.bottom - 1e-6 ? 1 : -1;
-      const edgeY = side === 1 ? rect.bottom : rect.top;
-      const target = edgeY + side * want;
-      if (Math.abs(target - railA.y) < 1e-6) {
-        continue;
+
+      const next = checkLayout(layout);
+      const strictlyFewer = next.issues.length < current.issues.length;
+      // Hand-off trade: on a crowded margin every clear lane may be taken, so
+      // the widen can only swap the end-band for a parallel-too-close pair at
+      // equal count. That pair is exactly what repairRailProximityWhenIssues-
+      // Improve — which runs right after this pass in the same winner-only
+      // block — exists to separate, so the swap is accepted and handed on.
+      // Guarded tightly: equal count, the band flag for THIS edge gone, and
+      // every issue that was not there before is a parallel-too-close.
+      const countIssues = (issues: typeof next.issues, type: string): number =>
+        issues.filter((i) => i.type === type).length;
+      const bandGone = !next.issues.some(
+        (i) =>
+          i.type === 'edge-bend-near-endpoint' &&
+          String(i.edgeId ?? '') === id &&
+          (i as { details?: { which?: string } }).details?.which === 'end-band'
+      );
+      const handOffTrade =
+        next.issues.length === current.issues.length &&
+        bandGone &&
+        countIssues(next.issues, 'edge-parallel-segment-too-close') ===
+          countIssues(current.issues, 'edge-parallel-segment-too-close') + 1 &&
+        countIssues(next.issues, 'edge-bend-near-endpoint') ===
+          countIssues(current.issues, 'edge-bend-near-endpoint') - 1;
+      if (strictlyFewer || handOffTrade) {
+        current = next;
+        widened++;
+        accepted = true;
+        break;
       }
-      railA.y = target;
-      railB.y = target;
     }
-
-    const next = checkLayout(layout);
-    if (next.issues.length < current.issues.length) {
-      current = next;
-      widened++;
-    } else {
+    if (!accepted) {
       (edge as { points: Point[] }).points = before;
     }
   }

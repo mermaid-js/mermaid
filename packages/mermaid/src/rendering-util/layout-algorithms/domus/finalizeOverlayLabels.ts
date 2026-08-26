@@ -306,7 +306,17 @@ export function finalizeDummyLabelNodesToOverlayLabels(layoutData: LayoutData): 
           const safety = spacing;
           const inRange = targetPara >= paraMin + safety && targetPara <= paraMax - safety;
           const worthShifting = Math.abs(targetPara - currentPara) > safety;
-          if (inRange && worthShifting) {
+          // The shift moves BOTH the port and its stub on the parallel axis,
+          // which keeps the final (perpendicular) segment orthogonal — but the
+          // segment BEHIND the stub only survives when it runs along the
+          // perpendicular axis too. When it runs parallel (the stub's
+          // predecessor is a corner on the same rail), moving the stub bends
+          // that segment diagonal: triage2's BSState->Classify shipped its
+          // `edge-non-orthogonal` from exactly this shift.
+          const prev = pts0.length >= 3 ? pts0[pts0.length - 3] : undefined;
+          const prevSurvives =
+            !prev || (isNS ? approxEqual(prev.y, endStub.y) : approxEqual(prev.x, endStub.x));
+          if (inRange && worthShifting && prevSurvives) {
             const siblings = (portsByNodeSide.get(`${endId}:${side}`) ?? []).filter(
               (p) => Math.abs(p - currentPara) > 1e-6
             );
