@@ -90,24 +90,32 @@ const REQUIRED_CAPTURE_VERSION = 2;
  * What survives has nothing to do with shapes: bends landing too close to an
  * endpoint, and group frames with more empty space than content.
  *
- * `merge-edge-ambiguity` guards edge bundling and is expected to PASS. Its
- * graph is
+ * `merge-edge-ambiguity` is different from the other two. It is a deliberate
+ * counterexample rather than debt, and it must STAY invalid until edge merging
+ * is fixed. Its graph is
  *
  * ```
  * A --> B & C & D ;  C --> A ;  F --> A ;  D --> A
  * ```
  *
- * with `elk.mergeEdges` on, and there is no edge between B and A. It was added
- * while ELK's own `mergeEdges` was in use, which collapsed A's whole fan onto
- * one handle carrying a double-headed arrow so the picture read as though that
- * edge existed — a correctness failure, since the diagram asserted a
- * relationship the source never declared. Bundling now routes each role through
- * its own port, so the arriving and leaving trunks get separate handles and the
- * false reading is gone. What remains are soft bundle penalties.
+ * with `elk.mergeEdges` on. There is no edge between B and A, but merging
+ * collapses A's whole fan onto one handle carrying a double-headed arrow, so
+ * the picture reads as though there is. That is a correctness failure, not an
+ * untidy one: the diagram asserts a relationship the source never declared.
+ *
+ * It also pins the boundary the bundle classification draws. The pairs that
+ * fabricate the reading are mixed-role — one edge arriving where another
+ * leaves — and stay HARD; the same-role fans in the same diagram are soft
+ * bundles. If a future change makes this fixture valid, the ratchet will say
+ * so, and that is the signal that merging became safe.
  */
 const KNOWN_INVALID = new Set<string>([
   'elk-edge-cases/many-subgraphs-and-edges',
   'elk-edge-cases/right-angles-not-curves',
+  // Not debt: a counterexample, pinned on purpose. Its frontmatter turns
+  // `elk.mergeEdges` ON, and the graph is built so that merging fabricates a
+  // relationship the graph does not contain — see the note below.
+  'elk-edge-cases/merge-edge-ambiguity',
 ]);
 
 function issueSummary(issues: { type: string }[]): string {
