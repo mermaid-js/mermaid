@@ -1201,3 +1201,11 @@ run ended: max_consecutive_reverts (rounds 5, 6, 7) — total 53,412.3 -> 53,602
 - `edge-to-group-too-short` flags now feed spaceNodesOffGroupFrames as spacing records: both flag families reduce to "leaf must move N px away from frame" — a stub's N is its visible-length deficit, charged to the leaf terminal. Same rigid sets, partner cascade, rungs, gates.
 - result: co-pilot +40 (BOTH user-named bottom stubs now read), subgraph-variation +36, edge-from-subgraph +7.1 (round-1's loss recovered). Sweep 65/65, wider suite green.
 - position: 53,571.4 — the padding debt is nearly paid back (-30.9 vs pre-instrument 53,602.3); target 54,102.3 needs +530.9. arch2's ledger cost is 11.29M vs the 10M budget with 52M of corpus headroom now free.
+
+### rounds 3-5 — compaction admission for arch2/svelte5 (ALL REVERTED; 3rd consecutive = STOP)
+
+- round 3: ledger 10M -> 12M admits arch2 — candidate still dies on edge-label-off-edge (335 -> 0), unchanged from T21/T23 measurements even under the new padding.
+- round 4: labeled-edges-as-spacers constraint in compactGroupSlack's move limit (the named root fix) + the budget raise as one logical move. The spacer alone: -3 (more conservative reclaim on accepting fixtures); combined: total unchanged, arch2 STILL strands the same label — it rides a CROSS-GROUP edge the within-group move limit never sees. The real constraint would have to span group boundaries at the compound level.
+- round 5: svelte5 re-measured at budget 30M under the new padding — same strand (507 -> 0), third time. Both fixtures' compaction value is permanently gated on cross-group label-aware compaction: supervised structural work.
+
+run ended: max_consecutive_reverts (rounds 3, 4, 5) — total 53,354.5 (post-instrument) -> 53,571.4 (+216.9 on the new scale; -30.9 vs the pre-instrument 53,602.3, the residue being dead-space growth from the wider frames plus edge-from-subgraph's -7). USER'S PADDING ASKS FULLY DELIVERED: zero remaining edge-to-group-too-short / node-close-to-own-frame flags, member padding 15 -> 22 visible everywhere, both co-pilot bottom stubs read as edges. invalid 1 (out of scope). cost 801.6M -> 751.2M (93.5% — 50.8M of headroom RE-OPENED, the run's biggest structural win).
