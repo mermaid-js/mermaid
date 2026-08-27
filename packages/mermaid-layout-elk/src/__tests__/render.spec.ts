@@ -129,8 +129,30 @@ describe('buildSubgraphLayoutOptions', () => {
   it('handles undefined elkConfig gracefully', () => {
     const opts = buildSubgraphLayoutOptions({}, undefined, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
-    expect(opts['nodePlacement.strategy']).toBeUndefined();
+    // With no config at all the `default` preset supplies the placement
+    // strategy, so this is no longer undefined.
+    expect(opts['nodePlacement.strategy']).toBe('LINEAR_SEGMENTS');
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+  });
+
+  it('lets an explicit strategy beat the preset', () => {
+    // A preset is a starting point, not a lock: naming one option explicitly
+    // overrides that option and leaves the rest of the preset in place.
+    const opts = buildSubgraphLayoutOptions(
+      {},
+      { preset: 'legacy', nodePlacementStrategy: 'SIMPLE' },
+      'layered'
+    );
+    expect(opts['nodePlacement.strategy']).toBe('SIMPLE');
+  });
+
+  it('takes the placement strategy from the named preset', () => {
+    expect(
+      buildSubgraphLayoutOptions({}, { preset: 'legacy' }, 'layered')['nodePlacement.strategy']
+    ).toBe('BRANDES_KOEPF');
+    expect(
+      buildSubgraphLayoutOptions({}, { preset: 'depthFirst' }, 'layered')['nodePlacement.strategy']
+    ).toBe('LINEAR_SEGMENTS');
   });
 
   it('applies a per-group algorithm from metadata with SEPARATE_CHILDREN', () => {
@@ -735,7 +757,9 @@ describe('clearContainerAlgorithmOptions', () => {
 
     clearContainerAlgorithmOptions(options);
 
-    expect(options['spacing.baseValue']).toBe(30);
+    // Back to DEFAULT_SUBGRAPH_SPACING_BASE_VALUE, which also sets the straight
+    // run an edge gets before the node it enters (ELK derives it at ~half).
+    expect(options['spacing.baseValue']).toBe(50);
     expect(options).not.toHaveProperty('spacing.nodeNode');
     expect(options).not.toHaveProperty('elk.rectpacking.trybox');
   });

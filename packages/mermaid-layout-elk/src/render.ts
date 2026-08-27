@@ -8,6 +8,7 @@ import mermaid, {
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
+import { applyElkLineJumps } from './lineHops.js';
 
 import {
   type P,
@@ -60,6 +61,9 @@ interface NodeWithVertex {
 
 interface ElkSubgraphConfig {
   mergeEdges?: boolean;
+  preset?: string;
+  layeringStrategy?: string;
+  layeringLayerBound?: number;
   nodePlacementAlignment?: string;
   nodePlacementStrategy?: string;
 }
@@ -126,8 +130,27 @@ const ARROW_MAP: Record<string, [string, string]> = {
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
-/** Default `spacing.baseValue` for a subgraph that has no algorithm of its own. */
-const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 30;
+/** Padding between a subgraph frame and its children. ELK's own default is 12. */
+const SUBGRAPH_PADDING = 24;
+/**
+ * Lane width for edges routed inside a container.
+ *
+ * 10 measured best over the ELK corpus. Below that edges crowd each other —
+ * at 5 the aggregate drops by about 500 as they start tripping the
+ * parallel-proximity checks — and above it the frame grows for no benefit.
+ */
+const SUBGRAPH_EDGE_LANE_SPACING = 10;
+/**
+ * Default `spacing.baseValue` for a subgraph that has no algorithm of its own.
+ *
+ * ELK derives the gap between an edge and a node from this at roughly half, and
+ * that gap is the straight run an edge gets between its last turn and the node
+ * it enters. At 30 the run came out at 15, and since the arrowhead alone is 10
+ * that left about 5px of visible line before the corner — the turn read as
+ * happening under the arrowhead. Setting the derived gap directly does not
+ * work: ELK ignores an explicit `spacing.edgeNode` here, in every key form.
+ */
+const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 50;
 /** Inner padding reserved around a container that runs its own algorithm. */
 const CONTAINER_PADDING = 15;
 /** Same, for `elk.rectpacking`, which packs tighter. */
@@ -259,8 +282,22 @@ export function buildSubgraphLayoutOptions(
 
   const layoutOptions: Record<string, unknown> = {
     'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
+    // Width of each routing lane inside the container, set on its own rather
+    // than left to derive from `spacing.baseValue`. Those two want to move in
+    // opposite directions: the base value has to be generous enough that an
+    // edge gets a straight run before the node it enters, but every edge
+    // routed down the inside of a frame then claims a lane that wide, so a
+    // group with several of them is pushed well clear of its own border.
+    // Splitting them keeps the approach while the lanes stay tight.
+    'elk.layered.spacing.edgeEdgeBetweenLayers': SUBGRAPH_EDGE_LANE_SPACING,
+    // Breathing room between a frame and its children. Set explicitly rather
+    // than left to ELK's default of 12. The top gets the same value as the
+    // rest: ELK reserves the subgraph's own title strip on top of whatever is
+    // given here, so adding the label height again double-counts it.
+    'elk.padding': `[top=${SUBGRAPH_PADDING},left=${SUBGRAPH_PADDING},bottom=${SUBGRAPH_PADDING},right=${SUBGRAPH_PADDING}]`,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-    'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
+    'nodePlacement.strategy':
+      elkConfig?.nodePlacementStrategy ?? resolveElkPreset(elkConfig?.preset).placement,
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'elk.layered.nodePlacement.bk.fixedAlignment':
       elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
@@ -534,6 +571,7 @@ export function buildElkGraphFromLayoutData(
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
+  afterPaint: applyElkLineJumps,
   prepareLayout: prepareLayoutForElk,
   // ELK derives a compound node's minimum size from the measured cluster label,
   // so the label has to be measured the way `insertCluster` paints it —
@@ -614,31 +652,95 @@ function getElkLayoutContext(
   };
 }
 
+/**
+ * Scratch overrides for local experimentation. MUST be empty on `develop`.
+ *
+ * Spread last into the root graph's `layoutOptions`, so anything here wins over
+ * the defaults above — including the keys wired to `config.elk.*`. That is the
+ * point: edit one line, let the dev server rebuild, and compare renders without
+ * touching a diagram's frontmatter or the config schema.
+ *
+ * It is also why this must not ship. An entry here silently disables the
+ * matching user-facing option for every diagram, and the symptom — "this config
+ * key does nothing" — gives no hint where to look. `elk.cycleBreakingStrategy`
+ * was dead this way, and it took a bisect against the raw ELK option to notice.
+ */
+/**
+ * Named combinations of the three options that decide where nodes end up.
+ *
+ * Layering picks the column, node placement the coordinate within it, and cycle
+ * breaking which edges are reversed and therefore which ones detour. They run in
+ * different phases and do not interact, so a preset is a named triple rather
+ * than a mode of its own.
+ *
+ * An explicit `elk.layeringStrategy` / `nodePlacementStrategy` /
+ * `cycleBreakingStrategy` beats the preset for that one option — which is why
+ * `defaultConfig` leaves all three undefined rather than giving them values.
+ */
+const ELK_PRESETS: Record<string, { layering: string; placement: string; cycleBreaking: string }> =
+  {
+    /** Keeps chains of nodes aligned. */
+    default: {
+      layering: 'NETWORK_SIMPLEX',
+      placement: 'LINEAR_SEGMENTS',
+      cycleBreaking: 'GREEDY_MODEL_ORDER',
+    },
+    /**
+     * What shipped before presets: straighter long edges, less alignment.
+     *
+     * `GREEDY`, not `GREEDY_MODEL_ORDER`, is deliberate. The schema advertised
+     * the latter, but `defaultConfig` never listed `cycleBreakingStrategy`, so it
+     * reached ELK as undefined and ELK's own default applied. This preset
+     * reproduces what `develop` actually renders, not what its schema claimed.
+     * Layering is ELK's default too — `develop` does not wire the option at all.
+     */
+    legacy: {
+      layering: 'NETWORK_SIMPLEX',
+      placement: 'BRANDES_KOEPF',
+      cycleBreaking: 'GREEDY',
+    },
+    /** As `default`, but shorter back edges on graphs that have many. */
+    depthFirst: {
+      layering: 'NETWORK_SIMPLEX',
+      placement: 'LINEAR_SEGMENTS',
+      cycleBreaking: 'DEPTH_FIRST',
+    },
+  };
+
+/** Resolve a preset name, falling back to `default` for an unknown one. */
+export function resolveElkPreset(name: string | undefined) {
+  return ELK_PRESETS[name ?? 'default'] ?? ELK_PRESETS.default;
+}
+
 function createRootElkGraph(
   data4Layout: LayoutData,
   algorithm: string | undefined,
   rootLayoutOptions?: Record<string, unknown>
 ): any {
+  const preset = resolveElkPreset(data4Layout.config.elk?.preset);
   const graph = {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy ?? preset.placement,
       'elk.layered.nodePlacement.bk.fixedAlignment':
         data4Layout.config.elk?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 40,
+
       'elk.layered.crossingMinimization.forceNodeModelOrder':
         data4Layout.config.elk?.forceNodeModelOrder,
       'elk.layered.considerModelOrder.strategy': data4Layout.config.elk?.considerModelOrder,
       'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
+      'elk.layered.cycleBreaking.strategy':
+        data4Layout.config.elk?.cycleBreakingStrategy ?? preset.cycleBreaking,
+      'elk.layered.layering.strategy': data4Layout.config.elk?.layeringStrategy ?? preset.layering,
+      // Only COFFMAN_GRAHAM reads this; the others ignore it.
+      'elk.layered.layering.coffmanGraham.layerBound': data4Layout.config.elk?.layeringLayerBound,
 
-      // 'elk.layered.cycleBreaking.strategy': 'GREEDY_MODEL_ORDER',
-      // 'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER',
-      // 'spacing.nodeNode': 20,
+      // 'spacing.nodeNode': 120,
       // 'spacing.nodeNodeBetweenLayers': 25,
       // 'spacing.edgeNode': 20,
       // 'spacing.edgeNodeBetweenLayers': 10,
@@ -647,27 +749,10 @@ function createRootElkGraph(
       // 'spacing.nodeSelfLoop': 20,
 
       // Tweaking options
-      // 'nodePlacement.favorStraightEdges': true,
-      // 'elk.layered.nodePlacement.favorStraightEdges': true,
-      // 'nodePlacement.feedbackEdges': true,
       'elk.layered.wrapping.multiEdge.improveCuts': true,
       'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
-      // 'elk.layered.wrapping.strategy': 'MULTI_EDGE',
-      // 'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
       'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
       'elk.layered.mergeHierarchyEdges': true,
-
-      // 'elk.layered.feedbackEdges': true,
-      // 'elk.layered.crossingMinimization.semiInteractive': true,
-      // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
-      // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
-      // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
-      // 'elk.insideSelfLoops.activate': true,
-      // 'elk.separateConnectedComponents': true,
-      // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
-      // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
-      // 'elk.layered.considerModelOrder.strategy': 'EDGES',
-      // 'elk.layered.wrapping.cutting.strategy': 'ARD',
     },
     children: [],
     edges: [],

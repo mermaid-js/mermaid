@@ -110,8 +110,6 @@ const REQUIRED_CAPTURE_VERSION = 2;
  * so, and that is the signal that merging became safe.
  */
 const KNOWN_INVALID = new Set<string>([
-  'elk-edge-cases/many-subgraphs-and-edges',
-  'elk-edge-cases/right-angles-not-curves',
   // Not debt: a counterexample, pinned on purpose. Its frontmatter turns
   // `elk.mergeEdges` ON, and the graph is built so that merging fabricates a
   // relationship the graph does not contain — see the note below.

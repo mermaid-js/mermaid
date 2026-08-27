@@ -126,6 +126,68 @@ export interface MermaidConfig {
      */
     nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
     /**
+     * Named combination of the three options that decide where nodes end up:
+     * layering strategy, node placement strategy and cycle breaking strategy.
+     * They belong to different phases of the layout, so a preset is simply a
+     * named triple rather than a mode with behaviour of its own.
+     *
+     * `default` — network simplex layering, linear segments placement, greedy
+     * model order cycle breaking. Keeps chains of nodes aligned.
+     *
+     * `legacy` — what shipped before presets existed: Brandes-Koepf placement,
+     * which straightens long edges at the cost of that alignment, with ELK's
+     * own greedy cycle breaking. Reproduces the rendering of earlier
+     * versions rather than the defaults their schema advertised.
+     *
+     * `depthFirst` — as `default`, but breaks cycles depth first, which tends
+     * to give shorter back edges on graphs that have many of them.
+     *
+     * Setting `layeringStrategy`, `nodePlacementStrategy` or
+     * `cycleBreakingStrategy` explicitly overrides the preset for that one
+     * option; the rest of the preset still applies.
+     *
+     */
+    preset?: 'default' | 'legacy' | 'depthFirst';
+    /**
+     * Renders edge crossings as small arcs ("hops") or visible gaps, so that
+     * it is clear which line passes over which where two edges meet.
+     *
+     * The edge that gives way loses its corner rounding for the segment
+     * carrying the hop, which is the trade for a readable crossing. Curved
+     * edges are skipped rather than rewritten, to avoid corrupting their
+     * geometry. Set to `false` to draw plain crossings.
+     *
+     */
+    lineHops?: boolean | ('arc' | 'gap');
+    /**
+     * Elk specific option deciding which layer each node is assigned to — the
+     * column in a left-to-right diagram, the row in a top-down one. This is
+     * the coarsest of the three placement decisions, so changing it moves
+     * nodes further than anything else short of altering spacing.
+     *
+     * NETWORK_SIMPLEX aims for the fewest long edges. LONGEST_PATH pushes
+     * every node as late as it can go. COFFMAN_GRAHAM bounds how many nodes
+     * share a layer, giving a more even, block-like shape on wide graphs.
+     * MIN_WIDTH and STRETCH_WIDTH trade edge length for a narrower or wider
+     * drawing. INTERACTIVE honours positions already on the nodes.
+     *
+     */
+    layeringStrategy?:
+      | 'NETWORK_SIMPLEX'
+      | 'LONGEST_PATH'
+      | 'LONGEST_PATH_SOURCE'
+      | 'COFFMAN_GRAHAM'
+      | 'MIN_WIDTH'
+      | 'STRETCH_WIDTH'
+      | 'INTERACTIVE';
+    /**
+     * Elk specific option capping how many nodes COFFMAN_GRAHAM will put in
+     * one layer. Ignored by every other layering strategy. Lower values give
+     * a taller, narrower drawing.
+     *
+     */
+    layeringLayerBound?: number;
+    /**
      * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
      *
      */
