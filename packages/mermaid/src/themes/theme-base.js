@@ -66,6 +66,9 @@ class Theme {
     this.edgeLabelBackground =
       this.edgeLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
+
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
 

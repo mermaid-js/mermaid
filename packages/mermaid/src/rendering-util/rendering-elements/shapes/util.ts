@@ -55,7 +55,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
     sanitizeText(decodeEntities(label), getConfig()),
     {
       useHtmlLabels,
-      width: node.width || getConfig().flowchart?.wrappingWidth,
+      width: node.width || node.wrappingWidth || getConfig().flowchart?.wrappingWidth,
       classes: isMarkdown ? 'markdown-node-label' : '',
       style: node.labelStyle,
       addSvgBackground: addBackground,

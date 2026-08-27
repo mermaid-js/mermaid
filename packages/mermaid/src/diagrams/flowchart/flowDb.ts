@@ -1208,6 +1208,12 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: true,
           look: config.look,
+          // Forwarded so layout engines can read per-container settings such as
+          // `@{ algorithm: elk.box }`. `view` is consumed above; everything else
+          // is opaque here and simply passed through. The cast is the
+          // interface-vs-index-signature gap: `NodeMetaData` is an interface, so
+          // it is not structurally assignable to `Record<string, unknown>`.
+          metadata: subGraph.metadata as Record<string, unknown> | undefined,
         });
       }
     }
