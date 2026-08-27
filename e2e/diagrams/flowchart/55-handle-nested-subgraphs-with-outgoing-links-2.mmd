@@ -1,0 +1,22 @@
+---
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+
+  subgraph one[One]
+  subgraph sub_one[Sub One]
+  _sub_one
+  end
+  subgraph sub_two[Sub Two]
+  _sub_two
+  end
+  _one
+  end
+
+  %% here, either the first or the second one
+  sub_one --> sub_two
+  _one --> b
