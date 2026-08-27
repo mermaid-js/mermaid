@@ -24,7 +24,7 @@ class Theme {
     this.radius = 12;
     this.strokeWidth = 2;
 
-    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+    this.primaryBorderColor = mkBorder('#28253D', this.darkMode);
     // dark
 
     this.fontFamily = '"Recursive Variable", arial, sans-serif';
@@ -39,6 +39,10 @@ class Theme {
     this.dropShadow = 'url(#drop-shadow)';
     this.nodeShadow = true;
     this.tertiaryColor = '#ffffff';
+
+    /* Class Diagram variables */
+    this.clusterBkg = '#F9F9FB';
+    this.clusterBorder = '#BDBCCC';
 
     /* Architecture Diagram variables */
     this.archEdgeColor = 'calculated';
@@ -147,10 +151,13 @@ class Theme {
     const primaryColor = '#ECECFE';
     const secondaryColor = '#E9E9F1';
     const tertiaryColor = adjust(primaryColor, { h: 180, l: 5 });
-    this.sectionBkgColor = this.sectionBkgColor || tertiaryColor;
+    // Section bands are painted at 20% opacity (gantt/styles.js `.section`), so the
+    // source colour has to be saturated to read at all -- the `primaryColor` tints this
+    // used before gave no banding. Literals rather than `cScale0`/`cScale1` because the
+    // categorical scale is not assigned until further down updateColors().
+    this.sectionBkgColor = this.sectionBkgColor || '#f4a8ff'; // Fuchsia-300
     this.altSectionBkgColor = this.altSectionBkgColor || 'white';
-    this.sectionBkgColor = this.sectionBkgColor || secondaryColor;
-    this.sectionBkgColor2 = this.sectionBkgColor2 || primaryColor;
+    this.sectionBkgColor2 = this.sectionBkgColor2 || '#46ecd5'; // Teal-300
     this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
     this.taskBkgColor = this.taskBkgColor || primaryColor;
@@ -184,7 +191,9 @@ class Theme {
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     /* The color of the text tables of the states*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
-
+    this.compositeTitleBackground = '#F9F9FB';
+    this.altBackground = '#F9F9FB';
+    this.stateEdgeLabelBackground = '#FFFFFF';
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
@@ -257,28 +266,20 @@ class Theme {
     this.classText = this.classText || this.textColor;
 
     /* user-journey */
-    this.fillType0 = this.fillType0 || primaryColor;
-    this.fillType1 = this.fillType1 || secondaryColor;
-    this.fillType2 = this.fillType2 || adjust(primaryColor, { h: 64 });
-    this.fillType3 = this.fillType3 || adjust(secondaryColor, { h: 64 });
-    this.fillType4 = this.fillType4 || adjust(primaryColor, { h: -64 });
-    this.fillType5 = this.fillType5 || adjust(secondaryColor, { h: -64 });
-    this.fillType6 = this.fillType6 || adjust(primaryColor, { h: 128 });
-    this.fillType7 = this.fillType7 || adjust(secondaryColor, { h: 128 });
+    // Journey task labels are hardcoded to #333 in user-journey/styles.js, so these
+    // fills must stay light. The pale background array keeps them hue-distinct where
+    // the old tints of `primaryColor` were eight shades of the same lavender.
+    for (let i = 0; i < 8; i++) {
+      this['fillType' + i] = this['fillType' + i] || this.bkgColorArray[i];
+    }
 
     /* pie */
-    this.pie1 = this.pie1 || primaryColor;
-    this.pie2 = this.pie2 || secondaryColor;
-    this.pie3 = this.pie3 || tertiaryColor;
-    this.pie4 = this.pie4 || adjust(primaryColor, { l: -10 });
-    this.pie5 = this.pie5 || adjust(secondaryColor, { l: -10 });
-    this.pie6 = this.pie6 || adjust(tertiaryColor, { l: -10 });
-    this.pie7 = this.pie7 || adjust(primaryColor, { h: +60, l: -10 });
-    this.pie8 = this.pie8 || adjust(primaryColor, { h: -60, l: -10 });
-    this.pie9 = this.pie9 || adjust(primaryColor, { h: 120, l: 0 });
-    this.pie10 = this.pie10 || adjust(primaryColor, { h: +60, l: -20 });
-    this.pie11 = this.pie11 || adjust(primaryColor, { h: -60, l: -20 });
-    this.pie12 = this.pie12 || adjust(primaryColor, { h: 120, l: -10 });
+    // Slices reuse the theme's categorical scale so a pie reads like a mindmap or
+    // treemap in the same theme. The old tints of `primaryColor` were all near-white
+    // (pie3 resolved to pure white), leaving adjacent slices indistinguishable.
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['pie' + (i + 1)] = this['pie' + (i + 1)] || this['cScale' + i];
+    }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
     this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
@@ -348,6 +349,7 @@ class Theme {
       this.relationLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+    this.requirementEdgeLabelBackground = '#FFFFFF';
 
     /* git */
     this.git0 = this.git0 || primaryColor;
