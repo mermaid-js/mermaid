@@ -13,7 +13,6 @@ import { applyElkLineJumps } from './lineHops.js';
 import {
   type P,
   type RectLike,
-  EPS,
   outsideNode,
   computeNodeIntersection,
   outlineAttachPoint,
@@ -1185,75 +1184,148 @@ function axisOf(a: P, b: P): 'h' | 'v' | undefined {
 }
 
 /**
- * Collapse the port-to-channel staircase at both ends of a clipped route.
+ * Straighten the port-to-channel staircase at either end of a clipped route,
+ * leaving both ports where they are.
  *
- * Where the terminal point sits on a node border and the route immediately
- * steps perpendicular by at most {@link TERMINAL_JOG_MAX} before continuing the
- * same way, the terminal is moved onto the channel row — still on the border —
- * and the step is dropped.
+ * Returns the original array when nothing applies, so callers can compare by
+ * identity.
  */
-export function straightenTerminalJogs(
-  points: P[],
-  startBounds: RectLike,
-  endBounds: RectLike
-): P[] {
-  const pts = [...points];
-  collapseTerminalJog(pts, startBounds);
-  pts.reverse();
-  collapseTerminalJog(pts, endBounds);
-  pts.reverse();
+export function straightenTerminalJogs(points: P[]): P[] {
+  let pts = straightenFront(points) ?? points;
+  const reversed = [...pts].reverse();
+  const fixedEnd = straightenFront(reversed);
+  if (fixedEnd) {
+    pts = fixedEnd.reverse();
+  }
   return pts;
 }
 
-/** Collapse the staircase at the front of `pts`, in place. */
-function collapseTerminalJog(pts: P[], bounds: RectLike): void {
-  // A route can stack more than one micro-step, so keep going while the front
-  // still matches the pattern. Bounded rather than `while (true)`.
-  for (let guard = 0; guard < 3; guard++) {
-    if (pts.length < 4) {
-      return;
+/**
+ * Straighten the staircase at the front of `pts`, or return null when it does
+ * not apply.
+ *
+ * The step is removed by pulling the CHANNEL onto the port's row, never by
+ * pulling the port onto the channel's. Moving the port slides the attachment
+ * along the node border, and a node whose other edges are still at their spread
+ * positions then looks lopsided — the reason this was rewritten. Moving the
+ * channel instead keeps every port exactly where ELK placed it, at the cost of
+ * displacing one run, which is why the caller checks the result for crossings.
+ *
+ * The run is only moved when the point after it is not the far terminal, since
+ * that would move the other end's port and reintroduce the same problem there.
+ */
+function straightenFront(pts: P[]): P[] | null {
+  if (pts.length < 5) {
+    return null;
+  }
+  const [p0, p1, p2, p3] = pts;
+  const axis = axisOf(p0, p1);
+  if (!axis || axisOf(p2, p3) !== axis || axisOf(p1, p2) !== (axis === 'h' ? 'v' : 'h')) {
+    return null;
+  }
+  // The step has to be next to the node to be the port-to-channel connector.
+  if (Math.hypot(p1.x - p0.x, p1.y - p0.y) > TERMINAL_RUN_MAX) {
+    return null;
+  }
+  const jog = axis === 'h' ? Math.abs(p2.y - p1.y) : Math.abs(p2.x - p1.x);
+  if (jog < JOG_EPS || jog > TERMINAL_JOG_MAX) {
+    return null;
+  }
+  // The route has to keep travelling the same way after the step, otherwise
+  // this is a real turn rather than a connector.
+  const forward =
+    axis === 'h'
+      ? Math.sign(p1.x - p0.x) === Math.sign(p3.x - p2.x)
+      : Math.sign(p1.y - p0.y) === Math.sign(p3.y - p2.y);
+  if (!forward) {
+    return null;
+  }
+  // The WHOLE run has to move, not just its first segment: the channel carries
+  // on past p3 until the route turns, and shifting only part of it leaves a
+  // diagonal where the moved and unmoved halves meet.
+  let last = 3;
+  while (last + 1 < pts.length && axisOf(pts[last], pts[last + 1]) === axis) {
+    last++;
+  }
+  // The far terminal must not be inside the run — moving it would drag the
+  // other end's port, which is the thing this avoids.
+  if (last === pts.length - 1) {
+    return null;
+  }
+
+  // No border check is needed: the port is untouched, so it stays exactly where
+  // ELK put it, and the run moves onto that same row — which the first segment
+  // already occupied on its way out of the node.
+  const moved = [...pts];
+  for (let i = 2; i <= last; i++) {
+    moved[i] = axis === 'h' ? { x: pts[i].x, y: p0.y } : { x: p0.x, y: pts[i].y };
+  }
+  // p1 and p2 are now collinear with p0 and the rest of the run.
+  moved.splice(1, 2);
+  return moved;
+}
+
+/** Do two axis-aligned segments cross at a point interior to both? */
+function segmentsCrossStrict(a1: P, a2: P, b1: P, b2: P): boolean {
+  const side = (o: P, p: P, q: P) => (p.x - o.x) * (q.y - o.y) - (p.y - o.y) * (q.x - o.x);
+  const d1 = side(b1, b2, a1);
+  const d2 = side(b1, b2, a2);
+  const d3 = side(a1, a2, b1);
+  const d4 = side(a1, a2, b2);
+  return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+}
+
+/** How many times one polyline crosses another. */
+function crossingCount(a: P[], b: P[]): number {
+  let n = 0;
+  for (let i = 0; i < a.length - 1; i++) {
+    for (let j = 0; j < b.length - 1; j++) {
+      if (segmentsCrossStrict(a[i], a[i + 1], b[j], b[j + 1])) {
+        n++;
+      }
     }
-    const [p0, p1, p2, p3] = pts;
-    const axis = axisOf(p0, p1);
-    if (!axis || axisOf(p2, p3) !== axis || axisOf(p1, p2) !== (axis === 'h' ? 'v' : 'h')) {
-      return;
+  }
+  return n;
+}
+
+/**
+ * Straighten the port-to-channel step on every edge that has one, but only
+ * where doing so does not buy a crossing.
+ *
+ * Runs once over the finished layout rather than per edge, because the decision
+ * needs the other edges: the step is removed by displacing one of this edge's
+ * runs onto the port's row, and that run can land in a lane something else
+ * already occupies. Trading a barely-visible step for a new crossing is a bad
+ * deal, so an edge that would cause one is left exactly as ELK routed it.
+ */
+function straightenEdgeTerminals(edges: Edge[]): void {
+  const routes = edges.map((edge) => (edge as { points?: P[] }).points ?? []);
+
+  for (const [index, edge] of edges.entries()) {
+    const original = routes[index];
+    if (original.length < 5) {
+      continue;
     }
-    // The step has to be next to the node to be the connector at all.
-    if (Math.hypot(p1.x - p0.x, p1.y - p0.y) > TERMINAL_RUN_MAX) {
-      return;
+    const candidate = straightenTerminalJogs(original);
+    if (candidate === original) {
+      continue;
     }
-    if (axis === 'h') {
-      const jog = Math.abs(p2.y - p1.y);
-      if (jog < JOG_EPS || jog > TERMINAL_JOG_MAX) {
-        return;
+
+    let before = 0;
+    let after = 0;
+    for (const [other, route] of routes.entries()) {
+      if (other === index || route.length < 2) {
+        continue;
       }
-      // The route has to keep travelling the same way after the step,
-      // otherwise this is a real turn rather than a connector.
-      if (Math.sign(p1.x - p0.x) !== Math.sign(p3.x - p2.x)) {
-        return;
-      }
-      // The moved terminal has to stay on the node's border span.
-      const top = bounds.y - bounds.height / 2;
-      const bottom = bounds.y + bounds.height / 2;
-      if (p2.y < top + EPS || p2.y > bottom - EPS) {
-        return;
-      }
-      pts.splice(0, 2, { x: p0.x, y: p2.y });
-    } else {
-      const jog = Math.abs(p2.x - p1.x);
-      if (jog < JOG_EPS || jog > TERMINAL_JOG_MAX) {
-        return;
-      }
-      if (Math.sign(p1.y - p0.y) !== Math.sign(p3.y - p2.y)) {
-        return;
-      }
-      const left = bounds.x - bounds.width / 2;
-      const right = bounds.x + bounds.width / 2;
-      if (p2.x < left + EPS || p2.x > right - EPS) {
-        return;
-      }
-      pts.splice(0, 2, { x: p2.x, y: p0.y });
+      before += crossingCount(original, route);
+      after += crossingCount(candidate, route);
     }
+    if (after > before) {
+      continue;
+    }
+
+    (edge as { points?: P[] }).points = candidate;
+    routes[index] = candidate;
   }
 }
 
@@ -1340,9 +1412,7 @@ function applyElkEdgeLayout(
 
     const clipped = sanitizeElkEdgePoints(points, startNode, endNode, log);
     layoutEdge.points = ensureEndMarkerSegmentLength(
-      straightenEdges
-        ? straightenTerminalJogs(clipped, boundsFor(startNode), boundsFor(endNode))
-        : clipped,
+      clipped,
       boundsFor(endNode),
       getEndMarkerPathOffset(layoutEdge),
       log
@@ -1355,6 +1425,10 @@ function applyElkEdgeLayout(
       layoutEdge.y = label.y + offset.y + label.height / 2;
     }
   });
+
+  if (straightenEdges) {
+    straightenEdgeTerminals(data4Layout.edges);
+  }
 }
 
 function createEdgePointsFromSection(section: any, offset: { x: number; y: number }): P[] {
