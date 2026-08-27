@@ -1282,7 +1282,13 @@ export function evenGroupFrames(
     if (layoutNode) {
       layoutNode.x = group.x;
       layoutNode.y = group.y;
-      layoutNode.width = Math.max(width, elkNode.labelData?.width ?? 0);
+      // The clamp above, not the label floor. `width` has already honoured the
+      // floor wherever ELK left room for it; the only case where the label is
+      // still wider is the one the clamp just refused, so taking the max here
+      // would quietly undo it — and this is the width the frame is PAINTED at
+      // (`clusters.js` sizes the rect from `node.width`), so the frame would
+      // spill outside the bounds ELK reserved.
+      layoutNode.width = width;
       layoutNode.height = height;
     }
   }

@@ -1015,6 +1015,68 @@ describe('clearContainerAlgorithmOptions', () => {
       expect(nodeDb.g.width).toBe(120);
     });
 
+    it('paints the clamped frame, not the wider title, into the layout node', () => {
+      // Every other test here passes an empty `nodeById`, so the branch that
+      // writes the node the renderer actually paints from went uncovered — and
+      // that is where the clamp was being undone.
+      //
+      // A 100-wide frame under a 200-wide title. The clamp refuses to widen the
+      // frame, so the layout node must not report 200 either: `clusters.js`
+      // sizes the painted rect from `node.width`, so a 200 here paints a frame
+      // 100 units wider than ELK reserved.
+      const nodeDb: Record<string, any> = {
+        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 100, height: 148 },
+        n: { id: 'n', offset: { posX: 10, posY: 48 }, width: 40, height: 76 },
+      };
+      const layoutNode = { id: 'g', x: 0, y: 0, width: 0, height: 0 } as any;
+
+      evenGroupFrames(
+        [
+          {
+            id: 'g',
+            isGroup: true,
+            labelData: { width: 200 },
+            labels: [],
+            children: [{ id: 'n' }],
+          },
+        ],
+        { nodeDb } as any,
+        new Map([['g', layoutNode]])
+      );
+
+      expect(nodeDb.g.width).toBe(100);
+      expect(layoutNode.width).toBe(100);
+      expect(layoutNode.width).toBe(nodeDb.g.width);
+    });
+
+    it('still reports the honoured title floor when ELK left room for it', () => {
+      // The other side of the same branch: here the 200-wide title fits inside
+      // the 300 ELK gave, so the floor is honoured and the layout node carries
+      // it. Without this the fix above could pass by always shrinking.
+      const nodeDb: Record<string, any> = {
+        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 300, height: 148 },
+        n: { id: 'n', offset: { posX: 24, posY: 48 }, width: 40, height: 76 },
+      };
+      const layoutNode = { id: 'g', x: 0, y: 0, width: 0, height: 0 } as any;
+
+      evenGroupFrames(
+        [
+          {
+            id: 'g',
+            isGroup: true,
+            labelData: { width: 200 },
+            labels: [],
+            children: [{ id: 'n' }],
+          },
+        ],
+        { nodeDb } as any,
+        new Map([['g', layoutNode]])
+      );
+
+      expect(nodeDb.g.width).toBe(200);
+      expect(layoutNode.width).toBe(200);
+    });
+
     it('skips a group with no children rather than collapsing it', () => {
       const nodeDb: Record<string, any> = {
         g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 100 },
