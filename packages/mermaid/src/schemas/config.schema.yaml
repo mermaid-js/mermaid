@@ -81,7 +81,7 @@ properties:
       - 'null' # should this be a `null`-type?
     meta:enum:
       'null': Can be set to disable any pre-defined mermaid theme
-    default: 'default'
+    default: 'redux-color'
   themeVariables:
     tsType: any
   themeCSS:

@@ -32,7 +32,7 @@ const config: RequiredDeep<MermaidConfig> = {
   themeCSS: undefined,
 
   // add non-JSON default config values
-  themeVariables: theme.default.getThemeVariables(),
+  themeVariables: theme['redux-color'].getThemeVariables(),
   sequence: {
     ...defaultConfigJson.sequence,
     messageFont: function () {

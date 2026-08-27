@@ -6,7 +6,10 @@ const genReduxSections = (options) => {
   //Required to read the active theme at render time,
   // since options alone does not expose the theme name needed to switch between redux and classic section generators.
   const isDarkTheme = theme?.includes('dark');
-  const isColorTheme = theme?.includes('color');
+  // `theme` is the globally configured name but `options` is passed in, so the two can
+  // disagree. Gate on the palette actually being present rather than on the name --
+  // indexing `borderColorArray` off a name-only check throws when they diverge.
+  const isColorTheme = theme?.includes('color') && options.borderColorArray?.length > 0;
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   const scopedDropShadow = rawSvgId
     ? `url(#${rawSvgId}-drop-shadow)`

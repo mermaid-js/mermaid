@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, expect } from 'vitest';
 import * as configApi from '../../config.js';
 import themes from '../../themes/index.js';
-import { getStyles } from './styles.js';
+import { buildRailroadStyleOptions, getStyles } from './styles.js';
 
 describe('Railroad Styles', () => {
   beforeEach(() => {
@@ -161,15 +161,22 @@ describe('Railroad Styles', () => {
     });
 
     it('should fall back to safe defaults when css values are invalid', () => {
-      const styles = getStyles({
+      const injected = {
         fontFamily: 'safe"} .railroad-terminal { display: none; } /*',
         terminalFill: '#fff; stroke: red;',
-      });
+      };
+      const styles = getStyles(injected);
 
       expect(styles).not.toContain('display: none');
       expect(styles).not.toContain('stroke: red;');
       expect(styles).toContain(`font-family: ${configApi.getConfig().themeVariables?.fontFamily}`);
-      expect(styles).toContain(`fill: ${configApi.getConfig().themeVariables?.secondBkg}`);
+      // Assert against railroad's own resolution rather than against a single theme
+      // variable. `buildRailroadStyleOptions` layers theme-default underneath the active
+      // theme, so a variable the active theme never assigns (`secondBkg` is unset in the
+      // base/neo/redux family) still resolves -- just not to `config.themeVariables`.
+      // Reading `secondBkg` off the config only agreed with the rendered value while the
+      // default theme happened to define it.
+      expect(styles).toContain(`fill: ${buildRailroadStyleOptions(injected).terminalFill}`);
     });
 
     it('should handle all options at once', () => {
