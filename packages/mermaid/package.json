@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "11.16.1",
+  "version": "11.17.2",
   "description": "Markdown-ish syntax for generating flowcharts, mindmaps, sequence diagrams, class diagrams, gantt charts, git graphs and more.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -61,7 +61,7 @@
     "ignore": [
       "**/parser/*.js",
       "dist/**/*.js",
-      "cypress/**/*.js"
+      "e2e/**/*.js"
     ],
     "globals": [
       "page"
@@ -81,7 +81,7 @@
     "d3-sankey": "^0.12.3",
     "dagre-d3-es": "7.0.14",
     "dayjs": "^1.11.21",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.12",
     "es-toolkit": "^1.45.1",
     "fastdom": "1.0.12",
     "katex": "^0.16.47",

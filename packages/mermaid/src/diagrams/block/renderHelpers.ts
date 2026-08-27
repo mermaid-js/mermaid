@@ -120,6 +120,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     directions: vertex.directions,
     width: bounds.width || undefined,
     height: bounds.height || undefined,
+    wrappingWidth: bounds.width || Number.POSITIVE_INFINITY,
     x: bounds.x,
     y: bounds.y,
     positioned,

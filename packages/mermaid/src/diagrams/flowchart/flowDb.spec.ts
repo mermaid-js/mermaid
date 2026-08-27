@@ -196,6 +196,20 @@ describe('flow db collapsible subgraphs', () => {
     expect(edges.find((e) => e.start === 'C' && e.end === 'A')).toBeDefined();
   });
 
+  it('forwards subgraph metadata to the group node so layouts can read it', () => {
+    addVertex('A');
+    addVertex('B');
+    flowDb.addSubGraph({ text: 'sub1' }, ['A', 'B'], { text: 'My Group', type: 'text' });
+    attachMeta('sub1', ' algorithm: elk.box ');
+
+    const { nodes } = flowDb.getData();
+    const sub = nodes.find((n) => n.id === 'sub1');
+    expect(sub?.isGroup).toBe(true);
+    // Without this the `@{ algorithm: … }` a user writes on a flowchart
+    // subgraph never reached the layout engine.
+    expect(sub?.metadata).toMatchObject({ algorithm: 'elk.box' });
+  });
+
   it('renders a collapsed subgraph as a single collapsedGroup node and hides its members', () => {
     addVertex('A');
     addVertex('B');
