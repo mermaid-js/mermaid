@@ -21,6 +21,33 @@ const ROUNDED_CORNER_RADIUS = 5;
  * zero-length arcs on very crowded paths. */
 const CORNER_EPSILON = 1e-5;
 
+/**
+ * Straight run kept between a hop and the bend next to it.
+ *
+ * Without it a hop may start exactly at the tangent point of a rounded corner,
+ * so the path leaves the corner's quadratic and enters the arc with no straight
+ * run between them. The two curves read as one malformed squiggle rather than
+ * as a corner followed by a hop.
+ */
+const CORNER_JUMP_CLEARANCE = 2;
+
+/**
+ * Smallest share of the requested radius a hop may shrink to before it is
+ * dropped instead of drawn.
+ *
+ * A hop close to a bend has little room, and the clamps below will happily fit
+ * one into whatever is left. That is the wrong trade: an arc at half radius no
+ * longer clears the stroke it is meant to hop, so the lines still touch and the
+ * result looks like a rendering fault rather than a crossing. An undrawn hop is
+ * just an ordinary crossing, which is what every diagram looked like before
+ * hops existed — a much better failure than a broken-looking one.
+ *
+ * This happens for real: ELK routes subgraph-internal edges into lanes 10px
+ * apart, and a 10px offset cannot hold a 7.07px corner cut plus a 6px hop, so
+ * every crossing in such a lane was being drawn at 2.9px hard against the bend.
+ */
+const MIN_USEFUL_RADIUS_RATIO = 0.6;
+
 export interface Point {
   x: number;
   y: number;
@@ -410,12 +437,18 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
       }
     }
 
-    // Jumps clamped so they don't overlap corners at either end of the
-    // segment or each other.
-    const segJumps = [...(bySeg.get(i) ?? [])].sort((a, b) => a.t - b.t);
-    for (const j of segJumps) {
-      j.r = Math.min(j.r, j.d - segStartConsumed, segEndStop - j.d);
-    }
+    // Clamp each jump to the room between the bends at either end of the
+    // segment, then drop the ones with too little room to be worth drawing.
+    // Dropping happens BEFORE the adjacency pass below so that a hop being
+    // squeezed out by a corner does not also shrink its neighbours.
+    const minUsefulRadius = config.jumpRadius * MIN_USEFUL_RADIUS_RATIO;
+    const segJumps = [...(bySeg.get(i) ?? [])]
+      .sort((a, b) => a.t - b.t)
+      .filter((j) => {
+        const room = Math.min(j.d - segStartConsumed, segEndStop - j.d) - CORNER_JUMP_CLEARANCE;
+        j.r = Math.min(j.r, room);
+        return j.r >= minUsefulRadius;
+      });
     for (let k = 0; k < segJumps.length - 1; k++) {
       const gap = segJumps[k + 1].d - segJumps[k].d;
       if (segJumps[k].r + segJumps[k + 1].r > gap) {
