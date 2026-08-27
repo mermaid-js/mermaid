@@ -1,0 +1,24 @@
+sequenceDiagram
+  participant A
+  participant B
+  participant C
+  participant D
+  participant E
+  participant G
+
+  A ->>+ B: Task 1
+  rect rgb(178, 102, 255)
+  B ->>+ C: Task 2
+  C -->>- B: Return
+  end
+
+  A ->> D: Task 3
+  rect rgb(0, 128, 255)
+  D ->>+ E: Task 4
+  rect rgb(0, 204, 0)
+  E ->>+ G: Task 5
+  G -->>- E: Return
+  end
+  E ->> E: Task 6
+  end
+  D -->> A: Complete

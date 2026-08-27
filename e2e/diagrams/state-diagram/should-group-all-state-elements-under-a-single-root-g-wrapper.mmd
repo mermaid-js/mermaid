@@ -1,0 +1,12 @@
+---
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*] --> Still
+  Still --> [*]
+  Still --> Moving
+  Moving --> Still
+  Moving --> Crash
+  Crash --> [*]
