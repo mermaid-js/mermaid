@@ -89,7 +89,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: ${options.arrowheadColor};
   }
 
-  .edgePath .path {
+  .edgePaths .path {
     stroke: ${options.lineColor};
     stroke-width: ${options.strokeWidth ?? 2}px;
   }

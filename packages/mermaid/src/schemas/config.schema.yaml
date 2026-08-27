@@ -310,6 +310,8 @@ properties:
     $ref: '#/$defs/FlowchartDiagramConfig'
   swimlane:
     $ref: '#/$defs/SwimlaneDiagramConfig'
+  agentflow:
+    $ref: '#/$defs/AgentflowDiagramConfig'
   sequence:
     $ref: '#/$defs/SequenceDiagramConfig'
   gantt:
@@ -2253,6 +2255,49 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           source swimlane order can carry semantic meaning.
         type: boolean
         default: false
+
+  AgentflowDiagramConfig:
+    title: Agentflow Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for the agentflow diagram type.
+
+      Agentflow renders through the shared unified renderer, so it owns the same
+      spacing and padding knobs a flowchart does. They live in their own block so
+      that agentflow can be tuned without moving every flowchart on the page.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      titleTopMargin:
+        description: Margin top for the text over the diagram
+        type: integer
+        minimum: 0
+        default: 25
+      diagramPadding:
+        description: |
+          The amount of padding around the diagram as a whole so that embedded
+          diagrams have margins, expressed in pixels.
+        type: integer
+        minimum: 0
+        default: 8
+      nodeSpacing:
+        description: |
+          Defines the spacing between nodes on the same level.
+
+          Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+          and the vertical spacing for LR as well as RL graphs.
+        type: integer
+        minimum: 0
+        default: 50
+      rankSpacing:
+        description: |
+          Defines the spacing between nodes on different levels.
+
+          Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the
+          horizontal spacing for LR as well as RL graphs.
+        type: integer
+        minimum: 0
+        default: 50
 
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config
