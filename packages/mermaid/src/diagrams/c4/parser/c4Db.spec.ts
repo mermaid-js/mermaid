@@ -59,7 +59,7 @@ System(SystemAA, "Internet Banking System")
 }
 UpdateElementStyle(b1, $bgColor="red;color:lime", $fontColor="red;color:lime", $borderColor="red;color:lime")`);
 
-    const boundary = c4.parser.yy.getBoundaries().find((item) => item.alias === 'b1');
+    const boundary = c4.parser.yy.getBoundaries()[1];
     expect(boundary).toBeDefined();
     expect(boundary.bgColor ?? '').not.toContain(';');
     expect(boundary.fontColor ?? '').not.toContain(';');
