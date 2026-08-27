@@ -160,6 +160,48 @@ function isHorizontalSeg(seg: Segment): boolean {
   return Math.abs(seg.b.x - seg.a.x) >= Math.abs(seg.b.y - seg.a.y);
 }
 
+/**
+ * True if a crossing on `edge`'s segment `segIndex` at parameter `t` falls
+ * inside the stretch where the drawn stroke has left the polyline to round a
+ * bend.
+ *
+ * Crossings are found on polylines, but a `rounded` edge is not drawn as its
+ * polyline: `generateRoundedPath` replaces each bend with a quadratic that
+ * departs the line up to `cutLen` before the vertex and rejoins it `cutLen`
+ * after. Inside that stretch the polyline says the stroke is somewhere it is
+ * not, so a "crossing" computed there is at best mislocated and at worst
+ * fictional — and a hop drawn for it arches over blank paper while the two
+ * strokes still touch alongside it.
+ *
+ * Only `rounded` edges lie this way; every other supported curve is drawn as
+ * the polyline it describes.
+ */
+function crossingSitsInRoundedCorner(edge: EdgeGeom, segIndex: number, t: number): boolean {
+  if (edge.curve !== 'rounded') {
+    return false;
+  }
+  const pts = edge.points;
+  const a = pts[segIndex];
+  const b = pts[segIndex + 1];
+  if (!a || !b) {
+    return false;
+  }
+  const segLen = Math.hypot(b.x - a.x, b.y - a.y);
+  const d = t * segLen;
+
+  const entering =
+    segIndex > 0 ? computeRoundedCorner(pts[segIndex - 1], a, b, ROUNDED_CORNER_RADIUS) : null;
+  if (entering && d < entering.cutLen) {
+    return true;
+  }
+
+  const leaving =
+    segIndex + 2 < pts.length
+      ? computeRoundedCorner(a, b, pts[segIndex + 2], ROUNDED_CORNER_RADIUS)
+      : null;
+  return leaving !== null && segLen - d < leaving.cutLen;
+}
+
 export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
   const crossings: Crossing[] = [];
 
@@ -174,6 +216,15 @@ export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
         for (const [sj, segB] of segmentsB.entries()) {
           const hit = segmentIntersection(segA.a, segA.b, segB.a, segB.b);
           if (!hit) {
+            continue;
+          }
+
+          // Either edge rounding a bend here means the polyline is not where
+          // the stroke is, so there is nothing trustworthy to hop over.
+          if (
+            crossingSitsInRoundedCorner(edgeA, si, hit.tA) ||
+            crossingSitsInRoundedCorner(edgeB, sj, hit.tB)
+          ) {
             continue;
           }
 

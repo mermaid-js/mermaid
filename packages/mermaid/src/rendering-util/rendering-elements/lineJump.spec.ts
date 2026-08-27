@@ -747,6 +747,72 @@ describe('lineJump', () => {
       expect(d).toContain('A6,6 0 0 1');
     });
 
+    /**
+     * `org -> platform` and `design -> app` from `knsv2.html`, verbatim.
+     *
+     * `org -> platform` runs east, turns south at (249, 1031.102) and carries on
+     * down. `design -> app` runs west along y=1033.625 and crosses that vertical
+     * — 2.5px below the turn, which is INSIDE the 7.07px the corner's quadratic
+     * takes to rejoin the line.
+     *
+     * So at the y where the hop was drawn, `org -> platform` is not on x=249 at
+     * all; it is still curving through its corner. The arc arched over blank
+     * paper while the two strokes carried on touching beside it.
+     */
+    const ACROSS_A_CORNER: EdgeGeom[] = [
+      {
+        id: 'orgToPlatform',
+        points: [
+          { x: 169, y: 1031.102 },
+          { x: 249, y: 1031.102 },
+          { x: 249, y: 1345.091 },
+          { x: 552.5, y: 1345.091 },
+        ],
+        curve: 'rounded',
+      },
+      {
+        id: 'designToApp',
+        points: [
+          { x: 229, y: 1382.007 },
+          { x: 229, y: 1033.625 },
+          { x: 269, y: 1033.625 },
+          { x: 351.5, y: 1033.625 },
+        ],
+        curve: 'rounded',
+      },
+    ];
+
+    it("ignores a crossing that lands inside the OTHER edge's corner", () => {
+      // Nothing is wrong with the hopping edge here: its own bend is 20px back,
+      // so the previous rule is happy to give it a full 6px arc. The problem is
+      // entirely on the edge being hopped.
+      expect(findEdgeIntersections(ACROSS_A_CORNER)).toEqual([]);
+
+      const d = processEdgesWithJumps(ACROSS_A_CORNER, ROOMY).get('designToApp')!;
+      expect(d).not.toMatch(/A/);
+    });
+
+    it('hops normally once that corner is out of the way', () => {
+      // Same two edges, but `org -> platform` turns south 30px higher, so by
+      // y=1033.625 it has long since settled onto x=249 and there is a real
+      // vertical line to hop.
+      const clear: EdgeGeom[] = [
+        {
+          ...ACROSS_A_CORNER[0],
+          points: [
+            { x: 169, y: 1001.102 },
+            { x: 249, y: 1001.102 },
+            { x: 249, y: 1345.091 },
+            { x: 552.5, y: 1345.091 },
+          ],
+        },
+        ACROSS_A_CORNER[1],
+      ];
+
+      expect(findEdgeIntersections(clear)).toHaveLength(1);
+      expect(processEdgesWithJumps(clear, ROOMY).get('designToApp')).toContain('A6,6');
+    });
+
     it('keeps a straight run between the corner and a hop it does draw', () => {
       // A hop with just enough room still must not open ON the corner's tangent
       // point — the quadratic and the arc would meet with nothing between them,
