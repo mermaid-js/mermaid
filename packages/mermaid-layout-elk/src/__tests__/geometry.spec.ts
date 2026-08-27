@@ -9,6 +9,9 @@ import {
   type RectLike,
   type P,
 } from '../geometry.js';
+// Lives in render.ts rather than geometry.ts, but it is pure point maths and
+// belongs with the other geometry cases.
+import { straightenTerminalJogs } from '../render.js';
 
 const approx = (a: number, b: number, eps = 1e-6) => Math.abs(a - b) < eps;
 
@@ -132,6 +135,98 @@ describe('geometry helpers', () => {
       expect(
         outlineAttachPoint({}, bounds, { x: 129.48, y: 454.87 }, { x: 144.48, y: 454.87 })
       ).toBe(null);
+    });
+  });
+
+  describe('straightenTerminalJogs', () => {
+    // A node 40 tall centred at y=120: its border spans y 100..140, so a
+    // terminal may be moved anywhere in that range.
+    const node: RectLike = { x: 200, y: 120, width: 60, height: 40 };
+    const far: RectLike = { x: 600, y: 120, width: 60, height: 40 };
+
+    it('collapses the port-to-channel step next to a node', () => {
+      // Leave the port at y=116.25, step 3.25 down onto the channel, carry on.
+      const pts: P[] = [
+        { x: 193, y: 116.25 },
+        { x: 218, y: 116.25 },
+        { x: 218, y: 119.5 },
+        { x: 315, y: 119.5 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, far)).toEqual([
+        { x: 193, y: 119.5 },
+        { x: 218, y: 119.5 },
+        { x: 315, y: 119.5 },
+      ]);
+    });
+
+    it('leaves a step too large to be a port connector alone', () => {
+      // 40 is a real routing decision, not the leftover from port spreading.
+      const pts: P[] = [
+        { x: 193, y: 100 },
+        { x: 218, y: 100 },
+        { x: 218, y: 140 },
+        { x: 315, y: 140 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, far)).toEqual(pts);
+    });
+
+    it('leaves a step that reverses direction', () => {
+      // The route doubles back after the step, so this is a turn, not a jog.
+      const pts: P[] = [
+        { x: 193, y: 116 },
+        { x: 218, y: 116 },
+        { x: 218, y: 119 },
+        { x: 100, y: 119 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, far)).toEqual(pts);
+    });
+
+    it('refuses to move a terminal off the node border', () => {
+      // y=145 is past the bottom of the border span, so collapsing here would
+      // detach the edge from the node.
+      const pts: P[] = [
+        { x: 193, y: 141 },
+        { x: 218, y: 141 },
+        { x: 218, y: 145 },
+        { x: 315, y: 145 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, far)).toEqual(pts);
+    });
+
+    it('collapses the step at the far end too', () => {
+      // The start side deliberately opens with an 80px turn so it does not
+      // match the pattern — on a four-point route the same four points serve
+      // both ends, and the start pass would consume the step first.
+      const target: RectLike = { x: 600, y: 198, width: 60, height: 40 };
+      const pts: P[] = [
+        { x: 193, y: 119.5 },
+        { x: 400, y: 119.5 },
+        { x: 400, y: 200 },
+        { x: 560, y: 200 },
+        { x: 560, y: 196.75 },
+        { x: 570, y: 196.75 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, target)).toEqual([
+        { x: 193, y: 119.5 },
+        { x: 400, y: 119.5 },
+        { x: 400, y: 200 },
+        { x: 560, y: 200 },
+        { x: 570, y: 200 },
+      ]);
+    });
+
+    it('leaves a route with nothing to collapse', () => {
+      const pts: P[] = [
+        { x: 193, y: 120 },
+        { x: 315, y: 120 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, far)).toEqual(pts);
     });
   });
 });

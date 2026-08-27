@@ -13,6 +13,7 @@ import { applyElkLineJumps } from './lineHops.js';
 import {
   type P,
   type RectLike,
+  EPS,
   outsideNode,
   computeNodeIntersection,
   outlineAttachPoint,
@@ -61,6 +62,7 @@ interface NodeWithVertex {
 
 interface ElkSubgraphConfig {
   mergeEdges?: boolean;
+  straightenEdges?: boolean;
   preset?: string;
   layeringStrategy?: string;
   layeringLayerBound?: number;
@@ -1129,6 +1131,103 @@ function applyElkNodePositions(
   });
 }
 
+/**
+ * Largest port-to-channel jog worth collapsing.
+ *
+ * ELK layered spreads an edge's port evenly along the node's side, then routes
+ * the edge down an inter-layer channel whose row rarely lines up with that port
+ * exactly. The leftover is a staircase right at the border: leave the port, run
+ * a few pixels, step perpendicular onto the channel, carry on. With rounded
+ * corners the two micro-bends sit on top of each other and read as a glitch.
+ *
+ * A step this close to the border can only be that connector — a genuine
+ * obstacle dodge bends much further out — so moving the terminal onto the
+ * channel row cannot introduce an overlap. The rest of the route is untouched.
+ */
+const TERMINAL_JOG_MAX = 16;
+
+/** Axis of an axis-aligned segment: `h`, `v`, or undefined when diagonal. */
+function axisOf(a: P, b: P): 'h' | 'v' | undefined {
+  const dx = Math.abs(b.x - a.x);
+  const dy = Math.abs(b.y - a.y);
+  if (dx > EPS && dy <= EPS) {
+    return 'h';
+  }
+  if (dy > EPS && dx <= EPS) {
+    return 'v';
+  }
+  return undefined;
+}
+
+/**
+ * Collapse the port-to-channel staircase at both ends of a clipped route.
+ *
+ * Where the terminal point sits on a node border and the route immediately
+ * steps perpendicular by at most {@link TERMINAL_JOG_MAX} before continuing the
+ * same way, the terminal is moved onto the channel row — still on the border —
+ * and the step is dropped.
+ */
+export function straightenTerminalJogs(
+  points: P[],
+  startBounds: RectLike,
+  endBounds: RectLike
+): P[] {
+  const pts = [...points];
+  collapseTerminalJog(pts, startBounds);
+  pts.reverse();
+  collapseTerminalJog(pts, endBounds);
+  pts.reverse();
+  return pts;
+}
+
+/** Collapse the staircase at the front of `pts`, in place. */
+function collapseTerminalJog(pts: P[], bounds: RectLike): void {
+  // A route can stack more than one micro-step, so keep going while the front
+  // still matches the pattern. Bounded rather than `while (true)`.
+  for (let guard = 0; guard < 3; guard++) {
+    if (pts.length < 4) {
+      return;
+    }
+    const [p0, p1, p2, p3] = pts;
+    const axis = axisOf(p0, p1);
+    if (!axis || axisOf(p2, p3) !== axis || axisOf(p1, p2) !== (axis === 'h' ? 'v' : 'h')) {
+      return;
+    }
+    if (axis === 'h') {
+      const jog = Math.abs(p2.y - p1.y);
+      if (jog < EPS || jog > TERMINAL_JOG_MAX) {
+        return;
+      }
+      // The route has to keep travelling the same way after the step,
+      // otherwise this is a real turn rather than a connector.
+      if (Math.sign(p1.x - p0.x) !== Math.sign(p3.x - p2.x)) {
+        return;
+      }
+      // The moved terminal has to stay on the node's border span.
+      const top = bounds.y - bounds.height / 2;
+      const bottom = bounds.y + bounds.height / 2;
+      if (p2.y < top + EPS || p2.y > bottom - EPS) {
+        return;
+      }
+      pts.splice(0, 2, { x: p0.x, y: p2.y });
+    } else {
+      const jog = Math.abs(p2.x - p1.x);
+      if (jog < EPS || jog > TERMINAL_JOG_MAX) {
+        return;
+      }
+      if (Math.sign(p1.y - p0.y) !== Math.sign(p3.y - p2.y)) {
+        return;
+      }
+      const left = bounds.x - bounds.width / 2;
+      const right = bounds.x + bounds.width / 2;
+      if (p2.x < left + EPS || p2.x > right - EPS) {
+        return;
+      }
+      pts.splice(0, 2, { x: p2.x, y: p0.y });
+    }
+  }
+}
+
 function applyElkEdgeLayout(
   data4Layout: LayoutData,
   graph: ElkLayoutResult,
@@ -1136,6 +1235,8 @@ function applyElkEdgeLayout(
   log: ElkLayoutContext['log']
 ): void {
   const edgeById = new Map(data4Layout.edges.map((edge) => [edge.id, edge]));
+  // Opt-out rather than opt-in: the step this removes is never intentional.
+  const straightenEdges = data4Layout.config.elk?.straightenEdges !== false;
 
   graph.edges?.forEach((edge) => {
     const layoutEdge = edgeById.get(edge.id);
@@ -1208,8 +1309,11 @@ function applyElkEdgeLayout(
       points.push({ x: endNode.x, y: endNode.y });
     }
 
+    const clipped = sanitizeElkEdgePoints(points, startNode, endNode, log);
     layoutEdge.points = ensureEndMarkerSegmentLength(
-      sanitizeElkEdgePoints(points, startNode, endNode, log),
+      straightenEdges
+        ? straightenTerminalJogs(clipped, boundsFor(startNode), boundsFor(endNode))
+        : clipped,
       boundsFor(endNode),
       getEndMarkerPathOffset(layoutEdge),
       log

@@ -23,6 +23,7 @@ const config: RequiredDeep<MermaidConfig> = {
   elk: {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
+    straightenEdges: true,
     lineHops: true,
     preset: 'default',
     // Left undefined so `??` can tell "the user chose this" from "nobody did",

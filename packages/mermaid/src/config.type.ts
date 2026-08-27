@@ -149,6 +149,21 @@ export interface MermaidConfig {
      */
     preset?: 'default' | 'legacy' | 'depthFirst';
     /**
+     * Straightens an edge that leaves or enters a node with a tiny step.
+     *
+     * ELK spreads an edge's port evenly along a node's side but routes the
+     * edge down a channel whose row rarely lines up with that port exactly,
+     * leaving a staircase of a few pixels right at the border. With rounded
+     * corners the two micro-bends land on top of each other and read as a
+     * kink. Enabling this moves the endpoint onto the channel row — still on
+     * the node's border — and drops the step.
+     *
+     * Only the step next to a node is touched, and only when the edge
+     * continues the same way afterwards, so a real turn is never collapsed.
+     *
+     */
+    straightenEdges?: boolean;
+    /**
      * Renders edge crossings as small arcs ("hops") or visible gaps, so that
      * it is clear which line passes over which where two edges meet.
      *
