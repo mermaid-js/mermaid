@@ -1,6 +1,7 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import { sanitizeText } from '../common/common.js';
+import { formatUrl } from '../../utils.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -22,6 +23,9 @@ type ParserAttribute = string | Record<string, string>;
  *
  * Values may arrive as a raw positional value or a single `{ key: value }` named
  * override; `undefined` is skipped so an earlier-set value is not clobbered.
+ *
+ * A `$link` becomes an `xlink:href` on the rendered element, so it is sanitized here,
+ * where flowchart and class diagrams sanitize theirs.
  */
 const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
   bag: Bag,
@@ -31,12 +35,8 @@ const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
     if (value === undefined) {
       continue;
     }
-    if (typeof value === 'object') {
-      const [key, val] = Object.entries(value)[0];
-      bag[key] = val;
-    } else {
-      bag[field] = value;
-    }
+    const [key, val] = typeof value === 'object' ? Object.entries(value)[0] : [field, value];
+    bag[key] = key === 'link' ? formatUrl(val, getConfig()) : val;
   }
 };
 

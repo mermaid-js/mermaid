@@ -209,6 +209,23 @@ UpdateRelStyle(a, b, $lineColor="red;background:url(x)", $textColor="blue;conten
     expect(edges[0].labelStyle).toHaveLength(0);
   });
 
+  it('carries a $link into the node', () => {
+    const db = parse(`C4Context\nPerson(a, "A", "desc", $link="https://example.com")`);
+
+    const { nodes } = getData(db, config());
+    // Sanitizing normalises the URL, as it does for a flowchart `click ... href`.
+    expect(nodes.find((node) => node.id === 'a')?.link).toBe('https://example.com/');
+  });
+
+  // The link is written to `xlink:href` unescaped, and the SVG-level DOMPurify pass is
+  // skipped at `securityLevel: 'loose'`, so the scheme has to be rejected here.
+  it('neutralises a $link that carries a javascript: scheme', () => {
+    const db = parse(`C4Context\nPerson(a, "A", "desc", $link="javascript:alert(1)")`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.find((node) => node.id === 'a')?.link).not.toContain('javascript:');
+  });
+
   // `UpdateElementStyle` resolves its alias against the elements first and then the
   // boundaries, so the same statement styles either.
   it('carries an UpdateElementStyle colour into the boundary style', () => {

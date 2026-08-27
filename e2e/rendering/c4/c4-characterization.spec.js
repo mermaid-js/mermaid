@@ -87,10 +87,29 @@ Rel(p, s, "Uses")
     );
 
     // The unified renderer wraps a linked node in an `svg:a`; it sets only
-    // `xlink:href`, and no `target` unless one was asked for.
+    // `xlink:href`, and no `target` unless one was asked for. The URL is normalised
+    // by the same sanitizer a flowchart `click ... href` goes through.
     const link = diagramSvg(page).locator('g.nodes a');
-    await expect(link).toHaveAttribute('xlink:href', 'https://example.com');
+    await expect(link).toHaveAttribute('xlink:href', 'https://example.com/');
     await expect(link).not.toHaveAttribute('target');
+  });
+
+  test('CHAR.link-scheme should not carry a javascript: $link into the href', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `C4Context
+title Link attribute with an unsafe scheme
+Person(p, "Person", "desc", $link="javascript:alert(1)")
+System(s, "System", "desc")
+Rel(p, s, "Uses")
+      `
+    );
+
+    const link = diagramSvg(page).locator('g.nodes a');
+    await expect(link).not.toHaveAttribute('xlink:href', /^javascript:/);
   });
 
   test('CHAR.sprite should accept but not render $sprite', async ({ page }, testInfo) => {
