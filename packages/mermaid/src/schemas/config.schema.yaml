@@ -747,6 +747,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: ['string', 'number']
         default: normal
 
+      showStereotypes:
+        description: |
+          This sets whether an element shows its stereotype - the bracketed type line
+          under its name, such as `[Software System]` or `[Container: JavaScript]`, and
+          the type on a boundary label. A single element can override this with
+          `UpdateElementStyle(alias, $showStereotype="false")`.
+        type: boolean
+        default: true
       wrap:
         description: This sets the auto-wrap state for the diagram
         type: boolean

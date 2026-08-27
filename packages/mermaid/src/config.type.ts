@@ -1677,6 +1677,14 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
    */
   external_component_queueFontWeight?: string | number;
   /**
+   * This sets whether an element shows its stereotype - the bracketed type line
+   * under its name, such as `[Software System]` or `[Container: JavaScript]`, and
+   * the type on a boundary label. A single element can override this with
+   * `UpdateElementStyle(alias, $showStereotype="false")`.
+   *
+   */
+  showStereotypes?: boolean;
+  /**
    * This sets the auto-wrap state for the diagram
    */
   wrap?: boolean;
