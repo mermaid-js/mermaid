@@ -664,11 +664,23 @@ export function applyLineJumpsToSvg(
 
   // Collect geometry from each path's data-points, preferring that over the
   // incoming `edges[].points` which came from pre-render layout state.
+  // Index the paths by their own `data-id` instead of building one selector per
+  // edge. An id is author-controlled, so interpolating it into a selector needs
+  // `CSS.escape`, which is not guaranteed outside a browser — and the fallback
+  // of using the id raw turns a trailing backslash into a `SyntaxError` that
+  // aborts the whole render. Reading the attribute avoids the selector entirely.
+  const pathByDataId = new Map<string, Element>();
+  for (const el of groupNode.querySelectorAll('path[data-id]')) {
+    const id = el.getAttribute('data-id');
+    if (id !== null && !pathByDataId.has(id)) {
+      pathByDataId.set(id, el);
+    }
+  }
+
   const renderedEdges: EdgeGeom[] = [];
   const pathById = new Map<string, Element>();
   for (const e of edges) {
-    const escapedId = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(e.id) : e.id;
-    const pathEl = groupNode.querySelector(`path[data-id="${escapedId}"]`);
+    const pathEl = pathByDataId.get(e.id);
     if (!pathEl) {
       continue;
     }

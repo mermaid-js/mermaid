@@ -750,9 +750,19 @@ const ELK_PRESETS: Record<string, { layering: string; placement: string; cycleBr
     },
   };
 
-/** Resolve a preset name, falling back to `default` for an unknown one. */
+/**
+ * Resolve a preset name, falling back to `default` for an unknown one.
+ *
+ * `Object.hasOwn` rather than a plain lookup: the schema's enum only guards the
+ * config path, and a directive or a programmatic config can still put anything
+ * here. `ELK_PRESETS['__proto__']` is truthy, so an indexed lookup would return
+ * `Object.prototype` and every strategy read off it would come back `undefined`
+ * — a silently strategy-less layout rather than the documented fallback.
+ */
 export function resolveElkPreset(name: string | undefined) {
-  return ELK_PRESETS[name ?? 'default'] ?? ELK_PRESETS.default;
+  return name !== undefined && Object.hasOwn(ELK_PRESETS, name)
+    ? ELK_PRESETS[name]
+    : ELK_PRESETS.default;
 }
 
 function createRootElkGraph(

@@ -162,8 +162,16 @@ export const fallbackIntersection = (bounds: RectLike, outside: P, center: P): P
   return intersection(bounds, outside, inside);
 };
 
-/** Bisection steps used to walk a ray onto the node outline. */
-const OUTLINE_RAY_STEPS = 40;
+/**
+ * Bisection steps used to walk a ray onto the node outline.
+ *
+ * Each step halves the bracket and costs one `node.intersect()` call, and both
+ * endpoints of every edge run this — so the count is paid twice per edge. 20
+ * steps take a 200px starting bracket to about 2e-4px, which is four orders of
+ * magnitude below anything that can be rendered; going further only buys
+ * precision that the SVG coordinate is rounded away from anyway.
+ */
+const OUTLINE_RAY_STEPS = 20;
 
 /**
  * Whether a point lies inside the node's outline.

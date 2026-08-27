@@ -12,6 +12,6 @@ The two are now bought separately. The base value drops to 24, and the approach 
 
 `elk.layered.spacing.edgeNodeBetweenLayers` is the key that buys the approach. An earlier attempt used `elk.layered.spacing.edgeEdgeBetweenLayers`, which is edge-to-edge and a different quantity, and a note in the source concluded from it that ELK ignored edge-node spacing "in every key form". It does not; that note was wrong and is corrected.
 
-Subgraph nodes are also placed with `NETWORK_SIMPLEX` and `PORT_POSITION` flexibility, which keeps a group's nodes aligned with one another instead of drifting, and lets a node shift so an edge can leave straight rather than bending off the port.
+Subgraph contents also gain `PORT_POSITION` node flexibility, which lets a node shift so an edge can leave straight rather than bending off the port. (Their placement strategy is covered in the `elk.preset` note.)
 
 **Existing diagrams with subgraphs will render differently** — groups get tighter and more even.

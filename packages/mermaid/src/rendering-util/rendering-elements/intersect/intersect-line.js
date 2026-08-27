@@ -46,19 +46,34 @@ function intersectLine(p1, p2, q1, q2) {
       return /*COLLINEAR*/;
     }
 
-    // The Graphics Gems original added `denom / 2` to the numerator here so
-    // that an INTEGER division would round rather than truncate. JavaScript
-    // division does neither, so that term was not a rounding correction at all:
-    // `(num + denom / 2) / denom` is `num / denom + 0.5`, a constant half-unit
-    // displacement of every intersection, on both axes.
+    // The Graphics Gems original rounded here, for an INTEGER division:
+    //
+    //   const offset = Math.abs(denom / 2);
+    //   x = num < 0 ? (num - offset) / denom : (num + offset) / denom;
+    //
+    // Nudging the numerator by half a denominator away from zero is how you
+    // round rather than truncate when `/` floors. JavaScript's `/` does
+    // neither, so the nudge stopped being a correction and became the whole
+    // error: the result came out displaced by
+    //
+    //   0.5 * sign(num) * sign(denom)
+    //
+    // The magnitude is always exactly half a unit, but the SIGN is per axis,
+    // because `num` is computed separately for x and y while `denom` is shared.
+    // So the two axes could be displaced the same way or opposite ways
+    // depending on the geometry, which is why it never looked like a simple
+    // constant offset anyone could spot by eye.
     //
     // Half a pixel is invisible by itself, but `intersectPolygon` is how every
     // non-rectangular shape finds its edge attachment, so it moved the point off
     // the axis the query ray travelled along — enough to give an otherwise
     // orthogonal edge a tiny diagonal opening segment, and to push an
-    // attachment just inside the node it was meant to touch. `question.ts` used
-    // to subtract the 0.5 back off for diamonds; that compensation went away
-    // with this.
+    // attachment just inside the node it was meant to touch.
+    //
+    // `question.ts` used to subtract a flat 0.5 from both axes to compensate.
+    // That only cancelled the bias when both signs happened to come out
+    // positive; when an axis was displaced the other way it doubled the error
+    // to a full unit instead. Both the bias and that compensation are gone.
     const x = (b1 * c2 - b2 * c1) / denom;
     const y = (a2 * c1 - a1 * c2) / denom;
 

@@ -21,6 +21,8 @@ config:
 
 Setting `layeringStrategy`, `nodePlacementStrategy` or `cycleBreakingStrategy` explicitly overrides the preset for that one option and leaves the rest in place, so a preset is a starting point rather than a lock.
 
-**The default placement strategy changes from `NETWORK_SIMPLEX` to `LINEAR_SEGMENTS`, so existing ELK diagrams will lay out differently.** `preset: legacy` restores the previous behaviour.
+**Node placement changes from `BRANDES_KOEPF` to `LINEAR_SEGMENTS`, so existing ELK diagrams will lay out differently.** `preset: legacy` restores the previous behaviour, and is the single switch for it — this is the net change against the last release, measured from what shipped rather than from any intermediate state.
+
+Subgraphs are a separate case: their contents are placed with `NETWORK_SIMPLEX`, which balances a node against all of its neighbours and so keeps a group's nodes aligned with one another instead of drifting. That is a container setting and is not affected by `preset`.
 
 Note that `legacy` uses `GREEDY` cycle breaking rather than the `GREEDY_MODEL_ORDER` the schema previously advertised. That default was declared in the schema but never listed in the shipped defaults, so it reached ELK as undefined and ELK's own default applied — `legacy` reproduces what was rendered, not what was documented.

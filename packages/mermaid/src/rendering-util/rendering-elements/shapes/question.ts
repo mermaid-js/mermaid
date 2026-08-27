@@ -74,11 +74,12 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
 
     // Calculate the intersection point.
     //
-    // This used to return `res` shifted by -0.5 on both axes, compensating for
-    // a half-unit displacement that `intersectLine` applied to every result —
-    // leftover integer-rounding arithmetic from the Graphics Gems original. The
-    // displacement is gone, so the compensation has to go with it or the
-    // diamond's attachment moves half a pixel the other way.
+    // This used to return `res` shifted by a flat -0.5 on both axes, to
+    // compensate for leftover integer-rounding arithmetic in `intersectLine`.
+    // That arithmetic displaced a result by `0.5 * sign(num) * sign(denom)`,
+    // whose sign varies per axis, so a fixed subtraction only cancelled it when
+    // both signs came out positive and doubled it to a full unit when they did
+    // not. The displacement is gone, so the compensation goes with it.
     return intersect.polygon(bounds, points, point);
   };
 

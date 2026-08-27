@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 import intersectLine from './intersect-line.js';
 import intersectPolygon from './intersect-polygon.js';
 
+interface Point {
+  x: number;
+  y: number;
+}
+
 /**
  * `intersectLine` comes from Graphics Gems, where the coordinates were INTEGERS
  * and `denom / 2` was added to the numerator so that the integer division
@@ -38,6 +43,48 @@ describe('intersectLine', () => {
     );
 
     expect(result).toEqual({ x: 33, y: 7 });
+  });
+
+  it('is unbiased whichever way the numerator and denominator sign out', () => {
+    // The removed arithmetic displaced a result by `0.5 * sign(num) * sign(denom)`,
+    // and `num` is computed per axis while `denom` is shared — so the old code
+    // could push x one way and y the other. These four cases put the same
+    // crossing in each sign combination by walking the segments in different
+    // directions; every one has to land on exactly the same point.
+    const expected = { x: 33, y: 57 };
+    const combos: [Point, Point, Point, Point][] = [
+      [
+        { x: 33, y: 0 },
+        { x: 33, y: 100 },
+        { x: 0, y: 57 },
+        { x: 100, y: 57 },
+      ],
+      [
+        { x: 33, y: 100 },
+        { x: 33, y: 0 },
+        { x: 0, y: 57 },
+        { x: 100, y: 57 },
+      ],
+      [
+        { x: 33, y: 0 },
+        { x: 33, y: 100 },
+        { x: 100, y: 57 },
+        { x: 0, y: 57 },
+      ],
+      [
+        { x: 33, y: 100 },
+        { x: 33, y: 0 },
+        { x: 100, y: 57 },
+        { x: 0, y: 57 },
+      ],
+    ];
+
+    for (const [p1, p2, q1, q2] of combos) {
+      const result = intersectLine(p1, p2, q1, q2);
+      expect(result, `${JSON.stringify([p1, p2, q1, q2])}`).toBeDefined();
+      expect(result!.x).toBeCloseTo(expected.x, 9);
+      expect(result!.y).toBeCloseTo(expected.y, 9);
+    }
   });
 
   it('keeps the crossing on the query line for non-integer coordinates', () => {

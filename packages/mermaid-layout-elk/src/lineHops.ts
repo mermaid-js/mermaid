@@ -4,9 +4,27 @@ import {
   type EdgeGeom,
   type LayoutData,
 } from 'mermaid';
-
-/** Radius of the arc drawn where one edge hops another. */
+/**
+ * Radius of the arc drawn where one edge hops another.
+ *
+ * Fixed rather than configurable: a hop reads as a hop because every one in the
+ * diagram is the same size, and `lineJump` already shrinks or drops an
+ * individual arc where a bend leaves it no room. `elk.lineHops` therefore
+ * exposes the STYLE (`arc` or `gap`) but not the radius, since a per-diagram
+ * radius would be a knob whose only good value is this one.
+ */
 const JUMP_RADIUS = 6;
+
+/**
+ * The paint groups `applyElkLineJumps` needs off the measure context.
+ *
+ * The selection type is taken from `applyLineJumpsToSvg`'s own signature rather
+ * than named here: `D3Selection` is not part of mermaid's public surface, and
+ * deriving it keeps the two in step without widening that surface.
+ */
+interface EdgePaintGroups {
+  groups: { edgePaths: Parameters<typeof applyLineJumpsToSvg>[0] };
+}
 
 /**
  * Draw a hop where two edges cross.
@@ -23,7 +41,7 @@ const JUMP_RADIUS = 6;
  */
 export function applyElkLineJumps(
   data4Layout: LayoutData,
-  { measure }: CommonLayoutPaintContext<unknown, { groups: { edgePaths: unknown } }>
+  { measure }: CommonLayoutPaintContext<unknown, EdgePaintGroups>
 ): void {
   const lineHops = (data4Layout.config as { elk?: { lineHops?: boolean | string } })?.elk?.lineHops;
   if (lineHops === false) {
@@ -31,22 +49,21 @@ export function applyElkLineJumps(
   }
 
   const edgeGeometries: EdgeGeom[] = data4Layout.edges
-    .filter((edge) => Array.isArray(edge.points) && edge.points.length >= 2)
+    .filter(
+      (edge): edge is typeof edge & { points: EdgeGeom['points'] } =>
+        Array.isArray(edge.points) && edge.points.length >= 2
+    )
     .map((edge) => ({
       id: edge.id,
-      points: edge.points!,
+      points: edge.points,
       curve: edge.curve,
       arrowTypeStart: edge.arrowTypeStart,
       arrowTypeEnd: edge.arrowTypeEnd,
-    })) as EdgeGeom[];
+    }));
 
-  applyLineJumpsToSvg(
-    (measure as { groups: { edgePaths: never } }).groups.edgePaths,
-    edgeGeometries,
-    {
-      enabled: true,
-      jumpRadius: JUMP_RADIUS,
-      jumpStyle: lineHops === 'gap' ? 'gap' : 'arc',
-    }
-  );
+  applyLineJumpsToSvg(measure.groups.edgePaths, edgeGeometries, {
+    enabled: true,
+    jumpRadius: JUMP_RADIUS,
+    jumpStyle: lineHops === 'gap' ? 'gap' : 'arc',
+  });
 }
