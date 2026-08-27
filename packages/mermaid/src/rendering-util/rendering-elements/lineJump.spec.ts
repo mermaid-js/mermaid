@@ -686,4 +686,169 @@ describe('lineJump', () => {
       expect(e2.getAttribute('d')).toBe('M5,0 L5,10');
     });
   });
+
+  describe('hops with too little room next to a bend', () => {
+    const ROOMY: LineJumpConfig = { enabled: true, jumpRadius: 6, jumpStyle: 'arc' };
+
+    /**
+     * Geometry lifted from `elk-edge-cases/many-subgraphs-and-edges`, where
+     * `design-system -> mermaid-chart-app` leaves its node, turns north, turns
+     * east again at (430.6, 180.1), and is crossed 10px later at (440.6, 180.1)
+     * by `infrastructure -> auth-service`.
+     *
+     * 10px is `SUBGRAPH_EDGE_LANE_SPACING` — ELK stacks subgraph-internal edges
+     * in lanes that far apart — and it does not hold a 7.07px corner cut plus a
+     * 6px hop. The hop used to be fitted into what was left anyway, at 2.9px,
+     * starting exactly where the corner's quadratic ended.
+     */
+    const CRAMPED: EdgeGeom[] = [
+      {
+        id: 'designSystemToApp',
+        points: [
+          { x: 395.6, y: 275.3 },
+          { x: 430.6, y: 275.3 },
+          { x: 430.6, y: 180.1 },
+          { x: 502.1, y: 180.1 },
+        ],
+        curve: 'rounded',
+      },
+      {
+        id: 'infrastructureToAuth',
+        points: [
+          { x: 440.6, y: 120 },
+          { x: 440.6, y: 320 },
+        ],
+        curve: 'rounded',
+      },
+    ];
+
+    it('leaves the crossing alone rather than drawing an undersized arc', () => {
+      const d = processEdgesWithJumps(CRAMPED, ROOMY).get('designSystemToApp')!;
+
+      // The crossing IS found — this is about what gets drawn for it, not about
+      // detection.
+      expect(findEdgeIntersections(CRAMPED)).toHaveLength(1);
+
+      // No arc anywhere on the path, and no zero-length `L` parked on the
+      // corner's tangent point ahead of one.
+      expect(d).not.toMatch(/A/);
+      expect(d).not.toMatch(/L437\.696,180\.086 L437\.696,180\.086/);
+    });
+
+    it('still hops once the bend is far enough away', () => {
+      // Same edge, same crossing, but the turn moved back so the lane is 20px
+      // instead of 10px — now there is room for the full radius.
+      const roomy: EdgeGeom[] = [{ ...CRAMPED[0], points: [...CRAMPED[0].points] }, CRAMPED[1]];
+      roomy[0].points[1] = { x: 420.6, y: 275.3 };
+      roomy[0].points[2] = { x: 420.6, y: 180.1 };
+
+      const d = processEdgesWithJumps(roomy, ROOMY).get('designSystemToApp')!;
+
+      expect(d).toContain('A6,6 0 0 1');
+    });
+
+    /**
+     * `org -> platform` and `design -> app` from `knsv2.html`, verbatim.
+     *
+     * `org -> platform` runs east, turns south at (249, 1031.102) and carries on
+     * down. `design -> app` runs west along y=1033.625 and crosses that vertical
+     * — 2.5px below the turn, which is INSIDE the 7.07px the corner's quadratic
+     * takes to rejoin the line.
+     *
+     * So at the y where the hop was drawn, `org -> platform` is not on x=249 at
+     * all; it is still curving through its corner. The arc arched over blank
+     * paper while the two strokes carried on touching beside it.
+     */
+    const ACROSS_A_CORNER: EdgeGeom[] = [
+      {
+        id: 'orgToPlatform',
+        points: [
+          { x: 169, y: 1031.102 },
+          { x: 249, y: 1031.102 },
+          { x: 249, y: 1345.091 },
+          { x: 552.5, y: 1345.091 },
+        ],
+        curve: 'rounded',
+      },
+      {
+        id: 'designToApp',
+        points: [
+          { x: 229, y: 1382.007 },
+          { x: 229, y: 1033.625 },
+          { x: 269, y: 1033.625 },
+          { x: 351.5, y: 1033.625 },
+        ],
+        curve: 'rounded',
+      },
+    ];
+
+    it("ignores a crossing that lands inside the OTHER edge's corner", () => {
+      // Nothing is wrong with the hopping edge here: its own bend is 20px back,
+      // so the previous rule is happy to give it a full 6px arc. The problem is
+      // entirely on the edge being hopped.
+      expect(findEdgeIntersections(ACROSS_A_CORNER)).toEqual([]);
+
+      const d = processEdgesWithJumps(ACROSS_A_CORNER, ROOMY).get('designToApp')!;
+      expect(d).not.toMatch(/A/);
+    });
+
+    it('hops normally once that corner is out of the way', () => {
+      // Same two edges, but `org -> platform` turns south 30px higher, so by
+      // y=1033.625 it has long since settled onto x=249 and there is a real
+      // vertical line to hop.
+      const clear: EdgeGeom[] = [
+        {
+          ...ACROSS_A_CORNER[0],
+          points: [
+            { x: 169, y: 1001.102 },
+            { x: 249, y: 1001.102 },
+            { x: 249, y: 1345.091 },
+            { x: 552.5, y: 1345.091 },
+          ],
+        },
+        ACROSS_A_CORNER[1],
+      ];
+
+      expect(findEdgeIntersections(clear)).toHaveLength(1);
+      expect(processEdgesWithJumps(clear, ROOMY).get('designToApp')).toContain('A6,6');
+    });
+
+    it('keeps a straight run between the corner and a hop it does draw', () => {
+      // A hop with just enough room still must not open ON the corner's tangent
+      // point — the quadratic and the arc would meet with nothing between them,
+      // which is the same squiggle as the undersized case, only bigger.
+      //
+      // The bend is at x=100, so its rounding ends at x=107.07. The crossing at
+      // x=113 leaves 5.93px, which the old clamp spent entirely on radius and
+      // opened the arc at exactly 107.07.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'bend',
+          points: [
+            { x: 100, y: 0 },
+            { x: 100, y: 100 },
+            { x: 300, y: 100 },
+          ],
+          curve: 'rounded',
+        },
+        {
+          id: 'crosser',
+          points: [
+            { x: 113, y: 0 },
+            { x: 113, y: 200 },
+          ],
+        },
+      ];
+
+      const d = processEdgesWithJumps(edges, ROOMY).get('bend')!;
+      const arc = /L([\d.]+),100 A([\d.]+),/.exec(d);
+      expect(arc).not.toBeNull();
+
+      const [openAt, radius] = [arc![1], arc![2]].map(Number.parseFloat);
+      // Radius gives way, not the clearance: 2px of straight line survives
+      // between the end of the corner and the start of the arc.
+      expect(openAt - 107.071).toBeCloseTo(2, 2);
+      expect(radius).toBeCloseTo(3.929, 2);
+    });
+  });
 });
