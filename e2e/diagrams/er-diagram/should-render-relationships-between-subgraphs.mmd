@@ -1,0 +1,14 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph customers
+  CUSTOMER
+  end
+
+  subgraph orders
+  ORDER
+  end
+
+  customers ||--o{ orders : places

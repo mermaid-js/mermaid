@@ -2,10 +2,12 @@ import { describe, it, expect } from 'vitest';
 import {
   buildElkGraphFromLayoutData,
   buildSubgraphLayoutOptions,
+  clearContainerAlgorithmOptions,
   dir2ElkDirection,
   ensureEndMarkerSegmentLength,
   findCyclicEntryNodes,
   prepareLayoutForElk,
+  resolveContainerAlgorithm,
   runElkLayoutCore,
 } from '../render.js';
 
@@ -26,7 +28,54 @@ const elkRenderContext = {
   options: { algorithm: 'elk.layered' },
 } as any;
 
+describe('resolveContainerAlgorithm', () => {
+  it('accepts the supported ELK algorithms', () => {
+    for (const algo of ['elk.layered', 'elk.box', 'elk.rectpacking', 'elk.mrtree']) {
+      expect(resolveContainerAlgorithm(algo)).toBe(algo);
+    }
+  });
+
+  it('rejects an unknown algorithm and warns instead of handing it to ELK', () => {
+    const warnings: unknown[] = [];
+    const spyLog = { ...log, warn: (...args: unknown[]) => warnings.push(args[0]) };
+    expect(resolveContainerAlgorithm('garbage', spyLog)).toBeUndefined();
+    expect(warnings).toHaveLength(1);
+    expect(String(warnings[0])).toContain('garbage');
+  });
+
+  it('rejects non-string values without warning', () => {
+    const warnings: unknown[] = [];
+    const spyLog = { ...log, warn: (...args: unknown[]) => warnings.push(args[0]) };
+    expect(resolveContainerAlgorithm(undefined, spyLog)).toBeUndefined();
+    expect(resolveContainerAlgorithm({ elk: 'box' }, spyLog)).toBeUndefined();
+    expect(warnings).toHaveLength(0);
+  });
+});
+
 describe('buildSubgraphLayoutOptions', () => {
+  it('derives a label-based minimum size for containers with their own algorithm', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      { mergeEdges: true },
+      'layered'
+    );
+    expect(opts['nodeSize.constraints']).toBe('[MINIMUM_SIZE, NODE_LABELS]');
+    // Height clears the whole reserved strip — label (14) plus the 15px
+    // padding above it and the 15px below — not just the label height.
+    expect(opts['nodeSize.minimum']).toBe('(60, 44)');
+    expect(opts['elk.padding']).toBe('[top=29,left=15,bottom=15,right=15]');
+  });
+
+  it('leaves the size of a plain subgraph to ELK, as before', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 } },
+      { mergeEdges: true },
+      'layered'
+    );
+    expect(opts['nodeSize.constraints']).toBeUndefined();
+    expect(opts['nodeSize.minimum']).toBeUndefined();
+  });
+
   it('propagates mergeEdges to subgraphs without an explicit direction', () => {
     const opts = buildSubgraphLayoutOptions({}, { mergeEdges: true }, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBe(true);
@@ -38,6 +87,17 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.direction']).toBe('RIGHT');
     expect(opts['elk.algorithm']).toBe('layered');
     expect(opts['elk.hierarchyHandling']).toBe('SEPARATE_CHILDREN');
+  });
+
+  it('ignores an unsupported metadata algorithm and falls back to the dir branch', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { dir: 'LR', labelData: { width: 30, height: 14 }, metadata: { algorithm: 'elk.garbage' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.algorithm']).toBe('layered');
+    expect(opts['elk.direction']).toBe('RIGHT');
+    expect(opts['nodeSize.minimum']).toBeUndefined();
   });
 
   it('omits direction-specific options when node has no dir', () => {
@@ -62,8 +122,8 @@ describe('buildSubgraphLayoutOptions', () => {
   });
 
   it('passes through nodePlacementAlignment from config', () => {
-    const opts = buildSubgraphLayoutOptions({}, { nodePlacementAlignment: 'NONE' }, 'layered');
-    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+    const opts = buildSubgraphLayoutOptions({}, { nodePlacementAlignment: 'BALANCED' }, 'layered');
+    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('BALANCED');
   });
 
   it('handles undefined elkConfig gracefully', () => {
@@ -71,6 +131,39 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
     expect(opts['nodePlacement.strategy']).toBeUndefined();
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+  });
+
+  it('applies a per-group algorithm from metadata with SEPARATE_CHILDREN', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { labelData: { width: 30, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.algorithm']).toBe('elk.box');
+    expect(opts['elk.hierarchyHandling']).toBe('SEPARATE_CHILDREN');
+    expect(opts['elk.padding']).toBe('[top=29,left=15,bottom=15,right=15]');
+  });
+
+  it('metadata algorithm takes precedence over dir', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { dir: 'LR', metadata: { algorithm: 'elk.box' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.algorithm']).toBe('elk.box');
+    expect(opts['elk.direction']).toBeUndefined();
+  });
+
+  it('applies tighter rectpacking options for elk.rectpacking groups', () => {
+    const opts = buildSubgraphLayoutOptions(
+      { labelData: { width: 30, height: 14 }, metadata: { algorithm: 'elk.rectpacking' } },
+      undefined,
+      'layered'
+    );
+    expect(opts['elk.rectpacking.trybox']).toBe('true');
+    expect(opts['elk.padding']).toBe('[top=24,left=10,bottom=10,right=10]');
+    // Minimum height clears the tighter rectpacking strip, not the default one.
+    expect(opts['nodeSize.minimum']).toBe('(30, 34)');
   });
 });
 
@@ -123,6 +216,29 @@ describe('findCyclicEntryNodes', () => {
     // The orphan has in-degree 0, so its component already has a source.
     expect(entries.has('format_output')).toBe(false);
     expect(entries.size).toBe(1);
+  });
+
+  it('pins the true entry when a back-edge feeds it and it is not declared first (#79)', () => {
+    // The chain starts at stockholm, but end_decision -> stockholm gives the
+    // entry an in-degree of 1 while san_francisco is declared first. The
+    // nomination must follow edge declaration order, not node declaration order.
+    const nodes = [
+      'san_francisco',
+      'stockholm',
+      'new_york',
+      'decide',
+      'end_decision',
+      'format_json',
+    ].map((id) => ({ id, parentId: 'world-clock' }));
+    const edges = [
+      { source: 'stockholm', target: 'new_york' },
+      { source: 'new_york', target: 'san_francisco' },
+      { source: 'san_francisco', target: 'decide' },
+      { source: 'decide', target: 'end_decision' },
+      { source: 'end_decision', target: 'format_json' },
+      { source: 'end_decision', target: 'stockholm' },
+    ];
+    expect([...findCyclicEntryNodes(nodes, edges)]).toEqual(['stockholm']);
   });
 
   it('scopes detection per container (parentId)', () => {
@@ -485,5 +601,155 @@ describe('ensureEndMarkerSegmentLength', () => {
     ];
 
     expect(ensureEndMarkerSegmentLength(points, circleBounds, 4, log)).toEqual(points);
+  });
+});
+
+describe('algorithms that place nodes but do not route edges', () => {
+  // `elk.box` and `elk.rectpacking` are selectable as top-level `layout` values,
+  // but neither routes edges, so ELK returns no `edge.sections`. Leaving
+  // `edge.points` unset then crashed the paint step with
+  // "Cannot read properties of undefined (reading 'filter')" — every diagram
+  // with a single edge blanked.
+  const nonRoutingData = () =>
+    ({
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        { id: 'A', isGroup: false, width: 40, height: 20, label: 'A', shape: 'rect' },
+        { id: 'B', isGroup: false, width: 40, height: 20, label: 'B', shape: 'rect' },
+      ],
+      edges: [{ id: 'L_A_B_0', start: 'A', end: 'B', type: 'arrow_point' }],
+    }) as any;
+
+  it.each(['elk.box', 'elk.rectpacking'])('assigns edge points under %s', async (algorithm) => {
+    const data = nonRoutingData();
+    await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm } });
+
+    const edge = data.edges[0];
+    expect(edge.points).toBeDefined();
+    expect(edge.points.length).toBeGreaterThanOrEqual(2);
+    for (const point of edge.points) {
+      expect(Number.isFinite(point.x)).toBe(true);
+      expect(Number.isFinite(point.y)).toBe(true);
+    }
+  });
+
+  // The straight line runs centre to centre, but this renderer paints with
+  // `skipIntersect`, so nothing downstream clips it: unclipped, the line runs
+  // under both nodes and the end marker sits inside the target instead of on
+  // its border. The endpoints have to be on (or outside) the node boxes.
+  it.each(['elk.box', 'elk.rectpacking'])(
+    'clips the fallback endpoints back to the node borders under %s',
+    async (algorithm) => {
+      const data = nonRoutingData();
+      await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm } });
+
+      const nodeById = Object.fromEntries(data.nodes.map((node: any) => [node.id, node]));
+      const points = data.edges[0].points;
+
+      // "Not strictly inside" is too weak on its own — a point at (1e9, 1e9)
+      // would satisfy it. Require the endpoint to sit *on* the node's boundary:
+      // flush against one edge of the box and within the span of the other.
+      const onNodeBorder = (node: any, point: { x: number; y: number }, tolerance = 0.5) => {
+        if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+          return false;
+        }
+        const dx = Math.abs(point.x - node.x);
+        const dy = Math.abs(point.y - node.y);
+        const halfWidth = node.width / 2;
+        const halfHeight = node.height / 2;
+        const onVerticalEdge =
+          Math.abs(dx - halfWidth) <= tolerance && dy <= halfHeight + tolerance;
+        const onHorizontalEdge =
+          Math.abs(dy - halfHeight) <= tolerance && dx <= halfWidth + tolerance;
+        return onVerticalEdge || onHorizontalEdge;
+      };
+
+      expect(onNodeBorder(nodeById.A, points[0])).toBe(true);
+      expect(onNodeBorder(nodeById.B, points[points.length - 1])).toBe(true);
+    }
+  );
+
+  // ELK never routed the edge, so it produced no label position either.
+  // `positionEdgeLabel` reads `edge.x` / `edge.y` straight into
+  // `translate(${x}, ${y + margin})`, so leaving them unset rendered
+  // `translate(undefined, NaN)` — an invalid transform that browsers drop,
+  // dumping the label at the group origin instead of on the edge.
+  it.each(['elk.box', 'elk.rectpacking'])(
+    'positions the label of an unrouted edge under %s',
+    async (algorithm) => {
+      const data = nonRoutingData();
+      data.edges[0].label = 'hello';
+      await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm } });
+
+      const edge = data.edges[0];
+      expect(Number.isFinite(edge.x)).toBe(true);
+      expect(Number.isFinite(edge.y)).toBe(true);
+
+      // On the line it labels: midway between the two clipped endpoints.
+      const [first] = edge.points;
+      const last = edge.points[edge.points.length - 1];
+      expect(edge.x).toBeCloseTo((first.x + last.x) / 2);
+      expect(edge.y).toBeCloseTo((first.y + last.y) / 2);
+    }
+  );
+});
+
+describe('clearContainerAlgorithmOptions', () => {
+  // A container whose edges cross its boundary falls back to the inherited
+  // algorithm. Deleting only `elk.algorithm` left the rest of the algorithm's
+  // options in place — none of which are inert under `elk.layered` — so the
+  // container got a hybrid rather than the documented fallback.
+  it('removes every option the algorithm branch added', () => {
+    const options = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      { mergeEdges: true },
+      'elk.layered'
+    );
+    clearContainerAlgorithmOptions(options);
+
+    for (const key of [
+      'elk.algorithm',
+      'nodeSize.constraints',
+      'nodeSize.minimum',
+      'elk.aspectRatio',
+      'elk.contentAlignment',
+      'elk.expandNodes',
+      'elk.padding',
+    ]) {
+      expect(options).not.toHaveProperty(key);
+    }
+  });
+
+  it('removes the rectpacking overrides and restores the default base spacing', () => {
+    const options = buildSubgraphLayoutOptions(
+      {
+        padding: 8,
+        labelData: { width: 44, height: 14 },
+        metadata: { algorithm: 'elk.rectpacking' },
+      },
+      { mergeEdges: true },
+      'elk.layered'
+    );
+    expect(options['spacing.baseValue']).toBe(15);
+
+    clearContainerAlgorithmOptions(options);
+
+    expect(options['spacing.baseValue']).toBe(30);
+    expect(options).not.toHaveProperty('spacing.nodeNode');
+    expect(options).not.toHaveProperty('elk.rectpacking.trybox');
+  });
+
+  it('leaves the base options alone', () => {
+    const options = buildSubgraphLayoutOptions(
+      { padding: 8, labelData: { width: 44, height: 14 }, metadata: { algorithm: 'elk.box' } },
+      { mergeEdges: true, nodePlacementStrategy: 'BRANDES_KOEPF' },
+      'elk.layered'
+    );
+    clearContainerAlgorithmOptions(options);
+
+    expect(options['elk.layered.mergeEdges']).toBe(true);
+    expect(options['nodePlacement.strategy']).toBe('BRANDES_KOEPF');
+    expect(options['nodeLabels.placement']).toBe('[H_CENTER V_TOP, INSIDE]');
   });
 });
