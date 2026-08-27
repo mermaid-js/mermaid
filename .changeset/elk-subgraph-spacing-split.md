@@ -8,7 +8,7 @@ A subgraph could end up with far more space on one side than the other for no re
 
 That base value was doing two jobs at once. Every unset ELK spacing derives from it, so it had to stay large enough that an edge got a straight run before the node it enters — below about 40 the approach came out shorter than the arrowhead and the turn read as happening underneath it. But an edge routed down the inside of a frame claims a lane the same width, so paying for the approach out of the base value also pushed groups clear of their own borders.
 
-The two are now bought separately. The base value drops to 24, and the approach run, node separation and edge separation are set explicitly. Subgraph padding is even again, and edges keep the run they had.
+The two are now bought separately. The base value drops to 24, and the approach run, node separation and edge separation are set explicitly, so edges keep the run they had without the frame paying for it.
 
 `elk.layered.spacing.edgeNodeBetweenLayers` is the key that buys the approach. An earlier attempt used `elk.layered.spacing.edgeEdgeBetweenLayers`, which is edge-to-edge and a different quantity, and a note in the source concluded from it that ELK ignored edge-node spacing "in every key form". It does not; that note was wrong and is corrected.
 
