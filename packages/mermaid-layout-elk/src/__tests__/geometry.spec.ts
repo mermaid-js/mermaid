@@ -172,6 +172,20 @@ describe('geometry helpers', () => {
       expect(straightenTerminalJogs(pts, node, far)).toEqual(pts);
     });
 
+    it('leaves a step that turns too far from the node', () => {
+      // Small step, but the corner is 120 out — that is a routing decision, not
+      // the port-to-channel connector, and collapsing it would drag the port
+      // onto a row another edge may already occupy.
+      const pts: P[] = [
+        { x: 193, y: 116.25 },
+        { x: 313, y: 116.25 },
+        { x: 313, y: 119.5 },
+        { x: 415, y: 119.5 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, far)).toEqual(pts);
+    });
+
     it('leaves a step that reverses direction', () => {
       // The route doubles back after the step, so this is a turn, not a jog.
       const pts: P[] = [

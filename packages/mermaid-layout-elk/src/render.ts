@@ -1146,6 +1146,18 @@ function applyElkNodePositions(
  */
 const TERMINAL_JOG_MAX = 16;
 
+/**
+ * How far from the node the step may sit and still count as the connector.
+ *
+ * Size alone does not identify a port-to-channel step: a small step a long way
+ * down the route is a routing decision, and collapsing it drags the port along
+ * for no reason. On the sample corpus every genuine connector turns 20–25 from
+ * the border, while the ones worth leaving alone turn at 48, 112 and 173 — one
+ * of which slid a port 15px into an occupied row and produced a crossing that
+ * was not there before.
+ */
+const TERMINAL_RUN_MAX = 30;
+
 /** Axis of an axis-aligned segment: `h`, `v`, or undefined when diagonal. */
 function axisOf(a: P, b: P): 'h' | 'v' | undefined {
   const dx = Math.abs(b.x - a.x);
@@ -1191,6 +1203,10 @@ function collapseTerminalJog(pts: P[], bounds: RectLike): void {
     const [p0, p1, p2, p3] = pts;
     const axis = axisOf(p0, p1);
     if (!axis || axisOf(p2, p3) !== axis || axisOf(p1, p2) !== (axis === 'h' ? 'v' : 'h')) {
+      return;
+    }
+    // The step has to be next to the node to be the connector at all.
+    if (Math.hypot(p1.x - p0.x, p1.y - p0.y) > TERMINAL_RUN_MAX) {
       return;
     }
     if (axis === 'h') {
