@@ -273,4 +273,3 @@ with a second line`
     }).not.toThrow();
   });
 });
-
