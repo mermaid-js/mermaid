@@ -1,6 +1,13 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
+import {
+  setAccTitle,
+  getAccTitle,
+  setAccDescription,
+  getAccDescription,
+  clear as clearCommon,
+} from '../../diagrams/common/commonDb.js';
 import { log } from '../../logger.js';
 import type { Edge, KanbanNode } from '../../rendering-util/types.js';
 import defaultConfig from '../../defaultConfig.js';
@@ -17,6 +24,7 @@ const clear = () => {
   sections = [];
   cnt = 0;
   elements = {};
+  clearCommon();
 };
 /*
  * if your level is the section level return null - then you do not belong to a level
@@ -250,6 +258,10 @@ const db = {
   type2Str,
   getLogger,
   getElementById,
+  setAccTitle,
+  getAccTitle,
+  setAccDescription,
+  getAccDescription,
 } as const;
 
 export default db;
