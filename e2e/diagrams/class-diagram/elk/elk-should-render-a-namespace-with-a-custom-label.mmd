@@ -1,0 +1,17 @@
+---
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: elk
+---
+classDiagram
+  namespace Auth["Authentication Service"] {
+  class UserService {
+    +login()
+    +logout()
+  }
+  class TokenManager {
+    +generate()
+  }
+  }
+  UserService --> TokenManager : uses

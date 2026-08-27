@@ -987,7 +987,7 @@ flowchart LR
     outside ---> top2
 ```
 
-### Collapsible subgraphs (v<MERMAID_RELEASE_VERSION>+)
+### Collapsible subgraphs (v11.17.0+)
 
 A subgraph can be collapsed into a single compact node by attaching the metadata
 `@{ view: collapsed }` to its id. This is useful for hiding the internals of a

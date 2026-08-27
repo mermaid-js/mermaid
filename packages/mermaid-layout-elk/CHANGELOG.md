@@ -1,5 +1,16 @@
 # @mermaid-js/layout-elk
 
+## 0.2.3
+
+### Patch Changes
+
+- [#7828](https://github.com/mermaid-js/mermaid/pull/7828) [`8eb3afc`](https://github.com/mermaid-js/mermaid/commit/8eb3afc08c64e0f5d2b2447daac417250a202c13) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(elk): add `elk.keepEntryNodeOnTop` config option to keep a recursive flow's entry node on top
+
+- [#7803](https://github.com/mermaid-js/mermaid/pull/7803) [`74e44eb`](https://github.com/mermaid-js/mermaid/commit/74e44ebf86d293cee1f2314c8b8a163284ea3911) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(elk): add `elk.nodePlacementAlignment` config option
+
+- Updated dependencies [[`215fe89`](https://github.com/mermaid-js/mermaid/commit/215fe89d3ecfb47cf0836cb52bf272b14fc99f29), [`3670b4e`](https://github.com/mermaid-js/mermaid/commit/3670b4e2d99b27945240dd3fe71da9175fddcaec), [`cdfc0ea`](https://github.com/mermaid-js/mermaid/commit/cdfc0ea65f47bc8f9605a2a646ed87c25a692216), [`c45cde9`](https://github.com/mermaid-js/mermaid/commit/c45cde9582ede4add658f62b771ba2a7efadde83), [`8d874c4`](https://github.com/mermaid-js/mermaid/commit/8d874c49fa1699cf22e99d4936b16f16dde1fc7f), [`8eb3afc`](https://github.com/mermaid-js/mermaid/commit/8eb3afc08c64e0f5d2b2447daac417250a202c13), [`74e44eb`](https://github.com/mermaid-js/mermaid/commit/74e44ebf86d293cee1f2314c8b8a163284ea3911), [`ea55b31`](https://github.com/mermaid-js/mermaid/commit/ea55b31bcfb36cfdfbc31a531058ee8c4ee53a4f), [`b3d1f63`](https://github.com/mermaid-js/mermaid/commit/b3d1f6316717faf099cbe21c9fb9f41c2e0bc069), [`71b8843`](https://github.com/mermaid-js/mermaid/commit/71b8843fb5ae25d7b884f5cc7ba856d978e0420b), [`9cbef5d`](https://github.com/mermaid-js/mermaid/commit/9cbef5d94f3aa6bea04b44f23ad81c1b8d7ca2b7), [`a2c0fb6`](https://github.com/mermaid-js/mermaid/commit/a2c0fb6cdf8073b8feb10595ea3cccff0237049b), [`a34cbf0`](https://github.com/mermaid-js/mermaid/commit/a34cbf02d9b5d88ac03f7792c8779ba2fd850378), [`f9cbe1e`](https://github.com/mermaid-js/mermaid/commit/f9cbe1ef3dcbb74b425d811c6dcf415953711544), [`ae3e115`](https://github.com/mermaid-js/mermaid/commit/ae3e1157c166fab7520d9ee2ed67b16613f6c243), [`90eeece`](https://github.com/mermaid-js/mermaid/commit/90eeeced88b8bc38b449ed01535b812b498f2b7d), [`afa2f80`](https://github.com/mermaid-js/mermaid/commit/afa2f80e658fe351ea73233a13787f7c3e2e433d), [`0fd7a9f`](https://github.com/mermaid-js/mermaid/commit/0fd7a9fe0d10a1ac39359bc5cb5341b5010a624e)]:
+  - mermaid@11.17.0
+
 ## 0.2.2
 
 ### Patch Changes

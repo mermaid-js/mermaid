@@ -1,0 +1,20 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice()/|-Bob: Circle at source with solid top reverse (RTL)
+  Alice()\|-Bob: Circle at source with solid bottom reverse (RTL)
+  Alice()//-Bob: Circle at source with stick top reverse (RTL)
+  Alice()\\-Bob: Circle at source with stick bottom reverse (RTL)
+  Alice()/|--Bob: Circle at source with dotted solid top reverse (RTL)
+  Alice()\|--Bob: Circle at source with dotted solid bottom reverse (RTL)
+  Alice()//--Bob: Circle at source with dotted stick top reverse (RTL)
+  Alice()\\--Bob: Circle at source with dotted stick bottom reverse (RTL)
