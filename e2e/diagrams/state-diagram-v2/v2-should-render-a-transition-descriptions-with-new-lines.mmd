@@ -1,0 +1,11 @@
+---
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+
+  [*] --> S1
+  S1 --> S2: long line using<br/>should work
+  S1 --> S3: long line using <br>should work
+  S1 --> S4: long line using \nshould work

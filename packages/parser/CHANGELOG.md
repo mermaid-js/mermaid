@@ -1,5 +1,11 @@
 # @mermaid-js/parser
 
+## 1.2.1
+
+### Patch Changes
+
+- [#7984](https://github.com/mermaid-js/mermaid/pull/7984) [`e848423`](https://github.com/mermaid-js/mermaid/commit/e848423d8841c6bd4651ee1e6e4833b5b573ac97) Thanks [@aloktomarr](https://github.com/aloktomarr)! - fix(architecture): allow non-ASCII characters and punctuation in unquoted titles
+
 ## 1.2.0
 
 ### Minor Changes
