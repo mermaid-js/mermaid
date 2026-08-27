@@ -22,10 +22,12 @@ import {
   formatTileTitle,
   listRelativeFiles,
   readTileAnnotation,
+  readTileOrigins,
   verifyArgosMetadataSidecars,
   writeArgosMetadataSidecar,
 } from '../e2e/helpers/argos-metadata.ts';
 import type {
+  ArgosLocation,
   ArgosScreenshotMetadata,
   ArgosTestAnnotation,
 } from '../e2e/helpers/argos-metadata.ts';
@@ -238,11 +240,27 @@ function groupRelative(source: string, groupKey: string): string {
   return groupKey && source.startsWith(`${groupKey}/`) ? source.slice(groupKey.length + 1) : source;
 }
 
+/**
+ * Inverse of {@link groupRelative}: the full source path for a manifest entry.
+ * `root` is {@link deriveGroupKey}'s synthetic key for top-level screenshots, not
+ * a real path segment, so it must not be prefixed back on.
+ */
+function groupSource(groupKey: string, rel: string): string {
+  return groupKey === 'root' ? rel : `${groupKey}/${rel}`;
+}
+
 /** A slot in a group's layout: a captured screenshot, or a blank placeholder. */
 interface TileSlot {
   source: string;
   missing: boolean;
 }
+
+/**
+ * Where each screenshot's test is declared (its sidecar's `test.location`: spec
+ * file plus line/column of the `test()` call), keyed by screenshot source path.
+ * Produced by {@link readTileOrigins}.
+ */
+export type TileOrigins = ReadonlyMap<string, ArgosLocation>;
 
 /**
  * Lays out a group's tiles in committed-manifest order:
@@ -251,6 +269,8 @@ interface TileSlot {
  *    removing a test doesn't shift later tiles across sheets;
  *  - present sources not in the manifest append at the tail, sorted.
  * Without a manifest entry for the group, falls back to plain alphabetical order.
+ * (The CLI pins every captured tile up front via {@link extendOrder}, so these
+ * fallbacks matter only for direct callers.)
  *
  * Unlike the upstream coarse-grouped batcher, our group key {@link deriveGroupKey}
  * IS the scoping unit (a whole spec file or diagram folder), and planSheets only
@@ -266,7 +286,7 @@ function layoutGroup(sources: string[], groupKey: string, order?: OrderManifest)
   const presentSet = new Set(sources);
   const canonicalSet = new Set(canonical);
   const slots: TileSlot[] = canonical.map((rel) => {
-    const source = `${groupKey}/${rel}`;
+    const source = groupSource(groupKey, rel);
     return { source, missing: !presentSet.has(source) };
   });
   const appended = sources
@@ -277,23 +297,85 @@ function layoutGroup(sources: string[], groupKey: string, order?: OrderManifest)
 }
 
 /**
- * Recomputes the manifest from the screenshots currently present: each group
- * keeps its committed order (for sources still present) then appends newly-seen
- * sources, sorted. Removed sources drop out. Pure and deterministic.
+ * Tail order for tiles the committed manifest doesn't pin. Alphabetical order
+ * would re-sort a group on every insertion — a new test whose slug sorts early
+ * takes the first cell and shifts every later tile across sheet boundaries.
+ * Declaration order appends instead: a test added at the end of its spec sorts
+ * last, so the tiles before it keep their cells. Tiles sharing one call site
+ * (e.g. the mmd runner registers every fixture from a single test() call) or
+ * lacking a readable sidecar tie, and fall back to path order — deterministic,
+ * and identical to the old alphabetical layout when no origins are known.
  */
-export function updateOrder(relPaths: string[], previous: OrderManifest = {}): OrderManifest {
-  const present = new Map<string, string[]>();
+function byDeclaration(origins?: TileOrigins) {
+  return (a: string, b: string): number => {
+    const originA = origins?.get(a);
+    const originB = origins?.get(b);
+    if (originA && originB) {
+      if (originA.file !== originB.file) {
+        return originA.file < originB.file ? -1 : 1;
+      }
+      if (originA.line !== originB.line) {
+        return originA.line - originB.line;
+      }
+      if (originA.column !== originB.column) {
+        return originA.column - originB.column;
+      }
+    } else if (originA || originB) {
+      // Sidecar-less tiles sort after located ones rather than interleaving.
+      return originA ? -1 : 1;
+    }
+    return a < b ? -1 : a > b ? 1 : 0;
+  };
+}
+
+/**
+ * The committed order extended to place every captured screenshot: each group's
+ * committed entries are kept verbatim (so a removed test keeps its blank slot)
+ * and captured tiles the manifest doesn't pin append at their group's tail in
+ * declaration order. The CLI feeds the result to {@link planSheets}, which
+ * therefore never has to invent an order of its own.
+ */
+export function extendOrder(
+  previous: OrderManifest,
+  relPaths: string[],
+  origins?: TileOrigins
+): OrderManifest {
+  const captured = new Map<string, string[]>();
   for (const p of relPaths) {
     const key = deriveGroupKey(p);
-    (present.get(key) ?? present.set(key, []).get(key)!).push(groupRelative(p, key));
+    (captured.get(key) ?? captured.set(key, []).get(key)!).push(p);
   }
   const next: OrderManifest = {};
-  for (const key of [...present.keys()].sort()) {
-    const here = new Set(present.get(key));
-    const kept = (previous[key] ?? []).filter((rel) => here.has(rel));
-    const keptSet = new Set(kept);
-    const added = [...here].filter((rel) => !keptSet.has(rel)).sort();
-    next[key] = [...kept, ...added];
+  for (const key of [...new Set([...Object.keys(previous), ...captured.keys()])].sort()) {
+    const pinned = previous[key] ?? [];
+    const pinnedSet = new Set(pinned);
+    const appended = (captured.get(key) ?? [])
+      .filter((source) => !pinnedSet.has(groupRelative(source, key)))
+      .sort(byDeclaration(origins))
+      .map((source) => groupRelative(source, key));
+    next[key] = [...pinned, ...appended];
+  }
+  return next;
+}
+
+/**
+ * Recomputes the manifest from the screenshots currently present: each group
+ * keeps its committed order for tiles still captured, newly-seen tiles append
+ * in declaration order, and removed tiles and groups drop out. Pure and
+ * deterministic — {@link extendOrder} with the leftovers pruned.
+ */
+export function updateOrder(
+  relPaths: string[],
+  previous: OrderManifest = {},
+  origins?: TileOrigins
+): OrderManifest {
+  const present = new Set(relPaths);
+  const next: OrderManifest = {};
+  for (const [key, rels] of Object.entries(extendOrder(previous, relPaths, origins))) {
+    const kept = rels.filter((rel) => present.has(groupSource(key, rel)));
+    if (kept.length > 0) {
+      next[key] = kept;
+    }
   }
   return next;
 }
@@ -610,13 +692,20 @@ async function main(): Promise<void> {
   log(
     orderedGroups > 0
       ? `loaded committed tile order for ${orderedGroups} groups from ${orderFile}`
-      : `no committed tile order at ${orderFile} — groups fall back to alphabetical`
+      : `no committed tile order at ${orderFile} — groups fall back to declaration order`
   );
 
   const relPaths = await collectScreenshots(inputDir);
   log(`collected ${relPaths.length} screenshots from ${inputDir}`);
 
-  const plans = planSheets(relPaths, { tilesPerSheet, cols, order });
+  // Extend the committed order over every captured screenshot: tiles it doesn't
+  // pin (new tests, groups it doesn't cover) append at their group's tail in
+  // test-declaration order, read from the capture sidecars.
+  const origins = readTileOrigins(inputDir, relPaths);
+  const effectiveOrder = extendOrder(order, relPaths, origins);
+  log(`declaration order known for ${origins.size}/${relPaths.length} screenshots`);
+
+  const plans = planSheets(relPaths, { tilesPerSheet, cols, order: effectiveOrder });
   const groupCount = new Set(plans.map((p) => p.group)).size;
   if (plans.length === 0) {
     log('no screenshots found — nothing to composite');

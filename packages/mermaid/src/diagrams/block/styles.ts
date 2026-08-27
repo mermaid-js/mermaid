@@ -79,7 +79,7 @@ const getStyles = (options: BlockChartStyleOptions) =>
     fill: ${options.arrowheadColor};
   }
 
-  .edgePath .path {
+  .edgePaths .path {
     stroke: ${options.lineColor};
     stroke-width: 2.0px;
   }
