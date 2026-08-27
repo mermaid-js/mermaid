@@ -1,5 +1,23 @@
 # mermaid
 
+## 11.17.2
+
+### Patch Changes
+
+- [#8125](https://github.com/mermaid-js/mermaid/pull/8125) [`178d7c7`](https://github.com/mermaid-js/mermaid/commit/178d7c79fcbafcf0662b822ec34ed989372ee5c2) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: restore the `edgePaths` class on the edge group in rendered SVG, and point the flowchart, block and user journey stylesheets at it
+
+## 11.17.1
+
+### Patch Changes
+
+- [#8092](https://github.com/mermaid-js/mermaid/pull/8092) [`31ce60a`](https://github.com/mermaid-js/mermaid/commit/31ce60a596746c76dc932ab540d910a6c7fff8be) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix(c4): wrap element labels to `c4.width` again
+
+  C4 element labels (`System`, `Container`, `Component`, `Person` and their `_Ext` variants) stopped wrapping in 11.17.0, so long descriptions rendered on one unbroken line and the shape grew sideways well past the configured `c4.width`. The unified-shapes label helper gated wrapping on the root-level `wrap` option, which has no schema default and is therefore `undefined`; it now gates on `c4.wrap` (default `true`), which is what the legacy renderer used.
+
+- [#8088](https://github.com/mermaid-js/mermaid/pull/8088) [`c66200b`](https://github.com/mermaid-js/mermaid/commit/c66200bc2302006c908f77819c584109f50c06e7) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: neo-look arrowheads and crow's-foot markers no longer fall back to default theme colours/stroke widths on the first render with `layout: elk`. State diagram arrowheads stayed dark on dark themes, and ER / requirement markers were drawn at the default stroke width, because markers were created from the layout package's own bundled copy of mermaid, whose config had not been initialized yet.
+
+- [#8079](https://github.com/mermaid-js/mermaid/pull/8079) [`281cd7b`](https://github.com/mermaid-js/mermaid/commit/281cd7b0705a7cdf4295bfd5e3171647dc809dfb) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(class): class diagram relation markers (composition, aggregation, extension, dependency, lollipop) no longer scale with the edge stroke width, so they stay outside the class box boundary in themes that set `strokeWidth: 2` (`redux`, `redux-dark`, `redux-color`, `redux-dark-color`, `neo`, `neo-dark`) with the default `classic` look.
+
 ## 11.17.0
 
 ### Minor Changes
