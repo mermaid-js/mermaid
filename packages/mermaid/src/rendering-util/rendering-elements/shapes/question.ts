@@ -72,10 +72,14 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
       { x: 0, y: -s / 2 },
     ];
 
-    // Calculate the intersection point
-    const res = intersect.polygon(bounds, points, point);
-
-    return { x: res.x - 0.5, y: res.y - 0.5 }; // Adjusted result
+    // Calculate the intersection point.
+    //
+    // This used to return `res` shifted by -0.5 on both axes, compensating for
+    // a half-unit displacement that `intersectLine` applied to every result —
+    // leftover integer-rounding arithmetic from the Graphics Gems original. The
+    // displacement is gone, so the compensation has to go with it or the
+    // diamond's attachment moves half a pixel the other way.
+    return intersect.polygon(bounds, points, point);
   };
 
   node.intersect = function (point) {

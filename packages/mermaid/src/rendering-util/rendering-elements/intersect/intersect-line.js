@@ -46,16 +46,21 @@ function intersectLine(p1, p2, q1, q2) {
       return /*COLLINEAR*/;
     }
 
-    const offset = Math.abs(denom / 2);
-
-    // The denom/2 is to get rounding instead of truncating. It
-    // is added or subtracted to the numerator, depending upon the
-    // sign of the numerator.
-    let num = b1 * c2 - b2 * c1;
-    const x = num < 0 ? (num - offset) / denom : (num + offset) / denom;
-
-    num = a2 * c1 - a1 * c2;
-    const y = num < 0 ? (num - offset) / denom : (num + offset) / denom;
+    // The Graphics Gems original added `denom / 2` to the numerator here so
+    // that an INTEGER division would round rather than truncate. JavaScript
+    // division does neither, so that term was not a rounding correction at all:
+    // `(num + denom / 2) / denom` is `num / denom + 0.5`, a constant half-unit
+    // displacement of every intersection, on both axes.
+    //
+    // Half a pixel is invisible by itself, but `intersectPolygon` is how every
+    // non-rectangular shape finds its edge attachment, so it moved the point off
+    // the axis the query ray travelled along — enough to give an otherwise
+    // orthogonal edge a tiny diagonal opening segment, and to push an
+    // attachment just inside the node it was meant to touch. `question.ts` used
+    // to subtract the 0.5 back off for diamonds; that compensation went away
+    // with this.
+    const x = (b1 * c2 - b2 * c1) / denom;
+    const y = (a2 * c1 - a1 * c2) / denom;
 
     return { x: x, y: y };
   }
