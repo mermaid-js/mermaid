@@ -273,7 +273,7 @@
   "edges": [],
   "metadata": {
     "captureVersion": 2,
-    "sourceSha256": "b5bef3433d7e8af63fa7d70e4d170b5dc4ed4164f1bcfca0503405cc66b2e2d3",
+    "sourceSha256": "6b721f5789c8b09bf85d28976ed048fb78d84886e47eb8a666a1d0f5f2cc4abf",
     "capturedAt": "2026-08-26T17:48:50.651Z",
     "capturedFrom": "capture-ddlt-sizes layout-tests/elk-edge-cases/many-subgraphs-and-edges.mmd theme=redux-color look=neo layout=elk",
     "theme": "redux-color",

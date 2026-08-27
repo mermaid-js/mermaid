@@ -134,24 +134,41 @@ const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
 /** Padding between a subgraph frame and its children. ELK's own default is 12. */
 const SUBGRAPH_PADDING = 24;
 /**
- * Lane width for edges routed inside a container.
- *
- * 10 measured best over the ELK corpus. Below that edges crowd each other —
- * at 5 the aggregate drops by about 500 as they start tripping the
- * parallel-proximity checks — and above it the frame grows for no benefit.
- */
-const SUBGRAPH_EDGE_LANE_SPACING = 10;
-/**
  * Default `spacing.baseValue` for a subgraph that has no algorithm of its own.
  *
- * ELK derives the gap between an edge and a node from this at roughly half, and
- * that gap is the straight run an edge gets between its last turn and the node
- * it enters. At 30 the run came out at 15, and since the arrowhead alone is 10
- * that left about 5px of visible line before the corner — the turn read as
- * happening under the arrowhead. Setting the derived gap directly does not
- * work: ELK ignores an explicit `spacing.edgeNode` here, in every key form.
+ * Every unset spacing derives from this, which is why it used to be 50: the
+ * gap ELK derives for an edge approaching a node comes out at roughly half,
+ * and below about 40 the approach ran shorter than the 10px arrowhead, so the
+ * turn read as happening underneath it.
+ *
+ * Paying for that approach out of the base value overcharged everything else.
+ * An edge routed down the inside of a frame claims a lane the same width, so a
+ * group with a couple of them was pushed 50px clear of its own border on that
+ * side and nowhere else — visible as a subgraph padded on one side only, for
+ * no reason a reader can see.
+ *
+ * The two are now set separately: this stays tight, and
+ * `elk.layered.spacing.edgeNodeBetweenLayers` buys the approach on its own.
+ * An earlier note here claimed ELK ignored an explicit edge-node spacing "in
+ * every key form"; it does honour the layered-scoped key, and the attempt that
+ * failed had used `elk.layered.spacing.edgeEdgeBetweenLayers`, which is
+ * edge-to-edge and a different quantity.
  */
-const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 50;
+const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 24;
+/**
+ * Gap between two sibling nodes in a subgraph.
+ *
+ * Also used to derive from `spacing.baseValue`, so lowering that pulled a
+ * group's nodes together until they tripped the validator's
+ * `node-node-padding` rule — three fixtures went invalid on it. 50 is what the
+ * old base value yielded, restored here so the base value is free to be small.
+ *
+ * Deliberately spelled the same way as the `elk.rectpacking` override in
+ * `RECTPACKING_OPTIONS`: ELK reads `spacing.nodeNode` and `elk.spacing.nodeNode`
+ * as the same option, so using both forms would leave a rectpacking container
+ * carrying two values for it and no say in which one won.
+ */
+const DEFAULT_SUBGRAPH_NODE_SPACING = 50;
 /** Inner padding reserved around a container that runs its own algorithm. */
 const CONTAINER_PADDING = 15;
 /** Same, for `elk.rectpacking`, which packs tighter. */
@@ -202,9 +219,12 @@ export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unk
   for (const key of CONTAINER_ALGORITHM_SCOPED_OPTIONS) {
     delete layoutOptions[key];
   }
-  // `spacing.baseValue` is a base option that the rectpacking overrides stomp
-  // on, so restore the default rather than leaving it unset.
+  // `spacing.baseValue` and `spacing.nodeNode` are base options that the
+  // rectpacking overrides stomp on, so restore the defaults rather than leaving
+  // them unset. Missing the second one would silently hand the container back
+  // ELK's own node spacing instead of ours.
   layoutOptions['spacing.baseValue'] = DEFAULT_SUBGRAPH_SPACING_BASE_VALUE;
+  layoutOptions['spacing.nodeNode'] = DEFAULT_SUBGRAPH_NODE_SPACING;
 }
 
 /**
@@ -283,14 +303,16 @@ export function buildSubgraphLayoutOptions(
 
   const layoutOptions: Record<string, unknown> = {
     'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
-    // Width of each routing lane inside the container, set on its own rather
-    // than left to derive from `spacing.baseValue`. Those two want to move in
-    // opposite directions: the base value has to be generous enough that an
-    // edge gets a straight run before the node it enters, but every edge
-    // routed down the inside of a frame then claims a lane that wide, so a
-    // group with several of them is pushed well clear of its own border.
-    // Splitting them keeps the approach while the lanes stay tight.
-    'elk.layered.spacing.edgeEdgeBetweenLayers': SUBGRAPH_EDGE_LANE_SPACING,
+    // The straight run an edge gets before the node it enters, bought on its
+    // own rather than out of `spacing.baseValue` — see the note there. This is
+    // the layered-scoped key; the unscoped `spacing.edgeNodeBetweenLayers` is
+    // not an ELK id at all and setting it does nothing.
+    'elk.layered.spacing.edgeNodeBetweenLayers': 40,
+    // Separation between edges sharing a lane. Also raised off the base value,
+    // so that lowering the base does not leave parallel edges touching.
+    'elk.spacing.edgeEdge': 20,
+    // Node separation, likewise bought on its own — see the note on the constant.
+    'spacing.nodeNode': DEFAULT_SUBGRAPH_NODE_SPACING,
     // Breathing room between a frame and its children. Set explicitly rather
     // than left to ELK's default of 12. The top gets the same value as the
     // rest: ELK reserves the subgraph's own title strip on top of whatever is
@@ -302,6 +324,12 @@ export function buildSubgraphLayoutOptions(
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'elk.layered.nodePlacement.bk.fixedAlignment':
       elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
+    // Containers place their own children. NETWORK_SIMPLEX balances a node
+    // against all of its neighbours, which keeps a group's nodes aligned with
+    // each other instead of drifting; PORT_POSITION lets it shift a node so an
+    // edge can leave straight rather than bending immediately off the port.
+    'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+    'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
   };
 
   // Apply per-group algorithm from metadata (e.g. @{algorithm: elk.box}).

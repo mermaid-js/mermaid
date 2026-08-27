@@ -757,10 +757,13 @@ describe('clearContainerAlgorithmOptions', () => {
 
     clearContainerAlgorithmOptions(options);
 
-    // Back to DEFAULT_SUBGRAPH_SPACING_BASE_VALUE, which also sets the straight
-    // run an edge gets before the node it enters (ELK derives it at ~half).
-    expect(options['spacing.baseValue']).toBe(50);
-    expect(options).not.toHaveProperty('spacing.nodeNode');
+    // Back to DEFAULT_SUBGRAPH_SPACING_BASE_VALUE. It no longer buys the
+    // approach run or the node gap — those are set on their own now — so it is
+    // free to be small, and the container's padding follows it.
+    expect(options['spacing.baseValue']).toBe(24);
+    // Restored too, rather than left deleted: rectpacking overrode it, and
+    // dropping it would hand the container ELK's node spacing instead of ours.
+    expect(options['spacing.nodeNode']).toBe(50);
     expect(options).not.toHaveProperty('elk.rectpacking.trybox');
   });
 
