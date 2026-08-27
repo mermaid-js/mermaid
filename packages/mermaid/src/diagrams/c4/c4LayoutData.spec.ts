@@ -209,6 +209,36 @@ UpdateRelStyle(a, b, $lineColor="red;background:url(x)", $textColor="blue;conten
     expect(edges[0].labelStyle).toHaveLength(0);
   });
 
+  // `UpdateElementStyle` resolves its alias against the elements first and then the
+  // boundaries, so the same statement styles either.
+  it('carries an UpdateElementStyle colour into the boundary style', () => {
+    const db = parse(`C4Context
+Enterprise_Boundary(b1, "Bank") {
+Person(a, "A")
+}
+UpdateElementStyle(b1, $bgColor="red", $borderColor="blue", $fontColor="green")`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.find((node) => node.id === 'b1')?.cssStyles).toEqual([
+      'fill:red',
+      'stroke:blue',
+      'color:green',
+    ]);
+  });
+
+  // As for a relationship colour: a boundary colour is interpolated into a CSS
+  // declaration, and a boundary has no palette to fall back to, so it is dropped.
+  it('drops a boundary colour that is not a colour on its own', () => {
+    const db = parse(`C4Context
+Enterprise_Boundary(b1, "Bank") {
+Person(a, "A")
+}
+UpdateElementStyle(b1, $bgColor="red;background:url(x)", $borderColor="blue;content:'x'")`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.find((node) => node.id === 'b1')?.cssStyles).toHaveLength(0);
+  });
+
   // With HTML labels off the label is rendered as SVG text, where markup would show up
   // as literal characters rather than as emphasis.
   it('builds a plain relationship label when HTML labels are off', () => {

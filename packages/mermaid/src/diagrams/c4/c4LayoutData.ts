@@ -42,17 +42,24 @@ const boundaryLabel = (boundary: C4Boundary): string => {
   return `${boundary.label.text} [${BOUNDARY_TYPE_LABELS[type.toLowerCase()] ?? type}]`;
 };
 
-/** Explicit per-element colours (UpdateBoundaryStyle) applied to a boundary. */
+/**
+ * Explicit colours applied to a boundary. `UpdateElementStyle` resolves its alias
+ * against the elements first and then the boundaries, so it styles both. A boundary
+ * has no palette to fall back to, so a value that is not a colour is dropped.
+ */
 const boundaryCssStyles = (boundary: C4Boundary): string[] => {
   const styles: string[] = [];
-  if (boundary.bgColor) {
-    styles.push(`fill:${boundary.bgColor}`);
+  const fill = asColor(boundary.bgColor);
+  const stroke = asColor(boundary.borderColor);
+  const color = asColor(boundary.fontColor);
+  if (fill) {
+    styles.push(`fill:${fill}`);
   }
-  if (boundary.borderColor) {
-    styles.push(`stroke:${boundary.borderColor}`);
+  if (stroke) {
+    styles.push(`stroke:${stroke}`);
   }
-  if (boundary.fontColor) {
-    styles.push(`color:${boundary.fontColor}`);
+  if (color) {
+    styles.push(`color:${color}`);
   }
   return styles;
 };

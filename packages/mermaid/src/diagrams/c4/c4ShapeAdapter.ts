@@ -122,7 +122,7 @@ const escapeHtml = (txt: string): string =>
     .replaceAll("'", '&#39;');
 
 /**
- * An `UpdateRelStyle` colour, accepted only if it is a colour on its own. The value is
+ * A colour from the diagram source, accepted only if it is a colour on its own. The value is
  * interpolated into a CSS declaration, so one carrying `;` or a `url(...)` could append
  * further declarations; `CSS.supports` rejects those, and anything it cannot judge (no
  * CSS API, as in jsdom) falls back to a conservative pattern match.
