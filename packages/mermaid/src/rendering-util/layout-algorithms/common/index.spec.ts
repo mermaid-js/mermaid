@@ -290,7 +290,19 @@ describe('defaultMeasureLayout', () => {
     mocks.createGraphWithElements.mockResolvedValue(measured);
 
     await expect(defaultMeasureLayout(data, { element } as never)).resolves.toBe(measured);
-    expect(mocks.createGraphWithElements).toHaveBeenCalledWith(element, data);
+    expect(mocks.createGraphWithElements).toHaveBeenCalledWith(element, data, undefined);
+  });
+
+  it('forwards measurement options to createGraphWithElements', async () => {
+    const { defaultMeasureLayout } = await import('./index.js');
+    const data = layout();
+    const element = { name: 'root-g' };
+    mocks.createGraphWithElements.mockResolvedValue(measure());
+
+    await defaultMeasureLayout(data, { element } as never, { unwrapGroupLabels: true });
+    expect(mocks.createGraphWithElements).toHaveBeenCalledWith(element, data, {
+      unwrapGroupLabels: true,
+    });
   });
 });
 
