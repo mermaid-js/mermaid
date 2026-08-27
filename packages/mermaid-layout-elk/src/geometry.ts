@@ -162,6 +162,94 @@ export const fallbackIntersection = (bounds: RectLike, outside: P, center: P): P
   return intersection(bounds, outside, inside);
 };
 
+/** Bisection steps used to walk a ray onto the node outline. */
+const OUTLINE_RAY_STEPS = 40;
+
+/**
+ * Whether a point lies inside the node's outline.
+ *
+ * Derived from `intersect` alone, so it needs no per-shape knowledge: the
+ * shape's `intersect` returns where the ray from the node CENTRE through the
+ * probe leaves the outline, so the probe is inside exactly when it is no
+ * further from the centre than that crossing is. Valid for any outline that is
+ * star-shaped about its centre, which every built-in shape is.
+ */
+const insideOutline = (node: NodeLike, centre: P, probe: P): boolean => {
+  const crossing = node.intersect?.(probe);
+  if (!crossing) {
+    return false;
+  }
+  const probeDist = Math.hypot(probe.x - centre.x, probe.y - centre.y);
+  const outlineDist = Math.hypot(crossing.x - centre.x, crossing.y - centre.y);
+  return probeDist <= outlineDist + 1e-9;
+};
+
+/**
+ * Where the node's outline meets the ray that runs into the node from `port`,
+ * against the direction the edge departs in.
+ *
+ * ELK routes to ports on the node's BOUNDING BOX, and always leaves one
+ * perpendicular to the side it sits on. For a rectangle that port is already
+ * the attachment point. For anything else the outline is inside the box, so the
+ * attachment has to move inwards — and the direction it moves in decides
+ * whether the edge stays orthogonal.
+ *
+ * Moving along the centre ray (what `intersect` does on its own) lands on the
+ * outline at a DIFFERENT offset along the side than the port, so the opening
+ * segment comes out diagonal and the edge visibly kinks as it leaves the shape.
+ * Moving along the departure axis instead keeps the attachment collinear with
+ * ELK's own stub: the edge leaves the outline, crosses the box, and carries on
+ * in one straight line.
+ *
+ * Returns null when the ray cannot be resolved — no `intersect`, a departure
+ * direction that is not axis-aligned, or an interior sample that is not
+ * actually inside — leaving the caller on its existing path.
+ */
+export const outlineAttachPoint = (
+  node: NodeLike,
+  bounds: RectLike,
+  port: P,
+  next: P
+): P | null => {
+  if (!node?.intersect) {
+    return null;
+  }
+
+  const dx = next.x - port.x;
+  const dy = next.y - port.y;
+  if (dx === 0 && dy === 0) {
+    return null;
+  }
+
+  const centre = { x: bounds.x, y: bounds.y };
+  // The departure axis. A diagonal departure has no single axis to preserve, so
+  // there is nothing here to improve on.
+  const horizontal = Math.abs(dx) > Math.abs(dy);
+  const along = (t: number): P => (horizontal ? { x: t, y: port.y } : { x: port.x, y: t });
+
+  // Walk in from the centre-line towards the port: inside at one end, on or
+  // outside the outline at the other.
+  let inner = horizontal ? centre.x : centre.y;
+  let outer = horizontal ? port.x : port.y;
+  if (!insideOutline(node, centre, along(inner))) {
+    return null;
+  }
+  if (insideOutline(node, centre, along(outer))) {
+    // The port itself is on or inside the outline — it IS the attachment.
+    return { ...port };
+  }
+
+  for (let step = 0; step < OUTLINE_RAY_STEPS; step++) {
+    const mid = (inner + outer) / 2;
+    if (insideOutline(node, centre, along(mid))) {
+      inner = mid;
+    } else {
+      outer = mid;
+    }
+  }
+  return along(inner);
+};
+
 export const computeNodeIntersection = (
   node: NodeLike,
   bounds: RectLike,
