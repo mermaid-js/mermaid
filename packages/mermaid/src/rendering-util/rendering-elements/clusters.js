@@ -469,6 +469,150 @@ const divider = (parent, node) => {
   return { cluster: shapeSvg, labelBBox: {} };
 };
 
+/**
+ * Shared helper for agentflow container cluster shapes.
+ * Renders a labeled rounded-rect cluster with configurable visual style.
+ *
+ * Agentflow's grammar has a single container kind (`flow`), so `flowGroup`
+ * below is the only caller today. The options object is kept so a second
+ * container kind does not have to re-derive the label/rough/separator logic.
+ *
+ * @param {object} opts
+ * @param {string} opts.cssClass    - CSS class suffix (e.g. 'agent-cluster')
+ * @param {number} opts.rx          - Corner radius
+ * @param {string} opts.fill        - Fill color (or 'none'/'transparent')
+ * @param {string} opts.stroke      - Stroke color
+ * @param {number} opts.strokeWidth - Stroke width in px
+ * @param {number[]} [opts.strokeDash] - Optional dash array
+ * @param {number} opts.roughness   - rough.js roughness
+ */
+const createContainerGroup = async (parent, node, opts) => {
+  log.info(`Creating ${opts.cssClass} for `, node.id, node);
+  const siteConfig = getConfig();
+  const { handDrawnSeed } = siteConfig;
+
+  const { labelStyles, borderStyles } = styles2String(node);
+
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'cluster ' + opts.cssClass + ' ' + node.cssClasses)
+    // `domId` is generated per render (render.ts prefixes it with the diagram's
+    // svg id). Using the raw, author-supplied `node.id` here collided across two
+    // diagrams on the same page, like every other cluster shape in this file.
+    .attr('id', node.domId ?? node.id)
+    .attr('data-look', node.look);
+
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label');
+
+  let bbox = { width: 0, height: 0 };
+  const hasLabel = node.label?.trim();
+  if (hasLabel) {
+    let text;
+    if (node.labelType === 'markdown') {
+      text = await createText(labelEl, node.label, {
+        style: node.labelStyle,
+        useHtmlLabels,
+        isNode: true,
+        width: node.width,
+      });
+    } else {
+      text = await createLabel(labelEl, node.label, node.labelStyle || '', false, true);
+    }
+    bbox = text.getBBox();
+    if (useHtmlLabels) {
+      const div = text.children[0];
+      const dv = select(text);
+      bbox = div.getBoundingClientRect();
+      dv.attr('width', bbox.width);
+      dv.attr('height', bbox.height);
+    }
+  }
+
+  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
+  if (node.width <= bbox.width + node.padding) {
+    node.diff = (width - node.width) / 2 - node.padding;
+  } else {
+    node.diff = -node.padding;
+  }
+
+  const height = node.height;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+
+  let rectEl;
+  if (node.look === 'handDrawn') {
+    const rc = rough.svg(shapeSvg);
+    const roughOpts = userNodeOverrides(node, {
+      roughness: opts.roughness,
+      fill: opts.fill,
+      stroke: opts.stroke,
+      strokeWidth: opts.strokeWidth,
+      seed: handDrawnSeed,
+      ...(opts.fill === 'none' ? { fillWeight: 0 } : { fillStyle: 'solid' }),
+      ...(opts.strokeDash ? { strokeLineDash: opts.strokeDash } : {}),
+    });
+    const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, opts.rx), roughOpts);
+    rectEl = shapeSvg.insert(() => roughNode, ':first-child');
+    rectEl.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
+  } else {
+    rectEl = shapeSvg.insert('rect', ':first-child');
+    rectEl
+      .attr('rx', opts.rx)
+      .attr('ry', opts.rx)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', opts.fill)
+      .attr('stroke', opts.stroke)
+      .attr('stroke-width', opts.strokeWidth + 'px');
+    if (opts.strokeDash) {
+      rectEl.attr('stroke-dasharray', opts.strokeDash.join(', '));
+    }
+  }
+
+  if (hasLabel) {
+    const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+    labelEl.attr(
+      'transform',
+      `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+    );
+    if (labelStyles) {
+      const span = labelEl.select('span');
+      if (span) {
+        span.attr('style', labelStyles);
+      }
+    }
+  }
+
+  const rectBox = rectEl.node().getBBox();
+  node.offsetX = 0;
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+  node.offsetY = bbox.height - node.padding / 2;
+
+  node.intersect = function (point) {
+    return intersectRect(node, point);
+  };
+
+  return { cluster: shapeSvg, labelBBox: bbox };
+};
+
+/** Flow group: organizational grouping. Transparent, solid 0.75px, rx=10. */
+const flowGroup = async (parent, node) => {
+  const { themeVariables } = getConfig();
+  const stroke = themeVariables.flowContainerStroke || themeVariables.secondaryBorderColor;
+  return createContainerGroup(parent, node, {
+    cssClass: 'flow-cluster',
+    rx: 10,
+    fill: 'none',
+    stroke,
+    strokeWidth: 0.75,
+    roughness: 0.7,
+  });
+};
+
 export const getUsecaseSystemBoundaryGeometry = (node, labelBBox) => {
   const boundaryType = node.boundaryType || 'rect';
   const horizontalLabelPadding = boundaryType === 'package' ? 20 : node.padding;
@@ -619,6 +763,7 @@ const shapes = {
   noteGroup,
   divider,
   kanbanSection,
+  flowGroup,
   usecaseSystemBoundary,
   swimlane,
 };

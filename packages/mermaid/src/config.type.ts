@@ -233,6 +233,7 @@ export interface MermaidConfig {
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
   swimlane?: SwimlaneDiagramConfig;
+  agentflow?: AgentflowDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -421,6 +422,45 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    *
    */
   automaticLaneOrdering?: boolean;
+}
+/**
+ * The object containing configurations specific for the agentflow diagram type.
+ *
+ * Agentflow renders through the shared unified renderer, so it owns the same
+ * spacing and padding knobs a flowchart does. They live in their own block so
+ * that agentflow can be tuned without moving every flowchart on the page.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "AgentflowDiagramConfig".
+ */
+export interface AgentflowDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  /**
+   * Defines the spacing between nodes on the same level.
+   *
+   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+   * and the vertical spacing for LR as well as RL graphs.
+   *
+   */
+  nodeSpacing?: number;
+  /**
+   * Defines the spacing between nodes on different levels.
+   *
+   * Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the
+   * horizontal spacing for LR as well as RL graphs.
+   *
+   */
+  rankSpacing?: number;
 }
 /**
  * The object containing configurations specific for sequence diagrams
