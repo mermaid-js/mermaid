@@ -10,4 +10,6 @@ The lane is real and the edge still needs it, so the space is not reclaimed. Wha
 
 The top is left as ELK set it, since it carries the subgraph's title strip and there is no way to tell how much of that padding is the title and how much is spare.
 
+A frame still holds the lanes that genuinely belong to it. An edge with both endpoints inside a group never leaves it, so its lane is part of that group's interior and the frame stays drawn around it — which matters for nested groups, where a lane routed around an inner group sits inside the outer one.
+
 **Subgraphs render tighter, and groups that used to be visibly lopsided are now even.**

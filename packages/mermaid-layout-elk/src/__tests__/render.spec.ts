@@ -894,6 +894,108 @@ describe('clearContainerAlgorithmOptions', () => {
       expect(nodeDb.outer.width).toBe(196); // 24 + 148 + 24
     });
 
+    it("keeps a frame around a lane belonging to the group's own interior", () => {
+      // The nested case. An edge from inside C to a sibling of C is routed around
+      // C: that lane is OUTSIDE C, so C is pulled in past it, but it is INSIDE P
+      // and P must stay drawn around it. Measuring P from child boxes alone left
+      // the edge running outside a group it never leaves.
+      const nodeDb: Record<string, any> = {
+        P: { id: 'P', isGroup: true, offset: { posX: 0, posY: 0 }, width: 400, height: 220 },
+        C: { id: 'C', isGroup: true, offset: { posX: 24, posY: 48 }, width: 200, height: 148 },
+        leaf: { id: 'leaf', offset: { posX: 48, posY: 96 }, width: 100, height: 76 },
+        sib: { id: 'sib', offset: { posX: 260, posY: 96 }, width: 60, height: 76 },
+      };
+      const elk = [
+        {
+          id: 'P',
+          isGroup: true,
+          labelData: { width: 0 },
+          labels: [],
+          children: [
+            {
+              id: 'C',
+              isGroup: true,
+              labelData: { width: 0 },
+              labels: [],
+              children: [{ id: 'leaf' }],
+            },
+            { id: 'sib' },
+          ],
+        },
+      ];
+      // Routed out of `leaf`, around C at x=350, and back to `sib`. Sections sit
+      // in P's coordinate space, so `calcOffset` resolves them against P.
+      const graph = {
+        edges: [
+          {
+            id: 'e',
+            sources: ['leaf'],
+            targets: ['sib'],
+            sections: [
+              {
+                startPoint: { x: 148, y: 134 },
+                bendPoints: [
+                  { x: 350, y: 134 },
+                  { x: 350, y: 60 },
+                ],
+                endPoint: { x: 260, y: 134 },
+              },
+            ],
+          },
+        ],
+      };
+      const layoutState = {
+        nodeDb,
+        parentLookupDb: { parentById: { leaf: 'C', C: 'P', sib: 'P' } },
+      };
+
+      evenGroupFrames(elk, layoutState as any, new Map(), graph as any);
+
+      // C ignores the lane — it leaves C — and pulls in to its one child.
+      expect(nodeDb.C.width).toBe(148);
+      // P keeps it: the lane reaches x=350, so the frame runs to 350 + 24.
+      expect(nodeDb.P.offset.posX + nodeDb.P.width).toBe(374);
+    });
+
+    it("leaves ELK's own origin readable after moving a frame", () => {
+      // Edge sections resolve against the container's ORIGINAL origin, so moving
+      // a frame must not overwrite it or every edge inside would shift with it.
+      const nodeDb: Record<string, any> = {
+        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 148 },
+        n: { id: 'n', offset: { posX: 40, posY: 48 }, width: 100, height: 76 },
+      };
+
+      evenGroupFrames(
+        [{ id: 'g', isGroup: true, labelData: { width: 0 }, labels: [], children: [{ id: 'n' }] }],
+        { nodeDb } as any,
+        new Map()
+      );
+
+      expect(nodeDb.g.offset.posX).toBe(16); // frame moved in to 40 - 24
+      expect(nodeDb.g.elkOrigin).toEqual({ posX: 0, posY: 0 });
+    });
+
+    it('never grows a frame beyond what ELK sized it to', () => {
+      // ELK sized the container around everything it put inside, so a measurement
+      // here that wants MORE room means this pass got something wrong. Clamp
+      // rather than trust it.
+      const nodeDb: Record<string, any> = {
+        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 120, height: 148 },
+        n: { id: 'n', offset: { posX: 10, posY: 48 }, width: 100, height: 76 },
+      };
+
+      evenGroupFrames(
+        [{ id: 'g', isGroup: true, labelData: { width: 0 }, labels: [], children: [{ id: 'n' }] }],
+        { nodeDb } as any,
+        new Map()
+      );
+
+      // 10 - 24 would put the left edge at -14 and 110 + 24 the right at 134;
+      // both are clamped back to the frame ELK gave.
+      expect(nodeDb.g.offset.posX).toBe(0);
+      expect(nodeDb.g.width).toBe(120);
+    });
+
     it('skips a group with no children rather than collapsing it', () => {
       const nodeDb: Record<string, any> = {
         g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 100 },

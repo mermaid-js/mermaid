@@ -45,6 +45,11 @@ interface NodeWithVertex {
   height?: number;
   intersect?: (point: P) => P | null;
   isGroup?: boolean;
+  /**
+   * Where ELK put this container, kept when `evenGroupFrames` moves the drawn
+   * frame. Edge sections resolve against this, never against the moved frame.
+   */
+  elkOrigin?: { posX: number; posY: number };
   padding?: number;
   parentId?: string;
   shape?: string;
@@ -1110,7 +1115,7 @@ function applyElkLayoutResult(
   // Between positions and edges on purpose: `boundsFor` reads the box set
   // above, and `cutter2` clips an edge that ends on a group against it, so an
   // edge attaching to a frame follows the frame when it moves.
-  evenGroupFrames(graph.children ?? [], layoutState, nodeById);
+  evenGroupFrames(graph.children ?? [], layoutState, nodeById, graph);
   applyElkEdgeLayout(data4Layout, graph, layoutState, log);
 }
 
@@ -1137,17 +1142,60 @@ function applyElkLayoutResult(
  * Runs deepest-first, so a parent measures against children that have already
  * been pulled in rather than against their original boxes.
  */
+export function collectDescendantIds(elkNode: any, into = new Set<string>()): Set<string> {
+  for (const child of elkNode.children ?? []) {
+    into.add(child.id);
+    collectDescendantIds(child, into);
+  }
+  return into;
+}
+
+/**
+ * Absolute points of every edge ELK routed INSIDE this group — meaning both of
+ * its endpoints are descendants of the group.
+ *
+ * An edge with one endpoint outside is the case this whole pass exists for: its
+ * lane belongs to the layout around the group, not to the group, so the frame
+ * should not be drawn around it. An edge with both endpoints inside is the
+ * opposite — its lane is part of the group's interior, and a frame pulled in
+ * past it would leave the edge running outside a group it never leaves.
+ */
+function internalEdgePoints(
+  graph: ElkLayoutResult,
+  descendants: Set<string>,
+  layoutState: ElkLayoutState
+): P[] {
+  const points: P[] = [];
+  for (const edge of graph.edges ?? []) {
+    const source = edge.sources?.[0] ?? edge.start;
+    const target = edge.targets?.[0] ?? edge.end;
+    if (!descendants.has(source) || !descendants.has(target)) {
+      continue;
+    }
+    const offset = calcOffset(source, target, layoutState.parentLookupDb, layoutState.nodeDb);
+    for (const section of edge.sections ?? []) {
+      for (const p of [section.startPoint, ...(section.bendPoints ?? []), section.endPoint]) {
+        if (p) {
+          points.push({ x: p.x + offset.x, y: p.y + offset.y });
+        }
+      }
+    }
+  }
+  return points;
+}
+
 export function evenGroupFrames(
   elkNodes: any[],
   layoutState: ElkLayoutState,
-  nodeById: Map<string, Node>
+  nodeById: Map<string, Node>,
+  graph: ElkLayoutResult = {}
 ): void {
   for (const elkNode of elkNodes) {
     if (!elkNode?.isGroup) {
       continue;
     }
     const children = elkNode.children ?? [];
-    evenGroupFrames(children, layoutState, nodeById);
+    evenGroupFrames(children, layoutState, nodeById, graph);
 
     const group = layoutState.nodeDb[elkNode.id];
     const boxes = children
@@ -1157,12 +1205,26 @@ export function evenGroupFrames(
       continue;
     }
 
-    const left = Math.min(...boxes.map((b: NodeWithVertex) => b.offset!.posX)) - SUBGRAPH_PADDING;
-    const right =
-      Math.max(...boxes.map((b: NodeWithVertex) => b.offset!.posX + b.width!)) + SUBGRAPH_PADDING;
-    const bottom =
-      Math.max(...boxes.map((b: NodeWithVertex) => b.offset!.posY + b.height!)) + SUBGRAPH_PADDING;
-    const top = group.offset.posY;
+    const lane = internalEdgePoints(graph, collectDescendantIds(elkNode), layoutState);
+    const xs = [
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posX),
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posX + b.width!),
+      ...lane.map((p) => p.x),
+    ];
+    const ys = [
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posY),
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posY + b.height!),
+      ...lane.map((p) => p.y),
+    ];
+
+    // Only ever pull a frame IN. ELK sized it to hold everything it put there,
+    // so growing one would mean this pass had measured something ELK had not —
+    // more likely a bug here than a gap there.
+    const origin = group.offset;
+    const left = Math.max(origin.posX, Math.min(...xs) - SUBGRAPH_PADDING);
+    const right = Math.min(origin.posX + group.width!, Math.max(...xs) + SUBGRAPH_PADDING);
+    const bottom = Math.min(origin.posY + group.height!, Math.max(...ys) + SUBGRAPH_PADDING);
+    const top = origin.posY;
 
     // A frame narrower than its own title would cut the title off. Both the
     // drawn rect and `getEffectiveGroupWidth` have their own idea of the floor,
@@ -1182,6 +1244,10 @@ export function evenGroupFrames(
       continue;
     }
 
+    // `calcOffset` resolves an edge's section against the origin of the
+    // container that owns it, so moving a frame would drag every edge routed
+    // inside it. Keep what ELK chose and let `calcOffset` read that instead.
+    group.elkOrigin ??= { posX: origin.posX, posY: origin.posY };
     group.offset.posX = x;
     group.offset.width = width;
     group.offset.height = height;
@@ -1600,7 +1666,11 @@ function calcOffset(
     return { x: 0, y: 0 };
   }
 
-  const ancestorOffset = nodeDb[ancestor]?.offset;
+  // `elkOrigin` when present: `evenGroupFrames` may have moved the frame, but a
+  // section's coordinates are relative to where ELK put the container, not to
+  // where the frame is now drawn.
+  const node = nodeDb[ancestor];
+  const ancestorOffset = node?.elkOrigin ?? node?.offset;
   return {
     x: ancestorOffset?.posX ?? 0,
     y: ancestorOffset?.posY ?? 0,
