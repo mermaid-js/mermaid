@@ -307,7 +307,21 @@ export function buildSubgraphLayoutOptions(
     // own rather than out of `spacing.baseValue` — see the note there. This is
     // the layered-scoped key; the unscoped `spacing.edgeNodeBetweenLayers` is
     // not an ELK id at all and setting it does nothing.
-    'elk.layered.spacing.edgeNodeBetweenLayers': 40,
+    //
+    // 20 is a balance, not a free choice. This value is charged TWICE against a
+    // group that has an edge routed down the inside of its frame — once between
+    // the nodes and the edge's lane, and again between that lane and the frame.
+    // Measured across four values on a six-subgraph diagram, that group's extra
+    // width came out at exactly `36 + 2x`, so 40 cost 40px of frame more than
+    // 20 does. It also stops buying anything above 30.
+    //
+    // Nothing separates the two uses. `elk.spacing.edgeEdge` and
+    // `elk.spacing.edgeNode` both leave the lane and the frame unchanged, and
+    // buying the same approach out of `spacing.baseValue` instead costs MORE
+    // frame, not less (approach 20 costs 84px that way against 76px here). So
+    // this key is the cheapest way to buy the approach, and 20 is as low as it
+    // goes while keeping every edge clear of its own arrowhead.
+    'elk.layered.spacing.edgeNodeBetweenLayers': 20,
     // Separation between edges sharing a lane. Also raised off the base value,
     // so that lowering the base does not leave parallel edges touching.
     'elk.spacing.edgeEdge': 20,
