@@ -259,7 +259,9 @@ export const sanitize = (options: any) => {
       const isCssKey = key === 'themeCSS' || key.endsWith('themeCSS');
       const hasInvalidChars = isCssKey
         ? options[key].includes('<') || options[key].includes('url(data:')
-        : options[key].includes('<') || options[key].includes('>') || options[key].includes('url(data:');
+        : options[key].includes('<') ||
+          options[key].includes('>') ||
+          options[key].includes('url(data:');
 
       if (hasInvalidChars) {
         delete options[key];
