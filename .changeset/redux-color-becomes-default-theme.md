@@ -1,5 +1,5 @@
 ---
-'mermaid': minor
+'mermaid': major
 ---
 
 **`redux-color` is now the default theme.** Every diagram rendered without an explicit theme changes appearance.
