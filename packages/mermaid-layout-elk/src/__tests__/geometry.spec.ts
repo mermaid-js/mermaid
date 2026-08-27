@@ -160,6 +160,24 @@ describe('geometry helpers', () => {
       ]);
     });
 
+    it('collapses a sub-pixel step', () => {
+      // ELK routinely leaves under a pixel between the port row and the channel
+      // row. It still paints as two rounded corners stacked on each other, and
+      // the shared EPS of 1 is far too coarse to see it.
+      const pts: P[] = [
+        { x: 193, y: 116.5 },
+        { x: 218, y: 116.5 },
+        { x: 218, y: 117.358 },
+        { x: 315, y: 117.358 },
+      ];
+
+      expect(straightenTerminalJogs(pts, node, far)).toEqual([
+        { x: 193, y: 117.358 },
+        { x: 218, y: 117.358 },
+        { x: 315, y: 117.358 },
+      ]);
+    });
+
     it('leaves a step too large to be a port connector alone', () => {
       // 40 is a real routing decision, not the leftover from port spreading.
       const pts: P[] = [

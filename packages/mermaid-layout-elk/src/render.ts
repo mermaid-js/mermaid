@@ -1158,14 +1158,27 @@ const TERMINAL_JOG_MAX = 16;
  */
 const TERMINAL_RUN_MAX = 30;
 
+/**
+ * Tolerance for deciding whether a segment counts as axis-aligned, and whether
+ * a step is a step at all.
+ *
+ * Deliberately much smaller than the shared `EPS` of 1, which exists for "is
+ * this point on a border" and is far too coarse here: ELK routinely leaves a
+ * sub-pixel step between the port row and the channel row, and at `EPS` those
+ * are not even recognised as segments. They still paint as two rounded corners
+ * stacked on each other, which is the artefact this pass removes — an
+ * `infra -> auth` edge stepped 0.858 and rendered exactly that way.
+ */
+const JOG_EPS = 0.01;
+
 /** Axis of an axis-aligned segment: `h`, `v`, or undefined when diagonal. */
 function axisOf(a: P, b: P): 'h' | 'v' | undefined {
   const dx = Math.abs(b.x - a.x);
   const dy = Math.abs(b.y - a.y);
-  if (dx > EPS && dy <= EPS) {
+  if (dx > JOG_EPS && dy <= JOG_EPS) {
     return 'h';
   }
-  if (dy > EPS && dx <= EPS) {
+  if (dy > JOG_EPS && dx <= JOG_EPS) {
     return 'v';
   }
   return undefined;
@@ -1211,7 +1224,7 @@ function collapseTerminalJog(pts: P[], bounds: RectLike): void {
     }
     if (axis === 'h') {
       const jog = Math.abs(p2.y - p1.y);
-      if (jog < EPS || jog > TERMINAL_JOG_MAX) {
+      if (jog < JOG_EPS || jog > TERMINAL_JOG_MAX) {
         return;
       }
       // The route has to keep travelling the same way after the step,
@@ -1228,7 +1241,7 @@ function collapseTerminalJog(pts: P[], bounds: RectLike): void {
       pts.splice(0, 2, { x: p0.x, y: p2.y });
     } else {
       const jog = Math.abs(p2.x - p1.x);
-      if (jog < EPS || jog > TERMINAL_JOG_MAX) {
+      if (jog < JOG_EPS || jog > TERMINAL_JOG_MAX) {
         return;
       }
       if (Math.sign(p1.y - p0.y) !== Math.sign(p3.y - p2.y)) {
