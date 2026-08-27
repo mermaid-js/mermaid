@@ -1181,3 +1181,11 @@ run ended: max_consecutive_reverts (rounds 11, 12, 13) — total 52,808.1 -> 53,
 - round 7: edge-crosses-foreign-group flags joined the rebuild candidate set (an alternative line/elbow might dodge the frame). Zero commits — svelte5's L_PADSTAT_LINTER transit has no rebuild variant that clears Render's frame without worse damage.
 
 run ended: max_consecutive_reverts (rounds 5, 6, 7) — total 53,412.3 -> 53,602.3 (+190 of the +1000 goal). invalid 1 (out-of-scope). cost 799.0M -> 801.6M (99.8% of ceiling — the ceiling is now the run-limiting constraint; the SAT refine spiral holds ~200M of it).
+
+## RUN 2026-08-27T10 — branch domus-loop/2026-08-27T10 — baseline 53,602.3, invalid 1, cost 801.6M (99.8%)
+
+- goal: USER-SET — +500 over 53,602.3 (target 54,102.3, absolute — new rules must be paid back first). swimlanes out of scope.
+- user lever: frame padding, both directions — (1) outside nodes glued to the frame make their connector stubs unreadable (co-pilot's three bottom nodes: 20px edges into `Response`), (2) members sit at exactly 15 from their own frame (co-pilot n4/n8 — the user's right-most/left-most examples; corpus-wide floor is a hard-wired 15).
+- instrument round (user-directed by the established pattern, commit follows): two SOFT graded rules — `edge-to-group-too-short` (group-terminal edge < 30 visible px, 2/px cap 40) and `node-close-to-own-frame` (member inset < 20, 2/px cap 30), lanes/swimlanes exempt, +4 unit tests. Sweep stays green (soft cannot invalidate); total re-bases 53,602.3 -> 53,354.5 (−247.8 of newly priced padding debt) across exactly the probe's 8 fixtures. Cost flat 99.8%.
+- CONSTRAINT: cost ceiling still 99.8% consumed; SAT refine spiral (~200M) still the named supervised unlock.
+- time_budget_sec: default 14400

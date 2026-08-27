@@ -1276,6 +1276,58 @@ describe('validateLayout new geometric issues', () => {
     expect(res.issues.map((i) => i.type)).not.toContain('group-group-padding');
   });
 
+  // ---- edge-to-group-too-short / node-close-to-own-frame (SOFT, graded) ----
+
+  it('grades an edge into a group frame that is too short to read', () => {
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 105, 0, 40, 40); // right edge x=125; frame left x=150
+    const e = mkEdge('L_N_G_0', 'N', 'G', [
+      { x: 125, y: 0 },
+      { x: 150, y: 0 }, // 25px stub into the frame
+    ]);
+    // The corpus regime: a 20px node↔frame clearance is legal, so a straight
+    // stub can be legally shorter than the visible minimum.
+    const res = validateLayout({
+      nodes: [g, n],
+      edges: [e],
+      config: { flowchart: { nodeGroupClearance: 20 } } as any,
+    });
+    const issue = res.issues.find((i) => i.type === 'edge-to-group-too-short');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.softPenalty).toBe(10); // (30 - 25) * 2
+    expect(res.ok).toBe(true); // soft: grades, never invalidates
+  });
+
+  it('does NOT grade a group edge at the full minimum length', () => {
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 100, 0, 40, 40); // right edge x=120 -> 30px stub
+    const e = mkEdge('L_N_G_0', 'N', 'G', [
+      { x: 120, y: 0 },
+      { x: 150, y: 0 },
+    ]);
+    const res = validateLayout({ nodes: [g, n], edges: [e], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('edge-to-group-too-short');
+  });
+
+  it('grades a member crowding its own frame', () => {
+    const g = mkGroup('G', 0, 0, 200, 200); // frame [-100,100]
+    const m = { ...mkNode('M', -65, 0, 40, 40), parentId: 'G' } as unknown as Node;
+    // member left edge -85 -> inset 15 from the frame's -100
+    const res = validateLayout({ nodes: [g, m], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'node-close-to-own-frame');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.inset).toBeCloseTo(15);
+    expect(issue?.details?.softPenalty).toBe(10); // (20 - 15) * 2
+    expect(res.ok).toBe(true);
+  });
+
+  it('does NOT grade a member at the full inner padding', () => {
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const m = { ...mkNode('M', -60, 0, 40, 40), parentId: 'G' } as unknown as Node; // inset 20
+    const res = validateLayout({ nodes: [g, m], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('node-close-to-own-frame');
+  });
+
   // ---- group-inside-group-padding: nested frame flush with its ancestor (HARD) ----
 
   it('flags group-inside-group-padding for a child frame 3px inside its parent', () => {

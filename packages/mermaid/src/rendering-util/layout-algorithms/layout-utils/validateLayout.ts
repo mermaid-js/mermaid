@@ -437,7 +437,12 @@ export type LayoutIssueType =
   /** Group frame is stretched far beyond its content on one axis. */
   | 'group-elongation'
   /** Node nearly aligns with a connected neighbour, but not quite. */
-  | 'grid-misalignment';
+  | 'grid-misalignment'
+  // ── Added 2026-08-27 (padding round). Soft: frame-adjacency legibility. ──
+  /** An edge terminating on a group frame is too short to read as an edge. */
+  | 'edge-to-group-too-short'
+  /** A member sits closer to its own frame than the minimum inner padding. */
+  | 'node-close-to-own-frame';
 
 export interface Issue {
   type: LayoutIssueType;
@@ -1122,7 +1127,31 @@ const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
   'group-dead-space': 0,
   'group-elongation': 0,
   'grid-misalignment': 5,
+  // Both graded per-issue; see details.softPenalty.
+  'edge-to-group-too-short': 0,
+  'node-close-to-own-frame': 0,
 };
+
+/**
+ * An edge that terminates ON a group frame needs at least this much visible
+ * polyline to read as an edge at all — below it the connector disappears
+ * behind its own arrowhead and the node looks glued to the frame
+ * (co-pilot-extension ships two 20px stubs into the `Response` frame). Graded
+ * soft: penalty 2 per missing px, capped.
+ */
+export const GROUP_EDGE_MIN_LEN = 30;
+const GROUP_EDGE_STUB_SCALE = 2;
+const GROUP_EDGE_STUB_MAX = 40;
+
+/**
+ * Minimum air between a member and its own frame. The corpus lays members out
+ * at exactly 15 from the border, which reads as cramped next to the 20px the
+ * validator demands OUTSIDE a frame. Graded soft: 2 per missing px, capped —
+ * a member poking outside its own frame hits the cap.
+ */
+export const MEMBER_FRAME_PADDING = 20;
+const MEMBER_FRAME_CROWD_SCALE = 2;
+const MEMBER_FRAME_CROWD_MAX = 30;
 
 /**
  * Render-time layout check: the same checks, the same issues and the same score
@@ -2612,6 +2641,83 @@ export function validateLayout(
             details: { minInset, threshold: NESTED_GROUP_PADDING },
           });
         }
+      }
+    }
+
+    // ── Frame-adjacency legibility (both soft, graded — 2026-08-27 padding
+    // round). An edge that terminates ON a frame must be long enough to read
+    // as an edge; a member must keep minimum air from its own frame. Lanes
+    // and swimlane groups keep their own spacing model, as everywhere else.
+    for (const em of edgeMetas) {
+      const sIsGroup = em.startId != null && groupBorderRects.has(em.startId);
+      const tIsGroup = em.endId != null && groupBorderRects.has(em.endId);
+      if (!sIsGroup && !tIsGroup) {
+        continue;
+      }
+      const gId = sIsGroup ? em.startId : em.endId;
+      if (isSwimlaneGroup(byId.get(gId)) || laneGroups.has(gId)) {
+        continue;
+      }
+      const pts = em.points;
+      if (!Array.isArray(pts) || pts.length < 2) {
+        continue;
+      }
+      let len = 0;
+      for (let i = 0; i + 1 < pts.length; i++) {
+        len += Math.abs(pts[i + 1].x - pts[i].x) + Math.abs(pts[i + 1].y - pts[i].y);
+      }
+      if (len < GROUP_EDGE_MIN_LEN - EPS) {
+        issues.push({
+          type: 'edge-to-group-too-short',
+          message: diag
+            ? `Edge "${em.id}" into group "${gId}" is only ${len.toFixed(1)} long (< ${GROUP_EDGE_MIN_LEN})`
+            : '',
+          edgeId: em.id,
+          nodeIds: [gId],
+          details: {
+            length: len,
+            softPenalty: Math.min(
+              GROUP_EDGE_STUB_MAX,
+              Math.round((GROUP_EDGE_MIN_LEN - len) * GROUP_EDGE_STUB_SCALE)
+            ),
+          },
+        });
+      }
+    }
+    for (const n of nodes) {
+      if (n?.id == null || n.isGroup || isLabelDummy(n) || n.parentId == null) {
+        continue;
+      }
+      const pid = String(n.parentId);
+      const gRect = groupBorderRects.get(pid);
+      if (!gRect || isSwimlaneGroup(byId.get(pid)) || laneGroups.has(pid)) {
+        continue;
+      }
+      const nr = nodeRects.get(String(n.id));
+      if (!nr) {
+        continue;
+      }
+      const inset = Math.min(
+        nr.left - gRect.left,
+        gRect.right - nr.right,
+        nr.top - gRect.top,
+        gRect.bottom - nr.bottom
+      );
+      if (inset < MEMBER_FRAME_PADDING - EPS) {
+        issues.push({
+          type: 'node-close-to-own-frame',
+          message: diag
+            ? `Member "${String(n.id)}" sits ${inset.toFixed(1)} inside its frame "${pid}" (min ${MEMBER_FRAME_PADDING})`
+            : '',
+          nodeIds: [String(n.id), pid],
+          details: {
+            inset,
+            softPenalty: Math.min(
+              MEMBER_FRAME_CROWD_MAX,
+              Math.round((MEMBER_FRAME_PADDING - inset) * MEMBER_FRAME_CROWD_SCALE)
+            ),
+          },
+        });
       }
     }
 
