@@ -251,4 +251,26 @@ with a second line`
       }).not.toThrow();
     });
   }
+
+  it('should efficiently parse flowchart followed by a large run of whitespace (issue #8127)', function () {
+    const payload = 'flowchart LR\nA-->B\n' + ' '.repeat(10000);
+    expect(() => {
+      flow.parser.parse(payload);
+    }).not.toThrow();
+
+    const vert = flow.parser.yy.getVertices();
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+  });
+
+  it('should tolerate multiple spaces between tokens', function () {
+    const flowChart = `graph  LR
+    classDef   myClass   fill:#f9f,stroke:#333
+    A[Node  A]   -->   B[Node  B]`;
+
+    expect(() => {
+      flow.parser.parse(flowChart);
+    }).not.toThrow();
+  });
 });
+
