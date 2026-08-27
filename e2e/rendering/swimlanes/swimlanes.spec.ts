@@ -23,7 +23,10 @@ const HANDDRAWN_FIXTURES = [
 ];
 
 const shapeSelector = 'rect, polygon, ellipse, circle, path';
-const edgePathSelector = 'g.edgePath path.path, g.edgePath path';
+// The shared layout renderer emits the edge group as `g.edges.edgePaths`
+// (see createLayoutElementGroups). Edge paths themselves carry
+// `edge-thickness-* edge-pattern-* flowchart-link`, not a `.path` class.
+const edgePathSelector = 'g.edgePaths path';
 
 const asStandaloneSwimlanes = (source: string): string => {
   // Every swimlanes layout-test fixture declares the standalone `swimlanes`
