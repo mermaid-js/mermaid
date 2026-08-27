@@ -430,11 +430,19 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   // from `dateFormat` still resolves; without the same fallback here the end time
   // collapses onto the start time and the task renders as a zero-width bar.
   //
-  // Parsed through dayjs rather than `new Date()` so a date-only string keeps the
-  // local midnight the strict path above would have produced: `new Date()` reads
-  // those as UTC, which would shift the bar by the viewer's offset.
+  // Accept exactly what `getStartDate` accepts, so the same string cannot be a
+  // usable start date and a rejected end date. `getStartDate` decides with
+  // `new Date`, which is stricter than dayjs about month overflow — dayjs reads
+  // `2026-13-01` as 2027-01-01 while `new Date` rejects it outright.
+  //
+  // The value is then read back through dayjs rather than from `new Date` so a
+  // date-only string keeps the local midnight the strict path above would have
+  // produced: `new Date` reads those as UTC, which would shift the bar by the
+  // viewer's offset.
+  const lenientDate = new Date(str);
   const fallbackDate = dayjs(str);
   if (
+    !Number.isNaN(lenientDate.getTime()) &&
     fallbackDate.isValid() &&
     // Mirrors the bounds `getStartDate` uses to reject dates that engines parse
     // into absurd years, which can stall rendering.

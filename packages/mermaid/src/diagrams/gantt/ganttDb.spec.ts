@@ -614,5 +614,36 @@ describe('when using the ganttDb', function () {
       const task = ganttDb.getTasks()[0];
       expect(task.endTime).toEqual(task.startTime);
     });
+
+    // A day that overflows its month is normalised rather than rejected, by
+    // `new Date` and by dayjs alike. The fallback has to agree with
+    // `getStartDate`, which accepts the same string, or one date would be usable
+    // as a start and refused as an end.
+    it('normalises an overflowing day the same way a start date does', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addSection('section');
+      ganttDb.addTask('overflow task', 'id1,2026-02-31,2026-04-31');
+
+      const task = ganttDb.getTasks()[0];
+      // Both roll into the next month rather than being refused. The start keeps
+      // `getStartDate`'s `new Date` semantics (UTC midnight) and the end keeps the
+      // local midnight of the strict path it falls back from, so each is compared
+      // against its own parser rather than a fixed offset.
+      expect(task.startTime).toEqual(new Date('2026-02-31'));
+      expect(task.endTime).toEqual(dayjs('2026-04-31').toDate());
+      expect(task.endTime.getTime()).toBeGreaterThan(task.startTime.getTime());
+    });
+
+    // dayjs alone reads this as 2027-01-01, but `new Date` rejects it and so does
+    // `getStartDate`. Accepting it here would invent an end date out of a string
+    // the same chart could not start on.
+    it('rejects a month that overflows, as a start date would', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addSection('section');
+      ganttDb.addTask('bad month task', 'id1,2026-01-03,2026-13-01');
+
+      const task = ganttDb.getTasks()[0];
+      expect(task.endTime).toEqual(task.startTime);
+    });
   });
 });
