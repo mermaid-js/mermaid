@@ -1,0 +1,19 @@
+---
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+
+  subgraph Wrapper
+  direction LR
+  subgraph Inner
+  D1 --> D2
+  D2 --> D3
+  end
+  end
+
+  %% External connection to nested subgraph
+  D3 --- E1

@@ -1,0 +1,18 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  actor U@{ "type" : "actor" } as End User
+  actor A@{ "type" : "boundary" } as API Gateway
+  actor S@{ "type" : "control" } as Service Layer
+  actor D@{ "type" : "database" } as Data Store
+  U ->> A: Send request
+  A ->> S: Process
+  S ->> D: Persist
+  D -->> S: Success
+  S -->> A: Response
+  A -->> U: Result

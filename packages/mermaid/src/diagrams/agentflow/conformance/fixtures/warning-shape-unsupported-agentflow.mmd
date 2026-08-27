@@ -1,0 +1,11 @@
+%% A Mermaid-valid shape that's not in agentflow's v0.8.1 catalogue and
+%% not in the removed-shape blacklist emits a SHAPE_UNSUPPORTED warning
+%% from transformData. (Removed shapes like `cylinder`, `doc`, `procs`
+%% emit SHAPE_REMOVED at error tier — see those fixtures.)
+agentflow-beta TB
+  input["q"]
+  input@{ shape: input }
+  x["X"]
+  y["Y"]
+  x@{ shape: "triangle" }
+  input --> x --> y
