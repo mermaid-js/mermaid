@@ -1,0 +1,10 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph "Customer Domain"
+  CUSTOMER
+  end
+
+  "Customer Domain" ||--o{ ORDER : contains

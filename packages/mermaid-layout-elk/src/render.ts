@@ -1,5 +1,6 @@
 import mermaid, {
   createCommonLayoutRenderer,
+  defaultMeasureLayout,
   type CommonLayoutRenderContext,
   type LayoutData,
 } from 'mermaid';
@@ -107,6 +108,101 @@ const ARROW_MAP: Record<string, [string, string]> = {
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
+/** Default `spacing.baseValue` for a subgraph that has no algorithm of its own. */
+const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 30;
+/** Inner padding reserved around a container that runs its own algorithm. */
+const CONTAINER_PADDING = 15;
+/** Same, for `elk.rectpacking`, which packs tighter. */
+const RECTPACKING_CONTAINER_PADDING = 10;
+
+/**
+ * Shared layout options for elk.rectpacking — applied at both root level
+ * and per-group level to reduce wasted space.
+ * trybox: attempt box-like packing first for tighter results.
+ * SCANLINE: width approximation scans node sizes instead of using a fixed target.
+ * EQUAL_BETWEEN_STRUCTURES: distributes remaining whitespace evenly between children.
+ */
+const RECTPACKING_OPTIONS: Record<string, string | number> = {
+  'spacing.baseValue': 15,
+  'spacing.nodeNode': 15,
+  'elk.aspectRatio': '1.6',
+  'elk.expandNodes': 'true',
+  'elk.rectpacking.trybox': 'true',
+  'elk.rectpacking.packing.compaction.rowHeightReevaluation': 'true',
+  'elk.rectpacking.packing.compaction.iterations': 10,
+  'elk.rectpacking.whiteSpaceElimination.strategy': 'EQUAL_BETWEEN_STRUCTURES',
+  'elk.rectpacking.widthApproximation.strategy': 'SCANLINE',
+};
+
+/**
+ * Every option `buildSubgraphLayoutOptions` sets *because* a container asked for
+ * its own algorithm. When cross-boundary edges force the container back onto the
+ * inherited algorithm, all of these have to go — they are not inert under
+ * `elk.layered`, so leaving them behind produced a hybrid rather than the
+ * documented fallback.
+ */
+const CONTAINER_ALGORITHM_SCOPED_OPTIONS = [
+  'nodeSize.constraints',
+  'nodeSize.minimum',
+  'elk.algorithm',
+  'elk.aspectRatio',
+  'elk.contentAlignment',
+  'elk.expandNodes',
+  'elk.padding',
+  ...Object.keys(RECTPACKING_OPTIONS),
+];
+
+/**
+ * Undo the algorithm-scoped options on a container, restoring the values a
+ * plain subgraph would have had.
+ */
+export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unknown>): void {
+  for (const key of CONTAINER_ALGORITHM_SCOPED_OPTIONS) {
+    delete layoutOptions[key];
+  }
+  // `spacing.baseValue` is a base option that the rectpacking overrides stomp
+  // on, so restore the default rather than leaving it unset.
+  layoutOptions['spacing.baseValue'] = DEFAULT_SUBGRAPH_SPACING_BASE_VALUE;
+}
+
+/**
+ * ELK algorithm ids a container may select through `@{ algorithm: … }`.
+ *
+ * The value comes from user-authored diagram metadata and would otherwise be
+ * handed to ELK verbatim; an id ELK doesn't know aborts the whole layout and
+ * blanks the diagram. Anything outside this list is ignored with a warning, so
+ * a typo degrades to the default layout instead of losing the render.
+ */
+const CONTAINER_ALGORITHMS = new Set([
+  'elk.layered',
+  'elk.box',
+  'elk.rectpacking',
+  'elk.stress',
+  'elk.force',
+  'elk.mrtree',
+  'elk.radial',
+  'elk.sporeOverlap',
+]);
+
+/**
+ * Resolve a container's requested layout algorithm, or `undefined` when the
+ * request is absent, not a string, or not a supported ELK algorithm.
+ */
+export function resolveContainerAlgorithm(
+  requested: unknown,
+  log?: ElkLayoutContext['log']
+): string | undefined {
+  if (typeof requested !== 'string') {
+    return undefined;
+  }
+  if (!CONTAINER_ALGORITHMS.has(requested)) {
+    log?.warn(
+      `Unknown container layout algorithm "${requested}". Supported values: ${[...CONTAINER_ALGORITHMS].join(', ')}. Falling back to the diagram's layout algorithm.`
+    );
+    return undefined;
+  }
+  return requested;
+}
 
 export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP' {
   switch (dir) {
@@ -125,19 +221,67 @@ export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP'
 }
 
 export function buildSubgraphLayoutOptions(
-  node: { dir?: string },
+  node: {
+    dir?: string;
+    padding?: number;
+    labelData?: LabelData;
+    metadata?: { algorithm?: unknown } & Record<string, unknown>;
+  },
   elkConfig: ElkSubgraphConfig | undefined,
-  algorithm: string | undefined
+  algorithm: string | undefined,
+  log?: ElkLayoutContext['log']
 ): Record<string, unknown> {
+  // Compute label-based minimum width so ELK sizes compound nodes to fit their
+  // labels. nodeSize.minimum acts as a label-derived floor while ELK computes
+  // the actual size from the children.
+  const labelW = node.labelData?.width ?? 0;
+  const pad = node.padding ?? 0;
+  const minWidth = labelW + 2 * pad;
+  const labelH = node.labelData?.height ?? 0;
+
   const layoutOptions: Record<string, unknown> = {
-    'spacing.baseValue': 30,
+    'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-    'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
+    'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'elk.layered.nodePlacement.bk.fixedAlignment':
       elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
   };
-  if (node.dir) {
+
+  // Apply per-group algorithm from metadata (e.g. @{algorithm: elk.box}).
+  // SEPARATE_CHILDREN is required so the subgraph's algorithm actually
+  // runs instead of being swallowed by the root INCLUDE_CHILDREN policy.
+  const algo = resolveContainerAlgorithm(node.metadata?.algorithm, log);
+  if (algo) {
+    // Label-derived minimum size, so ELK sizes the container to fit its label.
+    // Scoped to containers that opt into their own algorithm: applying it to
+    // every subgraph changes the dimensions of existing flowchart subgraphs.
+    const padTop = labelH + CONTAINER_PADDING;
+    layoutOptions['nodeSize.constraints'] = '[MINIMUM_SIZE, NODE_LABELS]';
+    // The minimum has to clear the whole reserved strip — the label plus the
+    // padding above and below it — not just the label height, or a container
+    // whose children are shorter than its own chrome comes out too short.
+    layoutOptions['nodeSize.minimum'] = `(${minWidth}, ${padTop + CONTAINER_PADDING})`;
+    layoutOptions['elk.algorithm'] = algo;
+    layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
+    layoutOptions['elk.aspectRatio'] = '2.0';
+    layoutOptions['elk.contentAlignment'] = 'H_CENTER V_TOP';
+    layoutOptions['elk.expandNodes'] = 'true';
+    // Reserve top padding for the label so children don't overlap it
+    layoutOptions['elk.padding'] =
+      `[top=${padTop},left=${CONTAINER_PADDING},bottom=${CONTAINER_PADDING},right=${CONTAINER_PADDING}]`;
+
+    // Tighter spacing for rectpacking — uses smaller padding for nested containers.
+    if (algo === 'elk.rectpacking') {
+      const rectPadTop = labelH + RECTPACKING_CONTAINER_PADDING;
+      Object.assign(layoutOptions, RECTPACKING_OPTIONS, {
+        'elk.padding': `[top=${rectPadTop},left=${RECTPACKING_CONTAINER_PADDING},bottom=${RECTPACKING_CONTAINER_PADDING},right=${RECTPACKING_CONTAINER_PADDING}]`,
+        'nodeSize.minimum': `(${minWidth}, ${rectPadTop + RECTPACKING_CONTAINER_PADDING})`,
+      });
+    }
+  } else if (node.dir) {
+    // Directional subgraph without explicit algorithm — run the parent layered
+    // algorithm in the subgraph's own coordinate system.
     layoutOptions['elk.algorithm'] = algorithm;
     layoutOptions['elk.direction'] = dir2ElkDirection(node.dir);
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
@@ -157,9 +301,14 @@ export function buildSubgraphLayoutOptions(
  * For each container (grouped by `parentId`) we look only at edges internal to
  * that container and find its weakly-connected components. A component with no
  * natural source — no node with in-degree 0 once self-loops are ignored — must
- * contain a cycle, so we nominate its first node in declaration order as the
- * entry. Acyclic components always have a source and nominate nothing, leaving
- * their layout untouched. The caller pins each nominee to the first layer with
+ * contain a cycle. For such components we break cycles greedily in edge
+ * declaration order: an edge that would close a directed cycle is treated as a
+ * back-edge and skipped, and the entry is the first node in declaration order
+ * that is a source of the remaining forward edges. Raw in-degree alone cannot
+ * find it — a back-edge feeding the true entry hides it, and nominating by
+ * node declaration order instead scrambles the layout (#79). Acyclic
+ * components always have a source and nominate nothing, leaving their layout
+ * untouched. The caller pins each nominee to the first layer with
  * `elk.layered.layering.layerConstraint = FIRST`.
  *
  * @param nodes - layout nodes in declaration order
@@ -188,6 +337,9 @@ export function findCyclicEntryNodes(
     const inDegree = new Map<string, number>(ids.map((id) => [id, 0]));
     // Undirected adjacency, used only to find weakly-connected components.
     const neighbors = new Map<string, string[]>(ids.map((id) => [id, []]));
+    // Container-internal directed edges in declaration order, for the
+    // cycle-breaking fallback below.
+    const internalEdges: [string, string][] = [];
 
     for (const edge of edges) {
       const source = edge.source == null ? undefined : String(edge.source);
@@ -202,6 +354,7 @@ export function findCyclicEntryNodes(
       inDegree.set(target, (inDegree.get(target) ?? 0) + 1);
       neighbors.get(source)!.push(target);
       neighbors.get(target)!.push(source);
+      internalEdges.push([source, target]);
     }
 
     // Label weakly-connected components.
@@ -226,17 +379,52 @@ export function findCyclicEntryNodes(
     }
 
     // A component with no in-degree-0 node necessarily contains a cycle.
-    // Nominate the first such node in declaration order as its entry.
     const hasSource = new Array<boolean>(componentCount).fill(false);
     for (const id of ids) {
       if ((inDegree.get(id) ?? 0) === 0) {
         hasSource[component.get(id)!] = true;
       }
     }
+    if (!hasSource.includes(false)) {
+      continue;
+    }
+
+    // Recover each source-less component's entry by breaking cycles greedily
+    // in edge declaration order: skip any edge that would close a directed
+    // cycle (a back-edge). The surviving forward edges are acyclic, so every
+    // component regains at least one source; nominate the first one in
+    // declaration order.
+    const forward = new Map<string, string[]>(ids.map((id) => [id, []]));
+    const residualInDegree = new Map<string, number>(ids.map((id) => [id, 0]));
+    const reaches = (from: string, to: string): boolean => {
+      const seen = new Set<string>([from]);
+      const stack = [from];
+      while (stack.length > 0) {
+        const current = stack.pop()!;
+        if (current === to) {
+          return true;
+        }
+        for (const next of forward.get(current)!) {
+          if (!seen.has(next)) {
+            seen.add(next);
+            stack.push(next);
+          }
+        }
+      }
+      return false;
+    };
+    for (const [source, target] of internalEdges) {
+      if (reaches(target, source)) {
+        continue;
+      }
+      forward.get(source)!.push(target);
+      residualInDegree.set(target, (residualInDegree.get(target) ?? 0) + 1);
+    }
+
     const nominated = new Array<boolean>(componentCount).fill(false);
     for (const id of ids) {
       const c = component.get(id)!;
-      if (!hasSource[c] && !nominated[c]) {
+      if (!hasSource[c] && !nominated[c] && residualInDegree.get(id) === 0) {
         entries.add(id);
         nominated[c] = true;
       }
@@ -319,14 +507,19 @@ export function buildElkGraphFromLayoutData(
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
   applyCyclicEntryConstraint(data4Layout, nodeDb);
-  logElkGraphForDebug(elkGraph, elkContext.log);
 
   return { elkGraph, nodeDb, parentLookupDb };
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
-  // Note that defaultMeasureLayout and createGraphWithElements is called by the factory function
   prepareLayout: prepareLayoutForElk,
+  // ELK derives a compound node's minimum size from the measured cluster label,
+  // so the label has to be measured the way `insertCluster` paints it —
+  // unwrapped — rather than at the 200px flowchart wrapping width. Requested
+  // here rather than sniffed for in core: core has no business knowing which
+  // layout it is running.
+  measureLayout: (data4Layout, context) =>
+    defaultMeasureLayout(data4Layout, context, { unwrapGroupLabels: true }),
   runLayoutCore: runElkLayoutCore,
   paintOptions: {
     skipIntersect: true,
@@ -397,7 +590,7 @@ function getElkLayoutContext(
 }
 
 function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefined): any {
-  return {
+  const graph = {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
@@ -450,6 +643,16 @@ function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefin
     children: [],
     edges: [],
   };
+
+  // Optimize spacing when rectpacking is the root algorithm.
+  if (algorithm === 'elk.rectpacking') {
+    Object.assign(graph.layoutOptions, RECTPACKING_OPTIONS, {
+      'elk.contentAlignment': 'H_CENTER V_TOP',
+      'elk.padding': '[top=15,left=15,bottom=15,right=15]',
+    });
+  }
+
+  return graph;
 }
 
 function addSubGraphs(nodeArr: Node[], log: ElkLayoutContext['log']): TreeData {
@@ -625,7 +828,8 @@ function configureSubgraphNodes(
     node.layoutOptions = buildSubgraphLayoutOptions(
       node,
       data4Layout.config.elk,
-      elkContext.algorithm
+      elkContext.algorithm,
+      elkContext.log
     );
     delete node.x;
     delete node.y;
@@ -651,8 +855,8 @@ function configureCrossHierarchyEdges(
 
     if (nodeDb[source] && nodeDb[target] && nodeDb[source].parentId !== nodeDb[target].parentId) {
       const ancestorId = findCommonAncestor(source, target, parentLookupDb);
-      setIncludeChildrenPolicy(nodeDb, source, ancestorId);
-      setIncludeChildrenPolicy(nodeDb, target, ancestorId);
+      setIncludeChildrenPolicy(nodeDb, source, ancestorId, log);
+      setIncludeChildrenPolicy(nodeDb, target, ancestorId, log);
     }
   });
 }
@@ -660,7 +864,8 @@ function configureCrossHierarchyEdges(
 function setIncludeChildrenPolicy(
   nodeDb: Record<string, NodeWithVertex>,
   nodeId: string,
-  ancestorId: string
+  ancestorId: string,
+  log: ElkLayoutContext['log']
 ): void {
   const node = nodeDb[nodeId];
 
@@ -668,33 +873,23 @@ function setIncludeChildrenPolicy(
     return;
   }
   node.layoutOptions ??= {};
+
+  // If this node has a user-specified custom algorithm (e.g. elk.box) with
+  // SEPARATE_CHILDREN, clear it — cross-boundary edges are incompatible with
+  // isolated layout algorithms.  Nodes using the default layered algorithm
+  // (set via the dir branch) keep theirs so they still lay out correctly.
+  if (
+    node.layoutOptions['elk.hierarchyHandling'] === 'SEPARATE_CHILDREN' &&
+    resolveContainerAlgorithm(node.metadata?.algorithm)
+  ) {
+    log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
+    clearContainerAlgorithmOptions(node.layoutOptions);
+  }
+
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
   if (node.id !== ancestorId && node.parentId) {
-    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId);
+    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log);
   }
-}
-
-function logElkGraphForDebug(elkGraph: any, log: ElkLayoutContext['log']): void {
-  log.debug('APA01 before');
-  log.debug('APA01 elkGraph structure:', JSON.stringify(elkGraph, null, 2));
-  log.debug('APA01 elkGraph.children length:', elkGraph.children?.length);
-  log.debug('APA01 elkGraph.edges length:', elkGraph.edges?.length);
-
-  elkGraph.edges?.forEach((edge: any, index: number) => {
-    log.debug(`APA01 validating edge ${index}:`, edge);
-    if (edge.sources) {
-      edge.sources.forEach((sourceId: any) => {
-        const sourceExists = elkGraph.children?.some((child: any) => child.id === sourceId);
-        log.debug(`APA01 source ${sourceId} exists:`, sourceExists);
-      });
-    }
-    if (edge.targets) {
-      edge.targets.forEach((targetId: any) => {
-        const targetExists = elkGraph.children?.some((child: any) => child.id === targetId);
-        log.debug(`APA01 target ${targetId} exists:`, targetExists);
-      });
-    }
-  });
 }
 
 async function runElkLayout(
@@ -721,11 +916,12 @@ async function runElkLayout(
       profiler?.end();
     }
     log.debug('APA01 after - success');
-    log.info('APA01 layout result:', JSON.stringify(graph, null, 2));
+    // Pass the object, not a pre-serialised string: `JSON.stringify` of the
+    // whole laid-out graph ran on every render regardless of log level.
+    log.debug('APA01 layout result:', graph);
     return graph;
   } catch (error) {
-    log.error('APA01 ELK layout error:', error);
-    log.error('APA01 elkGraph that caused error:', JSON.stringify(elkGraph, null, 2));
+    log.error('ELK layout error:', error);
     throw error;
   }
 }
@@ -831,7 +1027,44 @@ function applyElkEdgeLayout(
     const endId = edge.targets?.[0] ?? edge.end;
     const startNode = layoutState.nodeDb[startId];
     const endNode = layoutState.nodeDb[endId];
-    if (!startNode || !endNode || !edge.sections) {
+    if (!startNode || !endNode) {
+      return;
+    }
+
+    // `elk.box` and `elk.rectpacking` place nodes but never route edges, so ELK
+    // returns no sections. Guarded on length, not presence: an empty array would
+    // otherwise skip the fallback and hand `undefined` to
+    // `createEdgePointsFromSection`, which dereferences `section.startPoint`.
+    // `points` is not optional downstream — the paint step
+    // filters it — so fall back to a straight line between the two node centres
+    // rather than leaving the edge unlaid. The centres are then clipped back to
+    // the node borders: this renderer paints with `skipIntersect`, so nothing
+    // downstream would do it, and an unclipped line runs under both nodes with
+    // its end marker buried inside the target.
+    if (!edge.sections?.length) {
+      const centre = (node: NodeWithVertex) => ({
+        x: (node.offset?.posX ?? node.x ?? 0) + (node.width ?? 0) / 2,
+        y: (node.offset?.posY ?? node.y ?? 0) + (node.height ?? 0) / 2,
+      });
+      const from = centre(startNode);
+      const to = centre(endNode);
+      startNode.x = from.x;
+      startNode.y = from.y;
+      endNode.x = to.x;
+      endNode.y = to.y;
+      const straightPoints = sanitizeElkEdgePoints([from, to], startNode, endNode, log);
+      layoutEdge.points = straightPoints;
+      layoutEdge.curve = 'linear';
+      // No routing means no label position either: ELK only fills in
+      // `edge.labels[*].x/y` for edges it laid out. `positionEdgeLabel` reads
+      // `edge.x` / `edge.y` straight into a `translate(...)`, so leaving them
+      // unset emits `translate(undefined, NaN)` — dropped by the browser, which
+      // parks the label at the group origin. Put it on the line's midpoint.
+      const lineStart = straightPoints[0];
+      const lineEnd = straightPoints[straightPoints.length - 1];
+      layoutEdge.x = (lineStart.x + lineEnd.x) / 2;
+      layoutEdge.y = (lineStart.y + lineEnd.y) / 2;
+      log.debug('APA18 no edge sections, using a straight line', edge.id, layoutEdge.points);
       return;
     }
 
