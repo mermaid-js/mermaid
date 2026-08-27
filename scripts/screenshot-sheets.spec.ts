@@ -5,6 +5,7 @@ import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   argosMetadataSidecarPath,
+  readTileOrigins,
   writeArgosMetadataSidecar,
 } from '../e2e/helpers/argos-metadata.js';
 import {
@@ -14,6 +15,7 @@ import {
   DEFAULT_TILE_WIDTH,
   deriveGroupKey,
   ensureSheetMetadataSidecars,
+  extendOrder,
   findUnordered,
   formatTileTitle,
   LABEL_HEIGHT,
@@ -21,6 +23,7 @@ import {
   updateOrder,
   writeSheets,
 } from './screenshot-sheets.js';
+import type { OrderManifest, TileOrigins } from './screenshot-sheets.js';
 
 const SLOT_WIDTH = 40;
 const SLOT_HEIGHT = 30;
@@ -440,6 +443,192 @@ describe('append-only tile order', () => {
     const empty = planSheets(paths, { tilesPerSheet: 12, cols: 3, order: {} });
     expect(fallback[0].tiles.map((t) => t.source)).toEqual(empty[0].tiles.map((t) => t.source));
     expect(fallback[0].tiles.map((t) => t.source)).toEqual([...paths].sort());
+  });
+});
+
+describe('declaration-order tail for unpinned tiles', () => {
+  // Every *.spec.* group is missing from the committed manifest today (it only
+  // covers the mmd `diagrams/*` folders), so alphabetical layout let a new test
+  // whose slug sorts early take cell 1 and shift every other tile. The CLI now
+  // extends the manifest over all captured screenshots before planning
+  // (extendOrder): unpinned tiles are pinned in test-declaration order, so a
+  // test added at the end of its spec appends at its group's tail.
+  const SPEC_FILE = `e2e/${FC_MAIN}`;
+
+  /** Sources with the `test()` call line their capture sidecars would record. */
+  const declared = (entries: [string, number][]) => ({
+    sources: entries.map(([name]) => `${FC_MAIN}/${name}`),
+    origins: new Map(
+      entries.map(([name, line]) => [`${FC_MAIN}/${name}`, { file: SPEC_FILE, line, column: 3 }])
+    ),
+  });
+
+  /** Tile names as the CLI lays them out: manifest extended, then planned. */
+  const cells = (sources: string[], origins?: TileOrigins, previous: OrderManifest = {}) =>
+    planSheets(sources, {
+      tilesPerSheet: 12,
+      cols: 3,
+      order: extendOrder(previous, sources, origins),
+    }).flatMap((sheet) => sheet.tiles.map((t) => t.name));
+
+  it('lays an unpinned group out in declaration order, not alphabetically', () => {
+    const { sources, origins } = declared([
+      ['zebra.png', 10],
+      ['apple.png', 20],
+      ['mango.png', 30],
+    ]);
+    expect(cells(sources, origins)).toEqual(['zebra', 'apple', 'mango']);
+    // Without the extend pass the same group re-sorts alphabetically.
+    const [bare] = planSheets(sources, { tilesPerSheet: 12, cols: 3 });
+    expect(bare.tiles.map((t) => t.name)).toEqual(['apple', 'mango', 'zebra']);
+  });
+
+  it('a test added at the end of its spec appends, leaving every other tile in place', () => {
+    const { sources, origins } = declared([
+      ['basic-er-diagram.png', 10],
+      ['crows-foot-notation.png', 20],
+      ['zzz-last-one.png', 30],
+    ]);
+    const before = cells(sources, origins);
+
+    // Alphabetically first, but declared last — the case that used to take cell 1.
+    const added = `${FC_MAIN}/aaa-newly-added-test.png`;
+    const after = cells(
+      [...sources, added],
+      new Map([...origins, [added, { file: SPEC_FILE, line: 40, column: 3 }]])
+    );
+
+    expect(after).toEqual([...before, 'aaa-newly-added-test']);
+  });
+
+  it('keeps earlier sheets byte-identical when a test is appended to a multi-sheet group', () => {
+    const entries: [string, number][] = Array.from({ length: 26 }, (_, i) => [
+      `t-${String(i).padStart(3, '0')}.png`,
+      (i + 1) * 10,
+    ]);
+    const { sources, origins } = declared(entries);
+    const sig = (paths: string[], o: TileOrigins) =>
+      planSheets(paths, { tilesPerSheet: 12, cols: 3, order: extendOrder({}, paths, o) }).map(
+        (sheet) => `${sheet.group}#${sheet.index}:${sheet.tiles.map((t) => t.source).join(',')}`
+      );
+
+    const before = sig(sources, origins);
+    const added = `${FC_MAIN}/aaa-appended.png`; // sorts first, declared last
+    const after = sig(
+      [...sources, added],
+      new Map([...origins, [added, { file: SPEC_FILE, line: 999, column: 3 }]])
+    );
+
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).toBe(before[1]);
+    expect(after).toHaveLength(before.length); // 27 tiles still fit in 3 sheets
+    expect(after[2]).toBe(`${before[2]},${added}`);
+  });
+
+  it('breaks call-site ties (loop-registered tests) and sidecar-less tiles by path order', () => {
+    const { sources, origins } = declared([
+      ['loop-b.png', 12],
+      ['loop-a.png', 12], // same test() line as loop-b
+      ['later.png', 20],
+    ]);
+    const orphans = [`${FC_MAIN}/no-sidecar-b.png`, `${FC_MAIN}/no-sidecar-a.png`];
+    expect(cells([...orphans, ...sources], origins)).toEqual([
+      'loop-a',
+      'loop-b',
+      'later',
+      'no-sidecar-a', // sidecar-less tiles sort after located ones
+      'no-sidecar-b',
+    ]);
+  });
+
+  it('leaves mmd fixture groups alphabetical (one runner call site registers all)', () => {
+    // mmd-snapshots.spec.ts registers every fixture from a single test() call, so
+    // all of its captures tie on declaration position — the mmd `diagrams/*`
+    // groups (the only ones the committed manifest covers) keep today's layout.
+    const runner = { file: 'e2e/rendering/mmd-snapshots.spec.ts', line: 26, column: 5 };
+    const fixtures = ['diagrams/packet/zebra.png', 'diagrams/packet/apple.png'];
+    const origins = new Map(fixtures.map((f) => [f, runner]));
+    expect(extendOrder({}, fixtures, origins)['diagrams/packet']).toEqual([
+      'apple.png',
+      'zebra.png',
+    ]);
+  });
+
+  it('extendOrder keeps committed entries verbatim, appending only unpinned tiles', () => {
+    const { sources, origins } = declared([
+      ['pinned-a.png', 10],
+      ['new-zebra.png', 30],
+      ['new-apple.png', 40],
+    ]);
+    // pinned-b has no capture this run: its entry (and thus its blank slot) stays.
+    const previous = { [FC_MAIN]: ['pinned-a.png', 'pinned-b.png'] };
+    expect(extendOrder(previous, sources, origins)[FC_MAIN]).toEqual([
+      'pinned-a.png',
+      'pinned-b.png',
+      'new-zebra.png', // declared before new-apple, so it appends first
+      'new-apple.png',
+    ]);
+    expect(cells(sources, origins, previous)).toEqual([
+      'pinned-a',
+      'pinned-b', // blank cell — slot kept
+      'new-zebra',
+      'new-apple',
+    ]);
+  });
+
+  it('updateOrder folds newly-seen screenshots in declaration order and prunes removals', () => {
+    const { sources, origins } = declared([
+      ['kept.png', 10],
+      ['new-zebra.png', 20],
+      ['new-apple.png', 30],
+    ]);
+    const previous = {
+      [FC_MAIN]: ['removed.png', 'kept.png'],
+      'gone/entirely.spec.js': ['x.png'],
+    };
+    expect(updateOrder(sources, previous, origins)).toEqual({
+      [FC_MAIN]: ['kept.png', 'new-zebra.png', 'new-apple.png'],
+    });
+    // Without origins the new pair falls back to alphabetical order.
+    expect(updateOrder(sources, previous)[FC_MAIN]).toEqual([
+      'kept.png',
+      'new-apple.png',
+      'new-zebra.png',
+    ]);
+  });
+
+  it('round-trips a root-level screenshot without blanking or pruning it', () => {
+    // deriveGroupKey('tile.png') is the synthetic 'root' key; rebuilding sources
+    // must not prefix it back on, or the tile turns into a blank 'root/tile.png'
+    // cell and drops out of the refreshed manifest.
+    const order = extendOrder({}, ['tile.png']);
+    expect(order).toEqual({ root: ['tile.png'] });
+    const [sheet] = planSheets(['tile.png'], { tilesPerSheet: 12, cols: 3, order });
+    expect(sheet.tiles.map((t) => [t.source, t.missing ?? false])).toEqual([['tile.png', false]]);
+    expect(updateOrder(['tile.png'], order)).toEqual({ root: ['tile.png'] });
+  });
+
+  it('reads declaration positions from the capture sidecars on disk', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'argos-origins-'));
+    const source = `${FC_MAIN}/a.png`;
+    await mkdir(join(dir, FC_MAIN), { recursive: true });
+    await writeArgosMetadataSidecar(join(dir, source), {
+      $schema: 'https://api.argos-ci.com/v2/screenshot-metadata.json',
+      test: {
+        title: 'a',
+        location: { file: SPEC_FILE, line: 42, column: 3 },
+        annotations: [],
+      },
+      automationLibrary: { name: 'playwright', version: '1' },
+      sdk: { name: '@argos-ci/cli', version: '1' },
+    });
+    await writeFile(join(dir, FC_MAIN, 'b.png.argos.json'), 'not json');
+
+    const origins = readTileOrigins(dir, [source, `${FC_MAIN}/b.png`, `${FC_MAIN}/c.png`]);
+    expect(origins.get(source)).toEqual({ file: SPEC_FILE, line: 42, column: 3 });
+    expect(origins.has(`${FC_MAIN}/b.png`)).toBe(false); // corrupt sidecar
+    expect(origins.has(`${FC_MAIN}/c.png`)).toBe(false); // no sidecar
+    await rm(dir, { recursive: true, force: true });
   });
 });
 
