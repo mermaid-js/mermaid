@@ -151,13 +151,15 @@ export const sanitize = (options: any) => {
   // Check that there no attempts of xss, there should be no tags at all in the directive
   // blocking data urls as base64 urls can contain svg's with inline script tags
   Object.keys(options).forEach((key) => {
-    if (
-      typeof options[key] === 'string' &&
-      (options[key].includes('<') ||
-        options[key].includes('>') ||
-        options[key].includes('url(data:'))
-    ) {
-      delete options[key];
+    if (typeof options[key] === 'string') {
+      const isCssKey = key === 'themeCSS' || key.endsWith('themeCSS');
+      const hasInvalidChars = isCssKey
+        ? options[key].includes('<') || options[key].includes('url(data:')
+        : options[key].includes('<') || options[key].includes('>') || options[key].includes('url(data:');
+
+      if (hasInvalidChars) {
+        delete options[key];
+      }
     }
     if (typeof options[key] === 'object') {
       sanitize(options[key]);
