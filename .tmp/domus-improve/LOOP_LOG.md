@@ -1189,3 +1189,9 @@ run ended: max_consecutive_reverts (rounds 5, 6, 7) — total 53,412.3 -> 53,602
 - instrument round (user-directed by the established pattern, commit follows): two SOFT graded rules — `edge-to-group-too-short` (group-terminal edge < 30 visible px, 2/px cap 40) and `node-close-to-own-frame` (member inset < 20, 2/px cap 30), lanes/swimlanes exempt, +4 unit tests. Sweep stays green (soft cannot invalidate); total re-bases 53,602.3 -> 53,354.5 (−247.8 of newly priced padding debt) across exactly the probe's 8 fixtures. Cost flat 99.8%.
 - CONSTRAINT: cost ceiling still 99.8% consumed; SAT refine spiral (~200M) still the named supervised unlock.
 - time_budget_sec: default 14400
+
+### round 1 — member padding 15 -> 22 + small-deficit clearance push (KEPT) — 53,354.5 -> 53,488.3 (+133.8), invalid 1, COST 801.7M -> 750.8M (93.5%)
+
+- the hard-wired preprocessClusters groupPadding default 15 becomes MEMBER_FRAME_PADDING + 2 = 22 (checker-constant sharing, the T15 "deliver the floor" lesson). Clears the entire node-close-to-own-frame debt (~180) AND the wider frames give the router room: cost falls 50.8M — the biggest single cost drop any round has produced, re-opening the headroom that has been blocking expensive candidates for two runs.
+- collateral chased to zero: cluster-minimal canary pinned [] and the grown frame left its outside node X at gap 28 < 30 — preprocessClusters Pass 2 only acted on OVERLAP, so a facing-but-under-cleared foreign leaf was invisible. Extended it with a facing-axis push, then CAPPED at deficit <= 8: unconditional it thrashes on every reroute lap (architecture4 -28, corpus -44 — the T18 per-lap-mover family); at <= 8 only edge-from-subgraph pays (-7.1) and the canary is honest again.
+- result: deploy-pipeline +35, arch4 +14 (net), co-pilot +20, decoupled +9, state-machine +16, dp-simplified +28, events +9, edge-from-subgraph +4 net. Sweep 65/65, canary 10/10, wider suite 565, invalid 1.

@@ -1,8 +1,19 @@
 import {
+  MEMBER_FRAME_PADDING,
   NODE_NODE_PADDING,
   isLabelDummy,
   nodeGroupClearanceOf,
 } from '../layout-utils/validateLayout.js';
+
+/**
+ * Default member↔own-frame padding when a caller does not choose one. Was a
+ * hard-wired 15, which is exactly the corpus-wide inset floor the validator's
+ * `node-close-to-own-frame` rule (minimum 20) now grades — the checker's
+ * constant plus margin keeps the two from drifting apart (the round-1/T15
+ * lesson: passes must DELIVER the floor the validator prices, with room to
+ * spare).
+ */
+const DEFAULT_GROUP_PADDING = MEMBER_FRAME_PADDING + 2;
 import type { LayoutData, Node } from '../../types.js';
 import type { OrthogonalOptions } from './types.js';
 import { rectForNode } from './core/helpers.js';
@@ -403,6 +414,30 @@ function checkAllChildrenInGroup(
       const overlapX = Math.min(r.right, gr.right) - Math.max(r.left, gr.left);
       const overlapY = Math.min(r.bottom, gr.bottom) - Math.max(r.top, gr.top);
       if (overlapX <= 0 || overlapY <= 0) {
+        // Disjoint — but a foreign leaf FACING the frame across less than the
+        // clearance is the same defect at smaller amplitude, and it appears
+        // whenever the frame grows (raising the member padding shrank every
+        // adjacent outside gap by the same amount). Push it out along the
+        // facing axis to exactly the clearance; the diagonal case is not
+        // priced and stays untouched.
+        const facingX = overlapY > 0 && overlapX <= 0;
+        const facingY = overlapX > 0 && overlapY <= 0;
+        const gap = facingX ? -overlapX : facingY ? -overlapY : Number.POSITIVE_INFINITY;
+        const deficit = CLEARANCE - gap;
+        // Small deficits only — the case where a grown frame ate a few px of a
+        // previously-legal gap. Applied unconditionally to LARGE deficits this
+        // push runs on every reroute lap and thrashes placements the
+        // score-gated repairs would have handled (measured: architecture4
+        // -28); at <= 8px it is a benign correction the downstream passes
+        // never even see.
+        if (deficit <= 0 || deficit > 8) {
+          continue;
+        }
+        if (facingX) {
+          node.x += r.left >= gr.right ? deficit : -deficit;
+        } else if (facingY) {
+          node.y += r.top >= gr.bottom ? deficit : -deficit;
+        }
         continue;
       }
 
@@ -580,10 +615,10 @@ export function preprocessClusters(
   log.debug(ORTHO_DEBUG, 'CLUSTER_PREPROCESS_ENTER', {
     nodes: (data.nodes ?? []).length,
     edges: (data.edges ?? []).length,
-    groupPadding: options.groupPadding ?? 15,
+    groupPadding: options.groupPadding ?? DEFAULT_GROUP_PADDING,
     minGroupSpacing: options.minGroupSpacing ?? 100,
   });
-  const groupPadding = options.groupPadding ?? 15;
+  const groupPadding = options.groupPadding ?? DEFAULT_GROUP_PADDING;
   const minGroupSpacing = options.minGroupSpacing ?? 100;
   const titleBand = titleBandHeight();
   const { nodesById, groupsById, childrenByParentId } = buildClusterIndex(data);
