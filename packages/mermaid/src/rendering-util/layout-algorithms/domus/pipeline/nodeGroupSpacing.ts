@@ -24,7 +24,7 @@
  * a fixture's score or leave it unchanged — never regress it. Nodes are spaced
  * worst-gap first.
  */
-import { nodeGroupClearanceOf } from '../../layout-utils/validateLayout.js';
+import { GROUP_EDGE_MIN_LEN, nodeGroupClearanceOf } from '../../layout-utils/validateLayout.js';
 import type { LayoutData, Node } from '../../../types.js';
 import { rectForNode } from '../core/helpers.js';
 import { checkLayout } from '../validateLayoutProxy.js';
@@ -78,7 +78,9 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(
   // nodes to a distance that is still flagged. Read from config, same source.
   const clearance = nodeGroupClearanceOf(layout);
   let current = checkLayout(layout);
-  const flags = current.issues.filter((i) => i.type === 'node-too-close-to-group');
+  const flags = current.issues.filter(
+    (i) => i.type === 'node-too-close-to-group' || i.type === 'edge-to-group-too-short'
+  );
   if (flags.length === 0) {
     return;
   }
@@ -301,21 +303,49 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(
     return detail;
   };
 
-  // Worst (smallest gap) first.
-  const sorted = [...flags].sort(
-    (a, b) => ((a.details?.gap as number) ?? 0) - ((b.details?.gap as number) ?? 0)
-  );
+  // Both flag types reduce to "leaf must move `need` px away from frame gId":
+  // a crowded node's need is the clearance deficit; a too-short group stub's
+  // need is the visible-length deficit of its edge, charged to the LEAF
+  // terminal (lengthening the stub IS moving that node away from the frame).
+  const records: { nId: string; gId: string; need: number }[] = [];
+  for (const issue of flags) {
+    if (issue.type === 'node-too-close-to-group') {
+      const [nId, gId] = issue.nodeIds ?? [];
+      if (nId != null && gId != null) {
+        records.push({ nId, gId, need: clearance - ((issue.details?.gap as number) ?? 0) });
+      }
+      continue;
+    }
+    const gId = issue.nodeIds?.[0];
+    const edge = edges.find((e) => e.id != null && String(e.id) === String(issue.edgeId));
+    if (gId == null || !edge) {
+      continue;
+    }
+    const leafId = String(edge.start) === gId ? edge.end : edge.start;
+    const leaf = leafId != null ? nodeById.get(String(leafId)) : undefined;
+    if (!leaf || (leaf as { isGroup?: boolean }).isGroup) {
+      continue;
+    }
+    const length = (issue.details?.length as number) ?? 0;
+    records.push({
+      nId: String(leafId),
+      gId,
+      need: GROUP_EDGE_MIN_LEN - length,
+    });
+  }
 
-  for (const issue of sorted) {
-    const [nId, gId] = issue.nodeIds ?? [];
-    const node = nId != null ? nodeById.get(nId) : undefined;
-    const group = gId != null ? nodeById.get(gId) : undefined;
-    if (!node || !group || nId == null || gId == null) {
+  // Worst (largest need) first.
+  const sorted = records.sort((a, b) => b.need - a.need);
+
+  for (const rec of sorted) {
+    const { nId, gId, need } = rec;
+    const node = nodeById.get(nId);
+    const group = nodeById.get(gId);
+    if (!node || !group || need <= 0) {
       continue;
     }
     const nr = rectForNode(node);
     const gr = rectForNode(group);
-    const gap = (issue.details?.gap as number) ?? 0;
 
     // Slide along the separation axis, away from the group.
     const xOverlap = nr.left < gr.right && gr.left < nr.right;
@@ -331,8 +361,6 @@ export function spaceNodesOffGroupFramesWhenScoreImproves(
     } else {
       continue;
     }
-
-    const need = clearance - gap;
 
     // Two move shapes: single-node (frees a node not tied to neighbours) and a
     // rigid co-move of the node's axis-aligned straight-edge column (frees a

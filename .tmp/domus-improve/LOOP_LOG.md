@@ -1195,3 +1195,9 @@ run ended: max_consecutive_reverts (rounds 5, 6, 7) — total 53,412.3 -> 53,602
 - the hard-wired preprocessClusters groupPadding default 15 becomes MEMBER_FRAME_PADDING + 2 = 22 (checker-constant sharing, the T15 "deliver the floor" lesson). Clears the entire node-close-to-own-frame debt (~180) AND the wider frames give the router room: cost falls 50.8M — the biggest single cost drop any round has produced, re-opening the headroom that has been blocking expensive candidates for two runs.
 - collateral chased to zero: cluster-minimal canary pinned [] and the grown frame left its outside node X at gap 28 < 30 — preprocessClusters Pass 2 only acted on OVERLAP, so a facing-but-under-cleared foreign leaf was invisible. Extended it with a facing-axis push, then CAPPED at deficit <= 8: unconditional it thrashes on every reroute lap (architecture4 -28, corpus -44 — the T18 per-lap-mover family); at <= 8 only edge-from-subgraph pays (-7.1) and the canary is honest again.
 - result: deploy-pipeline +35, arch4 +14 (net), co-pilot +20, decoupled +9, state-machine +16, dp-simplified +28, events +9, edge-from-subgraph +4 net. Sweep 65/65, canary 10/10, wider suite 565, invalid 1.
+
+### round 2 — group stubs lengthened via the spacing pass (KEPT) — 53,488.3 -> 53,571.4 (+83.1), invalid 1, cost flat 93.5%
+
+- `edge-to-group-too-short` flags now feed spaceNodesOffGroupFrames as spacing records: both flag families reduce to "leaf must move N px away from frame" — a stub's N is its visible-length deficit, charged to the leaf terminal. Same rigid sets, partner cascade, rungs, gates.
+- result: co-pilot +40 (BOTH user-named bottom stubs now read), subgraph-variation +36, edge-from-subgraph +7.1 (round-1's loss recovered). Sweep 65/65, wider suite green.
+- position: 53,571.4 — the padding debt is nearly paid back (-30.9 vs pre-instrument 53,602.3); target 54,102.3 needs +530.9. arch2's ledger cost is 11.29M vs the 10M budget with 52M of corpus headroom now free.
