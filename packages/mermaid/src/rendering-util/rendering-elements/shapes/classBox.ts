@@ -10,10 +10,12 @@ import { textHelper } from '../../../diagrams/class/shapeUtil.js';
 import { evaluate } from '../../../diagrams/common/common.js';
 import type { D3Selection } from '../../../types.js';
 
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+
 export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const config = getConfig();
-  const { themeVariables } = config;
-  const { useGradient } = themeVariables;
+  const { theme, themeVariables } = config;
+  const { useGradient, borderColorArray } = themeVariables;
   const PADDING = config.class!.padding ?? 12;
   const GAP = PADDING;
   const useHtmlLabels = node.useHtmlLabels ?? evaluate(config.htmlLabels) ?? true;
@@ -24,6 +26,11 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
   classNode.methods = classNode.methods ?? [];
 
   const { shapeSvg, bbox } = await textHelper(parent, node, config, useHtmlLabels, GAP);
+
+  if (theme != null && COLOR_THEMES.has(theme) && borderColorArray?.length) {
+    const colorIndex = node.colorIndex ?? 0;
+    shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
+  }
 
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;

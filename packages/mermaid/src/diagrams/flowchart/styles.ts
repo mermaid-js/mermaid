@@ -18,7 +18,51 @@ export interface FlowChartStyleOptions {
   textColor: string;
   titleColor: string;
   strokeWidth: string;
+  theme?: string;
+  look?: string;
+  THEME_COLOR_LIMIT?: number;
+  borderColorArray?: string[];
+  bkgColorArray?: string[];
 }
+
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+
+/**
+ * Cycling per-subgraph colour. Only the containers are painted -- the nodes inside keep
+ * the uniform look, because a flowchart node is a step in a flow rather than a distinct
+ * participant, and node colour is already how `classDef` / `style` carry meaning.
+ *
+ * Emits both the `rect` (classic/neo) and `path` (handDrawn) forms since the container is
+ * a plain rect in one look and a roughjs path pair in the other. Not `!important`:
+ * `clusters.js` puts user styles in an inline `style` attribute, which has to keep
+ * winning over the theme palette.
+ */
+const genColor = (options: FlowChartStyleOptions) => {
+  const { theme, look, bkgColorArray, borderColorArray } = options;
+  if (!theme || !COLOR_THEMES.has(theme) || !borderColorArray?.length) {
+    return '';
+  }
+  const hasBkgColors = (bkgColorArray?.length ?? 0) > 0;
+  let sections = '';
+
+  for (let i = 0; i < (options.THEME_COLOR_LIMIT ?? 12); i++) {
+    const borderColor = borderColorArray[i % borderColorArray.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray![i % bkgColorArray!.length]};` : '';
+    sections += `
+
+    [data-look="${look}"][data-color-id="color-${i}"].cluster rect {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    [data-look="${look}"][data-color-id="color-${i}"].cluster path {
+      stroke: ${borderColor};
+      ${fill}
+    }
+    `;
+  }
+  return sections;
+};
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma
@@ -33,7 +77,8 @@ const fade = (color: string, opacity: number) => {
 };
 
 const getStyles = (options: FlowChartStyleOptions) =>
-  `.label {
+  `${genColor(options)}
+  .label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
   }

@@ -1193,6 +1193,9 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: false,
           look: config.look,
+          // A collapsed subgraph still consumes its slot so the colour cycle does not
+          // shift when one is collapsed. `collapsedGroup` does not paint it yet.
+          colorIndex: i,
         });
       } else {
         nodes.push({
@@ -1208,6 +1211,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: true,
           look: config.look,
+          colorIndex: i,
           // Forwarded so layout engines can read per-container settings such as
           // `@{ algorithm: elk.box }`. `view` is consumed above; everything else
           // is opaque here and simply passed through. The cast is the

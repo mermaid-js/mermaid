@@ -11,11 +11,13 @@ import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { compileStyles, styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
 
+const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
-  const { themeVariables, handDrawnSeed } = siteConfig;
-  const { clusterBkg, clusterBorder } = themeVariables;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder, borderColorArray } = themeVariables;
 
   const { labelStyles, nodeStyles, borderStyles, backgroundStyles } = styles2String(node);
 
@@ -25,6 +27,13 @@ const rect = async (parent, node) => {
     .attr('class', 'cluster ' + node.cssClasses)
     .attr('id', node.domId)
     .attr('data-look', node.look);
+
+  // Per-container colour slot. Only diagrams whose stylesheet defines the matching
+  // `[data-color-id]` rules paint it; for the rest this is an inert attribute.
+  if (theme != null && COLOR_THEMES.has(theme) && borderColorArray?.length) {
+    const colorIndex = node.colorIndex ?? 0;
+    shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
+  }
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
