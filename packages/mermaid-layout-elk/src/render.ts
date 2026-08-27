@@ -1097,7 +1097,97 @@ function applyElkLayoutResult(
 ): void {
   const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
   applyElkNodePositions(graph.children ?? [], layoutState, nodeById, 0, 0, 0, log);
+  // Between positions and edges on purpose: `boundsFor` reads the box set
+  // above, and `cutter2` clips an edge that ends on a group against it, so an
+  // edge attaching to a frame follows the frame when it moves.
+  evenGroupFrames(graph.children ?? [], layoutState, nodeById);
   applyElkEdgeLayout(data4Layout, graph, layoutState, log);
+}
+
+/**
+ * Sit each group's frame an even distance from its own contents.
+ *
+ * ELK sizes a container around everything it put inside, edges included. An
+ * edge that runs against the flow of the layout gets routed back around the
+ * outside, and when that happens inside a frame the frame grows to hold the
+ * lane — on one side only, since that is where the edge leaves. The result is a
+ * group with 76px of space on the right and 24px on the left, which reads as a
+ * mistake because nothing visible occupies it.
+ *
+ * The lane is real and the edge still needs it, so the fix is not to reclaim
+ * the space but to stop drawing the frame around it. The frame is pulled in to
+ * `SUBGRAPH_PADDING` from the children on the left, right and bottom, and the
+ * edge keeps its lane just outside — which is what an edge routed around a
+ * group should look like anyway.
+ *
+ * The top is left exactly as ELK set it. It carries the subgraph's title strip,
+ * and there is no way from here to tell how much of that padding is the label
+ * and how much is spare, so tightening it risks clipping the title.
+ *
+ * Runs deepest-first, so a parent measures against children that have already
+ * been pulled in rather than against their original boxes.
+ */
+export function evenGroupFrames(
+  elkNodes: any[],
+  layoutState: ElkLayoutState,
+  nodeById: Map<string, Node>
+): void {
+  for (const elkNode of elkNodes) {
+    if (!elkNode?.isGroup) {
+      continue;
+    }
+    const children = elkNode.children ?? [];
+    evenGroupFrames(children, layoutState, nodeById);
+
+    const group = layoutState.nodeDb[elkNode.id];
+    const boxes = children
+      .map((child: { id: string }) => layoutState.nodeDb[child.id])
+      .filter((child: NodeWithVertex | undefined) => child?.offset && child.width && child.height);
+    if (!group?.offset || boxes.length === 0) {
+      continue;
+    }
+
+    const left = Math.min(...boxes.map((b: NodeWithVertex) => b.offset!.posX)) - SUBGRAPH_PADDING;
+    const right =
+      Math.max(...boxes.map((b: NodeWithVertex) => b.offset!.posX + b.width!)) + SUBGRAPH_PADDING;
+    const bottom =
+      Math.max(...boxes.map((b: NodeWithVertex) => b.offset!.posY + b.height!)) + SUBGRAPH_PADDING;
+    const top = group.offset.posY;
+
+    // A frame narrower than its own title would cut the title off. Both the
+    // drawn rect and `getEffectiveGroupWidth` have their own idea of the floor,
+    // so honour the larger and keep the frame centred on its contents.
+    const labelFloor = Math.max(
+      elkNode.labelData?.width ?? 0,
+      (elkNode.labels?.[0]?.width ?? 0) + (elkNode.padding ?? 0)
+    );
+    let x = left;
+    let width = right - left;
+    if (width < labelFloor) {
+      x -= (labelFloor - width) / 2;
+      width = labelFloor;
+    }
+    const height = bottom - top;
+    if (height <= 0 || width <= 0) {
+      continue;
+    }
+
+    group.offset.posX = x;
+    group.offset.width = width;
+    group.offset.height = height;
+    group.width = width;
+    group.height = height;
+    group.x = x + width / 2;
+    group.y = top + height / 2;
+
+    const layoutNode = nodeById.get(elkNode.id);
+    if (layoutNode) {
+      layoutNode.x = group.x;
+      layoutNode.y = group.y;
+      layoutNode.width = Math.max(width, elkNode.labelData?.width ?? 0);
+      layoutNode.height = height;
+    }
+  }
 }
 
 function applyElkNodePositions(

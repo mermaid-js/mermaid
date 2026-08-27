@@ -5,6 +5,7 @@ import {
   clearContainerAlgorithmOptions,
   dir2ElkDirection,
   ensureEndMarkerSegmentLength,
+  evenGroupFrames,
   findCyclicEntryNodes,
   prepareLayoutForElk,
   resolveContainerAlgorithm,
@@ -778,5 +779,130 @@ describe('clearContainerAlgorithmOptions', () => {
     expect(options['elk.layered.mergeEdges']).toBe(true);
     expect(options['nodePlacement.strategy']).toBe('BRANDES_KOEPF');
     expect(options['nodeLabels.placement']).toBe('[H_CENTER V_TOP, INSIDE]');
+  });
+
+  describe('evenGroupFrames', () => {
+    /**
+     * Build the two structures the pass reads: the ELK tree (for `isGroup` and
+     * `children`) and `nodeDb`, whose entries carry the absolute box that
+     * `applyElkNodePositions` has already written.
+     */
+    function scene(groupBox: { x: number; y: number; w: number; h: number }, kids: number[][]) {
+      const nodeDb: Record<string, any> = {
+        g: {
+          id: 'g',
+          isGroup: true,
+          offset: { posX: groupBox.x, posY: groupBox.y },
+          width: groupBox.w,
+          height: groupBox.h,
+        },
+      };
+      const children = kids.map(([x, y, w, h], i) => {
+        nodeDb[`n${i}`] = { id: `n${i}`, offset: { posX: x, posY: y }, width: w, height: h };
+        return { id: `n${i}` };
+      });
+      const elk = [{ id: 'g', isGroup: true, children, labelData: { width: 0 }, labels: [] }];
+      return { elk, nodeDb, layoutState: { nodeDb } as any };
+    }
+
+    it('pulls a frame in to even padding when a routing lane inflated one side', () => {
+      // The reported shape: nodes 100 wide sitting 24 from the left of the frame,
+      // with the frame running 76 past their right because ELK held a lane there
+      // for an edge routed back around the outside.
+      const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 200, h: 148 }, [
+        [24, 48, 100, 76],
+      ]);
+
+      evenGroupFrames(elk, layoutState, new Map());
+
+      const g = nodeDb.g;
+      expect(g.offset.posX).toBe(0);
+      expect(g.width).toBe(148); // 24 + 100 + 24
+      // Top is deliberately untouched: it carries the subgraph's title strip.
+      expect(g.offset.posY).toBe(0);
+      expect(g.height).toBe(148); // 48 title strip + 76 + 24
+    });
+
+    it('leaves a frame alone when its padding is already even', () => {
+      const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 148, h: 148 }, [
+        [24, 48, 100, 76],
+      ]);
+
+      evenGroupFrames(elk, layoutState, new Map());
+
+      expect(nodeDb.g.width).toBe(148);
+      expect(nodeDb.g.height).toBe(148);
+    });
+
+    it('never squeezes a frame narrower than its own title', () => {
+      // A one-node group under a long title. Pulling in to the node would cut the
+      // title off, so the floor wins and the frame stays centred on its contents.
+      const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 300, h: 148 }, [
+        [24, 48, 40, 76],
+      ]);
+      elk[0].labelData = { width: 200 };
+
+      evenGroupFrames(elk, layoutState, new Map());
+
+      expect(nodeDb.g.width).toBe(200);
+      // Centred on the node's midpoint at x=44, so 44 - 100.
+      expect(nodeDb.g.offset.posX).toBe(-56);
+    });
+
+    it('measures a parent against children it has already pulled in', () => {
+      // Nested groups: the inner frame is inflated by 76 on the right and the
+      // outer one wraps it. Going deepest-first means the outer frame measures
+      // the tightened inner box, not the original.
+      const nodeDb: Record<string, any> = {
+        outer: {
+          id: 'outer',
+          isGroup: true,
+          offset: { posX: 0, posY: 0 },
+          width: 300,
+          height: 220,
+        },
+        inner: {
+          id: 'inner',
+          isGroup: true,
+          offset: { posX: 24, posY: 48 },
+          width: 200,
+          height: 148,
+        },
+        leaf: { id: 'leaf', offset: { posX: 48, posY: 96 }, width: 100, height: 76 },
+      };
+      const elk = [
+        {
+          id: 'outer',
+          isGroup: true,
+          labelData: { width: 0 },
+          labels: [],
+          children: [
+            {
+              id: 'inner',
+              isGroup: true,
+              labelData: { width: 0 },
+              labels: [],
+              children: [{ id: 'leaf' }],
+            },
+          ],
+        },
+      ];
+
+      evenGroupFrames(elk, { nodeDb } as any, new Map());
+
+      expect(nodeDb.inner.width).toBe(148); // 24 + 100 + 24
+      expect(nodeDb.outer.width).toBe(196); // 24 + 148 + 24
+    });
+
+    it('skips a group with no children rather than collapsing it', () => {
+      const nodeDb: Record<string, any> = {
+        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 100 },
+      };
+
+      evenGroupFrames([{ id: 'g', isGroup: true, children: [] }], { nodeDb } as any, new Map());
+
+      expect(nodeDb.g.width).toBe(200);
+      expect(nodeDb.g.height).toBe(100);
+    });
   });
 });
