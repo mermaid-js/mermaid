@@ -155,11 +155,14 @@ export interface MermaidConfig {
      * edge down a channel whose row rarely lines up with that port exactly,
      * leaving a staircase of a few pixels right at the border. With rounded
      * corners the two micro-bends land on top of each other and read as a
-     * kink. Enabling this moves the endpoint onto the channel row — still on
-     * the node's border — and drops the step.
+     * kink. Enabling this moves the channel onto the port's row and drops
+     * the step, so the edge draws as one straight line and both ports stay
+     * exactly where the layout put them.
      *
      * Only the step next to a node is touched, and only when the edge
      * continues the same way afterwards, so a real turn is never collapsed.
+     * An edge is left alone entirely when moving its run would drag the far
+     * port, or would introduce a crossing.
      *
      */
     straightenEdges?: boolean;

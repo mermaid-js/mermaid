@@ -302,8 +302,6 @@ interface JumpOnSegment {
   r: number;
 }
 
-const MIN_JUMP_RADIUS = 1e-3;
-
 /**
  * Shifts the first/last point inward along the edge direction by the amount
  * required for their arrow markers, matching `applyMarkerOffsetsToPoints` in
@@ -510,7 +508,11 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
     }
 
     for (const j of segJumps) {
-      if (j.r < MIN_JUMP_RADIUS) {
+      // Checked AGAIN after the adjacency pass, not only before it. That pass
+      // can halve a radius to keep two hops off each other, and a hop shrunk
+      // that way is just as unreadable as one squeezed by a bend — same rule,
+      // both times. Two crossings too close to carry a hop each carry none.
+      if (j.r < minUsefulRadius) {
         continue;
       }
       parts.push(...emitJump(j, ux, uy, sweep, config.jumpStyle));

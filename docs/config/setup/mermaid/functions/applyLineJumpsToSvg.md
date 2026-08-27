@@ -12,7 +12,7 @@
 
 > **applyLineJumpsToSvg**(`edgePathsGroup`, `edges`, `config`): `void`
 
-Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:644](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L644)
+Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:646](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L646)
 
 Patches the rendered SVG paths in `edgePathsGroup` for any edges that
 cross. The true geometry is read from each path's `data-points` attribute

@@ -136,6 +136,30 @@ describe('geometry helpers', () => {
         outlineAttachPoint({}, bounds, { x: 129.48, y: 454.87 }, { x: 144.48, y: 454.87 })
       ).toBe(null);
     });
+
+    it('declines a diagonal departure rather than forcing it onto an axis', () => {
+      // The bisection walks one axis holding the other fixed, so a diagonal has
+      // no axis to preserve. Forcing it onto the dominant one would attach at a
+      // point the edge does not pass through — reintroducing exactly the offset
+      // this function exists to remove — so the caller's centre-ray path is the
+      // honest fallback.
+      const port = { x: 129.48, y: 454.87 };
+
+      expect(outlineAttachPoint(diamond, bounds, port, { x: 144.48, y: 469.87 })).toBe(null);
+      // Dominant-x and dominant-y diagonals are both declined, not just the 45°.
+      expect(outlineAttachPoint(diamond, bounds, port, { x: 174.48, y: 459.87 })).toBe(null);
+      expect(outlineAttachPoint(diamond, bounds, port, { x: 134.48, y: 494.87 })).toBe(null);
+    });
+
+    it('still accepts a departure carrying floating-point dust', () => {
+      // ELK emits exact orthogonal stubs, but the numbers reaching here have been
+      // through arithmetic. A sub-nanometre minor component is not a diagonal.
+      const port = { x: 129.48, y: 454.87 };
+
+      expect(outlineAttachPoint(diamond, bounds, port, { x: 144.48, y: 454.87 + 1e-9 })).not.toBe(
+        null
+      );
+    });
   });
 
   describe('straightenTerminalJogs', () => {

@@ -340,16 +340,24 @@ export function buildSubgraphLayoutOptions(
     // given here, so adding the label height again double-counts it.
     'elk.padding': `[top=${SUBGRAPH_PADDING},left=${SUBGRAPH_PADDING},bottom=${SUBGRAPH_PADDING},right=${SUBGRAPH_PADDING}]`,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-    'nodePlacement.strategy':
-      elkConfig?.nodePlacementStrategy ?? resolveElkPreset(elkConfig?.preset).placement,
+
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'elk.layered.nodePlacement.bk.fixedAlignment':
       elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
-    // Containers place their own children. NETWORK_SIMPLEX balances a node
-    // against all of its neighbours, which keeps a group's nodes aligned with
-    // each other instead of drifting; PORT_POSITION lets it shift a node so an
-    // edge can leave straight rather than bending immediately off the port.
-    'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+    // Containers place their own children, and the preset says how: by default
+    // NETWORK_SIMPLEX, which balances a node against all of its neighbours and
+    // so keeps a group's nodes aligned with each other instead of drifting,
+    // while the root uses LINEAR_SEGMENTS. `legacy` keeps both on the strategy
+    // that shipped before, so it still reproduces the old rendering.
+    //
+    // ONE key, fully qualified. ELK reads `nodePlacement.strategy` and
+    // `elk.layered.nodePlacement.strategy` as the same option, so listing both
+    // — as this did — leaves the container holding two values for it with no
+    // say in which wins, and quietly ignores an explicit `nodePlacementStrategy`.
+    'elk.layered.nodePlacement.strategy':
+      elkConfig?.nodePlacementStrategy ?? resolveElkPreset(elkConfig?.preset).containerPlacement,
+    // PORT_POSITION lets a node shift so an edge can leave straight rather than
+    // bending immediately off the port.
     'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
   };
 
@@ -727,35 +735,40 @@ function getElkLayoutContext(
  * `cycleBreakingStrategy` beats the preset for that one option — which is why
  * `defaultConfig` leaves all three undefined rather than giving them values.
  */
-const ELK_PRESETS: Record<string, { layering: string; placement: string; cycleBreaking: string }> =
-  {
-    /** Keeps chains of nodes aligned. */
-    default: {
-      layering: 'NETWORK_SIMPLEX',
-      placement: 'LINEAR_SEGMENTS',
-      cycleBreaking: 'GREEDY_MODEL_ORDER',
-    },
-    /**
-     * What shipped before presets: straighter long edges, less alignment.
-     *
-     * `GREEDY`, not `GREEDY_MODEL_ORDER`, is deliberate. The schema advertised
-     * the latter, but `defaultConfig` never listed `cycleBreakingStrategy`, so it
-     * reached ELK as undefined and ELK's own default applied. This preset
-     * reproduces what `develop` actually renders, not what its schema claimed.
-     * Layering is ELK's default too — `develop` does not wire the option at all.
-     */
-    legacy: {
-      layering: 'NETWORK_SIMPLEX',
-      placement: 'BRANDES_KOEPF',
-      cycleBreaking: 'GREEDY',
-    },
-    /** As `default`, but shorter back edges on graphs that have many. */
-    depthFirst: {
-      layering: 'NETWORK_SIMPLEX',
-      placement: 'LINEAR_SEGMENTS',
-      cycleBreaking: 'DEPTH_FIRST',
-    },
-  };
+const ELK_PRESETS: Record<
+  string,
+  { layering: string; placement: string; containerPlacement: string; cycleBreaking: string }
+> = {
+  /** Keeps chains of nodes aligned. */
+  default: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'LINEAR_SEGMENTS',
+    containerPlacement: 'NETWORK_SIMPLEX',
+    cycleBreaking: 'GREEDY_MODEL_ORDER',
+  },
+  /**
+   * What shipped before presets: straighter long edges, less alignment.
+   *
+   * `GREEDY`, not `GREEDY_MODEL_ORDER`, is deliberate. The schema advertised
+   * the latter, but `defaultConfig` never listed `cycleBreakingStrategy`, so it
+   * reached ELK as undefined and ELK's own default applied. This preset
+   * reproduces what `develop` actually renders, not what its schema claimed.
+   * Layering is ELK's default too — `develop` does not wire the option at all.
+   */
+  legacy: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'BRANDES_KOEPF',
+    containerPlacement: 'BRANDES_KOEPF',
+    cycleBreaking: 'GREEDY',
+  },
+  /** As `default`, but shorter back edges on graphs that have many. */
+  depthFirst: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'LINEAR_SEGMENTS',
+    containerPlacement: 'NETWORK_SIMPLEX',
+    cycleBreaking: 'DEPTH_FIRST',
+  },
+};
 
 /**
  * Resolve a preset name, falling back to `default` for an unknown one.
@@ -783,7 +796,8 @@ function createRootElkGraph(
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy ?? preset.placement,
+      'elk.layered.nodePlacement.strategy':
+        data4Layout.config.elk?.nodePlacementStrategy ?? preset.placement,
       'elk.layered.nodePlacement.bk.fixedAlignment':
         data4Layout.config.elk?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
@@ -1240,6 +1254,12 @@ export function evenGroupFrames(
     if (width < labelFloor) {
       x -= (labelFloor - width) / 2;
       width = labelFloor;
+      // Still only ever pull IN. A title wider than the frame ELK sized is a
+      // frame ELK did not reserve for its own title, and widening it here would
+      // paper over that while breaking the one guarantee this pass makes.
+      const origRight = origin.posX + group.width!;
+      x = Math.max(origin.posX, Math.min(x, origRight - width));
+      width = Math.min(width, group.width!);
     }
     const height = bottom - top;
     if (height <= 0 || width <= 0) {

@@ -174,6 +174,14 @@ export const fallbackIntersection = (bounds: RectLike, outside: P, center: P): P
 const OUTLINE_RAY_STEPS = 20;
 
 /**
+ * How far off an axis a departure may sit and still count as axis-aligned.
+ *
+ * ELK's orthogonal routing emits exact horizontal and vertical stubs, so this
+ * only has to absorb floating-point dust, not a tolerance for near-diagonals.
+ */
+const DEPARTURE_AXIS_EPS = 1e-6;
+
+/**
  * Whether a point lies inside the node's outline.
  *
  * Derived from `intersect` alone, so it needs no per-shape knowledge: the
@@ -229,9 +237,16 @@ export const outlineAttachPoint = (
     return null;
   }
 
+  // A diagonal departure has no single axis to preserve. The bisection below
+  // walks along one axis holding the other fixed, so forcing a diagonal onto
+  // its dominant axis would attach at a point the edge does not actually pass
+  // through — reintroducing the offset this function exists to remove. Decline
+  // instead, and let the caller fall back to the centre-ray intersection.
+  if (Math.abs(dx) > DEPARTURE_AXIS_EPS && Math.abs(dy) > DEPARTURE_AXIS_EPS) {
+    return null;
+  }
+
   const centre = { x: bounds.x, y: bounds.y };
-  // The departure axis. A diagonal departure has no single axis to preserve, so
-  // there is nothing here to improve on.
   const horizontal = Math.abs(dx) > Math.abs(dy);
   const along = (t: number): P => (horizontal ? { x: t, y: port.y } : { x: port.x, y: t });
 

@@ -114,7 +114,7 @@ describe('buildSubgraphLayoutOptions', () => {
       { nodePlacementStrategy: 'BRANDES_KOEPF' },
       'layered'
     );
-    expect(opts['nodePlacement.strategy']).toBe('BRANDES_KOEPF');
+    expect(opts['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
   });
 
   it('defaults nodePlacementAlignment to NONE', () => {
@@ -131,8 +131,10 @@ describe('buildSubgraphLayoutOptions', () => {
     const opts = buildSubgraphLayoutOptions({}, undefined, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
     // With no config at all the `default` preset supplies the placement
-    // strategy, so this is no longer undefined.
-    expect(opts['nodePlacement.strategy']).toBe('LINEAR_SEGMENTS');
+    // strategy. Containers get NETWORK_SIMPLEX where the root gets
+    // LINEAR_SEGMENTS: balancing a node against all of its neighbours is what
+    // keeps a group's nodes aligned with each other rather than drifting.
+    expect(opts['elk.layered.nodePlacement.strategy']).toBe('NETWORK_SIMPLEX');
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
   });
 
@@ -144,16 +146,30 @@ describe('buildSubgraphLayoutOptions', () => {
       { preset: 'legacy', nodePlacementStrategy: 'SIMPLE' },
       'layered'
     );
-    expect(opts['nodePlacement.strategy']).toBe('SIMPLE');
+    expect(opts['elk.layered.nodePlacement.strategy']).toBe('SIMPLE');
   });
 
-  it('takes the placement strategy from the named preset', () => {
-    expect(
-      buildSubgraphLayoutOptions({}, { preset: 'legacy' }, 'layered')['nodePlacement.strategy']
-    ).toBe('BRANDES_KOEPF');
-    expect(
-      buildSubgraphLayoutOptions({}, { preset: 'depthFirst' }, 'layered')['nodePlacement.strategy']
-    ).toBe('LINEAR_SEGMENTS');
+  it('takes the container placement strategy from the named preset', () => {
+    const placement = (preset: string) =>
+      buildSubgraphLayoutOptions({}, { preset }, 'layered')['elk.layered.nodePlacement.strategy'];
+
+    // `legacy` exists to reproduce what earlier versions rendered, so it has to
+    // reach containers too — leaving them on the new strategy would make it a
+    // half-restore that still lays subgraph contents out differently.
+    expect(placement('legacy')).toBe('BRANDES_KOEPF');
+    expect(placement('depthFirst')).toBe('NETWORK_SIMPLEX');
+    expect(placement('default')).toBe('NETWORK_SIMPLEX');
+  });
+
+  it('names the placement option once, fully qualified', () => {
+    // ELK reads `nodePlacement.strategy` and `elk.layered.nodePlacement.strategy`
+    // as the same option. Setting both left the container holding two values
+    // for it with no say in which won, which silently ignored an explicit
+    // `nodePlacementStrategy`.
+    const opts = buildSubgraphLayoutOptions({}, { nodePlacementStrategy: 'SIMPLE' }, 'layered');
+
+    expect(opts).not.toHaveProperty('nodePlacement.strategy');
+    expect(opts['elk.layered.nodePlacement.strategy']).toBe('SIMPLE');
   });
 
   it('applies a per-group algorithm from metadata with SEPARATE_CHILDREN', () => {
@@ -777,7 +793,7 @@ describe('clearContainerAlgorithmOptions', () => {
     clearContainerAlgorithmOptions(options);
 
     expect(options['elk.layered.mergeEdges']).toBe(true);
-    expect(options['nodePlacement.strategy']).toBe('BRANDES_KOEPF');
+    expect(options['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
     expect(options['nodeLabels.placement']).toBe('[H_CENTER V_TOP, INSIDE]');
   });
 
@@ -835,8 +851,8 @@ describe('clearContainerAlgorithmOptions', () => {
     });
 
     it('never squeezes a frame narrower than its own title', () => {
-      // A one-node group under a long title. Pulling in to the node would cut the
-      // title off, so the floor wins and the frame stays centred on its contents.
+      // A one-node group under a long title. Pulling in to the node would cut
+      // the title off, so the floor wins it back.
       const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 300, h: 148 }, [
         [24, 48, 40, 76],
       ]);
@@ -845,8 +861,11 @@ describe('clearContainerAlgorithmOptions', () => {
       evenGroupFrames(elk, layoutState, new Map());
 
       expect(nodeDb.g.width).toBe(200);
-      // Centred on the node's midpoint at x=44, so 44 - 100.
-      expect(nodeDb.g.offset.posX).toBe(-56);
+      // Centring on the node's midpoint at x=44 would want to start at -56, but
+      // the frame is clamped to what ELK gave. Pulling a frame IN is the only
+      // thing this pass may do — a title too wide for its own frame is ELK's to
+      // size, and widening it here would paper over that.
+      expect(nodeDb.g.offset.posX).toBe(0);
     });
 
     it('measures a parent against children it has already pulled in', () => {

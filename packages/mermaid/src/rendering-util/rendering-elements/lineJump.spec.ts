@@ -248,23 +248,24 @@ describe('lineJump', () => {
     });
 
     it('shrinks jump radii when adjacent crossings would overlap', () => {
-      // Two crossings only 1.0 apart on a horizontal segment, but radius is
-      // 1.0 so a naive rewrite would invert the path. The two arcs must
-      // shrink to fit (each ≤ half the gap) and stay monotonic along the
-      // segment.
+      // Two crossings 1.6 apart on a horizontal segment, with radius 1.0 — a
+      // naive rewrite would invert the path. The two arcs must shrink to fit
+      // (each <= half the gap) and stay monotonic along the segment. 1.6 is
+      // wide enough that the shrunk radius still clears the minimum-useful
+      // bar; the case where it does not is the test below.
       const edges: EdgeGeom[] = [
         {
           id: 'v1',
           points: [
-            { x: 4.5, y: 0 },
-            { x: 4.5, y: 10 },
+            { x: 4.2, y: 0 },
+            { x: 4.2, y: 10 },
           ],
         },
         {
           id: 'v2',
           points: [
-            { x: 5.5, y: 0 },
-            { x: 5.5, y: 10 },
+            { x: 5.8, y: 0 },
+            { x: 5.8, y: 10 },
           ],
         },
         {
@@ -284,12 +285,47 @@ describe('lineJump', () => {
       expect(d.startsWith('M0,5 ')).toBe(true);
       expect(d.endsWith(' L10,5')).toBe(true);
       // Sweep flag 0 for horizontal +x segments, and radius clamped to at
-      // most half the 1.0 gap between the two crossings.
+      // most half the 1.6 gap between the two crossings.
       const firstArcMatch = /A([\d.]+),([\d.]+) 0 0 1 ([\d.]+),5/.exec(d);
       expect(firstArcMatch).not.toBeNull();
       const firstArcRadius = parseFloat(firstArcMatch![1]);
-      expect(firstArcRadius).toBeLessThanOrEqual(0.5);
+      expect(firstArcRadius).toBeLessThanOrEqual(0.8);
       expect(firstArcRadius).toBeGreaterThan(0);
+    });
+
+    it('drops both hops when crossings are too close to carry one each', () => {
+      // The adjacency clamp can shrink a radius as far as a bend can, and a hop
+      // shrunk that way is just as unreadable — at production radius 6, two
+      // crossings 4px apart would each get 2px, which does not clear the stroke
+      // being hopped. Same rule, applied after the clamp as well as before it.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'v1',
+          points: [
+            { x: 4.7, y: 0 },
+            { x: 4.7, y: 10 },
+          ],
+        },
+        {
+          id: 'v2',
+          points: [
+            { x: 5.3, y: 0 },
+            { x: 5.3, y: 10 },
+          ],
+        },
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+      ];
+
+      const d = processEdgesWithJumps(edges, ARC_CONFIG).get('h')!;
+
+      expect(d).not.toMatch(/A/);
+      expect(d).toBe('M0,5 L10,5');
     });
 
     it('returns plain polylines for every edge when disabled, even with crossings present', () => {
