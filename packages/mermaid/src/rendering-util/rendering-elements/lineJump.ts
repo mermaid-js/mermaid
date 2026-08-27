@@ -680,13 +680,11 @@ export function applyLineJumpsToSvg(
   }
 
   const renderedEdges: EdgeGeom[] = [];
-  const pathById = new Map<string, Element>();
   for (const e of edges) {
     const pathEl = pathByDataId.get(e.id);
     if (!pathEl) {
       continue;
     }
-    pathById.set(e.id, pathEl);
     const decoded = decodeDataPoints(pathEl.getAttribute('data-points'));
     const points = decoded ?? e.points;
     renderedEdges.push({ ...e, points });
@@ -715,7 +713,7 @@ export function applyLineJumpsToSvg(
       continue;
     }
 
-    const pathEl = pathById.get(renderedEdge.id);
+    const pathEl = pathByDataId.get(renderedEdge.id);
     if (!pathEl) {
       continue;
     }
