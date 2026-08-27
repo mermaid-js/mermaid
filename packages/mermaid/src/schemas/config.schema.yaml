@@ -132,7 +132,7 @@ properties:
           - NETWORK_SIMPLEX
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
-        default: BRANDES_KOEPF
+        # Default comes from `elk.preset` unless set explicitly.
       nodePlacementAlignment:
         description: |
           Elk specific option affecting Brandes-Koepf node placement alignment.
@@ -146,6 +146,91 @@ properties:
           - RIGHTDOWN
           - BALANCED
         default: NONE
+      preset:
+        description: |
+          Named combination of the three options that decide where nodes end up:
+          layering strategy, node placement strategy and cycle breaking strategy.
+          They belong to different phases of the layout, so a preset is simply a
+          named triple rather than a mode with behaviour of its own.
+
+          `default` — network simplex layering, linear segments placement, greedy
+          model order cycle breaking. Keeps chains of nodes aligned.
+
+          `legacy` — what shipped before presets existed: Brandes-Koepf placement,
+          which straightens long edges at the cost of that alignment, with ELK's
+          own greedy cycle breaking. Reproduces the rendering of earlier
+          versions rather than the defaults their schema advertised.
+
+          `depthFirst` — as `default`, but breaks cycles depth first, which tends
+          to give shorter back edges on graphs that have many of them.
+
+          Setting `layeringStrategy`, `nodePlacementStrategy` or
+          `cycleBreakingStrategy` explicitly overrides the preset for that one
+          option; the rest of the preset still applies.
+        type: string
+        enum:
+          - default
+          - legacy
+          - depthFirst
+        default: default
+      straightenEdges:
+        description: |
+          Straightens an edge that leaves or enters a node with a tiny step.
+
+          ELK spreads an edge's port evenly along a node's side but routes the
+          edge down a channel whose row rarely lines up with that port exactly,
+          leaving a staircase of a few pixels right at the border. With rounded
+          corners the two micro-bends land on top of each other and read as a
+          kink. Enabling this moves the endpoint onto the channel row — still on
+          the node's border — and drops the step.
+
+          Only the step next to a node is touched, and only when the edge
+          continues the same way afterwards, so a real turn is never collapsed.
+        type: boolean
+        default: true
+      lineHops:
+        description: |
+          Renders edge crossings as small arcs ("hops") or visible gaps, so that
+          it is clear which line passes over which where two edges meet.
+
+          The edge that gives way loses its corner rounding for the segment
+          carrying the hop, which is the trade for a readable crossing. Curved
+          edges are skipped rather than rewritten, to avoid corrupting their
+          geometry. Set to `false` to draw plain crossings.
+        oneOf:
+          - type: boolean
+          - type: string
+            enum: ['arc', 'gap']
+        default: true
+      layeringStrategy:
+        description: |
+          Elk specific option deciding which layer each node is assigned to — the
+          column in a left-to-right diagram, the row in a top-down one. This is
+          the coarsest of the three placement decisions, so changing it moves
+          nodes further than anything else short of altering spacing.
+
+          NETWORK_SIMPLEX aims for the fewest long edges. LONGEST_PATH pushes
+          every node as late as it can go. COFFMAN_GRAHAM bounds how many nodes
+          share a layer, giving a more even, block-like shape on wide graphs.
+          MIN_WIDTH and STRETCH_WIDTH trade edge length for a narrower or wider
+          drawing. INTERACTIVE honours positions already on the nodes.
+        type: string
+        enum:
+          - NETWORK_SIMPLEX
+          - LONGEST_PATH
+          - LONGEST_PATH_SOURCE
+          - COFFMAN_GRAHAM
+          - MIN_WIDTH
+          - STRETCH_WIDTH
+          - INTERACTIVE
+        # Default comes from `elk.preset` unless set explicitly.
+      layeringLayerBound:
+        description: |
+          Elk specific option capping how many nodes COFFMAN_GRAHAM will put in
+          one layer. Ignored by every other layering strategy. Lower values give
+          a taller, narrower drawing.
+        type: number
+        default: 4
       cycleBreakingStrategy:
         description: |
           This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
@@ -156,7 +241,7 @@ properties:
           - INTERACTIVE
           - MODEL_ORDER
           - GREEDY_MODEL_ORDER
-        default: GREEDY_MODEL_ORDER
+        # Default comes from `elk.preset` unless set explicitly.
       forceNodeModelOrder:
         description: |
           The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.
