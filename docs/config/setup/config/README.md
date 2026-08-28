@@ -22,7 +22,6 @@
 - [getEffectiveHtmlLabels](functions/getEffectiveHtmlLabels.md)
 - [getSiteConfig](functions/getSiteConfig.md)
 - [getUserDefinedConfig](functions/getUserDefinedConfig.md)
-- [isConfigKeySet](functions/isConfigKeySet.md)
 - [reset](functions/reset.md)
 - [sanitize](functions/sanitize.md)
 - [saveConfigFromInitialize](functions/saveConfigFromInitialize.md)

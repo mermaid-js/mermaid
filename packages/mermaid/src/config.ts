@@ -239,22 +239,6 @@ export const getUserDefinedConfig = (): MermaidConfig => {
 };
 
 /**
- * Whether a top-level config key was explicitly supplied by the embedder or by
- * the diagram, rather than inherited from {@link defaultConfig}.
- *
- * The merged config cannot answer this on its own, because a value the user set
- * is indistinguishable from a default that happens to match it. Diagrams that
- * keep a default of their own while still honouring an explicit request need
- * that distinction.
- *
- * @param key - The top-level config key to check.
- * @returns `true` when the key came from `initialize`, a frontmatter config
- * block, or a directive.
- */
-export const isConfigKeySet = (key: keyof MermaidConfig): boolean =>
-  getUserDefinedConfig()[key] !== undefined;
-
-/**
  * Helper function to handle deprecated flowchart.htmlLabels
  * @param config - The configuration object (merged config with defaults)
  * @returns The effective htmlLabels value based on precedence: root flowchart  default

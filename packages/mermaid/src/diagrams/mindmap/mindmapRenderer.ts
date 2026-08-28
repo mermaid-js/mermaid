@@ -7,7 +7,7 @@ import type { LayoutData } from '../../rendering-util/types.js';
 import type { FilledMindMapNode } from './mindmapTypes.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { MindmapDB } from './mindmapDb.js';
-import { getConfig, isConfigKeySet } from '../../config.js';
+import { getConfig } from '../../config.js';
 
 /**
  * Update the layout data with actual node dimensions after drawing
@@ -30,16 +30,6 @@ function _updateNodeDimensions(data4Layout: LayoutData, mindmapRoot: FilledMindM
   updateNode(mindmapRoot);
 }
 
-/**
- * Mindmap has not been migrated to ELK, so it keeps laying out with dagre even
- * though the global `layout` default is now `elk`. A layout the diagram or the
- * embedder explicitly asked for is still honoured.
- */
-export const resolveMindmapLayout = (layout: string | undefined) =>
-  getRegisteredLayoutAlgorithm(isConfigKeySet('layout') ? layout : 'dagre', {
-    fallback: 'cose-bilkent',
-  });
-
 export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   log.debug('Rendering mindmap diagram\n' + text);
 
@@ -54,7 +44,9 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   const svg = getDiagramElement(id, data4Layout.config.securityLevel);
 
   data4Layout.type = diagObj.type;
-  data4Layout.layoutAlgorithm = resolveMindmapLayout(data4Layout.config.layout);
+  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(data4Layout.config.layout, {
+    fallback: 'cose-bilkent',
+  });
 
   data4Layout.diagramId = id;
 
