@@ -16,7 +16,12 @@ const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
 
 const genColor: DiagramStylesProvider = (options) => {
   const { theme, look, bkgColorArray, borderColorArray } = options;
-  if (!COLOR_THEMES.has(theme)) {
+  // Bail on an empty border palette as well as a non-colour theme. Without the second
+  // check `i % borderColorArray.length` is `i % 0` -> NaN, and `[][NaN]` is `undefined`,
+  // so every slot would emit `stroke: undefined` -- the exact symptom this guard exists to
+  // prevent. `requirement/styles.js` already gated on the palette; this brings ER into
+  // line. Reachable through a `themeVariables` override, not just in theory.
+  if (!COLOR_THEMES.has(theme) || !borderColorArray?.length) {
     return '';
   }
   const hasBkgColors = bkgColorArray?.length > 0;
