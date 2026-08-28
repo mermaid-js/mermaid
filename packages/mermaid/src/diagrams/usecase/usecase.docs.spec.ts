@@ -27,20 +27,30 @@ const extractMermaidExamples = (markdown: string): string[] =>
     ([, source]) => source
   );
 
-describe('usecase public documentation examples', () => {
-  jsdomIt('parses and renders every mermaid-example fence from the canonical page', async () => {
-    const examples = extractMermaidExamples(readDocumentation());
-    expect(examples.length).toBeGreaterThan(0);
+// Renders all 20 examples from the page through a real layout engine in jsdom.
+// ELK, now the default layout, does considerably more work than dagre and pays
+// a one-off cost to load elkjs, which pushes this past vitest's 5s default on
+// slower CI runners.
+const RENDER_ALL_EXAMPLES_TIMEOUT_MS = 30_000;
 
-    for (const [index, source] of examples.entries()) {
-      const id = `usecase-doc-example-${index}`;
-      try {
-        const { svg } = await mermaidAPI.render(id, source);
-        expect(svg, `documentation example ${index + 1}`).toContain('<svg');
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        throw new Error(`Use-case documentation example ${index + 1} failed: ${message}`);
+describe('usecase public documentation examples', () => {
+  jsdomIt(
+    'parses and renders every mermaid-example fence from the canonical page',
+    async () => {
+      const examples = extractMermaidExamples(readDocumentation());
+      expect(examples.length).toBeGreaterThan(0);
+
+      for (const [index, source] of examples.entries()) {
+        const id = `usecase-doc-example-${index}`;
+        try {
+          const { svg } = await mermaidAPI.render(id, source);
+          expect(svg, `documentation example ${index + 1}`).toContain('<svg');
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          throw new Error(`Use-case documentation example ${index + 1} failed: ${message}`);
+        }
       }
-    }
-  });
+    },
+    RENDER_ALL_EXAMPLES_TIMEOUT_MS
+  );
 });
