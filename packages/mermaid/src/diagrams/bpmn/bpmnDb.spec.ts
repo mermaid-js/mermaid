@@ -185,6 +185,35 @@ describe('bpmnDb', () => {
     });
   });
 
+  // A group is the last Level 1 artifact. It contains elements the way a lane does, but
+  // it constrains no placement, so it must not be numbered or given a lane role - which
+  // is what would happen if it were treated as a band.
+  describe('groups', () => {
+    const source =
+      'bpmn-beta LR\n  lane "Sales"\n    group "Approval"\n      task t1 "Review"\n      task t2 "Sign off"';
+
+    it('is a container, but not a band', () => {
+      const { nodes } = build(source);
+      const group = nodeById(nodes, 'group-2');
+      expect(group.isGroup).toBe(true);
+      expect(group.metadata?.laneRole).toBeUndefined();
+      expect(group.metadata?.laneIndex).toBeUndefined();
+    });
+
+    it('does not consume a lane number', () => {
+      const { nodes } = build(source);
+      const lane = nodes.find((n) => n.metadata?.laneRole === 'lane')!;
+      expect(lane.metadata?.laneIndex).toBe(0);
+      expect(nodes.filter((n) => n.metadata?.laneIndex !== undefined)).toHaveLength(1);
+    });
+
+    it('holds its members', () => {
+      const { nodes } = build(source);
+      expect(nodeById(nodes, 't1').parentId).toBe('group-2');
+      expect(nodeById(nodes, 't2').parentId).toBe('group-2');
+    });
+  });
+
   it('draws a call activity with its own class, since it is marked by a thick border', () => {
     const { nodes } = build('bpmn-beta LR\n  lane "L"\n    call c "Check credit"');
     const node = nodeById(nodes, 'c');

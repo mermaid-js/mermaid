@@ -101,6 +101,8 @@ export const Complex = keyword('Complex', 'complex');
 export const DataStore = keyword('DataStore', 'data-store');
 export const DataObject = keyword('DataObject', 'data');
 export const Annotation = keyword('Annotation', 'note');
+/** A visual grouping. It has no execution semantics and may cross pools and lanes. */
+export const Group = keyword('Group', 'group');
 
 export const Trigger = createToken({
   name: 'Trigger',
@@ -160,6 +162,7 @@ export const bpmnTokens: TokenType[] = [
   DataStore,
   DataObject,
   Annotation,
+  Group,
   Trigger,
   TaskType,
   Identifier,

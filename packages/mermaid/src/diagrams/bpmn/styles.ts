@@ -213,6 +213,26 @@ const getStyles = (options: BpmnStyleOptions) => {
     stroke-width: 3.4px;
   }
 
+  /* A group is a rounded box drawn around whatever it contains. It carries no execution
+     semantics, so it is unfilled and never reads as a lane.
+
+     The cluster shape draws an outer box plus an inner one dividing a title band from a
+     body; a group has no such division, so only the outer box is painted. */
+  .bpmn-group rect:not(.inner) {
+    fill: none;
+    stroke: ${laneStroke};
+    stroke-width: 1.4px;
+    /* Dash-dot, as drawn in BPMN 2.0.2 Figure 8.13, which also tells a group's border
+       apart from the plain dashed one of a non-interrupting boundary event. */
+    stroke-dasharray: 10 4 2 4;
+    rx: 10px;
+    ry: 10px;
+  }
+  .bpmn-group rect.inner {
+    fill: none;
+    stroke: none;
+  }
+
   /* ----- Pools and lanes ---------------------------------------------------- */
   .swimlane.cluster rect,
   .pool.cluster rect {

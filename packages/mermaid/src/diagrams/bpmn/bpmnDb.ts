@@ -13,8 +13,8 @@ import { parseBpmn } from './parser/bpmn.parser.js';
 import type { ParsedDiagram, ParsedNode } from './parser/bpmn.parser.js';
 
 /**
- * A registered element shape, so a typo in the tables below fails to compile. A container
- * is a cluster and takes its shape from the cluster set instead.
+ * A registered element shape, so a typo in the tables below fails to compile. Bands and
+ * groups are clusters and take their shape from the cluster set instead.
  */
 type BpmnShape = NonNullable<NonClusterNode['shape']>;
 
@@ -131,7 +131,11 @@ export class BpmnDb {
     // a number, so numbering pools too is what keeps that condition satisfiable.
     let laneIndex = 0;
     for (const parsed of this.parsed.nodes) {
-      const isContainer = parsed.kind === 'pool' || parsed.kind === 'lane';
+      // A band is a pool or a lane, which the swimlane engine places. A group is drawn
+      // around its members and carries no execution semantics, so it is a container
+      // without being a band: it gets no lane role and constrains no placement.
+      const isBand = parsed.kind === 'pool' || parsed.kind === 'lane';
+      const isGroup = isBand || parsed.kind === 'group';
       const { shape, icon } = drawnAs(parsed);
       const shared = {
         id: parsed.id,
@@ -139,7 +143,7 @@ export class BpmnDb {
         labelType: 'string' as const,
         parentId: parsed.parentId,
         metadata: {
-          ...(isContainer ? { laneRole: parsed.kind, laneIndex: laneIndex++ } : {}),
+          ...(isBand ? { laneRole: parsed.kind, laneIndex: laneIndex++ } : {}),
           // A boundary event is drawn on the border of the activity it interrupts, which
           // the layout does by pinning it rather than by placing it.
           ...(parsed.keyword === 'boundary' && parsed.parentId
@@ -154,13 +158,16 @@ export class BpmnDb {
           ...(parsed.keyword === 'call' ? ['bpmn-call'] : []),
         ].join(' '),
         cssStyles: [],
-        padding: 20,
+        // A group has to clear both its own border and its label, and the notation fixes
+        // neither (Table 12.24 gives Group no BPMNShape attributes), so the headroom is
+        // ours to choose. Without it the box hugs its members and the label lands on them.
+        padding: parsed.kind === 'group' ? 56 : 20,
         look,
       };
-      // A container is a cluster and an element is not, and the two halves of the Node
-      // union accept different shape names, so each is built on its own.
-      if (isContainer) {
-        nodes.push({ ...shared, isGroup: true, shape: 'rect' });
+      // A band and a group are clusters and an element is not, and the two halves of the
+      // Node union accept different shape names, so each is built on its own.
+      if (isGroup) {
+        nodes.push({ ...shared, isGroup: true, shape: isBand ? 'rect' : 'roundedWithTitle' });
       } else {
         nodes.push({ ...shared, isGroup: false, shape, ...(icon ? { icon } : {}) });
       }

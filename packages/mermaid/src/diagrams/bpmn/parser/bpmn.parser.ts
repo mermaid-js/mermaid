@@ -38,7 +38,11 @@ class BpmnParser extends CstParser {
   });
 
   private container = this.RULE('container', () => {
-    this.OR([{ ALT: () => this.CONSUME(t.Pool) }, { ALT: () => this.CONSUME(t.Lane) }]);
+    this.OR([
+      { ALT: () => this.CONSUME(t.Pool) },
+      { ALT: () => this.CONSUME(t.Lane) },
+      { ALT: () => this.CONSUME(t.Group) },
+    ]);
     this.SUBRULE(this.nameAndLabel);
   });
 
@@ -109,7 +113,16 @@ export const BpmnBaseVisitor = bpmnParser.getBaseCstVisitorConstructorWithDefaul
 export const bpmnLexer = new Lexer(bpmnTokens, { positionTracking: 'onlyStart' });
 
 export interface ParsedNode {
-  kind: 'pool' | 'lane' | 'event' | 'gateway' | 'activity' | 'data' | 'store' | 'annotation';
+  kind:
+    | 'pool'
+    | 'lane'
+    | 'group'
+    | 'event'
+    | 'gateway'
+    | 'activity'
+    | 'data'
+    | 'store'
+    | 'annotation';
   /** The keyword that opened the statement, e.g. `start`, `xor`, `task`. */
   keyword: string;
   /** The trigger or task-type qualifier, when the statement carried one. */
@@ -193,7 +206,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
   }
 
   public container(ctx: Record<string, CstNode[] | IToken[]>): ParsedNode {
-    const keyword = ctx.Pool ? 'pool' : 'lane';
+    const keyword = ctx.Pool ? 'pool' : ctx.Group ? 'group' : 'lane';
     return this.element(ctx, keyword, keyword);
   }
 

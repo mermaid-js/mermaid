@@ -275,7 +275,10 @@ export function applyLrDirectionTransform(
   const childrenByLane = new Map<string, LayoutNode[]>();
 
   for (const n of nodes) {
-    if (n.isGroup || anchoredIds.has(n.id)) {
+    // A band is the frame being measured here, so it cannot also count as its own content.
+    // Any other group can: its padded box extends past the nodes inside it, and a lane
+    // measured from those nodes alone comes out too narrow to contain the group.
+    if (laneModel.isLane(n.id) || laneModel.isPool(n.id) || anchoredIds.has(n.id)) {
       continue;
     }
     // The lane model, not resolveTopLevelGroupId: with a pool the outermost group is the

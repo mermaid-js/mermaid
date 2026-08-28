@@ -192,6 +192,35 @@ export function toGraphView(layout: LayoutData): Graph {
   return { nodes, edges, layout, nodeById };
 }
 
+/**
+ * The groups, innermost first.
+ *
+ * A group is sized from the boxes of its children, so a group holding another group has to
+ * be sized after it - otherwise the outer one measures a box that has not been computed yet
+ * and comes out too small. Declaration order in `nodes` puts the outer group first, which is
+ * the opposite of what the sizing needs.
+ */
+function groupsDeepestFirst(allNodes: Node[]): Node[] {
+  const byId = new Map(allNodes.map((n) => [n.id, n]));
+  const depthOf = (node: Node) => {
+    let depth = 0;
+    let parentId = node.parentId;
+    // `seen` bounds the walk: a malformed parentId cycle would otherwise never terminate.
+    const seen = new Set<NodeId>([node.id]);
+    while (parentId != null && !seen.has(parentId)) {
+      seen.add(parentId);
+      depth++;
+      parentId = byId.get(parentId)?.parentId;
+    }
+    return depth;
+  };
+  return allNodes
+    .filter((n) => n?.isGroup)
+    .map((n) => ({ node: n, depth: depthOf(n) }))
+    .sort((a, b) => b.depth - a.depth)
+    .map((entry) => entry.node);
+}
+
 export function writeBackToLayoutData(
   g: Graph,
   ordered: OrderedLayers,
@@ -227,10 +256,7 @@ export function writeBackToLayoutData(
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
   const laneModel = buildLaneModel(allNodes);
   const topLevelGroups: Node[] = [];
-  for (const group of allNodes) {
-    if (!group?.isGroup) {
-      continue;
-    }
+  for (const group of groupsDeepestFirst(allNodes)) {
     if (laneModel.isLane(group.id)) {
       topLevelGroups.push(group);
     }
