@@ -131,23 +131,29 @@ export interface MermaidConfig {
      * They belong to different phases of the layout, so a preset is simply a
      * named triple rather than a mode with behaviour of its own.
      *
-     * `default` — network simplex layering, linear segments placement, greedy
-     * model order cycle breaking. Keeps chains of nodes aligned.
+     * `default` — network simplex layering and placement with depth-first
+     * cycle breaking at the top level, and Brandes-Koepf placement inside
+     * subgraphs. Depth-first breaking gives shorter back edges on graphs
+     * that loop.
      *
      * `legacy` — what shipped before presets existed: Brandes-Koepf placement,
      * which straightens long edges at the cost of that alignment, with ELK's
      * own greedy cycle breaking. Reproduces the rendering of earlier
      * versions rather than the defaults their schema advertised.
      *
-     * `depthFirst` — as `default`, but breaks cycles depth first, which tends
-     * to give shorter back edges on graphs that have many of them.
+     * `modelOrder` — as `default`, but breaks cycles by greedy model order,
+     * which disturbs declaration order least at the cost of longer back
+     * edges. This is the combination `default` named previously.
+     *
+     * `depthFirst` — a name for what `default` already is, for diagrams that
+     * would rather say depth-first than rely on the default.
      *
      * Setting `layeringStrategy`, `nodePlacementStrategy` or
      * `cycleBreakingStrategy` explicitly overrides the preset for that one
      * option; the rest of the preset still applies.
      *
      */
-    preset?: 'default' | 'legacy' | 'depthFirst';
+    preset?: 'default' | 'legacy' | 'modelOrder' | 'depthFirst';
     /**
      * Straightens an edge that leaves or enters a node with a tiny step.
      *

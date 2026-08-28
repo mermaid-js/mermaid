@@ -9,6 +9,7 @@ import {
   findCyclicEntryNodes,
   prepareLayoutForElk,
   resolveContainerAlgorithm,
+  resolveElkPreset,
   runElkLayoutCore,
 } from '../render.js';
 
@@ -131,10 +132,10 @@ describe('buildSubgraphLayoutOptions', () => {
     const opts = buildSubgraphLayoutOptions({}, undefined, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
     // With no config at all the `default` preset supplies the placement
-    // strategy. Containers get NETWORK_SIMPLEX where the root gets
-    // LINEAR_SEGMENTS: balancing a node against all of its neighbours is what
-    // keeps a group's nodes aligned with each other rather than drifting.
-    expect(opts['elk.layered.nodePlacement.strategy']).toBe('NETWORK_SIMPLEX');
+    // strategy. Containers are BRANDES_KOEPF while the root is NETWORK_SIMPLEX:
+    // network simplex inside a frame produced routes that left a subgraph on
+    // its bounding-box corner, so containers keep the strategy that does not.
+    expect(opts['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
     expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
   });
 
@@ -157,8 +158,11 @@ describe('buildSubgraphLayoutOptions', () => {
     // reach containers too — leaving them on the new strategy would make it a
     // half-restore that still lays subgraph contents out differently.
     expect(placement('legacy')).toBe('BRANDES_KOEPF');
-    expect(placement('depthFirst')).toBe('NETWORK_SIMPLEX');
-    expect(placement('default')).toBe('NETWORK_SIMPLEX');
+    // `default` and `depthFirst` place the ROOT with NETWORK_SIMPLEX but keep
+    // containers on BRANDES_KOEPF — the two sides are tuned separately on
+    // purpose, so a change to one must not be assumed to carry to the other.
+    expect(placement('depthFirst')).toBe('BRANDES_KOEPF');
+    expect(placement('default')).toBe('BRANDES_KOEPF');
   });
 
   it('names the placement option once, fully qualified', () => {
@@ -1087,5 +1091,34 @@ describe('clearContainerAlgorithmOptions', () => {
       expect(nodeDb.g.width).toBe(200);
       expect(nodeDb.g.height).toBe(100);
     });
+  });
+});
+
+describe('resolveElkPreset', () => {
+  it('breaks cycles depth first by default', () => {
+    // Depth-first took over as the default because it gives shorter back edges
+    // on graphs that loop; the greedy-model-order triple it displaced is still
+    // reachable, under its own name.
+    expect(resolveElkPreset(undefined).cycleBreaking).toBe('DEPTH_FIRST');
+    expect(resolveElkPreset('default').cycleBreaking).toBe('DEPTH_FIRST');
+    expect(resolveElkPreset('modelOrder').cycleBreaking).toBe('GREEDY_MODEL_ORDER');
+    expect(resolveElkPreset('legacy').cycleBreaking).toBe('GREEDY');
+  });
+
+  it('keeps depthFirst as a name for what default already is', () => {
+    // Not a distinct combination — a label, so a diagram can say depth-first
+    // rather than depend on the default staying put.
+    expect(resolveElkPreset('depthFirst')).toEqual(resolveElkPreset('default'));
+  });
+
+  it('differs from default in cycle breaking alone for modelOrder', () => {
+    const { cycleBreaking: _a, ...restDefault } = resolveElkPreset('default');
+    const { cycleBreaking: _b, ...restModelOrder } = resolveElkPreset('modelOrder');
+    expect(restModelOrder).toEqual(restDefault);
+  });
+
+  it('falls back to default for an unknown name, including __proto__', () => {
+    expect(resolveElkPreset('nope')).toEqual(resolveElkPreset('default'));
+    expect(resolveElkPreset('__proto__')).toEqual(resolveElkPreset('default'));
   });
 });

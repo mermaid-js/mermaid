@@ -9,6 +9,12 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { applyElkLineJumps } from './lineHops.js';
+import {
+  EDGE_ROUTING_OPTIONS,
+  PLACEMENT_OPTIONS,
+  ROOT_EXPERIMENT_OVERRIDES,
+  SUBGRAPH_EXPERIMENT_OVERRIDES,
+} from './elkOptionCatalogue.js';
 
 import {
   type P,
@@ -136,6 +142,13 @@ const ARROW_MAP: Record<string, [string, string]> = {
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
+
+/**
+ * Margin reserved at the ends of each side of a node, so that a port cannot be
+ * placed on a corner. Spelled as an ELK margin because `spacing.portsSurrounding`
+ * takes one.
+ */
+const PORTS_SURROUNDING = '[top=12,left=12,bottom=12,right=12]';
 /** Padding between a subgraph frame and its children. ELK's own default is 12. */
 const SUBGRAPH_PADDING = 24;
 /**
@@ -359,6 +372,10 @@ export function buildSubgraphLayoutOptions(
     // PORT_POSITION lets a node shift so an edge can leave straight rather than
     // bending immediately off the port.
     'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
+    // Keep a frame's ports off its own corners. See the note in
+    // `createRootElkGraph`; a container is where this bites hardest, because a
+    // cross-boundary edge attaches to the frame rather than to a node inside it.
+    'elk.spacing.portsSurrounding': PORTS_SURROUNDING,
   };
 
   // Apply per-group algorithm from metadata (e.g. @{algorithm: elk.box}).
@@ -399,6 +416,11 @@ export function buildSubgraphLayoutOptions(
     layoutOptions['elk.direction'] = dir2ElkDirection(node.dir);
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
   }
+
+  // Container-scoped experiments. Spacing, padding and label placement only
+  // bite here — an option set on the root never reaches inside a frame.
+  Object.assign(layoutOptions, SUBGRAPH_EXPERIMENT_OVERRIDES);
+
   return layoutOptions;
 }
 
@@ -739,12 +761,25 @@ const ELK_PRESETS: Record<
   string,
   { layering: string; placement: string; containerPlacement: string; cycleBreaking: string }
 > = {
-  /** Keeps chains of nodes aligned. */
+  /**
+   * Network simplex at the root, Brandes-Koepf inside frames, cycles broken
+   * depth first.
+   *
+   * Depth-first cycle breaking gives shorter back edges on graphs that have
+   * many of them, which is most flowcharts that loop at all. `modelOrder` is
+   * the same triple with the greedy-model-order breaking this used to carry.
+   *
+   * Containers deliberately do NOT follow the root's placement. Network simplex
+   * inside a frame produced routes that left a subgraph on its bounding-box
+   * corner, so the two sides are tuned separately: changing one is not a reason
+   * to change the other, and `legacy` keeps both on the strategy that shipped
+   * before.
+   */
   default: {
     layering: 'NETWORK_SIMPLEX',
-    placement: 'LINEAR_SEGMENTS',
-    containerPlacement: 'NETWORK_SIMPLEX',
-    cycleBreaking: 'GREEDY_MODEL_ORDER',
+    placement: 'NETWORK_SIMPLEX',
+    containerPlacement: 'BRANDES_KOEPF',
+    cycleBreaking: 'DEPTH_FIRST',
   },
   /**
    * What shipped before presets: straighter long edges, less alignment.
@@ -761,11 +796,26 @@ const ELK_PRESETS: Record<
     containerPlacement: 'BRANDES_KOEPF',
     cycleBreaking: 'GREEDY',
   },
-  /** As `default`, but shorter back edges on graphs that have many. */
+  /**
+   * As `default`, but breaks cycles by greedy model order — which reverses the
+   * edges that disturb declaration order least, at the cost of longer back
+   * edges. This is the triple `default` named before depth-first took over.
+   */
+  modelOrder: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'NETWORK_SIMPLEX',
+    containerPlacement: 'BRANDES_KOEPF',
+    cycleBreaking: 'GREEDY_MODEL_ORDER',
+  },
+  /**
+   * Kept as a name for what `default` now is, so diagrams that asked for
+   * depth-first breaking by name keep saying what they mean. Identical to
+   * `default` on purpose — not a distinct combination.
+   */
   depthFirst: {
     layering: 'NETWORK_SIMPLEX',
-    placement: 'LINEAR_SEGMENTS',
-    containerPlacement: 'NETWORK_SIMPLEX',
+    placement: 'NETWORK_SIMPLEX',
+    containerPlacement: 'BRANDES_KOEPF',
     cycleBreaking: 'DEPTH_FIRST',
   },
 };
@@ -827,6 +877,18 @@ function createRootElkGraph(
       'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
       'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
       'elk.layered.mergeHierarchyEdges': true,
+      // Reserve a margin at the ends of every side so a port cannot land on a
+      // corner. ELK's default is 0, which permits it — and a corner is the one
+      // boundary point with no side to leave from, so the edge came out of the
+      // vertex and then ran ALONG the box's own edge before turning away. It
+      // showed up on subgraphs first because a cross-boundary edge attaches to
+      // the frame, which is large enough for the corner to be visible.
+      //
+      // Chosen at 12 by measurement, not taste: it is the smallest value that
+      // clears the corner on the `elk-edge-cases` corpus. 30 was tried and
+      // reorders layers, so this is not a free parameter — raising it changes
+      // more than clearance.
+      'elk.spacing.portsSurrounding': PORTS_SURROUNDING,
     },
     children: [],
     edges: [],
@@ -845,6 +907,16 @@ function createRootElkGraph(
   if (rootLayoutOptions) {
     Object.assign(graph.layoutOptions, rootLayoutOptions);
   }
+
+  // Hand-run experiments from `elkOptionCatalogue.ts`, last so an option
+  // switched on there wins over the preset, `config.elk.*` and the sweep.
+  // MUST all be commented out on `develop` — this is the production path.
+  Object.assign(
+    graph.layoutOptions,
+    PLACEMENT_OPTIONS,
+    EDGE_ROUTING_OPTIONS,
+    ROOT_EXPERIMENT_OVERRIDES
+  );
 
   return graph;
 }
