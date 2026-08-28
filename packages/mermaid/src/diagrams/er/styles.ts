@@ -23,16 +23,21 @@ const genColor: DiagramStylesProvider = (options) => {
   let sections = '';
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+    // Wrap at the palette length rather than indexing raw. The loop runs to
+    // THEME_COLOR_LIMIT, so a palette with fewer entries than that emits
+    // `stroke: undefined` for the overflow slots.
+    const borderColor = borderColorArray[i % borderColorArray.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {
-    stroke: ${borderColorArray[i]};
-    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
+    stroke: ${borderColor};
+    ${fill}
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node  rect {
-    stroke: ${borderColorArray[i]};
-    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
+    stroke: ${borderColor};
+    ${fill}
      }
     `;
   }
