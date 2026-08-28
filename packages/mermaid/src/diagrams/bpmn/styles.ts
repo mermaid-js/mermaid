@@ -199,12 +199,18 @@ const getStyles = (options: BpmnStyleOptions) => {
   }
 
   /* A trigger that catches is drawn unfilled and one that throws is drawn filled
-     (BPMN 2.0.2, Table 10.93). An end event throws its result, so its marker fills;
-     start and boundary events catch, so theirs stay outlines. */
-  .bpmn-event-end .bpmn-glyph path,
-  .bpmn-event-end .bpmn-glyph polygon,
-  .bpmn-event-end .bpmn-glyph circle {
+     (BPMN 2.0.2, Table 10.93). The db decides which an element is, because an end event
+     and a throwing intermediate both create a result while sharing nothing else. */
+  .bpmn-throw .bpmn-glyph path,
+  .bpmn-throw .bpmn-glyph polygon,
+  .bpmn-throw .bpmn-glyph circle {
     fill: currentColor;
+  }
+
+  /* A call activity invokes a process defined elsewhere, and is drawn with a thick
+     border rather than a marker. */
+  .bpmn-call .bpmn-activity-rect {
+    stroke-width: 3.4px;
   }
 
   /* ----- Pools and lanes ---------------------------------------------------- */

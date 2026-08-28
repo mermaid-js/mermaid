@@ -24,6 +24,9 @@ const EVENT_SHAPES: Record<string, BpmnShape> = {
   intermediate: 'bpmn-intermediate',
   boundary: 'bpmn-boundary',
   end: 'bpmn-end',
+  // A throwing intermediate event carries the same double ring as a catching one; what
+  // separates them is that its marker is filled.
+  throw: 'bpmn-intermediate',
 };
 
 /** The glyph that says which kind of gateway a diamond is. */
@@ -143,7 +146,13 @@ export class BpmnDb {
             ? { anchorTo: { hostId: parsed.parentId } }
             : {}),
         },
-        cssClasses: `bpmn-${parsed.kind}`,
+        cssClasses: [
+          `bpmn-${parsed.kind}`,
+          // An end event and a throwing intermediate both create a result, so their
+          // markers fill; everything else catches and stays an outline.
+          ...(parsed.keyword === 'end' || parsed.keyword === 'throw' ? ['bpmn-throw'] : []),
+          ...(parsed.keyword === 'call' ? ['bpmn-call'] : []),
+        ].join(' '),
         cssStyles: [],
         padding: 20,
         look,

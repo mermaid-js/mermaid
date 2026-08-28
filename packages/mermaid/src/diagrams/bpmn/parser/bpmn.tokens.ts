@@ -83,9 +83,13 @@ export const Start = keyword('Start', 'start');
 export const Intermediate = keyword('Intermediate', 'intermediate');
 export const Boundary = keyword('Boundary', 'boundary');
 export const End = keyword('End', 'end');
+/** A throwing intermediate event. `intermediate` is the catching one. */
+export const Throw = keyword('Throw', 'throw');
 
 export const Task = keyword('Task', 'task');
 export const Subprocess = keyword('Subprocess', 'subprocess');
+/** A call activity: an activity that invokes a process defined elsewhere. */
+export const Call = keyword('Call', 'call');
 
 export const EventGateway = keyword('EventGateway', 'event-gateway');
 export const Xor = keyword('Xor', 'xor');
@@ -144,8 +148,10 @@ export const bpmnTokens: TokenType[] = [
   Intermediate,
   Boundary,
   End,
+  Throw,
   Subprocess,
   Task,
+  Call,
   EventGateway,
   Xor,
   And,

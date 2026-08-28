@@ -161,6 +161,37 @@ describe('bpmnDb', () => {
     });
   });
 
+  // BPMN 2.0.2 draws a caught trigger unfilled and a thrown one filled. The two that
+  // throw are an end event and a throwing intermediate, which share nothing else, so
+  // the db marks them rather than the shape inferring it from a ring weight.
+  describe('catch and throw', () => {
+    it.each([
+      ['start message x "X"', false],
+      ['intermediate message x "X"', false],
+      ['boundary error x "X"', false],
+      ['end message x "X"', true],
+      ['throw compensation x "X"', true],
+    ])('marks %s as throwing: %s', (statement, throws) => {
+      const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    ${statement}`);
+      expect(nodeById(nodes, 'x').cssClasses?.includes('bpmn-throw')).toBe(throws);
+    });
+
+    it('gives a throwing intermediate the same double ring as a catching one', () => {
+      const { nodes } = build(
+        'bpmn-beta LR\n  lane "L"\n    intermediate message a "A"\n    throw message b "B"'
+      );
+      expect(nodeById(nodes, 'a').shape).toBe('bpmn-intermediate');
+      expect(nodeById(nodes, 'b').shape).toBe('bpmn-intermediate');
+    });
+  });
+
+  it('draws a call activity with its own class, since it is marked by a thick border', () => {
+    const { nodes } = build('bpmn-beta LR\n  lane "L"\n    call c "Check credit"');
+    const node = nodeById(nodes, 'c');
+    expect(node.shape).toBe('bpmn-activity');
+    expect(node.cssClasses).toContain('bpmn-call');
+  });
+
   it('anchors a boundary event to the activity it interrupts', () => {
     const { nodes } = build(
       'bpmn-beta LR\n  lane "L"\n    user task t "T"\n      boundary timer b "2 days"'

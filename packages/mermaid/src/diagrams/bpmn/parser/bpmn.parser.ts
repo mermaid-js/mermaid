@@ -48,6 +48,7 @@ class BpmnParser extends CstParser {
       { ALT: () => this.CONSUME(t.Intermediate) },
       { ALT: () => this.CONSUME(t.Boundary) },
       { ALT: () => this.CONSUME(t.End) },
+      { ALT: () => this.CONSUME(t.Throw) },
     ]);
     this.OPTION(() => this.CONSUME(t.Trigger));
     this.SUBRULE(this.nameAndLabel);
@@ -66,7 +67,11 @@ class BpmnParser extends CstParser {
 
   private activity = this.RULE('activity', () => {
     this.OPTION(() => this.CONSUME(t.TaskType));
-    this.OR([{ ALT: () => this.CONSUME(t.Task) }, { ALT: () => this.CONSUME(t.Subprocess) }]);
+    this.OR([
+      { ALT: () => this.CONSUME(t.Task) },
+      { ALT: () => this.CONSUME(t.Subprocess) },
+      { ALT: () => this.CONSUME(t.Call) },
+    ]);
     this.SUBRULE(this.nameAndLabel);
   });
 
@@ -194,8 +199,9 @@ class BpmnVisitor extends BpmnBaseVisitor {
 
   public event(ctx: Record<string, CstNode[] | IToken[]>): ParsedNode {
     const keyword =
-      ['Start', 'Intermediate', 'Boundary', 'End'].find((name) => ctx[name])?.toLowerCase() ??
-      'start';
+      ['Start', 'Intermediate', 'Boundary', 'End', 'Throw']
+        .find((name) => ctx[name])
+        ?.toLowerCase() ?? 'start';
     const node = this.element(ctx, 'event', keyword);
     node.qualifier = imageOf((ctx.Trigger as IToken[] | undefined)?.[0]) || undefined;
     return node;
@@ -214,7 +220,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
   }
 
   public activity(ctx: Record<string, CstNode[] | IToken[]>): ParsedNode {
-    const keyword = ctx.Subprocess ? 'subprocess' : 'task';
+    const keyword = ctx.Subprocess ? 'subprocess' : ctx.Call ? 'call' : 'task';
     const node = this.element(ctx, 'activity', keyword);
     node.qualifier = imageOf((ctx.TaskType as IToken[] | undefined)?.[0]) || undefined;
     return node;
