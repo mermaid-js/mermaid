@@ -54,6 +54,11 @@ export type {
   CommonLayoutRenderContext,
   CommonLayoutRendererDefinition,
 } from './rendering-util/layout-algorithms/common/index.js';
+// Exported for layout packages that live outside this one: an `afterPaint`
+// hook is the only place line hops can be applied, and an external layout
+// cannot reach into `rendering-util` the way the built-in ones do.
+export { applyLineJumpsToSvg } from './rendering-util/rendering-elements/lineJump.js';
+export type { EdgeGeom, LineJumpConfig } from './rendering-util/rendering-elements/lineJump.js';
 
 export interface RunOptions {
   /**
