@@ -16,6 +16,23 @@ const ACTOR_MAN_FIGURE_CLASS = 'actor-man';
 
 /** Exact set of themes that use color arrays for actor styling */
 const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+
+/**
+ * Pick a colour for the nth actor from a palette, cycling within that palette's own
+ * length.
+ *
+ * Every call site used to index `bkgColorArray` by `borderColorArray.length` -- one array
+ * by the other's length. That is invisible while both ship twelve entries, and wrong the
+ * moment they differ: a shorter background palette leaves the overflow actors with
+ * `undefined`, so d3 strips the inline fill for some actors and not others.
+ *
+ * `undefined` for an absent or empty palette is deliberate rather than a fallback colour.
+ * `selection.style(name, undefined)` takes d3's remove path, which lets the stylesheet
+ * decide -- and that is exactly what `redux-dark-color` relies on, shipping a border
+ * palette and an empty background palette so that actors are outlined but not filled.
+ */
+export const paletteColor = (palette, index) =>
+  palette?.length ? palette[index % palette.length] : undefined;
 export const drawRect = function (elem, rectData) {
   const rectElement = svgDrawCommon.drawRect(elem, rectData);
   // Call getConfig() here (not at module level) so multi-diagram pages get fresh config
@@ -405,8 +422,8 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    rectElem.style('stroke', paletteColor(borderColorArray, actorCount));
+    rectElem.style('fill', paletteColor(bkgColorArray, actorCount));
   }
   if (look === 'neo') {
     rectElem.attr('filter', 'url(#drop-shadow)');
@@ -536,10 +553,10 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
-    stackedRect.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    stackedRect.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    rectElem.style('stroke', paletteColor(borderColorArray, actorCount));
+    rectElem.style('fill', paletteColor(bkgColorArray, actorCount));
+    stackedRect.style('stroke', paletteColor(borderColorArray, actorCount));
+    stackedRect.style('fill', paletteColor(bkgColorArray, actorCount));
   }
 
   if (actor.properties?.icon) {
@@ -671,10 +688,10 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap)
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    cylinderGroup.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    cylinderGroup.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
-    cylinderArc.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    cylinderArc.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    cylinderGroup.style('stroke', paletteColor(borderColorArray, actorCount));
+    cylinderGroup.style('fill', paletteColor(bkgColorArray, actorCount));
+    cylinderArc.style('stroke', paletteColor(borderColorArray, actorCount));
+    cylinderArc.style('fill', paletteColor(bkgColorArray, actorCount));
   }
 
   if (actor.properties?.icon) {
@@ -794,8 +811,8 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    actElem.style('stroke', paletteColor(borderColorArray, actorCount));
+    actElem.style('fill', paletteColor(bkgColorArray, actorCount));
   } else {
     actElem.style('stroke', actorBorder);
     actElem.style('fill', actorBkg);
@@ -876,8 +893,8 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    actElem.style('stroke', paletteColor(borderColorArray, actorCount));
+    actElem.style('fill', paletteColor(bkgColorArray, actorCount));
   }
 
   const bounds = actElem.node().getBBox();
@@ -1013,8 +1030,8 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexM
   }
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    cylinderGroup.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    cylinderGroup.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    cylinderGroup.style('stroke', paletteColor(borderColorArray, actorCount));
+    cylinderGroup.style('fill', paletteColor(bkgColorArray, actorCount));
   } else {
     cylinderGroup.style('stroke', actorBorder);
   }
@@ -1121,8 +1138,8 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, actorIndexM
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    actElem.style('stroke', paletteColor(borderColorArray, actorCount));
+    actElem.style('fill', paletteColor(bkgColorArray, actorCount));
   } else {
     actElem.style('stroke', actorBorder);
   }
@@ -1250,8 +1267,8 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    actElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    actElem.style('fill', bkgColorArray[actorCount % borderColorArray.length]);
+    actElem.style('stroke', paletteColor(borderColorArray, actorCount));
+    actElem.style('fill', paletteColor(bkgColorArray, actorCount));
   } else {
     actElem.style('stroke', actorBorder);
   }
@@ -1372,8 +1389,8 @@ export const drawActivation = function (
     );
   const actorCount = resolvedActorIndexMap.get(actor) ?? 0;
   if (COLOR_THEMES.has(theme)) {
-    rectElem.style('stroke', borderColorArray[actorCount % borderColorArray.length]);
-    rectElem.style('fill', bkgColorArray[actorCount % borderColorArray.length] ?? mainBkg);
+    rectElem.style('stroke', paletteColor(borderColorArray, actorCount));
+    rectElem.style('fill', paletteColor(bkgColorArray, actorCount) ?? mainBkg);
   }
 };
 
