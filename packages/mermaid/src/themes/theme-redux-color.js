@@ -151,13 +151,6 @@ class Theme {
     const primaryColor = '#ECECFE';
     const secondaryColor = '#E9E9F1';
     const tertiaryColor = adjust(primaryColor, { h: 180, l: 5 });
-    // Section bands are painted at 20% opacity (gantt/styles.js `.section`), so the
-    // source colour has to be saturated to read at all -- the `primaryColor` tints this
-    // used before gave no banding. Literals rather than `cScale0`/`cScale1` because the
-    // categorical scale is not assigned until further down updateColors().
-    this.sectionBkgColor = this.sectionBkgColor || '#f4a8ff'; // Fuchsia-300
-    this.altSectionBkgColor = this.altSectionBkgColor || 'white';
-    this.sectionBkgColor2 = this.sectionBkgColor2 || '#46ecd5'; // Teal-300
     this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
     this.taskBkgColor = this.taskBkgColor || primaryColor;
@@ -191,14 +184,12 @@ class Theme {
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     /* The color of the text tables of the states*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
-    this.compositeTitleBackground = '#F9F9FB';
-    this.altBackground = '#F9F9FB';
-    this.stateEdgeLabelBackground = '#FFFFFF';
+    this.stateEdgeLabelBackground = this.stateEdgeLabelBackground || '#FFFFFF';
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || '#f0f0f0';
-    this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+    this.altBackground = this.altBackground || '#F9F9FB';
+    this.compositeTitleBackground = this.compositeTitleBackground || '#F9F9FB';
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
@@ -231,6 +222,22 @@ class Theme {
     //     this['cScale' + i] = darken(this['cScale' + i], 25);
     //   }
     // }
+
+    /* Gantt chart section banding.
+     *
+     * gantt/styles.js cycles four band classes: .section0 -> sectionBkgColor,
+     * .section1 and .section3 -> altSectionBkgColor, .section2 -> sectionBkgColor2. All
+     * are painted at 20% opacity, so the source colour has to be saturated to read at
+     * all -- the `primaryColor` tints used before composited to nothing.
+     *
+     * Assigned here rather than in the gantt block above so the two visible bands come
+     * off the categorical scale and follow it if the palette changes. altSectionBkgColor
+     * stays the canvas colour so every other band reads as absent, which is the same
+     * alternation `default` uses.
+     */
+    this.sectionBkgColor = this.sectionBkgColor || this.cScale0;
+    this.sectionBkgColor2 = this.sectionBkgColor2 || this.cScale1;
+    this.altSectionBkgColor = this.altSectionBkgColor || this.background;
 
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
@@ -266,9 +273,12 @@ class Theme {
     this.classText = this.classText || this.textColor;
 
     /* user-journey */
-    // Journey task labels are hardcoded to #333 in user-journey/styles.js, so these
-    // fills must stay light. The pale background array keeps them hue-distinct where
-    // the old tints of `primaryColor` were eight shades of the same lavender.
+    // Journey task labels resolve to the theme's `textColor` (#28253D here), so these
+    // fills have to stay light. user-journey/styles.js also carries a hardcoded
+    // `.label text { fill: #333 }` rule, but it does not win -- confirmed against the
+    // rendered DOM, not read off the stylesheet. The pale background array keeps the
+    // fills hue-distinct where the old tints of `primaryColor` were eight shades of the
+    // same lavender.
     for (let i = 0; i < 8; i++) {
       this['fillType' + i] = this['fillType' + i] || this.bkgColorArray[i];
     }

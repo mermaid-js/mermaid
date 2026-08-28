@@ -1,7 +1,8 @@
 /**
  * `redux-color` / `redux-dark-color` are the colour-carrying siblings of `redux` /
- * `redux-dark`: they add `borderColorArray`, `bkgColorArray` and a real categorical
- * palette on top of the same geometry and typography.
+ * `redux-dark`: they add `borderColorArray` and a real categorical palette on top of the
+ * same geometry and typography. Only the light theme adds `bkgColorArray` -- see the
+ * array test below for why the dark one deliberately does not.
  *
  * They were forked by copy-paste, so they had drifted: seven variables `redux`
  * defines were either missing (`stateEdgeLabelBackground`,
@@ -43,12 +44,36 @@ const PALETTE_VARS = new Set([
   // Gantt section banding.
   'sectionBkgColor',
   'sectionBkgColor2',
+  // The third gantt band. Both base themes set it to 'white', which is right on a white
+  // canvas -- at the 20% opacity gantt paints bands with, it composites to nothing, so
+  // every other band reads as absent. On the dark canvas the same literal composites to
+  // rgb(92,92,92), a grey brighter than either tuned hue, so half of every gantt's
+  // banding fought the other half. Both colour themes now use the canvas colour, which
+  // gives the intended "absent" band in either mode.
+  'altSectionBkgColor',
 ]);
 
 const PAIRS = [
   ['redux', 'redux-color'],
   ['redux-dark', 'redux-dark-color'],
 ] as const;
+
+/**
+ * How many `bkgColorArray` entries each colour theme ships. The asymmetry is deliberate,
+ * not leftover drift: `bkgColorArray` is what gates *fills* in `er/styles.ts`,
+ * `requirement/styles.js` and `sequence/svgDraw.js`, and the dark theme intentionally
+ * colours only borders there, leaving box interiors on the dark canvas. Populating it
+ * would silently repaint ER entities, requirement boxes and sequence actors.
+ *
+ * It is asserted per theme rather than left unchecked so that the difference stays a
+ * recorded decision. An earlier version of this spec checked only `borderColorArray`,
+ * which meant the one asymmetry between the two themes passed the very test written to
+ * catch drift between them.
+ */
+const EXPECTED_BKG_COLORS: Record<string, number> = {
+  'redux-color': 12,
+  'redux-dark-color': 0,
+};
 
 describe.each(PAIRS)('%s -> %s', (baseName, colorName) => {
   const base = themes[baseName].getThemeVariables({}) as unknown as Record<string, unknown>;
@@ -73,7 +98,9 @@ describe.each(PAIRS)('%s -> %s', (baseName, colorName) => {
 
   it(`${colorName} provides the colour arrays ${baseName} does not`, () => {
     expect(base.borderColorArray).toBeUndefined();
+    expect(base.bkgColorArray).toBeUndefined();
     expect(color.borderColorArray).toHaveLength(12);
+    expect(color.bkgColorArray).toHaveLength(EXPECTED_BKG_COLORS[colorName]);
   });
 });
 

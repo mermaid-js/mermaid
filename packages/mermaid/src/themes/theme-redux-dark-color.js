@@ -156,13 +156,6 @@ class Theme {
 
     /* Gantt chart variables */
 
-    // Section bands are painted at 20% opacity (gantt/styles.js `.section`), so the
-    // source colour has to be saturated to read at all -- the `primaryColor` tints this
-    // used before gave no banding. Literals rather than `cScale0`/`cScale1` because the
-    // categorical scale is not assigned until further down updateColors().
-    this.sectionBkgColor = this.sectionBkgColor || '#f4a8ff'; // Fuchsia-300
-    this.altSectionBkgColor = this.altSectionBkgColor || 'white';
-    this.sectionBkgColor2 = this.sectionBkgColor2 || '#46ecd5'; // Teal-300
     this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
     this.taskBkgColor = this.taskBkgColor || this.primaryColor;
@@ -196,15 +189,12 @@ class Theme {
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     /* The color of the text tables of the states*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
-    this.compositeBackground = '#16141F';
-    this.altBackground = '#16141F';
-    this.compositeTitleBackground = '#16141F';
-    this.stateEdgeLabelBackground = '#16141F';
+    this.stateEdgeLabelBackground = this.stateEdgeLabelBackground || '#16141F';
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
-    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || '#f0f0f0';
-    this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+    this.compositeBackground = this.compositeBackground || '#16141F';
+    this.altBackground = this.altBackground || '#16141F';
+    this.compositeTitleBackground = this.compositeTitleBackground || '#16141F';
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
@@ -236,6 +226,25 @@ class Theme {
     //     this['cScale' + i] = darken(this['cScale' + i], 25);
     //   }
     // }
+
+    /* Gantt chart section banding.
+     *
+     * gantt/styles.js cycles four band classes: .section0 -> sectionBkgColor,
+     * .section1 and .section3 -> altSectionBkgColor, .section2 -> sectionBkgColor2. All
+     * are painted at 20% opacity, so the source colour has to be saturated to read at
+     * all -- the `primaryColor` tints used before composited to nothing.
+     *
+     * Assigned here rather than in the gantt block above so the two visible bands come
+     * off the categorical scale and follow it if the palette changes.
+     *
+     * altSectionBkgColor is the canvas colour, not the inherited 'white': at 20% over
+     * the #333 canvas white composites to rgb(92,92,92), a grey brighter than both tuned
+     * hues, so half of every gantt's banding fought the other half. The canvas colour
+     * makes those bands read as absent instead, matching the light theme.
+     */
+    this.sectionBkgColor = this.sectionBkgColor || this.cScale0;
+    this.sectionBkgColor2 = this.sectionBkgColor2 || this.cScale1;
+    this.altSectionBkgColor = this.altSectionBkgColor || this.background;
 
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
