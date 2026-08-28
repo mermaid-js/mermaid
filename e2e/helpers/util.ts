@@ -22,12 +22,6 @@ interface E2EConfig {
   screenshotPath?: string;
   /** Fail when mermaid renders its syntax-error diagram instead of the requested type. Default true. */
   rejectErrorDiagram?: boolean;
-  /**
-   * Skip the dagre baseline pin and let the diagram choose its own layout.
-   * Needed by diagrams that select ELK through their *syntax* — see
-   * {@link E2E_BASELINE_LAYOUT}.
-   */
-  useDiagramLayout?: boolean;
 }
 type E2EMermaidConfig = MermaidConfig & E2EConfig;
 
@@ -56,57 +50,12 @@ const shortenScreenshotName = (name: string, maxLen = 180): string => {
   return `${sanitized.slice(0, maxLen - 9)}-${hash}`;
 };
 
-/**
- * Layout the visual suite's screenshots were originally captured against.
- *
- * ELK is mermaid's default layout now, so without a pin every existing
- * screenshot in the suite would move at once. Pinning here rather than at the
- * ~1600 individual call sites keeps those baselines meaningful; specs that
- * exercise ELK opt in with `layout: 'elk'`, and there are dedicated ELK suites.
- *
- * Two ways a diagram picks its own layout, and how each interacts with this:
- * - Frontmatter `config.layout` is a directive, which already outranks this
- *   site-level value, so those diagrams need nothing.
- * - The diagram type itself picks one, which `flowDiagram.init` ranks BELOW a
- *   user-supplied layout — so pinning would silently override it. Those are
- *   detected by {@link selectsOwnLayout} and left unpinned.
- */
-const E2E_BASELINE_LAYOUT = 'dagre';
-
-/**
- * Diagram syntaxes that select their own layout, which the baseline pin must
- * not override.
- *
- * Two routes, both resolved in `flowDiagram.init` below a user-supplied layout:
- * the ELK detector (`flowchart-elk` / `graph-elk`), and a diagram definition's
- * own `defaultLayout` (`swimlane-beta`, via `createFlowDiagram`).
- *
- * Detected from the diagram source rather than left to each spec to remember,
- * because getting it wrong does not fail loudly — a swimlanes diagram pinned to
- * dagre still renders, just without its lanes, which in a screenshot-only test
- * means a silently wrong baseline.
- *
- * Deliberately does NOT cover `flowchart.defaultRenderer: 'elk'`: only
- * `flowDiagram.init` promotes that into the real config, so on the class/er/
- * mindmap fixtures that carry it the setting is inert and they must stay
- * pinned. Those few flowcharts that need it pass `useDiagramLayout` instead.
- */
-const SELF_SELECTED_LAYOUT_RE = /^\s*(?:flowchart-elk|graph-elk|swimlane-beta)\b/m;
-
-const selectsOwnLayout = (graphStr: string | string[]): boolean =>
-  (Array.isArray(graphStr) ? graphStr : [graphStr]).some((graph) =>
-    SELF_SELECTED_LAYOUT_RE.test(graph)
-  );
-
 export const mermaidUrl = (
   graphStr: string | string[],
   options: E2EMermaidConfig,
   api: boolean
 ): string => {
   options.handDrawnSeed = 1;
-  if (!options.useDiagramLayout && !selectsOwnLayout(graphStr)) {
-    options.layout ??= E2E_BASELINE_LAYOUT;
-  }
   options.architecture = { seed: 1, ...(options.architecture ?? {}) };
   options.cynefin = { seed: 1, ...(options.cynefin ?? {}) };
   const codeObject: CodeObject = {

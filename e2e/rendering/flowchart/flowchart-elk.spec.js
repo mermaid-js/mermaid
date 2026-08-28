@@ -25,7 +25,7 @@ test.describe('Flowchart ELK', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { defaultRenderer: 'elk' }, useDiagramLayout: true }
+      { flowchart: { defaultRenderer: 'elk' } }
     );
   });
 
