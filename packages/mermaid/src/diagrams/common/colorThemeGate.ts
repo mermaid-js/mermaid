@@ -20,6 +20,12 @@ export const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
 export const DEFAULT_COLOR_SLOTS = 12;
 
 /**
+ * Upper bound on slots. Every shipped palette has 12 entries, so this is generous -- it
+ * exists to bound the loop, not to express a design limit. See `colorSlotCount`.
+ */
+export const MAX_COLOR_SLOTS = 64;
+
+/**
  * A palette array is usable only if it is genuinely a non-empty array. A truthy `.length`
  * check passes for a plain string too, which would yield a per-character "palette" and
  * declarations like `stroke: r;`.
@@ -50,22 +56,34 @@ export const safeLook = (look: string | undefined): string =>
 /**
  * Number of palette slots a stylesheet should emit.
  *
- * A missing or non-numeric `THEME_COLOR_LIMIT` floors to the default. Beyond that, the
- * count must cover every slot `stampColorSlot` can actually assign, which is
- * `palette.length` -- it wraps there, not at the limit. A palette longer than the limit
- * would otherwise have its tail stamped as `color-N` with no rule emitted for it, and
- * those items would render uncoloured beside their neighbours. Both shipped colour themes
- * carry exactly `THEME_COLOR_LIMIT` entries, so this only bites a `themeVariables`
- * override -- but the two counts agreeing today is what hid it.
+ * A missing, non-integer, non-positive or absurdly large `THEME_COLOR_LIMIT` falls back to
+ * the default. The stylesheets use the result directly as a `for` bound, so it has to be a
+ * value a loop can finish on: `typeof x === 'number' && x > 0` was not, because `Infinity`
+ * satisfies both. That is reachable from diagram text rather than only site config --
+ * `THEME_COLOR_LIMIT: .inf` in front matter parses to `Infinity` under the `JSON_SCHEMA`
+ * mermaid loads YAML with -- and a large finite value such as `1e9` wedges generation just
+ * as effectively.
+ *
+ * Beyond that, the count must cover every slot `stampColorSlot` can actually assign, which
+ * is `palette.length` -- it wraps there, not at the limit. A palette longer than the limit
+ * would otherwise have its tail stamped as `color-N` with no rule emitted for it, and those
+ * items would render uncoloured beside their neighbours. Both shipped colour themes carry
+ * exactly `THEME_COLOR_LIMIT` entries, so that only bites a `themeVariables` override --
+ * but the two counts agreeing today is what hid it.
  *
  * Passing no palette keeps the plain limit, for callers that emit slots without stamping.
  */
 export const colorSlotCount = (themeColorLimit: unknown, palette?: unknown): number => {
   const limit =
-    typeof themeColorLimit === 'number' && themeColorLimit > 0
+    typeof themeColorLimit === 'number' &&
+    Number.isInteger(themeColorLimit) &&
+    themeColorLimit > 0 &&
+    themeColorLimit <= MAX_COLOR_SLOTS
       ? themeColorLimit
       : DEFAULT_COLOR_SLOTS;
-  return hasPalette(palette) ? Math.max(limit, palette.length) : limit;
+  // A real palette is inherently bounded, but cap anyway so no single input can make the
+  // bound unusable.
+  return hasPalette(palette) ? Math.min(Math.max(limit, palette.length), MAX_COLOR_SLOTS) : limit;
 };
 
 /**

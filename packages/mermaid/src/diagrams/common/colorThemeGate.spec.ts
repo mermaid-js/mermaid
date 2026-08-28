@@ -11,7 +11,13 @@ import { describe, expect, it } from 'vitest';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
-import { COLOR_THEMES, colorSlotCount, safeLook } from './colorThemeGate.js';
+import {
+  COLOR_THEMES,
+  DEFAULT_COLOR_SLOTS,
+  MAX_COLOR_SLOTS,
+  colorSlotCount,
+  safeLook,
+} from './colorThemeGate.js';
 
 const STYLESHEETS = {
   class: classStyles,
@@ -173,3 +179,37 @@ describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])(
     });
   }
 );
+
+/**
+ * Whatever the limit, the result is used directly as a `for` bound, so it has to be a value
+ * a loop can finish on. `Infinity` is reachable from diagram text:
+ * `THEME_COLOR_LIMIT: .inf` in front matter parses to it under the `JSON_SCHEMA` mermaid
+ * loads YAML with, and a large finite value such as `1e9` wedges generation just as
+ * effectively.
+ */
+describe('colorSlotCount stays a usable loop bound', () => {
+  it.each([
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['-Infinity', Number.NEGATIVE_INFINITY],
+    ['NaN', Number.NaN],
+    ['a huge integer', 1e9],
+    ['a fraction', 12.5],
+    ['a negative', -1],
+  ])('falls back to the default for %s', (_label, value) => {
+    expect(colorSlotCount(value)).toBe(DEFAULT_COLOR_SLOTS);
+  });
+
+  it('caps the palette-covering path too', () => {
+    const huge = Array.from({ length: MAX_COLOR_SLOTS + 50 }, () => '#000');
+    expect(colorSlotCount(12, huge)).toBe(MAX_COLOR_SLOTS);
+  });
+
+  it('always yields a finite positive integer within the cap', () => {
+    for (const value of [Number.POSITIVE_INFINITY, 1e9, Number.NaN, -1, 12.5, 'x', {}]) {
+      const bound = colorSlotCount(value);
+      expect(Number.isInteger(bound)).toBe(true);
+      expect(bound).toBeGreaterThan(0);
+      expect(bound).toBeLessThanOrEqual(MAX_COLOR_SLOTS);
+    }
+  });
+});
