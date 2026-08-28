@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
-import { COLOR_THEMES, safeLook } from './colorThemeGate.js';
+import { COLOR_THEMES, colorSlotCount, safeLook } from './colorThemeGate.js';
 
 const STYLESHEETS = {
   class: classStyles,
@@ -27,14 +27,24 @@ const COLOUR_THEMES = [...COLOR_THEMES];
  */
 const PLAIN_THEMES = Object.keys(themes).filter((name) => !COLOR_THEMES.has(name));
 
-const render = (name: keyof typeof STYLESHEETS, themeName: string, look = 'classic') => {
+const render = (
+  name: keyof typeof STYLESHEETS,
+  themeName: string,
+  look = 'classic',
+  overrides: Record<string, unknown> = {}
+) => {
   const themeVariables = themes[themeName as keyof typeof themes].getThemeVariables({});
   return STYLESHEETS[name]({
     ...(themeVariables as unknown as Record<string, unknown>),
     theme: themeName,
     look,
+    ...overrides,
   } as never);
 };
+
+/** The distinct `color-N` slots a stylesheet emits rules for. */
+const emittedSlots = (css: string): Set<number> =>
+  new Set([...css.matchAll(/data-color-id="color-(\d+)"/g)].map((m) => Number(m[1])));
 
 it('covers every registered theme between the two lists', () => {
   expect([...PLAIN_THEMES, ...COLOUR_THEMES].sort()).toEqual(Object.keys(themes).sort());
@@ -99,3 +109,67 @@ describe('safeLook', () => {
     expect(safeLook(undefined)).toBe('classic');
   });
 });
+
+/**
+ * `stampColorSlot` wraps at `palette.length`; the stylesheets emit one rule per slot up to
+ * `colorSlotCount`. Those two counts have to agree, or an item gets stamped `color-N` with
+ * no rule emitted for it and renders uncoloured beside its neighbours.
+ *
+ * Both shipped colour themes carry exactly `THEME_COLOR_LIMIT` entries, so they agree by
+ * coincidence -- which is what hid this. A `themeVariables` override with a longer palette
+ * is where they come apart.
+ */
+describe('colorSlotCount', () => {
+  it('floors a missing or non-numeric limit to the default', () => {
+    expect(colorSlotCount(undefined)).toBe(12);
+    expect(colorSlotCount('12')).toBe(12);
+    expect(colorSlotCount(0)).toBe(12);
+  });
+
+  it('covers the palette when it is longer than the limit', () => {
+    expect(
+      colorSlotCount(
+        3,
+        Array.from({ length: 20 }, () => '#000')
+      )
+    ).toBe(20);
+  });
+
+  it('keeps the limit when the palette is shorter, so the cycle still repeats', () => {
+    expect(colorSlotCount(12, ['#a', '#b'])).toBe(12);
+  });
+
+  it('keeps the plain limit when given no palette', () => {
+    expect(colorSlotCount(7)).toBe(7);
+  });
+});
+
+describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])(
+  '%s stylesheet slot coverage',
+  (name) => {
+    it('emits a rule for every slot a palette longer than THEME_COLOR_LIMIT can stamp', () => {
+      const palette = Array.from({ length: 20 }, (_, i) => `#${(i + 16).toString(16)}0000`);
+      const slots = emittedSlots(
+        render(name, 'redux-color', 'classic', {
+          THEME_COLOR_LIMIT: 3,
+          borderColorArray: palette,
+          bkgColorArray: palette,
+        })
+      );
+      // Named rather than counted, so a failure says which slots lost their rule.
+      const missing = [...palette.keys()].filter((i) => !slots.has(i));
+      expect(missing).toEqual([]);
+    });
+
+    it('still emits the full limit for a palette shorter than it', () => {
+      const slots = emittedSlots(
+        render(name, 'redux-color', 'classic', {
+          THEME_COLOR_LIMIT: 12,
+          borderColorArray: ['#ff0000', '#00ff00'],
+          bkgColorArray: ['#ffeeee', '#eeffee'],
+        })
+      );
+      expect(slots.size).toBe(12);
+    });
+  }
+);

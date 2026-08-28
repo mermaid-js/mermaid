@@ -48,15 +48,25 @@ export const safeLook = (look: string | undefined): string =>
   look != null && SAFE_LOOK.test(look) ? look : 'classic';
 
 /**
- * Number of palette slots a stylesheet should emit. This only floors a missing or
- * non-numeric `THEME_COLOR_LIMIT` to the default -- it never sees a palette, so it cannot
- * clamp to one. Keeping a slot from resolving to `undefined` is `stampColorSlot`'s job,
- * via the `% palette.length` wrap, and each stylesheet's own wrap when it indexes directly.
+ * Number of palette slots a stylesheet should emit.
+ *
+ * A missing or non-numeric `THEME_COLOR_LIMIT` floors to the default. Beyond that, the
+ * count must cover every slot `stampColorSlot` can actually assign, which is
+ * `palette.length` -- it wraps there, not at the limit. A palette longer than the limit
+ * would otherwise have its tail stamped as `color-N` with no rule emitted for it, and
+ * those items would render uncoloured beside their neighbours. Both shipped colour themes
+ * carry exactly `THEME_COLOR_LIMIT` entries, so this only bites a `themeVariables`
+ * override -- but the two counts agreeing today is what hid it.
+ *
+ * Passing no palette keeps the plain limit, for callers that emit slots without stamping.
  */
-export const colorSlotCount = (themeColorLimit: unknown): number =>
-  typeof themeColorLimit === 'number' && themeColorLimit > 0
-    ? themeColorLimit
-    : DEFAULT_COLOR_SLOTS;
+export const colorSlotCount = (themeColorLimit: unknown, palette?: unknown): number => {
+  const limit =
+    typeof themeColorLimit === 'number' && themeColorLimit > 0
+      ? themeColorLimit
+      : DEFAULT_COLOR_SLOTS;
+  return hasPalette(palette) ? Math.max(limit, palette.length) : limit;
+};
 
 /**
  * Stamp the element with its palette slot, so the diagram's `[data-color-id]` rules can

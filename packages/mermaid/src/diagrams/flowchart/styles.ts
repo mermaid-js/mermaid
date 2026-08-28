@@ -51,7 +51,7 @@ const genColor = (options: FlowChartStyleOptions) => {
   const hasBkgColors = hasPalette(bkgColorArray);
   let sections = '';
 
-  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
     const borderColor = borderColorArray![i % borderColorArray!.length];
     const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
