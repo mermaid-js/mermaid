@@ -13,6 +13,7 @@
 
 import type { LayoutData, Node as MermaidNode } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
+import { collectAnchoredIds } from '../anchoredNodes.js';
 import { PRECISION } from '../config.js';
 
 const EPS = PRECISION.EPSILON;
@@ -193,8 +194,14 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     // TB x becomes LR y, so the visual Y extent should use height, not width
     visualXHalfExtent: number;
   }
+  // An anchored node is drawn on its host's silhouette, so making it an obstacle in its
+  // own right would push routes around an area the host already covers. It stays a
+  // routable endpoint; only its obstacle rect is dropped.
+  const anchoredIds = collectAnchoredIds(nodes);
   const obstacles: ObstacleRect[] = nodes
-    .filter((n) => !n.isGroup && !(n as { isEdgeLabel?: boolean }).isEdgeLabel)
+    .filter(
+      (n) => !n.isGroup && !(n as { isEdgeLabel?: boolean }).isEdgeLabel && !anchoredIds.has(n.id)
+    )
     .map((n) => {
       const w = n.width ?? 10;
       const h = n.height ?? 10;

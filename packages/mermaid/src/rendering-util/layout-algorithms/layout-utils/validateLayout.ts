@@ -8,6 +8,7 @@ import {
   segmentIntersectsRectInterior,
 } from './helpers.js';
 import type { Point, Rect } from './types.js';
+import { readAnchor } from '../swimlanes/anchoredNodes.js';
 
 type PortSide = 'N' | 'E' | 'S' | 'W';
 import { EPS, normalizePolyline, distance, segmentsCross } from './geometry.js';
@@ -677,6 +678,12 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       const aContainsB = aNode.isGroup && isAncestorGroup(aId, bNode, byId);
       const bContainsA = bNode.isGroup && isAncestorGroup(bId, aNode, byId);
       if (aContainsB || bContainsA) {
+        continue;
+      }
+
+      // An anchored node's centre sits on its host's border, so the two overlap by
+      // design rather than by a layout fault.
+      if (readAnchor(aNode)?.hostId === bId || readAnchor(bNode)?.hostId === aId) {
         continue;
       }
 
