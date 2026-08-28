@@ -10,21 +10,69 @@ function buildNodeMap(nodes: LayoutNode[]): Map<string, LayoutNode> {
   return new Map(nodes.map((node) => [node.id, node]));
 }
 
-function resolveTopLevelGroupId(
-  node: LayoutNode,
-  nodeById: Map<string, LayoutNode>
-): string | null {
-  let parentId = node.parentId;
-  let topLevelGroupId: string | null = null;
-  while (parentId) {
-    const parent = nodeById.get(parentId);
-    if (!parent?.isGroup) {
-      break;
-    }
-    topLevelGroupId = parent.id;
-    parentId = parent.parentId;
+/**
+ * Puts a frame around each pool's lanes, with the pool's own name band to their left.
+ *
+ * The lanes are already equal width and stacked without gaps, so the pool only has to
+ * enclose the run and shift it right to make room for its band. Every lane makes that
+ * room, pooled or not, so a diagram mixing the two keeps its lanes aligned.
+ *
+ * Anchored nodes are not shifted here: they are pinned again from their host's final
+ * geometry once this transform has run, so shifting them would be undone anyway.
+ */
+function framePoolsLr(
+  nodes: LayoutNode[],
+  laneModel: ReturnType<typeof buildLaneModel>,
+  laneLeft: number,
+  titleBandSize: number
+): void {
+  if (!laneModel.hasPools) {
+    return;
   }
-  return topLevelGroupId;
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const poolBand = titleBandSize;
+  const anchoredIds = collectAnchoredIds(nodes);
+
+  for (const node of nodes) {
+    if (laneModel.isLane(node.id) && typeof node.x === 'number') {
+      node.x += poolBand;
+      if (node.groupTitleRect) {
+        node.groupTitleRect.left += poolBand;
+        node.groupTitleRect.right += poolBand;
+      }
+    }
+  }
+  for (const node of nodes) {
+    if (
+      !laneModel.isLane(node.id) &&
+      !node.isGroup &&
+      !anchoredIds.has(node.id) &&
+      typeof node.x === 'number'
+    ) {
+      node.x += poolBand;
+    }
+  }
+
+  for (const [poolId, laneIds] of laneModel.lanesByPool) {
+    const pool = byId.get(poolId);
+    const lanes = laneIds
+      .map((id: string) => byId.get(id))
+      .filter((lane): lane is LayoutNode => Boolean(lane));
+    if (!pool || lanes.length === 0) {
+      continue;
+    }
+    const top = Math.min(...lanes.map((lane) => (lane.y ?? 0) - (lane.height ?? 0) / 2));
+    const bottom = Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2));
+    const right = Math.max(...lanes.map((lane) => (lane.x ?? 0) + (lane.width ?? 0) / 2));
+    const left = laneLeft;
+
+    pool.x = (left + right) / 2;
+    pool.width = right - left;
+    pool.y = (top + bottom) / 2;
+    pool.height = bottom - top;
+    pool.swimlaneContentTop = top;
+    pool.groupTitleRect = { left, right: left + poolBand, top, bottom };
+  }
 }
 
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
@@ -224,14 +272,15 @@ export function applyLrDirectionTransform(
     return true;
   }
 
-  const nodeById = buildNodeMap(nodes);
   const childrenByLane = new Map<string, LayoutNode[]>();
 
   for (const n of nodes) {
     if (n.isGroup || anchoredIds.has(n.id)) {
       continue;
     }
-    const laneId = resolveTopLevelGroupId(n, nodeById);
+    // The lane model, not resolveTopLevelGroupId: with a pool the outermost group is the
+    // pool, so bucketing by it would leave every lane looking empty.
+    const laneId = laneModel.laneIdOf(n.id);
     if (!laneId) {
       continue;
     }
@@ -324,6 +373,8 @@ export function applyLrDirectionTransform(
       bottom: laneBottom,
     };
   }
+
+  framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');

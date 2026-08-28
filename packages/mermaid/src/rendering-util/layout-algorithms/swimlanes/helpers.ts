@@ -101,12 +101,16 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
   const laneModel = buildLaneModel(nodes);
-  for (const node of layout.nodes ?? []) {
-    if (laneModel.isLane(node.id)) {
-      node.shape = 'swimlane';
-      if (direction) {
-        (node as any).direction = direction;
-      }
+  for (const node of nodes) {
+    const isLane = laneModel.isLane(node.id);
+    if (!isLane && !laneModel.isPool(node.id)) {
+      continue;
+    }
+    // A pool is the same band geometry drawn one level out, so it gets its own cluster
+    // shape rather than being sized as a lane.
+    node.shape = isLane ? 'swimlane' : 'pool';
+    if (direction) {
+      (node as any).direction = direction;
     }
   }
 

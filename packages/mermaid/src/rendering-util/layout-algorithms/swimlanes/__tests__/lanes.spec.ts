@@ -63,8 +63,79 @@ describe('buildLaneModel', () => {
     const b = { id: 'b', isGroup: true, parentId: 'a' } as Node;
     const cyclic = buildLaneModel([a, b]);
 
+    // Neither one has a free parent, so neither is a lane and there is no band to
+    // resolve to. Reporting none beats reporting whichever node the walk happened to
+    // reach before the cycle guard tripped.
     expect(cyclic.isLane('a')).toBe(false);
-    expect(cyclic.laneIdOf('a')).toBe('b');
+    expect(cyclic.laneIdOf('a')).toBeNull();
+  });
+});
+
+describe('buildLaneModel with pools', () => {
+  const pool = (id: string): Node =>
+    ({ id, isGroup: true, metadata: { laneRole: 'pool' } }) as unknown as Node;
+
+  const model = buildLaneModel([
+    group('customer'),
+    pool('shop'),
+    group('sales', 'shop'),
+    group('warehouse', 'shop'),
+    leaf('order', 'customer'),
+    leaf('approve', 'sales'),
+    leaf('pick', 'warehouse'),
+  ]);
+
+  it('recognises a declared pool that holds lanes', () => {
+    expect(model.isPool('shop')).toBe(true);
+    expect(model.isLane('shop')).toBe(false);
+    expect(model.hasPools).toBe(true);
+  });
+
+  it('makes the children of a pool into lanes', () => {
+    expect(model.isLane('sales')).toBe(true);
+    expect(model.isLane('warehouse')).toBe(true);
+  });
+
+  // The reason laneIdOf resolves to the nearest lane rather than the outermost
+  // container: resolving to the pool would leave lanes constraining nothing.
+  it('resolves content to its lane, not to the enclosing pool', () => {
+    expect(model.laneIdOf('approve')).toBe('sales');
+    expect(model.laneIdOf('pick')).toBe('warehouse');
+  });
+
+  it('still resolves the enclosing pool separately', () => {
+    expect(model.poolIdOf('approve')).toBe('shop');
+    expect(model.poolIdOf('sales')).toBe('shop');
+  });
+
+  it('leaves an undeclared top-level group as a lane, so the two can be mixed', () => {
+    expect(model.isLane('customer')).toBe(true);
+    expect(model.isPool('customer')).toBe(false);
+    expect(model.laneIdOf('order')).toBe('customer');
+  });
+
+  it('lists the lanes of a pool in declaration order', () => {
+    expect(model.lanesByPool.get('shop')).toEqual(['sales', 'warehouse']);
+    expect(model.lanesByPool.has('customer')).toBe(false);
+  });
+
+  // Nesting alone must not create a pool, or every existing swimlane-beta diagram with
+  // a nested subgraph would silently restyle.
+  it('does not infer a pool from nesting alone', () => {
+    const nested = buildLaneModel([group('lane1'), group('inner', 'lane1'), leaf('c', 'inner')]);
+
+    expect(nested.hasPools).toBe(false);
+    expect(nested.isLane('inner')).toBe(false);
+    expect(nested.laneIdOf('c')).toBe('lane1');
+  });
+
+  // Which is also how the notation draws a pool holding a single unnamed lane.
+  it('treats a declared pool with no lanes as a lane', () => {
+    const solo = buildLaneModel([pool('solo'), leaf('task', 'solo')]);
+
+    expect(solo.isPool('solo')).toBe(false);
+    expect(solo.isLane('solo')).toBe(true);
+    expect(solo.laneIdOf('task')).toBe('solo');
   });
 });
 

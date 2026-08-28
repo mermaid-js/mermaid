@@ -1,5 +1,5 @@
 import type { Graph, NodeId } from './helpers.js';
-import { buildLaneModel } from './lanes.js';
+import { buildLaneModel, readLaneIndex } from './lanes.js';
 
 /**
  * Options controlling how layers are assigned in the Sugiyama pipeline.
@@ -38,9 +38,38 @@ export function createTopLaneResolver(g: Graph): (id: NodeId) => string | null {
 export function buildTopLaneOrder(g: Graph): string[] {
   const nodes = g.layout.nodes ?? [];
   const model = buildLaneModel(nodes);
-  // Reversed because flowchart emits its subgraphs back to front (`flowDb.getData`),
-  // which is the only producer this inference was written against.
-  const lanes = nodes.filter((node) => model.isLane(node.id)).map((node) => node.id);
+  const laneNodes = nodes.filter((node) => model.isLane(node.id));
+
+  // A diagram can state the order outright. That is honoured only when every lane says
+  // where it goes, so a partially numbered diagram falls back to one consistent rule
+  // rather than mixing two.
+  const indexed = laneNodes.filter((node) => readLaneIndex(node) !== undefined);
+  if (indexed.length > 0 && indexed.length === laneNodes.length) {
+    return [...indexed]
+      .sort((a, b) => (readLaneIndex(a) ?? 0) - (readLaneIndex(b) ?? 0))
+      .map((node) => node.id);
+  }
+
+  // Otherwise the order is inferred from the node array, and reversed because flowchart
+  // emits its subgraphs back to front (`flowDb.getData`), which is the only producer
+  // that inference was written against.
+  if (!model.hasPools) {
+    return [...new Set(laneNodes.map((node) => node.id))].reverse();
+  }
+
+  // With pools, walk the top-level containers and expand each pool into its own lanes,
+  // so a later reordering pass cannot interleave the lanes of two pools.
+  const lanes: string[] = [];
+  for (const node of nodes) {
+    if (node.parentId) {
+      continue;
+    }
+    if (model.isPool(node.id)) {
+      lanes.push(...(model.lanesByPool.get(node.id) ?? []));
+    } else if (model.isLane(node.id)) {
+      lanes.push(node.id);
+    }
+  }
   return [...new Set(lanes)].reverse();
 }
 
