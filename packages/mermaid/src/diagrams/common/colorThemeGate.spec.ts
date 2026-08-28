@@ -11,13 +11,17 @@ import { afterEach, describe, expect, it } from 'vitest';
 import * as configApi from '../../config.js';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
+import erStyles from '../er/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
+import requirementStyles from '../requirement/styles.js';
 import timelineStyles from '../timeline/styles.js';
 import { COLOR_THEMES, safeLook } from './colorThemeGate.js';
 
 const STYLESHEETS = {
   class: classStyles,
+  er: erStyles,
   flowchart: flowchartStyles,
+  requirement: requirementStyles,
   timeline: timelineStyles,
 } as const;
 
@@ -26,7 +30,9 @@ const STYLESHEETS = {
  * colours `.section-N` classes directly rather than stamping slots, so the slot-shaped
  * assertions do not apply to it — only the crash-safety pass at the bottom does.
  */
-const SLOT_STYLESHEETS = (['class', 'flowchart'] as const).filter((name) => name in STYLESHEETS);
+const SLOT_STYLESHEETS = (['class', 'er', 'flowchart', 'requirement'] as const).filter(
+  (name) => name in STYLESHEETS
+);
 
 const COLOUR_THEMES = [...COLOR_THEMES];
 
@@ -37,8 +43,16 @@ const COLOUR_THEMES = [...COLOR_THEMES];
  */
 const PLAIN_THEMES = Object.keys(themes).filter((name) => !COLOR_THEMES.has(name));
 
+/**
+ * Drives both channels. Most stylesheets read `theme`, `look` and the palette off the
+ * options they are handed; `requirement/styles.js` reads all three from `getConfig()`
+ * instead. Setting site config as well as passing options means one helper covers both,
+ * and the assertions do not have to know which stylesheet reads from where.
+ */
 const render = (name: keyof typeof STYLESHEETS, themeName: string, look = 'classic') => {
   const themeVariables = themes[themeName as keyof typeof themes].getThemeVariables({});
+  configApi.reset();
+  configApi.setSiteConfig({ theme: themeName as 'redux-color', look: look as 'classic' });
   return STYLESHEETS[name]({
     ...(themeVariables as unknown as Record<string, unknown>),
     theme: themeName,

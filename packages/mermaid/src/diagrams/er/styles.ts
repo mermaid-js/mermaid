@@ -1,5 +1,12 @@
 import * as khroma from 'khroma';
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import {
+  COLOR_THEMES,
+  colorSlotCount,
+  hasPalette,
+  isColorTheme,
+  safeLook,
+} from '../common/colorThemeGate.js';
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma
@@ -12,17 +19,17 @@ const fade = (color: string, opacity: number) => {
   // @ts-ignore incorrect types from khroma
   return khroma.rgba(r, g, b, opacity);
 };
-const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
-
 const genColor: DiagramStylesProvider = (options) => {
-  const { theme, look, bkgColorArray, borderColorArray } = options;
-  if (!COLOR_THEMES.has(theme)) {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
     return '';
   }
-  const hasBkgColors = bkgColorArray?.length > 0;
+  // `look` is validated before it reaches the selector -- see `safeLook`.
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
   let sections = '';
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
     // Wrap at the palette length instead of indexing raw: a palette shorter than
     // THEME_COLOR_LIMIT would otherwise emit `stroke: undefined`.
     const borderColor = borderColorArray[i % borderColorArray.length];

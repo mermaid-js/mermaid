@@ -1,18 +1,24 @@
 import * as configApi from '../../config.js';
+import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 const genColor = (options) => {
   const config = configApi.getConfig();
 
-  const { themeVariables, look } = config;
+  const { theme, themeVariables } = config;
   const { bkgColorArray, borderColorArray } = themeVariables;
-  if (!borderColorArray?.length) {
+  // Gates on the theme as well as the palette, matching every other stylesheet. This used
+  // to key off the array alone, which happened to give the same answer but left two
+  // different idioms in the codebase for the same decision.
+  if (!isColorTheme(theme, borderColorArray)) {
     return '';
   }
+  // `look` is validated before it reaches the selector -- see `safeLook`.
+  const look = safeLook(config.look);
   let sections = '';
 
-  const hasBkgColors = bkgColorArray?.length > 0;
+  const hasBkgColors = hasPalette(bkgColorArray);
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
     // Omit the declaration rather than emitting `fill: ;`, which is invalid CSS. An empty
     // `bkgColorArray` is the live case for `redux-dark-color`, which colours borders only.
     // Wrap at the palette length so a short palette cannot yield `stroke: undefined`.
