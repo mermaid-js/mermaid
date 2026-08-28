@@ -83,8 +83,14 @@ const journeyDiagram = `
 
 /**
  * Composite states and transition labels, which is what exercises
- * `compositeTitleBackground`, `altBackground` and `stateEdgeLabelBackground` — the three
- * variables that were missing or untuned in the colour themes.
+ * `compositeTitleBackground` and `altBackground` — two of the variables that were untuned
+ * in the colour themes.
+ *
+ * `stateEdgeLabelBackground` is deliberately not in that list even though this change adds
+ * it: nothing reads it. `state/styles.js` uses the unprefixed `edgeLabelBackground`, and a
+ * grep finds the prefixed name only in the theme files themselves. It is added for
+ * superset parity with the base themes, which already carry it, and has no rendered
+ * effect — so no fixture can cover it.
  */
 const stateDiagram = `
   stateDiagram-v2

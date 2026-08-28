@@ -19,9 +19,18 @@
  *     listed here explicitly, so widening it is a deliberate edit to this file
  *     rather than something a loose pattern lets through unnoticed.
  */
-// @ts-ignore TODO: incorrect types from khroma -- `isDark` exists at runtime but is
-// missing from the shipped .d.ts, the same gap worked around in er/styles.ts.
-import { isDark } from 'khroma';
+// khroma's `dist/index.d.ts` re-exports everything via a bare `export * from './methods'`.
+// Under this repo's `module: nodenext` that path is resolved as ESM, where a relative
+// specifier without a file extension does not resolve -- so TS sees the module as having no exports at all
+// and every member of this import errors. The members do exist (khroma
+// `dist/methods/index.d.ts` exports them) and the import works at runtime; an isolated
+// `tsc --moduleResolution bundler` also compiles it clean, which is why this looks
+// unnecessary until `pnpm build:types` runs.
+//
+// `@ts-expect-error` rather than `@ts-ignore` deliberately: if khroma ships resolvable
+// types or the module setting changes, this fails and gets deleted instead of lingering.
+// @ts-expect-error -- see above
+import { hue, isDark, toRgba } from 'khroma';
 import { describe, expect, it } from 'vitest';
 import themes from './index.js';
 
@@ -44,12 +53,13 @@ const PALETTE_VARS = new Set([
   // Gantt section banding.
   'sectionBkgColor',
   'sectionBkgColor2',
-  // The third gantt band. Both base themes set it to 'white', which is right on a white
-  // canvas -- at the 20% opacity gantt paints bands with, it composites to nothing, so
-  // every other band reads as absent. On the dark canvas the same literal composites to
-  // rgb(92,92,92), a grey brighter than either tuned hue, so half of every gantt's
-  // banding fought the other half. Both colour themes now use the canvas colour, which
-  // gives the intended "absent" band in either mode.
+  // The third gantt band, and an exemption the *dark* pair needs only. Both base themes
+  // set it to 'white', which is right on a white canvas: at the 20% opacity gantt paints
+  // bands with it composites to nothing, so every other band reads as absent. On the dark
+  // canvas the same literal composites to rgb(92,92,92) -- a grey brighter than either
+  // tuned hue, so half of every gantt's banding fought the other half -- and the dark
+  // theme therefore uses its canvas colour instead. The light theme keeps 'white'
+  // verbatim, so it does not diverge and this exemption goes unused for that pair.
   'altSectionBkgColor',
 ]);
 
@@ -113,6 +123,22 @@ describe.each(PAIRS)('%s -> %s', (baseName, colorName) => {
  * "12 distinct values" alone would have passed before this was fixed — the tints
  * *were* distinct, just indistinguishable. So assert real separation instead.
  */
+/** The opacity `gantt/styles.js` paints its `.section` bands at. */
+const GANTT_BAND_OPACITY = 0.2;
+
+const channels = (color: string): number[] =>
+  (toRgba(color).match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+
+/** Flatten a colour onto a background at the given alpha, as the browser would. */
+const compositeOver = (foreground: string, background: string, alpha: number): number[] => {
+  const fg = channels(foreground);
+  const bg = channels(background);
+  return fg.map((value, i) => Math.round(alpha * value + (1 - alpha) * bg[i]));
+};
+
+const maxChannelDelta = (a: number[], b: number[]): number =>
+  Math.max(...a.map((value, i) => Math.abs(value - b[i])));
+
 describe.each(['redux-color', 'redux-dark-color'] as const)('%s chart palettes', (name) => {
   const vars = themes[name].getThemeVariables({}) as unknown as Record<string, string>;
 
@@ -122,14 +148,26 @@ describe.each(['redux-color', 'redux-dark-color'] as const)('%s chart palettes',
     expect(slices).toEqual(scale);
   });
 
-  it('gives user-journey eight distinct task fills', () => {
+  it('gives user-journey a distinct hue per section', () => {
+    // Not "eight distinct values": the old tints were eight distinct values too -- four
+    // hues repeated in pairs -- so a `Set` of the strings passes against the broken code.
+    // One hue per section is the property that was actually missing. (In the dark theme
+    // the old fills were also all under 5% saturation, i.e. greyscale.)
     const fills = Array.from({ length: 8 }, (_, i) => vars[`fillType${i}`]);
     expect(fills.every((fill) => typeof fill === 'string' && fill.length > 0)).toBe(true);
-    expect(new Set(fills).size).toBe(8);
+    const hues = fills.map((fill) => Math.round(hue(fill)));
+    expect(new Set(hues).size).toBe(8);
   });
 
-  it('bands gantt sections with two different colours', () => {
-    expect(vars.sectionBkgColor).not.toBe(vars.sectionBkgColor2);
+  it('bands gantt sections with two visibly different colours', () => {
+    // `gantt/styles.js` paints bands at 20% opacity, so what matters is how the two
+    // composite over the canvas -- not whether the source strings differ. On the previous
+    // code they differed as strings while compositing to a max-channel delta of 4 in the
+    // light theme and 0 in the dark one: no visible banding at all, which a `not.toBe`
+    // assertion accepts without complaint. The tuned bands land at 35 in both.
+    const band0 = compositeOver(vars.sectionBkgColor, vars.background, GANTT_BAND_OPACITY);
+    const band2 = compositeOver(vars.sectionBkgColor2, vars.background, GANTT_BAND_OPACITY);
+    expect(maxChannelDelta(band0, band2)).toBeGreaterThanOrEqual(16);
   });
 
   /**

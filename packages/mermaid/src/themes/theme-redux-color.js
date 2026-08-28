@@ -231,13 +231,17 @@ class Theme {
      * all -- the `primaryColor` tints used before composited to nothing.
      *
      * Assigned here rather than in the gantt block above so the two visible bands come
-     * off the categorical scale and follow it if the palette changes. altSectionBkgColor
-     * stays the canvas colour so every other band reads as absent, which is the same
-     * alternation `default` uses.
+     * off the categorical scale and follow it if the palette changes.
+     *
+     * altSectionBkgColor keeps the base theme's 'white' verbatim rather than being
+     * restated as `this.background`. It is the same colour on this canvas, and every other
+     * band reading as absent is already the correct behaviour here -- so leaving the string
+     * untouched keeps this variable out of the drift net's exemption list for this pair.
+     * The dark theme is where 'white' is wrong and has to change.
      */
     this.sectionBkgColor = this.sectionBkgColor || this.cScale0;
     this.sectionBkgColor2 = this.sectionBkgColor2 || this.cScale1;
-    this.altSectionBkgColor = this.altSectionBkgColor || this.background;
+    this.altSectionBkgColor = this.altSectionBkgColor || 'white';
 
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
