@@ -113,8 +113,17 @@ describe('no call site indexes one palette by another', () => {
     const pairs = [
       ...source.matchAll(/\.style\(\s*'(stroke|fill)',\s*paletteColor\((\w+),\s*actorCount\)/g),
     ].map((m) => `${m[1]}<-${m[2]}`);
-    // Two properties for each of the eleven actor drawers.
-    expect(pairs.length).toBeGreaterThanOrEqual(2 * 11);
+    const strokes = pairs.filter((pair) => pair === 'stroke<-borderColorArray');
+    const fills = pairs.filter((pair) => pair === 'fill<-bkgColorArray');
+
+    // Each pairing must be the right way round...
     expect(new Set(pairs)).toEqual(new Set(['stroke<-borderColorArray', 'fill<-bkgColorArray']));
+    // ...and the two must stay balanced, because every drawer paints both. A set plus a
+    // total count cannot see a half-converted file -- 21 strokes and a single fill would
+    // satisfy both. Counting each side catches that.
+    expect(strokes).toHaveLength(fills.length);
+    // A floor rather than an exact 11, so adding a twelfth actor drawer does not fail a
+    // correct change; it still catches drawers being dropped or left unconverted.
+    expect(strokes.length).toBeGreaterThanOrEqual(11);
   });
 });
