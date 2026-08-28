@@ -27,5 +27,5 @@ Three things had to agree for this, and all three moved: the JSON-Schema default
 
 Two latent bugs surfaced and are fixed:
 
-- `timeline` read the theme _name_ from global config while receiving its theme variables as a parameter, and indexed `borderColorArray` on the strength of the name alone. When the two disagreed it threw `Cannot read properties of undefined`. It now gates on the palette actually being present.
+- `timeline` read the theme _name_ from global config while receiving its theme variables as a parameter, and indexed `borderColorArray` on the strength of the name alone, throwing `Cannot read properties of undefined` when the two disagreed. No released version could reach this — `mermaidAPI` always passes the name and the variables from the same config object — so this is gate hardening rather than a user-facing fix. It now uses the shared colour-theme gate instead of substring-matching the theme name.
 - The `railroad` style test asserted against `config.themeVariables.secondBkg`, which only matched the rendered output while the default theme happened to define that variable. `railroad` layers `theme-default` underneath the active theme, so variables the active theme omits — `secondBkg` is unset across the `base` / `neo` / `redux` family — still resolve, just not from the config. The test now asserts against `railroad`'s own resolution.

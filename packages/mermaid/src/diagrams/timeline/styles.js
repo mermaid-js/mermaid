@@ -1,15 +1,18 @@
 import { darken, lighten, isDark } from 'khroma';
 import { getConfig } from './../../config.js';
+import { colorSlotCount, isColorTheme as isPaletteTheme } from '../common/colorThemeGate.js';
 
 const genReduxSections = (options) => {
   const { theme } = getConfig();
   //Required to read the active theme at render time,
   // since options alone does not expose the theme name needed to switch between redux and classic section generators.
   const isDarkTheme = theme?.includes('dark');
-  // `theme` is the globally configured name but `options` is passed in, so the two can
-  // disagree. Gate on the palette actually being present rather than on the name --
-  // indexing `borderColorArray` off a name-only check throws when they diverge.
-  const isColorTheme = theme?.includes('color') && options.borderColorArray?.length > 0;
+  // Use the shared gate rather than substring-matching the theme name. Substring matching
+  // is what made this fragile: `includes('color')` would also match any future theme whose
+  // name merely contains "color", and on its own it says nothing about whether a palette
+  // is actually present -- indexing `borderColorArray` off a name-only check threw when
+  // the configured theme and the passed-in `options` disagreed.
+  const isColorTheme = isPaletteTheme(theme, options.borderColorArray);
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   const scopedDropShadow = rawSvgId
     ? `url(#${rawSvgId}-drop-shadow)`
@@ -17,10 +20,13 @@ const genReduxSections = (options) => {
 
   let sections = '';
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
     const sw = `${17 - 3 * i}`;
-    const color = isColorTheme ? options.borderColorArray[i] : options.mainBkg;
-    const stroke = isColorTheme ? options.borderColorArray[i] : options.nodeBorder;
+    const slot = isColorTheme
+      ? options.borderColorArray[i % options.borderColorArray.length]
+      : undefined;
+    const color = slot ?? options.mainBkg;
+    const stroke = slot ?? options.nodeBorder;
 
     sections += `
     .section-${i - 1} rect,

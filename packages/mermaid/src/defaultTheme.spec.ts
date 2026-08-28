@@ -20,13 +20,12 @@ const DEFAULT_THEME = 'redux-color';
 
 /**
  * A variable only the colour themes define -- a cheap fingerprint for the palette.
- * Coalesces to `'none'` rather than letting `JSON.stringify(undefined)` return the value
- * `undefined`, which would make a `.not.toBe('undefined')` assertion pass vacuously.
+ * Returns the sentinel `'none'` rather than letting `JSON.stringify(undefined)` yield the
+ * *value* `undefined`, which would make a `.not.toBe('undefined')` assertion pass
+ * vacuously.
  */
 const fingerprint = (variables: Record<string, unknown> | undefined): string =>
-  JSON.stringify(variables?.borderColorArray ?? null) === 'null'
-    ? 'none'
-    : JSON.stringify(variables?.borderColorArray);
+  Array.isArray(variables?.borderColorArray) ? JSON.stringify(variables.borderColorArray) : 'none';
 
 describe('default theme', () => {
   beforeEach(() => {

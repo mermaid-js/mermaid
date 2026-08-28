@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, expect } from 'vitest';
 import * as configApi from '../../config.js';
 import themes from '../../themes/index.js';
-import { buildRailroadStyleOptions, getStyles } from './styles.js';
+import { getStyles } from './styles.js';
 
 describe('Railroad Styles', () => {
   beforeEach(() => {
@@ -170,13 +170,15 @@ describe('Railroad Styles', () => {
       expect(styles).not.toContain('display: none');
       expect(styles).not.toContain('stroke: red;');
       expect(styles).toContain(`font-family: ${configApi.getConfig().themeVariables?.fontFamily}`);
-      // Assert against railroad's own resolution rather than against a single theme
-      // variable. `buildRailroadStyleOptions` layers theme-default underneath the active
-      // theme, so a variable the active theme never assigns (`secondBkg` is unset in the
-      // base/neo/redux family) still resolves -- just not to `config.themeVariables`.
-      // Reading `secondBkg` off the config only agreed with the rendered value while the
-      // default theme happened to define it.
-      expect(styles).toContain(`fill: ${buildRailroadStyleOptions(injected).terminalFill}`);
+      // `buildRailroadStyleOptions` layers theme-default underneath the active theme, so a
+      // variable the active theme never assigns still resolves -- `secondBkg` is unset
+      // across the base/neo/redux family, and railroad falls through to theme-default's
+      // value. Asserting that value directly keeps this independent of which theme is
+      // configured; reading `secondBkg` off `config.themeVariables` only agreed with the
+      // rendered output while the default theme happened to define it. Asserting against
+      // `buildRailroadStyleOptions` instead would be self-referential, since `getStyles`
+      // reads its values straight from it.
+      expect(styles).toContain(`fill: ${themes.default.getThemeVariables().secondBkg}`);
     });
 
     it('should handle all options at once', () => {

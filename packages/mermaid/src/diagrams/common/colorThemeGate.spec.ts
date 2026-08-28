@@ -7,16 +7,26 @@
  * every theme outside the colour pair, must emit one rule per palette slot inside it, and
  * must never outrank a user's own styling.
  */
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import * as configApi from '../../config.js';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
+import timelineStyles from '../timeline/styles.js';
 import { COLOR_THEMES, safeLook } from './colorThemeGate.js';
 
 const STYLESHEETS = {
   class: classStyles,
   flowchart: flowchartStyles,
+  timeline: timelineStyles,
 } as const;
+
+/**
+ * Which stylesheets emit `[data-color-id]` slot rules. `timeline` is palette-aware but
+ * colours `.section-N` classes directly rather than stamping slots, so the slot-shaped
+ * assertions do not apply to it — only the crash-safety pass at the bottom does.
+ */
+const SLOT_STYLESHEETS = (['class', 'flowchart'] as const).filter((name) => name in STYLESHEETS);
 
 const COLOUR_THEMES = [...COLOR_THEMES];
 
@@ -40,7 +50,7 @@ it('covers every registered theme between the two lists', () => {
   expect([...PLAIN_THEMES, ...COLOUR_THEMES].sort()).toEqual(Object.keys(themes).sort());
 });
 
-describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s stylesheet', (name) => {
+describe.each(SLOT_STYLESHEETS)('%s stylesheet', (name) => {
   it.each(PLAIN_THEMES)('emits no per-item colour rules for %s', (themeName) => {
     expect(render(name, themeName)).not.toContain('data-color-id');
   });
@@ -97,5 +107,49 @@ describe('safeLook', () => {
 
   it('falls back to classic when look is absent', () => {
     expect(safeLook(undefined)).toBe('classic');
+  });
+});
+
+/**
+ * A palette-aware stylesheet must survive being handed theme variables that did not come
+ * from the configured theme.
+ *
+ * `timeline` is the one that reads the configured theme *name* from `getConfig()` while
+ * receiving its variables as a parameter, so it is the one where the two can disagree. It
+ * used to gate on the name alone and then index the palette regardless, which threw
+ * `Cannot read properties of undefined` for all eight themes that carry no palette.
+ *
+ * In production `mermaidAPI` passes the name and the variables from the same config
+ * object, so they always agree and no user hit this. It is still worth pinning: the
+ * failure mode is a crash rather than a cosmetic drift, and nothing else stops a caller
+ * from passing them separately.
+ */
+describe('mismatched theme name and theme variables', () => {
+  afterEach(() => {
+    configApi.reset();
+  });
+
+  const paletteless = Object.keys(themes).filter((name) => !COLOR_THEMES.has(name));
+
+  describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s', (name) => {
+    it.each(paletteless)(
+      'does not throw for %s variables under a colour theme name',
+      (variablesFrom) => {
+        for (const configuredTheme of COLOUR_THEMES) {
+          // The configured theme claims a palette; the variables handed in have none.
+          configApi.setSiteConfig({ theme: configuredTheme as 'redux-color' });
+          const themeVariables = themes[variablesFrom as keyof typeof themes].getThemeVariables(
+            {}
+          ) as unknown as Record<string, unknown>;
+          expect(() =>
+            STYLESHEETS[name]({
+              ...themeVariables,
+              theme: configuredTheme,
+              look: 'classic',
+            } as never)
+          ).not.toThrow();
+        }
+      }
+    );
   });
 });

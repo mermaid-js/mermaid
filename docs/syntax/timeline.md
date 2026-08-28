@@ -484,7 +484,7 @@ config:
           2010 : Pinterest
 ```
 
-### Default Theme
+### The `default` Theme
 
 ```mermaid-example
 ---
