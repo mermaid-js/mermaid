@@ -13,6 +13,7 @@
  */
 import { beforeEach, describe, expect, it } from 'vitest';
 import * as configApi from './config.js';
+import erStyles from './diagrams/er/styles.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import themes from './themes/index.js';
 
@@ -63,7 +64,38 @@ describe('default theme', () => {
       string,
       unknown
     >;
-    expect(fingerprint(configApi.getConfig().themeVariables)).toBe(fingerprint(expected));
+    const config = configApi.getConfig();
+    expect(fingerprint(config.themeVariables)).toBe(fingerprint(expected));
+    // The name has to be normalised too, not just the variables. Leaving the unrecognised
+    // name in place is what this file's header warns about: `theme` reports one thing while
+    // `themeVariables` carries another's palette. It is not cosmetic -- every stylesheet
+    // gates its palette rules on the *name*, so the palette would be loaded and never used.
+    expect(config.theme).toBe(DEFAULT_THEME);
+  });
+
+  it('emits palette CSS for an unrecognised theme name, not just palette variables', () => {
+    // The consequence of the name and the variables disagreeing, asserted where it shows.
+    // `createUserStyles` hands the stylesheet `config.themeVariables` together with
+    // `config.theme`, and `er/styles.ts` gates on the name -- so a stale name means the
+    // palette is present in the variables and absent from the CSS.
+    // @ts-expect-error deliberately not a member of the theme union
+    mermaidAPI.initialize({ theme: 'not-a-real-theme' });
+    const config = configApi.getConfig();
+    const css = erStyles({
+      ...(config.themeVariables as unknown as Record<string, unknown>),
+      theme: config.theme,
+      look: 'classic',
+      THEME_COLOR_LIMIT: 12,
+    } as never);
+    expect(css).toContain('[data-color-id="color-0"]');
+  });
+
+  it("preserves the 'null' sentinel, which disables the pre-defined themes", () => {
+    // Documented in the schema as "Can be set to disable any pre-defined mermaid theme".
+    // Normalising it to the default theme name would re-enable one, so the fallback must
+    // leave this value alone even though it is not a registered theme.
+    mermaidAPI.initialize({ theme: 'null' });
+    expect(configApi.getConfig().theme).toBe('null');
   });
 
   it('still honours an explicitly chosen theme', () => {

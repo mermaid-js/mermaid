@@ -367,14 +367,20 @@ Mermaid supports a bunch of pre-defined themes which you can use to find the rig
 
 The following are the different pre-defined theme options:
 
-- `base`
-- `forest`
-- `dark`
+- `redux-color` (the default)
+- `redux-dark-color`
+- `redux`
+- `redux-dark`
 - `default`
 - `neutral`
+- `dark`
+- `forest`
+- `neo`
+- `neo-dark`
+- `base`
 
 **NOTE**: To change theme you can either use the `initialize` call or _directives_. Learn more about [directives](../config/directives.md)
-Let's put them to use, and see how our sample diagram looks in different themes:
+Let's put a few of them to use, and see how our sample diagram looks in different themes:
 
 ### Base Theme
 

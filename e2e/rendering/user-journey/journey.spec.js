@@ -181,7 +181,7 @@ section Checkout from website
       { journey: { useMaxWidth: true } }
     );
 
-    const { diagramStartX, maxLineWidth, lineCount } = await page.evaluate(() => {
+    const { diagramStartX, maxLineWidth, legendLines } = await page.evaluate(() => {
       const diagram = [...document.querySelectorAll('foreignobject')].find((el) =>
         el.textContent?.includes('Sign Up')
       );
@@ -200,18 +200,43 @@ section Checkout from website
       return {
         diagramStartX: parseFloat(diagram.getAttribute('x') ?? '0'),
         maxLineWidth: maxWidth,
-        lineCount: lines.length,
+        legendLines: lines.map((line) => line.textContent?.trim() ?? ''),
       };
     });
-    // The fixture has three distinct long actor labels, and this test is about wrapping
-    // mechanics and margins -- not about how many lines a particular typeface needs. An
-    // exact count silently encoded the default theme's font: the same labels wrap into 9
-    // lines in Trebuchet and 6 in Recursive, so the assertion broke on a theme change
-    // that had nothing to do with wrapping. More lines than labels proves every label
-    // still splits; the max-width check above and the margin check below are the real
-    // constraints.
-    const LONG_LABEL_COUNT = 3;
-    expect(lineCount).toBeGreaterThan(LONG_LABEL_COUNT);
+    // This test is about wrapping mechanics and margins -- not about how many lines a
+    // particular typeface needs. An exact line count silently encoded the default theme's
+    // font: these labels wrap into 9 lines in Trebuchet and 6 in Recursive, so the
+    // assertion used to break on a theme change that had nothing to do with wrapping.
+    //
+    // A total-vs-label-count comparison is not the answer either, because it is not a
+    // per-label check: with three labels, one wrapping into four lines while the other two
+    // stay on a single line each gives four lines in total and passes -- the very case the
+    // check is meant to exclude. The legend lines are flat siblings with no per-label
+    // grouping in the DOM, so walk them in order and consume as many as each label needs.
+    const LONG_LABELS = [
+      'This is a long label that will be split into multiple lines to test the wrapping functionality',
+      'This is another long label that will be split into multiple lines to test the wrapping functionality',
+      'This is yet another long label that will be split into multiple lines to test the wrapping functionality',
+    ];
+    const remaining = [...legendLines];
+    for (const label of LONG_LABELS) {
+      const consumed = [];
+      while (remaining.length > 0 && consumed.join(' ') !== label) {
+        consumed.push(remaining.shift());
+      }
+      // Reassembling the label also catches text being dropped or reordered by wrapping,
+      // and gives the per-label count its meaning: without this, a run of unrelated lines
+      // could satisfy the length check below.
+      expect(consumed.join(' '), `legend lines did not reassemble into: ${label}`).toBe(label);
+      // No exact count, so a different typeface is free to need a different number --
+      // only that this label, on its own, did not fit on one line.
+      expect(consumed.length, `label did not wrap onto multiple lines: ${label}`).toBeGreaterThan(
+        1
+      );
+    }
+    // Nothing left over: an extra legend entry would mean the fixture and LONG_LABELS have
+    // drifted apart, which would quietly weaken every assertion above.
+    expect(remaining).toEqual([]);
     expect(Math.abs(diagramStartX - maxLineWidth - 150)).toBeLessThanOrEqual(2);
   });
 
