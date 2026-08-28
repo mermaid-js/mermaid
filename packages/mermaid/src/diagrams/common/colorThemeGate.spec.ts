@@ -16,6 +16,7 @@ import {
   DEFAULT_COLOR_SLOTS,
   MAX_COLOR_SLOTS,
   colorSlotCount,
+  paletteSlotCount,
   safeLook,
 } from './colorThemeGate.js';
 
@@ -141,8 +142,12 @@ describe('colorSlotCount', () => {
     ).toBe(20);
   });
 
-  it('keeps the limit when the palette is shorter, so the cycle still repeats', () => {
-    expect(colorSlotCount(12, ['#a', '#b'])).toBe(12);
+  it('matches the palette when it is shorter than the limit', () => {
+    // Changed from expecting the limit. `stampColorSlot` assigns
+    // `colorIndex % palette.length`, so a two-entry palette can only ever produce color-0
+    // and color-1 -- enumerated over 500 indices to check. Emitting twelve rules would
+    // leave ten that nothing can match.
+    expect(colorSlotCount(12, ['#a', '#b'])).toBe(2);
   });
 
   it('keeps the plain limit when given no palette', () => {
@@ -167,7 +172,7 @@ describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])(
       expect(missing).toEqual([]);
     });
 
-    it('still emits the full limit for a palette shorter than it', () => {
+    it('emits exactly the slots a shorter palette can stamp, and no dead rules', () => {
       const slots = emittedSlots(
         render(name, 'redux-color', 'classic', {
           THEME_COLOR_LIMIT: 12,
@@ -175,7 +180,9 @@ describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])(
           bkgColorArray: ['#ffeeee', '#eeffee'],
         })
       );
-      expect(slots.size).toBe(12);
+      // Changed from expecting the full limit: slots 2..11 could never be stamped, so
+      // they were rules nothing could match.
+      expect([...slots].sort((a, b) => a - b)).toEqual([0, 1]);
     });
   }
 );
@@ -199,9 +206,12 @@ describe('colorSlotCount stays a usable loop bound', () => {
     expect(colorSlotCount(value)).toBe(DEFAULT_COLOR_SLOTS);
   });
 
-  it('caps the palette-covering path too', () => {
+  it('does not cap the palette path, because the palette is the bound', () => {
+    // This assertion previously expected MAX_COLOR_SLOTS, which was the bug: capping here
+    // let a palette longer than the cap stamp `color-64` and above with no rule emitted.
+    // A palette is inherently finite, so its own length is the bound.
     const huge = Array.from({ length: MAX_COLOR_SLOTS + 50 }, () => '#000');
-    expect(colorSlotCount(12, huge)).toBe(MAX_COLOR_SLOTS);
+    expect(colorSlotCount(12, huge)).toBe(huge.length);
   });
 
   it('always yields a finite positive integer within the cap', () => {
@@ -212,4 +222,65 @@ describe('colorSlotCount stays a usable loop bound', () => {
       expect(bound).toBeLessThanOrEqual(MAX_COLOR_SLOTS);
     }
   });
+});
+
+/**
+ * The invariant every previous round was missing.
+ *
+ * Three bugs came out of the emitted slot count and the stamped slot disagreeing: a limit
+ * longer than the palette (tail stamped, no rule), a palette longer than the limit (same,
+ * other direction), and a palette longer than the cap added to bound the limit. Each was
+ * found by review and fixed one at a time, because nothing asserted the two sides agree --
+ * only that each behaved as its author expected.
+ *
+ * This ties them together. `stampColorSlot` produces `colorIndex % paletteSlotCount`, and
+ * a stylesheet emits `0 .. colorSlotCount - 1`; those two sets have to be equal for any
+ * palette and any limit. Both now derive from the palette, so this holds by construction --
+ * and if anyone reintroduces a separate bound, it fails here rather than in review.
+ */
+describe('emitted slots and stampable slots agree', () => {
+  const paletteOf = (n: number) => Array.from({ length: n }, (_, i) => `#${i}`);
+
+  it.each([
+    [1, 12],
+    [2, 12],
+    [11, 12],
+    [12, 12],
+    [13, 12],
+    [MAX_COLOR_SLOTS, 12],
+    [MAX_COLOR_SLOTS + 50, 12],
+    [12, 3],
+    [12, Number.POSITIVE_INFINITY],
+    [12, undefined],
+  ])('palette of %s with limit %s', (paletteLength, limit) => {
+    const palette = paletteOf(paletteLength);
+
+    const emitted = new Set(Array.from({ length: colorSlotCount(limit, palette) }, (_, i) => i));
+    // Replicates stampColorSlot's arithmetic across far more items than slots.
+    const stampable = new Set(
+      Array.from({ length: paletteLength + 200 }, (_, i) => i % paletteSlotCount(palette))
+    );
+
+    expect([...emitted].sort((a, b) => a - b)).toEqual([...stampable].sort((a, b) => a - b));
+  });
+
+  it.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])(
+    'holds end to end for the %s stylesheet',
+    (name) => {
+      for (const paletteLength of [2, 12, MAX_COLOR_SLOTS + 50]) {
+        const palette = paletteOf(paletteLength);
+        const emitted = emittedSlots(
+          render(name, 'redux-color', 'classic', {
+            THEME_COLOR_LIMIT: 12,
+            borderColorArray: palette,
+            bkgColorArray: palette,
+          })
+        );
+        const stampable = new Set(
+          Array.from({ length: paletteLength + 200 }, (_, i) => i % paletteSlotCount(palette))
+        );
+        expect([...emitted].sort((a, b) => a - b)).toEqual([...stampable].sort((a, b) => a - b));
+      }
+    }
+  );
 });

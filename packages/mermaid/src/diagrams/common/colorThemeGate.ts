@@ -56,34 +56,36 @@ export const safeLook = (look: string | undefined): string =>
 /**
  * Number of palette slots a stylesheet should emit.
  *
- * A missing, non-integer, non-positive or absurdly large `THEME_COLOR_LIMIT` falls back to
- * the default. The stylesheets use the result directly as a `for` bound, so it has to be a
- * value a loop can finish on: `typeof x === 'number' && x > 0` was not, because `Infinity`
- * satisfies both. That is reachable from diagram text rather than only site config --
- * `THEME_COLOR_LIMIT: .inf` in front matter parses to `Infinity` under the `JSON_SCHEMA`
- * mermaid loads YAML with -- and a large finite value such as `1e9` wedges generation just
- * as effectively.
+ * With a palette, this is exactly `palette.length` -- not the limit, not a cap. That is not
+ * a policy choice: `stampColorSlot` assigns `colorIndex % palette.length`, so the ids it
+ * can produce are precisely `0 .. palette.length - 1`. Emitting fewer leaves items stamped
+ * with no rule to match, and emitting more is dead CSS. Deriving both from the same length
+ * is what makes the two impossible to disagree, rather than something a bound has to keep
+ * lined up.
  *
- * Beyond that, the count must cover every slot `stampColorSlot` can actually assign, which
- * is `palette.length` -- it wraps there, not at the limit. A palette longer than the limit
- * would otherwise have its tail stamped as `color-N` with no rule emitted for it, and those
- * items would render uncoloured beside their neighbours. Both shipped colour themes carry
- * exactly `THEME_COLOR_LIMIT` entries, so that only bites a `themeVariables` override --
- * but the two counts agreeing today is what hid it.
+ * Three separate bugs came out of letting these drift apart -- a limit longer than the
+ * palette, a palette longer than the limit, and then a palette longer than the cap that was
+ * added to bound the limit. `paletteSlotCount` below is the single source of truth for both
+ * sides, and `slotsAgree` in the spec pins that they never diverge again.
  *
- * Passing no palette keeps the plain limit, for callers that emit slots without stamping.
+ * `THEME_COLOR_LIMIT` still governs callers that emit slots *without* stamping -- timeline
+ * numbers `.section-N` classes rather than palette slots -- and is bounded there, because a
+ * loop runs on it directly and `Infinity` is reachable from front matter
+ * (`THEME_COLOR_LIMIT: .inf` parses to it under the `JSON_SCHEMA` mermaid uses).
  */
+export const paletteSlotCount = (palette: unknown): number =>
+  hasPalette(palette) ? palette.length : 0;
+
 export const colorSlotCount = (themeColorLimit: unknown, palette?: unknown): number => {
-  const limit =
-    typeof themeColorLimit === 'number' &&
+  if (hasPalette(palette)) {
+    return paletteSlotCount(palette);
+  }
+  return typeof themeColorLimit === 'number' &&
     Number.isInteger(themeColorLimit) &&
     themeColorLimit > 0 &&
     themeColorLimit <= MAX_COLOR_SLOTS
-      ? themeColorLimit
-      : DEFAULT_COLOR_SLOTS;
-  // A real palette is inherently bounded, but cap anyway so no single input can make the
-  // bound unusable.
-  return hasPalette(palette) ? Math.min(Math.max(limit, palette.length), MAX_COLOR_SLOTS) : limit;
+    ? themeColorLimit
+    : DEFAULT_COLOR_SLOTS;
 };
 
 /**
@@ -103,6 +105,6 @@ export const stampColorSlot = <T extends SVGGraphicsElement>(
   if (!isColorTheme(theme, palette)) {
     return;
   }
-  const slot = (colorIndex ?? 0) % (palette as string[]).length;
+  const slot = (colorIndex ?? 0) % paletteSlotCount(palette);
   shapeSvg.attr('data-color-id', `color-${slot}`);
 };
