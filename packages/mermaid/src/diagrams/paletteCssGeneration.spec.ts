@@ -26,11 +26,24 @@ import type { MermaidConfig } from '../config.type.js';
 import themes from '../themes/index.js';
 import erStyles from './er/styles.js';
 import requirementStyles from './requirement/styles.js';
+import timelineStyles from './timeline/styles.js';
 
 const STYLESHEETS = {
   er: erStyles,
   requirement: requirementStyles,
+  timeline: timelineStyles,
 } as const;
+
+type Stylesheet = keyof typeof STYLESHEETS;
+
+const ALL_STYLESHEETS = Object.keys(STYLESHEETS) as Stylesheet[];
+
+/**
+ * Which of them emit `[data-color-id]` slot rules. `timeline` is palette-aware but
+ * colours `.section-N` classes directly, so the slot-shaped assertions do not apply to
+ * it — only the invalid-CSS ones do.
+ */
+const SLOT_STYLESHEETS = ['er', 'requirement'] as const satisfies readonly Stylesheet[];
 
 const COLOUR_THEMES = [
   'redux-color',
@@ -77,7 +90,7 @@ afterEach(() => {
   configApi.reset();
 });
 
-describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s stylesheet', (name) => {
+describe.each(ALL_STYLESHEETS)('%s stylesheet', (name) => {
   it.each(COLOUR_THEMES)('emits no undefined values for %s', (theme) => {
     expect(render(name, theme)).not.toContain('undefined');
   });
@@ -87,12 +100,27 @@ describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s styl
     expect(render(name, theme)).not.toMatch(/[\w-]+:\s*;/);
   });
 
-  it('survives a palette shorter than THEME_COLOR_LIMIT', () => {
+  it('emits no undefined values for a palette shorter than THEME_COLOR_LIMIT', () => {
     const css = render(name, 'redux-color', {
       borderColorArray: ['#ff0000', '#00ff00'],
       bkgColorArray: ['#ffeeee', '#eeffee'],
     });
     expect(css).not.toContain('undefined');
+  });
+
+  it('emits no undefined values for an empty border palette', () => {
+    // `i % 0` is NaN, so wrapping the index is not enough on its own — the guard has to
+    // bail before the loop.
+    expect(render(name, 'redux-color', { borderColorArray: [] })).not.toContain('undefined');
+  });
+});
+
+describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
+  it('resolves every slot from a palette shorter than THEME_COLOR_LIMIT', () => {
+    const css = render(name, 'redux-color', {
+      borderColorArray: ['#ff0000', '#00ff00'],
+      bkgColorArray: ['#ffeeee', '#eeffee'],
+    });
     // Every slot still gets a rule, and every rule names one of the two colours. Scoped to
     // the palette blocks — the rest of the stylesheet has its own `stroke:` declarations.
     const strokes = paletteBlocks(css).flatMap((block) =>
@@ -102,13 +130,9 @@ describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s styl
     expect(new Set(strokes)).toEqual(new Set(['#ff0000', '#00ff00']));
   });
 
-  it('emits nothing at all for an empty border palette', () => {
-    // `i % 0` is NaN, so wrapping the index is not enough on its own — the guard has to
-    // bail before the loop. Emitting no palette rules is the correct outcome: there is no
-    // palette to render.
-    const css = render(name, 'redux-color', { borderColorArray: [] });
-    expect(css).not.toContain('undefined');
-    expect(paletteBlocks(css)).toEqual([]);
+  it('emits no slot rules at all for an empty border palette', () => {
+    // Emitting nothing is the correct outcome: there is no palette to render.
+    expect(paletteBlocks(render(name, 'redux-color', { borderColorArray: [] }))).toEqual([]);
   });
 
   it('omits the fill declaration when there is no background palette', () => {
