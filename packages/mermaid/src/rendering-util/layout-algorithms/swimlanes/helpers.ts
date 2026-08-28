@@ -4,6 +4,7 @@ import type {
   Edge as MermaidEdge,
   ClusterNode,
 } from '../../types.js';
+import { buildLaneModel } from './lanes.js';
 
 export type Layout = LayoutData;
 export type Node = MermaidNode;
@@ -98,8 +99,9 @@ function assignTopLaneTitleRect(lane: Node): void {
 export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
+  const laneModel = buildLaneModel(nodes);
   for (const node of layout.nodes ?? []) {
-    if (node.isGroup && !node.parentId) {
+    if (laneModel.isLane(node.id)) {
       node.shape = 'swimlane';
       if (direction) {
         (node as any).direction = direction;
@@ -200,12 +202,13 @@ export function writeBackToLayoutData(
 
   const allNodes = layout.nodes ?? [];
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
+  const laneModel = buildLaneModel(allNodes);
   const topLevelGroups: Node[] = [];
   for (const group of allNodes) {
     if (!group?.isGroup) {
       continue;
     }
-    if (!group.parentId) {
+    if (laneModel.isLane(group.id)) {
       topLevelGroups.push(group);
     }
     const children = allNodes.filter((n) => n.parentId === group.id);

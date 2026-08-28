@@ -1,4 +1,5 @@
 import type { LayoutData } from '../../../types.js';
+import { buildLaneModel } from '../lanes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -210,7 +211,8 @@ export function applyLrDirectionTransform(
 
   recomputeNestedGroupBounds(nodes);
 
-  const laneNodes = nodes.filter((n) => n.isGroup && !n.parentId);
+  const laneModel = buildLaneModel(nodes);
+  const laneNodes = nodes.filter((n) => laneModel.isLane(n.id));
   if (laneNodes.length === 0) {
     if (direction === 'RL') {
       mirrorAxis(layout, 'x');
