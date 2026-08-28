@@ -198,6 +198,15 @@ const getStyles = (options: BpmnStyleOptions) => {
     opacity: 0.85;
   }
 
+  /* A trigger that catches is drawn unfilled and one that throws is drawn filled
+     (BPMN 2.0.2, Table 10.93). An end event throws its result, so its marker fills;
+     start and boundary events catch, so theirs stay outlines. */
+  .bpmn-event-end .bpmn-glyph path,
+  .bpmn-event-end .bpmn-glyph polygon,
+  .bpmn-event-end .bpmn-glyph circle {
+    fill: currentColor;
+  }
+
   /* ----- Pools and lanes ---------------------------------------------------- */
   .swimlane.cluster rect,
   .pool.cluster rect {

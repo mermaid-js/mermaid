@@ -2,16 +2,25 @@
 
 export const BPMN_DIRECTIONS = ['LR', 'RL', 'TB', 'TD', 'BT'] as const;
 
-/** Event triggers, as the notation names them. `none` is the plain circle. */
+/**
+ * Event triggers, as the notation names them. `none` is the plain circle.
+ *
+ * These are the thirteen types of Table 10.93 in BPMN 2.0.2. `parallel-multiple` precedes
+ * `multiple` so the longer keyword is matched first.
+ */
 export const EVENT_TRIGGERS = [
   'message',
   'timer',
-  'signal',
-  'conditional',
-  'escalation',
-  'terminate',
   'error',
+  'escalation',
+  'cancel',
+  'compensation',
+  'conditional',
   'link',
+  'signal',
+  'terminate',
+  'parallel-multiple',
+  'multiple',
   'none',
 ] as const;
 
