@@ -27,6 +27,11 @@ process.env.MERMAID_DEV_PORT ??= port;
 
 const devCommand = process.env.E2E_COVERAGE ? 'pnpm dev:coverage' : 'pnpm dev';
 
+// Seeded in the runner process so every worker inherits the same id.
+if (process.env.USE_APPLI) {
+  process.env.APPLITOOLS_BATCH_ID ??= Date.now().toString();
+}
+
 export default defineConfig({
   testDir: 'e2e',
   testMatch: '**/*.spec.{js,ts}',
