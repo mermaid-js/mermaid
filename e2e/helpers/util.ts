@@ -67,12 +67,36 @@ const shortenScreenshotName = (name: string, maxLen = 180): string => {
  * Two ways a diagram picks its own layout, and how each interacts with this:
  * - Frontmatter `config.layout` is a directive, which already outranks this
  *   site-level value, so those diagrams need nothing.
- * - `flowchart-elk` / `graph-elk` syntax picks ELK inside the *detector*, and
- *   `flowDiagram.init` ranks the detector's choice BELOW a user-supplied
- *   layout. Pinning would silently flip those to dagre, so they must set
- *   `useDiagramLayout`.
+ * - The diagram type itself picks one, which `flowDiagram.init` ranks BELOW a
+ *   user-supplied layout — so pinning would silently override it. Those are
+ *   detected by {@link selectsOwnLayout} and left unpinned.
  */
 const E2E_BASELINE_LAYOUT = 'dagre';
+
+/**
+ * Diagram syntaxes that select their own layout, which the baseline pin must
+ * not override.
+ *
+ * Two routes, both resolved in `flowDiagram.init` below a user-supplied layout:
+ * the ELK detector (`flowchart-elk` / `graph-elk`), and a diagram definition's
+ * own `defaultLayout` (`swimlane-beta`, via `createFlowDiagram`).
+ *
+ * Detected from the diagram source rather than left to each spec to remember,
+ * because getting it wrong does not fail loudly — a swimlanes diagram pinned to
+ * dagre still renders, just without its lanes, which in a screenshot-only test
+ * means a silently wrong baseline.
+ *
+ * Deliberately does NOT cover `flowchart.defaultRenderer: 'elk'`: only
+ * `flowDiagram.init` promotes that into the real config, so on the class/er/
+ * mindmap fixtures that carry it the setting is inert and they must stay
+ * pinned. Those few flowcharts that need it pass `useDiagramLayout` instead.
+ */
+const SELF_SELECTED_LAYOUT_RE = /^\s*(?:flowchart-elk|graph-elk|swimlane-beta)\b/m;
+
+const selectsOwnLayout = (graphStr: string | string[]): boolean =>
+  (Array.isArray(graphStr) ? graphStr : [graphStr]).some((graph) =>
+    SELF_SELECTED_LAYOUT_RE.test(graph)
+  );
 
 export const mermaidUrl = (
   graphStr: string | string[],
@@ -80,7 +104,7 @@ export const mermaidUrl = (
   api: boolean
 ): string => {
   options.handDrawnSeed = 1;
-  if (!options.useDiagramLayout) {
+  if (!options.useDiagramLayout && !selectsOwnLayout(graphStr)) {
     options.layout ??= E2E_BASELINE_LAYOUT;
   }
   options.architecture = { seed: 1, ...(options.architecture ?? {}) };

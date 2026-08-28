@@ -7,10 +7,15 @@ import { mermaidUrl } from './util.ts';
  * in Argos — and would silently move every diagram in the suite at once, so the
  * pin's precedence is asserted here rather than left to a screenshot diff.
  */
-const layoutOf = (options: Record<string, unknown>): string | undefined => {
-  const url = mermaidUrl('flowchart TD\n A-->B', { ...options } as never, false);
-  const graph = new URL(url, 'http://localhost').searchParams.get('graph');
-  return JSON.parse(Buffer.from(graph!, 'base64').toString()).mermaid.layout;
+const layoutOf = (
+  options: Record<string, unknown>,
+  graph: string | string[] = 'flowchart TD\n A-->B'
+): string | undefined => {
+  const url = mermaidUrl(graph, { ...options } as never, false);
+  // Read the raw value: base64 can contain `+`, which URLSearchParams would
+  // decode to a space and corrupt.
+  const encoded = url.slice(url.indexOf('?graph=') + '?graph='.length);
+  return JSON.parse(Buffer.from(encoded, 'base64').toString()).mermaid.layout;
 };
 
 describe('e2e baseline layout pin', () => {
@@ -31,5 +36,25 @@ describe('e2e baseline layout pin', () => {
 
   it('still honours an explicit layout alongside the opt-out', () => {
     expect(layoutOf({ useDiagramLayout: true, layout: 'elk' })).toBe('elk');
+  });
+
+  // A diagram whose *type* picks its layout loses to a user-supplied one, so
+  // pinning would quietly render it with the wrong engine — swimlanes without
+  // lanes, `flowchart-elk` as dagre — and a screenshot-only test would just
+  // bake in the wrong baseline.
+  it.each([
+    ['swimlane-beta LR\n  subgraph A\n    B-->C\n  end'],
+    ['flowchart-elk TD\n A-->B'],
+    ['graph-elk TD\n A-->B'],
+  ])('leaves a diagram that selects its own layout unpinned: %s', (graph) => {
+    expect(layoutOf({}, graph)).toBeUndefined();
+  });
+
+  it('detects a self-selecting diagram anywhere in a multi-graph render', () => {
+    expect(layoutOf({}, ['flowchart TD\n A-->B', 'swimlane-beta LR\n  X-->Y'])).toBeUndefined();
+  });
+
+  it('still pins an ordinary flowchart that merely mentions swimlanes', () => {
+    expect(layoutOf({}, 'flowchart TD\n A[swimlane-beta] --> B')).toBe('dagre');
   });
 });

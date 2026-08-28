@@ -15,21 +15,6 @@ const fixtures = await collectMmdFixtures();
 assertUniqueSnapshotNames(fixtures);
 const fixtureTree = buildFixtureTree(fixtures);
 
-/**
- * `flowchart-elk` / `graph-elk` fixtures select ELK in the detector, whose
- * choice `flowDiagram.init` ranks below a user-supplied layout. Pinning the
- * baseline layout for these would silently render them with dagre instead, so
- * they keep whatever the diagram itself asks for. Fixtures that declare
- * `layout:` in frontmatter need no such treatment: a directive already wins.
- *
- * Deliberately does NOT look at `flowchart.defaultRenderer`. Only
- * `flowDiagram.init` promotes the detector's choice into the real config, so on
- * a non-flowchart (the class/er/mindmap fixtures that carry it) the setting is
- * inert and the fixture must stay pinned like any other.
- */
-const selectsElkBySyntax = (source: string): boolean =>
-  /^\s*(?:flowchart-elk|graph-elk)\b/m.test(source);
-
 const registerFixtureNode = (node: FixtureTree): void => {
   for (const segment of [...node.children.keys()].sort()) {
     test.describe(segment, () => {
@@ -51,7 +36,6 @@ const registerFixtureNode = (node: FixtureTree): void => {
       // folder (e.g. diagrams/packet) rather than the runner spec file.
       await imgSnapshotTest(page, testInfo, source, {
         screenshotPath: `diagrams/${relativePath.replace(/\.mmd$/i, '')}`,
-        useDiagramLayout: selectsElkBySyntax(source),
       });
     });
   }
