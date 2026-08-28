@@ -320,6 +320,34 @@ class Theme {
       this.quadrantExternalBorderStrokeFill || this.primaryBorderColor;
     this.quadrantTitleFill = this.quadrantTitleFill || this.primaryTextColor;
 
+    /* bpmn */
+    // Every BPMN colour is a theme variable so a diagram can be retuned without
+    // editing diagrams/bpmn/styles.ts, which is the only stylesheet that can reach
+    // these shapes (mermaid scopes diagram CSS with the svg id).
+    this.bpmn = {
+      eventFill: this.bpmn?.eventFill || '#FCFCFC',
+      eventStroke: this.bpmn?.eventStroke || '#3D4451',
+      eventStrokeWidth: this.bpmn?.eventStrokeWidth || 1.6,
+      endEventStroke: this.bpmn?.endEventStroke || '#B3453C',
+      endEventStrokeWidth: this.bpmn?.endEventStrokeWidth || 3.4,
+      gatewayFill: this.bpmn?.gatewayFill || '#FBF3E0',
+      gatewayStroke: this.bpmn?.gatewayStroke || '#B08A2E',
+      gatewayStrokeWidth: this.bpmn?.gatewayStrokeWidth || 1.6,
+      activityFill: this.bpmn?.activityFill || '#EAF2FB',
+      activityStroke: this.bpmn?.activityStroke || '#3E6FA8',
+      activityStrokeWidth: this.bpmn?.activityStrokeWidth || 1.6,
+      glyphColor: this.bpmn?.glyphColor || '#3D4451',
+      dataFill: this.bpmn?.dataFill || '#FCFCFC',
+      dataStroke: this.bpmn?.dataStroke || '#3D4451',
+      annotationStroke: this.bpmn?.annotationStroke || '#7A8290',
+      laneFill: this.bpmn?.laneFill || 'transparent',
+      laneStroke: this.bpmn?.laneStroke || '#B9C0CC',
+      laneLabelColor: this.bpmn?.laneLabelColor || this.titleColor,
+      labelColor: this.bpmn?.labelColor || this.nodeTextColor || this.primaryTextColor,
+      edgeStroke: this.bpmn?.edgeStroke || this.lineColor,
+      messageStroke: this.bpmn?.messageStroke || this.lineColor,
+    };
+
     /* xychart */
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
