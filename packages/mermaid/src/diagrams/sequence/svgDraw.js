@@ -1338,7 +1338,7 @@ export const anchorElement = function (elem) {
 /**
  * Draws an activation in the diagram
  *
- * @param {any} elem - Element to append activation rect.
+ * @param {any} _elem - Element to append activation rect.
  * @param {any} bounds - Activation box bounds.
  * @param {any} verticalPos - Precise y coordinate of bottom activation box edge.
  * @param {any} conf - Sequence diagram config object.

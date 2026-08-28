@@ -15,7 +15,7 @@ import {
  * algorithm to calculate optimal node positions and edge paths.
  *
  * @param data - The layout data containing nodes, edges, and configuration
- * @param config - Mermaid configuration object
+ * @param _config - Mermaid configuration object
  * @returns Promise resolving to layout result with positioned nodes and edges
  */
 export async function executeCoseBilkentLayout(
