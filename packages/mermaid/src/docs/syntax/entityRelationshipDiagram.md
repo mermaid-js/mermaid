@@ -173,7 +173,7 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
-#### Optional attribute types (v<MERMAID_RELEASE_VERSION>+)
+#### Optional attribute types (v11.16.0+)
 
 Attribute `type` values may end with `?` to indicate an optional or nullable type.
 
@@ -287,7 +287,7 @@ Possible diagram orientations are:
 - RL - Right to left
 - LR - Left to right
 
-### Subgraphs (v<MERMAID_RELEASE_VERSION>+)
+### Subgraphs (v11.17.0+)
 
 Subgraphs allow grouping entities into logical sections within an ER diagram. They are useful for organizing
 complex diagrams and improving readability.

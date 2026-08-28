@@ -89,7 +89,7 @@ const getStyles = (options: FlowChartStyleOptions) =>
     fill: ${options.arrowheadColor};
   }
 
-  .edgePath .path {
+  .edgePaths .path {
     stroke: ${options.lineColor};
     stroke-width: ${options.strokeWidth ?? 2}px;
   }
@@ -134,6 +134,18 @@ const getStyles = (options: FlowChartStyleOptions) =>
   /* .cluster div {
     color: ${options.titleColor};
   } */
+
+  /* Collapsed subgraph node (@{ view: collapsed }) */
+  .node .collapsed-indicator {
+    fill: ${options.clusterBorder};
+    stroke: none;
+    opacity: 0.6;
+  }
+
+  .node .collapsed-separator {
+    stroke: ${options.clusterBorder};
+    stroke-width: 0.75px;
+  }
 
   div.mermaidTooltip {
     position: absolute;

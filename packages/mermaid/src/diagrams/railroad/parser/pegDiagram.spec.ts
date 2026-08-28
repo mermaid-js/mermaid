@@ -10,7 +10,7 @@ describe('PEG Parser', () => {
   describe('Basic Parsing', () => {
     it('should parse literal', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- "hello" ;
       `;
       void parser.parse(input);
@@ -26,7 +26,7 @@ describe('PEG Parser', () => {
 
     it('should parse identifier reference', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- other_rule ;
       `;
       void parser.parse(input);
@@ -35,7 +35,7 @@ describe('PEG Parser', () => {
 
     it('should parse sequence', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- "a" "b" "c" ;
       `;
       void parser.parse(input);
@@ -48,7 +48,7 @@ describe('PEG Parser', () => {
 
     it('should parse ordered choice', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- "a" / "b" / "c" ;
       `;
       void parser.parse(input);
@@ -61,7 +61,7 @@ describe('PEG Parser', () => {
 
     it('should parse optional suffix', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- "a"? ;
       `;
       void parser.parse(input);
@@ -70,7 +70,7 @@ describe('PEG Parser', () => {
 
     it('should parse zero-or-more suffix', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- "a"* ;
       `;
       void parser.parse(input);
@@ -83,7 +83,7 @@ describe('PEG Parser', () => {
 
     it('should parse one-or-more suffix', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- "a"+ ;
       `;
       void parser.parse(input);
@@ -96,7 +96,7 @@ describe('PEG Parser', () => {
 
     it('should parse any character', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- . ;
       `;
       void parser.parse(input);
@@ -109,7 +109,7 @@ describe('PEG Parser', () => {
 
     it('should parse lookahead prefix', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- &"a" ;
       `;
       void parser.parse(input);
@@ -122,7 +122,7 @@ describe('PEG Parser', () => {
 
     it('should parse not-predicate prefix', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         rule <- !"a" ;
       `;
       void parser.parse(input);
@@ -135,7 +135,7 @@ describe('PEG Parser', () => {
 
     it('should parse title', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         title "Test Grammar"
         rule <- "a" ;
       `;
@@ -147,7 +147,7 @@ describe('PEG Parser', () => {
   describe('Real-world Examples', () => {
     it('should parse expression grammar', () => {
       const input = `
-        railroad-peg
+        railroad-peg-beta
         title "Calculator"
         Expression <- Term (("+" / "-") Term)* ;
         Term <- Factor (("*" / "/") Factor)* ;
@@ -170,7 +170,7 @@ describe('PEG Parser', () => {
     });
 
     it('should throw on missing semicolon', () => {
-      expect(() => parser.parse('railroad-peg\nrule <- "a"')).toThrow();
+      expect(() => parser.parse('railroad-peg-beta\nrule <- "a"')).toThrow();
     });
   });
 });

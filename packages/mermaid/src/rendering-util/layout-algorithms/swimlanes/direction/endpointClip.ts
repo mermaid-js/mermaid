@@ -1,4 +1,5 @@
 import {
+  dedupeConsecutivePoints,
   orthogonalizePolyline,
   pointInsideRect,
   rectOfNodeBounds,
@@ -11,6 +12,7 @@ import type { Point, RectBounds } from './geometry.js';
 
 const EPS = 1e-3;
 const INSIDE_EPS = 0.5;
+const CORNER_CLEARANCE = 4;
 
 type NodeRect = RectBounds;
 
@@ -94,7 +96,8 @@ export function clipEdgeEndpointsToNodeBoundaries(edges: unknown[], nodeByIdMap:
     if (context.dstRect) {
       next = clipEndpoint(next, context.dstRect, false);
     }
-
+    next = simplifyPolyline(orthogonalizePolyline(next));
+    next = clearStraightEndpointCornerConnections(next, context.srcRect, context.dstRect);
     context.edge.points = simplifyPolyline(orthogonalizePolyline(next));
   }
 }
@@ -138,7 +141,11 @@ function snapEndpointToBoundary(
   return endpoint;
 }
 
-function firstDistinctAdjacent(points: Point[], endpointIndex: number, step: 1 | -1): Point {
+function firstDistinctAdjacent(
+  points: Point[],
+  endpointIndex: number,
+  step: 1 | -1
+): Point | undefined {
   const endpoint = points[endpointIndex];
   for (let index = endpointIndex + step; index >= 0 && index < points.length; index += step) {
     const candidate = points[index];
@@ -147,6 +154,201 @@ function firstDistinctAdjacent(points: Point[], endpointIndex: number, step: 1 |
     }
   }
   return points[endpointIndex + step];
+}
+
+function cornerClearanceRange(min: number, max: number): { lo: number; hi: number } {
+  const lo = min + CORNER_CLEARANCE;
+  const hi = max - CORNER_CLEARANCE;
+  return lo <= hi ? { lo, hi } : { lo: (min + max) / 2, hi: (min + max) / 2 };
+}
+
+function clampToCornerClearance(value: number, min: number, max: number): number {
+  const { lo, hi } = cornerClearanceRange(min, max);
+  return Math.min(hi, Math.max(lo, value));
+}
+
+function intersectRanges(
+  ranges: { lo: number; hi: number }[]
+): { lo: number; hi: number } | undefined {
+  const lo = Math.max(...ranges.map((range) => range.lo));
+  const hi = Math.min(...ranges.map((range) => range.hi));
+  if (lo > hi) {
+    return undefined;
+  }
+  return { lo, hi };
+}
+
+function clearanceRangeForSide(r: NodeRect, side: BorderSide): { lo: number; hi: number } {
+  return side === 'left' || side === 'right'
+    ? cornerClearanceRange(r.top, r.bottom)
+    : cornerClearanceRange(r.left, r.right);
+}
+
+function terminalSideForSegment(
+  endpoint: Point,
+  adjacent: Point,
+  r: NodeRect
+): BorderSide | undefined {
+  const yWithin = endpoint.y >= r.top - EPS && endpoint.y <= r.bottom + EPS;
+  const xWithin = endpoint.x >= r.left - EPS && endpoint.x <= r.right + EPS;
+  if (sameY(endpoint, adjacent, EPS) && yWithin) {
+    if (Math.abs(endpoint.x - r.left) < EPS) {
+      return 'left';
+    }
+    if (Math.abs(endpoint.x - r.right) < EPS) {
+      return 'right';
+    }
+  }
+  if (sameX(endpoint, adjacent, EPS) && xWithin) {
+    if (Math.abs(endpoint.y - r.top) < EPS) {
+      return 'top';
+    }
+    if (Math.abs(endpoint.y - r.bottom) < EPS) {
+      return 'bottom';
+    }
+  }
+  return undefined;
+}
+
+function isHorizontalSide(side: BorderSide): boolean {
+  return side === 'left' || side === 'right';
+}
+
+function straightClearanceRange(
+  start: Point,
+  end: Point,
+  srcRect: NodeRect | undefined,
+  dstRect: NodeRect | undefined,
+  horizontal: boolean
+): { lo: number; hi: number } | undefined {
+  const ranges: { lo: number; hi: number }[] = [];
+  const srcSide = srcRect ? terminalSideForSegment(start, end, srcRect) : undefined;
+  const dstSide = dstRect ? terminalSideForSegment(end, start, dstRect) : undefined;
+
+  if (srcRect && srcSide && isHorizontalSide(srcSide) === horizontal) {
+    ranges.push(clearanceRangeForSide(srcRect, srcSide));
+  }
+  if (dstRect && dstSide && isHorizontalSide(dstSide) === horizontal) {
+    ranges.push(clearanceRangeForSide(dstRect, dstSide));
+  }
+
+  return ranges.length > 0 ? intersectRanges(ranges) : undefined;
+}
+
+function clearStraightEndpointCornerAxis(
+  start: Point,
+  end: Point,
+  srcRect: NodeRect | undefined,
+  dstRect: NodeRect | undefined,
+  horizontal: boolean
+): Point[] | undefined {
+  const range = straightClearanceRange(start, end, srcRect, dstRect, horizontal);
+  if (!range) {
+    return undefined;
+  }
+
+  const current = horizontal ? start.y : start.x;
+  const next = Math.min(range.hi, Math.max(range.lo, current));
+  if (Math.abs(next - current) < EPS) {
+    return undefined;
+  }
+
+  return horizontal
+    ? [
+        { x: start.x, y: next },
+        { x: end.x, y: next },
+      ]
+    : [
+        { x: next, y: start.y },
+        { x: next, y: end.y },
+      ];
+}
+
+function clearStraightEndpointCornerConnections(
+  points: Point[],
+  srcRect?: NodeRect,
+  dstRect?: NodeRect
+): Point[] {
+  if (points.length !== 2) {
+    return points;
+  }
+
+  const [start, end] = points;
+  if (sameY(start, end, EPS)) {
+    return clearStraightEndpointCornerAxis(start, end, srcRect, dstRect, true) ?? points;
+  }
+
+  if (sameX(start, end, EPS)) {
+    return clearStraightEndpointCornerAxis(start, end, srcRect, dstRect, false) ?? points;
+  }
+
+  return points;
+}
+
+function cornerClearedEndpoint(endpoint: Point, r: NodeRect, side: BorderSide): Point {
+  return isHorizontalSide(side)
+    ? { x: endpoint.x, y: clampToCornerClearance(endpoint.y, r.top, r.bottom) }
+    : { x: clampToCornerClearance(endpoint.x, r.left, r.right), y: endpoint.y };
+}
+
+function moveCollinearEndpointRun(
+  points: Point[],
+  endpointIndex: number,
+  step: 1 | -1,
+  endpoint: Point,
+  adjusted: Point,
+  horizontalTerminal: boolean
+): Point[] {
+  const next = points.map((point) => ({ ...point }));
+  for (let index = endpointIndex; index >= 0 && index < points.length; index += step) {
+    const point = points[index];
+    if (horizontalTerminal && !sameY(point, endpoint, EPS)) {
+      break;
+    }
+    if (!horizontalTerminal && !sameX(point, endpoint, EPS)) {
+      break;
+    }
+    if (horizontalTerminal) {
+      next[index].y = adjusted.y;
+    } else {
+      next[index].x = adjusted.x;
+    }
+  }
+  return next;
+}
+
+function clearEndpointCornerConnection(points: Point[], r: NodeRect, atStart: boolean): Point[] {
+  if (points.length < 2) {
+    return points;
+  }
+
+  const endpointIndex = atStart ? 0 : points.length - 1;
+  const step = atStart ? 1 : -1;
+  const endpoint = points[endpointIndex];
+  const adjacent = firstDistinctAdjacent(points, endpointIndex, step);
+  if (!adjacent) {
+    return points;
+  }
+
+  const side = terminalSideForSegment(endpoint, adjacent, r);
+  if (!side) {
+    return points;
+  }
+
+  const horizontalTerminal = isHorizontalSide(side);
+  const adjusted = cornerClearedEndpoint(endpoint, r, side);
+  if (samePoint(endpoint, adjusted, EPS)) {
+    return points;
+  }
+
+  return moveCollinearEndpointRun(
+    points,
+    endpointIndex,
+    step,
+    endpoint,
+    adjusted,
+    horizontalTerminal
+  );
 }
 
 function borderSideForSegment(a: Point, b: Point, r: NodeRect): BorderSide | undefined {
@@ -207,36 +409,54 @@ function snapAndCollapseEndpoints(
 ): Point[] {
   let next = points;
   if (srcRect) {
-    const snapped = snapEndpointToBoundary(firstDistinctAdjacent(next, 0, 1), next[0], srcRect);
-    if (snapped !== next[0]) {
-      next = [snapped, ...next.slice(1)];
+    const adjacent = firstDistinctAdjacent(next, 0, 1);
+    if (adjacent) {
+      const snapped = snapEndpointToBoundary(adjacent, next[0], srcRect);
+      if (snapped !== next[0]) {
+        next = [snapped, ...next.slice(1)];
+      }
     }
     next = collapseOwnBorderStub(next, srcRect, true);
   }
   if (dstRect) {
     const last = next.length - 1;
-    const snapped = snapEndpointToBoundary(
-      firstDistinctAdjacent(next, last, -1),
-      next[last],
-      dstRect,
-      true
-    );
-    if (snapped !== next[last]) {
-      next = [...next.slice(0, last), snapped];
+    const adjacent = firstDistinctAdjacent(next, last, -1);
+    if (adjacent) {
+      const snapped = snapEndpointToBoundary(adjacent, next[last], dstRect, true);
+      if (snapped !== next[last]) {
+        next = [...next.slice(0, last), snapped];
+      }
     }
     next = collapseOwnBorderStub(next, dstRect, false);
+  }
+
+  const straightCleared = clearStraightEndpointCornerConnections(next, srcRect, dstRect);
+  if (straightCleared !== next || next.length === 2) {
+    return straightCleared;
+  }
+
+  if (srcRect) {
+    next = clearEndpointCornerConnection(next, srcRect, true);
+  }
+  if (dstRect) {
+    next = clearEndpointCornerConnection(next, dstRect, false);
   }
   return next;
 }
 
 export function prepareEdgeEndpointsForRenderer(edges: unknown[], nodeByIdMap: Map<string, any>) {
   for (const edge of edges) {
-    const context = endpointContextFor(edge, nodeByIdMap, 3);
+    const context = endpointContextFor(edge, nodeByIdMap, 2);
     if (!context) {
       continue;
     }
 
-    const newPts = snapAndCollapseEndpoints(context.points, context.srcRect, context.dstRect);
+    const input = dedupeConsecutivePoints(context.points, EPS);
+    const newPts = snapAndCollapseEndpoints(input, context.srcRect, context.dstRect);
+    if (newPts.length < 3) {
+      context.edge.points = newPts;
+      continue;
+    }
     const duplicated = [
       newPts[0],
       { ...newPts[0] },

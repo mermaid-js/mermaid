@@ -58,6 +58,7 @@ required:
   - look
   - eventmodeling
   - radar
+  - usecase
   - venn
 properties:
   theme:
@@ -309,6 +310,8 @@ properties:
     $ref: '#/$defs/FlowchartDiagramConfig'
   swimlane:
     $ref: '#/$defs/SwimlaneDiagramConfig'
+  agentflow:
+    $ref: '#/$defs/AgentflowDiagramConfig'
   sequence:
     $ref: '#/$defs/SequenceDiagramConfig'
   gantt:
@@ -355,6 +358,8 @@ properties:
     $ref: '#/$defs/TreeViewDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
+  usecase:
+    $ref: '#/$defs/UsecaseDiagramConfig'
   venn:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
@@ -2243,6 +2248,56 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           Enables a crossing-aware rank optimization pass for swimlane layouts.
         type: boolean
         default: true
+      automaticLaneOrdering:
+        description: |
+          Automatically reorders top-level swimlanes with a deterministic
+          weighted-linear-arrangement heuristic. Disabled by default because
+          source swimlane order can carry semantic meaning.
+        type: boolean
+        default: false
+
+  AgentflowDiagramConfig:
+    title: Agentflow Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for the agentflow diagram type.
+
+      Agentflow renders through the shared unified renderer, so it owns the same
+      spacing and padding knobs a flowchart does. They live in their own block so
+      that agentflow can be tuned without moving every flowchart on the page.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      titleTopMargin:
+        description: Margin top for the text over the diagram
+        type: integer
+        minimum: 0
+        default: 25
+      diagramPadding:
+        description: |
+          The amount of padding around the diagram as a whole so that embedded
+          diagrams have margins, expressed in pixels.
+        type: integer
+        minimum: 0
+        default: 8
+      nodeSpacing:
+        description: |
+          Defines the spacing between nodes on the same level.
+
+          Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+          and the vertical spacing for LR as well as RL graphs.
+        type: integer
+        minimum: 0
+        default: 50
+      rankSpacing:
+        description: |
+          Defines the spacing between nodes on different levels.
+
+          Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the
+          horizontal spacing for LR as well as RL graphs.
+        type: integer
+        minimum: 0
+        default: 50
 
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config
@@ -2561,9 +2616,45 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 1
       showIcons:
-        description: Whether to show file/folder icons next to labels
+        description: |
+          Whether to show the default file/folder icons next to labels.
+          Explicit `icon()` annotations always render, regardless of this setting.
         type: boolean
-        default: true
+        default: false
+      defaultIconPack:
+        description: |
+          Name of a registered iconify pack used to resolve unprefixed icon
+          references — `icon(name)` annotations and `filenameIcons`/
+          `extensionIcons` values without a `pack:` prefix. The pack must be
+          registered with `registerIconPacks`. When empty, unprefixed names
+          resolve to the built-in file/folder icons.
+        type: string
+        default: ''
+      filenameIcons:
+        description: |
+          Exact-filename → icon map used to pick a file's icon when
+          `showIcons` is enabled, e.g.
+          `{ "Dockerfile": "material-icon-theme:docker" }`.
+          Values are resolved like `icon()` references: `pack:name` is used
+          as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+          hides the icon for matching files.
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
+      extensionIcons:
+        description: |
+          File-extension → icon map used to pick a file's icon when
+          `showIcons` is enabled, e.g.
+          `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+          lowercase and may include or omit the leading dot.
+          Values are resolved like `icon()` references: `pack:name` is used
+          as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+          hides the icon for matching files.
+        type: object
+        additionalProperties:
+          type: string
+        default: {}
 
   RadarDiagramConfig:
     title: Radar Diagram Config
@@ -2619,6 +2710,76 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         maximum: 1
         default: 0.17
 
+  UsecaseDiagramConfig:
+    title: Usecase Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for usecase diagrams.
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+    properties:
+      actorFontSize:
+        description: Font size for actor labels
+        type: number
+        minimum: 1
+        default: 14
+      actorFontFamily:
+        description: |
+          Font family for actor labels.
+
+          Written verbatim into an inline CSS custom property, so the characters that could
+          terminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,
+          `{`, `}`, and `\`. Quotes, commas, and spaces stay allowed for font stacks such as
+          `"Open Sans", sans-serif`.
+        type: string
+        pattern: &cssFontFamilyPattern '^[^;<>(){}\\]*$'
+        default: '"Open Sans", sans-serif'
+      actorFontWeight:
+        description: |
+          Font weight for actor labels.
+
+          Restricted to the CSS `font-weight` keywords and numeric weights, since this value
+          is written verbatim into an inline CSS custom property.
+        type: string
+        pattern: &cssFontWeightPattern '^(normal|bold|bolder|lighter|inherit|initial|revert|unset|[1-9][0-9]{0,3})$'
+        default: 'normal'
+      usecaseFontSize:
+        description: Font size for usecase labels
+        type: number
+        minimum: 1
+        default: 12
+      usecaseFontFamily:
+        description: |
+          Font family for usecase labels.
+
+          Constrained the same way as `actorFontFamily`.
+        type: string
+        pattern: *cssFontFamilyPattern
+        default: '"Open Sans", sans-serif'
+      usecaseFontWeight:
+        description: |
+          Font weight for usecase labels.
+
+          Constrained the same way as `actorFontWeight`.
+        type: string
+        pattern: *cssFontWeightPattern
+        default: 'normal'
+      nodeSpacing:
+        description: Spacing between nodes on the same level
+        type: number
+        minimum: 0
+        default: 50
+      rankSpacing:
+        description: Spacing between nodes on different levels
+        type: number
+        minimum: 0
+        default: 50
+      diagramPadding:
+        description: Padding around the entire diagram
+        type: number
+        minimum: 0
+        default: 20
   VennDiagramConfig:
     title: Venn Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]

@@ -10,6 +10,23 @@ export interface DiagramMetadata {
   config?: MermaidConfig;
 }
 
+/**
+ * Preprocessed code produced by `preprocessDiagram`. Diagrams that set
+ * {@link DiagramDB.preserveCommentsWhenParsing} are parsed from `withComments`
+ * and receive `frontmatterLineOffset`; all other diagrams are parsed from
+ * `cleaned` and behave exactly as before.
+ */
+export interface DiagramCode {
+  /** Original source text, untouched. */
+  raw: string;
+  /** Fully processed text: CRLF normalised, frontmatter removed, directives removed, comments stripped. */
+  cleaned: string;
+  /** Text after frontmatter/directive removal but before comment cleanup. */
+  withComments?: string;
+  /** Number of lines occupied by YAML frontmatter (0 if none). */
+  frontmatterLineOffset?: number;
+}
+
 export interface InjectUtils {
   _log: any;
   _setLogLevel: any;
@@ -41,6 +58,24 @@ export interface DiagramDB {
   setDisplayMode?: (title: string) => void;
   setDiagramId?: (svgElementId: string) => void;
   bindFunctions?: (element: Element) => void;
+
+  /**
+   * Opt in to source-faithful parsing.
+   *
+   * When `true`, `Diagram.fromText` parses the text with `%%` comments still in
+   * place ({@link DiagramCode.withComments}) instead of the comment-stripped
+   * {@link DiagramCode.cleaned}, so parser positions line up with the source the
+   * author wrote. Only diagrams that report source positions need this; every
+   * other diagram leaves it unset and parses `cleaned` as before.
+   */
+  readonly preserveCommentsWhenParsing?: boolean;
+
+  /**
+   * Receives the number of lines occupied by YAML frontmatter, which the parser
+   * never sees. Diagrams that report source positions add this to their parser
+   * line numbers so the positions refer to the original source.
+   */
+  setFrontmatterLineOffset?: (offset: number) => void;
 }
 
 /**

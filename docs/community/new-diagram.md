@@ -13,12 +13,22 @@
 
 ### Step 1: Grammar & Parsing
 
-Please refer to the following PRs on how to use Langium to add a new diagram grammar.
+New diagram grammars should use [Chevrotain](https://chevrotain.io/docs/), co-located with the
+diagram itself under `packages/mermaid/src/diagrams/<diagram>/parser/`. The use case diagram is
+the reference implementation: a lexer, a `CstParser`, and a CST visitor that builds the diagram
+model, sharing `diagrams/common/parser/runChevrotainParse.ts` to run the lexer/parser pair and
+report failures with source positions.
+
+Keeping the grammar next to the diagram mirrors the existing JISON layout, so a diagram stays
+self-contained and the parser does not have to be released from a separate package.
+
+Several existing diagrams (architecture, gitGraph, info, packet, pie, radar, treemap) instead use
+[Langium](https://langium.org/docs/reference/grammar-language/) grammars in `packages/parser`, and
+older diagrams use JISON. Both remain supported — modify them in place for bug fixes rather than
+rewriting — but neither is the target for new work. These PRs show the Langium approach:
 
 - <https://github.com/mermaid-js/mermaid/pull/4839>
 - <https://github.com/mermaid-js/mermaid/pull/4751>
-
-The grammar language is documented [here](https://langium.org/docs/reference/grammar-language/). The [Langium Playground](https://langium.org/playground/) can help you test your diagram grammar against real inputs.
 
 ### Step 2: Rendering
 

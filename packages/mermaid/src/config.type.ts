@@ -233,6 +233,7 @@ export interface MermaidConfig {
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
   swimlane?: SwimlaneDiagramConfig;
+  agentflow?: AgentflowDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -256,6 +257,7 @@ export interface MermaidConfig {
   eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
+  usecase?: UsecaseDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
@@ -413,6 +415,52 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    *
    */
   optimizeRanksByCrossings?: boolean;
+  /**
+   * Automatically reorders top-level swimlanes with a deterministic
+   * weighted-linear-arrangement heuristic. Disabled by default because
+   * source swimlane order can carry semantic meaning.
+   *
+   */
+  automaticLaneOrdering?: boolean;
+}
+/**
+ * The object containing configurations specific for the agentflow diagram type.
+ *
+ * Agentflow renders through the shared unified renderer, so it owns the same
+ * spacing and padding knobs a flowchart does. They live in their own block so
+ * that agentflow can be tuned without moving every flowchart on the page.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "AgentflowDiagramConfig".
+ */
+export interface AgentflowDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  /**
+   * Defines the spacing between nodes on the same level.
+   *
+   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+   * and the vertical spacing for LR as well as RL graphs.
+   *
+   */
+  nodeSpacing?: number;
+  /**
+   * Defines the spacing between nodes on different levels.
+   *
+   * Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the
+   * horizontal spacing for LR as well as RL graphs.
+   *
+   */
+  rankSpacing?: number;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -1834,9 +1882,45 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    */
   lineThickness?: number;
   /**
-   * Whether to show file/folder icons next to labels
+   * Whether to show the default file/folder icons next to labels.
+   * Explicit `icon()` annotations always render, regardless of this setting.
+   *
    */
   showIcons?: boolean;
+  /**
+   * Name of a registered iconify pack used to resolve unprefixed icon
+   * references — `icon(name)` annotations and `filenameIcons`/
+   * `extensionIcons` values without a `pack:` prefix. The pack must be
+   * registered with `registerIconPacks`. When empty, unprefixed names
+   * resolve to the built-in file/folder icons.
+   *
+   */
+  defaultIconPack?: string;
+  /**
+   * Exact-filename → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ "Dockerfile": "material-icon-theme:docker" }`.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  filenameIcons?: {
+    [k: string]: string;
+  };
+  /**
+   * File-extension → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+   * lowercase and may include or omit the leading dot.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  extensionIcons?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for radar diagrams.
@@ -1881,6 +1965,66 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+/**
+ * The object containing configurations specific for usecase diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "UsecaseDiagramConfig".
+ */
+export interface UsecaseDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Font size for actor labels
+   */
+  actorFontSize?: number;
+  /**
+   * Font family for actor labels.
+   *
+   * Written verbatim into an inline CSS custom property, so the characters that could
+   * terminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,
+   * `{`, `}`, and `\`. Quotes, commas, and spaces stay allowed for font stacks such as
+   * `"Open Sans", sans-serif`.
+   *
+   */
+  actorFontFamily?: string;
+  /**
+   * Font weight for actor labels.
+   *
+   * Restricted to the CSS `font-weight` keywords and numeric weights, since this value
+   * is written verbatim into an inline CSS custom property.
+   *
+   */
+  actorFontWeight?: string;
+  /**
+   * Font size for usecase labels
+   */
+  usecaseFontSize?: number;
+  /**
+   * Font family for usecase labels.
+   *
+   * Constrained the same way as `actorFontFamily`.
+   *
+   */
+  usecaseFontFamily?: string;
+  /**
+   * Font weight for usecase labels.
+   *
+   * Constrained the same way as `actorFontWeight`.
+   *
+   */
+  usecaseFontWeight?: string;
+  /**
+   * Spacing between nodes on the same level
+   */
+  nodeSpacing?: number;
+  /**
+   * Spacing between nodes on different levels
+   */
+  rankSpacing?: number;
+  /**
+   * Padding around the entire diagram
+   */
+  diagramPadding?: number;
 }
 /**
  * The object containing configurations specific for Venn diagrams.

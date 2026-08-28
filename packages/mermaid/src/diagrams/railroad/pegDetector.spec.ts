@@ -6,20 +6,20 @@ describe('PEG Detector', () => {
     expect(railroadPeg.id).toBe('railroadPeg');
   });
 
-  it('should detect railroad-peg keyword', () => {
-    expect(railroadPeg.detector('railroad-peg\nrule <- "test" ;')).toBe(true);
+  it('should detect railroad-peg-beta keyword', () => {
+    expect(railroadPeg.detector('railroad-peg-beta\nrule <- "test" ;')).toBe(true);
   });
 
   it('should detect with leading whitespace', () => {
-    expect(railroadPeg.detector('  railroad-peg\nrule <- "test" ;')).toBe(true);
+    expect(railroadPeg.detector('  railroad-peg-beta\nrule <- "test" ;')).toBe(true);
   });
 
   it('should detect case-insensitively', () => {
-    expect(railroadPeg.detector('RAILROAD-PEG\nrule <- "test" ;')).toBe(true);
+    expect(railroadPeg.detector('RAILROAD-PEG-BETA\nrule <- "test" ;')).toBe(true);
   });
 
   it('should not detect other diagram types', () => {
-    expect(railroadPeg.detector('railroad-diagram\nrule = terminal("a") ;')).toBe(false);
+    expect(railroadPeg.detector('railroad-beta\nrule = terminal("a") ;')).toBe(false);
     expect(railroadPeg.detector('flowchart TD\nA --> B')).toBe(false);
   });
 

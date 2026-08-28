@@ -83,10 +83,10 @@ describe('treeView db', () => {
       expect(root.children[0].cssClass).toBe('highlight');
     });
 
-    it('should store iconId', () => {
-      db.addNode(0, 'data.bin', 'file', undefined, 'database');
+    it('should store icon', () => {
+      db.addNode(0, 'data.bin', 'file', undefined, 'logos:mysql');
       const root = db.getRoot();
-      expect(root.children[0].iconId).toBe('database');
+      expect(root.children[0].icon).toBe('logos:mysql');
     });
 
     it('should store description', () => {
@@ -96,12 +96,12 @@ describe('treeView db', () => {
     });
 
     it('should store all optional fields together', () => {
-      db.addNode(0, 'App.tsx', 'file', 'highlight', 'react', 'main component');
+      db.addNode(0, 'App.tsx', 'file', 'highlight', 'logos:react', 'main component');
       const root = db.getRoot();
       const node = root.children[0];
       expect(node.name).toBe('App.tsx');
       expect(node.cssClass).toBe('highlight');
-      expect(node.iconId).toBe('react');
+      expect(node.icon).toBe('logos:react');
       expect(node.description).toBe('main component');
     });
 

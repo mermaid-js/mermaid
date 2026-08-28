@@ -278,6 +278,9 @@ const config: RequiredDeep<MermaidConfig> = {
   radar: {
     ...defaultConfigJson.radar,
   },
+  usecase: {
+    ...defaultConfigJson.usecase,
+  },
   railroad: {
     ...defaultConfigJson.railroad,
     // Railroad colors and typography derive from the active theme unless explicitly overridden.

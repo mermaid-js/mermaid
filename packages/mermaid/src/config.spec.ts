@@ -4,6 +4,7 @@ import type { MermaidConfig } from './config.type.js';
 describe('when working with site config', () => {
   beforeEach(() => {
     // Resets the site config to default config
+    configApi.reset();
     configApi.setSiteConfig({});
   });
   it('should set site config and config properly', () => {
@@ -29,7 +30,8 @@ describe('when working with site config', () => {
       fontSize: 54321,
       securityLevel: 'loose',
     };
-    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
+    configApi.addDirective(directive);
+    const cfg: MermaidConfig = configApi.getConfig();
     expect(cfg.fontFamily).toEqual(directive.fontFamily);
     expect(cfg.fontSize).toBe(config_0.fontSize);
     expect(cfg.securityLevel).toBe(config_0.securityLevel);
@@ -55,6 +57,7 @@ describe('when working with site config', () => {
 
     expect(config.swimlane?.ignoreCrossLaneEdges).toBe(true);
     expect(config.swimlane?.optimizeRanksByCrossings).toBe(true);
+    expect(config.swimlane?.automaticLaneOrdering).toBe(false);
   });
 
   it('should default ELK node placement alignment to NONE', () => {

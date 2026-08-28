@@ -98,16 +98,16 @@ radar-beta
   max 100
   min 0`,
 
-  railroad: `railroad-diagram
+  railroad: `railroad-beta
     rule = choice(terminal("a"), terminal("b")) ;`,
 
-  railroadEbnf: `railroad-ebnf
+  railroadEbnf: `railroad-ebnf-beta
     rule = "a" | "b" ;`,
 
-  railroadAbnf: `railroad-abnf
+  railroadAbnf: `railroad-abnf-beta
     rule = "a" / "b" ;`,
 
-  railroadPeg: `railroad-peg
+  railroadPeg: `railroad-peg-beta
     rule <- "a" / "b" ;`,
 
   treemap: `treemap-beta
@@ -172,7 +172,14 @@ union A, B`,
     service db(database)[DB]
     api:R -- L:db`,
 
-  'wardley-beta': `wardley-beta
+  agentflow: `agentflow-beta TB
+    flow grp["Group"]
+      a["Alpha"]
+      b["Beta"]
+      a --> b
+    end`,
+
+  wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]
 
@@ -201,6 +208,11 @@ union A, B`,
       "Restart service"
     chaotic
       "Page on-call"`,
+
+  usecase: `usecase-beta
+    actor User
+    Login("Sign in")
+    User --> Login`,
 
   eventmodeling: `eventmodeling
     tf 01 evt Start
