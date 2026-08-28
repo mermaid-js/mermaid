@@ -30,20 +30,16 @@ const genColor: DiagramStylesProvider = (options) => {
   let sections = '';
 
   for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
-    // Wrap at the palette length instead of indexing raw: a palette shorter than
-    // THEME_COLOR_LIMIT would otherwise emit `stroke: undefined`.
-    const borderColor = borderColorArray[i % borderColorArray.length];
-    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {
-    stroke: ${borderColor};
-    ${fill}
+    stroke: ${borderColorArray[i]};
+    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node  rect {
-    stroke: ${borderColor};
-    ${fill}
+    stroke: ${borderColorArray[i]};
+    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
      }
     `;
   }

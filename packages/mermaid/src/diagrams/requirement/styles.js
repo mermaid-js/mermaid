@@ -1,5 +1,5 @@
 import * as configApi from '../../config.js';
-import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
+import { colorSlotCount, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 const genColor = (options) => {
   const config = configApi.getConfig();
@@ -16,24 +16,17 @@ const genColor = (options) => {
   const look = safeLook(config.look);
   let sections = '';
 
-  const hasBkgColors = hasPalette(bkgColorArray);
-
   for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
-    // Omit the declaration rather than emitting `fill: ;`, which is invalid CSS. An empty
-    // `bkgColorArray` is the live case for `redux-dark-color`, which colours borders only.
-    // Wrap at the palette length so a short palette cannot yield `stroke: undefined`.
-    const borderColor = borderColorArray[i % borderColorArray.length];
-    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {
-    stroke: ${borderColor};
-    ${fill}
+    stroke: ${borderColorArray[i]};
+    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node  rect {
-    stroke: ${borderColor};
-    ${fill}
+    stroke: ${borderColorArray[i]};
+    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
      }
     `;
   }
