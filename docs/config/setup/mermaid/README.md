@@ -18,9 +18,11 @@
 - [CommonLayoutRenderContext](interfaces/CommonLayoutRenderContext.md)
 - [CommonLayoutRendererDefinition](interfaces/CommonLayoutRendererDefinition.md)
 - [DetailedError](interfaces/DetailedError.md)
+- [EdgeGeom](interfaces/EdgeGeom.md)
 - [ExternalDiagramDefinition](interfaces/ExternalDiagramDefinition.md)
 - [LayoutData](interfaces/LayoutData.md)
 - [LayoutLoaderDefinition](interfaces/LayoutLoaderDefinition.md)
+- [LineJumpConfig](interfaces/LineJumpConfig.md)
 - [Mermaid](interfaces/Mermaid.md)
 - [MermaidConfig](interfaces/MermaidConfig.md)
 - [ParseOptions](interfaces/ParseOptions.md)
@@ -46,6 +48,7 @@
 
 ## Functions
 
+- [applyLineJumpsToSvg](functions/applyLineJumpsToSvg.md)
 - [clearLayoutRenderState](functions/clearLayoutRenderState.md)
 - [createCommonLayoutRenderer](functions/createCommonLayoutRenderer.md)
 - [defaultMeasureLayout](functions/defaultMeasureLayout.md)
