@@ -156,12 +156,6 @@ test.describe('Swimlanes diagram', () => {
       `,
       'swimlanes-custom-theme',
       {
-        // Pinned to `classic` deliberately. This test is about custom theme variables
-        // reaching the rendered node, and under the `neo` look that assertion cannot hold:
-        // `theme: 'base'` sets `useGradient: true`, and the neo rules in `styles.ts` paint
-        // `stroke` with the gradient instead of `nodeBorder`, so the stroke assertion would
-        // be testing the gradient rather than the theme variable.
-        look: 'classic',
         theme: 'base',
         themeVariables: {
           mainBkg: '#ffe1ef',

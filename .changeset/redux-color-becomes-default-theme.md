@@ -22,7 +22,7 @@ config:
 ---
 ```
 
-One interaction worth knowing about the new look: `neo` paints node strokes with a gradient when the active theme sets `useGradient`, and `base` does — so a custom `nodeBorder` on top of `theme: base` no longer shows unless you also set `look: classic`. This is existing `neo` behaviour, not new, but it becomes reachable by default.
+One interaction worth knowing about the new look: `neo` paints node strokes with a gradient when the active theme sets `useGradient`, and `base` sets it by default — which meant a custom `nodeBorder` on `theme: base` was silently discarded. Since `base` is the theme documented as modifiable, an explicit `nodeBorder` now turns the gradient off so the override is what paints. Set `useGradient: true` alongside it to keep the gradient.
 
 Also fixed while making this change: the sequence diagram's `neo` drop-shadow filter used a hardcoded `id="drop-shadow"`, so two sequence diagrams on one page produced duplicate DOM IDs and the second borrowed the first's filter. It is now scoped per diagram, matching every other diagram.
 
