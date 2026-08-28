@@ -7,11 +7,12 @@ const genReduxSections = (options) => {
   //Required to read the active theme at render time,
   // since options alone does not expose the theme name needed to switch between redux and classic section generators.
   const isDarkTheme = theme?.includes('dark');
-  // Use the shared gate rather than substring-matching the theme name. Substring matching
-  // is what made this fragile: `includes('color')` would also match any future theme whose
-  // name merely contains "color", and on its own it says nothing about whether a palette
-  // is actually present -- indexing `borderColorArray` off a name-only check threw when
-  // the configured theme and the passed-in `options` disagreed.
+  // Use the shared gate rather than substring-matching the theme name. It checks both
+  // halves: that this is a colour theme, and that a palette is actually present. Both
+  // matter -- `includes('color')` would also match any future theme whose name merely
+  // contains "color", and it says nothing about the palette, so indexing
+  // `borderColorArray` off a name-only check threw when the configured theme and the
+  // passed-in `options` disagreed.
   const isColorTheme = isPaletteTheme(theme, options.borderColorArray);
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   const scopedDropShadow = rawSvgId
@@ -22,6 +23,11 @@ const genReduxSections = (options) => {
 
   for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
     const sw = `${17 - 3 * i}`;
+    // Unlike `er`/`requirement`, the bound here is the section count, not the palette
+    // length: timeline numbers `.section-N` classes, which are not `data-color-id` slots
+    // and so are not bounded by what anything stamps. The palette therefore wraps across
+    // however many sections exist -- indexing raw would leave the overflow sections
+    // undefined.
     const slot = isColorTheme
       ? options.borderColorArray[i % options.borderColorArray.length]
       : undefined;

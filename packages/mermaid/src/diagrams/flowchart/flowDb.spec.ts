@@ -319,7 +319,7 @@ describe('flow db subgraph colour slots', () => {
   const attachMeta = (id: string, meta: string) =>
     flowDb.addVertex(id, undefined as unknown as FlowText, undefined, [], [], '', {}, meta);
 
-  it('numbers subgraphs in declaration order, not the reverse order getData walks', () => {
+  it('numbers flat subgraphs in source order', () => {
     for (const id of ['A', 'B', 'C']) {
       addVertex(id);
     }
@@ -330,6 +330,33 @@ describe('flow db subgraph colour slots', () => {
     const { nodes } = flowDb.getData();
     const slot = (id: string) => nodes.find((n) => n.id === id)?.colorIndex;
     expect([slot('first'), slot('second'), slot('third')]).toEqual([0, 1, 2]);
+  });
+
+  it('numbers nested subgraphs in source order, parent before its children', () => {
+    /* The discriminating case. `addSubGraph` is called when a subgraph *closes*, so
+     * `subGraphs` holds nested ones before their parent -- here [InnerOne, InnerTwo,
+     * Outer, Sibling]. Taking the array index directly gave Outer slot 2 while its own
+     * children took 0 and 1.
+     *
+     * Three flat subgraphs cannot catch that: for siblings, close order and source order
+     * are the same. Only nesting separates them.
+     */
+    for (const id of ['A', 'B', 'C', 'D']) {
+      addVertex(id);
+    }
+    flowDb.addSubGraph({ text: 'InnerOne' }, ['A'], { text: 'InnerOne', type: 'text' });
+    flowDb.addSubGraph({ text: 'InnerTwo' }, ['B'], { text: 'InnerTwo', type: 'text' });
+    flowDb.addSubGraph({ text: 'Outer' }, ['InnerOne', 'InnerTwo'], {
+      text: 'Outer',
+      type: 'text',
+    });
+    flowDb.addSubGraph({ text: 'Sibling' }, ['D'], { text: 'Sibling', type: 'text' });
+
+    const { nodes } = flowDb.getData();
+    const slot = (id: string) => nodes.find((n) => n.id === id)?.colorIndex;
+    expect([slot('Outer'), slot('InnerOne'), slot('InnerTwo'), slot('Sibling')]).toEqual([
+      0, 1, 2, 3,
+    ]);
   });
 
   it('keeps a collapsed subgraph on its own slot so the cycle does not shift', () => {

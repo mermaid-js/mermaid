@@ -32,8 +32,12 @@ describe('class diagram colour slots', () => {
   });
 
   it('does not spend a slot on a namespace container', () => {
-    classDb.addClassesToNamespace('shop', [], []);
+    // `addNamespace` first: `addClassesToNamespace` early-returns when the namespace does
+    // not exist, so without it no namespace node is created and the assertion below passes
+    // on absence rather than on behaviour.
+    classDb.addNamespace('shop');
     classDb.addClass('Order');
+    classDb.addClassesToNamespace('shop', ['Order'], []);
     classDb.addClass('Customer');
 
     const slots = colorIndexById();

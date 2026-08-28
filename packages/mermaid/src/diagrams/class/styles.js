@@ -20,7 +20,7 @@ const genColor = (options) => {
   const hasBkgColors = hasPalette(bkgColorArray);
   let sections = '';
 
-  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
     const borderColor = borderColorArray[i % borderColorArray.length];
     sections += `
 
