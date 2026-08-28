@@ -304,7 +304,6 @@ jobs:
         id: playwright
         env:
           MERMAID_PORT: 9000
-          PLAYWRIGHT_COMMIT: ${{ github.sha }}
           # Enables native V8 coverage collection (page.coverage) on coverage runs.
           E2E_COVERAGE: ${{ (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') && 'true' || '' }}
           # Job output via env — never interpolate spec globs into the shell via ${{ }}.

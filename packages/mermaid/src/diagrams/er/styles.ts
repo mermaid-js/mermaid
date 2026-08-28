@@ -16,23 +16,33 @@ const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
 
 const genColor: DiagramStylesProvider = (options) => {
   const { theme, look, bkgColorArray, borderColorArray } = options;
-  if (!COLOR_THEMES.has(theme)) {
+  // Bail on an empty border palette as well as a non-colour theme. Without the second
+  // check `i % borderColorArray.length` is `i % 0` -> NaN, and `[][NaN]` is `undefined`,
+  // so every slot would emit `stroke: undefined` -- the exact symptom this guard exists to
+  // prevent. `requirement/styles.js` already gated on the palette; this brings ER into
+  // line. Reachable through a `themeVariables` override, not just in theory.
+  if (!COLOR_THEMES.has(theme) || !borderColorArray?.length) {
     return '';
   }
   const hasBkgColors = bkgColorArray?.length > 0;
   let sections = '';
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+    // Wrap at the palette length rather than indexing raw. The loop runs to
+    // THEME_COLOR_LIMIT, so a palette with fewer entries than that emits
+    // `stroke: undefined` for the overflow slots.
+    const borderColor = borderColorArray[i % borderColorArray.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {
-    stroke: ${borderColorArray[i]};
-    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
+    stroke: ${borderColor};
+    ${fill}
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node  rect {
-    stroke: ${borderColorArray[i]};
-    ${hasBkgColors ? `fill: ${bkgColorArray[i]};` : ''}
+    stroke: ${borderColor};
+    ${fill}
      }
     `;
   }
