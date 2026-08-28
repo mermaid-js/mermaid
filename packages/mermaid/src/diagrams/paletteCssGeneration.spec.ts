@@ -45,6 +45,9 @@ const ALL_STYLESHEETS = Object.keys(STYLESHEETS) as Stylesheet[];
  */
 const SLOT_STYLESHEETS = ['er', 'requirement'] as const satisfies readonly Stylesheet[];
 
+/** Matches `theme-base.js`; the palette rules are emitted one per slot up to this. */
+const THEME_COLOR_LIMIT = 12;
+
 const COLOUR_THEMES = [
   'redux-color',
   'redux-dark-color',
@@ -74,7 +77,7 @@ const render = (
     ...(themeVariables as unknown as Record<string, unknown>),
     theme,
     look: 'classic',
-    THEME_COLOR_LIMIT: 12,
+    THEME_COLOR_LIMIT,
     ...overrides,
   };
   configApi.reset();
@@ -85,6 +88,17 @@ const render = (
 /** The declaration bodies of the palette rules, ignoring the rest of the stylesheet. */
 const paletteBlocks = (css: string): string[] =>
   [...css.matchAll(/\[data-color-id="color-\d+"][^{]*{([^}]*)}/g)].map((m) => m[1]);
+
+/**
+ * The declaration bodies of timeline's `.section-N` rules. Anchored on the ` rect,` that
+ * opens each selector list, so it skips `.section-root` and the `[data-look="neo"]`
+ * gradient variants.
+ */
+const sectionBlocks = (css: string): string[] =>
+  [...css.matchAll(/\.section--?\d+ rect,[^{]*{([^}]*)}/g)].map((m) => m[1]);
+
+const strokesIn = (blocks: string[]): string[] =>
+  blocks.flatMap((block) => [...block.matchAll(/stroke:\s*([^;]+);/g)].map((m) => m[1].trim()));
 
 afterEach(() => {
   configApi.reset();
@@ -123,10 +137,13 @@ describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
     });
     // Every slot still gets a rule, and every rule names one of the two colours. Scoped to
     // the palette blocks — the rest of the stylesheet has its own `stroke:` declarations.
-    const strokes = paletteBlocks(css).flatMap((block) =>
-      [...block.matchAll(/stroke:\s*([^;]+);/g)].map((m) => m[1].trim())
-    );
-    expect(strokes.length).toBeGreaterThan(2);
+    // Counted exactly: a `greaterThan` bound would still pass if only a couple of slots
+    // were emitted, which is the regression this is here to catch. Each slot emits a
+    // `path` rule and a `rect` rule, hence twice the limit.
+    const blocks = paletteBlocks(css);
+    const strokes = strokesIn(blocks);
+    expect(blocks).toHaveLength(THEME_COLOR_LIMIT * 2);
+    expect(strokes).toHaveLength(THEME_COLOR_LIMIT * 2);
     expect(new Set(strokes)).toEqual(new Set(['#ff0000', '#00ff00']));
   });
 
@@ -142,5 +159,35 @@ describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
     // so an unscoped check would pass even if genColor returned nothing.
     expect(paletteBlocks(css).length).toBeGreaterThan(0);
     expect(paletteBlocks(css).every((block) => block.includes('stroke:'))).toBe(true);
+  });
+});
+
+describe('timeline section rules', () => {
+  it('wraps the palette across every section rather than falling back', () => {
+    const borderColorArray = ['#ff0000', '#00ff00'];
+    const css = render('timeline', 'redux-color', { borderColorArray });
+    const strokes = strokesIn(sectionBlocks(css));
+
+    // The assertion has to be the wrapped *sequence*, not just the absence of `undefined`.
+    // `slot ?? options.nodeBorder` means dropping the `% length` wrap sends the overflow
+    // slots to the classic fallback colour instead of leaving them undefined, so a
+    // `not.toContain('undefined')` check passes either way and catches nothing. What
+    // actually regresses is sections 3..12 silently losing their palette colours.
+    expect(strokes).toHaveLength(THEME_COLOR_LIMIT);
+    expect(strokes).toEqual(
+      Array.from(
+        { length: THEME_COLOR_LIMIT },
+        (_, i) => borderColorArray[i % borderColorArray.length]
+      )
+    );
+  });
+
+  it('falls back to the classic colours for an empty border palette', () => {
+    const css = render('timeline', 'redux-color', { borderColorArray: [] });
+    const strokes = strokesIn(sectionBlocks(css));
+    expect(strokes).toHaveLength(THEME_COLOR_LIMIT);
+    expect(new Set(strokes)).not.toContain(undefined);
+    // No palette to cycle, so every section takes the classic border colour.
+    expect(new Set(strokes).size).toBe(1);
   });
 });
