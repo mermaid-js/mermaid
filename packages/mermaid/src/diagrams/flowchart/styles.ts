@@ -55,6 +55,17 @@ const genColor = (options: FlowChartStyleOptions) => {
     const borderColor = borderColorArray![i % borderColorArray!.length];
     const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
+    /* A collapsed subgraph is drawn by `collapsedGroup.ts` through `getNodeClasses`, which
+     * returns `rough-node` instead of `node` for the handDrawn look -- so a `.node`-only
+     * selector leaves handDrawn collapsed containers uncoloured beside their tinted
+     * siblings. Clusters are unaffected: `clusters.js` sets the `cluster` class directly.
+     *
+     * Each descendant has to be appended to *both* prefixes separately. Writing
+     * `${slot}.node, ${slot}.rough-node .thing` would attach the descendant to the last
+     * item of the list only, silently matching nothing under the classic look.
+     */
+    const collapsedRule = (suffix: string) =>
+      `${slot}.node ${suffix}, ${slot}.rough-node ${suffix}`;
     sections += `
 
     ${slot}.cluster rect {
@@ -67,10 +78,20 @@ const genColor = (options: FlowChartStyleOptions) => {
       ${fill}
     }
 
-    ${slot}.node .collapsed-group,
-    ${slot}.node .collapsed-group path {
+    ${collapsedRule('.collapsed-group')},
+    ${collapsedRule('.collapsed-group path')} {
       stroke: ${borderColor};
       ${fill}
+    }
+
+    /* The ellipsis dots and the separator take clusterBorder further down, so without
+       these the container is palette-coloured while its own markers are not. */
+    ${collapsedRule('.collapsed-indicator')} {
+      fill: ${borderColor};
+    }
+
+    ${collapsedRule('.collapsed-separator')} {
+      stroke: ${borderColor};
     }
     `;
   }

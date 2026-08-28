@@ -48,8 +48,10 @@ export const safeLook = (look: string | undefined): string =>
   look != null && SAFE_LOOK.test(look) ? look : 'classic';
 
 /**
- * Number of palette slots a stylesheet should emit, clamped to what the palette can
- * actually supply so a slot never resolves to `undefined`.
+ * Number of palette slots a stylesheet should emit. This only floors a missing or
+ * non-numeric `THEME_COLOR_LIMIT` to the default -- it never sees a palette, so it cannot
+ * clamp to one. Keeping a slot from resolving to `undefined` is `stampColorSlot`'s job,
+ * via the `% palette.length` wrap, and each stylesheet's own wrap when it indexes directly.
  */
 export const colorSlotCount = (themeColorLimit: unknown): number =>
   typeof themeColorLimit === 'number' && themeColorLimit > 0

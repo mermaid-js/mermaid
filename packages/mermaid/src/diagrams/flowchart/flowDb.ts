@@ -1118,6 +1118,39 @@ You have to call mermaid.initialize.`
         }
       }
     }
+    /* Colour slots follow the order the subgraphs appear in the source.
+     *
+     * `subGraphs` is not in that order: the grammar reduces a subgraph when it *closes*,
+     * so a nested one lands before its parent -- `Outer { InnerOne, InnerTwo }, Sibling`
+     * arrives as [InnerOne, InnerTwo, Outer, Sibling]. Taking the array index directly
+     * would hand Outer slot 2 while its own children took 0 and 1.
+     *
+     * A pre-order walk of the containment forest recovers source order: roots complete in
+     * source order relative to each other, and a parent is always declared before the
+     * children it contains. Assigned once here so the collapsed and expanded branches
+     * below cannot drift apart.
+     */
+    const declarationIndex = new Map<string, number>();
+    const childrenOf = new Map<string, string[]>();
+    for (const sg of subGraphs) {
+      const parent = subGraphParent.get(sg.id);
+      if (parent !== undefined) {
+        childrenOf.set(parent, [...(childrenOf.get(parent) ?? []), sg.id]);
+      }
+    }
+    let nextDeclarationIndex = 0;
+    const walk = (sgId: string) => {
+      declarationIndex.set(sgId, nextDeclarationIndex++);
+      for (const childId of childrenOf.get(sgId) ?? []) {
+        walk(childId);
+      }
+    };
+    for (const sg of subGraphs) {
+      if (!subGraphParent.has(sg.id)) {
+        walk(sg.id);
+      }
+    }
+
     const isCollapsed = (sgId: string) =>
       this.subGraphLookup.get(sgId)?.metadata?.view === 'collapsed';
     const outermostCollapsed = (sgId: string): string | undefined => {
@@ -1193,9 +1226,9 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: false,
           look: config.look,
-          // A collapsed subgraph still consumes its slot so the colour cycle does not
-          // shift when one is collapsed. `collapsedGroup` does not paint it yet.
-          colorIndex: i,
+          // A collapsed subgraph still consumes its slot, so the cycle does not shift
+          // when one is collapsed.
+          colorIndex: declarationIndex.get(subGraph.id),
         });
       } else {
         nodes.push({
@@ -1211,7 +1244,7 @@ You have to call mermaid.initialize.`
           dir: subGraph.dir,
           isGroup: true,
           look: config.look,
-          colorIndex: i,
+          colorIndex: declarationIndex.get(subGraph.id),
           // Forwarded so layout engines can read per-container settings such as
           // `@{ algorithm: elk.box }`. `view` is consumed above; everything else
           // is opaque here and simply passed through. The cast is the
