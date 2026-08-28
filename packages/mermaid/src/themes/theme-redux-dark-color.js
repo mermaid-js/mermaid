@@ -24,7 +24,7 @@ class Theme {
     this.tertiaryTextColor = invert(this.tertiaryColor);
 
     this.mainBkg = '#111113';
-    this.secondBkg = 'calculated';
+    this.secondBkg = 'calculated'; // resolved in updateColors()
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
     this.border1 = '#ccc';
@@ -119,6 +119,10 @@ class Theme {
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
+    /* Resolve the ctor's 'calculated' placeholder, which this theme inherited from
+     * theme-dark.js without the line that computes it -- so it shipped as the literal
+     * string, and every consumer (railroad's terminal fill) emitted `fill: calculated`. */
+    this.secondBkg = this.secondBkg === 'calculated' ? lighten(this.mainBkg, 16) : this.secondBkg;
     this.nodeBorder = this.nodeBorder || this.border1;
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
@@ -162,7 +166,11 @@ class Theme {
     this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
     this.activeTaskBkgColor = this.activeTaskBkgColor || lighten(this.primaryColor, 23);
     this.gridColor = this.gridColor || 'lightgrey';
-    this.doneTaskBkgColor = this.doneTaskBkgColor || 'lightgrey';
+    /* `doneTaskBkgColor` was 'lightgrey' -- a light fill under this theme's light
+     * `taskTextDarkColor`, giving 1.07:1 on done-task labels. `theme-dark.js` gets away
+     * with the same fill because it pairs it with a dark ink; here the active-task fill is
+     * dark, so one ink has to serve both and the fill is what has to move. */
+    this.doneTaskBkgColor = this.doneTaskBkgColor || this.secondBkg;
     this.doneTaskBorderColor = this.doneTaskBorderColor || 'grey';
     this.critBorderColor = this.critBorderColor || '#ff8888';
     this.critBkgColor = this.critBkgColor || 'red';
