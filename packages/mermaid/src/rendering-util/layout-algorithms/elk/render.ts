@@ -1,9 +1,9 @@
-import mermaid, {
+import {
   createCommonLayoutRenderer,
   defaultMeasureLayout,
   type CommonLayoutRenderContext,
-  type LayoutData,
-} from 'mermaid';
+} from '../common/index.js';
+import type { LayoutData } from '../../types.js';
 // @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
@@ -469,7 +469,6 @@ export function prepareLayoutForElk(
   context: CommonLayoutRenderContext<ElkPreparedLayout>
 ): ElkPreparedLayout {
   const elkContext = getElkLayoutContext(context);
-  syncElkPackageConfig(elkContext);
   applyElkEdgeRenderData(data4Layout, elkContext);
   return { algorithm: elkContext.algorithm };
 }
@@ -525,10 +524,6 @@ export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLay
     skipIntersect: true,
   },
 });
-
-function syncElkPackageConfig(elkContext: ElkLayoutContext): void {
-  mermaid.mermaidAPI.setConfig(elkContext.getConfig());
-}
 
 function orderNodesForElkPaint(nodes: LayoutData['nodes']): void {
   const nodeById = new Map(nodes.map((node) => [node.id, node]));

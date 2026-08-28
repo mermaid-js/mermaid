@@ -13,7 +13,7 @@ test.describe('Flowchart ELK', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      {}
+      { useDiagramLayout: true }
     );
     await imgSnapshotTest(
       page,
@@ -25,7 +25,7 @@ test.describe('Flowchart ELK', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { defaultRenderer: 'elk' } }
+      { flowchart: { defaultRenderer: 'elk' }, useDiagramLayout: true }
     );
   });
 
@@ -42,7 +42,7 @@ test.describe('Flowchart ELK', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { useMaxWidth: true } }
+      { flowchart: { useMaxWidth: true }, useDiagramLayout: true }
     );
     const svg = page.locator('svg');
     await expect(svg).toHaveAttribute('width', '100%');
@@ -62,7 +62,7 @@ test.describe('Flowchart ELK', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { useMaxWidth: false } }
+      { flowchart: { useMaxWidth: false }, useDiagramLayout: true }
     );
     const svg = page.locator('svg');
     const width = parseFloat((await svg.getAttribute('width')) ?? '0');
@@ -77,7 +77,7 @@ test.describe('Flowchart ELK', () => {
       `flowchart-elk TD
       A --> B --> C --> D
       `,
-      {}
+      { useDiagramLayout: true }
     );
     await page.locator('svg').evaluate((svg) => {
       const edges = svg.querySelectorAll('.edges > path');

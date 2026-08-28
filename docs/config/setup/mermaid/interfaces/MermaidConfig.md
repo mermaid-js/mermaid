@@ -303,9 +303,12 @@ Defined in: [packages/mermaid/src/config.type.ts:251](https://github.com/mermaid
 
 > `optional` **layout**: `string`
 
-Defined in: [packages/mermaid/src/config.type.ts:101](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L101)
+Defined in: [packages/mermaid/src/config.type.ts:104](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L104)
 
 Defines which layout algorithm to use for rendering the diagram.
+
+Defaults to `elk`, which is bundled with mermaid. The `tiny` build omits
+ELK to stay small and falls back to `dagre`.
 
 ---
 

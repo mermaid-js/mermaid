@@ -3,6 +3,7 @@ import type { InternalHelpers } from '../internals.js';
 import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
 import type { LayoutData } from './types.js';
+import { ELK_ALGORITHMS } from './layout-algorithms/elk/algorithms.js';
 
 // console.log('MUST be removed, this only for keeping dev server working');
 // import tmp from './layout-algorithms/dagre/index.js';
@@ -35,6 +36,36 @@ export const registerLayoutLoaders = (loaders: LayoutLoaderDefinition[]) => {
   }
 };
 
+/**
+ * Look up a registered layout by name.
+ *
+ * @internal Not part of the public API; it exists so the registration of the
+ * built-in layouts can be asserted on directly.
+ */
+export const getLayoutLoaderDefinition = (name: string): LayoutLoaderDefinition => {
+  const definition = layoutAlgorithms[name];
+  if (!definition) {
+    throw new Error(`Unknown layout algorithm: ${name}`);
+  }
+  return definition;
+};
+
+/**
+ * Every ELK entry shares one loader, so all of them resolve to the same lazily
+ * imported chunk and elkjs is fetched at most once.
+ *
+ * The loader is declared here rather than imported from the ELK plugin entry so
+ * that the tiny build, which compiles this branch away, does not retain a
+ * dynamic import of elkjs.
+ */
+const elkLayoutLoaders = (): LayoutLoaderDefinition[] => {
+  const loader = async () => await import('./layout-algorithms/elk/index.js');
+  return [
+    { name: 'elk', loader, algorithm: 'elk.layered' },
+    ...ELK_ALGORITHMS.map((algorithm) => ({ name: algorithm, loader, algorithm })),
+  ];
+};
+
 // TODO: Should we load dagre without lazy loading?
 const registerDefaultLayoutLoaders = () => {
   registerLayoutLoaders([
@@ -46,12 +77,16 @@ const registerDefaultLayoutLoaders = () => {
       name: 'swimlane',
       loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
     },
+    // elkjs is ~1.6 MB of source, so it is excluded from the tiny build along
+    // with the other large features. `getRegisteredLayoutAlgorithm` then falls
+    // back to dagre for diagrams that ask for an ELK layout there.
     ...(injected.includeLargeFeatures
       ? [
           {
             name: 'cose-bilkent',
             loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
           },
+          ...elkLayoutLoaders(),
         ]
       : []),
   ]);

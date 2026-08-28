@@ -22,6 +22,12 @@ interface E2EConfig {
   screenshotPath?: string;
   /** Fail when mermaid renders its syntax-error diagram instead of the requested type. Default true. */
   rejectErrorDiagram?: boolean;
+  /**
+   * Skip the dagre baseline pin and let the diagram choose its own layout.
+   * Needed by diagrams that select ELK through their *syntax* — see
+   * {@link E2E_BASELINE_LAYOUT}.
+   */
+  useDiagramLayout?: boolean;
 }
 type E2EMermaidConfig = MermaidConfig & E2EConfig;
 
@@ -50,12 +56,33 @@ const shortenScreenshotName = (name: string, maxLen = 180): string => {
   return `${sanitized.slice(0, maxLen - 9)}-${hash}`;
 };
 
+/**
+ * Layout the visual suite's screenshots were originally captured against.
+ *
+ * ELK is mermaid's default layout now, so without a pin every existing
+ * screenshot in the suite would move at once. Pinning here rather than at the
+ * ~1600 individual call sites keeps those baselines meaningful; specs that
+ * exercise ELK opt in with `layout: 'elk'`, and there are dedicated ELK suites.
+ *
+ * Two ways a diagram picks its own layout, and how each interacts with this:
+ * - Frontmatter `config.layout` is a directive, which already outranks this
+ *   site-level value, so those diagrams need nothing.
+ * - `flowchart-elk` / `graph-elk` syntax picks ELK inside the *detector*, and
+ *   `flowDiagram.init` ranks the detector's choice BELOW a user-supplied
+ *   layout. Pinning would silently flip those to dagre, so they must set
+ *   `useDiagramLayout`.
+ */
+const E2E_BASELINE_LAYOUT = 'dagre';
+
 export const mermaidUrl = (
   graphStr: string | string[],
   options: E2EMermaidConfig,
   api: boolean
 ): string => {
   options.handDrawnSeed = 1;
+  if (!options.useDiagramLayout) {
+    options.layout ??= E2E_BASELINE_LAYOUT;
+  }
   options.architecture = { seed: 1, ...(options.architecture ?? {}) };
   options.cynefin = { seed: 1, ...(options.cynefin ?? {}) };
   const codeObject: CodeObject = {
