@@ -9,8 +9,7 @@ import intersect from '../intersect/index.js';
 import { textHelper } from '../../../diagrams/class/shapeUtil.js';
 import { evaluate } from '../../../diagrams/common/common.js';
 import type { D3Selection } from '../../../types.js';
-
-const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 
 export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const config = getConfig();
@@ -27,10 +26,7 @@ export async function classBox<T extends SVGGraphicsElement>(parent: D3Selection
 
   const { shapeSvg, bbox } = await textHelper(parent, node, config, useHtmlLabels, GAP);
 
-  if (theme != null && COLOR_THEMES.has(theme) && borderColorArray?.length) {
-    const colorIndex = node.colorIndex ?? 0;
-    shapeSvg.attr('data-color-id', `color-${colorIndex % borderColorArray.length}`);
-  }
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;

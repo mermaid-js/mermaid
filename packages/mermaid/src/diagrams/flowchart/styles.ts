@@ -1,6 +1,7 @@
 // import khroma from 'khroma';
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
+import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
@@ -25,37 +26,49 @@ export interface FlowChartStyleOptions {
   bkgColorArray?: string[];
 }
 
-const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
-
 /**
  * Cycling per-subgraph colour. Only the containers are painted -- the nodes inside keep
  * the uniform look, because a flowchart node is a step in a flow rather than a distinct
  * participant, and node colour is already how `classDef` / `style` carry meaning.
  *
  * Emits both the `rect` (classic/neo) and `path` (handDrawn) forms since the container is
- * a plain rect in one look and a roughjs path pair in the other. Not `!important`:
- * `clusters.js` puts user styles in an inline `style` attribute, which has to keep
- * winning over the theme palette.
+ * a plain rect in one look and a roughjs path pair in the other. `.collapsed-group` is
+ * the same container drawn as a compact node by `collapsedGroup.ts` — it is a container,
+ * not one of the flow's steps, so it takes the palette too; without it a collapsed
+ * subgraph rendered uncoloured beside tinted siblings.
+ *
+ * Not `!important`: `clusters.js` and `collapsedGroup.ts` both put user styles in an
+ * inline `style` attribute, which has to keep winning over the theme palette. The
+ * collapsed form's own colours are presentation attributes (`fill=` / `stroke=`), which
+ * these rules correctly outrank while still losing to that inline style.
  */
 const genColor = (options: FlowChartStyleOptions) => {
-  const { theme, look, bkgColorArray, borderColorArray } = options;
-  if (!theme || !COLOR_THEMES.has(theme) || !borderColorArray?.length) {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
     return '';
   }
-  const hasBkgColors = (bkgColorArray?.length ?? 0) > 0;
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
   let sections = '';
 
-  for (let i = 0; i < (options.THEME_COLOR_LIMIT ?? 12); i++) {
-    const borderColor = borderColorArray[i % borderColorArray.length];
-    const fill = hasBkgColors ? `fill: ${bkgColorArray![i % bkgColorArray!.length]};` : '';
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
+    const borderColor = borderColorArray![i % borderColorArray!.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
     sections += `
 
-    [data-look="${look}"][data-color-id="color-${i}"].cluster rect {
+    ${slot}.cluster rect {
       stroke: ${borderColor};
       ${fill}
     }
 
-    [data-look="${look}"][data-color-id="color-${i}"].cluster path {
+    ${slot}.cluster path {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    ${slot}.node .collapsed-group,
+    ${slot}.node .collapsed-group path {
       stroke: ${borderColor};
       ${fill}
     }

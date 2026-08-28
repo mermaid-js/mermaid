@@ -1,43 +1,44 @@
 /**
- * The per-item palette is opt-in per diagram: `clusters.js` and the shape files stamp a
- * `data-color-id` attribute unconditionally, and a diagram only renders colour if its
- * stylesheet emits the matching rules. That gate is a `COLOR_THEMES` set duplicated in
- * each stylesheet, so it is easy to widen one by accident.
+ * The per-item palette is opt-in per diagram: shapes and containers stamp a
+ * `data-color-id` slot via `stampColorSlot`, and a diagram renders colour only if its
+ * stylesheet emits the matching rules.
  *
  * These assertions are about the gate, not the colours: a stylesheet must stay silent for
- * every theme outside the colour pair, and must emit one rule per palette slot inside it.
+ * every theme outside the colour pair, must emit one rule per palette slot inside it, and
+ * must never outrank a user's own styling.
  */
 import { describe, expect, it } from 'vitest';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
+import { COLOR_THEMES, safeLook } from './colorThemeGate.js';
 
 const STYLESHEETS = {
   class: classStyles,
   flowchart: flowchartStyles,
 } as const;
 
-const COLOUR_THEMES = ['redux-color', 'redux-dark-color'];
-const PLAIN_THEMES = [
-  'default',
-  'base',
-  'dark',
-  'forest',
-  'neutral',
-  'neo',
-  'neo-dark',
-  'redux',
-  'redux-dark',
-];
+const COLOUR_THEMES = [...COLOR_THEMES];
 
-const render = (name: keyof typeof STYLESHEETS, themeName: string) => {
+/**
+ * Derived rather than listed. A hardcoded list stops being exhaustive the moment someone
+ * registers a new theme — the same "widened without anyone noticing" failure this file
+ * exists to catch, one level up.
+ */
+const PLAIN_THEMES = Object.keys(themes).filter((name) => !COLOR_THEMES.has(name));
+
+const render = (name: keyof typeof STYLESHEETS, themeName: string, look = 'classic') => {
   const themeVariables = themes[themeName as keyof typeof themes].getThemeVariables({});
   return STYLESHEETS[name]({
     ...(themeVariables as unknown as Record<string, unknown>),
     theme: themeName,
-    look: 'classic',
+    look,
   } as never);
 };
+
+it('covers every registered theme between the two lists', () => {
+  expect([...PLAIN_THEMES, ...COLOUR_THEMES].sort()).toEqual(Object.keys(themes).sort());
+});
 
 describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s stylesheet', (name) => {
   it.each(PLAIN_THEMES)('emits no per-item colour rules for %s', (themeName) => {
@@ -61,5 +62,40 @@ describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s styl
     );
     expect(bodies.length).toBeGreaterThan(0);
     expect(bodies.filter((body) => body.includes('!important'))).toEqual([]);
+  });
+
+  it.each(COLOUR_THEMES)('keeps a hostile look out of the selector for %s', (themeName) => {
+    const css = render(name, themeName, 'classic"]{a');
+    expect(css).not.toContain('classic"]{a');
+    expect(css).toContain('[data-look="classic"]');
+  });
+});
+
+/**
+ * `look` is interpolated straight into the palette rules' selector, and it is a top-level
+ * config key — so it is reachable from diagram text through frontmatter or an init
+ * directive, and `config.sanitize` only drops values containing `<`, `>` or `url(data:`.
+ * Braces and quotes survive, which is enough to close the attribute selector early and
+ * open a rule block of the author's choosing, escaping the `#svgId` scoping that stylis
+ * applies. Every real look is a bare word, so anything else is rejected outright rather
+ * than escaped.
+ */
+describe('safeLook', () => {
+  it.each(['classic', 'handDrawn', 'neo', 'some-look', 'A_1'])(
+    'passes the bare word %s',
+    (look) => {
+      expect(safeLook(look)).toBe(look);
+    }
+  );
+
+  it.each(['classic"]{a{b', 'classic"] *', 'classic}', 'classic ', '', 'a"]{}'])(
+    'falls back to classic for %j',
+    (look) => {
+      expect(safeLook(look)).toBe('classic');
+    }
+  );
+
+  it('falls back to classic when look is absent', () => {
+    expect(safeLook(undefined)).toBe('classic');
   });
 });

@@ -1,6 +1,5 @@
 import { getIconStyles } from '../globalStyles.js';
-
-const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
+import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 /**
  * Cycling per-class colour, mirroring `er/styles.ts`. A class box is the structural twin
@@ -13,14 +12,15 @@ const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
  * winning over the theme palette.
  */
 const genColor = (options) => {
-  const { theme, look, bkgColorArray, borderColorArray } = options;
-  if (!COLOR_THEMES.has(theme) || !borderColorArray?.length) {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
     return '';
   }
-  const hasBkgColors = bkgColorArray?.length > 0;
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
   let sections = '';
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
     const borderColor = borderColorArray[i % borderColorArray.length];
     sections += `
 
