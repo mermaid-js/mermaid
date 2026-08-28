@@ -30,6 +30,11 @@ const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
  * `selection.style(name, undefined)` takes d3's remove path, which lets the stylesheet
  * decide -- and that is exactly what `redux-dark-color` relies on, shipping a border
  * palette and an empty background palette so that actors are outlined but not filled.
+ *
+ * `drawActivation` is the one caller that does add `?? mainBkg`, and deliberately so: an
+ * activation rect spans the lifeline it sits on, so it needs an opaque fill or the line
+ * shows through it. That is a question of opacity rather than of palette, which is why it
+ * belongs at that call site and not in here.
  */
 export const paletteColor = (palette, index) =>
   palette?.length ? palette[index % palette.length] : undefined;

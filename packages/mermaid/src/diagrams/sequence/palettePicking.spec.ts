@@ -17,8 +17,7 @@ import { describe, expect, it } from 'vitest';
 import themes from '../../themes/index.js';
 import { paletteColor } from './svgDraw.js';
 // Vite's `?raw` gives the module's own source, so the guard below reads the real file
-// without depending on the working directory.
-// @ts-expect-error -- `?raw` is a Vite import suffix, not a declared module
+// without depending on the working directory. Declared in `src/type.d.ts`.
 import svgDrawSource from './svgDraw.js?raw';
 
 describe('paletteColor', () => {
@@ -106,10 +105,16 @@ describe('no call site indexes one palette by another', () => {
     expect(raw).toEqual([]);
   });
 
-  it('routes every actor colour through paletteColor', () => {
-    // Both halves of each stroke/fill pair.
-    const calls = [...source.matchAll(/paletteColor\((\w+),\s*actorCount\)/g)].map((m) => m[1]);
-    expect(calls.length).toBeGreaterThanOrEqual(22);
-    expect(new Set(calls)).toEqual(new Set(['borderColorArray', 'bkgColorArray']));
+  it('routes every actor colour through paletteColor, each to its own property', () => {
+    // Capture the property as well as the palette. Collecting only the palette argument
+    // would be blind to a swapped pair -- `stroke` fed from `bkgColorArray` and `fill` from
+    // `borderColorArray` -- which is exactly what a copy-paste between two adjacent
+    // `.style()` lines produces, and which no unit test here would otherwise notice.
+    const pairs = [
+      ...source.matchAll(/\.style\(\s*'(stroke|fill)',\s*paletteColor\((\w+),\s*actorCount\)/g),
+    ].map((m) => `${m[1]}<-${m[2]}`);
+    // Two properties for each of the eleven actor drawers.
+    expect(pairs.length).toBeGreaterThanOrEqual(2 * 11);
+    expect(new Set(pairs)).toEqual(new Set(['stroke<-borderColorArray', 'fill<-bkgColorArray']));
   });
 });
