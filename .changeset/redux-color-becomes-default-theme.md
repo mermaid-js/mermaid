@@ -2,14 +2,14 @@
 'mermaid': major
 ---
 
-**`redux-color` is now the default theme.** Every diagram rendered without an explicit theme changes appearance.
+**`redux-color` is now the default theme, and `neo` is the default look.** Every diagram rendered without an explicit `theme` and `look` changes appearance.
 
-Previously the default was `default` — the long-standing purple/Trebuchet look. The new default pairs the `redux` geometry and typography (12px corner radius, 2px strokes, the Recursive typeface, subtle node shadows) with a categorical colour palette, so ER entities, sequence actors, git branches, requirements, classes, flowchart subgraph containers, pie slices, mindmap and timeline sections each get their own colour.
+Previously the defaults were `theme: default` and `look: classic` — the long-standing purple/Trebuchet look with square corners. The new default pairs the `redux` geometry and typography (12px corner radius, 2px strokes, the Recursive typeface, subtle node shadows) with a categorical colour palette, so ER entities, sequence actors, git branches, requirements, classes, flowchart subgraph containers, pie slices, mindmap and timeline sections each get their own colour.
 
-To keep the previous appearance, name the old theme explicitly — site-wide:
+To keep the previous appearance, name both explicitly — site-wide:
 
 ```js
-mermaid.initialize({ theme: 'default' });
+mermaid.initialize({ theme: 'default', look: 'classic' });
 ```
 
 or per diagram:
@@ -18,8 +18,13 @@ or per diagram:
 ---
 config:
   theme: default
+  look: classic
 ---
 ```
+
+One interaction worth knowing about the new look: `neo` paints node strokes with a gradient when the active theme sets `useGradient`, and `base` does — so a custom `nodeBorder` on top of `theme: base` no longer shows unless you also set `look: classic`. This is existing `neo` behaviour, not new, but it becomes reachable by default.
+
+Also fixed while making this change: the sequence diagram's `neo` drop-shadow filter used a hardcoded `id="drop-shadow"`, so two sequence diagrams on one page produced duplicate DOM IDs and the second borrowed the first's filter. It is now scoped per diagram, matching every other diagram.
 
 `default` and every other built-in theme remain available and unchanged. Only the value used when no theme is given has changed.
 
