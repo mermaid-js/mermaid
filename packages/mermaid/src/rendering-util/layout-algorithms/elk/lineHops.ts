@@ -1,7 +1,4 @@
-import {
-  applyLineJumpsToSvg,
-  type EdgeGeom,
-} from '../../rendering-elements/lineJump.js';
+import { applyLineJumpsToSvg, type EdgeGeom } from '../../rendering-elements/lineJump.js';
 import type { CommonLayoutPaintContext } from '../common/index.js';
 import type { LayoutData } from '../../types.js';
 /**
