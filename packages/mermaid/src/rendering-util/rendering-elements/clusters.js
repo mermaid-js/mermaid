@@ -8,14 +8,15 @@ import { createText } from '../createText.ts';
 import intersectRect from '../rendering-elements/intersect/intersect-rect.js';
 import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
-import { styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
+import { compileStyles, styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
+import { stampColorSlot } from '../../diagrams/common/colorThemeGate.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
-  const { themeVariables, handDrawnSeed } = siteConfig;
-  const { clusterBkg, clusterBorder } = themeVariables;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder, borderColorArray } = themeVariables;
 
   const { labelStyles, nodeStyles, borderStyles, backgroundStyles } = styles2String(node);
 
@@ -25,6 +26,11 @@ const rect = async (parent, node) => {
     .attr('class', 'cluster ' + node.cssClasses)
     .attr('id', node.domId)
     .attr('data-look', node.look);
+
+  // Per-container colour slot. A no-op unless the active theme carries a palette, and
+  // painted only by diagrams whose stylesheet defines the matching `[data-color-id]`
+  // rules -- for state, block and class namespaces this is an inert attribute.
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
@@ -469,6 +475,292 @@ const divider = (parent, node) => {
   return { cluster: shapeSvg, labelBBox: {} };
 };
 
+/**
+ * Shared helper for agentflow container cluster shapes.
+ * Renders a labeled rounded-rect cluster with configurable visual style.
+ *
+ * Agentflow's grammar has a single container kind (`flow`), so `flowGroup`
+ * below is the only caller today. The options object is kept so a second
+ * container kind does not have to re-derive the label/rough/separator logic.
+ *
+ * @param {object} opts
+ * @param {string} opts.cssClass    - CSS class suffix (e.g. 'agent-cluster')
+ * @param {number} opts.rx          - Corner radius
+ * @param {string} opts.fill        - Fill color (or 'none'/'transparent')
+ * @param {string} opts.stroke      - Stroke color
+ * @param {number} opts.strokeWidth - Stroke width in px
+ * @param {number[]} [opts.strokeDash] - Optional dash array
+ * @param {number} opts.roughness   - rough.js roughness
+ */
+const createContainerGroup = async (parent, node, opts) => {
+  log.info(`Creating ${opts.cssClass} for `, node.id, node);
+  const siteConfig = getConfig();
+  const { handDrawnSeed } = siteConfig;
+
+  const { labelStyles, borderStyles } = styles2String(node);
+
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'cluster ' + opts.cssClass + ' ' + node.cssClasses)
+    // `domId` is generated per render (render.ts prefixes it with the diagram's
+    // svg id). Using the raw, author-supplied `node.id` here collided across two
+    // diagrams on the same page, like every other cluster shape in this file.
+    .attr('id', node.domId ?? node.id)
+    .attr('data-look', node.look);
+
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label');
+
+  let bbox = { width: 0, height: 0 };
+  const hasLabel = node.label?.trim();
+  if (hasLabel) {
+    let text;
+    if (node.labelType === 'markdown') {
+      text = await createText(labelEl, node.label, {
+        style: node.labelStyle,
+        useHtmlLabels,
+        isNode: true,
+        width: node.width,
+      });
+    } else {
+      text = await createLabel(labelEl, node.label, node.labelStyle || '', false, true);
+    }
+    bbox = text.getBBox();
+    if (useHtmlLabels) {
+      const div = text.children[0];
+      const dv = select(text);
+      bbox = div.getBoundingClientRect();
+      dv.attr('width', bbox.width);
+      dv.attr('height', bbox.height);
+    }
+  }
+
+  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
+  if (node.width <= bbox.width + node.padding) {
+    node.diff = (width - node.width) / 2 - node.padding;
+  } else {
+    node.diff = -node.padding;
+  }
+
+  const height = node.height;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+
+  let rectEl;
+  if (node.look === 'handDrawn') {
+    const rc = rough.svg(shapeSvg);
+    const roughOpts = userNodeOverrides(node, {
+      roughness: opts.roughness,
+      fill: opts.fill,
+      stroke: opts.stroke,
+      strokeWidth: opts.strokeWidth,
+      seed: handDrawnSeed,
+      ...(opts.fill === 'none' ? { fillWeight: 0 } : { fillStyle: 'solid' }),
+      ...(opts.strokeDash ? { strokeLineDash: opts.strokeDash } : {}),
+    });
+    const roughNode = rc.path(createRoundedRectPathD(x, y, width, height, opts.rx), roughOpts);
+    rectEl = shapeSvg.insert(() => roughNode, ':first-child');
+    rectEl.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
+  } else {
+    rectEl = shapeSvg.insert('rect', ':first-child');
+    rectEl
+      .attr('rx', opts.rx)
+      .attr('ry', opts.rx)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', opts.fill)
+      .attr('stroke', opts.stroke)
+      .attr('stroke-width', opts.strokeWidth + 'px');
+    if (opts.strokeDash) {
+      rectEl.attr('stroke-dasharray', opts.strokeDash.join(', '));
+    }
+  }
+
+  if (hasLabel) {
+    const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+    labelEl.attr(
+      'transform',
+      `translate(${node.x - bbox.width / 2}, ${node.y - node.height / 2 + subGraphTitleTopMargin})`
+    );
+    if (labelStyles) {
+      const span = labelEl.select('span');
+      if (span) {
+        span.attr('style', labelStyles);
+      }
+    }
+  }
+
+  const rectBox = rectEl.node().getBBox();
+  node.offsetX = 0;
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+  node.offsetY = bbox.height - node.padding / 2;
+
+  node.intersect = function (point) {
+    return intersectRect(node, point);
+  };
+
+  return { cluster: shapeSvg, labelBBox: bbox };
+};
+
+/** Flow group: organizational grouping. Transparent, solid 0.75px, rx=10. */
+const flowGroup = async (parent, node) => {
+  const { themeVariables } = getConfig();
+  const stroke = themeVariables.flowContainerStroke || themeVariables.secondaryBorderColor;
+  return createContainerGroup(parent, node, {
+    cssClass: 'flow-cluster',
+    rx: 10,
+    fill: 'none',
+    stroke,
+    strokeWidth: 0.75,
+    roughness: 0.7,
+  });
+};
+
+export const getUsecaseSystemBoundaryGeometry = (node, labelBBox) => {
+  const boundaryType = node.boundaryType || 'rect';
+  const horizontalLabelPadding = boundaryType === 'package' ? 20 : node.padding;
+  const tabHeight = boundaryType === 'package' ? labelBBox.height + 10 : 0;
+  const width = Math.max(node.width, labelBBox.width + horizontalLabelPadding);
+  const height =
+    boundaryType === 'package' ? Math.max(node.height, tabHeight + node.padding * 2) : node.height;
+  const x = node.x - width / 2;
+  const y = node.y - height / 2;
+
+  return {
+    boundaryType,
+    width,
+    height,
+    x,
+    y,
+    bodyY: y + tabHeight,
+    bodyHeight: height - tabHeight,
+    tabHeight,
+    tabWidth: boundaryType === 'package' ? Math.min(width, Math.max(80, labelBBox.width + 20)) : 0,
+  };
+};
+
+/**
+ * Custom cluster shape for use-case system boundaries.
+ * @param {any} parent
+ * @param {any} node
+ * @returns {any} ShapeSvg
+ */
+const usecaseSystemBoundary = async (parent, node) => {
+  log.info('Creating usecase system boundary for ', node.id, node);
+  const siteConfig = getConfig();
+  const { themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder } = themeVariables;
+  const { labelStyles, nodeStyles } = styles2String(node);
+  const { stylesMap } = compileStyles(node);
+
+  const boundaryType = node.boundaryType || 'rect';
+  const shapeSvg = parent
+    .insert('g')
+    .attr(
+      'class',
+      `cluster usecase-system-boundary usecase-system-boundary-${boundaryType} ${node.cssClasses}`
+    )
+    .attr('id', typeof node.domId === 'string' ? node.domId : node.id)
+    .attr('data-boundary-type', boundaryType)
+    .attr('data-look', node.look);
+
+  const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label system-boundary-title');
+  const text = await createText(labelEl, node.label, {
+    style: labelStyles,
+    useHtmlLabels,
+    isNode: true,
+  });
+
+  let bbox = text.getBBox();
+  if (useHtmlLabels) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  const geometry = getUsecaseSystemBoundaryGeometry(node, bbox);
+  const { width, height, x, y, bodyY, bodyHeight, tabHeight, tabWidth } = geometry;
+  node.diff =
+    node.width <= bbox.width + node.padding
+      ? (width - node.width) / 2 - node.padding
+      : -node.padding;
+
+  const roughOptions = userNodeOverrides(node, {
+    fill: stylesMap.get('fill') || clusterBkg,
+    stroke: stylesMap.get('stroke') || clusterBorder,
+    strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1,
+    seed: handDrawnSeed,
+  });
+
+  if (node.look === 'handDrawn') {
+    const rc = rough.svg(shapeSvg);
+    const roughBody = rc.rectangle(x, bodyY, width, bodyHeight, roughOptions);
+    shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'boundary-body label-container');
+
+    if (boundaryType === 'package') {
+      const roughTab = rc.rectangle(x, y, tabWidth, tabHeight, roughOptions);
+      shapeSvg
+        .insert(() => roughTab, ':first-child')
+        .attr('class', 'boundary-tab system-boundary-package-tab label-container');
+    }
+  } else {
+    shapeSvg
+      .insert('rect', ':first-child')
+      .attr('class', 'boundary-body label-container')
+      .attr('style', nodeStyles)
+      .attr('x', x)
+      .attr('y', bodyY)
+      .attr('width', width)
+      .attr('height', bodyHeight);
+
+    if (boundaryType === 'package') {
+      shapeSvg
+        .insert('rect', ':first-child')
+        .attr('class', 'boundary-tab system-boundary-package-tab label-container')
+        .attr('style', nodeStyles)
+        .attr('x', x)
+        .attr('y', y)
+        .attr('width', tabWidth)
+        .attr('height', tabHeight);
+    }
+  }
+
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins(siteConfig);
+  if (boundaryType === 'package') {
+    labelEl.attr(
+      'transform',
+      `translate(${x + (tabWidth - bbox.width) / 2}, ${y + (tabHeight - bbox.height) / 2})`
+    );
+  } else {
+    labelEl.attr(
+      'transform',
+      `translate(${node.x - bbox.width / 2}, ${y + subGraphTitleTopMargin})`
+    );
+  }
+
+  if (labelStyles) {
+    labelEl.attr('style', labelStyles);
+    labelEl.select('span').attr('style', labelStyles);
+  }
+
+  node.offsetX = 0;
+  node.width = width;
+  node.height = height;
+  node.offsetY = bbox.height - node.padding / 2;
+  node.labelBBox = bbox;
+  node.intersect = function (point) {
+    return intersectRect(node, point);
+  };
+
+  return { cluster: shapeSvg, labelBBox: bbox };
+};
+
 const squareRect = rect;
 const shapes = {
   rect,
@@ -477,6 +769,8 @@ const shapes = {
   noteGroup,
   divider,
   kanbanSection,
+  flowGroup,
+  usecaseSystemBoundary,
   swimlane,
 };
 

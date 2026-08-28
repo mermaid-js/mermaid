@@ -128,6 +128,8 @@ class Theme {
       this.edgeLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
 
     /* Sequence Diagram variables */
 
@@ -154,10 +156,6 @@ class Theme {
 
     /* Gantt chart variables */
 
-    this.sectionBkgColor = this.sectionBkgColor || this.tertiaryColor;
-    this.altSectionBkgColor = this.altSectionBkgColor || 'white';
-    this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
-    this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
     this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
     this.taskBkgColor = this.taskBkgColor || this.primaryColor;
@@ -191,12 +189,12 @@ class Theme {
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     /* The color of the text tables of the states*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
-
+    this.stateEdgeLabelBackground = this.stateEdgeLabelBackground || '#16141F';
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
-    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || '#f0f0f0';
-    this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+    this.compositeBackground = this.compositeBackground || '#16141F';
+    this.altBackground = this.altBackground || '#16141F';
+    this.compositeTitleBackground = this.compositeTitleBackground || '#16141F';
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
@@ -228,6 +226,25 @@ class Theme {
     //     this['cScale' + i] = darken(this['cScale' + i], 25);
     //   }
     // }
+
+    /* Gantt chart section banding.
+     *
+     * gantt/styles.js cycles four band classes: .section0 -> sectionBkgColor,
+     * .section1 and .section3 -> altSectionBkgColor, .section2 -> sectionBkgColor2. All
+     * are painted at 20% opacity, so the source colour has to be saturated to read at
+     * all -- the `primaryColor` tints used before composited to nothing.
+     *
+     * Assigned here rather than in the gantt block above so the two visible bands come
+     * off the categorical scale and follow it if the palette changes.
+     *
+     * altSectionBkgColor is the canvas colour, not the inherited 'white': at 20% over
+     * the #333 canvas white composites to rgb(92,92,92), a grey brighter than both tuned
+     * hues, so half of every gantt's banding fought the other half. The canvas colour
+     * makes those bands read as absent instead, matching the light theme.
+     */
+    this.sectionBkgColor = this.sectionBkgColor || this.cScale0;
+    this.sectionBkgColor2 = this.sectionBkgColor2 || this.cScale1;
+    this.altSectionBkgColor = this.altSectionBkgColor || this.background;
 
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
@@ -263,32 +280,41 @@ class Theme {
     this.classText = this.classText || this.textColor;
 
     /* user-journey */
-    this.fillType0 = this.fillType0 || this.primaryColor;
-    this.fillType1 = this.fillType1 || this.secondaryColor;
-    this.fillType2 = this.fillType2 || adjust(this.primaryColor, { h: 64 });
-    this.fillType3 = this.fillType3 || adjust(this.secondaryColor, { h: 64 });
-    this.fillType4 = this.fillType4 || adjust(this.primaryColor, { h: -64 });
-    this.fillType5 = this.fillType5 || adjust(this.secondaryColor, { h: -64 });
-    this.fillType6 = this.fillType6 || adjust(this.primaryColor, { h: 128 });
-    this.fillType7 = this.fillType7 || adjust(this.secondaryColor, { h: 128 });
+    // Journey paints the section band and the task rects inside it with the same
+    // `fillTypeN`, and task labels use the light `textColor`, so these fills have to
+    // stay dark -- a saturated fill collapses band and task into one block and swamps
+    // the labels. `bkgColorArray` is empty in this theme, so there is no pale array to
+    // draw on, and darkening the categorical scale by a fixed amount does not work
+    // either: the 300-shades differ too much in luminance, so teal lands near black
+    // while fuchsia stays clearly purple. Fixed 900-shades of the same hue order give
+    // even weight across the eight sections.
+    const journeyFills = [
+      '#701a75', // Fuchsia-900
+      '#134e4a', // Teal-900
+      '#7c2d12', // Orange-900
+      '#581c87', // Purple-900
+      '#14532d', // Green-900
+      '#4c1d95', // Violet-900
+      '#7f1d1d', // Red-900
+      '#713f12', // Yellow-900
+    ];
+    journeyFills.forEach((fill, i) => {
+      this['fillType' + i] = this['fillType' + i] || fill;
+    });
 
     /* pie */
-    this.pie1 = this.pie1 || this.primaryColor;
-    this.pie2 = this.pie2 || this.secondaryColor;
-    this.pie3 = this.pie3 || this.tertiaryColor;
-    this.pie4 = this.pie4 || adjust(this.primaryColor, { l: -10 });
-    this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
-    this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
-    this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
-    this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
-    this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
-    this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
-    this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
-    this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+    // Slices reuse the theme's categorical scale so a pie reads like a mindmap or
+    // treemap in the same theme. The old tints of `primaryColor` were all near-black
+    // on a dark canvas, leaving adjacent slices indistinguishable.
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['pie' + (i + 1)] = this['pie' + (i + 1)] || this['cScale' + i];
+    }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
     this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
-    this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+    // Slice fills are now the bright categorical scale, so the in-slice label needs a
+    // dark ink rather than the theme's light `textColor`.
+    this.pieSectionTextColor = this.pieSectionTextColor || '#28253D';
     this.pieLegendTextSize = this.pieLegendTextSize || '17px';
     this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
     this.pieStrokeColor = this.pieStrokeColor || 'black';
@@ -354,6 +380,7 @@ class Theme {
       this.relationLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+    this.requirementEdgeLabelBackground = '#16141F';
 
     /* git */
     this.git0 = this.git0 || this.primaryColor;
