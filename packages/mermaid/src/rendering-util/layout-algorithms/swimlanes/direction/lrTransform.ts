@@ -377,6 +377,49 @@ export function applyLrDirectionTransform(
     };
   }
 
+  // A band with no content still has to be drawn. In BPMN that is a black box pool - a
+  // participant whose internals are deliberately not shown - and it has no children to
+  // derive an extent from, so without this it keeps the zero size it started with and
+  // every such band collapses onto the origin, one title overlapping the next.
+  //
+  // They are stacked below the bands that do have content, which leaves those untouched;
+  // placing one back at its declared position would mean moving already-placed nodes.
+  const placed = new Set(laneBounds.map((entry) => entry.lane));
+  let emptyTop = laneBounds.reduce(
+    (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
+    laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
+  );
+  // A band's title is drawn rotated, so it runs along the band's height and a band
+  // shorter than its own name spills text over its neighbours. Text cannot be measured
+  // here - `calculateTextDimensions` needs a render tree and there is none during layout -
+  // so the run is estimated from the character count at the configured font size. It only
+  // has to be close enough to keep a name inside its own band.
+  const fontSize = Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16;
+  const estimatedTitleRun = (lane: LayoutNode) =>
+    (typeof lane.label === 'string' ? lane.label.length : 0) * fontSize * 0.55;
+  for (const lane of laneNodes) {
+    if (placed.has(lane)) {
+      continue;
+    }
+    const height = Math.max(
+      2 * titleBandSize,
+      2 * (lane.padding ?? 0),
+      estimatedTitleRun(lane) + titleBandSize
+    );
+    lane.x = centerX;
+    lane.y = emptyTop + height / 2;
+    lane.width = laneWidth;
+    lane.height = height;
+    lane.swimlaneContentTop = emptyTop;
+    lane.groupTitleRect = {
+      left: laneLeft,
+      right: laneLeft + titleBandSize,
+      top: emptyTop,
+      bottom: emptyTop + height,
+    };
+    emptyTop += height;
+  }
+
   framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
   if (direction === 'RL') {
