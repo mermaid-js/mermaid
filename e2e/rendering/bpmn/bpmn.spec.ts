@@ -97,28 +97,100 @@ test.describe('bpmn-beta', () => {
     expect(geometry.innerStroke).toBe('none');
   });
 
-  test('a boundary event is pinned to its host activity border', async ({ page }, testInfo) => {
-    await renderFixture(page, testInfo, '01-order-handling.mmd');
-    const placement = await page.evaluate(() => {
-      // Each node group carries its own translate, so getBBox would report both boxes in
-      // their own local space and make every node look concentric with every other.
-      const centre = (node: Element | null) => {
-        const box = node?.getBoundingClientRect();
-        return box ? { x: box.x + box.width / 2, y: box.y + box.height / 2, h: box.height } : null;
-      };
-      // A node's id is prefixed with the render's unique svg id, so it is matched by
-      // suffix rather than by the author-supplied name on its own.
-      return {
-        host: centre(document.querySelector('g.node[id$="-t1"]')),
-        boundary: centre(document.querySelector('g.node[id$="-b1"]')),
-      };
+  test('every flow reaches the shape it points at', async ({ page }, testInfo) => {
+    await renderFixture(page, testInfo, '08-black-box-pool.mmd');
+    const worstGap = await page.evaluate(() => {
+      // Node transforms and path data share the svg's user space, so they compare
+      // directly; getBoundingClientRect would mix in the page's own scaling.
+      const shapes = [];
+      for (const node of document.querySelectorAll('g.node')) {
+        const match = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
+          node.getAttribute('transform') ?? ''
+        );
+        const ring = node.querySelector('circle.bpmn-event-ring');
+        const box = node.querySelector('rect.bpmn-activity-rect');
+        if (!match || (!ring && !box)) {
+          continue;
+        }
+        const halfWidth = ring
+          ? Number(ring.getAttribute('r'))
+          : Number(box!.getAttribute('width')) / 2;
+        const halfHeight = ring
+          ? Number(ring.getAttribute('r'))
+          : Number(box!.getAttribute('height')) / 2;
+        shapes.push({ x: Number(match[1]), y: Number(match[2]), halfWidth, halfHeight });
+      }
+      let worst = 0;
+      for (const path of document.querySelectorAll('g.edgePaths path')) {
+        const points = [...(path.getAttribute('d') ?? '').matchAll(/([\d.-]+),([\d.-]+)/g)].map(
+          (m) => [Number(m[1]), Number(m[2])]
+        );
+        if (points.length < 2) {
+          continue;
+        }
+        for (const point of [points[0], points[points.length - 1]]) {
+          let nearest = Number.POSITIVE_INFINITY;
+          for (const shape of shapes) {
+            nearest = Math.min(
+              nearest,
+              Math.max(
+                Math.abs(point[0] - shape.x) - shape.halfWidth,
+                Math.abs(point[1] - shape.y) - shape.halfHeight
+              )
+            );
+          }
+          worst = Math.max(worst, nearest);
+        }
+      }
+      return worst;
     });
 
-    expect(placement.host).not.toBeNull();
-    expect(placement.boundary).not.toBeNull();
-    // The centre sits on the border, so it is half the host's height away from its centre.
-    const offset = Math.abs(placement.boundary!.y - placement.host!.y);
-    expect(offset).toBeGreaterThan(placement.host!.h / 2 - 6);
-    expect(offset).toBeLessThan(placement.host!.h / 2 + 6);
+    // An event reserves room for a caption above and below its circle, and a flow that
+    // bends on its way in used to stop at that reserved box rather than at the circle,
+    // ending tens of pixels short of anything drawn. The remaining slack is the
+    // arrowhead's own offset.
+    expect(worstGap).toBeLessThan(10);
+  });
+
+  test('pools with no content are drawn as bands of their own', async ({ page }, testInfo) => {
+    await renderFixture(page, testInfo, '08-black-box-pool.mmd');
+    const bands = await page.evaluate(() =>
+      [...document.querySelectorAll('g.cluster.swimlane')]
+        .map((band) => {
+          const body =
+            band.querySelector('rect.pool-body') ?? band.querySelector('rect.swimlane-body');
+          const label = band.querySelector('.cluster-label');
+          if (!body || !label) {
+            return null;
+          }
+          const text = label.getBoundingClientRect();
+          return {
+            name: label.textContent?.trim() ?? '',
+            top: Number(body.getAttribute('y')),
+            bottom: Number(body.getAttribute('y')) + Number(body.getAttribute('height')),
+            label: { x: text.x, y: text.y, width: text.width, height: text.height },
+          };
+        })
+        .filter((band) => band !== null)
+    );
+
+    // A participant drawn without its internals is a black box pool. Having no children to
+    // take an extent from, both used to keep a zero height and collapse onto each other.
+    const empty = bands.filter((band) => band.name === 'Courier' || band.name === 'Supplier');
+    expect(empty).toHaveLength(2);
+    const [first, second] = empty.sort((a, b) => a.top - b.top);
+    expect(second.top).toBeGreaterThanOrEqual(first.bottom - 1);
+
+    // Each title is drawn rotated along its band's height, so a band shorter than its own
+    // name would spill text over a neighbour's title.
+    for (const [a, b] of bands.flatMap((x, i) => bands.slice(i + 1).map((y) => [x, y]))) {
+      const overlapX =
+        Math.min(a.label.x + a.label.width, b.label.x + b.label.width) -
+        Math.max(a.label.x, b.label.x);
+      const overlapY =
+        Math.min(a.label.y + a.label.height, b.label.y + b.label.height) -
+        Math.max(a.label.y, b.label.y);
+      expect(Math.min(overlapX, overlapY)).toBeLessThanOrEqual(1);
+    }
   });
 });
