@@ -103,8 +103,48 @@ describe('insertEdge swimlane endpoint clipping', () => {
     const path = svg.select('path');
     const renderedPoints = JSON.parse(atob(path.attr('data-points')));
 
-    expect(head.intersect).not.toHaveBeenCalled();
+    // The shape is consulted, but its answer bends the final segment off the vertical
+    // the router laid down (x -101 against a bend at x -100), so the layout's endpoint
+    // stands. What matters is the endpoint that gets drawn, not whether it was asked.
     expect(renderedPoints.at(-1)).toEqual(pinnedEnd);
+  });
+
+  it('reaches a glyph that is smaller than the box its node reserves', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // A BPMN event reserves room for a caption above and below its circle, so the layout
+    // clips to y 100 while the circle it draws ends at y 130. Left alone the arrow stops
+    // 30px short of anything visible.
+    const boxEdge = { x: 40, y: 100 };
+    const glyphEdge = { x: 40, y: 130 };
+    const edge = {
+      id: 'L_A_B_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 0 },
+        { x: 40, y: 0 },
+        boxEdge,
+        { ...boxEdge },
+      ],
+    };
+    const tail = { intersect: vi.fn((point) => point) };
+    const head = { intersect: vi.fn(() => glyphEdge) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const path = svg.select('path');
+    const renderedPoints = JSON.parse(atob(path.attr('data-points')));
+
+    // Same vertical, so the segment stays orthogonal and the arrow reaches the circle.
+    expect(renderedPoints.at(-1)).toEqual(glyphEdge);
   });
 
   it('still clips source endpoints to the rendered shape boundary', () => {
