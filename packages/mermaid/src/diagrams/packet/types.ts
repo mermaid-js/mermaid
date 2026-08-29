@@ -22,6 +22,7 @@ export interface PacketStyleOptions {
   blockFillColor?: string;
   titleColor?: string;
   titleFontSize?: string;
+  endianness?: string;
 }
 
 export interface PacketData {
