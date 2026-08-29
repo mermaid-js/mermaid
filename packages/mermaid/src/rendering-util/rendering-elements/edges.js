@@ -625,8 +625,11 @@ export const insertEdge = function (
   if (layout === 'swimlane') {
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
-        // Simple straight edge: just clip the two endpoints to the node boundaries.
-        points = [tail.intersect(points[0]), head.intersect(points[1])];
+        // A straight edge: each end docks facing the other one. The reference has to be
+        // the far endpoint - handing a node its own endpoint back describes no direction,
+        // so the shape answers with whichever face that stray point happened to sit near
+        // and a link between two vertically aligned nodes can leave from a side.
+        points = [tail.intersect(points[1]), head.intersect(points[0])];
       } else {
         // For multi-segment paths, keep the inner bend points and just adjust the entry/exit
         // segments near the nodes.
