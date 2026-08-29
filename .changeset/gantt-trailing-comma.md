@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix: stop a trailing comma on a Gantt task line from killing the render. The empty field pushed the task past the three fields the parser handles and fell through an empty `default:`, leaving the task with no start time and throwing "Cannot read properties of undefined (reading 'type')" at draw time. A trailing comma is now ignored, and a task with genuinely too many fields fails at parse with the offending line named.
+fix: report a Gantt task with more comma separated fields than it can have, instead of crashing at render. A trailing comma or an extra field pushed the task past the three fields the parser handles and fell through an empty `default:`, leaving it with no start time and throwing "Cannot read properties of undefined (reading 'type')" at draw time. It now fails at parse with the offending definition quoted.

@@ -446,31 +446,29 @@ const parseId = function (idStr) {
 // length
 
 /**
- * Trims a task's comma separated fields down to the forms the switches below handle.
+ * Rejects a task carrying more comma separated fields than the switches below handle.
  *
- * A trailing comma leaves an empty final field, which is a typo with only one sensible
- * reading, so it is dropped. Any other overflow cannot be guessed at and is reported
- * here — it used to fall through an empty `default:`, leaving the task with no
- * `startTime` and surfacing much later as "Cannot read properties of undefined
- * (reading 'type')" at render time, which says nothing about the line at fault.
+ * Those switches cover one, two and three fields and had an empty `default:`, so a task
+ * with more was built with neither a `startTime` nor an `endTime`. Nothing checked for
+ * that, and `compileTask` later read `.type` off the missing `startTime`, throwing
+ * "Cannot read properties of undefined (reading 'type')" at draw time — a render-time
+ * crash naming nothing that points back at the line at fault.
+ *
+ * Only the field *count* is checked. An empty field is meaningful inside the supported
+ * forms, where it marks an omitted value: `Milestone : vert, 01,` is a vert marker with
+ * a start and no end, and dropping its empty field would re-read the `01` as the end and
+ * move the marker.
  *
  * @param {string[]} data - The task's fields, already tag-stripped and trimmed.
  * @param {string} dataStr - The raw task definition, for the error message.
- * @returns {string[]} `data`, with any trailing empty field removed.
- * @throws {Error} If more fields remain than a task definition can have.
+ * @throws {Error} If there are more fields than a task definition can have.
  */
-const normalizeTaskData = function (data, dataStr) {
-  while (data.length > 1 && data[data.length - 1] === '') {
-    data.pop();
-  }
-
+const assertTaskFieldCount = function (data, dataStr) {
   if (data.length > 3) {
     throw new Error(
       `Invalid task definition "${dataStr}": a task takes at most 3 comma separated fields (id, start, end), but ${data.length} were given.`
     );
   }
-
-  return data;
 };
 
 const compileData = function (prevTask, dataStr) {
@@ -493,7 +491,7 @@ const compileData = function (prevTask, dataStr) {
     data[i] = data[i].trim();
   }
 
-  normalizeTaskData(data, dataStr);
+  assertTaskFieldCount(data, dataStr);
 
   let endTimeData = '';
   switch (data.length) {
@@ -543,7 +541,7 @@ const parseData = function (prevTaskId, dataStr) {
     data[i] = data[i].trim();
   }
 
-  normalizeTaskData(data, dataStr);
+  assertTaskFieldCount(data, dataStr);
 
   switch (data.length) {
     case 1:
