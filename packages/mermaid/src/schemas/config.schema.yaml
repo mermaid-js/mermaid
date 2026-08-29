@@ -2818,26 +2818,31 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Width of the timeline area, excluding labels and outer padding.
         type: number
         minimum: 1
+        maximum: 9007199254740991
         default: 900
       rowHeight:
         description: Height of each signal lane.
         type: number
         minimum: 20
+        maximum: 9007199254740991
         default: 48
       labelWidth:
         description: Width reserved for signal labels.
         type: number
         minimum: 0
+        maximum: 9007199254740991
         default: 120
       padding:
         description: Padding around the timing diagram.
         type: number
         minimum: 0
+        maximum: 9007199254740991
         default: 16
       axisHeight:
         description: Height reserved for the time axis.
         type: number
         minimum: 20
+        maximum: 9007199254740991
         default: 36
 
   UsecaseDiagramConfig:

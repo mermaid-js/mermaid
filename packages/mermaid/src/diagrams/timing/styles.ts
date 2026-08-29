@@ -1,19 +1,44 @@
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import { getConfig as getConfigAPI } from '../../config.js';
+import { getThemeVariables } from '../../themes/theme-default.js';
 import type { TimingStyleOptions } from './types.js';
 
+type ThemeVariables = ReturnType<typeof getThemeVariables>;
+
+const FONT_FAMILY_PATTERN = /^[\w "',.-]+$/;
+
+const sanitizeFontFamily = (value: unknown, fallback: string): string => {
+  if (typeof value !== 'string') {
+    return fallback;
+  }
+  const normalized = value.trim();
+  return normalized && FONT_FAMILY_PATTERN.test(normalized) ? normalized : fallback;
+};
+
+/** Generate theme-aware, CSS-safe styles for timing diagrams. */
 export const styles: DiagramStylesProvider = (options: TimingStyleOptions = {}) => {
-  const lineColor = options.lineColor ?? '#333';
-  const textColor = options.textColor ?? '#333';
-  const titleColor = options.titleColor ?? textColor;
-  const primaryColor = options.primaryColor ?? '#ececff';
-  const primaryTextColor = options.primaryTextColor ?? textColor;
-  const primaryBorderColor = options.primaryBorderColor ?? lineColor;
-  const secondaryColor = options.secondaryColor ?? '#ffffde';
-  const tertiaryColor = options.tertiaryColor ?? '#fff4dd';
+  const defaultThemeVariables = getThemeVariables();
+  const themeVariables = {
+    ...defaultThemeVariables,
+    ...(getConfigAPI().themeVariables ?? {}),
+    ...options,
+  } as ThemeVariables & TimingStyleOptions;
+  const lineColor = themeVariables.lineColor;
+  const textColor = themeVariables.textColor;
+  const titleColor = themeVariables.titleColor ?? textColor;
+  const primaryColor = themeVariables.primaryColor;
+  const primaryTextColor = themeVariables.primaryTextColor ?? textColor;
+  const primaryBorderColor = themeVariables.primaryBorderColor ?? lineColor;
+  const secondaryColor = themeVariables.secondaryColor;
+  const tertiaryColor = themeVariables.tertiaryColor;
+  const fontFamily = sanitizeFontFamily(
+    themeVariables.fontFamily,
+    sanitizeFontFamily(defaultThemeVariables.fontFamily, 'sans-serif')
+  );
 
   return `
   .timing-root {
-    font-family: ${options.fontFamily ?? 'sans-serif'};
+    font-family: ${fontFamily};
   }
   .timing-title {
     fill: ${titleColor};

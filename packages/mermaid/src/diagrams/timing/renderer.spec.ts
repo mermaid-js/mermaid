@@ -12,11 +12,15 @@ const config = {
   useMaxWidth: true,
 };
 
-const createDiagram = (signals: TimingSignal[], title = '') =>
+const createDiagram = (
+  signals: TimingSignal[],
+  title = '',
+  configOverrides: Partial<typeof config> = {}
+) =>
   ({
     db: {
       getSignals: () => signals,
-      getConfig: () => config,
+      getConfig: () => ({ ...config, ...configOverrides }),
       getDiagramTitle: () => title,
       getTimeUnit: () => 'ns',
     },
@@ -121,5 +125,37 @@ describe('timing diagram renderer', () => {
     expect(() => draw('', 'oversized-clock', '1.0', createDiagram(signals))).toThrow(
       /more than 10{4} cycles/
     );
+  });
+
+  it('keeps constant high-magnitude analog values finite', () => {
+    document.body.innerHTML = '<svg id="large-analog"></svg>';
+    const signals: TimingSignal[] = [
+      {
+        id: 'V',
+        label: 'Voltage',
+        type: 'analog',
+        analog: { interpolation: 'linear' },
+        sequence: [
+          { value: 1e20, duration: 1 },
+          { value: 1e20, duration: 1 },
+        ],
+        events: [],
+      },
+    ];
+
+    expect(() => draw('', 'large-analog', '1.0', createDiagram(signals))).not.toThrow();
+    expect(document.querySelector('.timing-analog')?.getAttribute('d')).not.toMatch(/NaN|Infinity/);
+    for (const point of document.querySelectorAll('.timing-analog-point')) {
+      expect(point.getAttribute('cy')).not.toMatch(/NaN|Infinity/);
+    }
+  });
+
+  it('rejects configuration whose aggregate layout geometry overflows', () => {
+    document.body.innerHTML = '<svg id="overflow-layout"></svg>';
+
+    expect(() =>
+      draw('', 'overflow-layout', '1.0', createDiagram([], '', { width: 1e308, padding: 1e308 }))
+    ).toThrow(/finite, positive geometry/);
+    expect(document.querySelector('#overflow-layout')?.getAttribute('viewBox')).toBeNull();
   });
 });

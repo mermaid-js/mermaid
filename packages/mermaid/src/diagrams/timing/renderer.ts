@@ -172,15 +172,27 @@ const drawAnalog = (
   let min = signal.analog?.min ?? Math.min(...values);
   let max = signal.analog?.max ?? Math.max(...values);
   if (min === max) {
-    min -= 1;
-    max += 1;
+    const padding = Math.max(1, Math.abs(min)) * Number.EPSILON;
+    const paddedMin = min - padding;
+    const paddedMax = max + padding;
+    if (Number.isFinite(paddedMin) && paddedMin < min) {
+      min = paddedMin;
+    }
+    if (Number.isFinite(paddedMax) && paddedMax > max) {
+      max = paddedMax;
+    }
   }
   const range = max - min;
-  if (!Number.isFinite(range)) {
+  if (!Number.isFinite(range) || range <= 0) {
     throw new Error(`Analog signal "${signal.id}" must have a finite value range`);
   }
-  const y = (value: TimingValue): number =>
-    bottom - ((Number(value) - min) / range) * (bottom - top);
+  const y = (value: TimingValue): number => {
+    const coordinate = bottom - ((Number(value) - min) / range) * (bottom - top);
+    if (!Number.isFinite(coordinate)) {
+      throw new Error(`Analog signal "${signal.id}" must produce finite coordinates`);
+    }
+    return coordinate;
+  };
 
   let path = `M ${geometry.x(segments[0].start)} ${y(segments[0].value)}`;
   if (signal.analog?.interpolation === 'step') {
@@ -233,6 +245,16 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const totalHeight = lanesBottom + config.padding;
   const xStart = config.padding + config.labelWidth;
   const xEnd = xStart + config.width;
+  const layoutGeometry = [totalWidth, lanesTop, lanesBottom, totalHeight, xStart, xEnd];
+  if (
+    layoutGeometry.some((value) => !Number.isFinite(value)) ||
+    totalWidth <= 0 ||
+    totalHeight <= 0 ||
+    xEnd <= xStart ||
+    lanesBottom < lanesTop
+  ) {
+    throw new Error('Timing diagram layout must have finite, positive geometry');
+  }
   const geometry: TimelineGeometry = {
     x: (time) => xStart + (time / timelineEnd) * config.width,
     xStart,
