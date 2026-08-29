@@ -6,6 +6,7 @@ import type { TimingStyleOptions } from './types.js';
 type ThemeVariables = ReturnType<typeof getThemeVariables>;
 
 const FONT_FAMILY_PATTERN = /^[\w "',.-]+$/;
+const FONT_SIZE_PATTERN = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px|em|rem|pt|%)$/i;
 
 const sanitizeFontFamily = (value: unknown, fallback: string): string => {
   if (typeof value !== 'string') {
@@ -13,6 +14,17 @@ const sanitizeFontFamily = (value: unknown, fallback: string): string => {
   }
   const normalized = value.trim();
   return normalized && FONT_FAMILY_PATTERN.test(normalized) ? normalized : fallback;
+};
+
+const sanitizeFontSize = (value: unknown, fallback: string): string => {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value > 0 ? `${value}px` : fallback;
+  }
+  if (typeof value !== 'string') {
+    return fallback;
+  }
+  const normalized = value.trim();
+  return FONT_SIZE_PATTERN.test(normalized) ? normalized : fallback;
 };
 
 /** Generate theme-aware, CSS-safe styles for timing diagrams. */
@@ -35,24 +47,29 @@ export const styles: DiagramStylesProvider = (options: TimingStyleOptions = {}) 
     themeVariables.fontFamily,
     sanitizeFontFamily(defaultThemeVariables.fontFamily, 'sans-serif')
   );
+  const fontSize = sanitizeFontSize(
+    themeVariables.fontSize,
+    sanitizeFontSize(defaultThemeVariables.fontSize, '16px')
+  );
 
   return `
   .timing-root {
     font-family: ${fontFamily};
+    font-size: ${fontSize};
   }
   .timing-title {
     fill: ${titleColor};
-    font-size: 18px;
+    font-size: 1.125em;
     font-weight: 600;
   }
   .timing-axis-label, .timing-tick-label, .timing-signal-label, .timing-signal-meta {
     fill: ${textColor};
   }
   .timing-axis-label, .timing-tick-label, .timing-signal-meta {
-    font-size: 11px;
+    font-size: 0.6875em;
   }
   .timing-signal-label {
-    font-size: 13px;
+    font-size: 0.8125em;
     font-weight: 600;
   }
   .timing-signal-meta {
@@ -97,7 +114,7 @@ export const styles: DiagramStylesProvider = (options: TimingStyleOptions = {}) 
   }
   .timing-bus-label, .timing-state-label {
     fill: ${primaryTextColor};
-    font-size: 11px;
+    font-size: 0.6875em;
     pointer-events: none;
   }
   .timing-analog-point {
