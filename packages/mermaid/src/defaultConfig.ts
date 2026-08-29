@@ -23,8 +23,19 @@ const config: RequiredDeep<MermaidConfig> = {
   elk: {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
-    nodePlacementStrategy: 'BRANDES_KOEPF',
+    straightenEdges: true,
+    lineHops: true,
+    preset: 'default',
+    // Left undefined so `??` can tell "the user chose this" from "nobody did",
+    // which is what lets `elk.preset` supply a value while an explicit setting
+    // still wins. Listed rather than omitted so `configKeys` still finds them.
+    nodePlacementStrategy: undefined,
+    layeringStrategy: undefined,
+    cycleBreakingStrategy: undefined,
+    layeringLayerBound: 4,
+    // Brandes-Koepf specific; inert unless nodePlacementStrategy is set back to it.
     nodePlacementAlignment: 'NONE',
+
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
     keepEntryNodeOnTop: false,
