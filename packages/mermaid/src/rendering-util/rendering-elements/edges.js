@@ -634,12 +634,26 @@ export const insertEdge = function (
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
         const TOLERANCE = 0.5;
-        const lastIsPinned =
-          Math.abs(points[points.length - 1].x - lastInner.x) < TOLERANCE &&
-          Math.abs(points[points.length - 1].y - lastInner.y) < TOLERANCE;
 
         const newFirst = tail.intersect(firstInner);
-        const newLast = lastIsPinned ? lastInner : head.intersect(lastInner);
+
+        // The layout clips to each node's rect, but a shape whose drawn glyph is smaller
+        // than the box it reserves - a BPMN event reserves room for a caption above and
+        // below its circle - leaves the arrow short of what is actually drawn, so the
+        // shape is asked where its own boundary is.
+        //
+        // Its answer is refused only when it would bend a segment that the layout had
+        // drawn straight: a polygon intersection can drift off the axis, and on an
+        // orthogonal edge that is worse than stopping early. A segment that already runs
+        // diagonally has no such axis to protect, so the shape's answer is taken.
+        const originalLast = points[points.length - 1];
+        const isAxisAligned = (a, b) =>
+          Math.abs(a.x - b.x) < TOLERANCE || Math.abs(a.y - b.y) < TOLERANCE;
+        const candidateLast = head.intersect(lastInner);
+        const newLast =
+          !isAxisAligned(originalLast, lastInner) || isAxisAligned(candidateLast, lastInner)
+            ? candidateLast
+            : originalLast;
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
