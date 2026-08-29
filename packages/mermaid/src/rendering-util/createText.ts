@@ -251,35 +251,106 @@ function updateTextContentAndStyles(
 }
 
 /**
- * Convert fontawesome labels into fontawesome icons by using a regex pattern
+ * Convert icon labels into icons by using regex patterns.
+ *
+ * FontAwesome tokens (`fa:`, `fab:`, etc.) always fall back to `<i>` tags when the
+ * icon is not registered. Any other Iconify-style `prefix:name` token is replaced
+ * only when the icon actually resolves via `isIconAvailable`; unresolvable tokens
+ * are left as literal text so unknown pack names are never silently discarded.
+ *
  * @param text - The raw string to convert
  * @param config - Mermaid config
- * @returns string with fontawesome icons as svg if the icon is registered otherwise as i tags
+ * @returns string with icons as SVG where registered, otherwise `<i>` tags (FA) or unchanged text (generic)
  */
 export async function replaceIconSubstring(
   text: string,
   // TODO: Make config mandatory
   config: MermaidConfig = {}
 ): Promise<string> {
-  const pendingReplacements: Promise<string>[] = [];
   // cspell: disable-next-line
-  text.replace(/(fa[bklrs]?):fa-([\w-]+)/g, (fullMatch, prefix, iconName) => {
-    pendingReplacements.push(
+  const FA_PATTERN = /(fa[bklrs]?):fa-([\w-]+)/g;
+  // Generic Iconify-style: any lowercase prefix:name token not already matched by FA_PATTERN
+  const GENERIC_ICON_PATTERN = /([a-z][\da-z-]*):(\w[\w-]*)/g;
+  // Identifies FontAwesome prefixes that use <i> tag fallback when unregistered
+  const FA_PREFIX_RE = /^fa[bklrs]?$/;
+  // Returns true for tokens already handled by FA_PATTERN (e.g. fa:fa-user, fab:fa-github)
+  const isFaPatternToken = (prefix: string, iconName: string) =>
+    FA_PREFIX_RE.test(prefix) && iconName.startsWith('fa-');
+
+  // Collect all token matches from the original text in left-to-right order.
+  // Operating exclusively on the original text prevents a second regex pass from
+  // matching SVG attributes (e.g. xmlns:xlink, xlink:href) that getIconSVG injects.
+  interface TokenMatch {
+    start: number;
+    end: number;
+    fullMatch: string;
+    prefix: string;
+    iconName: string;
+    faFallback: boolean;
+  }
+
+  const tokens: TokenMatch[] = [];
+
+  FA_PATTERN.lastIndex = 0;
+  let m: RegExpExecArray | null;
+  while ((m = FA_PATTERN.exec(text)) !== null) {
+    tokens.push({
+      start: m.index,
+      end: m.index + m[0].length,
+      fullMatch: m[0],
+      prefix: m[1],
+      iconName: m[2],
+      faFallback: true,
+    });
+  }
+
+  GENERIC_ICON_PATTERN.lastIndex = 0;
+  while ((m = GENERIC_ICON_PATTERN.exec(text)) !== null) {
+    if (isFaPatternToken(m[1], m[2])) {
+      continue; // FA_PATTERN already covers this token
+    }
+    // Skip positions already claimed by a FA match
+    const start = m.index;
+    const end = m.index + m[0].length;
+    if (tokens.some((t) => start < t.end && end > t.start)) {
+      continue;
+    }
+    tokens.push({ start, end, fullMatch: m[0], prefix: m[1], iconName: m[2], faFallback: false });
+  }
+
+  // Sort tokens by their position in the original text
+  tokens.sort((a, b) => a.start - b.start);
+
+  // Resolve all replacements concurrently
+  const replacements = await Promise.all(
+    tokens.map(({ fullMatch, prefix, iconName, faFallback }) =>
       (async () => {
         const registeredIconName = `${prefix}:${iconName}`;
         if (await isIconAvailable(registeredIconName)) {
           return await getIconSVG(registeredIconName, undefined, { class: 'label-icon' });
-        } else {
+        } else if (faFallback) {
           return `<i class='${sanitizeText(fullMatch, config).replace(':', ' ')}'></i>`;
+        } else {
+          // Leave the literal source token untouched
+          return fullMatch;
         }
       })()
-    );
-    return fullMatch;
-  });
+    )
+  );
 
-  const replacements = await Promise.all(pendingReplacements);
-  // cspell: disable-next-line
-  return text.replace(/(fa[bklrs]?):fa-([\w-]+)/g, () => replacements.shift() ?? '');
+  // Build output from the original text in a single left-to-right pass.
+  // Replacements are spliced in at their original positions, so injected SVG
+  // is never scanned by either pattern.
+  let result = '';
+  let pos = 0;
+  for (const [i, token] of tokens.entries()) {
+    result += text.slice(pos, token.start);
+    result += replacements[i];
+    pos = token.end;
+  }
+  result += text.slice(pos);
+
+  return result;
 }
 
 // Note when using from flowcharts converting the API isNode means classes should be set accordingly. When using htmlLabels => to set classes to 'nodeLabel' when isNode=true otherwise 'edgeLabel'

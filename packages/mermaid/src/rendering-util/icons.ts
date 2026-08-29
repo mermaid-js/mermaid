@@ -26,6 +26,11 @@ export const unknownIcon: IconifyIcon = {
 const iconsStore = new Map<string, IconifyJSON>();
 const loaderStore = new Map<string, AsyncIconLoader['loader']>();
 
+export const clearIconPacks = () => {
+  iconsStore.clear();
+  loaderStore.clear();
+};
+
 export const registerIconPacks = (iconLoaders: IconLoader[]) => {
   for (const iconLoader of iconLoaders) {
     if (!iconLoader.name) {
