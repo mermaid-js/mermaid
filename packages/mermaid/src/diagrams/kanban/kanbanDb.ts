@@ -5,18 +5,24 @@ import { log } from '../../logger.js';
 import type { Edge, KanbanNode } from '../../rendering-util/types.js';
 import defaultConfig from '../../defaultConfig.js';
 import type { NodeMetaData } from '../../types.js';
+import { buildKanbanAST } from './kanbanAst.js';
+import type { KanbanAST, KanbanAstSource } from './kanbanTypes.js';
 import * as yaml from 'js-yaml';
 
 let nodes: KanbanNode[] = [];
 let sections: KanbanNode[] = [];
 let cnt = 0;
 let elements: Record<number, D3Element> = {};
+let astSource: KanbanAstSource | undefined;
+let ast: KanbanAST | undefined;
 
 const clear = () => {
   nodes = [];
   sections = [];
   cnt = 0;
   elements = {};
+  astSource = undefined;
+  ast = undefined;
 };
 /*
  * if your level is the section level return null - then you do not belong to a level
@@ -96,7 +102,18 @@ const getData = function () {
   return { nodes: _nodes, edges, other: {}, config: getConfig() };
 };
 
-const addNode = (level: number, id: string, descr: string, type: number, shapeData: string) => {
+/**
+ * Returns the id the node was actually stored under. It is not always the id as written: the text
+ * is sanitized, and a node whose id sanitizes away is given a generated one. Callers that need to
+ * refer back to the node — the source-mapped read-model — must use this rather than the raw text.
+ */
+const addNode = (
+  level: number,
+  id: string,
+  descr: string,
+  type: number,
+  shapeData: string
+): string => {
   const conf = getConfig();
   let padding: number = conf.mindmap?.padding ?? defaultConfig.mindmap.padding;
   switch (type) {
@@ -162,6 +179,7 @@ const addNode = (level: number, id: string, descr: string, type: number, shapeDa
     sections.push(node);
   }
   nodes.push(node);
+  return node.id;
 };
 
 const nodeType = {
@@ -238,11 +256,37 @@ const type2Str = (type: number) => {
 const getLogger = () => log;
 const getElementById = (id: number) => elements[id];
 
+/**
+ * The spans the parser collected, kept for {@link getAST}. Cheap to store: the parser has them
+ * already, and holding them costs nothing on a render that never asks for the read-model.
+ */
+const setAstSource = (next: KanbanAstSource | undefined) => {
+  astSource = next;
+  ast = undefined;
+};
+
+/**
+ * The source-mapped read-model, for tooling that needs to map diagram elements back to source
+ * text. Nothing in the rendering path reads it, so it is assembled on the first call rather than
+ * on every parse — building it re-reads the whole resolved graph, and `mermaid.parse()` runs per
+ * keystroke in a live editor. Memoized because the db does not change after a parse.
+ */
+const getAST = (): KanbanAST | undefined => {
+  if (!ast && astSource) {
+    // `db` rather than a bare `getData`, so a caller can observe (and a test can assert) that the
+    // resolved graph is read here and not during the parse.
+    ast = buildKanbanAST(db, astSource.source, astSource.headerSpan, astSource.statements);
+  }
+  return ast;
+};
+
 const db = {
   clear,
   addNode,
   getSections,
   getData,
+  setAstSource,
+  getAST,
   nodeType,
   getType,
   setElementForId,
