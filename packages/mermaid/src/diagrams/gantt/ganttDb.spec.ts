@@ -1,10 +1,12 @@
 // @ts-nocheck TODO: Fix TS
 import dayjs from 'dayjs';
 import ganttDb from './ganttDb.js';
+import * as configApi from '../../config.js';
 import { convert } from '../../tests/util.js';
 
 describe('when using the ganttDb', function () {
   beforeEach(function () {
+    configApi.reset();
     ganttDb.clear();
   });
 
@@ -565,5 +567,59 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].startTime.getFullYear()).toBe(2024);
     // Second task will be parsed as year 202 (fallback to new Date())
     expect(tasks[1].startTime.getFullYear()).toBe(202);
+  });
+
+  it('should use diagram workdayhours for hour durations', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setWorkdayHours(8);
+    ganttDb.addSection('workday hours');
+    ganttDb.addTask('task1', 'id1,2013-01-01,20h');
+    const tasks = ganttDb.getTasks();
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3, 12));
+  });
+
+  it('should use configured gantt workdayhours for hour durations', function () {
+    configApi.setConfig({ gantt: { workdayhours: 8 } });
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('workday hours');
+    ganttDb.addTask('task1', 'id1,2013-01-01,20h');
+    const tasks = ganttDb.getTasks();
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3, 12));
+  });
+
+  it('should prefer diagram workdayhours over configured gantt workdayhours', function () {
+    configApi.setConfig({ gantt: { workdayhours: 6 } });
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setWorkdayHours(8);
+    ganttDb.addSection('workday hours');
+    ganttDb.addTask('task1', 'id1,2013-01-01,20h');
+    const tasks = ganttDb.getTasks();
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3, 12));
+  });
+
+  it('should ignore invalid diagram workdayhours and use configured gantt workdayhours', function () {
+    configApi.setConfig({ gantt: { workdayhours: 8 } });
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setWorkdayHours(0);
+    ganttDb.addSection('workday hours');
+    ganttDb.addTask('task1', 'id1,2013-01-01,20h');
+    const tasks = ganttDb.getTasks();
+    expect(ganttDb.getWorkdayHours()).toBe(8);
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3, 12));
+  });
+
+  it('should use the default workdayhours when configured gantt workdayhours is invalid', function () {
+    configApi.setConfig({ gantt: { workdayhours: 0 } });
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('workday hours');
+    ganttDb.addTask('task1', 'id1,2013-01-01,20h');
+    const tasks = ganttDb.getTasks();
+    expect(ganttDb.getWorkdayHours()).toBe(24);
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1));
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 1, 20));
   });
 });

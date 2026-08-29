@@ -54,5 +54,6 @@ Viewbox
 viewports
 visio
 vitepress
+workdayhours
 xlink
 xychart

@@ -68,6 +68,13 @@ describe('when parsing a gantt diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(ganttDb.setTodayMarker).toHaveBeenCalledWith('off');
   });
+  it('should handle a workdayhours definition', function () {
+    spyOn(ganttDb, 'setWorkdayHours');
+    const str = 'gantt\nworkdayhours 8';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.setWorkdayHours).toHaveBeenCalledWith(8);
+  });
   it('should handle a section definition', function () {
     const str =
       'gantt\n' +

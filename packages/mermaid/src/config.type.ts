@@ -774,6 +774,11 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
    *
    */
   weekday?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  /**
+   * Number of work hours in a day to use when parsing task durations in hours (`h`).
+   *
+   */
+  workdayhours?: number;
 }
 /**
  * The object containing configurations specific for journey diagrams
