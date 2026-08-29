@@ -72,7 +72,7 @@ describe('buildLaneModel', () => {
  * A group with no parent, spelled out inline. The leading negation is excluded because
  * `!isGroup && !parentId` selects loose content, which is a different question.
  */
-const INLINE_LANE_TEST = /(^|[^!\w.])[\w.]*isGroup\s*&&\s*!\s*[\w.]*parentId/;
+const INLINE_LANE_TEST = /(^|[^\w!.])[\w.]*isGroup\s*&&\s*!\s*[\w.]*parentId/;
 
 const swimlanesRoot = () => {
   const candidates = [
@@ -99,9 +99,9 @@ const sourceFiles = (dir: string): string[] =>
 
 describe('one definition of a lane', () => {
   it('recognises the inline form without confusing it with the loose-node predicate', () => {
-    expect(INLINE_LANE_TEST.test('const lanes = nodes.filter((n) => n.isGroup && !n.parentId);')).toBe(
-      true
-    );
+    expect(
+      INLINE_LANE_TEST.test('const lanes = nodes.filter((n) => n.isGroup && !n.parentId);')
+    ).toBe(true);
     expect(INLINE_LANE_TEST.test('if (isGroup && !parentId) {')).toBe(true);
     expect(
       INLINE_LANE_TEST.test('const loose = nodes.filter((n) => !n.isGroup && !n.parentId);')
