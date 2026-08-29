@@ -127,13 +127,7 @@ describe('insertEdge swimlane endpoint clipping', () => {
       curve: 'rounded',
       look: 'neo',
       arrowTypeEnd: 'arrow_point',
-      points: [
-        { x: 0, y: 0 },
-        { x: 0, y: 0 },
-        { x: 40, y: 0 },
-        boxEdge,
-        { ...boxEdge },
-      ],
+      points: [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 40, y: 0 }, boxEdge, { ...boxEdge }],
     };
     const tail = { intersect: vi.fn((point) => point) };
     const head = { intersect: vi.fn(() => glyphEdge) };
