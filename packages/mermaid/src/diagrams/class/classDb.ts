@@ -82,10 +82,11 @@ export class ClassDB implements DiagramDB {
     let genericType = '';
     let className = id;
 
-    if (id.indexOf('~') > 0) {
-      const split = id.split('~');
-      className = sanitizeText(split[0]);
-      genericType = sanitizeText(split[1]);
+    const firstTilde = id.indexOf('~');
+    if (firstTilde > 0) {
+      const lastTilde = id.lastIndexOf('~');
+      className = sanitizeText(id.substring(0, firstTilde));
+      genericType = sanitizeText(id.substring(firstTilde + 1, lastTilde));
     }
 
     return { className: className, type: genericType };
