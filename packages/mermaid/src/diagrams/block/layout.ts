@@ -110,7 +110,13 @@ function setBlockSizes(
     for (const child of block.children) {
       if (child.size) {
         log.debug(
-          `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight} ${JSON.stringify(child.size)}`
+          `abc95 Setting size of children of ${block.id} id=${child.id} ${maxWidth} ${maxHeight}`,
+          {
+            width: child.size.width,
+            height: child.size.height,
+            x: child.size.x,
+            y: child.size.y,
+          }
         );
         child.size.width =
           maxWidth * (child.widthInColumns ?? 1) + padding * ((child.widthInColumns ?? 1) - 1);
@@ -359,7 +365,11 @@ export function layout(db: BlockDB) {
   layoutBlocks(root, db, padding);
   // Position blocks relative to parents
   // positionBlock(root, root, db);
-  log.debug('getBlocks', JSON.stringify(root, null, 2));
+  log.debug('getBlocks', {
+    id: root.id,
+    type: root.type,
+    childCount: root.children?.length ?? 0,
+  });
 
   const { minX, minY, maxX, maxY } = findBounds(root);
 
