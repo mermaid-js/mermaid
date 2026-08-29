@@ -109,6 +109,47 @@ describe('insertEdge swimlane endpoint clipping', () => {
     expect(renderedPoints.at(-1)).toEqual(pinnedEnd);
   });
 
+  it('docks a straight edge facing the other end, not its own endpoint', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // Two nodes on the same vertical. A gateway hands back whichever face the reference
+    // point sits near, so passing a node its own endpoint let the link leave sideways.
+    const edge = {
+      id: 'L_G_T_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [
+        { x: 75, y: 100 },
+        { x: 100, y: 300 },
+      ],
+    };
+    const seen = { tail: null, head: null };
+    const tail = {
+      intersect: vi.fn((point) => {
+        seen.tail = point;
+        return { x: 100, y: 125 };
+      }),
+    };
+    const head = {
+      intersect: vi.fn((point) => {
+        seen.head = point;
+        return { x: 100, y: 260 };
+      }),
+    };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    // Each end is asked about the far end of the link.
+    expect(seen.tail).toEqual({ x: 100, y: 300 });
+    expect(seen.head).toEqual({ x: 75, y: 100 });
+  });
+
   it('reaches a glyph that is smaller than the box its node reserves', () => {
     document.body.innerHTML = '';
     const svg = select(document.body).append('svg');
