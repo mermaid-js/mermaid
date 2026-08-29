@@ -119,7 +119,7 @@
     "cspell": "^9.3.2",
     "dotenv": "^17.4.2",
     "dotenv-cli": "^11.0.0",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.0",
     "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-html": "^8.1.4",
