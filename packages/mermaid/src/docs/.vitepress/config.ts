@@ -224,6 +224,7 @@ function sidebarConfig() {
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
         { text: 'Layouts', link: '/config/layouts' },
+        { text: 'Troubleshooting', link: '/troubleshooting' },
       ],
     },
   ];
