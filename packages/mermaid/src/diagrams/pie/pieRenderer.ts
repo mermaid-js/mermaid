@@ -183,7 +183,8 @@ export const draw: DrawDefinition = (text, id, _version, diagObj) => {
     ...legend
       .selectAll('text')
       .nodes()
-      .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0)
+      .map((node) => (node as Element)?.getBoundingClientRect().width ?? 0),
+    0
   );
 
   let chartAndLegendHeight: number = height;
