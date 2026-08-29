@@ -298,4 +298,30 @@ gitGraph:
     commit
 ```
 
+## Domain Storytelling
+
+```mermaid-example
+domainstorytelling-beta
+
+group G_Support "Support"
+A_Customer "Customer"
+A_Agent "Support Agent" in G_Support
+W_Ticket "Ticket"
+
+A_Customer : 01 -- "reports" -> W_Ticket
+A_Agent : 02 -- "resolves" -> W_Ticket
+```
+
+```mermaid
+domainstorytelling-beta
+
+group G_Support "Support"
+A_Customer "Customer"
+A_Agent "Support Agent" in G_Support
+W_Ticket "Ticket"
+
+A_Customer : 01 -- "reports" -> W_Ticket
+A_Agent : 02 -- "resolves" -> W_Ticket
+```
+
 <!--- cspell:ignore Ashish newbranch --->

@@ -179,6 +179,10 @@ union A, B`,
       a --> b
     end`,
 
+  domainstorytelling: `domainstorytelling-beta
+    A_Customer : 01 -- "places" -> W_Order
+    A_Clerk : 02 -- "processes" -> W_Order`,
+
   wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]

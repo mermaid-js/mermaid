@@ -75,6 +75,11 @@
       "id": "railroadPeg",
       "grammar": "src/language/railroad-peg/railroad-peg.langium",
       "fileExtensions": [".mmd", ".mermaid"]
+    },
+    {
+      "id": "domainstorytelling",
+      "grammar": "src/language/domainstorytelling/domainstorytelling.langium",
+      "fileExtensions": [".mmd", ".mermaid"]
     }
   ],
   "mode": "production",
