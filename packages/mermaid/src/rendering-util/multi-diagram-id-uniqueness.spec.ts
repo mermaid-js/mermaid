@@ -98,6 +98,13 @@ radar-beta
   max 100
   min 0`,
 
+  timingDiagram: `timingDiagram-beta
+    clock CLK : period 2
+    binary EN
+    bus DATA
+    EN : 0 x2, 1 x2
+    DATA : Z x2, "D0", "D1"`,
+
   railroad: `railroad-beta
     rule = choice(terminal("a"), terminal("b")) ;`,
 

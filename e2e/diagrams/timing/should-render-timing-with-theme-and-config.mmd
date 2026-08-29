@@ -1,0 +1,20 @@
+---
+config:
+  timing:
+    width: 650
+    rowHeight: 56
+  themeVariables:
+    primaryColor: '#dbeafe'
+    secondaryColor: '#dcfce7'
+    primaryBorderColor: '#1e40af'
+---
+timingDiagram-beta
+  title Themed timing diagram
+  clock CLK : period 4, duty 25%
+  binary READY
+  state MODE : Idle, Active
+  READY : 0 x2, 1 x4, 0 x2
+  at 0
+    MODE is Idle
+  at 2
+    MODE is Active

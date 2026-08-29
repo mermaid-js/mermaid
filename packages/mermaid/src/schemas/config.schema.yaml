@@ -453,6 +453,8 @@ properties:
     $ref: '#/$defs/TreeViewDiagramConfig'
   radar:
     $ref: '#/$defs/RadarDiagramConfig'
+  timing:
+    $ref: '#/$defs/TimingDiagramConfig'
   usecase:
     $ref: '#/$defs/UsecaseDiagramConfig'
   venn:
@@ -2804,6 +2806,39 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  TimingDiagramConfig:
+    title: Timing Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for timing diagrams.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      width:
+        description: Width of the timeline area, excluding labels and outer padding.
+        type: number
+        minimum: 1
+        default: 900
+      rowHeight:
+        description: Height of each signal lane.
+        type: number
+        minimum: 20
+        default: 48
+      labelWidth:
+        description: Width reserved for signal labels.
+        type: number
+        minimum: 0
+        default: 120
+      padding:
+        description: Padding around the timing diagram.
+        type: number
+        minimum: 0
+        default: 16
+      axisHeight:
+        description: Height reserved for the time axis.
+        type: number
+        minimum: 20
+        default: 36
 
   UsecaseDiagramConfig:
     title: Usecase Diagram Config
