@@ -253,6 +253,25 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
   task.renderEndTime = renderEndTime;
 };
 
+const parseFallbackDate = function (str) {
+  if (/^\d+$/.test(str)) {
+    const parsedDate = new Date(str);
+    if (
+      isNaN(parsedDate.getTime()) ||
+      parsedDate.getFullYear() < -10000 ||
+      parsedDate.getFullYear() > 10000
+    ) {
+      return null;
+    }
+    return dayjs(parsedDate);
+  }
+  const parsedDate = dayjs(str);
+  if (!parsedDate.isValid() || parsedDate.year() < -10000 || parsedDate.year() > 10000) {
+    return null;
+  }
+  return parsedDate;
+};
+
 /**
  * TODO: what does this function do?
  *
@@ -331,21 +350,11 @@ const getStartDate = function (prevTime, dateFormat, str) {
     log.debug('With date format:' + dateFormat.trim());
 
     // Timestamp formats can fall back to new Date()
-    const d = new Date(str);
-    if (
-      d === undefined ||
-      isNaN(d.getTime()) ||
-      // WebKit browsers can mis-parse invalid dates to be ridiculously
-      // huge numbers, e.g. new Date('202304') gets parsed as January 1, 202304.
-      // This can cause virtually infinite loops while rendering, so for the
-      // purposes of Gantt charts we'll just treat any date beyond 10,000 AD/BC as
-      // invalid.
-      d.getFullYear() < -10000 ||
-      d.getFullYear() > 10000
-    ) {
+    const fallbackDate = parseFallbackDate(str);
+    if (!fallbackDate) {
       throw new Error('Invalid date:' + str);
     }
-    return d;
+    return fallbackDate.toDate();
   }
 };
 
@@ -413,6 +422,17 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
       parsedDate = parsedDate.add(1, 'd');
     }
     return parsedDate.toDate();
+  }
+
+  // Fall back to non-strict parsing, mirroring getStartDate. This handles
+  // dates that do not match the configured dateFormat exactly, e.g. a date
+  // without a time when the dateFormat includes one.
+  const fallbackDate = parseFallbackDate(str);
+  if (fallbackDate) {
+    if (inclusive) {
+      return fallbackDate.add(1, 'd').toDate();
+    }
+    return fallbackDate.toDate();
   }
 
   let endTime = dayjs(prevTime);
