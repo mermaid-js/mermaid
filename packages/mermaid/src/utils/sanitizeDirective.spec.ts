@@ -8,6 +8,62 @@ describe('sanitizeDirective', () => {
     expect(args).toEqual({ fontSize: 12 });
   });
 
+  describe('theme variables only the default theme is missing', () => {
+    it('keeps treeView theme variables that only the default theme lacked', () => {
+      const args = {
+        themeVariables: {
+          treeView: {
+            iconColor: '#ff0000',
+            descriptionColor: '#ff0000',
+            highlightBg: '#ff0000',
+            highlightStroke: '#ff0000',
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.themeVariables.treeView).toEqual({
+        iconColor: '#ff0000',
+        descriptionColor: '#ff0000',
+        highlightBg: '#ff0000',
+        highlightStroke: '#ff0000',
+      });
+    });
+
+    it('keeps packet theme variables that only the default theme lacked', () => {
+      const args = {
+        themeVariables: {
+          packet: {
+            startByteColor: '#ff0000',
+            endByteColor: '#ff0000',
+            blockStrokeColor: '#ff0000',
+            blockFillColor: '#ff0000',
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.themeVariables.packet).toEqual({
+        startByteColor: '#ff0000',
+        endByteColor: '#ff0000',
+        blockStrokeColor: '#ff0000',
+        blockFillColor: '#ff0000',
+      });
+    });
+
+    it('keeps stateBorder and commitLineColor, only defined by the redux themes', () => {
+      const args = {
+        themeVariables: {
+          stateBorder: '#ff0000',
+          commitLineColor: '#ff0000',
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.themeVariables).toEqual({
+        stateBorder: '#ff0000',
+        commitLineColor: '#ff0000',
+      });
+    });
+  });
+
   describe('dictionary-style configs', () => {
     it('preserves treeView filenameIcons and extensionIcons entries', () => {
       const args = {
