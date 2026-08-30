@@ -50,6 +50,28 @@ title A message flow between two black box participants
     await expect(flow).toHaveClass(/edge-pattern-dashed/);
     await expect(flow).toHaveAttribute('marker-start', /hollowCircle/);
     await expect(flow).toHaveAttribute('marker-end', /openArrow/);
+
+    // The two participants are drawn apart and the flow runs between their borders.
+    // Asserted on geometry rather than on the element, which is present either way: the
+    // flow used to come back as a single point and so was never drawn at all.
+    const drawn = await flow.evaluate((path) => {
+      const bands = [...document.querySelectorAll('g.cluster.bpmn-pool')]
+        .map((band) => band.querySelector('rect')?.getBoundingClientRect())
+        .filter((box): box is DOMRect => Boolean(box))
+        .sort((a, b) => a.top - b.top);
+      const run = path.getBoundingClientRect();
+      return {
+        bands: bands.map((band) => [band.top, band.bottom]),
+        run: [run.top, run.bottom],
+      };
+    });
+    const [above, below] = drawn.bands;
+    // Lanes divide one participant and touch; separate participants leave room between.
+    expect(below[0] - above[1]).toBeGreaterThan(8);
+    // The run spans that room, from the border above to the border below.
+    expect(drawn.run[1] - drawn.run[0]).toBeGreaterThan(0);
+    expect(drawn.run[0]).toBeGreaterThanOrEqual(above[1] - 2);
+    expect(drawn.run[1]).toBeLessThanOrEqual(below[0] + 2);
   });
 
   test('CHAR.association-direction should give a head only to the pointing one', async ({
