@@ -216,7 +216,7 @@ const getStyles = (options: BpmnStyleOptions) => {
 
   /* A call activity invokes a process defined elsewhere, and is drawn with a thick
      border rather than a marker. */
-  .bpmn-call .bpmn-activity-rect {
+  .node.bpmn-call rect.bpmn-activity-rect {
     stroke-width: 3.4px;
   }
 
