@@ -311,7 +311,7 @@ function stubToHost(node: Node, host: Node, pin: AnchorPin): { x: number; y: num
   }
   // The host's border runs along one axis and the line travels along the other.
   const alongX = pin.side === 'top' || pin.side === 'bottom';
-  const hostAlong = alongX ? (hx as number) : (hy as number);
+  const hostAlong = alongX ? (hx!) : (hy!);
   const hostHalf = ((alongX ? host.width : host.height) ?? 0) / 2;
   const reach = Math.max(0, hostHalf - BORDER_INSET);
 
@@ -323,29 +323,29 @@ function stubToHost(node: Node, host: Node, pin: AnchorPin): { x: number; y: num
     : face === 'top' || face === 'bottom';
   const half = ((alongX ? node.width : node.height) ?? 0) / 2;
   const exit = sideways
-    ? (alongX ? (nx as number) : (ny as number)) +
+    ? (alongX ? (nx!) : (ny!)) +
       (face === 'left' || face === 'top' ? -(half + STUB_REACH) : half + STUB_REACH)
     : alongX
-      ? (nx as number)
-      : (ny as number);
+      ? (nx!)
+      : (ny!);
   const enter = clamp(exit, hostAlong - reach, hostAlong + reach);
   const mid = alongX
-    ? ((ny as number) + (hy as number)) / 2
-    : ((nx as number) + (hx as number)) / 2;
+    ? ((ny!) + (hy!)) / 2
+    : ((nx!) + (hx!)) / 2;
 
   const at = (along: number, across: number) =>
     alongX ? { x: along, y: across } : { x: across, y: along };
 
   const path = [
-    at(alongX ? (nx as number) : (ny as number), alongX ? (ny as number) : (nx as number)),
+    at(alongX ? (nx!) : (ny!), alongX ? (ny!) : (nx!)),
   ];
   if (sideways) {
-    path.push(at(exit, alongX ? (ny as number) : (nx as number)));
+    path.push(at(exit, alongX ? (ny!) : (nx!)));
   }
   if (Math.abs(enter - exit) >= 1) {
     path.push(at(exit, mid), at(enter, mid));
   }
-  path.push(at(enter, alongX ? (hy as number) : (hx as number)));
+  path.push(at(enter, alongX ? (hy!) : (hx!)));
   return path;
 }
 
