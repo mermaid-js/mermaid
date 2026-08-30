@@ -193,4 +193,70 @@ test.describe('bpmn-beta', () => {
       expect(Math.min(overlapX, overlapY)).toBeLessThanOrEqual(1);
     }
   });
+
+  test('an artifact hangs inside the lane that holds what it annotates', async ({
+    page,
+  }, testInfo) => {
+    await renderFixture(page, testInfo, '09-data-associations.mmd');
+    const overflow = await page.evaluate(() => {
+      const boxOf = (node: Element) => {
+        const match = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
+          node.getAttribute('transform') ?? ''
+        );
+        const bounds = node.querySelector('rect.bpmn-bounds');
+        if (!match || !bounds) {
+          return null;
+        }
+        const width = Number(bounds.getAttribute('width'));
+        const height = Number(bounds.getAttribute('height'));
+        return {
+          left: Number(match[1]) - width / 2,
+          right: Number(match[1]) + width / 2,
+          top: Number(match[2]) - height / 2,
+          bottom: Number(match[2]) + height / 2,
+        };
+      };
+
+      const lane = document.querySelector('g.cluster.swimlane rect.swimlane-body');
+      if (!lane) {
+        return null;
+      }
+      const laneBox = {
+        left: Number(lane.getAttribute('x')),
+        top: Number(lane.getAttribute('y')),
+        right: Number(lane.getAttribute('x')) + Number(lane.getAttribute('width')),
+        bottom: Number(lane.getAttribute('y')) + Number(lane.getAttribute('height')),
+      };
+
+      let worst = 0;
+      let counted = 0;
+      for (const node of document.querySelectorAll('g.node')) {
+        if (
+          !node.querySelector('.bpmn-data-page') &&
+          !node.querySelector('.bpmn-annotation-bracket')
+        ) {
+          continue;
+        }
+        const box = boxOf(node);
+        if (!box) {
+          continue;
+        }
+        counted++;
+        worst = Math.max(
+          worst,
+          laneBox.left - box.left,
+          box.right - laneBox.right,
+          laneBox.top - box.top,
+          box.bottom - laneBox.bottom
+        );
+      }
+      return { worst, counted };
+    });
+
+    expect(overflow).not.toBeNull();
+    expect(overflow!.counted).toBe(4);
+    // An artifact is placed from the element it annotates rather than laid out, so the
+    // lane has to be told to leave room for it or it is drawn outside its own pool.
+    expect(overflow!.worst).toBeLessThanOrEqual(1);
+  });
 });
