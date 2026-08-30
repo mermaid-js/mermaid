@@ -98,7 +98,36 @@ An event is written as its position, an optional trigger, then the name and labe
 | `boundary`     | Attached to an activity's border, see below               |
 | `end`          | Ends the process — a thick circle                         |
 
-The thirteen triggers of BPMN 2.0.2 Table 10.93 are accepted: `none`, `message`, `timer`, `error`, `escalation`, `cancel`, `compensation`, `conditional`, `link`, `signal`, `terminate`, `multiple`, and `parallel-multiple`. Omitting the trigger gives a plain (`none`) event.
+All thirteen triggers of BPMN 2.0.2 are available - `none`, `message`, `timer`, `error`, `escalation`, `cancel`, `compensation`, `conditional`, `link`, `signal`, `terminate`, `multiple` and `parallel-multiple` - each at the positions the notation draws it. An `x` marks a pair that can be written.
+
+| Trigger             | `start` | `intermediate` | `throw` | `boundary` | `end` |
+| ------------------- | ------- | -------------- | ------- | ---------- | ----- |
+| `none`              | x       |                | x       |            | x     |
+| `message`           | x       | x              | x       | x          | x     |
+| `timer`             | x       | x              |         | x          |       |
+| `error`             | x\*     |                |         | x          | x     |
+| `escalation`        | x\*     |                | x       | x          | x     |
+| `cancel`            |         |                |         | x\*\*      | x\*\* |
+| `compensation`      | x\*     |                | x       | x          | x     |
+| `conditional`       | x       | x              |         | x          |       |
+| `link`              |         | x              | x       |            |       |
+| `signal`            | x       | x              | x       | x          | x     |
+| `terminate`         |         |                |         |            | x     |
+| `multiple`          | x       | x              | x       | x          | x     |
+| `parallel-multiple` | x       | x              |         | x          |       |
+
+\* `error`, `escalation` and `compensation` start an _event sub-process_ rather than a process. There is no syntax for one yet, so they are accepted on any `start`.
+
+\*\* `cancel` belongs to a _transaction_. There is no syntax for one yet, so it is accepted on any `boundary` or `end`.
+
+A pair the notation does not draw is refused while the diagram is read, naming the line and where that trigger does belong:
+
+```
+BPMN error at line 3: a start event cannot carry the terminate trigger.
+The notation draws terminate on end events.
+```
+
+Omitting the trigger gives a plain (`none`) event, which `start`, `throw` and `end` accept. An `intermediate` or a `boundary` event is defined by what it waits for, so it has to name a trigger.
 
 A trigger that _catches_ is drawn as an outline and one that _throws_ is filled, which is why the same keyword produces a different marker on an `intermediate` than on an `end`.
 
@@ -299,7 +328,7 @@ bpmn-beta LR
 
 ## Current limitations
 
-- The parser accepts any position and trigger combination. BPMN 2.0.2 Table 10.93 permits only a subset — `terminate` on an end event, `link` on an intermediate one — and the rest are not yet rejected.
+- An event sub-process and a transaction have no syntax, so the two rules that depend on one are wider here than in the notation: `error`, `escalation` and `compensation` are accepted on any `start`, and `cancel` on any `boundary` or `end`. Every other position and trigger pair is checked.
 - Activity markers (loop, parallel and sequential multi-instance, ad-hoc, compensation) have no syntax yet.
 - A group is contained by one lane, so it cannot yet stretch across pools the way BPMN 2.0.2 Figure 8.14 shows.
 - An artifact is drawn beside the element it is associated with, so one associated across a lane boundary is drawn in that element's lane rather than the lane it was written in.
