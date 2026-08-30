@@ -12,6 +12,14 @@ const BPMN_FIXTURES = readdirSync(BPMN_FIXTURE_DIR)
 const asMermaidElementSource = (source: string): string =>
   source.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/**
+ * The connectors that make a line rather than declare an element.
+ *
+ * Matched as text: written as one alternation these read to a scanner as an attempt to
+ * find the end of an HTML comment, which is not what they are.
+ */
+const CONNECTORS = ['-->', '-.->', '..>', '...'];
+
 /** The ids a fixture declares, and which of them the notation draws on a border. */
 function declared(source: string) {
   const ids: string[] = [];
@@ -21,7 +29,7 @@ function declared(source: string) {
     if (!line || line.startsWith('bpmn-beta') || /^(title|accTitle|accDescr)\b/.test(line)) {
       continue;
     }
-    if (/(-->|-\.->|\.\.>|\.\.\.)/.test(line)) {
+    if (CONNECTORS.some((connector) => line.includes(connector))) {
       continue;
     }
     const named = /^(?:[a-z][a-z-]*\s+)*?([A-Z_a-z]\w*)\s+"/.exec(line);
