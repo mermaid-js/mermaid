@@ -116,7 +116,10 @@ export function assignLayers_Gravity(gAcyclic: Graph, opts?: LayeringOptions): L
     }
   }
 
-  const layers = buildLayersFromRanks(g, order, rankOf);
+  // A lane or group takes its geometry from the nodes inside it, so it is not content of
+  // a layer: leaving it in one gives the container a slot in the spread across the layer,
+  // which pushes the real nodes off the line their flow runs along.
+  const layers = buildLayersFromRanks(g, order, rankOf, { skipGroups: true });
 
   return { layers, rankOf, dummy: new Set<NodeId>() };
 }
