@@ -16,8 +16,11 @@ export const bpmnIcons: IconifyJSON = {
   width: 24,
   icons: {
     // --- Event triggers -----------------------------------------------------
+    // The fold carries its own class: a throwing marker is filled, and a filled envelope
+    // whose fold is filled to match is indistinguishable from a rectangle, so the fold is
+    // drawn in the shape's own colour instead.
     message: {
-      body: '<path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3z"/><path fill="none" stroke="currentColor" stroke-width="1.6" d="m3 6 9 7 9-7"/>',
+      body: '<path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 6h18v12H3z"/><path class="bpmn-glyph-fold" fill="none" stroke="currentColor" stroke-width="1.6" d="m3 6 9 7 9-7"/>',
     },
     timer: {
       body: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M12 7v5l3.5 2.5"/><path stroke="currentColor" stroke-width="1.2" d="M12 3v1.5M21 12h-1.5M12 21v-1.5M3 12h1.5"/>',

@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import type { Node } from '../../types.js';
 import { isValidShape, shapes } from '../shapes.js';
 import { EVENT_RINGS, faceCentreIntersect } from './bpmnShapeCore.js';
+import { bpmnIcons } from './bpmnIcons.js';
+import bpmnStyles from '../../../diagrams/bpmn/styles.js';
 
 const BPMN_SHAPES = [
   'bpmn-start',
@@ -59,5 +61,32 @@ describe('faceCentreIntersect', () => {
     // A short, wide box takes a 45-degree approach on its bottom edge, because relative
     // to its own proportions that approach is mostly vertical.
     expect(faceCentreIntersect(node, 100, 40, { x: 160, y: 110 })).toEqual({ x: 100, y: 70 });
+  });
+});
+
+describe('the message marker', () => {
+  const glyph = bpmnIcons.icons.message.body;
+
+  it('draws the envelope fold as a line of its own', () => {
+    expect(glyph).toContain('bpmn-glyph-fold');
+  });
+
+  // A throwing marker is filled. Filling the fold along with the envelope leaves a
+  // plain rectangle, which is not what the notation draws (BPMN 2.0.2, Table 10.93).
+  it('leaves that fold unfilled where the marker is filled', () => {
+    const theme = {
+      border: '#999',
+      edgeLabelBackground: '#fff',
+      fontFamily: 'sans-serif',
+      lineColor: '#333',
+      mainBkg: '#fafafa',
+      nodeBorder: '#666',
+      nodeTextColor: '#111',
+      tertiaryColor: '#eee',
+      textColor: '#111',
+      titleColor: '#111',
+    };
+    const sheet = bpmnStyles(theme as Parameters<typeof bpmnStyles>[0]).replace(/\s+/g, ' ');
+    expect(sheet).toMatch(/\.bpmn-throw[^{]*\.bpmn-glyph-fold\s*{[^}]*fill:\s*none/);
   });
 });
