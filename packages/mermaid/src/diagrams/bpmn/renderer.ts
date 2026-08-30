@@ -42,7 +42,17 @@ export const draw = async function (_text: string, id: string, _version: string,
   await render(data4Layout, svg);
 
   const padding = conf?.diagramPadding ?? 12;
-  utils.insertTitle(svg, 'bpmnTitleText', conf?.titleTopMargin ?? 25, diag.db.getDiagramTitle());
+  // `insertTitle` places a title at a fixed `-titleTopMargin`, which reads as "just above
+  // the drawing" only for a diagram whose content starts at the origin. A swimlane layout
+  // is laid out around its own centre and starts well above it, so the margin is measured
+  // from where the drawing actually begins.
+  const drawnTop = (svg.node() as SVGGraphicsElement | null)?.getBBox().y ?? 0;
+  utils.insertTitle(
+    svg,
+    'bpmnTitleText',
+    (conf?.titleTopMargin ?? 25) - drawnTop,
+    diag.db.getDiagramTitle()
+  );
   setupViewPortForSVG(svg, padding, 'bpmn', conf?.useMaxWidth ?? true);
 };
 
