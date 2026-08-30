@@ -49,6 +49,21 @@ export function assignCoordinates(
   const spreadByOwnExtent = opts?.spreadByOwnExtent ?? false;
   const crossExtent = (id: NodeId) =>
     isHorizontal && spreadByOwnExtent ? getHeight(id) : getWidth(id);
+  /**
+   * Nodes that an edge starts or ends at.
+   *
+   * Nodes sharing a layer are spread around their lane's centre so that branches running
+   * beside each other stay centred on the flow they belong to. A node no edge touches is
+   * in no branch, so counting it in that centring moves the whole flow sideways for every
+   * loose node the lane happens to declare - a note written next to a process should not
+   * shift the process. Such nodes are placed after the ones that are centred.
+   */
+  const inSomeFlow = new Set<NodeId>();
+  for (const e of gWithDummies.edges) {
+    inSomeFlow.add(e.src);
+    inSomeFlow.add(e.dst);
+  }
+
   const topLaneOf = createTopLaneResolver(gWithDummies);
   const laneOrderGlobal = resolveTopLaneOrder(gWithDummies, opts?.laneOrder);
 
@@ -155,8 +170,14 @@ export function assignCoordinates(
         continue;
       }
       const cx = centerX.get(L)!;
-      if (nodesInLane.length === 1) {
-        const id = nodesInLane[0];
+      const centred = nodesInLane.filter((id) => inSomeFlow.has(id));
+      const loose = nodesInLane.filter((id) => !inSomeFlow.has(id));
+      // With nothing to centre on, the loose nodes are all there is to place.
+      const spread = centred.length > 0 ? centred : loose;
+      const beside = centred.length > 0 ? loose : [];
+
+      if (spread.length === 1 && beside.length === 0) {
+        const id = spread[0];
         x[id] = cx;
         y[id] = yOffset + layerH / 2;
       } else {
@@ -164,14 +185,22 @@ export function assignCoordinates(
         // Only nodes belonging to a lane. The rest are the layout's own dummies, whose
         // width is a label's width - keeping them on it spreads stacked edge labels
         // further apart, which is what keeps them legible.
-        const extents = nodesInLane.map((id) => (L === null ? getWidth(id) : crossExtent(id)));
-        const total = extents.reduce((a, b) => a + b, 0) + nodeGap * (nodesInLane.length - 1);
+        const extentOf = (id: NodeId) => (L === null ? getWidth(id) : crossExtent(id));
+        const extents = spread.map(extentOf);
+        const total = extents.reduce((a, b) => a + b, 0) + nodeGap * (spread.length - 1);
         let start = cx - total / 2;
-        for (const [i, id] of nodesInLane.entries()) {
+        for (const [i, id] of spread.entries()) {
           const w = extents[i];
           x[id] = start + w / 2;
           y[id] = yOffset + layerH / 2;
           start += w + nodeGap;
+        }
+        for (const id of beside) {
+          const w = extentOf(id);
+          start += nodeGap;
+          x[id] = start + w / 2;
+          y[id] = yOffset + layerH / 2;
+          start += w;
         }
       }
     }

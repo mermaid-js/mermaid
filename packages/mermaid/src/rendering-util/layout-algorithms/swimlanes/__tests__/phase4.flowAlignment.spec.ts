@@ -38,6 +38,8 @@ function layOut(extra: Node[] = []) {
   return { layers: ordered.layers, x: coordinates.x };
 }
 
+const CHAIN = ['s1', 't1', 't2', 'e1'];
+
 describe('a lane keeps its flow on one line', () => {
   it('leaves lanes and groups out of the layers they enclose', () => {
     const { layers } = layOut();
@@ -49,5 +51,21 @@ describe('a lane keeps its flow on one line', () => {
     const { x } = layOut();
     expect(x.Lane).toBeUndefined();
     expect(x.Group).toBeUndefined();
+  });
+
+  it('holds the chain on one line when the lane also holds nodes no edge touches', () => {
+    const { x } = layOut([leaf('d1', 'Lane'), leaf('ds1', 'Lane'), leaf('n1', 'Lane')]);
+    expect(new Set(CHAIN.map((id) => x[id])).size).toBe(1);
+  });
+
+  it('still places the nodes no edge touches, clear of the flow', () => {
+    const { x } = layOut([leaf('d1', 'Lane'), leaf('ds1', 'Lane'), leaf('n1', 'Lane')]);
+    const loose = ['d1', 'ds1', 'n1'].map((id) => x[id]);
+    for (const at of loose) {
+      expect(at).toBeTypeOf('number');
+      // Clear of the start event, the only node on their layer the flow runs through.
+      expect(Math.abs(at - x.s1)).toBeGreaterThan((36 + 120) / 2);
+    }
+    expect(new Set(loose).size).toBe(loose.length);
   });
 });
