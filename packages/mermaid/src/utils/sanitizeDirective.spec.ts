@@ -62,6 +62,32 @@ describe('sanitizeDirective', () => {
         commitLineColor: '#ff0000',
       });
     });
+
+    it('blanks out hostile values nested under treeView and packet, same as top-level theme variables', () => {
+      const args = {
+        themeVariables: {
+          primaryColor: 'url(javascript:alert(1))',
+          treeView: {
+            iconColor: 'url(javascript:alert(1))',
+            descriptionColor: '#00ff00',
+          },
+          packet: {
+            startByteColor: '</style><script>alert(1)</script>',
+            endByteColor: 'black',
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.themeVariables.primaryColor).toBe('');
+      expect(args.themeVariables.treeView).toEqual({
+        iconColor: '',
+        descriptionColor: '#00ff00',
+      });
+      expect(args.themeVariables.packet).toEqual({
+        startByteColor: '',
+        endByteColor: 'black',
+      });
+    });
   });
 
   describe('dictionary-style configs', () => {
