@@ -35,8 +35,8 @@ export const draw = async function (_text: string, id: string, _version: string,
   // The schema supplies every one of these, so the fallbacks only stand in for a config
   // bag built by hand. They repeat the schema's defaults, because a fallback that
   // disagreed with one would make the diagram render differently than it documents.
-  data4Layout.nodeSpacing = conf?.nodeSpacing ?? 50;
-  data4Layout.rankSpacing = conf?.rankSpacing ?? 60;
+  data4Layout.nodeSpacing = conf?.nodeSpacing ?? 35;
+  data4Layout.rankSpacing = conf?.rankSpacing ?? 40;
 
   data4Layout.diagramId = id;
   await render(data4Layout, svg);
