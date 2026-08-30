@@ -283,4 +283,13 @@ describe('bpmnDb', () => {
       expect(nodeById(nodes, 'many').metadata?.isCollection).toBe(true);
     });
   });
+
+  // Two flows out of a gateway happen at the same time. Laying them end to end would
+  // read as one after the other, so the diagram asks for them side by side.
+  it('asks for its branches to be laid out side by side', () => {
+    const data = db.getData.call(
+      (db.clear(), db.parse('bpmn-beta LR\n  lane "L"\n    task t "T"'), db)
+    ) as unknown as { laneLayering?: string };
+    expect(data.laneLayering).toBe('branches');
+  });
 });

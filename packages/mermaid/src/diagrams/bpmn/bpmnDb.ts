@@ -263,6 +263,9 @@ export class BpmnDb {
       config,
       direction: this.parsed.direction,
       layoutAlgorithm: 'swimlane',
+      // Two flows out of a gateway are concurrent. Laying them end to end would read as
+      // one after the other, so the lane holds them side by side and grows instead.
+      laneLayering: 'branches',
       diagramId: this.diagramId,
       // `insertMarkers` only emits the markers named here, so a message flow's open head
       // and hollow source ring have to be requested or its marker reference points at a

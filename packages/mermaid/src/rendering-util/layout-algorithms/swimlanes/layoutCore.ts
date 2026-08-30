@@ -1,4 +1,5 @@
 import type { LayoutData } from '../../types.js';
+import { getUserDefinedConfig } from '../../../config.js';
 import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProcessing.js';
 import { toGraphView, writeBackToLayoutData } from './helpers.js';
 import { sugiyamaLayout } from './pipeline.js';
@@ -6,6 +7,24 @@ import { routeEdgesOrthogonal } from './orthogonalRouter/router.js';
 import { pinAnchoredNodes } from './anchoredNodes.js';
 
 export type SwimlaneDirection = 'TB' | 'LR' | 'BT' | 'RL';
+
+/**
+ * Whether a lane holds at most one node per layer.
+ *
+ * One node deep reads well for a role band, where the lane is the subject and the work
+ * passing through it is a single line. It reads wrongly for a process whose branches
+ * carry meaning: two paths out of a gateway happen at the same time, and laying them
+ * end to end says they happen one after the other.
+ *
+ * A diagram states which it wants; an explicit setting still decides it either way.
+ */
+function compactsLanesToOneRow(data4Layout: LayoutData): boolean {
+  const chosen = getUserDefinedConfig().swimlane?.ignoreCrossLaneEdges;
+  if (typeof chosen === 'boolean') {
+    return chosen;
+  }
+  return data4Layout.laneLayering !== 'branches';
+}
 
 function getSwimlaneDirection(data4Layout: LayoutData): SwimlaneDirection {
   return ((data4Layout as LayoutData & { direction?: string }).direction ??
@@ -22,7 +41,7 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
   const g = toGraphView(data4Layout);
   const nodeGap = data4Layout.config.flowchart?.nodeSpacing ?? 40;
   const layerGap = data4Layout.config.flowchart?.rankSpacing ?? 100;
-  const ignoreCrossLaneEdges = data4Layout.config.swimlane?.ignoreCrossLaneEdges ?? true;
+  const ignoreCrossLaneEdges = compactsLanesToOneRow(data4Layout);
   const optimizeRanksByCrossings = data4Layout.config.swimlane?.optimizeRanksByCrossings ?? true;
   const automaticLaneOrdering = data4Layout.config.swimlane?.automaticLaneOrdering ?? false;
   const direction = getSwimlaneDirection(data4Layout);
