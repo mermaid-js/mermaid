@@ -3,7 +3,7 @@ import type { Node } from '../../types.js';
 import { labelHelper, getNodeClasses } from './util.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import {
-  faceCentreIntersect,
+  faceProjectIntersect,
   LABEL_GAP,
   positionLabelBelow,
   reserveBounds,
@@ -54,7 +54,7 @@ export async function bpmnDataStore<T extends SVGGraphicsElement>(
   reserveBounds(shapeSvg, node, totalWidth, totalHeight);
 
   node.intersect = function (point) {
-    return faceCentreIntersect(node, STORE_SIZE, STORE_SIZE, point);
+    return faceProjectIntersect(node, STORE_SIZE, STORE_SIZE, point);
   };
   return shapeSvg;
 }

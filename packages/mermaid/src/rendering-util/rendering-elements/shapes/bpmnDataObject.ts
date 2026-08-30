@@ -4,7 +4,7 @@ import { labelHelper, getNodeClasses } from './util.js';
 import { styles2String } from './handDrawnShapeStyles.js';
 import {
   dataDirectionOf,
-  faceCentreIntersect,
+  faceProjectIntersect,
   isCollectionData,
   LABEL_GAP,
   positionLabelBelow,
@@ -76,7 +76,7 @@ export async function bpmnDataObject<T extends SVGGraphicsElement>(
   reserveBounds(shapeSvg, node, totalWidth, totalHeight);
 
   node.intersect = function (point) {
-    return faceCentreIntersect(node, DATA_WIDTH, DATA_HEIGHT, point);
+    return faceProjectIntersect(node, DATA_WIDTH, DATA_HEIGHT, point);
   };
   return shapeSvg;
 }

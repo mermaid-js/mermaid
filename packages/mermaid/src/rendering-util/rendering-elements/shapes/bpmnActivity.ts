@@ -5,7 +5,7 @@ import { styles2String } from './handDrawnShapeStyles.js';
 import {
   ACTIVITY_HEIGHT,
   ACTIVITY_WIDTH,
-  faceCentreIntersect,
+  faceProjectIntersect,
   glyphSvg,
   ICON_SIZE,
   positionLabelBelow,
@@ -85,7 +85,7 @@ export async function bpmnActivity<T extends SVGGraphicsElement>(
 
   updateNodeBounds(node, body);
   node.intersect = function (point) {
-    return faceCentreIntersect(node, width, height, point);
+    return faceProjectIntersect(node, width, height, point);
   };
 
   return shapeSvg;

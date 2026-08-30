@@ -3,7 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import * as configApi from '../../../config.js';
 import type { Node } from '../../types.js';
 import { shapes } from '../shapes.js';
-import { EVENT_DIAMETER, GATEWAY_SIZE } from './bpmnShapeCore.js';
+import { EVENT_DIAMETER, faceProjectIntersect, GATEWAY_SIZE } from './bpmnShapeCore.js';
 
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
 const originalGetComputedTextLength = Object.getOwnPropertyDescriptor(
@@ -268,5 +268,38 @@ describe('shape and glyph compose', () => {
     expect(document.querySelector('.bpmn-glyph')).not.toBeNull();
 
     expect(endRing).toBeGreaterThan(startRing);
+  });
+});
+
+describe('faceProjectIntersect', () => {
+  const box = { x: 100, y: 100 } as Node;
+
+  it('meets the border square to it, abreast of where the line comes from', () => {
+    // Coming from below and off to one side, the line lands on the bottom border at its
+    // own x, so the last leg is vertical rather than slanting in to the middle.
+    expect(faceProjectIntersect(box, 100, 60, { x: 130, y: 400 })).toEqual({ x: 130, y: 130 });
+  });
+
+  it('gives two lines on one border two places to land', () => {
+    const left = faceProjectIntersect(box, 100, 60, { x: 80, y: 400 });
+    const right = faceProjectIntersect(box, 100, 60, { x: 120, y: 400 });
+    expect(left).not.toEqual(right);
+    expect(left.y).toBe(right.y);
+  });
+
+  it('keeps clear of the corner, so an arrow cannot read as missing the shape', () => {
+    // Below the shape but past its right-hand end: it still lands on the bottom border,
+    // held short of the corner rather than exactly on it.
+    const corner = faceProjectIntersect(box, 100, 60, { x: 160, y: 400 });
+    expect(corner.y).toBe(130);
+    expect(corner.x).toBe(142);
+  });
+
+  it('uses the one border a shape offers, wherever the line comes from', () => {
+    // A text annotation is a bracket down its left side and has nowhere else to land.
+    expect(faceProjectIntersect(box, 100, 60, { x: 400, y: 100 }, 'left')).toEqual({
+      x: 50,
+      y: 100,
+    });
   });
 });
