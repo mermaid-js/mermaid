@@ -56,3 +56,35 @@ describe('a band with no content', () => {
     expect(overlap).toBeLessThanOrEqual(0.5);
   });
 });
+
+describe('a diagram that is bands and nothing else', () => {
+  // A collaboration may be drawn as participants alone, each a black box. There is no
+  // content to lay the bands out against, and they were left at zero height stacked on
+  // the origin with every title written over the next.
+  it('gives each band a size of its own', () => {
+    const layout = {
+      nodes: [
+        { id: 'p1', isGroup: true, label: 'Participant 1', metadata: { laneRole: 'pool' } },
+        { id: 'p2', isGroup: true, label: 'Participant 2', metadata: { laneRole: 'pool' } },
+        { id: 'p3', isGroup: true, label: 'Participant 3', metadata: { laneRole: 'pool' } },
+      ],
+      edges: [],
+      config: { flowchart: {} },
+      direction: 'LR',
+    } as unknown as Parameters<typeof applySwimlaneDirectionTransform>[0];
+
+    applySwimlaneDirectionTransform(layout, 'LR');
+
+    const bands = (layout.nodes ?? []).filter((n) => n.isGroup);
+    for (const band of bands) {
+      expect(band.height ?? 0).toBeGreaterThan(0);
+      expect(band.width ?? 0).toBeGreaterThan(0);
+    }
+    const tops = bands.map((b) => (b.y ?? 0) - (b.height ?? 0) / 2).sort((a, b) => a - b);
+    const bottoms = bands.map((b) => (b.y ?? 0) + (b.height ?? 0) / 2).sort((a, b) => a - b);
+    // Stacked, not piled up: each one starts where the one above it ended.
+    for (let i = 1; i < tops.length; i++) {
+      expect(tops[i]).toBeGreaterThanOrEqual(bottoms[i - 1] - 1);
+    }
+  });
+});

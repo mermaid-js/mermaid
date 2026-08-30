@@ -82,6 +82,9 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
     optimizeRanksByCrossings,
     automaticLaneOrdering,
     direction,
+    // Only a diagram that asked for its branches side by side puts several nodes in one
+    // lane and layer, and only then does each node's own extent across the lane matter.
+    spreadByOwnExtent: data4Layout.laneLayering === 'branches',
   });
   writeBackToLayoutData(g, ordered, coordinates, { nodeGap, layerGap });
 
