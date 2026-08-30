@@ -203,6 +203,9 @@ export class BpmnDb {
             ? { dataDirection: parsed.qualifier }
             : {}),
           ...(parsed.qualifier === 'collection' ? { isCollection: true } : {}),
+          // A note is an open bracket down one side, so its line has only that side to
+          // arrive on. The shape draws the bracket on the left; this says so to the layout.
+          ...(parsed.kind === 'annotation' ? { attachFace: 'left' } : {}),
         },
         cssClasses: [
           `bpmn-${parsed.kind}`,
