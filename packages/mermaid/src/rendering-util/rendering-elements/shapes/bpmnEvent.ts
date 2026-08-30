@@ -6,7 +6,7 @@ import {
   appendGlyph,
   EVENT_DIAMETER,
   EVENT_RINGS,
-  faceCentreIntersect,
+  ringIntersect,
   ICON_SIZE,
   LABEL_GAP,
   positionLabelBelow,
@@ -72,7 +72,7 @@ export async function renderBpmnEvent<T extends SVGGraphicsElement>(
   // compass point rather than wherever the line happens to cross the arc, so a flow
   // meets the circle square-on.
   node.intersect = function (point) {
-    return faceCentreIntersect(node, EVENT_DIAMETER, EVENT_DIAMETER, point);
+    return ringIntersect(node, EVENT_DIAMETER, point);
   };
 
   return shapeSvg;

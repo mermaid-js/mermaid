@@ -210,6 +210,33 @@ export const faceProjectIntersect = (
   };
 };
 
+/**
+ * Where an edge meets a round shape, staying on the line it arrived along.
+ *
+ * A ring has no faces to land on, so an edge approaching off-centre cannot both touch it
+ * and keep the middle. Following the approach to the circumference keeps the last leg on
+ * the axis the router drew it on, which is what lets two flows converge on one event
+ * from different columns and still reach it.
+ */
+export const ringIntersect = (node: Node, diameter: number, point: { x: number; y: number }) => {
+  const cx = node.x ?? 0;
+  const cy = node.y ?? 0;
+  const radius = diameter / 2;
+  const dx = point.x - cx;
+  const dy = point.y - cy;
+  // Held short of the tangent, where a line would graze the ring rather than meet it.
+  const reach = radius * 0.85;
+  if (Math.abs(dy) >= Math.abs(dx)) {
+    const along = clamp(dx, -reach, reach);
+    return {
+      x: cx + along,
+      y: cy + Math.sign(dy || 1) * Math.sqrt(radius * radius - along * along),
+    };
+  }
+  const along = clamp(dy, -reach, reach);
+  return { x: cx + Math.sign(dx || 1) * Math.sqrt(radius * radius - along * along), y: cy + along };
+};
+
 export const faceCentreIntersect = (
   node: Node,
   width: number,
