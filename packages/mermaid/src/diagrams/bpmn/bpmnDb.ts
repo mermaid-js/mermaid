@@ -100,6 +100,15 @@ export class BpmnDb {
 
   public parse(input: string) {
     this.parsed = parseBpmn(input);
+    if (this.parsed.title) {
+      setDiagramTitle(this.parsed.title);
+    }
+    if (this.parsed.accTitle) {
+      setAccTitle(this.parsed.accTitle);
+    }
+    if (this.parsed.accDescr) {
+      setAccDescription(this.parsed.accDescr);
+    }
   }
 
   public setDiagramId(id: string) {

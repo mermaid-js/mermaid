@@ -121,6 +121,25 @@ export const TaskType = createToken({
   longer_alt: Identifier,
 });
 
+/**
+ * The title and the accessibility text every mermaid diagram accepts.
+ *
+ * Each takes the rest of its line, so the text needs no quoting; `accDescr` also has a
+ * braced form that runs over several lines.
+ */
+export const Title = createToken({
+  name: 'Title',
+  pattern: /title[\t ]+[^\n\r]*/,
+  longer_alt: Identifier,
+});
+export const AccTitle = createToken({ name: 'AccTitle', pattern: /accTitle[\t ]*:[^\n\r]*/ });
+export const AccDescrMultiline = createToken({
+  name: 'AccDescrMultiline',
+  pattern: /accDescr[\t ]*{[^}]*}/,
+  line_breaks: true,
+});
+export const AccDescr = createToken({ name: 'AccDescr', pattern: /accDescr[\t ]*:[^\n\r]*/ });
+
 export const QuotedString = createToken({ name: 'QuotedString', pattern: /"[^\n\r"]*"/ });
 
 // `--(?![->])` keeps a label from swallowing the next arrow: without it
@@ -156,6 +175,11 @@ export const bpmnTokens: TokenType[] = [
   Arrow,
   AssociationArrow,
   AssociationLine,
+  // Ahead of every keyword: each takes a whole line, so a word inside one is text.
+  Title,
+  AccTitle,
+  AccDescrMultiline,
+  AccDescr,
   QuotedString,
   Header,
   Direction,

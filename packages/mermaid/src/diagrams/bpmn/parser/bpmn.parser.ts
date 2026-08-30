@@ -32,6 +32,7 @@ class BpmnParser extends CstParser {
         { ALT: () => this.SUBRULE(this.gateway) },
         { ALT: () => this.SUBRULE(this.activity) },
         { ALT: () => this.SUBRULE(this.artifact) },
+        { ALT: () => this.SUBRULE(this.meta) },
         { ALT: () => this.SUBRULE(this.flow) },
       ])
     );
@@ -90,6 +91,16 @@ class BpmnParser extends CstParser {
       { ALT: () => this.CONSUME(t.Annotation) },
     ]);
     this.SUBRULE(this.nameAndLabel);
+  });
+
+  /** The diagram's title, or the text that describes it to a screen reader. */
+  private meta = this.RULE('meta', () => {
+    this.OR([
+      { ALT: () => this.CONSUME(t.Title) },
+      { ALT: () => this.CONSUME(t.AccTitle) },
+      { ALT: () => this.CONSUME(t.AccDescrMultiline) },
+      { ALT: () => this.CONSUME(t.AccDescr) },
+    ]);
   });
 
   private nameAndLabel = this.RULE('nameAndLabel', () => {
@@ -151,6 +162,9 @@ export interface ParsedDiagram {
   direction: string;
   nodes: ParsedNode[];
   flows: ParsedFlow[];
+  title?: string;
+  accTitle?: string;
+  accDescr?: string;
 }
 
 const imageOf = (token?: IToken) => token?.image ?? '';
@@ -161,6 +175,9 @@ class BpmnVisitor extends BpmnBaseVisitor {
   private nodes: ParsedNode[] = [];
   private flows: ParsedFlow[] = [];
   private direction = 'LR';
+  private title: string | undefined;
+  private accTitle: string | undefined;
+  private accDescr: string | undefined;
   private generated = 0;
   /** Indentation of the first content line, so absolute indent never matters. */
   private baseLevel: number | undefined;
@@ -174,12 +191,22 @@ class BpmnVisitor extends BpmnBaseVisitor {
     this.nodes = [];
     this.flows = [];
     this.direction = 'LR';
+    this.title = undefined;
+    this.accTitle = undefined;
+    this.accDescr = undefined;
     this.generated = 0;
     this.baseLevel = undefined;
   }
 
   public result(): ParsedDiagram {
-    return { direction: this.direction, nodes: this.nodes, flows: this.flows };
+    return {
+      direction: this.direction,
+      nodes: this.nodes,
+      flows: this.flows,
+      ...(this.title ? { title: this.title } : {}),
+      ...(this.accTitle ? { accTitle: this.accTitle } : {}),
+      ...(this.accDescr ? { accDescr: this.accDescr } : {}),
+    };
   }
 
   public diagram(ctx: Record<string, CstNode[] | IToken[]>) {
@@ -196,6 +223,11 @@ class BpmnVisitor extends BpmnBaseVisitor {
   public line(ctx: Record<string, CstNode[] | IToken[]>) {
     const indent = (ctx.Indent as IToken[] | undefined)?.[0];
     const level = indent ? indent.image.length : 0;
+    const meta = (ctx.meta as CstNode[] | undefined)?.[0];
+    if (meta) {
+      this.visit(meta);
+      return;
+    }
     for (const key of ['container', 'event', 'gateway', 'activity', 'artifact'] as const) {
       const rule = (ctx[key] as CstNode[] | undefined)?.[0];
       if (rule) {
@@ -263,6 +295,33 @@ class BpmnVisitor extends BpmnBaseVisitor {
           ? 'collection'
           : undefined;
     return node;
+  }
+
+  public meta(ctx: Record<string, IToken[]>) {
+    const after = (image: string, keyword: string) =>
+      image
+        .slice(keyword.length)
+        .replace(/^[\t :]+/, '')
+        .trim();
+    const title = ctx.Title?.[0];
+    if (title) {
+      this.title = after(imageOf(title), 'title');
+    }
+    const accTitle = ctx.AccTitle?.[0];
+    if (accTitle) {
+      this.accTitle = after(imageOf(accTitle), 'accTitle');
+    }
+    const accDescr = ctx.AccDescr?.[0];
+    if (accDescr) {
+      this.accDescr = after(imageOf(accDescr), 'accDescr');
+    }
+    const braced = ctx.AccDescrMultiline?.[0];
+    if (braced) {
+      this.accDescr = imageOf(braced)
+        .replace(/^accDescr[\t ]*{/, '')
+        .replace(/}$/, '')
+        .trim();
+    }
   }
 
   public nameAndLabel(ctx: Record<string, IToken[]>) {
