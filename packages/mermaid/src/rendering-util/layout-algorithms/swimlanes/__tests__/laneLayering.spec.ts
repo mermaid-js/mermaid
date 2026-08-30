@@ -76,3 +76,36 @@ describe('spacing', () => {
     expect(chain()).toBeGreaterThan(0);
   });
 });
+
+describe('room across a lane', () => {
+  // A box whose label has wrapped is tall and narrow. Laid on its side, the room it
+  // needs across the lane is its height, and reserving its width instead left the two
+  // branches of a gateway sitting on top of each other.
+  const tall = (id: string): Node =>
+    ({ id, isGroup: false, width: 90, height: 190, parentId: 'L' }) as Node;
+
+  const branches = (laneLayering?: string): LayoutData => {
+    const layout = {
+      nodes: [band('L'), box('A'), tall('B'), tall('C'), box('D')],
+      edges: [
+        { id: 'e1', start: 'A', end: 'B', type: 'normal' },
+        { id: 'e2', start: 'A', end: 'C', type: 'normal' },
+        { id: 'e3', start: 'B', end: 'D', type: 'normal' },
+        { id: 'e4', start: 'C', end: 'D', type: 'normal' },
+      ],
+      config: { flowchart: { nodeSpacing: 40, rankSpacing: 80 } },
+      direction: 'LR',
+      ...(laneLayering ? { laneLayering } : {}),
+    } as unknown as LayoutData;
+    runSwimlaneLayoutCore(layout);
+    return layout;
+  };
+
+  it('keeps two tall branches off each other', () => {
+    const layout = branches('branches');
+    const b = at(layout, 'B');
+    const c = at(layout, 'C');
+    const gap = Math.abs((b?.y ?? 0) - (c?.y ?? 0));
+    expect(gap).toBeGreaterThanOrEqual(((b?.height ?? 0) + (c?.height ?? 0)) / 2);
+  });
+});

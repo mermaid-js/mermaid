@@ -7,6 +7,8 @@ export interface CoordOptions {
   nodeGap?: number; // horizontal gap between siblings inside a lane
   laneGap?: number; // horizontal gap between lanes (clusters)
   direction?: 'TB' | 'LR' | 'BT' | 'RL'; // layout direction for proper spacing
+  /** Whether a lane may hold several nodes in one layer, so their own extent matters. */
+  spreadByOwnExtent?: boolean;
   laneOrder?: string[];
 }
 
@@ -29,6 +31,22 @@ export function assignCoordinates(
   const getNode = (id: NodeId) => gWithDummies.nodeById.get(id) as any;
   const getWidth = (id: NodeId) => getNode(id)?.width ?? 0;
   const getHeight = (id: NodeId) => getNode(id)?.height ?? 0;
+  /**
+   * How much room a node needs across a layer.
+   *
+   * Coordinates are assigned with layers running down the page, so the cross axis is x
+   * and a node takes up its width. An LR or RL transform turns that axis into y, where
+   * the same node takes up its height instead, and a narrow box whose label has wrapped
+   * tall then reserves too little room and lands on its neighbour.
+   *
+   * This governs how nodes sharing a layer are spread. A lane that holds one node per
+   * layer never spreads anything, so the correction is asked for by the diagrams whose
+   * lanes hold several; the room reserved for the lane itself is left on width, where
+   * being generous costs space but never an overlap.
+   */
+  const spreadByOwnExtent = opts?.spreadByOwnExtent ?? false;
+  const crossExtent = (id: NodeId) =>
+    isHorizontal && spreadByOwnExtent ? getHeight(id) : getWidth(id);
   const topLaneOf = createTopLaneResolver(gWithDummies);
   const laneOrderGlobal = resolveTopLaneOrder(gWithDummies, opts?.laneOrder);
 
@@ -136,11 +154,14 @@ export function assignCoordinates(
         y[id] = yOffset + layerH / 2;
       } else {
         // Preserve phase 3 order while spreading nodes around the lane center.
-        const widths = nodesInLane.map((id) => getWidth(id));
-        const total = widths.reduce((a, b) => a + b, 0) + nodeGap * (nodesInLane.length - 1);
+        // Only nodes belonging to a lane. The rest are the layout's own dummies, whose
+        // width is a label's width - keeping them on it spreads stacked edge labels
+        // further apart, which is what keeps them legible.
+        const extents = nodesInLane.map((id) => (L === null ? getWidth(id) : crossExtent(id)));
+        const total = extents.reduce((a, b) => a + b, 0) + nodeGap * (nodesInLane.length - 1);
         let start = cx - total / 2;
         for (const [i, id] of nodesInLane.entries()) {
-          const w = widths[i];
+          const w = extents[i];
           x[id] = start + w / 2;
           y[id] = yOffset + layerH / 2;
           start += w + nodeGap;
