@@ -180,6 +180,31 @@ bpmn-beta LR
       </div>
     </div>
 
+    <h2>Data associations</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  pool "Order handling"
+    lane "Sales"
+      start s1 "Order received"
+      data-input in1 "Order form"
+      user task t1 "Check the order"
+      data-output out1 "Approval"
+      data-collection many "Line items"
+      end e1 "Filed"
+      note n1 "Against the price list"
+  s1 --> t1
+  t1 --> e1
+  in1 ..> t1
+  t1 ..> out1
+  many ..> t1
+  n1 ... t1
+        </pre>
+      </div>
+    </div>
+
     <h2>Retuned through theme variables</h2>
     <div class="demo">
       <pre class="source"></pre>

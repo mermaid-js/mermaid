@@ -143,15 +143,19 @@ bpmn-beta LR
 
 ## Flows
 
-| Syntax             | Flow                        |
-| ------------------ | --------------------------- |
-| `a --> b`          | Sequence flow               |
-| `a -- label --> b` | Sequence flow with a label  |
-| `a -.-> b`         | Message flow, between pools |
+| Syntax             | Flow                          |
+| ------------------ | ----------------------------- |
+| `a --> b`          | Sequence flow                 |
+| `a -- label --> b` | Sequence flow with a label    |
+| `a -.-> b`         | Message flow, between pools   |
+| `a ..> b`          | Association, pointing at `b`  |
+| `a ... b`          | Association, pointing nowhere |
 
 Flows chain, so `a --> b --> c` declares two of them.
 
 A message flow is drawn as a dashed line with an open arrowhead and a hollow circle at its source, which is how BPMN distinguishes a message between participants from a sequence flow inside one.
+
+An association is dotted rather than dashed, which is how the notation separates the two. It joins an artifact to what it belongs to and carries no order, so an element that is only associated does not take a place in the sequence.
 
 ```mermaid-example
 bpmn-beta LR
@@ -172,14 +176,19 @@ bpmn-beta LR
 
 Artifacts carry information without taking part in the flow.
 
-| Keyword      | Artifact                                     |
-| ------------ | -------------------------------------------- |
-| `data`       | A data object                                |
-| `data-store` | A data store                                 |
-| `note`       | A text annotation                            |
-| `group`      | A dash-dot box drawn around what it contains |
+| Keyword           | Artifact                                     |
+| ----------------- | -------------------------------------------- |
+| `data`            | A data object                                |
+| `data-input`      | A data object an activity reads              |
+| `data-output`     | A data object an activity writes             |
+| `data-collection` | A data object standing for a set of items    |
+| `data-store`      | A data store                                 |
+| `note`            | A text annotation                            |
+| `group`           | A dash-dot box drawn around what it contains |
 
 A `group` is a container, so its members are indented under it. It has no execution semantics.
+
+An artifact is placed beside the element it is associated with rather than in the flow, so where it is written among the elements does not decide where it is drawn.
 
 ```mermaid-example
 bpmn-beta LR
@@ -193,6 +202,25 @@ bpmn-beta LR
     note n1 "Stock checked nightly"
     end e1 "Done"
   s1 --> t1 --> t2 --> e1
+  d1 ..> t1
+  n1 ... t2
+```
+
+A data object drawn with an input, output or collection marker:
+
+```mermaid-example
+bpmn-beta LR
+  lane "Sales"
+    start s1 "Order received"
+    data-input in1 "Order form"
+    user task t1 "Check the order"
+    data-output out1 "Approval"
+    data-collection many "Line items"
+    end e1 "Filed"
+  s1 --> t1 --> e1
+  in1 ..> t1
+  t1 ..> out1
+  many ..> t1
 ```
 
 ## Configuration
@@ -249,3 +277,4 @@ bpmn-beta LR
 - The parser accepts any position and trigger combination. BPMN 2.0.2 Table 10.93 permits only a subset — `terminate` on an end event, `link` on an intermediate one — and the rest are not yet rejected.
 - Activity markers (loop, parallel and sequential multi-instance, ad-hoc, compensation) have no syntax yet.
 - A group is contained by one lane, so it cannot yet stretch across pools the way BPMN 2.0.2 Figure 8.14 shows.
+- Choreography and conversation diagrams are separate BPMN diagram types with their own shapes, and neither has syntax here.
