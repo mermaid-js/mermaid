@@ -306,7 +306,7 @@ export class SequenceDB implements DiagramDB {
           }
         }
         if (!actor.styleClassName) {
-          actor.styleClassName = `actor-style-${this.cssEscape(actor.name)}`;
+          actor.styleClassName = `actor-style-${this.encodeActorStyleToken(actor.name)}`;
         }
         result.set(actor.styleClassName, {
           id: actor.styleClassName,
@@ -320,12 +320,17 @@ export class SequenceDB implements DiagramDB {
   };
 
   /**
-   * Escape an actor id/name so it's safe to embed in a CSS class identifier.
-   * Replaces anything outside [A-Za-z0-9_-] with `_` so aliased participant
-   * names like "Customer Service.v2" produce a valid selector.
+   * Encode an actor id/name as a collision-free CSS class token.
+   * Each UTF-16 code unit becomes two bytes so lone surrogates are preserved,
+   * then Base64URL limits the output to selector-safe characters.
    */
-  private cssEscape(value: string): string {
-    return value.replace(/[^\w-]/g, '_');
+  private encodeActorStyleToken(value: string): string {
+    const utf16Bytes: string[] = [];
+    for (let index = 0; index < value.length; index++) {
+      const codeUnit = value.charCodeAt(index);
+      utf16Bytes.push(String.fromCharCode(codeUnit >>> 8, codeUnit & 0xff));
+    }
+    return btoa(utf16Bytes.join('')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
 
   public addActor(

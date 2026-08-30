@@ -3223,5 +3223,49 @@ Bob->>Alice:Got it!
       expect(generated).toBeDefined();
       expect(generated).toMatch(/^[\w-]+$/);
     });
+
+    it.each([
+      ['A.B / A_B', 'A.B', 'A_B'],
+      ['A+B / A_B', 'A+B', 'A_B'],
+      ['Japanese / A_B', '日本語', 'A_B'],
+      ['emoji / A_B', '😀', 'A_B'],
+      ['U+D800 / U+D801', '\uD800', '\uD801'],
+      ['U+D800 / U+DC00', '\uD800', '\uDC00'],
+    ])(
+      'should keep generated style classes distinct for actor ids: %s',
+      async (_label, firstActorId, secondActorId) => {
+        const source = `
+        sequenceDiagram
+        participant ${firstActorId}
+        participant ${secondActorId}
+        style ${firstActorId} fill:#f00
+        style ${secondActorId} fill:#00f
+        ${secondActorId}->>${secondActorId}: test
+        `;
+        const diagram = await Diagram.fromText(source);
+        const actors = diagram.db.getActors();
+        const classes = diagram.db.getClasses();
+        const firstClass = actors.get(firstActorId).styleClassName;
+        const secondClass = actors.get(secondActorId).styleClassName;
+        const generatedClasses = [...classes.keys()].filter((key) =>
+          key.startsWith('actor-style-')
+        );
+
+        expect.soft(firstClass).toBeDefined();
+        expect.soft(secondClass).toBeDefined();
+        expect.soft(firstClass).not.toBe(secondClass);
+        expect.soft(firstClass).toMatch(/^[\w-]+$/);
+        expect.soft(secondClass).toMatch(/^[\w-]+$/);
+        expect.soft(generatedClasses).toHaveLength(2);
+        expect.soft(classes.get(firstClass).styles).toContain('fill:#f00');
+        expect.soft(classes.get(secondClass).styles).toContain('fill:#00f');
+
+        const repeatedDiagram = await Diagram.fromText(source);
+        repeatedDiagram.db.getClasses();
+        const repeatedActors = repeatedDiagram.db.getActors();
+        expect.soft(repeatedActors.get(firstActorId).styleClassName).toBe(firstClass);
+        expect.soft(repeatedActors.get(secondActorId).styleClassName).toBe(secondClass);
+      }
+    );
   });
 });
