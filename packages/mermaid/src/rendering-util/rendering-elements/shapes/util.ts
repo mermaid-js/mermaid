@@ -229,8 +229,14 @@ export function insertPolygonShape(
     .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
 }
 
-export const getNodeClasses = (node: Node, extra?: string) =>
-  (node.look === 'handDrawn' ? 'rough-node' : 'node') + ' ' + node.cssClasses + ' ' + (extra || '');
+/**
+ * The classes a node's group carries: what it is to the renderer, what the diagram asked
+ * for, and what the shape adds. A class named by more than one of those is written once.
+ */
+export const getNodeClasses = (node: Node, extra?: string) => {
+  const named = [node.look === 'handDrawn' ? 'rough-node' : 'node', node.cssClasses, extra];
+  return [...new Set(named.flatMap((part) => (part ?? '').split(' ')).filter(Boolean))].join(' ');
+};
 
 export function createPathFromPoints(points: Point[]) {
   const pointStrings = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`);
