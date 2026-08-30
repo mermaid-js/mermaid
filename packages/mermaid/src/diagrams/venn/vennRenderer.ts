@@ -17,7 +17,7 @@ type DummyD3Root = Selection<HTMLDivElement, unknown, null, undefined>;
 function buildStyleByKey(styleData: VennStyleData[]): Map<string, Record<string, string>> {
   const map = new Map<string, Record<string, string>>();
   for (const entry of styleData) {
-    const key = entry.targets.join('|');
+    const key = stableSetsKey(entry.targets);
     const existing = map.get(key);
     if (existing) {
       Object.assign(existing, entry.styles);
@@ -239,7 +239,7 @@ export const draw: DrawDefinition = (
 };
 
 function stableSetsKey(setIds: string[]): string {
-  return setIds.join('|');
+  return [...setIds].sort().join('|');
 }
 
 function renderTextNodes(
