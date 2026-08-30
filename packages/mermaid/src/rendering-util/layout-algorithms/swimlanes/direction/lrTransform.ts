@@ -1,6 +1,6 @@
 import type { LayoutData } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
-import { collectAnchoredIds } from '../anchoredNodes.js';
+import { anchorFootprints, collectAnchoredIds } from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -273,6 +273,11 @@ export function applyLrDirectionTransform(
   }
 
   const childrenByLane = new Map<string, LayoutNode[]>();
+  // A node standing off its host is placed from that host rather than bucketed as content
+  // of its own, but it is still drawn inside the lane. Charging the room to the host,
+  // whose position is settled by now, sizes the lane to hold it without depending on when
+  // the standing-off node is finally placed.
+  const footprints = anchorFootprints(nodes);
 
   for (const n of nodes) {
     // A band is the frame being measured here, so it cannot also count as its own content.
@@ -288,7 +293,19 @@ export function applyLrDirectionTransform(
       continue;
     }
     const bucket = childrenByLane.get(laneId) ?? [];
-    bucket.push(n);
+    const footprint = footprints.get(n.id);
+    bucket.push(
+      footprint
+        ? {
+            ...n,
+            // The nodes hang below the host in this orientation, so the box grows
+            // downward only: its centre moves half the reach and its height by all of it.
+            y: (n.y ?? 0) + footprint.beyond / 2,
+            width: Math.max(n.width ?? 0, 2 * footprint.across),
+            height: (n.height ?? 0) + footprint.beyond,
+          }
+        : n
+    );
     childrenByLane.set(laneId, bucket);
   }
 
