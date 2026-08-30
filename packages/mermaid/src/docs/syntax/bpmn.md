@@ -33,6 +33,31 @@ bpmn-beta LR
 
 Comments start with `%%` and run to the end of the line.
 
+## Titling a diagram
+
+A diagram may carry a title, and the text that describes it to a screen reader. Each takes the rest of its line.
+
+```mermaid-example
+bpmn-beta LR
+title Order handling
+accTitle: How an order is handled
+accDescr: An order is received, checked by sales and then filed.
+  lane "Sales"
+    start s1 "Order received"
+    user task t1 "Check the order"
+    end e1 "Filed"
+  s1 --> t1 --> e1
+```
+
+`accDescr` also has a braced form for a description that runs over several lines:
+
+```
+accDescr {
+  An order is received.
+  It is then checked and filed.
+}
+```
+
 ## Naming elements
 
 Every element takes an optional id and an optional quoted label:
