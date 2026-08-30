@@ -197,6 +197,58 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
   return mirrorAxis(layout, 'y');
 }
 
+/** The strip along a band's edge that its rotated title is drawn in. */
+const LANE_TITLE_BAND = 36;
+
+/**
+ * Lays out the bands that hold nothing, stacking them below whatever was placed already.
+ *
+ * A band with no content has no children to take an extent from, so without this it keeps
+ * the zero size it started with and every one of them collapses onto the origin, each
+ * title overlapping the next. In BPMN such a band is a black box pool - a participant
+ * whose internals are deliberately not shown - and a collaboration may be nothing else.
+ *
+ * A band's title is drawn rotated, so it runs along the band's height and a band shorter
+ * than its own name spills text over its neighbours. Text cannot be measured here -
+ * `calculateTextDimensions` needs a render tree and there is none during layout - so the
+ * run is estimated from the character count at the configured font size, which only has
+ * to be close enough to keep a name inside its own band.
+ */
+function stackEmptyBands(
+  bands: LayoutNode[],
+  opts: {
+    top: number;
+    centerX: number;
+    laneLeft: number;
+    laneWidth: number;
+    titleBandSize: number;
+    fontSize: number;
+  }
+): void {
+  let top = opts.top;
+  for (const band of bands) {
+    const titleRun =
+      (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
+    const height = Math.max(
+      2 * opts.titleBandSize,
+      2 * (band.padding ?? 0),
+      titleRun + opts.titleBandSize
+    );
+    band.x = opts.centerX;
+    band.y = top + height / 2;
+    band.width = opts.laneWidth;
+    band.height = height;
+    band.swimlaneContentTop = top;
+    band.groupTitleRect = {
+      left: opts.laneLeft,
+      right: opts.laneLeft + opts.titleBandSize,
+      top,
+      bottom: top + height,
+    };
+    top += height;
+  }
+}
+
 export function applyLrDirectionTransform(
   layout: LayoutData,
   direction: Direction = 'LR'
@@ -222,10 +274,32 @@ export function applyLrDirectionTransform(
   }
 
   if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-    return false;
+    // There is no content anywhere, so there is nothing to turn on its side. A
+    // collaboration can be exactly this - participants and nothing else - and its bands
+    // still have to be drawn, at a width of their own since none can be measured.
+    const emptyModel = buildLaneModel(nodes);
+    const emptyBands = nodes.filter((n) => emptyModel.isLane(n.id));
+    if (emptyBands.length === 0) {
+      return false;
+    }
+    const titleBand = LANE_TITLE_BAND;
+    const bandWidth = 6 * titleBand;
+    stackEmptyBands(emptyBands, {
+      top: 0,
+      centerX: titleBand + bandWidth / 2,
+      laneLeft: titleBand,
+      laneWidth: bandWidth,
+      titleBandSize: titleBand,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, emptyModel, titleBand, titleBand);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
+    return true;
   }
 
-  const titleBandSize = 36;
+  const titleBandSize = LANE_TITLE_BAND;
 
   let totalWidth = 0;
   let totalHeight = 0;
@@ -344,6 +418,22 @@ export function applyLrDirectionTransform(
   }
 
   if (globalMinXChild === Infinity || globalMaxXChild === -Infinity) {
+    // Nothing in the diagram has content, so there are no bounds to lay bands out
+    // against - a collaboration drawn as participants alone. They are still drawn, at a
+    // width of their own since there is no content to take one from.
+    const emptyWidth = 6 * titleBandSize;
+    stackEmptyBands(laneNodes, {
+      top: 0,
+      centerX: titleBandSize + emptyWidth / 2,
+      laneLeft: titleBandSize,
+      laneWidth: emptyWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, laneModel, titleBandSize, titleBandSize);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
     return true;
   }
 
@@ -402,40 +492,20 @@ export function applyLrDirectionTransform(
   // They are stacked below the bands that do have content, which leaves those untouched;
   // placing one back at its declared position would mean moving already-placed nodes.
   const placed = new Set(laneBounds.map((entry) => entry.lane));
-  let emptyTop = laneBounds.reduce(
-    (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
-    laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
-  );
-  // A band's title is drawn rotated, so it runs along the band's height and a band
-  // shorter than its own name spills text over its neighbours. Text cannot be measured
-  // here - `calculateTextDimensions` needs a render tree and there is none during layout -
-  // so the run is estimated from the character count at the configured font size. It only
-  // has to be close enough to keep a name inside its own band.
-  const fontSize = Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16;
-  const estimatedTitleRun = (lane: LayoutNode) =>
-    (typeof lane.label === 'string' ? lane.label.length : 0) * fontSize * 0.55;
-  for (const lane of laneNodes) {
-    if (placed.has(lane)) {
-      continue;
+  stackEmptyBands(
+    laneNodes.filter((lane) => !placed.has(lane)),
+    {
+      top: laneBounds.reduce(
+        (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
+        laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
+      ),
+      centerX,
+      laneLeft,
+      laneWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
     }
-    const height = Math.max(
-      2 * titleBandSize,
-      2 * (lane.padding ?? 0),
-      estimatedTitleRun(lane) + titleBandSize
-    );
-    lane.x = centerX;
-    lane.y = emptyTop + height / 2;
-    lane.width = laneWidth;
-    lane.height = height;
-    lane.swimlaneContentTop = emptyTop;
-    lane.groupTitleRect = {
-      left: laneLeft,
-      right: laneLeft + titleBandSize,
-      top: emptyTop,
-      bottom: emptyTop + height,
-    };
-    emptyTop += height;
-  }
+  );
 
   framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
