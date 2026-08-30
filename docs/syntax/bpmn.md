@@ -429,4 +429,5 @@ bpmn-beta LR
 - The parser accepts any position and trigger combination. BPMN 2.0.2 Table 10.93 permits only a subset — `terminate` on an end event, `link` on an intermediate one — and the rest are not yet rejected.
 - Activity markers (loop, parallel and sequential multi-instance, ad-hoc, compensation) have no syntax yet.
 - A group is contained by one lane, so it cannot yet stretch across pools the way BPMN 2.0.2 Figure 8.14 shows.
+- An artifact is drawn beside the element it is associated with, so one associated across a lane boundary is drawn in that element's lane rather than the lane it was written in.
 - Choreography and conversation diagrams are separate BPMN diagram types with their own shapes, and neither has syntax here.
