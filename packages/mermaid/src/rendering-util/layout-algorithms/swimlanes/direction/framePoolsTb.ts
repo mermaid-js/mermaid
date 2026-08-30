@@ -45,7 +45,10 @@ export function framePoolsTb(layout: LayoutData): void {
     }
     const isPooledLane = laneModel.isLane(node.id) && pooled.has(node.id);
     const isPooledContent =
-      !node.isGroup && !anchoredIds.has(node.id) && !laneModel.isLane(node.id) && movesWithItsLane(node);
+      !node.isGroup &&
+      !anchoredIds.has(node.id) &&
+      !laneModel.isLane(node.id) &&
+      movesWithItsLane(node);
     if (!isPooledLane && !isPooledContent) {
       continue;
     }
