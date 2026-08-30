@@ -23,7 +23,7 @@ import { simplifyDetouredEdges } from './direction/detourSimplification.js';
 import { anchorLabelsToPolyline } from './direction/labelAnchoring.js';
 import { straightenCollinearSiblingDetours } from './direction/siblingSharedFaceRouting.js';
 import { nudgeSharedInteriorSubpaths } from './direction/sharedTrackNudging.js';
-import { pinAnchoredNodes } from './anchoredNodes.js';
+import { pinAnchoredNodes, squareAnchoredEdges } from './anchoredNodes.js';
 export { validateSwimlanesLayout } from './direction/validation.js';
 
 /** Applies direction transforms and post-routing cleanup to a swimlane layout. */
@@ -51,10 +51,13 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // anchor pinned in canonical space lands off the border by the difference. Re-pin from
   // the host's final geometry, ahead of the polyline passes below, so the repaired route
   // goes through the same cleanup as every other edge.
-  pinAnchoredNodes(layout, {
+  const pins = pinAnchoredNodes(layout, {
     space: 'final',
     direction: direction === 'LR' || direction === 'RL' || direction === 'BT' ? direction : 'TB',
   });
+  // Done before the polyline passes below, so a squared-up stub goes through the same
+  // cleanup as every other edge rather than sitting outside it.
+  squareAnchoredEdges(layout, pins);
 
   for (const edge of edges) {
     if ((edge as { isLayoutOnly?: boolean }).isLayoutOnly) {

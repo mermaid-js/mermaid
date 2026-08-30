@@ -157,6 +157,59 @@ export const reserveBounds = (
  * by comparing the approach against the box's own aspect, so a wide box still hands a
  * near-horizontal approach to its left or right side.
  */
+/** The border of a shape an edge arrives on. */
+export type ShapeFace = 'top' | 'bottom' | 'left' | 'right';
+
+/** How close to a corner a line may land before it reads as pointing at the next shape. */
+const CORNER_INSET = 8;
+
+const clamp = (value: number, low: number, high: number) => Math.min(Math.max(value, low), high);
+
+/**
+ * Where an edge meets a shape's border, square to it.
+ *
+ * The border is the one the far end lies off, unless the shape accepts only one: a text
+ * annotation is a bracket down a single side and its line belongs on that bracket.
+ *
+ * The point then follows the incoming line along the border instead of sitting at its
+ * middle. That keeps the last segment square to the surface, and gives two lines arriving
+ * at the same border two different places to land, so they stay apart and stay readable.
+ */
+export const faceProjectIntersect = (
+  node: Node,
+  width: number,
+  height: number,
+  point: { x: number; y: number },
+  fixedFace?: ShapeFace
+) => {
+  const cx = node.x ?? 0;
+  const cy = node.y ?? 0;
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const dx = point.x - cx;
+  const dy = point.y - cy;
+  const face: ShapeFace =
+    fixedFace ??
+    (Math.abs(dx) * halfHeight > Math.abs(dy) * halfWidth
+      ? dx >= 0
+        ? 'right'
+        : 'left'
+      : dy >= 0
+        ? 'bottom'
+        : 'top');
+  const reach = (half: number) => Math.max(0, half - Math.min(CORNER_INSET, half / 2));
+  if (face === 'left' || face === 'right') {
+    return {
+      x: cx + (face === 'right' ? halfWidth : -halfWidth),
+      y: clamp(point.y, cy - reach(halfHeight), cy + reach(halfHeight)),
+    };
+  }
+  return {
+    x: clamp(point.x, cx - reach(halfWidth), cx + reach(halfWidth)),
+    y: cy + (face === 'bottom' ? halfHeight : -halfHeight),
+  };
+};
+
 export const faceCentreIntersect = (
   node: Node,
   width: number,

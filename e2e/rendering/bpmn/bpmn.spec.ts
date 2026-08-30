@@ -259,4 +259,73 @@ test.describe('bpmn-beta', () => {
     // lane has to be told to leave room for it or it is drawn outside its own pool.
     expect(overflow!.worst).toBeLessThanOrEqual(1);
   });
+
+  test('an association meets the shape square and touching', async ({ page }, testInfo) => {
+    await renderFixture(page, testInfo, '09-data-associations.mmd');
+    const arrivals = await page.evaluate(() => {
+      const shapes = [];
+      for (const node of document.querySelectorAll('g.node')) {
+        const match = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
+          node.getAttribute('transform') ?? ''
+        );
+        if (!match) {
+          continue;
+        }
+        const activity = node.querySelector('rect.bpmn-activity-rect');
+        const page_ = node.querySelector('.bpmn-data-page');
+        const bracket = node.querySelector('.bpmn-annotation-bracket');
+        const bounds = node.querySelector('rect.bpmn-bounds');
+        let halfWidth;
+        let halfHeight;
+        if (activity) {
+          halfWidth = Number(activity.getAttribute('width')) / 2;
+          halfHeight = Number(activity.getAttribute('height')) / 2;
+        } else if (page_) {
+          halfWidth = 18;
+          halfHeight = 25;
+        } else if (bracket && bounds) {
+          halfWidth = Number(bounds.getAttribute('width')) / 2;
+          halfHeight = Number(bounds.getAttribute('height')) / 2;
+        } else {
+          continue;
+        }
+        shapes.push({ x: Number(match[1]), y: Number(match[2]), halfWidth, halfHeight });
+      }
+
+      const results = [];
+      for (const path of document.querySelectorAll('g.edgePaths path.bpmn-flow-association')) {
+        const points = [...(path.getAttribute('d') ?? '').matchAll(/([\d.-]+),([\d.-]+)/g)].map(
+          (m) => [Number(m[1]), Number(m[2])]
+        );
+        if (points.length < 2) {
+          continue;
+        }
+        const last = points[points.length - 1];
+        const previous = points[points.length - 2];
+        let gap = Number.POSITIVE_INFINITY;
+        for (const shape of shapes) {
+          gap = Math.min(
+            gap,
+            Math.max(
+              Math.abs(last[0] - shape.x) - shape.halfWidth,
+              Math.abs(last[1] - shape.y) - shape.halfHeight
+            )
+          );
+        }
+        results.push({
+          square: Math.abs(last[0] - previous[0]) < 2 || Math.abs(last[1] - previous[1]) < 2,
+          gap,
+        });
+      }
+      return results;
+    });
+
+    expect(arrivals).toHaveLength(4);
+    for (const arrival of arrivals) {
+      // Square to the border it lands on, rather than slanting in, and actually touching
+      // it rather than stopping at the box the layout reserved around the glyph.
+      expect(arrival.square).toBe(true);
+      expect(Math.abs(arrival.gap)).toBeLessThan(2);
+    }
+  });
 });

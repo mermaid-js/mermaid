@@ -2,7 +2,7 @@ import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
 import { labelHelper, getNodeClasses } from './util.js';
 import { styles2String } from './handDrawnShapeStyles.js';
-import { faceCentreIntersect, positionLabelBelow, reserveBounds } from './bpmnShapeCore.js';
+import { faceProjectIntersect, positionLabelBelow, reserveBounds } from './bpmnShapeCore.js';
 
 /** A BPMN text annotation: an open bracket with the text beside it, and no fill. */
 export async function bpmnAnnotation<T extends SVGGraphicsElement>(
@@ -38,7 +38,8 @@ export async function bpmnAnnotation<T extends SVGGraphicsElement>(
 
   reserveBounds(shapeSvg, node, width, height);
   node.intersect = function (point) {
-    return faceCentreIntersect(node, width, height, point);
+    // The bracket is drawn down the left, and the line belongs on the bracket.
+    return faceProjectIntersect(node, width, height, point, 'left');
   };
   return shapeSvg;
 }
