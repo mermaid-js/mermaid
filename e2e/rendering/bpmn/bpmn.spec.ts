@@ -100,6 +100,12 @@ test.describe('bpmn-beta', () => {
   test('every flow reaches the shape it points at', async ({ page }, testInfo) => {
     await renderFixture(page, testInfo, '08-black-box-pool.mmd');
     const worstGap = await page.evaluate(() => {
+      // The rendered `d` carries arc parameters for rounded corners, which a coordinate
+      // scan reads as points; `data-points` is the polyline the renderer was handed.
+      const polylineOf = (path) => {
+        const raw = path.getAttribute('data-points');
+        return raw ? JSON.parse(atob(raw)).map((p) => [p.x, p.y]) : [];
+      };
       // Node transforms and path data share the svg's user space, so they compare
       // directly; getBoundingClientRect would mix in the page's own scaling.
       const shapes = [];
@@ -122,9 +128,7 @@ test.describe('bpmn-beta', () => {
       }
       let worst = 0;
       for (const path of document.querySelectorAll('g.edgePaths path')) {
-        const points = [...(path.getAttribute('d') ?? '').matchAll(/([\d.-]+),([\d.-]+)/g)].map(
-          (m) => [Number(m[1]), Number(m[2])]
-        );
+        const points = polylineOf(path);
         if (points.length < 2) {
           continue;
         }
@@ -263,6 +267,12 @@ test.describe('bpmn-beta', () => {
   test('an association meets the shape square and touching', async ({ page }, testInfo) => {
     await renderFixture(page, testInfo, '09-data-associations.mmd');
     const arrivals = await page.evaluate(() => {
+      // The rendered `d` carries arc parameters for rounded corners, which a coordinate
+      // scan reads as points; `data-points` is the polyline the renderer was handed.
+      const polylineOf = (path) => {
+        const raw = path.getAttribute('data-points');
+        return raw ? JSON.parse(atob(raw)).map((p) => [p.x, p.y]) : [];
+      };
       const shapes = [];
       for (const node of document.querySelectorAll('g.node')) {
         const match = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
@@ -294,9 +304,7 @@ test.describe('bpmn-beta', () => {
 
       const results = [];
       for (const path of document.querySelectorAll('g.edgePaths path.bpmn-flow-association')) {
-        const points = [...(path.getAttribute('d') ?? '').matchAll(/([\d.-]+),([\d.-]+)/g)].map(
-          (m) => [Number(m[1]), Number(m[2])]
-        );
+        const points = polylineOf(path);
         if (points.length < 2) {
           continue;
         }
