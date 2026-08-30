@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  anchorFootprints,
   collectAnchoredIds,
   defaultAnchorSide,
   pinAnchoredNodes,
@@ -203,5 +204,57 @@ describe('pinAnchoredNodes', () => {
       anchored('cycleB', { hostId: 'cycleA' }, { width: 36 }),
     ]);
     expect(pinAnchoredNodes(layout, { space: 'final', direction: 'TB' })).toEqual([]);
+  });
+});
+
+describe('standing a node off its host', () => {
+  const stood = (id: string, gap: number, size: Partial<Node>) =>
+    anchored(id, { hostId: 'h', gap }, size);
+
+  it('clears the border by the gap and the node own half-extent', () => {
+    const layout = asLayout([host('h'), stood('a', 20, { width: 40, height: 60 })]);
+    pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    // The host spans y 10..90, so its bottom border is 90. A 60-tall node asked to
+    // clear it by 20 has its centre 20 + 30 below that.
+    expect(layout.nodes?.[1].y).toBe(140);
+  });
+
+  it('keeps a node with no gap on the border, which is where a boundary event sits', () => {
+    const layout = asLayout([host('h'), anchored('a', { hostId: 'h' }, { width: 40, height: 60 })]);
+    pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    expect(layout.nodes?.[1].y).toBe(90);
+  });
+
+  it('places twice the same as once, so the pass can run again after a transform', () => {
+    const layout = asLayout([host('h'), stood('a', 20, { width: 40, height: 60 })]);
+    pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    const once = { x: layout.nodes?.[1].x, y: layout.nodes?.[1].y };
+    pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    expect({ x: layout.nodes?.[1].x, y: layout.nodes?.[1].y }).toEqual(once);
+  });
+
+  // One wide member used to set the pitch for the whole run, which threw the narrow
+  // ones out to either side of a host they belong beside.
+  it('gives each place the width of its own node', () => {
+    const layout = asLayout([
+      host('h'),
+      stood('narrow', 20, { width: 40, height: 60 }),
+      stood('wide', 20, { width: 200, height: 60 }),
+    ]);
+    pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    const [, narrow, wide] = layout.nodes!;
+    // 40 + 8 + 200 = 248 wide, centred on the host at x 100: 100 - 124 + 20 = -4.
+    expect(narrow.x).toBe(-4);
+    expect(wide.x).toBe(124);
+  });
+
+  it('reports the room a run needs, so a caller can reserve it', () => {
+    const nodes = [host('h'), stood('a', 20, { width: 40, height: 60 })];
+    expect(anchorFootprints(nodes).get('h')).toEqual({ across: 20, beyond: 80 });
+  });
+
+  it('leaves a node sitting on the border out of the reserved room', () => {
+    const nodes = [host('h'), anchored('a', { hostId: 'h' }, { width: 40, height: 60 })];
+    expect(anchorFootprints(nodes).size).toBe(0);
   });
 });

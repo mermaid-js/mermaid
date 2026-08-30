@@ -10,7 +10,7 @@ import {
 } from '../common/commonDb.js';
 import type { LayoutData, Node, NonClusterNode, Edge } from '../../rendering-util/types.js';
 import { parseBpmn } from './parser/bpmn.parser.js';
-import type { ParsedDiagram, ParsedNode } from './parser/bpmn.parser.js';
+import type { ParsedDiagram, ParsedFlow, ParsedNode } from './parser/bpmn.parser.js';
 
 /**
  * A registered element shape, so a typo in the tables below fails to compile. Bands and
@@ -37,6 +37,19 @@ const GATEWAY_GLYPHS: Record<string, string> = {
   'event-gateway': 'bpmn:event-based',
   complex: 'bpmn:complex',
 };
+
+/** The line each kind of connection is drawn with. */
+const EDGE_PATTERNS: Record<ParsedFlow['kind'], Edge['pattern']> = {
+  sequence: 'solid',
+  message: 'dashed',
+  association: 'dotted',
+};
+
+/** The kinds that annotate a flow rather than take part in it. */
+const ARTIFACT_KINDS = new Set<ParsedNode['kind']>(['data', 'store', 'annotation']);
+
+/** Clearance between an activity's border and the artifact hanging off it. */
+const ARTIFACT_CLEARANCE = 18;
 
 interface Drawn {
   shape: BpmnShape;
@@ -119,6 +132,36 @@ export class BpmnDb {
    * is the only one that treats lane membership as a placement constraint, which is what
    * makes a pooled process lay out like a process rather than like a flowchart.
    */
+  /**
+   * The element each artifact hangs from.
+   *
+   * An association carries no order, so an artifact takes its place from what it
+   * annotates rather than from a rank of its own. Resolving the host here is what lets
+   * the layout leave the artifact out of the flow entirely.
+   */
+  private artifactHosts(): Map<string, string> {
+    const artifacts = new Set(
+      this.parsed.nodes.filter((node) => ARTIFACT_KINDS.has(node.kind)).map((node) => node.id)
+    );
+    const hosts = new Map<string, string>();
+    for (const flow of this.parsed.flows) {
+      if (flow.kind !== 'association') {
+        continue;
+      }
+      for (const [self, other] of [
+        [flow.from, flow.to],
+        [flow.to, flow.from],
+      ]) {
+        // The first association wins, so an artifact shared between two elements sits by
+        // the one it was joined to first and reaches the other along its own line.
+        if (artifacts.has(self) && !artifacts.has(other) && !hosts.has(self)) {
+          hosts.set(self, other);
+        }
+      }
+    }
+    return hosts;
+  }
+
   public getData(): LayoutData {
     const config = getGlobalConfig();
     const look = config.look ?? 'classic';
@@ -130,7 +173,9 @@ export class BpmnDb {
     // no lanes is drawn as a lane, and the order is honoured only when all of them carry
     // a number, so numbering pools too is what keeps that condition satisfiable.
     let laneIndex = 0;
+    const artifactHosts = this.artifactHosts();
     for (const parsed of this.parsed.nodes) {
+      const artifactHost = artifactHosts.get(parsed.id);
       // A band is a pool or a lane, which the swimlane engine places. A group is drawn
       // around its members and carries no execution semantics, so it is a container
       // without being a band: it gets no lane role and constrains no placement.
@@ -149,6 +194,15 @@ export class BpmnDb {
           ...(parsed.keyword === 'boundary' && parsed.parentId
             ? { anchorTo: { hostId: parsed.parentId } }
             : {}),
+          // An artifact stands beside its host rather than on its border, which is the
+          // difference between annotating an activity and interrupting one.
+          ...(artifactHost ? { anchorTo: { hostId: artifactHost, gap: ARTIFACT_CLEARANCE } } : {}),
+          // A data object's corner marker says whether the activity it is associated with
+          // reads it or writes it, and whether it stands for one item or a set.
+          ...(parsed.qualifier === 'input' || parsed.qualifier === 'output'
+            ? { dataDirection: parsed.qualifier }
+            : {}),
+          ...(parsed.qualifier === 'collection' ? { isCollection: true } : {}),
         },
         cssClasses: [
           `bpmn-${parsed.kind}`,
@@ -183,10 +237,16 @@ export class BpmnDb {
         labelType: 'string',
         labelpos: 'c',
         thickness: 'normal',
-        pattern: flow.kind === 'message' ? 'dashed' : 'solid',
-        // A message flow is dashed, with an open head at the target and a hollow ring at
-        // the source; a sequence flow is solid with a filled head.
-        arrowTypeEnd: flow.kind === 'message' ? 'arrow_open' : 'arrow_point',
+        // A sequence flow is solid with a filled head, a message flow is dashed with an
+        // open head at the target and a hollow ring at the source, and an association is
+        // dotted, taking an open head only when it points somewhere.
+        pattern: EDGE_PATTERNS[flow.kind],
+        arrowTypeEnd:
+          flow.kind === 'sequence'
+            ? 'arrow_point'
+            : flow.kind === 'message' || flow.directed
+              ? 'arrow_open'
+              : 'none',
         arrowTypeStart: flow.kind === 'message' ? 'arrow_hollow_circle' : 'none',
         // `edges.js` reduces these into a style string, and an absent one reduces to the
         // literal text "undefined" on every path.

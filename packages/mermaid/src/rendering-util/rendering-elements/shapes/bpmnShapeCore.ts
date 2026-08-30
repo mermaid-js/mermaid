@@ -56,9 +56,23 @@ export async function ensureBpmnIcons(): Promise<void> {
 export type BpmnNode = Node & {
   icon?: string;
   markers?: string[];
-  dataDirection?: 'input' | 'output';
-  isCollection?: boolean;
 };
+
+/**
+ * The corner marker a data object carries, when the diagram asked for one.
+ *
+ * A diagram passes its own vocabulary through `metadata` rather than through the layout
+ * contract every diagram shares, so the value arrives untyped and is narrowed here.
+ */
+export function dataDirectionOf(node: Node): 'input' | 'output' | undefined {
+  const direction = node.metadata?.dataDirection;
+  return direction === 'input' || direction === 'output' ? direction : undefined;
+}
+
+/** Whether a data object stands for a set of items rather than one. */
+export function isCollectionData(node: Node): boolean {
+  return node.metadata?.isCollection === true;
+}
 
 /** The glyph markup for `icon`, registering the pack on first use. */
 export async function glyphSvg(icon: string, size: number): Promise<string> {

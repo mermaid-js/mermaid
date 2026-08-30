@@ -227,4 +227,60 @@ describe('bpmnDb', () => {
     );
     expect(nodeById(nodes, 'b').metadata?.anchorTo).toEqual({ hostId: 't' });
   });
+
+  describe('associations', () => {
+    const source = `bpmn-beta LR
+  lane l1 "L"
+    task t1 "T"
+    data-input d1 "D"
+    note n1 "N"
+  d1 ..> t1
+  n1 ... t1
+`;
+
+    it('draws an association dotted, with an open head only when it points somewhere', () => {
+      const { edges } = build(source);
+      expect(edges.map((e) => [e.pattern, e.arrowTypeEnd, e.arrowTypeStart])).toEqual([
+        ['dotted', 'arrow_open', 'none'],
+        ['dotted', 'none', 'none'],
+      ]);
+    });
+
+    // An association carries no order, so an artifact takes its place from what it
+    // annotates. Anchoring is what keeps it out of the ranking that a flow would join.
+    it('hangs an artifact off the element it is associated with', () => {
+      const { nodes } = build(source);
+      expect(nodeById(nodes, 'd1').metadata?.anchorTo).toMatchObject({ hostId: 't1' });
+      expect(nodeById(nodes, 'n1').metadata?.anchorTo).toMatchObject({ hostId: 't1' });
+      expect(nodeById(nodes, 't1').metadata?.anchorTo).toBeUndefined();
+    });
+
+    it('stands an artifact off its host, unlike a boundary event which sits on it', () => {
+      const { nodes } = build(`bpmn-beta LR
+  lane l1 "L"
+    task t1 "T"
+      boundary timer b1 "B"
+    data d1 "D"
+  d1 ..> t1
+`);
+      const artifact = nodeById(nodes, 'd1').metadata?.anchorTo as { gap?: number };
+      const boundary = nodeById(nodes, 'b1').metadata?.anchorTo as { gap?: number };
+      expect(artifact.gap).toBeGreaterThan(0);
+      expect(boundary.gap).toBeUndefined();
+    });
+
+    it('carries the corner marker a data object was declared with', () => {
+      const { nodes } = build(`bpmn-beta LR
+  lane l1 "L"
+    data plain "P"
+    data-input in1 "I"
+    data-output out1 "O"
+    data-collection many "M"
+`);
+      expect(nodeById(nodes, 'plain').metadata).not.toHaveProperty('dataDirection');
+      expect(nodeById(nodes, 'in1').metadata?.dataDirection).toBe('input');
+      expect(nodeById(nodes, 'out1').metadata?.dataDirection).toBe('output');
+      expect(nodeById(nodes, 'many').metadata?.isCollection).toBe(true);
+    });
+  });
 });
