@@ -2,29 +2,54 @@ import { expect, test } from '@playwright/test';
 import { diagramSvg, imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 test.describe('bpmn-beta characterization', () => {
-  test('CHAR.event-position-trigger should draw a combination the notation forbids', async ({
+  test('CHAR.event-position-trigger should refuse a combination the notation forbids', async ({
     page,
   }, testInfo) => {
-    await imgSnapshotTest(
+    // BPMN 2.0.2 allows terminate only on an end event and cancel only on a boundary or
+    // an end. Both are refused while the diagram is read, so nothing is drawn: the error
+    // diagram stands in for it.
+    await renderGraph(
       page,
       testInfo,
       `bpmn-beta LR
-title Illegal position and trigger pairs (not rejected by the current parser)
+title Illegal position and trigger pairs
   lane "Orders"
     start terminate s "Terminate on a start event"
-    intermediate cancel i "Cancel on an intermediate event"
     end e "Done"
-  s --> i
-  i --> e
-      `
+  s --> e
+      `,
+      { screenshot: false, rejectErrorDiagram: false }
+    );
+
+    await expect(diagramSvg(page).first()).toHaveAttribute('aria-roledescription', 'error');
+    await expect(diagramSvg(page).locator('circle.bpmn-event-ring')).toHaveCount(0);
+  });
+
+  test('CHAR.event-position-trigger should draw the same triggers where they belong', async ({
+    page,
+  }, testInfo) => {
+    // Counted rather than pictured: how these events look is already covered by the
+    // event fixtures, and the point here is that the pairs are accepted and marked.
+    await renderGraph(
+      page,
+      testInfo,
+      `bpmn-beta LR
+title The same triggers at the positions the notation draws them
+  lane "Orders"
+    start message s "Order arrives"
+    user task t "Handle it"
+      boundary cancel c "Cancelled"
+    end terminate e "Stop everything"
+  s --> t
+  t --> e
+      `,
+      { screenshot: false }
     );
 
     const svg = diagramSvg(page);
-    // BPMN 2.0.2 Table 10.93 allows terminate only on an end event and cancel only on a
-    // boundary or end event. Both are drawn anyway: a start ring, an intermediate double
-    // ring and an end ring make four, each carrying the trigger it was given.
+    // A start ring, a boundary double ring and an end ring, each carrying its trigger.
     await expect(svg.locator('circle.bpmn-event-ring')).toHaveCount(4);
-    await expect(svg.locator('.bpmn-glyph')).toHaveCount(2);
+    await expect(svg.locator('.bpmn-glyph')).toHaveCount(3);
   });
 
   test('CHAR.message-flow-between-pools should join two participants with no content', async ({

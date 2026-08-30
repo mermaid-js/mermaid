@@ -2,7 +2,15 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { bpmnIcons } from '../../rendering-util/rendering-elements/shapes/bpmnIcons.js';
 import { db } from './bpmnDb.js';
-import { EVENT_TRIGGERS, TASK_TYPES } from './types.js';
+import { EVENT_TRIGGERS, TASK_TYPES, TRIGGERS_BY_POSITION, positionsFor } from './types.js';
+
+/** An event at a position, with a host where the position needs one. */
+const eventSource = (position: string, trigger?: string, id = 'e'): string => {
+  const statement = `${position}${trigger ? ` ${trigger}` : ''} ${id} "E"`;
+  return position === 'boundary'
+    ? `bpmn-beta LR\n  lane "L"\n    task host "H"\n      ${statement}`
+    : `bpmn-beta LR\n  lane "L"\n    ${statement}`;
+};
 
 const PACK = new Set(Object.keys(bpmnIcons.icons));
 
@@ -35,33 +43,77 @@ describe('bpmnDb', () => {
       ['boundary', 'bpmn-boundary'],
       ['end', 'bpmn-end'],
     ])('draws a %s event with the %s shape', (keyword, shape) => {
-      const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    ${keyword} e "E"`);
+      // Message is the one trigger the notation draws at every position.
+      const { nodes } = build(eventSource(keyword, 'message'));
       expect(nodeById(nodes, 'e').shape).toBe(shape);
     });
 
-    // The position and the glyph are chosen independently, so every trigger has to work
-    // at every position. An earlier design keyed a single shape name off both and
-    // silently fell back to a start event for the pairs it had no name for.
-    const triggers = EVENT_TRIGGERS.filter((t) => t !== 'none');
+    // The position and the glyph are chosen independently, over the pairs the notation
+    // draws. An earlier design keyed a single shape name off both and silently fell back
+    // to a start event for the pairs it had no name for.
+    const marked = (position: keyof typeof TRIGGERS_BY_POSITION) =>
+      TRIGGERS_BY_POSITION[position].filter((t) => t !== 'none');
 
-    it.each(triggers)('gives a start event the %s glyph', (trigger) => {
+    it.each(marked('start'))('gives a start event the %s glyph', (trigger) => {
       const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    start ${trigger} e "E"`);
       const node = nodeById(nodes, 'e');
       expect(node.shape).toBe('bpmn-start');
       expect(glyph(node)).toBe(trigger);
     });
 
-    it.each(triggers)('gives an end event the %s glyph without changing its ring', (trigger) => {
-      const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    end e "E"`);
-      expect(nodeById(nodes, 'e').shape).toBe('bpmn-end');
-      const withTrigger = build(`bpmn-beta LR\n  lane "L"\n    end ${trigger} e "E"`);
-      expect(nodeById(withTrigger.nodes, 'e').shape).toBe('bpmn-end');
-      expect(glyph(nodeById(withTrigger.nodes, 'e'))).toBe(trigger);
-    });
+    it.each(marked('end'))(
+      'gives an end event the %s glyph without changing its ring',
+      (trigger) => {
+        const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    end e "E"`);
+        expect(nodeById(nodes, 'e').shape).toBe('bpmn-end');
+        const withTrigger = build(`bpmn-beta LR\n  lane "L"\n    end ${trigger} e "E"`);
+        expect(nodeById(withTrigger.nodes, 'e').shape).toBe('bpmn-end');
+        expect(glyph(nodeById(withTrigger.nodes, 'e'))).toBe(trigger);
+      }
+    );
 
     it('leaves a plain event without a glyph', () => {
       const { nodes } = build('bpmn-beta LR\n  lane "L"\n    start none e "E"');
       expect(nodeById(nodes, 'e').icon).toBeUndefined();
+    });
+
+    describe('a trigger is refused where the notation does not draw it', () => {
+      for (const [position, allowed] of Object.entries(TRIGGERS_BY_POSITION)) {
+        it(`accepts each trigger a ${position} event carries`, () => {
+          for (const trigger of allowed) {
+            expect(
+              () => build(eventSource(position, trigger)),
+              `${position} ${trigger}`
+            ).not.toThrow();
+          }
+        });
+
+        it(`refuses the rest at a ${position} event`, () => {
+          const refused = EVENT_TRIGGERS.filter((t) => !(allowed as readonly string[]).includes(t));
+          expect(refused.length).toBeGreaterThan(0);
+          for (const trigger of refused) {
+            expect(() => build(eventSource(position, trigger)), `${position} ${trigger}`).toThrow(
+              /BPMN error/
+            );
+          }
+        });
+      }
+
+      it('says where the trigger it refused does belong', () => {
+        expect(() => build(eventSource('start', 'terminate'))).toThrow(
+          'a start event cannot carry the terminate trigger. The notation draws terminate on end events.'
+        );
+      });
+
+      it('asks an event that must name its trigger to name one', () => {
+        expect(() => build(eventSource('boundary'))).toThrow(
+          'a boundary event must name what triggers it.'
+        );
+      });
+
+      it('names the line the refused event is written on', () => {
+        expect(() => build(eventSource('start', 'link'))).toThrow('at line 3');
+      });
     });
   });
 
@@ -110,7 +162,10 @@ describe('bpmnDb', () => {
   // those gateways rendered as an empty diamond.
   it('emits only glyphs the icon pack actually defines', () => {
     const statements = [
-      ...EVENT_TRIGGERS.filter((t) => t !== 'none').map((t) => `start ${t} e_${t} "E"`),
+      ...EVENT_TRIGGERS.filter((t) => t !== 'none').map(
+        // Each trigger is drawn where the notation allows it.
+        (t) => `${positionsFor(t)[0]} ${t} e_${t} "E"`
+      ),
       ...TASK_TYPES.map((t) => `${t} task t_${t} "T"`),
       ...['xor', 'and', 'or', 'event-gateway', 'complex'].map((g) => `${g} g_${g} "G"`),
       'subprocess sub "S"',
