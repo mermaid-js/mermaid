@@ -4,6 +4,7 @@ import { isValidShape, shapes } from '../shapes.js';
 import { EVENT_RINGS, faceCentreIntersect } from './bpmnShapeCore.js';
 import { bpmnIcons } from './bpmnIcons.js';
 import bpmnStyles from '../../../diagrams/bpmn/styles.js';
+import type { BpmnStyleOptions } from '../../../diagrams/bpmn/styles.js';
 
 const BPMN_SHAPES = [
   'bpmn-start',
@@ -74,8 +75,8 @@ describe('the message marker', () => {
   // A throwing marker is filled. Filling the fold along with the envelope leaves a
   // plain rectangle, which is not what the notation draws (BPMN 2.0.2, Table 10.93).
   it('leaves that fold unfilled where the marker is filled', () => {
-    const theme = {
-      border: '#999',
+    const theme: BpmnStyleOptions = {
+      border2: '#999',
       edgeLabelBackground: '#fff',
       fontFamily: 'sans-serif',
       lineColor: '#333',
@@ -86,7 +87,7 @@ describe('the message marker', () => {
       textColor: '#111',
       titleColor: '#111',
     };
-    const sheet = bpmnStyles(theme as Parameters<typeof bpmnStyles>[0]).replace(/\s+/g, ' ');
+    const sheet = bpmnStyles(theme).replace(/\s+/g, ' ');
     expect(sheet).toMatch(/\.bpmn-throw[^{]*\.bpmn-glyph-fold\s*{[^}]*fill:\s*none/);
   });
 });

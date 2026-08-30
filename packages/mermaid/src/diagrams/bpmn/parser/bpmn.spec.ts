@@ -121,4 +121,38 @@ describe('bpmn parser', () => {
     const parsed = parseBpmn('bpmn-beta LR\n  lane l1 "L"\n    data database "D"\n');
     expect(parsed.nodes.at(-1)).toMatchObject({ id: 'database', kind: 'data' });
   });
+
+  it('reads a title and the text that describes the diagram', () => {
+    const parsed = parseBpmn(`bpmn-beta LR
+title Order handling
+accTitle: How an order is handled
+accDescr: An order is received, checked and filed.
+  lane l1 "Sales"
+    task t1 "Check"
+`);
+    expect(parsed.title).toBe('Order handling');
+    expect(parsed.accTitle).toBe('How an order is handled');
+    expect(parsed.accDescr).toBe('An order is received, checked and filed.');
+    // The lines carrying them are not elements.
+    expect(parsed.nodes.map((node) => node.id)).toEqual(['l1', 't1']);
+  });
+
+  it('reads a description written over several lines', () => {
+    const parsed = parseBpmn(`bpmn-beta LR
+accDescr {
+  An order is received.
+  It is then checked and filed.
+}
+  lane l1 "Sales"
+`);
+    expect(parsed.accDescr).toContain('An order is received.');
+    expect(parsed.accDescr).toContain('It is then checked and filed.');
+  });
+
+  // `title` opens a statement only as a whole word, so an id may still begin with it.
+  it('does not take a longer word for the title keyword', () => {
+    const parsed = parseBpmn('bpmn-beta LR\n  lane l1 "L"\n    task titles "T"\n');
+    expect(parsed.nodes.at(-1)?.id).toBe('titles');
+    expect(parsed.title).toBeUndefined();
+  });
 });
