@@ -9,6 +9,8 @@ export interface CoordOptions {
   direction?: 'TB' | 'LR' | 'BT' | 'RL'; // layout direction for proper spacing
   /** Whether a lane may hold several nodes in one layer, so their own extent matters. */
   spreadByOwnExtent?: boolean;
+  /** Whether the gap asked for is room between shapes rather than room they may share. */
+  gapIsRoomBetween?: boolean;
   laneOrder?: string[];
 }
 
@@ -64,7 +66,12 @@ export function assignCoordinates(
       const nextLayerMaxHeight = layerHeights[i + 1];
 
       const normalSpacing = thisLayerMaxHeight / 2 + nextLayerMaxHeight / 2;
-      const requiredSpacing = (thisLayerMaxWidth + nextLayerMaxWidth) / 2;
+      // Plus the gap itself, where the diagram asked for it that way: the room a layer
+      // needs is what the shapes occupy and then the space between them. Without it a
+      // narrow gap seats two shapes edge to edge and the flow joining them has nowhere
+      // left to be drawn.
+      const requiredSpacing =
+        (thisLayerMaxWidth + nextLayerMaxWidth) / 2 + (opts?.gapIsRoomBetween ? layerGap : 0);
       const extraNeeded = Math.max(0, requiredSpacing - normalSpacing - layerGap);
       extraLayerGaps.push(extraNeeded);
     }

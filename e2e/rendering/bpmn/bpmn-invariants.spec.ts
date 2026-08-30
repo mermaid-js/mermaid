@@ -210,4 +210,108 @@ test.describe('bpmn-beta invariants', () => {
       expect(seen.titleInsideDrawing).toBe(false);
     });
   }
+
+  test('two flows converging on one event both reach it', async ({ page }, testInfo) => {
+    // A ring has no face to land on. Landing at the middle of one is only reachable by a
+    // line arriving along the centre, so a second line from another column stopped at the
+    // box the layout reserved instead - a caption's height short of anything drawn.
+    await renderGraph(
+      page,
+      testInfo,
+      `bpmn-beta TB
+  lane "Orders"
+    xor g "Approved?"
+    user task ship "Ship"
+    user task refund "Refund"
+    end e "Closed"
+  g --> ship
+  g --> refund
+  ship --> e
+  refund --> e
+      `,
+      { screenshot: false }
+    );
+
+    const worstGap = await page.evaluate(() => {
+      const event = document.querySelector('g.node[id$="-e"]');
+      const at = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
+        event?.getAttribute('transform') ?? ''
+      );
+      const ring = event?.querySelector('circle.bpmn-event-ring');
+      if (!at || !ring) {
+        return null;
+      }
+      const centre = { x: Number(at[1]), y: Number(at[2]) };
+      const radius = Number(ring.getAttribute('r'));
+      let worst = 0;
+      for (const path of document.querySelectorAll('g.edgePaths path')) {
+        const raw = path.getAttribute('data-points');
+        if (!raw) {
+          continue;
+        }
+        const points = JSON.parse(atob(raw));
+        const end = points.at(-1);
+        const reach = Math.hypot(end.x - centre.x, end.y - centre.y) - radius;
+        // Only the two that arrive here; the rest end elsewhere.
+        if (reach < 40) {
+          worst = Math.max(worst, reach);
+        }
+      }
+      return worst;
+    });
+
+    expect(worstGap).not.toBeNull();
+    expect(Math.abs(worstGap!)).toBeLessThan(2);
+  });
+
+  test('a narrow rank spacing still leaves the flow somewhere to be drawn', async ({
+    page,
+  }, testInfo) => {
+    await renderGraph(
+      page,
+      testInfo,
+      `---
+config:
+  bpmn:
+    rankSpacing: 20
+---
+bpmn-beta LR
+  lane "Orders"
+    start s "Received"
+    user task t1 "Check"
+    service task t2 "Charge"
+    end e "Filed"
+  s --> t1 --> t2 --> e
+      `,
+      { screenshot: false }
+    );
+
+    const separation = await page.evaluate(() => {
+      const boxes = [...document.querySelectorAll('g.node')].map((node) => {
+        const at = /translate\(\s*([\d.-]+)[ ,]+([\d.-]+)/.exec(
+          node.getAttribute('transform') ?? ''
+        );
+        const rect = node.querySelector('rect.bpmn-activity-rect');
+        return at && rect
+          ? {
+              x: Number(at[1]),
+              w: Number(rect.getAttribute('width')),
+            }
+          : null;
+      });
+      const drawn = boxes.filter((box) => box !== null).sort((p, q) => p.x - q.x);
+      let closest = Infinity;
+      for (let i = 1; i < drawn.length; i++) {
+        closest = Math.min(
+          closest,
+          drawn[i].x - drawn[i - 1].x - (drawn[i].w + drawn[i - 1].w) / 2
+        );
+      }
+      return Number.isFinite(closest) ? closest : null;
+    });
+
+    // The gap asked for is the room between the shapes, not the room they end up sharing.
+    expect(separation).not.toBeNull();
+    expect(separation!).toBeGreaterThanOrEqual(19);
+  });
 });
