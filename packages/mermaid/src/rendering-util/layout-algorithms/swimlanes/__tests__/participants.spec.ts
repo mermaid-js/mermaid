@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../../types.js';
 import { separateParticipants, PARTICIPANT_GAP } from '../direction/separateParticipants.js';
+import { linkParticipantBands } from '../direction/participantLinks.js';
 
 const band = (id: string, y: number, height: number, role?: 'pool' | 'lane'): Node =>
   ({
@@ -71,5 +72,47 @@ describe('participants are drawn apart', () => {
     separateParticipants(layout, 'TB');
     expect(layout.nodes[0].x).toBe(100);
     expect(layout.nodes[1].x).toBe(300 + PARTICIPANT_GAP);
+  });
+});
+
+describe('a link ending on a participant', () => {
+  it('runs between the two facing borders', () => {
+    const layout = asLayout(
+      [band('p1', 40, 80, 'pool'), band('p2', 156, 80, 'pool')],
+      [link('m', 'p1', 'p2')]
+    );
+    linkParticipantBands(layout);
+    // p1 spans 0..80, p2 spans 116..196, and they share the full width.
+    expect(layout.edges[0].points).toEqual([
+      { x: 100, y: 80 },
+      { x: 100, y: 116 },
+    ]);
+  });
+
+  it('spreads several links along the border they share', () => {
+    const layout = asLayout(
+      [band('p1', 40, 80, 'pool'), band('p2', 156, 80, 'pool')],
+      [link('m1', 'p1', 'p2'), link('m2', 'p1', 'p2')]
+    );
+    linkParticipantBands(layout);
+    const xs = layout.edges.map((e) => e.points![0].x);
+    expect(new Set(xs).size).toBe(2);
+    for (const x of xs) {
+      expect(x).toBeGreaterThan(0);
+      expect(x).toBeLessThan(200);
+    }
+  });
+
+  it('leaves a flow between two nodes to the router', () => {
+    const routed = [
+      { x: 1, y: 2 },
+      { x: 3, y: 4 },
+    ];
+    const layout = asLayout(
+      [band('p1', 40, 80, 'pool'), inside('a', 'p1', 40), inside('b', 'p1', 60)],
+      [link('seq', 'a', 'b', routed)]
+    );
+    linkParticipantBands(layout);
+    expect(layout.edges[0].points).toEqual(routed);
   });
 });

@@ -6,6 +6,7 @@ import {
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
 import { framePoolsTb } from './direction/framePoolsTb.js';
+import { linkParticipantBands } from './direction/participantLinks.js';
 import { separateParticipants } from './direction/separateParticipants.js';
 import { applyBtDirectionTransform, applyLrDirectionTransform } from './direction/lrTransform.js';
 import { portSwapToLShape } from './direction/portSwap.js';
@@ -65,9 +66,10 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // cleanup as every other edge rather than sitting outside it.
   squareAnchoredEdges(layout, pins);
 
-  // The bands now have their final geometry, so the room between participants can be
-  // measured out from it.
+  // The bands now have their final geometry, which is what these two need: room between
+  // participants, and then the links that run through it.
   separateParticipants(layout, direction);
+  linkParticipantBands(layout);
 
   for (const edge of edges) {
     if ((edge as { isLayoutOnly?: boolean }).isLayoutOnly) {
