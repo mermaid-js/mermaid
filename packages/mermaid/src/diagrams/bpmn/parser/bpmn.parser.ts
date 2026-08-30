@@ -2,6 +2,11 @@ import { CstParser, Lexer } from 'chevrotain';
 import type { CstNode, IToken } from 'chevrotain';
 import * as t from './bpmn.tokens.js';
 import { bpmnTokens } from './bpmn.tokens.js';
+import { TRIGGERS_BY_POSITION, positionsFor } from '../types.js';
+
+/** Writes a list the way a sentence would: "a", "a or b", "a, b or c". */
+const listOf = (items: string[]): string =>
+  items.length > 1 ? `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}` : items[0];
 
 /**
  * A line-oriented grammar: one statement per line, preceded by the indentation token
@@ -250,13 +255,38 @@ class BpmnVisitor extends BpmnBaseVisitor {
   }
 
   public event(ctx: Record<string, CstNode[] | IToken[]>): ParsedNode {
-    const keyword =
-      ['Start', 'Intermediate', 'Boundary', 'End', 'Throw']
-        .find((name) => ctx[name])
-        ?.toLowerCase() ?? 'start';
+    const opener = ['Start', 'Intermediate', 'Boundary', 'End', 'Throw'].find((name) => ctx[name]);
+    const keyword = opener?.toLowerCase() ?? 'start';
     const node = this.element(ctx, 'event', keyword);
-    node.qualifier = imageOf((ctx.Trigger as IToken[] | undefined)?.[0]) || undefined;
+    const triggerToken = (ctx.Trigger as IToken[] | undefined)?.[0];
+    node.qualifier = imageOf(triggerToken) || undefined;
+    this.checkTrigger(
+      keyword,
+      node.qualifier ?? 'none',
+      triggerToken ?? (opener ? (ctx[opener] as IToken[])[0] : undefined)
+    );
     return node;
+  }
+
+  /** Refuses an event a trigger the notation does not draw at that position. */
+  private checkTrigger(keyword: string, trigger: string, at?: IToken): void {
+    const allowed = TRIGGERS_BY_POSITION[keyword as keyof typeof TRIGGERS_BY_POSITION] as
+      | readonly string[]
+      | undefined;
+    if (!allowed || allowed.includes(trigger)) {
+      return;
+    }
+    const where = `at line ${at?.startLine ?? '?'}`;
+    if (trigger === 'none') {
+      throw new Error(`BPMN error ${where}: a ${keyword} event must name what triggers it.`);
+    }
+    const positions = positionsFor(trigger);
+    const instead = positions.length
+      ? ` The notation draws ${trigger} on ${listOf(positions)} events.`
+      : '';
+    throw new Error(
+      `BPMN error ${where}: a ${keyword} event cannot carry the ${trigger} trigger.${instead}`
+    );
   }
 
   public gateway(ctx: Record<string, CstNode[] | IToken[]>): ParsedNode {

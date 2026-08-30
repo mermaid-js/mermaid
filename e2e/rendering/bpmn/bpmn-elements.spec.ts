@@ -1,7 +1,11 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 import { renderGraph } from '../../helpers/util.ts';
-import { EVENT_TRIGGERS, TASK_TYPES } from '../../../packages/mermaid/src/diagrams/bpmn/types.js';
+import {
+  EVENT_TRIGGERS,
+  TASK_TYPES,
+  TRIGGERS_BY_POSITION,
+} from '../../../packages/mermaid/src/diagrams/bpmn/types.js';
 
 /**
  * The element set of the OMG Analytic conformance sub-class, one case per element.
@@ -27,8 +31,9 @@ const POSITIONS: Position[] = [
   { keyword: 'end', rings: 1, marks: 'bpmn-event-end', throws: true },
 ];
 
-/** A trigger drawn as a mark inside the ring. `none` is the empty one, and draws no mark. */
-const MARKED_TRIGGERS = EVENT_TRIGGERS.filter((trigger) => trigger !== 'none');
+/** The triggers the notation draws at a position. `none` is the empty one, and has no mark. */
+const triggersAt = (position: string): readonly string[] =>
+  TRIGGERS_BY_POSITION[position as keyof typeof TRIGGERS_BY_POSITION];
 
 interface Drawn {
   rings: number;
@@ -64,11 +69,13 @@ const drawnById = async (page: Page): Promise<Record<string, Drawn>> =>
 
 /** One event per trigger, at the given position. A boundary event is given a host to sit on. */
 const eventsAt = (position: string): string => {
-  const body = EVENT_TRIGGERS.map((trigger, index) =>
-    position === 'boundary'
-      ? `    task h${index} "Host ${index}"\n      boundary ${trigger} e${index} "${trigger}"`
-      : `    ${position} ${trigger} e${index} "${trigger}"`
-  ).join('\n');
+  const body = triggersAt(position)
+    .map((trigger, index) =>
+      position === 'boundary'
+        ? `    task h${index} "Host ${index}"\n      boundary ${trigger} e${index} "${trigger}"`
+        : `    ${position} ${trigger} e${index} "${trigger}"`
+    )
+    .join('\n');
   return `bpmn-beta LR\n  lane "Events"\n${body}\n`;
 };
 
@@ -80,7 +87,7 @@ test.describe('bpmn-beta elements', () => {
       await renderGraph(page, testInfo, eventsAt(position.keyword), { screenshot: false });
       const drawn = await drawnById(page);
 
-      for (const [index, trigger] of EVENT_TRIGGERS.entries()) {
+      for (const [index, trigger] of triggersAt(position.keyword).entries()) {
         const event = drawn[`e${index}`];
         expect(event, `${position.keyword} ${trigger} should be drawn`).toBeDefined();
         expect(event.rings, `${position.keyword} ${trigger} ring count`).toBe(position.rings);
@@ -93,7 +100,7 @@ test.describe('bpmn-beta elements', () => {
         expect(event.glyphs > 0, `${position.keyword} ${trigger} mark`).toBe(trigger !== 'none');
       }
       expect(Object.keys(drawn).filter((id) => /^e\d+$/.test(id))).toHaveLength(
-        EVENT_TRIGGERS.length
+        triggersAt(position.keyword).length
       );
     });
   }
@@ -197,44 +204,61 @@ test.describe('bpmn-beta elements', () => {
     await expect(page.locator('path.bpmn-flow-association')).toHaveClass(/edge-pattern-dotted/);
   });
 
-  test('ELEM.trigger-position-legality is not enforced (every pair is accepted)', async ({
+  test('ELEM.trigger-position-legality refuses a trigger drawn nowhere near that position', async ({
     page,
   }, testInfo) => {
     // BPMN 2.0.2 allows a trigger only at certain positions: terminate ends a process,
-    // link is an intermediate hop, and cancel belongs to a transaction's boundary or end.
-    // None of that is checked, so each of these draws an ordinary event of its position.
-    // Enforcing it must fail this test, which is where the title gets corrected.
+    // link is an intermediate hop, and cancel belongs to a transaction. Each of these is
+    // refused while it is read, so the diagram does not render at all.
+    const refused = [
+      'start terminate a "terminate cannot start"',
+      'end link b "link cannot end"',
+      'intermediate c "an intermediate must name its trigger"',
+    ];
+    for (const statement of refused) {
+      await renderGraph(page, testInfo, `bpmn-beta LR\n  lane "L"\n    ${statement}\n`, {
+        screenshot: false,
+        rejectErrorDiagram: false,
+      });
+      await expect(page.locator('svg[aria-roledescription]').first(), statement).toHaveAttribute(
+        'aria-roledescription',
+        'error'
+      );
+    }
+  });
+
+  test('ELEM.trigger-position-legality draws the pairs the notation does allow', async ({
+    page,
+  }, testInfo) => {
+    // The counterpart to the test above: these are the same three triggers, at the
+    // positions the notation puts them, and each one renders.
     await renderGraph(
       page,
       testInfo,
       `bpmn-beta LR
-  lane "Rejected by the specification"
-    start terminate a "terminate cannot start"
-    end link b "link cannot end"
-    start cancel c "cancel needs a transaction"
+  lane "L"
+    end terminate a "terminate ends"
+    intermediate link b "link hops"
+    task host "H"
+      boundary cancel c "cancel on a boundary"
 `,
       { screenshot: false }
     );
     const drawn = await drawnById(page);
-    expect(drawn.a.classes).toContain('bpmn-event-start');
-    expect(drawn.b.classes).toContain('bpmn-event-end');
-    expect(drawn.c.classes).toContain('bpmn-event-start');
     for (const id of ['a', 'b', 'c']) {
-      expect(drawn[id].glyphs, `${id} is drawn with its mark`).toBeGreaterThan(0);
+      expect(drawn[id], `${id} should be drawn`).toBeDefined();
+      expect(drawn[id].glyphs, `${id} mark`).toBeGreaterThan(0);
     }
   });
 
-  test('ELEM.trigger-coverage exercises every trigger the grammar accepts', () => {
-    // Guards the matrix itself: a trigger added to the grammar is covered above only
-    // because these lists are the grammar's own.
-    expect(MARKED_TRIGGERS.length).toBe(EVENT_TRIGGERS.length - 1);
-    expect(EVENT_TRIGGERS).toContain('none');
-    expect(POSITIONS.map((position) => position.keyword)).toEqual([
-      'start',
-      'intermediate',
-      'throw',
-      'boundary',
-      'end',
-    ]);
+  test('ELEM.trigger-coverage reaches every trigger the grammar accepts', () => {
+    // Guards the matrix itself. The cases above cover a trigger only where the notation
+    // draws it, so this checks that no trigger is left with nowhere to be drawn - which
+    // is what a trigger added to the grammar but not to the table would be.
+    const covered = new Set(POSITIONS.flatMap((position) => [...triggersAt(position.keyword)]));
+    expect([...EVENT_TRIGGERS].filter((trigger) => !covered.has(trigger))).toEqual([]);
+    expect(POSITIONS.map((position) => position.keyword)).toEqual(
+      Object.keys(TRIGGERS_BY_POSITION)
+    );
   });
 });
