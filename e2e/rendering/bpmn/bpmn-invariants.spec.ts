@@ -314,4 +314,54 @@ bpmn-beta LR
     expect(separation).not.toBeNull();
     expect(separation!).toBeGreaterThanOrEqual(19);
   });
+
+  test('a pool holds its lanes when the process runs downwards', async ({ page }, testInfo) => {
+    await renderGraph(
+      page,
+      testInfo,
+      `bpmn-beta TB
+  pool "Order handling"
+    lane "Sales"
+      start s "Received"
+      user task t "Ship"
+      end e "Closed"
+  s --> t --> e
+      `,
+      { screenshot: false }
+    );
+
+    const nesting = await page.evaluate(() => {
+      const read = (element: Element | null | undefined) =>
+        element
+          ? {
+              left: Number(element.getAttribute('x')),
+              top: Number(element.getAttribute('y')),
+              right: Number(element.getAttribute('x')) + Number(element.getAttribute('width')),
+              bottom: Number(element.getAttribute('y')) + Number(element.getAttribute('height')),
+            }
+          : null;
+      const bands = [...document.querySelectorAll('g.cluster.swimlane')].map((band) => ({
+        name: band.querySelector('.cluster-label')?.textContent?.trim() ?? '',
+        body: read(
+          band.querySelector('rect.pool-body') ?? band.querySelector('rect.swimlane-body')
+        ),
+        title: read(
+          band.querySelector('rect.pool-title') ?? band.querySelector('rect.swimlane-title')
+        ),
+      }));
+      const pool = bands.find((band) => band.name === 'Order handling');
+      const lane = bands.find((band) => band.name === 'Sales');
+      return pool?.body && lane?.body && lane.title ? { pool, lane } : null;
+    });
+
+    expect(nesting).not.toBeNull();
+    const { pool, lane } = nesting!;
+    // The lane, name band and all, is drawn inside the body of the pool that holds it.
+    expect(lane.title!.top).toBeGreaterThanOrEqual(pool.body!.top - 1);
+    expect(lane.body!.bottom).toBeLessThanOrEqual(pool.body!.bottom + 1);
+    expect(lane.body!.left).toBeGreaterThanOrEqual(pool.body!.left - 1);
+    expect(lane.body!.right).toBeLessThanOrEqual(pool.body!.right + 1);
+    // And the pool's own name band sits above its body rather than over the lane's.
+    expect(pool.title!.bottom).toBeLessThanOrEqual(lane.title!.top + 1);
+  });
 });

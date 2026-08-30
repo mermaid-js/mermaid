@@ -5,6 +5,7 @@ import {
   prepareEdgeEndpointsForRenderer,
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
+import { framePoolsTb } from './direction/framePoolsTb.js';
 import { applyBtDirectionTransform, applyLrDirectionTransform } from './direction/lrTransform.js';
 import { portSwapToLShape } from './direction/portSwap.js';
 import { collapseShortTerminalStub } from './direction/terminalStub.js';
@@ -39,6 +40,12 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // content at all, and their bands still have to be laid out.
   if ((direction === 'LR' || direction === 'RL') && !applyLrDirectionTransform(layout, direction)) {
     return;
+  }
+
+  // Laid out downwards a pool leaves no room for its own name, so its lanes are drawn
+  // over it. Framed here, before anything is measured from the bands.
+  if (direction !== 'LR' && direction !== 'RL') {
+    framePoolsTb(layout);
   }
 
   if (direction === 'BT' && contentNodes.length > 0 && !applyBtDirectionTransform(layout)) {
