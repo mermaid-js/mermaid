@@ -206,6 +206,13 @@ const getStyles = (options: BpmnStyleOptions) => {
   .bpmn-throw .bpmn-glyph circle {
     fill: currentColor;
   }
+  /* An envelope's fold is a line across it, not a shape to fill. Filled along with the
+     rest it disappears into the envelope and the marker reads as a plain rectangle, so
+     on a filled marker the fold is drawn in the colour behind it instead. */
+  .bpmn-throw .bpmn-glyph .bpmn-glyph-fold {
+    fill: none;
+    stroke: ${eventFill};
+  }
 
   /* A call activity invokes a process defined elsewhere, and is drawn with a thick
      border rather than a marker. */
