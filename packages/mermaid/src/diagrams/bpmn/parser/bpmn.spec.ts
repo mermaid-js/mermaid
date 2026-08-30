@@ -82,4 +82,43 @@ describe('bpmn parser', () => {
   it('reports the line of a syntax error', () => {
     expect(() => parseBpmn('bpmn-beta LR\n  task t1 "One"\n  --> broken\n')).toThrow(/line 3/);
   });
+
+  it('tells the two association connectors apart', () => {
+    const parsed = parseBpmn(`bpmn-beta LR
+  lane l1 "L"
+    task t1 "T"
+    data d1 "D"
+    note n1 "N"
+  d1 ..> t1
+  n1 ... t1
+`);
+    expect(parsed.flows).toEqual([
+      { from: 'd1', to: 't1', kind: 'association', directed: true, label: undefined },
+      { from: 'n1', to: 't1', kind: 'association', directed: false, label: undefined },
+    ]);
+  });
+
+  it('reads the marker a data object carries from its keyword', () => {
+    const parsed = parseBpmn(`bpmn-beta LR
+  lane l1 "L"
+    data plain "P"
+    data-input in1 "I"
+    data-output out1 "O"
+    data-collection many "M"
+`);
+    const byId = new Map(parsed.nodes.map((n) => [n.id, n]));
+    expect(byId.get('plain')?.qualifier).toBeUndefined();
+    expect(byId.get('in1')?.qualifier).toBe('input');
+    expect(byId.get('out1')?.qualifier).toBe('output');
+    expect(byId.get('many')?.qualifier).toBe('collection');
+    // All four are data objects, so they draw the same outline.
+    expect([...byId.values()].filter((n) => n.kind === 'data')).toHaveLength(4);
+  });
+
+  // `data-store` and `data-input` both begin with `data`, and an id may begin with a
+  // keyword, so the lexer has to prefer the longest keyword and then give way.
+  it('does not let a keyword swallow a longer word', () => {
+    const parsed = parseBpmn('bpmn-beta LR\n  lane l1 "L"\n    data database "D"\n');
+    expect(parsed.nodes.at(-1)).toMatchObject({ id: 'database', kind: 'data' });
+  });
 });

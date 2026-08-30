@@ -83,6 +83,9 @@ class BpmnParser extends CstParser {
   private artifact = this.RULE('artifact', () => {
     this.OR([
       { ALT: () => this.CONSUME(t.DataStore) },
+      { ALT: () => this.CONSUME(t.DataCollection) },
+      { ALT: () => this.CONSUME(t.DataInput) },
+      { ALT: () => this.CONSUME(t.DataOutput) },
       { ALT: () => this.CONSUME(t.DataObject) },
       { ALT: () => this.CONSUME(t.Annotation) },
     ]);
@@ -101,6 +104,8 @@ class BpmnParser extends CstParser {
         { ALT: () => this.CONSUME(t.LabelledArrow) },
         { ALT: () => this.CONSUME(t.MessageArrow) },
         { ALT: () => this.CONSUME(t.Arrow) },
+        { ALT: () => this.CONSUME(t.AssociationArrow) },
+        { ALT: () => this.CONSUME(t.AssociationLine) },
       ]);
       this.CONSUME2(t.Identifier);
     });
@@ -137,7 +142,9 @@ export interface ParsedFlow {
   from: string;
   to: string;
   label?: string;
-  kind: 'sequence' | 'message';
+  kind: 'sequence' | 'message' | 'association';
+  /** Whether an association carries an arrowhead. Sequence and message flows always do. */
+  directed?: boolean;
 }
 
 export interface ParsedDiagram {
@@ -246,7 +253,16 @@ class BpmnVisitor extends BpmnBaseVisitor {
     if (ctx.Annotation) {
       return this.element(ctx, 'annotation', 'note');
     }
-    return this.element(ctx, 'data', 'data');
+    const node = this.element(ctx, 'data', 'data');
+    // The keyword carries the marker the notation draws in the data object's corner.
+    node.qualifier = ctx.DataInput
+      ? 'input'
+      : ctx.DataOutput
+        ? 'output'
+        : ctx.DataCollection
+          ? 'collection'
+          : undefined;
+    return node;
   }
 
   public nameAndLabel(ctx: Record<string, IToken[]>) {
@@ -264,6 +280,8 @@ class BpmnVisitor extends BpmnBaseVisitor {
       ...(ctx.LabelledArrow ?? []),
       ...(ctx.MessageArrow ?? []),
       ...(ctx.Arrow ?? []),
+      ...(ctx.AssociationArrow ?? []),
+      ...(ctx.AssociationLine ?? []),
     ].sort(byOffset);
 
     for (const [index, connector] of connectors.entries()) {
@@ -273,10 +291,12 @@ class BpmnVisitor extends BpmnBaseVisitor {
         break;
       }
       const name = connector.tokenType.name;
+      const isAssociation = name === 'AssociationArrow' || name === 'AssociationLine';
       this.flows.push({
         from: from.image,
         to: to.image,
-        kind: name === 'MessageArrow' ? 'message' : 'sequence',
+        kind: isAssociation ? 'association' : name === 'MessageArrow' ? 'message' : 'sequence',
+        ...(isAssociation ? { directed: name === 'AssociationArrow' } : {}),
         label: name === 'LabelledArrow' ? arrowLabel(connector.image) : undefined,
       });
     }

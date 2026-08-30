@@ -97,8 +97,14 @@ export const And = keyword('And', 'and');
 export const Or = keyword('Or', 'or');
 export const Complex = keyword('Complex', 'complex');
 
-// `data-store` precedes `data` in the token list below, so the longer keyword wins.
+// The longer keywords precede `data` in the token list below, so they win the match.
 export const DataStore = keyword('DataStore', 'data-store');
+/** A data object that stands for a set of items rather than one. */
+export const DataCollection = keyword('DataCollection', 'data-collection');
+/** A data object consumed by the activity it is associated with. */
+export const DataInput = keyword('DataInput', 'data-input');
+/** A data object produced by the activity it is associated with. */
+export const DataOutput = keyword('DataOutput', 'data-output');
 export const DataObject = keyword('DataObject', 'data');
 export const Annotation = keyword('Annotation', 'note');
 /** A visual grouping. It has no execution semantics and may cross pools and lanes. */
@@ -126,6 +132,13 @@ export const LabelledArrow = createToken({
 export const MessageArrow = createToken({ name: 'MessageArrow', pattern: /-\.->/ });
 export const Arrow = createToken({ name: 'Arrow', pattern: /--+>/ });
 
+// The notation draws an association dotted and a message flow dashed, so the connectors
+// are spelled apart the same way: dots for the first, a dash and a dot for the second.
+/** A directed association, which is also how a data association is drawn. */
+export const AssociationArrow = createToken({ name: 'AssociationArrow', pattern: /\.\.+>/ });
+/** An undirected association, such as the line joining a note to what it annotates. */
+export const AssociationLine = createToken({ name: 'AssociationLine', pattern: /\.\.\.+/ });
+
 /**
  * Declaration order is priority.
  *
@@ -141,6 +154,8 @@ export const bpmnTokens: TokenType[] = [
   LabelledArrow,
   MessageArrow,
   Arrow,
+  AssociationArrow,
+  AssociationLine,
   QuotedString,
   Header,
   Direction,
@@ -160,6 +175,9 @@ export const bpmnTokens: TokenType[] = [
   Or,
   Complex,
   DataStore,
+  DataCollection,
+  DataInput,
+  DataOutput,
   DataObject,
   Annotation,
   Group,
