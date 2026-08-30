@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   anchorFootprints,
+  squareAnchoredEdges,
   collectAnchoredIds,
   defaultAnchorSide,
   pinAnchoredNodes,
@@ -242,7 +243,7 @@ describe('standing a node off its host', () => {
       stood('wide', 20, { width: 200, height: 60 }),
     ]);
     pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
-    const [, narrow, wide] = layout.nodes!;
+    const [, narrow, wide] = layout.nodes;
     // 40 + 8 + 200 = 248 wide, centred on the host at x 100: 100 - 124 + 20 = -4.
     expect(narrow.x).toBe(-4);
     expect(wide.x).toBe(124);
@@ -256,5 +257,67 @@ describe('standing a node off its host', () => {
   it('leaves a node sitting on the border out of the reserved room', () => {
     const nodes = [host('h'), anchored('a', { hostId: 'h' }, { width: 40, height: 60 })];
     expect(anchorFootprints(nodes).size).toBe(0);
+  });
+});
+
+describe('squaring the line to a host', () => {
+  const stub = (extra: Partial<Node> = {}, edge: Record<string, unknown> = {}) => {
+    const nodes = [
+      host('h'),
+      anchored('a', { hostId: 'h', gap: 20 }, { width: 40, height: 60, ...extra }),
+    ];
+    const layout = { nodes, edges: [{ id: 'e', start: 'a', end: 'h', ...edge }] } as LayoutData;
+    const pins = pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    squareAnchoredEdges(layout, pins);
+    return layout.edges?.[0].points ?? [];
+  };
+
+  it('replaces the route with a line square to both borders', () => {
+    const points = stub();
+    expect(points.length).toBeGreaterThanOrEqual(2);
+    for (const [index, point] of points.slice(1).entries()) {
+      const previous = points[index];
+      // Every leg runs along one axis, so the ends cannot arrive at a slant.
+      expect(Math.abs(point.x - previous.x) < 1 || Math.abs(point.y - previous.y) < 1).toBe(true);
+    }
+  });
+
+  it('leaves the host abreast of the node, so two lines do not land together', () => {
+    // The host spans x 50..150 and the node sits on its centre, so the line runs straight.
+    expect(stub().at(-1)?.x).toBe(100);
+  });
+
+  it('steps across when the node is past the end of the host border', () => {
+    const points = stub({ width: 40 });
+    const layout = {
+      nodes: [
+        host('h'),
+        anchored('far', { hostId: 'h', gap: 20 }, { width: 40, height: 60 }),
+        anchored('near', { hostId: 'h', gap: 20 }, { width: 400, height: 60 }),
+      ],
+      edges: [{ id: 'e', start: 'far', end: 'h' }],
+    } as LayoutData;
+    const pins = pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    squareAnchoredEdges(layout, pins);
+    const stepped = layout.edges?.[0].points ?? [];
+    // Pushed out past the host by its wide neighbour, it can no longer leave abreast of
+    // itself, so it comes in as near as the border allows instead of at a slant.
+    expect(stepped.length).toBeGreaterThan(points.length);
+    expect(stepped.at(-1)?.x).toBeLessThanOrEqual(150);
+    expect(stepped.at(-1)?.x).toBeGreaterThanOrEqual(50);
+  });
+
+  it('leaves a line to anywhere but its own host alone', () => {
+    const layout = {
+      nodes: [
+        host('h'),
+        host('other'),
+        anchored('a', { hostId: 'h', gap: 20 }, { width: 40, height: 60 }),
+      ],
+      edges: [{ id: 'e', start: 'a', end: 'other', points: [{ x: 1, y: 2 }] }],
+    } as LayoutData;
+    const pins = pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    squareAnchoredEdges(layout, pins);
+    expect(layout.edges?.[0].points).toEqual([{ x: 1, y: 2 }]);
   });
 });

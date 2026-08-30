@@ -278,3 +278,108 @@ export function pinAnchoredNodes(
 
   return pins;
 }
+
+/** How far a line runs straight out of a border before it may turn. */
+const STUB_REACH = 16;
+
+/** How close to a corner a line may leave a border before it reads as missing it. */
+const BORDER_INSET = 8;
+
+const clamp = (value: number, low: number, high: number) => Math.min(Math.max(value, low), high);
+
+/**
+ * The border a node insists a line arrives on.
+ *
+ * A shape whose outline is open on three sides has only one border to arrive on, and
+ * says so here so the layout can bring the line in square to it.
+ */
+function attachFaceOf(node: Node | undefined): AnchorSide | undefined {
+  const face = node?.metadata?.attachFace;
+  return face === 'top' || face === 'bottom' || face === 'left' || face === 'right'
+    ? face
+    : undefined;
+}
+
+/** The square path from a node standing off a border to the host it stands off from. */
+function stubToHost(node: Node, host: Node, pin: AnchorPin): { x: number; y: number }[] | null {
+  const nx = node.x;
+  const ny = node.y;
+  const hx = host.x;
+  const hy = host.y;
+  if (![nx, ny, hx, hy].every((v) => typeof v === 'number' && Number.isFinite(v))) {
+    return null;
+  }
+  // The host's border runs along one axis and the line travels along the other.
+  const alongX = pin.side === 'top' || pin.side === 'bottom';
+  const hostAlong = alongX ? (hx as number) : (hy as number);
+  const hostHalf = ((alongX ? host.width : host.height) ?? 0) / 2;
+  const reach = Math.max(0, hostHalf - BORDER_INSET);
+
+  // Leaving abreast of the node is what keeps several lines on one border apart; a node
+  // too far along for that leaves as near to it as the border allows, and steps across.
+  const face = attachFaceOf(node);
+  const sideways = alongX
+    ? face === 'left' || face === 'right'
+    : face === 'top' || face === 'bottom';
+  const half = ((alongX ? node.width : node.height) ?? 0) / 2;
+  const exit = sideways
+    ? (alongX ? (nx as number) : (ny as number)) +
+      (face === 'left' || face === 'top' ? -(half + STUB_REACH) : half + STUB_REACH)
+    : alongX
+      ? (nx as number)
+      : (ny as number);
+  const enter = clamp(exit, hostAlong - reach, hostAlong + reach);
+  const mid = alongX
+    ? ((ny as number) + (hy as number)) / 2
+    : ((nx as number) + (hx as number)) / 2;
+
+  const at = (along: number, across: number) =>
+    alongX ? { x: along, y: across } : { x: across, y: along };
+
+  const path = [
+    at(alongX ? (nx as number) : (ny as number), alongX ? (ny as number) : (nx as number)),
+  ];
+  if (sideways) {
+    path.push(at(exit, alongX ? (ny as number) : (nx as number)));
+  }
+  if (Math.abs(enter - exit) >= 1) {
+    path.push(at(exit, mid), at(enter, mid));
+  }
+  path.push(at(enter, alongX ? (hy as number) : (hx as number)));
+  return path;
+}
+
+/**
+ * Squares up the line between a node standing off a border and its host.
+ *
+ * The node was held out of the layout, so the router aimed at the host instead and never
+ * saw where the node ended up. The two are adjacent by construction with nothing between
+ * them to route around, so the line has only to leave one border square and reach the
+ * other square, rather than keep whatever path was found to somewhere else.
+ */
+export function squareAnchoredEdges(layout: LayoutData, pins: AnchorPin[]): void {
+  const byId = new Map((layout.nodes ?? []).map((node) => [node.id, node]));
+  const pinById = new Map(pins.map((pin) => [pin.nodeId, pin]));
+  for (const edge of layout.edges ?? []) {
+    const start = typeof edge.start === 'string' ? edge.start : undefined;
+    const end = typeof edge.end === 'string' ? edge.end : undefined;
+    if (!start || !end) {
+      continue;
+    }
+    const pin = pinById.get(start) ?? pinById.get(end);
+    if (!pin) {
+      continue;
+    }
+    // Only the line joining the node to the host it stands off from. Anything else it is
+    // joined to is a real route the layout still has to find.
+    if ((pin.nodeId === start ? end : start) !== pin.hostId) {
+      continue;
+    }
+    const node = byId.get(pin.nodeId);
+    const host = byId.get(pin.hostId);
+    const path = node && host ? stubToHost(node, host, pin) : null;
+    if (path) {
+      edge.points = pin.nodeId === start ? path : [...path].reverse();
+    }
+  }
+}
