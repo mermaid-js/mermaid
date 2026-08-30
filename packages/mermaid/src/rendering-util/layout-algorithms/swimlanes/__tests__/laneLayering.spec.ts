@@ -48,3 +48,31 @@ describe('lane layering', () => {
     expect(alongProcess(splitAndJoin('branches'))).toBeLessThan(alongProcess(splitAndJoin()));
   });
 });
+
+describe('spacing', () => {
+  const chain = (own?: { nodeSpacing?: number; rankSpacing?: number }) => {
+    const layout = {
+      nodes: [band('L'), box('A'), box('B'), box('C')],
+      edges: [
+        { id: 'e1', start: 'A', end: 'B', type: 'normal' },
+        { id: 'e2', start: 'B', end: 'C', type: 'normal' },
+      ],
+      // The flowchart keys carry schema defaults, so they are always present.
+      config: { flowchart: { nodeSpacing: 50, rankSpacing: 50 } },
+      direction: 'LR',
+      ...own,
+    } as unknown as LayoutData;
+    runSwimlaneLayoutCore(layout);
+    return alongProcess(layout);
+  };
+
+  // A diagram that sets its own spacing had it silently shadowed by the flowchart
+  // defaults, which always exist - the same order dagre was corrected to in #7932.
+  it('prefers the spacing the diagram asked for over the generic fallback', () => {
+    expect(chain({ rankSpacing: 200 })).toBeGreaterThan(chain());
+  });
+
+  it('still falls back to the flowchart config when the diagram says nothing', () => {
+    expect(chain()).toBeGreaterThan(0);
+  });
+});
