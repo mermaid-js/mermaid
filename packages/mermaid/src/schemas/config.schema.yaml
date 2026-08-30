@@ -2378,12 +2378,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: The distance between two elements in the same rank of a lane.
         type: number
         minimum: 0
-        default: 50
+        default: 35
       rankSpacing:
         description: The distance between two ranks of a lane.
         type: number
         minimum: 0
-        default: 60
+        default: 40
 
   AgentflowDiagramConfig:
     title: Agentflow Diagram Config
