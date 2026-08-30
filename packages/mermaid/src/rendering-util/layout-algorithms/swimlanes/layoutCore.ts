@@ -8,6 +8,30 @@ import { pinAnchoredNodes } from './anchoredNodes.js';
 
 export type SwimlaneDirection = 'TB' | 'LR' | 'BT' | 'RL';
 
+/** A finite number at `key`, or undefined. The top-level override has no declared type. */
+function numberAt(source: object | undefined, key: string): number | undefined {
+  const value = source === undefined ? undefined : Reflect.get(source, key);
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : undefined;
+}
+
+/**
+ * The gap to lay out with.
+ *
+ * Precedence: an explicit top-level config override, which exists only when a user sets
+ * one, then the value the diagram's own renderer put on the layout data, then the
+ * flowchart config as a generic fallback. The flowchart keys carry schema defaults and so
+ * always exist, which is why they come last - ahead of the diagram's own they would
+ * silently shadow it, as they did for dagre until #7932.
+ */
+function spacing(layout: LayoutData, key: 'nodeSpacing' | 'rankSpacing', fallback: number) {
+  return (
+    numberAt(layout.config, key) ??
+    numberAt(layout, key) ??
+    numberAt(layout.config.flowchart, key) ??
+    fallback
+  );
+}
+
 /**
  * Whether a lane holds at most one node per layer.
  *
@@ -39,8 +63,13 @@ function getSwimlaneDirection(data4Layout: LayoutData): SwimlaneDirection {
  */
 export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirection {
   const g = toGraphView(data4Layout);
-  const nodeGap = data4Layout.config.flowchart?.nodeSpacing ?? 40;
-  const layerGap = data4Layout.config.flowchart?.rankSpacing ?? 100;
+  // Precedence: an explicit top-level config override (only present when a user sets it -
+  // it has no schema default) > the value the diagram's own renderer put on data4Layout >
+  // the flowchart config as a generic fallback. The flowchart keys have schema defaults
+  // and therefore always exist, so they must come last or they silently shadow every
+  // diagram's own spacing (see #7932, where dagre was given the same order).
+  const nodeGap = spacing(data4Layout, 'nodeSpacing', 40);
+  const layerGap = spacing(data4Layout, 'rankSpacing', 100);
   const ignoreCrossLaneEdges = compactsLanesToOneRow(data4Layout);
   const optimizeRanksByCrossings = data4Layout.config.swimlane?.optimizeRanksByCrossings ?? true;
   const automaticLaneOrdering = data4Layout.config.swimlane?.automaticLaneOrdering ?? false;
