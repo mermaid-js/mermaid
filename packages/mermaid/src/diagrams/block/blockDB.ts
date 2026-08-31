@@ -88,6 +88,14 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
+/**
+ * Next palette slot to hand out. Blocks take their colour from the order they are
+ * declared in, the way flowchart subgraphs do, so this counts across the whole parse
+ * rather than per container -- a nested block continues the cycle instead of restarting
+ * it, which is what keeps two sibling containers from opening on the same colour.
+ */
+let nextColorIndex = 0;
+
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
@@ -141,6 +149,13 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       const existingBlock = blockDatabase.get(block.id);
 
       if (existingBlock === undefined) {
+        // Assigned here, before the recursion into `block.children` below, so a container
+        // takes a lower slot than the blocks it holds. `space` paints nothing, so giving
+        // it a slot would leave a gap in the cycle and shift every colour after it for no
+        // visible reason.
+        if (block.type !== 'space') {
+          block.colorIndex = nextColorIndex++;
+        }
         blockDatabase.set(block.id, block);
       } else {
         // Add newer relevant data to aggregated node
@@ -186,6 +201,7 @@ const clear = (): void => {
   edgeList = [];
   edgeCount = new Map();
   diagramId = '';
+  nextColorIndex = 0;
 };
 
 export function typeStr2Type(typeStr: string) {

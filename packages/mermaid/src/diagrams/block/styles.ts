@@ -1,5 +1,6 @@
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
+import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 /** Returns the styles given options */
 export interface BlockChartStyleOptions {
@@ -16,7 +17,69 @@ export interface BlockChartStyleOptions {
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
+  /* Supplied by `createUserStyles`, which spreads `config.themeVariables` and adds the
+     theme name and look. Only the colour themes carry the palette arrays. */
+  theme?: string;
+  look?: string;
+  borderColorArray?: string[];
+  bkgColorArray?: string[];
+  THEME_COLOR_LIMIT?: number;
 }
+
+/**
+ * Per-block palette rules, the same mechanism the flowchart uses for its subgraphs: the
+ * db numbers each block in declaration order, the renderer stamps that number as
+ * `data-color-id`, and these rules map the slot to a border and a fill.
+ *
+ * Every block shape has to be named. A block diagram draws through far more shapes than a
+ * flowchart subgraph does -- `rect` for square and rounded, `polygon` for the diamond,
+ * hexagon, trapezoids and leans, `path` for the block arrow and the stadium, `circle` and
+ * `ellipse` for the round forms -- and a shape left out here renders uncoloured beside
+ * its tinted neighbours rather than failing in any visible way.
+ *
+ * `.rough-node` is listed alongside `.node` because `getNodeClasses` returns that instead
+ * under the handDrawn look, and each descendant is appended to both prefixes separately:
+ * writing `${'${slot}'}.node, ${'${slot}'}.rough-node rect` would attach `rect` to the last item of
+ * the list only and silently match nothing under classic.
+ *
+ * Not `!important`: a block carrying `classDef` or `style` gets an inline `style`
+ * attribute, which has to keep winning over the theme palette.
+ */
+const genColor = (options: BlockChartStyleOptions) => {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
+    return '';
+  }
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
+  let sections = '';
+
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
+    const borderColor = borderColorArray![i % borderColorArray!.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
+    const rule = (suffix: string) => `${slot}.node ${suffix}, ${slot}.rough-node ${suffix}`;
+
+    sections += `
+
+    ${rule('rect')},
+    ${rule('polygon')},
+    ${rule('circle')},
+    ${rule('ellipse')} {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    /* The block arrow and the stadium are drawn as paths, and every shape is a path
+       under handDrawn. */
+    ${rule('path')} {
+      stroke: ${borderColor};
+      ${fill}
+    }
+`;
+  }
+  return sections;
+};
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma
@@ -31,7 +94,8 @@ const fade = (color: string, opacity: number) => {
 };
 
 const getStyles = (options: BlockChartStyleOptions) =>
-  `.label {
+  `${genColor(options)}
+  .label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
   }
