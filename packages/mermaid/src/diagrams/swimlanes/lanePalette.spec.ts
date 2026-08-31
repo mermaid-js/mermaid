@@ -1,13 +1,6 @@
 /**
- * Lanes take a per-lane colour under the redux colour themes, as flowchart subgraphs do.
- *
- * These assertions are about the shape of the emitted CSS, because that is where this
- * fails silently: a lane renders identically whether a declaration was discarded,
- * outranked, or never emitted. The four things that can go wrong are a half-painted lane
- * (title band and body are separate elements), the generic `.cluster` rules reaching a
- * lane (wrong under handDrawn, where the body's hachure carries `stroke="none"`), the
- * `!important` lane border outranking the palette, and `redux-dark-color`'s empty
- * `bkgColorArray` producing a declaration with a missing value.
+ * Asserts the shape of the emitted CSS, because a lane renders identically whether a
+ * declaration was discarded, outranked, or never emitted.
  */
 import { describe, expect, it } from 'vitest';
 import themes from '../../themes/index.js';
@@ -57,7 +50,7 @@ describe.each(COLOUR_THEMES)('%s lane palette', (themeName) => {
       expect(laneRect![1]).toContain(`fill: ${bkgColorArray[slot]};`);
     }
 
-    // handDrawn: roughjs draws the hachure fill first, so the outline is the second path.
+    // roughjs draws the hachure fill first, so the outline is the second path.
     const laneOutline = new RegExp(
       `${prefix} \\.swimlane-title path:nth-of-type\\(2\\), ` +
         `${prefix} \\.swimlane-body path:nth-of-type\\(2\\) \\{([^}]*)\\}`

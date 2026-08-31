@@ -225,11 +225,7 @@ test.describe('Swimlanes diagram', () => {
     await expect(shape).toHaveCSS('stroke-width', '4px');
   });
 
-  /**
-   * The unit tests pin the generated CSS; only a render proves the stamped
-   * `data-color-id` meets the emitted selector on the element. Asserted as "distinct and
-   * self-consistent" rather than against hex values, which `lanePalette.spec.ts` pins.
-   */
+  /** Only a render proves the stamped slot meets the emitted selector. */
   test.describe('redux colour theme lanes', () => {
     const fiveLanes = `swimlane-beta TD
         subgraph Intake
@@ -278,11 +274,7 @@ test.describe('Swimlanes diagram', () => {
       });
     }
 
-    /**
-     * The handDrawn selectors encode roughjs's emission order -- hachure fill first, then
-     * the outline -- which no unit test can confirm. The assertions above never reach it:
-     * `rect.swimlane-*` does not exist under this look.
-     */
+    /** roughjs's emission order, which no unit test can confirm. */
     test.describe('handDrawn', () => {
       const lanePaths = (page: Page, half: 'title' | 'body', nth: 1 | 2) =>
         page
@@ -305,10 +297,7 @@ test.describe('Swimlanes diagram', () => {
         }
       });
 
-      /**
-       * The hachure path's *stroke* is the lane fill, since roughjs draws a fill as lines.
-       * It is the rule `hasBkgColors` turns on and off, so both cases are checked.
-       */
+      /** roughjs draws a fill as lines, so the hachure path's stroke is the lane fill. */
       test('fills both halves where the theme ships a background palette', async ({
         page,
       }, testInfo) => {
@@ -375,10 +364,7 @@ test.describe('Swimlanes diagram', () => {
       await expect(styled).toHaveCSS('fill', 'rgb(0, 255, 0)');
     });
 
-    /**
-     * The synthetic lane gets no `look` or colour slot from upstream. Without them it
-     * renders as a classic rect inside a handDrawn diagram and reuses the first slot.
-     */
+    /** The synthetic lane gets no `look` or colour slot from upstream. */
     test('colours the synthetic default lane distinctly', async ({ page }, testInfo) => {
       await renderSwimlanes(
         page,

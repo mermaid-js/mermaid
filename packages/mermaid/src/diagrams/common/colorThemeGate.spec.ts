@@ -25,10 +25,7 @@ import {
   safeLook,
 } from './colorThemeGate.js';
 
-/**
- * `swimlanes` wraps flowchart's stylesheet and appends its own lane rules, including an
- * `!important` one next to the palette, so it is listed separately from what it inherits.
- */
+/** `swimlanes` appends its own lane rules to flowchart's, so it is listed separately. */
 const STYLESHEETS = {
   class: classStyles,
   er: erStyles,
@@ -99,8 +96,7 @@ it('covers every registered theme between the two lists', () => {
 
 describe.each(SLOT_STYLESHEETS)('%s stylesheet', (name) => {
   it.each(PLAIN_THEMES)('emits no per-item colour rules for %s', (themeName) => {
-    // The slot marker, not the bare attribute: `swimlanes` keys a rule off
-    // `:not([data-color-id])`, which is the absence of a slot rather than a rule for one.
+    // The slot marker, not the bare attribute: `swimlanes` keys a rule off its absence.
     expect(render(name, themeName)).not.toContain('data-color-id="color-');
   });
 

@@ -44,11 +44,8 @@ describe('prepareLayoutForSwimlanes', () => {
     expect(grouped?.parentId).toBe('lane1');
   });
 
-  /**
-   * Neither omission fails loudly: without `look` the lane renders classic inside a
-   * handDrawn diagram and matches no palette rule, and slot 0 collides with the first
-   * declared lane.
-   */
+  // Neither omission fails loudly: no `look` renders classic in a handDrawn diagram, and
+  // slot 0 collides with the first declared lane.
   it('gives the synthetic default lane the diagram look and a free colour slot', () => {
     const layout: LayoutData = {
       nodes: [
