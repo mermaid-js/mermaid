@@ -70,20 +70,46 @@ const lifelineTop = async (type: string, look: string) => {
   return Number(line.getAttribute('y1')) - ACTOR_Y;
 };
 
+/** Distance from the bottom of the label text to the top of the lifeline. */
+const labelToLifelineGap = async (type: string, look: string) => {
+  const top = await lifelineTop(type, look);
+  const label = document.querySelector('text.actor')!;
+  const labelBottom = Number(label.getAttribute('y')) - ACTOR_Y + 7;
+  return top - labelBottom;
+};
+
 beforeEach(() => {
   document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
 });
 
 describe('lifeline start', () => {
-  it('starts the actor and the database lifeline at the same place on neo', async () => {
-    // The pairing the rule exists for: both hang their label at the same offset below the box, so
-    // both clear it at the same height.
-    expect(await lifelineTop('actor', 'neo')).toBe(await lifelineTop('database', 'neo'));
+  it('starts every icon-and-label-below shape at the same place on neo', async () => {
+    // `boundary`, `control`, `entity`, `database` and `actor` all hang their label below a glyph.
+    // They share one label offset, so they clear it at one height -- which is what puts an actor
+    // and a database, the most common pairing, on the same line.
+    const tops: number[] = [];
+    for (const type of ['boundary', 'control', 'entity', 'database', 'actor']) {
+      tops.push(await lifelineTop(type, 'neo'));
+    }
+
+    expect(new Set(tops).size).toBe(1);
+  });
+
+  it('leaves the same gap between label and lifeline for all of them', async () => {
+    // The property that is actually visible: glyphs of different heights must not produce
+    // different amounts of air under the text. `control` had 3 and `boundary` 10.5.
+    const gaps: number[] = [];
+    for (const type of ['boundary', 'control', 'entity', 'database', 'actor']) {
+      gaps.push(await labelToLifelineGap(type, 'neo'));
+    }
+
+    expect(new Set(gaps).size).toBe(1);
   });
 
   it('starts at the box bottom for shapes whose label sits inside the box', async () => {
-    // Nothing hangs below, so there is nothing to clear and no gap to leave.
-    for (const type of ['participant', 'queue', 'collections', 'boundary']) {
+    // A different arrangement -- the label is centred in the box, nothing hangs below it, so there
+    // is nothing to clear and no gap to leave.
+    for (const type of ['participant', 'queue', 'collections']) {
       expect(await lifelineTop(type, 'neo')).toBe(65);
     }
   });

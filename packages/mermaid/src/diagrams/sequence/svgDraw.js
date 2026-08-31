@@ -29,6 +29,24 @@ const ACTOR_GLYPH_HEIGHT = ACTOR_GLYPH_BOTTOM - ACTOR_GLYPH_TOP;
 const ACTOR_GLYPH_CENTER = (ACTOR_GLYPH_TOP + ACTOR_GLYPH_BOTTOM) / 2;
 const ACTOR_GLYPH_SCALE_NEO = 0.8;
 
+/**
+ * Where the icon-and-label-below shapes put their label, measured down from the top of the box.
+ *
+ * `boundary`, `control`, `entity`, `database` and `actor` all draw a glyph and hang the label
+ * underneath it, but each had picked an offset tuned to its own glyph -- 15, 34, 30, 35, 35 -- and
+ * to nothing else. Because the lifeline starts below the label, glyphs of different heights then
+ * produced different gaps between the text and the line: 3 under a `control`, 10.5 under a
+ * `boundary`, on shapes standing side by side.
+ *
+ * One offset for the family puts every label on one baseline and, through `lifelineStartY`, every
+ * lifeline the same distance below it. Shapes with shorter glyphs simply carry more space between
+ * glyph and label, which is the honest consequence of their glyphs being shorter.
+ *
+ * The shapes that centre their label *inside* the box -- `participant`, `queue`, `collections` --
+ * are a different arrangement and keep theirs.
+ */
+const LABEL_BELOW_GLYPH_OFFSET_NEO = 35;
+
 /** Clearance between the bottom of a participant's label and the top of its lifeline. */
 const LIFELINE_LABEL_GAP = 3;
 
@@ -790,7 +808,9 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
 const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, 22 + (!isFooter ? 12 : 5), actorY + 75);
+  const labelOffset =
+    conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : 22 + (!isFooter ? 12 : 5);
+  const centerY = lifelineStartY(actorY, actor, conf, labelOffset, actorY + 75);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables;
 
@@ -878,7 +898,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     actor.description,
     actElem,
     rect.x,
-    rect.y + r + (!isFooter ? 12 : 5),
+    rect.y + labelOffset,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -897,7 +917,8 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
 const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, !isFooter ? 30 : 15, actorY + 75);
+  const labelOffset = conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : !isFooter ? 30 : 15;
+  const centerY = lifelineStartY(actorY, actor, conf, labelOffset, actorY + 75);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -977,7 +998,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? 30 : 15),
+    rect.y + labelOffset,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -999,11 +1020,12 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
 const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
+  const labelOffset = conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : 35;
   const centerY = lifelineStartY(
     actorY,
     actor,
     conf,
-    35,
+    labelOffset,
     actorY + actor.height + 2 * conf.boxTextMargin
   );
   const { theme, themeVariables, look } = conf;
@@ -1103,7 +1125,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
     actor.description,
     g,
     rect.x,
-    rect.y + 35,
+    rect.y + labelOffset,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
@@ -1128,7 +1150,8 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, 15, actorY + 80);
+  const labelOffset = conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : 15;
+  const centerY = lifelineStartY(actorY, actor, conf, labelOffset, actorY + 80);
   const radius = 22;
   const line = elem.append('g').lower();
   const { look, theme, themeVariables } = conf;
@@ -1210,7 +1233,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
     actor.description,
     actElem,
     rect.x,
-    rect.y + 15,
+    rect.y + labelOffset,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1231,7 +1254,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, 35, actorY + 80);
+  const centerY = lifelineStartY(actorY, actor, conf, LABEL_BELOW_GLYPH_OFFSET_NEO, actorY + 80);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
@@ -1340,7 +1363,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     // this is the one the stick figure has always used under `classic`, and it puts the label on
     // the baseline `drawActorTypeDatabase` uses. Scaling it with the glyph, as `neo` did, moved the
     // label out from under the figure and off that baseline.
-    actorY + 35,
+    actorY + LABEL_BELOW_GLYPH_OFFSET_NEO,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
