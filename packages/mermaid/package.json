@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "11.16.1",
+  "version": "11.17.1",
   "description": "Markdown-ish syntax for generating flowcharts, mindmaps, sequence diagrams, class diagrams, gantt charts, git graphs and more.",
   "type": "module",
   "module": "./dist/mermaid.core.mjs",
@@ -61,7 +61,7 @@
     "ignore": [
       "**/parser/*.js",
       "dist/**/*.js",
-      "cypress/**/*.js"
+      "e2e/**/*.js"
     ],
     "globals": [
       "page"

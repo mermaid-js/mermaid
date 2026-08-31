@@ -1,0 +1,21 @@
+---
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart-elk TB
+  b-->B
+  a-->c
+  subgraph O
+  A
+  end
+  subgraph B
+  c
+  end
+  subgraph A
+    a
+    b
+    B
+  end
