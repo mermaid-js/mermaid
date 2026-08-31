@@ -1,19 +1,19 @@
 import { test, expect } from '@playwright/test';
 import { imgSnapshotTest, renderGraph, verifyNumber } from '../../helpers/util.ts';
 
-test.describe('Flowchart ELK', () => {
-  test('1-elk: should render a simple flowchart', async ({ page }, testInfo) => {
+test.describe('Flowchart Dagre', () => {
+  test('1-dagre: should render a simple flowchart', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,
       testInfo,
-      `flowchart-elk TD
+      `flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      {}
+      { flowchart: { defaultRenderer: 'dagre' } }
     );
     await imgSnapshotTest(
       page,
@@ -25,24 +25,24 @@ test.describe('Flowchart ELK', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { defaultRenderer: 'elk' } }
+      { flowchart: { defaultRenderer: 'dagre' } }
     );
   });
 
-  test('7-elk: should render a flowchart when useMaxWidth is true (default)', async ({
+  test('7-dagre: should render a flowchart when useMaxWidth is true (default)', async ({
     page,
   }, testInfo) => {
     await renderGraph(
       page,
       testInfo,
-      `flowchart-elk TD
+      `flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { useMaxWidth: true } }
+      { flowchart: { useMaxWidth: true, defaultRenderer: 'dagre' } }
     );
     const svg = page.locator('svg');
     await expect(svg).toHaveAttribute('width', '100%');
@@ -51,18 +51,20 @@ test.describe('Flowchart ELK', () => {
     const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
     verifyNumber(maxWidthValue, 380, 15);
   });
-  test('8-elk: should render a flowchart when useMaxWidth is false', async ({ page }, testInfo) => {
+  test('8-dagre: should render a flowchart when useMaxWidth is false', async ({
+    page,
+  }, testInfo) => {
     await renderGraph(
       page,
       testInfo,
-      `flowchart-elk TD
+      `flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { useMaxWidth: false } }
+      { flowchart: { useMaxWidth: false, defaultRenderer: 'dagre' } }
     );
     const svg = page.locator('svg');
     const width = parseFloat((await svg.getAttribute('width')) ?? '0');
@@ -70,14 +72,14 @@ test.describe('Flowchart ELK', () => {
     await expect(svg).not.toHaveAttribute('style');
   });
 
-  test('elk: should include classes on the edges', async ({ page }, testInfo) => {
+  test('dagre: should include classes on the edges', async ({ page }, testInfo) => {
     await renderGraph(
       page,
       testInfo,
-      `flowchart-elk TD
+      `flowchart TD
       A --> B --> C --> D
       `,
-      {}
+      { flowchart: { defaultRenderer: 'dagre' } }
     );
     await page.locator('svg').evaluate((svg) => {
       const edges = svg.querySelectorAll('.edges > path');
@@ -102,7 +104,7 @@ test.describe('Title and arrow styling #4813', () => {
       flowchart LR
       A-->B
       A-->C`,
-      { layout: 'elk' }
+      { flowchart: { defaultRenderer: 'dagre' } }
     );
     const titleText = await page.locator('svg text').first().textContent();
     expect(titleText).toContain(titleString);
@@ -118,7 +120,7 @@ test.describe('Title and arrow styling #4813', () => {
       B-.-oC
       C==xD
       D ~~~ A`,
-      { layout: 'elk' }
+      { flowchart: { defaultRenderer: 'dagre' } }
     );
     await page.locator('svg').evaluate((svg) => {
       const edges = svg.querySelectorAll('.edges path');
