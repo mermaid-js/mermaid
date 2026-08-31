@@ -216,8 +216,15 @@ function decodeHTMLEntities(text: string): string {
       const isHex = entity[1] === 'x' || entity[1] === 'X';
       const codePoint = Number.parseInt(isHex ? entity.slice(2) : entity.slice(1), isHex ? 16 : 10);
 
-      if (!Number.isInteger(codePoint) || codePoint < 0 || codePoint > 0x10ffff) {
-        return match;
+      // HTML parsing maps NULL, surrogates and out-of-range references to U+FFFD rather
+      // than emitting a NUL or a lone surrogate.
+      if (
+        !Number.isInteger(codePoint) ||
+        codePoint === 0 ||
+        codePoint > 0x10_ff_ff ||
+        (codePoint >= 0xd8_00 && codePoint <= 0xdf_ff)
+      ) {
+        return '�';
       }
 
       try {

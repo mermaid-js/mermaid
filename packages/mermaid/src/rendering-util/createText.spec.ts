@@ -113,4 +113,18 @@ describe('createText', () => {
       expect(output.textContent).toEqual(expected);
     }
   );
+
+  it.for([
+    { input: '&#x2665;', expected: '♥', what: 'a hexadecimal reference' },
+    { input: '&#0;', expected: '�', what: 'a NULL reference' },
+    { input: '&#55296;', expected: '�', what: 'a lone surrogate reference' },
+  ])('handles $what without html labels', async ({ input, expected }) => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(select(svgGroup), input, {
+      useHtmlLabels: false,
+      markdown: false,
+    });
+    expect(output.textContent).toEqual(expected);
+  });
 });

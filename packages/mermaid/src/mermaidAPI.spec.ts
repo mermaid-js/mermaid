@@ -1308,3 +1308,14 @@ flowchart TD
     );
   });
 });
+
+describe('encodeEntities hexadecimal references', () => {
+  it('keeps the numeric marker so the reference stays valid', () => {
+    // Without this `#x2665;` becomes `&x2665;`, which no label path can resolve.
+    expect(decodeEntities(encodeEntities('#x2665;'))).toEqual('&#x2665;');
+  });
+
+  it('still treats a name as a name', () => {
+    expect(decodeEntities(encodeEntities('#quot;'))).toEqual('&quot;');
+  });
+});
