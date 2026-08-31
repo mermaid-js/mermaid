@@ -1110,7 +1110,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   svgDraw.insertStickBottomArrowHead(diagram, id);
 
   if (look === 'neo') {
-    svgDraw.insertDropShadow(diagram, conf);
+    svgDraw.insertDropShadow(diagram, conf, id);
   }
 
   /**

@@ -683,13 +683,33 @@ function initialize(userOptions: MermaidConfig = {}) {
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
+  // The theme name and the theme variables travel together: `createUserStyles` hands the
+  // stylesheet `config.themeVariables` alongside `config.theme`, and every palette-aware
+  // stylesheet gates its rules on the *name*. So an unrecognised name left in place means
+  // the fallback theme's palette is loaded into the variables and then never rendered.
+  //
+  // That was harmless while the fallback was `default`, which carries no palette -- name
+  // and variables were both palette-less, so they could not disagree. Making a colour
+  // theme the default is what gives the mismatch a visible effect.
+  //
+  // Read from `defaultConfig` rather than naming the theme here, so the schema's
+  // `theme.default` stays the one place it is written down; `defaultConfig.ts` derives its
+  // `themeVariables` from the same value.
+  const fallbackTheme = configApi.defaultConfig.theme as keyof typeof theme;
   if (options?.theme && options.theme in theme) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme as keyof typeof theme].getThemeVariables(
       options.themeVariables
     );
   } else if (options) {
-    options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
+    // Two values deliberately keep their name. `'null'` is the documented sentinel for
+    // disabling the pre-defined themes, so normalising it would re-enable one; and an
+    // absent theme needs no name written in, because `defaultConfig` already supplies the
+    // same fallback. Anything else is a name no theme answers to, and is corrected here.
+    if (options.theme != null && options.theme !== 'null') {
+      options.theme = fallbackTheme;
+    }
+    options.themeVariables = theme[fallbackTheme].getThemeVariables(options.themeVariables);
   }
 
   const config =

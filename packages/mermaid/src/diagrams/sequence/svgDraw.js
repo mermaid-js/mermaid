@@ -359,7 +359,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
@@ -431,7 +431,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
     rectElem.style('fill', paletteColor(bkgColorArray, actorCount));
   }
   if (look === 'neo') {
-    rectElem.attr('filter', 'url(#drop-shadow)');
+    rectElem.attr('filter', `url(#${dropShadowId(diagramId)})`);
   }
 
   actor.rectData = rect;
@@ -482,7 +482,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, actorInd
  * @param {any} conf - DrawText implementation discriminator object
  * @param {boolean} isFooter - If the actor is the footer one
  */
-const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
@@ -553,7 +553,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
   actor.rectData = rect;
 
   if (look === 'neo') {
-    g.attr('filter', 'url(#drop-shadow)');
+    g.attr('filter', `url(#${dropShadowId(diagramId)})`);
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
@@ -600,7 +600,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, actorInd
   return height;
 };
 
-const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height;
@@ -688,7 +688,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, actorIndexMap)
   actor.rectData = rect;
 
   if (look === 'neo') {
-    cylinderGroup.attr('filter', 'url(#drop-shadow)');
+    cylinderGroup.attr('filter', `url(#${dropShadowId(diagramId)})`);
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
@@ -806,7 +806,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     .attr('cx', cx)
     .attr('cy', cy)
     .attr('r', r)
-    .attr('filter', `${look === 'neo' ? 'url(#drop-shadow)' : ''}`);
+    .attr('filter', `${look === 'neo' ? `url(#${dropShadowId(diagramId)})` : ''}`);
 
   // Draw looping arrow as arc path
   actElem
@@ -845,7 +845,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   return actor.height;
 };
 
-const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 75;
@@ -893,7 +893,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap
     .attr('stroke-width', 2);
 
   if (look === 'neo') {
-    actElem.attr('filter', 'url(#drop-shadow)');
+    actElem.attr('filter', `url(#${dropShadowId(diagramId)})`);
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
@@ -947,7 +947,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, actorIndexMap
   return actor.height;
 };
 
-const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + actor.height + 2 * conf.boxTextMargin;
@@ -1031,7 +1031,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexM
   // Draw the main cylinder body
   cylinderGroup.append('path').attr('d', d);
   if (look === 'neo') {
-    cylinderGroup.attr('filter', 'url(#drop-shadow)');
+    cylinderGroup.attr('filter', `url(#${dropShadowId(diagramId)})`);
   }
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
   if (COLOR_THEMES.has(theme)) {
@@ -1070,7 +1070,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, actorIndexM
   return actor.height;
 };
 
-const drawActorTypeBoundary = function (elem, actor, conf, isFooter, actorIndexMap) {
+const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
@@ -1138,7 +1138,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, actorIndexM
     .attr('r', radius);
 
   if (look === 'neo') {
-    actElem.attr('filter', 'url(#drop-shadow)');
+    actElem.attr('filter', `url(#${dropShadowId(diagramId)})`);
   }
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
@@ -1311,9 +1311,23 @@ export const drawActor = async function (
     case 'actor':
       return await drawActorTypeActor(elem, actor, conf, isFooter, resolvedActorIndexMap);
     case 'participant':
-      return await drawActorTypeParticipant(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return await drawActorTypeParticipant(
+        elem,
+        actor,
+        conf,
+        isFooter,
+        diagramId,
+        resolvedActorIndexMap
+      );
     case 'boundary':
-      return await drawActorTypeBoundary(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return await drawActorTypeBoundary(
+        elem,
+        actor,
+        conf,
+        isFooter,
+        diagramId,
+        resolvedActorIndexMap
+      );
     case 'control':
       return await drawActorTypeControl(
         elem,
@@ -1324,13 +1338,41 @@ export const drawActor = async function (
         resolvedActorIndexMap
       );
     case 'entity':
-      return await drawActorTypeEntity(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return await drawActorTypeEntity(
+        elem,
+        actor,
+        conf,
+        isFooter,
+        diagramId,
+        resolvedActorIndexMap
+      );
     case 'database':
-      return await drawActorTypeDatabase(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return await drawActorTypeDatabase(
+        elem,
+        actor,
+        conf,
+        isFooter,
+        diagramId,
+        resolvedActorIndexMap
+      );
     case 'collections':
-      return await drawActorTypeCollections(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return await drawActorTypeCollections(
+        elem,
+        actor,
+        conf,
+        isFooter,
+        diagramId,
+        resolvedActorIndexMap
+      );
     case 'queue':
-      return await drawActorTypeQueue(elem, actor, conf, isFooter, resolvedActorIndexMap);
+      return await drawActorTypeQueue(
+        elem,
+        actor,
+        conf,
+        isFooter,
+        diagramId,
+        resolvedActorIndexMap
+      );
   }
 };
 
@@ -1652,12 +1694,14 @@ export const insertArrowCrossHead = function (elem, id) {
   // this is actual shape for arrowhead
 };
 
-export const insertDropShadow = function (elem, conf) {
+export const dropShadowId = (diagramId) => (diagramId ? `${diagramId}-drop-shadow` : 'drop-shadow');
+
+export const insertDropShadow = function (elem, conf, diagramId) {
   const { theme } = conf;
   elem
     .append('defs')
     .append('filter')
-    .attr('id', 'drop-shadow')
+    .attr('id', dropShadowId(diagramId))
     .attr('height', '130%')
     .attr('width', '130%')
     .append('feDropShadow')

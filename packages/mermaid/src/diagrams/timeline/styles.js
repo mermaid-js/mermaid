@@ -1,16 +1,19 @@
 import { darken, lighten, isDark } from 'khroma';
 import { getConfig } from './../../config.js';
+import { colorSlotCount, isColorTheme as isPaletteTheme } from '../common/colorThemeGate.js';
 
 const genReduxSections = (options) => {
   const { theme } = getConfig();
   //Required to read the active theme at render time,
   // since options alone does not expose the theme name needed to switch between redux and classic section generators.
   const isDarkTheme = theme?.includes('dark');
-  // Gate on the palette actually being present, not just on the theme name. `theme` comes
-  // from global config while `options` is passed in, so the two can disagree -- and with an
-  // empty palette `borderColorArray[i]` is `undefined`, emitting `stroke: undefined`. Same
-  // guard as `er/styles.ts` and `requirement/styles.js`.
-  const isColorTheme = theme?.includes('color') && options.borderColorArray?.length > 0;
+  // Use the shared gate rather than substring-matching the theme name. It checks both
+  // halves: that this is a colour theme, and that a palette is actually present. Both
+  // matter -- `includes('color')` would also match any future theme whose name merely
+  // contains "color", and it says nothing about the palette, so indexing
+  // `borderColorArray` off a name-only check threw when the configured theme and the
+  // passed-in `options` disagreed.
+  const isColorTheme = isPaletteTheme(theme, options.borderColorArray);
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   const scopedDropShadow = rawSvgId
     ? `url(#${rawSvgId}-drop-shadow)`
@@ -18,10 +21,13 @@ const genReduxSections = (options) => {
 
   let sections = '';
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT); i++) {
     const sw = `${17 - 3 * i}`;
-    // Wrap at the palette length rather than indexing raw: the loop runs to
-    // THEME_COLOR_LIMIT, so a shorter palette would leave the overflow slots undefined.
+    // Unlike `er`/`requirement`, the bound here is the section count, not the palette
+    // length: timeline numbers `.section-N` classes, which are not `data-color-id` slots
+    // and so are not bounded by what anything stamps. The palette therefore wraps across
+    // however many sections exist -- indexing raw would leave the overflow sections
+    // undefined.
     const slot = isColorTheme
       ? options.borderColorArray[i % options.borderColorArray.length]
       : undefined;

@@ -5,10 +5,14 @@
  * discards, so the only symptom is a shape rendering unstyled. No screenshot test can
  * catch it: a diagram renders identically with or without a discarded declaration.
  *
- *   1. Indexing raw means a palette shorter than `THEME_COLOR_LIMIT` yields
- *      `stroke: undefined` for the overflow slots.
- *   2. Wrapping with `i % length` fixes that but reintroduces it for an *empty* palette:
- *      `i % 0` is `NaN` and `[][NaN]` is `undefined`. Both files bail early instead.
+ *   1. Indexing raw while looping to `THEME_COLOR_LIMIT` means a palette shorter than the
+ *      limit yields `stroke: undefined` for the overflow slots. Both files now take the
+ *      loop bound from the palette itself, which also fixes the reverse — a palette longer
+ *      than the limit left stamped boxes with no rule emitted.
+ *   2. Wrapping with `i % length` fixes the first half but reintroduces it for an *empty*
+ *      palette: `i % 0` is `NaN` and `[][NaN]` is `undefined`. Both files bail early
+ *      instead. The background palette is a separate array and may still be shorter than
+ *      the border one, so that one is still wrapped.
  *   3. `requirement` emitted `fill: ;` — an empty value, invalid CSS — whenever there was
  *      no background palette. `redux-dark-color` is the live case: it ships a border
  *      palette and no background palette, colouring outlines only.
@@ -131,20 +135,41 @@ describe.each(ALL_STYLESHEETS)('%s stylesheet', (name) => {
 
 describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
   it('resolves every slot from a palette shorter than THEME_COLOR_LIMIT', () => {
+    const borderColorArray = ['#ff0000', '#00ff00'];
     const css = render(name, 'redux-color', {
-      borderColorArray: ['#ff0000', '#00ff00'],
+      borderColorArray,
       bkgColorArray: ['#ffeeee', '#eeffee'],
     });
-    // Every slot still gets a rule, and every rule names one of the two colours. Scoped to
-    // the palette blocks — the rest of the stylesheet has its own `stroke:` declarations.
+    // Every slot gets a rule, and every rule names one of the two colours. Scoped to the
+    // palette blocks — the rest of the stylesheet has its own `stroke:` declarations.
     // Counted exactly: a `greaterThan` bound would still pass if only a couple of slots
     // were emitted, which is the regression this is here to catch. Each slot emits a
-    // `path` rule and a `rect` rule, hence twice the limit.
+    // `path` rule and a `rect` rule, hence twice the count.
+    //
+    // The expected count is the palette length, changed from `THEME_COLOR_LIMIT`. Looping
+    // to the limit and wrapping the index did keep every declaration valid — which is what
+    // this file was written to check, and that half still holds — but `erBox` and
+    // `requirementBox` stamp `colorIndex % borderColorArray.length`, so a two-entry palette
+    // can only ever produce color-0 and color-1. Ten of the twelve rules matched nothing.
+    // The same drift in the other direction is the actual defect: a palette *longer* than
+    // the limit left stamped boxes with no rule at all. Both sides now derive from the
+    // palette length, so they cannot disagree; `colorThemeGate.spec.ts` pins that.
     const blocks = paletteBlocks(css);
     const strokes = strokesIn(blocks);
-    expect(blocks).toHaveLength(THEME_COLOR_LIMIT * 2);
-    expect(strokes).toHaveLength(THEME_COLOR_LIMIT * 2);
-    expect(new Set(strokes)).toEqual(new Set(['#ff0000', '#00ff00']));
+    expect(blocks).toHaveLength(borderColorArray.length * 2);
+    expect(strokes).toHaveLength(borderColorArray.length * 2);
+    expect(new Set(strokes)).toEqual(new Set(borderColorArray));
+  });
+
+  it('resolves every slot from a palette longer than THEME_COLOR_LIMIT', () => {
+    // The direction that actually broke: with the bound at THEME_COLOR_LIMIT, slots
+    // 12..19 were stamped by `erBox`/`requirementBox` and had no rule emitted, so those
+    // entities rendered unstyled next to coloured neighbours.
+    const borderColorArray = Array.from({ length: 20 }, (_, i) => `#${(i + 16).toString(16)}0000`);
+    const css = render(name, 'redux-color', { borderColorArray, bkgColorArray: [] });
+    const strokes = strokesIn(paletteBlocks(css));
+    expect(strokes).toHaveLength(borderColorArray.length * 2);
+    expect(new Set(strokes)).toEqual(new Set(borderColorArray));
   });
 
   it('emits no slot rules at all for an empty border palette', () => {

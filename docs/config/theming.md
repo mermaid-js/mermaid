@@ -12,15 +12,27 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 ## Available Themes
 
-1. [**default**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-default.js) - This is the default theme for all diagrams.
+1. [**redux-color**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux-color.js) - This is the default theme for all diagrams. It pairs the `redux` geometry and typography with a categorical colour palette, so entities, actors, branches, classes, subgraph containers and chart series each get their own colour.
 
-2. [**neutral**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-neutral.js) - This theme is great for black and white documents that will be printed.
+2. [**redux-dark-color**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux-dark-color.js) - The dark counterpart of `redux-color`.
 
-3. [**dark**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-dark.js) - This theme goes well with dark-colored elements or dark-mode. To use the dark theme (which changes the theme of the schema itself) with dark-mode (which sets the background), set `darkMode` to `true` in your config.
+3. [**redux**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux.js) - The same geometry and typography as `redux-color`, but monochrome. Use this when you want the colour to carry meaning you assign yourself rather than being cycled per item.
 
-4. [**forest**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-forest.js) - This theme contains shades of green.
+4. [**redux-dark**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux-dark.js) - The dark counterpart of `redux`.
 
-5. [**base**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-base.js) - This is the only theme that can be modified. Use this theme as the base for customizations.
+5. [**default**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-default.js) - The long-standing Mermaid look. This was the default before the colour themes existed.
+
+6. [**neutral**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-neutral.js) - This theme is great for black-and-white documents that will be printed.
+
+7. [**dark**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-dark.js) - This theme goes well with dark-colored elements or dark-mode. To use the dark theme (which changes the theme of the schema itself) with dark-mode (which sets the background), set `darkMode` to `true` in your config.
+
+8. [**forest**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-forest.js) - This theme contains shades of green.
+
+9. [**neo**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-neo.js) - A flatter, softer look, intended to be paired with `look: neo`.
+
+10. [**neo-dark**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-neo-dark.js) - The dark counterpart of `neo`.
+
+11. [**base**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-base.js) - This is the only theme that can be modified. Use this theme as the base for customizations.
 
 ## Site-wide Theme
 
