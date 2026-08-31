@@ -1,22 +1,19 @@
 /**
- * Every participant shape draws into a box of `actor.width` x `actor.height` and offsets its label
- * below its own glyph. Those offsets differ per shape and are not interchangeable -- a plain
- * `participant` centres its label at `rect.y`, `boundary` uses `+15`, `database` uses `+35` -- so
- * alignment is only meaningful between shapes that share one, as `actor` and `database` do.
+ * The stick figure under the band model (`actorBands.ts`), against `classic` as the invariant.
  *
- * The stick figure did not. Under `neo` it multiplied every coordinate by 0.5, reported the scaled
- * bounding box back as `actor.height`, and offset its label by `35 * scale - 10`. So an `actor`
- * standing next to a `database` was drawn at half the size with its label on a different baseline,
- * and because the scaled height feeds lifeline placement, the discrepancy propagated into layout.
- *
- * These assertions compare the two shapes against each other rather than against fixed numbers, so
- * they keep holding if the shared box geometry is retuned later.
+ * History, because this spec has pinned three designs: the original `neo` halved the figure and
+ * let the scale leak into `actor.height` and the label; a first fix drew it full size; a second
+ * inset it at 0.8 with the label pinned. Both fixes still derived positions per shape, and the
+ * misalignments simply moved to the next seam -- lifelines, then footer stacks. The band model
+ * replaces all of that: the figure fills the shared glyph band, the label is bottom-anchored at
+ * the datum, and `classic` draws its legacy geometry untouched.
  */
 import { select } from 'd3';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import defaultConfig from '../../defaultConfig.js';
 import themes from '../../themes/index.js';
 import svgDraw from './svgDraw.js';
+import { GLYPH_BAND_HEIGHT, LABEL_LIFELINE_GAP, actorLabelHeight } from './actorBands.js';
 
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
 
@@ -118,7 +115,7 @@ describe('stick-figure actor sizing', () => {
     expect(glyphHeightOf(figure)).toBe(actor.height);
   });
 
-  it('insets the figure on neo without touching classic', async () => {
+  it('draws the figure smaller on neo than on classic, at the glyph band size', async () => {
     const classic = await drawOne('actor', 'classic');
     const classicHead = Number(classic.root.querySelector('circle')!.getAttribute('r'));
 
@@ -126,42 +123,28 @@ describe('stick-figure actor sizing', () => {
     const neoHead = Number(neo.root.querySelector('circle')!.getAttribute('r'));
 
     expect(neoHead).toBeLessThan(classicHead);
-    // Same box either way, so nothing around the figure moves with the look.
+    // Same box height either way; the look changes the glyph, not the layout around it.
     expect(neo.actor.height).toBe(classic.actor.height);
-    expect(labelY(neo.root)).toBe(labelY(classic.root));
   });
 
-  it('draws the glyph smaller than its box, centred in it', async () => {
-    // The figure is deliberately inset -- `ACTOR_GLYPH_SCALE` -- while the box it reports stays
-    // full size. Centred rather than top-anchored, so shrinking it does not leave it riding up
-    // against the top edge with a gap above the label.
-    const { actor, root } = await drawOne('actor', 'neo');
-    const top = 100 + -5; // actorY + ACTOR_GLYPH_TOP
-    const bottom = 100 + 60; // actorY + ACTOR_GLYPH_BOTTOM
-
+  it('fills the shared glyph band on neo', async () => {
+    // The figure is the same size as the round icons beside it: it spans exactly the glyph band,
+    // feet on the band's bottom edge.
+    const { root } = await drawOne('actor', 'neo');
     const figure = root.querySelector('.actor-man')!;
-    const circle = figure.querySelector('circle')!;
-    const cy = Number(circle.getAttribute('cy'));
-    const r = Number(circle.getAttribute('r'));
-    const feet = Math.max(
-      ...[...figure.querySelectorAll('line')].map((l) => Number(l.getAttribute('y2') ?? 0))
-    );
 
-    expect(cy - r).toBeGreaterThan(top);
-    expect(feet).toBeLessThan(bottom);
-    // Equal insets top and bottom.
-    expect(cy - r - top).toBeCloseTo(bottom - feet, 5);
-    expect(actor.height).toBe(bottom - top);
+    expect(glyphHeightOf(figure)).toBeCloseTo(GLYPH_BAND_HEIGHT, 5);
   });
 
-  it('keeps the label and the reported height independent of the glyph scale', async () => {
-    // The regression this whole change is about: the label offset and `actor.height` must be keyed
-    // to the box, so resizing the figure never moves the label or the surrounding layout.
+  it('anchors the label at the datum on neo', async () => {
+    // Bottom-anchored: the label block's centre sits half its measured height plus the clearance
+    // above the lifeline datum, so single-line labels share a baseline across shapes and a second
+    // line grows upward rather than into the lifeline.
     const { actor, root } = await drawOne('actor', 'neo');
-    const glyphHeight = glyphHeightOf(root.querySelector('.actor-man')!);
+    const textHeight = actorLabelHeight(actor as never, confFor('neo') as never);
+    const datum = 100 + actor.height;
 
-    expect(glyphHeight).toBeLessThan(actor.height);
-    expect(labelY(root)).toBe(100 + 35 + actor.height / 2);
+    expect(labelY(root)).toBe(datum - LABEL_LIFELINE_GAP - textHeight / 2);
   });
 
   it('reports a height that is not shrunk by the look', async () => {

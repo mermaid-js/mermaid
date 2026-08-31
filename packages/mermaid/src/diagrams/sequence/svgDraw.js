@@ -7,87 +7,32 @@ import common, {
   renderKatexSanitized,
 } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
+import { GLYPH_BAND_HEIGHT, actorLabelHeight, footerBands, headerBands } from './actorBands.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
 
 /**
- * The stick figure's geometry, in unscaled units measured down from the top of its box: the head
- * circle reaches `TOP` and the feet reach `BOTTOM`.
- *
- * The scale resizes the drawn glyph only. The label offset and the height the actor reports back
- * into lifeline placement are keyed to this box rather than to the glyph, so the figure can be
- * resized without dragging the label or the surrounding layout with it -- which is exactly what
- * went wrong when `neo` scaled the figure and everything else followed.
- *
- * Only `neo` insets the figure. `classic` draws it at the full height of its box, as it always
- * has: mermaid is rendered server-side for a great many existing documents, and resizing the
- * default look's actor would change every one of them that has an `actor` in it.
+ * The stick figure's geometry, in unscaled units measured down from the top of its classic box:
+ * the head circle reaches `TOP` and the feet reach `BOTTOM`. Under `neo` the figure is scaled to
+ * fit the shared glyph band (see `actorBands.ts`); under `classic` it draws at these coordinates
+ * unchanged, as it always has.
  */
 const ACTOR_GLYPH_TOP = -5;
 const ACTOR_GLYPH_BOTTOM = 60;
 const ACTOR_GLYPH_HEIGHT = ACTOR_GLYPH_BOTTOM - ACTOR_GLYPH_TOP;
-const ACTOR_GLYPH_CENTER = (ACTOR_GLYPH_TOP + ACTOR_GLYPH_BOTTOM) / 2;
-const ACTOR_GLYPH_SCALE_NEO = 0.8;
 
 /**
- * Where the icon-and-label-below shapes put their label, measured down from the top of the box.
- *
- * `boundary`, `control`, `entity`, `database` and `actor` all draw a glyph and hang the label
- * underneath it, but each had picked an offset tuned to its own glyph -- 15, 34, 30, 35, 35 -- and
- * to nothing else. Because the lifeline starts below the label, glyphs of different heights then
- * produced different gaps between the text and the line: 3 under a `control`, 10.5 under a
- * `boundary`, on shapes standing side by side.
- *
- * One offset for the family puts every label on one baseline and, through `lifelineStartY`, every
- * lifeline the same distance below it. Shapes with shorter glyphs simply carry more space between
- * glyph and label, which is the honest consequence of their glyphs being shorter.
- *
- * The shapes that centre their label *inside* the box -- `participant`, `queue`, `collections` --
- * are a different arrangement and keep theirs.
+ * Band geometry for one participant under `neo`; null under every other look, which keeps each
+ * shape's legacy geometry byte-for-byte. See `actorBands.ts` for the model. `actor.height` is the
+ * row height here -- `calculateActorMargins` sets every actor to the row's shared stack height --
+ * so the header datum `actorY + actor.height` is one line across the row.
  */
-const LABEL_BELOW_GLYPH_OFFSET_NEO = 35;
-
-/**
- * Where the round icons sit inside their box.
- *
- * `boundary`, `control` and `entity` all draw the same 22 unit circle but centred at three
- * different heights -- 12, 32 and 25 -- so their glyphs ended at 34, 54 and 47. With the family
- * sharing one label baseline that difference became visible as three different amounts of air
- * between glyph and label, which is what made `boundary` and `entity` look adrift while `control`
- * looked right.
- *
- * Centring them alike is what lets one label offset serve the family: the glyphs end together, so
- * the label sits the same distance under each of them.
- */
-const ICON_CENTER_Y_NEO = 32;
-
-/** Clearance between the bottom of a participant's label and the top of its lifeline. */
-const LIFELINE_LABEL_GAP = 3;
-
-/**
- * Where a participant's lifeline starts.
- *
- * Each shape used to answer this for itself, and they disagreed: `participant` measured from the
- * box, `database` from the box plus twice `boxTextMargin`, and `control`, `entity`, `boundary` and
- * `actor` used hardcoded 75s and 80s. On one row that put four different lifeline tops on shapes
- * standing side by side.
- *
- * The rule underneath all of them is the same -- start below whatever the participant occupies --
- * so it is stated once here. Most shapes centre their label inside the box and end at the box
- * bottom; `actor` and `database` hang their labels below the box, so for those the label decides.
- * Shapes that share a label offset therefore share a lifeline top, which is what makes an `actor`
- * and a `database` line up.
- *
- * `classic` keeps each shape's original value: this changes where the lifeline meets the shape, and
- * the default look renders a great many existing documents.
- */
-const lifelineStartY = (actorY, actor, conf, labelOffset, classicValue) => {
+const neoBands = (actor, conf, isFooter, actorY) => {
   if (conf.look !== 'neo') {
-    return classicValue;
+    return null;
   }
-  const [fontSize] = parseFontSize(conf.actorFontSize);
-  const labelBottom = labelOffset + actor.height / 2 + (fontSize ?? 14) / 2 + LIFELINE_LABEL_GAP;
-  return actorY + Math.max(actor.height, labelBottom);
+  const textHeight = actorLabelHeight(actor, conf);
+  return isFooter ? footerBands(actorY, textHeight) : headerBands(actorY, actor.height, textHeight);
 };
 
 const TOP_ACTOR_CLASS = 'actor-top';
@@ -443,7 +388,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
 const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, 0, actorY + actor.height);
+  const centerY = actorY + actor.height;
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -548,8 +493,10 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramI
   let height = actor.height;
   if (rectElem.node) {
     const bounds = rectElem.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+    if (conf.look !== 'neo') {
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   return height;
@@ -566,7 +513,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramI
 const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, 6, actorY + actor.height);
+  const centerY = actorY + actor.height;
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -668,8 +615,10 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
   let height = actor.height;
   if (rectElem.node) {
     const bounds = rectElem.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+    if (conf.look !== 'neo') {
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   if (!isFooter) {
@@ -684,7 +633,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
 const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, 0, actorY + actor.height);
+  const centerY = actorY + actor.height;
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -806,8 +755,10 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
   const lastPath = cylinderGroup.select('path:last-child');
   if (lastPath.node()) {
     const bounds = lastPath.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+    if (conf.look !== 'neo') {
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   if (!isFooter) {
@@ -822,9 +773,8 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
 const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const labelOffset =
-    conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : 22 + (!isFooter ? 12 : 5);
-  const centerY = lifelineStartY(actorY, actor, conf, labelOffset, actorY + 75);
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 75;
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables;
 
@@ -867,7 +817,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  const cy = actorY + 32;
+  const cy = bands ? bands.glyphBottomY - 22 : actorY + 32;
   const r = 22;
 
   actElem
@@ -905,14 +855,16 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     actElem.style('stroke', actorBorder);
     actElem.style('fill', actorBkg);
   }
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
+  if (!bands) {
+    const bounds = actElem.node().getBBox();
+    actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
+  }
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
-    rect.y + labelOffset,
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + r + (!isFooter ? 12 : 5),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -931,8 +883,8 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
 const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const labelOffset = conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : !isFooter ? 30 : 15;
-  const centerY = lifelineStartY(actorY, actor, conf, labelOffset, actorY + 75);
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 75;
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -957,8 +909,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  // Legacy placement sat 7 units above the other round icons; see ICON_CENTER_Y_NEO.
-  const cy = actorY + (conf.look === 'neo' ? ICON_CENTER_Y_NEO : !isFooter ? 25 : 10);
+  const cy = bands ? bands.glyphBottomY - 22 : actorY + (!isFooter ? 25 : 10);
   const r = 22;
 
   actElem
@@ -987,8 +938,10 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     actElem.style('fill', paletteColor(bkgColorArray, actorCount));
   }
 
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + (conf?.sequence?.labelBoxHeight ?? 0);
+  if (!bands) {
+    const bounds = actElem.node().getBBox();
+    actor.height = bounds.height + (conf?.sequence?.labelBoxHeight ?? 0);
+  }
 
   if (!isFooter) {
     actorCnt++;
@@ -1013,7 +966,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     actor.description,
     actElem,
     rect.x,
-    rect.y + labelOffset,
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + (!isFooter ? 30 : 15),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1035,14 +988,8 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
 const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const labelOffset = conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : 35;
-  const centerY = lifelineStartY(
-    actorY,
-    actor,
-    conf,
-    labelOffset,
-    actorY + actor.height + 2 * conf.boxTextMargin
-  );
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + actor.height + 2 * conf.boxTextMargin;
   const { theme, themeVariables, look } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
@@ -1100,20 +1047,25 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
   rect.class = cssclass;
   rect.name = actor.name;
 
-  // Cylinder dimensions
+  // Cylinder dimensions. The width stays proportional, but under the band model the height is
+  // fixed: `width / 3` let a long participant name make the icon taller, and the icon's height
+  // must not be able to move anything below it.
   rect.x = actor.x;
   rect.y = actorY;
   const w = rect.width / 3;
-  const h = rect.width / 3;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
+  const h = bands ? GLYPH_BAND_HEIGHT : rect.width / 3;
+  // Vertical anchor: the drawn cylinder spans cylinderY + ry .. cylinderY + h + ry after the
+  // translate below, so this puts its bottom on the glyph band's bottom edge.
+  const cylinderY = bands ? bands.glyphBottomY - h - ry : rect.y;
 
   // Cylinder base group
   const cylinderGroup = g.append('g');
   cylinderGroup.attr('class', cssclass);
 
   const d = `
-  M ${rect.x},${rect.y + ry}
+  M ${rect.x},${cylinderY + ry}
   a ${rx},${ry} 0 0 0 ${w},0
   a ${rx},${ry} 0 0 0 -${w},0
   l 0,${h - 2 * ry}
@@ -1140,17 +1092,19 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
     actor.description,
     g,
     rect.x,
-    rect.y + labelOffset,
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + 35,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
     conf
   );
 
-  const lastPath = cylinderGroup.select('path:last-child');
-  if (lastPath.node()) {
-    const bounds = lastPath.node().getBBox();
-    actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  if (!bands) {
+    const lastPath = cylinderGroup.select('path:last-child');
+    if (lastPath.node()) {
+      const bounds = lastPath.node().getBBox();
+      actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+    }
   }
 
   if (!isFooter) {
@@ -1165,11 +1119,10 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const labelOffset = conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : 15;
-  const centerY = lifelineStartY(actorY, actor, conf, labelOffset, actorY + 80);
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 80;
   const radius = 22;
-  // Legacy placement put this icon 20 units above the other round icons; see ICON_CENTER_Y_NEO.
-  const iconCenterY = actorY + (conf.look === 'neo' ? ICON_CENTER_Y_NEO : 12);
+  const iconCenterY = bands ? bands.glyphBottomY - radius : actorY + 12;
   const line = elem.append('g').lower();
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
@@ -1243,14 +1196,16 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
   } else {
     actElem.style('stroke', actorBorder);
   }
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  if (!bands) {
+    const bounds = actElem.node().getBBox();
+    actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  }
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
-    rect.y + labelOffset,
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + 15,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -1271,8 +1226,9 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = lifelineStartY(actorY, actor, conf, LABEL_BELOW_GLYPH_OFFSET_NEO, actorY + 80);
-  const { look, theme, themeVariables } = conf;
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 80;
+  const { theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
   const line = elem.append('g').lower();
@@ -1309,10 +1265,11 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actElem.attr('data-et', 'participant').attr('data-type', 'actor').attr('data-id', actor.name);
   }
 
-  // Scaled about the figure's own centre, so shrinking it leaves it where it was in the box
-  // instead of riding up towards the top edge.
-  const glyphScale = look === 'neo' ? ACTOR_GLYPH_SCALE_NEO : 1;
-  const gy = (offset) => actorY + ACTOR_GLYPH_CENTER + (offset - ACTOR_GLYPH_CENTER) * glyphScale;
+  // Under the band model the figure is scaled to fill the shared glyph band, feet on its bottom
+  // edge, the same size as the round icons beside it. `classic` draws the legacy coordinates.
+  const glyphScale = bands ? GLYPH_BAND_HEIGHT / ACTOR_GLYPH_HEIGHT : 1;
+  const gy = (offset) =>
+    bands ? bands.glyphBottomY - (ACTOR_GLYPH_BOTTOM - offset) * glyphScale : actorY + offset;
   const gx = (offset) => center + offset * glyphScale;
 
   actElem
@@ -1350,9 +1307,10 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   circle.attr('width', actor.width);
   circle.attr('height', actor.height);
 
-  // The box, not the drawn glyph. Measuring the glyph back into `actor.height` is what let the
-  // scale factor leak into the label position and into lifeline placement.
-  actor.height = ACTOR_GLYPH_HEIGHT;
+  if (!bands) {
+    // Classic reports the glyph's fixed extent, as it always measured out to.
+    actor.height = ACTOR_GLYPH_HEIGHT;
+  }
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
@@ -1376,11 +1334,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actor.description,
     actElem,
     rect.x,
-    // Each shape offsets its label below its own glyph, so the offsets are not interchangeable --
-    // this is the one the stick figure has always used under `classic`, and it puts the label on
-    // the baseline `drawActorTypeDatabase` uses. Scaling it with the glyph, as `neo` did, moved the
-    // label out from under the figure and off that baseline.
-    actorY + LABEL_BELOW_GLYPH_OFFSET_NEO,
+    bands ? bands.labelCenterY - rect.height / 2 : actorY + 35,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
