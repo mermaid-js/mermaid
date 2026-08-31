@@ -1,11 +1,11 @@
 ---
 config:
-  layout: elk
+  layout: dagre
   flowchart:
     curve: rounded
 ---
 flowchart LR
-    I["fa:fa-code Text"] -- Mermaid js --> D["Use<br/>the<br/>editor!"]
+    D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
     I --> D & D
     D@{ shape: question}
     I@{ shape: question}
