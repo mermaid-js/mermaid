@@ -47,6 +47,20 @@ const ACTOR_GLYPH_SCALE_NEO = 0.8;
  */
 const LABEL_BELOW_GLYPH_OFFSET_NEO = 35;
 
+/**
+ * Where the round icons sit inside their box.
+ *
+ * `boundary`, `control` and `entity` all draw the same 22 unit circle but centred at three
+ * different heights -- 12, 32 and 25 -- so their glyphs ended at 34, 54 and 47. With the family
+ * sharing one label baseline that difference became visible as three different amounts of air
+ * between glyph and label, which is what made `boundary` and `entity` look adrift while `control`
+ * looked right.
+ *
+ * Centring them alike is what lets one label offset serve the family: the glyphs end together, so
+ * the label sits the same distance under each of them.
+ */
+const ICON_CENTER_Y_NEO = 32;
+
 /** Clearance between the bottom of a participant's label and the top of its lifeline. */
 const LIFELINE_LABEL_GAP = 3;
 
@@ -943,7 +957,8 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  const cy = actorY + (!isFooter ? 25 : 10);
+  // Legacy placement sat 7 units above the other round icons; see ICON_CENTER_Y_NEO.
+  const cy = actorY + (conf.look === 'neo' ? ICON_CENTER_Y_NEO : !isFooter ? 25 : 10);
   const r = 22;
 
   actElem
@@ -1153,6 +1168,8 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
   const labelOffset = conf.look === 'neo' ? LABEL_BELOW_GLYPH_OFFSET_NEO : 15;
   const centerY = lifelineStartY(actorY, actor, conf, labelOffset, actorY + 80);
   const radius = 22;
+  // Legacy placement put this icon 20 units above the other round icons; see ICON_CENTER_Y_NEO.
+  const iconCenterY = actorY + (conf.look === 'neo' ? ICON_CENTER_Y_NEO : 12);
   const line = elem.append('g').lower();
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
@@ -1197,22 +1214,22 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 12)
+    .attr('y1', iconCenterY)
     .attr('x2', actor.x + actor.width / 2 - 15)
-    .attr('y2', actorY + 12);
+    .attr('y2', iconCenterY);
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 2) // starting Y
+    .attr('y1', iconCenterY - 10) // starting Y
     .attr('x2', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y2', actorY + 22); // ending Y (26px long, adjust as needed)
+    .attr('y2', iconCenterY + 10); // ending Y
 
   actElem
     .append('circle')
     .attr('cx', actor.x + actor.width / 2)
-    .attr('cy', actorY + 12)
+    .attr('cy', iconCenterY)
     .attr('r', radius);
 
   if (look === 'neo') {

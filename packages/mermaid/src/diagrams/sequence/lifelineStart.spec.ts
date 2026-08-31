@@ -114,6 +114,30 @@ describe('lifeline start', () => {
     }
   });
 
+  it('ends the round icons at the same height on neo', async () => {
+    // `boundary`, `control` and `entity` draw the same 22 unit circle but were centred at 12, 32
+    // and 25, so their glyphs ended 20 units apart. With one label baseline for the family that
+    // showed up as three different amounts of air between glyph and label.
+    const bottoms: number[] = [];
+    for (const type of ['boundary', 'control', 'entity']) {
+      await lifelineTop(type, 'neo');
+      const circle = document.querySelector('svg circle')!;
+      bottoms.push(Number(circle.getAttribute('cy')) + Number(circle.getAttribute('r')));
+    }
+
+    expect(new Set(bottoms).size).toBe(1);
+  });
+
+  it('leaves the classic icon centres alone', async () => {
+    const centres: Record<string, number> = {};
+    for (const type of ['boundary', 'control', 'entity']) {
+      await lifelineTop(type, 'classic');
+      centres[type] = Number(document.querySelector('svg circle')!.getAttribute('cy')) - ACTOR_Y;
+    }
+
+    expect(centres).toEqual({ boundary: 12, control: 32, entity: 25 });
+  });
+
   it('leaves every classic lifeline exactly where it was', async () => {
     // Sequentially: these share one document, so they cannot be measured in parallel.
     const classic: Record<string, number> = {};
