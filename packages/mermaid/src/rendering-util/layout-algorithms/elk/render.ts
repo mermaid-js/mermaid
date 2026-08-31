@@ -1,9 +1,10 @@
-import mermaid, {
+import {
   createCommonLayoutRenderer,
   defaultMeasureLayout,
   type CommonLayoutRenderContext,
-  type LayoutData,
-} from 'mermaid';
+} from '../common/index.js';
+import type { LayoutData } from '../../types.js';
+import { setConfig } from '../../../diagram-api/diagramAPI.js';
 // @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
@@ -604,7 +605,7 @@ export function prepareLayoutForElk(
   context: CommonLayoutRenderContext<ElkPreparedLayout>
 ): ElkPreparedLayout {
   const elkContext = getElkLayoutContext(context);
-  syncElkPackageConfig(elkContext);
+  syncHostConfig(elkContext);
   applyElkEdgeRenderData(data4Layout, elkContext);
   return { algorithm: elkContext.algorithm };
 }
@@ -666,8 +667,19 @@ export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLay
   },
 });
 
-function syncElkPackageConfig(elkContext: ElkLayoutContext): void {
-  mermaid.mermaidAPI.setConfig(elkContext.getConfig());
+/**
+ * Copy the host's config into whichever config module this bundle is using.
+ *
+ * When this file is compiled into `@mermaid-js/layout-elk` the bundle carries
+ * its own copy of the config module, and that copy never sees the host's
+ * `initialize()` — so it reads schema defaults and paints, for example, edge
+ * markers without `arrowMarkerAbsolute`. `setConfig` here resolves to the local
+ * copy while `context.getConfig` comes from the host, so this repairs it.
+ *
+ * Compiled into mermaid itself the two are the same module and this is a no-op.
+ */
+function syncHostConfig(elkContext: ElkLayoutContext): void {
+  setConfig(elkContext.getConfig());
 }
 
 function orderNodesForElkPaint(nodes: LayoutData['nodes']): void {

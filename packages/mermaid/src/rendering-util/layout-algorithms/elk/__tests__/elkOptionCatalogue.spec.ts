@@ -4,7 +4,7 @@ import {
   PLACEMENT_OPTIONS,
   ROOT_EXPERIMENT_OVERRIDES,
   SUBGRAPH_EXPERIMENT_OVERRIDES,
-} from './elkOptionCatalogue.js';
+} from '../elkOptionCatalogue.js';
 
 /**
  * Every catalogue block is merged last over the shipping layout options, so an

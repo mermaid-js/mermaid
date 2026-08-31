@@ -103,8 +103,11 @@ properties:
   layout:
     description: |
       Defines which layout algorithm to use for rendering the diagram.
+
+      Defaults to `elk`, which is bundled with mermaid. The `tiny` build omits
+      ELK to stay small and falls back to `dagre`.
     type: string
-    default: 'dagre'
+    default: 'elk'
   maxTextSize:
     description: The maximum allowed size of the users text diagram
     type: number

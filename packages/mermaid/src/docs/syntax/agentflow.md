@@ -182,13 +182,13 @@ fetch@{
 
 Mermaid itself acts on a small, fixed set of keys:
 
-| Key                             | Applies to | Effect                                                     |
-| ------------------------------- | ---------- | ---------------------------------------------------------- |
-| `shape`                         | nodes      | Selects the node shape (see the table above)               |
-| `label`, `labelType`            | nodes      | Overrides the node's label and how it is parsed            |
-| `view`                          | containers | `collapsed` folds the container down to a summary node     |
-| `algorithm`                     | containers | Per-container ELK algorithm, with `@mermaid-js/layout-elk` |
-| `curve`, `animate`, `animation` | edges      | Edge interpolation and animation                           |
+| Key                             | Applies to | Effect                                                 |
+| ------------------------------- | ---------- | ------------------------------------------------------ |
+| `shape`                         | nodes      | Selects the node shape (see the table above)           |
+| `label`, `labelType`            | nodes      | Overrides the node's label and how it is parsed        |
+| `view`                          | containers | `collapsed` folds the container down to a summary node |
+| `algorithm`                     | containers | Per-container ELK algorithm                            |
+| `curve`, `animate`, `animation` | edges      | Edge interpolation and animation                       |
 
 Everything else is carried through untouched and surfaced to consumers, so the vocabulary below is a convention rather than a closed list — an unknown key is preserved, never rejected.
 
@@ -280,7 +280,7 @@ agentflow diagram uses the standard node, edge, and cluster theme variables.
 
 ### Layout
 
-Agentflow renders through the unified renderer, so it works with any registered layout engine. With `@mermaid-js/layout-elk` installed, an individual container can also select its own ELK algorithm:
+Agentflow renders through the unified renderer, so it works with any registered layout engine. ELK is the default, and an individual container can also select its own ELK algorithm:
 
 ```mermaid
 ---

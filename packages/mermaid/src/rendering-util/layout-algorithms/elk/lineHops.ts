@@ -1,9 +1,6 @@
-import {
-  applyLineJumpsToSvg,
-  type CommonLayoutPaintContext,
-  type EdgeGeom,
-  type LayoutData,
-} from 'mermaid';
+import { applyLineJumpsToSvg, type EdgeGeom } from '../../rendering-elements/lineJump.js';
+import type { CommonLayoutPaintContext } from '../common/index.js';
+import type { LayoutData } from '../../types.js';
 /**
  * Radius of the arc drawn where one edge hops another.
  *

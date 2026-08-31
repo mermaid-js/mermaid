@@ -1,14 +1,14 @@
 {
   "name": "@mermaid-js/layout-elk",
   "version": "0.2.3",
-  "description": "ELK layout engine for mermaid",
+  "description": "ELK layout engine for mermaid builds that do not bundle it (e.g. mermaid.tiny.js)",
   "module": "dist/mermaid-layout-elk.core.mjs",
-  "types": "dist/layouts.d.ts",
+  "types": "./types.d.ts",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/mermaid-layout-elk.core.mjs",
-      "types": "./dist/layouts.d.ts"
+      "types": "./types.d.ts"
     },
     "./*": "./*"
   },
@@ -30,10 +30,6 @@
     "Sidharth Vinod"
   ],
   "license": "MIT",
-  "dependencies": {
-    "d3": "^7.9.0",
-    "elkjs": "^0.9.3"
-  },
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "mermaid": "workspace:^"
@@ -42,6 +38,11 @@
     "mermaid": "^11.0.2"
   },
   "files": [
-    "dist"
-  ]
+    "dist",
+    "types.d.ts"
+  ],
+  "dependencies": {
+    "d3": "^7.9.0",
+    "elkjs": "^0.9.3"
+  }
 }

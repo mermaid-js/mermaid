@@ -1389,22 +1389,20 @@ flowchart LR
 
 ### Renderer
 
-The layout of the diagram is done with the renderer. The default renderer is dagre.
+The layout of the diagram is done with the layout algorithm. The default is
+[ELK](https://www.eclipse.org/elk/), which handles larger and more complex
+diagrams well and is bundled with Mermaid.
 
-Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
-
-The _elk_ renderer is an experimental feature.
-You can change the renderer to elk by adding this directive:
+To use the classic Dagre layout instead:
 
 ```
 config:
-  flowchart:
-    defaultRenderer: "elk"
+  layout: dagre
 ```
 
-```note
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
-```
+The older `flowchart.defaultRenderer: "elk"` directive and the `flowchart-elk`
+diagram type still work, but are no longer needed — they predate `layout` and
+selected a renderer that is now the default.
 
 ### Width
 
