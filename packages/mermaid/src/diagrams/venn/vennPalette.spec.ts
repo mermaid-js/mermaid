@@ -1,12 +1,6 @@
 /**
- * The renderer reads `venn1`..`venn8` off the theme and falls back to a single
- * `primaryColor` for any it does not find, so a theme that defines none renders every
- * circle in one flat tone. That is what `redux-color` and `redux-dark-color` shipped:
- * no `venn*` variables at all, and nothing to report it, since the fallback is a valid
- * colour and the diagram renders without complaint.
- *
- * Two halves are pinned here: the themes that should define the variables do, and the
- * renderer paints from them.
+ * A theme defining no `venn*` renders every circle in one flat `primaryColor`, which is
+ * what the redux colour themes shipped -- silently, since the fallback is a valid colour.
  */
 import { describe, expect, it, vi } from 'vitest';
 import * as configModule from '../../config.js';
@@ -14,7 +8,7 @@ import themes from '../../themes/index.js';
 import type { Diagram } from '../../Diagram.js';
 import { draw } from './vennRenderer.js';
 
-/** How many the renderer reads. Matches `theme-dark` and `theme-neutral`. */
+/** How many the renderer reads. */
 const VENN_SLOTS = 8;
 
 const slots = Array.from({ length: VENN_SLOTS }, (_, i) => i);
@@ -29,13 +23,8 @@ const vennColorsOf = (name: string) =>
   slots.map((i) => themeVariablesOf(name)[`venn${i + 1}`] as string | undefined);
 
 /**
- * The themes that deliberately ship no venn palette, so their circles stay one flat
- * `primaryColor`. Listed rather than derived: each carries a `cScale` that is unusable
- * here -- uniform grey in `redux`, near-black on a dark background in the other three --
- * so flat is the better of the two, and that is a decision rather than an omission.
- *
- * A new theme added without venn colours fails the exhaustiveness check below instead of
- * silently rendering flat.
+ * Deliberately flat: their `cScale` is uniform grey in `redux` and near-black in the
+ * others. Listed, so a new theme without venn colours fails the check below.
  */
 const NO_VENN_PALETTE = ['neo', 'neo-dark', 'redux', 'redux-dark'];
 
@@ -61,12 +50,7 @@ describe.each(NO_VENN_PALETTE)('%s venn colours', (name) => {
   });
 });
 
-/**
- * The colour themes take `borderColorArray` -- the same categorical palette flowchart
- * subgraphs and swimlane lanes are painted from -- so a venn reads as part of the theme
- * rather than as its own scheme. Asserted against the array rather than against hex, so
- * retuning the palette does not need this file edited.
- */
+/** Asserted against the array rather than hex, so retuning the palette needs no edit. */
 describe.each(['redux-color', 'redux-dark-color'])('%s venn palette', (name) => {
   it('takes the theme categorical palette', () => {
     const palette = themeVariablesOf(name).borderColorArray as string[];
@@ -123,8 +107,7 @@ describe('renderer palette fallback', () => {
   });
 
   it('falls back to one colour, not to undefined, without a palette', async () => {
-    // Pins the flat fallback itself, not how it is reached: the empty-palette guard in
-    // the renderer is a readability change and produces the same fills without it.
+    // Pins the fallback, not how it is reached: the renderer guard changes no output.
     const fills = (await drawWithTheme('redux')).filter(Boolean);
 
     expect(fills.length).toBeGreaterThanOrEqual(2);

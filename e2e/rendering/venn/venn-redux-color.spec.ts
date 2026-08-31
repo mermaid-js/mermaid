@@ -2,10 +2,8 @@ import { test, expect, type Page } from '@playwright/test';
 import { renderGraph } from '../../helpers/util.ts';
 
 /**
- * The venn fixtures under `e2e/diagrams/venn` give Argos its coverage of the colours.
- * These assert the thing a screenshot cannot state: that the circles are painted from the
- * theme palette and differ from each other, rather than all landing on the single
- * `primaryColor` fallback the renderer uses when a theme defines no `venn*` variables.
+ * What a screenshot cannot state: the circles differ from each other, rather than all
+ * landing on the single `primaryColor` fallback.
  */
 const threeSets = `venn-beta
   title Innovation

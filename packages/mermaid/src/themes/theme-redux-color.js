@@ -322,10 +322,8 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
-    /* The circles are the diagram's participants, so they take the categorical palette
-       rather than shades of one hue. `borderColorArray` and not `cScale`, which is a
-       shade lighter: the renderer paints the fill at 0.1 opacity and leans on the stroke
-       and the label, both of which want the more saturated tone. */
+    /* `borderColorArray` and not the lighter `cScale`: the fill is painted at 0.1
+       opacity, so the stroke and the label carry the circle. */
     for (let i = 0; i < 8; i++) {
       this['venn' + (i + 1)] =
         this['venn' + (i + 1)] ?? this.borderColorArray[i % this.borderColorArray.length];
