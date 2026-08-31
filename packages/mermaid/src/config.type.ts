@@ -1679,7 +1679,7 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
   /**
    * This sets whether an element shows its stereotype - the bracketed type line
    * under its name, such as `[Software System]` or `[Container: JavaScript]`, and
-   * the type on a boundary label. A single element can override this with
+   * the type on a boundary label. A single element or boundary can override this with
    * `UpdateElementStyle(alias, $showStereotype="false")`.
    *
    */
