@@ -206,9 +206,27 @@ function createFormattedText(
  * TODO: If we're using `.textContent`, we can probably skip sanitization entirely.
  */
 function decodeHTMLEntities(text: string): string {
-  // We only need to decode the few entries that `sanitizeText` encodes.
-  const regex = /&(amp|lt|gt);/g;
-  return text.replace(regex, (match, entity) => {
+  // Two things arrive here as entities: what `sanitizeText` encodes, and mermaid's own
+  // `#name;` / `#nnn;` codes, which `encodeEntities`/`decodeEntities` turn into `&name;`
+  // and `&#nnn;`. HTML labels get those resolved by the browser, but this text is applied
+  // with `.text()`, so anything left encoded shows up literally.
+  const regex = /&(#\d+|#[Xx][\dA-Fa-f]+|[A-Za-z][\dA-Za-z]*);/g;
+  return text.replace(regex, (match, entity: string) => {
+    if (entity.startsWith('#')) {
+      const isHex = entity[1] === 'x' || entity[1] === 'X';
+      const codePoint = Number.parseInt(isHex ? entity.slice(2) : entity.slice(1), isHex ? 16 : 10);
+
+      if (!Number.isInteger(codePoint) || codePoint < 0 || codePoint > 0x10ffff) {
+        return match;
+      }
+
+      try {
+        return String.fromCodePoint(codePoint);
+      } catch {
+        return match;
+      }
+    }
+
     switch (entity) {
       case 'amp':
         return '&';
@@ -217,7 +235,17 @@ function decodeHTMLEntities(text: string): string {
       case 'gt':
         return '>';
       default:
-        return match;
+        break;
+    }
+
+    // Any other named entity is decoded on its own, so nothing around it can be read as
+    // markup: a label may legitimately contain a bare `<`.
+    try {
+      const decoded = new DOMParser().parseFromString(match, 'text/html').documentElement
+        .textContent;
+      return decoded && decoded !== match ? decoded : match;
+    } catch {
+      return match;
     }
   });
 }

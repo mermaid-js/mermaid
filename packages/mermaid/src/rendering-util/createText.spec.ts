@@ -99,4 +99,18 @@ describe('createText', () => {
       expect(output.textContent).toEqual(expected);
     }
   );
+
+  it.for([{ useHtmlLabels: false }, { useHtmlLabels: true }])(
+    'resolves the documented entity codes when useHtmlLabels is $useHtmlLabels',
+    async ({ useHtmlLabels }) => {
+      // What `#quot;` and `#9829;` have become by the time a label is rendered.
+      const input = 'A double quote:&quot; and a dec char:&#9829;';
+      const expected = 'A double quote:" and a dec char:♥';
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+      const output = await createText(select(svgGroup), input, { useHtmlLabels, markdown: false });
+      expect(output.textContent).toEqual(expected);
+    }
+  );
 });
