@@ -108,6 +108,45 @@ describe('stick-figure actor sizing', () => {
     expect(neoHead).toBe(classicHead);
   });
 
+  it('draws the glyph smaller than its box, centred in it', async () => {
+    // The figure is deliberately inset -- `ACTOR_GLYPH_SCALE` -- while the box it reports stays
+    // full size. Centred rather than top-anchored, so shrinking it does not leave it riding up
+    // against the top edge with a gap above the label.
+    const { actor, root } = await drawOne('actor', 'neo');
+    const top = 100 + -5; // actorY + ACTOR_GLYPH_TOP
+    const bottom = 100 + 60; // actorY + ACTOR_GLYPH_BOTTOM
+
+    const figure = root.querySelector('.actor-man')!;
+    const circle = figure.querySelector('circle')!;
+    const cy = Number(circle.getAttribute('cy'));
+    const r = Number(circle.getAttribute('r'));
+    const feet = Math.max(
+      ...[...figure.querySelectorAll('line')].map((l) => Number(l.getAttribute('y2') ?? 0))
+    );
+
+    expect(cy - r).toBeGreaterThan(top);
+    expect(feet).toBeLessThan(bottom);
+    // Equal insets top and bottom.
+    expect(cy - r - top).toBeCloseTo(bottom - feet, 5);
+    expect(actor.height).toBe(bottom - top);
+  });
+
+  it('keeps the label and the reported height independent of the glyph scale', async () => {
+    // The regression this whole change is about: the label offset and `actor.height` must be keyed
+    // to the box, so resizing the figure never moves the label or the surrounding layout.
+    const { actor, root } = await drawOne('actor', 'neo');
+    const figure = root.querySelector('.actor-man')!;
+    const circle = figure.querySelector('circle')!;
+    const glyphHeight =
+      Math.max(
+        ...[...figure.querySelectorAll('line')].map((l) => Number(l.getAttribute('y2') ?? 0))
+      ) -
+      (Number(circle.getAttribute('cy')) - Number(circle.getAttribute('r')));
+
+    expect(glyphHeight).toBeLessThan(actor.height);
+    expect(labelY(root)).toBe(100 + 35 + actor.height / 2);
+  });
+
   it('reports a height that is not shrunk by the look', async () => {
     const classic = await drawOne('actor', 'classic');
     const neo = await drawOne('actor', 'neo');

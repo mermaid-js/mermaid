@@ -9,6 +9,21 @@ import common, {
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
+
+/**
+ * The stick figure's geometry, in unscaled units measured down from the top of its box: the head
+ * circle reaches `TOP` and the feet reach `BOTTOM`.
+ *
+ * `SCALE` resizes the drawn glyph only. The label offset and the height the actor reports back into
+ * lifeline placement are keyed to this box rather than to the glyph, so the figure can be resized
+ * without dragging the label or the surrounding layout with it -- which is exactly what went wrong
+ * when `neo` scaled the figure and everything else followed.
+ */
+const ACTOR_GLYPH_TOP = -5;
+const ACTOR_GLYPH_BOTTOM = 60;
+const ACTOR_GLYPH_HEIGHT = ACTOR_GLYPH_BOTTOM - ACTOR_GLYPH_TOP;
+const ACTOR_GLYPH_CENTER = (ACTOR_GLYPH_TOP + ACTOR_GLYPH_BOTTOM) / 2;
+const ACTOR_GLYPH_SCALE = 0.8;
 const TOP_ACTOR_CLASS = 'actor-top';
 const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 const ACTOR_BOX_CLASS = 'actor-box';
@@ -1214,46 +1229,50 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actElem.attr('data-et', 'participant').attr('data-type', 'actor').attr('data-id', actor.name);
   }
 
-  // Drawn at one size for every look. `neo` used to halve the figure and shift it up, which left
-  // the actor smaller than the box shapes beside it, reported a halved `actor.height` back into
-  // lifeline placement, and moved the label off the baseline every other participant shape uses.
+  // Scaled about the figure's own centre, so shrinking it leaves it where it was in the box
+  // instead of riding up towards the top edge.
+  const gy = (offset) =>
+    actorY + ACTOR_GLYPH_CENTER + (offset - ACTOR_GLYPH_CENTER) * ACTOR_GLYPH_SCALE;
+  const gx = (offset) => center + offset * ACTOR_GLYPH_SCALE;
+
   actElem
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', center)
-    .attr('y1', actorY + 25)
+    .attr('y1', gy(25))
     .attr('x2', center)
-    .attr('y2', actorY + 45);
+    .attr('y2', gy(45));
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
-    .attr('x1', center - ACTOR_TYPE_WIDTH / 2)
-    .attr('y1', actorY + 33)
-    .attr('x2', center + ACTOR_TYPE_WIDTH / 2)
-    .attr('y2', actorY + 33);
+    .attr('x1', gx(-ACTOR_TYPE_WIDTH / 2))
+    .attr('y1', gy(33))
+    .attr('x2', gx(ACTOR_TYPE_WIDTH / 2))
+    .attr('y2', gy(33));
   actElem
     .append('line')
-    .attr('x1', center - ACTOR_TYPE_WIDTH / 2)
-    .attr('y1', actorY + 60)
+    .attr('x1', gx(-ACTOR_TYPE_WIDTH / 2))
+    .attr('y1', gy(60))
     .attr('x2', center)
-    .attr('y2', actorY + 45);
+    .attr('y2', gy(45));
   actElem
     .append('line')
     .attr('x1', center)
-    .attr('y1', actorY + 45)
-    .attr('x2', center + (ACTOR_TYPE_WIDTH / 2 - 2))
-    .attr('y2', actorY + 60);
+    .attr('y1', gy(45))
+    .attr('x2', gx(ACTOR_TYPE_WIDTH / 2 - 2))
+    .attr('y2', gy(60));
 
   const circle = actElem.append('circle');
   circle.attr('cx', actor.x + actor.width / 2);
-  circle.attr('cy', actorY + 10);
-  circle.attr('r', 15);
+  circle.attr('cy', gy(10));
+  circle.attr('r', 15 * ACTOR_GLYPH_SCALE);
   circle.attr('width', actor.width);
   circle.attr('height', actor.height);
 
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height;
+  // The box, not the drawn glyph. Measuring the glyph back into `actor.height` is what let the
+  // scale factor leak into the label position and into lifeline placement.
+  actor.height = ACTOR_GLYPH_HEIGHT;
 
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
