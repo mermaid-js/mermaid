@@ -7,8 +7,37 @@ import common, {
   renderKatexSanitized,
 } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
+import { GLYPH_BAND_HEIGHT, actorLabelHeight, footerBands, headerBands } from './actorBands.js';
 
 export const ACTOR_TYPE_WIDTH = 18 * 2;
+
+/**
+ * The stick figure's geometry, in unscaled units measured down from the top of its classic box:
+ * the head circle reaches `TOP` and the feet reach `BOTTOM`. Under `neo` the figure is scaled to
+ * fit the shared glyph band (see `actorBands.ts`); under `classic` it draws at these coordinates
+ * unchanged, as it always has.
+ */
+const ACTOR_GLYPH_TOP = -5;
+const ACTOR_GLYPH_BOTTOM = 60;
+const ACTOR_GLYPH_HEIGHT = ACTOR_GLYPH_BOTTOM - ACTOR_GLYPH_TOP;
+
+/**
+ * Band geometry for one participant under `neo`; null under every other look, which keeps each
+ * shape's legacy geometry byte-for-byte. See `actorBands.ts` for the model. `actor.height` is the
+ * row height here: `calculateActorMargins` gives each actor its own stack height and returns the
+ * max into `conf.height`, and `addActorRenderingData` (sequenceRenderer.ts) then raises every
+ * actor to that shared value via `getMax(actor.height || conf.height, conf.height)`. That second
+ * step is what makes the header datum `actorY + actor.height` one line across the row -- if it is
+ * ever refactored away, the datum splits per actor and the band model breaks.
+ */
+const neoBands = (actor, conf, isFooter, actorY) => {
+  if (conf.look !== 'neo') {
+    return null;
+  }
+  const textHeight = actorLabelHeight(actor, conf);
+  return isFooter ? footerBands(actorY, textHeight) : headerBands(actorY, actor.height, textHeight);
+};
+
 const TOP_ACTOR_CLASS = 'actor-top';
 const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 const ACTOR_BOX_CLASS = 'actor-box';
@@ -467,8 +496,10 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramI
   let height = actor.height;
   if (rectElem.node) {
     const bounds = rectElem.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+    if (conf.look !== 'neo') {
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   return height;
@@ -542,6 +573,11 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
 
   // DRAW STACKED RECTANGLES
   const offset = 6;
+  if (conf.look === 'neo') {
+    // The stack must not cross the datum. Both copies are drawn `offset` shorter, so the shadow
+    // copy's bottom edge lands exactly on the lifeline start instead of poking below it.
+    rect.height = actor.height - offset;
+  }
   const shadowRect = {
     ...rect,
     x: rect.x + (isFooter ? -offset : -offset),
@@ -587,8 +623,10 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
   let height = actor.height;
   if (rectElem.node) {
     const bounds = rectElem.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+    if (conf.look !== 'neo') {
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   if (!isFooter) {
@@ -725,8 +763,10 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
   const lastPath = cylinderGroup.select('path:last-child');
   if (lastPath.node()) {
     const bounds = lastPath.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
+    if (conf.look !== 'neo') {
+      actor.height = bounds.height;
+      height = bounds.height;
+    }
   }
 
   if (!isFooter) {
@@ -741,7 +781,8 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
 const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 75;
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 75;
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables;
 
@@ -784,7 +825,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  const cy = actorY + 32;
+  const cy = bands ? bands.glyphBottomY - 22 : actorY + 32;
   const r = 22;
 
   actElem
@@ -822,14 +863,16 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
     actElem.style('stroke', actorBorder);
     actElem.style('fill', actorBkg);
   }
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
+  if (!bands) {
+    const bounds = actElem.node().getBBox();
+    actor.height = bounds.height + 2 * (conf?.sequence?.labelBoxHeight ?? 0);
+  }
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
-    rect.y + r + (!isFooter ? 12 : 5),
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + r + (!isFooter ? 12 : 5),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
@@ -848,7 +891,8 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
 const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 75;
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 75;
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -873,7 +917,7 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
   rect.class = 'actor';
 
   const cx = actor.x + actor.width / 2;
-  const cy = actorY + (!isFooter ? 25 : 10);
+  const cy = bands ? bands.glyphBottomY - 22 : actorY + (!isFooter ? 25 : 10);
   const r = 22;
 
   actElem
@@ -902,8 +946,10 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     actElem.style('fill', paletteColor(bkgColorArray, actorCount));
   }
 
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + (conf?.sequence?.labelBoxHeight ?? 0);
+  if (!bands) {
+    const bounds = actElem.node().getBBox();
+    actor.height = bounds.height + (conf?.sequence?.labelBoxHeight ?? 0);
+  }
 
   if (!isFooter) {
     actorCnt++;
@@ -928,20 +974,23 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     actor.description,
     actElem,
     rect.x,
-    rect.y + (!isFooter ? 30 : 15),
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + (!isFooter ? 30 : 15),
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
     conf
   );
 
+  if (!bands) {
+    // Legacy nudges. Under the band model the circle is placed exactly, so any leftover translate
+    // would reintroduce the stagger the model exists to remove -- getBBox does not see transforms,
+    // which is how these hid from every measurement while being plainly visible on screen.
+    actElem.attr('transform', `translate(${0}, ${isFooter ? r : r / 2 - 5})`);
+  }
   if (!isFooter) {
-    actElem.attr('transform', `translate(${0}, ${r / 2 - 5})`);
     actElem.attr('data-et', 'participant');
     actElem.attr('data-type', 'entity');
     actElem.attr('data-id', actor.name);
-  } else {
-    actElem.attr('transform', `translate(${0}, ${r})`);
   }
 
   return actor.height;
@@ -950,7 +999,8 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
 const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height + 2 * conf.boxTextMargin;
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + actor.height + 2 * conf.boxTextMargin;
   const { theme, themeVariables, look } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
@@ -1008,20 +1058,25 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
   rect.class = cssclass;
   rect.name = actor.name;
 
-  // Cylinder dimensions
+  // Cylinder dimensions. The width stays proportional, but under the band model the height is
+  // fixed: `width / 3` let a long participant name make the icon taller, and the icon's height
+  // must not be able to move anything below it.
   rect.x = actor.x;
   rect.y = actorY;
   const w = rect.width / 3;
-  const h = rect.width / 3;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
+  const h = bands ? GLYPH_BAND_HEIGHT : rect.width / 3;
+  // Vertical anchor: the drawn cylinder spans cylinderY + ry .. cylinderY + h + ry after the
+  // translate below, so this puts its bottom on the glyph band's bottom edge.
+  const cylinderY = bands ? bands.glyphBottomY - h - ry : rect.y;
 
   // Cylinder base group
   const cylinderGroup = g.append('g');
   cylinderGroup.attr('class', cssclass);
 
   const d = `
-  M ${rect.x},${rect.y + ry}
+  M ${rect.x},${cylinderY + ry}
   a ${rx},${ry} 0 0 0 ${w},0
   a ${rx},${ry} 0 0 0 -${w},0
   l 0,${h - 2 * ry}
@@ -1048,17 +1103,19 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
     actor.description,
     g,
     rect.x,
-    rect.y + 35,
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + 35,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_BOX_CLASS}` },
     conf
   );
 
-  const lastPath = cylinderGroup.select('path:last-child');
-  if (lastPath.node()) {
-    const bounds = lastPath.node().getBBox();
-    actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  if (!bands) {
+    const lastPath = cylinderGroup.select('path:last-child');
+    if (lastPath.node()) {
+      const bounds = lastPath.node().getBBox();
+      actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+    }
   }
 
   if (!isFooter) {
@@ -1073,8 +1130,10 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 80;
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 80;
   const radius = 22;
+  const iconCenterY = bands ? bands.glyphBottomY - radius : actorY + 12;
   const line = elem.append('g').lower();
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
@@ -1119,22 +1178,22 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 12)
+    .attr('y1', iconCenterY)
     .attr('x2', actor.x + actor.width / 2 - 15)
-    .attr('y2', actorY + 12);
+    .attr('y2', iconCenterY);
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
     .attr('x1', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y1', actorY + 2) // starting Y
+    .attr('y1', iconCenterY - 10) // starting Y
     .attr('x2', actor.x + actor.width / 2 - radius * 2.5)
-    .attr('y2', actorY + 22); // ending Y (26px long, adjust as needed)
+    .attr('y2', iconCenterY + 10); // ending Y
 
   actElem
     .append('circle')
     .attr('cx', actor.x + actor.width / 2)
-    .attr('cy', actorY + 12)
+    .attr('cy', iconCenterY)
     .attr('r', radius);
 
   if (look === 'neo') {
@@ -1148,21 +1207,26 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
   } else {
     actElem.style('stroke', actorBorder);
   }
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  if (!bands) {
+    const bounds = actElem.node().getBBox();
+    actor.height = bounds.height + (conf.sequence.labelBoxHeight ?? 0);
+  }
 
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
     actElem,
     rect.x,
-    rect.y + 15,
+    bands ? bands.labelCenterY - rect.height / 2 : rect.y + 15,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
     conf
   );
 
-  actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
+  if (!bands) {
+    // Legacy nudge; see the note in drawActorTypeEntity.
+    actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
+  }
 
   if (!isFooter) {
     actElem.attr('data-et', 'participant');
@@ -1176,8 +1240,9 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 80;
-  const { look, theme, themeVariables } = conf;
+  const bands = neoBands(actor, conf, isFooter, actorY);
+  const centerY = bands ? bands.lifelineStartY : actorY + 80;
+  const { theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
   const line = elem.append('g').lower();
@@ -1214,58 +1279,59 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actElem.attr('data-et', 'participant').attr('data-type', 'actor').attr('data-id', actor.name);
   }
 
-  // Scaling the stickman
-  const scale = look === 'neo' ? 0.5 : 1;
-
-  // Adjusting stickman to maintain the same position
-  const adjustedActorY = look === 'neo' ? actorY + (1 - scale) * 30 : actorY; // Adjust for the torso and head shift
+  // Under the band model the figure is scaled to fill the shared glyph band, feet on its bottom
+  // edge, the same size as the round icons beside it. `classic` draws the legacy coordinates.
+  const glyphScale = bands ? GLYPH_BAND_HEIGHT / ACTOR_GLYPH_HEIGHT : 1;
+  const gy = (offset) =>
+    bands ? bands.glyphBottomY - (ACTOR_GLYPH_BOTTOM - offset) * glyphScale : actorY + offset;
+  const gx = (offset) => center + offset * glyphScale;
 
   actElem
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', center)
-    .attr('y1', adjustedActorY + 25 * scale)
+    .attr('y1', gy(25))
     .attr('x2', center)
-    .attr('y2', adjustedActorY + 45 * scale);
+    .attr('y2', gy(45));
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
-    .attr('x1', center - (ACTOR_TYPE_WIDTH / 2) * scale)
-    .attr('y1', adjustedActorY + 33 * scale)
-    .attr('x2', center + (ACTOR_TYPE_WIDTH / 2) * scale)
-    .attr('y2', adjustedActorY + 33 * scale);
+    .attr('x1', gx(-ACTOR_TYPE_WIDTH / 2))
+    .attr('y1', gy(33))
+    .attr('x2', gx(ACTOR_TYPE_WIDTH / 2))
+    .attr('y2', gy(33));
   actElem
     .append('line')
-    .attr('x1', center - (ACTOR_TYPE_WIDTH / 2) * scale)
-    .attr('y1', adjustedActorY + 60 * scale)
+    .attr('x1', gx(-ACTOR_TYPE_WIDTH / 2))
+    .attr('y1', gy(60))
     .attr('x2', center)
-    .attr('y2', adjustedActorY + 45 * scale);
+    .attr('y2', gy(45));
   actElem
     .append('line')
     .attr('x1', center)
-    .attr('y1', adjustedActorY + 45 * scale)
-    .attr('x2', center + (ACTOR_TYPE_WIDTH / 2 - 2) * scale)
-    .attr('y2', adjustedActorY + 60 * scale);
+    .attr('y1', gy(45))
+    .attr('x2', gx(ACTOR_TYPE_WIDTH / 2 - 2))
+    .attr('y2', gy(60));
 
   const circle = actElem.append('circle');
   circle.attr('cx', actor.x + actor.width / 2);
-  circle.attr('cy', adjustedActorY + 10 * scale);
-  circle.attr('r', 15 * scale);
-  circle.attr('width', actor.width * scale);
-  circle.attr('height', actor.height * scale);
+  circle.attr('cy', gy(10));
+  circle.attr('r', 15 * glyphScale);
+  circle.attr('width', actor.width);
+  circle.attr('height', actor.height);
 
-  // Get the bounds of the stickman after scaling
-  const bounds = actElem.node().getBBox();
-  actor.height = bounds.height;
+  if (!bands) {
+    // Classic reports the glyph's fixed extent, as it always measured out to.
+    actor.height = ACTOR_GLYPH_HEIGHT;
+  }
 
-  // // Adjust the rect to match the scaled stickman
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
-  rect.y = adjustedActorY; // Use adjustedActorY for proper alignment
+  rect.y = actorY;
   rect.fill = '#eaeaea';
-  rect.width = actor.width; // Scale the width
-  rect.height = actor.height / scale; // Use the updated height from bounds
+  rect.width = actor.width;
+  rect.height = actor.height;
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
@@ -1282,7 +1348,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actor.description,
     actElem,
     rect.x,
-    adjustedActorY + 35 * scale - (look === 'neo' ? 10 : 0),
+    bands ? bands.labelCenterY - rect.height / 2 : actorY + 35,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },
