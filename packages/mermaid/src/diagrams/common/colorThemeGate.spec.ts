@@ -11,6 +11,7 @@ import { describe, expect, it } from 'vitest';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
+import swimlanesStyles from '../swimlanes/styles.js';
 import {
   COLOR_THEMES,
   DEFAULT_COLOR_SLOTS,
@@ -20,9 +21,16 @@ import {
   safeLook,
 } from './colorThemeGate.js';
 
+/**
+ * `swimlanes` wraps flowchart's stylesheet and appends its own lane rules, so it is a
+ * separate answer to the same questions -- and the one that has an `!important` rule of
+ * its own near the palette. Listed here so the gate is checked on what swimlanes actually
+ * ships rather than on the half of it that comes from flowchart.
+ */
 const STYLESHEETS = {
   class: classStyles,
   flowchart: flowchartStyles,
+  swimlanes: swimlanesStyles,
 } as const;
 
 const COLOUR_THEMES = [...COLOR_THEMES];
@@ -59,7 +67,10 @@ it('covers every registered theme between the two lists', () => {
 
 describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s stylesheet', (name) => {
   it.each(PLAIN_THEMES)('emits no per-item colour rules for %s', (themeName) => {
-    expect(render(name, themeName)).not.toContain('data-color-id');
+    // The slot marker, not the bare attribute name: `swimlanes` keys its unconditional
+    // lane-border rule off `:not([data-color-id])`, which is the absence of a slot rather
+    // than a rule for one.
+    expect(render(name, themeName)).not.toContain('data-color-id="color-');
   });
 
   it.each(COLOUR_THEMES)('emits one rule per palette slot for %s', (themeName) => {

@@ -225,6 +225,157 @@ test.describe('Swimlanes diagram', () => {
     await expect(shape).toHaveCSS('stroke-width', '4px');
   });
 
+  /**
+   * Lanes take a per-lane colour under the redux colour themes. The unit tests pin the
+   * generated CSS and the slot each lane is handed; only a render proves the stamped
+   * `data-color-id` actually meets the emitted selector on the element, which is the half
+   * that fails silently -- a mismatch leaves every lane the uncoloured grey.
+   *
+   * Asserted as "distinct and self-consistent" rather than against hex values, so the
+   * assertions keep holding when the palettes are retuned. The exact colours are pinned
+   * in `swimlanes/lanePalette.spec.ts`.
+   */
+  test.describe('redux colour theme lanes', () => {
+    const fiveLanes = `swimlane-beta TD
+        subgraph Intake
+          A[Request]
+        end
+        subgraph Review
+          B[Check]
+        end
+        subgraph Build
+          C[Assemble]
+        end
+        subgraph Ship
+          D[Deliver]
+        end
+        subgraph Support
+          E[Follow up]
+        end
+        A --> B --> C --> D --> E
+      `;
+
+    const laneStrokes = (page: Page, half: 'title' | 'body') =>
+      page
+        .locator(`g.cluster.swimlane rect.swimlane-${half}`)
+        .evaluateAll((rects) => rects.map((rect) => getComputedStyle(rect).stroke));
+
+    for (const theme of ['redux-color', 'redux-dark-color'] as const) {
+      test(`gives every lane its own colour under ${theme}`, async ({ page }, testInfo) => {
+        await renderSwimlanes(page, testInfo, fiveLanes, `swimlanes-${theme}-lanes`, { theme });
+
+        await assertStandaloneSwimlanesRendered(page);
+
+        const slots = await page
+          .locator('g.cluster.swimlane')
+          .evaluateAll((lanes) => lanes.map((lane) => lane.getAttribute('data-color-id')));
+        expect(slots).toHaveLength(5);
+        expect(slots.filter(Boolean)).toHaveLength(5);
+        expect(new Set(slots).size).toBe(5);
+
+        // Title band and body of one lane are the same colour; across lanes they differ.
+        const titles = await laneStrokes(page, 'title');
+        const bodies = await laneStrokes(page, 'body');
+        expect(titles).toEqual(bodies);
+        expect(new Set(titles).size).toBe(5);
+        // `none` would mean the palette rule never landed and nothing else painted it.
+        expect(titles.filter((stroke) => stroke === 'none')).toEqual([]);
+      });
+    }
+
+    test('paints the lane body fill only where the theme ships one', async ({ page }, testInfo) => {
+      await renderSwimlanes(page, testInfo, fiveLanes, 'swimlanes-lane-fill', {
+        theme: 'redux-color',
+      });
+
+      const fills = await page
+        .locator('g.cluster.swimlane rect.swimlane-body')
+        .evaluateAll((rects) => rects.map((rect) => getComputedStyle(rect).fill));
+      expect(new Set(fills).size).toBe(5);
+    });
+
+    test('keeps an explicit lane style ahead of the palette', async ({ page }, testInfo) => {
+      await renderSwimlanes(
+        page,
+        testInfo,
+        `swimlane-beta TD
+          subgraph Palette
+            A[Slot colour]
+          end
+          subgraph Styled
+            B[Own colour]
+          end
+          A --> B
+          style Styled fill:#00ff00,stroke:#0000ff
+        `,
+        'swimlanes-lane-user-style',
+        { theme: 'redux-color' }
+      );
+
+      const styled = page.locator('g.cluster.swimlane[data-id="Styled"] rect.swimlane-body');
+      await expect(styled).toHaveCSS('stroke', 'rgb(0, 0, 255)');
+      await expect(styled).toHaveCSS('fill', 'rgb(0, 255, 0)');
+    });
+
+    /**
+     * The default lane is synthesised by the layout rather than declared, so it is the one
+     * lane nothing upstream gives a `look` or a colour slot to. Without them it renders as
+     * a classic rect inside a handDrawn diagram and reuses the first lane's colour.
+     */
+    test('colours the synthetic default lane distinctly', async ({ page }, testInfo) => {
+      await renderSwimlanes(
+        page,
+        testInfo,
+        `swimlane-beta TD
+          subgraph OwnedLane
+            A[Owned node]
+          end
+          Loose[Loose node] --> A
+        `,
+        'swimlanes-default-lane-colour',
+        { theme: 'redux-color' }
+      );
+
+      const slots = await page
+        .locator('g.cluster.swimlane')
+        .evaluateAll((lanes) => lanes.map((lane) => lane.getAttribute('data-color-id')));
+      expect(slots).toHaveLength(2);
+      expect(new Set(slots).size).toBe(2);
+      expect(slots.filter(Boolean)).toHaveLength(2);
+    });
+
+    test('draws the synthetic default lane in the diagram look', async ({ page }, testInfo) => {
+      await renderSwimlanes(
+        page,
+        testInfo,
+        `swimlane-beta TD
+          subgraph OwnedLane
+            A[Owned node]
+          end
+          Loose[Loose node] --> A
+        `,
+        'swimlanes-default-lane-handdrawn',
+        { theme: 'redux-color', look: 'handDrawn' }
+      );
+
+      const defaultLane = page.locator('g.cluster.swimlane[data-id="__swimlane_default__"]');
+      await expect(defaultLane).toHaveAttribute('data-look', 'handDrawn');
+      // roughjs draws paths; a `rect` here means the classic branch ran instead.
+      await expect(defaultLane.locator('rect.swimlane-body')).toHaveCount(0);
+      await expect(defaultLane.locator('.swimlane-body path')).not.toHaveCount(0);
+    });
+
+    for (const theme of ['redux-color', 'redux-dark-color'] as const) {
+      test(`renders coloured lanes under ${theme}`, async ({ page }, testInfo) => {
+        await snapshotSwimlanes(page, testInfo, fiveLanes, { theme });
+      });
+
+      test(`renders coloured handdrawn lanes under ${theme}`, async ({ page }, testInfo) => {
+        await snapshotSwimlanes(page, testInfo, fiveLanes, { theme, look: 'handDrawn' });
+      });
+    }
+  });
+
   test('puts nodes without an explicit subgraph into a default swimlane', async ({
     page,
   }, testInfo) => {

@@ -44,6 +44,49 @@ describe('prepareLayoutForSwimlanes', () => {
     expect(grouped?.parentId).toBe('lane1');
   });
 
+  /**
+   * The synthetic lane is the one lane no declaration produced, so it is the one lane
+   * nothing upstream gave a `look` or a `colorIndex` to. Both are needed at render time
+   * and neither fails loudly when missing: without `look` the lane renders classic inside
+   * a handDrawn diagram and matches no `[data-look="..."]` palette rule, and reusing
+   * slot 0 paints it the same colour as the first declared lane.
+   */
+  it('gives the synthetic default lane the diagram look and a free colour slot', () => {
+    const layout: LayoutData = {
+      nodes: [
+        { id: 'lane1', isGroup: true, colorIndex: 0, look: 'handDrawn' } as any,
+        { id: 'nested', isGroup: true, parentId: 'lane1', colorIndex: 1 } as any,
+        { id: 'lane2', isGroup: true, colorIndex: 2, look: 'handDrawn' } as any,
+        { id: 'loose', isGroup: false } as any,
+      ],
+      edges: [],
+      config: { look: 'handDrawn' } as any,
+    };
+
+    prepareLayoutForSwimlanes(layout);
+
+    const defaultLane = layout.nodes.find((node) => node.id === DEFAULT_SWIMLANE_ID);
+
+    expect(defaultLane?.look).toBe('handDrawn');
+    // One past the highest slot handed out, so it collides with no declared container.
+    expect(defaultLane?.colorIndex).toBe(3);
+  });
+
+  it('starts the default lane at slot 0 when no container carries a colour slot', () => {
+    const layout: LayoutData = {
+      nodes: [{ id: 'loose', isGroup: false } as any],
+      edges: [],
+      config: {} as any,
+    };
+
+    prepareLayoutForSwimlanes(layout);
+
+    const defaultLane = layout.nodes.find((node) => node.id === DEFAULT_SWIMLANE_ID);
+
+    expect(defaultLane?.colorIndex).toBe(0);
+    expect(defaultLane?.look).toBeUndefined();
+  });
+
   it('only treats top-level groups as swimlane lanes', () => {
     const layout: LayoutData = {
       nodes: [
