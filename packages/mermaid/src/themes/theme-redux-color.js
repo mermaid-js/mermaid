@@ -86,6 +86,21 @@ class Theme {
       '#FFF1F2', //Rose-50
     ];
 
+    /* Usecase Diagram variables.
+
+       One colour per kind of element -- see `usecase.colorScheme`. Chosen from this theme's
+       own palette so the diagram stays on-brand, and kept to three well-separated hues that
+       can be checked for contrast once rather than per instance. The boundary frame is a
+       large area, so it takes the lightest treatment and leans on its border. */
+    this.usecaseActorBorder = '#A78BFA'; // Violet-400
+    this.usecaseActorBkg = '#F5F3FF'; // Violet-50
+    this.usecaseBorder = '#2DD4BF'; // Teal-400
+    this.usecaseBkg = '#F0FDFA'; // Teal-50
+    this.usecaseBoundaryBorder = '#BDBCCC';
+    this.usecaseBoundaryBkg = '#FAFAFC';
+    this.usecaseIncludeLine = '#38BDF8'; // Sky-400
+    this.usecaseExtendLine = '#FB923C'; // Orange-400
+
     this.filterColor = '#000000';
   }
   updateColors() {
@@ -307,6 +322,12 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
+    /* `borderColorArray` and not the lighter `cScale`: the fill is painted at 0.1
+       opacity, so the stroke and the label carry the circle. */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] =
+        this['venn' + (i + 1)] ?? this.borderColorArray[i % this.borderColorArray.length];
+    }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
