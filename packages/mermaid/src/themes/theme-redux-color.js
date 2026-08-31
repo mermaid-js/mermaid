@@ -322,6 +322,12 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
+    /* `borderColorArray` and not the lighter `cScale`: the fill is painted at 0.1
+       opacity, so the stroke and the label carry the circle. */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] =
+        this['venn' + (i + 1)] ?? this.borderColorArray[i % this.borderColorArray.length];
+    }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
