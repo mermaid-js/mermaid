@@ -160,7 +160,11 @@ class Theme {
     this.activationBorderColor = this.activationBorderColor || darken(this.secondaryColor, 10);
     this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
-    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
+    // Not tertiaryColor here. This theme pins tertiaryColor to its background, so deriving the
+    // `rect` section band from it draws white on white -- present in the DOM, invisible on screen.
+    // Keying it to the background instead keeps the band a shade of whatever the background is,
+    // including when the background is overridden through themeVariables.
+    this.rectBkgColor = this.rectBkgColor || darken(this.background, 4);
 
     /* Gantt chart variables */
     const primaryColor = '#ECECFE';
