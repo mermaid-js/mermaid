@@ -64,9 +64,10 @@ const roleColors = (options: UsecaseStyleOptions) => ({
  * cases and system boundaries all take a slot from one cycle assigned in `usecaseDb`;
  * notes and JSON tables are never stamped, so they keep the theme's fixed colours.
  *
- * Every selector here is scoped to a `usecase-` class rather than a bare `.node`, which is
- * what keeps the rules off the note and JSON-table shapes -- both of those are stamped
- * `color-0` by the shared fallback in `stampColorSlot` when no slot was assigned.
+ * Every selector here is scoped to a `usecase-` class rather than a bare `.node`. `usecaseDb`
+ * hands a slot only to the three roles above, and the shapes stamp only what it assigned, so
+ * a note or JSON table carries no `data-color-id` to match -- the scoping keeps these rules
+ * narrow rather than being what makes them miss.
  *
  * Nothing is `!important`: the shapes put user `classDef` / `style` declarations in an
  * inline `style` attribute, which has to keep winning over the theme palette.
