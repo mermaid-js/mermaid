@@ -5,13 +5,18 @@ import * as configApi from '../../config.js';
 import getStyles from './styles.js';
 
 /**
- * Per-block palette slots, the same mechanism the flowchart uses for its subgraphs:
- * the db hands each block a `colorIndex`, the renderer stamps it as `data-color-id`,
+ * Palette slots for composites, the same mechanism the flowchart uses for its subgraphs:
+ * the db hands each container a `colorIndex`, the renderer stamps it as `data-color-id`,
  * and this stylesheet maps the slot to a border and a fill.
  *
- * Both halves are pinned here because either one alone is silent. A slot with no rule
- * renders uncoloured, and a rule with no slot is dead CSS — neither throws, so only a
- * test that checks them together catches a drift between them.
+ * Containers only, deliberately. `flowDb` builds its `declarationIndex` by walking
+ * `subGraphs` and nothing else, and every selector its stylesheet emits is a `.cluster`
+ * or a collapsed subgraph — a plain node never takes a slot. A block diagram's containers
+ * are its composites, so those are what take one here, and the simple shapes keep the
+ * flat theme colour.
+ *
+ * Both halves are pinned because either one alone is silent: a slot with no rule renders
+ * uncoloured, and a rule with no slot is dead CSS. Neither throws.
  */
 describe('block colour slots', () => {
   beforeEach(() => {
@@ -24,46 +29,74 @@ describe('block colour slots', () => {
 
   const indexOf = (id: string) => db.getBlock(id)?.colorIndex;
 
-  it('numbers blocks in declaration order', () => {
+  it('numbers composites in declaration order', () => {
+    block.parse(`block-beta
+      block:first
+        a
+      end
+      block:second
+        b
+      end
+      block:third
+        c
+      end
+    `);
+
+    expect([indexOf('first'), indexOf('second'), indexOf('third')]).toEqual([0, 1, 2]);
+  });
+
+  it('gives no slot to a simple block', () => {
+    // The flowchart colours containers and leaves its nodes alone; so does this.
     block.parse(`block-beta
       a
       b
-      c
+      block:group
+        c
+      end
     `);
 
-    expect([indexOf('a'), indexOf('b'), indexOf('c')]).toEqual([0, 1, 2]);
+    expect(indexOf('a')).toBeUndefined();
+    expect(indexOf('b')).toBeUndefined();
+    expect(indexOf('c')).toBeUndefined();
+    expect(indexOf('group')).toBe(0);
   });
 
-  it('gives a composite its own slot before the blocks it contains', () => {
-    // Source order, not completion order. A container is declared before its
-    // children, so it must take the lower slot even though it closes last.
+  it('numbers an outer composite before one nested inside it', () => {
+    // Source order, not completion order: a container is declared before its children,
+    // so it must take the lower slot even though it closes last.
     block.parse(`block-beta
-      outer["Outer"]
-      block:group
-        inner1
-        inner2
+      block:outer
+        block:inner
+          a
+        end
       end
-      tail
+      block:sibling
+        b
+      end
     `);
 
     expect(indexOf('outer')).toBe(0);
-    expect(indexOf('group')).toBe(1);
-    expect(indexOf('inner1')).toBe(2);
-    expect(indexOf('inner2')).toBe(3);
-    expect(indexOf('tail')).toBe(4);
+    expect(indexOf('inner')).toBe(1);
+    expect(indexOf('sibling')).toBe(2);
   });
 
-  it('does not spend a slot on a space', () => {
-    // A space paints nothing, so giving it a slot would put a gap in the cycle and
-    // shift every colour after it for no visible reason.
+  it('runs one counter across the whole diagram', () => {
+    // Not per container. Restarting the count inside each one would open every
+    // container's first child on the same colour as its cousins.
     block.parse(`block-beta
-      a
-      space
-      b
+      block:a1
+        block:a2
+          x
+        end
+      end
+      block:b1
+        block:b2
+          y
+        end
+      end
     `);
 
-    expect(indexOf('a')).toBe(0);
-    expect(indexOf('b')).toBe(1);
+    expect([indexOf('a1'), indexOf('a2'), indexOf('b1'), indexOf('b2')]).toEqual([0, 1, 2, 3]);
   });
 
   // The base variables every block stylesheet reads, so these tests fail on the
@@ -88,16 +121,26 @@ describe('block colour slots', () => {
     bkgColorArray: ['#eeeeee', '#dddddd'],
   } as any;
 
-  it('emits one rule per palette entry under a colour theme', () => {
+  it('emits one composite rule per palette entry under a colour theme', () => {
     const styles = getStyles(paletteOptions);
 
-    expect(styles).toContain('[data-look="neo"][data-color-id="color-0"]');
-    expect(styles).toContain('[data-look="neo"][data-color-id="color-1"]');
+    expect(styles).toContain('[data-look="neo"][data-color-id="color-0"].node rect.composite');
+    expect(styles).toContain('[data-look="neo"][data-color-id="color-1"].node rect.composite');
     expect(styles).toContain('#111111');
     expect(styles).toContain('#eeeeee');
     // Exactly as many slots as the palette has entries: a slot with no rule renders
     // uncoloured, and a rule with no slot is dead CSS.
     expect(styles).not.toContain('color-2');
+  });
+
+  it('leaves the simple shapes to the flat theme colour', () => {
+    const styles = getStyles(paletteOptions);
+    const paletteRules = styles.slice(0, styles.indexOf('.label {'));
+
+    // Every palette selector names `rect.composite`; nothing reaches a plain block.
+    for (const selector of paletteRules.match(/\[data-color-id="color-\d+"][^{]*/g) ?? []) {
+      expect(selector).toContain('rect.composite');
+    }
   });
 
   it('emits nothing for a theme that carries no palette', () => {

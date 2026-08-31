@@ -162,22 +162,25 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
   if (obj.type !== 'space') {
     const config = getConfig();
     const el = await insertNode(elem, node, { config });
-    /* Stamped here rather than inside the shapes, because a block diagram draws through a
-       dozen different ones and only `squareRect` stamps for itself. Doing it once on the
-       element `insertNode` returns colours every block shape alike, and keeps the change
-       inside the block diagram: no other diagram routes through this call, so nothing
-       else can start picking up a slot it did not ask for.
+    /* Only where a slot was actually assigned -- composites. `stampColorSlot` falls back
+       to `colorIndex ?? 0`, so calling it unconditionally would stamp every plain block
+       with slot 0 and paint the whole diagram one colour. `squareRect.ts` guards the same
+       way for the same reason.
 
-       A no-op unless the theme carries a palette, which is what `stampColorSlot` checks. */
-    stampColorSlot(
-      // `insertNode` returns an anchor instead of a group when the node carries a link,
-      // and both are `SVGGraphicsElement`s -- but the union of the two selections is not
-      // assignable to one instantiation of the generic, so it is narrowed here.
-      el as D3Selection<SVGGraphicsElement>,
-      node.colorIndex,
-      config.theme,
-      config.themeVariables?.borderColorArray
-    );
+       Stamped here rather than inside the shapes because `composite.ts` does not stamp
+       for itself, and doing it in the block renderer keeps the change inside the block
+       diagram: no other diagram routes through this call. */
+    if (node.colorIndex !== undefined) {
+      stampColorSlot(
+        // `insertNode` returns an anchor instead of a group when the node carries a
+        // link, and both are `SVGGraphicsElement`s -- but the union of the two selections
+        // is not assignable to one instantiation of the generic, so it is narrowed here.
+        el as D3Selection<SVGGraphicsElement>,
+        node.colorIndex,
+        config.theme,
+        config.themeVariables?.borderColorArray
+      );
+    }
     block.intersect = node?.intersect;
     positionNode(node);
   }

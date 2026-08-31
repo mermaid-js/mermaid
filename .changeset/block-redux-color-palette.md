@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix(block): apply the redux colour palette to block diagrams. Blocks now take a per-block colour under `redux-color` and `redux-dark-color` — the same mechanism flowchart subgraphs use — instead of rendering flat. `redux-color` is the default theme, so this is what a block diagram drawn with no theme set now looks like. Colours follow declaration order, a composite takes its slot before the blocks it contains, `space` consumes none, and `classDef`/`style` still win.
+fix(block): apply the redux colour palette to composite blocks. Composites now take a per-container colour under `redux-color` and `redux-dark-color`, matching how flowchart subgraphs are coloured — one counter over containers, in declaration order, with the plain shapes left on the flat theme colour. `redux-color` is the default theme, so this is what a block diagram drawn with no theme set now looks like. `classDef`/`style` still win.

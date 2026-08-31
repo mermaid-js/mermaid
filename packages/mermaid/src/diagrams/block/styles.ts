@@ -27,23 +27,15 @@ export interface BlockChartStyleOptions {
 }
 
 /**
- * Per-block palette rules, the same mechanism the flowchart uses for its subgraphs: the
- * db numbers each block in declaration order, the renderer stamps that number as
- * `data-color-id`, and these rules map the slot to a border and a fill.
+ * Per-composite palette rules, matching what the flowchart does for its subgraphs: one
+ * counter over containers, and nothing on the plain shapes.
  *
- * Every block shape has to be named. A block diagram draws through far more shapes than a
- * flowchart subgraph does -- `rect` for square and rounded, `polygon` for the diamond,
- * hexagon, trapezoids and leans, `path` for the block arrow and the stadium, `circle` and
- * `ellipse` for the round forms -- and a shape left out here renders uncoloured beside
- * its tinted neighbours rather than failing in any visible way.
+ * A composite always draws a `rect.composite` inside a `.node` group -- it has no roughjs
+ * variant, so unlike the flowchart there is no `.rough-node` prefix to mirror and no
+ * hachure path to avoid painting. That one selector is the whole surface.
  *
- * `.rough-node` is listed alongside `.node` because `getNodeClasses` returns that instead
- * under the handDrawn look, and each descendant is appended to both prefixes separately:
- * writing `${'${slot}'}.node, ${'${slot}'}.rough-node rect` would attach `rect` to the last item of
- * the list only and silently match nothing under classic.
- *
- * Not `!important`: a block carrying `classDef` or `style` gets an inline `style`
- * attribute, which has to keep winning over the theme palette.
+ * Not `!important`: `composite.ts` puts a block's own `style` declarations in an inline
+ * `style` attribute, which has to keep winning over the theme palette.
  */
 const genColor = (options: BlockChartStyleOptions) => {
   const { theme, bkgColorArray, borderColorArray } = options;
@@ -58,21 +50,10 @@ const genColor = (options: BlockChartStyleOptions) => {
     const borderColor = borderColorArray![i % borderColorArray!.length];
     const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
-    const rule = (suffix: string) => `${slot}.node ${suffix}, ${slot}.rough-node ${suffix}`;
 
     sections += `
 
-    ${rule('rect')},
-    ${rule('polygon')},
-    ${rule('circle')},
-    ${rule('ellipse')} {
-      stroke: ${borderColor};
-      ${fill}
-    }
-
-    /* The block arrow and the stadium are drawn as paths, and every shape is a path
-       under handDrawn. */
-    ${rule('path')} {
+    ${slot}.node rect.composite {
       stroke: ${borderColor};
       ${fill}
     }
