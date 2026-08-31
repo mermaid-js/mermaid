@@ -28,6 +28,36 @@ const ACTOR_GLYPH_BOTTOM = 60;
 const ACTOR_GLYPH_HEIGHT = ACTOR_GLYPH_BOTTOM - ACTOR_GLYPH_TOP;
 const ACTOR_GLYPH_CENTER = (ACTOR_GLYPH_TOP + ACTOR_GLYPH_BOTTOM) / 2;
 const ACTOR_GLYPH_SCALE_NEO = 0.8;
+
+/** Clearance between the bottom of a participant's label and the top of its lifeline. */
+const LIFELINE_LABEL_GAP = 3;
+
+/**
+ * Where a participant's lifeline starts.
+ *
+ * Each shape used to answer this for itself, and they disagreed: `participant` measured from the
+ * box, `database` from the box plus twice `boxTextMargin`, and `control`, `entity`, `boundary` and
+ * `actor` used hardcoded 75s and 80s. On one row that put four different lifeline tops on shapes
+ * standing side by side.
+ *
+ * The rule underneath all of them is the same -- start below whatever the participant occupies --
+ * so it is stated once here. Most shapes centre their label inside the box and end at the box
+ * bottom; `actor` and `database` hang their labels below the box, so for those the label decides.
+ * Shapes that share a label offset therefore share a lifeline top, which is what makes an `actor`
+ * and a `database` line up.
+ *
+ * `classic` keeps each shape's original value: this changes where the lifeline meets the shape, and
+ * the default look renders a great many existing documents.
+ */
+const lifelineStartY = (actorY, actor, conf, labelOffset, classicValue) => {
+  if (conf.look !== 'neo') {
+    return classicValue;
+  }
+  const [fontSize] = parseFontSize(conf.actorFontSize);
+  const labelBottom = labelOffset + actor.height / 2 + (fontSize ?? 14) / 2 + LIFELINE_LABEL_GAP;
+  return actorY + Math.max(actor.height, labelBottom);
+};
+
 const TOP_ACTOR_CLASS = 'actor-top';
 const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 const ACTOR_BOX_CLASS = 'actor-box';
@@ -381,7 +411,7 @@ export const fixLifeLineHeights = (diagram, actors, actorKeys, conf) => {
 const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height;
+  const centerY = lifelineStartY(actorY, actor, conf, 0, actorY + actor.height);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -504,7 +534,7 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramI
 const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height;
+  const centerY = lifelineStartY(actorY, actor, conf, 6, actorY + actor.height);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -622,7 +652,7 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
 const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height;
+  const centerY = lifelineStartY(actorY, actor, conf, 0, actorY + actor.height);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -760,7 +790,7 @@ const drawActorTypeQueue = function (elem, actor, conf, isFooter, diagramId, act
 const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 75;
+  const centerY = lifelineStartY(actorY, actor, conf, 22 + (!isFooter ? 12 : 5), actorY + 75);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder, actorBkg } = themeVariables;
 
@@ -867,7 +897,7 @@ const drawActorTypeControl = function (elem, actor, conf, isFooter, diagramId, a
 const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 75;
+  const centerY = lifelineStartY(actorY, actor, conf, !isFooter ? 30 : 15, actorY + 75);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray } = themeVariables;
 
@@ -969,7 +999,13 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
 const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + actor.height + 2 * conf.boxTextMargin;
+  const centerY = lifelineStartY(
+    actorY,
+    actor,
+    conf,
+    35,
+    actorY + actor.height + 2 * conf.boxTextMargin
+  );
   const { theme, themeVariables, look } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
@@ -1092,7 +1128,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 80;
+  const centerY = lifelineStartY(actorY, actor, conf, 15, actorY + 80);
   const radius = 22;
   const line = elem.append('g').lower();
   const { look, theme, themeVariables } = conf;
@@ -1195,7 +1231,7 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
 const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap) {
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
-  const centerY = actorY + 80;
+  const centerY = lifelineStartY(actorY, actor, conf, 35, actorY + 80);
   const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
