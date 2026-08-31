@@ -123,8 +123,12 @@ export const draw: DrawDefinition = (
     const data = d as VennData;
     const setsKey = stableSetsKey([...data.sets].sort());
     const customStyle = styleByKey.get(setsKey);
-    const baseColor =
-      customStyle?.fill || themeColors[i % themeColors.length] || themeVariables.primaryColor;
+    // `themeColors` is empty for the themes that define no `venn*` variables. Falling back
+    // to one flat `primaryColor` is intended for those, but the route there was `i % 0`
+    // being NaN and indexing to `undefined` -- same result, and no way to tell a theme
+    // that opted out from one that forgot. Spelled out so the next reader can.
+    const paletteColor = themeColors.length > 0 ? themeColors[i % themeColors.length] : undefined;
+    const baseColor = customStyle?.fill || paletteColor || themeVariables.primaryColor;
     group.classed(`venn-set-${i % 8}`, true);
     const fillOpacity = customStyle?.['fill-opacity'] ?? 0.1;
     const strokeColor = customStyle?.stroke || baseColor;
