@@ -163,8 +163,12 @@ class Theme {
     // Not tertiaryColor here. This theme pins tertiaryColor to its background, so deriving the
     // `rect` section band from it draws white on white -- present in the DOM, invisible on screen.
     // Keying it to the background instead keeps the band a shade of whatever the background is,
-    // including when the background is overridden through themeVariables.
-    this.rectBkgColor = this.rectBkgColor || darken(this.background, 4);
+    // including when the background is overridden through themeVariables. Direction-aware because
+    // darken() is a no-op at pure black: an override to #000000 needs the shade to go the other
+    // way or the band vanishes exactly as it did on white.
+    this.rectBkgColor =
+      this.rectBkgColor ||
+      (isDark(this.background) ? lighten(this.background, 4) : darken(this.background, 4));
 
     /* Gantt chart variables */
     const primaryColor = '#ECECFE';

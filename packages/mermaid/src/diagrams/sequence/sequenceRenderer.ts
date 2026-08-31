@@ -1634,7 +1634,7 @@ async function calculateActorMargins(
       ? conf.width
       : common.getMax(conf.width, actDims.width + 2 * conf.wrapPadding);
 
-    if ((conf as any).look === 'neo') {
+    if (getConfig().look === 'neo') {
       // The band model: the row is as tall as its tallest glyph-gap-label-gap stack, and every
       // shape anchors to the row's shared datum rather than measuring itself. The measured text
       // height travels with the actor so the shapes place the label from the same number.

@@ -27,6 +27,20 @@ describe('sequence rect section fill', () => {
     expect(resolvedRectFill(theme).toLowerCase()).not.toBe(theme.background.toLowerCase());
   });
 
+  it.each(themeNames)(
+    'stays distinguishable when the background is overridden to black, on the %s theme',
+    (themeName) => {
+      // darken() is a no-op at #000000, so a derivation that only darkens quietly reproduces the
+      // white-on-white bug at the other end of the range. Black-on-black hid from the bare
+      // getThemeVariables() assertions above, which never exercise an override.
+      const theme = themes[themeName].getThemeVariables({
+        background: '#000000',
+      }) as unknown as Record<string, string>;
+
+      expect(resolvedRectFill(theme).toLowerCase()).not.toBe('#000000');
+    }
+  );
+
   it('is still overridable through themeVariables', () => {
     const theme = themes.redux.getThemeVariables({
       rectBkgColor: '#abcdef',

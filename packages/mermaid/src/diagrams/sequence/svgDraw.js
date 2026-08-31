@@ -24,8 +24,11 @@ const ACTOR_GLYPH_HEIGHT = ACTOR_GLYPH_BOTTOM - ACTOR_GLYPH_TOP;
 /**
  * Band geometry for one participant under `neo`; null under every other look, which keeps each
  * shape's legacy geometry byte-for-byte. See `actorBands.ts` for the model. `actor.height` is the
- * row height here -- `calculateActorMargins` sets every actor to the row's shared stack height --
- * so the header datum `actorY + actor.height` is one line across the row.
+ * row height here: `calculateActorMargins` gives each actor its own stack height and returns the
+ * max into `conf.height`, and `addActorRenderingData` (sequenceRenderer.ts) then raises every
+ * actor to that shared value via `getMax(actor.height || conf.height, conf.height)`. That second
+ * step is what makes the header datum `actorY + actor.height` one line across the row -- if it is
+ * ever refactored away, the datum splits per actor and the band model breaks.
  */
 const neoBands = (actor, conf, isFooter, actorY) => {
   if (conf.look !== 'neo') {
