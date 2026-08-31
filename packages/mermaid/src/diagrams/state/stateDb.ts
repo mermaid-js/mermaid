@@ -165,6 +165,8 @@ export interface NodeData {
   position?: string;
   description?: string | string[];
   labelType?: string;
+  /** Palette slot for container shapes; see `nextColorSlot` in `dataFetcher.ts`. */
+  colorIndex?: number;
 }
 
 export interface Edge {

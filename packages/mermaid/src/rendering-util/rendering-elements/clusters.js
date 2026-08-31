@@ -175,9 +175,10 @@ const noteGroup = (parent, node) => {
 const roundedWithTitle = async (parent, node) => {
   const siteConfig = getConfig();
 
-  const { themeVariables, handDrawnSeed } = siteConfig;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
   const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
     themeVariables;
+  const { borderColorArray } = themeVariables;
 
   // Add outer g element
   const shapeSvg = parent
@@ -186,6 +187,10 @@ const roundedWithTitle = async (parent, node) => {
     .attr('id', node.domId)
     .attr('data-id', node.id)
     .attr('data-look', node.look);
+
+  // Per-composite colour slot, painted by the `[data-color-id]` rules in `state/styles.js`.
+  // A no-op unless the active theme carries a palette.
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');
@@ -405,15 +410,18 @@ const kanbanSection = async (parent, node) => {
 const divider = (parent, node) => {
   const siteConfig = getConfig();
 
-  const { themeVariables, handDrawnSeed } = siteConfig;
-  const { nodeBorder } = themeVariables;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
+  const { nodeBorder, borderColorArray } = themeVariables;
 
-  // Add outer g element
+  // Sibling regions of one composite share a slot -- see `nextColorSlot` in the state
+  // diagram's `dataFetcher.ts`.
   const shapeSvg = parent
     .insert('g')
     .attr('class', node.cssClasses)
     .attr('id', node.domId)
     .attr('data-look', node.look);
+
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   // add the rect
   const outerRectG = shapeSvg.insert('g', ':first-child');

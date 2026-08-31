@@ -41,6 +41,42 @@ const nodeDb = new Map<string, NodeData>();
 
 let graphItemCount = 0; // used to construct ids, etc.
 
+// Next palette slot to hand out, and the slot already handed to a parent's concurrency
+// regions. Both are per-render and cleared by `reset()` alongside `nodeDb`.
+let nextColorIndex = 0;
+const dividerColorIndex = new Map<string, number>();
+
+/**
+ * Palette slot for a container, in declaration order.
+ *
+ * `dataFetcher` recurses depth-first and takes a slot as it inserts each container, so the
+ * numbering is a pre-order walk of the containment tree -- the same order flowchart gives
+ * its subgraphs, and the reason a nested composite never shares its parent's colour.
+ *
+ * Concurrency regions are the exception. A `--` divider splits one composite into regions
+ * that `stateDb.docTranslator` models as sibling `divider` containers, so numbering them
+ * one by one would paint a single composite in three colours and read as three separate
+ * composites. Regions therefore share one slot, keyed by the parent they belong to: that
+ * keeps them reading as parts of one whole, while still separating them from the composite
+ * that holds them.
+ *
+ * Only containers are numbered. Plain states keep the uniform look for the same reason
+ * flowchart leaves its nodes alone -- a state is a step, not a participant, and `classDef`
+ * / `style` is how colour carries meaning there.
+ */
+const nextColorSlot = (shape: string, parent: StateStmt | undefined): number => {
+  if (shape !== SHAPE_DIVIDER) {
+    return nextColorIndex++;
+  }
+  const parentKey = parent?.id ?? 'root';
+  const shared = dividerColorIndex.get(parentKey);
+  if (shared !== undefined) {
+    return shared;
+  }
+  dividerColorIndex.set(parentKey, nextColorIndex);
+  return nextColorIndex++;
+};
+
 /**
  * Create a standard string for the dom ID of an item.
  * If a type is given, insert that before the counter, preceded by the type spacer
@@ -202,6 +238,18 @@ export const dataFetcher = (
   const style = getStylesFromDbInfo(dbState);
   const config = getConfig();
 
+  /**
+   * Whether the author has styled this state themselves, via `classDef`/`class` or a
+   * `style` statement. Such a container opts out of the palette entirely.
+   *
+   * It has to be all-or-nothing. A state `classDef` compiles to `.name > * { ... }` with
+   * `!important`, and the composite's title strip is *not* a direct child -- it sits inside
+   * an intermediate `g` -- so the author's rule reaches the body rect but not the title.
+   * Leaving the slot stamped therefore paints the two halves of one container from two
+   * different sources, which is worse than either on its own.
+   */
+  const userStyled = classStr.trim() !== '' || style.length > 0;
+
   log.info('dataFetcher parsedItem', parsedItem, dbState, style);
 
   if (itemId !== 'root') {
@@ -272,6 +320,11 @@ export const dataFetcher = (
       newNode.isGroup = true;
       newNode.dir = getDir(parsedItem);
       newNode.shape = parsedItem.type === DIVIDER_TYPE ? SHAPE_DIVIDER : SHAPE_GROUP;
+      // The slot is spent either way, so giving one composite a `classDef` does not shift
+      // every later composite's colour. It is only *stamped* when the container has no
+      // styling of its own -- see `userStyled`.
+      const slot = nextColorSlot(newNode.shape, parent);
+      newNode.colorIndex = userStyled ? undefined : slot;
       newNode.cssClasses = `${newNode.cssClasses} ${CSS_DIAGRAM_CLUSTER} ${altFlag ? CSS_DIAGRAM_CLUSTER_ALT : ''}`;
     }
 
@@ -288,6 +341,7 @@ export const dataFetcher = (
       domId: stateDomId(itemId, graphItemCount),
       type: newNode.type,
       isGroup: newNode.type === 'group',
+      colorIndex: newNode.colorIndex,
       padding: 8,
       rx: 10,
       ry: 10,
@@ -392,4 +446,6 @@ export const dataFetcher = (
 export const reset = () => {
   nodeDb.clear();
   graphItemCount = 0;
+  nextColorIndex = 0;
+  dividerColorIndex.clear();
 };

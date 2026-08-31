@@ -1,5 +1,75 @@
+import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
+
+/**
+ * Cycling per-container colour for composite states and concurrency regions.
+ *
+ * Only the containers are painted. A plain state is a step in the machine rather than a
+ * distinct participant, and `classDef` / `style` is already how colour carries meaning
+ * there -- the same line flowchart draws between its subgraphs and its nodes.
+ *
+ * The treatment follows the swimlane header: the palette's border colour on the outline,
+ * its background tint behind the title strip, and the theme's own `compositeBackground`
+ * left on the body. Tinting the body as well would stack tint on tint once composites
+ * nest, and nesting is exactly where the colours have to stay separable.
+ *
+ * `redux-dark-color` ships a border palette and an empty background palette, so on that
+ * theme the `fill` declarations are omitted entirely and only the outlines take colour --
+ * the same outlines-only treatment it gives ER, requirement and sequence.
+ *
+ * Not `!important`: a state's own `classDef` / `style` has to keep winning over the theme.
+ */
+const genColor = (options) => {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
+    return '';
+  }
+  // `look` is validated before it reaches the selector -- see `safeLook`.
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
+  let sections = '';
+
+  // One rule per slot `dataFetcher` can hand out; `stampColorSlot` wraps at the palette
+  // length, so those are exactly `0 .. borderColorArray.length - 1`.
+  for (let i = 0; i < paletteSlotCount(borderColorArray); i++) {
+    const borderColor = borderColorArray[i];
+    const tint = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
+    sections += `
+
+    /* The title strip: \`rect.outer\` spans the whole composite and \`rect.inner\` covers
+       the body, so what stays visible of \`outer\` is the band behind the label. */
+    ${slot}.statediagram-cluster rect.outer {
+      stroke: ${borderColor};
+      ${tint}
+    }
+
+    ${slot}.statediagram-cluster rect.inner {
+      stroke: ${borderColor};
+    }
+
+    /* Concurrency regions. Siblings of one composite share a slot, so a divided composite
+       reads as one thing split into parts rather than as several composites. */
+    ${slot}.statediagram-cluster rect.divider {
+      stroke: ${borderColor};
+      ${tint}
+    }
+
+    /* handDrawn draws the same container as roughjs paths, which carry no \`outer\` /
+       \`inner\` class -- without this the sketch look stays monochrome. Clusters hold only
+       their own shapes and label; child states live in a sibling layer, so the descendant
+       selector cannot reach them. */
+    ${slot}.statediagram-cluster path {
+      stroke: ${borderColor};
+      ${tint}
+    }
+    `;
+  }
+  return sections;
+};
+
 const getStyles = (options) =>
   `
+${genColor(options)}
 defs [id$="-barbEnd"] {
     fill: ${options.transitionColor};
     stroke: ${options.transitionColor};
