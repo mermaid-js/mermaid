@@ -12,6 +12,7 @@
  * the assignment here rather than relying on a screenshot to notice.
  */
 import { describe, expect, it, beforeEach } from 'vitest';
+// @ts-expect-error No types available for JISON
 import stateDiagram, { parser } from './parser/stateDiagram.jison';
 import { StateDB } from './stateDb.js';
 
