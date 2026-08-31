@@ -86,6 +86,21 @@ class Theme {
       '#FFF1F2', //Rose-50
     ];
 
+    /* Usecase Diagram variables.
+
+       One colour per kind of element -- see `usecase.colorScheme`. Chosen from this theme's
+       own palette so the diagram stays on-brand, and kept to three well-separated hues that
+       can be checked for contrast once rather than per instance. The boundary frame is a
+       large area, so it takes the lightest treatment and leans on its border. */
+    this.usecaseActorBorder = '#A78BFA'; // Violet-400
+    this.usecaseActorBkg = '#F5F3FF'; // Violet-50
+    this.usecaseBorder = '#2DD4BF'; // Teal-400
+    this.usecaseBkg = '#F0FDFA'; // Teal-50
+    this.usecaseBoundaryBorder = '#BDBCCC';
+    this.usecaseBoundaryBkg = '#FAFAFC';
+    this.usecaseIncludeLine = '#38BDF8'; // Sky-400
+    this.usecaseExtendLine = '#FB923C'; // Orange-400
+
     this.filterColor = '#000000';
   }
   updateColors() {
