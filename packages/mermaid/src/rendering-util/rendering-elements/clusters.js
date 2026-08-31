@@ -659,8 +659,8 @@ export const getUsecaseSystemBoundaryGeometry = (node, labelBBox) => {
 const usecaseSystemBoundary = async (parent, node) => {
   log.info('Creating usecase system boundary for ', node.id, node);
   const siteConfig = getConfig();
-  const { themeVariables, handDrawnSeed } = siteConfig;
-  const { clusterBkg, clusterBorder } = themeVariables;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder, borderColorArray } = themeVariables;
   const { labelStyles, nodeStyles } = styles2String(node);
   const { stylesMap } = compileStyles(node);
 
@@ -674,6 +674,10 @@ const usecaseSystemBoundary = async (parent, node) => {
     .attr('id', typeof node.domId === 'string' ? node.domId : node.id)
     .attr('data-boundary-type', boundaryType)
     .attr('data-look', node.look);
+
+  // Per-container colour slot, as in `rect` above. A boundary is a container, but unlike a
+  // class namespace it is painted -- `usecase/styles.ts` defines the matching rules.
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label system-boundary-title');

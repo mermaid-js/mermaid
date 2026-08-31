@@ -32,6 +32,7 @@ const supportedConfig = {
   nodeSpacing: 50,
   rankSpacing: 50,
   diagramPadding: 20,
+  colorScheme: 'role',
   useMaxWidth: true,
 } satisfies UsecaseDiagramConfig;
 
@@ -69,6 +70,9 @@ describe('usecase configuration', () => {
         nodeSpacing: { default: 50 },
         rankSpacing: { default: 50 },
         diagramPadding: { default: 20 },
+        // `role` is the default deliberately: colour keyed to the kind of element is
+        // invariant under insertion and reordering, where the rotating palette is not.
+        colorScheme: { default: 'role' },
       },
     });
     expect(baseDefinition.properties?.useMaxWidth).toMatchObject({ default: true });
@@ -82,6 +86,7 @@ describe('usecase configuration', () => {
       'nodeSpacing',
       'rankSpacing',
       'diagramPadding',
+      'colorScheme',
     ]);
   });
 

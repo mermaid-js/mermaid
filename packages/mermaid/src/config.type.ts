@@ -2111,6 +2111,28 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    * Padding around the entire diagram
    */
   diagramPadding?: number;
+  /**
+   * How a use case diagram takes its colours from the active theme.
+   *
+   * `role` (the default) gives every element of a kind one colour, read from the
+   * `usecaseActorBkg` / `usecaseActorBorder`, `usecaseBkg` / `usecaseBorder`, and
+   * `usecaseBoundaryBkg` / `usecaseBoundaryBorder` theme variables. Colour then says
+   * what an element *is*, and it is invariant under insertion, reordering, and
+   * renaming -- adding one use case in the middle does not recolour the ones after it,
+   * so diffs, documentation screenshots, and visual baselines stay stable.
+   *
+   * `rotate` instead gives each actor, use case, and system boundary its own slot from
+   * the theme's categorical palette (`borderColorArray` / `bkgColorArray`), cycling in
+   * declaration order, the way ER entities and class boxes are coloured. This buys
+   * per-instance variety at the cost of that stability: inserting an element shifts the
+   * colour of everything declared after it. Only the colour themes (`redux-color`,
+   * `redux-dark-color`) carry a palette, so on every other theme the two settings
+   * render identically.
+   *
+   * `classDef` and `style` keep overriding both, whichever is set.
+   *
+   */
+  colorScheme?: 'role' | 'rotate';
 }
 /**
  * The object containing configurations specific for Venn diagrams.

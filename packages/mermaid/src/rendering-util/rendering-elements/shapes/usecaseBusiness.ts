@@ -1,4 +1,6 @@
 import rough from 'roughjs';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
@@ -45,6 +47,10 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
   } = await labelHelper(parent, labelNode, getNodeClasses(node, 'usecase-business-shape'));
 
   label.attr('class', 'label usecase-label');
+
+  // Per-item colour slot -- see `usecaseEllipse`.
+  const { theme, themeVariables } = getConfig();
+  stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);
   let stereotypeLabel: D3Selection<SVGGElement> | undefined;
   let stereotypeBox: MeasuredBox | undefined;
   if (businessNode.stereotype) {

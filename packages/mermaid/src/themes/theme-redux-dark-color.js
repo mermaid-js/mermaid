@@ -88,6 +88,21 @@ class Theme {
 
     this.bkgColorArray = [];
 
+    /* Usecase Diagram variables -- the dark counterpart of the light theme's role tokens.
+
+       Borders only. This theme already ships a border palette and an *empty* background
+       palette, because saturated fills behind light text lose contrast fast in dark mode --
+       so the role tokens follow the same rule and set no fills at all. Leaving them unset
+       lets each one fall back to the value the rest of the theme already uses: `mainBkg`
+       for actors and use cases, `clusterBkg` for boundaries. Pinning them to one colour
+       instead flattened the three kinds into a single tone and made a use case body
+       indistinguishable from the boundary containing it. */
+    this.usecaseActorBorder = '#A78BFA'; // Violet-400
+    this.usecaseBorder = '#2DD4BF'; // Teal-400
+    this.usecaseBoundaryBorder = '#BDBCCC';
+    this.usecaseIncludeLine = '#38BDF8'; // Sky-400
+    this.usecaseExtendLine = '#FB923C'; // Orange-400
+
     this.filterColor = '#FFFFFF';
   }
   updateColors() {
@@ -332,6 +347,12 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
+    /* `borderColorArray` and not the lighter `cScale`: the fill is painted at 0.1
+       opacity, so the stroke and the label carry the circle. */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] =
+        this['venn' + (i + 1)] ?? this.borderColorArray[i % this.borderColorArray.length];
+    }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 

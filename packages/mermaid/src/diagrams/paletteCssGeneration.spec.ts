@@ -31,11 +31,13 @@ import themes from '../themes/index.js';
 import erStyles from './er/styles.js';
 import requirementStyles from './requirement/styles.js';
 import timelineStyles from './timeline/styles.js';
+import usecaseStyles from './usecase/styles.js';
 
 const STYLESHEETS = {
   er: erStyles,
   requirement: requirementStyles,
   timeline: timelineStyles,
+  usecase: usecaseStyles,
 } as const;
 
 type Stylesheet = keyof typeof STYLESHEETS;
@@ -47,7 +49,23 @@ const ALL_STYLESHEETS = Object.keys(STYLESHEETS) as Stylesheet[];
  * colours `.section-N` classes directly, so the slot-shaped assertions do not apply to
  * it — only the invalid-CSS ones do.
  */
-const SLOT_STYLESHEETS = ['er', 'requirement'] as const satisfies readonly Stylesheet[];
+const SLOT_STYLESHEETS = ['er', 'requirement', 'usecase'] as const satisfies readonly Stylesheet[];
+
+/**
+ * How many rule blocks each stylesheet emits per slot, under the `classic` look these
+ * tests render with. ER and requirement emit a `path` rule and a `rect` rule; usecase
+ * emits five, because it paints three different kinds of element, reaches the business
+ * marker by name, and names the actor glyph's children as well as the group.
+ *
+ * Kept as a per-stylesheet number rather than a `greaterThan` bound: the point of the
+ * assertion is that *every* slot gets its rules, and a lower bound would still pass if
+ * only a couple of slots were emitted.
+ */
+const RULES_PER_SLOT = {
+  er: 2,
+  requirement: 2,
+  usecase: 5,
+} as const satisfies Record<(typeof SLOT_STYLESHEETS)[number], number>;
 
 /** Matches `theme-base.js`; the palette rules are emitted one per slot up to this. */
 const THEME_COLOR_LIMIT = 12;
@@ -85,7 +103,16 @@ const render = (
     ...overrides,
   };
   configApi.reset();
-  configApi.setSiteConfig({ theme, look: 'classic', themeVariables: options });
+  configApi.setSiteConfig({
+    theme,
+    look: 'classic',
+    themeVariables: options,
+    // The usecase stylesheet emits its slot rules only when asked to. Its default is the
+    // `role` scheme -- one colour per kind of element -- so without this every assertion
+    // below would be checking an empty string. `usecaseRoleScheme` covers the default.
+    ...(name === 'usecase' ? { usecase: { colorScheme: 'rotate' } } : {}),
+    ...(overrides.look ? { look: overrides.look as MermaidConfig['look'] } : {}),
+  });
   return STYLESHEETS[name](options);
 };
 
@@ -143,8 +170,8 @@ describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
     // Every slot gets a rule, and every rule names one of the two colours. Scoped to the
     // palette blocks — the rest of the stylesheet has its own `stroke:` declarations.
     // Counted exactly: a `greaterThan` bound would still pass if only a couple of slots
-    // were emitted, which is the regression this is here to catch. Each slot emits a
-    // `path` rule and a `rect` rule, hence twice the count.
+    // were emitted, which is the regression this is here to catch. The per-slot rule count
+    // differs by stylesheet -- see `RULES_PER_SLOT`.
     //
     // The expected count is the palette length, changed from `THEME_COLOR_LIMIT`. Looping
     // to the limit and wrapping the index did keep every declaration valid — which is what
@@ -156,8 +183,8 @@ describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
     // palette length, so they cannot disagree; `colorThemeGate.spec.ts` pins that.
     const blocks = paletteBlocks(css);
     const strokes = strokesIn(blocks);
-    expect(blocks).toHaveLength(borderColorArray.length * 2);
-    expect(strokes).toHaveLength(borderColorArray.length * 2);
+    expect(blocks).toHaveLength(borderColorArray.length * RULES_PER_SLOT[name]);
+    expect(strokes).toHaveLength(borderColorArray.length * RULES_PER_SLOT[name]);
     expect(new Set(strokes)).toEqual(new Set(borderColorArray));
   });
 
@@ -168,7 +195,7 @@ describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
     const borderColorArray = Array.from({ length: 20 }, (_, i) => `#${(i + 16).toString(16)}0000`);
     const css = render(name, 'redux-color', { borderColorArray, bkgColorArray: [] });
     const strokes = strokesIn(paletteBlocks(css));
-    expect(strokes).toHaveLength(borderColorArray.length * 2);
+    expect(strokes).toHaveLength(borderColorArray.length * RULES_PER_SLOT[name]);
     expect(new Set(strokes)).toEqual(new Set(borderColorArray));
   });
 
@@ -214,5 +241,41 @@ describe('timeline section rules', () => {
     expect(new Set(strokes)).not.toContain(undefined);
     // No palette to cycle, so every section takes the classic border colour.
     expect(new Set(strokes).size).toBe(1);
+  });
+});
+
+/**
+ * The handDrawn look is the one case where descending into a shape's paths is wrong.
+ * roughjs draws each shape as an outline path plus a hachure *fill* path whose colour is
+ * carried by its `stroke`, and the two are indistinguishable in CSS -- so a rule that
+ * strokes every path inside a shape repaints the fill lines in the border colour. A use
+ * case body collapses into a solid block and a hollow actor into a solid disc.
+ *
+ * `genColor` therefore omits its glyph-descendant rule under handDrawn. The whole
+ * stylesheet is regenerated per render and every rule is scoped to `[data-look="<look>"]`,
+ * so gating on the look is exact rather than a heuristic.
+ */
+describe('usecase handDrawn palette rules', () => {
+  const glyphDescendantRules = (css: string) =>
+    [...css.matchAll(/\.usecase-actor-glyph (?:path|circle)/g)].length;
+
+  it('names the actor glyph children under a look that draws real elements', () => {
+    // `neo` ships `[data-look="neo"].node path { stroke }`, which hits the glyph's own
+    // paths -- a value set on the child beats one inherited from the group whatever the
+    // group rule's specificity. Without these rules every actor renders in the uniform
+    // border colour under the default look.
+    const css = render('usecase', 'redux-color', { look: 'neo' });
+    expect(glyphDescendantRules(css)).toBeGreaterThan(0);
+  });
+
+  it('omits them under handDrawn, where they would fill a hollow actor', () => {
+    expect(glyphDescendantRules(render('usecase', 'redux-color', { look: 'handDrawn' }))).toBe(0);
+  });
+
+  it('still colours the actor glyph group under handDrawn', () => {
+    // The group rule stays: it is what roughjs-drawn actors inherit where they can, and
+    // dropping it would leave handDrawn actors with no palette rule at all.
+    const css = render('usecase', 'redux-color', { look: 'handDrawn' });
+    expect(css).toContain('[data-look="handDrawn"][data-color-id="color-0"].usecase-actor');
   });
 });
