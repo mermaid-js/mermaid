@@ -114,10 +114,8 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
 
   let defaultLane = nodes.find((node) => node.id === DEFAULT_SWIMLANE_ID);
   if (!defaultLane) {
-    /* Synthesised rather than declared, so nothing upstream gave it the two properties a
-     * declared lane arrives with. Without `look` it renders classic inside a handDrawn
-     * diagram and matches no `[data-look="..."]` palette rule; `flowDb` numbers declared
-     * subgraphs from 0, so reusing 0 here would clash with the first of them. */
+    /* Synthesised, so nothing upstream gave it a `look` or a slot. Without `look` it
+     * renders classic in a handDrawn diagram; slot 0 would clash with the first lane. */
     defaultLane = {
       id: DEFAULT_SWIMLANE_ID,
       label: '',

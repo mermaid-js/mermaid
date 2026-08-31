@@ -42,12 +42,9 @@ export interface FlowChartStyleOptions {
  * collapsed form's own colours are presentation attributes (`fill=` / `stroke=`), which
  * these rules correctly outrank while still losing to that inline style.
  *
- * Swimlane lanes are clusters too but need their own rules: a lane is two rectangles, and
- * under handDrawn its body asks roughjs for `fill: 'none'`, which it answers with a
- * hachure path carrying `stroke="none"` -- the generic `path` rule would paint that
- * invisible hachure and fill both outlines solid. Hence `:not(.swimlane)`. Emitted here
- * rather than in `swimlanes/styles.ts` so a plain flowchart given `layout: swimlane`,
- * which never loads that stylesheet, is covered too.
+ * Lanes are excluded by `:not(.swimlane)` and ruled separately below: a lane is two
+ * rectangles, and the generic `path` rule would paint the hachure roughjs emits for its
+ * unfilled body. Here, not in `swimlanes/styles.ts`, so `layout: swimlane` is covered too.
  */
 const genColor = (options: FlowChartStyleOptions) => {
   const { theme, bkgColorArray, borderColorArray } = options;

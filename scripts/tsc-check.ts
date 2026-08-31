@@ -17,10 +17,7 @@ const MERMAID_PACKAGE_JSON = JSON.parse(
   readFileSync(path.join(__dirname, '..', 'packages', 'mermaid', 'package.json'), 'utf8')
 ) as Record<'dependencies' | 'devDependencies', Record<string, string> | undefined>;
 
-/**
- * The range mermaid itself declares for `name`. Throws rather than falling back, so that
- * moving a dependency between the two maps cannot quietly restore the floating version.
- */
+/** The range mermaid declares. Throws rather than falling back to a floating version. */
 const mermaidDependency = (name: string): string => {
   const range =
     MERMAID_PACKAGE_JSON.devDependencies?.[name] ?? MERMAID_PACKAGE_JSON.dependencies?.[name];
@@ -52,15 +49,11 @@ const SRC = {
         dependencies: tarballs,
         scripts: { build: 'tsc -b --verbose' },
         devDependencies: {
-          // these are somewhat-unexpectedly required, and a downstream would need to
-          // match the real `package.json` values -- so they are read from there rather
-          // than floated. `type-fest: '*'` resolved to 5.x, whose `typed-array.d.ts`
-          // names `Float16Array`, which the `lib: es2020` below does not have: an
-          // upstream release that changed nothing here failed every PR.
+          // Read from mermaid rather than floated: `type-fest: '*'` resolved to 5.x,
+          // which names `Float16Array` and does not compile under `lib: es2020` below.
           'type-fest': mermaidDependency('type-fest'),
           '@types/d3': mermaidDependency('@types/d3'),
-          // Left floating on purpose: compiling against the newest TypeScript is the
-          // signal this check exists for.
+          // Floating on purpose: the newest TypeScript is the signal this check wants.
           typescript: '*',
         },
       },
