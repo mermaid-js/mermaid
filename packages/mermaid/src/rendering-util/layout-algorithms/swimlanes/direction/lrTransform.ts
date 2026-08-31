@@ -27,13 +27,16 @@ function resolveTopLevelGroupId(
 }
 
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
+  // `seen` guards a malformed parent cycle, which would otherwise not terminate.
+  const seen = new Set<string>([group.id]);
   let depth = 0;
   let parentId = group.parentId;
-  while (parentId) {
+  while (parentId && !seen.has(parentId)) {
     const parent = nodeById.get(parentId);
     if (!parent?.isGroup) {
       break;
     }
+    seen.add(parentId);
     depth++;
     parentId = parent.parentId;
   }
