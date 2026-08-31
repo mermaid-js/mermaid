@@ -1177,7 +1177,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
-  const { look, theme, themeVariables } = conf;
+  const { theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
   const line = elem.append('g').lower();
@@ -1214,58 +1214,53 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actElem.attr('data-et', 'participant').attr('data-type', 'actor').attr('data-id', actor.name);
   }
 
-  // Scaling the stickman
-  const scale = look === 'neo' ? 0.5 : 1;
-
-  // Adjusting stickman to maintain the same position
-  const adjustedActorY = look === 'neo' ? actorY + (1 - scale) * 30 : actorY; // Adjust for the torso and head shift
-
+  // Drawn at one size for every look. `neo` used to halve the figure and shift it up, which left
+  // the actor smaller than the box shapes beside it, reported a halved `actor.height` back into
+  // lifeline placement, and moved the label off the baseline every other participant shape uses.
   actElem
     .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', center)
-    .attr('y1', adjustedActorY + 25 * scale)
+    .attr('y1', actorY + 25)
     .attr('x2', center)
-    .attr('y2', adjustedActorY + 45 * scale);
+    .attr('y2', actorY + 45);
 
   actElem
     .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
-    .attr('x1', center - (ACTOR_TYPE_WIDTH / 2) * scale)
-    .attr('y1', adjustedActorY + 33 * scale)
-    .attr('x2', center + (ACTOR_TYPE_WIDTH / 2) * scale)
-    .attr('y2', adjustedActorY + 33 * scale);
+    .attr('x1', center - ACTOR_TYPE_WIDTH / 2)
+    .attr('y1', actorY + 33)
+    .attr('x2', center + ACTOR_TYPE_WIDTH / 2)
+    .attr('y2', actorY + 33);
   actElem
     .append('line')
-    .attr('x1', center - (ACTOR_TYPE_WIDTH / 2) * scale)
-    .attr('y1', adjustedActorY + 60 * scale)
+    .attr('x1', center - ACTOR_TYPE_WIDTH / 2)
+    .attr('y1', actorY + 60)
     .attr('x2', center)
-    .attr('y2', adjustedActorY + 45 * scale);
+    .attr('y2', actorY + 45);
   actElem
     .append('line')
     .attr('x1', center)
-    .attr('y1', adjustedActorY + 45 * scale)
-    .attr('x2', center + (ACTOR_TYPE_WIDTH / 2 - 2) * scale)
-    .attr('y2', adjustedActorY + 60 * scale);
+    .attr('y1', actorY + 45)
+    .attr('x2', center + (ACTOR_TYPE_WIDTH / 2 - 2))
+    .attr('y2', actorY + 60);
 
   const circle = actElem.append('circle');
   circle.attr('cx', actor.x + actor.width / 2);
-  circle.attr('cy', adjustedActorY + 10 * scale);
-  circle.attr('r', 15 * scale);
-  circle.attr('width', actor.width * scale);
-  circle.attr('height', actor.height * scale);
+  circle.attr('cy', actorY + 10);
+  circle.attr('r', 15);
+  circle.attr('width', actor.width);
+  circle.attr('height', actor.height);
 
-  // Get the bounds of the stickman after scaling
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
-  // // Adjust the rect to match the scaled stickman
   const rect = svgDrawCommon.getNoteRect();
   rect.x = actor.x;
-  rect.y = adjustedActorY; // Use adjustedActorY for proper alignment
+  rect.y = actorY;
   rect.fill = '#eaeaea';
-  rect.width = actor.width; // Scale the width
-  rect.height = actor.height / scale; // Use the updated height from bounds
+  rect.width = actor.width;
+  rect.height = actor.height;
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
@@ -1282,7 +1277,11 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
     actor.description,
     actElem,
     rect.x,
-    adjustedActorY + 35 * scale - (look === 'neo' ? 10 : 0),
+    // Each shape offsets its label below its own glyph, so the offsets are not interchangeable --
+    // this is the one the stick figure has always used under `classic`, and it puts the label on
+    // the baseline `drawActorTypeDatabase` uses. Scaling it with the glyph, as `neo` did, moved the
+    // label out from under the figure and off that baseline.
+    actorY + 35,
     rect.width,
     rect.height,
     { class: `actor ${ACTOR_MAN_FIGURE_CLASS}` },

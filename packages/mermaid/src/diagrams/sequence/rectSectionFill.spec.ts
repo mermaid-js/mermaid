@@ -22,16 +22,15 @@ const resolvedRectFill = (theme: Record<string, string>) =>
 
 describe('sequence rect section fill', () => {
   it.each(themeNames)('is distinguishable from the background on the %s theme', (themeName) => {
-    const theme = themes[themeName].getThemeVariables() as Record<string, string>;
+    const theme = themes[themeName].getThemeVariables() as unknown as Record<string, string>;
 
     expect(resolvedRectFill(theme).toLowerCase()).not.toBe(theme.background.toLowerCase());
   });
 
   it('is still overridable through themeVariables', () => {
-    const theme = themes.redux.getThemeVariables({ rectBkgColor: '#abcdef' }) as Record<
-      string,
-      string
-    >;
+    const theme = themes.redux.getThemeVariables({
+      rectBkgColor: '#abcdef',
+    }) as unknown as Record<string, string>;
 
     expect(resolvedRectFill(theme)).toBe('#abcdef');
   });
