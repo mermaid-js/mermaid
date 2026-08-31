@@ -43,9 +43,38 @@ Your diagram must be self-contained. Never import from another diagram's folder.
 from `diagrams/common/` and from `rendering-util/`, and that is the whole list. Cross-diagram
 imports create coupling that breaks unrelated diagrams later, so a reviewer will block on this.
 
-Your db gets a fresh instance for every render. Do not keep state in module scope, and make sure
-`clear()` resets everything. Two diagrams of the same type on one page will otherwise leak into
-each other.
+Your db must not carry state from one render into the next. `Diagram.fromText()` reads `db` off
+the registered definition and calls `db.clear?.()` before parsing, and there are two supported
+ways to satisfy that.
+
+A getter, which builds a new db on every read, so each render gets its own:
+
+```ts
+export const diagram: DiagramDefinition = {
+  parser,
+  get db() {
+    return new TreeMapDB();
+  },
+  renderer,
+  styles,
+};
+```
+
+Or one shared db whose `clear()` resets every field it owns, plus the shared accessibility state
+in `diagrams/common/commonDb.ts`:
+
+```ts
+export const diagram: DiagramDefinition = { parser, db, renderer, styles };
+```
+
+Prefer the getter in a new diagram. Isolation is then structural — a field added later cannot be
+forgotten in `clear()`, which is the way the shared form goes wrong. The use case diagram used as
+the reference here takes the shared form, and pays for it by keeping every mutable field on one
+`state` object that `clear()` replaces wholesale, rather than resetting fields one by one.
+
+Either way the rule underneath is the same: all mutable state lives on the db, never in module
+scope. Module-level state survives `clear()` in both forms, and two diagrams of the same type on
+one page will leak into each other.
 
 ## Step 1: Grammar and parsing
 
@@ -108,14 +137,14 @@ import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js
 setupViewPortForSVG(svg, padding, 'usecaseDiagram', config.useMaxWidth);
 ```
 
-Support handdrawn mode if your drawing approach allows it. The config carries a `look`, and
+Support hand-drawn mode if your drawing approach allows it. The config carries a `look`, and
 diagrams check it directly:
 
 ```ts
 const isHandDrawn = look === 'handDrawn';
 ```
 
-If a third party library makes handdrawn output impossible, that is an acceptable answer, but say
+If a third party library makes hand-drawn output impossible, that is an acceptable answer, but say
 so in your diagram's documentation page so users are not left guessing.
 
 ## Step 4: Detection and registration

@@ -6,7 +6,9 @@
 
 # The Layout Maker's Guide 🗺️
 
-A layout algorithm decides where nodes sit and how edges get from one to the next. Shapes, themes, markers, and labels are already handled by the shared rendering code. Your job is coordinates.
+A layout algorithm decides where nodes sit and how edges get from one to the next. Shapes, themes, markers, and labels are already handled by the shared rendering code.
+
+Which means you never touch the DOM. You are handed a graph whose nodes already know how big they are, and you hand back numbers: a center point for every node, a list of points for every edge. Drawing the shapes, painting the strokes, placing the arrowheads, fitting the viewBox — all of that is somebody else's code working from your numbers. You are solving a geometry problem, not a rendering one, which is exactly why a layout can be tested without a browser.
 
 This guide covers layouts that live inside the Mermaid package, next to `dagre` and the others. The last section explains how to ship the same code as a standalone npm package instead.
 
@@ -25,20 +27,32 @@ interface LayoutData {
 }
 ```
 
-You must fill in these fields and nothing else:
+`runLayoutCore`, the stage that holds your algorithm, writes these fields and no others:
 
-| Field                       | On   | Meaning                                                             |
-| --------------------------- | ---- | ------------------------------------------------------------------- |
-| `node.x`, `node.y`          | Node | Center of the node, not its top-left corner                         |
-| `node.width`, `node.height` | Node | Already measured for leaf nodes; you set them for groups            |
-| `edge.points`               | Edge | Polyline from source boundary to target boundary, at least 2 points |
-| `edge.x`, `edge.y`          | Edge | Anchor for the edge label, when the edge has one                    |
+| Field                       | On   | Meaning                                                                    |
+| --------------------------- | ---- | -------------------------------------------------------------------------- |
+| `node.x`, `node.y`          | Node | Center of the node, in layout space                                        |
+| `node.width`, `node.height` | Node | Arrive measured for leaf nodes — leave those alone; you set them on groups |
+| `edge.points`               | Edge | Polyline from source boundary to target boundary, at least 2 points        |
+| `edge.x`, `edge.y`          | Edge | Anchor for the edge label, when the edge has one                           |
+
+One stage is allowed to do more. `prepareLayout` runs before measurement and may rebuild the graph — replace `data4Layout.nodes` and `data4Layout.edges`, add the synthetic nodes an edge label needs, drop what your algorithm handles another way. "These fields and no others" is a rule about `runLayoutCore`, where the graph is settled and only geometry moves.
+
+### Layout space
+
+Positions are centers. `node.x, node.y` is the middle of the node's box, so its left edge is `x - width / 2` and its top edge is `y - height / 2`. Layout libraries disagree about this — some report a node's top-left corner, some measure y upward from a bottom-left origin — so if you are wrapping one, convert its output in `runLayoutCore` rather than leaving the renderer to guess. Dagre and ELK both report centers, which is why the built-in layouts pass them straight through.
+
+Beyond that, layout space is a plain plane: x grows to the right, y grows downward. There is no fixed origin and no requirement that coordinates be positive. The renderer takes the bounding box of everything you produced and translates it into the SVG viewBox, so a layout centered on (0, 0) and a layout starting at (0, 0) render identically. Do not spend a pass normalizing coordinates; it is undone immediately.
 
 `Node` and `Edge` carry a good deal more than this, all of it defined in `rendering-util/types.ts`. Read the types there rather than working from what a debugger happens to show you: shape, label geometry, styling, and port information all travel on the same objects, and most of it belongs to the renderer rather than to you.
 
 Two structural fields are your input, not your output. `node.isGroup` marks a subgraph container, and `node.parentId` names the group a node belongs to. Read them, never rewrite them.
 
-Sizes arrive already measured. The renderer inserts every node into the SVG, calls `getBBox()`, and writes the result back before your algorithm runs. That measurement is the only step that touches the DOM, which is what makes the rest testable.
+Leaf sizes arrive already measured, and they are not yours to compute. The renderer inserts every leaf node into the SVG, calls `getBBox()`, and writes `width` and `height` back before your algorithm runs, so a leaf whose size you recalculate or overwrite will have its label spill out of its shape at render time. Read them; treat them as fixed.
+
+Groups are the exception, and the only place you do set a size. A group's extent is a consequence of where you put its children, so nothing can measure it up front — every node with `isGroup` set needs a `width` and `height` from you, big enough to enclose its members and the title band. See [Groups](#groups).
+
+That one measuring pass is the only step in the whole pipeline that touches the DOM, which is what makes everything after it testable in Node.
 
 ## The five stages
 
@@ -267,7 +281,7 @@ When a fixture passes in Node but looks broken on screen, run `validateLayout` o
 
 A fixture is a pair of files under `e2e/platform/dev-diagrams/layout-tests/`:
 
-```
+```text
 layout-tests/
   simple-graph.mmd          ← real Mermaid source, parsed by the real parser
   simple-graph.sizes.json   ← node dimensions captured from a browser render
@@ -486,6 +500,72 @@ The two disagree more often than you would expect, and the disagreement is infor
 
 Use the browser to check what the tests cannot see: text that overflows its shape, arrowheads pointing the wrong way, subgraph frames cutting through labels.
 
+## Performance on large diagrams
+
+A layout that is pleasant on ten nodes can be unusable on a thousand, and the difference does not show up in the fixture sweep — DDLT fixtures are small on purpose, so they say nothing about how your algorithm scales. There is a separate corpus for that.
+
+### The corpus
+
+`e2e/platform/dev-diagrams/performance/flowcharts/` holds fifteen real flowcharts, anonymized and grouped by size:
+
+```text
+performance/flowcharts/
+  medium1.mmd … medium5.mmd   ← ~45-50 KB of source each
+  large1.mmd  … large5.mmd    ← ~70-75 KB
+  huge1.mmd   … huge5.mmd     ← 120-240 KB
+  baseline.json               ← a captured profiler run, for comparison
+```
+
+The buckets are by source size, and node count does not follow it. `huge1.mmd` is around 2400 nodes with barely fifty edges; `huge2.mmd` is a few hundred nodes with over a thousand edges; `huge3.mmd` is a hundred nodes buried in `classDef` declarations. That spread is deliberate. These are real diagrams people drew, so the shapes that break layout algorithms in practice — one node with sixty edges, deeply nested subgraphs, a long thin chain, a wide flat fan — appear in the proportions they actually occur rather than the ones a generator would produce. Several carry frontmatter config, `handDrawn` look, and HTML labels, so they exercise the measuring pass as well as the layout.
+
+### Running the profiler
+
+Profiling lives in the same dev explorer as everything else in the previous section.
+
+1. `pnpm dev`, then open `/dev/` at the URL the server printed.
+2. Select `performance/flowcharts` in the file tree.
+3. In the Profiler panel, tick the layouts to compare, set the scope to **Folder**, choose the number of iterations, and press **Run profile**.
+
+Each layout is warmed up once and discarded, then every diagram is rendered `iterations` times per layout, with the fastest and slowest run of each series dropped before averaging. The score is total milliseconds across the set, lower is better. **Copy JSON** puts the whole run on the clipboard in the same shape as `baseline.json`.
+
+One rough edge: the profiler's layout checkboxes come from a hardcoded list in `.esbuild/dev-explorer/diagram-viewer.ts` (`ALL_LAYOUTS`). A new layout will not appear there until you add it, even after it is registered with Mermaid.
+
+### Reading the table
+
+The row you care about is rarely the total. Rendering is broken into phases, and only one of them is yours:
+
+| Phase       | What it covers                                              |
+| ----------- | ----------------------------------------------------------- |
+| `parse`     | Diagram text to db                                          |
+| `prepare`   | Building `LayoutData`, including your `prepareLayout`       |
+| `measure`   | DOM insertion and `getBBox` / `getBoundingClientRect`       |
+| `layout`    | The layout call, split into `↳ lib (external)` and `↳ ours` |
+| `paint`     | Drawing nodes and edges from your coordinates               |
+| `serialize` | SVG to string                                               |
+
+`↳ ours (wrapper)` is your code; `↳ lib (external)` is the third-party library underneath, if you wrap one. A layout that is slow because ELK is slow and a layout that is slow because of your own pass are the same number in the `layout` row and completely different problems one row down.
+
+`huge3.mmd` makes the point: 1410 ms in `parse` against 1.5 ms in `layout`. Its total is dominated by something you cannot fix from a layout algorithm, and reading totals would send you optimizing the wrong file.
+
+Watch `measure` too. It is not your phase, but it is downstream of `prepareLayout` — every synthetic node you add for an edge label is another element inserted into the DOM and measured, so a `prepareLayout` that is generous with helper nodes shows up as someone else's regression.
+
+### Comparing against the baseline
+
+`baseline.json` is a captured run over the same folder — dagre and elk, ten iterations, `theme=redux`, `look=neo`, with the capture date in the file.
+
+Treat the absolute numbers as a record of one machine on one day, not a threshold. They will not reproduce on your hardware, and a CI runner would not reproduce them either. What does carry over is the shape: the relative cost of the phases, which diagrams are layout-dominated and which are parse-dominated, and the ratio between the layouts. Profile your layout in the same run as dagre and elk and compare within that run.
+
+### What actually goes wrong
+
+In practice the regressions are algorithmic, not micro-optimizations:
+
+- A pass over every pair of nodes. Fine at 50 nodes, 1.4 million comparisons at 1200.
+- `edges.filter((e) => e.start === node.id)` inside a loop over nodes — O(V·E) hidden behind two readable lines. Build the adjacency map once, before the loop.
+- Rebuilding a lookup inside an iterative refinement step, so an O(V) cost becomes O(V) per iteration.
+- Recursing into subgraphs without memoizing, and revisiting the same subtree once per ancestor.
+
+Profile before you optimize. Run the corpus, find the diagram where your `↳ ours` row is worst, and read that one — the corpus is small enough that the answer is usually one diagram and one loop.
+
 ## Shipping as a separate package
 
 An external layout uses the same `render` signature and the same `createCommonLayoutRenderer`. Instead of editing the built-in registry, export a loader array and let the consumer register it:
@@ -524,3 +604,4 @@ Package it separately when the layout pulls in a large dependency. Everything el
 - [ ] Your backend is registered in `ddlt/backends.ts` and your profile in `ddlt-manifest.json`
 - [ ] The sweep passes and the aggregate score has not dropped
 - [ ] `.mmd` fixtures under `e2e/diagrams/` cover the layout visually, since layout changes are rendering changes
+- [ ] The layout has been profiled against `performance/flowcharts/`, and the `↳ ours` row is understood
