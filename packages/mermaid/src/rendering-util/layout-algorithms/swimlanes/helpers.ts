@@ -220,6 +220,10 @@ export function writeBackToLayoutData(
   }
 
   const allNodes = layout.nodes ?? [];
+  // An anchored node is placed from its host after this runs, so any coordinate it
+  // carries here is one it arrived with. Sizing a group from that would let a position
+  // left over from an earlier render stretch the group and the lane around it.
+  const anchoredIds = collectAnchoredIds(allNodes);
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
   const laneModel = buildLaneModel(allNodes);
   const topLevelGroups: Node[] = [];
@@ -230,7 +234,7 @@ export function writeBackToLayoutData(
     if (laneModel.isLane(group.id)) {
       topLevelGroups.push(group);
     }
-    const children = allNodes.filter((n) => n.parentId === group.id);
+    const children = allNodes.filter((n) => n.parentId === group.id && !anchoredIds.has(n.id));
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
