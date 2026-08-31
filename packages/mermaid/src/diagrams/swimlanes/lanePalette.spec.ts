@@ -1,25 +1,13 @@
 /**
- * Lanes take a per-lane colour under the redux colour themes, the same way flowchart
- * subgraphs do — a lane is a participant, which is exactly what a categorical palette is
- * for.
+ * Lanes take a per-lane colour under the redux colour themes, as flowchart subgraphs do.
  *
  * These assertions are about the shape of the emitted CSS, because that is where this
- * wiring fails silently. A lane renders identically whether a declaration was discarded,
- * outranked, or never emitted, so nothing downstream reports the difference:
- *
- *   1. A lane is two rects — the title band and the body — under classic and neo, and two
- *      roughjs path pairs under handDrawn. Missing either half leaves a lane half-painted.
- *   2. The generic `.cluster` palette rules must not reach lanes. Under handDrawn a lane
- *      body asks roughjs for no fill, which it answers with a hachure path carrying
- *      `stroke="none"`; the generic `path` rule would paint that invisible hachure and
- *      fill both outline paths solid.
- *   3. The lane-border override in this stylesheet is `!important` — it has to be, to
- *      outrank `[data-look="neo"].cluster rect`, which ties with it on specificity. An
- *      `!important` that also covered palette lanes would outrank every rule above and
- *      lanes would stay grey with no sign of why.
- *   4. `redux-dark-color` ships a border palette and no background palette, so rules
- *      derived from the background array have to be dropped rather than emitted with a
- *      missing value.
+ * fails silently: a lane renders identically whether a declaration was discarded,
+ * outranked, or never emitted. The four things that can go wrong are a half-painted lane
+ * (title band and body are separate elements), the generic `.cluster` rules reaching a
+ * lane (wrong under handDrawn, where the body's hachure carries `stroke="none"`), the
+ * `!important` lane border outranking the palette, and `redux-dark-color`'s empty
+ * `bkgColorArray` producing a declaration with a missing value.
  */
 import { describe, expect, it } from 'vitest';
 import themes from '../../themes/index.js';
@@ -59,8 +47,7 @@ describe.each(COLOUR_THEMES)('%s lane palette', (themeName) => {
     const css = render(themeName);
     const prefix = `\\[data-look="neo"\\]\\[data-color-id="color-${slot}"\\]\\.swimlane\\.cluster`;
 
-    // Title band and body share one rule, so the selector has to name both halves --
-    // each with the full prefix, or the second would match nothing.
+    // One rule names both halves, each with the full prefix.
     const laneRect = new RegExp(
       `${prefix} rect\\.swimlane-title,\\s*${prefix} rect\\.swimlane-body \\{([^}]*)\\}`
     ).exec(css);
@@ -70,8 +57,7 @@ describe.each(COLOUR_THEMES)('%s lane palette', (themeName) => {
       expect(laneRect![1]).toContain(`fill: ${bkgColorArray[slot]};`);
     }
 
-    // handDrawn: roughjs draws a hachure fill path then the outline path, so the outline
-    // is the second one and the only one that takes the border colour.
+    // handDrawn: roughjs draws the hachure fill first, so the outline is the second path.
     const laneOutline = new RegExp(
       `${prefix} \\.swimlane-title path:nth-of-type\\(2\\), ` +
         `${prefix} \\.swimlane-body path:nth-of-type\\(2\\) \\{([^}]*)\\}`
@@ -95,13 +81,12 @@ describe.each(COLOUR_THEMES)('%s lane palette', (themeName) => {
     expect(css).toContain(`.swimlane.cluster:not([data-color-id]) rect {
     stroke: ${clusterBorder} !important;
   }`);
-    // No unscoped form left behind, which would outrank every lane palette rule.
+    // An unscoped form would outrank every lane palette rule.
     expect(css).not.toContain('.swimlane.cluster rect {');
   });
 
   it('never marks a lane palette rule !important', () => {
-    // A user's `style` / `classDef` reaches the lane as an inline `style` attribute and
-    // has to keep winning over the theme.
+    // A user's `style` reaches the lane inline and has to keep winning over the theme.
     const bodies = bodiesMatching(render(themeName), /\[data-color-id="color-\d+"]\.swimlane/);
 
     expect(bodies.length).toBeGreaterThan(0);
@@ -118,11 +103,7 @@ describe.each(COLOUR_THEMES)('%s lane palette', (themeName) => {
   });
 });
 
-/**
- * `bkgColorArray` is empty in `redux-dark-color`, which is what makes the guard load
- * bearing rather than defensive: the background-derived rule must be absent there, not
- * emitted with a missing value.
- */
+/** `redux-dark-color` ships no background palette, so the rule must be absent there. */
 it('emits the handDrawn title fill rule only where a background palette exists', () => {
   expect(paletteOf('redux-color').bkgColorArray?.length).toBeGreaterThan(0);
   expect(paletteOf('redux-dark-color').bkgColorArray ?? []).toHaveLength(0);
@@ -135,7 +116,6 @@ it.each(PLAIN_THEMES)('emits no lane palette rules for %s', (themeName) => {
   const css = render(themeName);
 
   expect(css).not.toContain('data-color-id="color-');
-  // The lane border override still ships for these themes: the exemption is keyed on an
-  // attribute nothing stamps outside the colour themes, so their lanes are unchanged.
+  // The override still ships: nothing stamps the attribute its exemption keys on.
   expect(css).toContain('.swimlane.cluster:not([data-color-id]) rect');
 });

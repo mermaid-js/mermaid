@@ -12,12 +12,10 @@ import type { FlowChartStyleOptions } from '../flowchart/styles.js';
  * `.cluster rect` border is suppressed by matching its stroke to the cluster
  * background — theme-adaptive, rather than a hardcoded colour.
  *
- * Lanes carrying a palette slot are exempt: this rule is `!important` only to outrank
- * `[data-look="neo"].cluster rect`, which it ties with on specificity, and an
- * `!important` here would also outrank the per-lane palette rules the flowchart
- * stylesheet emits. Those already beat the neo rule on specificity, so they need no help
- * — they only need this one to stay out of their way. `data-color-id` is stamped only by
- * the themes that carry a palette, so every other theme keeps today's border exactly.
+ * The `!important` is only there to outrank `[data-look="neo"].cluster rect`, which ties
+ * with it on specificity. Palette lanes are exempted because they already outrank that
+ * rule on their own, and an `!important` here would beat them too — leaving lanes grey
+ * with nothing to say why. Nothing stamps `data-color-id` outside the colour themes.
  */
 const getStyles = (options: FlowChartStyleOptions): string =>
   `${getFlowchartStyles(options)}

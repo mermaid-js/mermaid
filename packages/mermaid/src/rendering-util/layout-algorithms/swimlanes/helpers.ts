@@ -114,17 +114,10 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
 
   let defaultLane = nodes.find((node) => node.id === DEFAULT_SWIMLANE_ID);
   if (!defaultLane) {
-    /* This lane is synthesised here rather than declared in the source, so nothing
-     * upstream has given it the two properties every declared lane arrives with.
-     *
-     * `look` decides which of the two drawing branches `swimlane.js` takes and is half of
-     * the `[data-look="..."][data-color-id="..."]` selector the theme palette is keyed
-     * on -- without it the lane renders classic inside a handDrawn diagram and takes no
-     * palette colour at all.
-     *
-     * `colorIndex` is assigned by `flowDb` per declared subgraph, so the free slot is the
-     * one past the highest already handed out. Reusing 0 would paint this lane the same
-     * colour as the first declared one. */
+    /* Synthesised rather than declared, so nothing upstream gave it the two properties a
+     * declared lane arrives with. Without `look` it renders classic inside a handDrawn
+     * diagram and matches no `[data-look="..."]` palette rule; `flowDb` numbers declared
+     * subgraphs from 0, so reusing 0 here would clash with the first of them. */
     defaultLane = {
       id: DEFAULT_SWIMLANE_ID,
       label: '',

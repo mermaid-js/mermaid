@@ -4,6 +4,7 @@
 
 /* eslint-disable no-console */
 import { mkdtemp, mkdir, writeFile, readFile, readdir, copyFile, rm } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { execFileSync } from 'child_process';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,6 +12,23 @@ import { tmpdir } from 'node:os';
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
+
+const MERMAID_PACKAGE_JSON = JSON.parse(
+  readFileSync(path.join(__dirname, '..', 'packages', 'mermaid', 'package.json'), 'utf8')
+) as Record<'dependencies' | 'devDependencies', Record<string, string> | undefined>;
+
+/**
+ * The range mermaid itself declares for `name`. Throws rather than falling back, so that
+ * moving a dependency between the two maps cannot quietly restore the floating version.
+ */
+const mermaidDependency = (name: string): string => {
+  const range =
+    MERMAID_PACKAGE_JSON.devDependencies?.[name] ?? MERMAID_PACKAGE_JSON.dependencies?.[name];
+  if (!range) {
+    throw new Error(`tsc-check: packages/mermaid/package.json declares no ${name}`);
+  }
+  return range;
+};
 
 /**
  * Packages to build and import
@@ -34,10 +52,15 @@ const SRC = {
         dependencies: tarballs,
         scripts: { build: 'tsc -b --verbose' },
         devDependencies: {
-          // these are somewhat-unexpectedly required, and a downstream would need
-          // to match the real `package.json` values
-          'type-fest': '*',
-          '@types/d3': '^7.4.3',
+          // these are somewhat-unexpectedly required, and a downstream would need to
+          // match the real `package.json` values -- so they are read from there rather
+          // than floated. `type-fest: '*'` resolved to 5.x, whose `typed-array.d.ts`
+          // names `Float16Array`, which the `lib: es2020` below does not have: an
+          // upstream release that changed nothing here failed every PR.
+          'type-fest': mermaidDependency('type-fest'),
+          '@types/d3': mermaidDependency('@types/d3'),
+          // Left floating on purpose: compiling against the newest TypeScript is the
+          // signal this check exists for.
           typescript: '*',
         },
       },

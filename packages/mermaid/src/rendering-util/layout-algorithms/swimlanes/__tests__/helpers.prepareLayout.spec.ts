@@ -45,11 +45,9 @@ describe('prepareLayoutForSwimlanes', () => {
   });
 
   /**
-   * The synthetic lane is the one lane no declaration produced, so it is the one lane
-   * nothing upstream gave a `look` or a `colorIndex` to. Both are needed at render time
-   * and neither fails loudly when missing: without `look` the lane renders classic inside
-   * a handDrawn diagram and matches no `[data-look="..."]` palette rule, and reusing
-   * slot 0 paints it the same colour as the first declared lane.
+   * Neither omission fails loudly: without `look` the lane renders classic inside a
+   * handDrawn diagram and matches no palette rule, and slot 0 collides with the first
+   * declared lane.
    */
   it('gives the synthetic default lane the diagram look and a free colour slot', () => {
     const layout: LayoutData = {
@@ -68,7 +66,7 @@ describe('prepareLayoutForSwimlanes', () => {
     const defaultLane = layout.nodes.find((node) => node.id === DEFAULT_SWIMLANE_ID);
 
     expect(defaultLane?.look).toBe('handDrawn');
-    // One past the highest slot handed out, so it collides with no declared container.
+    // One past the highest slot handed out.
     expect(defaultLane?.colorIndex).toBe(3);
   });
 

@@ -30,10 +30,8 @@ export const swimlane = async (parent, node) => {
     .attr('data-et', 'cluster')
     .attr('data-look', node.look);
 
-  // Per-lane colour slot. A no-op unless the active theme carries a palette; the
-  // matching `[data-color-id]` rules are emitted by the flowchart stylesheet, which
-  // swimlanes reuses. Lanes are the diagram's participants, so unlike a flowchart node
-  // they are exactly the thing the categorical palette is meant to distinguish.
+  // Per-lane colour slot; a no-op unless the theme carries a palette. The matching
+  // `[data-color-id]` rules come from the flowchart stylesheet, which swimlanes reuses.
   stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
@@ -116,8 +114,7 @@ export const swimlane = async (parent, node) => {
       });
 
       const roughTitle = rc.rectangle(laneLeft, laneTop, titleWidth, height, titleOptions);
-      // Same classes as the classic look, so the stylesheet can tell the title band from
-      // the lane body without having to know which look drew them.
+      // Same classes as the classic look, so CSS can tell the two halves apart.
       titleRect = shapeSvg.insert(() => roughTitle, ':first-child').attr('class', 'swimlane-title');
       const roughBody = rc.rectangle(bodyX, laneTop, bodyWidth, height, bodyOptions);
       bodyRect = shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'swimlane-body');

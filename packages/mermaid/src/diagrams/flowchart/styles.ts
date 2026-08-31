@@ -42,14 +42,12 @@ export interface FlowChartStyleOptions {
  * collapsed form's own colours are presentation attributes (`fill=` / `stroke=`), which
  * these rules correctly outrank while still losing to that inline style.
  *
- * Swimlane lanes are clusters too, and get their own block rather than riding on the
- * generic one: a lane is two rectangles (title band and body), and under handDrawn the
- * body is asked for `fill: 'none'`, which roughjs answers with a hachure path carrying
- * `stroke="none"`. The generic `path` rule would paint that invisible hachure and fill
- * both outline paths solid, so the lanes are excluded from it by `:not(.swimlane)` and
- * handled below instead. Swimlanes reach this stylesheet two ways -- the `swimlane-beta`
- * diagram, which wraps flowchart's `styles` export, and a plain flowchart given
- * `layout: swimlane` -- and emitting the rules here covers both.
+ * Swimlane lanes are clusters too but need their own rules: a lane is two rectangles, and
+ * under handDrawn its body asks roughjs for `fill: 'none'`, which it answers with a
+ * hachure path carrying `stroke="none"` -- the generic `path` rule would paint that
+ * invisible hachure and fill both outlines solid. Hence `:not(.swimlane)`. Emitted here
+ * rather than in `swimlanes/styles.ts` so a plain flowchart given `layout: swimlane`,
+ * which never loads that stylesheet, is covered too.
  */
 const genColor = (options: FlowChartStyleOptions) => {
   const { theme, bkgColorArray, borderColorArray } = options;
@@ -75,9 +73,7 @@ const genColor = (options: FlowChartStyleOptions) => {
      */
     const collapsedRule = (suffix: string) =>
       `${slot}.node ${suffix}, ${slot}.rough-node ${suffix}`;
-    /* Both halves of a lane, by the classes `swimlane.js` puts on them under every look.
-     * A helper because each has to carry the whole prefix separately -- the same
-     * append-to-both rule as `collapsedRule` above. */
+    /* Both halves of a lane. Each carries the whole prefix separately, as above. */
     const laneRule = (suffix: string) =>
       `${slot}.swimlane.cluster .swimlane-title${suffix}, ${slot}.swimlane.cluster .swimlane-body${suffix}`;
     sections += `
@@ -92,22 +88,22 @@ const genColor = (options: FlowChartStyleOptions) => {
       ${fill}
     }
 
-    /* Swimlane lane, classic and neo: title band and body. */
+    /* Lane, classic and neo. */
     ${slot}.swimlane.cluster rect.swimlane-title,
     ${slot}.swimlane.cluster rect.swimlane-body {
       stroke: ${borderColor};
       ${fill}
     }
 
-    /* Swimlane lane, handDrawn: the outline path of each half. */
+    /* Lane, handDrawn: roughjs emits the hachure fill first, then the outline. */
     ${laneRule(' path:nth-of-type(2)')} {
       stroke: ${borderColor};
     }
 ${
   hasBkgColors
     ? `
-    /* handDrawn title band: its hachure lines are strokes, not a fill. */
-    ${slot}.swimlane.cluster .swimlane-title path:first-of-type {
+    /* A roughjs fill is drawn as lines, so the lane fill is a stroke here. */
+    ${laneRule(' path:first-of-type')} {
       stroke: ${bkgColorArray[i % bkgColorArray.length]};
     }
 `
