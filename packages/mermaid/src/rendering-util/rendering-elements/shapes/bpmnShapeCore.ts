@@ -252,5 +252,7 @@ export const faceCentreIntersect = (
   if (Math.abs(dx) * halfHeight > Math.abs(dy) * halfWidth) {
     return { x: cx + Math.sign(dx) * halfWidth, y: cy };
   }
-  return { x: cx, y: cy + Math.sign(dy) * halfHeight };
+  // A reference point on the centre describes no direction. `|| 1` answers with the
+  // bottom border rather than the centre, which would put the arrow inside the shape.
+  return { x: cx, y: cy + Math.sign(dy || 1) * halfHeight };
 };

@@ -91,3 +91,19 @@ describe('the message marker', () => {
     expect(sheet).toMatch(/\.bpmn-throw[^{]*\.bpmn-glyph-fold\s*{[^}]*fill:\s*none/);
   });
 });
+
+describe('faceCentreIntersect', () => {
+  const node = { x: 100, y: 50 } as Parameters<typeof faceCentreIntersect>[0];
+
+  it('answers on the border when the reference point is the centre', () => {
+    // A layout that has not routed an edge hands both node centres to insertEdge, so the
+    // vector is zero and describes no direction. The answer still has to be a border.
+    const at = faceCentreIntersect(node, 80, 40, { x: 100, y: 50 });
+    expect(at).toEqual({ x: 100, y: 70 });
+  });
+
+  it('answers on the face the point lies off', () => {
+    expect(faceCentreIntersect(node, 80, 40, { x: 400, y: 50 })).toEqual({ x: 140, y: 50 });
+    expect(faceCentreIntersect(node, 80, 40, { x: 100, y: -400 })).toEqual({ x: 100, y: 30 });
+  });
+});
