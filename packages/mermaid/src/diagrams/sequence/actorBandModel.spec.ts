@@ -15,6 +15,17 @@ import mermaid from '../../mermaid.js';
 const TEXT_LINE_HEIGHT = 19;
 
 const num = (el: Element, n: string) => Number(el.getAttribute(n) ?? 0);
+
+const applyOwnTranslate = (
+  el: Element,
+  box: { x: number; y: number; width: number; height: number }
+) => {
+  const m = /translate\(\s*([\d.-]+)\s*[\s,]\s*([\d.-]+)\s*\)/.exec(
+    el.getAttribute('transform') ?? ''
+  );
+  return m ? { ...box, x: box.x + Number(m[1]), y: box.y + Number(m[2]) } : box;
+};
+
 const bboxOf = (el: Element): { x: number; y: number; width: number; height: number } => {
   const tag = el.tagName.toLowerCase();
   if (tag === 'circle') {
@@ -51,7 +62,12 @@ const bboxOf = (el: Element): { x: number; y: number; width: number; height: num
       height: TEXT_LINE_HEIGHT * lines,
     };
   }
-  const kids = [...el.children].map(bboxOf).filter((b) => b.width || b.height);
+  // Per the SVG spec, an element's getBBox excludes its own transform but includes its
+  // children's. The boundary shape hid a translate from three rounds of measurement because an
+  // earlier emulation skipped this.
+  const kids = [...el.children]
+    .map((child) => applyOwnTranslate(child, bboxOf(child)))
+    .filter((b) => b.width || b.height);
   if (!kids.length) {
     return { x: 0, y: 0, width: 0, height: 0 };
   }
@@ -166,6 +182,39 @@ describe('actor band model (neo, real pipeline)', () => {
     expect(multiDatum - multiLabels.get('Database')!).toBe(
       singleDatum - singleLabels.get('Database')!
     );
+  });
+
+  it('renders every glyph inside the bands, transforms included', async () => {
+    // The assertion that finally catches what getBBox cannot: boundary and entity carried legacy
+    // `translate` nudges on their groups, so their local boxes matched control's while their
+    // rendered positions sat 21 and 6 lower. Measured here with each group's own transform
+    // applied, the way the browser paints it.
+    const doc = await render('bm-glyphs', MIXED_ROW);
+    const [{ y1: datumTop }] = lifelines(doc);
+
+    const glyphBottoms = new Map<string, number>();
+    for (const g of doc.querySelectorAll('g[data-et="participant"]')) {
+      const box = applyOwnTranslate(g, bboxOf(g));
+      const glyphs = [...g.querySelectorAll('circle, line, rect, path')].filter(
+        (el) => el.getAttribute('data-et') !== 'life-line'
+      );
+      if (!glyphs.length) {
+        continue;
+      }
+      const bottoms = glyphs.map((el) => {
+        const b = applyOwnTranslate(el, bboxOf(el));
+        return b.y + b.height + (box.y - bboxOf(g).y);
+      });
+      glyphBottoms.set(g.getAttribute('data-id')!, Math.max(...bottoms));
+    }
+
+    // Nothing pokes below the datum...
+    for (const [, bottom] of glyphBottoms) {
+      expect(bottom).toBeLessThanOrEqual(datumTop + 0.5);
+    }
+    // ...and the icon family sits feet-on-one-line. A reintroduced translate breaks this.
+    const iconBottoms = ['User', 'B', 'C', 'E'].map((id) => glyphBottoms.get(id));
+    expect(new Set(iconBottoms.map((b) => Math.round(b! * 10) / 10)).size).toBe(1);
   });
 
   it('reports one uniform actor height back into the pipeline', async () => {

@@ -570,6 +570,11 @@ const drawActorTypeCollections = function (elem, actor, conf, isFooter, diagramI
 
   // DRAW STACKED RECTANGLES
   const offset = 6;
+  if (conf.look === 'neo') {
+    // The stack must not cross the datum. Both copies are drawn `offset` shorter, so the shadow
+    // copy's bottom edge lands exactly on the lifeline start instead of poking below it.
+    rect.height = actor.height - offset;
+  }
   const shadowRect = {
     ...rect,
     x: rect.x + (isFooter ? -offset : -offset),
@@ -973,13 +978,16 @@ const drawActorTypeEntity = function (elem, actor, conf, isFooter, diagramId, ac
     conf
   );
 
+  if (!bands) {
+    // Legacy nudges. Under the band model the circle is placed exactly, so any leftover translate
+    // would reintroduce the stagger the model exists to remove -- getBBox does not see transforms,
+    // which is how these hid from every measurement while being plainly visible on screen.
+    actElem.attr('transform', `translate(${0}, ${isFooter ? r : r / 2 - 5})`);
+  }
   if (!isFooter) {
-    actElem.attr('transform', `translate(${0}, ${r / 2 - 5})`);
     actElem.attr('data-et', 'participant');
     actElem.attr('data-type', 'entity');
     actElem.attr('data-id', actor.name);
-  } else {
-    actElem.attr('transform', `translate(${0}, ${r})`);
   }
 
   return actor.height;
@@ -1212,7 +1220,10 @@ const drawActorTypeBoundary = function (elem, actor, conf, isFooter, diagramId, 
     conf
   );
 
-  actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
+  if (!bands) {
+    // Legacy nudge; see the note in drawActorTypeEntity.
+    actElem.attr('transform', `translate(0,${radius / 2 + 10})`);
+  }
 
   if (!isFooter) {
     actElem.attr('data-et', 'participant');
