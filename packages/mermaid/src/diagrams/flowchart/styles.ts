@@ -41,6 +41,13 @@ export interface FlowChartStyleOptions {
  * inline `style` attribute, which has to keep winning over the theme palette. The
  * collapsed form's own colours are presentation attributes (`fill=` / `stroke=`), which
  * these rules correctly outrank while still losing to that inline style.
+ *
+ * Swimlane lanes are clusters too but need their own rules: a lane is two rectangles, and
+ * under handDrawn its body asks roughjs for `fill: 'none'`, which it answers with a
+ * hachure path carrying `stroke="none"` -- the generic `path` rule would paint that
+ * invisible hachure and fill both outlines solid. Hence `:not(.swimlane)`. Emitted here
+ * rather than in `swimlanes/styles.ts` so a plain flowchart given `layout: swimlane`,
+ * which never loads that stylesheet, is covered too.
  */
 const genColor = (options: FlowChartStyleOptions) => {
   const { theme, bkgColorArray, borderColorArray } = options;
@@ -66,18 +73,42 @@ const genColor = (options: FlowChartStyleOptions) => {
      */
     const collapsedRule = (suffix: string) =>
       `${slot}.node ${suffix}, ${slot}.rough-node ${suffix}`;
+    /* Both halves of a lane. Each carries the whole prefix separately, as above. */
+    const laneRule = (suffix: string) =>
+      `${slot}.swimlane.cluster .swimlane-title${suffix}, ${slot}.swimlane.cluster .swimlane-body${suffix}`;
     sections += `
 
-    ${slot}.cluster rect {
+    ${slot}.cluster:not(.swimlane) rect {
       stroke: ${borderColor};
       ${fill}
     }
 
-    ${slot}.cluster path {
+    ${slot}.cluster:not(.swimlane) path {
       stroke: ${borderColor};
       ${fill}
     }
 
+    /* Lane, classic and neo. */
+    ${slot}.swimlane.cluster rect.swimlane-title,
+    ${slot}.swimlane.cluster rect.swimlane-body {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    /* Lane, handDrawn: roughjs emits the hachure fill first, then the outline. */
+    ${laneRule(' path:nth-of-type(2)')} {
+      stroke: ${borderColor};
+    }
+${
+  hasBkgColors
+    ? `
+    /* A roughjs fill is drawn as lines, so the lane fill is a stroke here. */
+    ${laneRule(' path:first-of-type')} {
+      stroke: ${bkgColorArray[i % bkgColorArray.length]};
+    }
+`
+    : ''
+}
     ${collapsedRule('.collapsed-group')},
     ${collapsedRule('.collapsed-group path')} {
       stroke: ${borderColor};

@@ -14,6 +14,7 @@ import classStyles from '../class/styles.js';
 import erStyles from '../er/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
 import requirementStyles from '../requirement/styles.js';
+import swimlanesStyles from '../swimlanes/styles.js';
 import timelineStyles from '../timeline/styles.js';
 import {
   COLOR_THEMES,
@@ -24,11 +25,16 @@ import {
   safeLook,
 } from './colorThemeGate.js';
 
+/**
+ * `swimlanes` wraps flowchart's stylesheet and appends its own lane rules, including an
+ * `!important` one next to the palette, so it is listed separately from what it inherits.
+ */
 const STYLESHEETS = {
   class: classStyles,
   er: erStyles,
   flowchart: flowchartStyles,
   requirement: requirementStyles,
+  swimlanes: swimlanesStyles,
   timeline: timelineStyles,
 } as const;
 
@@ -37,7 +43,7 @@ const STYLESHEETS = {
  * colours `.section-N` classes directly rather than stamping slots, so the slot-shaped
  * assertions do not apply to it — only the crash-safety pass at the bottom does.
  */
-const SLOT_STYLESHEETS = (['class', 'er', 'flowchart', 'requirement'] as const).filter(
+const SLOT_STYLESHEETS = (['class', 'er', 'flowchart', 'requirement', 'swimlanes'] as const).filter(
   (name) => name in STYLESHEETS
 );
 
@@ -93,7 +99,9 @@ it('covers every registered theme between the two lists', () => {
 
 describe.each(SLOT_STYLESHEETS)('%s stylesheet', (name) => {
   it.each(PLAIN_THEMES)('emits no per-item colour rules for %s', (themeName) => {
-    expect(render(name, themeName)).not.toContain('data-color-id');
+    // The slot marker, not the bare attribute: `swimlanes` keys a rule off
+    // `:not([data-color-id])`, which is the absence of a slot rather than a rule for one.
+    expect(render(name, themeName)).not.toContain('data-color-id="color-');
   });
 
   it.each(COLOUR_THEMES)('emits one rule per palette slot for %s', (themeName) => {

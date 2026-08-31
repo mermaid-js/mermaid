@@ -114,12 +114,18 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
 
   let defaultLane = nodes.find((node) => node.id === DEFAULT_SWIMLANE_ID);
   if (!defaultLane) {
+    /* Synthesised rather than declared, so nothing upstream gave it the two properties a
+     * declared lane arrives with. Without `look` it renders classic inside a handDrawn
+     * diagram and matches no `[data-look="..."]` palette rule; `flowDb` numbers declared
+     * subgraphs from 0, so reusing 0 here would clash with the first of them. */
     defaultLane = {
       id: DEFAULT_SWIMLANE_ID,
       label: '',
       isGroup: true,
       shape: 'swimlane',
       padding: 20,
+      look: layout.config?.look,
+      colorIndex: nodes.reduce((max, node) => Math.max(max, node.colorIndex ?? -1), -1) + 1,
       ...(direction ? { direction } : {}),
     } as ClusterNode;
     nodes.push(defaultLane);

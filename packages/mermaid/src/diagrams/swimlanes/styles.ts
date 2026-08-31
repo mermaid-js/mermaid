@@ -11,10 +11,15 @@ import type { FlowChartStyleOptions } from '../flowchart/styles.js';
  * The swimlane cluster shape draws its own lane border, so the generic
  * `.cluster rect` border is suppressed by matching its stroke to the cluster
  * background — theme-adaptive, rather than a hardcoded colour.
+ *
+ * The `!important` is only there to outrank `[data-look="neo"].cluster rect`, which ties
+ * with it on specificity. Palette lanes are exempted because they already outrank that
+ * rule on their own, and an `!important` here would beat them too — leaving lanes grey
+ * with nothing to say why. Nothing stamps `data-color-id` outside the colour themes.
  */
 const getStyles = (options: FlowChartStyleOptions): string =>
   `${getFlowchartStyles(options)}
-  .swimlane.cluster rect {
+  .swimlane.cluster:not([data-color-id]) rect {
     stroke: ${options.clusterBorder} !important;
   }
   [data-look="neo"].cluster rect {
