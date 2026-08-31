@@ -14,16 +14,20 @@ export const ACTOR_TYPE_WIDTH = 18 * 2;
  * The stick figure's geometry, in unscaled units measured down from the top of its box: the head
  * circle reaches `TOP` and the feet reach `BOTTOM`.
  *
- * `SCALE` resizes the drawn glyph only. The label offset and the height the actor reports back into
- * lifeline placement are keyed to this box rather than to the glyph, so the figure can be resized
- * without dragging the label or the surrounding layout with it -- which is exactly what went wrong
- * when `neo` scaled the figure and everything else followed.
+ * The scale resizes the drawn glyph only. The label offset and the height the actor reports back
+ * into lifeline placement are keyed to this box rather than to the glyph, so the figure can be
+ * resized without dragging the label or the surrounding layout with it -- which is exactly what
+ * went wrong when `neo` scaled the figure and everything else followed.
+ *
+ * Only `neo` insets the figure. `classic` draws it at the full height of its box, as it always
+ * has: mermaid is rendered server-side for a great many existing documents, and resizing the
+ * default look's actor would change every one of them that has an `actor` in it.
  */
 const ACTOR_GLYPH_TOP = -5;
 const ACTOR_GLYPH_BOTTOM = 60;
 const ACTOR_GLYPH_HEIGHT = ACTOR_GLYPH_BOTTOM - ACTOR_GLYPH_TOP;
 const ACTOR_GLYPH_CENTER = (ACTOR_GLYPH_TOP + ACTOR_GLYPH_BOTTOM) / 2;
-const ACTOR_GLYPH_SCALE = 0.8;
+const ACTOR_GLYPH_SCALE_NEO = 0.8;
 const TOP_ACTOR_CLASS = 'actor-top';
 const BOTTOM_ACTOR_CLASS = 'actor-bottom';
 const ACTOR_BOX_CLASS = 'actor-box';
@@ -1192,7 +1196,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   const actorY = isFooter ? actor.stopy : actor.starty;
   const center = actor.x + actor.width / 2;
   const centerY = actorY + 80;
-  const { theme, themeVariables } = conf;
+  const { look, theme, themeVariables } = conf;
   const { bkgColorArray, borderColorArray, actorBorder } = themeVariables;
 
   const line = elem.append('g').lower();
@@ -1231,9 +1235,9 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
 
   // Scaled about the figure's own centre, so shrinking it leaves it where it was in the box
   // instead of riding up towards the top edge.
-  const gy = (offset) =>
-    actorY + ACTOR_GLYPH_CENTER + (offset - ACTOR_GLYPH_CENTER) * ACTOR_GLYPH_SCALE;
-  const gx = (offset) => center + offset * ACTOR_GLYPH_SCALE;
+  const glyphScale = look === 'neo' ? ACTOR_GLYPH_SCALE_NEO : 1;
+  const gy = (offset) => actorY + ACTOR_GLYPH_CENTER + (offset - ACTOR_GLYPH_CENTER) * glyphScale;
+  const gx = (offset) => center + offset * glyphScale;
 
   actElem
     .append('line')
@@ -1266,7 +1270,7 @@ const drawActorTypeActor = function (elem, actor, conf, isFooter, actorIndexMap)
   const circle = actElem.append('circle');
   circle.attr('cx', actor.x + actor.width / 2);
   circle.attr('cy', gy(10));
-  circle.attr('r', 15 * ACTOR_GLYPH_SCALE);
+  circle.attr('r', 15 * glyphScale);
   circle.attr('width', actor.width);
   circle.attr('height', actor.height);
 

@@ -72,6 +72,16 @@ const participant = (name: string, type: string) => ({
 
 const svg = () => select(document.querySelector<SVGSVGElement>('svg')!);
 
+/** Vertical extent of the drawn stick figure, ignoring the lifeline outside its group. */
+const glyphHeightOf = (figure: Element) => {
+  const circle = figure.querySelector('circle')!;
+  const top = Number(circle.getAttribute('cy')) - Number(circle.getAttribute('r'));
+  const feet = Math.max(
+    ...[...figure.querySelectorAll('line')].map((l) => Number(l.getAttribute('y2') ?? 0))
+  );
+  return feet - top;
+};
+
 /** y of the label `<text>` a participant shape emitted. */
 const labelY = (root: Element) => Number(root.querySelector('text')?.getAttribute('y'));
 
@@ -98,14 +108,27 @@ describe('stick-figure actor sizing', () => {
     }
   );
 
-  it('draws the same size on neo as on classic', async () => {
+  it('leaves the classic figure at the size it has always been', async () => {
+    // The default look renders a great many existing documents server-side, so its actor is not
+    // ours to resize. 15 is the radius `classic` has always drawn, and the glyph fills its box.
+    const { actor, root } = await drawOne('actor', 'classic');
+    const figure = root.querySelector('.actor-man')!;
+
+    expect(figure.querySelector('circle')?.getAttribute('r')).toBe('15');
+    expect(glyphHeightOf(figure)).toBe(actor.height);
+  });
+
+  it('insets the figure on neo without touching classic', async () => {
     const classic = await drawOne('actor', 'classic');
-    const classicHead = classic.root.querySelector('circle')?.getAttribute('r');
+    const classicHead = Number(classic.root.querySelector('circle')!.getAttribute('r'));
 
     const neo = await drawOne('actor', 'neo');
-    const neoHead = neo.root.querySelector('circle')?.getAttribute('r');
+    const neoHead = Number(neo.root.querySelector('circle')!.getAttribute('r'));
 
-    expect(neoHead).toBe(classicHead);
+    expect(neoHead).toBeLessThan(classicHead);
+    // Same box either way, so nothing around the figure moves with the look.
+    expect(neo.actor.height).toBe(classic.actor.height);
+    expect(labelY(neo.root)).toBe(labelY(classic.root));
   });
 
   it('draws the glyph smaller than its box, centred in it', async () => {
@@ -135,13 +158,7 @@ describe('stick-figure actor sizing', () => {
     // The regression this whole change is about: the label offset and `actor.height` must be keyed
     // to the box, so resizing the figure never moves the label or the surrounding layout.
     const { actor, root } = await drawOne('actor', 'neo');
-    const figure = root.querySelector('.actor-man')!;
-    const circle = figure.querySelector('circle')!;
-    const glyphHeight =
-      Math.max(
-        ...[...figure.querySelectorAll('line')].map((l) => Number(l.getAttribute('y2') ?? 0))
-      ) -
-      (Number(circle.getAttribute('cy')) - Number(circle.getAttribute('r')));
+    const glyphHeight = glyphHeightOf(root.querySelector('.actor-man')!);
 
     expect(glyphHeight).toBeLessThan(actor.height);
     expect(labelY(root)).toBe(100 + 35 + actor.height / 2);
