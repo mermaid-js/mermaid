@@ -146,10 +146,13 @@ const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
 
 /**
  * Margin reserved at the ends of each side of a node, so that a port cannot be
- * placed on a corner. Spelled as an ELK margin because `spacing.portsSurrounding`
- * takes one.
+ * placed on a corner. `anchorOnDegenerateSide` treats a side shorter than twice
+ * this as having no usable anchor span, so the option string below is built
+ * from it — the two must not be able to disagree.
  */
-const PORTS_SURROUNDING = '[top=12,left=12,bottom=12,right=12]';
+const PORTS_SURROUNDING_MARGIN = 12;
+/** The margin spelled as an ELK margin, because `spacing.portsSurrounding` takes one. */
+const PORTS_SURROUNDING = `[top=${PORTS_SURROUNDING_MARGIN},left=${PORTS_SURROUNDING_MARGIN},bottom=${PORTS_SURROUNDING_MARGIN},right=${PORTS_SURROUNDING_MARGIN}]`;
 /** Padding between a subgraph frame and its children. ELK's own default is 12. */
 const SUBGRAPH_PADDING = 24;
 /**
@@ -1723,10 +1726,16 @@ function applyElkEdgeLayout(
     endNode.y = endNode.offset!.posY + endNode.height! / 2;
 
     if (startNode.shape !== 'rect33') {
+      if (points.length > 1 && anchorOnDegenerateSide(startNode, points[0])) {
+        points.shift();
+      }
       points.unshift({ x: startNode.x, y: startNode.y });
     }
 
     if (endNode.shape !== 'rect33') {
+      if (points.length > 1 && anchorOnDegenerateSide(endNode, points[points.length - 1])) {
+        points.pop();
+      }
       points.push({ x: endNode.x, y: endNode.y });
     }
 
@@ -1749,6 +1758,32 @@ function applyElkEdgeLayout(
   if (straightenEdges) {
     straightenEdgeTerminals(data4Layout.edges);
   }
+}
+
+/**
+ * ELK reserves `PORTS_SURROUNDING_MARGIN` at both ends of a node side before
+ * distributing edge anchors along it (see `PORTS_SURROUNDING`). On a side
+ * shorter than twice that margin the usable span is negative, and ELK's
+ * clamping parks the anchor off-centre — a 14px start/end state circle got
+ * its only edge attached 3px off the dot's centre, and no node-level option
+ * overrides it (the spacing is only read per hierarchy level). Such an anchor
+ * carries no information, so the caller drops it and lets the edge aim at the
+ * node centre instead; the border clip then lands it dead centre, the same
+ * way the dagre pipeline attaches edges.
+ */
+function anchorOnDegenerateSide(node: NodeWithVertex, anchor: P): boolean {
+  const width = node.width ?? 0;
+  const height = node.height ?? 0;
+  const top = node.offset!.posY;
+  const bottom = top + height;
+  // ELK puts the anchor exactly on the border; the slack only absorbs float
+  // error from the offset arithmetic above. Same tolerance `onBorder` uses.
+  const tol = 0.5;
+  // An anchor on the top or bottom border spreads along the width; one on the
+  // left or right border spreads along the height.
+  const alongWidth = Math.abs(anchor.y - top) <= tol || Math.abs(anchor.y - bottom) <= tol;
+  const side = alongWidth ? width : height;
+  return side < 2 * PORTS_SURROUNDING_MARGIN;
 }
 
 function createEdgePointsFromSection(section: any, offset: { x: number; y: number }): P[] {
