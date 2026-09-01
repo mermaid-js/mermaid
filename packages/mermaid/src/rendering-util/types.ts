@@ -85,6 +85,7 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  metadata?: Record<string, unknown>;
   layer?: number;
   order?: number;
   children?: NodeChildren;
@@ -138,6 +139,8 @@ export interface Edge {
   style?: string[];
   animate?: boolean;
   animation?: 'fast' | 'slow';
+  /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
+  metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges
   arrowhead?: string;
   arrowheadStyle?: string;

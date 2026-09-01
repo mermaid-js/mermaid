@@ -6,6 +6,12 @@ const themes = [
   { theme: 'neo-dark', label: 'neo-dark' },
   { theme: 'redux', label: 'redux' },
   { theme: 'redux-dark', label: 'redux-dark' },
+  // The colour themes give each class box its own border and fill. Without these two
+  // entries nothing in the suite renders a class diagram under them, so the palette
+  // wiring — the slot stamped on the element meeting the selector emitted by the
+  // stylesheet — had no visual coverage at all.
+  { theme: 'redux-color', label: 'redux-color' },
+  { theme: 'redux-dark-color', label: 'redux-dark-color' },
 ];
 
 const diagrams = {
@@ -189,6 +195,36 @@ test.describe('Class diagram — Neo look with new themes', () => {
         logLevel: 1,
         htmlLabels: true,
         look: 'neo',
+        theme,
+      });
+    });
+  });
+});
+
+// The neo/redux themes set `themeVariables.strokeWidth` to 2, which lands on `path.relation`.
+// Relation markers must not scale with it, otherwise they overshoot the line-end offset and end
+// up drawn behind the class box. The `look: 'neo'` cases above use the `-margin` marker variants,
+// so only the default `classic` look exercises the plain markers.
+test.describe('Class diagram — Classic look with new themes', () => {
+  themes.forEach(({ theme, label }) => {
+    test(`CLASSIC-1 [${label}]: should render relation markers outside the class box`, async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(page, testInfo, diagrams.allRelationships, {
+        logLevel: 1,
+        htmlLabels: true,
+        theme,
+      });
+    });
+  });
+
+  themes.forEach(({ theme, label }) => {
+    test(`CLASSIC-2 [${label}]: should render cardinality with classic look`, async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(page, testInfo, diagrams.cardinality, {
+        logLevel: 1,
+        htmlLabels: true,
         theme,
       });
     });

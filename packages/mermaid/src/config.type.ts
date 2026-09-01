@@ -126,6 +126,92 @@ export interface MermaidConfig {
      */
     nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
     /**
+     * Named combination of the three options that decide where nodes end up:
+     * layering strategy, node placement strategy and cycle breaking strategy.
+     * They belong to different phases of the layout, so a preset is simply a
+     * named triple rather than a mode with behaviour of its own.
+     *
+     * `default` — network simplex layering and placement with depth-first
+     * cycle breaking at the top level, and Brandes-Koepf placement inside
+     * subgraphs. Depth-first breaking gives shorter back edges on graphs
+     * that loop.
+     *
+     * `legacy` — what shipped before presets existed: Brandes-Koepf placement,
+     * which straightens long edges at the cost of that alignment, with ELK's
+     * own greedy cycle breaking. Reproduces the rendering of earlier
+     * versions rather than the defaults their schema advertised.
+     *
+     * `modelOrder` — as `default`, but breaks cycles by greedy model order,
+     * which disturbs declaration order least at the cost of longer back
+     * edges. This is the combination `default` named previously.
+     *
+     * `depthFirst` — a name for what `default` already is, for diagrams that
+     * would rather say depth-first than rely on the default.
+     *
+     * Setting `layeringStrategy`, `nodePlacementStrategy` or
+     * `cycleBreakingStrategy` explicitly overrides the preset for that one
+     * option; the rest of the preset still applies.
+     *
+     */
+    preset?: 'default' | 'legacy' | 'modelOrder' | 'depthFirst';
+    /**
+     * Straightens an edge that leaves or enters a node with a tiny step.
+     *
+     * ELK spreads an edge's port evenly along a node's side but routes the
+     * edge down a channel whose row rarely lines up with that port exactly,
+     * leaving a staircase of a few pixels right at the border. With rounded
+     * corners the two micro-bends land on top of each other and read as a
+     * kink. Enabling this moves the channel onto the port's row and drops
+     * the step, so the edge draws as one straight line and both ports stay
+     * exactly where the layout put them.
+     *
+     * Only the step next to a node is touched, and only when the edge
+     * continues the same way afterwards, so a real turn is never collapsed.
+     * An edge is left alone entirely when moving its run would drag the far
+     * port, or would introduce a crossing.
+     *
+     */
+    straightenEdges?: boolean;
+    /**
+     * Renders edge crossings as small arcs ("hops") or visible gaps, so that
+     * it is clear which line passes over which where two edges meet.
+     *
+     * The edge that gives way loses its corner rounding for the segment
+     * carrying the hop, which is the trade for a readable crossing. Curved
+     * edges are skipped rather than rewritten, to avoid corrupting their
+     * geometry. Set to `false` to draw plain crossings.
+     *
+     */
+    lineHops?: boolean | ('arc' | 'gap');
+    /**
+     * Elk specific option deciding which layer each node is assigned to — the
+     * column in a left-to-right diagram, the row in a top-down one. This is
+     * the coarsest of the three placement decisions, so changing it moves
+     * nodes further than anything else short of altering spacing.
+     *
+     * NETWORK_SIMPLEX aims for the fewest long edges. LONGEST_PATH pushes
+     * every node as late as it can go. COFFMAN_GRAHAM bounds how many nodes
+     * share a layer, giving a more even, block-like shape on wide graphs.
+     * MIN_WIDTH and STRETCH_WIDTH trade edge length for a narrower or wider
+     * drawing. INTERACTIVE honours positions already on the nodes.
+     *
+     */
+    layeringStrategy?:
+      | 'NETWORK_SIMPLEX'
+      | 'LONGEST_PATH'
+      | 'LONGEST_PATH_SOURCE'
+      | 'COFFMAN_GRAHAM'
+      | 'MIN_WIDTH'
+      | 'STRETCH_WIDTH'
+      | 'INTERACTIVE';
+    /**
+     * Elk specific option capping how many nodes COFFMAN_GRAHAM will put in
+     * one layer. Ignored by every other layering strategy. Lower values give
+     * a taller, narrower drawing.
+     *
+     */
+    layeringLayerBound?: number;
+    /**
      * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
      *
      */
@@ -233,6 +319,7 @@ export interface MermaidConfig {
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
   swimlane?: SwimlaneDiagramConfig;
+  agentflow?: AgentflowDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -421,6 +508,45 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    *
    */
   automaticLaneOrdering?: boolean;
+}
+/**
+ * The object containing configurations specific for the agentflow diagram type.
+ *
+ * Agentflow renders through the shared unified renderer, so it owns the same
+ * spacing and padding knobs a flowchart does. They live in their own block so
+ * that agentflow can be tuned without moving every flowchart on the page.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "AgentflowDiagramConfig".
+ */
+export interface AgentflowDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  /**
+   * Defines the spacing between nodes on the same level.
+   *
+   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+   * and the vertical spacing for LR as well as RL graphs.
+   *
+   */
+  nodeSpacing?: number;
+  /**
+   * Defines the spacing between nodes on different levels.
+   *
+   * Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the
+   * horizontal spacing for LR as well as RL graphs.
+   *
+   */
+  rankSpacing?: number;
 }
 /**
  * The object containing configurations specific for sequence diagrams
