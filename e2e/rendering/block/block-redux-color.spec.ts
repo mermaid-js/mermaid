@@ -4,8 +4,8 @@ import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 /**
  * Composite blocks take a per-container colour under the redux colour themes, the same
  * way flowchart subgraphs do — one counter over containers, nothing on the plain shapes.
- * `redux-color` is the default theme, so a block diagram drawn with no theme set at all
- * goes through this path.
+ * Block is not one of the diagram types that default to a colour theme, so every test here
+ * names one explicitly.
  *
  * The unit tests pin the two halves separately — that `blockDB` hands out slots, and that
  * the stylesheet emits rules — but only a render proves the stamped `data-color-id`
