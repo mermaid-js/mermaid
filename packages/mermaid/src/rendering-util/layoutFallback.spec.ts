@@ -37,6 +37,16 @@ describe('layout fallback', () => {
     );
   });
 
+  it.each(['__proto__', 'constructor', 'toString'])(
+    'falls back for %s rather than reading it off the prototype',
+    (inherited) => {
+      // `layout` is settable from front matter, and on a plain registry object these pass a
+      // membership test and reach `loader()` as a TypeError.
+      vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      expect(getRegisteredLayoutAlgorithm(inherited)).toBe('dagre');
+    }
+  );
+
   it('resolves a layout the moment it is registered', () => {
     // What `@mermaid-js/layout-elk` does, and what tiny users do by hand.
     registerLayoutLoaders([

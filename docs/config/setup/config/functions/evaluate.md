@@ -12,7 +12,7 @@
 
 > **evaluate**(`val?`): `boolean`
 
-Defined in: [packages/mermaid/src/config.ts:37](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L37)
+Defined in: [packages/mermaid/src/config.ts:60](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L60)
 
 Converts a string/boolean into a boolean
 

@@ -111,6 +111,8 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
       return false;
     }
     throw error;
+  } finally {
+    configApi.setDiagramConfigScope(undefined);
   }
 }
 
@@ -472,7 +474,7 @@ export const removeExistingElements = (
  * Deprecated for external use.
  */
 
-const render = async function (
+const renderDiagram = async function (
   id: string,
   text: string,
   svgContainingElement?: Element
@@ -675,6 +677,23 @@ const render = async function (
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
   };
+};
+
+/**
+ * Renders the diagram, holding the diagram config scope for exactly as long as the render.
+ * Leaving it set would make `getConfig()` report the last diagram's appearance as the
+ * global answer for every caller between renders.
+ */
+const render = async function (
+  id: string,
+  text: string,
+  svgContainingElement?: Element
+): Promise<RenderResult> {
+  try {
+    return await renderDiagram(id, text, svgContainingElement);
+  } finally {
+    configApi.setDiagramConfigScope(undefined);
+  }
 };
 
 /**

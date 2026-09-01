@@ -12,7 +12,7 @@
 
 > **sanitize**(`options`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:208](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L208)
+Defined in: [packages/mermaid/src/config.ts:231](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L231)
 
 Ensures options parameter does not attempt to override `siteConfig` secure keys.
 

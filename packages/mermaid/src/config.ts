@@ -15,7 +15,28 @@ type AppearanceKey = (typeof APPEARANCE_KEYS)[number];
 
 type DiagramAppearance = Pick<BaseDiagramConfig, AppearanceKey>;
 
-/** Reads one appearance setting from one config layer, diagram-scoped value first. */
+/** Kept in step with the schema's `look` enum by `config.appearance.spec.ts`. */
+const LOOKS = new Set(['classic', 'handDrawn', 'neo']);
+
+/**
+ * Whether an appearance value is one this build answers to. `initialize()` normalises an
+ * unknown top-level `theme`, so the diagram-scoped keys need the same guard or they would
+ * carry a name no stylesheet matches. `layout` is exempt: its registry is extensible, and
+ * `getRegisteredLayoutAlgorithm` falls back at render time.
+ */
+const isUsableAppearance = (key: AppearanceKey, value: string) => {
+  if (key === 'theme') {
+    // `'null'` is the documented sentinel for disabling the pre-defined themes.
+    return value === 'null' || value in theme;
+  }
+  return key !== 'look' || LOOKS.has(value);
+};
+
+/**
+ * Reads one appearance setting from one config layer, diagram-scoped value first. A value
+ * this build cannot render is passed over rather than winning, so a bogus `flowchart.theme`
+ * falls back to the `theme` set beside it before the next layer is tried.
+ */
 const readAppearance = (
   layer: MermaidConfig | undefined,
   diagramConfigKey: string,
@@ -25,7 +46,9 @@ const readAppearance = (
     return undefined;
   }
   const section = (layer as Record<string, DiagramAppearance | undefined>)[diagramConfigKey];
-  return section?.[key] ?? layer[key];
+  return [section?.[key], layer[key]].find(
+    (value) => value !== undefined && isUsableAppearance(key, value)
+  );
 };
 
 /**

@@ -3,7 +3,13 @@
  * diagram type. It is a schema default, not forced by `init`, so an override can reach it.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { getConfig, reset, saveConfigFromInitialize, setSiteConfig } from '../../config.js';
+import {
+  getConfig,
+  reset,
+  saveConfigFromInitialize,
+  setDiagramConfigScope,
+  setSiteConfig,
+} from '../../config.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 import { mermaidAPI } from '../../mermaidAPI.js';
 
@@ -17,8 +23,12 @@ const resetConfig = () => {
 };
 
 const layoutFor = async (text: string) => {
-  await mermaidAPI.parse(text);
-  return getConfig().layout;
+  const { diagramType } = await mermaidAPI.parse(text);
+  // Scope is bounded to the parse; re-establish it to read back the resolution it performed.
+  setDiagramConfigScope(diagramType);
+  const { layout } = getConfig();
+  setDiagramConfigScope(undefined);
+  return layout;
 };
 
 describe('swimlanesDiagram', () => {

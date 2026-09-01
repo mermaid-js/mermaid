@@ -12,7 +12,7 @@
 
 > **setDiagramConfigScope**(`diagramType?`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:125](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L125)
+Defined in: [packages/mermaid/src/config.ts:148](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L148)
 
 Names the diagram type being parsed or rendered, so its own appearance defaults apply.
 

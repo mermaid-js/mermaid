@@ -77,9 +77,20 @@ describe('default theme', () => {
   });
 
   describe('when a diagram type defaults to a different theme', () => {
-    it('carries that theme and its variables together', async () => {
-      await mermaidAPI.parse('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
+    /**
+     * The config the renderers are handed. Scope is bounded to the parse, so it is
+     * re-established here over the same directives to read back its resolution.
+     */
+    const configFor = async (text: string) => {
+      const { diagramType } = await mermaidAPI.parse(text);
+      configApi.setDiagramConfigScope(diagramType);
       const config = configApi.getConfig();
+      configApi.setDiagramConfigScope(undefined);
+      return config;
+    };
+
+    it('carries that theme and its variables together', async () => {
+      const config = await configFor('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
       expect(config.theme).toBe(DIAGRAM_DEFAULT_THEME);
       expect(fingerprint(config.themeVariables)).toBe(fingerprintOf(DIAGRAM_DEFAULT_THEME));
       expect(fingerprint(config.themeVariables)).not.toBe('none');
@@ -88,8 +99,7 @@ describe('default theme', () => {
     it('emits palette CSS, not just palette variables', async () => {
       // Where a name/variables disagreement would show: `er/styles.ts` gates on the name,
       // so a stale one leaves the palette in the variables and absent from the CSS.
-      await mermaidAPI.parse('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
-      const config = configApi.getConfig();
+      const config = await configFor('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
       const css = erStyles({
         ...(config.themeVariables as unknown as Record<string, unknown>),
         theme: config.theme,
@@ -100,8 +110,7 @@ describe('default theme', () => {
     });
 
     it('leaves the theme alone for a diagram type that did not opt in', async () => {
-      await mermaidAPI.parse('pie\n  "Dogs" : 40');
-      const config = configApi.getConfig();
+      const config = await configFor('pie\n  "Dogs" : 40');
       expect(config.theme).toBe(GLOBAL_DEFAULT_THEME);
       expect(fingerprint(config.themeVariables)).toBe(fingerprintOf(GLOBAL_DEFAULT_THEME));
     });

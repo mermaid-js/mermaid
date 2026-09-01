@@ -27,7 +27,9 @@ export interface LayoutLoaderDefinition {
   algorithm?: string;
 }
 
-const layoutAlgorithms: Record<string, LayoutLoaderDefinition> = {};
+// Prototype-less: `layout` is settable from frontmatter, and on a plain object a value of
+// `__proto__` or `toString` would pass a membership test and reach `loader()` as a TypeError.
+const layoutAlgorithms: Record<string, LayoutLoaderDefinition> = Object.create(null);
 
 export const registerLayoutLoaders = (loaders: LayoutLoaderDefinition[]) => {
   for (const loader of loaders) {
@@ -60,7 +62,7 @@ const registerDefaultLayoutLoaders = () => {
 registerDefaultLayoutLoaders();
 
 export const render = async (data4Layout: LayoutData, svg: SVG) => {
-  if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
+  if (!Object.hasOwn(layoutAlgorithms, data4Layout.layoutAlgorithm)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
 
@@ -147,11 +149,11 @@ export const getRegisteredLayoutAlgorithm = (
   algorithm = '',
   { fallback = LAST_RESORT_LAYOUT } = {}
 ) => {
-  if (algorithm in layoutAlgorithms) {
+  if (Object.hasOwn(layoutAlgorithms, algorithm)) {
     return algorithm;
   }
   for (const candidate of [fallback, LAST_RESORT_LAYOUT]) {
-    if (candidate in layoutAlgorithms) {
+    if (Object.hasOwn(layoutAlgorithms, candidate)) {
       log.warn(`Layout algorithm ${algorithm} is not registered. Using ${candidate} as fallback.`);
       return candidate;
     }

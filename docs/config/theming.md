@@ -36,18 +36,21 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 ## Per-diagram defaults
 
-Not every diagram type defaults to the same theme and look. These types default to the
-`redux-color` theme and the `neo` look:
+Not every diagram type defaults to the same theme and look. These do, to the `redux-color`
+theme and the `neo` look. The name on the left is the **config key** — what you write to
+scope a setting to that diagram, which is not always the keyword the diagram starts with:
 
-- `flowchart`
-- `swimlane`
-- `classDiagram`
-- `erDiagram`
-- `requirementDiagram`
-- `sequenceDiagram`
-- `stateDiagram`
-- `usecase`
-- `venn`
+| Config key    | Diagram              |
+| ------------- | -------------------- |
+| `flowchart`   | `flowchart`          |
+| `swimlane`    | `swimlane-beta`      |
+| `class`       | `classDiagram`       |
+| `er`          | `erDiagram`          |
+| `requirement` | `requirementDiagram` |
+| `sequence`    | `sequenceDiagram`    |
+| `state`       | `stateDiagram`       |
+| `usecase`     | `usecase-beta`       |
+| `venn`        | `venn-beta`          |
 
 Every other diagram type defaults to the `default` theme and the `classic` look.
 
