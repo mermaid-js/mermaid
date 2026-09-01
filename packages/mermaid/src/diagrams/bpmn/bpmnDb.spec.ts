@@ -324,6 +324,21 @@ describe('bpmnDb', () => {
       expect(boundary.gap).toBeUndefined();
     });
 
+    it('hangs an artifact off a boundary event, which is itself anchored', () => {
+      // Two anchors in a row: the note hangs from the boundary event, and the boundary
+      // event sits on the task. The layout resolves such a chain to its end, so both
+      // artefacts end up on the task's border.
+      const { nodes } = build(`bpmn-beta LR
+  lane l1 "L"
+    task t1 "T"
+      boundary timer b1 "B"
+    note n1 "Escalate"
+  n1 ... b1
+`);
+      expect(nodeById(nodes, 'n1').metadata?.anchorTo).toMatchObject({ hostId: 'b1' });
+      expect(nodeById(nodes, 'b1').metadata?.anchorTo).toMatchObject({ hostId: 't1' });
+    });
+
     it('carries the corner marker a data object was declared with', () => {
       const { nodes } = build(`bpmn-beta LR
   lane l1 "L"
