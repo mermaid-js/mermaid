@@ -1,14 +1,7 @@
 /**
- * `init` used to decide the layout, picking between a user override, a
- * `defaultLayout` baked into the factory call, and the site config. It no
- * longer does: `layout` is resolved from the schema alongside `theme` and
- * `look`, where a diagram type's default sits below anything the user set
- * rather than above it. Swimlanes -- the only caller that ever passed a
- * `defaultLayout` -- declare `layout: swimlane` in the schema instead.
- *
- * What is checked here is that `init` keeps its hands off the layout, so the
- * resolution chain stays the only authority. The chain itself is covered by
- * `config.appearance.spec.ts` and `swimlanes/swimlanesDiagram.spec.ts`.
+ * `init` used to decide the layout; it no longer does, so that the schema resolution chain
+ * is the only authority. The chain itself is covered by `config.appearance.spec.ts` and
+ * `swimlanes/swimlanesDiagram.spec.ts`.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setConfig } from '../../diagram-api/diagramAPI.js';

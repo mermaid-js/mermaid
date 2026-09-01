@@ -12,7 +12,7 @@
 
 > **reset**(`config`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:311](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L311)
+Defined in: [packages/mermaid/src/config.ts:271](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L271)
 
 Resets the current config and applied directives to the provided config.
 

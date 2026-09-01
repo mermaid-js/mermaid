@@ -1,10 +1,7 @@
 /**
- * A diagram type may name a layout as its default, but the layout it names is
- * not guaranteed to be there: `elk` ships as a separate package the embedder
- * registers, and `cose-bilkent` is only bundled into builds that include the
- * large features, so `@mermaid-js/tiny` has neither. Every renderer therefore
- * resolves the layout before handing it to `render()`, and the resolution has
- * to terminate at something that is always registered.
+ * A diagram type may name a layout as its default, but `elk` ships as a separate package
+ * and `cose-bilkent` only in large-feature builds, so the resolution every renderer runs
+ * before `render()` has to terminate at something always registered.
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { getRegisteredLayoutAlgorithm, registerLayoutLoaders } from './render.js';
@@ -32,10 +29,8 @@ describe('layout fallback', () => {
   });
 
   it('falls through to dagre when the caller-supplied fallback is absent too', () => {
-    // Mindmap asks for `cose-bilkent`, which a build without the large features
-    // never registers. Before the chain ended at dagre this threw, so a
-    // `mindmap.layout` default of `elk` would have taken tiny down rather than
-    // quietly rendering with dagre.
+    // Mindmap's fallback is `cose-bilkent`, absent from tiny. Before the chain ended at
+    // dagre this threw, so a `mindmap.layout` of `elk` would have taken tiny down.
     vi.spyOn(log, 'warn').mockImplementation(() => undefined);
     expect(getRegisteredLayoutAlgorithm('elk', { fallback: 'not-registered-either' })).toBe(
       'dagre'

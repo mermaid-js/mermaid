@@ -12,11 +12,9 @@
 
 > **setDiagramConfigScope**(`diagramType?`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:165](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L165)
+Defined in: [packages/mermaid/src/config.ts:125](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L125)
 
-Tells the config machinery which diagram type is about to be parsed or
-rendered, so the type's own `theme` / `look` / `layout` defaults can outrank
-the global ones. Pass `undefined` to leave diagram scope.
+Names the diagram type being parsed or rendered, so its own appearance defaults apply.
 
 ## Parameters
 
@@ -24,7 +22,7 @@ the global ones. Pass `undefined` to leave diagram scope.
 
 `string`
 
-The type `detectType` returned, e.g. `flowchart-v2`.
+The type `detectType` returned, e.g. `flowchart-v2`; `undefined` to leave scope.
 
 ## Returns
 

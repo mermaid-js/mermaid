@@ -1,21 +1,8 @@
 /**
- * The theme name and the theme variables have to agree.
- *
- * The name is decided in three places:
- *
- *  1. `config.schema.yaml`, whose `theme.default` becomes the global default and whose
- *     per-diagram `theme.default` overrides it for the diagram types that opt in.
- *  2. `defaultConfig.ts`, which sets `themeVariables` explicitly (a non-JSON default, so
- *     the schema cannot supply it) from the *global* default.
- *  3. `config.ts`, which re-derives `themeVariables` whenever the resolved theme turns out
- *     to be a different one from the one the site config was built with.
- *
- * If they drift, nothing throws: `theme` reports one theme while `themeVariables` carries
- * another's palette, and diagrams render in a mixture that is very hard to attribute. So
- * assert the name and the variables agree, rather than just asserting the name.
- *
- * Which diagram type gets which theme is not this file's subject -- see
- * `config.appearance.spec.ts` for the resolution order.
+ * The theme name and the theme variables have to agree. If they drift nothing throws --
+ * `theme` names one theme while `themeVariables` carries another's palette, and diagrams
+ * render in a mixture. Resolution order is `config.appearance.spec.ts`'s subject, not this
+ * file's.
  */
 import { beforeEach, describe, expect, it } from 'vitest';
 import * as configApi from './config.js';
@@ -69,10 +56,7 @@ describe('default theme', () => {
     mermaidAPI.initialize({ theme: 'not-a-real-theme' });
     const config = configApi.getConfig();
     expect(fingerprint(config.themeVariables)).toBe(fingerprintOf(GLOBAL_DEFAULT_THEME));
-    // The name has to be normalised too, not just the variables. Leaving the unrecognised
-    // name in place is what this file's header warns about: `theme` reports one thing while
-    // `themeVariables` carries another's palette. It is not cosmetic -- every stylesheet
-    // gates its palette rules on the *name*, so the palette would be loaded and never used.
+    // The name too, not just the variables: stylesheets gate their palette rules on it.
     expect(config.theme).toBe(GLOBAL_DEFAULT_THEME);
   });
 
@@ -102,10 +86,8 @@ describe('default theme', () => {
     });
 
     it('emits palette CSS, not just palette variables', async () => {
-      // Where the consequence of a name/variables disagreement would show.
-      // `createUserStyles` hands the stylesheet `config.themeVariables` together with
-      // `config.theme`, and `er/styles.ts` gates on the name -- so a stale name would mean
-      // the palette is present in the variables and absent from the CSS.
+      // Where a name/variables disagreement would show: `er/styles.ts` gates on the name,
+      // so a stale one leaves the palette in the variables and absent from the CSS.
       await mermaidAPI.parse('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
       const config = configApi.getConfig();
       const css = erStyles({

@@ -472,17 +472,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           If set to `false`, the absolute space required is used.
         type: boolean
         default: true
-      # `theme`, `look` and `layout` are declared here rather than only at the top
-      # level so that a diagram type can carry its own default for them, and so a
-      # user can set one for a single diagram type. The top-level properties of the
-      # same name `$ref` these definitions, which keeps the enums written down once.
-      #
-      # Resolution order, lowest to highest: the top-level default in this schema,
-      # this diagram type's default in this schema, whatever the user passed to
-      # `initialize()`, and finally the diagram's own frontmatter or directive. Within
-      # each of the two user-supplied layers the diagram-scoped value wins over the
-      # global one, so `initialize({ look: 'classic', flowchart: { look: 'neo' } })`
-      # leaves flowcharts on `neo` and everything else on `classic`.
+      # Declared here as well as at the top level so a diagram type can carry its own
+      # default; the top-level properties `$ref` these, keeping the enums written once.
+      # Resolution, highest first: frontmatter/directive, `initialize()`, this diagram
+      # type's default, the top-level default. Diagram-scoped beats global within a layer.
       theme:
         description: |
           Theme, the CSS style sheet.
@@ -2376,9 +2369,8 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 'neo'
       layout:
         $ref: '#/$defs/BaseDiagramConfig/properties/layout'
-        # Swimlanes reuse the flowchart parser, DB and renderer and differ only in
-        # the layout engine, so the engine is the diagram type. Declared here rather
-        # than forced by the renderer so that a user override still wins.
+        # Swimlanes differ from flowcharts only in the layout engine, so the engine is the
+        # diagram type. Declared here, not forced by the renderer, so an override still wins.
         default: 'swimlane'
       lineHops:
         description: |

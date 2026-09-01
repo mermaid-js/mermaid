@@ -1,8 +1,6 @@
 /**
- * Swimlanes reuse the flowchart parser, DB and renderer and differ only in the
- * layout engine, so `layout: swimlane` is the whole diagram type. It is declared
- * as the schema default for the `swimlane` config section rather than forced by
- * the diagram's `init` hook, which is what lets a user override reach it.
+ * Swimlanes differ from flowcharts only in the layout engine, so `layout: swimlane` is the
+ * diagram type. It is a schema default, not forced by `init`, so an override can reach it.
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { getConfig, reset, saveConfigFromInitialize, setSiteConfig } from '../../config.js';
@@ -44,8 +42,7 @@ describe('swimlanesDiagram', () => {
   });
 
   it('keeps a diagram-scoped layout override', async () => {
-    // Forcing the layout from `init` used to override this too, so a user could
-    // not move swimlanes onto another engine at all.
+    // `init` used to override this too, so swimlanes could not be moved off the engine.
     mermaidAPI.initialize({ swimlane: { layout: 'dagre' } });
     expect(await layoutFor(SWIMLANE)).toBe('dagre');
   });

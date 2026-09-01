@@ -73,11 +73,8 @@ const DOMPURIFY_ATTR = ['dominant-baseline'];
 function processAndSetConfigs(text: string) {
   const processed = preprocessDiagram(text);
   configApi.reset();
-  // A diagram type may default `theme`, `look` or `layout` differently from the
-  // rest of mermaid, so the config has to know which type it is resolving for.
-  // Detection is cheap and runs against the same text `Diagram.fromText` will
-  // detect from, and text that matches nothing simply leaves the global
-  // defaults in charge -- the real error is raised later, at parse time.
+  // The config needs the diagram type to apply that type's appearance defaults. Text
+  // matching nothing leaves the global defaults in charge; parse raises the real error.
   let diagramType: string | undefined;
   try {
     diagramType = detectType(processed.code.cleaned, configApi.getConfig());
@@ -696,19 +693,9 @@ function initialize(userOptions: MermaidConfig = {}) {
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
-  // The theme name and the theme variables travel together: `createUserStyles` hands the
-  // stylesheet `config.themeVariables` alongside `config.theme`, and every palette-aware
-  // stylesheet gates its rules on the *name*. So an unrecognised name left in place means
-  // the fallback theme's palette is loaded into the variables and then never rendered.
-  //
-  // Normalising the name also matters to the per-diagram defaults: an unrecognised name is
-  // still a theme the user asked for, and the site config is the layer that outranks a
-  // diagram type's own default. Leaving the invalid name here would carry it past that
-  // check and into the stylesheets.
-  //
-  // Read from `defaultConfig` rather than naming the theme here, so the schema's global
-  // `theme.default` stays the one place it is written down; `defaultConfig.ts` derives its
-  // `themeVariables` from the same value.
+  // Stylesheets gate their palette rules on the theme *name*, so an unrecognised name left
+  // in place loads a palette that is then never rendered. Read the fallback from
+  // `defaultConfig` so the schema's `theme.default` stays the one place it is written down.
   const fallbackTheme = configApi.defaultConfig.theme as keyof typeof theme;
   if (options?.theme && options.theme in theme) {
     // Todo merge with user options

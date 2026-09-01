@@ -69,15 +69,10 @@ const config: RequiredDeep<MermaidConfig> = {
     },
   },
   class: {
-    // `class` is the one diagram section built from scratch here instead of
-    // being spread from the schema, so the `theme` / `look` / `layout` defaults
-    // it declares have to be carried across by hand or the diagram type cannot
-    // override the global ones. The rest of the schema's class defaults stay
-    // off deliberately: this section has never carried them, and `padding`
-    // above all — setting the schema default of 5 here would change class node
-    // dimensions on the unified (v2) renderer.
-    // Optional chaining because the docs scripts short-circuit `.schema.yaml`
-    // imports to `{}` -- see `scripts/loadHook.mjs`.
+    // Built from scratch rather than spread from the schema, so the appearance defaults
+    // have to be carried across by hand; the rest stay off, `padding` above all — the
+    // schema default of 5 would change class node dimensions on the unified renderer.
+    // Optional chaining: the docs scripts short-circuit `.schema.yaml` to `{}`.
     theme: defaultConfigJson.class?.theme,
     look: defaultConfigJson.class?.look,
     layout: defaultConfigJson.class?.layout,

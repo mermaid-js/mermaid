@@ -25,11 +25,8 @@ export const createFlowDiagram = ({
     if (!cnf.flowchart) {
       cnf.flowchart = {};
     }
-    // The layout is not forced here. Swimlanes -- the one variant that needs a
-    // layout other than the flowchart default -- declare `layout: swimlane` in
-    // the schema instead, which puts it in the same precedence chain as
-    // everything else: a user's `layout`, or `swimlane.layout`, outranks it,
-    // where forcing it here overrode both.
+    // The layout is not forced here: swimlanes declare `layout: swimlane` in the schema,
+    // which puts it below a user's `layout` or `swimlane.layout` instead of above both.
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
   },
