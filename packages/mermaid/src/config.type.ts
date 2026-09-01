@@ -343,6 +343,7 @@ export interface MermaidConfig {
   eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
+  timing?: TimingDiagramConfig;
   usecase?: UsecaseDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
@@ -2051,6 +2052,34 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
    * The tension factor for the Catmull-Rom spline conversion to cubic Bézier curves.
    */
   curveTension?: number;
+}
+/**
+ * The object containing configurations specific for timing diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "TimingDiagramConfig".
+ */
+export interface TimingDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Width of the timeline area, excluding labels and outer padding.
+   */
+  width?: number;
+  /**
+   * Height of each signal lane.
+   */
+  rowHeight?: number;
+  /**
+   * Width reserved for signal labels.
+   */
+  labelWidth?: number;
+  /**
+   * Padding around the timing diagram.
+   */
+  padding?: number;
+  /**
+   * Height reserved for the time axis.
+   */
+  axisHeight?: number;
 }
 /**
  * The object containing configurations specific for usecase diagrams.

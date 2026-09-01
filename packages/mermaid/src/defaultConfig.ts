@@ -289,6 +289,9 @@ const config: RequiredDeep<MermaidConfig> = {
   radar: {
     ...defaultConfigJson.radar,
   },
+  timing: {
+    ...defaultConfigJson.timing,
+  },
   usecase: {
     ...defaultConfigJson.usecase,
   },
