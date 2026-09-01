@@ -36,9 +36,11 @@ import type {
   SemanticEdge,
   SemanticSubGraph,
   SemanticVertex,
+  VertexKind,
 } from './types.js';
 import { AgentflowWarning } from './diagnostics.js';
 import { normaliseNodeShapes, resolveShapeAlias } from './shapes.js';
+import { assignColorSlots } from './colorSlots.js';
 import type {
   AgentflowDiagnostic,
   AgentflowDiagnosticContext,
@@ -1903,6 +1905,24 @@ You have to call mermaid.initialize.`
     // returned `[]`.
     normaliseNodeShapes(nodes, this);
 
+    // Palette slots. Wired here rather than in `transformData` because this is the path the
+    // renderer actually takes -- `getData()` calls `normaliseNodeShapes` directly, so a hook
+    // added to `transformData` never runs on a real render.
+    //
+    // The kind comes from the vertex record, not from the resolved shape: a `connector` and a
+    // `task` are both `roundedRect`, so reading it off the shape paints every connector as a
+    // task.
+    const connectorIds = new Set(this.getConnectors().map((c) => c.id));
+    assignColorSlots(nodes, (id) => {
+      if (connectorIds.has(id)) {
+        return 'connector';
+      }
+      const v = this.vertices.get(id);
+      return v
+        ? this.deriveVertexKind(v, resolveShapeAlias(v.type as string | undefined))
+        : undefined;
+    });
+
     return {
       nodes,
       edges,
@@ -1927,6 +1947,33 @@ You have to call mermaid.initialize.`
   // that carry meaning (ids, labels, shape, domain metadata, edge
   // arrow/stroke/label, subgraph membership, type/template declarations,
   // diagnostics) are kept.
+
+  /**
+   * The v0.8.1 §4 vertex kind for a parsed vertex.
+   *
+   * Extracted so the semantic model and `getData()`'s palette slots read the same rules
+   * from one place. Kind is NOT recoverable from the resolved shape alone — a tool and a
+   * task can both land on `roundedRect` — which is why this takes the vertex and not just
+   * its shape.
+   */
+  private deriveVertexKind(v: FlowVertex, resolvedShape: string | undefined): VertexKind {
+    if (this.isToolDefinition(v)) {
+      return 'tool';
+    }
+    if (resolvedShape === 'hexagon' || resolvedShape === 'hex') {
+      return 'action';
+    }
+    if (resolvedShape === 'lean-right' || resolvedShape === 'lean_right') {
+      return 'input';
+    }
+    if (resolvedShape === 'lin-doc' || resolvedShape === 'lined-document') {
+      return 'refdoc';
+    }
+    if (resolvedShape === 'diamond') {
+      return 'decision';
+    }
+    return 'task';
+  }
 
   public getSemanticModel(): AgentflowSemanticModel {
     // Run the post-parse validators so that the semantic export includes
@@ -1973,19 +2020,7 @@ You have to call mermaid.initialize.`
         vertex.shape = resolvedShape;
       }
       // Derived vertex kind per v0.8.1 §4.
-      if (this.isToolDefinition(v)) {
-        vertex.vertexKind = 'tool';
-      } else if (resolvedShape === 'hexagon' || resolvedShape === 'hex') {
-        vertex.vertexKind = 'action';
-      } else if (resolvedShape === 'lean-right' || resolvedShape === 'lean_right') {
-        vertex.vertexKind = 'input';
-      } else if (resolvedShape === 'lin-doc' || resolvedShape === 'lined-document') {
-        vertex.vertexKind = 'refdoc';
-      } else if (resolvedShape === 'diamond') {
-        vertex.vertexKind = 'decision';
-      } else {
-        vertex.vertexKind = 'task';
-      }
+      vertex.vertexKind = this.deriveVertexKind(v, resolvedShape);
       if (v.metadata && Object.keys(v.metadata).length > 0) {
         // Strip presentation-only keys from metadata passthrough.
         const meta: Record<string, unknown> = {};
