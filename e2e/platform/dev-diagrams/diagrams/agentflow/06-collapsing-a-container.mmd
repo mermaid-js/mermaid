@@ -1,0 +1,18 @@
+agentflow-beta TB
+  flow intake["Intake"]
+    receive["Receive request"]@{ shape: input }
+  end
+
+  flow processing["Processing"]
+    validate["Validate"]@{ shape: task }
+    enrich["Enrich"]@{ shape: task }
+    validate --> enrich
+  end
+  processing@{ view: "collapsed" }
+
+  flow output["Output"]
+    publish["Publish"]@{ shape: action }
+  end
+
+  receive --> validate
+  enrich --> publish

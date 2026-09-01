@@ -601,6 +601,29 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
  */
 export interface AgentflowDiagramConfig extends BaseDiagramConfig {
   /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
