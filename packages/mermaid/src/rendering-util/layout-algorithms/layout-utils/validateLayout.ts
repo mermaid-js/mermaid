@@ -8,7 +8,7 @@ import {
   segmentIntersectsRectInterior,
 } from './helpers.js';
 import type { Point, Rect } from './types.js';
-import { readAnchor } from '../swimlanes/anchoredNodes.js';
+import { resolveAnchorHostId } from '../swimlanes/anchoredNodes.js';
 
 type PortSide = 'N' | 'E' | 'S' | 'W';
 import { EPS, normalizePolyline, distance, segmentsCross } from './geometry.js';
@@ -682,8 +682,9 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       }
 
       // An anchored node's centre sits on its host's border, so the two overlap by
-      // design rather than by a layout fault.
-      if (readAnchor(aNode)?.hostId === bId || readAnchor(bNode)?.hostId === aId) {
+      // design rather than by a layout fault. The host is the one the pinning resolved,
+      // which for a node anchored to another anchored node is the end of the chain.
+      if (resolveAnchorHostId(aId, byId) === bId || resolveAnchorHostId(bId, byId) === aId) {
         continue;
       }
 
