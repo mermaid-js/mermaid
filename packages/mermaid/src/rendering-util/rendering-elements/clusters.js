@@ -420,7 +420,7 @@ const divider = (parent, node) => {
   const siteConfig = getConfig();
 
   const { theme, themeVariables, handDrawnSeed } = siteConfig;
-  const { nodeBorder, borderColorArray } = themeVariables;
+  const { altBackground, nodeBorder, borderColorArray } = themeVariables;
 
   // Sibling regions of one composite share a slot -- see `nextColorSlot` in the state
   // diagram's `dataFetcher.ts`.
@@ -452,7 +452,19 @@ const divider = (parent, node) => {
   if (node.look === 'handDrawn') {
     const rc = rough.svg(shapeSvg);
     const roughOuterNode = rc.rectangle(x, y, width, height, {
-      fill: 'lightgrey',
+      // The theme's own value, matching what `rect.divider` gets from CSS under the other
+      // looks -- and the same fallback. It was hardcoded `lightgrey`, which no dark theme
+      // ever asked for; that stayed tolerable only while the fill was sparse hatching, and
+      // turns into a bright block on a dark canvas once it is solid.
+      fill: altBackground ?? '#efefef',
+      // Solid rather than roughjs's default hachure. A hachure fill is drawn as *stroked*
+      // lines, so both of the group's paths come out with `fill="none"` and a stylesheet
+      // cannot tell the fill from the outline -- which is the same trap documented on
+      // `roundedWithTitle`'s inner shape in `state/styles.js`. Solid splits them the way
+      // the composite's outer shape already does, so a region can take the palette's tint
+      // and border without its hatching being repainted. `roundedWithTitle` fills solid
+      // too, except for its deliberately hatched alt variant.
+      fillStyle: 'solid',
       roughness: 0.5,
       strokeLineDash: [5],
       stroke: nodeBorder,

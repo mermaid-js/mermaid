@@ -82,6 +82,10 @@ const genColor = (options) => {
        leaving it on \`altBackground\`. The container still reads as palette-coloured: the
        \`outer\` shape spans the whole composite, so its outline already frames the body. */
 
+    /* Regions split the same way, which is why \`divider\` fills solid rather than taking
+       roughjs's default hachure -- see the note on that call. Hatched, both of its paths
+       carried \`fill="none"\` and these two rules degenerated: the tint matched nothing and
+       the border rule repainted the hatching. */
     ${slot}.statediagram-cluster .divider path[stroke='none'] {
       ${tint}
     }
