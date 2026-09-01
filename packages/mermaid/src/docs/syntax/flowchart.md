@@ -1213,11 +1213,11 @@ flowchart LR
     e2@{ curve: natural }
 ```
 
-```info
+```note
 Any edge curve style modified at the edge level overrides the diagram level style.
 ```
 
-```info
+```note
 If the same edge is modified multiple times the last modification will be rendered.
 ```
 
