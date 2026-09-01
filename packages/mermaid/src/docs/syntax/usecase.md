@@ -22,15 +22,56 @@ Use case diagrams use the `redux-color` theme and the `neo` look by default. Not
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
 
-Both are only defaults, so anything you set yourself wins. To draw a diagram the way Mermaid
-did before these became the defaults, name the previous two in its front matter:
+The same diagram, drawn both ways:
 
-```yaml
+### With the defaults
+
+```mermaid-example
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
 ---
 config:
   theme: default
   look: classic
 ---
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
 ```
 
 Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,

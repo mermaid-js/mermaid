@@ -27,15 +27,60 @@ Requirement diagrams use the `redux-color` theme and the `neo` look by default. 
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
 
-Both are only defaults, so anything you set yourself wins. To draw a diagram the way Mermaid
-did before these became the defaults, name the previous two in its front matter:
+The same diagram, drawn both ways:
 
-```yaml
+### With the defaults
+
+```mermaid-example
+requirementDiagram
+  requirement checkout_req {
+    id: 1
+    text: Orders must be payable online.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement payment_req {
+    id: 1.1
+    text: Card payments must be authorised.
+    risk: high
+    verifymethod: test
+  }
+  element checkout_service {
+    type: service
+  }
+  checkout_req - contains -> payment_req
+  checkout_service - satisfies -> payment_req
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
 ---
 config:
   theme: default
   look: classic
 ---
+requirementDiagram
+  requirement checkout_req {
+    id: 1
+    text: Orders must be payable online.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement payment_req {
+    id: 1.1
+    text: Card payments must be authorised.
+    risk: high
+    verifymethod: test
+  }
+  element checkout_service {
+    type: service
+  }
+  checkout_req - contains -> payment_req
+  checkout_service - satisfies -> payment_req
 ```
 
 Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
