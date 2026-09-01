@@ -60,3 +60,29 @@ test('default theme leaves the markers inert', async ({ page }, testInfo) => {
   expect(n.slots, 'no container slots stamped off-palette').toBe(0);
   expect(n.stroke, 'nodes keep the theme colour').not.toBe('rgb(232, 121, 249)');
 });
+
+test('applies redux-color and neo by default, with nothing set', async ({ page }, testInfo) => {
+  // Agentflow declares `theme: redux-color` and `look: neo` as its own defaults in
+  // `config.schema.yaml`, so a diagram that sets neither still gets the palette. Rendered
+  // with no options at all — if those defaults stop resolving, the strokes collapse to one
+  // colour and this fails.
+  await renderGraph(page, testInfo, esc(src), {});
+
+  const seen = await page.evaluate(() => {
+    const svg = document.querySelector('svg[aria-roledescription]')!;
+    const looks = new Set(
+      [...svg.querySelectorAll('[data-look]')].map((e) => e.getAttribute('data-look'))
+    );
+    const strokes = new Set<string>();
+    for (const el of svg.querySelectorAll('[class*="af-kind-"],[data-color-id]')) {
+      const tag = el.querySelector('rect,path,polygon');
+      if (tag) {
+        strokes.add(getComputedStyle(tag).stroke);
+      }
+    }
+    return { looks: [...looks], strokes: strokes.size };
+  });
+
+  expect(seen.looks, 'the neo look is the agentflow default').toContain('neo');
+  expect(seen.strokes, 'the palette is live without asking for it').toBeGreaterThan(6);
+});

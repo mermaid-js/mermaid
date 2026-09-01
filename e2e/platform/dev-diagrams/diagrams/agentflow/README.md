@@ -1,9 +1,12 @@
 # Agentflow fixtures
 
-Working set for the redux-colour work on agentflow. Pick the theme and look in the Dev
-Explorer's own controls rather than pinning them in front matter, so the same file can be
-compared across themes — that is why the copied spec fixture had its `theme: default`
-front matter removed.
+Working set for the redux-colour work on agentflow.
+
+None of these pin a theme or look. They do not need to: agentflow declares `redux-color`
+and `neo` as its own defaults in `config.schema.yaml`, so opening any of them shows the
+palette straight away. Leaving the front matter out also means the Dev Explorer's own
+theme and look controls still govern, so the same file can be compared across themes —
+that is why the copied spec fixture had its `theme: default` block removed.
 
 | Fixtures            | Source                                                                                                                                                                                                                                             |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

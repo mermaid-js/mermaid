@@ -2414,6 +2414,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     unevaluatedProperties: false
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       titleTopMargin:
         description: Margin top for the text over the diagram
         type: integer
