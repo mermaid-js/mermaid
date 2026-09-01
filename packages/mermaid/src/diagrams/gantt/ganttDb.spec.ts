@@ -227,13 +227,13 @@ describe('when using the ganttDb', function () {
 
     expect(tasks[0].startTime).toEqual(dayjs('2019-02-01', 'YYYY-MM-DD').toDate());
     expect(tasks[0].endTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
-    expect(tasks[0].renderEndTime).toEqual(dayjs('2019-02-02', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].renderEndTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
     expect(tasks[0].id).toEqual('id1');
     expect(tasks[0].task).toEqual('test1');
 
     expect(tasks[1].startTime).toEqual(dayjs('2019-02-04', 'YYYY-MM-DD').toDate());
     expect(tasks[1].endTime).toEqual(dayjs('2019-02-07', 'YYYY-MM-DD').toDate());
-    expect(tasks[1].renderEndTime).toEqual(dayjs('2019-02-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].renderEndTime).toEqual(dayjs('2019-02-07', 'YYYY-MM-DD').toDate());
     expect(tasks[1].id).toEqual('id2');
     expect(tasks[1].task).toEqual('test2');
 
@@ -257,7 +257,7 @@ describe('when using the ganttDb', function () {
 
     expect(tasks[5].startTime).toEqual(dayjs('2019-02-13', 'YYYY-MM-DD').toDate());
     expect(tasks[5].endTime).toEqual(dayjs('2019-02-18', 'YYYY-MM-DD').toDate());
-    expect(tasks[5].renderEndTime).toEqual(dayjs('2019-02-15', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].renderEndTime).toEqual(dayjs('2019-02-18', 'YYYY-MM-DD').toDate());
     expect(tasks[5].id).toEqual('id6');
     expect(tasks[5].task).toEqual('test6');
 
@@ -265,6 +265,22 @@ describe('when using the ganttDb', function () {
     expect(tasks[6].endTime).toEqual(dayjs('2019-02-19', 'YYYY-MM-DD').toDate());
     expect(tasks[6].id).toEqual('id7');
     expect(tasks[6].task).toEqual('test7');
+  });
+
+  it('should not render a task ending on an excluded day (issue #6421)', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends');
+    ganttDb.addSection('weekend offset test');
+    // 2025-07-09 is a Wednesday; a 3-day task naively ends 2025-07-12, a
+    // Saturday. The excluded weekend (12th-13th) should push the *rendered*
+    // end date to the next valid day, 2025-07-14 (Monday), matching
+    // `endTime` - not get stuck on the excluded Saturday.
+    ganttDb.addTask('Act2', 'act2,2025-07-09,3d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].endTime).toEqual(dayjs('2025-07-14', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].renderEndTime).toEqual(dayjs('2025-07-14', 'YYYY-MM-DD').toDate());
   });
 
   it('should ignore weekends starting on friday', function () {
