@@ -96,9 +96,63 @@ describe('state diagram colour slots', () => {
     // remainder. Asserting only on the distinct values would pass if a region went missing.
     expect(regions).toHaveLength(3);
     expect(new Set(regions).size).toBe(1);
-    // ...and distinct from the composite that holds them, so the split stays legible.
+    // ...and it is the composite's own slot, not a fresh one. The regions are synthetic --
+    // the author wrote one composite -- so they are drawn as parts of it rather than as
+    // something with a colour of its own.
     expect(byId.get('Active')).toBe(0);
-    expect(regions[0]).toBe(1);
+    expect(regions[0]).toBe(0);
+  });
+
+  it('does not shift later composites when a divider is added', () => {
+    // The reason regions reuse the parent's slot rather than taking one. Spending slots on
+    // containers the author never wrote meant adding a `--` recoloured everything after it.
+    const withoutDivider = slots(`stateDiagram-v2
+      state First {
+        [*] --> A
+      }
+      state Second {
+        [*] --> B
+      }
+    `);
+    stateDb = new StateDB(2);
+    parser.yy = stateDb;
+    stateDiagram.parser.yy = stateDb;
+    stateDiagram.parser.yy.clear();
+    const withDivider = slots(`stateDiagram-v2
+      state First {
+        [*] --> A
+        --
+        [*] --> C
+      }
+      state Second {
+        [*] --> B
+      }
+    `);
+
+    expect(withoutDivider.get('First')).toBe(withDivider.get('First'));
+    expect(withoutDivider.get('Second')).toBe(withDivider.get('Second'));
+    expect(withDivider.get('Second')).toBe(1);
+  });
+
+  it("carries a styled composite's opt-out into its concurrency regions", () => {
+    // The regions render in a sibling layer, so the author's `.pinned > *` rule cannot
+    // reach them. Were they to keep a palette slot, the composite would be painted by the
+    // author and its own regions from the palette -- one container, two sources, which is
+    // the split `userStyled` exists to prevent.
+    const nodes = parse(`stateDiagram-v2
+      classDef pinned fill:#111827,stroke:#F59E0B
+      state Active {
+        [*] --> A
+        --
+        [*] --> B
+      }
+      class Active pinned
+    `);
+    const byId = new Map(nodes.map((node) => [node.id, node.colorIndex]));
+    expect(byId.get('Active')).toBeUndefined();
+    const regions = regionSlots(nodes);
+    expect(regions).toHaveLength(2);
+    expect(regions.every((region) => region.colorIndex === undefined)).toBe(true);
   });
 
   it('does not share one slot between two separately divided composites', () => {
@@ -123,14 +177,16 @@ describe('state diagram colour slots', () => {
     expect(regions).toHaveLength(4);
     // Two composites, two regions each: two distinct region colours, not one and not four.
     expect(new Set(regions.map((node) => node.colorIndex)).size).toBe(2);
-    // And the pairing is by parent, not by declaration order -- both of First's regions
-    // share one slot and both of Second's share the other.
+    // And the pairing is by parent, not by declaration order -- each composite's regions
+    // carry that composite's own slot.
     const byParent = new Map<string, Set<number | undefined>>();
     for (const region of regions) {
       const key = region.parentId ?? 'root';
       byParent.set(key, (byParent.get(key) ?? new Set()).add(region.colorIndex));
     }
     expect([...byParent.values()].map((set) => set.size)).toEqual([1, 1]);
+    expect(byParent.get('First')).toEqual(new Set([byId.get('First')]));
+    expect(byParent.get('Second')).toEqual(new Set([byId.get('Second')]));
   });
 
   it('leaves a composite with its own classDef unstamped, but still spends its slot', () => {

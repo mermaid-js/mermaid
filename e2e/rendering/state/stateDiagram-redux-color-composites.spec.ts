@@ -100,11 +100,33 @@ const userStyled = `
     class Pinned pinned
 `;
 
+/**
+ * A styled composite that is also divided. The regions render in a sibling layer, out of
+ * reach of the author's \`.pinned \> *\` rule, so if they kept a palette slot the composite
+ * would be painted by the author and its own regions from the palette. \`Neighbour\` is
+ * there to show the opt-out does not shift the colours around it.
+ */
+const userStyledWithRegions = `
+  stateDiagram-v2
+    classDef pinned fill:#111827,stroke:#F59E0B,color:#F9FAFB
+    state Split {
+      [*] --> Left
+      --
+      [*] --> Right
+    }
+    Split --> Neighbour
+    state Neighbour {
+      [*] --> After
+    }
+    class Split pinned
+`;
+
 const diagrams = {
   nested,
   concurrency,
   'regions inside nesting': regionsInsideNesting,
   'user-styled': userStyled,
+  'user-styled with regions': userStyledWithRegions,
 } as const;
 
 test.describe('State diagram - Redux colour theme composites', () => {
@@ -116,5 +138,28 @@ test.describe('State diagram - Redux colour theme composites', () => {
         });
       }
     });
+  }
+});
+
+/**
+ * `handDrawn` draws these containers as roughjs shapes rather than rects, so it is served
+ * by a separate set of rules in `state/styles.js` -- and those were the only part of this
+ * feature with no render behind them. A bare `path` selector tinted the composite body as
+ * well as the title strip, which is what these snapshots now hold still.
+ *
+ * Only the two colour themes and two fixtures, rather than the full matrix: the rules under
+ * test are the `outer` / `inner` / `divider` ones, and `nested` plus `concurrency` reach all
+ * three. `redux-dark-color` is worth keeping because it ships no background palette, so it
+ * exercises the branch where the tint is omitted entirely.
+ */
+test.describe('State diagram - Redux colour theme composites, handDrawn', () => {
+  for (const theme of ['redux-color', 'redux-dark-color'] as const) {
+    for (const [name, diagram] of Object.entries({ nested, concurrency })) {
+      test(`should render ${name} composite containers for ${theme}`, async ({
+        page,
+      }, testInfo) => {
+        await imgSnapshotTest(page, testInfo, diagram, { theme, look: 'handDrawn' });
+      });
+    }
   }
 });

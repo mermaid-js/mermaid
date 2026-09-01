@@ -54,13 +54,40 @@ const genColor = (options) => {
       ${tint}
     }
 
-    /* handDrawn draws the same container as roughjs paths, which carry no \`outer\` /
-       \`inner\` class -- without this the sketch look stays monochrome. Clusters hold only
-       their own shapes and label; child states live in a sibling layer, so the descendant
-       selector cannot reach them. */
-    ${slot}.statediagram-cluster path {
-      stroke: ${borderColor};
+    /* handDrawn draws the same container as roughjs shapes rather than plain rects, so it
+       needs its own rules. \`roundedWithTitle\` and \`divider\` name those groups \`outer\`,
+       \`inner\` and \`divider\` to match the classic branch, which is what lets these
+       discriminate -- a bare \`.statediagram-cluster path\` rule reached the body as well and
+       tinted the whole composite, losing \`compositeBackground\` and diverging from what
+       classic and neo do.
+
+       roughjs emits two paths per shape and marks them: the filled shape carries
+       \`stroke="none"\` and the sketched outline carries \`fill="none"\`. Splitting on that is
+       what keeps \`fill\` off the outline -- a rough outline is open squiggles, not a closed
+       region, so filling it produces smears -- and keeps \`stroke\` off the fill shape, which
+       would otherwise gain an edge it was drawn without. */
+    ${slot}.statediagram-cluster .outer path[stroke='none'] {
       ${tint}
+    }
+
+    ${slot}.statediagram-cluster .outer path[fill='none'] {
+      stroke: ${borderColor};
+    }
+
+    /* No \`.inner\` rule on purpose. The body shape is left entirely alone under handDrawn,
+       where a rect's \`inner\` counterpart cannot be recoloured safely: roughjs draws a
+       hachure fill as *stroked* lines, so its fill paths carry \`fill="none"\` exactly like
+       the outline and no selector separates them. An \`.inner\` stroke rule therefore
+       repainted the hatching of every alt composite in the palette colour instead of
+       leaving it on \`altBackground\`. The container still reads as palette-coloured: the
+       \`outer\` shape spans the whole composite, so its outline already frames the body. */
+
+    ${slot}.statediagram-cluster .divider path[stroke='none'] {
+      ${tint}
+    }
+
+    ${slot}.statediagram-cluster .divider path[fill='none'] {
+      stroke: ${borderColor};
     }
     `;
   }

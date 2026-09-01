@@ -176,9 +176,13 @@ const roundedWithTitle = async (parent, node) => {
   const siteConfig = getConfig();
 
   const { theme, themeVariables, handDrawnSeed } = siteConfig;
-  const { altBackground, compositeBackground, compositeTitleBackground, nodeBorder } =
-    themeVariables;
-  const { borderColorArray } = themeVariables;
+  const {
+    altBackground,
+    borderColorArray,
+    compositeBackground,
+    compositeTitleBackground,
+    nodeBorder,
+  } = themeVariables;
 
   // Add outer g element
   const shapeSvg = parent
@@ -258,6 +262,11 @@ const roundedWithTitle = async (parent, node) => {
 
     rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
     innerRect = shapeSvg.insert(() => roughInnerNode);
+    // The classic branch below gives its two rects `outer` and `inner`; roughjs wraps each
+    // shape in a `g` with no class, so without the same names here a stylesheet cannot tell
+    // the title shape from the body and any `path` rule hits both.
+    rect.attr('class', 'outer');
+    innerRect.attr('class', 'inner');
   } else {
     rect = outerRectG.insert('rect', ':first-child');
     const outerRectClass = 'outer';
@@ -450,7 +459,7 @@ const divider = (parent, node) => {
       seed: handDrawnSeed,
     });
 
-    rect = shapeSvg.insert(() => roughOuterNode, ':first-child');
+    rect = shapeSvg.insert(() => roughOuterNode, ':first-child').attr('class', 'divider');
   } else {
     rect = outerRectG.insert('rect', ':first-child');
     let outerRectClass = 'outer';
