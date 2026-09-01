@@ -15,18 +15,59 @@ export const directiveRegex =
 // paths must use `stripAnyComments` below instead of replacing with this regex directly.
 export const anyCommentRegex = /\s*%%.*\n/gm;
 
-// The fast equivalent. `(^|\S)` only lets the greedy `\s*` start where a whitespace run actually
-// begins (string/line start, or right after a non-whitespace char, re-emitted by `$1`). Without
-// that, the global match retries `\s*` from every position inside an indent, re-scanning the run
-// each time — O(whitespace²), ~250ms on a deeply-indented diagram (1.6k-space lines). The guard
-// makes it O(n) while stripping byte-identically to `replace(anyCommentRegex, '\n')` (proven
-// against it in regexes.spec.ts). Written without a `(?<=\S)` lookbehind on purpose: the project
-// supports Safari 15.4, and lookbehind ships in 16.4 — and since this module loads for every
-// diagram, an unsupported construct would be a module-load SyntaxError.
-const linearAnyCommentRegex = /(^|\S)\s*%%.*\n/gm;
+/** One character, tested against the same class `\s` means inside `anyCommentRegex`. */
+const whitespace = /\s/;
 
 /**
  * Strip `%%` comment runs exactly like `text.replace(anyCommentRegex, '\n')`, in linear time.
+ *
+ * A scanner rather than a regex, because no variant of this pattern is linear. Every regex form
+ * carries a `\s*` that can cross newlines, and `/m` gives the engine a candidate start at each
+ * line, so an all-whitespace document has the match attempt rescan the remaining run once per
+ * line. Two shapes are quadratic in the released pattern and in the guarded `(^|\S)\s*%%.*\n`
+ * that replaced it, both inside the default 50k `maxTextSize`:
+ *
+ * ```
+ *   ('\n' + ' '.repeat(4)).repeat(10_000)   all whitespace, many lines   256ms
+ *   '%%' + 'x%%'.repeat(16_000)             no terminating newline       339ms
+ * ```
+ *
+ * against 0.1ms for ordinary diagram text of the same size. The guard cut the constant roughly
+ * 40x but left the exponent alone, which is what CodeQL and the CWE-1333 review both caught.
+ *
+ * The scan walks forward once. For each `%%` it takes the line's terminating newline as the end
+ * of the match — `.` never matches a newline, so the regex ends at that same character — and
+ * extends left over the preceding whitespace run, never past the previous match. Each character
+ * is visited at most twice, so the work is linear in the input and independent of how the
+ * whitespace is arranged.
+ *
+ * A `%%` with no newline after it is left alone, because `%%.*\n` cannot match without one.
  */
-export const stripAnyComments = (text: string): string =>
-  text.replace(linearAnyCommentRegex, '$1\n');
+export const stripAnyComments = (text: string): string => {
+  let out = '';
+  // Everything before this index has been emitted or dropped; also the floor for the leftward
+  // whitespace scan, which is what `lastIndex` does for the global regex.
+  let consumed = 0;
+  let searchFrom = 0;
+
+  while (searchFrom < text.length) {
+    const marker = text.indexOf('%%', searchFrom);
+    if (marker === -1) {
+      break;
+    }
+    const lineEnd = text.indexOf('\n', marker);
+    if (lineEnd === -1) {
+      // No newline left in the string, so this `%%` and every later one cannot match.
+      break;
+    }
+    let start = marker;
+    while (start > consumed && whitespace.test(text[start - 1])) {
+      start--;
+    }
+    out += text.slice(consumed, start) + '\n';
+    consumed = lineEnd + 1;
+    searchFrom = consumed;
+  }
+
+  return out + text.slice(consumed);
+};

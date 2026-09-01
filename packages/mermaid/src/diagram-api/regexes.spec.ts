@@ -31,6 +31,12 @@ const CORPUS: string[] = [
   '',
   '\n\n\n',
   '%%\n', // empty comment
+  // The two shapes CodeQL and the CWE-1333 review flagged. Small instances here: the point is
+  // that the scanner still agrees with the released regex on them, not how fast it is.
+  ('\n' + ' '.repeat(4)).repeat(20),
+  '%%' + 'x%%'.repeat(20),
+  '%%' + 'x%%'.repeat(20) + '\n',
+  ' \n \n %% after blank indented lines\n',
 ];
 
 describe('stripAnyComments', () => {
@@ -40,17 +46,31 @@ describe('stripAnyComments', () => {
     }
   });
 
-  it('is O(n) on deeply-indented input (no catastrophic backtracking)', () => {
-    // Deep indentation with no comments is the worst case for the leading-`\s*` pattern: the
-    // global match re-scans each indent run from every position — O(whitespace²), ~250ms+ on the
-    // perf fixture huge3 (1.6k-space lines). The guarded pattern is O(n).
-    const pathological =
-      Array.from({ length: 300 }, () => ' '.repeat(1672) + 'classDef x fill:#fff').join('\n') +
-      '\n';
-    const t0 = performance.now();
-    const out = stripAnyComments(pathological);
-    const ms = performance.now() - t0;
-    expect(out).toBe(pathological); // no `%%` → nothing stripped
-    expect(ms).toBeLessThan(200); // the unguarded pattern takes seconds on this input
+  it.each([
+    ['all-whitespace lines', (n: number) => ('\n' + ' '.repeat(4)).repeat(n)],
+    ['`%%` runs with no terminating newline', (n: number) => '%%' + 'x%%'.repeat(n)],
+    ['deep indents', (n: number) => (' '.repeat(400) + 'classDef x fill:#fff\n').repeat(n)],
+  ])('scales linearly on %s', (_label, build) => {
+    // Scaling, not a wall-clock bound. The previous version of this test asserted "under 200ms"
+    // on one fixed input, which a quadratic implementation passes comfortably — and did, for
+    // both shapes above. Doubling the input should roughly double the work; quadratic would
+    // quadruple it.
+    const measure = (n: number) => {
+      const input = build(n);
+      // Warm up so the first call does not carry compilation cost into the ratio.
+      stripAnyComments(input);
+      const t0 = performance.now();
+      for (let i = 0; i < 5; i++) {
+        stripAnyComments(input);
+      }
+      return (performance.now() - t0) / 5;
+    };
+
+    const small = measure(4000);
+    const large = measure(16000);
+
+    // 4x the input. Linear predicts ~4x, quadratic ~16x. The bar is set at 8 so ordinary timing
+    // noise on a loaded machine cannot fail it while a return to quadratic still does.
+    expect(large / Math.max(small, 0.01)).toBeLessThan(8);
   });
 });
