@@ -95,6 +95,14 @@ export const colorSlotCount = (themeColorLimit: unknown, palette?: unknown): num
  *
  * The slot wraps at the palette length rather than indexing raw, so a palette shorter
  * than the emitted slot count cannot produce `stroke: undefined`.
+ *
+ * An absent `colorIndex` means "this element is not part of the cycle", so nothing is
+ * stamped. It used to fall back to `colorIndex ?? 0`, which says the opposite -- an
+ * unnumbered element was stamped `color-0` and painted in the first palette colour. That
+ * was invisible while the only unnumbered containers were ones whose diagram emits no
+ * matching rules (class namespaces, block containers), and it stops being invisible the
+ * moment such a diagram gains palette rules: state's composites opt out of the cycle when
+ * the author has styled them, and would otherwise all come back as `color-0`.
  */
 export const stampColorSlot = <T extends SVGGraphicsElement>(
   shapeSvg: D3Selection<T>,
@@ -102,9 +110,9 @@ export const stampColorSlot = <T extends SVGGraphicsElement>(
   theme: string | undefined,
   palette: unknown
 ): void => {
-  if (!isColorTheme(theme, palette)) {
+  if (colorIndex === undefined || !isColorTheme(theme, palette)) {
     return;
   }
-  const slot = (colorIndex ?? 0) % paletteSlotCount(palette);
+  const slot = colorIndex % paletteSlotCount(palette);
   shapeSvg.attr('data-color-id', `color-${slot}`);
 };

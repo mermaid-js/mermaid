@@ -6,6 +6,7 @@ import common, { calculateMathMLDimensions, hasKatex } from '../common/common.js
 import { getUrl } from '../common/common.js';
 import * as svgDrawCommon from '../common/svgDrawCommon.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import { actorStackHeight } from './actorBands.js';
 import assignWithDepth from '../../assignWithDepth.js';
 import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
@@ -1633,7 +1634,15 @@ async function calculateActorMargins(
       ? conf.width
       : common.getMax(conf.width, actDims.width + 2 * conf.wrapPadding);
 
-    actor.height = actor.wrap ? common.getMax(actDims.height, conf.height) : conf.height;
+    if (getConfig().look === 'neo') {
+      // The band model: the row is as tall as its tallest glyph-gap-label-gap stack, and every
+      // shape anchors to the row's shared datum rather than measuring itself. The measured text
+      // height travels with the actor so the shapes place the label from the same number.
+      actor.actorTextHeight = actDims.height;
+      actor.height = common.getMax(actorStackHeight(actDims.height), conf.height);
+    } else {
+      actor.height = actor.wrap ? common.getMax(actDims.height, conf.height) : conf.height;
+    }
     maxHeight = common.getMax(maxHeight, actor.height);
   }
 

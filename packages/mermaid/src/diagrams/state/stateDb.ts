@@ -165,6 +165,8 @@ export interface NodeData {
   position?: string;
   description?: string | string[];
   labelType?: string;
+  /** Palette slot for container shapes; see `nextColorSlot` in `dataFetcher.ts`. */
+  colorIndex?: number;
 }
 
 export interface Edge {
@@ -182,6 +184,11 @@ export interface Edge {
   thickness: string;
   classes: string;
   look: MermaidConfig['look'];
+  /**
+   * Stroke pattern, read by `insertEdge`. The note edge is the only state edge that sets
+   * it; see the note-edge push in `dataFetcher.ts` for why the CSS class is not enough.
+   */
+  pattern?: 'solid' | 'dotted' | 'dashed';
 }
 
 /**
