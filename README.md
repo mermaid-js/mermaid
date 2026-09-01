@@ -18,8 +18,9 @@ Generate diagrams from markdown-like text.
  <a href="https://mermaid.ai/open-source/">📖 Documentation</a> | <a href="https://mermaid.ai/open-source/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
 </p>
 <p align="center">
-<a href="./README.zh-CN.md">简体中文</a>
+<a href="./README.fr.md">Français</a> | <a href="./README.zh-CN.md">简体中文</a>
 </p>
+
 <p align="center">
 Try Live Editor previews of future releases: <a href="https://develop.git.mermaid.live/" title="Try the mermaid version from the develop branch.">Develop</a> | <a href="https://next.git.mermaid.live/" title="Try the mermaid version from the next branch.">Next</a>
 </p>
