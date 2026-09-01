@@ -716,7 +716,7 @@ function initialize(userOptions: MermaidConfig = {}) {
   // in place loads a palette that is then never rendered. Read the fallback from
   // `defaultConfig` so the schema's `theme.default` stays the one place it is written down.
   const fallbackTheme = configApi.defaultConfig.theme as keyof typeof theme;
-  if (options?.theme && options.theme in theme) {
+  if (options?.theme && Object.hasOwn(theme, options.theme)) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme as keyof typeof theme].getThemeVariables(
       options.themeVariables

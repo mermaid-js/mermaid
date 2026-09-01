@@ -217,6 +217,31 @@ describe('per-diagram appearance defaults', () => {
       expect((await configFor(REDESIGNED_DIAGRAMS.flowchart)).look).toBe('neo');
     });
 
+    it.each(['__proto__', 'constructor', 'toString', 'valueOf'])(
+      'falls through %s rather than reading it off the theme registry prototype',
+      async (inherited) => {
+        // These satisfy `in` on an object literal and then have no `getThemeVariables`.
+        const config = await configFor(
+          `---\nconfig:\n  flowchart:\n    theme: ${inherited}\n---\nflowchart TD\n  A --> B`
+        );
+        expect(config.theme).toBe('redux-color');
+        expect(config.themeVariables.primaryColor).toBe(
+          theme['redux-color'].getThemeVariables().primaryColor
+        );
+      }
+    );
+
+    it.each(['__proto__', 'constructor'])(
+      'survives %s as a global theme, which never reached the diagram-scoped guard',
+      async (inherited) => {
+        // The global path predates this PR and threw a bare TypeError out of the render.
+        const config = await configFor(
+          `---\nconfig:\n  theme: ${inherited}\n---\nflowchart TD\n  A --> B`
+        );
+        expect(config.themeVariables.primaryColor).toBeDefined();
+      }
+    );
+
     it("keeps the 'null' theme sentinel, which disables the pre-defined themes", async () => {
       mermaidAPI.initialize({ flowchart: { theme: 'null' } });
       expect((await configFor(REDESIGNED_DIAGRAMS.flowchart)).theme).toBe('null');

@@ -27,7 +27,9 @@ const LOOKS = new Set(['classic', 'handDrawn', 'neo']);
 const isUsableAppearance = (key: AppearanceKey, value: string) => {
   if (key === 'theme') {
     // `'null'` is the documented sentinel for disabling the pre-defined themes.
-    return value === 'null' || value in theme;
+    // `hasOwn`, not `in`: the registry is an object literal, so `__proto__` and
+    // `constructor` satisfy `in` and then have no `getThemeVariables`.
+    return value === 'null' || Object.hasOwn(theme, value);
   }
   return key !== 'look' || LOOKS.has(value);
 };
@@ -124,7 +126,7 @@ const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: MermaidConfig[
   // `cfg.themeVariables` were built from `siteCfg.theme`, and stylesheets gate their rules
   // on the theme *name*, so a resolved theme of another name needs them rebuilt.
   const themeWasOverridden = Boolean(sumOfDirectives.theme) || cfg.theme !== siteCfg.theme;
-  if (themeWasOverridden && cfg.theme && cfg.theme in theme) {
+  if (themeWasOverridden && cfg.theme && Object.hasOwn(theme, cfg.theme)) {
     // Only `configFromInitialize` holds the variables as the user wrote them; the site
     // config's are already derived, and feeding those back would override the new theme.
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
@@ -164,10 +166,12 @@ export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth(siteConfig, conf);
   siteConfigDelta = assignWithDepth({}, conf);
 
-  // @ts-ignore: TODO Fix ts errors
-  if (conf.theme && theme[conf.theme]) {
-    // @ts-ignore: TODO Fix ts errors
-    siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
+  // `hasOwn` rather than a truthiness check on `theme[conf.theme]`: `Object.prototype`
+  // members are truthy and carry no `getThemeVariables`.
+  if (conf.theme && Object.hasOwn(theme, conf.theme)) {
+    siteConfig.themeVariables = theme[conf.theme as keyof typeof theme].getThemeVariables(
+      conf.themeVariables
+    );
   }
 
   updateCurrentConfig(siteConfig, directives);
