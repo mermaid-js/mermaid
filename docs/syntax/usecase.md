@@ -32,6 +32,111 @@ Customer --> Checkout
 
 Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direction.
 
+## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
+
+Use case diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+```mermaid
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+---
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ usecase: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
 ## Actors and use cases
 
 Actor and use case identifiers match `[A-Za-z0-9_]+`, so they may start with a digit — `1`, `1mg`, and `3rd` are all valid. Identifiers are diagram-wide and are shared by actors, use cases, boundaries, JSON nodes, and explicit edges.

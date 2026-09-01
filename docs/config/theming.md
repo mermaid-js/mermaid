@@ -36,12 +36,13 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 ## Per-diagram defaults
 
-Not every diagram type defaults to the same theme and look. These do, to the `redux-color`
-theme and the `neo` look. The name on the left is the **config key** — what you write to
+Not every diagram type defaults to the same theme and look. Since v\<MERMAID_RELEASE_VERSION>
+these do, to the `redux-color` theme and the `neo` look. The name on the left is the **config key** — what you write to
 scope a setting to that diagram, which is not always the keyword the diagram starts with:
 
 | Config key    | Diagram              |
 | ------------- | -------------------- |
+| `agentflow`   | `agentflow-beta`     |
 | `flowchart`   | `flowchart`          |
 | `swimlane`    | `swimlane-beta`      |
 | `class`       | `classDiagram`       |
@@ -89,6 +90,25 @@ config:
   flowchart:
     look: handDrawn
 ---
+```
+
+### Going back to the previous appearance
+
+The nine types above changed appearance when these became their defaults. To draw one the
+way Mermaid drew it before, name the previous theme and look in its front matter:
+
+```yaml
+---
+config:
+  theme: default
+  look: classic
+---
+```
+
+For every diagram on a page, pass the same two keys to `mermaid.initialize()`:
+
+```javascript
+mermaid.initialize({ theme: 'default', look: 'classic' });
 ```
 
 ## Site-wide Theme
