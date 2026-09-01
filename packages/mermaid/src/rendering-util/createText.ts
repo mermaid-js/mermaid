@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
 import type { SVGGroup } from '../diagram-api/types.js';
-import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
+import { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { profiler } from '../profiler.js';
@@ -31,6 +31,21 @@ function applyStyle<T extends Element>(
 // We assume that nobody will want to create labels larger than 16384 pixels wide
 const maxSafeSizeForWidth = 16384;
 
+/**
+ * Creates a `<foreignObject>` containing the label as HTML.
+ *
+ * If the label contains KaTeX (`$$…$$`) delimiters, it is rendered through
+ * `renderKatexSanitized`, which places each `<br/>`-separated line in its own
+ * `<div>`; otherwise the label is sanitized as plain HTML.
+ *
+ * @param element - The parent group to append the `<foreignObject>` to.
+ * @param node - The label text, its style, and whether it belongs to a node or an edge.
+ * @param width - The maximum width of the label.
+ * @param classes - Additional CSS classes for the label span.
+ * @param addBackground - Whether to add a background class to the containing div.
+ * @param config - Mermaid configuration object.
+ * @returns The created `<foreignObject>` element.
+ */
 async function addHtmlSpan(
   element: D3Selection<SVGGElement>,
   node: { label: string; labelStyle: string; isNode: boolean },
@@ -48,7 +63,7 @@ async function addHtmlSpan(
 
   const div = fo.append<HTMLDivElement>('xhtml:div');
   const sanitizedLabel = hasKatex(node.label)
-    ? await renderKatexSanitized(node.label.replace(common.lineBreakRegex, '\n'), config)
+    ? await renderKatexSanitized(node.label, config)
     : sanitizeText(node.label, config);
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
   const span = div.append('span');
@@ -334,7 +349,10 @@ export const createText = async (
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
-    const inputForKatex = text.replace(/\\\\/g, '\\');
+    //KaTeX labels bypass the markdown/non-markdown conversion above, so hard line breaks in the
+    //source label would never reach `renderKatexSanitized`, which splits its input on `<br/>`.
+    //Convert them here using the same rule `markdownToHTML` applies to plain text.
+    const inputForKatex = text.replace(/\\\\/g, '\\').replace(/\n */g, '<br/>');
 
     const node = {
       isNode,
