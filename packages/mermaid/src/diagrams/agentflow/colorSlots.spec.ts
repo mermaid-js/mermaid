@@ -3,7 +3,13 @@ import * as configApi from '../../config.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import getStyles from './styles.js';
-import { KIND_COUNT, KIND_SLOT, assignColorSlots, containerSlotCount } from './colorSlots.js';
+import {
+  KIND_COUNT,
+  KIND_SLOT,
+  assignColorSlots,
+  containerSlot,
+  containerSlotCount,
+} from './colorSlots.js';
 
 /**
  * Two rules, and the point of the tests is that they stay apart:
@@ -21,6 +27,17 @@ const node = (id: string, kind: string) => ({ id, kind, isGroup: false }) as any
 const kindOf = (nodes: any[]) => (id: string) => nodes.find((n) => n.id === id)?.kind;
 const group = (id: string) => ({ id, isGroup: true }) as any;
 const layout = (nodes: any[]) => ({ nodes, edges: [], config: {} }) as unknown as LayoutData;
+/**
+ * Declaration order. In production `getData()` derives this from a pre-order walk of the
+ * containment forest; these fixtures are already written in source order, so the array
+ * index is the same thing.
+ */
+const orderOf = (nodes: any[]) =>
+  new Map(
+    nodes
+      .filter((n) => n.isGroup || n.shape === 'collapsedGroup')
+      .map((n, i) => [String(n.id), i] as const)
+  );
 
 describe('agentflow colour slots', () => {
   beforeEach(() => {
@@ -38,7 +55,7 @@ describe('agentflow colour slots', () => {
       withPalette(12);
       const data = layout([node('a', 'tool'), node('b', 'decision'), node('c', 'task')]);
 
-      assignColorSlots(data.nodes as any, kindOf(data.nodes as any));
+      assignColorSlots(data.nodes as any, kindOf(data.nodes as any), orderOf(data.nodes as any));
 
       expect(data.nodes[0].cssClasses).toContain('af-kind-tool');
       expect(data.nodes[1].cssClasses).toContain('af-kind-decision');
@@ -50,7 +67,7 @@ describe('agentflow colour slots', () => {
       withPalette(12);
       const data = layout([node('a', 'tool'), node('b', 'decision'), node('c', 'tool')]);
 
-      assignColorSlots(data.nodes as any, kindOf(data.nodes as any));
+      assignColorSlots(data.nodes as any, kindOf(data.nodes as any), orderOf(data.nodes as any));
 
       expect(data.nodes[0].cssClasses).toBe(data.nodes[2].cssClasses);
     });
@@ -59,16 +76,16 @@ describe('agentflow colour slots', () => {
       withPalette(12);
       const data = layout([{ ...node('a', 'decision'), cssClasses: 'mine' }]);
 
-      assignColorSlots(data.nodes as any, kindOf(data.nodes as any));
+      assignColorSlots(data.nodes as any, kindOf(data.nodes as any), orderOf(data.nodes as any));
 
       expect(data.nodes[0].cssClasses).toBe('mine af-kind-decision');
     });
 
-    it('numbers containers in declaration order, above the kind slots', () => {
+    it('numbers containers from the order it is given, above the kind slots', () => {
       withPalette(12);
       const data = layout([group('one'), node('a', 'decision'), group('two'), group('three')]);
 
-      assignColorSlots(data.nodes as any, kindOf(data.nodes as any));
+      assignColorSlots(data.nodes as any, kindOf(data.nodes as any), orderOf(data.nodes as any));
 
       expect(data.nodes[0].colorIndex).toBe(KIND_COUNT);
       expect(data.nodes[2].colorIndex).toBe(KIND_COUNT + 1);
@@ -87,7 +104,7 @@ describe('agentflow colour slots', () => {
         (getConfig().themeVariables as { borderColorArray?: string[] }).borderColorArray ?? [];
       const data = layout(Array.from({ length: palette.length * 2 }, (_, i) => group(`g${i}`)));
 
-      assignColorSlots(data.nodes as any, kindOf(data.nodes as any));
+      assignColorSlots(data.nodes as any, kindOf(data.nodes as any), orderOf(data.nodes as any));
 
       for (const n of data.nodes) {
         expect(n.colorIndex).toBeGreaterThanOrEqual(KIND_COUNT);
@@ -96,12 +113,36 @@ describe('agentflow colour slots', () => {
       }
     });
 
-    it('survives a palette shorter than the kind range', () => {
+    it('stamps a slot the stylesheet actually names, on a palette shorter than the kinds', () => {
+      // The regression: `stampColorSlot` reduces the index modulo the palette length, so a
+      // 3-colour palette turned an assigned slot 7 into `color-1` while the stylesheet
+      // emitted a rule for `color-7` — every container silently unpainted. Both sides now
+      // go through `containerSlot`, so the assigned value IS the stamped value.
       withPalette(3);
       const data = layout([group('one'), group('two')]);
 
-      expect(() => assignColorSlots(data.nodes as any, kindOf(data.nodes as any))).not.toThrow();
+      assignColorSlots(data.nodes as any, kindOf(data.nodes as any), orderOf(data.nodes as any));
+
+      const palette = (getConfig().themeVariables as { borderColorArray?: string[] })
+        .borderColorArray!;
+      for (const n of data.nodes) {
+        // What `stampColorSlot` will write, and what `genColor` will have named.
+        expect(n.colorIndex! % palette.length).toBe(n.colorIndex);
+        expect(n.colorIndex).toBe(containerSlot(0, palette.length));
+      }
       expect(containerSlotCount(3)).toBe(1);
+    });
+
+    it('agrees with the stylesheet at every palette length', () => {
+      // Cheap exhaustive check of the one invariant that matters: whatever the palette
+      // length, the slot the assignment produces is a slot `genColor` emits a rule for.
+      for (const len of [1, 3, 6, 7, 8, 12, 24]) {
+        for (let i = 0; i < containerSlotCount(len); i++) {
+          const slot = containerSlot(i, len);
+          expect(slot, `palette ${len}, container ${i}`).toBeLessThan(Math.max(1, len));
+          expect(slot).toBe(slot % Math.max(1, len));
+        }
+      }
     });
   });
 

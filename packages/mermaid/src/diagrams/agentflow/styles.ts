@@ -1,7 +1,7 @@
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
 import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
-import { KINDS, KIND_SLOT, KIND_COUNT, containerSlotCount, kindClass } from './colorSlots.js';
+import { KINDS, KIND_SLOT, containerSlot, containerSlotCount, kindClass } from './colorSlots.js';
 
 /** Returns the styles given options */
 export interface AgentflowStyleOptions {
@@ -83,7 +83,9 @@ const genColor = (options: AgentflowStyleOptions) => {
      use — `createContainerGroup` stamps the expanded frame, `collapsedGroup` the collapsed
      one. */
   for (let i = 0; i < containerSlotCount(paletteLength); i++) {
-    const slot = KIND_COUNT + i;
+    // The same arithmetic the assignment uses, so the selector always names the slot the
+    // stamp actually writes -- see `containerSlot`.
+    const slot = containerSlot(i, paletteLength);
     /* Both forms of a container. An expanded one is a `.cluster`; a collapsed one is
        drawn as a single `.node` and still holds its slot, so naming only `.cluster` would
        leave collapsed containers grey beside their expanded siblings. Each suffix is

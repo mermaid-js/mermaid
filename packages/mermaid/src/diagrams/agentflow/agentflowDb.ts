@@ -1912,16 +1912,53 @@ You have to call mermaid.initialize.`
     // The kind comes from the vertex record, not from the resolved shape: a `connector` and a
     // `task` are both `roundedRect`, so reading it off the shape paints every connector as a
     // task.
-    const connectorIds = new Set(this.getConnectors().map((c) => c.id));
-    assignColorSlots(nodes, (id) => {
-      if (connectorIds.has(id)) {
-        return 'connector';
+    // Declaration order for the container counter. Neither `nodes` nor `subGraphs` carries
+    // it: the loops above walk `subGraphs` in REVERSE, and `subGraphs` is itself in
+    // completion order, because the grammar reduces a container when it closes and a
+    // nested one therefore lands before its parent. Un-reversing would fix the flat case
+    // and still get nesting wrong.
+    //
+    // A pre-order walk of the containment forest recovers source order: roots complete in
+    // source order relative to each other, and a parent is always declared before the
+    // children it holds. `flowDb` builds its `declarationIndex` the same way.
+    const containerOrder = new Map<string, number>();
+    const childContainers = new Map<string, string[]>();
+    for (const sg of subGraphs) {
+      const parent = parentDB.get(sg.id);
+      if (parent !== undefined) {
+        childContainers.set(parent, [...(childContainers.get(parent) ?? []), sg.id]);
       }
-      const v = this.vertices.get(id);
-      return v
-        ? this.deriveVertexKind(v, resolveShapeAlias(v.type as string | undefined))
-        : undefined;
-    });
+    }
+    let nextContainer = 0;
+    const walkContainers = (id: string) => {
+      if (containerOrder.has(id)) {
+        return; // a containment cycle was refused above; do not loop on its remnant
+      }
+      containerOrder.set(id, nextContainer++);
+      for (const child of childContainers.get(id) ?? []) {
+        walkContainers(child);
+      }
+    };
+    for (const sg of subGraphs) {
+      if (parentDB.get(sg.id) === undefined) {
+        walkContainers(sg.id);
+      }
+    }
+
+    const connectorIds = new Set(this.getConnectors().map((c) => c.id));
+    assignColorSlots(
+      nodes,
+      (id) => {
+        if (connectorIds.has(id)) {
+          return 'connector';
+        }
+        const v = this.vertices.get(id);
+        return v
+          ? this.deriveVertexKind(v, resolveShapeAlias(v.type as string | undefined))
+          : undefined;
+      },
+      containerOrder
+    );
 
     return {
       nodes,
