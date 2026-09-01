@@ -12,7 +12,7 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 ## Available Themes
 
-1. [**redux-color**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux-color.js) - This is the default theme for all diagrams. It pairs the `redux` geometry and typography with a categorical colour palette, so entities, actors, branches, classes, subgraph containers and chart series each get their own colour.
+1. [**redux-color**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux-color.js) - The default theme for the diagram types listed under [Per-diagram defaults](#per-diagram-defaults). It pairs the `redux` geometry and typography with a categorical colour palette, so entities, actors, branches, classes, subgraph containers and chart series each get their own colour.
 
 2. [**redux-dark-color**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux-dark-color.js) - The dark counterpart of `redux-color`.
 
@@ -20,7 +20,7 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 4. [**redux-dark**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-redux-dark.js) - The dark counterpart of `redux`.
 
-5. [**default**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-default.js) - The long-standing Mermaid look. This was the default before the colour themes existed.
+5. [**default**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-default.js) - The long-standing Mermaid look, and still the default for every diagram type not listed under [Per-diagram defaults](#per-diagram-defaults).
 
 6. [**neutral**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-neutral.js) - This theme is great for black-and-white documents that will be printed.
 
@@ -33,6 +33,63 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 10. [**neo-dark**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-neo-dark.js) - The dark counterpart of `neo`.
 
 11. [**base**](https://github.com/mermaid-js/mermaid/blob/develop/packages/mermaid/src/themes/theme-base.js) - This is the only theme that can be modified. Use this theme as the base for customizations.
+
+## Per-diagram defaults
+
+Not every diagram type defaults to the same theme and look. These do, to the `redux-color`
+theme and the `neo` look. The name on the left is the **config key** — what you write to
+scope a setting to that diagram, which is not always the keyword the diagram starts with:
+
+| Config key    | Diagram              |
+| ------------- | -------------------- |
+| `flowchart`   | `flowchart`          |
+| `swimlane`    | `swimlane-beta`      |
+| `class`       | `classDiagram`       |
+| `er`          | `erDiagram`          |
+| `requirement` | `requirementDiagram` |
+| `sequence`    | `sequenceDiagram`    |
+| `state`       | `stateDiagram`       |
+| `usecase`     | `usecase-beta`       |
+| `venn`        | `venn-beta`          |
+
+Every other diagram type defaults to the `default` theme and the `classic` look.
+
+`layout` works the same way. Only `swimlane` overrides it, to `swimlane`; everything else
+uses the global default, `dagre`.
+
+These are only defaults, and the most specific thing you say wins. Highest priority first:
+
+1. The diagram's own frontmatter or `%%{init}%%` directive.
+2. What you passed to `mermaid.initialize()`.
+3. The diagram type's default, above.
+4. The global default (`theme: default`, `look: classic`, `layout: dagre`).
+
+A layout that is not registered in the running build falls back to `dagre`, with a warning
+in the console. `elk` ships as a separate package you register yourself, and `cose-bilkent`
+is only bundled into builds that include the large features, so naming either as a default
+does not require every build to carry it.
+
+Within each of the first two you can also scope a value to one diagram type, and the
+scoped value wins over the global one you set alongside it. `theme`, `look` and `layout`
+can all be set this way:
+
+```javascript
+mermaid.initialize({
+  look: 'classic', // everything is classic...
+  flowchart: { look: 'handDrawn' }, // ...except flowcharts
+  er: { theme: 'neutral' },
+});
+```
+
+The same works in frontmatter, for one diagram:
+
+```yaml
+---
+config:
+  flowchart:
+    look: handDrawn
+---
+```
 
 ## Site-wide Theme
 

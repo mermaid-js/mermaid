@@ -43,7 +43,7 @@ const config: RequiredDeep<MermaidConfig> = {
   themeCSS: undefined,
 
   // add non-JSON default config values
-  themeVariables: theme['redux-color'].getThemeVariables(),
+  themeVariables: theme.default.getThemeVariables(),
   sequence: {
     ...defaultConfigJson.sequence,
     messageFont: function () {
@@ -69,12 +69,16 @@ const config: RequiredDeep<MermaidConfig> = {
     },
   },
   class: {
+    // Built from scratch rather than spread from the schema, so the appearance defaults
+    // have to be carried across by hand; the rest stay off, `padding` above all — the
+    // schema default of 5 would change class node dimensions on the unified renderer.
+    // Optional chaining: the docs scripts short-circuit `.schema.yaml` to `{}`.
+    theme: defaultConfigJson.class?.theme,
+    look: defaultConfigJson.class?.look,
+    layout: defaultConfigJson.class?.layout,
     defaultRenderer: 'dagre-wrapper',
     hideEmptyMembersBox: false,
     hierarchicalNamespaces: true,
-    // `padding` is intentionally left undefined so the unified (v2) renderer keeps
-    // its own node sizing — setting the schema default of 5 here would change class
-    // node dimensions.
   },
   gantt: {
     ...defaultConfigJson.gantt,
