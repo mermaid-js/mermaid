@@ -134,7 +134,17 @@ export function createCommonLayoutRenderer<
     options?: RenderOptions
   ): Promise<void> {
     const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
+    // Use the helper handed over by the host mermaid instance when there is one.
+    // External layout packages (elk, tidy-tree) are bundled with their own copy of
+    // these modules, and that copy's config module never sees `mermaid.initialize()`,
+    // so markers created through the statically imported `insertMarkers` read default
+    // theme variables instead of the diagram's.
+    (helpers?.insertMarkers ?? insertMarkers)(
+      element,
+      data4Layout.markers,
+      data4Layout.type,
+      data4Layout.diagramId
+    );
     clearLayoutRenderState();
 
     // Convenience struct containing everything you need to render
