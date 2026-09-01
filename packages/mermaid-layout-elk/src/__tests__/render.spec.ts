@@ -604,6 +604,47 @@ describe('runElkLayoutCore', () => {
   });
 });
 
+describe('small-node edge anchoring', () => {
+  // A start/end state circle is 14px across — smaller than twice the 12px
+  // ports-surrounding margin — so ELK's anchor for it lands off-centre and is
+  // discarded in favour of aiming at the node centre. The whole route must
+  // then run down the shared centre line.
+  it('centres a single edge between two start/end state circles', async () => {
+    const data = {
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        {
+          id: 'root_start',
+          isGroup: false,
+          width: 14,
+          height: 14,
+          label: 'root_start',
+          shape: 'stateStart',
+        },
+        {
+          id: 'root_end',
+          isGroup: false,
+          width: 14,
+          height: 14,
+          label: 'root_end',
+          shape: 'stateEnd',
+        },
+      ],
+      edges: [{ id: 'edge0', start: 'root_start', end: 'root_end', type: 'arrow_barb' }],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const start = data.nodes.find((node: any) => node.id === 'root_start');
+    const edge = data.edges[0];
+    expect(edge.points.length).toBeGreaterThanOrEqual(2);
+    for (const point of edge.points) {
+      expect(point.x).toBeCloseTo(start.x, 3);
+    }
+  });
+});
+
 describe('ensureEndMarkerSegmentLength', () => {
   const log = { debug: () => undefined };
   const circleBounds = {
