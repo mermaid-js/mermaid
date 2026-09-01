@@ -199,6 +199,9 @@ class Theme {
     this.defaultLinkColor = this.lineColor;
     this.titleColor = this.text;
 
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
+
     /* Gantt chart variables */
 
     this.sectionBkgColor = lighten(this.contrast, 30);

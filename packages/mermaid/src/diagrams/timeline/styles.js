@@ -6,7 +6,11 @@ const genReduxSections = (options) => {
   //Required to read the active theme at render time,
   // since options alone does not expose the theme name needed to switch between redux and classic section generators.
   const isDarkTheme = theme?.includes('dark');
-  const isColorTheme = theme?.includes('color');
+  // Gate on the palette actually being present, not just on the theme name. `theme` comes
+  // from global config while `options` is passed in, so the two can disagree -- and with an
+  // empty palette `borderColorArray[i]` is `undefined`, emitting `stroke: undefined`. Same
+  // guard as `er/styles.ts` and `requirement/styles.js`.
+  const isColorTheme = theme?.includes('color') && options.borderColorArray?.length > 0;
   const rawSvgId = options.svgId?.replace(/^#/, '') ?? '';
   const scopedDropShadow = rawSvgId
     ? `url(#${rawSvgId}-drop-shadow)`
@@ -16,8 +20,13 @@ const genReduxSections = (options) => {
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
     const sw = `${17 - 3 * i}`;
-    const color = isColorTheme ? options.borderColorArray[i] : options.mainBkg;
-    const stroke = isColorTheme ? options.borderColorArray[i] : options.nodeBorder;
+    // Wrap at the palette length rather than indexing raw: the loop runs to
+    // THEME_COLOR_LIMIT, so a shorter palette would leave the overflow slots undefined.
+    const slot = isColorTheme
+      ? options.borderColorArray[i % options.borderColorArray.length]
+      : undefined;
+    const color = slot ?? options.mainBkg;
+    const stroke = slot ?? options.nodeBorder;
 
     sections += `
     .section-${i - 1} rect,
