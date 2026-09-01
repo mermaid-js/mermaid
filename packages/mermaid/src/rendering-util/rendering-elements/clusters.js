@@ -524,7 +524,8 @@ const divider = (parent, node) => {
 const createContainerGroup = async (parent, node, opts) => {
   log.info(`Creating ${opts.cssClass} for `, node.id, node);
   const siteConfig = getConfig();
-  const { handDrawnSeed } = siteConfig;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
+  const { borderColorArray } = themeVariables;
 
   const { labelStyles, borderStyles } = styles2String(node);
 
@@ -536,6 +537,13 @@ const createContainerGroup = async (parent, node, opts) => {
     // diagrams on the same page, like every other cluster shape in this file.
     .attr('id', node.domId ?? node.id)
     .attr('data-look', node.look);
+
+  // Per-container colour slot, exactly as `rect` above does it. Every other cluster
+  // function stamps; this one did not, which left the containers drawn through it — only
+  // agentflow's `flowGroup` — unable to use the mechanism every other diagram's containers
+  // use. A no-op unless the theme carries a palette, and inert for any diagram whose
+  // stylesheet defines no matching `[data-color-id]` rules.
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
   const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label');
