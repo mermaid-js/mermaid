@@ -1,15 +1,21 @@
 /**
- * The default theme is encoded in three places that have to agree:
+ * The theme name and the theme variables have to agree.
  *
- *  1. `config.schema.yaml`, whose `theme.default` becomes `defaultConfigJson.theme`.
- *  2. `defaultConfig.ts`, which sets `themeVariables` explicitly (a non-JSON default, so the
- *     schema cannot supply it).
- *  3. `mermaidAPI.ts`, in the branch taken when no theme is given *or* an unrecognised one
- *     is given.
+ * The name is decided in three places:
+ *
+ *  1. `config.schema.yaml`, whose `theme.default` becomes the global default and whose
+ *     per-diagram `theme.default` overrides it for the diagram types that opt in.
+ *  2. `defaultConfig.ts`, which sets `themeVariables` explicitly (a non-JSON default, so
+ *     the schema cannot supply it) from the *global* default.
+ *  3. `config.ts`, which re-derives `themeVariables` whenever the resolved theme turns out
+ *     to be a different one from the one the site config was built with.
  *
  * If they drift, nothing throws: `theme` reports one theme while `themeVariables` carries
  * another's palette, and diagrams render in a mixture that is very hard to attribute. So
  * assert the name and the variables agree, rather than just asserting the name.
+ *
+ * Which diagram type gets which theme is not this file's subject -- see
+ * `config.appearance.spec.ts` for the resolution order.
  */
 import { beforeEach, describe, expect, it } from 'vitest';
 import * as configApi from './config.js';
@@ -17,7 +23,11 @@ import erStyles from './diagrams/er/styles.js';
 import { mermaidAPI } from './mermaidAPI.js';
 import themes from './themes/index.js';
 
-const DEFAULT_THEME = 'redux-color';
+/** What mermaid renders with when neither the user nor the diagram type says otherwise. */
+const GLOBAL_DEFAULT_THEME = 'default';
+
+/** What the diagram types redesigned for it default to instead. */
+const DIAGRAM_DEFAULT_THEME = 'redux-color';
 
 /**
  * A variable only the colour themes define -- a cheap fingerprint for the palette.
@@ -28,66 +38,42 @@ const DEFAULT_THEME = 'redux-color';
 const fingerprint = (variables: Record<string, unknown> | undefined): string =>
   Array.isArray(variables?.borderColorArray) ? JSON.stringify(variables.borderColorArray) : 'none';
 
+const fingerprintOf = (name: keyof typeof themes) =>
+  fingerprint(themes[name].getThemeVariables({}) as unknown as Record<string, unknown>);
+
 describe('default theme', () => {
   beforeEach(() => {
-    configApi.reset();
+    configApi.saveConfigFromInitialize({});
     configApi.setSiteConfig({});
+    configApi.reset();
   });
 
-  it(`is ${DEFAULT_THEME}`, () => {
-    expect(configApi.getConfig().theme).toBe(DEFAULT_THEME);
+  it(`is ${GLOBAL_DEFAULT_THEME} outside of any diagram`, () => {
+    expect(configApi.getConfig().theme).toBe(GLOBAL_DEFAULT_THEME);
   });
 
   it('ships themeVariables matching the theme it names', () => {
     const config = configApi.getConfig();
-    const expected = themes[DEFAULT_THEME].getThemeVariables({}) as unknown as Record<
-      string,
-      unknown
-    >;
-    expect(fingerprint(config.themeVariables)).toBe(fingerprint(expected));
-    expect(fingerprint(config.themeVariables)).not.toBe('none');
+    expect(fingerprint(config.themeVariables)).toBe(fingerprintOf(GLOBAL_DEFAULT_THEME));
   });
 
   it('resolves themeVariables to the default theme when initialize is given no theme', () => {
     mermaidAPI.initialize({});
-    const expected = themes[DEFAULT_THEME].getThemeVariables({}) as unknown as Record<
-      string,
-      unknown
-    >;
-    expect(fingerprint(configApi.getConfig().themeVariables)).toBe(fingerprint(expected));
+    expect(fingerprint(configApi.getConfig().themeVariables)).toBe(
+      fingerprintOf(GLOBAL_DEFAULT_THEME)
+    );
   });
 
   it('falls back to the default theme for an unrecognised theme name', () => {
     // @ts-expect-error deliberately not a member of the theme union
     mermaidAPI.initialize({ theme: 'not-a-real-theme' });
-    const expected = themes[DEFAULT_THEME].getThemeVariables({}) as unknown as Record<
-      string,
-      unknown
-    >;
     const config = configApi.getConfig();
-    expect(fingerprint(config.themeVariables)).toBe(fingerprint(expected));
+    expect(fingerprint(config.themeVariables)).toBe(fingerprintOf(GLOBAL_DEFAULT_THEME));
     // The name has to be normalised too, not just the variables. Leaving the unrecognised
     // name in place is what this file's header warns about: `theme` reports one thing while
     // `themeVariables` carries another's palette. It is not cosmetic -- every stylesheet
     // gates its palette rules on the *name*, so the palette would be loaded and never used.
-    expect(config.theme).toBe(DEFAULT_THEME);
-  });
-
-  it('emits palette CSS for an unrecognised theme name, not just palette variables', () => {
-    // The consequence of the name and the variables disagreeing, asserted where it shows.
-    // `createUserStyles` hands the stylesheet `config.themeVariables` together with
-    // `config.theme`, and `er/styles.ts` gates on the name -- so a stale name means the
-    // palette is present in the variables and absent from the CSS.
-    // @ts-expect-error deliberately not a member of the theme union
-    mermaidAPI.initialize({ theme: 'not-a-real-theme' });
-    const config = configApi.getConfig();
-    const css = erStyles({
-      ...(config.themeVariables as unknown as Record<string, unknown>),
-      theme: config.theme,
-      look: 'classic',
-      THEME_COLOR_LIMIT: 12,
-    } as never);
-    expect(css).toContain('[data-color-id="color-0"]');
+    expect(config.theme).toBe(GLOBAL_DEFAULT_THEME);
   });
 
   it("preserves the 'null' sentinel, which disables the pre-defined themes", () => {
@@ -104,5 +90,38 @@ describe('default theme', () => {
     expect(config.theme).toBe('forest');
     // `forest` has no categorical colour arrays, so the fingerprint must go away.
     expect(fingerprint(config.themeVariables)).toBe('none');
+  });
+
+  describe('when a diagram type defaults to a different theme', () => {
+    it('carries that theme and its variables together', async () => {
+      await mermaidAPI.parse('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
+      const config = configApi.getConfig();
+      expect(config.theme).toBe(DIAGRAM_DEFAULT_THEME);
+      expect(fingerprint(config.themeVariables)).toBe(fingerprintOf(DIAGRAM_DEFAULT_THEME));
+      expect(fingerprint(config.themeVariables)).not.toBe('none');
+    });
+
+    it('emits palette CSS, not just palette variables', async () => {
+      // Where the consequence of a name/variables disagreement would show.
+      // `createUserStyles` hands the stylesheet `config.themeVariables` together with
+      // `config.theme`, and `er/styles.ts` gates on the name -- so a stale name would mean
+      // the palette is present in the variables and absent from the CSS.
+      await mermaidAPI.parse('erDiagram\n  CUSTOMER ||--o{ ORDER : places');
+      const config = configApi.getConfig();
+      const css = erStyles({
+        ...(config.themeVariables as unknown as Record<string, unknown>),
+        theme: config.theme,
+        look: config.look,
+        THEME_COLOR_LIMIT: 12,
+      } as never);
+      expect(css).toContain('[data-color-id="color-0"]');
+    });
+
+    it('leaves the theme alone for a diagram type that did not opt in', async () => {
+      await mermaidAPI.parse('pie\n  "Dogs" : 40');
+      const config = configApi.getConfig();
+      expect(config.theme).toBe(GLOBAL_DEFAULT_THEME);
+      expect(fingerprint(config.themeVariables)).toBe(fingerprintOf(GLOBAL_DEFAULT_THEME));
+    });
   });
 });

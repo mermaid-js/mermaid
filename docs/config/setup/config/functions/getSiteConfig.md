@@ -12,7 +12,7 @@
 
 > **getSiteConfig**(): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:94](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L94)
+Defined in: [packages/mermaid/src/config.ts:211](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L211)
 
 Returns a copy of the current `siteConfig` base configuration.
 

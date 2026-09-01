@@ -367,6 +367,29 @@ export interface MermaidConfig {
  */
 export interface FlowchartDiagramConfig extends BaseDiagramConfig {
   /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
@@ -469,6 +492,34 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
 }
 /**
  * The object containing configurations specific for the swimlanes diagram type.
@@ -482,6 +533,29 @@ export interface BaseDiagramConfig {
  * via the `definition` "SwimlaneDiagramConfig".
  */
 export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Renders edge crossings as small arcs ("hops") or visible gaps so that
    * overlapping edges are easier to read. Set to `false` to disable. Edges
@@ -555,6 +629,29 @@ export interface AgentflowDiagramConfig extends BaseDiagramConfig {
  * via the `definition` "SequenceDiagramConfig".
  */
 export interface SequenceDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   arrowMarkerAbsolute?: boolean;
   hideUnusedParticipants?: boolean;
   /**
@@ -958,6 +1055,29 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
  */
 export interface ClassDiagramConfig extends BaseDiagramConfig {
   /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
@@ -1003,6 +1123,29 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
  */
 export interface StateDiagramConfig extends BaseDiagramConfig {
   /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
@@ -1043,6 +1186,29 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
  * via the `definition` "ErDiagramConfig".
  */
 export interface ErDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Margin top for the text over the diagram
    */
@@ -1311,6 +1477,29 @@ export interface XYChartAxisConfig {
  * via the `definition` "RequirementDiagramConfig".
  */
 export interface RequirementDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   rect_fill?: string;
   text_color?: string;
   rect_border_size?: string;
@@ -2060,6 +2249,29 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
  */
 export interface UsecaseDiagramConfig extends BaseDiagramConfig {
   /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
    * Font size for actor labels
    */
   actorFontSize?: number;
@@ -2141,6 +2353,29 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
  * via the `definition` "VennDiagramConfig".
  */
 export interface VennDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * The width of the Venn diagram.
    */

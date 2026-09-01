@@ -24,6 +24,7 @@ import * as configApi from './config.js';
 import { getEffectiveHtmlLabels } from './config.js';
 import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
+import { detectType } from './diagram-api/detectType.js';
 import type { DiagramCode, DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
 import { evaluate } from './diagrams/common/common.js';
@@ -72,6 +73,18 @@ const DOMPURIFY_ATTR = ['dominant-baseline'];
 function processAndSetConfigs(text: string) {
   const processed = preprocessDiagram(text);
   configApi.reset();
+  // A diagram type may default `theme`, `look` or `layout` differently from the
+  // rest of mermaid, so the config has to know which type it is resolving for.
+  // Detection is cheap and runs against the same text `Diagram.fromText` will
+  // detect from, and text that matches nothing simply leaves the global
+  // defaults in charge -- the real error is raised later, at parse time.
+  let diagramType: string | undefined;
+  try {
+    diagramType = detectType(processed.code.cleaned, configApi.getConfig());
+  } catch {
+    diagramType = undefined;
+  }
+  configApi.setDiagramConfigScope(diagramType);
   configApi.addDirective(processed.config ?? {});
   return processed;
 }
@@ -688,11 +701,12 @@ function initialize(userOptions: MermaidConfig = {}) {
   // stylesheet gates its rules on the *name*. So an unrecognised name left in place means
   // the fallback theme's palette is loaded into the variables and then never rendered.
   //
-  // That was harmless while the fallback was `default`, which carries no palette -- name
-  // and variables were both palette-less, so they could not disagree. Making a colour
-  // theme the default is what gives the mismatch a visible effect.
+  // Normalising the name also matters to the per-diagram defaults: an unrecognised name is
+  // still a theme the user asked for, and the site config is the layer that outranks a
+  // diagram type's own default. Leaving the invalid name here would carry it past that
+  // check and into the stylesheets.
   //
-  // Read from `defaultConfig` rather than naming the theme here, so the schema's
+  // Read from `defaultConfig` rather than naming the theme here, so the schema's global
   // `theme.default` stays the one place it is written down; `defaultConfig.ts` derives its
   // `themeVariables` from the same value.
   const fallbackTheme = configApi.defaultConfig.theme as keyof typeof theme;
