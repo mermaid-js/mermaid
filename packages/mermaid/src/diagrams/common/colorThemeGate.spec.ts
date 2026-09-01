@@ -14,6 +14,7 @@ import classStyles from '../class/styles.js';
 import erStyles from '../er/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
 import requirementStyles from '../requirement/styles.js';
+import stateStyles from '../state/styles.js';
 import swimlanesStyles from '../swimlanes/styles.js';
 import timelineStyles from '../timeline/styles.js';
 import {
@@ -23,6 +24,7 @@ import {
   colorSlotCount,
   paletteSlotCount,
   safeLook,
+  stampColorSlot,
 } from './colorThemeGate.js';
 
 /** `swimlanes` appends its own lane rules to flowchart's, so it is listed separately. */
@@ -31,6 +33,7 @@ const STYLESHEETS = {
   er: erStyles,
   flowchart: flowchartStyles,
   requirement: requirementStyles,
+  state: stateStyles,
   swimlanes: swimlanesStyles,
   timeline: timelineStyles,
 } as const;
@@ -40,9 +43,9 @@ const STYLESHEETS = {
  * colours `.section-N` classes directly rather than stamping slots, so the slot-shaped
  * assertions do not apply to it — only the crash-safety pass at the bottom does.
  */
-const SLOT_STYLESHEETS = (['class', 'er', 'flowchart', 'requirement', 'swimlanes'] as const).filter(
-  (name) => name in STYLESHEETS
-);
+const SLOT_STYLESHEETS = (
+  ['class', 'er', 'flowchart', 'requirement', 'state', 'swimlanes'] as const
+).filter((name) => name in STYLESHEETS);
 
 const COLOUR_THEMES = [...COLOR_THEMES];
 
@@ -317,6 +320,31 @@ describe('colorSlotCount stays a usable loop bound', () => {
  * palette and any limit. Both now derive from the palette, so this holds by construction --
  * and if anyone reintroduces a separate bound, it fails here rather than in review.
  */
+describe('stampColorSlot leaves an unnumbered element alone', () => {
+  const stamped = (colorIndex: number | undefined) => {
+    let attr: string | undefined;
+    const selection = {
+      attr: (_name: string, value: string) => {
+        attr = value;
+        return selection;
+      },
+    } as unknown as Parameters<typeof stampColorSlot>[0];
+    stampColorSlot(selection, colorIndex, 'redux-color', ['#a', '#b']);
+    return attr;
+  };
+
+  it('stamps nothing when there is no colorIndex', () => {
+    // Not `color-0`: an absent index means the element is outside the cycle, and painting
+    // it in the first palette colour is the opposite of that. State composites carrying
+    // the author's own `classDef` are the live case.
+    expect(stamped(undefined)).toBeUndefined();
+  });
+
+  it('still stamps slot zero when the index really is zero', () => {
+    expect(stamped(0)).toBe('color-0');
+  });
+});
+
 describe('emitted slots and stampable slots agree', () => {
   const paletteOf = (n: number) => Array.from({ length: n }, (_, i) => `#${i}`);
 
