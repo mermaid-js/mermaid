@@ -5,6 +5,27 @@ Venn diagrams show relationships between sets using overlapping circles.
 > **Warning**
 > This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
 
+## Default theme and look
+
+Venn diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+Both are only defaults, so anything you set yourself wins. To draw a diagram the way Mermaid
+did before these became the defaults, name the previous two in its front matter:
+
+```yaml
+---
+config:
+  theme: default
+  look: classic
+---
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ venn: { look: 'classic' } })` —
+does it for that type alone.
+
 ## Syntax
 
 - Start with `venn-beta`.

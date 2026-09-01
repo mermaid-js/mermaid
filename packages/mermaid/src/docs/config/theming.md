@@ -85,6 +85,25 @@ config:
 ---
 ```
 
+### Going back to the previous appearance
+
+The nine types above changed appearance when these became their defaults. To draw one the
+way Mermaid drew it before, name the previous theme and look in its front matter:
+
+```yaml
+---
+config:
+  theme: default
+  look: classic
+---
+```
+
+For every diagram on a page, pass the same two keys to `mermaid.initialize()`:
+
+```javascript
+mermaid.initialize({ theme: 'default', look: 'classic' });
+```
+
 ## Site-wide Theme
 
 To customize themes site-wide, call the `initialize` method on the `mermaid`.

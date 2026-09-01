@@ -39,6 +39,27 @@ a _transition._ The example diagram above shows three states: **Still**, **Movin
 **Still** state. From **Still** you can change to the **Moving** state. From **Moving** you can change either back to the **Still** state or to
 the **Crash** state. There is no transition from **Still** to **Crash**. (You can't crash if you're still.)
 
+## Default theme and look
+
+State diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+Both are only defaults, so anything you set yourself wins. To draw a diagram the way Mermaid
+did before these became the defaults, name the previous two in its front matter:
+
+```yaml
+---
+config:
+  theme: default
+  look: classic
+---
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ state: { look: 'classic' } })` —
+does it for that type alone.
+
 ## States
 
 A state can be declared in multiple ways. The simplest way is to define a state with just an id:

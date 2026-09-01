@@ -32,6 +32,27 @@ Customer --> Checkout
 
 Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direction.
 
+## Default theme and look
+
+Use case diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+Both are only defaults, so anything you set yourself wins. To draw a diagram the way Mermaid
+did before these became the defaults, name the previous two in its front matter:
+
+```yaml
+---
+config:
+  theme: default
+  look: classic
+---
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ usecase: { look: 'classic' } })` —
+does it for that type alone.
+
 ## Actors and use cases
 
 Actor and use case identifiers match `[A-Za-z0-9_]+`, so they may start with a digit — `1`, `1mg`, and `3rd` are all valid. Identifiers are diagram-wide and are shared by actors, use cases, boundaries, JSON nodes, and explicit edges.

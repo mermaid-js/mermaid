@@ -29,6 +29,27 @@ sequenceDiagram
 >
 > If unavoidable, one must use parentheses(), quotation marks "", or brackets {},\[], to enclose the word "end". i.e : (end), \[end], {end}.
 
+## Default theme and look
+
+Sequence diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+Both are only defaults, so anything you set yourself wins. To draw a diagram the way Mermaid
+did before these became the defaults, name the previous two in its front matter:
+
+```yaml
+---
+config:
+  theme: default
+  look: classic
+---
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ sequence: { look: 'classic' } })` —
+does it for that type alone.
+
 ## Syntax
 
 ### Participants
