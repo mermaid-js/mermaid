@@ -182,6 +182,11 @@ export interface Edge {
   thickness: string;
   classes: string;
   look: MermaidConfig['look'];
+  /**
+   * Stroke pattern, read by `insertEdge`. The note edge is the only state edge that sets
+   * it; see the note-edge push in `dataFetcher.ts` for why the CSS class is not enough.
+   */
+  pattern?: 'solid' | 'dotted' | 'dashed';
 }
 
 /**

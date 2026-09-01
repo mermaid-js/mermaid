@@ -53,6 +53,7 @@ DOUBLECIRCLEEND
 DOUBLECIRCLESTART
 DQUOTE
 DSTART
+DUMMYNODE
 EBNF
 edgesep
 Eiglsperger
@@ -70,6 +71,7 @@ grammr
 graphtype
 halign
 iife
+instrumenter
 interp
 introdcued
 INVTRAPEND
@@ -100,6 +102,8 @@ minlen
 Mstartx
 MULT
 Naur
+NIKOLOV
+NODECOUNT
 NODIR
 nonterminal
 NSTR
@@ -164,10 +168,12 @@ ts-nocheck
 tsdoc
 typeof
 typestr
-uninstrumented
 unrouted
 unshift
 urlsafe
+usecase
+Usecase
+USECASE
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH

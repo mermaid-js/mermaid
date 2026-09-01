@@ -1,0 +1,11 @@
+C4Deployment
+title Deployment node aliases
+Node(dc, "Data Center", "us-east-1") {
+  Node_L(srv, "App Server", "Ubuntu 22.04") {
+    Container(api, "API", "Java, Spring")
+  }
+  Node_R(dbn, "DB Server", "Ubuntu 22.04") {
+    ContainerDb(db, "Database", "PostgreSQL")
+  }
+}
+Rel(api, db, "reads/writes", "JDBC")
