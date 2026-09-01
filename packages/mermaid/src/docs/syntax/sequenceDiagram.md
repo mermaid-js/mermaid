@@ -17,7 +17,7 @@ A note on nodes, the word "end" could potentially break the diagram, due to the 
 If unavoidable, one must use parentheses(), quotation marks "", or brackets {},[], to enclose the word "end". i.e : (end), [end], {end}.
 ```
 
-## Default theme and look
+## Default theme and look (v<MERMAID_RELEASE_VERSION>+)
 
 Sequence diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
@@ -74,7 +74,7 @@ sequenceDiagram
 ```
 
 Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
-and scoping them to one diagram type — `mermaid.initialize({ sequence: { look: 'classic' } })` —
+and scoping them to one diagram type — `mermaid.initialize({ sequence: { theme: 'default', look: 'classic' } })` —
 does it for that type alone.
 
 ## Syntax

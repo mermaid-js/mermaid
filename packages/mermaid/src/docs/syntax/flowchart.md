@@ -102,7 +102,7 @@ Possible FlowChart orientations are:
 - RL - Right to left
 - LR - Left to right
 
-## Default theme and look
+## Default theme and look (v<MERMAID_RELEASE_VERSION>+)
 
 Flowcharts use the `redux-color` theme and the `neo` look by default. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
@@ -167,7 +167,7 @@ flowchart LR
 ```
 
 Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
-and scoping them to one diagram type — `mermaid.initialize({ flowchart: { look: 'classic' } })` —
+and scoping them to one diagram type — `mermaid.initialize({ flowchart: { theme: 'default', look: 'classic' } })` —
 does it for that type alone.
 
 ## Node shapes

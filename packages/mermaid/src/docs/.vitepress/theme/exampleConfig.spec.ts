@@ -8,15 +8,18 @@ import { buildExampleConfig, getDiagramType, COLOR_THEME_DIAGRAMS } from './exam
  * Read as text rather than through the `?only-defaults` plugin, which is not registered for
  * the docs vitest project. This spec runs from more than one working directory.
  */
-const schemaPath = [
-  'packages/mermaid/src/schemas/config.schema.yaml',
-  'src/schemas/config.schema.yaml',
-  '../../schemas/config.schema.yaml',
-]
-  .map((candidate) => resolve(process.cwd(), candidate))
-  .find((candidate) => existsSync(candidate));
+const schemaCandidates = [
+  'packages/mermaid/src/schemas/config.schema.yaml', // repo root
+  'src/schemas/config.schema.yaml', // packages/mermaid
+  '../schemas/config.schema.yaml', // packages/mermaid/src/docs
+].map((candidate) => resolve(process.cwd(), candidate));
 
-const schema = load(readFileSync(schemaPath!, 'utf8')) as {
+const schemaPath = schemaCandidates.find((candidate) => existsSync(candidate));
+if (!schemaPath) {
+  throw new Error(`config.schema.yaml not found at any of: ${schemaCandidates.join(', ')}`);
+}
+
+const schema = load(readFileSync(schemaPath, 'utf8')) as {
   properties: Record<string, { $ref?: string }>;
   $defs: Record<string, { properties?: Record<string, { default?: unknown }> }>;
 };
@@ -29,6 +32,9 @@ const declaredColourDefaults = Object.entries(schema.properties)
     return declared === 'redux-color' ? [key] : [];
   })
   .sort();
+
+/** `buildExampleConfig`'s return, with the diagram sections it may add. */
+type SectionedConfig = Record<string, { theme?: string; [option: string]: unknown } | undefined>;
 
 describe('docs example config', () => {
   describe('light mode', () => {
@@ -67,7 +73,7 @@ describe('docs example config', () => {
     const swimlane = 'swimlane-beta LR\n  subgraph Customer\n  end';
 
     it('applies the layout options the syntax page should not repeat', () => {
-      const config = buildExampleConfig(swimlane, false) as Record<string, any>;
+      const config = buildExampleConfig(swimlane, false) as SectionedConfig;
       expect(config.swimlane).toMatchObject({
         ignoreCrossLaneEdges: true,
         optimizeRanksByCrossings: true,
@@ -76,7 +82,7 @@ describe('docs example config', () => {
     });
 
     it('keeps the dark counterpart alongside them', () => {
-      const config = buildExampleConfig(swimlane, true) as Record<string, any>;
+      const config = buildExampleConfig(swimlane, true) as SectionedConfig;
       expect(config.swimlane).toMatchObject({
         theme: 'redux-dark-color',
         ignoreCrossLaneEdges: true,
@@ -84,14 +90,14 @@ describe('docs example config', () => {
     });
 
     it('does not pin a theme or look of its own', () => {
-      const config = buildExampleConfig(swimlane, false) as Record<string, any>;
+      const config = buildExampleConfig(swimlane, false) as SectionedConfig;
       expect(config.theme).toBeUndefined();
       expect(config.look).toBeUndefined();
-      expect(config.swimlane.theme).toBeUndefined();
+      expect(config.swimlane?.theme).toBeUndefined();
     });
 
     it('leaves other diagram types without the swimlane options', () => {
-      const config = buildExampleConfig('flowchart TD\n  A --> B', false) as Record<string, any>;
+      const config = buildExampleConfig('flowchart TD\n  A --> B', false) as SectionedConfig;
       expect(config.swimlane).toBeUndefined();
       expect(config.flowchart).toBeUndefined();
     });

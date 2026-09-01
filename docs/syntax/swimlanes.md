@@ -13,7 +13,7 @@ A swimlane diagram shows a process divided by responsibility. Each lane represen
 
 Use swimlane diagrams when the most important question is not only "what happens next?" but also "who owns this step?" They are useful for approval flows, support processes, delivery workflows, and any process where work crosses teams or systems.
 
-## Default theme and look
+## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
 
 Swimlane diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
@@ -115,12 +115,10 @@ swimlane-beta LR
 ```
 
 Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
-and scoping them to one diagram type — `mermaid.initialize({ swimlane: { look: 'classic' } })` —
+and scoping them to one diagram type — `mermaid.initialize({ swimlane: { theme: 'default', look: 'classic' } })` —
 does it for that type alone.
 
 ## Basic Example
-
-> The rendered examples on this page use the **Neo** look and the **Redux** theme. Out of the box, swimlanes use your configured default look and theme.
 
 ```mermaid-example
 swimlane-beta LR

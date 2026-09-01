@@ -72,7 +72,7 @@ classDiagram
     }
 ```
 
-## Default theme and look
+## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
 
 Class diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
@@ -190,7 +190,7 @@ classDiagram
 ```
 
 Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
-and scoping them to one diagram type — `mermaid.initialize({ class: { look: 'classic' } })` —
+and scoping them to one diagram type — `mermaid.initialize({ class: { theme: 'default', look: 'classic' } })` —
 does it for that type alone.
 
 ## Syntax

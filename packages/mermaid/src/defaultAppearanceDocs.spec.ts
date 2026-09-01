@@ -34,7 +34,7 @@ const readPage = (page: string): string => {
 
 /** The `mermaid-example` fences inside the "Default theme and look" section. */
 const appearanceExamples = (page: string): string[] => {
-  const section = /## Default theme and look\n[\S\s]*?(?=\n## )/.exec(readPage(page))?.[0];
+  const section = /## Default theme and look[^\n]*\n[\S\s]*?(?=\n## )/.exec(readPage(page))?.[0];
   expect(section, `${page}.md has no "Default theme and look" section`).toBeDefined();
   return [...section!.matchAll(/^```mermaid-example[^\n]*\r?\n([\S\s]*?)\r?\n```$/gm)].map(
     ([, source]) => source
@@ -49,6 +49,9 @@ describe('per-diagram appearance documentation', () => {
   it.each(PAGES)('%s.md shows the diagram with the defaults and pinned back', async (page) => {
     const examples = appearanceExamples(page);
     expect(examples).toHaveLength(2);
+
+    // `contributing.md` asks for a version marker on newly documented behaviour.
+    expect(readPage(page)).toContain('## Default theme and look (v<MERMAID_RELEASE_VERSION>+)');
 
     const [withDefaults, pinnedBack] = examples;
     // The pair has to be the same diagram, or the comparison teaches nothing.

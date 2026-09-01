@@ -55,7 +55,12 @@ export const buildExampleConfig = (
   // Layout options the swimlanes syntax page should not have to repeat on every example.
   // Theme and look are left to the defaults.
   if (getDiagramType(source) === 'swimlane-beta') {
-    config.flowchart = { titleTopMargin: 10 };
+    // Both merge rather than replace: dark mode may already have put a theme on either key,
+    // and swimlanes read the shared flowchart section for `useMaxWidth` and friends.
+    config.flowchart = {
+      ...(config.flowchart as Record<string, unknown> | undefined),
+      titleTopMargin: 10,
+    };
     config.swimlane = {
       ...(config.swimlane as Record<string, unknown> | undefined),
       ignoreCrossLaneEdges: true,
