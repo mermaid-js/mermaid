@@ -1,0 +1,10 @@
+usecase-beta
+    direction LR
+    actor Customer("Customer")
+    actor Admin("Administrator")
+    Browse("Browse catalog")
+    Checkout("Place order")
+    Manage[Manage catalog]
+    Customer --> Browse
+    Customer --> Checkout
+    Admin --> Manage

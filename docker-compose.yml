@@ -18,19 +18,6 @@ services:
     ports:
       - ${MERMAID_PORT}:${MERMAID_PORT}
       - 3333:3333
-  cypress:
-    image: cypress/included:14.0.3
-    stdin_open: true
-    tty: true
-    working_dir: /mermaid
-    mem_limit: '2G'
-    entrypoint: cypress
-    environment:
-      - DISPLAY
-    volumes:
-      - ./:/mermaid
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    network_mode: host
 
 volumes:
   root_cache:
