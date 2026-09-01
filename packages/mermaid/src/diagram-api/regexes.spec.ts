@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { anyCommentRegex } from './regexes.js';
+import { anyCommentRegex, stripAnyComments } from './regexes.js';
 
-// The pre-optimization pattern, kept here as the equivalence oracle. The optimized
-// `anyCommentRegex` must strip comments byte-for-byte identically to this — the only change is
-// avoiding O(whitespace²) backtracking on deeply-indented input, not the matched text.
-const LEGACY_ANY_COMMENT = /\s*%%.*\n/gm;
+// The exported `anyCommentRegex` is the published, pre-optimization pattern and serves as the
+// equivalence oracle: `stripAnyComments` must strip comments byte-for-byte identically to
+// `replace(anyCommentRegex, '\n')` — the only difference is avoiding O(whitespace²) backtracking
+// on deeply-indented input, not the matched text.
 
 // Fresh regex per call so the global `lastIndex` never leaks between assertions.
-const strip = (re: RegExp, text: string) => text.replace(new RegExp(re.source, re.flags), '\n');
+const legacyStrip = (text: string) =>
+  text.replace(new RegExp(anyCommentRegex.source, anyCommentRegex.flags), '\n');
 
 const CORPUS: string[] = [
   '%% a line comment\n',
@@ -32,24 +33,24 @@ const CORPUS: string[] = [
   '%%\n', // empty comment
 ];
 
-describe('anyCommentRegex', () => {
-  it('strips comments byte-identically to the legacy /\\s*%%.*\\n/gm pattern', () => {
+describe('stripAnyComments', () => {
+  it('strips comments byte-identically to replace(anyCommentRegex, "\\n")', () => {
     for (const input of CORPUS) {
-      expect(strip(anyCommentRegex, input)).toBe(strip(LEGACY_ANY_COMMENT, input));
+      expect(stripAnyComments(input)).toBe(legacyStrip(input));
     }
   });
 
   it('is O(n) on deeply-indented input (no catastrophic backtracking)', () => {
-    // Deep indentation with no comments is the worst case for the old leading-`\s*` pattern: the
-    // global match re-scanned each indent run from every position — O(whitespace²), ~250ms+ on the
+    // Deep indentation with no comments is the worst case for the leading-`\s*` pattern: the
+    // global match re-scans each indent run from every position — O(whitespace²), ~250ms+ on the
     // perf fixture huge3 (1.6k-space lines). The guarded pattern is O(n).
     const pathological =
       Array.from({ length: 300 }, () => ' '.repeat(1672) + 'classDef x fill:#fff').join('\n') +
       '\n';
     const t0 = performance.now();
-    const out = strip(anyCommentRegex, pathological);
+    const out = stripAnyComments(pathological);
     const ms = performance.now() - t0;
     expect(out).toBe(pathological); // no `%%` → nothing stripped
-    expect(ms).toBeLessThan(200); // legacy pattern takes seconds on this input
+    expect(ms).toBeLessThan(200); // the unguarded pattern takes seconds on this input
   });
 });
