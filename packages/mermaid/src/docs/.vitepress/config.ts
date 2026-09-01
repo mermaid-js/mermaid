@@ -33,7 +33,8 @@ export default defineConfig({
     applyHomePageHeroCopy(pageData, docsHostname());
   },
   head: [
-    ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    ['link', { rel: 'apple-touch-icon', href: '/favicon.png' }],
     ['meta', { property: 'og:title', content: 'Mermaid' }],
     [
       'meta',
