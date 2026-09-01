@@ -7,6 +7,7 @@ import {
   ensureEndMarkerSegmentLength,
   evenGroupFrames,
   findCyclicEntryNodes,
+  growClusterPaddingForLabels,
   prepareLayoutForElk,
   resolveContainerAlgorithm,
   resolveElkPreset,
@@ -601,6 +602,144 @@ describe('runElkLayoutCore', () => {
     expect(child.offset.y).toBeCloseTo(group.offset.posY);
     expect(layoutChild.x).toBeCloseTo(child.offset.posX + child.width / 2);
     expect(layoutChild.y).toBeCloseTo(child.offset.posY + child.height / 2);
+  });
+});
+
+describe('growClusterPaddingForLabels', () => {
+  const nodeDb = {
+    wide: { id: 'wide', isGroup: true, padding: 8, labelData: { width: 300, height: 16 } },
+    narrow: { id: 'narrow', isGroup: true, padding: 8, labelData: { width: 20, height: 16 } },
+    leaf: { id: 'leaf', isGroup: false },
+  } as any;
+
+  it('reports no change when every subgraph already fits its label', () => {
+    const graph = { children: [{ id: 'narrow', width: 100, children: [] }] };
+    const overrides = new Map<string, number>();
+    expect(growClusterPaddingForLabels(graph, nodeDb, overrides)).toBe(false);
+    expect(overrides.size).toBe(0);
+  });
+
+  it('adds half the missing width per side for a too-narrow subgraph', () => {
+    // painted width = label 300 + padding 8 = 308; laid out at 100 -> 208 missing
+    const graph = { children: [{ id: 'wide', width: 100, children: [] }] };
+    const overrides = new Map<string, number>();
+    expect(growClusterPaddingForLabels(graph, nodeDb, overrides)).toBe(true);
+    expect(overrides.get('wide')).toBe(104);
+  });
+
+  it('accumulates overrides across passes', () => {
+    const overrides = new Map([['wide', 50]]);
+    // still 8 too narrow after the previous pass -> grow by 4 more per side
+    const graph = { children: [{ id: 'wide', width: 300, children: [] }] };
+    expect(growClusterPaddingForLabels(graph, nodeDb, overrides)).toBe(true);
+    expect(overrides.get('wide')).toBe(54);
+  });
+
+  it('visits nested subgraphs and ignores leaf nodes', () => {
+    const graph = {
+      children: [
+        {
+          id: 'narrow',
+          width: 400,
+          children: [
+            { id: 'wide', width: 100, children: [{ id: 'leaf', width: 40 }] },
+            { id: 'leaf', width: 40 },
+          ],
+        },
+      ],
+    };
+    const overrides = new Map<string, number>();
+    expect(growClusterPaddingForLabels(graph, nodeDb, overrides)).toBe(true);
+    expect([...overrides.keys()]).toEqual(['wide']);
+  });
+});
+
+describe('runElkLayoutCore label width handling', () => {
+  const layoutDataWithWideLabels = () =>
+    ({
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        {
+          id: 'outer',
+          isGroup: true,
+          label: 'outer',
+          padding: 8,
+          labelBBox: { width: 60, height: 16 },
+        },
+        {
+          id: 'inner',
+          isGroup: true,
+          parentId: 'outer',
+          label: 'a very long inner subgraph title',
+          padding: 8,
+          // far wider than the content (a single 40px leaf)
+          labelBBox: { width: 400, height: 16 },
+        },
+        {
+          id: 'leaf',
+          isGroup: false,
+          parentId: 'inner',
+          width: 40,
+          height: 20,
+          label: 'leaf',
+          shape: 'rect',
+        },
+      ],
+      edges: [],
+    }) as any;
+
+  it('grows a subgraph to its painted label width', async () => {
+    const data = layoutDataWithWideLabels();
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const inner = data.nodes.find((node: any) => node.id === 'inner');
+    expect(inner.width).toBeGreaterThanOrEqual(400 + 8);
+  });
+
+  it('keeps a label-widened subgraph inside its parent', async () => {
+    const data = layoutDataWithWideLabels();
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const outer = data.nodes.find((node: any) => node.id === 'outer');
+    const inner = data.nodes.find((node: any) => node.id === 'inner');
+
+    expect(inner.x - inner.width / 2).toBeGreaterThanOrEqual(outer.x - outer.width / 2);
+    expect(inner.x + inner.width / 2).toBeLessThanOrEqual(outer.x + outer.width / 2);
+    expect(inner.y - inner.height / 2).toBeGreaterThanOrEqual(outer.y - outer.height / 2);
+    expect(inner.y + inner.height / 2).toBeLessThanOrEqual(outer.y + outer.height / 2);
+  });
+
+  it('does not add layout passes when labels already fit', async () => {
+    const data = {
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        {
+          id: 'group',
+          isGroup: true,
+          label: 'g',
+          padding: 8,
+          labelBBox: { width: 10, height: 16 },
+        },
+        {
+          id: 'leaf',
+          isGroup: false,
+          parentId: 'group',
+          width: 100,
+          height: 20,
+          label: 'leaf',
+          shape: 'rect',
+        },
+      ],
+      edges: [],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const group = data.nodes.find((node: any) => node.id === 'group');
+    // content 100 + default padding 12 per side; no label-driven growth
+    expect(group.width).toBeCloseTo(124);
   });
 });
 

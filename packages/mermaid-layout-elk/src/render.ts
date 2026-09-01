@@ -142,6 +142,14 @@ const ARROW_MAP: Record<string, [string, string]> = {
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
+// ELK's default padding for compound nodes ('elk.padding'), applied on every
+// side when the option is not set explicitly.
+const ELK_DEFAULT_CLUSTER_PADDING = 12;
+// Upper bound for label-width layout passes. The first pass fixes every
+// subgraph that is narrower than its own label; later passes only trigger in
+// the rare case where the re-layout reshuffles content enough to expose a new
+// too-narrow subgraph.
+const MAX_LABEL_WIDTH_PASSES = 4;
 
 /**
  * Margin reserved at the ends of each side of a node, so that a port cannot be
@@ -614,16 +622,128 @@ export async function runElkLayoutCore(
   context: CommonLayoutRenderContext<ElkPreparedLayout>
 ): Promise<ElkLayoutResult> {
   const elkContext = getElkLayoutContext(context);
-  const layoutState = buildElkGraphFromLayoutData(data4Layout, elkContext);
+  await remeasureClusterLabels(data4Layout, context);
+  let layoutState = buildElkGraphFromLayoutData(data4Layout, elkContext);
 
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
   elkContext.log.info('Drawing flowchart using v4 renderer', elk);
 
-  const graph = await runElkLayout(elk, layoutState.elkGraph, elkContext.log);
+  let graph = await runElkLayout(elk, layoutState.elkGraph, elkContext.log);
+
+  // ELK reserves vertical space for INSIDE node labels on compound nodes but
+  // ignores their width, so a subgraph can come back narrower than its own
+  // title. The painter would then widen just that rectangle after layout,
+  // pushing it outside its parent and over its siblings. Detect such
+  // subgraphs and re-run the layout with extra horizontal padding so parents
+  // and siblings are placed around the final painted width.
+  const paddingOverrides = new Map<string, number>();
+  for (let pass = 0; pass < MAX_LABEL_WIDTH_PASSES; pass++) {
+    if (!growClusterPaddingForLabels(graph, layoutState.nodeDb, paddingOverrides)) {
+      break;
+    }
+    elkContext.log.debug('ELK re-running layout for subgraph label widths', paddingOverrides);
+    layoutState = buildElkGraphFromLayoutData(data4Layout, elkContext);
+    applyClusterPaddingOverrides(layoutState.nodeDb, paddingOverrides);
+    graph = await runElkLayout(elk, layoutState.elkGraph, elkContext.log);
+  }
+
   applyElkLayoutResult(data4Layout, graph, layoutState, elkContext.log);
   orderNodesForElkPaint(data4Layout.nodes);
   return graph;
+}
+
+/**
+ * Re-measure subgraph labels the way the cluster painter will draw them.
+ *
+ * The generic measure pass wraps labels at `flowchart.wrappingWidth`, but the
+ * cluster painter renders non-markdown titles without wrapping. A long title
+ * therefore paints wider than the `labelBBox` the layout was computed with,
+ * and the subgraph rectangle ends up overflowing its parent. Override
+ * `labelBBox` with the unwrapped size so the layout sees the painted width.
+ */
+async function remeasureClusterLabels(
+  data4Layout: LayoutData,
+  context: CommonLayoutRenderContext<ElkPreparedLayout>
+): Promise<void> {
+  const element = context.element;
+  const labelHelper = context.helpers?.labelHelper;
+  if (!labelHelper || !element?.node()) {
+    return;
+  }
+  for (const node of data4Layout.nodes) {
+    if (!node.isGroup || !node.label || node.labelType === 'markdown') {
+      continue;
+    }
+    // `element` is the root `<g>` (a graphics element); the context types it as the
+    // wider `SVGElement`, so cast to what `labelHelper` expects.
+    const { shapeSvg, bbox } = await labelHelper(
+      element as unknown as Parameters<typeof labelHelper>[0],
+      {
+        ...node,
+        width: Number.POSITIVE_INFINITY,
+      }
+    );
+    shapeSvg.remove();
+    node.labelBBox = { width: bbox.width, height: bbox.height };
+  }
+}
+
+/**
+ * Find subgraphs whose laid-out width is smaller than the width the painter
+ * will actually draw (label width plus cluster padding) and increase their
+ * horizontal padding override accordingly.
+ *
+ * @param graph - the laid-out ELK graph of the previous pass
+ * @param nodeDb - lookup with the measured `labelData` and `padding` per node
+ * @param paddingOverrides - accumulated extra horizontal padding per subgraph
+ *   id, mutated in place
+ * @returns true when any override was added or increased, i.e. another layout
+ *   pass is needed
+ */
+export function growClusterPaddingForLabels(
+  graph: ElkLayoutResult,
+  nodeDb: Record<string, NodeWithVertex>,
+  paddingOverrides: Map<string, number>
+): boolean {
+  let changed = false;
+  const visit = (children: any[] | undefined) => {
+    for (const child of children ?? []) {
+      if (!child) {
+        continue;
+      }
+      const dbNode = nodeDb[child.id];
+      if (dbNode?.isGroup) {
+        const requiredWidth = (dbNode.labelData?.width ?? 0) + (dbNode.padding ?? 0);
+        const missing = requiredWidth - (child.width ?? 0);
+        if (missing > 0) {
+          const extra = Math.ceil(missing / 2);
+          paddingOverrides.set(child.id, (paddingOverrides.get(child.id) ?? 0) + extra);
+          changed = true;
+        }
+        visit(child.children);
+      }
+    }
+  };
+  visit(graph.children);
+  return changed;
+}
+
+function applyClusterPaddingOverrides(
+  nodeDb: Record<string, NodeWithVertex>,
+  paddingOverrides: Map<string, number>
+): void {
+  for (const [id, extra] of paddingOverrides) {
+    const node = nodeDb[id];
+    if (!node) {
+      continue;
+    }
+    const horizontal = ELK_DEFAULT_CLUSTER_PADDING + extra;
+    node.layoutOptions = {
+      ...node.layoutOptions,
+      'elk.padding': `[top=${ELK_DEFAULT_CLUSTER_PADDING},left=${horizontal},bottom=${ELK_DEFAULT_CLUSTER_PADDING},right=${horizontal}]`,
+    };
+  }
 }
 
 export function buildElkGraphFromLayoutData(
