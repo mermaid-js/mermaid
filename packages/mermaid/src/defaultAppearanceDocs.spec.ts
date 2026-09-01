@@ -10,6 +10,7 @@ import { addDiagrams } from './diagram-api/diagram-orchestration.js';
 import { mermaidAPI } from './mermaidAPI.js';
 
 const PAGES = [
+  'agentflow',
   'flowchart',
   'swimlanes',
   'classDiagram',

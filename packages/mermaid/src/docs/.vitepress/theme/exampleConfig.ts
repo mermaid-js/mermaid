@@ -12,6 +12,7 @@
  * `exampleConfig.spec.ts` checks this against the schema so it cannot drift.
  */
 export const COLOR_THEME_DIAGRAMS = [
+  'agentflow',
   'flowchart',
   'swimlane',
   'class',

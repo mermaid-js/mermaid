@@ -65,7 +65,9 @@ describe('docs example config', () => {
   it('names exactly the diagram types the schema defaults to a colour theme', () => {
     // The list in `exampleConfig.ts` is written out by hand. Deriving the expectation from
     // the schema is what stops the docs site quietly missing a tenth type added later.
-    expect(declaredColourDefaults).toHaveLength(9);
+    expect(declaredColourDefaults.length, 'no colour defaults found in the schema').toBeGreaterThan(
+      0
+    );
     expect([...COLOR_THEME_DIAGRAMS].sort()).toEqual(declaredColourDefaults);
   });
 
