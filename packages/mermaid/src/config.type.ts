@@ -557,6 +557,11 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    */
   look?: 'classic' | 'handDrawn' | 'neo';
   /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
+  /**
    * Renders edge crossings as small arcs ("hops") or visible gaps so that
    * overlapping edges are easier to read. Set to `false` to disable. Edges
    * rendered as curves are skipped to avoid corrupting the geometry.

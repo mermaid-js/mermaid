@@ -1,5 +1,4 @@
 import type { MermaidConfig } from '../../config.type.js';
-import { getUserDefinedConfig } from '../../config.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDefinition } from '../../diagram-api/types.js';
 import { FlowDB } from './flowDb.js';
@@ -10,12 +9,10 @@ import flowParser from './parser/flowParser.ts';
 import flowStyles from './styles.js';
 
 interface FlowDiagramOptions {
-  defaultLayout?: string;
   styles?: typeof flowStyles;
 }
 
 export const createFlowDiagram = ({
-  defaultLayout,
   styles = flowStyles,
 }: FlowDiagramOptions = {}): DiagramDefinition => ({
   parser: flowParser,
@@ -28,10 +25,11 @@ export const createFlowDiagram = ({
     if (!cnf.flowchart) {
       cnf.flowchart = {};
     }
-    const layout = getUserDefinedConfig().layout ?? defaultLayout ?? cnf.layout;
-    if (layout) {
-      setConfig({ layout });
-    }
+    // The layout is not forced here. Swimlanes -- the one variant that needs a
+    // layout other than the flowchart default -- declare `layout: swimlane` in
+    // the schema instead, which puts it in the same precedence chain as
+    // everything else: a user's `layout`, or `swimlane.layout`, outranks it,
+    // where forcing it here overrode both.
     cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
     setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
   },

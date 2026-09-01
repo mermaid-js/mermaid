@@ -2374,6 +2374,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       look:
         $ref: '#/$defs/BaseDiagramConfig/properties/look'
         default: 'neo'
+      layout:
+        $ref: '#/$defs/BaseDiagramConfig/properties/layout'
+        # Swimlanes reuse the flowchart parser, DB and renderer and differ only in
+        # the layout engine, so the engine is the diagram type. Declared here rather
+        # than forced by the renderer so that a user override still wins.
+        default: 'swimlane'
       lineHops:
         description: |
           Renders edge crossings as small arcs ("hops") or visible gaps so that

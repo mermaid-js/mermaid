@@ -135,16 +135,36 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   });
 };
 
+/** The one layout that is always registered, so the fallback chain can always end. */
+const LAST_RESORT_LAYOUT = 'dagre';
+
 /**
- * Get the registered layout algorithm. If the algorithm is not registered, use the fallback algorithm.
+ * Get the registered layout algorithm, falling back when it is not available.
+ *
+ * A layout can be absent for reasons that have nothing to do with the diagram
+ * asking for it: `elk` ships as a separate package the embedder has to register,
+ * and `cose-bilkent` is only bundled in builds that include the large features,
+ * so `@mermaid-js/tiny` has neither. A diagram type is therefore free to name a
+ * layout as its default without every build having to carry it -- the diagram
+ * renders with `dagre` and logs a warning, rather than failing.
+ *
+ * `fallback` names a better second choice than `dagre` where the diagram type
+ * has one, but it may itself be unregistered, so `dagre` closes the chain.
  */
-export const getRegisteredLayoutAlgorithm = (algorithm = '', { fallback = 'dagre' } = {}) => {
+export const getRegisteredLayoutAlgorithm = (
+  algorithm = '',
+  { fallback = LAST_RESORT_LAYOUT } = {}
+) => {
   if (algorithm in layoutAlgorithms) {
     return algorithm;
   }
-  if (fallback in layoutAlgorithms) {
-    log.warn(`Layout algorithm ${algorithm} is not registered. Using ${fallback} as fallback.`);
-    return fallback;
+  for (const candidate of [fallback, LAST_RESORT_LAYOUT]) {
+    if (candidate in layoutAlgorithms) {
+      log.warn(`Layout algorithm ${algorithm} is not registered. Using ${candidate} as fallback.`);
+      return candidate;
+    }
   }
-  throw new Error(`Both layout algorithms ${algorithm} and ${fallback} are not registered.`);
+  throw new Error(
+    `Neither layout algorithm ${algorithm}, ${fallback}, nor ${LAST_RESORT_LAYOUT} is registered.`
+  );
 };

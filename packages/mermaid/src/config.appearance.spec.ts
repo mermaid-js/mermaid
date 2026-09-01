@@ -98,9 +98,12 @@ describe('per-diagram appearance defaults', () => {
       expect(pie.themeVariables.primaryColor).toBe(theme.default.getThemeVariables().primaryColor);
     });
 
-    it('leaves the layout alone -- no diagram type overrides it', async () => {
+    it('leaves the layout on dagre except where a diagram type names its own', async () => {
       expect((await configFor(REDESIGNED_DIAGRAMS.class)).layout).toBe('dagre');
       expect((await configFor(UNCHANGED_DIAGRAMS.pie)).layout).toBe('dagre');
+      // Swimlanes are the flowchart pipeline with a different layout engine, so
+      // the engine is the diagram type -- see `swimlanesDiagram.spec.ts`.
+      expect((await configFor(REDESIGNED_DIAGRAMS.swimlane)).layout).toBe('swimlane');
     });
   });
 
