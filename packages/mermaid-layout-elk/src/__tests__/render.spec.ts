@@ -604,6 +604,80 @@ describe('runElkLayoutCore', () => {
   });
 });
 
+describe('small-node edge anchoring', () => {
+  // A start/end state circle is 14px across — smaller than twice the 12px
+  // ports-surrounding margin — so ELK's anchor for it lands off-centre and is
+  // discarded in favour of aiming at the node centre. The whole route must
+  // then run down the shared centre line.
+  it('centres a single edge between two start/end state circles', async () => {
+    const data = {
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        {
+          id: 'root_start',
+          isGroup: false,
+          width: 14,
+          height: 14,
+          label: 'root_start',
+          shape: 'stateStart',
+        },
+        {
+          id: 'root_end',
+          isGroup: false,
+          width: 14,
+          height: 14,
+          label: 'root_end',
+          shape: 'stateEnd',
+        },
+      ],
+      edges: [{ id: 'edge0', start: 'root_start', end: 'root_end', type: 'arrow_barb' }],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const start = data.nodes.find((node: any) => node.id === 'root_start');
+    const edge = data.edges[0];
+    expect(edge.points.length).toBeGreaterThanOrEqual(2);
+    for (const point of edge.points) {
+      expect(point.x).toBeCloseTo(start.x, 3);
+    }
+  });
+
+  // The drop is side-specific: a fork/join bar is thin but long, and the side
+  // its anchors spread along (the width, for a top/bottom attachment) is well
+  // above the margin threshold. Its anchors carry real information — two
+  // incoming edges must keep two distinct attachment points instead of being
+  // funnelled to the bar's centre.
+  it('keeps spread anchors on a wide, thin fork/join bar', async () => {
+    const data = {
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        { id: 'a', isGroup: false, width: 40, height: 20, label: 'a', shape: 'rect' },
+        { id: 'b', isGroup: false, width: 40, height: 20, label: 'b', shape: 'rect' },
+        { id: 'bar', isGroup: false, width: 120, height: 10, label: 'bar', shape: 'forkJoin' },
+      ],
+      edges: [
+        { id: 'e1', start: 'a', end: 'bar', type: 'arrow_point' },
+        { id: 'e2', start: 'b', end: 'bar', type: 'arrow_point' },
+      ],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const bar = data.nodes.find((node: any) => node.id === 'bar');
+    const arrivalXs = data.edges.map((edge: any) => edge.points.at(-1).x);
+    expect(Math.abs(arrivalXs[0] - arrivalXs[1])).toBeGreaterThan(1);
+    // ELK spreads the two anchors ~28px either side of the bar's centre. An
+    // edge whose anchor was wrongly dropped aims at the centre instead and
+    // arrives within ~5px of it, so require real clearance from the centre.
+    for (const x of arrivalXs) {
+      expect(Math.abs(x - bar.x)).toBeGreaterThan(10);
+    }
+  });
+});
+
 describe('ensureEndMarkerSegmentLength', () => {
   const log = { debug: () => undefined };
   const circleBounds = {

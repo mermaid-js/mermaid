@@ -373,6 +373,18 @@ export const dataFetcher = (
         style: G_EDGE_STYLE,
         labelStyle: '',
         classes: CSS_EDGE_NOTE_EDGE,
+        // The dashes have to be declared on the edge, not only through the `note-edge`
+        // class. Under `look: neo`, `insertEdge` writes an *inline* `stroke-dasharray`
+        // computed from the path length -- a solid run trimmed at both ends so the arrow
+        // markers get their gaps -- and it picks that pattern from `edge.pattern`. An
+        // inline style outranks the stylesheet, so a note edge that only carried the class
+        // was drawn solid: the `.note-edge` rule was still there and simply lost.
+        //
+        // Naming the pattern here routes it through the same dash generator every other
+        // dashed edge uses, so the marker gaps survive. `classic` is untouched: it writes
+        // no inline dasharray, and `.note-edge` still wins over `edge-pattern-dashed`
+        // because it is emitted later in the sheet at equal specificity.
+        pattern: 'dashed',
         arrowheadStyle: G_EDGE_ARROWHEADSTYLE,
         labelpos: G_EDGE_LABELPOS,
         labelType: G_EDGE_LABELTYPE,

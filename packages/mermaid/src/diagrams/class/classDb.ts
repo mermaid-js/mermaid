@@ -769,6 +769,9 @@ export class ClassDB implements DiagramDB {
       nodes.push(node);
     }
 
+    // Only classes consume a colour slot -- namespaces are containers and notes have
+    // their own fixed note colour, so neither should shift the cycle.
+    let classColorIndex = 0;
     for (const classNode of this.classes.values()) {
       const parentId = hierarchical
         ? classNode.parent
@@ -779,6 +782,7 @@ export class ClassDB implements DiagramDB {
         isGroup: false,
         parentId,
         look: config.look,
+        colorIndex: classColorIndex++,
       };
       nodes.push(node);
     }
