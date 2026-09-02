@@ -57,6 +57,8 @@ export const draw = async function (text: string, id: string, _version: string, 
   const svg = getDiagramElement(id, securityLevel);
 
   data4Layout.type = diag.type;
+  // Resolve rather than assign: an unregistered layout would otherwise reach `render()`
+  // and throw, where every other unified renderer falls back to dagre.
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.

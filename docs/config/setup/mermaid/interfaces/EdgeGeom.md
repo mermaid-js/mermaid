@@ -10,7 +10,7 @@
 
 # Interface: EdgeGeom
 
-Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:56](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L56)
+Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:56
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:
 
 > `optional` **arrowTypeEnd**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:72](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L72)
+Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:72
 
 Arrow type at the end (last point).
 
@@ -28,7 +28,7 @@ Arrow type at the end (last point).
 
 > `optional` **arrowTypeStart**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L70)
+Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:70
 
 Arrow type at the start (first point) — used to apply marker offset so
 the rewritten path's endpoint matches the original rendered geometry and
@@ -40,7 +40,7 @@ the arrow marker orients correctly.
 
 > `optional` **curve**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L66)
+Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:66
 
 Optional curve hint matching `edge.curve` from the rendering layer.
 When set, line jumps are only applied for orthogonal-friendly curves
@@ -54,7 +54,7 @@ corrupting smoothed geometry.
 
 > **id**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:57](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L57)
+Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:57
 
 ---
 
@@ -62,4 +62,4 @@ Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:
 
 > **points**: `Point`\[]
 
-Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:58](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L58)
+Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:58

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { imgSnapshotTest, renderGraph, verifyNumber } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
 
 test.describe('Flowchart Dagre', () => {
   test('1-dagre: should render a simple flowchart', async ({ page }, testInfo) => {
@@ -49,7 +49,14 @@ test.describe('Flowchart Dagre', () => {
     const style = await svg.getAttribute('style');
     expect(style).toMatch(/^max-width: [\d.]+px;$/);
     const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-    verifyNumber(maxWidthValue, 380, 15);
+    // `useMaxWidth` sets max-width to the diagram's own width, so assert it against the
+    // viewBox rather than a hardcoded pixel figure. The natural width depends on the
+    // default look, theme and font -- none of which this test is about -- so an absolute
+    // expectation breaks whenever any of those change.
+    const viewBox = (await svg.getAttribute('viewBox')) ?? '';
+    const viewBoxWidth = parseFloat(viewBox.split(/\s+/)[2]);
+    expect(viewBoxWidth).toBeGreaterThan(0);
+    expect(maxWidthValue).toBeCloseTo(viewBoxWidth, 1);
   });
   test('8-dagre: should render a flowchart when useMaxWidth is false', async ({
     page,
@@ -68,7 +75,12 @@ test.describe('Flowchart Dagre', () => {
     );
     const svg = page.locator('svg');
     const width = parseFloat((await svg.getAttribute('width')) ?? '0');
-    verifyNumber(width, 380, 15);
+    // Same reasoning as the useMaxWidth:true case: the width attribute carries the
+    // diagram's own width, which the viewBox already states.
+    const viewBox = (await svg.getAttribute('viewBox')) ?? '';
+    const viewBoxWidth = parseFloat(viewBox.split(/\s+/)[2]);
+    expect(viewBoxWidth).toBeGreaterThan(0);
+    expect(width).toBeCloseTo(viewBoxWidth, 1);
     await expect(svg).not.toHaveAttribute('style');
   });
 

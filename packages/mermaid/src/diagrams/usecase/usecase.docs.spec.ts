@@ -27,12 +27,6 @@ const extractMermaidExamples = (markdown: string): string[] =>
     ([, source]) => source
   );
 
-// Renders all 20 examples from the page through a real layout engine in jsdom.
-// ELK, now the default layout, does considerably more work than dagre and pays
-// a one-off cost to load elkjs, which pushes this past vitest's 5s default on
-// slower CI runners.
-const RENDER_ALL_EXAMPLES_TIMEOUT_MS = 30_000;
-
 describe('usecase public documentation examples', () => {
   jsdomIt(
     'parses and renders every mermaid-example fence from the canonical page',
@@ -51,6 +45,10 @@ describe('usecase public documentation examples', () => {
         }
       }
     },
-    RENDER_ALL_EXAMPLES_TIMEOUT_MS
+    // Renders every example on the page in one test, so the cost grows with the page and the
+    // default 5s was already marginal on CI — and ELK as the default layout does considerably
+    // more work than dagre, plus a one-off cost to load elkjs. Generous rather than tuned: the
+    // point is that adding an example to the docs must not turn into a timeout here.
+    60_000
   );
 });
