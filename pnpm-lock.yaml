@@ -16,6 +16,9 @@ overrides:
 packageExtensionsChecksum: sha256-MNAXgvfQrO1Cwjlk5bwEsW3ZfMffzU8xSht5BuS8yGc=
 
 patchedDependencies:
+  fastdom:
+    hash: 10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87
+    path: patches/fastdom.patch
   roughjs:
     hash: 3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64
     path: patches/roughjs.patch
@@ -315,9 +318,6 @@ importers:
       es-toolkit:
         specifier: ^1.45.1
         version: 1.45.1
-      fastdom:
-        specifier: 1.0.12
-        version: 1.0.12
       katex:
         specifier: ^0.16.47
         version: 0.16.47
@@ -394,6 +394,9 @@ importers:
       csstree-validator:
         specifier: ^4.0.1
         version: 4.0.1
+      fastdom:
+        specifier: 1.0.12
+        version: 1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87)
       globby:
         specifier: ^14.1.0
         version: 14.1.0
@@ -17322,7 +17325,7 @@ snapshots:
 
   fast-uri@3.1.4: {}
 
-  fastdom@1.0.12:
+  fastdom@1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87):
     dependencies:
       strictdom: 1.0.1
 
