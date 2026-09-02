@@ -1264,29 +1264,47 @@ export function collectDescendantIds(elkNode: any, into = new Set<string>()): Se
 
 /**
  * Absolute points of every edge ELK routed INSIDE this group — meaning both of
- * its endpoints are descendants of the group.
+ * its endpoints are descendants of the group — plus the attachment point of
+ * every edge that terminates ON the group itself.
  *
  * An edge with one endpoint outside is the case this whole pass exists for: its
  * lane belongs to the layout around the group, not to the group, so the frame
  * should not be drawn around it. An edge with both endpoints inside is the
  * opposite — its lane is part of the group's interior, and a frame pulled in
  * past it would leave the edge running outside a group it never leaves.
+ *
+ * An edge whose endpoint IS the group (a state diagram's `[*] --> Composite`,
+ * a flowchart's `node --> subgraph`) sits between the two: ELK anchored it on
+ * the frame's border, so the border must not be pulled past that anchor. When
+ * it was, the stale anchor ended up floating outside the drawn frame, the
+ * on-border check in `sanitizeElkEdgePoints` no longer recognised it, and
+ * `cutter2` re-clipped the edge along a ray to the group's centre — painting a
+ * long shallow diagonal that hugged the frame's side. Only the terminal point
+ * on the group is added, never the edge's other points: those belong to the
+ * layout outside the frame.
  */
 function internalEdgePoints(
   graph: ElkLayoutResult,
   descendants: Set<string>,
-  layoutState: ElkLayoutState
+  layoutState: ElkLayoutState,
+  groupId: string
 ): P[] {
   const points: P[] = [];
   for (const edge of graph.edges ?? []) {
     const source = edge.sources?.[0] ?? edge.start;
     const target = edge.targets?.[0] ?? edge.end;
-    if (!descendants.has(source) || !descendants.has(target)) {
+    const isInternal = descendants.has(source) && descendants.has(target);
+    const attachesAtStart = source === groupId;
+    const attachesAtEnd = target === groupId;
+    if (!isInternal && !attachesAtStart && !attachesAtEnd) {
       continue;
     }
     const offset = calcOffset(source, target, layoutState.parentLookupDb, layoutState.nodeDb);
     for (const section of edge.sections ?? []) {
-      for (const p of [section.startPoint, ...(section.bendPoints ?? []), section.endPoint]) {
+      const sectionPoints = isInternal
+        ? [section.startPoint, ...(section.bendPoints ?? []), section.endPoint]
+        : [attachesAtStart ? section.startPoint : null, attachesAtEnd ? section.endPoint : null];
+      for (const p of sectionPoints) {
         if (p) {
           points.push({ x: p.x + offset.x, y: p.y + offset.y });
         }
@@ -1317,7 +1335,7 @@ export function evenGroupFrames(
       continue;
     }
 
-    const lane = internalEdgePoints(graph, collectDescendantIds(elkNode), layoutState);
+    const lane = internalEdgePoints(graph, collectDescendantIds(elkNode), layoutState, elkNode.id);
     const xs = [
       ...boxes.map((b: NodeWithVertex) => b.offset!.posX),
       ...boxes.map((b: NodeWithVertex) => b.offset!.posX + b.width!),
