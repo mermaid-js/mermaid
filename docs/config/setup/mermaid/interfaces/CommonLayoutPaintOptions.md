@@ -10,7 +10,7 @@
 
 # Interface: CommonLayoutPaintOptions
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:55
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:55](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L55)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.t
 
 > `optional` **clusterDb**: `ClusterDb`
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:56
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:56](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L56)
 
 ---
 
@@ -26,7 +26,7 @@ Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.t
 
 > `optional` **getEdgeNode**: (`id`, `edge`, `context`) => `object` | `Node` | `undefined`
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:61
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:61](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L61)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.t
 
 > `optional` **getNodes**: (`data4Layout`, `context`) => `Iterable`<`Node`>
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:57
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:57](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L57)
 
 #### Parameters
 
@@ -74,7 +74,7 @@ Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.t
 
 > `optional` **isCluster**: (`node`, `context`) => `boolean`
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:70
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:70](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L70)
 
 #### Parameters
 
@@ -96,7 +96,7 @@ Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.t
 
 > `optional` **skipEdge**: (`edge`) => `boolean`
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:74
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:74](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L74)
 
 #### Parameters
 
@@ -114,7 +114,7 @@ Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.t
 
 > `optional` **skipIntersect**: `boolean` | (`edge`) => `boolean`
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:75
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L75)
 
 ---
 
@@ -122,7 +122,7 @@ Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.t
 
 > `optional` **skipNode**: (`node`, `context`) => `boolean`
 
-Defined in: packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:66
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:66](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L66)
 
 #### Parameters
 

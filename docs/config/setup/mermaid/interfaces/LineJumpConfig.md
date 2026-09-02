@@ -10,7 +10,7 @@
 
 # Interface: LineJumpConfig
 
-Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:75
+Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L75)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:7
 
 > **enabled**: `boolean`
 
-Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:76
+Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:76](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L76)
 
 ---
 
@@ -26,7 +26,7 @@ Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:7
 
 > **jumpRadius**: `number`
 
-Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:77
+Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:77](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L77)
 
 ---
 
@@ -34,4 +34,4 @@ Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:7
 
 > **jumpStyle**: `"arc"` | `"gap"`
 
-Defined in: packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:78
+Defined in: [packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts:78](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/rendering-elements/lineJump.ts#L78)
