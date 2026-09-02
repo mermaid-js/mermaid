@@ -8,12 +8,20 @@ import mermaid, {
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
+import { applyElkLineJumps } from './lineHops.js';
+import {
+  EDGE_ROUTING_OPTIONS,
+  PLACEMENT_OPTIONS,
+  ROOT_EXPERIMENT_OVERRIDES,
+  SUBGRAPH_EXPERIMENT_OVERRIDES,
+} from './elkOptionCatalogue.js';
 
 import {
   type P,
   type RectLike,
   outsideNode,
   computeNodeIntersection,
+  outlineAttachPoint,
   replaceEndpoint,
   onBorder,
 } from './geometry.js';
@@ -43,6 +51,11 @@ interface NodeWithVertex {
   height?: number;
   intersect?: (point: P) => P | null;
   isGroup?: boolean;
+  /**
+   * Where ELK put this container, kept when `evenGroupFrames` moves the drawn
+   * frame. Edge sections resolve against this, never against the moved frame.
+   */
+  elkOrigin?: { posX: number; posY: number };
   padding?: number;
   parentId?: string;
   shape?: string;
@@ -59,6 +72,10 @@ interface NodeWithVertex {
 
 interface ElkSubgraphConfig {
   mergeEdges?: boolean;
+  straightenEdges?: boolean;
+  preset?: string;
+  layeringStrategy?: string;
+  layeringLayerBound?: number;
   nodePlacementAlignment?: string;
   nodePlacementStrategy?: string;
 }
@@ -69,6 +86,23 @@ interface ElkPreparedLayout {
 
 interface ElkLayoutContext {
   algorithm?: string;
+  /**
+   * Extra root-graph `layoutOptions`, merged last over
+   * {@link createRootElkGraph}'s defaults.
+   *
+   * NOT user-facing config: nothing in `config.schema.yaml` writes it and
+   * production `render()` never sets it. It exists so the DDLT configuration
+   * sweep can try ELK options that are currently hardcoded here — spacings,
+   * edge routing, node placement — WITHOUT forking the layout pipeline. A
+   * sweep that reimplemented `createRootElkGraph` would be measuring a graph
+   * the browser never builds, which is the exact failure the single-pipeline
+   * rule exists to prevent.
+   *
+   * Promote a winning option to a real default in `createRootElkGraph`, or to
+   * a `config.elk.*` key if it should be author-controlled. Do not reach for
+   * this from product code.
+   */
+  rootLayoutOptions?: Record<string, unknown>;
   common: { lineBreakRegex: RegExp };
   getConfig: () => any;
   interpolateToCurve: (interpolate: string | undefined, defaultCurve: unknown) => unknown;
@@ -108,8 +142,54 @@ const ARROW_MAP: Record<string, [string, string]> = {
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
-/** Default `spacing.baseValue` for a subgraph that has no algorithm of its own. */
-const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 30;
+
+/**
+ * Margin reserved at the ends of each side of a node, so that a port cannot be
+ * placed on a corner. `anchorOnDegenerateSide` treats a side shorter than twice
+ * this as having no usable anchor span, so the option string below is built
+ * from it — the two must not be able to disagree.
+ */
+const PORTS_SURROUNDING_MARGIN = 12;
+/** The margin spelled as an ELK margin, because `spacing.portsSurrounding` takes one. */
+const PORTS_SURROUNDING = `[top=${PORTS_SURROUNDING_MARGIN},left=${PORTS_SURROUNDING_MARGIN},bottom=${PORTS_SURROUNDING_MARGIN},right=${PORTS_SURROUNDING_MARGIN}]`;
+/** Padding between a subgraph frame and its children. ELK's own default is 12. */
+const SUBGRAPH_PADDING = 24;
+/**
+ * Default `spacing.baseValue` for a subgraph that has no algorithm of its own.
+ *
+ * Every unset spacing derives from this, which is why it used to be 50: the
+ * gap ELK derives for an edge approaching a node comes out at roughly half,
+ * and below about 40 the approach ran shorter than the 10px arrowhead, so the
+ * turn read as happening underneath it.
+ *
+ * Paying for that approach out of the base value overcharged everything else.
+ * An edge routed down the inside of a frame claims a lane the same width, so a
+ * group with a couple of them was pushed 50px clear of its own border on that
+ * side and nowhere else — visible as a subgraph padded on one side only, for
+ * no reason a reader can see.
+ *
+ * The two are now set separately: this stays tight, and
+ * `elk.layered.spacing.edgeNodeBetweenLayers` buys the approach on its own.
+ * An earlier note here claimed ELK ignored an explicit edge-node spacing "in
+ * every key form"; it does honour the layered-scoped key, and the attempt that
+ * failed had used `elk.layered.spacing.edgeEdgeBetweenLayers`, which is
+ * edge-to-edge and a different quantity.
+ */
+const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 24;
+/**
+ * Gap between two sibling nodes in a subgraph.
+ *
+ * Also used to derive from `spacing.baseValue`, so lowering that pulled a
+ * group's nodes together until they tripped the validator's
+ * `node-node-padding` rule — three fixtures went invalid on it. 50 is what the
+ * old base value yielded, restored here so the base value is free to be small.
+ *
+ * Deliberately spelled the same way as the `elk.rectpacking` override in
+ * `RECTPACKING_OPTIONS`: ELK reads `spacing.nodeNode` and `elk.spacing.nodeNode`
+ * as the same option, so using both forms would leave a rectpacking container
+ * carrying two values for it and no say in which one won.
+ */
+const DEFAULT_SUBGRAPH_NODE_SPACING = 50;
 /** Inner padding reserved around a container that runs its own algorithm. */
 const CONTAINER_PADDING = 15;
 /** Same, for `elk.rectpacking`, which packs tighter. */
@@ -160,9 +240,12 @@ export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unk
   for (const key of CONTAINER_ALGORITHM_SCOPED_OPTIONS) {
     delete layoutOptions[key];
   }
-  // `spacing.baseValue` is a base option that the rectpacking overrides stomp
-  // on, so restore the default rather than leaving it unset.
+  // `spacing.baseValue` and `spacing.nodeNode` are base options that the
+  // rectpacking overrides stomp on, so restore the defaults rather than leaving
+  // them unset. Missing the second one would silently hand the container back
+  // ELK's own node spacing instead of ours.
   layoutOptions['spacing.baseValue'] = DEFAULT_SUBGRAPH_SPACING_BASE_VALUE;
+  layoutOptions['spacing.nodeNode'] = DEFAULT_SUBGRAPH_NODE_SPACING;
 }
 
 /**
@@ -241,11 +324,61 @@ export function buildSubgraphLayoutOptions(
 
   const layoutOptions: Record<string, unknown> = {
     'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
+    // The straight run an edge gets before the node it enters, bought on its
+    // own rather than out of `spacing.baseValue` — see the note there. This is
+    // the layered-scoped key; the unscoped `spacing.edgeNodeBetweenLayers` is
+    // not an ELK id at all and setting it does nothing.
+    //
+    // 30, which is where the approach run stops improving: 40 measured the same
+    // 30px shortest approach and only widened the lane this value also pays
+    // for. That lane used to be the reason to go lower — the value is charged
+    // TWICE against a group with an edge routed inside its frame, once between
+    // the nodes and the lane and again between the lane and the frame, so the
+    // group's extra width came out at exactly `36 + 2x`. `evenGroupFrames` now
+    // pulls the frame in past the lane regardless, so a wider lane no longer
+    // shows as lopsided padding and the only cost left is overall diagram size.
+    //
+    // Do NOT lower it further on that reasoning. Over the DDLT corpus this is
+    // not monotonic: 30 and 40 leave one fixture invalid (the deliberate
+    // merge-edge counterexample), while 20 leaves two and 25 leaves three —
+    // `right-angles-not-curves` starts tripping `edge-parallel-segment-too-close`
+    // because this spacing also separates edges running alongside each other in
+    // the layer gap. 30 is the lowest value that keeps the corpus clean.
+    'elk.layered.spacing.edgeNodeBetweenLayers': 30,
+    // Separation between edges sharing a lane. Also raised off the base value,
+    // so that lowering the base does not leave parallel edges touching.
+    'elk.spacing.edgeEdge': 20,
+    // Node separation, likewise bought on its own — see the note on the constant.
+    'spacing.nodeNode': DEFAULT_SUBGRAPH_NODE_SPACING,
+    // Breathing room between a frame and its children. Set explicitly rather
+    // than left to ELK's default of 12. The top gets the same value as the
+    // rest: ELK reserves the subgraph's own title strip on top of whatever is
+    // given here, so adding the label height again double-counts it.
+    'elk.padding': `[top=${SUBGRAPH_PADDING},left=${SUBGRAPH_PADDING},bottom=${SUBGRAPH_PADDING},right=${SUBGRAPH_PADDING}]`,
     'nodeLabels.placement': '[H_CENTER V_TOP, INSIDE]',
-    'nodePlacement.strategy': elkConfig?.nodePlacementStrategy,
+
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'elk.layered.nodePlacement.bk.fixedAlignment':
       elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
+    // Containers place their own children, and the preset says how: by default
+    // NETWORK_SIMPLEX, which balances a node against all of its neighbours and
+    // so keeps a group's nodes aligned with each other instead of drifting,
+    // while the root uses LINEAR_SEGMENTS. `legacy` keeps both on the strategy
+    // that shipped before, so it still reproduces the old rendering.
+    //
+    // ONE key, fully qualified. ELK reads `nodePlacement.strategy` and
+    // `elk.layered.nodePlacement.strategy` as the same option, so listing both
+    // — as this did — leaves the container holding two values for it with no
+    // say in which wins, and quietly ignores an explicit `nodePlacementStrategy`.
+    'elk.layered.nodePlacement.strategy':
+      elkConfig?.nodePlacementStrategy ?? resolveElkPreset(elkConfig?.preset).containerPlacement,
+    // PORT_POSITION lets a node shift so an edge can leave straight rather than
+    // bending immediately off the port.
+    'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
+    // Keep a frame's ports off its own corners. See the note in
+    // `createRootElkGraph`; a container is where this bites hardest, because a
+    // cross-boundary edge attaches to the frame rather than to a node inside it.
+    'elk.spacing.portsSurrounding': PORTS_SURROUNDING,
   };
 
   // Apply per-group algorithm from metadata (e.g. @{algorithm: elk.box}).
@@ -286,6 +419,11 @@ export function buildSubgraphLayoutOptions(
     layoutOptions['elk.direction'] = dir2ElkDirection(node.dir);
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
   }
+
+  // Container-scoped experiments. Spacing, padding and label placement only
+  // bite here — an option set on the root never reaches inside a frame.
+  Object.assign(layoutOptions, SUBGRAPH_EXPERIMENT_OVERRIDES);
+
   return layoutOptions;
 }
 
@@ -496,7 +634,11 @@ export function buildElkGraphFromLayoutData(
   elkContext: ElkLayoutContext
 ): ElkLayoutState {
   const nodeDb: Record<string, NodeWithVertex> = {};
-  const elkGraph = createRootElkGraph(data4Layout, elkContext.algorithm);
+  const elkGraph = createRootElkGraph(
+    data4Layout,
+    elkContext.algorithm,
+    elkContext.rootLayoutOptions
+  );
 
   const dir = (data4Layout as { direction?: string }).direction ?? 'DOWN';
   elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
@@ -512,6 +654,7 @@ export function buildElkGraphFromLayoutData(
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
+  afterPaint: applyElkLineJumps,
   prepareLayout: prepareLayoutForElk,
   // ELK derives a compound node's minimum size from the measured cluster label,
   // so the label has to be measured the way `insertCluster` paints it —
@@ -579,6 +722,9 @@ function getElkLayoutContext(
     algorithm:
       context.preparedLayout?.algorithm ??
       (context.options as { algorithm?: string } | undefined)?.algorithm,
+    rootLayoutOptions: (
+      context.options as { rootLayoutOptions?: Record<string, unknown> } | undefined
+    )?.rootLayoutOptions,
     common: helpers.common,
     getConfig: helpers.getConfig,
     interpolateToCurve: helpers.interpolateToCurve as (
@@ -589,27 +735,139 @@ function getElkLayoutContext(
   };
 }
 
-function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefined): any {
+/**
+ * Scratch overrides for local experimentation. MUST be empty on `develop`.
+ *
+ * Spread last into the root graph's `layoutOptions`, so anything here wins over
+ * the defaults above — including the keys wired to `config.elk.*`. That is the
+ * point: edit one line, let the dev server rebuild, and compare renders without
+ * touching a diagram's frontmatter or the config schema.
+ *
+ * It is also why this must not ship. An entry here silently disables the
+ * matching user-facing option for every diagram, and the symptom — "this config
+ * key does nothing" — gives no hint where to look. `elk.cycleBreakingStrategy`
+ * was dead this way, and it took a bisect against the raw ELK option to notice.
+ */
+/**
+ * Named combinations of the three options that decide where nodes end up.
+ *
+ * Layering picks the column, node placement the coordinate within it, and cycle
+ * breaking which edges are reversed and therefore which ones detour. They run in
+ * different phases and do not interact, so a preset is a named triple rather
+ * than a mode of its own.
+ *
+ * An explicit `elk.layeringStrategy` / `nodePlacementStrategy` /
+ * `cycleBreakingStrategy` beats the preset for that one option — which is why
+ * `defaultConfig` leaves all three undefined rather than giving them values.
+ */
+const ELK_PRESETS: Record<
+  string,
+  { layering: string; placement: string; containerPlacement: string; cycleBreaking: string }
+> = {
+  /**
+   * Network simplex at the root, Brandes-Koepf inside frames, cycles broken
+   * depth first.
+   *
+   * Depth-first cycle breaking gives shorter back edges on graphs that have
+   * many of them, which is most flowcharts that loop at all. `modelOrder` is
+   * the same triple with the greedy-model-order breaking this used to carry.
+   *
+   * Containers deliberately do NOT follow the root's placement. Network simplex
+   * inside a frame produced routes that left a subgraph on its bounding-box
+   * corner, so the two sides are tuned separately: changing one is not a reason
+   * to change the other, and `legacy` keeps both on the strategy that shipped
+   * before.
+   */
+  default: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'NETWORK_SIMPLEX',
+    containerPlacement: 'BRANDES_KOEPF',
+    cycleBreaking: 'DEPTH_FIRST',
+  },
+  /**
+   * What shipped before presets: straighter long edges, less alignment.
+   *
+   * `GREEDY`, not `GREEDY_MODEL_ORDER`, is deliberate. The schema advertised
+   * the latter, but `defaultConfig` never listed `cycleBreakingStrategy`, so it
+   * reached ELK as undefined and ELK's own default applied. This preset
+   * reproduces what `develop` actually renders, not what its schema claimed.
+   * Layering is ELK's default too — `develop` does not wire the option at all.
+   */
+  legacy: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'BRANDES_KOEPF',
+    containerPlacement: 'BRANDES_KOEPF',
+    cycleBreaking: 'GREEDY',
+  },
+  /**
+   * As `default`, but breaks cycles by greedy model order — which reverses the
+   * edges that disturb declaration order least, at the cost of longer back
+   * edges. This is the triple `default` named before depth-first took over.
+   */
+  modelOrder: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'NETWORK_SIMPLEX',
+    containerPlacement: 'BRANDES_KOEPF',
+    cycleBreaking: 'GREEDY_MODEL_ORDER',
+  },
+  /**
+   * Kept as a name for what `default` now is, so diagrams that asked for
+   * depth-first breaking by name keep saying what they mean. Identical to
+   * `default` on purpose — not a distinct combination.
+   */
+  depthFirst: {
+    layering: 'NETWORK_SIMPLEX',
+    placement: 'NETWORK_SIMPLEX',
+    containerPlacement: 'BRANDES_KOEPF',
+    cycleBreaking: 'DEPTH_FIRST',
+  },
+};
+
+/**
+ * Resolve a preset name, falling back to `default` for an unknown one.
+ *
+ * `Object.hasOwn` rather than a plain lookup: the schema's enum only guards the
+ * config path, and a directive or a programmatic config can still put anything
+ * here. `ELK_PRESETS['__proto__']` is truthy, so an indexed lookup would return
+ * `Object.prototype` and every strategy read off it would come back `undefined`
+ * — a silently strategy-less layout rather than the documented fallback.
+ */
+export function resolveElkPreset(name: string | undefined) {
+  return name !== undefined && Object.hasOwn(ELK_PRESETS, name)
+    ? ELK_PRESETS[name]
+    : ELK_PRESETS.default;
+}
+
+function createRootElkGraph(
+  data4Layout: LayoutData,
+  algorithm: string | undefined,
+  rootLayoutOptions?: Record<string, unknown>
+): any {
+  const preset = resolveElkPreset(data4Layout.config.elk?.preset);
   const graph = {
     id: 'root',
     layoutOptions: {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.algorithm': algorithm,
-      'nodePlacement.strategy': data4Layout.config.elk?.nodePlacementStrategy,
+      'elk.layered.nodePlacement.strategy':
+        data4Layout.config.elk?.nodePlacementStrategy ?? preset.placement,
       'elk.layered.nodePlacement.bk.fixedAlignment':
         data4Layout.config.elk?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 40,
+
       'elk.layered.crossingMinimization.forceNodeModelOrder':
         data4Layout.config.elk?.forceNodeModelOrder,
       'elk.layered.considerModelOrder.strategy': data4Layout.config.elk?.considerModelOrder,
       'elk.layered.unnecessaryBendpoints': true,
-      'elk.layered.cycleBreaking.strategy': data4Layout.config.elk?.cycleBreakingStrategy,
+      'elk.layered.cycleBreaking.strategy':
+        data4Layout.config.elk?.cycleBreakingStrategy ?? preset.cycleBreaking,
+      'elk.layered.layering.strategy': data4Layout.config.elk?.layeringStrategy ?? preset.layering,
+      // Only COFFMAN_GRAHAM reads this; the others ignore it.
+      'elk.layered.layering.coffmanGraham.layerBound': data4Layout.config.elk?.layeringLayerBound,
 
-      // 'elk.layered.cycleBreaking.strategy': 'GREEDY_MODEL_ORDER',
-      // 'elk.layered.cycleBreaking.strategy': 'MODEL_ORDER',
-      // 'spacing.nodeNode': 20,
+      // 'spacing.nodeNode': 120,
       // 'spacing.nodeNodeBetweenLayers': 25,
       // 'spacing.edgeNode': 20,
       // 'spacing.edgeNodeBetweenLayers': 10,
@@ -618,27 +876,22 @@ function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefin
       // 'spacing.nodeSelfLoop': 20,
 
       // Tweaking options
-      // 'nodePlacement.favorStraightEdges': true,
-      // 'elk.layered.nodePlacement.favorStraightEdges': true,
-      // 'nodePlacement.feedbackEdges': true,
       'elk.layered.wrapping.multiEdge.improveCuts': true,
       'elk.layered.wrapping.multiEdge.improveWrappedEdges': true,
-      // 'elk.layered.wrapping.strategy': 'MULTI_EDGE',
-      // 'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
       'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
       'elk.layered.mergeHierarchyEdges': true,
-
-      // 'elk.layered.feedbackEdges': true,
-      // 'elk.layered.crossingMinimization.semiInteractive': true,
-      // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
-      // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
-      // 'elk.layered.wrapping.validify.strategy': 'LOOK_BACK',
-      // 'elk.insideSelfLoops.activate': true,
-      // 'elk.separateConnectedComponents': true,
-      // 'elk.alg.layered.options.EdgeStraighteningStrategy': 'NONE',
-      // 'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
-      // 'elk.layered.considerModelOrder.strategy': 'EDGES',
-      // 'elk.layered.wrapping.cutting.strategy': 'ARD',
+      // Reserve a margin at the ends of every side so a port cannot land on a
+      // corner. ELK's default is 0, which permits it — and a corner is the one
+      // boundary point with no side to leave from, so the edge came out of the
+      // vertex and then ran ALONG the box's own edge before turning away. It
+      // showed up on subgraphs first because a cross-boundary edge attaches to
+      // the frame, which is large enough for the corner to be visible.
+      //
+      // Chosen at 12 by measurement, not taste: it is the smallest value that
+      // clears the corner on the `elk-edge-cases` corpus. 30 was tried and
+      // reorders layers, so this is not a free parameter — raising it changes
+      // more than clearance.
+      'elk.spacing.portsSurrounding': PORTS_SURROUNDING,
     },
     children: [],
     edges: [],
@@ -651,6 +904,22 @@ function createRootElkGraph(data4Layout: LayoutData, algorithm: string | undefin
       'elk.padding': '[top=15,left=15,bottom=15,right=15]',
     });
   }
+
+  // Last, so a sweep override beats every default above. See
+  // `ElkLayoutContext.rootLayoutOptions` for why this exists.
+  if (rootLayoutOptions) {
+    Object.assign(graph.layoutOptions, rootLayoutOptions);
+  }
+
+  // Hand-run experiments from `elkOptionCatalogue.ts`, last so an option
+  // switched on there wins over the preset, `config.elk.*` and the sweep.
+  // MUST all be commented out on `develop` — this is the production path.
+  Object.assign(
+    graph.layoutOptions,
+    PLACEMENT_OPTIONS,
+    EDGE_ROUTING_OPTIONS,
+    ROOT_EXPERIMENT_OVERRIDES
+  );
 
   return graph;
 }
@@ -934,7 +1203,170 @@ function applyElkLayoutResult(
 ): void {
   const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
   applyElkNodePositions(graph.children ?? [], layoutState, nodeById, 0, 0, 0, log);
+  // Between positions and edges on purpose: `boundsFor` reads the box set
+  // above, and `cutter2` clips an edge that ends on a group against it, so an
+  // edge attaching to a frame follows the frame when it moves.
+  evenGroupFrames(graph.children ?? [], layoutState, nodeById, graph);
   applyElkEdgeLayout(data4Layout, graph, layoutState, log);
+}
+
+/**
+ * Sit each group's frame an even distance from its own contents.
+ *
+ * ELK sizes a container around everything it put inside, edges included. An
+ * edge that runs against the flow of the layout gets routed back around the
+ * outside, and when that happens inside a frame the frame grows to hold the
+ * lane — on one side only, since that is where the edge leaves. The result is a
+ * group with 76px of space on the right and 24px on the left, which reads as a
+ * mistake because nothing visible occupies it.
+ *
+ * The lane is real and the edge still needs it, so the fix is not to reclaim
+ * the space but to stop drawing the frame around it. The frame is pulled in to
+ * `SUBGRAPH_PADDING` from the children on the left, right and bottom, and the
+ * edge keeps its lane just outside — which is what an edge routed around a
+ * group should look like anyway.
+ *
+ * The top is left exactly as ELK set it. It carries the subgraph's title strip,
+ * and there is no way from here to tell how much of that padding is the label
+ * and how much is spare, so tightening it risks clipping the title.
+ *
+ * Runs deepest-first, so a parent measures against children that have already
+ * been pulled in rather than against their original boxes.
+ */
+export function collectDescendantIds(elkNode: any, into = new Set<string>()): Set<string> {
+  for (const child of elkNode.children ?? []) {
+    into.add(child.id);
+    collectDescendantIds(child, into);
+  }
+  return into;
+}
+
+/**
+ * Absolute points of every edge ELK routed INSIDE this group — meaning both of
+ * its endpoints are descendants of the group.
+ *
+ * An edge with one endpoint outside is the case this whole pass exists for: its
+ * lane belongs to the layout around the group, not to the group, so the frame
+ * should not be drawn around it. An edge with both endpoints inside is the
+ * opposite — its lane is part of the group's interior, and a frame pulled in
+ * past it would leave the edge running outside a group it never leaves.
+ */
+function internalEdgePoints(
+  graph: ElkLayoutResult,
+  descendants: Set<string>,
+  layoutState: ElkLayoutState
+): P[] {
+  const points: P[] = [];
+  for (const edge of graph.edges ?? []) {
+    const source = edge.sources?.[0] ?? edge.start;
+    const target = edge.targets?.[0] ?? edge.end;
+    if (!descendants.has(source) || !descendants.has(target)) {
+      continue;
+    }
+    const offset = calcOffset(source, target, layoutState.parentLookupDb, layoutState.nodeDb);
+    for (const section of edge.sections ?? []) {
+      for (const p of [section.startPoint, ...(section.bendPoints ?? []), section.endPoint]) {
+        if (p) {
+          points.push({ x: p.x + offset.x, y: p.y + offset.y });
+        }
+      }
+    }
+  }
+  return points;
+}
+
+export function evenGroupFrames(
+  elkNodes: any[],
+  layoutState: ElkLayoutState,
+  nodeById: Map<string, Node>,
+  graph: ElkLayoutResult = {}
+): void {
+  for (const elkNode of elkNodes) {
+    if (!elkNode?.isGroup) {
+      continue;
+    }
+    const children = elkNode.children ?? [];
+    evenGroupFrames(children, layoutState, nodeById, graph);
+
+    const group = layoutState.nodeDb[elkNode.id];
+    const boxes = children
+      .map((child: { id: string }) => layoutState.nodeDb[child.id])
+      .filter((child: NodeWithVertex | undefined) => child?.offset && child.width && child.height);
+    if (!group?.offset || boxes.length === 0) {
+      continue;
+    }
+
+    const lane = internalEdgePoints(graph, collectDescendantIds(elkNode), layoutState);
+    const xs = [
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posX),
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posX + b.width!),
+      ...lane.map((p) => p.x),
+    ];
+    const ys = [
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posY),
+      ...boxes.map((b: NodeWithVertex) => b.offset!.posY + b.height!),
+      ...lane.map((p) => p.y),
+    ];
+
+    // Only ever pull a frame IN. ELK sized it to hold everything it put there,
+    // so growing one would mean this pass had measured something ELK had not —
+    // more likely a bug here than a gap there.
+    const origin = group.offset;
+    const left = Math.max(origin.posX, Math.min(...xs) - SUBGRAPH_PADDING);
+    const right = Math.min(origin.posX + group.width!, Math.max(...xs) + SUBGRAPH_PADDING);
+    const bottom = Math.min(origin.posY + group.height!, Math.max(...ys) + SUBGRAPH_PADDING);
+    const top = origin.posY;
+
+    // A frame narrower than its own title would cut the title off. Both the
+    // drawn rect and `getEffectiveGroupWidth` have their own idea of the floor,
+    // so honour the larger and keep the frame centred on its contents.
+    const labelFloor = Math.max(
+      elkNode.labelData?.width ?? 0,
+      (elkNode.labels?.[0]?.width ?? 0) + (elkNode.padding ?? 0)
+    );
+    let x = left;
+    let width = right - left;
+    if (width < labelFloor) {
+      x -= (labelFloor - width) / 2;
+      width = labelFloor;
+      // Still only ever pull IN. A title wider than the frame ELK sized is a
+      // frame ELK did not reserve for its own title, and widening it here would
+      // paper over that while breaking the one guarantee this pass makes.
+      const origRight = origin.posX + group.width!;
+      x = Math.max(origin.posX, Math.min(x, origRight - width));
+      width = Math.min(width, group.width!);
+    }
+    const height = bottom - top;
+    if (height <= 0 || width <= 0) {
+      continue;
+    }
+
+    // `calcOffset` resolves an edge's section against the origin of the
+    // container that owns it, so moving a frame would drag every edge routed
+    // inside it. Keep what ELK chose and let `calcOffset` read that instead.
+    group.elkOrigin ??= { posX: origin.posX, posY: origin.posY };
+    group.offset.posX = x;
+    group.offset.width = width;
+    group.offset.height = height;
+    group.width = width;
+    group.height = height;
+    group.x = x + width / 2;
+    group.y = top + height / 2;
+
+    const layoutNode = nodeById.get(elkNode.id);
+    if (layoutNode) {
+      layoutNode.x = group.x;
+      layoutNode.y = group.y;
+      // The clamp above, not the label floor. `width` has already honoured the
+      // floor wherever ELK left room for it; the only case where the label is
+      // still wider is the one the clamp just refused, so taking the max here
+      // would quietly undo it — and this is the width the frame is PAINTED at
+      // (`clusters.js` sizes the rect from `node.width`), so the frame would
+      // spill outside the bounds ELK reserved.
+      layoutNode.width = width;
+      layoutNode.height = height;
+    }
+  }
 }
 
 function applyElkNodePositions(
@@ -1009,6 +1441,205 @@ function applyElkNodePositions(
   });
 }
 
+/**
+ * Largest port-to-channel jog worth collapsing.
+ *
+ * ELK layered spreads an edge's port evenly along the node's side, then routes
+ * the edge down an inter-layer channel whose row rarely lines up with that port
+ * exactly. The leftover is a staircase right at the border: leave the port, run
+ * a few pixels, step perpendicular onto the channel, carry on. With rounded
+ * corners the two micro-bends sit on top of each other and read as a glitch.
+ *
+ * A step this close to the border can only be that connector — a genuine
+ * obstacle dodge bends much further out — so moving the terminal onto the
+ * channel row cannot introduce an overlap. The rest of the route is untouched.
+ */
+const TERMINAL_JOG_MAX = 16;
+
+/**
+ * How far from the node the step may sit and still count as the connector.
+ *
+ * Size alone does not identify a port-to-channel step: a small step a long way
+ * down the route is a routing decision, and collapsing it drags the port along
+ * for no reason. On the sample corpus every genuine connector turns 20–25 from
+ * the border, while the ones worth leaving alone turn at 48, 112 and 173 — one
+ * of which slid a port 15px into an occupied row and produced a crossing that
+ * was not there before.
+ */
+const TERMINAL_RUN_MAX = 30;
+
+/**
+ * Tolerance for deciding whether a segment counts as axis-aligned, and whether
+ * a step is a step at all.
+ *
+ * Deliberately much smaller than the shared `EPS` of 1, which exists for "is
+ * this point on a border" and is far too coarse here: ELK routinely leaves a
+ * sub-pixel step between the port row and the channel row, and at `EPS` those
+ * are not even recognised as segments. They still paint as two rounded corners
+ * stacked on each other, which is the artefact this pass removes — an
+ * `infra -> auth` edge stepped 0.858 and rendered exactly that way.
+ */
+const JOG_EPS = 0.01;
+
+/** Axis of an axis-aligned segment: `h`, `v`, or undefined when diagonal. */
+function axisOf(a: P, b: P): 'h' | 'v' | undefined {
+  const dx = Math.abs(b.x - a.x);
+  const dy = Math.abs(b.y - a.y);
+  if (dx > JOG_EPS && dy <= JOG_EPS) {
+    return 'h';
+  }
+  if (dy > JOG_EPS && dx <= JOG_EPS) {
+    return 'v';
+  }
+  return undefined;
+}
+
+/**
+ * Straighten the port-to-channel staircase at either end of a clipped route,
+ * leaving both ports where they are.
+ *
+ * Returns the original array when nothing applies, so callers can compare by
+ * identity.
+ */
+export function straightenTerminalJogs(points: P[]): P[] {
+  let pts = straightenFront(points) ?? points;
+  const reversed = [...pts].reverse();
+  const fixedEnd = straightenFront(reversed);
+  if (fixedEnd) {
+    pts = fixedEnd.reverse();
+  }
+  return pts;
+}
+
+/**
+ * Straighten the staircase at the front of `pts`, or return null when it does
+ * not apply.
+ *
+ * The step is removed by pulling the CHANNEL onto the port's row, never by
+ * pulling the port onto the channel's. Moving the port slides the attachment
+ * along the node border, and a node whose other edges are still at their spread
+ * positions then looks lopsided — the reason this was rewritten. Moving the
+ * channel instead keeps every port exactly where ELK placed it, at the cost of
+ * displacing one run, which is why the caller checks the result for crossings.
+ *
+ * The run is only moved when the point after it is not the far terminal, since
+ * that would move the other end's port and reintroduce the same problem there.
+ */
+function straightenFront(pts: P[]): P[] | null {
+  if (pts.length < 5) {
+    return null;
+  }
+  const [p0, p1, p2, p3] = pts;
+  const axis = axisOf(p0, p1);
+  if (!axis || axisOf(p2, p3) !== axis || axisOf(p1, p2) !== (axis === 'h' ? 'v' : 'h')) {
+    return null;
+  }
+  // The step has to be next to the node to be the port-to-channel connector.
+  if (Math.hypot(p1.x - p0.x, p1.y - p0.y) > TERMINAL_RUN_MAX) {
+    return null;
+  }
+  const jog = axis === 'h' ? Math.abs(p2.y - p1.y) : Math.abs(p2.x - p1.x);
+  if (jog < JOG_EPS || jog > TERMINAL_JOG_MAX) {
+    return null;
+  }
+  // The route has to keep travelling the same way after the step, otherwise
+  // this is a real turn rather than a connector.
+  const forward =
+    axis === 'h'
+      ? Math.sign(p1.x - p0.x) === Math.sign(p3.x - p2.x)
+      : Math.sign(p1.y - p0.y) === Math.sign(p3.y - p2.y);
+  if (!forward) {
+    return null;
+  }
+  // The WHOLE run has to move, not just its first segment: the channel carries
+  // on past p3 until the route turns, and shifting only part of it leaves a
+  // diagonal where the moved and unmoved halves meet.
+  let last = 3;
+  while (last + 1 < pts.length && axisOf(pts[last], pts[last + 1]) === axis) {
+    last++;
+  }
+  // The far terminal must not be inside the run — moving it would drag the
+  // other end's port, which is the thing this avoids.
+  if (last === pts.length - 1) {
+    return null;
+  }
+
+  // No border check is needed: the port is untouched, so it stays exactly where
+  // ELK put it, and the run moves onto that same row — which the first segment
+  // already occupied on its way out of the node.
+  const moved = [...pts];
+  for (let i = 2; i <= last; i++) {
+    moved[i] = axis === 'h' ? { x: pts[i].x, y: p0.y } : { x: p0.x, y: pts[i].y };
+  }
+  // p1 and p2 are now collinear with p0 and the rest of the run.
+  moved.splice(1, 2);
+  return moved;
+}
+
+/** Do two axis-aligned segments cross at a point interior to both? */
+function segmentsCrossStrict(a1: P, a2: P, b1: P, b2: P): boolean {
+  const side = (o: P, p: P, q: P) => (p.x - o.x) * (q.y - o.y) - (p.y - o.y) * (q.x - o.x);
+  const d1 = side(b1, b2, a1);
+  const d2 = side(b1, b2, a2);
+  const d3 = side(a1, a2, b1);
+  const d4 = side(a1, a2, b2);
+  return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
+}
+
+/** How many times one polyline crosses another. */
+function crossingCount(a: P[], b: P[]): number {
+  let n = 0;
+  for (let i = 0; i < a.length - 1; i++) {
+    for (let j = 0; j < b.length - 1; j++) {
+      if (segmentsCrossStrict(a[i], a[i + 1], b[j], b[j + 1])) {
+        n++;
+      }
+    }
+  }
+  return n;
+}
+
+/**
+ * Straighten the port-to-channel step on every edge that has one, but only
+ * where doing so does not buy a crossing.
+ *
+ * Runs once over the finished layout rather than per edge, because the decision
+ * needs the other edges: the step is removed by displacing one of this edge's
+ * runs onto the port's row, and that run can land in a lane something else
+ * already occupies. Trading a barely-visible step for a new crossing is a bad
+ * deal, so an edge that would cause one is left exactly as ELK routed it.
+ */
+function straightenEdgeTerminals(edges: Edge[]): void {
+  const routes = edges.map((edge) => (edge as { points?: P[] }).points ?? []);
+
+  for (const [index, edge] of edges.entries()) {
+    const original = routes[index];
+    if (original.length < 5) {
+      continue;
+    }
+    const candidate = straightenTerminalJogs(original);
+    if (candidate === original) {
+      continue;
+    }
+
+    let before = 0;
+    let after = 0;
+    for (const [other, route] of routes.entries()) {
+      if (other === index || route.length < 2) {
+        continue;
+      }
+      before += crossingCount(original, route);
+      after += crossingCount(candidate, route);
+    }
+    if (after > before) {
+      continue;
+    }
+
+    (edge as { points?: P[] }).points = candidate;
+    routes[index] = candidate;
+  }
+}
+
 function applyElkEdgeLayout(
   data4Layout: LayoutData,
   graph: ElkLayoutResult,
@@ -1016,6 +1647,8 @@ function applyElkEdgeLayout(
   log: ElkLayoutContext['log']
 ): void {
   const edgeById = new Map(data4Layout.edges.map((edge) => [edge.id, edge]));
+  // Opt-out rather than opt-in: the step this removes is never intentional.
+  const straightenEdges = data4Layout.config.elk?.straightenEdges !== false;
 
   graph.edges?.forEach((edge) => {
     const layoutEdge = edgeById.get(edge.id);
@@ -1081,15 +1714,22 @@ function applyElkEdgeLayout(
     endNode.y = endNode.offset!.posY + endNode.height! / 2;
 
     if (startNode.shape !== 'rect33') {
+      if (points.length > 1 && anchorOnDegenerateSide(startNode, points[0])) {
+        points.shift();
+      }
       points.unshift({ x: startNode.x, y: startNode.y });
     }
 
     if (endNode.shape !== 'rect33') {
+      if (points.length > 1 && anchorOnDegenerateSide(endNode, points[points.length - 1])) {
+        points.pop();
+      }
       points.push({ x: endNode.x, y: endNode.y });
     }
 
+    const clipped = sanitizeElkEdgePoints(points, startNode, endNode, log);
     layoutEdge.points = ensureEndMarkerSegmentLength(
-      sanitizeElkEdgePoints(points, startNode, endNode, log),
+      clipped,
       boundsFor(endNode),
       getEndMarkerPathOffset(layoutEdge),
       log
@@ -1102,6 +1742,36 @@ function applyElkEdgeLayout(
       layoutEdge.y = label.y + offset.y + label.height / 2;
     }
   });
+
+  if (straightenEdges) {
+    straightenEdgeTerminals(data4Layout.edges);
+  }
+}
+
+/**
+ * ELK reserves `PORTS_SURROUNDING_MARGIN` at both ends of a node side before
+ * distributing edge anchors along it (see `PORTS_SURROUNDING`). On a side
+ * shorter than twice that margin the usable span is negative, and ELK's
+ * clamping parks the anchor off-centre — a 14px start/end state circle got
+ * its only edge attached 3px off the dot's centre, and no node-level option
+ * overrides it (the spacing is only read per hierarchy level). Such an anchor
+ * carries no information, so the caller drops it and lets the edge aim at the
+ * node centre instead; the border clip then lands it dead centre, the same
+ * way the dagre pipeline attaches edges.
+ */
+function anchorOnDegenerateSide(node: NodeWithVertex, anchor: P): boolean {
+  const width = node.width ?? 0;
+  const height = node.height ?? 0;
+  const top = node.offset!.posY;
+  const bottom = top + height;
+  // ELK puts the anchor exactly on the border; the slack only absorbs float
+  // error from the offset arithmetic above. Same tolerance `onBorder` uses.
+  const tol = 0.5;
+  // An anchor on the top or bottom border spreads along the width; one on the
+  // left or right border spreads along the height.
+  const alongWidth = Math.abs(anchor.y - top) <= tol || Math.abs(anchor.y - bottom) <= tol;
+  const side = alongWidth ? width : height;
+  return side < 2 * PORTS_SURROUNDING_MARGIN;
 }
 
 function createEdgePointsFromSection(section: any, offset: { x: number; y: number }): P[] {
@@ -1131,7 +1801,11 @@ function calcOffset(
     return { x: 0, y: 0 };
   }
 
-  const ancestorOffset = nodeDb[ancestor]?.offset;
+  // `elkOrigin` when present: `evenGroupFrames` may have moved the frame, but a
+  // section's coordinates are relative to where ELK put the container, not to
+  // where the frame is now drawn.
+  const node = nodeDb[ancestor];
+  const ancestorOffset = node?.elkOrigin ?? node?.offset;
   return {
     x: ancestorOffset?.posX ?? 0,
     y: ancestorOffset?.posY ?? 0,
@@ -1504,6 +2178,33 @@ function applyEndIntersectionIfNeeded(
   }
 }
 
+/**
+ * Attachment point for the terminal at `portIndex`, on the axis the edge
+ * departs along.
+ *
+ * `step` is +1 at the start of the polyline and -1 at the end, i.e. the
+ * direction that walks AWAY from the node, which is what gives the departure
+ * direction. Groups are excluded: their frame already is their outline, and the
+ * caller has its own on-border handling for them.
+ */
+function attachAlongDepartureAxis(
+  node: NodeWithVertex,
+  bounds: RectLike,
+  points: P[],
+  portIndex: number,
+  step: 1 | -1
+): P | null {
+  if (node?.isGroup) {
+    return null;
+  }
+  const port = points[portIndex];
+  const next = points[portIndex + step];
+  if (!port || !next) {
+    return null;
+  }
+  return outlineAttachPoint(node, bounds, port, next);
+}
+
 function cutter2(
   startNode: NodeWithVertex,
   endNode: NodeWithVertex,
@@ -1534,12 +2235,12 @@ function cutter2(
 
   if (firstOutsideStartIndex !== -1) {
     const outsidePointForStart = points[firstOutsideStartIndex];
-    const startIntersection = computeNodeIntersection(
-      startNode,
-      startBounds,
-      outsidePointForStart,
-      startCenter
-    );
+    const startIntersection =
+      // Prefer an attachment on the edge's own departure axis; see
+      // `outlineAttachPoint`. Falls back to the centre-ray intersection, which
+      // is all a non-axis-aligned or shapeless endpoint can offer.
+      attachAlongDepartureAxis(startNode, startBounds, points, firstOutsideStartIndex, 1) ??
+      computeNodeIntersection(startNode, startBounds, outsidePointForStart, startCenter);
     log.debug('UIO cutter2: start intersection', startIntersection);
     replaceEndpoint(points, 'start', startIntersection);
   }
@@ -1561,12 +2262,9 @@ function cutter2(
   }
 
   if (outsidePointForEnd) {
-    const endIntersection = computeNodeIntersection(
-      endNode,
-      endBounds,
-      outsidePointForEnd,
-      endCenter
-    );
+    const endIntersection =
+      attachAlongDepartureAxis(endNode, endBounds, points, outsideIndexForEnd, -1) ??
+      computeNodeIntersection(endNode, endBounds, outsidePointForEnd, endCenter);
     log.debug('UIO cutter2: end intersection', { endIntersection, outsideIndexForEnd });
     replaceEndpoint(points, 'end', endIntersection);
   }
