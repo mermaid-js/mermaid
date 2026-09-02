@@ -991,7 +991,7 @@ Your Mermaid code should be similar to the following:
 ---
 title: Order example
 config:
-    layout: elk
+    layout: dagre
 ---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
@@ -1003,15 +1003,12 @@ erDiagram
 ---
 title: Order example
 config:
-    layout: elk
+    layout: dagre
 ---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
 ```
-
-> **Note**
-> Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
 
 <!--- cspell:locale en,en-gb --->

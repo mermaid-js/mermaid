@@ -10,7 +10,7 @@ This page lists the available layout algorithms supported in Mermaid diagrams.
 - **tidy-tree**: Tidy tree layout for hierarchical diagrams, from the [`@mermaid-js/layout-tidy-tree`](https://www.npmjs.com/package/@mermaid-js/layout-tidy-tree) package [Tidy Tree Configuration](/config/tidy-tree)
 
 Mindmaps are the one diagram type not laid out with ELK by default; they use
-Dagre unless you ask for something else.
+cose-bilkent unless you ask for something else.
 
 The **tiny** build omits ELK to stay small, and falls back to Dagre for
 diagrams that request it.

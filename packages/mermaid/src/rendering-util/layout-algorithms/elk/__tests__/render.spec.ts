@@ -172,7 +172,9 @@ describe('buildSubgraphLayoutOptions', () => {
     // `nodePlacementStrategy`.
     const opts = buildSubgraphLayoutOptions({}, { nodePlacementStrategy: 'SIMPLE' }, 'layered');
 
-    expect(opts).not.toHaveProperty('nodePlacement.strategy');
+    // Array form: the flat key contains a dot, which the string form would
+    // misread as a nested path and pass vacuously.
+    expect(opts).not.toHaveProperty(['nodePlacement.strategy']);
     expect(opts['elk.layered.nodePlacement.strategy']).toBe('SIMPLE');
   });
 
@@ -909,297 +911,291 @@ describe('clearContainerAlgorithmOptions', () => {
     expect(options['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
     expect(options['nodeLabels.placement']).toBe('[H_CENTER V_TOP, INSIDE]');
   });
+});
 
-  describe('evenGroupFrames', () => {
-    /**
-     * Build the two structures the pass reads: the ELK tree (for `isGroup` and
-     * `children`) and `nodeDb`, whose entries carry the absolute box that
-     * `applyElkNodePositions` has already written.
-     */
-    function scene(groupBox: { x: number; y: number; w: number; h: number }, kids: number[][]) {
-      const nodeDb: Record<string, any> = {
-        g: {
+describe('evenGroupFrames', () => {
+  /**
+   * Build the two structures the pass reads: the ELK tree (for `isGroup` and
+   * `children`) and `nodeDb`, whose entries carry the absolute box that
+   * `applyElkNodePositions` has already written.
+   */
+  function scene(groupBox: { x: number; y: number; w: number; h: number }, kids: number[][]) {
+    const nodeDb: Record<string, any> = {
+      g: {
+        id: 'g',
+        isGroup: true,
+        offset: { posX: groupBox.x, posY: groupBox.y },
+        width: groupBox.w,
+        height: groupBox.h,
+      },
+    };
+    const children = kids.map(([x, y, w, h], i) => {
+      nodeDb[`n${i}`] = { id: `n${i}`, offset: { posX: x, posY: y }, width: w, height: h };
+      return { id: `n${i}` };
+    });
+    const elk = [{ id: 'g', isGroup: true, children, labelData: { width: 0 }, labels: [] }];
+    return { elk, nodeDb, layoutState: { nodeDb } as any };
+  }
+
+  it('pulls a frame in to even padding when a routing lane inflated one side', () => {
+    // The reported shape: nodes 100 wide sitting 24 from the left of the frame,
+    // with the frame running 76 past their right because ELK held a lane there
+    // for an edge routed back around the outside.
+    const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 200, h: 148 }, [[24, 48, 100, 76]]);
+
+    evenGroupFrames(elk, layoutState, new Map());
+
+    const g = nodeDb.g;
+    expect(g.offset.posX).toBe(0);
+    expect(g.width).toBe(148); // 24 + 100 + 24
+    // Top is deliberately untouched: it carries the subgraph's title strip.
+    expect(g.offset.posY).toBe(0);
+    expect(g.height).toBe(148); // 48 title strip + 76 + 24
+  });
+
+  it('leaves a frame alone when its padding is already even', () => {
+    const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 148, h: 148 }, [[24, 48, 100, 76]]);
+
+    evenGroupFrames(elk, layoutState, new Map());
+
+    expect(nodeDb.g.width).toBe(148);
+    expect(nodeDb.g.height).toBe(148);
+  });
+
+  it('never squeezes a frame narrower than its own title', () => {
+    // A one-node group under a long title. Pulling in to the node would cut
+    // the title off, so the floor wins it back.
+    const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 300, h: 148 }, [[24, 48, 40, 76]]);
+    elk[0].labelData = { width: 200 };
+
+    evenGroupFrames(elk, layoutState, new Map());
+
+    expect(nodeDb.g.width).toBe(200);
+    // Centring on the node's midpoint at x=44 would want to start at -56, but
+    // the frame is clamped to what ELK gave. Pulling a frame IN is the only
+    // thing this pass may do — a title too wide for its own frame is ELK's to
+    // size, and widening it here would paper over that.
+    expect(nodeDb.g.offset.posX).toBe(0);
+  });
+
+  it('measures a parent against children it has already pulled in', () => {
+    // Nested groups: the inner frame is inflated by 76 on the right and the
+    // outer one wraps it. Going deepest-first means the outer frame measures
+    // the tightened inner box, not the original.
+    const nodeDb: Record<string, any> = {
+      outer: {
+        id: 'outer',
+        isGroup: true,
+        offset: { posX: 0, posY: 0 },
+        width: 300,
+        height: 220,
+      },
+      inner: {
+        id: 'inner',
+        isGroup: true,
+        offset: { posX: 24, posY: 48 },
+        width: 200,
+        height: 148,
+      },
+      leaf: { id: 'leaf', offset: { posX: 48, posY: 96 }, width: 100, height: 76 },
+    };
+    const elk = [
+      {
+        id: 'outer',
+        isGroup: true,
+        labelData: { width: 0 },
+        labels: [],
+        children: [
+          {
+            id: 'inner',
+            isGroup: true,
+            labelData: { width: 0 },
+            labels: [],
+            children: [{ id: 'leaf' }],
+          },
+        ],
+      },
+    ];
+
+    evenGroupFrames(elk, { nodeDb } as any, new Map());
+
+    expect(nodeDb.inner.width).toBe(148); // 24 + 100 + 24
+    expect(nodeDb.outer.width).toBe(196); // 24 + 148 + 24
+  });
+
+  it("keeps a frame around a lane belonging to the group's own interior", () => {
+    // The nested case. An edge from inside C to a sibling of C is routed around
+    // C: that lane is OUTSIDE C, so C is pulled in past it, but it is INSIDE P
+    // and P must stay drawn around it. Measuring P from child boxes alone left
+    // the edge running outside a group it never leaves.
+    const nodeDb: Record<string, any> = {
+      P: { id: 'P', isGroup: true, offset: { posX: 0, posY: 0 }, width: 400, height: 220 },
+      C: { id: 'C', isGroup: true, offset: { posX: 24, posY: 48 }, width: 200, height: 148 },
+      leaf: { id: 'leaf', offset: { posX: 48, posY: 96 }, width: 100, height: 76 },
+      sib: { id: 'sib', offset: { posX: 260, posY: 96 }, width: 60, height: 76 },
+    };
+    const elk = [
+      {
+        id: 'P',
+        isGroup: true,
+        labelData: { width: 0 },
+        labels: [],
+        children: [
+          {
+            id: 'C',
+            isGroup: true,
+            labelData: { width: 0 },
+            labels: [],
+            children: [{ id: 'leaf' }],
+          },
+          { id: 'sib' },
+        ],
+      },
+    ];
+    // Routed out of `leaf`, around C at x=350, and back to `sib`. Sections sit
+    // in P's coordinate space, so `calcOffset` resolves them against P.
+    const graph = {
+      edges: [
+        {
+          id: 'e',
+          sources: ['leaf'],
+          targets: ['sib'],
+          sections: [
+            {
+              startPoint: { x: 148, y: 134 },
+              bendPoints: [
+                { x: 350, y: 134 },
+                { x: 350, y: 60 },
+              ],
+              endPoint: { x: 260, y: 134 },
+            },
+          ],
+        },
+      ],
+    };
+    const layoutState = {
+      nodeDb,
+      parentLookupDb: { parentById: { leaf: 'C', C: 'P', sib: 'P' } },
+    };
+
+    evenGroupFrames(elk, layoutState as any, new Map(), graph as any);
+
+    // C ignores the lane — it leaves C — and pulls in to its one child.
+    expect(nodeDb.C.width).toBe(148);
+    // P keeps it: the lane reaches x=350, so the frame runs to 350 + 24.
+    expect(nodeDb.P.offset.posX + nodeDb.P.width).toBe(374);
+  });
+
+  it("leaves ELK's own origin readable after moving a frame", () => {
+    // Edge sections resolve against the container's ORIGINAL origin, so moving
+    // a frame must not overwrite it or every edge inside would shift with it.
+    const nodeDb: Record<string, any> = {
+      g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 148 },
+      n: { id: 'n', offset: { posX: 40, posY: 48 }, width: 100, height: 76 },
+    };
+
+    evenGroupFrames(
+      [{ id: 'g', isGroup: true, labelData: { width: 0 }, labels: [], children: [{ id: 'n' }] }],
+      { nodeDb } as any,
+      new Map()
+    );
+
+    expect(nodeDb.g.offset.posX).toBe(16); // frame moved in to 40 - 24
+    expect(nodeDb.g.elkOrigin).toEqual({ posX: 0, posY: 0 });
+  });
+
+  it('never grows a frame beyond what ELK sized it to', () => {
+    // ELK sized the container around everything it put inside, so a measurement
+    // here that wants MORE room means this pass got something wrong. Clamp
+    // rather than trust it.
+    const nodeDb: Record<string, any> = {
+      g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 120, height: 148 },
+      n: { id: 'n', offset: { posX: 10, posY: 48 }, width: 100, height: 76 },
+    };
+
+    evenGroupFrames(
+      [{ id: 'g', isGroup: true, labelData: { width: 0 }, labels: [], children: [{ id: 'n' }] }],
+      { nodeDb } as any,
+      new Map()
+    );
+
+    // 10 - 24 would put the left edge at -14 and 110 + 24 the right at 134;
+    // both are clamped back to the frame ELK gave.
+    expect(nodeDb.g.offset.posX).toBe(0);
+    expect(nodeDb.g.width).toBe(120);
+  });
+
+  it('paints the clamped frame, not the wider title, into the layout node', () => {
+    // Every other test here passes an empty `nodeById`, so the branch that
+    // writes the node the renderer actually paints from went uncovered — and
+    // that is where the clamp was being undone.
+    //
+    // A 100-wide frame under a 200-wide title. The clamp refuses to widen the
+    // frame, so the layout node must not report 200 either: `clusters.js`
+    // sizes the painted rect from `node.width`, so a 200 here paints a frame
+    // 100 units wider than ELK reserved.
+    const nodeDb: Record<string, any> = {
+      g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 100, height: 148 },
+      n: { id: 'n', offset: { posX: 10, posY: 48 }, width: 40, height: 76 },
+    };
+    const layoutNode = { id: 'g', x: 0, y: 0, width: 0, height: 0 } as any;
+
+    evenGroupFrames(
+      [
+        {
           id: 'g',
           isGroup: true,
-          offset: { posX: groupBox.x, posY: groupBox.y },
-          width: groupBox.w,
-          height: groupBox.h,
-        },
-      };
-      const children = kids.map(([x, y, w, h], i) => {
-        nodeDb[`n${i}`] = { id: `n${i}`, offset: { posX: x, posY: y }, width: w, height: h };
-        return { id: `n${i}` };
-      });
-      const elk = [{ id: 'g', isGroup: true, children, labelData: { width: 0 }, labels: [] }];
-      return { elk, nodeDb, layoutState: { nodeDb } as any };
-    }
-
-    it('pulls a frame in to even padding when a routing lane inflated one side', () => {
-      // The reported shape: nodes 100 wide sitting 24 from the left of the frame,
-      // with the frame running 76 past their right because ELK held a lane there
-      // for an edge routed back around the outside.
-      const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 200, h: 148 }, [
-        [24, 48, 100, 76],
-      ]);
-
-      evenGroupFrames(elk, layoutState, new Map());
-
-      const g = nodeDb.g;
-      expect(g.offset.posX).toBe(0);
-      expect(g.width).toBe(148); // 24 + 100 + 24
-      // Top is deliberately untouched: it carries the subgraph's title strip.
-      expect(g.offset.posY).toBe(0);
-      expect(g.height).toBe(148); // 48 title strip + 76 + 24
-    });
-
-    it('leaves a frame alone when its padding is already even', () => {
-      const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 148, h: 148 }, [
-        [24, 48, 100, 76],
-      ]);
-
-      evenGroupFrames(elk, layoutState, new Map());
-
-      expect(nodeDb.g.width).toBe(148);
-      expect(nodeDb.g.height).toBe(148);
-    });
-
-    it('never squeezes a frame narrower than its own title', () => {
-      // A one-node group under a long title. Pulling in to the node would cut
-      // the title off, so the floor wins it back.
-      const { elk, nodeDb, layoutState } = scene({ x: 0, y: 0, w: 300, h: 148 }, [
-        [24, 48, 40, 76],
-      ]);
-      elk[0].labelData = { width: 200 };
-
-      evenGroupFrames(elk, layoutState, new Map());
-
-      expect(nodeDb.g.width).toBe(200);
-      // Centring on the node's midpoint at x=44 would want to start at -56, but
-      // the frame is clamped to what ELK gave. Pulling a frame IN is the only
-      // thing this pass may do — a title too wide for its own frame is ELK's to
-      // size, and widening it here would paper over that.
-      expect(nodeDb.g.offset.posX).toBe(0);
-    });
-
-    it('measures a parent against children it has already pulled in', () => {
-      // Nested groups: the inner frame is inflated by 76 on the right and the
-      // outer one wraps it. Going deepest-first means the outer frame measures
-      // the tightened inner box, not the original.
-      const nodeDb: Record<string, any> = {
-        outer: {
-          id: 'outer',
-          isGroup: true,
-          offset: { posX: 0, posY: 0 },
-          width: 300,
-          height: 220,
-        },
-        inner: {
-          id: 'inner',
-          isGroup: true,
-          offset: { posX: 24, posY: 48 },
-          width: 200,
-          height: 148,
-        },
-        leaf: { id: 'leaf', offset: { posX: 48, posY: 96 }, width: 100, height: 76 },
-      };
-      const elk = [
-        {
-          id: 'outer',
-          isGroup: true,
-          labelData: { width: 0 },
+          labelData: { width: 200 },
           labels: [],
-          children: [
-            {
-              id: 'inner',
-              isGroup: true,
-              labelData: { width: 0 },
-              labels: [],
-              children: [{ id: 'leaf' }],
-            },
-          ],
+          children: [{ id: 'n' }],
         },
-      ];
+      ],
+      { nodeDb } as any,
+      new Map([['g', layoutNode]])
+    );
 
-      evenGroupFrames(elk, { nodeDb } as any, new Map());
+    expect(nodeDb.g.width).toBe(100);
+    expect(layoutNode.width).toBe(100);
+    expect(layoutNode.width).toBe(nodeDb.g.width);
+  });
 
-      expect(nodeDb.inner.width).toBe(148); // 24 + 100 + 24
-      expect(nodeDb.outer.width).toBe(196); // 24 + 148 + 24
-    });
+  it('still reports the honoured title floor when ELK left room for it', () => {
+    // The other side of the same branch: here the 200-wide title fits inside
+    // the 300 ELK gave, so the floor is honoured and the layout node carries
+    // it. Without this the fix above could pass by always shrinking.
+    const nodeDb: Record<string, any> = {
+      g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 300, height: 148 },
+      n: { id: 'n', offset: { posX: 24, posY: 48 }, width: 40, height: 76 },
+    };
+    const layoutNode = { id: 'g', x: 0, y: 0, width: 0, height: 0 } as any;
 
-    it("keeps a frame around a lane belonging to the group's own interior", () => {
-      // The nested case. An edge from inside C to a sibling of C is routed around
-      // C: that lane is OUTSIDE C, so C is pulled in past it, but it is INSIDE P
-      // and P must stay drawn around it. Measuring P from child boxes alone left
-      // the edge running outside a group it never leaves.
-      const nodeDb: Record<string, any> = {
-        P: { id: 'P', isGroup: true, offset: { posX: 0, posY: 0 }, width: 400, height: 220 },
-        C: { id: 'C', isGroup: true, offset: { posX: 24, posY: 48 }, width: 200, height: 148 },
-        leaf: { id: 'leaf', offset: { posX: 48, posY: 96 }, width: 100, height: 76 },
-        sib: { id: 'sib', offset: { posX: 260, posY: 96 }, width: 60, height: 76 },
-      };
-      const elk = [
+    evenGroupFrames(
+      [
         {
-          id: 'P',
+          id: 'g',
           isGroup: true,
-          labelData: { width: 0 },
+          labelData: { width: 200 },
           labels: [],
-          children: [
-            {
-              id: 'C',
-              isGroup: true,
-              labelData: { width: 0 },
-              labels: [],
-              children: [{ id: 'leaf' }],
-            },
-            { id: 'sib' },
-          ],
+          children: [{ id: 'n' }],
         },
-      ];
-      // Routed out of `leaf`, around C at x=350, and back to `sib`. Sections sit
-      // in P's coordinate space, so `calcOffset` resolves them against P.
-      const graph = {
-        edges: [
-          {
-            id: 'e',
-            sources: ['leaf'],
-            targets: ['sib'],
-            sections: [
-              {
-                startPoint: { x: 148, y: 134 },
-                bendPoints: [
-                  { x: 350, y: 134 },
-                  { x: 350, y: 60 },
-                ],
-                endPoint: { x: 260, y: 134 },
-              },
-            ],
-          },
-        ],
-      };
-      const layoutState = {
-        nodeDb,
-        parentLookupDb: { parentById: { leaf: 'C', C: 'P', sib: 'P' } },
-      };
+      ],
+      { nodeDb } as any,
+      new Map([['g', layoutNode]])
+    );
 
-      evenGroupFrames(elk, layoutState as any, new Map(), graph as any);
+    expect(nodeDb.g.width).toBe(200);
+    expect(layoutNode.width).toBe(200);
+  });
 
-      // C ignores the lane — it leaves C — and pulls in to its one child.
-      expect(nodeDb.C.width).toBe(148);
-      // P keeps it: the lane reaches x=350, so the frame runs to 350 + 24.
-      expect(nodeDb.P.offset.posX + nodeDb.P.width).toBe(374);
-    });
+  it('skips a group with no children rather than collapsing it', () => {
+    const nodeDb: Record<string, any> = {
+      g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 100 },
+    };
 
-    it("leaves ELK's own origin readable after moving a frame", () => {
-      // Edge sections resolve against the container's ORIGINAL origin, so moving
-      // a frame must not overwrite it or every edge inside would shift with it.
-      const nodeDb: Record<string, any> = {
-        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 148 },
-        n: { id: 'n', offset: { posX: 40, posY: 48 }, width: 100, height: 76 },
-      };
+    evenGroupFrames([{ id: 'g', isGroup: true, children: [] }], { nodeDb } as any, new Map());
 
-      evenGroupFrames(
-        [{ id: 'g', isGroup: true, labelData: { width: 0 }, labels: [], children: [{ id: 'n' }] }],
-        { nodeDb } as any,
-        new Map()
-      );
-
-      expect(nodeDb.g.offset.posX).toBe(16); // frame moved in to 40 - 24
-      expect(nodeDb.g.elkOrigin).toEqual({ posX: 0, posY: 0 });
-    });
-
-    it('never grows a frame beyond what ELK sized it to', () => {
-      // ELK sized the container around everything it put inside, so a measurement
-      // here that wants MORE room means this pass got something wrong. Clamp
-      // rather than trust it.
-      const nodeDb: Record<string, any> = {
-        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 120, height: 148 },
-        n: { id: 'n', offset: { posX: 10, posY: 48 }, width: 100, height: 76 },
-      };
-
-      evenGroupFrames(
-        [{ id: 'g', isGroup: true, labelData: { width: 0 }, labels: [], children: [{ id: 'n' }] }],
-        { nodeDb } as any,
-        new Map()
-      );
-
-      // 10 - 24 would put the left edge at -14 and 110 + 24 the right at 134;
-      // both are clamped back to the frame ELK gave.
-      expect(nodeDb.g.offset.posX).toBe(0);
-      expect(nodeDb.g.width).toBe(120);
-    });
-
-    it('paints the clamped frame, not the wider title, into the layout node', () => {
-      // Every other test here passes an empty `nodeById`, so the branch that
-      // writes the node the renderer actually paints from went uncovered — and
-      // that is where the clamp was being undone.
-      //
-      // A 100-wide frame under a 200-wide title. The clamp refuses to widen the
-      // frame, so the layout node must not report 200 either: `clusters.js`
-      // sizes the painted rect from `node.width`, so a 200 here paints a frame
-      // 100 units wider than ELK reserved.
-      const nodeDb: Record<string, any> = {
-        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 100, height: 148 },
-        n: { id: 'n', offset: { posX: 10, posY: 48 }, width: 40, height: 76 },
-      };
-      const layoutNode = { id: 'g', x: 0, y: 0, width: 0, height: 0 } as any;
-
-      evenGroupFrames(
-        [
-          {
-            id: 'g',
-            isGroup: true,
-            labelData: { width: 200 },
-            labels: [],
-            children: [{ id: 'n' }],
-          },
-        ],
-        { nodeDb } as any,
-        new Map([['g', layoutNode]])
-      );
-
-      expect(nodeDb.g.width).toBe(100);
-      expect(layoutNode.width).toBe(100);
-      expect(layoutNode.width).toBe(nodeDb.g.width);
-    });
-
-    it('still reports the honoured title floor when ELK left room for it', () => {
-      // The other side of the same branch: here the 200-wide title fits inside
-      // the 300 ELK gave, so the floor is honoured and the layout node carries
-      // it. Without this the fix above could pass by always shrinking.
-      const nodeDb: Record<string, any> = {
-        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 300, height: 148 },
-        n: { id: 'n', offset: { posX: 24, posY: 48 }, width: 40, height: 76 },
-      };
-      const layoutNode = { id: 'g', x: 0, y: 0, width: 0, height: 0 } as any;
-
-      evenGroupFrames(
-        [
-          {
-            id: 'g',
-            isGroup: true,
-            labelData: { width: 200 },
-            labels: [],
-            children: [{ id: 'n' }],
-          },
-        ],
-        { nodeDb } as any,
-        new Map([['g', layoutNode]])
-      );
-
-      expect(nodeDb.g.width).toBe(200);
-      expect(layoutNode.width).toBe(200);
-    });
-
-    it('skips a group with no children rather than collapsing it', () => {
-      const nodeDb: Record<string, any> = {
-        g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 100 },
-      };
-
-      evenGroupFrames([{ id: 'g', isGroup: true, children: [] }], { nodeDb } as any, new Map());
-
-      expect(nodeDb.g.width).toBe(200);
-      expect(nodeDb.g.height).toBe(100);
-    });
+    expect(nodeDb.g.width).toBe(200);
+    expect(nodeDb.g.height).toBe(100);
   });
 });
 

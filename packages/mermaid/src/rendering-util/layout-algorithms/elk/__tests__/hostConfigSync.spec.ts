@@ -59,10 +59,10 @@ describe('prepareLayoutForElk host config sync', () => {
     // sync that ran later would be too late to affect how they are measured.
     const order: string[] = [];
     setConfigMock.mockImplementation(() => order.push('setConfig'));
+    // Instrument `edges`, the property `applyElkEdgeRenderData` actually reads.
     const data = {
       nodes: [],
-      edges: [],
-      get markers() {
+      get edges() {
         order.push('data-read');
         return [];
       },
@@ -70,6 +70,7 @@ describe('prepareLayoutForElk host config sync', () => {
 
     prepareLayoutForElk(data, contextWithHostConfig);
 
-    expect(order[0]).toBe('setConfig');
+    expect(order).toContain('data-read');
+    expect(order.indexOf('setConfig')).toBeLessThan(order.indexOf('data-read'));
   });
 });

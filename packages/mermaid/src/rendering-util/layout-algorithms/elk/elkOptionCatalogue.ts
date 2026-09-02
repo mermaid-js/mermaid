@@ -232,10 +232,12 @@ export const EDGE_ROUTING_OPTIONS: Record<string, unknown> = {
 /* ────────────────────────────────────────────────────────────────────────────
  * THE SWITCH
  *
- * Everything above is reference material — inert, imported by nothing, there to
- * be read and copied from. The two objects below are the opposite: they ARE
- * imported, and whatever they contain is merged over the shipping layout
- * options as the last word. That is the on/off switch.
+ * Everything above is reference material to read and copy from — but it is not
+ * inert: `render.ts` imports `PLACEMENT_OPTIONS` and `EDGE_ROUTING_OPTIONS` too
+ * and merges them over the ROOT graph's layout options, so uncommenting a line
+ * up there switches it on just as surely. The two objects below are the
+ * per-scope scratch pads, merged as the last word over the root and subgraph
+ * options. All four objects together are the on/off switch.
  *
  * To try an option: copy its line out of the catalogue above into the matching
  * object below and uncomment it. To switch back off: re-comment it. Nothing in
@@ -243,8 +245,9 @@ export const EDGE_ROUTING_OPTIONS: Record<string, unknown> = {
  * behind as a stray edit in production code — which is how the previous round
  * of these ended up deleted rather than kept.
  *
- * Both MUST be empty on `develop`. `elkOptionCatalogue.spec.ts` asserts exactly
- * that, so an override left switched on fails the build instead of shipping.
+ * All four MUST be empty on `develop`. `elkOptionCatalogue.spec.ts` asserts
+ * exactly that, so an override left switched on fails the build instead of
+ * shipping.
  *
  * Which object to use matters more than it looks: options set on the ROOT graph
  * do NOT reach subgraphs — containers get their own set — so `spacing.*`,
