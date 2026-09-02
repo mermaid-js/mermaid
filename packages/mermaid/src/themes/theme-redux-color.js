@@ -442,7 +442,7 @@ class Theme {
 }
 
 /**
- * @param {ThemeOverrides} [overrides] - Optional overrides.
+ * @param {ThemeOverrides} [userOverrides] - Optional overrides.
  */
 export const getThemeVariables = (userOverrides) => {
   const theme = new Theme();
