@@ -425,13 +425,15 @@ Checkout ..> : include Browse
 ### Per-element colour rotation
 
 Set `colorScheme: rotate` to extend the numbering from the boundaries to the actors and use
-cases as well, so every element takes its own slot from the theme's categorical palette,
-cycling in declaration order the way entity relationship and class diagrams are coloured.
-This buys per-element variety at the cost of the stability described above: inserting an
-actor or a use case shifts the colour of every actor and use case declared after it.
-Boundaries keep their own numbering either way. Only the colour themes (`redux-color` and
-`redux-dark-color`) carry a palette, so on any other theme the two settings render
-identically.
+cases as well, so every element takes its own slot from the theme's categorical palette, the
+way entity relationship and class diagrams are coloured. Actors and use cases share one
+cycle, with the actors numbered first and the use cases after them, each in declaration
+order. An `actor A`, `usecase U`, `actor B` written in that order is therefore numbered A,
+B, U rather than A, U, B. This buys per-element variety at the cost of the stability
+described above: inserting an element shifts the colour of every later element of its own
+kind, and inserting an actor shifts the use cases too. Boundaries keep their own numbering
+either way. Only the colour themes (`redux-color` and `redux-dark-color`) carry a palette,
+so on any other theme the two settings render identically.
 
 ```mermaid-example
 ---

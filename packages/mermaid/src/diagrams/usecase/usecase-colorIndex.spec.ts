@@ -54,6 +54,22 @@ Logout("Sign out")`);
     expect(slots.get('Logout')).toBe(3);
   });
 
+  it('numbers the actors before the use cases, whatever order they were written in', async () => {
+    const slots = await colorIndexById(`usecase-beta
+actor A
+Middle("A use case between the two actors")
+actor B`);
+
+    // The two kinds live in separate maps, so the shared cycle runs over the actors first
+    // and the use cases after them rather than over the source order -- interleaving them
+    // would need the declaration index carried through the model. Written down because the
+    // grouping is the contract `usecase.colorScheme: 'rotate'` documents, and a future
+    // change that merged the two loops would silently recolour every interleaved diagram.
+    expect(slots.get('A')).toBe(0);
+    expect(slots.get('B')).toBe(1);
+    expect(slots.get('Middle')).toBe(2);
+  });
+
   it('numbers system boundaries from zero, on their own counter', async () => {
     const slots = await colorIndexById(`usecase-beta
 systemBoundary sb1["Payment service"]

@@ -2956,12 +2956,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           so diffs, documentation screenshots, and visual baselines stay stable.
 
           `rotate` instead gives each actor, use case, and system boundary its own slot from
-          the theme's categorical palette (`borderColorArray` / `bkgColorArray`), cycling in
-          declaration order, the way ER entities and class boxes are coloured. This buys
-          per-instance variety at the cost of that stability: inserting an element shifts the
-          colour of everything declared after it. Only the colour themes (`redux-color`,
-          `redux-dark-color`) carry a palette, so on every other theme the two settings
-          render identically.
+          the theme's categorical palette (`borderColorArray` / `bkgColorArray`), the way ER
+          entities and class boxes are coloured. Actors and use cases share one cycle, and
+          system boundaries run a second one from zero, so a boundary is never forced to
+          match an element inside it. Within the shared cycle the actors are numbered first
+          and the use cases after them, each in declaration order -- an interleaved
+          `actor A`, `usecase U`, `actor B` is therefore numbered A, B, U rather than
+          A, U, B. This buys per-instance variety at the cost of the stability `role` has:
+          inserting an element shifts the colour of every later element of its own kind, and
+          inserting an actor shifts the use cases too. Only the colour themes
+          (`redux-color`, `redux-dark-color`) carry a palette, so on every other theme the
+          two settings render identically.
 
           `classDef` and `style` keep overriding both, whichever is set.
         type: string
