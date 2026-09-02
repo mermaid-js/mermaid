@@ -491,9 +491,21 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
+      dagre-d3-es:
+        specifier: 7.0.14
+        version: 7.0.14
+      dayjs:
+        specifier: ^1.11.21
+        version: 1.11.21
+      dompurify:
+        specifier: 3.4.12
+        version: 3.4.12
       elkjs:
         specifier: ^0.9.3
         version: 0.9.3
+      katex:
+        specifier: ^0.16.47
+        version: 0.16.47
     devDependencies:
       '@types/d3':
         specifier: ^7.4.3

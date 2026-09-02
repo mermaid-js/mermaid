@@ -22,9 +22,11 @@ const log = {
   warn: () => undefined,
 };
 
+// No secure keys (`securityLevel`, `maxTextSize`, ...) in this fixture: the
+// real `setConfig` sanitizes them away, so asserting one here would document a
+// propagation that does not happen (the mock skips `sanitize()`).
 const HOST_CONFIG = {
   htmlLabels: false,
-  securityLevel: 'sandbox',
   arrowMarkerAbsolute: true,
   flowchart: { wrappingWidth: 200 },
   curve: undefined,

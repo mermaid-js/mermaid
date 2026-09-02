@@ -8,4 +8,6 @@ feat: this package is now built from mermaid's own ELK implementation instead of
 
 Because it is compiled from mermaid's ELK source rather than importing the whole `mermaid` entry point, the published bundle no longer drags in every diagram type, parser and KaTeX: the minified ESM payload drops from roughly **1.58 MB to 728 kB gzipped**. It stays self-contained, so it still loads from a CDN next to any Mermaid build with no import map.
 
+The rendering utilities the ELK source reaches (`dompurify`, `katex`, `dayjs`, `dagre-d3-es`) are now declared in the package's `dependencies`, so the npm build (`.core.mjs`) resolves them through your package manager — they dedupe against the host's copies and show up in audits — instead of carrying invisible inlined copies.
+
 > **Maintainers:** `peerDependencies.mermaid` still reads `^11.0.2`. It should be raised to the major that bundles ELK as part of the release.

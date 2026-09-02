@@ -671,13 +671,22 @@ export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLay
 });
 
 /**
- * Copy the host's config into whichever config module this bundle is using.
+ * Copy the host's config into whichever config module this bundle is using —
+ * except the secure keys, which `setConfig` strips.
  *
  * When this file is compiled into `@mermaid-js/layout-elk` the bundle carries
  * its own copy of the config module, and that copy never sees the host's
  * `initialize()` — so it reads schema defaults and paints, for example, edge
  * markers without `arrowMarkerAbsolute`. `setConfig` here resolves to the local
  * copy while `context.getConfig` comes from the host, so this repairs it.
+ *
+ * `setConfig` runs `sanitize()`, which deletes every key in
+ * `['secure', ...siteConfig.secure]` — `securityLevel`, `startOnLoad`,
+ * `maxTextSize`, `maxEdges`, `suppressErrorRendering` — so those never
+ * propagate through this call. That is the safe direction: the plugin's local
+ * copy stays at the schema default `strict` rather than inheriting a looser
+ * host value. If the host's `securityLevel` ever genuinely needs to reach the
+ * plugin's copy, `setSiteConfig` is the call that survives sanitization.
  *
  * Compiled into mermaid itself the two are the same module and this is a no-op.
  */
