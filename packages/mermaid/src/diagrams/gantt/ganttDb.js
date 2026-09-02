@@ -446,7 +446,7 @@ const parseId = function (idStr) {
 // length
 
 /**
- * Rejects a task carrying more comma separated fields than the switches below handle.
+ * Rejects a task carrying more comma-separated fields than the switches below handle.
  *
  * Those switches cover one, two and three fields and had an empty `default:`, so a task
  * with more was built with neither a `startTime` nor an `endTime`. Nothing checked for
@@ -466,7 +466,7 @@ const parseId = function (idStr) {
 const assertTaskFieldCount = function (data, dataStr) {
   if (data.length > 3) {
     throw new Error(
-      `Invalid task definition "${dataStr}": a task takes at most 3 comma separated fields (id, start, end), but ${data.length} were given.`
+      `Invalid task definition "${dataStr}": a task takes at most 3 comma-separated fields (id, start, end), but ${data.length} were given.`
     );
   }
 };

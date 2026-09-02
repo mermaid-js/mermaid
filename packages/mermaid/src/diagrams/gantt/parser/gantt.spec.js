@@ -145,7 +145,7 @@ describe('when parsing a gantt diagram it', function () {
       'gantt\n' + 'dateFormat YYYY-MM-DD\n' + 'section S\n' + 'Task A :a1, 2024-01-01, 30d,\n';
 
     expect(parserFnConstructor(str)).toThrow(
-      'Invalid task definition ":a1, 2024-01-01, 30d,": a task takes at most 3 comma separated fields (id, start, end), but 4 were given.'
+      'Invalid task definition ":a1, 2024-01-01, 30d,": a task takes at most 3 comma-separated fields (id, start, end), but 4 were given.'
     );
   });
 
@@ -154,7 +154,7 @@ describe('when parsing a gantt diagram it', function () {
       'gantt\n' + 'dateFormat YYYY-MM-DD\n' + 'section S\n' + 'Task A :a1, 2024-01-01, 30d, junk\n';
 
     expect(parserFnConstructor(str)).toThrow(
-      'Invalid task definition ":a1, 2024-01-01, 30d, junk": a task takes at most 3 comma separated fields (id, start, end), but 4 were given.'
+      'Invalid task definition ":a1, 2024-01-01, 30d, junk": a task takes at most 3 comma-separated fields (id, start, end), but 4 were given.'
     );
   });
 
