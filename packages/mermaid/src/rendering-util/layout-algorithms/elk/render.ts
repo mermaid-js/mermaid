@@ -146,9 +146,9 @@ const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
 
 /**
  * Margin reserved at the ends of each side of a node, so that a port cannot be
- * placed on a corner. `anchorOnDegenerateSide` treats a side shorter than twice
- * this as having no usable anchor span, so the option string below is built
- * from it — the two must not be able to disagree.
+ * placed on a corner. `alignDegenerateNodeToAnchor` treats a side shorter than
+ * twice this as having no usable anchor span, so the option string below is
+ * built from it — the two must not be able to disagree.
  */
 const PORTS_SURROUNDING_MARGIN = 12;
 /** The margin spelled as an ELK margin, because `spacing.portsSurrounding` takes one. */
@@ -1662,6 +1662,44 @@ function applyElkEdgeLayout(
   // Opt-out rather than opt-in: the step this removes is never intentional.
   const straightenEdges = data4Layout.config.elk?.straightenEdges !== false;
 
+  // Alignment pre-pass: move degenerately-anchored small nodes onto their routed
+  // lines BEFORE any edge points are built, so every edge — whichever side of the
+  // node it attaches to, in whatever order the loop visits it — sees the node at
+  // its final position. See `alignDegenerateNodeToAnchor` for why the node moves
+  // and the edge does not.
+  const layoutNodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
+  const alignedNodes = new Set<string>();
+  graph.edges?.forEach((edge) => {
+    if (!edge.sections?.length) {
+      return;
+    }
+    const startNode = layoutState.nodeDb[edge.sources?.[0] ?? edge.start];
+    const endNode = layoutState.nodeDb[edge.targets?.[0] ?? edge.end];
+    if (!startNode || !endNode) {
+      return;
+    }
+    const sourceId = edge.start ?? edge.sourceId ?? edge.sources?.[0];
+    const targetId = edge.end ?? edge.targetId ?? edge.targets?.[0];
+    const offset = calcOffset(sourceId, targetId, layoutState.parentLookupDb, layoutState.nodeDb);
+    const section = edge.sections[0];
+    if (startNode.shape !== 'rect33') {
+      alignDegenerateNodeToAnchor(
+        startNode,
+        { x: section.startPoint.x + offset.x, y: section.startPoint.y + offset.y },
+        layoutNodeById,
+        alignedNodes
+      );
+    }
+    if (endNode.shape !== 'rect33') {
+      alignDegenerateNodeToAnchor(
+        endNode,
+        { x: section.endPoint.x + offset.x, y: section.endPoint.y + offset.y },
+        layoutNodeById,
+        alignedNodes
+      );
+    }
+  });
+
   graph.edges?.forEach((edge) => {
     const layoutEdge = edgeById.get(edge.id);
     if (!layoutEdge) {
@@ -1726,16 +1764,10 @@ function applyElkEdgeLayout(
     endNode.y = endNode.offset!.posY + endNode.height! / 2;
 
     if (startNode.shape !== 'rect33') {
-      if (points.length > 1 && anchorOnDegenerateSide(startNode, points[0])) {
-        points.shift();
-      }
       points.unshift({ x: startNode.x, y: startNode.y });
     }
 
     if (endNode.shape !== 'rect33') {
-      if (points.length > 1 && anchorOnDegenerateSide(endNode, points[points.length - 1])) {
-        points.pop();
-      }
       points.push({ x: endNode.x, y: endNode.y });
     }
 
@@ -1763,27 +1795,66 @@ function applyElkEdgeLayout(
 /**
  * ELK reserves `PORTS_SURROUNDING_MARGIN` at both ends of a node side before
  * distributing edge anchors along it (see `PORTS_SURROUNDING`). On a side
- * shorter than twice that margin the usable span is negative, and ELK's
- * clamping parks the anchor off-centre — a 14px start/end state circle got
- * its only edge attached 3px off the dot's centre, and no node-level option
- * overrides it (the spacing is only read per hierarchy level). Such an anchor
- * carries no information, so the caller drops it and lets the edge aim at the
- * node centre instead; the border clip then lands it dead centre, the same
- * way the dagre pipeline attaches edges.
+ * shorter than twice that margin the usable span is negative and ELK's clamping
+ * parks the anchor off-centre — a 14px start/end state circle gets its edge
+ * attached ~3px off the dot's centre, and no node-level option overrides it
+ * (the spacing is only read per hierarchy level).
+ *
+ * The anchor's position along the side is garbage, but its LINE is not: with
+ * `nodeFlexibility: PORT_POSITION` ELK has already placed the node so this
+ * clamped port sits on a straight route — so it is the node that stands
+ * off-centre, not the edge. An earlier fix repointed the edge at the node's
+ * centre, which bent ELK's straight verticals visibly diagonal (every fixture
+ * with `[*] --> SomeState` showed it). Move the NODE instead: shift it along
+ * the side's axis until its centre sits on the anchor line. The edge stays
+ * exactly as routed, and the appended centre point is collinear with it.
+ *
+ * The shift is at most half the side (≲4px on a state dot), first anchor wins
+ * (later anchors on a degenerate side land on the same clamped point), and both
+ * the nodeDb entry and the layout node move so painting and clipping agree.
  */
-function anchorOnDegenerateSide(node: NodeWithVertex, anchor: P): boolean {
+function alignDegenerateNodeToAnchor(
+  node: NodeWithVertex,
+  anchor: P,
+  layoutNodeById: Map<string, Node>,
+  alignedNodes: Set<string>
+): void {
   const width = node.width ?? 0;
   const height = node.height ?? 0;
   const top = node.offset!.posY;
   const bottom = top + height;
   // ELK puts the anchor exactly on the border; the slack only absorbs float
-  // error from the offset arithmetic above. Same tolerance `onBorder` uses.
+  // error from the offset arithmetic. Same tolerance `onBorder` uses.
   const tol = 0.5;
   // An anchor on the top or bottom border spreads along the width; one on the
   // left or right border spreads along the height.
   const alongWidth = Math.abs(anchor.y - top) <= tol || Math.abs(anchor.y - bottom) <= tol;
-  const side = alongWidth ? width : height;
-  return side < 2 * PORTS_SURROUNDING_MARGIN;
+  if ((alongWidth ? width : height) >= 2 * PORTS_SURROUNDING_MARGIN) {
+    return;
+  }
+  if (alignedNodes.has(node.id)) {
+    return;
+  }
+  alignedNodes.add(node.id);
+
+  const delta = alongWidth
+    ? anchor.x - (node.offset!.posX + width / 2)
+    : anchor.y - (node.offset!.posY + height / 2);
+  if (Math.abs(delta) < 0.01) {
+    return;
+  }
+  if (alongWidth) {
+    node.offset!.posX += delta;
+    node.x = node.offset!.posX + width / 2;
+  } else {
+    node.offset!.posY += delta;
+    node.y = node.offset!.posY + height / 2;
+  }
+  const layoutNode = layoutNodeById.get(node.id);
+  if (layoutNode) {
+    layoutNode.x = node.offset!.posX + width / 2;
+    layoutNode.y = node.offset!.posY + height / 2;
+  }
 }
 
 function createEdgePointsFromSection(section: any, offset: { x: number; y: number }): P[] {

@@ -644,6 +644,41 @@ describe('small-node edge anchoring', () => {
     }
   });
 
+  // ELK routes the edge straight down the big node's port line and, with
+  // `nodeFlexibility: PORT_POSITION`, has already placed the small node so its
+  // (degenerately clamped) port sits ON that line — meaning the node is what is
+  // off-centre, not the edge. Repointing the edge at the node centre bends a
+  // straight line diagonal. The fix must move the NODE onto the line instead,
+  // so the edge stays exactly vertical and the node is centred on it.
+  it('moves a small node onto the routed line instead of bending the edge', async () => {
+    const data = {
+      direction: 'TB',
+      config: { elk: {} },
+      nodes: [
+        { id: 'start', isGroup: false, width: 14, height: 14, label: 'start', shape: 'stateStart' },
+        { id: 'still', isGroup: false, width: 60, height: 40, label: 'Still', shape: 'rect' },
+        { id: 'end', isGroup: false, width: 14.013, height: 14, label: 'end', shape: 'stateEnd' },
+      ],
+      edges: [
+        { id: 'e1', start: 'start', end: 'still', type: 'arrow_barb' },
+        { id: 'e2', start: 'still', end: 'end', type: 'arrow_barb' },
+      ],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    for (const edge of data.edges as any[]) {
+      const xs = edge.points.map((p: any) => p.x);
+      for (const x of xs) {
+        expect(x, `edge ${edge.id} must be exactly vertical`).toBeCloseTo(xs[0], 3);
+      }
+    }
+    const start = data.nodes.find((node: any) => node.id === 'start');
+    const end = data.nodes.find((node: any) => node.id === 'end');
+    expect(start.x, 'start dot centred on its edge').toBeCloseTo(data.edges[0].points[0].x, 3);
+    expect(end.x, 'end dot centred on its edge').toBeCloseTo(data.edges[1].points.at(-1).x, 3);
+  });
+
   // The drop is side-specific: a fork/join bar is thin but long, and the side
   // its anchors spread along (the width, for a top/bottom attachment) is well
   // above the margin threshold. Its anchors carry real information — two
