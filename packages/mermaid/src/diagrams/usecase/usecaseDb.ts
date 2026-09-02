@@ -310,6 +310,30 @@ const getData = (): UsecaseLayoutData => {
   const nodes: UsecaseLayoutData['nodes'] = [];
   const edges: UsecaseLayoutEdge[] = [];
 
+  /**
+   * Two counters, because the two kinds of slot mean different things.
+   *
+   * `boundaryColorIndex` numbers the system boundaries from zero in declaration order, the
+   * way `flowDb` numbers flowchart subgraphs. Here the counter carries real information --
+   * which group a thing belongs to -- so boundary N takes palette slot N, and that holds
+   * under the default colour scheme as well as under `rotate`. It stays stable as long as
+   * the boundary order does, which is the property that makes a counter defensible for a
+   * container and not for a leaf.
+   *
+   * `colorIndex` numbers actors and use cases together, and is consumed only by the opt-in
+   * `usecase.colorScheme: 'rotate'`. Sharing one cycle between the two kinds is what stops
+   * an actor and a use case landing on the same colour and reading as linked. Notes and
+   * JSON tables are deliberately not counted: a note carries the theme's fixed note colour
+   * and a JSON table is reference data, so neither is a participant and neither may shift
+   * the cycle.
+   *
+   * Both are assigned unconditionally -- `stampColorSlot` is a no-op for every theme
+   * without a palette, and `getData` has no business knowing which theme or scheme is
+   * active.
+   */
+  let colorIndex = 0;
+  let boundaryColorIndex = 0;
+
   for (const actor of state.actors.values()) {
     nodes.push({
       id: actor.id,
@@ -319,6 +343,7 @@ const getData = (): UsecaseLayoutData => {
       isGroup: false,
       padding: 10,
       look: globalConfig.look,
+      colorIndex: colorIndex++,
       cssClasses: classNames(
         'default',
         'usecase-actor',
@@ -345,6 +370,7 @@ const getData = (): UsecaseLayoutData => {
       isGroup: false,
       padding: useCase.shape === 'ellipse' ? 20 : 10,
       look: globalConfig.look,
+      colorIndex: colorIndex++,
       cssClasses: classNames(
         'default',
         'usecase-element',
@@ -407,6 +433,7 @@ const getData = (): UsecaseLayoutData => {
       isGroup: true,
       padding: 20,
       look: globalConfig.look,
+      colorIndex: boundaryColorIndex++,
       cssClasses: classNames(
         'default',
         'system-boundary',

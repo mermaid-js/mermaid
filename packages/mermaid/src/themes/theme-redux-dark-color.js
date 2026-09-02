@@ -24,7 +24,7 @@ class Theme {
     this.tertiaryTextColor = invert(this.tertiaryColor);
 
     this.mainBkg = '#111113';
-    this.secondBkg = 'calculated';
+    this.secondBkg = 'calculated'; // resolved in updateColors()
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
     this.border1 = '#ccc';
@@ -88,6 +88,21 @@ class Theme {
 
     this.bkgColorArray = [];
 
+    /* Usecase Diagram variables -- the dark counterpart of the light theme's role tokens.
+
+       Borders only. This theme already ships a border palette and an *empty* background
+       palette, because saturated fills behind light text lose contrast fast in dark mode --
+       so the role tokens follow the same rule and set no fills at all. Leaving them unset
+       lets each one fall back to the value the rest of the theme already uses: `mainBkg`
+       for actors and use cases, `clusterBkg` for boundaries. Pinning them to one colour
+       instead flattened the three kinds into a single tone and made a use case body
+       indistinguishable from the boundary containing it. */
+    this.usecaseActorBorder = '#A78BFA'; // Violet-400
+    this.usecaseBorder = '#2DD4BF'; // Teal-400
+    this.usecaseBoundaryBorder = '#BDBCCC';
+    this.usecaseIncludeLine = '#38BDF8'; // Sky-400
+    this.usecaseExtendLine = '#FB923C'; // Orange-400
+
     this.filterColor = '#FFFFFF';
   }
   updateColors() {
@@ -119,6 +134,10 @@ class Theme {
     /* Flowchart variables */
     this.nodeBkg = this.nodeBkg || this.primaryColor;
     this.mainBkg = this.mainBkg || this.primaryColor;
+    /* Resolve the ctor's 'calculated' placeholder, which this theme inherited from
+     * theme-dark.js without the line that computes it -- so it shipped as the literal
+     * string, and every consumer (railroad's terminal fill) emitted `fill: calculated`. */
+    this.secondBkg = this.secondBkg === 'calculated' ? lighten(this.mainBkg, 16) : this.secondBkg;
     this.nodeBorder = this.nodeBorder || this.border1;
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
@@ -162,7 +181,11 @@ class Theme {
     this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
     this.activeTaskBkgColor = this.activeTaskBkgColor || lighten(this.primaryColor, 23);
     this.gridColor = this.gridColor || 'lightgrey';
-    this.doneTaskBkgColor = this.doneTaskBkgColor || 'lightgrey';
+    /* `doneTaskBkgColor` was 'lightgrey' -- a light fill under this theme's light
+     * `taskTextDarkColor`, giving 1.07:1 on done-task labels. `theme-dark.js` gets away
+     * with the same fill because it pairs it with a dark ink; here the active-task fill is
+     * dark, so one ink has to serve both and the fill is what has to move. */
+    this.doneTaskBkgColor = this.doneTaskBkgColor || this.secondBkg;
     this.doneTaskBorderColor = this.doneTaskBorderColor || 'grey';
     this.critBorderColor = this.critBorderColor || '#ff8888';
     this.critBkgColor = this.critBkgColor || 'red';
@@ -324,6 +347,12 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
+    /* `borderColorArray` and not the lighter `cScale`: the fill is painted at 0.1
+       opacity, so the stroke and the label carry the circle. */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] =
+        this['venn' + (i + 1)] ?? this.borderColorArray[i % this.borderColorArray.length];
+    }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
