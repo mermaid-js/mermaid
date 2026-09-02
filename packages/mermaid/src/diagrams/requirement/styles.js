@@ -10,17 +10,27 @@ const genColor = (options) => {
   }
   let sections = '';
 
+  const hasBkgColors = bkgColorArray?.length > 0;
+
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+    // Omit the declaration when there is no fill palette, rather than emitting `fill: ;`
+    // -- an empty value is invalid CSS. `redux-dark-color` is the live case: it ships a
+    // border palette and no background palette, colouring outlines only.
+    //
+    // Wrap at the palette length for the same reason as `er/styles.ts`: the loop runs to
+    // THEME_COLOR_LIMIT, so a shorter palette would emit `stroke: undefined`.
+    const borderColor = borderColorArray[i % borderColorArray.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {
-    stroke: ${borderColorArray[i]};
-    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
+    stroke: ${borderColor};
+    ${fill}
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node  rect {
-    stroke: ${borderColorArray[i]};
-    fill: ${bkgColorArray?.length ? bkgColorArray[i] : ''};
+    stroke: ${borderColor};
+    ${fill}
      }
     `;
   }
