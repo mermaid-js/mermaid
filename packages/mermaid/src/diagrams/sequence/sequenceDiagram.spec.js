@@ -1731,6 +1731,107 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(createdActors.get('c')).toEqual(1);
     expect(destroyedActors.get('c')).toEqual(3);
   });
+
+  it('should keep future participant location and create it at the correct message line', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant a
+  future participant c
+  participant b
+  a ->> b: first
+  create participant c
+  b ->> c: create c
+  `);
+
+    const actorKeys = diagram.db.getActorKeys();
+    const createdActors = diagram.db.getCreatedActors();
+    const messages = diagram.db.getMessages();
+
+    expect(actorKeys).toEqual(['a', 'c', 'b']);
+    expect(createdActors.get('c')).toEqual(1);
+    expect(messages[1].to).toEqual('c');
+    expect(messages[1].message).toEqual('create c');
+  });
+
+  it('should support future actor declarations with matching create actor', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant a
+  future actor c as Carl
+  participant b
+  a ->> b: first
+  create actor c
+  b ->> c: create c
+  `);
+
+    const actors = diagram.db.getActors();
+    const createdActors = diagram.db.getCreatedActors();
+
+    expect(actors.get('c').type).toEqual('actor');
+    expect(actors.get('c').description).toEqual('Carl');
+    expect(createdActors.get('c')).toEqual(1);
+  });
+
+  it('should fail when a future participant is used before create', async () => {
+    await expect(
+      Diagram.fromText(`
+  sequenceDiagram
+  participant a
+  future participant c
+  a ->> c: first
+  create participant c
+  `)
+    ).rejects.toThrow(/must be created with a matching create directive before it can be used/i);
+  });
+
+  it('should fail when a future participant is not created later', async () => {
+    await expect(
+      Diagram.fromText(`
+  sequenceDiagram
+  participant a
+  future participant c
+  a ->> a: first
+  `)
+    ).rejects.toThrow(/future participant declarations must be resolved/i);
+  });
+
+  it('should fail when future declaration type does not match create type', async () => {
+    await expect(
+      Diagram.fromText(`
+  sequenceDiagram
+  participant a
+  future actor c
+  a ->> a: first
+  create participant c
+  a ->> c: create c
+  `)
+    ).rejects.toThrow(/must be created using 'create actor c'/i);
+  });
+
+  it('should record the correct message index for create participant when rect precedes the create message', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant a
+  future participant c
+  participant b
+  a ->> b: first
+  create participant c
+  rect rgb(200, 150, 255)
+    b ->> c: create c inside rect
+  end
+  `);
+
+    const createdActors = diagram.db.getCreatedActors();
+    const messages = diagram.db.getMessages();
+
+    // The RECT_START signal is inserted between createParticipant and the create message,
+    // so the create message lands at index 2 (not 1). The fix ensures createdActors
+    // records the actual index of the create message, not the index at createParticipant time.
+    const createMsgIndex = messages.findIndex(
+      (m) => m.to === 'c' && m.message === 'create c inside rect'
+    );
+    expect(createdActors.get('c')).toEqual(createMsgIndex);
+  });
 });
 describe('when checking the bounds in a sequenceDiagram', function () {
   beforeAll(() => {
@@ -2394,11 +2495,11 @@ Bob->>Alice:Got it!
         Bob -|/ Alice: Hello Alice, how are you?
         Bob -// Alice: Hello Alice, how are you?
         Bob -\\\\ Alice: Hello Alice, how are you?
-        
+
         Bob \\|- Alice: Hello Alice, how are you?
         Bob /|- Alice: Hello Alice, how are you?
         Bob //- Alice: Hello Alice, how are you?
-        Bob \\\\- Alice: Hello Alice, how are you?        
+        Bob \\\\- Alice: Hello Alice, how are you?
     `);
 
     const messages = diagram.db.getMessages();
@@ -2616,7 +2717,7 @@ Bob->>Alice:Got it!
       const diagram = await Diagram.fromText(`
       sequenceDiagram
       participant Q@{ "type" : "queue" }
-      Q->Q: test 
+      Q->Q: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('Q').type).toBe('queue');

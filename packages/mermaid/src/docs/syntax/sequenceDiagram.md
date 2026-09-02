@@ -34,6 +34,30 @@ sequenceDiagram
     Alice->>Bob: Hi Bob
 ```
 
+### Future participants (v<MERMAID_RELEASE_VERSION>+)
+
+You can reserve a participant or actor position with the `future` keyword and create it later with `create`.
+This is useful when you want the participant to appear in a specific horizontal position, even though it is
+introduced later in the sequence lifecycle.
+
+Rules:
+
+- A future declaration must be resolved later with a matching `create` directive.
+- The `create` keyword must include `participant` or `actor`.
+- The `create` kind must match the future declaration kind.
+- Messages cannot involve a future participant before it is created.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice
+    future participant Carol
+    participant Bob
+
+    Alice->>Bob: Setup
+    create participant Carol
+    Bob->>Carol: Welcome Carol
+```
+
 ### Actors
 
 If you specifically want to use the actor symbol instead of a rectangle with text you can do so by using actor statements as per below.
