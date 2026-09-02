@@ -212,6 +212,21 @@ describe.each(SLOT_STYLESHEETS)('%s stylesheet slot rules', (name) => {
     expect(paletteBlocks(css).length).toBeGreaterThan(0);
     expect(paletteBlocks(css).every((block) => block.includes('stroke:'))).toBe(true);
   });
+
+  it('keeps a hostile look out of the selector', () => {
+    // `look` reaches getConfig() verbatim from an init directive -- the schema enum is not
+    // enforced at runtime, and config.sanitize only strips values containing `<`, `>` or
+    // `url(data:`. Braces and quotes survive, which is enough to close the attribute
+    // selector early and open a rule block of the author's choosing. `safeLook` is what
+    // stops that; this only exercises it here because er/requirement/usecase are the
+    // stylesheets that actually interpolate `look` into a slot selector (colorThemeGate.spec.ts
+    // pins `safeLook` itself). `timeline` never reads `options.look`, so it has nothing to
+    // protect and is deliberately excluded from this describe block.
+    const hostileLook = 'classic"]{a';
+    const css = render(name, 'redux-color', { look: hostileLook as MermaidConfig['look'] });
+    expect(css).not.toContain(hostileLook);
+    expect(css).toContain('[data-look="classic"]');
+  });
 });
 
 describe('timeline section rules', () => {

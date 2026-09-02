@@ -1,5 +1,5 @@
 /**
- * The nine pages that document the per-diagram defaults each show the same diagram twice --
+ * The ten pages that document the per-diagram defaults each show the same diagram twice --
  * once with the defaults and once pinned back to `default`/`classic`. They render on the
  * public docs site, so a syntax slip in one shows up there as an error diagram.
  */

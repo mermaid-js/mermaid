@@ -32,6 +32,7 @@ const REDESIGNED_DIAGRAMS = {
   sequence: 'sequenceDiagram\n  Alice->>John: Hello John',
   usecase: 'usecase-beta\n  actor User1("Customer")',
   venn: 'venn-beta\n  set A\n  set B',
+  agentflow: 'agentflow-beta TB\n  a["A"]\n  b["B"]\n  a --> b',
 } as const;
 
 /** Types deliberately left on whatever develop already shipped. */

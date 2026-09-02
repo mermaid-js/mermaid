@@ -90,8 +90,13 @@ const genReduxSections = (options) => {
 const genSections = (options) => {
   let sections = '';
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
-    options['lineColor' + i] = options['lineColor' + i] || options['cScaleInv' + i];
+  // Bounded the same way as genReduxSections: these loops run on THEME_COLOR_LIMIT
+  // directly rather than a stamped slot count, and THEME_COLOR_LIMIT is reachable from
+  // front matter (including `.inf`, which parses to Infinity). See colorThemeGate.ts.
+  const colorLimit = colorSlotCount(options.THEME_COLOR_LIMIT);
+
+  for (let i = 0; i < colorLimit; i++) {
+    options['lineColor' + i] = options['lineColor' + i] ?? options['cScaleInv' + i];
     if (isDark(options['lineColor' + i])) {
       options['lineColor' + i] = lighten(options['lineColor' + i], 20);
     } else {
@@ -99,7 +104,7 @@ const genSections = (options) => {
     }
   }
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+  for (let i = 0; i < colorLimit; i++) {
     const sw = '' + (17 - 3 * i);
     sections += `
     .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${
@@ -150,7 +155,9 @@ const getStyles = (options) => {
   let gradientSections = '';
   // Don't apply gradient styling for neutral theme - it should maintain its grayscale color scheme
   if (options.useGradient && rawSvgId && options.THEME_COLOR_LIMIT && !isNeutralTheme) {
-    for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+    // Same bound as genSections -- see the comment there.
+    const gradientColorLimit = colorSlotCount(options.THEME_COLOR_LIMIT);
+    for (let i = 0; i < gradientColorLimit; i++) {
       gradientSections += `
       .section-${i - 1}[data-look="neo"] rect,
       .section-${i - 1}[data-look="neo"] path,

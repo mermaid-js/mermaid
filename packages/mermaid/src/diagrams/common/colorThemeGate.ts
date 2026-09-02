@@ -50,8 +50,15 @@ export const isColorTheme = (theme: string | undefined, palette: unknown): boole
  */
 const SAFE_LOOK = /^[\w-]+$/;
 
-export const safeLook = (look: string | undefined): string =>
-  look != null && SAFE_LOOK.test(look) ? look : 'classic';
+export const safeLook = (look: unknown): string => {
+  // Only stringify types that actually describe themselves -- `String()` on a plain object
+  // or array would pass through as the meaningless `[object Object]`, which happens to
+  // still fail SAFE_LOOK today but would be a silent bug waiting for a future look-alike
+  // regex, and is exactly the kind of default-stringification mistake this function exists
+  // to guard against elsewhere.
+  const s = typeof look === 'string' || typeof look === 'number' ? String(look) : '';
+  return SAFE_LOOK.test(s) ? s : 'classic';
+};
 
 /**
  * Number of palette slots a stylesheet should emit.

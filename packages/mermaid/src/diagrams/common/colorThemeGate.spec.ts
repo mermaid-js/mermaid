@@ -9,6 +9,7 @@
  */
 import { afterEach, describe, expect, it } from 'vitest';
 import * as configApi from '../../config.js';
+import { configKeys } from '../../defaultConfig.js';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
 import erStyles from '../er/styles.js';
@@ -155,6 +156,36 @@ describe('safeLook', () => {
 
   it('falls back to classic when look is absent', () => {
     expect(safeLook(undefined)).toBe('classic');
+  });
+});
+
+/**
+ * Unlike `look`, palette entries (`borderColorArray`/`bkgColorArray`) are interpolated
+ * straight into generated CSS by `er/styles.ts`, `requirement/styles.js`, `block/styles.ts`
+ * and their equivalents, with nothing analogous to `safeLook` validating an entry first. A
+ * hostile array entry — the same kind of `"]{a` payload `safeLook` guards against — would
+ * inject if it ever reached that code.
+ *
+ * It cannot, but not because the palette code defends itself, and not quite for the reason
+ * it looks like at a glance. `keyify` in `defaultConfig.ts` does skip any array-valued
+ * property while building `configKeys` -- but that branch is never reached for these two:
+ * `configKeys` is built by walking the *default* theme's variables
+ * (`theme.default.getThemeVariables()`), and the default theme does not define
+ * `borderColorArray`/`bkgColorArray` at all. Only `redux-color`/`redux-dark-color` do, and
+ * their variables never populate the object `keyify` walks. So today the property is simply
+ * absent, not present-and-filtered.
+ *
+ * `sanitizeDirective` strips any key that is not in `configKeys` -- the same mechanism that
+ * keeps a user from setting arbitrary config through front matter at all -- so either way,
+ * a directive-supplied `borderColorArray` cannot reach the palette code. The array-skip
+ * would become the operative defence, rather than a currently-unexercised one, if a future
+ * change ever gave the default theme its own `borderColorArray`/`bkgColorArray`. Pinning the
+ * outcome here, rather than the mechanism, is what keeps this test meaningful regardless of
+ * which of the two is actually doing the work.
+ */
+describe('palette arrays are excluded from configKeys', () => {
+  it.each(['borderColorArray', 'bkgColorArray'])('%s is not a recognised config key', (key) => {
+    expect(configKeys.has(key)).toBe(false);
   });
 });
 
