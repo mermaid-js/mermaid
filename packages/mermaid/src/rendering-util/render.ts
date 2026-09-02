@@ -176,9 +176,9 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
 const LAST_RESORT_LAYOUT = 'dagre';
 
 /**
- * Get the registered layout algorithm, falling back when it is not available -- `elk` ships
- * as a separate package and `cose-bilkent` only in large-feature builds, so a diagram type
- * may name either as its default. `fallback` may itself be absent, so `dagre` closes the chain.
+ * Get the registered layout algorithm, falling back when it is not available -- `elk` and
+ * `cose-bilkent` ship only in large-feature builds (the tiny build omits them), so a diagram
+ * type may name either as its default. `fallback` may itself be absent, so `dagre` closes the chain.
  */
 export const getRegisteredLayoutAlgorithm = (
   algorithm = '',
