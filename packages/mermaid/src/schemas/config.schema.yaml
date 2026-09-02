@@ -62,38 +62,14 @@ required:
   - venn
 properties:
   theme:
-    description: |
-      Theme, the CSS style sheet.
-      You may also use `themeCSS` to override this value.
-    type: string
-    enum:
-      - default
-      - base
-      - dark
-      - forest
-      - neutral
-      - neo
-      - neo-dark
-      - redux
-      - redux-dark
-      - redux-color
-      - redux-dark-color
-      - 'null' # should this be a `null`-type?
-    meta:enum:
-      'null': Can be set to disable any pre-defined mermaid theme
+    $ref: '#/$defs/BaseDiagramConfig/properties/theme'
     default: 'default'
   themeVariables:
     tsType: any
   themeCSS:
     type: string
   look:
-    description: |
-      Defines which main look to use for the diagram.
-    type: string
-    enum:
-      - classic
-      - handDrawn
-      - neo
+    $ref: '#/$defs/BaseDiagramConfig/properties/look'
     default: 'classic'
   handDrawnSeed:
     description: |
@@ -101,9 +77,7 @@ properties:
     type: number
     default: 0
   layout:
-    description: |
-      Defines which layout algorithm to use for rendering the diagram.
-    type: string
+    $ref: '#/$defs/BaseDiagramConfig/properties/layout'
     default: 'dagre'
   maxTextSize:
     description: The maximum allowed size of the users text diagram
@@ -132,7 +106,7 @@ properties:
           - NETWORK_SIMPLEX
           - LINEAR_SEGMENTS
           - BRANDES_KOEPF
-        default: BRANDES_KOEPF
+        # Default comes from `elk.preset` unless set explicitly.
       nodePlacementAlignment:
         description: |
           Elk specific option affecting Brandes-Koepf node placement alignment.
@@ -146,6 +120,101 @@ properties:
           - RIGHTDOWN
           - BALANCED
         default: NONE
+      preset:
+        description: |
+          Named combination of the three options that decide where nodes end up:
+          layering strategy, node placement strategy and cycle breaking strategy.
+          They belong to different phases of the layout, so a preset is simply a
+          named triple rather than a mode with behaviour of its own.
+
+          `default` — network simplex layering and placement with depth-first
+          cycle breaking at the top level, and Brandes-Koepf placement inside
+          subgraphs. Depth-first breaking gives shorter back edges on graphs
+          that loop.
+
+          `legacy` — what shipped before presets existed: Brandes-Koepf placement,
+          which straightens long edges at the cost of that alignment, with ELK's
+          own greedy cycle breaking. Reproduces the rendering of earlier
+          versions rather than the defaults their schema advertised.
+
+          `modelOrder` — as `default`, but breaks cycles by greedy model order,
+          which disturbs declaration order least at the cost of longer back
+          edges. This is the combination `default` named previously.
+
+          `depthFirst` — a name for what `default` already is, for diagrams that
+          would rather say depth-first than rely on the default.
+
+          Setting `layeringStrategy`, `nodePlacementStrategy` or
+          `cycleBreakingStrategy` explicitly overrides the preset for that one
+          option; the rest of the preset still applies.
+        type: string
+        enum:
+          - default
+          - legacy
+          - modelOrder
+          - depthFirst
+        default: default
+      straightenEdges:
+        description: |
+          Straightens an edge that leaves or enters a node with a tiny step.
+
+          ELK spreads an edge's port evenly along a node's side but routes the
+          edge down a channel whose row rarely lines up with that port exactly,
+          leaving a staircase of a few pixels right at the border. With rounded
+          corners the two micro-bends land on top of each other and read as a
+          kink. Enabling this moves the channel onto the port's row and drops
+          the step, so the edge draws as one straight line and both ports stay
+          exactly where the layout put them.
+
+          Only the step next to a node is touched, and only when the edge
+          continues the same way afterwards, so a real turn is never collapsed.
+          An edge is left alone entirely when moving its run would drag the far
+          port, or would introduce a crossing.
+        type: boolean
+        default: true
+      lineHops:
+        description: |
+          Renders edge crossings as small arcs ("hops") or visible gaps, so that
+          it is clear which line passes over which where two edges meet.
+
+          The edge that gives way loses its corner rounding for the segment
+          carrying the hop, which is the trade for a readable crossing. Curved
+          edges are skipped rather than rewritten, to avoid corrupting their
+          geometry. Set to `false` to draw plain crossings.
+        oneOf:
+          - type: boolean
+          - type: string
+            enum: ['arc', 'gap']
+        default: true
+      layeringStrategy:
+        description: |
+          Elk specific option deciding which layer each node is assigned to — the
+          column in a left-to-right diagram, the row in a top-down one. This is
+          the coarsest of the three placement decisions, so changing it moves
+          nodes further than anything else short of altering spacing.
+
+          NETWORK_SIMPLEX aims for the fewest long edges. LONGEST_PATH pushes
+          every node as late as it can go. COFFMAN_GRAHAM bounds how many nodes
+          share a layer, giving a more even, block-like shape on wide graphs.
+          MIN_WIDTH and STRETCH_WIDTH trade edge length for a narrower or wider
+          drawing. INTERACTIVE honours positions already on the nodes.
+        type: string
+        enum:
+          - NETWORK_SIMPLEX
+          - LONGEST_PATH
+          - LONGEST_PATH_SOURCE
+          - COFFMAN_GRAHAM
+          - MIN_WIDTH
+          - STRETCH_WIDTH
+          - INTERACTIVE
+        # Default comes from `elk.preset` unless set explicitly.
+      layeringLayerBound:
+        description: |
+          Elk specific option capping how many nodes COFFMAN_GRAHAM will put in
+          one layer. Ignored by every other layering strategy. Lower values give
+          a taller, narrower drawing.
+        type: number
+        default: 4
       cycleBreakingStrategy:
         description: |
           This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
@@ -156,7 +225,7 @@ properties:
           - INTERACTIVE
           - MODEL_ORDER
           - GREEDY_MODEL_ORDER
-        default: GREEDY_MODEL_ORDER
+        # Default comes from `elk.preset` unless set explicitly.
       forceNodeModelOrder:
         description: |
           The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.
@@ -403,6 +472,42 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           If set to `false`, the absolute space required is used.
         type: boolean
         default: true
+      # Declared here as well as at the top level so a diagram type can carry its own
+      # default; the top-level properties `$ref` these, keeping the enums written once.
+      # Resolution, highest first: frontmatter/directive, `initialize()`, this diagram
+      # type's default, the top-level default. Diagram-scoped beats global within a layer.
+      theme:
+        description: |
+          Theme, the CSS style sheet.
+          You may also use `themeCSS` to override this value.
+        type: string
+        enum:
+          - default
+          - base
+          - dark
+          - forest
+          - neutral
+          - neo
+          - neo-dark
+          - redux
+          - redux-dark
+          - redux-color
+          - redux-dark-color
+          - 'null' # should this be a `null`-type?
+        meta:enum:
+          'null': Can be set to disable any pre-defined mermaid theme
+      look:
+        description: |
+          Defines which main look to use for the diagram.
+        type: string
+        enum:
+          - classic
+          - handDrawn
+          - neo
+      layout:
+        description: |
+          Defines which layout algorithm to use for rendering the diagram.
+        type: string
   C4DiagramConfig:
     title: C4 Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -975,6 +1080,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     required:
       - useMaxWidth
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       rect_fill:
         type: string
         default: '#f9f9f9'
@@ -1461,6 +1572,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       # TODO: fontSize is the only property that is not required, is this correct?
       - useMaxWidth
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
@@ -1531,6 +1648,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - useMaxWidth
       - defaultRenderer
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
@@ -1618,6 +1741,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - useMaxWidth
       - defaultRenderer
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
@@ -2085,6 +2214,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - messageFontFamily
       - messageFontWeight
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       arrowMarkerAbsolute:
         type: boolean # TODO, is this actually used here (it has no default value but was in types)
       hideUnusedParticipants:
@@ -2226,6 +2361,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     unevaluatedProperties: false
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
+      layout:
+        $ref: '#/$defs/BaseDiagramConfig/properties/layout'
+        # Swimlanes differ from flowcharts only in the layout engine, so the engine is the
+        # diagram type. Declared here, not forced by the renderer, so an override still wins.
+        default: 'swimlane'
       lineHops:
         description: |
           Renders edge crossings as small arcs ("hops") or visible gaps so that
@@ -2268,6 +2414,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     unevaluatedProperties: false
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       titleTopMargin:
         description: Margin top for the text over the diagram
         type: integer
@@ -2316,6 +2468,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - defaultRenderer
       - wrappingWidth
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
@@ -2719,6 +2877,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     required:
       - useMaxWidth
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       actorFontSize:
         description: Font size for actor labels
         type: number
@@ -2780,6 +2944,36 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         minimum: 0
         default: 20
+      colorScheme:
+        description: |
+          How a use case diagram takes its colours from the active theme.
+
+          `role` (the default) gives every element of a kind one colour, read from the
+          `usecaseActorBkg` / `usecaseActorBorder`, `usecaseBkg` / `usecaseBorder`, and
+          `usecaseBoundaryBkg` / `usecaseBoundaryBorder` theme variables. Colour then says
+          what an element *is*, and it is invariant under insertion, reordering, and
+          renaming -- adding one use case in the middle does not recolour the ones after it,
+          so diffs, documentation screenshots, and visual baselines stay stable.
+
+          `rotate` instead gives each actor, use case, and system boundary its own slot from
+          the theme's categorical palette (`borderColorArray` / `bkgColorArray`), the way ER
+          entities and class boxes are coloured. Actors and use cases share one cycle, and
+          system boundaries run a second one from zero, so a boundary is never forced to
+          match an element inside it. Within the shared cycle the actors are numbered first
+          and the use cases after them, each in declaration order -- an interleaved
+          `actor A`, `usecase U`, `actor B` is therefore numbered A, B, U rather than
+          A, U, B. This buys per-instance variety at the cost of the stability `role` has:
+          inserting an element shifts the colour of every later element of its own kind, and
+          inserting an actor shifts the use cases too. Only the colour themes
+          (`redux-color`, `redux-dark-color`) carry a palette, so on every other theme the
+          two settings render identically.
+
+          `classDef` and `style` keep overriding both, whichever is set.
+        type: string
+        enum:
+          - role
+          - rotate
+        default: role
   VennDiagramConfig:
     title: Venn Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -2787,6 +2981,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     type: object
     unevaluatedProperties: false
     properties:
+      theme:
+        $ref: '#/$defs/BaseDiagramConfig/properties/theme'
+        default: 'redux-color'
+      look:
+        $ref: '#/$defs/BaseDiagramConfig/properties/look'
+        default: 'neo'
       width:
         description: The width of the Venn diagram.
         type: number
