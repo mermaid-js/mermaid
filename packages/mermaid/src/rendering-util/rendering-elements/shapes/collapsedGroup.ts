@@ -8,6 +8,7 @@ import { createRoundedRectPathD } from './roundedRectPath.js';
 import { userNodeOverrides, styles2String } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
 import { handleUndefinedAttr } from '../../../utils.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 
 /** Height reserved for the ellipsis indicator row below the title */
 const INDICATOR_ROW_HEIGHT = 20;
@@ -82,6 +83,12 @@ export async function collapsedGroup<T extends SVGGraphicsElement>(
   const { nodeStyles } = styles2String(node);
 
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+
+  // A collapsed subgraph is still a container, so it takes the same palette slot its
+  // expanded form would. Without this it renders uncoloured beside tinted siblings, and
+  // the seam shows up exactly when someone uses the collapse feature.
+  const { theme, themeVariables } = getConfig();
+  stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);
 
   const padding = node.padding ?? 8;
   const titleHeight = bbox.height;

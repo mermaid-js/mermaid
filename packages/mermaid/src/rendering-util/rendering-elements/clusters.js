@@ -10,12 +10,13 @@ import createLabel from './createLabel.js';
 import { createRoundedRectPathD } from './shapes/roundedRectPath.ts';
 import { compileStyles, styles2String, userNodeOverrides } from './shapes/handDrawnShapeStyles.js';
 import { swimlane } from './clusters/swimlane.js';
+import { stampColorSlot } from '../../diagrams/common/colorThemeGate.js';
 
 const rect = async (parent, node) => {
   log.info('Creating subgraph rect for ', node.id, node);
   const siteConfig = getConfig();
-  const { themeVariables, handDrawnSeed } = siteConfig;
-  const { clusterBkg, clusterBorder } = themeVariables;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder, borderColorArray } = themeVariables;
 
   const { labelStyles, nodeStyles, borderStyles, backgroundStyles } = styles2String(node);
 
@@ -25,6 +26,11 @@ const rect = async (parent, node) => {
     .attr('class', 'cluster ' + node.cssClasses)
     .attr('id', node.domId)
     .attr('data-look', node.look);
+
+  // Per-container colour slot. A no-op unless the active theme carries a palette, and
+  // painted only by diagrams whose stylesheet defines the matching `[data-color-id]`
+  // rules -- for state, block and class namespaces this is an inert attribute.
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   const useHtmlLabels = getEffectiveHtmlLabels(siteConfig);
 
