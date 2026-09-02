@@ -6,6 +6,12 @@ const themes = [
   { theme: 'neo-dark', label: 'neo-dark' },
   { theme: 'redux', label: 'redux' },
   { theme: 'redux-dark', label: 'redux-dark' },
+  // The colour themes give each class box its own border and fill. Without these two
+  // entries nothing in the suite renders a class diagram under them, so the palette
+  // wiring — the slot stamped on the element meeting the selector emitted by the
+  // stylesheet — had no visual coverage at all.
+  { theme: 'redux-color', label: 'redux-color' },
+  { theme: 'redux-dark-color', label: 'redux-dark-color' },
 ];
 
 const diagrams = {
