@@ -1086,6 +1086,53 @@ describe('evenGroupFrames', () => {
     expect(nodeDb.P.offset.posX + nodeDb.P.width).toBe(374);
   });
 
+  it('never pulls a frame past the anchor of an edge that terminates on the group', () => {
+    // A state diagram's `[*] --> Composite` (or a flowchart's `a --> subgraph`)
+    // is anchored by ELK ON the frame's border. Pulling the frame in past that
+    // anchor leaves it floating outside the drawn frame; the on-border check in
+    // `sanitizeElkEdgePoints` then fails and `cutter2` re-clips the edge along
+    // a ray to the group's centre — a long shallow diagonal hugging the frame's
+    // side, which is the reported defect.
+    const nodeDb: Record<string, any> = {
+      g: { id: 'g', isGroup: true, offset: { posX: 0, posY: 0 }, width: 200, height: 148 },
+      n: { id: 'n', offset: { posX: 60, posY: 48 }, width: 100, height: 76 },
+      ext: { id: 'ext', offset: { posX: 5, posY: -60 }, width: 14, height: 14 },
+    };
+    const graph = {
+      edges: [
+        {
+          id: 'e',
+          sources: ['ext'],
+          targets: ['g'],
+          sections: [
+            {
+              // Only the endpoint sits on the group; the start and the bend
+              // belong to the layout outside and must NOT hold the frame open.
+              startPoint: { x: 500, y: -40 },
+              bendPoints: [{ x: 500, y: -10 }],
+              endPoint: { x: 12, y: 0 },
+            },
+          ],
+        },
+      ],
+    };
+    const layoutState = { nodeDb, parentLookupDb: { parentById: {} } };
+
+    evenGroupFrames(
+      [{ id: 'g', isGroup: true, labelData: { width: 0 }, labels: [], children: [{ id: 'n' }] }],
+      layoutState as any,
+      new Map(),
+      graph as any
+    );
+
+    // The left border stays where ELK put it — the anchor at x=12 is on the top
+    // border and pulling the left edge to 60 - 24 = 36 would strand it.
+    expect(nodeDb.g.offset.posX).toBe(0);
+    // The right side still evens up to the child (160 + 24): the section's far
+    // start point at x=500 was ignored, or the frame would have stayed at 200.
+    expect(nodeDb.g.width).toBe(184);
+  });
+
   it("leaves ELK's own origin readable after moving a frame", () => {
     // Edge sections resolve against the container's ORIGINAL origin, so moving
     // a frame must not overwrite it or every edge inside would shift with it.

@@ -1177,6 +1177,11 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
    */
   look?: 'classic' | 'handDrawn' | 'neo';
   /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
+  /**
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
