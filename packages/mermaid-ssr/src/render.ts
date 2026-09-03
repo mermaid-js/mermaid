@@ -1,27 +1,22 @@
 #!/usr/bin/env node
-/**
+/*
  * CLI tool for rendering mermaid diagrams without a browser.
  *
  * Usage:
- *   npx tsx packages/mermaid/src/cli/render.ts [input-file] [output-file]
- *   echo 'flowchart TD; A--\>B' | npx tsx packages/mermaid/src/cli/render.ts
+ *   pnpm --filter @mermaid-js/mermaid-ssr render [input-file] [output-file]
+ *   echo 'flowchart TD; A--\>B' | pnpm --filter @mermaid-js/mermaid-ssr render
  *
  * If no output file is specified, SVG is written to stdout.
  * If no input file is specified, reads from stdin.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
 
 // Virtual DOM must be set up BEFORE importing mermaid (D3 reads globals at import time)
 import { createVirtualDOMEnvironment } from './virtualDOM.js';
 
 const virtualDOM = createVirtualDOMEnvironment();
 
-// Import the pre-built mermaid bundle (avoids needing YAML/jison custom loaders)
-const selfDir = dirname(fileURLToPath(import.meta.url));
-const distPath = resolve(selfDir, '../../dist/mermaid.core.mjs');
-const { default: mermaid } = await import(distPath);
+const { default: mermaid } = await import('mermaid');
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -36,8 +31,8 @@ Arguments:
   output-file  Path to write SVG output (writes to stdout if omitted)
 
 Examples:
-  npx tsx packages/mermaid/src/cli/render.ts diagram.mmd output.svg
-  echo 'packet-beta\\n  0-15: "Header"' | npx tsx packages/mermaid/src/cli/render.ts
+  pnpm --filter @mermaid-js/mermaid-ssr render diagram.mmd output.svg
+  echo 'packet-beta\\n  0-15: "Header"' | pnpm --filter @mermaid-js/mermaid-ssr render
 `);
 }
 

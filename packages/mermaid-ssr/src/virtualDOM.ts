@@ -1,5 +1,5 @@
 /**
- * Virtual DOM environment for browserless mermaid rendering.
+ * Virtual DOM environment for rendering mermaid without a browser.
  *
  * Sets up a JSDOM instance with mocked browser measurement APIs
  * (`getBBox`, `getComputedTextLength`, `getBoundingClientRect`) so that
@@ -8,7 +8,7 @@
  * All dimension estimation is delegated to `fontMetrics` and `svgBBox`.
  */
 import { JSDOM } from 'jsdom';
-import { getFontSize, getFontWeight, measureTextWidth } from './fontMetrics.js';
+import { fontOf, measureTextWidth } from './fontMetrics.js';
 import { estimateBBox, getTextContent } from './svgBBox.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,10 +50,10 @@ export function createVirtualDOMEnvironment(): VirtualDOMEnvironment {
         return estimateBBox(this);
       });
 
-      // getComputedTextLength — estimated text width via AFM metrics
+      // getComputedTextLength — advance width from the resolved font
       forceSet(_window.Element.prototype, 'getComputedTextLength', function (this: Element) {
         const text = getTextContent(this);
-        return measureTextWidth(text, getFontSize(this), getFontWeight(this));
+        return measureTextWidth(text, fontOf(this));
       });
 
       // getBoundingClientRect — DOMRect-like wrapper around estimateBBox

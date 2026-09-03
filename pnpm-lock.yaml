@@ -330,18 +330,12 @@ importers:
       marked:
         specifier: ^16.3.0
         version: 16.3.0
-      opentype.js:
-        specifier: ^1.3.4
-        version: 1.3.4
       roughjs:
         specifier: ^4.6.6
         version: 4.6.6(patch_hash=3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64)
       stylis:
         specifier: ^4.3.6
         version: 4.3.6
-      svg-path-bbox:
-        specifier: ^2.1.0
-        version: 2.1.0
       ts-dedent:
         specifier: ^2.2.0
         version: 2.2.0
@@ -537,6 +531,31 @@ importers:
         version: 2.0.2
 
   packages/mermaid-local-editor: {}
+
+  packages/mermaid-ssr:
+    dependencies:
+      jsdom:
+        specifier: ^26.1.0
+        version: 26.1.0(canvas@3.2.3)
+      mermaid:
+        specifier: workspace:^
+        version: link:../mermaid
+      opentype.js:
+        specifier: 1.3.4
+        version: 1.3.4
+      svg-path-bbox:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@mermaid-js/examples':
+        specifier: workspace:^
+        version: link:../examples
+      '@types/jsdom':
+        specifier: ^21.1.7
+        version: 21.1.7
+      '@types/opentype.js':
+        specifier: ^1.3.10
+        version: 1.3.10
 
   packages/mermaid-zenuml:
     dependencies:
@@ -4124,6 +4143,9 @@ packages:
 
   '@types/node@22.20.1':
     resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}
+
+  '@types/opentype.js@1.3.10':
+    resolution: {integrity: sha512-F67EFyk6j02okHz5JCgata3ZRAcZi9GLnzmkHw/rzJq3OCc8/ZVdoKrxMTYjcQP6IYHGBz2cav1cpzkOkPiPCQ==}
 
   '@types/qs@6.14.0':
     resolution: {integrity: sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==}
@@ -14503,6 +14525,8 @@ snapshots:
   '@types/node@22.20.1':
     dependencies:
       undici-types: 6.21.0
+
+  '@types/opentype.js@1.3.10': {}
 
   '@types/qs@6.14.0': {}
 

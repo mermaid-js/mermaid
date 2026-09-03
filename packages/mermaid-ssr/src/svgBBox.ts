@@ -7,14 +7,14 @@
  */
 import { svgPathBbox } from 'svg-path-bbox';
 import {
-  getFontSize,
-  getFontWeight,
-  measureTextWidth,
+  fontOf,
   lineBoxHeight,
+  lineMetrics,
+  measureTextWidth,
   parseEmValue,
 } from './fontMetrics.js';
 
-/** Simple {x, y, width, height} rectangle. */
+/** Simple rectangle: x, y, width, height. */
 export interface BBox {
   x: number;
   y: number;
@@ -37,7 +37,7 @@ export function getTextContent(el: Element): string {
   return el.textContent ?? '';
 }
 
-const RE_TRANSLATE = /translate\(\s*([^,)]+)\s*(?:,\s*([^)]+))?\s*\)/;
+const RE_TRANSLATE = /translate\(\s*([^),]+)\s*(?:,\s*([^)]+))?\s*\)/;
 
 // ── Leaf geometry ──────────────────────────────────────────────────────
 
@@ -123,28 +123,25 @@ function pathBBox(el: Element): BBox {
 // ── Text elements ──────────────────────────────────────────────────────
 
 function textBBox(el: Element): BBox {
-  const fontSize = getFontSize(el);
-  const fontWeight = getFontWeight(el);
-  const tspans = el.querySelectorAll('tspan');
+  const spec = fontOf(el);
+  const fontSize = spec.size;
+  const spans = [...el.querySelectorAll('tspan')];
 
-  if (tspans.length > 0) {
+  if (spans.length > 0) {
     const textY = numAttr(el, 'y');
-    // Tuned to better match browser getBBox() for Mermaid's svg <text>/<tspan> labels.
-    const ascent = fontSize * 0.94;
-    const descent = fontSize * 0.25;
+    const { ascent, descent } = lineMetrics(spec);
     let hasVisibleText = false;
     let totalMinY = 0;
     let totalMaxY = 0;
     let maxW = 0;
     let currentBaseline = textY;
 
-    for (let i = 0; i < tspans.length; i++) {
-      const ts = tspans[i];
+    for (const [i, ts] of spans.entries()) {
       const lineText = ts.textContent ?? '';
       if (lineText.trim()) {
         hasVisibleText = true;
       }
-      const w = measureTextWidth(lineText, fontSize, fontWeight);
+      const w = measureTextWidth(lineText, spec);
       if (w > maxW) {
         maxW = w;
       }
@@ -193,8 +190,8 @@ function textBBox(el: Element): BBox {
   if (!text.trim()) {
     return ZERO_BOX;
   }
-  const w = measureTextWidth(text, fontSize, fontWeight);
-  const h = lineBoxHeight(fontSize);
+  const w = measureTextWidth(text, spec);
+  const h = lineBoxHeight(spec);
   return { x: numAttr(el, 'x'), y: numAttr(el, 'y') - h, width: w, height: h };
 }
 
@@ -249,14 +246,8 @@ export function estimateBBox(el: Element): BBox {
   if (children.length === 0) {
     const text = getTextContent(el);
     if (text.trim()) {
-      const fontSize = getFontSize(el);
-      const fontWeight = getFontWeight(el);
-      return {
-        x: 0,
-        y: 0,
-        width: measureTextWidth(text, fontSize, fontWeight),
-        height: lineBoxHeight(fontSize),
-      };
+      const spec = fontOf(el);
+      return { x: 0, y: 0, width: measureTextWidth(text, spec), height: lineBoxHeight(spec) };
     }
     return ZERO_BOX;
   }
@@ -266,8 +257,7 @@ export function estimateBBox(el: Element): BBox {
   let maxX = -Infinity;
   let maxY = -Infinity;
 
-  for (let i = 0; i < children.length; i++) {
-    const child = children[i];
+  for (const child of children) {
     if (SKIP_TAGS.has(child.tagName?.toLowerCase())) {
       continue;
     }
