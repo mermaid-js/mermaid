@@ -45,6 +45,8 @@ interface BaseNode {
   width?: number;
   height?: number;
   wrappingWidth?: number;
+  /** Minimum width of the label area; short labels are widened to it (see `minNodeWidth`). */
+  minWidth?: number;
   labelBBox?: {
     width: number;
     height: number;

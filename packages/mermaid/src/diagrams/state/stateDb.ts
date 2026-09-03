@@ -758,6 +758,12 @@ export class StateDB {
 
   getData() {
     const config = getConfig();
+    for (const node of this.nodes) {
+      node.wrappingWidth ??= config.state?.wrappingWidth;
+      if (!node.isGroup) {
+        node.minWidth ??= config.state?.minNodeWidth;
+      }
+    }
     return {
       nodes: this.nodes,
       edges: this.edges,

@@ -59,6 +59,7 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
       useHtmlLabels: node.useHtmlLabels,
       padding: 0,
       centerLabel: true,
+      width: node.wrappingWidth,
     });
     stereotypeLabel = stereotype.label.attr('class', 'label usecase-stereotype');
     stereotypeBox = stereotype.bbox;

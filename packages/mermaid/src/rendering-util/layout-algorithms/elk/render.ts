@@ -1031,14 +1031,14 @@ function getMeasuredLabelData(node: Node, config: any): LabelData {
     return {
       width: node.labelBBox.width,
       height: Math.max(0, node.labelBBox.height - 2),
-      wrappingWidth: config.flowchart?.wrappingWidth,
+      wrappingWidth: node.wrappingWidth ?? config.flowchart?.wrappingWidth,
     };
   }
 
   return {
     width: 0,
     height: 0,
-    wrappingWidth: config.flowchart?.wrappingWidth,
+    wrappingWidth: node.wrappingWidth ?? config.flowchart?.wrappingWidth,
   };
 }
 

@@ -476,6 +476,16 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   wrappingWidth?: number;
   /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
+  /**
    * If true, subgraphs without explicit direction will inherit the global graph direction
    * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
    *
@@ -652,6 +662,24 @@ export interface AgentflowDiagramConfig extends BaseDiagramConfig {
    *
    */
   rankSpacing?: number;
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -1181,6 +1209,24 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
    *
    */
   layout?: string;
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
   /**
    * Margin top for the text over the diagram
    */
@@ -2307,6 +2353,24 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    *
    */
   look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
   /**
    * Font size for actor labels
    */
