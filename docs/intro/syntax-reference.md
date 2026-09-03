@@ -130,7 +130,7 @@ An application of using Directives to change [Themes](../config/theming.md). `Th
 
 ### Layout and look
 
-We've restructured how Mermaid renders diagrams, enabling new features like selecting layout and look. **Currently, this is supported for flowcharts and state diagrams**, with plans to extend support to all diagram types.
+We've restructured how Mermaid renders diagrams, enabling new features like selecting layout and look. **Currently, this is supported for flowchart, state, class, entity relationship, requirement, use case, and agentflow diagrams**, with plans to extend support to all diagram types. Mindmaps are the exception: they keep their own `cose-bilkent` layout unless a layout is explicitly set (the tiny build, which ships neither ELK nor cose-bilkent, falls back to Dagre).
 
 ### Selecting Diagram Looks
 
@@ -178,8 +178,12 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 #### Supported Layout Algorithms:
 
-- Dagre (default): This is the classic layout algorithm that has been used in Mermaid for a long time. It provides a good balance of simplicity and visual clarity, making it ideal for most diagrams.
-- ELK: For those who need more sophisticated layout capabilities, especially when working with large or intricate diagrams, the ELK (Eclipse Layout Kernel) layout offers advanced options. It provides a more optimized arrangement, potentially reducing overlapping and improving readability. This is not included out the box but needs to be added when integrating mermaid for sites/applications that want to have elk support.
+- ELK (default): The ELK (Eclipse Layout Kernel) layout offers more sophisticated layout capabilities, especially for large or intricate diagrams, producing a more optimized arrangement with fewer overlaps. It is bundled with Mermaid and needs no setup.
+- Dagre: The classic layout algorithm used by Mermaid for a long time. It provides a good balance of simplicity and visual clarity, and remains available with `layout: dagre`.
+
+> **Note**
+> The `mermaid` **tiny** build omits ELK to stay small. Diagrams asking for an
+> ELK layout there fall back to Dagre.
 
 #### How to Select a Layout Algorithm:
 
@@ -270,4 +274,13 @@ B -->|Option 2| D[Path 2]
 
 These options give you the flexibility to create diagrams that not only look great but are also arranged to best suit your data’s structure and flow.
 
-When integrating Mermaid, you can include look and layout configuration with the initialize call. This is also where you add the loading of elk.
+When integrating Mermaid, you can include look and layout configuration with the initialize call:
+
+```js
+mermaid.initialize({ look: 'handDrawn', layout: 'elk' });
+```
+
+ELK ships with Mermaid, so no separate package or registration is needed — the
+`@mermaid-js/layout-elk` dependency and its `registerLayoutLoaders` call can be
+removed. That package is still published for builds that omit ELK, which today
+means the **tiny** build.

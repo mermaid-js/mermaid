@@ -98,9 +98,9 @@ describe('per-diagram appearance defaults', () => {
       expect(pie.themeVariables.primaryColor).toBe(theme.default.getThemeVariables().primaryColor);
     });
 
-    it('leaves the layout on dagre except where a diagram type names its own', async () => {
-      expect((await configFor(REDESIGNED_DIAGRAMS.class)).layout).toBe('dagre');
-      expect((await configFor(UNCHANGED_DIAGRAMS.pie)).layout).toBe('dagre');
+    it('leaves the layout on elk except where a diagram type names its own', async () => {
+      expect((await configFor(REDESIGNED_DIAGRAMS.class)).layout).toBe('elk');
+      expect((await configFor(UNCHANGED_DIAGRAMS.pie)).layout).toBe('elk');
       // The one type that names its own -- see `swimlanesDiagram.spec.ts`.
       expect((await configFor(REDESIGNED_DIAGRAMS.swimlane)).layout).toBe('swimlane');
     });
@@ -138,9 +138,9 @@ describe('per-diagram appearance defaults', () => {
     });
 
     it('opts a diagram type into a layout', async () => {
-      mermaidAPI.initialize({ er: { layout: 'elk' } });
-      expect((await configFor(REDESIGNED_DIAGRAMS.er)).layout).toBe('elk');
-      expect((await configFor(REDESIGNED_DIAGRAMS.class)).layout).toBe('dagre');
+      mermaidAPI.initialize({ er: { layout: 'dagre' } });
+      expect((await configFor(REDESIGNED_DIAGRAMS.er)).layout).toBe('dagre');
+      expect((await configFor(REDESIGNED_DIAGRAMS.class)).layout).toBe('elk');
     });
   });
 

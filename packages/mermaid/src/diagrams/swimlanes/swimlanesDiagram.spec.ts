@@ -43,7 +43,7 @@ describe('swimlanesDiagram', () => {
   });
 
   it('leaves plain flowcharts on the global default layout', async () => {
-    expect(await layoutFor(FLOWCHART)).toBe('dagre');
+    expect(await layoutFor(FLOWCHART)).toBe('elk');
   });
 
   it('keeps an explicit global layout override', async () => {

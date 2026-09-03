@@ -389,8 +389,14 @@ export const dataFetcher = (
         cssCompiledStyles: [],
         id: itemId + NOTE_ID + '-' + graphItemCount,
         domId: stateDomId(itemId, graphItemCount, NOTE),
-        type: newNode.type,
-        isGroup: newNode.type === 'group',
+        // A note is a leaf: it is placed inside the note group below, alongside
+        // the state it annotates. Inheriting `type`/`isGroup` from that state
+        // marked the note as a container when annotating a composite state,
+        // and the renderer then looked for a `note` *cluster* shape, which does
+        // not exist. dagre only reads `isGroup` for edge hints so it survived;
+        // the shared paint path uses it to decide cluster-ness and threw.
+        type: 'node',
+        isGroup: false,
         padding: config.flowchart?.padding,
         look,
         position: parsedItem.note.position,
