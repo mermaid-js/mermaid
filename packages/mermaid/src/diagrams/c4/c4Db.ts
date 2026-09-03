@@ -23,6 +23,41 @@ type ParserAttribute = string | Record<string, string>;
 const TEXT_FIELDS = new Set(['label', 'descr', 'techn', 'type']);
 
 /**
+ * An `UpdateElementStyle` / `UpdateRelStyle` colour, accepted only if it is a
+ * colour on its own. The value is interpolated into a CSS declaration, so one
+ * carrying `;` or a `url(...)` could append further declarations; `CSS.supports`
+ * rejects those, and anything it cannot judge (no CSS API, as in jsdom) falls
+ * back to a conservative pattern match.
+ */
+const asColor = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || value === '') {
+    return undefined;
+  }
+  const accepted =
+    typeof globalThis.CSS?.supports === 'function'
+      ? globalThis.CSS.supports('color', value)
+      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%,./]+\)|hsla?\([\d\s%,./deg]+\))$/i.test(value);
+  return accepted ? value : undefined;
+};
+
+const COLOR_STYLE_KEYS = new Set(['bgColor', 'fontColor', 'borderColor', 'textColor', 'lineColor']);
+
+const assignAttributeValue = (
+  target: C4Shape | C4Boundary | C4Rel,
+  key: string,
+  value: string
+): void => {
+  if (COLOR_STYLE_KEYS.has(key)) {
+    const color = asColor(value);
+    if (color !== undefined) {
+      target[key] = color;
+    }
+    return;
+  }
+  target[key] = value;
+};
+
+/**
  * Apply optional C4 attributes to `bag` from the parser.
  *
  * Values may arrive as a raw positional value or a single `{ key: value }` named
@@ -516,31 +551,31 @@ export const updateElStyle = function (
   if (bgColor !== undefined && bgColor !== null) {
     if (typeof bgColor === 'object') {
       const [key, value] = Object.entries(bgColor)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
-      old.bgColor = bgColor;
+      assignAttributeValue(old, 'bgColor', bgColor);
     }
   }
   if (fontColor !== undefined && fontColor !== null) {
     if (typeof fontColor === 'object') {
       const [key, value] = Object.entries(fontColor)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
-      old.fontColor = fontColor;
+      assignAttributeValue(old, 'fontColor', fontColor);
     }
   }
   if (borderColor !== undefined && borderColor !== null) {
     if (typeof borderColor === 'object') {
       const [key, value] = Object.entries(borderColor)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
-      old.borderColor = borderColor;
+      assignAttributeValue(old, 'borderColor', borderColor);
     }
   }
   if (shadowing !== undefined && shadowing !== null) {
     if (typeof shadowing === 'object') {
       const [key, value] = Object.entries(shadowing)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
       old.shadowing = shadowing;
     }
@@ -548,7 +583,7 @@ export const updateElStyle = function (
   if (shape !== undefined && shape !== null) {
     if (typeof shape === 'object') {
       const [key, value] = Object.entries(shape)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
       old.shape = shape;
     }
@@ -556,7 +591,7 @@ export const updateElStyle = function (
   if (sprite !== undefined && sprite !== null) {
     if (typeof sprite === 'object') {
       const [key, value] = Object.entries(sprite)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
       old.sprite = sprite;
     }
@@ -564,7 +599,7 @@ export const updateElStyle = function (
   if (techn !== undefined && techn !== null) {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
       // The parser hands over a plain string here, even though `techn` is a
       // `{ text: string }` object everywhere else.
@@ -574,7 +609,7 @@ export const updateElStyle = function (
   if (legendText !== undefined && legendText !== null) {
     if (typeof legendText === 'object') {
       const [key, value] = Object.entries(legendText)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
       old.legendText = legendText;
     }
@@ -582,7 +617,7 @@ export const updateElStyle = function (
   if (legendSprite !== undefined && legendSprite !== null) {
     if (typeof legendSprite === 'object') {
       const [key, value] = Object.entries(legendSprite)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
       old.legendSprite = legendSprite;
     }
@@ -606,17 +641,17 @@ export const updateRelStyle = function (
   if (textColor !== undefined && textColor !== null) {
     if (typeof textColor === 'object') {
       const [key, value] = Object.entries(textColor)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
-      old.textColor = textColor;
+      assignAttributeValue(old, 'textColor', textColor);
     }
   }
   if (lineColor !== undefined && lineColor !== null) {
     if (typeof lineColor === 'object') {
       const [key, value] = Object.entries(lineColor)[0];
-      old[key] = value;
+      assignAttributeValue(old, key, value);
     } else {
-      old.lineColor = lineColor;
+      assignAttributeValue(old, 'lineColor', lineColor);
     }
   }
   if (offsetX !== undefined && offsetX !== null) {
