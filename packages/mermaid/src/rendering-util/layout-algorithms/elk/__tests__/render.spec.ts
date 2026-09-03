@@ -150,6 +150,43 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.layered.nodePlacement.strategy']).toBe('SIMPLE');
   });
 
+  it('takes the cycle breaking strategy from the named preset', () => {
+    const breaking = (preset?: string) =>
+      buildSubgraphLayoutOptions({}, preset ? { preset } : undefined, 'layered')[
+        'elk.layered.cycleBreaking.strategy'
+      ];
+
+    // Containers used to receive no cycle-breaking option at all and silently
+    // ran ELK's own default, GREEDY, while the root ran the preset's. The two
+    // sides then broke different edges of the same cycle, so a composite
+    // containing a loop opened on whichever node greedy promoted to a source.
+    expect(breaking()).toBe('DEPTH_FIRST');
+    expect(breaking('default')).toBe('DEPTH_FIRST');
+    expect(breaking('modelOrder')).toBe('GREEDY_MODEL_ORDER');
+    // `legacy` reproduces what earlier versions rendered, so it has to keep
+    // reaching containers with GREEDY rather than inheriting the new default.
+    expect(breaking('legacy')).toBe('GREEDY');
+  });
+
+  it('lets an explicit cycleBreakingStrategy beat the preset in a container', () => {
+    const opts = buildSubgraphLayoutOptions(
+      {},
+      { preset: 'legacy', cycleBreakingStrategy: 'MODEL_ORDER' },
+      'layered'
+    );
+    expect(opts['elk.layered.cycleBreaking.strategy']).toBe('MODEL_ORDER');
+  });
+
+  it('resolves container cycle breaking to the same value as the root', () => {
+    // The bug was the two disagreeing. Pin that they agree rather than pinning
+    // each side's value separately, which is what let them drift.
+    for (const preset of ['default', 'legacy', 'modelOrder', 'depthFirst']) {
+      expect(
+        buildSubgraphLayoutOptions({}, { preset }, 'layered')['elk.layered.cycleBreaking.strategy']
+      ).toBe(resolveElkPreset(preset).cycleBreaking);
+    }
+  });
+
   it('takes the container placement strategy from the named preset', () => {
     const placement = (preset: string) =>
       buildSubgraphLayoutOptions({}, { preset }, 'layered')['elk.layered.nodePlacement.strategy'];

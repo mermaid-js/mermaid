@@ -79,6 +79,7 @@ interface ElkSubgraphConfig {
   layeringLayerBound?: number;
   nodePlacementAlignment?: string;
   nodePlacementStrategy?: string;
+  cycleBreakingStrategy?: string;
 }
 
 interface ElkPreparedLayout {
@@ -322,6 +323,10 @@ export function buildSubgraphLayoutOptions(
   const pad = node.padding ?? 0;
   const minWidth = labelW + 2 * pad;
   const labelH = node.labelData?.height ?? 0;
+  // Hoisted, as in `createRootElkGraph`: the two functions resolve the same
+  // preset for the same reasons, and reading alike is most of what keeps them
+  // from drifting apart again.
+  const preset = resolveElkPreset(elkConfig?.preset);
 
   const layoutOptions: Record<string, unknown> = {
     'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
@@ -372,7 +377,14 @@ export function buildSubgraphLayoutOptions(
     // — as this did — leaves the container holding two values for it with no
     // say in which wins, and quietly ignores an explicit `nodePlacementStrategy`.
     'elk.layered.nodePlacement.strategy':
-      elkConfig?.nodePlacementStrategy ?? resolveElkPreset(elkConfig?.preset).containerPlacement,
+      elkConfig?.nodePlacementStrategy ?? preset.containerPlacement,
+    // Resolved here as well as at the root, because a container laid out on its
+    // own never sees the root's value and falls back to ELK's default, GREEDY.
+    // That reverses a different edge than the preset asked for, so a composite
+    // containing a loop opens on whichever node greedy promoted to a source
+    // rather than on its own start node. Same key and same resolution as the
+    // root, so `legacy` reproduces the old rendering inside frames too.
+    'elk.layered.cycleBreaking.strategy': elkConfig?.cycleBreakingStrategy ?? preset.cycleBreaking,
     // PORT_POSITION lets a node shift so an edge can leave straight rather than
     // bending immediately off the port.
     'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
