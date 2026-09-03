@@ -247,6 +247,43 @@ describe('Graphlib decorations', () => {
       expect(g.nodes().length).toBe(1);
     });
 
+    it('extracts cluster with explicit direction even when it has external connections (#8066)', function () {
+      /*
+      flowchart LR
+      subgraph Branches
+        dev --> uat
+      end
+      subgraph Orgs
+        direction TB
+        org1
+        org2
+      end
+      dev --> org1
+      uat --> org2
+      */
+      g.setNode('Branches', { data: 'branches' });
+      g.setNode('dev', { data: 'dev' });
+      g.setNode('uat', { data: 'uat' });
+      g.setParent('dev', 'Branches');
+      g.setParent('uat', 'Branches');
+      g.setEdge('dev', 'uat', { data: 'internal' }, '1');
+
+      g.setNode('Orgs', { data: 'orgs', dir: 'TB' });
+      g.setNode('org1', { data: 'org1' });
+      g.setNode('org2', { data: 'org2' });
+      g.setParent('org1', 'Orgs');
+      g.setParent('org2', 'Orgs');
+
+      g.setEdge('dev', 'org1', { data: 'ext1' }, '2');
+      g.setEdge('uat', 'org2', { data: 'ext2' }, '3');
+
+      adjustClustersAndEdges(g, 0);
+
+      // Orgs should be extracted into a clusterNode with rankdir: 'TB'
+      expect(g.node('Orgs').clusterNode).toBe(true);
+      expect(g.node('Orgs').graph.graph().rankdir).toBe('TB');
+    });
+
     it('adjustClustersAndEdges the extracted graphs shall contain the correct data GLB11', function () {
       /*
     subgraph A
