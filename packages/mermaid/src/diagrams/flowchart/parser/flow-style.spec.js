@@ -399,6 +399,20 @@ describe('[Style] when parsing', () => {
     expect(edges[0].style[0]).toBe('stroke:#FFF9B4 /*a[b]*/');
   });
 
+  it('should not split a style on a comma inside a CSS comment', function () {
+    flow.parser.parse('graph TD;A-->B;linkStyle 0 stroke:#FFF9B4 /*a,b*/;');
+
+    const edges = flow.parser.yy.getEdges();
+    expect(edges[0].style).toEqual(['stroke:#FFF9B4 /*a,b*/', 'fill:none']);
+  });
+
+  it('should handle quotes in a CSS comment', function () {
+    flow.parser.parse('graph TD;A-->B;linkStyle 0 stroke:#FFF9B4 /*a, "b"*/;');
+
+    const edges = flow.parser.yy.getEdges();
+    expect(edges[0].style[0]).toBe('stroke:#FFF9B4 /*a, "b"*/');
+  });
+
   it('should handle a CSS comment in a vertex style', function () {
     flow.parser.parse('graph TD;style Q fill:#fff /* white */;');
 
