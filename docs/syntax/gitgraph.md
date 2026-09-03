@@ -1125,7 +1125,7 @@ gitGraph:
   commit
 ```
 
-## Reusing branch lanes (v11.18.0+)
+## Reusing branch lanes (v\<MERMAID_RELEASE_VERSION>+)
 
 In Mermaid we support reusing branch lanes. By default, each branch will have its own lane. However, with a lot of different branches this can make the diagram quite big. In such cases it can be nice to re-use previously used branch lanes, as long as they are no longer used by the previous branch.
 
