@@ -5,6 +5,7 @@ import {
   clearContainerAlgorithmOptions,
   dir2ElkDirection,
   ensureEndMarkerSegmentLength,
+  ensureStartMarkerSegmentLength,
   evenGroupFrames,
   findCyclicEntryNodes,
   prepareLayoutForElk,
@@ -792,6 +793,63 @@ describe('ensureEndMarkerSegmentLength', () => {
     ];
 
     expect(ensureEndMarkerSegmentLength(points, circleBounds, 4, log)).toEqual(points);
+  });
+
+  it('removes the stub an off-centre port leaves outside an ellipse for a wide marker', () => {
+    // `Coupon --|> Checkout`: ELK's port sits on the bbox border 9px above the
+    // centre-line, the ellipse outline is 9.5px further in, and the extension
+    // marker pulls the end back 17.25px — past the port, flipping the arrow.
+    const ellipseBounds = { x: 408, y: 190, width: 160, height: 58 };
+    const points = [
+      { x: 308, y: 199 },
+      { x: 328, y: 199 },
+      { x: 337.54, y: 199 },
+    ];
+
+    expect(ensureEndMarkerSegmentLength(points, ellipseBounds, 17.25, log)).toEqual([
+      points[0],
+      points[2],
+    ]);
+  });
+});
+
+describe('ensureStartMarkerSegmentLength', () => {
+  const log = { debug: () => undefined };
+  const ellipseBounds = { x: 408, y: 190, width: 160, height: 58 };
+
+  it('removes the source bbox exit point when the first marker segment is too short', () => {
+    const points = [
+      { x: 478.46, y: 199 },
+      { x: 488, y: 199 },
+      { x: 508, y: 199 },
+      { x: 508, y: 260 },
+    ];
+
+    expect(ensureStartMarkerSegmentLength(points, ellipseBounds, 17.25, log)).toEqual([
+      points[0],
+      points[2],
+      points[3],
+    ]);
+  });
+
+  it('keeps real bends that are not on the source bounds', () => {
+    const points = [
+      { x: 478.46, y: 199 },
+      { x: 484, y: 203 },
+      { x: 508, y: 260 },
+    ];
+
+    expect(ensureStartMarkerSegmentLength(points, ellipseBounds, 17.25, log)).toEqual(points);
+  });
+
+  it('keeps source exit segments that already have marker runway', () => {
+    const points = [
+      { x: 448, y: 190 },
+      { x: 488, y: 190 },
+      { x: 508, y: 260 },
+    ];
+
+    expect(ensureStartMarkerSegmentLength(points, ellipseBounds, 4, log)).toEqual(points);
   });
 });
 

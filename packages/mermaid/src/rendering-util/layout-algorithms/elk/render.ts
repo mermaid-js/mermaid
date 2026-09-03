@@ -10,6 +10,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { applyElkLineJumps } from './lineHops.js';
+import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
   EDGE_ROUTING_OPTIONS,
   PLACEMENT_OPTIONS,
@@ -129,10 +130,24 @@ interface ElkLayoutResult {
 
 type Side = 'start' | 'end';
 
-const END_MARKER_PATH_OFFSETS: Record<string, number> = {
-  arrow_point: 4,
-};
 const MIN_END_MARKER_SEGMENT_LENGTH = 8;
+
+/**
+ * How far `getLineFunctionsWithOffset` pulls a path end back along its last
+ * segment to make room for this marker. Read from the same tables the edge
+ * drawing uses, so a marker added there cannot be missed here — a missed one
+ * leaves a stub shorter than the offset, and the pull-back then runs past the
+ * previous point and flips the marker around.
+ */
+const markerPathOffset = (arrowType: unknown): number => {
+  if (typeof arrowType !== 'string') {
+    return 0;
+  }
+  return Math.max(
+    (markerOffsets as Record<string, number>)[arrowType] ?? 0,
+    (markerOffsets2 as Record<string, number>)[arrowType] ?? 0
+  );
+};
 
 const ARROW_MAP: Record<string, [string, string]> = {
   arrow_open: ['arrow_open', 'arrow_open'],
@@ -1016,6 +1031,19 @@ function createElkNode(node: Node): NodeWithVertex {
   } else {
     child.width = node.width ?? 0;
     child.height = node.height ?? 0;
+    if (node.spreadPorts) {
+      // ELK packs a fixed-size node's implicit ports (the attachment points of
+      // port-less edges) tightly around the middle of a side; CENTER alignment
+      // spreads them as far as the side allows. That is the whole lever: the
+      // node-level `elk.spacing.portPort` and `elk.spacing.portsSurrounding`
+      // options are ignored for implicit ports (measured with elkjs 0.9.3), and
+      // the root's corner margin still bounds the spread — a 38px side holds
+      // three ports about 8px apart.
+      child.layoutOptions = {
+        ...child.layoutOptions,
+        'elk.portAlignment.default': 'CENTER',
+      };
+    }
   }
 
   return child;
@@ -1811,10 +1839,15 @@ function applyElkEdgeLayout(
     }
 
     const clipped = sanitizeElkEdgePoints(points, startNode, endNode, log);
-    layoutEdge.points = ensureEndMarkerSegmentLength(
-      clipped,
-      boundsFor(endNode),
-      getEndMarkerPathOffset(layoutEdge),
+    layoutEdge.points = ensureStartMarkerSegmentLength(
+      ensureEndMarkerSegmentLength(
+        clipped,
+        boundsFor(endNode),
+        getEndMarkerPathOffset(layoutEdge),
+        log
+      ),
+      boundsFor(startNode),
+      getStartMarkerPathOffset(layoutEdge),
       log
     );
     layoutEdge.curve = 'rounded';
@@ -2031,8 +2064,47 @@ function dedupeConsecutivePoints(points: P[], log: ElkLayoutContext['log']): P[]
 }
 
 function getEndMarkerPathOffset(edge: Edge): number {
-  const arrowTypeEnd = (edge as { arrowTypeEnd?: unknown }).arrowTypeEnd;
-  return typeof arrowTypeEnd === 'string' ? (END_MARKER_PATH_OFFSETS[arrowTypeEnd] ?? 0) : 0;
+  return markerPathOffset((edge as { arrowTypeEnd?: unknown }).arrowTypeEnd);
+}
+
+function getStartMarkerPathOffset(edge: Edge): number {
+  return markerPathOffset((edge as { arrowTypeStart?: unknown }).arrowTypeStart);
+}
+
+/**
+ * Mirror of `ensureEndMarkerSegmentLength` for the start of the path: the
+ * start marker's pull-back walks forward along the first segment, so a short
+ * on-border stub there flips the start marker the same way.
+ */
+export function ensureStartMarkerSegmentLength(
+  points: P[],
+  startBounds: RectLike,
+  markerOffset: number,
+  log: { debug: (...args: unknown[]) => void }
+): P[] {
+  if (markerOffset <= 0 || points.length < 3) {
+    return points;
+  }
+
+  const start = points[0];
+  const exit = points[1];
+  const segmentLength = Math.hypot(exit.x - start.x, exit.y - start.y);
+  if (segmentLength >= Math.max(MIN_END_MARKER_SEGMENT_LENGTH, markerOffset * 2)) {
+    return points;
+  }
+
+  if (!onBorder(startBounds, exit, 1)) {
+    return points;
+  }
+
+  const adjusted = [start, ...points.slice(2)];
+  log.debug('UIO cutter2: removed short start marker segment', {
+    before: points,
+    after: adjusted,
+    markerOffset,
+    segmentLength,
+  });
+  return adjusted;
 }
 
 export function ensureEndMarkerSegmentLength(

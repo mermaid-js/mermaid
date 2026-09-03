@@ -514,6 +514,11 @@ const getData = (): UsecaseLayoutData => {
     if (!node.isGroup && !node.shape.startsWith('usecaseActor')) {
       node.minWidth ??= config.minNodeWidth;
     }
+    // Several association edges can end on one side of a use case, each with its
+    // own marker; spread their attachment points so the markers stay apart.
+    if (node.shape === 'usecaseEllipse' || node.shape === 'usecaseBusiness') {
+      node.spreadPorts = true;
+    }
   }
 
   return {
