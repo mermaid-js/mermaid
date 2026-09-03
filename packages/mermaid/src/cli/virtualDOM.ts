@@ -38,6 +38,7 @@ export interface VirtualDOMEnvironment {
 export function createVirtualDOMEnvironment(): VirtualDOMEnvironment {
   const oldWindow = global.window;
   const oldDocument = global.document;
+  const oldCSSStyleSheet = global.CSSStyleSheet;
 
   const dom = new JSDOM('<html lang="en"><body></body></html>', {
     url: 'http://localhost',
@@ -78,6 +79,7 @@ export function createVirtualDOMEnvironment(): VirtualDOMEnvironment {
   // Expose globals so D3 and mermaid find them
   forceSet(global, 'window', dom.window);
   forceSet(global, 'document', dom.window.document);
+  forceSet(global, 'CSSStyleSheet', dom.window.CSSStyleSheet);
 
   return {
     window: dom.window,
@@ -85,6 +87,7 @@ export function createVirtualDOMEnvironment(): VirtualDOMEnvironment {
     cleanup() {
       forceSet(global, 'window', oldWindow);
       forceSet(global, 'document', oldDocument);
+      forceSet(global, 'CSSStyleSheet', oldCSSStyleSheet);
     },
   };
 }
