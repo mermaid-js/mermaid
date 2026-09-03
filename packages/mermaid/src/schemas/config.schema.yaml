@@ -1661,7 +1661,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 'neo'
       layout:
         $ref: '#/$defs/BaseDiagramConfig/properties/layout'
-        default: 'dagre'
+        default: 'elk'
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
