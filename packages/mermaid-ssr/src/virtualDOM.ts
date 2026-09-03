@@ -85,6 +85,7 @@ export function createVirtualDOMEnvironment(): VirtualDOMEnvironment {
     window: dom.window,
     document: dom.window.document,
     cleanup() {
+      dom.window.close();
       forceSet(global, 'window', oldWindow);
       forceSet(global, 'document', oldDocument);
       forceSet(global, 'CSSStyleSheet', oldCSSStyleSheet);
