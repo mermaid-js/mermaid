@@ -1,16 +1,15 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
+    "composite": true,
     "types": ["vitest/importMeta", "vitest/globals"]
   },
-  "include": [
-    "./src/**/*.ts",
-    "./package.json",
-    "src/diagrams/gantt/ganttDb.js",
-    "src/diagrams/git/gitGraphRenderer.js",
-    "src/diagrams/class/classRenderer.js",
-    "src/diagrams/eventmodeling/renderer.js"
+  "include": ["./src/**/*.ts", "./package.json", "./src/**/*.js"],
+  "references": [
+    {
+      "path": "../parser"
+    }
   ]
 }

@@ -414,6 +414,14 @@ class Theme {
       this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
     /* -------------------------------------------------- */
   }
+
+  /**
+   * @typedef {Partial<Theme>} ThemeOverrides
+   */
+
+  /**
+   * @param {ThemeOverrides} [overrides] - Optional overrides.
+   */
   calculate(overrides) {
     if (typeof overrides !== 'object') {
       // Calculate colors form base colors
@@ -437,6 +445,9 @@ class Theme {
   }
 }
 
+/**
+ * @param {ThemeOverrides} [userOverrides] - Optional overrides.
+ */
 export const getThemeVariables = (userOverrides) => {
   const theme = new Theme();
   theme.calculate(userOverrides);
