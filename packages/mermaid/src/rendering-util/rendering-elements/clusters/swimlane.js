@@ -25,7 +25,8 @@ export const swimlane = async (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'cluster swimlane ' + (node.cssClasses || ''))
-    .attr('id', node.id)
+    // `domId` is unique per render; `data-id` keeps the author-supplied id for selectors.
+    .attr('id', node.domId ?? node.id)
     .attr('data-id', node.id)
     .attr('data-et', 'cluster')
     .attr('data-look', node.look);
