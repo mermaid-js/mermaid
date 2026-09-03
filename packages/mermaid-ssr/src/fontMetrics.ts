@@ -1,3 +1,4 @@
+import { outermostSvg } from './cssProperty.js';
 import { resolveFont } from './fonts.js';
 
 export const DEFAULT_FONT_SIZE = 16;
@@ -22,16 +23,6 @@ interface RootStyle {
 }
 
 const rootStyleCache = new WeakMap<Element, RootStyle>();
-
-function outermostSvg(el: Element): Element | null {
-  let svg = el.closest('svg');
-  let up = svg?.parentElement?.closest('svg');
-  while (up) {
-    svg = up;
-    up = up.parentElement?.closest('svg');
-  }
-  return svg;
-}
 
 /** Font declarations from the `#<svg id> { ... }` rule of the diagram's own stylesheet. */
 function getRootStyle(el: Element): RootStyle {

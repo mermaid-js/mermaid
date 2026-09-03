@@ -6,6 +6,7 @@
  * browser-native `getBBox()`.
  */
 import { svgPathBbox } from 'svg-path-bbox';
+import { anchorOffset, textAnchorOf } from './cssProperty.js';
 import {
   fontOf,
   lineBoxHeight,
@@ -125,6 +126,7 @@ function pathBBox(el: Element): BBox {
 function textBBox(el: Element): BBox {
   const spec = fontOf(el);
   const fontSize = spec.size;
+  const anchor = textAnchorOf(el);
   const spans = [...el.querySelectorAll('tspan')];
 
   if (spans.length > 0) {
@@ -178,7 +180,7 @@ function textBBox(el: Element): BBox {
     }
 
     return {
-      x: numAttr(el, 'x'),
+      x: numAttr(el, 'x') + anchorOffset(anchor, maxW),
       y: totalMinY,
       width: maxW,
       height: Math.max(totalMaxY - totalMinY, ascent + descent),
@@ -192,7 +194,12 @@ function textBBox(el: Element): BBox {
   }
   const w = measureTextWidth(text, spec);
   const h = lineBoxHeight(spec);
-  return { x: numAttr(el, 'x'), y: numAttr(el, 'y') - h, width: w, height: h };
+  return {
+    x: numAttr(el, 'x') + anchorOffset(anchor, w),
+    y: numAttr(el, 'y') - h,
+    width: w,
+    height: h,
+  };
 }
 
 // ── foreignObject ──────────────────────────────────────────────────────
