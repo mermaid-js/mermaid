@@ -6,8 +6,23 @@ export default {
   description: 'Create block-based visualizations with beta styling',
   examples: [
     {
-      title: 'Basic Block Layout',
+      title: 'Three-Tier Web Architecture',
       isDefault: true,
+      code: `block-beta
+  columns 3
+  user(("User")):3
+  space:3
+  ui["Web UI"] api["API Server"] db[("Database")]
+
+  user --> ui
+  ui --> api
+  api --> db
+
+  style user fill:#ffe0b2,stroke:#fb8c00
+  style db fill:#bbdefb,stroke:#1e88e5`,
+    },
+    {
+      title: 'Block Arrows and Nested Blocks',
       code: `block-beta
 columns 1
   db(("DB"))

@@ -8,10 +8,15 @@ import type {
   GitGraph,
   EventModel,
   Radar,
+  Railroad,
+  RailroadEbnf,
+  RailroadAbnf,
+  RailroadPeg,
   Treemap,
   TreeView,
   Wardley,
-} from './index.js';
+  Cynefin,
+} from './language/index.js';
 
 export type DiagramAST =
   | Info
@@ -21,8 +26,14 @@ export type DiagramAST =
   | GitGraph
   | EventModel
   | Radar
+  | Railroad
+  | RailroadEbnf
+  | RailroadAbnf
+  | RailroadPeg
+  | Treemap
   | TreeView
-  | Wardley;
+  | Wardley
+  | Cynefin;
 
 const parsers: Record<string, LangiumParser> = {};
 const initializers = {
@@ -66,6 +77,26 @@ const initializers = {
     const parser = createRadarServices().Radar.parser.LangiumParser;
     parsers.radar = parser;
   },
+  railroad: async () => {
+    const { createRailroadServices } = await import('./language/railroad/index.js');
+    const parser = createRailroadServices().Railroad.parser.LangiumParser;
+    parsers.railroad = parser;
+  },
+  railroadEbnf: async () => {
+    const { createRailroadEbnfServices } = await import('./language/railroad-ebnf/index.js');
+    const parser = createRailroadEbnfServices().RailroadEbnf.parser.LangiumParser;
+    parsers.railroadEbnf = parser;
+  },
+  railroadAbnf: async () => {
+    const { createRailroadAbnfServices } = await import('./language/railroad-abnf/index.js');
+    const parser = createRailroadAbnfServices().RailroadAbnf.parser.LangiumParser;
+    parsers.railroadAbnf = parser;
+  },
+  railroadPeg: async () => {
+    const { createRailroadPegServices } = await import('./language/railroad-peg/index.js');
+    const parser = createRailroadPegServices().RailroadPeg.parser.LangiumParser;
+    parsers.railroadPeg = parser;
+  },
   treemap: async () => {
     const { createTreemapServices } = await import('./language/treemap/index.js');
     const parser = createTreemapServices().Treemap.parser.LangiumParser;
@@ -75,6 +106,11 @@ const initializers = {
     const { createWardleyServices } = await import('./language/wardley/index.js');
     const parser = createWardleyServices().Wardley.parser.LangiumParser;
     parsers.wardley = parser;
+  },
+  cynefin: async () => {
+    const { createCynefinServices } = await import('./language/cynefin/index.js');
+    const parser = createCynefinServices().Cynefin.parser.LangiumParser;
+    parsers.cynefin = parser;
   },
 } as const;
 
@@ -86,8 +122,13 @@ export async function parse(diagramType: 'architecture', text: string): Promise<
 export async function parse(diagramType: 'gitGraph', text: string): Promise<GitGraph>;
 export async function parse(diagramType: 'eventmodeling', text: string): Promise<EventModel>;
 export async function parse(diagramType: 'radar', text: string): Promise<Radar>;
+export async function parse(diagramType: 'railroad', text: string): Promise<Railroad>;
+export async function parse(diagramType: 'railroadEbnf', text: string): Promise<RailroadEbnf>;
+export async function parse(diagramType: 'railroadAbnf', text: string): Promise<RailroadAbnf>;
+export async function parse(diagramType: 'railroadPeg', text: string): Promise<RailroadPeg>;
 export async function parse(diagramType: 'treemap', text: string): Promise<Treemap>;
 export async function parse(diagramType: 'wardley', text: string): Promise<Wardley>;
+export async function parse(diagramType: 'cynefin', text: string): Promise<Cynefin>;
 
 export async function parse<T extends DiagramAST>(
   diagramType: keyof typeof initializers,

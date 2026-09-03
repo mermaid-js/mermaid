@@ -119,6 +119,7 @@ class Theme {
     this.activationBorderColor = this.activationBorderColor || darken(this.secondaryColor, 10);
     this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
+    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
 
     /* Gantt chart variables */
 
@@ -297,6 +298,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      legendTextColor: this.xyChart?.legendTextColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

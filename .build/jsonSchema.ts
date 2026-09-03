@@ -8,6 +8,7 @@ import type { MermaidConfig, BaseDiagramConfig } from '../packages/mermaid/src/c
  */
 const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'flowchart',
+  'swimlane',
   'sequence',
   'gantt',
   'journey',
@@ -32,6 +33,7 @@ const MERMAID_CONFIG_DIAGRAM_KEYS = [
   'eventmodeling',
   'radar',
   'venn',
+  'cynefin',
 ] as const;
 
 /**

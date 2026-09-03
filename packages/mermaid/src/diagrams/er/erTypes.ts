@@ -37,3 +37,13 @@ export interface EntityClass {
   styles: string[];
   textStyles: string[];
 }
+
+export interface ErSubGraph {
+  classes: string[];
+  cssStyles?: string[];
+  dir?: string;
+  id: string;
+  labelType: string;
+  nodes: string[];
+  title: string;
+}

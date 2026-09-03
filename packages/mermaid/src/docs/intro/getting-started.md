@@ -294,23 +294,33 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
 
 Below are the steps for adding Mermaid as a dependency:
 
-1. Install `node v16`
+1. Install [Node.js](https://nodejs.org/) v20 or higher (LTS recommended).
 
 ```note
 To learn more about downloading and installing `Node.js` and `npm`, visit the [npm Docs website](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 ```
 
-1. Install `yarn` using `npm` with this command:
+2. Add Mermaid using your preferred package manager:
 
-   `npm install -g yarn`
+   **npm**
 
-1. After yarn installs, enter this command:
+   `npm install mermaid`
+
+   **yarn**
 
    `yarn add mermaid`
 
-1. To add Mermaid as a dev dependency, enter this command:
+   **pnpm**
 
-   `yarn add --dev mermaid`
+   `pnpm add mermaid`
+
+3. To add Mermaid as a dev dependency instead, append the dev flag:
+
+   **npm:** `npm install --save-dev mermaid`
+
+   **yarn:** `yarn add --dev mermaid`
+
+   **pnpm:** `pnpm add --save-dev mermaid`
 
 ## Closing note
 

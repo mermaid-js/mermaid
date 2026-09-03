@@ -4,7 +4,18 @@
  */
 // @ts-ignore TODO: Investigate D3 issue
 import { select } from 'd3';
-import { compile, serialize, stringify } from 'stylis';
+import {
+  COMMENT,
+  compile,
+  KEYFRAMES,
+  LAYER,
+  MEDIA,
+  middleware,
+  SCOPE,
+  serialize,
+  stringify,
+  SUPPORTS,
+} from 'stylis';
 import DOMPurify from 'dompurify';
 import { isEmpty } from 'es-toolkit/compat';
 import { addSVGa11yTitleDescription, setA11yDiagramInfo } from './accessibility.js';
@@ -19,12 +30,20 @@ import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
 import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
+import { profiler } from './profiler.js';
 import { preprocessDiagram } from './preprocess.js';
-import getStyles from './styles.js';
+import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
-import type { D3Element, ParseOptions, ParseResult, RenderResult } from './types.js';
+import type {
+  D3HtmlSelection,
+  D3Selection,
+  ParseOptions,
+  ParseResult,
+  RenderResult,
+} from './types.js';
 import { decodeEntities } from './utils.js';
 import { toBase64 } from './utils/base64.js';
+import { sanitizeCss } from './utils/sanitizeDirective.js';
 
 const MAX_TEXTLENGTH = 50_000;
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
@@ -96,7 +115,8 @@ export const cssImportantStyles = (
   element: string,
   cssClasses: string[] = []
 ): string => {
-  return `\n.${cssClass} ${element} { ${cssClasses.join(' !important; ')} !important; }`;
+  const declarationBlock = sanitizeCss(`{ ${cssClasses.join(' !important; ')} !important; }`);
+  return `.${cssClass} ${element} ${declarationBlock}`;
 };
 
 /**
@@ -110,20 +130,22 @@ export const createCssStyles = (
   config: MermaidConfig,
   classDefs: Map<string, DiagramStyleClassDef> | null | undefined = new Map()
 ): string => {
-  let cssStyles = '';
+  const cssStyles = new CSSStyleSheet();
 
   // user provided theme CSS info
   // If you add more configuration driven data into the user styles make sure that the value is
   // sanitized by the sanitize CSS function TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
-  if (config.themeCSS !== undefined) {
-    cssStyles += `\n${config.themeCSS}`;
-  }
-
   if (config.fontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-font-family: ${config.fontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
   if (config.altFontFamily !== undefined) {
-    cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+    cssStyles.insertRule(
+      `:root { --mermaid-alt-font-family: ${config.altFontFamily}}`,
+      cssStyles.cssRules.length
+    );
   }
 
   // classDefs defined in the diagram text
@@ -140,27 +162,159 @@ export const createCssStyles = (
       // create the css styles for each cssElement and the styles (only if there are styles)
       if (!isEmpty(styleClassDef.styles)) {
         cssElements.forEach((cssElement) => {
-          cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
+          cssStyles.insertRule(
+            cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles),
+            cssStyles.cssRules.length
+          );
         });
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
-        cssStyles += cssImportantStyles(
-          styleClassDef.id,
-          'tspan',
-          (styleClassDef?.textStyles || []).map((s) => s.replace('color', 'fill'))
+        cssStyles.insertRule(
+          cssImportantStyles(
+            styleClassDef.id,
+            'tspan',
+            (styleClassDef?.textStyles || []).map((s) => s.replace('color', 'fill'))
+          ),
+          cssStyles.cssRules.length
         );
       }
     });
   }
-  return cssStyles;
+
+  let cssString = '';
+  if (config.themeCSS !== undefined) {
+    if (typeof cssStyles.replaceSync === 'function') {
+      const themeCssStyleSheet = new CSSStyleSheet();
+      themeCssStyleSheet.replaceSync(config.themeCSS);
+      cssString = cssStyleSheetToString(themeCssStyleSheet) + '\n';
+    } else {
+      /**
+       * Ideally we'd do a `CSSStyleSheet.replaceSync`, but it's not supported
+       * in some older browsers and in JSDOM.
+       */
+      cssString += `${config.themeCSS}\n`;
+    }
+  }
+
+  return cssString + cssStyleSheetToString(cssStyles);
+};
+
+/**
+ * Use `stylis` to compile the CSS to only apply to the given namespace.
+ *
+ * This will also remove some newer CSS features (e.g. nesting) to better
+ * support older browsers and does some minification. It also removes some
+ * at-rules that can't be namespaced.
+ *
+ * @internal
+ * @param namespace - the namespace to add in front of all the CSS styles, e.g. `#idOfSvgElement`
+ * @param css - the CSS styles to add the namespace to.
+ * @see https://github.com/thysultan/stylis
+ *
+ * @example
+ * // Returns `#id .class1{fill:red;}`
+ * compileCSS('#id', `.class1 { fill: red }`)
+ */
+const compileCSS = (namespace: `#${string}`, css: string) => {
+  return serialize(
+    compile(`${namespace}{${css}}`),
+    middleware([
+      function addNamespace(element, _index, _children, _callback) {
+        /**
+         * CSS normally automatically adds the `&` selector in front of each
+         * element. But, if there's already an `&` selector, it doesn't add this.
+         *
+         * This code will explicitly make sure it's always added, to ensure
+         * that the CSS never applies outside the SVG.
+         *
+         * E.g. `#svgId { .nested-class :not(&) { fill: red } }` will be
+         * transformed to `#svgId { & .nested-class :not(&) { fill: red } }`
+         */
+        if (element.type === 'rule' && Array.isArray(element.props)) {
+          if (element.parent && element.parent.type === KEYFRAMES) {
+            /**
+             * Don't namespace CSSKeyframeRule, since they don't have selectors.
+             */
+            return;
+          }
+          element.props = element.props.map((prop) => {
+            /**
+             * For the root selector `& { ... }`, allow limited inherited
+             * styles to not be namespaced.
+             * These won't do anything to the `<svg>`, but will be inherited by
+             * children with a lower specificity than SVG presentation attributes.
+             */
+            if (
+              prop === namespace &&
+              Array.isArray(element.children) &&
+              element.children.every((child) => {
+                if (child.type !== 'decl') {
+                  return false;
+                }
+                const allowedProps = new Set<typeof child.props>([
+                  'font-family',
+                  'font-size',
+                  'fill',
+                ]);
+                return allowedProps.has(child.props);
+              })
+            ) {
+              return prop;
+            }
+
+            const alreadyNamespaced =
+              // If the prop already starts with the namespace followed by a space or >, then it's already namespaced.
+              (prop.startsWith(`${namespace} `) || prop.startsWith(`${namespace}>`)) &&
+              // Column combinators are not yet widely supported, it's not yet compressed to `${namespace}||`,
+              // so we need to add an extra check for that
+              !prop.startsWith(`${namespace} ||`);
+            if (!alreadyNamespaced) {
+              return `${namespace} ${prop}`;
+            }
+            return prop;
+          });
+        } else if (element.type.startsWith('@')) {
+          // Only allow certain at-rules to avoid namespace escape.
+          //
+          // Nested ones are allowed, since they'd get namespaced appropriately.
+          // @keyframes are required for Mermaid's animation features, even
+          // if they can potentially pollute the page.
+
+          /**
+           * At-rules that contain nested rules.
+           *
+           * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@container}
+           */
+          const nestedAtRules = [
+            MEDIA,
+            SUPPORTS,
+            LAYER,
+            SCOPE,
+            '@container',
+            '@starting-style',
+          ] as const;
+          const allowedAtRules = [
+            ...nestedAtRules,
+            KEYFRAMES, // needed for Mermaid's animation feature
+          ] as const;
+          if (!allowedAtRules.includes(element.type as (typeof allowedAtRules)[number])) {
+            log.warn(`Removing unsupported at-rule ${element.type} from CSS`);
+            element.type = COMMENT;
+          }
+        }
+      },
+      stringify,
+    ])
+  );
 };
 
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
   classDefs: Map<string, DiagramStyleClassDef> | undefined,
-  svgId: string
+  // CSS selector for the SVG element, e.g. `#idOfSvgElement`
+  svgId: `#${string}`
 ): string => {
   const userCSSstyles = createCssStyles(config, classDefs);
   const allStyles = getStyles(
@@ -169,11 +323,7 @@ export const createUserStyles = (
     { ...config.themeVariables, theme: config.theme, look: config.look },
     svgId
   );
-
-  // Now turn all of the styles into a (compiled) string that starts with the id
-  // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))
-  // @see https://github.com/thysultan/stylis
-  return serialize(compile(`${svgId}{${allStyles}}`), stringify);
+  return compileCSS(svgId, allStyles);
 };
 
 /**
@@ -214,7 +364,7 @@ export const cleanUpSvgCode = (
  * @param svgElement - the d3 node that has the current svgElement so we can get the height from it
  * @returns  - the code with the iFrame that now contains the svgCode
  */
-export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
+export const putIntoIFrame = (svgCode = '', svgElement?: SVGSVGElement): string => {
   const height = svgElement?.viewBox?.baseVal?.height
     ? svgElement.viewBox.baseVal.height + 'px'
     : IFRAME_HEIGHT;
@@ -238,12 +388,12 @@ export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
  * @returns - returns the parentRoot that had nodes appended
  */
 export const appendDivSvgG = (
-  parentRoot: D3Element,
+  parentRoot: D3HtmlSelection<HTMLElement> | D3HtmlSelection<Element>,
   id: string,
   enclosingDivId: string,
   divStyle?: string,
   svgXlink?: string
-): D3Element => {
+) => {
   const enclosingDiv = parentRoot.append('div');
   enclosingDiv.attr('id', enclosingDivId);
   if (divStyle) {
@@ -271,7 +421,10 @@ export const appendDivSvgG = (
  * @param iFrameId - id to use for the iFrame
  * @returns the appended iframe d3 node
  */
-function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
+function sandboxedIframe(
+  parentNode: D3HtmlSelection<Element> | D3HtmlSelection<HTMLElement>,
+  iFrameId: string
+) {
   return parentNode
     .append('iframe')
     .attr('id', iFrameId)
@@ -314,6 +467,10 @@ const render = async function (
 ): Promise<RenderResult> {
   addDiagrams();
 
+  if (injected.profiling) {
+    profiler.start('render');
+  }
+
   const processed = processAndSetConfigs(text);
   text = processed.code;
 
@@ -325,7 +482,7 @@ const render = async function (
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
 
-  const idSelector = '#' + id;
+  const idSelector = `#${id}` as const;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
@@ -341,7 +498,7 @@ const render = async function (
     }
   };
 
-  let root: any = select('body');
+  let root: D3HtmlSelection<HTMLElement> | D3HtmlSelection<Element> = select(document.body);
 
   const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
   const isLooseSecurityLevel = config.securityLevel === SECURITY_LVL_LOOSE;
@@ -360,8 +517,8 @@ const render = async function (
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed )iFrame
       const iframe = sandboxedIframe(select(svgContainingElement), iFrameID);
-      root = select(iframe.nodes()[0]!.contentDocument!.body);
-      root.node().style.margin = 0;
+      root = select(iframe.nodes()[0].contentDocument!.body);
+      root.node()!.style.margin = '0';
     } else {
       root = select(svgContainingElement);
     }
@@ -377,9 +534,9 @@ const render = async function (
 
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed) iFrame
-      const iframe = sandboxedIframe(select('body'), iFrameID);
-      root = select(iframe.nodes()[0]!.contentDocument!.body);
-      root.node().style.margin = 0;
+      const iframe = sandboxedIframe(select(document.body), iFrameID);
+      root = select(iframe.nodes()[0].contentDocument!.body);
+      root.node()!.style.margin = '0';
     } else {
       root = select('body');
     }
@@ -395,7 +552,9 @@ const render = async function (
   let parseEncounteredException;
 
   try {
-    diag = await Diagram.fromText(text, { title: processed.title });
+    diag = injected.profiling
+      ? await profiler.span('parse', () => Diagram.fromText(text, { title: processed.title }))
+      : await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -406,14 +565,14 @@ const render = async function (
   }
 
   // Get the temporary div element containing the svg
-  const element = root.select(enclosingDivID_selector).node();
+  const element = root.select<HTMLDivElement>(enclosingDivID_selector).node()!;
   const diagramType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
 
   // Insert an element into svg. This is where we put the styles
-  const svg = element.firstChild;
+  const svg = element.firstChild!;
   const firstChild = svg.firstChild;
   const diagramClassDefs = diag.renderer.getClasses?.(text, diag);
 
@@ -426,7 +585,11 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Draw the diagram with the renderer
   try {
-    await diag.renderer.draw(text, id, injected.version, diag);
+    if (injected.profiling) {
+      await profiler.span('draw', () => diag.renderer.draw(text, id, injected.version, diag));
+    } else {
+      await diag.renderer.draw(text, id, injected.version, diag);
+    }
   } catch (e) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -437,39 +600,55 @@ const render = async function (
   }
 
   // This is the d3 node for the svg element
-  const svgNode = root.select(`${enclosingDivID_selector} svg`);
+  const svgNode = root.select<SVGSVGElement>(`${enclosingDivID_selector} svg`);
   const a11yTitle: string | undefined = diag.db.getAccTitle?.();
   const a11yDescr: string | undefined = diag.db.getAccDescription?.();
   addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr);
-  // -------------------------------------------------------------------------------
-  // Clean up SVG code
-  root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
+  // "paint after layout" tail: SVG serialization + sanitization, which can
+  // dominate for very large diagrams. Wrapped in a closure so it can run inside a
+  // profiler span — whose try/finally also guarantees the span can never leak —
+  // while staying zero-cost in production, where the `injected.profiling` branch
+  // (and every profiler reference) folds away to a plain `serializeSvg()` call.
+  const serializeSvg = (): string => {
+    // -------------------------------------------------------------------------------
+    // Clean up SVG code
+    root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
-  // Fix for when the base tag is used
-  let svgCode: string = root.select(enclosingDivID_selector).node().innerHTML;
+    // Fix for when the base tag is used
+    let code: string = root.select<HTMLDivElement>(enclosingDivID_selector).node()!.innerHTML;
 
-  log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
-  svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
+    log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
+    code = cleanUpSvgCode(code, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
-  if (isSandboxed) {
-    const svgEl = root.select(enclosingDivID_selector + ' svg').node();
-    svgCode = putIntoIFrame(svgCode, svgEl);
-  } else if (!isLooseSecurityLevel) {
-    // Sanitize the svgCode using DOMPurify
-    svgCode = DOMPurify.sanitize(svgCode, {
-      ADD_TAGS: DOMPURIFY_TAGS,
-      ADD_ATTR: DOMPURIFY_ATTR,
-      HTML_INTEGRATION_POINTS: { foreignobject: true },
-    });
-  }
+    if (isSandboxed) {
+      const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
+      code = putIntoIFrame(code, svgEl);
+    } else if (!isLooseSecurityLevel) {
+      // Sanitize the svgCode using DOMPurify
+      code = DOMPurify.sanitize(code, {
+        ADD_TAGS: DOMPURIFY_TAGS,
+        ADD_ATTR: DOMPURIFY_ATTR,
+        HTML_INTEGRATION_POINTS: { foreignobject: true },
+      });
+    }
 
-  attachFunctions();
+    attachFunctions();
+    return code;
+  };
+
+  const svgCode: string = injected.profiling
+    ? await profiler.span('serialize', serializeSvg)
+    : serializeSvg();
 
   if (parseEncounteredException) {
     throw parseEncounteredException;
   }
 
   removeTempElements();
+
+  if (injected.profiling) {
+    profiler.stop(); // render
+  }
 
   return {
     diagramType,
@@ -525,7 +704,7 @@ const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title
  */
 function addA11yInfo(
   diagramType: string,
-  svgNode: D3Element,
+  svgNode: D3Selection<SVGSVGElement>,
   a11yTitle?: string,
   a11yDescr?: string
 ): void {
@@ -542,6 +721,10 @@ export const mermaidAPI = Object.freeze({
   getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,
+  /**
+   * @deprecated This function does nothing. It will be overwritten by the next
+   *             call to {@link render} or {@link parse}.
+   */
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,

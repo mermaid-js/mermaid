@@ -1,6 +1,7 @@
 import type { LayoutOptions, Position } from 'cytoscape';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
+import { withSeededRandom } from './architectureSeed.js';
 import { select } from 'd3';
 import type { DrawDefinition, SVG } from '../../diagram-api/types.js';
 import type { Diagram } from '../../Diagram.js';
@@ -15,6 +16,7 @@ import type {
   ArchitectureDataStructures,
   ArchitectureGroupAlignments,
   ArchitectureJunction,
+  ArchitectureLayoutHint,
   ArchitectureSpatialMap,
   EdgeSingular,
   EdgeSingularData,
@@ -26,6 +28,7 @@ import {
   type ArchitectureGroup,
   type ArchitectureService,
   ArchitectureDirectionName,
+  architectureGroupAlignmentKey,
   edgeData,
   getOppositeArchitectureDirection,
   isArchitectureDirectionXY,
@@ -152,93 +155,100 @@ function addEdges(edges: ArchitectureEdge[], cy: cytoscape.Core) {
 function getAlignments(
   db: ArchitectureDB,
   spatialMaps: ArchitectureSpatialMap[],
-  groupAlignments: ArchitectureGroupAlignments
+  groupAlignments: ArchitectureGroupAlignments,
+  layoutHints: ArchitectureLayoutHint[] = []
 ): fcose.FcoseAlignmentConstraint {
   /**
-   * Flattens the alignment object so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
+   * Flattens the alignment map so nodes in different groups will be in the same alignment array IFF their groups don't connect in a conflicting alignment
    *
    * i.e., two groups which connect horizontally should not have nodes with vertical alignments to one another
    *
    * See: #5952
    *
-   * @param alignmentObj - alignment object with the outer key being the row/col # and the inner key being the group name mapped to the nodes on that axis in the group
+   * @param alignmentMap - alignment map with the outer key being the row/col # and the inner key being the group name mapped to the nodes on that axis in the group
    * @param alignmentDir - alignment direction
-   * @returns flattened alignment object with an arbitrary key mapping to nodes in the same row/col
+   * @returns flattened alignment map with an arbitrary key mapping to nodes in the same row/col
    */
   const flattenAlignments = (
-    alignmentObj: Record<number, Record<string, string[]>>,
+    alignmentMap: Map<number, Map<string, string[]>>,
     alignmentDir: ArchitectureAlignment
-  ): Record<string, string[]> => {
-    return Object.entries(alignmentObj).reduce(
-      (prev, [dir, alignments]) => {
-        // prev is the mapping of x/y coordinate to an array of the nodes in that row/column
-        let cnt = 0;
-        const arr = Object.entries(alignments); // [group name, array of nodes within the group on axis dir]
-        if (arr.length === 1) {
-          // If only one group exists in the row/column, we don't need to do anything else
-          prev[dir] = arr[0][1];
-          return prev;
-        }
-        for (let i = 0; i < arr.length - 1; i++) {
-          for (let j = i + 1; j < arr.length; j++) {
-            const [aGroupId, aNodeIds] = arr[i];
-            const [bGroupId, bNodeIds] = arr[j];
-            const alignment = groupAlignments[aGroupId]?.[bGroupId]; // Get how the two groups are intended to align (undefined if they aren't)
+  ): Map<string, string[]> => {
+    // flattened is the mapping of x/y coordinate to an array of the nodes in that row/column
+    const flattened = new Map<string, string[]>();
+    for (const [numericDir, alignments] of alignmentMap.entries()) {
+      const dir = `${numericDir}`;
+      let cnt = 0;
+      const arr = [...alignments.entries()]; // [group name, array of nodes within the group on axis dir]
+      if (arr.length === 1) {
+        // If only one group exists in the row/column, we don't need to do anything else
+        flattened.set(dir, arr[0][1]);
+        continue;
+      }
+      for (let i = 0; i < arr.length - 1; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+          const [aGroupId, aNodeIds] = arr[i];
+          const [bGroupId, bNodeIds] = arr[j];
+          // Get how the two groups are intended to align (undefined if they aren't)
+          const alignment = groupAlignments.get(architectureGroupAlignmentKey(aGroupId, bGroupId));
 
-            if (alignment === alignmentDir) {
-              // If the intended alignment between the two groups is the same as the alignment we are parsing
-              prev[dir] ??= [];
-              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds]; // add the node ids of both groups to the axis array in prev
-            } else if (aGroupId === 'default' || bGroupId === 'default') {
-              // If either of the groups are in the default space (not in a group), use the same behavior as above
-              prev[dir] ??= [];
-              prev[dir] = [...prev[dir], ...aNodeIds, ...bNodeIds];
-            } else {
-              // Otherwise, the nodes in the two groups are not intended to align
-              const keyA = `${dir}-${cnt++}`;
-              prev[keyA] = aNodeIds;
-              const keyB = `${dir}-${cnt++}`;
-              prev[keyB] = bNodeIds;
-            }
+          if (alignment === alignmentDir) {
+            // If the intended alignment between the two groups is the same as the alignment we are parsing
+            flattened.set(dir, [...(flattened.get(dir) ?? []), ...aNodeIds, ...bNodeIds]); // add the node ids of both groups to the axis array in flattened
+          } else if (aGroupId === 'default' || bGroupId === 'default') {
+            // If either of the groups are in the default space (not in a group), use the same behavior as above
+            flattened.set(dir, [...(flattened.get(dir) ?? []), ...aNodeIds, ...bNodeIds]);
+          } else {
+            // Otherwise, the nodes in the two groups are not intended to align
+            const keyA = `${dir}-${cnt++}`;
+            flattened.set(keyA, aNodeIds);
+            const keyB = `${dir}-${cnt++}`;
+            flattened.set(keyB, bNodeIds);
           }
         }
-
-        return prev;
-      },
-      {} as Record<string, string[]>
-    );
+      }
+    }
+    return flattened;
   };
 
   const alignments = spatialMaps.map((spatialMap) => {
-    const horizontalAlignments: Record<number, Record<string, string[]>> = {};
-    const verticalAlignments: Record<number, Record<string, string[]>> = {};
+    const horizontalAlignments = new Map<number, Map<string, string[]>>();
+    const verticalAlignments = new Map<number, Map<string, string[]>>();
 
-    // Group service ids in an object with their x and y coordinate as the key
-    Object.entries(spatialMap).forEach(([id, [x, y]]) => {
+    // Group service ids in a map with their x and y coordinate as the key
+    spatialMap.forEach(([x, y], id) => {
       const nodeGroup = db.getNode(id)?.in ?? 'default';
+      const horizontalAlignment = horizontalAlignments.get(y) ?? new Map<string, string[]>();
+      if (!horizontalAlignments.has(y)) {
+        horizontalAlignments.set(y, horizontalAlignment);
+      }
 
-      horizontalAlignments[y] ??= {};
-      horizontalAlignments[y][nodeGroup] ??= [];
-      horizontalAlignments[y][nodeGroup].push(id);
+      const verticalAlignment = verticalAlignments.get(x) ?? new Map<string, string[]>();
+      if (!verticalAlignments.has(x)) {
+        verticalAlignments.set(x, verticalAlignment);
+      }
 
-      verticalAlignments[x] ??= {};
-      verticalAlignments[x][nodeGroup] ??= [];
-      verticalAlignments[x][nodeGroup].push(id);
+      for (const alignment of [horizontalAlignment, verticalAlignment]) {
+        const nodeList = alignment.get(nodeGroup) ?? [];
+        if (!alignment.has(nodeGroup)) {
+          alignment.set(nodeGroup, nodeList);
+        }
+        nodeList.push(id);
+      }
     });
 
-    // Merge the values of each object into a list if the inner list has at least 2 elements
+    // Merge the values of each map into a list if the inner list has at least 2 elements
     return {
-      horiz: Object.values(flattenAlignments(horizontalAlignments, 'horizontal')).filter(
+      horiz: [...flattenAlignments(horizontalAlignments, 'horizontal').values()].filter(
         (arr) => arr.length > 1
       ),
-      vert: Object.values(flattenAlignments(verticalAlignments, 'vertical')).filter(
+      vert: [...flattenAlignments(verticalAlignments, 'vertical').values()].filter(
         (arr) => arr.length > 1
       ),
     };
   });
 
   // Merge the alignment lists for each spatial map into one 2d array per axis
-  const [horizontal, vertical] = alignments.reduce(
+  const [horizontalRaw, verticalRaw] = alignments.reduce(
     ([prevHoriz, prevVert], { horiz, vert }) => {
       return [
         [...prevHoriz, ...horiz],
@@ -248,6 +258,30 @@ function getAlignments(
     [[] as string[][], [] as string[][]]
   );
 
+  // Drop any heuristic alignment group that contains a member of a declared layout hint.
+  // The user-declared hint takes precedence — keeping both produces conflicting constraints
+  // that fcose cannot satisfy and crashes on (RangeError in FDLayout.calcGrid).
+  const declaredMembers = new Set<string>();
+  layoutHints.forEach((hint) => hint.members.forEach((m) => declaredMembers.add(m)));
+  const dropOverlapping = (groups: string[][]) =>
+    groups.filter((group) => !group.some((id) => declaredMembers.has(id)));
+
+  const horizontal = dropOverlapping(horizontalRaw);
+  const vertical = dropOverlapping(verticalRaw);
+
+  // Append user-declared layout hints. `align row` shares a Y coord (horizontal axis),
+  // `align column` shares an X coord (vertical axis).
+  layoutHints.forEach((hint) => {
+    if (hint.members.length < 2) {
+      return;
+    }
+    if (hint.direction === 'row') {
+      horizontal.push([...hint.members]);
+    } else {
+      vertical.push([...hint.members]);
+    }
+  });
+
   return {
     horizontal,
     vertical,
@@ -256,20 +290,45 @@ function getAlignments(
 
 function getRelativeConstraints(
   spatialMaps: ArchitectureSpatialMap[],
-  db: ArchitectureDB
+  db: ArchitectureDB,
+  layoutHints: ArchitectureLayoutHint[] = []
 ): fcose.FcoseRelativePlacementConstraint[] {
   const relativeConstraints: fcose.FcoseRelativePlacementConstraint[] = [];
-  const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}`;
+
+  // Emit a chain of relative placements for each declared layout hint. This is what actually
+  // separates members along the axis — the alignment constraint alone only says "share a y/x"
+  // but does not order the nodes.
+  const iconSize = db.getConfigField('iconSize');
+  const idealMult = db.getConfigField('idealEdgeLengthMultiplier');
+  const hintGap = idealMult * iconSize;
+  // Track every (a,b) pair that the declared hints already constrain. The heuristic BFS
+  // below will skip any pair already covered to avoid double constraints that fcose cannot
+  // reconcile.
+  const declaredPairs = new Set<string>();
+  layoutHints.forEach((hint) => {
+    for (let i = 0; i < hint.members.length - 1; i++) {
+      const a = hint.members[i];
+      const b = hint.members[i + 1];
+      declaredPairs.add(`${a}|${b}`);
+      declaredPairs.add(`${b}|${a}`);
+      if (hint.direction === 'row') {
+        relativeConstraints.push({ left: a, right: b, gap: hintGap });
+      } else {
+        relativeConstraints.push({ top: a, bottom: b, gap: hintGap });
+      }
+    }
+  });
+  const posToStr = (pos: number[]) => `${pos[0]},${pos[1]}` as const;
   const strToPos = (pos: string) => pos.split(',').map((p) => parseInt(p));
 
   spatialMaps.forEach((spatialMap) => {
-    const invSpatialMap = Object.fromEntries(
-      Object.entries(spatialMap).map(([id, pos]) => [posToStr(pos), id])
+    const invSpatialMap = new Map(
+      [...spatialMap.entries()].map(([key, value]) => [posToStr(value), key])
     );
 
     // perform BFS
     const queue = [posToStr([0, 0])];
-    const visited: Record<string, number> = {};
+    const visited: Record<ReturnType<typeof posToStr>, number> = {};
     const directions: Record<ArchitectureDirection, number[]> = {
       L: [-1, 0],
       R: [1, 0],
@@ -280,22 +339,29 @@ function getRelativeConstraints(
       const curr = queue.shift();
       if (curr) {
         visited[curr] = 1;
-        const currId = invSpatialMap[curr];
+        const currId = invSpatialMap.get(curr);
         if (currId) {
           const currPos = strToPos(curr);
           Object.entries(directions).forEach(([dir, shift]) => {
             const newPos = posToStr([currPos[0] + shift[0], currPos[1] + shift[1]]);
-            const newId = invSpatialMap[newPos];
+            const newId = invSpatialMap.get(newPos);
             // If there is an adjacent service to the current one and it has not yet been visited
             if (newId && !visited[newPos]) {
               queue.push(newPos);
+              // Skip the heuristic constraint if the user has already declared a relation
+              // between this pair via `align row|column`. Without this, fcose receives both
+              // a heuristic and a declared placement for the same pair, which can produce
+              // inconsistent solutions and crash the layout (RangeError in calcGrid).
+              if (declaredPairs.has(`${currId}|${newId}`)) {
+                return;
+              }
               // @ts-ignore cannot determine if left/right or top/bottom are paired together
               relativeConstraints.push({
                 [ArchitectureDirectionName[dir as ArchitectureDirection]]: newId,
                 [ArchitectureDirectionName[
                   getOppositeArchitectureDirection(dir as ArchitectureDirection)
                 ]]: currId,
-                gap: 1.5 * db.getConfigField('iconSize'),
+                gap: idealMult * iconSize,
               });
             }
           });
@@ -400,16 +466,28 @@ function layoutArchitecture(
     addServices(services, cy, db);
     addJunctions(junctions, cy, db);
     addEdges(edges, cy);
-    // Use the spatial map to create alignment arrays for fcose
-    const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments);
+    const layoutHints = db.getLayoutHints();
+    // Use the spatial map to create alignment arrays for fcose, then merge in any
+    // user-declared `align row|column` hints.
+    const alignmentConstraint = getAlignments(db, spatialMaps, groupAlignments, layoutHints);
 
     // Create the relative constraints for fcose by using an inverse of the spatial map and performing BFS on it
-    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db);
+    const relativePlacementConstraint = getRelativeConstraints(spatialMaps, db, layoutHints);
+
+    const iconSize = db.getConfigField('iconSize');
+    const sameGroupIdealLength = db.getConfigField('idealEdgeLengthMultiplier') * iconSize;
+    const crossGroupIdealLength = 0.5 * iconSize;
+    const sameGroupElasticity = db.getConfigField('edgeElasticity');
+    // Wrap each layout.run() with withSeededRandom so fcose's internal
+    // Math.random() calls produce reproducible results. See architectureSeed.ts.
+    const seed = db.getConfigField('seed');
 
     const layout = cy.layout({
       name: 'fcose',
       quality: 'proof',
       randomize: db.getConfigField('randomize'),
+      nodeSeparation: db.getConfigField('nodeSeparation'),
+      numIter: db.getConfigField('numIter'),
       styleEnabled: false,
       animate: false,
       nodeDimensionsIncludeLabels: false,
@@ -419,18 +497,13 @@ function layoutArchitecture(
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity =
-          parentA === parentB
-            ? 1.5 * db.getConfigField('iconSize')
-            : 0.5 * db.getConfigField('iconSize');
-        return elasticity;
+        return parentA === parentB ? sameGroupIdealLength : crossGroupIdealLength;
       },
       edgeElasticity(edge: EdgeSingular) {
         const [nodeA, nodeB] = edge.connectedNodes();
         const { parent: parentA } = nodeData(nodeA);
         const { parent: parentB } = nodeData(nodeB);
-        const elasticity = parentA === parentB ? 0.45 : 0.001;
-        return elasticity;
+        return parentA === parentB ? sameGroupElasticity : 0.001;
       },
       alignmentConstraint,
       relativePlacementConstraint,
@@ -504,9 +577,28 @@ function layoutArchitecture(
         }
       }
       cy.endBatch();
-      layout.run();
+      withSeededRandom(seed, () => layout.run());
     });
-    layout.run();
+    try {
+      withSeededRandom(seed, () => layout.run());
+    } catch (err) {
+      // fcose throws a raw `RangeError: Invalid array length` from inside
+      // FDLayout.calcGrid when the constraints it receives are unsatisfiable
+      // (e.g. an `align row|column` chain whose member order contradicts the
+      // edge directions, or two declared alignments that overlap on a node).
+      // Rethrow with actionable context so users don't have to chase the
+      // failure into fcose internals.
+      if (err instanceof RangeError && err.message.includes('Invalid array length')) {
+        throw new Error(
+          'Architecture layout failed: a declared `align row|column` directive ' +
+            'likely contradicts the edge directions, or two declared alignments ' +
+            'overlap on a shared node. Check that the order of members in each ' +
+            '`align` chain is consistent with the edges between them, and that ' +
+            'no node appears in two `align` directives along the same axis.'
+        );
+      }
+      throw err;
+    }
 
     cy.ready((e) => {
       log.info('Ready', e);

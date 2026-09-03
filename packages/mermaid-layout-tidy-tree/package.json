@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/layout-tidy-tree",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Tidy-tree layout engine for mermaid",
   "module": "dist/mermaid-layout-tidy-tree.core.mjs",
   "types": "dist/layouts.d.ts",

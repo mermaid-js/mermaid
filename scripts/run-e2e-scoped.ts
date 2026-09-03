@@ -2,10 +2,11 @@
  * Local development runner for scoped e2e tests.
  *
  * Detects which diagrams changed (comparing HEAD against a base ref) and
- * invokes Cypress with only the matching spec files. Falls back to the full
+ * invokes Playwright with only the matching spec files. Falls back to the full
  * suite when shared code is touched.
  *
- * The dev server must already be running (started by start-server-and-test).
+ * Playwright starts the dev server automatically when it is not already running
+ * (see playwright.config.ts webServer).
  *
  * Usage via pnpm:
  *   pnpm e2e:scope                         # base ref defaults to 'develop'
@@ -13,7 +14,7 @@
  */
 
 import { execSync, spawn } from 'child_process';
-import { detectScope } from './e2e-diagram-scope.mjs';
+import { detectScope, SKIP } from './e2e-diagram-scope.mjs';
 
 const base = process.argv[2] ?? process.env.E2E_BASE_REF ?? 'develop';
 
@@ -28,15 +29,23 @@ try {
 
 const spec = detectScope(changedFiles);
 
-const cypressArgs = ['run'];
+if (spec === SKIP) {
+  /* eslint-disable no-console */
+  console.log('[e2e:scope] Only docs/ignorable files changed — nothing to test.');
+  process.exit(0);
+}
+
+const playwrightArgs = ['test'];
 if (spec) {
   /* eslint-disable no-console */
   console.log(`[e2e:scope] Scoped run:\n  ${spec.split(',').join('\n  ')}`);
-  cypressArgs.push('--spec', spec);
+  for (const pattern of spec.split(',')) {
+    playwrightArgs.push(pattern);
+  }
 } else {
   /* eslint-disable no-console */
   console.log('[e2e:scope] Running full e2e suite (shared code changed or scope undetermined).');
 }
 
-const child = spawn('cypress', cypressArgs, { stdio: 'inherit' });
+const child = spawn('playwright', playwrightArgs, { stdio: 'inherit' });
 child.on('exit', (code) => process.exit(code ?? 0));

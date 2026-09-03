@@ -1,0 +1,44 @@
+---
+config:
+  layout: swimlane
+  swimlane:
+    ignoreCrossLaneEdges: false
+    optimizeRanksByCrossings: false
+---
+swimlane-beta LR
+
+  subgraph L1[Community / Users]
+    A1[Report issue]
+    A2[Submit PR]
+  end
+
+  subgraph L2[GitHub System of Record]
+    G1[GitHub Issues]
+    G2[GitHub Pull Requests]
+    G3["GitHub Projects\n(tracking + prioritization)"]
+  end
+
+  subgraph L3[Full-time OS Team\nOmkar • Darshan • Shubham]
+    C1[Daily call\ncoordinate + unblock]
+    C2[Dev sync Tue/Thu\ntriage + plan complex items]
+    C3[Implement work\nShubham: layout algorithms focus]
+    C4[Peer review]
+  end
+
+  subgraph L4["Senior project members\n(pre-Mermaid Chart maintainers)"]
+    S1["Escalated review\n(deeper expertise / historical context)"]
+  end
+
+  subgraph L5[Team Lead & Release Manager\nAshish Jain]
+    R1[Owns release process\nplanning + cut release]
+    R2[Biweekly release]
+  end
+
+  A1 --> G1 --> G3
+  A2 --> G2 --> G3
+
+  G3 --> C1 --> C3 --> G2
+  G3 --> C2 --> C3
+
+
+  R1 --> R2 --> G3

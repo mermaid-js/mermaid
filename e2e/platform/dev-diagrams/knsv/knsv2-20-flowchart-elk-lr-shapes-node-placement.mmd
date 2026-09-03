@@ -1,0 +1,14 @@
+---
+config:
+  layout: elk
+  flowchart:
+    curve: rounded
+  elk:
+    nodePlacementStrategy: NETWORK_SIMPLEX
+---
+flowchart LR
+    D["Use the editor"] -- Mermaid js --> I["fa:fa-code Text"]
+    D --> I & I
+    a["a"]
+    D@{ shape: trap-b}
+    I@{ shape: lean-l}

@@ -282,6 +282,44 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].task).toEqual('test1');
   });
 
+  it('should not infinite loop when excluding everything', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends,monday,tuesday,wednesday,thursday,friday');
+    ganttDb.setWeekend('saturday');
+    ganttDb.addSection('weekends skip test');
+    ganttDb.addTask('test1', 'id1,2019-02-01,7d');
+
+    expect(() => ganttDb.getTasks()).toThrowError('Failed to find a valid date');
+
+    // Fridays are now allowed, so it should not throw an error
+    ganttDb.clear();
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends,monday,tuesday,wednesday,thursday');
+    ganttDb.setWeekend('saturday');
+    ganttDb.addSection('weekends skip test');
+    ganttDb.addTask('test1', 'id1,2019-02-01,7d');
+    expect(() => ganttDb.getTasks()).not.toThrow();
+  });
+
+  it('should merge tokens across multiple setExcludes calls (issue #6270)', function () {
+    ganttDb.setExcludes('weekends');
+    ganttDb.setExcludes('2019-02-06');
+    ganttDb.setExcludes('friday, monday');
+    expect(ganttDb.getExcludes()).toEqual(['weekends', '2019-02-06', 'friday', 'monday']);
+  });
+
+  it('should dedupe tokens across multiple setExcludes calls (issue #6270)', function () {
+    ganttDb.setExcludes('weekends,2019-02-06');
+    ganttDb.setExcludes('weekends 2019-02-07');
+    expect(ganttDb.getExcludes()).toEqual(['weekends', '2019-02-06', '2019-02-07']);
+  });
+
+  it('should merge tokens across multiple setIncludes calls (issue #6270)', function () {
+    ganttDb.setIncludes('2019-02-06');
+    ganttDb.setIncludes('2019-02-07,2019-02-08');
+    expect(ganttDb.getIncludes()).toEqual(['2019-02-06', '2019-02-07', '2019-02-08']);
+  });
+
   it('should maintain the order in which tasks are created', function () {
     ganttDb.setAccTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');

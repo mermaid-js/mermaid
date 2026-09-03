@@ -12,18 +12,17 @@
 
 > **getConfig**(): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:140](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L140)
+Defined in: [packages/mermaid/src/config.ts:120](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L120)
 
-## getConfig
-
-| Function  | Description               | Type        | Return Values                  |
-| --------- | ------------------------- | ----------- | ------------------------------ |
-| getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
-
-**Notes**: Avoid calling this function repeatedly. Instead, store the result in a variable and use it, and pass it down to function calls.
+Returns a copy of the `currentConfig`.
 
 ## Returns
 
 [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
 The currentConfig
+
+## Remarks
+
+Avoid calling this function repeatedly.
+Instead, store the result in a variable and use it, and pass it down to function calls.

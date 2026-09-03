@@ -136,6 +136,52 @@ describe('extractFrontmatter', () => {
     expect(() => extractFrontMatter(text)).toThrow('tag suffix cannot contain exclamation marks');
   });
 
+  it('handles leading horizontal whitespace before delimiters (issue #7613)', () => {
+    const text = `   ---\n   title: foo\n   ---\n   diagram`;
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "title": "foo",
+        },
+        "text": "   diagram",
+      }
+    `);
+  });
+
+  it('handles tab indentation before delimiters (issue #7613)', () => {
+    const text = `\t---\n\ttitle: foo\n\t---\n\tdiagram`;
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "title": "foo",
+        },
+        "text": "\tdiagram",
+      }
+    `);
+  });
+
+  it('handles indented frontmatter with config (issue #7613)', () => {
+    const text = `   ---\n   config:\n     sankey:\n       showValues: true\n   ---\n   sankey\n   a,b,8`;
+    expect(extractFrontMatter(text)).toMatchInlineSnapshot(`
+      {
+        "metadata": {
+          "config": {
+            "sankey": {
+              "showValues": true,
+            },
+          },
+        },
+        "text": "   sankey
+         a,b,8",
+      }
+    `);
+  });
+
+  it('does not match an indented closing delimiter when opening is at column zero', () => {
+    const text = `---\ntitle: foo\n   ---\n   diagram`;
+    expect(extractFrontMatter(text).metadata).toEqual({});
+  });
+
   it('handles frontmatter with config', () => {
     const text = `---
 title: hello
