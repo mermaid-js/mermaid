@@ -3,6 +3,7 @@ import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProces
 import { toGraphView, writeBackToLayoutData } from './helpers.js';
 import { sugiyamaLayout } from './pipeline.js';
 import { routeEdgesOrthogonal } from './orthogonalRouter/router.js';
+import { pinAnchoredNodes } from './anchoredNodes.js';
 
 export type SwimlaneDirection = 'TB' | 'LR' | 'BT' | 'RL';
 
@@ -35,6 +36,11 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
     direction,
   });
   writeBackToLayoutData(g, ordered, coordinates, { nodeGap, layerGap });
+
+  // Anchored nodes were held out of the layout, so give them a position now that their
+  // hosts have one. This is canonical space, which gives the router a real port to route
+  // from; postProcessSwimlaneLayout pins them again against the final geometry.
+  pinAnchoredNodes(data4Layout, { space: 'canonical', direction });
 
   // The layout phases above position nodes only; they do not emit edge routing.
   // Reset any edge points carried on the input so routeEdgesOrthogonal below is
