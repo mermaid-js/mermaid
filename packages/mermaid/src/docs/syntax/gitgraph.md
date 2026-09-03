@@ -280,6 +280,7 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 - `mainBranchName` : String, default is `main`. The name of the default/root branch.
 - `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
 - `parallelCommits`: Boolean, default is `false`. If set to `true`, commits x distance away from the parent are shown at the same level in the diagram.
+- `reuseBranchLanes`: Boolean, default is `false`. If set to `true`, branches will reuse lanes from older branches that have no new commits.
 
 Let's look at them one by one.
 
@@ -680,6 +681,56 @@ gitGraph:
   checkout main
   commit
   commit
+```
+
+## Reusing branch lanes (v11.17.3+)
+
+In Mermaid we support reusing branch lanes. By default, each branch will have its own lane. However, with a lot of different branches this can make the diagram quite big. In such cases it can be nice to re-use previously used branch lanes, as long as they are no longer used by the previous branch.
+
+### One branch per lane (`reuseBranchLanes: false`)
+
+```mermaid-example
+    ---
+    config:
+      gitGraph:
+        reuseBranchLanes: false
+    ---
+    gitGraph
+      commit
+      branch b1
+      checkout b1
+      commit
+      checkout main
+      merge b1
+      commit
+      branch b2
+      checkout b2
+      commit
+      checkout main
+      merge b2
+```
+
+### Reusing branch lanes (`reuseBranchLanes: true`)
+
+```mermaid-example
+    ---
+    config:
+      gitGraph:
+        reuseBranchLanes: true
+    ---
+    gitGraph
+      commit
+      branch b1
+      checkout b1
+      commit
+      checkout main
+      merge b1
+      commit
+      branch b2
+      checkout b2
+      commit
+      checkout main
+      merge b2
 ```
 
 ## Themes
