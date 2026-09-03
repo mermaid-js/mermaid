@@ -73,10 +73,10 @@ Item returns Item:
 
 // Use a special rule order to handle the parsing precedence
 Section returns Section:
-    name=STRING2 (STYLE_SEPARATOR classSelector=ID2)?;
+    name=STRING2 (STYLE_SEPARATOR classSelector=ID2)? INDENTATION?;
 
 Leaf returns Leaf:
-    name=STRING2 INDENTATION? (SEPARATOR | COMMA) INDENTATION? value=MyNumber (STYLE_SEPARATOR classSelector=ID2)?;
+    name=STRING2 INDENTATION? (SEPARATOR | COMMA) INDENTATION? value=MyNumber (STYLE_SEPARATOR classSelector=ID2)? INDENTATION?;
 
 // Keywords with fixed text patterns
 terminal ID2: /[a-zA-Z_][a-zA-Z0-9_]*/;
