@@ -8,6 +8,12 @@ import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
+// For e2e coverage we serve an uninstrumented bundle and collect native V8
+// coverage in the browser (see e2e/helpers/coverage.ts). monocart maps the V8
+// data back to source via the bundle's source map, which must be inline for it
+// to resolve — so the coverage build emits inline maps instead of external ones.
+const coverageBuild = process.env.MERMAID_COVERAGE === 'true';
+
 export interface MermaidBuildOptions extends BuildOptions {
   minify: boolean;
   core: boolean;
@@ -15,6 +21,8 @@ export interface MermaidBuildOptions extends BuildOptions {
   format: 'esm' | 'iife';
   options: PackageOptions;
   includeLargeFeatures: boolean;
+  /** Compile the render profiler into the bundle (dev/profiling builds only). */
+  profiling: boolean;
 }
 
 export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> = {
@@ -23,6 +31,7 @@ export const defaultOptions: Omit<MermaidBuildOptions, 'entryName' | 'options'> 
   core: false,
   format: 'esm',
   includeLargeFeatures: true,
+  profiling: false,
 } as const;
 
 const buildOptions = (override: BuildOptions): BuildOptions => {
@@ -36,7 +45,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
-    sourcemap: 'external',
+    sourcemap: coverageBuild ? 'inline' : 'external',
     ...override,
   };
 };
@@ -66,12 +75,13 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     options: { name, file, packageName },
     globalName = 'mermaid',
     includeLargeFeatures,
+    profiling,
     ...rest
   } = options;
 
   const external: string[] = ['require', 'fs', 'path'];
   const outFileName = getFileName(name, options);
-  const { dependencies, version } = JSON.parse(
+  const { dependencies, peerDependencies, version } = JSON.parse(
     readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
   );
   const output: BuildOptions = buildOptions({
@@ -86,6 +96,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     define: {
       // This needs to be stringified for esbuild
       'injected.includeLargeFeatures': `${includeLargeFeatures}`,
+      'injected.profiling': `${profiling}`,
       'injected.version': `'${version}'`,
       'import.meta.vitest': 'undefined',
     },
@@ -94,8 +105,17 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (core) {
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
-    // Ignore dependencies and any dependencies of dependencies
-    external.push(...Object.keys(dependencies));
+    // Ignore dependencies and any dependencies of dependencies.
+    // A package may legitimately have none at all.
+    //
+    // peerDependencies must be external too. The consumer is the one that
+    // supplies them, so inlining one ships a second copy of that package —
+    // with its own module-level singletons — inside this bundle. For the
+    // layout plugins that peer dep is mermaid itself: a runtime (non-type)
+    // import of it resolves through `exports` to dist/mermaid.core.mjs and
+    // esbuild would inline the whole thing, so the plugin would run against
+    // its own stale mermaid rather than the host's.
+    external.push(...Object.keys(dependencies ?? {}), ...Object.keys(peerDependencies ?? {}));
     output.external = external;
   }
 

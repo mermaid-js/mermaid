@@ -2,8 +2,11 @@ import DOMPurify from 'dompurify';
 import { evaluate, getEffectiveHtmlLabels } from '../../config.js';
 import type { MermaidConfig } from '../../config.type.js';
 
-// Remove and ignore br:s
-export const lineBreakRegex = /<br\s*\/?>/gi;
+// Remove and ignore br:s. The optional leading slash accepts the malformed-but-common
+// `</br>`, which HTML parsers already treat as a `<br>`; without it the tag survived as
+// literal text wherever labels are rendered as plain SVG text instead of HTML.
+export const lineBreakRegex = /<\/?br\s*\/?>/gi;
+const lineBreakTestRegex = new RegExp(lineBreakRegex.source, 'i');
 
 /**
  * Gets the rows of lines in a string
@@ -111,7 +114,9 @@ export const sanitizeTextOrArray = (
  * @returns Whether or not the text has breaks
  */
 export const hasBreaks = (text: string): boolean => {
-  return lineBreakRegex.test(text);
+  // Derived from lineBreakRegex without the `g` flag: `.test()` on a global regex advances
+  // `lastIndex`, so repeated calls alternate between true and false on the same input.
+  return lineBreakTestRegex.test(text);
 };
 
 /**
@@ -287,7 +292,7 @@ const processSet = (input: string): string => {
 // Firefox versions between [4,71] (0.47%) and Safari versions between [5,13.4] (0.17%) don't have this interface implemented but MathML is supported
 export const isMathMLSupported = () => window.MathMLElement !== undefined;
 
-export const katexRegex = /\$\$(.*)\$\$/g;
+export const katexRegex = /\$\$(.*?)\$\$/g;
 
 /**
  * Whether or not a text has KaTeX delimiters

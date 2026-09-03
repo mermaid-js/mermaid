@@ -114,6 +114,7 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"swimlane-beta"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"               return 'subgraph';
@@ -285,7 +286,7 @@ that id.
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
-\s                    return 'SPACE';
+[^\S\n\r]+            return 'SPACE';
 <<EOF>>               return 'EOF';
 
 /lex

@@ -477,6 +477,34 @@ describe('mermaidAPI', () => {
       );
     });
 
+    it.for([
+      // test for CSS sibling components
+      ['should namespace sibling combinator', '& ~ *', '#someId #someId~*'],
+      // CSS ignores these whitespace characters
+      ['should namespace sibling combinator', '& \n\t \r \f \r\n + *', '#someId #someId+*'],
+      /*
+       * Experimental column combinator,
+       * see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Column_combinator
+       *
+       * Output whitespace will probably change once JSDOM supports it.
+       */
+      ['should namespace column combinator', '& || *', '#someId #someId || *'],
+      ['should namespace root if using unsupported declarations', '&', '#someId #someId'],
+      // child combinators and descent combinators are already namespaced
+      ['should not namespace child combinator', '& > *', '#someId>*'],
+      ['should not namespace descent combinator', '& *', '#someId *'],
+    ] as const)('%s %s to %s', ([_description, inputSelector, expectedSelector]) => {
+      const result = createUserStyles(
+        { ...mockConfig, themeCSS: `${inputSelector} { color: red; }` },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        `#someId .edge-pattern-dashed{stroke-dasharray:3;}${expectedSelector}{color:red;}`
+      );
+    });
+
     it('should remove unsupported at-rules from user CSS', () => {
       const result = createUserStyles(
         {
@@ -625,18 +653,18 @@ describe('mermaidAPI', () => {
     it('resets mermaid config to global defaults', () => {
       const config = {
         logLevel: 0,
-        securityLevel: 'loose',
+        htmlLabels: false,
       } as const;
       mermaidAPI.initialize(config);
-      mermaidAPI.setConfig({ securityLevel: 'strict', logLevel: 1 });
+      mermaidAPI.setConfig({ logLevel: 1, htmlLabels: true });
       expect(mermaidAPI.getConfig().logLevel).toBe(1);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(true);
       mermaidAPI.reset();
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('loose');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(false);
       mermaidAPI.globalReset();
       expect(mermaidAPI.getConfig().logLevel).toBe(5);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(mermaidAPI.defaultConfig.htmlLabels);
     });
 
     it('prevents changes to site defaults (sneaky)', () => {
@@ -757,6 +785,14 @@ describe('mermaidAPI', () => {
         }
       `);
     });
+    it('resolves swimlanes as its own diagram type', async () => {
+      await expect(mermaidAPI.parse('swimlane-beta TD;A-->B;')).resolves.toMatchInlineSnapshot(`
+        {
+          "config": {},
+          "diagramType": "swimlane",
+        }
+      `);
+    });
     it('returns config when defined in frontmatter', async () => {
       await expect(
         mermaidAPI.parse(`---
@@ -838,7 +874,7 @@ graph TD;A--x|text including URL space|B;`)
     // We have to have both the specific textDiagramType and the expected type name because the expected type may be slightly different from what is put in the diagram text (ex: in -v2 diagrams)
     const diagramTypesAndExpectations = [
       // { textDiagramType: 'C4Context', expectedType: 'c4' }, TODO : setAccTitle not called in C4 jison parser
-      { textDiagramType: 'classDiagram', expectedType: 'class' },
+      { textDiagramType: 'classDiagram', expectedType: 'classDiagram' },
       { textDiagramType: 'classDiagram-v2', expectedType: 'classDiagram' },
       { textDiagramType: 'erDiagram', expectedType: 'er' },
       { textDiagramType: 'graph', expectedType: 'flowchart-v2' },
@@ -896,6 +932,27 @@ graph TD;A--x|text including URL space|B;`)
           );
         });
       });
+    });
+
+    jsdomIt('preserves treeView icons after strict security sanitization', async () => {
+      mermaidAPI.initialize({ securityLevel: 'strict' });
+
+      const { svg } = await mermaidAPI.render(
+        'tree-view-strict-icons',
+        `---
+config:
+  treeView:
+    showIcons: true
+---
+treeView-beta
+  src/
+    index.js`
+      );
+
+      const dom = new JSDOM(svg);
+      const iconNode = ensureNodeFromSelector('.treeView-node-icon', dom.window.document);
+      ensureNodeFromSelector('path', iconNode);
+      expect(dom.window.document.querySelector('use')).toBeNull();
     });
   });
 

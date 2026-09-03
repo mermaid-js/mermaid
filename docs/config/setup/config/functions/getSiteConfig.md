@@ -12,15 +12,9 @@
 
 > **getSiteConfig**(): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:105](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L105)
+Defined in: [packages/mermaid/src/config.ts:198](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L198)
 
-## getSiteConfig
-
-| Function      | Description                                       | Type        | Values                           |
-| ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
-| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
-
-**Notes**: Returns **any** values in siteConfig.
+Returns a copy of the current `siteConfig` base configuration.
 
 ## Returns
 

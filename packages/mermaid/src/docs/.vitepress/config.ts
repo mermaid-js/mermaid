@@ -164,6 +164,7 @@ function sidebarSyntax() {
       collapsed: false,
       items: [
         { text: 'Flowchart', link: '/syntax/flowchart' },
+        { text: 'Swimlanes Diagram', link: '/syntax/swimlanes' },
         { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
         { text: 'Class Diagram', link: '/syntax/classDiagram' },
         { text: 'State Diagram', link: '/syntax/stateDiagram' },
@@ -176,6 +177,7 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
+        { text: 'Use Case Diagram', link: '/syntax/usecase' },
         { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
@@ -195,6 +197,9 @@ function sidebarSyntax() {
         { text: 'Wardley 🔥', link: '/syntax/wardley' },
         { text: 'Cynefin 🔥', link: '/syntax/cynefin' },
         { text: 'TreeView 🔥', link: '/syntax/treeView' },
+        // Agentflow is deliberately not listed while it is beta. The page at
+        // `/syntax/agentflow` still builds and is reachable by URL; it is just
+        // not announced in the nav until the syntax is declared stable.
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -248,6 +253,7 @@ function sidebarCommunity() {
         { text: 'Getting Started', link: '/community/intro' },
         { text: 'Contributing to Mermaid', link: '/community/contributing' },
         { text: 'Adding Diagrams', link: '/community/new-diagram' },
+        { text: 'Adding Layouts', link: '/community/layout-makers-guide' },
         { text: 'Questions and Suggestions', link: '/community/questions-and-suggestions' },
         { text: 'Security', link: '/community/security' },
       ],

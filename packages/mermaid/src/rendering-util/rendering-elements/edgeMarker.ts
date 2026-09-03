@@ -42,6 +42,7 @@ const arrowTypesMap = {
   arrow_barb: { type: 'barb', fill: true },
   arrow_barb_neo: { type: 'barb', fill: true },
   arrow_circle: { type: 'circle', fill: false },
+  arrow_hierarchy: { type: 'hierarchy', fill: false },
   aggregation: { type: 'aggregation', fill: false },
   extension: { type: 'extension', fill: false },
   composition: { type: 'composition', fill: true },
@@ -77,6 +78,13 @@ const addEdgeMarker = (
   useMargin = false,
   strokeColor?: string
 ) => {
+  // 'none' (and empty) are valid "no arrowhead" values, not unknown types. Flowchart
+  // edges without an arrow pass 'none', so warning here fires once per such edge —
+  // thousands of times on large diagrams. Skip silently; only genuinely unknown types warn.
+  if (!arrowType || arrowType === 'none') {
+    return;
+  }
+
   const arrowTypeInfo = arrowTypesMap[arrowType as keyof typeof arrowTypesMap];
   const marginSupport = arrowTypeInfo && arrowTypesWithMarginSupport.includes(arrowTypeInfo.type);
 

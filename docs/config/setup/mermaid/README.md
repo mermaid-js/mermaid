@@ -13,10 +13,16 @@
 ## Interfaces
 
 - [AsyncIconLoader](interfaces/AsyncIconLoader.md)
+- [CommonLayoutPaintContext](interfaces/CommonLayoutPaintContext.md)
+- [CommonLayoutPaintOptions](interfaces/CommonLayoutPaintOptions.md)
+- [CommonLayoutRenderContext](interfaces/CommonLayoutRenderContext.md)
+- [CommonLayoutRendererDefinition](interfaces/CommonLayoutRendererDefinition.md)
 - [DetailedError](interfaces/DetailedError.md)
+- [EdgeGeom](interfaces/EdgeGeom.md)
 - [ExternalDiagramDefinition](interfaces/ExternalDiagramDefinition.md)
 - [LayoutData](interfaces/LayoutData.md)
 - [LayoutLoaderDefinition](interfaces/LayoutLoaderDefinition.md)
+- [LineJumpConfig](interfaces/LineJumpConfig.md)
 - [Mermaid](interfaces/Mermaid.md)
 - [MermaidConfig](interfaces/MermaidConfig.md)
 - [ParseOptions](interfaces/ParseOptions.md)
@@ -29,6 +35,7 @@
 
 ## Type Aliases
 
+- [CommonLayoutMeasure](type-aliases/CommonLayoutMeasure.md)
 - [IconLoader](type-aliases/IconLoader.md)
 - [InternalHelpers](type-aliases/InternalHelpers.md)
 - [ParseErrorFunction](type-aliases/ParseErrorFunction.md)
@@ -38,3 +45,11 @@
 ## Variables
 
 - [default](variables/default.md)
+
+## Functions
+
+- [applyLineJumpsToSvg](functions/applyLineJumpsToSvg.md)
+- [clearLayoutRenderState](functions/clearLayoutRenderState.md)
+- [createCommonLayoutRenderer](functions/createCommonLayoutRenderer.md)
+- [defaultMeasureLayout](functions/defaultMeasureLayout.md)
+- [paintLayoutData](functions/paintLayoutData.md)

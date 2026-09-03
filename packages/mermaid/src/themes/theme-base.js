@@ -66,6 +66,9 @@ class Theme {
     this.edgeLabelBackground =
       this.edgeLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
+
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
 
@@ -339,6 +342,7 @@ class Theme {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
       dataLabelColor: this.xyChart?.dataLabelColor || this.primaryTextColor,
+      legendTextColor: this.xyChart?.legendTextColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,
@@ -468,6 +472,22 @@ class Theme {
     keys.forEach((k) => {
       this[k] = overrides[k];
     });
+
+    /* `base` is the one theme documented as modifiable, so an explicit override has to be
+     * the thing that actually paints.
+     *
+     * Under `look: neo` the rules in `styles.ts` paint node strokes with
+     * `url(#…-gradient)` whenever `useGradient` is set, which `base` sets by default --
+     * so a custom `nodeBorder` was silently discarded, and the more specific the user was
+     * the less effect they had. Turning the gradient off when `nodeBorder` is overridden
+     * makes the override win, and costs nothing for anyone who has not set one.
+     *
+     * An explicit `useGradient` still takes precedence, so `{ nodeBorder, useGradient:
+     * true }` keeps the gradient and is the way to ask for both.
+     */
+    if (Object.hasOwn(overrides, 'nodeBorder') && !Object.hasOwn(overrides, 'useGradient')) {
+      this.useGradient = false;
+    }
   }
 }
 

@@ -39,7 +39,7 @@ const getStyles = (
   } else {
     log.warn(`No theme found for ${type}`);
   }
-  return ` & {
+  return `& {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
     fill: ${options.textColor}
@@ -120,6 +120,9 @@ const getStyles = (
   [data-look="neo"].node rect, [data-look="neo"].cluster rect, [data-look="neo"].node polygon {
     stroke: ${options.useGradient ? 'url(' + svgId + '-gradient)' : options.nodeBorder};
     filter: ${options.dropShadow ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`) : 'none'};
+  }
+  [data-look="neo"].swimlane.cluster rect {
+    filter: none;
   }
 
 

@@ -44,6 +44,76 @@ erDiagram
 
 When including attributes on ER diagrams, you must decide whether to include foreign keys as attributes. This probably depends on how closely you are trying to represent relational table structures. If your diagram is a _logical_ model which is not meant to imply a relational implementation, then it is better to leave these out because the associative relationships already convey the way that entities are associated. For example, a JSON data structure can implement a one-to-many relationship without the need for foreign key properties, using arrays. Similarly an object-oriented programming language may use pointers or references to collections. Even for models that are intended for relational implementation, you might decide that inclusion of foreign key attributes duplicates information already portrayed by the relationships, and does not add meaning to entities. Ultimately, it's your choice.
 
+## Default theme and look (v<MERMAID_RELEASE_VERSION>+)
+
+Entity relationship diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE_ITEM : contains
+  PRODUCT ||--o{ LINE_ITEM : "appears in"
+  CUSTOMER {
+    string name
+    string email
+  }
+  ORDER {
+    int id
+    date placedAt
+  }
+  LINE_ITEM {
+    int quantity
+    float price
+  }
+  PRODUCT {
+    string sku
+    string title
+  }
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE_ITEM : contains
+  PRODUCT ||--o{ LINE_ITEM : "appears in"
+  CUSTOMER {
+    string name
+    string email
+  }
+  ORDER {
+    int id
+    date placedAt
+  }
+  LINE_ITEM {
+    int quantity
+    float price
+  }
+  PRODUCT {
+    string sku
+    string title
+  }
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ er: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
 ## Syntax
 
 ### Entities and Relationships
@@ -173,7 +243,7 @@ erDiagram
 
 The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
-#### Optional attribute types (v<MERMAID_RELEASE_VERSION>+)
+#### Optional attribute types (v11.16.0+)
 
 Attribute `type` values may end with `?` to indicate an optional or nullable type.
 
@@ -286,6 +356,129 @@ Possible diagram orientations are:
 - BT - Bottom to top
 - RL - Right to left
 - LR - Left to right
+
+### Subgraphs (v11.17.0+)
+
+Subgraphs allow grouping entities into logical sections within an ER diagram. They are useful for organizing
+complex diagrams and improving readability.
+
+Subgraphs can contain entities, relationships, and even other subgraphs (nested subgraphs).
+
+```
+subgraph title
+    graph definition
+end
+```
+
+An example below:
+
+```mermaid-example
+erDiagram
+    subgraph title1
+        CUSTOMER
+        CUSTOMER {
+            string name
+            string custNumber
+            string sector
+        }
+    end
+    subgraph title2
+        CAR ||--o{ NAMED-DRIVER : allows
+        subgraph title3
+            PERSON
+            PERSON {
+                string firstName
+                string lastName
+                int age
+            }
+        end
+    end
+```
+
+A subgraph always has an `id`, and optionally a `title`.
+
+If the subgraph name is a single word, it is used as both id and title:
+
+```mermaid-example
+erDiagram
+    subgraph title1
+        CUSTOMER
+    end
+```
+
+If the subgraph identifier contains more than one word, it must be written in `quotes`. In this case, the quoted value is used both as the id and the title.
+
+```mermaid-example
+erDiagram
+    subgraph "Customer Domain"
+        CUSTOMER
+    end
+```
+
+You can also set an explicit id for the subgraph.
+
+```mermaid-example
+erDiagram
+    subgraph id1 [title 1]
+        CUSTOMER
+    end
+```
+
+````note
+Subgraphs are always referenced by their id, never by their title.
+
+This is important when defining relationships involving subgraphs.
+
+**If a subgraph id contains spaces, it must be referenced using quotes:**
+
+```"Customer Domain" ||--o{ ORDER : contains```
+````
+
+#### Relationships involving subgraphs
+
+It is also possible to define relationships to and from subgraphs.
+
+```mermaid-example
+erDiagram
+    subgraph title1
+        A1 ||--|| A2 : links
+    end
+
+    subgraph title2
+        B1 ||--|| B2 : links
+    end
+
+    subgraph title3
+        C1 ||--|| C2 : links
+    end
+
+    title1 ||--|| title2 : links
+    title2 ||--|| title3 : links
+    title2 ||--|| C2 : links
+```
+
+#### Direction in subgraphs
+
+A subgraph can define its own layout direction.
+
+```mermaid-example
+erDiagram
+    direction LR
+    subgraph TOP
+        direction TB
+        subgraph B1
+            direction RL
+            I1 ||--|| F1 : links
+        end
+        subgraph B2
+            direction BT
+            I2 ||--|| F2 : links
+        end
+    end
+    A ||--|| TOP : links
+    TOP ||--|| B : links
+    B1 ||--|| B2 : links
+```
 
 ### Styling a node
 
@@ -422,14 +615,14 @@ erDiagram
 
 ### Layout
 
-The layout of the diagram is handled by [`render()`](../config/setup/mermaid/interfaces/Mermaid.md#render). The default layout is dagre.
+The layout of the diagram is handled by [`render()`](../config/setup/mermaid/interfaces/Mermaid.md#render). The default layout is the ELK (Eclipse Layout Kernel) layout, which suits larger and more-complex diagrams. For more information, see [Customizing ELK Layout](../intro/syntax-reference.md#customizing-elk-layout).
 
-For larger or more-complex diagrams, you can alternatively apply the ELK (Eclipse Layout Kernel) layout using your YAML frontmatter's `config`. For more information, see [Customizing ELK Layout](../intro/syntax-reference.md#customizing-elk-layout).
+To use the classic Dagre layout instead, set it in your YAML frontmatter's `config`:
 
 ```yaml
 ---
 config:
-  layout: elk
+  layout: dagre
 ---
 ```
 
@@ -439,16 +632,12 @@ Your Mermaid code should be similar to the following:
 ---
 title: Order example
 config:
-    layout: elk
+    layout: dagre
 ---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-```
-
-```note
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
 ```
 
 <!--- cspell:locale en,en-gb --->

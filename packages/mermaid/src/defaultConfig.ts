@@ -23,9 +23,22 @@ const config: RequiredDeep<MermaidConfig> = {
   elk: {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
-    nodePlacementStrategy: 'BRANDES_KOEPF',
+    straightenEdges: true,
+    lineHops: true,
+    preset: 'default',
+    // Left undefined so `??` can tell "the user chose this" from "nobody did",
+    // which is what lets `elk.preset` supply a value while an explicit setting
+    // still wins. Listed rather than omitted so `configKeys` still finds them.
+    nodePlacementStrategy: undefined,
+    layeringStrategy: undefined,
+    cycleBreakingStrategy: undefined,
+    layeringLayerBound: 4,
+    // Brandes-Koepf specific; inert unless nodePlacementStrategy is set back to it.
+    nodePlacementAlignment: 'NONE',
+
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
+    keepEntryNodeOnTop: false,
   },
   themeCSS: undefined,
 
@@ -56,6 +69,14 @@ const config: RequiredDeep<MermaidConfig> = {
     },
   },
   class: {
+    // Built from scratch rather than spread from the schema, so the appearance defaults
+    // have to be carried across by hand; the rest stay off, `padding` above all — the
+    // schema default of 5 would change class node dimensions on the unified renderer.
+    // Optional chaining: the docs scripts short-circuit `.schema.yaml` to `{}`.
+    theme: defaultConfigJson.class?.theme,
+    look: defaultConfigJson.class?.look,
+    layout: defaultConfigJson.class?.layout,
+    defaultRenderer: 'dagre-wrapper',
     hideEmptyMembersBox: false,
     hierarchicalNamespaces: true,
   },
@@ -271,6 +292,9 @@ const config: RequiredDeep<MermaidConfig> = {
   },
   radar: {
     ...defaultConfigJson.radar,
+  },
+  usecase: {
+    ...defaultConfigJson.usecase,
   },
   railroad: {
     ...defaultConfigJson.railroad,

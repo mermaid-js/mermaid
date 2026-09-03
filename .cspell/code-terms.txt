@@ -1,4 +1,3 @@
-!viewbox
 # It should be viewBox
 # This file contains coding related terms
 ABNF
@@ -9,6 +8,7 @@ ARROWHEADSTYLE
 ARROWTYPE
 autonumber
 axisl-line
+bary
 Bigdecimal
 birel
 BIREL
@@ -23,18 +23,23 @@ classdef
 classdefid
 classentity
 classname
+clazz
 CODEOWNERS
 COLONSEP
 COMPOSIT_STATE
 concat
 controlx
 controly
+cplusplus
 CSSCLASS
 curv
 CYLINDEREND
 CYLINDERSTART
 DAGA
 datakey
+ddlt
+Ddlt
+DDLT
 DEND
 descr
 distp
@@ -42,13 +47,16 @@ distq
 divs
 docref
 DOMID
+domus
 doublecircle
 DOUBLECIRCLEEND
 DOUBLECIRCLESTART
 DQUOTE
 DSTART
+DUMMYNODE
 EBNF
 edgesep
+Eiglsperger
 EMPTYSTR
 enddate
 ERDIAGRAM
@@ -63,6 +71,7 @@ grammr
 graphtype
 halign
 iife
+instrumenter
 interp
 introdcued
 INVTRAPEND
@@ -82,6 +91,8 @@ LINETYPE
 LINKSTYLE
 LLABEL
 loglevel
+logline
+logmeta
 LOGMSG
 lookaheads
 LPAREN
@@ -91,12 +102,16 @@ minlen
 Mstartx
 MULT
 Naur
+NIKOLOV
+NODECOUNT
 NODIR
 nonterminal
 NSTR
 outdir
 Qcontrolx
 QSTR
+raykov
+Raykov
 readmodel
 reinit
 rels
@@ -110,6 +125,7 @@ RPAREN
 sankey
 sequencenumber
 shrc
+Siebenhaller
 signaltype
 someclass
 SPACELINE
@@ -152,12 +168,18 @@ ts-nocheck
 tsdoc
 typeof
 typestr
+unrouted
 unshift
 urlsafe
+usecase
+Usecase
+USECASE
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH
 Wirth
+worktree
+worktrees
 xhost
 yaxis
 yfunc

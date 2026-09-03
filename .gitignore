@@ -5,7 +5,7 @@ coverage/
 .idea/
 .pnpm-store/
 .instructions/
-.claude
+docs/superpowers/
 .mcp.json
 
 dist
@@ -22,16 +22,18 @@ package-lock.json
 !/.vscode/launch.json
 !/.vscode/extensions.json
 
-cypress/platform/current.html
-cypress/platform/experimental.html
+e2e/platform/current.html
+e2e/platform/experimental.html
 local/
 
 _site
 Gemfile.lock
 /.vs
 
-cypress/screenshots/
-cypress/snapshots/
+e2e/screenshots/
+e2e/__snapshots__/
+e2e/snapshots/
+e2e/sheets/
 
 # eslint --cache file
 .eslintcache
@@ -60,15 +62,23 @@ vite.config.ts.timestamp-*
 # autogenereated by langium-cli
 generated/
 
-# generated type declarations from pnpm prepare
-packages/examples/src/**/*.d.ts
 
 /CLAUDE.md
 /AGENTS.md
 /assistant/
-/.claude/skills/
+/.claude/
 packages/mermaid/src/diagrams/CLAUDE.md
 packages/parser/CLAUDE.md
 AGENTS.mermaid.md
 CLAUDE.mermaid.md
 .envrc
+AGENTS.alana.md
+CLAUDE.alana.md
+mermaid-parser.tar.gz
+.gitnexus
+.agents/
+.ralph/
+.tmp
+.fallow/
+test-results/
+.playwright-mcp/

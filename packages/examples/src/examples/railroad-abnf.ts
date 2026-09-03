@@ -6,15 +6,24 @@ export default {
   description: 'Visualize grammar rules using RFC 5234 ABNF notation',
   examples: [
     {
-      title: 'URI Scheme',
+      title: 'Email Address',
       isDefault: true,
-      code: `railroad-abnf
+      code: `railroad-abnf-beta
     title Email Address
 
     address = local-part "@" domain ;
     local-part = 1*( ALPHA / DIGIT / "." / "-" ) ;
     domain = label *( "." label ) ;
     label = 1*( ALPHA / DIGIT / "-" ) ;`,
+    },
+    {
+      title: 'Phone Number',
+      code: `railroad-abnf-beta
+    title Phone Number
+
+    phone = [ "+" country-code ] subscriber ;
+    country-code = 1*DIGIT ;
+    subscriber = 1*( DIGIT / "-" / " " ) ;`,
     },
   ],
 } satisfies DiagramMetadata;

@@ -10,7 +10,7 @@ describe('Railroad Parser', () => {
   describe('Basic Parsing', () => {
     it('should parse terminal', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = terminal("hello") ;
       `;
       void parser.parse(input);
@@ -26,7 +26,7 @@ describe('Railroad Parser', () => {
 
     it('should parse nonterminal', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = nonterminal("expression") ;
       `;
       void parser.parse(input);
@@ -41,7 +41,7 @@ describe('Railroad Parser', () => {
 
     it('should parse sequence', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = sequence(terminal("a"), terminal("b"), terminal("c")) ;
       `;
       void parser.parse(input);
@@ -56,7 +56,7 @@ describe('Railroad Parser', () => {
 
     it('should collapse single-element sequence', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = sequence(terminal("a")) ;
       `;
       void parser.parse(input);
@@ -68,7 +68,7 @@ describe('Railroad Parser', () => {
 
     it('should parse choice', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = choice(terminal("a"), terminal("b"), terminal("c")) ;
       `;
       void parser.parse(input);
@@ -83,7 +83,7 @@ describe('Railroad Parser', () => {
 
     it('should collapse single-element choice', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = choice(terminal("a")) ;
       `;
       void parser.parse(input);
@@ -95,7 +95,7 @@ describe('Railroad Parser', () => {
 
     it('should parse optional', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = optional(terminal("a")) ;
       `;
       void parser.parse(input);
@@ -107,7 +107,7 @@ describe('Railroad Parser', () => {
 
     it('should parse zeroOrMore', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = zeroOrMore(terminal("a")) ;
       `;
       void parser.parse(input);
@@ -122,7 +122,7 @@ describe('Railroad Parser', () => {
 
     it('should parse oneOrMore', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = oneOrMore(terminal("a")) ;
       `;
       void parser.parse(input);
@@ -137,7 +137,7 @@ describe('Railroad Parser', () => {
 
     it('should parse special', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = special("any character") ;
       `;
       void parser.parse(input);
@@ -152,7 +152,7 @@ describe('Railroad Parser', () => {
 
     it('should parse title', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         title "Test Grammar"
         rule = terminal("a") ;
       `;
@@ -165,7 +165,7 @@ describe('Railroad Parser', () => {
   describe('Complex Grammars', () => {
     it('should parse multiple rules', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule1 = terminal("a") ;
         rule2 = terminal("b") ;
         rule3 = terminal("c") ;
@@ -181,7 +181,7 @@ describe('Railroad Parser', () => {
 
     it('should handle nested structures', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = sequence(
             choice(terminal("a"), terminal("b")),
             oneOrMore(choice(terminal("c"), terminal("d")))
@@ -196,7 +196,7 @@ describe('Railroad Parser', () => {
 
     it('should parse complex expression grammar', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         digit = choice(
             terminal("0"), terminal("1"), terminal("2"),
             terminal("3"), terminal("4"), terminal("5"),
@@ -214,7 +214,7 @@ describe('Railroad Parser', () => {
   });
 
   describe('Error Handling', () => {
-    it('should throw on missing railroad-diagram keyword', () => {
+    it('should throw on missing railroad-beta keyword', () => {
       const input = `
         rule = terminal("a") ;
       `;
@@ -224,7 +224,7 @@ describe('Railroad Parser', () => {
 
     it('should throw on missing semicolon', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = terminal("a")
       `;
 
@@ -233,7 +233,7 @@ describe('Railroad Parser', () => {
 
     it('should throw on unterminated string', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = terminal("unclosed) ;
       `;
 
@@ -244,7 +244,7 @@ describe('Railroad Parser', () => {
   describe('Edge Cases', () => {
     it('should handle empty rules list', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         title "Empty Grammar"
       `;
       void parser.parse(input);
@@ -256,7 +256,7 @@ describe('Railroad Parser', () => {
 
     it('should handle whitespace in strings', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = terminal("hello world") ;
       `;
       void parser.parse(input);
@@ -270,7 +270,7 @@ describe('Railroad Parser', () => {
 
     it('should handle underscore in rule names', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         my_rule = terminal("test") ;
       `;
       void parser.parse(input);
@@ -282,7 +282,7 @@ describe('Railroad Parser', () => {
 
     it('should handle numbers in rule names', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule123 = terminal("test") ;
       `;
       void parser.parse(input);
@@ -294,7 +294,7 @@ describe('Railroad Parser', () => {
 
     it('should parse deeply nested IR', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = sequence(
             choice(terminal("a"), terminal("b")),
             choice(terminal("c"), terminal("d"))
@@ -314,7 +314,7 @@ describe('Railroad Parser', () => {
 
     it('should parse zeroOrMore with choice', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         rule = zeroOrMore(choice(terminal("a"), terminal("b"))) ;
       `;
       void parser.parse(input);
@@ -329,7 +329,7 @@ describe('Railroad Parser', () => {
 
     it('should parse block comments', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         /* this is a comment */
         rule = terminal("a") ;
       `;
@@ -347,7 +347,7 @@ describe('Railroad Parser', () => {
   describe('Real-world Examples', () => {
     it('should parse an expression grammar', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         title "Simple Expression"
         expression = sequence(
             nonterminal("term"),
@@ -388,7 +388,7 @@ describe('Railroad Parser', () => {
 
     it('should parse JSON grammar excerpt', () => {
       const input = `
-        railroad-diagram
+        railroad-beta
         title "JSON Subset"
         value = choice(
             nonterminal("string"),

@@ -87,6 +87,9 @@ class Theme {
       this.edgeLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
+
     /* Sequence Diagram variables */
 
     // this.actorBorder = lighten(this.border1, 0.5);
@@ -103,7 +106,15 @@ class Theme {
     this.activationBorderColor = this.activationBorderColor || darken(this.secondaryColor, 10);
     this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
-    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
+    // Not tertiaryColor here. This theme pins tertiaryColor to its background, so deriving the
+    // `rect` section band from it draws white on white -- present in the DOM, invisible on screen.
+    // Keying it to the background instead keeps the band a shade of whatever the background is,
+    // including when the background is overridden through themeVariables. Direction-aware because
+    // darken() is a no-op at pure black: an override to #000000 needs the shade to go the other
+    // way or the band vanishes exactly as it did on white.
+    this.rectBkgColor =
+      this.rectBkgColor ||
+      (isDark(this.background) ? lighten(this.background, 4) : darken(this.background, 4));
 
     /* Gantt chart variables */
     const primaryColor = '#ECECFE';
@@ -285,6 +296,7 @@ class Theme {
     this.xyChart = {
       backgroundColor: this.xyChart?.backgroundColor || this.background,
       titleColor: this.xyChart?.titleColor || this.primaryTextColor,
+      legendTextColor: this.xyChart?.legendTextColor || this.primaryTextColor,
       xAxisTitleColor: this.xyChart?.xAxisTitleColor || this.primaryTextColor,
       xAxisLabelColor: this.xyChart?.xAxisLabelColor || this.primaryTextColor,
       xAxisTickColor: this.xyChart?.xAxisTickColor || this.primaryTextColor,

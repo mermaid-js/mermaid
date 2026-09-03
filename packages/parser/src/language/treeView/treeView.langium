@@ -38,7 +38,8 @@ fragment TitleAndAccessibilities:
 // terminal matches the full string (14 chars) vs INDENTATION matching just " " (1 char).
 // Chevrotain uses declaration order for priority, so these must come first.
 terminal CLASS_ANNOTATION: /[ \t]+:::[ \t]*[A-Za-z_][\w-]*/;
-terminal ICON_ANNOTATION: /[ \t]+icon\([\w-]*\)/;
+// Icon name is an iconify reference: optional `pack:` prefix followed by the icon name
+terminal ICON_ANNOTATION: /[ \t]+icon\([\w-]*(?::[\w-]+)?\)/;
 terminal DESC_ANNOTATION: /[ \t]+##[^\n\r]*/;
 
 // This should be processed before whitespace is ignored
