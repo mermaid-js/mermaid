@@ -235,4 +235,30 @@ accDescr: This is an accessible description
       }
     });
   });
+
+  describe('Trailing whitespace', () => {
+    it('should parse a leaf with trailing space after the value', () => {
+      const result = parse('treemap\n"Root"\n  "Child": 100 ');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(2);
+    });
+
+    it('should parse treemap-beta with trailing space on the last leaf line', () => {
+      const result = parse(`treemap-beta
+"Category A"
+    "Item A1": 10
+    "Item A2": 20
+"Category B"
+    "Item B1": 15
+    "Item C3": 10 `);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(6);
+    });
+
+    it('should parse a section with trailing space', () => {
+      const result = parse('treemap\n"Root" \n  "Child": 100');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.TreemapRows).toHaveLength(2);
+    });
+  });
 });
