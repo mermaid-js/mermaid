@@ -412,7 +412,7 @@ class Theme {
   }
 
   /**
-   * @typedef {Partial<Record<keyof Theme, Theme[keyof Theme]>>} ThemeOverrides
+   * @typedef {Partial<Theme>} ThemeOverrides
    */
 
   /**
