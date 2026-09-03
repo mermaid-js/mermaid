@@ -371,6 +371,41 @@ describe('[Style] when parsing', () => {
     warnSpy.mockRestore();
   });
 
+  it('should handle a CSS comment in a link style', function () {
+    flow.parser.parse('graph TD;A-->B;linkStyle 0 stroke:#FFF9B4 /*jaune*/;');
+
+    const edges = flow.parser.yy.getEdges();
+    expect(edges[0].style[0]).toBe('stroke:#FFF9B4 /*jaune*/');
+  });
+
+  it('should handle a space before the end of a CSS comment', function () {
+    flow.parser.parse('graph TD;A-->B;linkStyle 0 stroke:#FFF9B4 /* jaune */;');
+
+    const edges = flow.parser.yy.getEdges();
+    expect(edges[0].style[0]).toBe('stroke:#FFF9B4 /* jaune */');
+  });
+
+  it('should handle non-ascii characters in a CSS comment', function () {
+    flow.parser.parse('graph TD;A-->B;linkStyle 0 stroke:#00815F /*émeraude*/;');
+
+    const edges = flow.parser.yy.getEdges();
+    expect(edges[0].style[0]).toBe('stroke:#00815F /*émeraude*/');
+  });
+
+  it('should handle brackets in a CSS comment', function () {
+    flow.parser.parse('graph TD;A-->B;linkStyle 0 stroke:#FFF9B4 /*a[b]*/;');
+
+    const edges = flow.parser.yy.getEdges();
+    expect(edges[0].style[0]).toBe('stroke:#FFF9B4 /*a[b]*/');
+  });
+
+  it('should handle a CSS comment in a vertex style', function () {
+    flow.parser.parse('graph TD;style Q fill:#fff /* white */;');
+
+    const vert = flow.parser.yy.getVertices();
+    expect(vert.get('Q').styles[0]).toBe('fill:#fff /* white */');
+  });
+
   it('should handle multiple vertices with style', function () {
     const res = flow.parser.parse(`
     graph TD
