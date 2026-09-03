@@ -15,12 +15,22 @@ import { c4LabelHelper } from './c4LabelHelper.js';
  * Widens a measured label box to `minWidth`. `createText` already sizes HTML labels
  * up in the DOM; this covers SVG text (which has no box to size) and keeps the
  * geometry shapes derive from the box consistent with it.
+ *
+ * The two label kinds measure differently and shapes rely on the difference:
+ * an HTML label's `getBoundingClientRect()` is a DOMRect with `left`/`top`,
+ * while SVG text's `getBBox()` is an SVGRect without them, centred on x=0.
+ * Shapes place labels with `pos - (bbox.x - (bbox.left ?? 0))`, which cancels
+ * the centring for SVG text only because `left` is absent — so the widened box
+ * must keep the kind it was given, and SVG text stays centred as it grows.
  */
-const withMinWidth = (bbox: DOMRect, minWidth: number): DOMRect => {
+export const withMinWidth = (bbox: DOMRect, minWidth: number): DOMRect => {
   if (bbox.width >= minWidth) {
     return bbox;
   }
   const { x, y, height } = bbox;
+  if (!('left' in bbox)) {
+    return { x: x - (minWidth - bbox.width) / 2, y, width: minWidth, height } as DOMRect;
+  }
   return {
     x,
     y,
