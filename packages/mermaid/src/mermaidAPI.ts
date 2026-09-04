@@ -451,8 +451,8 @@ function sandboxedIframe(
  *
  * @param doc - the document to removed elements from
  * @param id - id for any existing SVG element
- * @param divSelector - selector for any existing enclosing div element
- * @param iFrameSelector - selector for any existing iFrame element
+ * @param divId - id for any existing enclosing div element
+ * @param iFrameId - id for any existing iFrame element
  */
 export const removeExistingElements = (
   doc: Document,
