@@ -1,5 +1,9 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { C4_ELEMENT_TYPES } from './c4ShapeAdapter.js';
+import { readableOn } from './c4Colors.js';
+
+// The elements each C4 shape draws; `person` contributes both a rect and a circle.
+const SHAPE_PARTS = ['rect', 'path', 'circle', 'ellipse', 'line'];
 
 // Per-element-type font rules from the c4 config (personFontFamily and friends).
 // Built through the CSSOM so config values are parsed as CSS values: a value
@@ -33,15 +37,44 @@ const elementFontStyles = () => {
     .join('\n');
 };
 
-const getStyles = (options) =>
-  `.person {
-    stroke: ${options.personBorder};
-    fill: ${options.personBkg};
+// The c4model.com outline look: each element type's palette colour becomes its border
+// and text - its identity - over the theme's surface colour. Built through the CSSOM for
+// the same reason as the font rules, and here rather than inline on the node because the
+// theme variables only exist at style-generation time. An `UpdateElementStyle` colour is
+// still emitted inline by the shape adapter, which outranks any of this.
+const elementColorStyles = (options) => {
+  const c4 = getConfig().c4 ?? {};
+  const surface = options.background;
+  const sheet = new CSSStyleSheet();
+  for (const type of C4_ELEMENT_TYPES) {
+    const paletteColor = c4[`${type}_bg_color`];
+    if (!paletteColor) {
+      continue;
+    }
+    const identity = readableOn(paletteColor, surface);
+    const parts = SHAPE_PARTS.map((part) => `.c4-shape.c4-${type} ${part}`).join(', ');
+    const strokeRule = sheet.cssRules[sheet.insertRule(`${parts} {}`, sheet.cssRules.length)];
+    strokeRule.style.setProperty('stroke', identity);
+    // Set on the group so the label inherits it and `fill: currentColor` picks it up.
+    const colorRule =
+      sheet.cssRules[sheet.insertRule(`.c4-shape.c4-${type} {}`, sheet.cssRules.length)];
+    colorRule.style.setProperty('color', identity);
   }
-${elementFontStyles()}
+  return [...sheet.cssRules]
+    .filter((rule) => rule.style.length > 0)
+    .map((rule) => `  ${rule.cssText}`)
+    .join('\n');
+};
 
-  /* The element font colour is set inline per element (default white); the
-     label text takes it via currentColor. */
+const getStyles = (options) =>
+  `${elementFontStyles()}
+${elementColorStyles(options)}
+
+  ${SHAPE_PARTS.map((part) => `.c4-shape ${part}`).join(',\n  ')} {
+    fill: ${options.background};
+    stroke-width: 2px;
+  }
+  /* The identity colour is set on the element group above; the label follows it. */
   .c4-shape .label,
   .c4-shape .label text {
     color: inherit;
@@ -56,14 +89,6 @@ ${elementFontStyles()}
   }
   .c4-shape .label .c4-descr {
     font-size: 0.82em;
-  }
-  .c4-shape .basic,
-  .c4-shape rect,
-  .c4-shape path,
-  .c4-shape circle,
-  .c4-shape ellipse,
-  .c4-shape line {
-    stroke-width: 2px;
   }
 `;
 
