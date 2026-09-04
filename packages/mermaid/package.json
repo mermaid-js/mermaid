@@ -57,6 +57,9 @@
   },
   "author": "Knut Sveidqvist",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "standard": {
     "ignore": [
       "**/parser/*.js",

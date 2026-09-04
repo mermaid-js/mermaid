@@ -30,6 +30,9 @@
     "Sidharth Vinod"
   ],
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "mermaid": "workspace:^"

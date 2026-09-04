@@ -22,7 +22,15 @@ We have compiled some Video [Tutorials](../ecosystem/tutorials.md) on how to use
 
 Requirements:
 
-- Node >= 16
+- Node.js >= 22.12.0
+
+### Supported browsers and runtimes
+
+Mermaid v<MERMAID_RELEASE_VERSION>+'s published bundles target ES2024 and are aimed to support Safari 17.4 or later.
+
+We run linting for Chromium 121 and Firefox 123 support as well, but unlike Safari 17.4, we don't commit to supporting these outdated versions.
+
+Older browsers may work too, or you may need to polyfill/transpile mermaid to support them.
 
 ```bash
 # NPM
