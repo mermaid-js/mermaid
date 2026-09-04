@@ -1,4 +1,6 @@
 import type { LayoutData } from '../../../types.js';
+import { buildLaneModel } from '../lanes.js';
+import { anchorFootprints, collectAnchoredIds } from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -8,31 +10,82 @@ function buildNodeMap(nodes: LayoutNode[]): Map<string, LayoutNode> {
   return new Map(nodes.map((node) => [node.id, node]));
 }
 
-function resolveTopLevelGroupId(
-  node: LayoutNode,
-  nodeById: Map<string, LayoutNode>
-): string | null {
-  let parentId = node.parentId;
-  let topLevelGroupId: string | null = null;
-  while (parentId) {
-    const parent = nodeById.get(parentId);
-    if (!parent?.isGroup) {
-      break;
-    }
-    topLevelGroupId = parent.id;
-    parentId = parent.parentId;
+/**
+ * Puts a frame around each pool's lanes, with the pool's own name band to their left.
+ *
+ * The lanes are already equal width and stacked without gaps, so the pool only has to
+ * enclose the run and shift it right to make room for its band. Every lane makes that
+ * room, pooled or not, so a diagram mixing the two keeps its lanes aligned.
+ *
+ * Anchored nodes are not shifted here: they are pinned again from their host's final
+ * geometry once this transform has run, so shifting them would be undone anyway.
+ */
+function framePoolsLr(
+  nodes: LayoutNode[],
+  laneModel: ReturnType<typeof buildLaneModel>,
+  laneLeft: number,
+  titleBandSize: number
+): void {
+  if (!laneModel.hasPools) {
+    return;
   }
-  return topLevelGroupId;
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const poolBand = titleBandSize;
+  const anchoredIds = collectAnchoredIds(nodes);
+
+  for (const node of nodes) {
+    if (laneModel.isLane(node.id) && typeof node.x === 'number') {
+      node.x += poolBand;
+      if (node.groupTitleRect) {
+        node.groupTitleRect.left += poolBand;
+        node.groupTitleRect.right += poolBand;
+      }
+    }
+  }
+  for (const node of nodes) {
+    if (
+      !laneModel.isLane(node.id) &&
+      !node.isGroup &&
+      !anchoredIds.has(node.id) &&
+      typeof node.x === 'number'
+    ) {
+      node.x += poolBand;
+    }
+  }
+
+  for (const [poolId, laneIds] of laneModel.lanesByPool) {
+    const pool = byId.get(poolId);
+    const lanes = laneIds
+      .map((id: string) => byId.get(id))
+      .filter((lane): lane is LayoutNode => Boolean(lane));
+    if (!pool || lanes.length === 0) {
+      continue;
+    }
+    const top = Math.min(...lanes.map((lane) => (lane.y ?? 0) - (lane.height ?? 0) / 2));
+    const bottom = Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2));
+    const right = Math.max(...lanes.map((lane) => (lane.x ?? 0) + (lane.width ?? 0) / 2));
+    const left = laneLeft;
+
+    pool.x = (left + right) / 2;
+    pool.width = right - left;
+    pool.y = (top + bottom) / 2;
+    pool.height = bottom - top;
+    pool.swimlaneContentTop = top;
+    pool.groupTitleRect = { left, right: left + poolBand, top, bottom };
+  }
 }
 
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
+  // `seen` guards a malformed parent cycle, which would otherwise not terminate.
+  const seen = new Set<string>([group.id]);
   let depth = 0;
   let parentId = group.parentId;
-  while (parentId) {
+  while (parentId && !seen.has(parentId)) {
     const parent = nodeById.get(parentId);
     if (!parent?.isGroup) {
       break;
     }
+    seen.add(parentId);
     depth++;
     parentId = parent.parentId;
   }
@@ -147,13 +200,68 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
   return mirrorAxis(layout, 'y');
 }
 
+/** The strip along a band's edge that its rotated title is drawn in. */
+const LANE_TITLE_BAND = 36;
+
+/**
+ * Lays out the bands that hold nothing, stacking them below whatever was placed already.
+ *
+ * A band with no content has no children to take an extent from, so without this it keeps
+ * the zero size it started with and every one of them collapses onto the origin, each
+ * title overlapping the next. In BPMN such a band is a black box pool - a participant
+ * whose internals are deliberately not shown - and a collaboration may be nothing else.
+ *
+ * A band's title is drawn rotated, so it runs along the band's height and a band shorter
+ * than its own name spills text over its neighbours. Text cannot be measured here -
+ * `calculateTextDimensions` needs a render tree and there is none during layout - so the
+ * run is estimated from the character count at the configured font size, which only has
+ * to be close enough to keep a name inside its own band.
+ */
+function stackEmptyBands(
+  bands: LayoutNode[],
+  opts: {
+    top: number;
+    centerX: number;
+    laneLeft: number;
+    laneWidth: number;
+    titleBandSize: number;
+    fontSize: number;
+  }
+): void {
+  let top = opts.top;
+  for (const band of bands) {
+    const titleRun =
+      (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
+    const height = Math.max(
+      2 * opts.titleBandSize,
+      2 * (band.padding ?? 0),
+      titleRun + opts.titleBandSize
+    );
+    band.x = opts.centerX;
+    band.y = top + height / 2;
+    band.width = opts.laneWidth;
+    band.height = height;
+    band.swimlaneContentTop = top;
+    band.groupTitleRect = {
+      left: opts.laneLeft,
+      right: opts.laneLeft + opts.titleBandSize,
+      top,
+      bottom: top + height,
+    };
+    top += height;
+  }
+}
+
 export function applyLrDirectionTransform(
   layout: LayoutData,
   direction: Direction = 'LR'
 ): boolean {
   const nodes = (layout.nodes ?? []) as LayoutNode[];
   const edges = layout.edges ?? [];
-  const contentNodes = nodes.filter((n) => !n.isGroup);
+  // An anchored node's position is derived from its host, so it must not steer the
+  // aspect ratio or the lane bounds computed below.
+  const anchoredIds = collectAnchoredIds(nodes);
+  const contentNodes = nodes.filter((n) => !n.isGroup && !anchoredIds.has(n.id));
 
   let minX = Infinity;
   let minY = Infinity;
@@ -169,10 +277,32 @@ export function applyLrDirectionTransform(
   }
 
   if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-    return false;
+    // There is no content anywhere, so there is nothing to turn on its side. A
+    // collaboration can be exactly this - participants and nothing else - and its bands
+    // still have to be drawn, at a width of their own since none can be measured.
+    const emptyModel = buildLaneModel(nodes);
+    const emptyBands = nodes.filter((n) => emptyModel.isLane(n.id));
+    if (emptyBands.length === 0) {
+      return false;
+    }
+    const titleBand = LANE_TITLE_BAND;
+    const bandWidth = 6 * titleBand;
+    stackEmptyBands(emptyBands, {
+      top: 0,
+      centerX: titleBand + bandWidth / 2,
+      laneLeft: titleBand,
+      laneWidth: bandWidth,
+      titleBandSize: titleBand,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, emptyModel, titleBand, titleBand);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
+    return true;
   }
 
-  const titleBandSize = 36;
+  const titleBandSize = LANE_TITLE_BAND;
 
   let totalWidth = 0;
   let totalHeight = 0;
@@ -210,7 +340,8 @@ export function applyLrDirectionTransform(
 
   recomputeNestedGroupBounds(nodes);
 
-  const laneNodes = nodes.filter((n) => n.isGroup && !n.parentId);
+  const laneModel = buildLaneModel(nodes);
+  const laneNodes = nodes.filter((n) => laneModel.isLane(n.id));
   if (laneNodes.length === 0) {
     if (direction === 'RL') {
       mirrorAxis(layout, 'x');
@@ -218,19 +349,40 @@ export function applyLrDirectionTransform(
     return true;
   }
 
-  const nodeById = buildNodeMap(nodes);
   const childrenByLane = new Map<string, LayoutNode[]>();
+  // A node standing off its host is placed from that host rather than bucketed as content
+  // of its own, but it is still drawn inside the lane. Charging the room to the host,
+  // whose position is settled by now, sizes the lane to hold it without depending on when
+  // the standing-off node is finally placed.
+  const footprints = anchorFootprints(nodes);
 
   for (const n of nodes) {
-    if (n.isGroup) {
+    // A band is the frame being measured here, so it cannot also count as its own content.
+    // Any other group can: its padded box extends past the nodes inside it, and a lane
+    // measured from those nodes alone comes out too narrow to contain the group.
+    if (laneModel.isLane(n.id) || laneModel.isPool(n.id) || anchoredIds.has(n.id)) {
       continue;
     }
-    const laneId = resolveTopLevelGroupId(n, nodeById);
+    // The lane model, not resolveTopLevelGroupId: with a pool the outermost group is the
+    // pool, so bucketing by it would leave every lane looking empty.
+    const laneId = laneModel.laneIdOf(n.id);
     if (!laneId) {
       continue;
     }
     const bucket = childrenByLane.get(laneId) ?? [];
-    bucket.push(n);
+    const footprint = footprints.get(n.id);
+    bucket.push(
+      footprint
+        ? {
+            ...n,
+            // The nodes hang below the host in this orientation, so the box grows
+            // downward only: its centre moves half the reach and its height by all of it.
+            y: (n.y ?? 0) + footprint.beyond / 2,
+            width: Math.max(n.width ?? 0, 2 * footprint.across),
+            height: (n.height ?? 0) + footprint.beyond,
+          }
+        : n
+    );
     childrenByLane.set(laneId, bucket);
   }
 
@@ -269,6 +421,22 @@ export function applyLrDirectionTransform(
   }
 
   if (globalMinXChild === Infinity || globalMaxXChild === -Infinity) {
+    // Nothing in the diagram has content, so there are no bounds to lay bands out
+    // against - a collaboration drawn as participants alone. They are still drawn, at a
+    // width of their own since there is no content to take one from.
+    const emptyWidth = 6 * titleBandSize;
+    stackEmptyBands(laneNodes, {
+      top: 0,
+      centerX: titleBandSize + emptyWidth / 2,
+      laneLeft: titleBandSize,
+      laneWidth: emptyWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, laneModel, titleBandSize, titleBandSize);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
     return true;
   }
 
@@ -318,6 +486,31 @@ export function applyLrDirectionTransform(
       bottom: laneBottom,
     };
   }
+
+  // A band with no content still has to be drawn. In BPMN that is a black box pool - a
+  // participant whose internals are deliberately not shown - and it has no children to
+  // derive an extent from, so without this it keeps the zero size it started with and
+  // every such band collapses onto the origin, one title overlapping the next.
+  //
+  // They are stacked below the bands that do have content, which leaves those untouched;
+  // placing one back at its declared position would mean moving already-placed nodes.
+  const placed = new Set(laneBounds.map((entry) => entry.lane));
+  stackEmptyBands(
+    laneNodes.filter((lane) => !placed.has(lane)),
+    {
+      top: laneBounds.reduce(
+        (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
+        laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
+      ),
+      centerX,
+      laneLeft,
+      laneWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    }
+  );
+
+  framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');

@@ -5,6 +5,9 @@ import {
   prepareEdgeEndpointsForRenderer,
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
+import { framePoolsTb } from './direction/framePoolsTb.js';
+import { linkParticipantBands } from './direction/participantLinks.js';
+import { separateParticipants } from './direction/separateParticipants.js';
 import { applyBtDirectionTransform, applyLrDirectionTransform } from './direction/lrTransform.js';
 import { portSwapToLShape } from './direction/portSwap.js';
 import { collapseShortTerminalStub } from './direction/terminalStub.js';
@@ -23,6 +26,7 @@ import { simplifyDetouredEdges } from './direction/detourSimplification.js';
 import { anchorLabelsToPolyline } from './direction/labelAnchoring.js';
 import { straightenCollinearSiblingDetours } from './direction/siblingSharedFaceRouting.js';
 import { nudgeSharedInteriorSubpaths } from './direction/sharedTrackNudging.js';
+import { pinAnchoredNodes, squareAnchoredEdges } from './anchoredNodes.js';
 export { validateSwimlanesLayout } from './direction/validation.js';
 
 /** Applies direction transforms and post-routing cleanup to a swimlane layout. */
@@ -34,17 +38,38 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // TB is the canonical orientation. LR/RL rotate rank progression onto X;
   // BT mirrors the canonical Y progression. Cleanup passes below operate in
   // whichever coordinate system this step leaves behind.
-  if (
-    (direction === 'LR' || direction === 'RL') &&
-    contentNodes.length > 0 &&
-    !applyLrDirectionTransform(layout, direction)
-  ) {
+  // Run even with nothing in the diagram: a collaboration can be participants and no
+  // content at all, and their bands still have to be laid out.
+  if ((direction === 'LR' || direction === 'RL') && !applyLrDirectionTransform(layout, direction)) {
     return;
+  }
+
+  // Laid out downwards a pool leaves no room for its own name, so its lanes are drawn
+  // over it. Framed here, before anything is measured from the bands.
+  if (direction !== 'LR' && direction !== 'RL') {
+    framePoolsTb(layout);
   }
 
   if (direction === 'BT' && contentNodes.length > 0 && !applyBtDirectionTransform(layout)) {
     return;
   }
+
+  // The transforms above move a host without transforming its width and height, so an
+  // anchor pinned in canonical space lands off the border by the difference. Re-pin from
+  // the host's final geometry, ahead of the polyline passes below, so the repaired route
+  // goes through the same cleanup as every other edge.
+  const pins = pinAnchoredNodes(layout, {
+    space: 'final',
+    direction: direction === 'LR' || direction === 'RL' || direction === 'BT' ? direction : 'TB',
+  });
+  // Done before the polyline passes below, so a squared-up stub goes through the same
+  // cleanup as every other edge rather than sitting outside it.
+  squareAnchoredEdges(layout, pins);
+
+  // The bands now have their final geometry, which is what these two need: room between
+  // participants, and then the links that run through it.
+  separateParticipants(layout, direction);
+  linkParticipantBands(layout);
 
   for (const edge of edges) {
     if ((edge as { isLayoutOnly?: boolean }).isLayoutOnly) {

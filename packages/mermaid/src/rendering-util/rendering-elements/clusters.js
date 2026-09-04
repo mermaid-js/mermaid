@@ -803,6 +803,10 @@ const usecaseSystemBoundary = async (parent, node) => {
 };
 
 const squareRect = rect;
+
+/** A pool: the swimlane band, drawn one level out around a run of lanes. */
+const pool = (elem, node) => swimlane(elem, node, { variant: 'pool' });
+
 const shapes = {
   rect,
   squareRect,
@@ -813,6 +817,7 @@ const shapes = {
   flowGroup,
   usecaseSystemBoundary,
   swimlane,
+  pool,
 };
 
 let clusterElems = new Map();
