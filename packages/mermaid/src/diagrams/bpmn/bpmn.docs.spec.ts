@@ -42,5 +42,7 @@ describe('bpmn public documentation examples', () => {
         throw new Error(`BPMN documentation example ${index + 1} failed: ${message}`);
       }
     }
-  });
+    // Twelve full renders in jsdom take several seconds together; the default per-test
+    // budget is sized for one.
+  }, 60_000);
 });
