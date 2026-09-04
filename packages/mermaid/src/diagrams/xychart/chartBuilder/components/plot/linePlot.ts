@@ -45,6 +45,23 @@ export class LinePlot {
       },
     ];
 
+    // A single datum produces a zero-length M...Z path that paints nothing.
+    if (finalData.length === 1) {
+      const [px, py] = finalData[0];
+      elements.push({
+        groupTexts: ['plot', `line-plot-${this.plotIndex}`],
+        type: 'circle',
+        data: [
+          {
+            x: this.orientation === 'horizontal' ? py : px,
+            y: this.orientation === 'horizontal' ? px : py,
+            radius: Math.max(3, this.plotData.strokeWidth),
+            fill: this.plotData.strokeFill,
+          },
+        ],
+      });
+    }
+
     if (this.plotData.pointLabels && this.plotData.pointLabels.length > 0) {
       const labelOffset = 10;
       const fontSize = 12;
