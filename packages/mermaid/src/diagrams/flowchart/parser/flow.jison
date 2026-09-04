@@ -400,13 +400,21 @@ shapeData:
     { $$ = $1; }
     ;
 
-vertexStatement: vertexStatement link node shapeData
+vertexStatement: vertexStatement link node shapeData STYLE_SEPARATOR idString
+        { /* console.warn('vs shapeData STYLE_SEPARATOR idString',$vertexStatement.stmt,$node, $shapeData, $idString);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.setClass($node[$node.length-1],$idString); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    | vertexStatement link node shapeData
         { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     | vertexStatement link node
         { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
         { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
+    |node shapeData STYLE_SEPARATOR idString {
+        /*console.warn('vertexStatement: node shapeData STYLE_SEPARATOR idString', $node[0], $shapeData, $idString);*/
+        yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
+        yy.setClass($node[$node.length-1],$idString);
+        $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
+    }
     |node shapeData {
         /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
         yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
@@ -417,6 +425,8 @@ vertexStatement: vertexStatement link node shapeData
 
 node: styledVertex
         { /*console.warn('nod', $styledVertex);*/ $$ = [$styledVertex];}
+    | node shapeData STYLE_SEPARATOR idString spaceList AMP spaceList styledVertex
+        {  yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.setClass($node[$node.length-1],$idString); $$ = $node.concat($styledVertex); /*console.warn('pip2 styled', $node[0], $styledVertex, $$);*/  }
     | node shapeData spaceList AMP spaceList styledVertex
         {  yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); $$ = $node.concat($styledVertex); /*console.warn('pip2', $node[0], $styledVertex, $$);*/  }
     | node spaceList AMP spaceList styledVertex
