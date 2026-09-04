@@ -120,12 +120,20 @@ describe('when parsing ER diagram it...', function () {
       });
     });
 
-    // skip this: jison cannot handle non-english letters
-    it.skip('[skipped test] can contain àáâäæãåā', function () {
+    it('can contain àáâäæãåā', function () {
       const beyondEnglishName = 'DUCK-àáâäæãåā';
       erDiagram.parser.parse(`erDiagram\n${beyondEnglishName}\n`);
       const entities = erDb.getEntities();
       expect(entities.has(beyondEnglishName)).toBe(true);
+    });
+
+    it('can contain non-Latin scripts', function () {
+      const names = ['中文实体', 'Сущность', 'Οντότητα', 'エンティティ'];
+      names.forEach((name) => {
+        erDiagram.parser.yy.clear();
+        erDiagram.parser.parse(`erDiagram\n${name}\n`);
+        expect(erDb.getEntities().has(name)).toBe(true);
+      });
     });
 
     it('can contain - _ without needing ""', function () {
@@ -231,6 +239,37 @@ describe('when parsing ER diagram it...', function () {
       expect(entities.get(entity).attributes.length).toBe(1);
       expect(entities.get(entity).attributes[0].type).toBe(type);
       expect(entities.get(entity).attributes[0].name).toBe(name);
+    });
+
+    it('should allow non-Latin characters in an attribute type and name', () => {
+      const entity = 'ENTITY';
+      const type = '中文';
+      const name = '名前';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${type} ${name}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].type).toBe(type);
+      expect(entities.get(entity).attributes[0].name).toBe(name);
+    });
+
+    it('should allow non-Latin attribute types across scripts', () => {
+      const entity = 'ENTITY';
+      const types = ['中文', 'Привет', 'Ελλάδα', 'カタカナ'];
+      types.forEach((type) => {
+        erDiagram.parser.yy.clear();
+        erDiagram.parser.parse(`erDiagram\n${entity} {\n${type} value\n}`);
+        expect(erDb.getEntities().get(entity).attributes[0].type).toBe(type);
+      });
+    });
+
+    // https://github.com/mermaid-js/mermaid/issues/6335
+    it('should allow a non-Latin attribute type inside a quoted entity', () => {
+      erDiagram.parser.parse('erDiagram\n"Chinese" {\nChinese chinese "test"\n中文 test\n}');
+      const attributes = erDb.getEntities().get('Chinese').attributes;
+      expect(attributes.length).toBe(2);
+      expect(attributes[1].type).toBe('中文');
+      expect(attributes[1].name).toBe('test');
     });
 
     it('should not allow leading numbers, dashes or brackets', function () {
