@@ -2283,6 +2283,35 @@ end`;
     expect(diagram.db.getMessages()[2].msgModel.sequenceIndex).toBe(10.2);
     expect(diagram.db.getMessages()[3].msgModel.sequenceIndex).toBe(10.3);
   });
+
+  it('should set actor stopy for all actors in a tall diagram (non-mirrorActors)', async () => {
+    // Generate enough back-and-forth messages to push the diagram height past
+    // the hardcoded y2=2000. This exposes the bug where actor.stopy was never
+    // set for non-mirrorActors diagrams, leaving fixLifeLineHeights to skip
+    // the update so life lines stopped at y=2000 while the diagram content continued below.
+    const messages = Array.from(
+      { length: 100 },
+      (_, i) => `Alice->Bob: message ${i}\nBob->Alice: reply ${i}`
+    ).join('\n');
+    const str = `sequenceDiagram\n${messages}`;
+
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+    const actors = diagram.db.getActors();
+    const { bounds } = diagram.renderer.bounds.getBounds();
+
+    // Sanity-check: the diagram is genuinely taller than 2000px
+    expect(bounds.stopy).toBeGreaterThan(2000);
+
+    // Every actor must have stopy set and exceed 2000. Previously actor.stopy
+    // was undefined for non-mirrorActors, so fixLifeLineHeights would skip
+    // updating y2 and life lines would stop at the hardcoded 2000.
+    for (const [, actor] of actors) {
+      expect(actor.stopy).toBeDefined();
+      expect(actor.stopy).toBeGreaterThan(2000);
+    }
+  });
 });
 
 describe('when rendering a sequenceDiagram with actor mirror activated', () => {
@@ -2394,11 +2423,11 @@ Bob->>Alice:Got it!
         Bob -|/ Alice: Hello Alice, how are you?
         Bob -// Alice: Hello Alice, how are you?
         Bob -\\\\ Alice: Hello Alice, how are you?
-        
+
         Bob \\|- Alice: Hello Alice, how are you?
         Bob /|- Alice: Hello Alice, how are you?
         Bob //- Alice: Hello Alice, how are you?
-        Bob \\\\- Alice: Hello Alice, how are you?        
+        Bob \\\\- Alice: Hello Alice, how are you?
     `);
 
     const messages = diagram.db.getMessages();
@@ -2616,7 +2645,7 @@ Bob->>Alice:Got it!
       const diagram = await Diagram.fromText(`
       sequenceDiagram
       participant Q@{ "type" : "queue" }
-      Q->Q: test 
+      Q->Q: test
       `);
       const actors = diagram.db.getActors();
       expect(actors.get('Q').type).toBe('queue');
