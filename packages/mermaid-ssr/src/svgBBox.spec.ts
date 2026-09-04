@@ -125,4 +125,27 @@ describe('estimateBBox text-anchor', () => {
     const box = estimateBBox(svg.querySelector('text')!);
     expect(box.x).toBeCloseTo(-box.width / 2, 1);
   });
+
+  it('honours an anchor set on the row tspan, as c4 centres its labels', () => {
+    // c4 puts text-anchor on the row tspan rather than on the <text>.
+    const svg = parseSvgElement(`
+      <text y="-10.1">
+        <tspan class="text-outer-tspan row" x="0" y="-0.1em" dy="1.1em" text-anchor="middle">
+          <tspan class="text-inner-tspan">Handle paren</tspan>
+        </tspan>
+      </text>
+    `);
+    const box = estimateBBox(svg.querySelector('text')!);
+    expect(box.x).toBeCloseTo(-box.width / 2, 1);
+  });
+
+  it('anchors each row on its own x', () => {
+    const svg = parseSvgElement(`
+      <text y="-10.1">
+        <tspan class="row" x="100" y="0" text-anchor="middle">Handle paren</tspan>
+      </text>
+    `);
+    const box = estimateBBox(svg.querySelector('text')!);
+    expect(box.x).toBeCloseTo(100 - box.width / 2, 1);
+  });
 });

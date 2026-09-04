@@ -130,12 +130,14 @@ function textBBox(el: Element): BBox {
   const spans = [...el.querySelectorAll('tspan')];
 
   if (spans.length > 0) {
+    const textX = numAttr(el, 'x');
     const textY = numAttr(el, 'y');
     const { ascent, descent } = lineMetrics(spec);
     let hasVisibleText = false;
     let totalMinY = 0;
     let totalMaxY = 0;
-    let maxW = 0;
+    let minX = Infinity;
+    let maxX = -Infinity;
     let currentBaseline = textY;
 
     for (const [i, ts] of spans.entries()) {
@@ -144,8 +146,13 @@ function textBBox(el: Element): BBox {
         hasVisibleText = true;
       }
       const w = measureTextWidth(lineText, spec);
-      if (w > maxW) {
-        maxW = w;
+      // A span with its own x starts a new text chunk, anchored on that x.
+      // c4 puts text-anchor on the row span rather than on the <text>.
+      if (w > 0) {
+        const spanX = ts.hasAttribute('x') ? numAttr(ts, 'x') : textX;
+        const left = spanX + anchorOffset(textAnchorOf(ts), w);
+        minX = Math.min(minX, left);
+        maxX = Math.max(maxX, left + w);
       }
 
       const dyAttr = ts.getAttribute('dy') ?? '';
@@ -180,9 +187,9 @@ function textBBox(el: Element): BBox {
     }
 
     return {
-      x: numAttr(el, 'x') + anchorOffset(anchor, maxW),
+      x: Number.isFinite(minX) ? minX : textX,
       y: totalMinY,
-      width: maxW,
+      width: Number.isFinite(maxX) ? maxX - minX : 0,
       height: Math.max(totalMaxY - totalMinY, ascent + descent),
     };
   }

@@ -1,8 +1,11 @@
-import { outermostSvg } from './cssProperty.js';
+import { declaredProperty, resolveInheritedProperty } from './cssProperty.js';
 import { resolveFont } from './fonts.js';
 
 export const DEFAULT_FONT_SIZE = 16;
 export const DEFAULT_FONT_FAMILY = '"trebuchet ms", verdana, arial, sans-serif';
+
+/** Depth guard for the recursive font-size walk. */
+const MAX_INHERIT_DEPTH = 64;
 
 export interface FontSpec {
   family: string;
@@ -10,131 +13,83 @@ export interface FontSpec {
   weight: number;
 }
 
-const RE_FONT_SIZE_PX = /font-size:\s*([\d.]+)\s*px/;
-const RE_FONT_SIZE_PT = /font-size:\s*([\d.]+)\s*pt/;
-const RE_FONT_WEIGHT = /font-weight:\s*([\da-z]+)/i;
-const RE_FONT_FAMILY = /font-family:\s*([^;}]+)/;
+const RE_ABSOLUTE_SIZE = /^([\d.]+)\s*(px|pt)?$/i;
+const RE_RELATIVE_SIZE = /^([\d.]+)\s*(em|rem|%)$/i;
 const RE_EM_VALUE = /^(-?[\d.]+)\s*em$/;
-const RE_REGEXP_SPECIAL = /[$()*+.?[\\\]^{|}]/g;
 
-interface RootStyle {
-  family?: string;
-  size?: number;
+/** A font-size in absolute px, or undefined when the value is relative. */
+function absoluteSize(value: string): number | undefined {
+  const match = RE_ABSOLUTE_SIZE.exec(value);
+  if (!match) {
+    return undefined;
+  }
+  const size = Number.parseFloat(match[1]);
+  if (!Number.isFinite(size) || size <= 0) {
+    return undefined;
+  }
+  return match[2]?.toLowerCase() === 'pt' ? size * 1.333 : size;
 }
 
-const rootStyleCache = new WeakMap<Element, RootStyle>();
-
-/** Font declarations from the `#<svg id> { ... }` rule of the diagram's own stylesheet. */
-function getRootStyle(el: Element): RootStyle {
-  const svg = outermostSvg(el);
-  if (!svg) {
-    return {};
+/** A font-size given as a multiple of another size, e.g. `0.75em` or `82%`. */
+function relativeSize(value: string): { factor: number; ofRoot: boolean } | undefined {
+  const match = RE_RELATIVE_SIZE.exec(value);
+  if (!match) {
+    return undefined;
   }
-  const cached = rootStyleCache.get(svg);
-  if (cached) {
-    return cached;
+  const raw = Number.parseFloat(match[1]);
+  if (!Number.isFinite(raw)) {
+    return undefined;
   }
-  const result: RootStyle = {};
-  const id = svg.getAttribute('id');
-  const css = svg.querySelector('style')?.textContent ?? '';
-  if (id && css) {
-    const escaped = id.replaceAll(RE_REGEXP_SPECIAL, String.raw`\$&`);
-    const rule = new RegExp(String.raw`#${escaped}\s*\{([^}]*)\}`).exec(css)?.[1] ?? '';
-    const family = RE_FONT_FAMILY.exec(rule)?.[1]?.trim();
-    if (family) {
-      result.family = family;
-    }
-    const px = RE_FONT_SIZE_PX.exec(rule);
-    if (px) {
-      result.size = parseFloat(px[1]);
-    }
-  }
-  rootStyleCache.set(svg, result);
-  return result;
+  const unit = match[2].toLowerCase();
+  return { factor: unit === '%' ? raw / 100 : raw, ofRoot: unit === 'rem' };
 }
 
-function inlineFontSize(el: Element): number | undefined {
-  const style = el.getAttribute('style') ?? '';
-
-  const pxMatch = RE_FONT_SIZE_PX.exec(style);
-  if (pxMatch) {
-    return parseFloat(pxMatch[1]);
+/**
+ * Font size in px.
+ *
+ * Walks up to the nearest element that declares one. Relative units are
+ * resolved against the size that element inherits, which is how mermaid sizes
+ * c4's secondary label rows (`font-size: 0.75em` under a 14px label).
+ */
+export function getFontSize(el: Element | null, depth = 0): number {
+  if (!el || depth > MAX_INHERIT_DEPTH) {
+    return DEFAULT_FONT_SIZE;
   }
-
-  const ptMatch = RE_FONT_SIZE_PT.exec(style);
-  if (ptMatch) {
-    return parseFloat(ptMatch[1]) * 1.333;
+  const declared = declaredProperty(el, 'font-size');
+  if (!declared || declared === 'inherit') {
+    return getFontSize(el.parentElement, depth + 1);
   }
-
-  const attr = el.getAttribute('font-size');
-  if (attr) {
-    const n = parseFloat(attr);
-    if (Number.isFinite(n) && n > 0) {
-      return n;
-    }
+  const absolute = absoluteSize(declared);
+  if (absolute !== undefined) {
+    return absolute;
   }
-
-  return el.parentElement ? inlineFontSize(el.parentElement) : undefined;
+  const relative = relativeSize(declared);
+  if (relative) {
+    const base = relative.ofRoot ? DEFAULT_FONT_SIZE : getFontSize(el.parentElement, depth + 1);
+    return relative.factor * base;
+  }
+  return getFontSize(el.parentElement, depth + 1);
 }
 
-function inlineFontFamily(el: Element): string | undefined {
-  const style = el.getAttribute('style') ?? '';
-  const styleMatch = RE_FONT_FAMILY.exec(style);
-  if (styleMatch) {
-    return styleMatch[1].trim();
-  }
-
-  const attr = el.getAttribute('font-family');
-  if (attr) {
-    return attr.trim();
-  }
-
-  return el.parentElement ? inlineFontFamily(el.parentElement) : undefined;
-}
-
-/** Font size in px: inline style or attribute (walking up), then the root svg stylesheet. */
-export function getFontSize(el: Element): number {
-  return inlineFontSize(el) ?? getRootStyle(el).size ?? DEFAULT_FONT_SIZE;
-}
-
-/** Font family: inline style or attribute (walking up), then the root svg stylesheet. */
+/** Font family, as the CSS font-family list it was declared with. */
 export function getFontFamily(el: Element): string {
-  return inlineFontFamily(el) ?? getRootStyle(el).family ?? DEFAULT_FONT_FAMILY;
+  return resolveInheritedProperty(el, 'font-family') ?? DEFAULT_FONT_FAMILY;
 }
 
-/** Extract font-weight from an element, walking up the tree as needed. */
+/** Font weight as a number, mapping the CSS keywords onto their numeric values. */
 export function getFontWeight(el: Element): number {
-  const style = el.getAttribute('style') ?? '';
-  const wMatch = RE_FONT_WEIGHT.exec(style);
-  if (wMatch) {
-    const v = wMatch[1].toLowerCase();
-    if (v === 'bold') {
-      return 700;
-    }
-    if (v === 'normal' || v === 'lighter') {
-      return 400;
-    }
-    const n = parseInt(v, 10);
-    if (Number.isFinite(n)) {
-      return n;
-    }
+  const declared = resolveInheritedProperty(el, 'font-weight')?.toLowerCase();
+  if (!declared) {
+    return 400;
   }
-
-  const attr = el.getAttribute('font-weight');
-  if (attr) {
-    if (attr === 'bold') {
-      return 700;
-    }
-    const n = parseInt(attr, 10);
-    if (Number.isFinite(n)) {
-      return n;
-    }
+  if (declared === 'bold' || declared === 'bolder') {
+    return 700;
   }
-
-  if (el.parentElement) {
-    return getFontWeight(el.parentElement);
+  if (declared === 'normal' || declared === 'lighter') {
+    return 400;
   }
-  return 400;
+  const numeric = Number.parseInt(declared, 10);
+  return Number.isFinite(numeric) ? numeric : 400;
 }
 
 export function fontOf(el: Element): FontSpec {
@@ -172,7 +127,7 @@ export function lineBoxHeight(spec: FontSpec): number {
 export function parseEmValue(value: string, fontSize: number): number | undefined {
   const m = RE_EM_VALUE.exec(value);
   if (m) {
-    return parseFloat(m[1]) * fontSize;
+    return Number.parseFloat(m[1]) * fontSize;
   }
   return undefined;
 }

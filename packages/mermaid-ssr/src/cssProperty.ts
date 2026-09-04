@@ -79,8 +79,23 @@ function fromStylesheet(el: Element, prop: string): string | undefined {
   return found;
 }
 
-function fromElement(el: Element, prop: string, inlineRe: RegExp): string | undefined {
-  const inline = inlineRe.exec(el.getAttribute('style') ?? '');
+const inlineCache = new Map<string, RegExp>();
+
+function inlineRegExp(prop: string): RegExp {
+  let re = inlineCache.get(prop);
+  if (!re) {
+    re = new RegExp(String.raw`(?:^|;)\s*${prop}\s*:\s*([^;]+)`, 'i');
+    inlineCache.set(prop, re);
+  }
+  return re;
+}
+
+/**
+ * The value `el` itself declares for `prop` — inline style, then presentation
+ * attribute, then the diagram's stylesheet. Does not consider ancestors.
+ */
+export function declaredProperty(el: Element, prop: string): string | undefined {
+  const inline = inlineRegExp(prop).exec(el.getAttribute('style') ?? '');
   if (inline) {
     return inline[1].trim();
   }
@@ -96,9 +111,8 @@ function fromElement(el: Element, prop: string, inlineRe: RegExp): string | unde
  * nothing in the tree or the stylesheet sets it.
  */
 export function resolveInheritedProperty(el: Element, prop: string): string | undefined {
-  const inlineRe = new RegExp(String.raw`(?:^|;)\s*${prop}\s*:\s*([^;]+)`, 'i');
   for (let node: Element | null = el; node; node = node.parentElement) {
-    const value = fromElement(node, prop, inlineRe);
+    const value = declaredProperty(node, prop);
     if (value !== undefined && value !== 'inherit') {
       return value;
     }
