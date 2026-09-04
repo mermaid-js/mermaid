@@ -18,9 +18,19 @@ UpdateElementStyle(c, $shape="cylinder")
       `
     );
 
+    // Asserted per element rather than by total count: counting `.node path` and
+    // `.node > rect` across the whole diagram passes just as well if the cylinder and
+    // folder overrides are swapped. `:scope > rect` rather than a descendant match,
+    // because each node also contains label-background rects.
     const svg = diagramSvg(page);
-    await expect(svg.locator('.node path')).toHaveCount(1);
-    await expect(svg.locator('.node > rect')).toHaveCount(2);
+    const node = (label) => svg.locator('.node').filter({ hasText: label });
+
+    await expect(node('As Cylinder').locator('path')).toHaveCount(1);
+    await expect(node('As Cylinder').locator(':scope > rect')).toHaveCount(0);
+    // `$shape="folder"` is not mapped, so it falls back to the same box as no override.
+    await expect(node('As Folder').locator('path')).toHaveCount(0);
+    await expect(node('As Folder').locator(':scope > rect')).toHaveCount(1);
+    await expect(node('Default').locator(':scope > rect')).toHaveCount(1);
   });
 
   for (const shapesInRow of [2, 4]) {
@@ -83,10 +93,18 @@ Container(b, "Terminal", "Tech", "server-side app", $sprite="terminal")
       `
     );
 
+    // Both containers fall back to the plain box, asserted per element: a total of two
+    // rects cannot tell "both fell back" from "one fell back and the other grew a second
+    // box". A sprite implementation must break these.
     const svg = diagramSvg(page);
     await expect(svg.locator('image')).toHaveCount(0);
     await expect(svg.locator('svg')).toHaveCount(0);
-    await expect(svg.locator('.node > rect')).toHaveCount(2);
+
+    const node = (label) => svg.locator('.node').filter({ hasText: label });
+    for (const label of ['Browser', 'Terminal']) {
+      await expect(node(label).locator(':scope > rect')).toHaveCount(1);
+      await expect(node(label).locator('path')).toHaveCount(0);
+    }
   });
 
   test('CHAR.descr-wrapping should use wrapped SVG text', async ({ page }, testInfo) => {
