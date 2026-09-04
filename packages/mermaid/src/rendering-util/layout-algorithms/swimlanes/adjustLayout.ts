@@ -18,6 +18,7 @@ export function applySwimlaneLineJumps(
       id: edge.id,
       points: edge.points!,
       curve: edge.curve,
+      roundedCornerRadius: edge.roundedCornerRadius,
       arrowTypeStart: edge.arrowTypeStart,
       arrowTypeEnd: edge.arrowTypeEnd,
     }));

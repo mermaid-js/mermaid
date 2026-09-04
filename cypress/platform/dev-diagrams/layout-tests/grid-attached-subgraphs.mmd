@@ -1,0 +1,23 @@
+---
+config:
+  layout: grid-attached-subgraphs
+---
+flowchart TB
+  subgraph frontend[Frontend]
+    A[Browser]
+    B[UI]
+    C[Client state]
+  end
+
+  subgraph backend[Backend]
+    D[API]
+    E[Worker]
+    F[Database]
+  end
+
+  A --> D
+  D --> B
+  B --> E
+  E --> C
+  C --> F
+  F --> A

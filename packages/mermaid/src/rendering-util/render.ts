@@ -87,6 +87,12 @@ const registerDefaultLayoutLoaders = () => {
       name: 'grid-attached',
       loader: async () => await import('./layout-algorithms/grid-attached/index.js'),
     },
+    {
+      // Grid-attached with invisible spanning chains between the direct members
+      // of each subgraph, so the topology keeps each subgraph together.
+      name: 'grid-attached-subgraphs',
+      loader: async () => await import('./layout-algorithms/grid-attached-subgraphs/index.js'),
+    },
     ...(injected.includeLargeFeatures
       ? [
           {

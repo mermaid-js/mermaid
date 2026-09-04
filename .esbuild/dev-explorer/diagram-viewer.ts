@@ -116,6 +116,7 @@ type MermaidLayout =
   | 'grid-like'
   | 'grid-decomposed'
   | 'grid-attached'
+  | 'grid-attached-subgraphs'
   | 'swimlane';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
@@ -131,6 +132,7 @@ const ALL_LAYOUTS: MermaidLayout[] = [
   'grid-like',
   'grid-decomposed',
   'grid-attached',
+  'grid-attached-subgraphs',
   'swimlane',
 ];
 
@@ -342,6 +344,7 @@ function isLayout(v: unknown): v is MermaidLayout {
     v === 'grid-like' ||
     v === 'grid-decomposed' ||
     v === 'grid-attached' ||
+    v === 'grid-attached-subgraphs' ||
     v === 'swimlane'
   );
 }
@@ -1495,6 +1498,7 @@ export class DevDiagramViewer extends LitElement {
               <sl-option value="grid-like">grid-like</sl-option>
               <sl-option value="grid-decomposed">grid-decomposed</sl-option>
               <sl-option value="grid-attached">grid-attached</sl-option>
+              <sl-option value="grid-attached-subgraphs">grid-attached-subgraphs</sl-option>
               <sl-option value="swimlane">swimlane</sl-option>
             </sl-select>
           </div>

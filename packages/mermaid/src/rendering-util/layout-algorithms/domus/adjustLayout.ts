@@ -80,6 +80,7 @@ export async function adjustLayout(
         id: e.id,
         points: e.points,
         curve: e.curve,
+        roundedCornerRadius: e.roundedCornerRadius,
         arrowTypeStart: e.arrowTypeStart,
         arrowTypeEnd: e.arrowTypeEnd,
       }));

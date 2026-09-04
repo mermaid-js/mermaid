@@ -164,6 +164,11 @@ export interface Edge {
   endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
+  /**
+   * Radius, in layout pixels, used for `curve: 'rounded'`. Omit it to use the
+   * renderer's default radius.
+   */
+  roundedCornerRadius?: number;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;

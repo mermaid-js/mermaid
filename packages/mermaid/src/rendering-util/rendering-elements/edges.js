@@ -782,7 +782,10 @@ export const insertEdge = function (
   let svgPath;
   let linePath =
     edgeCurveType === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      ? generateRoundedPath(
+          applyMarkerOffsetsToPoints(lineData, edge),
+          edge.roundedCornerRadius ?? 5
+        )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
