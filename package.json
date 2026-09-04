@@ -10,8 +10,10 @@
   },
   "browserslist": [
     "chrome >= 121",
+    "edge >= 121",
     "firefox >= 123",
     "safari >= 17.4",
+    "ios_saf >= 17.4",
     "node >= 22.12"
   ],
   "keywords": [
