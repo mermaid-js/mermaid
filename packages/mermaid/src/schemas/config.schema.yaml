@@ -1665,10 +1665,22 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         $ref: '#/$defs/BaseDiagramConfig/properties/layout'
         default: 'elk'
       wrappingWidth:
-        $ref: '#/$defs/FlowchartDiagramConfig/properties/wrappingWidth'
+        description: |
+          Width of nodes where text is wrapped.
+
+          When using markdown strings the text is wrapped automatically, this
+          value sets the max width of a text before it continues on a new line.
+        type: number
         default: 120
       minNodeWidth:
-        $ref: '#/$defs/FlowchartDiagramConfig/properties/minNodeWidth'
+        description: |
+          Minimum width of the label area of a node.
+
+          Labels narrower than this are widened to it, so nodes with short text
+          get a uniform width; the node's own padding is added on top, the same
+          way it is for `wrappingWidth`. Nodes with an explicit width are not
+          affected.
+        type: number
         default: 120
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
@@ -2467,10 +2479,22 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         default: 50
       wrappingWidth:
-        $ref: '#/$defs/FlowchartDiagramConfig/properties/wrappingWidth'
+        description: |
+          Width of nodes where text is wrapped.
+
+          When using markdown strings the text is wrapped automatically, this
+          value sets the max width of a text before it continues on a new line.
+        type: number
         default: 120
       minNodeWidth:
-        $ref: '#/$defs/FlowchartDiagramConfig/properties/minNodeWidth'
+        description: |
+          Minimum width of the label area of a node.
+
+          Labels narrower than this are widened to it, so nodes with short text
+          get a uniform width; the node's own padding is added on top, the same
+          way it is for `wrappingWidth`. Nodes with an explicit width are not
+          affected.
+        type: number
         default: 120
 
   FlowchartDiagramConfig:
