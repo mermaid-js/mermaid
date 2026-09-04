@@ -118,6 +118,33 @@ export interface C4Rel {
 }
 
 /**
+ * A named element style defined via `AddElementTag`. An element references it
+ * through its `$tags` attribute; matching tags contribute fill/border/text
+ * colors (and an optional shape keyword) when the node is built.
+ */
+export interface C4ElementTag {
+  /** The parser may set fields via `{ key: value }` shaped arguments. */
+  [key: string]: string | undefined;
+  tagName: string;
+  bgColor?: string;
+  fontColor?: string;
+  borderColor?: string;
+  shape?: string;
+}
+
+/**
+ * A named relationship style defined via `AddRelTag`. A relationship references
+ * it through its `$tags` attribute; matching tags contribute line/text colors.
+ */
+export interface C4RelTag {
+  /** The parser may set fields via `{ key: value }` shaped arguments. */
+  [key: string]: string | undefined;
+  tagName: string;
+  textColor?: string;
+  lineColor?: string;
+}
+
+/**
  * Font configuration as produced by the `*Font()` helpers of the C4
  * configuration. The helpers always populate family/size/weight from the
  * (defaulted) config, so those fields are typed as present.

@@ -63,15 +63,32 @@ const keywordShape = (value: string | undefined): ShapeID | undefined =>
   value ? SHAPE_KEYWORDS[value.toLowerCase()] : undefined;
 
 /**
+ * The colours and shape a matched `AddElementTag` contributes. The caller resolves which
+ * tags an element carries; this module only applies the result.
+ */
+export interface C4TagStyle {
+  bgColor?: string;
+  fontColor?: string;
+  borderColor?: string;
+  shape?: string;
+}
+
+/**
  * Resolves the render shape for a C4 element: explicit $shape/$sprite first,
  * then a recognised $tags token, then the element type.
  */
-export const resolveNodeShape = (shape: C4ShapeLike): ShapeID => {
+export const resolveNodeShape = (shape: C4ShapeLike, tagStyle?: C4TagStyle): ShapeID => {
   const explicit = keywordShape(shape.shape) ?? keywordShape(shape.sprite);
   if (explicit) {
     return explicit;
   }
   if (shape.tags) {
+    // A tag naming a defined `AddElementTag` contributes that tag's `$shape`. A tag that
+    // is itself a shape keyword still works, so `$tags="cylinder"` keeps its meaning.
+    const definedShape = keywordShape(tagStyle?.shape);
+    if (definedShape) {
+      return definedShape;
+    }
     for (const tag of shape.tags.split(',')) {
       const tagged = keywordShape(tag.trim());
       if (tagged) {
@@ -113,6 +130,59 @@ const stereotypeText = (shape: C4ShapeLike): string => {
   return shape.techn?.text ? `[${stereotype}: ${shape.techn.text}]` : `[${stereotype}]`;
 };
 
+const escapeHtml = (txt: string): string =>
+  txt
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
+/**
+ * An `UpdateRelStyle` colour, accepted only if it is a colour on its own. The value is
+ * interpolated into a CSS declaration, so one carrying `;` or a `url(...)` could append
+ * further declarations; `CSS.supports` rejects those, and anything it cannot judge (no
+ * CSS API, as in jsdom) falls back to a conservative pattern match.
+ */
+export const asColor = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || value === '') {
+    return undefined;
+  }
+  const accepted =
+    typeof globalThis.CSS?.supports === 'function'
+      ? globalThis.CSS.supports('color', value)
+      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%,./]+\)|hsla?\([\d\s%,./deg]+\))$/i.test(value);
+  return accepted ? value : undefined;
+};
+
+/**
+ * A C4 relationship label: name, then optional `[technology]` and description, one per
+ * line. `<br/>` separates the lines either way, since it is a line break in an HTML
+ * label and a line delimiter in a plain SVG one. The emphasis tags only render as
+ * emphasis in an HTML label; with `htmlLabels` off they would show as literal text, so
+ * the plain form carries the same words without them.
+ */
+export const buildEdgeLabel = (
+  rel: { label: C4Text; techn?: C4Text; descr?: C4Text },
+  useHtmlLabels = true
+): string => {
+  const parts = [rel.label.text, rel.techn?.text && `[${rel.techn.text}]`, rel.descr?.text].filter(
+    (part): part is string => Boolean(part)
+  );
+  if (!useHtmlLabels) {
+    return parts.join('<br/>');
+  }
+  const [name, ...rest] = parts.map((part) => escapeHtml(part));
+  const lines = [`<b>${name}</b>`];
+  if (rel.techn?.text) {
+    lines.push(`<small><i>${rest.shift()}</i></small>`);
+  }
+  for (const part of rest) {
+    lines.push(`<small>${part}</small>`);
+  }
+  return lines.join('<br/>');
+};
+
 /** The C4 element types, internal and external, that carry per-type config. */
 export const C4_ELEMENT_TYPES = (
   [
@@ -139,11 +209,23 @@ const isC4ElementType = (value: string): value is (typeof C4_ELEMENT_TYPES)[numb
  * palette drives the fill and border, with white text. An explicit per-element
  * colour (UpdateElementStyle: $bgColor/$borderColor/$fontColor) overrides it.
  */
-const elementCssStyles = (shape: C4ShapeLike, config: C4DiagramConfig): string[] => {
+const elementCssStyles = (
+  shape: C4ShapeLike,
+  config: C4DiagramConfig,
+  tagStyle?: C4TagStyle
+): string[] => {
   const elementType = shape.typeC4Shape.text;
-  const fill = shape.bgColor ?? (isC4ElementType(elementType) && config[`${elementType}_bg_color`]);
+  // Precedence: an explicit `UpdateElementStyle` on this element, then any tag it carries,
+  // then the element type's palette colour. Tag colours come from the diagram source and
+  // land in a CSS declaration, so they go through the same guard as relationship colours.
+  const fill =
+    shape.bgColor ??
+    asColor(tagStyle?.bgColor) ??
+    (isC4ElementType(elementType) && config[`${elementType}_bg_color`]);
   const stroke =
-    shape.borderColor ?? (isC4ElementType(elementType) && config[`${elementType}_border_color`]);
+    shape.borderColor ??
+    asColor(tagStyle?.borderColor) ??
+    (isC4ElementType(elementType) && config[`${elementType}_border_color`]);
   const styles: string[] = [];
   if (fill) {
     styles.push(`fill:${fill}`);
@@ -151,7 +233,7 @@ const elementCssStyles = (shape: C4ShapeLike, config: C4DiagramConfig): string[]
   if (stroke) {
     styles.push(`stroke:${stroke}`);
   }
-  styles.push(`color:${shape.fontColor ?? '#FFFFFF'}`);
+  styles.push(`color:${shape.fontColor ?? asColor(tagStyle?.fontColor) ?? '#FFFFFF'}`);
   return styles;
 };
 
@@ -166,15 +248,16 @@ export const buildC4Node = (
   config: C4DiagramConfig,
   padding: number,
   look: string,
-  elementWidth: number
+  elementWidth: number,
+  tagStyle?: C4TagStyle
 ): NonClusterNode => {
   const typeC4Shape = shape.typeC4Shape.text;
   const cssClasses = ['c4-shape', `c4-${typeC4Shape}`];
   if (isExternal(typeC4Shape)) {
     cssClasses.push('c4-external');
   }
-  const nodeShape = resolveNodeShape(shape);
-  const cssStyles = elementCssStyles(shape, config);
+  const nodeShape = resolveNodeShape(shape, tagStyle);
+  const cssStyles = elementCssStyles(shape, config, tagStyle);
   if (nodeShape === 'rounded' || nodeShape === 'fr-rect') {
     // Inline so it wins over the shape's default corner radius.
     cssStyles.push('rx:12px', 'ry:12px');
