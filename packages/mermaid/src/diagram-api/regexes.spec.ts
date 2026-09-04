@@ -46,31 +46,34 @@ describe('stripAnyComments', () => {
     }
   });
 
+  // A ratio between two sub-millisecond measurements is mostly scheduler noise, which is how this
+  // test used to fail on loaded runners. Each fixture below is instead sized so the released regex
+  // needs seconds on it where the scanner needs microseconds, leaving one generous bound to
+  // separate them with several orders of magnitude to spare:
+  //
+  //   all-whitespace lines      80,000 chars   scanner 0.006ms   regex 6932ms
+  //   `%%` runs, no newline     96,002 chars   scanner 0.007ms   regex 3082ms
+  //   deep indents             644,200 chars   scanner 0.043ms   regex 2322ms
+  //
+  // The third shape grows by indent width, not by line count. It contains no `%%` at all and the
+  // regex is linear in its line count, so scaling it by line count, as this test did, proves
+  // nothing about the blowup it is meant to guard.
+  const BUDGET_MS = 250;
+
   it.each([
-    ['all-whitespace lines', (n: number) => ('\n' + ' '.repeat(4)).repeat(n)],
-    ['`%%` runs with no terminating newline', (n: number) => '%%' + 'x%%'.repeat(n)],
-    ['deep indents', (n: number) => (' '.repeat(400) + 'classDef x fill:#fff\n').repeat(n)],
-  ])('scales linearly on %s', (_label, build) => {
-    // Scaling, not a wall-clock bound. The previous version of this test asserted "under 200ms"
-    // on one fixed input, which a quadratic implementation passes comfortably — and did, for
-    // both shapes above. Doubling the input should roughly double the work; quadratic would
-    // quadruple it.
-    const measure = (n: number) => {
-      const input = build(n);
-      // Warm up so the first call does not carry compilation cost into the ratio.
-      stripAnyComments(input);
+    ['all-whitespace lines', ('\n' + ' '.repeat(4)).repeat(16000)],
+    ['`%%` runs with no terminating newline', '%%' + 'x%%'.repeat(32000)],
+    ['deep indents', (' '.repeat(3200) + 'classDef x fill:#fff\n').repeat(200)],
+  ])('does not backtrack catastrophically on %s', (_label, input) => {
+    // Best of three: catastrophic backtracking is deterministic and shows up in every run, while
+    // a GC pause or a busy runner hits one.
+    let fastest = Infinity;
+    for (let i = 0; i < 3; i++) {
       const t0 = performance.now();
-      for (let i = 0; i < 5; i++) {
-        stripAnyComments(input);
-      }
-      return (performance.now() - t0) / 5;
-    };
+      stripAnyComments(input);
+      fastest = Math.min(fastest, performance.now() - t0);
+    }
 
-    const small = measure(4000);
-    const large = measure(16000);
-
-    // 4x the input. Linear predicts ~4x, quadratic ~16x. The bar is set at 8 so ordinary timing
-    // noise on a loaded machine cannot fail it while a return to quadratic still does.
-    expect(large / Math.max(small, 0.01)).toBeLessThan(8);
+    expect(fastest).toBeLessThan(BUDGET_MS);
   });
 });
