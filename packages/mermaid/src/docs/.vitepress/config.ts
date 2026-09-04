@@ -254,6 +254,7 @@ function sidebarCommunity() {
         { text: 'Getting Started', link: '/community/intro' },
         { text: 'Contributing to Mermaid', link: '/community/contributing' },
         { text: 'Adding Diagrams', link: '/community/new-diagram' },
+        { text: 'Adding Layouts', link: '/community/layout-makers-guide' },
         { text: 'Questions and Suggestions', link: '/community/questions-and-suggestions' },
         { text: 'Security', link: '/community/security' },
       ],

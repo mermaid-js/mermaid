@@ -1,0 +1,16 @@
+---
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  a -->b
+  subgraph A
+  B
+  end
+  subgraph B
+  b
+  end

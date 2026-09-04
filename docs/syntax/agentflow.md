@@ -46,6 +46,119 @@ agentflow-beta TB
   end
 ```
 
+## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
+
+Agentflow diagrams use the `redux-color` theme and the `neo` look by default. Not every
+diagram type does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for
+the list and for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+agentflow-beta TB
+  brief["Release brief"]@{ shape: input }
+  flow writer["Drafting Agent"]
+    draft["Draft the notes"]@{ shape: task }
+    lookup["changelog_search"]@{ shape: tool }
+    guide["Tone of voice"]@{ shape: refdoc }
+    draft --> lookup
+    draft -.- guide
+  end
+  flow reviewer["Review Agent"]
+    check["Check the claims"]@{ shape: task }
+    ok["Accurate?"]@{ shape: decision }
+    check --> ok
+  end
+  publish["Publish"]@{ shape: action }
+  brief --> writer
+  writer --> reviewer
+  ok --> publish
+```
+
+```mermaid
+agentflow-beta TB
+  brief["Release brief"]@{ shape: input }
+  flow writer["Drafting Agent"]
+    draft["Draft the notes"]@{ shape: task }
+    lookup["changelog_search"]@{ shape: tool }
+    guide["Tone of voice"]@{ shape: refdoc }
+    draft --> lookup
+    draft -.- guide
+  end
+  flow reviewer["Review Agent"]
+    check["Check the claims"]@{ shape: task }
+    ok["Accurate?"]@{ shape: decision }
+    check --> ok
+  end
+  publish["Publish"]@{ shape: action }
+  brief --> writer
+  writer --> reviewer
+  ok --> publish
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+agentflow-beta TB
+  brief["Release brief"]@{ shape: input }
+  flow writer["Drafting Agent"]
+    draft["Draft the notes"]@{ shape: task }
+    lookup["changelog_search"]@{ shape: tool }
+    guide["Tone of voice"]@{ shape: refdoc }
+    draft --> lookup
+    draft -.- guide
+  end
+  flow reviewer["Review Agent"]
+    check["Check the claims"]@{ shape: task }
+    ok["Accurate?"]@{ shape: decision }
+    check --> ok
+  end
+  publish["Publish"]@{ shape: action }
+  brief --> writer
+  writer --> reviewer
+  ok --> publish
+```
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+---
+agentflow-beta TB
+  brief["Release brief"]@{ shape: input }
+  flow writer["Drafting Agent"]
+    draft["Draft the notes"]@{ shape: task }
+    lookup["changelog_search"]@{ shape: tool }
+    guide["Tone of voice"]@{ shape: refdoc }
+    draft --> lookup
+    draft -.- guide
+  end
+  flow reviewer["Review Agent"]
+    check["Check the claims"]@{ shape: task }
+    ok["Accurate?"]@{ shape: decision }
+    check --> ok
+  end
+  publish["Publish"]@{ shape: action }
+  brief --> writer
+  writer --> reviewer
+  ok --> publish
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ agentflow: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
 ## Declaring a diagram
 
 Every diagram starts with the `agentflow-beta` keyword, optionally followed by a direction — `TB`, `TD`, `BT`, `LR`, or `RL`.
@@ -278,13 +391,13 @@ fetch@{
 
 Mermaid itself acts on a small, fixed set of keys:
 
-| Key                             | Applies to | Effect                                                     |
-| ------------------------------- | ---------- | ---------------------------------------------------------- |
-| `shape`                         | nodes      | Selects the node shape (see the table above)               |
-| `label`, `labelType`            | nodes      | Overrides the node's label and how it is parsed            |
-| `view`                          | containers | `collapsed` folds the container down to a summary node     |
-| `algorithm`                     | containers | Per-container ELK algorithm, with `@mermaid-js/layout-elk` |
-| `curve`, `animate`, `animation` | edges      | Edge interpolation and animation                           |
+| Key                             | Applies to | Effect                                                 |
+| ------------------------------- | ---------- | ------------------------------------------------------ |
+| `shape`                         | nodes      | Selects the node shape (see the table above)           |
+| `label`, `labelType`            | nodes      | Overrides the node's label and how it is parsed        |
+| `view`                          | containers | `collapsed` folds the container down to a summary node |
+| `algorithm`                     | containers | Per-container ELK algorithm                            |
+| `curve`, `animate`, `animation` | edges      | Edge interpolation and animation                       |
 
 Everything else is carried through untouched and surfaced to consumers, so the vocabulary below is a convention rather than a closed list — an unknown key is preserved, never rejected.
 
@@ -423,7 +536,7 @@ agentflow diagram uses the standard node, edge, and cluster theme variables.
 
 ### Layout
 
-Agentflow renders through the unified renderer, so it works with any registered layout engine. With `@mermaid-js/layout-elk` installed, an individual container can also select its own ELK algorithm:
+Agentflow renders through the unified renderer, so it works with any registered layout engine. ELK is the default, and an individual container can also select its own ELK algorithm:
 
 ```mermaid-example
 ---
