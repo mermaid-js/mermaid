@@ -2,6 +2,7 @@ import c4 from '../diagrams/c4/c4Detector.js';
 import flowchart from '../diagrams/flowchart/flowDetector.js';
 import flowchartV2 from '../diagrams/flowchart/flowDetector-v2.js';
 import agentflow from '../diagrams/agentflow/afDetector.js';
+import { bpmn } from '../diagrams/bpmn/detector.js';
 import swimlanes from '../diagrams/swimlanes/detector.js';
 import er from '../diagrams/er/erDetector.js';
 import git from '../diagrams/git/gitGraphDetector.js';
@@ -92,6 +93,7 @@ export const addDiagrams = () => {
   // Ordering of detectors is important. The first one to return true will be used.
   registerLazyLoadedDiagrams(
     agentflow,
+    bpmn,
     c4,
     kanban,
     classDiagramV2,

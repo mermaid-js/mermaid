@@ -7,6 +7,10 @@ export interface CoordOptions {
   nodeGap?: number; // horizontal gap between siblings inside a lane
   laneGap?: number; // horizontal gap between lanes (clusters)
   direction?: 'TB' | 'LR' | 'BT' | 'RL'; // layout direction for proper spacing
+  /** Whether a lane may hold several nodes in one layer, so their own extent matters. */
+  spreadByOwnExtent?: boolean;
+  /** Whether the gap asked for is room between shapes rather than room they may share. */
+  gapIsRoomBetween?: boolean;
   laneOrder?: string[];
 }
 
@@ -29,6 +33,37 @@ export function assignCoordinates(
   const getNode = (id: NodeId) => gWithDummies.nodeById.get(id) as any;
   const getWidth = (id: NodeId) => getNode(id)?.width ?? 0;
   const getHeight = (id: NodeId) => getNode(id)?.height ?? 0;
+  /**
+   * How much room a node needs across a layer.
+   *
+   * Coordinates are assigned with layers running down the page, so the cross axis is x
+   * and a node takes up its width. An LR or RL transform turns that axis into y, where
+   * the same node takes up its height instead, and a narrow box whose label has wrapped
+   * tall then reserves too little room and lands on its neighbour.
+   *
+   * This governs how nodes sharing a layer are spread. A lane that holds one node per
+   * layer never spreads anything, so the correction is asked for by the diagrams whose
+   * lanes hold several; the room reserved for the lane itself is left on width, where
+   * being generous costs space but never an overlap.
+   */
+  const spreadByOwnExtent = opts?.spreadByOwnExtent ?? false;
+  const crossExtent = (id: NodeId) =>
+    isHorizontal && spreadByOwnExtent ? getHeight(id) : getWidth(id);
+  /**
+   * Nodes that an edge starts or ends at.
+   *
+   * Nodes sharing a layer are spread around their lane's centre so that branches running
+   * beside each other stay centred on the flow they belong to. A node no edge touches is
+   * in no branch, so counting it in that centring moves the whole flow sideways for every
+   * loose node the lane happens to declare - a note written next to a process should not
+   * shift the process. Such nodes are placed after the ones that are centred.
+   */
+  const inSomeFlow = new Set<NodeId>();
+  for (const e of gWithDummies.edges) {
+    inSomeFlow.add(e.src);
+    inSomeFlow.add(e.dst);
+  }
+
   const topLaneOf = createTopLaneResolver(gWithDummies);
   const laneOrderGlobal = resolveTopLaneOrder(gWithDummies, opts?.laneOrder);
 
@@ -46,7 +81,12 @@ export function assignCoordinates(
       const nextLayerMaxHeight = layerHeights[i + 1];
 
       const normalSpacing = thisLayerMaxHeight / 2 + nextLayerMaxHeight / 2;
-      const requiredSpacing = (thisLayerMaxWidth + nextLayerMaxWidth) / 2;
+      // Plus the gap itself, where the diagram asked for it that way: the room a layer
+      // needs is what the shapes occupy and then the space between them. Without it a
+      // narrow gap seats two shapes edge to edge and the flow joining them has nowhere
+      // left to be drawn.
+      const requiredSpacing =
+        (thisLayerMaxWidth + nextLayerMaxWidth) / 2 + (opts?.gapIsRoomBetween ? layerGap : 0);
       const extraNeeded = Math.max(0, requiredSpacing - normalSpacing - layerGap);
       extraLayerGaps.push(extraNeeded);
     }
@@ -130,20 +170,37 @@ export function assignCoordinates(
         continue;
       }
       const cx = centerX.get(L)!;
-      if (nodesInLane.length === 1) {
-        const id = nodesInLane[0];
+      const centred = nodesInLane.filter((id) => inSomeFlow.has(id));
+      const loose = nodesInLane.filter((id) => !inSomeFlow.has(id));
+      // With nothing to centre on, the loose nodes are all there is to place.
+      const spread = centred.length > 0 ? centred : loose;
+      const beside = centred.length > 0 ? loose : [];
+
+      if (spread.length === 1 && beside.length === 0) {
+        const id = spread[0];
         x[id] = cx;
         y[id] = yOffset + layerH / 2;
       } else {
         // Preserve phase 3 order while spreading nodes around the lane center.
-        const widths = nodesInLane.map((id) => getWidth(id));
-        const total = widths.reduce((a, b) => a + b, 0) + nodeGap * (nodesInLane.length - 1);
+        // Only nodes belonging to a lane. The rest are the layout's own dummies, whose
+        // width is a label's width - keeping them on it spreads stacked edge labels
+        // further apart, which is what keeps them legible.
+        const extentOf = (id: NodeId) => (L === null ? getWidth(id) : crossExtent(id));
+        const extents = spread.map(extentOf);
+        const total = extents.reduce((a, b) => a + b, 0) + nodeGap * (spread.length - 1);
         let start = cx - total / 2;
-        for (const [i, id] of nodesInLane.entries()) {
-          const w = widths[i];
+        for (const [i, id] of spread.entries()) {
+          const w = extents[i];
           x[id] = start + w / 2;
           y[id] = yOffset + layerH / 2;
           start += w + nodeGap;
+        }
+        for (const id of beside) {
+          const w = extentOf(id);
+          start += nodeGap;
+          x[id] = start + w / 2;
+          y[id] = yOffset + layerH / 2;
+          start += w;
         }
       }
     }
