@@ -304,7 +304,6 @@ jobs:
         id: playwright
         env:
           MERMAID_PORT: 9000
-          PLAYWRIGHT_COMMIT: ${{ github.sha }}
           # Enables native V8 coverage collection (page.coverage) on coverage runs.
           E2E_COVERAGE: ${{ (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') && 'true' || '' }}
           # Job output via env — never interpolate spec globs into the shell via ${{ }}.
@@ -426,8 +425,12 @@ jobs:
       # Sheets are tiled in the committed order (e2e/sheet-order.json): new
       # screenshots append at their group's tail and removed ones leave a blank
       # cell, so adding/removing a test changes only that group's last/affected
-      # sheet instead of cascading. The manifest is compacted periodically by the
-      # "Refresh screenshot sheet order" workflow (opens a PR), not on every run.
+      # sheet instead of cascading. Groups the manifest doesn't cover yet are tiled
+      # in test-declaration order (read from the capture sidecars), so a test added
+      # at the end of its spec still appends instead of re-sorting the group; tiles
+      # whose sidecar is missing or unreadable fall back to source-path order at
+      # the group's tail. The manifest is compacted periodically by the "Refresh
+      # screenshot sheet order" workflow (opens a PR), not on every run.
       - name: Composite screenshots into per-spec sheets
         if: env.GROUP_ARGOS_IMAGES == 'true'
         run: pnpm run screenshots:sheets

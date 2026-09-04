@@ -1,0 +1,22 @@
+usecase-beta
+  direction LR
+
+  actor Inspector
+  Inspect("Inspect all values")
+  json Payload@{
+    "10": "ten appears first",
+    "2": "two appears second",
+    "enabled": true,
+    "count": 3,
+    "missing": null,
+    "colors": ["Red", "Green"],
+    "address": { "city": "Oslo", "zip": "0150" },
+    "items": [{ "name": "Book" }, { "name": "Pen" }],
+    "emptyObject": {},
+    "emptyArray": []
+  }:::payload
+
+  Inspector --> Inspect
+  Inspect --> Payload
+
+  classDef payload stroke:#3572a5

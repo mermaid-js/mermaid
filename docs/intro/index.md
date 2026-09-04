@@ -115,6 +115,24 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+### [Use case diagram](../syntax/usecase.md)
+
+```mermaid-example
+usecase-beta
+direction LR
+actor Customer
+Checkout("Place order")
+Customer --> Checkout
+```
+
+```mermaid
+usecase-beta
+direction LR
+actor Customer
+Checkout("Place order")
+Customer --> Checkout
+```
+
 ### [Gantt diagram](../syntax/gantt.md)
 
 ```mermaid-example
@@ -329,7 +347,7 @@ Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
 
 To Deploy Mermaid:
 
-1. You will need to install node v16, which would have npm
+1. You will need to install Node.js v22.12.0 or later, which comes with npm
 2. Install mermaid
    - NPM: `npm i mermaid`
    - Yarn: `yarn add mermaid`

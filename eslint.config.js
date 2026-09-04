@@ -1,5 +1,6 @@
 import cspell from '@cspell/eslint-plugin';
 import eslint from '@eslint/js';
+import compat from 'eslint-plugin-compat';
 import jsdoc from 'eslint-plugin-jsdoc';
 import json from 'eslint-plugin-json';
 import lodash from 'eslint-plugin-lodash';
@@ -41,7 +42,7 @@ export default tseslint.config(
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.es2020,
+        ...globals.es2024,
         ...globals.jest,
       },
     },
@@ -160,6 +161,24 @@ export default tseslint.config(
       'unicorn/string-content': 'error',
       'unicorn/prefer-spread': 'error',
       'unicorn/no-lonely-if': 'error',
+    },
+  },
+  {
+    // Lint rules for bundled code only (e.g. what ships in the final bundles)
+    files: ['packages/*/src/**/*.{ts,js}'],
+    ignores: ['**/*.spec.{ts,js}', '**/docs/**', '**/__mocks__/**'],
+    plugins: {
+      // Browser-compatibility lint for web/ES APIs.
+      // Follows the browserslist setting in our `package.json`.
+      compat,
+    },
+    settings: {
+      // Lint ECMAScript built-ins (e.g. `Array.prototype.toSorted`),
+      // since we don't polyfill for ES APIs.
+      lintAllEsApis: true,
+    },
+    rules: {
+      'compat/compat': 'error',
     },
   },
   {

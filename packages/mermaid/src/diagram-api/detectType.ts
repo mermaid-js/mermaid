@@ -6,7 +6,7 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from './types.js';
-import { anyCommentRegex, directiveRegex, frontMatterRegex } from './regexes.js';
+import { directiveRegex, frontMatterRegex, stripAnyComments } from './regexes.js';
 import { UnknownDiagramError } from '../errors.js';
 
 export const detectors: Record<string, DetectorRecord> = {};
@@ -34,10 +34,7 @@ export const detectors: Record<string, DetectorRecord> = {};
  * @returns A graph definition key
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
-  text = text
-    .replace(frontMatterRegex, '')
-    .replace(directiveRegex, '')
-    .replace(anyCommentRegex, '\n');
+  text = stripAnyComments(text.replace(frontMatterRegex, '').replace(directiveRegex, ''));
   for (const [key, { detector }] of Object.entries(detectors)) {
     const diagram = detector(text, config);
     if (diagram) {

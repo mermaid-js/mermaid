@@ -11,6 +11,42 @@ import { configureLabelImages } from './labelImageUtils.js';
 import { profiler } from '../../../profiler.js';
 import { c4LabelHelper } from './c4LabelHelper.js';
 
+/**
+ * Widens a measured label box to `minWidth`. `createText` already sizes HTML labels
+ * up in the DOM; this covers SVG text (which has no box to size) and keeps the
+ * geometry shapes derive from the box consistent with it.
+ *
+ * The two label kinds measure differently and shapes rely on the difference:
+ * an HTML label's `getBoundingClientRect()` is a DOMRect with `left`/`top`,
+ * while SVG text's `getBBox()` is an SVGRect without them, centred on x=0.
+ * Shapes place labels with `pos - (bbox.x - (bbox.left ?? 0))`, which cancels
+ * the centring for SVG text only because `left` is absent — so the widened box
+ * must keep the kind it was given, and SVG text stays centred as it grows.
+ */
+export const withMinWidth = (bbox: DOMRect, minWidth: number): DOMRect => {
+  // Read the geometry up front: `getBBox()` hands back an SVGRect at runtime, which the
+  // DOM typings widen to DOMRect, so the `'left' in bbox` test below is a runtime check
+  // TypeScript believes can never fail and narrows `bbox` to `never` in its false branch.
+  const { x, y, width, height } = bbox;
+  if (width >= minWidth) {
+    return bbox;
+  }
+  if (!('left' in bbox)) {
+    return { x: x - (minWidth - width) / 2, y, width: minWidth, height } as DOMRect;
+  }
+  return {
+    x,
+    y,
+    width: minWidth,
+    height,
+    top: y,
+    left: x,
+    bottom: y + height,
+    right: x + minWidth,
+    toJSON: () => ({}),
+  } as DOMRect;
+};
+
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
@@ -50,12 +86,16 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
 
   const addBackground = !!node.icon || !!node.img;
   const isMarkdown = node.labelType === 'markdown';
+  // An explicit node width wins over the diagram-level minimum; an empty label has
+  // nothing to widen.
+  const minLabelWidth = label && !node.width ? (node.minWidth ?? 0) : 0;
   const text = await createText(
     labelEl,
     sanitizeText(decodeEntities(label), getConfig()),
     {
       useHtmlLabels,
       width: node.width || node.wrappingWidth || getConfig().flowchart?.wrappingWidth,
+      minWidth: minLabelWidth,
       classes: isMarkdown ? 'markdown-node-label' : '',
       style: node.labelStyle,
       addSvgBackground: addBackground,
@@ -87,6 +127,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
         ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
         : div.getBoundingClientRect()
     );
+    bbox = withMinWidth(bbox, minLabelWidth);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   } else {
@@ -95,6 +136,7 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
         ? profiler.tickSync('getBBox', () => text.getBBox())
         : text.getBBox()
     );
+    bbox = withMinWidth(bbox, minLabelWidth);
   }
 
   // Center the label

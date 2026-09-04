@@ -1,0 +1,26 @@
+---
+config:
+  theme: neutral
+---
+agentflow-beta TB
+  flow orchestrator["Orchestrator"]
+    gather["Gather Input"]@{ shape: input }
+    plan["Plan"]@{ shape: task }
+    decide["Ready?"]@{ shape: decision }
+    gather --> plan --> decide
+  end
+
+  flow workers["Workers"]
+    search["web_search"]@{ shape: tool }
+    notes["Notes"]@{ shape: refdoc }
+    search -.- notes
+  end
+
+  flow archive["Archive"]
+    store["Store"]
+  end
+  archive@{ view: "collapsed" }
+
+  decide --> search
+  notes --> archive
+  decide --x archive

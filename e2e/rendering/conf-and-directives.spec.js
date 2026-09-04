@@ -19,14 +19,14 @@ test.describe('Configuration and directives - nodes should be light blue', () =>
 
         %%{init: { 'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
 graph TD
-          A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A(Start) --> B[/We should/]
+          A[/nodes should be red/] --> C[red]
           subgraph section
             B
             C
           end
         `,
-      { theme: 'base', themeVariables: { primaryColor: '#ff0000' }, logLevel: 0 }
+      { theme: 'base', themeVariables: { primaryColor: '#ffff00' }, logLevel: 0 }
     );
   });
 
@@ -38,7 +38,7 @@ graph TD
         %%{init: { 'logLevel': 0, 'theme': 'neutral'} }%%
 graph TD
           A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A[/nodes should be grey/] --> C[End]
           subgraph section
             B
             C
@@ -58,7 +58,7 @@ graph TD
           %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
 graph TD
           A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A[/nodes should be red/] --> C[End]
           subgraph section
             B
             C
@@ -78,7 +78,7 @@ graph TD
       %%{init: { 'logLevel': 0, 'theme': 'neutral'} }%%
 graph TD
           A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A[/nodes should be grey/] --> C[End]
           subgraph section
             B
             C
@@ -98,7 +98,7 @@ graph TD
       %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
 graph TD
           A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A[/nodes should be red/] --> C[End]
           subgraph section
             B
             C
@@ -123,7 +123,7 @@ config:
 ---
 graph TD
           A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A[/nodes should be red/] --> C[End]
           subgraph section
             B
             C
@@ -149,7 +149,7 @@ config:
 %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
 graph TD
           A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A[/nodes should be red/] --> C[End]
           subgraph section
             B
             C
@@ -169,7 +169,7 @@ graph TD
       %%{init: { 'logLevel': 0, 'theme': 'base'} }%%
 graph TD
           A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
+          A[/nodes should be red/] --> C[End]
           subgraph section
             B
             C

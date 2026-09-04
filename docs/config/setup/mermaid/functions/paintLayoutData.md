@@ -12,7 +12,7 @@
 
 > **paintLayoutData**(`data4Layout`, `context`, `options`): `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:220](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L220)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:222](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L222)
 
 ## Parameters
 
