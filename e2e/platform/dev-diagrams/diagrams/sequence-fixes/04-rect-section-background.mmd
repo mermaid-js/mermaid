@@ -1,0 +1,18 @@
+sequenceDiagram
+  actor User
+  participant API
+  participant DB@{ "type" : "database" } as Database
+  rect
+    User ->> API: inside a bare rect, theme default fill
+    API ->> DB: query
+  end
+  API -->> User: outside any rect
+  rect rgb(200, 230, 255)
+    User ->> API: inside a rect with an explicit colour
+  end
+  rect
+    User ->> API: outer bare rect
+    rect rgb(255, 230, 200)
+      API ->> DB: nested rect with an explicit colour
+    end
+  end

@@ -173,6 +173,9 @@ class Theme {
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
 
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
+
     /* Gantt chart variables */
 
     this.taskBorderColor = this.border1;

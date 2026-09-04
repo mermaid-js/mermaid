@@ -1,0 +1,7 @@
+agentflow-beta TB
+  A["Data Source"] --> B["Process"]
+  B -.- C["Schema Ref"]
+  B --x D["Failure Handler"]
+  E["Decision"] -- yes --> F["Approved"]
+  C@{ shape: refdoc }
+  E@{ shape: decision }

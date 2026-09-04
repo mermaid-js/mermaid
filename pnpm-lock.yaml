@@ -13,7 +13,12 @@ overrides:
   js-yaml@<3.15.0: 3.15.0
   minimatch@10: ^10.2.6
 
+packageExtensionsChecksum: sha256-MNAXgvfQrO1Cwjlk5bwEsW3ZfMffzU8xSht5BuS8yGc=
+
 patchedDependencies:
+  fastdom:
+    hash: 10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87
+    path: patches/fastdom.patch
   roughjs:
     hash: 3543d47108cb41b68ec6a671c0e1f9d0cfe2ce524fea5b0992511ae84c3c6b64
     path: patches/roughjs.patch
@@ -286,6 +291,9 @@ importers:
       '@upsetjs/venn.js':
         specifier: ^2.0.0
         version: 2.0.0
+      chevrotain:
+        specifier: ~11.1.2
+        version: 11.1.2
       cytoscape:
         specifier: ^3.34.0
         version: 3.34.0
@@ -310,12 +318,12 @@ importers:
       dompurify:
         specifier: 3.4.12
         version: 3.4.12
+      elkjs:
+        specifier: ^0.9.3
+        version: 0.9.3
       es-toolkit:
         specifier: ^1.45.1
         version: 1.45.1
-      fastdom:
-        specifier: 1.0.12
-        version: 1.0.12
       katex:
         specifier: ^0.16.47
         version: 0.16.47
@@ -392,6 +400,9 @@ importers:
       csstree-validator:
         specifier: ^4.0.1
         version: 4.0.1
+      fastdom:
+        specifier: 1.0.12
+        version: 1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87)
       globby:
         specifier: ^14.1.0
         version: 14.1.0
@@ -483,9 +494,21 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
+      dagre-d3-es:
+        specifier: 7.0.14
+        version: 7.0.14
+      dayjs:
+        specifier: ^1.11.21
+        version: 1.11.21
+      dompurify:
+        specifier: 3.4.12
+        version: 3.4.12
       elkjs:
         specifier: ^0.9.3
         version: 0.9.3
+      katex:
+        specifier: ^0.16.47
+        version: 0.16.47
     devDependencies:
       '@types/d3':
         specifier: ^7.4.3
@@ -15327,17 +15350,17 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  acorn-jsx@5.3.2(acorn@8.16.0):
+  acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.15.0
 
   acorn-loose@8.5.2:
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.17.0
 
   acorn-walk@8.3.5:
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.17.0
 
   acorn@8.15.0: {}
 
@@ -17161,8 +17184,8 @@ snapshots:
 
   espree@10.4.0:
     dependencies:
-      acorn: 8.16.0
-      acorn-jsx: 5.3.2(acorn@8.16.0)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       eslint-visitor-keys: 4.2.1
 
   esprima@1.1.1: {}
@@ -17357,7 +17380,7 @@ snapshots:
 
   fast-uri@3.1.4: {}
 
-  fastdom@1.0.12:
+  fastdom@1.0.12(patch_hash=10bad52c2ff6c742f43492850f2a5a74e9d70a33f42a442cdbda4e174356aa87):
     dependencies:
       strictdom: 1.0.1
 
@@ -18787,6 +18810,7 @@ snapshots:
 
   langium@4.2.1:
     dependencies:
+      '@chevrotain/regexp-to-ast': 11.1.2
       chevrotain: 11.1.2
       chevrotain-allstar: 0.3.1(chevrotain@11.1.2)
       vscode-languageserver: 9.0.1
@@ -19453,14 +19477,14 @@ snapshots:
 
   mlly@1.8.0:
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.15.0
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.6.1
 
   monocart-coverage-reports@2.12.12:
     dependencies:
-      acorn: 8.16.0
+      acorn: 8.17.0
       acorn-loose: 8.5.2
       acorn-walk: 8.3.5
       commander: 14.0.3
@@ -21235,7 +21259,7 @@ snapshots:
   terser@5.44.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
-      acorn: 8.16.0
+      acorn: 8.17.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
