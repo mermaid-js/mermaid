@@ -24,7 +24,7 @@ class Theme {
     this.radius = 12;
     this.strokeWidth = 2;
 
-    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+    this.primaryBorderColor = mkBorder('#28253D', this.darkMode);
     // dark
 
     this.fontFamily = '"Recursive Variable", arial, sans-serif';
@@ -39,6 +39,10 @@ class Theme {
     this.dropShadow = 'url(#drop-shadow)';
     this.nodeShadow = true;
     this.tertiaryColor = '#ffffff';
+
+    /* Class Diagram variables */
+    this.clusterBkg = '#F9F9FB';
+    this.clusterBorder = '#BDBCCC';
 
     /* Architecture Diagram variables */
     this.archEdgeColor = 'calculated';
@@ -81,6 +85,21 @@ class Theme {
       '#F0F9FF', //Sky-50
       '#FFF1F2', //Rose-50
     ];
+
+    /* Usecase Diagram variables.
+
+       One colour per kind of element -- see `usecase.colorScheme`. Chosen from this theme's
+       own palette so the diagram stays on-brand, and kept to three well-separated hues that
+       can be checked for contrast once rather than per instance. The boundary frame is a
+       large area, so it takes the lightest treatment and leans on its border. */
+    this.usecaseActorBorder = '#A78BFA'; // Violet-400
+    this.usecaseActorBkg = '#F5F3FF'; // Violet-50
+    this.usecaseBorder = '#2DD4BF'; // Teal-400
+    this.usecaseBkg = '#F0FDFA'; // Teal-50
+    this.usecaseBoundaryBorder = '#BDBCCC';
+    this.usecaseBoundaryBkg = '#FAFAFC';
+    this.usecaseIncludeLine = '#38BDF8'; // Sky-400
+    this.usecaseExtendLine = '#FB923C'; // Orange-400
 
     this.filterColor = '#000000';
   }
@@ -141,16 +160,20 @@ class Theme {
     this.activationBorderColor = this.activationBorderColor || darken(this.secondaryColor, 10);
     this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
-    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
+    // Not tertiaryColor here. This theme pins tertiaryColor to its background, so deriving the
+    // `rect` section band from it draws white on white -- present in the DOM, invisible on screen.
+    // Keying it to the background instead keeps the band a shade of whatever the background is,
+    // including when the background is overridden through themeVariables. Direction-aware because
+    // darken() is a no-op at pure black: an override to #000000 needs the shade to go the other
+    // way or the band vanishes exactly as it did on white.
+    this.rectBkgColor =
+      this.rectBkgColor ||
+      (isDark(this.background) ? lighten(this.background, 4) : darken(this.background, 4));
 
     /* Gantt chart variables */
     const primaryColor = '#ECECFE';
     const secondaryColor = '#E9E9F1';
     const tertiaryColor = adjust(primaryColor, { h: 180, l: 5 });
-    this.sectionBkgColor = this.sectionBkgColor || tertiaryColor;
-    this.altSectionBkgColor = this.altSectionBkgColor || 'white';
-    this.sectionBkgColor = this.sectionBkgColor || secondaryColor;
-    this.sectionBkgColor2 = this.sectionBkgColor2 || primaryColor;
     this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
     this.taskBkgColor = this.taskBkgColor || primaryColor;
@@ -184,12 +207,12 @@ class Theme {
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     /* The color of the text tables of the states*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
-
+    this.stateEdgeLabelBackground = this.stateEdgeLabelBackground || '#FFFFFF';
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || '#f0f0f0';
-    this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+    this.altBackground = this.altBackground || '#F9F9FB';
+    this.compositeTitleBackground = this.compositeTitleBackground || '#F9F9FB';
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
@@ -222,6 +245,26 @@ class Theme {
     //     this['cScale' + i] = darken(this['cScale' + i], 25);
     //   }
     // }
+
+    /* Gantt chart section banding.
+     *
+     * gantt/styles.js cycles four band classes: .section0 -> sectionBkgColor,
+     * .section1 and .section3 -> altSectionBkgColor, .section2 -> sectionBkgColor2. All
+     * are painted at 20% opacity, so the source colour has to be saturated to read at
+     * all -- the `primaryColor` tints used before composited to nothing.
+     *
+     * Assigned here rather than in the gantt block above so the two visible bands come
+     * off the categorical scale and follow it if the palette changes.
+     *
+     * altSectionBkgColor keeps the base theme's 'white' verbatim rather than being
+     * restated as `this.background`. It is the same colour on this canvas, and every other
+     * band reading as absent is already the correct behaviour here -- so leaving the string
+     * untouched keeps this variable out of the drift net's exemption list for this pair.
+     * The dark theme is where 'white' is wrong and has to change.
+     */
+    this.sectionBkgColor = this.sectionBkgColor || this.cScale0;
+    this.sectionBkgColor2 = this.sectionBkgColor2 || this.cScale1;
+    this.altSectionBkgColor = this.altSectionBkgColor || 'white';
 
     // Setup the inverted color for the set
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
@@ -257,28 +300,23 @@ class Theme {
     this.classText = this.classText || this.textColor;
 
     /* user-journey */
-    this.fillType0 = this.fillType0 || primaryColor;
-    this.fillType1 = this.fillType1 || secondaryColor;
-    this.fillType2 = this.fillType2 || adjust(primaryColor, { h: 64 });
-    this.fillType3 = this.fillType3 || adjust(secondaryColor, { h: 64 });
-    this.fillType4 = this.fillType4 || adjust(primaryColor, { h: -64 });
-    this.fillType5 = this.fillType5 || adjust(secondaryColor, { h: -64 });
-    this.fillType6 = this.fillType6 || adjust(primaryColor, { h: 128 });
-    this.fillType7 = this.fillType7 || adjust(secondaryColor, { h: 128 });
+    // Journey task labels resolve to the theme's `textColor` (#28253D here), so these
+    // fills have to stay light. user-journey/styles.js also carries a hardcoded
+    // `.label text { fill: #333 }` rule, but it does not win -- confirmed against the
+    // rendered DOM, not read off the stylesheet. The pale background array keeps the
+    // fills hue-distinct where the old tints of `primaryColor` were eight shades of the
+    // same lavender.
+    for (let i = 0; i < 8; i++) {
+      this['fillType' + i] = this['fillType' + i] || this.bkgColorArray[i];
+    }
 
     /* pie */
-    this.pie1 = this.pie1 || primaryColor;
-    this.pie2 = this.pie2 || secondaryColor;
-    this.pie3 = this.pie3 || tertiaryColor;
-    this.pie4 = this.pie4 || adjust(primaryColor, { l: -10 });
-    this.pie5 = this.pie5 || adjust(secondaryColor, { l: -10 });
-    this.pie6 = this.pie6 || adjust(tertiaryColor, { l: -10 });
-    this.pie7 = this.pie7 || adjust(primaryColor, { h: +60, l: -10 });
-    this.pie8 = this.pie8 || adjust(primaryColor, { h: -60, l: -10 });
-    this.pie9 = this.pie9 || adjust(primaryColor, { h: 120, l: 0 });
-    this.pie10 = this.pie10 || adjust(primaryColor, { h: +60, l: -20 });
-    this.pie11 = this.pie11 || adjust(primaryColor, { h: -60, l: -20 });
-    this.pie12 = this.pie12 || adjust(primaryColor, { h: 120, l: -10 });
+    // Slices reuse the theme's categorical scale so a pie reads like a mindmap or
+    // treemap in the same theme. The old tints of `primaryColor` were all near-white
+    // (pie3 resolved to pure white), leaving adjacent slices indistinguishable.
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['pie' + (i + 1)] = this['pie' + (i + 1)] || this['cScale' + i];
+    }
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
     this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
@@ -292,6 +330,12 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
+    /* `borderColorArray` and not the lighter `cScale`: the fill is painted at 0.1
+       opacity, so the stroke and the label carry the circle. */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] =
+        this['venn' + (i + 1)] ?? this.borderColorArray[i % this.borderColorArray.length];
+    }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
@@ -348,6 +392,7 @@ class Theme {
       this.relationLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+    this.requirementEdgeLabelBackground = '#FFFFFF';
 
     /* git */
     this.git0 = this.git0 || primaryColor;
