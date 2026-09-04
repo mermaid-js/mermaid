@@ -149,7 +149,7 @@ describe('when parsing ER diagram it...', function () {
       const secondEntity = 'bar';
       const alias = 'batman';
       erDiagram.parser.parse(
-        `erDiagram\n${firstEntity} ||--o| ${secondEntity} : rel\nbuzz ${firstEntity}["${alias}"]\n`
+        `erDiagram\n${firstEntity} ||--o| ${secondEntity} : rel\nbuzz\n${firstEntity}["${alias}"]\n`
       );
       const entities = erDb.getEntities();
       expect(entities.has(firstEntity)).toBe(true);
@@ -163,7 +163,7 @@ describe('when parsing ER diagram it...', function () {
       const secondEntity = 'bar';
       const alias = 'batman';
       erDiagram.parser.parse(
-        `erDiagram\nbuzz ${firstEntity}["${alias}"]\n${firstEntity} ||--o| ${secondEntity} : rel\n`
+        `erDiagram\nbuzz\n${firstEntity}["${alias}"]\n${firstEntity} ||--o| ${secondEntity} : rel\n`
       );
       const entities = erDb.getEntities();
       expect(entities.has(firstEntity)).toBe(true);
@@ -1246,6 +1246,34 @@ describe('when parsing ER diagram it...', function () {
               }
         `
         );
+      });
+    });
+
+    describe('unescaped quotes and statement separation (issue #8054)', function () {
+      it('should reject unescaped double quotes inside entity names in relationships', function () {
+        expect(() => {
+          erDiagram.parser.parse(`erDiagram\n"say "stop" now" ||--|| Bb : owns\n`);
+        }).toThrow();
+      });
+
+      it('should reject unescaped double quotes inside relationship labels', function () {
+        expect(() => {
+          erDiagram.parser.parse(`erDiagram\nAa ||--|| Bb : say "stop" now\n`);
+        }).toThrow();
+      });
+
+      it('should reject multiple statements on the same line without separator', function () {
+        expect(() => {
+          erDiagram.parser.parse(`erDiagram\nCUSTOMER ORDER\n`);
+        }).toThrow();
+      });
+
+      it('should allow escaped quotes (#quot;) inside entity names and relationship labels', function () {
+        expect(() => {
+          erDiagram.parser.parse(
+            `erDiagram\n"say #quot;hello#quot; now" ||--|| Bb : "owns #quot;item#quot;"\n`
+          );
+        }).not.toThrow();
       });
     });
   });
