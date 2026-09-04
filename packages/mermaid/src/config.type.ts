@@ -604,6 +604,11 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
  */
 export interface BPMNDiagramConfig extends BaseDiagramConfig {
   /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
+  /**
    * The margin above the diagram title.
    */
   titleTopMargin?: number;
