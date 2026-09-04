@@ -28,21 +28,25 @@ const extractMermaidExamples = (markdown: string): string[] =>
   );
 
 describe('bpmn public documentation examples', () => {
-  jsdomIt('parses and renders every mermaid-example fence from the canonical page', async () => {
-    const examples = extractMermaidExamples(readDocumentation());
-    expect(examples.length).toBeGreaterThan(0);
+  jsdomIt(
+    'parses and renders every mermaid-example fence from the canonical page',
+    async () => {
+      const examples = extractMermaidExamples(readDocumentation());
+      expect(examples.length).toBeGreaterThan(0);
 
-    for (const [index, source] of examples.entries()) {
-      const id = `bpmn-doc-example-${index}`;
-      try {
-        const { svg } = await mermaidAPI.render(id, source);
-        expect(svg, `documentation example ${index + 1}`).toContain('<svg');
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        throw new Error(`BPMN documentation example ${index + 1} failed: ${message}`);
+      for (const [index, source] of examples.entries()) {
+        const id = `bpmn-doc-example-${index}`;
+        try {
+          const { svg } = await mermaidAPI.render(id, source);
+          expect(svg, `documentation example ${index + 1}`).toContain('<svg');
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          throw new Error(`BPMN documentation example ${index + 1} failed: ${message}`);
+        }
       }
-    }
-    // Twelve full renders in jsdom take several seconds together; the default per-test
-    // budget is sized for one.
-  }, 60_000);
+      // Twelve full renders in jsdom take several seconds together; the default per-test
+      // budget is sized for one.
+    },
+    60_000
+  );
 });
