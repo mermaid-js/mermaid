@@ -28,6 +28,9 @@
     "directory": "packages/parser"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "keywords": [
     "mermaid",
     "parser",
