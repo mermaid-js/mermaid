@@ -88,6 +88,29 @@ Container(b, "Terminal", "Tech", "server-side app", $sprite="terminal")
     await expect(svg.locator('svg')).toHaveCount(0);
     await expect(svg.locator('.node > rect')).toHaveCount(2);
   });
+  test('CHAR.descr-wrapping should use wrapped SVG text', async ({ page }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `C4Context
+title Description wrapping
+Person(p, "Person", "A customer of the bank with personal bank accounts and a long description that should wrap across multiple lines")
+System(s, "System", "Allows customers to view information about their bank accounts and make payments")
+Rel(p, s, "Uses")
+      `,
+      { wrap: true }
+    );
+
+    const svg = diagramSvg(page);
+    await expect(svg.locator('.node foreignObject')).toHaveCount(0);
+
+    const descriptions = svg.locator('.node .c4-descr');
+    await expect(descriptions).toHaveCount(2);
+
+    const wrappedLines = descriptions.first().locator('tspan.text-outer-tspan');
+    expect(await wrappedLines.count()).toBeGreaterThan(1);
+    await expect(wrappedLines.first()).toContainText('A customer');
+  });
 
   test('CHAR.show-stereotypes should hide every stereotype when turned off', async ({
     page,
@@ -130,29 +153,5 @@ UpdateElementStyle(b, $showStereotype="false")
     const svg = diagramSvg(page);
     await expect(svg.locator('.c4-shape .c4-type')).toHaveCount(1);
     await expect(svg).toContainText('[Software System]');
-  });
-
-  test('CHAR.descr-wrapping should use wrapped SVG text', async ({ page }, testInfo) => {
-    await imgSnapshotTest(
-      page,
-      testInfo,
-      `C4Context
-title Description wrapping
-Person(p, "Person", "A customer of the bank with personal bank accounts and a long description that should wrap across multiple lines")
-System(s, "System", "Allows customers to view information about their bank accounts and make payments")
-Rel(p, s, "Uses")
-      `,
-      { wrap: true }
-    );
-
-    const svg = diagramSvg(page);
-    await expect(svg.locator('.node foreignObject')).toHaveCount(0);
-
-    const descriptions = svg.locator('.node .c4-descr');
-    await expect(descriptions).toHaveCount(2);
-
-    const wrappedLines = descriptions.first().locator('tspan.text-outer-tspan');
-    expect(await wrappedLines.count()).toBeGreaterThan(1);
-    await expect(wrappedLines.first()).toContainText('A customer');
   });
 });
