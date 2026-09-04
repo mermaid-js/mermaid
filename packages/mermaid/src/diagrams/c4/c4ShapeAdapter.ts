@@ -113,6 +113,59 @@ const stereotypeText = (shape: C4ShapeLike): string => {
   return shape.techn?.text ? `[${stereotype}: ${shape.techn.text}]` : `[${stereotype}]`;
 };
 
+const escapeHtml = (txt: string): string =>
+  txt
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
+/**
+ * An `UpdateRelStyle` colour, accepted only if it is a colour on its own. The value is
+ * interpolated into a CSS declaration, so one carrying `;` or a `url(...)` could append
+ * further declarations; `CSS.supports` rejects those, and anything it cannot judge (no
+ * CSS API, as in jsdom) falls back to a conservative pattern match.
+ */
+export const asColor = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || value === '') {
+    return undefined;
+  }
+  const accepted =
+    typeof globalThis.CSS?.supports === 'function'
+      ? globalThis.CSS.supports('color', value)
+      : /^(#[\da-f]{3,8}|[a-z]+|rgba?\([\d\s%,./]+\)|hsla?\([\d\s%,./deg]+\))$/i.test(value);
+  return accepted ? value : undefined;
+};
+
+/**
+ * A C4 relationship label: name, then optional `[technology]` and description, one per
+ * line. `<br/>` separates the lines either way, since it is a line break in an HTML
+ * label and a line delimiter in a plain SVG one. The emphasis tags only render as
+ * emphasis in an HTML label; with `htmlLabels` off they would show as literal text, so
+ * the plain form carries the same words without them.
+ */
+export const buildEdgeLabel = (
+  rel: { label: C4Text; techn?: C4Text; descr?: C4Text },
+  useHtmlLabels = true
+): string => {
+  const parts = [rel.label.text, rel.techn?.text && `[${rel.techn.text}]`, rel.descr?.text].filter(
+    (part): part is string => Boolean(part)
+  );
+  if (!useHtmlLabels) {
+    return parts.join('<br/>');
+  }
+  const [name, ...rest] = parts.map((part) => escapeHtml(part));
+  const lines = [`<b>${name}</b>`];
+  if (rel.techn?.text) {
+    lines.push(`<small><i>${rest.shift()}</i></small>`);
+  }
+  for (const part of rest) {
+    lines.push(`<small>${part}</small>`);
+  }
+  return lines.join('<br/>');
+};
+
 /** The C4 element types, internal and external, that carry per-type config. */
 export const C4_ELEMENT_TYPES = (
   [

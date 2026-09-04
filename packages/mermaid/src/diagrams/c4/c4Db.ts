@@ -8,6 +8,8 @@ import {
   setAccDescription,
 } from '../common/commonDb.js';
 import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
+import type { LayoutData } from '../../rendering-util/types.js';
+import { getData as buildLayoutData } from './c4LayoutData.js';
 
 /**
  * The parser may pass a plain string or an object with a single
@@ -72,6 +74,7 @@ let wrapEnabled: boolean | undefined = false;
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
 let c4Type: string | undefined;
+let direction = 'TB';
 
 export const getC4Type = function () {
   return c4Type;
@@ -731,6 +734,22 @@ export const autoWrap = function () {
   return wrapEnabled;
 };
 
+export const setDirection = function (dir: string) {
+  direction = dir;
+};
+
+export const getDirection = function () {
+  return direction;
+};
+
+/** The parsed diagram as the unified rendering pipeline consumes it. */
+export const getData = function (): LayoutData {
+  return buildLayoutData(
+    { getC4ShapeArray, getBoundaries, getRels, getC4Type, getDirection },
+    getConfig()
+  );
+};
+
 export const clear = function () {
   c4ShapeArray = [];
   boundaries = [createGlobalBoundary()];
@@ -744,6 +763,7 @@ export const clear = function () {
   wrapEnabled = false;
   c4ShapeInRow = 4;
   c4BoundaryInRow = 2;
+  direction = 'TB';
 };
 
 export const LINETYPE = {
@@ -825,5 +845,8 @@ export default {
   PLACEMENT,
   setTitle,
   setC4Type,
+  setDirection,
+  getDirection,
+  getData,
   // apply,
 };
