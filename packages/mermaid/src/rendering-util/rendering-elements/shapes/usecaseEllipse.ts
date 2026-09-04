@@ -1,4 +1,6 @@
 import rough from 'roughjs';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
@@ -12,6 +14,11 @@ export async function usecaseEllipse<T extends SVGGraphicsElement>(
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
+
+  // Per-item colour slot. A no-op unless the active theme carries a palette; `usecase/styles.ts`
+  // defines the matching `[data-color-id]` rules.
+  const { theme, themeVariables } = getConfig();
+  stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);
 
   // Calculate ellipse dimensions with padding
   const padding = halfPadding ?? 10;

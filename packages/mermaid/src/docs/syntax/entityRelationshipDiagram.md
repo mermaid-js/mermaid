@@ -44,6 +44,76 @@ erDiagram
 
 When including attributes on ER diagrams, you must decide whether to include foreign keys as attributes. This probably depends on how closely you are trying to represent relational table structures. If your diagram is a _logical_ model which is not meant to imply a relational implementation, then it is better to leave these out because the associative relationships already convey the way that entities are associated. For example, a JSON data structure can implement a one-to-many relationship without the need for foreign key properties, using arrays. Similarly an object-oriented programming language may use pointers or references to collections. Even for models that are intended for relational implementation, you might decide that inclusion of foreign key attributes duplicates information already portrayed by the relationships, and does not add meaning to entities. Ultimately, it's your choice.
 
+## Default theme and look (v<MERMAID_RELEASE_VERSION>+)
+
+Entity relationship diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE_ITEM : contains
+  PRODUCT ||--o{ LINE_ITEM : "appears in"
+  CUSTOMER {
+    string name
+    string email
+  }
+  ORDER {
+    int id
+    date placedAt
+  }
+  LINE_ITEM {
+    int quantity
+    float price
+  }
+  PRODUCT {
+    string sku
+    string title
+  }
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE_ITEM : contains
+  PRODUCT ||--o{ LINE_ITEM : "appears in"
+  CUSTOMER {
+    string name
+    string email
+  }
+  ORDER {
+    int id
+    date placedAt
+  }
+  LINE_ITEM {
+    int quantity
+    float price
+  }
+  PRODUCT {
+    string sku
+    string title
+  }
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ er: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
 ## Syntax
 
 ### Entities and Relationships
@@ -545,14 +615,14 @@ erDiagram
 
 ### Layout
 
-The layout of the diagram is handled by [`render()`](../config/setup/mermaid/interfaces/Mermaid.md#render). The default layout is dagre.
+The layout of the diagram is handled by [`render()`](../config/setup/mermaid/interfaces/Mermaid.md#render). The default layout is the ELK (Eclipse Layout Kernel) layout, which suits larger and more-complex diagrams. For more information, see [Customizing ELK Layout](../intro/syntax-reference.md#customizing-elk-layout).
 
-For larger or more-complex diagrams, you can alternatively apply the ELK (Eclipse Layout Kernel) layout using your YAML frontmatter's `config`. For more information, see [Customizing ELK Layout](../intro/syntax-reference.md#customizing-elk-layout).
+To use the classic Dagre layout instead, set it in your YAML frontmatter's `config`:
 
 ```yaml
 ---
 config:
-  layout: elk
+  layout: dagre
 ---
 ```
 
@@ -562,16 +632,12 @@ Your Mermaid code should be similar to the following:
 ---
 title: Order example
 config:
-    layout: elk
+    layout: dagre
 ---
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-```
-
-```note
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
 ```
 
 <!--- cspell:locale en,en-gb --->

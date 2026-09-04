@@ -18,11 +18,28 @@ interface ConfigSchema {
   $defs: Record<string, SchemaDefinition>;
 }
 
+/**
+ * `BaseDiagramConfig` carries the shared `theme` definition, whose `meta:enum` is
+ * documentation for jsonschema2md rather than a validation keyword. Ajv's strict mode
+ * refuses to compile a schema containing a keyword it has never heard of, so declare it
+ * here the same way the schema build scripts do.
+ */
+const compileUsecaseSchema = () => {
+  const ajv = new Ajv2019({ allErrors: true, allowUnionTypes: true, strict: true });
+  ajv.addKeyword({ keyword: 'meta:enum', errors: false });
+  ajv.addKeyword({ keyword: 'tsType', errors: false });
+  return ajv;
+};
+
 const schema = configSchema as ConfigSchema;
 const usecaseDefinition = schema.$defs.UsecaseDiagramConfig;
 const baseDefinition = schema.$defs.BaseDiagramConfig;
 
 const supportedConfig = {
+  // The usecase diagram is one of the types that declares its own appearance
+  // defaults, so they are part of its runtime config surface.
+  theme: 'redux-color',
+  look: 'neo',
   actorFontSize: 14,
   actorFontFamily: '"Open Sans", sans-serif',
   actorFontWeight: 'normal',
@@ -32,6 +49,7 @@ const supportedConfig = {
   nodeSpacing: 50,
   rankSpacing: 50,
   diagramPadding: 20,
+  colorScheme: 'role',
   useMaxWidth: true,
 } satisfies UsecaseDiagramConfig;
 
@@ -60,6 +78,8 @@ describe('usecase configuration', () => {
       unevaluatedProperties: false,
       required: ['useMaxWidth'],
       properties: {
+        theme: { default: 'redux-color' },
+        look: { default: 'neo' },
         actorFontSize: { default: 14 },
         actorFontFamily: { default: '"Open Sans", sans-serif' },
         actorFontWeight: { default: 'normal' },
@@ -69,10 +89,15 @@ describe('usecase configuration', () => {
         nodeSpacing: { default: 50 },
         rankSpacing: { default: 50 },
         diagramPadding: { default: 20 },
+        // `role` is the default deliberately: colour keyed to the kind of element is
+        // invariant under insertion and reordering, where the rotating palette is not.
+        colorScheme: { default: 'role' },
       },
     });
     expect(baseDefinition.properties?.useMaxWidth).toMatchObject({ default: true });
     expect(Object.keys(usecaseDefinition.properties ?? {})).toEqual([
+      'theme',
+      'look',
       'actorFontSize',
       'actorFontFamily',
       'actorFontWeight',
@@ -82,11 +107,12 @@ describe('usecase configuration', () => {
       'nodeSpacing',
       'rankSpacing',
       'diagramPadding',
+      'colorScheme',
     ]);
   });
 
   it.each(['actorMargin', 'usecaseMargin'])('rejects removed %s in the JSON Schema', (key) => {
-    const ajv = new Ajv2019({ allErrors: true, allowUnionTypes: true, strict: true });
+    const ajv = compileUsecaseSchema();
     const validate = ajv.compile({
       $schema: schema.$schema,
       $defs: { BaseDiagramConfig: baseDefinition },
@@ -107,7 +133,7 @@ describe('usecase configuration', () => {
   // implicit guarantees of addDirective's sanitize() and setProperty().
   describe('font pattern constraints', () => {
     const compile = () => {
-      const ajv = new Ajv2019({ allErrors: true, allowUnionTypes: true, strict: true });
+      const ajv = compileUsecaseSchema();
       return ajv.compile({
         $schema: schema.$schema,
         $defs: { BaseDiagramConfig: baseDefinition },
