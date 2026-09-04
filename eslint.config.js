@@ -166,7 +166,7 @@ export default tseslint.config(
   {
     // Lint rules for bundled code only (e.g. what ships in the final bundles)
     files: ['packages/*/src/**/*.{ts,js}'],
-    ignores: ['**/*.spec.{ts,js}', '**/docs/**', '**/vitepress/**', '**/scripts/**'],
+    ignores: ['**/*.spec.{ts,js}', '**/docs/**', '**/__mocks__/**'],
     plugins: {
       // Browser-compatibility lint for web/ES APIs.
       // Follows the browserslist setting in our `package.json`.
