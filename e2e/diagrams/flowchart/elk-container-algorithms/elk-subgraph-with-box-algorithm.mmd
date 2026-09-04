@@ -1,0 +1,14 @@
+---
+config:
+  layout: elk
+---
+%% A subgraph opting into its own ELK algorithm via `@{ algorithm: … }`.
+flowchart TD
+  start[Start] --> grp
+  subgraph grp[Grouped]
+    a[One]
+    b[Two]
+    c[Three]
+  end
+  grp@{ algorithm: elk.box }
+  grp --> done[Done]

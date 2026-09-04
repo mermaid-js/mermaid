@@ -199,6 +199,9 @@ class Theme {
     this.titleColor = this.textColor;
     this.edgeLabelBackground = this.labelBackground;
 
+    /* Agentflow variables */
+    this.flowContainerStroke = this.flowContainerStroke || this.secondaryBorderColor;
+
     /* Sequence Diagram variables */
 
     this.actorBorder = this.border1;

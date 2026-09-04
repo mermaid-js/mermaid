@@ -6,6 +6,7 @@ import rough from 'roughjs';
 import { createText } from '../../createText.ts';
 import intersectRect from '../intersect/intersect-rect.js';
 import { styles2String, userNodeOverrides } from '../shapes/handDrawnShapeStyles.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 
 /**
  * Swimlane cluster shape (lane). Extracted from the shared clusters.js so the
@@ -14,8 +15,8 @@ import { styles2String, userNodeOverrides } from '../shapes/handDrawnShapeStyles
  */
 export const swimlane = async (parent, node) => {
   const siteConfig = getConfig();
-  const { themeVariables, handDrawnSeed } = siteConfig;
-  const { clusterBkg, clusterBorder } = themeVariables;
+  const { theme, themeVariables, handDrawnSeed } = siteConfig;
+  const { clusterBkg, clusterBorder, borderColorArray } = themeVariables;
   const laneStroke = clusterBorder;
 
   const { labelStyles, nodeStyles, borderStyles, backgroundStyles } = styles2String(node);
@@ -28,6 +29,10 @@ export const swimlane = async (parent, node) => {
     .attr('data-id', node.id)
     .attr('data-et', 'cluster')
     .attr('data-look', node.look);
+
+  // Per-lane colour slot; a no-op unless the theme carries a palette. The matching
+  // `[data-color-id]` rules come from the flowchart stylesheet, which swimlanes reuses.
+  stampColorSlot(shapeSvg, node.colorIndex, theme, borderColorArray);
 
   const useHtmlLabels = evaluate(siteConfig.flowchart.htmlLabels);
 
@@ -109,9 +114,10 @@ export const swimlane = async (parent, node) => {
       });
 
       const roughTitle = rc.rectangle(laneLeft, laneTop, titleWidth, height, titleOptions);
-      titleRect = shapeSvg.insert(() => roughTitle, ':first-child');
+      // Same classes as the classic look, so CSS can tell the two halves apart.
+      titleRect = shapeSvg.insert(() => roughTitle, ':first-child').attr('class', 'swimlane-title');
       const roughBody = rc.rectangle(bodyX, laneTop, bodyWidth, height, bodyOptions);
-      bodyRect = shapeSvg.insert(() => roughBody, ':first-child');
+      bodyRect = shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'swimlane-body');
 
       titleRect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
       titleRect.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));
@@ -180,9 +186,9 @@ export const swimlane = async (parent, node) => {
       });
 
       const roughTitle = rc.rectangle(x, laneTop, width, titleHeight, titleOptions);
-      titleRect = shapeSvg.insert(() => roughTitle, ':first-child');
+      titleRect = shapeSvg.insert(() => roughTitle, ':first-child').attr('class', 'swimlane-title');
       const roughBody = rc.rectangle(x, bodyY, width, contentHeight, bodyOptions);
-      bodyRect = shapeSvg.insert(() => roughBody, ':first-child');
+      bodyRect = shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'swimlane-body');
 
       titleRect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
       titleRect.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));

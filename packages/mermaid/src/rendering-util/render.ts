@@ -3,6 +3,7 @@ import type { InternalHelpers } from '../internals.js';
 import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
 import type { LayoutData } from './types.js';
+import { ELK_ALGORITHMS } from './layout-algorithms/elk/algorithms.js';
 
 // console.log('MUST be removed, this only for keeping dev server working');
 // import tmp from './layout-algorithms/dagre/index.js';
@@ -27,12 +28,44 @@ export interface LayoutLoaderDefinition {
   algorithm?: string;
 }
 
-const layoutAlgorithms: Record<string, LayoutLoaderDefinition> = {};
+// Prototype-less: `layout` is settable from frontmatter, and on a plain object a value of
+// `__proto__` or `toString` would pass a membership test and reach `loader()` as a TypeError.
+const layoutAlgorithms: Record<string, LayoutLoaderDefinition> = Object.create(null);
 
 export const registerLayoutLoaders = (loaders: LayoutLoaderDefinition[]) => {
   for (const loader of loaders) {
     layoutAlgorithms[loader.name] = loader;
   }
+};
+
+/**
+ * Look up a registered layout by name.
+ *
+ * @internal Not part of the public API; it exists so the registration of the
+ * built-in layouts can be asserted on directly.
+ */
+export const getLayoutLoaderDefinition = (name: string): LayoutLoaderDefinition => {
+  const definition = layoutAlgorithms[name];
+  if (!definition) {
+    throw new Error(`Unknown layout algorithm: ${name}`);
+  }
+  return definition;
+};
+
+/**
+ * Every ELK entry shares one loader, so all of them resolve to the same lazily
+ * imported chunk and elkjs is fetched at most once.
+ *
+ * The loader is declared here rather than imported from the ELK plugin entry so
+ * that the tiny build, which compiles this branch away, does not retain a
+ * dynamic import of elkjs.
+ */
+const elkLayoutLoaders = (): LayoutLoaderDefinition[] => {
+  const loader = async () => await import('./layout-algorithms/elk/index.js');
+  return [
+    { name: 'elk', loader, algorithm: 'elk.layered' },
+    ...ELK_ALGORITHMS.map((algorithm) => ({ name: algorithm, loader, algorithm })),
+  ];
 };
 
 // TODO: Should we load dagre without lazy loading?
@@ -46,12 +79,16 @@ const registerDefaultLayoutLoaders = () => {
       name: 'swimlane',
       loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
     },
+    // elkjs is ~1.6 MB of source, so it is excluded from the tiny build along
+    // with the other large features. `getRegisteredLayoutAlgorithm` then falls
+    // back to dagre for diagrams that ask for an ELK layout there.
     ...(injected.includeLargeFeatures
       ? [
           {
             name: 'cose-bilkent',
             loader: async () => await import('./layout-algorithms/cose-bilkent/index.js'),
           },
+          ...elkLayoutLoaders(),
         ]
       : []),
   ]);
@@ -60,7 +97,7 @@ const registerDefaultLayoutLoaders = () => {
 registerDefaultLayoutLoaders();
 
 export const render = async (data4Layout: LayoutData, svg: SVG) => {
-  if (!(data4Layout.layoutAlgorithm in layoutAlgorithms)) {
+  if (!Object.hasOwn(layoutAlgorithms, data4Layout.layoutAlgorithm)) {
     throw new Error(`Unknown layout algorithm: ${data4Layout.layoutAlgorithm}`);
   }
 
@@ -135,16 +172,28 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
   });
 };
 
+/** Always registered, so the fallback chain can always end. */
+const LAST_RESORT_LAYOUT = 'dagre';
+
 /**
- * Get the registered layout algorithm. If the algorithm is not registered, use the fallback algorithm.
+ * Get the registered layout algorithm, falling back when it is not available -- `elk` and
+ * `cose-bilkent` ship only in large-feature builds (the tiny build omits them), so a diagram
+ * type may name either as its default. `fallback` may itself be absent, so `dagre` closes the chain.
  */
-export const getRegisteredLayoutAlgorithm = (algorithm = '', { fallback = 'dagre' } = {}) => {
-  if (algorithm in layoutAlgorithms) {
+export const getRegisteredLayoutAlgorithm = (
+  algorithm = '',
+  { fallback = LAST_RESORT_LAYOUT } = {}
+) => {
+  if (Object.hasOwn(layoutAlgorithms, algorithm)) {
     return algorithm;
   }
-  if (fallback in layoutAlgorithms) {
-    log.warn(`Layout algorithm ${algorithm} is not registered. Using ${fallback} as fallback.`);
-    return fallback;
+  for (const candidate of [fallback, LAST_RESORT_LAYOUT]) {
+    if (Object.hasOwn(layoutAlgorithms, candidate)) {
+      log.warn(`Layout algorithm ${algorithm} is not registered. Using ${candidate} as fallback.`);
+      return candidate;
+    }
   }
-  throw new Error(`Both layout algorithms ${algorithm} and ${fallback} are not registered.`);
+  throw new Error(
+    `Neither layout algorithm ${algorithm}, ${fallback}, nor ${LAST_RESORT_LAYOUT} is registered.`
+  );
 };
