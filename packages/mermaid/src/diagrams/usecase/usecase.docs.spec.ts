@@ -46,8 +46,9 @@ describe('usecase public documentation examples', () => {
       }
     },
     // Renders every example on the page in one test, so the cost grows with the page and the
-    // default 5s was already marginal on CI. Generous rather than tuned: the point is that
-    // adding an example to the docs must not turn into a timeout here.
+    // default 5s was already marginal on CI — and ELK as the default layout does considerably
+    // more work than dagre, plus a one-off cost to load elkjs. Generous rather than tuned: the
+    // point is that adding an example to the docs must not turn into a timeout here.
     60_000
   );
 });

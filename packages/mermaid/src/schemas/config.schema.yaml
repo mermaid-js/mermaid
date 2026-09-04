@@ -78,7 +78,12 @@ properties:
     default: 0
   layout:
     $ref: '#/$defs/BaseDiagramConfig/properties/layout'
-    default: 'dagre'
+    description: |
+      Defines which layout algorithm to use for rendering the diagram.
+
+      Defaults to `elk`, which is bundled with mermaid. The `tiny` build omits
+      ELK to stay small and falls back to `dagre`.
+    default: 'elk'
   maxTextSize:
     description: The maximum allowed size of the users text diagram
     type: number
@@ -1654,6 +1659,9 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       look:
         $ref: '#/$defs/BaseDiagramConfig/properties/look'
         default: 'neo'
+      layout:
+        $ref: '#/$defs/BaseDiagramConfig/properties/layout'
+        default: 'elk'
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25

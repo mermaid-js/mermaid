@@ -1,11 +1,9 @@
 import mermaid, { type MermaidConfig } from 'mermaid';
 import zenuml from '../../../../../mermaid-zenuml/dist/mermaid-zenuml.core.mjs';
 import tidyTreeLayout from '../../../../../mermaid-layout-tidy-tree/dist/mermaid-layout-tidy-tree.core.mjs';
-import layouts from '../../../../../mermaid-layout-elk/dist/mermaid-layout-elk.core.mjs';
 
 const init = Promise.all([
   mermaid.registerExternalDiagrams([zenuml]),
-  mermaid.registerLayoutLoaders(layouts),
   mermaid.registerLayoutLoaders(tidyTreeLayout),
 ]);
 mermaid.registerIconPacks([
