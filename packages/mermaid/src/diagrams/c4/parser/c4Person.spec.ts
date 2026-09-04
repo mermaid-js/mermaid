@@ -117,7 +117,8 @@ Person(customerA, "Banking Customer A", "A customer.", $tags="v1.0+internal", $l
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       alias: 'customerA',
       tags: 'v1.0+internal',
-      link: 'https://example.com',
+      // Sanitizing the link normalises it, as it does for a flowchart `click ... href`.
+      link: 'https://example.com/',
     });
   });
 });
