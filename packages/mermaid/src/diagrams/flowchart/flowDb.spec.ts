@@ -1,5 +1,7 @@
 import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph, FlowText } from './types.js';
+import { log } from '../../logger.js';
+import { setSiteConfig, reset } from '../../config.js';
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -384,5 +386,48 @@ describe('flow db subgraph colour slots', () => {
     const { nodes } = flowDb.getData();
     expect(nodes.find((n) => n.id === 'A')?.colorIndex).toBeUndefined();
     expect(nodes.find((n) => n.id === 'only')?.colorIndex).toBe(0);
+  });
+});
+
+describe('flow db click callbacks', () => {
+  let flowDb: FlowDB;
+
+  beforeEach(() => {
+    flowDb = new FlowDB();
+    flowDb.addVertex(
+      'nodeA',
+      { text: 'nodeA', type: 'text' } as FlowText,
+      'square',
+      [],
+      [],
+      '',
+      {},
+      undefined
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    reset();
+  });
+
+  it('warns when a click callback is ignored because securityLevel is not loose', () => {
+    setSiteConfig({ securityLevel: 'strict' });
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+    flowDb.setClickEvent('nodeA', 'someCallback', '');
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toContain('nodeA');
+    expect(warn.mock.calls[0][0]).toContain('loose');
+  });
+
+  it('does not warn when securityLevel is loose', () => {
+    setSiteConfig({ securityLevel: 'loose' });
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+    flowDb.setClickEvent('nodeA', 'someCallback', '');
+
+    expect(warn).not.toHaveBeenCalled();
   });
 });
