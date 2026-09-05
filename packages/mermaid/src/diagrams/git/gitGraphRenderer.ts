@@ -1017,8 +1017,8 @@ const drawBranches = (
   const reuseBranchLanes = gitGraphConfig.reuseBranchLanes ?? false;
   const mainBranchName = gitGraphConfig.mainBranchName ?? 'main';
 
-  // Group branches by lane pos to identify the first occupant per lane for axis labeling
-  const laneOccupantsCount = new Map<number, number>();
+  // Group branches by lane pos to identify the occupant index per lane
+  const branchesPerLane = new Map<number, number>();
 
   branches.forEach((branch, index) => {
     const adjustIndexForTheme = calcColorIndex(
@@ -1031,6 +1031,11 @@ const drawBranches = (
     if (pos === undefined) {
       throw new Error(`Position not found for branch ${branch.name}`);
     }
+
+    const previousCount = branchesPerLane.get(pos) ?? 0;
+    branchesPerLane.set(pos, previousCount + 1);
+    const isReusedLane = previousCount > 0;
+
     // LR spine Y: bkg rect center, dotted line, and commits all sit here.
     // TB/BT use pos directly (their line attrs are overridden below).
     const spineY =
@@ -1039,10 +1044,6 @@ const drawBranches = (
         : useReduxGeometry
           ? pos + REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1
           : pos - 2;
-
-    if (!lanes.includes(spineY)) {
-      lanes.push(spineY);
-    }
 
     // Determine branch commit coordinates for segmented branch lines
     const branchCommits = [...allCommitsDict.values()]
@@ -1055,16 +1056,24 @@ const drawBranches = (
     let endCoord = maxPos;
 
     if (reuseBranchLanes && branch.name !== mainBranchName && branchCommits.length > 0) {
-      if (dir === 'TB' || dir === 'BT') {
-        const firstY = commitPos.get(firstCommit.id)?.y ?? defaultPos;
-        const lastY = commitPos.get(lastCommit.id)?.y ?? maxPos;
-        startCoord = Math.min(firstY, lastY);
-        endCoord = Math.max(firstY, lastY);
-      } else {
-        const firstX = commitPos.get(firstCommit.id)?.x ?? 0;
-        const lastX = commitPos.get(lastCommit.id)?.x ?? maxPos;
-        startCoord = firstX;
-        endCoord = lastX;
+      const firstCommitPosition = commitPos.get(firstCommit.id);
+      const lastCommitPosition = commitPos.get(lastCommit.id);
+      if (firstCommitPosition === undefined || lastCommitPosition === undefined) {
+        throw new Error('Could not find position of first or last commit');
+      }
+      switch (dir) {
+        case 'BT':
+          startCoord = firstCommitPosition.y - COMMIT_STEP - LAYOUT_OFFSET;
+          endCoord = lastCommitPosition.y + COMMIT_STEP - LAYOUT_OFFSET;
+          break;
+        case 'TB':
+          startCoord = firstCommitPosition.y - COMMIT_STEP - LAYOUT_OFFSET;
+          endCoord = lastCommitPosition.y + COMMIT_STEP - LAYOUT_OFFSET;
+          break;
+        case 'LR':
+          startCoord = firstCommitPosition.x - COMMIT_STEP - LAYOUT_OFFSET;
+          endCoord = lastCommitPosition.x + COMMIT_STEP - LAYOUT_OFFSET;
+          break;
       }
     }
 
@@ -1111,9 +1120,6 @@ const drawBranches = (
       bkg.attr('data-look', `neo`);
     }
 
-    const occupantIndex = laneOccupantsCount.get(pos) ?? 0;
-    laneOccupantsCount.set(pos, occupantIndex + 1);
-
     bkg
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
       .attr(
@@ -1138,27 +1144,43 @@ const drawBranches = (
         ')'
     );
     if (dir === 'TB') {
-      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', 0);
-      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + 0 + ')');
+      const attrY = isReusedLane ? startCoord - 20 : 0;
+      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', attrY);
+      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + attrY + ')');
       if (useReduxGeometry) {
-        bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${-labelPaddingY - 10})`);
+        bkg.attr(
+          'transform',
+          `translate(${-labelPaddingX / 2 - 3}, ${attrY - labelPaddingY - 10})`
+        );
         label.attr(
           'transform',
-          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (-labelPaddingY * 2 + 7) + ')'
+          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (attrY - labelPaddingY * 2 + 7) + ')'
         );
       }
     } else if (dir === 'BT') {
-      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', maxPos);
-      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + maxPos + ')');
+      const attrY = isReusedLane ? endCoord + 20 : maxPos;
+      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', attrY);
+      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + attrY + ')');
       if (useReduxGeometry) {
-        bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
+        bkg.attr(
+          'transform',
+          `translate(${-labelPaddingX / 2 - 3}, ${attrY + labelPaddingY + 10})`
+        );
         label.attr(
           'transform',
-          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (maxPos + labelPaddingY * 2 + 4) + ')'
+          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (attrY + labelPaddingY * 2 + 4) + ')'
         );
       }
     } else {
       bkg.attr('transform', 'translate(-19, ' + (spineY - 12 - labelPaddingY / 2) + ')');
+      if (isReusedLane) {
+        const attrX = isReusedLane ? startCoord - 20 : 0;
+        bkg.attr('x', attrX);
+        label.attr(
+          'transform',
+          'translate(' + (attrX - LAYOUT_OFFSET) + ',' + (spineY - bbox.height / 2 - 2) + ')'
+        );
+      }
     }
   });
 };
