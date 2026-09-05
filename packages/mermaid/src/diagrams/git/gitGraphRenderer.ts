@@ -22,6 +22,18 @@ interface CommitPositionOffset extends CommitPosition {
   posWithOffset: number;
 }
 
+export interface BranchLifetime {
+  name: string;
+  startSeq: number;
+  endSeq: number;
+  isMain: boolean;
+}
+
+export interface LaneAllocation {
+  laneIndex: number;
+  colorIndex: number;
+}
+
 const LAYOUT_OFFSET = 10;
 const COMMIT_STEP = 40;
 const PX = 4;
@@ -67,7 +79,7 @@ const branchPos = new Map<string, BranchPosition>();
 const commitPos = new Map<string, CommitPosition>();
 const defaultPos = 30;
 
-let allCommitsDict = new Map();
+let allCommitsDict = new Map<string, Commit>();
 let lanes: number[] = [];
 let maxPos = 0;
 let dir: DiagramOrientation = 'LR';
@@ -864,6 +876,133 @@ const drawArrows = (
   });
 };
 
+/**
+ * Computes the chronological lifetime [startSeq, endSeq] for each branch based on commits,
+ * forks, and merge operations.
+ */
+export const computeBranchLifetimes = (
+  commits: Map<string, Commit>,
+  branches: { name: string }[],
+  mainBranchName: string
+): Map<string, BranchLifetime> => {
+  const lifetimes = new Map<string, BranchLifetime>();
+
+  branches.forEach((b) => {
+    const isMain = b.name === mainBranchName;
+    lifetimes.set(b.name, {
+      name: b.name,
+      startSeq: isMain ? 0 : Infinity,
+      endSeq: isMain ? Infinity : -1,
+      isMain,
+    });
+  });
+
+  for (const commit of commits.values()) {
+    const branchLifetime = lifetimes.get(commit.branch);
+    if (branchLifetime === undefined) {
+      throw new Error(
+        'Cannot get branch lifetime for commit: ' + commit.id + ' with branch ' + commit.branch
+      );
+    }
+    branchLifetime.startSeq = Math.min(branchLifetime.startSeq, commit.seq);
+    if (!branchLifetime.isMain) {
+      branchLifetime.endSeq = Math.max(branchLifetime.endSeq, commit.seq);
+    }
+
+    // Check if this commit forks from a parent on another branch
+    if (commit.parents && commit.parents.length > 0) {
+      const parent0 = commits.get(commit.parents[0]);
+      if (parent0 && parent0.branch !== commit.branch && branchLifetime && !branchLifetime.isMain) {
+        branchLifetime.startSeq = Math.min(branchLifetime.startSeq, parent0.seq);
+      }
+    }
+
+    // Check if this commit is a merge commit that merged another branch
+    if (commit.type === commitType.MERGE && commit.parents.length > 1) {
+      const mergedParentCommit = commits.get(commit.parents[1]);
+      if (mergedParentCommit) {
+        const mergedBranch = lifetimes.get(mergedParentCommit.branch);
+        if (mergedBranch && !mergedBranch.isMain) {
+          mergedBranch.endSeq = Math.max(mergedBranch.endSeq, commit.seq);
+        }
+      }
+    }
+  }
+
+  for (const info of lifetimes.values()) {
+    if (info.startSeq === Infinity) {
+      info.startSeq = 0;
+    }
+    if (info.endSeq === -1) {
+      info.endSeq = Infinity;
+    }
+  }
+
+  return lifetimes;
+};
+
+/**
+ * Allocates lane and color indices to branches. When reuseBranchLanes is true,
+ * subsequent non-overlapping branches reuse lanes from previously merged branches.
+ */
+export const allocateLanes = (
+  branches: { name: string }[],
+  lifetimes: Map<string, BranchLifetime>,
+  mainBranchName: string,
+  reuseBranchLanes: boolean
+): Map<string, LaneAllocation> => {
+  const branchLaneMap = new Map<string, LaneAllocation>();
+
+  if (!reuseBranchLanes) {
+    branches.forEach((branch, index) => {
+      branchLaneMap.set(branch.name, {
+        laneIndex: index,
+        colorIndex: index,
+      });
+    });
+    return branchLaneMap;
+  }
+
+  // Lane 0 is reserved for the main branch
+  const laneLastOccupied: number[] = [Infinity]; // index 0 is main
+
+  branches.forEach((branch, branchIndex) => {
+    if (branch.name === mainBranchName) {
+      branchLaneMap.set(branch.name, {
+        laneIndex: 0,
+        colorIndex: 0,
+      });
+      return;
+    }
+
+    const lifetime = lifetimes.get(branch.name);
+    const start = lifetime ? lifetime.startSeq : 0;
+    const end = lifetime ? lifetime.endSeq : Infinity;
+
+    // Find the first available lane (index >= 1)
+    let assignedLane = -1;
+    for (let l = 1; l < laneLastOccupied.length; l++) {
+      if (laneLastOccupied[l] <= start) {
+        assignedLane = l;
+        laneLastOccupied[l] = end;
+        break;
+      }
+    }
+
+    if (assignedLane === -1) {
+      assignedLane = laneLastOccupied.length;
+      laneLastOccupied.push(end);
+    }
+
+    branchLaneMap.set(branch.name, {
+      laneIndex: assignedLane,
+      colorIndex: branchIndex,
+    });
+  });
+
+  return branchLaneMap;
+};
+
 const drawBranches = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   branches: { name: string }[],
@@ -875,6 +1014,12 @@ const drawBranches = (
   const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
   const useColorTheme = COLOR_THEMES.has(theme ?? '');
   const g = svg.append('g');
+  const reuseBranchLanes = gitGraphConfig.reuseBranchLanes ?? false;
+  const mainBranchName = gitGraphConfig.mainBranchName ?? 'main';
+
+  // Group branches by lane pos to identify the first occupant per lane for axis labeling
+  const laneOccupantsCount = new Map<number, number>();
+
   branches.forEach((branch, index) => {
     const adjustIndexForTheme = calcColorIndex(
       index,
@@ -894,25 +1039,57 @@ const drawBranches = (
         : useReduxGeometry
           ? pos + REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1
           : pos - 2;
+
+    if (!lanes.includes(spineY)) {
+      lanes.push(spineY);
+    }
+
+    // Determine branch commit coordinates for segmented branch lines
+    const branchCommits = [...allCommitsDict.values()]
+      .filter((c) => c.branch === branch.name)
+      .sort((a, b) => a.seq - b.seq);
+    const firstCommit = branchCommits[0];
+    const lastCommit = branchCommits[branchCommits.length - 1];
+
+    let startCoord = 0;
+    let endCoord = maxPos;
+
+    if (reuseBranchLanes && branch.name !== mainBranchName && branchCommits.length > 0) {
+      if (dir === 'TB' || dir === 'BT') {
+        const firstY = commitPos.get(firstCommit.id)?.y ?? defaultPos;
+        const lastY = commitPos.get(lastCommit.id)?.y ?? maxPos;
+        startCoord = Math.min(firstY, lastY);
+        endCoord = Math.max(firstY, lastY);
+      } else {
+        const firstX = commitPos.get(firstCommit.id)?.x ?? 0;
+        const lastX = commitPos.get(lastCommit.id)?.x ?? maxPos;
+        startCoord = firstX;
+        endCoord = lastX;
+      }
+    }
+
     const line = g.append('line');
-    line.attr('x1', 0);
+    line.attr('x1', startCoord);
     line.attr('y1', spineY);
-    line.attr('x2', maxPos);
+    line.attr('x2', endCoord);
     line.attr('y2', spineY);
     line.attr('class', 'branch branch' + adjustIndexForTheme);
 
     if (dir === 'TB') {
-      line.attr('y1', defaultPos);
+      const startY = branch.name === mainBranchName || !reuseBranchLanes ? defaultPos : startCoord;
+      const endY = branch.name === mainBranchName || !reuseBranchLanes ? maxPos : endCoord;
+      line.attr('y1', startY);
       line.attr('x1', pos);
-      line.attr('y2', maxPos);
+      line.attr('y2', endY);
       line.attr('x2', pos);
     } else if (dir === 'BT') {
-      line.attr('y1', maxPos);
+      const startY = branch.name === mainBranchName || !reuseBranchLanes ? maxPos : endCoord;
+      const endY = branch.name === mainBranchName || !reuseBranchLanes ? defaultPos : startCoord;
+      line.attr('y1', startY);
       line.attr('x1', pos);
-      line.attr('y2', defaultPos);
+      line.attr('y2', endY);
       line.attr('x2', pos);
     }
-    lanes.push(spineY);
 
     const name = branch.name;
 
@@ -933,6 +1110,9 @@ const drawBranches = (
     if (look === 'neo') {
       bkg.attr('data-look', `neo`);
     }
+
+    const occupantIndex = laneOccupantsCount.get(pos) ?? 0;
+    laneOccupantsCount.set(pos, occupantIndex + 1);
 
     bkg
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
@@ -983,7 +1163,7 @@ const drawBranches = (
   });
 };
 
-const setBranchPosition = function (
+export const setBranchPosition = function (
   name: string,
   pos: number,
   index: number,
@@ -1006,6 +1186,8 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
   }
   const gitGraphConfig = db.getConfig();
   const rotateCommitLabel = gitGraphConfig.rotateCommitLabel ?? false;
+  const reuseBranchLanes = gitGraphConfig.reuseBranchLanes ?? false;
+  const mainBranchName = gitGraphConfig.mainBranchName ?? 'main';
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
   dir = db.getDirection();
@@ -1054,21 +1236,54 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       .attr('flood-color', filterColor);
   }
 
-  let pos = 0;
-
-  branches.forEach((branch, index) => {
+  const branchBBoxes = new Map<string, DOMRect>();
+  branches.forEach((branch) => {
     const labelElement = drawText(branch.name);
     const g = diagram.append('g');
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
     const label = branchLabel.insert('g').attr('class', 'label branch-label');
     label.node()?.appendChild(labelElement);
     const bbox = labelElement.getBBox();
-
-    pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
+    branchBBoxes.set(branch.name, bbox);
     label.remove();
     branchLabel.remove();
     g.remove();
   });
+
+  const lifetimes = computeBranchLifetimes(allCommitsDict, branches, mainBranchName);
+  const branchLaneMap = allocateLanes(branches, lifetimes, mainBranchName, reuseBranchLanes);
+
+  if (!reuseBranchLanes) {
+    let pos = 0;
+    branches.forEach((branch, index) => {
+      const bbox = branchBBoxes.get(branch.name) ?? ({ width: 0, height: 0 } as DOMRect);
+      pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
+    });
+  } else {
+    // Calculate distinct lane positions
+    const maxLaneIndex = Math.max(0, ...[...branchLaneMap.values()].map((l) => l.laneIndex));
+    const lanePosList: number[] = [];
+    let curPos = 0;
+
+    for (let l = 0; l <= maxLaneIndex; l++) {
+      lanePosList.push(curPos);
+      const branchesOnLane = branches.filter((b) => branchLaneMap.get(b.name)?.laneIndex === l);
+      const maxBBoxWidth = Math.max(
+        0,
+        ...branchesOnLane.map((b) => branchBBoxes.get(b.name)?.width ?? 0)
+      );
+      curPos +=
+        50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? maxBBoxWidth / 2 : 0);
+    }
+
+    branches.forEach((branch) => {
+      const alloc = branchLaneMap.get(branch.name)!;
+      branchPos.set(branch.name, {
+        pos: lanePosList[alloc.laneIndex],
+        index: alloc.colorIndex,
+      });
+    });
+  }
 
   drawCommits(diagram, allCommitsDict, false, gitGraphConfig);
   if (gitGraphConfig.showBranches) {
@@ -1139,6 +1354,351 @@ if (import.meta.vitest) {
       const posNext = setBranchPosition('develop', pos, 1, bbox, true);
       expect(posNext).toBe(225.70703125);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
+    });
+  });
+
+  describe('computeBranchLifetimes and allocateLanes', () => {
+    it('should calculate lifetimes for sequential branches merged into main', () => {
+      const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
+      const commits = new Map<string, Commit>([
+        [
+          'c0',
+          {
+            id: 'c0',
+            message: '',
+            seq: 0,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: [],
+            branch: 'main',
+          },
+        ],
+        [
+          'c1',
+          {
+            id: 'c1',
+            message: '',
+            seq: 1,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'b1',
+          },
+        ],
+        [
+          'c2',
+          {
+            id: 'c2',
+            message: '',
+            seq: 2,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c0', 'c1'],
+            branch: 'main',
+          },
+        ],
+        [
+          'c3',
+          {
+            id: 'c3',
+            message: '',
+            seq: 3,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c2'],
+            branch: 'b2',
+          },
+        ],
+        [
+          'c4',
+          {
+            id: 'c4',
+            message: '',
+            seq: 4,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c2', 'c3'],
+            branch: 'main',
+          },
+        ],
+      ]);
+
+      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      expect(lifetimes.get('main')?.startSeq).toBe(0);
+      expect(lifetimes.get('main')?.endSeq).toBe(Infinity);
+      expect(lifetimes.get('b1')?.startSeq).toBe(0);
+      expect(lifetimes.get('b1')?.endSeq).toBe(2);
+      expect(lifetimes.get('b2')?.startSeq).toBe(2);
+      expect(lifetimes.get('b2')?.endSeq).toBe(4);
+
+      const lanesWithoutReuse = allocateLanes(branches, lifetimes, 'main', false);
+      expect(lanesWithoutReuse.get('main')?.laneIndex).toBe(0);
+      expect(lanesWithoutReuse.get('b1')?.laneIndex).toBe(1);
+      expect(lanesWithoutReuse.get('b2')?.laneIndex).toBe(2);
+
+      const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
+      expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
+      expect(lanesWithReuse.get('b1')?.laneIndex).toBe(1);
+      expect(lanesWithReuse.get('b2')?.laneIndex).toBe(1);
+    });
+
+    it('should not reuse lanes when branches overlap concurrently', () => {
+      const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
+      const commits = new Map<string, Commit>([
+        [
+          'c0',
+          {
+            id: 'c0',
+            message: '',
+            seq: 0,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: [],
+            branch: 'main',
+          },
+        ],
+        [
+          'c1',
+          {
+            id: 'c1',
+            message: '',
+            seq: 1,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'b1',
+          },
+        ],
+        [
+          'c2',
+          {
+            id: 'c2',
+            message: '',
+            seq: 2,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'b2',
+          },
+        ],
+        [
+          'c3',
+          {
+            id: 'c3',
+            message: '',
+            seq: 3,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c0', 'c1'],
+            branch: 'main',
+          },
+        ],
+        [
+          'c4',
+          {
+            id: 'c4',
+            message: '',
+            seq: 4,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c3', 'c2'],
+            branch: 'main',
+          },
+        ],
+      ]);
+
+      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
+      expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
+      expect(lanesWithReuse.get('b1')?.laneIndex).toBe(1);
+      expect(lanesWithReuse.get('b2')?.laneIndex).toBe(2);
+    });
+
+    it('should reuse lane across 3 sequential feature branches', () => {
+      const branches = [{ name: 'main' }, { name: 'feat1' }, { name: 'feat2' }, { name: 'feat3' }];
+      const commits = new Map<string, Commit>([
+        [
+          'c0',
+          {
+            id: 'c0',
+            message: '',
+            seq: 0,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: [],
+            branch: 'main',
+          },
+        ],
+        [
+          'c1',
+          {
+            id: 'c1',
+            message: '',
+            seq: 1,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'feat1',
+          },
+        ],
+        [
+          'c2',
+          {
+            id: 'c2',
+            message: '',
+            seq: 2,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c0', 'c1'],
+            branch: 'main',
+          },
+        ],
+        [
+          'c3',
+          {
+            id: 'c3',
+            message: '',
+            seq: 3,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c2'],
+            branch: 'feat2',
+          },
+        ],
+        [
+          'c4',
+          {
+            id: 'c4',
+            message: '',
+            seq: 4,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c2', 'c3'],
+            branch: 'main',
+          },
+        ],
+        [
+          'c5',
+          {
+            id: 'c5',
+            message: '',
+            seq: 5,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c4'],
+            branch: 'feat3',
+          },
+        ],
+        [
+          'c6',
+          {
+            id: 'c6',
+            message: '',
+            seq: 6,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c4', 'c5'],
+            branch: 'main',
+          },
+        ],
+      ]);
+
+      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
+      expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
+      expect(lanesWithReuse.get('feat1')?.laneIndex).toBe(1);
+      expect(lanesWithReuse.get('feat2')?.laneIndex).toBe(1);
+      expect(lanesWithReuse.get('feat3')?.laneIndex).toBe(1);
+    });
+
+    it('should handle persistent develop branch and reused feature branches', () => {
+      const branches = [
+        { name: 'main' },
+        { name: 'develop' },
+        { name: 'feat1' },
+        { name: 'feat2' },
+      ];
+      const commits = new Map<string, Commit>([
+        [
+          'c0',
+          {
+            id: 'c0',
+            message: '',
+            seq: 0,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: [],
+            branch: 'main',
+          },
+        ],
+        [
+          'c1',
+          {
+            id: 'c1',
+            message: '',
+            seq: 1,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'develop',
+          },
+        ],
+        [
+          'c2',
+          {
+            id: 'c2',
+            message: '',
+            seq: 2,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c1'],
+            branch: 'feat1',
+          },
+        ],
+        [
+          'c3',
+          {
+            id: 'c3',
+            message: '',
+            seq: 3,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c1', 'c2'],
+            branch: 'develop',
+          },
+        ],
+        [
+          'c4',
+          {
+            id: 'c4',
+            message: '',
+            seq: 4,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c3'],
+            branch: 'feat2',
+          },
+        ],
+        [
+          'c5',
+          {
+            id: 'c5',
+            message: '',
+            seq: 5,
+            type: commitType.MERGE,
+            tags: [],
+            parents: ['c3', 'c4'],
+            branch: 'develop',
+          },
+        ],
+      ]);
+
+      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
+      expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
+      expect(lanesWithReuse.get('develop')?.laneIndex).toBe(1);
+      expect(lanesWithReuse.get('feat1')?.laneIndex).toBe(2);
+      expect(lanesWithReuse.get('feat2')?.laneIndex).toBe(2);
     });
   });
 
