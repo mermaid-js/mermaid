@@ -1,7 +1,7 @@
 /**
- * A diagram type may name a layout as its default, but `elk` ships as a separate package
- * and `cose-bilkent` only in large-feature builds, so the resolution every renderer runs
- * before `render()` has to terminate at something always registered.
+ * A diagram type may name a layout as its default, but `elk` and `cose-bilkent` ship only
+ * in large-feature builds (the tiny build omits them), so the resolution every renderer
+ * runs before `render()` has to terminate at something always registered.
  */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { getRegisteredLayoutAlgorithm, registerLayoutLoaders } from './render.js';
@@ -15,26 +15,30 @@ describe('layout fallback', () => {
   it('returns a registered layout unchanged', () => {
     expect(getRegisteredLayoutAlgorithm('dagre')).toBe('dagre');
     expect(getRegisteredLayoutAlgorithm('swimlane')).toBe('swimlane');
+    // Bundled by default now; only the tiny build omits it.
+    expect(getRegisteredLayoutAlgorithm('elk')).toBe('elk');
   });
 
   it('falls back to dagre for a layout nobody registered', () => {
     const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
-    expect(getRegisteredLayoutAlgorithm('elk')).toBe('dagre');
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('elk'));
+    expect(getRegisteredLayoutAlgorithm('no-such-layout')).toBe('dagre');
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('no-such-layout'));
   });
 
   it('prefers the caller-supplied fallback when it is registered', () => {
     vi.spyOn(log, 'warn').mockImplementation(() => undefined);
-    expect(getRegisteredLayoutAlgorithm('elk', { fallback: 'swimlane' })).toBe('swimlane');
+    expect(getRegisteredLayoutAlgorithm('no-such-layout', { fallback: 'swimlane' })).toBe(
+      'swimlane'
+    );
   });
 
   it('falls through to dagre when the caller-supplied fallback is absent too', () => {
     // Mindmap's fallback is `cose-bilkent`, absent from tiny. Before the chain ended at
-    // dagre this threw, so a `mindmap.layout` of `elk` would have taken tiny down.
+    // dagre this threw, so an unregistered `mindmap.layout` would have taken tiny down.
     vi.spyOn(log, 'warn').mockImplementation(() => undefined);
-    expect(getRegisteredLayoutAlgorithm('elk', { fallback: 'not-registered-either' })).toBe(
-      'dagre'
-    );
+    expect(
+      getRegisteredLayoutAlgorithm('no-such-layout', { fallback: 'not-registered-either' })
+    ).toBe('dagre');
   });
 
   it.each(['__proto__', 'constructor', 'toString'])(
