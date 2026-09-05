@@ -8,16 +8,9 @@ import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './git
 import { commitType } from './gitGraphTypes.js';
 import type { GitGraphDiagramConfig } from '../../config.type.js';
 
-export interface BranchPosition {
+interface BranchPosition {
   pos: number;
   index: number;
-}
-
-export interface LaneInfo {
-  pos: number;
-  index: number;
-  branches: string[];
-  spans: { startSeq: number; endSeq: number }[];
 }
 
 interface CommitPosition {
@@ -242,16 +235,11 @@ const drawCommitBullet = (
   const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
   const useColorTheme = COLOR_THEMES.has(theme ?? '');
   const isDark = DARK_THEMES.has(theme ?? '');
-  const cx = dir === 'TB' || dir === 'BT' ? commitPosition.x : commitPosition.posWithOffset;
-  const cy =
-    dir === 'TB' || dir === 'BT'
-      ? commitPosition.y
-      : commitPosition.x + (useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1 : -2);
   if (commitSymbolType === commitType.HIGHLIGHT) {
     gBullets
       .append('rect')
-      .attr('x', cx - 10 + (useReduxGeometry ? 3 : 0))
-      .attr('y', cy - 10 + (useReduxGeometry ? 3 : 0))
+      .attr('x', commitPosition.x - 10 + (useReduxGeometry ? 3 : 0))
+      .attr('y', commitPosition.y - 10 + (useReduxGeometry ? 3 : 0))
       .attr('width', useReduxGeometry ? 14 : 20)
       .attr('height', useReduxGeometry ? 14 : 20)
       .attr(
@@ -260,8 +248,8 @@ const drawCommitBullet = (
       );
     gBullets
       .append('rect')
-      .attr('x', cx - 6 + (useReduxGeometry ? 2 : 0))
-      .attr('y', cy - 6 + (useReduxGeometry ? 2 : 0))
+      .attr('x', commitPosition.x - 6 + (useReduxGeometry ? 2 : 0))
+      .attr('y', commitPosition.y - 6 + (useReduxGeometry ? 2 : 0))
       .attr('width', useReduxGeometry ? 8 : 12)
       .attr('height', useReduxGeometry ? 8 : 12)
       .attr(
@@ -271,44 +259,44 @@ const drawCommitBullet = (
   } else if (commitSymbolType === commitType.CHERRY_PICK) {
     gBullets
       .append('circle')
-      .attr('cx', cx)
-      .attr('cy', cy)
+      .attr('cx', commitPosition.x)
+      .attr('cy', commitPosition.y)
       .attr('r', useReduxGeometry ? 7 : 10)
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('circle')
-      .attr('cx', cx - 3)
-      .attr('cy', cy + 2)
+      .attr('cx', commitPosition.x - 3)
+      .attr('cy', commitPosition.y + 2)
       .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('circle')
-      .attr('cx', cx + 3)
-      .attr('cy', cy + 2)
+      .attr('cx', commitPosition.x + 3)
+      .attr('cy', commitPosition.y + 2)
       .attr('r', useReduxGeometry ? 2.5 : 2.75)
       .attr('fill', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('line')
-      .attr('x1', cx + 3)
-      .attr('y1', cy + 1)
-      .attr('x2', cx)
-      .attr('y2', cy - 5)
+      .attr('x1', commitPosition.x + 3)
+      .attr('y1', commitPosition.y + 1)
+      .attr('x2', commitPosition.x)
+      .attr('y2', commitPosition.y - 5)
       .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
     gBullets
       .append('line')
-      .attr('x1', cx - 3)
-      .attr('y1', cy + 1)
-      .attr('x2', cx)
-      .attr('y2', cy - 5)
+      .attr('x1', commitPosition.x - 3)
+      .attr('y1', commitPosition.y + 1)
+      .attr('x2', commitPosition.x)
+      .attr('y2', commitPosition.y - 5)
       .attr('stroke', isDark ? '#000000' : '#fff')
       .attr('class', `commit ${commit.id} ${typeClass}`);
   } else {
     const circle = gBullets.append('circle');
-    circle.attr('cx', cx);
-    circle.attr('cy', cy);
+    circle.attr('cx', commitPosition.x);
+    circle.attr('cy', commitPosition.y);
     circle.attr('r', useReduxGeometry ? 7 : 10);
     circle.attr(
       'class',
@@ -316,8 +304,8 @@ const drawCommitBullet = (
     );
     if (commitSymbolType === commitType.MERGE) {
       const circle2 = gBullets.append('circle');
-      circle2.attr('cx', cx);
-      circle2.attr('cy', cy);
+      circle2.attr('cx', commitPosition.x);
+      circle2.attr('cy', commitPosition.y);
       circle2.attr('r', useReduxGeometry ? 5 : 6);
       circle2.attr(
         'class',
@@ -330,7 +318,7 @@ const drawCommitBullet = (
       cross
         .attr(
           'd',
-          `M ${cx - constValue},${cy - constValue}L${cx + constValue},${cy + constValue}M${cx - constValue},${cy + constValue}L${cx + constValue},${cy - constValue}`
+          `M ${commitPosition.x - constValue},${commitPosition.y - constValue}L${commitPosition.x + constValue},${commitPosition.y + constValue}M${commitPosition.x - constValue},${commitPosition.y + constValue}L${commitPosition.x + constValue},${commitPosition.y - constValue}`
         )
         .attr(
           'class',
@@ -352,19 +340,12 @@ const drawCommitLabel = (
     ((commit.customId && commit.type === commitType.MERGE) || commit.type !== commitType.MERGE) &&
     gitGraphConfig.showCommitLabel
   ) {
-    const { theme } = getConfig();
-    const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
-    const cx = dir === 'TB' || dir === 'BT' ? commitPosition.x : commitPosition.posWithOffset;
-    const cy =
-      dir === 'TB' || dir === 'BT'
-        ? commitPosition.y
-        : commitPosition.x + (useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1 : -2);
     const wrapper = gLabels.append('g');
     const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
     const text = wrapper
       .append('text')
       .attr('x', pos)
-      .attr('y', cy + 25)
+      .attr('y', commitPosition.y + 25)
       .attr('class', 'commit-label')
       .text(commit.id);
     const bbox = text.node()?.getBBox();
@@ -372,27 +353,47 @@ const drawCommitLabel = (
     if (bbox) {
       labelBkg
         .attr('x', commitPosition.posWithOffset - bbox.width / 2 - PY)
-        .attr('y', cy + 13.5)
+        .attr('y', commitPosition.y + 13.5)
         .attr('width', bbox.width + 2 * PY)
         .attr('height', bbox.height + 2 * PY);
 
       if (dir === 'TB' || dir === 'BT') {
-        labelBkg.attr('x', cx - (bbox.width + 4 * PX + 5)).attr('y', cy - 12);
-        text.attr('x', cx - (bbox.width + 4 * PX)).attr('y', cy + bbox.height - 12);
+        labelBkg
+          .attr('x', commitPosition.x - (bbox.width + 4 * PX + 5))
+          .attr('y', commitPosition.y - 12);
+        text
+          .attr('x', commitPosition.x - (bbox.width + 4 * PX))
+          .attr('y', commitPosition.y + bbox.height - 12);
       } else {
         text.attr('x', commitPosition.posWithOffset - bbox.width / 2);
       }
 
       if (gitGraphConfig.rotateCommitLabel) {
         if (dir === 'TB' || dir === 'BT') {
-          text.attr('transform', 'rotate(' + -45 + ', ' + cx + ', ' + cy + ')');
-          labelBkg.attr('transform', 'rotate(' + -45 + ', ' + cx + ', ' + cy + ')');
+          text.attr(
+            'transform',
+            'rotate(' + -45 + ', ' + commitPosition.x + ', ' + commitPosition.y + ')'
+          );
+          labelBkg.attr(
+            'transform',
+            'rotate(' + -45 + ', ' + commitPosition.x + ', ' + commitPosition.y + ')'
+          );
         } else {
           const r_x = -7.5 - ((bbox.width + 10) / 25) * 9.5;
           const r_y = 10 + (bbox.width / 25) * 8.5;
           wrapper.attr(
             'transform',
-            'translate(' + r_x + ', ' + r_y + ') rotate(' + -45 + ', ' + pos + ', ' + cy + ')'
+            'translate(' +
+              r_x +
+              ', ' +
+              r_y +
+              ') rotate(' +
+              -45 +
+              ', ' +
+              pos +
+              ', ' +
+              commitPosition.y +
+              ')'
           );
         }
       }
@@ -407,12 +408,6 @@ const drawCommitTags = (
   pos: number
 ) => {
   if (commit.tags.length > 0) {
-    const { theme } = getConfig();
-    const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
-    const cy =
-      dir === 'TB' || dir === 'BT'
-        ? commitPosition.y
-        : commitPosition.x + (useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1 : -2);
     let yOffset = 0;
     let maxTagBboxWidth = 0;
     let maxTagBboxHeight = 0;
@@ -423,7 +418,7 @@ const drawCommitTags = (
       const hole = gLabels.append('circle');
       const tag = gLabels
         .append('text')
-        .attr('y', cy - 16 - yOffset)
+        .attr('y', commitPosition.y - 16 - yOffset)
         .attr('class', 'tag-label')
         .text(tagValue);
       const tagBbox = tag.node()?.getBBox();
@@ -448,7 +443,7 @@ const drawCommitTags = (
 
     for (const { tag, hole, rect, yOffset } of tagElements) {
       const h2 = maxTagBboxHeight / 2;
-      const ly = cy - 19.2 - yOffset;
+      const ly = commitPosition.y - 19.2 - yOffset;
       rect.attr('class', 'tag-label-bkg').attr(
         'points',
         `
@@ -554,11 +549,16 @@ const getCommitPosition = (
   isParallelCommits: boolean
 ): CommitPositionOffset => {
   const posWithOffset = dir === 'BT' && isParallelCommits ? pos : pos + LAYOUT_OFFSET;
-  const x = branchPos.get(commit.branch)?.pos;
-  if (x === undefined) {
+  const branchY = branchPos.get(commit.branch)?.pos;
+  const x = dir === 'TB' || dir === 'BT' ? branchPos.get(commit.branch)?.pos : posWithOffset;
+  if (x === undefined || branchY === undefined) {
     throw new Error(`Position were undefined for commit ${commit.id}`);
   }
-  const y = posWithOffset;
+  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(getConfig().theme ?? '');
+  const y =
+    dir === 'TB' || dir === 'BT'
+      ? posWithOffset
+      : branchY + (useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1 : -2);
   return { x, y, posWithOffset };
 };
 
@@ -607,27 +607,14 @@ const drawCommits = (
       drawCommitLabel(gLabels, commit, commitPosition, pos, gitGraphConfig);
       drawCommitTags(gLabels, commit, commitPosition, pos);
     }
-
-    if (dir === 'TB') {
-      maxPos = Math.max(maxPos, commitPosition.y + 35);
-    } else if (dir === 'BT') {
-      maxPos = Math.max(maxPos, commitPosition.y + 40);
-    } else {
-      maxPos = Math.max(maxPos, commitPosition.posWithOffset + 35);
-    }
-
-    if (!isParallelCommits) {
-      pos += COMMIT_STEP + LAYOUT_OFFSET;
-    }
     if (dir === 'TB' || dir === 'BT') {
-      commitPos.set(commit.id, { x: commitPosition.x, y: commitPosition.y });
+      commitPos.set(commit.id, { x: commitPosition.x, y: commitPosition.posWithOffset });
     } else {
-      const { theme } = getConfig();
-      const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
-      commitPos.set(commit.id, {
-        x: commitPosition.posWithOffset,
-        y: commitPosition.x + (useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1 : -2),
-      });
+      commitPos.set(commit.id, { x: commitPosition.posWithOffset, y: commitPosition.y });
+    }
+    pos = dir === 'BT' && isParallelCommits ? pos + COMMIT_STEP : pos + COMMIT_STEP + LAYOUT_OFFSET;
+    if (pos > maxPos) {
+      maxPos = pos;
     }
   });
 };
@@ -638,35 +625,14 @@ const shouldRerouteArrow = (
   p1: CommitPosition,
   p2: CommitPosition,
   allCommits: Map<string, Commit>
-): boolean => {
-  const commitBIsDirectMerge =
-    commitB.type === commitType.MERGE && commitA.id !== commitB.parents[0];
-
-  if (commitBIsDirectMerge) {
-    return false;
-  }
-
-  const branchA = commitA.branch;
-  const branchB = commitB.branch;
-
-  const isCrossing = [...allCommits.values()].some((commit) => {
-    if (commit.branch === branchA || commit.branch === branchB) {
-      return false;
-    }
-
-    const pos = commitPos.get(commit.id);
-    if (!pos) {
-      return false;
-    }
-
-    const minX = Math.min(p1.x, p2.x);
-    const maxX = Math.max(p1.x, p2.x);
-    const minY = Math.min(p1.y, p2.y);
-    const maxY = Math.max(p1.y, p2.y);
-    return pos.x > minX && pos.x < maxX && pos.y > minY && pos.y < maxY;
+) => {
+  const commitBIsFurthest = dir === 'TB' || dir === 'BT' ? p1.x < p2.x : p1.y < p2.y;
+  const branchToGetCurve = commitBIsFurthest ? commitB.branch : commitA.branch;
+  const isOnBranchToGetCurve = (x: Commit) => x.branch === branchToGetCurve;
+  const isBetweenCommits = (x: Commit) => x.seq > commitA.seq && x.seq < commitB.seq;
+  return [...allCommits.values()].some((commitX) => {
+    return isBetweenCommits(commitX) && isOnBranchToGetCurve(commitX);
   });
-
-  return isCrossing;
 };
 
 const findLane = (y1: number, y2: number, depth = 0): number => {
@@ -898,33 +864,28 @@ const drawArrows = (
   });
 };
 
-const drawBranchLines = (
+const drawBranches = (
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   branches: { name: string }[],
-  allocatedLanes?: LaneInfo[]
+  gitGraphConfig: GitGraphDiagramConfig,
+  id: string
 ) => {
-  const { theme, themeVariables } = getConfig();
-  const { THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
+  const { look, theme, themeVariables } = getConfig();
+  const { dropShadow, THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
   const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
   const useColorTheme = COLOR_THEMES.has(theme ?? '');
-  const gLines = svg.append('g').attr('class', 'branch-lines');
-
+  const g = svg.append('g');
   branches.forEach((branch, index) => {
-    const pos = branchPos.get(branch.name)?.pos;
-    if (pos === undefined) {
-      throw new Error(`Position not found for branch ${branch.name}`);
-    }
-    const branchIndex = branchPos.get(branch.name)?.index ?? index;
     const adjustIndexForTheme = calcColorIndex(
-      branchIndex,
+      index,
       useReduxGeometry ? themeColorLimit : THEME_COLOR_LIMIT,
       useColorTheme
     );
 
-    const lane = allocatedLanes?.find((l) => l.branches.includes(branch.name));
-    const isSharedLane = (lane?.branches.length ?? 0) > 1;
-    const isFirstBranchOnLane = !lane || lane.branches[0] === branch.name;
-
+    const pos = branchPos.get(branch.name)?.pos;
+    if (pos === undefined) {
+      throw new Error(`Position not found for branch ${branch.name}`);
+    }
     // LR spine Y: bkg rect center, dotted line, and commits all sit here.
     // TB/BT use pos directly (their line attrs are overridden below).
     const spineY =
@@ -933,161 +894,36 @@ const drawBranchLines = (
         : useReduxGeometry
           ? pos + REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1
           : pos - 2;
-
-    lanes.push(spineY);
-
-    const bCommits = [...allCommitsDict.values()].filter((c) => c.branch === branch.name);
-    const bMerges = [...allCommitsDict.values()].filter(
-      (c) =>
-        c.branch !== branch.name &&
-        c.parents?.some((p: string) => allCommitsDict.get(p)?.branch === branch.name)
-    );
-
-    const line = gLines.append('line');
+    const line = g.append('line');
+    line.attr('x1', 0);
+    line.attr('y1', spineY);
+    line.attr('x2', maxPos);
+    line.attr('y2', spineY);
     line.attr('class', 'branch branch' + adjustIndexForTheme);
 
     if (dir === 'TB') {
-      const yCoords = bCommits
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const mergeYCoords = bMerges
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const allY = [...yCoords, ...mergeYCoords];
-
-      if (!isSharedLane) {
-        line.attr('x1', pos);
-        line.attr('y1', defaultPos);
-        line.attr('x2', pos);
-        line.attr('y2', maxPos);
-      } else if (isFirstBranchOnLane) {
-        const lastY = allY.length > 0 ? Math.max(...allY) : maxPos;
-        line.attr('x1', pos);
-        line.attr('y1', defaultPos);
-        line.attr('x2', pos);
-        line.attr('y2', lastY);
-      } else {
-        const firstY =
-          yCoords.length > 0
-            ? Math.min(...yCoords)
-            : allY.length > 0
-              ? Math.min(...allY)
-              : defaultPos;
-        const lastY = allY.length > 0 ? Math.max(...allY) : maxPos;
-        line.attr('x1', pos);
-        line.attr('y1', firstY);
-        line.attr('x2', pos);
-        line.attr('y2', lastY);
-      }
+      line.attr('y1', defaultPos);
+      line.attr('x1', pos);
+      line.attr('y2', maxPos);
+      line.attr('x2', pos);
     } else if (dir === 'BT') {
-      const yCoords = bCommits
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const mergeYCoords = bMerges
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const allY = [...yCoords, ...mergeYCoords];
-
-      if (!isSharedLane) {
-        line.attr('x1', pos);
-        line.attr('y1', maxPos);
-        line.attr('x2', pos);
-        line.attr('y2', defaultPos);
-      } else if (isFirstBranchOnLane) {
-        const minY = allY.length > 0 ? Math.min(...allY) : defaultPos;
-        line.attr('x1', pos);
-        line.attr('y1', maxPos);
-        line.attr('x2', pos);
-        line.attr('y2', minY);
-      } else {
-        const firstY =
-          yCoords.length > 0 ? Math.max(...yCoords) : allY.length > 0 ? Math.max(...allY) : maxPos;
-        const minY = allY.length > 0 ? Math.min(...allY) : defaultPos;
-        line.attr('x1', pos);
-        line.attr('y1', firstY);
-        line.attr('x2', pos);
-        line.attr('y2', minY);
-      }
-    } else {
-      // LR direction
-      const xCoords = bCommits
-        .map((c) => commitPos.get(c.id)?.x)
-        .filter((x): x is number => x !== undefined);
-      const mergeXCoords = bMerges
-        .map((c) => commitPos.get(c.id)?.x)
-        .filter((x): x is number => x !== undefined);
-      const allX = [...xCoords, ...mergeXCoords];
-
-      if (!isSharedLane) {
-        line.attr('x1', 0);
-        line.attr('y1', spineY);
-        line.attr('x2', maxPos);
-        line.attr('y2', spineY);
-      } else if (isFirstBranchOnLane) {
-        const lastX = allX.length > 0 ? Math.max(...allX) : maxPos;
-        line.attr('x1', 0);
-        line.attr('y1', spineY);
-        line.attr('x2', lastX);
-        line.attr('y2', spineY);
-      } else {
-        const firstX =
-          xCoords.length > 0 ? Math.min(...xCoords) : allX.length > 0 ? Math.min(...allX) : 0;
-        const lastX = allX.length > 0 ? Math.max(...allX) : maxPos;
-        line.attr('x1', firstX);
-        line.attr('y1', spineY);
-        line.attr('x2', lastX);
-        line.attr('y2', spineY);
-      }
+      line.attr('y1', maxPos);
+      line.attr('x1', pos);
+      line.attr('y2', defaultPos);
+      line.attr('x2', pos);
     }
-  });
-};
-
-const drawBranchLabels = (
-  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
-  branches: { name: string }[],
-  gitGraphConfig: GitGraphDiagramConfig,
-  id: string,
-  allocatedLanes?: LaneInfo[]
-) => {
-  const { look, theme, themeVariables } = getConfig();
-  const { dropShadow, THEME_COLOR_LIMIT: themeColorLimit } = themeVariables;
-  const useReduxGeometry = REDUX_GEOMETRY_THEMES.has(theme ?? '');
-  const useColorTheme = COLOR_THEMES.has(theme ?? '');
-  const gLabels = svg.append('g').attr('class', 'branch-labels');
-
-  branches.forEach((branch, index) => {
-    const pos = branchPos.get(branch.name)?.pos;
-    if (pos === undefined) {
-      throw new Error(`Position not found for branch ${branch.name}`);
-    }
-    const branchIndex = branchPos.get(branch.name)?.index ?? index;
-    const adjustIndexForTheme = calcColorIndex(
-      branchIndex,
-      useReduxGeometry ? themeColorLimit : THEME_COLOR_LIMIT,
-      useColorTheme
-    );
-
-    const lane = allocatedLanes?.find((l) => l.branches.includes(branch.name));
-    const isSharedLane = (lane?.branches.length ?? 0) > 1;
-    const isFirstBranchOnLane = !lane || lane.branches[0] === branch.name;
-
-    const spineY =
-      dir === 'TB' || dir === 'BT'
-        ? pos
-        : useReduxGeometry
-          ? pos + REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1
-          : pos - 2;
+    lanes.push(spineY);
 
     const name = branch.name;
 
     // Create the actual text element
     const labelElement = drawText(name);
     // Create outer g, edgeLabel, this will be positioned after graph layout
-    const bkg = gLabels.append('rect');
-    const branchLabel = gLabels.append('g').attr('class', 'branchLabel');
+    const bkg = g.insert('rect');
+    const branchLabel = g.insert('g').attr('class', 'branchLabel');
 
     // Create inner g, label, this will be positioned now for centering the text
-    const label = branchLabel.append('g').attr('class', 'label branch-label' + adjustIndexForTheme);
+    const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
 
     label.node()!.appendChild(labelElement);
     const bbox = labelElement.getBBox();
@@ -1098,144 +934,6 @@ const drawBranchLabels = (
       bkg.attr('data-look', `neo`);
     }
 
-    const bCommits = [...allCommitsDict.values()].filter((c) => c.branch === branch.name);
-    const bMerges = [...allCommitsDict.values()].filter(
-      (c) =>
-        c.branch !== branch.name &&
-        c.parents?.some((p: string) => allCommitsDict.get(p)?.branch === branch.name)
-    );
-
-    if (dir === 'TB') {
-      const yCoords = bCommits
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const mergeYCoords = bMerges
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const allY = [...yCoords, ...mergeYCoords];
-
-      if (!isSharedLane || isFirstBranchOnLane) {
-        bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', 0);
-        label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + 0 + ')');
-        if (useReduxGeometry) {
-          bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${-labelPaddingY - 10})`);
-          label.attr(
-            'transform',
-            'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (-labelPaddingY * 2 + 7) + ')'
-          );
-        }
-      } else {
-        const firstY =
-          yCoords.length > 0
-            ? Math.min(...yCoords)
-            : allY.length > 0
-              ? Math.min(...allY)
-              : defaultPos;
-        const badgeY = firstY - 35;
-        bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', badgeY);
-        label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + badgeY + ')');
-        if (useReduxGeometry) {
-          bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${-labelPaddingY - 10})`);
-          label.attr(
-            'transform',
-            'translate(' +
-              (pos - bbox.width / 2 - 5) +
-              ', ' +
-              (badgeY - labelPaddingY * 2 + 7) +
-              ')'
-          );
-        }
-      }
-    } else if (dir === 'BT') {
-      const yCoords = bCommits
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const mergeYCoords = bMerges
-        .map((c) => commitPos.get(c.id)?.y)
-        .filter((y): y is number => y !== undefined);
-      const allY = [...yCoords, ...mergeYCoords];
-
-      if (!isSharedLane || isFirstBranchOnLane) {
-        bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', maxPos);
-        label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + maxPos + ')');
-        if (useReduxGeometry) {
-          bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
-          label.attr(
-            'transform',
-            'translate(' +
-              (pos - bbox.width / 2 - 5) +
-              ', ' +
-              (maxPos + labelPaddingY * 2 + 4) +
-              ')'
-          );
-        }
-      } else {
-        const firstY =
-          yCoords.length > 0 ? Math.max(...yCoords) : allY.length > 0 ? Math.max(...allY) : maxPos;
-        const badgeY = firstY + 15;
-        bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', badgeY);
-        label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + badgeY + ')');
-        if (useReduxGeometry) {
-          bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
-          label.attr(
-            'transform',
-            'translate(' +
-              (pos - bbox.width / 2 - 5) +
-              ', ' +
-              (badgeY + labelPaddingY * 2 + 4) +
-              ')'
-          );
-        }
-      }
-    } else {
-      // LR direction
-      const xCoords = bCommits
-        .map((c) => commitPos.get(c.id)?.x)
-        .filter((x): x is number => x !== undefined);
-      const mergeXCoords = bMerges
-        .map((c) => commitPos.get(c.id)?.x)
-        .filter((x): x is number => x !== undefined);
-      const allX = [...xCoords, ...mergeXCoords];
-
-      if (!isSharedLane || isFirstBranchOnLane) {
-        bkg
-          .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
-          .attr('y', -bbox.height / 2 + 10)
-          .attr('transform', 'translate(-19, ' + (spineY - 12 - labelPaddingY / 2) + ')');
-
-        label.attr(
-          'transform',
-          'translate(' +
-            (-bbox.width -
-              14 -
-              (gitGraphConfig.rotateCommitLabel === true ? 30 : 0) +
-              labelPaddingX / 2) +
-            ', ' +
-            (spineY - bbox.height / 2 - 2) +
-            ')'
-        );
-      } else {
-        const firstX =
-          xCoords.length > 0 ? Math.min(...xCoords) : allX.length > 0 ? Math.min(...allX) : 0;
-        const badgeWidth = bbox.width + 18 + labelPaddingX;
-        const badgeX = Math.max(0, firstX - badgeWidth - 15);
-
-        bkg
-          .attr('x', badgeX)
-          .attr('y', -bbox.height / 2 + 10)
-          .attr('transform', 'translate(0, ' + (spineY - 12 - labelPaddingY / 2) + ')');
-
-        label.attr(
-          'transform',
-          'translate(' +
-            (badgeX + 10 + labelPaddingX / 2) +
-            ', ' +
-            (spineY - bbox.height / 2 - 2) +
-            ')'
-        );
-      }
-    }
-
     bkg
       .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
       .attr(
@@ -1244,12 +942,48 @@ const drawBranchLabels = (
       )
       .attr('rx', borderRadius)
       .attr('ry', borderRadius)
+      .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
+      .attr('y', -bbox.height / 2 + 10)
       .attr('width', bbox.width + 18 + labelPaddingX)
       .attr('height', bbox.height + 4 + labelPaddingY);
+    label.attr(
+      'transform',
+      'translate(' +
+        (-bbox.width -
+          14 -
+          (gitGraphConfig.rotateCommitLabel === true ? 30 : 0) +
+          labelPaddingX / 2) +
+        ', ' +
+        (spineY - bbox.height / 2 - 2) +
+        ')'
+    );
+    if (dir === 'TB') {
+      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', 0);
+      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + 0 + ')');
+      if (useReduxGeometry) {
+        bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${-labelPaddingY - 10})`);
+        label.attr(
+          'transform',
+          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (-labelPaddingY * 2 + 7) + ')'
+        );
+      }
+    } else if (dir === 'BT') {
+      bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', maxPos);
+      label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + maxPos + ')');
+      if (useReduxGeometry) {
+        bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
+        label.attr(
+          'transform',
+          'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (maxPos + labelPaddingY * 2 + 4) + ')'
+        );
+      }
+    } else {
+      bkg.attr('transform', 'translate(-19, ' + (spineY - 12 - labelPaddingY / 2) + ')');
+    }
   });
 };
 
-export const setBranchPosition = function (
+const setBranchPosition = function (
   name: string,
   pos: number,
   index: number,
@@ -1320,44 +1054,27 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
       .attr('flood-color', filterColor);
   }
 
-  const branchBBoxes = new Map<string, DOMRect>();
-  branches.forEach((branch) => {
+  let pos = 0;
+
+  branches.forEach((branch, index) => {
     const labelElement = drawText(branch.name);
     const g = diagram.append('g');
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
     const label = branchLabel.insert('g').attr('class', 'label branch-label');
     label.node()?.appendChild(labelElement);
     const bbox = labelElement.getBBox();
-    branchBBoxes.set(branch.name, bbox);
+
+    pos = setBranchPosition(branch.name, pos, index, bbox, rotateCommitLabel);
     label.remove();
     branchLabel.remove();
     g.remove();
   });
 
-  const mainBranchName = gitGraphConfig.mainBranchName ?? 'main';
-  const reuseBranchLanes = gitGraphConfig.reuseBranchLanes ?? false;
-  const { branchPosMap, allocatedLanes } = allocateBranchPositions(
-    branches,
-    allCommitsDict,
-    branchBBoxes,
-    rotateCommitLabel,
-    mainBranchName,
-    reuseBranchLanes
-  );
-
-  branchPosMap.forEach((val, key) => {
-    branchPos.set(key, val);
-  });
-
   drawCommits(diagram, allCommitsDict, false, gitGraphConfig);
   if (gitGraphConfig.showBranches) {
-    drawBranchLines(diagram, branches, allocatedLanes);
+    drawBranches(diagram, branches, gitGraphConfig, id);
   }
   drawArrows(diagram, allCommitsDict);
-  if (gitGraphConfig.showBranches) {
-    // draw branch labels after arrows so they're shown on top of the arrow
-    drawBranchLabels(diagram, branches, gitGraphConfig, id, allocatedLanes);
-  }
   drawCommits(diagram, allCommitsDict, true, gitGraphConfig);
 
   utils.insertTitle(
@@ -1369,102 +1086,6 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, gitGraphConfig.useMaxWidth);
-};
-
-export const allocateBranchPositions = (
-  branches: { name: string }[],
-  commits: Map<string, Commit>,
-  branchBBoxes: Map<string, DOMRect>,
-  rotateCommitLabel: boolean,
-  mainBranchName = 'main',
-  reuseBranchLanes = false
-): { branchPosMap: Map<string, BranchPosition>; allocatedLanes: LaneInfo[] } => {
-  const branchPosMap = new Map<string, BranchPosition>();
-  const allocatedLanes: LaneInfo[] = [];
-
-  // Calculate spans for all branches
-  const branchSpans = new Map<string, { startSeq: number; endSeq: number }>();
-  branches.forEach((branch) => {
-    if (branch.name === mainBranchName) {
-      branchSpans.set(branch.name, { startSeq: 0, endSeq: Infinity });
-    } else {
-      const branchCommits = [...commits.values()].filter((c) => c.branch === branch.name);
-      const mergeCommits = [...commits.values()].filter(
-        (commit) =>
-          commit.branch !== branch.name &&
-          commit.parents?.some((pId) => commits.get(pId)?.branch === branch.name)
-      );
-      const allInvolved = [...branchCommits, ...mergeCommits];
-      if (allInvolved.length > 0) {
-        const startSeq =
-          branchCommits.length > 0
-            ? Math.min(...branchCommits.map((c) => c.seq))
-            : Math.min(...allInvolved.map((c) => c.seq));
-        const endSeq = Math.max(...allInvolved.map((c) => c.seq));
-        branchSpans.set(branch.name, { startSeq, endSeq });
-      } else {
-        branchSpans.set(branch.name, { startSeq: 0, endSeq: 0 });
-      }
-    }
-  });
-
-  let currentPos = 0;
-
-  // place branches in lanes
-  branches.forEach((b) => {
-    const name = b.name;
-    const span = branchSpans.get(name) ?? { startSeq: 0, endSeq: 0 };
-    const bbox = branchBBoxes.get(name) ?? ({ width: 0, height: 0 } as DOMRect);
-
-    if (name === mainBranchName) {
-      const lane0: LaneInfo = {
-        pos: 0,
-        index: 0,
-        branches: [name],
-        spans: [span],
-      };
-      allocatedLanes.push(lane0);
-      branchPosMap.set(name, { pos: 0, index: 0 });
-      currentPos +=
-        50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
-      return;
-    }
-
-    // Try to find an existing lane (excluding lane 0) where this branch fits without overlap
-    let targetLane: LaneInfo | undefined;
-    if (reuseBranchLanes) {
-      for (let l = 1; l < allocatedLanes.length; l++) {
-        const candidateLane = allocatedLanes[l];
-        const hasOverlap = candidateLane.spans.some(
-          (s) => !(span.endSeq < s.startSeq || span.startSeq > s.endSeq)
-        );
-        if (!hasOverlap) {
-          targetLane = candidateLane;
-          break;
-        }
-      }
-    }
-
-    if (targetLane) {
-      targetLane.branches.push(name);
-      targetLane.spans.push(span);
-      branchPosMap.set(name, { pos: targetLane.pos, index: targetLane.index });
-    } else {
-      const laneIndex = allocatedLanes.length;
-      const newLane: LaneInfo = {
-        pos: currentPos,
-        index: laneIndex,
-        branches: [name],
-        spans: [span],
-      };
-      allocatedLanes.push(newLane);
-      branchPosMap.set(name, { pos: currentPos, index: laneIndex });
-      currentPos +=
-        50 + (rotateCommitLabel ? 40 : 0) + (dir === 'TB' || dir === 'BT' ? bbox.width / 2 : 0);
-    }
-  });
-
-  return { branchPosMap, allocatedLanes };
 };
 
 export default {
@@ -1518,244 +1139,6 @@ if (import.meta.vitest) {
       const posNext = setBranchPosition('develop', pos, 1, bbox, true);
       expect(posNext).toBe(225.70703125);
       expect(branchPos.get('develop')).toEqual({ pos: pos, index: 1 });
-    });
-  });
-
-  describe('allocateBranchPositions', () => {
-    const bbox: DOMRect = {
-      x: 0,
-      y: 0,
-      width: 10,
-      height: 10,
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-      toJSON: () => '',
-    };
-    const branchBBoxes = new Map<string, DOMRect>([
-      ['main', bbox],
-      ['b1', bbox],
-      ['b2', bbox],
-      ['b3', bbox],
-    ]);
-
-    it('should NOT reuse lanes when reuseBranchLanes is false (default)', () => {
-      const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
-      const commits = new Map<string, Commit>([
-        ['c0', { id: 'c0', message: '', seq: 0, type: 0, tags: [], parents: [], branch: 'main' }],
-        ['c1', { id: 'c1', message: '', seq: 1, type: 0, tags: [], parents: ['c0'], branch: 'b1' }],
-        [
-          'c2',
-          {
-            id: 'c2',
-            message: '',
-            seq: 2,
-            type: 3,
-            tags: [],
-            parents: ['c0', 'c1'],
-            branch: 'main',
-          },
-        ],
-        [
-          'c3',
-          { id: 'c3', message: '', seq: 3, type: 0, tags: [], parents: ['c2'], branch: 'main' },
-        ],
-        ['c4', { id: 'c4', message: '', seq: 4, type: 0, tags: [], parents: ['c3'], branch: 'b2' }],
-        [
-          'c5',
-          {
-            id: 'c5',
-            message: '',
-            seq: 5,
-            type: 3,
-            tags: [],
-            parents: ['c3', 'c4'],
-            branch: 'main',
-          },
-        ],
-      ]);
-
-      const { branchPosMap, allocatedLanes } = allocateBranchPositions(
-        branches,
-        commits,
-        branchBBoxes,
-        false,
-        'main',
-        false
-      );
-      expect(branchPosMap.get('b1')?.index).toBe(1);
-      expect(branchPosMap.get('b2')?.index).toBe(2);
-      expect(branchPosMap.get('b2')!.pos).toBeGreaterThan(branchPosMap.get('b1')!.pos);
-      expect(allocatedLanes.length).toBe(3);
-    });
-
-    it('should reuse lane and color index for sequential non-overlapping branches', () => {
-      const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
-      const commits = new Map<string, Commit>([
-        ['c0', { id: 'c0', message: '', seq: 0, type: 0, tags: [], parents: [], branch: 'main' }],
-        ['c1', { id: 'c1', message: '', seq: 1, type: 0, tags: [], parents: ['c0'], branch: 'b1' }],
-        [
-          'c2',
-          {
-            id: 'c2',
-            message: '',
-            seq: 2,
-            type: 3,
-            tags: [],
-            parents: ['c0', 'c1'],
-            branch: 'main',
-          },
-        ],
-        [
-          'c3',
-          { id: 'c3', message: '', seq: 3, type: 0, tags: [], parents: ['c2'], branch: 'main' },
-        ],
-        ['c4', { id: 'c4', message: '', seq: 4, type: 0, tags: [], parents: ['c3'], branch: 'b2' }],
-        [
-          'c5',
-          {
-            id: 'c5',
-            message: '',
-            seq: 5,
-            type: 3,
-            tags: [],
-            parents: ['c3', 'c4'],
-            branch: 'main',
-          },
-        ],
-      ]);
-
-      const { branchPosMap, allocatedLanes } = allocateBranchPositions(
-        branches,
-        commits,
-        branchBBoxes,
-        false,
-        'main',
-        true
-      );
-
-      expect(branchPosMap.get('main')).toEqual({ pos: 0, index: 0 });
-      expect(branchPosMap.get('b1')?.index).toBe(1);
-      expect(branchPosMap.get('b2')?.index).toBe(1);
-      expect(branchPosMap.get('b1')?.pos).toBe(branchPosMap.get('b2')?.pos);
-      expect(allocatedLanes.length).toBe(2);
-      expect(allocatedLanes[1].branches).toEqual(['b1', 'b2']);
-    });
-
-    it('should allocate a separate lane and index when branch lifespans overlap', () => {
-      const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
-      const commits = new Map<string, Commit>([
-        ['c0', { id: 'c0', message: '', seq: 0, type: 0, tags: [], parents: [], branch: 'main' }],
-        ['c1', { id: 'c1', message: '', seq: 1, type: 0, tags: [], parents: ['c0'], branch: 'b1' }],
-        [
-          'c2',
-          {
-            id: 'c2',
-            message: '',
-            seq: 2,
-            type: 3,
-            tags: [],
-            parents: ['c0', 'c1'],
-            branch: 'main',
-          },
-        ],
-        [
-          'c3',
-          { id: 'c3', message: '', seq: 3, type: 0, tags: [], parents: ['c2'], branch: 'main' },
-        ],
-        ['c4', { id: 'c4', message: '', seq: 4, type: 0, tags: [], parents: ['c3'], branch: 'b2' }],
-        [
-          'c5',
-          {
-            id: 'c5',
-            message: '',
-            seq: 5,
-            type: 3,
-            tags: [],
-            parents: ['c3', 'c4'],
-            branch: 'main',
-          },
-        ],
-        ['c6', { id: 'c6', message: '', seq: 6, type: 0, tags: [], parents: ['c1'], branch: 'b1' }],
-        [
-          'c7',
-          {
-            id: 'c7',
-            message: '',
-            seq: 7,
-            type: 3,
-            tags: [],
-            parents: ['c5', 'c6'],
-            branch: 'main',
-          },
-        ],
-      ]);
-
-      const { branchPosMap, allocatedLanes } = allocateBranchPositions(
-        branches,
-        commits,
-        branchBBoxes,
-        false,
-        'main',
-        true
-      );
-
-      expect(branchPosMap.get('main')).toEqual({ pos: 0, index: 0 });
-      expect(branchPosMap.get('b1')?.index).toBe(1);
-      expect(branchPosMap.get('b2')?.index).toBe(2);
-      expect(branchPosMap.get('b2')!.pos).toBeGreaterThan(branchPosMap.get('b1')!.pos);
-      expect(allocatedLanes.length).toBe(3);
-    });
-
-    it('should handle greedy first-fit lane reuse with 3 non-overlapping branches', () => {
-      const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }, { name: 'b3' }];
-      const commits = new Map<string, Commit>([
-        ['c0', { id: 'c0', message: '', seq: 0, type: 0, tags: [], parents: [], branch: 'main' }],
-        ['c1', { id: 'c1', message: '', seq: 1, type: 0, tags: [], parents: ['c0'], branch: 'b1' }],
-        ['c2', { id: 'c2', message: '', seq: 2, type: 0, tags: [], parents: ['c0'], branch: 'b2' }],
-        [
-          'c3',
-          {
-            id: 'c3',
-            message: '',
-            seq: 3,
-            type: 3,
-            tags: [],
-            parents: ['c0', 'c1'],
-            branch: 'main',
-          },
-        ],
-        ['c4', { id: 'c4', message: '', seq: 4, type: 0, tags: [], parents: ['c3'], branch: 'b3' }],
-        [
-          'c5',
-          {
-            id: 'c5',
-            message: '',
-            seq: 5,
-            type: 3,
-            tags: [],
-            parents: ['c3', 'c4'],
-            branch: 'main',
-          },
-        ],
-      ]);
-
-      const { branchPosMap, allocatedLanes } = allocateBranchPositions(
-        branches,
-        commits,
-        branchBBoxes,
-        false,
-        'main',
-        true
-      );
-
-      expect(branchPosMap.get('b1')?.index).toBe(1);
-      expect(branchPosMap.get('b2')?.index).toBe(2);
-      // b3 span [4, 5] does not overlap b1 span [1, 3], so b3 reuses lane 1!
-      expect(branchPosMap.get('b3')?.index).toBe(1);
-      expect(branchPosMap.get('b3')?.pos).toBe(branchPosMap.get('b1')?.pos);
-      expect(allocatedLanes.length).toBe(3);
     });
   });
 
