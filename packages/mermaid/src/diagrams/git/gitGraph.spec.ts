@@ -913,6 +913,60 @@ describe('when parsing a gitGraph', function () {
       ]);
     });
 
+    it('should merge multiple branches into a single merge commit', async () => {
+      const str = `gitGraph
+        commit id:"root"
+    
+        branch feature1
+        checkout feature1
+        commit id:"f1"
+    
+        checkout main
+        branch feature2
+        checkout feature2
+        commit id:"f2"
+    
+        checkout main
+        branch feature3
+        checkout feature3
+        commit id:"f3"
+    
+        checkout main
+        commit id:"main2"
+    
+        merge feature1, feature2, feature3 id:"merge"
+      `;
+
+      await parser.parse(str);
+
+      const commits = db.getCommits();
+
+      expect(commits.size).toBe(6);
+      expect(db.getCurrentBranch()).toBe('main');
+
+      const mergeCommit = commits.get('merge');
+
+      expect(mergeCommit).toBeDefined();
+      expect(mergeCommit?.branch).toBe('main');
+      expect(mergeCommit?.type).toBe(3);
+
+      expect(mergeCommit?.parents).toStrictEqual(['main2', 'f1', 'f2', 'f3']);
+
+      expect(db.getHead()?.id).toBe('merge');
+
+      expect(db.getBranches().get('main')).toBe('merge');
+      expect(db.getBranches().get('feature1')).toBe('f1');
+      expect(db.getBranches().get('feature2')).toBe('f2');
+      expect(db.getBranches().get('feature3')).toBe('f3');
+
+      expect(db.getBranchesAsObjArray()).toStrictEqual([
+        { name: 'main' },
+        { name: 'feature1' },
+        { name: 'feature2' },
+        { name: 'feature3' },
+      ]);
+    });
+
     it('should support cherry-picking commits', async () => {
       const str = `gitGraph
         commit id: "ZERO"
@@ -1269,6 +1323,24 @@ describe('when parsing a gitGraph', function () {
         expect(e.message).toBe(
           'Incorrect usage of "merge". Branch to be merged (test1) has no commits'
         );
+      }
+    });
+    it('should throw error when merging duplicate branches', async () => {
+      const str = `gitGraph
+        commit
+        branch testBranch
+        checkout testBranch
+        commit
+        checkout main
+        merge testBranch, testBranch
+      `;
+
+      try {
+        await parser.parse(str);
+        // Fail test if above expression doesn't throw anything.
+        expect(true).toBe(false);
+      } catch (e: any) {
+        expect(e.message).toContain('Duplicate branch');
       }
     });
     describe('accessibility', () => {
