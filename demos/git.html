@@ -554,6 +554,48 @@
     commit id:"C"
     merge featureA
     </pre>
+    <pre class="mermaid">
+      ---
+      title: branch lanes get reused (top-to-bottom)
+      config:
+        gitGraph:
+          reuseBranchLanes: true
+      ---
+      gitGraph TB:
+      commit
+      branch b1
+      checkout b1
+      commit
+      checkout main
+      merge b1
+      commit
+      branch b2
+      checkout b2
+      commit
+      checkout main
+      merge b2
+    </pre>
+    <pre class="mermaid">
+      ---
+      title: branch lanes get reused (left-to-right))
+      config:
+        gitGraph:
+          reuseBranchLanes: true
+      ---
+      gitGraph LR:
+      commit
+      branch b1
+      checkout b1
+      commit
+      checkout main
+      merge b1
+      commit
+      branch b2
+      checkout b2
+      commit
+      checkout main
+      merge b2
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       const ALLOWED_TAGS = [
