@@ -149,7 +149,11 @@ async function calculateBlockSize(
   const nodeEl = await insertNode(elem, node, { config });
   const boundingBox = nodeEl.node()?.getBBox() ?? { width: 0, height: 0 };
   const obj = db.getBlock(node.id);
-  obj.size = { width: boundingBox.width, height: boundingBox.height, x: 0, y: 0, node: nodeEl };
+  // Only the measurements belong on the block. `nodeEl` is a live element that is
+  // removed on the next line, and keeping it here both retains the detached node
+  // and puts a DOM reference inside the model, where anything walking the block
+  // tree runs into it.
+  obj.size = { width: boundingBox.width, height: boundingBox.height, x: 0, y: 0 };
   db.setBlock(obj);
   nodeEl.remove();
 }
