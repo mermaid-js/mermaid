@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
-test.describe('Class diagram V3 ELK', () => {
+test.describe('Class diagram V3 Dagre', () => {
   test('ELK-3: should render multiple class diagrams', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,
@@ -52,7 +52,7 @@ test.describe('Class diagram V3 ELK', () => {
       }
       `,
       ],
-      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+      { logLevel: 1, htmlLabels: true, layout: 'dagre' }
     );
   });
 });

@@ -7,10 +7,17 @@
  * every theme outside the colour pair, must emit one rule per palette slot inside it, and
  * must never outrank a user's own styling.
  */
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import * as configApi from '../../config.js';
+import { configKeys } from '../../defaultConfig.js';
 import themes from '../../themes/index.js';
 import classStyles from '../class/styles.js';
+import erStyles from '../er/styles.js';
 import flowchartStyles from '../flowchart/styles.js';
+import requirementStyles from '../requirement/styles.js';
+import stateStyles from '../state/styles.js';
+import swimlanesStyles from '../swimlanes/styles.js';
+import timelineStyles from '../timeline/styles.js';
 import {
   COLOR_THEMES,
   DEFAULT_COLOR_SLOTS,
@@ -18,12 +25,28 @@ import {
   colorSlotCount,
   paletteSlotCount,
   safeLook,
+  stampColorSlot,
 } from './colorThemeGate.js';
 
+/** `swimlanes` appends its own lane rules to flowchart's, so it is listed separately. */
 const STYLESHEETS = {
   class: classStyles,
+  er: erStyles,
   flowchart: flowchartStyles,
+  requirement: requirementStyles,
+  state: stateStyles,
+  swimlanes: swimlanesStyles,
+  timeline: timelineStyles,
 } as const;
+
+/**
+ * Which stylesheets emit `[data-color-id]` slot rules. `timeline` is palette-aware but
+ * colours `.section-N` classes directly rather than stamping slots, so the slot-shaped
+ * assertions do not apply to it — only the crash-safety pass at the bottom does.
+ */
+const SLOT_STYLESHEETS = (
+  ['class', 'er', 'flowchart', 'requirement', 'state', 'swimlanes'] as const
+).filter((name) => name in STYLESHEETS);
 
 const COLOUR_THEMES = [...COLOR_THEMES];
 
@@ -34,6 +57,12 @@ const COLOUR_THEMES = [...COLOR_THEMES];
  */
 const PLAIN_THEMES = Object.keys(themes).filter((name) => !COLOR_THEMES.has(name));
 
+/**
+ * Drives both channels. Most stylesheets read `theme`, `look` and the palette off the
+ * options they are handed; `requirement/styles.js` reads all three from `getConfig()`
+ * instead. Setting site config as well as passing options means one helper covers both,
+ * and the assertions do not have to know which stylesheet reads from where.
+ */
 const render = (
   name: keyof typeof STYLESHEETS,
   themeName: string,
@@ -41,12 +70,24 @@ const render = (
   overrides: Record<string, unknown> = {}
 ) => {
   const themeVariables = themes[themeName as keyof typeof themes].getThemeVariables({});
-  return STYLESHEETS[name]({
+  const options = {
     ...(themeVariables as unknown as Record<string, unknown>),
     theme: themeName,
     look,
     ...overrides,
-  } as never);
+  };
+  configApi.reset();
+  // The resolved options go into site config too, not just the theme name. Without that,
+  // `requirement/styles.js` -- which reads the palette from `getConfig()` -- never sees an
+  // `overrides` palette, so every slot-count assertion against it would quietly run
+  // against the shipped twelve-entry palette instead of the one under test and pass for
+  // the wrong reason.
+  configApi.setSiteConfig({
+    theme: themeName as 'redux-color',
+    look: look as 'classic',
+    themeVariables: options,
+  });
+  return STYLESHEETS[name](options as never);
 };
 
 /** The distinct `color-N` slots a stylesheet emits rules for. */
@@ -57,9 +98,10 @@ it('covers every registered theme between the two lists', () => {
   expect([...PLAIN_THEMES, ...COLOUR_THEMES].sort()).toEqual(Object.keys(themes).sort());
 });
 
-describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s stylesheet', (name) => {
+describe.each(SLOT_STYLESHEETS)('%s stylesheet', (name) => {
   it.each(PLAIN_THEMES)('emits no per-item colour rules for %s', (themeName) => {
-    expect(render(name, themeName)).not.toContain('data-color-id');
+    // The slot marker, not the bare attribute: `swimlanes` keys a rule off its absence.
+    expect(render(name, themeName)).not.toContain('data-color-id="color-');
   });
 
   it.each(COLOUR_THEMES)('emits one rule per palette slot for %s', (themeName) => {
@@ -118,6 +160,80 @@ describe('safeLook', () => {
 });
 
 /**
+ * Unlike `look`, palette entries (`borderColorArray`/`bkgColorArray`) are interpolated
+ * straight into generated CSS by `er/styles.ts`, `requirement/styles.js`, `block/styles.ts`
+ * and their equivalents, with nothing analogous to `safeLook` validating an entry first. A
+ * hostile array entry — the same kind of `"]{a` payload `safeLook` guards against — would
+ * inject if it ever reached that code.
+ *
+ * It cannot, but not because the palette code defends itself, and not quite for the reason
+ * it looks like at a glance. `keyify` in `defaultConfig.ts` does skip any array-valued
+ * property while building `configKeys` -- but that branch is never reached for these two:
+ * `configKeys` is built by walking the *default* theme's variables
+ * (`theme.default.getThemeVariables()`), and the default theme does not define
+ * `borderColorArray`/`bkgColorArray` at all. Only `redux-color`/`redux-dark-color` do, and
+ * their variables never populate the object `keyify` walks. So today the property is simply
+ * absent, not present-and-filtered.
+ *
+ * `sanitizeDirective` strips any key that is not in `configKeys` -- the same mechanism that
+ * keeps a user from setting arbitrary config through front matter at all -- so either way,
+ * a directive-supplied `borderColorArray` cannot reach the palette code. The array-skip
+ * would become the operative defence, rather than a currently-unexercised one, if a future
+ * change ever gave the default theme its own `borderColorArray`/`bkgColorArray`. Pinning the
+ * outcome here, rather than the mechanism, is what keeps this test meaningful regardless of
+ * which of the two is actually doing the work.
+ */
+describe('palette arrays are excluded from configKeys', () => {
+  it.each(['borderColorArray', 'bkgColorArray'])('%s is not a recognised config key', (key) => {
+    expect(configKeys.has(key)).toBe(false);
+  });
+});
+
+/**
+ * A palette-aware stylesheet must survive being handed theme variables that did not come
+ * from the configured theme.
+ *
+ * `timeline` is the one that reads the configured theme *name* from `getConfig()` while
+ * receiving its variables as a parameter, so it is the one where the two can disagree. It
+ * used to gate on the name alone and then index the palette regardless, which threw
+ * `Cannot read properties of undefined` for all eight themes that carry no palette.
+ *
+ * In production `mermaidAPI` passes the name and the variables from the same config
+ * object, so they always agree and no user hit this. It is still worth pinning: the
+ * failure mode is a crash rather than a cosmetic drift, and nothing else stops a caller
+ * from passing them separately.
+ */
+describe('mismatched theme name and theme variables', () => {
+  afterEach(() => {
+    configApi.reset();
+  });
+
+  const paletteless = Object.keys(themes).filter((name) => !COLOR_THEMES.has(name));
+
+  describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])('%s', (name) => {
+    it.each(paletteless)(
+      'does not throw for %s variables under a colour theme name',
+      (variablesFrom) => {
+        for (const configuredTheme of COLOUR_THEMES) {
+          // The configured theme claims a palette; the variables handed in have none.
+          configApi.setSiteConfig({ theme: configuredTheme as 'redux-color' });
+          const themeVariables = themes[variablesFrom as keyof typeof themes].getThemeVariables(
+            {}
+          ) as unknown as Record<string, unknown>;
+          expect(() =>
+            STYLESHEETS[name]({
+              ...themeVariables,
+              theme: configuredTheme,
+              look: 'classic',
+            } as never)
+          ).not.toThrow();
+        }
+      }
+    );
+  });
+});
+
+/**
  * `stampColorSlot` wraps at `palette.length`; the stylesheets emit one rule per slot up to
  * `colorSlotCount`. Those two counts have to agree, or an item gets stamped `color-N` with
  * no rule emitted for it and renders uncoloured beside its neighbours.
@@ -155,37 +271,34 @@ describe('colorSlotCount', () => {
   });
 });
 
-describe.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])(
-  '%s stylesheet slot coverage',
-  (name) => {
-    it('emits a rule for every slot a palette longer than THEME_COLOR_LIMIT can stamp', () => {
-      const palette = Array.from({ length: 20 }, (_, i) => `#${(i + 16).toString(16)}0000`);
-      const slots = emittedSlots(
-        render(name, 'redux-color', 'classic', {
-          THEME_COLOR_LIMIT: 3,
-          borderColorArray: palette,
-          bkgColorArray: palette,
-        })
-      );
-      // Named rather than counted, so a failure says which slots lost their rule.
-      const missing = [...palette.keys()].filter((i) => !slots.has(i));
-      expect(missing).toEqual([]);
-    });
+describe.each(SLOT_STYLESHEETS)('%s stylesheet slot coverage', (name) => {
+  it('emits a rule for every slot a palette longer than THEME_COLOR_LIMIT can stamp', () => {
+    const palette = Array.from({ length: 20 }, (_, i) => `#${(i + 16).toString(16)}0000`);
+    const slots = emittedSlots(
+      render(name, 'redux-color', 'classic', {
+        THEME_COLOR_LIMIT: 3,
+        borderColorArray: palette,
+        bkgColorArray: palette,
+      })
+    );
+    // Named rather than counted, so a failure says which slots lost their rule.
+    const missing = [...palette.keys()].filter((i) => !slots.has(i));
+    expect(missing).toEqual([]);
+  });
 
-    it('emits exactly the slots a shorter palette can stamp, and no dead rules', () => {
-      const slots = emittedSlots(
-        render(name, 'redux-color', 'classic', {
-          THEME_COLOR_LIMIT: 12,
-          borderColorArray: ['#ff0000', '#00ff00'],
-          bkgColorArray: ['#ffeeee', '#eeffee'],
-        })
-      );
-      // Changed from expecting the full limit: slots 2..11 could never be stamped, so
-      // they were rules nothing could match.
-      expect([...slots].sort((a, b) => a - b)).toEqual([0, 1]);
-    });
-  }
-);
+  it('emits exactly the slots a shorter palette can stamp, and no dead rules', () => {
+    const slots = emittedSlots(
+      render(name, 'redux-color', 'classic', {
+        THEME_COLOR_LIMIT: 12,
+        borderColorArray: ['#ff0000', '#00ff00'],
+        bkgColorArray: ['#ffeeee', '#eeffee'],
+      })
+    );
+    // Changed from expecting the full limit: slots 2..11 could never be stamped, so
+    // they were rules nothing could match.
+    expect([...slots].sort((a, b) => a - b)).toEqual([0, 1]);
+  });
+});
 
 /**
  * Whatever the limit, the result is used directly as a `for` bound, so it has to be a value
@@ -238,6 +351,31 @@ describe('colorSlotCount stays a usable loop bound', () => {
  * palette and any limit. Both now derive from the palette, so this holds by construction --
  * and if anyone reintroduces a separate bound, it fails here rather than in review.
  */
+describe('stampColorSlot leaves an unnumbered element alone', () => {
+  const stamped = (colorIndex: number | undefined) => {
+    let attr: string | undefined;
+    const selection = {
+      attr: (_name: string, value: string) => {
+        attr = value;
+        return selection;
+      },
+    } as unknown as Parameters<typeof stampColorSlot>[0];
+    stampColorSlot(selection, colorIndex, 'redux-color', ['#a', '#b']);
+    return attr;
+  };
+
+  it('stamps nothing when there is no colorIndex', () => {
+    // Not `color-0`: an absent index means the element is outside the cycle, and painting
+    // it in the first palette colour is the opposite of that. State composites carrying
+    // the author's own `classDef` are the live case.
+    expect(stamped(undefined)).toBeUndefined();
+  });
+
+  it('still stamps slot zero when the index really is zero', () => {
+    expect(stamped(0)).toBe('color-0');
+  });
+});
+
 describe('emitted slots and stampable slots agree', () => {
   const paletteOf = (n: number) => Array.from({ length: n }, (_, i) => `#${i}`);
 
@@ -264,23 +402,20 @@ describe('emitted slots and stampable slots agree', () => {
     expect([...emitted].sort((a, b) => a - b)).toEqual([...stampable].sort((a, b) => a - b));
   });
 
-  it.each(Object.keys(STYLESHEETS) as (keyof typeof STYLESHEETS)[])(
-    'holds end to end for the %s stylesheet',
-    (name) => {
-      for (const paletteLength of [2, 12, MAX_COLOR_SLOTS + 50]) {
-        const palette = paletteOf(paletteLength);
-        const emitted = emittedSlots(
-          render(name, 'redux-color', 'classic', {
-            THEME_COLOR_LIMIT: 12,
-            borderColorArray: palette,
-            bkgColorArray: palette,
-          })
-        );
-        const stampable = new Set(
-          Array.from({ length: paletteLength + 200 }, (_, i) => i % paletteSlotCount(palette))
-        );
-        expect([...emitted].sort((a, b) => a - b)).toEqual([...stampable].sort((a, b) => a - b));
-      }
+  it.each(SLOT_STYLESHEETS)('holds end to end for the %s stylesheet', (name) => {
+    for (const paletteLength of [2, 12, MAX_COLOR_SLOTS + 50]) {
+      const palette = paletteOf(paletteLength);
+      const emitted = emittedSlots(
+        render(name, 'redux-color', 'classic', {
+          THEME_COLOR_LIMIT: 12,
+          borderColorArray: palette,
+          bkgColorArray: palette,
+        })
+      );
+      const stampable = new Set(
+        Array.from({ length: paletteLength + 200 }, (_, i) => i % paletteSlotCount(palette))
+      );
+      expect([...emitted].sort((a, b) => a - b)).toEqual([...stampable].sort((a, b) => a - b));
     }
-  );
+  });
 });
