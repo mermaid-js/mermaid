@@ -1045,6 +1045,10 @@ const drawBranches = (
           ? pos + REDUX_BRANCH_LABEL_PADDING_Y / 2 + 1
           : pos - 2;
 
+    if (!lanes.includes(spineY)) {
+      lanes.push(spineY);
+    }
+
     // Determine branch commit coordinates for segmented branch lines
     const branchCommits = [...allCommitsDict.values()]
       .filter((c) => c.branch === branch.name)
