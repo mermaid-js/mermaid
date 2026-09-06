@@ -1,5 +1,4 @@
-// @ts-expect-error No types available for JISON
-import { parser as kanban } from './parser/kanban.jison';
+import { parser as kanban } from './parser/kanban.chevrotain.js';
 import kanbanDB from './kanbanDb.js';
 import type { KanbanNode } from '../../rendering-util/types.js';
 // Todo fix utils functions for tests
