@@ -274,6 +274,18 @@ class Theme {
       labelColor: this.cynefin?.labelColor || this.primaryTextColor,
     };
 
+    /* domainstorytelling */
+    /* Deriving these from the *BorderColor variables looks tidier but does not work:
+       those are desaturated outline colours, and on this background they land at
+       roughly 1.2:1 -- an actor icon you cannot see. Override them directly to
+       recolour the diagram. */
+    this.domainstorytellingActorColor = this.domainstorytellingActorColor || '#2E86AB';
+    this.domainstorytellingWorkobjectColor = this.domainstorytellingWorkobjectColor || '#A23B72';
+    this.domainstorytellingSequenceColor = this.domainstorytellingSequenceColor || '#4A90E2';
+    this.domainstorytellingGroupColor =
+      this.domainstorytellingGroupColor ||
+      (this.darkMode ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.35)');
+
     /* radar */
     this.radar = {
       axisColor: this.radar?.axisColor || this.lineColor,

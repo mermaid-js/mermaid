@@ -138,3 +138,17 @@ xychart-beta
     bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
     line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
 ```
+
+### [Domain Storytelling Diagram (beta)](../syntax/domainstorytelling.md)
+
+```mermaid-example
+domainstorytelling-beta
+
+group G_Platform "Platform"
+A_Customer in G_Platform
+A_Service in G_Platform
+W_Order
+
+A_Customer : 01 -- "places" -> W_Order
+A_Service : 02 -- "processes" -> W_Order
+```

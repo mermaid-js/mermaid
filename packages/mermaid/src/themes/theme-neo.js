@@ -267,6 +267,12 @@ class Theme {
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 
+    /* domainstorytelling */
+    this.domainstorytellingActorColor = this.domainstorytellingActorColor || '#2E86AB';
+    this.domainstorytellingWorkobjectColor = this.domainstorytellingWorkobjectColor || '#A23B72';
+    this.domainstorytellingSequenceColor = this.domainstorytellingSequenceColor || '#4A90E2';
+    this.domainstorytellingGroupColor = this.domainstorytellingGroupColor || 'rgba(0, 0, 0, 0.35)';
+
     /* quadrant-graph */
     this.quadrant1Fill = this.quadrant1Fill || primaryColor;
     this.quadrant2Fill = this.quadrant2Fill || adjust(primaryColor, { r: 5, g: 5, b: 5 });
