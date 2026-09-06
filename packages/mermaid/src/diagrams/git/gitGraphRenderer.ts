@@ -1,10 +1,10 @@
+import type d3 from 'd3';
 import { select } from 'd3';
 import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import utils from '../../utils.js';
 import type { DrawDefinition } from '../../diagram-api/types.js';
-import type d3 from 'd3';
-import type { Commit, GitGraphDBRenderProvider, DiagramOrientation } from './gitGraphTypes.js';
+import type { Commit, DiagramOrientation, GitGraphDBRenderProvider } from './gitGraphTypes.js';
 import { commitType } from './gitGraphTypes.js';
 import type { GitGraphDiagramConfig } from '../../config.type.js';
 
@@ -880,11 +880,11 @@ const drawArrows = (
  * forks, and merge operations.
  */
 export const computeBranchLifetimes = (
-  commits: Map<string, Commit>,
   branches: { name: string }[],
-  mainBranchName: string
+  mainBranchName: string,
+  reuseBranchLanes: boolean
 ): Map<string, BranchLifetime> => {
-  const lifetimes = new Map<string, BranchLifetime>();
+  let lifetimes = new Map<string, BranchLifetime>();
 
   branches.forEach((b) => {
     const isMain = b.name === mainBranchName;
@@ -896,44 +896,61 @@ export const computeBranchLifetimes = (
     });
   });
 
-  for (const commit of commits.values()) {
-    const branchLifetime = lifetimes.get(commit.branch);
-    if (branchLifetime === undefined) {
-      throw new Error(
-        'Cannot get branch lifetime for commit: ' + commit.id + ' with branch ' + commit.branch
-      );
-    }
-    branchLifetime.startSeq = Math.min(branchLifetime.startSeq, commit.seq);
-    if (!branchLifetime.isMain) {
-      branchLifetime.endSeq = Math.max(branchLifetime.endSeq, commit.seq);
-    }
+  if (reuseBranchLanes) {
+    lifetimes = computeBranchLifetimesWithReusedLanes(branches, lifetimes);
+  }
 
-    // Check if this commit forks from a parent on another branch
-    if (commit.parents && commit.parents.length > 0) {
-      const parent0 = commits.get(commit.parents[0]);
-      if (parent0 && parent0.branch !== commit.branch && branchLifetime && !branchLifetime.isMain) {
-        branchLifetime.startSeq = Math.min(branchLifetime.startSeq, parent0.seq);
-      }
+  for (const lifetime of lifetimes.values()) {
+    if (lifetime.startSeq === Infinity) {
+      lifetime.startSeq = 0;
     }
-
-    // Check if this commit is a merge commit that merged another branch
-    if (commit.type === commitType.MERGE && commit.parents.length > 1) {
-      const mergedParentCommit = commits.get(commit.parents[1]);
-      if (mergedParentCommit) {
-        const mergedBranch = lifetimes.get(mergedParentCommit.branch);
-        if (mergedBranch && !mergedBranch.isMain) {
-          mergedBranch.endSeq = Math.max(mergedBranch.endSeq, commit.seq);
-        }
-      }
+    if (lifetime.endSeq === -1) {
+      lifetime.endSeq = Infinity;
     }
   }
 
-  for (const info of lifetimes.values()) {
-    if (info.startSeq === Infinity) {
-      info.startSeq = 0;
+  return lifetimes;
+};
+
+const computeBranchLifetimesWithReusedLanes = (
+  branches: { name: string }[],
+  lifetimes: Map<string, BranchLifetime>
+): Map<string, BranchLifetime> => {
+  for (const branch of branches) {
+    const branchLifetime = lifetimes.get(branch.name);
+    if (branchLifetime === undefined) {
+      throw new Error('Cannot get branch lifetime for branch ' + branch.name);
     }
-    if (info.endSeq === -1) {
-      info.endSeq = Infinity;
+    if (branchLifetime.isMain) {
+      // do not change main lifetime
+      continue;
+    }
+
+    const branchCommits = [...allCommitsDict.values()]
+      .filter((c) => c.branch === branch.name)
+      .sort((a, b) => a.seq - b.seq);
+
+    if (branchCommits.length === 0) {
+      // no commits, so do not change lifetime
+      continue;
+    }
+
+    // start sequence of branch is the parent of the first commit or the first commit if there is no parent
+    const firstCommit = branchCommits[0];
+    const firstCommitParent = firstCommit.parents[0];
+    branchLifetime.startSeq = allCommitsDict.get(firstCommitParent)?.seq ?? firstCommit.seq;
+
+    // if there is a merge from the last commit of this branch
+    // then development of this branch is completed, and its lane can be reused
+    // thus we set the end sequence of this branch to the merge commit
+    const lastCommit = branchCommits[branchCommits.length - 1];
+    const mergeCommitsFromLastCommit = [...allCommitsDict.values()]
+      .filter((c) => c.type === commitType.MERGE)
+      .filter((c) => c.parents.includes(lastCommit.id))
+      .sort((a, b) => a.seq - b.seq);
+
+    if (mergeCommitsFromLastCommit.length > 0) {
+      branchLifetime.endSeq = mergeCommitsFromLastCommit[0].seq;
     }
   }
 
@@ -1294,7 +1311,7 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     g.remove();
   });
 
-  const lifetimes = computeBranchLifetimes(allCommitsDict, branches, mainBranchName);
+  const lifetimes = computeBranchLifetimes(branches, mainBranchName, reuseBranchLanes);
   const branchLaneMap = allocateLanes(branches, lifetimes, mainBranchName, reuseBranchLanes);
 
   if (!reuseBranchLanes) {
@@ -1404,7 +1421,7 @@ if (import.meta.vitest) {
   describe('computeBranchLifetimes and allocateLanes', () => {
     it('should calculate lifetimes for sequential branches merged into main', () => {
       const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
-      const commits = new Map<string, Commit>([
+      allCommitsDict = new Map<string, Commit>([
         [
           'c0',
           {
@@ -1467,7 +1484,7 @@ if (import.meta.vitest) {
         ],
       ]);
 
-      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lifetimes = computeBranchLifetimes(branches, 'main', true);
       expect(lifetimes.get('main')?.startSeq).toBe(0);
       expect(lifetimes.get('main')?.endSeq).toBe(Infinity);
       expect(lifetimes.get('b1')?.startSeq).toBe(0);
@@ -1488,7 +1505,7 @@ if (import.meta.vitest) {
 
     it('should not reuse lanes when branches overlap concurrently', () => {
       const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
-      const commits = new Map<string, Commit>([
+      allCommitsDict = new Map<string, Commit>([
         [
           'c0',
           {
@@ -1551,7 +1568,7 @@ if (import.meta.vitest) {
         ],
       ]);
 
-      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lifetimes = computeBranchLifetimes(branches, 'main', true);
       const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
       expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
       expect(lanesWithReuse.get('b1')?.laneIndex).toBe(1);
@@ -1560,7 +1577,7 @@ if (import.meta.vitest) {
 
     it('should reuse lane across 3 sequential feature branches', () => {
       const branches = [{ name: 'main' }, { name: 'feat1' }, { name: 'feat2' }, { name: 'feat3' }];
-      const commits = new Map<string, Commit>([
+      allCommitsDict = new Map<string, Commit>([
         [
           'c0',
           {
@@ -1647,7 +1664,7 @@ if (import.meta.vitest) {
         ],
       ]);
 
-      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lifetimes = computeBranchLifetimes(branches, 'main', true);
       const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
       expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
       expect(lanesWithReuse.get('feat1')?.laneIndex).toBe(1);
@@ -1662,7 +1679,7 @@ if (import.meta.vitest) {
         { name: 'feat1' },
         { name: 'feat2' },
       ];
-      const commits = new Map<string, Commit>([
+      allCommitsDict = new Map<string, Commit>([
         [
           'c0',
           {
@@ -1737,7 +1754,7 @@ if (import.meta.vitest) {
         ],
       ]);
 
-      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lifetimes = computeBranchLifetimes(branches, 'main', true);
       const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
       expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
       expect(lanesWithReuse.get('develop')?.laneIndex).toBe(1);
@@ -1747,7 +1764,7 @@ if (import.meta.vitest) {
 
     it('should assign unique colorIndex when main branch is reordered', () => {
       const branches = [{ name: 'develop' }, { name: 'feat' }, { name: 'main' }];
-      const commits = new Map<string, Commit>([
+      allCommitsDict = new Map<string, Commit>([
         [
           'c0',
           {
@@ -1798,7 +1815,7 @@ if (import.meta.vitest) {
         ],
       ]);
 
-      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lifetimes = computeBranchLifetimes(branches, 'main', true);
       const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
       expect(lanesWithReuse.get('develop')?.laneIndex).toBe(1);
       expect(lanesWithReuse.get('develop')?.colorIndex).toBe(0);
