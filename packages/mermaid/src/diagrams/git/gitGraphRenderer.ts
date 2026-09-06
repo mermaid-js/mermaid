@@ -1059,50 +1059,63 @@ const drawBranches = (
     let startCoord = 0;
     let endCoord = maxPos;
 
-    if (reuseBranchLanes && branch.name !== mainBranchName && branchCommits.length > 0) {
+    const branchIsUsingSplitLanes = reuseBranchLanes && branch.name !== mainBranchName;
+
+    if (branchIsUsingSplitLanes && branchCommits.length > 0) {
       const firstCommitPosition = commitPos.get(firstCommit.id);
       const lastCommitPosition = commitPos.get(lastCommit.id);
       if (firstCommitPosition === undefined || lastCommitPosition === undefined) {
         throw new Error('Could not find position of first or last commit');
       }
+
       switch (dir) {
         case 'BT':
           startCoord = firstCommitPosition.y - COMMIT_STEP - LAYOUT_OFFSET;
-          endCoord = lastCommitPosition.y + COMMIT_STEP - LAYOUT_OFFSET;
+          endCoord = lastCommitPosition.y + COMMIT_STEP + LAYOUT_OFFSET;
           break;
         case 'TB':
           startCoord = firstCommitPosition.y - COMMIT_STEP - LAYOUT_OFFSET;
-          endCoord = lastCommitPosition.y + COMMIT_STEP - LAYOUT_OFFSET;
+          endCoord = lastCommitPosition.y + COMMIT_STEP + LAYOUT_OFFSET;
           break;
         case 'LR':
           startCoord = firstCommitPosition.x - COMMIT_STEP - LAYOUT_OFFSET;
-          endCoord = lastCommitPosition.x + COMMIT_STEP - LAYOUT_OFFSET;
+          endCoord = lastCommitPosition.x + COMMIT_STEP + LAYOUT_OFFSET;
           break;
       }
     }
 
     const line = g.append('line');
-    line.attr('x1', startCoord);
-    line.attr('y1', spineY);
-    line.attr('x2', endCoord);
-    line.attr('y2', spineY);
     line.attr('class', 'branch branch' + adjustIndexForTheme);
 
-    if (dir === 'TB') {
-      const startY = branch.name === mainBranchName || !reuseBranchLanes ? defaultPos : startCoord;
-      const endY = branch.name === mainBranchName || !reuseBranchLanes ? maxPos : endCoord;
-      line.attr('y1', startY);
-      line.attr('x1', pos);
-      line.attr('y2', endY);
-      line.attr('x2', pos);
-    } else if (dir === 'BT') {
-      const startY = branch.name === mainBranchName || !reuseBranchLanes ? maxPos : endCoord;
-      const endY = branch.name === mainBranchName || !reuseBranchLanes ? defaultPos : startCoord;
-      line.attr('y1', startY);
-      line.attr('x1', pos);
-      line.attr('y2', endY);
-      line.attr('x2', pos);
+    let lineX1, lineX2, lineY1, lineY2;
+
+    switch (dir) {
+      case 'LR':
+        lineX1 = branchIsUsingSplitLanes ? startCoord - LAYOUT_OFFSET : startCoord;
+        lineY1 = spineY;
+        lineX2 = branchIsUsingSplitLanes ? endCoord + LAYOUT_OFFSET : endCoord;
+        lineY2 = spineY;
+        break;
+      case 'BT':
+        lineX1 = pos;
+        lineY1 = branchIsUsingSplitLanes ? startCoord - LAYOUT_OFFSET : defaultPos;
+        lineX2 = pos;
+        lineY2 = branchIsUsingSplitLanes ? endCoord + LAYOUT_OFFSET : maxPos;
+        break;
+      case 'TB':
+        lineX1 = pos;
+        lineY1 = branchIsUsingSplitLanes ? endCoord + LAYOUT_OFFSET : maxPos;
+        lineX2 = pos;
+        lineY2 = branchIsUsingSplitLanes ? startCoord - LAYOUT_OFFSET : defaultPos;
+        break;
+      default:
+        throw new Error('not implemented direction ');
     }
+
+    line.attr('x1', lineX1);
+    line.attr('y1', lineY1);
+    line.attr('x2', lineX2);
+    line.attr('y2', lineY2);
 
     const name = branch.name;
 
@@ -1148,7 +1161,7 @@ const drawBranches = (
         ')'
     );
     if (dir === 'TB') {
-      const attrY = isReusedLane ? startCoord - 20 : 0;
+      const attrY = isReusedLane ? startCoord - 30 : 0;
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', attrY);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + attrY + ')');
       if (useReduxGeometry) {
@@ -1162,7 +1175,7 @@ const drawBranches = (
         );
       }
     } else if (dir === 'BT') {
-      const attrY = isReusedLane ? endCoord + 20 : maxPos;
+      const attrY = isReusedLane ? endCoord + 10 : maxPos;
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', attrY);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + attrY + ')');
       if (useReduxGeometry) {
@@ -1178,7 +1191,7 @@ const drawBranches = (
     } else {
       bkg.attr('transform', 'translate(-19, ' + (spineY - 12 - labelPaddingY / 2) + ')');
       if (isReusedLane) {
-        const attrX = isReusedLane ? startCoord - 20 : 0;
+        const attrX = isReusedLane ? startCoord - 25 : 0;
         bkg.attr('x', attrX);
         label.attr(
           'transform',
