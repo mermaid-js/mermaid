@@ -1129,7 +1129,10 @@ export const drawBranches = (
     const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
 
     label.node()!.appendChild(labelElement);
-    const bbox = labelElement.getBBox();
+    const bbox =
+      typeof labelElement.getBBox === 'function'
+        ? labelElement.getBBox()
+        : ({ width: 0, height: 0, x: 0, y: 0 } as DOMRect);
     const borderRadius = useReduxGeometry ? 0 : 4;
     const labelPaddingX = useReduxGeometry ? 16 : 0;
     const labelPaddingY = useReduxGeometry ? REDUX_BRANCH_LABEL_PADDING_Y : 0;
@@ -1279,7 +1282,10 @@ export const draw: DrawDefinition = function (txt, id, ver, diagObj) {
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
     const label = branchLabel.insert('g').attr('class', 'label branch-label');
     label.node()?.appendChild(labelElement);
-    const bbox = labelElement.getBBox();
+    const bbox =
+      typeof labelElement.getBBox === 'function'
+        ? labelElement.getBBox()
+        : ({ width: 0, height: 0, x: 0, y: 0 } as DOMRect);
     branchBBoxes.set(branch.name, bbox);
     label.remove();
     branchLabel.remove();
@@ -2137,9 +2143,6 @@ if (import.meta.vitest) {
   });
 
   describe('drawBranches line rendering', () => {
-    SVGElement.prototype.getBBox = () =>
-      ({ x: 0, y: 0, width: 50, height: 20, top: 0, left: 0, right: 50, bottom: 20 }) as DOMRect;
-
     const createSvg = () => {
       const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       // cast to d3.Selection(...) to prevent red squiggly lines. It would compile without but give annoying red lines in the file
