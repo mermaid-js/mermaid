@@ -569,11 +569,36 @@
       checkout main
       merge b1
       commit
+      commit
       branch b2
       checkout b2
       commit
       checkout main
       merge b2
+      branch b3
+    </pre>
+    <pre class="mermaid">
+      ---
+      title: branch lanes get reused (bottom-to-top)
+      config:
+        gitGraph:
+          reuseBranchLanes: true
+      ---
+      gitGraph BT:
+      commit
+      branch b1
+      checkout b1
+      commit
+      checkout main
+      merge b1
+      commit
+      commit
+      branch b2
+      checkout b2
+      commit
+      checkout main
+      merge b2
+      branch b3
     </pre>
     <pre class="mermaid">
       ---
@@ -590,11 +615,13 @@
       checkout main
       merge b1
       commit
+      commit
       branch b2
       checkout b2
       commit
       checkout main
       merge b2
+      branch b3
     </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
