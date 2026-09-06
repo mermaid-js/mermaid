@@ -1070,15 +1070,16 @@ export const drawBranches = (
     const branchCommits = [...allCommitsDict.values()]
       .filter((c) => c.branch === branch.name)
       .sort((a, b) => a.seq - b.seq);
-    const firstCommit = branchCommits[0];
-    const lastCommit = branchCommits[branchCommits.length - 1];
 
     let startCoord = 0;
     let endCoord = maxPos;
 
-    const branchIsUsingSplitLanes = reuseBranchLanes && branch.name !== mainBranchName;
+    const branchIsUsingSplitLanes =
+      reuseBranchLanes && branch.name !== mainBranchName && branchCommits.length > 0;
 
-    if (branchIsUsingSplitLanes && branchCommits.length > 0) {
+    if (branchIsUsingSplitLanes) {
+      const firstCommit = branchCommits[0];
+      const lastCommit = branchCommits[branchCommits.length - 1];
       const firstCommitPosition = commitPos.get(firstCommit.id);
       const lastCommitPosition = commitPos.get(lastCommit.id);
       if (firstCommitPosition === undefined || lastCommitPosition === undefined) {
