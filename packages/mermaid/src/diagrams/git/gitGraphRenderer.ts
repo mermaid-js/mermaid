@@ -970,7 +970,7 @@ export const allocateLanes = (
     if (branch.name === mainBranchName) {
       branchLaneMap.set(branch.name, {
         laneIndex: 0,
-        colorIndex: 0,
+        colorIndex: branchIndex,
       });
       return;
     }
@@ -1021,8 +1021,9 @@ const drawBranches = (
   const branchesPerLane = new Map<number, number>();
 
   branches.forEach((branch, index) => {
+    const branchIndex = branchPos.get(branch.name)?.index ?? index;
     const adjustIndexForTheme = calcColorIndex(
-      index,
+      branchIndex,
       useReduxGeometry ? themeColorLimit : THEME_COLOR_LIMIT,
       useColorTheme
     );
@@ -1735,6 +1736,69 @@ if (import.meta.vitest) {
       expect(lanesWithReuse.get('develop')?.laneIndex).toBe(1);
       expect(lanesWithReuse.get('feat1')?.laneIndex).toBe(2);
       expect(lanesWithReuse.get('feat2')?.laneIndex).toBe(2);
+    });
+
+    it('should assign unique colorIndex when main branch is reordered', () => {
+      const branches = [{ name: 'develop' }, { name: 'feat' }, { name: 'main' }];
+      const commits = new Map<string, Commit>([
+        [
+          'c0',
+          {
+            id: 'c0',
+            message: '',
+            seq: 0,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: [],
+            branch: 'develop',
+          },
+        ],
+        [
+          'c1',
+          {
+            id: 'c1',
+            message: '',
+            seq: 1,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'feat',
+          },
+        ],
+        [
+          'c2',
+          {
+            id: 'c2',
+            message: '',
+            seq: 2,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'develop',
+          },
+        ],
+        [
+          'c3',
+          {
+            id: 'c3',
+            message: '',
+            seq: 3,
+            type: commitType.NORMAL,
+            tags: [],
+            parents: ['c0'],
+            branch: 'main',
+          },
+        ],
+      ]);
+
+      const lifetimes = computeBranchLifetimes(commits, branches, 'main');
+      const lanesWithReuse = allocateLanes(branches, lifetimes, 'main', true);
+      expect(lanesWithReuse.get('develop')?.laneIndex).toBe(1);
+      expect(lanesWithReuse.get('develop')?.colorIndex).toBe(0);
+      expect(lanesWithReuse.get('feat')?.laneIndex).toBe(2);
+      expect(lanesWithReuse.get('feat')?.colorIndex).toBe(1);
+      expect(lanesWithReuse.get('main')?.laneIndex).toBe(0);
+      expect(lanesWithReuse.get('main')?.colorIndex).toBe(2);
     });
   });
 
