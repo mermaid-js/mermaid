@@ -1179,10 +1179,7 @@ const drawBranches = (
       bkg.attr('x', pos - bbox.width / 2 - 10).attr('y', attrY);
       label.attr('transform', 'translate(' + (pos - bbox.width / 2 - 5) + ', ' + attrY + ')');
       if (useReduxGeometry) {
-        bkg.attr(
-          'transform',
-          `translate(${-labelPaddingX / 2 - 3}, ${attrY + labelPaddingY + 10})`
-        );
+        bkg.attr('transform', `translate(${-labelPaddingX / 2 - 3}, ${labelPaddingY + 10})`);
         label.attr(
           'transform',
           'translate(' + (pos - bbox.width / 2 - 5) + ', ' + (attrY + labelPaddingY * 2 + 4) + ')'
