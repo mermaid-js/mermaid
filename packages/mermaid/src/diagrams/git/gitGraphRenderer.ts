@@ -1097,16 +1097,18 @@ export const drawBranches = (
         lineY2 = spineY;
         break;
       case 'BT':
-        lineX1 = pos;
-        lineY1 = branchIsUsingSplitLanes ? startCoord - LAYOUT_OFFSET : defaultPos;
-        lineX2 = pos;
-        lineY2 = branchIsUsingSplitLanes ? endCoord + LAYOUT_OFFSET : maxPos;
-        break;
-      case 'TB':
+        // commits are sorted from top to bottom
+        // draw BT from bottom to top, so XY1 will be the last commit and XY2 will be the first commit
         lineX1 = pos;
         lineY1 = branchIsUsingSplitLanes ? endCoord + LAYOUT_OFFSET : maxPos;
         lineX2 = pos;
         lineY2 = branchIsUsingSplitLanes ? startCoord - LAYOUT_OFFSET : defaultPos;
+        break;
+      case 'TB':
+        lineX1 = pos;
+        lineY1 = branchIsUsingSplitLanes ? startCoord - LAYOUT_OFFSET : defaultPos;
+        lineX2 = pos;
+        lineY2 = branchIsUsingSplitLanes ? endCoord + LAYOUT_OFFSET : maxPos;
         break;
       default:
         throw new Error('not implemented direction ');
@@ -2523,314 +2525,6 @@ if (import.meta.vitest) {
 
         expect(getLineAttrs(svg, 0)).toEqual({
           x1: 0,
-          y1: 300,
-          x2: 0,
-          y2: 30,
-          className: 'branch branch0',
-        });
-        expect(getLineAttrs(svg, 1)).toEqual({
-          x1: 50,
-          y1: 300,
-          x2: 50,
-          y2: 30,
-          className: 'branch branch1',
-        });
-        expect(getLineAttrs(svg, 2)).toEqual({
-          x1: 100,
-          y1: 300,
-          x2: 100,
-          y2: 30,
-          className: 'branch branch2',
-        });
-      });
-
-      it('without reuseBranchLanes: main branch and two separate branches without commits', () => {
-        clear();
-        dir = 'TB';
-        maxPos = 200;
-        branchPos.set('main', { pos: 0, index: 0 });
-        branchPos.set('b1', { pos: 50, index: 1 });
-        branchPos.set('b2', { pos: 100, index: 2 });
-
-        allCommitsDict.set('c0', {
-          id: 'c0',
-          message: '',
-          seq: 0,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: [],
-          branch: 'main',
-        });
-        commitPos.set('c0', { x: 0, y: 50 });
-
-        const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
-        const svg = createSvg();
-        drawBranches(svg, branches, { reuseBranchLanes: false, mainBranchName: 'main' }, 'test-d');
-
-        expect(getLineAttrs(svg, 0)).toEqual({
-          x1: 0,
-          y1: 200,
-          x2: 0,
-          y2: 30,
-          className: 'branch branch0',
-        });
-        expect(getLineAttrs(svg, 1)).toEqual({
-          x1: 50,
-          y1: 200,
-          x2: 50,
-          y2: 30,
-          className: 'branch branch1',
-        });
-        expect(getLineAttrs(svg, 2)).toEqual({
-          x1: 100,
-          y1: 200,
-          x2: 100,
-          y2: 30,
-          className: 'branch branch2',
-        });
-      });
-
-      it('with reuseBranchLanes: main branch and a reused lane', () => {
-        clear();
-        dir = 'TB';
-        maxPos = 400;
-        branchPos.set('main', { pos: 0, index: 0 });
-        branchPos.set('feat1', { pos: 50, index: 1 });
-        branchPos.set('feat2', { pos: 50, index: 2 });
-
-        allCommitsDict.set('c0', {
-          id: 'c0',
-          message: '',
-          seq: 0,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: [],
-          branch: 'main',
-        });
-        allCommitsDict.set('c1', {
-          id: 'c1',
-          message: '',
-          seq: 1,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c0'],
-          branch: 'feat1',
-        });
-        allCommitsDict.set('c2', {
-          id: 'c2',
-          message: '',
-          seq: 2,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c1'],
-          branch: 'feat1',
-        });
-        allCommitsDict.set('c3', {
-          id: 'c3',
-          message: '',
-          seq: 3,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c0'],
-          branch: 'feat2',
-        });
-        allCommitsDict.set('c4', {
-          id: 'c4',
-          message: '',
-          seq: 4,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c3'],
-          branch: 'feat2',
-        });
-
-        commitPos.set('c0', { x: 0, y: 50 });
-        commitPos.set('c1', { x: 50, y: 100 });
-        commitPos.set('c2', { x: 50, y: 150 });
-        commitPos.set('c3', { x: 50, y: 250 });
-        commitPos.set('c4', { x: 50, y: 300 });
-
-        const branches = [{ name: 'main' }, { name: 'feat1' }, { name: 'feat2' }];
-        const svg = createSvg();
-        drawBranches(svg, branches, { reuseBranchLanes: true, mainBranchName: 'main' }, 'test-d');
-
-        // main
-        expect(getLineAttrs(svg, 0)).toEqual({
-          x1: 0,
-          y1: 400,
-          x2: 0,
-          y2: 30,
-          className: 'branch branch0',
-        });
-        // feat1: startCoord = 100 - 50 = 50, endCoord = 150 + 50 = 200 => lineY1 = 210, lineY2 = 40
-        expect(getLineAttrs(svg, 1)).toEqual({
-          x1: 50,
-          y1: 210,
-          x2: 50,
-          y2: 40,
-          className: 'branch branch1',
-        });
-        // feat2: startCoord = 250 - 50 = 200, endCoord = 300 + 50 = 350 => lineY1 = 360, lineY2 = 190
-        expect(getLineAttrs(svg, 2)).toEqual({
-          x1: 50,
-          y1: 360,
-          x2: 50,
-          y2: 190,
-          className: 'branch branch2',
-        });
-      });
-
-      it('with reuseBranchLanes: main branch, a reused lane, and a separate branch', () => {
-        clear();
-        dir = 'TB';
-        maxPos = 500;
-        branchPos.set('main', { pos: 0, index: 0 });
-        branchPos.set('develop', { pos: 50, index: 1 });
-        branchPos.set('feat1', { pos: 100, index: 2 });
-        branchPos.set('feat2', { pos: 100, index: 3 });
-
-        allCommitsDict.set('c0', {
-          id: 'c0',
-          message: '',
-          seq: 0,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: [],
-          branch: 'main',
-        });
-        allCommitsDict.set('c_d1', {
-          id: 'c_d1',
-          message: '',
-          seq: 1,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c0'],
-          branch: 'develop',
-        });
-        allCommitsDict.set('c_f1', {
-          id: 'c_f1',
-          message: '',
-          seq: 2,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c_d1'],
-          branch: 'feat1',
-        });
-        allCommitsDict.set('c_f2', {
-          id: 'c_f2',
-          message: '',
-          seq: 3,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c_d1'],
-          branch: 'feat2',
-        });
-        allCommitsDict.set('c_d2', {
-          id: 'c_d2',
-          message: '',
-          seq: 4,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c_d1'],
-          branch: 'develop',
-        });
-
-        commitPos.set('c0', { x: 0, y: 50 });
-        commitPos.set('c_d1', { x: 50, y: 100 });
-        commitPos.set('c_f1', { x: 100, y: 150 });
-        commitPos.set('c_f2', { x: 100, y: 300 });
-        commitPos.set('c_d2', { x: 50, y: 400 });
-
-        const branches = [
-          { name: 'main' },
-          { name: 'develop' },
-          { name: 'feat1' },
-          { name: 'feat2' },
-        ];
-        const svg = createSvg();
-        drawBranches(svg, branches, { reuseBranchLanes: true, mainBranchName: 'main' }, 'test-d');
-
-        // main
-        expect(getLineAttrs(svg, 0)).toEqual({
-          x1: 0,
-          y1: 500,
-          x2: 0,
-          y2: 30,
-          className: 'branch branch0',
-        });
-        // develop on lane 1
-        expect(getLineAttrs(svg, 1)).toEqual({
-          x1: 50,
-          y1: 460,
-          x2: 50,
-          y2: 40,
-          className: 'branch branch1',
-        });
-        // feat1 on lane 2
-        expect(getLineAttrs(svg, 2)).toEqual({
-          x1: 100,
-          y1: 210,
-          x2: 100,
-          y2: 90,
-          className: 'branch branch2',
-        });
-        // feat2 on lane 2
-        expect(getLineAttrs(svg, 3)).toEqual({
-          x1: 100,
-          y1: 360,
-          x2: 100,
-          y2: 240,
-          className: 'branch branch3',
-        });
-      });
-    });
-
-    describe('BT direction', () => {
-      it('without reuseBranchLanes: main branch and two separate branches with commits', () => {
-        clear();
-        dir = 'BT';
-        maxPos = 300;
-        branchPos.set('main', { pos: 0, index: 0 });
-        branchPos.set('b1', { pos: 50, index: 1 });
-        branchPos.set('b2', { pos: 100, index: 2 });
-
-        allCommitsDict.set('c0', {
-          id: 'c0',
-          message: '',
-          seq: 0,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: [],
-          branch: 'main',
-        });
-        allCommitsDict.set('c1', {
-          id: 'c1',
-          message: '',
-          seq: 1,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c0'],
-          branch: 'b1',
-        });
-        allCommitsDict.set('c2', {
-          id: 'c2',
-          message: '',
-          seq: 2,
-          type: commitType.NORMAL,
-          tags: [],
-          parents: ['c0'],
-          branch: 'b2',
-        });
-        commitPos.set('c0', { x: 0, y: 50 });
-        commitPos.set('c1', { x: 50, y: 150 });
-        commitPos.set('c2', { x: 100, y: 250 });
-
-        const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
-        const svg = createSvg();
-        drawBranches(svg, branches, { reuseBranchLanes: false, mainBranchName: 'main' }, 'test-d');
-
-        expect(getLineAttrs(svg, 0)).toEqual({
-          x1: 0,
           y1: 30,
           x2: 0,
           y2: 300,
@@ -2854,7 +2548,7 @@ if (import.meta.vitest) {
 
       it('without reuseBranchLanes: main branch and two separate branches without commits', () => {
         clear();
-        dir = 'BT';
+        dir = 'TB';
         maxPos = 200;
         branchPos.set('main', { pos: 0, index: 0 });
         branchPos.set('b1', { pos: 50, index: 1 });
@@ -2900,7 +2594,7 @@ if (import.meta.vitest) {
 
       it('with reuseBranchLanes: main branch and a reused lane', () => {
         clear();
-        dir = 'BT';
+        dir = 'TB';
         maxPos = 400;
         branchPos.set('main', { pos: 0, index: 0 });
         branchPos.set('feat1', { pos: 50, index: 1 });
@@ -2970,7 +2664,7 @@ if (import.meta.vitest) {
           y2: 400,
           className: 'branch branch0',
         });
-        // feat1: startCoord = 100 - 50 = 50, endCoord = 150 + 50 = 200 => lineY1 = 40, lineY2 = 210
+        // feat1: startCoord = 100 - 50 = 50, endCoord = 150 + 50 = 200 => lineY1 = 210, lineY2 = 40
         expect(getLineAttrs(svg, 1)).toEqual({
           x1: 50,
           y1: 40,
@@ -2978,7 +2672,7 @@ if (import.meta.vitest) {
           y2: 210,
           className: 'branch branch1',
         });
-        // feat2: startCoord = 250 - 50 = 200, endCoord = 300 + 50 = 350 => lineY1 = 190, lineY2 = 360
+        // feat2: startCoord = 250 - 50 = 200, endCoord = 300 + 50 = 350 => lineY1 = 360, lineY2 = 190
         expect(getLineAttrs(svg, 2)).toEqual({
           x1: 50,
           y1: 190,
@@ -2990,7 +2684,7 @@ if (import.meta.vitest) {
 
       it('with reuseBranchLanes: main branch, a reused lane, and a separate branch', () => {
         clear();
-        dir = 'BT';
+        dir = 'TB';
         maxPos = 500;
         branchPos.set('main', { pos: 0, index: 0 });
         branchPos.set('develop', { pos: 50, index: 1 });
@@ -3088,6 +2782,314 @@ if (import.meta.vitest) {
           y1: 240,
           x2: 100,
           y2: 360,
+          className: 'branch branch3',
+        });
+      });
+    });
+
+    describe('BT direction', () => {
+      it('without reuseBranchLanes: main branch and two separate branches with commits', () => {
+        clear();
+        dir = 'BT';
+        maxPos = 300;
+        branchPos.set('main', { pos: 0, index: 0 });
+        branchPos.set('b1', { pos: 50, index: 1 });
+        branchPos.set('b2', { pos: 100, index: 2 });
+
+        allCommitsDict.set('c0', {
+          id: 'c0',
+          message: '',
+          seq: 0,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: [],
+          branch: 'main',
+        });
+        allCommitsDict.set('c1', {
+          id: 'c1',
+          message: '',
+          seq: 1,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c0'],
+          branch: 'b1',
+        });
+        allCommitsDict.set('c2', {
+          id: 'c2',
+          message: '',
+          seq: 2,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c0'],
+          branch: 'b2',
+        });
+        commitPos.set('c0', { x: 0, y: 50 });
+        commitPos.set('c1', { x: 50, y: 150 });
+        commitPos.set('c2', { x: 100, y: 250 });
+
+        const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
+        const svg = createSvg();
+        drawBranches(svg, branches, { reuseBranchLanes: false, mainBranchName: 'main' }, 'test-d');
+
+        expect(getLineAttrs(svg, 0)).toEqual({
+          x1: 0,
+          y1: 300,
+          x2: 0,
+          y2: 30,
+          className: 'branch branch0',
+        });
+        expect(getLineAttrs(svg, 1)).toEqual({
+          x1: 50,
+          y1: 300,
+          x2: 50,
+          y2: 30,
+          className: 'branch branch1',
+        });
+        expect(getLineAttrs(svg, 2)).toEqual({
+          x1: 100,
+          y1: 300,
+          x2: 100,
+          y2: 30,
+          className: 'branch branch2',
+        });
+      });
+
+      it('without reuseBranchLanes: main branch and two separate branches without commits', () => {
+        clear();
+        dir = 'BT';
+        maxPos = 200;
+        branchPos.set('main', { pos: 0, index: 0 });
+        branchPos.set('b1', { pos: 50, index: 1 });
+        branchPos.set('b2', { pos: 100, index: 2 });
+
+        allCommitsDict.set('c0', {
+          id: 'c0',
+          message: '',
+          seq: 0,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: [],
+          branch: 'main',
+        });
+        commitPos.set('c0', { x: 0, y: 50 });
+
+        const branches = [{ name: 'main' }, { name: 'b1' }, { name: 'b2' }];
+        const svg = createSvg();
+        drawBranches(svg, branches, { reuseBranchLanes: false, mainBranchName: 'main' }, 'test-d');
+
+        expect(getLineAttrs(svg, 0)).toEqual({
+          x1: 0,
+          y1: 200,
+          x2: 0,
+          y2: 30,
+          className: 'branch branch0',
+        });
+        expect(getLineAttrs(svg, 1)).toEqual({
+          x1: 50,
+          y1: 200,
+          x2: 50,
+          y2: 30,
+          className: 'branch branch1',
+        });
+        expect(getLineAttrs(svg, 2)).toEqual({
+          x1: 100,
+          y1: 200,
+          x2: 100,
+          y2: 30,
+          className: 'branch branch2',
+        });
+      });
+
+      it('with reuseBranchLanes: main branch and a reused lane', () => {
+        clear();
+        dir = 'BT';
+        maxPos = 400;
+        branchPos.set('main', { pos: 0, index: 0 });
+        branchPos.set('feat1', { pos: 50, index: 1 });
+        branchPos.set('feat2', { pos: 50, index: 2 });
+
+        allCommitsDict.set('c0', {
+          id: 'c0',
+          message: '',
+          seq: 0,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: [],
+          branch: 'main',
+        });
+        allCommitsDict.set('c1', {
+          id: 'c1',
+          message: '',
+          seq: 1,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c0'],
+          branch: 'feat1',
+        });
+        allCommitsDict.set('c2', {
+          id: 'c2',
+          message: '',
+          seq: 2,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c1'],
+          branch: 'feat1',
+        });
+        allCommitsDict.set('c3', {
+          id: 'c3',
+          message: '',
+          seq: 3,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c0'],
+          branch: 'feat2',
+        });
+        allCommitsDict.set('c4', {
+          id: 'c4',
+          message: '',
+          seq: 4,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c3'],
+          branch: 'feat2',
+        });
+
+        commitPos.set('c0', { x: 0, y: 50 });
+        commitPos.set('c1', { x: 50, y: 100 });
+        commitPos.set('c2', { x: 50, y: 150 });
+        commitPos.set('c3', { x: 50, y: 250 });
+        commitPos.set('c4', { x: 50, y: 300 });
+
+        const branches = [{ name: 'main' }, { name: 'feat1' }, { name: 'feat2' }];
+        const svg = createSvg();
+        drawBranches(svg, branches, { reuseBranchLanes: true, mainBranchName: 'main' }, 'test-d');
+
+        // main
+        expect(getLineAttrs(svg, 0)).toEqual({
+          x1: 0,
+          y1: 400,
+          x2: 0,
+          y2: 30,
+          className: 'branch branch0',
+        });
+        // feat1: startCoord = 100 - 50 = 50, endCoord = 150 + 50 = 200 => lineY1 = 40, lineY2 = 210
+        expect(getLineAttrs(svg, 1)).toEqual({
+          x1: 50,
+          y1: 210,
+          x2: 50,
+          y2: 40,
+          className: 'branch branch1',
+        });
+        // feat2: startCoord = 250 - 50 = 200, endCoord = 300 + 50 = 350 => lineY1 = 190, lineY2 = 360
+        expect(getLineAttrs(svg, 2)).toEqual({
+          x1: 50,
+          y1: 360,
+          x2: 50,
+          y2: 190,
+          className: 'branch branch2',
+        });
+      });
+
+      it('with reuseBranchLanes: main branch, a reused lane, and a separate branch', () => {
+        clear();
+        dir = 'BT';
+        maxPos = 500;
+        branchPos.set('main', { pos: 0, index: 0 });
+        branchPos.set('develop', { pos: 50, index: 1 });
+        branchPos.set('feat1', { pos: 100, index: 2 });
+        branchPos.set('feat2', { pos: 100, index: 3 });
+
+        allCommitsDict.set('c0', {
+          id: 'c0',
+          message: '',
+          seq: 0,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: [],
+          branch: 'main',
+        });
+        allCommitsDict.set('c_d1', {
+          id: 'c_d1',
+          message: '',
+          seq: 1,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c0'],
+          branch: 'develop',
+        });
+        allCommitsDict.set('c_f1', {
+          id: 'c_f1',
+          message: '',
+          seq: 2,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c_d1'],
+          branch: 'feat1',
+        });
+        allCommitsDict.set('c_f2', {
+          id: 'c_f2',
+          message: '',
+          seq: 3,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c_d1'],
+          branch: 'feat2',
+        });
+        allCommitsDict.set('c_d2', {
+          id: 'c_d2',
+          message: '',
+          seq: 4,
+          type: commitType.NORMAL,
+          tags: [],
+          parents: ['c_d1'],
+          branch: 'develop',
+        });
+
+        commitPos.set('c0', { x: 0, y: 50 });
+        commitPos.set('c_d1', { x: 50, y: 100 });
+        commitPos.set('c_f1', { x: 100, y: 150 });
+        commitPos.set('c_f2', { x: 100, y: 300 });
+        commitPos.set('c_d2', { x: 50, y: 400 });
+
+        const branches = [
+          { name: 'main' },
+          { name: 'develop' },
+          { name: 'feat1' },
+          { name: 'feat2' },
+        ];
+        const svg = createSvg();
+        drawBranches(svg, branches, { reuseBranchLanes: true, mainBranchName: 'main' }, 'test-d');
+
+        // main
+        expect(getLineAttrs(svg, 0)).toEqual({
+          x1: 0,
+          y1: 500,
+          x2: 0,
+          y2: 30,
+          className: 'branch branch0',
+        });
+        // develop on lane 1
+        expect(getLineAttrs(svg, 1)).toEqual({
+          x1: 50,
+          y1: 460,
+          x2: 50,
+          y2: 40,
+          className: 'branch branch1',
+        });
+        // feat1 on lane 2
+        expect(getLineAttrs(svg, 2)).toEqual({
+          x1: 100,
+          y1: 210,
+          x2: 100,
+          y2: 90,
+          className: 'branch branch2',
+        });
+        // feat2 on lane 2
+        expect(getLineAttrs(svg, 3)).toEqual({
+          x1: 100,
+          y1: 360,
+          x2: 100,
+          y2: 240,
           className: 'branch branch3',
         });
       });
