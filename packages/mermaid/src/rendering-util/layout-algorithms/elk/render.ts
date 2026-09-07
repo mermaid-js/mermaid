@@ -357,9 +357,9 @@ export function buildSubgraphLayoutOptions(
   algorithm: string | undefined,
   log?: ElkLayoutContext['log']
 ): Record<string, unknown> {
-  // Compute label-based minimum width so ELK sizes compound nodes to fit their
-  // labels. nodeSize.minimum acts as a label-derived floor while ELK computes
-  // the actual size from the children.
+  // Every group gets its painted title width as a floor via
+  // `groupTitleSizeOptions` below. Containers that run their own algorithm
+  // override that floor with this wider, label-plus-both-paddings minimum.
   const labelW = node.labelData?.width ?? 0;
   const pad = node.padding ?? 0;
   const minWidth = labelW + 2 * pad;
