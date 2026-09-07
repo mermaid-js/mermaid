@@ -59,11 +59,19 @@ describe('stripAnyComments', () => {
       const input = build(n);
       // Warm up so the first call does not carry compilation cost into the ratio.
       stripAnyComments(input);
-      const t0 = performance.now();
-      for (let i = 0; i < 5; i++) {
-        stripAnyComments(input);
+      // A single pass over the small input takes tens of microseconds, so one GC pause or
+      // scheduler hiccup on a shared CI runner can inflate an averaged sample several-fold.
+      // Noise only ever adds time, so the minimum over repeated trials is the stable estimate
+      // of the true cost; it is what keeps this ratio from flaking on a loaded machine.
+      let best = Infinity;
+      for (let trial = 0; trial < 5; trial++) {
+        const t0 = performance.now();
+        for (let i = 0; i < 5; i++) {
+          stripAnyComments(input);
+        }
+        best = Math.min(best, (performance.now() - t0) / 5);
       }
-      return (performance.now() - t0) / 5;
+      return best;
     };
 
     const small = measure(4000);
