@@ -41,46 +41,12 @@ export type {
   SyncIconLoader,
   UnknownDiagramError,
 };
-import {
+export {
   clearLayoutRenderState,
   createCommonLayoutRenderer,
   defaultMeasureLayout,
   paintLayoutData,
 } from './rendering-util/layout-algorithms/common/index.js';
-import { applyLineJumpsToSvg } from './rendering-util/rendering-elements/lineJump.js';
-
-/**
- * Building blocks for layout packages that live outside this repository, such
- * as `@mermaid-js/layout-tidy-tree`. See the
- * {@link https://mermaid.js.org/community/layout-makers-guide.html | layout makers guide}.
- *
- * **Not covered by SemVer.** These reach straight into the renderer, so they
- * move whenever it does — a new node shape or a change to how edges are
- * painted can alter their signatures. They may change or disappear in any
- * Mermaid release, including a patch, without being called a breaking change.
- * Anything you depend on long-term should go through the documented API
- * instead; if you need something here to be stable, please open an issue so it
- * can be promoted deliberately.
- *
- * Until v12 these were plain named exports, which made every renderer-internal
- * change a breaking change to Mermaid's public API.
- */
-export const __internalsDoNotUse = {
-  clearLayoutRenderState,
-  createCommonLayoutRenderer,
-  defaultMeasureLayout,
-  paintLayoutData,
-  // An `afterPaint` hook is the only place line hops can be applied, and an
-  // external layout cannot reach into `rendering-util` the way built-ins do.
-  applyLineJumpsToSvg,
-} as const;
-
-/**
- * Types for the {@link __internalsDoNotUse} helpers.
- *
- * **Not covered by SemVer**, for the same reasons — they describe renderer
- * internals and change with the renderer.
- */
 export type {
   CommonLayoutMeasure,
   CommonLayoutPaintContext,
@@ -88,6 +54,10 @@ export type {
   CommonLayoutRenderContext,
   CommonLayoutRendererDefinition,
 } from './rendering-util/layout-algorithms/common/index.js';
+// Exported for layout packages that live outside this one: an `afterPaint`
+// hook is the only place line hops can be applied, and an external layout
+// cannot reach into `rendering-util` the way the built-in ones do.
+export { applyLineJumpsToSvg } from './rendering-util/rendering-elements/lineJump.js';
 export type { EdgeGeom, LineJumpConfig } from './rendering-util/rendering-elements/lineJump.js';
 
 export interface RunOptions {

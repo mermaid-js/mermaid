@@ -10,7 +10,7 @@
 
 # Interface: RunOptions
 
-Defined in: [packages/mermaid/src/mermaid.ts:93](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L93)
+Defined in: [packages/mermaid/src/mermaid.ts:63](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L63)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: [packages/mermaid/src/mermaid.ts:93](https://github.com/mermaid-js/m
 
 > `optional` **nodes**: `ArrayLike`<`HTMLElement`>
 
-Defined in: [packages/mermaid/src/mermaid.ts:101](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L101)
+Defined in: [packages/mermaid/src/mermaid.ts:71](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L71)
 
 The nodes to render. If this is set, `querySelector` will be ignored.
 
@@ -28,7 +28,7 @@ The nodes to render. If this is set, `querySelector` will be ignored.
 
 > `optional` **postRenderCallback**: (`id`) => `unknown`
 
-Defined in: [packages/mermaid/src/mermaid.ts:105](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L105)
+Defined in: [packages/mermaid/src/mermaid.ts:75](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L75)
 
 A callback to call after each diagram is rendered.
 
@@ -48,7 +48,7 @@ A callback to call after each diagram is rendered.
 
 > `optional` **querySelector**: `string`
 
-Defined in: [packages/mermaid/src/mermaid.ts:97](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L97)
+Defined in: [packages/mermaid/src/mermaid.ts:67](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L67)
 
 The query selector to use when finding elements to render. Default: `".mermaid"`.
 
@@ -58,6 +58,6 @@ The query selector to use when finding elements to render. Default: `".mermaid"`
 
 > `optional` **suppressErrors**: `boolean`
 
-Defined in: [packages/mermaid/src/mermaid.ts:109](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L109)
+Defined in: [packages/mermaid/src/mermaid.ts:79](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L79)
 
 If `true`, errors will be logged to the console, but not thrown. Default: `false`

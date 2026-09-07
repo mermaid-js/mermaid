@@ -574,29 +574,6 @@ const layouts: LayoutLoaderDefinition[] = [{ name: 'grid', loader, algorithm: 'g
 export default layouts;
 ```
 
-From outside the repository, the building blocks come from `__internalsDoNotUse`:
-
-```ts
-import { __internalsDoNotUse } from 'mermaid';
-
-const { createCommonLayoutRenderer } = __internalsDoNotUse;
-
-export const render = createCommonLayoutRenderer({ runLayoutCore: runGridLayoutCore });
-```
-
-```note
-`__internalsDoNotUse` is not covered by SemVer. These helpers reach straight
-into the renderer, so they move whenever it does — adding a node shape or
-changing how edges are painted can alter their signatures — and they may change
-or disappear in any Mermaid release, including a patch. Pin the Mermaid version
-you build against, and open an issue if you need something here to be stable so
-it can be promoted deliberately. Before v12 these were plain named exports,
-which made every renderer-internal change a breaking change to Mermaid's public
-API.
-```
-
-It also carries `defaultMeasureLayout`, `paintLayoutData`, `clearLayoutRenderState` and `applyLineJumpsToSvg`, and the matching types (`CommonLayoutRendererDefinition`, `CommonLayoutRenderContext`, `CommonLayoutPaintContext`, `CommonLayoutPaintOptions`, `CommonLayoutMeasure`, `EdgeGeom`, `LineJumpConfig`) are still exported as types.
-
 ```js
 import mermaid from 'mermaid';
 import layouts from 'my-mermaid-layout';

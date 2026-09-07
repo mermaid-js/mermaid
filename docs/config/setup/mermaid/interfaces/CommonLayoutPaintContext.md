@@ -12,11 +12,6 @@
 
 Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:48](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L48)
 
-Types for the [\_\_internalsDoNotUse](../variables/internalsDoNotUse.md) helpers.
-
-**Not covered by SemVer**, for the same reasons — they describe renderer
-internals and change with the renderer.
-
 ## Extends
 
 - [`CommonLayoutRenderContext`](CommonLayoutRenderContext.md)<`PreparedLayout`>
