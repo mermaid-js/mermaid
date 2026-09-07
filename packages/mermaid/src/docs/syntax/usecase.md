@@ -16,9 +16,9 @@ Customer --> Checkout
 
 Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direction.
 
-## Default theme and look (v<MERMAID_RELEASE_VERSION>+)
+## Default theme, look and layout (v<MERMAID_RELEASE_VERSION>+)
 
-Use case diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+Use case diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
 
@@ -55,6 +55,7 @@ in a diagram's front matter draws it the way Mermaid did before:
 config:
   theme: default
   look: classic
+  layout: dagre
 ---
 usecase-beta
 direction LR
@@ -74,9 +75,9 @@ Support --> Track
 Checkout ..> : include Browse
 ```
 
-Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
-and scoping them to one diagram type — `mermaid.initialize({ usecase: { theme: 'default', look: 'classic' } })` —
-does it for that type alone.
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', usecase: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
 
 ## Actors and use cases
 

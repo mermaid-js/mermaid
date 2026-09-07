@@ -633,6 +633,12 @@ importers:
 
   packages/tiny: {}
 
+  tests/release-verification:
+    devDependencies:
+      playwright:
+        specifier: ^1.62.1
+        version: 1.62.1
+
   tests/webpack:
     dependencies:
       '@mermaid-js/mermaid-example-diagram':
