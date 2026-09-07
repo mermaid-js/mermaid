@@ -3,12 +3,14 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
+import { resolveDefaultRenderer } from '../../diagram-api/defaultRenderer.js';
 
 const id = 'class';
 
 const detector: DiagramDetector = (txt, config) => {
-  // If we have configured to use dagre-wrapper then we should never return true in this function
-  if (config?.class?.defaultRenderer === 'dagre-wrapper') {
+  // Any configured renderer (`dagre` with its aliases, or `elk`) routes `classDiagram` code
+  // to the unified class diagram, so this legacy id only applies when none is configured.
+  if (resolveDefaultRenderer(config?.class?.defaultRenderer) !== undefined) {
     return false;
   }
   // We have not opted to use the new renderer so we should return true if we detect a class diagram

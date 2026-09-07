@@ -463,10 +463,19 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   padding?: number;
   /**
-   * Decides which rendering engine that is to be used for the rendering.
+   * Decides which rendering engine is used for the diagram.
+   *
+   * `dagre` is the default. It selects the unified renderer; the layout
+   * algorithm is chosen separately with the `layout` option, so a diagram
+   * rendered with `defaultRenderer: dagre` is still laid out by ELK unless
+   * `layout: dagre` is set.
+   *
+   * `dagre-wrapper` and `dagre-d3` are the names this renderer went by in
+   * earlier versions. They are accepted as aliases of `dagre` and behave
+   * identically.
    *
    */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  defaultRenderer?: 'dagre' | 'dagre-wrapper' | 'dagre-d3' | 'elk';
   /**
    * Width of nodes where text is wrapped.
    *
@@ -1150,10 +1159,19 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   textHeight?: number;
   /**
-   * Decides which rendering engine that is to be used for the rendering.
+   * Decides which rendering engine is used for the diagram.
+   *
+   * `dagre` is the default. It selects the unified renderer; the layout
+   * algorithm is chosen separately with the `layout` option, so a diagram
+   * rendered with `defaultRenderer: dagre` is still laid out by ELK unless
+   * `layout: dagre` is set.
+   *
+   * `dagre-wrapper` and `dagre-d3` are the names this renderer went by in
+   * earlier versions. They are accepted as aliases of `dagre` and behave
+   * identically.
    *
    */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  defaultRenderer?: 'dagre' | 'dagre-wrapper' | 'dagre-d3' | 'elk';
   nodeSpacing?: number;
   rankSpacing?: number;
   /**
@@ -1256,10 +1274,19 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
   compositTitleSize?: number;
   radius?: number;
   /**
-   * Decides which rendering engine that is to be used for the rendering.
+   * Decides which rendering engine is used for the diagram.
+   *
+   * `dagre` is the default. It selects the unified renderer; the layout
+   * algorithm is chosen separately with the `layout` option, so a diagram
+   * rendered with `defaultRenderer: dagre` is still laid out by ELK unless
+   * `layout: dagre` is set.
+   *
+   * `dagre-wrapper` and `dagre-d3` are the names this renderer went by in
+   * earlier versions. They are accepted as aliases of `dagre` and behave
+   * identically.
    *
    */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
+  defaultRenderer?: 'dagre' | 'dagre-wrapper' | 'dagre-d3' | 'elk';
 }
 /**
  * The object containing configurations specific for entity relationship diagrams

@@ -44,29 +44,18 @@ describe('diagram-orchestration', () => {
     );
 
     it('should detect proper flowchart type based on config', () => {
-      // graph & dagre-d3 => flowchart
+      // graph without a configured renderer => legacy flowchart id
       expect(detectType('graph TD; A-->B')).toBe('flowchart');
-      // graph & dagre-d3 => flowchart
-      expect(detectType('graph TD; A-->B', { flowchart: { defaultRenderer: 'dagre-d3' } })).toBe(
-        'flowchart'
+      // graph & dagre => flowchart-v2
+      expect(detectType('graph TD; A-->B', { flowchart: { defaultRenderer: 'dagre' } })).toBe(
+        'flowchart-v2'
       );
-      // flowchart & dagre-d3 => error
-      expect(() =>
-        detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre-d3' } })
-      ).toThrowErrorMatchingInlineSnapshot(
-        `[UnknownDiagramError: No diagram type detected matching given configuration for text: flowchart TD; A-->B]`
-      );
-
-      // graph & dagre-wrapper => flowchart-v2
-      expect(
-        detectType('graph TD; A-->B', { flowchart: { defaultRenderer: 'dagre-wrapper' } })
-      ).toBe('flowchart-v2');
       // flowchart ==> flowchart-v2
       expect(detectType('flowchart TD; A-->B')).toBe('flowchart-v2');
-      // flowchart && dagre-wrapper ==> flowchart-v2
-      expect(
-        detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre-wrapper' } })
-      ).toBe('flowchart-v2');
+      // flowchart && dagre ==> flowchart-v2
+      expect(detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'dagre' } })).toBe(
+        'flowchart-v2'
+      );
       // flowchart && elk ==> flowchart-elk
       expect(detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: 'elk' } })).toBe(
         'flowchart-elk'
@@ -76,11 +65,35 @@ describe('diagram-orchestration', () => {
       );
     });
 
-    it('should detect class diagram v2 when dagre-wrapper is the class renderer', () => {
-      expect(detectType('classDiagram', { class: { defaultRenderer: 'dagre-wrapper' } })).toBe(
-        'classDiagram'
-      );
-    });
+    it.each(['dagre-wrapper', 'dagre-d3'] as const)(
+      'should treat the %s renderer as an alias of dagre for flowcharts',
+      (renderer) => {
+        expect(detectType('graph TD; A-->B', { flowchart: { defaultRenderer: renderer } })).toBe(
+          'flowchart-v2'
+        );
+        expect(
+          detectType('flowchart TD; A-->B', { flowchart: { defaultRenderer: renderer } })
+        ).toBe('flowchart-v2');
+      }
+    );
+
+    it.each(['dagre', 'dagre-wrapper', 'dagre-d3'] as const)(
+      'should detect class diagram v2 when %s is the class renderer',
+      (renderer) => {
+        expect(detectType('classDiagram', { class: { defaultRenderer: renderer } })).toBe(
+          'classDiagram'
+        );
+      }
+    );
+
+    it.each(['dagre', 'dagre-wrapper', 'dagre-d3'] as const)(
+      'should detect state diagram v2 when %s is the state renderer',
+      (renderer) => {
+        expect(
+          detectType('stateDiagram\n  [*] --> A', { state: { defaultRenderer: renderer } })
+        ).toBe('stateDiagram');
+      }
+    );
 
     it('should not detect flowchart if pie contains flowchart', () => {
       expect(

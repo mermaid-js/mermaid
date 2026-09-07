@@ -1746,17 +1746,27 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 5
       defaultRenderer:
         description: |
-          Decides which rendering engine that is to be used for the rendering.
+          Decides which rendering engine is used for the diagram.
+
+          `dagre` is the default. It selects the unified renderer; the layout
+          algorithm is chosen separately with the `layout` option, so a diagram
+          rendered with `defaultRenderer: dagre` is still laid out by ELK unless
+          `layout: dagre` is set.
+
+          `dagre-wrapper` and `dagre-d3` are the names this renderer went by in
+          earlier versions. They are accepted as aliases of `dagre` and behave
+          identically.
         type: string
         enum:
-          - dagre-d3
+          - dagre
           - dagre-wrapper
+          - dagre-d3
           - elk
-        # todo, check this, old docs said dagre-d3 even though value was dagre-wrapper
-        default: dagre-wrapper
+        default: dagre
         meta:enum:
-          dagre-d3: The [dagre-d3-es](https://www.npmjs.com/package/dagre-d3-es) library.
-          dagre-wrapper: wrapper for dagre implemented in mermaid
+          dagre: The unified renderer (default).
+          dagre-wrapper: Alias of `dagre`, kept for backwards compatibility.
+          dagre-d3: Alias of `dagre`, kept for backwards compatibility.
           elk: Layout using [elkjs](https://github.com/kieler/elkjs)
 
   ClassDiagramConfig:
@@ -1791,7 +1801,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 10
       defaultRenderer:
         $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
-        default: dagre-wrapper
+        default: dagre
       nodeSpacing:
         type: integer
         minimum: 0
@@ -2604,7 +2614,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         default: 15
       defaultRenderer:
         $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
-        default: dagre-wrapper
+        default: dagre
       wrappingWidth:
         description: |
           Width of nodes where text is wrapped.

@@ -3,13 +3,14 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
+import { resolveDefaultRenderer } from '../../diagram-api/defaultRenderer.js';
 
 const id = 'state';
 
 const detector: DiagramDetector = (txt, config) => {
-  // If we have confirmed to only use new state diagrams this function should always return false
-  // as in not signalling true for a legacy state diagram
-  if (config?.state?.defaultRenderer === 'dagre-wrapper') {
+  // Any configured renderer (`dagre` with its aliases, or `elk`) routes `stateDiagram` code
+  // to the unified state diagram, so this legacy id only applies when none is configured.
+  if (resolveDefaultRenderer(config?.state?.defaultRenderer) !== undefined) {
     return false;
   }
   return /^\s*stateDiagram/.test(txt);

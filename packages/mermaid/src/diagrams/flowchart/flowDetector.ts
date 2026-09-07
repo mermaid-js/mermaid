@@ -3,16 +3,14 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
+import { resolveDefaultRenderer } from '../../diagram-api/defaultRenderer.js';
 
 const id = 'flowchart';
 
 const detector: DiagramDetector = (txt, config) => {
-  // If we have conferred to only use new flow charts this function should always return false
-  // as in not signalling true for a legacy flowchart
-  if (
-    config?.flowchart?.defaultRenderer === 'dagre-wrapper' ||
-    config?.flowchart?.defaultRenderer === 'elk'
-  ) {
+  // Any configured renderer (`dagre` with its aliases, or `elk`) routes `graph` code to the
+  // unified flowchart, so this legacy id only applies when no renderer is configured.
+  if (resolveDefaultRenderer(config?.flowchart?.defaultRenderer) !== undefined) {
     return false;
   }
   return /^\s*graph/.test(txt);

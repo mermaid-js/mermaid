@@ -21,6 +21,14 @@ cose-bilkent unless you ask for something else.
 The **tiny** build omits ELK to stay small, and falls back to Dagre for
 diagrams that request it.
 
+## Layout versus renderer
+
+`layout` picks the layout algorithm from the list above. It is separate from
+the `defaultRenderer` option of the `flowchart`, `class` and `state` config
+sections, which picks the rendering engine. `defaultRenderer` defaults to
+`dagre`, the unified renderer; `dagre-wrapper` and `dagre-d3` are accepted as
+aliases of `dagre`. To lay a diagram out with Dagre, set `layout: dagre`.
+
 ## How to Use
 
 Since `elk` is the default, a diagram needs no configuration to use it. To pick

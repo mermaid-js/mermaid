@@ -3,20 +3,20 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
+import { resolveDefaultRenderer } from '../../diagram-api/defaultRenderer.js';
 
 const id = 'flowchart-v2';
 
 const detector: DiagramDetector = (txt, config) => {
-  if (config?.flowchart?.defaultRenderer === 'dagre-d3') {
-    return false;
-  }
+  const renderer = resolveDefaultRenderer(config?.flowchart?.defaultRenderer);
 
-  if (config?.flowchart?.defaultRenderer === 'elk') {
+  if (renderer === 'elk' && config) {
     config.layout = 'elk';
   }
 
-  // If we have configured to use dagre-wrapper then we should return true in this function for graph code thus making it use the new flowchart diagram
-  if (/^\s*graph/.test(txt) && config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
+  // `graph` code renders with the unified flowchart as soon as a renderer is configured
+  // (`dagre` and its aliases, or `elk`); without one it falls to the legacy `flowchart` id.
+  if (/^\s*graph/.test(txt) && renderer !== undefined) {
     return true;
   }
   return /^\s*flowchart/.test(txt);
