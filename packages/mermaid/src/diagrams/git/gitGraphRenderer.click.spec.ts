@@ -48,12 +48,18 @@ describe('GitGraph Click Events (Rendering)', () => {
     // @ts-ignore - partial diagram object for testing
     await draw(diagram, svgId, '1.0', { db, type: 'gitGraph' });
 
-    const anchor = svg.select('a');
-    expect(anchor.empty()).toBe(false);
-    expect(anchor.attr('href')).toBe('https://example.com');
-    expect(anchor.attr('xlink:href')).toBe('https://example.com');
-    expect(anchor.attr('rel')).toBe('noopener noreferrer');
-    expect(anchor.select('title').text()).toBe('Tooltip');
+    const anchors = svg.selectAll('a');
+    expect(anchors.size()).toBe(2);
+    for (const selector of ['circle', 'text.commit-label']) {
+      const anchor = anchors.filter(function () {
+        return select(this).select(selector).node() !== null;
+      });
+      expect(anchor.size()).toBe(1);
+      expect(anchor.attr('href')).toBe('https://example.com');
+      expect(anchor.attr('xlink:href')).toBe('https://example.com');
+      expect(anchor.attr('rel')).toBe('noopener noreferrer');
+      expect(anchor.select('title').text()).toBe('Tooltip');
+    }
     expect(svg.select('.commit.clickable').empty()).toBe(false);
   });
 
@@ -111,12 +117,39 @@ describe('GitGraph Click Events (Rendering)', () => {
 
     const anchors = svg.selectAll('a');
     expect(anchors.size()).toBe(2);
-    anchors.each(function () {
-      const anchor = select(this);
-      expect(anchor.attr('href')).toBe(anchor.attr('xlink:href'));
+    const branchAnchor = anchors.filter(function () {
+      return select(this).select('.branchLabel.clickable').node() !== null;
     });
+    expect(branchAnchor.size()).toBe(1);
+    expect(branchAnchor.attr('href')).toBe('https://example.com/branch');
+    expect(branchAnchor.attr('xlink:href')).toBe('https://example.com/branch');
+    const tagAnchor = anchors.filter(function () {
+      return select(this).select('.tag.clickable').node() !== null;
+    });
+    expect(tagAnchor.size()).toBe(1);
+    expect(tagAnchor.attr('href')).toBe('https://example.com/tag');
+    expect(tagAnchor.attr('xlink:href')).toBe('https://example.com/tag');
     expect(svg.select('.branchLabel.clickable').empty()).toBe(false);
     expect(svg.select('.tag.clickable').empty()).toBe(false);
+  });
+
+  it('should suppress unsafe URLs after formatUrl sanitization', async () => {
+    setSiteConfig({ securityLevel: 'antiscript' });
+    reset();
+    const diagram = `
+      gitGraph
+        commit id: "c1"
+        click commit "c1" "javascript:alert(1)"
+    `;
+    await parser.parse(diagram);
+    const svgId = 'gitgraph-unsafe-url-test';
+    const svg = select(container).append('svg').attr('id', svgId);
+
+    // @ts-ignore - partial diagram object for testing
+    await draw(diagram, svgId, '1.0', { db, type: 'gitGraph' });
+
+    expect(svg.select('a').empty()).toBe(true);
+    expect(svg.select('.clickable').empty()).toBe(true);
   });
 
   it('should ignore invalid targets at runtime', async () => {
