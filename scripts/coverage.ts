@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { cp } from 'fs/promises';
 
 const main = async () => {
@@ -12,8 +12,16 @@ const main = async () => {
     coverageFiles.map((file) => cp(file, `${coverageDir}/combined/${file.split('/')[1]}.json`))
   );
 
-  execSync('npx nyc merge coverage/combined coverage/combined-final.json');
-  execSync('npx nyc report -t coverage --report-dir coverage/html --reporter=html-spa');
+  execFileSync('npx', ['nyc', 'merge', 'coverage/combined', 'coverage/combined-final.json']);
+  execFileSync('npx', [
+    'nyc',
+    'report',
+    '-t',
+    'coverage',
+    '--report-dir',
+    'coverage/html',
+    '--reporter=html-spa',
+  ]);
 };
 
 void main();
