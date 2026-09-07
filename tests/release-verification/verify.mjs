@@ -72,6 +72,13 @@ for (const [id, file, title] of PAGES) {
       failed++;
     }
   }
+  // The page's own verdict, asserted rather than merely waited on: a page that
+  // reported `ok: false` without a failing check or an error would otherwise
+  // pass silently.
+  if (result.ok !== true) {
+    console.log('   FAIL  page reported ok: false');
+    failed++;
+  }
   if (result.error) {
     console.log(`   ERROR ${result.error}`);
     failed++;

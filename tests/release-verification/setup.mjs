@@ -24,7 +24,7 @@
  * rebuilt tarball keeps the same version, which quietly tests stale artifacts.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,27 +49,55 @@ const PKGS = join(ROOT, 'pkgs');
 rmSync(PKGS, { recursive: true, force: true });
 mkdirSync(PKGS, { recursive: true });
 
-// `mermaid` is the directory the pages import from; `spec` is what to fetch.
+/**
+ * `dir` is where the pages import from, `workspace` is the folder to pack from a
+ * checkout, and `published` is the name to fetch from a registry.
+ *
+ * `mermaid` is published as `@mermaid-js/mermaid` — GitHub Packages requires an
+ * org scope — so the two modes pack different *names* for the same package and
+ * produce differently named tarballs.
+ */
 const TARGETS = [
-  { dir: 'mermaid', workspace: 'mermaid', published: '@mermaid-js/mermaid', match: /^mermaid-\d/ },
+  { dir: 'mermaid', workspace: 'mermaid', published: '@mermaid-js/mermaid' },
   {
     dir: join('@mermaid-js', 'layout-elk'),
     workspace: 'mermaid-layout-elk',
     published: '@mermaid-js/layout-elk',
-    match: /^mermaid-js-layout-elk-/,
   },
-  {
-    dir: join('@mermaid-js', 'tiny'),
-    workspace: 'tiny',
-    published: '@mermaid-js/tiny',
-    match: /^mermaid-js-tiny-/,
-  },
+  { dir: join('@mermaid-js', 'tiny'), workspace: 'tiny', published: '@mermaid-js/tiny' },
 ];
+
+/**
+ * Locate the tarball npm just wrote for `packageName`.
+ *
+ * npm names it after the package it packed, with the scope flattened:
+ * `@mermaid-js/layout-elk` becomes `mermaid-js-layout-elk-<version>.tgz`.
+ * Derived from the name rather than matched with a hand-written pattern,
+ * because the two modes pack different names — a pattern for
+ * `mermaid-<version>` silently misses `mermaid-js-mermaid-<version>`.
+ *
+ * The version must follow immediately, or the prefix for `mermaid` would also
+ * match `mermaid-js-tiny-…` and pick whichever `readdir` happened to return
+ * first.
+ */
+const findTarball = (files, packageName) => {
+  const prefix = `${packageName.replace(/^@/, '').replace(/\//g, '-')}-`;
+  const tarball = files.find(
+    (f) => f.startsWith(prefix) && /^\d/.test(f.slice(prefix.length)) && f.endsWith('.tgz')
+  );
+  if (!tarball) {
+    throw new Error(`no tarball for '${packageName}' (expected '${prefix}<version>.tgz')`);
+  }
+  return tarball;
+};
 
 for (const target of TARGETS) {
   if (checkout) {
-    run('pnpm', ['pack', '--pack-destination', PKGS], join(checkout, 'packages', target.workspace));
+    const pkgDir = join(checkout, 'packages', target.workspace);
+    target.packed = JSON.parse(readFileSync(join(pkgDir, 'package.json'), 'utf8')).name;
+    run('pnpm', ['pack', '--pack-destination', PKGS], pkgDir);
   } else {
+    target.packed = target.published;
     run(
       'npm',
       ['pack', `${target.published}@${version}`, ...(registry ? ['--registry', registry] : [])],
@@ -78,11 +106,9 @@ for (const target of TARGETS) {
   }
 }
 
+const packed = readdirSync(PKGS);
 for (const target of TARGETS) {
-  const tarball = readdirSync(PKGS).find((f) => target.match.test(f));
-  if (!tarball) {
-    throw new Error(`no tarball matching ${target.match} in ${PKGS}`);
-  }
+  const tarball = findTarball(packed, target.packed);
   const dest = join(MODULES, target.dir);
   rmSync(dest, { recursive: true, force: true });
   mkdirSync(dest, { recursive: true });

@@ -112,31 +112,19 @@ The tiny build has never included ELK, and still doesn't — it is a large depen
 
 What changed in v<MERMAID_RELEASE_VERSION> is the main package, not this one: ELK used to be an opt-in `@mermaid-js/layout-elk` install, and is now bundled with `mermaid` and used by default. So **if you want a Mermaid without ELK, the tiny build is the way to get one** — it is no longer simply a matter of not installing the layout package.
 
-If you want the tiny build _and_ ELK, install the layout package and register it. It continues to be published for exactly this case:
-
-```bash
-npm install @mermaid-js/tiny @mermaid-js/layout-elk
-```
+If you want the tiny build _and_ ELK, register `@mermaid-js/layout-elk` alongside it. That package continues to be published for exactly this case:
 
 ```html
-<script src="/path/to/mermaid.tiny.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mermaid-js/tiny/dist/mermaid.tiny.js"></script>
 <script type="module">
-  import elkLayouts from '/path/to/mermaid-layout-elk.esm.min.mjs';
+  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk/dist/mermaid-layout-elk.esm.min.mjs';
 
-  // The tiny build is an IIFE, so `mermaid` is a global rather than an import.
+  // The tiny build is an IIFE that assigns `globalThis.mermaid`, so it is loaded
+  // with a plain `<script>` tag and used as a global — there is no default
+  // export to import.
   mermaid.registerLayoutLoaders(elkLayouts);
   mermaid.initialize({ startOnLoad: true, layout: 'elk' });
 </script>
-```
-
-With a bundler it is the same two calls:
-
-```js
-import mermaid from '@mermaid-js/tiny';
-import elkLayouts from '@mermaid-js/layout-elk';
-
-mermaid.registerLayoutLoaders(elkLayouts);
-mermaid.initialize({ layout: 'elk' });
 ```
 
 Registering the package also makes the named ELK algorithms available — `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box` and `elk.rectpacking`. On a normal `mermaid` build you do not need this package at all: registering it is harmless but redundant, since the same layouts are already built in.
