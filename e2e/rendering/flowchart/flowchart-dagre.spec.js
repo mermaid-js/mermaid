@@ -93,8 +93,13 @@ test.describe('Flowchart Dagre', () => {
       `,
       { flowchart: { defaultRenderer: 'dagre' } }
     );
+    // `.edgePaths`, not `.edges`: only ELK tags the edge group with both classes,
+    // so an `.edges` selector matches nothing here and the loop passes vacuously.
     await page.locator('svg').evaluate((svg) => {
-      const edges = svg.querySelectorAll('.edges > path');
+      const edges = svg.querySelectorAll('.edgePaths > path');
+      if (edges.length !== 3) {
+        throw new Error(`Expected 3 edges, found ${edges.length}`);
+      }
       for (const edge of edges) {
         if (!edge.classList.contains('flowchart-link')) {
           throw new Error('Expected flowchart-link class on edge');
@@ -135,7 +140,7 @@ test.describe('Title and arrow styling #4813', () => {
       { flowchart: { defaultRenderer: 'dagre' } }
     );
     await page.locator('svg').evaluate((svg) => {
-      const edges = svg.querySelectorAll('.edges path');
+      const edges = svg.querySelectorAll('.edgePaths path');
       const classes = [
         'edge-pattern-solid',
         'edge-pattern-dotted',
