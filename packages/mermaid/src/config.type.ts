@@ -469,11 +469,11 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * value sets the max width of a text before it continues on a new line.
    *
    * The flowchart shapes stadium (`terminal`, `pill`), circle (`circ`),
-   * diamond (`diam`, `decision`, `question`), double circle (`dbl-circ`),
-   * Display (`curv-trap`, `curved-trapezoid`) and Delay
-   * (`half-rounded-rectangle`) do not wrap automatically; only explicit
-   * line breaks split their labels. An explicit node width still takes
-   * precedence.
+   * diamond (`diam`, `decision`, `question`), double circle (`dbl-circ`,
+   * `double-circle`), Display (`curv-trap`, `curved-trapezoid`,
+   * `display`) and Delay (`delay`, `half-rounded-rectangle`) do not wrap
+   * automatically; only explicit line breaks split their labels. An
+   * explicit node width still takes precedence.
    *
    */
   wrappingWidth?: number;
@@ -2352,11 +2352,11 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    * value sets the max width of a text before it continues on a new line.
    *
    * The flowchart shapes stadium (`terminal`, `pill`), circle (`circ`),
-   * diamond (`diam`, `decision`, `question`), double circle (`dbl-circ`),
-   * Display (`curv-trap`, `curved-trapezoid`) and Delay
-   * (`half-rounded-rectangle`) do not wrap automatically; only explicit
-   * line breaks split their labels. An explicit node width still takes
-   * precedence.
+   * diamond (`diam`, `decision`, `question`), double circle (`dbl-circ`,
+   * `double-circle`), Display (`curv-trap`, `curved-trapezoid`,
+   * `display`) and Delay (`delay`, `half-rounded-rectangle`) do not wrap
+   * automatically; only explicit line breaks split their labels. An
+   * explicit node width still takes precedence.
    *
    */
   wrappingWidth?: number;

@@ -1127,6 +1127,8 @@ config:
 graph LR
 ```
 
+Some shapes never wrap their labels automatically, so only explicit line breaks split them; the `flowchart.wrappingWidth` configuration option lists them.
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
