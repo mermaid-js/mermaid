@@ -6,6 +6,10 @@
  *
  *   pnpm run argos:upload-sheets
  *   SHEETS_DIR=e2e/sheets ARGOS_SUBSET=true pnpm run argos:upload-sheets
+ *
+ * ARGOS_PROJECT (account/project slug) is read by the Argos CLI itself and is
+ * required in CI, where two Argos projects are linked to this repository and
+ * tokenless authentication is otherwise ambiguous.
  */
 
 import { spawnSync } from 'node:child_process';
