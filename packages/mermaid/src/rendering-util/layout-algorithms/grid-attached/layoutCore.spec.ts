@@ -94,6 +94,40 @@ function rectOf(node: Node): Rect {
   };
 }
 
+/** A non-incident orthogonal edge must never enter a node's interior. */
+function edgePassesThroughNode(data: LayoutData, edgeId: string, nodeId: string): boolean {
+  const edge = data.edges.find((candidate) => candidate.id === edgeId);
+  const node = data.nodes.find((candidate) => candidate.id === nodeId);
+  if (!edge || !node) {
+    return false;
+  }
+  const rect = rectOf(node);
+  const points = edge.points ?? [];
+  for (let index = 1; index < points.length; index++) {
+    const a = points[index - 1];
+    const b = points[index];
+    if (Math.abs(a.x - b.x) < 1e-6) {
+      if (
+        a.x > rect.minX + 1e-6 &&
+        a.x < rect.maxX - 1e-6 &&
+        Math.min(a.y, b.y) < rect.maxY - 1e-6 &&
+        Math.max(a.y, b.y) > rect.minY + 1e-6
+      ) {
+        return true;
+      }
+    } else if (
+      Math.abs(a.y - b.y) < 1e-6 &&
+      a.y > rect.minY + 1e-6 &&
+      a.y < rect.maxY - 1e-6 &&
+      Math.min(a.x, b.x) < rect.maxX - 1e-6 &&
+      Math.max(a.x, b.x) > rect.minX + 1e-6
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function overlaps(a: Rect, b: Rect, epsilon = 1e-6): boolean {
   return (
     a.minX < b.maxX - epsilon &&
@@ -869,12 +903,11 @@ describe('grid-attached layout', () => {
   });
 
   /**
-   * A four-node loop with a big tree on one corner and a small one on the next. At
-   * grid-like's own scale the two corners are close enough that the two trees'
-   * connectors cross; the room to separate them is exactly what stretching the loop's
-   * edges buys, so the ladder should spend it rather than leave the crossing.
+   * The smaller tree on C3 needs the vertical corridor currently occupied by a
+   * branch of C2's tree. Enlarging the four-cycle separates those root corridors;
+   * routing the C3 connector through C2_12 is never an acceptable shortcut.
    */
-  it('stretches the core rather than leave two trees crossing each other', () => {
+  it('enlarges the core to keep a tree connector out of another tree node', () => {
     // HOLA's four-node loop with trees, node for node: a big deep tree on `C4` and a
     // small one on the neighbouring `C3`, whose two corners of the loop sit close
     // together with both trees wanting the space between them.
@@ -913,7 +946,10 @@ describe('grid-attached layout', () => {
           'C4_221',
           'C4_1111',
           'C4_1121',
-        ].map((id) => node(id, { width: 100, height: 54 })),
+          // Browser-captured classic-flowchart sizes for this exact fixture. The
+          // identifier length changes the rendered label width, which is precisely
+          // what narrows the C2/C3 corridor enough to expose the regression.
+        ].map((id) => node(id, { width: 61.1875 + id.length * 8.390625, height: 54 })),
         [
           edge('C1', 'C2'),
           edge('C2', 'C3'),
@@ -950,50 +986,15 @@ describe('grid-attached layout', () => {
         ]
       );
 
-    const crossings = (data: LayoutData): number => {
-      const segments: { id: string; a: Point; b: Point }[] = [];
-      for (const e of data.edges) {
-        const points = e.points ?? [];
-        for (let i = 1; i < points.length; i++) {
-          segments.push({ id: e.id, a: points[i - 1], b: points[i] });
-        }
-      }
-      let count = 0;
-      for (let i = 0; i < segments.length; i++) {
-        for (let j = i + 1; j < segments.length; j++) {
-          const p = segments[i];
-          const q = segments[j];
-          if (p.id === q.id) {
-            continue;
-          }
-          const r = { x: p.b.x - p.a.x, y: p.b.y - p.a.y };
-          const s2 = { x: q.b.x - q.a.x, y: q.b.y - q.a.y };
-          const den = r.x * s2.y - r.y * s2.x;
-          if (Math.abs(den) < 1e-9) {
-            continue;
-          }
-          const d = { x: q.a.x - p.a.x, y: q.a.y - p.a.y };
-          const t = (d.x * s2.y - d.y * s2.x) / den;
-          const u = (d.x * r.y - d.y * r.x) / den;
-          if (t <= 1e-6 || t >= 1 - 1e-6 || u <= 1e-6 || u >= 1 - 1e-6) {
-            continue;
-          }
-          count++;
-        }
-      }
-      return count;
-    };
-
     const cramped = loop();
     const crampedResult = runGridAttachedLayoutCore(cramped, { maxCoreScale: 1 });
     const stretched = loop();
     const stretchedResult = runGridAttachedLayoutCore(stretched);
 
-    // Denied the room, the drawing has crossings; given it, the ladder spends it.
     expect(crampedResult.components[0].coreScale).toBe(1);
-    expect(crossings(cramped)).toBeGreaterThan(0);
+    expect(edgePassesThroughNode(cramped, 'C3-C3_1', 'C2_12')).toBe(true);
     expect(stretchedResult.components[0].coreScale).toBeGreaterThan(1);
-    expect(crossings(stretched)).toBeLessThan(crossings(cramped));
+    expect(edgePassesThroughNode(stretched, 'C3-C3_1', 'C2_12')).toBe(false);
 
     // And it really is the core's own edges that got longer, by one common factor.
     const before = nodeById(cramped);

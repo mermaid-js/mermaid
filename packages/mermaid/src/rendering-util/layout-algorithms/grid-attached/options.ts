@@ -30,6 +30,14 @@ export interface GridAttachedOptions extends GridLikeOptions {
    */
   treeFanPortSpacing: number;
   /**
+   * Keep a rounded tree connector's two turns away from either node when a comb
+   * lane would otherwise leave only a tiny terminal stub.
+   *
+   * Disabled for the base layout to preserve its exact comb geometry; enabled by
+   * the subgraph variant, whose renderer draws rounded corners.
+   */
+  roundShortTerminalTurns: boolean;
+  /**
    * Clear distance between two levels of a fan's nested comb, and so also between
    * the last level and the rank it arrives at.
    *
@@ -182,6 +190,7 @@ export function resolveGridAttachedOptions(
     // from each other, or the drawing reads as one blob.
     treeClearance: overrides?.treeClearance ?? base.nodeSpacing,
     treeFanPortSpacing: overrides?.treeFanPortSpacing ?? 14,
+    roundShortTerminalTurns: overrides?.roundShortTerminalTurns ?? false,
     treeBendSpacing: overrides?.treeBendSpacing ?? 16,
 
     favourCardinalPlacement: overrides?.favourCardinalPlacement ?? true,

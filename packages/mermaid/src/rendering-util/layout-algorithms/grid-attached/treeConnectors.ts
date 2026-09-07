@@ -46,7 +46,14 @@
  */
 
 import type { Point } from '../../../types.js';
-import type { Cardinal, HolaGraph, Rect, Side, Silhouette } from '../hola-faithful/model.js';
+import type {
+  Cardinal,
+  Direction,
+  HolaGraph,
+  Rect,
+  Side,
+  Silhouette,
+} from '../hola-faithful/model.js';
 import { oppositeSide, sideOfCardinal } from '../hola-faithful/model.js';
 import { silhouetteBand, silhouettePort } from '../hola-faithful/adapter/silhouette.js';
 import { spreadPorts } from '../hola-faithful/routing/finalRouting.js';
@@ -77,6 +84,8 @@ export interface TreeRouteRequest {
   tree: DecomposedTree;
   /** The tree at its final position, root copy included. */
   transformed: TreeLayout;
+  /** Face direction selected for the tree at its core root. */
+  placementDirection?: Direction;
   /**
    * Rectangle standing in for the tree's copied root. The copy *is* the core node,
    * so the first rank's connectors start on the core node's own boundary. For a
@@ -113,26 +122,36 @@ export function routeComponentTrees(
    */
   reserved = new Map<string, number[]>()
 ): TreeConnector[] {
-  const legs = requests.flatMap((request) => collectLegs(request));
+  const legs = requests.flatMap((request) => collectLegs(request, reserved));
   if (legs.length === 0) {
     return [];
   }
 
   assignPorts(legs, reserved, options);
+  spreadRedirectedRootExits(legs);
+  separateRedirectedRootEntries(legs, options);
   for (const leg of legs) {
-    leg.points = routeRankEdgeTowards(
-      portedRect(leg.parent, leg.parentPort, leg.growth),
-      portedRect(leg.child, leg.childPort, leg.growth),
-      leg.growth,
-      leg.rankGap
-    );
+    leg.points = leg.redirectedRoot
+      ? routeRedirectedRoot(leg)
+      : routeRankEdgeTowards(
+          portedRect(leg.parent, leg.parentPort, leg.growth),
+          portedRect(leg.child, leg.childPort, leg.growth),
+          leg.growth,
+          leg.rankGap
+        );
   }
   assignTurns(legs, options);
   // Last, so the comb above reasoned about the bounding-box spans every leg shares.
   // Moving a terminal onto its shape only lengthens the leg it is on: it slides
   // *inwards* along the approach axis, away from the bend, never past it.
   for (const leg of legs) {
-    insetTerminals(leg);
+    if (!leg.redirectedRoot) {
+      insetTerminals(leg);
+    }
+  }
+  escapeSaturatedRootPorts(legs, reserved, options);
+  if (options.roundShortTerminalTurns) {
+    centreShortTerminalTurns(legs, 2 * options.treeBendSpacing);
   }
 
   return legs.map((leg) => ({
@@ -174,7 +193,11 @@ interface Leg {
   fromRoot: boolean;
   parent: ShapedRect;
   child: ShapedRect;
+  /** Direction the tree itself grows, before a root exit is redirected. */
+  treeGrowth: Cardinal;
   growth: Cardinal;
+  /** A root exit redirected onto its outward face, rather than tree growth. */
+  redirectedRoot: boolean;
   rankGap: number;
   /** Which fan this leg belongs to: one parent, one side. */
   fan: string;
@@ -184,7 +207,7 @@ interface Leg {
   points: Point[];
 }
 
-function collectLegs(request: TreeRouteRequest): Leg[] {
+function collectLegs(request: TreeRouteRequest, reserved: Map<string, number[]>): Leg[] {
   const { tree, transformed, rootRect, growth, rankGap } = request;
   const rooted = rootTree(tree.graph, tree.rootCopyId);
   const rectOf = (id: string): ShapedRect | undefined => {
@@ -220,6 +243,15 @@ function collectLegs(request: TreeRouteRequest): Leg[] {
       if (!child) {
         continue;
       }
+      // The placement's growth direction describes the whole tree, but a root
+      // connector may leave a different side after a corner placement. Prefer the
+      // outward face side when it is free of core edges. This keeps the terminal run
+      // perpendicular to the node boundary and avoids an avoidable bend across a
+      // core edge. When every core side is taken, retain the tree growth direction
+      // as the deliberate congested-node fallback.
+      const legGrowth = fromRoot
+        ? rootExitDirection(parentId, request.placementDirection, growth, reserved)
+        : growth;
       // A bundle of parallel edges between the same pair becomes several legs, so
       // each gets its own port at both ends instead of being drawn once on top of
       // itself.
@@ -237,11 +269,13 @@ function collectLegs(request: TreeRouteRequest): Leg[] {
           fromRoot,
           parent,
           child,
-          growth,
+          treeGrowth: growth,
+          growth: legGrowth,
+          redirectedRoot: fromRoot && legGrowth !== growth,
           rankGap,
-          fan: `${parentId}|${growth}`,
-          parentPort: across(parent, growth),
-          childPort: across(child, growth),
+          fan: `${parentId}|${legGrowth}`,
+          parentPort: across(parent, legGrowth),
+          childPort: across(child, legGrowth),
           points: [],
         });
       }
@@ -249,6 +283,43 @@ function collectLegs(request: TreeRouteRequest): Leg[] {
   }
 
   return legs;
+}
+
+/** Best orthogonal side for a root connector, without stealing a core edge's side. */
+function rootExitDirection(
+  parentId: string,
+  placement: Direction | undefined,
+  fallback: Cardinal,
+  reserved: Map<string, number[]>
+): Cardinal {
+  const sideIsFree = (direction: Cardinal): boolean =>
+    (reserved?.get(`${parentId}|${sideOfCardinal(direction)}`)?.length ?? 0) === 0;
+
+  // For a corner placement, the vertical component is preferred. It gives an
+  // immediately vertical terminal run for the common north/south tree stacks;
+  // the other component remains a free-side fallback. This is how an NW tree at
+  // E leaves its top rather than needlessly crossing D's east-west core edge.
+  const preferred: Cardinal[] =
+    placement === 'NE'
+      ? ['N', 'E']
+      : placement === 'NW'
+        ? ['N', 'W']
+        : placement === 'SE'
+          ? ['S', 'E']
+          : placement === 'SW'
+            ? ['S', 'W']
+            : placement
+              ? [placement]
+              : [fallback];
+  for (const direction of preferred) {
+    if (sideIsFree(direction)) {
+      return direction;
+    }
+  }
+  if (sideIsFree(fallback)) {
+    return fallback;
+  }
+  return fallback;
 }
 
 function vertical(growth: Cardinal): boolean {
@@ -294,6 +365,111 @@ function insetTerminals(leg: Leg): void {
       leg.childPort - across(leg.child, leg.growth)
     );
   }
+}
+
+/**
+ * A root redirected onto a free core face leaves that face along its own axis,
+ * then joins the tree using the tree's original approach side. For example, an F
+ * tree that normally grows west can leave F's bottom, run down in a parallel fan,
+ * then enter each F child from its right. The only bend is at the child rank, so
+ * the long trunks remain straight and evenly spaced beside the core.
+ */
+function routeRedirectedRoot(leg: Leg): Point[] {
+  const parentSide = sideOfCardinal(leg.growth);
+  const childSide = oppositeSide(sideOfCardinal(leg.treeGrowth));
+  const start = sidePort(leg.parent, parentSide, leg.parentPort - across(leg.parent, leg.growth));
+  // Each child receives its natural tree-facing port. Its rank gives every final
+  // run a separate coordinate, without making the root-side parallel trunks merge.
+  const end = sidePort(leg.child, childSide, 0);
+  const middle = vertical(leg.growth) ? { x: start.x, y: end.y } : { x: end.x, y: start.y };
+  return [start, middle, end];
+}
+
+/** Point on a rectangle's real silhouette, offset along the requested side. */
+function sidePort(rect: ShapedRect, side: Side, offset: number): Point {
+  if (rect.silhouette) {
+    return silhouettePort(rect.silhouette, rect, side, offset);
+  }
+  switch (side) {
+    case 'top':
+      return { x: rect.x + offset, y: rect.y - rect.height / 2 };
+    case 'bottom':
+      return { x: rect.x + offset, y: rect.y + rect.height / 2 };
+    case 'right':
+      return { x: rect.x + rect.width / 2, y: rect.y + offset };
+    case 'left':
+      return { x: rect.x - rect.width / 2, y: rect.y + offset };
+  }
+}
+
+/**
+ * A core node can have an edge on each of its four sides. If a root fan then has
+ * more connectors than the one remaining side can carry, its central member can
+ * still coincide with the core edge's port even after port spreading. A distinct
+ * corner is available, though: leave there diagonally into the fan's first free
+ * corridor, then resume the normal orthogonal comb. This is deliberately the one
+ * exception to orthogonal root terminals — it is only used for an actually
+ * saturated core node and only for the connector that would otherwise share a core
+ * port.
+ */
+function escapeSaturatedRootPorts(
+  legs: Leg[],
+  reserved: Map<string, number[]>,
+  options: GridAttachedOptions
+): void {
+  for (const leg of legs) {
+    if (
+      !leg.fromRoot ||
+      leg.redirectedRoot ||
+      leg.parent.silhouette ||
+      leg.points.length !== 4 ||
+      !allCoreSidesReserved(leg.parentId, reserved)
+    ) {
+      continue;
+    }
+    const side = sideOfCardinal(leg.growth);
+    const currentOffset = leg.parentPort - across(leg.parent, leg.growth);
+    const corePorts = reserved.get(`${leg.parentId}|${side}`) ?? [];
+    if (!corePorts.some((offset) => Math.abs(offset - currentOffset) < EPSILON)) {
+      continue;
+    }
+
+    const [, , second, end] = leg.points;
+    const clearance = Math.max(FAN_PORT_MARGIN, options.treeBendSpacing);
+    if (vertical(leg.growth)) {
+      const outward = Math.sign(second.x - leg.parent.x) || 1;
+      const corner = sidePort(
+        leg.parent,
+        outward > 0 ? 'right' : 'left',
+        (leg.growth === 'S' ? 1 : -1) * (leg.parent.height / 2 - FAN_PORT_MARGIN)
+      );
+      const horizontalGap = Math.abs(second.x - corner.x);
+      const escape = {
+        x: corner.x + outward * Math.min(clearance, horizontalGap / 2),
+        y: second.y,
+      };
+      leg.points = [corner, escape, second, end];
+    } else {
+      const outward = Math.sign(second.y - leg.parent.y) || 1;
+      const corner = sidePort(
+        leg.parent,
+        outward > 0 ? 'bottom' : 'top',
+        (leg.growth === 'E' ? 1 : -1) * (leg.parent.width / 2 - FAN_PORT_MARGIN)
+      );
+      const verticalGap = Math.abs(second.y - corner.y);
+      const escape = {
+        x: second.x,
+        y: corner.y + outward * Math.min(clearance, verticalGap / 2),
+      };
+      leg.points = [corner, escape, second, end];
+    }
+  }
+}
+
+function allCoreSidesReserved(nodeId: string, reserved: Map<string, number[]>): boolean {
+  return ['top', 'right', 'bottom', 'left'].every(
+    (side) => (reserved.get(`${nodeId}|${side}`)?.length ?? 0) > 0
+  );
 }
 
 /** The rectangle `routeRankEdgeTowards` should treat as the endpoint's own. */
@@ -346,6 +522,103 @@ function assignPorts(
     (leg) => reserved.get(`${leg.childId}|${oppositeSide(sideOfCardinal(leg.growth))}`) ?? [],
     options
   );
+}
+
+/**
+ * A root that leaves on a free outward face may approach a row/column of children
+ * from a direction different from the tree's own growth. Those children often have
+ * the same across-coordinate. Their ordinary one-edge port groups would therefore
+ * all choose their centres, making the rank-facing terminal runs coincide.
+ *
+ * Give that redirected root fan a small, ordered set of entry ports. The long runs
+ * next to the core are already separated by the parent fan; this keeps the short
+ * tree-facing runs separate as well, without moving a bend back toward the core.
+ */
+function separateRedirectedRootEntries(legs: Leg[], options: GridAttachedOptions): void {
+  const fans = new Map<string, Leg[]>();
+  for (const leg of legs) {
+    if (!leg.redirectedRoot) {
+      continue;
+    }
+    const group = fans.get(leg.fan);
+    if (group) {
+      group.push(leg);
+    } else {
+      fans.set(leg.fan, [leg]);
+    }
+  }
+
+  for (const fan of fans.values()) {
+    if (fan.length < 2) {
+      continue;
+    }
+    const ordered = [...fan].sort((a, b) => {
+      const delta = across(a.child, a.growth) - across(b.child, b.growth);
+      return delta !== 0 ? delta : a.originalEdgeId.localeCompare(b.originalEdgeId);
+    });
+    const middle = (ordered.length - 1) / 2;
+    ordered.forEach((leg, index) => {
+      const rect = leg.child;
+      const growth = leg.growth;
+      const sideLength = acrossExtent(rect, growth);
+      const centre = across(rect, growth);
+      const margin = Math.min(FAN_PORT_MARGIN, sideLength / 4);
+      const side = oppositeSide(sideOfCardinal(growth));
+      const band = rect.silhouette
+        ? silhouetteBand(rect.silhouette, rect, side)
+        : { min: -sideLength / 2, max: sideLength / 2 };
+      const low = centre + Math.max(-sideLength / 2 + margin, band.min);
+      const high = centre + Math.min(sideLength / 2 - margin, band.max);
+      const wanted = centre + (index - middle) * options.treeFanPortSpacing;
+      leg.childPort = Math.max(low, Math.min(high, wanted));
+    });
+  }
+}
+
+/**
+ * A redirected root fan has no child-position information along its new exit side:
+ * all of F's west-growing children, for example, ask for the same x on F's bottom.
+ * The generic port spread then clusters the exits around that one wish. Fill the
+ * free face instead, exactly as a regular dense fan does, so every long trunk is
+ * visibly distinct and every adjacent pair has the same pitch.
+ */
+function spreadRedirectedRootExits(legs: Leg[]): void {
+  const fans = new Map<string, Leg[]>();
+  for (const leg of legs) {
+    if (!leg.redirectedRoot) {
+      continue;
+    }
+    const group = fans.get(leg.fan);
+    if (group) {
+      group.push(leg);
+    } else {
+      fans.set(leg.fan, [leg]);
+    }
+  }
+
+  for (const fan of fans.values()) {
+    if (fan.length < 2) {
+      continue;
+    }
+    const root = fan[0].parent;
+    const growth = fan[0].growth;
+    const sideLength = acrossExtent(root, growth);
+    const centre = across(root, growth);
+    const margin = Math.min(FAN_PORT_MARGIN, sideLength / 4);
+    const band = root.silhouette
+      ? silhouetteBand(root.silhouette, root, sideOfCardinal(growth))
+      : { min: -sideLength / 2, max: sideLength / 2 };
+    const low = centre + Math.max(-sideLength / 2 + margin, band.min);
+    const high = centre + Math.min(sideLength / 2 - margin, band.max);
+    if (high <= low + EPSILON) {
+      continue;
+    }
+    const ordered = [...fan].sort((a, b) => a.originalEdgeId.localeCompare(b.originalEdgeId));
+    const pitch = (high - low) / (ordered.length - 1);
+    ordered.forEach((leg, index) => {
+      leg.parentPort = low + index * pitch;
+    });
+  }
 }
 
 function spreadGroups(
@@ -519,6 +792,10 @@ function assignTurns(legs: Leg[], options: GridAttachedOptions): void {
   for (const fan of fans.values()) {
     plans.push(...planFan(fan));
   }
+  const lanePitch = componentLanePitch(plans, options);
+  for (const plan of plans) {
+    plan.candidates = turnCandidates(plan, lanePitch);
+  }
 
   // Every run of every route counts as occupied, not just the turns. A connector
   // whose child is straight ahead is one long run with no turn at all, so it never
@@ -555,7 +832,13 @@ function assignTurns(legs: Leg[], options: GridAttachedOptions): void {
 
   // Bigger fans first: they have the most levels to fit and the least freedom to
   // give one up, so they get their preferred lines before anything else claims one.
+  // A redirected root is the exception: its outward terminal must stay straight
+  // beside the core, so reserve its child-facing bend lanes before ordinary fans
+  // can force that bend back into the core corridor.
   plans.sort((a, b) => {
+    if (a.anchorAtChild !== b.anchorAtChild) {
+      return a.anchorAtChild ? -1 : 1;
+    }
     if (a.levels !== b.levels) {
       return b.levels - a.levels;
     }
@@ -651,6 +934,15 @@ interface TurnPlan {
   /** Across-range the run covers, for the collision check. */
   from: number;
   to: number;
+  /** Coordinate and direction of the rank-facing terminal run. */
+  start: number;
+  sign: number;
+  /** Shortest available rank span in this fan. */
+  shortest: number;
+  /** This leg's own rank span. */
+  span: number;
+  /** Redirected root edges keep their long straight run next to the core. */
+  anchorAtChild: boolean;
   /** Turn coordinates to try, most preferred first. */
   candidates: number[];
 }
@@ -707,32 +999,6 @@ function planFan(fan: Leg[]): TurnPlan[] {
     const start = alongOf(leg, 0);
     const sign = Math.sign(alongOf(leg, 3) - start) || 1;
     const preferred = level.get(leg)!;
-    const at = (fraction: number): number => start + sign * shortest * fraction;
-
-    // Own level first, then the fan's other levels nearest to it, then the lines
-    // half way between them. Giving up a level costs a crossing inside the fan;
-    // keeping one that is already occupied costs two edges drawn as one line, which
-    // is worse.
-    const fractions = [preferred, ...others(preferred, levels)].map(
-      (candidate) => (candidate + 1) / (levels + 1)
-    );
-    const between = fractions.slice(1).map((fraction) => fraction - 0.5 / (levels + 1));
-
-    // A fan of one has a single level, so the two lists above offer it a single
-    // place to turn and it cannot move at all — which is how a lone connector ends
-    // up sharing a line with another tree's. These are the fallbacks: no longer the
-    // tidy nesting, but anywhere between the ranks beats being drawn as one line.
-    const anywhere = [0.5, 0.35, 0.65, 0.25, 0.75, 0.15, 0.85];
-
-    const seen = new Set<number>();
-    const candidates: number[] = [];
-    for (const fraction of [...fractions, ...between, ...anywhere]) {
-      const key = Math.round(fraction * 1e4);
-      if (fraction > 0 && fraction < 1 && !seen.has(key)) {
-        seen.add(key);
-        candidates.push(at(fraction));
-      }
-    }
 
     return {
       leg,
@@ -740,8 +1006,53 @@ function planFan(fan: Leg[]): TurnPlan[] {
       level: preferred,
       from: Math.min(leg.parentPort, leg.childPort),
       to: Math.max(leg.parentPort, leg.childPort),
-      candidates,
+      start,
+      sign,
+      shortest,
+      span: Math.abs(alongOf(leg, 3) - start),
+      anchorAtChild: leg.redirectedRoot,
+      candidates: [],
     };
+  });
+}
+
+/**
+ * One drawing uses one comb-lane pitch. The tightest fan limits it; roomy fans
+ * keep that pitch instead of spreading their turns across their entire rank gap.
+ */
+function componentLanePitch(plans: TurnPlan[], options: GridAttachedOptions): number {
+  if (plans.length === 0) {
+    return options.treeBendSpacing;
+  }
+  return Math.min(
+    options.treeBendSpacing,
+    ...plans.map((plan) => plan.shortest / (plan.levels + 1))
+  );
+}
+
+function turnCandidates(plan: TurnPlan, lanePitch: number): number[] {
+  // Own level first, then the fan's other levels nearest to it. Every primary lane
+  // has the same component-wide pitch, which makes adjacent bundles read as one
+  // regular routing grid rather than unrelated local fans.
+  const levels = [plan.level, ...others(plan.level, plan.levels)];
+  const anchor = plan.anchorAtChild ? alongOf(plan.leg, 3) : plan.start;
+  const direction = plan.anchorAtChild ? -plan.sign : plan.sign;
+  const lanes = levels.map((level) => anchor + direction * (level + 1) * lanePitch);
+  const between = lanes.slice(1).map((lane) => (lanes[0] + lane) / 2);
+
+  // A fan of one has only a single primary lane. These fallbacks trade local comb
+  // regularity for a non-overlapping route when another tree already occupies it.
+  const anywhere = [0.5, 0.35, 0.65, 0.25, 0.75, 0.15, 0.85].map(
+    (fraction) => plan.start + plan.sign * plan.span * fraction
+  );
+
+  const seen = new Set<number>();
+  return [...lanes, ...between, ...anywhere].filter((candidate) => {
+    const distance = Math.abs(candidate - plan.start);
+    const key = Math.round(candidate * 1e4);
+    return distance > EPSILON && distance < plan.span - EPSILON && !seen.has(key)
+      ? (seen.add(key), true)
+      : false;
   });
 }
 
@@ -784,6 +1095,50 @@ function applyTurn(leg: Leg, turn: number): void {
   leg.points = vertical(leg.growth)
     ? [start, { x: first.x, y: turn }, { x: second.x, y: turn }, end]
     : [start, { x: turn, y: first.y }, { x: turn, y: second.y }, end];
+}
+
+/**
+ * A rounded path needs room on both sides of each bend. The comb deliberately
+ * places its first lane close to the tree root; when Mermaid declared the edge in
+ * the opposite direction, that same lane becomes a short terminal stub at the
+ * arrowhead. Centre just those short, ordinary four-point routes so both corners
+ * can be rounded and the visible S-turn stays in the connector's middle corridor.
+ */
+function centreShortTerminalTurns(legs: Leg[], minimumTerminalRun: number): void {
+  for (const leg of legs) {
+    if (leg.redirectedRoot || leg.points.length !== 4) {
+      continue;
+    }
+    const [start, firstTurn, secondTurn, end] = leg.points;
+    const upright = vertical(leg.growth);
+    const aligned = upright
+      ? Math.abs(start.x - firstTurn.x) < EPSILON &&
+        Math.abs(firstTurn.y - secondTurn.y) < EPSILON &&
+        Math.abs(secondTurn.x - end.x) < EPSILON
+      : Math.abs(start.y - firstTurn.y) < EPSILON &&
+        Math.abs(firstTurn.x - secondTurn.x) < EPSILON &&
+        Math.abs(secondTurn.y - end.y) < EPSILON;
+    if (!aligned) {
+      continue;
+    }
+
+    const startAlong = upright ? start.y : start.x;
+    const endAlong = upright ? end.y : end.x;
+    const firstAlong = upright ? firstTurn.y : firstTurn.x;
+    const secondAlong = upright ? secondTurn.y : secondTurn.x;
+    const span = Math.abs(endAlong - startAlong);
+    const hasShortTerminal =
+      Math.abs(firstAlong - startAlong) < minimumTerminalRun ||
+      Math.abs(endAlong - secondAlong) < minimumTerminalRun;
+    if (!hasShortTerminal || span < 2 * minimumTerminalRun) {
+      continue;
+    }
+
+    const middle = (startAlong + endAlong) / 2;
+    leg.points = upright
+      ? [start, { x: firstTurn.x, y: middle }, { x: secondTurn.x, y: middle }, end]
+      : [start, { x: middle, y: firstTurn.y }, { x: middle, y: secondTurn.y }, end];
+  }
 }
 
 // ---------------------------------------------------------------------------

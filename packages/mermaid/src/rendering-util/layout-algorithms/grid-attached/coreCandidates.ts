@@ -45,6 +45,7 @@ import {
   countEdgeCrossings,
   countEdgesThroughForeignNodes,
 } from '../grid-decomposed/partQuality.js';
+import { X_AXIS, resolveFlowAxis } from '../ipsep-cola/adapter/constraints.js';
 import type { GridAttachedOptions } from './options.js';
 
 /** How the core may be drawn. Order is the tie-break: earlier wins. */
@@ -93,6 +94,7 @@ export function drawBestCore(
   }
 
   restore(layoutData, best!.positions);
+  compactFlowAxis(layoutData, options);
 
   log.debug(
     `GRID-ATTACHED: core drawn as "${best!.label}" — ${best!.foreignNodeHits} edge(s) through a ` +
@@ -132,6 +134,130 @@ function draw(
     crossings: countEdgeCrossings(layoutData),
     bends: countBentEdges(layoutData),
   };
+}
+
+/**
+ * Turn grid-like's square grid into the rectangular grid the measured content
+ * actually needs.
+ *
+ * Grid-like deliberately derives one grid spacing that is large enough on both
+ * axes. That is safe, but it lets one long label widen every *row* as well as its
+ * column. The result is especially wasteful in a top-to-bottom flowchart: the
+ * label needs the 317px column in `life-choices`, while its nodes need a much
+ * shorter row. A uniform affine transform along the flow axis preserves every
+ * row/column alignment grid-like chose; it merely gives that axis its own cell
+ * size. Core edges are routed after this step, so their clearance and ports are
+ * still calculated from the final node boxes. Before routing, a short ordered
+ * sweep restores the normal rank gap wherever two nodes share the other axis;
+ * this is what keeps a final convergence node from collapsing into its parent.
+ *
+ * The 120px floor is grid-like's own default spacing. The transform is deliberately
+ * reserved for cells that are more than twice as tall/wide as that flow axis needs:
+ * smaller reductions can change which face a dense core offers to its attached
+ * trees, whereas a two-fold mismatch is the unmistakable wide-label failure this
+ * corrects. Together those limits leave ordinary diagrams unchanged and keep a
+ * readable lane even when their nodes are unusually short.
+ */
+function compactFlowAxis(layoutData: LayoutData, options: GridAttachedOptions): void {
+  const nodes = layoutData.nodes.filter((node) => !node.isGroup);
+  if (nodes.length < 2) {
+    return;
+  }
+
+  const flowAxis = resolveFlowAxis((layoutData as { direction?: string }).direction).axis;
+  const flowExtent = Math.max(
+    ...nodes.map((node) => (flowAxis === X_AXIS ? (node.width ?? 0) : (node.height ?? 0)))
+  );
+  const targetStep = Math.max(120, flowExtent + options.rankSpacing);
+  if (targetStep + EPSILON >= options.gridSpacing) {
+    return;
+  }
+
+  const scale = targetStep / options.gridSpacing;
+  if (scale > 0.5) {
+    return;
+  }
+  const coordinate = (node: (typeof nodes)[number]) =>
+    flowAxis === X_AXIS ? (node.x ?? 0) : (node.y ?? 0);
+  const origin = Math.min(...nodes.map(coordinate));
+
+  for (const node of nodes) {
+    const compacted = origin + (coordinate(node) - origin) * scale;
+    if (flowAxis === X_AXIS) {
+      node.x = compacted;
+    } else {
+      node.y = compacted;
+    }
+  }
+
+  restoreFlowAxisClearance(nodes, flowAxis, options.rankSpacing);
+}
+
+/**
+ * Restore rank clearance after the affine compaction where it is visible.
+ *
+ * Two nodes in distinct columns can share a row freely, so only a pair whose
+ * cross-axis boxes overlap needs separating. Each exact grid-aligned row/column
+ * is moved as a unit, so a clearance insertion never turns a straight horizontal
+ * core edge into a bend. Every later rank observes the already-restored position.
+ */
+function restoreFlowAxisClearance(
+  nodes: readonly LayoutData['nodes'][number][],
+  flowAxis: typeof X_AXIS,
+  rankSpacing: number
+): void {
+  const coordinate = (node: (typeof nodes)[number]) =>
+    flowAxis === X_AXIS ? (node.x ?? 0) : (node.y ?? 0);
+  const setCoordinate = (node: (typeof nodes)[number], value: number) => {
+    if (flowAxis === X_AXIS) {
+      node.x = value;
+    } else {
+      node.y = value;
+    }
+  };
+  const flowExtent = (node: (typeof nodes)[number]) =>
+    flowAxis === X_AXIS ? (node.width ?? 0) : (node.height ?? 0);
+  const crossCoordinate = (node: (typeof nodes)[number]) =>
+    flowAxis === X_AXIS ? (node.y ?? 0) : (node.x ?? 0);
+  const crossExtent = (node: (typeof nodes)[number]) =>
+    flowAxis === X_AXIS ? (node.height ?? 0) : (node.width ?? 0);
+  const ordered = [...nodes].sort((left, right) => coordinate(left) - coordinate(right));
+  const ranks: (typeof nodes)[number][][] = [];
+  for (const node of ordered) {
+    const rank = ranks.at(-1);
+    if (rank && coordinate(node) - coordinate(rank[0]) <= EPSILON) {
+      rank.push(node);
+    } else {
+      ranks.push([node]);
+    }
+  }
+
+  for (let rankIndex = 0; rankIndex < ranks.length; rankIndex++) {
+    const rank = ranks[rankIndex];
+    let minimum = coordinate(rank[0]);
+
+    for (let previousRankIndex = 0; previousRankIndex < rankIndex; previousRankIndex++) {
+      const previousRank = ranks[previousRankIndex];
+      for (const node of rank) {
+        for (const previous of previousRank) {
+          const crossAxisOverlaps =
+            Math.abs(crossCoordinate(node) - crossCoordinate(previous)) <
+            (crossExtent(node) + crossExtent(previous)) / 2 - EPSILON;
+          if (!crossAxisOverlaps) {
+            continue;
+          }
+          minimum = Math.max(
+            minimum,
+            coordinate(previous) + flowExtent(previous) / 2 + rankSpacing + flowExtent(node) / 2
+          );
+        }
+      }
+    }
+
+    for (const node of rank) {
+      setCoordinate(node, minimum);
+    }
+  }
 }
 
 /** Lexicographic: edges through a node, then crossings, then bends. */

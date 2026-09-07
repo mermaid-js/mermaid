@@ -37,6 +37,15 @@ export interface FinalEdge {
    */
   lockedSourceSide?: Side;
   lockedTargetSide?: Side;
+  /**
+   * A pair of sides to prefer during the exploratory pass when the surrounding
+   * topology identifies a clearer corridor. Unlike locked sides this remains a
+   * preference: if that pair cannot be routed without a crossing, normal routing
+   * is retained.
+   */
+  preferredSourceSide?: Side;
+  /** Target faces in preference order for `preferredSourceSide`. */
+  preferredTargetSides?: Side[];
 }
 
 export interface RoutedFinalEdge {
@@ -187,7 +196,24 @@ function routePass(
       config
     );
 
-    const best = alternatives[0];
+    // A layout may know that a particular outer corridor keeps two branches at
+    // one shared endpoint from crossing. Honour that choice only when it is clean: topology
+    // improves the tie-break, never turns an avoidable clean route into a
+    // crossing elsewhere.
+    const preferred =
+      !plan && edge.preferredSourceSide && edge.preferredTargetSides
+        ? edge.preferredTargetSides
+            .map((targetSide) =>
+              alternatives.find(
+                (candidate) =>
+                  candidate.sourceSide === edge.preferredSourceSide &&
+                  candidate.targetSide === targetSide &&
+                  candidate.crossings === 0
+              )
+            )
+            .find((candidate) => candidate !== undefined)
+        : undefined;
+    const best = preferred ?? alternatives[0];
     if (!best) {
       const fallback = [portOf(source, target), portOf(target, source)];
       routed.push({

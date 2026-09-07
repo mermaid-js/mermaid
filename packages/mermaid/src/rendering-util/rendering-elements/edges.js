@@ -621,7 +621,11 @@ export const insertEdge = function (
   // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
   // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
   // clipping below, so their edge ports are unaffected by swimlanes.
-  if (layout === 'swimlane') {
+  // Grid-attached supplies boundary ports itself. Re-clipping those settled
+  // Manhattan routes against a node uses only the next bend as a target, which
+  // pulls every member of a fan back toward the node centre and makes its first
+  // segment diagonal. Keep these terminal points verbatim in every painter mode.
+  if (layout === 'swimlane' && edge.hasIntersectionPoints !== true) {
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
@@ -656,7 +660,12 @@ export const insertEdge = function (
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipLayoutAdjustments) {
+  } else if (
+    head.intersect &&
+    tail.intersect &&
+    !skipLayoutAdjustments &&
+    edge.hasIntersectionPoints !== true
+  ) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
     // Skipped entirely when skipLayoutAdjustments is set (DOMUS dumb paint).
     if (points.length <= 2) {
@@ -701,7 +710,11 @@ export const insertEdge = function (
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
   // Apply fixCorners for non-rounded curves to pre-round right-angle corners
   // (rounded curve type uses generateRoundedPath instead)
-  if (edgeCurveType !== 'rounded') {
+  // Orthogonal routers that set `hasIntersectionPoints` have already chosen
+  // exact, boundary-attached Manhattan vertices. The legacy corner repair
+  // inserts a short diagonal around every such vertex, undoing that contract
+  // in the rendered SVG even though the layout's points are orthogonal.
+  if (edgeCurveType !== 'rounded' && edge.hasIntersectionPoints !== true) {
     lineData = fixCorners(lineData);
   }
   let curve = curveLinear;
@@ -784,7 +797,8 @@ export const insertEdge = function (
     edgeCurveType === 'rounded'
       ? generateRoundedPath(
           applyMarkerOffsetsToPoints(lineData, edge),
-          edge.roundedCornerRadius ?? 5
+          edge.roundedCornerRadius ?? 5,
+          edge.hasIntersectionPoints === true ? 8 : 0
         )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
@@ -943,7 +957,7 @@ export const insertEdge = function (
  * @param {Number} radius - The radius of the rounded corners
  * @returns {String} - SVG path data string
  */
-export function generateRoundedPath(points, radius) {
+export function generateRoundedPath(points, radius, terminalStub = 0) {
   if (points.length < 2) {
     return '';
   }
@@ -997,8 +1011,19 @@ export function generateRoundedPath(points, radius) {
         continue;
       }
 
-      // Calculate the distance to offset the control point
-      const cutLen = Math.min(radius / Math.sin(angle / 2), len1 / 2, len2 / 2);
+      // Keep a meaningful axis-aligned run at each endpoint of a settled
+      // orthogonal route. Without it a rounded first bend consumes almost the
+      // whole short terminal leg and reads as a diagonal leaving the node.
+      const incomingLimit =
+        i === 1 && terminalStub > 0 ? Math.max(0, len1 - terminalStub) : len1 / 2;
+      const outgoingLimit =
+        i === size - 2 && terminalStub > 0 ? Math.max(0, len2 - terminalStub) : len2 / 2;
+      const cutLen = Math.min(radius / Math.sin(angle / 2), incomingLimit, outgoingLimit);
+
+      if (cutLen < epsilon) {
+        path += `L${currPoint.x},${currPoint.y}`;
+        continue;
+      }
 
       // Calculate the start and end points of the curve
       const startX = currPoint.x - nx1 * cutLen;

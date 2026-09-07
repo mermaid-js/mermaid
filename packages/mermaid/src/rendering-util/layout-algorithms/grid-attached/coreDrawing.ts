@@ -233,6 +233,7 @@ export function routeCoreEdges(
     });
   }
 
+  preferOutsideSharedEndpointCorridors(finalEdges, rects);
   const routed = routeFinalEdges(
     rects,
     finalEdges,
@@ -249,6 +250,75 @@ export function routeCoreEdges(
   drawing.routes = new Map(routed.edges.map((edge) => [edge.originalEdgeId, edge.points]));
   drawing.unroutedEdgeIds = routed.failed;
   drawing.ports = collectPorts(routed.edges, rects);
+}
+
+/** Positions within this distance are one grid rank for route-choice purposes. */
+const ROUTE_ALIGNMENT_EPSILON = 0.5;
+
+/**
+ * Prefer the outside face for a sideways route at a shared endpoint when another
+ * branch approaches through the corridor it would otherwise cross.
+ *
+ * Consider `right ──> sink`, with a second predecessor north of the sink and
+ * horizontally between the two. A direct or upper detour from `right` cuts across
+ * that north branch's final approach. Asking the router for a bottom exit sends
+ * the outer branch below both nodes before it turns back to the sink. It prefers
+ * the sink's bottom face, then its far horizontal face when another rank blocks
+ * the bottom port. The mirrored case uses a top exit. This is deliberately a
+ * preference, not a hard constraint: the final router keeps its normal route if
+ * the outside pair is obstructed or would cross something itself. HOLA's rooted
+ * core can orient
+ * that local pair away from the common endpoint, so the same test is made for
+ * shared sources as well as shared targets; write-back restores Mermaid's arrow
+ * direction afterwards.
+ */
+export function preferOutsideSharedEndpointCorridors(
+  edges: FinalEdge[],
+  nodes: ReadonlyMap<string, HolaNode>
+): void {
+  for (const edge of edges) {
+    const source = nodes.get(edge.source);
+    const target = nodes.get(edge.target);
+    if (!source || !target || Math.abs(source.y - target.y) > ROUTE_ALIGNMENT_EPSILON) {
+      continue;
+    }
+
+    const left = Math.min(source.x, target.x);
+    const right = Math.max(source.x, target.x);
+    let north = false;
+    let south = false;
+    for (const other of edges) {
+      if (other === edge) {
+        continue;
+      }
+      const otherEndpoint =
+        other.target === edge.target && other.source !== edge.source
+          ? nodes.get(other.source)
+          : other.source === edge.source && other.target !== edge.target
+            ? nodes.get(other.target)
+            : undefined;
+      if (
+        !otherEndpoint ||
+        otherEndpoint.x <= left + ROUTE_ALIGNMENT_EPSILON ||
+        otherEndpoint.x >= right - ROUTE_ALIGNMENT_EPSILON
+      ) {
+        continue;
+      }
+      north ||= otherEndpoint.y < target.y - ROUTE_ALIGNMENT_EPSILON;
+      south ||= otherEndpoint.y > target.y + ROUTE_ALIGNMENT_EPSILON;
+    }
+
+    // With branches on both sides neither outer lane is inherently clearer.
+    if (north === south) {
+      continue;
+    }
+    const outside: Side = north ? 'bottom' : 'top';
+    // Entering the common endpoint through its far horizontal face keeps the
+    // outside lane useful if its top/bottom face is blocked by another rank.
+    const farHorizontalSide: Side = source.x > target.x ? 'left' : 'right';
+    edge.preferredSourceSide = outside;
+    edge.preferredTargetSides = [outside, farHorizontalSide];
+  }
 }
 
 /**

@@ -4,7 +4,8 @@
  * The selection machinery is HOLA's and is not re-litigated here:
  *
  *   - trees are placed **largest-first**, by descending bounding-box perimeter,
- *     stable on id (§17.1);
+ *     except that a comparable tree with a substantially wider root fan is
+ *     committed first, stable on id (§17.1);
  *   - a candidate is a (face, placement direction, growth direction, flip)
  *     tuple, and a direction is only a candidate if it points into the angular
  *     **wedge** the face occupies at the tree's root (§17.2) — `faceWedgeAt`,
@@ -175,7 +176,10 @@ export interface AttachResult {
 export function attachTrees(input: AttachInput): AttachResult {
   const { options } = input;
 
-  // Guide §17.1: descending bounding-box perimeter, stable on id.
+  // Guide §17.1 places the largest trees first. A root fan reserves connector
+  // corridors outside its bounding box, however: when a similarly sized tree has
+  // three or more extra root connectors, commit it first so a deep node of the
+  // earlier tree cannot occupy one of those corridors.
   const ordered = [...input.trees].sort((a, b) => {
     const difference = treePerimeter(b.layout) - treePerimeter(a.layout);
     if (Math.abs(difference) > EPSILON) {
@@ -183,6 +187,7 @@ export function attachTrees(input: AttachInput): AttachResult {
     }
     return a.id < b.id ? -1 : 1;
   });
+  prioritiseConnectorCorridors(input, ordered);
 
   // The core's routes are orthogonal and already clipped to the node boundaries,
   // so every piece of them is drawn and every piece is an obstacle.
@@ -200,6 +205,10 @@ export function attachTrees(input: AttachInput): AttachResult {
   const attachments: Attachment[] = [];
   const unplaced: string[] = [];
   const committed: Bounds[] = [];
+  // Exact node rectangles complement the tree footprints above. Footprints are
+  // right for spacing two trees, but are too coarse for deciding whether a
+  // connector actually crosses a node in a branched tree.
+  const committedNodes: Bounds[] = [];
   // The connectors of the trees already placed. A footprint says where a tree *sits*;
   // it says nothing about the run that reaches it, and two trees on neighbouring core
   // nodes growing the same way cross each other's connectors while both footprints
@@ -222,6 +231,7 @@ export function attachTrees(input: AttachInput): AttachResult {
       root,
       obstacles,
       committed,
+      committedNodes,
       committedRoutes,
       drawn,
     };
@@ -240,6 +250,7 @@ export function attachTrees(input: AttachInput): AttachResult {
 
     attachments.push(winner.attachment);
     committed.push(winner.attachment.footprint);
+    committedNodes.push(...treeNodeBounds(winner.attachment.transformed));
     committedRoutes.push(...rootConnectorSegments(context, winner.attachment));
     drawn = unionBounds([drawn, winner.attachment.footprint]) ?? drawn;
   }
@@ -249,6 +260,40 @@ export function attachTrees(input: AttachInput): AttachResult {
   const stubPenalty = attachments.reduce((total, attachment) => total + attachment.slide, 0);
 
   return { attachments, unplaced, relaxedCount, maxSlide, stubPenalty };
+}
+
+/** Number of connectors that leave the core node for this attached tree. */
+function rootFanout(input: AttachInput, tree: AttachableTree): number {
+  return input.sources.get(tree.id)?.graph.adjacency.get(tree.rootCopyId)?.size ?? 0;
+}
+
+/**
+ * Promote only comparable, much wider fans through the perimeter order. This is a
+ * local, deterministic adjustment rather than a non-transitive sort comparator.
+ */
+function prioritiseConnectorCorridors(input: AttachInput, ordered: AttachableTree[]): void {
+  for (let index = 1; index < ordered.length; index++) {
+    const narrower = ordered[index - 1];
+    const wider = ordered[index];
+    if (!shouldPrioritiseFan(input, wider, narrower)) {
+      continue;
+    }
+    ordered[index - 1] = wider;
+    ordered[index] = narrower;
+    // The promoted tree may have one more qualifying predecessor.
+    index = Math.max(0, index - 2);
+  }
+}
+
+function shouldPrioritiseFan(
+  input: AttachInput,
+  wider: AttachableTree,
+  narrower: AttachableTree
+): boolean {
+  return (
+    rootFanout(input, wider) >= rootFanout(input, narrower) + 3 &&
+    treePerimeter(wider.layout) >= treePerimeter(narrower.layout) * 0.7 - EPSILON
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -325,6 +370,8 @@ interface EvaluationContext {
   root: HolaNode;
   obstacles: Segment[];
   committed: Bounds[];
+  /** Exact node rectangles of trees already placed. */
+  committedNodes: Bounds[];
   /** Root connectors of the trees already placed. */
   committedRoutes: Segment[];
   /** Everything drawn so far, for the compactness term. */
@@ -427,7 +474,9 @@ function evaluate(context: EvaluationContext, candidate: Candidate): Evaluated |
     return null;
   }
 
-  const violations = countConnectorViolations(context, placed.transformed, candidate.growth);
+  const violations =
+    countConnectorViolations(context, placed.transformed, candidate.growth) +
+    countCommittedRouteNodeViolations(context, placed.transformed);
   const relaxed = violations > 0 || slide > options.maxSlide;
 
   const cost =
@@ -485,34 +534,24 @@ function requiredPush(context: EvaluationContext, footprint: Bounds, growth: Car
   for (const segment of context.obstacles) {
     push = Math.max(push, pushPastSegment(footprint, segment, growth, clearance));
   }
-
   return push;
 }
 
 /**
- * How many of the tree's root connectors run into something they must not: a core
+ * How many of the tree's connectors run into something they must not: a core
  * node they do not touch, a core edge, or a tree already placed.
  *
- * Only the connectors between the core node and the first rank are checked. Every
- * deeper edge of the tree runs between two ranks and within the footprint, which
- * `requiredPush` has already cleared.
+ * Every tree connector is checked. A deep branch can enter a region occupied by a
+ * tree committed earlier even when the root fan itself is clear.
  */
 function countConnectorViolations(
   context: EvaluationContext,
   transformed: TreeLayout,
   growth: Cardinal
 ): number {
-  const { input, tree, source, root } = context;
+  const { input, tree, root } = context;
   const rootRect: Rect = { x: root.x, y: root.y, width: root.width, height: root.height };
-  const connectors = routeTreeEdges(
-    source,
-    transformed,
-    rootRect,
-    growth,
-    input.options,
-    rankGapFor(tree, growth, input.options),
-    input.reservedPorts
-  ).filter((connector) => connector.fromRoot);
+  const connectors = connectorsFor(context, transformed, growth, rootRect);
 
   let violations = 0;
   for (const connector of connectors) {
@@ -529,7 +568,7 @@ function countConnectorViolations(
         violations++;
       }
     }
-    for (const other of context.committed) {
+    for (const other of context.committedNodes) {
       if (polylineHitsBounds(connector.points, other)) {
         violations++;
       }
@@ -542,6 +581,58 @@ function countConnectorViolations(
   }
 
   return violations;
+}
+
+function connectorsFor(
+  context: EvaluationContext,
+  transformed: TreeLayout,
+  growth: Cardinal,
+  rootRect: Rect
+) {
+  const { input, tree, source } = context;
+  return routeTreeEdges(
+    source,
+    transformed,
+    rootRect,
+    growth,
+    input.options,
+    rankGapFor(tree, growth, input.options),
+    input.reservedPorts
+  );
+}
+
+/**
+ * A connector committed for an earlier tree must not pass through a node in the
+ * current candidate tree. Testing the individual node rectangles (rather than
+ * the tree's bounding box) preserves valid runs through the empty space inside
+ * a branched tree.
+ */
+function countCommittedRouteNodeViolations(
+  context: EvaluationContext,
+  transformed: TreeLayout
+): number {
+  let violations = 0;
+  for (const node of transformed.nodes.values()) {
+    // The copied root coincides with the core node and is intentionally not
+    // part of the attached tree's occupied area.
+    if (node.id === transformed.rootId) {
+      continue;
+    }
+    const bounds = nodeBounds(node);
+    for (const route of context.committedRoutes) {
+      if (polylineHitsBounds([route.a, route.b], bounds)) {
+        violations++;
+      }
+    }
+  }
+  return violations;
+}
+
+/** Exact occupied rectangles of a tree, without the root copy on the core. */
+function treeNodeBounds(layout: TreeLayout): Bounds[] {
+  return [...layout.nodes.values()]
+    .filter((node) => node.id !== layout.rootId)
+    .map((node) => nodeBounds(node));
 }
 
 /** The root connectors of a committed placement, as segments for later candidates. */

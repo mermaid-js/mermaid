@@ -35,6 +35,7 @@ import { applyFixtureEdgeLabelSizes } from '../ddlt/backends.js';
 import { countBentEdges } from './coreCandidates.js';
 import { runGridAttachedLayoutCore } from './layoutCore.js';
 import type { GridAttachedResult } from './layoutCore.js';
+import { runGridAttachedSubgraphsLayoutCore } from '../grid-attached-subgraphs/index.js';
 
 const FIXTURE_DIR = join(layoutTestsDir(), 'hola-faithful');
 const EPSILON = 0.5;
@@ -140,21 +141,8 @@ const KNOWN_LABELS_ON_NODES: Record<string, string[]> = {
   ],
 };
 
-/**
- * Tree connectors still sharing a port.
- *
- * A shared tree port is this layout's own bug — the port is its to choose — and it
- * holds on every other fixture, which is why this record has one entry rather than
- * a policy. `D` carries a core edge and a tree, and `spreadAvoiding` places the
- * tree's port on the side the core edge already took instead of the free one.
- *
- * Nothing to do with containers: the sibling branch, which holds containers
- * together from the decomposition onwards, has the same collision on the same
- * fixture. Any fixture not listed here must still have none.
- */
-const KNOWN_SHARED_TREE_PORTS: Record<string, number> = {
-  'GRAPH - hola 7 nodes double loop + trees': 1,
-};
+/** Tree connectors own their ports, so none may share one with a core edge. */
+const KNOWN_SHARED_TREE_PORTS: Record<string, number> = {};
 
 const UNALIGNED_CORE_EDGES: Record<string, number> = {
   '___ Hola paper main example algorithm': 6,
@@ -283,6 +271,29 @@ function isOrthogonal(edge: Edge): boolean {
     }
   }
   return true;
+}
+
+/** The label placer always chooses a point on one of the edge's straight runs. */
+function pointLiesOnRoute(x: number, y: number, points: { x: number; y: number }[]): boolean {
+  for (let index = 1; index < points.length; index++) {
+    const start = points[index - 1];
+    const end = points[index];
+    const horizontal = Math.abs(start.y - end.y) < 1e-6;
+    const vertical = Math.abs(start.x - end.x) < 1e-6;
+    if (
+      (horizontal &&
+        Math.abs(y - start.y) < 1e-6 &&
+        x >= Math.min(start.x, end.x) - 1e-6 &&
+        x <= Math.max(start.x, end.x) + 1e-6) ||
+      (vertical &&
+        Math.abs(x - start.x) < 1e-6 &&
+        y >= Math.min(start.y, end.y) - 1e-6 &&
+        y <= Math.max(start.y, end.y) + 1e-6)
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 interface Rect {
@@ -441,6 +452,146 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
   });
 
   for (const { name, sizes } of all) {
+    if (name === 'deploy-pipeline') {
+      it('compacts the lone entry edge into the deployment subgraph', async () => {
+        const layout = await parseMmdFileToLayoutData(join(FIXTURE_DIR, `${name}.mmd`), {
+          stampFlowchartRendererFields: true,
+        });
+        const measured = loadSizesFixture(join(FIXTURE_DIR, sizes));
+        applyFixtureContentSizesStrict(layout, measured);
+        applyFixtureEdgeLabelSizes(layout, measured);
+        runGridAttachedSubgraphsLayoutCore(layout);
+        const entry = layout.edges.find((edge) => edge.start === 'D' && edge.end === 'F');
+        const [start, ...tail] = entry?.points ?? [];
+        const end = tail.at(-1);
+
+        expect(start).toBeDefined();
+        expect(end).toBeDefined();
+        const buildDockerImage = layout.nodes.find((node) => node.id === 'F');
+        expect(buildDockerImage).toBeDefined();
+        // The router may choose the top or the left face, but the shortened
+        // bridge must still reach F's clipped boundary rather than stop at the
+        // subgraph frame.
+        const dx = Math.abs(end!.x - buildDockerImage!.x!);
+        const dy = Math.abs(end!.y - buildDockerImage!.y!);
+        const halfWidth = buildDockerImage!.width! / 2;
+        const halfHeight = buildDockerImage!.height! / 2;
+        expect(dx).toBeLessThanOrEqual(halfWidth + 1e-6);
+        expect(dy).toBeLessThanOrEqual(halfHeight + 1e-6);
+        expect(Math.min(Math.abs(dx - halfWidth), Math.abs(dy - halfHeight))).toBeLessThan(1e-6);
+        // The bridge is rebuilt from node-boundary ports, so paint must retain
+        // those ports rather than treating it as a centre-to-centre core edge.
+        expect(entry?.hasIntersectionPoints).toBe(true);
+        // The group is a compact unit; only the otherwise-empty D--F bridge
+        // should shrink, leaving enough room for its “Yes” label.
+        expect(Math.abs(end!.y - start.y)).toBeLessThanOrEqual(64);
+
+        const rejected = layout.edges.find((edge) => edge.start === 'D' && edge.end === 'E');
+        expect(rejected).toBeDefined();
+        expect(rejected?.x).toBeDefined();
+        expect(rejected?.y).toBeDefined();
+        // Compaction translates D--E with D. Its "No" label must be recomputed
+        // against that translated route, rather than left at the old position.
+        expect(pointLiesOnRoute(rejected!.x!, rejected!.y!, rejected!.points ?? [])).toBe(true);
+      });
+    }
+
+    if (name === 'life-choices') {
+      it('does not turn wide labels into excessive vertical core spacing', async () => {
+        const layout = await parseMmdFileToLayoutData(join(FIXTURE_DIR, `${name}.mmd`), {
+          stampFlowchartRendererFields: true,
+        });
+        const measured = loadSizesFixture(join(FIXTURE_DIR, sizes));
+        applyFixtureContentSizesStrict(layout, measured);
+        applyFixtureEdgeLabelSizes(layout, measured);
+        runGridAttachedSubgraphsLayoutCore(layout);
+        const ys = layout.nodes.map((node) => node.y ?? 0);
+        const height = Math.max(...ys) - Math.min(...ys);
+
+        // The longest label needs a wide grid column, but that must not also
+        // make every row 317px tall.
+        expect(height).toBeLessThan(1200);
+
+        const nodes = new Map(layout.nodes.map((node) => [node.id, node]));
+        const spareTime = nodes.get('n6');
+        const happyLife = nodes.get('ne');
+        expect(spareTime).toBeDefined();
+        expect(happyLife).toBeDefined();
+        // Compaction may remove empty space, never the rank gap between a node
+        // and its successor on the same vertical lane.
+        const gap =
+          (happyLife!.y ?? 0) -
+          (happyLife!.height ?? 0) / 2 -
+          ((spareTime!.y ?? 0) + (spareTime!.height ?? 0) / 2);
+        expect(gap).toBeGreaterThanOrEqual(50);
+
+        // When several branches converge on the same sink, an outer branch must
+        // use the outside lane instead of cutting through another branch's final
+        // approach. Here `n5 → ne` comes from the right of `nh → ne`.
+        const routes = new Map(layout.edges.map((edge) => [edge.id, edge]));
+        const betterWork = routes.get('L_nh_ne_0');
+        const lowerBranch = routes.get('L_n5_ne_0');
+        expect(betterWork).toBeDefined();
+        expect(lowerBranch).toBeDefined();
+        expect(crossingPoints([betterWork!, lowerBranch!])).toEqual([]);
+      });
+    }
+
+    if (name === 'GRAPH - hola 7 nodes double loop + trees') {
+      it('keeps F root trunks parallel and attaches them to the child boundary', async () => {
+        const { layout } = await lay(name, sizes);
+        const children = new Map(layout.nodes.map((node) => [node.id, node]));
+        const fan = layout.edges
+          .filter((edge) => edge.start === 'F' && /^F[1-4]$/.test(edge.end ?? ''))
+          .sort((a, b) => a.id.localeCompare(b.id));
+
+        expect(fan).toHaveLength(4);
+        const root = children.get('F');
+        expect(root).toBeDefined();
+        const trunks: number[] = [];
+        for (const edge of fan) {
+          const points = edge.points ?? [];
+          const child = children.get(edge.end!);
+          expect(points, edge.id).toHaveLength(3);
+          expect(child, edge.id).toBeDefined();
+          const [start, bend, end] = points;
+          // One long vertical trunk, then a horizontal run into the child.
+          expect(bend.x).toBeCloseTo(start.x, 6);
+          expect(Math.abs(bend.y - start.y)).toBeGreaterThan(0.5);
+          expect(end.y).toBeCloseTo(bend.y, 6);
+          expect(Math.abs(end.x - (child!.x ?? 0))).toBeCloseTo((child!.width ?? 0) / 2, 6);
+          expect(end.y).toBeCloseTo(child!.y ?? 0, 6);
+          trunks.push(start.x);
+        }
+        const pitch = trunks[1] - trunks[0];
+        expect(pitch).toBeGreaterThan(0.5);
+        for (let index = 2; index < trunks.length; index++) {
+          expect(trunks[index] - trunks[index - 1]).toBeCloseTo(pitch, 6);
+        }
+        // Do not merely offset a cluster around F's centre: a redirected fan owns
+        // the free side, so use that whole usable face at a constant pitch.
+        const halfWidth = (root!.width ?? 0) / 2;
+        expect(trunks[0]).toBeCloseTo((root!.x ?? 0) - halfWidth + 8, 6);
+        expect(trunks.at(-1)).toBeCloseTo((root!.x ?? 0) + halfWidth - 8, 6);
+      });
+
+      it('uses one diagonal escape when D has core edges on all four sides', async () => {
+        const { layout } = await lay(name, sizes);
+        const roots = layout.edges.filter(
+          (edge) => edge.start === 'D' && /^D[1-5]$/.test(edge.end ?? '')
+        );
+        const diagonal = roots.filter((edge) => {
+          const [start, next] = edge.points ?? [];
+          return start && next && start.x !== next.x && start.y !== next.y;
+        });
+
+        // D's right-side core connector occupies the only tree port that cannot
+        // be spread away. One root connector may therefore leave through a free
+        // corner, diagonally, rather than overlap D--C.
+        expect(diagonal.map((edge) => edge.id)).toHaveLength(1);
+      });
+    }
+
     it(`draws no two tree connectors along each other in ${name}`, async () => {
       const { treeEdges } = await lay(name, sizes);
       expect(overlappingPairs(treeEdges)).toEqual(KNOWN_TREE_CONNECTOR_OVERLAPS[name] ?? []);

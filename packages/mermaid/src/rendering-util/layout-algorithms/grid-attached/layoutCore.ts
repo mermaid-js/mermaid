@@ -103,7 +103,7 @@ import {
 import type { FittedFrame, SubgraphModel } from './subgraphs.js';
 import type { LabelObstacles, RouteSegment } from './labelPlacement.js';
 import { redirectContainerEdges, restoreContainerEdges } from './containerEdges.js';
-import { segmentsCross } from './geometry.js';
+import { polylineHitsBounds, segmentsCross } from './geometry.js';
 import { combLevelsNeeded, routeComponentTrees, routeTreeSelfLoop } from './treeConnectors.js';
 import type { TreeConnector, TreeRouteRequest } from './treeConnectors.js';
 
@@ -261,6 +261,10 @@ export function runGridAttachedLayoutCore(
     }
   }
   restoreContainerEdges(containerEdges.redirected, frameBoxes);
+  // Container routes are cut only now, after their endpoints and frames have their
+  // final coordinates. A label placed before that cut can be left on the tiny run
+  // that meets a frame, which is exactly where the frame title is painted.
+  repositionLabelsAwayFromFrameTitles(flat, data.edges, drawnNodes, frameBoxes, subgraphs, options);
 
   const droppedEdgeIds = pruneToDrawn(data, laidOut, framed);
 
@@ -364,7 +368,7 @@ function layoutComponent(
   const labelRequests: { originalEdgeId: string; width: number; height: number; route: Point[] }[] =
     [];
 
-  const core = writeCoreEdges(flat, drawing);
+  const core = writeCoreEdges(flat, drawing, options);
   const edges = [...core.edges];
   labelRequests.push(...core.labelRequests);
 
@@ -388,6 +392,7 @@ function layoutComponent(
         silhouette: root.silhouette,
       },
       growth: attachment.growth,
+      placementDirection: attachment.placementDirection,
       rankGap: rankGapFor(drawnById.get(attachment.treeId), attachment.growth, options),
     });
     const written = writeTree(flat, tree, attachment, options);
@@ -414,6 +419,15 @@ function layoutComponent(
   edges.push(...connected.edges);
   labelRequests.push(...connected.labelRequests);
 
+  compactLoneSubgraphEntryBridges(
+    data,
+    nodes,
+    edges,
+    labelRequests,
+    new Set(drawing.nodes.map((node) => node.id)),
+    options
+  );
+
   // Labels last, and for the whole component at once: a label has to keep off every
   // node and every route in the drawing, not just the ones on its own side of it.
   const labels = writeLabels(flat, labelRequests, nodes, edges, options);
@@ -435,6 +449,297 @@ function layoutComponent(
     edges,
     labels,
   };
+}
+
+/**
+ * A modeled subgraph can be a compact core region while its one incoming bridge is
+ * needlessly long: grid-like has no reason to pull the upstream component toward a
+ * group when every alignment inside each side is already satisfied. Moving the
+ * group would stretch its outgoing edges, so instead translate the upstream core
+ * region as a rigid body. Its internal drawing remains byte-for-byte the same and
+ * only the cut edge is re-routed.
+ *
+ * This deliberately has a narrow proof obligation. It runs only for one edge that
+ * crosses from a non-group core region into a group, only when removing group-owned
+ * nodes leaves one closed upstream region, and only as far as every stationary node
+ * still has normal tree clearance. Anything more connected remains grid-like's
+ * responsibility rather than becoming an unsafe post-layout translation.
+ */
+function compactLoneSubgraphEntryBridges(
+  data: LayoutData,
+  nodes: Node[],
+  edges: Edge[],
+  labelRequests: { originalEdgeId: string; width: number; height: number; route: Point[] }[],
+  coreNodeIds: ReadonlySet<string>,
+  options: GridAttachedOptions
+): void {
+  if (!options.modelCoreGroups) {
+    return;
+  }
+
+  const subgraphs = collectSubgraphs(data);
+  const nodeById = new Map(nodes.map((node) => [node.id, node]));
+  for (const bridge of edges) {
+    const sourceId = bridge.start;
+    const targetId = bridge.end;
+    if (!sourceId || !targetId || !coreNodeIds.has(sourceId) || !coreNodeIds.has(targetId)) {
+      continue;
+    }
+    const groupId = subgraphs.parentOfLeaf.get(targetId);
+    if (!groupId) {
+      continue;
+    }
+    const group = subgraphs.byId.get(groupId);
+    if (!group) {
+      continue;
+    }
+    const members = new Set(group.leafIds);
+    if (members.has(sourceId)) {
+      continue;
+    }
+
+    const upstream = coreRegionOutsideGroup(sourceId, members, edges, coreNodeIds);
+    if (upstream.size === 0 || [...upstream].some((id) => !nodeById.has(id))) {
+      continue;
+    }
+    const boundary = edges.filter(
+      (edge) =>
+        edge.start !== undefined &&
+        edge.end !== undefined &&
+        upstream.has(edge.start) !== upstream.has(edge.end)
+    );
+    if (boundary.length !== 1 || boundary[0] !== bridge) {
+      continue;
+    }
+
+    const points = bridge.points ?? [];
+    const start = points[0];
+    const end = points.at(-1);
+    if (!start || !end) {
+      continue;
+    }
+    const vertical = Math.abs(end.y - start.y) >= Math.abs(end.x - start.x);
+    const distance = vertical ? end.y - start.y : end.x - start.x;
+    const direction = Math.sign(distance);
+    const label = labelRequests.find((request) => request.originalEdgeId === bridge.id);
+    const minimumSpan = Math.max(
+      options.treeClearance,
+      (vertical ? (label?.height ?? 0) : (label?.width ?? 0)) + 2 * options.labelClearance
+    );
+    if (direction === 0 || Math.abs(distance) <= minimumSpan + 1e-6) {
+      continue;
+    }
+
+    const maximum = maximumSafeRegionShift(
+      upstream,
+      nodes,
+      vertical,
+      direction,
+      options.treeClearance
+    );
+    const shift = Math.min(Math.abs(distance) - minimumSpan, maximum);
+    if (shift <= 1e-6) {
+      continue;
+    }
+    const delta = vertical ? { x: 0, y: direction * shift } : { x: direction * shift, y: 0 };
+    translateNodeRegion(upstream, nodes, edges, labelRequests, delta);
+
+    const shiftedStart = { x: start.x + delta.x, y: start.y + delta.y };
+    bridge.points = compactBridgeRoute(
+      shiftedStart,
+      end,
+      routePortIsVertical(points, true) ?? vertical,
+      routePortIsVertical(points, false) ?? vertical
+    );
+    if (label) {
+      label.route = bridge.points;
+    }
+  }
+}
+
+/** Core nodes connected to a bridge source without passing through the target group. */
+function coreRegionOutsideGroup(
+  sourceId: string,
+  groupMembers: ReadonlySet<string>,
+  edges: readonly Edge[],
+  coreNodeIds: ReadonlySet<string>
+): Set<string> {
+  const neighbours = new Map<string, Set<string>>();
+  for (const edge of edges) {
+    const { start, end } = edge;
+    if (
+      !start ||
+      !end ||
+      !coreNodeIds.has(start) ||
+      !coreNodeIds.has(end) ||
+      groupMembers.has(start) ||
+      groupMembers.has(end)
+    ) {
+      continue;
+    }
+    let from = neighbours.get(start);
+    if (!from) {
+      from = new Set();
+      neighbours.set(start, from);
+    }
+    from.add(end);
+    let to = neighbours.get(end);
+    if (!to) {
+      to = new Set();
+      neighbours.set(end, to);
+    }
+    to.add(start);
+  }
+
+  const seen = new Set<string>();
+  const todo = [sourceId];
+  while (todo.length > 0) {
+    const id = todo.pop()!;
+    if (seen.has(id) || groupMembers.has(id)) {
+      continue;
+    }
+    seen.add(id);
+    for (const neighbour of neighbours.get(id) ?? []) {
+      if (!seen.has(neighbour)) {
+        todo.push(neighbour);
+      }
+    }
+  }
+  return seen;
+}
+
+/** How far a region can move before a stationary node enters its clearance box. */
+function maximumSafeRegionShift(
+  moving: ReadonlySet<string>,
+  nodes: readonly Node[],
+  vertical: boolean,
+  direction: number,
+  clearance: number
+): number {
+  let maximum = Number.POSITIVE_INFINITY;
+  for (const node of nodes) {
+    if (!moving.has(node.id) || node.isGroup === true) {
+      continue;
+    }
+    const movingBox = nodeBounds({
+      x: node.x ?? 0,
+      y: node.y ?? 0,
+      width: node.width ?? 0,
+      height: node.height ?? 0,
+    });
+    for (const other of nodes) {
+      if (moving.has(other.id) || other.isGroup === true) {
+        continue;
+      }
+      const otherBox = nodeBounds({
+        x: other.x ?? 0,
+        y: other.y ?? 0,
+        width: other.width ?? 0,
+        height: other.height ?? 0,
+      });
+      const crossOverlaps = vertical
+        ? movingBox.minX < otherBox.maxX + clearance && movingBox.maxX > otherBox.minX - clearance
+        : movingBox.minY < otherBox.maxY + clearance && movingBox.maxY > otherBox.minY - clearance;
+      if (!crossOverlaps) {
+        continue;
+      }
+      const available = vertical
+        ? direction > 0
+          ? otherBox.minY - clearance - movingBox.maxY
+          : movingBox.minY - clearance - otherBox.maxY
+        : direction > 0
+          ? otherBox.minX - clearance - movingBox.maxX
+          : movingBox.minX - clearance - otherBox.maxX;
+      if (available >= 0) {
+        maximum = Math.min(maximum, available);
+      }
+    }
+  }
+  return maximum;
+}
+
+/** Translate every internal route with its rigid node region. */
+function translateNodeRegion(
+  nodeIds: ReadonlySet<string>,
+  nodes: Node[],
+  edges: Edge[],
+  labelRequests: { originalEdgeId: string; width: number; height: number; route: Point[] }[],
+  delta: Point
+): void {
+  const labelsByEdgeId = new Map(labelRequests.map((request) => [request.originalEdgeId, request]));
+  for (const node of nodes) {
+    if (nodeIds.has(node.id)) {
+      node.x = (node.x ?? 0) + delta.x;
+      node.y = (node.y ?? 0) + delta.y;
+    }
+  }
+  for (const edge of edges) {
+    if (edge.start && edge.end && nodeIds.has(edge.start) && nodeIds.has(edge.end)) {
+      const points = (edge.points ?? []).map((point) => ({
+        x: point.x + delta.x,
+        y: point.y + delta.y,
+      }));
+      edge.points = points;
+      const label = labelsByEdgeId.get(edge.id);
+      if (label) {
+        label.route = points;
+      }
+    }
+  }
+}
+
+/**
+ * Whether the first or last non-degenerate route segment leaves perpendicular to
+ * a horizontal node face. `true` means vertical, `false` horizontal.
+ */
+function routePortIsVertical(points: readonly Point[], fromStart: boolean): boolean | undefined {
+  let previous = fromStart ? points[0] : points.at(-1);
+  if (!previous) {
+    return undefined;
+  }
+  const index = fromStart ? 1 : points.length - 2;
+  const step = fromStart ? 1 : -1;
+  for (let nextIndex = index; nextIndex >= 0 && nextIndex < points.length; nextIndex += step) {
+    const next = points[nextIndex];
+    const dx = Math.abs(next.x - previous.x);
+    const dy = Math.abs(next.y - previous.y);
+    if (dx < 1e-6 && dy > 1e-6) {
+      return true;
+    }
+    if (dy < 1e-6 && dx > 1e-6) {
+      return false;
+    }
+    previous = next;
+  }
+  return undefined;
+}
+
+/**
+ * Shortest labelled Manhattan route that preserves both already-clipped port
+ * normals. A bridge arriving at a left/right face must finish horizontally;
+ * otherwise its last run traces the node's border instead of entering the node.
+ */
+function compactBridgeRoute(
+  start: Point,
+  end: Point,
+  sourcePortIsVertical: boolean,
+  targetPortIsVertical: boolean
+): Point[] {
+  if (sourcePortIsVertical !== targetPortIsVertical) {
+    return sourcePortIsVertical
+      ? [start, { x: start.x, y: end.y }, end]
+      : [start, { x: end.x, y: start.y }, end];
+  }
+  if (sourcePortIsVertical && Math.abs(start.x - end.x) < 1e-6) {
+    return [start, end];
+  }
+  if (!sourcePortIsVertical && Math.abs(start.y - end.y) < 1e-6) {
+    return [start, end];
+  }
+  const middle = sourcePortIsVertical ? (start.y + end.y) / 2 : (start.x + end.x) / 2;
+  return sourcePortIsVertical
+    ? [start, { x: start.x, y: middle }, { x: end.x, y: middle }, end]
+    : [start, { x: middle, y: start.y }, { x: middle, y: end.y }, end];
 }
 
 /**
@@ -629,6 +934,8 @@ interface LadderRung {
   attempt: AttachResult;
   /** Crossings between the drawn edges at this scale. */
   crossings: number;
+  /** Connectors that run through a non-incident node at this scale. */
+  nodeViolations: number;
   /** Crossings and dead stubs, plus what this much enlargement costs, in pixels. */
   penalty: number;
 }
@@ -668,6 +975,7 @@ function climbEnlargementLadder(
     scale: 1,
     attempt: EMPTY_ATTEMPT,
     crossings: Number.POSITIVE_INFINITY,
+    nodeViolations: Number.POSITIVE_INFINITY,
     penalty: Number.POSITIVE_INFINITY,
   };
   let sinceImprovement = 0;
@@ -697,23 +1005,23 @@ function climbEnlargementLadder(
     // already committed, but the final routing settles ports and turns across every
     // tree at once, so a crossing can exist only in the finished drawing — and that is
     // the one a reader sees.
-    const crossings = countDrawnCrossings(
-      coreSegments(drawing, core),
-      routeComponentTrees(
-        connectorRequests(attempt, rects, sources, byId, options),
-        options,
-        drawing.ports
-      )
+    const connectors = routeComponentTrees(
+      connectorRequests(attempt, rects, sources, byId, options),
+      options,
+      drawing.ports
     );
+    const crossings = countDrawnCrossings(coreSegments(drawing, core), connectors);
+    const nodeViolations = countDrawnConnectorNodeViolations(rects, attempt, connectors);
     const penalty =
       attempt.stubPenalty +
       crossings * options.crossingPenalty +
+      nodeViolations * options.crossingPenalty +
       options.enlargementPenaltyWeight * (scale - 1) * coreSpan;
-    const rungResult: LadderRung = { scale, attempt, crossings, penalty };
+    const rungResult: LadderRung = { scale, attempt, crossings, nodeViolations, penalty };
 
     log.debug(
       `GRID-ATTACHED: rung scale=${scale.toFixed(2)} unplaced=${attempt.unplaced.length} ` +
-        `relaxed=${attempt.relaxedCount} crossings=${crossings} ` +
+        `relaxed=${attempt.relaxedCount} crossings=${crossings} nodeViolations=${nodeViolations} ` +
         `stub=${attempt.stubPenalty.toFixed(0)} penalty=${penalty.toFixed(0)}`
     );
 
@@ -724,7 +1032,11 @@ function climbEnlargementLadder(
       sinceImprovement++;
     }
 
-    const settled = attempt.unplaced.length === 0 && attempt.stubPenalty <= 0 && crossings === 0;
+    const settled =
+      attempt.unplaced.length === 0 &&
+      attempt.stubPenalty <= 0 &&
+      crossings === 0 &&
+      nodeViolations === 0;
     if (settled || scale >= options.maxCoreScale || sinceImprovement >= options.coreScalePatience) {
       break;
     }
@@ -767,6 +1079,7 @@ function connectorRequests(
         silhouette: root.silhouette,
       },
       growth: attachment.growth,
+      placementDirection: attachment.placementDirection,
       rankGap: rankGapFor(drawn, attachment.growth, options),
     });
   }
@@ -810,6 +1123,44 @@ function countDrawnCrossings(coreEdges: CoreSegment[], connectors: TreeConnector
   return crossings;
 }
 
+/**
+ * Final connector routing can choose root sides and fan ports that were not known
+ * when individual trees were placed. Check that actual geometry against every node
+ * it does not touch, so the enlargement ladder makes room instead of accepting an
+ * edge hidden behind a tree node.
+ */
+function countDrawnConnectorNodeViolations(
+  core: Map<string, HolaNode>,
+  attempt: AttachResult,
+  connectors: TreeConnector[]
+): number {
+  const nodes = new Map<string, Bounds>();
+  for (const node of core.values()) {
+    nodes.set(node.id, nodeBounds(node));
+  }
+  for (const attachment of attempt.attachments) {
+    for (const node of attachment.transformed.nodes.values()) {
+      // The tree root is a copy of its core node, already included above.
+      if (node.id !== attachment.transformed.rootId) {
+        nodes.set(node.id, nodeBounds(node));
+      }
+    }
+  }
+
+  let violations = 0;
+  for (const connector of connectors) {
+    for (const [nodeId, bounds] of nodes) {
+      if (nodeId === connector.parentId || nodeId === connector.childId) {
+        continue;
+      }
+      if (polylineHitsBounds(connector.points, bounds)) {
+        violations++;
+      }
+    }
+  }
+  return violations;
+}
+
 /** Placeholder incumbent, so rung 0 has something to beat. */
 const EMPTY_ATTEMPT: AttachResult = {
   attachments: [],
@@ -823,6 +1174,9 @@ const EMPTY_ATTEMPT: AttachResult = {
 function isBetterRung(candidate: LadderRung, incumbent: LadderRung): boolean {
   if (candidate.attempt.unplaced.length !== incumbent.attempt.unplaced.length) {
     return candidate.attempt.unplaced.length < incumbent.attempt.unplaced.length;
+  }
+  if (candidate.nodeViolations !== incumbent.nodeViolations) {
+    return candidate.nodeViolations < incumbent.nodeViolations;
   }
   return candidate.penalty < incumbent.penalty - 1e-6;
 }
@@ -944,15 +1298,22 @@ function writeTree(
  * back to, which is still a drawable line — `routeCoreEdges` has already reported
  * it.
  */
-function writeCoreEdges(flat: FlattenResult, drawing: CoreDrawing): WrittenConnectors {
+function writeCoreEdges(
+  flat: FlattenResult,
+  drawing: CoreDrawing,
+  options: GridAttachedOptions
+): WrittenConnectors {
   const edges: Edge[] = [];
   const labelRequests: WrittenConnectors['labelRequests'] = [];
 
   for (const edge of drawing.edges) {
-    const route = drawing.routes.get(edge.id);
-    if (!route || route.length < 2) {
+    const routed = drawing.routes.get(edge.id);
+    if (!routed || routed.length < 2) {
       continue;
     }
+    const route = options.roundShortTerminalTurns
+      ? centreShortTerminalCoreTurn(routed, 2 * options.treeBendSpacing)
+      : routed;
     edge.points = route;
     edge.curve = 'linear';
     edge.hasIntersectionPoints = true;
@@ -970,6 +1331,50 @@ function writeCoreEdges(flat: FlattenResult, drawing: CoreDrawing): WrittenConne
   }
 
   return { edges, labelRequests };
+}
+
+/**
+ * The core router's first comb lane is intentionally close to one endpoint. When
+ * that route is rendered in reverse, the lane becomes a short arrowhead stub and
+ * rounded painting can soften only its first corner. Re-centre an ordinary
+ * four-point route only when either terminal lacks room for the second curve.
+ */
+function centreShortTerminalCoreTurn(
+  points: readonly Point[],
+  minimumTerminalRun: number
+): Point[] {
+  if (points.length !== 4) {
+    return [...points];
+  }
+  const [start, firstTurn, secondTurn, end] = points;
+  const upright =
+    Math.abs(start.x - firstTurn.x) < 1e-6 &&
+    Math.abs(firstTurn.y - secondTurn.y) < 1e-6 &&
+    Math.abs(secondTurn.x - end.x) < 1e-6;
+  const horizontal =
+    Math.abs(start.y - firstTurn.y) < 1e-6 &&
+    Math.abs(firstTurn.x - secondTurn.x) < 1e-6 &&
+    Math.abs(secondTurn.y - end.y) < 1e-6;
+  if (!upright && !horizontal) {
+    return [...points];
+  }
+
+  const startAlong = upright ? start.y : start.x;
+  const endAlong = upright ? end.y : end.x;
+  const firstAlong = upright ? firstTurn.y : firstTurn.x;
+  const secondAlong = upright ? secondTurn.y : secondTurn.x;
+  const span = Math.abs(endAlong - startAlong);
+  const hasShortTerminal =
+    Math.abs(firstAlong - startAlong) < minimumTerminalRun ||
+    Math.abs(endAlong - secondAlong) < minimumTerminalRun;
+  if (!hasShortTerminal || span < 2 * minimumTerminalRun) {
+    return [...points];
+  }
+
+  const middle = (startAlong + endAlong) / 2;
+  return upright
+    ? [start, { x: firstTurn.x, y: middle }, { x: secondTurn.x, y: middle }, end]
+    : [start, { x: middle, y: firstTurn.y }, { x: middle, y: secondTurn.y }, end];
 }
 
 interface WrittenConnectors {
@@ -1038,7 +1443,8 @@ function writeLabels(
   requests: { originalEdgeId: string; width: number; height: number; route: Point[] }[],
   nodes: Node[],
   edges: Edge[],
-  options: GridAttachedOptions
+  options: GridAttachedOptions,
+  extraNodeObstacles: readonly Bounds[] = []
 ): { originalEdgeId: string; x: number; y: number }[] {
   if (requests.length === 0) {
     return [];
@@ -1052,14 +1458,17 @@ function writeLabels(
     }
   }
   const obstacles: LabelObstacles = {
-    nodes: nodes.map((node) =>
-      nodeBounds({
-        x: node.x ?? 0,
-        y: node.y ?? 0,
-        width: node.width ?? 0,
-        height: node.height ?? 0,
-      })
-    ),
+    nodes: [
+      ...nodes.map((node) =>
+        nodeBounds({
+          x: node.x ?? 0,
+          y: node.y ?? 0,
+          width: node.width ?? 0,
+          height: node.height ?? 0,
+        })
+      ),
+      ...extraNodeObstacles,
+    ],
     segments,
   };
 
@@ -1072,6 +1481,56 @@ function writeLabels(
     }
   }
   return labels;
+}
+
+/**
+ * Frames are fitted only after all components have been packed, whereas labels
+ * are initially placed within their individual components. Re-place them once
+ * against the final title bands, so an edge entering a nested frame cannot cover
+ * the frame's title without making the frame itself larger or dishonest.
+ */
+function repositionLabelsAwayFromFrameTitles(
+  flat: FlattenResult,
+  edges: Edge[],
+  nodes: Node[],
+  frames: ReadonlyMap<string, Bounds>,
+  subgraphs: SubgraphModel,
+  options: GridAttachedOptions
+): void {
+  const titleBands: Bounds[] = [];
+  for (const [id, bounds] of frames) {
+    const titleHeight = subgraphs.byId.get(id)?.titleHeight ?? 0;
+    if (titleHeight <= 0) {
+      continue;
+    }
+    titleBands.push({
+      minX: bounds.minX,
+      maxX: bounds.maxX,
+      minY: bounds.minY,
+      // The browser title has a small top inset. Reserving the whole title band
+      // plus the normal inner padding keeps the label visibly clear of it.
+      maxY: bounds.minY + titleHeight + options.groupPadding,
+    });
+  }
+  if (titleBands.length === 0) {
+    return;
+  }
+
+  const requests = edges.flatMap((edge) => {
+    const label = flat.labels.get(edge.id);
+    const route = edge.points ?? [];
+    return label && route.length >= 2
+      ? [
+          {
+            originalEdgeId: edge.id,
+            width: label.width,
+            height: label.height,
+            route,
+          },
+        ]
+      : [];
+  });
+  writeLabels(flat, requests, nodes, edges, options, titleBands);
 }
 
 // ---------------------------------------------------------------------------

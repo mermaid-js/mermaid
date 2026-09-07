@@ -16,6 +16,7 @@ import type { Edge, LayoutData, Node } from '../../types.js';
 import { createCommonLayoutRenderer } from '../common/index.js';
 import { prepareGridAttachedLayout } from '../grid-attached/prepareLayout.js';
 import { runGridAttachedLayoutCore, type GridAttachedResult } from '../grid-attached/layoutCore.js';
+import { resolveGridAttachedOptions } from '../grid-attached/options.js';
 
 const SYNTHETIC_EDGE_PREFIX = '__grid-attached-subgraph__:';
 const ROUNDED_CORNER_RADIUS = 12;
@@ -105,7 +106,33 @@ export function runGridAttachedSubgraphsLayoutCore(data: LayoutData): GridAttach
     syntheticEdgeIds.add(edgeId);
   }
   try {
-    const result = runGridAttachedLayoutCore(data, { modelCoreGroups: true });
+    const options = resolveGridAttachedOptions(data, { modelCoreGroups: true });
+    // A frame title occupies the final part of every rank gap that enters a
+    // subgraph. A label belongs in that same gap, so the normal tree spacing can
+    // shrink to a few pixels once the frame is fitted. Reserve the title band
+    // and two label-clearance bands: one lets a label clear the frame heading,
+    // the other leaves room for neighbouring labelled connectors to choose a
+    // separate run. This is scoped to the subgraph backend; ordinary
+    // grid-attached diagrams keep their compact tree ranks unchanged.
+    const largestTitleBand = Math.max(
+      0,
+      ...(data.nodes ?? [])
+        .filter((node) => node.isGroup === true)
+        .map((node) => (node.labelBBox?.height ?? 0) + options.groupPadding)
+    );
+    const largestEdgeLabel = Math.max(
+      0,
+      ...(data.edges ?? []).filter((edge) => Boolean(edge.label)).map((edge) => edge.height ?? 0)
+    );
+    const titleLabelRunway =
+      largestEdgeLabel === 0
+        ? 0
+        : largestTitleBand + 2 * (largestEdgeLabel + options.labelClearance);
+    const result = runGridAttachedLayoutCore(data, {
+      modelCoreGroups: true,
+      treeRankGap: options.treeRankGap + titleLabelRunway,
+      roundShortTerminalTurns: true,
+    });
     result.droppedEdgeIds = result.droppedEdgeIds.filter((edgeId) => !syntheticEdgeIds.has(edgeId));
     // Keep every route orthogonal, but replace each sharp 90° turn with a larger
     // in-corridor arc at paint time. `rounded` consumes only the two segments
@@ -127,6 +154,13 @@ export function runGridAttachedSubgraphsLayoutCore(data: LayoutData): GridAttach
 export const render = createCommonLayoutRenderer({
   prepareLayout: prepareGridAttachedSubgraphsLayout,
   runLayoutCore: runGridAttachedSubgraphsLayoutCore,
+  // Tree connectors already carry the exact boundary ports selected by the
+  // grid-attached router. Preserve them when this variant paints rounded bends:
+  // generic endpoint clipping would replace the root fan's distinct ports with
+  // one centre-directed diagonal per edge.
+  paintOptions: {
+    skipIntersect: (edge: Edge) => edge.hasIntersectionPoints === true,
+  },
 });
 
 function pairKey(first: string, second: string): string {
