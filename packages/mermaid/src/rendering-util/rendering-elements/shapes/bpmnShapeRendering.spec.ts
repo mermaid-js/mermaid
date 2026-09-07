@@ -4,6 +4,7 @@ import * as configApi from '../../../config.js';
 import type { Node } from '../../types.js';
 import { shapes } from '../shapes.js';
 import { EVENT_DIAMETER, GATEWAY_SIZE } from './bpmnShapeCore.js';
+import { DATA_HEIGHT, DATA_WIDTH } from './bpmnDataObject.js';
 
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
 const originalGetComputedTextLength = Object.getOwnPropertyDescriptor(
@@ -231,7 +232,12 @@ describe('BPMN shapes draw their own marks', () => {
     expect(document.querySelector(selector)).not.toBeNull();
   });
 
-  it('gives every shape an intersect, so an edge never falls back to the raw box', async () => {
+  it('docks every shape at the centre of the face an edge approaches', async () => {
+    // The notation joins two elements border-centre to border-centre, so a flow leaves
+    // the middle of one side and arrives at the middle of another. An outline intersect
+    // answers with wherever the line crosses instead, which on a diagonal approach is
+    // near a corner and leaves neither coordinate on a centre line - so these three
+    // approaches tell the two apart without knowing any shape's size.
     for (const shape of [
       'bpmn-start',
       'bpmn-intermediate',
@@ -243,9 +249,40 @@ describe('BPMN shapes draw their own marks', () => {
       'bpmn-data-store',
       'bpmn-annotation',
     ]) {
-      const node = await draw(shape);
-      expect(node.intersect, `${shape} has no intersect`).toBeTypeOf('function');
+      const node = await draw(shape, { label: 'A caption wider than the shape it names' });
+      const intersect = node.intersect;
+      expect(intersect, `${shape} has no intersect`).toBeTypeOf('function');
+
+      const fromTheRight = intersect!({ x: 1000, y: 0 });
+      expect(fromTheRight.y, `${shape} from the right leaves the centre line`).toBe(0);
+      expect(fromTheRight.x, `${shape} from the right`).toBeGreaterThan(0);
+
+      const fromBelow = intersect!({ x: 0, y: 1000 });
+      expect(fromBelow.x, `${shape} from below leaves the centre line`).toBe(0);
+      expect(fromBelow.y, `${shape} from below`).toBeGreaterThan(0);
+
+      const fromACorner = intersect!({ x: 1000, y: 1000 });
+      expect(
+        fromACorner.x === 0 || fromACorner.y === 0,
+        `${shape} docks off both centre lines on a diagonal approach`
+      ).toBe(true);
+
+      // The caption widens the reserved box but not the shape, so docking on the drawn
+      // silhouette has to land inside the bounds the layout was given.
+      expect(fromTheRight.x, `${shape} docks on its reserved box`).toBeLessThanOrEqual(
+        (node.width ?? 0) / 2
+      );
     }
+  });
+
+  it.each([
+    ['bpmn-gateway', GATEWAY_SIZE / 2, GATEWAY_SIZE / 2],
+    ['bpmn-data', DATA_WIDTH / 2, DATA_HEIGHT / 2],
+  ])('docks %s on its own drawn extent', async (shape, halfWidth, halfHeight) => {
+    const node = await draw(shape, { label: 'A caption wider than the shape it names' });
+
+    expect(node.intersect!({ x: 1000, y: 0 })).toEqual({ x: halfWidth, y: 0 });
+    expect(node.intersect!({ x: 0, y: 1000 })).toEqual({ x: 0, y: halfHeight });
   });
 });
 
