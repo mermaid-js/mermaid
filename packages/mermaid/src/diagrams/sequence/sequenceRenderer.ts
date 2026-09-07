@@ -627,12 +627,18 @@ const activationBounds = function (actor, actors) {
   const actorObj = actors[actor];
   const activations = actorActivations(actor);
 
-  const left = activations.reduce(function (acc, activation) {
-    return common.getMin(acc, activation.startx);
-  }, actorObj.x + actorObj.width / 2 - 1);
-  const right = activations.reduce(function (acc, activation) {
-    return common.getMax(acc, activation.stopx);
-  }, actorObj.x + actorObj.width / 2 + 1);
+  const left = activations.reduce(
+    function (acc, activation) {
+      return common.getMin(acc, activation.startx);
+    },
+    actorObj.x + actorObj.width / 2 - 1
+  );
+  const right = activations.reduce(
+    function (acc, activation) {
+      return common.getMax(acc, activation.stopx);
+    },
+    actorObj.x + actorObj.width / 2 + 1
+  );
   return [left, right];
 };
 

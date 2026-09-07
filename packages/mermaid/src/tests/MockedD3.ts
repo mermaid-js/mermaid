@@ -39,14 +39,16 @@ export class MockedD3 {
     return this.select(select_str);
   });
 
-  append = vi
-    .fn()
-    .mockImplementation(function (this: MockedD3, type: string, id = '' + '-appended'): MockedD3 {
-      const newMock = new MockedD3(id);
-      newMock.attribs.set('type', type);
-      this._children.push(newMock);
-      return newMock;
-    });
+  append = vi.fn().mockImplementation(function (
+    this: MockedD3,
+    type: string,
+    id = '' + '-appended'
+  ): MockedD3 {
+    const newMock = new MockedD3(id);
+    newMock.attribs.set('type', type);
+    this._children.push(newMock);
+    return newMock;
+  });
 
   // NOTE: The d3 implementation allows for a selector ('beforeSelector' arg below).
   //   With this mocked implementation, we assume it will always refer to an node id

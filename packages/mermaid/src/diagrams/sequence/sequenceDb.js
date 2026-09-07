@@ -221,8 +221,8 @@ export const parseMessage = function (str) {
       _str.match(/^:?wrap:/) !== null
         ? true
         : _str.match(/^:?nowrap:/) !== null
-        ? false
-        : undefined,
+          ? false
+          : undefined,
   };
   log.debug('parseMessage:', message);
   return message;
@@ -262,8 +262,8 @@ export const parseBoxData = function (str) {
         ? title.match(/^:?wrap:/) !== null
           ? true
           : title.match(/^:?nowrap:/) !== null
-          ? false
-          : undefined
+            ? false
+            : undefined
         : undefined,
   };
 };

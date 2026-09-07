@@ -22,7 +22,10 @@ export class Diagram {
   private init?: DiagramDefinition['init'];
 
   private detectError?: UnknownDiagramError;
-  constructor(public text: string, public metadata: Pick<DiagramMetadata, 'title'> = {}) {
+  constructor(
+    public text: string,
+    public metadata: Pick<DiagramMetadata, 'title'> = {}
+  ) {
     this.text = encodeEntities(text);
     this.text += '\n';
     const cnf = configApi.getConfig();
