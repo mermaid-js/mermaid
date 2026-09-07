@@ -188,7 +188,7 @@ describe('when detecting chart type ', function () {
   it('should handle a graph definition', function () {
     const str = 'graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
   it('should handle a wrap directive', () => {
     const wrap = { type: 'wrap', args: null };
@@ -278,13 +278,13 @@ Alice->Bob: hi`;
   it('should handle a graph definition with leading spaces', function () {
     const str = '    graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
 
   it('should handle a graph definition with leading spaces and newline', function () {
     const str = '  \n  graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
   it('should handle a graph definition for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue';

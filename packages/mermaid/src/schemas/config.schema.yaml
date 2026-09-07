@@ -1651,7 +1651,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     required:
       - titleTopMargin
       - useMaxWidth
-      - defaultRenderer
       - wrappingWidth
       - minNodeWidth
     properties:
@@ -1744,31 +1743,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       radius:
         type: number
         default: 5
-      defaultRenderer:
-        description: |
-          Decides which rendering engine is used for the diagram.
-
-          `dagre` is the default. It selects the unified renderer; the layout
-          algorithm is chosen separately with the `layout` option, so a diagram
-          rendered with `defaultRenderer: dagre` is still laid out by ELK unless
-          `layout: dagre` is set.
-
-          `dagre-wrapper` and `dagre-d3` are the names this renderer went by in
-          earlier versions. They are accepted as aliases of `dagre` and behave
-          identically.
-        type: string
-        enum:
-          - dagre
-          - dagre-wrapper
-          - dagre-d3
-          - elk
-        default: dagre
-        meta:enum:
-          dagre: The unified renderer (default).
-          dagre-wrapper: Alias of `dagre`, kept for backwards compatibility.
-          dagre-d3: Alias of `dagre`, kept for backwards compatibility.
-          elk: Layout using [elkjs](https://github.com/kieler/elkjs)
-
   ClassDiagramConfig:
     title: Class Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -1777,7 +1751,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     required:
       - titleTopMargin
       - useMaxWidth
-      - defaultRenderer
     properties:
       theme:
         $ref: '#/$defs/BaseDiagramConfig/properties/theme'
@@ -1799,9 +1772,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       textHeight:
         type: number
         default: 10
-      defaultRenderer:
-        $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
-        default: dagre
       nodeSpacing:
         type: integer
         minimum: 0
@@ -2521,7 +2491,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - rankSpacing
       - curve
       - useMaxWidth
-      - defaultRenderer
       - wrappingWidth
       - minNodeWidth
     properties:
@@ -2612,9 +2581,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           **Only used in new experimental rendering.**
         type: number
         default: 15
-      defaultRenderer:
-        $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
-        default: dagre
       wrappingWidth:
         description: |
           Width of nodes where text is wrapped.

@@ -1468,27 +1468,14 @@ config:
   layout: dagre
 ```
 
-The older `flowchart.defaultRenderer: "elk"` directive and the `flowchart-elk`
-diagram type still work, but are no longer needed — they predate `layout` and
-selected a renderer that is now the default.
+The `flowchart-elk` diagram type still works, but is no longer needed — it
+predates `layout` and selected what is now the default.
 
-#### defaultRenderer
-
-`flowchart.defaultRenderer` (and likewise `class.defaultRenderer` and
-`state.defaultRenderer`) selects the rendering engine, not the layout
-algorithm. Its default value is `dagre`, which is the unified renderer. The
-names it went by in earlier versions, `dagre-wrapper` and `dagre-d3`, are
-accepted as aliases of `dagre` and behave identically, so existing
-configuration keeps working.
-
-```
-config:
-  flowchart:
-    defaultRenderer: dagre
-```
-
-A diagram rendered with `defaultRenderer: dagre` is still laid out by ELK
-unless you also set `layout: dagre`.
+The `defaultRenderer` option of the `flowchart`, `class` and `state` config
+sections was removed in v12. It named a rendering engine at a time when there
+was more than one; all of its values had come to mean the same renderer, and
+its `elk` value only ever set `layout: elk` on your behalf. Use `layout`
+directly.
 
 ### Width
 

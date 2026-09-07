@@ -66,10 +66,9 @@ describe('when working with site config', () => {
     expect(config.elk?.nodePlacementAlignment).toBe('NONE');
   });
 
-  it('should default class diagrams to the dagre renderer without forcing class padding', () => {
+  it('should not force class diagram padding', () => {
     const config = configApi.getConfig();
 
-    expect(config.class?.defaultRenderer).toBe('dagre');
     expect(config.class?.padding).toBeUndefined();
   });
 

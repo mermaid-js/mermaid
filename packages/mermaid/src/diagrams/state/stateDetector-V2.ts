@@ -3,24 +3,11 @@ import type {
   DiagramLoader,
   ExternalDiagramDefinition,
 } from '../../diagram-api/types.js';
-import { resolveDefaultRenderer } from '../../diagram-api/defaultRenderer.js';
 
 const id = 'stateDiagram';
 
-const detector: DiagramDetector = (txt, config) => {
-  if (/^\s*stateDiagram-v2/.test(txt)) {
-    return true;
-  }
-  // `stateDiagram` code renders with the unified state diagram as soon as a renderer is
-  // configured (`dagre` and its aliases, or `elk`).
-  if (
-    /^\s*stateDiagram/.test(txt) &&
-    resolveDefaultRenderer(config?.state?.defaultRenderer) !== undefined
-  ) {
-    return true;
-  }
-  return false;
-};
+// Both `stateDiagram` and `stateDiagram-v2` render with the unified state diagram.
+const detector: DiagramDetector = (txt) => /^\s*stateDiagram/.test(txt);
 
 const loader: DiagramLoader = async () => {
   const { diagram } = await import('./stateDiagram-v2.js');

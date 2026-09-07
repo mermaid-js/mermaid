@@ -76,7 +76,6 @@ const config: RequiredDeep<MermaidConfig> = {
     theme: defaultConfigJson.class?.theme,
     look: defaultConfigJson.class?.look,
     layout: defaultConfigJson.class?.layout,
-    defaultRenderer: 'dagre',
     hideEmptyMembersBox: false,
     hierarchicalNamespaces: true,
   },
