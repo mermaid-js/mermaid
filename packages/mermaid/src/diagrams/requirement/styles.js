@@ -1,25 +1,35 @@
 import * as configApi from '../../config.js';
+import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
 
-const genColor = (options) => {
+const genColor = () => {
   const config = configApi.getConfig();
 
-  const { themeVariables, look } = config;
+  const { theme, themeVariables } = config;
   const { bkgColorArray, borderColorArray } = themeVariables;
-  if (!borderColorArray?.length) {
+  // Gates on the theme as well as the palette, matching every other stylesheet. This used
+  // to key off the array alone, which happened to give the same answer but left two
+  // different idioms in the codebase for the same decision.
+  if (!isColorTheme(theme, borderColorArray)) {
     return '';
   }
+  // `look` is validated before it reaches the selector -- see `safeLook`.
+  const look = safeLook(config.look);
   let sections = '';
 
-  const hasBkgColors = bkgColorArray?.length > 0;
+  const hasBkgColors = hasPalette(bkgColorArray);
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
+  // One rule per slot `requirementBox` can actually stamp -- it stamps
+  // `colorIndex % borderColorArray.length`, so the ids it can produce are exactly
+  // `0 .. borderColorArray.length - 1`. Same reasoning as `er/styles.ts`.
+  for (let i = 0; i < paletteSlotCount(borderColorArray); i++) {
     // Omit the declaration when there is no fill palette, rather than emitting `fill: ;`
     // -- an empty value is invalid CSS. `redux-dark-color` is the live case: it ships a
     // border palette and no background palette, colouring outlines only.
     //
-    // Wrap at the palette length for the same reason as `er/styles.ts`: the loop runs to
-    // THEME_COLOR_LIMIT, so a shorter palette would emit `stroke: undefined`.
-    const borderColor = borderColorArray[i % borderColorArray.length];
+    // The background palette is a separate array that may be shorter than the border one,
+    // so it still wraps; `borderColorArray[i]` does not need to, now the bound is its own
+    // length.
+    const borderColor = borderColorArray[i];
     const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     sections += `
 
@@ -42,7 +52,7 @@ const getStyles = (options) => {
   const { look, themeVariables } = config;
   const { requirementEdgeLabelBackground } = themeVariables;
   return `
-  ${genColor(options)}
+  ${genColor()}
   marker {
     fill: ${options.relationColor};
     stroke: ${options.relationColor};

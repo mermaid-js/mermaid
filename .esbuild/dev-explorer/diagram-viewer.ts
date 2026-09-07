@@ -103,9 +103,12 @@ type MermaidTheme =
   | 'forest'
   | 'neutral'
   | 'base'
+  | 'neo'
+  | 'neo-dark'
   | 'redux'
   | 'redux-dark'
-  | 'redux-color';
+  | 'redux-color'
+  | 'redux-dark-color';
 type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
@@ -292,9 +295,12 @@ function isTheme(v: unknown): v is MermaidTheme {
     v === 'forest' ||
     v === 'neutral' ||
     v === 'base' ||
+    v === 'neo' ||
+    v === 'neo-dark' ||
     v === 'redux' ||
     v === 'redux-dark' ||
-    v === 'redux-color'
+    v === 'redux-color' ||
+    v === 'redux-dark-color'
   );
 }
 
@@ -1245,9 +1251,12 @@ export class DevDiagramViewer extends LitElement {
               <sl-option value="forest">forest</sl-option>
               <sl-option value="neutral">neutral</sl-option>
               <sl-option value="base">base</sl-option>
+              <sl-option value="neo">neo</sl-option>
+              <sl-option value="neo-dark">neo-dark</sl-option>
               <sl-option value="redux">redux</sl-option>
               <sl-option value="redux-dark">redux-dark</sl-option>
               <sl-option value="redux-color">redux-color</sl-option>
+              <sl-option value="redux-dark-color">redux-dark-color</sl-option>
             </sl-select>
           </div>
 

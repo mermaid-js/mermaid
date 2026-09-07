@@ -46,7 +46,9 @@ describe('deriveGroupKey', () => {
   });
   it('keeps each spec file in its own group, even within one folder', () => {
     expect(deriveGroupKey(`${FC_MAIN}/x.png`)).toBe(FC_MAIN);
-    expect(deriveGroupKey(`${FC}/flowchart-elk.spec.js/y.png`)).toBe(`${FC}/flowchart-elk.spec.js`);
+    expect(deriveGroupKey(`${FC}/flowchart-dagre.spec.js/y.png`)).toBe(
+      `${FC}/flowchart-dagre.spec.js`
+    );
   });
   it('groups folder-structured mmd snapshots by their diagram folder', () => {
     // mmd screenshots mirror the fixture path (diagrams/<type>/<name>), so they

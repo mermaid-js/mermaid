@@ -32,6 +32,111 @@ Customer --> Checkout
 
 Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direction.
 
+## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
+
+Use case diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+```mermaid
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+---
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ usecase: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
 ## Actors and use cases
 
 Actor and use case identifiers match `[A-Za-z0-9_]+`, so they may start with a digit — `1`, `1mg`, and `3rd` are all valid. Identifiers are diagram-wide and are shared by actors, use cases, boundaries, JSON nodes, and explicit edges.
@@ -510,6 +615,129 @@ Backgrounds come from the active theme, so a hardcoded `fill` is tied to the the
 
 Actor metadata is typed and is not a style map. `fillColor`, `strokeColor`, `strokeWidth`, and arbitrary actor metadata keys are errors. Use `classDef`, `class`, or `style` instead.
 
+## Colors
+
+Colour is keyed to the kind of element, not to the order elements are declared. Actors take
+one colour, use cases another, and system boundaries a third, so the colour of an element
+says what it is and does not change when you edit the diagram around it. Adding a use case
+in the middle of a document leaves every other element exactly as it was, which keeps
+diffs, documentation screenshots, and visual baselines stable.
+
+Each role reads a pair of theme variables. A theme that sets none of them renders as it
+always did, and you can override any of them through `themeVariables`.
+
+| Theme variable          | Applies to                                |
+| ----------------------- | ----------------------------------------- |
+| `usecaseActorBkg`       | Actor glyph fill                          |
+| `usecaseActorBorder`    | Actor glyph stroke                        |
+| `usecaseBkg`            | Use case body fill                        |
+| `usecaseBorder`         | Use case body stroke                      |
+| `usecaseBoundaryBkg`    | System boundary fill, when not numbered   |
+| `usecaseBoundaryBorder` | System boundary stroke, when not numbered |
+| `usecaseIncludeLine`    | `include` relationship stroke             |
+| `usecaseExtendLine`     | `extend` relationship stroke              |
+
+`include` and `extend` are both dashed, which is hard to tell apart at small sizes, so the
+colour themes give them separate hues as well.
+
+System boundaries are the exception to the rule above: they are numbered rather than given
+one shared colour. The first boundary in the document takes the first colour of the theme's
+palette, the second takes the second, and so on, exactly as flowchart subgraphs are
+numbered. For a container the number means something — it says which group an element
+belongs to — and it stays put as long as the order of the boundaries does, so adding an
+actor or a use case anywhere leaves it alone. `usecaseBoundaryBkg` and
+`usecaseBoundaryBorder` are the fallback for themes that carry no palette to number with.
+
+```mermaid-example
+---
+config:
+  theme: redux-color
+---
+usecase-beta
+direction LR
+actor Customer
+systemBoundary Catalogue
+  Browse("Browse catalogue")
+end
+systemBoundary Payment
+  Checkout("Checkout")
+end
+Customer --> Browse
+Browse --> Checkout
+Checkout ..> : include Browse
+```
+
+```mermaid
+---
+config:
+  theme: redux-color
+---
+usecase-beta
+direction LR
+actor Customer
+systemBoundary Catalogue
+  Browse("Browse catalogue")
+end
+systemBoundary Payment
+  Checkout("Checkout")
+end
+Customer --> Browse
+Browse --> Checkout
+Checkout ..> : include Browse
+```
+
+### Per-element colour rotation
+
+Set `colorScheme: rotate` to extend the numbering from the boundaries to the actors and use
+cases as well, so every element takes its own slot from the theme's categorical palette, the
+way entity relationship and class diagrams are coloured. Actors and use cases share one
+cycle, with the actors numbered first and the use cases after them, each in declaration
+order. An `actor A`, `usecase U`, `actor B` written in that order is therefore numbered A,
+B, U rather than A, U, B. This buys per-element variety at the cost of the stability
+described above: inserting an element shifts the colour of every later element of its own
+kind, and inserting an actor shifts the use cases too. Boundaries keep their own numbering
+either way. Only the colour themes (`redux-color` and `redux-dark-color`) carry a palette,
+so on any other theme the two settings render identically.
+
+```mermaid-example
+---
+config:
+  theme: redux-color
+  usecase:
+    colorScheme: rotate
+---
+usecase-beta
+direction LR
+actor Customer
+actor Auditor
+Browse("Browse catalogue")
+Checkout("Checkout")
+Customer --> Browse
+Browse --> Checkout
+Auditor --> Checkout
+```
+
+```mermaid
+---
+config:
+  theme: redux-color
+  usecase:
+    colorScheme: rotate
+---
+usecase-beta
+direction LR
+actor Customer
+actor Auditor
+Browse("Browse catalogue")
+Checkout("Checkout")
+Customer --> Browse
+Browse --> Checkout
+Auditor --> Checkout
+```
+
+`classDef` and `style` override both schemes, so per-element semantic colour stays
+available whichever one is active. See [Styling](#styling).
+
 ## Configuration
 
 Use case diagrams accept these diagram configuration keys:
@@ -525,6 +753,7 @@ Use case diagrams accept these diagram configuration keys:
 | `nodeSpacing`       | `50`                      | Spacing between nodes on the same level       |
 | `rankSpacing`       | `50`                      | Spacing between layout ranks                  |
 | `diagramPadding`    | `20`                      | Padding around the diagram                    |
+| `colorScheme`       | `role`                    | How the diagram takes colour from the theme   |
 | `useMaxWidth`       | `true`                    | Whether the SVG scales to the available width |
 
 ```mermaid-example
@@ -540,6 +769,7 @@ config:
     nodeSpacing: 60
     rankSpacing: 70
     diagramPadding: 24
+    colorScheme: role
     useMaxWidth: false
 ---
 usecase-beta
@@ -562,6 +792,7 @@ config:
     nodeSpacing: 60
     rankSpacing: 70
     diagramPadding: 24
+    colorScheme: role
     useMaxWidth: false
 ---
 usecase-beta

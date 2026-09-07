@@ -105,7 +105,8 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (core) {
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
-    // Ignore dependencies and any dependencies of dependencies
+    // Ignore dependencies and any dependencies of dependencies.
+    // A package may legitimately have none at all.
     //
     // peerDependencies must be external too. The consumer is the one that
     // supplies them, so inlining one ships a second copy of that package —

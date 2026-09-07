@@ -1,0 +1,11 @@
+%% Without the `global` block, referencing A inside the flow would pull it
+%% into the container. Declaring it global anchors it at root level.
+agentflow-beta TB
+
+global
+  A["Shared input"]
+end
+
+flow pipeline["Pipeline"]
+  A --> B["Process"] --> C["Publish"]
+end

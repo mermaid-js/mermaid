@@ -344,6 +344,10 @@ Defined in: [packages/mermaid/src/mermaid.ts:466](https://github.com/mermaid-js/
 
 Defined in: [packages/mermaid/src/mermaid.ts:460](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L460)
 
+Renders the diagram, holding the diagram config scope for exactly as long as the render.
+Leaving it set would make `getConfig()` report the last diagram's appearance as the
+global answer for every caller between renders.
+
 #### Parameters
 
 ##### id
@@ -361,12 +365,6 @@ Defined in: [packages/mermaid/src/mermaid.ts:460](https://github.com/mermaid-js/
 #### Returns
 
 `Promise`<[`RenderResult`](RenderResult.md)>
-
-#### Deprecated
-
-- use the `mermaid.render` function instead of `mermaid.mermaidAPI.render`
-
-Deprecated for external use.
 
 ---
 
