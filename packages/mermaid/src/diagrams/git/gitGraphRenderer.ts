@@ -227,7 +227,11 @@ const addInteraction = (
     return undefined;
   }
 
-  const a = parent.append('a').attr('xlink:href', sanitizedUrl).attr('rel', 'noopener noreferrer');
+  const a = parent
+    .append('a')
+    .attr('href', sanitizedUrl)
+    .attr('xlink:href', sanitizedUrl)
+    .attr('rel', 'noopener noreferrer');
 
   if (securityLevel === 'sandbox') {
     log.debug('Overriding %s "%s" link target to "_top" for sandbox mode', type, id);

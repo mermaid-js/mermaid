@@ -1,18 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { select } from 'd3';
-import { setConfig } from '../../config.js';
+import { reset, setSiteConfig } from '../../config.js';
 import { draw } from './gitGraphRenderer.js';
 import { db, clear } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
 
 describe('GitGraph Click Events (Rendering)', () => {
   let container: HTMLDivElement;
+  const originalGetBBox = Object.getOwnPropertyDescriptor(Element.prototype, 'getBBox');
 
   beforeEach(() => {
     container = document.createElement('div');
     container.id = 'test-container';
     document.body.appendChild(container);
-    setConfig({ securityLevel: 'loose' });
+    setSiteConfig({ securityLevel: 'loose' });
+    reset();
     clear();
 
     // Mock SVG getBBox method
@@ -22,6 +24,14 @@ describe('GitGraph Click Events (Rendering)', () => {
 
   afterEach(() => {
     document.body.removeChild(container);
+    reset();
+    setSiteConfig({});
+    reset();
+    if (originalGetBBox) {
+      Object.defineProperty(Element.prototype, 'getBBox', originalGetBBox);
+    } else {
+      Reflect.deleteProperty(Element.prototype, 'getBBox');
+    }
     vi.clearAllMocks();
   });
 
@@ -40,6 +50,7 @@ describe('GitGraph Click Events (Rendering)', () => {
 
     const anchor = svg.select('a');
     expect(anchor.empty()).toBe(false);
+    expect(anchor.attr('href')).toBe('https://example.com');
     expect(anchor.attr('xlink:href')).toBe('https://example.com');
     expect(anchor.attr('rel')).toBe('noopener noreferrer');
     expect(anchor.select('title').text()).toBe('Tooltip');
@@ -47,7 +58,8 @@ describe('GitGraph Click Events (Rendering)', () => {
   });
 
   it('should respect securityLevel="strict" and NOT create anchors', async () => {
-    setConfig({ securityLevel: 'strict' });
+    setSiteConfig({ securityLevel: 'strict' });
+    reset();
     const diagram = `
       gitGraph
         commit id: "cl-same-tab"
@@ -65,7 +77,8 @@ describe('GitGraph Click Events (Rendering)', () => {
   });
 
   it('should force target="_top" when securityLevel="sandbox"', async () => {
-    setConfig({ securityLevel: 'sandbox' });
+    setSiteConfig({ securityLevel: 'sandbox' });
+    reset();
     const diagram = `
       gitGraph
         commit id: "cl-same-tab"
@@ -98,6 +111,10 @@ describe('GitGraph Click Events (Rendering)', () => {
 
     const anchors = svg.selectAll('a');
     expect(anchors.size()).toBe(2);
+    anchors.each(function () {
+      const anchor = select(this);
+      expect(anchor.attr('href')).toBe(anchor.attr('xlink:href'));
+    });
     expect(svg.select('.branchLabel.clickable').empty()).toBe(false);
     expect(svg.select('.tag.clickable').empty()).toBe(false);
   });
