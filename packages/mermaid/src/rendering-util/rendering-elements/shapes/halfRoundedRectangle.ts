@@ -36,7 +36,7 @@ export async function halfRoundedRectangle<T extends SVGGraphicsElement>(
     }
   }
 
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), { wrap: false });
 
   const w = (node?.width ? node?.width : Math.max(minWidth, bbox.width)) + paddingX * 2;
   const h = (node?.height ? node?.height : Math.max(minHeight, bbox.height)) + paddingY * 2;
