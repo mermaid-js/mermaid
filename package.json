@@ -184,6 +184,7 @@
       }
     },
     "patchedDependencies": {
+      "fastdom": "patches/fastdom.patch",
       "roughjs": "patches/roughjs.patch"
     },
     "onlyBuiltDependencies": [

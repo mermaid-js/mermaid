@@ -480,11 +480,36 @@ test.describe('Usecase diagram', () => {
   // THEMED_DIAGRAM deliberately carries no classDef/style, so every colour on screen comes
   // from a theme variable. clusterBkg (system boundary), noteBkgColor/noteBorderColor (note),
   // and the actor/use-case fills are the ones most likely to regress on a dark background.
-  for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
+  //
+  // The two colour themes are in the list because they are the only ones that set the
+  // `usecase*` role variables: on them an actor, a use case and a boundary each render in
+  // their own colour, and `include` and `extend` separate by hue rather than by dash alone.
+  // Every other theme leaves those variables unset and must render exactly as before.
+  for (const theme of [
+    'default',
+    'dark',
+    'forest',
+    'neutral',
+    'base',
+    'redux-color',
+    'redux-dark-color',
+  ] as const) {
     test(`renders every themed element on the ${theme} theme`, async ({ page }, testInfo) => {
       await imgSnapshotTest(page, testInfo, THEMED_DIAGRAM, {
         theme,
         usecase: { diagramPadding: 24, useMaxWidth: true },
+      });
+    });
+  }
+
+  // The opt-in scheme: every actor, use case and boundary takes its own slot from the
+  // theme's categorical palette instead of its role colour. Only the colour themes carry a
+  // palette, so those are the only two where this differs from the default.
+  for (const theme of ['redux-color', 'redux-dark-color'] as const) {
+    test(`rotates the palette per element on the ${theme} theme`, async ({ page }, testInfo) => {
+      await imgSnapshotTest(page, testInfo, THEMED_DIAGRAM, {
+        theme,
+        usecase: { diagramPadding: 24, useMaxWidth: true, colorScheme: 'rotate' },
       });
     });
   }

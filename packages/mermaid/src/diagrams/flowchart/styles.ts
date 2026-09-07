@@ -1,6 +1,7 @@
 // import khroma from 'khroma';
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
+import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
@@ -18,7 +19,112 @@ export interface FlowChartStyleOptions {
   textColor: string;
   titleColor: string;
   strokeWidth: string;
+  theme?: string;
+  look?: string;
+  THEME_COLOR_LIMIT?: number;
+  borderColorArray?: string[];
+  bkgColorArray?: string[];
 }
+
+/**
+ * Cycling per-subgraph colour. Only the containers are painted -- the nodes inside keep
+ * the uniform look, because a flowchart node is a step in a flow rather than a distinct
+ * participant, and node colour is already how `classDef` / `style` carry meaning.
+ *
+ * Emits both the `rect` (classic/neo) and `path` (handDrawn) forms since the container is
+ * a plain rect in one look and a roughjs path pair in the other. `.collapsed-group` is
+ * the same container drawn as a compact node by `collapsedGroup.ts` — it is a container,
+ * not one of the flow's steps, so it takes the palette too; without it a collapsed
+ * subgraph rendered uncoloured beside tinted siblings.
+ *
+ * Not `!important`: `clusters.js` and `collapsedGroup.ts` both put user styles in an
+ * inline `style` attribute, which has to keep winning over the theme palette. The
+ * collapsed form's own colours are presentation attributes (`fill=` / `stroke=`), which
+ * these rules correctly outrank while still losing to that inline style.
+ *
+ * Lanes are excluded by `:not(.swimlane)` and ruled separately below: a lane is two
+ * rectangles, and the generic `path` rule would paint the hachure roughjs emits for its
+ * unfilled body. Here, not in `swimlanes/styles.ts`, so `layout: swimlane` is covered too.
+ */
+const genColor = (options: FlowChartStyleOptions) => {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
+    return '';
+  }
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
+  let sections = '';
+
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
+    const borderColor = borderColorArray![i % borderColorArray!.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
+    /* A collapsed subgraph is drawn by `collapsedGroup.ts` through `getNodeClasses`, which
+     * returns `rough-node` instead of `node` for the handDrawn look -- so a `.node`-only
+     * selector leaves handDrawn collapsed containers uncoloured beside their tinted
+     * siblings. Clusters are unaffected: `clusters.js` sets the `cluster` class directly.
+     *
+     * Each descendant has to be appended to *both* prefixes separately. Writing
+     * `${slot}.node, ${slot}.rough-node .thing` would attach the descendant to the last
+     * item of the list only, silently matching nothing under the classic look.
+     */
+    const collapsedRule = (suffix: string) =>
+      `${slot}.node ${suffix}, ${slot}.rough-node ${suffix}`;
+    /* Both halves of a lane. Each carries the whole prefix separately, as above. */
+    const laneRule = (suffix: string) =>
+      `${slot}.swimlane.cluster .swimlane-title${suffix}, ${slot}.swimlane.cluster .swimlane-body${suffix}`;
+    sections += `
+
+    ${slot}.cluster:not(.swimlane) rect {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    ${slot}.cluster:not(.swimlane) path {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    /* Lane, classic and neo. */
+    ${slot}.swimlane.cluster rect.swimlane-title,
+    ${slot}.swimlane.cluster rect.swimlane-body {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    /* Lane, handDrawn: roughjs emits the hachure fill first, then the outline. */
+    ${laneRule(' path:nth-of-type(2)')} {
+      stroke: ${borderColor};
+    }
+${
+  hasBkgColors
+    ? `
+    /* A roughjs fill is drawn as lines, so the lane fill is a stroke here. */
+    ${laneRule(' path:first-of-type')} {
+      stroke: ${bkgColorArray[i % bkgColorArray.length]};
+    }
+`
+    : ''
+}
+    ${collapsedRule('.collapsed-group')},
+    ${collapsedRule('.collapsed-group path')} {
+      stroke: ${borderColor};
+      ${fill}
+    }
+
+    /* The ellipsis dots and the separator take clusterBorder further down, so without
+       these the container is palette-coloured while its own markers are not. */
+    ${collapsedRule('.collapsed-indicator')} {
+      fill: ${borderColor};
+    }
+
+    ${collapsedRule('.collapsed-separator')} {
+      stroke: ${borderColor};
+    }
+    `;
+  }
+  return sections;
+};
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma
@@ -33,7 +139,8 @@ const fade = (color: string, opacity: number) => {
 };
 
 const getStyles = (options: FlowChartStyleOptions) =>
-  `.label {
+  `${genColor(options)}
+  .label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
   }

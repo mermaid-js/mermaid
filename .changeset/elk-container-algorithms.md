@@ -1,5 +1,5 @@
 ---
-'@mermaid-js/layout-elk': minor
+'mermaid': minor
 ---
 
 feat: let a container pick its own ELK algorithm with `@{ algorithm: … }`, and add `elk.box` and `elk.rectpacking` to the selectable `layout` values.

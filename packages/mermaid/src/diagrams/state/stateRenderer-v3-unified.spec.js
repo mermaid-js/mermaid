@@ -19,6 +19,7 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 }));
 
 vi.mock('../../rendering-util/render.js', () => ({
+  getRegisteredLayoutAlgorithm: vi.fn((algorithm) => algorithm),
   render: vi.fn((data, svg) => {
     const layoutNode = data.nodes.find((node) => node.id === 'A') ?? data.nodes[0];
     if (layoutNode) {

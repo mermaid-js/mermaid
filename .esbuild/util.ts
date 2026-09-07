@@ -81,7 +81,7 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
 
   const external: string[] = ['require', 'fs', 'path'];
   const outFileName = getFileName(name, options);
-  const { dependencies, version } = JSON.parse(
+  const { dependencies, peerDependencies, version } = JSON.parse(
     readFileSync(resolve(__dirname, `../packages/${packageName}/package.json`), 'utf-8')
   );
   const output: BuildOptions = buildOptions({
@@ -105,8 +105,17 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (core) {
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
-    // Ignore dependencies and any dependencies of dependencies
-    external.push(...Object.keys(dependencies));
+    // Ignore dependencies and any dependencies of dependencies.
+    // A package may legitimately have none at all.
+    //
+    // peerDependencies must be external too. The consumer is the one that
+    // supplies them, so inlining one ships a second copy of that package —
+    // with its own module-level singletons — inside this bundle. For the
+    // layout plugins that peer dep is mermaid itself: a runtime (non-type)
+    // import of it resolves through `exports` to dist/mermaid.core.mjs and
+    // esbuild would inline the whole thing, so the plugin would run against
+    // its own stale mermaid rather than the host's.
+    external.push(...Object.keys(dependencies ?? {}), ...Object.keys(peerDependencies ?? {}));
     output.external = external;
   }
 

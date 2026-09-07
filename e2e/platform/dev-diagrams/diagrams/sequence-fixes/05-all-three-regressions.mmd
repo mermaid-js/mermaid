@@ -1,0 +1,14 @@
+sequenceDiagram
+  actor User
+  participant API
+  participant DB@{ "type" : "database" } as Database
+  Note over User: bold note text was fix 1
+  rect
+    User ->> API: the band behind this was invisible, fix 3
+    API ->> DB: query
+  end
+  Note over API,DB: a wider note
+  rect rgb(200, 230, 255)
+    DB -->> API: an explicitly coloured band always worked
+  end
+  API -->> User: the stick figure size was fix 2

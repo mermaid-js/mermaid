@@ -296,3 +296,93 @@ describe('flow db direction', () => {
     expect(flowDb.getDirection()).toBe('TB');
   });
 });
+
+/**
+ * `colorIndex` drives the per-subgraph palette under the `redux-color` /
+ * `redux-dark-color` themes: `clusters.js` stamps it as `data-color-id` and
+ * `flowchart/styles.ts` maps it to a container border and fill.
+ *
+ * It is deliberately the declaration index rather than a running counter, because
+ * `getData()` walks subgraphs in reverse and skips ones hidden inside a collapsed
+ * ancestor. A counter would hand out colours in reverse reading order and reshuffle them
+ * whenever a subgraph is collapsed.
+ */
+describe('flow db subgraph colour slots', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+  });
+
+  const addVertex = (id: string) =>
+    flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+
+  const attachMeta = (id: string, meta: string) =>
+    flowDb.addVertex(id, undefined as unknown as FlowText, undefined, [], [], '', {}, meta);
+
+  it('numbers flat subgraphs in source order', () => {
+    for (const id of ['A', 'B', 'C']) {
+      addVertex(id);
+    }
+    flowDb.addSubGraph({ text: 'first' }, ['A'], { text: 'First', type: 'text' });
+    flowDb.addSubGraph({ text: 'second' }, ['B'], { text: 'Second', type: 'text' });
+    flowDb.addSubGraph({ text: 'third' }, ['C'], { text: 'Third', type: 'text' });
+
+    const { nodes } = flowDb.getData();
+    const slot = (id: string) => nodes.find((n) => n.id === id)?.colorIndex;
+    expect([slot('first'), slot('second'), slot('third')]).toEqual([0, 1, 2]);
+  });
+
+  it('numbers nested subgraphs in source order, parent before its children', () => {
+    /* The discriminating case. `addSubGraph` is called when a subgraph *closes*, so
+     * `subGraphs` holds nested ones before their parent -- here [InnerOne, InnerTwo,
+     * Outer, Sibling]. Taking the array index directly gave Outer slot 2 while its own
+     * children took 0 and 1.
+     *
+     * Three flat subgraphs cannot catch that: for siblings, close order and source order
+     * are the same. Only nesting separates them.
+     */
+    for (const id of ['A', 'B', 'C', 'D']) {
+      addVertex(id);
+    }
+    flowDb.addSubGraph({ text: 'InnerOne' }, ['A'], { text: 'InnerOne', type: 'text' });
+    flowDb.addSubGraph({ text: 'InnerTwo' }, ['B'], { text: 'InnerTwo', type: 'text' });
+    flowDb.addSubGraph({ text: 'Outer' }, ['InnerOne', 'InnerTwo'], {
+      text: 'Outer',
+      type: 'text',
+    });
+    flowDb.addSubGraph({ text: 'Sibling' }, ['D'], { text: 'Sibling', type: 'text' });
+
+    const { nodes } = flowDb.getData();
+    const slot = (id: string) => nodes.find((n) => n.id === id)?.colorIndex;
+    expect([slot('Outer'), slot('InnerOne'), slot('InnerTwo'), slot('Sibling')]).toEqual([
+      0, 1, 2, 3,
+    ]);
+  });
+
+  it('keeps a collapsed subgraph on its own slot so the cycle does not shift', () => {
+    for (const id of ['A', 'B', 'C']) {
+      addVertex(id);
+    }
+    flowDb.addSubGraph({ text: 'first' }, ['A'], { text: 'First', type: 'text' });
+    flowDb.addSubGraph({ text: 'second' }, ['B'], { text: 'Second', type: 'text' });
+    flowDb.addSubGraph({ text: 'third' }, ['C'], { text: 'Third', type: 'text' });
+    attachMeta('second', ' view: collapsed ');
+
+    const { nodes } = flowDb.getData();
+    const slot = (id: string) => nodes.find((n) => n.id === id)?.colorIndex;
+    // `second` is drawn as a compact node rather than a container, but `third` keeps
+    // slot 2 either way.
+    expect(slot('first')).toBe(0);
+    expect(slot('second')).toBe(1);
+    expect(slot('third')).toBe(2);
+  });
+
+  it('leaves plain vertices without a slot', () => {
+    addVertex('A');
+    flowDb.addSubGraph({ text: 'only' }, ['A'], { text: 'Only', type: 'text' });
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.find((n) => n.id === 'A')?.colorIndex).toBeUndefined();
+    expect(nodes.find((n) => n.id === 'only')?.colorIndex).toBe(0);
+  });
+});
