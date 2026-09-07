@@ -1,0 +1,22 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+
+  Alice->>Bob: Regular message
+  Bob->>Bob: Self-reference solid
+  Bob-->>Charlie: Regular dotted
+  Charlie()->>()Charlie: Self-ref dual central
+  Charlie->>Alice: Regular back
+  Alice<<->>Alice: Self-ref bidirectional
+  Alice()->>Bob: Regular with central
+  Bob()/|-()Bob: Self-ref reverse dual central
+  Bob-->>Alice: Regular dotted back

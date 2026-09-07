@@ -1,0 +1,15 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  actor U@{ "type" : "actor", "alias": "End User" }
+  actor G@{ "type" : "boundary", "alias": "Gateway" }
+  actor S@{ "type" : "control", "alias": "Service" }
+  U ->> G: Request
+  G ->> S: Process
+  S -->> G: Response
+  G -->> U: Result

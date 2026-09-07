@@ -51,6 +51,17 @@
     {
       "matchPackageNames": ["chokidar"],
       "enabled": false
+    },
+    {
+      "description": "langium >=4.2.2 depends on chevrotain v12, which requires Node >=22 (uses Object.groupBy). Pinned to 4.2.1 / chevrotain v11 to keep Node 20 support — bump manually and in sync when Node 20 support is dropped.",
+      "matchPackageNames": [
+        "langium",
+        "langium-cli",
+        "chevrotain",
+        "@chevrotain/types",
+        "@chevrotain/regexp-to-ast"
+      ],
+      "enabled": false
     }
   ],
   "dependencyDashboard": false,

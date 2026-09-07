@@ -1,0 +1,13 @@
+---
+config:
+  logLevel: 0
+---
+stateDiagram-v2
+  [*] --> Off
+  Off --> On
+  state MyChoice [[choice]]
+  On --> MyChoice
+  MyChoice --> Washing
+  MyChoice --> Drying
+  Washing --> Finished
+  Finished --> [*]

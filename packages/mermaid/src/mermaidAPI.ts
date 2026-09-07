@@ -24,7 +24,8 @@ import * as configApi from './config.js';
 import { getEffectiveHtmlLabels } from './config.js';
 import type { MermaidConfig } from './config.type.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import type { DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
+import { detectType } from './diagram-api/detectType.js';
+import type { DiagramCode, DiagramMetadata, DiagramStyleClassDef } from './diagram-api/types.js';
 import { Diagram } from './Diagram.js';
 import { evaluate } from './diagrams/common/common.js';
 import errorRenderer from './diagrams/error/errorRenderer.js';
@@ -72,6 +73,15 @@ const DOMPURIFY_ATTR = ['dominant-baseline'];
 function processAndSetConfigs(text: string) {
   const processed = preprocessDiagram(text);
   configApi.reset();
+  // The config needs the diagram type to apply that type's appearance defaults. Text
+  // matching nothing leaves the global defaults in charge; parse raises the real error.
+  let diagramType: string | undefined;
+  try {
+    diagramType = detectType(processed.code.cleaned, configApi.getConfig());
+  } catch {
+    diagramType = undefined;
+  }
+  configApi.setDiagramConfigScope(diagramType);
   configApi.addDirective(processed.config ?? {});
   return processed;
 }
@@ -92,13 +102,17 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
   addDiagrams();
   try {
     const { code, config } = processAndSetConfigs(text);
-    const diagram = await getDiagramFromText(code);
+    // Pass the whole DiagramCode object so diagrams that report source
+    // positions see the same text (and frontmatter offset) that render() uses.
+    const diagram = await Diagram.fromText(code);
     return { diagramType: diagram.type, config };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
     }
     throw error;
+  } finally {
+    configApi.setDiagramConfigScope(undefined);
   }
 }
 
@@ -239,7 +253,37 @@ const compileCSS = (namespace: `#${string}`, css: string) => {
             return;
           }
           element.props = element.props.map((prop) => {
-            if (!prop.startsWith(namespace)) {
+            /**
+             * For the root selector `& { ... }`, allow limited inherited
+             * styles to not be namespaced.
+             * These won't do anything to the `<svg>`, but will be inherited by
+             * children with a lower specificity than SVG presentation attributes.
+             */
+            if (
+              prop === namespace &&
+              Array.isArray(element.children) &&
+              element.children.every((child) => {
+                if (child.type !== 'decl') {
+                  return false;
+                }
+                const allowedProps = new Set<typeof child.props>([
+                  'font-family',
+                  'font-size',
+                  'fill',
+                ]);
+                return allowedProps.has(child.props);
+              })
+            ) {
+              return prop;
+            }
+
+            const alreadyNamespaced =
+              // If the prop already starts with the namespace followed by a space or >, then it's already namespaced.
+              (prop.startsWith(`${namespace} `) || prop.startsWith(`${namespace}>`)) &&
+              // Column combinators are not yet widely supported, it's not yet compressed to `${namespace}||`,
+              // so we need to add an extra check for that
+              !prop.startsWith(`${namespace} ||`);
+            if (!alreadyNamespaced) {
               return `${namespace} ${prop}`;
             }
             return prop;
@@ -430,7 +474,7 @@ export const removeExistingElements = (
  * Deprecated for external use.
  */
 
-const render = async function (
+const renderDiagram = async function (
   id: string,
   text: string,
   svgContainingElement?: Element
@@ -442,14 +486,22 @@ const render = async function (
   }
 
   const processed = processAndSetConfigs(text);
-  text = processed.code;
+  // Keep the DiagramCode object, not just the cleaned string: diagrams that
+  // report source positions need `withComments` and `frontmatterLineOffset`,
+  // and dropping them here silently disabled that on the render path while
+  // `parse()` still had them.
+  let code: DiagramCode = processed.code;
+  text = code.cleaned;
 
   const config = configApi.getConfig();
   log.debug(config);
 
-  // Check the maximum allowed text size
+  // Check the maximum allowed text size. `Diagram.fromText` separately caps the
+  // comment-preserving variant, which only diagrams that report source
+  // positions ever parse.
   if (text.length > (config?.maxTextSize ?? MAX_TEXTLENGTH)) {
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+    code = { raw: text, cleaned: text };
   }
 
   const idSelector = `#${id}` as const;
@@ -523,8 +575,8 @@ const render = async function (
 
   try {
     diag = injected.profiling
-      ? await profiler.span('parse', () => Diagram.fromText(text, { title: processed.title }))
-      : await Diagram.fromText(text, { title: processed.title });
+      ? await profiler.span('parse', () => Diagram.fromText(code, { title: processed.title }))
+      : await Diagram.fromText(code, { title: processed.title });
   } catch (error) {
     if (config.suppressErrorRendering) {
       removeTempElements();
@@ -628,6 +680,23 @@ const render = async function (
 };
 
 /**
+ * Renders the diagram, holding the diagram config scope for exactly as long as the render.
+ * Leaving it set would make `getConfig()` report the last diagram's appearance as the
+ * global answer for every caller between renders.
+ */
+const render = async function (
+  id: string,
+  text: string,
+  svgContainingElement?: Element
+): Promise<RenderResult> {
+  try {
+    return await renderDiagram(id, text, svgContainingElement);
+  } finally {
+    configApi.setDiagramConfigScope(undefined);
+  }
+};
+
+/**
  * @param  userOptions - Initial Mermaid options
  */
 function initialize(userOptions: MermaidConfig = {}) {
@@ -643,13 +712,24 @@ function initialize(userOptions: MermaidConfig = {}) {
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
-  if (options?.theme && options.theme in theme) {
+  // Stylesheets gate their palette rules on the theme *name*, so an unrecognised name left
+  // in place loads a palette that is then never rendered. Read the fallback from
+  // `defaultConfig` so the schema's `theme.default` stays the one place it is written down.
+  const fallbackTheme = configApi.defaultConfig.theme as keyof typeof theme;
+  if (options?.theme && Object.hasOwn(theme, options.theme)) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme as keyof typeof theme].getThemeVariables(
       options.themeVariables
     );
   } else if (options) {
-    options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
+    // Two values deliberately keep their name. `'null'` is the documented sentinel for
+    // disabling the pre-defined themes, so normalising it would re-enable one; and an
+    // absent theme needs no name written in, because `defaultConfig` already supplies the
+    // same fallback. Anything else is a name no theme answers to, and is corrected here.
+    if (options.theme != null && options.theme !== 'null') {
+      options.theme = fallbackTheme;
+    }
+    options.themeVariables = theme[fallbackTheme].getThemeVariables(options.themeVariables);
   }
 
   const config =
@@ -661,6 +741,7 @@ function initialize(userOptions: MermaidConfig = {}) {
 
 const getDiagramFromText = (text: string, metadata: Pick<DiagramMetadata, 'title'> = {}) => {
   const { code } = preprocessDiagram(text);
+  // `code` is now a DiagramCode object; Diagram.fromText accepts either shape.
   return Diagram.fromText(code, metadata);
 };
 
@@ -691,6 +772,10 @@ export const mermaidAPI = Object.freeze({
   getDiagramFromText,
   initialize,
   getConfig: configApi.getConfig,
+  /**
+   * @deprecated This function does nothing. It will be overwritten by the next
+   *             call to {@link render} or {@link parse}.
+   */
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,

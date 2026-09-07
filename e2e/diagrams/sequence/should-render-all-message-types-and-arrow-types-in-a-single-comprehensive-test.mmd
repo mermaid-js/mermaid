@@ -1,0 +1,89 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  participant David
+
+  Note over Alice,David: SOLID ARROWS (Filled arrowhead)
+  Alice->>Bob: Solid arrow (->>)
+  Alice->Charlie: Solid open arrow (->)
+  Alice-xDavid: Solid cross (-x)
+  Alice-)Bob: Solid point async (-)
+
+  Note over Alice,David: DOTTED ARROWS (Dashed line)
+  Bob-->>Alice: Dotted arrow (-->>)
+  Bob-->Charlie: Dotted open arrow (-->)
+  Bob--xDavid: Dotted cross (--x)
+  Bob--)Alice: Dotted point async (--)
+
+  Note over Alice,David: BIDIRECTIONAL ARROWS
+  Alice<<->>Bob: Bidirectional solid (<<->>)
+  Charlie<<-->>David: Bidirectional dotted (<<-->>)
+
+  Note over Alice,David: REVERSE ARROWS (Half arrows)
+  Bob/|-Alice: Solid top reverse (/|-)
+  Charlie\|-Bob: Solid bottom reverse (\|-)
+  David//-Alice: Stick top reverse (//)
+  Alice\\-Bob: Stick bottom reverse (\\-)
+
+  Note over Alice,David: DOTTED REVERSE ARROWS
+  Bob/|--Alice: Dotted solid top reverse (/|--)
+  Charlie\|--Bob: Dotted solid bottom reverse (\|--)
+  David//--Alice: Dotted stick top reverse (//--)
+  Alice\\--Bob: Dotted stick bottom reverse (\\--)
+
+  Note over Alice,David: CENTRAL CONNECTIONS (Circle at destination)
+  Alice->>()Bob: Solid with circle at destination
+  Alice-->>()Charlie: Dotted with circle at destination
+  Alice->()David: Open with circle at destination
+  Alice--x()Bob: Cross with circle at destination
+
+  Note over Alice,David: CENTRAL CONNECTIONS REVERSE (Circle at source)
+  Bob()->>Alice: Circle at source with solid
+  Charlie()-->>Bob: Circle at source with dotted
+  David()->Alice: Circle at source with open
+  Bob()--xAlice: Circle at source with cross
+
+  Note over Alice,David: CENTRAL CONNECTIONS DUAL (Circles at both ends)
+  Alice()->>()Bob: Dual circles with solid
+  Alice()-->>()Charlie: Dual circles with dotted
+  Alice()->()David: Dual circles with open
+  Alice()--x()Bob: Dual circles with cross
+
+  Note over Alice,David: BIDIRECTIONAL WITH CENTRAL CONNECTIONS
+  Alice()<<->>()Bob: Dual circles with bidirectional solid
+  Charlie()<<-->>()David: Dual circles with bidirectional dotted
+
+  Note over Alice,David: SELF-REFERENCES (Same participant)
+  Alice->>Alice: Self-reference solid
+  Bob-->>Bob: Self-reference dotted
+  Charlie->Charlie: Self-reference open
+  David-xDavid: Self-reference cross
+
+  Note over Alice,David: SELF-REFERENCES WITH REVERSE ARROWS
+  Alice/|-Alice: Self-ref reverse solid top
+  Bob\|-Bob: Self-ref reverse solid bottom
+  Charlie//-Charlie: Self-ref reverse stick top
+  David\\-David: Self-ref reverse stick bottom
+
+  Note over Alice,David: SELF-REFERENCES BIDIRECTIONAL
+  Alice<<->>Alice: Self-ref bidirectional solid
+  Bob<<-->>Bob: Self-ref bidirectional dotted
+
+  Note over Alice,David: MIXED COMPLEX SCENARIO
+  Alice->>Bob: Regular message
+  Bob()->>()Charlie: Central dual connection
+  Charlie-->>David: Dotted response
+  David/|-Alice: Reverse arrow
+  Alice<<->>Bob: Bidirectional back
+  Bob-xCharlie: Cross message
+  Charlie()->>David: Central reverse
+  David-->>()Alice: Dotted with circle

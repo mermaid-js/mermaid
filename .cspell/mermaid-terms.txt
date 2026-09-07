@@ -1,4 +1,6 @@
 Adamiecki
+agentflow
+agentic
 arrowend
 Bendpoints
 bmatrix
@@ -38,10 +40,12 @@ rankdir
 ranksep
 rect
 rects
+refdoc
 sandboxed
 sentencepiece
 siebling
 statediagram
+Structurizr
 substate
 treeview
 unfixable

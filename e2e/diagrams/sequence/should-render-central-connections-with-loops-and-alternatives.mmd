@@ -1,0 +1,20 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  loop Every minute
+  Alice ()->>() Bob: Central heartbeat
+  Bob ()-->> Charlie: Forward heartbeat
+  end
+  alt Success
+  Charlie ()<<-->>() Alice: Success response
+  else Failure
+  Charlie ()-x() Alice: Failure response
+  end

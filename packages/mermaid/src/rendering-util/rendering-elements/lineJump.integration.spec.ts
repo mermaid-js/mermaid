@@ -41,12 +41,12 @@ const __dirname = dirname(__filename);
 
 const FIXTURE_PATH = resolve(
   __dirname,
-  '../../../../../cypress/platform/dev-diagrams/layout-tests/swimlanes/7-car-sales-constr.sizes.json'
+  '../../../../../e2e/platform/dev-diagrams/layout-tests/swimlanes/7-car-sales-constr.sizes.json'
 );
 
 const MMD_PATH = resolve(
   __dirname,
-  '../../../../../cypress/platform/dev-diagrams/layout-tests/swimlanes/7-car-sales-constr.mmd'
+  '../../../../../e2e/platform/dev-diagrams/layout-tests/swimlanes/7-car-sales-constr.mmd'
 );
 
 function loadFixture(): SizesFixture {

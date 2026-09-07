@@ -1,0 +1,35 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Web@{ "type" : "boundary" } as Web Portal
+  participant Auth@{ "type" : "control" } as Auth Service
+  participant UserDB@{ "type" : "database" } as User DB
+  participant Queue@{ "type" : "queue" } as Event Queue
+  participant Audit@{ "type" : "collections" } as Audit Trail
+  Web ->> Auth: Login request
+  activate Auth
+  Auth ->> UserDB: Verify credentials
+  activate UserDB
+  UserDB -->> Auth: User found
+  deactivate UserDB
+  alt Valid credentials
+  Auth ->> Queue: Publish login event
+  Auth ->> Audit: Log success
+  par Parallel processing
+    Queue -->> Auth: Event queued
+    and
+    Audit -->> Auth: Logged
+  end
+  Auth -->> Web: Success token
+  else Invalid credentials
+  Auth ->> Audit: Log failure
+  Audit -->> Auth: Logged
+  Auth --x Web: Access denied
+  end
+  deactivate Auth
+  Note over Web,Audit: All interactions logged

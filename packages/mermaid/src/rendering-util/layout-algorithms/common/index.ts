@@ -7,6 +7,7 @@ import { getConfig } from '../../../config.js';
 import utils from '../../../utils.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { createGraphWithElements } from '../../createGraph.js';
+import type { CreateGraphOptions } from '../../createGraph.js';
 import { clear as clearClusters, insertCluster } from '../../rendering-elements/clusters.js';
 import {
   clear as clearEdges,
@@ -133,7 +134,17 @@ export function createCommonLayoutRenderer<
     options?: RenderOptions
   ): Promise<void> {
     const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
+    // Use the helper handed over by the host mermaid instance when there is one.
+    // External layout packages (elk, tidy-tree) are bundled with their own copy of
+    // these modules, and that copy's config module never sees `mermaid.initialize()`,
+    // so markers created through the statically imported `insertMarkers` read default
+    // theme variables instead of the diagram's.
+    (helpers?.insertMarkers ?? insertMarkers)(
+      element,
+      data4Layout.markers,
+      data4Layout.type,
+      data4Layout.diagramId
+    );
     clearLayoutRenderState();
 
     // Convenience struct containing everything you need to render
@@ -202,9 +213,10 @@ export function clearLayoutRenderState(): void {
 
 export async function defaultMeasureLayout(
   data4Layout: LayoutData,
-  { element }: CommonLayoutRenderContext
+  { element }: CommonLayoutRenderContext,
+  options?: CreateGraphOptions
 ): Promise<CommonLayoutMeasure> {
-  return await createGraphWithElements(element, data4Layout);
+  return await createGraphWithElements(element, data4Layout, options);
 }
 
 export async function paintLayoutData(

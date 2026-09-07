@@ -1,0 +1,18 @@
+classDiagram-v2
+namespace Company.Project.Module {
+  class User {
+    +login(username: String, password: String)
+    +logout()
+  }
+  class Admin {
+    +addUser(user: User)
+    +removeUser(user: User)
+    +generateReport()
+  }
+  class Report {
+    +generatePDF(reportData: List)
+    +generateCSV(reportData: List)
+  }
+}
+Admin --> User : manages
+Admin --> Report : generates

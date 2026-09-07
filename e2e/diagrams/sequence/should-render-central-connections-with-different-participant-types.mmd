@@ -1,0 +1,18 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  actor Bob
+  participant Charlie@{"type":"boundary"}
+  participant David@{"type":"control"}
+  participant Eve@{"type":"entity"}
+  Alice ()->>() Bob: To actor
+  Bob ()-->> Charlie: To boundary
+  Charlie ()->>() David: To control
+  David ()<<-->>() Eve: To entity
+  Eve ()-x() Alice: Back to participant

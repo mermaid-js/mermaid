@@ -1,0 +1,43 @@
+---
+config:
+  sequence:
+    useMaxWidth: false
+---
+sequenceDiagram
+  box rgb(200,220,255) Authentication
+  participant User@{ "type": "actor" }
+  participant LoginUI@{ "type": "boundary" }
+  participant AuthService@{ "type": "control" }
+  participant UserDB@{ "type": "database" }
+  end
+
+  box rgb(200,255,220) Order Processing
+  participant Order@{ "type": "entity" }
+  participant OrderQueue@{ "type": "queue" }
+  participant AuditLogs@{ "type": "collections" }
+  end
+
+  User ->> LoginUI: Enter credentials
+  LoginUI ->> AuthService: Validate
+  AuthService ->> UserDB: Query user
+  UserDB -->> AuthService: User data
+
+  alt Valid credentials
+  AuthService -->> LoginUI: Success
+  LoginUI -->> User: Welcome
+
+  par Place order
+    User ->> Order: New order
+    Order ->> OrderQueue: Process
+    and
+    Order ->> AuditLogs: Record
+  end
+
+  loop Until confirmed
+    OrderQueue ->> Order: Update status
+    Order -->> User: Notification
+  end
+  else Invalid credentials
+  AuthService --x LoginUI: Failure
+  LoginUI --x User: Retry
+  end

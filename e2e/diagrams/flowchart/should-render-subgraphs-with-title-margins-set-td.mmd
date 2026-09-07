@@ -1,0 +1,22 @@
+---
+config:
+  flowchart:
+    subGraphTitleMargin:
+      top: 8
+      bottom: 16
+---
+flowchart TD
+
+  subgraph TOP
+  direction LR
+  subgraph B1
+      direction RL
+      i1 -->f1
+  end
+  subgraph B2
+      direction BT
+      i2 -->f2
+  end
+  end
+  A --> TOP --> B
+  B1 --> B2

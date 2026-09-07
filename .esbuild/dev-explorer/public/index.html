@@ -22,6 +22,16 @@
 
           mermaid.registerLayoutLoaders(layouts);
 
+          mermaid.registerIconPacks([
+            {
+              name: 'fa',
+              loader: () =>
+                fetch('https://unpkg.com/@iconify-json/fa6-solid@1/icons.json').then((response) =>
+                  response.json()
+                ),
+            },
+          ]);
+
           // Keep the rest of the dev explorer simple: expose mermaid on window for the Lit components.
           window.mermaid = mermaid;
           return mermaid;

@@ -1,0 +1,15 @@
+architecture-beta
+  service left_disk(disk)[Disk]
+  service top_disk(disk)[Disk]
+  service bottom_disk(disk)[Disk]
+  service top_gateway(internet)[Gateway]
+  service bottom_gateway(internet)[Gateway]
+  junction juncC
+  junction juncR
+
+  left_disk:R -- L:juncC
+  top_disk:B -- T:juncC
+  bottom_disk:T -- B:juncC
+  juncC:R -- L:juncR
+  top_gateway:B -- T:juncR
+  bottom_gateway:T -- B:juncR

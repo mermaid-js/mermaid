@@ -1,0 +1,8 @@
+C4Dynamic
+title Dynamic diagram
+ContainerDb(db, "Database", "SQL")
+Container(api, "API", "Java")
+Container(spa, "SPA", "Angular")
+Rel(spa, api, "1. Submits credentials")
+Rel(api, db, "2. Validates against")
+Rel(api, spa, "3. Returns token")

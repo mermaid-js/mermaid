@@ -1,0 +1,17 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  CUSTOMER ||--o{ 1 : places
+  1 ||--|{ u : contains
+  1.5
+  u ||--|| 2.5 : processes
+  2.5 {
+  string id
+  float value
+  }
+  u {
+  varchar(50) name
+  int count
+  }

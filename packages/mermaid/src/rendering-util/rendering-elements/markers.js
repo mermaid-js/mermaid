@@ -35,6 +35,7 @@ const extension = (elem, type, id) => {
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 
@@ -83,6 +84,7 @@ const composition = (elem, type, id) => {
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
@@ -96,6 +98,7 @@ const composition = (elem, type, id) => {
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
@@ -141,6 +144,7 @@ const aggregation = (elem, type, id) => {
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
@@ -154,6 +158,7 @@ const aggregation = (elem, type, id) => {
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
@@ -198,6 +203,7 @@ const dependency = (elem, type, id) => {
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
 
@@ -211,6 +217,7 @@ const dependency = (elem, type, id) => {
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
   elem
@@ -254,6 +261,7 @@ const lollipop = (elem, type, id) => {
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('circle')
     .attr('fill', 'transparent')
     .attr('cx', 7)
@@ -270,6 +278,7 @@ const lollipop = (elem, type, id) => {
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
+    .attr('markerUnits', 'userSpaceOnUse')
     .append('circle')
     .attr('fill', 'transparent')
     .attr('cx', 7)
@@ -947,6 +956,42 @@ const requirement_contains_neo = (elem, type, id) => {
   containsNode.append('line').attr('y1', 1).attr('y2', 19).attr('x1', 10).attr('x2', 10);
   containsNode.selectAll('*').attr('stroke-width', `${strokeWidth}`);
 };
+const hierarchy = (elem, type, id) => {
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-hierarchyEnd')
+    .attr('class', 'marker hierarchy ' + type)
+    .attr('viewBox', '0 0 12 10')
+    .attr('refX', 10)
+    .attr('refY', 5)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 10)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0 0 L 6 5 L 0 10 M 4 0 L 10 5 L 4 10')
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-hierarchyStart')
+    .attr('class', 'marker hierarchy ' + type)
+    .attr('viewBox', '0 0 12 10')
+    .attr('refX', 2)
+    .attr('refY', 5)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 10)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 12 0 L 6 5 L 12 10 M 8 0 L 2 5 L 8 10')
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+};
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
@@ -960,6 +1005,7 @@ const markers = {
   cross,
   barb,
   barbNeo,
+  hierarchy,
   only_one,
   zero_or_one,
   one_or_more,

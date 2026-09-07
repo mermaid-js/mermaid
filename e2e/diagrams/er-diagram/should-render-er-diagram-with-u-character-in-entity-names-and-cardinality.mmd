@@ -1,0 +1,8 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  CUSTOMER ||--|| u : has
+  u ||--|| ORDER : places
+  PROJECT u--o{ TEAM_MEMBER : "parent"

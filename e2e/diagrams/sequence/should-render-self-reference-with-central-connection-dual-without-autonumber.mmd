@@ -1,0 +1,16 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice()->>()Alice: Circles at both ends with solid arrow
+  Bob()-->>()Bob: Circles at both ends with dotted arrow
+  Charlie()->()Charlie: Circles at both ends with open arrow
+  Alice()--x()Alice: Circles at both ends with cross arrow
+  Bob()--)()Bob: Circles at both ends with close arrow

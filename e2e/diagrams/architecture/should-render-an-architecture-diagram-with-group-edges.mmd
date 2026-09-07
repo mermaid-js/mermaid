@@ -1,0 +1,17 @@
+architecture-beta
+  group left_group(cloud)[Left]
+  group right_group(cloud)[Right]
+  group top_group(cloud)[Top]
+  group bottom_group(cloud)[Bottom]
+  group center_group(cloud)[Center]
+
+  service left_disk(disk)[Disk] in left_group
+  service right_disk(disk)[Disk] in right_group
+  service top_disk(disk)[Disk] in top_group
+  service bottom_disk(disk)[Disk] in bottom_group
+  service center_disk(disk)[Disk] in center_group
+
+  left_disk{group}:R --> L:center_disk{group}
+  right_disk{group}:L --> R:center_disk{group}
+  top_disk{group}:B --> T:center_disk{group}
+  bottom_disk{group}:T --> B:center_disk{group}

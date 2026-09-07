@@ -1,0 +1,6 @@
+flowchart TB
+  Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch" }
+  Cloudfront@{ icon: "aws:arch-amazon-route-53" }
+  Route53@{ icon: "aws:arch-amazon-eks-cloud" }
+  Cloudwatch --> Cloudfront
+  Cloudfront --> Route53

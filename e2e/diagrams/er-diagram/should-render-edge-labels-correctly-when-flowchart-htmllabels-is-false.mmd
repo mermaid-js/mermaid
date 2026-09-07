@@ -1,0 +1,12 @@
+---
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE-ITEM : contains
+  CUSTOMER ||--|{ ADDRESS : "invoiced at"
+  CUSTOMER ||--|{ ADDRESS : "receives goods at"
+  ORDER ||--o{ INVOICE : "liable for"

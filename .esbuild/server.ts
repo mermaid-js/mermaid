@@ -1,7 +1,7 @@
 import chokidar from 'chokidar';
 import cors from 'cors';
 import { createHash } from 'crypto';
-import { build, context } from 'esbuild';
+import { context } from 'esbuild';
 import { promises as fs } from 'fs';
 import type { Request, Response } from 'express';
 import express from 'express';
@@ -73,22 +73,17 @@ configs.push(mermaidIIFEConfig);
 
 // The @mermaid-js/layout-elk package imports mermaid through its package
 // `exports`, which resolves to dist/mermaid.core.mjs — and esbuild INLINES that
-// prebuilt core bundle into the elk bundle (mermaid is a peer dep, not external
-// here). The watched configs above only emit the *esm* entry, never the core,
-// so the elk bundle would otherwise inline whatever core was left on disk by the
-// last `pnpm build` (profiling disabled). Its layout phases (prepare/measure/
-// layout/paint) would then be compiled into dead `if (false)` branches and never
-// reach the profiler. Build a profiling-enabled core once, up front, so the elk
-// bundle inlines live spans that share the global `__mermaidProfiler` instance.
-await build(
-  getBuildConfig({
-    ...defaultOptions,
-    minify: false,
-    core: true,
-    profiling: true,
-    options: packageOptions.mermaid,
-  })
-);
+// core bundle into the elk bundle. Keep a core build context alive and rebuild
+// it before the package contexts so every layout sees current Mermaid source.
+const mermaidCoreConfig = getBuildConfig({
+  ...defaultOptions,
+  minify: false,
+  core: true,
+  profiling: true,
+  options: packageOptions.mermaid,
+});
+const mermaidCoreContext = await context(mermaidCoreConfig);
+await mermaidCoreContext.rebuild();
 
 const contexts = await Promise.all(
   configs.map(async (config) => ({ config, context: await context(config) }))
@@ -99,6 +94,11 @@ const rebuildAll = async () => {
   const buildNumber = rebuildCounter++;
   const timeLabel = `Rebuild ${buildNumber} Time (total)`;
   console.time(timeLabel);
+  const coreBuildVariant = `Rebuild ${buildNumber} Time (mermaid.core esm)`;
+  console.time(coreBuildVariant);
+  await mermaidCoreContext.rebuild();
+  console.timeEnd(coreBuildVariant);
+
   await Promise.all(
     contexts.map(async ({ config, context }) => {
       const buildVariant = `Rebuild ${buildNumber} Time (${Object.keys(config.entryPoints!)[0]} ${config.format})`;
@@ -163,7 +163,7 @@ interface DevExplorerCapturedNodeSize {
 
 const devExplorerRootAbs = resolve(
   process.cwd(),
-  process.env.MERMAID_DEV_EXPLORER_ROOT ?? 'cypress/platform/dev-diagrams'
+  process.env.MERMAID_DEV_EXPLORER_ROOT ?? 'e2e/platform/dev-diagrams'
 );
 
 // Starter content written when a new diagram is created from the Dev Explorer.
@@ -272,7 +272,7 @@ async function createServer() {
   handleFileChange();
   const app = express();
   chokidar
-    .watch('**/src/**/*.{js,ts,g4,langium,yaml,json}', {
+    .watch('**/src/**/*.{js,ts,langium,yaml,json}', {
       ignoreInitial: true,
       ignored: [/node_modules/, /dist/, /docs/, /coverage/],
     })
@@ -508,7 +508,7 @@ async function createServer() {
     })
   );
   // Also expose dev-explorer public assets (libavoid.wasm, etc.) at root
-  // so demo pages under /cypress/platform/ and /demos/ can resolve a
+  // so demo pages under /e2e/platform/ and /demos/ can resolve a
   // bare "libavoid.wasm" without going through the /dev/ namespace.
   // index:false so this doesn't shadow the cypress/demos default index.
   app.use(express.static(devExplorerPublicDir, { index: false }));
@@ -517,7 +517,7 @@ async function createServer() {
     app.use(express.static(`./packages/${packageName}/dist`));
   }
   app.use(express.static('demos'));
-  app.use(express.static('cypress/platform'));
+  app.use(express.static('e2e/platform'));
 
   app.listen(devPort, () => {
     console.log(

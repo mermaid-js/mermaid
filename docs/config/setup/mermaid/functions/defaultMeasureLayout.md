@@ -10,9 +10,9 @@
 
 # Function: defaultMeasureLayout()
 
-> **defaultMeasureLayout**(`data4Layout`, `__namedParameters`): `Promise`<{ `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
+> **defaultMeasureLayout**(`data4Layout`, `__namedParameters`, `options?`): `Promise`<{ `graph`: `Graph`; `groups`: { `clusters`: `D3Selection`<`SVGGElement`>; `edgeLabels`: `D3Selection`<`SVGGElement`>; `edgePaths`: `D3Selection`<`SVGGElement`>; `nodes`: `D3Selection`<`SVGGElement`>; `rootGroups`: `D3Selection`<`SVGGElement`>; }; `nodeElements`: `Map`<`string`, `D3Selection`<`SVGElement` | `SVGGElement`>>; }>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:203](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L203)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:214](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L214)
 
 ## Parameters
 
@@ -23,6 +23,10 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 ### \_\_namedParameters
 
 [`CommonLayoutRenderContext`](../interfaces/CommonLayoutRenderContext.md)
+
+### options?
+
+`CreateGraphOptions`
 
 ## Returns
 

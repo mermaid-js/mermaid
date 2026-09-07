@@ -1,0 +1,34 @@
+---
+config:
+  theme: forest
+  xyChart:
+    width: 1000
+    height: 600
+    titlePadding: 5
+    titleFontSize: 10
+    xAxis:
+      labelFontSize: 20
+      labelPadding: 10
+      titleFontSize: 30
+      titlePadding: 20
+      tickLength: 10
+      tickWidth: 5
+      axisLineWidth: 5
+    yAxis:
+      labelFontSize: 20
+      labelPadding: 10
+      titleFontSize: 30
+      titlePadding: 20
+      tickLength: 10
+      tickWidth: 5
+      axisLineWidth: 5
+    chartOrientation: horizontal
+    plotReservedSpacePercent: 60
+    showDataLabel: true
+---
+xychart
+  title "Sales Revenue"
+  x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+  y-axis "Revenue (in $)" 4000 --> 11000
+  bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+  line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]

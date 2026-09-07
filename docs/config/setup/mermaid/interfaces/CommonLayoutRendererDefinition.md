@@ -10,7 +10,7 @@
 
 # Interface: CommonLayoutRendererDefinition\<CoreResult, PreparedLayout, MeasureResult>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:77](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L77)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:78](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L78)
 
 ## Type Parameters
 
@@ -32,7 +32,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **afterPaint**: (`data4Layout`, `context`, `coreResult`) => `void` | `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:99](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L99)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:100](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L100)
 
 #### Parameters
 
@@ -58,7 +58,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **measureLayout**: (`data4Layout`, `context`) => `Promise`<`MeasureResult`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:86](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L86)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:87](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L87)
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **paintLayout**: (`data4Layout`, `context`, `coreResult`) => `void` | `Promise`<`void`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:94](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L94)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:95](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L95)
 
 #### Parameters
 
@@ -106,7 +106,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **paintOptions**: [`CommonLayoutPaintOptions`](CommonLayoutPaintOptions.md)
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:104](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L104)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:105](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L105)
 
 ---
 
@@ -114,7 +114,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > `optional` **prepareLayout**: (`data4Layout`, `context`) => `PreparedLayout` | `Promise`<`PreparedLayout`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:82](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L82)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:83](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L83)
 
 #### Parameters
 
@@ -136,7 +136,7 @@ Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.
 
 > **runLayoutCore**: (`data4Layout`, `context`) => `CoreResult` | `Promise`<`CoreResult`>
 
-Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:90](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L90)
+Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:91](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L91)
 
 #### Parameters
 

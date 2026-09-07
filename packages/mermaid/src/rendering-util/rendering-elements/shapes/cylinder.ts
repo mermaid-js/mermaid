@@ -62,16 +62,18 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
   const labelPaddingX = node.look === 'neo' ? 24 : nodePadding;
   const labelPaddingY = node.look === 'neo' ? 24 : nodePadding;
 
-  if (node.width || node.height) {
-    const originalWidth = node.width ?? 0;
-    node.width = (node.width ?? 0) - labelPaddingY;
+  const originalWidth = node.width ?? 0;
+  if (node.width) {
+    node.width = node.width - labelPaddingY;
     if (node.width < MIN_WIDTH) {
       node.width = MIN_WIDTH;
     }
+  }
 
+  if (node.height) {
     const rx = originalWidth / 2;
     const ry = rx / (2.5 + originalWidth / 50);
-    node.height = (node.height ?? 0) - labelPaddingX - ry * 3;
+    node.height = node.height - labelPaddingX - ry * 3;
 
     if (node.height < MIN_HEIGHT) {
       node.height = MIN_HEIGHT;
@@ -80,10 +82,10 @@ export async function cylinder<T extends SVGGraphicsElement>(parent: D3Selection
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = (node.width ? node.width : bbox.width) + labelPaddingY;
+  const w = Math.max(node.width ?? 0, bbox.width) + labelPaddingY;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
-  const h = (node.height ? node.height : bbox.height) + labelPaddingX + ry;
+  const h = Math.max(node.height ?? 0, bbox.height) + labelPaddingX + ry;
 
   let cylinder: D3Selection<SVGPathElement> | D3Selection<SVGGElement>;
   const { cssStyles } = node;

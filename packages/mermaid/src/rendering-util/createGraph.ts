@@ -28,7 +28,7 @@ export interface CreateLayoutElementGroupsOptions {
 
 export function createLayoutElementGroups(
   element: D3Selection,
-  { edgePathsClass = 'edges edgePath' }: CreateLayoutElementGroupsOptions = {}
+  { edgePathsClass = 'edges edgePaths' }: CreateLayoutElementGroupsOptions = {}
 ): LayoutElementGroups {
   const rootGroups = element.insert('g').attr('class', 'root');
   const clusters = rootGroups.insert('g').attr('class', 'clusters');
@@ -41,10 +41,16 @@ export function createLayoutElementGroups(
 
 export async function measureGroupLabel(
   nodesGroup: D3Selection<SVGGElement>,
-  node: ClusterNode
+  node: ClusterNode,
+  measureWidth?: number
 ): Promise<void> {
   if (node.label) {
-    const { shapeSvg, bbox } = await labelHelper(nodesGroup, node);
+    // `measureWidth` overrides the width used purely for measuring. The result is
+    // still written back to the real `node`, so callers must not pass a copy.
+    const { shapeSvg, bbox } = await labelHelper(
+      nodesGroup,
+      measureWidth === undefined ? node : { ...node, width: measureWidth }
+    );
     node.labelBBox = { width: bbox.width, height: bbox.height };
     shapeSvg.remove();
   } else {
@@ -75,9 +81,49 @@ export async function insertMeasuredNode(
  * @param data4Layout - The layout data containing nodes and edges.
  * @returns A promise resolving to an object containing the graph and the inserted groups.
  */
+export interface CreateGraphOptions {
+  /**
+   * Measure cluster labels at their natural width rather than wrapping them at
+   * `flowchart.wrappingWidth`. Layouts that derive a compound node's size from
+   * this measurement (ELK) opt in, so measurement matches what `insertCluster`
+   * actually paints. Markdown labels are always measured wrapped — they are the
+   * ones meant to wrap, and they are painted wrapped too.
+   */
+  unwrapGroupLabels?: boolean;
+}
+
+/**
+ * Resolves the flow direction that applies to a node: the `dir` of the nearest
+ * ancestor group that declares one (a subgraph or composite state with its own
+ * direction), falling back to the diagram-level direction. Direction-sensitive
+ * shapes (e.g. fork/join bars, which must run perpendicular to the flow) rely
+ * on this — the dagre path gets the same information via each subgraph's
+ * `rankdir` during its recursive render.
+ */
+function resolveNodeDir(
+  node: NonClusterNode,
+  nodeById: Map<string, LayoutData['nodes'][number]>,
+  diagramDir?: string
+): string | undefined {
+  let current: LayoutData['nodes'][number] | undefined = node;
+  const seen = new Set<string>();
+  while (current) {
+    if (current.dir) {
+      return current.dir;
+    }
+    if (!current.parentId || seen.has(current.parentId)) {
+      break;
+    }
+    seen.add(current.parentId);
+    current = nodeById.get(current.parentId);
+  }
+  return diagramDir;
+}
+
 export async function createGraphWithElements(
   element: D3Selection,
-  data4Layout: LayoutData
+  data4Layout: LayoutData,
+  options: CreateGraphOptions = {}
 ): Promise<{
   graph: graphlib.Graph;
   groups: {
@@ -100,6 +146,8 @@ export async function createGraphWithElements(
   const { edgeLabels, nodes: nodesGroup } = groups;
 
   const nodeElements = new Map<string, D3Selection<SVGElement | SVGGElement>>();
+  const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
+  const diagramDir = (data4Layout as { direction?: string }).direction;
 
   // When the container element is detached (no real DOM — e.g. headless unit
   // tests that exercise the layout engine without rendering), `insertNode`
@@ -113,14 +161,22 @@ export async function createGraphWithElements(
     data4Layout.nodes.map(async (node) => {
       if (node.isGroup) {
         if (hasDom) {
-          await measureGroupLabel(nodesGroup, node);
+          // `insertCluster` paints plain cluster labels through `createLabel`,
+          // which uses an infinite width, while `labelHelper` falls back to
+          // `flowchart.wrappingWidth` (200px) when `node.width` is undefined —
+          // so measure and paint disagree. Layouts that size compound nodes
+          // from this measurement opt into measuring the way it is painted.
+          // Markdown labels are painted wrapped (`width: node.width`), so they
+          // keep wrapped measurement either way.
+          const unwrap = options.unwrapGroupLabels && node.labelType !== 'markdown';
+          await measureGroupLabel(nodesGroup, node, unwrap ? Number.POSITIVE_INFINITY : undefined);
         }
         graph.setNode(node.id, { ...node });
       } else {
         if (hasDom) {
           const childNodeEl = await insertMeasuredNode(nodesGroup, node, {
             config,
-            dir: node.dir,
+            dir: resolveNodeDir(node, nodeById, diagramDir),
           });
           nodeElements.set(node.id, childNodeEl);
         }

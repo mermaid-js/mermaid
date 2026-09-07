@@ -1,0 +1,13 @@
+{
+  "outcome": "valid",
+  "semanticAssertions": {
+    "vertices": [
+      { "id": "query", "vertexKind": "input" },
+      { "id": "style_guide", "vertexKind": "refdoc" }
+    ],
+    "edges": [
+      { "start": "query", "end": "gen_html", "edgeSemantic": "sequence" },
+      { "start": "gen_html", "end": "style_guide", "edgeSemantic": "reference" }
+    ]
+  }
+}

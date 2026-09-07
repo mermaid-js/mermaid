@@ -1,0 +1,19 @@
+---
+config:
+  look: handDrawn
+  handDrawnSeed: 1
+---
+%% Exercises the rough.js branch of collapsedGroup, including the separator
+%% and ellipsis rows, with more than one collapsed container in the graph.
+agentflow-beta TB
+  flow tasks["Tasks"]
+    t1["One"]@{ shape: task }
+  end
+  tasks@{ view: "collapsed" }
+
+  flow more["More"]
+    t2["Two"]@{ shape: task }
+  end
+  more@{ view: "collapsed" }
+
+  tasks --> more

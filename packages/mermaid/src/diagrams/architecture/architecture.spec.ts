@@ -195,6 +195,51 @@ describe('architecture diagrams', () => {
     });
   });
 
+  it('should throw when missing a group', async () => {
+    const str = `architecture-beta
+      group mermaidPrototypePollutionMarker(cloud)[Marker]
+      service a(server)[A] in __proto__
+      service b(server)[B] in mermaidPrototypePollutionMarker
+      a:R -- L:b`;
+    // __proto__ group does not exist.
+    await expect(parser.parse(str)).rejects.toThrow(/The service \[a]'s parent does not exist./);
+  });
+
+  it('should allow __proto__ as a group name', async () => {
+    const str = `architecture-beta
+      group __proto__(cloud)[Marker]
+      service a(server)[A] in __proto__
+      service b(server)[B] in __proto__
+      a:R -- L:b`;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(db.getGroups().map((g) => g.id)).toContain('__proto__');
+  });
+
+  it('should block proto pollution via service id', async () => {
+    const str = `architecture-beta
+      group __proto__(cloud)[P]
+      group myPrototypePollutionKey(cloud)[Real]
+      service a(server)[A] in __proto__
+      service b(server)[B] in myPrototypePollutionKey
+      a:R -- L:b`;
+
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    // GHSA-3rrr-jr9j-h3q3 happened in this function
+    const structures = db.getDataStructures();
+    expect(structures.groupAlignments.get(`"__proto__"-"myPrototypePollutionKey"`)).toBeDefined();
+    expect(Object.prototype).not.toHaveProperty('myPrototypePollutionKey');
+  });
+
+  it('should store services in the order they were added', async () => {
+    const str = `architecture-beta
+      service a(server)[A]
+      service 20(server)[B]
+      service 10(server)[C]`;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    // Old object iteration order rules sorts numeric keys first
+    expect(db.getServices().map((s) => s.id)).toEqual(['a', '20', '10']);
+  });
+
   describe('align directive', () => {
     it('should parse a row alignment and expose it via getLayoutHints', async () => {
       const str = `architecture-beta
