@@ -13,3 +13,8 @@
 > **CommonLayoutMeasure** = `Awaited`<`ReturnType`<_typeof_ `createGraphWithElements`>>
 
 Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:26](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L26)
+
+Types for the [\_\_internalsDoNotUse](../variables/internalsDoNotUse.md) helpers.
+
+**Not covered by SemVer**, for the same reasons — they describe renderer
+internals and change with the renderer.

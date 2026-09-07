@@ -108,9 +108,44 @@ Mermaid can load multiple diagrams, in the same page.
 
 ## Tiny Mermaid
 
-We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't support Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, or lazy loading.
+We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't support Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, or lazy loading, and — from v\<MERMAID_RELEASE_VERSION> — it does not bundle the ELK layout engine either.
 
 If you need a more lightweight version without these features, you can use [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny).
+
+### ELK and the tiny build
+
+From v\<MERMAID_RELEASE_VERSION>, ELK is bundled with the main `mermaid` package and is the default layout. The tiny build leaves it out, because ELK is a large dependency and staying small is the point of that build. Diagrams that ask for an ELK layout there fall back to Dagre and still render — nothing breaks, they are just laid out by Dagre.
+
+**If you want a Mermaid without ELK, use the tiny build.** That is the supported way to avoid it; the main package no longer ships without it.
+
+If you want the tiny build _and_ ELK, install the layout package and register it. It continues to be published for exactly this case:
+
+```bash
+npm install @mermaid-js/tiny @mermaid-js/layout-elk
+```
+
+```html
+<script src="/path/to/mermaid.tiny.js"></script>
+<script type="module">
+  import elkLayouts from '/path/to/mermaid-layout-elk.esm.min.mjs';
+
+  // The tiny build is an IIFE, so `mermaid` is a global rather than an import.
+  mermaid.registerLayoutLoaders(elkLayouts);
+  mermaid.initialize({ startOnLoad: true, layout: 'elk' });
+</script>
+```
+
+With a bundler it is the same two calls:
+
+```js
+import mermaid from '@mermaid-js/tiny';
+import elkLayouts from '@mermaid-js/layout-elk';
+
+mermaid.registerLayoutLoaders(elkLayouts);
+mermaid.initialize({ layout: 'elk' });
+```
+
+Registering the package also makes the named ELK algorithms available — `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box` and `elk.rectpacking`. On a normal `mermaid` build you do not need this package at all: registering it is harmless but redundant, since the same layouts are already built in.
 
 ## Enabling Click Event and Tags in Nodes
 

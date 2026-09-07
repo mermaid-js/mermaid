@@ -12,6 +12,11 @@
 
 Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:55](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L55)
 
+Types for the [\_\_internalsDoNotUse](../variables/internalsDoNotUse.md) helpers.
+
+**Not covered by SemVer**, for the same reasons — they describe renderer
+internals and change with the renderer.
+
 ## Properties
 
 ### clusterDb?

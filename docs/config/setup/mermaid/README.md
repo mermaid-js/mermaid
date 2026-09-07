@@ -44,12 +44,5 @@
 
 ## Variables
 
+- [\_\_internalsDoNotUse](variables/internalsDoNotUse.md)
 - [default](variables/default.md)
-
-## Functions
-
-- [applyLineJumpsToSvg](functions/applyLineJumpsToSvg.md)
-- [clearLayoutRenderState](functions/clearLayoutRenderState.md)
-- [createCommonLayoutRenderer](functions/createCommonLayoutRenderer.md)
-- [defaultMeasureLayout](functions/defaultMeasureLayout.md)
-- [paintLayoutData](functions/paintLayoutData.md)

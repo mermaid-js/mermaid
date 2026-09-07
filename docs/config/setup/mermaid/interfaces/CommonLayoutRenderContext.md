@@ -12,6 +12,11 @@
 
 Defined in: [packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts:41](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/layout-algorithms/common/index.ts#L41)
 
+Types for the [\_\_internalsDoNotUse](../variables/internalsDoNotUse.md) helpers.
+
+**Not covered by SemVer**, for the same reasons — they describe renderer
+internals and change with the renderer.
+
 ## Extended by
 
 - [`CommonLayoutPaintContext`](CommonLayoutPaintContext.md)
