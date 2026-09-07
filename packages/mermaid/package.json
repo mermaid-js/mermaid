@@ -109,7 +109,7 @@
     "json-schema-to-typescript": "^11.0.3",
     "micromatch": "^4.0.5",
     "path-browserify": "^1.0.1",
-    "prettier": "^2.8.8",
+    "prettier": "^3.2.5",
     "remark": "^14.0.2",
     "remark-frontmatter": "^4.0.1",
     "remark-gfm": "^3.0.1",
