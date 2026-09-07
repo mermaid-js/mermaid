@@ -1,6 +1,11 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "mermaid-js/mermaid" }],
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "mermaid-js/mermaid"
+    }
+  ],
   "commit": false,
   "fixed": [],
   "linked": [],
@@ -8,5 +13,10 @@
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "bumpVersionsWithWorkspaceProtocolOnly": true,
-  "ignore": ["@mermaid-js/docs", "@mermaid-js/webpack-test", "@mermaid-js/mermaid-example-diagram"]
+  "ignore": [
+    "@mermaid-js/docs",
+    "@mermaid-js/webpack-test",
+    "@mermaid-js/mermaid-example-diagram",
+    "@mermaid-js/release-verification"
+  ]
 }
