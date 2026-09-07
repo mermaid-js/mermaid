@@ -9,16 +9,22 @@ each site had to install and register. It is now part of `mermaid` itself and
 registered automatically, so `layout: elk` works with no setup — and it is the
 **default**, replacing Dagre.
 
-Two consequences worth knowing:
+`elk` is the new default layout for these diagrams:
 
-- **Diagrams look different by default.** Flowchart, state, class,
-  entity-relationship, requirement, use-case and agentflow diagrams that do not
-  set a `layout` are now laid out by ELK. Set `layout: dagre` to keep the
-  previous appearance.
-- **The main package always includes ELK.** If you want Mermaid without it, use
-  the [tiny build](./usage.md#elk-and-the-tiny-build), which omits ELK along
-  with some diagram types. `@mermaid-js/layout-elk` is still published so the
-  tiny build can opt back in.
+- Flowchart
+- State
+- Class
+- Entity relationship
+- Requirement
+- Use case
+- Agentflow
+
+To go back to the previous layout, use `layout: dagre`.
+
+The main `mermaid` package always includes ELK. If you want Mermaid without it,
+use the [tiny build](./usage.md#elk-and-the-tiny-build), which omits ELK along
+with some diagram types. `@mermaid-js/layout-elk` is still published so the tiny
+build can opt back in.
 
 ## Supported Layouts
 

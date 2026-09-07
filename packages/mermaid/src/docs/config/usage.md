@@ -102,15 +102,15 @@ Mermaid can load multiple diagrams, in the same page.
 
 ## Tiny Mermaid
 
-We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't support Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, or lazy loading, and — from v<MERMAID_RELEASE_VERSION> — it does not bundle the ELK layout engine either.
+We offer a smaller version of Mermaid that's approximately half the size of the full library. This tiny version doesn't include Mindmap Diagrams, Architecture Diagrams, KaTeX rendering, lazy loading, or the ELK layout engine.
 
 If you need a more lightweight version without these features, you can use [Mermaid Tiny](https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny).
 
 ### ELK and the tiny build
 
-From v<MERMAID_RELEASE_VERSION>, ELK is bundled with the main `mermaid` package and is the default layout. The tiny build leaves it out, because ELK is a large dependency and staying small is the point of that build. Diagrams that ask for an ELK layout there fall back to Dagre and still render — nothing breaks, they are just laid out by Dagre.
+The tiny build has never included ELK, and still doesn't — it is a large dependency and staying small is the point of that build. Diagrams that ask for an ELK layout here fall back to Dagre and still render; nothing breaks, they are simply laid out by Dagre.
 
-**If you want a Mermaid without ELK, use the tiny build.** That is the supported way to avoid it; the main package no longer ships without it.
+What changed in v<MERMAID_RELEASE_VERSION> is the main package, not this one: ELK used to be an opt-in `@mermaid-js/layout-elk` install, and is now bundled with `mermaid` and used by default. So **if you want a Mermaid without ELK, the tiny build is the way to get one** — it is no longer simply a matter of not installing the layout package.
 
 If you want the tiny build _and_ ELK, install the layout package and register it. It continues to be published for exactly this case:
 
