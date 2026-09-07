@@ -2265,6 +2265,46 @@ The older `flowchart.defaultRenderer: "elk"` directive and the `flowchart-elk`
 diagram type still work, but are no longer needed — they predate `layout` and
 selected a renderer that is now the default.
 
+#### Using the ELK renderer outside the Mermaid Live Editor
+
+The Mermaid Live Editor registers the ELK layout automatically. When you use Mermaid as a package, you need to install and register the ELK layout before diagrams can use `defaultRenderer: "elk"`.
+
+With a bundler, install the ELK layout package:
+
+```sh
+npm install @mermaid-js/layout-elk
+```
+
+Then import the package and register the layout loaders before calling `mermaid.initialize` or `mermaid.run`:
+
+```javascript
+import mermaid from 'mermaid';
+import elkLayouts from '@mermaid-js/layout-elk';
+
+mermaid.registerLayoutLoaders(elkLayouts);
+mermaid.initialize({
+  startOnLoad: true,
+  flowchart: {
+    defaultRenderer: 'elk',
+  },
+});
+```
+
+When loading Mermaid from a CDN, import the ELK layout package and register it in the same module:
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import elkLayouts from 'https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@latest/dist/mermaid-layout-elk.esm.min.mjs';
+
+  mermaid.registerLayoutLoaders(elkLayouts);
+  mermaid.initialize({ startOnLoad: true });
+</script>
+```
+
+> **Note**
+> Registering the ELK layout makes the renderer available to Mermaid. You can then select it with the `flowchart.defaultRenderer` configuration or with the `layout: elk` diagram configuration.
+
 ### Width
 
 It is possible to adjust the width of the rendered flowchart.
