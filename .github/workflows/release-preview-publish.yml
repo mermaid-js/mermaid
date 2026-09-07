@@ -86,7 +86,10 @@ jobs:
               # unmet-peer warning on every install.
               json -I -f package.json -e 'delete this.peerDependencies'
               pnpm pack
-              npm publish --tag preview *.tgz
+              # `--access public` is not optional here: neither package exists in
+              # the org's registry yet, and a scoped package defaults to
+              # `restricted`, so the create is refused with `write_package`.
+              npm publish --access public --tag preview *.tgz
             )
           done
         env:

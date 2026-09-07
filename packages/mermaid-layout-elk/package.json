@@ -25,6 +25,9 @@
     "type": "git",
     "url": "https://github.com/mermaid-js/mermaid"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "contributors": [
     "Knut Sveidqvist",
     "Sidharth Vinod"
