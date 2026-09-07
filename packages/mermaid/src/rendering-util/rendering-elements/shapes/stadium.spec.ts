@@ -74,7 +74,7 @@ const render = async (
   });
   const node = { id: 'stadium', look, padding, x: 0, y: 0, ...extra } as Node;
   await stadium(parent, node);
-  return { node, points: pointsFromPath(shapeSvg.select('path').node()!) };
+  return { node, points: pointsFromPath(shapeSvg.select<SVGPathElement>('path').node()!) };
 };
 
 describe('stadium geometry', () => {
