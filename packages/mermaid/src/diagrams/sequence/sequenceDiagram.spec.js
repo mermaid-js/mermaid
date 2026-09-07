@@ -2557,6 +2557,26 @@ Bob->>Alice:Got it!
     });
   });
   describe('participant type parsing', () => {
+    it('should parse hyphenated participant names with config objects', async () => {
+      const diagram = await Diagram.fromText(`
+        sequenceDiagram
+        participant shop-db@{ "type" : "database", "alias": "Shop DB" }
+        actor user-service@{ "type" : "actor" }
+        shop-db->>user-service: Query
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('shop-db').type).toBe('database');
+      expect(actors.get('shop-db').description).toBe('Shop DB');
+      expect(actors.get('user-service').type).toBe('actor');
+      expect(actors.get('user-service').description).toBe('user-service');
+
+      const messages = diagram.db.getMessages();
+      expect(messages).toHaveLength(1);
+      expect(messages[0].from).toBe('shop-db');
+      expect(messages[0].to).toBe('user-service');
+      expect(messages[0].message).toBe('Query');
+    });
+
     it('should parse boundary participant', async () => {
       const diagram = await Diagram.fromText(`
           sequenceDiagram
