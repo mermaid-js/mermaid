@@ -36,15 +36,27 @@ jobs:
       - name: Install Json
         run: npm i json@11.0.0 --global
 
-      - name: Publish
-        working-directory: ./packages/mermaid
+      # Shared by every publish step below, so all three packages carry the same
+      # preview version and can be installed as a matching set.
+      - name: Compute preview version
+        id: preview
         run: |
           PREVIEW_VERSION=$(git log --oneline "origin/$GITHUB_REF_NAME" ^"origin/master" | wc -l)
           VERSION=$(echo "${GITHUB_REF}" | tail -c +20)-preview.$PREVIEW_VERSION
-          echo $VERSION
-          npm version --no-git-tag-version --allow-same-version $VERSION
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing preview version $VERSION"
+
+      - name: Configure registry
+        run: |
           npm set //npm.pkg.github.com/:_authToken "${GITHUB_TOKEN}"
           npm set registry https://npm.pkg.github.com/mermaid-js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish mermaid
+        working-directory: ./packages/mermaid
+        run: |
+          npm version --no-git-tag-version --allow-same-version "$VERSION"
           json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
           json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
           # We don't publish a separate `@mermaid-js/parser` so bundle it instead
@@ -53,5 +65,30 @@ jobs:
           npm publish --tag preview *.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.preview.outputs.version }}
           # Prevent `npm publish` from failing if the docs verification fails.
           ONLY_WARN_ON_VERIFY_ERROR: 'true'
+
+      # `@mermaid-js/layout-elk` and `@mermaid-js/tiny` are already scoped to the
+      # org, so unlike `mermaid` they need no rename. Publishing them alongside
+      # lets a preview be exercised the way users combine them: ELK bundled in
+      # mermaid, and ELK registered onto the tiny build, which omits it.
+      - name: Publish layout-elk and tiny
+        run: |
+          for pkg in mermaid-layout-elk tiny; do
+            (
+              cd "packages/$pkg"
+              npm version --no-git-tag-version --allow-same-version "$VERSION"
+              json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
+              # The preview `mermaid` is published under a different name
+              # (`@mermaid-js/mermaid`), so a `mermaid` peer range can never be
+              # satisfied by a preview install. Drop it rather than emit an
+              # unmet-peer warning on every install.
+              json -I -f package.json -e 'delete this.peerDependencies'
+              pnpm pack
+              npm publish --tag preview *.tgz
+            )
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.preview.outputs.version }}

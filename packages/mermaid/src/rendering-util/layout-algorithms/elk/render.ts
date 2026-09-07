@@ -149,13 +149,23 @@ const markerPathOffset = (arrowType: unknown): number => {
   );
 };
 
+/**
+ * `[arrowTypeStart, arrowTypeEnd]` per edge type.
+ *
+ * "No arrowhead on this end" is spelled `none`, which `addEdgeMarker` treats as
+ * a deliberate absence. Spelling it `arrow_open` — the edge *type* meaning "no
+ * arrowheads" — made it warn `Unknown arrow type: arrow_open` once per edge,
+ * because that string is not a marker name. Diagrams whose db sets
+ * `arrowTypeStart` itself (flowchart) never reached this fallback; state
+ * diagrams, which do not, warned on every edge.
+ */
 const ARROW_MAP: Record<string, [string, string]> = {
-  arrow_open: ['arrow_open', 'arrow_open'],
-  arrow_cross: ['arrow_open', 'arrow_cross'],
+  arrow_open: ['none', 'none'],
+  arrow_cross: ['none', 'arrow_cross'],
   double_arrow_cross: ['arrow_cross', 'arrow_cross'],
-  arrow_point: ['arrow_open', 'arrow_point'],
+  arrow_point: ['none', 'arrow_point'],
   double_arrow_point: ['arrow_point', 'arrow_point'],
-  arrow_circle: ['arrow_open', 'arrow_circle'],
+  arrow_circle: ['none', 'arrow_circle'],
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
 const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
