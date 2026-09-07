@@ -56,15 +56,35 @@ export const createStadiumPathD = (
   ].join(' ');
 };
 
+const arcPointCount = 50;
+
+const stadiumDimensions = (
+  bbox: Pick<DOMRect, 'width' | 'height'>,
+  paddingX: number,
+  paddingY: number
+) => {
+  const h = bbox.height + paddingY;
+  // The sampled arcs sit just inside the circles. Use their inscribed circle
+  // for label clearance, and account for the missing horizontal extrema when
+  // enforcing the outer aspect ratio.
+  const inscribedDiameter = h * Math.cos(Math.PI / (2 * (arcPointCount - 1)));
+  const capWidthAtLabel = Math.sqrt(Math.max(0, inscribedDiameter ** 2 - bbox.height ** 2));
+  const w = Math.max(
+    bbox.width + h / 4 + paddingX,
+    1.5 * h + (h - inscribedDiameter),
+    bbox.width + paddingX + h - capWidthAtLabel
+  );
+  return { w, h };
+};
+
 export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
   const nodePadding = node.padding ?? 0;
-  const labelPaddingX = node.look === 'neo' ? 20 : nodePadding;
-  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const h = bbox.height + (node.look === 'neo' ? labelPaddingY * 2 : labelPaddingY);
-  const w = bbox.width + h / 4 + (node.look === 'neo' ? labelPaddingX * 2 : labelPaddingX);
+  const paddingX = node.look === 'neo' ? 40 : nodePadding;
+  const paddingY = node.look === 'neo' ? 24 : nodePadding;
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), { wrap: false });
+  const { w, h } = stadiumDimensions(bbox, paddingX, paddingY);
 
   const radius = h / 2;
   const { cssStyles } = node;
@@ -80,9 +100,9 @@ export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<
   const points = [
     { x: -w / 2 + radius, y: -h / 2 },
     { x: w / 2 - radius, y: -h / 2 },
-    ...generateCirclePoints(-w / 2 + radius, 0, radius, 50, 90, 270),
+    ...generateCirclePoints(-w / 2 + radius, 0, radius, arcPointCount, 90, 270),
     { x: w / 2 - radius, y: h / 2 },
-    ...generateCirclePoints(w / 2 - radius, 0, radius, 50, 270, 450),
+    ...generateCirclePoints(w / 2 - radius, 0, radius, arcPointCount, 270, 450),
   ];
 
   const pathData = createPathFromPoints(points);

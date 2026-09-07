@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { withMinWidth } from './util.js';
+import { select } from 'd3';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { getConfig, reset, setConfig } from '../../../config.js';
+import type { Node } from '../../types.js';
+import { labelHelper, withMinWidth } from './util.js';
 
 describe('withMinWidth', () => {
   it('leaves a box that already meets the minimum untouched', () => {
@@ -29,5 +32,58 @@ describe('withMinWidth', () => {
     const widened = withMinWidth(bbox, 120);
     expect(widened).toMatchObject({ x: 300, y: 200, width: 120, height: 16, left: 300, top: 200 });
     expect(widened.right).toBe(420);
+  });
+});
+
+describe('shape label wrapping', () => {
+  beforeEach(() => {
+    setConfig({ htmlLabels: true, flowchart: { wrappingWidth: 120 } });
+    document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
+  });
+
+  afterEach(() => reset());
+
+  const renderLabel = async (extra: Partial<Node> = {}, wrap?: boolean) => {
+    const parent = select(document.querySelector<SVGSVGElement>('svg')!);
+    const node = {
+      id: 'label',
+      isGroup: false,
+      label: 'A long label with an explicit<br/>line break',
+      minWidth: 120,
+      ...extra,
+    } as Node;
+    const result = await labelHelper(parent, node, undefined, { wrap });
+    return { ...result, node, div: parent.select('foreignObject div').node() as HTMLDivElement };
+  };
+
+  it('keeps the configured wrapping width for shapes that do not opt out', async () => {
+    const { div } = await renderLabel();
+    expect(div.style.maxWidth).toBe('120px');
+  });
+
+  it('removes the width limit while retaining explicit line breaks and the minimum label width', async () => {
+    const { div, bbox, node } = await renderLabel({}, false);
+    expect(div.style.maxWidth).toBe('');
+    expect(div.style.whiteSpace).toBe('nowrap');
+    expect(div.querySelectorAll('br')).toHaveLength(1);
+    expect(bbox.width).toBe(120);
+    expect(node.minWidth).toBe(120);
+    expect(getConfig().flowchart?.wrappingWidth).toBe(120);
+  });
+
+  it('keeps explicit node widths authoritative for shapes that opt out', async () => {
+    const { div } = await renderLabel({ width: 90 }, false);
+    expect(div.style.maxWidth).toBe('90px');
+  });
+
+  it('keeps a per-node wrapping width for shapes that do not opt out', async () => {
+    const { div } = await renderLabel({ wrappingWidth: 80 });
+    expect(div.style.maxWidth).toBe('80px');
+  });
+
+  it('does not mutate a wrapping width when a shape opts out', async () => {
+    const { div, node } = await renderLabel({ wrappingWidth: 80 }, false);
+    expect(div.style.maxWidth).toBe('');
+    expect(node.wrappingWidth).toBe(80);
   });
 });
