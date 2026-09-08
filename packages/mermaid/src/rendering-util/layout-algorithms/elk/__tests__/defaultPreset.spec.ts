@@ -55,12 +55,10 @@ describe('ELK preset configuration through initialize', () => {
     expect(nodeDb.group.layoutOptions?.['elk.layered.nodePlacement.strategy']).toBe(
       'BRANDES_KOEPF'
     );
+    expect(elkGraph.layoutOptions['elk.layered.layering.strategy']).toBe('NETWORK_SIMPLEX');
     for (const options of [elkGraph.layoutOptions, nodeDb.group.layoutOptions]) {
       expect(options?.['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
       expect(options?.['elk.layered.cycleBreaking.strategy']).toBe(cycleBreaking);
-      expect(options?.['elk.layered.layering.strategy'] ?? 'NETWORK_SIMPLEX').toBe(
-        'NETWORK_SIMPLEX'
-      );
     }
   });
 
