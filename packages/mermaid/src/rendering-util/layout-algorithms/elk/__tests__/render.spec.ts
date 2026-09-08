@@ -119,9 +119,9 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
   });
 
-  it('defaults nodePlacementAlignment to NONE', () => {
+  it('defaults nodePlacementAlignment to BALANCED', () => {
     const opts = buildSubgraphLayoutOptions({}, { mergeEdges: true }, 'layered');
-    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('BALANCED');
   });
 
   it('passes through nodePlacementAlignment from config', () => {
@@ -133,11 +133,9 @@ describe('buildSubgraphLayoutOptions', () => {
     const opts = buildSubgraphLayoutOptions({}, undefined, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
     // With no config at all the `default` preset supplies the placement
-    // strategy. Containers are BRANDES_KOEPF while the root is NETWORK_SIMPLEX:
-    // network simplex inside a frame produced routes that left a subgraph on
-    // its bounding-box corner, so containers keep the strategy that does not.
+    // strategy and alignment for both the root and its containers.
     expect(opts['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
-    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('BALANCED');
   });
 
   it('lets an explicit strategy beat the preset', () => {
@@ -196,9 +194,8 @@ describe('buildSubgraphLayoutOptions', () => {
     // reach containers too — leaving them on the new strategy would make it a
     // half-restore that still lays subgraph contents out differently.
     expect(placement('legacy')).toBe('BRANDES_KOEPF');
-    // `default` and `depthFirst` place the ROOT with NETWORK_SIMPLEX but keep
-    // containers on BRANDES_KOEPF — the two sides are tuned separately on
-    // purpose, so a change to one must not be assumed to carry to the other.
+    // Both presets keep container placement on BRANDES_KOEPF even though
+    // their root placement now differs.
     expect(placement('depthFirst')).toBe('BRANDES_KOEPF');
     expect(placement('default')).toBe('BRANDES_KOEPF');
   });
@@ -455,7 +452,7 @@ describe('buildElkGraphFromLayoutData', () => {
 
     expect(state.elkGraph.layoutOptions['elk.direction']).toBe('RIGHT');
     expect(state.elkGraph.layoutOptions['elk.layered.nodePlacement.bk.fixedAlignment']).toBe(
-      'NONE'
+      'BALANCED'
     );
     expect(state.elkGraph.children).toHaveLength(2);
 
@@ -1352,16 +1349,15 @@ describe('resolveElkPreset', () => {
     expect(resolveElkPreset('legacy').cycleBreaking).toBe('GREEDY');
   });
 
-  it('keeps depthFirst as a name for what default already is', () => {
-    // Not a distinct combination — a label, so a diagram can say depth-first
-    // rather than depend on the default staying put.
-    expect(resolveElkPreset('depthFirst')).toEqual(resolveElkPreset('default'));
-  });
-
-  it('differs from default in cycle breaking alone for modelOrder', () => {
-    const { cycleBreaking: _a, ...restDefault } = resolveElkPreset('default');
-    const { cycleBreaking: _b, ...restModelOrder } = resolveElkPreset('modelOrder');
-    expect(restModelOrder).toEqual(restDefault);
+  it('preserves depthFirst and modelOrder placement independently of default', () => {
+    for (const name of ['depthFirst', 'modelOrder']) {
+      expect(resolveElkPreset(name)).toMatchObject({
+        layering: 'NETWORK_SIMPLEX',
+        placement: 'NETWORK_SIMPLEX',
+        containerPlacement: 'BRANDES_KOEPF',
+        alignment: 'NONE',
+      });
+    }
   });
 
   it('falls back to default for an unknown name, including __proto__', () => {
