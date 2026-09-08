@@ -1,7 +1,13 @@
 // import khroma from 'khroma';
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
-import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
+import {
+  colorSlotCount,
+  hasPalette,
+  isColorTheme,
+  safeColor,
+  safeLook,
+} from '../common/colorThemeGate.js';
 
 /** Returns the styles given options */
 export interface FlowChartStyleOptions {
@@ -56,8 +62,8 @@ const genColor = (options: FlowChartStyleOptions) => {
   let sections = '';
 
   for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
-    const borderColor = borderColorArray![i % borderColorArray!.length];
-    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const borderColor = safeColor(borderColorArray![i % borderColorArray!.length]);
+    const fill = hasBkgColors ? `fill: ${safeColor(bkgColorArray[i % bkgColorArray.length])};` : '';
     const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
     /* A collapsed subgraph is drawn by `collapsedGroup.ts` through `getNodeClasses`, which
      * returns `rough-node` instead of `node` for the handDrawn look -- so a `.node`-only
@@ -101,7 +107,7 @@ ${
     ? `
     /* A roughjs fill is drawn as lines, so the lane fill is a stroke here. */
     ${laneRule(' path:first-of-type')} {
-      stroke: ${bkgColorArray[i % bkgColorArray.length]};
+      stroke: ${safeColor(bkgColorArray[i % bkgColorArray.length])};
     }
 `
     : ''
