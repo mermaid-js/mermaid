@@ -731,6 +731,12 @@ To style selected transitions, provide a comma-separated list of their indexes f
 linkStyle 1,3 stroke:#dc2626,stroke-width:4px,color:#dc2626
 ```
 
+Commas separate CSS properties. Escape a literal comma in a CSS value with a backslash:
+
+```txt
+linkStyle 0 stroke-dasharray:5\,5,stroke:#2563eb
+```
+
 Use `default` instead of an index to apply a style to every transition:
 
 ```txt
