@@ -5,6 +5,7 @@ import {
   hasPalette,
   isColorTheme,
   paletteSlotCount,
+  safeColor,
   safeLook,
 } from '../common/colorThemeGate.js';
 
@@ -43,8 +44,8 @@ const genColor: DiagramStylesProvider = (options) => {
     // `borderColorArray[i]` needs no wrap now the bound is its own length. The background
     // palette is a separate array that may be shorter, so that one still wraps -- guarded
     // by `hasBkgColors`, since `i % 0` is NaN and `[][NaN]` is `undefined`.
-    const borderColor = borderColorArray[i];
-    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const borderColor = safeColor(borderColorArray[i]);
+    const fill = hasBkgColors ? `fill: ${safeColor(bkgColorArray[i % bkgColorArray.length])};` : '';
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node path {

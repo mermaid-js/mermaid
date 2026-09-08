@@ -1,6 +1,12 @@
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
-import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
+import {
+  colorSlotCount,
+  hasPalette,
+  isColorTheme,
+  safeColor,
+  safeLook,
+} from '../common/colorThemeGate.js';
 
 /** Returns the styles given options */
 export interface BlockChartStyleOptions {
@@ -47,8 +53,8 @@ const genColor = (options: BlockChartStyleOptions) => {
   let sections = '';
 
   for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
-    const borderColor = borderColorArray![i % borderColorArray!.length];
-    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const borderColor = safeColor(borderColorArray![i % borderColorArray!.length]);
+    const fill = hasBkgColors ? `fill: ${safeColor(bkgColorArray[i % bkgColorArray.length])};` : '';
     const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
 
     sections += `
