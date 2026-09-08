@@ -81,6 +81,18 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['nodeSize.minimum']).toBe('(52, 0)');
   });
 
+  it('reserves no title width for cluster shapes that paint no title', () => {
+    // A state-diagram note group carries the note's text as its label, but the
+    // note node inside paints it; the group frame has no title strip.
+    const opts = buildSubgraphLayoutOptions(
+      { shape: 'noteGroup', padding: 16, labelData: { width: 336, height: 40 } },
+      undefined,
+      'layered'
+    );
+    expect(opts['nodeSize.constraints']).toBeUndefined();
+    expect(opts['nodeSize.minimum']).toBeUndefined();
+  });
+
   it('propagates mergeEdges to subgraphs without an explicit direction', () => {
     const opts = buildSubgraphLayoutOptions({}, { mergeEdges: true }, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBe(true);

@@ -10,6 +10,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { applyElkLineJumps } from './lineHops.js';
+import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
   EDGE_ROUTING_OPTIONS,
@@ -242,13 +243,14 @@ const RECTPACKING_OPTIONS: Record<string, string | number> = {
 };
 
 /**
- * Every option `buildSubgraphLayoutOptions` sets *because* a container asked for
- * its own algorithm. When cross-boundary edges force the container back onto the
- * inherited algorithm, all of these have to go — they are not inert under
- * `elk.layered`, so leaving them behind produced a hybrid rather than the
- * documented fallback.
+ * Every option `buildSubgraphLayoutOptions` sets or overrides *because* a
+ * container asked for its own algorithm. When cross-boundary edges force the
+ * container back onto the inherited algorithm, all of these have to go — they
+ * are not inert under `elk.layered`, so leaving them behind produced a hybrid
+ * rather than the documented fallback. `nodeSize.*` is then re-applied with the
+ * plain-subgraph title floor by the caller (`groupTitleSizeOptions`).
  */
-const CONTAINER_ALGORITHM_SCOPED_OPTIONS = [
+const CONTAINER_ALGORITHM_OVERRIDES = [
   'nodeSize.constraints',
   'nodeSize.minimum',
   'elk.algorithm',
@@ -264,7 +266,7 @@ const CONTAINER_ALGORITHM_SCOPED_OPTIONS = [
  * plain subgraph would have had.
  */
 export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unknown>): void {
-  for (const key of CONTAINER_ALGORITHM_SCOPED_OPTIONS) {
+  for (const key of CONTAINER_ALGORITHM_OVERRIDES) {
     delete layoutOptions[key];
   }
   // `spacing.baseValue` and `spacing.nodeNode` are base options that the
@@ -330,16 +332,35 @@ export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP'
   }
 }
 
-function groupTitleWidth(node: {
+interface GroupTitleNode {
+  shape?: string;
   labelData?: LabelData;
   labels?: { width?: number }[];
   padding?: number;
-}): number {
+}
+
+/**
+ * The width the frame painter needs for the group's title, or 0 for cluster
+ * shapes that paint no title (a note group's label is the note's text, which
+ * the note node inside it paints; reserving it would size the frame for text
+ * that never appears there).
+ */
+function groupTitleWidth(node: GroupTitleNode): number {
+  if (!clusterPaintsTitle(node.shape)) {
+    return 0;
+  }
   // Match the frame painter's label width plus total horizontal padding.
   return (node.labelData?.width ?? node.labels?.[0]?.width ?? 0) + (node.padding ?? 0);
 }
 
-function groupTitleSizeOptions(node: { labelData?: LabelData; padding?: number }) {
+/**
+ * ELK options reserving the painted title width before routing. Empty for
+ * cluster shapes that paint no title, so they keep ELK's default sizing.
+ */
+function groupTitleSizeOptions(node: GroupTitleNode): Record<string, string> {
+  if (!clusterPaintsTitle(node.shape)) {
+    return {};
+  }
   return {
     'nodeSize.constraints': '[MINIMUM_SIZE, NODE_LABELS]',
     'nodeSize.minimum': `(${groupTitleWidth(node)}, 0)`,
@@ -349,6 +370,7 @@ function groupTitleSizeOptions(node: { labelData?: LabelData; padding?: number }
 export function buildSubgraphLayoutOptions(
   node: {
     dir?: string;
+    shape?: string;
     padding?: number;
     labelData?: LabelData;
     metadata?: { algorithm?: unknown } & Record<string, unknown>;

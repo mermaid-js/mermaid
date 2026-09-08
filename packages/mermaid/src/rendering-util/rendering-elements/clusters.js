@@ -815,6 +815,20 @@ const shapes = {
   swimlane,
 };
 
+/**
+ * Cluster shapes that never paint their label as a title. A note group's label
+ * is the note's text, painted by the note node inside it; the group itself is
+ * an invisible frame. Layout must not reserve title space for these.
+ */
+const UNTITLED_CLUSTER_SHAPES = new Set(['noteGroup', 'divider']);
+
+/**
+ * Whether a cluster shape paints its label as a title strip above its children.
+ * @param {string | undefined} shape - Shape id; defaults to 'rect' like `insertCluster`
+ * @returns {boolean}
+ */
+export const clusterPaintsTitle = (shape) => !UNTITLED_CLUSTER_SHAPES.has(shape ?? 'rect');
+
 let clusterElems = new Map();
 
 /**
