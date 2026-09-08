@@ -50,8 +50,7 @@ export const withMinWidth = (bbox: DOMRect, minWidth: number): DOMRect => {
 export const labelHelper = async <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
   node: Node,
-  _classes?: string,
-  options: { wrap?: boolean } = {}
+  _classes?: string
 ) => {
   // Nodes carrying a stereotype render a stacked multi-section SVG label.
   if (node.stereotype !== undefined) {
@@ -90,18 +89,12 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
   // An explicit node width wins over the diagram-level minimum; an empty label has
   // nothing to widen.
   const minLabelWidth = label && !node.width ? (node.minWidth ?? 0) : 0;
-  // Shapes can opt out of automatic wrapping without changing the diagram's
-  // setting. Explicit node widths still win; explicit line breaks are retained.
-  const wrappingWidth =
-    options.wrap === false
-      ? Number.POSITIVE_INFINITY
-      : node.wrappingWidth || getConfig().flowchart?.wrappingWidth;
   const text = await createText(
     labelEl,
     sanitizeText(decodeEntities(label), getConfig()),
     {
       useHtmlLabels,
-      width: node.width || wrappingWidth,
+      width: node.width || node.wrappingWidth || getConfig().flowchart?.wrappingWidth,
       minWidth: minLabelWidth,
       classes: isMarkdown ? 'markdown-node-label' : '',
       style: node.labelStyle,

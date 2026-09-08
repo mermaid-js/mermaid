@@ -36,11 +36,17 @@ export async function halfRoundedRectangle<T extends SVGGraphicsElement>(
     }
   }
 
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), { wrap: false });
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const w = (node?.width ? node?.width : Math.max(minWidth, bbox.width)) + paddingX * 2;
   const h = (node?.height ? node?.height : Math.max(minHeight, bbox.height)) + paddingY * 2;
   const radius = h / 2;
+  // The label is centred, so it has to clear the semicircular right cap at its own top and
+  // bottom corners -- not just at the vertical middle, where the cap is widest.
+  const capClearance = radius - Math.sqrt(Math.max(0, radius ** 2 - (bbox.height / 2) ** 2));
+  // Doubled: the label is centred, so widening only by the clearance moves its centre right
+  // along with the outline and the corner stays outside.
+  const w =
+    (node?.width ? node?.width : Math.max(minWidth, bbox.width) + capClearance * 2) + paddingX * 2;
   const { cssStyles } = node;
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
