@@ -132,6 +132,8 @@ test.describe('Interaction', () => {
 
     test('gitGraph: should not create interactive links in strict mode', async ({ page }) => {
       const gitGraph = page.locator('svg').filter({ has: page.locator('.commit-bullets') });
+      await expect(gitGraph).toHaveCount(1);
+      await expect(gitGraph).toBeVisible();
       await expect(gitGraph.locator('a')).toHaveCount(0);
       await expect(gitGraph.locator('.clickable')).toHaveCount(0);
     });
