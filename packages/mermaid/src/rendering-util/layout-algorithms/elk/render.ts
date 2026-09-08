@@ -168,7 +168,6 @@ const ARROW_MAP: Record<string, [string, string]> = {
   arrow_circle: ['none', 'arrow_circle'],
   double_arrow_circle: ['arrow_circle', 'arrow_circle'],
 };
-const DEFAULT_NODE_PLACEMENT_ALIGNMENT = 'NONE';
 
 /**
  * Margin reserved at the ends of each side of a node, so that a port cannot be
@@ -390,12 +389,9 @@ export function buildSubgraphLayoutOptions(
 
     'elk.layered.mergeEdges': elkConfig?.mergeEdges,
     'elk.layered.nodePlacement.bk.fixedAlignment':
-      elkConfig?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
-    // Containers place their own children, and the preset says how: by default
-    // NETWORK_SIMPLEX, which balances a node against all of its neighbours and
-    // so keeps a group's nodes aligned with each other instead of drifting,
-    // while the root uses LINEAR_SEGMENTS. `legacy` keeps both on the strategy
-    // that shipped before, so it still reproduces the old rendering.
+      elkConfig?.nodePlacementAlignment ?? preset.alignment,
+    // The preset resolves child placement separately from root placement.
+    // Named presets retain their previous strategies; explicit options win.
     //
     // ONE key, fully qualified. ELK reads `nodePlacement.strategy` and
     // `elk.layered.nodePlacement.strategy` as the same option, so listing both
@@ -807,76 +803,51 @@ function getElkLayoutContext(
  * was dead this way, and it took a bisect against the raw ELK option to notice.
  */
 /**
- * Named combinations of the three options that decide where nodes end up.
- *
- * Layering picks the column, node placement the coordinate within it, and cycle
- * breaking which edges are reversed and therefore which ones detour. They run in
- * different phases and do not interact, so a preset is a named triple rather
- * than a mode of its own.
- *
- * An explicit `elk.layeringStrategy` / `nodePlacementStrategy` /
- * `cycleBreakingStrategy` beats the preset for that one option — which is why
- * `defaultConfig` leaves all three undefined rather than giving them values.
+ * Presets supply layout choices only when the caller leaves them unspecified.
+ * Root and container placement are independent, while both use the preset's
+ * Brandes-Koepf alignment. Named non-default presets retain their earlier layout.
  */
 const ELK_PRESETS: Record<
   string,
-  { layering: string; placement: string; containerPlacement: string; cycleBreaking: string }
+  {
+    layering: string;
+    placement: string;
+    containerPlacement: string;
+    alignment: string;
+    cycleBreaking: string;
+  }
 > = {
-  /**
-   * Network simplex at the root, Brandes-Koepf inside frames, cycles broken
-   * depth first.
-   *
-   * Depth-first cycle breaking gives shorter back edges on graphs that have
-   * many of them, which is most flowcharts that loop at all. `modelOrder` is
-   * the same triple with the greedy-model-order breaking this used to carry.
-   *
-   * Containers deliberately do NOT follow the root's placement. Network simplex
-   * inside a frame produced routes that left a subgraph on its bounding-box
-   * corner, so the two sides are tuned separately: changing one is not a reason
-   * to change the other, and `legacy` keeps both on the strategy that shipped
-   * before.
-   */
+  // Balanced Brandes-Koepf centers simple branches and composite-state entries.
+  // Layering and cycle breaking retain the release defaults.
   default: {
     layering: 'NETWORK_SIMPLEX',
-    placement: 'NETWORK_SIMPLEX',
+    placement: 'BRANDES_KOEPF',
     containerPlacement: 'BRANDES_KOEPF',
+    alignment: 'BALANCED',
     cycleBreaking: 'DEPTH_FIRST',
   },
-  /**
-   * What shipped before presets: straighter long edges, less alignment.
-   *
-   * `GREEDY`, not `GREEDY_MODEL_ORDER`, is deliberate. The schema advertised
-   * the latter, but `defaultConfig` never listed `cycleBreakingStrategy`, so it
-   * reached ELK as undefined and ELK's own default applied. This preset
-   * reproduces what `develop` actually renders, not what its schema claimed.
-   * Layering is ELK's default too — `develop` does not wire the option at all.
-   */
+  // Reproduce the layout before presets, including ELK's own greedy cycle
+  // breaking rather than the greedy-model-order value advertised by the schema.
   legacy: {
     layering: 'NETWORK_SIMPLEX',
     placement: 'BRANDES_KOEPF',
     containerPlacement: 'BRANDES_KOEPF',
+    alignment: 'NONE',
     cycleBreaking: 'GREEDY',
   },
-  /**
-   * As `default`, but breaks cycles by greedy model order — which reverses the
-   * edges that disturb declaration order least, at the cost of longer back
-   * edges. This is the triple `default` named before depth-first took over.
-   */
   modelOrder: {
     layering: 'NETWORK_SIMPLEX',
     placement: 'NETWORK_SIMPLEX',
     containerPlacement: 'BRANDES_KOEPF',
+    alignment: 'NONE',
     cycleBreaking: 'GREEDY_MODEL_ORDER',
   },
-  /**
-   * Kept as a name for what `default` now is, so diagrams that asked for
-   * depth-first breaking by name keep saying what they mean. Identical to
-   * `default` on purpose — not a distinct combination.
-   */
+  // Preserve the previous default recipe for callers selecting it by name.
   depthFirst: {
     layering: 'NETWORK_SIMPLEX',
     placement: 'NETWORK_SIMPLEX',
     containerPlacement: 'BRANDES_KOEPF',
+    alignment: 'NONE',
     cycleBreaking: 'DEPTH_FIRST',
   },
 };
@@ -910,7 +881,7 @@ function createRootElkGraph(
       'elk.layered.nodePlacement.strategy':
         data4Layout.config.elk?.nodePlacementStrategy ?? preset.placement,
       'elk.layered.nodePlacement.bk.fixedAlignment':
-        data4Layout.config.elk?.nodePlacementAlignment ?? DEFAULT_NODE_PLACEMENT_ALIGNMENT,
+        data4Layout.config.elk?.nodePlacementAlignment ?? preset.alignment,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
       'spacing.baseValue': 40,

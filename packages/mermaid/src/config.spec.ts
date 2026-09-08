@@ -60,10 +60,11 @@ describe('when working with site config', () => {
     expect(config.swimlane?.automaticLaneOrdering).toBe(false);
   });
 
-  it('should default ELK node placement alignment to NONE', () => {
+  it('leaves ELK placement and alignment to the selected preset', () => {
     const config = configApi.getConfig();
 
-    expect(config.elk?.nodePlacementAlignment).toBe('NONE');
+    expect(config.elk?.nodePlacementStrategy).toBeUndefined();
+    expect(config.elk?.nodePlacementAlignment).toBeUndefined();
   });
 
   it('should not force class diagram padding', () => {
