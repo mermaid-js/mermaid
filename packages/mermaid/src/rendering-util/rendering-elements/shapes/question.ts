@@ -20,7 +20,7 @@ export const createDecisionBoxPathD = (x: number, y: number, size: number): stri
 export async function question<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), { wrap: false });
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
 
   const w = bbox.width + (node.padding ?? 0);
   const h = bbox.height + (node.padding ?? 0);

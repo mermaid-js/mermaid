@@ -468,13 +468,6 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
    *
-   * The flowchart shapes stadium (`terminal`, `pill`), circle (`circ`),
-   * diamond (`diam`, `decision`, `question`), double circle (`dbl-circ`,
-   * `double-circle`), Display (`curv-trap`, `curved-trapezoid`,
-   * `display`) and Delay (`delay`, `half-rounded-rectangle`) do not wrap
-   * automatically; only explicit line breaks split their labels. An
-   * explicit node width still takes precedence.
-   *
    */
   wrappingWidth?: number;
   /**
@@ -669,10 +662,6 @@ export interface AgentflowDiagramConfig extends BaseDiagramConfig {
    *
    * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
-   *
-   * `decision` (`diamond`) nodes do not wrap automatically; only explicit
-   * line breaks split their labels. An explicit node width still takes
-   * precedence.
    *
    */
   wrappingWidth?: number;
@@ -2354,13 +2343,6 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    *
    * When using markdown strings the text is wrapped automatically, this
    * value sets the max width of a text before it continues on a new line.
-   *
-   * The flowchart shapes stadium (`terminal`, `pill`), circle (`circ`),
-   * diamond (`diam`, `decision`, `question`), double circle (`dbl-circ`,
-   * `double-circle`), Display (`curv-trap`, `curved-trapezoid`,
-   * `display`) and Delay (`delay`, `half-rounded-rectangle`) do not wrap
-   * automatically; only explicit line breaks split their labels. An
-   * explicit node width still takes precedence.
    *
    */
   wrappingWidth?: number;

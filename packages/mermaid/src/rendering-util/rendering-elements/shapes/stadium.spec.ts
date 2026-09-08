@@ -78,10 +78,12 @@ const render = async (
 };
 
 describe('stadium geometry', () => {
-  it('measures its label once using the shape wrapping exception', async () => {
+  it('measures its label once, at the configured wrapping width', async () => {
     const { node } = await render(120, 231, 'neo', 15, { wrappingWidth: 120 });
     expect(labelHelper).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(labelHelper).mock.calls[0][3]).toEqual({ wrap: false });
+    // No wrapping exception is passed: the `w >= 1.5h` floor below is what keeps a wrapped
+    // label from closing the caps into a circle.
+    expect(vi.mocked(labelHelper).mock.calls[0]).toHaveLength(3);
     expect(node.wrappingWidth).toBe(120);
   });
 
