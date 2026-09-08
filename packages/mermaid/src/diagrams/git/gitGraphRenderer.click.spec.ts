@@ -133,6 +133,22 @@ describe('GitGraph Click Events (Rendering)', () => {
     expect(svg.select('.tag.clickable').empty()).toBe(false);
   });
 
+  it('should mark noninteractive branch labels with the branchLabel class', async () => {
+    const diagram = `
+      gitGraph
+        branch "br-no-link"
+        commit id: "c1"
+    `;
+    await parser.parse(diagram);
+    const svgId = 'gitgraph-noninteractive-branch-test';
+    const svg = select(container).append('svg').attr('id', svgId);
+
+    // @ts-ignore - partial diagram object for testing
+    await draw(diagram, svgId, '1.0', { db, type: 'gitGraph' });
+
+    expect(svg.select('.branchLabel').empty()).toBe(false);
+  });
+
   it('should suppress unsafe URLs after formatUrl sanitization', async () => {
     setSiteConfig({ securityLevel: 'antiscript' });
     reset();

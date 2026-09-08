@@ -1011,9 +1011,9 @@ const drawBranches = (
 
     const interactiveGroup = addInteraction(db, g, name, 'branch');
     const branchInteractionGroup = interactiveGroup || g.append('g');
+    branchInteractionGroup.classed('branchLabel', true);
 
     if (interactiveGroup) {
-      branchInteractionGroup.classed('branchLabel', true);
       branchInteractionGroup.attr('data-branch-name', name);
     }
 
