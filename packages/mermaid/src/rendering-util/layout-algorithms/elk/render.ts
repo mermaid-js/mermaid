@@ -10,6 +10,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { applyElkLineJumps } from './lineHops.js';
+import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
   EDGE_ROUTING_OPTIONS,
@@ -241,13 +242,14 @@ const RECTPACKING_OPTIONS: Record<string, string | number> = {
 };
 
 /**
- * Every option `buildSubgraphLayoutOptions` sets *because* a container asked for
- * its own algorithm. When cross-boundary edges force the container back onto the
- * inherited algorithm, all of these have to go — they are not inert under
- * `elk.layered`, so leaving them behind produced a hybrid rather than the
- * documented fallback.
+ * Every option `buildSubgraphLayoutOptions` sets or overrides *because* a
+ * container asked for its own algorithm. When cross-boundary edges force the
+ * container back onto the inherited algorithm, all of these have to go — they
+ * are not inert under `elk.layered`, so leaving them behind produced a hybrid
+ * rather than the documented fallback. `nodeSize.*` is then re-applied with the
+ * plain-subgraph title floor by the caller (`groupTitleSizeOptions`).
  */
-const CONTAINER_ALGORITHM_SCOPED_OPTIONS = [
+const CONTAINER_ALGORITHM_OVERRIDES = [
   'nodeSize.constraints',
   'nodeSize.minimum',
   'elk.algorithm',
@@ -263,7 +265,7 @@ const CONTAINER_ALGORITHM_SCOPED_OPTIONS = [
  * plain subgraph would have had.
  */
 export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unknown>): void {
-  for (const key of CONTAINER_ALGORITHM_SCOPED_OPTIONS) {
+  for (const key of CONTAINER_ALGORITHM_OVERRIDES) {
     delete layoutOptions[key];
   }
   // `spacing.baseValue` and `spacing.nodeNode` are base options that the
@@ -329,9 +331,45 @@ export function dir2ElkDirection(dir: unknown): 'RIGHT' | 'LEFT' | 'DOWN' | 'UP'
   }
 }
 
+interface GroupTitleNode {
+  shape?: string;
+  labelData?: LabelData;
+  labels?: { width?: number }[];
+  padding?: number;
+}
+
+/**
+ * The width the frame painter needs for the group's title, or 0 for cluster
+ * shapes that paint no title (a note group's label is the note's text, which
+ * the note node inside it paints; reserving it would size the frame for text
+ * that never appears there).
+ */
+function groupTitleWidth(node: GroupTitleNode): number {
+  if (!clusterPaintsTitle(node.shape)) {
+    return 0;
+  }
+  // Match the frame painter's label width plus total horizontal padding.
+  return (node.labelData?.width ?? node.labels?.[0]?.width ?? 0) + (node.padding ?? 0);
+}
+
+/**
+ * ELK options reserving the painted title width before routing. Empty for
+ * cluster shapes that paint no title, so they keep ELK's default sizing.
+ */
+function groupTitleSizeOptions(node: GroupTitleNode): Record<string, string> {
+  if (!clusterPaintsTitle(node.shape)) {
+    return {};
+  }
+  return {
+    'nodeSize.constraints': '[MINIMUM_SIZE, NODE_LABELS]',
+    'nodeSize.minimum': `(${groupTitleWidth(node)}, 0)`,
+  };
+}
+
 export function buildSubgraphLayoutOptions(
   node: {
     dir?: string;
+    shape?: string;
     padding?: number;
     labelData?: LabelData;
     metadata?: { algorithm?: unknown } & Record<string, unknown>;
@@ -340,9 +378,9 @@ export function buildSubgraphLayoutOptions(
   algorithm: string | undefined,
   log?: ElkLayoutContext['log']
 ): Record<string, unknown> {
-  // Compute label-based minimum width so ELK sizes compound nodes to fit their
-  // labels. nodeSize.minimum acts as a label-derived floor while ELK computes
-  // the actual size from the children.
+  // Every group gets its painted title width as a floor via
+  // `groupTitleSizeOptions` below. Containers that run their own algorithm
+  // override that floor with this wider, label-plus-both-paddings minimum.
   const labelW = node.labelData?.width ?? 0;
   const pad = node.padding ?? 0;
   const minWidth = labelW + 2 * pad;
@@ -353,6 +391,9 @@ export function buildSubgraphLayoutOptions(
   const preset = resolveElkPreset(elkConfig?.preset);
 
   const layoutOptions: Record<string, unknown> = {
+    // Reserve the painted title width before routing. Enlarging a frame after
+    // ELK has placed its ports leaves those ports inside the painted border.
+    ...groupTitleSizeOptions(node),
     'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
     // The straight run an edge gets before the node it enters, bought on its
     // own rather than out of `spacing.baseValue` — see the note there. This is
@@ -420,9 +461,7 @@ export function buildSubgraphLayoutOptions(
   // runs instead of being swallowed by the root INCLUDE_CHILDREN policy.
   const algo = resolveContainerAlgorithm(node.metadata?.algorithm, log);
   if (algo) {
-    // Label-derived minimum size, so ELK sizes the container to fit its label.
-    // Scoped to containers that opt into their own algorithm: applying it to
-    // every subgraph changes the dimensions of existing flowchart subgraphs.
+    // These algorithms also need a minimum height for their title strip.
     const padTop = labelH + CONTAINER_PADDING;
     layoutOptions['nodeSize.constraints'] = '[MINIMUM_SIZE, NODE_LABELS]';
     // The minimum has to clear the whole reserved strip — the label plus the
@@ -1195,6 +1234,7 @@ function setIncludeChildrenPolicy(
   ) {
     log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
     clearContainerAlgorithmOptions(node.layoutOptions);
+    Object.assign(node.layoutOptions, groupTitleSizeOptions(node));
   }
 
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
@@ -1377,13 +1417,9 @@ export function evenGroupFrames(
     const bottom = Math.min(origin.posY + group.height!, Math.max(...ys) + SUBGRAPH_PADDING);
     const top = origin.posY;
 
-    // A frame narrower than its own title would cut the title off. Both the
-    // drawn rect and `getEffectiveGroupWidth` have their own idea of the floor,
-    // so honour the larger and keep the frame centred on its contents.
-    const labelFloor = Math.max(
-      elkNode.labelData?.width ?? 0,
-      (elkNode.labels?.[0]?.width ?? 0) + (elkNode.padding ?? 0)
-    );
+    // Keep the same title-plus-padding floor reserved before ELK routing and
+    // used by clipping and painting.
+    const labelFloor = groupTitleWidth(elkNode);
     let x = left;
     let width = right - left;
     if (width < labelFloor) {
@@ -1417,12 +1453,8 @@ export function evenGroupFrames(
     if (layoutNode) {
       layoutNode.x = group.x;
       layoutNode.y = group.y;
-      // The clamp above, not the label floor. `width` has already honoured the
-      // floor wherever ELK left room for it; the only case where the label is
-      // still wider is the one the clamp just refused, so taking the max here
-      // would quietly undo it — and this is the width the frame is PAINTED at
-      // (`clusters.js` sizes the rect from `node.width`), so the frame would
-      // spill outside the bounds ELK reserved.
+      // The title floor was reserved before routing; never grow past ELK's
+      // frame here, which could cover a neighbouring node or route.
       layoutNode.width = width;
       layoutNode.height = height;
     }
@@ -1948,7 +1980,7 @@ function calcOffset(
   };
 }
 
-function sanitizeElkEdgePoints(
+export function sanitizeElkEdgePoints(
   points: P[],
   startNode: NodeWithVertex,
   endNode: NodeWithVertex,
@@ -1983,11 +2015,21 @@ function sanitizeElkEdgePoints(
       'end'
     );
 
-    const skipStart = startIsGroup && onBorder(startBounds, startCandidate);
-    const skipEnd = endIsGroup && onBorder(endBounds, endCandidate);
+    let skipStart = startIsGroup && onBorder(startBounds, startCandidate);
+    let skipEnd = endIsGroup && onBorder(endBounds, endCandidate);
 
     dropAutoCenterPoint(prevPoints, 'start', skipStart && startCenterApprox);
     dropAutoCenterPoint(prevPoints, 'end', skipEnd && endCenterApprox);
+
+    // If a frame changed, remove its obsolete interior terminals and intersect
+    // the actual crossing segment. A ray to the group centre changes the
+    // approach direction and leaves a spurious segment along the border.
+    if (startIsGroup && !skipStart) {
+      skipStart = clipGroupEndpoint(prevPoints, startBounds, 'start');
+    }
+    if (endIsGroup && !skipEnd) {
+      skipEnd = clipGroupEndpoint(prevPoints, endBounds, 'end');
+    }
 
     if (skipStart || skipEnd) {
       if (!skipStart) {
@@ -2239,9 +2281,7 @@ function buildEdgeData(
 }
 
 function getEffectiveGroupWidth(node: NodeWithVertex): number {
-  const labelW = node?.labels?.[0]?.width ?? 0;
-  const padding = node?.padding ?? 0;
-  return Math.max(node.width ?? 0, labelW + padding);
+  return Math.max(node.width ?? 0, groupTitleWidth(node));
 }
 
 function boundsFor(node: NodeWithVertex): RectLike {
@@ -2297,6 +2337,35 @@ function dropAutoCenterPoint(points: P[], side: Side, doDrop: boolean): void {
       points.pop();
     }
   }
+}
+
+function clipGroupEndpoint(points: P[], bounds: RectLike, side: Side): boolean {
+  const step = side === 'start' ? 1 : -1;
+  let index = side === 'start' ? 0 : points.length - 1;
+  const terminalIndex = index;
+  while (index >= 0 && index < points.length && !outsideNode(bounds, points[index])) {
+    index += step;
+  }
+  if (index === terminalIndex || index < 0 || index >= points.length) {
+    return false;
+  }
+
+  const outside = points[index];
+  const inside = points[index - step];
+  const dx = outside.x - inside.x;
+  const dy = outside.y - inside.y;
+  // Walk from the last interior point to the first exterior point. The first
+  // side reached is the crossing, including diagonal and corner approaches.
+  const tx = dx === 0 ? Infinity : (bounds.x + (Math.sign(dx) * bounds.width) / 2 - inside.x) / dx;
+  const ty = dy === 0 ? Infinity : (bounds.y + (Math.sign(dy) * bounds.height) / 2 - inside.y) / dy;
+  const t = Math.min(tx, ty);
+  const crossing = { x: inside.x + t * dx, y: inside.y + t * dy };
+  if (side === 'start') {
+    points.splice(0, index, crossing);
+  } else {
+    points.splice(index + 1, points.length - index - 1, crossing);
+  }
+  return true;
 }
 
 function applyStartIntersectionIfNeeded(

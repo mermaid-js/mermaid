@@ -12,7 +12,9 @@ import {
   resolveContainerAlgorithm,
   resolveElkPreset,
   runElkLayoutCore,
+  sanitizeElkEdgePoints,
 } from '../render.js';
+import { onBorder, type P } from '../geometry.js';
 
 const log = {
   debug: () => undefined,
@@ -69,10 +71,22 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.padding']).toBe('[top=29,left=15,bottom=15,right=15]');
   });
 
-  it('leaves the size of a plain subgraph to ELK, as before', () => {
+  it('reserves title padding while leaving child layout and height to ELK', () => {
     const opts = buildSubgraphLayoutOptions(
       { padding: 8, labelData: { width: 44, height: 14 } },
       { mergeEdges: true },
+      'layered'
+    );
+    expect(opts['nodeSize.constraints']).toBe('[MINIMUM_SIZE, NODE_LABELS]');
+    expect(opts['nodeSize.minimum']).toBe('(52, 0)');
+  });
+
+  it('reserves no title width for cluster shapes that paint no title', () => {
+    // A state-diagram note group carries the note's text as its label, but the
+    // note node inside paints it; the group frame has no title strip.
+    const opts = buildSubgraphLayoutOptions(
+      { shape: 'noteGroup', padding: 16, labelData: { width: 336, height: 40 } },
+      undefined,
       'layered'
     );
     expect(opts['nodeSize.constraints']).toBeUndefined();
@@ -100,7 +114,7 @@ describe('buildSubgraphLayoutOptions', () => {
     );
     expect(opts['elk.algorithm']).toBe('layered');
     expect(opts['elk.direction']).toBe('RIGHT');
-    expect(opts['nodeSize.minimum']).toBeUndefined();
+    expect(opts['nodeSize.minimum']).toBe('(30, 0)');
   });
 
   it('omits direction-specific options when node has no dir', () => {
@@ -638,6 +652,207 @@ describe('runElkLayoutCore', () => {
     expect(child.offset.y).toBeCloseTo(group.offset.posY);
     expect(layoutChild.x).toBeCloseTo(child.offset.posX + child.width / 2);
     expect(layoutChild.y).toBeCloseTo(child.offset.posY + child.height / 2);
+  });
+});
+
+describe('group title padding and edge attachment', () => {
+  type ClipNode = Parameters<typeof sanitizeElkEdgePoints>[1];
+  const frame = (id: string, x: number, y: number, width: number, height: number): ClipNode => ({
+    id,
+    x,
+    y,
+    width,
+    height,
+    isGroup: true,
+    offset: { posX: x - width / 2, posY: y - height / 2, x: 0, y: 0, depth: 0, width, height },
+  });
+
+  // Measured sizes from elk-legacy-preset-regression.mmd: default/neo has
+  // 152px children under a 197.671875px title. Classic's 180px children and
+  // redux's narrower title mask the missing 8px of title padding.
+  it.each([
+    [197.671875, 152],
+    [197.671875, 180],
+    [164.96875, 152],
+    [164.96875, 180],
+    [191.75, 152],
+    [192, 152],
+    [192.25, 152],
+  ])(
+    'reserves title %s plus padding before routing around child width %s',
+    async (title, child) => {
+      const data = {
+        direction: 'LR',
+        config: {
+          elk: { nodePlacementStrategy: 'BRANDES_KOEPF', nodePlacementAlignment: 'BALANCED' },
+        },
+        nodes: [
+          { id: 'org', width: 152, height: 40, shape: 'rect', label: 'org' },
+          {
+            id: 'platform',
+            isGroup: true,
+            padding: 8,
+            label: 'Platform and infrastructure',
+            labelBBox: { width: title, height: 24 },
+          },
+          {
+            id: 'infra',
+            parentId: 'platform',
+            width: child,
+            height: 200,
+            shape: 'rect',
+            label: 'infra',
+          },
+        ],
+        edges: [{ id: 'edge', start: 'org', end: 'platform' }],
+      } as any;
+      const result = await runElkLayoutCore(data, elkRenderContext);
+      const rawGroup = result.children!.find((node: any) => node.id === 'platform');
+      const group = data.nodes.find((node: any) => node.id === 'platform');
+      expect(rawGroup.width).toBeGreaterThanOrEqual(title + 8);
+      expect(group.width).toBeGreaterThanOrEqual(title + 8);
+      const points: P[] = data.edges[0].points;
+      expect(onBorder(group, points.at(-1)!)).toBe(true);
+      expect(points.at(-1)).toEqual(result.edges![0].sections[0].endPoint);
+    }
+  );
+
+  it.each([false, true])(
+    'trims interior points on both ends (other endpoint is group: %s)',
+    (otherIsGroup) => {
+      const other = {
+        x: -100,
+        y: 130,
+        width: 40,
+        height: 40,
+        offset: { posX: -120, posY: 110 },
+        isGroup: otherIsGroup,
+      } as any;
+      const group = {
+        x: 100,
+        y: 100,
+        width: 100,
+        height: 120,
+        offset: { posX: 50, posY: 40 },
+        isGroup: true,
+      } as any;
+      const points = [
+        { x: -100, y: 130 },
+        { x: -80, y: 130 },
+        { x: 20, y: 130 },
+        { x: 53, y: 130 },
+        { x: 60, y: 130 },
+        { x: 100, y: 100 },
+      ];
+      const expected = [
+        { x: -80, y: 130 },
+        { x: 20, y: 130 },
+        { x: 50, y: 130 },
+      ];
+      expect(sanitizeElkEdgePoints(points, other, group, log)).toEqual(expected);
+      expect(sanitizeElkEdgePoints([...points].reverse(), group, other, log)).toEqual(
+        [...expected].reverse()
+      );
+    }
+  );
+
+  it('keeps valid group anchors unchanged', () => {
+    const source = {
+      x: -100,
+      y: 130,
+      width: 40,
+      height: 40,
+      offset: { posX: -120, posY: 110 },
+      isGroup: true,
+    } as any;
+    const target = {
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 120,
+      offset: { posX: 50, posY: 40 },
+      isGroup: true,
+    } as any;
+    const route = [
+      { x: -80, y: 130 },
+      { x: 20, y: 130 },
+      { x: 50, y: 130 },
+    ];
+    expect(
+      sanitizeElkEdgePoints(
+        [{ x: source.x, y: source.y }, ...route, { x: target.x, y: target.y }],
+        source,
+        target,
+        log
+      )
+    ).toEqual(route);
+  });
+
+  it.each([
+    [
+      { x: 20, y: 130 },
+      { x: 60, y: 130 },
+      { x: 50, y: 130 },
+    ],
+    [
+      { x: 180, y: 130 },
+      { x: 140, y: 130 },
+      { x: 150, y: 130 },
+    ],
+    [
+      { x: 80, y: 10 },
+      { x: 80, y: 60 },
+      { x: 80, y: 40 },
+    ],
+    [
+      { x: 80, y: 190 },
+      { x: 80, y: 140 },
+      { x: 80, y: 160 },
+    ],
+    [
+      { x: 20, y: 50 },
+      { x: 80, y: 150 },
+      { x: 50, y: 100 },
+    ],
+    [
+      { x: 20, y: 10 },
+      { x: 80, y: 70 },
+      { x: 50, y: 40 },
+    ],
+  ])('clips the actual crossing from %j through %j to %j', (outside, inside, crossing) => {
+    const group = frame('group', 100, 100, 100, 120);
+    const source = frame('source', outside.x - 20, outside.y, 40, 40);
+    const points = [{ x: source.x!, y: source.y! }, outside, inside, { x: 100, y: 100 }];
+    const expected = [outside, crossing];
+    expect(sanitizeElkEdgePoints(points, source, group, log)).toEqual(expected);
+    expect(sanitizeElkEdgePoints([...points].reverse(), group, source, log)).toEqual(
+      [...expected].reverse()
+    );
+  });
+
+  it('keeps the title minimum when cross-boundary edges replace a container algorithm', async () => {
+    const data = {
+      direction: 'LR',
+      config: { elk: {} },
+      nodes: [
+        { id: 'org', width: 152, height: 40, label: 'org' },
+        {
+          id: 'platform',
+          isGroup: true,
+          padding: 8,
+          label: 'Platform and infrastructure',
+          labelBBox: { width: 197.671875, height: 24 },
+          metadata: { algorithm: 'elk.box' },
+        },
+        { id: 'infra', parentId: 'platform', width: 152, height: 200, label: 'infra' },
+      ],
+      edges: [{ id: 'edge', start: 'infra', end: 'org' }],
+    } as any;
+    const result = await runElkLayoutCore(data, elkRenderContext);
+    const group = result.children!.find((node: any) => node.id === 'platform');
+    expect(group.layoutOptions['elk.hierarchyHandling']).toBe('INCLUDE_CHILDREN');
+    expect(group.layoutOptions['elk.algorithm']).toBeUndefined();
+    expect(group.width).toBeGreaterThanOrEqual(205.671875);
   });
 });
 
