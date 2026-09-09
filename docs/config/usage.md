@@ -32,7 +32,7 @@ Requirements:
 
 ### Supported browsers and runtimes
 
-Mermaid v\<MERMAID_RELEASE_VERSION>+'s published bundles target ES2024 and are aimed to support Safari 17.4 or later.
+Mermaid v12.0.0+'s published bundles target ES2024 and are aimed to support Safari 17.4 or later.
 
 We run linting for Chromium 121 and Firefox 123 support as well, but unlike Safari 17.4, we don't commit to supporting these outdated versions.
 
@@ -72,7 +72,7 @@ Example:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
 </script>
 ```
 
@@ -91,7 +91,7 @@ Example:
       B-->D(fa:fa-spinner);
     </pre>
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
     </script>
   </body>
 </html>
@@ -116,7 +116,7 @@ If you need a more lightweight version without these features, you can use [Merm
 
 The tiny build has never included ELK, and still doesn't — it is a large dependency and staying small is the point of that build. Diagrams that ask for an ELK layout here fall back to Dagre and still render; nothing breaks, they are simply laid out by Dagre.
 
-What changed in v\<MERMAID_RELEASE_VERSION> is the main package, not this one: ELK used to be an opt-in `@mermaid-js/layout-elk` install, and is now bundled with `mermaid` and used by default. So **if you want a Mermaid without ELK, the tiny build is the way to get one** — it is no longer simply a matter of not installing the layout package.
+What changed in v12.0.0 is the main package, not this one: ELK used to be an opt-in `@mermaid-js/layout-elk` install, and is now bundled with `mermaid` and used by default. So **if you want a Mermaid without ELK, the tiny build is the way to get one** — it is no longer simply a matter of not installing the layout package.
 
 If you want the tiny build _and_ ELK, register `@mermaid-js/layout-elk` alongside it. That package continues to be published for exactly this case:
 
