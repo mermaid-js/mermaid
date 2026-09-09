@@ -518,6 +518,10 @@ async function createServer() {
   }
   app.use(express.static('demos'));
   app.use(express.static('e2e/platform'));
+  app.use(
+    `/node_modules/@fontsource-variable`,
+    express.static(resolve(process.cwd(), 'node_modules', '@fontsource-variable'))
+  );
 
   app.listen(devPort, () => {
     console.log(
