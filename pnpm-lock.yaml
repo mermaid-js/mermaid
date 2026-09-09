@@ -57,6 +57,9 @@ importers:
       '@eslint/js':
         specifier: ^9.26.0
         version: 9.35.0
+      '@fontsource-variable/arimo':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@fontsource-variable/recursive':
         specifier: ^5.3.0
         version: 5.3.0
@@ -2525,6 +2528,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@fontsource-variable/arimo@5.3.0':
+    resolution: {integrity: sha512-t34ntseQmQX5nLt4nbAmjm4a2sZK5jzcYNBkehOqTg9xlbctc2ZrzlGZlptibfl9Trvsg9buhuoiqBBdm8VK8Q==}
 
   '@fontsource-variable/recursive@5.3.0':
     resolution: {integrity: sha512-4B4/lWCVeZgdbpJdIIU1sOVO/ECjjM673ohuxvyQ6uCK41TPlGzKRNokKY84noUgGYnpwc//MW4k2KrOMY19jQ==}
@@ -12913,6 +12919,8 @@ snapshots:
       tabbable: 6.2.0
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@fontsource-variable/arimo@5.3.0': {}
 
   '@fontsource-variable/recursive@5.3.0': {}
 

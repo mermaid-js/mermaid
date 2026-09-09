@@ -4,8 +4,8 @@ import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const looks = ['neo'] as const;
 const themes = [
-  { theme: 'neo', fontFamily: 'arial, sans-serif' },
-  { theme: 'neo-dark', fontFamily: 'arial, sans-serif' },
+  { theme: 'neo', fontFamily: '"Arimo Variable", Arimo, arial, sans-serif' },
+  { theme: 'neo-dark', fontFamily: '"Arimo Variable", Arimo, arial, sans-serif' },
   { theme: 'redux', fontFamily: '"Recursive Variable", arial, sans-serif' },
   { theme: 'redux-dark', fontFamily: '"Recursive Variable", arial, sans-serif' },
 ] as const;
