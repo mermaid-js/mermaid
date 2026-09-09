@@ -1,0 +1,225 @@
+import type { LayoutData } from '../../../types.js';
+import type { GridLikeOptions } from '../grid/options.js';
+import { resolveGridLikeOptions } from '../grid/options.js';
+
+/**
+ * Tunables for the attached grid-like layout.
+ *
+ * The core's *layout* is inherited from grid-like and nothing here changes it:
+ * every core node stays exactly where grid-like put it, so every ACA alignment
+ * and the grid structure survive. Two things about the core are this layout's
+ * own — `coreScaleStep`/`maxCoreScale`, which stretch its edges without
+ * touching its shape, and the `routing*` fields, which decide how those edges
+ * are *drawn*. The rest describe the trees: how each is drawn on its own, and
+ * how the placement search around the core is scored.
+ */
+export interface GridAttachedOptions extends GridLikeOptions {
+  /** Clear gap left between two packed connected components. */
+  componentGap: number;
+
+  /** Gap between two successive ranks of a tree. */
+  treeRankGap: number;
+  /** Gap between two sibling subtrees. */
+  treeSiblingGap: number;
+  /** Clear space kept between a placed tree and anything already drawn. */
+  treeClearance: number;
+  /**
+   * How far apart the connectors leaving one side of a tree node are spread,
+   * when a parent has several children. Capped by the side's length, so a wide
+   * fan on a small node simply gets a tighter spread.
+   */
+  treeFanPortSpacing: number;
+  /**
+   * Keep a rounded tree connector's two turns away from either node when a comb
+   * lane would otherwise leave only a tiny terminal stub.
+   *
+   * Disabled for the base layout to preserve its exact comb geometry; enabled by
+   * the subgraph variant, whose renderer draws rounded corners.
+   */
+  roundShortTerminalTurns: boolean;
+  /**
+   * Clear distance between two levels of a fan's nested comb, and so also between
+   * the last level and the rank it arrives at.
+   *
+   * A rank gap that cannot hold the comb it has to carry is widened to fit, which
+   * is the whole reason this is a separate number from `treeRankGap`: a tree with a
+   * fan of eight needs more room between its ranks than a chain does, and giving
+   * every tree the wide gap would stretch drawings that never needed it. It must
+   * stay above the arrowhead's own length, or the last leg of a connector is too
+   * short to show which way it points.
+   */
+  treeBendSpacing: number;
+
+  /** HOLA §17.6, first priority: a cardinal placement beats an ordinal one. */
+  favourCardinalPlacement: boolean;
+  /** HOLA §17.6, second priority: the external face beats an internal one. */
+  favourExternalFace: boolean;
+
+  /** Hard cap on a tree's dead stub: past it a placement counts as relaxed. */
+  maxSlide: number;
+  /**
+   * What one rung of core enlargement costs, against the dead stubs it saves.
+   *
+   * Both sides of that trade are measured in pixels — a stub by its length, an
+   * enlargement by how much wider and taller it makes the core — so a weight of
+   * 1 means "a core one pixel bigger is worth one pixel less stub". Raise it to
+   * keep drawings tight and live with longer connectors; lower it to spend size
+   * on hanging every tree straight off its root.
+   */
+  enlargementPenaltyWeight: number;
+  /**
+   * Weight of "how far this tree pushes the drawing's outline out" in the
+   * candidate cost, relative to one pixel of dead stub.
+   */
+  compactnessWeight: number;
+  /** Cost of growing a tree against the diagram's declared direction. */
+  flowPenalty: number;
+
+  /** One rung of the core-enlargement ladder, as a fraction of the core's size. */
+  coreScaleStep: number;
+  /** Largest enlargement factor the ladder may reach. */
+  maxCoreScale: number;
+  /** Rungs without improvement before the ladder gives up and keeps the best. */
+  coreScalePatience: number;
+  /**
+   * What one crossing between drawn edges is worth, in pixels of enlargement.
+   *
+   * The enlargement ladder trades the room it spends against the defects that room
+   * removes, and a crossing is the defect a reader notices first. Priced in the same
+   * units as everything else the ladder weighs, so two crossings removed justify
+   * roughly `2 × this` of extra core.
+   */
+  crossingPenalty: number;
+
+  /**
+   * Clear space kept around an edge label.
+   *
+   * Reserved twice over in a tree's rank gap — a label is drawn centred on its
+   * connector, so it needs room at both ends or it ends up touching the two ranks
+   * it sits between — and used again when a label is placed, to keep it off nodes
+   * and off other edges.
+   *
+   * The default is the shortest run an arrowhead can be drawn along, because that
+   * is what the gap between a label and the node it points at has to hold: any less
+   * and the label eats the arrow.
+   */
+  labelClearance: number;
+  /**
+   * How far a label is kept from a point where two edges cross.
+   *
+   * A label sitting on a crossing belongs, as far as a reader can tell, to either
+   * edge. Moving it along its own route costs nothing else, so the crossing is
+   * treated as something to avoid outright rather than as one cost among many.
+   */
+  labelCrossingClearance: number;
+
+  /**
+   * How many extra nodes the core may take on in order to keep a subgraph's members
+   * out of the trees.
+   *
+   * Leaf peeling cannot see a container, so it will happily pull one member into a
+   * tree and leave another in the core — a split no later stage can repair, since
+   * the halves are laid out by different algorithms and placed by different rules.
+   * Holding the members in the core prevents that, and costs core size: a bigger
+   * core is one grid-like aligns less of, and this layout asks grid-like for it once
+   * per candidate and once per rung.
+   *
+   * Counted in nodes rather than as a ratio, because a ratio is meaningless at both
+   * ends of the range: a three-node core going to five trips any ratio worth setting
+   * and costs nothing, while the same ratio would wave through seventeen becoming
+   * twenty-five. At 8 the diagrams where a container spans a few nodes keep their
+   * containers whole, and the ones whose containers cover nearly everything — where
+   * this turned a core of seventeen into thirty-four, its aligned edges from all but
+   * one into all but thirty, and seconds into minutes — do not.
+   */
+  maxExtraCoreNodesForContainment: number;
+
+  /**
+   * Take subgraph containers into account from the decomposition onwards, rather
+   * than fitting a frame around whatever the layout produced.
+   *
+   * Two things happen together, because neither is worth anything alone. Leaf
+   * peeling stops pulling a member out of a container that keeps another member in
+   * the core, up to `maxExtraCoreNodesForContainment` extra nodes; and the core is
+   * solved with the containers modelled, so its members are held together and
+   * everything else is held out. Measured over the subgraph fixtures:
+   *
+   *     neither                       48 frames drawn, 23 declined
+   *     containment in the core only  48 frames drawn, 23 declined
+   *     peeling held back only        47 frames drawn, 24 declined
+   *     both                          50 frames drawn, 21 declined
+   *
+   * Off, because the two extra frames are not the whole story. On `architecture`,
+   * whose thirteen nested containers cover nearly every node, containment and grid
+   * alignment want different things and containment wins: its unaligned core edges
+   * go from one to fifteen, and one tree connector ends up sharing a port. Those are
+   * a fair price for a diagram whose boxes matter more than its grid, and not a
+   * price to charge every diagram by default.
+   */
+  modelCoreGroups: boolean;
+
+  /** Clearance the core router keeps from node rectangles. */
+  routingClearance: number;
+  /** A* penalty per bend, so a route with fewer corners wins. */
+  routingBendPenalty: number;
+  /** A* penalty per crossing of an already routed edge. */
+  routingCrossingPenalty: number;
+  /** Hard cap on A* expansions per core route. */
+  routingMaxExpansions: number;
+}
+
+export function resolveGridAttachedOptions(
+  data4Layout: LayoutData,
+  overrides?: Partial<GridAttachedOptions>
+): GridAttachedOptions {
+  const base = resolveGridLikeOptions(data4Layout, overrides);
+
+  const treeRankGap = overrides?.treeRankGap ?? base.rankSpacing;
+  const treeSiblingGap = overrides?.treeSiblingGap ?? base.nodeSpacing;
+
+  return {
+    ...base,
+    // The components have to read as separate diagrams, so the gap between two
+    // of them must be clearly larger than the spacing *inside* one — which, in a
+    // grid-like drawing, is one grid step.
+    componentGap: overrides?.componentGap ?? 1.5 * base.gridSpacing,
+
+    treeRankGap,
+    treeSiblingGap,
+    // A tree must sit at least as far from its neighbours as two core nodes do
+    // from each other, or the drawing reads as one blob.
+    treeClearance: overrides?.treeClearance ?? base.nodeSpacing,
+    treeFanPortSpacing: overrides?.treeFanPortSpacing ?? 14,
+    roundShortTerminalTurns: overrides?.roundShortTerminalTurns ?? false,
+    // The longest transparent class-relation marker is 17.25px. The first
+    // comb lane has to clear it, otherwise the painter advances the path past
+    // its first bend and the arrowhead appears to float beside the node.
+    treeBendSpacing: overrides?.treeBendSpacing ?? 18,
+
+    favourCardinalPlacement: overrides?.favourCardinalPlacement ?? true,
+    favourExternalFace: overrides?.favourExternalFace ?? true,
+
+    maxSlide: overrides?.maxSlide ?? 4 * base.gridSpacing,
+    enlargementPenaltyWeight: overrides?.enlargementPenaltyWeight ?? 1,
+    compactnessWeight: overrides?.compactnessWeight ?? 0.25,
+    flowPenalty: overrides?.flowPenalty ?? treeRankGap / 2,
+
+    coreScaleStep: overrides?.coreScaleStep ?? 0.25,
+    maxCoreScale: overrides?.maxCoreScale ?? 3,
+    coreScalePatience: overrides?.coreScalePatience ?? 2,
+    crossingPenalty: overrides?.crossingPenalty ?? 200,
+
+    labelClearance: overrides?.labelClearance ?? 12,
+    labelCrossingClearance: overrides?.labelCrossingClearance ?? 24,
+
+    maxExtraCoreNodesForContainment: overrides?.maxExtraCoreNodesForContainment ?? 4,
+    modelCoreGroups: overrides?.modelCoreGroups ?? false,
+
+    routingClearance: overrides?.routingClearance ?? 12,
+    routingBendPenalty: overrides?.routingBendPenalty ?? 40,
+    routingCrossingPenalty: overrides?.routingCrossingPenalty ?? 200,
+    routingMaxExpansions: overrides?.routingMaxExpansions ?? 40_000,
+
+    ...overrides,
+  };
+}

@@ -1,0 +1,189 @@
+/**
+ * The graph stress objective (guide §7.4):
+ *
+ *     Stress = sum over i&lt;j of w_ij · (dist(p_i, p_j) − D_ij)²
+ *     D_ij   = baseEdgeLength · shortestPathDistance(i, j)
+ *     w_ij   = 1 / shortestPathDistance(i, j)²
+ *
+ * One model, one gradient. The objective, its gradient and its directional
+ * curvature all come from the same `pairs` list, so a stage can never optimise
+ * something other than what it measures — which is the defect guide §18.2
+ * calls out in the previous implementation.
+ *
+ * Node dimensions deliberately do *not* appear here: non-overlap is expressed
+ * as separation constraints, exactly as in the reference constraint-layout
+ * formulation.
+ */
+
+import { computeGraphDistances } from './graphDistances.js';
+
+export interface StressPair {
+  a: string;
+  b: string;
+  ideal: number;
+  weight: number;
+}
+
+export interface Positioned {
+  x: number;
+  y: number;
+}
+
+export interface Gradient {
+  x: number;
+  y: number;
+}
+
+/** Distance below which two coincident nodes are nudged apart deterministically. */
+const COINCIDENT_EPSILON = 1e-6;
+
+export class StressModel {
+  constructor(public readonly pairs: StressPair[]) {}
+
+  /** All-pairs model over the graph-theoretic distances. */
+  static allPairs(
+    ids: string[],
+    adjacency: Map<string, Set<string>>,
+    baseEdgeLength: number
+  ): StressModel {
+    const distances = computeGraphDistances(ids, adjacency);
+    const pairs: StressPair[] = [];
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        const d = distances.get(ids[i], ids[j]);
+        if (!isFinite(d) || d === 0) {
+          continue;
+        }
+        pairs.push({
+          a: ids[i],
+          b: ids[j],
+          ideal: baseEdgeLength * d,
+          weight: 1 / (d * d),
+        });
+      }
+    }
+    return new StressModel(pairs);
+  }
+
+  /**
+   * Neighbour-only model (guide §18.2): terms for adjacent nodes only, so the
+   * pass evens out local spacing without fighting the global arrangement.
+   */
+  static neighboursOnly(
+    ids: string[],
+    adjacency: Map<string, Set<string>>,
+    baseEdgeLength: number
+  ): StressModel {
+    const present = new Set(ids);
+    const pairs: StressPair[] = [];
+    const seen = new Set<string>();
+    for (const a of ids) {
+      for (const b of adjacency.get(a) ?? []) {
+        if (!present.has(b) || a === b) {
+          continue;
+        }
+        const key = a < b ? `${a}~${b}` : `${b}~${a}`;
+        if (seen.has(key)) {
+          continue;
+        }
+        seen.add(key);
+        pairs.push({ a, b, ideal: baseEdgeLength, weight: 1 });
+      }
+    }
+    return new StressModel(pairs);
+  }
+
+  value(positions: Map<string, Positioned>): number {
+    let total = 0;
+    for (const pair of this.pairs) {
+      const p = positions.get(pair.a);
+      const q = positions.get(pair.b);
+      if (!p || !q) {
+        continue;
+      }
+      const dx = p.x - q.x;
+      const dy = p.y - q.y;
+      const length = Math.hypot(dx, dy);
+      const residual = length - pair.ideal;
+      total += pair.weight * residual * residual;
+    }
+    return total;
+  }
+
+  /** ∇Stress. Zero for nodes not appearing in any pair. */
+  gradient(positions: Map<string, Positioned>): Map<string, Gradient> {
+    const gradients = new Map<string, Gradient>();
+    for (const id of positions.keys()) {
+      gradients.set(id, { x: 0, y: 0 });
+    }
+
+    for (const pair of this.pairs) {
+      const p = positions.get(pair.a);
+      const q = positions.get(pair.b);
+      if (!p || !q) {
+        continue;
+      }
+      let dx = p.x - q.x;
+      let dy = p.y - q.y;
+      let length = Math.hypot(dx, dy);
+      if (length < COINCIDENT_EPSILON) {
+        // Deterministic separation direction for coincident nodes.
+        dx = pair.a < pair.b ? COINCIDENT_EPSILON : -COINCIDENT_EPSILON;
+        dy = 0;
+        length = COINCIDENT_EPSILON;
+      }
+      const scale = (2 * pair.weight * (length - pair.ideal)) / length;
+      const ga = gradients.get(pair.a)!;
+      const gb = gradients.get(pair.b)!;
+      ga.x += scale * dx;
+      ga.y += scale * dy;
+      gb.x -= scale * dx;
+      gb.y -= scale * dy;
+    }
+
+    return gradients;
+  }
+
+  /**
+   * Second derivative of the stress along `direction`. Used to pick a
+   * well-scaled first trial step instead of an arbitrary learning rate.
+   */
+  directionalCurvature(
+    positions: Map<string, Positioned>,
+    direction: Map<string, Gradient>
+  ): number {
+    let curvature = 0;
+    for (const pair of this.pairs) {
+      const p = positions.get(pair.a);
+      const q = positions.get(pair.b);
+      const da = direction.get(pair.a);
+      const db = direction.get(pair.b);
+      if (!p || !q || !da || !db) {
+        continue;
+      }
+      const dx = p.x - q.x;
+      const dy = p.y - q.y;
+      const length = Math.hypot(dx, dy);
+      if (length < COINCIDENT_EPSILON) {
+        continue;
+      }
+      const ux = dx / length;
+      const uy = dy / length;
+      const sx = da.x - db.x;
+      const sy = da.y - db.y;
+      const along = ux * sx + uy * sy;
+      const squared = sx * sx + sy * sy;
+      const perpendicular = Math.max(0, squared - along * along);
+      curvature += 2 * pair.weight * (along * along + (1 - pair.ideal / length) * perpendicular);
+    }
+    return curvature;
+  }
+}
+
+export function gradientNorm(gradient: Map<string, Gradient>): number {
+  let total = 0;
+  for (const g of gradient.values()) {
+    total += g.x * g.x + g.y * g.y;
+  }
+  return Math.sqrt(total);
+}
