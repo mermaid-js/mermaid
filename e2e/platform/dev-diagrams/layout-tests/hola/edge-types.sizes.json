@@ -2,74 +2,64 @@
   "nodes": [
     {
       "id": "L1",
-      "width": 47.57528305053711,
-      "height": 44.994319915771484
+      "width": 76.4921875,
+      "height": 54
     },
     {
       "id": "L2",
-      "width": 47.57528305053711,
-      "height": 44.994319915771484
+      "width": 76.4921875,
+      "height": 54
     },
     {
       "id": "C",
-      "width": 42.1136360168457,
-      "height": 44.994319915771484
+      "width": 69.5703125,
+      "height": 54
     },
     {
       "id": "M1",
-      "width": 51.453125,
-      "height": 44.994319915771484
+      "width": 79.7421875,
+      "height": 54
     },
     {
       "id": "R1",
-      "width": 49.897727966308594,
-      "height": 44.994319915771484
+      "width": 77.703125,
+      "height": 54
     },
     {
       "id": "R2",
-      "width": 49.897727966308594,
-      "height": 44.994319915771484
+      "width": 77.703125,
+      "height": 54
     },
     {
       "id": "E1",
-      "width": 49.130680084228516,
-      "height": 44.994319915771484
+      "width": 76.9609375,
+      "height": 54
     },
     {
       "id": "E2",
-      "width": 49.130680084228516,
-      "height": 44.994319915771484
+      "width": 76.9609375,
+      "height": 54
     },
     {
       "id": "E3",
-      "width": 49.130680084228516,
-      "height": 44.994319915771484
+      "width": 76.9609375,
+      "height": 54
     },
     {
       "id": "E4",
-      "width": 49.130680084228516,
-      "height": 44.994319915771484
+      "width": 76.9609375,
+      "height": 54
     },
     {
       "id": "E5",
-      "width": 49.130680084228516,
-      "height": 44.994319915771484
-    },
-    {
-      "id": "edge-label-C-E1-L_C_E1_0",
-      "width": 45.9375,
-      "height": 20.99431800842285
-    },
-    {
-      "id": "edge-label-C-E2-L_C_E2_0",
-      "width": 45.9375,
-      "height": 20.99431800842285
+      "width": 76.9609375,
+      "height": 54
     }
   ],
   "metadata": {
     "captureVersion": 1,
-    "sourceSha256": "c24e556ffa7e8ac70465449c7206cf098c6c083a94e722d33e567eee53e7a2c6",
-    "capturedAt": "2026-06-10T07:00:43.801Z",
-    "capturedFrom": "dev-explorer layout-tests/domus/edge-types.mmd theme=redux look=neo layout=swimlane"
+    "sourceSha256": "0f0a98dbef44e3a1698734eade387d1e0222729cd7f856b846fe2138e12396ed",
+    "capturedAt": "2026-09-09T09:06:33.299Z",
+    "capturedFrom": "dev-explorer layout-tests/hola/edge-types.mmd theme=default look=classic layout=hola"
   }
 }
