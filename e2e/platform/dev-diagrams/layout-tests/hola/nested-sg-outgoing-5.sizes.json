@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "process_C",
+      "width": 98.921875,
+      "height": 45
+    },
+    {
+      "id": "Process_D",
+      "width": 100.46875,
+      "height": 45
+    },
+    {
+      "id": "process_A",
+      "width": 98.15625,
+      "height": 45
+    },
+    {
+      "id": "process_B",
+      "width": 98.15625,
+      "height": 45
+    },
+    {
+      "id": "edge-label-process_B-container_Beta-L_process_B_container_Beta_0",
+      "width": 92.859375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-process_A-process_C-L_process_A_process_C_0",
+      "width": 63.8125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "b33481eff63c4099a32140121c5f91b2fe65fd9d38242d24686c87ffe8d424e7",
+    "capturedAt": "2026-08-26T09:20:55.005Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-sg-outgoing-5.mmd theme=redux look=neo layout=swimlane"
+  }
+}

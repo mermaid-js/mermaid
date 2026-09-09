@@ -144,6 +144,7 @@ rootcopy
 roughjs
 RPAREN
 sankey
+segs
 sequencenumber
 shrc
 Siebenhaller

@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "internet",
+      "width": 78.703125,
+      "height": 45
+    },
+    {
+      "id": "nat",
+      "width": 51.46875,
+      "height": 45
+    },
+    {
+      "id": "routeur",
+      "width": 76.359375,
+      "height": 45
+    },
+    {
+      "id": "lb1",
+      "width": 50.6875,
+      "height": 45
+    },
+    {
+      "id": "lb2",
+      "width": 50.6875,
+      "height": 45
+    },
+    {
+      "id": "compute1",
+      "width": 93.484375,
+      "height": 45
+    },
+    {
+      "id": "compute2",
+      "width": 93.484375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "76720e70afdb15f73ff764c33e13866778a3f9a1bf5bf347743816e11f5d2dc5",
+    "capturedAt": "2026-08-26T09:20:54.929Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-sb-edges-in-out.mmd theme=redux look=neo layout=swimlane"
+  }
+}

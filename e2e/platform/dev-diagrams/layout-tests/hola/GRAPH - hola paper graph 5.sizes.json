@@ -1,0 +1,75 @@
+{
+  "nodes": [
+    {
+      "id": "C",
+      "width": 113.21875,
+      "height": 54
+    },
+    {
+      "id": "F",
+      "width": 74.9375,
+      "height": 102
+    },
+    {
+      "id": "L",
+      "width": 111.15625,
+      "height": 54
+    },
+    {
+      "id": "N",
+      "width": 104.375,
+      "height": 78
+    },
+    {
+      "id": "A",
+      "width": 69.4375,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 69.0625,
+      "height": 54
+    },
+    {
+      "id": "D",
+      "width": 69.8125,
+      "height": 54
+    },
+    {
+      "id": "E",
+      "width": 68.578125,
+      "height": 54
+    },
+    {
+      "id": "G",
+      "width": 70.828125,
+      "height": 54
+    },
+    {
+      "id": "H",
+      "width": 70.46875,
+      "height": 54
+    },
+    {
+      "id": "I",
+      "width": 64.453125,
+      "height": 54
+    },
+    {
+      "id": "M",
+      "width": 71.359375,
+      "height": 54
+    },
+    {
+      "id": "O",
+      "width": 70.78125,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "334f35663ce4ebfc357f27f3046856c039a7a9725f96078e483acb1f10ae8dff",
+    "capturedAt": "2026-08-07T13:54:30.316Z",
+    "capturedFrom": "dev-explorer layout-tests/hola/GRAPH - hola paper graph 5.mmd theme=forest look=classic layout=hola"
+  }
+}

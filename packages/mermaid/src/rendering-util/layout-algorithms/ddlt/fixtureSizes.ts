@@ -132,11 +132,15 @@ export function applyFixtureContentSizesStrict(layout: LayoutData, fixture: Size
   }
 }
 
-/** Apply sizes to nodes with `isEdgeLabel` (strict). */
+/**
+ * Apply sizes to edge-label dummy nodes (strict). Matches both the `isEdgeLabel`
+ * flag and HOLA's `isLabelNode`.
+ */
 export function applyFixtureLabelSizesStrict(layout: LayoutData, fixture: SizesFixture): void {
   const known = fixture.nodes.map((n) => n.id).join(', ');
   for (const node of layout.nodes) {
-    if (!(node as { isEdgeLabel?: boolean }).isEdgeLabel) {
+    const labelNode = node as { isEdgeLabel?: boolean; isLabelNode?: boolean };
+    if (!labelNode.isEdgeLabel && !labelNode.isLabelNode) {
       continue;
     }
     const size = fixtureSizeById(fixture, node.id);

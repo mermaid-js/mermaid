@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "a1",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "a2",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "a3",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "a4",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "edge-label-a1-a2-L_a1_a2_0",
+      "width": 112.875,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c996b609a9a4995b4589ec6527d614365ac4fa75125ed6d1ece85c33eefd0a72",
+    "capturedAt": "2026-08-26T09:20:55.569Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/subgraph-labels-3.mmd theme=redux look=neo layout=swimlane"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "a",
+      "width": 39.791194915771484,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "b",
+      "width": 39.791194915771484,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "c",
+      "width": 39.00284194946289,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "d",
+      "width": 39.791194915771484,
+      "height": 44.994319915771484
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "4b44b206207276d47ccc7238931953922b759ea1acc28b3483f9758892a943b3",
+    "capturedAt": "2026-06-10T07:00:47.951Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/multiple-edges.mmd theme=redux look=neo layout=swimlane"
+  }
+}

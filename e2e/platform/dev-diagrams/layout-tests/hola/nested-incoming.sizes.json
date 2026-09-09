@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "_sub_one",
+      "width": 93.515625,
+      "height": 45
+    },
+    {
+      "id": "_sub_two",
+      "width": 91.9375,
+      "height": 45
+    },
+    {
+      "id": "_one",
+      "width": 63.15625,
+      "height": 45
+    },
+    {
+      "id": "b",
+      "width": 39.796875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "9d1ff0c7d654f74db7ab473f87ff518e264c1dc57da7a405b6cb92a057214cf8",
+    "capturedAt": "2026-08-26T09:20:54.860Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-incoming.mmd theme=redux look=neo layout=swimlane"
+  }
+}

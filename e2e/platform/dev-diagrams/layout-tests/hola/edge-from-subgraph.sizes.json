@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 41.3394889831543,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "B",
+      "width": 41.3394889831543,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "C",
+      "width": 42.1136360168457,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "D",
+      "width": 42.1136360168457,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "X",
+      "width": 41.3394889831543,
+      "height": 44.994319915771484
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "f31152a1ff64dd397960f47e61fb70c072d38458baf365f4bd4eef257c52afb1",
+    "capturedAt": "2026-06-10T07:00:41.855Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/edge-from-subgraph.mmd theme=redux look=neo layout=swimlane"
+  }
+}

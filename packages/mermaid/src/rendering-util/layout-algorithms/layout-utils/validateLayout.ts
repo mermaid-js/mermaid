@@ -74,6 +74,38 @@ const EPS_ENDPOINT_BAND = 18;
 /** Two distinct edges sharing an attach point on a node within this distance trips `edge-shared-attachment-point`. */
 const EPS_SHARED_ATTACH = 3;
 
+/**
+ * A non-member leaf node should keep at least this much clear air between itself
+ * and a foreign group frame it faces. Below it, `node-too-close-to-group` fires
+ * as a GRADED SOFT penalty (the closer, the larger), so it never invalidates a
+ * layout — it just rewards spacing the node out.
+ */
+const NODE_GROUP_CLEARANCE = 20;
+/** Soft penalty per crowded node↔group pair: round((CLEARANCE - gap) * SCALE). */
+const NODE_GROUP_CROWD_SCALE = 3;
+/** Cap a single crowded pair's soft penalty. */
+const NODE_GROUP_CROWD_MAX = 60;
+
+/**
+ * The clear gap between two non-overlapping rects that FACE each other (their
+ * projections overlap on one axis), or null when they overlap on both axes
+ * (containment, handled elsewhere) or only meet diagonally (not facing).
+ */
+function rectFacingGap(a: Rect, b: Rect): number | null {
+  const xOverlap = a.left < b.right && b.left < a.right;
+  const yOverlap = a.top < b.bottom && b.top < a.bottom;
+  if (xOverlap && yOverlap) {
+    return null;
+  }
+  if (xOverlap) {
+    return a.top >= b.bottom ? a.top - b.bottom : b.top - a.bottom;
+  }
+  if (yOverlap) {
+    return a.left >= b.right ? a.left - b.right : b.left - a.right;
+  }
+  return null;
+}
+
 /** Per-edge bend penalty as a function of polyline POINT count (post-normalize). */
 function bendPenaltyForPoints(n: number): number {
   if (n <= 3) {
@@ -107,15 +139,20 @@ export type LayoutIssueType =
   | 'edge-shared-projected-port'
   | 'edge-bend-near-endpoint'
   | 'edge-corner-connection'
+  | 'edge-endpoint-detached-from-node'
   | 'edge-shared-subpath'
+  | 'edge-self-shared-subpath'
+  | 'edge-bend-overlaps-arrowhead'
   | 'edge-parallel-segment-too-close'
   | 'edge-border-hugging'
   | 'node-border-hugging'
+  | 'node-too-close-to-group'
   | 'edge-label-off-edge'
   | 'edge-endpoint-inside-node'
   | 'edge-label-overlaps-foreign-edge'
   | 'edge-label-overlaps-own-arrowhead'
-  | 'edge-label-overlaps-group-border';
+  | 'edge-label-overlaps-group-border'
+  | 'edge-label-overlaps-node';
 
 export interface Issue {
   type: LayoutIssueType;
@@ -759,6 +796,50 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
+  // 1c) Node-vs-group crowding (SOFT, graded)
+  //
+  // A non-member leaf node parked right up against a foreign group's frame reads
+  // as cramped (e.g. subgraph-variation's P5 only 10px off the P1.5 subgraph;
+  // P1 15.8px above it). Unlike border-hugging (a node running flush ALONG the
+  // frame), this catches a node FACING the frame across too small a gap. The
+  // penalty is GRADED and SOFT: the closer below NODE_GROUP_CLEARANCE, the larger
+  // — so it never invalidates (a hard rule would mass-regress fixtures like
+  // deploy-pipeline, whose D/E sit ~9–12px off their subgraph), it just rewards
+  // spacing the node out. Swimlane lanes use a different spacing model and are
+  // excluded.
+  // ─────────────────────────────────────────────────────────────────────────────
+  for (const n of nodes) {
+    if (n?.id == null || n.isGroup || isLabelDummy(n)) {
+      continue;
+    }
+    const nId = String(n.id);
+    const nr = nodeRects.get(nId);
+    if (!nr) {
+      continue;
+    }
+    for (const [gId, gRect] of groupBorderRects) {
+      const groupNode = byId.get(gId);
+      if (isAncestorGroup(gId, n, byId) || isSwimlaneGroup(groupNode)) {
+        continue;
+      }
+      const gap = rectFacingGap(nr, gRect);
+      if (gap == null || gap <= 0 || gap >= NODE_GROUP_CLEARANCE) {
+        continue;
+      }
+      const penalty = Math.min(
+        NODE_GROUP_CROWD_MAX,
+        Math.round((NODE_GROUP_CLEARANCE - gap) * NODE_GROUP_CROWD_SCALE)
+      );
+      issues.push({
+        type: 'node-too-close-to-group',
+        message: `Node "${nId}" is only ${gap.toFixed(1)} from group "${gId}" frame (< ${NODE_GROUP_CLEARANCE})`,
+        nodeIds: [nId, gId],
+        details: { gap, clearance: NODE_GROUP_CLEARANCE, softPenalty: penalty },
+      });
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
   // Pre-compute normalized polylines and edge metadata for edge checks
   // ─────────────────────────────────────────────────────────────────────────────
   interface EdgeMeta {
@@ -1004,6 +1085,87 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           details: { labelRect, points },
         });
       }
+    } else {
+      // Post-finalize / overlay representation: the label lives on the edge as
+      // `edge.label` + `edge.x/y` + `edge.width/height` (no `labelNodeId`). The
+      // labelNodeId branch above never sees it, so a label anchored away from
+      // its own polyline (e.g. a broken edge whose label floats in empty space)
+      // was silently accepted. Apply the same off-edge test to the overlay rect.
+      const overlayRect = labelRectForEdge(e);
+      if (overlayRect && !polylineIntersectsRect(points, overlayRect)) {
+        issues.push({
+          type: 'edge-label-off-edge',
+          message: `Edge "${edgeId}" label does not sit on the edge polyline`,
+          edgeId,
+          details: { labelRect: overlayRect, points },
+        });
+      }
+    }
+
+    // Check edge-endpoint-detached-from-node: an edge's start/end point must
+    // attach to its start/end node. A point floating in empty space — more than
+    // EPS_DETACHED OUTSIDE the node (the opposite of edge-endpoint-inside-node) —
+    // means the edge does not actually connect that node, the most basic
+    // structural defect. Paint clips the dangling endpoint back onto the node,
+    // which renders as the edge hugging the node's border.
+    {
+      const EPS_DETACHED = 2;
+      const distOutsideRect = (p: Point, r: Rect): number => {
+        const dx = Math.max(r.left - p.x, 0, p.x - r.right);
+        const dy = Math.max(r.top - p.y, 0, p.y - r.bottom);
+        return Math.hypot(dx, dy);
+      };
+      const ends: [Node | undefined, string, Point | undefined, 'start' | 'end'][] = [
+        [sNode, startId, points[0], 'start'],
+        [tNode, endId, points[points.length - 1], 'end'],
+      ];
+      for (const [node, nodeId, endpoint, which] of ends) {
+        if (!node || !endpoint) {
+          continue;
+        }
+        const d = distOutsideRect(endpoint, rectForNode(node));
+        if (d > EPS_DETACHED) {
+          issues.push({
+            type: 'edge-endpoint-detached-from-node',
+            message: `Edge "${edgeId}" ${which} point is ${d.toFixed(1)}px from node "${nodeId}" (not attached)`,
+            edgeId,
+            nodeIds: [nodeId],
+            details: { which, distance: d, point: endpoint },
+          });
+        }
+      }
+    }
+
+    // Check edge-bend-overlaps-arrowhead (SOFT): a turn (interior bend) sitting
+    // inside the terminal arrowhead marker's footprint — the bend visually
+    // overlaps the arrowhead because the terminal segment is no longer than the
+    // marker body. A real but non-structural defect, so it is a soft penalty
+    // (see SOFT_PENALTY_BY_TYPE), not an invalidation.
+    if (points.length >= 3) {
+      for (const terminal of ['start', 'end'] as const) {
+        if (!hasTerminalMarker(e, terminal)) {
+          continue;
+        }
+        const markerRect = terminalMarkerClearanceRect(points, terminal);
+        if (!markerRect) {
+          continue;
+        }
+        const innerVertex = terminal === 'end' ? points[points.length - 2] : points[1];
+        const insideMarker =
+          innerVertex.x >= markerRect.left - EPS &&
+          innerVertex.x <= markerRect.right + EPS &&
+          innerVertex.y >= markerRect.top - EPS &&
+          innerVertex.y <= markerRect.bottom + EPS;
+        if (insideMarker) {
+          issues.push({
+            type: 'edge-bend-overlaps-arrowhead',
+            message: `Edge "${edgeId}" ${terminal} bend overlaps its arrowhead marker`,
+            edgeId,
+            details: { terminal, innerVertex, markerRect },
+          });
+          break;
+        }
+      }
     }
 
     // Check edge-endpoint-inside-node: the start and end points of an edge
@@ -1195,6 +1357,42 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         }
       }
 
+      // edge-label-overlaps-node: the label rect sits on top of a leaf node's
+      // interior. An edge label belongs in the routing channel, not over a box;
+      // covering a node hides both the node's text and the label's. Checked
+      // against every leaf node (groups and label dummies excluded) including
+      // the label's own endpoints — a label covering even its own source/target
+      // is a real visual defect. A small overlap margin avoids border-touch
+      // noise from sub-pixel sizes.
+      {
+        const EPS_LABEL_NODE_OVERLAP = 2;
+        for (const n of nodes) {
+          if (n?.id == null || n.isGroup || isLabelDummy(n)) {
+            continue;
+          }
+          const nr = nodeRects.get(String(n.id));
+          if (!nr) {
+            continue;
+          }
+          const ov = rectsOverlap(labelRect, nr);
+          if (ov && ov.overlapX > EPS_LABEL_NODE_OVERLAP && ov.overlapY > EPS_LABEL_NODE_OVERLAP) {
+            issues.push({
+              type: 'edge-label-overlaps-node',
+              message: `Label ${who} overlaps node "${String(n.id)}"`,
+              edgeId: ownerEdgeId || undefined,
+              nodeIds: labelNodeId ? [labelNodeId, String(n.id)] : [String(n.id)],
+              details: {
+                nodeId: String(n.id),
+                labelRect,
+                overlapX: ov.overlapX,
+                overlapY: ov.overlapY,
+              },
+            });
+            break; // one node-overlap issue per label
+          }
+        }
+      }
+
       // edge-label-overlaps-group-border: a subgraph frame line cuts the
       // label rect (the label is half-in / half-out of a subgraph — its text
       // is visually sliced by the border, regardless of which group it is).
@@ -1371,6 +1569,73 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
         isTerminalSegmentForNode(e1, s1, nodeId) && isTerminalSegmentForNode(e2, s2, nodeId)
     );
   };
+
+  // 4a) Self-shared subpath: an edge whose own polyline doubles back along the
+  // same lane. Two flavours, both reported as `edge-self-shared-subpath`:
+  //
+  //   * Non-adjacent overlap (e.g. an A*/roundabout route never cleaned up):
+  //     two normalised segments ≥2 apart that are collinear and overlap.
+  //   * Adjacent reversal ("backtrack spike"): the RAW route runs out along a
+  //     lane and immediately comes straight back over it (e.g. project-sox2's
+  //     F→K: right to x=1181.6 then back to x=1071.6 at the same y). This is
+  //     invisible on the normalised segments because `mergeCollinear` silently
+  //     collapses the reversal — so it MUST be checked on the raw points, which
+  //     is what DOMUS paints verbatim.
+  for (const em of sortedEdges) {
+    const segs = em.normalized.segments;
+    let selfFlagged = false;
+    for (let a = 0; a < segs.length && !selfFlagged; a++) {
+      for (let b = a + 2; b < segs.length; b++) {
+        const overlap = collinearOverlap(segs[a], segs[b]);
+        if (overlap >= L_MIN_SHARED) {
+          issues.push({
+            type: 'edge-self-shared-subpath',
+            message: `Edge "${em.id}" overlaps its own route along a shared lane (length ${overlap.toFixed(1)})`,
+            edgeId: em.id,
+            details: { overlapLength: overlap, segmentIndices: [a, b] },
+          });
+          selfFlagged = true;
+          break;
+        }
+      }
+    }
+    if (selfFlagged) {
+      continue;
+    }
+    // Adjacent reversal on the RAW points: P_i→P_{i+1}→P_{i+2} collinear with the
+    // second leg running back over the first. The retraced length is the shorter
+    // of the two legs.
+    const pts = em.points;
+    for (let i = 0; i + 2 < pts.length; i++) {
+      const p0 = pts[i];
+      const p1 = pts[i + 1];
+      const p2 = pts[i + 2];
+      let backtrack = 0;
+      if (Math.abs(p0.y - p1.y) <= EPS && Math.abs(p1.y - p2.y) <= EPS) {
+        const d1 = Math.sign(p1.x - p0.x);
+        const d2 = Math.sign(p2.x - p1.x);
+        if (d1 !== 0 && d2 !== 0 && d1 !== d2) {
+          backtrack = Math.min(Math.abs(p1.x - p0.x), Math.abs(p2.x - p1.x));
+        }
+      } else if (Math.abs(p0.x - p1.x) <= EPS && Math.abs(p1.x - p2.x) <= EPS) {
+        const d1 = Math.sign(p1.y - p0.y);
+        const d2 = Math.sign(p2.y - p1.y);
+        if (d1 !== 0 && d2 !== 0 && d1 !== d2) {
+          backtrack = Math.min(Math.abs(p1.y - p0.y), Math.abs(p2.y - p1.y));
+        }
+      }
+      if (backtrack >= L_MIN_SHARED) {
+        issues.push({
+          type: 'edge-self-shared-subpath',
+          message: `Edge "${em.id}" backtracks over its own lane (length ${backtrack.toFixed(1)})`,
+          edgeId: em.id,
+          details: { overlapLength: backtrack, reversalAt: i },
+        });
+        break;
+      }
+    }
+  }
+
   for (let i = 0; i < sortedEdges.length; i++) {
     for (let j = i + 1; j < sortedEdges.length; j++) {
       const e1 = sortedEdges[i];
@@ -1478,8 +1743,30 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     pointsHistogram[key]++;
   }
 
-  const ok = issues.length === 0;
-  const rawScore = MAX_SCORE - totalBendPenalty - crossingPenalty;
+  // Soft issues are real defects that DON'T invalidate the layout but cost a
+  // fixed score penalty (a "warning"). Everything not listed here is HARD: a
+  // single occurrence sets ok=false and the score to 0. Keep this map small and
+  // explicit — promoting an issue to soft changes the headline score model.
+  const SOFT_PENALTY_BY_TYPE: Partial<Record<LayoutIssueType, number>> = {
+    'edge-bend-overlaps-arrowhead': 50,
+    // Graded: the actual amount is carried per-issue in details.softPenalty.
+    'node-too-close-to-group': 0,
+  };
+  const isSoftType = (t: LayoutIssueType): boolean => SOFT_PENALTY_BY_TYPE[t] !== undefined;
+  const softPenalty = issues.reduce(
+    (sum, issue) =>
+      sum +
+      (isSoftType(issue.type)
+        ? ((issue.details?.softPenalty as number | undefined) ??
+          SOFT_PENALTY_BY_TYPE[issue.type] ??
+          0)
+        : 0),
+    0
+  );
+  const hardIssues = issues.filter((issue) => !isSoftType(issue.type));
+
+  const ok = hardIssues.length === 0;
+  const rawScore = MAX_SCORE - totalBendPenalty - crossingPenalty - softPenalty;
   const score = ok ? Math.max(0, Math.min(MAX_SCORE, rawScore)) : 0;
 
   const breakdown = {

@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "c1",
+      "width": 46.796875,
+      "height": 45
+    },
+    {
+      "id": "a2",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "a1",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "b1",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "b2",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "c2",
+      "width": 46.796875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "5dbc933b1335a5e1b0e98637d9013372adae657a349cb5372e63c4cc62fae5cc",
+    "capturedAt": "2026-08-26T09:20:54.957Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-sg-outgoing-2.mmd theme=redux look=neo layout=swimlane"
+  }
+}

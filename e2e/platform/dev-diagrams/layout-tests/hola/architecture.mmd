@@ -1,0 +1,121 @@
+flowchart TB
+    Client(["End users · plugins · AI agents · ChatGPT"])
+    subgraph AWSProd["AWS · prod account 941377121247"]
+        direction TB
+
+        subgraph Edge["Edge · us-west-1"]
+            CF["CloudFront<br/>6 distributions"]
+            WAF["WAF · IP-rep + custom rules"]
+        end
+
+        subgraph VPC["VPC · us-west-1 · 2 AZs"]
+            direction TB
+            subgraph Public["Public subnets"]
+                ALB["ALBs<br/>main · mcp · voice · chatgpt"]
+                NAT["NAT Gateway"]
+            end
+            subgraph Private["Private subnets"]
+                subgraph Cluster["ECS Fargate · ecs-cluster-prod-bc6bb74"]
+                    Web["app · app-ai<br/>SvelteKit"]
+                    Render["render<br/>(secondary)"]
+                    MCP["mcp · mcp2<br/>(host-routed,<br/>mcp2 sticky)"]
+                    Voice["voice"]
+                    GPTApp["chatgpt-app"]
+                    AIECS["mermaid-ai ECS"]
+                end
+                Valkey[("Valkey<br/>Redis-compat<br/>sessions")]
+            end
+        end
+
+        subgraph Serverless["Serverless · us-west-1"]
+            APIGW["API Gateway<br/>ai.mermaid.ai"]
+            LamAI["Lambda · mermaid-ai REST"]
+            LamUCB["Lambda · user-context-builder"]
+            LamSum["Lambda · diagram-summary"]
+            LamSync["Lambda · diagram-sync"]
+            LamRedep["Lambda · redeploy-on-push"]
+            LamMix["Lambda · mixpanel webhook"]
+            SNS{{"SNS · diagram-modified"}}
+        end
+
+        subgraph Storage["Storage · us-west-1"]
+            Dynamo[("DynamoDB<br/>UserContextSystem")]
+            S3w[("S3 buckets<br/>diagram-repair-log · chat-attachments ·<br/>CF/WAF logs · Pulumi state · static")]
+            ECR["ECR · container registries"]
+        end
+
+        subgraph East1["us-east-1 (secondary region)"]
+            S3East[("S3 · Bedrock batch I/O")]
+            ECRPub["ECR Public<br/>(pull-through cache)"]
+        end
+
+        subgraph Ops["DNS · secrets · identity"]
+            R53["Route53<br/>mermaid.ai · mermaidchart.com · mdct.co"]
+            SM["Secrets Manager + KMS"]
+            OIDC["IAM OIDC · GitHub Actions"]
+        end
+    end
+    subgraph AWSML["AWS · ML / SageMaker account 319690731184 · us-east-1"]
+        direction TB
+        Glue["AWS Glue<br/>Python-Shell ETL"]
+        Bedrock["Bedrock · imported model<br/>Qwen 2.5 Coder FT<br/>(invoked cross-account)"]
+        SM_DZ["SageMaker DataZone<br/>(data-science workbench)"]
+        S3ML[("S3 · repaired-diagrams ·<br/>aws-glue-assets")]
+    end
+    subgraph Ext["External providers"]
+        direction TB
+        Supabase[("Supabase<br/>PostgreSQL + Auth + Storage")]
+        DOApp["DigitalOcean App Platform<br/>render · primary"]
+        DODroplet["DigitalOcean droplet<br/>Jenkins smoke tests"]
+        Vercel["Vercel<br/>Office proxy · docs"]
+        Anth["Anthropic API"]
+        OpenAI["OpenAI API + Realtime"]
+    end
+    subgraph CICD["CI/CD"]
+        GHA["GitHub Actions<br/>(per-repo · OIDC-auth)"]
+    end
+
+    Render -. "fallback proxy" .-> DOApp
+    Glue -. "reads" .-> S3w
+    Glue -. "reads" .-> Dynamo
+    SM_DZ -. "reads (cross-account)" .-> S3w
+    SM_DZ -. "reads (cross-account)" .-> Dynamo
+    Glue --> S3ML
+    GHA -- "OIDC assume" --> OIDC
+    GHA -- "image push" --> ECR
+    ECR -- "event" --> LamRedep
+    LamRedep -- "force new deploy" --> Cluster
+    LamRedep -- "invalidate" --> CF
+    Cluster -. reads .-> SM
+    Serverless -. reads .-> SM
+    DODroplet -. "polls every 5 min" .-> CF
+
+
+    Client --> CF
+    Client --> APIGW
+    CF --> WAF --> ALB
+
+    ALB --> Web
+    ALB --> Render
+    ALB --> MCP
+    ALB --> Voice
+    ALB --> GPTApp
+    Private --> NAT
+    NAT --> Supabase
+    NAT --> Anth
+    NAT --> OpenAI
+
+    APIGW --> LamAI
+    NAT --> Bedrock
+
+
+    SNS --> LamUCB
+    LamAI --> Dynamo
+
+    LamUCB --> Dynamo
+    LamSum --> Dynamo
+    LamSum --> Anth
+    LamSync --> S3w
+    Web --> Supabase
+    Web --> Valkey
+    AIECS --> Supabase

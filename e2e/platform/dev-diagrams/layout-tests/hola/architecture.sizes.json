@@ -1,0 +1,270 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "width": 251.22647094726562,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "CF",
+      "width": 118.38021850585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "WAF",
+      "width": 208.46702575683594,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "ALB",
+      "width": 204.72572326660156,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "NAT",
+      "width": 117.85070037841797,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Web",
+      "width": 106.72223663330078,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Render",
+      "width": 105.92361450195312,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "MCP",
+      "width": 111.375,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "Voice",
+      "width": 64.69097137451172,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "GPTApp",
+      "width": 105.94965362548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "AIECS",
+      "width": 134.69097900390625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Valkey",
+      "width": 110.37152862548828,
+      "height": 122.16414642333984
+    },
+    {
+      "id": "APIGW",
+      "width": 116.02777862548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "LamAI",
+      "width": 206.27952575683594,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "LamUCB",
+      "width": 218.7621612548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "LamSum",
+      "width": 207.84202575683594,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "LamSync",
+      "width": 179.06597900390625,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "LamRedep",
+      "width": 203.9965362548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "LamMix",
+      "width": 210.99305725097656,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "SNS",
+      "width": 233.39137268066406,
+      "height": 90.99826049804688
+    },
+    {
+      "id": "Dynamo",
+      "width": 148.48785400390625,
+      "height": 106.71712493896484
+    },
+    {
+      "id": "S3w",
+      "width": 224.00003051757812,
+      "height": 135.13232421875
+    },
+    {
+      "id": "ECR",
+      "width": 192.2777862548828,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "S3East",
+      "width": 165.62327575683594,
+      "height": 87.74000549316406
+    },
+    {
+      "id": "ECRPub",
+      "width": 156.51390075683594,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "R53",
+      "width": 232.00003051757812,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "SM",
+      "width": 184.89930725097656,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "OIDC",
+      "width": 200.82815551757812,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "Glue",
+      "width": 140.9496612548828,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Bedrock",
+      "width": 192.29515075683594,
+      "height": 86.99478912353516
+    },
+    {
+      "id": "SM_DZ",
+      "width": 192.30384826660156,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "S3ML",
+      "width": 175.72743225097656,
+      "height": 109.82211303710938
+    },
+    {
+      "id": "Supabase",
+      "width": 208.72222900390625,
+      "height": 112.90431213378906
+    },
+    {
+      "id": "DOApp",
+      "width": 196.19271850585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "DODroplet",
+      "width": 158.84896850585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Vercel",
+      "width": 148.45834350585938,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "Anth",
+      "width": 116.83507537841797,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "OpenAI",
+      "width": 176.35765075683594,
+      "height": 44.99826431274414
+    },
+    {
+      "id": "GHA",
+      "width": 173.59722900390625,
+      "height": 65.99652862548828
+    },
+    {
+      "id": "edge-label-Render-DOApp-L_Render_DOApp_0",
+      "width": 85.59896087646484,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Glue-S3w-L_Glue_S3w_0",
+      "width": 35.02604293823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Glue-Dynamo-L_Glue_Dynamo_0",
+      "width": 35.02604293823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SM_DZ-S3w-L_SM_DZ_S3w_0",
+      "width": 135.3819580078125,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-SM_DZ-Dynamo-L_SM_DZ_Dynamo_0",
+      "width": 135.3819580078125,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-GHA-OIDC-L_GHA_OIDC_0",
+      "width": 87.91667175292969,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-GHA-ECR-L_GHA_ECR_0",
+      "width": 72.38715362548828,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-ECR-LamRedep-L_ECR_LamRedep_0",
+      "width": 34.253475189208984,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-LamRedep-Cluster-L_LamRedep_Cluster_0",
+      "width": 105.8420181274414,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-LamRedep-CF-L_LamRedep_CF_0",
+      "width": 59.157989501953125,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Cluster-SM-L_Cluster_SM_0",
+      "width": 35.02604293823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-Serverless-SM-L_Serverless_SM_0",
+      "width": 35.02604293823242,
+      "height": 20.99826431274414
+    },
+    {
+      "id": "edge-label-DODroplet-CF-L_DODroplet_CF_0",
+      "width": 105.04342651367188,
+      "height": 20.99826431274414
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "acd5bb93af59a63715c46241d6d72053b8c5c8a0f15191764e34e099c87a4e02",
+    "capturedAt": "2026-07-01T12:06:57.117Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/architecture.mmd theme=redux look=neo layout=swimlane"
+  }
+}

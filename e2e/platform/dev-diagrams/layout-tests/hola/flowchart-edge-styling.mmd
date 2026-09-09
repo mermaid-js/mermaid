@@ -1,0 +1,22 @@
+%% Validate ELK flowchart edge classes, labels, invisible edges, and linkStyle output.
+flowchart LR
+  Start([Start]) -->|normal red label| Parse[Parse Input]
+  Start ==>|thick blue label| Validate{Valid?}
+  Parse -.->|dashed green label| Validate
+  Validate -->|yes| Render[Render SVG]
+  Validate -->|no| Error[[Show Error]]
+  Render ~~~ Spacer[Layout-only Spacer]
+  Spacer ~~~ Error
+
+  classDef start fill:#eef2ff,stroke:#3730a3,color:#111827;
+  classDef work fill:#ecfeff,stroke:#0e7490,color:#0f172a;
+  classDef error fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d;
+  class Start start;
+  class Parse,Validate,Render work;
+  class Error error;
+
+  linkStyle 0 stroke:red,stroke-width:4px,color:red;
+  linkStyle 1 stroke:blue,stroke-width:6px,color:blue;
+  linkStyle 2 stroke:green,stroke-width:3px,color:green;
+  linkStyle 3 stroke:purple,stroke-width:2px,color:purple;
+  linkStyle 4 stroke:orange,stroke-width:2px,color:orange;

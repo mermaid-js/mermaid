@@ -1,0 +1,25 @@
+{
+  "nodes": [
+    {
+      "id": "b1",
+      "width": 47.57528305053711,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "c2",
+      "width": 46.786930084228516,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "note",
+      "width": 232,
+      "height": 65.98863983154297
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "2c034f215d6044c3ad93fae1d5b730532c6d1ba57a0eab9e005e78bce615f4d0",
+    "capturedAt": "2026-06-10T07:01:03.754Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/subgraph-variation-2.mmd theme=redux look=neo layout=swimlane"
+  }
+}

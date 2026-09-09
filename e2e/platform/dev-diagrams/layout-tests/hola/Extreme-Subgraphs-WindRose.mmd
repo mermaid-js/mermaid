@@ -1,0 +1,33 @@
+flowchart TB
+
+    NW
+    NE
+    SW
+    SE
+    C
+
+    subgraph North
+        NW
+        NE
+    end
+
+    subgraph South
+        SW
+        SE
+    end
+
+    subgraph West
+        NW
+        SW
+    end
+
+    subgraph Est
+        NE
+        SE
+    end
+
+
+    NW --- C 
+    NE --- C
+    SW --- C
+    SE --- C

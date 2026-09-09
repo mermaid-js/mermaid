@@ -1,0 +1,12 @@
+flowchart
+  subgraph Z
+    subgraph X
+    a --> b
+    end
+    subgraph Y
+    c --> d
+    end
+  end
+  Y --> X
+  X --> P
+  P --> Y

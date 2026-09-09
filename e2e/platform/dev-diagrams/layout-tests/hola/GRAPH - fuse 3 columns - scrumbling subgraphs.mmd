@@ -1,0 +1,31 @@
+flowchart LR
+    
+    Start --- A1 --- B1 --- C1 --- End
+    Start --- A2 --- B2 --- C2 --- End
+    Start --- A3 --- B3 --- C3 --- End
+    Start --- A4 --- B4 --- C4 --- End
+    Start --- A5 --- B5 --- C5 --- End
+
+    subgraph Central
+        B1
+        B2
+        B3
+        B4
+        B5
+    end
+
+    subgraph Scrumble left or bottom
+        A1
+        C2
+        A3
+        C4
+        A5
+    end
+
+    subgraph Scumble right or top
+        C1
+        A2
+        C3
+        A4
+        C5
+    end

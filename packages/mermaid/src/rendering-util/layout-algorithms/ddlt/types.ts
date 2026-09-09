@@ -26,7 +26,7 @@ export interface SizesFixture {
 }
 
 /** How to prepare parsed `LayoutData` before running a layout backend. */
-export type DdltFixtureProfile = 'flowchart-domus' | 'swimlanes';
+export type DdltFixtureProfile = 'flowchart-domus' | 'flowchart-hola' | 'swimlanes';
 
 export interface DdltManifestEntry {
   /** Relative path without extension, e.g. `swimlanes/1-simple` or `Company-simp`. */
@@ -40,7 +40,7 @@ export interface DdltManifest {
   fixtures?: DdltManifestEntry[];
 }
 
-export type LayoutTestBackendId = 'domus-orthogonal' | 'swimlanes';
+export type LayoutTestBackendId = 'domus-orthogonal' | 'hola' | 'swimlanes';
 
 /** Pure layout stage: mutates `layout` in place (DOM-free). */
 export type LayoutTestBackend = (layout: LayoutData) => void | Promise<void>;

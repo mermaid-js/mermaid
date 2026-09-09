@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "b1",
+      "width": 77.3125,
+      "height": 54
+    },
+    {
+      "id": "c2",
+      "width": 76.3125,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "240573ac6bc3f9259532f24227e57dc1bfe4a19b4b405fb4c4f83a605911a8c6",
+    "capturedAt": "2026-09-08T13:46:07.657Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/subgraph-case.mmd theme=default look=classic layout=grid-attached-subgraphs"
+  }
+}

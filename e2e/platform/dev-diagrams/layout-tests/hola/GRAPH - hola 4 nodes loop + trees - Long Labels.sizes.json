@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "C1",
+      "width": 260,
+      "height": 102
+    },
+    {
+      "id": "C2",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C3",
+      "width": 260,
+      "height": 462
+    },
+    {
+      "id": "C4",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C1_1",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C1_2",
+      "width": 260,
+      "height": 102
+    },
+    {
+      "id": "C1_11",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C1_12",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C1_13",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C1_111",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C1_21",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C2_1",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C2_2",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C2_11",
+      "width": 260,
+      "height": 102
+    },
+    {
+      "id": "C2_12",
+      "width": 260,
+      "height": 102
+    },
+    {
+      "id": "C3_1",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C3_11",
+      "width": 260,
+      "height": 102
+    },
+    {
+      "id": "C3_12",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_1",
+      "width": 94.7421875,
+      "height": 54
+    },
+    {
+      "id": "C4_2",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C4_11",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C4_12",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_21",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_22",
+      "width": 103.1328125,
+      "height": 54
+    },
+    {
+      "id": "C4_111",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_112",
+      "width": 260,
+      "height": 78
+    },
+    {
+      "id": "C4_121",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_122",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_211",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_221",
+      "width": 111.5234375,
+      "height": 54
+    },
+    {
+      "id": "C4_1111",
+      "width": 119.9140625,
+      "height": 54
+    },
+    {
+      "id": "C4_1121",
+      "width": 119.9140625,
+      "height": 54
+    },
+    {
+      "id": "C5",
+      "width": 260,
+      "height": 78
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "ce9c85a80f2b7f4a8d9088fc569e2ec504e24fd6f27bd17654964d51ef7cd9c7",
+    "capturedAt": "2026-08-26T11:48:48.910Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/GRAPH - hola 4 nodes loop + trees - Long Labels.mmd theme=default look=classic layout=grid-attached"
+  }
+}

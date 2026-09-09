@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "Knob",
+      "width": 94.953125,
+      "height": 54
+    },
+    {
+      "id": "ConsoleItem",
+      "width": 148.2109375,
+      "height": 54
+    },
+    {
+      "id": "presetKey",
+      "width": 130.734375,
+      "height": 54
+    },
+    {
+      "id": "mixerState",
+      "width": 138.3203125,
+      "height": 54
+    },
+    {
+      "id": "updateKnob",
+      "width": 145,
+      "height": 54
+    },
+    {
+      "id": "handlePointerTap",
+      "width": 184.21875,
+      "height": 54
+    },
+    {
+      "id": "showConsole",
+      "width": 151.1171875,
+      "height": 54
+    },
+    {
+      "id": "hideConsole",
+      "width": 146.3515625,
+      "height": 54
+    },
+    {
+      "id": "consoleManager",
+      "width": 173.640625,
+      "height": 54
+    },
+    {
+      "id": "renderPreset",
+      "width": 152.2109375,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "36fb72136dc9f0fc5865a36df87217029e0d3718c0a600d775cdca8da3c6bb45",
+    "capturedAt": "2026-08-26T10:41:50.016Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/event.mmd theme=default look=classic layout=grid-attached"
+  }
+}

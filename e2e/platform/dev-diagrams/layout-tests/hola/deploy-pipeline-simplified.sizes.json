@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "C",
+      "width": 42.1136360168457,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "D",
+      "width": 142.0454559326172,
+      "height": 142.0454559326172
+    },
+    {
+      "id": "F",
+      "width": 154.1661834716797,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "I",
+      "width": 35.89204406738281,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "J",
+      "width": 130.82101440429688,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "K",
+      "width": 161.97158813476562,
+      "height": 44.994319915771484
+    },
+    {
+      "id": "edge-label-D-F-L_D_F_0",
+      "width": 22.84090805053711,
+      "height": 20.99431800842285
+    },
+    {
+      "id": "edge-label-I-J-L_I_J_0",
+      "width": 17.89772605895996,
+      "height": 20.99431800842285
+    },
+    {
+      "id": "edge-label-I-K-L_I_K_0",
+      "width": 22.84090805053711,
+      "height": 20.99431800842285
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "00ffb238833e3b2cd7bed3f2617db48165ca5adbc99fe77553a0031477b02943",
+    "capturedAt": "2026-06-10T07:00:35.488Z",
+    "capturedFrom": "dev-explorer layout-tests/domus/deploy-pipeline-simplified.mmd theme=redux look=neo layout=swimlane"
+  }
+}

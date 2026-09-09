@@ -1,4 +1,5 @@
 import type { LayoutData } from '../../types.js';
+import { runGridAttachedSubgraphsLayoutCore } from '../hola/index.js';
 import { createEdgeLabelNodes } from '../swimlanes/edgeLabelNodes.js';
 import { prepareLayoutForSwimlanes } from '../swimlanes/helpers.js';
 import { runSwimlaneLayoutCore } from '../swimlanes/layoutCore.js';
@@ -40,6 +41,44 @@ export async function runDomusOrthogonalDdlt(
 }
 
 /**
+ * HOLA via the same DOM-free entry point the browser calls.
+ *
+ * Note the deliberate difference from the swimlanes backend: HOLA never turns
+ * an edge label into a node, so the caller applies label sizes to
+ * `edge.width`/`edge.height` — what `insertEdgeLabel` sets in the browser —
+ * rather than injecting label dummies.
+ */
+export function runHolaDdlt(layout: LayoutData): void {
+  (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'hola';
+  runGridAttachedSubgraphsLayoutCore(layout);
+}
+
+/**
+ * Apply fixture label sizes to the edges themselves.
+ *
+ * Sizes fixtures are captured from a pipeline that injects `edge-label-*` dummy
+ * nodes, so the label entry is keyed by that dummy's id. Recreate the id to find
+ * it; fall back to matching on the edge id so a fixture captured by a different
+ * injector still lines up.
+ */
+export function applyFixtureEdgeLabelSizes(layout: LayoutData, fixture: SizesFixture): void {
+  for (const edge of layout.edges) {
+    if (!edge.label) {
+      continue;
+    }
+    const holaId = `edge-label-${edge.start}-${edge.end}-${edge.id}`;
+    const size =
+      fixture.nodes.find((n) => n.id === holaId) ??
+      fixture.nodes.find((n) => n.id.startsWith('edge-label-') && n.id.endsWith(edge.id));
+    if (!size) {
+      continue;
+    }
+    edge.width = size.width;
+    edge.height = size.height;
+  }
+}
+
+/**
  * Swimlanes pipeline (mirrors `swimlanes/query-process.ddlt.spec.ts`).
  * Mutates `layout` to hold the finished `LayoutData` from the swimlanes subgraph.
  */
@@ -64,7 +103,7 @@ export function runSwimlanesDdlt(layout: LayoutData, sizes: SizesFixture): void 
 
 /**
  * Parse `.mmd`, apply fixture sizes, then run the given backend (mutates returned `LayoutData`).
- * Only `'swimlanes'` is supported on this branch; `'domus-orthogonal'` throws.
+ * `'domus-orthogonal'` throws — that subtree is not on this branch.
  */
 export async function parseApplySizesAndLayout(
   mmdPath: string,
@@ -72,23 +111,39 @@ export async function parseApplySizesAndLayout(
   backendId: LayoutTestBackendId,
   _options?: { trace?: OrthogonalTrace }
 ): Promise<LayoutData> {
-  if (backendId !== 'swimlanes') {
+  if (backendId === 'domus-orthogonal') {
     domusBackendUnavailable();
   }
   const layout = await parseMmdFileToLayoutData(mmdPath, { stampFlowchartRendererFields: true });
+
+  if (backendId === 'hola') {
+    applyFixtureContentSizesStrict(layout, sizes);
+    applyFixtureEdgeLabelSizes(layout, sizes);
+    runHolaDdlt(layout);
+    return layout;
+  }
+
   (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'swimlane';
   runSwimlanesDdlt(layout, sizes);
   return layout;
 }
 
 /** Returns a DOM-free layout runner. `swimlanes` must use `parseApplySizesAndLayout()` (needs fixture sizes mid-pipeline); `domus-orthogonal` throws. */
-export function getLayoutTestBackend(_id: LayoutTestBackendId): LayoutTestBackend {
+export function getLayoutTestBackend(id: LayoutTestBackendId): LayoutTestBackend {
+  if (id === 'hola') {
+    return (layout) => {
+      runHolaDdlt(layout);
+    };
+  }
   domusBackendUnavailable();
 }
 
 export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBackendId[] {
   if (profile === 'swimlanes') {
     return ['swimlanes'];
+  }
+  if (profile === 'flowchart-hola') {
+    return ['hola'];
   }
   return ['domus-orthogonal'];
 }

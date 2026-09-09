@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "a",
+      "width": 39.796875,
+      "height": 45
+    },
+    {
+      "id": "b",
+      "width": 39.796875,
+      "height": 45
+    },
+    {
+      "id": "c",
+      "width": 39,
+      "height": 45
+    },
+    {
+      "id": "d",
+      "width": 39.796875,
+      "height": 45
+    },
+    {
+      "id": "P",
+      "width": 41.34375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "8fbfaf4bd70c9d7e0c0aace099172d990f92ea45069430bdee947103c5a8e9e1",
+    "capturedAt": "2026-08-26T09:20:55.052Z",
+    "capturedFrom": "dev-explorer layout-tests/hola-faithful/nested-subgraphs-3.mmd theme=redux look=neo layout=swimlane"
+  }
+}

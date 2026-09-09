@@ -1,0 +1,15 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 61.59375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "ab52068df7444ffd823731609f70e3333b7a33ebe37184d581531c28d3242b25",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/self-loop.mmd theme=default look=classic"
+  }
+}

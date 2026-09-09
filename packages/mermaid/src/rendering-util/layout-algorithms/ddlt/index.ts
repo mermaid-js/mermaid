@@ -26,6 +26,8 @@ export { injectDomusEdgeLabelNodes } from './domusEdgeLabelInject.js';
 export {
   parseApplySizesAndLayout,
   runDomusOrthogonalDdlt,
+  runHolaDdlt,
+  applyFixtureEdgeLabelSizes,
   runSwimlanesDdlt,
   getLayoutTestBackend,
   backendsForProfile,
