@@ -2,7 +2,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
-import { expect, type Page, type TestInfo } from '@playwright/test';
+import { expect, type Locator, type Page, type TestInfo } from '@playwright/test';
 import { Buffer } from 'buffer';
 import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
 import { applitoolsBatch, applitoolsTestName } from './applitools.ts';
@@ -70,24 +70,37 @@ export const mermaidUrl = (
   return url;
 };
 
+/**
+ * Renders the given mermaid diagram and take an image snapshot of it.
+ *
+ * @param page - The Playwright page.
+ * @param testInfo - The Playwright test info (used for naming the snapshot)
+ * @param graphStr - Mermaid diagram code.
+ * @param _options - {@link MermaidConfig} and {@link E2EConfig} options.
+ *                   Defaults to using the `courier` font.
+ * @param api - If `true`, use `/xss.html` instead of the default `/e2e.html`.
+ * @param validation - Optional function to run Playwright validation on the
+ *                     {@link Locator} of the rendered diagram's SVG/iframe element,
+ *                     after it's been rendered but before the screenshot.
+ */
 export const imgSnapshotTest = async (
   page: Page,
   testInfo: TestInfo,
   graphStr: string,
   _options: E2EMermaidConfig = {},
   api = false,
-  validation?: any
+  validation?: (locator: Locator) => Promise<void> | void
 ): Promise<void> => {
   const options: E2EMermaidConfig = {
-    ..._options,
-    fontFamily: _options.fontFamily ?? 'courier',
+    fontFamily: 'courier',
     // @ts-ignore TODO: Fix type of fontSize
-    fontSize: _options.fontSize ?? '16px',
+    fontSize: '16px',
+    ..._options,
     sequence: {
-      ...(_options.sequence ?? {}),
       actorFontFamily: 'courier',
-      noteFontFamily: _options.sequence?.noteFontFamily ?? 'courier',
+      noteFontFamily: 'courier',
       messageFontFamily: 'courier',
+      ...(_options.sequence ?? {}),
     },
   };
 
@@ -132,7 +145,7 @@ export const openURLAndVerifyRendering = async (
   testInfo: TestInfo,
   url: string,
   { screenshot = true, rejectErrorDiagram = true, ...options }: E2EMermaidConfig,
-  validation?: any
+  validation?: (locator: Locator) => Promise<void> | void
 ): Promise<void> => {
   const name: string = shortenScreenshotName(options.name ?? testInfo.titlePath.join(' '));
 

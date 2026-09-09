@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2024",
-    "lib": ["es2024", "dom"],
+    "lib": [
+      "es2024",
+      "ES2025.Collection", // Node.JS v22 in the E2E tests supports these
+      "dom"
+    ],
     "types": ["node", "@playwright/test"],
     "allowImportingTsExtensions": true,
     "noEmit": true
