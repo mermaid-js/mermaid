@@ -74,6 +74,7 @@ that id.
 "topAxis"                       return 'topAxis';
 "axisFormat"\s[^#\n;]+          return 'axisFormat';
 "tickInterval"\s[^#\n;]+        return 'tickInterval';
+"workdayhours"\s[0-9]+(\.[0-9]+)? return 'workdayhours';
 "includes"\s[^#\n;]+            return 'includes';
 "excludes"\s[^#\n;]+            return 'excludes';
 "todayMarker"\s[^\n;]+          return 'todayMarker';
@@ -141,6 +142,7 @@ statement
   | topAxis {yy.TopAxis();$$=$1.substr(8);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
   | tickInterval {yy.setTickInterval($1.substr(13));$$=$1.substr(13);}
+  | workdayhours {yy.setWorkdayHours(Number($1.substr(13).trim()));$$=$1.substr(13);}
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
