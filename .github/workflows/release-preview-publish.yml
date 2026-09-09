@@ -75,6 +75,11 @@ jobs:
       # mermaid, and ELK registered onto the tiny build, which omits it.
       - name: Publish layout-elk and tiny
         run: |
+          # Every package is attempted even after one fails, and the step fails
+          # at the end. Under `bash -e` a failing subshell aborted the loop, so
+          # `tiny` was never attempted while `layout-elk` was being refused —
+          # its own publishability stayed unknown across every failed run.
+          failed=''
           for pkg in mermaid-layout-elk tiny; do
             (
               cd "packages/$pkg"
@@ -86,15 +91,19 @@ jobs:
               # unmet-peer warning on every install.
               json -I -f package.json -e 'delete this.peerDependencies'
               pnpm pack
-              # Both packages must be *public* in the org's GitHub Packages
+              # Both packages must stay *public* in the org's GitHub Packages
               # settings. While they were `internal`, this step failed with
               # `403 permission_denied: write_package`; `@mermaid-js/mermaid`
               # published from the same job and the same `GITHUB_TOKEN` because
               # it is public. `--access` is not the lever — npm already sends
               # `public access` without it, and passing it changed nothing.
               npm publish --tag preview *.tgz
-            )
+            ) || failed="$failed $pkg"
           done
+          if [ -n "$failed" ]; then
+            echo "::error::preview publish failed for:$failed"
+            exit 1
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.preview.outputs.version }}
