@@ -2367,7 +2367,7 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    * Written verbatim into an inline CSS custom property, so the characters that could
    * terminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,
    * `{`, `}`, and `\`. Quotes, commas, and spaces stay allowed for font stacks such as
-   * `"Open Sans", sans-serif`.
+   * `"Open Sans Variable", "Open Sans", sans-serif`.
    *
    */
   actorFontFamily?: string;

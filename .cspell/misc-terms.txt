@@ -4,6 +4,7 @@ Buzan
 circo
 GHSA
 handDrawn
+Hyperlegible
 KOEPF
 MMLU
 neato

@@ -18,6 +18,13 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { render } from './mermaid';
 import { buildExampleConfig } from './exampleConfig';
+import '@fontsource-variable/arimo/wght.css';
+import '@fontsource-variable/arimo/wght-italic.css';
+import '@fontsource-variable/atkinson-hyperlegible-next/wght.css';
+import '@fontsource-variable/atkinson-hyperlegible-next/wght-italic.css';
+import '@fontsource-variable/open-sans/wght.css';
+import '@fontsource-variable/open-sans/wght-italic.css';
+import '@fontsource-variable/recursive/index.css';
 
 const props = defineProps({
   graph: {

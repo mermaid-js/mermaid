@@ -26,7 +26,7 @@ class Theme {
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     // dark
 
-    this.fontFamily = 'arial, sans-serif';
+    this.fontFamily = '"Arimo Variable", Arimo, arial, sans-serif';
     this.fontSize = '14px';
 
     // Neo-specific

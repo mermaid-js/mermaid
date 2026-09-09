@@ -16,6 +16,10 @@
     "fetch-contributors": "tsx .vitepress/scripts/fetch-contributors.ts"
   },
   "dependencies": {
+    "@fontsource-variable/arimo": "^5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/open-sans": "^5.3.0",
+    "@fontsource-variable/recursive": "^5.3.0",
     "@mdi/font": "^7.4.47",
     "@plausible-analytics/tracker": "^0.4.5",
     "@vueuse/core": "^13.9.0",

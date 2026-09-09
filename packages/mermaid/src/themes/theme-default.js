@@ -33,7 +33,8 @@ class Theme {
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.border2 = '#aaaa33';
     this.arrowheadColor = '#333333';
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
+    this.fontFamily =
+      '"Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", "trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     this.labelBackground = 'rgba(232,232,232, 0.8)';
     this.textColor = '#333';

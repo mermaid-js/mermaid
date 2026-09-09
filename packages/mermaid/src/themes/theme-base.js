@@ -24,7 +24,8 @@ class Theme {
     this.strokeWidth = 1;
     // dark
 
-    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
+    this.fontFamily =
+      '"Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", "trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     this.useGradient = true;
     this.dropShadow = 'drop-shadow( 1px 2px 2px rgba(185,185,185,1))';

@@ -1,9 +1,18 @@
-import { test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const looks = ['neo'] as const;
-const themes = ['neo', 'neo-dark', 'redux', 'redux-dark'] as const;
+const themes = [
+  {
+    theme: 'forest',
+    fontFamily:
+      '"Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", "trebuchet ms", verdana, arial, sans-serif',
+  },
+  { theme: 'neo', fontFamily: '"Arimo Variable", Arimo, arial, sans-serif' },
+  { theme: 'neo-dark', fontFamily: '"Arimo Variable", Arimo, arial, sans-serif' },
+  { theme: 'redux-dark', fontFamily: '"Recursive Variable", arial, sans-serif' },
+] as const;
 const directions = ['TB'] as const;
 
 // New shapes sets
@@ -73,8 +82,23 @@ const allShapes = [
   oldShapesSet5,
 ] as const;
 
+/**
+ * Shapes that don't render a label, even if you pass a `label` property
+ */
+const labelLessShapes = new Set([
+  'hourglass',
+  'lightning-bolt',
+  'filled-circle',
+  'crossed-circle',
+  'start',
+  'stop',
+  'fork',
+  'choice',
+  'anchor',
+]);
+
 looks.forEach((look) => {
-  themes.forEach((theme) => {
+  themes.forEach(({ theme, fontFamily }) => {
     directions.forEach((direction) => {
       allShapes.forEach((shapesSet, setIndex) => {
         test.describe(`Test all shapes connected with each other in ${look} look, ${theme} theme and dir ${direction} - set ${setIndex + 1}`, () => {
@@ -88,7 +112,22 @@ looks.forEach((look) => {
                 flowchartCode += `  n${i}${i} --> n${j}${j}\n`;
               }
             }
-            await imgSnapshotTest(page, testInfo, flowchartCode, { look, theme });
+            await imgSnapshotTest(
+              page,
+              testInfo,
+              flowchartCode,
+              { look, theme, fontFamily: undefined },
+              undefined,
+              async (svg: Locator) => {
+                const labelLocator = svg.getByText('This is a label for');
+                await expect(labelLocator).toHaveCount(
+                  new Set(shapesSet).difference(labelLessShapes).size
+                );
+                for (const label of await labelLocator.all()) {
+                  await expect(label).toHaveCSS('font-family', fontFamily);
+                }
+              }
+            );
             console.log('flowchartCode', flowchartCode);
           });
         });

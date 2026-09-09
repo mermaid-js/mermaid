@@ -257,10 +257,10 @@ describe('usecase font custom properties', () => {
     const svgElement = document.getElementById('usecase-font-vars') as unknown as SVGSVGElement;
     const expectedFonts = {
       '--mermaid-usecase-actor-font-size': '14px',
-      '--mermaid-usecase-actor-font-family': '"Open Sans", sans-serif',
+      '--mermaid-usecase-actor-font-family': '"Open Sans Variable", "Open Sans", sans-serif',
       '--mermaid-usecase-actor-font-weight': 'normal',
       '--mermaid-usecase-font-size': '12px',
-      '--mermaid-usecase-font-family': '"Open Sans", sans-serif',
+      '--mermaid-usecase-font-family': '"Open Sans Variable", "Open Sans", sans-serif',
       '--mermaid-usecase-font-weight': 'normal',
     };
 
