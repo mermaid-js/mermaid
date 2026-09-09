@@ -461,19 +461,19 @@ available whichever one is active. See [Styling](#styling).
 
 Use case diagrams accept these diagram configuration keys:
 
-| Key                 | Default                   | Purpose                                       |
-| ------------------- | ------------------------- | --------------------------------------------- |
-| `actorFontSize`     | `14`                      | Actor label font size                         |
-| `actorFontFamily`   | `"Open Sans", sans-serif` | Actor label font family                       |
-| `actorFontWeight`   | `normal`                  | Actor label font weight                       |
-| `usecaseFontSize`   | `12`                      | Use case label font size                      |
-| `usecaseFontFamily` | `"Open Sans", sans-serif` | Use case label font family                    |
-| `usecaseFontWeight` | `normal`                  | Use case label font weight                    |
-| `nodeSpacing`       | `50`                      | Spacing between nodes on the same level       |
-| `rankSpacing`       | `50`                      | Spacing between layout ranks                  |
-| `diagramPadding`    | `20`                      | Padding around the diagram                    |
-| `colorScheme`       | `role`                    | How the diagram takes colour from the theme   |
-| `useMaxWidth`       | `true`                    | Whether the SVG scales to the available width |
+| Key                 | Default                                         | Purpose                                       |
+| ------------------- | ----------------------------------------------- | --------------------------------------------- |
+| `actorFontSize`     | `14`                                            | Actor label font size                         |
+| `actorFontFamily`   | `"Open Sans Variable", "Open Sans", sans-serif` | Actor label font family                       |
+| `actorFontWeight`   | `normal`                                        | Actor label font weight                       |
+| `usecaseFontSize`   | `12`                                            | Use case label font size                      |
+| `usecaseFontFamily` | `"Open Sans Variable", "Open Sans", sans-serif` | Use case label font family                    |
+| `usecaseFontWeight` | `normal`                                        | Use case label font weight                    |
+| `nodeSpacing`       | `50`                                            | Spacing between nodes on the same level       |
+| `rankSpacing`       | `50`                                            | Spacing between layout ranks                  |
+| `diagramPadding`    | `20`                                            | Padding around the diagram                    |
+| `colorScheme`       | `role`                                          | How the diagram takes colour from the theme   |
+| `useMaxWidth`       | `true`                                          | Whether the SVG scales to the available width |
 
 ```mermaid-example
 ---

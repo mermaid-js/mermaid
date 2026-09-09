@@ -495,10 +495,26 @@ test.describe('Usecase diagram', () => {
     'redux-dark-color',
   ] as const) {
     test(`renders every themed element on the ${theme} theme`, async ({ page }, testInfo) => {
-      await imgSnapshotTest(page, testInfo, THEMED_DIAGRAM, {
-        theme,
-        usecase: { diagramPadding: 24, useMaxWidth: true },
-      });
+      await imgSnapshotTest(
+        page,
+        testInfo,
+        THEMED_DIAGRAM,
+        {
+          theme,
+          usecase: { diagramPadding: 24, useMaxWidth: true },
+        },
+        undefined,
+        async (locator) => {
+          const actorLabels = locator.locator('.actor-label .nodeLabel');
+          await expect(actorLabels).toHaveCount(3);
+          for (const label of await actorLabels.all()) {
+            await expect(label).toHaveCSS(
+              'font-family',
+              '"Open Sans Variable", "Open Sans", sans-serif'
+            );
+          }
+        }
+      );
     });
   }
 
