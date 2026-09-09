@@ -106,8 +106,11 @@ test.describe('Interaction', () => {
     test('gitGraph: should handle a click on a commit with a bound url', async ({ page }) => {
       const commitLinks = page.getByRole('link', { name: 'Commit Tooltip', exact: true });
       await expect(commitLinks).toHaveCount(2);
+      await expect(commitLinks.first()).toHaveAttribute('target', '_blank');
+      const popupPromise = page.waitForEvent('popup');
       await commitLinks.first().click();
-      await expect(page).toHaveURL('/empty.html');
+      const popup = await popupPromise;
+      await expect(popup).toHaveURL('/empty.html');
     });
 
     test('gitGraph: should handle a click on a branch with a bound url', async ({ page }) => {

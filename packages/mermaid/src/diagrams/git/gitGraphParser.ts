@@ -50,6 +50,12 @@ const parseStatement = (statement: any, db: GitGraphDBParseProvider) => {
 };
 
 const parseClick = (click: ClickAst, db: GitGraphDBParseProvider) => {
+  if (
+    click.target !== undefined &&
+    !['_blank', '_self', '_parent', '_top'].includes(click.target)
+  ) {
+    throw new Error(`Invalid GitGraph click target: ${click.target}`);
+  }
   db.setLink(click.id, click.href, click.type, click.tooltip, click.target);
 };
 

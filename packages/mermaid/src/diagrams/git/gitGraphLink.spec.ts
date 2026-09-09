@@ -43,6 +43,20 @@ describe('gitGraph parser - click statements', () => {
       }
     );
 
+    it.each(['_blank', '_self', '_parent', '_top'])(
+      'should parse click with quoted target %s',
+      async (target) => {
+        await parser.parse(`
+        gitGraph
+          commit id: "c1"
+          click commit "c1" "https://example.com" "Tooltip" "${target}"
+      `);
+        const link = db.getLink('c1');
+        expect(link).toBeDefined();
+        expect(link!.target).toBe(target);
+      }
+    );
+
     it('should parse click with tooltip and target', async () => {
       await parser.parse(`
         gitGraph
