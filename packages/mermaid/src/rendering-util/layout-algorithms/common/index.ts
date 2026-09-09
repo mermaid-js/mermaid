@@ -201,6 +201,24 @@ export function createCommonLayoutRenderer<
     if (injected.profiling) {
       profiler.end(); // paint
     }
+
+    // Layout validation capture (dev / test tooling only), loaded by dynamic
+    // import so it never reaches a production render path: in published builds
+    // `window.mermaidCaptureValidation` is unset, so this is a single property
+    // read and the import resolves to a chunk that is only fetched when a
+    // developer turns capture on. Same shape as the size-capture guard in
+    // `createGraph.ts`. See layout-algorithms/ddlt/validationCapture.ts.
+    //
+    // After `afterPaint`, because that hook is where a layout settles its edge
+    // labels — grading before it would judge a drawing that was never shown.
+    // Outside the `paint` span, so capture never inflates the painted time the
+    // Profile tab reports.
+    if (
+      (globalThis as unknown as { mermaidCaptureValidation?: boolean }).mermaidCaptureValidation
+    ) {
+      const { captureLayoutForValidation } = await import('../ddlt/validationCapture.js');
+      captureLayoutForValidation(element, data4Layout);
+    }
   };
 }
 

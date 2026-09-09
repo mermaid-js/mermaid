@@ -14,6 +14,8 @@ import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import './code-editor';
 import './console-panel';
 import type { LogEntry, LogLevel } from './console-panel';
+import './validation-panel';
+import type { DevValidationPanel, ValidationResult } from './validation-panel.js';
 
 type MermaidIife = {
   initialize: (config: Record<string, unknown>) => void | Promise<void>;
@@ -63,6 +65,11 @@ declare global {
     mermaidCaptureSizes?: boolean;
     mermaidCapturedSizes?: CapturedSizesEntry[];
     mermaidLastCapturedSizes?: CapturedSizesEntry;
+    // Installed by layout-algorithms/ddlt/validationCapture.ts, which the shared
+    // renderer imports only while `mermaidCaptureValidation` is set.
+    mermaidCaptureValidation?: boolean;
+    mermaidLastLayoutCapture?: { svgId: string; layoutAlgorithm?: string; capturedAt: number };
+    mermaidValidateLastLayout?: () => ValidationResult | undefined;
     __mermaidProfiler?: MermaidProfiler;
   }
 }
@@ -382,6 +389,7 @@ export class DevDiagramViewer extends LitElement {
     zoomX: { state: true },
     zoomY: { state: true },
     splitPosition: { state: true },
+    sidePanelSplit: { state: true },
     activeTab: { state: true },
     dirty: { state: true },
     saving: { state: true },
@@ -418,6 +426,8 @@ export class DevDiagramViewer extends LitElement {
   declare zoomX: number;
   declare zoomY: number;
   declare splitPosition: number;
+  /** Vertical split of the side pane: validation above, logs below. */
+  declare sidePanelSplit: number;
   declare activeTab: ViewerTab;
   declare dirty: boolean;
   declare saving: boolean;
@@ -477,6 +487,7 @@ export class DevDiagramViewer extends LitElement {
       'devExplorer.viewer.optimizeRanksByCrossings'
     );
     const storedSplitPosition = readStorage('devExplorer.viewer.splitPosition');
+    const storedSidePanelSplit = readStorage('devExplorer.viewer.sidePanelSplit');
 
     this.theme = isTheme(themeParam)
       ? themeParam
@@ -507,6 +518,9 @@ export class DevDiagramViewer extends LitElement {
         ? this.ignoreCrossLaneEdges
         : (parseBoolean(storedOptimizeRanksByCrossings) ?? this.ignoreCrossLaneEdges));
     this.splitPosition = storedSplitPosition ? Number(storedSplitPosition) : 75;
+    // Validation is the shorter of the two: a score, and a grouped issue list
+    // that is collapsed until asked. Logs get the rest.
+    this.sidePanelSplit = storedSidePanelSplit ? Number(storedSidePanelSplit) : 40;
 
     this.filePath = '';
     this.sseToken = 0;
@@ -808,6 +822,63 @@ export class DevDiagramViewer extends LitElement {
 
   #persistSplitPosition() {
     writeStorage('devExplorer.viewer.splitPosition', String(this.splitPosition));
+  }
+
+  #persistSidePanelSplit() {
+    writeStorage('devExplorer.viewer.sidePanelSplit', String(this.sidePanelSplit));
+  }
+
+  get #validationPanel(): DevValidationPanel | null {
+    return this.querySelector('dev-validation-panel');
+  }
+
+  /**
+   * Grade the layout the render just produced, and show it in the side panel.
+   *
+   * Runs only after the browser has painted the SVG. Validation is several
+   * quadratic passes over nodes and edges — on a large diagram it is clearly
+   * visible — and doing it inline would hold the picture off the screen for
+   * that whole time. Waiting two animation frames is the standard "after the
+   * next paint" idiom: the first callback runs before the paint that includes
+   * our DOM change, the second after it.
+   *
+   * `sinceCapturedAt` is the capture timestamp from *before* this render. If it
+   * has not moved, this render captured nothing and the global still holds the
+   * previous diagram's layout — reporting that as this diagram's score would be
+   * worse than reporting nothing.
+   */
+  async #runValidation(sinceCapturedAt: number | undefined) {
+    const panel = this.#validationPanel;
+    if (!panel) {
+      return;
+    }
+    panel.state = 'running';
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    );
+
+    const captured = window.mermaidLastLayoutCapture;
+    const run = window.mermaidValidateLastLayout;
+    if (!run || !captured || captured.capturedAt === sinceCapturedAt) {
+      panel.state = 'unavailable';
+      return;
+    }
+
+    try {
+      const t0 = performance.now();
+      const result = run();
+      const elapsed = performance.now() - t0;
+      if (!result) {
+        panel.state = 'unavailable';
+        return;
+      }
+      panel.result = result;
+      panel.durationMs = elapsed;
+      panel.state = 'done';
+    } catch (err) {
+      panel.error = err instanceof Error ? err.message : String(err);
+      panel.state = 'error';
+    }
   }
 
   #setActiveTab(tab: ViewerTab) {
@@ -1347,6 +1418,14 @@ export class DevDiagramViewer extends LitElement {
     // Keep it deterministic-ish between reloads.
     await m.initialize(initConfig);
 
+    // Ask the shared renderer to hold on to the finished LayoutData. Only a
+    // reference is stored, so this costs nothing per render; the grading itself
+    // happens below, once the diagram is on screen. See
+    // layout-algorithms/ddlt/validationCapture.ts.
+    window.mermaidCaptureValidation = true;
+    const captureBefore = window.mermaidLastLayoutCapture?.capturedAt;
+    this.#validationPanel?.reset();
+
     const id = `dev-explorer-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const { svg, bindFunctions } = await m.render(id, text);
     this.svg = svg;
@@ -1362,6 +1441,10 @@ export class DevDiagramViewer extends LitElement {
     const container = this.querySelector('.diagram-inner');
     if (container && bindFunctions) bindFunctions(container);
     this.#fitRenderedSvg();
+
+    // Diagram first, score second — deliberately not awaited, so the render
+    // call returns as soon as the picture is up.
+    void this.#runValidation(captureBefore);
   }
 
   #renderZoomControls() {
@@ -1589,7 +1672,22 @@ export class DevDiagramViewer extends LitElement {
                 </div>
               </div>
               <div slot="end" style="height: 100%;">
-                <dev-console-panel></dev-console-panel>
+                <sl-split-panel
+                  vertical
+                  position=${this.sidePanelSplit}
+                  style="height: 100%;"
+                  @sl-reposition=${(e: any) => {
+                    this.sidePanelSplit = e.target?.position ?? 40;
+                    this.#persistSidePanelSplit();
+                  }}
+                >
+                  <div slot="start" style="height: 100%; overflow: hidden;">
+                    <dev-validation-panel></dev-validation-panel>
+                  </div>
+                  <div slot="end" style="height: 100%; overflow: hidden;">
+                    <dev-console-panel></dev-console-panel>
+                  </div>
+                </sl-split-panel>
               </div>
             </sl-split-panel>
           </sl-tab-panel>

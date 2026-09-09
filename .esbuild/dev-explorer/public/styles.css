@@ -669,6 +669,132 @@ dev-explorer-app .empty {
   font-size: 13px;
 }
 
+dev-explorer-app .empty.error {
+  color: #f87171;
+}
+
+/* Validation panel — the upper half of the side pane; logs take the lower. */
+dev-explorer-app .validation {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+
+dev-explorer-app .validation-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+dev-explorer-app .validation-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+dev-explorer-app .validation-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+dev-explorer-app .validation-headline {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Tabular figures so the score does not jitter as it changes between renders. */
+dev-explorer-app .validation-score {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+dev-explorer-app .validation-score.success {
+  color: #4ade80;
+}
+dev-explorer-app .validation-score.warning {
+  color: #fbbf24;
+}
+dev-explorer-app .validation-score.danger {
+  color: #f87171;
+}
+
+dev-explorer-app .validation-score-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+}
+
+dev-explorer-app .validation-score-meta .subtle {
+  color: var(--muted);
+}
+
+dev-explorer-app .issue-group {
+  border-bottom: 1px solid var(--border);
+}
+
+dev-explorer-app .issue-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+dev-explorer-app .issue-head:hover {
+  background: color-mix(in srgb, var(--app-fg) 7%, transparent);
+}
+
+dev-explorer-app .issue-type {
+  font-family: var(--mono);
+}
+
+dev-explorer-app .issue-head .subtle {
+  color: var(--muted);
+}
+
+dev-explorer-app .issue-list {
+  padding: 2px 12px 10px 34px;
+}
+
+dev-explorer-app .issue-line {
+  font-size: 12px;
+  line-height: 1.4;
+  margin-bottom: 5px;
+  word-break: break-word;
+}
+
+dev-explorer-app .issue-ref {
+  margin-left: 6px;
+  padding: 0 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
 dev-explorer-app sl-breadcrumb::part(base) {
   font-size: 12px;
 }
