@@ -290,6 +290,57 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
 </html>
 ```
 
+##### Custom fonts
+
+Mermaid comes with some default recommended fonts that you can setup on your
+page as well.
+
+See [Usage § Fonts](../config/usage.md#fonts) for full details.
+
+```html
+<html>
+  <head>
+    <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/arimo@5/wght.css" />
+    <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/arimo@5/wght-italic.css" />
+    <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/open-sans@5/wght.css" />
+    <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/open-sans@5/wght-italic.css" />
+    <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/recursive@5/index.css" />
+  </head>
+  <body>
+    Here is one mermaid diagram using the `neo` theme:
+
+    <pre class="mermaid">
+      ---
+      config:
+        theme: neo
+      ---
+      flowchart
+            A[Client] --> B[Load Balancer]
+            B --> C[Server1]
+            B --> D[Server2]
+    </pre>
+
+    And one using the `redux-dark` theme:
+
+    <pre class="mermaid">
+      ---
+      config:
+        theme: redux-dark
+      ---
+      flowchart
+            A[Client] --> B[Load Balancer]
+            B --> C[Server1]
+            B --> D[Server2]
+    </pre>
+
+    <script type="module">
+      import mermaid from '<CDN_URL>/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
+```
+
 ## 5. Adding Mermaid as a dependency
 
 Below are the steps for adding Mermaid as a dependency:

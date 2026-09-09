@@ -78,10 +78,67 @@ Example:
 
 **Following these directions, mermaid starts at page load and (when the page has loaded) it will locate the graph definitions inside the `pre` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
 
+### Fonts
+
+Mermaid currently uses a few different default `fontFamily` settings, based on
+the diagram type and the given theme.
+
+The current preferred fonts are:
+
+- Recursive Variable (open-source font, since v11.15.0)
+- Arimo (open-source font, since v\<MERMAID_RELEASE_VERSION>. Previously Arial)
+- Open Sans (open-source font, "Open Sans Variable" since v\<MERMAID_RELEASE_VERSION>)
+- Trebuchet MS ([Restrictive License](https://en.wikipedia.org/wiki/TrueType_core_fonts_for_the_Web))
+
+For a consistent look, we recommend you supply these as web fonts, when possible,
+e.g. like:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/arimo@5/wght.css" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource-variable/arimo@5/wght-italic.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource-variable/open-sans@5/wght.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource-variable/open-sans@5/wght-italic.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource-variable/recursive@5/index.css"
+/>
+```
+
 ## Simple full example:
 
 ```html
 <!doctype html>
+<head>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/arimo@5/wght.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/arimo@5/wght-italic.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/open-sans@5/wght.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/open-sans@5/wght-italic.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/recursive@5/index.css"
+  />
+</head>
 <html lang="en">
   <body>
     <pre class="mermaid">

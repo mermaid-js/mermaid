@@ -177,6 +177,7 @@ USECASE
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH
+wght
 Wirth
 worktree
 worktrees
