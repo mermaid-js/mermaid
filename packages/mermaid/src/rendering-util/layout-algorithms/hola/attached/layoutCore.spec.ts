@@ -450,6 +450,37 @@ describe('grid-attached layout', () => {
     expect(ports.size).toBe(3);
   });
 
+  it('uses side exits and one bend for a two-child tree split across its parent', () => {
+    // This is the topology of class-diagram-3: the centre `User` has one child
+    // on either side. A bottom fan gives both edges two turns; the readable route
+    // is one horizontal run from the matching side, followed by one vertical run
+    // into each child.
+    const data = layoutData(
+      [
+        node('AuthService', { width: 460, height: 180 }),
+        node('User', { width: 260, height: 150 }),
+        node('Role', { width: 240, height: 170 }),
+      ],
+      [edge('AuthService', 'User'), edge('User', 'Role')]
+    );
+
+    runGridAttachedLayoutCore(data);
+
+    const at = nodeById(data);
+    const user = rectOf(at.get('User')!);
+    const authToUser = data.edges.find((candidate) => candidate.id === 'AuthService-User')!.points!;
+    const userToRole = data.edges.find((candidate) => candidate.id === 'User-Role')!.points!;
+
+    // `AuthService → User` is declared against the tree orientation, hence its
+    // route is reversed on write-back and its User port is the final point.
+    expect(authToUser).toHaveLength(3);
+    expect(authToUser.at(-1)!.x).toBeCloseTo(user.minX);
+    expect(authToUser.at(-1)!.y).toBeCloseTo(at.get('User')!.y!);
+    expect(userToRole).toHaveLength(3);
+    expect(userToRole[0].x).toBeCloseTo(user.maxX);
+    expect(userToRole[0].y).toBeCloseTo(at.get('User')!.y!);
+  });
+
   /**
    * Six pendants on one node are six components of the pruned forest, so HOLA's
    * decomposition returns six trees. Placing them separately means six independent

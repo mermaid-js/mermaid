@@ -136,21 +136,23 @@ export function routeComponentTrees(
   spreadRedirectedRootExits(legs);
   separateRedirectedRootEntries(legs, options);
   for (const leg of legs) {
-    leg.points = leg.redirectedRoot
-      ? routeRedirectedRoot(leg)
-      : routeRankEdgeTowards(
-          portedRect(leg.parent, leg.parentPort, leg.growth),
-          portedRect(leg.child, leg.childPort, leg.growth),
-          leg.growth,
-          leg.rankGap
-        );
+    leg.points = leg.sideExit
+      ? routeSparseSplit(leg)
+      : leg.redirectedRoot
+        ? routeRedirectedRoot(leg)
+        : routeRankEdgeTowards(
+            portedRect(leg.parent, leg.parentPort, leg.growth),
+            portedRect(leg.child, leg.childPort, leg.growth),
+            leg.growth,
+            leg.rankGap
+          );
   }
   assignTurns(legs, options);
   // Last, so the comb above reasoned about the bounding-box spans every leg shares.
   // Moving a terminal onto its shape only lengthens the leg it is on: it slides
   // *inwards* along the approach axis, away from the bend, never past it.
   for (const leg of legs) {
-    if (!leg.redirectedRoot) {
+    if (!leg.redirectedRoot && !leg.sideExit) {
       insetTerminals(leg);
     }
   }
@@ -203,6 +205,8 @@ interface Leg {
   growth: Cardinal;
   /** A root exit redirected onto its outward face, rather than tree growth. */
   redirectedRoot: boolean;
+  /** A sparse two-child split leaves through this lateral side and turns once. */
+  sideExit?: Side;
   rankGap: number;
   /** Which fan this leg belongs to: one parent, one side. */
   fan: string;
@@ -248,6 +252,15 @@ function collectLegs(
     }
     const fromRoot = rawParentId === tree.rootCopyId;
     const parentId = fromRoot ? tree.coreNodeId : rawParentId;
+    const sideExits = sparseSplitSideExits(
+      parent,
+      childIds,
+      rectOf,
+      growth,
+      fromRoot,
+      parentId,
+      reserved
+    );
 
     for (const childId of childIds) {
       const child = rectOf(childId);
@@ -271,6 +284,10 @@ function collectLegs(
         topological && topological.originalEdgeIds.length > 0
           ? topological.originalEdgeIds
           : [`${parentId}-${childId}`];
+      // Parallel originals need distinct ports and tracks, so they retain the
+      // regular fan instead of sharing one lateral side port.
+      const sideExit =
+        originalEdgeIds.length === 1 && legGrowth === growth ? sideExits.get(childId) : undefined;
 
       for (const originalEdgeId of originalEdgeIds) {
         const label = labels.get(originalEdgeId);
@@ -284,8 +301,9 @@ function collectLegs(
           treeGrowth: growth,
           growth: legGrowth,
           redirectedRoot: fromRoot && legGrowth !== growth,
+          sideExit,
           rankGap,
-          fan: `${parentId}|${legGrowth}`,
+          fan: sideExit ? `${parentId}|${sideExit}` : `${parentId}|${legGrowth}`,
           parentPort: across(parent, legGrowth),
           childPort: across(child, legGrowth),
           labelAcross: label ? (vertical(legGrowth) ? label.width : label.height) : 0,
@@ -296,6 +314,61 @@ function collectLegs(
   }
 
   return legs;
+}
+
+/**
+ * A pair split across a vertically growing parent is clearer with lateral exits:
+ * left child from the left side, right child from the right side. Each path then
+ * has one horizontal and one vertical run, rather than a two-turn bottom fan.
+ * Larger or one-sided fans retain the ordered rank-facing comb. At a core root,
+ * both lateral sides must also be free of core connectors.
+ */
+function sparseSplitSideExits(
+  parent: ShapedRect,
+  childIds: readonly string[],
+  rectOf: (id: string) => ShapedRect | undefined,
+  growth: Cardinal,
+  fromRoot: boolean,
+  parentId: string,
+  reserved: Map<string, number[]>
+): Map<string, Side> {
+  // A diamond or other tapered silhouette may meet a lateral bounding-box side
+  // only at a vertex. Its normal fan has silhouette-aware offset ports; do not
+  // replace those with a visually ambiguous corner attachment.
+  if (!vertical(growth) || childIds.length !== 2 || parent.silhouette) {
+    return new Map();
+  }
+  const [firstId, secondId] = childIds;
+  const first = rectOf(firstId);
+  const second = rectOf(secondId);
+  if (!first || !second) {
+    return new Map();
+  }
+  const firstSide: Side | undefined = first.x < parent.x - EPSILON ? 'left' : undefined;
+  const secondSide: Side | undefined = second.x > parent.x + EPSILON ? 'right' : undefined;
+  const swappedFirstSide: Side | undefined = first.x > parent.x + EPSILON ? 'right' : undefined;
+  const swappedSecondSide: Side | undefined = second.x < parent.x - EPSILON ? 'left' : undefined;
+  const exits =
+    firstSide && secondSide
+      ? new Map<string, Side>([
+          [firstId, firstSide],
+          [secondId, secondSide],
+        ])
+      : swappedFirstSide && swappedSecondSide
+        ? new Map<string, Side>([
+            [firstId, swappedFirstSide],
+            [secondId, swappedSecondSide],
+          ])
+        : new Map<string, Side>();
+
+  if (
+    fromRoot &&
+    ((reserved.get(`${parentId}|left`)?.length ?? 0) > 0 ||
+      (reserved.get(`${parentId}|right`)?.length ?? 0) > 0)
+  ) {
+    return new Map();
+  }
+  return exits;
 }
 
 /** Best orthogonal side for a root connector, without stealing a core edge's side. */
@@ -396,6 +469,14 @@ function routeRedirectedRoot(leg: Leg): Point[] {
   const end = sidePort(leg.child, childSide, 0);
   const middle = vertical(leg.growth) ? { x: start.x, y: end.y } : { x: end.x, y: start.y };
   return [start, middle, end];
+}
+
+/** One-bend route for a left/right pair below (or above) its parent. */
+function routeSparseSplit(leg: Leg): Point[] {
+  const start = sidePort(leg.parent, leg.sideExit!, 0);
+  const childSide = leg.treeGrowth === 'S' ? 'top' : 'bottom';
+  const end = sidePort(leg.child, childSide, 0);
+  return [start, { x: end.x, y: start.y }, end];
 }
 
 /** Point on a rectangle's real silhouette, offset along the requested side. */
@@ -510,10 +591,13 @@ function assignPorts(
   reserved: Map<string, number[]>,
   options: GridAttachedOptions
 ): void {
+  // Lateral split routes own one unshared side port and do not participate in a
+  // rank-facing fan. Including them would spread unrelated dense-fan ports.
+  const rankFacing = legs.filter((leg) => !leg.sideExit);
   // Leaving side: the parent's rank-facing side. Each leg wants to leave nearest
   // its own child.
   spreadGroups(
-    legs,
+    rankFacing,
     (leg) => `${leg.parentId}|out|${leg.growth}`,
     (leg) => leg.parent,
     (leg) => sideOfCardinal(leg.growth),
@@ -526,7 +610,7 @@ function assignPorts(
   // Entering side: the child's side facing the parent's rank. Each leg wants to
   // enter nearest wherever it came from.
   spreadGroups(
-    legs,
+    rankFacing,
     (leg) => `${leg.childId}|in|${leg.growth}`,
     (leg) => leg.child,
     (leg) => oppositeSide(sideOfCardinal(leg.growth)),
