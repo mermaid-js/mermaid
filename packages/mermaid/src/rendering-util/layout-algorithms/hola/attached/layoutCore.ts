@@ -81,6 +81,7 @@ import type { CoreDrawing, CoreSegment } from './coreDrawing.js';
 import { planariseRoutedCore } from './corePlanarisation.js';
 import type { GridAttachedOptions } from './options.js';
 import { resolveGridAttachedOptions } from './options.js';
+import { timeStage } from '../profile.js';
 import { prepareGridAttachedLayout } from './prepareLayout.js';
 import { mergeTreesByRoot } from './treeGrouping.js';
 import { placeLabels } from './labelPlacement.js';
@@ -216,8 +217,8 @@ export function runGridAttachedLayoutCore(
   // the content instead of needing a second correction.
   const subgraphs = collectSubgraphs(data);
   const drawnNodes = laidOut.flatMap((component) => component.nodes);
-  const frames = fitSubgraphFrames(subgraphs, drawnNodes, options);
-  const framed = keepCleanFrames(data, subgraphs, frames, diagnostics);
+  const frames = timeStage('frames', () => fitSubgraphFrames(subgraphs, drawnNodes, options));
+  const framed = timeStage('frames', () => keepCleanFrames(data, subgraphs, frames, diagnostics));
 
   // A frame reaches outside its members by its padding and its title, so the shift
   // that puts the drawing at `margin` has to be measured from the frames too.
@@ -331,31 +332,37 @@ function layoutComponent(
         options.maxExtraCoreNodesForContainment
       )
     : new Set<string>();
-  const decomposition = decompose(graph, { keepInCore });
+  const decomposition = timeStage('decompose', () => decompose(graph, { keepInCore }));
 
   if (decomposition.pureTree) {
     return layoutPureTreeComponent(flat, componentId, decomposition.pureTree, flowGrowth, options);
   }
 
-  const drawing = drawCore(data, flat, componentId, decomposition.core, options);
+  const drawing = timeStage('core', () =>
+    drawCore(data, flat, componentId, decomposition.core, options)
+  );
   // Everything hanging off one core node is one tree. HOLA's decomposition returns
   // one per forest component, so a node with five pendant leaves would otherwise get
   // five independent placements all competing for the same wedges.
   const peeled = mergeTreesByRoot(decomposition.trees);
   const sources = new Map(peeled.map((tree) => [tree.id, tree]));
-  const placeable = peeled.map((tree) =>
-    drawTree(tree.id, tree.graph, tree.rootCopyId, tree.coreNodeId, flat.labels, options)
+  const placeable = timeStage('trees', () =>
+    peeled.map((tree) =>
+      drawTree(tree.id, tree.graph, tree.rootCopyId, tree.coreNodeId, flat.labels, options)
+    )
   );
 
-  const chosen = climbEnlargementLadder(
-    drawing,
-    decomposition.core,
-    flat,
-    placeable,
-    sources,
-    flowGrowth,
-    options,
-    diagnostics
+  const chosen = timeStage('place', () =>
+    climbEnlargementLadder(
+      drawing,
+      decomposition.core,
+      flat,
+      placeable,
+      sources,
+      flowGrowth,
+      options,
+      diagnostics
+    )
   );
 
   reportPlacementDiagnostics(diagnostics, componentId, chosen.attempt, sources);
@@ -366,7 +373,7 @@ function layoutComponent(
   const labelRequests: { originalEdgeId: string; width: number; height: number; route: Point[] }[] =
     [];
 
-  const core = writeCoreEdges(flat, drawing, options);
+  const core = timeStage('route', () => writeCoreEdges(flat, drawing, options));
   const edges = [...core.edges];
   labelRequests.push(...core.labelRequests);
 
@@ -413,7 +420,9 @@ function layoutComponent(
 
   // Connectors are routed once, for the whole component: two of the three ways two
   // of them end up drawn as one line are collisions *between* trees.
-  const connected = writeConnectors(flat, routeRequests, options, drawing.ports);
+  const connected = timeStage('route', () =>
+    writeConnectors(flat, routeRequests, options, drawing.ports)
+  );
   edges.push(...connected.edges);
   labelRequests.push(...connected.labelRequests);
 
@@ -435,7 +444,7 @@ function layoutComponent(
 
   // Labels last, and for the whole component at once: a label has to keep off every
   // node and every route in the drawing, not just the ones on its own side of it.
-  const labels = writeLabels(flat, labelRequests, nodes, edges, options);
+  const labels = timeStage('labels', () => writeLabels(flat, labelRequests, nodes, edges, options));
 
   const bounds = boundsOfDrawing(nodes, edges);
 

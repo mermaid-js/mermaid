@@ -135,6 +135,20 @@ const ZOOM_FIT_MARGIN = 24;
 // the root `render` span. See packages/mermaid/src/profiler.ts.
 const PROFILE_PHASES = ['parse', 'prepare', 'measure', 'layout', 'paint', 'serialize'] as const;
 
+// HOLA reports its own stage timings as profiler buckets, because it owns its
+// routing and so spends almost the whole `layout` phase inside itself — one
+// number for all of it says nothing about where the time went. Labels and keys
+// mirror `layout-algorithms/hola/profile.ts`; order is pipeline order.
+const HOLA_STAGE_ROWS: readonly (readonly [label: string, key: string])[] = [
+  ['decompose (core + trees)', 'holaDecompose'],
+  ['core drawing', 'holaCore'],
+  ['tree layout', 'holaTrees'],
+  ['tree placement', 'holaPlace'],
+  ['orthogonal routing', 'holaRoute'],
+  ['subgraph frames', 'holaFrames'],
+  ['edge labels', 'holaLabels'],
+] as const;
+
 // One render's normalized per-phase durations + total.
 type RunSample = { total: number; phases: Record<string, number> };
 // Trimmed-mean aggregate for one (diagram, layout) series.
@@ -1857,10 +1871,16 @@ export class DevDiagramViewer extends LitElement {
             // Break "layout" into the external library call vs. our wrapper, and
             // "measure" into the DOM reflow queries (getBBox / getBoundingClientRect).
             if (phase === 'layout') {
+              // Only layouts that report stage buckets get the HOLA breakdown;
+              // for everything else those rows would be a column of dashes.
+              const holaRows = HOLA_STAGE_ROWS.filter(([, key]) =>
+                results.some((r) => r.phaseTotals[key] > 0)
+              ).map(([label, key]) => subRow(`↳ ${label}`, key));
               return [
                 row,
                 subRow('↳ lib (external)', 'layoutLib'),
                 subRow('↳ ours (wrapper)', 'layoutOurs'),
+                ...holaRows,
               ];
             }
             if (phase === 'measure') {
