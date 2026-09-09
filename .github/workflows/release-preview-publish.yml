@@ -86,10 +86,12 @@ jobs:
               # unmet-peer warning on every install.
               json -I -f package.json -e 'delete this.peerDependencies'
               pnpm pack
-              # No `--access` flag: GitHub Packages derives package visibility
-              # from the repository, and rejects `--access` from `GITHUB_TOKEN`
-              # with `403 permission_denied: write_package` — even for
-              # `@mermaid-js/layout-elk`, which already exists in the registry.
+              # Both packages must be *public* in the org's GitHub Packages
+              # settings. While they were `internal`, this step failed with
+              # `403 permission_denied: write_package`; `@mermaid-js/mermaid`
+              # published from the same job and the same `GITHUB_TOKEN` because
+              # it is public. `--access` is not the lever — npm already sends
+              # `public access` without it, and passing it changed nothing.
               npm publish --tag preview *.tgz
             )
           done
