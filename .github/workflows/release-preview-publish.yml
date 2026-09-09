@@ -86,10 +86,11 @@ jobs:
               # unmet-peer warning on every install.
               json -I -f package.json -e 'delete this.peerDependencies'
               pnpm pack
-              # `--access public` is not optional here: neither package exists in
-              # the org's registry yet, and a scoped package defaults to
-              # `restricted`, so the create is refused with `write_package`.
-              npm publish --access public --tag preview *.tgz
+              # No `--access` flag: GitHub Packages derives package visibility
+              # from the repository, and rejects `--access` from `GITHUB_TOKEN`
+              # with `403 permission_denied: write_package` — even for
+              # `@mermaid-js/layout-elk`, which already exists in the registry.
+              npm publish --tag preview *.tgz
             )
           done
         env:
