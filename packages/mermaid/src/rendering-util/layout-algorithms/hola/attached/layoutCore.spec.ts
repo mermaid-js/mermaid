@@ -481,6 +481,36 @@ describe('grid-attached layout', () => {
     expect(userToRole[0].y).toBeCloseTo(at.get('User')!.y!);
   });
 
+  it('keeps the middle child straight and sends a three-child split through lateral exits', () => {
+    // The same sparse policy is independent of the tree's axis. In a left-to-right
+    // tree the two lateral exits are top and bottom, while the centred child keeps
+    // the direct east-facing connector.
+    const data = layoutData(
+      ['parent', 'top', 'middle', 'bottom'].map((id) => node(id)),
+      [edge('parent', 'top'), edge('parent', 'middle'), edge('parent', 'bottom')],
+      'LR'
+    );
+
+    runGridAttachedLayoutCore(data);
+
+    const at = nodeById(data);
+    const parent = rectOf(at.get('parent')!);
+    const routes = ['parent-top', 'parent-middle', 'parent-bottom'].map(
+      (id) => data.edges.find((candidate) => candidate.id === id)!.points!
+    );
+    const lateral = routes.filter((route) => route.length === 3);
+    const direct = routes.filter((route) => route.length === 2);
+
+    expect(lateral).toHaveLength(2);
+    expect(direct).toHaveLength(1);
+    expect(lateral.map((route) => route[0].y).sort((a, b) => a - b)).toEqual([
+      parent.minY,
+      parent.maxY,
+    ]);
+    expect(lateral.every((route) => route[0].x === at.get('parent')!.x)).toBe(true);
+    expect(direct[0][0]).toEqual({ x: parent.maxX, y: at.get('parent')!.y });
+  });
+
   /**
    * Six pendants on one node are six components of the pruned forest, so HOLA's
    * decomposition returns six trees. Placing them separately means six independent

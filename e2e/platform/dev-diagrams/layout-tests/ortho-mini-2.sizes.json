@@ -2,39 +2,29 @@
   "nodes": [
     {
       "id": "A",
-      "width": 138.640625,
-      "height": 45
+      "width": 173.70660400390625,
+      "height": 53.99305725097656
     },
     {
       "id": "B",
-      "width": 232,
-      "height": 129
+      "width": 230.00003051757812,
+      "height": 53.99305725097656
     },
     {
       "id": "D",
-      "width": 232,
-      "height": 87
+      "width": 260.0000305175781,
+      "height": 53.99305725097656
     },
     {
       "id": "L",
-      "width": 232,
-      "height": 87
-    },
-    {
-      "id": "edge-label-A-B-L_A_B_0",
-      "width": 200,
-      "height": 42
-    },
-    {
-      "id": "edge-label-D-L-L_D_L_0",
-      "width": 106.640625,
-      "height": 21
+      "width": 230.00003051757812,
+      "height": 53.99305725097656
     }
   ],
   "metadata": {
     "captureVersion": 1,
     "sourceSha256": "e91e7a30070ac9291894e048c839af3f3ced9f9664ceef87ce1de7ed50c40249",
-    "capturedAt": "2026-05-06T00:00:00.000Z",
-    "capturedFrom": "browser-dev layout-tests/ortho-mini-2.mmd theme=default look=classic"
+    "capturedAt": "2026-09-09T10:37:44.071Z",
+    "capturedFrom": "dev-explorer layout-tests/ortho-mini-2.mmd theme=default look=classic layout=hola"
   }
 }

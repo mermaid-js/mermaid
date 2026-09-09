@@ -88,6 +88,12 @@ export function finalRouterConfig(options: HolaOptions): RouterConfig {
 
 /** How close to a corner a port may sit. */
 const FAN_PORT_MARGIN = 8;
+/**
+ * Continuous placement and subgraph constraints can leave two intended grid
+ * neighbours a fraction of a pixel apart. Treat that numerical residue as an
+ * alignment only when an obstacle-free direct route proves it is safe.
+ */
+const NEAR_ALIGNMENT_EPSILON = 1;
 
 /**
  * Final routing, in two passes (guide §19).
@@ -223,7 +229,12 @@ function routePass(
       lockedSourceSide: assigned?.source?.side ?? edge.lockedSourceSide,
       lockedTargetSide: assigned?.target?.side ?? edge.lockedTargetSide,
     };
-    const alternatives = routeAlternatives(request, config);
+    // A direct candidate is considered before the visibility search. The latter
+    // correctly sees that two centres 0.5px apart are not collinear and produces
+    // a four-point jog; a shared boundary coordinate is still a perfectly valid
+    // straight connector when its corridor is clear.
+    const direct = assigned ? undefined : nearAlignedDirectRoute(request, edge, config);
+    const alternatives = direct ? [] : routeAlternatives(request, config);
 
     // A layout may know that a particular external channel keeps two branches at
     // one shared endpoint from crossing. It is a preference: if another box or
@@ -232,7 +243,7 @@ function routePass(
     const preferred = edge.preferredOutsideSide
       ? outsideChannelRoute(request, edge.preferredOutsideSide, config)
       : undefined;
-    const best = preferred ?? alternatives[0];
+    const best = direct ?? preferred ?? alternatives[0];
     if (!best) {
       const fallback = [portOf(source, target), portOf(target, source)];
       routed.push({
@@ -259,6 +270,116 @@ function routePass(
   }
 
   return { edges: routed, failed };
+}
+
+/**
+ * Return the shared-coordinate direct route for two almost-aligned endpoints.
+ *
+ * This is deliberately narrower than a generic simplifier: it never moves a
+ * planned port, a parallel edge, or a mandatory waypoint. It also proves the
+ * resulting segment clears every non-endpoint node and every earlier route, so a
+ * one-pixel alignment tolerance cannot turn an intentional detour into a crossing.
+ */
+function nearAlignedDirectRoute(
+  request: OrthogonalRouteRequest,
+  edge: FinalEdge,
+  config: RouterConfig
+): OrthogonalRouteResult | undefined {
+  if (edge.parallelCount > 1 || edge.mandatoryWaypoints.length > 0) {
+    return undefined;
+  }
+
+  const source = request.source;
+  const target = request.target;
+  const deltaX = target.rect.x - source.rect.x;
+  const deltaY = target.rect.y - source.rect.y;
+  const vertical = Math.abs(deltaX) <= NEAR_ALIGNMENT_EPSILON;
+  const horizontal = Math.abs(deltaY) <= NEAR_ALIGNMENT_EPSILON;
+  if (vertical === horizontal) {
+    return undefined;
+  }
+
+  const sourceSide: Side = vertical
+    ? deltaY >= 0
+      ? 'bottom'
+      : 'top'
+    : deltaX >= 0
+      ? 'right'
+      : 'left';
+  const targetSide: Side = vertical
+    ? sourceSide === 'bottom'
+      ? 'top'
+      : 'bottom'
+    : sourceSide === 'right'
+      ? 'left'
+      : 'right';
+  if (
+    (request.lockedSourceSide && request.lockedSourceSide !== sourceSide) ||
+    (request.lockedTargetSide && request.lockedTargetSide !== targetSide)
+  ) {
+    return undefined;
+  }
+
+  const coordinate = vertical
+    ? (source.rect.x + target.rect.x) / 2
+    : (source.rect.y + target.rect.y) / 2;
+  const start = obstaclePort(
+    source,
+    sourceSide,
+    vertical ? coordinate - source.rect.x : coordinate - source.rect.y
+  );
+  const end = obstaclePort(
+    target,
+    targetSide,
+    vertical ? coordinate - target.rect.x : coordinate - target.rect.y
+  );
+  if (
+    (vertical && Math.abs(start.x - end.x) > 1e-6) ||
+    (horizontal && Math.abs(start.y - end.y) > 1e-6)
+  ) {
+    return undefined;
+  }
+
+  const minimumLeg = Math.max(config.clearance, config.minTerminalLegLength ?? 0, 1);
+  if (Math.abs(vertical ? end.y - start.y : end.x - start.x) < minimumLeg) {
+    return undefined;
+  }
+
+  for (const obstacle of request.obstacles) {
+    if (obstacle.id === source.id || obstacle.id === target.id) {
+      continue;
+    }
+    const bounds = nodeBounds(obstacle.rect);
+    if (
+      segmentCrossesInterior(start, end, {
+        minX: bounds.minX - config.clearance,
+        minY: bounds.minY - config.clearance,
+        maxX: bounds.maxX + config.clearance,
+        maxY: bounds.maxY + config.clearance,
+      })
+    ) {
+      return undefined;
+    }
+  }
+
+  const existing = request.existingSegments ?? [];
+  if (
+    countCrossings(start, end, existing) > 0 ||
+    countCollinearOverlaps(start, end, existing) > 0
+  ) {
+    return undefined;
+  }
+
+  const points = [start, end];
+  return {
+    points,
+    sourceSide,
+    targetSide,
+    bendCount: 0,
+    length: pathLength(points),
+    crossings: 0,
+    cost: pathLength(points),
+  };
 }
 
 function ownedSegments(points: Point[], edge: FinalEdge): OccupiedSegment[] {

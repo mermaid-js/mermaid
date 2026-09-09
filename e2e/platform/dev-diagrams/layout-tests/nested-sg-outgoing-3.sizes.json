@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "process_A",
+      "width": 131.15451049804688,
+      "height": 53.99305725097656
+    },
+    {
+      "id": "process_B",
+      "width": 130.77256774902344,
+      "height": 53.99305725097656
+    },
+    {
+      "id": "process_C",
+      "width": 131.28472900390625,
+      "height": 53.99305725097656
+    },
+    {
+      "id": "Process_D",
+      "width": 130.78125,
+      "height": 53.99305725097656
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "0f7b7aaa027e61a4d5824cb9ae4eef567efbe75f527f5b713e37c37b792f5e10",
+    "capturedAt": "2026-09-09T10:34:42.432Z",
+    "capturedFrom": "dev-explorer layout-tests/nested-sg-outgoing-3.mmd theme=default look=classic layout=hola"
+  }
+}

@@ -317,11 +317,16 @@ function collectLegs(
 }
 
 /**
- * A pair split across a vertically growing parent is clearer with lateral exits:
- * left child from the left side, right child from the right side. Each path then
- * has one horizontal and one vertical run, rather than a two-turn bottom fan.
- * Larger or one-sided fans retain the ordered rank-facing comb. At a core root,
- * both lateral sides must also be free of core connectors.
+ * Sparse, symmetric fan alternatives.
+ *
+ * A pair split across the parent uses one lateral exit on each side. A three-way
+ * split does the same for its outer children while its centred child keeps the
+ * direct rank-facing route. This reduces bends without consuming the regular
+ * comb's lane space. The pattern is axis-independent: lateral means left/right
+ * in a vertical tree and top/bottom in a horizontal tree.
+ *
+ * Larger, one-sided, asymmetric, parallel, or core-congested fans retain the
+ * ordered rank-facing comb, which is still the safer use of the available space.
  */
 function sparseSplitSideExits(
   parent: ShapedRect,
@@ -335,36 +340,49 @@ function sparseSplitSideExits(
   // A diamond or other tapered silhouette may meet a lateral bounding-box side
   // only at a vertex. Its normal fan has silhouette-aware offset ports; do not
   // replace those with a visually ambiguous corner attachment.
-  if (!vertical(growth) || childIds.length !== 2 || parent.silhouette) {
+  if ((childIds.length !== 2 && childIds.length !== 3) || parent.silhouette) {
     return new Map();
   }
-  const [firstId, secondId] = childIds;
-  const first = rectOf(firstId);
-  const second = rectOf(secondId);
-  if (!first || !second) {
+
+  const upright = vertical(growth);
+  const acrossAxis = (rect: ShapedRect): number => (upright ? rect.x : rect.y);
+  const parentAcross = acrossAxis(parent);
+  const before: { id: string; side: Side }[] = [];
+  const after: { id: string; side: Side }[] = [];
+  let centred = 0;
+  for (const childId of childIds) {
+    const child = rectOf(childId);
+    if (!child) {
+      return new Map();
+    }
+    const delta = acrossAxis(child) - parentAcross;
+    if (delta < -EPSILON) {
+      before.push({ id: childId, side: upright ? 'left' : 'top' });
+    } else if (delta > EPSILON) {
+      after.push({ id: childId, side: upright ? 'right' : 'bottom' });
+    } else {
+      centred++;
+    }
+  }
+
+  // Two children need an opposite-side pair. A three-child alternative also
+  // needs exactly one on the main axis; that connector remains an unbent rank
+  // edge while the two outer children claim the lateral sides.
+  const balancedPair = before.length === 1 && after.length === 1;
+  const hasDirectMiddle = childIds.length === 2 ? centred === 0 : centred === 1;
+  if (!balancedPair || !hasDirectMiddle) {
     return new Map();
   }
-  const firstSide: Side | undefined = first.x < parent.x - EPSILON ? 'left' : undefined;
-  const secondSide: Side | undefined = second.x > parent.x + EPSILON ? 'right' : undefined;
-  const swappedFirstSide: Side | undefined = first.x > parent.x + EPSILON ? 'right' : undefined;
-  const swappedSecondSide: Side | undefined = second.x < parent.x - EPSILON ? 'left' : undefined;
-  const exits =
-    firstSide && secondSide
-      ? new Map<string, Side>([
-          [firstId, firstSide],
-          [secondId, secondSide],
-        ])
-      : swappedFirstSide && swappedSecondSide
-        ? new Map<string, Side>([
-            [firstId, swappedFirstSide],
-            [secondId, swappedSecondSide],
-          ])
-        : new Map<string, Side>();
+
+  const exits = new Map<string, Side>([
+    [before[0].id, before[0].side],
+    [after[0].id, after[0].side],
+  ]);
+  const lateralSides: Side[] = upright ? ['left', 'right'] : ['top', 'bottom'];
 
   if (
     fromRoot &&
-    ((reserved.get(`${parentId}|left`)?.length ?? 0) > 0 ||
-      (reserved.get(`${parentId}|right`)?.length ?? 0) > 0)
+    lateralSides.some((side) => (reserved.get(`${parentId}|${side}`)?.length ?? 0) > 0)
   ) {
     return new Map();
   }
@@ -471,12 +489,14 @@ function routeRedirectedRoot(leg: Leg): Point[] {
   return [start, middle, end];
 }
 
-/** One-bend route for a left/right pair below (or above) its parent. */
+/** One-bend route from a perpendicular side into the child's rank-facing side. */
 function routeSparseSplit(leg: Leg): Point[] {
   const start = sidePort(leg.parent, leg.sideExit!, 0);
-  const childSide = leg.treeGrowth === 'S' ? 'top' : 'bottom';
+  const childSide = oppositeSide(sideOfCardinal(leg.treeGrowth));
   const end = sidePort(leg.child, childSide, 0);
-  return [start, { x: end.x, y: start.y }, end];
+  return vertical(leg.treeGrowth)
+    ? [start, { x: end.x, y: start.y }, end]
+    : [start, { x: start.x, y: end.y }, end];
 }
 
 /** Point on a rectangle's real silhouette, offset along the requested side. */

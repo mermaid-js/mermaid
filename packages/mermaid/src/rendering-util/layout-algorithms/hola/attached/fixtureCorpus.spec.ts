@@ -582,6 +582,43 @@ describe('grid-attached over the hola-faithful fixture corpus', () => {
       });
     }
 
+    if (name === 'GRAPH - hola 4 nodes loop + trees - Long Labels') {
+      it('uses the top and bottom exits for C3_1’s horizontal two-child split', async () => {
+        const { layout } = await lay(name, sizes);
+        const nodes = new Map(layout.nodes.map((node) => [node.id, node]));
+        const parent = nodes.get('C3_1')!;
+        const routes = ['L_C3_1_C3_11_0', 'L_C3_1_C3_12_0'].map(
+          (id) => layout.edges.find((edge) => edge.id === id)!.points!
+        );
+
+        // The parent-to-C3_1 edge takes the main west/east axis. Its two children
+        // therefore leave C3_1 from the top and bottom, each with one turn into
+        // the left side of the wide child box rather than a two-turn comb.
+        expect(routes.every((route) => route.length === 3)).toBe(true);
+        expect(routes.map((route) => route[0].y).sort((a, b) => a - b)).toEqual([
+          parent.y! - parent.height! / 2,
+          parent.y! + parent.height! / 2,
+        ]);
+        expect(routes.every((route) => route[0].x === parent.x)).toBe(true);
+      });
+    }
+
+    if (name === 'Extreme-Subgraphs-WindRose') {
+      it('keeps the near-aligned SE → C route straight', async () => {
+        const layout = await parseMmdFileToLayoutData(join(FIXTURE_DIR, `${name}.mmd`), {
+          stampFlowchartRendererFields: true,
+        });
+        const measured = loadSizesFixture(join(FIXTURE_DIR, sizes));
+        applyFixtureContentSizesStrict(layout, measured);
+        applyFixtureEdgeLabelSizes(layout, measured);
+        runGridAttachedSubgraphsLayoutCore(layout);
+
+        const route = layout.edges.find((edge) => edge.id === 'L_SE_C_0')?.points;
+        expect(route).toHaveLength(2);
+        expect(route![0].x).toBeCloseTo(route![1].x, 6);
+      });
+    }
+
     if (name === 'project-sox2') {
       it('keeps D’s two lower branches out of each other’s corridors', async () => {
         const { layout } = await lay(name, sizes);
