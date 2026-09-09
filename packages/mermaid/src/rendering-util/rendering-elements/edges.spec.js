@@ -68,6 +68,58 @@ describe('computeLabelTransform', () => {
 });
 
 describe('insertEdge swimlane endpoint clipping', () => {
+  it('preserves deliberate right angles from a settled orthogonal route', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'orthogonal-route',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'linear',
+      hasIntersectionPoints: true,
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 40 },
+        { x: 60, y: 40 },
+      ],
+    };
+
+    insertEdge(svg, edge, null, 'flowchart', {}, {}, 'diagram', true);
+
+    expect(svg.select('path').attr('d')).toBe('M0,0L0,40L60,40');
+  });
+
+  it('keeps a straight terminal stub before rounding an orthogonal route', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const tail = { intersect: vi.fn(() => ({ x: 25, y: 0 })) };
+    const head = { intersect: vi.fn(() => ({ x: 50, y: 25 })) };
+    const edge = {
+      id: 'rounded-orthogonal-route',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      hasIntersectionPoints: true,
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 10 },
+        { x: 50, y: 10 },
+      ],
+    };
+
+    insertEdge(svg, edge, null, 'flowchart', tail, head, 'diagram');
+
+    expect(svg.select('path').attr('d')).toBe('M0,0L0,8Q0,10 2,10L50,10');
+    expect(tail.intersect).not.toHaveBeenCalled();
+    expect(head.intersect).not.toHaveBeenCalled();
+  });
+
   it('honors duplicated endpoint pins instead of recomputing polygon intersections', () => {
     document.body.innerHTML = '';
     const svg = select(document.body).append('svg');

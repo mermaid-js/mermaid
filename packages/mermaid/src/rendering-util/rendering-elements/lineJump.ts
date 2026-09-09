@@ -13,8 +13,8 @@
 import type { D3Selection } from '../../types.js';
 import { markerOffsets } from '../../utils/lineWithOffset.js';
 
-/** Radius used by edges.js' generateRoundedPath. Kept in sync so rewritten
- * paths look like the originals at bends. */
+/** Default radius used by edges.js' generateRoundedPath. Kept in sync so
+ * rewritten paths look like the originals at bends. */
 const ROUNDED_CORNER_RADIUS = 5;
 
 /** Skip the jump if its clamped radius falls below this — avoids invisible
@@ -64,6 +64,8 @@ export interface EdgeGeom {
    * corrupting smoothed geometry.
    */
   curve?: string;
+  /** Optional per-edge radius for `curve: 'rounded'`, matching `Edge.roundedCornerRadius`. */
+  roundedCornerRadius?: number;
   /** Arrow type at the start (first point) — used to apply marker offset so
    * the rewritten path's endpoint matches the original rendered geometry and
    * the arrow marker orients correctly. */
@@ -422,6 +424,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
   // Match edges.js: shift the first/last point inward so arrow markers line up.
   const points = applyMarkerOffsets(rawPoints, edge);
   const rounded = edge.curve === 'rounded';
+  const roundedCornerRadius = edge.roundedCornerRadius ?? ROUNDED_CORNER_RADIUS;
 
   // Jumps are indexed into the ORIGINAL (un-offset) segment list. For mid-
   // segments (i > 0 and i < n-2) the offsets don't change anything, and for
@@ -464,7 +467,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
         points[i - 1],
         points[i],
         points[i + 1] ?? points[i],
-        ROUNDED_CORNER_RADIUS
+        roundedCornerRadius
       );
       if (corner) {
         segStartConsumed = corner.cutLen;
@@ -479,7 +482,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
         points[i],
         points[i + 1],
         points[i + 2] ?? points[i + 1],
-        ROUNDED_CORNER_RADIUS
+        roundedCornerRadius
       );
       if (upcomingCorner) {
         segEndStop = segLen - upcomingCorner.cutLen;

@@ -118,6 +118,7 @@ export interface ClusterNode extends BaseNode {
   edgeStart?: string;
   edgeEnd?: string;
   isDummy?: boolean;
+  isLabelNode?: boolean;
 }
 export interface NonClusterNode extends BaseNode {
   shape?: ShapeID;
@@ -126,6 +127,12 @@ export interface NonClusterNode extends BaseNode {
   edgeStart?: string;
   edgeEnd?: string;
   isDummy?: boolean;
+  /**
+   * Marks a dummy node standing in for an edge label so the layout reserves
+   * space for the label text. Set by layouts that split a labelled edge into
+   * `start → label → end` (HOLA).
+   */
+  isLabelNode?: boolean;
 }
 
 // Common properties for any node in the system
@@ -162,6 +169,11 @@ export interface Edge {
   endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
+  /**
+   * Radius, in layout pixels, used for `curve: 'rounded'`. Omit it to use the
+   * renderer's default radius.
+   */
+  roundedCornerRadius?: number;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;
@@ -194,6 +206,15 @@ export interface Edge {
    * that route or render edges must skip any edge with `isLayoutOnly: true`.
    */
   isLayoutOnly?: boolean;
+  /** Node side the route leaves from, chosen by an orthogonal router (HOLA). */
+  startSide?: 'left' | 'right' | 'top' | 'bottom';
+  /** Node side the route arrives at, chosen by an orthogonal router (HOLA). */
+  endSide?: 'left' | 'right' | 'top' | 'bottom';
+  /**
+   * Set when the router already anchored both endpoints on the node boundary,
+   * so paint must not re-clip them against the node shapes.
+   */
+  hasIntersectionPoints?: boolean;
 }
 
 export interface RectOptions {

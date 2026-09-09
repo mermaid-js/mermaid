@@ -622,7 +622,12 @@ export const insertEdge = function (
   // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
   // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
   // clipping below, so their edge ports are unaffected by swimlanes.
-  if (layout === 'swimlane') {
+  //
+  // An edge marked `hasIntersectionPoints` is exempt from both paths: its router
+  // already anchored the two terminals on the node boundaries. Re-clipping such a
+  // route uses only the next bend as a target, which pulls every member of a fan
+  // back toward the node centre and makes its first segment diagonal.
+  if (layout === 'swimlane' && edge.hasIntersectionPoints !== true) {
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
@@ -657,11 +662,24 @@ export const insertEdge = function (
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipIntersect) {
+  } else if (
+    head.intersect &&
+    tail.intersect &&
+    !skipIntersect &&
+    edge.hasIntersectionPoints !== true
+  ) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
-    points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
-    points.push(head.intersect(points[points.length - 1]));
+    if (points.length <= 2) {
+      // Straight edge with no interior bend points (orthogonal layouts emit
+      // these). Slicing off the first and last point would leave an empty array
+      // and `intersect(undefined)` would crash, so clip each endpoint toward the
+      // other directly.
+      points = [tail.intersect(points[points.length - 1]), head.intersect(points[0])];
+    } else {
+      points = points.slice(1, edge.points.length - 1);
+      points.unshift(tail.intersect(points[0]));
+      points.push(head.intersect(points[points.length - 1]));
+    }
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
@@ -687,7 +705,12 @@ export const insertEdge = function (
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
   // Apply fixCorners for non-rounded curves to pre-round right-angle corners
   // (rounded curve type uses generateRoundedPath instead)
-  if (edgeCurveType !== 'rounded') {
+  //
+  // Orthogonal routers that set `hasIntersectionPoints` have already chosen
+  // exact, boundary-attached Manhattan vertices. The legacy corner repair
+  // inserts a short diagonal around every such vertex, undoing that contract
+  // in the rendered SVG even though the layout's points are orthogonal.
+  if (edgeCurveType !== 'rounded' && edge.hasIntersectionPoints !== true) {
     lineData = fixCorners(lineData);
   }
   let curve = curveLinear;
@@ -768,7 +791,11 @@ export const insertEdge = function (
   let svgPath;
   let linePath =
     edgeCurveType === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      ? generateRoundedPath(
+          applyMarkerOffsetsToPoints(lineData, edge),
+          edge.roundedCornerRadius ?? 5,
+          edge.hasIntersectionPoints === true ? 8 : 0
+        )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
@@ -924,9 +951,12 @@ export const insertEdge = function (
  * Generates SVG path data with rounded corners from an array of points.
  * @param {Array} points - Array of points in the format [{x: Number, y: Number}, ...]
  * @param {Number} radius - The radius of the rounded corners
+ * @param {Number} [terminalStub] - Minimum axis-aligned run to keep at the first and
+ *   last bend, so a settled orthogonal route still leaves and enters its nodes
+ *   straight. 0 (the default) keeps the original behaviour.
  * @returns {String} - SVG path data string
  */
-export function generateRoundedPath(points, radius) {
+export function generateRoundedPath(points, radius, terminalStub = 0) {
   if (points.length < 2) {
     return '';
   }
@@ -980,8 +1010,19 @@ export function generateRoundedPath(points, radius) {
         continue;
       }
 
-      // Calculate the distance to offset the control point
-      const cutLen = Math.min(radius / Math.sin(angle / 2), len1 / 2, len2 / 2);
+      // Keep a meaningful axis-aligned run at each endpoint of a settled
+      // orthogonal route. Without it a rounded first bend consumes almost the
+      // whole short terminal leg and reads as a diagonal leaving the node.
+      const incomingLimit =
+        i === 1 && terminalStub > 0 ? Math.max(0, len1 - terminalStub) : len1 / 2;
+      const outgoingLimit =
+        i === size - 2 && terminalStub > 0 ? Math.max(0, len2 - terminalStub) : len2 / 2;
+      const cutLen = Math.min(radius / Math.sin(angle / 2), incomingLimit, outgoingLimit);
+
+      if (cutLen < epsilon) {
+        path += `L${currPoint.x},${currPoint.y}`;
+        continue;
+      }
 
       // Calculate the start and end points of the curve
       const startX = currPoint.x - nx1 * cutLen;
