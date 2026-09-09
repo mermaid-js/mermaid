@@ -101,6 +101,14 @@ e.g. like:
 />
 <link
   rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource-variable/atkinson-hyperlegible-next@5/wght.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource-variable/atkinson-hyperlegible-next@5/wght-italic.css"
+/>
+<link
+  rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/@fontsource-variable/open-sans@5/wght.css"
 />
 <link
@@ -125,6 +133,14 @@ e.g. like:
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/@fontsource-variable/arimo@5/wght-italic.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/atkinson-hyperlegible-next@5/wght.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/atkinson-hyperlegible-next@5/wght-italic.css"
   />
   <link
     rel="stylesheet"

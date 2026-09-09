@@ -4,9 +4,13 @@ import { imgSnapshotTest } from '../../helpers/util.ts';
 
 const looks = ['neo'] as const;
 const themes = [
+  {
+    theme: 'forest',
+    fontFamily:
+      '"Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", "trebuchet ms", verdana, arial, sans-serif',
+  },
   { theme: 'neo', fontFamily: '"Arimo Variable", Arimo, arial, sans-serif' },
   { theme: 'neo-dark', fontFamily: '"Arimo Variable", Arimo, arial, sans-serif' },
-  { theme: 'redux', fontFamily: '"Recursive Variable", arial, sans-serif' },
   { theme: 'redux-dark', fontFamily: '"Recursive Variable", arial, sans-serif' },
 ] as const;
 const directions = ['TB'] as const;

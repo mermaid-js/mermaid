@@ -329,7 +329,8 @@ function calculateTextProps(
   const wrapLabelConfig = {
     fontSize: 16,
     fontWeight: 700,
-    fontFamily: '"trebuchet ms", verdana, arial, sans-serif',
+    fontFamily:
+      '"Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", "trebuchet ms", verdana, arial, sans-serif',
     joinWith: '<br/>',
   };
 

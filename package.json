@@ -105,6 +105,7 @@
     "@cspell/eslint-plugin": "^9.3.2",
     "@eslint/js": "^9.26.0",
     "@fontsource-variable/arimo": "^5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
     "@fontsource-variable/open-sans": "^5.3.0",
     "@fontsource-variable/recursive": "^5.3.0",
     "@fontsource/noto-sans-sc": "^5.2.9",

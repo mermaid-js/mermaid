@@ -90,6 +90,14 @@ e.g. like:
 ```html
 <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/arimo@5/wght.css" />
 <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/arimo@5/wght-italic.css" />
+<link
+  rel="stylesheet"
+  href="<CDN_URL>/@fontsource-variable/atkinson-hyperlegible-next@5/wght.css"
+/>
+<link
+  rel="stylesheet"
+  href="<CDN_URL>/@fontsource-variable/atkinson-hyperlegible-next@5/wght-italic.css"
+/>
 <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/open-sans@5/wght.css" />
 <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/open-sans@5/wght-italic.css" />
 <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/recursive@5/index.css" />
@@ -102,6 +110,14 @@ e.g. like:
 <head>
   <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/arimo@5/wght.css" />
   <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/arimo@5/wght-italic.css" />
+  <link
+    rel="stylesheet"
+    href="<CDN_URL>/@fontsource-variable/atkinson-hyperlegible-next@5/wght.css"
+  />
+  <link
+    rel="stylesheet"
+    href="<CDN_URL>/@fontsource-variable/atkinson-hyperlegible-next@5/wght-italic.css"
+  />
   <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/open-sans@5/wght.css" />
   <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/open-sans@5/wght-italic.css" />
   <link rel="stylesheet" href="<CDN_URL>/@fontsource-variable/recursive@5/index.css" />

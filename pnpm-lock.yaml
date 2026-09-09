@@ -60,6 +60,9 @@ importers:
       '@fontsource-variable/arimo':
         specifier: ^5.3.0
         version: 5.3.0
+      '@fontsource-variable/atkinson-hyperlegible-next':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@fontsource-variable/open-sans':
         specifier: ^5.3.0
         version: 5.3.0
@@ -2534,6 +2537,9 @@ packages:
 
   '@fontsource-variable/arimo@5.3.0':
     resolution: {integrity: sha512-t34ntseQmQX5nLt4nbAmjm4a2sZK5jzcYNBkehOqTg9xlbctc2ZrzlGZlptibfl9Trvsg9buhuoiqBBdm8VK8Q==}
+
+  '@fontsource-variable/atkinson-hyperlegible-next@5.3.0':
+    resolution: {integrity: sha512-UnLzNUy1RWoLDfydAatP4NaRm99X/WbQEph7q/PymJnCFIOOwKOx3pBmp5ys8trO0dM+CKGuJgeZP9fAR4mQpA==}
 
   '@fontsource-variable/open-sans@5.3.0':
     resolution: {integrity: sha512-VOfhZfLIOBVa6K/dTEu7scqQXYdGa4jBX8quFpQ0S6574B+W2EOBJf9PkqyVtMEI7WWIWNEbpvPc3vY1mN2mmQ==}
@@ -12927,6 +12933,8 @@ snapshots:
   '@floating-ui/utils@0.2.10': {}
 
   '@fontsource-variable/arimo@5.3.0': {}
+
+  '@fontsource-variable/atkinson-hyperlegible-next@5.3.0': {}
 
   '@fontsource-variable/open-sans@5.3.0': {}
 
