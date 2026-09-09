@@ -559,6 +559,18 @@ importers:
 
   packages/mermaid/src/docs:
     dependencies:
+      '@fontsource-variable/arimo':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource-variable/atkinson-hyperlegible-next':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource-variable/open-sans':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource-variable/recursive':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@mdi/font':
         specifier: ^7.4.47
         version: 7.4.47
