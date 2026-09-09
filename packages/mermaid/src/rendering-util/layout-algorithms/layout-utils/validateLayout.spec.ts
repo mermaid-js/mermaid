@@ -169,6 +169,50 @@ describe('validateLayout scoring (DDLT unified, 0–1000 fixed cap)', () => {
   });
 });
 
+describe('validateLayout self-loop rendering', () => {
+  // Node A centred at (0,0), 120x60 → borders x∈[-60,60], y∈[-30,30].
+  const a = () => mkNode('A', 0, 0, 120, 60);
+
+  it('flags edge-self-loop-not-rendered for a collapsed (zero-length) self-loop', () => {
+    // Both endpoints slid onto a single point on the right border — the exact
+    // degeneracy straightenParallelZs used to produce. Renders as a bare
+    // arrowhead with no visible loop.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: 0 },
+      { x: 60, y: 0 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).toContain('edge-self-loop-not-rendered');
+    expect(res.ok).toBe(false); // hard: the drawing is broken
+    expect(res.score).toBe(0);
+  });
+
+  it('flags edge-self-loop-not-rendered when the loop never leaves the node border', () => {
+    // Both ports on the right border at different offsets, no outward stub.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: -15 },
+      { x: 60, y: 15 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    expect(getIssueTypes(layout)).toContain('edge-self-loop-not-rendered');
+  });
+
+  it('does NOT flag a proper same-side U-bend self-loop that escapes the node', () => {
+    // right border → out 40px → over → back to right border: a visible loop.
+    const e = mkEdge('L_A_A', 'A', 'A', [
+      { x: 60, y: -15 },
+      { x: 100, y: -15 },
+      { x: 100, y: 15 },
+      { x: 60, y: 15 },
+    ]);
+    const layout: LayoutData = { nodes: [a()], edges: [e], config: {} as any };
+    const res = validateLayout(layout);
+    expect(res.issues.map((i) => i.type)).not.toContain('edge-self-loop-not-rendered');
+    expect(res.ok).toBe(true);
+  });
+});
+
 describe('validateLayout new hard-validation rules', () => {
   it('flags edge-bend-near-endpoint when the LAST segment is shorter than 10', () => {
     // Use node-free edges so only the new rule fires.
@@ -1132,13 +1176,13 @@ describe('validateLayout new geometric issues', () => {
     expect(getIssueTypes(layout)).not.toContain('edge-bend-overlaps-arrowhead');
   });
 
-  // ---- node-too-close-to-group: a leaf crowding a foreign group frame (SOFT) ----
+  // ---- node-too-close-to-group: a leaf crowding a foreign group frame (HARD) ----
 
   function mkGroup(id: string, x: number, y: number, width: number, height: number): Node {
     return { id, x, y, width, height, isGroup: true } as any;
   }
 
-  it('flags node-too-close-to-group as a graded SOFT penalty (still valid)', () => {
+  it('flags node-too-close-to-group as a HARD issue', () => {
     // Group G frame at x[150,250]; leaf N right edge at x=140 -> 10px gap, facing.
     const g = mkGroup('G', 200, 0, 100, 100);
     const n = mkNode('N', 120, 0, 40, 40);
@@ -1149,31 +1193,29 @@ describe('validateLayout new geometric issues', () => {
     expect(issue).toBeDefined();
     expect(issue?.nodeIds).toEqual(['N', 'G']);
     expect(issue?.details?.gap).toBeCloseTo(10);
-    // Soft: penalizes the score but stays valid. 1000 - round((20 - 10) * 3) = 970.
-    expect(res.ok).toBe(true);
-    expect(res.score).toBe(970);
+    // Promoted from a graded soft penalty on 2026-08-26: a node crowding a frame
+    // it does not belong to is a placement defect, and grading it let layouts
+    // keep a high score while looking wrong.
+    expect(res.ok).toBe(false);
+    expect(res.score).toBe(0);
   });
 
-  it('charges more the closer a node sits to the group frame', () => {
-    const near = validateLayout({
-      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 120, 0, 40, 40)], // gap 10
+  it('flags a node that clears the old 20px clearance but not the new 30px one', () => {
+    // N right edge at x=125 -> 25px gap: fine under the old clearance, not now.
+    const res = validateLayout({
+      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 105, 0, 40, 40)],
       edges: [],
       config: {} as any,
     });
-    const far = validateLayout({
-      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 115, 0, 40, 40)], // gap 15
-      edges: [],
-      config: {} as any,
-    });
-    expect(near.ok).toBe(true);
-    expect(far.ok).toBe(true);
-    expect(near.score).toBeLessThan(far.score); // closer => bigger penalty
+    const issue = res.issues.find((i) => i.type === 'node-too-close-to-group');
+    expect(issue?.details?.gap).toBeCloseTo(25);
+    expect(res.ok).toBe(false);
   });
 
   it('does NOT flag a node that clears the group by the full clearance', () => {
-    // N right edge at x=125 -> 25px gap (>= the 20px clearance).
+    // N right edge at x=115 -> 35px gap (>= the 30px clearance).
     const layout: LayoutData = {
-      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 105, 0, 40, 40)],
+      nodes: [mkGroup('G', 200, 0, 100, 100), mkNode('N', 95, 0, 40, 40)],
       edges: [],
       config: {} as any,
     };
@@ -1187,6 +1229,134 @@ describe('validateLayout new geometric issues', () => {
     const member = { ...mkNode('M', 180, 0, 40, 40), parentId: 'G' } as unknown as Node;
     const layout: LayoutData = { nodes: [g, member], edges: [], config: {} as any };
     expect(getIssueTypes(layout)).not.toContain('node-too-close-to-group');
+  });
+
+  it('flags a node whose border touches the group frame exactly (gap 0)', () => {
+    // G frame left edge at x=150; N right edge at exactly x=150 — kissing. The
+    // old `gap <= 0` skip made this the one crowding case the rule could not
+    // see (architecture4's outside nodes sat flush on the platform frame).
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 130, 0, 40, 40);
+    const res = validateLayout({ nodes: [g, n], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'node-too-close-to-group');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.gap).toBe(0);
+    expect(res.ok).toBe(false);
+  });
+
+  // ---- group-group-padding: two unrelated frames kissing (HARD) ----
+
+  it('flags group-group-padding for two sibling frames 5px apart', () => {
+    // A frame right edge x=50, B frame left edge x=55 — facing across 5px.
+    // B is shorter and offset so the pair does not tile its union into two
+    // bands (lane-shaped pairs are exempt by design).
+    const a = mkGroup('A', 0, 0, 100, 100);
+    const b = mkGroup('B', 105, 40, 100, 60);
+    const res = validateLayout({ nodes: [a, b], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'group-group-padding');
+    expect(issue).toBeDefined();
+    expect(issue?.nodeIds).toEqual(['A', 'B']);
+    expect(issue?.details?.gap).toBeCloseTo(5);
+    expect(res.ok).toBe(false);
+    expect(res.score).toBe(0);
+  });
+
+  it('does NOT flag group-group-padding at the full 20px padding', () => {
+    const a = mkGroup('A', 0, 0, 100, 100);
+    const b = mkGroup('B', 120, 40, 100, 60); // gap exactly 20, non-lane-shaped
+    const res = validateLayout({ nodes: [a, b], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('group-group-padding');
+  });
+
+  it('does NOT flag group-group-padding for a parent/child frame pair', () => {
+    // Nesting is the inset rule's job; the pair rule must skip ancestry.
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 0, 0, 150, 150), parentId: 'G' } as unknown as Node;
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('group-group-padding');
+  });
+
+  // ---- edge-to-group-too-short / node-close-to-own-frame (SOFT, graded) ----
+
+  it('grades an edge into a group frame that is too short to read', () => {
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 105, 0, 40, 40); // right edge x=125; frame left x=150
+    const e = mkEdge('L_N_G_0', 'N', 'G', [
+      { x: 125, y: 0 },
+      { x: 150, y: 0 }, // 25px stub into the frame
+    ]);
+    // The corpus regime: a 20px node↔frame clearance is legal, so a straight
+    // stub can be legally shorter than the visible minimum.
+    const res = validateLayout({
+      nodes: [g, n],
+      edges: [e],
+      config: { flowchart: { nodeGroupClearance: 20 } } as any,
+    });
+    const issue = res.issues.find((i) => i.type === 'edge-to-group-too-short');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.softPenalty).toBe(10); // (30 - 25) * 2
+    expect(res.ok).toBe(true); // soft: grades, never invalidates
+  });
+
+  it('does NOT grade a group edge at the full minimum length', () => {
+    const g = mkGroup('G', 200, 0, 100, 100);
+    const n = mkNode('N', 100, 0, 40, 40); // right edge x=120 -> 30px stub
+    const e = mkEdge('L_N_G_0', 'N', 'G', [
+      { x: 120, y: 0 },
+      { x: 150, y: 0 },
+    ]);
+    const res = validateLayout({ nodes: [g, n], edges: [e], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('edge-to-group-too-short');
+  });
+
+  it('grades a member crowding its own frame', () => {
+    const g = mkGroup('G', 0, 0, 200, 200); // frame [-100,100]
+    const m = { ...mkNode('M', -65, 0, 40, 40), parentId: 'G' } as unknown as Node;
+    // member left edge -85 -> inset 15 from the frame's -100
+    const res = validateLayout({ nodes: [g, m], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'node-close-to-own-frame');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.inset).toBeCloseTo(15);
+    expect(issue?.details?.softPenalty).toBe(10); // (20 - 15) * 2
+    expect(res.ok).toBe(true);
+  });
+
+  it('does NOT grade a member at the full inner padding', () => {
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const m = { ...mkNode('M', -60, 0, 40, 40), parentId: 'G' } as unknown as Node; // inset 20
+    const res = validateLayout({ nodes: [g, m], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('node-close-to-own-frame');
+  });
+
+  // ---- group-inside-group-padding: nested frame flush with its ancestor (HARD) ----
+
+  it('flags group-inside-group-padding for a child frame 3px inside its parent', () => {
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 0, 0, 194, 194), parentId: 'G' } as unknown as Node;
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'group-inside-group-padding');
+    expect(issue).toBeDefined();
+    expect(issue?.nodeIds).toEqual(['C', 'G']);
+    expect(issue?.details?.minInset).toBeCloseTo(3);
+    expect(res.ok).toBe(false);
+  });
+
+  it('flags group-inside-group-padding when the child pokes outside its parent', () => {
+    // Child right edge 10px past the parent's — negative inset fails the same test.
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 30, 0, 160, 100), parentId: 'G' } as unknown as Node;
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    const issue = res.issues.find((i) => i.type === 'group-inside-group-padding');
+    expect(issue).toBeDefined();
+    expect(issue?.details?.minInset).toBeCloseTo(-10);
+    expect(res.ok).toBe(false);
+  });
+
+  it('does NOT flag group-inside-group-padding at a healthy inset', () => {
+    const g = mkGroup('G', 0, 0, 200, 200);
+    const c = { ...mkGroup('C', 0, 0, 180, 180), parentId: 'G' } as unknown as Node; // inset 10
+    const res = validateLayout({ nodes: [g, c], edges: [], config: {} as any });
+    expect(res.issues.map((i) => i.type)).not.toContain('group-inside-group-padding');
   });
 
   // ---- edge-self-shared-subpath: adjacent-reversal backtrack spike (raw points) ----

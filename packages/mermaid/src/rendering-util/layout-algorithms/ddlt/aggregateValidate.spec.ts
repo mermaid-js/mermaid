@@ -11,6 +11,8 @@ function makeResult(overrides: Partial<ValidateLayoutResult>): ValidateLayoutRes
       nodeCount: 0,
       edgeCount: 0,
       crossings: 0,
+      maxCrossingsOnAnyEdge: 0,
+      crossingsHistogram: { '0': 0, '1': 0, '2': 0, '3': 0, '4+': 0 },
       totalPoints: 0,
       totalBendPenalty: 0,
       crossingPenalty: 0,

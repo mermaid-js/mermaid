@@ -13,6 +13,7 @@ atallah
 autonumber
 axisl-line
 bary
+bendless
 Bigdecimal
 birel
 BIREL
@@ -66,6 +67,7 @@ Eiglsperger
 EMPTYSTR
 enddate
 ERDIAGRAM
+errlog
 eslint
 flatmap
 forwardable
@@ -111,6 +113,7 @@ majorisation
 majorising
 mdast
 metafile
+metricly
 minlen
 Mstartx
 MULT
