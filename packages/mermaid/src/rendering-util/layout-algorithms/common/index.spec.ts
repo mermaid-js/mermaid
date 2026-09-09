@@ -437,6 +437,17 @@ describe('paintLayoutData', () => {
     expect(mocks.labelElement.attr).toHaveBeenCalledWith('transform', 'translate(10, 22)');
   });
 
+  it('uses a layout-specific edge label offset when provided', async () => {
+    const { paintLayoutData } = await import('./index.js');
+    const labelledEdge = edge('labelled', { label: 'Yes', x: 0, y: 0 } as Partial<Edge>);
+    const data = layout({ edges: [labelledEdge] });
+    const measured = measure();
+
+    await paintLayoutData(data, { measure: measured } as never, { edgeLabelOffsetY: 0 });
+
+    expect(mocks.labelElement.attr).toHaveBeenCalledWith('transform', 'translate(10, 20)');
+  });
+
   it('inserts and positions terminal labels without a center edge label', async () => {
     const { paintLayoutData } = await import('./index.js');
     const terminalEdge = edge('terminal', {

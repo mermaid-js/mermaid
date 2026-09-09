@@ -678,6 +678,8 @@ export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLay
     defaultMeasureLayout(data4Layout, context, { unwrapGroupLabels: true }),
   runLayoutCore: runElkLayoutCore,
   paintOptions: {
+    // ELK returns edge-label coordinates in the same final space as its routed edges.
+    edgeLabelOffsetY: 0,
     skipIntersect: true,
   },
 });
