@@ -4,6 +4,9 @@
   "description": "Mermaid examples package",
   "author": "Sidharth Vinod",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "type": "module",
   "module": "./dist/mermaid-examples.core.mjs",
   "types": "./dist/mermaid.d.ts",

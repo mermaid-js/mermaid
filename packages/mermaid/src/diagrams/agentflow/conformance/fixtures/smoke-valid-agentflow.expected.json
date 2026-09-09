@@ -1,0 +1,10 @@
+{
+  "outcome": "valid",
+  "semanticAssertions": {
+    "vertices": [{ "id": "input", "vertexKind": "input" }, { "id": "a" }, { "id": "b" }],
+    "edges": [
+      { "start": "input", "end": "a", "edgeSemantic": "sequence" },
+      { "start": "a", "end": "b", "edgeSemantic": "sequence" }
+    ]
+  }
+}

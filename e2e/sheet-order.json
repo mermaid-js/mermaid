@@ -1,4 +1,27 @@
 {
+  "diagrams/agentflow": [
+    "1-should-render-nested-flow-containers.png",
+    "10-should-keep-a-global-scoped-node-outside-the-flow-container.png",
+    "11-should-render-every-container-kind-with-the-base-theme.png",
+    "11-should-render-every-container-kind-with-the-dark-theme.png",
+    "11-should-render-every-container-kind-with-the-default-theme.png",
+    "11-should-render-every-container-kind-with-the-forest-theme.png",
+    "11-should-render-every-container-kind-with-the-neutral-theme.png",
+    "2-should-render-all-three-edge-types-plus-a-labeled-branch.png",
+    "3-should-render-a-decision-with-labeled-branches.png",
+    "4-should-render-collapsed-view.png",
+    "4b-should-render-the-input-value-pattern.png",
+    "5-should-render-the-v08-node-shapes.png",
+    "6-should-render-the-coffee-website-builder-diagram.png",
+    "7a-should-render-a-connector-declaration-with-a-bound-tool.png",
+    "7b-should-render-multiple-connector-declarations.png",
+    "8-should-redirect-cross-boundary-edges-to-the-collapsed-parent.png",
+    "9-should-treat-an-empty-metadata-block-as-a-no-op.png"
+  ],
+  "diagrams/agentflow/handdrawn": [
+    "should-render-every-container-kind.png",
+    "should-render-several-collapsed-containers.png"
+  ],
   "diagrams/architecture": [
     "should-align-siblings-in-a-row-when-their-edges-feed-a-common-downstream-node.png",
     "should-render-a-deterministic-layout-for-a-complex-deeply-nested-diagram.png",
@@ -579,6 +602,11 @@
     "with-styling-and-classes.png",
     "wrapping-long-text-with-a-new-line-2.png",
     "wrapping-long-text-with-a-new-line.png"
+  ],
+  "diagrams/flowchart/elk-container-algorithms": [
+    "elk-box-layout-with-edges.png",
+    "elk-rectpacking-layout-with-edges.png",
+    "elk-subgraph-with-box-algorithm.png"
   ],
   "diagrams/flowchart/handdrawn": [
     "apply-class-called-default-on-node-called-default.png",

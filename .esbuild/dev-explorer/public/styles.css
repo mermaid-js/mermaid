@@ -366,7 +366,9 @@ dev-explorer-app .diagram-inner > svg {
 }
 
 dev-explorer-app .diagram-inner[data-theme='dark'],
-dev-explorer-app .diagram-inner[data-theme='redux-dark'] {
+dev-explorer-app .diagram-inner[data-theme='neo-dark'],
+dev-explorer-app .diagram-inner[data-theme='redux-dark'],
+dev-explorer-app .diagram-inner[data-theme='redux-dark-color'] {
   background: #0b1020;
   color: #e8eefc;
 }

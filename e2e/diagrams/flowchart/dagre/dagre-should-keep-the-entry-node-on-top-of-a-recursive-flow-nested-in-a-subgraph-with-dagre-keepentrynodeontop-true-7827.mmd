@@ -1,0 +1,12 @@
+---
+config:
+  layout: dagre
+---
+flowchart TD
+  start([Start]) --> research
+  research --> done([Done])
+  subgraph research["Research"]
+  brief --> web_sources --> academic_sources --> expert_voices --> synthesize --> decision
+  decision -->|Needs completion| brief
+  decision -->|If complete| format_output
+  end

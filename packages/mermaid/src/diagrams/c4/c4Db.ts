@@ -16,6 +16,13 @@ import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
 type ParserAttribute = string | Record<string, string>;
 
 /**
+ * The fields a C4 element, boundary or relationship stores as `{ text }`. Everything else
+ * a named attribute can set - `$tags`, `$sprite`, `$link`, colours, `$shape` - is a plain
+ * string.
+ */
+const TEXT_FIELDS = new Set(['label', 'descr', 'techn', 'type']);
+
+/**
  * Apply optional C4 attributes to `bag` from the parser.
  *
  * Values may arrive as a raw positional value or a single `{ key: value }` named
@@ -31,7 +38,12 @@ const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
     }
     if (typeof value === 'object') {
       const [key, val] = Object.entries(value)[0];
-      bag[key] = val;
+      // Same rule as the positional text slots: a text field is stored as `{ text }`
+      // whichever slot it arrived through. `System_Boundary` and friends splice their
+      // kind in as a positional argument, so an explicit `$type` shifts along into this
+      // one and would otherwise land here as a bare string and overwrite the wrapped
+      // value the type slot just set.
+      bag[key] = TEXT_FIELDS.has(key) ? { text: val } : val;
     } else {
       bag[field] = value;
     }
@@ -110,22 +122,22 @@ export const addRel = function (
   rel.label = { text: label };
 
   if (techn === undefined || techn === null) {
-    rel.techn = { text: '' };
+    rel.techn ??= { text: '' };
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
-      rel[key] = { text: value };
+      rel[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       rel.techn = { text: techn };
     }
   }
 
   if (descr === undefined || descr === null) {
-    rel.descr = { text: '' };
+    rel.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      rel[key] = { text: value };
+      rel[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       rel.descr = { text: descr };
     }
@@ -167,11 +179,11 @@ export const addPersonOrSystem = function (
   }
 
   if (descr === undefined || descr === null) {
-    personOrSystem.descr = { text: '' };
+    personOrSystem.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      personOrSystem[key] = { text: value };
+      personOrSystem[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       personOrSystem.descr = { text: descr };
     }
@@ -216,22 +228,22 @@ export const addContainer = function (
   }
 
   if (techn === undefined || techn === null) {
-    container.techn = { text: '' };
+    container.techn ??= { text: '' };
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
-      container[key] = { text: value };
+      container[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       container.techn = { text: techn };
     }
   }
 
   if (descr === undefined || descr === null) {
-    container.descr = { text: '' };
+    container.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      container[key] = { text: value };
+      container[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       container.descr = { text: descr };
     }
@@ -276,22 +288,22 @@ export const addComponent = function (
   }
 
   if (techn === undefined || techn === null) {
-    component.techn = { text: '' };
+    component.techn ??= { text: '' };
   } else {
     if (typeof techn === 'object') {
       const [key, value] = Object.entries(techn)[0];
-      component[key] = { text: value };
+      component[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       component.techn = { text: techn };
     }
   }
 
   if (descr === undefined || descr === null) {
-    component.descr = { text: '' };
+    component.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      component[key] = { text: value };
+      component[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       component.descr = { text: descr };
     }
@@ -339,7 +351,7 @@ export const addPersonOrSystemBoundary = function (
   } else {
     if (typeof type === 'object') {
       const [key, value] = Object.entries(type)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.type = { text: type };
     }
@@ -390,7 +402,7 @@ export const addContainerBoundary = function (
   } else {
     if (typeof type === 'object') {
       const [key, value] = Object.entries(type)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.type = { text: type };
     }
@@ -444,18 +456,18 @@ export const addDeploymentNode = function (
   } else {
     if (typeof type === 'object') {
       const [key, value] = Object.entries(type)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.type = { text: type };
     }
   }
 
   if (descr === undefined || descr === null) {
-    boundary.descr = { text: '' };
+    boundary.descr ??= { text: '' };
   } else {
     if (typeof descr === 'object') {
       const [key, value] = Object.entries(descr)[0];
-      boundary[key] = { text: value };
+      boundary[key] = TEXT_FIELDS.has(key) ? { text: value } : value;
     } else {
       boundary.descr = { text: descr };
     }
@@ -679,7 +691,11 @@ export const getC4ShapeArray = function (parentBoundary?: string | null) {
   }
 };
 export const getC4Shape = function (alias: string) {
-  return c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
+  // Relations may target a boundary as well as a shape, so fall back to boundaries (#4864).
+  return (
+    c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias) ??
+    boundaries.find((boundary) => boundary.alias === alias)
+  );
 };
 export const getC4ShapeKeys = function (parentBoundary?: string | null) {
   return Object.keys(getC4ShapeArray(parentBoundary));

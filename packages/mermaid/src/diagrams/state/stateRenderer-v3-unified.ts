@@ -2,7 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { getDiagramElement } from '../../rendering-util/insertElementsForSize.js';
-import { render } from '../../rendering-util/render.js';
+import { getRegisteredLayoutAlgorithm, render } from '../../rendering-util/render.js';
 import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
@@ -57,7 +57,9 @@ export const draw = async function (text: string, id: string, _version: string, 
   const svg = getDiagramElement(id, securityLevel);
 
   data4Layout.type = diag.type;
-  data4Layout.layoutAlgorithm = layout;
+  // Resolve rather than assign: an unregistered layout would otherwise reach `render()`
+  // and throw, where every other unified renderer falls back to dagre.
+  data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
 
   // TODO: Should we move these two to baseConfig? These types are not there in StateConfig.
 

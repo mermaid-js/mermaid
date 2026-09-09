@@ -1,0 +1,16 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice()<<->>()Alice: Dual central with bidirectional solid
+  Bob()<<-->>()Bob: Dual central with bidirectional dotted
+  Charlie<<->>()Charlie: Central at end with bidirectional
+  Bob()<<->>Bob: Central at start with bidirectional

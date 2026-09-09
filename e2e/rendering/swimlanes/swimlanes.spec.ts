@@ -23,7 +23,10 @@ const HANDDRAWN_FIXTURES = [
 ];
 
 const shapeSelector = 'rect, polygon, ellipse, circle, path';
-const edgePathSelector = 'g.edgePath path.path, g.edgePath path';
+// The shared layout renderer emits the edge group as `g.edges.edgePaths`
+// (see createLayoutElementGroups). Edge paths themselves carry
+// `edge-thickness-* edge-pattern-* flowchart-link`, not a `.path` class.
+const edgePathSelector = 'g.edgePaths path';
 
 const asStandaloneSwimlanes = (source: string): string => {
   // Every swimlanes layout-test fixture declares the standalone `swimlanes`
@@ -220,6 +223,200 @@ test.describe('Swimlanes diagram', () => {
     await expect(shape).toHaveCSS('fill', 'rgb(187, 187, 255)');
     await expect(shape).toHaveCSS('stroke', 'rgb(255, 102, 102)');
     await expect(shape).toHaveCSS('stroke-width', '4px');
+  });
+
+  /** Only a render proves the stamped slot meets the emitted selector. */
+  test.describe('redux colour theme lanes', () => {
+    const fiveLanes = `swimlane-beta TD
+        subgraph Intake
+          A[Request]
+        end
+        subgraph Review
+          B[Check]
+        end
+        subgraph Build
+          C[Assemble]
+        end
+        subgraph Ship
+          D[Deliver]
+        end
+        subgraph Support
+          E[Follow up]
+        end
+        A --> B --> C --> D --> E
+      `;
+
+    const laneStrokes = (page: Page, half: 'title' | 'body') =>
+      page
+        .locator(`g.cluster.swimlane rect.swimlane-${half}`)
+        .evaluateAll((rects) => rects.map((rect) => getComputedStyle(rect).stroke));
+
+    for (const theme of ['redux-color', 'redux-dark-color'] as const) {
+      test(`gives every lane its own colour under ${theme}`, async ({ page }, testInfo) => {
+        await renderSwimlanes(page, testInfo, fiveLanes, `swimlanes-${theme}-lanes`, { theme });
+
+        await assertStandaloneSwimlanesRendered(page);
+
+        const slots = await page
+          .locator('g.cluster.swimlane')
+          .evaluateAll((lanes) => lanes.map((lane) => lane.getAttribute('data-color-id')));
+        expect(slots).toHaveLength(5);
+        expect(slots.filter(Boolean)).toHaveLength(5);
+        expect(new Set(slots).size).toBe(5);
+
+        // One lane's two halves match; across lanes they differ.
+        const titles = await laneStrokes(page, 'title');
+        const bodies = await laneStrokes(page, 'body');
+        expect(titles).toEqual(bodies);
+        expect(new Set(titles).size).toBe(5);
+        // `none` would mean the palette rule never landed.
+        expect(titles.filter((stroke) => stroke === 'none')).toEqual([]);
+      });
+    }
+
+    /** roughjs's emission order, which no unit test can confirm. */
+    test.describe('handDrawn', () => {
+      const lanePaths = (page: Page, half: 'title' | 'body', nth: 1 | 2) =>
+        page
+          .locator(`g.cluster.swimlane .swimlane-${half} path:nth-of-type(${nth})`)
+          .evaluateAll((paths) => paths.map((path) => getComputedStyle(path).stroke));
+
+      test('paints the outline path of both halves per lane', async ({ page }, testInfo) => {
+        await renderSwimlanes(page, testInfo, fiveLanes, 'swimlanes-handdrawn-outlines', {
+          theme: 'redux-color',
+          look: 'handDrawn',
+        });
+
+        await expect(page.locator('g.cluster.swimlane rect.swimlane-body')).toHaveCount(0);
+
+        for (const half of ['title', 'body'] as const) {
+          const outlines = await lanePaths(page, half, 2);
+          expect(outlines, `${half} outlines`).toHaveLength(5);
+          expect(new Set(outlines).size, `${half} outlines are distinct`).toBe(5);
+          expect(outlines.filter((stroke) => stroke === 'none')).toEqual([]);
+        }
+      });
+
+      /** roughjs draws a fill as lines, so the hachure path's stroke is the lane fill. */
+      test('fills both halves where the theme ships a background palette', async ({
+        page,
+      }, testInfo) => {
+        await renderSwimlanes(page, testInfo, fiveLanes, 'swimlanes-handdrawn-fill', {
+          theme: 'redux-color',
+          look: 'handDrawn',
+        });
+
+        for (const half of ['title', 'body'] as const) {
+          const fills = await lanePaths(page, half, 1);
+          expect(fills, `${half} fills`).toHaveLength(5);
+          expect(new Set(fills).size, `${half} fills are distinct`).toBe(5);
+          expect(fills.filter((stroke) => stroke === 'none')).toEqual([]);
+        }
+      });
+
+      test('leaves the body hachure unpainted without a background palette', async ({
+        page,
+      }, testInfo) => {
+        await renderSwimlanes(page, testInfo, fiveLanes, 'swimlanes-handdrawn-no-fill', {
+          theme: 'redux-dark-color',
+          look: 'handDrawn',
+        });
+
+        const fills = await lanePaths(page, 'body', 1);
+        expect(fills).toHaveLength(5);
+        expect(new Set(fills)).toEqual(new Set(['none']));
+        // The outline is still palette-coloured; only the fill is absent.
+        expect(new Set(await lanePaths(page, 'body', 2)).size).toBe(5);
+      });
+    });
+
+    test('paints the lane body fill only where the theme ships one', async ({ page }, testInfo) => {
+      await renderSwimlanes(page, testInfo, fiveLanes, 'swimlanes-lane-fill', {
+        theme: 'redux-color',
+      });
+
+      const fills = await page
+        .locator('g.cluster.swimlane rect.swimlane-body')
+        .evaluateAll((rects) => rects.map((rect) => getComputedStyle(rect).fill));
+      expect(new Set(fills).size).toBe(5);
+    });
+
+    test('keeps an explicit lane style ahead of the palette', async ({ page }, testInfo) => {
+      await renderSwimlanes(
+        page,
+        testInfo,
+        `swimlane-beta TD
+          subgraph Palette
+            A[Slot colour]
+          end
+          subgraph Styled
+            B[Own colour]
+          end
+          A --> B
+          style Styled fill:#00ff00,stroke:#0000ff
+        `,
+        'swimlanes-lane-user-style',
+        { theme: 'redux-color' }
+      );
+
+      const styled = page.locator('g.cluster.swimlane[data-id="Styled"] rect.swimlane-body');
+      await expect(styled).toHaveCSS('stroke', 'rgb(0, 0, 255)');
+      await expect(styled).toHaveCSS('fill', 'rgb(0, 255, 0)');
+    });
+
+    /** The synthetic lane gets no `look` or colour slot from upstream. */
+    test('colours the synthetic default lane distinctly', async ({ page }, testInfo) => {
+      await renderSwimlanes(
+        page,
+        testInfo,
+        `swimlane-beta TD
+          subgraph OwnedLane
+            A[Owned node]
+          end
+          Loose[Loose node] --> A
+        `,
+        'swimlanes-default-lane-colour',
+        { theme: 'redux-color' }
+      );
+
+      const slots = await page
+        .locator('g.cluster.swimlane')
+        .evaluateAll((lanes) => lanes.map((lane) => lane.getAttribute('data-color-id')));
+      expect(slots).toHaveLength(2);
+      expect(new Set(slots).size).toBe(2);
+      expect(slots.filter(Boolean)).toHaveLength(2);
+    });
+
+    test('draws the synthetic default lane in the diagram look', async ({ page }, testInfo) => {
+      await renderSwimlanes(
+        page,
+        testInfo,
+        `swimlane-beta TD
+          subgraph OwnedLane
+            A[Owned node]
+          end
+          Loose[Loose node] --> A
+        `,
+        'swimlanes-default-lane-handdrawn',
+        { theme: 'redux-color', look: 'handDrawn' }
+      );
+
+      const defaultLane = page.locator('g.cluster.swimlane[data-id="__swimlane_default__"]');
+      await expect(defaultLane).toHaveAttribute('data-look', 'handDrawn');
+      // A `rect` here would mean the classic branch ran instead.
+      await expect(defaultLane.locator('rect.swimlane-body')).toHaveCount(0);
+      await expect(defaultLane.locator('.swimlane-body path')).not.toHaveCount(0);
+    });
+
+    for (const theme of ['redux-color', 'redux-dark-color'] as const) {
+      test(`renders coloured lanes under ${theme}`, async ({ page }, testInfo) => {
+        await snapshotSwimlanes(page, testInfo, fiveLanes, { theme });
+      });
+
+      test(`renders coloured handdrawn lanes under ${theme}`, async ({ page }, testInfo) => {
+        await snapshotSwimlanes(page, testInfo, fiveLanes, { theme, look: 'handDrawn' });
+      });
+    }
   });
 
   test('puts nodes without an explicit subgraph into a default swimlane', async ({

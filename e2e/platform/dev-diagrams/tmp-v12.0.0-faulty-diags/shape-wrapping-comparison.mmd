@@ -1,0 +1,73 @@
+---
+config:
+  look: neo
+  htmlLabels: true
+  fontFamily: courier
+  flowchart:
+    wrappingWidth: 120
+    minNodeWidth: 120
+---
+%% Change wrappingWidth to 400 to compare wider labels.
+%% Set root htmlLabels to false to compare SVG labels.
+%% All nodes use the same label; case names are subgraph titles.
+flowchart TB
+  subgraph row_current["Current exceptions and rectangle control"]
+    direction LR
+    subgraph case_rectangle["Rectangle"]
+      rectangle@{shape: rect, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_stadium["Stadium"]
+      stadium@{shape: stadium, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_circle["Circle"]
+      circle@{shape: circle, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_diamond["Diamond"]
+      diamond@{shape: diam, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    case_rectangle ~~~ case_stadium ~~~ case_circle ~~~ case_diamond
+  end
+
+  subgraph row_candidates["Additional candidates"]
+    direction LR
+    subgraph case_double_circle["Double circle"]
+      double_circle@{shape: dbl-circ, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_display["Display"]
+      display@{shape: curv-trap, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_delay["Delay"]
+      delay@{shape: delay, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    case_double_circle ~~~ case_display ~~~ case_delay
+  end
+
+  subgraph row_images["Images with a 48 × 48 source"]
+    direction LR
+    subgraph case_image["Image — constraint off"]
+      image@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 48, h: 48, constraint: "off", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_image_constrained["Image — constraint on"]
+      image_constrained@{img: "/dev-diagrams/tmp-v12.0.0-faulty-diags/wrapping-audit-image.svg", w: 48, h: 48, constraint: "on", label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    case_image ~~~ case_image_constrained
+  end
+
+  subgraph row_icons["Icon variants with external captions"]
+    direction LR
+    subgraph case_icon["Plain icon"]
+      icon@{icon: "fa:cloud", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_icon_square["Square icon"]
+      icon_square@{icon: "fa:cloud", form: "square", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_icon_circle["Circle icon"]
+      icon_circle@{icon: "fa:cloud", form: "circle", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    subgraph case_icon_rounded["Rounded icon"]
+      icon_rounded@{icon: "fa:cloud", form: "rounded", h: 48, label: "Let me think...<br/>Do I want something for work,<br/>something to spend every free second with,<br/>or something to get around?"}
+    end
+    case_icon ~~~ case_icon_square ~~~ case_icon_circle ~~~ case_icon_rounded
+  end
+
+  row_current ~~~ row_candidates ~~~ row_images ~~~ row_icons

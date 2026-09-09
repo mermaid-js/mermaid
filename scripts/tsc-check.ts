@@ -8,9 +8,50 @@ import { execFileSync } from 'child_process';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { tmpdir } from 'node:os';
+import { createRequire } from 'node:module';
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
+
+const require_ = createRequire(import.meta.url);
+
+/**
+ * `mermaid`'s emitted `.d.ts` files reference `type-fest` and `@types/d3` directly, so the
+ * throwaway project has to install them itself. Their versions are not a free choice: the
+ * check compiles the *published* declarations, and those were built against exactly the
+ * ranges `packages/mermaid/package.json` declares.
+ *
+ * They used to be written as `'*'` and a hardcoded `'^7.4.3'`, which quietly meant "whatever
+ * the registry serves today". That resolved `type-fest` to a major mermaid has never been
+ * compiled against and broke this job at random -- 5.9.0 added `Float16Array` to its
+ * `TypedArray` union, which does not exist under the `es2020` lib below, and `skipLibCheck`
+ * is deliberately off here so third-party declarations are checked too. Two runs of the same
+ * commit seconds apart disagreed, depending on what npm resolved.
+ *
+ * Reading the ranges from the package under test is what makes this reproducible. It is also
+ * what the note below the field always asked for.
+ */
+const MERMAID_PKG = require_('../packages/mermaid/package.json') as {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+};
+
+/**
+ * Look in both sections: `type-fest` is a devDependency while `@types/d3` is a runtime one,
+ * and which section a type package sits in is not something this check should care about.
+ * Throw rather than emit `undefined` -- npm reads a missing range as "latest", which is the
+ * exact failure mode being fixed here, and it would come back silently.
+ */
+const typeDependency = (name: string): string => {
+  const range = MERMAID_PKG.dependencies?.[name] ?? MERMAID_PKG.devDependencies?.[name];
+  if (!range) {
+    throw new Error(
+      `tsc-check: packages/mermaid/package.json no longer declares '${name}'. ` +
+        `Update scripts/tsc-check.ts to match wherever it moved.`
+    );
+  }
+  return range;
+};
 
 /**
  * Packages to build and import
@@ -34,10 +75,15 @@ const SRC = {
         dependencies: tarballs,
         scripts: { build: 'tsc -b --verbose' },
         devDependencies: {
-          // these are somewhat-unexpectedly required, and a downstream would need
-          // to match the real `package.json` values
-          'type-fest': '*',
-          '@types/d3': '^7.4.3',
+          // these are somewhat-unexpectedly required, and a downstream needs to match the
+          // real `package.json` values -- see `typeDependency`
+          'type-fest': typeDependency('type-fest'),
+          '@types/d3': typeDependency('@types/d3'),
+          // Deliberately unpinned: a downstream picks its own compiler, so checking against
+          // the current release is the signal this job exists to give. Pinning it to the
+          // repo's own TypeScript additionally needs `"type": "module"` here, or the
+          // generated `src/index.ts` is treated as CommonJS under `moduleResolution:
+          // nodenext` and cannot import these ESM-only packages (TS1479).
           typescript: '*',
         },
       },
@@ -54,14 +100,14 @@ const SRC = {
           declaration: true,
           esModuleInterop: true,
           incremental: true,
-          lib: ['dom', 'es2020'],
+          lib: ['dom', 'es2024'],
           module: 'nodenext',
           moduleResolution: 'nodenext',
           noEmitOnError: true,
           noImplicitAny: true,
           noUnusedLocals: true,
           sourceMap: true,
-          target: 'es2020',
+          target: 'es2024',
           rootDir: './src',
           outDir: './lib',
           strict: true,
@@ -121,7 +167,9 @@ async function main() {
   for (const argv of COMMANDS) {
     console.warn('... in', cwd);
     console.warn('>>>', ...argv);
-    execFileSync(argv[0], argv.slice(1), { cwd });
+    // `stdio: 'inherit'`, or a failure prints the compiler output as `<Buffer 0a 3e ...>` and
+    // the actual diagnostic never reaches the log.
+    execFileSync(argv[0], argv.slice(1), { cwd, stdio: 'inherit' });
   }
 
   for (const lib of LIB) {
