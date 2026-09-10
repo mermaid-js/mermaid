@@ -1,0 +1,16 @@
+---
+config:
+  fontFamily: courier
+  flowchart:
+    wrappingWidth: 120
+    minNodeWidth: 120
+---
+%% The wavy bottom edge dips a full amplitude below the page, so the last line has to clear
+%% it. Labels here have no explicit line breaks and every line fills the width, which is the
+%% case that clipped the final glyph on the stacked and lined variants.
+flowchart TD
+  A@{shape: doc, label: "aaaaaa bbbbbb cccccc dddddd eeeeee ffffff gggggg hhhhhh"}
+  B@{shape: docs, label: "aaaaaa bbbbbb cccccc dddddd eeeeee ffffff gggggg hhhhhh"}
+  C@{shape: lin-doc, label: "aaaaaa bbbbbb cccccc dddddd eeeeee ffffff gggggg hhhhhh"}
+  D@{shape: tag-doc, label: "aaaaaa bbbbbb cccccc dddddd eeeeee ffffff gggggg hhhhhh"}
+  A --> B --> C --> D

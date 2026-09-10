@@ -115,7 +115,9 @@ properties:
       nodePlacementAlignment:
         description: |
           Elk specific option affecting Brandes-Koepf node placement alignment.
-          NONE picks the alignment with the smallest height.
+          BALANCED combines the four directional alignments; NONE picks the
+          smallest result. Defaults to BALANCED for the default preset and NONE
+          for named non-default presets.
         type: string
         enum:
           - NONE
@@ -124,34 +126,33 @@ properties:
           - RIGHTUP
           - RIGHTDOWN
           - BALANCED
-        default: NONE
+        # Default comes from `elk.preset` unless set explicitly.
       preset:
         description: |
-          Named combination of the three options that decide where nodes end up:
-          layering strategy, node placement strategy and cycle breaking strategy.
-          They belong to different phases of the layout, so a preset is simply a
-          named triple rather than a mode with behaviour of its own.
+          Named combination of layering, node placement, placement alignment
+          and cycle breaking options. Explicit options override the preset for
+          that option; the remaining preset values still apply.
 
-          `default` — network simplex layering and placement with depth-first
-          cycle breaking at the top level, and Brandes-Koepf placement inside
-          subgraphs. Depth-first breaking gives shorter back edges on graphs
-          that loop.
+          `default` — network simplex layering, balanced Brandes-Koepf placement
+          at the top level and inside subgraphs, and depth-first cycle breaking.
+          Balanced placement favors centered branches and composite-state entries,
+          sometimes at the cost of a wider or taller drawing. It does not
+          guarantee that every edge attaches to the center of its target.
 
-          `legacy` — what shipped before presets existed: Brandes-Koepf placement,
-          which straightens long edges at the cost of that alignment, with ELK's
-          own greedy cycle breaking. Reproduces the rendering of earlier
-          versions rather than the defaults their schema advertised.
+          `legacy` — Brandes-Koepf placement with NONE alignment and ELK's own
+          greedy cycle breaking. Reproduces the rendering before presets existed.
 
-          `modelOrder` — as `default`, but breaks cycles by greedy model order,
-          which disturbs declaration order least at the cost of longer back
-          edges. This is the combination `default` named previously.
+          `modelOrder` — network simplex layering and top-level placement,
+          Brandes-Koepf placement inside subgraphs, NONE alignment, and greedy
+          model-order cycle breaking, which favors declaration order.
 
-          `depthFirst` — a name for what `default` already is, for diagrams that
-          would rather say depth-first than rely on the default.
+          `depthFirst` — the previous default: network simplex layering and
+          top-level placement, Brandes-Koepf placement inside subgraphs, NONE
+          alignment, and depth-first cycle breaking.
 
-          Setting `layeringStrategy`, `nodePlacementStrategy` or
-          `cycleBreakingStrategy` explicitly overrides the preset for that one
-          option; the rest of the preset still applies.
+          Setting `layeringStrategy`, `nodePlacementStrategy`,
+          `nodePlacementAlignment` or `cycleBreakingStrategy` explicitly overrides
+          the preset for that option, including an explicit NONE alignment.
         type: string
         enum:
           - default
@@ -1651,7 +1652,8 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     required:
       - titleTopMargin
       - useMaxWidth
-      - defaultRenderer
+      - wrappingWidth
+      - minNodeWidth
     properties:
       theme:
         $ref: '#/$defs/BaseDiagramConfig/properties/theme'
@@ -1662,6 +1664,24 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       layout:
         $ref: '#/$defs/BaseDiagramConfig/properties/layout'
         default: 'elk'
+      wrappingWidth:
+        description: |
+          Width of nodes where text is wrapped.
+
+          When using markdown strings the text is wrapped automatically, this
+          value sets the max width of a text before it continues on a new line.
+        type: number
+        default: 120
+      minNodeWidth:
+        description: |
+          Minimum width of the label area of a node.
+
+          Labels narrower than this are widened to it, so nodes with short text
+          get a uniform width; the node's own padding is added on top, the same
+          way it is for `wrappingWidth`. Nodes with an explicit width are not
+          affected.
+        type: number
+        default: 120
       titleTopMargin:
         $ref: '#/$defs/GitGraphDiagramConfig/properties/titleTopMargin'
         default: 25
@@ -1724,21 +1744,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       radius:
         type: number
         default: 5
-      defaultRenderer:
-        description: |
-          Decides which rendering engine that is to be used for the rendering.
-        type: string
-        enum:
-          - dagre-d3
-          - dagre-wrapper
-          - elk
-        # todo, check this, old docs said dagre-d3 even though value was dagre-wrapper
-        default: dagre-wrapper
-        meta:enum:
-          dagre-d3: The [dagre-d3-es](https://www.npmjs.com/package/dagre-d3-es) library.
-          dagre-wrapper: wrapper for dagre implemented in mermaid
-          elk: Layout using [elkjs](https://github.com/kieler/elkjs)
-
   ClassDiagramConfig:
     title: Class Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
@@ -1747,7 +1752,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     required:
       - titleTopMargin
       - useMaxWidth
-      - defaultRenderer
     properties:
       theme:
         $ref: '#/$defs/BaseDiagramConfig/properties/theme'
@@ -1769,9 +1773,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       textHeight:
         type: number
         default: 10
-      defaultRenderer:
-        $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
-        default: dagre-wrapper
       nodeSpacing:
         type: integer
         minimum: 0
@@ -2458,6 +2459,24 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         minimum: 0
         default: 50
+      wrappingWidth:
+        description: |
+          Width of nodes where text is wrapped.
+
+          When using markdown strings the text is wrapped automatically, this
+          value sets the max width of a text before it continues on a new line.
+        type: number
+        default: 120
+      minNodeWidth:
+        description: |
+          Minimum width of the label area of a node.
+
+          Labels narrower than this are widened to it, so nodes with short text
+          get a uniform width; the node's own padding is added on top, the same
+          way it is for `wrappingWidth`. Nodes with an explicit width are not
+          affected.
+        type: number
+        default: 120
 
   FlowchartDiagramConfig:
     title: Flowchart Diagram Config
@@ -2473,8 +2492,8 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - rankSpacing
       - curve
       - useMaxWidth
-      - defaultRenderer
       - wrappingWidth
+      - minNodeWidth
     properties:
       theme:
         $ref: '#/$defs/BaseDiagramConfig/properties/theme'
@@ -2563,9 +2582,6 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           **Only used in new experimental rendering.**
         type: number
         default: 15
-      defaultRenderer:
-        $ref: '#/$defs/StateDiagramConfig/properties/defaultRenderer'
-        default: dagre-wrapper
       wrappingWidth:
         description: |
           Width of nodes where text is wrapped.
@@ -2573,7 +2589,17 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           When using markdown strings the text is wrapped automatically, this
           value sets the max width of a text before it continues on a new line.
         type: number
-        default: 200
+        default: 120
+      minNodeWidth:
+        description: |
+          Minimum width of the label area of a node.
+
+          Labels narrower than this are widened to it, so nodes with short text
+          get a uniform width; the node's own padding is added on top, the same
+          way it is for `wrappingWidth`. Nodes with an explicit width are not
+          affected.
+        type: number
+        default: 120
 
       inheritDir:
         type: boolean
@@ -2884,6 +2910,8 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     unevaluatedProperties: false
     required:
       - useMaxWidth
+      - wrappingWidth
+      - minNodeWidth
     properties:
       theme:
         $ref: '#/$defs/BaseDiagramConfig/properties/theme'
@@ -2891,6 +2919,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       look:
         $ref: '#/$defs/BaseDiagramConfig/properties/look'
         default: 'neo'
+      wrappingWidth:
+        $ref: '#/$defs/FlowchartDiagramConfig/properties/wrappingWidth'
+        default: 120
+      minNodeWidth:
+        $ref: '#/$defs/FlowchartDiagramConfig/properties/minNodeWidth'
+        default: 120
       actorFontSize:
         description: Font size for actor labels
         type: number

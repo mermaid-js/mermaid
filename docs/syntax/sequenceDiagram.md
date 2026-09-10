@@ -29,7 +29,7 @@ sequenceDiagram
 >
 > If unavoidable, one must use parentheses(), quotation marks "", or brackets {},\[], to enclose the word "end". i.e : (end), \[end], {end}.
 
-## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
+## Default theme and look (v12.0.0+)
 
 Sequence diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
