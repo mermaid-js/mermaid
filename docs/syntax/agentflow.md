@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/agentflow.md](../../packages/mermaid/src/docs/syntax/agentflow.md).
 
-# Agentflow (v\<MERMAID_RELEASE_VERSION>+)
+# Agentflow (v12.0.0+)
 
 > An agentflow diagram describes an agentic workflow: the agents that do the work, the flows they run, the tasks and tools inside those flows, and how control and data move between them.
 >
@@ -46,7 +46,7 @@ agentflow-beta TB
   end
 ```
 
-## Default theme, look and layout (v\<MERMAID_RELEASE_VERSION>+)
+## Default theme, look and layout (v12.0.0+)
 
 Agentflow diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every
 diagram type does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for

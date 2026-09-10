@@ -68,7 +68,12 @@ describe('per-diagram appearance documentation', () => {
     expect(examples).toHaveLength(2);
 
     // `contributing.md` asks for a version marker on newly documented behaviour.
-    expect(readPage(page)).toMatch(/^## Default theme[^\n]* \(v<MERMAID_RELEASE_VERSION>\+\)$/m);
+    // On `develop` that marker is still the placeholder; the changesets release
+    // (`docs:release-version`) rewrites it to the version being published, so the
+    // released docs carry a concrete number instead. Both are correct.
+    expect(readPage(page)).toMatch(
+      /^## Default theme[^\n]* \(v(?:<MERMAID_RELEASE_VERSION>|\d+\.\d+\.\d+)\+\)$/m
+    );
 
     const [withDefaults, pinnedBack] = examples;
     // The pair has to be the same diagram, or the comparison teaches nothing.

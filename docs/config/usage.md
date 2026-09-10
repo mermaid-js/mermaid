@@ -32,7 +32,7 @@ Requirements:
 
 ### Supported browsers and runtimes
 
-Mermaid v\<MERMAID_RELEASE_VERSION>+'s published bundles target ES2024 and are aimed to support Safari 17.4 or later.
+Mermaid v12.0.0+'s published bundles target ES2024 and are aimed to support Safari 17.4 or later.
 
 We run linting for Chromium 121 and Firefox 123 support as well, but unlike Safari 17.4, we don't commit to supporting these outdated versions.
 
@@ -72,16 +72,51 @@ Example:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
 </script>
 ```
 
 **Following these directions, mermaid starts at page load and (when the page has loaded) it will locate the graph definitions inside the `pre` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
 
+### Fonts
+
+Mermaid currently uses a few different default `fontFamily` settings, based on
+the diagram type and the given theme.
+
+The current preferred fonts are:
+
+- Recursive Variable (open-source font, since v11.15.0)
+- Open Sans (open-source font)
+- Arial ([Restrictive License](https://en.wikipedia.org/wiki/TrueType_core_fonts_for_the_Web))
+- Trebuchet MS ([Restrictive License](https://en.wikipedia.org/wiki/TrueType_core_fonts_for_the_Web))
+
+For a consistent look, we recommend you supply these as web fonts, when possible,
+e.g. like:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5/400.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5/400-italic.css" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fontsource-variable/recursive@5/index.css"
+/>
+```
+
 ## Simple full example:
 
 ```html
 <!doctype html>
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5/400.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5/400-italic.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@fontsource-variable/recursive@5/index.css"
+  />
+</head>
 <html lang="en">
   <body>
     <pre class="mermaid">
@@ -91,7 +126,7 @@ Example:
       B-->D(fa:fa-spinner);
     </pre>
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
     </script>
   </body>
 </html>
@@ -116,7 +151,7 @@ If you need a more lightweight version without these features, you can use [Merm
 
 The tiny build has never included ELK, and still doesn't — it is a large dependency and staying small is the point of that build. Diagrams that ask for an ELK layout here fall back to Dagre and still render; nothing breaks, they are simply laid out by Dagre.
 
-What changed in v\<MERMAID_RELEASE_VERSION> is the main package, not this one: ELK used to be an opt-in `@mermaid-js/layout-elk` install, and is now bundled with `mermaid` and used by default. So **if you want a Mermaid without ELK, the tiny build is the way to get one** — it is no longer simply a matter of not installing the layout package.
+What changed in v12.0.0 is the main package, not this one: ELK used to be an opt-in `@mermaid-js/layout-elk` install, and is now bundled with `mermaid` and used by default. So **if you want a Mermaid without ELK, the tiny build is the way to get one** — it is no longer simply a matter of not installing the layout package.
 
 If you want the tiny build _and_ ELK, register `@mermaid-js/layout-elk` alongside it. That package continues to be published for exactly this case:
 

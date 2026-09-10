@@ -8,9 +8,9 @@
 
 This page lists the available layout algorithms supported in Mermaid diagrams.
 
-## ELK is bundled and default from v\<MERMAID_RELEASE_VERSION>
+## ELK is bundled and default from v12.0.0
 
-Before v\<MERMAID_RELEASE_VERSION>, ELK shipped as a separate `@mermaid-js/layout-elk` package that
+Before v12.0.0, ELK shipped as a separate `@mermaid-js/layout-elk` package that
 each site had to install and register. It is now part of `mermaid` itself and
 registered automatically, so `layout: elk` works with no setup — and it is the
 **default**, replacing Dagre.
