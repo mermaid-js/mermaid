@@ -30,6 +30,23 @@ const sanitizeDictionaryConfig = (dict: Record<string, unknown>, valuePattern: R
   }
 };
 
+const THEME_VARIABLE_VALUE_PATTERN = /^[\d "#%(),.;A-Za-z]+$/;
+
+// themeVariables can nest plain color leaves under a namespace object (treeView,
+// packet, ...), so this has to walk down into them instead of only checking the
+// top-level keys, or a nested leaf could carry a value the top-level check would
+// otherwise have blanked out.
+const sanitizeThemeVariables = (themeVariables: Record<string, unknown>): void => {
+  for (const key of Object.keys(themeVariables)) {
+    const value = themeVariables[key];
+    if (value && typeof value === 'object') {
+      sanitizeThemeVariables(value as Record<string, unknown>);
+    } else if (typeof value === 'string' && !THEME_VARIABLE_VALUE_PATTERN.test(value)) {
+      themeVariables[key] = '';
+    }
+  }
+};
+
 /**
  * Sanitizes directive objects
  *
@@ -87,12 +104,7 @@ export const sanitizeDirective = (args: any): void => {
   }
 
   if (args.themeVariables) {
-    for (const k of Object.keys(args.themeVariables)) {
-      const val = args.themeVariables[k];
-      if (val?.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
-        args.themeVariables[k] = '';
-      }
-    }
+    sanitizeThemeVariables(args.themeVariables);
   }
   log.debug('After sanitization', args);
 };
