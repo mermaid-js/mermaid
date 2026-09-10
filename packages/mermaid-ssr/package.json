@@ -1,0 +1,31 @@
+{
+  "name": "@mermaid-js/mermaid-ssr",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Render Mermaid diagrams in Node without a browser",
+  "type": "module",
+  "scripts": {
+    "render": "tsx src/render.ts",
+    "render:examples": "tsx src/render-examples.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "jsdom": "^26.1.0",
+    "mermaid": "workspace:^",
+    "opentype.js": "1.3.4",
+    "svg-path-bbox": "^2.1.0"
+  },
+  "devDependencies": {
+    "@mermaid-js/examples": "workspace:^",
+    "@types/jsdom": "^21.1.7",
+    "@types/opentype.js": "^1.3.10"
+  },
+  "files": [
+    "src",
+    "fonts"
+  ]
+}
