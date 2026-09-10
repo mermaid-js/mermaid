@@ -9,6 +9,13 @@ import type { IconifyJSON } from '@iconify/types';
  *
  * Names follow the OMG event/task/gateway vocabulary, so `bpmn:message` is the envelope
  * that marks a message event and `bpmn:user` is the person that marks a user task.
+ *
+ * Every path is drawn as an original shape for this project, from the symbols BPMN 2.0.2
+ * specifies; none is taken from a third-party icon set. The notation fixes what each mark
+ * depicts - an envelope, a clock, a lightning bolt - but not its path data, so the marks
+ * are redrawn here rather than sourced. This follows the same rule as the treeView pack,
+ * whose bundled icons were cut to originally-drawn shapes in 770c44e20; anything a diagram
+ * needs beyond the notation belongs in a user-registered pack, not in this file.
  */
 export const bpmnIcons: IconifyJSON = {
   prefix: 'bpmn',
