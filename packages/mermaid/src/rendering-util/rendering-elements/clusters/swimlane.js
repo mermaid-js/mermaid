@@ -103,7 +103,7 @@ export const swimlane = async (parent, node) => {
         roughness: 0.7,
         fill: clusterBkg,
         stroke: laneStroke,
-        fillWeight: 3,
+        // fillWeight: 3,
         seed: handDrawnSeed,
       });
       const bodyOptions = userNodeOverrides(node, {
