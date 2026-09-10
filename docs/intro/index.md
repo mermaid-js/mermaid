@@ -341,7 +341,7 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
+Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@12>
 
 ## Deploying Mermaid
 
@@ -359,7 +359,7 @@ To Deploy Mermaid:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```
