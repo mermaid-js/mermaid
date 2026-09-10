@@ -47,3 +47,42 @@ describe('layout runtime config', () => {
     expect(result1!.width).toBeLessThan(result2!.width);
   });
 });
+
+describe('layout debug logging', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // Regression for #7907: the block tree was serialized eagerly for a debug log on
+  // every render. Anything in the tree that JSON cannot represent - a DOM node
+  // carrying React's own enumerable fiber properties, in the reported case - turned
+  // a render into a thrown TypeError/RangeError.
+  it('does not serialize the block tree when laying out', () => {
+    const circular: Record<string, unknown> = { id: 'not-serializable' };
+    circular.self = circular;
+
+    const root: Block = {
+      id: 'root',
+      type: 'square',
+      columns: 1,
+      children: [
+        {
+          id: 'b1',
+          type: 'square',
+          children: [],
+          size: { width: 100, height: 50, x: 0, y: 0 },
+          // Stands in for a value the model can pick up that JSON cannot walk.
+          node: circular,
+        } as unknown as Block,
+      ],
+    };
+
+    const db = {
+      getBlock: (id: string) => (id === 'root' ? root : undefined),
+    } as unknown as BlockDB;
+
+    vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({ block: { padding: 8 } } as any);
+
+    expect(() => layout(db)).not.toThrow();
+  });
+});
