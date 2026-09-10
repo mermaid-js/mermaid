@@ -445,6 +445,32 @@ const parseId = function (idStr) {
 // endDate
 // length
 
+/**
+ * Rejects a task carrying more comma-separated fields than the switches below handle.
+ *
+ * Those switches cover one, two and three fields and had an empty `default:`, so a task
+ * with more was built with neither a `startTime` nor an `endTime`. Nothing checked for
+ * that, and `compileTask` later read `.type` off the missing `startTime`, throwing
+ * "Cannot read properties of undefined (reading 'type')" at draw time — a render-time
+ * crash naming nothing that points back at the line at fault.
+ *
+ * Only the field *count* is checked. An empty field is meaningful inside the supported
+ * forms, where it marks an omitted value: `Milestone : vert, 01,` is a vert marker with
+ * a start and no end, and dropping its empty field would re-read the `01` as the end and
+ * move the marker.
+ *
+ * @param {string[]} data - The task's fields, already tag-stripped and trimmed.
+ * @param {string} dataStr - The raw task definition, for the error message.
+ * @throws {Error} If there are more fields than a task definition can have.
+ */
+const assertTaskFieldCount = function (data, dataStr) {
+  if (data.length > 3) {
+    throw new Error(
+      `Invalid task definition "${dataStr}": a task takes at most 3 comma-separated fields (id, start, end), but ${data.length} were given.`
+    );
+  }
+};
+
 const compileData = function (prevTask, dataStr) {
   let ds;
 
@@ -464,6 +490,8 @@ const compileData = function (prevTask, dataStr) {
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim();
   }
+
+  assertTaskFieldCount(data, dataStr);
 
   let endTimeData = '';
   switch (data.length) {
@@ -512,6 +540,8 @@ const parseData = function (prevTaskId, dataStr) {
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim();
   }
+
+  assertTaskFieldCount(data, dataStr);
 
   switch (data.length) {
     case 1:
