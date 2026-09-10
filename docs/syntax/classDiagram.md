@@ -72,7 +72,7 @@ classDiagram
     }
 ```
 
-## Default theme, look and layout (v\<MERMAID_RELEASE_VERSION>+)
+## Default theme, look and layout (v12.0.0+)
 
 Class diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and

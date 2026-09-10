@@ -1,4 +1,4 @@
-# Use case diagrams (<MERMAID_RELEASE_VERSION>+)
+# Use case diagrams (12.0.0+)
 
 Use case diagrams show how actors interact with a system and its use cases. Start a diagram with the `usecase-beta` keyword. Put each statement on its own physical line.
 
@@ -16,7 +16,7 @@ Customer --> Checkout
 
 Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direction.
 
-## Default theme, look and layout (v<MERMAID_RELEASE_VERSION>+)
+## Default theme, look and layout (v12.0.0+)
 
 Use case diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and

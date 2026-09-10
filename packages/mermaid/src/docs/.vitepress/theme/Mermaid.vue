@@ -18,6 +18,9 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { render } from './mermaid';
 import { buildExampleConfig } from './exampleConfig';
+import '@fontsource/open-sans/400.css';
+import '@fontsource/open-sans/400-italic.css';
+import '@fontsource-variable/recursive/index.css';
 
 const props = defineProps({
   graph: {
