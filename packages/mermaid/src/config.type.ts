@@ -124,36 +124,37 @@ export interface MermaidConfig {
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
     /**
      * Elk specific option affecting Brandes-Koepf node placement alignment.
-     * NONE picks the alignment with the smallest height.
+     * BALANCED combines the four directional alignments; NONE picks the
+     * smallest result. Defaults to BALANCED for the default preset and NONE
+     * for named non-default presets.
      *
      */
     nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
     /**
-     * Named combination of the three options that decide where nodes end up:
-     * layering strategy, node placement strategy and cycle breaking strategy.
-     * They belong to different phases of the layout, so a preset is simply a
-     * named triple rather than a mode with behaviour of its own.
+     * Named combination of layering, node placement, placement alignment
+     * and cycle breaking options. Explicit options override the preset for
+     * that option; the remaining preset values still apply.
      *
-     * `default` — network simplex layering and placement with depth-first
-     * cycle breaking at the top level, and Brandes-Koepf placement inside
-     * subgraphs. Depth-first breaking gives shorter back edges on graphs
-     * that loop.
+     * `default` — network simplex layering, balanced Brandes-Koepf placement
+     * at the top level and inside subgraphs, and depth-first cycle breaking.
+     * Balanced placement favors centered branches and composite-state entries,
+     * sometimes at the cost of a wider or taller drawing. It does not
+     * guarantee that every edge attaches to the center of its target.
      *
-     * `legacy` — what shipped before presets existed: Brandes-Koepf placement,
-     * which straightens long edges at the cost of that alignment, with ELK's
-     * own greedy cycle breaking. Reproduces the rendering of earlier
-     * versions rather than the defaults their schema advertised.
+     * `legacy` — Brandes-Koepf placement with NONE alignment and ELK's own
+     * greedy cycle breaking. Reproduces the rendering before presets existed.
      *
-     * `modelOrder` — as `default`, but breaks cycles by greedy model order,
-     * which disturbs declaration order least at the cost of longer back
-     * edges. This is the combination `default` named previously.
+     * `modelOrder` — network simplex layering and top-level placement,
+     * Brandes-Koepf placement inside subgraphs, NONE alignment, and greedy
+     * model-order cycle breaking, which favors declaration order.
      *
-     * `depthFirst` — a name for what `default` already is, for diagrams that
-     * would rather say depth-first than rely on the default.
+     * `depthFirst` — the previous default: network simplex layering and
+     * top-level placement, Brandes-Koepf placement inside subgraphs, NONE
+     * alignment, and depth-first cycle breaking.
      *
-     * Setting `layeringStrategy`, `nodePlacementStrategy` or
-     * `cycleBreakingStrategy` explicitly overrides the preset for that one
-     * option; the rest of the preset still applies.
+     * Setting `layeringStrategy`, `nodePlacementStrategy`,
+     * `nodePlacementAlignment` or `cycleBreakingStrategy` explicitly overrides
+     * the preset for that option, including an explicit NONE alignment.
      *
      */
     preset?: 'default' | 'legacy' | 'modelOrder' | 'depthFirst';
@@ -463,11 +464,6 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   padding?: number;
   /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
-  /**
    * Width of nodes where text is wrapped.
    *
    * When using markdown strings the text is wrapped automatically, this
@@ -475,6 +471,16 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    *
    */
   wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
   /**
    * If true, subgraphs without explicit direction will inherit the global graph direction
    * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
@@ -652,6 +658,24 @@ export interface AgentflowDiagramConfig extends BaseDiagramConfig {
    *
    */
   rankSpacing?: number;
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -1121,11 +1145,6 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   dividerMargin?: number;
   padding?: number;
   textHeight?: number;
-  /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
   nodeSpacing?: number;
   rankSpacing?: number;
   /**
@@ -1182,6 +1201,24 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
    */
   layout?: string;
   /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
+  /**
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
@@ -1209,11 +1246,6 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
   edgeLengthFactor?: string;
   compositTitleSize?: number;
   radius?: number;
-  /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -2307,6 +2339,24 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    *
    */
   look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
   /**
    * Font size for actor labels
    */

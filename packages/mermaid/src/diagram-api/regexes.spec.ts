@@ -49,21 +49,34 @@ describe('stripAnyComments', () => {
   it.each([
     ['all-whitespace lines', (n: number) => ('\n' + ' '.repeat(4)).repeat(n)],
     ['`%%` runs with no terminating newline', (n: number) => '%%' + 'x%%'.repeat(n)],
-    ['deep indents', (n: number) => (' '.repeat(400) + 'classDef x fill:#fff\n').repeat(n)],
   ])('scales linearly on %s', (_label, build) => {
     // Scaling, not a wall-clock bound. The previous version of this test asserted "under 200ms"
     // on one fixed input, which a quadratic implementation passes comfortably — and did, for
     // both shapes above. Doubling the input should roughly double the work; quadratic would
     // quadruple it.
+    //
+    // Only shapes that are quadratic in the line count belong here. A deeply indented document
+    // (hundreds of spaces per line, no `%%`) is quadratic in the indent width but linear in the
+    // number of lines, so the released regex passes this ratio on it too; it proves nothing, and
+    // at several megabytes per input it turns the ratio into a memory-bandwidth measurement that
+    // flakes on shared runners.
     const measure = (n: number) => {
       const input = build(n);
       // Warm up so the first call does not carry compilation cost into the ratio.
       stripAnyComments(input);
-      const t0 = performance.now();
-      for (let i = 0; i < 5; i++) {
-        stripAnyComments(input);
+      // A single pass over the small input takes tens of microseconds, so one GC pause or
+      // scheduler hiccup on a shared CI runner can inflate an averaged sample several-fold.
+      // Noise only ever adds time, so the minimum over repeated trials is the stable estimate
+      // of the true cost; it is what keeps this ratio from flaking on a loaded machine.
+      let best = Infinity;
+      for (let trial = 0; trial < 5; trial++) {
+        const t0 = performance.now();
+        for (let i = 0; i < 5; i++) {
+          stripAnyComments(input);
+        }
+        best = Math.min(best, (performance.now() - t0) / 5);
       }
-      return (performance.now() - t0) / 5;
+      return best;
     };
 
     const small = measure(4000);

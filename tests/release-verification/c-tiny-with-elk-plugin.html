@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>c) tiny + @mermaid-js/layout-elk</title>
+  </head>
+  <body>
+    <h1>c) tiny gains ELK by registering the plugin</h1>
+    <div id="out"></div>
+    <script src="./node_modules/@mermaid-js/tiny/dist/mermaid.tiny.js"></script>
+    <script type="module">
+      import elkLayouts from './node_modules/@mermaid-js/layout-elk/dist/mermaid-layout-elk.esm.min.mjs';
+
+      const LOG_LEVEL = 'warn';
+      const captured = [];
+      for (const level of ['warn', 'error']) {
+        const original = console[level].bind(console);
+        console[level] = (...args) => {
+          captured.push(level + ': ' + args.map(String).join(' '));
+          original(...args);
+        };
+      }
+
+      const FLOW =
+        'flowchart TD\n A[Start] --> B{Choose}\n B -->|one| C[One]\n B -->|two| D[Two]\n A --> D';
+
+      const render = async (id, code, config) => {
+        mermaid.initialize({ startOnLoad: false, logLevel: LOG_LEVEL, ...config });
+        const { svg } = await mermaid.render(id, code);
+        const host = document.createElement('div');
+        host.innerHTML = svg;
+        return {
+          role: host.querySelector('svg')?.getAttribute('aria-roledescription') ?? null,
+          nodes: host.querySelectorAll('.node').length,
+          geometry: [...host.querySelectorAll('.node')]
+            .map((n) => n.getAttribute('transform'))
+            .join('|'),
+          marker: host.querySelector('.edgePaths path')?.getAttribute('marker-end') ?? '',
+          svg,
+        };
+      };
+
+      const result = { checks: [], warnings: [] };
+      const check = (name, pass, detail) => result.checks.push({ name, pass: !!pass, detail });
+
+      try {
+        // Baseline before registering: tiny can only do dagre.
+        const before = await render('c-before', FLOW, { layout: 'elk' });
+
+        result.registered = elkLayouts.map((l) => l.name);
+        mermaid.registerLayoutLoaders(elkLayouts);
+
+        const dagre = await render('c-dagre', FLOW, { layout: 'dagre' });
+        const elk = await render('c-elk', FLOW, { layout: 'elk' });
+        const mrtree = await render('c-mrtree', FLOW, { layout: 'elk.mrtree' });
+        // arrowMarkerAbsolute is the specific setting that broke when the plugin's
+        // own config module never saw initialize(); it is the sharpest probe that
+        // the host config actually reaches the plugin.
+        const absolute = await render('c-absolute', FLOW, {
+          layout: 'elk',
+          arrowMarkerAbsolute: true,
+        });
+
+        document.getElementById('out').innerHTML = elk.svg;
+
+        check(
+          'plugin exposes the expected layout names',
+          result.registered.join(',') ===
+            'elk,elk.stress,elk.force,elk.mrtree,elk.sporeOverlap,elk.box,elk.rectpacking',
+          result.registered.join(',')
+        );
+        check(
+          'flowchart renders after registering the plugin',
+          elk.role === 'flowchart-v2' && elk.nodes === 4,
+          elk.role + ', ' + elk.nodes + ' nodes'
+        );
+        check(
+          'elk geometry differs from dagre (elk really ran)',
+          elk.geometry !== dagre.geometry && elk.geometry.length > 0
+        );
+        check(
+          'before registering, elk had fallen back to dagre',
+          before.geometry === dagre.geometry
+        );
+        check(
+          'elk.mrtree variant works too',
+          mrtree.nodes === 4 && mrtree.geometry !== elk.geometry
+        );
+        check(
+          'host config reaches the plugin (arrowMarkerAbsolute honoured)',
+          absolute.marker.includes('http'),
+          absolute.marker.slice(0, 60)
+        );
+
+        const unexpected = captured.filter((m) => !/not registered/i.test(m));
+        check(
+          'no unexpected warnings or errors after registering',
+          unexpected.length === 0,
+          unexpected.join(' ~ ') || 'none'
+        );
+
+        result.warnings = captured;
+        result.ok = result.checks.every((c) => c.pass);
+      } catch (e) {
+        result.ok = false;
+        result.error = String(e?.stack ?? e).slice(0, 900);
+      }
+      window.__result = result;
+    </script>
+  </body>
+</html>

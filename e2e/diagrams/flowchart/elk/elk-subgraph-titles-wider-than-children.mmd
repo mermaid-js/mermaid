@@ -1,0 +1,24 @@
+---
+config:
+  layout: elk
+---
+%% Every subgraph title here is wider than the nodes inside it. ELK must reserve
+%% the title width before routing, so edges into a group meet the painted border
+%% instead of ending inside it, and the frame is not widened after the fact.
+flowchart LR
+  org[Org]
+  subgraph platform["Platform and infrastructure services"]
+    infra[infra]
+  end
+  subgraph product["Product experience and onboarding"]
+    app[app]
+  end
+  subgraph shared["Shared design system and tokens"]
+    design[design]
+    icons[icons]
+  end
+  org --> platform
+  org --> product
+  org --> shared
+  app --> infra
+  design --> app

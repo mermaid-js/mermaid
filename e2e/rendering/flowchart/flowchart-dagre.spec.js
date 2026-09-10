@@ -13,7 +13,7 @@ test.describe('Flowchart Dagre', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { defaultRenderer: 'dagre' } }
+      { layout: 'dagre' }
     );
     await imgSnapshotTest(
       page,
@@ -25,7 +25,7 @@ test.describe('Flowchart Dagre', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { defaultRenderer: 'dagre' } }
+      { layout: 'dagre' }
     );
   });
 
@@ -42,7 +42,7 @@ test.describe('Flowchart Dagre', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { useMaxWidth: true, defaultRenderer: 'dagre' } }
+      { layout: 'dagre', flowchart: { useMaxWidth: true } }
     );
     const svg = page.locator('svg');
     await expect(svg).toHaveAttribute('width', '100%');
@@ -71,7 +71,7 @@ test.describe('Flowchart Dagre', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { useMaxWidth: false, defaultRenderer: 'dagre' } }
+      { layout: 'dagre', flowchart: { useMaxWidth: false } }
     );
     const svg = page.locator('svg');
     const width = parseFloat((await svg.getAttribute('width')) ?? '0');
@@ -91,10 +91,15 @@ test.describe('Flowchart Dagre', () => {
       `flowchart TD
       A --> B --> C --> D
       `,
-      { flowchart: { defaultRenderer: 'dagre' } }
+      { layout: 'dagre' }
     );
+    // `.edgePaths`, not `.edges`: only ELK tags the edge group with both classes,
+    // so an `.edges` selector matches nothing here and the loop passes vacuously.
     await page.locator('svg').evaluate((svg) => {
-      const edges = svg.querySelectorAll('.edges > path');
+      const edges = svg.querySelectorAll('.edgePaths > path');
+      if (edges.length !== 3) {
+        throw new Error(`Expected 3 edges, found ${edges.length}`);
+      }
       for (const edge of edges) {
         if (!edge.classList.contains('flowchart-link')) {
           throw new Error('Expected flowchart-link class on edge');
@@ -116,7 +121,7 @@ test.describe('Title and arrow styling #4813', () => {
       flowchart LR
       A-->B
       A-->C`,
-      { flowchart: { defaultRenderer: 'dagre' } }
+      { layout: 'dagre' }
     );
     const titleText = await page.locator('svg text').first().textContent();
     expect(titleText).toContain(titleString);
@@ -132,10 +137,10 @@ test.describe('Title and arrow styling #4813', () => {
       B-.-oC
       C==xD
       D ~~~ A`,
-      { flowchart: { defaultRenderer: 'dagre' } }
+      { layout: 'dagre' }
     );
     await page.locator('svg').evaluate((svg) => {
-      const edges = svg.querySelectorAll('.edges path');
+      const edges = svg.querySelectorAll('.edgePaths path');
       const classes = [
         'edge-pattern-solid',
         'edge-pattern-dotted',
