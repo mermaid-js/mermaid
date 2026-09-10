@@ -31,3 +31,15 @@ a.edit {
   position: relative;
   top: 10px;
 }
+
+/*
+ * VitePress styles prose paragraphs (`.vp-doc p`: 28px line height, 16px
+ * margins). Diagram labels are markdown wrapped in <p> inside the rendered SVG
+ * and are measured by mermaid itself, so those prose values shift and clip the
+ * labels. Reset them for the rendered diagram only; the surrounding prose keeps
+ * the VitePress values.
+ */
+.vp-doc .mermaid-diagram p {
+  line-height: inherit;
+  margin: 0;
+}
