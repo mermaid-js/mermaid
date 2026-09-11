@@ -625,8 +625,11 @@ export const insertEdge = function (
   if (layout === 'swimlane') {
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
-        // Simple straight edge: just clip the two endpoints to the node boundaries.
-        points = [tail.intersect(points[0]), head.intersect(points[1])];
+        // A straight edge: each end docks facing the other one. The reference has to be
+        // the far endpoint - handing a node its own endpoint back describes no direction,
+        // so the shape answers with whichever face that stray point happened to sit near
+        // and a link between two vertically aligned nodes can leave from a side.
+        points = [tail.intersect(points[1]), head.intersect(points[0])];
       } else {
         // For multi-segment paths, keep the inner bend points and just adjust the entry/exit
         // segments near the nodes.
@@ -634,12 +637,26 @@ export const insertEdge = function (
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
         const TOLERANCE = 0.5;
-        const lastIsPinned =
-          Math.abs(points[points.length - 1].x - lastInner.x) < TOLERANCE &&
-          Math.abs(points[points.length - 1].y - lastInner.y) < TOLERANCE;
 
         const newFirst = tail.intersect(firstInner);
-        const newLast = lastIsPinned ? lastInner : head.intersect(lastInner);
+
+        // The layout clips to each node's rect, but a shape whose drawn glyph is smaller
+        // than the box it reserves - a BPMN event reserves room for a caption above and
+        // below its circle - leaves the arrow short of what is actually drawn, so the
+        // shape is asked where its own boundary is.
+        //
+        // Its answer is refused only when it would bend a segment that the layout had
+        // drawn straight: a polygon intersection can drift off the axis, and on an
+        // orthogonal edge that is worse than stopping early. A segment that already runs
+        // diagonally has no such axis to protect, so the shape's answer is taken.
+        const originalLast = points[points.length - 1];
+        const isAxisAligned = (a, b) =>
+          Math.abs(a.x - b.x) < TOLERANCE || Math.abs(a.y - b.y) < TOLERANCE;
+        const candidateLast = head.intersect(lastInner);
+        const newLast =
+          !isAxisAligned(originalLast, lastInner) || isAxisAligned(candidateLast, lastInner)
+            ? candidateLast
+            : originalLast;
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
