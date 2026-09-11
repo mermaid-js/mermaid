@@ -194,12 +194,19 @@ function extractName(entityIdentifier: string): string | undefined {
 
 function findSwimlaneByNamespace(
   swimlanes: Record<string, Swimlane>,
-  namespace: string | undefined
+  namespace: string | undefined,
+  boundaryMin: number,
+  boundaryMax: number
 ): Swimlane | undefined {
   if (!namespace || namespace.length === 0) {
     return undefined;
   }
-  return Object.values(swimlanes).find((swimlane) => swimlane.namespace === namespace);
+  return Object.values(swimlanes).find(
+    (swimlane) =>
+      swimlane.namespace === namespace &&
+      swimlane.index > boundaryMin &&
+      swimlane.index < boundaryMax
+  );
 }
 
 function findNextAvailableIndex(
@@ -225,55 +232,54 @@ function calculateSwimlaneProps(
   swimlanes: Record<string, Swimlane>
 ): SwimlaneProps {
   const namespace = extractNamespace(frame.entityIdentifier);
-  const sw = findSwimlaneByNamespace(swimlanes, namespace);
 
   switch (frame.modelEntityType) {
     case 'ui':
     case 'pcr':
-    case 'processor':
+    case 'processor': {
+      const sw = findSwimlaneByNamespace(swimlanes, namespace, 0, 100);
       if (sw) {
-        return {
-          index: sw.index,
-          label: sw.namespace || diagramProps.labelUiAutomation,
-        };
+        return { index: sw.index, label: sw.label, namespace: sw.namespace };
       } else if (namespace) {
         return {
           index: findNextAvailableIndex(swimlanes, 0, 100),
           label: diagramProps.labelUiAutomationPrefix + namespace,
+          namespace,
         };
       }
       return { index: 0, label: diagramProps.labelUiAutomation };
+    }
     case 'rmo':
     case 'readmodel':
     case 'cmd':
-    case 'command':
+    case 'command': {
+      const sw = findSwimlaneByNamespace(swimlanes, namespace, 100, 200);
       if (sw) {
-        return {
-          index: sw.index,
-          label: sw.namespace || diagramProps.labelCommandReadModel,
-        };
+        return { index: sw.index, label: sw.label, namespace: sw.namespace };
       } else if (namespace) {
         return {
           index: findNextAvailableIndex(swimlanes, 100, 200),
           label: diagramProps.labelCommandReadModelPrefix + namespace,
+          namespace,
         };
       }
       return { index: 100, label: diagramProps.labelCommandReadModel };
+    }
     case 'evt':
     case 'event':
-    default:
+    default: {
+      const sw = findSwimlaneByNamespace(swimlanes, namespace, 200, 300);
       if (sw) {
-        return {
-          index: sw.index,
-          label: sw.namespace || diagramProps.labelEvents,
-        };
+        return { index: sw.index, label: sw.label, namespace: sw.namespace };
       } else if (namespace) {
         return {
           index: findNextAvailableIndex(swimlanes, 200, 300),
           label: diagramProps.labelEventsPrefix + namespace,
+          namespace,
         };
       }
       return { index: 200, label: diagramProps.labelEvents };
+    }
   }
 }
 
@@ -447,6 +453,7 @@ function evolveFramePositioned(state: Context, _event: Event): Context {
     swimlane = {
       index: swimlaneProps.index,
       label: swimlaneProps.label,
+      namespace: swimlaneProps.namespace,
       r: 0,
       y: swimlaneProps.index * diagramProps.swimlaneMinHeight + diagramProps.swimlaneGap,
       height: diagramProps.swimlaneMinHeight,
