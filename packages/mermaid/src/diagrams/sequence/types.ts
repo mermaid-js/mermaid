@@ -47,6 +47,7 @@ export interface AddMessageParams {
     | 'addMessage'
     | 'sequenceIndex'
     | 'addParticipant'
+    | 'addFutureParticipant'
     | 'createParticipant'
     | 'destroyParticipant'
     | 'activeStart'
