@@ -279,17 +279,18 @@ You can add clickable links to commits, branches, and tags. This allows you to n
 - `securityLevel='strict'`: Click links are disabled.
 - `securityLevel='loose'`: Click links are enabled and respect specified targets (`_blank`, `_self`, etc.).
 - `securityLevel='sandbox'`: Click links are enabled and override the link target to `_top`.
+- `securityLevel='antiscript'`: Click links are enabled, but unsafe URL schemes are suppressed.
 ```
 
 Usage:
 
-- `click commit <id> <url>`: Adds a link to a commit with the given ID.
-- `click branch <name> <url>`: Adds a link to a branch with the given name.
-- `click tag <name> <url>`: Adds a link to a tag with the given name.
+- `click commit <id> "<url>"`: Adds a link to a commit with the given ID.
+- `click branch <name> "<url>"`: Adds a link to a branch with the given name.
+- `click tag <name> "<url>"`: Adds a link to a tag with the given name.
 
 You can also specify an optional tooltip and target (e.g., `_blank` for new tab).
 
-Syntax: `click <type> <id> <url> ["tooltip"] [target]`
+Syntax: `click <type> <id> "<url>" ["tooltip"] [target]`
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 
