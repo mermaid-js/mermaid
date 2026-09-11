@@ -88,7 +88,7 @@ export const plainTeamMembers: CoreTeam[] = [
     name: 'Justin Greywolf',
   },
   {
-    github: 'IOrlandoni',
+    github: 'thisisnacho',
     name: 'Nacho Orlandoni',
   },
   {
