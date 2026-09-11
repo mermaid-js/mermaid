@@ -67,6 +67,7 @@ const getData = function () {
       ticket: section.ticket,
       shape: 'kanbanSection',
       level: section.level,
+      cssClasses: section?.cssClasses,
       look: conf.look,
     } satisfies KanbanNode;
     _nodes.push(node);
@@ -87,6 +88,7 @@ const getData = function () {
         level: item.level,
         rx: 5,
         ry: 5,
+        cssClasses: item?.cssClasses,
         cssStyles: ['text-align: left'],
       } satisfies KanbanNode;
       _nodes.push(childNode);
