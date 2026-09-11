@@ -1,4 +1,6 @@
 import type { LayoutData } from '../../../types.js';
+import { buildLaneModel } from '../lanes.js';
+import { collectAnchoredIds } from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -153,7 +155,10 @@ export function applyLrDirectionTransform(
 ): boolean {
   const nodes = (layout.nodes ?? []) as LayoutNode[];
   const edges = layout.edges ?? [];
-  const contentNodes = nodes.filter((n) => !n.isGroup);
+  // An anchored node's position is derived from its host, so it must not steer the
+  // aspect ratio or the lane bounds computed below.
+  const anchoredIds = collectAnchoredIds(nodes);
+  const contentNodes = nodes.filter((n) => !n.isGroup && !anchoredIds.has(n.id));
 
   let minX = Infinity;
   let minY = Infinity;
@@ -210,7 +215,8 @@ export function applyLrDirectionTransform(
 
   recomputeNestedGroupBounds(nodes);
 
-  const laneNodes = nodes.filter((n) => n.isGroup && !n.parentId);
+  const laneModel = buildLaneModel(nodes);
+  const laneNodes = nodes.filter((n) => laneModel.isLane(n.id));
   if (laneNodes.length === 0) {
     if (direction === 'RL') {
       mirrorAxis(layout, 'x');
@@ -222,7 +228,7 @@ export function applyLrDirectionTransform(
   const childrenByLane = new Map<string, LayoutNode[]>();
 
   for (const n of nodes) {
-    if (n.isGroup) {
+    if (n.isGroup || anchoredIds.has(n.id)) {
       continue;
     }
     const laneId = resolveTopLevelGroupId(n, nodeById);

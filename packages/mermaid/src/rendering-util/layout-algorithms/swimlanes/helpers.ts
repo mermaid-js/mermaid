@@ -4,6 +4,8 @@ import type {
   Edge as MermaidEdge,
   ClusterNode,
 } from '../../types.js';
+import { buildLaneModel } from './lanes.js';
+import { collectAnchoredIds, resolveAnchorHostId } from './anchoredNodes.js';
 
 export type Layout = LayoutData;
 export type Node = MermaidNode;
@@ -98,8 +100,9 @@ function assignTopLaneTitleRect(lane: Node): void {
 export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
+  const laneModel = buildLaneModel(nodes);
   for (const node of layout.nodes ?? []) {
-    if (node.isGroup && !node.parentId) {
+    if (laneModel.isLane(node.id)) {
       node.shape = 'swimlane';
       if (direction) {
         (node as any).direction = direction;
@@ -140,16 +143,28 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
 }
 
 export function toGraphView(layout: LayoutData): Graph {
+  const allNodes = layout.nodes ?? [];
+  const byId = new Map<NodeId, Node>(allNodes.map((n) => [n.id, n]));
+
+  // An anchored node is placed from its host rather than laid out, so it stays out of
+  // ranking, ordering and coordinate assignment. `normalizeGraph` rebuilds the node list
+  // from `nodeById`, so it has to be absent from that map as well as from the id list.
+  const anchoredIds = collectAnchoredIds(allNodes);
+  const hostOf = (id: NodeId): NodeId =>
+    anchoredIds.has(id) ? (resolveAnchorHostId(id, byId) ?? id) : id;
+
   const nodeById = new Map<NodeId, Node>();
-  for (const n of layout.nodes ?? []) {
-    nodeById.set(n.id, n);
+  for (const n of allNodes) {
+    if (!anchoredIds.has(n.id)) {
+      nodeById.set(n.id, n);
+    }
   }
 
   const edges: EdgeRef[] = [];
   for (const e of layout.edges ?? []) {
-    const src = typeof e.start === 'string' ? e.start : undefined;
-    const dst = typeof e.end === 'string' ? e.end : undefined;
-    if (!src || !dst) {
+    const rawSrc = typeof e.start === 'string' ? e.start : undefined;
+    const rawDst = typeof e.end === 'string' ? e.end : undefined;
+    if (!rawSrc || !rawDst) {
       continue;
     }
     // Exclude labelled originals from Sugiyama: their routing is carried by
@@ -159,12 +174,18 @@ export function toGraphView(layout: LayoutData): Graph {
     if ((e as MermaidEdge & { labelNodeId?: string }).labelNodeId) {
       continue;
     }
+    // A flow touching an anchored node is ranked as if it left the host, which is what
+    // the notation draws and what stops the far end becoming an unconstrained root.
+    const src = hostOf(rawSrc);
+    const dst = hostOf(rawDst);
+    if (src === dst) {
+      continue;
+    }
     edges.push({ id: e.id, src, dst, ref: e });
   }
 
-  const allNodes = layout.nodes ?? [];
-  const groupNodes = allNodes.filter((n) => n.isGroup);
-  const nonGroupNodes = allNodes.filter((n) => !n.isGroup);
+  const groupNodes = allNodes.filter((n) => n.isGroup && !anchoredIds.has(n.id));
+  const nonGroupNodes = allNodes.filter((n) => !n.isGroup && !anchoredIds.has(n.id));
 
   const nodesInGroupOrder = [...groupNodes].reverse();
   const nodes: NodeId[] = [...nodesInGroupOrder, ...nonGroupNodes].map((n) => n.id);
@@ -203,16 +224,21 @@ export function writeBackToLayoutData(
   }
 
   const allNodes = layout.nodes ?? [];
+  // An anchored node is placed from its host after this runs, so any coordinate it
+  // carries here is one it arrived with. Sizing a group from that would let a position
+  // left over from an earlier render stretch the group and the lane around it.
+  const anchoredIds = collectAnchoredIds(allNodes);
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
+  const laneModel = buildLaneModel(allNodes);
   const topLevelGroups: Node[] = [];
   for (const group of allNodes) {
     if (!group?.isGroup) {
       continue;
     }
-    if (!group.parentId) {
+    if (laneModel.isLane(group.id)) {
       topLevelGroups.push(group);
     }
-    const children = allNodes.filter((n) => n.parentId === group.id);
+    const children = allNodes.filter((n) => n.parentId === group.id && !anchoredIds.has(n.id));
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
