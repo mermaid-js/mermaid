@@ -17,7 +17,6 @@ import type {
  * algorithm to calculate optimal node positions for tree structures.
  *
  * @param data - The layout data containing nodes, edges, and configuration
- * @param config - Mermaid configuration object
  * @returns Promise resolving to layout result with positioned nodes and edges
  */
 export function executeTidyTreeLayout(data: LayoutData): Promise<LayoutResult> {
