@@ -2168,6 +2168,14 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
    */
   showBits?: boolean;
   /**
+   * The direction each row is numbered in. `descending` mirrors every row so it reads from
+   * that row's highest bit on the left down to its lowest bit on the right, the convention
+   * used for hardware registers. Fields are still declared lowest bit first, and keep their
+   * width.
+   *
+   */
+  bitOrder?: 'ascending' | 'descending';
+  /**
    * The horizontal padding between the blocks in a row.
    */
   paddingX?: number;
