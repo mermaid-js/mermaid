@@ -81,6 +81,15 @@ import { bang } from './shapes/bang.js';
 import { cloud } from './shapes/cloud.js';
 import { defaultMindmapNode } from './shapes/defaultMindmapNode.js';
 import { mindmapCircle } from './shapes/mindmapCircle.js';
+import { bpmnStart } from './shapes/bpmnStart.js';
+import { bpmnIntermediate } from './shapes/bpmnIntermediate.js';
+import { bpmnBoundary } from './shapes/bpmnBoundary.js';
+import { bpmnEnd } from './shapes/bpmnEnd.js';
+import { bpmnGateway } from './shapes/bpmnGateway.js';
+import { bpmnActivity } from './shapes/bpmnActivity.js';
+import { bpmnDataObject } from './shapes/bpmnDataObject.js';
+import { bpmnDataStore } from './shapes/bpmnDataStore.js';
+import { bpmnAnnotation } from './shapes/bpmnAnnotation.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -581,6 +590,19 @@ const generateShapeMap = () => {
     usecaseBusiness,
     usecaseEllipse,
     usecaseJsonTable,
+
+    // BPMN diagram. The element's kind comes from the shape name and its glyph from the
+    // `icon` attribute, so the whole vocabulary is reachable without a shape per type.
+    // Names are hyphenated because flowchart rejects a shape name that is not lowercase.
+    'bpmn-start': bpmnStart,
+    'bpmn-intermediate': bpmnIntermediate,
+    'bpmn-boundary': bpmnBoundary,
+    'bpmn-end': bpmnEnd,
+    'bpmn-gateway': bpmnGateway,
+    'bpmn-activity': bpmnActivity,
+    'bpmn-data': bpmnDataObject,
+    'bpmn-data-store': bpmnDataStore,
+    'bpmn-annotation': bpmnAnnotation,
   } as const;
 
   const entries = [
