@@ -8,5 +8,10 @@
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "bumpVersionsWithWorkspaceProtocolOnly": true,
-  "ignore": ["@mermaid-js/docs", "@mermaid-js/webpack-test", "@mermaid-js/mermaid-example-diagram"]
+  "ignore": [
+    "@mermaid-js/docs",
+    "@mermaid-js/webpack-test",
+    "@mermaid-js/mermaid-example-diagram",
+    "@mermaid-js/release-verification"
+  ]
 }

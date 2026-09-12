@@ -224,7 +224,7 @@ b. The importing of the Mermaid library through the `mermaid.esm.mjs` or `mermai
 ```html
 <body>
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
   </script>
 </body>
@@ -262,7 +262,7 @@ In this example, the `mermaidAPI` is being called through the `CDN`:
     </pre>
 
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
@@ -291,6 +291,48 @@ In this example, `mermaid.js` is referenced in `src` as a separate JavaScript fi
     </pre>
     <script type="module">
       import mermaid from 'The/Path/In/Your/Package/mermaid.esm.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
+```
+
+##### Custom fonts
+
+Mermaid comes with some default recommended fonts that you can setup on your
+page as well.
+
+See [Usage § Fonts](../config/usage.md#fonts) for full details.
+
+```html
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5/400.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5/400-italic.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fontsource-variable/recursive@5/index.css"
+    />
+  </head>
+  <body>
+    Here is one mermaid diagram using the `redux-dark` theme:
+
+    <pre class="mermaid">
+      ---
+      config:
+        theme: redux-dark
+      ---
+      flowchart
+            A[Client] --> B[Load Balancer]
+            B --> C[Server1]
+            B --> D[Server2]
+    </pre>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>

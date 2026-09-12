@@ -7,7 +7,7 @@ import type { Request, Response } from 'express';
 import express from 'express';
 import path, { resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { packageOptions } from '../.build/common.js';
+import { buildTarget, packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
 import { DDLT_SIZE_CAPTURE_VERSION } from '../packages/mermaid/src/rendering-util/layout-algorithms/ddlt/captureContract.js';
@@ -237,7 +237,7 @@ async function createDevExplorerBundle() {
       entryPoints: [entryPoint],
       bundle: true,
       format: 'esm',
-      target: 'es2020',
+      target: [...buildTarget],
       sourcemap: true,
       outdir: outDir,
       logLevel: 'info',
