@@ -492,3 +492,77 @@ describe('item data data', function () {
     expect(sections[0].ticket).toEqual('MC-1234');
   });
 });
+
+describe('accessibility directives (issue #8120)', function () {
+  beforeEach(function () {
+    kanban.yy = kanbanDB;
+    kanban.yy.clear();
+  });
+
+  it('should support accTitle and not treat it as a column node', function () {
+    const str = `kanban
+  accTitle: My Kanban Board
+  id1[Todo]
+    task1[Buy milk]
+`;
+    kanban.parse(str);
+    expect(kanban.yy.getAccTitle()).toEqual('My Kanban Board');
+
+    const sections = kanban.yy.getSections();
+    expect(sections.length).toEqual(1);
+    expect(sections[0].id).toEqual('id1');
+    expect(sections[0].label).toEqual('Todo');
+  });
+
+  it('should support single-line accDescr and not treat it as a column node', function () {
+    const str = `kanban
+  accTitle: Project Board
+  accDescr: Simple board describing project tasks
+  col1[In Progress]
+    task1[Write docs]
+`;
+    kanban.parse(str);
+    expect(kanban.yy.getAccTitle()).toEqual('Project Board');
+    expect(kanban.yy.getAccDescription()).toEqual('Simple board describing project tasks');
+
+    const sections = kanban.yy.getSections();
+    expect(sections.length).toEqual(1);
+    expect(sections[0].id).toEqual('col1');
+  });
+
+  it('should support multi-line accDescr block', function () {
+    const str = `kanban
+  accTitle: Multi-line board
+  accDescr {
+    Line 1
+    Line 2
+  }
+  col1[Done]
+    task1[Finished]
+`;
+    kanban.parse(str);
+    expect(kanban.yy.getAccTitle()).toEqual('Multi-line board');
+    expect(kanban.yy.getAccDescription()).toEqual(
+      'Line 1\n    Line 2'.replace(/^ {4}/gm, '').trimEnd()
+    );
+
+    const sections = kanban.yy.getSections();
+    expect(sections.length).toEqual(1);
+    expect(sections[0].id).toEqual('col1');
+  });
+
+  it('should clear accessibility state on clear()', function () {
+    const str = `kanban
+  accTitle: Board Title
+  accDescr: Board Description
+  col1[Backlog]
+`;
+    kanban.parse(str);
+    expect(kanban.yy.getAccTitle()).toEqual('Board Title');
+    expect(kanban.yy.getAccDescription()).toEqual('Board Description');
+
+    kanban.yy.clear();
+    expect(kanban.yy.getAccTitle()).toEqual('');
+    expect(kanban.yy.getAccDescription()).toEqual('');
+  });
+});
