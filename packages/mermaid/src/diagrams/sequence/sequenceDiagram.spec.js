@@ -2512,7 +2512,7 @@ Bob->>Alice:Got it!
     sequenceDiagram
         actor lead-actor@{ "type" : "database" }
         participant order-svc@{ "type" : "queue" }
-        actor kebab-case@{ "type" : "control" } as Kebab Cased
+        actor kebab-case@{ "type" : "control" } as Kebab-Cased
         participant web-ui@{ "type" : "entity" } as Web UI
     `);
 
@@ -2525,7 +2525,7 @@ Bob->>Alice:Got it!
       expect(actors.get('order-svc').description).toBe('order-svc');
 
       expect(actors.get('kebab-case').type).toBe('control');
-      expect(actors.get('kebab-case').description).toBe('Kebab Cased');
+      expect(actors.get('kebab-case').description).toBe('Kebab-Cased');
 
       expect(actors.get('web-ui').type).toBe('entity');
       expect(actors.get('web-ui').description).toBe('Web UI');
