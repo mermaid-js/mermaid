@@ -25,7 +25,7 @@ import type {
   C4Text,
 } from './c4Types.js';
 import { shapes } from '../../rendering-util/rendering-elements/shapes.js';
-import { buildC4Node } from './c4ShapeAdapter.js';
+import { buildC4Node, showsStereotype } from './c4ShapeAdapter.js';
 import intersect from '../../rendering-util/rendering-elements/intersect/index.js';
 
 type C4DB = typeof c4Db;
@@ -474,17 +474,23 @@ async function drawInsideBoundary(
     Y = label.Y + label.height;
 
     if (currentBoundary.type && currentBoundary.type.text !== '') {
-      currentBoundary.type.text = '[' + currentBoundary.type.text + ']';
-      const currentBoundaryTypeConf = boundaryFont(conf);
-      const type = calcC4ShapeTextWH(
-        'type',
-        currentBoundary,
-        currentBoundaryTextWrap,
-        currentBoundaryTypeConf,
-        currentBounds.data.widthLimit
-      );
-      type.Y = Y + 5;
-      Y = type.Y + type.height;
+      if (showsStereotype(currentBoundary, conf)) {
+        currentBoundary.type.text = '[' + currentBoundary.type.text + ']';
+        const currentBoundaryTypeConf = boundaryFont(conf);
+        const type = calcC4ShapeTextWH(
+          'type',
+          currentBoundary,
+          currentBoundaryTextWrap,
+          currentBoundaryTypeConf,
+          currentBounds.data.widthLimit
+        );
+        type.Y = Y + 5;
+        Y = type.Y + type.height;
+      } else {
+        // Cleared rather than skipped: the draw pass keys off the same text, and
+        // would otherwise place it at a height this pass never worked out.
+        currentBoundary.type.text = '';
+      }
     }
 
     if (currentBoundary.descr && currentBoundary.descr.text !== '') {

@@ -45,6 +45,7 @@ export interface C4Shape {
   fontColor?: string;
   borderColor?: string;
   shadowing?: string;
+  showStereotype?: string;
   shape?: string;
   legendText?: string;
   legendSprite?: string;
@@ -78,6 +79,7 @@ export interface C4Boundary {
   fontColor?: string;
   borderColor?: string;
   shadowing?: string;
+  showStereotype?: string;
   shape?: string;
   legendText?: string;
   legendSprite?: string;
