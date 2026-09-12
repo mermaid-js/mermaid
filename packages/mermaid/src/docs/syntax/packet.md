@@ -70,6 +70,29 @@ title UDP Packet
 - **Ranges**: Each line after the title represents a different field in the packet. The range (e.g., `0-15`) indicates the bit positions in the packet.
 - **Field Description**: A brief description of what the field represents, enclosed in quotes.
 
+### Bit Numbering Order (v<MERMAID_RELEASE_VERSION>+)
+
+Rows are numbered from their lowest bit on the left up to their highest bit on the right, which suits network packets. Hardware registers are conventionally drawn the other way round, with the most significant bit on the left and bit 0 on the right. Set `bitOrder: descending` to mirror every row:
+
+```mermaid-example
+---
+config:
+  packet:
+    showBits: true
+    bitOrder: descending
+    bitsPerRow: 16
+---
+packet
+0-7: "DATA"
+8-11: "TYPE"
+12: "EN"
+13-15: "RESERVED"
+```
+
+Only the drawing is mirrored. Fields are still declared lowest bit first (`0-7`, never `7-0`) and keep their width, so the same diagram can be switched between the two conventions by changing `bitOrder` alone.
+
+Each row is mirrored on its own, so a packet wider than `bitsPerRow` reads as a stack of words that each run from their highest bit down to their lowest: with the default `bitsPerRow: 32`, the second row runs from bit 63 down to bit 32, not down to bit 0. A row that is not completely filled is padded on the left, keeping its lowest bit flush against the right edge.
+
 ## Configuration
 
 Please refer to the [configuration](/config/schema-docs/config-defs-packet-diagram-config.html) guide for details.
