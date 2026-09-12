@@ -422,8 +422,23 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     if (newEndTime.isValid()) {
       endTime = newEndTime;
     }
+    return endTime.toDate();
   }
-  return endTime.toDate();
+
+  // An empty token (point tasks / `vert` markers) and a bare numeric token
+  // (e.g. a zero-length `milestone ..., 0`) have always resolved to the start
+  // time; preserve that so existing diagrams keep rendering.
+  if (str === '' || /^\d+(?:\.\d+)?$/.test(str)) {
+    return endTime.toDate();
+  }
+
+  // Otherwise the string is not an `until` statement, not a valid end date,
+  // and not a recognised duration token — it's a malformed end token such as
+  // `24de`, `24d+`, or `24d7`. Previously this fell through and silently
+  // returned the start time, dropping the task without any feedback (#6586).
+  // Throw instead, mirroring how getStartDate() handles invalid dates, so the
+  // problem surfaces as a syntax error.
+  throw new Error('Invalid date:' + str);
 };
 
 let taskCnt = 0;
