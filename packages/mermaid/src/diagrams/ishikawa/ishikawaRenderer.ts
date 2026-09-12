@@ -21,6 +21,7 @@ const SPINE_BASE_LENGTH = 250;
 const BONE_STUB = 30;
 const BONE_BASE = 60;
 const BONE_PER_CHILD = 5;
+const GAP_WIDTH = BONE_BASE;
 const ANGLE = (82 * Math.PI) / 180;
 const COS_A = Math.cos(ANGLE);
 const SIN_A = Math.sin(ANGLE);
@@ -129,14 +130,18 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
       [causes[p * 2], -1, upperLen] as const,
       [causes[p * 2 + 1], 1, lowerLen] as const,
     ]) {
-      if (cause) {
+      if (cause && !cause.isGap) {
         drawBranch(pg, cause, spineX, spineY, dir, len, fontSize, roughContext);
       }
     }
-    spineX = pg
+    let pairLeftX = pg
       .selectAll('text')
       .nodes()
       .reduce((left, n) => Math.min(left, (n as SVGGraphicsElement).getBBox().x), Infinity);
+    if (causes[p * 2]?.isGap || causes[p * 2 + 1]?.isGap) {
+      pairLeftX = Math.min(pairLeftX, spineX - GAP_WIDTH);
+    }
+    spineX = pairLeftX;
   }
 
   if (isHandDrawn) {
@@ -151,7 +156,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
 
 const sideStats = (nodes: IshikawaNode[]) => {
   const countDescendants = (node: IshikawaNode): number =>
-    node.children.reduce((sum, child) => sum + 1 + countDescendants(child), 0);
+    node.isGap ? 0 : node.children.reduce((sum, child) => sum + 1 + countDescendants(child), 0);
 
   return nodes.reduce(
     (stats, node) => {
@@ -215,6 +220,7 @@ interface LabelEntry {
   depth: number;
   parentIndex: number;
   childCount: number;
+  isGap?: boolean;
 }
 
 interface BoneInfo {
@@ -236,12 +242,13 @@ const flattenTree = (children: IshikawaNode[], direction: 1 | -1) => {
     const ordered = direction === -1 ? [...nodes].reverse() : nodes;
     for (const child of ordered) {
       const idx = entries.length;
-      const gc = child.children ?? [];
+      const gc = child.isGap ? [] : (child.children ?? []);
       entries.push({
         depth,
-        text: wrapText(child.text, 15),
+        text: child.isGap ? '' : wrapText(child.text, 15),
         parentIndex: pid,
         childCount: gc.length,
+        isGap: child.isGap,
       });
       if (depth % 2 === 0) {
         // Even-depth: pre-order (closer to spine)
@@ -405,25 +412,29 @@ const drawBranch = (
       bx0 = lerp(par.x0, par.x1, dyP ? (y - par.y0) / dyP : 0.5);
       by0 = y;
       bx1 = bx0 - (e.childCount > 0 ? BONE_BASE + e.childCount * BONE_PER_CHILD : BONE_STUB);
-      drawLine(grp, bx0, y, bx1, y, 'ishikawa-sub-branch', roughContext);
-      if (roughContext) {
-        drawArrowMarker(grp, bx0, y, 1, 0, roughContext);
+      if (!e.isGap) {
+        drawLine(grp, bx0, y, bx1, y, 'ishikawa-sub-branch', roughContext);
+        if (roughContext) {
+          drawArrowMarker(grp, bx0, y, 1, 0, roughContext);
+        }
+        drawMultilineText(grp, e.text, bx1, y, 'ishikawa-label align', 'end', fontSize);
       }
-      drawMultilineText(grp, e.text, bx1, y, 'ishikawa-label align', 'end', fontSize);
     } else {
       // Diagonal bone: start from evenly-spaced point on parent's horizontal, angle toward target Y
       const k = par.childrenDrawn++;
       bx0 = lerp(par.x0, par.x1, (par.childCount - k) / (par.childCount + 1));
       by0 = par.y0;
       bx1 = bx0 + diagonalX * ((y - by0) / diagonalY);
-      drawLine(grp, bx0, by0, bx1, y, 'ishikawa-sub-branch', roughContext);
-      if (roughContext) {
-        drawArrowMarker(grp, bx0, by0, bx0 - bx1, by0 - y, roughContext);
+      if (!e.isGap) {
+        drawLine(grp, bx0, by0, bx1, y, 'ishikawa-sub-branch', roughContext);
+        if (roughContext) {
+          drawArrowMarker(grp, bx0, by0, bx0 - bx1, by0 - y, roughContext);
+        }
+        drawMultilineText(grp, e.text, bx1, y, oddLabel, 'end', fontSize);
       }
-      drawMultilineText(grp, e.text, bx1, y, oddLabel, 'end', fontSize);
     }
 
-    if (e.childCount > 0) {
+    if (!e.isGap && e.childCount > 0) {
       bones.set(i, {
         x0: bx0,
         y0: by0,
