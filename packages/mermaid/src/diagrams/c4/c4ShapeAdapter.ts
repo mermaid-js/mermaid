@@ -1,4 +1,3 @@
-import type { C4DiagramConfig } from '../../config.type.js';
 import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { NonClusterNode } from '../../rendering-util/types.js';
 
@@ -129,41 +128,34 @@ export const C4_ELEMENT_TYPES = (
   ] as const
 ).flatMap((type) => [type, `external_${type}`] as const);
 
-const C4_ELEMENT_TYPE_SET = new Set<string>(C4_ELEMENT_TYPES);
-
-const isC4ElementType = (value: string): value is (typeof C4_ELEMENT_TYPES)[number] =>
-  C4_ELEMENT_TYPE_SET.has(value);
-
 /**
- * Element colours: the per-element `<type>_bg_color`/`<type>_border_color` config
- * palette drives the fill and border, with white text. An explicit per-element
- * colour (UpdateElementStyle: $bgColor/$borderColor/$fontColor) overrides it.
+ * Only the explicit per-element colours from `UpdateElementStyle`
+ * (`$bgColor`/`$borderColor`/`$fontColor`). The outline look itself - the light fill and
+ * the palette colour as border and text - comes from the stylesheet, which is where the
+ * theme variables are available; these are emitted inline so they override it.
  */
-const elementCssStyles = (shape: C4ShapeLike, config: C4DiagramConfig): string[] => {
-  const elementType = shape.typeC4Shape.text;
-  const fill = shape.bgColor ?? (isC4ElementType(elementType) && config[`${elementType}_bg_color`]);
-  const stroke =
-    shape.borderColor ?? (isC4ElementType(elementType) && config[`${elementType}_border_color`]);
+const elementCssStyles = (shape: C4ShapeLike): string[] => {
   const styles: string[] = [];
-  if (fill) {
-    styles.push(`fill:${fill}`);
+  if (shape.bgColor) {
+    styles.push(`fill:${shape.bgColor}`);
   }
-  if (stroke) {
-    styles.push(`stroke:${stroke}`);
+  if (shape.borderColor) {
+    styles.push(`stroke:${shape.borderColor}`);
   }
-  styles.push(`color:${shape.fontColor ?? '#FFFFFF'}`);
+  if (shape.fontColor) {
+    styles.push(`color:${shape.fontColor}`);
+  }
   return styles;
 };
 
 /**
- * Converts a legacy C4 shape into a unified-renderer Node. `config` is the c4
- * diagram config, whose `<type>_bg_color`/`<type>_border_color` palette drives the fill and border.
- * `elementWidth` is the target shape width (`c4.width`); the label helper
- * derives its own text-wrapping width from it.
+ * Converts a legacy C4 shape into a unified-renderer Node. Element colours come from the
+ * stylesheet, keyed on the `c4-<type>` class this sets; only `UpdateElementStyle`
+ * overrides travel inline. `elementWidth` is the target shape width (`c4.width`); the
+ * label helper derives its own text-wrapping width from it.
  */
 export const buildC4Node = (
   shape: C4ShapeLike,
-  config: C4DiagramConfig,
   padding: number,
   look: string,
   elementWidth: number
@@ -174,7 +166,7 @@ export const buildC4Node = (
     cssClasses.push('c4-external');
   }
   const nodeShape = resolveNodeShape(shape);
-  const cssStyles = elementCssStyles(shape, config);
+  const cssStyles = elementCssStyles(shape);
   if (nodeShape === 'rounded' || nodeShape === 'fr-rect') {
     // Inline so it wins over the shape's default corner radius.
     cssStyles.push('rx:12px', 'ry:12px');
