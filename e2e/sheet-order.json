@@ -807,7 +807,8 @@
     "94-should-render-with-parallelcommits-set-to-false.png",
     "95-should-render-with-custom-mainbranchname.png",
     "96-should-render-with-custom-mainbranchorder.png",
-    "97-should-render-branch-labels-with-multi-line-text-aligned-with-background-in-lr-layout.png"
+    "97-should-render-branch-labels-with-multi-line-text-aligned-with-background-in-lr-layout.png",
+    "98-should-render-gitgraph-with-click-interactions.png"
   ],
   "diagrams/info": [
     "should-handle-an-info-definition-with-showinfo.png",
