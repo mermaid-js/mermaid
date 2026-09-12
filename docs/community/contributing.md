@@ -50,14 +50,14 @@ We support **development within Docker** environment along with **host setup**. 
 
 These are the tools we use for working with the code and documentation:
 
-- [Node.js](https://nodejs.org/en/).
+- [Node.js](https://nodejs.org/en/) v22.12.0 or higher.
 - [pnpm](https://pnpm.io/) package manager.
 
 The following commands must be sufficient enough to start with:
 
 ```bash
 curl -fsSL https://get.pnpm.io/install.sh | sh -
-pnpm env use --global 20
+pnpm env use --global 24
 ```
 
 You may also need to reload `.shrc` or `.bashrc` afterwards.
