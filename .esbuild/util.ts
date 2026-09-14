@@ -4,6 +4,7 @@ import type { BuildOptions } from 'esbuild';
 import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
+import { buildTarget } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -40,6 +41,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     minify: true,
     keepNames: true,
     platform: 'browser',
+    target: [...buildTarget],
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
