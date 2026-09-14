@@ -2459,6 +2459,22 @@ Bob->>Alice:Got it!
       expect(messages[2].message).toBe('Hi Bob');
     });
 
+    it('should parse a participant config object separated from the name by whitespace', async () => {
+      const diagram = await Diagram.fromText(`
+  sequenceDiagram
+      participant Gina@{ "type" : "database" }
+      participant Harry @{ "type" : "database" }
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('Gina').type).toBe('database');
+      expect(actors.get('Gina').description).toBe('Gina');
+
+      expect(actors.get('Harry').type).toBe('database');
+      expect(actors.get('Harry').description).toBe('Harry');
+    });
+
     it('should parse mixed participant types with extended syntax', async () => {
       const diagram = await Diagram.fromText(`
     sequenceDiagram
