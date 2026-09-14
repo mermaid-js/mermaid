@@ -10,6 +10,7 @@ import {
   markerOffsets,
   markerOffsets2,
 } from '../../utils/lineWithOffset.js';
+import { toBase64 } from '../../utils/base64.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 
 import {
@@ -663,7 +664,7 @@ export const insertEdge = function (
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
   }
-  const pointsStr = btoa(JSON.stringify(points));
+  const pointsStr = toBase64(JSON.stringify(points));
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
     points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
