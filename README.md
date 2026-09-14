@@ -5,7 +5,7 @@
 Mermaid
 </h1>
 <p align="center">
-Generate diagrams from markdown-like text.
+Generate diagrams from Markdown-like text.
 <p>
 <p align="center">
   <a href="https://www.npmjs.com/package/mermaid"><img src="https://img.shields.io/npm/v/mermaid?color=ff3670&label="></a>
