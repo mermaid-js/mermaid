@@ -272,4 +272,15 @@ with a second line`
       flow.parser.parse(flowChart);
     }).not.toThrow();
   });
+
+  it('should accept standalone carriage returns as whitespace', function () {
+    const payload = 'flowchart LR\nA-->B\n\r';
+    expect(() => {
+      flow.parser.parse(payload);
+    }).not.toThrow();
+
+    const vert = flow.parser.yy.getVertices();
+    expect(vert.get('A').id).toBe('A');
+    expect(vert.get('B').id).toBe('B');
+  });
 });
