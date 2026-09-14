@@ -99,4 +99,37 @@ describe('createText', () => {
       expect(output.textContent).toEqual(expected);
     }
   );
+
+  it('applies markdown to the text around a math span', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(select(svgGroup), '**sym**: $$\\pi$$', {
+      useHtmlLabels: true,
+      markdown: true,
+    });
+    expect(output.innerHTML).toContain('<strong>sym</strong>');
+    expect(output.innerHTML).not.toContain('**sym**');
+  });
+
+  it('keeps every math span in a label that has more than one', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(select(svgGroup), '*a* $$\\pi$$ and $$\\alpha$$ *b*', {
+      useHtmlLabels: true,
+      markdown: true,
+    });
+    expect(output.innerHTML).toContain('<em>a</em>');
+    expect(output.innerHTML).toContain('<em>b</em>');
+    expect(output.textContent).not.toContain('$$');
+  });
+
+  it('converts an icon in a label that also has math', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(select(svgGroup), 'user fa:fa-user $$\\pi$$', {
+      useHtmlLabels: true,
+      markdown: true,
+    });
+    expect(output.innerHTML).toContain('<i class="fa fa-user"></i>');
+  });
 });

@@ -1,7 +1,12 @@
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
 import type { SVGGroup } from '../diagram-api/types.js';
-import common, { hasKatex, renderKatexSanitized, sanitizeText } from '../diagrams/common/common.js';
+import common, {
+  hasKatex,
+  katexRegex,
+  renderKatexSanitized,
+  sanitizeText,
+} from '../diagrams/common/common.js';
 import type { D3TSpanElement, D3TextElement } from '../diagrams/common/commonTypes.js';
 import { log } from '../logger.js';
 import { profiler } from '../profiler.js';
@@ -30,6 +35,12 @@ function applyStyle<T extends Element>(
 
 // We assume that nobody will want to create labels larger than 16384 pixels wide
 const maxSafeSizeForWidth = 16384;
+
+// A math span is set aside while the label goes through the markdown pass, so that a label
+// holding both markdown and math gets neither taken literally. The delimiter follows the
+// entity placeholders in utils.ts: something the markdown lexer has no meaning for.
+const mathPlaceholder = (index: number) => `¤math${index}¤`;
+const mathPlaceholderRegex = /¤math(\d+)¤/g;
 
 async function addHtmlSpan(
   element: D3Selection<SVGGElement>,
@@ -340,15 +351,24 @@ export const createText = async (
   if (useHtmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 
-    const htmlText = markdown ? markdownToHTML(text, config) : nonMarkdownToHTML(text);
-    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
-
     //for Katex the text could contain escaped characters, \\relax that should be transformed to \relax
-    const inputForKatex = text.replace(/\\\\/g, '\\');
+    const mathSpans: string[] = [];
+    const textWithoutMath = text.replace(katexRegex, (span) => {
+      mathSpans.push(span.replace(/\\\\/g, '\\'));
+      return mathPlaceholder(mathSpans.length - 1);
+    });
+
+    const htmlText = markdown
+      ? markdownToHTML(textWithoutMath, config)
+      : nonMarkdownToHTML(textWithoutMath);
+    const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
     const node = {
       isNode,
-      label: hasKatex(text) ? inputForKatex : decodedReplacedText,
+      label: decodedReplacedText.replace(
+        mathPlaceholderRegex,
+        (_, index: string) => mathSpans[Number(index)]
+      ),
       labelStyle: style.replace('fill:', 'color:'),
     };
     const vertexNode = await addHtmlSpan(
