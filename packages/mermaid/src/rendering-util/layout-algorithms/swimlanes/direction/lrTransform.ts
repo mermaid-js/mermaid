@@ -1,4 +1,5 @@
 import type { LayoutData } from '../../../types.js';
+import { buildLaneModel } from '../lanes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -26,13 +27,16 @@ function resolveTopLevelGroupId(
 }
 
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
+  // `seen` guards a malformed parent cycle, which would otherwise not terminate.
+  const seen = new Set<string>([group.id]);
   let depth = 0;
   let parentId = group.parentId;
-  while (parentId) {
+  while (parentId && !seen.has(parentId)) {
     const parent = nodeById.get(parentId);
     if (!parent?.isGroup) {
       break;
     }
+    seen.add(parentId);
     depth++;
     parentId = parent.parentId;
   }
@@ -210,7 +214,8 @@ export function applyLrDirectionTransform(
 
   recomputeNestedGroupBounds(nodes);
 
-  const laneNodes = nodes.filter((n) => n.isGroup && !n.parentId);
+  const laneModel = buildLaneModel(nodes);
+  const laneNodes = nodes.filter((n) => laneModel.isLane(n.id));
   if (laneNodes.length === 0) {
     if (direction === 'RL') {
       mirrorAxis(layout, 'x');

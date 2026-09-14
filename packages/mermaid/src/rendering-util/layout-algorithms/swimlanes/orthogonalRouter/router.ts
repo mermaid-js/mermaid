@@ -12,6 +12,7 @@
  */
 
 import type { LayoutData, Node as MermaidNode } from '../../../types.js';
+import { buildLaneModel } from '../lanes.js';
 import { PRECISION } from '../config.js';
 
 const EPS = PRECISION.EPSILON;
@@ -163,7 +164,8 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
   }
 
   // Identify Lanes (Top-level groups)
-  const topLevelGroups = nodes.filter((n) => n.isGroup && !n.parentId);
+  const laneModel = buildLaneModel(nodes);
+  const topLevelGroups = nodes.filter((n) => laneModel.isLane(n.id));
   for (const group of topLevelGroups) {
     const lane: LaneInfo = { id: group.id };
 
