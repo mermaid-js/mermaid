@@ -24,6 +24,7 @@ import {
   MAX_COLOR_SLOTS,
   colorSlotCount,
   paletteSlotCount,
+  safeColor,
   safeLook,
   stampColorSlot,
 } from './colorThemeGate.js';
@@ -156,6 +157,42 @@ describe('safeLook', () => {
 
   it('falls back to classic when look is absent', () => {
     expect(safeLook(undefined)).toBe('classic');
+  });
+});
+
+describe('safeColor', () => {
+  it.each([
+    '#fff',
+    '#ffff',
+    '#a1b2c3',
+    '#a1b2c3d4',
+    'red',
+    'currentColor',
+    'rgb(1, 2, 3)',
+    'hsla(1, 2%, 3%, 0.5)',
+  ])('passes %s through', (color) => {
+    expect(safeColor(color)).toBe(color);
+  });
+
+  it.each(['red; } .evil { background: url(x)', 'red"]{a{b', '', '#12345', '#1234567'])(
+    'falls back to currentColor for %j',
+    (color) => {
+      expect(safeColor(color)).toBe('currentColor');
+    }
+  );
+
+  it('falls back to a given fallback', () => {
+    expect(safeColor('bad;value', 'black')).toBe('black');
+  });
+
+  it('preserves incidental surrounding whitespace on an otherwise valid value', () => {
+    // theme-redux-color.js ships one palette entry with a trailing space; trimming
+    // only for validation (not for the returned value) keeps existing output unchanged.
+    expect(safeColor('#A3E635 ')).toBe('#A3E635 ');
+  });
+
+  it('falls back to currentColor for a non-string value', () => {
+    expect(safeColor(['red'])).toBe('currentColor');
   });
 });
 

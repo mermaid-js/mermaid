@@ -1,5 +1,11 @@
 import { getIconStyles } from '../globalStyles.js';
-import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
+import {
+  colorSlotCount,
+  hasPalette,
+  isColorTheme,
+  safeColor,
+  safeLook,
+} from '../common/colorThemeGate.js';
 
 /**
  * Cycling per-class colour, mirroring `er/styles.ts`. A class box is the structural twin
@@ -21,12 +27,12 @@ const genColor = (options) => {
   let sections = '';
 
   for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
-    const borderColor = borderColorArray[i % borderColorArray.length];
+    const borderColor = safeColor(borderColorArray[i % borderColorArray.length]);
     sections += `
 
     [data-look="${look}"][data-color-id="color-${i}"].node .outer-path path {
       stroke: ${borderColor};
-      ${hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : ''}
+      ${hasBkgColors ? `fill: ${safeColor(bkgColorArray[i % bkgColorArray.length])};` : ''}
     }
 
     [data-look="${look}"][data-color-id="color-${i}"].node .divider path {
