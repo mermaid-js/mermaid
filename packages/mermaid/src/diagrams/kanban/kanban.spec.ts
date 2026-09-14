@@ -543,7 +543,7 @@ describe('accessibility directives (issue #8120)', function () {
     kanban.parse(str);
     expect(kanban.yy.getAccTitle()).toEqual('Multi-line board');
     expect(kanban.yy.getAccDescription()).toEqual(
-      'Line 1\n    Line 2'.replace(/^ {4}/gm, '').trimEnd()
+      'Line 1\nLine 2'
     );
 
     const sections = kanban.yy.getSections();
