@@ -41,6 +41,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
   - [CloudScript.io Mermaid Addon](https://marketplace.atlassian.com/apps/1219878/cloudscript-io-mermaid-addon?hosting=cloud&tab=overview)
   - [Mermaid plus for Confluence](https://marketplace.atlassian.com/apps/1236814/mermaid-plus-for-confluence?hosting=cloud&tab=overview)
+- [AtlasDocs](https://atlasdocs.io/en/mermaid-diagram) - Browser-only Mermaid editor with live preview, PNG/SVG export and conversion to an editable Excalidraw file; nothing is uploaded
 - [Azure Devops](https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) ✅
 - [Deepdwn](https://billiam.itch.io/deepdwn) ✅
 - [Doctave](https://www.doctave.com/) ✅
@@ -286,4 +287,4 @@ Communication tools and platforms
 - [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
-<!--- cspell:ignore Blazorade HueHive --->
+<!--- cspell:ignore AtlasDocs Blazorade Excalidraw HueHive --->
