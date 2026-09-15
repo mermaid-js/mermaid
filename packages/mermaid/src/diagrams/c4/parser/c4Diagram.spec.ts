@@ -22,6 +22,27 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
     expect(rendered).toBe(true);
   });
 
+  it.each(['Sprint #3 architecture', 'Boundary (#4864)', 'issue#4864'])(
+    'should allow # characters in C4 titles like %s',
+    function (title: string) {
+      c4.parser.parse(`C4Context
+title ${title}
+Person(customer, "Customer", "A customer")`);
+
+      const yy = c4.parser.yy;
+      expect(yy.getTitle()).toBe(title);
+    }
+  );
+
+  it('should allow # characters in accDescription', function () {
+    c4.parser.parse(`C4Context
+accDescription Sprint #3 notes
+Person(customer, "Customer", "A customer")`);
+
+    const yy = c4.parser.yy;
+    expect(yy.getAccDescription()).toBe('Sprint #3 notes');
+  });
+
   it('should handle parameter names that are keywords', function () {
     c4.parser.parse(`C4Context
 title title
