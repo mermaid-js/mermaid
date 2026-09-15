@@ -1,6 +1,6 @@
 import { it, describe, expect } from 'vitest';
 
-import { db } from './db.js';
+import { db, stripInlineValue, stripBlockValue } from './db.js';
 import { parser } from './parser.js';
 
 const { clear } = db;
@@ -75,5 +75,45 @@ data ItemAddedData
     tf 09 rmo ReadModel
     tf 10 readmodel ReadModel2`;
     await expect(parser.parse(str)).resolves.not.toThrow();
+  });
+});
+
+describe('stripInlineValue', () => {
+  it('keeps the last character of an inline data spec', () => {
+    // cspell:ignore quantit
+    // Regression: previously `substring(0, lastIndexOf('}') - 1)` chopped
+    // the last char, so "{item, quantity}" rendered as "item, quantit".
+    expect(stripInlineValue('{item, quantity}')).toBe('item, quantity');
+  });
+
+  it('returns content verbatim for multi-field specs', () => {
+    expect(stripInlineValue('{cartId, item, quantity}')).toBe('cartId, item, quantity');
+  });
+
+  it('handles a single-character content', () => {
+    // Edge case where the off-by-one was easiest to spot: a single char
+    // body became the empty string under the old behavior.
+    expect(stripInlineValue('{x}')).toBe('x');
+  });
+
+  it('handles an empty body', () => {
+    expect(stripInlineValue('{}')).toBe('');
+  });
+
+  it('preserves leading/trailing whitespace inside the braces', () => {
+    expect(stripInlineValue('{ item, quantity }')).toBe(' item, quantity ');
+  });
+});
+
+describe('stripBlockValue', () => {
+  it('keeps the last character of a block data spec', () => {
+    // Block notation: `data Foo {\n  ...lines...\n}`. The buggy version
+    // chopped the trailing newline (and on the last line, the last char).
+    const input = '{\n  item: string\n  quantity: number\n}';
+    expect(stripBlockValue(input)).toBe('  item: string\n  quantity: number\n');
+  });
+
+  it('keeps single-line block content intact', () => {
+    expect(stripBlockValue('{\n  field: value\n}')).toBe('  field: value\n');
   });
 });
