@@ -214,6 +214,15 @@ union A, B`,
     Login("Sign in")
     User --> Login`,
 
+  swimlane: `swimlane-beta LR
+    subgraph sales[Sales]
+      a[Draft quote]
+    end
+    subgraph ops[Fulfilment]
+      b[Ship order]
+    end
+    a --> b`,
+
   eventmodeling: `eventmodeling
     tf 01 evt Start
     tf 02 evt End
@@ -293,7 +302,6 @@ describe('Multi-diagram ID uniqueness', () => {
     'state', // legacy alias, covered by stateDiagram
     'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
-    'swimlane', // reuses the flowchart renderer (createFlowDiagram); IDs covered by flowchart-v2
   ]);
 
   it('"journey" — task line IDs are scoped with the diagram ID', async () => {
