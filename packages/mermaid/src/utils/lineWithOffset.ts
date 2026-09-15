@@ -22,6 +22,9 @@ export const markerOffsets2 = {
   arrow_point: 4,
   arrow_cross: 12.5,
   arrow_circle: 12.5,
+  // Both of these are unfilled, so without an offset the line shows through them.
+  arrow_open: 4,
+  arrow_hollow_circle: 8,
 } as const;
 
 /**
