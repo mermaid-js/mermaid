@@ -7,18 +7,18 @@ Layout algorithms control how nodes and edges are visually arranged in Mermaid d
 | Layout           | Description                                                                                                                                   |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | **dagre**        | Layered (top-to-bottom) layout for directed graphs. Default for most diagram types.                                                           |
-| **elk**          | Advanced layout algorithms from the [Eclipse Layout Kernel](https://www.eclipse.org/elk/). Supports layered, force, tree, and stress layouts. |
+| **elk**          | Advanced layout algorithms from the [Eclipse Layout Kernel](https://www.eclipse.org/elk/). Supports layered, force, mrtree, and stress layouts. |
 | **tidy-tree**    | Compact tree layout for hierarchical diagrams. See [Tidy Tree Configuration](/config/tidy-tree).                                              |
 | **cose-bilkent** | Force-directed layout based on the CoSE (Compound Spring Embedder) algorithm from Bilkent University.                                         |
 
 ## How to Use
 
-Specify the layout in your diagram's frontmatter config:
+Specify the layout in your diagram's frontmatter config (using the built-in `dagre` layout, which works without extra installation):
 
 ```mermaid-example
 ---
 config:
-  layout: elk
+  layout: dagre
 ---
 graph TD;
   A-->B;
@@ -29,9 +29,11 @@ You can also set the layout when initializing Mermaid:
 
 ```javascript
 mermaid.initialize({
-  layout: 'elk',
+  layout: 'dagre',
 });
 ```
+
+ELK-specific setup (installation and registration) is covered in the [ELK section](#elk-eclipse-layout-kernel) below.
 
 ---
 
@@ -131,18 +133,24 @@ config:
   layout: elk
   elk:
     mergeEdges: true
-    nodePlacementStrategy: LINEAR_SEGMENTS
+    nodePlacementStrategy: BRANDES_KOEPF
     nodePlacementAlignment: BALANCED
 ---
 ```
 
 #### Options
 
-| Option                   | Type    | Default         | Description                                                                                                               |
-| ------------------------ | ------- | --------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `mergeEdges`             | boolean | `false`         | Combine parallel edges into a single edge. Useful for reducing visual clutter.                                            |
-| `nodePlacementStrategy`  | string  | `BRANDES_KOEPF` | Algorithm for placing nodes. One of: `SIMPLE`, `NETWORK_SIMPLEX`, `LINEAR_SEGMENTS`, `BRANDES_KOEPF`.                     |
-| `nodePlacementAlignment` | string  | `NONE`          | Alignment strategy for Brandes-Koepf placement. One of: `NONE`, `LEFTUP`, `LEFTDOWN`, `RIGHTUP`, `RIGHTDOWN`, `BALANCED`. |
+Commonly used options (see `ElkLayoutOptions` in `config.type.ts` for the full list):
+
+| Option                   | Type    | Default              | Description                                                                                                               |
+| ------------------------ | ------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `mergeEdges`             | boolean | `false`              | Combine parallel edges into a single edge. Useful for reducing visual clutter.                                            |
+| `nodePlacementStrategy`  | string  | `BRANDES_KOEPF`      | Algorithm for placing nodes. One of: `SIMPLE`, `NETWORK_SIMPLEX`, `LINEAR_SEGMENTS`, `BRANDES_KOEPF`.                     |
+| `nodePlacementAlignment` | string  | `NONE`               | Alignment strategy for Brandes-Koepf placement. One of: `NONE`, `LEFTUP`, `LEFTDOWN`, `RIGHTUP`, `RIGHTDOWN`, `BALANCED`. |
+| `cycleBreakingStrategy`  | string  | `GREEDY_MODEL_ORDER` | How cycles are broken. One of: `GREEDY`, `DEPTH_FIRST`, `INTERACTIVE`, `MODEL_ORDER`, `GREEDY_MODEL_ORDER`.              |
+| `forceNodeModelOrder`    | boolean | `false`              | Keep model node order during crossing minimization.                                                                       |
+| `considerModelOrder`     | string  | `NODES_AND_EDGES`    | Preserve model order where possible. One of: `NONE`, `NODES_AND_EDGES`, `PREFER_EDGES`, `PREFER_NODES`.                  |
+| `keepEntryNodeOnTop`     | boolean | `false`              | Pin a cyclic flow's entry node to the first layer.                                                                        |
 
 ---
 
@@ -173,17 +181,4 @@ See the dedicated [Tidy Tree Configuration](/config/tidy-tree) page for details.
 
 ## CoSE Bilkent
 
-[CoSE Bilkent](https://github.com/bilkent-CG) applies a force-directed layout algorithm. Nodes repel each other while connected edges act as springs, producing organic-looking layouts suitable for network-like diagrams.
-
-```mermaid-example
----
-config:
-  layout: cose-bilkent
----
-graph TD
-  A --> B
-  A --> C
-  B --> D
-  C --> D
-  D --> E
-```
+[CoSE Bilkent](https://github.com/bilkent-CG) applies a force-directed layout algorithm. Nodes repel each other while connected edges act as springs, producing organic-looking layouts suitable for network-like diagrams. It is the default layout for mindmaps.
