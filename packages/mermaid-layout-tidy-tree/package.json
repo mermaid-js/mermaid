@@ -43,7 +43,7 @@
     "non-layered-tidy-tree-layout": "^2.0.2"
   },
   "peerDependencies": {
-    "mermaid": "^11.0.2"
+    "mermaid": "^11.0.2 || ^12.0.0"
   },
   "files": [
     "dist"
