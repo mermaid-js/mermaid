@@ -42,6 +42,12 @@ const maxSafeSizeForWidth = 16384;
 const mathPlaceholder = (index: number) => `¤math${index}¤`;
 const mathPlaceholderRegex = /¤math(\d+)¤/g;
 
+const unwrapParagraphs = (html: string) =>
+  html
+    .replace(/<\/p>\s*<p>/g, '<br/>')
+    .replace(/^<p>/, '')
+    .replace(/<\/p>$/, '');
+
 async function addHtmlSpan(
   element: D3Selection<SVGGElement>,
   node: { label: string; labelStyle: string; isNode: boolean },
@@ -363,12 +369,20 @@ export const createText = async (
       : nonMarkdownToHTML(textWithoutMath);
     const decodedReplacedText = await replaceIconSubstring(decodeEntities(htmlText), config);
 
+    // KaTeX renders in display mode, a block, and the label is laid out as a flex row per
+    // line. Inside a paragraph that block would drop below the text rather than sit beside
+    // it, so a label with math keeps the flat shape it always had.
+    const label =
+      mathSpans.length > 0
+        ? unwrapParagraphs(decodedReplacedText).replace(
+            mathPlaceholderRegex,
+            (_, index: string) => mathSpans[Number(index)]
+          )
+        : decodedReplacedText;
+
     const node = {
       isNode,
-      label: decodedReplacedText.replace(
-        mathPlaceholderRegex,
-        (_, index: string) => mathSpans[Number(index)]
-      ),
+      label,
       labelStyle: style.replace('fill:', 'color:'),
     };
     const vertexNode = await addHtmlSpan(

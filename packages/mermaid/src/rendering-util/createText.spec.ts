@@ -132,4 +132,15 @@ describe('createText', () => {
     });
     expect(output.innerHTML).toContain('<i class="fa fa-user"></i>');
   });
+
+  it('keeps the text beside the math rather than in a paragraph above it', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(select(svgGroup), 'From $$x(t)$$', {
+      useHtmlLabels: true,
+      markdown: true,
+    });
+    expect(output.innerHTML).not.toContain('<p>');
+    expect(output.innerHTML).toMatch(/nodeLabel[^>]*>From /);
+  });
 });
