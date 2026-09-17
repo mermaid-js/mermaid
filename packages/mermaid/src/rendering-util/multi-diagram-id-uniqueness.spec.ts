@@ -179,6 +179,13 @@ union A, B`,
       a --> b
     end`,
 
+  bpmn: `bpmn-beta LR
+    lane "Sales"
+      start message s1 "Order received"
+      user task t1 "Approve order"
+      end e1 "Done"
+    s1 --> t1 --> e1`,
+
   wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]
