@@ -775,7 +775,12 @@ export const insertEdge = function (
   let svgPath;
   let linePath =
     edgeCurveType === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      ? generateRoundedPath(
+          applyMarkerOffsetsToPoints(lineData, edge, {
+            coincidentTerminals: layout === 'swimlane',
+          }),
+          5
+        )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
@@ -1018,7 +1023,20 @@ function calculateDeltaAndAngle(point1, point2) {
 }
 
 // Function to adjust the first and last points of the points array
-export function applyMarkerOffsetsToPoints(points, edge) {
+const SAME_POINT = 1e-6;
+
+const isSamePoint = (a, b) => Math.abs(a.x - b.x) < SAME_POINT && Math.abs(a.y - b.y) < SAME_POINT;
+
+function firstDistinct(points, from, step) {
+  for (let at = from + step; at >= 0 && at < points.length; at += step) {
+    if (!isSamePoint(points[at], points[from])) {
+      return at;
+    }
+  }
+  return -1;
+}
+
+export function applyMarkerOffsetsToPoints(points, edge, { coincidentTerminals = false } = {}) {
   // Copy the points array to avoid mutating the original data
   const newPoints = points.map((point) => ({ ...point }));
 
@@ -1027,15 +1045,19 @@ export function applyMarkerOffsetsToPoints(points, edge) {
     const offsetValue = markerOffsets[edge.arrowTypeStart];
 
     const point1 = points[0];
-    const point2 = points[1];
+    const towards = coincidentTerminals ? firstDistinct(points, 0, 1) : 1;
 
-    const { angle } = calculateDeltaAndAngle(point1, point2);
+    if (towards !== -1) {
+      const { angle } = calculateDeltaAndAngle(point1, points[towards]);
 
-    const offsetX = offsetValue * Math.cos(angle);
-    const offsetY = offsetValue * Math.sin(angle);
+      const offsetX = offsetValue * Math.cos(angle);
+      const offsetY = offsetValue * Math.sin(angle);
 
-    newPoints[0].x = point1.x + offsetX;
-    newPoints[0].y = point1.y + offsetY;
+      for (let at = 0; at < towards; at++) {
+        newPoints[at].x = points[at].x + offsetX;
+        newPoints[at].y = points[at].y + offsetY;
+      }
+    }
   }
 
   // Handle the last point (end of the edge)
@@ -1044,15 +1066,19 @@ export function applyMarkerOffsetsToPoints(points, edge) {
     const offsetValue = markerOffsets[edge.arrowTypeEnd];
 
     const point1 = points[n - 1];
-    const point2 = points[n - 2];
+    const towards = coincidentTerminals ? firstDistinct(points, n - 1, -1) : n - 2;
 
-    const { angle } = calculateDeltaAndAngle(point2, point1);
+    if (towards !== -1) {
+      const { angle } = calculateDeltaAndAngle(points[towards], point1);
 
-    const offsetX = offsetValue * Math.cos(angle);
-    const offsetY = offsetValue * Math.sin(angle);
+      const offsetX = offsetValue * Math.cos(angle);
+      const offsetY = offsetValue * Math.sin(angle);
 
-    newPoints[n - 1].x = point1.x - offsetX;
-    newPoints[n - 1].y = point1.y - offsetY;
+      for (let at = n - 1; at > towards; at--) {
+        newPoints[at].x = points[at].x - offsetX;
+        newPoints[at].y = points[at].y - offsetY;
+      }
+    }
   }
 
   return newPoints;
