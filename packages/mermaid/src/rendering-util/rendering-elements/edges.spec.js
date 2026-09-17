@@ -11,7 +11,12 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
-import { insertEdge, resolveEdgeCurveType, setTerminalWidth } from './edges.js';
+import {
+  applyMarkerOffsetsToPoints,
+  insertEdge,
+  resolveEdgeCurveType,
+  setTerminalWidth,
+} from './edges.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
 import intersectRect from './intersect/intersect-rect.js';
@@ -530,5 +535,50 @@ describe('setTerminalWidth', () => {
     const fo = { style: {} };
     setTerminalWidth(fo, '1', { width: 7.8, height: 21 });
     expect(fo.style.width).toBe('9px');
+  });
+});
+
+describe('applyMarkerOffsetsToPoints', () => {
+  /** A route arriving from above whose terminal the layout handed over twice. */
+  const duplicatedTerminal = () => [
+    { x: 50, y: 0 },
+    { x: 50, y: 100 },
+    { x: 50, y: 100 },
+  ];
+
+  const edge = { arrowTypeEnd: 'arrow_point' };
+
+  it('moves the terminal along the neighbour, leaving every other layout as it was', () => {
+    const points = applyMarkerOffsetsToPoints(duplicatedTerminal(), edge);
+
+    // The neighbour is the terminal's own copy, which describes no direction: the angle
+    // comes back as zero and the shortening goes to the right. That is what dagre and
+    // ELK have always been drawn with, and a BPMN fix must not change it.
+    expect(points[2]).toEqual({ x: 46, y: 100 });
+    expect(points[1]).toEqual({ x: 50, y: 100 });
+    expect(points[0]).toEqual({ x: 50, y: 0 });
+  });
+
+  it('moves every copy of the terminal against the way it arrives, for coincident terminals', () => {
+    const points = applyMarkerOffsetsToPoints(duplicatedTerminal(), edge, {
+      coincidentTerminals: true,
+    });
+
+    // The direction now comes from the nearest point that is somewhere else, so the line
+    // is shortened upwards, and no copy is left behind as a leg of its own.
+    expect(points[2]).toEqual({ x: 50, y: 96 });
+    expect(points[1]).toEqual({ x: 50, y: 96 });
+    expect(points[0]).toEqual({ x: 50, y: 0 });
+  });
+
+  it('is unaffected by the option when the terminals are distinct', () => {
+    const route = [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+    ];
+
+    expect(applyMarkerOffsetsToPoints(route, edge)).toEqual(
+      applyMarkerOffsetsToPoints(route, edge, { coincidentTerminals: true })
+    );
   });
 });
