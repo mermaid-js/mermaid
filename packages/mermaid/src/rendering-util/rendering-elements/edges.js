@@ -628,7 +628,7 @@ export const insertEdge = function (
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
-        points = [tail.intersect(points[0]), head.intersect(points[1])];
+        points = [tail.intersect(points[1]), head.intersect(points[0])];
       } else {
         // For multi-segment paths, keep the inner bend points and just adjust the entry/exit
         // segments near the nodes.
@@ -636,12 +636,17 @@ export const insertEdge = function (
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
         const TOLERANCE = 0.5;
-        const lastIsPinned =
-          Math.abs(points[points.length - 1].x - lastInner.x) < TOLERANCE &&
-          Math.abs(points[points.length - 1].y - lastInner.y) < TOLERANCE;
 
         const newFirst = tail.intersect(firstInner);
-        const newLast = lastIsPinned ? lastInner : head.intersect(lastInner);
+
+        const originalLast = points[points.length - 1];
+        const isAxisAligned = (a, b) =>
+          Math.abs(a.x - b.x) < TOLERANCE || Math.abs(a.y - b.y) < TOLERANCE;
+        const candidateLast = head.intersect(lastInner);
+        const newLast =
+          !isAxisAligned(originalLast, lastInner) || isAxisAligned(candidateLast, lastInner)
+            ? candidateLast
+            : originalLast;
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
