@@ -54,4 +54,14 @@ describe('a group inside a pool', () => {
     expect(group.x).toBeCloseTo(centreOf(members, 'x'), 5);
   });
 
+  it('travels with the nodes it is drawn around (TB)', () => {
+    const { g, ordered, coords } = mkPoolWithNestedGroup();
+    writeBackToLayoutData(g, ordered, coords, { nodeGap: 40, layerGap: 120 });
+    applySwimlaneDirectionTransform(g.layout, 'TB');
+
+    const group = g.nodeById.get('group1') as any;
+    const members = [g.nodeById.get('A'), g.nodeById.get('B')] as any[];
+
+    expect(group.y).toBeCloseTo(centreOf(members, 'y'), 5);
+  });
 });

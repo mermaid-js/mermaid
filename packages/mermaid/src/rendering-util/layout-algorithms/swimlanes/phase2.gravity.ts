@@ -116,7 +116,7 @@ export function assignLayers_Gravity(gAcyclic: Graph, opts?: LayeringOptions): L
     }
   }
 
-  const layers = buildLayersFromRanks(g, order, rankOf);
+  const layers = buildLayersFromRanks(g, order, rankOf, { skipGroups: true });
 
   return { layers, rankOf, dummy: new Set<NodeId>() };
 }
