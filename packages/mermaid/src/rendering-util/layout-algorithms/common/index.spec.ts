@@ -340,7 +340,8 @@ describe('paintLayoutData', () => {
       nodeA,
       nodeB,
       data.diagramId,
-      true
+      true,
+      data.layoutAlgorithm
     );
   });
 
@@ -421,7 +422,8 @@ describe('paintLayoutData', () => {
       graphOnlyNode,
       nodeB,
       data.diagramId,
-      false
+      false,
+      data.layoutAlgorithm
     );
   });
 

@@ -598,14 +598,16 @@ export const insertEdge = function (
   startNode,
   endNode,
   diagramId,
-  skipIntersect = false
+  skipIntersect = false,
+  layoutAlgorithm = undefined
 ) {
   if (!diagramId) {
     throw new Error(
       `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
     );
   }
-  const { handDrawnSeed, layout } = getConfig();
+  const { handDrawnSeed, layout: configuredLayout } = getConfig();
+  const layout = layoutAlgorithm ?? configuredLayout;
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = startNode;
