@@ -145,6 +145,21 @@ describe('c4-beta', () => {
       expect(element.tags).toEqual(['web', 'critical-path']);
     });
 
+    it('should allow element kind keywords as element ids', () => {
+      const result = parse(`c4-beta context
+        softwareSystem softwareSystem "System"
+        person container "Container Person"
+        deploymentNode component "Node System"
+      `);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.elements[0].kind).toBe('softwareSystem');
+      expect(result.value.elements[0].id).toBe('softwareSystem');
+      expect(result.value.elements[1].kind).toBe('person');
+      expect(result.value.elements[1].id).toBe('container');
+      expect(result.value.elements[2].kind).toBe('deploymentNode');
+      expect(result.value.elements[2].id).toBe('component');
+    });
+
     it('should handle nested elements via braces', () => {
       const result = parse(`c4-beta context
         softwareSystem big "Big System" {
@@ -201,6 +216,19 @@ describe('c4-beta', () => {
       const relationship = result.value.relationships[0];
       expect(relationship.step).toBe(1);
       expect(relationship.sourceId).toBe('spa');
+    });
+
+    it('should allow element kind keywords as relationship endpoints', () => {
+      const result = parse(`c4-beta context
+        person person "Person"
+        softwareSystem softwareSystem "System"
+        person --> softwareSystem : "Uses"
+      `);
+      expectNoErrorsOrAlternatives(result);
+      const relationship = result.value.relationships[0];
+      expect(relationship.sourceId).toBe('person');
+      expect(relationship.targetId).toBe('softwareSystem');
+      expect(relationship.description).toBe('Uses');
     });
 
     it('should handle tags on relationships', () => {

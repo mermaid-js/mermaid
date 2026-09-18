@@ -192,11 +192,11 @@ export class C4BetaDB implements DiagramDB {
 
     this.validateElements();
 
-    // Any element containing other elements is rendered as a boundary cluster.
-    // Deployment nodes are always clusters, even when they are empty.
+    // Any element containing other elements is rendered as a boundary cluster. A deployment
+    // node and a group are boundaries by definition, so they stay clusters when empty.
     const boundaryIds = new Set(
       this.elements.flatMap((element) => [
-        ...(element.kind === 'deploymentNode' ? [element.id] : []),
+        ...(element.kind === 'deploymentNode' || element.kind === 'group' ? [element.id] : []),
         ...(element.parentId === undefined ? [] : [element.parentId]),
       ])
     );
