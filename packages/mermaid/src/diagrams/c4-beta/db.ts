@@ -13,6 +13,7 @@ import {
 } from '../common/commonDb.js';
 import type {
   C4BetaElement,
+  C4BetaLegendItem,
   C4BetaRelationship,
   C4BetaTagStyle,
   C4DiagramKind,
@@ -84,12 +85,56 @@ const buildRelationshipLabel = (
   return lines.join('<br/>');
 };
 
+// Element kinds that get a legend swatch (those with a theme identity colour).
+// Groups and deployment nodes render as unfilled boundaries, so they are omitted.
+const LEGEND_KINDS = new Set<C4ElementKind>([
+  'person',
+  'softwareSystem',
+  'container',
+  'component',
+  'infrastructureNode',
+]);
+
+/**
+ * Derives the legend entries for a diagram: one entry per element kind in use
+ * (external variants are listed separately) followed by one entry per
+ * user-defined style tag. Kind rows carry only the kind; the renderer resolves
+ * their swatch colour from the active theme so the legend matches the elements.
+ */
+export const buildLegendItems = (
+  elements: C4BetaElement[],
+  styles: Map<string, C4BetaTagStyle>
+): C4BetaLegendItem[] => {
+  const items: C4BetaLegendItem[] = [];
+  const seenLabels = new Set<string>();
+  for (const element of elements) {
+    // `external` is a convention tag; external elements share the grey identity.
+    const isExternal = element.tags.includes('external');
+    if (!LEGEND_KINDS.has(element.kind)) {
+      continue;
+    }
+    const label = isExternal ? `external ${element.kind}` : element.kind;
+    if (seenLabels.has(label)) {
+      continue;
+    }
+    seenLabels.add(label);
+    // Carry the kind only; the renderer resolves the swatch colour from the
+    // active theme so the legend matches the rendered elements.
+    items.push({ label, kind: element.kind, external: isExternal });
+  }
+  for (const [tag, style] of styles) {
+    items.push({ label: tag, fill: style.fill, stroke: style.stroke ?? style.fill });
+  }
+  return items;
+};
+
 export class C4BetaDB implements DiagramDB {
   private elements: C4BetaElement[] = [];
   private relationships: C4BetaRelationship[] = [];
   private styles = new Map<string, C4BetaTagStyle>();
   private direction: C4Direction = 'TB';
   private kind: C4DiagramKind = 'context';
+  private legendEnabled = true;
 
   public addElement(element: C4BetaElement) {
     this.elements.push(element);
@@ -143,6 +188,18 @@ export class C4BetaDB implements DiagramDB {
     return this.kind;
   }
 
+  public setLegendEnabled(enabled: boolean) {
+    this.legendEnabled = enabled;
+  }
+
+  public isLegendEnabled(): boolean {
+    return this.legendEnabled;
+  }
+
+  public getLegendItems(): C4BetaLegendItem[] {
+    return buildLegendItems(this.elements, this.styles);
+  }
+
   private validateElements() {
     const unexpected = UNEXPECTED_ELEMENT_KINDS[this.kind];
     for (const element of this.elements) {
@@ -169,6 +226,41 @@ export class C4BetaDB implements DiagramDB {
         element.instances = undefined;
       }
     }
+  }
+
+  /**
+   * Adds an element's tag classes and returns what they style.
+   *
+   * `external` is a built-in convention tag: it adds the `c4-external` class, whose grey comes
+   * from the theme rather than an inline style. Everything else a tag sets is emitted inline, so
+   * a `style <tag> fill:#...` statement beats the themed class rules.
+   */
+  private applyTags(
+    element: C4BetaElement,
+    cssClasses: string[],
+    defaultShape: Node['shape']
+  ): { cssStyles: string[]; shape: Node['shape'] } {
+    if (element.tags.includes('external')) {
+      cssClasses.push('c4-external');
+    }
+    const cssStyles: string[] = [];
+    let shape = defaultShape;
+    for (const tag of element.tags) {
+      cssClasses.push(`c4-tag-${tag}`);
+      const style = this.styles.get(tag);
+      if (!style) {
+        continue;
+      }
+      for (const key of ['fill', 'stroke', 'color'] as const) {
+        if (style[key]) {
+          cssStyles.push(`${key}: ${style[key]}`);
+        }
+      }
+      if (style.shape) {
+        shape = style.shape;
+      }
+    }
+    return { cssStyles, shape };
   }
 
   public getData(): LayoutData {
@@ -205,48 +297,29 @@ export class C4BetaDB implements DiagramDB {
         } else {
           label = escapeHtml(element.name);
         }
+        const boundaryClasses = ['c4-boundary'];
+        if (element.kind === 'deploymentNode') {
+          boundaryClasses.push('c4-deploymentNode');
+        }
+        // A boundary carries its tags like any other element: `:::external` on a system with
+        // containers, or a tag on a deployment node, styles the box it draws.
+        const { cssStyles: boundaryStyles } = this.applyTags(element, boundaryClasses, 'rect');
         nodes.push({
           id: element.id,
           label,
           parentId: element.parentId,
           isGroup: true,
           shape: 'rect',
-          cssClasses:
-            element.kind === 'deploymentNode' ? 'c4-boundary c4-deploymentNode' : 'c4-boundary',
-          cssStyles: [],
+          cssClasses: boundaryClasses.join(' '),
+          cssStyles: boundaryStyles,
           padding: 8,
           look: config.look,
         });
         continue;
       }
-      // `external` is a built-in convention tag: it adds the `c4-external` class
-      // (themed grey comes from CSS, not inline styles) instead of the kind color.
-      const isExternal = element.tags.includes('external');
       const cssClasses = ['c4-shape', `c4-${element.kind}`];
-      if (isExternal) {
-        cssClasses.push('c4-external');
-      }
-      // All per-kind colours come from theme-driven outline class rules in styles.ts;
-      // only tag styles are emitted inline so they win over the class-based defaults.
-      const cssStyles: string[] = [];
-      let shape: Node['shape'] = element.kind === 'person' ? 'person' : 'rect';
-      // Tag styles are emitted inline so they override the themed class colours.
-      // A user `style external fill:#...` therefore beats the default `.c4-external` rule.
-      for (const tag of element.tags) {
-        cssClasses.push(`c4-tag-${tag}`);
-        const style = this.styles.get(tag);
-        if (!style) {
-          continue;
-        }
-        for (const key of ['fill', 'stroke', 'color'] as const) {
-          if (style[key]) {
-            cssStyles.push(`${key}: ${style[key]}`);
-          }
-        }
-        if (style.shape) {
-          shape = style.shape;
-        }
-      }
+      const defaultShape: Node['shape'] = element.kind === 'person' ? 'person' : 'rect';
+      const { cssStyles, shape } = this.applyTags(element, cssClasses, defaultShape);
       nodes.push({
         id: element.id,
         label: buildElementLabel(element),
@@ -323,6 +396,7 @@ export class C4BetaDB implements DiagramDB {
     this.styles = new Map();
     this.direction = 'TB';
     this.kind = 'context';
+    this.legendEnabled = true;
   }
 
   public setAccTitle = setAccTitle;
