@@ -162,6 +162,11 @@ union A, B`,
     System(system, "System")
     Rel(user, system, "Uses")`,
 
+  c4beta: `c4-beta context
+    person user "User"
+    softwareSystem core "System"
+    user --> core : "Uses"`,
+
   block: `block-beta
     columns 1
     a["A"]
