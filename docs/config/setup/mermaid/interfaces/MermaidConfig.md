@@ -18,7 +18,7 @@ Defined in: [packages/mermaid/src/config.type.ts:66](https://github.com/mermaid-
 
 > `optional` **agentflow**: `AgentflowDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:326](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L326)
+Defined in: [packages/mermaid/src/config.type.ts:327](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L327)
 
 ---
 
@@ -34,7 +34,7 @@ Defined in: [packages/mermaid/src/config.type.ts:264](https://github.com/mermaid
 
 > `optional` **architecture**: `ArchitectureDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:338](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L338)
+Defined in: [packages/mermaid/src/config.type.ts:339](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L339)
 
 ---
 
@@ -53,7 +53,15 @@ This matters if you are using base tag settings.
 
 > `optional` **block**: `BlockDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:346](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L346)
+Defined in: [packages/mermaid/src/config.type.ts:347](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L347)
+
+---
+
+### bpmn?
+
+> `optional` **bpmn**: `BPMNDiagramConfig`
+
+Defined in: [packages/mermaid/src/config.type.ts:326](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L326)
 
 ---
 
@@ -61,7 +69,7 @@ Defined in: [packages/mermaid/src/config.type.ts:346](https://github.com/mermaid
 
 > `optional` **c4**: `C4DiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:343](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L343)
+Defined in: [packages/mermaid/src/config.type.ts:344](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L344)
 
 ---
 
@@ -69,7 +77,7 @@ Defined in: [packages/mermaid/src/config.type.ts:343](https://github.com/mermaid
 
 > `optional` **class**: `ClassDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:331](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L331)
+Defined in: [packages/mermaid/src/config.type.ts:332](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L332)
 
 ---
 
@@ -77,7 +85,7 @@ Defined in: [packages/mermaid/src/config.type.ts:331](https://github.com/mermaid
 
 > `optional` **cynefin**: `CynefinDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:353](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L353)
+Defined in: [packages/mermaid/src/config.type.ts:354](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L354)
 
 ---
 
@@ -121,7 +129,7 @@ You can set this attribute to base the seed on a static string.
 
 > `optional` **dompurifyConfig**: `Config`
 
-Defined in: [packages/mermaid/src/config.type.ts:355](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L355)
+Defined in: [packages/mermaid/src/config.type.ts:356](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L356)
 
 ---
 
@@ -269,7 +277,7 @@ port, or would introduce a crossing.
 
 > `optional` **er**: `ErDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:333](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L333)
+Defined in: [packages/mermaid/src/config.type.ts:334](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L334)
 
 ---
 
@@ -277,7 +285,7 @@ Defined in: [packages/mermaid/src/config.type.ts:333](https://github.com/mermaid
 
 > `optional` **eventmodeling**: `EventModelingDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:347](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L347)
+Defined in: [packages/mermaid/src/config.type.ts:348](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L348)
 
 ---
 
@@ -305,7 +313,7 @@ See <https://developer.mozilla.org/en-US/docs/Web/CSS/font-family>
 
 > `optional` **fontSize**: `number`
 
-Defined in: [packages/mermaid/src/config.type.ts:357](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L357)
+Defined in: [packages/mermaid/src/config.type.ts:358](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L358)
 
 ---
 
@@ -325,7 +333,7 @@ If set to true, ignores legacyMathML.
 
 > `optional` **gantt**: `GanttDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L328)
+Defined in: [packages/mermaid/src/config.type.ts:329](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L329)
 
 ---
 
@@ -333,7 +341,7 @@ Defined in: [packages/mermaid/src/config.type.ts:328](https://github.com/mermaid
 
 > `optional` **gitGraph**: `GitGraphDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:342](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L342)
+Defined in: [packages/mermaid/src/config.type.ts:343](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L343)
 
 ---
 
@@ -364,7 +372,7 @@ over any diagram-specific settings.
 
 > `optional` **ishikawa**: `IshikawaDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:340](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L340)
+Defined in: [packages/mermaid/src/config.type.ts:341](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L341)
 
 ---
 
@@ -372,7 +380,7 @@ Defined in: [packages/mermaid/src/config.type.ts:340](https://github.com/mermaid
 
 > `optional` **journey**: `JourneyDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:329](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L329)
+Defined in: [packages/mermaid/src/config.type.ts:330](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L330)
 
 ---
 
@@ -380,7 +388,7 @@ Defined in: [packages/mermaid/src/config.type.ts:329](https://github.com/mermaid
 
 > `optional` **kanban**: `KanbanDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:341](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L341)
+Defined in: [packages/mermaid/src/config.type.ts:342](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L342)
 
 ---
 
@@ -434,7 +442,7 @@ Defines which main look to use for the diagram.
 
 > `optional` **markdownAutoWrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:358](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L358)
+Defined in: [packages/mermaid/src/config.type.ts:359](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L359)
 
 ---
 
@@ -462,7 +470,7 @@ The maximum allowed size of the users text diagram
 
 > `optional` **mindmap**: `MindmapDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:339](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L339)
+Defined in: [packages/mermaid/src/config.type.ts:340](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L340)
 
 ---
 
@@ -470,7 +478,7 @@ Defined in: [packages/mermaid/src/config.type.ts:339](https://github.com/mermaid
 
 > `optional` **packet**: `PacketDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:345](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L345)
+Defined in: [packages/mermaid/src/config.type.ts:346](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L346)
 
 ---
 
@@ -478,7 +486,7 @@ Defined in: [packages/mermaid/src/config.type.ts:345](https://github.com/mermaid
 
 > `optional` **pie**: `PieDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:334](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L334)
+Defined in: [packages/mermaid/src/config.type.ts:335](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L335)
 
 ---
 
@@ -486,7 +494,7 @@ Defined in: [packages/mermaid/src/config.type.ts:334](https://github.com/mermaid
 
 > `optional` **quadrantChart**: `QuadrantChartConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:335](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L335)
+Defined in: [packages/mermaid/src/config.type.ts:336](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L336)
 
 ---
 
@@ -494,7 +502,7 @@ Defined in: [packages/mermaid/src/config.type.ts:335](https://github.com/mermaid
 
 > `optional` **radar**: `RadarDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:349](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L349)
+Defined in: [packages/mermaid/src/config.type.ts:350](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L350)
 
 ---
 
@@ -502,7 +510,7 @@ Defined in: [packages/mermaid/src/config.type.ts:349](https://github.com/mermaid
 
 > `optional` **railroad**: `RailroadDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:354](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L354)
+Defined in: [packages/mermaid/src/config.type.ts:355](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L355)
 
 ---
 
@@ -510,7 +518,7 @@ Defined in: [packages/mermaid/src/config.type.ts:354](https://github.com/mermaid
 
 > `optional` **requirement**: `RequirementDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:337](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L337)
+Defined in: [packages/mermaid/src/config.type.ts:338](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L338)
 
 ---
 
@@ -518,7 +526,7 @@ Defined in: [packages/mermaid/src/config.type.ts:337](https://github.com/mermaid
 
 > `optional` **sankey**: `SankeyDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:344](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L344)
+Defined in: [packages/mermaid/src/config.type.ts:345](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L345)
 
 ---
 
@@ -548,7 +556,7 @@ Level of trust for parsed diagram
 
 > `optional` **sequence**: `SequenceDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:327](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L327)
+Defined in: [packages/mermaid/src/config.type.ts:328](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L328)
 
 ---
 
@@ -566,7 +574,7 @@ Dictates whether mermaid starts on Page load
 
 > `optional` **state**: `StateDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:332](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L332)
+Defined in: [packages/mermaid/src/config.type.ts:333](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L333)
 
 ---
 
@@ -574,7 +582,7 @@ Defined in: [packages/mermaid/src/config.type.ts:332](https://github.com/mermaid
 
 > `optional` **suppressErrorRendering**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:364](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L364)
+Defined in: [packages/mermaid/src/config.type.ts:365](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L365)
 
 Suppresses inserting 'Syntax error' diagram in the DOM.
 This is useful when you want to control how to handle syntax errors in your application.
@@ -620,7 +628,7 @@ Defined in: [packages/mermaid/src/config.type.ts:85](https://github.com/mermaid-
 
 > `optional` **timeline**: `TimelineDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:330](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L330)
+Defined in: [packages/mermaid/src/config.type.ts:331](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L331)
 
 ---
 
@@ -628,7 +636,7 @@ Defined in: [packages/mermaid/src/config.type.ts:330](https://github.com/mermaid
 
 > `optional` **treeView**: `TreeViewDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:348](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L348)
+Defined in: [packages/mermaid/src/config.type.ts:349](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L349)
 
 ---
 
@@ -636,7 +644,7 @@ Defined in: [packages/mermaid/src/config.type.ts:348](https://github.com/mermaid
 
 > `optional` **usecase**: `UsecaseDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:350](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L350)
+Defined in: [packages/mermaid/src/config.type.ts:351](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L351)
 
 ---
 
@@ -644,7 +652,7 @@ Defined in: [packages/mermaid/src/config.type.ts:350](https://github.com/mermaid
 
 > `optional` **venn**: `VennDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:351](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L351)
+Defined in: [packages/mermaid/src/config.type.ts:352](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L352)
 
 ---
 
@@ -652,7 +660,7 @@ Defined in: [packages/mermaid/src/config.type.ts:351](https://github.com/mermaid
 
 > `optional` **wardley-beta**: `WardleyDiagramConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:352](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L352)
+Defined in: [packages/mermaid/src/config.type.ts:353](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L353)
 
 ---
 
@@ -660,7 +668,7 @@ Defined in: [packages/mermaid/src/config.type.ts:352](https://github.com/mermaid
 
 > `optional` **wrap**: `boolean`
 
-Defined in: [packages/mermaid/src/config.type.ts:356](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L356)
+Defined in: [packages/mermaid/src/config.type.ts:357](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L357)
 
 ---
 
@@ -668,4 +676,4 @@ Defined in: [packages/mermaid/src/config.type.ts:356](https://github.com/mermaid
 
 > `optional` **xyChart**: `XYChartConfig`
 
-Defined in: [packages/mermaid/src/config.type.ts:336](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L336)
+Defined in: [packages/mermaid/src/config.type.ts:337](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L337)
