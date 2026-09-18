@@ -9,7 +9,7 @@ import type { C4BetaDB } from './db.js';
 
 const draw: DrawDefinition = async function (_text, id, _version, diag) {
   log.debug('Drawing c4-beta diagram', id);
-  const { securityLevel, layout } = getConfig();
+  const { securityLevel, layout, c4beta: conf } = getConfig();
   const db = diag.db as C4BetaDB;
 
   // getData extracts the parsed structure into the unified Layout data format.
@@ -37,7 +37,7 @@ const draw: DrawDefinition = async function (_text, id, _version, diag) {
   await render(data4Layout, svg);
 
   utils.insertTitle(svg, 'c4TitleText', 30, db.getDiagramTitle());
-  setupViewPortForSVG(svg, 10, 'c4beta', true);
+  setupViewPortForSVG(svg, conf?.diagramPadding ?? 10, 'c4beta', conf?.useMaxWidth ?? true);
 };
 
 export const renderer: DiagramRenderer = { draw };
