@@ -535,4 +535,18 @@ describe('c4-beta db', () => {
     expect(db.getKind()).toBe('context');
     expect(db.getDirection()).toBe('TB');
   });
+
+  it('should draw an empty group as a boundary', async () => {
+    await populate(`c4-beta context
+group empty "Nothing in here"
+group team "Team A" {
+  softwareSystem core "Core System"
+}
+`);
+    const { nodes } = db.getData();
+
+    // a group is a boundary by what it is, not by whether anything is inside it
+    expect(nodes.find((node) => node.id === 'empty')?.isGroup).toBe(true);
+    expect(nodes.find((node) => node.id === 'team')?.isGroup).toBe(true);
+  });
 });
