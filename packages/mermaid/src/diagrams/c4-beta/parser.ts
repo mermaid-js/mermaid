@@ -30,6 +30,9 @@ export const populateDb = (ast: C4, db: C4BetaDB) => {
   if (ast.direction) {
     db.setDirection(ast.direction);
   }
+  if (ast.legend) {
+    db.setLegendEnabled(ast.legend === 'on');
+  }
   for (const element of ast.elements) {
     addElement(db, element);
   }

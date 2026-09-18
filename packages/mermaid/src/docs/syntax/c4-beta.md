@@ -256,6 +256,24 @@ container db "Database" "Stores user credentials." "Oracle 12c" :::database
 api --> db : "Reads from and writes to" "SQL/TCP" :::async
 ```
 
+### Legend (v<MERMAID_RELEASE_VERSION>+)
+
+A legend listing the element kinds (for example `person`, `softwareSystem`, `external softwareSystem`) and the style tags used in the diagram is rendered below the diagram by default. An element kind shows an outline swatch in that kind's colour, and a style tag shows the tag's own fill and stroke.
+
+The legend can be disabled with the `legend off` statement:
+
+```mermaid-example
+c4-beta context
+legend off
+
+person user "User"
+softwareSystem core "Core System"
+
+user --> core : "Uses"
+```
+
+`legend on` is also accepted and matches the default behavior.
+
 ### Direction
 
 The layout direction can be set with `direction TB|BT|LR|RL` (default `TB`):
