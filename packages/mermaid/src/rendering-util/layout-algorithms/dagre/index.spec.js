@@ -305,6 +305,96 @@ describe('getEdgesToRender', () => {
     expect(edgesToRender[0].edge.label).toBe('loop');
   });
 
+  it('keeps and nests multiple self-loops on the same node', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
+
+    const addSelfLoop = (loopId, label) => {
+      const originalEdge = { id: loopId, start: 'A', end: 'A', label };
+      const specialId1 = `A---${loopId}---1`;
+      const specialId2 = `A---${loopId}---2`;
+      const segment = (order, points) => ({
+        ...originalEdge,
+        id: `${loopId}-cyclic-special-${order}`,
+        selfLoop: { id: loopId, order },
+        originalEdge,
+        points,
+      });
+
+      graph.setNode(specialId1, { id: specialId1 });
+      graph.setNode(specialId2, { id: specialId2 });
+      graph.setEdge('A', specialId1, segment(0, [{ x: 0, y: 0 }]), `${loopId}-cyclic-special-0`);
+      graph.setEdge(
+        specialId1,
+        specialId2,
+        segment(1, [{ x: 20, y: 0 }]),
+        `${loopId}-cyclic-special-1`
+      );
+      graph.setEdge(specialId2, 'A', segment(2, [{ x: 30, y: 0 }]), `${loopId}-cyclic-special-2`);
+    };
+
+    addSelfLoop('A-A-1', 'ref1');
+    addSelfLoop('A-A-2', 'ref2');
+
+    const edgesToRender = getEdgesToRender(graph);
+
+    expect(edgesToRender.map(({ edge }) => edge.id)).toEqual(['A-A-1', 'A-A-2']);
+    expect(edgesToRender.map(({ edge }) => edge.label)).toEqual(['ref1', 'ref2']);
+    expect(edgesToRender[0].edge.points).toEqual([
+      { x: -8, y: 0 },
+      { x: -8, y: -24 },
+      { x: 28, y: -24 },
+      { x: 28, y: 0 },
+    ]);
+    // The second loop on the same side is drawn outside the first one.
+    expect(edgesToRender[1].edge.points).toEqual([
+      { x: -8, y: 0 },
+      { x: -8, y: -40 },
+      { x: 28, y: -40 },
+      { x: 28, y: 0 },
+    ]);
+    expect(edgesToRender[0].edge.y).toBe(-28);
+    expect(edgesToRender[1].edge.y).toBe(-44);
+  });
+
+  it('spreads nested self-loop endpoints and clears the previous label', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setNode('A', { id: 'A', x: 100, y: 100, width: 120, height: 80 });
+
+    ['A-A-1', 'A-A-2'].forEach((loopId) => {
+      const originalEdge = { id: loopId, start: 'A', end: 'A' };
+      const segment = (order) => ({
+        ...originalEdge,
+        id: `${loopId}-cyclic-special-${order}`,
+        selfLoop: { id: loopId, order },
+        originalEdge,
+        width: 40,
+        height: 24,
+        points: [],
+      });
+      graph.setNode(`A---${loopId}---1`, { x: 100, y: 0 });
+      graph.setNode(`A---${loopId}---2`, { x: 100, y: 0 });
+      graph.setEdge('A', `A---${loopId}---1`, segment(0), `${loopId}-cyclic-special-0`);
+      graph.setEdge(
+        `A---${loopId}---1`,
+        `A---${loopId}---2`,
+        segment(1),
+        `${loopId}-cyclic-special-1`
+      );
+      graph.setEdge(`A---${loopId}---2`, 'A', segment(2), `${loopId}-cyclic-special-2`);
+    });
+
+    const [inner, outer] = getEdgesToRender(graph).map(({ edge }) => edge);
+
+    // Endpoints on the node border differ, so the arrowheads don't stack.
+    expect(outer.points[0].x).toBeLessThan(inner.points[0].x);
+    expect(outer.points[3].x).toBeGreaterThan(inner.points[3].x);
+    // The outer loop passes beyond the inner loop's label box.
+    expect(outer.points[1].y).toBeLessThan(inner.y - inner.height / 2);
+    // Labels don't overlap.
+    expect(inner.y - inner.height / 2).toBeGreaterThanOrEqual(outer.y + outer.height / 2);
+  });
+
   it('places compact self-loops on the side chosen by the layout', () => {
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
@@ -704,6 +794,72 @@ SelfReferential "1" --> "0..1" SelfReferential : referenced`
       expect(edgePaths).toHaveLength(1);
       expect(terminalLabels).toContain('1');
       expect(terminalLabels).toContain('0..1');
+      expectFinitePaths(edgePaths);
+    } finally {
+      restoreDom();
+    }
+  });
+
+  it('renders every self-reference when a class has multiple self-loops', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      const { svg } = await mermaidAPI.render(
+        'class-multiple-self-loops-test',
+        `---
+config:
+  layout: dagre
+---
+classDiagram
+classG <-- classG : ref1
+classG <-- classG : ref2`
+      );
+      const dom = new JSDOM(svg);
+      const document = dom.window.document;
+      const edgePaths = [...document.querySelectorAll('.edgePaths path[data-edge="true"]')];
+      const edgeLabels = [...document.querySelectorAll('.edgeLabels .edgeLabel')].map((label) =>
+        label.textContent?.trim()
+      );
+
+      // Compare strings rather than DOM nodes so a failure prints a readable diff.
+      expect(getCyclicPaths(document).length).toBe(0);
+      expect(edgePaths.map((path) => path.getAttribute('data-id'))).toEqual([
+        'id_classG_classG_1',
+        'id_classG_classG_2',
+      ]);
+      expect(new Set(edgePaths.map((path) => path.getAttribute('d'))).size).toBe(2);
+      expect(edgeLabels).toEqual(expect.arrayContaining(['ref1', 'ref2']));
+      expectFinitePaths(edgePaths);
+    } finally {
+      restoreDom();
+    }
+  });
+
+  it('renders every self-loop when a flowchart node has multiple self-loops', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      const { svg } = await mermaidAPI.render(
+        'flowchart-multiple-self-loops-test',
+        `---
+config:
+  layout: dagre
+---
+flowchart TD
+A -->|one| A
+A -->|two| A`
+      );
+      const dom = new JSDOM(svg);
+      const edgePaths = [...dom.window.document.querySelectorAll('.edgePaths path.flowchart-link')];
+
+      expect(getCyclicPaths(dom.window.document).length).toBe(0);
+      const edgeLabels = [...dom.window.document.querySelectorAll('.edgeLabels .edgeLabel')].map(
+        (label) => label.textContent?.trim()
+      );
+
+      expect(edgePaths.map((path) => path.getAttribute('data-id'))).toHaveLength(2);
+      expect(new Set(edgePaths.map((path) => path.getAttribute('d'))).size).toBe(2);
+      expect(edgeLabels).toEqual(expect.arrayContaining(['one', 'two']));
       expectFinitePaths(edgePaths);
     } finally {
       restoreDom();
