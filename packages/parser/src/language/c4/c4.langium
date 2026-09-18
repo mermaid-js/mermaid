@@ -24,7 +24,7 @@ fragment Direction:
 
 C4Element:
     kind=('person' | 'softwareSystem' | 'container' | 'component' | 'group' | 'deploymentNode' | 'infrastructureNode')
-    id=ID
+    id=C4Id
     name=STRING (description=STRING (technology=STRING)?)?
     ('instances' instances=STRING)?
     (tags+=C4_TAG)*
@@ -34,10 +34,16 @@ C4Element:
 
 C4Relationship:
     (step=INT ':')?
-    sourceId=ID arrow=C4_ARROW targetId=ID
+    sourceId=C4Id arrow=C4_ARROW targetId=C4Id
     (':' description=STRING (technology=STRING)?)?
     (tags+=C4_TAG)*
     EOL
+;
+
+// Element kind keywords are also valid element identifiers, so e.g.
+// `softwareSystem softwareSystem "System"` parses.
+C4Id returns string:
+    ID | 'person' | 'softwareSystem' | 'container' | 'component' | 'group' | 'deploymentNode' | 'infrastructureNode'
 ;
 
 C4Style:
