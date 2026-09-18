@@ -62,6 +62,69 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('D');
     expect(data4Layout.nodes[1].label).toEqual('E');
   });
+  it('should be possible to apply a class to a node with shape data using :::', function () {
+    const res = flow.parser.parse(`flowchart TD
+      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px
+      n1@{ shape: rect, label: "Rectangle" }:::customClazz`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(1);
+    expect(data4Layout.nodes[0].shape).toEqual('rect');
+    expect(data4Layout.nodes[0].label).toEqual('Rectangle');
+
+    const vertices = flow.parser.yy.getVertices();
+    expect(vertices.get('n1').classes).toContain('customClazz');
+  });
+  it('should be possible to apply a class to a node with shape data and edges using :::', function () {
+    const res = flow.parser.parse(`flowchart TD
+      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px
+      n1@{ shape: rect, label: "Rectangle" }:::customClazz --> n2`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+
+    const vertices = flow.parser.yy.getVertices();
+    expect(vertices.get('n1').classes).toContain('customClazz');
+    expect(vertices.get('n2').classes.length).toBe(0);
+  });
+  it('should be possible to apply a class to a linked target node with shape data using :::', function () {
+    const res = flow.parser.parse(`flowchart TD
+      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px
+      n1 --> n2@{ shape: rect, label: "Rectangle" }:::customClazz`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+    expect(data4Layout.nodes[1].shape).toEqual('rect');
+    expect(data4Layout.nodes[1].label).toEqual('Rectangle');
+
+    const vertices = flow.parser.yy.getVertices();
+    expect(vertices.get('n1').classes.length).toBe(0);
+    expect(vertices.get('n2').classes).toContain('customClazz');
+  });
+  it('should be possible to chain a linked target node with shape data and ::: class', function () {
+    const res = flow.parser.parse(`flowchart TD
+      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px
+      n1 --> n2@{ shape: rect, label: "Rectangle" }:::customClazz --> n3`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(3);
+
+    const vertices = flow.parser.yy.getVertices();
+    expect(vertices.get('n2').classes).toContain('customClazz');
+    expect(vertices.get('n3').classes.length).toBe(0);
+  });
+  it('should be possible to apply a class to a node with shape data before an ampersand', function () {
+    const res = flow.parser.parse(`flowchart TD
+      classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px
+      n1@{ shape: rect, label: "Rectangle" }:::customClazz & n2`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(2);
+
+    const vertices = flow.parser.yy.getVertices();
+    expect(vertices.get('n1').classes).toContain('customClazz');
+    expect(vertices.get('n2').classes.length).toBe(0);
+  });
   it('should handle basic shape data statements with amp and edges 2', function () {
     const res = flow.parser.parse(`flowchart TB
       D@{ shape: rounded } & E@{ shape: rounded } --> F`);
