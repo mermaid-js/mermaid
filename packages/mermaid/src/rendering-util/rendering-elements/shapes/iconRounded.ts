@@ -23,7 +23,7 @@ export async function iconRounded<T extends SVGGraphicsElement>(
   const { shapeSvg, bbox, halfPadding, label } = await labelHelper(
     parent,
     node,
-    'icon-shape default'
+    `${node.cssClasses ?? ''} icon-shape default`
   );
 
   const topLabel = node.pos === 't';
