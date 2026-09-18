@@ -342,6 +342,40 @@ export const extractor = (graph, depth) => {
     if (!clusterDb.has(node)) {
       log.debug('Not a cluster', node, depth);
     } else if (
+      clusterDb.get(node)?.clusterData?.dir &&
+      graph.children(node) &&
+      graph.children(node).length > 0
+    ) {
+      // Cluster with an explicit direction keyword — always create a subgraph,
+      // even when it has external connections (fixes issue #4648 / #8066).
+      log.debug('Cluster with explicit dir, creating subgraph for children', node, depth);
+
+      const dir = clusterDb.get(node).clusterData.dir;
+      const clusterGraph = new graphlib.Graph({
+        multigraph: true,
+        compound: true,
+      })
+        .setGraph({
+          rankdir: dir,
+          nodesep: 50,
+          ranksep: 50,
+          marginx: 8,
+          marginy: 8,
+        })
+        .setDefaultEdgeLabel(function () {
+          return {};
+        });
+
+      copy(node, graph, clusterGraph, node);
+      graph.setNode(node, {
+        clusterNode: true,
+        id: node,
+        clusterData: clusterDb.get(node).clusterData,
+        label: clusterDb.get(node).label,
+        graph: clusterGraph,
+      });
+      log.debug('Subgraph for cluster with explicit dir created:', node);
+    } else if (
       !clusterDb.get(node).externalConnections &&
       graph.children(node) &&
       graph.children(node).length > 0
