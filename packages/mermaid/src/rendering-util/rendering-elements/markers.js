@@ -335,6 +335,8 @@ const point = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z')
     .attr('class', 'arrowMarkerPath')
+    .attr('fill', 'context-stroke')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
   elem
@@ -351,6 +353,8 @@ const point = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 0 5 L 10 10 L 10 0 z')
     .attr('class', 'arrowMarkerPath')
+    .attr('fill', 'context-stroke')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
   elem
@@ -367,6 +371,8 @@ const point = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 0 0 L 11.5 7 L 0 14 z')
     .attr('class', 'arrowMarkerPath')
+    .attr('fill', 'context-stroke')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
   elem
@@ -383,6 +389,8 @@ const point = (elem, type, id) => {
     .append('polygon')
     .attr('points', '0,7 11.5,14 11.5,0')
     .attr('class', 'arrowMarkerPath')
+    .attr('fill', 'context-stroke')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
@@ -403,6 +411,7 @@ const circle = (elem, type, id) => {
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 
@@ -422,6 +431,7 @@ const circle = (elem, type, id) => {
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
   elem
@@ -440,6 +450,7 @@ const circle = (elem, type, id) => {
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 
@@ -459,6 +470,7 @@ const circle = (elem, type, id) => {
     .attr('cy', '5')
     .attr('r', '5')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 0)
     .style('stroke-dasharray', '1,0');
 };
@@ -478,6 +490,7 @@ const cross = (elem, type, id) => {
     // .attr('stroke', 'black')
     .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 
@@ -496,6 +509,7 @@ const cross = (elem, type, id) => {
     // .attr('stroke', 'black')
     .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
   elem
@@ -512,6 +526,7 @@ const cross = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 1,1 L 14,14 M 1,14 L 14,1')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 2.5);
 
   elem
@@ -528,6 +543,7 @@ const cross = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 1,1 L 14,14 M 1,14 L 14,1')
     .attr('class', 'arrowMarkerPath')
+    .attr('stroke', 'context-stroke')
     .style('stroke-width', 2.5)
     .style('stroke-dasharray', '1,0');
 };
