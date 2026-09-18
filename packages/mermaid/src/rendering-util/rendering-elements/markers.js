@@ -993,6 +993,90 @@ const hierarchy = (elem, type, id) => {
     .style('fill', 'none');
 };
 
+const openArrow = (elem, type, id) => {
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-openArrowEnd')
+    .attr('class', 'marker openArrow ' + type)
+    .attr('viewBox', '0 0 12 12')
+    .attr('refX', 11)
+    .attr('refY', 6)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 1 1 L 11 6 L 1 11')
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1.4)
+    .style('stroke-linecap', 'round')
+    .style('stroke-linejoin', 'round')
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-openArrowStart')
+    .attr('class', 'marker openArrow ' + type)
+    .attr('viewBox', '0 0 12 12')
+    .attr('refX', 1)
+    .attr('refY', 6)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 11 1 L 1 6 L 11 11')
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1.4)
+    .style('stroke-linecap', 'round')
+    .style('stroke-linejoin', 'round')
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+};
+
+const hollowCircle = (elem, type, id) => {
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-hollowCircleStart')
+    .attr('class', 'marker hollowCircle ' + type)
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 0)
+    .attr('refY', 5)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 10)
+    .attr('markerHeight', 10)
+    .attr('orient', 'auto')
+    .append('circle')
+    .attr('cx', 5)
+    .attr('cy', 5)
+    .attr('r', 3.6)
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1.4)
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+
+  elem
+    .append('marker')
+    .attr('id', id + '_' + type + '-hollowCircleEnd')
+    .attr('class', 'marker hollowCircle ' + type)
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 10)
+    .attr('refY', 5)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 10)
+    .attr('markerHeight', 10)
+    .attr('orient', 'auto')
+    .append('circle')
+    .attr('cx', 5)
+    .attr('cy', 5)
+    .attr('r', 3.6)
+    .attr('class', 'arrowMarkerPath')
+    .style('stroke-width', 1.4)
+    .style('stroke-dasharray', '1,0')
+    .style('fill', 'none');
+};
+
 // TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
   extension,
@@ -1018,5 +1102,7 @@ const markers = {
   requirement_contains,
   requirement_arrow_neo,
   requirement_contains_neo,
+  openArrow,
+  hollowCircle,
 };
 export default insertMarkers;

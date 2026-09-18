@@ -179,6 +179,13 @@ union A, B`,
       a --> b
     end`,
 
+  bpmn: `bpmn-beta LR
+    lane "Sales"
+      start message s1 "Order received"
+      user task t1 "Approve order"
+      end e1 "Done"
+    s1 --> t1 --> e1`,
+
   wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]
@@ -213,6 +220,15 @@ union A, B`,
     actor User
     Login("Sign in")
     User --> Login`,
+
+  swimlane: `swimlane-beta LR
+    subgraph sales[Sales]
+      a[Draft quote]
+    end
+    subgraph ops[Fulfilment]
+      b[Ship order]
+    end
+    a --> b`,
 
   eventmodeling: `eventmodeling
     tf 01 evt Start
@@ -293,7 +309,6 @@ describe('Multi-diagram ID uniqueness', () => {
     'state', // legacy alias, covered by stateDiagram
     'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
-    'swimlane', // reuses the flowchart renderer (createFlowDiagram); IDs covered by flowchart-v2
   ]);
 
   it('"journey" — task line IDs are scoped with the diagram ID', async () => {

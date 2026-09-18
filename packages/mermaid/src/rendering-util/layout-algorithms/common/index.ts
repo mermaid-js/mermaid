@@ -299,7 +299,8 @@ async function paintLayoutEdge(
     getRenderedNode(edge.start, edge, nodeById, context, options),
     getRenderedNode(edge.end, edge, nodeById, context, options),
     data4Layout.diagramId,
-    shouldSkipIntersect(edge, options)
+    shouldSkipIntersect(edge, options),
+    data4Layout.layoutAlgorithm
   ) as EdgeRenderPaths | undefined;
 
   if (hasEdgeLabel(edge)) {

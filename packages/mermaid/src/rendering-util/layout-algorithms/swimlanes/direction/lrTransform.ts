@@ -1,4 +1,6 @@
 import type { LayoutData } from '../../../types.js';
+import { buildLaneModel } from '../lanes.js';
+import { anchorFootprints, collectAnchoredIds } from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -8,31 +10,71 @@ function buildNodeMap(nodes: LayoutNode[]): Map<string, LayoutNode> {
   return new Map(nodes.map((node) => [node.id, node]));
 }
 
-function resolveTopLevelGroupId(
-  node: LayoutNode,
-  nodeById: Map<string, LayoutNode>
-): string | null {
-  let parentId = node.parentId;
-  let topLevelGroupId: string | null = null;
-  while (parentId) {
-    const parent = nodeById.get(parentId);
-    if (!parent?.isGroup) {
-      break;
-    }
-    topLevelGroupId = parent.id;
-    parentId = parent.parentId;
+function framePoolsLr(
+  nodes: LayoutNode[],
+  laneModel: ReturnType<typeof buildLaneModel>,
+  laneLeft: number,
+  titleBandSize: number
+): void {
+  if (!laneModel.hasPools) {
+    return;
   }
-  return topLevelGroupId;
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const poolBand = titleBandSize;
+  const anchoredIds = collectAnchoredIds(nodes);
+
+  for (const node of nodes) {
+    if (laneModel.isLane(node.id) && typeof node.x === 'number') {
+      node.x += poolBand;
+      if (node.groupTitleRect) {
+        node.groupTitleRect.left += poolBand;
+        node.groupTitleRect.right += poolBand;
+      }
+    }
+  }
+  for (const node of nodes) {
+    if (
+      !laneModel.isLane(node.id) &&
+      !node.isGroup &&
+      !anchoredIds.has(node.id) &&
+      typeof node.x === 'number'
+    ) {
+      node.x += poolBand;
+    }
+  }
+
+  for (const [poolId, laneIds] of laneModel.lanesByPool) {
+    const pool = byId.get(poolId);
+    const lanes = laneIds
+      .map((id: string) => byId.get(id))
+      .filter((lane): lane is LayoutNode => Boolean(lane));
+    if (!pool || lanes.length === 0) {
+      continue;
+    }
+    const top = Math.min(...lanes.map((lane) => (lane.y ?? 0) - (lane.height ?? 0) / 2));
+    const bottom = Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2));
+    const right = Math.max(...lanes.map((lane) => (lane.x ?? 0) + (lane.width ?? 0) / 2));
+    const left = laneLeft;
+
+    pool.x = (left + right) / 2;
+    pool.width = right - left;
+    pool.y = (top + bottom) / 2;
+    pool.height = bottom - top;
+    pool.swimlaneContentTop = top;
+    pool.groupTitleRect = { left, right: left + poolBand, top, bottom };
+  }
 }
 
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
+  const seen = new Set<string>([group.id]);
   let depth = 0;
   let parentId = group.parentId;
-  while (parentId) {
+  while (parentId && !seen.has(parentId)) {
     const parent = nodeById.get(parentId);
     if (!parent?.isGroup) {
       break;
     }
+    seen.add(parentId);
     depth++;
     parentId = parent.parentId;
   }
@@ -147,13 +189,51 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
   return mirrorAxis(layout, 'y');
 }
 
+const LANE_TITLE_BAND = 36;
+
+function stackEmptyBands(
+  bands: LayoutNode[],
+  opts: {
+    top: number;
+    centerX: number;
+    laneLeft: number;
+    laneWidth: number;
+    titleBandSize: number;
+    fontSize: number;
+  }
+): void {
+  let top = opts.top;
+  for (const band of bands) {
+    const titleRun =
+      (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
+    const height = Math.max(
+      2 * opts.titleBandSize,
+      2 * (band.padding ?? 0),
+      titleRun + opts.titleBandSize
+    );
+    band.x = opts.centerX;
+    band.y = top + height / 2;
+    band.width = opts.laneWidth;
+    band.height = height;
+    band.swimlaneContentTop = top;
+    band.groupTitleRect = {
+      left: opts.laneLeft,
+      right: opts.laneLeft + opts.titleBandSize,
+      top,
+      bottom: top + height,
+    };
+    top += height;
+  }
+}
+
 export function applyLrDirectionTransform(
   layout: LayoutData,
   direction: Direction = 'LR'
 ): boolean {
   const nodes = (layout.nodes ?? []) as LayoutNode[];
   const edges = layout.edges ?? [];
-  const contentNodes = nodes.filter((n) => !n.isGroup);
+  const anchoredIds = collectAnchoredIds(nodes);
+  const contentNodes = nodes.filter((n) => !n.isGroup && !anchoredIds.has(n.id));
 
   let minX = Infinity;
   let minY = Infinity;
@@ -169,10 +249,29 @@ export function applyLrDirectionTransform(
   }
 
   if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-    return false;
+    const emptyModel = buildLaneModel(nodes);
+    const emptyBands = nodes.filter((n) => emptyModel.isLane(n.id));
+    if (emptyBands.length === 0) {
+      return false;
+    }
+    const titleBand = LANE_TITLE_BAND;
+    const bandWidth = 6 * titleBand;
+    stackEmptyBands(emptyBands, {
+      top: 0,
+      centerX: titleBand + bandWidth / 2,
+      laneLeft: titleBand,
+      laneWidth: bandWidth,
+      titleBandSize: titleBand,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, emptyModel, titleBand, titleBand);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
+    return true;
   }
 
-  const titleBandSize = 36;
+  const titleBandSize = LANE_TITLE_BAND;
 
   let totalWidth = 0;
   let totalHeight = 0;
@@ -210,7 +309,8 @@ export function applyLrDirectionTransform(
 
   recomputeNestedGroupBounds(nodes);
 
-  const laneNodes = nodes.filter((n) => n.isGroup && !n.parentId);
+  const laneModel = buildLaneModel(nodes);
+  const laneNodes = nodes.filter((n) => laneModel.isLane(n.id));
   if (laneNodes.length === 0) {
     if (direction === 'RL') {
       mirrorAxis(layout, 'x');
@@ -218,19 +318,29 @@ export function applyLrDirectionTransform(
     return true;
   }
 
-  const nodeById = buildNodeMap(nodes);
   const childrenByLane = new Map<string, LayoutNode[]>();
+  const footprints = anchorFootprints(nodes, direction);
 
   for (const n of nodes) {
-    if (n.isGroup) {
+    if (laneModel.isLane(n.id) || laneModel.isPool(n.id) || anchoredIds.has(n.id)) {
       continue;
     }
-    const laneId = resolveTopLevelGroupId(n, nodeById);
+    const laneId = laneModel.laneIdOf(n.id);
     if (!laneId) {
       continue;
     }
     const bucket = childrenByLane.get(laneId) ?? [];
-    bucket.push(n);
+    const footprint = footprints.get(n.id);
+    bucket.push(
+      footprint
+        ? {
+            ...n,
+            y: (n.y ?? 0) + footprint.beyond / 2,
+            width: Math.max(n.width ?? 0, 2 * footprint.across),
+            height: (n.height ?? 0) + footprint.beyond,
+          }
+        : n
+    );
     childrenByLane.set(laneId, bucket);
   }
 
@@ -269,6 +379,19 @@ export function applyLrDirectionTransform(
   }
 
   if (globalMinXChild === Infinity || globalMaxXChild === -Infinity) {
+    const emptyWidth = 6 * titleBandSize;
+    stackEmptyBands(laneNodes, {
+      top: 0,
+      centerX: titleBandSize + emptyWidth / 2,
+      laneLeft: titleBandSize,
+      laneWidth: emptyWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, laneModel, titleBandSize, titleBandSize);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
     return true;
   }
 
@@ -318,6 +441,24 @@ export function applyLrDirectionTransform(
       bottom: laneBottom,
     };
   }
+
+  const placed = new Set(laneBounds.map((entry) => entry.lane));
+  stackEmptyBands(
+    laneNodes.filter((lane) => !placed.has(lane)),
+    {
+      top: laneBounds.reduce(
+        (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
+        laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
+      ),
+      centerX,
+      laneLeft,
+      laneWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    }
+  );
+
+  framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');
