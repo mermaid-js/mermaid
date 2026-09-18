@@ -3,7 +3,7 @@
  * and is not intended to be used by the end user.
  */
 // @ts-ignore TODO: Investigate D3 issue
-import { select } from 'd3';
+import { select, selectAll } from 'd3';
 import {
   COMMENT,
   compile,
@@ -47,6 +47,10 @@ import { toBase64 } from './utils/base64.js';
 import { sanitizeCss } from './utils/sanitizeDirective.js';
 
 const MAX_TEXTLENGTH = 50_000;
+// Marks an error diagram that render() deliberately leaves in the body after throwing, so
+// the next render can drop it instead of stacking a new one beside it.
+const ERROR_DIAGRAM_ATTR = 'data-mermaid-error-diagram';
+
 const MAX_TEXTLENGTH_EXCEEDED_MSG =
   'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
 
@@ -551,6 +555,10 @@ const renderDiagram = async function (
     // If there is an existing element with the id, we remove it. This likely a previously rendered diagram
     removeExistingElements(document, id, enclosingDivID, iFrameID);
 
+    // A previous render whose text failed to parse left its error diagram in the body on
+    // purpose, under an id of its own. Drop it so the body holds the newest one only.
+    selectAll(`[${ERROR_DIAGRAM_ATTR}]`).remove();
+
     // Add the temporary div used for rendering with the enclosingDivID.
     // This temporary div will contain a svg with the id == id
 
@@ -663,6 +671,12 @@ const renderDiagram = async function (
     : serializeSvg();
 
   if (parseEncounteredException) {
+    if (svgContainingElement === undefined) {
+      select(isSandboxed ? iFrameID_selector : enclosingDivID_selector).attr(
+        ERROR_DIAGRAM_ATTR,
+        ''
+      );
+    }
     throw parseEncounteredException;
   }
 

@@ -954,6 +954,16 @@ treeView-beta
       ensureNodeFromSelector('path', iconNode);
       expect(dom.window.document.querySelector('use')).toBeNull();
     });
+
+    jsdomIt('keeps only the newest error diagram when renders fail repeatedly', async () => {
+      const bad = 'this is not a mermaid diagram definition';
+
+      await expect(mermaidAPI.render('parse-failure-1', bad)).rejects.toThrow();
+      await expect(mermaidAPI.render('parse-failure-2', bad)).rejects.toThrow();
+
+      expect(document.querySelectorAll('#dparse-failure-1').length).toBe(0);
+      expect(document.querySelectorAll('#dparse-failure-2').length).toBe(1);
+    });
   });
 
   describe('getDiagramFromText', () => {
