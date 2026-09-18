@@ -34,6 +34,17 @@ export interface C4BetaTagStyle {
   line?: C4LinePattern;
 }
 
+export interface C4BetaLegendItem {
+  label: string;
+  // Element-kind rows resolve their swatch colour from the theme at render time
+  // (no theme is available when the legend items are built at parse time).
+  kind?: C4ElementKind;
+  external?: boolean;
+  // Tag rows carry the user's explicit, theme-independent colours.
+  fill?: string;
+  stroke?: string;
+}
+
 export interface C4BetaRelationship {
   sourceId: string;
   targetId: string;
