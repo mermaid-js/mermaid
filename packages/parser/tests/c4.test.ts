@@ -55,6 +55,24 @@ describe('c4-beta', () => {
     });
   });
 
+  describe('legend', () => {
+    it.each(['on', 'off'])('should handle legend %s', (legend: string) => {
+      const result = parse(`c4-beta context
+        legend ${legend}
+      `);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.legend).toBe(legend);
+    });
+
+    it('should leave legend undefined when no legend statement is given', () => {
+      const result = parse(`c4-beta context
+        person customer "Customer"
+      `);
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.legend).toBeUndefined();
+    });
+  });
+
   describe('elements', () => {
     it('should handle a person with name and description', () => {
       const result = parse(`c4-beta context

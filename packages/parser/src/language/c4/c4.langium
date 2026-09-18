@@ -16,10 +16,15 @@ fragment Statement:
     | relationships+=C4Relationship
     | styles+=C4Style
     | Direction
+    | Legend
 ;
 
 fragment Direction:
     'direction' direction=('TB' | 'BT' | 'LR' | 'RL') EOL
+;
+
+fragment Legend:
+    'legend' legend=('on' | 'off') EOL
 ;
 
 C4Element:
