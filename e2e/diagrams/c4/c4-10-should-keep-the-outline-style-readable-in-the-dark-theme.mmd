@@ -1,0 +1,14 @@
+---
+config:
+  theme: dark
+---
+C4Context
+  title Outline style, dark theme
+
+  Person(customerA, "Banking Customer A", "A customer of the bank.")
+  System(SystemAA, "Internet Banking System", "Allows customers to view information.")
+  System_Ext(SystemE, "Mainframe", "Stores all of the core banking information.")
+  ContainerDb(db, "Database", "SQL Database", "Stores user registration information.")
+
+  Rel(customerA, SystemAA, "Uses")
+  Rel(SystemAA, db, "Reads from and writes to", "JDBC")
