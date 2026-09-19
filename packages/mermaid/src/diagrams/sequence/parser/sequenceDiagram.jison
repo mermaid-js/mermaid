@@ -40,6 +40,7 @@
 "box"															{ this.begin('LINE'); return 'box'; }
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   		{ this.begin('ID'); return 'participant_actor'; }
+"future"                                                        return 'future';
 "create"                                                        return 'create';
 "destroy"                                                       { this.begin('ID'); return 'destroy'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
@@ -265,11 +266,19 @@ participant_statement
 	| 'participant' actor 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant';$$=$2;}
 	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
+	| 'future' 'participant' actor 'AS' restOfLine 'NEWLINE' {$3.draw='participant'; $3.type='addFutureParticipant'; $3.description=yy.parseMessage($5); $$=$3;}
+	| 'future' 'participant' actor 'NEWLINE' {$3.draw='participant'; $3.type='addFutureParticipant'; $$=$3;}
+	| 'future' 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$3.draw='actor'; $3.type='addFutureParticipant'; $3.description=yy.parseMessage($5); $$=$3;}
+	| 'future' 'participant_actor' actor 'NEWLINE' {$3.draw='actor'; $3.type='addFutureParticipant'; $$=$3;}
 	| 'destroy' actor 'NEWLINE' {$2.type='destroyParticipant'; $$=$2;}
     | 'participant' actor_with_config 'AS' restOfLine 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant'; $2.description=yy.parseMessage($4); $$=$2;}
     | 'participant' actor_with_config 'NEWLINE' {$2.draw='participant'; $2.type='addParticipant'; $$=$2;}
     | 'participant_actor' actor_with_config 'AS' restOfLine 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $2.description=yy.parseMessage($4); $$=$2;}
     | 'participant_actor' actor_with_config 'NEWLINE' {$2.draw='actor'; $2.type='addParticipant'; $$=$2;}
+    | 'future' 'participant' actor_with_config 'AS' restOfLine 'NEWLINE' {$3.draw='participant'; $3.type='addFutureParticipant'; $3.description=yy.parseMessage($5); $$=$3;}
+    | 'future' 'participant' actor_with_config 'NEWLINE' {$3.draw='participant'; $3.type='addFutureParticipant'; $$=$3;}
+    | 'future' 'participant_actor' actor_with_config 'AS' restOfLine 'NEWLINE' {$3.draw='actor'; $3.type='addFutureParticipant'; $3.description=yy.parseMessage($5); $$=$3;}
+    | 'future' 'participant_actor' actor_with_config 'NEWLINE' {$3.draw='actor'; $3.type='addFutureParticipant'; $$=$3;}
 
 	;
 
@@ -341,7 +350,7 @@ signal
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5, activate: true, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION},
 	              {type: 'centralConnection', signalType: yy.LINETYPE.CENTRAL_CONNECTION, actor: $4.actor, }
 	             ]}
-    
+
 	| actor '()' signaltype actor text2
 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$3, msg:$5, activate: false, centralConnection: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE},
 	              {type: 'centralConnectionReverse', signalType: yy.LINETYPE.CENTRAL_CONNECTION_REVERSE, actor: $1.actor}
@@ -384,13 +393,13 @@ signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
 	| DOTTED_OPEN_ARROW { $$ = yy.LINETYPE.DOTTED_OPEN; }
 	| SOLID_ARROW       { $$ = yy.LINETYPE.SOLID; }
-	
+
 	| SOLID_ARROW_TOP    { $$ = yy.LINETYPE.SOLID_TOP; }
 	| SOLID_ARROW_BOTTOM { $$ = yy.LINETYPE.SOLID_BOTTOM; }
 	| STICK_ARROW_TOP    { $$ = yy.LINETYPE.STICK_TOP; }
 	| STICK_ARROW_BOTTOM { $$ = yy.LINETYPE.STICK_BOTTOM; }
 
-	| SOLID_ARROW_TOP_DOTTED    { $$ = yy.LINETYPE.SOLID_TOP_DOTTED; }	
+	| SOLID_ARROW_TOP_DOTTED    { $$ = yy.LINETYPE.SOLID_TOP_DOTTED; }
 	| SOLID_ARROW_BOTTOM_DOTTED { $$ = yy.LINETYPE.SOLID_BOTTOM_DOTTED; }
 	| STICK_ARROW_TOP_DOTTED    { $$ = yy.LINETYPE.STICK_TOP_DOTTED; }
 	| STICK_ARROW_BOTTOM_DOTTED { $$ = yy.LINETYPE.STICK_BOTTOM_DOTTED; }

@@ -249,6 +249,51 @@
       Alice<<->>Bob: Wow, we said that at the same time!
       Bob<<-->>Alice: Bidirectional Arrows are so cool
     </pre>
+
+    <hr />
+
+    <pre class="mermaid">
+    ---
+    title: With future participants
+    ---
+    sequenceDiagram
+      participant Alice
+      box land of the lost
+      future participant Bob
+      end
+      participant John
+      Alice->>John: Hello John, have you heard from Bob?
+      rect rgb(200, 220, 100)
+      create participant Bob
+      John-->>Bob: Bob, where are you?
+      Bob-->>John: I'm here!
+      end
+      John-->>Alice: Bob is here!
+    </pre>
+
+    <hr />
+    <pre class="mermaid">
+    ---
+    title: With future participants in boxes
+    ---
+    sequenceDiagram
+      box lightblue Teachers
+      actor Alice
+      end
+      box lightgreen Students
+      future actor Timmy
+      actor Suzie
+      actor Bobby
+      end
+      Alice->>Suzie: Hello Suzie
+      Suzie->>Alice: Hi Teacher!
+      Alice->>Bobby: Hello Bobby
+      Bobby->>Alice: Hi Teacher!
+      Bobby->>Alice: I brought my cousin to class today!
+      create actor Timmy
+      Alice->>Timmy: Hello Timmy, welcome to class!
+      Timmy->>Alice: Hi Teacher!
+    </pre>
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
