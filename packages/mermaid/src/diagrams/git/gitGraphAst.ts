@@ -150,77 +150,15 @@ export const branch = function (branchDB: BranchDB) {
 };
 
 export const merge = (mergeDB: MergeDB): void => {
-  let otherBranch = mergeDB.branch;
+  const otherBranches = mergeDB.branches;
   let customId = mergeDB.id;
   const overrideType = mergeDB.type;
   const customTags = mergeDB.tags;
   const config = getConfig();
-  otherBranch = common.sanitizeText(otherBranch, config);
   if (customId) {
     customId = common.sanitizeText(customId, config);
   }
-  const currentBranchCheck = state.records.branches.get(state.records.currBranch);
-  const otherBranchCheck = state.records.branches.get(otherBranch);
-  const currentCommit = currentBranchCheck
-    ? state.records.commits.get(currentBranchCheck)
-    : undefined;
-  const otherCommit: Commit | undefined = otherBranchCheck
-    ? state.records.commits.get(otherBranchCheck)
-    : undefined;
-  if (currentCommit && otherCommit && currentCommit.branch === otherBranch) {
-    throw new Error(`Cannot merge branch '${otherBranch}' into itself.`);
-  }
-  if (state.records.currBranch === otherBranch) {
-    const error: any = new Error('Incorrect usage of "merge". Cannot merge a branch to itself');
-    error.hash = {
-      text: `merge ${otherBranch}`,
-      token: `merge ${otherBranch}`,
-      expected: ['branch abc'],
-    };
-    throw error;
-  }
-  if (currentCommit === undefined || !currentCommit) {
-    const error: any = new Error(
-      `Incorrect usage of "merge". Current branch (${state.records.currBranch})has no commits`
-    );
-    error.hash = {
-      text: `merge ${otherBranch}`,
-      token: `merge ${otherBranch}`,
-      expected: ['commit'],
-    };
-    throw error;
-  }
-  if (!state.records.branches.has(otherBranch)) {
-    const error: any = new Error(
-      'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') does not exist'
-    );
-    error.hash = {
-      text: `merge ${otherBranch}`,
-      token: `merge ${otherBranch}`,
-      expected: [`branch ${otherBranch}`],
-    };
-    throw error;
-  }
-  if (otherCommit === undefined || !otherCommit) {
-    const error: any = new Error(
-      'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') has no commits'
-    );
-    error.hash = {
-      text: `merge ${otherBranch}`,
-      token: `merge ${otherBranch}`,
-      expected: ['"commit"'],
-    };
-    throw error;
-  }
-  if (currentCommit === otherCommit) {
-    const error: any = new Error('Incorrect usage of "merge". Both branches have same head');
-    error.hash = {
-      text: `merge ${otherBranch}`,
-      token: `merge ${otherBranch}`,
-      expected: ['branch abc'],
-    };
-    throw error;
-  }
+
   if (customId && state.records.commits.has(customId)) {
     const error: any = new Error(
       'Incorrect usage of "merge". Commit with id:' +
@@ -228,23 +166,107 @@ export const merge = (mergeDB: MergeDB): void => {
         ' already exists, use different custom id'
     );
     error.hash = {
-      text: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,
-      token: `merge ${otherBranch} ${customId} ${overrideType} ${customTags?.join(' ')}`,
+      text: `merge ${otherBranches.join(',')} ${customId} ${overrideType} ${customTags?.join(' ')}`,
+      token: `merge ${otherBranches.join(',')} ${customId} ${overrideType} ${customTags?.join(' ')}`,
       expected: [
-        `merge ${otherBranch} ${customId}_UNIQUE ${overrideType} ${customTags?.join(' ')}`,
+        `merge ${otherBranches.join(',')} ${customId}_UNIQUE ${overrideType} ${customTags?.join(' ')}`,
       ],
     };
 
     throw error;
   }
 
-  const verifiedBranch: string = otherBranchCheck ? otherBranchCheck : ''; //figure out a cleaner way to do this
+  const currentBranchCheck = state.records.branches.get(state.records.currBranch);
+  const currentCommit = currentBranchCheck
+    ? state.records.commits.get(currentBranchCheck)
+    : undefined;
+
+  const verifiedBranches: string[] = [];
+  for (const branch of otherBranches) {
+    const otherBranch = common.sanitizeText(branch, config);
+
+    const otherBranchCheck = state.records.branches.get(otherBranch);
+
+    const otherCommit: Commit | undefined = otherBranchCheck
+      ? state.records.commits.get(otherBranchCheck)
+      : undefined;
+
+    if (state.records.currBranch === otherBranch) {
+      const error: any = new Error('Incorrect usage of "merge". Cannot merge a branch to itself');
+      error.hash = {
+        text: `merge ${otherBranch}`,
+        token: `merge ${otherBranch}`,
+        expected: ['branch abc'],
+      };
+      throw error;
+    }
+    if (currentCommit === undefined || !currentCommit) {
+      const error: any = new Error(
+        `Incorrect usage of "merge". Current branch (${state.records.currBranch})has no commits`
+      );
+      error.hash = {
+        text: `merge ${otherBranch}`,
+        token: `merge ${otherBranch}`,
+        expected: ['commit'],
+      };
+      throw error;
+    }
+    if (!state.records.branches.has(otherBranch)) {
+      const error: any = new Error(
+        'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') does not exist'
+      );
+      error.hash = {
+        text: `merge ${otherBranch}`,
+        token: `merge ${otherBranch}`,
+        expected: [`branch ${otherBranch}`],
+      };
+      throw error;
+    }
+    if (!otherBranchCheck || otherCommit === undefined || !otherCommit) {
+      const error: any = new Error(
+        'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') has no commits'
+      );
+      error.hash = {
+        text: `merge ${otherBranch}`,
+        token: `merge ${otherBranch}`,
+        expected: ['"commit"'],
+      };
+      throw error;
+    }
+    if (currentCommit === otherCommit) {
+      const error: any = new Error('Incorrect usage of "merge". Both branches have same head');
+      error.hash = {
+        text: `merge ${otherBranch}`,
+        token: `merge ${otherBranch}`,
+        expected: ['branch abc'],
+      };
+      throw error;
+    }
+
+    verifiedBranches.push(otherBranchCheck);
+
+    if (new Set(verifiedBranches).size !== verifiedBranches.length) {
+      const error: any = new Error(
+        'Incorrect usage of "merge". Duplicate branches are not allowed.'
+      );
+      error.hash = {
+        text: `merge ${otherBranches.join(' ')}`,
+        token: `merge ${otherBranches.join(' ')}`,
+        expected: ['unique branches'],
+      };
+      throw error;
+    }
+  }
 
   const commit = {
     id: customId || `${state.records.seq}-${getID()}`,
-    message: `merged branch ${otherBranch} into ${state.records.currBranch}`,
+    message: `merged branch ${
+      otherBranches.length == 1
+        ? otherBranches[0]
+        : `${otherBranches.slice(0, -1).join(', ')} and ${otherBranches.at(-1)}`
+    } into ${state.records.currBranch}`,
     seq: state.records.seq++,
-    parents: state.records.head == null ? [] : [state.records.head.id, verifiedBranch],
+    parents: state.records.head == null ? [] : [state.records.head.id, ...verifiedBranches],
     branch: state.records.currBranch,
     type: commitType.MERGE,
     customType: overrideType,
