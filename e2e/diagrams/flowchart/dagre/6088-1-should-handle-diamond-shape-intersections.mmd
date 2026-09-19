@@ -1,0 +1,17 @@
+---
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+flowchart LR
+  subgraph S2
+  subgraph s1["APA"]
+  D{"Use the editor"}
+  end
+
+  D -- Mermaid js --> I{"fa:fa-code Text"}
+  D --> I
+  D --> I
+
+  end

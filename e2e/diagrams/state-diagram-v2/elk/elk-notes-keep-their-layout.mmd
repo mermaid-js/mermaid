@@ -1,0 +1,16 @@
+---
+config:
+  layout: elk
+  fontFamily: courier
+---
+%% A note group's label is the note text, which is never painted as a title.
+%% ELK must not reserve title width for it, or the note groups push the
+%% states apart.
+stateDiagram-v2
+  State1: The state with a note
+  note right of State1
+  Important information! You can write
+  notes.
+  end note
+  State1 --> State2 : With a label
+  note left of State2 : This is the note

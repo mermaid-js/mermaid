@@ -1,4 +1,6 @@
 import rough from 'roughjs';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
@@ -45,6 +47,10 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
   } = await labelHelper(parent, labelNode, getNodeClasses(node, 'usecase-business-shape'));
 
   label.attr('class', 'label usecase-label');
+
+  // Per-item colour slot -- see `usecaseEllipse`.
+  const { theme, themeVariables } = getConfig();
+  stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);
   let stereotypeLabel: D3Selection<SVGGElement> | undefined;
   let stereotypeBox: MeasuredBox | undefined;
   if (businessNode.stereotype) {
@@ -53,6 +59,7 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
       useHtmlLabels: node.useHtmlLabels,
       padding: 0,
       centerLabel: true,
+      width: node.wrappingWidth,
     });
     stereotypeLabel = stereotype.label.attr('class', 'label usecase-stereotype');
     stereotypeBox = stereotype.bbox;
@@ -62,8 +69,9 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
   const labelHeight = labelBox.height + (stereotypeBox?.height ?? 0) + labelGap;
   const labelWidth = Math.max(labelBox.width, stereotypeBox?.width ?? 0);
   const padding = halfPadding ?? 10;
+  // Same vertical air as `usecaseEllipse`, so both ovals share one silhouette.
   const radiusX = labelWidth / 2 + padding * 2;
-  const radiusY = labelHeight / 2 + padding;
+  const radiusY = labelHeight / 2 + padding * 2;
   const markerInset = Math.min(Math.max(padding / 5, 1), padding / 2);
   const markerStartX = labelWidth / 2 + markerInset;
   const markerEndX = radiusX - markerInset;

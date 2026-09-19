@@ -86,6 +86,21 @@ class Theme {
       '#FFF1F2', //Rose-50
     ];
 
+    /* Usecase Diagram variables.
+
+       One colour per kind of element -- see `usecase.colorScheme`. Chosen from this theme's
+       own palette so the diagram stays on-brand, and kept to three well-separated hues that
+       can be checked for contrast once rather than per instance. The boundary frame is a
+       large area, so it takes the lightest treatment and leans on its border. */
+    this.usecaseActorBorder = '#A78BFA'; // Violet-400
+    this.usecaseActorBkg = '#F5F3FF'; // Violet-50
+    this.usecaseBorder = '#2DD4BF'; // Teal-400
+    this.usecaseBkg = '#F0FDFA'; // Teal-50
+    this.usecaseBoundaryBorder = '#BDBCCC';
+    this.usecaseBoundaryBkg = '#FAFAFC';
+    this.usecaseIncludeLine = '#38BDF8'; // Sky-400
+    this.usecaseExtendLine = '#FB923C'; // Orange-400
+
     this.filterColor = '#000000';
   }
   updateColors() {
@@ -145,7 +160,15 @@ class Theme {
     this.activationBorderColor = this.activationBorderColor || darken(this.secondaryColor, 10);
     this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
-    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
+    // Not tertiaryColor here. This theme pins tertiaryColor to its background, so deriving the
+    // `rect` section band from it draws white on white -- present in the DOM, invisible on screen.
+    // Keying it to the background instead keeps the band a shade of whatever the background is,
+    // including when the background is overridden through themeVariables. Direction-aware because
+    // darken() is a no-op at pure black: an override to #000000 needs the shade to go the other
+    // way or the band vanishes exactly as it did on white.
+    this.rectBkgColor =
+      this.rectBkgColor ||
+      (isDark(this.background) ? lighten(this.background, 4) : darken(this.background, 4));
 
     /* Gantt chart variables */
     const primaryColor = '#ECECFE';
@@ -307,6 +330,12 @@ class Theme {
     this.pieOpacity = this.pieOpacity || '0.7';
 
     /* venn */
+    /* `borderColorArray` and not the lighter `cScale`: the fill is painted at 0.1
+       opacity, so the stroke and the label carry the circle. */
+    for (let i = 0; i < 8; i++) {
+      this['venn' + (i + 1)] =
+        this['venn' + (i + 1)] ?? this.borderColorArray[i % this.borderColorArray.length];
+    }
     this.vennTitleTextColor = this.vennTitleTextColor ?? this.titleColor;
     this.vennSetTextColor = this.vennSetTextColor ?? this.textColor;
 

@@ -4,6 +4,7 @@ import type { BuildOptions } from 'esbuild';
 import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
+import { buildTarget } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -40,6 +41,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     minify: true,
     keepNames: true,
     platform: 'browser',
+    target: [...buildTarget],
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
@@ -105,7 +107,8 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (core) {
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
-    // Ignore dependencies and any dependencies of dependencies
+    // Ignore dependencies and any dependencies of dependencies.
+    // A package may legitimately have none at all.
     //
     // peerDependencies must be external too. The consumer is the one that
     // supplies them, so inlining one ships a second copy of that package —

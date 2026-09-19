@@ -88,6 +88,20 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
+/**
+ * Next palette slot to hand out.
+ *
+ * Composites only, and one counter across the whole parse -- exactly what the flowchart
+ * does for its subgraphs. There, `declarationIndex` is built by walking `subGraphs` and
+ * nothing else, and every palette selector it emits is a `.cluster` or a collapsed
+ * subgraph; a plain node never takes a slot. A block diagram's containers are its
+ * composites, so those are what take one here.
+ *
+ * A nested composite continues the cycle rather than restarting it, which is what keeps
+ * two sibling containers from opening on the same colour.
+ */
+let nextColorIndex = 0;
+
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
@@ -141,6 +155,11 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       const existingBlock = blockDatabase.get(block.id);
 
       if (existingBlock === undefined) {
+        // Assigned here, before the recursion into `block.children` below, so an outer
+        // composite takes a lower slot than any composite nested inside it.
+        if (block.type === 'composite') {
+          block.colorIndex = nextColorIndex++;
+        }
         blockDatabase.set(block.id, block);
       } else {
         // Add newer relevant data to aggregated node
@@ -186,6 +205,7 @@ const clear = (): void => {
   edgeList = [];
   edgeCount = new Map();
   diagramId = '';
+  nextColorIndex = 0;
 };
 
 export function typeStr2Type(typeStr: string) {

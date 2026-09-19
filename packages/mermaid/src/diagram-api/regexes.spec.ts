@@ -7,16 +7,22 @@ import {
 } from './regexes.js';
 
 /**
- * Duration of the fastest of several runs. The tests below compare the cost of two input sizes, and
- * the whole suite runs in parallel workers: a mean is skewed by any single scheduling stall, while
- * the minimum reports the run that was not interrupted.
+ * Per-call cost of `run`, measured as the minimum over `trials` samples of the mean of
+ * `iterations` calls.
+ *
+ * A single pass over the small input takes tens of microseconds, so one GC pause or scheduler
+ * hiccup on a shared CI runner can inflate an averaged sample several-fold. Noise only ever adds
+ * time, so the minimum over repeated trials is the stable estimate of the true cost; it is what
+ * keeps the ratios below from flaking on a loaded machine.
  */
-const fastestRun = (run: () => unknown, attempts = 5): number => {
+const fastestRun = (run: () => unknown, trials = 5, iterations = 5): number => {
   let fastest = Infinity;
-  for (let i = 0; i < attempts; i++) {
+  for (let trial = 0; trial < trials; trial++) {
     const t0 = performance.now();
-    run();
-    fastest = Math.min(fastest, performance.now() - t0);
+    for (let i = 0; i < iterations; i++) {
+      run();
+    }
+    fastest = Math.min(fastest, (performance.now() - t0) / iterations);
   }
   return fastest;
 };
@@ -69,12 +75,17 @@ describe('stripAnyComments', () => {
   it.each([
     ['all-whitespace lines', (n: number) => ('\n' + ' '.repeat(4)).repeat(n)],
     ['`%%` runs with no terminating newline', (n: number) => '%%' + 'x%%'.repeat(n)],
-    ['deep indents', (n: number) => (' '.repeat(400) + 'classDef x fill:#fff\n').repeat(n)],
   ])('scales linearly on %s', (_label, build) => {
     // Scaling, not a wall-clock bound. The previous version of this test asserted "under 200ms"
     // on one fixed input, which a quadratic implementation passes comfortably — and did, for
     // both shapes above. Doubling the input should roughly double the work; quadratic would
     // quadruple it.
+    //
+    // Only shapes that are quadratic in the line count belong here. A deeply indented document
+    // (hundreds of spaces per line, no `%%`) is quadratic in the indent width but linear in the
+    // number of lines, so the released regex passes this ratio on it too; it proves nothing, and
+    // at several megabytes per input it turns the ratio into a memory-bandwidth measurement that
+    // flakes on shared runners.
     const measure = (n: number) => {
       const input = build(n);
       // Warm up so the first call does not carry compilation cost into the ratio.

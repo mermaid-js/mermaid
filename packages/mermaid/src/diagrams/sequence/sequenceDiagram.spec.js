@@ -2459,6 +2459,22 @@ Bob->>Alice:Got it!
       expect(messages[2].message).toBe('Hi Bob');
     });
 
+    it('should parse a participant config object separated from the name by whitespace', async () => {
+      const diagram = await Diagram.fromText(`
+  sequenceDiagram
+      participant Gina@{ "type" : "database" }
+      participant Harry @{ "type" : "database" }
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('Gina').type).toBe('database');
+      expect(actors.get('Gina').description).toBe('Gina');
+
+      expect(actors.get('Harry').type).toBe('database');
+      expect(actors.get('Harry').description).toBe('Harry');
+    });
+
     it('should parse mixed participant types with extended syntax', async () => {
       const diagram = await Diagram.fromText(`
     sequenceDiagram
@@ -2505,6 +2521,30 @@ Bob->>Alice:Got it!
       expect(messages[4].from).toBe('dsa');
       expect(messages[4].to).toBe('Database');
       expect(messages[4].message).toBe('hello');
+    });
+
+    it('should parse hyphenated names with an attached config object', async () => {
+      const diagram = await Diagram.fromText(`
+    sequenceDiagram
+        actor lead-actor@{ "type" : "database" }
+        participant order-svc@{ "type" : "queue" }
+        actor kebab-case@{ "type" : "control" } as Kebab-Cased
+        participant web-ui@{ "type" : "entity" } as Web UI
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('lead-actor').type).toBe('database');
+      expect(actors.get('lead-actor').description).toBe('lead-actor');
+
+      expect(actors.get('order-svc').type).toBe('queue');
+      expect(actors.get('order-svc').description).toBe('order-svc');
+
+      expect(actors.get('kebab-case').type).toBe('control');
+      expect(actors.get('kebab-case').description).toBe('Kebab-Cased');
+
+      expect(actors.get('web-ui').type).toBe('entity');
+      expect(actors.get('web-ui').description).toBe('Web UI');
     });
 
     it('should fail for malformed JSON in participant definition', async () => {
