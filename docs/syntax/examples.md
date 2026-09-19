@@ -6,6 +6,12 @@
 
 # Examples
 
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
+
+<IconsNote />
+
 This page contains a collection of examples of diagrams and charts that can be created through mermaid and its myriad applications.
 
 **If you wish to learn how to support mermaid on your webpage, read the [Beginner's Guide](../config/usage.md?id=usage).**

@@ -1,5 +1,11 @@
 # State diagrams
 
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
+
+<IconsNote />
+
 > "A state diagram is a type of diagram used in computer science and related fields to describe the behavior of systems.
 > State diagrams require that the system described is composed of a finite number of states; sometimes, this is indeed the
 > case, while at other times this is a reasonable abstraction." Wikipedia
