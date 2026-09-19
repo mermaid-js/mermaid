@@ -103,9 +103,10 @@ line was introduced with 'click'.
 */
 <*>"href"                       return 'HREF';
 
-<generic>[~]                    this.popState();
-<generic>[^~]*                  return "GENERICTYPE";
-<*>"~"                          this.begin("generic");
+<*>"~"[A-Za-z0-9_,\t .[\]~]*"~" {
+                                  yytext = yytext.slice(1, -1);
+                                  return 'GENERICTYPE';
+                                }
 
 <bqstring>[`]                   this.popState();
 <bqstring>[^`]+                 return "BQUOTE_STR";
