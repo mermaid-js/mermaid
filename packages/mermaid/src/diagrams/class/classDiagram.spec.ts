@@ -1447,6 +1447,19 @@ describe('given a class diagram with generics, ', function () {
       expect(c1.text).toBe('Class 1 with text label&lt;List&lt;T&gt;&gt;');
     });
 
+    it('should handle nested generics with multiple parameters in relationships (#7648)', function () {
+      const str =
+        'classDiagram\n' +
+        'class Store~Map~string, List~Item~~~ {\n' +
+        '  +inventory: Map~string, List~Item~~\n' +
+        '}\n' +
+        'Store~Map~string, List~Item~~~ -- Item : stocks >';
+      parser.parse(str);
+      const store = parser.yy.getClass('Store');
+      expect(store.id).toBe('Store');
+      expect(store.type).toBe('Map~string, List~Item~~');
+    });
+
     it('should handle generic class with relationships', function () {
       const str =
         'classDiagram\n' +
