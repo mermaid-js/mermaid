@@ -12,7 +12,83 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 }));
 
 import { insertEdge, resolveEdgeCurveType } from './edges.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
+
+describe('insertEdge clips for the engine that drew the edge', () => {
+  /** A shape that reads the point it is handed, the way every real one does. */
+  const shapeMeeting = () => ({ intersect: vi.fn((point) => ({ x: point.x, y: point.y })) });
+
+  /** A straight two-point route, which is what a swimlane lane gives a simple chain. */
+  const twoPointEdge = () => ({
+    id: 'L_a_b_0',
+    cssCompiledStyles: {},
+    style: [],
+    thickness: 'normal',
+    pattern: 'solid',
+    classes: 'bpmn-flow',
+    curve: 'rounded',
+    look: 'classic',
+    arrowTypeEnd: 'arrow_point',
+    points: [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+    ],
+  });
+
+  const withConfiguredLayout = (name, run) => {
+    const configured = vi.mocked(getConfig);
+    const previous = configured.getMockImplementation();
+    configured.mockImplementation(() => ({
+      layout: name,
+      flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+      state: { arrowMarkerAbsolute: false },
+      handDrawnSeed: 0,
+    }));
+    try {
+      return run();
+    } finally {
+      configured.mockImplementation(previous);
+    }
+  };
+
+  it('takes the swimlane path when the layout data says so and the config disagrees', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+
+    withConfiguredLayout('elk', () => {
+      insertEdge(
+        svg,
+        twoPointEdge(),
+        null,
+        'bpmn',
+        shapeMeeting(),
+        shapeMeeting(),
+        'd',
+        false,
+        'swimlane'
+      );
+    });
+
+    const drawn = JSON.parse(atob(svg.select('path').attr('data-points')));
+    expect(drawn).toHaveLength(2);
+  });
+
+  it('would empty a two-point route if it went by the configured layout instead', () => {
+    // The clipping written for dagre drops the first and last point, which leaves a
+    // two-point route with nothing to meet. A bpmn diagram is always laid out in
+    // swimlanes while `layout` resolves to the global default, so the two disagree and
+    // this is what the argument above exists to prevent.
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+
+    withConfiguredLayout('elk', () => {
+      expect(() =>
+        insertEdge(svg, twoPointEdge(), null, 'bpmn', shapeMeeting(), shapeMeeting(), 'd')
+      ).toThrow(TypeError);
+    });
+  });
+});
 
 describe('resolveEdgeCurveType', () => {
   it('should return edge.curve when it is a string', () => {
