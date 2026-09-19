@@ -1,7 +1,8 @@
 import { select } from 'd3';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { sanitizeText } from '../diagram-api/diagramAPI.js';
 import mermaid from '../mermaid.js';
+import { clearIconPacks } from './icons.js';
 import { createText, replaceIconSubstring } from './createText.js';
 
 describe('replaceIconSubstring', () => {
@@ -60,6 +61,73 @@ describe('replaceIconSubstring', () => {
     const output = await replaceIconSubstring(input);
     const expected = sanitizeText(staticBellIconPack.icons.bell.body);
     expect(output).toContain(expected);
+  });
+
+  describe('generic Iconify icon tokens', () => {
+    afterEach(() => {
+      clearIconPacks();
+    });
+
+    it('leaves unregistered generic icon tokens as literal text', async () => {
+      const input = 'Check out these logos: logos:react and logos:nodejs';
+      const output = await replaceIconSubstring(input);
+      expect(output).toEqual(input);
+    });
+
+    it('leaves unregistered mdi tokens as literal text', async () => {
+      const input = 'Material design icons: mdi:home and mdi:account-circle';
+      const output = await replaceIconSubstring(input);
+      expect(output).toEqual(input);
+    });
+
+    it('leaves unregistered symbols tokens as literal text', async () => {
+      const input = 'Symbols: symbols:arrow-upward and symbols:check';
+      const output = await replaceIconSubstring(input);
+      expect(output).toEqual(input);
+    });
+
+    it('replaces a registered generic icon token with SVG', async () => {
+      const mockIconPack = {
+        prefix: 'mypack',
+        icons: {
+          myicon: {
+            body: '<circle cx="50" cy="50" r="40"/>',
+            width: 100,
+            height: 100,
+          },
+        },
+      };
+      mermaid.registerIconPacks([
+        {
+          name: 'mypack',
+          loader: () => Promise.resolve(mockIconPack),
+        },
+      ]);
+      const input = 'Icon here: mypack:myicon';
+      const output = await replaceIconSubstring(input);
+      expect(output).toContain('<circle');
+      expect(output).not.toContain('mypack:myicon');
+    });
+
+    it('FA icons fall back to <i> tags while unregistered generic tokens stay as literal text', async () => {
+      const input = 'Mixed: fa:fa-user and logos:github';
+      const output = await replaceIconSubstring(input);
+      expect(output).toContain("<i class='fa fa-user'></i>");
+      expect(output).toContain('logos:github');
+      expect(output).not.toContain("<i class='logos github'></i>");
+    });
+
+    it('handles icon names with hyphens and underscores as literal text when unregistered', async () => {
+      const input = 'Complex names: mdi:account-circle and mdi:account_circle';
+      const output = await replaceIconSubstring(input);
+      expect(output).toEqual(input);
+    });
+
+    it('handles strings with no icon tokens', async () => {
+      const input = 'This string has no new icons';
+      const output = await replaceIconSubstring(input);
+      expect(output).toEqual(input);
+    });
   });
 });
 
