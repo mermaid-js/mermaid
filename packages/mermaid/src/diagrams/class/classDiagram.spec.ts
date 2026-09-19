@@ -1391,6 +1391,53 @@ describe('given a class diagram with generics, ', function () {
       parser.parse(str);
     });
 
+    it('should handle nested generic class (#7648)', function () {
+      const str = 'classDiagram\n' + 'class Foo~List~T~~';
+      parser.parse(str);
+      const cls = parser.yy.getClass('Foo');
+      expect(cls.type).toBe('List~T~');
+      expect(cls.text).toBe('Foo&lt;List&lt;T&gt;&gt;');
+    });
+
+    it('should handle deeply nested generic class (#7648)', function () {
+      const str = 'classDiagram\n' + 'class People~List~List~Person~~~';
+      parser.parse(str);
+      const cls = parser.yy.getClass('People');
+      expect(cls.type).toBe('List~List~Person~~');
+      expect(cls.text).toBe('People&lt;List&lt;List&lt;Person&gt;&gt;&gt;');
+    });
+
+    it('should handle nested generic class shorthand and members (#7648)', function () {
+      const str =
+        'classDiagram\n' +
+        '  class Person {\n' +
+        '    +ID : Guid\n' +
+        '    +FirstName : string\n' +
+        '    +LastName : string\n' +
+        '    -privateProperty : string\n' +
+        '    #ProtectedProperty : string\n' +
+        '    ~InternalProperty : string\n' +
+        '    ~AnotherInternalProperty : List~List~string~~\n' +
+        '  }\n' +
+        '  class People~List~Person~~\n' +
+        '  People~List~Person~~ -- Person : contains >';
+
+      parser.parse(str);
+      const person = parser.yy.getClass('Person');
+      const people = parser.yy.getClass('People');
+      expect(person.id).toBe('Person');
+      expect(people.id).toBe('People');
+      expect(people.type).toBe('List~Person~');
+      expect(people.text).toBe('People&lt;List&lt;Person&gt;&gt;');
+    });
+
+    it('should handle nested generic class shorthand without tilde separator (#7648)', function () {
+      const str = 'classDiagram\n' + 'class People List~List~Person~~';
+      parser.parse(str);
+      const classes = parser.yy.getClasses();
+      expect(classes.size).toBe(1);
+    });
+
     it('should handle generic class with relationships', function () {
       const str =
         'classDiagram\n' +
