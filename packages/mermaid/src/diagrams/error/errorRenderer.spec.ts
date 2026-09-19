@@ -4,7 +4,7 @@ import { jsdomIt } from '../../tests/util.js';
 import { draw, wrapErrorMessage } from './errorRenderer.js';
 
 const errorTexts = (): string[] =>
-  Array.from(document.querySelectorAll('.error-text')).map((element) => element.textContent ?? '');
+  [...document.querySelectorAll('.error-text')].map((element) => element.textContent ?? '');
 
 describe('wrapErrorMessage', () => {
   it('returns no lines for an empty message', () => {

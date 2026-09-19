@@ -965,7 +965,7 @@ treeView-beta
       ).rejects.toThrow(/Edge limit exceeded/);
 
       // the error SVG stays in the document, check that it carries the message
-      const texts = Array.from(document.querySelectorAll('.error-text')).map(
+      const texts = [...document.querySelectorAll('.error-text')].map(
         (element) => element.textContent ?? ''
       );
       expect(texts).toContain('Syntax error in text');
