@@ -1,22 +1,80 @@
+import type { Diagram } from '../../Diagram.js';
 import type { SVG, SVGGroup } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 
+const MAX_LINES = 4;
+const MAX_LINE_LENGTH = 75;
+
+/**
+ * Wraps an error message into a few centered lines for the error diagram.
+ *
+ * Whitespace is normalized, words longer than a line are hard-wrapped, and a
+ * message that does not fit is capped at {@link MAX_LINES} lines with a
+ * trailing ellipsis.
+ *
+ * @param message - The error message to wrap.
+ * @returns The wrapped lines, or an empty array for an empty message.
+ */
+export const wrapErrorMessage = (message: string): string[] => {
+  const words: string[] = [];
+  for (const token of message.split(/\s+/)) {
+    let rest = token;
+    while (rest.length > MAX_LINE_LENGTH) {
+      words.push(rest.slice(0, MAX_LINE_LENGTH));
+      rest = rest.slice(MAX_LINE_LENGTH);
+    }
+    if (rest) {
+      words.push(rest);
+    }
+  }
+
+  const lines: string[] = [];
+  let current = '';
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length > MAX_LINE_LENGTH) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) {
+    lines.push(current);
+  }
+
+  if (lines.length > MAX_LINES) {
+    lines.length = MAX_LINES;
+    const lastLine = lines[MAX_LINES - 1] ?? '';
+    lines[MAX_LINES - 1] = `${lastLine.slice(0, MAX_LINE_LENGTH - 3)}...`;
+  }
+  return lines;
+};
+
 /**
  * Draws an info picture in the tag with id: id based on the graph definition in text.
+ *
+ * When the diagram carries an error message (set on the error db by
+ * `mermaidAPI.render` when parsing failed), it is drawn below the headline so
+ * that hosts which only show the SVG also see the actual cause of the failure.
  *
  * @param _text - Mermaid graph definition.
  * @param id - The text for the error
  * @param version - The version
+ * @param diag - The error diagram, used to read the error message
  */
-export const draw = (_text: string, id: string, version: string) => {
+export const draw = (_text: string, id: string, version: string, diag?: Diagram) => {
   log.debug('rendering svg for syntax error\n');
   const svg: SVG = selectSvgElement(id);
   const g: SVGGroup = svg.append('g');
 
-  svg.attr('viewBox', '0 0 2412 512');
-  configureSvgSize(svg, 100, 512, true);
+  const messageLines = wrapErrorMessage(diag?.db.getErrorMessage?.() ?? '');
+  const height = messageLines.length > 0 ? 500 + messageLines.length * 56 : 512;
+
+  svg.attr('viewBox', `0 0 2412 ${height}`);
+  configureSvgSize(svg, 100, height, true);
 
   g.append('path')
     .attr('class', 'error-icon')
@@ -74,6 +132,16 @@ export const draw = (_text: string, id: string, version: string) => {
     .attr('font-size', '100px')
     .style('text-anchor', 'middle')
     .text(`mermaid version ${version}`);
+
+  messageLines.forEach((line, index) => {
+    g.append('text')
+      .attr('class', 'error-text')
+      .attr('x', 1440)
+      .attr('y', 510 + index * 56)
+      .attr('font-size', '42px')
+      .style('text-anchor', 'middle')
+      .text(line);
+  });
 };
 
 export const renderer = { draw };
