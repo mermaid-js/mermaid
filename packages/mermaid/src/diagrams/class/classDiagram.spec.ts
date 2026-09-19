@@ -1438,6 +1438,15 @@ describe('given a class diagram with generics, ', function () {
       expect(classes.size).toBe(1);
     });
 
+    it('should handle generic class with custom text label (#7648)', function () {
+      const str = 'classDiagram\n' + 'class C1~List~T~~["Class 1 with text label"]';
+      parser.parse(str);
+      const c1 = parser.yy.getClass('C1');
+      expect(c1.label).toBe('Class 1 with text label');
+      expect(c1.type).toBe('List~T~');
+      expect(c1.text).toBe('Class 1 with text label&lt;List&lt;T&gt;&gt;');
+    });
+
     it('should handle generic class with relationships', function () {
       const str =
         'classDiagram\n' +
