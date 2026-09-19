@@ -1549,6 +1549,86 @@ describe('given a class diagram with relationships, ', function () {
       parser.parse(str);
     });
 
+    it('should reuse a declared class on the left of a lollipop relationship', function () {
+      const str = `classDiagram
+        class IPerson {
+          <<interface>>
+          +name: string
+        }
+        class Person
+        IPerson ()-- Person`;
+
+      parser.parse(str);
+
+      const { nodes, edges } = classDb.getData();
+      expect(nodes.filter((node) => node.label === 'IPerson')).toHaveLength(1);
+      expect(nodes.map((node) => node.id).sort()).toEqual(['IPerson', 'Person']);
+      expect(edges[0]).toMatchObject({
+        start: 'IPerson',
+        end: 'Person',
+        arrowTypeStart: 'lollipop',
+      });
+    });
+
+    it('should reuse a declared class on the right of a lollipop relationship', function () {
+      const str = `classDiagram
+        class IPerson {
+          <<interface>>
+          +name: string
+        }
+        class Person
+        Person --() IPerson`;
+
+      parser.parse(str);
+
+      const { nodes, edges } = classDb.getData();
+      expect(nodes.filter((node) => node.label === 'IPerson')).toHaveLength(1);
+      expect(nodes.map((node) => node.id).sort()).toEqual(['IPerson', 'Person']);
+      expect(edges[0]).toMatchObject({
+        start: 'Person',
+        end: 'IPerson',
+        arrowTypeEnd: 'lollipop',
+      });
+    });
+
+    it('should create a synthetic interface for an undeclared class on the left', function () {
+      parser.parse(`classDiagram
+        IWorker ()-- Worker`);
+
+      const { nodes, edges } = classDb.getData();
+      expect(nodes).toHaveLength(2);
+      expect(nodes).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'Worker', label: 'Worker' }),
+          expect.objectContaining({ id: 'interface0', label: 'IWorker' }),
+        ])
+      );
+      expect(edges[0]).toMatchObject({
+        start: 'interface0',
+        end: 'Worker',
+        arrowTypeStart: 'lollipop',
+      });
+    });
+
+    it('should create a synthetic interface for an undeclared class on the right', function () {
+      parser.parse(`classDiagram
+        Worker --() IWorker`);
+
+      const { nodes, edges } = classDb.getData();
+      expect(nodes).toHaveLength(2);
+      expect(nodes).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'Worker', label: 'Worker' }),
+          expect.objectContaining({ id: 'interface0', label: 'IWorker' }),
+        ])
+      );
+      expect(edges[0]).toMatchObject({
+        start: 'Worker',
+        end: 'interface0',
+        arrowTypeEnd: 'lollipop',
+      });
+    });
+
     it('should handle relation definitions EXTENSION', function () {
       const str = 'classDiagram\n' + 'Class1 <|-- Class02';
 
