@@ -1,5 +1,6 @@
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
+import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
 
 /** Returns the styles given options */
 export interface BlockChartStyleOptions {
@@ -13,10 +14,54 @@ export interface BlockChartStyleOptions {
   mainBkg: string;
   nodeBorder: string;
   nodeTextColor: string;
+  strokeWidth?: number;
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
+  /* Supplied by `createUserStyles`, which spreads `config.themeVariables` and adds the
+     theme name and look. Only the colour themes carry the palette arrays. */
+  theme?: string;
+  look?: string;
+  borderColorArray?: string[];
+  bkgColorArray?: string[];
+  THEME_COLOR_LIMIT?: number;
 }
+
+/**
+ * Per-composite palette rules, matching what the flowchart does for its subgraphs: one
+ * counter over containers, and nothing on the plain shapes.
+ *
+ * A composite always draws a `rect.composite` inside a `.node` group -- it has no roughjs
+ * variant, so unlike the flowchart there is no `.rough-node` prefix to mirror and no
+ * hachure path to avoid painting. That one selector is the whole surface.
+ *
+ * Not `!important`: `composite.ts` puts a block's own `style` declarations in an inline
+ * `style` attribute, which has to keep winning over the theme palette.
+ */
+const genColor = (options: BlockChartStyleOptions) => {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
+    return '';
+  }
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
+  let sections = '';
+
+  for (let i = 0; i < colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray); i++) {
+    const borderColor = borderColorArray![i % borderColorArray!.length];
+    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
+
+    sections += `
+
+    ${slot}.node rect.composite {
+      stroke: ${borderColor};
+      ${fill}
+    }
+`;
+  }
+  return sections;
+};
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma
@@ -31,7 +76,8 @@ const fade = (color: string, opacity: number) => {
 };
 
 const getStyles = (options: BlockChartStyleOptions) =>
-  `.label {
+  `${genColor(options)}
+  .label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
   }
@@ -56,7 +102,11 @@ const getStyles = (options: BlockChartStyleOptions) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    /* From the theme, as every other diagram does. Pinned at 1px here, so block drew a
+       thinner border than an identical flowchart node under any theme asking for more --
+       the neo theme asks for 2. Nothing downstream corrected it: the neo rules set stroke
+       and filter, never stroke-width. */
+    stroke-width: ${options.strokeWidth ?? 1}px;
   }
   .flowchart-label text {
     text-anchor: middle;

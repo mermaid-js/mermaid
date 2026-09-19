@@ -1,4 +1,6 @@
 import rough from 'roughjs';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
@@ -187,6 +189,10 @@ export async function renderUsecaseActor<T extends SVGGraphicsElement>(
 
   label.attr('class', 'label actor-label usecase-actor-label');
 
+  // Per-item colour slot, stamped once here so all four actor variants share it.
+  const { theme, themeVariables } = getConfig();
+  stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);
+
   let stereotypeLabel: D3Selection<SVGGElement> | undefined;
   let stereotypeBox: MeasuredBox | undefined;
   if (node.stereotype) {
@@ -195,6 +201,7 @@ export async function renderUsecaseActor<T extends SVGGraphicsElement>(
       useHtmlLabels: node.useHtmlLabels,
       padding: 0,
       centerLabel: true,
+      width: node.wrappingWidth,
     });
     stereotypeLabel = stereotype.label.attr('class', 'label usecase-stereotype');
     stereotypeBox = stereotype.bbox;

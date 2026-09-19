@@ -114,12 +114,16 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
 
   let defaultLane = nodes.find((node) => node.id === DEFAULT_SWIMLANE_ID);
   if (!defaultLane) {
+    /* Synthesised, so nothing upstream gave it a `look` or a slot. Without `look` it
+     * renders classic in a handDrawn diagram; slot 0 would clash with the first lane. */
     defaultLane = {
       id: DEFAULT_SWIMLANE_ID,
       label: '',
       isGroup: true,
       shape: 'swimlane',
       padding: 20,
+      look: layout.config?.look,
+      colorIndex: nodes.reduce((max, node) => Math.max(max, node.colorIndex ?? -1), -1) + 1,
       ...(direction ? { direction } : {}),
     } as ClusterNode;
     nodes.push(defaultLane);

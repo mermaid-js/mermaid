@@ -23,6 +23,14 @@ const labelHelper = vi.hoisted(() =>
 
 vi.mock('./rendering-elements/shapes/util.js', () => ({ labelHelper }));
 
+const insertNode = vi.hoisted(() =>
+  vi.fn((_parent: unknown, _node: unknown, _renderOptions: { dir?: string }) =>
+    Promise.resolve({ node: () => null })
+  )
+);
+
+vi.mock('./rendering-elements/nodes.js', () => ({ insertNode }));
+
 const { createGraphWithElements } = await import('./createGraph.js');
 const { select } = await import('d3');
 
@@ -71,5 +79,64 @@ describe('createGraphWithElements — cluster label measurement', () => {
     );
 
     expect(labelHelper.mock.calls[0][1].width).toBeUndefined();
+  });
+});
+
+/**
+ * Direction-sensitive shapes (fork/join bars) must know the flow direction to
+ * orient themselves perpendicular to it. The dagre path passes each subgraph's
+ * rankdir during its recursive render; this generic path resolves the same
+ * information from the node, its ancestor groups, or the diagram direction.
+ */
+describe('createGraphWithElements — node direction resolution', () => {
+  const data = (nodes: object[], direction?: string) =>
+    ({
+      nodes,
+      edges: [],
+      config: {},
+      direction,
+      type: 'flowchart-v2',
+    }) as never;
+
+  jsdomIt('falls back to the diagram-level direction', async ({ svg }) => {
+    insertNode.mockClear();
+    await createGraphWithElements(select(svg.node()!) as never, data([{ id: 'a' }], 'LR'));
+
+    expect(insertNode).toHaveBeenCalledTimes(1);
+    expect(insertNode.mock.calls[0][2].dir).toBe('LR');
+  });
+
+  jsdomIt('prefers the node’s own dir over the diagram direction', async ({ svg }) => {
+    insertNode.mockClear();
+    await createGraphWithElements(
+      select(svg.node()!) as never,
+      data([{ id: 'a', dir: 'RL' }], 'TB')
+    );
+
+    expect(insertNode.mock.calls[0][2].dir).toBe('RL');
+  });
+
+  jsdomIt('inherits the nearest ancestor group’s dir', async ({ svg }) => {
+    insertNode.mockClear();
+    await createGraphWithElements(
+      select(svg.node()!) as never,
+      data(
+        [
+          { id: 'grp', isGroup: true, dir: 'LR', label: '', labelType: 'text' },
+          { id: 'a', parentId: 'grp' },
+        ],
+        'TB'
+      )
+    );
+
+    expect(insertNode).toHaveBeenCalledTimes(1);
+    expect(insertNode.mock.calls[0][2].dir).toBe('LR');
+  });
+
+  jsdomIt('leaves dir undefined when nothing declares one', async ({ svg }) => {
+    insertNode.mockClear();
+    await createGraphWithElements(select(svg.node()!) as never, data([{ id: 'a' }]));
+
+    expect(insertNode.mock.calls[0][2].dir).toBeUndefined();
   });
 });

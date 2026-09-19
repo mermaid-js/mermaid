@@ -165,6 +165,12 @@ export interface NodeData {
   position?: string;
   description?: string | string[];
   labelType?: string;
+  /** Palette slot for container shapes; see `nextColorSlot` in `dataFetcher.ts`. */
+  colorIndex?: number;
+  /** Width at which the label wraps; defaults from `state.wrappingWidth` in `getData`. */
+  wrappingWidth?: number;
+  /** Minimum width of the label area; defaults from `state.minNodeWidth` in `getData`. */
+  minWidth?: number;
 }
 
 export interface Edge {
@@ -756,6 +762,12 @@ export class StateDB {
 
   getData() {
     const config = getConfig();
+    for (const node of this.nodes) {
+      node.wrappingWidth ??= config.state?.wrappingWidth;
+      if (!node.isGroup) {
+        node.minWidth ??= config.state?.minNodeWidth;
+      }
+    }
     return {
       nodes: this.nodes,
       edges: this.edges,

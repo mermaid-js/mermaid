@@ -33,8 +33,7 @@ const config: RequiredDeep<MermaidConfig> = {
     layeringStrategy: undefined,
     cycleBreakingStrategy: undefined,
     layeringLayerBound: 4,
-    // Brandes-Koepf specific; inert unless nodePlacementStrategy is set back to it.
-    nodePlacementAlignment: 'NONE',
+    nodePlacementAlignment: undefined,
 
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
@@ -69,12 +68,15 @@ const config: RequiredDeep<MermaidConfig> = {
     },
   },
   class: {
-    defaultRenderer: 'dagre-wrapper',
+    // Built from scratch rather than spread from the schema, so the appearance defaults
+    // have to be carried across by hand; the rest stay off, `padding` above all — the
+    // schema default of 5 would change class node dimensions on the unified renderer.
+    // Optional chaining: the docs scripts short-circuit `.schema.yaml` to `{}`.
+    theme: defaultConfigJson.class?.theme,
+    look: defaultConfigJson.class?.look,
+    layout: defaultConfigJson.class?.layout,
     hideEmptyMembersBox: false,
     hierarchicalNamespaces: true,
-    // `padding` is intentionally left undefined so the unified (v2) renderer keeps
-    // its own node sizing — setting the schema default of 5 here would change class
-    // node dimensions.
   },
   gantt: {
     ...defaultConfigJson.gantt,

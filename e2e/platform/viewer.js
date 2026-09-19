@@ -1,5 +1,4 @@
 import externalExample from './mermaid-example-diagram.esm.mjs';
-import layouts from './mermaid-layout-elk.esm.mjs';
 import tidyTree from './mermaid-layout-tidy-tree.esm.mjs';
 import zenUml from './mermaid-zenuml.esm.mjs';
 import mermaid from './mermaid.esm.mjs';
@@ -90,7 +89,10 @@ const contentLoaded = async function () {
 
     await mermaid.registerExternalDiagrams([externalExample, zenUml]);
 
-    mermaid.registerLayoutLoaders(layouts);
+    // ELK is bundled with mermaid and registered automatically. Registering the
+    // standalone package here would override that with a second, self-contained
+    // copy, so the suite would be exercising the plugin build rather than the
+    // layout users actually get.
     mermaid.registerLayoutLoaders(tidyTree);
     mermaid.initialize(graphObj.mermaid);
     /**
