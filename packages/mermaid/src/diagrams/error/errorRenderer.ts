@@ -20,13 +20,15 @@ const MAX_LINE_LENGTH = 75;
 export const wrapErrorMessage = (message: string): string[] => {
   const words: string[] = [];
   for (const token of message.split(/\s+/)) {
-    let rest = token;
+    // Handle the token as code points, not UTF-16 code units, so surrogate
+    // pairs (emoji etc.) are never cut in half by the hard wrap below.
+    let rest = [...token];
     while (rest.length > MAX_LINE_LENGTH) {
-      words.push(rest.slice(0, MAX_LINE_LENGTH));
+      words.push(rest.slice(0, MAX_LINE_LENGTH).join(''));
       rest = rest.slice(MAX_LINE_LENGTH);
     }
-    if (rest) {
-      words.push(rest);
+    if (rest.length > 0) {
+      words.push(rest.join(''));
     }
   }
 
@@ -34,7 +36,7 @@ export const wrapErrorMessage = (message: string): string[] => {
   let current = '';
   for (const word of words) {
     const candidate = current ? `${current} ${word}` : word;
-    if (candidate.length > MAX_LINE_LENGTH) {
+    if ([...candidate].length > MAX_LINE_LENGTH) {
       lines.push(current);
       current = word;
     } else {
@@ -48,7 +50,7 @@ export const wrapErrorMessage = (message: string): string[] => {
   if (lines.length > MAX_LINES) {
     lines.length = MAX_LINES;
     const lastLine = lines[MAX_LINES - 1] ?? '';
-    lines[MAX_LINES - 1] = `${lastLine.slice(0, MAX_LINE_LENGTH - 3)}...`;
+    lines[MAX_LINES - 1] = `${[...lastLine].slice(0, MAX_LINE_LENGTH - 3).join('')}...`;
   }
   return lines;
 };

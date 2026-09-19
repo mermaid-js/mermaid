@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Diagram } from '../../Diagram.js';
 import { jsdomIt } from '../../tests/util.js';
+import errorDiagram from './errorDiagram.js';
 import { draw, wrapErrorMessage } from './errorRenderer.js';
 
 const errorTexts = (): string[] =>
@@ -30,12 +31,35 @@ describe('wrapErrorMessage', () => {
     ]);
   });
 
+  it('does not split surrogate pairs when hard-wrapping', () => {
+    const emoji = '\u{1F600}'; // one code point, two UTF-16 code units
+    expect(wrapErrorMessage(emoji.repeat(80))).toEqual([emoji.repeat(75), emoji.repeat(5)]);
+  });
+
   it('caps the message at four lines with an ellipsis', () => {
     const word = 'w'.repeat(70);
     const message = [word, word, word, word, word, word].join(' ');
     const lines = wrapErrorMessage(message);
     expect(lines).toHaveLength(4);
     expect(lines[3]).toBe(`${word}...`);
+  });
+
+  it('does not split surrogate pairs when truncating', () => {
+    const emoji = '\u{1F600}';
+    const message = Array.from({ length: 6 }, () => emoji.repeat(70)).join(' ');
+    const lines = wrapErrorMessage(message);
+    expect(lines).toHaveLength(4);
+    expect(lines[3]).toBe(`${emoji.repeat(70)}...`);
+  });
+});
+
+describe('error diagram db', () => {
+  it('clears the stored error message', () => {
+    errorDiagram.db.setErrorMessage?.('Edge limit exceeded');
+    expect(errorDiagram.db.getErrorMessage?.()).toBe('Edge limit exceeded');
+
+    errorDiagram.db.clear?.();
+    expect(errorDiagram.db.getErrorMessage?.()).toBeUndefined();
   });
 });
 

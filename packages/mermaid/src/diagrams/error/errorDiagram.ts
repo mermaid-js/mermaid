@@ -4,6 +4,9 @@ import { renderer } from './errorRenderer.js';
 let errorMessage: string | undefined;
 
 const db = {
+  clear() {
+    errorMessage = undefined;
+  },
   setErrorMessage(message: string) {
     errorMessage = message;
   },
