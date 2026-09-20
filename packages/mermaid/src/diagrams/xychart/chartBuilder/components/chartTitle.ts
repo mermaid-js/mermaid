@@ -41,14 +41,18 @@ export class ChartTitle implements ChartComponent {
     const widthRequired = Math.max(titleDimension.width, availableSpace.width);
     const heightRequired = titleDimension.height + 2 * this.chartConfig.titlePadding;
     if (
-      titleDimension.width <= widthRequired &&
-      titleDimension.height <= heightRequired &&
+      titleDimension.width <= availableSpace.width &&
+      heightRequired <= availableSpace.height &&
       this.chartConfig.showTitle &&
       this.chartData.title
     ) {
       this.boundingRect.width = widthRequired;
       this.boundingRect.height = heightRequired;
       this.showChartTitle = true;
+    } else {
+      this.boundingRect.width = 0;
+      this.boundingRect.height = 0;
+      this.showChartTitle = false;
     }
 
     return {

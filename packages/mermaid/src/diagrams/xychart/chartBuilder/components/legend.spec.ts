@@ -200,4 +200,31 @@ describe('ChartLegend', () => {
       ])
     );
   });
+
+  it('preserves a right margin so wide charts do not clip legend text', () => {
+    const wideConfig: XYChartConfig = {
+      ...chartConfig,
+      width: 2400,
+      chartOrientation: 'vertical',
+    };
+    const drawables = XYChartBuilder.build(
+      wideConfig,
+      chartData,
+      chartThemeConfig,
+      undefined as unknown as SVGGroup
+    );
+    const legendLabels = drawables.find(
+      (drawable) => drawable.type === 'text' && drawable.groupTexts.join('.') === 'legend.label'
+    );
+    expect(legendLabels).toBeDefined();
+    const expectedRightMargin = Math.max(
+      wideConfig.legendPadding,
+      Math.round(wideConfig.width * 0.02)
+    );
+    const labelData = legendLabels!.data as { x: number; text: string }[];
+    for (const label of labelData) {
+      const approxTextWidth = label.text.length * 14;
+      expect(label.x + approxTextWidth).toBeLessThanOrEqual(wideConfig.width - expectedRightMargin);
+    }
+  });
 });

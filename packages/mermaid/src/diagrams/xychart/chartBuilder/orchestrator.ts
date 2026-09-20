@@ -98,9 +98,13 @@ export class Orchestrator {
       height: chartHeight,
     });
     availableWidth -= legendSpace.width;
-    if (availableWidth > 0) {
-      chartWidth += availableWidth;
-      availableWidth = 0;
+    const rightMargin =
+      legendSpace.width > 0
+        ? Math.max(this.chartConfig.legendPadding, Math.round(this.chartConfig.width * 0.02))
+        : 0;
+    if (availableWidth > rightMargin) {
+      chartWidth += availableWidth - rightMargin;
+      availableWidth = rightMargin;
     }
     if (availableHeight > 0) {
       chartHeight += availableHeight;
@@ -168,9 +172,13 @@ export class Orchestrator {
       height: chartHeight,
     });
     availableWidth -= legendSpace.width;
-    if (availableWidth > 0) {
-      chartWidth += availableWidth;
-      availableWidth = 0;
+    const rightMargin =
+      legendSpace.width > 0
+        ? Math.max(this.chartConfig.legendPadding, Math.round(this.chartConfig.width * 0.02))
+        : 0;
+    if (availableWidth > rightMargin) {
+      chartWidth += availableWidth - rightMargin;
+      availableWidth = rightMargin;
     }
     if (availableHeight > 0) {
       chartHeight += availableHeight;
