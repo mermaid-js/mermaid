@@ -250,7 +250,14 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     delete mergedEdge.selfLoop;
     delete mergedEdge.originalEdge;
 
-    edgesToRender.push({ edge: mergedEdge, start: mergedEdge.start, end: mergedEdge.end });
+    // Built from the already-shifted node and pre-compensated for yOffset, so the caller
+    // must not shift it again.
+    edgesToRender.push({
+      edge: mergedEdge,
+      start: mergedEdge.start,
+      end: mergedEdge.end,
+      placed: true,
+    });
   });
 
   return edgesToRender;
@@ -452,6 +459,57 @@ const runDagreGraphLayout = (graph) => {
   // log.info('Graph after layout:', JSON.stringify(graphlibJson.write(graph)));
 };
 
+// Vertical space a cluster must reserve above its children for its own (possibly
+// multi-line) header label. Only active when subGraphTitleMargin is configured (>0);
+// then the measured label height supersedes that margin when it is taller, so a
+// cluster never overlaps its children. Diagrams using the default margin (0) are
+// unaffected.
+const getClusterTitleReserve = (node, subGraphTitleTotalMargin) =>
+  subGraphTitleTotalMargin > 0
+    ? Math.max(node?.labelBBox?.height ?? 0, subGraphTitleTotalMargin)
+    : 0;
+
+// Summed title reserve of all ancestor clusters, so a deeply nested node clears
+// every ancestor's header, not just its immediate parent's. Returns early at the
+// default margin so no ancestor walk happens when the reserve would be 0 anyway.
+const cumulativeAncestorReserve = (graph, nodeId, subGraphTitleTotalMargin) => {
+  if (subGraphTitleTotalMargin <= 0) {
+    return 0;
+  }
+  let total = 0;
+  let parentId = graph.parent(nodeId);
+  // `graph.parent()` yields undefined at a root; comparing against it keeps the walk
+  // going for a falsy-but-valid node id such as ''.
+  while (parentId !== undefined) {
+    total += getClusterTitleReserve(graph.node(parentId), subGraphTitleTotalMargin);
+    parentId = graph.parent(parentId);
+  }
+  return total;
+};
+
+// Vertical space a cluster must grow by to fit its own header plus the headers of
+// the deepest chain of nested clusters below it. Sibling sub-clusters sit side by
+// side (same rank), so only the heaviest single ancestor-to-leaf chain stacks
+// vertically; taking the max over child clusters keeps the box tight rather than
+// summing every branch.
+// Returns early at the default margin, so no subtree walk happens when the reserve
+// would be 0 anyway.
+const deepestClusterReserve = (graph, nodeId, subGraphTitleTotalMargin) => {
+  if (subGraphTitleTotalMargin <= 0) {
+    return 0;
+  }
+  let maxChild = 0;
+  for (const childId of graph.children(nodeId)) {
+    if (graph.children(childId).length > 0) {
+      maxChild = Math.max(
+        maxChild,
+        deepestClusterReserve(graph, childId, subGraphTitleTotalMargin)
+      );
+    }
+  }
+  return getClusterTitleReserve(graph.node(nodeId), subGraphTitleTotalMargin) + maxChild;
+};
+
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
   const node = graph.node(nodeId);
   if (!node) {
@@ -459,12 +517,25 @@ const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
   }
 
   const normalizedNode = { ...node };
-  if (node?.clusterNode) {
-    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin;
+  // Every node carries the diagram's baseline half-margin (matching the edge offset so
+  // nodes and edges stay aligned); nested nodes additionally clear all ancestor headers.
+  const ancestorReserve = cumulativeAncestorReserve(graph, nodeId, subGraphTitleTotalMargin);
+  if (node.clusterNode) {
+    // A recursively-rendered cluster already reserves its own header internally, so it
+    // shifts by the full margin (legacy behaviour) plus every ancestor header.
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin + ancestorReserve;
   } else if (graph.children(nodeId).length > 0) {
-    normalizedNode.height = (node.height ?? 0) + subGraphTitleTotalMargin;
+    // A cluster laid out in the top-level graph: grow it to fit its own header and the
+    // deepest chain of nested headers below it (so children never overlap any header),
+    // then shift it down below all ancestor headers. Growing downward and moving the
+    // centre by half the growth keeps the cluster's top edge in place.
+    const ownReserve = deepestClusterReserve(graph, nodeId, subGraphTitleTotalMargin);
+    normalizedNode.height = (node.height ?? 0) + ownReserve;
+    normalizedNode.y =
+      (node.y ?? 0) + subGraphTitleTotalMargin / 2 + ancestorReserve + ownReserve / 2;
   } else {
-    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2;
+    // A leaf node: baseline half-margin plus clearance for every ancestor header.
+    normalizedNode.y = (node.y ?? 0) + subGraphTitleTotalMargin / 2 + ancestorReserve;
   }
   return normalizedNode;
 };
@@ -477,15 +548,30 @@ const applyDagreNodeLayout = (targetNode, dagreNode) => {
   });
 };
 
-const normalizeDagreEdge = (edge, start, end, edgeOffsetY) => ({
-  ...edge,
-  start: edge.start ?? start,
-  end: edge.end ?? end,
-  points: (edge.points ?? []).map((point) => ({
-    ...point,
-    y: typeof point.y === 'number' ? point.y + edgeOffsetY : point.y,
-  })),
-});
+const normalizeDagreEdge = (edge, start, end, edgeOffsetY, startReserve = 0, endReserve = 0) => {
+  const points = edge.points ?? [];
+  const last = points.length - 1;
+  // Each end is shifted by its own ancestors' headers. They differ when the edge crosses a
+  // cluster boundary, so the points between them are interpolated rather than all taking one
+  // offset, which would leave the line off one of its two nodes.
+  const reserveAt = (index) => {
+    const share = last > 0 ? index / last : 0;
+    return startReserve + (endReserve - startReserve) * share;
+  };
+  const midReserve = reserveAt(last / 2);
+  return {
+    ...edge,
+    start: edge.start ?? start,
+    end: edge.end ?? end,
+    // The label sits at the edge's own coordinates, so it travels with the route it names.
+    // Only by the reserve: the flat half-margin is deliberately not applied to a label.
+    ...(typeof edge.y === 'number' && midReserve !== 0 ? { y: edge.y + midReserve } : {}),
+    points: points.map((point, index) => ({
+      ...point,
+      y: typeof point.y === 'number' ? point.y + edgeOffsetY + reserveAt(index) : point.y,
+    })),
+  };
+};
 
 /**
  * Copy the Dagre layout results back onto LayoutData.
@@ -521,7 +607,15 @@ export const applyDagreLayoutResult = (data4Layout, measuredLayout) => {
 
   const edgeOffsetY = subGraphTitleTotalMargin / 2;
   data4Layout.edges = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops }).map(
-    ({ edge, start, end }) => normalizeDagreEdge(edge, start, end, edgeOffsetY)
+    ({ edge, start, end, placed }) => {
+      const reserve = placed
+        ? { start: 0, end: 0 }
+        : {
+            start: cumulativeAncestorReserve(graph, start, subGraphTitleTotalMargin),
+            end: cumulativeAncestorReserve(graph, end, subGraphTitleTotalMargin),
+          };
+      return normalizeDagreEdge(edge, start, end, edgeOffsetY, reserve.start, reserve.end);
+    }
   );
 
   return data4Layout;
