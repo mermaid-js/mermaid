@@ -35,6 +35,7 @@ import { profiler } from './profiler.js';
 import { preprocessDiagram } from './preprocess.js';
 import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
+import { prepareMermaidSvgForWeb } from './utils/svgCssVars.js';
 import type {
   D3HtmlSelection,
   D3Selection,
@@ -643,6 +644,17 @@ const renderDiagram = async function (
 
     log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
     code = cleanUpSvgCode(code, isSandboxed, evaluate(config.arrowMarkerAbsolute));
+
+    if (config.cssVariableTheme || config.webCompatibility) {
+      code = prepareMermaidSvgForWeb(code, {
+        themeVariables: config.themeVariables as Record<
+          string,
+          string | number | boolean | undefined | null
+        >,
+        cssVariableTheme: config.cssVariableTheme,
+        webCompatibility: config.webCompatibility,
+      });
+    }
 
     if (isSandboxed) {
       const svgEl = root.select<SVGSVGElement>(enclosingDivID_selector + ' svg').node()!;
