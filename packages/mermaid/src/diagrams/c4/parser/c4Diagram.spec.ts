@@ -39,6 +39,16 @@ Person(Person, "Person", "Person")`);
     expect(onlyShape.label.text).toBe('Person');
   });
 
+  it('should send accTitle to the accessible title, not the visible one', function () {
+    c4.parser.parse(`C4Context
+accTitle: an accessible title
+Person(Person, "Person", "Person")`);
+
+    const yy = c4.parser.yy;
+    expect(yy.getAccTitle()).toBe('an accessible title');
+    expect(yy.getTitle()).toBe('');
+  });
+
   it('should allow default in the parameters', function () {
     c4.parser.parse(`C4Context
 Person(default, "default", "default")`);
