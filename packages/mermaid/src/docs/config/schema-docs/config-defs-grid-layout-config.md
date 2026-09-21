@@ -1,0 +1,26 @@
+# Grid Layout Config
+
+Configuration for Mermaid's built-in `grid` layout.
+
+## Properties
+
+| Property           | Type                            | Default  | Description                                                           |
+| ------------------ | ------------------------------- | -------- | --------------------------------------------------------------------- |
+| `placements`       | `Record<string, GridPlacement>` | `{}`     | Placement map keyed by emitted node id.                               |
+| `columns`          | `number`                        | `0`      | Fixed candidate column count for auto-placement. `0` means automatic. |
+| `rowGap`           | `number`                        | `50`     | Pixel gap between occupied rows.                                      |
+| `columnGap`        | `number`                        | `50`     | Pixel gap between occupied columns.                                   |
+| `cellGap`          | `number`                        | `20`     | Pixel gap between items that explicitly share one cell.               |
+| `containerPadding` | `number`                        | `20`     | Minimum padding inside groups.                                        |
+| `titleGap`         | `number`                        | `8`      | Clearance between a measured group title and the child grid.          |
+| `horizontalAlign`  | `left \| center \| right`       | `center` | Default horizontal item alignment.                                    |
+| `verticalAlign`    | `top \| center \| bottom`       | `center` | Default vertical stack alignment.                                     |
+
+## `GridPlacement`
+
+| Property          | Type                      | Description                                        |
+| ----------------- | ------------------------- | -------------------------------------------------- |
+| `row`             | `number`                  | One-based row local to the direct parent group.    |
+| `column`          | `number`                  | One-based column local to the direct parent group. |
+| `horizontalAlign` | `left \| center \| right` | Item alignment within the resolved cell.           |
+| `verticalAlign`   | `top \| center \| bottom` | Stack alignment within the resolved cell.          |

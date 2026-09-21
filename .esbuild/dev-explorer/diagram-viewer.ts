@@ -109,12 +109,12 @@ type MermaidTheme =
   | 'redux-dark'
   | 'redux-color'
   | 'redux-dark-color';
-type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane';
+type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane' | 'grid';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 type ViewerTab = 'diagram' | 'code' | 'profile';
 
-const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane'];
+const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane', 'grid'];
 
 // mermaid's `maxTextSize` (default 50_000) and `maxEdges` (default 500) are
 // *secure* config keys, so they can't be raised from a diagram's frontmatter/
@@ -305,7 +305,14 @@ function isTheme(v: unknown): v is MermaidTheme {
 }
 
 function isLayout(v: unknown): v is MermaidLayout {
-  return v === 'dagre' || v === 'elk' || v === 'domus' || v === 'hola' || v === 'swimlane';
+  return (
+    v === 'dagre' ||
+    v === 'elk' ||
+    v === 'domus' ||
+    v === 'hola' ||
+    v === 'swimlane' ||
+    v === 'grid'
+  );
 }
 
 function isLook(v: unknown): v is MermaidLook {
@@ -322,7 +329,16 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
   // Back-compat:
   // - older UI used `renderer=dagre-d3|dagre-wrapper|elk`
   // - new UI uses `layout=dagre|elk|domus`
-  if (v === 'dagre' || v === 'elk' || v === 'domus' || v === 'hola' || v === 'swimlane') return v;
+  if (
+    v === 'dagre' ||
+    v === 'elk' ||
+    v === 'domus' ||
+    v === 'hola' ||
+    v === 'swimlane' ||
+    v === 'grid'
+  ) {
+    return v;
+  }
   if (v === 'dagre-d3' || v === 'dagre-wrapper') return 'dagre';
   return null;
 }

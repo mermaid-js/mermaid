@@ -622,7 +622,7 @@ export const insertEdge = function (
   // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
   // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
   // clipping below, so their edge ports are unaffected by swimlanes.
-  if (layout === 'swimlane') {
+  if (layout === 'swimlane' || layout === 'grid') {
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.

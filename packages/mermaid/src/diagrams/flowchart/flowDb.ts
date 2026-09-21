@@ -34,6 +34,30 @@ interface LinkData {
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
+/**
+ * Remove `__proto__` / `constructor` / `prototype` own keys from parsed `@{ }`
+ * metadata, recursively.
+ *
+ * Flowchart now forwards node metadata to `LayoutData`, so the same parse-boundary
+ * hardening as agentflow is required here too.
+ */
+function stripPrototypeKeys<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((entry) => stripPrototypeKeys(entry)) as T;
+  }
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+  const clean: Record<string, unknown> = {};
+  for (const key of Object.keys(value)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
+    clean[key] = stripPrototypeKeys((value as Record<string, unknown>)[key]);
+  }
+  return clean as T;
+}
+
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
@@ -148,7 +172,7 @@ export class FlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
-      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+      doc = stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData);
     }
 
     // Check if this is metadata for an already-declared subgraph
@@ -233,6 +257,8 @@ export class FlowDB implements DiagramDB {
     }
 
     if (doc !== undefined) {
+      vertex.metadata = { ...vertex.metadata, ...doc };
+
       if (doc.shape) {
         if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
           throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
@@ -1062,6 +1088,7 @@ You have to call mermaid.initialize.`
         assetWidth: vertex.assetWidth,
         assetHeight: vertex.assetHeight,
         constraint: vertex.constraint,
+        metadata: vertex.metadata as Record<string, unknown> | undefined,
       };
       if (isGroup) {
         nodes.push({

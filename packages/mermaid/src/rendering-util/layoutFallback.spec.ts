@@ -15,6 +15,7 @@ describe('layout fallback', () => {
   it('returns a registered layout unchanged', () => {
     expect(getRegisteredLayoutAlgorithm('dagre')).toBe('dagre');
     expect(getRegisteredLayoutAlgorithm('swimlane')).toBe('swimlane');
+    expect(getRegisteredLayoutAlgorithm('grid')).toBe('grid');
     // Bundled by default now; only the tiny build omits it.
     expect(getRegisteredLayoutAlgorithm('elk')).toBe('elk');
   });

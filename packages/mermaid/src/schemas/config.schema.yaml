@@ -256,6 +256,9 @@ properties:
           Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
         type: boolean
         default: false
+  grid:
+    $ref: '#/$defs/GridLayoutConfig'
+    default: {}
   darkMode:
     type: boolean
     default: false
@@ -514,6 +517,88 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Defines which layout algorithm to use for rendering the diagram.
         type: string
+  GridHorizontalAlign:
+    description: Horizontal alignment for items within a grid cell.
+    type: string
+    enum:
+      - left
+      - center
+      - right
+  GridVerticalAlign:
+    description: Vertical alignment for items or stacks within a grid cell.
+    type: string
+    enum:
+      - top
+      - center
+      - bottom
+  GridPlacement:
+    title: Grid Placement
+    type: object
+    additionalProperties: false
+    properties:
+      row:
+        description: One-based row number local to the item's direct parent grid.
+        type: integer
+        minimum: 1
+      column:
+        description: One-based column number local to the item's direct parent grid.
+        type: integer
+        minimum: 1
+      horizontalAlign:
+        description: Horizontal alignment within the resolved grid cell.
+        $ref: '#/$defs/GridHorizontalAlign'
+      verticalAlign:
+        description: Vertical alignment for the resolved grid cell stack.
+        $ref: '#/$defs/GridVerticalAlign'
+  GridLayoutConfig:
+    title: Grid Layout Config
+    type: object
+    additionalProperties: false
+    properties:
+      placements:
+        description: Mapping of emitted node ids to explicit grid placements.
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/GridPlacement'
+        default: {}
+      columns:
+        description: Fixed candidate column count for auto-placed items; 0 means automatic.
+        type: integer
+        minimum: 0
+        default: 0
+      rowGap:
+        description: Pixel gap between occupied rows.
+        type: number
+        minimum: 0
+        default: 50
+      columnGap:
+        description: Pixel gap between occupied columns.
+        type: number
+        minimum: 0
+        default: 50
+      cellGap:
+        description: Pixel gap between stacked items that share an explicit cell.
+        type: number
+        minimum: 0
+        default: 20
+      containerPadding:
+        description: Minimum pixel padding inside groups on every side.
+        type: number
+        minimum: 0
+        default: 20
+      titleGap:
+        description: Clearance between a measured group title and its child grid.
+        type: number
+        minimum: 0
+        default: 8
+      horizontalAlign:
+        description: Default horizontal alignment within each grid cell.
+        $ref: '#/$defs/GridHorizontalAlign'
+        default: center
+      verticalAlign:
+        description: Default vertical alignment for each grid cell stack.
+        $ref: '#/$defs/GridVerticalAlign'
+        default: center
   C4DiagramConfig:
     title: C4 Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]

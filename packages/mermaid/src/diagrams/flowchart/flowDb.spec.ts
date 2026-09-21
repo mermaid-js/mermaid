@@ -1,5 +1,6 @@
 import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph, FlowText } from './types.js';
+import flow from './parser/flowParser.js';
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -277,6 +278,46 @@ describe('flow db collapsible subgraphs', () => {
     expect(nodes.find((n) => n.id === 'A')).toBeUndefined();
     // C --> A redirects all the way to the outer collapsed node
     expect(edges.find((e) => e.start === 'C' && e.end === 'outer')).toBeDefined();
+  });
+});
+
+describe('flow db metadata propagation', () => {
+  it('preserves grid metadata on emitted leaf nodes', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      A@{ row: 2, column: 3, horizontalAlign: left, verticalAlign: bottom, note: "kept" }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const node = nodes.find((item: { id: string }) => item.id === 'A');
+    expect(node?.metadata).toMatchObject({
+      row: 2,
+      column: 3,
+      horizontalAlign: 'left',
+      verticalAlign: 'bottom',
+      note: 'kept',
+    });
+  });
+
+  it('strips prototype-shaped metadata keys before forwarding them', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      A@{
+        row: 1
+        __proto__:
+          polluted: true
+        constructor: "drop"
+      }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const metadata =
+      nodes.find((item: { id: string; metadata?: Record<string, unknown> }) => item.id === 'A')
+        ?.metadata ?? {};
+    expect(metadata).toMatchObject({ row: 1 });
+    expect(Object.keys(metadata)).not.toContain('__proto__');
+    expect(Object.keys(metadata)).not.toContain('constructor');
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
   });
 });
 

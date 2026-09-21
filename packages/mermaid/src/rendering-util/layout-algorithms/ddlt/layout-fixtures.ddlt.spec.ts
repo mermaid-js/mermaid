@@ -5,6 +5,7 @@ import { discoverLayoutTestFixtures } from './discoverFixtures.js';
 import { loadDdltFixture } from './loadDdltFixture.js';
 
 const SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE = 11754;
+const GRID_TOTAL_SCORE_BASELINE = 9470;
 
 describe('DDLT layout-test fixture sweep', () => {
   it('aggregate validateLayout report — swimlanes', { timeout: 20_000 }, async () => {
@@ -35,5 +36,40 @@ describe('DDLT layout-test fixture sweep', () => {
     expect(report.totalScore).toBeGreaterThanOrEqual(
       SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE
     );
+  });
+
+  it('aggregate validateLayout report — grid', { timeout: 20_000 }, async () => {
+    const fixtures = discoverLayoutTestFixtures().filter((fixture) => fixture.profile === 'grid');
+    const items = [];
+
+    expect(fixtures.map((fixture) => fixture.id)).toEqual(
+      expect.arrayContaining([
+        'grid/simple',
+        'grid/group-stack',
+        'grid/placement-matrix-tb',
+        'grid/placement-matrix-lr',
+        'grid/singleton-alignments',
+        'grid/stack-default',
+        'grid/stack-gap-zero',
+        'grid/routing-group-member',
+        'grid/routing-outside-member',
+        'grid/routing-loops-parallel-lr',
+      ])
+    );
+
+    for (const fixture of fixtures) {
+      const layout = await loadDdltFixture(fixture.id, { backendId: 'grid' });
+      items.push({ id: fixture.id, result: validateLayout(layout) });
+    }
+
+    const report = combineValidateLayoutResults(items);
+    console.log('DDLT-GRID-AGG:', JSON.stringify(report, null, 2));
+
+    const exemptIds = new Set(
+      fixtures.filter((fixture) => fixture.allowLevel1Failure).map((fixture) => fixture.id)
+    );
+    const nonExemptInvalid = report.byCase.filter((row) => !exemptIds.has(row.id) && !row.valid);
+    expect(nonExemptInvalid.map((row) => `${row.id}: ${row.issueTypes.join(', ')}`)).toEqual([]);
+    expect(report.totalScore).toBeGreaterThanOrEqual(GRID_TOTAL_SCORE_BASELINE);
   });
 });

@@ -133,6 +133,19 @@ A@{ shape: 'rect' }
 
         expect(edges[0].id).toBe('id1');
       });
+      it('keeps grid metadata on a node while still parsing nearby edge ids', function () {
+        flow.parser.parse(`flowchart LR
+A id1@--> B
+A@{ row: 2, column: 3, horizontalAlign: left, verticalAlign: top }`);
+
+        const vertex = flow.parser.yy.getVertices().get('A');
+        expect(vertex.metadata).toMatchObject({
+          row: 2,
+          column: 3,
+          horizontalAlign: 'left',
+          verticalAlign: 'top',
+        });
+      });
     });
     describe('double ended edges with ids and labels', function () {
       doubleEndedEdges.forEach((edgeType) => {

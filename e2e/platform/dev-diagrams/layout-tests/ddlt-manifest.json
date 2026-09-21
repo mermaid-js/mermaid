@@ -29,6 +29,46 @@
       "id": "swimlanes/13-disagree-exits-b-c-d",
       "profile": "swimlanes",
       "allowLevel1Failure": true
+    },
+    {
+      "id": "grid/simple",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/group-stack",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/placement-matrix-tb",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/placement-matrix-lr",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/singleton-alignments",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/stack-default",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/stack-gap-zero",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-group-member",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-outside-member",
+      "profile": "grid"
+    },
+    {
+      "id": "grid/routing-loops-parallel-lr",
+      "profile": "grid"
     }
   ]
 }

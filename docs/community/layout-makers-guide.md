@@ -103,7 +103,7 @@ So write the core as one exported function, and have both the browser and your t
 
 ## A minimal layout
 
-The examples from here on build a layout called `grid`. No such layout ships with Mermaid. It stands in for whatever you are writing, and the code below is what you would write to create it.
+The examples from here on build a layout called `grid`. Mermaid now ships a production `grid` layout under `rendering-util/layout-algorithms/grid/`; the snippets here stay intentionally minimal and pedagogical so you can focus on the layout-maker contract rather than production complexity.
 
 Put the algorithm in `packages/mermaid/src/rendering-util/layout-algorithms/<name>/`. This one arranges leaf nodes in a grid and connects them with straight lines:
 
