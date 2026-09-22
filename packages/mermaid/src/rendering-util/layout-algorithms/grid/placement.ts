@@ -3,6 +3,7 @@ import type { GridPlacement } from '../../../types.js';
 import type { Node } from '../../types.js';
 import {
   GRID_DEFAULTS,
+  type GridCurve,
   type GridLayoutConfigNormalized,
   type GridResolvedPlacement,
   type GridLayoutData,
@@ -11,6 +12,21 @@ import {
 } from './types.js';
 
 const GRID_LOG_PREFIX = '[grid]';
+const GRID_CURVES = new Set<GridCurve>([
+  'basis',
+  'bumpX',
+  'bumpY',
+  'cardinal',
+  'catmullRom',
+  'linear',
+  'monotoneX',
+  'monotoneY',
+  'natural',
+  'step',
+  'stepAfter',
+  'stepBefore',
+  'rounded',
+]);
 
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object';
@@ -115,6 +131,16 @@ export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized
       readAlign(raw.horizontalAlign, ['left', 'center', 'right']) ?? GRID_DEFAULTS.horizontalAlign,
     verticalAlign:
       readAlign(raw.verticalAlign, ['top', 'center', 'bottom']) ?? GRID_DEFAULTS.verticalAlign,
+    curve:
+      typeof raw.curve === 'string' && GRID_CURVES.has(raw.curve as GridCurve)
+        ? (raw.curve as GridCurve)
+        : GRID_DEFAULTS.curve,
+    edgeCornerRadius:
+      typeof raw.edgeCornerRadius === 'number' &&
+      Number.isFinite(raw.edgeCornerRadius) &&
+      raw.edgeCornerRadius >= 0
+        ? raw.edgeCornerRadius
+        : GRID_DEFAULTS.edgeCornerRadius,
   };
 }
 

@@ -13,9 +13,7 @@
 import type { D3Selection } from '../../types.js';
 import { markerOffsets } from '../../utils/lineWithOffset.js';
 
-/** Radius used by edges.js' generateRoundedPath. Kept in sync so rewritten
- * paths look like the originals at bends. */
-const ROUNDED_CORNER_RADIUS = 5;
+const DEFAULT_ROUNDED_CORNER_RADIUS = 5;
 
 /** Skip the jump if its clamped radius falls below this — avoids invisible
  * zero-length arcs on very crowded paths. */
@@ -64,12 +62,21 @@ export interface EdgeGeom {
    * corrupting smoothed geometry.
    */
   curve?: string;
+  cornerRadius?: number;
   /** Arrow type at the start (first point) — used to apply marker offset so
    * the rewritten path's endpoint matches the original rendered geometry and
    * the arrow marker orients correctly. */
   arrowTypeStart?: string;
   /** Arrow type at the end (last point). */
   arrowTypeEnd?: string;
+}
+
+function roundedCornerRadius(edge: EdgeGeom): number {
+  return typeof edge.cornerRadius === 'number' &&
+    Number.isFinite(edge.cornerRadius) &&
+    edge.cornerRadius >= 0
+    ? edge.cornerRadius
+    : DEFAULT_ROUNDED_CORNER_RADIUS;
 }
 
 export interface LineJumpConfig {
@@ -188,17 +195,16 @@ function crossingSitsInRoundedCorner(edge: EdgeGeom, segIndex: number, t: number
   }
   const segLen = Math.hypot(b.x - a.x, b.y - a.y);
   const d = t * segLen;
+  const cornerRadius = roundedCornerRadius(edge);
 
   const entering =
-    segIndex > 0 ? computeRoundedCorner(pts[segIndex - 1], a, b, ROUNDED_CORNER_RADIUS) : null;
+    segIndex > 0 ? computeRoundedCorner(pts[segIndex - 1], a, b, cornerRadius) : null;
   if (entering && d < entering.cutLen) {
     return true;
   }
 
   const leaving =
-    segIndex + 2 < pts.length
-      ? computeRoundedCorner(a, b, pts[segIndex + 2], ROUNDED_CORNER_RADIUS)
-      : null;
+    segIndex + 2 < pts.length ? computeRoundedCorner(a, b, pts[segIndex + 2], cornerRadius) : null;
   return leaving !== null && segLen - d < leaving.cutLen;
 }
 
@@ -422,6 +428,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
   // Match edges.js: shift the first/last point inward so arrow markers line up.
   const points = applyMarkerOffsets(rawPoints, edge);
   const rounded = edge.curve === 'rounded';
+  const cornerRadius = roundedCornerRadius(edge);
 
   // Jumps are indexed into the ORIGINAL (un-offset) segment list. For mid-
   // segments (i > 0 and i < n-2) the offsets don't change anything, and for
@@ -464,7 +471,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
         points[i - 1],
         points[i],
         points[i + 1] ?? points[i],
-        ROUNDED_CORNER_RADIUS
+        cornerRadius
       );
       if (corner) {
         segStartConsumed = corner.cutLen;
@@ -479,7 +486,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
         points[i],
         points[i + 1],
         points[i + 2] ?? points[i + 1],
-        ROUNDED_CORNER_RADIUS
+        cornerRadius
       );
       if (upcomingCorner) {
         segEndStop = segLen - upcomingCorner.cutLen;

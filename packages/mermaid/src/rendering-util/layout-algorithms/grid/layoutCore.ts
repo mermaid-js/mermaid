@@ -399,6 +399,7 @@ function commitGridGeometry(source: LayoutData, target: LayoutData): void {
     }
     targetEdge.points = sourceEdge.points?.map((point) => ({ ...point }));
     targetEdge.curve = sourceEdge.curve;
+    targetEdge.cornerRadius = sourceEdge.cornerRadius;
   }
 }
 

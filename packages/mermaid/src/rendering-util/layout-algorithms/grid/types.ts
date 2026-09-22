@@ -10,6 +10,20 @@ export const GRID_LABEL_PREFIX = 'edge-label-';
 export type GridContainerId = string;
 export type GridSide = 'left' | 'right' | 'top' | 'bottom';
 export type GridOrientation = 'H' | 'V';
+export type GridCurve =
+  | 'basis'
+  | 'bumpX'
+  | 'bumpY'
+  | 'cardinal'
+  | 'catmullRom'
+  | 'linear'
+  | 'monotoneX'
+  | 'monotoneY'
+  | 'natural'
+  | 'step'
+  | 'stepAfter'
+  | 'stepBefore'
+  | 'rounded';
 export type RouterVertexId = number;
 
 export interface RouterPoint {
@@ -133,6 +147,8 @@ export interface GridLayoutConfigNormalized {
   titleGap: number;
   horizontalAlign: GridHorizontalAlign;
   verticalAlign: GridVerticalAlign;
+  curve: GridCurve;
+  edgeCornerRadius: number;
 }
 
 export interface GridResolvedPlacement {
@@ -250,6 +266,8 @@ export const GRID_DEFAULTS = {
   titleGap: 8,
   horizontalAlign: 'center' as GridHorizontalAlign,
   verticalAlign: 'center' as GridVerticalAlign,
+  curve: 'linear' as GridCurve,
+  edgeCornerRadius: 5,
 };
 
 export type GridLayoutData = LayoutData & {
@@ -264,6 +282,8 @@ export type GridLayoutData = LayoutData & {
       titleGap?: number;
       horizontalAlign?: GridHorizontalAlign;
       verticalAlign?: GridVerticalAlign;
+      curve?: GridCurve;
+      edgeCornerRadius?: number;
     };
   };
 };

@@ -421,6 +421,27 @@ export interface GridLayoutConfig {
    * Default vertical alignment for each grid cell stack.
    */
   verticalAlign?: 'top' | 'center' | 'bottom';
+  /**
+   * Curve style used to render grid edges.
+   */
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore'
+    | 'rounded';
+  /**
+   * Pixel radius used for grid edges when curve is rounded.
+   */
+  edgeCornerRadius?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

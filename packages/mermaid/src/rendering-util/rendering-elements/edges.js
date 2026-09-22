@@ -44,6 +44,12 @@ export const resolveEdgeCurveType = (edgeCurve) => {
   return typeof edgeCurve === 'string' ? edgeCurve : getConfig()?.flowchart?.curve;
 };
 
+export const resolveEdgeCornerRadius = (cornerRadius) => {
+  return typeof cornerRadius === 'number' && Number.isFinite(cornerRadius) && cornerRadius >= 0
+    ? cornerRadius
+    : 5;
+};
+
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
 
@@ -768,7 +774,10 @@ export const insertEdge = function (
   let svgPath;
   let linePath =
     edgeCurveType === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      ? generateRoundedPath(
+          applyMarkerOffsetsToPoints(lineData, edge),
+          resolveEdgeCornerRadius(edge.cornerRadius)
+        )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));

@@ -2282,7 +2282,8 @@ export function routeGridEdges(
       const countKey = `${sourceNode.id}:${side}`;
       selfLoopCounts.set(countKey, index + 1);
       edge.points = points;
-      edge.curve = 'linear';
+      edge.curve = result.config.curve;
+      edge.cornerRadius = result.config.edgeCornerRadius;
       committedPairRoutes.push(points);
       pairRoutes.set(plan.pairKey, committedPairRoutes);
       (context.occupancy.routes as RouterPoint[][]).push(points);
@@ -2531,7 +2532,8 @@ export function routeGridEdges(
       });
     }
     edge.points = points;
-    edge.curve = 'linear';
+    edge.curve = result.config.curve;
+    edge.cornerRadius = result.config.edgeCornerRadius;
     committedPairRoutes.push(points);
     pairRoutes.set(plan.pairKey, committedPairRoutes);
     if (metrics && instrumentedRoutes) {

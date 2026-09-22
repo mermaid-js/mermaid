@@ -170,6 +170,7 @@ export interface Edge {
   endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
+  cornerRadius?: number;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;

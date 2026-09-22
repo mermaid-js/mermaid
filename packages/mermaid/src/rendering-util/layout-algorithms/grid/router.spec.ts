@@ -163,6 +163,19 @@ function boundaryCrossings(points: { x: number; y: number }[], owner: Node): num
 }
 
 describe('grid router', () => {
+  it('uses the configured edge curve and rounded corner radius', () => {
+    const data = baseLayout(
+      [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 2, column: 2 })],
+      [edge('a-b', 'a', 'b')],
+      { curve: 'rounded', edgeCornerRadius: 12 }
+    );
+
+    runGridLayoutCore(data);
+
+    expect(data.edges[0]).toMatchObject({ curve: 'rounded', cornerRadius: 12 });
+    expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThan(0);
+  });
+
   it('records current route metrics without changing geometry', () => {
     const build = () =>
       baseLayout(

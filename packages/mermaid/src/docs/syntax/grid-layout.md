@@ -121,8 +121,35 @@ Groups are laid out recursively from the inside out. Child coordinates are alway
 - `titleGap`
 - `horizontalAlign`
 - `verticalAlign`
+- `curve`
+- `edgeCornerRadius`
 
 See the generated configuration reference for the exact schema and defaults.
+
+## Edge curves
+
+Grid edges use `linear` rendering by default. Set `grid.curve` to any Mermaid
+flowchart curve style, including `basis`, `cardinal`, `catmullRom`, `step`, or
+`rounded`.
+
+`edgeCornerRadius` controls the corner radius for `rounded` edges. It is ignored
+by other curve styles, and each corner is automatically limited by the adjacent
+segment lengths.
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    curve: rounded
+    edgeCornerRadius: 10
+---
+flowchart TB
+  A@{ row: 1, column: 1 } --> B@{ row: 2, column: 2 }
+```
+
+Curves other than `linear` and `rounded` interpolate between the obstacle-aware
+route points and can move away from the calculated orthogonal corridor.
 
 ## Current limits
 

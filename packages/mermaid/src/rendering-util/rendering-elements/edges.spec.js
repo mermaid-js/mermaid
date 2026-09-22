@@ -11,7 +11,12 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
-import { insertEdge, resolveEdgeCurveType } from './edges.js';
+import {
+  generateRoundedPath,
+  insertEdge,
+  resolveEdgeCornerRadius,
+  resolveEdgeCurveType,
+} from './edges.js';
 import { computeLabelTransform } from '../labelTransform.js';
 
 describe('resolveEdgeCurveType', () => {
@@ -36,6 +41,26 @@ describe('resolveEdgeCurveType', () => {
 
   it('should fall back to config flowchart.curve when edge.curve is null', () => {
     expect(resolveEdgeCurveType(null)).toBe('rounded');
+  });
+});
+
+describe('rounded edge corners', () => {
+  it('uses a valid configured radius and defaults invalid values', () => {
+    expect(resolveEdgeCornerRadius(12)).toBe(12);
+    expect(resolveEdgeCornerRadius(0)).toBe(0);
+    expect(resolveEdgeCornerRadius(-1)).toBe(5);
+    expect(resolveEdgeCornerRadius(Number.NaN)).toBe(5);
+  });
+
+  it('changes the rounded path geometry with the corner radius', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 40, y: 0 },
+      { x: 40, y: 40 },
+    ];
+
+    expect(generateRoundedPath(points, 5)).not.toBe(generateRoundedPath(points, 12));
+    expect(generateRoundedPath(points, 0)).toBe('M0,0L40,0Q40,0 40,0L40,40');
   });
 });
 
