@@ -4,6 +4,8 @@ import type {
   Edge as MermaidEdge,
   ClusterNode,
 } from '../../types.js';
+import { buildLaneModel } from './lanes.js';
+import { collectAnchoredIds, resolveAnchorHostId } from './anchoredNodes.js';
 
 export type Layout = LayoutData;
 export type Node = MermaidNode;
@@ -98,12 +100,15 @@ function assignTopLaneTitleRect(lane: Node): void {
 export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
-  for (const node of layout.nodes ?? []) {
-    if (node.isGroup && !node.parentId) {
-      node.shape = 'swimlane';
-      if (direction) {
-        (node as any).direction = direction;
-      }
+  const laneModel = buildLaneModel(nodes);
+  for (const node of nodes) {
+    const isLane = laneModel.isLane(node.id);
+    if (!isLane && !laneModel.isPool(node.id)) {
+      continue;
+    }
+    node.shape = isLane ? 'swimlane' : 'pool';
+    if (direction) {
+      (node as any).direction = direction;
     }
   }
 
@@ -140,16 +145,25 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
 }
 
 export function toGraphView(layout: LayoutData): Graph {
+  const allNodes = layout.nodes ?? [];
+  const byId = new Map<NodeId, Node>(allNodes.map((n) => [n.id, n]));
+
+  const anchoredIds = collectAnchoredIds(allNodes);
+  const hostOf = (id: NodeId): NodeId =>
+    anchoredIds.has(id) ? (resolveAnchorHostId(id, byId) ?? id) : id;
+
   const nodeById = new Map<NodeId, Node>();
-  for (const n of layout.nodes ?? []) {
-    nodeById.set(n.id, n);
+  for (const n of allNodes) {
+    if (!anchoredIds.has(n.id)) {
+      nodeById.set(n.id, n);
+    }
   }
 
   const edges: EdgeRef[] = [];
   for (const e of layout.edges ?? []) {
-    const src = typeof e.start === 'string' ? e.start : undefined;
-    const dst = typeof e.end === 'string' ? e.end : undefined;
-    if (!src || !dst) {
+    const rawSrc = typeof e.start === 'string' ? e.start : undefined;
+    const rawDst = typeof e.end === 'string' ? e.end : undefined;
+    if (!rawSrc || !rawDst) {
       continue;
     }
     // Exclude labelled originals from Sugiyama: their routing is carried by
@@ -159,16 +173,40 @@ export function toGraphView(layout: LayoutData): Graph {
     if ((e as MermaidEdge & { labelNodeId?: string }).labelNodeId) {
       continue;
     }
+    const src = hostOf(rawSrc);
+    const dst = hostOf(rawDst);
+    if (src === dst) {
+      continue;
+    }
     edges.push({ id: e.id, src, dst, ref: e });
   }
 
-  const allNodes = layout.nodes ?? [];
-  const groupNodes = allNodes.filter((n) => n.isGroup);
-  const nonGroupNodes = allNodes.filter((n) => !n.isGroup);
+  const groupNodes = allNodes.filter((n) => n.isGroup && !anchoredIds.has(n.id));
+  const nonGroupNodes = allNodes.filter((n) => !n.isGroup && !anchoredIds.has(n.id));
 
   const nodesInGroupOrder = [...groupNodes].reverse();
   const nodes: NodeId[] = [...nodesInGroupOrder, ...nonGroupNodes].map((n) => n.id);
   return { nodes, edges, layout, nodeById };
+}
+
+function groupsDeepestFirst(allNodes: Node[]): Node[] {
+  const byId = new Map(allNodes.map((n) => [n.id, n]));
+  const depthOf = (node: Node) => {
+    let depth = 0;
+    let parentId = node.parentId;
+    const seen = new Set<NodeId>([node.id]);
+    while (parentId != null && !seen.has(parentId)) {
+      seen.add(parentId);
+      depth++;
+      parentId = byId.get(parentId)?.parentId;
+    }
+    return depth;
+  };
+  return allNodes
+    .filter((n) => n?.isGroup)
+    .map((n) => ({ node: n, depth: depthOf(n) }))
+    .sort((a, b) => b.depth - a.depth)
+    .map((entry) => entry.node);
 }
 
 export function writeBackToLayoutData(
@@ -203,16 +241,15 @@ export function writeBackToLayoutData(
   }
 
   const allNodes = layout.nodes ?? [];
+  const anchoredIds = collectAnchoredIds(allNodes);
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
+  const laneModel = buildLaneModel(allNodes);
   const topLevelGroups: Node[] = [];
-  for (const group of allNodes) {
-    if (!group?.isGroup) {
-      continue;
-    }
-    if (!group.parentId) {
+  for (const group of groupsDeepestFirst(allNodes)) {
+    if (laneModel.isLane(group.id)) {
       topLevelGroups.push(group);
     }
-    const children = allNodes.filter((n) => n.parentId === group.id);
+    const children = allNodes.filter((n) => n.parentId === group.id && !anchoredIds.has(n.id));
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
