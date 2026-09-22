@@ -465,6 +465,26 @@ describe('grid router', () => {
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
+  it('does not separate edges that use opposite sides of the same node', () => {
+    const data = baseLayout(
+      [
+        leaf('v1', 80, 40, { row: 1, column: 1 }),
+        leaf('v2p', 80, 40, { row: 2, column: 2 }),
+        leaf('v2', 80, 40, { row: 1, column: 3 }),
+        leaf('v3', 80, 40, { row: 1, column: 4 }),
+      ],
+      [edge('v1-v2', 'v1', 'v2'), edge('v2-v3', 'v2', 'v3'), edge('v2p-v1', 'v2p', 'v1')]
+    );
+
+    runGridLayoutCore(data);
+
+    expect(data.edges.find(({ id }) => id === 'v2-v3')?.points).toEqual([
+      { x: 340, y: 20 },
+      { x: 390, y: 20 },
+    ]);
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+  });
+
   it('allocates deterministic legal endpoint slots with clearance and terminal approach', () => {
     const build = () =>
       baseLayout(

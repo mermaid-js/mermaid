@@ -1000,6 +1000,62 @@ function endpointPairKey(edge: Edge): string {
   return start < end ? `${start}|${end}` : `${end}|${start}`;
 }
 
+function compareEndpointDemands(
+  a: EndpointDemandEntry,
+  b: EndpointDemandEntry,
+  side: GridSide
+): number {
+  const aRect = rectForNode(a.opposite);
+  const bRect = rectForNode(b.opposite);
+  const aCoord = side === 'left' || side === 'right' ? aRect.cy : aRect.cx;
+  const bCoord = side === 'left' || side === 'right' ? bRect.cy : bRect.cx;
+  return (
+    aCoord - bCoord ||
+    endpointPairKey(a.plan.edge).localeCompare(endpointPairKey(b.plan.edge)) ||
+    `${a.plan.edge.start}|${a.plan.edge.end}`.localeCompare(
+      `${b.plan.edge.start}|${b.plan.edge.end}`
+    ) ||
+    a.plan.edge.id.localeCompare(b.plan.edge.id) ||
+    a.role.localeCompare(b.role)
+  );
+}
+
+function preferredEndpointCoordinates(
+  owner: Node,
+  side: GridSide,
+  demands: readonly EndpointDemandEntry[]
+): ReadonlyMap<EndpointDemandEntry, number> {
+  const interval = sideInterval(owner, side);
+  if (!interval || demands.length === 0) {
+    return new Map();
+  }
+  const sorted = [...demands].sort((a, b) => compareEndpointDemands(a, b, side));
+  if (
+    sorted.length > 1 &&
+    (interval.high - interval.low) / (sorted.length - 1) < MIN_PORT_SEPARATION_PX
+  ) {
+    return new Map();
+  }
+  const desired = sorted.map(({ opposite }) => {
+    const rect = rectForNode(opposite);
+    const coordinate = side === 'left' || side === 'right' ? rect.cy : rect.cx;
+    return Math.max(interval.low, Math.min(interval.high, coordinate));
+  });
+  const coordinates: number[] = [];
+  for (const [index, element] of desired.entries()) {
+    coordinates.push(
+      index === 0 ? element : Math.max(element, coordinates[index - 1] + MIN_PORT_SEPARATION_PX)
+    );
+  }
+  const averageDesired = desired.reduce((sum, coordinate) => sum + coordinate, 0) / desired.length;
+  const averageAssigned =
+    coordinates.reduce((sum, coordinate) => sum + coordinate, 0) / coordinates.length;
+  const minimumShift = interval.low - coordinates[0];
+  const maximumShift = interval.high - coordinates[coordinates.length - 1];
+  const shift = Math.max(minimumShift, Math.min(maximumShift, averageDesired - averageAssigned));
+  return new Map(sorted.map((demand, index) => [demand, coordinates[index] + shift]));
+}
+
 function endpointCandidates(
   plan: EdgeRoutePlan,
   role: 'source' | 'target',
@@ -1055,26 +1111,32 @@ function endpointCandidates(
     addCandidate(side, center + plan.laneOffset, -1);
   }
 
+  const ownerDemands = [...(demandsByOwner.get(ownerId) ?? [])];
+  if (plan.bundleSize === 1) {
+    for (const side of ['right', 'bottom', 'left', 'top'] as const) {
+      const preferredDemands = ownerDemands.filter(
+        ({ plan: demandPlan, opposite: demandOpposite }) => {
+          const rect = rectForNode(demandOpposite);
+          return (
+            demandPlan.bundleSize === 1 && preferredSide(owner, { x: rect.cx, y: rect.cy }) === side
+          );
+        }
+      );
+      const coordinates = preferredEndpointCoordinates(owner, side, preferredDemands);
+      const demand = preferredDemands.find((entry) => entry.plan === plan && entry.role === role);
+      const coordinate = demand ? coordinates.get(demand) : undefined;
+      if (coordinate !== undefined) {
+        addCandidate(side, coordinate, -1);
+      }
+    }
+  }
+
   for (const side of ['right', 'bottom', 'left', 'top'] as const) {
     const interval = sideInterval(owner, side);
     if (!interval) {
       continue;
     }
-    const demands = [...(demandsByOwner.get(ownerId) ?? [])].sort((a, b) => {
-      const aRect = rectForNode(a.opposite);
-      const bRect = rectForNode(b.opposite);
-      const aCoord = side === 'left' || side === 'right' ? aRect.cy : aRect.cx;
-      const bCoord = side === 'left' || side === 'right' ? bRect.cy : bRect.cx;
-      return (
-        aCoord - bCoord ||
-        endpointPairKey(a.plan.edge).localeCompare(endpointPairKey(b.plan.edge)) ||
-        `${a.plan.edge.start}|${a.plan.edge.end}`.localeCompare(
-          `${b.plan.edge.start}|${b.plan.edge.end}`
-        ) ||
-        a.plan.edge.id.localeCompare(b.plan.edge.id) ||
-        a.role.localeCompare(b.role)
-      );
-    });
+    const demands = [...ownerDemands].sort((a, b) => compareEndpointDemands(a, b, side));
     const demandIndex = demands.findIndex((entry) => entry.plan === plan && entry.role === role);
     if (demandIndex < 0) {
       continue;

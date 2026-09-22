@@ -176,11 +176,11 @@ describe('grid DDLT matrix fixtures', () => {
       [
         {
           "x": 180,
-          "y": 6,
+          "y": 27,
         },
         {
           "x": 460,
-          "y": 6,
+          "y": 27,
         },
       ]
     `);
@@ -199,9 +199,9 @@ describe('grid DDLT matrix fixtures', () => {
         "baseAdjacencyEntries": 144,
         "baseVertices": 44,
         "endpointOverlayBuilds": 3,
-        "endpointOverlayVertices": 32,
+        "endpointOverlayVertices": 28,
         "estimatedBytes": 36704,
-        "expandedStates": 12,
+        "expandedStates": 9,
         "maxOpenSet": 8,
         "resourceLimitFallbacks": 0,
         "searches": 3,
@@ -305,15 +305,15 @@ describe('grid DDLT matrix fixtures', () => {
           "valid": true,
         },
         {
-          "bends": 4,
+          "bends": 2,
           "compatibilitySegments": 0,
           "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
           "id": "grid/routing-cell-aware-empty-cell",
-          "routeSignature": "857343e11a83b770566d6bd35e7fe7cd349ff828354636cb387ccc2826191d69",
-          "score": 990,
+          "routeSignature": "09ec84f95ab69c4818429f0f2b7ba4f0e22eed42903af2cadf11083e4d492d46",
+          "score": 995,
           "valid": true,
         },
       ]
@@ -378,15 +378,15 @@ describe('grid DDLT matrix fixtures', () => {
           "valid": true,
         },
         {
-          "bends": 4,
+          "bends": 2,
           "compatibilitySegments": 0,
           "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
           "id": "grid/routing-cell-aware-empty-cell",
-          "routeSignature": "857343e11a83b770566d6bd35e7fe7cd349ff828354636cb387ccc2826191d69",
-          "score": 990,
+          "routeSignature": "09ec84f95ab69c4818429f0f2b7ba4f0e22eed42903af2cadf11083e4d492d46",
+          "score": 995,
           "valid": true,
         },
         {
@@ -438,15 +438,15 @@ describe('grid DDLT matrix fixtures', () => {
           "valid": true,
         },
         {
-          "bends": 4,
+          "bends": 0,
           "compatibilitySegments": 0,
           "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
           "id": "grid/simple",
-          "routeSignature": "21d0e2e047baa6b928af40495f78c3659aeff67f3401265ba61083feedca2772",
-          "score": 990,
+          "routeSignature": "82a73ca84f8b6c929a0965705f2dba8ad35d19f4845dd717f46eeb4b06832118",
+          "score": 1000,
           "valid": true,
         },
         {
