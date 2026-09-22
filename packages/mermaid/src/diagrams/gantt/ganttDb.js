@@ -465,6 +465,25 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   return endTime.toDate();
 };
 
+/**
+ * Checks whether a string can be used as the start of a task, i.e. whether it is an `after`
+ * statement or a date that {@link getStartDate} accepts.
+ *
+ * @param {string} str - The start data to check.
+ * @returns {boolean} `true` if `str` is valid start data.
+ */
+const isValidStartData = function (str) {
+  if (/^after\s+/.test(str.trim())) {
+    return true;
+  }
+  try {
+    getStartDate(undefined, dateFormat, str);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 let taskCnt = 0;
 const parseId = function (idStr) {
   if (idStr === undefined) {
@@ -564,6 +583,19 @@ const parseData = function (prevTaskId, dataStr) {
       };
       break;
     case 2:
+      // A milestone is a single instant, so `id, startDate` is allowed and defaults to a zero
+      // duration instead of treating the id as a start date. See issue #4121.
+      if (task.milestone && !isValidStartData(data[0]) && isValidStartData(data[1])) {
+        task.id = parseId(data[0]);
+        task.startTime = {
+          type: 'getStartDate',
+          startData: data[1],
+        };
+        task.endTime = {
+          data: '0d',
+        };
+        break;
+      }
       task.id = parseId();
       task.startTime = {
         type: 'getStartDate',
