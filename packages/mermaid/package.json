@@ -76,7 +76,7 @@
     "@mermaid-js/parser": "workspace:^",
     "@types/d3": "^7.4.3",
     "@upsetjs/venn.js": "^2.0.0",
-    "chevrotain": "~11.1.2",
+    "chevrotain": "~12.0.0",
     "cytoscape": "^3.34.0",
     "cytoscape-cose-bilkent": "^4.1.0",
     "cytoscape-fcose": "^2.2.0",
