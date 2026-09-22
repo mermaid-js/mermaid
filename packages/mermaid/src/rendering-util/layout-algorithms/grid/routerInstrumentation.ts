@@ -25,6 +25,7 @@ export interface GridRouteInstrumentation {
   bendCount: number;
   crossingCount: number;
   sharedLength: number;
+  boundaryTransitionCount: number;
   routeSignature: string;
 }
 
@@ -36,6 +37,9 @@ export interface GridRoutingInstrumentation {
   buildSweepEvents: number;
   endpointOverlayBuilds: number;
   endpointOverlayVertices: number;
+  hierarchyPortalPairs: number;
+  hierarchyPortalTransitionLength: number;
+  hierarchyBoundaryTransitions: number;
   labelOverlayBuilds: number;
   labelOverlayVertices: number;
   searches: number;
@@ -65,6 +69,9 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     buildSweepEvents: 0,
     endpointOverlayBuilds: 0,
     endpointOverlayVertices: 0,
+    hierarchyPortalPairs: 0,
+    hierarchyPortalTransitionLength: 0,
+    hierarchyBoundaryTransitions: 0,
     labelOverlayBuilds: 0,
     labelOverlayVertices: 0,
     searches: 0,
@@ -128,7 +135,8 @@ export function recordGridRoute(
   metrics: GridRoutingInstrumentation,
   edgeId: string,
   points: Point[],
-  previousRoutes: readonly Point[][]
+  previousRoutes: readonly Point[][],
+  boundaryTransitionCount = 0
 ): void {
   const normalized = normalizePolyline(points);
   let crossingCount = 0;
@@ -153,6 +161,7 @@ export function recordGridRoute(
     bendCount: normalized.bends,
     crossingCount,
     sharedLength,
+    boundaryTransitionCount,
     routeSignature: JSON.stringify(normalized.points),
   };
   metrics.routeOrder.push(edgeId);
@@ -162,4 +171,5 @@ export function recordGridRoute(
   metrics.bendCount += route.bendCount;
   metrics.crossingCount += route.crossingCount;
   metrics.sharedLength += route.sharedLength;
+  metrics.hierarchyBoundaryTransitions += boundaryTransitionCount;
 }

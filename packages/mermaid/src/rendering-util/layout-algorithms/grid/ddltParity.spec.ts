@@ -31,9 +31,9 @@ function geometrySignature(layout: Awaited<ReturnType<typeof parseMmdFileToLayou
 }
 
 describe('grid DDLT parity', () => {
-  it('uses the same prepare → measure → core orchestration in DDLT as production', async () => {
+  async function expectProductionParity(fixtureName: string): Promise<void> {
     addDiagrams();
-    const fixtureId = 'grid/simple';
+    const fixtureId = `grid/${fixtureName}`;
     const mmdPath = resolve(process.cwd(), FIXTURES_DIR, `${fixtureId}.mmd`);
     const sizesPath = resolve(process.cwd(), FIXTURES_DIR, `${fixtureId}.sizes.json`);
     const sizes = loadFreshSizesFixture(sizesPath, mmdPath, fixtureId);
@@ -51,5 +51,13 @@ describe('grid DDLT parity', () => {
     runGridLayoutCore(directLayout);
 
     expect(geometrySignature(ddltLayout)).toEqual(geometrySignature(directLayout));
+  }
+
+  it('uses the same prepare → measure → core orchestration in DDLT as production', async () => {
+    await expectProductionParity('simple');
+  });
+
+  it('uses the same production orchestration for hierarchy portal fixtures', async () => {
+    await expectProductionParity('routing-hierarchy-portals');
   });
 });

@@ -33,6 +33,22 @@ export interface PortalRange {
   side: GridSide;
   low: number;
   high: number;
+  coordinate?: number;
+}
+
+export interface PairedPortal {
+  ownerId: string;
+  side: GridSide;
+  tangentialCoordinate: number;
+  interior: RouterPoint;
+  exterior: RouterPoint;
+  transition: {
+    from: RouterPoint;
+    to: RouterPoint;
+    orientation: GridOrientation;
+    length: number;
+    kind: 'portal';
+  };
 }
 
 export interface RouterVertex {

@@ -7,6 +7,7 @@ import type {
   GridOrientation,
   GridSide,
   OrthogonalIntervalIndex,
+  PairedPortal,
   PortalRange,
   RouterArc,
   RouterObstacle,
@@ -560,15 +561,24 @@ function cornerRecords(
 }
 
 function portalRecords(range: PortalRange, bounds: RouterRect): VertexRecord[] {
+  const coordinate =
+    range.coordinate ??
+    (range.side === 'left'
+      ? bounds.left
+      : range.side === 'right'
+        ? bounds.right
+        : range.side === 'top'
+          ? bounds.top
+          : bounds.bottom);
   const points =
     range.side === 'left' || range.side === 'right'
       ? [
-          { x: range.side === 'left' ? bounds.left : bounds.right, y: range.low },
-          { x: range.side === 'left' ? bounds.left : bounds.right, y: range.high },
+          { x: coordinate, y: range.low },
+          { x: coordinate, y: range.high },
         ]
       : [
-          { x: range.low, y: range.side === 'top' ? bounds.top : bounds.bottom },
-          { x: range.high, y: range.side === 'top' ? bounds.top : bounds.bottom },
+          { x: range.low, y: coordinate },
+          { x: range.high, y: coordinate },
         ];
   return points.map((value) => ({
     point: value,
@@ -864,6 +874,57 @@ export function derivePortalRanges(
     }
   }
   return ranges;
+}
+
+export function buildPairedPortal(
+  ownerId: string,
+  bounds: RouterRect,
+  title: RouterRect | undefined,
+  side: GridSide,
+  tangentialCoordinate: number
+): PairedPortal {
+  const range = derivePortalRanges(ownerId, bounds, title).find((entry) => entry.side === side);
+  if (!range || tangentialCoordinate < range.low || tangentialCoordinate > range.high) {
+    throw new Error(`Illegal ${side} portal for "${ownerId}" at ${tangentialCoordinate}`);
+  }
+  const boundary =
+    side === 'left'
+      ? bounds.left
+      : side === 'right'
+        ? bounds.right
+        : side === 'top'
+          ? bounds.top
+          : bounds.bottom;
+  const inward =
+    side === 'left' || side === 'top'
+      ? boundary + ROUTE_CLEARANCE_PX
+      : boundary - ROUTE_CLEARANCE_PX;
+  const outward =
+    side === 'left' || side === 'top'
+      ? boundary - ROUTE_CLEARANCE_PX
+      : boundary + ROUTE_CLEARANCE_PX;
+  const interior =
+    side === 'left' || side === 'right'
+      ? { x: inward, y: tangentialCoordinate }
+      : { x: tangentialCoordinate, y: inward };
+  const exterior =
+    side === 'left' || side === 'right'
+      ? { x: outward, y: tangentialCoordinate }
+      : { x: tangentialCoordinate, y: outward };
+  return {
+    ownerId,
+    side,
+    tangentialCoordinate,
+    interior,
+    exterior,
+    transition: {
+      from: interior,
+      to: exterior,
+      orientation: side === 'left' || side === 'right' ? 'H' : 'V',
+      length: ROUTE_CLEARANCE_PX * 2,
+      kind: 'portal',
+    },
+  };
 }
 
 export function buildContainerRoutingTopology(

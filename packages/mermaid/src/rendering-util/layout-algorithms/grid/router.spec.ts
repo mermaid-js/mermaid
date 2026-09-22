@@ -99,6 +99,40 @@ function terminalLength(points: { x: number; y: number }[], atStart: boolean): n
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
+function nodeRect(node: Node) {
+  return {
+    left: (node.x ?? 0) - (node.width ?? 0) / 2,
+    right: (node.x ?? 0) + (node.width ?? 0) / 2,
+    top: (node.y ?? 0) - (node.height ?? 0) / 2,
+    bottom: (node.y ?? 0) + (node.height ?? 0) / 2,
+  };
+}
+
+function boundaryCrossings(points: { x: number; y: number }[], owner: Node): number {
+  const rect = nodeRect(owner);
+  return normalizePolyline(points).segments.reduce((count, segment) => {
+    if (segment.orientation === 'H' && segment.a.y > rect.top && segment.a.y < rect.bottom) {
+      const low = Math.min(segment.a.x, segment.b.x);
+      const high = Math.max(segment.a.x, segment.b.x);
+      return (
+        count +
+        Number(low < rect.left && high > rect.left) +
+        Number(low < rect.right && high > rect.right)
+      );
+    }
+    if (segment.orientation === 'V' && segment.a.x > rect.left && segment.a.x < rect.right) {
+      const low = Math.min(segment.a.y, segment.b.y);
+      const high = Math.max(segment.a.y, segment.b.y);
+      return (
+        count +
+        Number(low < rect.top && high > rect.top) +
+        Number(low < rect.bottom && high > rect.bottom)
+      );
+    }
+    return count;
+  }, 0);
+}
+
 describe('grid router', () => {
   it('records current route metrics without changing geometry', () => {
     const build = () =>
@@ -541,6 +575,145 @@ describe('grid router', () => {
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
     expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThanOrEqual(2);
+  });
+
+  it.each([
+    {
+      name: 'nested siblings',
+      nodes: [
+        group('outer', 'Outer', { row: 1, column: 1 }),
+        group('inner', 'Inner', { row: 1, column: 1 }, 'outer'),
+        leaf('source', 70, 36, { row: 1, column: 1 }, 'inner'),
+        leaf('target', 70, 36, { row: 1, column: 2 }, 'inner'),
+      ],
+      route: edge('nested-siblings', 'source', 'target'),
+      boundaries: [],
+    },
+    {
+      name: 'group/member',
+      nodes: [
+        group('outer', 'Outer', { row: 1, column: 1 }),
+        leaf('source', 70, 36, { row: 1, column: 1 }, 'outer'),
+      ],
+      route: edge('group-member', 'outer', 'source'),
+      boundaries: ['outer'],
+    },
+    {
+      name: 'ancestor/member',
+      nodes: [
+        group('outer', 'Outer', { row: 1, column: 1 }),
+        group('inner', 'Inner', { row: 1, column: 1 }, 'outer'),
+        leaf('source', 70, 36, { row: 1, column: 1 }, 'inner'),
+      ],
+      route: edge('ancestor-member', 'outer', 'source'),
+      boundaries: ['outer', 'inner'],
+    },
+    {
+      name: 'cross-group members',
+      nodes: [
+        group('left-group', 'Left', { row: 1, column: 1 }),
+        leaf('source', 70, 36, { row: 1, column: 1 }, 'left-group'),
+        group('right-group', 'Right', { row: 1, column: 2 }),
+        leaf('target', 70, 36, { row: 1, column: 1 }, 'right-group'),
+      ],
+      route: edge('cross-group', 'source', 'target'),
+      boundaries: ['left-group', 'right-group'],
+    },
+    {
+      name: 'outside/group endpoint',
+      nodes: [
+        leaf('source', 70, 36, { row: 1, column: 1 }),
+        group('target-group', 'Target', { row: 1, column: 2 }),
+        leaf('member', 70, 36, { row: 1, column: 1 }, 'target-group'),
+      ],
+      route: edge('group-endpoint', 'source', 'target-group'),
+      boundaries: [],
+    },
+  ])(
+    'routes $name container-by-container with only required boundary transitions',
+    ({ nodes, route, boundaries }) => {
+      const build = () =>
+        baseLayout(
+          nodes.map((node) => ({ ...node })),
+          [{ ...route }],
+          {
+            rowGap: 70,
+            columnGap: 90,
+          }
+        );
+      const data = build();
+      const metrics = createGridRoutingInstrumentation();
+
+      runGridLayoutCore(data, metrics);
+
+      expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+      const routed = data.edges[0];
+      const groups = data.nodes.filter((node) => node.isGroup);
+      const actual = groups.reduce(
+        (total, owner) => total + boundaryCrossings(routed.points ?? [], owner),
+        0
+      );
+      expect(actual).toBe(boundaries.length);
+      for (const owner of groups) {
+        expect(boundaryCrossings(routed.points ?? [], owner)).toBe(
+          boundaries.includes(owner.id) ? 1 : 0
+        );
+      }
+      expect(metrics.routes[0]?.boundaryTransitionCount).toBe(boundaries.length);
+      expect(metrics.hierarchyPortalPairs).toBe(boundaries.length);
+      expect(metrics.resourceLimitFallbacks).toBe(0);
+
+      const rerun = build();
+      runGridLayoutCore(rerun);
+      expect(rerun.edges[0].points).toEqual(routed.points);
+    }
+  );
+
+  it('uses 12px paired portals outside title and corner exclusions', () => {
+    const data = baseLayout(
+      [
+        group('titled', 'A deliberately wide title', { row: 1, column: 1 }),
+        leaf('member', 64, 32, { row: 1, column: 1 }, 'titled'),
+        leaf('outside', 64, 32, { row: 1, column: 2 }),
+      ],
+      [edge('title-adjacent', 'member', 'outside')],
+      { rowGap: 60, columnGap: 80 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics);
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    const owner = data.nodes.find(({ id }) => id === 'titled')!;
+    const rect = nodeRect(owner);
+    const crossing = normalizePolyline(data.edges[0].points ?? []).segments.find((segment) => {
+      if (segment.orientation === 'H') {
+        return (
+          segment.a.y > rect.top &&
+          segment.a.y < rect.bottom &&
+          Math.min(segment.a.x, segment.b.x) < rect.right &&
+          Math.max(segment.a.x, segment.b.x) > rect.right
+        );
+      }
+      return (
+        segment.a.x > rect.left &&
+        segment.a.x < rect.right &&
+        Math.min(segment.a.y, segment.b.y) < rect.bottom &&
+        Math.max(segment.a.y, segment.b.y) > rect.bottom
+      );
+    });
+    expect(crossing).toBeDefined();
+    const tangential = crossing?.orientation === 'H' ? crossing.a.y : crossing?.a.x;
+    const low =
+      crossing?.orientation === 'H'
+        ? Math.max(rect.top + 6, (owner.groupTitleRect?.bottom ?? rect.top) + 6)
+        : rect.left + 6;
+    const high = crossing?.orientation === 'H' ? rect.bottom - 6 : rect.right - 6;
+    expect(tangential).toBeGreaterThanOrEqual(low);
+    expect(tangential).toBeLessThanOrEqual(high);
+    expect(metrics.routes[0]?.boundaryTransitionCount).toBe(1);
+    expect(metrics.hierarchyPortalPairs).toBe(1);
+    expect(metrics.hierarchyPortalTransitionLength).toBe(12);
   });
 
   it('reports test-only sparse and legacy route comparison without changing selection', () => {

@@ -204,6 +204,39 @@ describe('grid DDLT matrix fixtures', () => {
     `);
   });
 
+  it('routes hierarchy fixtures through exact paired boundary portals', async () => {
+    const metrics = createGridRoutingInstrumentation();
+    const { layout } = await loadGridFixtureWithResult('routing-hierarchy-portals', metrics);
+    const characterization = await characterizeFixture('routing-hierarchy-portals');
+    const transitions = Object.fromEntries(
+      metrics.routes.map((route) => [route.edgeId, route.boundaryTransitionCount])
+    );
+
+    expect(validateLayout(layout)).toMatchObject({ ok: true, issues: [] });
+    expect(
+      Object.fromEntries(
+        layout.edges.map((edge) => [`${edge.start}->${edge.end}`, transitions[edge.id]])
+      )
+    ).toEqual({
+      'SOURCE->TARGET': 3,
+    });
+    expect({
+      baseTopologyBuilds: metrics.baseTopologyBuilds,
+      hierarchyPortalPairs: metrics.hierarchyPortalPairs,
+      hierarchyPortalTransitionLength: metrics.hierarchyPortalTransitionLength,
+      hierarchyBoundaryTransitions: metrics.hierarchyBoundaryTransitions,
+      resourceLimitFallbacks: metrics.resourceLimitFallbacks,
+      routeSignature: characterization.routeSignature,
+    }).toEqual({
+      baseTopologyBuilds: 4,
+      hierarchyPortalPairs: 3,
+      hierarchyPortalTransitionLength: 36,
+      hierarchyBoundaryTransitions: 3,
+      resourceLimitFallbacks: 0,
+      routeSignature: 'f16caa3b660b48df29626620b374757376d1e37090eda473c6aed3c2bd16fb77',
+    });
+  });
+
   it('records representative route characteristics', async () => {
     const characterization = [];
     for (const fixture of [

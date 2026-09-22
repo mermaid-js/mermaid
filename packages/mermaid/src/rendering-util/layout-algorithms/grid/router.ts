@@ -20,8 +20,10 @@ import {
   type RouterTupleCost,
 } from './routerSearch.js';
 import {
+  buildPairedPortal,
   buildContainerRoutingTopology,
   buildEndpointRoutingOverlay,
+  derivePortalRanges,
   EndpointOverlayScratch,
   ROUTE_CLEARANCE_PX,
   type TopologyResourceCaps,
@@ -33,6 +35,8 @@ import type {
   GridLayoutResult,
   GridRoutingContext,
   GridOrientation,
+  PairedPortal,
+  PortalRange,
   GridSide,
   RouterPoint,
   RouterRect,
@@ -159,7 +163,12 @@ function buildEndpointPlan(
   let current = endpoint;
 
   for (;;) {
-    const side = preferredSide(current, otherCenter);
+    const parentId = current.parentId ?? ROOT_CONTAINER_ID;
+    const parent = nodeById.get(parentId);
+    let side = preferredSide(current, otherCenter);
+    if (side === 'top' && parent?.groupTitleRect) {
+      side = otherCenter.x >= (current.x ?? 0) ? 'right' : 'left';
+    }
     chain.push({
       ownerId: current.id,
       side,
@@ -167,7 +176,6 @@ function buildEndpointPlan(
       oppositeCoord: oppositeCoordFor(rectForNode(other), side),
     });
 
-    const parentId = current.parentId ?? ROOT_CONTAINER_ID;
     if (
       current.isGroup &&
       current.id === lcaContainerId &&
@@ -179,7 +187,6 @@ function buildEndpointPlan(
       return { chain, finalKind: 'item' };
     }
 
-    const parent = nodeById.get(parentId);
     if (!parent?.isGroup) {
       throw gridError('GRID_INVALID_CONTAINMENT', `Missing parent group "${parentId}"`, {
         traversedIds: chain.map((entry) => entry.ownerId),
@@ -286,7 +293,7 @@ function assignDemandCoordinates(
     const span = Math.max(0, high - low);
     demands.sort((a, b) => a.oppositeCoord - b.oppositeCoord || a.edgeId.localeCompare(b.edgeId));
     if (demands.length === 1 || span <= 0) {
-      assigned.set(demands[0].demandKey, side === 'left' || side === 'right' ? rect.cy : rect.cx);
+      assigned.set(demands[0].demandKey, (low + high) / 2);
       continue;
     }
     const step = span / (demands.length - 1);
@@ -490,6 +497,61 @@ function boundaryAttachment(
         side,
       };
   }
+}
+
+interface SegmentAttachment extends GridAttachment {
+  ownerId: string;
+}
+
+function portalBoundaryPoint(portal: PairedPortal): Point {
+  return {
+    x: (portal.interior.x + portal.exterior.x) / 2,
+    y: (portal.interior.y + portal.exterior.y) / 2,
+  };
+}
+
+function portalAttachment(portal: PairedPortal, interior: boolean): SegmentAttachment {
+  return {
+    ownerId: portal.ownerId,
+    port: portalBoundaryPoint(portal),
+    connect: interior ? portal.interior : portal.exterior,
+    orientation: portal.side === 'left' || portal.side === 'right' ? 'V' : 'H',
+    side: portal.side,
+  };
+}
+
+function groupBoundaryEndpointAttachment(
+  ownerId: string,
+  side: GridSide,
+  demandKey: string,
+  result: GridLayoutResult,
+  demandCoords: Map<string, number>
+): SegmentAttachment {
+  const owner = result.forest.nodeById.get(ownerId);
+  if (!owner?.isGroup) {
+    throw gridError('GRID_ROUTE_NOT_FOUND', `Missing group endpoint "${ownerId}"`);
+  }
+  const rect = rectForNode(owner);
+  const coordinate =
+    demandCoords.get(demandKey) ?? (side === 'left' || side === 'right' ? rect.cy : rect.cx);
+  const port =
+    side === 'left' || side === 'right'
+      ? { x: side === 'left' ? rect.left : rect.right, y: coordinate }
+      : { x: coordinate, y: side === 'top' ? rect.top : rect.bottom };
+  return {
+    ownerId,
+    port,
+    connect: {
+      x:
+        port.x +
+        (side === 'left' ? TERMINAL_APPROACH_PX : side === 'right' ? -TERMINAL_APPROACH_PX : 0),
+      y:
+        port.y +
+        (side === 'top' ? TERMINAL_APPROACH_PX : side === 'bottom' ? -TERMINAL_APPROACH_PX : 0),
+    },
+    orientation: side === 'left' || side === 'right' ? 'V' : 'H',
+    side,
+  };
 }
 
 function reversePoints(points: Point[]): Point[] {
@@ -723,11 +785,56 @@ function containerBounds(containerId: GridContainerId, result: GridLayoutResult)
   }
   const ownerBounds = routerRect(owner);
   return {
-    left: Math.max(ownerBounds.left, container.contentLeft - 20),
-    right: Math.min(ownerBounds.right, container.contentRight + 20),
-    top: Math.max(ownerBounds.top, container.contentTop - 20),
-    bottom: Math.min(ownerBounds.bottom, container.contentBottom + 20),
+    left: ownerBounds.left + ROUTE_CLEARANCE_PX,
+    right: ownerBounds.right - ROUTE_CLEARANCE_PX,
+    top: ownerBounds.top + ROUTE_CLEARANCE_PX,
+    bottom: ownerBounds.bottom - ROUTE_CLEARANCE_PX,
   };
+}
+
+function portalCoordinate(bounds: RouterRect, side: GridSide, interior: boolean): number {
+  const boundary =
+    side === 'left'
+      ? bounds.left
+      : side === 'right'
+        ? bounds.right
+        : side === 'top'
+          ? bounds.top
+          : bounds.bottom;
+  const towardInterior = side === 'left' || side === 'top' ? 1 : -1;
+  return boundary + towardInterior * ROUTE_CLEARANCE_PX * (interior ? 1 : -1);
+}
+
+function containerPortalRanges(
+  containerId: GridContainerId,
+  result: GridLayoutResult
+): PortalRange[] {
+  const ranges: PortalRange[] = [];
+  if (containerId !== ROOT_CONTAINER_ID) {
+    const owner = result.forest.nodeById.get(containerId);
+    if (owner) {
+      const bounds = routerRect(owner);
+      ranges.push(
+        ...derivePortalRanges(containerId, bounds, owner.groupTitleRect).map((range) => ({
+          ...range,
+          coordinate: portalCoordinate(bounds, range.side, true),
+        }))
+      );
+    }
+  }
+  for (const child of result.forest.childrenByParent.get(containerId) ?? []) {
+    if (!child.isGroup) {
+      continue;
+    }
+    const bounds = routerRect(child);
+    ranges.push(
+      ...derivePortalRanges(child.id, bounds, child.groupTitleRect).map((range) => ({
+        ...range,
+        coordinate: portalCoordinate(bounds, range.side, false),
+      }))
+    );
+  }
+  return ranges;
 }
 
 function buildRoutingContext(
@@ -760,6 +867,7 @@ function buildRoutingContext(
           titleExclusions: title
             ? [{ id: `${containerId}:title`, bounds: { ...title } }]
             : undefined,
+          portalRanges: containerPortalRanges(containerId, result),
         },
         { caps: options.topologyCaps }
       );
@@ -973,6 +1081,41 @@ function validateSameContainerRoute(
       if (
         (obstacle.id === source.id && index === 0) ||
         (obstacle.id === target.id && index === normalized.points.length - 2)
+      ) {
+        continue;
+      }
+      if (segmentEntersRect(normalized.points[index], normalized.points[index + 1], rect)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function validateContainerSegment(
+  points: readonly Point[],
+  startOwnerId: string,
+  endOwnerId: string,
+  containerId: GridContainerId,
+  result: GridLayoutResult
+): boolean {
+  const normalized = normalizePolyline([...points]);
+  if (
+    normalized.points.length < 2 ||
+    normalized.points.some(({ x, y }) => !Number.isFinite(x) || !Number.isFinite(y)) ||
+    normalized.segments.some(({ orientation }) => orientation === 'Z')
+  ) {
+    return false;
+  }
+  const children = (result.forest.childrenByParent.get(containerId) ?? []).filter(
+    (node) => !node.id.startsWith('edge-label-')
+  );
+  for (const obstacle of children) {
+    const rect = inflatedRect(obstacle);
+    for (let index = 0; index < normalized.points.length - 1; index++) {
+      if (
+        (obstacle.id === startOwnerId && index === 0) ||
+        (obstacle.id === endOwnerId && index === normalized.points.length - 2)
       ) {
         continue;
       }
@@ -1229,6 +1372,120 @@ function sparseSameContainerRoute(
   return best.points;
 }
 
+function sparseContainerSegment(
+  edgeId: string,
+  containerId: GridContainerId,
+  start: SegmentAttachment,
+  end: SegmentAttachment,
+  legacyRoute: () => Point[],
+  result: GridLayoutResult,
+  context: GridRoutingContext,
+  searchWorkspace: RouterSearchWorkspace,
+  overlayScratch: EndpointOverlayScratch | undefined,
+  options: GridRoutingOptions
+): Point[] {
+  const fallbackReason = context.fallbackContainers.get(containerId) as
+    | GridRoutingFallbackReason
+    | undefined;
+  if (fallbackReason) {
+    const legacy = legacyRoute();
+    recordFallback(context.metrics, fallbackReason, edgeId, containerId);
+    if (!validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result)) {
+      if (context.metrics) {
+        context.metrics.fallbackValidationFailures++;
+      }
+      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${edgeId}"`, {
+        edgeId,
+        containerId,
+        reason: fallbackReason,
+      });
+    }
+    return legacy;
+  }
+  const topology = context.topologies.get(containerId);
+  if (!topology || !overlayScratch) {
+    throw gridError('GRID_ROUTE_NOT_FOUND', `Missing routing topology "${containerId}"`);
+  }
+  try {
+    const overlay = buildEndpointRoutingOverlay(
+      topology,
+      start.connect,
+      end.connect,
+      context.metrics,
+      overlayScratch
+    );
+    const liveEstimatedBytes =
+      context.baseEstimatedBytes + overlay.estimatedBytes - topology.estimatedBytes;
+    if (
+      liveEstimatedBytes > (options.topologyCaps?.maxEstimatedBytes ?? DEFAULT_MAX_ESTIMATED_BYTES)
+    ) {
+      throw new GridRoutingResourceLimitError(
+        'estimated_memory_cap',
+        'Grid routing estimated_memory_cap exceeded'
+      );
+    }
+    const sourceId = overlay.pointVertexIds.get(routingPointKey(start.connect));
+    const targetId = overlay.pointVertexIds.get(routingPointKey(end.connect));
+    if (sourceId === undefined || targetId === undefined) {
+      throw new Error('Hierarchy projection is missing from the routing overlay');
+    }
+    const route = findShortestRoute(overlay, sourceId, targetId, {
+      metrics: context.metrics,
+      caps: {
+        ...options.searchCaps,
+        maxEstimatedBytes:
+          options.searchCaps?.maxEstimatedBytes ??
+          options.topologyCaps?.maxEstimatedBytes ??
+          DEFAULT_MAX_ESTIMATED_BYTES,
+      },
+      recordOutcome: false,
+      budget: context.searchBudget,
+      initialOrientation: start.side === 'left' || start.side === 'right' ? 'H' : 'V',
+      initialSide: start.side,
+      initialLength:
+        Math.abs(start.port.x - start.connect.x) + Math.abs(start.port.y - start.connect.y),
+      targetOrientation: end.side === 'left' || end.side === 'right' ? 'H' : 'V',
+      targetSide: end.side,
+      targetLength: Math.abs(end.port.x - end.connect.x) + Math.abs(end.port.y - end.connect.y),
+      topologyValidated: true,
+      workspace: searchWorkspace,
+      estimatedBytesBase: liveEstimatedBytes,
+    });
+    if (!route) {
+      throw gridError(
+        'GRID_ROUTE_NOT_FOUND',
+        `No hierarchy route for "${edgeId}" in "${containerId}" from ${routingPointKey(start.connect)} to ${routingPointKey(end.connect)}`,
+        { edgeId, containerId }
+      );
+    }
+    const points = normalizePolyline([start.port, ...route.points, end.port]).points;
+    if (!validateContainerSegment(points, start.ownerId, end.ownerId, containerId, result)) {
+      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid hierarchy route for "${edgeId}"`, {
+        edgeId,
+        containerId,
+      });
+    }
+    return points;
+  } catch (error) {
+    if (!(error instanceof GridRoutingResourceLimitError)) {
+      throw error;
+    }
+    const legacy = legacyRoute();
+    recordFallback(context.metrics, error.reason, edgeId, containerId);
+    if (!validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result)) {
+      if (context.metrics) {
+        context.metrics.fallbackValidationFailures++;
+      }
+      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${edgeId}"`, {
+        edgeId,
+        containerId,
+        reason: error.reason,
+      });
+    }
+    return legacy;
+  }
+}
+
 export function routeGridEdges(
   layout: LayoutData,
   result: GridLayoutResult,
@@ -1238,15 +1495,30 @@ export function routeGridEdges(
   rootContainerMeta(result);
   const plans = collectRoutePlans(layout, result);
   const pairCounts = new Map<string, number>();
+  const endpointIncidentCounts = new Map<string, number>();
   for (const plan of plans) {
     const key = endpointPairKey(plan.edge);
     pairCounts.set(key, (pairCounts.get(key) ?? 0) + 1);
+    if (plan.edge.start) {
+      endpointIncidentCounts.set(
+        plan.edge.start,
+        (endpointIncidentCounts.get(plan.edge.start) ?? 0) + 1
+      );
+    }
+    if (plan.edge.end && plan.edge.end !== plan.edge.start) {
+      endpointIncidentCounts.set(
+        plan.edge.end,
+        (endpointIncidentCounts.get(plan.edge.end) ?? 0) + 1
+      );
+    }
   }
   const eligiblePlans = plans.filter(
     (plan) =>
       plan.edge.start !== plan.edge.end &&
       plan.source.chain.length === 1 &&
       plan.target.chain.length === 1 &&
+      plan.source.finalKind === 'item' &&
+      plan.target.finalKind === 'item' &&
       pairCounts.get(endpointPairKey(plan.edge)) === 1
   );
   const endpointDemandsByOwner = new Map<string, EndpointDemandEntry[]>();
@@ -1314,12 +1586,25 @@ export function routeGridEdges(
   });
   const demandCoords = assignDemandCoordinates(orderedPlans, result);
   const eligibleIds = new Set(eligiblePlans.map(({ edge }) => edge.id));
-  const context = buildRoutingContext(
-    eligiblePlans.map(({ lcaContainerId }) => lcaContainerId),
-    result,
-    metrics,
-    options
+  const sparseHierarchyIds = new Set(
+    plans
+      .filter(
+        (plan) =>
+          !eligibleIds.has(plan.edge.id) &&
+          plan.edge.start !== plan.edge.end &&
+          (endpointIncidentCounts.get(plan.edge.start!) ?? 0) === 1 &&
+          (endpointIncidentCounts.get(plan.edge.end!) ?? 0) === 1
+      )
+      .map(({ edge }) => edge.id)
   );
+  const routedContainerIds = plans
+    .filter((plan) => eligibleIds.has(plan.edge.id) || sparseHierarchyIds.has(plan.edge.id))
+    .flatMap((plan) => [
+      plan.lcaContainerId,
+      ...plan.source.chain.slice(1).map(({ ownerId }) => ownerId),
+      ...plan.target.chain.slice(1).map(({ ownerId }) => ownerId),
+    ]);
+  const context = buildRoutingContext(routedContainerIds, result, metrics, options);
   const searchWorkspace = new RouterSearchWorkspace();
   const endpointOverlayScratch = new Map(
     [...context.topologies].map(([containerId, topology]) => [
@@ -1327,6 +1612,59 @@ export function routeGridEdges(
       new EndpointOverlayScratch(topology),
     ])
   );
+  const pairedPortals = new Map<string, PairedPortal>();
+  const pairedPortal = (entry: EdgeEndpointEntry): PairedPortal => {
+    const existing = pairedPortals.get(entry.demandKey);
+    if (existing) {
+      return existing;
+    }
+    const owner = result.forest.nodeById.get(entry.ownerId);
+    if (!owner?.isGroup) {
+      throw gridError('GRID_ROUTE_NOT_FOUND', `Missing portal owner "${entry.ownerId}"`);
+    }
+    const rect = routerRect(owner);
+    const coordinate =
+      demandCoords.get(entry.demandKey) ??
+      (entry.side === 'left' || entry.side === 'right'
+        ? (rect.top + rect.bottom) / 2
+        : (rect.left + rect.right) / 2);
+    const range = derivePortalRanges(entry.ownerId, rect, owner.groupTitleRect).find(
+      ({ side }) => side === entry.side
+    );
+    if (!range) {
+      throw gridError(
+        'GRID_ROUTE_NOT_FOUND',
+        `No legal ${entry.side} portal for "${entry.ownerId}"`
+      );
+    }
+    const portal = buildPairedPortal(
+      entry.ownerId,
+      rect,
+      owner.groupTitleRect ? { ...owner.groupTitleRect } : undefined,
+      entry.side,
+      Math.max(range.low, Math.min(range.high, coordinate))
+    );
+    pairedPortals.set(entry.demandKey, portal);
+    if (metrics) {
+      metrics.hierarchyPortalPairs++;
+      metrics.hierarchyPortalTransitionLength += portal.transition.length;
+    }
+    return portal;
+  };
+  const itemSegmentAttachment = (
+    entry: EdgeEndpointEntry,
+    containerId: GridContainerId
+  ): SegmentAttachment => ({
+    ownerId: entry.ownerId,
+    ...itemAttachment(
+      entry.ownerId,
+      entry.side,
+      entry.demandKey,
+      containerId,
+      result,
+      demandCoords
+    ),
+  });
   const ownerSideCounts = new Map<string, number>();
   const instrumentedRoutes: Point[][] | undefined = metrics ? [] : undefined;
   for (const demandKey of demandCoords.keys()) {
@@ -1368,13 +1706,42 @@ export function routeGridEdges(
     for (let index = 0; index < plan.source.chain.length - 1; index++) {
       const from = plan.source.chain[index];
       const to = plan.source.chain[index + 1];
+      if (!sparseHierarchyIds.has(edge.id)) {
+        sourceChains.push(
+          routeWithinContainer(
+            to.ownerId,
+            result,
+            itemAttachment(
+              from.ownerId,
+              from.side,
+              from.demandKey,
+              to.ownerId,
+              result,
+              demandCoords
+            ),
+            boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
+            plan.laneIndex
+          )
+        );
+        continue;
+      }
+      const start =
+        index === 0
+          ? itemSegmentAttachment(from, to.ownerId)
+          : portalAttachment(pairedPortal(from), false);
+      const end = portalAttachment(pairedPortal(to), true);
       sourceChains.push(
-        routeWithinContainer(
+        sparseContainerSegment(
+          edge.id,
           to.ownerId,
+          start,
+          end,
+          () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
           result,
-          itemAttachment(from.ownerId, from.side, from.demandKey, to.ownerId, result, demandCoords),
-          boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-          plan.laneIndex
+          context,
+          searchWorkspace,
+          endpointOverlayScratch.get(to.ownerId),
+          options
         )
       );
     }
@@ -1383,53 +1750,111 @@ export function routeGridEdges(
     for (let index = 0; index < plan.target.chain.length - 1; index++) {
       const from = plan.target.chain[index];
       const to = plan.target.chain[index + 1];
+      if (!sparseHierarchyIds.has(edge.id)) {
+        targetChains.push(
+          routeWithinContainer(
+            to.ownerId,
+            result,
+            itemAttachment(
+              from.ownerId,
+              from.side,
+              from.demandKey,
+              to.ownerId,
+              result,
+              demandCoords
+            ),
+            boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
+            plan.laneIndex
+          )
+        );
+        continue;
+      }
+      const start =
+        index === 0
+          ? itemSegmentAttachment(from, to.ownerId)
+          : portalAttachment(pairedPortal(from), false);
+      const end = portalAttachment(pairedPortal(to), true);
       targetChains.push(
-        routeWithinContainer(
+        sparseContainerSegment(
+          edge.id,
           to.ownerId,
+          start,
+          end,
+          () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
           result,
-          itemAttachment(from.ownerId, from.side, from.demandKey, to.ownerId, result, demandCoords),
-          boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-          plan.laneIndex
+          context,
+          searchWorkspace,
+          endpointOverlayScratch.get(to.ownerId),
+          options
         )
       );
     }
 
     const sourceFinal = plan.source.chain[plan.source.chain.length - 1];
     const targetFinal = plan.target.chain[plan.target.chain.length - 1];
-    const lcaStart =
-      plan.source.finalKind === 'boundary'
-        ? boundaryAttachment(
-            plan.lcaContainerId,
-            sourceFinal.side,
-            sourceFinal.demandKey,
-            result,
-            demandCoords
-          )
-        : itemAttachment(
+    const useSparseHierarchy = sparseHierarchyIds.has(edge.id);
+    const lcaStart: SegmentAttachment = useSparseHierarchy
+      ? plan.source.finalKind === 'boundary'
+        ? groupBoundaryEndpointAttachment(
             sourceFinal.ownerId,
             sourceFinal.side,
             sourceFinal.demandKey,
-            plan.lcaContainerId,
             result,
             demandCoords
-          );
-    const lcaEnd =
-      plan.target.finalKind === 'boundary'
-        ? boundaryAttachment(
-            plan.lcaContainerId,
+          )
+        : plan.source.chain.length > 1
+          ? portalAttachment(pairedPortal(sourceFinal), false)
+          : itemSegmentAttachment(sourceFinal, plan.lcaContainerId)
+      : {
+          ownerId: sourceFinal.ownerId,
+          ...(plan.source.finalKind === 'boundary'
+            ? boundaryAttachment(
+                plan.lcaContainerId,
+                sourceFinal.side,
+                sourceFinal.demandKey,
+                result,
+                demandCoords
+              )
+            : itemAttachment(
+                sourceFinal.ownerId,
+                sourceFinal.side,
+                sourceFinal.demandKey,
+                plan.lcaContainerId,
+                result,
+                demandCoords
+              )),
+        };
+    const lcaEnd: SegmentAttachment = useSparseHierarchy
+      ? plan.target.finalKind === 'boundary'
+        ? groupBoundaryEndpointAttachment(
+            targetFinal.ownerId,
             targetFinal.side,
             targetFinal.demandKey,
             result,
             demandCoords
           )
-        : itemAttachment(
-            targetFinal.ownerId,
-            targetFinal.side,
-            targetFinal.demandKey,
-            plan.lcaContainerId,
-            result,
-            demandCoords
-          );
+        : plan.target.chain.length > 1
+          ? portalAttachment(pairedPortal(targetFinal), false)
+          : itemSegmentAttachment(targetFinal, plan.lcaContainerId)
+      : {
+          ownerId: targetFinal.ownerId,
+          ...(plan.target.finalKind === 'boundary'
+            ? boundaryAttachment(
+                plan.lcaContainerId,
+                targetFinal.side,
+                targetFinal.demandKey,
+                result,
+                demandCoords
+              )
+            : itemAttachment(
+                targetFinal.ownerId,
+                targetFinal.side,
+                targetFinal.demandKey,
+                plan.lcaContainerId,
+                result,
+                demandCoords
+              )),
+        };
     let legacyLcaPoints: Point[] | undefined;
     const legacyRoute = () =>
       (legacyLcaPoints ??= routeWithinContainer(
@@ -1453,7 +1878,20 @@ export function routeGridEdges(
           endpointOverlayScratch.get(plan.lcaContainerId)!,
           options
         )
-      : legacyRoute();
+      : useSparseHierarchy
+        ? sparseContainerSegment(
+            edge.id,
+            plan.lcaContainerId,
+            lcaStart,
+            lcaEnd,
+            legacyRoute,
+            result,
+            context,
+            searchWorkspace,
+            endpointOverlayScratch.get(plan.lcaContainerId),
+            options
+          )
+        : legacyRoute();
 
     const points = combinePointChains([
       ...sourceChains,
@@ -1463,7 +1901,8 @@ export function routeGridEdges(
     edge.points = points;
     edge.curve = 'linear';
     if (metrics && instrumentedRoutes) {
-      recordGridRoute(metrics, edge.id, points, instrumentedRoutes);
+      const boundaryTransitionCount = plan.source.chain.length + plan.target.chain.length - 2;
+      recordGridRoute(metrics, edge.id, points, instrumentedRoutes, boundaryTransitionCount);
       instrumentedRoutes.push(points);
     }
   }

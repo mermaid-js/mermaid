@@ -73,6 +73,10 @@
     {
       "id": "grid/routing-cell-aware-empty-cell",
       "profile": "grid"
+    },
+    {
+      "id": "grid/routing-hierarchy-portals",
+      "profile": "grid"
     }
   ]
 }

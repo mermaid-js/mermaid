@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
-import { buildContainerRoutingTopology, derivePortalRanges } from './routerTopology.js';
+import {
+  buildContainerRoutingTopology,
+  buildPairedPortal,
+  derivePortalRanges,
+} from './routerTopology.js';
 import type { RouterPoint } from './types.js';
 
 function point(x: number, y: number): RouterPoint {
@@ -204,6 +208,32 @@ describe('grid router topology', () => {
       { ownerId: 'group', side: 'right', low: 48, high: 94 },
       { ownerId: 'group', side: 'bottom', low: 16, high: 104 },
     ]);
+  });
+
+  it('builds perpendicular paired portals exactly 6px inside and outside the frame', () => {
+    const bounds = { left: 10, right: 110, top: 20, bottom: 100 };
+    const title = { left: 10, right: 110, top: 20, bottom: 42 };
+
+    expect(buildPairedPortal('group', bounds, title, 'right', 48)).toEqual({
+      ownerId: 'group',
+      side: 'right',
+      tangentialCoordinate: 48,
+      interior: { x: 104, y: 48 },
+      exterior: { x: 116, y: 48 },
+      transition: {
+        from: { x: 104, y: 48 },
+        to: { x: 116, y: 48 },
+        orientation: 'H',
+        length: 12,
+        kind: 'portal',
+      },
+    });
+    expect(() => buildPairedPortal('group', bounds, title, 'right', 47)).toThrowError(
+      /Illegal right portal/
+    );
+    expect(() => buildPairedPortal('group', bounds, title, 'top', 60)).toThrowError(
+      /Illegal top portal/
+    );
   });
 
   it('has geometry-only counts for compact and sparse logical-coordinate twins', () => {

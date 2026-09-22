@@ -5,6 +5,7 @@ import {
 import type {
   ContainerRoutingTopology,
   GridOrientation,
+  GridSide,
   RouterArc,
   RouterObstacle,
   RouterPoint,
@@ -44,8 +45,10 @@ export interface RouterSearchOptions {
   recordOutcome?: boolean;
   budget?: RouterSearchBudget;
   initialOrientation?: GridOrientation;
+  initialSide?: GridSide;
   initialLength?: number;
   targetOrientation?: GridOrientation;
+  targetSide?: GridSide;
   targetLength?: number;
   topologyValidated?: boolean;
   workspace?: RouterSearchWorkspace;
@@ -198,6 +201,16 @@ export function tupleHeuristic(
 
 function orientationOrdinal(orientation: GridOrientation | undefined): number {
   return orientation === undefined ? 0 : orientation === 'H' ? 1 : 2;
+}
+
+function movesTowardOwner(from: RouterPoint, to: RouterPoint, side: GridSide): boolean {
+  return side === 'left'
+    ? from.y === to.y && to.x > from.x
+    : side === 'right'
+      ? from.y === to.y && to.x < from.x
+      : side === 'top'
+        ? from.x === to.x && to.y > from.y
+        : from.x === to.x && to.y < from.y;
 }
 
 function stateIndex(vertexId: number, orientation: GridOrientation | undefined): number {
@@ -561,6 +574,20 @@ function search(
       topology.getSearchArcs?.(vertexId) ?? topology.searchAdjacencyByVertex?.[vertexId];
     if (compactArcs) {
       for (const arc of compactArcs) {
+        if (
+          options.initialSide &&
+          predecessors[current] < 0 &&
+          movesTowardOwner(vertexAt(vertexId).point, vertexAt(arc.to).point, options.initialSide)
+        ) {
+          continue;
+        }
+        if (
+          options.targetSide &&
+          arc.to === targetId &&
+          movesTowardOwner(target.point, vertexAt(vertexId).point, options.targetSide)
+        ) {
+          continue;
+        }
         const orientation = arc.orientationOrdinal;
         const index = arc.to * 3 + orientation;
         const previous = best[index];
@@ -638,6 +665,20 @@ function search(
       for (const arc of topology.adjacencyByVertex?.[vertexId] ??
         topology.adjacency.get(vertexId) ??
         []) {
+        if (
+          options.initialSide &&
+          predecessors[current] < 0 &&
+          movesTowardOwner(vertexAt(vertexId).point, vertexAt(arc.to).point, options.initialSide)
+        ) {
+          continue;
+        }
+        if (
+          options.targetSide &&
+          arc.to === targetId &&
+          movesTowardOwner(target.point, vertexAt(vertexId).point, options.targetSide)
+        ) {
+          continue;
+        }
         const orientation = orientationOrdinal(arc.orientation);
         const index = arc.to * 3 + orientation;
         const previous = best[index];
