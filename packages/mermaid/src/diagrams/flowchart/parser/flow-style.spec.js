@@ -286,18 +286,47 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle style definitions within number of edges', function () {
+  it('should throw a descriptive error for a linkStyle index past the last edge', function () {
+    // `.toThrow` used to be chained onto `parse()` inside the arrow rather than onto the
+    // `expect`, so this asserted nothing and the raw TypeError below went unnoticed.
     expect(() =>
-      flow.parser
-        .parse(
-          `graph TD
+      flow.parser.parse(`graph TD
     A-->B
-    linkStyle 1 stroke-width:1px;`
-        )
-        .toThrow(
-          'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing edges.)'
-        )
+    linkStyle 1 stroke-width:1px;`)
+    ).toThrow(
+      'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing edges.)'
     );
+  });
+
+  it('should throw a descriptive error for an out-of-bounds linkStyle interpolate index', function () {
+    expect(() =>
+      flow.parser.parse(`graph TD
+    A-->B
+    linkStyle 1 interpolate basis`)
+    ).toThrow(
+      'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing edges.)'
+    );
+  });
+
+  it('should name the offending index when several are given', function () {
+    // The whole statement fails on the first bad index rather than styling the good ones.
+    expect(() =>
+      flow.parser.parse(`graph TD
+    A-->B
+    A-->C
+    linkStyle 0,5 stroke-width:1px;`)
+    ).toThrow('The index 5 for linkStyle is out of bounds');
+  });
+
+  it('should still accept the last valid index', function () {
+    flow.parser.parse(`graph TD
+    A-->B
+    A-->C
+    linkStyle 1 stroke-width:1px;`);
+
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[1].style[0]).toBe('stroke-width:1px');
   });
 
   it('should handle style definitions within number of edges', function () {
