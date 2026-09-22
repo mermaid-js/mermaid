@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
@@ -7,6 +8,10 @@ import { applyFixtureContentSizesStrict, loadFreshSizesFixture } from '../ddlt/f
 import { parseMmdFileToLayoutData } from '../ddlt/parseToLayoutData.js';
 import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
+import {
+  createGridRoutingInstrumentation,
+  type GridRoutingInstrumentation,
+} from './routerInstrumentation.js';
 import type { GridItemLayoutMeta, GridLayoutResult } from './types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
 
@@ -28,7 +33,10 @@ beforeAll(() => {
   addDiagrams();
 });
 
-async function loadGridFixtureWithResult(name: string): Promise<{
+async function loadGridFixtureWithResult(
+  name: string,
+  metrics?: GridRoutingInstrumentation
+): Promise<{
   layout: LayoutData;
   result: GridLayoutResult;
 }> {
@@ -40,7 +48,7 @@ async function loadGridFixtureWithResult(name: string): Promise<{
   });
   prepareGridLayout(layout);
   applyFixtureContentSizesStrict(layout, sizes);
-  const result = runGridLayoutCore(layout);
+  const result = metrics ? runGridLayoutCore(layout, metrics) : runGridLayoutCore(layout);
   return { layout, result };
 }
 
@@ -121,7 +129,103 @@ function primaryTrackCoordinate(edge: Edge): number {
   return primary.orientation === 'H' ? primary.a.y : primary.a.x;
 }
 
+async function characterizeFixture(name: string) {
+  const { layout } = await loadGridFixtureWithResult(name);
+  const validation = validateLayout(layout);
+  const bends = layout.edges.reduce(
+    (total, edge) => total + normalizePolyline(edge.points ?? []).bends,
+    0
+  );
+  const routeSignature = createHash('sha256')
+    .update(
+      JSON.stringify(
+        layout.edges.map((edge) => ({
+          id: edge.id,
+          points: normalizePolyline(edge.points ?? []).points,
+        }))
+      )
+    )
+    .digest('hex');
+
+  return {
+    id: `grid/${name}`,
+    valid: validation.ok,
+    score: validation.score,
+    bends,
+    crossings: validation.breakdown.crossings,
+    routeSignature,
+  };
+}
+
 describe('grid DDLT matrix fixtures', () => {
+  it.fails('routes through empty aligned cell space without a global-corridor detour', async () => {
+    const { layout } = await loadGridFixtureWithResult('routing-cell-aware-empty-cell');
+    const routed = layout.edges.find((edge) => edge.start === 'v1' && edge.end === 'v2');
+    const normalized = normalizePolyline(routed?.points ?? []);
+
+    expect(validateLayout(layout)).toMatchObject({ ok: true, issues: [] });
+    expect(normalized.segments).toHaveLength(1);
+    expect(normalized.segments[0]?.orientation).toBe('H');
+  });
+
+  it('records representative route characteristics', async () => {
+    const characterization = [];
+    for (const fixture of [
+      'placement-matrix-tb',
+      'stack-default',
+      'routing-group-member',
+      'routing-loops-parallel-lr',
+      'routing-cell-aware-empty-cell',
+    ]) {
+      characterization.push(await characterizeFixture(fixture));
+    }
+
+    expect(characterization).toMatchInlineSnapshot(`
+      [
+        {
+          "bends": 0,
+          "crossings": 0,
+          "id": "grid/placement-matrix-tb",
+          "routeSignature": "a82ae0a776a8bbf760a5d0ce5433df84d98a1e8f114870b9878aa1f2aecc78da",
+          "score": 1000,
+          "valid": true,
+        },
+        {
+          "bends": 0,
+          "crossings": 0,
+          "id": "grid/stack-default",
+          "routeSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "score": 1000,
+          "valid": true,
+        },
+        {
+          "bends": 14,
+          "crossings": 0,
+          "id": "grid/routing-group-member",
+          "routeSignature": "547db42f090327b2959d83ff3a1751dbda816ea0ae2e0c1e075199aefc91cbd4",
+          "score": 485,
+          "valid": true,
+        },
+        {
+          "bends": 6,
+          "crossings": 0,
+          "id": "grid/routing-loops-parallel-lr",
+          "routeSignature": "e095678042ae372f2c85800cb37d2f29a9e9a303b457b5547d64f8d521066049",
+          "score": 985,
+          "valid": true,
+        },
+        {
+          "bends": 6,
+          "crossings": 0,
+          "id": "grid/routing-cell-aware-empty-cell",
+          "routeSignature": "0ec7e387d9677c50d7e98c31b57be0fd4cd45cddd2d28cf02cdcf2f7310a76a0",
+          "score": 965,
+          "valid": true,
+        },
+      ]
+    `);
+  });
+
   it('covers partial/autoplacement, sparse tracks, disconnected nodes, and TB/LR parity', async () => {
     const tb = await loadGridFixtureWithResult('placement-matrix-tb');
     const lr = await loadGridFixtureWithResult('placement-matrix-lr');

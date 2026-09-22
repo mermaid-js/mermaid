@@ -4,6 +4,7 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { polylineIntersectsRect, rectForNode } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
 import { isAncestorGroup } from './groups.js';
+import { recordGridRoute, type GridRoutingInstrumentation } from './routerInstrumentation.js';
 import type {
   GridAttachment,
   GridAttachmentDemand,
@@ -642,7 +643,11 @@ function rootContainerMeta(result: GridLayoutResult): void {
   });
 }
 
-export function routeGridEdges(layout: LayoutData, result: GridLayoutResult): void {
+export function routeGridEdges(
+  layout: LayoutData,
+  result: GridLayoutResult,
+  metrics?: GridRoutingInstrumentation
+): void {
   rootContainerMeta(result);
   const plans = collectRoutePlans(layout, result);
   const demandCoords = assignDemandCoordinates(plans, result);
@@ -653,6 +658,7 @@ export function routeGridEdges(layout: LayoutData, result: GridLayoutResult): vo
     ownerSideCounts.set(key, (ownerSideCounts.get(key) ?? 0) + 1);
   }
   const selfLoopCounts = new Map<string, number>();
+  const instrumentedRoutes: Point[][] | undefined = metrics ? [] : undefined;
 
   for (const plan of plans) {
     const edge = plan.edge;
@@ -675,6 +681,10 @@ export function routeGridEdges(layout: LayoutData, result: GridLayoutResult): vo
       selfLoopCounts.set(countKey, index + 1);
       edge.points = points;
       edge.curve = 'linear';
+      if (metrics && instrumentedRoutes) {
+        recordGridRoute(metrics, edge.id, points, instrumentedRoutes);
+        instrumentedRoutes.push(points);
+      }
       continue;
     }
 
@@ -759,5 +769,9 @@ export function routeGridEdges(layout: LayoutData, result: GridLayoutResult): vo
     ]);
     edge.points = points;
     edge.curve = 'linear';
+    if (metrics && instrumentedRoutes) {
+      recordGridRoute(metrics, edge.id, points, instrumentedRoutes);
+      instrumentedRoutes.push(points);
+    }
   }
 }

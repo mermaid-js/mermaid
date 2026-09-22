@@ -8,6 +8,7 @@ import {
   validateGridPlacementMap,
 } from './placement.js';
 import { routeGridEdges } from './router.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import {
   GRID_DEFAULTS,
   ROOT_CONTAINER_ID,
@@ -416,7 +417,10 @@ function cloneGridLayoutData(data: GridLayoutData): GridLayoutData {
   };
 }
 
-function runGridLayoutCoreInPlace(data: GridLayoutData): GridLayoutResult {
+function runGridLayoutCoreInPlace(
+  data: GridLayoutData,
+  metrics?: GridRoutingInstrumentation
+): GridLayoutResult {
   const forest = buildGridForest(data.nodes);
   const config = readGridConfig(data);
   const sourceOrder = buildGridSourceOrder(data.nodes.filter((node) => !isEdgeLabelNode(node)));
@@ -439,12 +443,20 @@ function runGridLayoutCoreInPlace(data: GridLayoutData): GridLayoutResult {
   }
   layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
   materializeAbsoluteGeometry(result);
-  routeGridEdges(data, result);
+  routeGridEdges(data, result, metrics);
   positionGridEdgeLabels(data);
   return result;
 }
 
-export function runGridLayoutCore(data4Layout: LayoutData): GridLayoutResult {
+export function runGridLayoutCore(data4Layout: LayoutData): GridLayoutResult;
+export function runGridLayoutCore(
+  data4Layout: LayoutData,
+  metrics: GridRoutingInstrumentation
+): GridLayoutResult;
+export function runGridLayoutCore(
+  data4Layout: LayoutData,
+  metrics?: GridRoutingInstrumentation
+): GridLayoutResult {
   const data = data4Layout as GridLayoutData;
   const forest = buildGridForest(data.nodes);
   const config = readGridConfig(data);
@@ -456,7 +468,7 @@ export function runGridLayoutCore(data4Layout: LayoutData): GridLayoutResult {
   validatePlacementsBeforeLayout(forest, config, sourceOrder);
 
   const working = cloneGridLayoutData(data);
-  const result = runGridLayoutCoreInPlace(working);
+  const result = runGridLayoutCoreInPlace(working, metrics);
   commitGridGeometry(working, data);
   return result;
 }

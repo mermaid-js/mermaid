@@ -69,6 +69,10 @@
     {
       "id": "grid/routing-loops-parallel-lr",
       "profile": "grid"
+    },
+    {
+      "id": "grid/routing-cell-aware-empty-cell",
+      "profile": "grid"
     }
   ]
 }

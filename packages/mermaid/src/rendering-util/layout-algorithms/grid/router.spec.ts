@@ -4,6 +4,7 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
+import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 
 function leaf(
   id: string,
@@ -92,6 +93,46 @@ function primaryTrackCoordinate(edge: Edge): number {
 }
 
 describe('grid router', () => {
+  it('records current route metrics without changing geometry', () => {
+    const build = () =>
+      baseLayout(
+        [
+          leaf('a', 80, 40, { row: 1, column: 1 }),
+          leaf('b', 80, 40, { row: 1, column: 2 }),
+          leaf('c', 80, 40, { row: 2, column: 2 }),
+        ],
+        [edge('horizontal', 'a', 'b'), edge('vertical', 'b', 'c')],
+        { rowGap: 40, columnGap: 60 }
+      );
+    const baseline = build();
+    runGridLayoutCore(baseline);
+    const expectedGeometry = baseline.edges.map((item) => item.points);
+
+    const instrumented = build();
+    const metrics = createGridRoutingInstrumentation();
+    runGridLayoutCore(instrumented, metrics);
+
+    expect(instrumented.edges.map((item) => item.points)).toEqual(expectedGeometry);
+    expect(metrics.routeOrder).toEqual(['horizontal', 'vertical']);
+    expect(metrics.routes.map(({ edgeId, routeOrder }) => ({ edgeId, routeOrder }))).toEqual([
+      { edgeId: 'horizontal', routeOrder: 0 },
+      { edgeId: 'vertical', routeOrder: 1 },
+    ]);
+    expect(metrics.routesFound).toBe(2);
+    expect(metrics.routeLength).toBeGreaterThan(0);
+    expect(metrics.bendCount).toBeGreaterThanOrEqual(0);
+    expect(metrics.crossingCount).toBeGreaterThanOrEqual(0);
+    expect(metrics.sharedLength).toBe(0);
+    expect(metrics.baseTopologyBuilds).toBe(0);
+    expect(metrics.searches).toBe(0);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+    expect(metrics.fallbackReasons).toEqual({
+      vertex_cap: 0,
+      adjacency_cap: 0,
+      estimated_memory_cap: 0,
+      search_state_cap: 0,
+    });
+  });
   it('routes ordinary and labelled edges into valid orthogonal polylines', () => {
     const data = baseLayout(
       [
