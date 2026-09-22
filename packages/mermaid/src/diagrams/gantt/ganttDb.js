@@ -298,7 +298,7 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
  */
 const warnAboutUnknownTaskIds = function (keyword, ids) {
   log.warn(
-    `Gantt: the "${keyword}" statement references unknown task id(s): ${ids.join(', ')}. Make sure the referenced tasks exist and declare an id. Milestones need both an id and a duration, e.g. "Milestone :milestone, m1, 2023-01-01, 0d".`
+    `Gantt: the "${keyword}" statement references unknown task id(s): ${ids.join(', ')}. Make sure the referenced tasks exist and declare an id, e.g. "Milestone :milestone, m1, 2023-01-01".`
   );
 };
 
@@ -454,7 +454,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   const [durationValue, durationUnit] = parseDuration(str);
   if (Number.isNaN(durationValue)) {
     log.warn(
-      `Gantt: "${str}" is neither a valid date for the "${dateFormat.trim()}" date format nor a valid duration (e.g. "3d"), so it is ignored and the task gets a zero duration. Milestones need a duration too, e.g. "Milestone :milestone, m1, 2023-01-01, 0d".`
+      `Gantt: "${str}" is neither a valid date for the "${dateFormat.trim()}" date format nor a valid duration (e.g. "3d"), so it is ignored and the task gets a zero duration. If it was meant to be a milestone id, put it before the date, e.g. "Milestone :milestone, m1, 2023-01-01".`
     );
   } else {
     const newEndTime = endTime.add(durationValue, durationUnit);
