@@ -488,6 +488,127 @@ describe('getEdgesToRender', () => {
     }
   });
 
+  it('stacks self-loops that resolve to the same side of the node', () => {
+    // https://github.com/mermaid-js/mermaid/issues/6888 — a node can carry
+    // several self-loops; they must not all render on exactly the same path.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
+
+    const makeSelfLoopSegments = (edgeId, label) => {
+      const originalEdge = {
+        id: edgeId,
+        start: 'A',
+        end: 'A',
+        label,
+        arrowTypeStart: 'normal',
+        arrowTypeEnd: 'normal',
+      };
+      const segment = (id, order) => ({
+        ...originalEdge,
+        id,
+        selfLoop: { id: edgeId, order },
+        originalEdge,
+      });
+      return [
+        segment(`${edgeId}-cyclic-special-1`, 0),
+        segment(`${edgeId}-cyclic-special-mid`, 1),
+        segment(`${edgeId}-cyclic-special-2`, 2),
+      ];
+    };
+
+    const [first1, firstMid, first2] = makeSelfLoopSegments('A-A-first', 'first');
+    const [second1, secondMid, second2] = makeSelfLoopSegments('A-A-second', 'second');
+
+    graph.setNode('A---A---1', { id: 'A---A---1' });
+    graph.setNode('A---A---2', { id: 'A---A---2' });
+    graph.setEdge('A', 'A---A---1', first1, 'A-A-first-cyclic-special-0');
+    graph.setEdge('A---A---1', 'A---A---2', firstMid, 'A-A-first-cyclic-special-1');
+    graph.setEdge('A---A---2', 'A', first2, 'A-A-first-cyclic-special-2');
+    graph.setEdge('A', 'A---A---1', second1, 'A-A-second-cyclic-special-0');
+    graph.setEdge('A---A---1', 'A---A---2', secondMid, 'A-A-second-cyclic-special-1');
+    graph.setEdge('A---A---2', 'A', second2, 'A-A-second-cyclic-special-2');
+
+    const edgesToRender = getEdgesToRender(graph);
+
+    expect(edgesToRender).toHaveLength(2);
+    const [first, second] = edgesToRender;
+    expect(first.edge.id).toBe('A-A-first');
+    expect(second.edge.id).toBe('A-A-second');
+    expect(first.edge.label).toBe('first');
+    expect(second.edge.label).toBe('second');
+    // Same side (the default, no layout hints), so the second loop is stacked
+    // further out from the node instead of overlapping the first.
+    expect(second.edge.points).not.toEqual(first.edge.points);
+    expect(second.edge.points[0].x).toBe(first.edge.points[0].x);
+    expect(second.edge.points[0].y).toBe(first.edge.points[0].y - 12);
+  });
+
+  it('renders one arc per self-loop through the full DAGRE pipeline', async () => {
+    // https://github.com/mermaid-js/mermaid/issues/6888
+    const restoreDom = setupDom();
+
+    try {
+      const data4Layout = {
+        type: 'flowchart',
+        diagramId: 'dagre-multi-self-loop',
+        direction: 'TB',
+        config: {
+          flowchart: {
+            htmlLabels: false,
+            nodeSpacing: 50,
+            rankSpacing: 50,
+          },
+        },
+        nodes: [
+          {
+            id: 'A',
+            domId: 'dagre-multi-self-loop-A',
+            label: 'A',
+            shape: 'rect',
+            isGroup: false,
+            padding: 0,
+          },
+        ],
+        edges: [
+          {
+            id: 'L-A-A-0',
+            start: 'A',
+            end: 'A',
+            label: 'One',
+            arrowTypeStart: 'none',
+            arrowTypeEnd: 'arrow_point',
+          },
+          {
+            id: 'L-A-A-1',
+            start: 'A',
+            end: 'A',
+            label: 'Two',
+            arrowTypeStart: 'none',
+            arrowTypeEnd: 'arrow_point',
+          },
+        ],
+      };
+
+      const preparedLayout = prepareLayoutForDagre(data4Layout);
+      const element = select(document.querySelector('#container')).append('svg').append('g');
+      await measureDagreLayout(data4Layout, { element, preparedLayout });
+      runDagreLayoutCore(data4Layout, { preparedLayout });
+
+      const edgesToRender = getEdgesToRender(preparedLayout.graph);
+      const byId = new Map(edgesToRender.map((entry) => [entry.edge.id, entry.edge]));
+
+      expect([...byId.keys()].sort()).toEqual(['L-A-A-0', 'L-A-A-1']);
+      expect(byId.get('L-A-A-0')?.label).toBe('One');
+      expect(byId.get('L-A-A-1')?.label).toBe('Two');
+      // Before the fix the second loop's segments were overwritten in the graph,
+      // so only one edge came out — and even with both present the arcs landed
+      // on the same path when the labels measured the same width.
+      expect(byId.get('L-A-A-0')?.points).not.toEqual(byId.get('L-A-A-1')?.points);
+    } finally {
+      restoreDom();
+    }
+  });
+
   it('requires DAGRE measurement before running the layout core', () => {
     const data4Layout = {
       type: 'flowchart',
