@@ -20,13 +20,13 @@ function config(overrides: Record<string, unknown> = {}): LayoutData['config'] {
 }
 
 describe('grid placement', () => {
-  it('defaults grid edges to linear and validates curve options', () => {
+  it('defaults grid edges to rounded and validates curve options', () => {
     const defaults = readGridConfig({
       nodes: [],
       edges: [],
       config: config(),
     } as LayoutData);
-    expect(defaults).toMatchObject({ curve: 'linear', edgeCornerRadius: 5 });
+    expect(defaults).toMatchObject({ curve: 'rounded', edgeCornerRadius: 5 });
 
     const rounded = readGridConfig({
       nodes: [],
@@ -40,7 +40,7 @@ describe('grid placement', () => {
       edges: [],
       config: config({ curve: 'unknown', edgeCornerRadius: -1 }),
     } as LayoutData);
-    expect(invalid).toMatchObject({ curve: 'linear', edgeCornerRadius: 5 });
+    expect(invalid).toMatchObject({ curve: 'rounded', edgeCornerRadius: 5 });
   });
 
   it('resolves full, partial, automatic, sparse, and precedence cases deterministically', () => {

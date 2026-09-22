@@ -618,7 +618,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             'stepBefore',
             'rounded',
           ]
-        default: linear
+        default: rounded
       edgeCornerRadius:
         description: Pixel radius used for grid edges when curve is rounded.
         type: number

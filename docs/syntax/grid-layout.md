@@ -191,7 +191,7 @@ See the generated configuration reference for the exact schema and defaults.
 
 ## Edge curves
 
-Grid edges use `linear` rendering by default. Set `grid.curve` to any Mermaid
+Grid edges use `rounded` rendering by default. Set `grid.curve` to any Mermaid
 flowchart curve style, including `basis`, `cardinal`, `catmullRom`, `step`, or
 `rounded`.
 

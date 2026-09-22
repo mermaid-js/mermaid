@@ -266,7 +266,7 @@ export const GRID_DEFAULTS = {
   titleGap: 8,
   horizontalAlign: 'center' as GridHorizontalAlign,
   verticalAlign: 'center' as GridVerticalAlign,
-  curve: 'linear' as GridCurve,
+  curve: 'rounded' as GridCurve,
   edgeCornerRadius: 5,
 };
 
