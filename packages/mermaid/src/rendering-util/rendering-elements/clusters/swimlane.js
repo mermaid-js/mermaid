@@ -13,7 +13,12 @@ import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
  * swimlane-specific rendering lives on its own; registered in the clusters.js
  * shape dispatch table. Supports LR/TB and the handdrawn (rough) look.
  */
-export const swimlane = async (parent, node) => {
+export const swimlane = async (parent, node, { variant = 'swimlane' } = {}) => {
+  const isPool = variant === 'pool';
+  const groupClass = isPool ? 'pool swimlane' : 'swimlane';
+  const labelClass = isPool ? 'pool-label swimlane-label' : 'swimlane-label';
+  const titleClass = isPool ? 'pool-title swimlane-title' : 'swimlane-title';
+  const bodyClass = isPool ? 'pool-body swimlane-body' : 'swimlane-body';
   const siteConfig = getConfig();
   const { theme, themeVariables, handDrawnSeed } = siteConfig;
   const { clusterBkg, clusterBorder, borderColorArray } = themeVariables;
@@ -24,8 +29,8 @@ export const swimlane = async (parent, node) => {
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
-    .attr('class', 'cluster swimlane ' + (node.cssClasses || ''))
-    .attr('id', node.id)
+    .attr('class', 'cluster ' + groupClass + ' ' + (node.cssClasses || ''))
+    .attr('id', node.domId ?? node.id)
     .attr('data-id', node.id)
     .attr('data-et', 'cluster')
     .attr('data-look', node.look);
@@ -40,7 +45,7 @@ export const swimlane = async (parent, node) => {
   const isLR = node.direction === 'LR';
 
   // Create the label and insert it after the rects
-  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label swimlane-label');
+  const labelEl = shapeSvg.insert('g').attr('class', 'cluster-label ' + labelClass);
 
   const text = await createText(labelEl, node.label, {
     style: node.labelStyle,
@@ -115,9 +120,9 @@ export const swimlane = async (parent, node) => {
 
       const roughTitle = rc.rectangle(laneLeft, laneTop, titleWidth, height, titleOptions);
       // Same classes as the classic look, so CSS can tell the two halves apart.
-      titleRect = shapeSvg.insert(() => roughTitle, ':first-child').attr('class', 'swimlane-title');
+      titleRect = shapeSvg.insert(() => roughTitle, ':first-child').attr('class', titleClass);
       const roughBody = rc.rectangle(bodyX, laneTop, bodyWidth, height, bodyOptions);
-      bodyRect = shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'swimlane-body');
+      bodyRect = shapeSvg.insert(() => roughBody, ':first-child').attr('class', bodyClass);
 
       titleRect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
       titleRect.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));
@@ -126,7 +131,7 @@ export const swimlane = async (parent, node) => {
       bodyRect = shapeSvg.insert('rect', ':first-child');
 
       titleRect
-        .attr('class', 'swimlane-title')
+        .attr('class', titleClass)
         .attr('style', nodeStyles)
         .attr('x', laneLeft)
         .attr('y', laneTop)
@@ -136,7 +141,7 @@ export const swimlane = async (parent, node) => {
         .attr('stroke', laneStroke);
 
       bodyRect
-        .attr('class', 'swimlane-body')
+        .attr('class', bodyClass)
         .attr('style', nodeStyles)
         .attr('x', bodyX)
         .attr('y', laneTop)
@@ -186,9 +191,9 @@ export const swimlane = async (parent, node) => {
       });
 
       const roughTitle = rc.rectangle(x, laneTop, width, titleHeight, titleOptions);
-      titleRect = shapeSvg.insert(() => roughTitle, ':first-child').attr('class', 'swimlane-title');
+      titleRect = shapeSvg.insert(() => roughTitle, ':first-child').attr('class', titleClass);
       const roughBody = rc.rectangle(x, bodyY, width, contentHeight, bodyOptions);
-      bodyRect = shapeSvg.insert(() => roughBody, ':first-child').attr('class', 'swimlane-body');
+      bodyRect = shapeSvg.insert(() => roughBody, ':first-child').attr('class', bodyClass);
 
       titleRect.select('path:nth-child(2)').attr('style', borderStyles.join(';'));
       titleRect.select('path').attr('style', backgroundStyles.join(';').replace('fill', 'stroke'));
@@ -197,7 +202,7 @@ export const swimlane = async (parent, node) => {
       bodyRect = shapeSvg.insert('rect', ':first-child');
 
       titleRect
-        .attr('class', 'swimlane-title')
+        .attr('class', titleClass)
         .attr('style', nodeStyles)
         .attr('x', x)
         .attr('y', laneTop)
@@ -207,7 +212,7 @@ export const swimlane = async (parent, node) => {
         .attr('stroke', laneStroke);
 
       bodyRect
-        .attr('class', 'swimlane-body')
+        .attr('class', bodyClass)
         .attr('style', nodeStyles)
         .attr('x', x)
         .attr('y', bodyY)
