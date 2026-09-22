@@ -7,6 +7,7 @@ import {
   segmentIntersectsRectInterior,
 } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import { GRID_LABEL_PREFIX, gridError, isEdgeLabelNode, isFinitePositiveNumber } from './types.js';
 
 const LABEL_CLEARANCE = 6;
@@ -89,15 +90,23 @@ export interface GridEdgeLabelInstrumentation {
   segmentBandQueries: number;
   segmentCandidatesVisited: number;
   foreignEdgeLookups: number;
+  labelPasses: number;
+  frozenReservations: number;
+  impactedEdgeReroutes: number;
+  maxReroutesPerEdgePerPass: number;
+  preservedAnchors: number;
+  rollbacks: number;
+  indexCoordinateCount: number;
+  indexSpanAllocations: number;
 }
 
 interface EdgeLabelContext {
   edgeById: Map<string, Edge>;
   edgeGeometryById: Map<string, EdgeGeometryCache>;
-  obstacleIndex: SpatialHashIndex<ObstacleEntry>;
-  placedLabelIndex: SpatialHashIndex<ObstacleEntry>;
-  groupBorderIndex: SpatialHashIndex<BorderEntry>;
-  segmentIndex: SpatialHashIndex<EdgeSegmentEntry>;
+  obstacleIndex: CompressedBoundsIndex<ObstacleEntry>;
+  placedLabelIndex: CompressedBoundsIndex<ObstacleEntry>;
+  groupBorderIndex: CompressedBoundsIndex<BorderEntry>;
+  segmentIndex: CompressedBoundsIndex<EdgeSegmentEntry>;
   searchBounds: Bounds;
   metrics?: GridEdgeLabelInstrumentation;
 }
@@ -107,8 +116,6 @@ type ObstacleQueryMetric =
   | 'obstacleBandQueries'
   | 'obstaclePolylineQueries';
 type SegmentQueryMetric = 'segmentRectQueries' | 'segmentBandQueries';
-
-const SPATIAL_INDEX_CELL_SIZE = 128;
 
 export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentation {
   return {
@@ -122,83 +129,64 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     segmentBandQueries: 0,
     segmentCandidatesVisited: 0,
     foreignEdgeLookups: 0,
+    labelPasses: 0,
+    frozenReservations: 0,
+    impactedEdgeReroutes: 0,
+    maxReroutesPerEdgePerPass: 0,
+    preservedAnchors: 0,
+    rollbacks: 0,
+    indexCoordinateCount: 0,
+    indexSpanAllocations: 0,
   };
 }
 
-class SpatialHashIndex<T extends { id: string; bounds: Bounds }> {
-  private readonly buckets = new Map<string, T[]>();
-  private readonly bucketKeysById = new Map<string, string[]>();
+/**
+ * A dynamic coordinate-compressed bounds index. Entries are keyed by their
+ * actual boundaries; no bucket is allocated for any coordinate between them.
+ * Label routing mutates these indexes often enough that a sorted sweep on the
+ * compressed entries is both simpler and more predictable than rebuilding a
+ * tree after every provisional reservation.
+ */
+class CompressedBoundsIndex<T extends { id: string; bounds: Bounds }> {
   private readonly entriesById = new Map<string, T>();
+  private sortedByLeft: T[] = [];
+  private dirty = false;
 
-  constructor(private readonly cellSize: number) {}
+  constructor(private readonly metrics?: GridEdgeLabelInstrumentation) {}
 
   upsert(entry: T): void {
-    this.remove(entry.id);
+    const isNew = !this.entriesById.has(entry.id);
     this.entriesById.set(entry.id, entry);
-    const bucketKeys = this.bucketKeys(entry.bounds);
-    this.bucketKeysById.set(entry.id, bucketKeys);
-    for (const key of bucketKeys) {
-      const bucket = this.buckets.get(key);
-      if (bucket) {
-        bucket.push(entry);
-      } else {
-        this.buckets.set(key, [entry]);
-      }
+    this.dirty = true;
+    if (isNew && this.metrics) {
+      // Four stored boundary coordinates per entry, independent of their span.
+      this.metrics.indexCoordinateCount += 4;
     }
   }
 
   remove(id: string): void {
-    const bucketKeys = this.bucketKeysById.get(id);
-    if (bucketKeys) {
-      for (const key of bucketKeys) {
-        const bucket = this.buckets.get(key);
-        if (!bucket) {
-          continue;
-        }
-        const next = bucket.filter((entry) => entry.id !== id);
-        if (next.length === 0) {
-          this.buckets.delete(key);
-        } else {
-          this.buckets.set(key, next);
-        }
-      }
-      this.bucketKeysById.delete(id);
+    if (this.entriesById.delete(id)) {
+      this.dirty = true;
     }
-    this.entriesById.delete(id);
   }
 
   query(bounds: Bounds): T[] {
-    const entries = new Map<string, T>();
-    for (const key of this.bucketKeys(bounds)) {
-      const bucket = this.buckets.get(key);
-      if (!bucket) {
-        continue;
+    if (this.dirty) {
+      this.sortedByLeft = [...this.entriesById.values()].sort(
+        (a, b) => a.bounds.left - b.bounds.left || a.id.localeCompare(b.id)
+      );
+      this.dirty = false;
+    }
+    const result: T[] = [];
+    for (const entry of this.sortedByLeft) {
+      if (entry.bounds.left > bounds.right) {
+        break;
       }
-      for (const entry of bucket) {
-        if (!entries.has(entry.id) && boundsOverlap(entry.bounds, bounds)) {
-          entries.set(entry.id, entry);
-        }
+      if (boundsOverlap(entry.bounds, bounds)) {
+        result.push(entry);
       }
     }
-    return [...entries.values()];
-  }
-
-  values(): T[] {
-    return [...this.entriesById.values()];
-  }
-
-  private bucketKeys(bounds: Bounds): string[] {
-    const startX = Math.floor(Math.min(bounds.left, bounds.right) / this.cellSize);
-    const endX = Math.floor(Math.max(bounds.left, bounds.right) / this.cellSize);
-    const startY = Math.floor(Math.min(bounds.top, bounds.bottom) / this.cellSize);
-    const endY = Math.floor(Math.max(bounds.top, bounds.bottom) / this.cellSize);
-    const keys: string[] = [];
-    for (let cellX = startX; cellX <= endX; cellX++) {
-      for (let cellY = startY; cellY <= endY; cellY++) {
-        keys.push(`${cellX}:${cellY}`);
-      }
-    }
-    return keys;
+    return result;
   }
 }
 
@@ -355,15 +343,6 @@ function expandBounds(bounds: Bounds, padding: number): Bounds {
 
 function boundsOverlap(a: Bounds, b: Bounds): boolean {
   return a.left <= b.right && a.right >= b.left && a.top <= b.bottom && a.bottom >= b.top;
-}
-
-function boundsContain(outer: Bounds, inner: Bounds): boolean {
-  return (
-    outer.left <= inner.left &&
-    outer.right >= inner.right &&
-    outer.top <= inner.top &&
-    outer.bottom >= inner.bottom
-  );
 }
 
 function candidateSegmentsFromSegments(segments: Segment[]): SegmentCandidate[] {
@@ -598,10 +577,10 @@ function createEdgeLabelContext(
   const context: EdgeLabelContext = {
     edgeById: new Map(),
     edgeGeometryById: new Map(),
-    obstacleIndex: new SpatialHashIndex<ObstacleEntry>(SPATIAL_INDEX_CELL_SIZE),
-    placedLabelIndex: new SpatialHashIndex<ObstacleEntry>(SPATIAL_INDEX_CELL_SIZE),
-    groupBorderIndex: new SpatialHashIndex<BorderEntry>(SPATIAL_INDEX_CELL_SIZE),
-    segmentIndex: new SpatialHashIndex<EdgeSegmentEntry>(SPATIAL_INDEX_CELL_SIZE),
+    obstacleIndex: new CompressedBoundsIndex<ObstacleEntry>(metrics),
+    placedLabelIndex: new CompressedBoundsIndex<ObstacleEntry>(metrics),
+    groupBorderIndex: new CompressedBoundsIndex<BorderEntry>(metrics),
+    segmentIndex: new CompressedBoundsIndex<EdgeSegmentEntry>(metrics),
     searchBounds: { left: 0, right: 0, top: 0, bottom: 0 },
     metrics,
   };
@@ -666,7 +645,7 @@ function createEdgeLabelContext(
 
   context.searchBounds = expandBounds(
     aggregateBounds ?? { left: 0, right: 0, top: 0, bottom: 0 },
-    SPATIAL_INDEX_CELL_SIZE
+    128
   );
   return context;
 }
@@ -695,14 +674,8 @@ function queryObstacleEntries(
     }
   };
 
-  if (boundsContain(bounds, context.searchBounds)) {
-    incrementMetric(context.metrics, 'fullNodeObstacleScans');
-    appendEntries(context.obstacleIndex.values());
-    appendEntries(context.placedLabelIndex.values());
-  } else {
-    appendEntries(context.obstacleIndex.query(bounds));
-    appendEntries(context.placedLabelIndex.query(bounds));
-  }
+  appendEntries(context.obstacleIndex.query(bounds));
+  appendEntries(context.placedLabelIndex.query(bounds));
   incrementMetric(context.metrics, 'obstacleCandidatesVisited', collected.length);
   return collected;
 }
@@ -718,9 +691,7 @@ function queryForeignSegments(
 
   const overriddenEdgeIds = overrides ? new Set(overrides.keys()) : undefined;
   const collected: EdgeSegmentEntry[] = [];
-  const indexedEntries = boundsContain(bounds, context.searchBounds)
-    ? (incrementMetric(context.metrics, 'fullEdgeScans'), context.segmentIndex.values())
-    : context.segmentIndex.query(bounds);
+  const indexedEntries = context.segmentIndex.query(bounds);
   for (const entry of indexedEntries) {
     if (entry.edgeId === selfEdgeId || overriddenEdgeIds?.has(entry.edgeId)) {
       continue;
@@ -1907,7 +1878,8 @@ export function prepareGridLayout(data: LayoutData): void {
 
 export function positionGridEdgeLabels(
   data: LayoutData,
-  instrumentation?: GridEdgeLabelInstrumentation
+  instrumentation?: GridEdgeLabelInstrumentation,
+  routingInstrumentation?: GridRoutingInstrumentation
 ): void {
   const nodeById = new Map<string, Node>();
   for (const node of data.nodes) {
@@ -1963,86 +1935,18 @@ export function positionGridEdgeLabels(
     }
   };
 
-  const longestFirst = (a: LabelWorkItem, b: LabelWorkItem): number => {
-    const aSegments = candidateSegments(a.edge);
-    const bSegments = candidateSegments(b.edge);
-    const aLongest =
-      aSegments.length === 0
-        ? 0
-        : Math.max(...aSegments.map((segmentCandidate) => segmentLength(segmentCandidate.segment)));
-    const bLongest =
-      bSegments.length === 0
-        ? 0
-        : Math.max(...bSegments.map((segmentCandidate) => segmentLength(segmentCandidate.segment)));
-    if (Math.abs(bLongest - aLongest) > EPS) {
-      return bLongest - aLongest;
-    }
-    const aArea = (a.labelNode.width ?? 0) * (a.labelNode.height ?? 0);
-    const bArea = (b.labelNode.width ?? 0) * (b.labelNode.height ?? 0);
-    if (Math.abs(bArea - aArea) > EPS) {
-      return bArea - aArea;
-    }
-    return a.sourceIndex - b.sourceIndex || a.edge.id.localeCompare(b.edge.id);
-  };
-
-  const constrainedFirst = (a: LabelWorkItem, b: LabelWorkItem): number => {
-    const aSegments = candidateSegments(a.edge);
-    const bSegments = candidateSegments(b.edge);
-    if (aSegments.length !== bSegments.length) {
-      return aSegments.length - bSegments.length;
-    }
-    const aSlack =
-      aSegments.length === 0
-        ? Number.POSITIVE_INFINITY
-        : Math.max(
-            ...aSegments.map(
-              (segmentCandidate) =>
-                segmentLength(segmentCandidate.segment) -
-                requiredSegmentLength(a.labelNode, segmentCandidate.segment)
-            )
-          );
-    const bSlack =
-      bSegments.length === 0
-        ? Number.POSITIVE_INFINITY
-        : Math.max(
-            ...bSegments.map(
-              (segmentCandidate) =>
-                segmentLength(segmentCandidate.segment) -
-                requiredSegmentLength(b.labelNode, segmentCandidate.segment)
-            )
-          );
-    if (Math.abs(aSlack - bSlack) > EPS) {
-      return aSlack - bSlack;
-    }
-    return a.sourceIndex - b.sourceIndex || a.edge.id.localeCompare(b.edge.id);
-  };
-
-  const areaFirst = (a: LabelWorkItem, b: LabelWorkItem): number => {
-    const aArea = (a.labelNode.width ?? 0) * (a.labelNode.height ?? 0);
-    const bArea = (b.labelNode.width ?? 0) * (b.labelNode.height ?? 0);
-    if (Math.abs(bArea - aArea) > EPS) {
-      return bArea - aArea;
-    }
-    return longestFirst(a, b);
-  };
-
-  const placementOrders: LabelWorkItem[][] = [
-    [...labelledEdges].sort(longestFirst),
-    [...labelledEdges].sort(areaFirst),
-    [...labelledEdges].sort(constrainedFirst),
-    [...labelledEdges].sort(
-      (a, b) => a.sourceIndex - b.sourceIndex || a.edge.id.localeCompare(b.edge.id)
-    ),
-    [...labelledEdges].sort(
-      (a, b) => b.sourceIndex - a.sourceIndex || a.edge.id.localeCompare(b.edge.id)
-    ),
-  ];
-
+  const workItems = [...labelledEdges].sort(
+    (a, b) => a.sourceIndex - b.sourceIndex || a.edge.id.localeCompare(b.edge.id)
+  );
   let lastError: unknown;
-  for (const workItems of placementOrders) {
-    restoreBaseState();
+  for (let pass = 1; pass <= 2; pass++) {
+    incrementMetric(instrumentation, 'labelPasses');
     const context = createEdgeLabelContext(data, instrumentation);
     const placedLabelsByEdgeId = new Map<string, PlacedLabel>();
+    const passStartPoints = new Map(
+      data.edges.map((edge) => [edge.id, pointsForEdge(edge, undefined, context).map(clonePoint)])
+    );
+    const proposedOwnerRoutes = new Map<string, Point[]>();
     try {
       for (const { edge, labelNode } of workItems) {
         const segments = [...candidateSegments(edge, context)].sort((a, b) => {
@@ -2081,7 +1985,7 @@ export function positionGridEdgeLabels(
           }
         }
 
-        if (!labelCenter) {
+        if (pass === 2 && !labelCenter) {
           for (const segmentCandidate of segments) {
             labelCenter = labelPlacementWithDetour(
               edge,
@@ -2096,7 +2000,7 @@ export function positionGridEdgeLabels(
           }
         }
 
-        if (!labelCenter) {
+        if (pass === 2 && !labelCenter) {
           for (const segmentCandidate of segments) {
             labelCenter = labelPlacementWithExtendedDetour(
               edge,
@@ -2140,12 +2044,156 @@ export function positionGridEdgeLabels(
         upsertPlacedLabelObstacle(context, placedLabel);
       }
 
+      const frozenLabels = [...placedLabelsByEdgeId.values()];
+      incrementMetric(instrumentation, 'frozenReservations', frozenLabels.length);
+      if (routingInstrumentation) {
+        routingInstrumentation.labelOverlayBuilds++;
+        routingInstrumentation.labelOverlayVertices += frozenLabels.length * 4;
+      }
+
+      // The placement search is provisional: capture its route proposals, roll
+      // the routes back to the pass boundary, and only then commit each
+      // impacted edge once against the complete frozen reservation set.
+      for (const edge of data.edges) {
+        const passStart = passStartPoints.get(edge.id) ?? [];
+        const proposed = pointsForEdge(edge, undefined, context);
+        if (JSON.stringify(proposed) !== JSON.stringify(passStart)) {
+          proposedOwnerRoutes.set(edge.id, proposed.map(clonePoint));
+        }
+        setEdgePoints(context, edge, passStart.map(clonePoint));
+      }
+      for (const [edgeId, points] of proposedOwnerRoutes) {
+        if (!placedLabelsByEdgeId.has(edgeId)) {
+          continue;
+        }
+        const owner = context.edgeById.get(edgeId);
+        if (owner) {
+          setEdgePoints(context, owner, points);
+        }
+      }
+
+      const impacted = new Set<string>(proposedOwnerRoutes.keys());
+      for (const edge of data.edges) {
+        const ownLabel = placedLabelsByEdgeId.get(edge.id);
+        const points = pointsForEdge(edge, undefined, context);
+        for (const reservation of frozenLabels) {
+          if (reservation.edgeId !== edge.id && polylineIntersectsRect(points, reservation.rect)) {
+            impacted.add(edge.id);
+          }
+        }
+        if (ownLabel && !labelStillAnchored(edge.id, points, placedLabelsByEdgeId)) {
+          impacted.add(edge.id);
+        }
+      }
+
+      let rerouteOrdinal = 0;
+      for (const edge of data.edges) {
+        if (!impacted.has(edge.id)) {
+          continue;
+        }
+        let points = pointsForEdge(edge, undefined, context);
+        const overrides: EdgePointOverrides = new Map([[edge.id, points]]);
+        const blockingReservations = frozenLabels.filter(
+          (reservation) =>
+            reservation.edgeId !== edge.id && polylineIntersectsRect(points, reservation.rect)
+        );
+        if (blockingReservations.length > 0) {
+          const combinedRect = blockingReservations.slice(1).reduce<Rect>(
+            (combined, reservation) => ({
+              cx:
+                (Math.min(combined.left, reservation.rect.left) +
+                  Math.max(combined.right, reservation.rect.right)) /
+                2,
+              cy:
+                (Math.min(combined.top, reservation.rect.top) +
+                  Math.max(combined.bottom, reservation.rect.bottom)) /
+                2,
+              left: Math.min(combined.left, reservation.rect.left),
+              right: Math.max(combined.right, reservation.rect.right),
+              top: Math.min(combined.top, reservation.rect.top),
+              bottom: Math.max(combined.bottom, reservation.rect.bottom),
+            }),
+            { ...blockingReservations[0].rect }
+          );
+          // Leave one full separation lane beyond the 6 px label clearance;
+          // successive impacted routes receive distinct deterministic lanes.
+          const lanePadding = (rerouteOrdinal + 2) * 12;
+          const blockedRect: Rect = {
+            cx: combinedRect.cx,
+            cy: combinedRect.cy,
+            left: combinedRect.left - lanePadding,
+            right: combinedRect.right + lanePadding,
+            top: combinedRect.top - lanePadding,
+            bottom: combinedRect.bottom + lanePadding,
+          };
+          const rerouted = rerouteForeignEdgeAroundRect(
+            edge,
+            blockedRect,
+            context,
+            placedLabelsByEdgeId,
+            overrides
+          );
+          if (!rerouted) {
+            throw gridError(
+              'GRID_ROUTE_NOT_FOUND',
+              `Could not reroute edge "${edge.id}" around frozen labels`,
+              { edgeId: edge.id, pass }
+            );
+          }
+          points = rerouted;
+          overrides.set(edge.id, points);
+        }
+        if (!labelStillAnchored(edge.id, points, placedLabelsByEdgeId)) {
+          throw gridError('GRID_ROUTE_NOT_FOUND', `Label anchor was lost for edge "${edge.id}"`, {
+            edgeId: edge.id,
+            pass,
+          });
+        }
+        if (placedLabelsByEdgeId.has(edge.id)) {
+          incrementMetric(instrumentation, 'preservedAnchors');
+        }
+        setEdgePoints(context, edge, points);
+        incrementMetric(instrumentation, 'impactedEdgeReroutes');
+        rerouteOrdinal++;
+      }
+      if (impacted.size > 0 && instrumentation) {
+        instrumentation.maxReroutesPerEdgePerPass = Math.max(
+          instrumentation.maxReroutesPerEdgePerPass,
+          1
+        );
+      }
+
+      for (const { edge, labelNode } of workItems) {
+        const reservation = placedLabelsByEdgeId.get(edge.id);
+        if (
+          !reservation ||
+          !labelStillAnchored(
+            edge.id,
+            pointsForEdge(edge, undefined, context),
+            placedLabelsByEdgeId
+          ) ||
+          !rectSafeForLabel(reservation.rect, edge, labelNode.id, context)
+        ) {
+          throw gridError('GRID_ROUTE_NOT_FOUND', `Label pass ${pass} did not validate`, {
+            edgeId: edge.id,
+            pass,
+          });
+        }
+      }
       return;
     } catch (error) {
       lastError = error;
+      // Pass 2 begins from any valid route work produced by pass 1, while
+      // provisional labels are cleared and rebuilt deterministically.
+      for (const { labelNode } of workItems) {
+        delete labelNode.x;
+        delete labelNode.y;
+      }
     }
   }
 
+  restoreBaseState();
+  incrementMetric(instrumentation, 'rollbacks');
   if (lastError instanceof Error) {
     throw lastError;
   }

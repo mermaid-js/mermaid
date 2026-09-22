@@ -272,8 +272,16 @@ describe('grid determinism and performance', () => {
     expect(elapsed).toBeLessThan(500);
   });
 
-  it('records full-scan fallbacks when a candidate query spans the entire search bounds', () => {
+  it('uses coordinate-compressed label queries for very large coordinate spans', () => {
     const layout = fullSpanFallbackLayout();
+    for (const node of layout.nodes) {
+      if (typeof node.x === 'number') {
+        node.x += 1_000_000_000;
+      }
+    }
+    for (const edge of layout.edges) {
+      edge.points = edge.points?.map((point) => ({ ...point, x: point.x + 1_000_000_000 }));
+    }
     prepareGridLayout(layout);
     const labelNode = layout.nodes.find((node) => node.id === layout.edges[0].labelNodeId);
     if (labelNode) {
@@ -287,7 +295,10 @@ describe('grid determinism and performance', () => {
     expect(Number.isFinite(labelNode?.x)).toBe(true);
     expect(Number.isFinite(labelNode?.y)).toBe(true);
     expect(layout.edges[0].points?.length).toBeGreaterThan(2);
-    expect(metrics.fullNodeObstacleScans + metrics.fullEdgeScans).toBeGreaterThan(0);
+    expect(metrics.fullNodeObstacleScans).toBe(0);
+    expect(metrics.fullEdgeScans).toBe(0);
+    expect(metrics.indexCoordinateCount).toBe(100);
+    expect(metrics.indexSpanAllocations).toBe(0);
   });
 
   it('indexes dense label routing instead of rescanning all nodes and edges per candidate', () => {
@@ -318,5 +329,7 @@ describe('grid determinism and performance', () => {
     expect(metrics.obstacleRectQueries + metrics.obstacleBandQueries).toBeGreaterThan(0);
     expect(metrics.fullNodeObstacleScans).toBe(0);
     expect(metrics.fullEdgeScans).toBe(0);
+    expect(metrics.labelPasses).toBeLessThanOrEqual(2);
+    expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
   });
 });

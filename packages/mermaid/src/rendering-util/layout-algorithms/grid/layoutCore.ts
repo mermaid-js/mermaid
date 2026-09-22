@@ -445,7 +445,7 @@ function runGridLayoutCoreInPlace(
   layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
   materializeAbsoluteGeometry(result);
   routeGridEdges(data, result, metrics, routingOptions);
-  positionGridEdgeLabels(data);
+  positionGridEdgeLabels(data, undefined, metrics);
   return result;
 }
 

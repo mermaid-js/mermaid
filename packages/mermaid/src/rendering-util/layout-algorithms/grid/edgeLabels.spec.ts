@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
-import { prepareGridLayout, positionGridEdgeLabels } from './edgeLabels.js';
+import {
+  createGridEdgeLabelInstrumentation,
+  prepareGridLayout,
+  positionGridEdgeLabels,
+} from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
+import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 
 function node(id: string): Node {
   return {
@@ -57,6 +62,133 @@ function manualEdge(
 }
 
 describe('grid edge label helpers', () => {
+  it('places a fitting label on its existing segment without a routing pass', () => {
+    const data: LayoutData = {
+      nodes: [manualNode('a', 40, 100, 20, 20), manualNode('b', 360, 100, 20, 20)],
+      edges: [
+        manualEdge(
+          'labelled',
+          'a',
+          'b',
+          [
+            { x: 50, y: 100 },
+            { x: 350, y: 100 },
+          ],
+          'fits'
+        ),
+      ],
+      config: { layout: 'grid' } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 40;
+    labelNode.height = 20;
+    const originalPoints = structuredClone(data.edges[0].points);
+    const metrics = createGridEdgeLabelInstrumentation();
+    const routingMetrics = createGridRoutingInstrumentation();
+
+    positionGridEdgeLabels(data, metrics, routingMetrics);
+
+    expect(data.edges[0].points).toEqual(originalPoints);
+    expect(labelNode).toMatchObject({ x: 200, y: 100 });
+    expect(metrics.labelPasses).toBe(1);
+    expect(metrics.frozenReservations).toBe(1);
+    expect(metrics.impactedEdgeReroutes).toBe(0);
+    expect(routingMetrics.labelOverlayBuilds).toBe(1);
+    expect(routingMetrics.labelOverlayVertices).toBe(4);
+  });
+
+  it('reroutes an owning edge while preserving its frozen label anchor', () => {
+    const data: LayoutData = {
+      nodes: [
+        manualNode('left', 40, 160, 20, 20),
+        manualNode('right', 460, 160, 20, 20),
+        manualNode('top-1', 220, 40, 20, 20),
+        manualNode('bottom-1', 220, 280, 20, 20),
+        manualNode('top-2', 280, 40, 20, 20),
+        manualNode('bottom-2', 280, 280, 20, 20),
+        manualNode('owner-blocker', 250, 160, 70, 70),
+      ],
+      edges: [
+        manualEdge(
+          'owner',
+          'left',
+          'right',
+          [
+            { x: 50, y: 160 },
+            { x: 450, y: 160 },
+          ],
+          'owner label'
+        ),
+        manualEdge('foreign-1', 'top-1', 'bottom-1', [
+          { x: 220, y: 50 },
+          { x: 220, y: 270 },
+        ]),
+        manualEdge('foreign-2', 'top-2', 'bottom-2', [
+          { x: 280, y: 50 },
+          { x: 280, y: 270 },
+        ]),
+      ],
+      config: { layout: 'grid' } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 300;
+    labelNode.height = 28;
+    const metrics = createGridEdgeLabelInstrumentation();
+
+    positionGridEdgeLabels(data, metrics);
+
+    expect(data.edges[0].points?.length).toBeGreaterThan(2);
+    expect(metrics.labelPasses).toBe(2);
+    expect(metrics.frozenReservations).toBe(1);
+    expect(metrics.impactedEdgeReroutes).toBeGreaterThanOrEqual(1);
+    expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
+    expect(metrics.preservedAnchors).toBeGreaterThan(0);
+  });
+
+  it('rolls every route and label position back after two-pass non-convergence', () => {
+    const data: LayoutData = {
+      nodes: [
+        manualNode('a', 200, 200),
+        manualNode('left', 95, 200, 110, 180),
+        manualNode('right', 305, 200, 110, 180),
+        manualNode('top', 200, 95, 180, 110),
+        manualNode('bottom', 200, 305, 180, 110),
+      ],
+      edges: [
+        manualEdge(
+          'loop',
+          'a',
+          'a',
+          [
+            { x: 240, y: 190 },
+            { x: 280, y: 190 },
+            { x: 280, y: 210 },
+            { x: 240, y: 210 },
+          ],
+          'impossible'
+        ),
+      ],
+      config: { layout: 'grid' } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 260;
+    labelNode.height = 180;
+    const originalPoints = structuredClone(data.edges[0].points);
+    const metrics = createGridEdgeLabelInstrumentation();
+
+    expect(() => positionGridEdgeLabels(data, metrics)).toThrowError(
+      expect.objectContaining({ code: 'GRID_ROUTE_NOT_FOUND' })
+    );
+    expect(data.edges[0].points).toEqual(originalPoints);
+    expect(labelNode.x).toBeUndefined();
+    expect(labelNode.y).toBeUndefined();
+    expect(metrics.labelPasses).toBe(2);
+    expect(metrics.rollbacks).toBe(1);
+  });
+
   it('creates measurable label nodes without leaving duplicate edge labels behind', () => {
     const data: LayoutData = {
       nodes: [node('a'), node('b')],
@@ -234,11 +366,12 @@ describe('grid edge label helpers', () => {
     prepareGridLayout(data);
     const labelNode = data.nodes.find((node) => node.id === data.edges[0].labelNodeId);
     if (labelNode) {
-      labelNode.width = 52;
+      labelNode.width = 180;
       labelNode.height = 20;
     }
 
-    positionGridEdgeLabels(data);
+    const metrics = createGridEdgeLabelInstrumentation();
+    positionGridEdgeLabels(data, metrics);
 
     const report = validateLayout(data);
     expect(report).toMatchObject({ ok: true, issues: [] });
@@ -247,6 +380,8 @@ describe('grid edge label helpers', () => {
         .filter((item) => item.id.startsWith('v-'))
         .some((item) => (item.points?.length ?? 0) > 2)
     ).toBe(true);
+    expect(metrics.impactedEdgeReroutes).toBeGreaterThan(1);
+    expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
     expect(labelNode?.x).toEqual(expect.any(Number));
     expect(labelNode?.y).toEqual(expect.any(Number));
   });
