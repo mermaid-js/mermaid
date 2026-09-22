@@ -53,5 +53,4 @@ describe('a group inside a pool', () => {
 
     expect(group.x).toBeCloseTo(centreOf(members, 'x'), 5);
   });
-
 });
