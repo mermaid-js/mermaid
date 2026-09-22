@@ -9,6 +9,86 @@ export const GRID_LABEL_PREFIX = 'edge-label-';
 export type GridContainerId = string;
 export type GridSide = 'left' | 'right' | 'top' | 'bottom';
 export type GridOrientation = 'H' | 'V';
+export type RouterVertexId = number;
+
+export interface RouterPoint {
+  x: number;
+  y: number;
+}
+
+export interface RouterRect {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+export interface RouterObstacle extends RouterRect {
+  id: string;
+}
+
+export interface PortalRange {
+  ownerId: string;
+  side: GridSide;
+  low: number;
+  high: number;
+}
+
+export interface RouterVertex {
+  id: RouterVertexId;
+  point: RouterPoint;
+  kind: 'corner' | 'projection' | 'portal' | 'endpoint' | 'lane';
+  ownerId?: string;
+  side?: GridSide;
+}
+
+export interface RouterArc {
+  from: RouterVertexId;
+  to: RouterVertexId;
+  orientation: GridOrientation;
+  length: number;
+  kind: 'visibility' | 'terminal' | 'portal' | 'lane';
+  intervalStart: number;
+  intervalEnd: number;
+  occupiedLength?: number;
+  crossingCount?: number;
+}
+
+export interface RouterSearchArc {
+  to: RouterVertexId;
+  orientationOrdinal: 1 | 2;
+  length: number;
+  boundaryTransitions: 0 | 1;
+  occupiedLength: number;
+  crossings: number;
+}
+
+export interface OrthogonalIntervalIndex {
+  readonly coordinateCount: number;
+  readonly intervalCount: number;
+  intersects(coordinate: number, intervalStart: number, intervalEnd: number): boolean;
+  contains(coordinate: number, varying: number): boolean;
+  nearestBoundary(coordinate: number, origin: number, direction: -1 | 1): number | undefined;
+}
+
+export interface ContainerRoutingTopology {
+  containerId: GridContainerId;
+  bounds: RouterRect;
+  obstacles: readonly RouterObstacle[];
+  vertices: readonly RouterVertex[];
+  pointVertexIds: ReadonlyMap<string, RouterVertexId>;
+  horizontalVertexLines: ReadonlyMap<number, readonly RouterVertex[]>;
+  verticalVertexLines: ReadonlyMap<number, readonly RouterVertex[]>;
+  adjacency: ReadonlyMap<RouterVertexId, readonly RouterArc[]>;
+  adjacencyByVertex: readonly (readonly RouterArc[])[];
+  searchAdjacencyByVertex: readonly (readonly RouterSearchArc[])[];
+  adjacencyEntries: number;
+  horizontalIntervals: OrthogonalIntervalIndex;
+  verticalIntervals: OrthogonalIntervalIndex;
+  portalRanges: readonly PortalRange[];
+  seedCount: number;
+  estimatedBytes: number;
+}
 
 export interface GridLayoutConfigNormalized {
   placements: Map<string, GridPlacement>;
