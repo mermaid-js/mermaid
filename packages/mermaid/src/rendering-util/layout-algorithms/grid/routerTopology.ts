@@ -1,4 +1,7 @@
-import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
+import {
+  GridRoutingResourceLimitError,
+  type GridRoutingInstrumentation,
+} from './routerInstrumentation.js';
 import type {
   ContainerRoutingTopology,
   GridOrientation,
@@ -15,6 +18,10 @@ import type {
 
 export const ROUTE_CLEARANCE_PX = 6;
 
+const DEFAULT_MAX_VERTICES = 50_000;
+const DEFAULT_MAX_ADJACENCY_ENTRIES = 200_000;
+const DEFAULT_MAX_ESTIMATED_BYTES = 64 * 1024 * 1024;
+
 export interface RouterObstacleInput {
   id: string;
   bounds: RouterRect;
@@ -29,8 +36,15 @@ export interface ContainerTopologyInput {
   portalRanges?: readonly PortalRange[];
 }
 
+export interface TopologyResourceCaps {
+  maxVertices?: number;
+  maxAdjacencyEntries?: number;
+  maxEstimatedBytes?: number;
+}
+
 export interface BuildTopologyOptions {
   metrics?: GridRoutingInstrumentation;
+  caps?: TopologyResourceCaps;
 }
 
 interface VertexRecord {
@@ -86,6 +100,24 @@ class CompressedIntervalIndex implements OrthogonalIntervalIndex {
     return undefined;
   }
 
+  private overlaps(
+    intervals: readonly (readonly [number, number])[],
+    low: number,
+    high: number
+  ): boolean {
+    let left = 0;
+    let right = intervals.length;
+    while (left < right) {
+      const middle = (left + right) >>> 1;
+      if (intervals[middle][1] <= low) {
+        left = middle + 1;
+      } else {
+        right = middle;
+      }
+    }
+    return left < intervals.length && intervals[left][0] < high;
+  }
+
   intersects(coordinate: number, intervalStart: number, intervalEnd: number): boolean {
     const low = Math.min(intervalStart, intervalEnd);
     const high = Math.max(intervalStart, intervalEnd);
@@ -93,9 +125,7 @@ class CompressedIntervalIndex implements OrthogonalIntervalIndex {
     const after = this.byLow.get(coordinate);
     const containing = before || after ? undefined : this.containingBand(coordinate);
     if (containing) {
-      return containing.intervals.some(
-        ([intervalLow, intervalHigh]) => high > intervalLow && low < intervalHigh
-      );
+      return this.overlaps(containing.intervals, low, high);
     }
     if (!before || !after) {
       return false;
@@ -126,11 +156,22 @@ class CompressedIntervalIndex implements OrthogonalIntervalIndex {
   }
 
   contains(coordinate: number, varying: number): boolean {
-    return Boolean(
-      (
-        this.strictBoundaryIntervals.get(coordinate) ?? this.containingBand(coordinate)?.intervals
-      )?.some(([low, high]) => varying > low && varying < high)
-    );
+    const intervals =
+      this.strictBoundaryIntervals.get(coordinate) ?? this.containingBand(coordinate)?.intervals;
+    if (!intervals) {
+      return false;
+    }
+    let low = 0;
+    let high = intervals.length;
+    while (low < high) {
+      const middle = (low + high) >>> 1;
+      if (intervals[middle][0] < varying) {
+        low = middle + 1;
+      } else {
+        high = middle;
+      }
+    }
+    return low > 0 && varying < intervals[low - 1][1];
   }
 
   nearestBoundary(coordinate: number, origin: number, direction: -1 | 1): number | undefined {
@@ -140,19 +181,29 @@ class CompressedIntervalIndex implements OrthogonalIntervalIndex {
       return undefined;
     }
     if (direction < 0) {
-      for (let index = intervals.length - 1; index >= 0; index--) {
-        if (intervals[index][1] <= origin) {
-          return intervals[index][1];
+      let low = 0;
+      let high = intervals.length;
+      while (low < high) {
+        const middle = (low + high) >>> 1;
+        if (intervals[middle][1] <= origin) {
+          low = middle + 1;
+        } else {
+          high = middle;
         }
       }
-      return undefined;
+      return low > 0 ? intervals[low - 1][1] : undefined;
     }
-    for (const [low] of intervals) {
-      if (low >= origin) {
-        return low;
+    let low = 0;
+    let high = intervals.length;
+    while (low < high) {
+      const middle = (low + high) >>> 1;
+      if (intervals[middle][0] < origin) {
+        low = middle + 1;
+      } else {
+        high = middle;
       }
     }
-    return undefined;
+    return low < intervals.length ? intervals[low][0] : undefined;
   }
 }
 
@@ -195,6 +246,139 @@ class ImmutableMap<K, V> implements ReadonlyMap<K, V> {
 
   [Symbol.iterator](): MapIterator<[K, V]> {
     return this.entries();
+  }
+}
+
+class OverlayMap<K, V> implements ReadonlyMap<K, V> {
+  readonly [Symbol.toStringTag] = 'OverlayMap';
+
+  constructor(
+    private readonly base: ReadonlyMap<K, V>,
+    private readonly overrides: ReadonlyMap<K, V>
+  ) {}
+
+  get size(): number {
+    let added = 0;
+    for (const key of this.overrides.keys()) {
+      if (!this.base.has(key)) {
+        added++;
+      }
+    }
+    return this.base.size + added;
+  }
+
+  private materialize(): Map<K, V> {
+    return new Map([...this.base, ...this.overrides]);
+  }
+
+  entries(): MapIterator<[K, V]> {
+    return this.materialize().entries();
+  }
+
+  forEach(callbackfn: (value: V, key: K, map: ReadonlyMap<K, V>) => void, thisArg?: unknown): void {
+    for (const [key, value] of this) {
+      callbackfn.call(thisArg, value, key, this);
+    }
+  }
+
+  get(key: K): V | undefined {
+    return this.overrides.get(key) ?? this.base.get(key);
+  }
+
+  has(key: K): boolean {
+    return this.overrides.has(key) || this.base.has(key);
+  }
+
+  keys(): MapIterator<K> {
+    return this.materialize().keys();
+  }
+
+  values(): MapIterator<V> {
+    return this.materialize().values();
+  }
+
+  [Symbol.iterator](): MapIterator<[K, V]> {
+    return this.entries();
+  }
+}
+
+function overlayArray<T>(base: readonly T[], additions: readonly T[]): readonly T[] {
+  return new Proxy([] as T[], {
+    get(_target, property) {
+      if (property === 'length') {
+        return base.length + additions.length;
+      }
+      if (property === Symbol.iterator) {
+        return function* () {
+          yield* base;
+          yield* additions;
+        };
+      }
+      if (typeof property === 'string' && /^\d+$/.test(property)) {
+        const index = Number(property);
+        return index < base.length ? base[index] : additions[index - base.length];
+      }
+      return Reflect.get(Array.prototype, property);
+    },
+  });
+}
+
+function overrideArray<T>(
+  base: readonly T[],
+  overrides: ReadonlyMap<number, T>,
+  length: number
+): readonly T[] {
+  return new Proxy([] as T[], {
+    get(_target, property) {
+      if (property === 'length') {
+        return length;
+      }
+      if (property === Symbol.iterator) {
+        return function* () {
+          for (let index = 0; index < length; index++) {
+            yield overrides.get(index) ?? base[index];
+          }
+        };
+      }
+      if (typeof property === 'string' && /^\d+$/.test(property)) {
+        const index = Number(property);
+        return overrides.get(index) ?? base[index];
+      }
+      return Reflect.get(Array.prototype, property);
+    },
+  });
+}
+
+export class EndpointOverlayScratch {
+  readonly addedVertices: RouterVertex[] = [];
+  readonly adjacencyOverrides = new Map<number, readonly RouterArc[]>();
+  readonly searchAdjacencyOverrides = new Map<number, readonly RouterSearchArc[]>();
+  readonly pointOverrides = new Map<string, number>();
+  readonly undoLog: number[] = [];
+  resetCount = 0;
+
+  constructor(readonly base: ContainerRoutingTopology) {}
+
+  reset(base: ContainerRoutingTopology): void {
+    if (base !== this.base) {
+      throw new Error('Endpoint overlay scratch cannot be shared across base topologies');
+    }
+    for (const id of this.undoLog) {
+      this.adjacencyOverrides.delete(id);
+      this.searchAdjacencyOverrides.delete(id);
+    }
+    this.undoLog.length = 0;
+    this.addedVertices.length = 0;
+    this.pointOverrides.clear();
+    this.resetCount++;
+  }
+
+  setArcs(id: number, arcs: readonly RouterArc[]): void {
+    if (!this.adjacencyOverrides.has(id)) {
+      this.undoLog.push(id);
+    }
+    this.adjacencyOverrides.set(id, arcs);
+    this.searchAdjacencyOverrides.set(id, searchArcs(arcs));
   }
 }
 
@@ -254,38 +438,59 @@ function mergeIntervals(
 }
 
 function unionObstacles(obstacles: readonly RouterObstacle[]): RouterObstacle[] {
-  const xCoordinates = [...new Set(obstacles.flatMap(({ left, right }) => [left, right]))].sort(
-    (a, b) => a - b
-  );
+  const events = new Map<number, { starts: RouterObstacle[]; ends: RouterObstacle[] }>();
+  for (const obstacle of obstacles) {
+    const start = events.get(obstacle.left) ?? { starts: [], ends: [] };
+    start.starts.push(obstacle);
+    events.set(obstacle.left, start);
+    const end = events.get(obstacle.right) ?? { starts: [], ends: [] };
+    end.ends.push(obstacle);
+    events.set(obstacle.right, end);
+  }
+  const xCoordinates = [...events.keys()].sort((a, b) => a - b);
+  const active = new Set<RouterObstacle>();
   const slabs: RouterObstacle[] = [];
+  let previousByInterval = new Map<string, RouterObstacle>();
   for (let index = 0; index < xCoordinates.length - 1; index++) {
     const left = xCoordinates[index];
     const right = xCoordinates[index + 1];
-    const active = obstacles
-      .filter((obstacle) => obstacle.left < right && obstacle.right > left)
-      .map((obstacle) => ({ low: obstacle.top, high: obstacle.bottom, id: obstacle.id }));
-    for (const interval of mergeIntervals(active)) {
-      const previous = slabs.find(
-        (candidate) =>
-          candidate.right === left &&
-          candidate.top === interval.low &&
-          candidate.bottom === interval.high
-      );
+    const event = events.get(left)!;
+    for (const obstacle of event.ends) {
+      active.delete(obstacle);
+    }
+    for (const obstacle of event.starts) {
+      active.add(obstacle);
+    }
+    const nextByInterval = new Map<string, RouterObstacle>();
+    for (const interval of mergeIntervals(
+      [...active].map((obstacle) => ({
+        low: obstacle.top,
+        high: obstacle.bottom,
+        id: obstacle.id,
+      }))
+    )) {
+      const key = `${interval.low}:${interval.high}`;
+      const previous = previousByInterval.get(key);
       if (previous) {
         previous.right = right;
         if (interval.id.localeCompare(previous.id) < 0) {
           previous.id = interval.id;
         }
       } else {
-        slabs.push({
+        const slab = {
           id: interval.id,
           left,
           right,
           top: interval.low,
           bottom: interval.high,
-        });
+        };
+        slabs.push(slab);
+        nextByInterval.set(key, slab);
+        continue;
       }
+      nextByInterval.set(key, previous);
     }
+    previousByInterval = nextByInterval;
   }
   return slabs.sort(
     (a, b) =>
@@ -406,50 +611,52 @@ function createIntervalIndex(
   ].sort((a, b) => a - b);
   const bands: IndexedBand[] = [];
   const strictBoundaryIntervals = new Map<number, readonly (readonly [number, number])[]>();
-  for (const coordinate of coordinates) {
-    const intervals = obstacles
-      .filter((obstacle) =>
-        orientation === 'H'
-          ? obstacle.top < coordinate && coordinate < obstacle.bottom
-          : obstacle.left < coordinate && coordinate < obstacle.right
-      )
-      .map((obstacle) =>
+  const starts = new Map<number, RouterObstacle[]>();
+  const ends = new Map<number, RouterObstacle[]>();
+  for (const obstacle of obstacles) {
+    const start = orientation === 'H' ? obstacle.top : obstacle.left;
+    const end = orientation === 'H' ? obstacle.bottom : obstacle.right;
+    const startEvents = starts.get(start) ?? [];
+    startEvents.push(obstacle);
+    starts.set(start, startEvents);
+    const endEvents = ends.get(end) ?? [];
+    endEvents.push(obstacle);
+    ends.set(end, endEvents);
+  }
+  const active = new Set<RouterObstacle>();
+  const activeIntervals = () =>
+    mergeIntervals(
+      [...active].map((obstacle) =>
         orientation === 'H'
           ? { low: obstacle.left, high: obstacle.right, id: obstacle.id }
           : { low: obstacle.top, high: obstacle.bottom, id: obstacle.id }
-      );
-    strictBoundaryIntervals.set(
-      coordinate,
-      Object.freeze(
-        mergeIntervals(intervals).map((interval) =>
-          Object.freeze([interval.low, interval.high] as const)
-        )
       )
     );
-  }
-  for (let index = 1; index < coordinates.length; index++) {
-    const low = coordinates[index - 1];
-    const high = coordinates[index];
-    const intervals = obstacles
-      .filter((obstacle) =>
-        orientation === 'H'
-          ? obstacle.top < high && obstacle.bottom > low
-          : obstacle.left < high && obstacle.right > low
-      )
-      .map((obstacle) =>
-        orientation === 'H'
-          ? { low: obstacle.left, high: obstacle.right, id: obstacle.id }
-          : { low: obstacle.top, high: obstacle.bottom, id: obstacle.id }
-      );
+  const freezeIntervals = (
+    intervals: readonly { low: number; high: number }[]
+  ): readonly (readonly [number, number])[] =>
+    Object.freeze(
+      intervals.map((interval) => Object.freeze([interval.low, interval.high] as const))
+    );
+  for (let index = 0; index < coordinates.length; index++) {
+    const coordinate = coordinates[index];
+    for (const obstacle of ends.get(coordinate) ?? []) {
+      active.delete(obstacle);
+    }
+    strictBoundaryIntervals.set(coordinate, freezeIntervals(activeIntervals()));
+    for (const obstacle of starts.get(coordinate) ?? []) {
+      active.add(obstacle);
+    }
+    const high = coordinates[index + 1];
+    if (high === undefined) {
+      continue;
+    }
+    const intervals = activeIntervals();
     if (intervals.length > 0) {
       bands.push({
-        low,
+        low: coordinate,
         high,
-        intervals: Object.freeze(
-          mergeIntervals(intervals).map((interval) =>
-            Object.freeze([interval.low, interval.high] as const)
-          )
-        ),
+        intervals: freezeIntervals(intervals),
       });
     }
   }
@@ -466,6 +673,19 @@ function estimatedTopologyBytes(
   intervals: number
 ): number {
   return vertices * 64 + adjacencyEntries * 56 + obstacles * 48 + intervals * 24;
+}
+
+function enforceCap(
+  actual: number,
+  maximum: number,
+  reason: 'vertex_cap' | 'adjacency_cap' | 'estimated_memory_cap'
+): void {
+  if (actual > maximum) {
+    throw new GridRoutingResourceLimitError(
+      reason,
+      `Grid routing ${reason} exceeded: ${actual} > ${maximum}`
+    );
+  }
 }
 
 function indexVertexLines(
@@ -509,13 +729,15 @@ function searchArcs(arcs: readonly RouterArc[]): readonly RouterSearchArc[] {
 function buildVisibilityGraph(
   records: readonly VertexRecord[],
   horizontalIntervals: OrthogonalIntervalIndex,
-  verticalIntervals: OrthogonalIntervalIndex
+  verticalIntervals: OrthogonalIntervalIndex,
+  caps: TopologyResourceCaps
 ): {
   vertices: readonly RouterVertex[];
   adjacency: ReadonlyMap<number, readonly RouterArc[]>;
   adjacencyEntries: number;
 } {
   const canonical = canonicalRecords(records).sort(vertexRecordOrder);
+  enforceCap(canonical.length, caps.maxVertices ?? DEFAULT_MAX_VERTICES, 'vertex_cap');
   const vertices = canonical.map<RouterVertex>((record, id) =>
     Object.freeze({ id, ...record, point: Object.freeze({ ...record.point }) })
   );
@@ -602,6 +824,11 @@ function buildVisibilityGraph(
     adjacencyEntries += unique.length;
     immutableAdjacency.set(vertex.id, Object.freeze(unique.map((arc) => Object.freeze(arc))));
   }
+  enforceCap(
+    adjacencyEntries,
+    caps.maxAdjacencyEntries ?? DEFAULT_MAX_ADJACENCY_ENTRIES,
+    'adjacency_cap'
+  );
   return {
     vertices: Object.freeze(vertices),
     adjacency: new ImmutableMap(immutableAdjacency),
@@ -677,7 +904,8 @@ export function buildContainerRoutingTopology(
   const { vertices, adjacency, adjacencyEntries } = buildVisibilityGraph(
     [...seeds, ...projections],
     horizontalIntervals,
-    verticalIntervals
+    verticalIntervals,
+    options.caps ?? {}
   );
 
   const estimatedBytes = estimatedTopologyBytes(
@@ -685,6 +913,11 @@ export function buildContainerRoutingTopology(
     adjacencyEntries,
     obstacles.length,
     horizontalIntervals.intervalCount + verticalIntervals.intervalCount
+  );
+  enforceCap(
+    estimatedBytes,
+    options.caps?.maxEstimatedBytes ?? DEFAULT_MAX_ESTIMATED_BYTES,
+    'estimated_memory_cap'
   );
 
   if (options.metrics) {
@@ -717,5 +950,199 @@ export function buildContainerRoutingTopology(
     portalRanges: Object.freeze(portalRanges.map((range) => Object.freeze(range))),
     seedCount: seeds.length,
     estimatedBytes,
+  });
+}
+
+function pointInsideObstacle(
+  point: RouterPoint,
+  horizontalIntervals: OrthogonalIntervalIndex
+): boolean {
+  return horizontalIntervals.contains(point.y, point.x);
+}
+
+export function buildEndpointRoutingOverlay(
+  base: ContainerRoutingTopology,
+  source: RouterPoint,
+  target: RouterPoint,
+  metrics?: GridRoutingInstrumentation,
+  reusableScratch?: EndpointOverlayScratch
+): ContainerRoutingTopology {
+  const scratch = reusableScratch ?? new EndpointOverlayScratch(base);
+  scratch.reset(base);
+  const endpointRecords: VertexRecord[] = [
+    { point: source, kind: 'endpoint', ownerId: 'source' },
+    { point: target, kind: 'endpoint', ownerId: 'target' },
+  ];
+  for (const point of [
+    { x: source.x, y: target.y },
+    { x: target.x, y: source.y },
+  ]) {
+    if (!pointInsideObstacle(point, base.horizontalIntervals)) {
+      endpointRecords.push({ point, kind: 'projection' });
+    }
+  }
+  for (const record of endpointRecords.slice(0, 2)) {
+    for (const side of ['left', 'right', 'top', 'bottom'] as const) {
+      const hit = rayHit(
+        record.point,
+        side,
+        base.bounds,
+        base.horizontalIntervals,
+        base.verticalIntervals
+      );
+      if (hit.x !== record.point.x || hit.y !== record.point.y) {
+        endpointRecords.push({ point: hit, kind: 'projection', side });
+      }
+    }
+  }
+  const additions = canonicalRecords(endpointRecords)
+    .filter(({ point }) => !base.pointVertexIds.has(pointKey(point)))
+    .sort(vertexRecordOrder);
+  enforceCap(additions.length, 32, 'vertex_cap');
+  scratch.addedVertices.push(
+    ...additions.map<RouterVertex>((record, index) =>
+      Object.freeze({
+        id: base.vertices.length + index,
+        ...record,
+        point: Object.freeze({ ...record.point }),
+      })
+    )
+  );
+  const vertices = overlayArray(base.vertices, scratch.addedVertices);
+  const vertexAt = (id: number): RouterVertex =>
+    id < base.vertices.length
+      ? base.vertices[id]
+      : scratch.addedVertices[id - base.vertices.length];
+  const adjacency = new Map<number, RouterArc[]>();
+  const mutableArcs = (id: number): RouterArc[] => {
+    let arcs = adjacency.get(id);
+    if (!arcs) {
+      arcs = [...(base.adjacency.get(id) ?? [])];
+      adjacency.set(id, arcs);
+    }
+    return arcs;
+  };
+  for (const vertex of scratch.addedVertices) {
+    adjacency.set(vertex.id, []);
+  }
+  const addedIds = new Set(scratch.addedVertices.map(({ id }) => id));
+  const addedArcKeys = new Set<string>();
+  const connect = (a: RouterVertex, b: RouterVertex, orientation: GridOrientation): void => {
+    const length = Math.abs(a.point.x - b.point.x) + Math.abs(a.point.y - b.point.y);
+    if (length === 0) {
+      return;
+    }
+    const intervalStart =
+      orientation === 'H' ? Math.min(a.point.x, b.point.x) : Math.min(a.point.y, b.point.y);
+    const intervalEnd = intervalStart + length;
+    for (const [from, to] of [
+      [a, b],
+      [b, a],
+    ] as const) {
+      const key = `${from.id}:${to.id}:${orientation}:visibility`;
+      if (
+        addedArcKeys.has(key) ||
+        (base.adjacency.get(from.id) ?? []).some(
+          (arc) => arc.to === to.id && arc.orientation === orientation && arc.kind === 'visibility'
+        )
+      ) {
+        continue;
+      }
+      addedArcKeys.add(key);
+      mutableArcs(from.id).push({
+        from: from.id,
+        to: to.id,
+        orientation,
+        length,
+        kind: 'visibility',
+        intervalStart,
+        intervalEnd,
+      });
+    }
+  };
+
+  for (const orientation of ['H', 'V'] as const) {
+    const baseLines = orientation === 'H' ? base.horizontalVertexLines : base.verticalVertexLines;
+    const affected = new Set(
+      scratch.addedVertices.map(({ point }) => (orientation === 'H' ? point.y : point.x))
+    );
+    for (const fixed of affected) {
+      const line = [
+        ...(baseLines.get(fixed) ?? []),
+        ...scratch.addedVertices.filter(
+          ({ point }) => (orientation === 'H' ? point.y : point.x) === fixed
+        ),
+      ];
+      line.sort((a, b) =>
+        orientation === 'H'
+          ? a.point.x - b.point.x || a.id - b.id
+          : a.point.y - b.point.y || a.id - b.id
+      );
+      for (let index = 1; index < line.length; index++) {
+        const a = line[index - 1];
+        const b = line[index];
+        if (!addedIds.has(a.id) && !addedIds.has(b.id)) {
+          continue;
+        }
+        const start = orientation === 'H' ? a.point.x : a.point.y;
+        const end = orientation === 'H' ? b.point.x : b.point.y;
+        const intervalIndex =
+          orientation === 'H' ? base.horizontalIntervals : base.verticalIntervals;
+        if (!intervalIndex.intersects(fixed, start, end)) {
+          connect(a, b, orientation);
+        }
+      }
+    }
+  }
+
+  for (const [id, arcs] of adjacency) {
+    arcs.sort(
+      (a, b) =>
+        a.kind.localeCompare(b.kind) ||
+        a.orientation.localeCompare(b.orientation) ||
+        vertexAt(a.to).point.x - vertexAt(b.to).point.x ||
+        vertexAt(a.to).point.y - vertexAt(b.to).point.y ||
+        a.to - b.to
+    );
+    const immutableArcs = Object.freeze(arcs.map((arc) => Object.freeze(arc)));
+    scratch.setArcs(id, immutableArcs);
+  }
+  const adjacencyEntries = base.adjacencyEntries + addedArcKeys.size;
+  enforceCap(adjacencyEntries, base.adjacencyEntries + 64, 'adjacency_cap');
+  const addedVertices = additions.length;
+  const estimatedBytes =
+    base.estimatedBytes + addedVertices * 64 + (adjacencyEntries - base.adjacencyEntries) * 56;
+  if (metrics) {
+    metrics.endpointOverlayBuilds++;
+    metrics.endpointOverlayVertices += addedVertices;
+    metrics.estimatedBytes = Math.max(metrics.estimatedBytes, estimatedBytes);
+  }
+  const vertexCount = base.vertices.length + scratch.addedVertices.length;
+  const adjacencyByVertex = overrideArray(
+    base.adjacencyByVertex,
+    scratch.adjacencyOverrides,
+    vertexCount
+  );
+  const searchAdjacencyByVertex = overrideArray(
+    base.searchAdjacencyByVertex,
+    scratch.searchAdjacencyOverrides,
+    vertexCount
+  );
+  for (const vertex of scratch.addedVertices) {
+    scratch.pointOverrides.set(pointKey(vertex.point), vertex.id);
+  }
+  return Object.freeze({
+    ...base,
+    vertices,
+    pointVertexIds: new OverlayMap(base.pointVertexIds, scratch.pointOverrides),
+    adjacency: new OverlayMap(base.adjacency, scratch.adjacencyOverrides),
+    adjacencyByVertex,
+    searchAdjacencyByVertex,
+    adjacencyEntries,
+    estimatedBytes,
+    vertexCount,
+    getVertex: vertexAt,
+    getSearchArcs: (id: number) =>
+      scratch.searchAdjacencyOverrides.get(id) ?? base.searchAdjacencyByVertex[id] ?? [],
   });
 }

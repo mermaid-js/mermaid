@@ -7,7 +7,7 @@ import {
   resolveGridPlacements,
   validateGridPlacementMap,
 } from './placement.js';
-import { routeGridEdges } from './router.js';
+import { routeGridEdges, type GridRoutingOptions } from './router.js';
 import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import {
   GRID_DEFAULTS,
@@ -419,7 +419,8 @@ function cloneGridLayoutData(data: GridLayoutData): GridLayoutData {
 
 function runGridLayoutCoreInPlace(
   data: GridLayoutData,
-  metrics?: GridRoutingInstrumentation
+  metrics?: GridRoutingInstrumentation,
+  routingOptions?: GridRoutingOptions
 ): GridLayoutResult {
   const forest = buildGridForest(data.nodes);
   const config = readGridConfig(data);
@@ -443,7 +444,7 @@ function runGridLayoutCoreInPlace(
   }
   layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
   materializeAbsoluteGeometry(result);
-  routeGridEdges(data, result, metrics);
+  routeGridEdges(data, result, metrics, routingOptions);
   positionGridEdgeLabels(data);
   return result;
 }
@@ -451,11 +452,13 @@ function runGridLayoutCoreInPlace(
 export function runGridLayoutCore(data4Layout: LayoutData): GridLayoutResult;
 export function runGridLayoutCore(
   data4Layout: LayoutData,
-  metrics: GridRoutingInstrumentation
+  metrics: GridRoutingInstrumentation,
+  routingOptions?: GridRoutingOptions
 ): GridLayoutResult;
 export function runGridLayoutCore(
   data4Layout: LayoutData,
-  metrics?: GridRoutingInstrumentation
+  metrics?: GridRoutingInstrumentation,
+  routingOptions?: GridRoutingOptions
 ): GridLayoutResult {
   const data = data4Layout as GridLayoutData;
   const forest = buildGridForest(data.nodes);
@@ -468,7 +471,7 @@ export function runGridLayoutCore(
   validatePlacementsBeforeLayout(forest, config, sourceOrder);
 
   const working = cloneGridLayoutData(data);
-  const result = runGridLayoutCoreInPlace(working, metrics);
+  const result = runGridLayoutCoreInPlace(working, metrics, routingOptions);
   commitGridGeometry(working, data);
   return result;
 }

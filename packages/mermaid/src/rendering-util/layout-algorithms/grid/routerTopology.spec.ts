@@ -19,6 +19,90 @@ function topology(
 }
 
 describe('grid router topology', () => {
+  it('matches a brute-force obstacle union and interval oracle on randomized cases', () => {
+    let state = 0x71ab_19e3;
+    const random = () => {
+      state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+      return state / 0x1_0000_0000;
+    };
+
+    for (let caseIndex = 0; caseIndex < 500; caseIndex++) {
+      const obstacles = Array.from({ length: 1 + Math.floor(random() * 12) }, (_, index) => {
+        const left = Math.floor(random() * 80);
+        const top = Math.floor(random() * 80);
+        return {
+          id: `o-${index}`,
+          left,
+          right: left + 1 + Math.floor(random() * 20),
+          top,
+          bottom: top + 1 + Math.floor(random() * 20),
+        };
+      });
+      const result = topology(obstacles);
+      const inflated = obstacles.map((obstacle) => ({
+        left: Math.max(0, obstacle.left - 6),
+        right: Math.min(100, obstacle.right + 6),
+        top: Math.max(0, obstacle.top - 6),
+        bottom: Math.min(100, obstacle.bottom + 6),
+      }));
+
+      for (let query = 0; query < 50; query++) {
+        const coordinate = Math.floor(random() * 101);
+        const start = Math.floor(random() * 101);
+        const end = Math.floor(random() * 101);
+        const low = Math.min(start, end);
+        const high = Math.max(start, end);
+        const blocked = (orientation: 'H' | 'V') => {
+          const isBoundary = inflated.some((obstacle) =>
+            orientation === 'H'
+              ? obstacle.top === coordinate || obstacle.bottom === coordinate
+              : obstacle.left === coordinate || obstacle.right === coordinate
+          );
+          if (isBoundary && low === high) {
+            return false;
+          }
+          const before = inflated.filter((obstacle) =>
+            orientation === 'H'
+              ? obstacle.top < coordinate && obstacle.bottom >= coordinate
+              : obstacle.left < coordinate && obstacle.right >= coordinate
+          );
+          const after = inflated.filter((obstacle) =>
+            orientation === 'H'
+              ? obstacle.top <= coordinate && obstacle.bottom > coordinate
+              : obstacle.left <= coordinate && obstacle.right > coordinate
+          );
+          return before.some((first) =>
+            after.some((second) => {
+              const firstLow = orientation === 'H' ? first.left : first.top;
+              const firstHigh = orientation === 'H' ? first.right : first.bottom;
+              const secondLow = orientation === 'H' ? second.left : second.top;
+              const secondHigh = orientation === 'H' ? second.right : second.bottom;
+              if (low === high) {
+                return low > firstLow && low < firstHigh && low > secondLow && low < secondHigh;
+              }
+              return Math.max(low, firstLow, secondLow) < Math.min(high, firstHigh, secondHigh);
+            })
+          );
+        };
+        const horizontal = blocked('H');
+        const vertical = blocked('V');
+        expect(
+          result.horizontalIntervals.intersects(coordinate, start, end),
+          `horizontal case=${caseIndex} coordinate=${coordinate} range=${start}:${end}`
+        ).toBe(horizontal);
+        expect(
+          result.verticalIntervals.intersects(coordinate, start, end),
+          `vertical case=${caseIndex} coordinate=${coordinate} range=${start}:${end}`
+        ).toBe(vertical);
+      }
+
+      const rebuilt = topology([...obstacles].reverse());
+      expect(rebuilt.obstacles).toEqual(result.obstacles);
+      expect(rebuilt.vertices).toEqual(result.vertices);
+      expect([...rebuilt.adjacency]).toEqual([...result.adjacency]);
+    }
+  });
+
   it('uses inflated measured geometry and title exclusions as obstacles', () => {
     const result = buildContainerRoutingTopology({
       containerId: 'group',
@@ -150,5 +234,23 @@ describe('grid router topology', () => {
     expect(metricsCompact.baseTopologyBuilds).toBe(1);
     expect(metricsCompact.containersBuilt).toBe(1);
     expect(metricsCompact.estimatedBytes).toBeGreaterThan(0);
+  });
+
+  it.each([
+    ['vertex_cap', { maxVertices: 1 }],
+    ['adjacency_cap', { maxAdjacencyEntries: 1 }],
+    ['estimated_memory_cap', { maxEstimatedBytes: 1 }],
+  ] as const)('reports the deterministic %s resource cap', (reason, caps) => {
+    expect(() =>
+      buildContainerRoutingTopology(
+        {
+          containerId: '__grid_root__',
+          ancestryPath: ['__grid_root__'],
+          bounds: { left: 0, right: 100, top: 0, bottom: 100 },
+          obstacles: [{ id: 'center', bounds: { left: 40, right: 60, top: 40, bottom: 60 } }],
+        },
+        { caps }
+      )
+    ).toThrowError(expect.objectContaining({ reason }));
   });
 });

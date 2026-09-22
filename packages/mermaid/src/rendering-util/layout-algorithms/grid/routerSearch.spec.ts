@@ -7,7 +7,11 @@ import {
   findShortestRoute,
   tupleHeuristic,
 } from './routerSearch.js';
-import { buildContainerRoutingTopology } from './routerTopology.js';
+import {
+  EndpointOverlayScratch,
+  buildContainerRoutingTopology,
+  buildEndpointRoutingOverlay,
+} from './routerTopology.js';
 import type { ContainerRoutingTopology, RouterPoint } from './types.js';
 
 function build(
@@ -38,7 +42,10 @@ describe('grid router search', () => {
       0
     );
     expect(addTupleCost([1, 2, 3, 4, 5, 6], [6, 5, 4, 3, 2, 1])).toEqual([7, 7, 7, 7, 7, 7]);
-    expect(tupleHeuristic({ x: 10, y: 15 }, { x: 22, y: 8 })).toEqual([19, 0, 0, 0, 0, 0]);
+    expect(tupleHeuristic({ x: 10, y: 15 }, { x: 22, y: 8 }, 'H', 'V')).toEqual([
+      19, 1, 0, 0, 0, 0,
+    ]);
+    expect(tupleHeuristic({ x: 10, y: 15 }, { x: 10, y: 8 }, 'H', 'V')).toEqual([7, 1, 0, 0, 0, 0]);
   });
 
   it('finds a deterministic shortest path with exact bend accounting', () => {
@@ -76,6 +83,114 @@ describe('grid router search', () => {
 
     expect(reduced?.cost.slice(0, 2)).toEqual(dense?.cost.slice(0, 2));
     expect(reduced?.cost.slice(0, 2)).toEqual([100, 0]);
+  });
+
+  it('keeps endpoint overlays bounded and outside the base topology', () => {
+    const topology = build([{ id: 'center', left: 40, right: 60, top: 30, bottom: 70 }]);
+    const metrics = createGridRoutingInstrumentation();
+    const overlay = buildEndpointRoutingOverlay(
+      topology,
+      { x: 10, y: 10 },
+      { x: 90, y: 90 },
+      metrics
+    );
+
+    expect(overlay.vertices.length - topology.vertices.length).toBeLessThanOrEqual(32);
+    expect(overlay.adjacencyEntries - topology.adjacencyEntries).toBeLessThanOrEqual(64);
+    expect(metrics.endpointOverlayBuilds).toBe(1);
+    expect(metrics.endpointOverlayVertices).toBe(
+      overlay.vertices.length - topology.vertices.length
+    );
+    expect(topology.vertices.some(({ kind }) => kind === 'endpoint')).toBe(false);
+  });
+
+  it('reuses endpoint overlay scratch without changing the immutable base topology', () => {
+    const topology = build([{ id: 'center', left: 40, right: 60, top: 30, bottom: 70 }]);
+    const baseSnapshot = structuredClone({
+      vertices: topology.vertices,
+      adjacency: [...topology.adjacency],
+    });
+    const scratch = new EndpointOverlayScratch(topology);
+    const first = buildEndpointRoutingOverlay(
+      topology,
+      { x: 10, y: 10 },
+      { x: 90, y: 90 },
+      undefined,
+      scratch
+    );
+    const firstCounts = {
+      vertices: first.vertices.length - topology.vertices.length,
+      arcs: first.adjacencyEntries - topology.adjacencyEntries,
+    };
+    const second = buildEndpointRoutingOverlay(
+      topology,
+      { x: 10, y: 90 },
+      { x: 90, y: 10 },
+      undefined,
+      scratch
+    );
+
+    expect(firstCounts.vertices).toBeLessThanOrEqual(32);
+    expect(firstCounts.arcs).toBeLessThanOrEqual(64);
+    expect(second.vertices.length - topology.vertices.length).toBeLessThanOrEqual(32);
+    expect(second.adjacencyEntries - topology.adjacencyEntries).toBeLessThanOrEqual(64);
+    expect(scratch.resetCount).toBe(2);
+    expect({
+      vertices: topology.vertices,
+      adjacency: [...topology.adjacency],
+    }).toEqual(baseSnapshot);
+  });
+
+  it('returns the same canonical route with zero heuristic and perturbed queue order', () => {
+    const topology = build([
+      { id: 'center', left: 40, right: 60, top: 30, bottom: 70 },
+      { id: 'upper-left', left: 15, right: 25, top: 10, bottom: 25 },
+    ]);
+    const overlay = buildEndpointRoutingOverlay(topology, { x: 0, y: 50 }, { x: 100, y: 50 });
+    const source = vertexAt(overlay, { x: 0, y: 50 });
+    const target = vertexAt(overlay, { x: 100, y: 50 });
+    const canonical = findShortestRoute(overlay, source, target);
+    const zero = findShortestRoute(overlay, source, target, { heuristic: 'zero' });
+    const perturbed = findShortestRoute(overlay, source, target, {
+      queueOrder: 'reverse',
+    });
+
+    expect(zero).toEqual(canonical);
+    expect(perturbed).toEqual(canonical);
+  });
+
+  it('accounts for reusable search workspace memory and enforces its cap', () => {
+    const topology = build();
+    const source = vertexAt(topology, { x: 0, y: 0 });
+    const target = vertexAt(topology, { x: 100, y: 100 });
+    const metrics = createGridRoutingInstrumentation();
+
+    findShortestRoute(topology, source, target, { metrics });
+    expect(metrics.searchWorkspaceBytes).toBeGreaterThan(0);
+    expect(() =>
+      findShortestRoute(topology, source, target, {
+        caps: { maxEstimatedBytes: 1 },
+      })
+    ).toThrowError(expect.objectContaining({ reason: 'estimated_memory_cap' }));
+  });
+
+  it('reports deterministic search-state cap exhaustion', () => {
+    const topology = build([{ id: 'center', left: 40, right: 60, top: 30, bottom: 70 }]);
+    const source = vertexAt(topology, { x: 0, y: 24 });
+    const target = vertexAt(topology, { x: 100, y: 76 });
+    const metrics = createGridRoutingInstrumentation();
+
+    expect(() =>
+      findShortestRoute(topology, source, target, {
+        metrics,
+        caps: { maxExpandedStates: 1 },
+      })
+    ).toThrowError(
+      expect.objectContaining({
+        reason: 'search_state_cap',
+      })
+    );
+    expect(metrics.expandedStates).toBe(1);
   });
 
   it('rejects malformed graph invariants without treating them as no-route', () => {
@@ -123,22 +238,38 @@ describe('grid router search', () => {
         };
       });
       const topology = build(obstacles);
-      const source = { x: 0, y: 0 };
-      const target = { x: 100, y: 100 };
+      const seeds = topology.vertices.filter(({ kind }) => kind !== 'projection');
+      const source = seeds[caseIndex % seeds.length];
+      const target = seeds[(caseIndex * 17 + 7) % seeds.length];
+      const overlay = buildEndpointRoutingOverlay(topology, source.point, target.point);
       const reduced = findShortestRoute(
-        topology,
-        vertexAt(topology, source),
-        vertexAt(topology, target)
+        overlay,
+        vertexAt(overlay, source.point),
+        vertexAt(overlay, target.point)
+      );
+      const zero = findShortestRoute(
+        overlay,
+        vertexAt(overlay, source.point),
+        vertexAt(overlay, target.point),
+        { heuristic: 'zero' }
+      );
+      const perturbed = findShortestRoute(
+        overlay,
+        vertexAt(overlay, source.point),
+        vertexAt(overlay, target.point),
+        { queueOrder: 'reverse' }
       );
       const dense = findDenseOracleRoute({
         bounds: topology.bounds,
         obstacles: topology.obstacles,
-        source,
-        target,
+        source: source.point,
+        target: target.point,
       });
 
       expect(Boolean(reduced), `reachability case ${caseIndex}`).toBe(Boolean(dense));
       expect(reduced?.cost.slice(0, 2), `cost case ${caseIndex}`).toEqual(dense?.cost.slice(0, 2));
+      expect(zero, `zero heuristic canonical case ${caseIndex}`).toEqual(reduced);
+      expect(perturbed, `queue perturbation canonical case ${caseIndex}`).toEqual(reduced);
     }
-  }, 20_000);
+  }, 60_000);
 });

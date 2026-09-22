@@ -158,14 +158,50 @@ async function characterizeFixture(name: string) {
 }
 
 describe('grid DDLT matrix fixtures', () => {
-  it.fails('routes through empty aligned cell space without a global-corridor detour', async () => {
-    const { layout } = await loadGridFixtureWithResult('routing-cell-aware-empty-cell');
+  it('routes through empty aligned cell space without a global-corridor detour', async () => {
+    const metrics = createGridRoutingInstrumentation();
+    const { layout } = await loadGridFixtureWithResult('routing-cell-aware-empty-cell', metrics);
     const routed = layout.edges.find((edge) => edge.start === 'v1' && edge.end === 'v2');
     const normalized = normalizePolyline(routed?.points ?? []);
 
     expect(validateLayout(layout)).toMatchObject({ ok: true, issues: [] });
     expect(normalized.segments).toHaveLength(1);
     expect(normalized.segments[0]?.orientation).toBe('H');
+    expect(normalized.points).toMatchInlineSnapshot(`
+      [
+        {
+          "x": 180,
+          "y": 6,
+        },
+        {
+          "x": 460,
+          "y": 6,
+        },
+      ]
+    `);
+    expect({
+      baseVertices: metrics.baseVertices,
+      baseAdjacencyEntries: metrics.baseAdjacencyEntries,
+      endpointOverlayBuilds: metrics.endpointOverlayBuilds,
+      endpointOverlayVertices: metrics.endpointOverlayVertices,
+      searches: metrics.searches,
+      expandedStates: metrics.expandedStates,
+      maxOpenSet: metrics.maxOpenSet,
+      estimatedBytes: metrics.estimatedBytes,
+      resourceLimitFallbacks: metrics.resourceLimitFallbacks,
+    }).toMatchInlineSnapshot(`
+      {
+        "baseAdjacencyEntries": 144,
+        "baseVertices": 44,
+        "endpointOverlayBuilds": 3,
+        "endpointOverlayVertices": 32,
+        "estimatedBytes": 36704,
+        "expandedStates": 12,
+        "maxOpenSet": 8,
+        "resourceLimitFallbacks": 0,
+        "searches": 3,
+      }
+    `);
   });
 
   it('records representative route characteristics', async () => {
@@ -215,11 +251,11 @@ describe('grid DDLT matrix fixtures', () => {
           "valid": true,
         },
         {
-          "bends": 6,
+          "bends": 4,
           "crossings": 0,
           "id": "grid/routing-cell-aware-empty-cell",
-          "routeSignature": "0ec7e387d9677c50d7e98c31b57be0fd4cd45cddd2d28cf02cdcf2f7310a76a0",
-          "score": 965,
+          "routeSignature": "857343e11a83b770566d6bd35e7fe7cd349ff828354636cb387ccc2826191d69",
+          "score": 990,
           "valid": true,
         },
       ]

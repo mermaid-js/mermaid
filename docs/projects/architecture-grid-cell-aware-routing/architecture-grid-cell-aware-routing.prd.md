@@ -1,8 +1,8 @@
 ---
 goal: Replace Grid Global Corridors with Sparse Cell-Aware Orthogonal Routing
-version: 1.0
+version: 1.1
 date_created: 2026-09-21
-last_updated: 2026-09-21
+last_updated: 2026-09-22
 owner: Mermaid maintainers
 tags: [architecture, grid-layout, edge-routing, migration, performance]
 ---
@@ -20,7 +20,7 @@ corridors nevertheless detour `v1 --> v2` above row 1.
 
 This plan replaces that routing model with a path-complete, sparse rectilinear
 visibility graph built from measured geometry once per container per layout
-invocation. Deterministic tuple-cost A* chooses valid orthogonal routes.
+invocation. Deterministic tuple-cost A\* chooses valid orthogonal routes.
 Straight routes emerge naturally because they have minimum Manhattan length
 and zero bends; there is no direct-route special case.
 
@@ -67,7 +67,7 @@ requirements), `FM-` (failure modes), `AC-` (acceptance criteria), and `RD-`
 - Geometry-derived obstacle, container-boundary, endpoint, portal, and lane
   semantics for grid routing.
 - A reduced rectilinear visibility graph with nearest-visible projections and
-  deterministic tuple-cost A*.
+  deterministic tuple-cost A\*.
 - Per-edge endpoint/lane overlays and per-label-pass obstacle overlays over an
   immutable invocation-local base topology.
 - Nested-container route composition through paired boundary portals.
@@ -90,22 +90,22 @@ requirements), `FM-` (failure modes), `AC-` (acceptance criteria), and `RD-`
 
 ## 2. Terminology
 
-| Term | Definition |
-|------|------------|
-| Logical cell | A placement key `(row, column)`. Logical coordinates determine ordering, not routing occupancy or allocation size. |
-| Track rectangle | The full `cellLeft`, `cellTop`, `cellWidth`, and `cellHeight` area recorded for placement/alignment. It is not an obstacle. |
-| Measured geometry | The actual node/group bounding rectangle after `layoutContainer()` and `materializeAbsoluteGeometry()`. |
-| Inflated obstacle | Measured geometry expanded by `ROUTE_CLEARANCE_PX = 6`, except for explicitly legal terminal channels and portals. |
-| Routing site | An obstacle corner, container corner, portal site, endpoint slot, lane site, or nearest-visible projection used by the reduced graph. |
-| Base topology | Immutable per-container graph derived from container geometry and direct-child obstacles, excluding edge occupancy and labels. |
-| Overlay | Invocation-local graph additions/disabled transitions for one endpoint pair, lane bundle, or label-reservation pass. |
-| Portal range | A legal interval on one group side after excluding corners, title space, and padding constraints. |
-| Paired portal | Matching child-interior and parent-exterior vertices connected by one perpendicular hierarchy transition. |
-| Terminal channel | The only segment allowed to cross an endpoint owner's inflated obstacle, from a measured boundary port outward to clear space. |
-| Pair bundle | All parallel and reverse edges sharing one unordered endpoint pair. |
-| Occupancy | Segments from already committed valid routes, stored separately from base topology. |
-| Path-complete | If a valid orthogonal route exists under this document's rectangular obstacle, portal, clearance, and terminal-channel model, a graph route exists. |
-| Legacy router | The current global-corridor implementation, retained temporarily behind enumerated resource-limit fallback only. |
+| Term              | Definition                                                                                                                                          |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Logical cell      | A placement key `(row, column)`. Logical coordinates determine ordering, not routing occupancy or allocation size.                                  |
+| Track rectangle   | The full `cellLeft`, `cellTop`, `cellWidth`, and `cellHeight` area recorded for placement/alignment. It is not an obstacle.                         |
+| Measured geometry | The actual node/group bounding rectangle after `layoutContainer()` and `materializeAbsoluteGeometry()`.                                             |
+| Inflated obstacle | Measured geometry expanded by `ROUTE_CLEARANCE_PX = 6`, except for explicitly legal terminal channels and portals.                                  |
+| Routing site      | An obstacle corner, container corner, portal site, endpoint slot, lane site, or nearest-visible projection used by the reduced graph.               |
+| Base topology     | Immutable per-container graph derived from container geometry and direct-child obstacles, excluding edge occupancy and labels.                      |
+| Overlay           | Invocation-local graph additions/disabled transitions for one endpoint pair, lane bundle, or label-reservation pass.                                |
+| Portal range      | A legal interval on one group side after excluding corners, title space, and padding constraints.                                                   |
+| Paired portal     | Matching child-interior and parent-exterior vertices connected by one perpendicular hierarchy transition.                                           |
+| Terminal channel  | The only segment allowed to cross an endpoint owner's inflated obstacle, from a measured boundary port outward to clear space.                      |
+| Pair bundle       | All parallel and reverse edges sharing one unordered endpoint pair.                                                                                 |
+| Occupancy         | Segments from already committed valid routes, stored separately from base topology.                                                                 |
+| Path-complete     | If a valid orthogonal route exists under this document's rectangular obstacle, portal, clearance, and terminal-channel model, a graph route exists. |
+| Legacy router     | The current global-corridor implementation, retained temporarily behind enumerated resource-limit fallback only.                                    |
 
 ## 3. Solution Architecture
 
@@ -174,7 +174,7 @@ interface RouterPoint {
 }
 
 interface RouterVertex {
-  id: RouterVertexId;           // Stable sorted ordinal, not a coordinate hash.
+  id: RouterVertexId; // Stable sorted ordinal, not a coordinate hash.
   point: RouterPoint;
   kind: 'corner' | 'projection' | 'portal' | 'endpoint' | 'lane';
   ownerId?: string;
@@ -288,18 +288,18 @@ change a route.
 
 ### 3.5 Cell and obstacle semantics
 
-| Geometry | Router semantics |
-|----------|------------------|
-| Logical cell | Placement ordering only; never materialized as a routing object. |
-| Track rectangle | Available space except where actual measured geometry occupies it. |
-| Leaf node | Measured bounding rectangle inflated by 6 px. |
-| Nonrectangular node | Same conservative inflated bounding rectangle in v1; actual shape clipping remains in the painter. |
-| Direct child group as seen from parent | Inflated solid rectangle except legal terminal/transit portals. |
-| Group as its own container | Container frame/boundary; child routing stays inside the existing 24 px routing gutter. |
-| Group title | `groupTitleRect` inflated by 6 px and excluded from portal/routing space. |
-| Empty or unused aligned space | Traversable when no inflated measured geometry intersects it. |
-| Label helper before placement | Not a base obstacle. |
-| Frozen label reservation | Pass-local inflated obstacle with local visibility projections. |
+| Geometry                               | Router semantics                                                                                   |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Logical cell                           | Placement ordering only; never materialized as a routing object.                                   |
+| Track rectangle                        | Available space except where actual measured geometry occupies it.                                 |
+| Leaf node                              | Measured bounding rectangle inflated by 6 px.                                                      |
+| Nonrectangular node                    | Same conservative inflated bounding rectangle in v1; actual shape clipping remains in the painter. |
+| Direct child group as seen from parent | Inflated solid rectangle except legal terminal/transit portals.                                    |
+| Group as its own container             | Container frame/boundary; child routing stays inside the existing 24 px routing gutter.            |
+| Group title                            | `groupTitleRect` inflated by 6 px and excluded from portal/routing space.                          |
+| Empty or unused aligned space          | Traversable when no inflated measured geometry intersects it.                                      |
+| Label helper before placement          | Not a base obstacle.                                                                               |
+| Frozen label reservation               | Pass-local inflated obstacle with local visibility projections.                                    |
 
 Inflated obstacles MUST be normalized into non-overlapping blocked rectangles or
 an equivalent interval union before visibility sweeps. Inflated-obstacle
@@ -314,7 +314,7 @@ Routing domains are exact:
   `rootContainerMeta()`.
 - A group interior domain is
   `[contentLeft - 20, contentRight + 20] ×
-  [contentTop - 20, contentBottom + 20]`, clipped to the measured group
+[contentTop - 20, contentBottom + 20]`, clipped to the measured group
   rectangle and excluding the inflated group title. This preserves the current
   24 px routing gutter and 20 px clearance from `layoutContainer()`.
 - In a parent topology, the same group is its measured rectangle inflated by
@@ -412,7 +412,7 @@ base graph is built per container while hierarchy demand remains edge-specific.
 
 ### 3.8 Deterministic search and cost
 
-Production routing MUST use A*. Dijkstra MAY exist only as the small-graph test
+Production routing MUST use A\*. Dijkstra MAY exist only as the small-graph test
 oracle. Search state is `(vertexId, incomingOrientation)` so bends are counted
 exactly.
 
@@ -437,12 +437,12 @@ Pair-bundle shared-lane violations are hard-invalid. Per-arc increments are
 crossingEvents, 0]`. Endpoint candidate rank is charged exactly once on the
 synthetic source arc.
 
-The admissible A* heuristic is deliberately simple:
+The admissible, consistent A\* heuristic is:
 
 ```text
 [
   Manhattan distance to target,
-  0,
+  minimum remaining bends implied by displacement and endpoint orientations,
   0,
   0,
   0,
@@ -454,13 +454,18 @@ Congestion and crossings therefore influence only routes tied on length, bends,
 and boundary transitions. v1 MUST NOT take an arbitrarily longer route solely
 to reduce crossings and MUST NOT claim global crossing minimization.
 
-The open set MUST compare `f = g + h`, then use non-cost keys
-`[stateVertexId, incomingOrientationOrdinal, predecessorStateId,
-insertionOrdinal]`. Relaxation replaces a state on lower `g`; equal `g` keeps
-the lexicographically smaller predecessor-state chain. Reopening is REQUIRED
-when a lower `g` is found. Search MAY terminate only when the smallest open
-`f` is not less than the best goal `g`. Epsilon-based priority comparisons are
-forbidden because they are not transitive.
+The externally meaningful result is the minimum semantic tuple cost followed
+by the lexicographically smallest complete state sequence
+`[(vertexId, incomingOrientationOrdinal), ...]`. Queue insertion order,
+queue-pop order, and other discovery-order details are implementation details
+and MUST NOT affect that result. Relaxation replaces a state on lower `g`;
+equal-cost alternatives MUST resolve to the canonical lexicographically
+smallest state sequence. Reopening is REQUIRED when a lower `g` is found.
+After a best goal exists, search MAY terminate only when the smallest open `f`
+is **strictly greater than** the best goal `g`; equal-`f` states remain eligible
+to supply the canonical result. Epsilon-based priority comparisons are
+forbidden because they are not transitive. Tests MUST perturb queue tie order
+and compare the production heuristic with `h = 0` to prove result independence.
 
 ### 3.9 Routing order, occupancy, and cache behavior
 
@@ -554,16 +559,16 @@ cover equivalent dense-label cases.
 
 Search outcomes MUST be classified exactly:
 
-| Outcome | Legacy fallback allowed |
-|---------|-------------------------|
-| Complete path-complete graph searched to exhaustion | No; throw `GRID_ROUTE_NOT_FOUND` |
-| Vertex cap reached during base construction | Yes, reason `vertex_cap` |
-| Adjacency cap reached during base construction | Yes, reason `adjacency_cap` |
-| Estimated-memory cap reached | Yes, reason `estimated_memory_cap` |
-| Per-edge or invocation search-state cap reached | Yes, reason `search_state_cap` |
-| Internal invariant violation, malformed graph, non-finite geometry | No; throw |
-| Wall-clock timeout | Forbidden; nondeterministic |
-| Label convergence failure | No; restore and throw |
+| Outcome                                                            | Legacy fallback allowed            |
+| ------------------------------------------------------------------ | ---------------------------------- |
+| Complete path-complete graph searched to exhaustion                | No; throw `GRID_ROUTE_NOT_FOUND`   |
+| Vertex cap reached during base construction                        | Yes, reason `vertex_cap`           |
+| Adjacency cap reached during base construction                     | Yes, reason `adjacency_cap`        |
+| Estimated-memory cap reached                                       | Yes, reason `estimated_memory_cap` |
+| Per-edge or invocation search-state cap reached                    | Yes, reason `search_state_cap`     |
+| Internal invariant violation, malformed graph, non-finite geometry | No; throw                          |
+| Wall-clock timeout                                                 | Forbidden; nondeterministic        |
+| Label convergence failure                                          | No; restore and throw              |
 
 A base-construction fallback is container-scoped: every segment routed inside
 that container MUST use the legacy router for that invocation. Arbitrary
@@ -754,6 +759,13 @@ retention of validated legacy fallback until objective removal criteria hold.
 - **RISK-009**: Existing DDLT scores can change broadly even when routes become
   valid. Mitigation: per-fixture before/after review and intentional baseline
   update, never an unexplained baseline reduction.
+- **RISK-010**: Same-container tuple-cost routing currently misses the retained
+  1,000-node/500-edge performance target: official EPIC-003 measurements range
+  from 1.3 to 1.7 seconds versus the required 500 ms, with zero fallback.
+  Mitigation: treat this as explicit performance debt, preserve NFR-002 and
+  AC-011 unchanged, and require EPIC-007/ITEM-021 to revisit measured search,
+  topology, indexing, and later-routing optimization options before claiming
+  performance closure or removing the legacy router.
 - **ASSUMPTION-001**: Measured bounding rectangles are conservative enough for
   v1 obstacle routing while painter-time `intersect()` handles visual shape
   boundaries.
@@ -804,7 +816,7 @@ completeness; DDLT and visual review prove production integration.
   overlapping obstacle normalization, and path completeness against a dense
   test-only oracle.
 - **TEST-003**: Generate at least 10,000 deterministic small rectangle cases;
-  compare reduced A* reachability and shortest Manhattan length/bends with the
+  compare reduced A\* reachability and shortest Manhattan length/bends with the
   dense Dijkstra oracle.
 - **TEST-004**: Add sparse-coordinate twins using rows/columns `{1,2}` and
   `{1,10000}`; assert equal compact geometry, graph sizes, overlay sizes, and
@@ -837,18 +849,18 @@ completeness; DDLT and visual review prove production integration.
 
 `GridRoutingInstrumentation` MUST include:
 
-| Metric | Contract |
-|--------|----------|
-| `containersBuilt`, `baseTopologyBuilds` | Exactly one per routed container per invocation. |
-| `baseVertices`, `baseAdjacencyEntries`, `buildSweepEvents` | Stable counts; no coordinate-magnitude growth. |
-| `endpointOverlayBuilds`, `endpointOverlayVertices` | At most 32 vertices per edge attempt. |
-| `labelOverlayBuilds`, `labelOverlayVertices` | Reported per pass and container. |
-| `searches`, `expandedStates`, `maxOpenSet` | Stable deterministic counts. |
-| `routesFound`, `routesImpossible` | Sum consistent with attempted routes. |
-| `resourceLimitFallbacks`, `fallbackReasons` | Only four fixed reasons. |
-| `fallbackValidationFailures` | Must remain zero. |
-| `routeLength`, `bendCount`, `crossingCount`, `sharedLength` | Reported per route and aggregate. |
-| `estimatedBytes` | Under 64 MiB for the 1,000/500 benchmark. |
+| Metric                                                      | Contract                                         |
+| ----------------------------------------------------------- | ------------------------------------------------ |
+| `containersBuilt`, `baseTopologyBuilds`                     | Exactly one per routed container per invocation. |
+| `baseVertices`, `baseAdjacencyEntries`, `buildSweepEvents`  | Stable counts; no coordinate-magnitude growth.   |
+| `endpointOverlayBuilds`, `endpointOverlayVertices`          | At most 32 vertices per edge attempt.            |
+| `labelOverlayBuilds`, `labelOverlayVertices`                | Reported per pass and container.                 |
+| `searches`, `expandedStates`, `maxOpenSet`                  | Stable deterministic counts.                     |
+| `routesFound`, `routesImpossible`                           | Sum consistent with attempted routes.            |
+| `resourceLimitFallbacks`, `fallbackReasons`                 | Only four fixed reasons.                         |
+| `fallbackValidationFailures`                                | Must remain zero.                                |
+| `routeLength`, `bendCount`, `crossingCount`, `sharedLength` | Reported per route and aggregate.                |
+| `estimatedBytes`                                            | Under 64 MiB for the 1,000/500 benchmark.        |
 
 Deterministic caps:
 
@@ -860,33 +872,42 @@ Deterministic caps:
 
 Benchmark matrix:
 
-| Case | Required result |
-|------|-----------------|
-| Existing 1,000 nodes/500 edges | `<500 ms`, zero fallback, `<64 MiB`, `<2M` expanded states |
-| 1,000 densely packed nodes/500 long edges | Completes under deterministic caps; fallback, if any, uses a fixed surfaced reason and validates |
-| 1,000 sparse logical coordinates spanning 1..10,000 | Same topology counts as compact-coordinate twin; no magnitude-proportional work |
-| 10-level nested groups with cross-container edges | Correct portal counts, bounded topology per container, no stack overflow |
-| 100 pair bundles plus reverse edges | All routes distinct and valid; deterministic counts |
-| Dense measured labels crossing many routes | Converges within two passes or rolls back and throws; no partial state |
+| Case                                                | Required result                                                                                  |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Existing 1,000 nodes/500 edges                      | `<500 ms`, zero fallback, `<64 MiB`, `<2M` expanded states                                       |
+| 1,000 densely packed nodes/500 long edges           | Completes under deterministic caps; fallback, if any, uses a fixed surfaced reason and validates |
+| 1,000 sparse logical coordinates spanning 1..10,000 | Same topology counts as compact-coordinate twin; no magnitude-proportional work                  |
+| 10-level nested groups with cross-container edges   | Correct portal counts, bounded topology per container, no stack overflow                         |
+| 100 pair bundles plus reverse edges                 | All routes distinct and valid; deterministic counts                                              |
+| Dense measured labels crossing many routes          | Converges within two passes or rolls back and throws; no partial state                           |
 
 ### Acceptance Criteria
 
-| ID | Criterion | Verification | Traces To |
-|----|-----------|--------------|-----------|
-| AC-001 | The exact unusual fixture routes `v1 --> v2` as one clear horizontal segment through row 1/column 2, without special-case production code. | DDLT point-array assertion and code review | FR-001, FR-002 |
-| AC-002 | Equivalent compact and row/column-10000 diagrams have equal graph/overlay sizes and no magnitude-proportional loops or arrays. | Sparse-coordinate unit and performance tests | FR-004, NFR-005 |
-| AC-003 | Reduced A* finds every route found by the dense oracle across deterministic generated cases and matches shortest length/bend priority. | 10,000-case oracle property test | FR-004 |
-| AC-004 | Routes use actual geometry, traverse unused track space, and never intersect inflated unrelated leaf/group/title obstacles. | Router geometry matrix plus `validateLayout()` | FR-003, FR-005 |
-| AC-005 | Every endpoint has a legal distinct port, one owner exit channel, 12 px pre-bend approach, correct direction, and painter-compatible clipping. | Endpoint tests, validator, painter tests | FR-006, FR-013 |
-| AC-006 | Same-cell, self-loop, group/member, ancestor/member, cross-group, and nested routes cross exactly the required boundaries and no others. | Hierarchy/portal test matrix | FR-007, FR-008 |
-| AC-007 | Parallel/reverse edges remain distinct, at least 8 px apart where parallel, and share no nonterminal subpath of 8 px or more. | Bundle tests and validator | FR-009 |
-| AC-008 | Label placement converges within two passes or restores the complete pre-label state and throws; no partial route/label mutation survives. | Label transactional tests | FR-010, FM-003 |
-| AC-009 | Repeated runs produce byte-equivalent geometry, labels, route arrays, metrics, and fallback reasons. | 100-run determinism tests | NFR-001 |
-| AC-010 | Only enumerated resource caps invoke fallback; every fallback is logged, counted, validated, and invalid fallback is rejected. | Instrumentation/fault-injection tests | FR-012, FM-001, FM-002 |
-| AC-011 | Existing 1,000/500 benchmark remains under 500 ms with zero fallback and all memory/state caps satisfied. | `performance.spec.ts` | NFR-002, NFR-004 |
-| AC-012 | All grid DDLT fixtures validate with no exemptions; intentional route changes have per-fixture score/bend/crossing deltas reviewed; the grid baseline is not reduced below 9470. | DDLT sweep and visual review record | CON-003 |
-| AC-013 | Non-grid geometry/tests and swimlane aggregate baseline remain unchanged. | Targeted non-grid suites and baseline assertion | CON-004 |
-| AC-014 | The old PRD is marked superseded and no direct-route fast path is introduced. | Documentation and diff review | FR-014 |
+| ID     | Criterion                                                                                                                                                                        | Verification                                    | Traces To              |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------- |
+| AC-001 | The exact unusual fixture routes `v1 --> v2` as one clear horizontal segment through row 1/column 2, without special-case production code.                                       | DDLT point-array assertion and code review      | FR-001, FR-002         |
+| AC-002 | Equivalent compact and row/column-10000 diagrams have equal graph/overlay sizes and no magnitude-proportional loops or arrays.                                                   | Sparse-coordinate unit and performance tests    | FR-004, NFR-005        |
+| AC-003 | Reduced A\* finds every route found by the dense oracle across deterministic generated cases and matches shortest length/bend priority.                                          | 10,000-case oracle property test                | FR-004                 |
+| AC-004 | Routes use actual geometry, traverse unused track space, and never intersect inflated unrelated leaf/group/title obstacles.                                                      | Router geometry matrix plus `validateLayout()`  | FR-003, FR-005         |
+| AC-005 | Every endpoint has a legal distinct port, one owner exit channel, 12 px pre-bend approach, correct direction, and painter-compatible clipping.                                   | Endpoint tests, validator, painter tests        | FR-006, FR-013         |
+| AC-006 | Same-cell, self-loop, group/member, ancestor/member, cross-group, and nested routes cross exactly the required boundaries and no others.                                         | Hierarchy/portal test matrix                    | FR-007, FR-008         |
+| AC-007 | Parallel/reverse edges remain distinct, at least 8 px apart where parallel, and share no nonterminal subpath of 8 px or more.                                                    | Bundle tests and validator                      | FR-009                 |
+| AC-008 | Label placement converges within two passes or restores the complete pre-label state and throws; no partial route/label mutation survives.                                       | Label transactional tests                       | FR-010, FM-003         |
+| AC-009 | Repeated runs produce byte-equivalent geometry, labels, route arrays, metrics, and fallback reasons.                                                                             | 100-run determinism tests                       | NFR-001                |
+| AC-010 | Only enumerated resource caps invoke fallback; every fallback is logged, counted, validated, and invalid fallback is rejected.                                                   | Instrumentation/fault-injection tests           | FR-012, FM-001, FM-002 |
+| AC-011 | Existing 1,000/500 benchmark remains under 500 ms with zero fallback and all memory/state caps satisfied.                                                                        | `performance.spec.ts`                           | NFR-002, NFR-004       |
+| AC-012 | All grid DDLT fixtures validate with no exemptions; intentional route changes have per-fixture score/bend/crossing deltas reviewed; the grid baseline is not reduced below 9470. | DDLT sweep and visual review record             | CON-003                |
+| AC-013 | Non-grid geometry/tests and swimlane aggregate baseline remain unchanged.                                                                                                        | Targeted non-grid suites and baseline assertion | CON-004                |
+| AC-014 | The old PRD is marked superseded and no direct-route fast path is introduced.                                                                                                    | Documentation and diff review                   | FR-014                 |
+
+**EPIC-003 acceptance status (2026-09-22)**: Same-container correctness,
+minimum-tuple canonical determinism, resource caps, zero-fallback behavior, and
+the motivating one-segment route are accepted. AC-011 and NFR-002 are not met:
+the official 1,000-node/500-edge benchmark currently measures 1.3–1.7 seconds
+against the unchanged 500 ms target, with zero fallback. By explicit project
+decision, this performance debt is deferred to EPIC-007/ITEM-021 so later
+routing steps can inform the optimization choice. This deferral does not waive,
+weaken, or satisfy AC-011 or NFR-002.
 
 ## 8. Security Considerations
 
@@ -945,40 +966,40 @@ fallback MUST NOT appear indistinguishable from a new-router success.
 
 ## 10. Resolved Decisions
 
-| ID | Decision | Rationale |
-|----|----------|-----------|
-| RD-001 | Replace, rather than augment, global corridors with a sparse path-complete visibility graph. | A direct fast path fixes one symptom but leaves the track-wide representation unable to model cell-local occupancy. |
-| RD-002 | Use a reduced nearest-visible projection graph, not all candidate-line intersections. | All intersections recreate a dense Cartesian graph and violate the performance/sparsity goal. |
-| RD-003 | Treat logical cells and track rectangles as placement metadata, not obstacles. | The motivating defect requires traversal of unused space inside a track. |
-| RD-004 | Use measured bounding rectangles inflated by 6 px; retain painter-time exact shape clipping. | This is conservative, compatible with current geometry, and avoids shape-specific router complexity. |
-| RD-005 | Use one invocation-local immutable base topology per container plus endpoint/lane/label overlays. | It satisfies graph reuse without stale global caches or rebuilding for every edge. |
-| RD-006 | Use paired portals and container-by-container composition. | Hierarchy legality is clearer and safer than flattening nested geometry. |
-| RD-007 | Generate side-specific demand slots before search and require at least 4 px port distinction. | Candidate selection and demand spreading otherwise become circular and can collapse incident edges. |
-| RD-008 | Use tuple-cost A* with state `(vertex, incoming orientation)`. | It deterministically enforces length/bend priority without unsafe scalar weights. |
-| RD-009 | Put length and bends ahead of local congestion/crossings. | Straight edges emerge naturally while v1 avoids promising global crossing optimization. |
-| RD-010 | Make pair-lane separation a hard constraint, not a congestion preference. | Existing validation rejects shared/too-close bundle routes even when they are shortest. |
-| RD-011 | Route in one fixed class/hierarchy/pair/ID order and keep occupancy outside topology. | This makes intentional local order influence deterministic and preserves topology reuse. |
-| RD-012 | Use two transactional label passes over frozen reservation sets. | It bounds iteration and lets each rerouted edge account for all current labels at once. |
-| RD-013 | Permit legacy fallback only for deterministic resource caps, never ordinary no-path or arbitrary exceptions. | Fallback must protect rollout without concealing correctness defects. |
-| RD-014 | Use deterministic count/memory caps, not wall-clock timeouts. | Timing-dependent fallback would make output nondeterministic. |
-| RD-015 | Keep dual routing test-only and add no public flag. | This is an internal architecture correction, not a user-selectable product mode. |
-| RD-016 | Mark the direct-fast-path PRD superseded and do not combine approaches. | Two route-selection systems would increase ambiguity and migration risk. |
+| ID     | Decision                                                                                                                                                                                                                       | Rationale                                                                                                                                                         |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RD-001 | Replace, rather than augment, global corridors with a sparse path-complete visibility graph.                                                                                                                                   | A direct fast path fixes one symptom but leaves the track-wide representation unable to model cell-local occupancy.                                               |
+| RD-002 | Use a reduced nearest-visible projection graph, not all candidate-line intersections.                                                                                                                                          | All intersections recreate a dense Cartesian graph and violate the performance/sparsity goal.                                                                     |
+| RD-003 | Treat logical cells and track rectangles as placement metadata, not obstacles.                                                                                                                                                 | The motivating defect requires traversal of unused space inside a track.                                                                                          |
+| RD-004 | Use measured bounding rectangles inflated by 6 px; retain painter-time exact shape clipping.                                                                                                                                   | This is conservative, compatible with current geometry, and avoids shape-specific router complexity.                                                              |
+| RD-005 | Use one invocation-local immutable base topology per container plus endpoint/lane/label overlays.                                                                                                                              | It satisfies graph reuse without stale global caches or rebuilding for every edge.                                                                                |
+| RD-006 | Use paired portals and container-by-container composition.                                                                                                                                                                     | Hierarchy legality is clearer and safer than flattening nested geometry.                                                                                          |
+| RD-007 | Generate side-specific demand slots before search and require at least 4 px port distinction.                                                                                                                                  | Candidate selection and demand spreading otherwise become circular and can collapse incident edges.                                                               |
+| RD-008 | Use tuple-cost A\* with state `(vertex, incoming orientation)`, an admissible consistent `[Manhattan, minBends, 0...]` heuristic, and canonical result-level state-sequence tie-breaking independent of queue discovery order. | It enforces length/bend priority without unsafe scalar weights while allowing queue and storage optimizations that cannot change the externally meaningful route. |
+| RD-009 | Put length and bends ahead of local congestion/crossings.                                                                                                                                                                      | Straight edges emerge naturally while v1 avoids promising global crossing optimization.                                                                           |
+| RD-010 | Make pair-lane separation a hard constraint, not a congestion preference.                                                                                                                                                      | Existing validation rejects shared/too-close bundle routes even when they are shortest.                                                                           |
+| RD-011 | Route in one fixed class/hierarchy/pair/ID order and keep occupancy outside topology.                                                                                                                                          | This makes intentional local order influence deterministic and preserves topology reuse.                                                                          |
+| RD-012 | Use two transactional label passes over frozen reservation sets.                                                                                                                                                               | It bounds iteration and lets each rerouted edge account for all current labels at once.                                                                           |
+| RD-013 | Permit legacy fallback only for deterministic resource caps, never ordinary no-path or arbitrary exceptions.                                                                                                                   | Fallback must protect rollout without concealing correctness defects.                                                                                             |
+| RD-014 | Use deterministic count/memory caps, not wall-clock timeouts.                                                                                                                                                                  | Timing-dependent fallback would make output nondeterministic.                                                                                                     |
+| RD-015 | Keep dual routing test-only and add no public flag.                                                                                                                                                                            | This is an internal architecture correction, not a user-selectable product mode.                                                                                  |
+| RD-016 | Mark the direct-fast-path PRD superseded and do not combine approaches.                                                                                                                                                        | Two route-selection systems would increase ambiguity and migration risk.                                                                                          |
 
 ## 11. Alternatives Considered
 
-| Alternative | Pros | Cons | Decision |
-|-------------|------|------|----------|
-| Narrow aligned direct-route fast path | Small and low initial cost | Special case; leaves global corridor model and most cell-aware cases unsolved | Rejected and superseded |
-| Dense rows×columns occupancy matrix | Simple indexing | Memory/time depend on sparse coordinate magnitude; violates requirement | Rejected |
-| Full Hanan grid or all candidate-line intersections | Path search is straightforward | Can produce quadratic/Cartesian vertices and miss the 500 ms budget | Rejected |
-| Flatten all nested containers into one graph | One search per edge | Complicates group legality, titles, terminal groups, and boundary transitions | Rejected |
-| Scalar weighted A* | Conventional numeric priority | Cannot guarantee lexicographic priorities without global upper bounds | Rejected |
-| Dijkstra in production | Simpler heuristic story | Expands more states; A* has a safe admissible tuple heuristic | Rejected; retained only as test oracle |
-| Global route/crossing optimizer | Potential visual improvements | High complexity, order/global-state cost, no need for motivating defect | Deferred |
-| Exact per-shape obstacles | Tighter routes | Duplicates painter shape logic and expands v1 scope | Deferred |
-| Process-global topology cache | Potential repeat-render speedup | Stale measured geometry and unbounded retention risk | Rejected for v1 |
-| Public `gridRouter` flag | Easy manual rollback | Exposes transitional architecture and doubles supported behavior | Rejected |
-| Sparse per-container graph with deterministic overlays and A* | Solves representation defect with bounded, testable components | Larger migration than fast path | Selected |
+| Alternative                                                    | Pros                                                           | Cons                                                                          | Decision                               |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------- |
+| Narrow aligned direct-route fast path                          | Small and low initial cost                                     | Special case; leaves global corridor model and most cell-aware cases unsolved | Rejected and superseded                |
+| Dense rows×columns occupancy matrix                            | Simple indexing                                                | Memory/time depend on sparse coordinate magnitude; violates requirement       | Rejected                               |
+| Full Hanan grid or all candidate-line intersections            | Path search is straightforward                                 | Can produce quadratic/Cartesian vertices and miss the 500 ms budget           | Rejected                               |
+| Flatten all nested containers into one graph                   | One search per edge                                            | Complicates group legality, titles, terminal groups, and boundary transitions | Rejected                               |
+| Scalar weighted A\*                                            | Conventional numeric priority                                  | Cannot guarantee lexicographic priorities without global upper bounds         | Rejected                               |
+| Dijkstra in production                                         | Simpler heuristic story                                        | Expands more states; A\* has a safe admissible tuple heuristic                | Rejected; retained only as test oracle |
+| Global route/crossing optimizer                                | Potential visual improvements                                  | High complexity, order/global-state cost, no need for motivating defect       | Deferred                               |
+| Exact per-shape obstacles                                      | Tighter routes                                                 | Duplicates painter shape logic and expands v1 scope                           | Deferred                               |
+| Process-global topology cache                                  | Potential repeat-render speedup                                | Stale measured geometry and unbounded retention risk                          | Rejected for v1                        |
+| Public `gridRouter` flag                                       | Easy manual rollback                                           | Exposes transitional architecture and doubles supported behavior              | Rejected                               |
+| Sparse per-container graph with deterministic overlays and A\* | Solves representation defect with bounded, testable components | Larger migration than fast path                                               | Selected                               |
 
 ## 12. Files
 
@@ -992,7 +1013,7 @@ fallback MUST NOT appear indistinguishable from a new-router success.
   portals, overlays, and stable IDs.
 - **FILE-003**:
   `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts`
-  — new tuple costs, stable priority queue, A*, route reconstruction, and
+  — new tuple costs, stable priority queue, A\*, route reconstruction, and
   test-only Dijkstra oracle hooks.
 - **FILE-004**:
   `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`
@@ -1022,7 +1043,7 @@ fallback MUST NOT appear indistinguishable from a new-router success.
   — new graph sparsity, completeness, stable-ID, and sparse-coordinate tests.
 - **FILE-011**:
   `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.spec.ts`
-  — new tuple-cost, heuristic, A*/Dijkstra parity, and cap tests.
+  — new tuple-cost, heuristic, A\*/Dijkstra parity, and cap tests.
 - **FILE-012**:
   `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.spec.ts`
   — transactional two-pass and rollback tests.
@@ -1086,11 +1107,11 @@ fallback MUST NOT appear indistinguishable from a new-router success.
 
 - EPIC-001: Characterize current behavior and establish metrics — Completed
 
-| Task | Description | Status | Relevant Files |
-|------|-------------|--------|----------------|
-| ITEM-001 | Add the exact unusual DDLT fixture from `test-mermaid-unusual.mmd`, captured through the existing browser size workflow. Add a failing assertion that `v1 --> v2` is one horizontal segment while retaining whole-layout validation. | Completed | `test-mermaid-unusual.mmd`, `e2e/platform/dev-diagrams/layout-tests/grid/routing-cell-aware-empty-cell.mmd`, `e2e/platform/dev-diagrams/layout-tests/grid/routing-cell-aware-empty-cell.sizes.json`, `e2e/platform/dev-diagrams/layout-tests/ddlt-manifest.json`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts` |
-| ITEM-002 | Add internal instrumentation types and no-op-by-default counters for current route length, bends, crossings, route order, and future graph/fallback metrics. Assert instrumentation does not change geometry. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts` |
-| ITEM-003 | Record current per-fixture validity, score, bends, crossings, route signatures, and the grid aggregate baseline. Add characterization cases for hierarchy, stacks, loops, bundles, labels, and sparse coordinates without accepting invalid output. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts` |
+| Task     | Description                                                                                                                                                                                                                                         | Status    | Relevant Files                                                                                                                                                                                                                                                                                                                                         |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ITEM-001 | Add the exact unusual DDLT fixture from `test-mermaid-unusual.mmd`, captured through the existing browser size workflow. Add a failing assertion that `v1 --> v2` is one horizontal segment while retaining whole-layout validation.                | Completed | `test-mermaid-unusual.mmd`, `e2e/platform/dev-diagrams/layout-tests/grid/routing-cell-aware-empty-cell.mmd`, `e2e/platform/dev-diagrams/layout-tests/grid/routing-cell-aware-empty-cell.sizes.json`, `e2e/platform/dev-diagrams/layout-tests/ddlt-manifest.json`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts` |
+| ITEM-002 | Add internal instrumentation types and no-op-by-default counters for current route length, bends, crossings, route order, and future graph/fallback metrics. Assert instrumentation does not change geometry.                                       | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                           |
+| ITEM-003 | Record current per-fixture validity, score, bends, crossings, route signatures, and the grid aggregate baseline. Add characterization cases for hierarchy, stacks, loops, bundles, labels, and sparse coordinates without accepting invalid output. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts`                                                                                           |
 
 Implementation note: the current dev explorer disables its **Save sizes**
 button for non-swimlane layouts. ITEM-001 therefore used the same browser
@@ -1105,60 +1126,75 @@ blocked before layout by pre-existing stale freshness metadata for
 
 - EPIC-002: Build and prove the sparse topology and deterministic search — Completed
 
-| Task | Description | Status | Relevant Files |
-|------|-------------|--------|----------------|
-| ITEM-004 | Write failing topology tests for actual-geometry obstacles, 6 px inflation, title exclusion, nearest-visible projections, no Cartesian intersections, exact-coordinate stable ordinals, interval queries, structural bounds, and compact-vs-10000 coordinate parity. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts` |
-| ITEM-005 | Implement normalized obstacles, portal ranges, reduced horizontal/vertical sweeps, nearest-visible projections, sorted adjacency, coordinate-compressed interval indexes, and resource accounting. Keep the topology immutable after construction. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts` |
-| ITEM-006 | Write failing tuple-cost tests, then implement stable A* over `(vertex, incomingOrientation)`, admissible tuple heuristic, exact bend counting, reconstruction, and deterministic caps. Implement dense Dijkstra only as a test oracle. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts` |
-| ITEM-007 | Run at least 10,000 seeded small rectangular cases against the dense oracle. Require reachability and shortest length/bend parity before production integration. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.spec.ts` |
+| Task     | Description                                                                                                                                                                                                                                                          | Status    | Relevant Files                                                                                                                                                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ITEM-004 | Write failing topology tests for actual-geometry obstacles, 6 px inflation, title exclusion, nearest-visible projections, no Cartesian intersections, exact-coordinate stable ordinals, interval queries, structural bounds, and compact-vs-10000 coordinate parity. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`                                                                                    |
+| ITEM-005 | Implement normalized obstacles, portal ranges, reduced horizontal/vertical sweeps, nearest-visible projections, sorted adjacency, coordinate-compressed interval indexes, and resource accounting. Keep the topology immutable after construction.                   | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`           |
+| ITEM-006 | Write failing tuple-cost tests, then implement stable A\* over `(vertex, incomingOrientation)`, admissible tuple heuristic, exact bend counting, reconstruction, and deterministic caps. Implement dense Dijkstra only as a test oracle.                             | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts` |
+| ITEM-007 | Run at least 10,000 seeded small rectangular cases against the dense oracle. Require reachability and shortest length/bend parity before production integration.                                                                                                     | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.spec.ts`                                                                                 |
 
-- EPIC-003: Route same-container edges through cell-aware geometry
+- EPIC-003: Route same-container edges through cell-aware geometry — Completed
 
-| Task | Description | Status | Relevant Files |
-|------|-------------|--------|----------------|
-| ITEM-008 | Add failing endpoint tests for legal-side slots, demand order, title/corner exclusion, 4 px distinction, terminal channels, 12 px approach, owner non-reentry, same-cell stacks, and nonrectangular measured bounds. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts` |
-| ITEM-009 | Create one `GridRoutingContext` per layout invocation, build one base topology per container, add endpoint overlays, route ordinary same-container edges with A*, and commit occupancy only after route-level validation. Before production selection, implement the four resource-cap classifications, container-scoped legacy fallback, route validation, structured metrics/logging, and fault-injection tests. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/layoutCore.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts` |
-| ITEM-010 | After ITEM-009 passes, add test-only dual-route comparison and enable new production selection for same-container ordinary edges. Prove the motivating straight route is selected by normal tuple cost and no fast-path predicate exists. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts` |
+| Task     | Description                                                                                                                                                                                                                                                                                                                                                                                                         | Status    | Relevant Files                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ITEM-008 | Add failing endpoint tests for legal-side slots, demand order, title/corner exclusion, 4 px distinction, terminal channels, 12 px approach, owner non-reentry, same-cell stacks, and nonrectangular measured bounds.                                                                                                                                                                                                | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ITEM-009 | Create one `GridRoutingContext` per layout invocation, build one base topology per container, add endpoint overlays, route ordinary same-container edges with A\*, and commit occupancy only after route-level validation. Before production selection, implement the four resource-cap classifications, container-scoped legacy fallback, route validation, structured metrics/logging, and fault-injection tests. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/layoutCore.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts` |
+| ITEM-010 | After ITEM-009 passes, add test-only dual-route comparison and enable new production selection for same-container ordinary edges. Prove the motivating straight route is selected by normal tuple cost and no fast-path predicate exists.                                                                                                                                                                           | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`                                                                                                                                                                                                                                      |
+
+EPIC-003 completion accepts the verified correctness and determinism scope.
+Performance closure is deliberately excluded from this completion decision:
+official measurements remain 1.3–1.7 seconds versus the retained 500 ms target,
+with zero fallback. EPIC-007/ITEM-021 owns the deferred investigation and MUST
+revisit optimization options after the hierarchy, bundle, and label routing
+steps; it MUST NOT treat this completion status as evidence that NFR-002 or
+AC-011 passed.
 
 - EPIC-004: Add hierarchical endpoints and paired portals
 
-| Task | Description | Status | Relevant Files |
-|------|-------------|--------|----------------|
-| ITEM-011 | Add failing tests for nested siblings, group/member, ancestor/member, cross-group members, group endpoints, title-adjacent portals, corner clearance, and exact required boundary transitions. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts` |
-| ITEM-012 | Implement containment paths, legal portal ranges, paired demand-specific portal overlays, perpendicular transition arcs, and container-by-container route composition. Reject unrelated or repeated boundary crossings. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/groups.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts` |
-| ITEM-013 | Register hierarchy DDLT fixtures and assert final validation, transition counts, deterministic signatures, and unchanged production/DDLT orchestration parity. | Not Started | `e2e/platform/dev-diagrams/layout-tests/ddlt-manifest.json`, `e2e/platform/dev-diagrams/layout-tests/grid/*.mmd`, `e2e/platform/dev-diagrams/layout-tests/grid/*.sizes.json`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/ddltParity.spec.ts` |
+| Task     | Description                                                                                                                                                                                                             | Status      | Relevant Files                                                                                                                                                                                                                                                                                                                                      |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ITEM-011 | Add failing tests for nested siblings, group/member, ancestor/member, cross-group members, group endpoints, title-adjacent portals, corner clearance, and exact required boundary transitions.                          | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`                                                                                                                                                                                   |
+| ITEM-012 | Implement containment paths, legal portal ranges, paired demand-specific portal overlays, perpendicular transition arcs, and container-by-container route composition. Reject unrelated or repeated boundary crossings. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/groups.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts`                                               |
+| ITEM-013 | Register hierarchy DDLT fixtures and assert final validation, transition counts, deterministic signatures, and unchanged production/DDLT orchestration parity.                                                          | Not Started | `e2e/platform/dev-diagrams/layout-tests/ddlt-manifest.json`, `e2e/platform/dev-diagrams/layout-tests/grid/*.mmd`, `e2e/platform/dev-diagrams/layout-tests/grid/*.sizes.json`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/ddltParity.spec.ts` |
 
 - EPIC-005: Enforce self-loop and parallel/reverse lane validity
 
-| Task | Description | Status | Relevant Files |
-|------|-------------|--------|----------------|
-| ITEM-014 | Add failing self-loop and bundle tests for distinct ports, centered 8 px offsets, blocked preferred lanes, no shared 8 px subpaths, at least 8 px parallel separation, reverse ordering, and explicit impossible-route errors. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts` |
-| ITEM-015 | Implement self-loop endpoint pairs and pair-local lane overlays. Enforce bundle reuse/separation as hard constraints while leaving unrelated congestion soft. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts` |
-| ITEM-016 | Extend existing loop/parallel DDLT assertions and 100-run determinism checks to route arrays, occupancy metrics, expanded states, and lane offsets. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts` |
+| Task     | Description                                                                                                                                                                                                                    | Status      | Relevant Files                                                                                                                                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ITEM-014 | Add failing self-loop and bundle tests for distinct ports, centered 8 px offsets, blocked preferred lanes, no shared 8 px subpaths, at least 8 px parallel separation, reverse ordering, and explicit impossible-route errors. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                                                                        |
+| ITEM-015 | Implement self-loop endpoint pairs and pair-local lane overlays. Enforce bundle reuse/separation as hard constraints while leaving unrelated congestion soft.                                                                  | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts` |
+| ITEM-016 | Extend existing loop/parallel DDLT assertions and 100-run determinism checks to route arrays, occupancy metrics, expanded states, and lane offsets.                                                                            | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                                                               |
 
 - EPIC-006: Integrate bounded transactional label routing
 
-| Task | Description | Status | Relevant Files |
-|------|-------------|--------|----------------|
-| ITEM-017 | Add failing tests for existing-segment placement, owner reroute, multiple foreign reroutes, frozen reservations, preserved anchors, second-pass convergence, resource accounting, and full rollback on failure. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts` |
-| ITEM-018 | Refactor label placement into at most two transactional passes. Add pass-local label obstacle/projection overlays and route impacted edges once per pass against all frozen reservations. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts` |
+| Task     | Description                                                                                                                                                                                                                                                              | Status      | Relevant Files                                                                                                                                                                                                                                                                                                                |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ITEM-017 | Add failing tests for existing-segment placement, owner reroute, multiple foreign reroutes, frozen reservations, preserved anchors, second-pass convergence, resource accounting, and full rollback on failure.                                                          | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                                                                                                                                                             |
+| ITEM-018 | Refactor label placement into at most two transactional passes. Add pass-local label obstacle/projection overlays and route impacted edges once per pass against all frozen reservations.                                                                                | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`     |
 | ITEM-019 | Replace the existing fixed-cell spatial hash for grid label queries with the same coordinate-compressed interval index where necessary to guarantee no absolute-coordinate-span allocation. Remove the five-order transitional fallback after dense-label parity passes. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts` |
 
 - EPIC-007: Complete migration, performance closure, and legacy removal
 
-| Task | Description | Status | Relevant Files |
-|------|-------------|--------|----------------|
-| ITEM-020 | Audit the resource-cap behavior introduced by ITEM-009 across hierarchy, bundles, and labels. Prove complete-search no-path and label failure never fall back, all fallback routes validate, and post-removal cap failures carry the same fixed reason in `GRID_ROUTE_NOT_FOUND` details. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts` |
-| ITEM-021 | Execute the benchmark matrix, optimize only measured topology/search/index bottlenecks, and require the existing 1,000/500 case below 500 ms with zero fallback plus all structural/memory caps. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.ts` |
-| ITEM-022 | Run the full grid DDLT corpus with zero grid exemptions, record before/after validity/score/bends/crossings/fallbacks per fixture, review visual diffs, and add exact assertions for intentional route changes. Update `GRID_TOTAL_SCORE_BASELINE` only to the accepted measured result and never below 9470. Verify the swimlane baseline remains exactly 11754 and non-grid tests remain unchanged. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/ddltParity.spec.ts`, `e2e/platform/dev-diagrams/layout-tests/ddlt-manifest.json` |
-| ITEM-023 | After every removal gate in Section 9 holds, delete `routeWithinContainer()`, corridor selection/helpers, corridor fields from grid metadata, fallback/shadow code, and obsolete tests. Retain sparse-router instrumentation and regression fixtures. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/layoutCore.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts` |
+| Task     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Status      | Relevant Files                                                                                                                                                                                                                                                                                                                                                                           |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ITEM-020 | Audit the resource-cap behavior introduced by ITEM-009 across hierarchy, bundles, and labels. Prove complete-search no-path and label failure never fall back, all fallback routes validate, and post-removal cap failures carry the same fixed reason in `GRID_ROUTE_NOT_FOUND` details.                                                                                                                                                                                               | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerInstrumentation.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`                                                                                                                                               |
+| ITEM-021 | Revisit the deferred EPIC-003 performance debt after hierarchy, bundle, and label routing are implemented; evaluate options against measured topology/search/index bottlenecks, execute the benchmark matrix, and require the existing 1,000/500 case below 500 ms with zero fallback plus all structural/memory caps. Prove canonical minimum-tuple results are byte-identical under queue-order perturbation and `h = 0`; queue discovery order itself is not an acceptance contract. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/edgeLabels.ts`                                                               |
+| ITEM-022 | Run the full grid DDLT corpus with zero grid exemptions, record before/after validity/score/bends/crossings/fallbacks per fixture, review visual diffs, and add exact assertions for intentional route changes. Update `GRID_TOTAL_SCORE_BASELINE` only to the accepted measured result and never below 9470. Verify the swimlane baseline remains exactly 11754 and non-grid tests remain unchanged.                                                                                   | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/ddlt/layout-fixtures.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/ddltParity.spec.ts`, `e2e/platform/dev-diagrams/layout-tests/ddlt-manifest.json`                                                            |
+| ITEM-023 | After every removal gate in Section 9 holds, delete `routeWithinContainer()`, corridor selection/helpers, corridor fields from grid metadata, fallback/shadow code, and obsolete tests. Retain sparse-router instrumentation and regression fixtures.                                                                                                                                                                                                                                   | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/layoutCore.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/types.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts` |
 
 ## 15. Change Log
 
+- 2026-09-22: Marked EPIC-003 and ITEM-008 through ITEM-010 Completed based on
+  verified correctness, canonical determinism, resource-cap behavior, and
+  zero-fallback same-container routing. Recorded the explicit decision to defer
+  the unmet 1,000-node/500-edge performance target to EPIC-007/ITEM-021:
+  official measurements are currently 1.3–1.7 seconds versus 500 ms. NFR-002
+  and AC-011 remain unchanged and unmet; this status update does not claim
+  performance acceptance.
 - 2026-09-21: Created version 1.0. Superseded the narrow direct-route
   fast-path plan after grounding the design in current grid placement, routing,
   labels, containment, validator, DDLT, performance, and painter contracts.
   Resolved sparse graph representation, path completeness, exact IDs,
-  obstacle/cell semantics, hierarchy portals, endpoint slots, tuple-cost A*,
+  obstacle/cell semantics, hierarchy portals, endpoint slots, tuple-cost A\*,
   route order, bundles, bounded label convergence, fallback, performance caps,
   migration, and legacy removal.

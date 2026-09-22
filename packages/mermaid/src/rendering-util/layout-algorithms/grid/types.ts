@@ -2,6 +2,7 @@ import type { MermaidConfig } from '../../../config.type.js';
 import type { GridHorizontalAlign, GridPlacement, GridVerticalAlign } from '../../../types.js';
 import type { LayoutData, Node } from '../../types.js';
 import type { Point } from '../../../types.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 
 export const ROOT_CONTAINER_ID = '__grid_root__';
 export const GRID_LABEL_PREFIX = 'edge-label-';
@@ -88,6 +89,22 @@ export interface ContainerRoutingTopology {
   portalRanges: readonly PortalRange[];
   seedCount: number;
   estimatedBytes: number;
+  readonly vertexCount?: number;
+  getVertex?(id: RouterVertexId): RouterVertex | undefined;
+  getSearchArcs?(id: RouterVertexId): readonly RouterSearchArc[];
+}
+
+export interface RouteOccupancyIndex {
+  readonly routes: readonly (readonly RouterPoint[])[];
+}
+
+export interface GridRoutingContext {
+  topologies: Map<GridContainerId, ContainerRoutingTopology>;
+  fallbackContainers: Map<GridContainerId, string>;
+  occupancy: RouteOccupancyIndex;
+  searchBudget: { expandedStates: number };
+  baseEstimatedBytes: number;
+  metrics?: GridRoutingInstrumentation;
 }
 
 export interface GridLayoutConfigNormalized {

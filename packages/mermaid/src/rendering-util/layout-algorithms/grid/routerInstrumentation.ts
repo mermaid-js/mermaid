@@ -8,6 +8,16 @@ export type GridRoutingFallbackReason =
   | 'estimated_memory_cap'
   | 'search_state_cap';
 
+export class GridRoutingResourceLimitError extends Error {
+  constructor(
+    public readonly reason: GridRoutingFallbackReason,
+    message: string
+  ) {
+    super(message);
+    this.name = 'GridRoutingResourceLimitError';
+  }
+}
+
 export interface GridRouteInstrumentation {
   edgeId: string;
   routeOrder: number;
@@ -41,6 +51,7 @@ export interface GridRoutingInstrumentation {
   crossingCount: number;
   sharedLength: number;
   estimatedBytes: number;
+  searchWorkspaceBytes: number;
   routeOrder: string[];
   routes: GridRouteInstrumentation[];
 }
@@ -74,6 +85,7 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     crossingCount: 0,
     sharedLength: 0,
     estimatedBytes: 0,
+    searchWorkspaceBytes: 0,
     routeOrder: [],
     routes: [],
   };

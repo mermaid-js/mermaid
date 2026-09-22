@@ -92,6 +92,13 @@ function primaryTrackCoordinate(edge: Edge): number {
   return primary.orientation === 'H' ? primary.a.y : primary.a.x;
 }
 
+function terminalLength(points: { x: number; y: number }[], atStart: boolean): number {
+  const normalized = normalizePolyline(points).points;
+  const a = atStart ? normalized[0] : normalized[normalized.length - 1];
+  const b = atStart ? normalized[1] : normalized[normalized.length - 2];
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
 describe('grid router', () => {
   it('records current route metrics without changing geometry', () => {
     const build = () =>
@@ -123,8 +130,8 @@ describe('grid router', () => {
     expect(metrics.bendCount).toBeGreaterThanOrEqual(0);
     expect(metrics.crossingCount).toBeGreaterThanOrEqual(0);
     expect(metrics.sharedLength).toBe(0);
-    expect(metrics.baseTopologyBuilds).toBe(0);
-    expect(metrics.searches).toBe(0);
+    expect(metrics.baseTopologyBuilds).toBe(1);
+    expect(metrics.searches).toBeGreaterThan(0);
     expect(metrics.resourceLimitFallbacks).toBe(0);
     expect(metrics.fallbackReasons).toEqual({
       vertex_cap: 0,
@@ -132,7 +139,17 @@ describe('grid router', () => {
       estimated_memory_cap: 0,
       search_state_cap: 0,
     });
+
+    const permuted = build();
+    permuted.edges.reverse();
+    const permutedMetrics = createGridRoutingInstrumentation();
+    runGridLayoutCore(permuted, permutedMetrics);
+    expect(permutedMetrics.routeOrder).toEqual(['horizontal', 'vertical']);
+    expect(new Map(permuted.edges.map((item) => [item.id, item.points]))).toEqual(
+      new Map(instrumented.edges.map((item) => [item.id, item.points]))
+    );
   });
+
   it('routes ordinary and labelled edges into valid orthogonal polylines', () => {
     const data = baseLayout(
       [
@@ -279,5 +296,276 @@ describe('grid router', () => {
     runGridLayoutCore(data);
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+  });
+
+  it('selects the motivating straight route through unused cell space by tuple cost', () => {
+    const data = baseLayout(
+      [
+        leaf('v1', 80, 40, { row: 1, column: 1 }),
+        leaf('v2', 80, 40, { row: 1, column: 3 }),
+        leaf('v2p', 80, 40, { row: 2, column: 2 }),
+      ],
+      [edge('v1-v2', 'v1', 'v2')],
+      { rowGap: 40, columnGap: 40 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics);
+
+    const normalized = normalizePolyline(data.edges[0].points ?? []);
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(normalized.segments).toHaveLength(1);
+    expect(normalized.segments[0]?.orientation).toBe('H');
+    expect(metrics.baseTopologyBuilds).toBe(1);
+    expect(metrics.endpointOverlayBuilds).toBeGreaterThan(0);
+    expect(metrics.searches).toBeGreaterThan(0);
+    expect(metrics.expandedStates).toBeGreaterThan(0);
+    expect(metrics.maxOpenSet).toBeGreaterThan(0);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+  });
+
+  it('allocates deterministic legal endpoint slots with clearance and terminal approach', () => {
+    const build = () =>
+      baseLayout(
+        [
+          leaf('source', 80, 56, { row: 1, column: 1 }),
+          leaf('high', 60, 32, { row: 1, column: 3 }),
+          leaf('middle', 60, 32, { row: 1, column: 3 }),
+          leaf('low', 60, 32, { row: 1, column: 3 }),
+        ],
+        [
+          edge('to-low', 'source', 'low'),
+          edge('to-high', 'source', 'high'),
+          edge('to-middle', 'source', 'middle'),
+        ],
+        { rowGap: 34, columnGap: 70 }
+      );
+    const data = build();
+
+    runGridLayoutCore(data);
+
+    const source = data.nodes.find(({ id }) => id === 'source')!;
+    const sourceTop = (source.y ?? 0) - (source.height ?? 0) / 2;
+    const sourceBottom = (source.y ?? 0) + (source.height ?? 0) / 2;
+    const ports = data.edges.map((item) => item.points![0]);
+    const ys = ports.map(({ y }) => y).sort((a, b) => a - b);
+    expect(ys[0]).toBeGreaterThanOrEqual(sourceTop + 6);
+    expect(ys.at(-1)).toBeLessThanOrEqual(sourceBottom - 6);
+    expect(ys[1] - ys[0]).toBeGreaterThanOrEqual(4);
+    expect(ys[2] - ys[1]).toBeGreaterThanOrEqual(4);
+    for (const routed of data.edges) {
+      expect(terminalLength(routed.points ?? [], true)).toBeGreaterThanOrEqual(12);
+      expect(terminalLength(routed.points ?? [], false)).toBeGreaterThanOrEqual(12);
+    }
+
+    const rerun = build();
+    runGridLayoutCore(rerun);
+    expect(rerun.edges.map(({ points }) => points)).toEqual(data.edges.map(({ points }) => points));
+  });
+
+  it('uses measured bounds conservatively for nonrectangular same-container endpoints', () => {
+    const source = leaf('source', 70, 70, { row: 1, column: 1 });
+    source.shape = 'circle';
+    const blocker = leaf('blocker', 80, 80, { row: 1, column: 2 });
+    blocker.shape = 'diamond';
+    const target = leaf('target', 70, 70, { row: 1, column: 3 });
+    target.shape = 'stadium';
+    const data = baseLayout(
+      [source, blocker, target],
+      [edge('around-blocker', 'source', 'target')],
+      { rowGap: 40, columnGap: 50 }
+    );
+
+    runGridLayoutCore(data);
+
+    const blockerRect = {
+      left: (blocker.x ?? 0) - (blocker.width ?? 0) / 2 - 6,
+      right: (blocker.x ?? 0) + (blocker.width ?? 0) / 2 + 6,
+      top: (blocker.y ?? 0) - (blocker.height ?? 0) / 2 - 6,
+      bottom: (blocker.y ?? 0) + (blocker.height ?? 0) / 2 + 6,
+    };
+    const points = data.edges[0].points ?? [];
+    for (let index = 1; index < points.length; index++) {
+      const a = points[index - 1];
+      const b = points[index];
+      const crosses =
+        a.y === b.y
+          ? a.y > blockerRect.top &&
+            a.y < blockerRect.bottom &&
+            Math.max(a.x, b.x) > blockerRect.left &&
+            Math.min(a.x, b.x) < blockerRect.right
+          : a.x > blockerRect.left &&
+            a.x < blockerRect.right &&
+            Math.max(a.y, b.y) > blockerRect.top &&
+            Math.min(a.y, b.y) < blockerRect.bottom;
+      expect(crosses).toBe(false);
+    }
+  });
+
+  it.each([
+    {
+      reason: 'vertex_cap',
+      options: { topologyCaps: { maxVertices: 1 } },
+    },
+    {
+      reason: 'adjacency_cap',
+      options: { topologyCaps: { maxAdjacencyEntries: 1 } },
+    },
+    {
+      reason: 'estimated_memory_cap',
+      options: { topologyCaps: { maxEstimatedBytes: 1 } },
+    },
+    {
+      reason: 'search_state_cap',
+      options: { searchCaps: { maxExpandedStates: 1 } },
+    },
+  ] as const)(
+    'falls back only for the fixed $reason resource-cap reason',
+    ({ reason, options }) => {
+      const data = baseLayout(
+        [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 1, column: 2 })],
+        [edge('a-b', 'a', 'b')],
+        { columnGap: 60 }
+      );
+      const metrics = createGridRoutingInstrumentation();
+
+      runGridLayoutCore(data, metrics, options);
+
+      expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+      expect(metrics.resourceLimitFallbacks).toBe(1);
+      expect(metrics.fallbackReasons[reason]).toBe(1);
+      expect(metrics.fallbackValidationFailures).toBe(0);
+    }
+  );
+
+  it('rejects an invalid resource-cap fallback instead of committing it', () => {
+    const data = baseLayout(
+      [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 1, column: 2 })],
+      [edge('a-b', 'a', 'b')],
+      { columnGap: 0 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    expect(() =>
+      runGridLayoutCore(data, metrics, { topologyCaps: { maxVertices: 1 } })
+    ).toThrowError(/GRID_ROUTE_NOT_FOUND: Invalid legacy fallback/);
+    expect(metrics.resourceLimitFallbacks).toBe(1);
+    expect(metrics.fallbackValidationFailures).toBe(1);
+  });
+
+  it('commits an earlier validated candidate when a later candidate reaches the search cap', () => {
+    const data = baseLayout(
+      [
+        leaf('a', 80, 40, { row: 1, column: 1 }),
+        leaf('blocker', 80, 400, { row: 1, column: 2 }),
+        leaf('b', 80, 40, { row: 1, column: 3 }),
+      ],
+      [edge('a-b', 'a', 'b')],
+      { columnGap: 40 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics, {
+      searchCaps: { maxInvocationExpandedStates: 30 },
+    });
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(metrics.searches).toBe(2);
+    expect(metrics.expandedStates).toBe(30);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+    expect(data.edges[0].points).toEqual([
+      { x: 80, y: 200 },
+      { x: 114, y: 200 },
+      { x: 114, y: -6 },
+      { x: 206, y: -6 },
+      { x: 206, y: 200 },
+      { x: 240, y: 200 },
+    ]);
+  });
+
+  it('does not fall back when endpoint capacity makes a route impossible', () => {
+    const data = baseLayout(
+      [leaf('a', 10, 10, { row: 1, column: 1 }), leaf('b', 10, 10, { row: 1, column: 2 })],
+      [edge('a-b', 'a', 'b')],
+      { columnGap: 40 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    expect(() => runGridLayoutCore(data, metrics)).toThrowError(
+      /GRID_ROUTE_NOT_FOUND: No legal endpoint candidates/
+    );
+    expect(metrics.routesImpossible).toBe(1);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+  });
+
+  it('excludes group titles and corners from same-container endpoint slots', () => {
+    const data = baseLayout(
+      [
+        leaf('above', 60, 30, { row: 1, column: 1 }),
+        group('g', 'Titled group', { row: 2, column: 1 }),
+        leaf('member', 80, 40, { row: 1, column: 1 }, 'g'),
+      ],
+      [edge('g-above', 'g', 'above')],
+      { rowGap: 70 }
+    );
+
+    runGridLayoutCore(data);
+
+    const owner = data.nodes.find(({ id }) => id === 'g')!;
+    const port = data.edges[0].points![0];
+    const ownerRect = {
+      left: (owner.x ?? 0) - (owner.width ?? 0) / 2,
+      right: (owner.x ?? 0) + (owner.width ?? 0) / 2,
+      top: (owner.y ?? 0) - (owner.height ?? 0) / 2,
+      bottom: (owner.y ?? 0) + (owner.height ?? 0) / 2,
+    };
+    expect(port.y).not.toBe(ownerRect.top);
+    if (port.x === ownerRect.left || port.x === ownerRect.right) {
+      expect(port.y).toBeGreaterThanOrEqual((owner.groupTitleRect?.bottom ?? ownerRect.top) + 6);
+    }
+    expect(port.y).toBeLessThanOrEqual(ownerRect.bottom - 6);
+  });
+
+  it('routes same-cell stack endpoints around measured intervening items', () => {
+    const data = baseLayout(
+      [
+        leaf('top', 70, 32, { row: 1, column: 1 }),
+        leaf('middle', 90, 42, { row: 1, column: 1 }),
+        leaf('bottom', 70, 32, { row: 1, column: 1 }),
+      ],
+      [edge('stack-edge', 'top', 'bottom')],
+      { cellGap: 20 }
+    );
+
+    runGridLayoutCore(data);
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThanOrEqual(2);
+  });
+
+  it('reports test-only sparse and legacy route comparison without changing selection', () => {
+    const data = baseLayout(
+      [
+        leaf('v1', 80, 40, { row: 1, column: 1 }),
+        leaf('v2', 80, 40, { row: 1, column: 3 }),
+        leaf('v2p', 80, 40, { row: 2, column: 2 }),
+      ],
+      [edge('v1-v2', 'v1', 'v2')],
+      { rowGap: 40, columnGap: 40 }
+    );
+    const comparisons: unknown[] = [];
+
+    runGridLayoutCore(data, createGridRoutingInstrumentation(), {
+      onDualRouteComparison: (comparison) => comparisons.push(comparison),
+    });
+
+    expect(comparisons).toEqual([
+      expect.objectContaining({
+        edgeId: 'v1-v2',
+        sparse: expect.objectContaining({ valid: true, bends: 0 }),
+        legacy: expect.objectContaining({ valid: true, bends: 4 }),
+      }),
+    ]);
+    expect(normalizePolyline(data.edges[0].points ?? []).segments).toHaveLength(1);
   });
 });

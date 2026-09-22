@@ -1,4 +1,7 @@
-import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
+import {
+  GridRoutingResourceLimitError,
+  type GridRoutingInstrumentation,
+} from './routerInstrumentation.js';
 import type {
   ContainerRoutingTopology,
   GridOrientation,
@@ -24,17 +27,35 @@ export interface RouterSearchResult {
   cost: RouterTupleCost;
 }
 
+export interface RouterSearchCaps {
+  maxExpandedStates?: number;
+  maxInvocationExpandedStates?: number;
+  maxEstimatedBytes?: number;
+}
+
+export interface RouterSearchBudget {
+  expandedStates: number;
+}
+
 export interface RouterSearchOptions {
   metrics?: GridRoutingInstrumentation;
+  caps?: RouterSearchCaps;
   endpointCandidateRank?: number;
   recordOutcome?: boolean;
+  budget?: RouterSearchBudget;
   initialOrientation?: GridOrientation;
   initialLength?: number;
   targetOrientation?: GridOrientation;
   targetLength?: number;
   topologyValidated?: boolean;
   workspace?: RouterSearchWorkspace;
+  heuristic?: 'bend-aware' | 'zero';
+  queueOrder?: 'canonical' | 'reverse';
+  estimatedBytesBase?: number;
 }
+
+const DEFAULT_MAX_EDGE_STATES = 100_000;
+const DEFAULT_MAX_INVOCATION_STATES = 2_000_000;
 
 export class RouterSearchWorkspace {
   stateVertices = new Int32Array(256);
@@ -45,6 +66,7 @@ export class RouterSearchWorkspace {
   gOccupiedLengths = new Float64Array(256);
   gCrossings = new Float64Array(256);
   fLengths = new Float64Array(256);
+  fBends = new Float64Array(256);
   predecessors = new Int32Array(256);
   depths = new Int32Array(256);
   ancestor4 = new Int32Array(256);
@@ -75,11 +97,33 @@ export class RouterSearchWorkspace {
     this.gOccupiedLengths = growTypedArray(this.gOccupiedLengths, capacity);
     this.gCrossings = growTypedArray(this.gCrossings, capacity);
     this.fLengths = growTypedArray(this.fLengths, capacity);
+    this.fBends = growTypedArray(this.fBends, capacity);
     this.predecessors = growTypedArray(this.predecessors, capacity);
     this.depths = growTypedArray(this.depths, capacity);
     this.ancestor4 = growTypedArray(this.ancestor4, capacity);
     this.heapChildren = growTypedArray(this.heapChildren, capacity);
     this.heapSiblings = growTypedArray(this.heapSiblings, capacity);
+  }
+
+  estimatedBytes(): number {
+    return (
+      this.stateVertices.byteLength +
+      this.orientations.byteLength +
+      this.gLengths.byteLength +
+      this.gBends.byteLength +
+      this.gBoundaryTransitions.byteLength +
+      this.gOccupiedLengths.byteLength +
+      this.gCrossings.byteLength +
+      this.fLengths.byteLength +
+      this.fBends.byteLength +
+      this.predecessors.byteLength +
+      this.depths.byteLength +
+      this.ancestor4.byteLength +
+      this.best.byteLength +
+      this.heapChildren.byteLength +
+      this.heapSiblings.byteLength +
+      this.heapPairs.length * 8
+    );
   }
 }
 
@@ -107,8 +151,49 @@ export function addTupleCost(a: RouterTupleCost, b: RouterTupleCost): RouterTupl
   return [a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3], a[4] + b[4], a[5] + b[5]];
 }
 
-export function tupleHeuristic(from: RouterPoint, to: RouterPoint): RouterTupleCost {
-  return [Math.abs(from.x - to.x) + Math.abs(from.y - to.y), 0, 0, 0, 0, 0];
+function minimumBends(
+  dx: number,
+  dy: number,
+  incomingOrientation?: GridOrientation,
+  targetOrientation?: GridOrientation
+): number {
+  if (dx === 0 && dy === 0) {
+    return incomingOrientation && targetOrientation
+      ? Number(incomingOrientation !== targetOrientation)
+      : 0;
+  }
+  if (dx === 0) {
+    return (
+      (incomingOrientation ? Number(incomingOrientation !== 'V') : 0) +
+      (targetOrientation ? Number(targetOrientation !== 'V') : 0)
+    );
+  }
+  if (dy === 0) {
+    return (
+      (incomingOrientation ? Number(incomingOrientation !== 'H') : 0) +
+      (targetOrientation ? Number(targetOrientation !== 'H') : 0)
+    );
+  }
+  return Math.min(
+    (incomingOrientation ? Number(incomingOrientation !== 'H') : 0) +
+      1 +
+      (targetOrientation ? Number(targetOrientation !== 'V') : 0),
+    (incomingOrientation ? Number(incomingOrientation !== 'V') : 0) +
+      1 +
+      (targetOrientation ? Number(targetOrientation !== 'H') : 0)
+  );
+}
+
+export function tupleHeuristic(
+  from: RouterPoint,
+  to: RouterPoint,
+  incomingOrientation?: GridOrientation,
+  targetOrientation?: GridOrientation
+): RouterTupleCost {
+  const dx = Math.abs(from.x - to.x);
+  const dy = Math.abs(from.y - to.y);
+  const bends = minimumBends(dx, dy, incomingOrientation, targetOrientation);
+  return [dx + dy, bends, 0, 0, 0, 0];
 }
 
 function orientationOrdinal(orientation: GridOrientation | undefined): number {
@@ -146,7 +231,7 @@ function reconstruct(
   stateVertices: ArrayLike<number>,
   predecessors: ArrayLike<number>,
   cost: RouterTupleCost,
-  topology: Pick<ContainerRoutingTopology, 'vertices'>
+  vertexAt: (id: number) => RouterVertex
 ): RouterSearchResult {
   const vertexIds: number[] = [];
   let current = stateId;
@@ -156,7 +241,7 @@ function reconstruct(
   }
   vertexIds.reverse();
   return {
-    points: normalizePoints(vertexIds.map((id) => topology.vertices[id].point)),
+    points: normalizePoints(vertexIds.map((id) => vertexAt(id).point)),
     vertexIds,
     cost,
   };
@@ -199,14 +284,30 @@ function validateSearchTopology(
 
 function search(
   topology: Pick<ContainerRoutingTopology, 'vertices' | 'adjacency'> &
-    Partial<Pick<ContainerRoutingTopology, 'adjacencyByVertex' | 'searchAdjacencyByVertex'>>,
+    Partial<
+      Pick<
+        ContainerRoutingTopology,
+        | 'adjacencyByVertex'
+        | 'searchAdjacencyByVertex'
+        | 'vertexCount'
+        | 'getVertex'
+        | 'getSearchArcs'
+      >
+    >,
   sourceId: number,
   targetId: number,
   options: RouterSearchOptions,
   useHeuristic: boolean
 ): RouterSearchResult | undefined {
-  const source = topology.vertices[sourceId];
-  const target = topology.vertices[targetId];
+  const vertexAt = (id: number): RouterVertex => {
+    const vertex = topology.getVertex?.(id) ?? topology.vertices[id];
+    if (!vertex) {
+      throw new Error(`Missing grid routing vertex ${id}`);
+    }
+    return vertex;
+  };
+  const source = vertexAt(sourceId);
+  const target = vertexAt(targetId);
   if (!source || !target) {
     throw new Error('Grid routing search source and target must be topology vertices');
   }
@@ -219,7 +320,7 @@ function search(
     metrics.searches++;
   }
   const workspace = options.workspace ?? new RouterSearchWorkspace();
-  workspace.reset(topology.vertices.length);
+  workspace.reset(topology.vertexCount ?? topology.vertices.length);
   let stateVertices = workspace.stateVertices;
   let orientations = workspace.orientations;
   let gLengths = workspace.gLengths;
@@ -228,6 +329,7 @@ function search(
   let gOccupiedLengths = workspace.gOccupiedLengths;
   let gCrossings = workspace.gCrossings;
   let fLengths = workspace.fLengths;
+  let fBends = workspace.fBends;
   let predecessors = workspace.predecessors;
   let depths = workspace.depths;
   let ancestor4 = workspace.ancestor4;
@@ -237,17 +339,26 @@ function search(
   const heapPairs = workspace.heapPairs;
   let stateCount = 1;
   const endpointCandidateRank = options.endpointCandidateRank ?? 0;
-  const compareStates = (a: number, b: number): number =>
-    fLengths[a] - fLengths[b] ||
-    gBends[a] - gBends[b] ||
-    gBoundaryTransitions[a] - gBoundaryTransitions[b] ||
-    gOccupiedLengths[a] - gOccupiedLengths[b] ||
-    gCrossings[a] - gCrossings[b] ||
-    stateVertices[a] - stateVertices[b] ||
-    orientations[a] - orientations[b] ||
-    predecessors[a] - predecessors[b] ||
-    a - b;
-  const compareChains = (a: number, b: number): number => {
+  const useBendHeuristic = useHeuristic && options.heuristic !== 'zero';
+  function nonCostOrder(a: number, b: number): number {
+    return (
+      stateVertices[a] - stateVertices[b] ||
+      orientations[a] - orientations[b] ||
+      predecessors[a] - predecessors[b] ||
+      a - b
+    );
+  }
+  function compareStates(a: number, b: number): number {
+    return (
+      fLengths[a] - fLengths[b] ||
+      fBends[a] - fBends[b] ||
+      gBoundaryTransitions[a] - gBoundaryTransitions[b] ||
+      gOccupiedLengths[a] - gOccupiedLengths[b] ||
+      gCrossings[a] - gCrossings[b] ||
+      (options.queueOrder === 'reverse' ? -nonCostOrder(a, b) : nonCostOrder(a, b))
+    );
+  }
+  function compareChains(a: number, b: number): number {
     if (a === b) {
       return 0;
     }
@@ -286,10 +397,10 @@ function search(
       stateVertices[alignedA] - stateVertices[alignedB] ||
       orientations[alignedA] - orientations[alignedB]
     );
-  };
+  }
   let heapRoot = -1;
   let heapSize = 0;
-  const heapMeld = (first: number, second: number): number => {
+  function heapMeld(first: number, second: number): number {
     if (first < 0) {
       return second;
     }
@@ -304,7 +415,7 @@ function search(
     heapSiblings[first] = heapChildren[second];
     heapChildren[second] = first;
     return second;
-  };
+  }
   const heapPush = (value: number): void => {
     heapChildren[value] = -1;
     heapSiblings[value] = -1;
@@ -339,7 +450,28 @@ function search(
     return first;
   };
   let expandedThisSearch = 0;
+  const edgeCap = options.caps?.maxExpandedStates ?? DEFAULT_MAX_EDGE_STATES;
+  const invocationCap = options.caps?.maxInvocationExpandedStates ?? DEFAULT_MAX_INVOCATION_STATES;
+  const invocationStart = options.budget?.expandedStates ?? metrics?.expandedStates ?? 0;
+  const recordWorkspaceBytes = (): void => {
+    const bytes = workspace.estimatedBytes();
+    const totalBytes = (options.estimatedBytesBase ?? 0) + bytes;
+    if (metrics) {
+      metrics.searchWorkspaceBytes = Math.max(metrics.searchWorkspaceBytes, bytes);
+      metrics.estimatedBytes = Math.max(metrics.estimatedBytes, totalBytes);
+    }
+    if (totalBytes > (options.caps?.maxEstimatedBytes ?? Number.POSITIVE_INFINITY)) {
+      throw new GridRoutingResourceLimitError(
+        'estimated_memory_cap',
+        'Grid routing search workspace memory cap exceeded'
+      );
+    }
+  };
+  recordWorkspaceBytes();
   const commitExpandedStates = (): void => {
+    if (options.budget) {
+      options.budget.expandedStates += expandedThisSearch;
+    }
     if (metrics) {
       metrics.expandedStates += expandedThisSearch;
     }
@@ -352,11 +484,12 @@ function search(
   gBoundaryTransitions[0] = 0;
   gOccupiedLengths[0] = 0;
   gCrossings[0] = 0;
-  fLengths[0] =
-    initialLength +
-    (useHeuristic
-      ? Math.abs(source.point.x - target.point.x) + Math.abs(source.point.y - target.point.y)
-      : 0);
+  const initialDx = Math.abs(source.point.x - target.point.x);
+  const initialDy = Math.abs(source.point.y - target.point.y);
+  fLengths[0] = initialLength + (useBendHeuristic ? initialDx + initialDy : 0);
+  fBends[0] = useBendHeuristic
+    ? minimumBends(initialDx, initialDy, options.initialOrientation, options.targetOrientation)
+    : 0;
   predecessors[0] = -1;
   depths[0] = 1;
   ancestor4[0] = -1;
@@ -397,17 +530,24 @@ function search(
     if (
       bestGoalCost &&
       (fLengths[next] - bestGoalCost[0] ||
-        gBends[next] - bestGoalCost[1] ||
+        fBends[next] - bestGoalCost[1] ||
         gBoundaryTransitions[next] - bestGoalCost[2] ||
         gOccupiedLengths[next] - bestGoalCost[3] ||
         gCrossings[next] - bestGoalCost[4] ||
-        endpointCandidateRank - bestGoalCost[5]) >= 0
+        endpointCandidateRank - bestGoalCost[5]) > 0
     ) {
       break;
     }
     const current = heapPop()!;
     if (best[stateVertices[current] * 3 + orientations[current]] !== current) {
       continue;
+    }
+    if (expandedThisSearch >= edgeCap || invocationStart + expandedThisSearch >= invocationCap) {
+      commitExpandedStates();
+      throw new GridRoutingResourceLimitError(
+        'search_state_cap',
+        'Grid routing search-state cap exceeded'
+      );
     }
     expandedThisSearch++;
 
@@ -417,7 +557,8 @@ function search(
     }
 
     const vertexId = stateVertices[current];
-    const compactArcs = topology.searchAdjacencyByVertex?.[vertexId];
+    const compactArcs =
+      topology.getSearchArcs?.(vertexId) ?? topology.searchAdjacencyByVertex?.[vertexId];
     if (compactArcs) {
       for (const arc of compactArcs) {
         const orientation = arc.orientationOrdinal;
@@ -456,11 +597,13 @@ function search(
           gOccupiedLengths = workspace.gOccupiedLengths;
           gCrossings = workspace.gCrossings;
           fLengths = workspace.fLengths;
+          fBends = workspace.fBends;
           predecessors = workspace.predecessors;
           depths = workspace.depths;
           ancestor4 = workspace.ancestor4;
           heapChildren = workspace.heapChildren;
           heapSiblings = workspace.heapSiblings;
+          recordWorkspaceBytes();
         }
         stateVertices[candidate] = arc.to;
         orientations[candidate] = orientation;
@@ -469,11 +612,19 @@ function search(
         gBoundaryTransitions[candidate] = boundaryTransitions;
         gOccupiedLengths[candidate] = occupiedLength;
         gCrossings[candidate] = crossings;
-        fLengths[candidate] =
-          length +
-          (useHeuristic
-            ? Math.abs(topology.vertices[arc.to].point.x - target.point.x) +
-              Math.abs(topology.vertices[arc.to].point.y - target.point.y)
+        const candidatePoint = vertexAt(arc.to).point;
+        const candidateDx = Math.abs(candidatePoint.x - target.point.x);
+        const candidateDy = Math.abs(candidatePoint.y - target.point.y);
+        fLengths[candidate] = length + (useBendHeuristic ? candidateDx + candidateDy : 0);
+        fBends[candidate] =
+          bends +
+          (useBendHeuristic
+            ? minimumBends(
+                candidateDx,
+                candidateDy,
+                orientation === 1 ? 'H' : 'V',
+                options.targetOrientation
+              )
             : 0);
         predecessors[candidate] = current;
         depths[candidate] = depths[current] + 1;
@@ -523,11 +674,13 @@ function search(
           gOccupiedLengths = workspace.gOccupiedLengths;
           gCrossings = workspace.gCrossings;
           fLengths = workspace.fLengths;
+          fBends = workspace.fBends;
           predecessors = workspace.predecessors;
           depths = workspace.depths;
           ancestor4 = workspace.ancestor4;
           heapChildren = workspace.heapChildren;
           heapSiblings = workspace.heapSiblings;
+          recordWorkspaceBytes();
         }
         stateVertices[candidate] = arc.to;
         orientations[candidate] = orientation;
@@ -536,11 +689,14 @@ function search(
         gBoundaryTransitions[candidate] = boundaryTransitions;
         gOccupiedLengths[candidate] = occupiedLength;
         gCrossings[candidate] = crossings;
-        fLengths[candidate] =
-          length +
-          (useHeuristic
-            ? Math.abs(topology.vertices[arc.to].point.x - target.point.x) +
-              Math.abs(topology.vertices[arc.to].point.y - target.point.y)
+        const candidatePoint = vertexAt(arc.to).point;
+        const candidateDx = Math.abs(candidatePoint.x - target.point.x);
+        const candidateDy = Math.abs(candidatePoint.y - target.point.y);
+        fLengths[candidate] = length + (useBendHeuristic ? candidateDx + candidateDy : 0);
+        fBends[candidate] =
+          bends +
+          (useBendHeuristic
+            ? minimumBends(candidateDx, candidateDy, arc.orientation, options.targetOrientation)
             : 0);
         predecessors[candidate] = current;
         depths[candidate] = depths[current] + 1;
@@ -567,12 +723,21 @@ function search(
     metrics.routesFound++;
   }
   commitExpandedStates();
-  return reconstruct(bestGoalState, stateVertices, predecessors, bestGoalCost, topology);
+  return reconstruct(bestGoalState, stateVertices, predecessors, bestGoalCost, vertexAt);
 }
 
 export function findShortestRoute(
   topology: Pick<ContainerRoutingTopology, 'vertices' | 'adjacency'> &
-    Partial<Pick<ContainerRoutingTopology, 'adjacencyByVertex' | 'searchAdjacencyByVertex'>>,
+    Partial<
+      Pick<
+        ContainerRoutingTopology,
+        | 'adjacencyByVertex'
+        | 'searchAdjacencyByVertex'
+        | 'vertexCount'
+        | 'getVertex'
+        | 'getSearchArcs'
+      >
+    >,
   sourceId: number,
   targetId: number,
   options: RouterSearchOptions = {}
