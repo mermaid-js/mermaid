@@ -1,0 +1,17 @@
+sequenceDiagram
+  Alice ->> Bob: Hello Bob, how are you ?
+  Bob ->> Alice: Fine, thank you. And you?
+  create participant Polo
+  Alice ->> Polo: Hi Polo!
+  create actor Ola1 as Ola
+  Polo ->> Ola1: Hiii
+  Ola1 ->> Alice: Hi too
+  destroy Ola1
+  Alice --x Ola1: Bye!
+  Alice ->> Bob: And now?
+  create participant Ola2 as Ola
+  Alice ->> Ola2: Hello again
+  destroy Alice
+  Alice --x Ola2: Bye for me!
+  destroy Bob
+  Ola2 --> Bob: The end

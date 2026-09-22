@@ -1,0 +1,9 @@
+flowchart TD
+  Start([Start]) --> Prep[Preparation Step]
+  Prep --> Split{Ready to Process?}
+  Split -->|Yes| T1[Task A]
+  Split -->|Yes| T2[Task B]
+  T1 --> Merge
+  T2 --> Merge
+  Merge((Join Results)) --> Finalize[Finalize Process]
+  Finalize --> End([End])

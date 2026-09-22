@@ -1,0 +1,22 @@
+flowchart TD
+A["A:RNA Sequencing"] -- Differential Gene Expression Analysis --> C("Five Candidates")
+C -- Methylation Array Quantitive PCR --> H("Identification of Sox2")
+H --> B("Investigate how SOX2 is implicated in endothelial to mesenchymal transition and how expression affects the migration of GBM cells")
+B --> D["Investigate and isolate migratory glioblastoma with regards to phenotype"] & E["Investigate the effect of SOX2 on EMT in GBM"] & F["Investigate the effect of SOX2 downregulation on migratory/invasive phenotype in the in vitro model and the effect on metastasis formation in the in vivo model"]
+D -- Transwell migration assay --> I("Isolation of migratory cells")
+I --> L("L: Expression of markers for stemness, EMT and invasion pattern")
+D -- RNA Sequencing --> L
+E -- "Lentiviral-mediated RNA interference" --> J("J: Sox2 Knock-Down")
+J --> O("O: Up/downregulation of stemness markers") & P("Up/downregulation of EMT markers")
+F -- Transwell/Wound Healing Assay --> K("In Vitro m")
+F -- Orthotopic PDX --> N("In Vivo")
+P --> Q("Q: Determine effects of Sox2 regulation on EMT markers and stemness")
+O --> Q
+N --> R("Kaplan-Meier Survival") & T("Immunohistochemical Analysis")
+K --> S("Phenotyping")
+R --> n1["Characterise the effects of SOX2 expression changes on the phenotype of the cancer cells, heterogeneity and EMT"]
+T --> n1
+S --> n1
+L --> n2["n2: Future studies focused on drug discovery and development of combination treatments"]
+Q --> n2
+n1 --> n2

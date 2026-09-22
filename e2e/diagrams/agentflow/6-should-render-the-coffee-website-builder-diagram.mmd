@@ -1,0 +1,39 @@
+agentflow-beta TB
+  flow build_site["Build Site"]
+    flow researcher["Researcher"]
+      city["city"]
+      research_loc["research_location"]
+      brief["Research Brief"]
+      city --> research_loc --> brief
+      write_copy["write_copy"]
+      english_copy["English Copy"]
+      brief --> write_copy --> english_copy
+    end
+
+    flow translator["Translator"]
+      translate_sv["translate_to_swedish"]
+      bilingual["Bilingual Page"]
+      english_copy --> translate_sv --> bilingual
+    end
+
+    flow designer["Designer"]
+      gen_html["generate_html"]
+      html_out["HTML Website"]
+      bilingual --> gen_html --> html_out
+      nordic["nordic_design"]
+      gen_html -.- nordic
+    end
+  end
+
+  city@{ shape: input, value: "Stockholm" }
+  research_loc@{ shape: tool, returns: "String" }
+  write_copy@{ shape: tool, returns: "CoffeeCopy" }
+  translate_sv@{ shape: tool, returns: "BilingualPage" }
+  gen_html@{ shape: tool, returns: "String" }
+  nordic@{ shape: refdoc }
+
+  researcher@{ model: "claude-sonnet-4-20250514", instruction: "Research the location and write the copy." }
+  translator@{ model: "claude-sonnet-4-20250514" }
+  designer@{ model: "claude-sonnet-4-20250514" }
+
+  build_site@{ params: "city :: String", returns: "String" }

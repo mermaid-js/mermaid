@@ -1,0 +1,15 @@
+architecture-beta
+  group api[API]
+  group public[Public API] in api
+  group private[Private API] in api
+
+  service serv1(server)[Server] in public
+
+  service serv2(server)[Server] in private
+  service db(database)[Database] in private
+
+  service gateway(internet)[Gateway] in api
+
+  serv1:B -- T:serv2
+  serv2:L -- R:db
+  serv1:L -- R:gateway

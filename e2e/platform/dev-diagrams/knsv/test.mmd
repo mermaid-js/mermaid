@@ -1,0 +1,9 @@
+flowchart TD
+      B("B: Investigate how SOX2 is implicated in endothelial to mesenchymal transition and how expression affects the migration of GBM cells")
+      B --> D["D: Investigate and isolate migratory glioblastoma with regards to phenotype"] & E["E: Investigate the effect of SOX2 on EMT in GBM"] & F["F: Investigate the effect of SOX2 downregulation on migratory/invasive phenotype in the in vitro model and the effect on metastasis formation in the in vivo model"]
+
+      L("L: Expression of markers for stemness, EMT and invasion pattern")
+      D -- RNA Sequencing --> L
+      E -- "Lentiviral-mediated RNA interference" --> J("J:Sox2 Knock-Down")
+      J --> O("O: Up/downregulation of stemness markers") & P("P: Up/downregulation of EMT markers")
+      F -- Transwell/Wound Healing Assay --> K("K: In Vitro m")

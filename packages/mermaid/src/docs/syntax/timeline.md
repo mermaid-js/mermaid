@@ -121,7 +121,7 @@ timeline
           Bullet 4 : sub-point 4a : sub-point 4b
 ```
 
-### Direction (v<MERMAID_RELEASE_VERSION>+)
+### Direction (v11.14.0+)
 
 Timeline can change its direction by the keyword after `timeline`.
 
@@ -241,14 +241,20 @@ Mermaid supports a bunch of pre-defined themes which you can use to find the rig
 
 The following are the different pre-defined theme options:
 
-- `base`
-- `forest`
-- `dark`
+- `redux-color` (the default)
+- `redux-dark-color`
+- `redux`
+- `redux-dark`
 - `default`
 - `neutral`
+- `dark`
+- `forest`
+- `neo`
+- `neo-dark`
+- `base`
 
 **NOTE**: To change theme you can either use the `initialize` call or _directives_. Learn more about [directives](../config/directives.md)
-Let's put them to use, and see how our sample diagram looks in different themes:
+Let's put a few of them to use, and see how our sample diagram looks in different themes:
 
 ### Base Theme
 
@@ -307,7 +313,7 @@ config:
           2010 : Pinterest
 ```
 
-### Default Theme
+### The `default` Theme
 
 ```mermaid-example
 ---

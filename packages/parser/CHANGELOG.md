@@ -1,5 +1,60 @@
 # @mermaid-js/parser
 
+## 2.0.0
+
+### Major Changes
+
+- [#8213](https://github.com/mermaid-js/mermaid/pull/8213) [`33442fd`](https://github.com/mermaid-js/mermaid/commit/33442fddbf91852417ac2805afbd35aba0facbe1) Thanks [@aloisklink](https://github.com/aloisklink)! - chore!: require ES2024, Safari 17.4+, Node.JS v22.12+
+
+  Mermaid is now built to target Safari 17.4+ and ES2024. If you need to support
+  older browsers, you may need to polyfill or transpile mermaid.
+
+  Safari 17.4+ has been chosen as the floor, as unlike Firefox/Chrome,
+  older iOS devices don't get major Safari updates.
+
+  Node.JS v22.12+ is also declared as requirement in our `package.json` files,
+  but as mermaid requires a browser, this is mainly so we can use dependencies that
+  also declare a Node.JS v22.12+ requirement, without causing issues for users when
+  running `npm install`.
+
+## 1.2.1
+
+### Patch Changes
+
+- [#7984](https://github.com/mermaid-js/mermaid/pull/7984) [`e848423`](https://github.com/mermaid-js/mermaid/commit/e848423d8841c6bd4651ee1e6e4833b5b573ac97) Thanks [@aloktomarr](https://github.com/aloktomarr)! - fix(architecture): allow non-ASCII characters and punctuation in unquoted titles
+
+## 1.2.0
+
+### Minor Changes
+
+- [#7535](https://github.com/mermaid-js/mermaid/pull/7535) [`ea1c48f`](https://github.com/mermaid-js/mermaid/commit/ea1c48f53fce5d025388d386c90da8743ee25b13) Thanks [@ragelink](https://github.com/ragelink)! - feat(cynefin): Adds the Cynefin framework as a new diagram type (beta) to Mermaid (available as `cynefin-beta`). The Cynefin framework, created by Dave Snowden, is a decision-making framework that categorizes problems into five complexity domains, widely used in agile, incident management, strategy, and organizational design.
+
+- [#7527](https://github.com/mermaid-js/mermaid/pull/7527) [`b4d0442`](https://github.com/mermaid-js/mermaid/commit/b4d0442dd1628acb3f71681519e7f47fc8bacf55) Thanks [@notionparallax](https://github.com/notionparallax)! - feat(treeView): Extends the existing treeView-beta diagram with features useful for representing file/directory structures.
+
+- [#7708](https://github.com/mermaid-js/mermaid/pull/7708) [`4e63e9d`](https://github.com/mermaid-js/mermaid/commit/4e63e9d338b6476df283afd4a002072945bc4563) Thanks [@txmxthy](https://github.com/txmxthy)! - feat(architecture): add `align row|column {ids…}` directive to architecture-beta diagrams so authors can declare horizontal or vertical alignment of services explicitly.
+
+- [#7251](https://github.com/mermaid-js/mermaid/pull/7251) [`216e4e9`](https://github.com/mermaid-js/mermaid/commit/216e4e9a61afceae885b00854f79e17373ccad31) Thanks [@ydah](https://github.com/ydah)! - feat(railroad): Add support for Railroad Diagrams (Syntax Diagrams) with four input syntaxes: IR (railroad-beta), EBNF (railroad-ebnf-beta), ABNF (railroad-abnf-beta), and PEG (railroad-peg-beta).
+
+## 1.1.1
+
+### Patch Changes
+
+- [#7642](https://github.com/mermaid-js/mermaid/pull/7642) [`7a8fb85`](https://github.com/mermaid-js/mermaid/commit/7a8fb8532c57ecc55b3711454ab0e505a4291445) Thanks [@tractorjuice](https://github.com/tractorjuice)! - fix(wardley): allow hyphens in unquoted component names
+
+  Multi-word names containing hyphens — e.g. `real-time processing`, `end-user`, `on-call engineer` — now parse without quoting, bringing the grammar in line with the OnlineWardleyMaps (OWM) convention. `A->B` (no-space arrow) still tokenises correctly.
+
+- [#7658](https://github.com/mermaid-js/mermaid/pull/7658) [`675a64c`](https://github.com/mermaid-js/mermaid/commit/675a64ca0e3cde8728ca715991623c3fc055ce88) Thanks [@aloisklink](https://github.com/aloisklink)! - fix(parser): bundle langium/chevrotain
+
+  This should silence warnings about lodash-es 4.17.23, which chevrotain@11.1.1 is pinned to, but is not vulnerable to.
+
+  And this avoids warnings when langium v4 is installed on Node.JS v20.0.
+
+## 1.1.0
+
+### Minor Changes
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - add new TreeView diagram
+
 ## 1.0.1
 
 ### Patch Changes

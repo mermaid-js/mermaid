@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor Admin
+  participant Dashboard
+  participant AuthService@{ "type" : "boundary" }
+  participant UserManager@{ "type" : "control" }
+  participant UserProfile@{ "type" : "entity" }
+  participant UserDB@{ "type" : "database" }
+  participant Logs@{ "type" : "database" }
+
+  Admin ->> Dashboard: Open user management
+  loop Authentication check
+  Dashboard ->> AuthService: Verify admin rights
+  AuthService ->> Dashboard: Access granted
+  end
+  Dashboard ->> UserManager: List users
+  UserManager ->> UserDB: Query users
+  UserDB ->> UserManager: Return user data
+  Note right of UserDB: Encrypted data<br/>requires decryption
+  UserManager ->> UserProfile: Format profiles
+  UserProfile ->> UserManager: Formatted data
+  UserManager ->> Dashboard: Display users
+  Dashboard ->> Logs: Record access
+  Logs ->> Admin: Audit trail

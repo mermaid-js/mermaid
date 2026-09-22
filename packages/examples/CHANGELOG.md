@@ -1,5 +1,44 @@
 # @mermaid-js/examples
 
+## 2.0.0
+
+### Major Changes
+
+- [#8213](https://github.com/mermaid-js/mermaid/pull/8213) [`33442fd`](https://github.com/mermaid-js/mermaid/commit/33442fddbf91852417ac2805afbd35aba0facbe1) Thanks [@aloisklink](https://github.com/aloisklink)! - chore!: require ES2024, Safari 17.4+, Node.JS v22.12+
+
+  Mermaid is now built to target Safari 17.4+ and ES2024. If you need to support
+  older browsers, you may need to polyfill or transpile mermaid.
+
+  Safari 17.4+ has been chosen as the floor, as unlike Firefox/Chrome,
+  older iOS devices don't get major Safari updates.
+
+  Node.JS v22.12+ is also declared as requirement in our `package.json` files,
+  but as mermaid requires a browser, this is mainly so we can use dependencies that
+  also declare a Node.JS v22.12+ requirement, without causing issues for users when
+  running `npm install`.
+
+### Minor Changes
+
+- [#8048](https://github.com/mermaid-js/mermaid/pull/8048) [`7a3c1a8`](https://github.com/mermaid-js/mermaid/commit/7a3c1a832b80066850d179a36fa7a0a3690134c4) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: add UML use case diagrams with actors, use cases, system boundaries, relationships, stereotypes, notes, JSON tables, class and style support, accessibility metadata, and business variants.
+
+## 1.4.0
+
+### Minor Changes
+
+- [#7832](https://github.com/mermaid-js/mermaid/pull/7832) [`c637c35`](https://github.com/mermaid-js/mermaid/commit/c637c35d2821d363ee81dcfb82d6e65b4f9f18f2) Thanks [@sidharthv96](https://github.com/sidharthv96)! - feat: add relatable, real-world examples for every diagram type, showcasing each diagram's strengths
+
+## 1.3.0
+
+### Minor Changes
+
+- [#7915](https://github.com/mermaid-js/mermaid/pull/7915) [`f707c3d`](https://github.com/mermaid-js/mermaid/commit/f707c3daa78811370ef3df065985bab4dc0ac6c9) Thanks [@sidharthv96](https://github.com/sidharthv96)! - feat(examples): Add relatable, real-world examples for every diagram type, showcasing each diagram's strengths
+
+## 1.2.0
+
+### Minor Changes
+
+- [#7526](https://github.com/mermaid-js/mermaid/pull/7526) [`efe218a`](https://github.com/mermaid-js/mermaid/commit/efe218a47fb5a4c2bd5489b48ce69213b141e519) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - add new TreeView diagram
+
 ## 1.1.0
 
 ### Minor Changes

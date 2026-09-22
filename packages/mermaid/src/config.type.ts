@@ -51,6 +51,14 @@ export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * The style of labels in the sankey diagram.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SankeyLabelStyle".
+ */
+export type SankeyLabelStyle = 'legacy' | 'outlined';
+/**
  * The font size to use
  */
 export type CSSFontSize = string | number;
@@ -61,14 +69,26 @@ export interface MermaidConfig {
    * You may also use `themeCSS` to override this value.
    *
    */
-  theme?: 'default' | 'base' | 'dark' | 'forest' | 'neutral' | 'null';
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
   themeVariables?: any;
   themeCSS?: string;
   /**
    * Defines which main look to use for the diagram.
    *
    */
-  look?: 'classic' | 'handDrawn';
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
    *
@@ -76,6 +96,9 @@ export interface MermaidConfig {
   handDrawnSeed?: number;
   /**
    * Defines which layout algorithm to use for rendering the diagram.
+   *
+   * Defaults to `elk`, which is bundled with mermaid. The `tiny` build omits
+   * ELK to stay small and falls back to `dagre`.
    *
    */
   layout?: string;
@@ -100,6 +123,99 @@ export interface MermaidConfig {
      */
     nodePlacementStrategy?: 'SIMPLE' | 'NETWORK_SIMPLEX' | 'LINEAR_SEGMENTS' | 'BRANDES_KOEPF';
     /**
+     * Elk specific option affecting Brandes-Koepf node placement alignment.
+     * BALANCED combines the four directional alignments; NONE picks the
+     * smallest result. Defaults to BALANCED for the default preset and NONE
+     * for named non-default presets.
+     *
+     */
+    nodePlacementAlignment?: 'NONE' | 'LEFTUP' | 'LEFTDOWN' | 'RIGHTUP' | 'RIGHTDOWN' | 'BALANCED';
+    /**
+     * Named combination of layering, node placement, placement alignment
+     * and cycle breaking options. Explicit options override the preset for
+     * that option; the remaining preset values still apply.
+     *
+     * `default` — network simplex layering, balanced Brandes-Koepf placement
+     * at the top level and inside subgraphs, and depth-first cycle breaking.
+     * Balanced placement favors centered branches and composite-state entries,
+     * sometimes at the cost of a wider or taller drawing. It does not
+     * guarantee that every edge attaches to the center of its target.
+     *
+     * `legacy` — Brandes-Koepf placement with NONE alignment and ELK's own
+     * greedy cycle breaking. Reproduces the rendering before presets existed.
+     *
+     * `modelOrder` — network simplex layering and top-level placement,
+     * Brandes-Koepf placement inside subgraphs, NONE alignment, and greedy
+     * model-order cycle breaking, which favors declaration order.
+     *
+     * `depthFirst` — the previous default: network simplex layering and
+     * top-level placement, Brandes-Koepf placement inside subgraphs, NONE
+     * alignment, and depth-first cycle breaking.
+     *
+     * Setting `layeringStrategy`, `nodePlacementStrategy`,
+     * `nodePlacementAlignment` or `cycleBreakingStrategy` explicitly overrides
+     * the preset for that option, including an explicit NONE alignment.
+     *
+     */
+    preset?: 'default' | 'legacy' | 'modelOrder' | 'depthFirst';
+    /**
+     * Straightens an edge that leaves or enters a node with a tiny step.
+     *
+     * ELK spreads an edge's port evenly along a node's side but routes the
+     * edge down a channel whose row rarely lines up with that port exactly,
+     * leaving a staircase of a few pixels right at the border. With rounded
+     * corners the two micro-bends land on top of each other and read as a
+     * kink. Enabling this moves the channel onto the port's row and drops
+     * the step, so the edge draws as one straight line and both ports stay
+     * exactly where the layout put them.
+     *
+     * Only the step next to a node is touched, and only when the edge
+     * continues the same way afterwards, so a real turn is never collapsed.
+     * An edge is left alone entirely when moving its run would drag the far
+     * port, or would introduce a crossing.
+     *
+     */
+    straightenEdges?: boolean;
+    /**
+     * Renders edge crossings as small arcs ("hops") or visible gaps, so that
+     * it is clear which line passes over which where two edges meet.
+     *
+     * The edge that gives way loses its corner rounding for the segment
+     * carrying the hop, which is the trade for a readable crossing. Curved
+     * edges are skipped rather than rewritten, to avoid corrupting their
+     * geometry. Set to `false` to draw plain crossings.
+     *
+     */
+    lineHops?: boolean | ('arc' | 'gap');
+    /**
+     * Elk specific option deciding which layer each node is assigned to — the
+     * column in a left-to-right diagram, the row in a top-down one. This is
+     * the coarsest of the three placement decisions, so changing it moves
+     * nodes further than anything else short of altering spacing.
+     *
+     * NETWORK_SIMPLEX aims for the fewest long edges. LONGEST_PATH pushes
+     * every node as late as it can go. COFFMAN_GRAHAM bounds how many nodes
+     * share a layer, giving a more even, block-like shape on wide graphs.
+     * MIN_WIDTH and STRETCH_WIDTH trade edge length for a narrower or wider
+     * drawing. INTERACTIVE honours positions already on the nodes.
+     *
+     */
+    layeringStrategy?:
+      | 'NETWORK_SIMPLEX'
+      | 'LONGEST_PATH'
+      | 'LONGEST_PATH_SOURCE'
+      | 'COFFMAN_GRAHAM'
+      | 'MIN_WIDTH'
+      | 'STRETCH_WIDTH'
+      | 'INTERACTIVE';
+    /**
+     * Elk specific option capping how many nodes COFFMAN_GRAHAM will put in
+     * one layer. Ignored by every other layering strategy. Lower values give
+     * a taller, narrower drawing.
+     *
+     */
+    layeringLayerBound?: number;
+    /**
      * This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
      *
      */
@@ -119,6 +235,15 @@ export interface MermaidConfig {
      *
      */
     considerModelOrder?: 'NONE' | 'NODES_AND_EDGES' | 'PREFER_EDGES' | 'PREFER_NODES';
+    /**
+     * Elk specific option that keeps the entry node of a recursive flow at the top of the layout.
+     *
+     * When a flow loops back on itself (a back-edge to an earlier node), ELK's degree-based cycle-breaking has no notion of an "entry point" and may rank the first-declared node in the middle, scrambling the reading order. When enabled, the entry node of each cyclic component is pinned to the first layer so the diagram still reads from its entry. Acyclic flows always have a natural source, so this has no effect on them.
+     *
+     * Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
+     *
+     */
+    keepEntryNodeOnTop?: boolean;
   };
   darkMode?: boolean;
   /**
@@ -197,6 +322,8 @@ export interface MermaidConfig {
    */
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
+  swimlane?: SwimlaneDiagramConfig;
+  agentflow?: AgentflowDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
   journey?: JourneyDiagramConfig;
@@ -217,9 +344,14 @@ export interface MermaidConfig {
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
+  eventmodeling?: EventModelingDiagramConfig;
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
+  usecase?: UsecaseDiagramConfig;
   venn?: VennDiagramConfig;
+  'wardley-beta'?: WardleyDiagramConfig;
+  cynefin?: CynefinDiagramConfig;
+  railroad?: RailroadDiagramConfig;
   dompurifyConfig?: DOMPurifyConfiguration;
   wrap?: boolean;
   fontSize?: number;
@@ -238,6 +370,29 @@ export interface MermaidConfig {
  * via the `definition` "FlowchartDiagramConfig".
  */
 export interface FlowchartDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Margin top for the text over the diagram
    */
@@ -309,11 +464,6 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   padding?: number;
   /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
-  /**
    * Width of nodes where text is wrapped.
    *
    * When using markdown strings the text is wrapped automatically, this
@@ -321,6 +471,16 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    *
    */
   wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
   /**
    * If true, subgraphs without explicit direction will inherit the global graph direction
    * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
@@ -341,6 +501,181 @@ export interface BaseDiagramConfig {
    *
    */
   useMaxWidth?: boolean;
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
+}
+/**
+ * The object containing configurations specific for the swimlanes diagram type.
+ *
+ * Swimlanes reuses the flowchart renderer and flowchart config for shared
+ * options (curve, htmlLabels, spacing, …); this block holds the knobs that
+ * only affect the swimlanes layout pipeline.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "SwimlaneDiagramConfig".
+ */
+export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
+  /**
+   * Renders edge crossings as small arcs ("hops") or visible gaps so that
+   * overlapping edges are easier to read. Set to `false` to disable. Edges
+   * rendered as curves are skipped to avoid corrupting the geometry.
+   *
+   */
+  lineHops?: boolean | ('arc' | 'gap');
+  /**
+   * Ignores edges that cross swimlane boundaries during swimlane layer
+   * assignment. This can improve rank quality for diagrams with many
+   * cross-lane links.
+   *
+   */
+  ignoreCrossLaneEdges?: boolean;
+  /**
+   * Enables a crossing-aware rank optimization pass for swimlane layouts.
+   *
+   */
+  optimizeRanksByCrossings?: boolean;
+  /**
+   * Automatically reorders top-level swimlanes with a deterministic
+   * weighted-linear-arrangement heuristic. Disabled by default because
+   * source swimlane order can carry semantic meaning.
+   *
+   */
+  automaticLaneOrdering?: boolean;
+}
+/**
+ * The object containing configurations specific for the agentflow diagram type.
+ *
+ * Agentflow renders through the shared unified renderer, so it owns the same
+ * spacing and padding knobs a flowchart does. They live in their own block so
+ * that agentflow can be tuned without moving every flowchart on the page.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "AgentflowDiagramConfig".
+ */
+export interface AgentflowDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Margin top for the text over the diagram
+   */
+  titleTopMargin?: number;
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  /**
+   * Defines the spacing between nodes on the same level.
+   *
+   * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs,
+   * and the vertical spacing for LR as well as RL graphs.
+   *
+   */
+  nodeSpacing?: number;
+  /**
+   * Defines the spacing between nodes on different levels.
+   *
+   * Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the
+   * horizontal spacing for LR as well as RL graphs.
+   *
+   */
+  rankSpacing?: number;
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
 }
 /**
  * The object containing configurations specific for sequence diagrams
@@ -349,6 +684,29 @@ export interface BaseDiagramConfig {
  * via the `definition` "SequenceDiagramConfig".
  */
 export interface SequenceDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   arrowMarkerAbsolute?: boolean;
   hideUnusedParticipants?: boolean;
   /**
@@ -752,6 +1110,29 @@ export interface TimelineDiagramConfig extends BaseDiagramConfig {
  */
 export interface ClassDiagramConfig extends BaseDiagramConfig {
   /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
    * Margin top for the text over the diagram
    */
   titleTopMargin?: number;
@@ -764,11 +1145,6 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   dividerMargin?: number;
   padding?: number;
   textHeight?: number;
-  /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
   nodeSpacing?: number;
   rankSpacing?: number;
   /**
@@ -779,6 +1155,15 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
   diagramPadding?: number;
   htmlLabels?: boolean;
   hideEmptyMembersBox?: boolean;
+  /**
+   * When true (default), nested namespaces render as hierarchical clusters,
+   * with each segment of a dotted name (e.g. `A.B.C`) becoming its own nested
+   * box. When false, namespaces render in compact mode: only explicitly
+   * declared namespaces are emitted and their full qualified name is used as
+   * a single flat label.
+   *
+   */
+  hierarchicalNamespaces?: boolean;
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -787,6 +1172,52 @@ export interface ClassDiagramConfig extends BaseDiagramConfig {
  * via the `definition` "StateDiagramConfig".
  */
 export interface StateDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Defines which layout algorithm to use for rendering the diagram.
+   *
+   */
+  layout?: string;
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
   /**
    * Margin top for the text over the diagram
    */
@@ -815,11 +1246,6 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
   edgeLengthFactor?: string;
   compositTitleSize?: number;
   radius?: number;
-  /**
-   * Decides which rendering engine that is to be used for the rendering.
-   *
-   */
-  defaultRenderer?: 'dagre-d3' | 'dagre-wrapper' | 'elk';
 }
 /**
  * The object containing configurations specific for entity relationship diagrams
@@ -828,6 +1254,29 @@ export interface StateDiagramConfig extends BaseDiagramConfig {
  * via the `definition` "ErDiagramConfig".
  */
 export interface ErDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * Margin top for the text over the diagram
    */
@@ -881,6 +1330,21 @@ export interface PieDiagramConfig extends BaseDiagramConfig {
    *
    */
   textPosition?: number;
+  /**
+   * Donut hole ratio. Valid value are from 0 to 0.9. Default to 0.
+   *
+   */
+  donutHole?: number;
+  /**
+   * Legend's position relative to the chart. Default to right.
+   *
+   */
+  legendPosition?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  /**
+   * Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.
+   *
+   */
+  highlightSlice?: string;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
@@ -995,6 +1459,18 @@ export interface XYChartConfig extends BaseDiagramConfig {
    * Should show the chart title
    */
   showTitle?: boolean;
+  /**
+   * Should show a legend for named plots
+   */
+  showLegend?: boolean;
+  /**
+   * Font size of the legend text
+   */
+  legendFontSize?: number;
+  /**
+   * Padding around the legend
+   */
+  legendPadding?: number;
   xAxis?: XYChartAxisConfig;
   yAxis?: XYChartAxisConfig;
   /**
@@ -1057,6 +1533,10 @@ export interface XYChartAxisConfig {
    * Width of the axis line
    */
   axisLineWidth?: number;
+  /**
+   * Label rotation in degrees
+   */
+  labelRotation?: number;
 }
 /**
  * The object containing configurations specific for req diagrams
@@ -1065,6 +1545,29 @@ export interface XYChartAxisConfig {
  * via the `definition` "RequirementDiagramConfig".
  */
 export interface RequirementDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   rect_fill?: string;
   text_color?: string;
   rect_border_size?: string;
@@ -1085,6 +1588,52 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
   padding?: number;
   iconSize?: number;
   fontSize?: number;
+  /**
+   * Whether to randomize initial node positions before running the layout algorithm.
+   * When false (default), nodes start at deterministic seed positions. When true, nodes
+   * start at random positions, which may produce varied but potentially better-spaced
+   * layouts. Note: `randomize: false` alone does NOT guarantee identical renders, because
+   * the underlying fcose layout still uses `Math.random()` internally during its
+   * constraint solver — use the `seed` option for full determinism.
+   *
+   */
+  randomize?: boolean;
+  /**
+   * Minimum separation (in pixels) between sibling nodes in the same group, passed through to the
+   * underlying fcose layout. Increase to spread overlapping siblings apart when many edges share the
+   * same port direction.
+   *
+   */
+  nodeSeparation?: number;
+  /**
+   * Multiplier applied to `iconSize` to compute the ideal length of edges between nodes within the
+   * same group. Increase to add breathing room; decrease to pack the diagram tighter. Edges crossing
+   * group boundaries are unaffected and use a fixed shorter length.
+   *
+   */
+  idealEdgeLengthMultiplier?: number;
+  /**
+   * Spring elasticity (0–1) applied to edges between nodes within the same group, passed through to
+   * fcose. Higher values pull connected nodes closer together; lower values let the layout spread them
+   * out. Edges crossing group boundaries are unaffected.
+   *
+   */
+  edgeElasticity?: number;
+  /**
+   * Maximum number of iterations the fcose layout algorithm runs before stopping. Increase for higher
+   * quality on large or densely-connected diagrams at the cost of render time.
+   *
+   */
+  numIter?: number;
+  /**
+   * Deterministic seed for the fcose layout. Defaults to 1, which makes every render of the
+   * same diagram produce the same layout — required for visual regression tests to be stable.
+   * Set to 0 to opt out and use the unstubbed Math.random (the layout will still differ
+   * slightly between renders, matching pre-fix behavior). Any other number selects a
+   * different reproducible layout variant.
+   *
+   */
+  seed?: number;
 }
 /**
  * The object containing configurations specific for mindmap diagrams
@@ -1572,6 +2121,28 @@ export interface SankeyDiagramConfig extends BaseDiagramConfig {
    *
    */
   suffix?: string;
+  /**
+   * The width of the nodes in the sankey diagram.
+   *
+   */
+  nodeWidth?: number;
+  /**
+   * The padding between nodes in the sankey diagram.
+   *
+   */
+  nodePadding?: number;
+  /**
+   * The style of labels in the sankey diagram. 'outlined' provides better readability with a white stroke behind the text.
+   *
+   */
+  labelStyle?: 'legacy' | 'outlined';
+  /**
+   * A mapping of node IDs to their colors. Nodes not specified will use the default color scheme.
+   *
+   */
+  nodeColors?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for packet diagrams.
@@ -1597,6 +2168,14 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
    */
   showBits?: boolean;
   /**
+   * The direction each row is numbered in. `descending` mirrors every row so it reads from
+   * that row's highest bit on the left down to its lowest bit on the right, the convention
+   * used for hardware registers. Fields are still declared lowest bit first, and keep their
+   * width.
+   *
+   */
+  bitOrder?: 'ascending' | 'descending';
+  /**
    * The horizontal padding between the blocks in a row.
    */
   paddingX?: number;
@@ -1613,6 +2192,22 @@ export interface PacketDiagramConfig extends BaseDiagramConfig {
  */
 export interface BlockDiagramConfig extends BaseDiagramConfig {
   padding?: number;
+}
+/**
+ * The object containing configurations specific for Event Modeling diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "EventModelingDiagramConfig".
+ */
+export interface EventModelingDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The padding around the Event Modeling diagram.
+   */
+  padding?: number;
+  /**
+   * The height of each row in the Event Modeling diagram.
+   */
+  rowHeight?: number;
 }
 /**
  * The object containing configurations specific for treeView diagrams.
@@ -1637,6 +2232,46 @@ export interface TreeViewDiagramConfig extends BaseDiagramConfig {
    * Thickness of the line
    */
   lineThickness?: number;
+  /**
+   * Whether to show the default file/folder icons next to labels.
+   * Explicit `icon()` annotations always render, regardless of this setting.
+   *
+   */
+  showIcons?: boolean;
+  /**
+   * Name of a registered iconify pack used to resolve unprefixed icon
+   * references — `icon(name)` annotations and `filenameIcons`/
+   * `extensionIcons` values without a `pack:` prefix. The pack must be
+   * registered with `registerIconPacks`. When empty, unprefixed names
+   * resolve to the built-in file/folder icons.
+   *
+   */
+  defaultIconPack?: string;
+  /**
+   * Exact-filename → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ "Dockerfile": "material-icon-theme:docker" }`.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  filenameIcons?: {
+    [k: string]: string;
+  };
+  /**
+   * File-extension → icon map used to pick a file's icon when
+   * `showIcons` is enabled, e.g.
+   * `{ ".ts": "material-icon-theme:typescript" }`. Keys are
+   * lowercase and may include or omit the leading dot.
+   * Values are resolved like `icon()` references: `pack:name` is used
+   * as-is, unprefixed names resolve via `defaultIconPack`, and `none`
+   * hides the icon for matching files.
+   *
+   */
+  extensionIcons?: {
+    [k: string]: string;
+  };
 }
 /**
  * The object containing configurations specific for radar diagrams.
@@ -1683,12 +2318,163 @@ export interface RadarDiagramConfig extends BaseDiagramConfig {
   curveTension?: number;
 }
 /**
+ * The object containing configurations specific for usecase diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "UsecaseDiagramConfig".
+ */
+export interface UsecaseDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
+  /**
+   * Width of nodes where text is wrapped.
+   *
+   * When using markdown strings the text is wrapped automatically, this
+   * value sets the max width of a text before it continues on a new line.
+   *
+   */
+  wrappingWidth?: number;
+  /**
+   * Minimum width of the label area of a node.
+   *
+   * Labels narrower than this are widened to it, so nodes with short text
+   * get a uniform width; the node's own padding is added on top, the same
+   * way it is for `wrappingWidth`. Nodes with an explicit width are not
+   * affected.
+   *
+   */
+  minNodeWidth?: number;
+  /**
+   * Font size for actor labels
+   */
+  actorFontSize?: number;
+  /**
+   * Font family for actor labels.
+   *
+   * Written verbatim into an inline CSS custom property, so the characters that could
+   * terminate a declaration or open a new one are excluded: `;`, `<`, `>`, `(`, `)`,
+   * `{`, `}`, and `\`. Quotes, commas, and spaces stay allowed for font stacks such as
+   * `"Open Sans", sans-serif`.
+   *
+   */
+  actorFontFamily?: string;
+  /**
+   * Font weight for actor labels.
+   *
+   * Restricted to the CSS `font-weight` keywords and numeric weights, since this value
+   * is written verbatim into an inline CSS custom property.
+   *
+   */
+  actorFontWeight?: string;
+  /**
+   * Font size for usecase labels
+   */
+  usecaseFontSize?: number;
+  /**
+   * Font family for usecase labels.
+   *
+   * Constrained the same way as `actorFontFamily`.
+   *
+   */
+  usecaseFontFamily?: string;
+  /**
+   * Font weight for usecase labels.
+   *
+   * Constrained the same way as `actorFontWeight`.
+   *
+   */
+  usecaseFontWeight?: string;
+  /**
+   * Spacing between nodes on the same level
+   */
+  nodeSpacing?: number;
+  /**
+   * Spacing between nodes on different levels
+   */
+  rankSpacing?: number;
+  /**
+   * Padding around the entire diagram
+   */
+  diagramPadding?: number;
+  /**
+   * How a use case diagram takes its colours from the active theme.
+   *
+   * `role` (the default) gives every element of a kind one colour, read from the
+   * `usecaseActorBkg` / `usecaseActorBorder`, `usecaseBkg` / `usecaseBorder`, and
+   * `usecaseBoundaryBkg` / `usecaseBoundaryBorder` theme variables. Colour then says
+   * what an element *is*, and it is invariant under insertion, reordering, and
+   * renaming -- adding one use case in the middle does not recolour the ones after it,
+   * so diffs, documentation screenshots, and visual baselines stay stable.
+   *
+   * `rotate` instead gives each actor, use case, and system boundary its own slot from
+   * the theme's categorical palette (`borderColorArray` / `bkgColorArray`), the way ER
+   * entities and class boxes are coloured. Actors and use cases share one cycle, and
+   * system boundaries run a second one from zero, so a boundary is never forced to
+   * match an element inside it. Within the shared cycle the actors are numbered first
+   * and the use cases after them, each in declaration order -- an interleaved
+   * `actor A`, `usecase U`, `actor B` is therefore numbered A, B, U rather than
+   * A, U, B. This buys per-instance variety at the cost of the stability `role` has:
+   * inserting an element shifts the colour of every later element of its own kind, and
+   * inserting an actor shifts the use cases too. Only the colour themes
+   * (`redux-color`, `redux-dark-color`) carry a palette, so on every other theme the
+   * two settings render identically.
+   *
+   * `classDef` and `style` keep overriding both, whichever is set.
+   *
+   */
+  colorScheme?: 'role' | 'rotate';
+}
+/**
  * The object containing configurations specific for Venn diagrams.
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "VennDiagramConfig".
  */
 export interface VennDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Theme, the CSS style sheet.
+   * You may also use `themeCSS` to override this value.
+   *
+   */
+  theme?:
+    | 'default'
+    | 'base'
+    | 'dark'
+    | 'forest'
+    | 'neutral'
+    | 'neo'
+    | 'neo-dark'
+    | 'redux'
+    | 'redux-dark'
+    | 'redux-color'
+    | 'redux-dark-color'
+    | 'null';
+  /**
+   * Defines which main look to use for the diagram.
+   *
+   */
+  look?: 'classic' | 'handDrawn' | 'neo';
   /**
    * The width of the Venn diagram.
    */
@@ -1699,6 +2485,186 @@ export interface VennDiagramConfig extends BaseDiagramConfig {
   height?: number;
   padding?: number;
   useDebugLayout?: boolean;
+}
+/**
+ * The object containing configurations specific for Wardley Maps diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "WardleyDiagramConfig".
+ */
+export interface WardleyDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Wardley diagram canvas.
+   */
+  width?: number;
+  /**
+   * The height of the Wardley diagram canvas.
+   */
+  height?: number;
+  /**
+   * The padding around the Wardley diagram.
+   */
+  padding?: number;
+  /**
+   * The radius of component nodes.
+   */
+  nodeRadius?: number;
+  /**
+   * The offset distance for node labels.
+   */
+  nodeLabelOffset?: number;
+  /**
+   * The font size for axis labels.
+   */
+  axisFontSize?: number;
+  /**
+   * The font size for component labels.
+   */
+  labelFontSize?: number;
+  /**
+   * Whether to display a background grid.
+   */
+  showGrid?: boolean;
+}
+/**
+ * Configuration for Cynefin framework diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "CynefinDiagramConfig".
+ */
+export interface CynefinDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The width of the Cynefin diagram.
+   */
+  width?: number;
+  /**
+   * The height of the Cynefin diagram.
+   */
+  height?: number;
+  /**
+   * Padding around the diagram.
+   */
+  padding?: number;
+  /**
+   * Show decision model and practice type labels.
+   */
+  showDomainDescriptions?: boolean;
+  /**
+   * Waviness amplitude of domain boundaries (0 for straight).
+   */
+  boundaryAmplitude?: number;
+  /**
+   * Deterministic seed for boundary waviness. When 0 (default) the seed is derived
+   * from the diagram's SVG element id, which varies per render. Set any non-zero
+   * number to produce identical boundaries on every render — required for visual
+   * regression tests to be stable.
+   *
+   */
+  seed?: number;
+}
+/**
+ * Configuration for Railroad (Syntax) Diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "RailroadDiagramConfig".
+ */
+export interface RailroadDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Use compact layout mode
+   */
+  compactMode?: boolean;
+  /**
+   * Padding around elements
+   */
+  padding?: number;
+  /**
+   * Vertical separation between elements
+   */
+  verticalSeparation?: number;
+  /**
+   * Horizontal separation between elements
+   */
+  horizontalSeparation?: number;
+  /**
+   * Radius for curved paths
+   */
+  arcRadius?: number;
+  /**
+   * Font size for text
+   */
+  fontSize?: number;
+  /**
+   * Font family for text
+   */
+  fontFamily?: string;
+  /**
+   * Fill color for terminal elements
+   */
+  terminalFill?: string;
+  /**
+   * Stroke color for terminal elements
+   */
+  terminalStroke?: string;
+  /**
+   * Text color for terminal elements
+   */
+  terminalTextColor?: string;
+  /**
+   * Fill color for non-terminal elements
+   */
+  nonTerminalFill?: string;
+  /**
+   * Stroke color for non-terminal elements
+   */
+  nonTerminalStroke?: string;
+  /**
+   * Text color for non-terminal elements
+   */
+  nonTerminalTextColor?: string;
+  /**
+   * Color for connection lines
+   */
+  lineColor?: string;
+  /**
+   * Width of strokes
+   */
+  strokeWidth?: number;
+  /**
+   * Fill color for start/end markers
+   */
+  markerFill?: string;
+  /**
+   * Fill color for comments
+   */
+  commentFill?: string;
+  /**
+   * Stroke color for comments
+   */
+  commentStroke?: string;
+  /**
+   * Text color for comments
+   */
+  commentTextColor?: string;
+  /**
+   * Fill color for special sequences
+   */
+  specialFill?: string;
+  /**
+   * Stroke color for special sequences
+   */
+  specialStroke?: string;
+  /**
+   * Color for rule names
+   */
+  ruleNameColor?: string;
+  /**
+   * Show start/end markers
+   */
+  showMarkers?: boolean;
+  /**
+   * Radius of start/end markers
+   */
+  markerRadius?: number;
 }
 /**
  * This interface was referenced by `MermaidConfig`'s JSON-Schema

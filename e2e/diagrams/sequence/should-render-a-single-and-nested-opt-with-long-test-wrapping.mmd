@@ -1,0 +1,25 @@
+%%{init: { 'config': { 'wrap': true } } }%%
+sequenceDiagram
+  participant A
+  participant B
+  participant C
+  participant D
+  participant E
+  participant G
+
+  A ->>+ B: Task 1
+  opt this is an opt with a long title that will overflow
+  B ->>+ C: Task 2
+  C -->>- B: Return
+  end
+
+  A ->> D: Task 3
+  opt this is another opt with a long title that will overflow
+  D ->>+ E: Task 4
+  opt this is a nested opt with a long title that will overflow
+  E ->>+ G: Task 5
+  G -->>- E: Return
+  end
+  E ->> E: Task 6
+  end
+  D -->> A: Complete

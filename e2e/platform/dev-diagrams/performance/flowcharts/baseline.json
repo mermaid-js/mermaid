@@ -1,0 +1,525 @@
+{
+  "capturedAt": "2026-06-15T14:14:21.109Z",
+  "scope": "folder",
+  "iterations": 10,
+  "aggregation": "mean of runs after dropping the fastest and slowest; warmup discarded",
+  "theme": "redux",
+  "look": "neo",
+  "phases": ["parse", "prepare", "measure", "layout", "paint", "serialize"],
+  "layouts": [
+    {
+      "layout": "dagre",
+      "score": 11855.1,
+      "phaseTotals": {
+        "parse": 2935.4,
+        "prepare": 103.1,
+        "measure": 3009.7,
+        "layout": 3507.6,
+        "paint": 1269,
+        "serialize": 883.2,
+        "layoutLib": 3264,
+        "layoutOurs": 243.6
+      },
+      "failures": 0,
+      "perDiagram": [
+        {
+          "diagram": "performance/flowcharts/huge1.mmd",
+          "total": 426.8,
+          "phases": {
+            "parse": 160.3,
+            "prepare": 1.7,
+            "measure": 190.3,
+            "layout": 31,
+            "paint": 15.8,
+            "serialize": 18.8,
+            "layoutLib": 29.2,
+            "layoutOurs": 1.8
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge2.mmd",
+          "total": 2286.6,
+          "phases": {
+            "parse": 55.3,
+            "prepare": 19.9,
+            "measure": 438.6,
+            "layout": 1414.8,
+            "paint": 288.5,
+            "serialize": 55.8,
+            "layoutLib": 1409.8,
+            "layoutOurs": 5
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge3.mmd",
+          "total": 1483.3,
+          "phases": {
+            "parse": 1410.4,
+            "prepare": 1.5,
+            "measure": 53.6,
+            "layout": 1.5,
+            "paint": 2.4,
+            "serialize": 6.7,
+            "layoutLib": 0.6,
+            "layoutOurs": 1
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge4.mmd",
+          "total": 2317.2,
+          "phases": {
+            "parse": 55.6,
+            "prepare": 20.6,
+            "measure": 453.5,
+            "layout": 1423.6,
+            "paint": 294,
+            "serialize": 56,
+            "layoutLib": 1417.8,
+            "layoutOurs": 5.9
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge5.mmd",
+          "total": 508.1,
+          "phases": {
+            "parse": 50.3,
+            "prepare": 8.2,
+            "measure": 209.1,
+            "layout": 122.6,
+            "paint": 70.1,
+            "serialize": 34.9,
+            "layoutLib": 2.2,
+            "layoutOurs": 120.4
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large1.mmd",
+          "total": 739.1,
+          "phases": {
+            "parse": 46.7,
+            "prepare": 6.2,
+            "measure": 313.3,
+            "layout": 63.6,
+            "paint": 100.8,
+            "serialize": 194.7,
+            "layoutLib": 60.9,
+            "layoutOurs": 2.7
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large2.mmd",
+          "total": 550.8,
+          "phases": {
+            "parse": 508.5,
+            "prepare": 0.9,
+            "measure": 31.5,
+            "layout": 1.1,
+            "paint": 1.9,
+            "serialize": 2.9,
+            "layoutLib": 0.5,
+            "layoutOurs": 0.6
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large3.mmd",
+          "total": 730.5,
+          "phases": {
+            "parse": 44.7,
+            "prepare": 6.2,
+            "measure": 310,
+            "layout": 62.6,
+            "paint": 102.4,
+            "serialize": 191.6,
+            "layoutLib": 59.9,
+            "layoutOurs": 2.7
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large4.mmd",
+          "total": 508,
+          "phases": {
+            "parse": 449.1,
+            "prepare": 0.5,
+            "measure": 20.6,
+            "layout": 17.5,
+            "paint": 11.9,
+            "serialize": 3.5,
+            "layoutLib": 17.2,
+            "layoutOurs": 0.3
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large5.mmd",
+          "total": 726.8,
+          "phases": {
+            "parse": 42.2,
+            "prepare": 6.3,
+            "measure": 305.5,
+            "layout": 61,
+            "paint": 98.3,
+            "serialize": 199.4,
+            "layoutLib": 58.3,
+            "layoutOurs": 2.7
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium1.mmd",
+          "total": 416.4,
+          "phases": {
+            "parse": 23.5,
+            "prepare": 4,
+            "measure": 152,
+            "layout": 104.3,
+            "paint": 99.8,
+            "serialize": 22.6,
+            "layoutLib": 102.3,
+            "layoutOurs": 1.9
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium2.mmd",
+          "total": 295.6,
+          "phases": {
+            "parse": 27.4,
+            "prepare": 2.7,
+            "measure": 138,
+            "layout": 30.9,
+            "paint": 51.5,
+            "serialize": 36.2,
+            "layoutLib": 29.3,
+            "layoutOurs": 1.6
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium3.mmd",
+          "total": 377.3,
+          "phases": {
+            "parse": 25.5,
+            "prepare": 18.8,
+            "measure": 174.8,
+            "layout": 88.6,
+            "paint": 39.5,
+            "serialize": 21.4,
+            "layoutLib": 4.5,
+            "layoutOurs": 84.2
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium4.mmd",
+          "total": 296.9,
+          "phases": {
+            "parse": 17.2,
+            "prepare": 2.8,
+            "measure": 116.9,
+            "layout": 72,
+            "paint": 63.7,
+            "serialize": 17.4,
+            "layoutLib": 70.9,
+            "layoutOurs": 1.1
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium5.mmd",
+          "total": 191.7,
+          "phases": {
+            "parse": 18.7,
+            "prepare": 2.8,
+            "measure": 101.7,
+            "layout": 12.3,
+            "paint": 28.3,
+            "serialize": 21.3,
+            "layoutLib": 0.5,
+            "layoutOurs": 11.8
+          },
+          "samples": 8,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "layout": "elk",
+      "score": 16406,
+      "phaseTotals": {
+        "parse": 2912.7,
+        "prepare": 7.6,
+        "measure": 1802.3,
+        "layout": 9790.1,
+        "paint": 971.2,
+        "serialize": 788.7,
+        "layoutLib": 9665.1,
+        "layoutOurs": 125
+      },
+      "failures": 0,
+      "perDiagram": [
+        {
+          "diagram": "performance/flowcharts/huge1.mmd",
+          "total": 929.9,
+          "phases": {
+            "parse": 158.6,
+            "prepare": 0.4,
+            "measure": 166.4,
+            "layout": 563.3,
+            "paint": 10.7,
+            "serialize": 18.8,
+            "layoutLib": 558.8,
+            "layoutOurs": 4.5
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge2.mmd",
+          "total": 3540.8,
+          "phases": {
+            "parse": 51.5,
+            "prepare": 0.8,
+            "measure": 127,
+            "layout": 3120.1,
+            "paint": 194.7,
+            "serialize": 36.5,
+            "layoutLib": 3106.1,
+            "layoutOurs": 14
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge3.mmd",
+          "total": 1469.2,
+          "phases": {
+            "parse": 1401.6,
+            "prepare": 0.4,
+            "measure": 32.3,
+            "layout": 18.9,
+            "paint": 7.2,
+            "serialize": 4.2,
+            "layoutLib": 14.7,
+            "layoutOurs": 4.2
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge4.mmd",
+          "total": 3530.3,
+          "phases": {
+            "parse": 51.9,
+            "prepare": 0.7,
+            "measure": 124.4,
+            "layout": 3110.3,
+            "paint": 196.3,
+            "serialize": 36.6,
+            "layoutLib": 3096.2,
+            "layoutOurs": 14.1
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/huge5.mmd",
+          "total": 402.3,
+          "phases": {
+            "parse": 48.8,
+            "prepare": 0.5,
+            "measure": 131.7,
+            "layout": 123.1,
+            "paint": 59.9,
+            "serialize": 26.8,
+            "layoutLib": 114.5,
+            "layoutOurs": 8.6
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large1.mmd",
+          "total": 681.1,
+          "phases": {
+            "parse": 41.2,
+            "prepare": 0.5,
+            "measure": 257.6,
+            "layout": 108.4,
+            "paint": 75.8,
+            "serialize": 183.3,
+            "layoutLib": 98.6,
+            "layoutOurs": 9.8
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large2.mmd",
+          "total": 551.5,
+          "phases": {
+            "parse": 511.2,
+            "prepare": 0.4,
+            "measure": 10,
+            "layout": 15.9,
+            "paint": 7.8,
+            "serialize": 2.5,
+            "layoutLib": 12,
+            "layoutOurs": 3.9
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large3.mmd",
+          "total": 669.3,
+          "phases": {
+            "parse": 41.5,
+            "prepare": 0.6,
+            "measure": 251,
+            "layout": 104.8,
+            "paint": 75.1,
+            "serialize": 183.2,
+            "layoutLib": 94.8,
+            "layoutOurs": 10
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large4.mmd",
+          "total": 505.8,
+          "phases": {
+            "parse": 449.8,
+            "prepare": 0.4,
+            "measure": 14.6,
+            "layout": 25.6,
+            "paint": 8.9,
+            "serialize": 3,
+            "layoutLib": 21.5,
+            "layoutOurs": 4.2
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/large5.mmd",
+          "total": 669.6,
+          "phases": {
+            "parse": 42.9,
+            "prepare": 0.6,
+            "measure": 251.9,
+            "layout": 103.7,
+            "paint": 74.3,
+            "serialize": 181.8,
+            "layoutLib": 93.3,
+            "layoutOurs": 10.4
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium1.mmd",
+          "total": 2304.3,
+          "phases": {
+            "parse": 24.1,
+            "prepare": 0.5,
+            "measure": 135.5,
+            "layout": 2024.4,
+            "paint": 86.4,
+            "serialize": 23.5,
+            "layoutLib": 2015.1,
+            "layoutOurs": 9.3
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium2.mmd",
+          "total": 281.7,
+          "phases": {
+            "parse": 27.1,
+            "prepare": 0.5,
+            "measure": 106,
+            "layout": 69.2,
+            "paint": 39.6,
+            "serialize": 31.1,
+            "layoutLib": 61.7,
+            "layoutOurs": 7.5
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium3.mmd",
+          "total": 439.9,
+          "phases": {
+            "parse": 25.5,
+            "prepare": 0.4,
+            "measure": 61.6,
+            "layout": 253.2,
+            "paint": 64.7,
+            "serialize": 26.6,
+            "layoutLib": 243.3,
+            "layoutOurs": 9.9
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium4.mmd",
+          "total": 259.1,
+          "phases": {
+            "parse": 17.5,
+            "prepare": 0.4,
+            "measure": 65.3,
+            "layout": 113.3,
+            "paint": 45.1,
+            "serialize": 13.1,
+            "layoutLib": 106,
+            "layoutOurs": 7.3
+          },
+          "samples": 8,
+          "failures": 0
+        },
+        {
+          "diagram": "performance/flowcharts/medium5.mmd",
+          "total": 171.3,
+          "phases": {
+            "parse": 19.4,
+            "prepare": 0.4,
+            "measure": 67.1,
+            "layout": 35.6,
+            "paint": 24.7,
+            "serialize": 17.7,
+            "layoutLib": 28.5,
+            "layoutOurs": 7.1
+          },
+          "samples": 8,
+          "failures": 0
+        }
+      ]
+    }
+  ]
+}

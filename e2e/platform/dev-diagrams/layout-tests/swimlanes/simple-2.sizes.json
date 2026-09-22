@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    {
+      "id": "edge-label-E-B-L_E_B_0",
+      "width": 18.6796875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-A-B-L_A_B_0",
+      "width": 18.6796875,
+      "height": 21
+    },
+    {
+      "id": "B",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "A",
+      "width": 41.34375,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 42.1171875,
+      "height": 45
+    },
+    {
+      "id": "D",
+      "width": 42.1171875,
+      "height": 45
+    },
+    {
+      "id": "E",
+      "width": 41.34375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "ed7c3818d0b785b1f753ef7ee3a2f8d36a76f987f4678e2e92600531cf6f4802",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/swimlanes/simple-2.mmd theme=default look=classic"
+  }
+}

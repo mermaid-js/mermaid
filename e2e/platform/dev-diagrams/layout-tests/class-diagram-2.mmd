@@ -1,0 +1,17 @@
+classDiagram
+  class Controller {
+    +handleRequest(): void
+  }
+
+  class View {
+    +render(): void
+  }
+
+  class Model {
+    +getData(): any
+    +setData(data: any): void
+  }
+
+  Controller --> Model
+  Controller --> View
+  Model --> View : notifyChange()

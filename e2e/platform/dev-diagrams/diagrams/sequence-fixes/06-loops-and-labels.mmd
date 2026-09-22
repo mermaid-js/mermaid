@@ -1,0 +1,14 @@
+sequenceDiagram
+  actor User
+  participant DB@{ "type" : "database" } as Database
+  loop every retry
+    User ->> DB: attempt
+  end
+  alt found
+    DB -->> User: rows
+  else missing
+    DB -->> User: empty
+  end
+  opt cache
+    User ->> DB: warm
+  end

@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { expectNoErrorsOrAlternatives } from './test-util.js';
-import type { TreeView } from '../src/language/generated/ast.js';
 import type { LangiumParser } from 'langium';
+import { describe, expect, it } from 'vitest';
+import type { TreeView } from '../src/language/generated/ast.js';
 import { createTreeViewServices } from '../src/language/treeView/module.js';
+import { expectNoErrorsOrAlternatives } from './test-util.js';
 
 describe('TreeView Parser', () => {
   const services = createTreeViewServices().TreeView;
@@ -20,7 +20,7 @@ describe('TreeView Parser', () => {
       expect(result.value.nodes).toHaveLength(0);
     });
 
-    it('should parse a treeView with only a root node', () => {
+    it('should parse a treeView with a quoted root node', () => {
       const result = parse('treeView-beta\n"Root"');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
@@ -29,7 +29,7 @@ describe('TreeView Parser', () => {
       expect(result.value.nodes[0].indent).toBe(undefined);
     });
 
-    it('should parse a treeView with multiple words within a node', () => {
+    it('should parse a treeView with multiple words within a quoted node', () => {
       const result = parse('treeView-beta\n"Multi Word Root"');
       expectNoErrorsOrAlternatives(result);
       expect(result.value.$type).toBe('TreeView');
@@ -55,6 +55,151 @@ describe('TreeView Parser', () => {
 
       expect(result.value.nodes[3].name).toBe('Child3');
       expect(result.value.nodes[3].indent).toBe(8);
+    });
+
+    it('should parse bare (unquoted) labels', () => {
+      const result = parse('treeView-beta\nindex.js');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      expect(result.value.nodes[0].name).toBe('index.js');
+    });
+
+    it('should parse bare labels with directory trailing slash', () => {
+      const result = parse('treeView-beta\nsrc/\n    index.js');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(2);
+      expect(result.value.nodes[0].name).toBe('src/');
+      expect(result.value.nodes[1].name).toBe('index.js');
+      expect(result.value.nodes[1].indent).toBe(4);
+    });
+
+    it('should parse bare labels with annotations', () => {
+      const result = parse('treeView-beta\nindex.js :::highlight icon(javascript) ## entry point');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      const node = result.value.nodes[0];
+      expect(node.name).toBe('index.js');
+      expect(node.classAnnotation).toBe('highlight');
+      expect(node.iconAnnotation).toBe('javascript');
+      expect(node.descAnnotation).toBe('entry point');
+    });
+
+    it('should parse quoted labels with annotations', () => {
+      const result = parse(
+        'treeView-beta\n"my file.js" :::highlight icon(javascript) ## entry point'
+      );
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      const node = result.value.nodes[0];
+      expect(node.name).toBe('my file.js');
+      expect(node.classAnnotation).toBe('highlight');
+      expect(node.iconAnnotation).toBe('javascript');
+      expect(node.descAnnotation).toBe('entry point');
+    });
+
+    it('should handle %% comments', () => {
+      const result = parse('treeView-beta\n%% this is a comment\nindex.js');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes).toHaveLength(1);
+      expect(result.value.nodes[0].name).toBe('index.js');
+    });
+  });
+
+  describe('Structured terminals', () => {
+    it('should strip quotes from QUOTED_NAME', () => {
+      const result = parse('treeView-beta\n"my file.js"');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].name).toBe('my file.js');
+    });
+
+    it('should strip single quotes from QUOTED_NAME', () => {
+      const result = parse("treeView-beta\n'my folder/'");
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].name).toBe('my folder/');
+    });
+
+    it('should extract class name from CLASS_ANNOTATION', () => {
+      const result = parse('treeView-beta\nindex.js :::highlight');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].classAnnotation).toBe('highlight');
+    });
+
+    it('should handle class names with hyphens', () => {
+      const result = parse('treeView-beta\nfile.ts :::my-class');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].classAnnotation).toBe('my-class');
+    });
+
+    it('should preserve consecutive spaces in quoted names', () => {
+      const result = parse('treeView-beta\n"But  _  _ton💓.tsx"');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].name).toBe('But  _  _ton💓.tsx');
+    });
+
+    it('should preserve consecutive spaces in bare names', () => {
+      const result = parse('treeView-beta\nBut  _  _ton💓.tsx');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].name).toBe('But  _  _ton💓.tsx');
+    });
+
+    it('should trim trailing whitespace from bare names', () => {
+      const result = parse('treeView-beta\nindex.js  ');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].name).toBe('index.js');
+    });
+
+    it('should extract icon name from ICON_ANNOTATION', () => {
+      const result = parse('treeView-beta\ndata.bin icon(folder)');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].iconAnnotation).toBe('folder');
+    });
+
+    it('should extract prefixed iconify name from ICON_ANNOTATION', () => {
+      const result = parse('treeView-beta\nApp.tsx icon(logos:react)');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].iconAnnotation).toBe('logos:react');
+    });
+
+    it('should handle empty icon()', () => {
+      const result = parse('treeView-beta\nindex.js icon()');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].iconAnnotation).toBe('');
+    });
+
+    it('should extract description from DESC_ANNOTATION', () => {
+      const result = parse('treeView-beta\nindex.js ## entry point');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].descAnnotation).toBe('entry point');
+    });
+
+    it('should handle all annotations in any order', () => {
+      const result = parse('treeView-beta\napp.ts icon(none) :::highlight ## entry point');
+      expectNoErrorsOrAlternatives(result);
+      const node = result.value.nodes[0];
+      expect(node.name).toBe('app.ts');
+      expect(node.iconAnnotation).toBe('none');
+      expect(node.classAnnotation).toBe('highlight');
+      expect(node.descAnnotation).toBe('entry point');
+    });
+
+    it('should parse bare names with spaces before annotations', () => {
+      const result = parse('treeView-beta\nMy Documents/ :::highlight');
+      expectNoErrorsOrAlternatives(result);
+      const node = result.value.nodes[0];
+      expect(node.name).toBe('My Documents/');
+      expect(node.classAnnotation).toBe('highlight');
+    });
+
+    it('should parse dotfiles', () => {
+      const result = parse('treeView-beta\n.gitignore');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].name).toBe('.gitignore');
+    });
+
+    it('should parse filenames with hyphens', () => {
+      const result = parse('treeView-beta\ndocker-compose.yml');
+      expectNoErrorsOrAlternatives(result);
+      expect(result.value.nodes[0].name).toBe('docker-compose.yml');
     });
   });
 

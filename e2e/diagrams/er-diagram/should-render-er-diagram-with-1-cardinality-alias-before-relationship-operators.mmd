@@ -1,0 +1,9 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  CUSTOMER 1--1 ORDER : "exactly one"
+  ORDER 1--o{ LINE-ITEM : "one to many"
+  PRODUCT 1--|{ CATEGORY : "one or more"
+  USER 1..1 PROFILE : "exactly one optional"

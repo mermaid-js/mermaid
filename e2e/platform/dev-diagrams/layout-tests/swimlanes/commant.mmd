@@ -1,0 +1,25 @@
+swimlane-beta LR
+   subgraph customer
+    sales_process(sales_process: sales process)
+    places_order[places order]
+    receives_order[receives order]
+  end
+
+   subgraph sales
+    order_complete{{order<br>complete?}}
+    details[ask for details]
+  end
+
+
+  subgraph warehouse
+    roadmap{{product on<br>roadmap?}}
+    collect[collect<br>products for<br>shipping]
+    ship[ship products]
+  end
+    subgraph purchasing
+    purchase[purchase<br>the products]
+    received{{order<br>received?}}
+  end
+    sales_process --> places_order --> order_complete -- no --> details --> order_complete
+  order_complete -- yes --> roadmap --> collect --> ship --> receives_order
+  roadmap -- no --> purchase --> received --> collect

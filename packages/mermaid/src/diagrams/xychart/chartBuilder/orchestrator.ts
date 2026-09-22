@@ -2,6 +2,7 @@ import type { SVGGroup } from '../../../diagram-api/types.js';
 import type { Axis } from './components/axis/index.js';
 import { getAxis } from './components/axis/index.js';
 import { getChartTitleComponent } from './components/chartTitle.js';
+import { getChartLegendComponent } from './components/legend.js';
 import type { Plot } from './components/plot/index.js';
 import { getPlotComponent } from './components/plot/index.js';
 import type {
@@ -19,6 +20,7 @@ export class Orchestrator {
     plot: Plot;
     xAxis: Axis;
     yAxis: Axis;
+    legend: ChartComponent;
   };
   constructor(
     private chartConfig: XYChartConfig,
@@ -29,6 +31,7 @@ export class Orchestrator {
     this.componentStore = {
       title: getChartTitleComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGroup),
       plot: getPlotComponent(chartConfig, chartData, chartThemeConfig),
+      legend: getChartLegendComponent(chartConfig, chartData, chartThemeConfig, tmpSVGGroup),
       xAxis: getAxis(
         chartData.xAxis,
         chartConfig.xAxis,
@@ -59,6 +62,7 @@ export class Orchestrator {
     let availableHeight = this.chartConfig.height;
     let plotX = 0;
     let plotY = 0;
+    let legendSpace = { width: 0, height: 0 };
     let chartWidth = Math.floor((availableWidth * this.chartConfig.plotReservedSpacePercent) / 100);
     let chartHeight = Math.floor(
       (availableHeight * this.chartConfig.plotReservedSpacePercent) / 100
@@ -89,6 +93,11 @@ export class Orchestrator {
     });
     plotX = spaceUsed.width;
     availableWidth -= spaceUsed.width;
+    legendSpace = this.componentStore.legend.calculateSpace({
+      width: availableWidth,
+      height: chartHeight,
+    });
+    availableWidth -= legendSpace.width;
     if (availableWidth > 0) {
       chartWidth += availableWidth;
       availableWidth = 0;
@@ -103,6 +112,10 @@ export class Orchestrator {
     });
 
     this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
+    this.componentStore.legend.setBoundingBoxXY({
+      x: plotX + chartWidth,
+      y: plotY + Math.max((chartHeight - legendSpace.height) / 2, 0),
+    });
     this.componentStore.xAxis.setRange([plotX, plotX + chartWidth]);
     this.componentStore.xAxis.setBoundingBoxXY({ x: plotX, y: plotY + chartHeight });
     this.componentStore.yAxis.setRange([plotY, plotY + chartHeight]);
@@ -118,6 +131,7 @@ export class Orchestrator {
     let titleYEnd = 0;
     let plotX = 0;
     let plotY = 0;
+    let legendSpace = { width: 0, height: 0 };
     let chartWidth = Math.floor((availableWidth * this.chartConfig.plotReservedSpacePercent) / 100);
     let chartHeight = Math.floor(
       (availableHeight * this.chartConfig.plotReservedSpacePercent) / 100
@@ -149,6 +163,11 @@ export class Orchestrator {
     });
     availableHeight -= spaceUsed.height;
     plotY = titleYEnd + spaceUsed.height;
+    legendSpace = this.componentStore.legend.calculateSpace({
+      width: availableWidth,
+      height: chartHeight,
+    });
+    availableWidth -= legendSpace.width;
     if (availableWidth > 0) {
       chartWidth += availableWidth;
       availableWidth = 0;
@@ -163,6 +182,10 @@ export class Orchestrator {
     });
 
     this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
+    this.componentStore.legend.setBoundingBoxXY({
+      x: plotX + chartWidth,
+      y: plotY + Math.max((chartHeight - legendSpace.height) / 2, 0),
+    });
     this.componentStore.yAxis.setRange([plotX, plotX + chartWidth]);
     this.componentStore.yAxis.setBoundingBoxXY({ x: plotX, y: titleYEnd });
     this.componentStore.xAxis.setRange([plotY, plotY + chartHeight]);

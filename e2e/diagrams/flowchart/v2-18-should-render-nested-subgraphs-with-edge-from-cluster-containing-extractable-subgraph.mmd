@@ -1,0 +1,24 @@
+flowchart TB
+  subgraph asub
+      aa
+  end
+  a
+  subgraph bsub
+      subgraph csub
+          subgraph dsub
+              da
+          end
+      end
+      subgraph esub
+          subgraph fsub
+              %%comment out subgraph below
+              subgraph gsub
+                  ga
+                  abc
+                  abcd
+              end
+          end
+      end
+  end
+  bsub-->a
+  da-->a

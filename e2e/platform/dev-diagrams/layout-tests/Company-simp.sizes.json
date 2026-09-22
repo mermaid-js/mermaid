@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "Customer",
+      "width": 92.6875,
+      "height": 45
+    },
+    {
+      "id": "USCompany",
+      "width": 111.3671875,
+      "height": 45
+    },
+    {
+      "id": "HongKongCompany",
+      "width": 158.0859375,
+      "height": 45
+    },
+    {
+      "id": "Expenses",
+      "width": 93.484375,
+      "height": 45
+    },
+    {
+      "id": "ExpensesHK",
+      "width": 112.9375,
+      "height": 45
+    },
+    {
+      "id": "Wages",
+      "width": 51.453125,
+      "height": 45
+    },
+    {
+      "id": "Incomehk",
+      "width": 92.703125,
+      "height": 45
+    },
+    {
+      "id": "edge-label-USCompany-HongKongCompany-L_USCompany_HongKongCompany_0",
+      "width": 81.71875,
+      "height": 21
+    },
+    {
+      "id": "edge-label-USCompany-Expenses-L_USCompany_Expenses_0",
+      "width": 9.34375,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "a90f6e785ac423264ebadcabda4467549dff8d31333c1d6293945711da432107",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/Company-simp.mmd theme=default look=classic"
+  }
+}

@@ -1,0 +1,16 @@
+swimlane-beta LR
+      subgraph Dep1
+        Start
+        Process1
+        Process2
+        Process3
+      end
+
+      subgraph Dep2
+       Process3
+       Process4
+       Process5
+      end
+
+
+      Start --> Process1 --> Process2 --> Process3 --> Process4

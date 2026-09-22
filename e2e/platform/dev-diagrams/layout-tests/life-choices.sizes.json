@@ -1,0 +1,130 @@
+{
+  "nodes": [
+    {
+      "id": "B",
+      "width": 246.890625,
+      "height": 91
+    },
+    {
+      "id": "n0",
+      "width": 63.390625,
+      "height": 45
+    },
+    {
+      "id": "nl",
+      "width": 54.578125,
+      "height": 45
+    },
+    {
+      "id": "nm",
+      "width": 111.40625,
+      "height": 45
+    },
+    {
+      "id": "n3",
+      "width": 158.078125,
+      "height": 45
+    },
+    {
+      "id": "n4",
+      "width": 240,
+      "height": 66
+    },
+    {
+      "id": "no",
+      "width": 202.625,
+      "height": 45
+    },
+    {
+      "id": "nr",
+      "width": 152.828125,
+      "height": 45
+    },
+    {
+      "id": "nh",
+      "width": 183.953125,
+      "height": 45
+    },
+    {
+      "id": "n6",
+      "width": 180.859375,
+      "height": 45
+    },
+    {
+      "id": "nj",
+      "width": 126.375,
+      "height": 45
+    },
+    {
+      "id": "nw",
+      "width": 132.625,
+      "height": 45
+    },
+    {
+      "id": "n1",
+      "width": 126.40625,
+      "height": 45
+    },
+    {
+      "id": "nb",
+      "width": 184.765625,
+      "height": 45
+    },
+    {
+      "id": "ne",
+      "width": 94.265625,
+      "height": 45
+    },
+    {
+      "id": "ni",
+      "width": 137.296875,
+      "height": 45
+    },
+    {
+      "id": "ns",
+      "width": 130.28125,
+      "height": 45
+    },
+    {
+      "id": "n2",
+      "width": 177.75,
+      "height": 45
+    },
+    {
+      "id": "nq",
+      "width": 228.328125,
+      "height": 45
+    },
+    {
+      "id": "n8",
+      "width": 152.0625,
+      "height": 45
+    },
+    {
+      "id": "nk",
+      "width": 102.25,
+      "height": 45
+    },
+    {
+      "id": "nv",
+      "width": 240,
+      "height": 66
+    },
+    {
+      "id": "np",
+      "width": 221.328125,
+      "height": 45
+    },
+    {
+      "id": "n5",
+      "width": 197.171875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "9b1e423fb517a0155c912c9cdbc3c312623ee5f4ab64bc5c84fa862cee5fde37",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/life-choices.mmd theme=default look=classic"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "nodes": [
+    {
+      "id": "order_complete",
+      "width": 160.59375,
+      "height": 112
+    },
+    {
+      "id": "roadmap",
+      "width": 162.16250610351562,
+      "height": 112
+    },
+    {
+      "id": "received",
+      "width": 156.7062530517578,
+      "height": 112
+    },
+    {
+      "id": "edge-label-order_complete-details-L_order_complete_details_0",
+      "width": 15.574999809265137,
+      "height": 21
+    },
+    {
+      "id": "edge-label-order_complete-roadmap-L_order_complete_roadmap_0",
+      "width": 21.787500381469727,
+      "height": 21
+    },
+    {
+      "id": "edge-label-roadmap-purchase-L_roadmap_purchase_0",
+      "width": 15.574999809265137,
+      "height": 21
+    },
+    {
+      "id": "sales_process",
+      "width": 212.8625030517578,
+      "height": 51
+    },
+    {
+      "id": "places_order",
+      "width": 109.04374694824219,
+      "height": 45
+    },
+    {
+      "id": "receives_order",
+      "width": 120.70625305175781,
+      "height": 45
+    },
+    {
+      "id": "details",
+      "width": 118.375,
+      "height": 45
+    },
+    {
+      "id": "collect",
+      "width": 105.92500305175781,
+      "height": 87
+    },
+    {
+      "id": "ship",
+      "width": 115.26875305175781,
+      "height": 45
+    },
+    {
+      "id": "purchase",
+      "width": 109.05000305175781,
+      "height": 66
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "1e455f5516f2383d9f328b39db36392a66ad7c1ffe6a0f66b39ea82d8ad74f20",
+    "capturedAt": "2026-05-29T12:24:36.365Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/commant.mmd theme=redux-dark look=neo layout=swimlane"
+  }
+}

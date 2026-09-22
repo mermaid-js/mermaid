@@ -6,6 +6,6 @@
     "allowJs": false,
     "strictPropertyInitialization": false
   },
-  "include": ["./src/**/*.ts", "./tests/**/*.ts"],
+  "include": ["./src/**/*.ts", "./tests/**/*.ts", "./scripts/**/*.ts"],
   "typeRoots": ["./src/types"]
 }

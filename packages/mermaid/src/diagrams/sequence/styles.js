@@ -1,7 +1,23 @@
-const getStyles = (options) =>
-  `.actor {
+import { getConfig } from '../../diagram-api/diagramAPI.js';
+
+const getStyles = (options) => {
+  const dropShadow = options.dropShadow ?? 'none';
+  const { look } = getConfig();
+
+  return `.actor {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
+    stroke-width: ${options.strokeWidth ?? 1};
+  }
+
+  rect.actor.outer-path[data-look="neo"] {
+      filter: ${dropShadow};
+  }
+
+  rect.note[data-look="neo"] {
+      stroke:${options.noteBorderColor};
+      fill:${options.noteBkgColor};
+      filter: ${dropShadow};
   }
 
   text.actor > tspan {
@@ -12,7 +28,7 @@ const getStyles = (options) =>
   .actor-line {
     stroke: ${options.actorLineColor};
   }
-  
+
   .innerArc {
     stroke-width: 1.5;
     stroke-dasharray: none;
@@ -56,6 +72,7 @@ const getStyles = (options) =>
   .labelBox {
     stroke: ${options.labelBoxBorderColor};
     fill: ${options.labelBoxBkgColor};
+    filter: ${look === 'neo' ? dropShadow : 'none'};
   }
 
   .labelText, .labelText > tspan {
@@ -64,6 +81,11 @@ const getStyles = (options) =>
   }
 
   .loopText, .loopText > tspan {
+    fill: ${options.loopTextColor};
+    stroke: none;
+  }
+
+  .sectionTitle, .sectionTitle > tspan {
     fill: ${options.loopTextColor};
     stroke: none;
   }
@@ -81,6 +103,14 @@ const getStyles = (options) =>
     fill: ${options.noteBkgColor};
   }
 
+  /*
+   * No font-weight here, deliberately. Note text renders inside tspan elements, and a weight emitted at
+   * tspan level outranks the inline style drawText puts on the parent text element from the
+   * sequence.noteFontWeight config key -- so that documented key would never reach the glyphs.
+   * The theme variable formerly emitted here is a different value from that config key, and
+   * git/styles.js reads it as its own bold-label weight under redux and neo, so it cannot be
+   * lowered there either.
+   */
   .noteText, .noteText > tspan {
     fill: ${options.noteTextColor};
     stroke: none;
@@ -111,16 +141,16 @@ const getStyles = (options) =>
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
 }
-  .actor-man line {
-    stroke: ${options.actorBorder};
-    fill: ${options.actorBkg};
-  }
   .actor-man circle, line {
-    stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
     stroke-width: 2px;
   }
 
+  g rect.rect {
+    filter: ${dropShadow};
+    stroke: ${options.nodeBorder};
+  }
 `;
+};
 
 export default getStyles;

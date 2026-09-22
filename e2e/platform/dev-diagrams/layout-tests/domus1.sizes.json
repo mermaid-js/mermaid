@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "n0",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "n1",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "n3",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "n2",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "n6",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "n4",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "n5",
+      "width": 47.578125,
+      "height": 45
+    },
+    {
+      "id": "n7",
+      "width": 47.578125,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "c647db6f0fa83b54e5284d2d1fa650534142de5d5ce9fed58c8ba3039560e129",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/domus1.mmd theme=default look=classic"
+  }
+}

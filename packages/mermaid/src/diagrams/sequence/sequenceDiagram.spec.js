@@ -479,6 +479,44 @@ Bob-->Alice: I am good thanks!`;
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
 
+  it('should allow sequence numbers to have decimals up to the hundredths place', async () => {
+    const str = `
+        sequenceDiagram
+        autonumber 10.1 .01
+        Alice->Bob:Hello Bob, how are you?
+        Note right of Bob: Bob thinks
+        Bob-->Alice: I am good thanks!
+      `;
+
+    let error = false;
+    try {
+      const diagram = await Diagram.fromText(str);
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
+    } catch (e) {
+      error = true;
+    }
+    expect(error).toBe(false);
+  });
+
+  it('should not allow sequence numbers to have decimals to the thousandths place or greater', async () => {
+    const str = `
+      sequenceDiagram
+      autonumber 10.001
+      Alice->Bob:Hello Bob, how are you?
+      Note right of Bob: Bob thinks
+      Bob-->Alice: I am good thanks!
+    `;
+
+    let error = false;
+    try {
+      const diagram = await Diagram.fromText(str);
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
+    } catch (e) {
+      error = true;
+    }
+    expect(error).toBe(true);
+  });
+
   it('should handle a sequenceDiagram definition with a title:', async () => {
     const diagram = await Diagram.fromText(`
 sequenceDiagram
@@ -2211,6 +2249,40 @@ end`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastLoop().stopy);
   });
+
+  it('should increment the sequence number with a decimal in the hundredths place', async () => {
+    const str = `
+      sequenceDiagram
+      autonumber 10.01 .01
+      Alice->Bob:Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!
+      Alice-->Bob: Have a good day!
+    `;
+
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
+    expect(diagram.db.showSequenceNumbers()).toBe(true);
+    expect(diagram.db.getMessages()[1].msgModel.sequenceIndex).toBe(10.01);
+    expect(diagram.db.getMessages()[2].msgModel.sequenceIndex).toBe(10.02);
+    expect(diagram.db.getMessages()[3].msgModel.sequenceIndex).toBe(10.03);
+  });
+
+  it('should increment the sequence number with a decimal in the tenths place', async () => {
+    const str = `
+      sequenceDiagram
+      autonumber 10.1 .1
+      Alice->Bob:Hello Bob, how are you?
+      Bob-->Alice: I am good thanks!
+      Alice-->Bob: Have a good day!
+    `;
+
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
+    expect(diagram.db.showSequenceNumbers()).toBe(true);
+    expect(diagram.db.getMessages()[1].msgModel.sequenceIndex).toBe(10.1);
+    expect(diagram.db.getMessages()[2].msgModel.sequenceIndex).toBe(10.2);
+    expect(diagram.db.getMessages()[3].msgModel.sequenceIndex).toBe(10.3);
+  });
 });
 
 describe('when rendering a sequenceDiagram with actor mirror activated', () => {
@@ -2387,6 +2459,22 @@ Bob->>Alice:Got it!
       expect(messages[2].message).toBe('Hi Bob');
     });
 
+    it('should parse a participant config object separated from the name by whitespace', async () => {
+      const diagram = await Diagram.fromText(`
+  sequenceDiagram
+      participant Gina@{ "type" : "database" }
+      participant Harry @{ "type" : "database" }
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('Gina').type).toBe('database');
+      expect(actors.get('Gina').description).toBe('Gina');
+
+      expect(actors.get('Harry').type).toBe('database');
+      expect(actors.get('Harry').description).toBe('Harry');
+    });
+
     it('should parse mixed participant types with extended syntax', async () => {
       const diagram = await Diagram.fromText(`
     sequenceDiagram
@@ -2433,6 +2521,30 @@ Bob->>Alice:Got it!
       expect(messages[4].from).toBe('dsa');
       expect(messages[4].to).toBe('Database');
       expect(messages[4].message).toBe('hello');
+    });
+
+    it('should parse hyphenated names with an attached config object', async () => {
+      const diagram = await Diagram.fromText(`
+    sequenceDiagram
+        actor lead-actor@{ "type" : "database" }
+        participant order-svc@{ "type" : "queue" }
+        actor kebab-case@{ "type" : "control" } as Kebab-Cased
+        participant web-ui@{ "type" : "entity" } as Web UI
+    `);
+
+      const actors = diagram.db.getActors();
+
+      expect(actors.get('lead-actor').type).toBe('database');
+      expect(actors.get('lead-actor').description).toBe('lead-actor');
+
+      expect(actors.get('order-svc').type).toBe('queue');
+      expect(actors.get('order-svc').description).toBe('order-svc');
+
+      expect(actors.get('kebab-case').type).toBe('control');
+      expect(actors.get('kebab-case').description).toBe('Kebab-Cased');
+
+      expect(actors.get('web-ui').type).toBe('entity');
+      expect(actors.get('web-ui').description).toBe('Web UI');
     });
 
     it('should fail for malformed JSON in participant definition', async () => {

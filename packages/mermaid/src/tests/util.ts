@@ -28,7 +28,8 @@ ${'2w'}   | ${dayjs.duration(2, 'w')}
 
 import { JSDOM } from 'jsdom';
 import { expect, it } from 'vitest';
-import { select, type Selection } from 'd3';
+import { select } from 'd3';
+import type { D3HtmlSelection, D3Selection } from '../types.js';
 
 export const convert = (template: TemplateStringsArray, ...params: unknown[]) => {
   const header = template[0]
@@ -63,10 +64,8 @@ export const MOCKED_BBOX = {
 };
 
 interface JsdomItInput {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body: Selection<HTMLBodyElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  svg: Selection<SVGSVGElement, never, HTMLElement, any>; // The `any` here comes from D3'as API.
+  body: D3HtmlSelection<HTMLElement>;
+  svg: D3Selection<SVGSVGElement>;
 }
 
 /**
@@ -82,39 +81,47 @@ interface JsdomItInput {
  *
  * This makes it possible to make structural tests instead of mocking everything.
  */
-export function jsdomIt(message: string, run: (input: JsdomItInput) => void | Promise<void>) {
-  return it(message, async (): Promise<void> => {
-    const oldWindow = global.window;
-    const oldDocument = global.document;
+export function jsdomIt(
+  message: string,
+  run: (input: JsdomItInput) => void | Promise<void>,
+  timeout?: number
+) {
+  return it(
+    message,
+    async (): Promise<void> => {
+      const oldWindow = global.window;
+      const oldDocument = global.document;
 
-    try {
-      const baseHtml = `
+      try {
+        const baseHtml = `
         <html lang="en">
           <body id="cy">
             <svg id="svg"/>
           </body>
         </html>
       `;
-      const dom = new JSDOM(baseHtml, {
-        resources: 'usable',
-        beforeParse(_window) {
-          // Mocks DOM functions that require rendering, JSDOM doesn't
-          setOnProtectedConstant(_window.Element.prototype, 'getBBox', () => MOCKED_BBOX);
-          setOnProtectedConstant(_window.Element.prototype, 'getComputedTextLength', () => 200);
-        },
-      });
-      setOnProtectedConstant(global, 'window', dom.window); // Fool D3 into thinking it's in a browser
-      setOnProtectedConstant(global, 'document', dom.window.document); // Fool D3 into thinking it's in a browser
-      setOnProtectedConstant(global, 'MutationObserver', undefined); // JSDOM doesn't like cytoscape elements
+        const dom = new JSDOM(baseHtml, {
+          resources: 'usable',
+          beforeParse(_window) {
+            // Mocks DOM functions that require rendering, JSDOM doesn't
+            setOnProtectedConstant(_window.Element.prototype, 'getBBox', () => MOCKED_BBOX);
+            setOnProtectedConstant(_window.Element.prototype, 'getComputedTextLength', () => 200);
+          },
+        });
+        setOnProtectedConstant(global, 'window', dom.window); // Fool D3 into thinking it's in a browser
+        setOnProtectedConstant(global, 'document', dom.window.document); // Fool D3 into thinking it's in a browser
+        setOnProtectedConstant(global, 'MutationObserver', undefined); // JSDOM doesn't like cytoscape elements
 
-      const body = select<HTMLBodyElement, never>('body');
-      const svg = select<SVGSVGElement, never>('svg');
-      await run({ body, svg });
-    } finally {
-      setOnProtectedConstant(global, 'window', oldWindow);
-      setOnProtectedConstant(global, 'document', oldDocument);
-    }
-  });
+        const body = select(document.body);
+        const svg = select<SVGSVGElement, unknown>('svg');
+        await run({ body, svg });
+      } finally {
+        setOnProtectedConstant(global, 'window', oldWindow);
+        setOnProtectedConstant(global, 'document', oldDocument);
+      }
+    },
+    timeout
+  );
 }
 
 /**

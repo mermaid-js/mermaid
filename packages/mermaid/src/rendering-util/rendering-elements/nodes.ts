@@ -3,6 +3,7 @@ import { shapes } from './shapes.js';
 import type { Node, NonClusterNode, ShapeRenderOptions } from '../types.js';
 import type { SVGGroup } from '../../mermaid.js';
 import type { D3Selection } from '../../types.js';
+import { handleUndefinedAttr } from '../../utils.js';
 import type { graphlib } from 'dagre-d3-es';
 
 type ShapeHandler = (typeof shapes)[keyof typeof shapes];
@@ -50,6 +51,9 @@ export async function insertNode(
     el = await shapeHandler(elem, node, renderOptions);
     newEl = el;
   }
+  // Add data attributes for neo look support
+  newEl.attr('data-look', handleUndefinedAttr(node.look));
+
   if (node.tooltip) {
     el.attr('title', node.tooltip);
   }

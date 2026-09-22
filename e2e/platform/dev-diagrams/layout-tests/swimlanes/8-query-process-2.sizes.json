@@ -1,0 +1,80 @@
+{
+  "nodes": [
+    {
+      "id": "A2",
+      "width": 138.59375,
+      "height": 138.59375
+    },
+    {
+      "id": "E",
+      "width": 142.4921875,
+      "height": 142.4921875
+    },
+    {
+      "id": "B",
+      "width": 142.4921875,
+      "height": 142.4921875
+    },
+    {
+      "id": "edge-label-E-F-L_E_F_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-E-G-L_E_G_0",
+      "width": 17.8984375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-B-C-L_B_C_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-A2-B-L_A2_B_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-A2-E-L_A2_E_0",
+      "width": 17.8984375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-B-E-L_B_E_0",
+      "width": 17.8984375,
+      "height": 21
+    },
+    {
+      "id": "A",
+      "width": 127.71875,
+      "height": 45
+    },
+    {
+      "id": "F",
+      "width": 78.6875,
+      "height": 45
+    },
+    {
+      "id": "F2",
+      "width": 78.6875,
+      "height": 45
+    },
+    {
+      "id": "G",
+      "width": 99.7109375,
+      "height": 45
+    },
+    {
+      "id": "C",
+      "width": 78.6875,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "9bc9c74eca6bca18996067bc89ba5ffd5ce092e6ade93020827d9923d8e53e57",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/swimlanes/8-query-process-2.mmd theme=default look=classic"
+  }
+}

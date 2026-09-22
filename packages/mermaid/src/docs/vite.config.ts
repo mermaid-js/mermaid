@@ -5,6 +5,7 @@ import path from 'path';
 import { SearchPlugin } from 'vitepress-plugin-search';
 import fs from 'fs';
 import Components from 'unplugin-vue-components/vite';
+import Icons from 'unplugin-icons/vite';
 import Unocss from 'unocss/vite';
 import { presetAttributify, presetIcons, presetUno } from 'unocss';
 import { resolve } from 'pathe';
@@ -31,6 +32,9 @@ export default defineConfig({
       include: [/\.vue/, /\.md/],
       dirs: '.vitepress/components',
       dts: '.vitepress/components.d.ts',
+    }) as Plugin,
+    Icons({
+      compiler: 'vue3',
     }) as Plugin,
     // @ts-ignore This package has an incorrect exports.
     Unocss({
@@ -73,7 +77,11 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      mermaid: path.join(__dirname, '../../dist/mermaid.esm.min.mjs'), // Use this one to build
+      // Deliberately not the minified build: esbuild's syntax minification
+      // leaves the ELK chunk in a form that `es-module-lexer`, which Vite uses
+      // for import analysis, fails to lex. VitePress minifies its own output
+      // anyway, so feeding it a pre-minified bundle bought nothing.
+      mermaid: path.join(__dirname, '../../dist/mermaid.esm.mjs'), // Use this one to build
       '@mermaid-js/mermaid-example-diagram': path.join(
         __dirname,
         '../../../mermaid-example-diagram/dist/mermaid-example-diagram.esm.min.mjs'

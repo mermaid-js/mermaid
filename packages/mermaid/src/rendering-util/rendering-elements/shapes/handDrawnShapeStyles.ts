@@ -7,12 +7,25 @@ export const solidStateFill = (color: string) => {
   return {
     fill: color,
     hachureAngle: 120, // angle of hachure,
-    hachureGap: 4,
-    fillWeight: 2,
+    hachureGap: 1.5,
+    fillWeight: 1.5,
     roughness: 0.7,
     stroke: color,
     seed: handDrawnSeed,
   };
+};
+
+const normalizeStyleList = (styles: string | string[] | undefined): string[] => {
+  if (Array.isArray(styles)) {
+    return styles;
+  }
+  if (!styles) {
+    return [];
+  }
+  return styles
+    .split(';')
+    .map((style) => style.trim())
+    .filter(Boolean);
 };
 
 export const compileStyles = (node: Node) => {
@@ -23,7 +36,7 @@ export const compileStyles = (node: Node) => {
   const stylesMap = styles2Map([
     ...(node.cssCompiledStyles || []),
     ...(node.cssStyles || []),
-    ...(node.labelStyle || []),
+    ...normalizeStyleList(node.labelStyle),
   ]);
   return { stylesMap, stylesArray: [...stylesMap] };
 };
@@ -36,6 +49,7 @@ export const styles2Map = (styles: string[]) => {
   });
   return styleMap;
 };
+
 export const isLabelStyle = (key: string) => {
   return (
     key === 'color' ||
@@ -102,8 +116,8 @@ export const userNodeOverrides = (node: Node, options: any) => {
       roughness: 0.7,
       fill: stylesMap.get('fill') || mainBkg,
       fillStyle: 'hachure', // solid fill
-      fillWeight: 4,
-      hachureGap: 5.2,
+      fillWeight: 1.5,
+      hachureGap: 1.5,
       stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handDrawnSeed,
       strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,

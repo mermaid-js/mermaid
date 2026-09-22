@@ -12,6 +12,9 @@ const populateDb = (ast: Architecture, db: ArchitectureDB) => {
   ast.junctions.map((service) => db.addJunction({ ...service, type: 'junction' }));
   // @ts-ignore TODO our parser guarantees the type is L/R/T/B and not string. How to change to union type?
   ast.edges.map((edge) => db.addEdge(edge));
+  ast.alignments?.map((alignment) =>
+    db.addLayoutHint({ direction: alignment.direction, members: [...alignment.members] })
+  );
 };
 
 export const parser: ParserDefinition = {

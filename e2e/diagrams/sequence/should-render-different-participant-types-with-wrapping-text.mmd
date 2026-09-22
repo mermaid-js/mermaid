@@ -1,0 +1,23 @@
+---
+config:
+  sequence:
+    wrap: true
+---
+sequenceDiagram
+  participant B@{ "type" : "boundary" }
+  participant C@{ "type" : "control" }
+  participant E@{ "type" : "entity" }
+  participant DB@{ "type" : "database" }
+  participant COL@{ "type" : "collections" }
+  participant Q@{ "type" : "queue" }
+
+  FE ->> B: Another long message<br/>with explicit<br/>line breaks
+  B -->> FE: Response message that is also quite long and needs to wrap
+  FE ->> C: Process data
+  C ->> E: Validate
+  E -->> C: Validation result
+  C ->> DB: Save
+  DB -->> C: Save result
+  C ->> COL: Log
+  COL -->> Q: Forward
+  Q -->> LongNameUser: Final response with confirmation of all actions taken

@@ -102,6 +102,75 @@ Possible FlowChart orientations are:
 - RL - Right to left
 - LR - Left to right
 
+## Default theme, look and layout (v12.0.0+)
+
+Flowcharts use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', flowchart: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
+
 ## Node shapes
 
 ### A node with round edges
@@ -305,6 +374,13 @@ flowchart TD
 ```mermaid-example
 flowchart TD
     A@{ shape: lean-l, label: "Output/Input" }
+```
+
+### Datastore (Top and bottom border)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
 ```
 
 ### Priority Action (Trapezoid Base Bottom)
@@ -980,6 +1056,39 @@ flowchart LR
     outside ---> top2
 ```
 
+### Collapsible subgraphs (v11.17.0+)
+
+A subgraph can be collapsed into a single compact node by attaching the metadata
+`@{ view: collapsed }` to its id. This is useful for hiding the internals of a
+group while still showing how it connects to the rest of the diagram.
+
+```mermaid-example
+flowchart TD
+    Start --> one
+    subgraph one [My Group]
+        A --> B
+        B --> C
+    end
+    one --> End
+    one@{ view: collapsed }
+```
+
+The metadata is attached with the existing `id@{ ... }` statement syntax, where
+`id` is the subgraph id (use `subgraph id [Title]` to give a subgraph an explicit
+id). When a subgraph is collapsed:
+
+- Its internal nodes are hidden and it is drawn as a single node carrying the
+  subgraph's title.
+- Edges that cross the subgraph boundary are **redirected to the collapsed node**.
+- Edges that are entirely internal to the collapsed subgraph are dropped (they
+  would otherwise become self-loops on the collapsed node).
+- For nested subgraphs, a collapse resolves to the **outermost** collapsed
+  ancestor, so an edge pointing at a deeply nested node lands on the outermost
+  collapsed group.
+
+`view: expanded` is the default and renders the subgraph normally, so omitting the
+metadata (or setting `view: expanded`) keeps the existing behavior.
+
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
@@ -1241,28 +1350,18 @@ flowchart LR
 
 ### CSS classes
 
-It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
-below:
+> **Note:** Applying styles to Mermaid nodes via external CSS (e.g., `.cssClass > rect { fill: ... }`) does **not** work reliably. Mermaid's internal styles are injected with `!important` and scoped to the SVG element ID, giving them higher specificity than external CSS rules. External CSS will be silently overridden.
+>
+> The recommended approach is to use the `classDef` syntax shown in the [Classes](#classes) section above, which works correctly and is the intended styling mechanism.
+>
+> If external CSS is strictly required, every property must use `!important` to override Mermaid's styles — but this is not recommended.
 
-**Example style**
-
-```html
-<style>
-  .cssClass > rect {
-    fill: #ff0000;
-    stroke: #ffff00;
-    stroke-width: 4px;
-  }
-</style>
-```
-
-**Example definition**
+**Working approach — use `classDef` instead:**
 
 ```mermaid-example
 flowchart LR
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
+    A:::myStyle --> B
+    classDef myStyle fill:#ff0000,stroke:#ffff00,stroke-width:4px
 ```
 
 ### Default class
@@ -1359,22 +1458,25 @@ flowchart LR
 
 ### Renderer
 
-The layout of the diagram is done with the renderer. The default renderer is dagre.
+The layout of the diagram is done with the layout algorithm. The default is
+[ELK](https://www.eclipse.org/elk/), which handles larger and more complex
+diagrams well and is bundled with Mermaid.
 
-Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
-
-The _elk_ renderer is an experimental feature.
-You can change the renderer to elk by adding this directive:
+To use the classic Dagre layout instead:
 
 ```
 config:
-  flowchart:
-    defaultRenderer: "elk"
+  layout: dagre
 ```
 
-```note
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
-```
+The `flowchart-elk` diagram type still works, but is no longer needed — it
+predates `layout` and selected what is now the default.
+
+The `defaultRenderer` option of the `flowchart`, `class` and `state` config
+sections was removed in v12. It named a rendering engine at a time when there
+was more than one; all of its values had come to mean the same renderer, and
+its `elk` value only ever set `layout: elk` on your behalf. Use `layout`
+directly.
 
 ### Width
 

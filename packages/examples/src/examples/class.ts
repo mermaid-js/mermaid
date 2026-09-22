@@ -30,5 +30,52 @@ export default {
       +run()
     }`,
     },
+    {
+      title: 'E-commerce Domain Model',
+      code: `classDiagram
+    direction LR
+    class Customer {
+        +String name
+        +String email
+        +register()
+        +placeOrder() Order
+    }
+    class Order {
+        +Date createdAt
+        +List~OrderItem~ items
+        +addItem(Product product, int quantity)
+        +total() float
+    }
+    class OrderItem {
+        +int quantity
+        +float unitPrice
+    }
+    class Product {
+        +String name
+        +float price
+    }
+    class PaymentMethod {
+        <<interface>>
+        +authorize(float amount) bool
+    }
+    class CreditCard {
+        +String maskedNumber
+        +authorize(float amount) bool
+    }
+    class GiftCard {
+        +float balance
+        +authorize(float amount) bool
+    }
+
+    Customer "1" --> "0..*" Order : places
+    Order "1" *-- "1..*" OrderItem : contains
+    OrderItem "0..*" --> "1" Product : refers to
+    PaymentMethod <|.. CreditCard
+    PaymentMethod <|.. GiftCard
+    Order --> PaymentMethod : paid via
+
+    note for PaymentMethod "New payment providers only
+need to implement authorize()"`,
+    },
   ],
 } satisfies DiagramMetadata;

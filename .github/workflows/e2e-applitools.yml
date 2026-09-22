@@ -30,40 +30,26 @@ jobs:
           echo "::error,title=Not using Applitools::APPLITOOLS_API_KEY is empty, disabling Applitools for this run."
 
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
-        # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version-file: '.node-version'
 
-      - if: ${{ env.USE_APPLI }}
-        name: Notify applitools of new batch
-        # Copied from docs https://applitools.com/docs/topics/integrations/github-integration-ci-setup.html
-        env:
-          # e.g. mermaid-js/mermaid/my-branch
-          APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
-          APPLITOOLS_PARENT_BRANCH: ${{ github.event.inputs.parent_branch }}
-          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-          APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'
-        uses: wei/curl@012398a392d02480afa2720780031f8621d5f94c
-        with:
-          args: -X POST "$APPLITOOLS_SERVER_URL/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$GITHUB_SHA&BranchName=${APPLITOOLS_BRANCH}$&ParentBranchName=$APPLITOOLS_PARENT_BRANCH"
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
 
-      - name: Cypress run
-        uses: cypress-io/github-action@108b8684ae52e735ff7891524cbffbcd4be5b19f # v6.7.16
-        id: cypress
-        with:
-          start: pnpm run dev
-          wait-on: 'http://localhost:9000'
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Playwright run (Applitools)
+        if: ${{ env.USE_APPLI }}
+        run: USE_APPLI=true pnpm exec playwright test
         env:
-          # Mermaid applitools.config.js uses this to pick batch name.
-          APPLI_BRANCH: ${{ github.ref_name }}
-          APPLITOOLS_BATCH_ID: ${{ github.sha }}
+          MERMAID_PORT: 9000
+          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+          APPLITOOLS_BATCH_ID: ${{ github.sha }}-${{ github.run_id }}
           # e.g. mermaid-js/mermaid/my-branch
           APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
           APPLITOOLS_PARENT_BRANCH: ${{ github.event.inputs.parent_branch }}
-          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-          APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'

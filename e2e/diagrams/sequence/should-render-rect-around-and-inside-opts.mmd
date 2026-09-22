@@ -1,0 +1,17 @@
+sequenceDiagram
+  A ->> B: 1
+  rect rgb(204, 0, 102)
+  opt maybe
+    C -->> D: Do something
+    rect rgb(0, 204, 204)
+      C ->> C: 0
+    end
+  end
+  end
+
+  opt possibly
+  rect rgb(0, 204, 204)
+    C ->> C: 0
+  end
+  end
+  B ->> A: Return

@@ -23,5 +23,23 @@ export default {
     Campaign E: [0.40, 0.34]
     Campaign F: [0.35, 0.78]`,
     },
+    {
+      title: 'Eisenhower Matrix with Styled Points',
+      code: `quadrantChart
+    title Task Prioritization
+    x-axis Not Urgent --> Urgent
+    y-axis Not Important --> Important
+    quadrant-1 Do first
+    quadrant-2 Schedule
+    quadrant-3 Eliminate
+    quadrant-4 Delegate
+    Fix production outage: [0.88, 0.92] radius: 9
+    Plan next quarter: [0.28, 0.85]
+    Renew passport: [0.65, 0.75]
+    Answer routine emails: [0.78, 0.28]
+    Tidy desktop folders: [0.18, 0.12]
+    classDef urgent color: #ff3300
+    Book dentist appointment:::urgent: [0.72, 0.62]`,
+    },
   ],
 } satisfies DiagramMetadata;

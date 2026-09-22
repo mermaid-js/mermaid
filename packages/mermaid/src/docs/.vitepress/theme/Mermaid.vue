@@ -17,6 +17,10 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import { render } from './mermaid';
+import { buildExampleConfig } from './exampleConfig';
+import '@fontsource/open-sans/400.css';
+import '@fontsource/open-sans/400-italic.css';
+import '@fontsource-variable/recursive/index.css';
 
 const props = defineProps({
   graph: {
@@ -87,11 +91,7 @@ onUnmounted(() => mut.disconnect());
 const renderChart = async () => {
   console.log('rendering chart' + props.id + code.value);
   const hasDarkClass = document.documentElement.classList.contains('dark');
-  const mermaidConfig = {
-    securityLevel: 'loose',
-    startOnLoad: false,
-    theme: hasDarkClass ? 'dark' : 'default',
-  };
+  const mermaidConfig = buildExampleConfig(code.value, hasDarkClass);
   let svgCode = await render(props.id, code.value, mermaidConfig);
   // This is a hack to force v-html to re-render, otherwise the diagram disappears
   // when **switching themes** or **reloading the page**.

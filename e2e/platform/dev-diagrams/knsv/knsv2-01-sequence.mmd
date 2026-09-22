@@ -1,0 +1,16 @@
+sequenceDiagram
+actor Alice
+participant John@{ "type": "boundary" }
+participant P1@{ "type": "control" } as New Control
+participant P2@{ "type": "entity" } as New Entity
+participant P3@{ "type": "database" } as New Database
+Alice->>+John: Hello John, how are you?
+John->>P1: new msg
+P1->>P2: new msg
+P2->>P3: new msg
+Alice->>+John: John, can you hear me?
+P3->>P2: new msg
+P2->>P1: new msg
+John-->>-Alice: Hi Alice, I can hear you!
+P1->>John: new msg
+John-->>-Alice: I feel great!

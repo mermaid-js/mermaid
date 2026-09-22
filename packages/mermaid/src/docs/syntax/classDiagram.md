@@ -37,6 +37,77 @@ classDiagram
     }
 ```
 
+## Default theme, look and layout (v12.0.0+)
+
+Class diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+classDiagram
+  class Customer {
+    +String name
+    +String email
+  }
+  class Order {
+    +String id
+    +Date placedAt
+    +total() Money
+  }
+  class LineItem {
+    +int quantity
+  }
+  class Payment {
+    <<interface>>
+    +authorise() bool
+  }
+  Customer "1" --> "*" Order : places
+  Order "1" *-- "*" LineItem : contains
+  Order --> Payment : settled by
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+classDiagram
+  class Customer {
+    +String name
+    +String email
+  }
+  class Order {
+    +String id
+    +Date placedAt
+    +total() Money
+  }
+  class LineItem {
+    +int quantity
+  }
+  class Payment {
+    <<interface>>
+    +authorise() bool
+  }
+  Customer "1" --> "*" Order : places
+  Order "1" *-- "*" LineItem : contains
+  Order --> Payment : settled by
+```
+
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', class: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
+
 ## Syntax
 
 ### Class
@@ -318,6 +389,108 @@ namespace BaseShapes {
       double height
     }
 }
+```
+
+### Namespace Labels (v11.15.0+)
+
+A namespace can be given a display label using square bracket syntax, similar to class labels:
+
+```mermaid-example
+classDiagram
+    namespace Auth["Authentication Service"] {
+        class UserService {
+            +login()
+            +logout()
+        }
+    }
+```
+
+The label replaces the namespace name in the rendered diagram, while the name is still used internally for relationships and nesting.
+
+### Nested Namespaces (v11.15.0+)
+
+Namespaces can be nested to represent hierarchical groupings. There are two ways to define nested namespaces:
+
+**Dot notation** creates intermediate namespaces automatically:
+
+```mermaid-example
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company.Engineering {
+        class TechLead {
+            +planSprint()
+        }
+    }
+    TechLead --> Developer : leads
+    TechLead --> Designer : leads
+```
+
+**Syntactic nesting** places namespace blocks inside other namespace blocks:
+
+```mermaid-example
+classDiagram
+    namespace Platform {
+        namespace Auth {
+            class UserService {
+                +login()
+                +logout()
+            }
+        }
+        namespace Data {
+            class Repository {
+                +find()
+                +save()
+            }
+        }
+        class Gateway {
+            +route()
+        }
+    }
+    Gateway --> UserService : delegates
+    Gateway --> Repository : delegates
+```
+
+Both approaches can be combined. Dot notation like `namespace A.B.C` will automatically create namespaces `A` and `A.B` as parents if they don't already exist.
+
+#### Compact rendering (`hierarchicalNamespaces: false`)
+
+By default (`hierarchicalNamespaces: true`), each segment of a dotted or syntactically-nested namespace name renders as its own cluster, producing a nested layout.
+
+Setting `hierarchicalNamespaces: false` in the class diagram config switches to **compact mode**: only namespaces the user explicitly declares are drawn — each as a single flat box labelled with its fully-qualified name. Auto-created intermediate ancestors are skipped, and classes inside them are moved to their nearest declared namespace.
+
+```mermaid-example
+---
+config:
+  class:
+    hierarchicalNamespaces: false
+---
+classDiagram
+    namespace Company.Engineering.Backend {
+        class Developer {
+            +writeCode()
+        }
+    }
+    namespace Company.Engineering.Frontend {
+        class Designer {
+            +createMockup()
+        }
+    }
+    namespace Company {
+        class CEO {
+            +makeDecisions()
+        }
+    }
+    CEO --> Developer : oversees
+    CEO --> Designer : oversees
 ```
 
 ## Cardinality / Multiplicity on relations
@@ -665,6 +838,12 @@ classDiagram
 It is possible to hide the empty members box of a class node.
 
 This is done by changing the **hideEmptyMembersBox** value of the class diagram configuration. For more information on how to edit the Mermaid configuration see the [configuration page.](https://mermaid.js.org/config/configuration.html)
+
+### Possible configuration parameters:
+
+| Parameter           | Description                                                  | Default value |
+| ------------------- | ------------------------------------------------------------ | ------------- |
+| hideEmptyMembersBox | Hides the empty members box of a class node when set to true | false         |
 
 ```mermaid-example
 ---

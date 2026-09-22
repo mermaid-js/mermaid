@@ -1,0 +1,25 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+
+  Note over Alice,Charlie: Normal arrows
+  Alice->>Alice: Normal solid
+  Bob-->>Bob: Normal dotted
+  Charlie->Charlie: Normal open
+
+  Note over Alice,Charlie: Reverse arrows
+  Alice/|-Alice: Reverse solid top
+  Bob\|-Bob: Reverse solid bottom
+
+  Note over Alice,Charlie: Bidirectional arrows
+  Charlie<<->>Charlie: Bidirectional solid
+  Alice<<-->>Alice: Bidirectional dotted

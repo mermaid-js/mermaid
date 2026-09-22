@@ -255,6 +255,177 @@
     </pre>
     <hr />
 
+    <h2>Nested Namespaces (dot notation)</h2>
+    <pre class="mermaid">
+    classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+          +reviewPR()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+          +buildUI()
+        }
+      }
+      namespace Company.Engineering {
+        class TechLead {
+          +planSprint()
+        }
+      }
+      namespace Company {
+        class CEO {
+          +makeDecisions()
+        }
+      }
+      CEO --> TechLead : oversees
+      TechLead --> Developer : leads
+      TechLead --> Designer : leads
+    </pre>
+    <hr />
+
+    <h2>Nested Namespaces (syntactic nesting)</h2>
+    <pre class="mermaid">
+    classDiagram
+      namespace Platform {
+        namespace Auth {
+          class UserService {
+            +login()
+            +logout()
+          }
+          class TokenManager {
+            +generateToken()
+            +validateToken()
+          }
+        }
+        namespace Data {
+          class Repository {
+            +find()
+            +save()
+          }
+        }
+        class Gateway {
+          +route()
+        }
+      }
+      UserService --> TokenManager : uses
+      Gateway --> UserService : delegates
+      Gateway --> Repository : delegates
+    </pre>
+    <hr />
+
+    <h2>Mixed: dot notation + syntactic nesting</h2>
+    <pre class="mermaid">
+    classDiagram
+      namespace App.Services {
+        namespace Billing {
+          class Invoice {
+            +calculate()
+          }
+        }
+        class Logger {
+          +log()
+        }
+      }
+      namespace App.Models {
+        class User {
+          +String name
+        }
+      }
+      Invoice --> Logger : logs to
+      Invoice --> User : bills
+    </pre>
+    <hr />
+
+    <h2>Compact mode (hierarchicalNamespaces: false)</h2>
+    <p>
+      Same source as the dot-notation demo above, rendered with
+      <code>hierarchicalNamespaces: false</code>. Only the three user-declared namespaces are
+      emitted as flat boxes using their full qualified name; intermediate ancestors (e.g.
+      <code>Company.Engineering</code> would only appear if declared) are skipped.
+    </p>
+    <pre class="mermaid">
+    ---
+    config:
+      class:
+        hierarchicalNamespaces: false
+    ---
+    classDiagram
+      namespace Company.Engineering.Backend {
+        class Developer {
+          +writeCode()
+          +reviewPR()
+        }
+      }
+      namespace Company.Engineering.Frontend {
+        class Designer {
+          +createMockup()
+          +buildUI()
+        }
+      }
+      namespace Company {
+        class CEO {
+          +makeDecisions()
+        }
+      }
+      CEO --> Developer : oversees
+      CEO --> Designer : oversees
+    </pre>
+    <hr />
+
+    <h2>Compact mode with syntactic nesting</h2>
+    <p>
+      Syntactic nesting in compact mode: nested <code>namespace</code> blocks still produce
+      fully-qualified names, but only the explicit leaf namespaces render as flat boxes.
+    </p>
+    <pre class="mermaid">
+    ---
+    config:
+      class:
+        hierarchicalNamespaces: false
+    ---
+    classDiagram
+      namespace Platform {
+        namespace Auth {
+          class UserService {
+            +login()
+          }
+        }
+        namespace Data {
+          class Repository {
+            +find()
+          }
+        }
+      }
+      UserService --> Repository : reads
+    </pre>
+    <hr />
+
+    <h2>Namespace labels</h2>
+    <pre class="mermaid">
+    classDiagram
+      namespace Auth["Authentication Service"] {
+        class UserService {
+          +login()
+          +logout()
+        }
+        class TokenManager {
+          +generate()
+        }
+      }
+      namespace Store["Data Store"] {
+        class Repository {
+          +find()
+          +save()
+        }
+      }
+      UserService --> TokenManager : uses
+      UserService --> Repository : reads from
+    </pre>
+    <hr />
+
     <script type="module">
       import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({

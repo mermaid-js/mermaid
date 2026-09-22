@@ -6,22 +6,53 @@ export default {
   description: 'Visualize system requirements and their relationships',
   examples: [
     {
-      title: 'Basic Requirements',
+      title: 'E-Bike Braking System',
+      isDefault: true,
       code: `requirementDiagram
 
-    requirement test_req {
-    id: 1
-    text: the test text.
-    risk: high
-    verifymethod: test
+    requirement rider_safety {
+        id: 1
+        text: Riders must be able to stop safely in all conditions.
+        risk: high
+        verifymethod: test
     }
 
-    element test_entity {
-    type: simulation
+    functionalRequirement brake_response {
+        id: 1.1
+        text: Brakes engage within 100 ms of lever pull.
+        risk: medium
+        verifymethod: test
     }
 
-    test_entity - satisfies -> test_req`,
-      isDefault: true,
+    performanceRequirement stopping_distance {
+        id: 1.2
+        text: Stop from 25 km/h within 4 m on dry pavement.
+        risk: medium
+        verifymethod: demonstration
+    }
+
+    designConstraint water_resistance {
+        id: 1.3
+        text: Brake electronics must be IP67 rated.
+        risk: low
+        verifymethod: inspection
+    }
+
+    element brake_controller {
+        type: hardware
+        docRef: "specs/brake-controller"
+    }
+
+    element road_test_suite {
+        type: "test suite"
+        docRef: "qa/road-tests"
+    }
+
+    rider_safety - contains -> brake_response
+    rider_safety - contains -> stopping_distance
+    brake_response - derives -> water_resistance
+    brake_controller - satisfies -> brake_response
+    road_test_suite - verifies -> stopping_distance`,
     },
   ],
 } satisfies DiagramMetadata;

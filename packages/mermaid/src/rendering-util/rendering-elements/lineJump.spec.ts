@@ -1,0 +1,890 @@
+import { describe, expect, it } from 'vitest';
+import { select } from 'd3';
+import {
+  applyLineJumpsToSvg,
+  findEdgeIntersections,
+  isStraightPath,
+  processEdgesWithJumps,
+  type EdgeGeom,
+  type LineJumpConfig,
+} from './lineJump.js';
+import type { D3Selection } from '../../types.js';
+
+const ARC_CONFIG: LineJumpConfig = {
+  enabled: true,
+  jumpRadius: 1,
+  jumpStyle: 'arc',
+};
+
+describe('lineJump', () => {
+  describe('findEdgeIntersections', () => {
+    it('detects a single perpendicular crossing and assigns the jump to the horizontal edge', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'e1',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'e2',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+      ];
+
+      const crossings = findEdgeIntersections(edges);
+
+      expect(crossings).toHaveLength(1);
+      const [c] = crossings;
+      // Orthogonal rule: horizontal edge hops over vertical.
+      expect(c.jumpEdgeId).toBe('e1');
+      expect(c.otherEdgeId).toBe('e2');
+      expect(c.point.x).toBeCloseTo(5);
+      expect(c.point.y).toBeCloseTo(5);
+    });
+
+    it('keeps horizontal-hops-over-vertical even when input order is reversed', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'vertical',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+        {
+          id: 'horizontal',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+      ];
+
+      const [c] = findEdgeIntersections(edges);
+
+      // Still horizontal that gets the jump, regardless of array order.
+      expect(c.jumpEdgeId).toBe('horizontal');
+      expect(c.otherEdgeId).toBe('vertical');
+    });
+
+    it('falls back to later-index-wins when both segments share orientation', () => {
+      // Two diagonal edges crossing each other — neither is purely horizontal
+      // nor purely vertical under the |dx|>=|dy| test (both are horizontal-
+      // dominant here), so the tie is broken by input order.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'a',
+          points: [
+            { x: 0, y: 0 },
+            { x: 10, y: 2 },
+          ],
+        },
+        {
+          id: 'b',
+          points: [
+            { x: 0, y: 2 },
+            { x: 10, y: 0 },
+          ],
+        },
+      ];
+
+      const [c] = findEdgeIntersections(edges);
+      expect(c.jumpEdgeId).toBe('b');
+      expect(c.otherEdgeId).toBe('a');
+    });
+
+    it('does not treat a T-junction (endpoint touching another edge) as a crossing', () => {
+      // e2 ends exactly on e1, like an arrowhead landing on a backbone edge.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'e1',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'e2',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 5 },
+          ],
+        },
+      ];
+
+      expect(findEdgeIntersections(edges)).toHaveLength(0);
+    });
+
+    it('does not treat shared start points as crossings', () => {
+      // Two edges fanning out from the same node.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'e1',
+          points: [
+            { x: 0, y: 0 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'e2',
+          points: [
+            { x: 0, y: 0 },
+            { x: 10, y: -5 },
+          ],
+        },
+      ];
+
+      expect(findEdgeIntersections(edges)).toHaveLength(0);
+    });
+
+    it('does not treat shared end points as crossings', () => {
+      // Two edges converging on the same node.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'e1',
+          points: [
+            { x: 0, y: 0 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'e2',
+          points: [
+            { x: 0, y: 10 },
+            { x: 10, y: 5 },
+          ],
+        },
+      ];
+
+      expect(findEdgeIntersections(edges)).toHaveLength(0);
+    });
+
+    it('ignores parallel (non-intersecting) segments', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'e1',
+          points: [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+          ],
+        },
+        {
+          id: 'e2',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+      ];
+
+      expect(findEdgeIntersections(edges)).toHaveLength(0);
+    });
+  });
+
+  describe('processEdgesWithJumps', () => {
+    it('leaves the vertical edge untouched and puts the arc jump on the horizontal edge', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'v',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+      ];
+
+      const paths = processEdgesWithJumps(edges, ARC_CONFIG);
+
+      // Vertical edge unchanged.
+      expect(paths.get('v')).toBe('M5,0 L5,10');
+      // Horizontal edge carries a unit-radius arc that "bumps up" at the
+      // crossing — segment going +x → sweep flag 0.
+      expect(paths.get('h')).toBe('M0,5 L4,5 A1,1 0 0 1 6,5 L10,5');
+    });
+
+    it('emits two arcs in t-order when a horizontal edge crosses multiple verticals', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'v1',
+          points: [
+            { x: 3, y: 0 },
+            { x: 3, y: 10 },
+          ],
+        },
+        {
+          id: 'v2',
+          points: [
+            { x: 7, y: 0 },
+            { x: 7, y: 10 },
+          ],
+        },
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+      ];
+
+      const paths = processEdgesWithJumps(edges, ARC_CONFIG);
+
+      expect(paths.get('v1')).toBe('M3,0 L3,10');
+      expect(paths.get('v2')).toBe('M7,0 L7,10');
+      // Two crossings at x=3 and x=7 on the same horizontal segment, t-sorted.
+      expect(paths.get('h')).toBe('M0,5 L2,5 A1,1 0 0 1 4,5 L6,5 A1,1 0 0 1 8,5 L10,5');
+    });
+
+    it('shrinks jump radii when adjacent crossings would overlap', () => {
+      // Two crossings 1.6 apart on a horizontal segment, with radius 1.0 — a
+      // naive rewrite would invert the path. The two arcs must shrink to fit
+      // (each <= half the gap) and stay monotonic along the segment. 1.6 is
+      // wide enough that the shrunk radius still clears the minimum-useful
+      // bar; the case where it does not is the test below.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'v1',
+          points: [
+            { x: 4.2, y: 0 },
+            { x: 4.2, y: 10 },
+          ],
+        },
+        {
+          id: 'v2',
+          points: [
+            { x: 5.8, y: 0 },
+            { x: 5.8, y: 10 },
+          ],
+        },
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+      ];
+
+      const paths = processEdgesWithJumps(edges, ARC_CONFIG);
+
+      const d = paths.get('h')!;
+      const arcs = d.match(/A[^A]*?(?=L|A|M|$)/g) ?? [];
+      expect(arcs).toHaveLength(2);
+      expect(d.startsWith('M0,5 ')).toBe(true);
+      expect(d.endsWith(' L10,5')).toBe(true);
+      // Sweep flag 0 for horizontal +x segments, and radius clamped to at
+      // most half the 1.6 gap between the two crossings.
+      const firstArcMatch = /A([\d.]+),([\d.]+) 0 0 1 ([\d.]+),5/.exec(d);
+      expect(firstArcMatch).not.toBeNull();
+      const firstArcRadius = parseFloat(firstArcMatch![1]);
+      expect(firstArcRadius).toBeLessThanOrEqual(0.8);
+      expect(firstArcRadius).toBeGreaterThan(0);
+    });
+
+    it('drops both hops when crossings are too close to carry one each', () => {
+      // The adjacency clamp can shrink a radius as far as a bend can, and a hop
+      // shrunk that way is just as unreadable — at production radius 6, two
+      // crossings 4px apart would each get 2px, which does not clear the stroke
+      // being hopped. Same rule, applied after the clamp as well as before it.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'v1',
+          points: [
+            { x: 4.7, y: 0 },
+            { x: 4.7, y: 10 },
+          ],
+        },
+        {
+          id: 'v2',
+          points: [
+            { x: 5.3, y: 0 },
+            { x: 5.3, y: 10 },
+          ],
+        },
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+      ];
+
+      const d = processEdgesWithJumps(edges, ARC_CONFIG).get('h')!;
+
+      expect(d).not.toMatch(/A/);
+      expect(d).toBe('M0,5 L10,5');
+    });
+
+    it('returns plain polylines for every edge when disabled, even with crossings present', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'v',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+      ];
+
+      const paths = processEdgesWithJumps(edges, { ...ARC_CONFIG, enabled: false });
+
+      expect(paths.get('h')).toBe('M0,5 L10,5');
+      expect(paths.get('v')).toBe('M5,0 L5,10');
+    });
+
+    it('emits an M (move) on the horizontal edge when jumpStyle is "gap"', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'v',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+      ];
+
+      const paths = processEdgesWithJumps(edges, {
+        enabled: true,
+        jumpRadius: 1,
+        jumpStyle: 'gap',
+      });
+
+      expect(paths.get('v')).toBe('M5,0 L5,10');
+      // The gap variant lifts the pen and resumes on the far side of the crossing.
+      expect(paths.get('h')).toBe('M0,5 L4,5 M6,5 L10,5');
+    });
+  });
+
+  describe('isStraightPath', () => {
+    it('accepts pure M/L paths', () => {
+      expect(isStraightPath('M0,5 L10,5')).toBe(true);
+      expect(isStraightPath('M5,0 L5,4 L5,10')).toBe(true);
+    });
+
+    it('rejects paths containing curve commands', () => {
+      expect(isStraightPath('M0,0 C1,1 2,2 3,3')).toBe(false);
+      expect(isStraightPath('M0,0 Q1,1 2,2')).toBe(false);
+      expect(isStraightPath('M0,0 L1,1 A1,1 0 0 1 2,2')).toBe(false);
+    });
+  });
+
+  describe('applyLineJumpsToSvg', () => {
+    function makeGroup(paths: { id: string; d: string }[]): {
+      group: D3Selection<SVGGElement>;
+      svg: SVGSVGElement;
+    } {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      svg.appendChild(g);
+      for (const { id, d } of paths) {
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('data-id', id);
+        p.setAttribute('d', d);
+        g.appendChild(p);
+      }
+      return { group: select(g) as D3Selection<SVGGElement>, svg };
+    }
+
+    it('rewrites the d attribute of the horizontal edge for a perpendicular crossing', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'h',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'v',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'h', d: 'M0,5 L10,5' },
+        { id: 'v', d: 'M5,0 L5,10' },
+      ]);
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const h = group.node()!.querySelector('path[data-id="h"]')!;
+      const v = group.node()!.querySelector('path[data-id="v"]')!;
+      expect(v.getAttribute('d')).toBe('M5,0 L5,10');
+      expect(h.getAttribute('d')).toBe('M0,5 L4,5 A1,1 0 0 1 6,5 L10,5');
+    });
+
+    it('rewrites a "rounded" edge whose rendered d contains corner-rounding Q commands', () => {
+      // Real-world case: swimlane edges render via generateRoundedPath with
+      // small Q quadratics at corners. With curve hint = 'rounded' the
+      // rewrite should still fire and replace the path with arcs at
+      // crossings (corner rounding is intentionally lost on the rewritten
+      // edge to make the hop visible).
+      // With horizontal-hops-over-vertical, the edge that gets rewritten is
+      // the one whose crossing segment is horizontal. Use an horizontalBend
+      // (horizontal-first-then-down) that crosses a tall vertical.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'verticalLine',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 25 },
+          ],
+          curve: 'rounded',
+        },
+        {
+          id: 'horizontalBend',
+          // Horizontal segment at y=5 from x=0 to x=20, then bend down to
+          // (20, 15). The crossing with verticalLine is at (10, 5), well inside
+          // the horizontal segment and away from the corner.
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+            { x: 20, y: 15 },
+          ],
+          curve: 'rounded',
+        },
+      ];
+
+      // Simulated rendered output for `horizontalBend` from generateRoundedPath.
+      const renderedRounded = 'M0,5 L17.5,5 Q20,5 20,7.5 L20,15';
+      const { group } = makeGroup([
+        { id: 'verticalLine', d: 'M10,0 L10,25' },
+        { id: 'horizontalBend', d: renderedRounded },
+      ]);
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const horizontalBend = group.node()!.querySelector('path[data-id="horizontalBend"]')!;
+      const newD = horizontalBend.getAttribute('d')!;
+      expect(newD).not.toBe(renderedRounded);
+      // The jump arc uses the full requested radius and bumps up (sweep=1
+      // for a +x-going horizontal segment in SVG's y-down coordinate system).
+      expect(newD).toContain('A1,1 0 0 1');
+      // Corner rounding is preserved — Q at the bend point (20, 5).
+      expect(newD).toMatch(/Q20,5/);
+    });
+
+    it('skips edges whose curve hint is a true smoothing curve', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+          curve: 'basis',
+        },
+      ];
+
+      const curvedD = 'M5,0 C5,3 5,7 5,10';
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L10,5' },
+        { id: 'vert', d: curvedD },
+      ]);
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      // basis curve → skipped by the curve hint, even before the d check.
+      expect(group.node()!.querySelector('path[data-id="vert"]')!.getAttribute('d')).toBe(curvedD);
+    });
+
+    it('skips edges whose rendered d contains curve commands', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'e1',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'e2',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+      ];
+
+      const curvedD = 'M5,0 C5,3 5,7 5,10';
+      const { group } = makeGroup([
+        { id: 'e1', d: 'M0,5 L10,5' },
+        { id: 'e2', d: curvedD },
+      ]);
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const e2 = group.node()!.querySelector('path[data-id="e2"]')!;
+      // Curved path left untouched even though geometry says it crosses e1.
+      expect(e2.getAttribute('d')).toBe(curvedD);
+    });
+
+    it('prefers data-points (the geometry edges.js actually rendered) over edge.points', () => {
+      // Simulates the swimlane case where edge.points from layout differs
+      // slightly from what edges.js used after its node-boundary
+      // intersect() clipping. The rewrite must use the rendered geometry so
+      // endpoints line up with the arrow marker.
+      const layoutEdges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          // Layout says y=5; rendering clipped to y=5 too.
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          // Layout says x=10 from y=0 to y=20.
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+
+      // Rendering (via edges.js) actually used x=10, y=2..18 after clipping
+      // — encoded in data-points. Crossings/rewrites must use the rendered y.
+      const renderedVertPoints = [
+        { x: 10, y: 2 },
+        { x: 10, y: 18 },
+      ];
+      const b64 = Buffer.from(JSON.stringify(renderedVertPoints)).toString('base64');
+
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,2 L10,18' },
+      ]);
+      const vertPath = group.node()!.querySelector('path[data-id="vert"]')!;
+      vertPath.setAttribute('data-points', b64);
+
+      applyLineJumpsToSvg(group, layoutEdges, ARC_CONFIG);
+
+      const d = vertPath.getAttribute('d')!;
+      expect(d.startsWith('M10,2')).toBe(true);
+      expect(d.endsWith('L10,18')).toBe(true);
+    });
+
+    it('applies markerOffsets so the rewritten endpoint matches edges.js', () => {
+      // With arrowTypeEnd='arrow_point' the markerOffsets table shifts the
+      // last point inward by 4 along the last segment's direction. Without
+      // this, the arrow marker's orientation/clipping goes wrong (user bug
+      // report: "arrow pointing in the wrong way").
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+          arrowTypeEnd: 'arrow_point',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,0 L10,20' },
+      ]);
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const horiz = group.node()!.querySelector('path[data-id="horiz"]')!;
+      const d = horiz.getAttribute('d')!;
+      // Last coord pair is "16,5" (20 - markerOffsets.arrow_point=4), not "20,5".
+      expect(d.endsWith('L16,5')).toBe(true);
+    });
+
+    it('recomputes stroke-dasharray against the new total length to preserve neo-look marker clearance', () => {
+      // The `neo` look in edges.js emits:
+      //   stroke-dasharray: 0 <oValueS> <len - oValueS - oValueE> <oValueE>
+      // which hides the first oValueS (9 for arrow_point) and last oValueE
+      // pixels of the stroke so it doesn't leak into the arrow marker body.
+      // After rewrite the path length changes, so the "on" middle portion
+      // must be updated, but oValueS and oValueE must be preserved.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,0 L10,20' },
+      ]);
+      const vertPath = group.node()!.querySelector('path[data-id="vert"]')!;
+      vertPath.setAttribute(
+        'style',
+        'stroke-dasharray: 0 9 42 9; stroke-dashoffset: 0; stroke: #000;'
+      );
+      // JSDOM does not implement getTotalLength; stub it so the recompute
+      // branch runs. Value is arbitrary but plausible — mirrors post-rewrite
+      // length with an arc inserted.
+      (vertPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 60;
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      const style = vertPath.getAttribute('style') ?? '';
+      // oValueS (9) and oValueE (9) preserved; the on-portion recomputed to
+      // (60 - 9 - 9) = 42.
+      expect(style).toMatch(/stroke-dasharray:\s*0 9 42 9/);
+      // Other declarations survive.
+      expect(style).toMatch(/stroke:\s*#000/);
+    });
+
+    it('does nothing when disabled', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'e1',
+          points: [
+            { x: 0, y: 5 },
+            { x: 10, y: 5 },
+          ],
+        },
+        {
+          id: 'e2',
+          points: [
+            { x: 5, y: 0 },
+            { x: 5, y: 10 },
+          ],
+        },
+      ];
+
+      const { group } = makeGroup([
+        { id: 'e1', d: 'M0,5 L10,5' },
+        { id: 'e2', d: 'M5,0 L5,10' },
+      ]);
+
+      applyLineJumpsToSvg(group, edges, { ...ARC_CONFIG, enabled: false });
+
+      const e2 = group.node()!.querySelector('path[data-id="e2"]')!;
+      expect(e2.getAttribute('d')).toBe('M5,0 L5,10');
+    });
+  });
+
+  describe('hops with too little room next to a bend', () => {
+    const ROOMY: LineJumpConfig = { enabled: true, jumpRadius: 6, jumpStyle: 'arc' };
+
+    /**
+     * Geometry lifted from `elk-edge-cases/many-subgraphs-and-edges`, where
+     * `design-system -> mermaid-chart-app` leaves its node, turns north, turns
+     * east again at (430.6, 180.1), and is crossed 10px later at (440.6, 180.1)
+     * by `infrastructure -> auth-service`.
+     *
+     * 10px is `SUBGRAPH_EDGE_LANE_SPACING` — ELK stacks subgraph-internal edges
+     * in lanes that far apart — and it does not hold a 7.07px corner cut plus a
+     * 6px hop. The hop used to be fitted into what was left anyway, at 2.9px,
+     * starting exactly where the corner's quadratic ended.
+     */
+    const CRAMPED: EdgeGeom[] = [
+      {
+        id: 'designSystemToApp',
+        points: [
+          { x: 395.6, y: 275.3 },
+          { x: 430.6, y: 275.3 },
+          { x: 430.6, y: 180.1 },
+          { x: 502.1, y: 180.1 },
+        ],
+        curve: 'rounded',
+      },
+      {
+        id: 'infrastructureToAuth',
+        points: [
+          { x: 440.6, y: 120 },
+          { x: 440.6, y: 320 },
+        ],
+        curve: 'rounded',
+      },
+    ];
+
+    it('leaves the crossing alone rather than drawing an undersized arc', () => {
+      const d = processEdgesWithJumps(CRAMPED, ROOMY).get('designSystemToApp')!;
+
+      // The crossing IS found — this is about what gets drawn for it, not about
+      // detection.
+      expect(findEdgeIntersections(CRAMPED)).toHaveLength(1);
+
+      // No arc anywhere on the path, and no zero-length `L` parked on the
+      // corner's tangent point ahead of one.
+      expect(d).not.toMatch(/A/);
+      expect(d).not.toMatch(/L437\.696,180\.086 L437\.696,180\.086/);
+    });
+
+    it('still hops once the bend is far enough away', () => {
+      // Same edge, same crossing, but the turn moved back so the lane is 20px
+      // instead of 10px — now there is room for the full radius.
+      const roomy: EdgeGeom[] = [{ ...CRAMPED[0], points: [...CRAMPED[0].points] }, CRAMPED[1]];
+      roomy[0].points[1] = { x: 420.6, y: 275.3 };
+      roomy[0].points[2] = { x: 420.6, y: 180.1 };
+
+      const d = processEdgesWithJumps(roomy, ROOMY).get('designSystemToApp')!;
+
+      expect(d).toContain('A6,6 0 0 1');
+    });
+
+    /**
+     * `org -> platform` and `design -> app` from `knsv2.html`, verbatim.
+     *
+     * `org -> platform` runs east, turns south at (249, 1031.102) and carries on
+     * down. `design -> app` runs west along y=1033.625 and crosses that vertical
+     * — 2.5px below the turn, which is INSIDE the 7.07px the corner's quadratic
+     * takes to rejoin the line.
+     *
+     * So at the y where the hop was drawn, `org -> platform` is not on x=249 at
+     * all; it is still curving through its corner. The arc arched over blank
+     * paper while the two strokes carried on touching beside it.
+     */
+    const ACROSS_A_CORNER: EdgeGeom[] = [
+      {
+        id: 'orgToPlatform',
+        points: [
+          { x: 169, y: 1031.102 },
+          { x: 249, y: 1031.102 },
+          { x: 249, y: 1345.091 },
+          { x: 552.5, y: 1345.091 },
+        ],
+        curve: 'rounded',
+      },
+      {
+        id: 'designToApp',
+        points: [
+          { x: 229, y: 1382.007 },
+          { x: 229, y: 1033.625 },
+          { x: 269, y: 1033.625 },
+          { x: 351.5, y: 1033.625 },
+        ],
+        curve: 'rounded',
+      },
+    ];
+
+    it("ignores a crossing that lands inside the OTHER edge's corner", () => {
+      // Nothing is wrong with the hopping edge here: its own bend is 20px back,
+      // so the previous rule is happy to give it a full 6px arc. The problem is
+      // entirely on the edge being hopped.
+      expect(findEdgeIntersections(ACROSS_A_CORNER)).toEqual([]);
+
+      const d = processEdgesWithJumps(ACROSS_A_CORNER, ROOMY).get('designToApp')!;
+      expect(d).not.toMatch(/A/);
+    });
+
+    it('hops normally once that corner is out of the way', () => {
+      // Same two edges, but `org -> platform` turns south 30px higher, so by
+      // y=1033.625 it has long since settled onto x=249 and there is a real
+      // vertical line to hop.
+      const clear: EdgeGeom[] = [
+        {
+          ...ACROSS_A_CORNER[0],
+          points: [
+            { x: 169, y: 1001.102 },
+            { x: 249, y: 1001.102 },
+            { x: 249, y: 1345.091 },
+            { x: 552.5, y: 1345.091 },
+          ],
+        },
+        ACROSS_A_CORNER[1],
+      ];
+
+      expect(findEdgeIntersections(clear)).toHaveLength(1);
+      expect(processEdgesWithJumps(clear, ROOMY).get('designToApp')).toContain('A6,6');
+    });
+
+    it('keeps a straight run between the corner and a hop it does draw', () => {
+      // A hop with just enough room still must not open ON the corner's tangent
+      // point — the quadratic and the arc would meet with nothing between them,
+      // which is the same squiggle as the undersized case, only bigger.
+      //
+      // The bend is at x=100, so its rounding ends at x=107.07. The crossing at
+      // x=113 leaves 5.93px, which the old clamp spent entirely on radius and
+      // opened the arc at exactly 107.07.
+      const edges: EdgeGeom[] = [
+        {
+          id: 'bend',
+          points: [
+            { x: 100, y: 0 },
+            { x: 100, y: 100 },
+            { x: 300, y: 100 },
+          ],
+          curve: 'rounded',
+        },
+        {
+          id: 'crosser',
+          points: [
+            { x: 113, y: 0 },
+            { x: 113, y: 200 },
+          ],
+        },
+      ];
+
+      const d = processEdgesWithJumps(edges, ROOMY).get('bend')!;
+      const arc = /L([\d.]+),100 A([\d.]+),/.exec(d);
+      expect(arc).not.toBeNull();
+
+      const [openAt, radius] = [arc![1], arc![2]].map(Number.parseFloat);
+      // Radius gives way, not the clearance: 2px of straight line survives
+      // between the end of the corner and the start of the arc.
+      expect(openAt - 107.071).toBeCloseTo(2, 2);
+      expect(radius).toBeCloseTo(3.929, 2);
+    });
+  });
+});

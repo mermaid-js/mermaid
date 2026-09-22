@@ -6,8 +6,34 @@ export default {
   description: 'Visualize flow quantities between different stages or processes',
   examples: [
     {
-      title: 'Energy Flow',
+      title: 'Monthly Budget Flow',
       isDefault: true,
+      code: `sankey-beta
+
+Salary,Budget,3000
+Freelance work,Budget,1200
+Budget,Rent,1300
+Budget,Groceries,600
+Budget,Transport,250
+Budget,Fun,350
+Budget,Savings,1700`,
+    },
+    {
+      title: 'Job Application Funnel',
+      code: `sankey-beta
+
+Applications,Screening,120
+Screening,Rejected early,70
+Screening,Phone interview,50
+Phone interview,Rejected,20
+Phone interview,Technical interview,30
+Technical interview,Rejected late,12
+Technical interview,Offer,18
+Offer,Declined,4
+Offer,Hired,14`,
+    },
+    {
+      title: 'Energy Flow (UK)',
       code: `---
 config:
   sankey:

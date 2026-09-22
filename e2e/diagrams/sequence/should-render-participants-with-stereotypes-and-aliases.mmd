@@ -1,0 +1,18 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant API@{ "type" : "boundary" } as Public API
+  participant Auth@{ "type" : "control" } as Auth Controller
+  participant DB@{ "type" : "database" } as User Database
+  participant Cache@{ "type" : "entity" } as Cache Layer
+  API ->> Auth: Authenticate request
+  Auth ->> DB: Query user
+  DB -->> Auth: User data
+  Auth ->> Cache: Store session
+  Cache -->> Auth: Confirmed
+  Auth -->> API: Token

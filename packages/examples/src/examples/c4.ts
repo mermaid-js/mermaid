@@ -43,5 +43,31 @@ export default {
     Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
     Rel(SystemC, customerA, "Sends e-mails to")`,
     },
+    {
+      title: 'Internet Banking Container Diagram',
+      code: `C4Container
+    title Container diagram for Internet Banking System
+
+    Person(customer, "Banking Customer", "A customer of the bank, with personal bank accounts")
+    System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system")
+
+    Container_Boundary(c1, "Internet Banking") {
+        Container(web_app, "Web Application", "JavaScript, React", "Delivers the static content and the SPA")
+        Container(spa, "Single-Page App", "JavaScript, React", "Provides all banking functionality via the browser")
+        Container(mobile_app, "Mobile App", "C#, Xamarin", "Provides a subset of banking functionality")
+        ContainerDb(database, "Database", "SQL Database", "Stores user registration, hashed auth credentials, access logs")
+        Container(backend_api, "API Application", "Java, Docker", "Provides banking functionality via JSON/HTTPS API")
+    }
+
+    Rel(customer, web_app, "Uses", "HTTPS")
+    Rel(customer, spa, "Uses", "HTTPS")
+    Rel(customer, mobile_app, "Uses")
+    Rel(web_app, spa, "Delivers")
+    Rel(spa, backend_api, "Makes API calls to", "JSON/HTTPS")
+    Rel(mobile_app, backend_api, "Makes API calls to", "JSON/HTTPS")
+    Rel(backend_api, database, "Reads from and writes to", "JDBC")
+    Rel(email_system, customer, "Sends e-mails to")
+    Rel(backend_api, email_system, "Sends e-mails using", "SMTP")`,
+    },
   ],
 } satisfies DiagramMetadata;

@@ -1,0 +1,13 @@
+    flowchart TD
+        Customer --> USCompany
+
+        USCompany -- fdhdfjkfdkjdjd --> HongKongCompany
+        USCompany -- & --> Expenses
+        USCompany --$ --> Income
+        HongKongCompany  --> USCompany
+        Income(US) --> Tax1(US)
+
+        HongKongCompany --> ExpensesHK
+        HongKongCompany --> Wages(HK)
+        HongKongCompany --> Incomehk
+        Income(HongKong) --> Tax(HongKong)

@@ -1,0 +1,11 @@
+agentflow-beta LR
+  flow f1["Flow One"]
+    step1["Step 1"]
+    step2["Step 2"]
+    step1 --> step2
+  end
+  flow f2["Flow Two"]
+    step3["Step 3"]
+  end
+  f1@{ view: "collapsed" }
+  f1 --> f2

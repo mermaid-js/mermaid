@@ -1,0 +1,15 @@
+---
+config:
+  loglevel: 1
+---
+erDiagram
+  HOTEL {
+  string      address
+  string      `geo.accuracy`
+  string      `check-in date` PK "ISO 8601"
+  }
+  HOTEL ||--o{ ROOM : has
+  ROOM {
+  int         `room.number`
+  string      `bed.type`
+  }

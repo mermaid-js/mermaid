@@ -1,0 +1,16 @@
+C4Deployment
+  title Deployment Diagram for Internet Banking System - Live
+
+  Deployment_Node(mob, "Customer's mobile device", "Apple IOS or Android"){
+  Container(mobile, "Mobile App", "Xamarin", "Provides a limited subset of the Internet Banking functionality to customers via their mobile device.")
+  }
+
+  Deployment_Node(plc, "Big Bank plc", "Big Bank plc data center"){
+  Deployment_Node(dn, "bigbank-api*** x8", "Ubuntu 16.04 LTS"){
+      Deployment_Node(apache, "Apache Tomcat", "Apache Tomcat 8.x"){
+          Container(api, "API Application", "Java and Spring MVC", "Provides Internet Banking functionality via a JSON/HTTPS API.")
+      }
+  }
+  }
+
+  Rel(mobile, api, "Makes API calls to", "json/HTTPS")

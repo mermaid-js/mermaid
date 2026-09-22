@@ -1,4 +1,4 @@
-import clone from 'lodash-es/clone.js';
+import { clone } from 'es-toolkit/compat';
 import * as configApi from '../../config.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
@@ -16,12 +16,10 @@ const COLOR_KEYWORD = 'color';
 const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
-const config = getConfig();
-
 let classes = new Map<string, ClassDef>();
 let diagramId = '';
 
-const sanitizeText = (txt: string) => common.sanitizeText(txt, config);
+const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
 
 /**
  * Called when the parser comes across a (style) class definition
@@ -90,6 +88,20 @@ export const setCssClass = function (itemIds: string, cssClassName: string) {
   });
 };
 
+/**
+ * Next palette slot to hand out.
+ *
+ * Composites only, and one counter across the whole parse -- exactly what the flowchart
+ * does for its subgraphs. There, `declarationIndex` is built by walking `subGraphs` and
+ * nothing else, and every palette selector it emits is a `.cluster` or a collapsed
+ * subgraph; a plain node never takes a slot. A block diagram's containers are its
+ * composites, so those are what take one here.
+ *
+ * A nested composite continues the cycle rather than restarting it, which is what keeps
+ * two sibling containers from opening on the same colour.
+ */
+let nextColorIndex = 0;
+
 const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
   const blockList = _blockList.flat();
   const children = [];
@@ -143,6 +155,11 @@ const populateBlockDatabase = (_blockList: Block[], parent: Block): void => {
       const existingBlock = blockDatabase.get(block.id);
 
       if (existingBlock === undefined) {
+        // Assigned here, before the recursion into `block.children` below, so an outer
+        // composite takes a lower slot than any composite nested inside it.
+        if (block.type === 'composite') {
+          block.colorIndex = nextColorIndex++;
+        }
         blockDatabase.set(block.id, block);
       } else {
         // Add newer relevant data to aggregated node
@@ -188,6 +205,7 @@ const clear = (): void => {
   edgeList = [];
   edgeCount = new Map();
   diagramId = '';
+  nextColorIndex = 0;
 };
 
 export function typeStr2Type(typeStr: string) {
@@ -240,7 +258,8 @@ export function edgeTypeStr2Type(typeStr: string): string {
 }
 
 export function edgeStrToEdgeData(typeStr: string): string {
-  switch (typeStr.replace(/^[\s-]+|[\s-]+$/g, '')) {
+  const lastChar = typeStr.trim().slice(-1);
+  switch (lastChar) {
     case 'x':
       return 'arrow_cross';
     case 'o':
@@ -250,6 +269,31 @@ export function edgeStrToEdgeData(typeStr: string): string {
     default:
       return '';
   }
+}
+
+export function edgeStrToEdgeStartData(typeStr: string): string {
+  const firstChar = typeStr.trim().charAt(0);
+  switch (firstChar) {
+    case 'x':
+      return 'arrow_cross';
+    case 'o':
+      return 'arrow_circle';
+    case '<':
+      return 'arrow_point';
+    default:
+      return 'arrow_open';
+  }
+}
+
+export function edgeStrToThickness(typeStr: string): string {
+  return typeStr.includes('==') ? 'thick' : 'normal';
+}
+
+export function edgeStrToPattern(typeStr: string): string {
+  if (typeStr.includes('.-')) {
+    return 'dotted';
+  }
+  return 'solid';
 }
 
 let cnt = 0;
@@ -324,6 +368,9 @@ const db = {
   typeStr2Type: typeStr2Type,
   edgeTypeStr2Type: edgeTypeStr2Type,
   edgeStrToEdgeData,
+  edgeStrToEdgeStartData,
+  edgeStrToThickness,
+  edgeStrToPattern,
   getLogger,
   getBlocksFlat,
   getBlocks,

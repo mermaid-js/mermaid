@@ -5,6 +5,7 @@ import { calculateTextWidth, decodeEntities } from '../../utils.js';
 import type { ClassMember, ClassNode } from './classTypes.js';
 import { sanitizeText } from '../../diagram-api/diagramAPI.js';
 import { createText } from '../../rendering-util/createText.js';
+import { configureLabelImages } from '../../rendering-util/rendering-elements/shapes/labelImageUtils.js';
 import { evaluate, hasKatex } from '../common/common.js';
 import type { Node } from '../../rendering-util/types.js';
 import type { MermaidConfig } from '../../config.type.js';
@@ -166,7 +167,7 @@ async function addText<T extends SVGGraphicsElement>(
     // Get the bounding box after the text update
     bbox = text.getBBox();
   } else {
-    const div = text.children[0];
+    const div = text.children[0] as HTMLElement;
     const dv = select(text);
 
     numberOfLines = div.innerHTML.split('<br>').length;
@@ -175,42 +176,7 @@ async function addText<T extends SVGGraphicsElement>(
       numberOfLines += div.innerHTML.split('<mrow>').length - 1;
     }
 
-    // Support images
-    const images = div.getElementsByTagName('img');
-    if (images) {
-      const noImgText = textContent.replace(/<img[^>]*>/g, '').trim() === '';
-      await Promise.all(
-        [...images].map(
-          (img) =>
-            new Promise((res) => {
-              function setupImage() {
-                img.style.display = 'flex';
-                img.style.flexDirection = 'column';
-
-                if (noImgText) {
-                  // default size if no text
-                  const bodyFontSize =
-                    config.fontSize?.toString() ?? window.getComputedStyle(document.body).fontSize;
-                  const enlargingFactor = 5;
-                  const width = parseInt(bodyFontSize, 10) * enlargingFactor + 'px';
-                  img.style.minWidth = width;
-                  img.style.maxWidth = width;
-                } else {
-                  img.style.width = '100%';
-                }
-                res(img);
-              }
-              setTimeout(() => {
-                if (img.complete) {
-                  setupImage();
-                }
-              });
-              img.addEventListener('error', setupImage);
-              img.addEventListener('load', setupImage);
-            })
-        )
-      );
-    }
+    await configureLabelImages(div);
 
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);

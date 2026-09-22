@@ -128,7 +128,7 @@ flowchart TD
     Styles --> stylesTS["styles.ts<br/>getStyles(options)"]
     stylesTS --> StyleOptions["FlowChartStyleOptions<br/>- arrowheadColor, border2<br/>- clusterBkg, mainBkg<br/>- fontFamily, textColor"]
     
-    StyleOptions --> GenerateCSS["Generate CSS styles<br/>- .label, .cluster-label<br/>- .node, .edgePath<br/>- .flowchart-link, .edgeLabel"]
+    StyleOptions --> GenerateCSS["Generate CSS styles<br/>- .label, .cluster-label<br/>- .node, .edgePaths<br/>- .flowchart-link, .edgeLabel"]
     GenerateCSS --> GetIconStyles["getIconStyles()"]
     
     %% Type System

@@ -375,7 +375,7 @@ To start working with the E2E tests:
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
 
-When running in CI it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag it for review if it differs.
+When running in CI it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag it for review if it differs. When the changes in PR only apply to specific diagrams, only the rendering tests for those diagrams will be run in CI. If a change is not related to a specific diagram, the full test-suite will be run.
 
 This is what a rendering test looks like:
 

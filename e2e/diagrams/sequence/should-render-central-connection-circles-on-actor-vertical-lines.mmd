@@ -1,0 +1,14 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice ()->>() Bob: Central connection
+  Bob ()-->> Charlie: Reverse central connection
+  Charlie ()<<-->>() Alice: Dual central connection

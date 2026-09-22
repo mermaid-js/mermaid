@@ -1,0 +1,16 @@
+---
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph TB:
+  commit id:"1-abcdefg"
+
+  branch branch-B order: 2
+  commit id:"2-abcdefg"
+
+  branch branch-A
+  merge main
+
+  checkout branch-B
+  merge branch-A

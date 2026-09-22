@@ -21,5 +21,20 @@ radar-beta
   min 0
 `,
     },
+    {
+      title: 'Framework Comparison with Polygon Grid',
+      code: `radar-beta
+  title Frontend Framework Comparison
+  axis perf["Performance"], dx["Dev Experience"], eco["Ecosystem"]
+  axis learn["Easy to Learn"], docs["Documentation"]
+
+  curve react["React"]{4, 4, 5, 3, 4}
+  curve vue["Vue"]{4, 5, 4, 4, 5}
+  curve svelte["Svelte"]{5, 5, 3, 4, 4}
+
+  graticule polygon
+  max 5
+  min 0`,
+    },
   ],
 } satisfies DiagramMetadata;

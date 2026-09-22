@@ -26,14 +26,27 @@ export const draw = async function (text: string, id: string, _version: string, 
   data4Layout.config.flowchart!.nodeSpacing = conf?.nodeSpacing || 140;
   data4Layout.config.flowchart!.rankSpacing = conf?.rankSpacing || 80;
   data4Layout.direction = diag.db.getDirection();
+  const { config } = data4Layout;
+  const { look } = config;
 
-  data4Layout.markers = ['only_one', 'zero_or_one', 'one_or_more', 'zero_or_more'];
+  if (look === 'neo') {
+    data4Layout.markers = [
+      'only_one_neo',
+      'zero_or_one_neo',
+      'one_or_more_neo',
+      'zero_or_more_neo',
+    ];
+  } else {
+    data4Layout.markers = ['only_one', 'zero_or_one', 'one_or_more', 'zero_or_more'];
+  }
   data4Layout.diagramId = id;
   await render(data4Layout, svg);
-  // Elk layout algorithm displays markers above nodes, so move edges to top so they are "painted" over by the nodes.
-  if (data4Layout.layoutAlgorithm === 'elk') {
-    svg.select('.edges').lower();
-  }
+  // Note: the layout render inserts the edge group between the cluster and node
+  // groups (clusters < edges < nodes in paint order), so edge markers are
+  // covered by the nodes they touch while edges still paint above cluster
+  // backgrounds. The old external ELK renderer painted edges above nodes and
+  // needed `svg.select('.edges').lower()` here — that call must not come back:
+  // lowering the edge group drops edges below cluster backgrounds.
 
   // Sets the background nodes to the same position as their original counterparts.
   // Background nodes are created when the look is handDrawn so the ER diagram markers do not show underneath.

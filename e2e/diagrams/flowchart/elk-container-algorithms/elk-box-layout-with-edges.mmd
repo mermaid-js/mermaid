@@ -1,0 +1,12 @@
+---
+config:
+  layout: elk.box
+---
+%% elk.box places nodes but does not route edges. Every edge here relies on the
+%% straight-line fallback; without it the render throws on `points.filter`.
+%% One edge is labelled: an unrouted edge has no ELK label position either, and
+%% an unset one renders as `translate(undefined, NaN)`.
+flowchart TD
+  A[Start] -->|labelled| B[Middle]
+  B --> C[End]
+  A --> C

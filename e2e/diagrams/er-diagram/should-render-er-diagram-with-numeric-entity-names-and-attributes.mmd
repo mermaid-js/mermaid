@@ -1,0 +1,14 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  1 {
+  string name
+  int value
+  }
+  1 ||--|| ORDER : places
+  ORDER {
+  float price
+  string description
+  }

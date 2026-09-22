@@ -1,0 +1,18 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice->>()Bob: Central connection at destination
+  Bob()->>Alice: Reverse central at source
+  Alice()->>()Bob: Dual central connections
+  Bob->>()Charlie: Another central connection
+  Charlie()-->>Alice: Reverse central dotted
+  Alice()<<-->>()Bob: Dual central bidirectional

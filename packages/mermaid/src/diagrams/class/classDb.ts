@@ -43,6 +43,7 @@ export class ClassDB implements DiagramDB {
   // private static classCounter = 0;
   private namespaces = new Map<string, NamespaceNode>();
   private namespaceCounter = 0;
+  private namespaceStack: string[] = [];
   private diagramId = '';
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
@@ -56,6 +57,7 @@ export class ClassDB implements DiagramDB {
     this.addRelation = this.addRelation.bind(this);
     this.addClassesToNamespace = this.addClassesToNamespace.bind(this);
     this.addNamespace = this.addNamespace.bind(this);
+    this.popNamespace = this.popNamespace.bind(this);
     this.setCssClass = this.setCssClass.bind(this);
     this.addMembers = this.addMembers.bind(this);
     this.addClass = this.addClass.bind(this);
@@ -177,6 +179,7 @@ export class ClassDB implements DiagramDB {
     this.functions.push(this.setupToolTips.bind(this));
     this.namespaces = new Map<string, NamespaceNode>();
     this.namespaceCounter = 0;
+    this.namespaceStack = [];
     this.diagramId = '';
     this.direction = 'TB';
     commonClear();
@@ -331,6 +334,7 @@ export class ClassDB implements DiagramDB {
       if (/\d/.exec(_id[0])) {
         id = MERMAID_DOM_ID_PREFIX + id;
       }
+      id = this.splitClassNameAndType(id).className;
       const classNode = this.classes.get(id);
       if (classNode) {
         classNode.cssClasses += ' ' + className;
@@ -373,7 +377,11 @@ export class ClassDB implements DiagramDB {
   public setTooltip(ids: string, tooltip?: string) {
     ids.split(',').forEach((id) => {
       if (tooltip !== undefined) {
-        this.classes.get(id)!.tooltip = sanitizeText(tooltip);
+        const className = this.splitClassNameAndType(id).className;
+        const classNode = this.classes.get(className);
+        if (classNode) {
+          classNode.tooltip = sanitizeText(tooltip);
+        }
       }
     });
   }
@@ -400,6 +408,7 @@ export class ClassDB implements DiagramDB {
       if (/\d/.exec(_id[0])) {
         id = MERMAID_DOM_ID_PREFIX + id;
       }
+      id = this.splitClassNameAndType(id).className;
       const theClass = this.classes.get(id);
       if (theClass) {
         theClass.link = utils.formatUrl(linkStr, config);
@@ -425,7 +434,11 @@ export class ClassDB implements DiagramDB {
   public setClickEvent(ids: string, functionName: string, functionArgs: string) {
     ids.split(',').forEach((id) => {
       this.setClickFunc(id, functionName, functionArgs);
-      this.classes.get(id)!.haveCallback = true;
+      const className = this.splitClassNameAndType(id).className;
+      const classNode = this.classes.get(className);
+      if (classNode) {
+        classNode.haveCallback = true;
+      }
     });
     this.setCssClass(ids, 'clickable');
   }
@@ -440,7 +453,7 @@ export class ClassDB implements DiagramDB {
       return;
     }
 
-    const id = domId;
+    const id = this.splitClassNameAndType(domId).className;
     if (this.classes.has(id)) {
       let argList: string[] = [];
       if (typeof functionArgs === 'string') {
@@ -547,26 +560,92 @@ export class ClassDB implements DiagramDB {
     this.direction = dir;
   }
 
-  /**
-   * Function called by parser when a namespace definition has been found.
-   *
-   * @param id - ID of the namespace to add
-   * @public
-   */
-  public addNamespace(id: string) {
-    if (this.namespaces.has(id)) {
-      return;
-    }
+  private static resolveQualifiedId(id: string, stack: string[]): string {
+    const prefix = stack.at(-1);
+    return prefix ? `${prefix}.${id}` : id;
+  }
 
-    this.namespaces.set(id, {
-      id: id,
+  private static getAncestorIds(qualifiedId: string): string[] {
+    const parts = qualifiedId.split('.');
+    const ids: string[] = new Array(parts.length);
+    ids[0] = parts[0];
+    for (let i = 1; i < parts.length; i++) {
+      ids[i] = `${ids[i - 1]}.${parts[i]}`;
+    }
+    return ids;
+  }
+
+  private createNamespaceNode(
+    id: string,
+    label: string,
+    parentId?: string,
+    explicit = false
+  ): NamespaceNode {
+    return {
+      id,
+      label,
       classes: new Map<string, ClassNode>(),
       notes: new Map<string, ClassNote>(),
       children: new Map<string, NamespaceNode>(),
-      domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.namespaceCounter,
-    });
+      domId: MERMAID_DOM_ID_PREFIX + id + '-' + this.namespaceCounter++,
+      parent: parentId,
+      explicit,
+    };
+  }
 
-    this.namespaceCounter++;
+  private linkParentChild(parentId: string, childId: string) {
+    const parent = this.namespaces.get(parentId);
+    const child = this.namespaces.get(childId);
+    if (!parent || !child) {
+      return;
+    }
+    if (!parent.children.has(childId)) {
+      parent.children.set(childId, child);
+    }
+    child.parent ??= parentId;
+  }
+
+  public addNamespace(id: string, label?: string): string {
+    const qualifiedId = ClassDB.resolveQualifiedId(id, this.namespaceStack);
+    // Push first — grammar guarantees a matching popNamespace in all cases, including re-declarations
+    this.namespaceStack.push(qualifiedId);
+
+    if (this.namespaces.has(qualifiedId)) {
+      const existing = this.namespaces.get(qualifiedId)!;
+      // Re-declaration promotes an auto-created ancestor to explicit
+      existing.explicit = true;
+      if (label) {
+        existing.label = label;
+      }
+      return qualifiedId;
+    }
+
+    const parts = qualifiedId.split('.');
+    const ancestorIds = ClassDB.getAncestorIds(qualifiedId);
+    for (let i = 0; i < ancestorIds.length; i++) {
+      const currentId = ancestorIds[i];
+      const parentId = i > 0 ? ancestorIds[i - 1] : undefined;
+      const isLeaf = i === ancestorIds.length - 1;
+      const nodeLabel = isLeaf && label ? label : parts[i];
+
+      if (!this.namespaces.has(currentId)) {
+        this.namespaces.set(
+          currentId,
+          this.createNamespaceNode(currentId, nodeLabel, parentId, isLeaf)
+        );
+      } else if (isLeaf) {
+        this.namespaces.get(currentId)!.explicit = true;
+      }
+      if (parentId) {
+        this.linkParentChild(parentId, currentId);
+      }
+    }
+
+    return qualifiedId;
+  }
+
+  public popNamespace() {
+    this.namespaceStack.pop();
   }
 
   public getNamespace(name: string): NamespaceNode {
@@ -646,37 +725,70 @@ export class ClassDB implements DiagramDB {
     return marker;
   }
 
+  /**
+   * Walks up the namespace tree from the given id and returns the nearest ancestor
+   * (or the id itself) that is marked as explicit. Used by compact rendering mode
+   * to reassign children to the nearest user-declared namespace.
+   */
+  private resolveExplicitAncestor(id: string | undefined): string | undefined {
+    let current = id;
+    while (current) {
+      const ns = this.namespaces.get(current);
+      if (!ns) {
+        return undefined;
+      }
+      if (ns.explicit) {
+        return current;
+      }
+      current = ns.parent;
+    }
+    return undefined;
+  }
+
   public getData() {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
     const config = getConfig();
+    const hierarchical = config.class?.hierarchicalNamespaces ?? true;
 
     for (const namespace of this.namespaces.values()) {
+      if (!hierarchical && !namespace.explicit) {
+        continue;
+      }
       const node: Node = {
         id: namespace.id,
-        label: namespace.id,
+        label: hierarchical ? namespace.label : namespace.id,
         isGroup: true,
         padding: config.class!.padding ?? 16,
         // parent node must be one of [rect, roundedWithTitle, noteGroup, divider]
         shape: 'rect',
         cssStyles: [],
         look: config.look,
+        parentId: hierarchical ? namespace.parent : undefined,
       };
       nodes.push(node);
     }
 
+    // Only classes consume a colour slot -- namespaces are containers and notes have
+    // their own fixed note colour, so neither should shift the cycle.
+    let classColorIndex = 0;
     for (const classNode of this.classes.values()) {
+      const parentId = hierarchical
+        ? classNode.parent
+        : this.resolveExplicitAncestor(classNode.parent);
       const node: Node = {
         ...classNode,
         type: undefined,
         isGroup: false,
-        parentId: classNode.parent,
+        parentId,
         look: config.look,
+        colorIndex: classColorIndex++,
       };
       nodes.push(node);
     }
 
     for (const note of this.notes.values()) {
+      const noteParentId = hierarchical ? note.parent : this.resolveExplicitAncestor(note.parent);
       const noteNode: Node = {
         id: note.id,
         label: note.text,
@@ -690,7 +802,7 @@ export class ClassDB implements DiagramDB {
           `stroke: ${config.themeVariables.noteBorderColor}`,
         ],
         look: config.look,
-        parentId: note.parent,
+        parentId: noteParentId,
         labelType: 'markdown',
       };
       nodes.push(noteNode);

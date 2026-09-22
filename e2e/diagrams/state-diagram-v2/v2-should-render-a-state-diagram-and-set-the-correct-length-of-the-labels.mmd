@@ -1,0 +1,9 @@
+---
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  [*] --> 1
+  1 --> 2: test({ foo#colon; 'far' })
+  2 --> [*]

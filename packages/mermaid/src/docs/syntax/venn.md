@@ -1,9 +1,57 @@
-# Venn diagrams (v\11.12.3+)
+# Venn diagrams (v11.12.3+)
 
 Venn diagrams show relationships between sets using overlapping circles.
 
 > **Warning**
 > This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+
+## Default theme and look (v12.0.0+)
+
+Venn diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+venn-beta
+  title What makes a good feature
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible["Buildable"]
+  union Feasible,Viable["Sustainable"]
+  union Desirable,Viable["Marketable"]
+  union Desirable,Feasible,Viable["Ship it"]
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+venn-beta
+  title What makes a good feature
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible["Buildable"]
+  union Feasible,Viable["Sustainable"]
+  union Desirable,Viable["Marketable"]
+  union Desirable,Feasible,Viable["Ship it"]
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ venn: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
 
 ## Syntax
 
@@ -30,6 +78,20 @@ venn-beta
   set A["Alpha"]
   set B["Beta"]
   union A,B["AB"]
+```
+
+### Higher-arity unions
+
+`union` accepts three or more set names. The diagram renders the implied
+pairwise overlaps automatically, so the label on the higher-arity union has a
+visible region to sit in:
+
+```mermaid-example
+venn-beta
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible,Viable["Innovation"]
 ```
 
 ### Sizes

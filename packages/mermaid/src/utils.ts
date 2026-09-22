@@ -29,8 +29,7 @@ import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
-import memoize from 'lodash-es/memoize.js';
-import merge from 'lodash-es/merge.js';
+import { memoize, merge } from 'es-toolkit/compat';
 import { directiveRegex } from './diagram-api/regexes.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
 
@@ -567,7 +566,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
         { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
         config
       );
-      if (common.lineBreakRegex.test(label)) {
+      if (common.hasBreaks(label)) {
         return label;
       }
       const words = label.split(' ').filter(Boolean);

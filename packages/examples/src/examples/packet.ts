@@ -30,5 +30,15 @@ packet
 160-191: "(Options and Padding)"
 192-255: "Data (variable length)"`,
     },
+    {
+      title: 'UDP Packet with Relative Bits',
+      code: `packet
+title UDP Packet
++16: "Source Port"
++16: "Destination Port"
++16: "Length"
++16: "Checksum"
+64-95: "Data (variable length)"`,
+    },
   ],
 } satisfies DiagramMetadata;

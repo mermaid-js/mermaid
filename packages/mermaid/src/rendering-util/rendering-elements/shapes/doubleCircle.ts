@@ -12,11 +12,16 @@ export async function doublecircle<T extends SVGGraphicsElement>(
   node: Node
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
+  const gap = node.look === 'neo' ? 12 : 5;
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
-  const gap = 5;
-  const outerRadius = bbox.width / 2 + halfPadding + gap;
-  const innerRadius = bbox.width / 2 + halfPadding;
+  const padding = node.padding ?? 0;
+  const labelPadding = node.look === 'neo' ? 16 : padding;
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  // The label sits inside the *inner* ring, so that is the circle sized from the label
+  // box's diagonal; the outer ring is the gap beyond it.
+  const labelRadius = Math.sqrt(bbox.width ** 2 + bbox.height ** 2) / 2;
+  const innerRadius = (node?.width ? node?.width / 2 : labelRadius) + (labelPadding ?? 0);
+  const outerRadius = innerRadius + gap;
 
   let circleGroup;
   const { cssStyles } = node;

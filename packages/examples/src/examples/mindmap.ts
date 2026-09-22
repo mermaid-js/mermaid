@@ -26,6 +26,29 @@ export default {
       Pen and paper
       Mermaid`,
     },
+    {
+      title: 'Trip Planning with Shapes and Icons',
+      code: `mindmap
+  root((Summer Trip))
+    Destination
+      Beach town
+      Mountain village
+    Budget
+      ::icon(fa fa-wallet)
+      Flights
+      Hotel
+      Food and activities
+    Packing
+      Documents
+        Passport
+        Travel insurance
+      reminder{{Sunscreen!}}
+    Activities
+      ::icon(fa fa-person-hiking)
+      Hiking
+      Snorkeling
+      Local food tour`,
+    },
   ],
 } satisfies DiagramMetadata;
 

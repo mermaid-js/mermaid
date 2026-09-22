@@ -1,0 +1,15 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant API@{ "type" : "boundary", "alias": "Public API" }
+  participant Auth@{ "type" : "control", "alias": "Auth Service" }
+  participant DB@{ "type" : "database", "alias": "User DB" }
+  API ->> Auth: Login request
+  Auth ->> DB: Query user
+  DB -->> Auth: User data
+  Auth -->> API: Token

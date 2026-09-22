@@ -12,4 +12,4 @@
 
 > `const` **defaultConfig**: [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L8)
+Defined in: [packages/mermaid/src/config.ts:9](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L9)

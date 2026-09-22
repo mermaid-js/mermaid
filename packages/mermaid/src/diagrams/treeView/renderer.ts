@@ -1,34 +1,112 @@
+import type { TreeViewDiagramConfig } from '../../config.type.js';
 import type { DiagramRenderer, DrawDefinition } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
+import { getIconSVG, registerIconPacks } from '../../rendering-util/icons.js';
 import { selectSvgElement } from '../../rendering-util/selectSvgElement.js';
-import type { D3SVGElement, TreeViewDB } from './types.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
-import type { TreeViewDiagramConfig } from '../../config.type.js';
-import type { Node } from './types.js';
+import { getNodeIcon, treeViewIcons } from './icons.js';
+import type { D3SVGElement, Node, TreeViewDB } from './types.js';
+
+registerIconPacks([
+  {
+    name: treeViewIcons.prefix,
+    icons: treeViewIcons,
+  },
+]);
+
+const ICON_SIZE = 14;
+const ICON_GAP = 4;
+const DESC_GAP = 16;
+
+interface RenderInfo {
+  node: Node;
+  nodeGroup: D3SVGElement<SVGGElement>;
+  labelRightEdge: number;
+  centerY: number;
+}
+
+const resolveNodeIcons = async (root: Node, config: Required<TreeViewDiagramConfig>) => {
+  const nodeIcons: { icon: string; node: Node }[] = [];
+  const collect = (node: Node) => {
+    const icon = getNodeIcon(node, config);
+    if (icon) {
+      nodeIcons.push({ icon, node });
+    }
+    node.children.forEach(collect);
+  };
+  collect(root);
+
+  const resolvedIcons = await Promise.all(
+    nodeIcons.map(async ({ icon, node }) => ({
+      id: node.id,
+      svg: await getIconSVG(icon, {
+        height: ICON_SIZE,
+        width: ICON_SIZE,
+      }),
+    }))
+  );
+
+  return new Map(resolvedIcons.map(({ id, svg }) => [id, svg]));
+};
 
 const positionLabel = (
   x: number,
   y: number,
   node: Node,
   domElem: D3SVGElement<SVGGElement>,
-  config: Required<TreeViewDiagramConfig>
-) => {
-  const label = domElem
+  config: Required<TreeViewDiagramConfig>,
+  iconSVGs: Map<number, string>
+): RenderInfo => {
+  const nodeGroup = domElem.append('g');
+  let cssClasses = 'treeView-node-label';
+  if (node.nodeType === 'directory') {
+    cssClasses += ' treeView-node-dir';
+  }
+  if (node.cssClass) {
+    cssClasses += ` ${node.cssClass}`;
+  }
+
+  // Explicit icon() annotations always render; defaults only when showIcons is on
+  const iconOffset = ICON_SIZE + ICON_GAP;
+  const icon = getNodeIcon(node, config);
+  const showIcon = icon !== undefined;
+  if (icon) {
+    nodeGroup
+      .append('g')
+      .attr('class', 'treeView-node-icon')
+      .attr('transform', `translate(${x + config.paddingX}, ${y + config.paddingY})`)
+      .html(iconSVGs.get(node.id) ?? '');
+  }
+
+  // Label text
+  const label = nodeGroup
     .append('text')
     .text(node.name)
     .attr('dominant-baseline', 'middle')
-    .attr('class', 'treeView-node-label');
+    .attr('class', cssClasses);
   const { height: labelHeight, width: labelWidth } = label.node()!.getBBox();
   const height = labelHeight + config.paddingY * 2;
-  const width = labelWidth + config.paddingX * 2;
-  label.attr('x', x + config.paddingX);
+  const labelX = x + config.paddingX + (showIcon ? iconOffset : 0);
+  label.attr('x', labelX);
   label.attr('y', y + height / 2);
-  node.BBox = {
-    x,
-    y,
-    width,
-    height,
-  };
+
+  const labelRightEdge = labelX + labelWidth;
+  const width = labelWidth + config.paddingX * 2 + (showIcon ? iconOffset : 0);
+  node.BBox = { x, y, width, height };
+
+  // Highlight background rect (sized later in drawTree)
+  if (node.cssClass?.split(/\s+/).includes('highlight')) {
+    nodeGroup
+      .insert('rect', ':first-child')
+      .attr('x', x)
+      .attr('y', y + 1)
+      .attr('width', 0)
+      .attr('height', height - 2)
+      .attr('rx', 3)
+      .attr('class', 'treeView-highlight-bg');
+  }
+
+  return { node, nodeGroup, labelRightEdge, centerY: y + height / 2 };
 };
 
 const positionLine = (
@@ -52,10 +130,13 @@ const positionLine = (
 const drawTree = (
   elem: D3SVGElement<SVGGElement>,
   root: Node,
-  config: Required<TreeViewDiagramConfig>
+  config: Required<TreeViewDiagramConfig>,
+  iconSVGs: Map<number, string>
 ) => {
   let totalHeight = 0;
   let totalWidth = 0;
+  const renderInfos: RenderInfo[] = [];
+
   const drawNode = (
     elem: D3SVGElement<SVGGElement>,
     node: Node,
@@ -63,7 +144,8 @@ const drawTree = (
     depth: number
   ) => {
     const indent = depth * (config.rowIndent + config.paddingX);
-    positionLabel(indent, totalHeight, node, elem, config);
+    const info = positionLabel(indent, totalHeight, node, elem, config, iconSVGs);
+    renderInfos.push(info);
     const { height, width } = node.BBox!;
     positionLine(
       elem,
@@ -98,10 +180,42 @@ const drawTree = (
   };
 
   processNode(root);
+
+  // Phase 2: Add descriptions, aligned to a common column
+  const nodesWithDesc = renderInfos.filter((ri) => ri.node.description);
+  if (nodesWithDesc.length > 0) {
+    const maxLabelRight = Math.max(...renderInfos.map((ri) => ri.labelRightEdge));
+    const descX = maxLabelRight + DESC_GAP;
+    for (const ri of nodesWithDesc) {
+      const desc = ri.nodeGroup
+        .append('text')
+        .text(ri.node.description!)
+        .attr('dominant-baseline', 'middle')
+        .attr('class', 'treeView-node-description')
+        .attr('x', descX)
+        .attr('y', ri.centerY);
+      const descBBox = desc.node()!.getBBox();
+      totalWidth = Math.max(totalWidth, descX + descBBox.width + config.paddingX);
+    }
+  }
+
+  // Phase 3: Size highlight background rects to full tree width
+  for (const ri of renderInfos) {
+    if (ri.node.cssClass?.split(/\s+/).includes('highlight')) {
+      const rect = ri.nodeGroup.select('.treeView-highlight-bg');
+      if (!rect.empty()) {
+        const rectWidth = totalWidth - ri.node.BBox!.x + 8;
+        rect.attr('width', rectWidth);
+        // Expand totalWidth to ensure the viewBox includes the highlight rect + stroke
+        totalWidth = Math.max(totalWidth, ri.node.BBox!.x + rectWidth + 2);
+      }
+    }
+  }
+
   return { totalHeight, totalWidth };
 };
 
-const draw: DrawDefinition = (text, id, _ver, diagObj) => {
+const draw: DrawDefinition = async (text, id, _ver, diagObj) => {
   log.debug('Rendering treeView diagram\n' + text);
 
   const db = diagObj.db as TreeViewDB;
@@ -109,10 +223,12 @@ const draw: DrawDefinition = (text, id, _ver, diagObj) => {
   const config = db.getConfig();
 
   const svg = selectSvgElement(id);
+
   const treeElem = svg.append('g');
   treeElem.attr('class', 'tree-view');
 
-  const { totalHeight, totalWidth } = drawTree(treeElem, root, config);
+  const iconSVGs = await resolveNodeIcons(root, config);
+  const { totalHeight, totalWidth } = drawTree(treeElem, root, config, iconSVGs);
   /* -${config.lineThickness/2} is required for a line with x coordinate = 0
      as there is overflow to the left due to the line being centered */
   svg.attr('viewBox', `-${config.lineThickness / 2} 0 ${totalWidth} ${totalHeight}`);

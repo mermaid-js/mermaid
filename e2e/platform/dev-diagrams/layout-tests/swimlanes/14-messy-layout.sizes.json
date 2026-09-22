@@ -1,0 +1,240 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "width": 95.8268814086914,
+      "height": 45
+    },
+    {
+      "id": "2",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "3",
+      "width": 207.8625030517578,
+      "height": 45
+    },
+    {
+      "id": "15",
+      "width": 187.6374969482422,
+      "height": 45
+    },
+    {
+      "id": "16",
+      "width": 232,
+      "height": 45
+    },
+    {
+      "id": "17",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "18",
+      "width": 215.6437530517578,
+      "height": 45
+    },
+    {
+      "id": "24",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "36",
+      "width": 214.0812530517578,
+      "height": 45
+    },
+    {
+      "id": "39",
+      "width": 80.78938293457031,
+      "height": 45
+    },
+    {
+      "id": "4",
+      "width": 214.1062469482422,
+      "height": 45
+    },
+    {
+      "id": "19",
+      "width": 228.8874969482422,
+      "height": 45
+    },
+    {
+      "id": "5",
+      "width": 137.83749389648438,
+      "height": 45
+    },
+    {
+      "id": "6",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "7",
+      "width": 173.1875,
+      "height": 173.1875
+    },
+    {
+      "id": "8",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "9",
+      "width": 130.03750610351562,
+      "height": 45
+    },
+    {
+      "id": "11",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "12",
+      "width": 224.96875,
+      "height": 45
+    },
+    {
+      "id": "25",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "29",
+      "width": 213.33749389648438,
+      "height": 45
+    },
+    {
+      "id": "35",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "38",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "10",
+      "width": 174.40000915527344,
+      "height": 45
+    },
+    {
+      "id": "30",
+      "width": 158.0812530517578,
+      "height": 45
+    },
+    {
+      "id": "31",
+      "width": 151.05624389648438,
+      "height": 45
+    },
+    {
+      "id": "32",
+      "width": 158.38751220703125,
+      "height": 158.38751220703125
+    },
+    {
+      "id": "37",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "13",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "14",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "26",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "20",
+      "width": 228.8874969482422,
+      "height": 45
+    },
+    {
+      "id": "28",
+      "width": 232,
+      "height": 108
+    },
+    {
+      "id": "21",
+      "width": 228.8874969482422,
+      "height": 45
+    },
+    {
+      "id": "22",
+      "width": 228.8874969482422,
+      "height": 45
+    },
+    {
+      "id": "23",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "27",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "33",
+      "width": 226.6062469482422,
+      "height": 226.6062469482422
+    },
+    {
+      "id": "33a",
+      "width": 244,
+      "height": 54
+    },
+    {
+      "id": "33b",
+      "width": 244,
+      "height": 54
+    },
+    {
+      "id": "edge-label-7-8-L_7_8_0",
+      "width": 22.84375,
+      "height": 21
+    },
+    {
+      "id": "edge-label-7-9-L_7_9_0",
+      "width": 17.899999618530273,
+      "height": 21
+    },
+    {
+      "id": "edge-label-32-33-L_32_33_0",
+      "width": 71.07500457763672,
+      "height": 21
+    },
+    {
+      "id": "edge-label-33-33a-L_33_33a_0",
+      "width": 36.056251525878906,
+      "height": 21
+    },
+    {
+      "id": "edge-label-33-33b-L_33_33b_0",
+      "width": 66.4000015258789,
+      "height": 21
+    },
+    {
+      "id": "edge-label-32-35-L_32_35_0",
+      "width": 36.3125,
+      "height": 21
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "6b57271592c65dd22ef5279dfba5cd62a60e884a0221eb8bd5f349c7d130e654",
+    "capturedAt": "2026-06-08T10:21:30.240Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/14-disagree-exits-b-c-d copy.mmd theme=redux look=neo layout=swimlane"
+  }
+}

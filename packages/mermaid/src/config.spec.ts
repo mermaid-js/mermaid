@@ -4,6 +4,7 @@ import type { MermaidConfig } from './config.type.js';
 describe('when working with site config', () => {
   beforeEach(() => {
     // Resets the site config to default config
+    configApi.reset();
     configApi.setSiteConfig({});
   });
   it('should set site config and config properly', () => {
@@ -29,7 +30,8 @@ describe('when working with site config', () => {
       fontSize: 54321,
       securityLevel: 'loose',
     };
-    const cfg: MermaidConfig = configApi.updateCurrentConfig(config_0, [directive]);
+    configApi.addDirective(directive);
+    const cfg: MermaidConfig = configApi.getConfig();
     expect(cfg.fontFamily).toEqual(directive.fontFamily);
     expect(cfg.fontSize).toBe(config_0.fontSize);
     expect(cfg.securityLevel).toBe(config_0.securityLevel);
@@ -49,6 +51,40 @@ describe('when working with site config', () => {
     expect(defaultConfig.quadrantChart!.chartWidth).toEqual(
       updatedConfig.quadrantChart!.chartWidth
     );
+  });
+  it('should default swimlane layering options to true', () => {
+    const config = configApi.getConfig();
+
+    expect(config.swimlane?.ignoreCrossLaneEdges).toBe(true);
+    expect(config.swimlane?.optimizeRanksByCrossings).toBe(true);
+    expect(config.swimlane?.automaticLaneOrdering).toBe(false);
+  });
+
+  it('leaves ELK placement and alignment to the selected preset', () => {
+    const config = configApi.getConfig();
+
+    expect(config.elk?.nodePlacementStrategy).toBeUndefined();
+    expect(config.elk?.nodePlacementAlignment).toBeUndefined();
+  });
+
+  it('should not force class diagram padding', () => {
+    const config = configApi.getConfig();
+
+    expect(config.class?.padding).toBeUndefined();
+  });
+
+  it('should retain railroad directives after sanitization', () => {
+    configApi.saveConfigFromInitialize({});
+    configApi.addDirective({
+      railroad: {
+        fontSize: 18,
+        fontFamily: 'Courier New',
+      },
+    });
+
+    const currentConfig = configApi.getConfig();
+    expect(currentConfig.railroad?.fontSize).toBe(18);
+    expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
   });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };

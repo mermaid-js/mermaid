@@ -1,0 +1,16 @@
+agentflow-beta LR
+  flow review_agent["Code Review Agent"]
+    flow pipeline["Review Pipeline"]
+      flow extract["Extract Changes"]
+        receive_pr("Receive PR")
+        analysis["Code Analysis"]
+        receive_pr --> analysis
+      end
+      flow assess["Assess Risk"]
+        evaluate("Evaluate")
+        risk["Risk Assessment"]
+        evaluate --> risk
+      end
+      extract --> assess
+    end
+  end

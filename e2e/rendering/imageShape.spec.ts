@@ -1,0 +1,105 @@
+import { test } from '@playwright/test';
+
+import { imgSnapshotTest } from '../helpers/util.ts';
+
+const looks = ['classic', 'handDrawn'] as const;
+const directions = [
+  'TB',
+  //'BT',
+  'LR',
+  //  'RL'
+] as const;
+const labelPos = [undefined, 't', 'b'] as const;
+
+looks.forEach((look) => {
+  directions.forEach((direction) => {
+    labelPos.forEach((pos) => {
+      test.describe(`Test imageShape in ${look} look and dir ${direction} with label position ${pos ? pos : 'not defined'}`, () => {
+        test(`without label`, async ({ page }, testInfo) => {
+          let flowchartCode = `flowchart ${direction}\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://dummyimage.com/100x100/2c3e50/2c3e50.png', w: '100', h: '100' }\n`;
+          await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+        });
+
+        test(`with label`, async ({ page }, testInfo) => {
+          let flowchartCode = `flowchart ${direction}\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://dummyimage.com/100x100/2c3e50/2c3e50.png', label: 'This is a label for image shape'`;
+
+          flowchartCode += `, w: '100', h: '200'`;
+          if (pos) {
+            flowchartCode += `, pos: '${pos}'`;
+          }
+          flowchartCode += ` }\n`;
+          await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+        });
+
+        test(`with very long label`, async ({ page }, testInfo) => {
+          let flowchartCode = `flowchart ${direction}\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://dummyimage.com/100x100/2c3e50/2c3e50.png', label: 'This is a very very very very very long long long label for image shape'`;
+
+          flowchartCode += `, w: '100', h: '250'`;
+          if (pos) {
+            flowchartCode += `, pos: '${pos}'`;
+          }
+          flowchartCode += ` }\n`;
+          await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+        });
+
+        test(`with markdown htmlLabels:true`, async ({ page }, testInfo) => {
+          let flowchartCode = `flowchart ${direction}\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://dummyimage.com/100x100/2c3e50/2c3e50.png', label: 'This is **bold** </br>and <strong>strong</strong> for image shape'`;
+
+          flowchartCode += `, w: '550', h: '200'`;
+          if (pos) {
+            flowchartCode += `, pos: '${pos}'`;
+          }
+          flowchartCode += ` }\n`;
+          await imgSnapshotTest(page, testInfo, flowchartCode, { look, htmlLabels: true });
+        });
+
+        test(`with markdown htmlLabels:false`, async ({ page }, testInfo) => {
+          let flowchartCode = `flowchart ${direction}\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://dummyimage.com/100x100/2c3e50/2c3e50.png', label: 'This is **bold** </br>and <strong>strong</strong> for image shape'`;
+          flowchartCode += `, w: '250', h: '200'`;
+
+          if (pos) {
+            flowchartCode += `, pos: '${pos}'`;
+          }
+          flowchartCode += ` }\n`;
+          await imgSnapshotTest(page, testInfo, flowchartCode, {
+            look,
+            htmlLabels: false,
+            flowchart: { htmlLabels: false },
+          });
+        });
+
+        test(`with styles`, async ({ page }, testInfo) => {
+          let flowchartCode = `flowchart ${direction}\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://dummyimage.com/100x100/2c3e50/2c3e50.png', label: 'new image shape'`;
+          flowchartCode += `, w: '550', h: '200'`;
+
+          if (pos) {
+            flowchartCode += `, pos: '${pos}'`;
+          }
+          flowchartCode += ` }\n`;
+          flowchartCode += `  style A fill:#f9f,stroke:#333,stroke-width:4px \n`;
+          await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+        });
+
+        test(`with classDef`, async ({ page }, testInfo) => {
+          let flowchartCode = `flowchart ${direction}\n`;
+          flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#000000,stroke-dasharray: 5 5\n`;
+          flowchartCode += `  nA --> A@{ img: 'https://dummyimage.com/100x100/2c3e50/2c3e50.png', label: 'new image shape'`;
+
+          flowchartCode += `, w: '500', h: '550'`;
+          if (pos) {
+            flowchartCode += `, pos: '${pos}'`;
+          }
+          flowchartCode += ` }\n`;
+          flowchartCode += `  A:::customClazz\n`;
+          await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+        });
+      });
+    });
+  });
+});

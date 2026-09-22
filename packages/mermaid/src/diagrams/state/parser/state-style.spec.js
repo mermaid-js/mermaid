@@ -236,6 +236,120 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
 
           expect(states.get('Moving').doc.length).toEqual(1);
         });
+
+        it('should handle comments correctly', function () {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '%%initial_comment\n';
+          diagram += '[*] --> Moving %%inline_comment\n';
+          diagram += '%%final_comment\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.size).toEqual(2);
+          expect(states.get('%%initial_comment')).toBeUndefined();
+          expect(states.get('%%inline_comment')).toBeUndefined();
+          expect(states.get('%%final_comment')).toBeUndefined();
+        });
+
+        it('should handle comments correctly inside states', function () {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += 'state Moving {\n';
+          diagram += '%%comment_inside_state\n';
+          diagram += 'slow  --> fast %%inline_comment\n';
+          diagram += '}\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          const movingDoc = states.get('Moving').doc;
+          const state1 = movingDoc.find((d) => d.id === '%%comment_inside_state');
+          expect(state1).toBeUndefined();
+          const state2 = movingDoc.find((d) => d.id === '%%inline_comment');
+          expect(state2).toBeUndefined();
+        });
+
+        it('should handle comments correctly after a blank line', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '[*] --> Moving\n';
+          diagram += '\n';
+          diagram += '%% comment after a blank line\n';
+          diagram += 'Moving --> Still\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.size).toEqual(3);
+        });
+
+        it('should parse single % as normal syntax, not a comment', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '% not a comment\n';
+          diagram += 'Moving --> Still %inline\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.size).toEqual(7);
+          expect(states.get('%inline')).toBeDefined();
+        });
+
+        it('should skip multiple consecutive comment lines', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '%% first comment\n';
+          diagram += '%% second comment\n';
+          diagram += '%% third comment\n';
+          diagram += '[*] --> Moving\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.size).toEqual(2);
+        });
+
+        it('transitions should be preserved when separated by a comment', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += 'Moving --> Crash\n';
+          diagram += '%% comment between\n';
+          diagram += 'Moving --> Still\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const relationships = stateDiagram.parser.yy.getRelations();
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.size).toEqual(3);
+          expect(relationships).toHaveLength(2);
+          expect(relationships[0].id1).toEqual('Moving');
+          expect(relationships[0].id2).toEqual('Crash');
+          expect(relationships[1].id1).toEqual('Moving');
+          expect(relationships[1].id2).toEqual('Still');
+        });
+
+        it('should correctly handle inline %% comments in state syntax', () => {
+          let diagram = '';
+          diagram += 'stateDiagram-v2\n';
+          diagram += '[*] --> Moving%% this is a comment\n';
+          diagram += 'Moving --> Still%Active\n';
+
+          stateDiagram.parser.parse(diagram);
+
+          const states = stateDiagram.parser.yy.getStates();
+
+          expect(states.get('Moving')).toBeDefined();
+          expect(states.get('Still%Active')).toBeDefined();
+        });
       });
     });
   });
