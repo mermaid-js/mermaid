@@ -594,6 +594,27 @@ describe('grid router', () => {
     expect(metrics.fallbackValidationFailures).toBe(1);
   });
 
+  it('validates resource-cap fallback for every hierarchy segment', () => {
+    const data = baseLayout(
+      [
+        group('left-group', 'Left', { row: 1, column: 1 }),
+        leaf('source', 70, 36, { row: 1, column: 1 }, 'left-group'),
+        group('right-group', 'Right', { row: 1, column: 2 }),
+        leaf('target', 70, 36, { row: 1, column: 1 }, 'right-group'),
+      ],
+      [edge('cross-group', 'source', 'target')],
+      { rowGap: 70, columnGap: 90 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics, { topologyCaps: { maxVertices: 1 } });
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(metrics.resourceLimitFallbacks).toBe(3);
+    expect(metrics.fallbackReasons.vertex_cap).toBe(3);
+    expect(metrics.fallbackValidationFailures).toBe(0);
+  });
+
   it('commits an earlier validated candidate when a later candidate reaches the search cap', () => {
     const data = baseLayout(
       [

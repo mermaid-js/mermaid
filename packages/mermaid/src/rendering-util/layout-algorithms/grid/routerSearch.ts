@@ -571,27 +571,26 @@ function search(
     }
 
     const vertexId = stateVertices[current];
+    const currentPoint = vertexAt(vertexId).point;
     const compactArcs =
       topology.getSearchArcs?.(vertexId) ?? topology.searchAdjacencyByVertex?.[vertexId];
     if (compactArcs) {
       for (const arc of compactArcs) {
-        if (
-          options.arcAllowed &&
-          !options.arcAllowed(vertexAt(vertexId).point, vertexAt(arc.to).point)
-        ) {
+        const nextPoint = vertexAt(arc.to).point;
+        if (options.arcAllowed && !options.arcAllowed(currentPoint, nextPoint)) {
           continue;
         }
         if (
           options.initialSide &&
           predecessors[current] < 0 &&
-          movesTowardOwner(vertexAt(vertexId).point, vertexAt(arc.to).point, options.initialSide)
+          movesTowardOwner(currentPoint, nextPoint, options.initialSide)
         ) {
           continue;
         }
         if (
           options.targetSide &&
           arc.to === targetId &&
-          movesTowardOwner(target.point, vertexAt(vertexId).point, options.targetSide)
+          movesTowardOwner(target.point, currentPoint, options.targetSide)
         ) {
           continue;
         }
@@ -646,9 +645,8 @@ function search(
         gBoundaryTransitions[candidate] = boundaryTransitions;
         gOccupiedLengths[candidate] = occupiedLength;
         gCrossings[candidate] = crossings;
-        const candidatePoint = vertexAt(arc.to).point;
-        const candidateDx = Math.abs(candidatePoint.x - target.point.x);
-        const candidateDy = Math.abs(candidatePoint.y - target.point.y);
+        const candidateDx = Math.abs(nextPoint.x - target.point.x);
+        const candidateDy = Math.abs(nextPoint.y - target.point.y);
         fLengths[candidate] = length + (useBendHeuristic ? candidateDx + candidateDy : 0);
         fBends[candidate] =
           bends +
@@ -672,23 +670,21 @@ function search(
       for (const arc of topology.adjacencyByVertex?.[vertexId] ??
         topology.adjacency.get(vertexId) ??
         []) {
-        if (
-          options.arcAllowed &&
-          !options.arcAllowed(vertexAt(vertexId).point, vertexAt(arc.to).point)
-        ) {
+        const nextPoint = vertexAt(arc.to).point;
+        if (options.arcAllowed && !options.arcAllowed(currentPoint, nextPoint)) {
           continue;
         }
         if (
           options.initialSide &&
           predecessors[current] < 0 &&
-          movesTowardOwner(vertexAt(vertexId).point, vertexAt(arc.to).point, options.initialSide)
+          movesTowardOwner(currentPoint, nextPoint, options.initialSide)
         ) {
           continue;
         }
         if (
           options.targetSide &&
           arc.to === targetId &&
-          movesTowardOwner(target.point, vertexAt(vertexId).point, options.targetSide)
+          movesTowardOwner(target.point, currentPoint, options.targetSide)
         ) {
           continue;
         }
@@ -743,9 +739,8 @@ function search(
         gBoundaryTransitions[candidate] = boundaryTransitions;
         gOccupiedLengths[candidate] = occupiedLength;
         gCrossings[candidate] = crossings;
-        const candidatePoint = vertexAt(arc.to).point;
-        const candidateDx = Math.abs(candidatePoint.x - target.point.x);
-        const candidateDy = Math.abs(candidatePoint.y - target.point.y);
+        const candidateDx = Math.abs(nextPoint.x - target.point.x);
+        const candidateDy = Math.abs(nextPoint.y - target.point.y);
         fLengths[candidate] = length + (useBendHeuristic ? candidateDx + candidateDy : 0);
         fBends[candidate] =
           bends +

@@ -1999,6 +1999,16 @@ export function routeGridEdges(
   const hasIsolatedEndpoints = (plan: EdgeRoutePlan): boolean =>
     (endpointIncidentCounts.get(plan.edge.start!) ?? 0) === plan.bundleSize &&
     (endpointIncidentCounts.get(plan.edge.end!) ?? 0) === plan.bundleSize;
+  const hasAncestorEndpoint = (plan: EdgeRoutePlan): boolean => {
+    const source = result.forest.nodeById.get(plan.edge.start!);
+    const target = result.forest.nodeById.get(plan.edge.end!);
+    return Boolean(
+      source &&
+        target &&
+        ((source.isGroup && isAncestorGroup(source.id, target, result.forest.nodeById)) ||
+          (target.isGroup && isAncestorGroup(target.id, source, result.forest.nodeById)))
+    );
+  };
   const sparseHierarchyIds = new Set(
     plans
       .filter(
@@ -2009,11 +2019,15 @@ export function routeGridEdges(
       )
       .map(({ edge }) => edge.id)
   );
+  const sparseLcaIds = new Set([
+    ...sparseHierarchyIds,
+    ...plans.filter(hasAncestorEndpoint).map(({ edge }) => edge.id),
+  ]);
   const routedContainerIds = plans
     .filter(
       (plan) =>
         eligibleIds.has(plan.edge.id) ||
-        sparseHierarchyIds.has(plan.edge.id) ||
+        sparseLcaIds.has(plan.edge.id) ||
         plan.edge.start === plan.edge.end
     )
     .flatMap((plan) => [
@@ -2222,8 +2236,8 @@ export function routeGridEdges(
 
     const sourceFinal = plan.source.chain[plan.source.chain.length - 1];
     const targetFinal = plan.target.chain[plan.target.chain.length - 1];
-    const useSparseHierarchy = sparseHierarchyIds.has(edge.id);
-    const lcaStart: SegmentAttachment = useSparseHierarchy
+    const useSparseLca = sparseLcaIds.has(edge.id);
+    const lcaStart: SegmentAttachment = useSparseLca
       ? plan.source.finalKind === 'boundary'
         ? groupBoundaryEndpointAttachment(
             sourceFinal.ownerId,
@@ -2254,7 +2268,7 @@ export function routeGridEdges(
                 demandCoords
               )),
         };
-    const lcaEnd: SegmentAttachment = useSparseHierarchy
+    const lcaEnd: SegmentAttachment = useSparseLca
       ? plan.target.finalKind === 'boundary'
         ? groupBoundaryEndpointAttachment(
             targetFinal.ownerId,
@@ -2309,7 +2323,7 @@ export function routeGridEdges(
           options,
           pairRoutes.get(plan.pairKey) ?? []
         )
-      : useSparseHierarchy
+      : useSparseLca
         ? sparseContainerSegment(
             edge.id,
             plan.lcaContainerId,

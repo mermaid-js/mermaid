@@ -1301,6 +1301,15 @@ function detourCenterCandidates(
   );
 }
 
+function detourReturnCoordinate(
+  sourceLine: number,
+  detourLine: number,
+  labelHalfSize: number
+): number {
+  const direction = detourLine >= sourceLine ? 1 : -1;
+  return detourLine + direction * (labelHalfSize + LABEL_CLEARANCE);
+}
+
 function buildLabelDetourPoints(
   points: Point[],
   segmentIndex: number,
@@ -1343,11 +1352,13 @@ function buildLabelDetourPoints(
       ]).points;
     }
 
+    const returnY = detourReturnCoordinate(segment.a.y, detourLineCoord, labelNode.height / 2);
     const detourPoints: Point[] = [...points.slice(0, segmentIndex), a];
     if (extendsBeforeStart) {
       detourPoints.push(
         { x: entryX, y: segment.a.y },
-        { x: entryX, y: detourLineCoord },
+        { x: entryX, y: returnY },
+        { x: x1, y: returnY },
         { x: x1, y: detourLineCoord }
       );
     } else {
@@ -1355,7 +1366,11 @@ function buildLabelDetourPoints(
     }
     detourPoints.push({ x: x2, y: detourLineCoord });
     if (extendsAfterEnd) {
-      detourPoints.push({ x: exitX, y: detourLineCoord }, { x: exitX, y: segment.a.y });
+      detourPoints.push(
+        { x: x2, y: returnY },
+        { x: exitX, y: returnY },
+        { x: exitX, y: segment.a.y }
+      );
     } else {
       detourPoints.push({ x: x2, y: segment.a.y });
     }
@@ -1390,11 +1405,13 @@ function buildLabelDetourPoints(
     ]).points;
   }
 
+  const returnX = detourReturnCoordinate(segment.a.x, detourLineCoord, labelNode.width / 2);
   const detourPoints: Point[] = [...points.slice(0, segmentIndex), a];
   if (extendsBeforeStart) {
     detourPoints.push(
       { x: segment.a.x, y: entryY },
-      { x: detourLineCoord, y: entryY },
+      { x: returnX, y: entryY },
+      { x: returnX, y: y1 },
       { x: detourLineCoord, y: y1 }
     );
   } else {
@@ -1402,7 +1419,11 @@ function buildLabelDetourPoints(
   }
   detourPoints.push({ x: detourLineCoord, y: y2 });
   if (extendsAfterEnd) {
-    detourPoints.push({ x: detourLineCoord, y: exitY }, { x: segment.a.x, y: exitY });
+    detourPoints.push(
+      { x: returnX, y: y2 },
+      { x: returnX, y: exitY },
+      { x: segment.a.x, y: exitY }
+    );
   } else {
     detourPoints.push({ x: segment.a.x, y: y2 });
   }
@@ -1435,6 +1456,7 @@ function buildExtendedLabelDetourPoints(
     );
     const entryX = a.x + xDirection * segmentInset;
     const exitX = b.x - xDirection * segmentInset;
+    const returnY = detourReturnCoordinate(segment.a.y, detourLineCoord, labelNode.height / 2);
     return normalizePolyline([
       ...points.slice(0, segmentIndex),
       a,
@@ -1442,7 +1464,8 @@ function buildExtendedLabelDetourPoints(
       { x: entryX, y: detourLineCoord },
       { x: x1, y: detourLineCoord },
       { x: x2, y: detourLineCoord },
-      { x: exitX, y: detourLineCoord },
+      { x: x2, y: returnY },
+      { x: exitX, y: returnY },
       { x: exitX, y: segment.a.y },
       b,
       ...points.slice(segmentIndex + 2),
@@ -1459,6 +1482,7 @@ function buildExtendedLabelDetourPoints(
   );
   const entryY = a.y + yDirection * segmentInset;
   const exitY = b.y - yDirection * segmentInset;
+  const returnX = detourReturnCoordinate(segment.a.x, detourLineCoord, labelNode.width / 2);
   return normalizePolyline([
     ...points.slice(0, segmentIndex),
     a,
@@ -1466,7 +1490,8 @@ function buildExtendedLabelDetourPoints(
     { x: detourLineCoord, y: entryY },
     { x: detourLineCoord, y: y1 },
     { x: detourLineCoord, y: y2 },
-    { x: detourLineCoord, y: exitY },
+    { x: returnX, y: y2 },
+    { x: returnX, y: exitY },
     { x: segment.a.x, y: exitY },
     b,
     ...points.slice(segmentIndex + 2),

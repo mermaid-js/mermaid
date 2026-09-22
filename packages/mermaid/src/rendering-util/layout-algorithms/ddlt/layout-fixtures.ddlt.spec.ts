@@ -5,7 +5,7 @@ import { discoverLayoutTestFixtures } from './discoverFixtures.js';
 import { loadDdltFixture } from './loadDdltFixture.js';
 
 const SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE = 11754;
-const GRID_TOTAL_SCORE_BASELINE = 10435;
+const GRID_TOTAL_SCORE_BASELINE = 9935;
 
 describe('DDLT layout-test fixture sweep', () => {
   it('aggregate validateLayout report — swimlanes', { timeout: 20_000 }, async () => {
@@ -69,8 +69,9 @@ describe('DDLT layout-test fixture sweep', () => {
     const exemptIds = new Set(
       fixtures.filter((fixture) => fixture.allowLevel1Failure).map((fixture) => fixture.id)
     );
+    expect([...exemptIds]).toEqual([]);
     const nonExemptInvalid = report.byCase.filter((row) => !exemptIds.has(row.id) && !row.valid);
     expect(nonExemptInvalid.map((row) => `${row.id}: ${row.issueTypes.join(', ')}`)).toEqual([]);
-    expect(report.totalScore).toBeGreaterThanOrEqual(GRID_TOTAL_SCORE_BASELINE);
+    expect(report.totalScore).toBe(GRID_TOTAL_SCORE_BASELINE);
   });
 });

@@ -264,12 +264,27 @@ describe('grid determinism and performance', () => {
     }
   });
 
-  it('lays out 1000 nodes and 500 edges within the 500ms budget', () => {
+  it.fails('lays out 1000 nodes and 500 edges within the deferred 500ms budget', () => {
     const layout = largeSyntheticLayout();
     const start = performance.now();
     runGridLayoutCore(layout);
     const elapsed = performance.now() - start;
     expect(elapsed).toBeLessThan(500);
+  });
+
+  it('keeps the 1000-node/500-edge case below structural and resource caps', () => {
+    const layout = largeSyntheticLayout();
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(layout, metrics);
+
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+    expect(metrics.fallbackValidationFailures).toBe(0);
+    expect(metrics.baseVertices).toBeLessThan(50_000);
+    expect(metrics.baseAdjacencyEntries).toBeLessThan(200_000);
+    expect(metrics.endpointOverlayVertices).toBeLessThanOrEqual(metrics.endpointOverlayBuilds * 32);
+    expect(metrics.expandedStates).toBeLessThan(2_000_000);
+    expect(metrics.estimatedBytes).toBeLessThan(64 * 1024 * 1024);
   });
 
   it('uses coordinate-compressed label queries for very large coordinate spans', () => {

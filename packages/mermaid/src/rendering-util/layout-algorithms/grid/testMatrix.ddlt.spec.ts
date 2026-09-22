@@ -130,7 +130,8 @@ function primaryTrackCoordinate(edge: Edge): number {
 }
 
 async function characterizeFixture(name: string) {
-  const { layout } = await loadGridFixtureWithResult(name);
+  const metrics = createGridRoutingInstrumentation();
+  const { layout } = await loadGridFixtureWithResult(name, metrics);
   const validation = validateLayout(layout);
   const bends = layout.edges.reduce(
     (total, edge) => total + normalizePolyline(edge.points ?? []).bends,
@@ -153,6 +154,8 @@ async function characterizeFixture(name: string) {
     score: validation.score,
     bends,
     crossings: validation.breakdown.crossings,
+    fallbacks: metrics.resourceLimitFallbacks,
+    fallbackValidationFailures: metrics.fallbackValidationFailures,
     routeSignature,
   };
 }
@@ -254,6 +257,8 @@ describe('grid DDLT matrix fixtures', () => {
         {
           "bends": 0,
           "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
           "id": "grid/placement-matrix-tb",
           "routeSignature": "a82ae0a776a8bbf760a5d0ce5433df84d98a1e8f114870b9878aa1f2aecc78da",
           "score": 1000,
@@ -262,22 +267,28 @@ describe('grid DDLT matrix fixtures', () => {
         {
           "bends": 0,
           "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
           "id": "grid/stack-default",
           "routeSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
           "score": 1000,
           "valid": true,
         },
         {
-          "bends": 14,
+          "bends": 16,
           "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
           "id": "grid/routing-group-member",
-          "routeSignature": "547db42f090327b2959d83ff3a1751dbda816ea0ae2e0c1e075199aefc91cbd4",
-          "score": 485,
+          "routeSignature": "c82847bd79170a809fe1dd4534db3a61dfc336c7db2ab3ea668491907f95bcf4",
+          "score": 0,
           "valid": true,
         },
         {
           "bends": 6,
           "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
           "id": "grid/routing-loops-parallel-lr",
           "routeSignature": "869f0fa6e78715b10770d30f2dbcdbf802ed3418259494a19088091b156ac7b1",
           "score": 985,
@@ -286,9 +297,156 @@ describe('grid DDLT matrix fixtures', () => {
         {
           "bends": 4,
           "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
           "id": "grid/routing-cell-aware-empty-cell",
           "routeSignature": "857343e11a83b770566d6bd35e7fe7cd349ff828354636cb387ccc2826191d69",
           "score": 990,
+          "valid": true,
+        },
+      ]
+    `);
+  });
+
+  it('records exact migration results for the complete grid corpus', async () => {
+    const characterization = [];
+    for (const fixture of [
+      'group-stack',
+      'placement-matrix-lr',
+      'placement-matrix-tb',
+      'routing-cell-aware-empty-cell',
+      'routing-group-member',
+      'routing-hierarchy-portals',
+      'routing-loops-parallel-lr',
+      'routing-outside-member',
+      'simple',
+      'singleton-alignments',
+      'stack-default',
+      'stack-gap-zero',
+    ]) {
+      characterization.push(await characterizeFixture(fixture));
+    }
+
+    expect(characterization).toMatchInlineSnapshot(`
+      [
+        {
+          "bends": 0,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/group-stack",
+          "routeSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "score": 1000,
+          "valid": true,
+        },
+        {
+          "bends": 0,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/placement-matrix-lr",
+          "routeSignature": "a82ae0a776a8bbf760a5d0ce5433df84d98a1e8f114870b9878aa1f2aecc78da",
+          "score": 1000,
+          "valid": true,
+        },
+        {
+          "bends": 0,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/placement-matrix-tb",
+          "routeSignature": "a82ae0a776a8bbf760a5d0ce5433df84d98a1e8f114870b9878aa1f2aecc78da",
+          "score": 1000,
+          "valid": true,
+        },
+        {
+          "bends": 4,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/routing-cell-aware-empty-cell",
+          "routeSignature": "857343e11a83b770566d6bd35e7fe7cd349ff828354636cb387ccc2826191d69",
+          "score": 990,
+          "valid": true,
+        },
+        {
+          "bends": 16,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/routing-group-member",
+          "routeSignature": "c82847bd79170a809fe1dd4534db3a61dfc336c7db2ab3ea668491907f95bcf4",
+          "score": 0,
+          "valid": true,
+        },
+        {
+          "bends": 12,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/routing-hierarchy-portals",
+          "routeSignature": "f16caa3b660b48df29626620b374757376d1e37090eda473c6aed3c2bd16fb77",
+          "score": 0,
+          "valid": true,
+        },
+        {
+          "bends": 6,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/routing-loops-parallel-lr",
+          "routeSignature": "869f0fa6e78715b10770d30f2dbcdbf802ed3418259494a19088091b156ac7b1",
+          "score": 985,
+          "valid": true,
+        },
+        {
+          "bends": 4,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/routing-outside-member",
+          "routeSignature": "497cbacd8972f9249bbb01e46646993826730ba5bf90cfdb6c482b530af39097",
+          "score": 970,
+          "valid": true,
+        },
+        {
+          "bends": 4,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/simple",
+          "routeSignature": "21d0e2e047baa6b928af40495f78c3659aeff67f3401265ba61083feedca2772",
+          "score": 990,
+          "valid": true,
+        },
+        {
+          "bends": 0,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/singleton-alignments",
+          "routeSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "score": 1000,
+          "valid": true,
+        },
+        {
+          "bends": 0,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/stack-default",
+          "routeSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "score": 1000,
+          "valid": true,
+        },
+        {
+          "bends": 0,
+          "crossings": 0,
+          "fallbackValidationFailures": 0,
+          "fallbacks": 0,
+          "id": "grid/stack-gap-zero",
+          "routeSignature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "score": 1000,
           "valid": true,
         },
       ]

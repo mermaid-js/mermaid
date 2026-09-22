@@ -178,8 +178,9 @@ describe('grid edge label helpers', () => {
     labelNode.height = 180;
     const originalPoints = structuredClone(data.edges[0].points);
     const metrics = createGridEdgeLabelInstrumentation();
+    const routingMetrics = createGridRoutingInstrumentation();
 
-    expect(() => positionGridEdgeLabels(data, metrics)).toThrowError(
+    expect(() => positionGridEdgeLabels(data, metrics, routingMetrics)).toThrowError(
       expect.objectContaining({ code: 'GRID_ROUTE_NOT_FOUND' })
     );
     expect(data.edges[0].points).toEqual(originalPoints);
@@ -187,6 +188,8 @@ describe('grid edge label helpers', () => {
     expect(labelNode.y).toBeUndefined();
     expect(metrics.labelPasses).toBe(2);
     expect(metrics.rollbacks).toBe(1);
+    expect(routingMetrics.resourceLimitFallbacks).toBe(0);
+    expect(routingMetrics.fallbackValidationFailures).toBe(0);
   });
 
   it('creates measurable label nodes without leaving duplicate edge labels behind', () => {

@@ -1,25 +1,25 @@
 {
-  "metadata": {
-    "captureVersion": 1,
-    "capturedAt": "2026-09-21T01:20:21.978Z",
-    "capturedFrom": "browser-capture layout-tests/grid/simple.mmd theme=default look=classic",
-    "sourceSha256": "7dc0d73a293bb4cb43a0baed944cb300355463cfe23c78c20debd6ea75ca9a6f"
-  },
   "nodes": [
     {
       "id": "A",
-      "width": 152,
-      "height": 45
+      "width": 180,
+      "height": 54
     },
     {
       "id": "B",
-      "width": 152,
-      "height": 45
+      "width": 180,
+      "height": 54
     },
     {
       "id": "C",
-      "width": 152,
-      "height": 45
+      "width": 180,
+      "height": 54
     }
-  ]
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "02fd41c407cad767a825bab2c2526fdd9f6f749b241769ba1d8ab7d540d35219",
+    "capturedAt": "2026-09-22T04:36:58.610Z",
+    "capturedFrom": "browser-capture layout-tests/grid/simple.mmd theme=default look=classic layout=grid"
+  }
 }

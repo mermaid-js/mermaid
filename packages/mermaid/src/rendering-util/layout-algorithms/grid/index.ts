@@ -6,5 +6,5 @@ export { prepareGridLayout, runGridLayoutCore };
 
 export const render = createCommonLayoutRenderer({
   prepareLayout: prepareGridLayout,
-  runLayoutCore: runGridLayoutCore,
+  runLayoutCore: (data4Layout) => runGridLayoutCore(data4Layout),
 });
