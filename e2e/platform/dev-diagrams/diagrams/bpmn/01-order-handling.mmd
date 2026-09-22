@@ -1,0 +1,14 @@
+bpmn-beta LR
+title Order handling
+  pool "Order handling"
+    lane "Sales"
+      start message s1 "Order received"
+      user task t1 "Approve order"
+        boundary timer b1 "2 days"
+      xor gw "Approved?"
+    lane "Warehouse"
+      service task t2 "Pick items"
+      end e1 "Shipped"
+  s1 --> t1 --> gw
+  gw -- yes --> t2 --> e1
+  b1 --> t2
