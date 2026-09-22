@@ -19,7 +19,11 @@ export async function iconCircle<T extends SVGGraphicsElement>(
   const iconSize = Math.max(assetHeight, assetWidth);
   const defaultWidth = flowchart?.wrappingWidth;
   node.width = Math.max(iconSize, defaultWidth ?? 0);
-  const { shapeSvg, bbox, label } = await labelHelper(parent, node, 'icon-shape default');
+  const { shapeSvg, bbox, label } = await labelHelper(
+    parent,
+    node,
+    `${node.cssClasses ?? ''} icon-shape default`
+  );
 
   const padding = 20;
   const labelPadding = node.label ? 8 : 0;
