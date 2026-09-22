@@ -1167,13 +1167,23 @@ participate in deferred parallel/reverse bundles retain legacy composition
 until EPIC-005 so the existing bundle geometry remains unchanged. The
 EPIC-003 performance debt remains deferred to EPIC-007/ITEM-021.
 
-- EPIC-005: Enforce self-loop and parallel/reverse lane validity
+- EPIC-005: Enforce self-loop and parallel/reverse lane validity — Completed
 
 | Task     | Description                                                                                                                                                                                                                    | Status      | Relevant Files                                                                                                                                                                                                                       |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| ITEM-014 | Add failing self-loop and bundle tests for distinct ports, centered 8 px offsets, blocked preferred lanes, no shared 8 px subpaths, at least 8 px parallel separation, reverse ordering, and explicit impossible-route errors. | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                                                                        |
-| ITEM-015 | Implement self-loop endpoint pairs and pair-local lane overlays. Enforce bundle reuse/separation as hard constraints while leaving unrelated congestion soft.                                                                  | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts` |
-| ITEM-016 | Extend existing loop/parallel DDLT assertions and 100-run determinism checks to route arrays, occupancy metrics, expanded states, and lane offsets.                                                                            | Not Started | `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                                                               |
+| ITEM-014 | Add failing self-loop and bundle tests for distinct ports, centered 8 px offsets, blocked preferred lanes, no shared 8 px subpaths, at least 8 px parallel separation, reverse ordering, and explicit impossible-route errors. | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                                                                        |
+| ITEM-015 | Implement self-loop endpoint pairs and pair-local lane overlays. Enforce bundle reuse/separation as hard constraints while leaving unrelated congestion soft.                                                                  | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/router.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts` |
+| ITEM-016 | Extend existing loop/parallel DDLT assertions and 100-run determinism checks to route arrays, occupancy metrics, expanded states, and lane offsets.                                                                            | Completed | `packages/mermaid/src/rendering-util/layout-algorithms/grid/testMatrix.ddlt.spec.ts`, `packages/mermaid/src/rendering-util/layout-algorithms/grid/performance.spec.ts`                                                               |
+
+EPIC-005 completion moves same-container pair bundles and self-loops onto
+pair-local sparse overlays. Four-edge bundles use centered lane offsets
+`[-12, -4, 4, 12]`, search independently when preferred lanes are blocked,
+reject shared nonterminal subpaths of 8 px or more and parallel separation
+below 8 px, and fail explicitly when no distinct route exists. The loop and
+parallel DDLT fixture performs seven sparse searches, expands 30 states,
+records zero shared length and zero resource fallback, and is byte-identical
+across repeated route-array and metric runs. The EPIC-003 performance debt
+remains deferred to EPIC-007/ITEM-021.
 
 - EPIC-006: Integrate bounded transactional label routing
 

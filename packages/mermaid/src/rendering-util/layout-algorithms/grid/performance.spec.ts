@@ -6,6 +6,7 @@ import {
   prepareGridLayout,
 } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
+import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 
 function node(id: string, metadata?: Record<string, unknown>): Node {
   return {
@@ -64,7 +65,14 @@ function representativeLayout(): LayoutData {
 function representativeParallelLayout(): LayoutData {
   return {
     nodes: [node('A', { row: 1, column: 1 }), node('B', { row: 1, column: 2 })],
-    edges: [edge('e1', 'A', 'B'), edge('e2', 'A', 'B'), edge('e3', 'A', 'B'), edge('e4', 'B', 'A')],
+    edges: [
+      edge('loop-1', 'A', 'A'),
+      edge('loop-2', 'A', 'A'),
+      edge('e1', 'A', 'B'),
+      edge('e2', 'A', 'B'),
+      edge('e3', 'A', 'B'),
+      edge('e4', 'B', 'A'),
+    ],
     config: {
       layout: 'grid',
       grid: { columnGap: 60 },
@@ -218,15 +226,41 @@ describe('grid determinism and performance', () => {
     }
   });
 
-  it('keeps parallel and reverse edge ordering byte-equivalent across repeated runs', () => {
+  it('keeps parallel/reverse route arrays and routing metrics byte-equivalent across 100 runs', () => {
     const baseline = representativeParallelLayout();
-    runGridLayoutCore(baseline);
-    const expected = signature(baseline);
+    const baselineMetrics = createGridRoutingInstrumentation();
+    runGridLayoutCore(baseline, baselineMetrics);
+    const expected = JSON.stringify({
+      layout: signature(baseline),
+      expandedStates: baselineMetrics.expandedStates,
+      routeLength: baselineMetrics.routeLength,
+      bendCount: baselineMetrics.bendCount,
+      crossingCount: baselineMetrics.crossingCount,
+      sharedLength: baselineMetrics.sharedLength,
+      routeOrder: baselineMetrics.routeOrder,
+      routes: baselineMetrics.routes,
+      resourceLimitFallbacks: baselineMetrics.resourceLimitFallbacks,
+      fallbackReasons: baselineMetrics.fallbackReasons,
+    });
 
     for (let index = 0; index < 100; index++) {
       const next = structuredClone(representativeParallelLayout());
-      runGridLayoutCore(next);
-      expect(signature(next)).toBe(expected);
+      const metrics = createGridRoutingInstrumentation();
+      runGridLayoutCore(next, metrics);
+      expect(
+        JSON.stringify({
+          layout: signature(next),
+          expandedStates: metrics.expandedStates,
+          routeLength: metrics.routeLength,
+          bendCount: metrics.bendCount,
+          crossingCount: metrics.crossingCount,
+          sharedLength: metrics.sharedLength,
+          routeOrder: metrics.routeOrder,
+          routes: metrics.routes,
+          resourceLimitFallbacks: metrics.resourceLimitFallbacks,
+          fallbackReasons: metrics.fallbackReasons,
+        })
+      ).toBe(expected);
     }
   });
 

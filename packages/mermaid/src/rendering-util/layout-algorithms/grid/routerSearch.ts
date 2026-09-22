@@ -55,6 +55,7 @@ export interface RouterSearchOptions {
   heuristic?: 'bend-aware' | 'zero';
   queueOrder?: 'canonical' | 'reverse';
   estimatedBytesBase?: number;
+  arcAllowed?: (from: RouterPoint, to: RouterPoint) => boolean;
 }
 
 const DEFAULT_MAX_EDGE_STATES = 100_000;
@@ -575,6 +576,12 @@ function search(
     if (compactArcs) {
       for (const arc of compactArcs) {
         if (
+          options.arcAllowed &&
+          !options.arcAllowed(vertexAt(vertexId).point, vertexAt(arc.to).point)
+        ) {
+          continue;
+        }
+        if (
           options.initialSide &&
           predecessors[current] < 0 &&
           movesTowardOwner(vertexAt(vertexId).point, vertexAt(arc.to).point, options.initialSide)
@@ -665,6 +672,12 @@ function search(
       for (const arc of topology.adjacencyByVertex?.[vertexId] ??
         topology.adjacency.get(vertexId) ??
         []) {
+        if (
+          options.arcAllowed &&
+          !options.arcAllowed(vertexAt(vertexId).point, vertexAt(arc.to).point)
+        ) {
+          continue;
+        }
         if (
           options.initialSide &&
           predecessors[current] < 0 &&

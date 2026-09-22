@@ -279,7 +279,7 @@ describe('grid DDLT matrix fixtures', () => {
           "bends": 6,
           "crossings": 0,
           "id": "grid/routing-loops-parallel-lr",
-          "routeSignature": "e095678042ae372f2c85800cb37d2f29a9e9a303b457b5547d64f8d521066049",
+          "routeSignature": "869f0fa6e78715b10770d30f2dbcdbf802ed3418259494a19088091b156ac7b1",
           "score": 985,
           "valid": true,
         },
@@ -442,7 +442,8 @@ describe('grid DDLT matrix fixtures', () => {
   });
 
   it('covers self-loops, parallel/reverse edges, non-rect shapes, disconnected nodes, and LR routing', async () => {
-    const { layout } = await loadGridFixtureWithResult('routing-loops-parallel-lr');
+    const metrics = createGridRoutingInstrumentation();
+    const { layout } = await loadGridFixtureWithResult('routing-loops-parallel-lr', metrics);
     expect(validateLayout(layout)).toMatchObject({ ok: true, issues: [] });
 
     const loopPoints = layout.edges
@@ -461,6 +462,28 @@ describe('grid DDLT matrix fixtures', () => {
     for (let index = 1; index < trackCoords.length; index++) {
       expect(trackCoords[index] - trackCoords[index - 1]).toBeGreaterThanOrEqual(8);
     }
+    expect(metrics.routes.map(({ edgeId, laneOffset }) => [edgeId, laneOffset])).toEqual([
+      ['L_Loop_Loop_0', -8],
+      ['L_Loop_Loop_2', 0],
+      ['L_Loop_Loop_3', 8],
+      ['L_Source_Target_0', -12],
+      ['L_Source_Target_2', -4],
+      ['L_Source_Target_3', 4],
+      ['L_Target_Source_0', 12],
+    ]);
+    expect({
+      searches: metrics.searches,
+      expandedStates: metrics.expandedStates,
+      sharedLength: metrics.sharedLength,
+      resourceLimitFallbacks: metrics.resourceLimitFallbacks,
+    }).toMatchInlineSnapshot(`
+      {
+        "expandedStates": 30,
+        "resourceLimitFallbacks": 0,
+        "searches": 7,
+        "sharedLength": 0,
+      }
+    `);
 
     const source = nodeById(layout, 'Source');
     const target = nodeById(layout, 'Target');

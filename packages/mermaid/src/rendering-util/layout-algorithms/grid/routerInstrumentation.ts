@@ -21,6 +21,7 @@ export class GridRoutingResourceLimitError extends Error {
 export interface GridRouteInstrumentation {
   edgeId: string;
   routeOrder: number;
+  laneOffset: number;
   routeLength: number;
   bendCount: number;
   crossingCount: number;
@@ -136,7 +137,8 @@ export function recordGridRoute(
   edgeId: string,
   points: Point[],
   previousRoutes: readonly Point[][],
-  boundaryTransitionCount = 0
+  boundaryTransitionCount = 0,
+  laneOffset = 0
 ): void {
   const normalized = normalizePolyline(points);
   let crossingCount = 0;
@@ -157,6 +159,7 @@ export function recordGridRoute(
   const route: GridRouteInstrumentation = {
     edgeId,
     routeOrder: metrics.routes.length,
+    laneOffset,
     routeLength: manhattanLength(normalized.points),
     bendCount: normalized.bends,
     crossingCount,

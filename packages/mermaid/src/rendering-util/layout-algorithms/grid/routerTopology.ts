@@ -1026,13 +1026,17 @@ export function buildEndpointRoutingOverlay(
   source: RouterPoint,
   target: RouterPoint,
   metrics?: GridRoutingInstrumentation,
-  reusableScratch?: EndpointOverlayScratch
+  reusableScratch?: EndpointOverlayScratch,
+  lanePoints: readonly RouterPoint[] = []
 ): ContainerRoutingTopology {
   const scratch = reusableScratch ?? new EndpointOverlayScratch(base);
   scratch.reset(base);
   const endpointRecords: VertexRecord[] = [
     { point: source, kind: 'endpoint', ownerId: 'source' },
     { point: target, kind: 'endpoint', ownerId: 'target' },
+    ...lanePoints
+      .filter((point) => !pointInsideObstacle(point, base.horizontalIntervals))
+      .map((point) => ({ point, kind: 'lane' as const })),
   ];
   for (const point of [
     { x: source.x, y: target.y },

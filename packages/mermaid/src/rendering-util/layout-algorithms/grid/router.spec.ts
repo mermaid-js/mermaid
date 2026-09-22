@@ -99,6 +99,35 @@ function terminalLength(points: { x: number; y: number }[], atStart: boolean): n
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
+function longestSharedNonterminalSubpath(first: Edge, second: Edge): number {
+  const firstSegments = normalizePolyline(first.points ?? []).segments.slice(1, -1);
+  const secondSegments = normalizePolyline(second.points ?? []).segments.slice(1, -1);
+  let longest = 0;
+  for (const a of firstSegments) {
+    for (const b of secondSegments) {
+      if (a.orientation !== b.orientation) {
+        continue;
+      }
+      if (a.orientation === 'H' && a.a.y === b.a.y) {
+        longest = Math.max(
+          longest,
+          0,
+          Math.min(Math.max(a.a.x, a.b.x), Math.max(b.a.x, b.b.x)) -
+            Math.max(Math.min(a.a.x, a.b.x), Math.min(b.a.x, b.b.x))
+        );
+      } else if (a.orientation === 'V' && a.a.x === b.a.x) {
+        longest = Math.max(
+          longest,
+          0,
+          Math.min(Math.max(a.a.y, a.b.y), Math.max(b.a.y, b.b.y)) -
+            Math.max(Math.min(a.a.y, a.b.y), Math.min(b.a.y, b.b.y))
+        );
+      }
+    }
+  }
+  return longest;
+}
+
 function nodeRect(node: Node) {
   return {
     left: (node.x ?? 0) - (node.width ?? 0) / 2,
@@ -260,7 +289,7 @@ describe('grid router', () => {
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
   });
 
-  it('keeps parallel, reverse, and self-loop routes distinct and at least 8px apart', () => {
+  it('uses centered 8px pair lanes, distinct ports, and deterministic reverse ordering', () => {
     const build = () =>
       baseLayout(
         [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 1, column: 2 })],
@@ -276,7 +305,8 @@ describe('grid router', () => {
       );
 
     const data = build();
-    runGridLayoutCore(data);
+    const metrics = createGridRoutingInstrumentation();
+    runGridLayoutCore(data, metrics);
 
     const byId = new Map(data.edges.map((item) => [item.id, item.points ?? []]));
     expect(byId.get('e1')).not.toEqual(byId.get('e2'));
@@ -284,40 +314,83 @@ describe('grid router', () => {
     expect(byId.get('e4')).not.toEqual(byId.get('e1'));
     expect(byId.get('loop-1')).not.toEqual(byId.get('loop-2'));
 
-    const primaryTracks = data.edges
+    const bundle = data.edges.filter((item) => item.id.startsWith('e'));
+    const primaryTracks = bundle
       .filter((item) => item.id.startsWith('e'))
       .map((item) => primaryTrackCoordinate(item))
       .sort((a, b) => a - b);
+    const centerY = data.nodes.find(({ id }) => id === 'a')!.y ?? 0;
+    expect(primaryTracks.map((coordinate) => coordinate - centerY)).toEqual([-12, -4, 4, 12]);
     for (let index = 1; index < primaryTracks.length; index++) {
       expect(primaryTracks[index] - primaryTracks[index - 1]).toBeGreaterThanOrEqual(8);
     }
+    expect(new Set(bundle.map((item) => JSON.stringify(item.points?.[0]))).size).toBe(
+      bundle.length
+    );
+    expect(new Set(bundle.map((item) => JSON.stringify(item.points?.at(-1)))).size).toBe(
+      bundle.length
+    );
+    for (let first = 0; first < bundle.length; first++) {
+      for (let second = first + 1; second < bundle.length; second++) {
+        expect(longestSharedNonterminalSubpath(bundle[first], bundle[second])).toBeLessThan(8);
+      }
+    }
+    expect(metrics.routeOrder).toEqual(['loop-1', 'loop-2', 'e1', 'e2', 'e3', 'e4']);
+    expect(metrics.routes.map(({ edgeId, laneOffset }) => [edgeId, laneOffset])).toEqual([
+      ['loop-1', -4],
+      ['loop-2', 4],
+      ['e1', -12],
+      ['e2', -4],
+      ['e3', 4],
+      ['e4', 12],
+    ]);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
 
     const rerun = build();
     runGridLayoutCore(rerun);
     expect(rerun.edges.map((item) => item.points)).toEqual(data.edges.map((item) => item.points));
   });
 
-  it('produces distinct routes for parallel, reverse, and self-loop edges', () => {
+  it('searches independently when a preferred pair lane is blocked', () => {
     const data = baseLayout(
-      [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 1, column: 2 })],
       [
-        edge('e1', 'a', 'b'),
-        edge('e2', 'a', 'b'),
-        edge('e3', 'a', 'b'),
-        edge('e4', 'b', 'a'),
-        edge('loop-1', 'a', 'a'),
-        edge('loop-2', 'a', 'a'),
+        leaf('a', 80, 40, { row: 1, column: 1 }),
+        leaf('blocker', 80, 8, { row: 1, column: 2 }),
+        leaf('b', 80, 40, { row: 1, column: 3 }),
       ],
+      [edge('e1', 'a', 'b'), edge('e2', 'a', 'b'), edge('e3', 'a', 'b'), edge('e4', 'b', 'a')],
       { rowGap: 40, columnGap: 60 }
     );
+    const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(data);
+    runGridLayoutCore(data, metrics);
 
-    const byId = new Map(data.edges.map((item) => [item.id, item.points ?? []]));
-    expect(byId.get('e1')).not.toEqual(byId.get('e2'));
-    expect(byId.get('e2')).not.toEqual(byId.get('e3'));
-    expect(byId.get('e4')).not.toEqual(byId.get('e1'));
-    expect(byId.get('loop-1')).not.toEqual(byId.get('loop-2'));
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(data.edges.some((item) => normalizePolyline(item.points ?? []).bends > 0)).toBe(true);
+    for (let first = 0; first < data.edges.length; first++) {
+      for (let second = first + 1; second < data.edges.length; second++) {
+        expect(longestSharedNonterminalSubpath(data.edges[first], data.edges[second])).toBeLessThan(
+          8
+        );
+      }
+    }
+    expect(metrics.routes.map(({ laneOffset }) => laneOffset)).toEqual([-12, -4, 4, 12]);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+  });
+
+  it('throws an explicit no-route error when a pair cannot allocate distinct 8px lanes', () => {
+    const data = baseLayout(
+      [leaf('a', 40, 24, { row: 1, column: 1 }), leaf('b', 40, 24, { row: 1, column: 2 })],
+      Array.from({ length: 10 }, (_, index) => edge(`e${index}`, 'a', 'b')),
+      { rowGap: 0, columnGap: 12 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    expect(() => runGridLayoutCore(data, metrics)).toThrowError(
+      /GRID_ROUTE_NOT_FOUND: No distinct lane route/
+    );
+    expect(metrics.routesImpossible).toBe(1);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
   it('routes self-loops around adjacent nodes when track gaps are zero', () => {
@@ -330,6 +403,40 @@ describe('grid router', () => {
     runGridLayoutCore(data);
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+  });
+
+  it('keeps reverse pair lanes distinct across hierarchy portals', () => {
+    const data = baseLayout(
+      [
+        group('left-group', 'Left', { row: 1, column: 1 }),
+        leaf('a', 80, 40, { row: 1, column: 1 }, 'left-group'),
+        group('right-group', 'Right', { row: 1, column: 2 }),
+        leaf('b', 80, 40, { row: 1, column: 1 }, 'right-group'),
+      ],
+      [edge('e1', 'a', 'b'), edge('e2', 'a', 'b'), edge('e3', 'b', 'a')],
+      { rowGap: 50, columnGap: 90 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics);
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(new Set(data.edges.map(({ points }) => JSON.stringify(points))).size).toBe(3);
+    const a = data.nodes.find(({ id }) => id === 'a')!;
+    const aPorts = data.edges
+      .map((item) => (item.start === 'a' ? item.points?.[0] : item.points?.at(-1)))
+      .map((point) => (point?.y ?? 0) - (a.y ?? 0))
+      .sort((first, second) => first - second);
+    expect(aPorts).toEqual([-8, 0, 8]);
+    for (let first = 0; first < data.edges.length; first++) {
+      for (let second = first + 1; second < data.edges.length; second++) {
+        expect(longestSharedNonterminalSubpath(data.edges[first], data.edges[second])).toBeLessThan(
+          8
+        );
+      }
+    }
+    expect(metrics.routes.map(({ laneOffset }) => laneOffset)).toEqual([-8, 0, 8]);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
   it('selects the motivating straight route through unused cell space by tuple cost', () => {

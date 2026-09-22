@@ -51,6 +51,7 @@ const SELF_LOOP_TRACK_GAP = 18;
 const SELF_LOOP_PORT_OFFSET_STEP = 4;
 const TERMINAL_APPROACH_PX = 20;
 const MIN_PORT_SEPARATION_PX = 4;
+const LANE_SEPARATION_PX = 8;
 const ROUTER_DEBUG_KEY = 'grid-router';
 const DEFAULT_MAX_ESTIMATED_BYTES = 64 * 1024 * 1024;
 
@@ -84,6 +85,9 @@ interface EdgeRoutePlan {
   source: EdgeEndpointPlan;
   target: EdgeEndpointPlan;
   laneIndex: number;
+  laneOffset: number;
+  bundleSize: number;
+  pairKey: string;
 }
 
 function ownerGroupTitle(node: Node): boolean {
@@ -196,10 +200,17 @@ function buildEndpointPlan(
   }
 }
 
-function buildPairLaneIndexes(edges: Edge[]): Map<string, number> {
+interface PairLane {
+  index: number;
+  size: number;
+  offset: number;
+  pairKey: string;
+}
+
+function buildPairLanes(edges: Edge[]): Map<string, PairLane> {
   const byPair = new Map<string, Edge[]>();
   for (const edge of edges) {
-    if (!edge.start || !edge.end || edge.start === edge.end) {
+    if (!edge.start || !edge.end) {
       continue;
     }
     const pairKey =
@@ -210,17 +221,27 @@ function buildPairLaneIndexes(edges: Edge[]): Map<string, number> {
     byPair.get(pairKey)!.push(edge);
   }
 
-  const out = new Map<string, number>();
-  for (const entries of byPair.values()) {
-    entries.sort((a, b) => a.id.localeCompare(b.id));
-    entries.forEach((edge, index) => out.set(edge.id, index));
+  const out = new Map<string, PairLane>();
+  for (const [pairKey, entries] of byPair) {
+    entries.sort(
+      (a, b) =>
+        `${a.start}|${a.end}`.localeCompare(`${b.start}|${b.end}`) || a.id.localeCompare(b.id)
+    );
+    entries.forEach((edge, index) =>
+      out.set(edge.id, {
+        index,
+        size: entries.length,
+        offset: (index - (entries.length - 1) / 2) * LANE_SEPARATION_PX,
+        pairKey,
+      })
+    );
   }
   return out;
 }
 
 function collectRoutePlans(layout: LayoutData, result: GridLayoutResult): EdgeRoutePlan[] {
   const nodeById = result.forest.nodeById;
-  const laneIndexes = buildPairLaneIndexes(layout.edges);
+  const pairLanes = buildPairLanes(layout.edges);
 
   return layout.edges.map((edge) => {
     const source = edge.start ? nodeById.get(edge.start) : undefined;
@@ -233,12 +254,21 @@ function collectRoutePlans(layout: LayoutData, result: GridLayoutResult): EdgeRo
       });
     }
     const lcaContainerId = commonContainerId(source, target, nodeById);
+    const pairLane = pairLanes.get(edge.id) ?? {
+      index: 0,
+      size: 1,
+      offset: 0,
+      pairKey: endpointPairKey(edge),
+    };
     return {
       edge,
       lcaContainerId,
       source: buildEndpointPlan(source, target, lcaContainerId, nodeById, edge.id, 'source'),
       target: buildEndpointPlan(target, source, lcaContainerId, nodeById, edge.id, 'target'),
-      laneIndex: laneIndexes.get(edge.id) ?? 0,
+      laneIndex: pairLane.index,
+      laneOffset: pairLane.offset,
+      bundleSize: pairLane.size,
+      pairKey: pairLane.pairKey,
     };
   });
 }
@@ -248,6 +278,16 @@ function assignDemandCoordinates(
   result: GridLayoutResult
 ): Map<string, number> {
   const nodeById = result.forest.nodeById;
+  const planByEdgeId = new Map(plans.map((plan) => [plan.edge.id, plan]));
+  const incidentCounts = new Map<string, number>();
+  for (const plan of plans) {
+    if (plan.edge.start) {
+      incidentCounts.set(plan.edge.start, (incidentCounts.get(plan.edge.start) ?? 0) + 1);
+    }
+    if (plan.edge.end && plan.edge.end !== plan.edge.start) {
+      incidentCounts.set(plan.edge.end, (incidentCounts.get(plan.edge.end) ?? 0) + 1);
+    }
+  }
   const demandByKey = new Map<string, GridAttachmentDemand>();
   for (const plan of plans) {
     if (plan.edge.start === plan.edge.end) {
@@ -292,6 +332,25 @@ function assignDemandCoordinates(
     }
     const span = Math.max(0, high - low);
     demands.sort((a, b) => a.oppositeCoord - b.oppositeCoord || a.edgeId.localeCompare(b.edgeId));
+    const demandPlans = demands.map((demand) => planByEdgeId.get(demand.edgeId));
+    const pairKeys = new Set(demandPlans.map((plan) => plan?.pairKey));
+    if (
+      pairKeys.size === 1 &&
+      demandPlans.every(
+        (plan) =>
+          plan &&
+          plan.bundleSize === demands.length &&
+          incidentCounts.get(plan.edge.start!) === plan.bundleSize &&
+          incidentCounts.get(plan.edge.end!) === plan.bundleSize
+      )
+    ) {
+      const center = (low + high) / 2;
+      const coordinates = demandPlans.map((plan) => center + plan!.laneOffset);
+      if (coordinates.every((coordinate) => coordinate >= low && coordinate <= high)) {
+        demands.forEach((demand, index) => assigned.set(demand.demandKey, coordinates[index]));
+        continue;
+      }
+    }
     if (demands.length === 1 || span <= 0) {
       assigned.set(demands[0].demandKey, (low + high) / 2);
       continue;
@@ -956,6 +1015,45 @@ function endpointCandidates(
   }
   const oppositeRect = rectForNode(opposite);
   const candidates: EndpointCandidate[] = [];
+  const candidateKeys = new Set<string>();
+
+  const addCandidate = (side: GridSide, coordinate: number, rank: number): void => {
+    const interval = sideInterval(owner, side);
+    if (!interval || coordinate < interval.low || coordinate > interval.high) {
+      return;
+    }
+    const rect = rectForNode(owner);
+    const port =
+      side === 'left' || side === 'right'
+        ? { x: side === 'left' ? rect.left : rect.right, y: coordinate }
+        : { x: coordinate, y: side === 'top' ? rect.top : rect.bottom };
+    const key = `${side}:${routingPointKey(port)}`;
+    if (candidateKeys.has(key)) {
+      return;
+    }
+    candidateKeys.add(key);
+    candidates.push({
+      ownerId,
+      side,
+      port,
+      connect: {
+        x:
+          port.x +
+          (side === 'left' ? -TERMINAL_APPROACH_PX : side === 'right' ? TERMINAL_APPROACH_PX : 0),
+        y:
+          port.y +
+          (side === 'top' ? -TERMINAL_APPROACH_PX : side === 'bottom' ? TERMINAL_APPROACH_PX : 0),
+      },
+      rank,
+    });
+  };
+
+  if (plan.bundleSize > 1) {
+    const side = preferredSide(owner, { x: oppositeRect.cx, y: oppositeRect.cy });
+    const ownerRect = rectForNode(owner);
+    const center = side === 'left' || side === 'right' ? ownerRect.cy : ownerRect.cx;
+    addCandidate(side, center + plan.laneOffset, -1);
+  }
 
   for (const side of ['right', 'bottom', 'left', 'top'] as const) {
     const interval = sideInterval(owner, side);
@@ -997,16 +1095,8 @@ function endpointCandidates(
       side === 'left' || side === 'right'
         ? { x: side === 'left' ? rect.left : rect.right, y: coordinate }
         : { x: coordinate, y: side === 'top' ? rect.top : rect.bottom };
-    const connect = {
-      x:
-        port.x +
-        (side === 'left' ? -TERMINAL_APPROACH_PX : side === 'right' ? TERMINAL_APPROACH_PX : 0),
-      y:
-        port.y +
-        (side === 'top' ? -TERMINAL_APPROACH_PX : side === 'bottom' ? TERMINAL_APPROACH_PX : 0),
-    };
     const distance = Math.abs(port.x - oppositeRect.cx) + Math.abs(port.y - oppositeRect.cy);
-    candidates.push({ ownerId, side, port, connect, rank: distance });
+    addCandidate(side, coordinate, distance);
   }
 
   candidates.sort((a, b) => a.rank - b.rank || sideOrder(a.side) - sideOrder(b.side));
@@ -1135,6 +1225,117 @@ function routeLength(points: readonly Point[]): number {
   );
 }
 
+interface OrthogonalSegment {
+  a: Point;
+  b: Point;
+  orientation: GridOrientation;
+}
+
+function segmentSpan(segment: OrthogonalSegment): { low: number; high: number } {
+  return segment.orientation === 'H'
+    ? { low: Math.min(segment.a.x, segment.b.x), high: Math.max(segment.a.x, segment.b.x) }
+    : { low: Math.min(segment.a.y, segment.b.y), high: Math.max(segment.a.y, segment.b.y) };
+}
+
+function nonterminalSegments(points: readonly Point[]): OrthogonalSegment[] {
+  const segments = normalizePolyline([...points])
+    .segments.filter((segment) => segment.orientation !== 'Z')
+    .map((segment) => ({
+      a: { ...segment.a },
+      b: { ...segment.b },
+      orientation: segment.orientation as GridOrientation,
+    }));
+  if (segments.length === 0) {
+    return [];
+  }
+  if (
+    segments.length === 1 &&
+    Math.abs(segments[0].a.x - segments[0].b.x) + Math.abs(segments[0].a.y - segments[0].b.y) <=
+      TERMINAL_APPROACH_PX * 2
+  ) {
+    return [];
+  }
+  const trim = (segment: OrthogonalSegment, atStart: boolean): void => {
+    if (segment.orientation === 'H') {
+      const direction = Math.sign(segment.b.x - segment.a.x);
+      if (atStart) {
+        segment.a.x += direction * TERMINAL_APPROACH_PX;
+      } else {
+        segment.b.x -= direction * TERMINAL_APPROACH_PX;
+      }
+    } else {
+      const direction = Math.sign(segment.b.y - segment.a.y);
+      if (atStart) {
+        segment.a.y += direction * TERMINAL_APPROACH_PX;
+      } else {
+        segment.b.y -= direction * TERMINAL_APPROACH_PX;
+      }
+    }
+  };
+  trim(segments[0], true);
+  trim(segments[segments.length - 1], false);
+  return segments.filter(({ a, b }) => a.x !== b.x || a.y !== b.y);
+}
+
+function pairSegmentsConflict(candidate: OrthogonalSegment, committed: OrthogonalSegment): boolean {
+  if (candidate.orientation !== committed.orientation) {
+    return false;
+  }
+  const first = segmentSpan(candidate);
+  const second = segmentSpan(committed);
+  const overlap = Math.max(0, Math.min(first.high, second.high) - Math.max(first.low, second.low));
+  if (overlap <= 0) {
+    return false;
+  }
+  const separation =
+    candidate.orientation === 'H'
+      ? Math.abs(candidate.a.y - committed.a.y)
+      : Math.abs(candidate.a.x - committed.a.x);
+  return (
+    (separation === 0 && overlap >= LANE_SEPARATION_PX) ||
+    (separation > 0 && separation < LANE_SEPARATION_PX)
+  );
+}
+
+function routeSatisfiesPairConstraints(
+  points: readonly Point[],
+  pairRoutes: readonly (readonly Point[])[]
+): boolean {
+  const normalized = normalizePolyline([...points]).points;
+  const candidatePorts = [normalized[0], normalized.at(-1)!];
+  const candidateSegments = nonterminalSegments(normalized);
+  return pairRoutes.every((route) => {
+    const committed = normalizePolyline([...route]).points;
+    const committedPorts = [committed[0], committed.at(-1)!];
+    if (
+      candidatePorts.some((port) =>
+        committedPorts.some((other) => port.x === other.x && port.y === other.y)
+      )
+    ) {
+      return false;
+    }
+    return candidateSegments.every((candidate) =>
+      nonterminalSegments(committed).every(
+        (committedSegment) => !pairSegmentsConflict(candidate, committedSegment)
+      )
+    );
+  });
+}
+
+function pairArcAllowed(
+  from: RouterPoint,
+  to: RouterPoint,
+  pairRoutes: readonly (readonly Point[])[]
+): boolean {
+  const orientation: GridOrientation = from.y === to.y ? 'H' : 'V';
+  const candidate = { a: from, b: to, orientation };
+  return pairRoutes.every((route) =>
+    nonterminalSegments(route).every(
+      (committedSegment) => !pairSegmentsConflict(candidate, committedSegment)
+    )
+  );
+}
+
 function endpointPairLowerBound(
   source: EndpointCandidate,
   target: EndpointCandidate
@@ -1193,7 +1394,8 @@ function sparseSameContainerRoute(
   context: GridRoutingContext,
   searchWorkspace: RouterSearchWorkspace,
   overlayScratch: EndpointOverlayScratch,
-  options: GridRoutingOptions
+  options: GridRoutingOptions,
+  pairRoutes: readonly (readonly Point[])[]
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(plan.lcaContainerId) as
     | GridRoutingFallbackReason
@@ -1201,7 +1403,10 @@ function sparseSameContainerRoute(
   if (fallbackReason) {
     const legacy = legacyRoute();
     recordFallback(context.metrics, fallbackReason, plan.edge.id, plan.lcaContainerId);
-    if (!validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result)) {
+    if (
+      !validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result) ||
+      (plan.bundleSize > 1 && !routeSatisfiesPairConstraints(legacy, pairRoutes))
+    ) {
       if (context.metrics) {
         context.metrics.fallbackValidationFailures++;
       }
@@ -1221,9 +1426,13 @@ function sparseSameContainerRoute(
     if (context.metrics) {
       context.metrics.routesImpossible++;
     }
-    throw gridError('GRID_ROUTE_NOT_FOUND', `No legal endpoint candidates for "${plan.edge.id}"`, {
-      edgeId: plan.edge.id,
-    });
+    throw gridError(
+      'GRID_ROUTE_NOT_FOUND',
+      plan.bundleSize > 1
+        ? `No distinct lane route for "${plan.edge.id}"`
+        : `No legal endpoint candidates for "${plan.edge.id}"`,
+      { edgeId: plan.edge.id }
+    );
   }
 
   let best: { result: RouterSearchResult; points: Point[] } | undefined;
@@ -1254,7 +1463,17 @@ function sparseSameContainerRoute(
         sourceCandidate.connect,
         targetCandidate.connect,
         context.metrics,
-        overlayScratch
+        overlayScratch,
+        plan.bundleSize > 1 &&
+          (sourceCandidate.connect.x === targetCandidate.connect.x ||
+            sourceCandidate.connect.y === targetCandidate.connect.y)
+          ? [
+              {
+                x: (sourceCandidate.connect.x + targetCandidate.connect.x) / 2,
+                y: (sourceCandidate.connect.y + targetCandidate.connect.y) / 2,
+              },
+            ]
+          : []
       );
       const liveEstimatedBytes =
         context.baseEstimatedBytes + overlay.estimatedBytes - topology.estimatedBytes;
@@ -1301,6 +1520,8 @@ function sparseSameContainerRoute(
         topologyValidated: true,
         workspace: searchWorkspace,
         estimatedBytesBase: liveEstimatedBytes,
+        arcAllowed:
+          plan.bundleSize > 1 ? (from, to) => pairArcAllowed(from, to, pairRoutes) : undefined,
       });
       if (!resultForPair) {
         continue;
@@ -1311,6 +1532,9 @@ function sparseSameContainerRoute(
         targetCandidate.port,
       ]).points;
       if (!validateSameContainerRoute(points, source, target, plan.lcaContainerId, result)) {
+        continue;
+      }
+      if (plan.bundleSize > 1 && !routeSatisfiesPairConstraints(points, pairRoutes)) {
         continue;
       }
       if (!best || compareTupleCost(resultForPair.cost, best.result.cost) < 0) {
@@ -1330,7 +1554,10 @@ function sparseSameContainerRoute(
   if (searchCap) {
     const legacy = legacyRoute();
     recordFallback(context.metrics, searchCap, plan.edge.id, plan.lcaContainerId);
-    if (!validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result)) {
+    if (
+      !validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result) ||
+      (plan.bundleSize > 1 && !routeSatisfiesPairConstraints(legacy, pairRoutes))
+    ) {
       if (context.metrics) {
         context.metrics.fallbackValidationFailures++;
       }
@@ -1346,9 +1573,15 @@ function sparseSameContainerRoute(
     if (context.metrics) {
       context.metrics.routesImpossible++;
     }
-    throw gridError('GRID_ROUTE_NOT_FOUND', `No cell-aware route for "${plan.edge.id}"`, {
-      edgeId: plan.edge.id,
-    });
+    throw gridError(
+      'GRID_ROUTE_NOT_FOUND',
+      plan.bundleSize > 1
+        ? `No distinct lane route for "${plan.edge.id}"`
+        : `No cell-aware route for "${plan.edge.id}"`,
+      {
+        edgeId: plan.edge.id,
+      }
+    );
   }
   if (options.onDualRouteComparison) {
     const legacy = legacyRoute();
@@ -1372,6 +1605,172 @@ function sparseSameContainerRoute(
   return best.points;
 }
 
+function selfLoopAttachments(
+  owner: Node,
+  side: GridSide
+): { start: EndpointCandidate; target: EndpointCandidate } | undefined {
+  const interval = sideInterval(owner, side);
+  if (!interval || interval.high - interval.low < SELF_LOOP_PORT_GAP) {
+    return undefined;
+  }
+  const rect = rectForNode(owner);
+  const center = (interval.low + interval.high) / 2;
+  const coordinates = [center - SELF_LOOP_PORT_GAP / 2, center + SELF_LOOP_PORT_GAP / 2];
+  const candidate = (coordinate: number): EndpointCandidate => {
+    const port =
+      side === 'left' || side === 'right'
+        ? { x: side === 'left' ? rect.left : rect.right, y: coordinate }
+        : { x: coordinate, y: side === 'top' ? rect.top : rect.bottom };
+    return {
+      ownerId: owner.id,
+      side,
+      port,
+      connect: {
+        x:
+          port.x +
+          (side === 'left' ? -TERMINAL_APPROACH_PX : side === 'right' ? TERMINAL_APPROACH_PX : 0),
+        y:
+          port.y +
+          (side === 'top' ? -TERMINAL_APPROACH_PX : side === 'bottom' ? TERMINAL_APPROACH_PX : 0),
+      },
+      rank: 0,
+    };
+  };
+  return { start: candidate(coordinates[0]), target: candidate(coordinates[1]) };
+}
+
+function sparseSelfLoopRoute(
+  plan: EdgeRoutePlan,
+  owner: Node,
+  result: GridLayoutResult,
+  context: GridRoutingContext,
+  searchWorkspace: RouterSearchWorkspace,
+  overlayScratch: EndpointOverlayScratch | undefined,
+  ownerSideCounts: Map<string, number>,
+  selfLoopCounts: Map<string, number>,
+  pairRoutes: readonly (readonly Point[])[],
+  options: GridRoutingOptions
+): { points: Point[]; side: GridSide; index: number } {
+  const containerId = owner.parentId ?? ROOT_CONTAINER_ID;
+  const fallbackReason = context.fallbackContainers.get(containerId) as
+    | GridRoutingFallbackReason
+    | undefined;
+  const legacyRoute = (): { points: Point[]; side: GridSide; index: number } =>
+    routeObstacleClearSelfLoop(owner, ownerSideCounts, selfLoopCounts, result);
+  if (fallbackReason) {
+    const legacy = legacyRoute();
+    recordFallback(context.metrics, fallbackReason, plan.edge.id, containerId);
+    if (
+      !validateSameContainerRoute(legacy.points, owner, owner, containerId, result) ||
+      !routeSatisfiesPairConstraints(legacy.points, pairRoutes)
+    ) {
+      if (context.metrics) {
+        context.metrics.fallbackValidationFailures++;
+      }
+      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${plan.edge.id}"`, {
+        edgeId: plan.edge.id,
+        reason: fallbackReason,
+      });
+    }
+    return legacy;
+  }
+  const topology = context.topologies.get(containerId);
+  if (!topology || !overlayScratch) {
+    throw gridError('GRID_ROUTE_NOT_FOUND', `Missing routing topology "${containerId}"`);
+  }
+  for (const side of orderedSelfLoopSides(owner, ownerSideCounts, selfLoopCounts)) {
+    const attachments = selfLoopAttachments(owner, side);
+    if (!attachments) {
+      continue;
+    }
+    const { start, target } = attachments;
+    try {
+      const overlay = buildEndpointRoutingOverlay(
+        topology,
+        start.connect,
+        target.connect,
+        context.metrics,
+        overlayScratch,
+        [
+          {
+            x: (start.connect.x + target.connect.x) / 2,
+            y: (start.connect.y + target.connect.y) / 2,
+          },
+        ]
+      );
+      const sourceId = overlay.pointVertexIds.get(routingPointKey(start.connect));
+      const targetId = overlay.pointVertexIds.get(routingPointKey(target.connect));
+      if (sourceId === undefined || targetId === undefined) {
+        throw new Error('Self-loop endpoint projection is missing from the routing overlay');
+      }
+      const orientation: GridOrientation = side === 'left' || side === 'right' ? 'H' : 'V';
+      const route = findShortestRoute(overlay, sourceId, targetId, {
+        metrics: context.metrics,
+        caps: {
+          ...options.searchCaps,
+          maxEstimatedBytes:
+            options.searchCaps?.maxEstimatedBytes ??
+            options.topologyCaps?.maxEstimatedBytes ??
+            DEFAULT_MAX_ESTIMATED_BYTES,
+        },
+        recordOutcome: false,
+        budget: context.searchBudget,
+        initialOrientation: orientation,
+        initialSide: side,
+        initialLength: TERMINAL_APPROACH_PX,
+        targetOrientation: orientation,
+        targetSide: side,
+        targetLength: TERMINAL_APPROACH_PX,
+        topologyValidated: true,
+        workspace: searchWorkspace,
+        estimatedBytesBase:
+          context.baseEstimatedBytes + overlay.estimatedBytes - topology.estimatedBytes,
+        arcAllowed: (from, to) => pairArcAllowed(from, to, pairRoutes),
+      });
+      if (!route) {
+        continue;
+      }
+      const points = normalizePolyline([start.port, ...route.points, target.port]).points;
+      if (
+        validateSameContainerRoute(points, owner, owner, containerId, result) &&
+        routeSatisfiesPairConstraints(points, pairRoutes)
+      ) {
+        return {
+          points,
+          side,
+          index: selfLoopCounts.get(`${owner.id}:${side}`) ?? 0,
+        };
+      }
+    } catch (error) {
+      if (!(error instanceof GridRoutingResourceLimitError)) {
+        throw error;
+      }
+      const legacy = legacyRoute();
+      recordFallback(context.metrics, error.reason, plan.edge.id, containerId);
+      if (
+        !validateSameContainerRoute(legacy.points, owner, owner, containerId, result) ||
+        !routeSatisfiesPairConstraints(legacy.points, pairRoutes)
+      ) {
+        if (context.metrics) {
+          context.metrics.fallbackValidationFailures++;
+        }
+        throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${plan.edge.id}"`, {
+          edgeId: plan.edge.id,
+          reason: error.reason,
+        });
+      }
+      return legacy;
+    }
+  }
+  if (context.metrics) {
+    context.metrics.routesImpossible++;
+  }
+  throw gridError('GRID_ROUTE_NOT_FOUND', `No distinct self-loop route for "${plan.edge.id}"`, {
+    edgeId: plan.edge.id,
+    nodeId: owner.id,
+  });
+}
+
 function sparseContainerSegment(
   edgeId: string,
   containerId: GridContainerId,
@@ -1382,7 +1781,8 @@ function sparseContainerSegment(
   context: GridRoutingContext,
   searchWorkspace: RouterSearchWorkspace,
   overlayScratch: EndpointOverlayScratch | undefined,
-  options: GridRoutingOptions
+  options: GridRoutingOptions,
+  pairRoutes: readonly (readonly Point[])[] = []
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(containerId) as
     | GridRoutingFallbackReason
@@ -1390,7 +1790,10 @@ function sparseContainerSegment(
   if (fallbackReason) {
     const legacy = legacyRoute();
     recordFallback(context.metrics, fallbackReason, edgeId, containerId);
-    if (!validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result)) {
+    if (
+      !validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result) ||
+      !routeSatisfiesPairConstraints(legacy, pairRoutes)
+    ) {
       if (context.metrics) {
         context.metrics.fallbackValidationFailures++;
       }
@@ -1450,6 +1853,8 @@ function sparseContainerSegment(
       topologyValidated: true,
       workspace: searchWorkspace,
       estimatedBytesBase: liveEstimatedBytes,
+      arcAllowed:
+        pairRoutes.length > 0 ? (from, to) => pairArcAllowed(from, to, pairRoutes) : undefined,
     });
     if (!route) {
       throw gridError(
@@ -1459,7 +1864,10 @@ function sparseContainerSegment(
       );
     }
     const points = normalizePolyline([start.port, ...route.points, end.port]).points;
-    if (!validateContainerSegment(points, start.ownerId, end.ownerId, containerId, result)) {
+    if (
+      !validateContainerSegment(points, start.ownerId, end.ownerId, containerId, result) ||
+      !routeSatisfiesPairConstraints(points, pairRoutes)
+    ) {
       throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid hierarchy route for "${edgeId}"`, {
         edgeId,
         containerId,
@@ -1472,7 +1880,10 @@ function sparseContainerSegment(
     }
     const legacy = legacyRoute();
     recordFallback(context.metrics, error.reason, edgeId, containerId);
-    if (!validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result)) {
+    if (
+      !validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result) ||
+      !routeSatisfiesPairConstraints(legacy, pairRoutes)
+    ) {
       if (context.metrics) {
         context.metrics.fallbackValidationFailures++;
       }
@@ -1518,8 +1929,7 @@ export function routeGridEdges(
       plan.source.chain.length === 1 &&
       plan.target.chain.length === 1 &&
       plan.source.finalKind === 'item' &&
-      plan.target.finalKind === 'item' &&
-      pairCounts.get(endpointPairKey(plan.edge)) === 1
+      plan.target.finalKind === 'item'
   );
   const endpointDemandsByOwner = new Map<string, EndpointDemandEntry[]>();
   for (const plan of eligiblePlans) {
@@ -1586,19 +1996,26 @@ export function routeGridEdges(
   });
   const demandCoords = assignDemandCoordinates(orderedPlans, result);
   const eligibleIds = new Set(eligiblePlans.map(({ edge }) => edge.id));
+  const hasIsolatedEndpoints = (plan: EdgeRoutePlan): boolean =>
+    (endpointIncidentCounts.get(plan.edge.start!) ?? 0) === plan.bundleSize &&
+    (endpointIncidentCounts.get(plan.edge.end!) ?? 0) === plan.bundleSize;
   const sparseHierarchyIds = new Set(
     plans
       .filter(
         (plan) =>
           !eligibleIds.has(plan.edge.id) &&
           plan.edge.start !== plan.edge.end &&
-          (endpointIncidentCounts.get(plan.edge.start!) ?? 0) === 1 &&
-          (endpointIncidentCounts.get(plan.edge.end!) ?? 0) === 1
+          hasIsolatedEndpoints(plan)
       )
       .map(({ edge }) => edge.id)
   );
   const routedContainerIds = plans
-    .filter((plan) => eligibleIds.has(plan.edge.id) || sparseHierarchyIds.has(plan.edge.id))
+    .filter(
+      (plan) =>
+        eligibleIds.has(plan.edge.id) ||
+        sparseHierarchyIds.has(plan.edge.id) ||
+        plan.edge.start === plan.edge.end
+    )
     .flatMap((plan) => [
       plan.lcaContainerId,
       ...plan.source.chain.slice(1).map(({ ownerId }) => ownerId),
@@ -1673,6 +2090,7 @@ export function routeGridEdges(
     ownerSideCounts.set(key, (ownerSideCounts.get(key) ?? 0) + 1);
   }
   const selfLoopCounts = new Map<string, number>();
+  const pairRoutes = new Map<string, Point[][]>();
 
   for (const plan of orderedPlans) {
     const edge = plan.edge;
@@ -1685,18 +2103,28 @@ export function routeGridEdges(
     }
 
     if (sourceNode.id === targetNode.id) {
-      const { points, side, index } = routeObstacleClearSelfLoop(
+      const committedPairRoutes = pairRoutes.get(plan.pairKey) ?? [];
+      const { points, side, index } = sparseSelfLoopRoute(
+        plan,
         sourceNode,
+        result,
+        context,
+        searchWorkspace,
+        endpointOverlayScratch.get(sourceNode.parentId ?? ROOT_CONTAINER_ID),
         ownerSideCounts,
         selfLoopCounts,
-        result
+        committedPairRoutes,
+        options
       );
       const countKey = `${sourceNode.id}:${side}`;
       selfLoopCounts.set(countKey, index + 1);
       edge.points = points;
       edge.curve = 'linear';
+      committedPairRoutes.push(points);
+      pairRoutes.set(plan.pairKey, committedPairRoutes);
+      (context.occupancy.routes as RouterPoint[][]).push(points);
       if (metrics && instrumentedRoutes) {
-        recordGridRoute(metrics, edge.id, points, instrumentedRoutes);
+        recordGridRoute(metrics, edge.id, points, instrumentedRoutes, 0, plan.laneOffset);
         instrumentedRoutes.push(points);
       }
       continue;
@@ -1741,7 +2169,8 @@ export function routeGridEdges(
           context,
           searchWorkspace,
           endpointOverlayScratch.get(to.ownerId),
-          options
+          options,
+          pairRoutes.get(plan.pairKey) ?? []
         )
       );
     }
@@ -1785,7 +2214,8 @@ export function routeGridEdges(
           context,
           searchWorkspace,
           endpointOverlayScratch.get(to.ownerId),
-          options
+          options,
+          pairRoutes.get(plan.pairKey) ?? []
         )
       );
     }
@@ -1876,7 +2306,8 @@ export function routeGridEdges(
           context,
           searchWorkspace,
           endpointOverlayScratch.get(plan.lcaContainerId)!,
-          options
+          options,
+          pairRoutes.get(plan.pairKey) ?? []
         )
       : useSparseHierarchy
         ? sparseContainerSegment(
@@ -1889,7 +2320,8 @@ export function routeGridEdges(
             context,
             searchWorkspace,
             endpointOverlayScratch.get(plan.lcaContainerId),
-            options
+            options,
+            pairRoutes.get(plan.pairKey) ?? []
           )
         : legacyRoute();
 
@@ -1898,11 +2330,29 @@ export function routeGridEdges(
       lcaPoints,
       ...targetChains.reverse().map((chain) => reversePoints(chain)),
     ]);
+    const committedPairRoutes = pairRoutes.get(plan.pairKey) ?? [];
+    if (plan.bundleSize > 1 && !routeSatisfiesPairConstraints(points, committedPairRoutes)) {
+      if (metrics) {
+        metrics.routesImpossible++;
+      }
+      throw gridError('GRID_ROUTE_NOT_FOUND', `No distinct lane route for "${edge.id}"`, {
+        edgeId: edge.id,
+      });
+    }
     edge.points = points;
     edge.curve = 'linear';
+    committedPairRoutes.push(points);
+    pairRoutes.set(plan.pairKey, committedPairRoutes);
     if (metrics && instrumentedRoutes) {
       const boundaryTransitionCount = plan.source.chain.length + plan.target.chain.length - 2;
-      recordGridRoute(metrics, edge.id, points, instrumentedRoutes, boundaryTransitionCount);
+      recordGridRoute(
+        metrics,
+        edge.id,
+        points,
+        instrumentedRoutes,
+        boundaryTransitionCount,
+        plan.laneOffset
+      );
       instrumentedRoutes.push(points);
     }
   }
