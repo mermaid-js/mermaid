@@ -1217,6 +1217,32 @@ function validateContainerSegment(
   return true;
 }
 
+function validatedCompatibilitySegment(
+  edgeId: string,
+  containerId: GridContainerId,
+  start: SegmentAttachment,
+  end: SegmentAttachment,
+  route: () => Point[],
+  result: GridLayoutResult,
+  metrics?: GridRoutingInstrumentation
+): Point[] {
+  const points = route();
+  if (metrics) {
+    metrics.compatibilitySegments++;
+  }
+  if (validateContainerSegment(points, start.ownerId, end.ownerId, containerId, result)) {
+    return points;
+  }
+  if (metrics) {
+    metrics.compatibilityValidationFailures++;
+    metrics.routesImpossible++;
+  }
+  throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid compatibility route for "${edgeId}"`, {
+    edgeId,
+    containerId,
+  });
+}
+
 function routeLength(points: readonly Point[]): number {
   return normalizePolyline([...points]).segments.reduce(
     (total, segment) =>
@@ -2009,13 +2035,74 @@ export function routeGridEdges(
           (target.isGroup && isAncestorGroup(target.id, source, result.forest.nodeById)))
     );
   };
+  const compatibilityPlanIsValid = (plan: EdgeRoutePlan): boolean => {
+    const segmentIsValid = (
+      containerId: GridContainerId,
+      start: SegmentAttachment,
+      end: SegmentAttachment
+    ): boolean =>
+      validateContainerSegment(
+        routeWithinContainer(containerId, result, start, end, plan.laneIndex),
+        start.ownerId,
+        end.ownerId,
+        containerId,
+        result
+      );
+    for (const chain of [plan.source.chain, plan.target.chain]) {
+      for (let index = 0; index < chain.length - 1; index++) {
+        const from = chain[index];
+        const to = chain[index + 1];
+        const start: SegmentAttachment = {
+          ownerId: from.ownerId,
+          ...itemAttachment(
+            from.ownerId,
+            from.side,
+            from.demandKey,
+            to.ownerId,
+            result,
+            demandCoords
+          ),
+        };
+        const end: SegmentAttachment = {
+          ownerId: to.ownerId,
+          ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
+        };
+        if (!segmentIsValid(to.ownerId, start, end)) {
+          return false;
+        }
+      }
+    }
+    const sourceFinal = plan.source.chain.at(-1)!;
+    const targetFinal = plan.target.chain.at(-1)!;
+    const finalAttachment = (
+      endpoint: typeof plan.source,
+      final: (typeof plan.source.chain)[number]
+    ): SegmentAttachment => ({
+      ownerId: final.ownerId,
+      ...(endpoint.finalKind === 'boundary'
+        ? boundaryAttachment(plan.lcaContainerId, final.side, final.demandKey, result, demandCoords)
+        : itemAttachment(
+            final.ownerId,
+            final.side,
+            final.demandKey,
+            plan.lcaContainerId,
+            result,
+            demandCoords
+          )),
+    });
+    return segmentIsValid(
+      plan.lcaContainerId,
+      finalAttachment(plan.source, sourceFinal),
+      finalAttachment(plan.target, targetFinal)
+    );
+  };
   const sparseHierarchyIds = new Set(
     plans
       .filter(
         (plan) =>
           !eligibleIds.has(plan.edge.id) &&
           plan.edge.start !== plan.edge.end &&
-          hasIsolatedEndpoints(plan)
+          (hasIsolatedEndpoints(plan) || !compatibilityPlanIsValid(plan))
       )
       .map(({ edge }) => edge.id)
   );
@@ -2149,20 +2236,30 @@ export function routeGridEdges(
       const from = plan.source.chain[index];
       const to = plan.source.chain[index + 1];
       if (!sparseHierarchyIds.has(edge.id)) {
-        sourceChains.push(
-          routeWithinContainer(
+        const start: SegmentAttachment = {
+          ownerId: from.ownerId,
+          ...itemAttachment(
+            from.ownerId,
+            from.side,
+            from.demandKey,
             to.ownerId,
             result,
-            itemAttachment(
-              from.ownerId,
-              from.side,
-              from.demandKey,
-              to.ownerId,
-              result,
-              demandCoords
-            ),
-            boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-            plan.laneIndex
+            demandCoords
+          ),
+        };
+        const end: SegmentAttachment = {
+          ownerId: to.ownerId,
+          ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
+        };
+        sourceChains.push(
+          validatedCompatibilitySegment(
+            edge.id,
+            to.ownerId,
+            start,
+            end,
+            () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
+            result,
+            metrics
           )
         );
         continue;
@@ -2194,20 +2291,30 @@ export function routeGridEdges(
       const from = plan.target.chain[index];
       const to = plan.target.chain[index + 1];
       if (!sparseHierarchyIds.has(edge.id)) {
-        targetChains.push(
-          routeWithinContainer(
+        const start: SegmentAttachment = {
+          ownerId: from.ownerId,
+          ...itemAttachment(
+            from.ownerId,
+            from.side,
+            from.demandKey,
             to.ownerId,
             result,
-            itemAttachment(
-              from.ownerId,
-              from.side,
-              from.demandKey,
-              to.ownerId,
-              result,
-              demandCoords
-            ),
-            boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-            plan.laneIndex
+            demandCoords
+          ),
+        };
+        const end: SegmentAttachment = {
+          ownerId: to.ownerId,
+          ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
+        };
+        targetChains.push(
+          validatedCompatibilitySegment(
+            edge.id,
+            to.ownerId,
+            start,
+            end,
+            () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
+            result,
+            metrics
           )
         );
         continue;
@@ -2337,7 +2444,15 @@ export function routeGridEdges(
             options,
             pairRoutes.get(plan.pairKey) ?? []
           )
-        : legacyRoute();
+        : validatedCompatibilitySegment(
+            edge.id,
+            plan.lcaContainerId,
+            lcaStart,
+            lcaEnd,
+            legacyRoute,
+            result,
+            metrics
+          );
 
     const points = combinePointChains([
       ...sourceChains,

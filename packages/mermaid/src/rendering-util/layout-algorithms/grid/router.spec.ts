@@ -705,6 +705,48 @@ describe('grid router', () => {
     expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThanOrEqual(2);
   });
 
+  it('uses sparse hierarchy routing when mixed-demand compatibility crosses stacked items', () => {
+    const data = baseLayout(
+      [
+        group('group', 'Group', { row: 1, column: 1 }),
+        leaf('top', 70, 32, { row: 1, column: 1 }, 'group'),
+        leaf('middle', 90, 42, { row: 1, column: 1 }, 'group'),
+        leaf('bottom', 70, 32, { row: 1, column: 1 }, 'group'),
+        leaf('outside', 70, 32, { row: 1, column: 2 }),
+      ],
+      [edge('hierarchy-edge', 'top', 'outside'), edge('incident-edge', 'top', 'middle')],
+      { cellGap: 20, columnGap: 80 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics);
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThanOrEqual(2);
+    expect(metrics.compatibilityValidationFailures).toBe(0);
+    expect(metrics.routesImpossible).toBe(0);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+  });
+
+  it('fails safely when the exact vertical mixed-demand stack has no valid sparse route', () => {
+    const data = baseLayout(
+      [
+        group('group', 'Group', { row: 1, column: 1 }),
+        leaf('top', 70, 32, { row: 1, column: 1 }, 'group'),
+        leaf('middle', 90, 42, { row: 1, column: 1 }, 'group'),
+        leaf('bottom', 70, 32, { row: 1, column: 1 }, 'group'),
+        leaf('outside', 70, 32, { row: 2, column: 1 }),
+      ],
+      [edge('hierarchy-edge', 'top', 'outside'), edge('incident-edge', 'top', 'middle')],
+      { cellGap: 20, rowGap: 80 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    expect(() => runGridLayoutCore(data, metrics)).toThrowError(/GRID_ROUTE_NOT_FOUND/);
+    expect(metrics.compatibilityValidationFailures).toBe(0);
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+  });
+
   it.each([
     {
       name: 'nested siblings',

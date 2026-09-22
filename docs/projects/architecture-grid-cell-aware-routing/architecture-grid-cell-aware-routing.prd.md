@@ -105,7 +105,7 @@ requirements), `FM-` (failure modes), `AC-` (acceptance criteria), and `RD-`
 | Pair bundle       | All parallel and reverse edges sharing one unordered endpoint pair.                                                                                 |
 | Occupancy         | Segments from already committed valid routes, stored separately from base topology.                                                                 |
 | Path-complete     | If a valid orthogonal route exists under this document's rectangular obstacle, portal, clearance, and terminal-channel model, a graph route exists. |
-| Legacy router     | The current global-corridor implementation, retained temporarily behind enumerated resource-limit fallback only.                                    |
+| Legacy router     | The global-corridor implementation, retained temporarily for validated compatibility segments and enumerated resource-limit fallback.                |
 
 ## 3. Solution Architecture
 
@@ -1272,17 +1272,25 @@ the current browser, so their accepted deltas include the measurement migration
 rather than claiming an input-identical router comparison.
 
 ITEM-023 is blocked and the legacy router is retained. Mixed-demand hierarchy
-segments still use `routeWithinContainer()`. A trial that moved all such
-segments to sparse routing made `routing-group-member` invalid with
-`edge-shared-subpath` and crossings; the accepted narrow fix moves only
-ancestor-edge LCA segments to sparse routing. The `<500 ms` target, the required
-10,000 generated nesting/label/loop/bundle fallback sweep, and two successive
-release-cycle or release-branch validations are also absent. Therefore the
-Section 9 removal gates do not hold even though current DDLT and benchmark runs
-record zero fallback and measured peaks remain below 75% of deterministic caps.
+segments first preflight `routeWithinContainer()`. Valid compatibility segments
+are counted separately from resource-limit fallbacks; any compatibility plan
+that intersects measured obstacles is promoted to sparse hierarchy routing, and
+every committed compatibility segment is validated again. A trial that moved
+all mixed-demand segments unconditionally to sparse routing made
+`routing-group-member` invalid with `edge-shared-subpath` and crossings. The
+`<500 ms` target, the required 10,000 generated
+nesting/label/loop/bundle fallback sweep, and two successive release-cycle or
+release-branch validations are also absent. Therefore the Section 9 removal
+gates do not hold even though current DDLT and benchmark runs record zero
+resource-limit fallback and measured peaks remain below 75% of deterministic
+caps.
 
 ## 15. Change Log
 
+- 2026-09-22: Added geometric preflight and commit-time validation for retained
+  compatibility segments. Mixed-demand hierarchy plans whose legacy geometry
+  intersects an obstacle now use sparse hierarchy routing instead, and
+  compatibility usage is instrumented separately from resource-limit fallback.
 - 2026-09-22: Completed EPIC-007 ITEM-020 and ITEM-022, completed ITEM-021
   under the explicit performance deferral while retaining NFR-002 and AC-011 as
   unmet, and blocked ITEM-023 because mixed-demand hierarchy still relies on

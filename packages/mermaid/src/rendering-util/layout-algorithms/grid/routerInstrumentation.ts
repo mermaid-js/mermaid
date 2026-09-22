@@ -51,6 +51,8 @@ export interface GridRoutingInstrumentation {
   resourceLimitFallbacks: number;
   fallbackReasons: Record<GridRoutingFallbackReason, number>;
   fallbackValidationFailures: number;
+  compatibilitySegments: number;
+  compatibilityValidationFailures: number;
   routeLength: number;
   bendCount: number;
   crossingCount: number;
@@ -88,6 +90,8 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
       search_state_cap: 0,
     },
     fallbackValidationFailures: 0,
+    compatibilitySegments: 0,
+    compatibilityValidationFailures: 0,
     routeLength: 0,
     bendCount: 0,
     crossingCount: 0,

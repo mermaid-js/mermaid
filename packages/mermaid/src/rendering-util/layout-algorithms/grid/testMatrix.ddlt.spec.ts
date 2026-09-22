@@ -156,6 +156,8 @@ async function characterizeFixture(name: string) {
     crossings: validation.breakdown.crossings,
     fallbacks: metrics.resourceLimitFallbacks,
     fallbackValidationFailures: metrics.fallbackValidationFailures,
+    compatibilitySegments: metrics.compatibilitySegments,
+    compatibilityValidationFailures: metrics.compatibilityValidationFailures,
     routeSignature,
   };
 }
@@ -256,6 +258,8 @@ describe('grid DDLT matrix fixtures', () => {
       [
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -266,6 +270,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -276,6 +282,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 16,
+          "compatibilitySegments": 4,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -286,6 +294,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 6,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -296,6 +306,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 4,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -331,6 +343,8 @@ describe('grid DDLT matrix fixtures', () => {
       [
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -341,6 +355,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -351,6 +367,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -361,6 +379,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 4,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -371,6 +391,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 16,
+          "compatibilitySegments": 4,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -381,6 +403,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 12,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -391,6 +415,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 6,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -401,6 +427,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 4,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -411,6 +439,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 4,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -421,6 +451,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -431,6 +463,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
@@ -441,6 +475,8 @@ describe('grid DDLT matrix fixtures', () => {
         },
         {
           "bends": 0,
+          "compatibilitySegments": 0,
+          "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
