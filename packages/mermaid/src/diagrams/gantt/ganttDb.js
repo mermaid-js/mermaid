@@ -437,12 +437,18 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   if (untilStatement !== null) {
     const untilTarget = untilStatement.groups.target.trim();
 
-    const untilDate = dayjs(untilTarget, dateFormat.trim(), true);
+    let untilDate = dayjs(untilTarget, dateFormat.trim(), true);
     // For `until <taskId|endDate>`, `getEndDate` checks `<endDate>` first using `dateFormat`.
     // If `untilTarget` matches `dateFormat`, it is interpreted as an end date.
     // That means a task ID that also matches the `dateFormat` pattern is treated as a date.
     // This edge case is unlikely in practice, and this date-first order is intentional.
     if (untilDate.isValid()) {
+      // An explicit `until <endDate>` is this task's own end date, so it honours
+      // `inclusiveEndDates` like any other end date. `until <taskId>` resolves to the
+      // referenced task's start instead, which is a boundary and is never adjusted.
+      if (inclusive) {
+        untilDate = untilDate.add(1, 'd');
+      }
       return untilDate.toDate();
     }
 

@@ -221,6 +221,39 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].task).toEqual('task1');
   });
 
+  it('should apply inclusiveEndDates to an explicit until end date', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.enableInclusiveEndDates();
+    ganttDb.addSection('sec1');
+    ganttDb.addTask('task1', 'id1,3d,until 2024-01-05');
+    // Forward equivalent: same duration, same inclusive end date.
+    ganttDb.addTask('task2', 'id2,2024-01-03,3d');
+
+    const tasks = ganttDb.getTasks();
+
+    // `until <endDate>` is this task's own end date, so it is extended like any other.
+    expect(tasks[0].startTime).toEqual(new Date(2024, 0, 3));
+    expect(tasks[0].endTime).toEqual(new Date(2024, 0, 6));
+    // Backward scheduling lands on the same span as the forward equivalent.
+    expect(tasks[1].startTime).toEqual(tasks[0].startTime);
+    expect(tasks[1].endTime).toEqual(tasks[0].endTime);
+  });
+
+  it('should not apply inclusiveEndDates to an until task id boundary', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.enableInclusiveEndDates();
+    ganttDb.addSection('sec1');
+    ganttDb.addTask('task1', 'id1,7d,until id2');
+    ganttDb.addTask('task2', 'id2,2013-02-01,0d');
+
+    const tasks = ganttDb.getTasks();
+
+    // `until <taskId>` resolves to the referenced task's start, a boundary, so it is
+    // never shifted by inclusiveEndDates.
+    expect(tasks[0].endTime).toEqual(new Date(2013, 1, 1));
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 25));
+  });
+
   it('should handle relative start date based on multiple id', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('sec1');
