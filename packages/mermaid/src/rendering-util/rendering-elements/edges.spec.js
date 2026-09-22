@@ -17,6 +17,7 @@ import {
   resolveEdgeCornerRadius,
   resolveEdgeCurveType,
 } from './edges.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
 
 describe('resolveEdgeCurveType', () => {
@@ -167,5 +168,51 @@ describe('insertEdge swimlane endpoint clipping', () => {
 
     expect(tail.intersect).toHaveBeenCalledWith({ x: 10, y: 14 });
     expect(renderedPoints[0]).toEqual(clippedStart);
+  });
+});
+
+describe('insertEdge grid endpoint geometry', () => {
+  it('preserves router-owned ports and strictly orthogonal linear segments', () => {
+    vi.mocked(getConfig).mockReturnValue({
+      layout: 'grid',
+      flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+      state: { arrowMarkerAbsolute: false },
+      handDrawnSeed: 0,
+    });
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const points = [
+      { x: 130, y: 110 },
+      { x: 100, y: 110 },
+      { x: 100, y: 34 },
+      { x: 80, y: 34 },
+    ];
+    const edge = {
+      id: 'v2p-v1',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'linear',
+      look: 'classic',
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'arrow_point',
+      points,
+    };
+    const tail = {
+      intersect: vi.fn(() => ({ x: 130, y: 101.25 })),
+    };
+    const head = {
+      intersect: vi.fn(() => ({ x: 80, y: 29.33 })),
+    };
+
+    insertEdge(svg, edge, null, 'flowchart-v2', tail, head, 'diagram');
+
+    const path = svg.select('path');
+    expect(tail.intersect).not.toHaveBeenCalled();
+    expect(head.intersect).not.toHaveBeenCalled();
+    expect(JSON.parse(atob(path.attr('data-points')))).toEqual(points);
+    expect(path.attr('d')).toBe('M130,110L100,110L100,34L84,34');
   });
 });

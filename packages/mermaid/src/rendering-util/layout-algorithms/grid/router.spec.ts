@@ -495,6 +495,17 @@ describe('grid router', () => {
       { x: 340, y: 20 },
       { x: 390, y: 20 },
     ]);
+    const preview = data.nodes.find(({ id }) => id === 'v2p')!;
+    const previewToV1 = data.edges.find(({ id }) => id === 'v2p-v1')!;
+    expect(previewToV1.points?.[0]).toEqual({
+      x: (preview.x ?? 0) - (preview.width ?? 0) / 2,
+      y: preview.y,
+    });
+    expect(
+      normalizePolyline(previewToV1.points ?? []).segments.every(
+        ({ orientation }) => orientation === 'H' || orientation === 'V'
+      )
+    ).toBe(true);
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
   });
 

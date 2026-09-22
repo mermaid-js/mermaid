@@ -624,11 +624,10 @@ export const insertEdge = function (
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
 
-  // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
-  // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
-  // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
-  // clipping below, so their edge ports are unaffected by swimlanes.
-  if (layout === 'swimlane' || layout === 'grid') {
+  // Grid routes already terminate at their measured node boundaries. Re-clipping
+  // them from the node center would turn their terminal segments diagonal.
+  // Swimlanes still needs its dedicated orthogonal clipping path.
+  if (layout === 'swimlane') {
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
@@ -663,8 +662,8 @@ export const insertEdge = function (
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipIntersect) {
-    // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
+  } else if (layout !== 'grid' && head.intersect && tail.intersect && !skipIntersect) {
+    // Original clipping for layouts that do not own their final boundary ports.
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
@@ -691,9 +690,10 @@ export const insertEdge = function (
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
-  // Apply fixCorners for non-rounded curves to pre-round right-angle corners
-  // (rounded curve type uses generateRoundedPath instead)
-  if (edgeCurveType !== 'rounded') {
+  // Grid routes already contain their final orthogonal geometry. Rounded grid
+  // edges are handled by generateRoundedPath below; linear grid edges must not
+  // receive the diagonal corner transitions added by fixCorners.
+  if (edgeCurveType !== 'rounded' && !(layout === 'grid' && edgeCurveType === 'linear')) {
     lineData = fixCorners(lineData);
   }
   let curve = curveLinear;

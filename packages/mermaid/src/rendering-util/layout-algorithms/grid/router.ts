@@ -1030,10 +1030,12 @@ function preferredEndpointCoordinates(
     return new Map();
   }
   const sorted = [...demands].sort((a, b) => compareEndpointDemands(a, b, side));
-  if (
-    sorted.length > 1 &&
-    (interval.high - interval.low) / (sorted.length - 1) < MIN_PORT_SEPARATION_PX
-  ) {
+  if (sorted.length === 1) {
+    const rect = rectForNode(owner);
+    const center = side === 'left' || side === 'right' ? rect.cy : rect.cx;
+    return new Map([[sorted[0], Math.max(interval.low, Math.min(interval.high, center))]]);
+  }
+  if ((interval.high - interval.low) / (sorted.length - 1) < MIN_PORT_SEPARATION_PX) {
     return new Map();
   }
   const desired = sorted.map(({ opposite }) => {
