@@ -111,8 +111,11 @@ const getSelfLoopSide = (graph, node, segments, originalNodeId, rankdir) => {
   return getDefaultSelfLoopSide(rankdir);
 };
 
+// Extra distance applied per additional self-loop stacked on the same side of a node.
+const SELF_LOOP_STACK_GAP = 12;
+
 // Build a compact loop around the node instead of rendering dagre's long dummy-edge route.
-const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0) => {
+const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0, loopIndex = 0) => {
   const x = node.x;
   const y = node.y - yOffset;
   const halfWidth = node.width / 2;
@@ -121,45 +124,61 @@ const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0) => {
   const span = clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan);
   const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48);
 
+  let points;
   switch (side) {
     case 'bottom': {
       const bottom = y + halfHeight;
-      return [
+      points = [
         { x: x - span / 2, y: bottom },
         { x: x - span / 2, y: bottom + depth },
         { x: x + span / 2, y: bottom + depth },
         { x: x + span / 2, y: bottom },
       ];
+      break;
     }
     case 'right': {
       const right = x + halfWidth;
-      return [
+      points = [
         { x: right, y: y - span / 2 },
         { x: right + depth, y: y - span / 2 },
         { x: right + depth, y: y + span / 2 },
         { x: right, y: y + span / 2 },
       ];
+      break;
     }
     case 'left': {
       const left = x - halfWidth;
-      return [
+      points = [
         { x: left, y: y - span / 2 },
         { x: left - depth, y: y - span / 2 },
         { x: left - depth, y: y + span / 2 },
         { x: left, y: y + span / 2 },
       ];
+      break;
     }
     case 'top':
     default: {
       const top = y - halfHeight;
-      return [
+      points = [
         { x: x - span / 2, y: top },
         { x: x - span / 2, y: top - depth },
         { x: x + span / 2, y: top - depth },
         { x: x + span / 2, y: top },
       ];
+      break;
     }
   }
+
+  // A node can carry several self-loops on the same side. Push each additional
+  // loop further out so they don't render exactly on top of each other (see #6888).
+  if (loopIndex > 0) {
+    const shift = loopIndex * SELF_LOOP_STACK_GAP;
+    const dx = side === 'right' ? shift : side === 'left' ? -shift : 0;
+    const dy = side === 'bottom' ? shift : -shift;
+    points = points.map((point) => ({ x: point.x + dx, y: point.y + dy }));
+  }
+
+  return points;
 };
 
 const getSelfLoopLabelPosition = (node, points, side = 'top', yOffset = 0, label = {}) => {
@@ -201,6 +220,7 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     }
   });
 
+  const selfLoopCountsByNodeAndSide = new Map();
   selfLoopEdgeGroups.forEach((segments) => {
     if (segments.length !== 3) {
       // Unexpected self-loop state: preserve the old rendering behavior rather than dropping edges.
@@ -226,7 +246,10 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     };
     // Dagre uses the dummy route for layout; the SVG output should still be one logical edge.
     const side = getSelfLoopSide(graph, node, segments, originalEdge.start, rankdir);
-    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0);
+    const sideKey = `${originalEdge.start}|${side}`;
+    const loopIndex = selfLoopCountsByNodeAndSide.get(sideKey) ?? 0;
+    selfLoopCountsByNodeAndSide.set(sideKey, loopIndex + 1);
+    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0, loopIndex);
     const labelPosition = getSelfLoopLabelPosition(node, points, side, yOffset, label);
     const mergedEdge = {
       ...middleSegment.edge,
@@ -686,8 +709,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
     if (edge.start === edge.end) {
       // Keep the dagre dummy-node workaround for layout, then merge these segments before rendering.
       const nodeId = edge.start;
-      const specialId1 = nodeId + '---' + nodeId + '---1';
-      const specialId2 = nodeId + '---' + nodeId + '---2';
+      // Derive the dummy ids from the edge id, not just the node id: a node can
+      // carry several self-loops, and graphlib would silently overwrite the
+      // first loop's segments when the ids collide (see #6888).
+      const specialId1 = nodeId + '---' + edge.id + '---1';
+      const specialId2 = nodeId + '---' + edge.id + '---2';
       const node = graph.node(nodeId);
       graph.setNode(specialId1, {
         domId: specialId1,
@@ -734,14 +760,14 @@ export const prepareLayoutForDagre = (data4Layout) => {
       edge1.endLabelLeft = '';
       edge1.endLabelRight = ''; // defensive
       edge1.startLabelLeft = ''; // defensive
-      edge1.id = nodeId + '-cyclic-special-1';
+      edge1.id = edge.id + '-cyclic-special-1';
       edgeMid.startLabelRight = '';
       edgeMid.startLabelLeft = ''; // defensive
       edgeMid.endLabelLeft = '';
       edgeMid.endLabelRight = ''; // defensive
       edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
-      edgeMid.id = nodeId + '-cyclic-special-mid';
+      edgeMid.id = edge.id + '-cyclic-special-mid';
       edge2.label = '';
       edge2.startLabelRight = '';
       edge2.startLabelLeft = ''; // defensive
@@ -750,11 +776,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
         edge1.fromCluster = nodeId;
         edge2.toCluster = nodeId;
       }
-      edge2.id = nodeId + '-cyclic-special-2';
+      edge2.id = edge.id + '-cyclic-special-2';
       edge2.arrowTypeStart = 'none';
-      graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
-      graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
-      graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyclic-special-2');
+      graph.setEdge(nodeId, specialId1, edge1, edge.id + '-cyclic-special-0');
+      graph.setEdge(specialId1, specialId2, edgeMid, edge.id + '-cyclic-special-1');
+      graph.setEdge(specialId2, nodeId, edge2, edge.id + '-cyclic-special-2');
     } else {
       graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
     }
