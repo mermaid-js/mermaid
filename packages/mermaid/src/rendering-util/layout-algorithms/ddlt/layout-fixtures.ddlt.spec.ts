@@ -5,7 +5,7 @@ import { discoverLayoutTestFixtures } from './discoverFixtures.js';
 import { loadDdltFixture } from './loadDdltFixture.js';
 
 const SWIMLANE_TOTAL_SCORE_WITH_10_NODE_PLACEMENT_BASELINE = 11754;
-const GRID_TOTAL_SCORE_BASELINE = 9950;
+const GRID_TOTAL_SCORE_BASELINE = 10980;
 
 describe('DDLT layout-test fixture sweep', () => {
   it('aggregate validateLayout report — swimlanes', { timeout: 20_000 }, async () => {
