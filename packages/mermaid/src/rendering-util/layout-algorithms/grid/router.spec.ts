@@ -780,6 +780,30 @@ describe('grid router', () => {
     expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThanOrEqual(2);
   });
 
+  it('routes hierarchy edges to a root sibling in the same stacked cell', () => {
+    const data = baseLayout(
+      [
+        group('G', 'Group One', { row: 1, column: 1 }),
+        leaf('A', 80, 40, { row: 1, column: 1 }, 'G'),
+        leaf('B', 80, 40, { row: 2, column: 1 }, 'G'),
+        leaf('C', 80, 40, { row: 1, column: 1 }),
+      ],
+      [edge('A-to-C', 'A', 'C'), edge('B-to-C', 'B', 'C')]
+    );
+
+    runGridLayoutCore(data);
+
+    expect(data.edges.every(({ points }) => (points?.length ?? 0) >= 2)).toBe(true);
+    expect(validateLayout(data).issues).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ type: 'edge-missing-points' }),
+        expect.objectContaining({ type: 'edge-non-orthogonal' }),
+        expect.objectContaining({ type: 'edge-intersects-obstacle' }),
+        expect.objectContaining({ type: 'edge-endpoint-inside-node' }),
+      ])
+    );
+  });
+
   it('uses sparse hierarchy routing when mixed-demand compatibility crosses stacked items', () => {
     const data = baseLayout(
       [
@@ -803,7 +827,7 @@ describe('grid router', () => {
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
-  it('fails safely when the exact vertical mixed-demand stack has no valid sparse route', () => {
+  it('routes the exact vertical mixed-demand stack through local stack corridors', () => {
     const data = baseLayout(
       [
         group('group', 'Group', { row: 1, column: 1 }),
@@ -817,7 +841,17 @@ describe('grid router', () => {
     );
     const metrics = createGridRoutingInstrumentation();
 
-    expect(() => runGridLayoutCore(data, metrics)).toThrowError(/GRID_ROUTE_NOT_FOUND/);
+    runGridLayoutCore(data, metrics);
+
+    expect(data.edges.every(({ points }) => (points?.length ?? 0) >= 2)).toBe(true);
+    expect(validateLayout(data).issues).toEqual(
+      expect.not.arrayContaining([
+        expect.objectContaining({ type: 'edge-missing-points' }),
+        expect.objectContaining({ type: 'edge-non-orthogonal' }),
+        expect.objectContaining({ type: 'edge-intersects-obstacle' }),
+        expect.objectContaining({ type: 'edge-endpoint-inside-node' }),
+      ])
+    );
     expect(metrics.compatibilityValidationFailures).toBe(0);
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });

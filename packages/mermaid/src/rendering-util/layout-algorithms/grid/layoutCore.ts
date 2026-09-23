@@ -172,13 +172,35 @@ function layoutContainer(
     const stackTop = cellTop + (cellHeight - cell.height) * verticalFactor;
 
     let itemTop = stackTop;
-    for (const placement of cell.items) {
+    for (const [itemIndex, placement] of cell.items.entries()) {
       const { width, height } = measureChild(placement.item);
       const horizontalFactor =
         placement.horizontalAlign === 'left' ? 0 : placement.horizontalAlign === 'right' ? 1 : 0.5;
       const itemLeft = cellLeft + (cellWidth - width) * horizontalFactor;
       placement.item.x = itemLeft + width / 2;
       placement.item.y = itemTop + height / 2;
+      const topCorridorY =
+        itemIndex > 0
+          ? itemTop - config.cellGap / 2
+          : cell.row === firstRow
+            ? outerTopCorridor
+            : ([...horizontalCorridors]
+                .filter((value) => value < cellTop)
+                .sort((a, b) => b - a)[0] ?? outerTopCorridor);
+      const bottomCorridorY =
+        itemIndex < cell.items.length - 1
+          ? itemTop + height + config.cellGap / 2
+          : cell.row === lastRow
+            ? outerBottomCorridor
+            : ([...horizontalCorridors]
+                .filter((value) => value > cellTop + cellHeight)
+                .sort((a, b) => a - b)[0] ?? outerBottomCorridor);
+      if (itemIndex > 0) {
+        horizontalCorridors.add(topCorridorY);
+      }
+      if (itemIndex < cell.items.length - 1) {
+        horizontalCorridors.add(bottomCorridorY);
+      }
 
       itemMeta.set(placement.item.id, {
         containerId,
@@ -200,18 +222,8 @@ function layoutContainer(
             : ([...verticalCorridors]
                 .filter((value) => value > cellLeft + cellWidth)
                 .sort((a, b) => a - b)[0] ?? outerRightCorridor),
-        topCorridorY:
-          cell.row === firstRow
-            ? outerTopCorridor
-            : ([...horizontalCorridors]
-                .filter((value) => value < cellTop)
-                .sort((a, b) => b - a)[0] ?? outerTopCorridor),
-        bottomCorridorY:
-          cell.row === lastRow
-            ? outerBottomCorridor
-            : ([...horizontalCorridors]
-                .filter((value) => value > cellTop + cellHeight)
-                .sort((a, b) => a - b)[0] ?? outerBottomCorridor),
+        topCorridorY,
+        bottomCorridorY,
       });
 
       itemTop += height + config.cellGap;
