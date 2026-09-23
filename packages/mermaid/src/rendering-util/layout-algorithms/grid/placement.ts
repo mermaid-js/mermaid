@@ -154,9 +154,7 @@ export function validateGridPlacementMap(
   }
   for (const [key] of config.placements) {
     if (!knownIds.has(key)) {
-      throw gridError('GRID_UNKNOWN_NODE', `Unknown grid placement target "${key}"`, {
-        nodeId: key,
-      });
+      log.warn(GRID_LOG_PREFIX, `Ignoring grid placement for unknown target "${key}"`);
     }
   }
 }

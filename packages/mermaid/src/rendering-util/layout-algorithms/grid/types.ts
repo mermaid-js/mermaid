@@ -242,7 +242,6 @@ export interface GridError extends Error {
 export type GridErrorCode =
   | 'GRID_INVALID_COORDINATE'
   | 'GRID_CELL_ALIGNMENT_CONFLICT'
-  | 'GRID_UNKNOWN_NODE'
   | 'GRID_INVALID_CONTAINMENT'
   | 'GRID_MISSING_MEASUREMENT'
   | 'GRID_MISSING_ENDPOINT'

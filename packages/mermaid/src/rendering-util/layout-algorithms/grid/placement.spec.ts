@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { log } from '../../../logger.js';
 import type { LayoutData, Node } from '../../types.js';
 import { readGridConfig, resolveGridPlacements, validateGridPlacementMap } from './placement.js';
 
@@ -98,7 +99,7 @@ describe('grid placement', () => {
     });
   });
 
-  it('throws for invalid coordinates, conflicting stack alignment, and unknown placement ids', () => {
+  it('throws for invalid coordinates and conflicting stack alignment', () => {
     const items = [node('bad', { row: 0 })];
     const sourceOrder = new Map([['bad', 0]]);
     const gridConfig = readGridConfig({
@@ -118,7 +119,9 @@ describe('grid placement', () => {
     expect(() => resolveGridPlacements(conflictItems, conflictOrder, gridConfig)).toThrow(
       /GRID_CELL_ALIGNMENT_CONFLICT/
     );
+  });
 
+  it('ignores and warns about unknown placement ids', () => {
     const placementConfig = readGridConfig({
       nodes: [],
       edges: [],
@@ -128,9 +131,14 @@ describe('grid placement', () => {
         },
       }),
     } as LayoutData);
-    expect(() => validateGridPlacementMap([node('known')], placementConfig)).toThrow(
-      /GRID_UNKNOWN_NODE/
+
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    expect(() => validateGridPlacementMap([node('known')], placementConfig)).not.toThrow();
+    expect(warn).toHaveBeenCalledWith(
+      '[grid]',
+      'Ignoring grid placement for unknown target "unknown"'
     );
+    warn.mockRestore();
   });
 
   it('rejects explicit null coordinates instead of treating them as omitted', () => {

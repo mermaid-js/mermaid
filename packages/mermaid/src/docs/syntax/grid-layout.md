@@ -71,6 +71,9 @@ flowchart TB
 
 The placement-map keys are the emitted node ids from the diagram database. Flowchart and agentflow ids are usually the ids you author directly. Other unified diagrams should use the ids produced by that diagram type.
 
+Placements for ids that are not present in the diagram are ignored with a console warning. This
+allows a shared or generated placement map to contain entries for optional nodes.
+
 ## Automatic placement
 
 If either coordinate is omitted, Mermaid fills it deterministically:
