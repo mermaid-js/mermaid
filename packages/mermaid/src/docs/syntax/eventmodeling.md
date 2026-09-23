@@ -54,6 +54,8 @@ tf 03 evt ItemAdded
 
 Each Time Frame is referenced by a **unique number** in order to distinguish one from another and also to be able to reference it when needed. Depending on the complexity of the diagram it should be enough to have just two digit number or more. Imagine you are typing a BASIC program on your ZX Spectrum always starting with a two digit number, but the order of the numbers does not matter, just the uniqueness in the whole timeline.
 
+Reusing a number for another Time Frame or Reset Frame produces an error. Give each frame its own number before referring to it with `->>`.
+
 The Time Frame also contains an **Entity Identifier**, e.g. in case of `01` Time Frame it is `CartUI`. One Entity Identifier can be used multiple times in the timeline for example when you want to express invocations of the same event in different points in time.
 
 Relaxed notation would look like this:

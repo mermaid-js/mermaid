@@ -62,6 +62,19 @@ data ItemAddedData
     await expect(parser.parse(str)).resolves.not.toThrow();
   });
 
+  it('should reject a frame id reused by a reset frame', async () => {
+    await parser.parse(`eventmodeling
+      tf 09 ui PreviousDiagram`);
+
+    await expect(
+      parser.parse(`eventmodeling
+        tf 01 ui UI
+        tf 02 cmd Command
+        rf 01 evt Event`)
+    ).rejects.toThrow('Duplicate event modeling frame ID "01"');
+    expect(() => db.getState()).toThrow('No data for EventModel');
+  });
+
   it('should handle all entity types', async () => {
     const str = `eventmodeling
     tf 01 ui UI

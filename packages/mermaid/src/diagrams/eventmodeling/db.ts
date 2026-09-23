@@ -137,6 +137,16 @@ function getState(): Context {
 }
 
 function setAst(ast: EventModel) {
+  store.ast = undefined;
+  const frameIds = new Set<string>();
+  for (const frame of ast.frames) {
+    if (frameIds.has(frame.name)) {
+      const line = frame.$cstNode?.range.start.line;
+      const location = line === undefined ? '' : ` on line ${line + 1}`;
+      throw new Error(`Duplicate event modeling frame ID "${frame.name}"${location}`);
+    }
+    frameIds.add(frame.name);
+  }
   store.ast = ast;
 }
 
