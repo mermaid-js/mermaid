@@ -272,6 +272,8 @@ describe('grid determinism and performance', () => {
     expect(elapsed).toBeLessThan(500);
   });
 
+  // Coverage instrumentation pushes this test past Vitest's 5-second default;
+  // non-coverage runs remain below it.
   it('keeps the 1000-node/500-edge case below structural and resource caps', () => {
     const layout = largeSyntheticLayout();
     const metrics = createGridRoutingInstrumentation();
