@@ -59,9 +59,9 @@ config:
     cellGap: 12
 ---
 flowchart TB
-  A["Start"]@{ row: 1, column: 1 }
-  B["Review"]@{ row: 2, column: 1 }
-  C["Done"]@{ row: 2, column: 2, horizontalAlign: right }
+  A@{ row: 1, column: 1 }
+  B@{ row: 2, column: 1 }
+  C@{ row: 2, column: 2, horizontalAlign: right }
   A --> B
   B --> C
 ```
@@ -76,9 +76,9 @@ config:
     cellGap: 12
 ---
 flowchart TB
-  A["Start"]@{ row: 1, column: 1 }
-  B["Review"]@{ row: 2, column: 1 }
-  C["Done"]@{ row: 2, column: 2, horizontalAlign: right }
+  A@{ row: 1, column: 1 }
+  B@{ row: 2, column: 1 }
+  C@{ row: 2, column: 2, horizontalAlign: right }
   A --> B
   B --> C
 ```
@@ -145,11 +145,9 @@ config:
     cellGap: 16
 ---
 flowchart TB
-  subgraph G["Stacked cell"]
-    A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
-    B["Beta"]@{ row: 1, column: 1, horizontalAlign: right, verticalAlign: bottom }
-  end
-  C["Peer"]@{ row: 1, column: 2 }
+  A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
+  B["Beta"]@{ row: 1, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  A --> B
 ```
 
 ```mermaid
@@ -160,11 +158,9 @@ config:
     cellGap: 16
 ---
 flowchart TB
-  subgraph G["Stacked cell"]
-    A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
-    B["Beta"]@{ row: 1, column: 1, horizontalAlign: right, verticalAlign: bottom }
-  end
-  C["Peer"]@{ row: 1, column: 2 }
+  A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
+  B["Beta"]@{ row: 1, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  A --> B
 ```
 
 ## Nested groups
@@ -177,15 +173,24 @@ config:
   layout: grid
   grid:
     cellGap: 16
+    placements:
+      A: { row: 1, column: 1 }
+      B: { row: 2, column: 1 }
+      C: { row: 1, column: 1 }
+      G: { row: 1, column: 1 }
+      H: { row: 1, column: 2 }
 ---
 flowchart TB
-  subgraph G["Stacked cell"]
-    A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
-    B["Beta"]@{ row: 2, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  subgraph G["Group G"]
+    A["Alpha"]
+    B["Beta"]
   end
-  C["Peer"]@{ row: 1, column: 2 }
+  subgraph H["Group H"]
+    C["Peer"]
+  end
   A --> C
-  B --> C
+  B --> H
+  G --> H
 ```
 
 ```mermaid
@@ -194,15 +199,24 @@ config:
   layout: grid
   grid:
     cellGap: 16
+    placements:
+      A: { row: 1, column: 1 }
+      B: { row: 2, column: 1 }
+      C: { row: 1, column: 1 }
+      G: { row: 1, column: 1 }
+      H: { row: 1, column: 2 }
 ---
 flowchart TB
-  subgraph G["Stacked cell"]
-    A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
-    B["Beta"]@{ row: 2, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  subgraph G["Group G"]
+    A["Alpha"]
+    B["Beta"]
   end
-  C["Peer"]@{ row: 1, column: 2 }
+  subgraph H["Group H"]
+    C["Peer"]
+  end
   A --> C
-  B --> C
+  B --> H
+  G --> H
 ```
 
 ## Configuration
