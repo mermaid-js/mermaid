@@ -95,6 +95,11 @@ export interface GridEdgeLabelInstrumentation {
   impactedEdgeReroutes: number;
   maxReroutesPerEdgePerPass: number;
   preservedAnchors: number;
+  rerouteCandidatesEvaluated: number;
+  rerouteRejectedBlockedRect: number;
+  rerouteRejectedProtectedObstacle: number;
+  rerouteRejectedLabelAnchor: number;
+  rerouteRejectedDegenerateSpan: number;
   rollbacks: number;
   indexCoordinateCount: number;
   indexSpanAllocations: number;
@@ -134,6 +139,11 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     impactedEdgeReroutes: 0,
     maxReroutesPerEdgePerPass: 0,
     preservedAnchors: 0,
+    rerouteCandidatesEvaluated: 0,
+    rerouteRejectedBlockedRect: 0,
+    rerouteRejectedProtectedObstacle: 0,
+    rerouteRejectedLabelAnchor: 0,
+    rerouteRejectedDegenerateSpan: 0,
     rollbacks: 0,
     indexCoordinateCount: 0,
     indexSpanAllocations: 0,
@@ -1542,10 +1552,12 @@ function rerouteSegmentAroundRect(
     const entry = Math.max(minX, blockedRect.left - LABEL_CLEARANCE);
     const exit = Math.min(maxX, blockedRect.right + LABEL_CLEARANCE);
     if (exit - entry <= EPS) {
+      incrementMetric(context.metrics, 'rerouteRejectedDegenerateSpan');
       return null;
     }
 
     for (const y of rerouteLineCandidates(segment, blockedRect, context, skipNodeIds)) {
+      incrementMetric(context.metrics, 'rerouteCandidatesEvaluated');
       const candidatePoints = normalizePolyline([
         ...normalized.points.slice(0, segmentIndex),
         a,
@@ -1557,12 +1569,15 @@ function rerouteSegmentAroundRect(
         ...normalized.points.slice(segmentIndex + 2),
       ]).points;
       if (polylineIntersectsRect(candidatePoints, blockedRect)) {
+        incrementMetric(context.metrics, 'rerouteRejectedBlockedRect');
         continue;
       }
       if (polylineHitsProtectedObstacles(candidatePoints, context, skipNodeIds)) {
+        incrementMetric(context.metrics, 'rerouteRejectedProtectedObstacle');
         continue;
       }
       if (!labelStillAnchored(edge.id, candidatePoints, placedLabelsByEdgeId)) {
+        incrementMetric(context.metrics, 'rerouteRejectedLabelAnchor');
         continue;
       }
       return candidatePoints;
@@ -1575,10 +1590,12 @@ function rerouteSegmentAroundRect(
   const entry = Math.max(minY, blockedRect.top - LABEL_CLEARANCE);
   const exit = Math.min(maxY, blockedRect.bottom + LABEL_CLEARANCE);
   if (exit - entry <= EPS) {
+    incrementMetric(context.metrics, 'rerouteRejectedDegenerateSpan');
     return null;
   }
 
   for (const x of rerouteLineCandidates(segment, blockedRect, context, skipNodeIds)) {
+    incrementMetric(context.metrics, 'rerouteCandidatesEvaluated');
     const candidatePoints = normalizePolyline([
       ...normalized.points.slice(0, segmentIndex),
       a,
@@ -1590,12 +1607,15 @@ function rerouteSegmentAroundRect(
       ...normalized.points.slice(segmentIndex + 2),
     ]).points;
     if (polylineIntersectsRect(candidatePoints, blockedRect)) {
+      incrementMetric(context.metrics, 'rerouteRejectedBlockedRect');
       continue;
     }
     if (polylineHitsProtectedObstacles(candidatePoints, context, skipNodeIds)) {
+      incrementMetric(context.metrics, 'rerouteRejectedProtectedObstacle');
       continue;
     }
     if (!labelStillAnchored(edge.id, candidatePoints, placedLabelsByEdgeId)) {
+      incrementMetric(context.metrics, 'rerouteRejectedLabelAnchor');
       continue;
     }
     return candidatePoints;
@@ -1931,6 +1951,7 @@ export function positionGridEdgeLabels(
   if (labelledEdges.length === 0) {
     return;
   }
+  instrumentation ??= createGridEdgeLabelInstrumentation();
 
   const baseEdgePoints = new Map<string, Point[] | undefined>(
     data.edges.map((edge) => [edge.id, edge.points?.map((point) => ({ ...point }))])
@@ -2151,6 +2172,13 @@ export function positionGridEdgeLabels(
             top: combinedRect.top - lanePadding,
             bottom: combinedRect.bottom + lanePadding,
           };
+          const rejectionsBefore = {
+            candidates: instrumentation.rerouteCandidatesEvaluated,
+            blockedRect: instrumentation.rerouteRejectedBlockedRect,
+            protectedObstacle: instrumentation.rerouteRejectedProtectedObstacle,
+            labelAnchor: instrumentation.rerouteRejectedLabelAnchor,
+            degenerateSpan: instrumentation.rerouteRejectedDegenerateSpan,
+          };
           const rerouted = rerouteForeignEdgeAroundRect(
             edge,
             blockedRect,
@@ -2159,10 +2187,22 @@ export function positionGridEdgeLabels(
             overrides
           );
           if (!rerouted) {
+            const rejections = {
+              candidates: instrumentation.rerouteCandidatesEvaluated - rejectionsBefore.candidates,
+              blockedRect:
+                instrumentation.rerouteRejectedBlockedRect - rejectionsBefore.blockedRect,
+              protectedObstacle:
+                instrumentation.rerouteRejectedProtectedObstacle -
+                rejectionsBefore.protectedObstacle,
+              labelAnchor:
+                instrumentation.rerouteRejectedLabelAnchor - rejectionsBefore.labelAnchor,
+              degenerateSpan:
+                instrumentation.rerouteRejectedDegenerateSpan - rejectionsBefore.degenerateSpan,
+            };
             throw gridError(
               'GRID_ROUTE_NOT_FOUND',
-              `Could not reroute edge "${edge.id}" around frozen labels`,
-              { edgeId: edge.id, pass }
+              `Could not reroute edge "${edge.id}" around frozen labels: ${rejections.candidates} candidates rejected (${rejections.blockedRect} blocked, ${rejections.protectedObstacle} obstacle, ${rejections.labelAnchor} anchor, ${rejections.degenerateSpan} degenerate)`,
+              { edgeId: edge.id, pass, rejections }
             );
           }
           points = rerouted;

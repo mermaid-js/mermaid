@@ -145,6 +145,13 @@ describe('grid edge label helpers', () => {
     expect(metrics.impactedEdgeReroutes).toBeGreaterThanOrEqual(1);
     expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
     expect(metrics.preservedAnchors).toBeGreaterThan(0);
+    expect(metrics.rerouteCandidatesEvaluated).toBeGreaterThan(0);
+    expect(
+      metrics.rerouteRejectedBlockedRect +
+        metrics.rerouteRejectedProtectedObstacle +
+        metrics.rerouteRejectedLabelAnchor
+    ).toBeLessThanOrEqual(metrics.rerouteCandidatesEvaluated);
+    expect(metrics.rerouteRejectedProtectedObstacle).toBeGreaterThan(0);
   });
 
   it('rolls every route and label position back after two-pass non-convergence', () => {
@@ -385,6 +392,7 @@ describe('grid edge label helpers', () => {
     ).toBe(true);
     expect(metrics.impactedEdgeReroutes).toBeGreaterThan(1);
     expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
+    expect(metrics.rerouteCandidatesEvaluated).toBeGreaterThan(0);
     expect(labelNode?.x).toEqual(expect.any(Number));
     expect(labelNode?.y).toEqual(expect.any(Number));
   });

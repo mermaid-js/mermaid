@@ -335,6 +335,11 @@ recovery, pair-bundle retries, hierarchy separation relaxation, and the same-con
 Fast-path metrics record attempts, accepted routes, geometry-validation failures, and valid routes
 rejected because they exceeded the Manhattan lower bound.
 
+Edge-label instrumentation records each frozen-label detour candidate and classifies rejection as
+continued intersection with the blocked rectangle, collision with a protected obstacle, loss of the
+edge's existing label anchor, or a degenerate detour span. A failed reroute includes the per-edge
+rejection counts in its `GRID_ROUTE_NOT_FOUND` message and error context.
+
 ### 13. Render the selected polyline
 
 The router stores the orthogonal points on the edge and applies the configured grid curve:
