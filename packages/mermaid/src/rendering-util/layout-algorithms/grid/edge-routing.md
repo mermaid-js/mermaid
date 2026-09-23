@@ -337,8 +337,12 @@ rejected because they exceeded the Manhattan lower bound.
 
 Edge-label instrumentation records each frozen-label detour candidate and classifies rejection as
 continued intersection with the blocked rectangle, collision with a protected obstacle, loss of the
-edge's existing label anchor, or a degenerate detour span. A failed reroute includes the per-edge
-rejection counts in its `GRID_ROUTE_NOT_FOUND` message and error context.
+edge's existing label anchor, or a degenerate detour span. Candidates that reduce the number or
+length of blocked intersections are retained so the bounded reroute loop can clear multi-segment
+intersections incrementally. If the combined reservation cannot be cleared, the router makes two
+deterministic passes over the individual labels. As a final compatibility fallback, the original
+edge may remain visible through a label; instrumentation records both the affected edge and each
+allowed edge-label overlap.
 
 ### 13. Render the selected polyline
 
