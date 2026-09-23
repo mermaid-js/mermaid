@@ -8,6 +8,9 @@ This guide covers layouts that live inside the Mermaid package, next to `dagre` 
 
 Two layouts in the tree are worth reading alongside it. `dagre` is the default and the oldest. `swimlanes` is the newest, and it is the one that follows the conventions described here, so most of the examples point at it.
 
+For a detailed example of a production layout's routing design, see
+[Grid Edge-Routing Algorithm](./grid-layout-routing.md).
+
 ## What a layout receives and what it must produce
 
 Every layout is handed the same structure, `LayoutData`, regardless of which diagram type produced it:
