@@ -71,7 +71,7 @@ data ItemAddedData
         tf 01 ui UI
         tf 02 cmd Command
         rf 01 evt Event`)
-    ).rejects.toThrow('Duplicate event modeling frame ID "01"');
+    ).rejects.toThrow('Duplicate event modeling frame ID "01" on line 4');
     expect(() => db.getState()).toThrow('No data for EventModel');
   });
 
