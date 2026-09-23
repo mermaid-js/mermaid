@@ -171,6 +171,40 @@ flowchart TB
 
 Groups are laid out recursively from the inside out. Child coordinates are always local to the immediate parent group; diagram direction (`TB`, `BT`, `LR`, `RL`) does not rotate or mirror the authored grid.
 
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    cellGap: 16
+---
+flowchart TB
+  subgraph G["Stacked cell"]
+    A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
+    B["Beta"]@{ row: 2, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  end
+  C["Peer"]@{ row: 1, column: 2 }
+  A --> C
+  B --> C
+```
+
+```mermaid
+---
+config:
+  layout: grid
+  grid:
+    cellGap: 16
+---
+flowchart TB
+  subgraph G["Stacked cell"]
+    A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
+    B["Beta"]@{ row: 2, column: 1, horizontalAlign: right, verticalAlign: bottom }
+  end
+  C["Peer"]@{ row: 1, column: 2 }
+  A --> C
+  B --> C
+```
+
 ## Configuration
 
 `grid` supports:
@@ -231,6 +265,6 @@ route points and can move away from the calculated orthogonal corridor.
 Grid layout does **not** support:
 
 - row or column spanning
-- alternate in-cell layouts beyond vertical stacking
+- alternate in-cell layouts beyond vertical stacking (although a subgraph can do this)
 - track-level row/column alignment declarations
 - manual absolute coordinates or manual edge waypoints
