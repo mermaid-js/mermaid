@@ -368,7 +368,7 @@ erDiagram
     }
 ```
 
-The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses and square brackets. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
+The `type` values must begin with an alphabetic character and may contain digits, hyphens, underscores, parentheses, commas, periods and square brackets, so SQL-style types such as `decimal(10,2)` or `numeric(8,3)` are valid. The `name` values follow a similar format to `type`, but may start with an asterisk as another option to indicate an attribute is a primary key. Other than that, there are no restrictions, and there is no implicit set of valid data types.
 
 #### Optional attribute types (v11.16.0+)
 
