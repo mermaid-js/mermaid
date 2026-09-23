@@ -153,6 +153,30 @@ describe('grid layout core', () => {
     expect(lrCoords).toEqual(tbCoords);
   });
 
+  it('precomputes adjacent row and column corridors without changing sparse track geometry', () => {
+    const data = layout([
+      leaf('top-left', 40, 20, { row: 1, column: 1 }),
+      leaf('bottom-right', 60, 30, { row: 100, column: 50 }),
+    ]);
+
+    const result = runGridLayoutCore(data);
+    const topLeft = result.itemMeta.get('top-left');
+    const bottomRight = result.itemMeta.get('bottom-right');
+
+    expect(topLeft).toMatchObject({
+      leftCorridorX: -25,
+      rightCorridorX: 65,
+      topCorridorY: -25,
+      bottomCorridorY: 45,
+    });
+    expect(bottomRight).toMatchObject({
+      leftCorridorX: 65,
+      rightCorridorX: 175,
+      topCorridorY: 45,
+      bottomCorridorY: 125,
+    });
+  });
+
   it.each([
     {
       name: 'invalid coordinates',

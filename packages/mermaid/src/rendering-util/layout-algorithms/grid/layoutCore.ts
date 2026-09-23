@@ -140,7 +140,15 @@ function layoutContainer(
 
   const verticalCorridors = new Set<number>([outerLeftCorridor, outerRightCorridor]);
   const horizontalCorridors = new Set<number>([outerTopCorridor, outerBottomCorridor]);
+  const leftCorridorByColumn = new Map<number, number>();
+  const rightCorridorByColumn = new Map<number, number>();
+  const topCorridorByRow = new Map<number, number>();
+  const bottomCorridorByRow = new Map<number, number>();
 
+  if (sortedColumns.length > 0) {
+    leftCorridorByColumn.set(sortedColumns[0], outerLeftCorridor);
+    rightCorridorByColumn.set(sortedColumns.at(-1)!, outerRightCorridor);
+  }
   for (let index = 0; index < sortedColumns.length - 1; index++) {
     const current = sortedColumns[index];
     const next = sortedColumns[index + 1];
@@ -148,6 +156,12 @@ function layoutContainer(
       (columnOrigins.get(current)! + (columnWidths.get(current) ?? 0) + columnOrigins.get(next)!) /
       2;
     verticalCorridors.add(corridor);
+    rightCorridorByColumn.set(current, corridor);
+    leftCorridorByColumn.set(next, corridor);
+  }
+  if (sortedRows.length > 0) {
+    topCorridorByRow.set(sortedRows[0], outerTopCorridor);
+    bottomCorridorByRow.set(sortedRows.at(-1)!, outerBottomCorridor);
   }
   for (let index = 0; index < sortedRows.length - 1; index++) {
     const current = sortedRows[index];
@@ -155,12 +169,9 @@ function layoutContainer(
     const corridor =
       (rowOrigins.get(current)! + (rowHeights.get(current) ?? 0) + rowOrigins.get(next)!) / 2;
     horizontalCorridors.add(corridor);
+    bottomCorridorByRow.set(current, corridor);
+    topCorridorByRow.set(next, corridor);
   }
-
-  const firstColumn = sortedColumns[0];
-  const lastColumn = sortedColumns[sortedColumns.length - 1];
-  const firstRow = sortedRows[0];
-  const lastRow = sortedRows[sortedRows.length - 1];
 
   for (const cell of cellEntries) {
     const cellLeft = columnOrigins.get(cell.column) ?? contentLeft;
@@ -182,19 +193,11 @@ function layoutContainer(
       const topCorridorY =
         itemIndex > 0
           ? itemTop - config.cellGap / 2
-          : cell.row === firstRow
-            ? outerTopCorridor
-            : ([...horizontalCorridors]
-                .filter((value) => value < cellTop)
-                .sort((a, b) => b - a)[0] ?? outerTopCorridor);
+          : (topCorridorByRow.get(cell.row) ?? outerTopCorridor);
       const bottomCorridorY =
         itemIndex < cell.items.length - 1
           ? itemTop + height + config.cellGap / 2
-          : cell.row === lastRow
-            ? outerBottomCorridor
-            : ([...horizontalCorridors]
-                .filter((value) => value > cellTop + cellHeight)
-                .sort((a, b) => a - b)[0] ?? outerBottomCorridor);
+          : (bottomCorridorByRow.get(cell.row) ?? outerBottomCorridor);
       if (itemIndex > 0) {
         horizontalCorridors.add(topCorridorY);
       }
@@ -210,18 +213,8 @@ function layoutContainer(
         cellTop,
         cellWidth,
         cellHeight,
-        leftCorridorX:
-          cell.column === firstColumn
-            ? outerLeftCorridor
-            : ([...verticalCorridors]
-                .filter((value) => value < cellLeft)
-                .sort((a, b) => b - a)[0] ?? outerLeftCorridor),
-        rightCorridorX:
-          cell.column === lastColumn
-            ? outerRightCorridor
-            : ([...verticalCorridors]
-                .filter((value) => value > cellLeft + cellWidth)
-                .sort((a, b) => a - b)[0] ?? outerRightCorridor),
+        leftCorridorX: leftCorridorByColumn.get(cell.column) ?? outerLeftCorridor,
+        rightCorridorX: rightCorridorByColumn.get(cell.column) ?? outerRightCorridor,
         topCorridorY,
         bottomCorridorY,
       });

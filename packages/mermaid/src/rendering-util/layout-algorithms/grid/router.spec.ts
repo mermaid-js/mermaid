@@ -4,7 +4,11 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
-import { areExactlyAxisAligned, assignCompactPortalCoordinates } from './router.js';
+import {
+  areExactlyAxisAligned,
+  assignCompactPortalCoordinates,
+  boundedAlternativePortalCoordinates,
+} from './router.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 
 function leaf(
@@ -177,6 +181,13 @@ function invalidRoutingIssues(data: LayoutData) {
 describe('grid router', () => {
   it('keeps compact portal coordinates within their available interval', () => {
     expect(assignCompactPortalCoordinates([0, 10, 0], 0, 10)).toEqual([0, 6, 10]);
+  });
+
+  it('bounds alternative portal coordinates and prefers nearby routing corridors', () => {
+    expect(boundedAlternativePortalCoordinates(50, 10, 90, [80, 20, 60, 50, 100])).toEqual([
+      60, 20, 80,
+    ]);
+    expect(boundedAlternativePortalCoordinates(50, 10, 90, [], 4)).toEqual([10, 90]);
   });
 
   it('requires exact axis alignment for the direct route shortcut', () => {
@@ -947,6 +958,8 @@ describe('grid router', () => {
       }
       expect(metrics.routes[0]?.boundaryTransitionCount).toBe(boundaries.length);
       expect(metrics.hierarchyPortalPairs).toBe(boundaries.length);
+      expect(metrics.hierarchyPortalAlternativeAttempts).toBe(0);
+      expect(metrics.hierarchyPortalAlternativeSelections).toBe(0);
       expect(metrics.resourceLimitFallbacks).toBe(0);
 
       const rerun = build();
@@ -954,6 +967,39 @@ describe('grid router', () => {
       expect(rerun.edges[0].points).toEqual(routed.points);
     }
   );
+
+  it('validates assembled hierarchy routes across deterministic placement variations', () => {
+    for (let caseIndex = 0; caseIndex < 64; caseIndex++) {
+      const leftRow = 1 + (caseIndex % 3);
+      const rightRow = 1 + ((caseIndex >> 2) % 3);
+      const leftColumn = 1 + ((caseIndex >> 4) % 2);
+      const rightColumn = leftColumn + 1 + ((caseIndex >> 5) % 2);
+      const data = baseLayout(
+        [
+          group('left-group', 'Left', { row: leftRow, column: leftColumn }),
+          leaf('source', 60, 32, { row: 1, column: 1 }, 'left-group'),
+          leaf('left-blocker', 72, 36, { row: 2, column: 2 }, 'left-group'),
+          group('right-group', 'Right', { row: rightRow, column: rightColumn }),
+          leaf('target', 60, 32, { row: 1, column: 1 }, 'right-group'),
+          leaf('right-blocker', 72, 36, { row: 2, column: 2 }, 'right-group'),
+        ],
+        [edge(`cross-group-${caseIndex}`, 'source', 'target')],
+        {
+          rowGap: 48 + (caseIndex % 3) * 8,
+          columnGap: 56 + (caseIndex % 4) * 8,
+        }
+      );
+
+      runGridLayoutCore(data);
+
+      expect(validateLayout(data), `case ${caseIndex}`).toMatchObject({ ok: true, issues: [] });
+      const route = data.edges[0].points ?? [];
+      const leftGroup = data.nodes.find(({ id }) => id === 'left-group')!;
+      const rightGroup = data.nodes.find(({ id }) => id === 'right-group')!;
+      expect(boundaryCrossings(route, leftGroup), `left boundary case ${caseIndex}`).toBe(1);
+      expect(boundaryCrossings(route, rightGroup), `right boundary case ${caseIndex}`).toBe(1);
+    }
+  });
 
   it('uses 12px paired portals outside title and corner exclusions', () => {
     const data = baseLayout(

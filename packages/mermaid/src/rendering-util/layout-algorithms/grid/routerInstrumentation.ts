@@ -40,6 +40,8 @@ export interface GridRoutingInstrumentation {
   endpointOverlayVertices: number;
   hierarchyPortalPairs: number;
   hierarchyPortalTransitionLength: number;
+  hierarchyPortalAlternativeAttempts: number;
+  hierarchyPortalAlternativeSelections: number;
   hierarchyBoundaryTransitions: number;
   labelOverlayBuilds: number;
   labelOverlayVertices: number;
@@ -74,6 +76,8 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     endpointOverlayVertices: 0,
     hierarchyPortalPairs: 0,
     hierarchyPortalTransitionLength: 0,
+    hierarchyPortalAlternativeAttempts: 0,
+    hierarchyPortalAlternativeSelections: 0,
     hierarchyBoundaryTransitions: 0,
     labelOverlayBuilds: 0,
     labelOverlayVertices: 0,

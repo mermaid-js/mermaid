@@ -206,6 +206,12 @@ bundle, and pair-route constraints, a shorter sparse route wins regardless of ho
 need to be traded to obtain it. When lengths are equal, fewer bends wins, and so on. Compatibility
 routes and resource-limit fallbacks do not compete in this sparse-search tuple.
 
+The current production visibility arcs contribute length and bend information. Boundary-transition
+count is fixed by hierarchy decomposition, while occupied-length and crossing values are recorded
+after routing for instrumentation rather than used as congestion costs. The tuple retains those
+positions so a future indexed congestion model can add them without changing route ordering
+semantics.
+
 The search uses a bend-aware Manhattan heuristic. Canonical vertex and edge ordering provides
 deterministic tie-breaking in addition to the tuple comparison.
 
@@ -225,6 +231,12 @@ Portal ranges exclude:
 - subgraph corners;
 - the subgraph title;
 - coordinates outside the measured boundary.
+
+The preferred portal coordinate is tried first. If a sparse child-container segment has no legal
+route, the router tries at most three deterministic alternatives on the same side: nearby routing
+corridors first, then the range midpoint and endpoints. The first valid alternative becomes the
+paired portal used by the following parent-container segment. Resource-limit failures do not trigger
+extra searches; they use the bounded fallback policy described below.
 
 The route inside the subgraph ends at the interior point. The parent-container route starts at the
 matching exterior point. Both sides therefore agree on one exact boundary crossing.
@@ -296,6 +308,9 @@ the compatibility route as a fallback. That fallback route is validated with the
 checks. If it is invalid, the router throws `GRID_ROUTE_NOT_FOUND`.
 
 Ordinary no-route failures do not fall back to an unverified path.
+
+Routing instrumentation distinguishes resource fallbacks from bounded portal recovery. It records
+the number of alternative portal searches and the number that selected a replacement portal.
 
 ### 13. Render the selected polyline
 

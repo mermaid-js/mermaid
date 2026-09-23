@@ -307,6 +307,36 @@ export function assignCompactPortalCoordinates(
   return coordinates.map((coordinate) => coordinate + shift);
 }
 
+export function boundedAlternativePortalCoordinates(
+  selected: number,
+  low: number,
+  high: number,
+  corridors: readonly number[],
+  limit = 3
+): number[] {
+  const candidates = [
+    ...corridors
+      .filter((coordinate) => coordinate >= low && coordinate <= high)
+      .sort((a, b) => Math.abs(a - selected) - Math.abs(b - selected) || a - b),
+    (low + high) / 2,
+    low,
+    high,
+  ];
+  const seen = new Set<number>([selected]);
+  const alternatives: number[] = [];
+  for (const coordinate of candidates) {
+    if (seen.has(coordinate)) {
+      continue;
+    }
+    seen.add(coordinate);
+    alternatives.push(coordinate);
+    if (alternatives.length === limit) {
+      break;
+    }
+  }
+  return alternatives;
+}
+
 function assignDemandCoordinates(
   plans: EdgeRoutePlan[],
   result: GridLayoutResult
@@ -629,6 +659,11 @@ function boundaryAttachment(
 
 interface SegmentAttachment extends GridAttachment {
   ownerId: string;
+}
+
+interface SegmentAttachmentAlternative {
+  attachment: SegmentAttachment;
+  select: () => void;
 }
 
 function portalBoundaryPoint(portal: PairedPortal): Point {
@@ -1941,7 +1976,8 @@ function sparseContainerSegment(
   searchWorkspace: RouterSearchWorkspace,
   overlayScratch: EndpointOverlayScratch | undefined,
   options: GridRoutingOptions,
-  pairRoutes: readonly (readonly Point[])[] = []
+  pairRoutes: readonly (readonly Point[])[] = [],
+  endAlternatives: () => readonly SegmentAttachmentAlternative[] = () => []
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(containerId) as
     | GridRoutingFallbackReason
@@ -1964,85 +2000,136 @@ function sparseContainerSegment(
     }
     return legacy;
   }
-  const aligned = areExactlyAxisAligned(start.connect, end.connect);
-  if (aligned) {
-    const direct = normalizePolyline([start.port, start.connect, end.connect, end.port]).points;
-    if (
-      validateContainerSegment(direct, start.ownerId, end.ownerId, containerId, result) &&
-      routeSatisfiesPairConstraints(direct, pairRoutes)
-    ) {
-      return direct;
-    }
-  }
   const topology = context.topologies.get(containerId);
   if (!topology || !overlayScratch) {
     throw gridError('GRID_ROUTE_NOT_FOUND', `Missing routing topology "${containerId}"`);
   }
-  try {
-    const overlay = buildEndpointRoutingOverlay(
-      topology,
-      start.connect,
-      end.connect,
-      context.metrics,
-      overlayScratch
+  const attempts: {
+    attachment: SegmentAttachment;
+    select: (() => void) | undefined;
+  }[] = [{ attachment: end, select: undefined }];
+  let alternativesAdded = false;
+  const appendEndAlternatives = (): void => {
+    if (alternativesAdded) {
+      return;
+    }
+    alternativesAdded = true;
+    attempts.push(
+      ...endAlternatives().map((alternative) => ({
+        attachment: alternative.attachment,
+        select: alternative.select,
+      }))
     );
-    const liveEstimatedBytes =
-      context.baseEstimatedBytes + overlay.estimatedBytes - topology.estimatedBytes;
-    if (
-      liveEstimatedBytes > (options.topologyCaps?.maxEstimatedBytes ?? DEFAULT_MAX_ESTIMATED_BYTES)
-    ) {
-      throw new GridRoutingResourceLimitError(
-        'estimated_memory_cap',
-        'Grid routing estimated_memory_cap exceeded'
+  };
+  try {
+    for (const [attemptIndex, attempt] of attempts.entries()) {
+      const attemptedEnd = attempt.attachment;
+      if (attemptIndex > 0 && context.metrics) {
+        context.metrics.hierarchyPortalAlternativeAttempts++;
+      }
+      const aligned = areExactlyAxisAligned(start.connect, attemptedEnd.connect);
+      if (aligned) {
+        const direct = normalizePolyline([
+          start.port,
+          start.connect,
+          attemptedEnd.connect,
+          attemptedEnd.port,
+        ]).points;
+        if (
+          validateContainerSegment(
+            direct,
+            start.ownerId,
+            attemptedEnd.ownerId,
+            containerId,
+            result
+          ) &&
+          routeSatisfiesPairConstraints(direct, pairRoutes)
+        ) {
+          attempt.select?.();
+          if (attemptIndex > 0 && context.metrics) {
+            context.metrics.hierarchyPortalAlternativeSelections++;
+          }
+          return direct;
+        }
+      }
+      const overlay = buildEndpointRoutingOverlay(
+        topology,
+        start.connect,
+        attemptedEnd.connect,
+        context.metrics,
+        overlayScratch
       );
-    }
-    const sourceId = overlay.pointVertexIds.get(routingPointKey(start.connect));
-    const targetId = overlay.pointVertexIds.get(routingPointKey(end.connect));
-    if (sourceId === undefined || targetId === undefined) {
-      throw new Error('Hierarchy projection is missing from the routing overlay');
-    }
-    const route = findShortestRoute(overlay, sourceId, targetId, {
-      metrics: context.metrics,
-      caps: {
-        ...options.searchCaps,
-        maxEstimatedBytes:
-          options.searchCaps?.maxEstimatedBytes ??
-          options.topologyCaps?.maxEstimatedBytes ??
-          DEFAULT_MAX_ESTIMATED_BYTES,
-      },
-      recordOutcome: false,
-      budget: context.searchBudget,
-      initialOrientation: start.side === 'left' || start.side === 'right' ? 'H' : 'V',
-      initialSide: start.side,
-      initialLength:
-        Math.abs(start.port.x - start.connect.x) + Math.abs(start.port.y - start.connect.y),
-      targetOrientation: end.side === 'left' || end.side === 'right' ? 'H' : 'V',
-      targetSide: end.side,
-      targetLength: Math.abs(end.port.x - end.connect.x) + Math.abs(end.port.y - end.connect.y),
-      topologyValidated: true,
-      workspace: searchWorkspace,
-      estimatedBytesBase: liveEstimatedBytes,
-      arcAllowed:
-        pairRoutes.length > 0 ? (from, to) => pairArcAllowed(from, to, pairRoutes) : undefined,
-    });
-    if (!route) {
-      throw gridError(
-        'GRID_ROUTE_NOT_FOUND',
-        `No hierarchy route for "${edgeId}" in "${containerId}" from ${routingPointKey(start.connect)} to ${routingPointKey(end.connect)}`,
-        { edgeId, containerId }
-      );
-    }
-    const points = normalizePolyline([start.port, ...route.points, end.port]).points;
-    if (
-      !validateContainerSegment(points, start.ownerId, end.ownerId, containerId, result) ||
-      !routeSatisfiesPairConstraints(points, pairRoutes)
-    ) {
-      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid hierarchy route for "${edgeId}"`, {
-        edgeId,
-        containerId,
+      const liveEstimatedBytes =
+        context.baseEstimatedBytes + overlay.estimatedBytes - topology.estimatedBytes;
+      if (
+        liveEstimatedBytes >
+        (options.topologyCaps?.maxEstimatedBytes ?? DEFAULT_MAX_ESTIMATED_BYTES)
+      ) {
+        throw new GridRoutingResourceLimitError(
+          'estimated_memory_cap',
+          'Grid routing estimated_memory_cap exceeded'
+        );
+      }
+      const sourceId = overlay.pointVertexIds.get(routingPointKey(start.connect));
+      const targetId = overlay.pointVertexIds.get(routingPointKey(attemptedEnd.connect));
+      if (sourceId === undefined || targetId === undefined) {
+        throw new Error('Hierarchy projection is missing from the routing overlay');
+      }
+      const route = findShortestRoute(overlay, sourceId, targetId, {
+        metrics: context.metrics,
+        caps: {
+          ...options.searchCaps,
+          maxEstimatedBytes:
+            options.searchCaps?.maxEstimatedBytes ??
+            options.topologyCaps?.maxEstimatedBytes ??
+            DEFAULT_MAX_ESTIMATED_BYTES,
+        },
+        recordOutcome: false,
+        budget: context.searchBudget,
+        initialOrientation: start.side === 'left' || start.side === 'right' ? 'H' : 'V',
+        initialSide: start.side,
+        initialLength:
+          Math.abs(start.port.x - start.connect.x) + Math.abs(start.port.y - start.connect.y),
+        targetOrientation:
+          attemptedEnd.side === 'left' || attemptedEnd.side === 'right' ? 'H' : 'V',
+        targetSide: attemptedEnd.side,
+        targetLength:
+          Math.abs(attemptedEnd.port.x - attemptedEnd.connect.x) +
+          Math.abs(attemptedEnd.port.y - attemptedEnd.connect.y),
+        topologyValidated: true,
+        workspace: searchWorkspace,
+        estimatedBytesBase: liveEstimatedBytes,
+        arcAllowed:
+          pairRoutes.length > 0 ? (from, to) => pairArcAllowed(from, to, pairRoutes) : undefined,
       });
+      if (!route) {
+        if (attemptIndex === 0) {
+          appendEndAlternatives();
+        }
+        continue;
+      }
+      const points = normalizePolyline([start.port, ...route.points, attemptedEnd.port]).points;
+      if (
+        !validateContainerSegment(
+          points,
+          start.ownerId,
+          attemptedEnd.ownerId,
+          containerId,
+          result
+        ) ||
+        !routeSatisfiesPairConstraints(points, pairRoutes)
+      ) {
+        if (attemptIndex === 0) {
+          appendEndAlternatives();
+        }
+        continue;
+      }
+      attempt.select?.();
+      if (attemptIndex > 0 && context.metrics) {
+        context.metrics.hierarchyPortalAlternativeSelections++;
+      }
+      return points;
     }
-    return points;
   } catch (error) {
     if (!(error instanceof GridRoutingResourceLimitError)) {
       throw error;
@@ -2064,6 +2151,11 @@ function sparseContainerSegment(
     }
     return legacy;
   }
+  throw gridError(
+    'GRID_ROUTE_NOT_FOUND',
+    `No hierarchy route for "${edgeId}" in "${containerId}" from ${routingPointKey(start.connect)} to ${routingPointKey(end.connect)}`,
+    { edgeId, containerId }
+  );
 }
 
 export function routeGridEdges(
@@ -2312,6 +2404,46 @@ export function routeGridEdges(
     }
     return portal;
   };
+  const alternativePairedPortals = (entry: EdgeEndpointEntry): SegmentAttachmentAlternative[] => {
+    const selected = pairedPortal(entry);
+    const owner = result.forest.nodeById.get(entry.ownerId);
+    if (!owner?.isGroup) {
+      return [];
+    }
+    const rect = routerRect(owner);
+    const range = derivePortalRanges(entry.ownerId, rect, owner.groupTitleRect).find(
+      ({ side }) => side === entry.side
+    );
+    if (!range) {
+      return [];
+    }
+    const container = result.containers.get(owner.id);
+    const corridors =
+      entry.side === 'left' || entry.side === 'right'
+        ? container?.horizontalCorridors
+        : container?.verticalCorridors;
+    return boundedAlternativePortalCoordinates(
+      selected.tangentialCoordinate,
+      range.low,
+      range.high,
+      corridors ?? []
+    ).map((coordinate) => {
+      const portal = buildPairedPortal(
+        entry.ownerId,
+        rect,
+        owner.groupTitleRect ? { ...owner.groupTitleRect } : undefined,
+        entry.side,
+        coordinate
+      );
+      return {
+        attachment: portalAttachment(portal, true),
+        select: () => {
+          pairedPortals.set(entry.demandKey, portal);
+          demandCoords.set(entry.demandKey, coordinate);
+        },
+      };
+    });
+  };
   const itemSegmentAttachment = (
     entry: EdgeEndpointEntry,
     containerId: GridContainerId
@@ -2425,7 +2557,8 @@ export function routeGridEdges(
           searchWorkspace,
           endpointOverlayScratch.get(to.ownerId),
           options,
-          pairRoutes.get(plan.pairKey) ?? []
+          pairRoutes.get(plan.pairKey) ?? [],
+          () => alternativePairedPortals(to)
         )
       );
     }
@@ -2480,7 +2613,8 @@ export function routeGridEdges(
           searchWorkspace,
           endpointOverlayScratch.get(to.ownerId),
           options,
-          pairRoutes.get(plan.pairKey) ?? []
+          pairRoutes.get(plan.pairKey) ?? [],
+          () => alternativePairedPortals(to)
         )
       );
     }
