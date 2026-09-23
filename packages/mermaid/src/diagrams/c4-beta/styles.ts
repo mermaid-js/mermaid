@@ -97,9 +97,11 @@ const getStyles = (options: C4BetaStyleOptions) =>
     stroke-width: 1px;
   }
 
+  /* Faded with a translucent colour, not opacity: WebKit (Safari, Preview) paints HTML
+   * with opacity inside a foreignObject without the ancestor SVG transforms, so these
+   * lines piled up at the top-left corner of the diagram. */
   .cluster small {
     font-size: 0.75em;
-    opacity: 0.85;
   }
 
   .cluster text {
@@ -110,10 +112,18 @@ const getStyles = (options: C4BetaStyleOptions) =>
     color: ${options.titleColor};
   }
 
+  .cluster small,
+  .cluster small span {
+    color: ${fade(options.titleColor, 0.85)};
+  }
+
   .c4-instances {
     font-size: 0.75em;
     font-weight: bold;
-    opacity: 0.7;
+  }
+
+  .cluster .c4-instances {
+    color: ${fade(options.titleColor, 0.7)};
   }
 
   .c4TitleText {
