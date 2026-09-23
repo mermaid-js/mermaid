@@ -266,11 +266,8 @@ flowchart TB
 
   test('grid flowchart keeps group titles, HTML labels, loops, and parallel routes structurally valid', async ({
     page,
-  }, testInfo) => {
-    await renderGraph(
-      page,
-      testInfo,
-      `---
+  }) => {
+    const source = `---
 config:
   layout: grid
   grid:
@@ -297,8 +294,28 @@ flowchart LR
   Source --> Target
   Source --> Target
   Source --> Target
-  Target --> Source`,
-      { securityLevel: 'loose', screenshot: false, name: 'grid-routing-structural' }
+  Target --> Source`;
+
+    await page.goto('/iife.html');
+    await page.evaluate(
+      async ({ diagramSource }) => {
+        const mount = document.createElement('div');
+        mount.id = 'grid-routing-structural';
+        document.body.replaceChildren(mount);
+
+        await window.mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'loose',
+        });
+
+        const { svg, bindFunctions } = await window.mermaid.render(
+          'grid-routing-structural-svg',
+          diagramSource
+        );
+        mount.innerHTML = svg;
+        bindFunctions?.(mount);
+      },
+      { diagramSource: source }
     );
 
     await assertFiniteViewBox(page);
