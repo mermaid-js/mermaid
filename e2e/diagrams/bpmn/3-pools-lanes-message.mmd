@@ -1,0 +1,15 @@
+bpmn LR
+  pool "Customer"
+    task:user c1 "Place order"
+  pool "Supplier"
+    lane "Sales"
+      start message s1 "Order received"
+      xor g1 "In stock?"
+    lane "Warehouse"
+      task:service t1 "Pick items"
+      end e1 "Shipped"
+      end e2 "Backordered"
+  s1 --> g1
+  g1 -- "yes" --> t1 --> e1
+  g1 -->|default| e2
+  c1 ==> s1

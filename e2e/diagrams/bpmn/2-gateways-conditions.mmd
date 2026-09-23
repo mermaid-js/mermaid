@@ -1,0 +1,10 @@
+bpmn LR
+  start s1 "Order received"
+  task:user t1 "Review order"
+  xor g1 "Approved?"
+  task:service t2 "Charge card"
+  end e1 "Shipped"
+  end e2 "Rejected"
+  s1 --> t1 --> g1
+  g1 -- "approved" --> t2 --> e1
+  g1 -->|default| e2

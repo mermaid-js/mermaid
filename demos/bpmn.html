@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BPMN Diagram Demo</title>
+    <style>
+      body {
+        font-family: 'Trebuchet MS', Verdana, Arial, sans-serif;
+        margin: 24px;
+      }
+      h2 {
+        color: #555;
+      }
+      .mermaid {
+        border: 1px solid #eee;
+        padding: 12px;
+        margin-bottom: 32px;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>BPMN (AI-first) — demo</h1>
+
+    <h2>1. Simple flow</h2>
+    <pre class="mermaid">
+bpmn LR
+  start s1 "Start"
+  task:user t1 "Review order"
+  task:service t2 "Charge card"
+  end e1 "Done"
+  s1 --> t1 --> t2 --> e1
+    </pre>
+
+    <h2>2. Gateways &amp; conditions</h2>
+    <pre class="mermaid">
+bpmn LR
+  start s1 "Order received"
+  task:user t1 "Review order"
+  xor g1 "Approved?"
+  task:service t2 "Charge card"
+  end e1 "Shipped"
+  end e2 "Rejected"
+  s1 --> t1 --> g1
+  g1 -- "approved" --> t2 --> e1
+  g1 -->|default| e2
+    </pre>
+
+    <h2>3. Pools, lanes &amp; message flow</h2>
+    <pre class="mermaid">
+bpmn LR
+  pool "Customer"
+    task:user c1 "Place order"
+  pool "Supplier"
+    lane "Sales"
+      start message s1 "Order received"
+      xor g1 "In stock?"
+    lane "Warehouse"
+      task:service t1 "Pick items"
+      end e1 "Shipped"
+      end e2 "Backordered"
+  s1 --> g1
+  g1 -- "yes" --> t1 --> e1
+  g1 -->|default| e2
+  c1 ==> s1
+    </pre>
+
+    <h2>4. Intermediate events (message, timer) &amp; parallel gateway</h2>
+    <pre class="mermaid">
+bpmn LR
+  start message s1 "Request received"
+  task:user t1 "Assess request"
+  intermediate timer i1 "Wait 2 days"
+  and g1
+  task:service t2 "Notify"
+  task:script t3 "Archive"
+  end e1 "Closed"
+  s1 --> t1 --> i1 --> g1
+  g1 --> t2 --> e1
+  g1 --> t3 --> e1
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.parseError = function (err) {
+        console.error('PARSE_ERROR', err);
+      };
+      await mermaid.initialize({ startOnLoad: false, securityLevel: 'loose' });
+      await mermaid.run();
+      window.__mermaidDone = true;
+    </script>
+  </body>
+</html>
