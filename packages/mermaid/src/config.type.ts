@@ -244,6 +244,15 @@ export interface MermaidConfig {
      *
      */
     keepEntryNodeOnTop?: boolean;
+    /**
+     * Routes an edge that re-enters a subgraph downstream instead of around the subgraph.
+     *
+     * ELK lays out a subgraph as one node of its parent graph. A node outside a subgraph that both receives an edge from it and sends one back into it therefore closes a cycle there, even when the nodes inside do not. ELK breaks that cycle by reversing one of the edges and routes it into the subgraph's input side, around the outside of the subgraph.
+     *
+     * When enabled, such edges are found before layout, on the graph with each subgraph collapsed, and handed to ELK in the other direction. The edge is drawn with its arrowhead at its real target. Cycles between plain nodes are left to `cycleBreakingStrategy`.
+     *
+     */
+    orientFeedbackEdges?: boolean;
   };
   darkMode?: boolean;
   /**
