@@ -123,16 +123,15 @@ config:
       H: { row: 1, column: 2 }
 ---
 flowchart TB
-  subgraph G["Group G"]
+  subgraph G["Group One"]
     A["Alpha"]
     B["Beta"]
   end
-  subgraph H["Group H"]
+  subgraph H["Group Two"]
     C["Peer"]
   end
   A --> C
-  B --> H
-  G --> H
+  B --> C
 ```
 
 ## Configuration
