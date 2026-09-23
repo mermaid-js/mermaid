@@ -61,6 +61,12 @@ class Theme {
     this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
     this.clusterBkg = this.clusterBkg || this.tertiaryColor;
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
+
+    /* BPMN diagram. Optional overrides; bpmn/styles.ts falls back to the cluster
+     * and line variables above, so every other theme themes BPMN correctly too. */
+    this.bpmnLaneBkg = this.bpmnLaneBkg || this.clusterBkg;
+    this.bpmnPoolBorder = this.bpmnPoolBorder || this.clusterBorder;
+    this.bpmnMessageFlow = this.bpmnMessageFlow || this.lineColor;
     this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
     this.titleColor = this.titleColor || this.tertiaryTextColor;
     this.edgeLabelBackground =
