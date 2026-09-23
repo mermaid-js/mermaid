@@ -215,6 +215,8 @@ export interface GridAttachmentDemand {
   edgeId: string;
   demandKey: string;
   oppositeCoord: number;
+  preferredCoord: number;
+  compactPortal: boolean;
 }
 
 export interface GridAttachment {

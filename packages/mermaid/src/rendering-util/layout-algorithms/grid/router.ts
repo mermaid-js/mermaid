@@ -1,7 +1,7 @@
 import { log } from '../../../logger.js';
 import type { Point } from '../../../types.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
-import { normalizePolyline } from '../layout-utils/geometry.js';
+import { EPS, normalizePolyline } from '../layout-utils/geometry.js';
 import { polylineIntersectsRect, rectForNode } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
 import { isAncestorGroup } from './groups.js';
@@ -72,6 +72,8 @@ interface EdgeEndpointEntry {
   side: GridSide;
   demandKey: string;
   oppositeCoord: number;
+  preferredCoord: number;
+  compactPortal: boolean;
 }
 
 interface EdgeEndpointPlan {
@@ -163,6 +165,8 @@ function buildEndpointPlan(
   role: 'source' | 'target'
 ): EdgeEndpointPlan {
   const chain: EdgeEndpointEntry[] = [];
+  const endpointRect = rectForNode(endpoint);
+  const otherRect = rectForNode(other);
   const otherCenter = { x: other.x ?? 0, y: other.y ?? 0 };
   let current = endpoint;
 
@@ -177,7 +181,9 @@ function buildEndpointPlan(
       ownerId: current.id,
       side,
       demandKey: `${edgeId}:${role}:${current.id}:${side}`,
-      oppositeCoord: oppositeCoordFor(rectForNode(other), side),
+      oppositeCoord: oppositeCoordFor(otherRect, side),
+      preferredCoord: oppositeCoordFor(endpointRect, side),
+      compactPortal: current.id !== endpoint.id,
     });
 
     if (
@@ -301,6 +307,8 @@ function assignDemandCoordinates(
           edgeId: plan.edge.id,
           demandKey: entry.demandKey,
           oppositeCoord: entry.oppositeCoord,
+          preferredCoord: entry.preferredCoord,
+          compactPortal: entry.compactPortal,
         });
       }
     }
@@ -348,6 +356,51 @@ function assignDemandCoordinates(
       const coordinates = demandPlans.map((plan) => center + plan!.laneOffset);
       if (coordinates.every((coordinate) => coordinate >= low && coordinate <= high)) {
         demands.forEach((demand, index) => assigned.set(demand.demandKey, coordinates[index]));
+        continue;
+      }
+    }
+    if (owner.isGroup && demands.every(({ compactPortal }) => compactPortal)) {
+      const container = result.containers.get(owner.id);
+      const corridorCoordinates =
+        side === 'left' || side === 'right'
+          ? container?.horizontalCorridors
+          : container?.verticalCorridors;
+      const preferredCoordinate = (demand: GridAttachmentDemand): number => {
+        const clamped = Math.max(low, Math.min(high, demand.preferredCoord));
+        const nearest = corridorCoordinates?.reduce(
+          (best, coordinate) =>
+            Math.abs(coordinate - clamped) < Math.abs(best - clamped) ? coordinate : best,
+          corridorCoordinates[0]
+        );
+        return nearest !== undefined && Math.abs(nearest - clamped) <= EPS ? nearest : clamped;
+      };
+      if (demands.length === 1) {
+        assigned.set(demands[0].demandKey, preferredCoordinate(demands[0]));
+        continue;
+      }
+      if (span >= MIN_PORT_SEPARATION_PX * (demands.length - 1)) {
+        const desired = demands.map(preferredCoordinate);
+        const coordinates: number[] = [];
+        for (const [index, coordinate] of desired.entries()) {
+          coordinates.push(
+            index === 0
+              ? coordinate
+              : Math.max(coordinate, coordinates[index - 1] + MIN_PORT_SEPARATION_PX)
+          );
+        }
+        const averageDesired =
+          desired.reduce((sum, coordinate) => sum + coordinate, 0) / desired.length;
+        const averageAssigned =
+          coordinates.reduce((sum, coordinate) => sum + coordinate, 0) / coordinates.length;
+        const minimumShift = low - coordinates[0];
+        const maximumShift = high - coordinates[coordinates.length - 1];
+        const shift = Math.max(
+          minimumShift,
+          Math.min(maximumShift, averageDesired - averageAssigned)
+        );
+        demands.forEach((demand, index) =>
+          assigned.set(demand.demandKey, coordinates[index] + shift)
+        );
         continue;
       }
     }
