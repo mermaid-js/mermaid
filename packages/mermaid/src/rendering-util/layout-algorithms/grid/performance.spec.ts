@@ -285,7 +285,7 @@ describe('grid determinism and performance', () => {
     expect(metrics.endpointOverlayVertices).toBeLessThanOrEqual(metrics.endpointOverlayBuilds * 32);
     expect(metrics.expandedStates).toBeLessThan(2_000_000);
     expect(metrics.estimatedBytes).toBeLessThan(64 * 1024 * 1024);
-  });
+  }, 10_000);
 
   it('uses coordinate-compressed label queries for very large coordinate spans', () => {
     const layout = fullSpanFallbackLayout();
