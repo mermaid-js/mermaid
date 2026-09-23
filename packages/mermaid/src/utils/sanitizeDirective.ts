@@ -47,16 +47,17 @@ const sanitizeGridPlacements = (dict: Record<string, unknown>): void => {
       delete dict[key];
       continue;
     }
-    for (const placementKey of Object.keys(value)) {
+    const placement = value as Record<string, unknown>;
+    for (const placementKey of Object.keys(placement)) {
       if (
         placementKey.startsWith('__') ||
         placementKey.includes('proto') ||
         placementKey.includes('constr') ||
         !GRID_PLACEMENT_KEYS.has(placementKey) ||
-        value[placementKey] == null
+        placement[placementKey] == null
       ) {
         log.debug('sanitize deleting grid placement property:', placementKey);
-        delete value[placementKey];
+        delete placement[placementKey];
       }
     }
   }
