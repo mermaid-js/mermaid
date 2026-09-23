@@ -163,6 +163,17 @@ function boundaryCrossings(points: { x: number; y: number }[], owner: Node): num
   }, 0);
 }
 
+const invalidRoutingIssueTypes = new Set([
+  'edge-missing-points',
+  'edge-non-orthogonal',
+  'edge-intersects-obstacle',
+  'edge-endpoint-inside-node',
+]);
+
+function invalidRoutingIssues(data: LayoutData) {
+  return validateLayout(data).issues.filter(({ type }) => invalidRoutingIssueTypes.has(type));
+}
+
 describe('grid router', () => {
   it('keeps compact portal coordinates within their available interval', () => {
     expect(assignCompactPortalCoordinates([0, 10, 0], 0, 10)).toEqual([0, 6, 10]);
@@ -804,14 +815,7 @@ describe('grid router', () => {
     runGridLayoutCore(data);
 
     expect(data.edges.every(({ points }) => (points?.length ?? 0) >= 2)).toBe(true);
-    expect(validateLayout(data).issues).toEqual(
-      expect.not.arrayContaining([
-        expect.objectContaining({ type: 'edge-missing-points' }),
-        expect.objectContaining({ type: 'edge-non-orthogonal' }),
-        expect.objectContaining({ type: 'edge-intersects-obstacle' }),
-        expect.objectContaining({ type: 'edge-endpoint-inside-node' }),
-      ])
-    );
+    expect(invalidRoutingIssues(data)).toEqual([]);
   });
 
   it('uses sparse hierarchy routing when mixed-demand compatibility crosses stacked items', () => {
@@ -854,14 +858,7 @@ describe('grid router', () => {
     runGridLayoutCore(data, metrics);
 
     expect(data.edges.every(({ points }) => (points?.length ?? 0) >= 2)).toBe(true);
-    expect(validateLayout(data).issues).toEqual(
-      expect.not.arrayContaining([
-        expect.objectContaining({ type: 'edge-missing-points' }),
-        expect.objectContaining({ type: 'edge-non-orthogonal' }),
-        expect.objectContaining({ type: 'edge-intersects-obstacle' }),
-        expect.objectContaining({ type: 'edge-endpoint-inside-node' }),
-      ])
-    );
+    expect(invalidRoutingIssues(data)).toEqual([]);
     expect(metrics.compatibilityValidationFailures).toBe(0);
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });
