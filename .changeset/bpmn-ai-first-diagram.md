@@ -9,5 +9,6 @@ conditions and default flows, pools, lanes, and cross-pool message flows. The
 parser is tolerant (case-insensitive keywords and synonyms) and produces
 deterministic output, and every semantic error is a prescriptive, self-correcting
 message (unreachable nodes, gateway arity, message-flows-across-pools, and more).
-Rendering reuses the swimlane layout engine for lanes; a plain flow lays out with
-dagre.
+Pools and lanes render as titled containers; a plain flow lays out with dagre. It
+also ships a one-way BPMN 2.0 XML export (`toBpmnXml(dsl)`) with a BPMNDI section,
+so a diagram opens laid-out in bpmn.io / Camunda Modeler.

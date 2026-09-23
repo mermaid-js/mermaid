@@ -239,3 +239,23 @@ bpmn LR
   g1 -- "approved" --> t2 --> e1
   g1 -->|default| e2
 ```
+
+## Export to BPMN 2.0 XML
+
+A BPMN diagram can be exported one-way to BPMN 2.0 XML (with a `BPMNDI` section
+carrying real layout coordinates), so it opens laid-out in bpmn.io or Camunda
+Modeler. Pools become a `collaboration` of `participant`s, lanes become a
+`laneSet`, and message flows become `messageFlow`s.
+
+```js
+import { toBpmnXml } from 'mermaid/dist/diagrams/bpmn/export/index.js';
+
+const xml = await toBpmnXml(`bpmn LR
+  start s1 "Start"
+  task:user t1 "Review"
+  end e1 "Done"
+  s1 --> t1 --> e1`);
+// -> a BPMN 2.0 XML string; write it to an .bpmn file and open it in bpmn.io
+```
+
+XML import (XML back to DSL) is intentionally out of scope.
