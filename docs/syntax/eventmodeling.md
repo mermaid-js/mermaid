@@ -246,6 +246,8 @@ data ItemAdded {
 
 By default the diagram builds the relations based on the inference. But modeling a more complex business flow requires to break such inference from time to time. For that you can use a different type of Time Frame called **Reset Frame**. It is represented by a `rf` / `resetframe` token.
 
+A reset frame stops the inferred relation from the preceding frame. You can still connect it to a specific earlier frame with `->>`.
+
 Compact version:
 
 ```mermaid-example
@@ -300,6 +302,24 @@ resetframe 04 event External.InventoryChanged
 timeframe 05 processor InventoryProcessor
 timeframe 06 command ChangeInventory
 timeframe 07 event Cart.InventoryChanged
+```
+
+For example, this read model receives input from `ItemAdded` without inferring a relation from `OtherUI`:
+
+```mermaid-example
+eventmodeling
+
+tf 01 evt ItemAdded
+tf 02 ui OtherUI
+rf 03 rmo CartItems ->> 01
+```
+
+```mermaid
+eventmodeling
+
+tf 01 evt ItemAdded
+tf 02 ui OtherUI
+rf 03 rmo CartItems ->> 01
 ```
 
 ### Multiple relations
