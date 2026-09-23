@@ -1,4 +1,5 @@
 import { it, describe, expect } from 'vitest';
+import { parse as parseAst } from '@mermaid-js/parser';
 import { db } from './db.js';
 import { parser } from './parser.js';
 import { closedRoundCurve, relativeRadius } from './renderer.js';
@@ -140,6 +141,35 @@ describe('radar diagrams', () => {
         startEntries: [1, null, 3],
       },
     ]);
+  });
+
+  it.each(['1', '[1..2]'])('should reject named entries without axes: %s', async (entry) => {
+    await expect(
+      parser.parse(`radar-beta
+      curve c1{A:${entry}}`)
+    ).rejects.toThrow('Axes must be populated before curves for reference entries');
+    expect(getCurves()).toEqual([]);
+  });
+
+  it.each(['1', '[1..2]'])('should reject an omitted named axis: %s', async (entry) => {
+    await expect(
+      parser.parse(`radar-beta
+      axis A,B["Axis B"],C
+      curve c1{C:3,A:${entry}}`)
+    ).rejects.toThrow('Missing entry for axis Axis B');
+    expect(getCurves()).toEqual([]);
+  });
+
+  it('should reject an AST entry with neither a value nor a range', async () => {
+    const { curves } = await parseAst(
+      'radar',
+      `radar-beta
+      curve c1{1}`
+    );
+    delete curves[0].entries[0].value;
+
+    expect(() => db.setCurves(curves)).toThrow('Curve entry must contain a value or range');
+    expect(getCurves()).toEqual([]);
   });
 
   it('should reject a curve range whose start exceeds its end', async () => {
