@@ -359,6 +359,33 @@ describe('when formatting urls', function () {
     result = utils.formatUrl(url, { securityLevel: 'strict' });
     expect(result).toEqual('about:blank');
   });
+  it('should preserve encoded newlines and carriage returns in the query string', function () {
+    const url = 'https://github.com/mermaid-js/mermaid/issues/new?body=new%0Aline%0Aanother%0Aline';
+
+    let result = utils.formatUrl(url, { securityLevel: 'loose' });
+    expect(result).toEqual(url);
+
+    result = utils.formatUrl(url, { securityLevel: 'strict' });
+    expect(result).toEqual(url);
+  });
+  it('should preserve an encoded carriage return + newline pair in the fragment', function () {
+    const url = 'https://example.com/#body=one%0D%0Atwo';
+
+    const result = utils.formatUrl(url, { securityLevel: 'strict' });
+    expect(result).toEqual(url);
+  });
+  it('should still strip a raw, unencoded newline used to obfuscate a script URL', function () {
+    const url = 'java\nscript:alert("test")';
+
+    const result = utils.formatUrl(url, { securityLevel: 'strict' });
+    expect(result).toEqual('about:blank');
+  });
+  it('should still strip an encoded newline used to obfuscate a script URL', function () {
+    const url = 'java%0Ascript:alert("test")';
+
+    const result = utils.formatUrl(url, { securityLevel: 'strict' });
+    expect(result).toEqual('about:blank');
+  });
 });
 
 describe('when initializing the id generator', function () {
