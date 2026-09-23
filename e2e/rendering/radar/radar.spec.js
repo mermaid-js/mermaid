@@ -93,5 +93,6 @@ test.describe('radar structure', () => {
     );
     expect(await pixelAt(page, 34.5, -144)).toEqual([255, 255, 255]);
     expect(await pixelAt(page, -180, -180)).toEqual([255, 0, 0]);
+    expect(await pixelAt(page, 0, 0)).toEqual([255, 255, 255]);
   });
 });
