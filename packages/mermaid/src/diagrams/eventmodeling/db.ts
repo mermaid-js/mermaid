@@ -679,6 +679,7 @@ function dispatch(state: Context, command: Command): Context {
 
 export const db: EventModelingDB = {
   getConfig,
+  preserveCommentsWhenParsing: true,
 
   setOptions,
   getOptions,
