@@ -390,7 +390,7 @@ export interface GridLayoutConfig {
     [k: string]: GridPlacement;
   };
   /**
-   * Fixed candidate column count for auto-placed items; 0 means automatic.
+   * Non-negative integer candidate column count for auto-placed items; 0 means automatic.
    */
   columns?: number;
   /**
@@ -449,11 +449,11 @@ export interface GridLayoutConfig {
  */
 export interface GridPlacement {
   /**
-   * One-based row number local to the item's direct parent grid.
+   * Positive integer row number local to the item's direct parent grid.
    */
   row?: number;
   /**
-   * One-based column number local to the item's direct parent grid.
+   * Positive integer column number local to the item's direct parent grid.
    */
   column?: number;
   /**

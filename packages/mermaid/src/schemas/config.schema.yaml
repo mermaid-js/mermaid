@@ -537,11 +537,11 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     additionalProperties: false
     properties:
       row:
-        description: One-based row number local to the item's direct parent grid.
+        description: Positive integer row number local to the item's direct parent grid.
         type: integer
         minimum: 1
       column:
-        description: One-based column number local to the item's direct parent grid.
+        description: Positive integer column number local to the item's direct parent grid.
         type: integer
         minimum: 1
       horizontalAlign:
@@ -562,7 +562,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           $ref: '#/$defs/GridPlacement'
         default: {}
       columns:
-        description: Fixed candidate column count for auto-placed items; 0 means automatic.
+        description: Non-negative integer candidate column count for auto-placed items; 0 means automatic.
         type: integer
         minimum: 0
         default: 0
