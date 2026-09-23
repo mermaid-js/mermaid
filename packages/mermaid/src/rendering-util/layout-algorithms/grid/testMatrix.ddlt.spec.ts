@@ -238,7 +238,7 @@ describe('grid DDLT matrix fixtures', () => {
       hierarchyPortalTransitionLength: 36,
       hierarchyBoundaryTransitions: 3,
       resourceLimitFallbacks: 0,
-      routeSignature: 'f16caa3b660b48df29626620b374757376d1e37090eda473c6aed3c2bd16fb77',
+      routeSignature: '111f63ddd791c903341933dbdf21ab10bb88e6531f10d8ac76f9bb77ad314ccb',
     });
   });
 
@@ -402,15 +402,15 @@ describe('grid DDLT matrix fixtures', () => {
           "valid": true,
         },
         {
-          "bends": 12,
+          "bends": 0,
           "compatibilitySegments": 0,
           "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
           "id": "grid/routing-hierarchy-portals",
-          "routeSignature": "f16caa3b660b48df29626620b374757376d1e37090eda473c6aed3c2bd16fb77",
-          "score": 0,
+          "routeSignature": "111f63ddd791c903341933dbdf21ab10bb88e6531f10d8ac76f9bb77ad314ccb",
+          "score": 1000,
           "valid": true,
         },
         {
@@ -426,15 +426,15 @@ describe('grid DDLT matrix fixtures', () => {
           "valid": true,
         },
         {
-          "bends": 4,
+          "bends": 0,
           "compatibilitySegments": 0,
           "compatibilityValidationFailures": 0,
           "crossings": 0,
           "fallbackValidationFailures": 0,
           "fallbacks": 0,
           "id": "grid/routing-outside-member",
-          "routeSignature": "497cbacd8972f9249bbb01e46646993826730ba5bf90cfdb6c482b530af39097",
-          "score": 970,
+          "routeSignature": "ee2c39338c6ecbf919fd83d4110716b138749438afa1a751cf0904d57052b6fa",
+          "score": 1000,
           "valid": true,
         },
         {

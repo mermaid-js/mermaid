@@ -1009,6 +1009,40 @@ describe('grid router', () => {
     }
   });
 
+  it('keeps a single hierarchy portal near its endpoint instead of centering it', () => {
+    const data = baseLayout(
+      [
+        group('group', 'Group', { row: 1, column: 1 }),
+        leaf('a', 80, 40, { row: 1, column: 1 }, 'group'),
+        leaf('c', 80, 40, { row: 1, column: 2 }),
+      ],
+      [edge('a-c', 'a', 'c')],
+      { cellGap: 16 }
+    );
+
+    runGridLayoutCore(data);
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    const owner = data.nodes.find(({ id }) => id === 'group')!;
+    const source = data.nodes.find(({ id }) => id === 'a')!;
+    const ownerRect = nodeRect(owner);
+    const crossing = normalizePolyline(data.edges[0].points ?? []).segments.find((segment) => {
+      if (segment.orientation !== 'H') {
+        return false;
+      }
+      const low = Math.min(segment.a.x, segment.b.x);
+      const high = Math.max(segment.a.x, segment.b.x);
+      return low < ownerRect.right && high > ownerRect.right;
+    });
+
+    expect(crossing).toBeDefined();
+    expect(Math.abs(crossing!.a.y - (source.y ?? 0))).toBeLessThanOrEqual(1);
+    const endpointYs = [source.y ?? 0, data.nodes.find(({ id }) => id === 'c')?.y ?? 0];
+    const routeYs = data.edges[0].points?.map(({ y }) => y) ?? [];
+    expect(Math.min(...routeYs)).toBeGreaterThanOrEqual(Math.min(...endpointYs) - 1);
+    expect(Math.max(...routeYs)).toBeLessThanOrEqual(Math.max(...endpointYs) + 1);
+  });
+
   it('reports test-only sparse and legacy route comparison without changing selection', () => {
     const data = baseLayout(
       [

@@ -342,7 +342,10 @@ function assignDemandCoordinates(
     demands.sort((a, b) => a.oppositeCoord - b.oppositeCoord || a.edgeId.localeCompare(b.edgeId));
     const demandPlans = demands.map((demand) => planByEdgeId.get(demand.edgeId));
     const pairKeys = new Set(demandPlans.map((plan) => plan?.pairKey));
+    const compactHierarchyPortals =
+      owner.isGroup && demands.every(({ compactPortal }) => compactPortal);
     if (
+      !(compactHierarchyPortals && demands.length === 1) &&
       pairKeys.size === 1 &&
       demandPlans.every(
         (plan) =>
@@ -359,7 +362,7 @@ function assignDemandCoordinates(
         continue;
       }
     }
-    if (owner.isGroup && demands.every(({ compactPortal }) => compactPortal)) {
+    if (compactHierarchyPortals) {
       const container = result.containers.get(owner.id);
       const corridorCoordinates =
         side === 'left' || side === 'right'
@@ -1947,6 +1950,18 @@ function sparseContainerSegment(
       });
     }
     return legacy;
+  }
+  const aligned =
+    Math.abs(start.connect.x - end.connect.x) <= EPS ||
+    Math.abs(start.connect.y - end.connect.y) <= EPS;
+  if (aligned) {
+    const direct = normalizePolyline([start.port, start.connect, end.connect, end.port]).points;
+    if (
+      validateContainerSegment(direct, start.ownerId, end.ownerId, containerId, result) &&
+      routeSatisfiesPairConstraints(direct, pairRoutes)
+    ) {
+      return direct;
+    }
   }
   const topology = context.topologies.get(containerId);
   if (!topology || !overlayScratch) {
