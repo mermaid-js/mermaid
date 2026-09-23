@@ -279,6 +279,34 @@ function collectRoutePlans(layout: LayoutData, result: GridLayoutResult): EdgeRo
   });
 }
 
+export function assignCompactPortalCoordinates(
+  desired: readonly number[],
+  low: number,
+  high: number
+): number[] {
+  const coordinates: number[] = [];
+  for (const [index, coordinate] of desired.entries()) {
+    coordinates.push(
+      index === 0
+        ? coordinate
+        : Math.max(coordinate, coordinates[index - 1] + MIN_PORT_SEPARATION_PX)
+    );
+  }
+  for (let index = coordinates.length - 1; index >= 0; index--) {
+    coordinates[index] = Math.min(
+      coordinates[index],
+      index === coordinates.length - 1 ? high : coordinates[index + 1] - MIN_PORT_SEPARATION_PX
+    );
+  }
+  const averageDesired = desired.reduce((sum, coordinate) => sum + coordinate, 0) / desired.length;
+  const averageAssigned =
+    coordinates.reduce((sum, coordinate) => sum + coordinate, 0) / coordinates.length;
+  const minimumShift = low - coordinates[0];
+  const maximumShift = high - coordinates[coordinates.length - 1];
+  const shift = Math.max(minimumShift, Math.min(maximumShift, averageDesired - averageAssigned));
+  return coordinates.map((coordinate) => coordinate + shift);
+}
+
 function assignDemandCoordinates(
   plans: EdgeRoutePlan[],
   result: GridLayoutResult
@@ -383,27 +411,8 @@ function assignDemandCoordinates(
       }
       if (span >= MIN_PORT_SEPARATION_PX * (demands.length - 1)) {
         const desired = demands.map(preferredCoordinate);
-        const coordinates: number[] = [];
-        for (const [index, coordinate] of desired.entries()) {
-          coordinates.push(
-            index === 0
-              ? coordinate
-              : Math.max(coordinate, coordinates[index - 1] + MIN_PORT_SEPARATION_PX)
-          );
-        }
-        const averageDesired =
-          desired.reduce((sum, coordinate) => sum + coordinate, 0) / desired.length;
-        const averageAssigned =
-          coordinates.reduce((sum, coordinate) => sum + coordinate, 0) / coordinates.length;
-        const minimumShift = low - coordinates[0];
-        const maximumShift = high - coordinates[coordinates.length - 1];
-        const shift = Math.max(
-          minimumShift,
-          Math.min(maximumShift, averageDesired - averageAssigned)
-        );
-        demands.forEach((demand, index) =>
-          assigned.set(demand.demandKey, coordinates[index] + shift)
-        );
+        const coordinates = assignCompactPortalCoordinates(desired, low, high);
+        demands.forEach((demand, index) => assigned.set(demand.demandKey, coordinates[index]));
         continue;
       }
     }
@@ -421,6 +430,10 @@ function assignDemandCoordinates(
 
 function equalPoint(a: Point, b: Point): boolean {
   return Math.abs(a.x - b.x) <= 1e-6 && Math.abs(a.y - b.y) <= 1e-6;
+}
+
+export function areExactlyAxisAligned(a: Point, b: Point): boolean {
+  return a.x === b.x || a.y === b.y;
 }
 
 function chooseIntermediateCoordinate(
@@ -1951,9 +1964,7 @@ function sparseContainerSegment(
     }
     return legacy;
   }
-  const aligned =
-    Math.abs(start.connect.x - end.connect.x) <= EPS ||
-    Math.abs(start.connect.y - end.connect.y) <= EPS;
+  const aligned = areExactlyAxisAligned(start.connect, end.connect);
   if (aligned) {
     const direct = normalizePolyline([start.port, start.connect, end.connect, end.port]).points;
     if (

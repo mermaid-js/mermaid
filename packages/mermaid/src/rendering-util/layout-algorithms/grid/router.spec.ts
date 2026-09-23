@@ -4,6 +4,7 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
+import { areExactlyAxisAligned, assignCompactPortalCoordinates } from './router.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 
 function leaf(
@@ -163,6 +164,15 @@ function boundaryCrossings(points: { x: number; y: number }[], owner: Node): num
 }
 
 describe('grid router', () => {
+  it('keeps compact portal coordinates within their available interval', () => {
+    expect(assignCompactPortalCoordinates([0, 10, 0], 0, 10)).toEqual([0, 6, 10]);
+  });
+
+  it('requires exact axis alignment for the direct route shortcut', () => {
+    expect(areExactlyAxisAligned({ x: 0, y: 0 }, { x: 0.5, y: 10 })).toBe(false);
+    expect(areExactlyAxisAligned({ x: 0, y: 0 }, { x: 0, y: 10 })).toBe(true);
+  });
+
   it('uses the configured edge curve and rounded corner radius', () => {
     const data = baseLayout(
       [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 2, column: 2 })],
