@@ -214,6 +214,87 @@ describe('radar', () => {
     });
 
     it.each([
+      ['curve my-curve { [2..3] }', undefined],
+      ['curve my-curve { my-axis: [2..3] }', 'my-axis'],
+    ])('should handle a curve range entry', (context: string, axis: string | undefined) => {
+      const result = parse(`radar-beta\naxis my-axis\n${context}`);
+      expectNoErrorsOrAlternatives(result);
+
+      const [entry] = result.value.curves[0].entries;
+      expect(entry.range).toBe('[2..3]');
+      expect(entry.value).toBeUndefined();
+      expect(entry.axis?.$refText).toBe(axis);
+    });
+
+    it.each(['[0..0]', '[4..4]', '[1.25..2.5]'])(
+      'should preserve zero-width and decimal ranges: %s',
+      (range) => {
+        const result = parse(`radar-beta\naxis A\ncurve c1{${range}}`);
+        expectNoErrorsOrAlternatives(result);
+        expect(result.value.curves[0].entries[0].range).toBe(range);
+        expect(result.value.curves[0].entries[0].value).toBeUndefined();
+      }
+    );
+
+    it.each([
+      ['positional', '6, [0..4], 2, [2..6]', [undefined, undefined, undefined, undefined]],
+      ['named', 'A: 6, B: [0..4], C: 2, D: [2..6]', ['A', 'B', 'C', 'D']],
+    ])('should mix literals and ranges in one %s curve', (_syntax, entries, axes) => {
+      const result = parse(`radar-beta
+      axis A, B, C, D
+      curve c1{${entries}}`);
+      expectNoErrorsOrAlternatives(result);
+
+      expect(result.value.curves).toHaveLength(1);
+      expect(
+        result.value.curves[0].entries.map(({ value, range, axis }) => ({
+          value,
+          range,
+          axis: axis?.$refText,
+        }))
+      ).toEqual([
+        { value: 6, range: undefined, axis: axes[0] },
+        { value: undefined, range: '[0..4]', axis: axes[1] },
+        { value: 2, range: undefined, axis: axes[2] },
+        { value: undefined, range: '[2..6]', axis: axes[3] },
+      ]);
+    });
+
+    it.each([
+      'curve c1{1, 2, 3}\ncurve c2{[1..2], [2..3], [1..3]}',
+      'curve c1{A: 1, B: 2, C: 3}, c2{A: [1..2], B: [2..3], C: [1..3]}',
+    ])('should keep literals and ranges separate across curves: %s', (curves) => {
+      const result = parse(`radar-beta
+      axis A, B, C
+      ${curves}`);
+      expectNoErrorsOrAlternatives(result);
+
+      expect(
+        result.value.curves.map(({ name, entries }) => ({
+          name,
+          entries: entries.map(({ value, range }) => ({ value, range })),
+        }))
+      ).toEqual([
+        {
+          name: 'c1',
+          entries: [
+            { value: 1, range: undefined },
+            { value: 2, range: undefined },
+            { value: 3, range: undefined },
+          ],
+        },
+        {
+          name: 'c2',
+          entries: [
+            { value: undefined, range: '[1..2]' },
+            { value: undefined, range: '[2..3]' },
+            { value: undefined, range: '[1..3]' },
+          ],
+        },
+      ]);
+    });
+
+    it.each([
       `curve my-curve { ax1 1, ax2 2 }`,
       `curve my-curve {
         ax1 1,

@@ -134,6 +134,37 @@
         curve c2{5,4,3,2,1}
         curve c3{3,3,3,3,3}
       </pre>
+
+      <pre class="mermaid">
+      radar-beta
+        title Scalar curve
+        axis A, B, C, D, E
+        curve c1{3,4,5,4,3}
+        showLegend false
+        ticks 5
+        max 10
+    </pre
+      >
+
+      <pre class="mermaid">
+      ---
+      config:
+        theme: base
+        themeVariables:
+          cScale0: "#287271"
+          radar:
+            axisColor: "#16324F"
+            curveOpacity: 0.7
+      ---
+      radar-beta
+        title Range-valued curve
+        axis A, B, C, D, E
+        curve c1{[2..4],[3..6],[4..7],[3..6],[2..5]}
+        showLegend false
+        ticks 5
+        max 10
+    </pre
+      >
     </div>
     <script type="module">
       import mermaid from '/mermaid.esm.mjs';

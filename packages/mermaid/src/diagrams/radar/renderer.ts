@@ -32,7 +32,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   drawAxes(g, axes, radius, config);
 
   // 📊 Draw the curves
-  drawCurves(g, axes, curves, minValue, maxValue, options.graticule, config);
+  drawCurves(g, axes, curves, minValue, maxValue, options.graticule, config, id);
 
   // 🏷 Draw Legend
   drawLegend(g, curves, options.showLegend, config);
@@ -139,7 +139,8 @@ function drawCurves(
   minValue: number,
   maxValue: number,
   graticule: string,
-  config: Required<RadarDiagramConfig>
+  config: Required<RadarDiagramConfig>,
+  id: string
 ) {
   const numAxes = axes.length;
   const radius = Math.min(config.width, config.height) / 2;
@@ -158,6 +159,52 @@ function drawCurves(
       return { x, y };
     });
 
+    if (curve.startEntries !== undefined) {
+      const startPoints = curve.startEntries.map((entry, i) => {
+        const angle = (2 * Math.PI * i) / numAxes - Math.PI / 2;
+        const r = relativeRadius(entry ?? minValue, minValue, maxValue, radius);
+        return { x: r * Math.cos(angle), y: r * Math.sin(angle) };
+      });
+      const curvePath = graticule === 'circle' ? closedRoundCurve : closedPolygonCurve;
+      const outerPath = curvePath(points, config.curveTension);
+      const innerPath = curvePath(startPoints, config.curveTension);
+      const maskId = `${id}-radar-mask-${index}`;
+      const clipId = `${id}-radar-clip-${index}`;
+      const defs = g.append('defs');
+      const mask = defs.append('mask').attr('id', maskId).style('mask-type', 'luminance');
+
+      // Smoothed boundaries can cross: subtract the inner region instead of XOR-filling it.
+      mask
+        .append('path')
+        .attr('d', outerPath)
+        .style('fill', 'white')
+        .style('fill-opacity', 1)
+        .style('stroke', 'none');
+      mask
+        .append('path')
+        .attr('d', innerPath)
+        .style('fill', 'black')
+        .style('fill-opacity', 1)
+        .style('stroke', 'none');
+      defs.append('clipPath').attr('id', clipId).append('path').attr('d', outerPath);
+      g.append('path')
+        .attr('d', `${outerPath} ${innerPath}`)
+        .attr('fill-rule', 'nonzero')
+        .attr('mask', `url(#${maskId})`)
+        .attr('class', `radarCurve-${index}`)
+        .style('stroke', 'none');
+      g.append('path')
+        .attr('d', outerPath)
+        .attr('class', `radarCurveOutline-${index}`)
+        .style('fill', 'none');
+      g.append('path')
+        .attr('d', innerPath)
+        .attr('clip-path', `url(#${clipId})`)
+        .attr('class', `radarCurveOutline-${index}`)
+        .style('fill', 'none');
+      return;
+    }
+
     if (graticule === 'circle') {
       // Draw a closed curve through the points.
       g.append('path')
@@ -171,6 +218,9 @@ function drawCurves(
     }
   });
 }
+
+const closedPolygonCurve = (points: { x: number; y: number }[]): string =>
+  `${points.map(({ x, y }, index) => `${index === 0 ? 'M' : 'L'}${x},${y}`).join(' ')} Z`;
 
 export function relativeRadius(
   value: number,
