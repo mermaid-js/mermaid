@@ -237,6 +237,44 @@ export function interpolateToCurve(
   return d3CurveTypes[curveName as keyof typeof d3CurveTypes] ?? defaultCurve;
 }
 
+// `sanitizeUrl` (from `@braintree/sanitize-url`) repeatedly URL-decodes its input to catch
+// obfuscated `javascript:`/`data:`/`vbscript:` links, and along the way it deletes any
+// control characters the decoding reveals (e.g. `%0A` becomes a newline, which is then
+// stripped outright rather than re-encoded). That silently destroys legitimate encoded
+// newlines/carriage returns in a link's query string or fragment, such as a GitHub "new
+// issue" URL whose `body` parameter is meant to contain line breaks.
+// See https://github.com/mermaid-js/mermaid/issues/7378 and the upstream report at
+// https://github.com/braintree/sanitize-url/issues/75.
+//
+// To avoid that, we hide `%0A`/`%0D` sequences behind placeholders before sanitizing and
+// restore them afterwards. Only sequences at or after the URL's first `?`/`#` are touched,
+// i.e. only inside the query string or fragment: this is exactly where the affected content
+// lives, and it keeps the change from ever altering the scheme portion of the URL that
+// `sanitizeUrl` inspects for dangerous protocols.
+const ENCODED_LF_REGEX = /%0[Aa]/g;
+const ENCODED_CR_REGEX = /%0[Dd]/g;
+const ENCODED_LF_PLACEHOLDER = 'MERMAID_PRESERVED_ENCODED_LF';
+const ENCODED_CR_PLACEHOLDER = 'MERMAID_PRESERVED_ENCODED_CR';
+
+function sanitizeUrlPreservingEncodedNewlines(url: string): string {
+  const splitIndex = url.search(/[#?]/);
+  if (splitIndex === -1) {
+    return sanitizeUrl(url);
+  }
+
+  const head = url.slice(0, splitIndex);
+  const tail = url
+    .slice(splitIndex)
+    .replace(ENCODED_LF_REGEX, ENCODED_LF_PLACEHOLDER)
+    .replace(ENCODED_CR_REGEX, ENCODED_CR_PLACEHOLDER);
+
+  return sanitizeUrl(head + tail)
+    .split(ENCODED_LF_PLACEHOLDER)
+    .join('%0A')
+    .split(ENCODED_CR_PLACEHOLDER)
+    .join('%0D');
+}
+
 /**
  * Formats a URL string
  *
@@ -252,7 +290,7 @@ export function formatUrl(linkStr: string, config: MermaidConfig): string | unde
   }
 
   if (config.securityLevel !== 'loose') {
-    return sanitizeUrl(url);
+    return sanitizeUrlPreservingEncodedNewlines(url);
   }
 
   return url;
