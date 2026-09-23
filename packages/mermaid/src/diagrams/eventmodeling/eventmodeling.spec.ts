@@ -2,6 +2,7 @@ import { it, describe, expect } from 'vitest';
 
 import { db } from './db.js';
 import { parser } from './parser.js';
+import { mermaidAPI } from '../../mermaidAPI.js';
 
 const { clear } = db;
 
@@ -60,6 +61,28 @@ data ItemAddedData
     rf 02 cmd AddItem
     rf 03 evt ItemAdded`;
     await expect(parser.parse(str)).resolves.not.toThrow();
+  });
+
+  it('should reject a frame id reused by a reset frame', async () => {
+    await parser.parse(`eventmodeling
+      tf 09 ui PreviousDiagram`);
+
+    await expect(
+      parser.parse(`eventmodeling
+        tf 01 ui UI
+        tf 02 cmd Command
+        rf 01 evt Event`)
+    ).rejects.toThrow('Duplicate event modeling frame ID "01" on line 4');
+    expect(() => db.getState()).toThrow('No data for EventModel');
+  });
+
+  it('should report the original line number when comments precede a duplicate frame', async () => {
+    await expect(
+      mermaidAPI.parse(`eventmodeling
+        tf 01 ui UI
+        %% This comment occupies a source line.
+        rf 01 evt Event`)
+    ).rejects.toThrow('Duplicate event modeling frame ID "01" on line 4');
   });
 
   it('should handle all entity types', async () => {
