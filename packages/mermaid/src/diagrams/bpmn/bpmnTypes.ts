@@ -1,5 +1,5 @@
 import type { DiagramDBBase } from '../../diagram-api/types.js';
-import type { BpmnDiagramConfig } from '../../config.type.js';
+import type { BPMNDiagramConfig as BpmnDiagramConfig } from '../../config.type.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 
 /** Layout direction. `TD` normalizes to `TB`. */

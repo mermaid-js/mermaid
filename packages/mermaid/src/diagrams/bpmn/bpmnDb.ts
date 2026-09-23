@@ -10,7 +10,7 @@ import {
 import { getConfig as getGlobalConfig } from '../../diagram-api/diagramAPI.js';
 import { sanitizeText } from '../common/common.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
-import type { BpmnDiagramConfig } from '../../config.type.js';
+import type { BPMNDiagramConfig as BpmnDiagramConfig } from '../../config.type.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
 import type {
   BpmnDB,

@@ -5,6 +5,7 @@ arrowend
 Bendpoints
 bmatrix
 bpmn
+bpmndi
 braintree
 catmull
 compositTitleSize
@@ -31,6 +32,7 @@ mermaidchart
 mermaidjs
 mindmap
 mindmaps
+moddle
 mrtree
 multigraph
 nodesep
