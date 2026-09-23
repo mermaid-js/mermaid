@@ -175,22 +175,18 @@ Groups are laid out recursively from the inside out. Child coordinates are alway
 config:
   layout: grid
   grid:
-    cellGap: 16
     placements:
       A: { row: 1, column: 1 }
       B: { row: 2, column: 1 }
-      C: { row: 1, column: 1 }
+      C: { row: 1, column: 2 }
       G: { row: 1, column: 1 }
-      H: { row: 1, column: 2 }
 ---
 flowchart TB
   subgraph G["Group One"]
     A["Alpha"]
     B["Beta"]
   end
-  subgraph H["Group Two"]
-    C["Peer"]
-  end
+  C["Peer"]
   A --> C
   B --> C
 ```
@@ -200,22 +196,18 @@ flowchart TB
 config:
   layout: grid
   grid:
-    cellGap: 16
     placements:
       A: { row: 1, column: 1 }
       B: { row: 2, column: 1 }
-      C: { row: 1, column: 1 }
+      C: { row: 1, column: 2 }
       G: { row: 1, column: 1 }
-      H: { row: 1, column: 2 }
 ---
 flowchart TB
   subgraph G["Group One"]
     A["Alpha"]
     B["Beta"]
   end
-  subgraph H["Group Two"]
-    C["Peer"]
-  end
+  C["Peer"]
   A --> C
   B --> C
 ```
@@ -267,6 +259,28 @@ config:
   grid:
     curve: rounded
     edgeCornerRadius: 10
+---
+flowchart TB
+  A@{ row: 1, column: 1 } --> B@{ row: 2, column: 2 }
+```
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    curve: linear
+---
+flowchart TB
+  A@{ row: 1, column: 1 } --> B@{ row: 2, column: 2 }
+```
+
+```mermaid
+---
+config:
+  layout: grid
+  grid:
+    curve: linear
 ---
 flowchart TB
   A@{ row: 1, column: 1 } --> B@{ row: 2, column: 2 }
