@@ -41,7 +41,7 @@ import type {
   RouterPoint,
   RouterRect,
 } from './types.js';
-import { ROOT_CONTAINER_ID, gridError } from './types.js';
+import { ROOT_CONTAINER_ID, gridError, isEdgeLabelNode } from './types.js';
 
 const PORT_MARGIN = 4;
 const ROOT_OUTER_MARGIN = 24;
@@ -913,7 +913,7 @@ function buildRoutingContext(
   let estimatedBytes = 0;
   for (const containerId of [...new Set(containerIds)].sort()) {
     const children = (result.forest.childrenByParent.get(containerId) ?? []).filter(
-      (node) => !node.id.startsWith('edge-label-')
+      (node) => !isEdgeLabelNode(node)
     );
     const title = result.forest.nodeById.get(containerId)?.groupTitleRect;
     try {
@@ -1227,7 +1227,7 @@ function validateSameContainerRoute(
     return false;
   }
   const children = (result.forest.childrenByParent.get(containerId) ?? []).filter(
-    (node) => !node.id.startsWith('edge-label-')
+    (node) => !isEdgeLabelNode(node)
   );
   for (const obstacle of children) {
     const rect = inflatedRect(obstacle);
@@ -1262,7 +1262,7 @@ function validateContainerSegment(
     return false;
   }
   const children = (result.forest.childrenByParent.get(containerId) ?? []).filter(
-    (node) => !node.id.startsWith('edge-label-')
+    (node) => !isEdgeLabelNode(node)
   );
   for (const obstacle of children) {
     const rect = inflatedRect(obstacle);

@@ -587,6 +587,37 @@ describe('grid router', () => {
     }
   });
 
+  it('treats user nodes with the edge-label prefix as routing obstacles', () => {
+    const source = leaf('source', 80, 40, { row: 1, column: 1 });
+    const blocker = leaf('edge-label-blocker', 80, 80, { row: 1, column: 2 });
+    const target = leaf('target', 80, 40, { row: 1, column: 3 });
+    const data = baseLayout(
+      [source, blocker, target],
+      [edge('around-prefixed-blocker', 'source', 'target')],
+      { rowGap: 40, columnGap: 50 }
+    );
+
+    runGridLayoutCore(data);
+
+    const blockerBounds = nodeRect(blocker);
+    const route = normalizePolyline(data.edges[0].points ?? []);
+    expect(route.bends).toBeGreaterThan(0);
+    for (const segment of route.segments) {
+      const crosses =
+        segment.orientation === 'H'
+          ? segment.a.y > blockerBounds.top &&
+            segment.a.y < blockerBounds.bottom &&
+            Math.max(segment.a.x, segment.b.x) > blockerBounds.left &&
+            Math.min(segment.a.x, segment.b.x) < blockerBounds.right
+          : segment.a.x > blockerBounds.left &&
+            segment.a.x < blockerBounds.right &&
+            Math.max(segment.a.y, segment.b.y) > blockerBounds.top &&
+            Math.min(segment.a.y, segment.b.y) < blockerBounds.bottom;
+      expect(crosses).toBe(false);
+    }
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+  });
+
   it.each([
     {
       reason: 'vertex_cap',

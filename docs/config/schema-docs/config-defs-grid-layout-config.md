@@ -10,17 +10,19 @@ Configuration for Mermaid's built-in `grid` layout.
 
 ## Properties
 
-| Property           | Type                            | Default  | Description                                                           |
-| ------------------ | ------------------------------- | -------- | --------------------------------------------------------------------- |
-| `placements`       | `Record<string, GridPlacement>` | `{}`     | Placement map keyed by emitted node id.                               |
-| `columns`          | `number`                        | `0`      | Fixed candidate column count for auto-placement. `0` means automatic. |
-| `rowGap`           | `number`                        | `50`     | Pixel gap between occupied rows.                                      |
-| `columnGap`        | `number`                        | `50`     | Pixel gap between occupied columns.                                   |
-| `cellGap`          | `number`                        | `20`     | Pixel gap between items that explicitly share one cell.               |
-| `containerPadding` | `number`                        | `20`     | Minimum padding inside groups.                                        |
-| `titleGap`         | `number`                        | `8`      | Clearance between a measured group title and the child grid.          |
-| `horizontalAlign`  | `left \| center \| right`       | `center` | Default horizontal item alignment.                                    |
-| `verticalAlign`    | `top \| center \| bottom`       | `center` | Default vertical stack alignment.                                     |
+| Property           | Type                                                                                                                                             | Default   | Description                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------- | --------------------------------------------------------------------- |
+| `placements`       | `Record<string, GridPlacement>`                                                                                                                  | `{}`      | Placement map keyed by emitted node id.                               |
+| `columns`          | `number`                                                                                                                                         | `0`       | Fixed candidate column count for auto-placement. `0` means automatic. |
+| `rowGap`           | `number`                                                                                                                                         | `50`      | Pixel gap between occupied rows.                                      |
+| `columnGap`        | `number`                                                                                                                                         | `50`      | Pixel gap between occupied columns.                                   |
+| `cellGap`          | `number`                                                                                                                                         | `20`      | Pixel gap between items that explicitly share one cell.               |
+| `containerPadding` | `number`                                                                                                                                         | `20`      | Minimum padding inside groups.                                        |
+| `titleGap`         | `number`                                                                                                                                         | `8`       | Clearance between a measured group title and the child grid.          |
+| `horizontalAlign`  | `left \| center \| right`                                                                                                                        | `center`  | Default horizontal item alignment.                                    |
+| `verticalAlign`    | `top \| center \| bottom`                                                                                                                        | `center`  | Default vertical stack alignment.                                     |
+| `curve`            | `basis \| bumpX \| bumpY \| cardinal \| catmullRom \| linear \| monotoneX \| monotoneY \| natural \| step \| stepAfter \| stepBefore \| rounded` | `rounded` | Curve style used to render grid edges.                                |
+| `edgeCornerRadius` | `number`                                                                                                                                         | `5`       | Pixel radius used for grid edges when `curve` is `rounded`.           |
 
 ## `GridPlacement`
 
