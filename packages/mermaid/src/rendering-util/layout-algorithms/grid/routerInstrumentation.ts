@@ -58,7 +58,11 @@ export interface GridRoutingInstrumentation {
   compatibilityFastPaths: number;
   compatibilityFastPathValidationFailures: number;
   compatibilityFastPathNonMinimalRoutes: number;
+  compatibilityRecoveries: number;
   compatibilityValidationFailures: number;
+  bundleRetryAttempts: number;
+  bundleRetrySuccesses: number;
+  bundleSeparationRelaxations: number;
   routeLength: number;
   bendCount: number;
   crossingCount: number;
@@ -103,7 +107,11 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     compatibilityFastPaths: 0,
     compatibilityFastPathValidationFailures: 0,
     compatibilityFastPathNonMinimalRoutes: 0,
+    compatibilityRecoveries: 0,
     compatibilityValidationFailures: 0,
+    bundleRetryAttempts: 0,
+    bundleRetrySuccesses: 0,
+    bundleSeparationRelaxations: 0,
     routeLength: 0,
     bendCount: 0,
     crossingCount: 0,

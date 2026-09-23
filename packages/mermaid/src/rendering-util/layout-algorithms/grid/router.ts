@@ -558,7 +558,8 @@ function itemAttachment(
   demandKey: string,
   containerId: GridContainerId,
   result: GridLayoutResult,
-  demandCoords: Map<string, number>
+  demandCoords: Map<string, number>,
+  coordinate?: number
 ): GridAttachment {
   const owner = result.forest.nodeById.get(ownerId);
   const item = result.itemMeta.get(ownerId);
@@ -571,7 +572,9 @@ function itemAttachment(
 
   const rect = rectForNode(owner);
   const coord =
-    demandCoords.get(demandKey) ?? (side === 'left' || side === 'right' ? rect.cy : rect.cx);
+    coordinate ??
+    demandCoords.get(demandKey) ??
+    (side === 'left' || side === 'right' ? rect.cy : rect.cx);
   switch (side) {
     case 'left':
       return {
@@ -1516,6 +1519,21 @@ function routeSatisfiesPairConstraints(
   });
 }
 
+function routeHasDistinctPairPorts(
+  points: readonly Point[],
+  pairRoutes: readonly (readonly Point[])[]
+): boolean {
+  const normalized = normalizePolyline([...points]).points;
+  const candidatePorts = [normalized[0], normalized.at(-1)!];
+  return pairRoutes.every((route) => {
+    const committed = normalizePolyline([...route]).points;
+    const committedPorts = [committed[0], committed.at(-1)!];
+    return !candidatePorts.some((port) =>
+      committedPorts.some((other) => port.x === other.x && port.y === other.y)
+    );
+  });
+}
+
 function pairArcAllowed(
   from: RouterPoint,
   to: RouterPoint,
@@ -1977,7 +1995,9 @@ function sparseContainerSegment(
   overlayScratch: EndpointOverlayScratch | undefined,
   options: GridRoutingOptions,
   pairRoutes: readonly (readonly Point[])[] = [],
-  endAlternatives: () => readonly SegmentAttachmentAlternative[] = () => []
+  endAlternatives: () => readonly SegmentAttachmentAlternative[] = () => [],
+  startAlternatives: () => readonly SegmentAttachmentAlternative[] = () => [],
+  allowSharedPairCorridors = false
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(containerId) as
     | GridRoutingFallbackReason
@@ -2005,47 +2025,66 @@ function sparseContainerSegment(
     throw gridError('GRID_ROUTE_NOT_FOUND', `Missing routing topology "${containerId}"`);
   }
   const attempts: {
-    attachment: SegmentAttachment;
-    select: (() => void) | undefined;
-  }[] = [{ attachment: end, select: undefined }];
+    start: SegmentAttachment;
+    end: SegmentAttachment;
+    select: readonly (() => void)[];
+  }[] = [{ start, end, select: [] }];
   let alternativesAdded = false;
-  const appendEndAlternatives = (): void => {
+  const appendAlternatives = (): void => {
     if (alternativesAdded) {
       return;
     }
     alternativesAdded = true;
+    const starts = startAlternatives();
+    const ends = endAlternatives();
     attempts.push(
-      ...endAlternatives().map((alternative) => ({
-        attachment: alternative.attachment,
-        select: alternative.select,
-      }))
+      ...ends.map((alternative) => ({
+        start,
+        end: alternative.attachment,
+        select: [alternative.select],
+      })),
+      ...starts.map((alternative) => ({
+        start: alternative.attachment,
+        end,
+        select: [alternative.select],
+      })),
+      ...starts.flatMap((startAlternative) =>
+        ends.map((endAlternative) => ({
+          start: startAlternative.attachment,
+          end: endAlternative.attachment,
+          select: [startAlternative.select, endAlternative.select],
+        }))
+      )
     );
   };
   try {
     for (const [attemptIndex, attempt] of attempts.entries()) {
-      const attemptedEnd = attempt.attachment;
+      const attemptedStart = attempt.start;
+      const attemptedEnd = attempt.end;
       if (attemptIndex > 0 && context.metrics) {
         context.metrics.hierarchyPortalAlternativeAttempts++;
       }
-      const aligned = areExactlyAxisAligned(start.connect, attemptedEnd.connect);
+      const aligned = areExactlyAxisAligned(attemptedStart.connect, attemptedEnd.connect);
       if (aligned) {
         const direct = normalizePolyline([
-          start.port,
-          start.connect,
+          attemptedStart.port,
+          attemptedStart.connect,
           attemptedEnd.connect,
           attemptedEnd.port,
         ]).points;
         if (
           validateContainerSegment(
             direct,
-            start.ownerId,
+            attemptedStart.ownerId,
             attemptedEnd.ownerId,
             containerId,
             result
           ) &&
           routeSatisfiesPairConstraints(direct, pairRoutes)
         ) {
-          attempt.select?.();
+          for (const select of attempt.select) {
+            select();
+          }
           if (attemptIndex > 0 && context.metrics) {
             context.metrics.hierarchyPortalAlternativeSelections++;
           }
@@ -2054,7 +2093,7 @@ function sparseContainerSegment(
       }
       const overlay = buildEndpointRoutingOverlay(
         topology,
-        start.connect,
+        attemptedStart.connect,
         attemptedEnd.connect,
         context.metrics,
         overlayScratch
@@ -2070,10 +2109,13 @@ function sparseContainerSegment(
           'Grid routing estimated_memory_cap exceeded'
         );
       }
-      const sourceId = overlay.pointVertexIds.get(routingPointKey(start.connect));
+      const sourceId = overlay.pointVertexIds.get(routingPointKey(attemptedStart.connect));
       const targetId = overlay.pointVertexIds.get(routingPointKey(attemptedEnd.connect));
       if (sourceId === undefined || targetId === undefined) {
-        throw new Error('Hierarchy projection is missing from the routing overlay');
+        if (attemptIndex === 0) {
+          appendAlternatives();
+        }
+        continue;
       }
       const route = findShortestRoute(overlay, sourceId, targetId, {
         metrics: context.metrics,
@@ -2086,10 +2128,12 @@ function sparseContainerSegment(
         },
         recordOutcome: false,
         budget: context.searchBudget,
-        initialOrientation: start.side === 'left' || start.side === 'right' ? 'H' : 'V',
-        initialSide: start.side,
+        initialOrientation:
+          attemptedStart.side === 'left' || attemptedStart.side === 'right' ? 'H' : 'V',
+        initialSide: attemptedStart.side,
         initialLength:
-          Math.abs(start.port.x - start.connect.x) + Math.abs(start.port.y - start.connect.y),
+          Math.abs(attemptedStart.port.x - attemptedStart.connect.x) +
+          Math.abs(attemptedStart.port.y - attemptedStart.connect.y),
         targetOrientation:
           attemptedEnd.side === 'left' || attemptedEnd.side === 'right' ? 'H' : 'V',
         targetSide: attemptedEnd.side,
@@ -2104,15 +2148,19 @@ function sparseContainerSegment(
       });
       if (!route) {
         if (attemptIndex === 0) {
-          appendEndAlternatives();
+          appendAlternatives();
         }
         continue;
       }
-      const points = normalizePolyline([start.port, ...route.points, attemptedEnd.port]).points;
+      const points = normalizePolyline([
+        attemptedStart.port,
+        ...route.points,
+        attemptedEnd.port,
+      ]).points;
       if (
         !validateContainerSegment(
           points,
-          start.ownerId,
+          attemptedStart.ownerId,
           attemptedEnd.ownerId,
           containerId,
           result
@@ -2120,11 +2168,13 @@ function sparseContainerSegment(
         !routeSatisfiesPairConstraints(points, pairRoutes)
       ) {
         if (attemptIndex === 0) {
-          appendEndAlternatives();
+          appendAlternatives();
         }
         continue;
       }
-      attempt.select?.();
+      for (const select of attempt.select) {
+        select();
+      }
       if (attemptIndex > 0 && context.metrics) {
         context.metrics.hierarchyPortalAlternativeSelections++;
       }
@@ -2150,6 +2200,18 @@ function sparseContainerSegment(
       });
     }
     return legacy;
+  }
+  const compatibility = legacyRoute();
+  if (
+    validateContainerSegment(compatibility, start.ownerId, end.ownerId, containerId, result) &&
+    (routeSatisfiesPairConstraints(compatibility, pairRoutes) ||
+      (allowSharedPairCorridors && routeHasDistinctPairPorts(compatibility, pairRoutes)))
+  ) {
+    if (context.metrics) {
+      context.metrics.compatibilitySegments++;
+      context.metrics.compatibilityRecoveries++;
+    }
+    return compatibility;
   }
   throw gridError(
     'GRID_ROUTE_NOT_FOUND',
@@ -2398,7 +2460,7 @@ export function routeGridEdges(
         (plan) =>
           !eligibleIds.has(plan.edge.id) &&
           plan.edge.start !== plan.edge.end &&
-          (hasIsolatedEndpoints(plan) || !compatibilityPlanIsValid(plan))
+          (plan.bundleSize > 1 || hasIsolatedEndpoints(plan) || !compatibilityPlanIsValid(plan))
       )
       .map(({ edge }) => edge.id)
   );
@@ -2465,7 +2527,10 @@ export function routeGridEdges(
     }
     return portal;
   };
-  const alternativePairedPortals = (entry: EdgeEndpointEntry): SegmentAttachmentAlternative[] => {
+  const alternativePairedPortals = (
+    entry: EdgeEndpointEntry,
+    interior = true
+  ): SegmentAttachmentAlternative[] => {
     const selected = pairedPortal(entry);
     const owner = result.forest.nodeById.get(entry.ownerId);
     if (!owner?.isGroup) {
@@ -2497,7 +2562,7 @@ export function routeGridEdges(
         coordinate
       );
       return {
-        attachment: portalAttachment(portal, true),
+        attachment: portalAttachment(portal, interior),
         select: () => {
           pairedPortals.set(entry.demandKey, portal);
           demandCoords.set(entry.demandKey, coordinate);
@@ -2519,6 +2584,49 @@ export function routeGridEdges(
       demandCoords
     ),
   });
+  const alternativeItemAttachments = (
+    plan: EdgeRoutePlan,
+    entry: EdgeEndpointEntry,
+    containerId: GridContainerId
+  ): SegmentAttachmentAlternative[] => {
+    const current = itemSegmentAttachment(entry, containerId);
+    const owner = result.forest.nodeById.get(entry.ownerId);
+    if (!owner) {
+      return [];
+    }
+    return (['right', 'bottom', 'left', 'top'] as const)
+      .filter((side) => side !== current.side && !(side === 'top' && ownerGroupTitle(owner)))
+      .map((side) => {
+        const interval = sideInterval(owner, side);
+        if (!interval) {
+          return undefined;
+        }
+        const rect = rectForNode(owner);
+        const center = side === 'left' || side === 'right' ? rect.cy : rect.cx;
+        const coordinate = Math.max(
+          interval.low,
+          Math.min(interval.high, center + plan.laneOffset)
+        );
+        return {
+          ownerId: entry.ownerId,
+          ...itemAttachment(
+            entry.ownerId,
+            side,
+            entry.demandKey,
+            containerId,
+            result,
+            demandCoords,
+            coordinate
+          ),
+        };
+      })
+      .filter((attachment): attachment is SegmentAttachment => attachment !== undefined)
+      .slice(0, 3)
+      .map((attachment) => ({
+        attachment,
+        select: () => undefined,
+      }));
+  };
   const ownerSideCounts = new Map<string, number>();
   const instrumentedRoutes: Point[][] | undefined = metrics ? [] : undefined;
   for (const demandKey of demandCoords.keys()) {
@@ -2529,7 +2637,7 @@ export function routeGridEdges(
   const selfLoopCounts = new Map<string, number>();
   const pairRoutes = new Map<string, Point[][]>();
 
-  for (const plan of orderedPlans) {
+  const routePlan = (plan: EdgeRoutePlan): void => {
     const edge = plan.edge;
     const sourceNode = edge.start ? result.forest.nodeById.get(edge.start) : undefined;
     const targetNode = edge.end ? result.forest.nodeById.get(edge.end) : undefined;
@@ -2565,119 +2673,7 @@ export function routeGridEdges(
         recordGridRoute(metrics, edge.id, points, instrumentedRoutes, 0, plan.laneOffset);
         instrumentedRoutes.push(points);
       }
-      continue;
-    }
-
-    const sourceChains: Point[][] = [];
-    for (let index = 0; index < plan.source.chain.length - 1; index++) {
-      const from = plan.source.chain[index];
-      const to = plan.source.chain[index + 1];
-      if (!sparseHierarchyIds.has(edge.id)) {
-        const start: SegmentAttachment = {
-          ownerId: from.ownerId,
-          ...itemAttachment(
-            from.ownerId,
-            from.side,
-            from.demandKey,
-            to.ownerId,
-            result,
-            demandCoords
-          ),
-        };
-        const end: SegmentAttachment = {
-          ownerId: to.ownerId,
-          ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-        };
-        sourceChains.push(
-          validatedCompatibilitySegment(
-            edge.id,
-            to.ownerId,
-            start,
-            end,
-            () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
-            result,
-            metrics
-          )
-        );
-        continue;
-      }
-      const start =
-        index === 0
-          ? itemSegmentAttachment(from, to.ownerId)
-          : portalAttachment(pairedPortal(from), false);
-      const end = portalAttachment(pairedPortal(to), true);
-      sourceChains.push(
-        sparseContainerSegment(
-          edge.id,
-          to.ownerId,
-          start,
-          end,
-          () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
-          result,
-          context,
-          searchWorkspace,
-          endpointOverlayScratch.get(to.ownerId),
-          options,
-          pairRoutes.get(plan.pairKey) ?? [],
-          () => alternativePairedPortals(to)
-        )
-      );
-    }
-
-    const targetChains: Point[][] = [];
-    for (let index = 0; index < plan.target.chain.length - 1; index++) {
-      const from = plan.target.chain[index];
-      const to = plan.target.chain[index + 1];
-      if (!sparseHierarchyIds.has(edge.id)) {
-        const start: SegmentAttachment = {
-          ownerId: from.ownerId,
-          ...itemAttachment(
-            from.ownerId,
-            from.side,
-            from.demandKey,
-            to.ownerId,
-            result,
-            demandCoords
-          ),
-        };
-        const end: SegmentAttachment = {
-          ownerId: to.ownerId,
-          ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-        };
-        targetChains.push(
-          validatedCompatibilitySegment(
-            edge.id,
-            to.ownerId,
-            start,
-            end,
-            () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
-            result,
-            metrics
-          )
-        );
-        continue;
-      }
-      const start =
-        index === 0
-          ? itemSegmentAttachment(from, to.ownerId)
-          : portalAttachment(pairedPortal(from), false);
-      const end = portalAttachment(pairedPortal(to), true);
-      targetChains.push(
-        sparseContainerSegment(
-          edge.id,
-          to.ownerId,
-          start,
-          end,
-          () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
-          result,
-          context,
-          searchWorkspace,
-          endpointOverlayScratch.get(to.ownerId),
-          options,
-          pairRoutes.get(plan.pairKey) ?? [],
-          () => alternativePairedPortals(to)
-        )
-      );
+      return;
     }
 
     const sourceFinal = plan.source.chain[plan.source.chain.length - 1];
@@ -2790,7 +2786,16 @@ export function routeGridEdges(
               searchWorkspace,
               endpointOverlayScratch.get(plan.lcaContainerId),
               options,
-              pairRoutes.get(plan.pairKey) ?? []
+              pairRoutes.get(plan.pairKey) ?? [],
+              () =>
+                plan.target.finalKind === 'item' && plan.target.chain.length > 1
+                  ? alternativePairedPortals(targetFinal, false)
+                  : [],
+              () =>
+                plan.source.finalKind === 'item' && plan.source.chain.length > 1
+                  ? alternativePairedPortals(sourceFinal, false)
+                  : [],
+              plan.bundleSize > 1
             )
           : validatedCompatibilitySegment(
               edge.id,
@@ -2802,19 +2807,91 @@ export function routeGridEdges(
               metrics
             );
 
+    const routeHierarchyChain = (endpoint: EdgeEndpointPlan, chains: Point[][]): void => {
+      for (let index = 0; index < endpoint.chain.length - 1; index++) {
+        const from = endpoint.chain[index];
+        const to = endpoint.chain[index + 1];
+        if (!sparseHierarchyIds.has(edge.id)) {
+          const start: SegmentAttachment = {
+            ownerId: from.ownerId,
+            ...itemAttachment(
+              from.ownerId,
+              from.side,
+              from.demandKey,
+              to.ownerId,
+              result,
+              demandCoords
+            ),
+          };
+          const end: SegmentAttachment = {
+            ownerId: to.ownerId,
+            ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
+          };
+          chains.push(
+            validatedCompatibilitySegment(
+              edge.id,
+              to.ownerId,
+              start,
+              end,
+              () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
+              result,
+              metrics
+            )
+          );
+          continue;
+        }
+        const start =
+          index === 0
+            ? itemSegmentAttachment(from, to.ownerId)
+            : portalAttachment(pairedPortal(from), false);
+        const end = portalAttachment(pairedPortal(to), true);
+        chains.push(
+          sparseContainerSegment(
+            edge.id,
+            to.ownerId,
+            start,
+            end,
+            () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
+            result,
+            context,
+            searchWorkspace,
+            endpointOverlayScratch.get(to.ownerId),
+            options,
+            pairRoutes.get(plan.pairKey) ?? [],
+            () => alternativePairedPortals(to),
+            () => (index === 0 ? alternativeItemAttachments(plan, from, to.ownerId) : []),
+            plan.bundleSize > 1
+          )
+        );
+      }
+    };
+    const sourceChains: Point[][] = [];
+    const targetChains: Point[][] = [];
+    routeHierarchyChain(plan.source, sourceChains);
+    routeHierarchyChain(plan.target, targetChains);
+
     const points = combinePointChains([
       ...sourceChains,
       lcaPoints,
       ...targetChains.reverse().map((chain) => reversePoints(chain)),
     ]);
     const committedPairRoutes = pairRoutes.get(plan.pairKey) ?? [];
-    if (plan.bundleSize > 1 && !routeSatisfiesPairConstraints(points, committedPairRoutes)) {
+    const satisfiesPairConstraints = routeSatisfiesPairConstraints(points, committedPairRoutes);
+    const relaxHierarchySeparation =
+      !satisfiesPairConstraints &&
+      plan.bundleSize > 1 &&
+      plan.source.chain.length + plan.target.chain.length > 2 &&
+      routeHasDistinctPairPorts(points, committedPairRoutes);
+    if (plan.bundleSize > 1 && !satisfiesPairConstraints && !relaxHierarchySeparation) {
       if (metrics) {
         metrics.routesImpossible++;
       }
       throw gridError('GRID_ROUTE_NOT_FOUND', `No distinct lane route for "${edge.id}"`, {
         edgeId: edge.id,
       });
+    }
+    if (relaxHierarchySeparation && metrics) {
+      metrics.bundleSeparationRelaxations++;
     }
     edge.points = points;
     edge.curve = result.config.curve;
@@ -2832,6 +2909,130 @@ export function routeGridEdges(
         plan.laneOffset
       );
       instrumentedRoutes.push(points);
+    }
+  };
+
+  const plansByPair = new Map<string, EdgeRoutePlan[]>();
+  for (const plan of orderedPlans) {
+    const pairPlans = plansByPair.get(plan.pairKey) ?? [];
+    pairPlans.push(plan);
+    plansByPair.set(plan.pairKey, pairPlans);
+  }
+
+  for (const pairPlans of plansByPair.values()) {
+    const canRetry =
+      pairPlans.length > 1 &&
+      pairPlans.length <= 8 &&
+      pairPlans.every(({ edge }) => edge.start !== edge.end);
+    if (!canRetry) {
+      for (const plan of pairPlans) {
+        routePlan(plan);
+      }
+      continue;
+    }
+
+    const occupancyRoutes = context.occupancy.routes as RouterPoint[][];
+    const occupancyLength = occupancyRoutes.length;
+    const portalSnapshot = new Map(pairedPortals);
+    const demandSnapshot = new Map(demandCoords);
+    const edgeSnapshot = new Map(
+      pairPlans.map(({ edge }) => [
+        edge.id,
+        {
+          points: edge.points,
+          curve: edge.curve,
+          cornerRadius: edge.cornerRadius,
+        },
+      ])
+    );
+    const instrumentedLength = instrumentedRoutes?.length ?? 0;
+    const metricSnapshot = metrics
+      ? {
+          routeOrderLength: metrics.routeOrder.length,
+          routesLength: metrics.routes.length,
+          routesFound: metrics.routesFound,
+          routeLength: metrics.routeLength,
+          bendCount: metrics.bendCount,
+          crossingCount: metrics.crossingCount,
+          sharedLength: metrics.sharedLength,
+          hierarchyBoundaryTransitions: metrics.hierarchyBoundaryTransitions,
+          hierarchyPortalPairs: metrics.hierarchyPortalPairs,
+          hierarchyPortalTransitionLength: metrics.hierarchyPortalTransitionLength,
+          hierarchyPortalAlternativeSelections: metrics.hierarchyPortalAlternativeSelections,
+          compatibilitySegments: metrics.compatibilitySegments,
+          compatibilityRecoveries: metrics.compatibilityRecoveries,
+          bundleSeparationRelaxations: metrics.bundleSeparationRelaxations,
+        }
+      : undefined;
+    const restorePairState = (): void => {
+      occupancyRoutes.length = occupancyLength;
+      pairRoutes.delete(pairPlans[0].pairKey);
+      pairedPortals.clear();
+      for (const [key, portal] of portalSnapshot) {
+        pairedPortals.set(key, portal);
+      }
+      demandCoords.clear();
+      for (const [key, coordinate] of demandSnapshot) {
+        demandCoords.set(key, coordinate);
+      }
+      for (const { edge } of pairPlans) {
+        const snapshot = edgeSnapshot.get(edge.id)!;
+        edge.points = snapshot.points;
+        edge.curve = snapshot.curve;
+        edge.cornerRadius = snapshot.cornerRadius;
+      }
+      if (instrumentedRoutes) {
+        instrumentedRoutes.length = instrumentedLength;
+      }
+      if (metrics && metricSnapshot) {
+        metrics.routeOrder.length = metricSnapshot.routeOrderLength;
+        metrics.routes.length = metricSnapshot.routesLength;
+        metrics.routesFound = metricSnapshot.routesFound;
+        metrics.routeLength = metricSnapshot.routeLength;
+        metrics.bendCount = metricSnapshot.bendCount;
+        metrics.crossingCount = metricSnapshot.crossingCount;
+        metrics.sharedLength = metricSnapshot.sharedLength;
+        metrics.hierarchyBoundaryTransitions = metricSnapshot.hierarchyBoundaryTransitions;
+        metrics.hierarchyPortalPairs = metricSnapshot.hierarchyPortalPairs;
+        metrics.hierarchyPortalTransitionLength = metricSnapshot.hierarchyPortalTransitionLength;
+        metrics.hierarchyPortalAlternativeSelections =
+          metricSnapshot.hierarchyPortalAlternativeSelections;
+        metrics.compatibilitySegments = metricSnapshot.compatibilitySegments;
+        metrics.compatibilityRecoveries = metricSnapshot.compatibilityRecoveries;
+        metrics.bundleSeparationRelaxations = metricSnapshot.bundleSeparationRelaxations;
+      }
+    };
+
+    try {
+      for (const plan of pairPlans) {
+        routePlan(plan);
+      }
+    } catch (initialError) {
+      restorePairState();
+      if (metrics) {
+        metrics.bundleRetryAttempts++;
+      }
+      const retryPlans = [...pairPlans].sort((a, b) => {
+        const aBoundaryCount = a.source.chain.length + a.target.chain.length - 2;
+        const bBoundaryCount = b.source.chain.length + b.target.chain.length - 2;
+        return (
+          bBoundaryCount - aBoundaryCount ||
+          Math.abs(b.laneOffset) - Math.abs(a.laneOffset) ||
+          a.laneOffset - b.laneOffset ||
+          a.edge.id.localeCompare(b.edge.id)
+        );
+      });
+      try {
+        for (const plan of retryPlans) {
+          routePlan(plan);
+        }
+        if (metrics) {
+          metrics.bundleRetrySuccesses++;
+        }
+      } catch {
+        restorePairState();
+        throw initialError;
+      }
     }
   }
 }

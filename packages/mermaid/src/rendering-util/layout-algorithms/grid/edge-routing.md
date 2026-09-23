@@ -240,11 +240,13 @@ Portal ranges exclude:
 - the subgraph title;
 - coordinates outside the measured boundary.
 
-The preferred portal coordinate is tried first. If a sparse child-container segment has no legal
-route, the router tries at most three deterministic alternatives on the same side: nearby routing
-corridors first, then the range midpoint and endpoints. The first valid alternative becomes the
-paired portal used by the following parent-container segment. Resource-limit failures do not trigger
-extra searches; they use the bounded fallback policy described below.
+The preferred portal coordinate is tried first. If a sparse hierarchy segment has no legal route,
+the router tries at most three deterministic alternatives per portal on the same side: nearby
+routing corridors first, then the range midpoint and endpoints. Lowest-common-ancestor segments may
+combine bounded alternatives from both portals. The first child-container segment may also try up
+to three alternate node sides after its preferred attachment fails. The first valid combination
+becomes the paired portal selection used by the complete hierarchy route. Resource-limit failures
+do not trigger extra searches; they use the bounded fallback policy described below.
 
 The route inside the subgraph ends at the interior point. The parent-container route starts at the
 matching exterior point. Both sides therefore agree on one exact boundary crossing.
@@ -274,6 +276,16 @@ The router:
 
 If the geometry cannot support distinct legal lanes, routing fails with `GRID_ROUTE_NOT_FOUND`
 instead of drawing several edges on top of one another.
+
+Hierarchy bundles use sparse routing even when their individual compatibility routes are
+obstacle-clear. Bundles of two through eight edges are committed atomically. If the normal order
+fails, the router restores the pair-local portal, demand, occupancy, edge, and instrumentation state
+and retries once, routing deeper hierarchy paths and outer lanes first.
+
+As a final hierarchy-only recovery, a validated compatibility segment may share an interior
+corridor with an already committed reverse or parallel route. Endpoint ports must still be distinct,
+and the complete route must pass the normal obstacle and hierarchy validation. This relaxation is
+not used for ordinary same-container bundles.
 
 ### 10. Handle self-loops
 
@@ -311,15 +323,17 @@ Topology construction and search have explicit caps for:
 The deterministic compatibility router also serves as the normal fast path for hierarchy segments
 whose corridor route is known to be valid. This is separate from fallback behavior.
 
-When a segment has been selected for sparse routing, only a resource-cap failure may switch it to
-the compatibility route as a fallback. That fallback route is validated with the same geometry
-checks. If it is invalid, the router throws `GRID_ROUTE_NOT_FOUND`.
+When a segment has been selected for sparse routing, a resource-cap failure may switch it to the
+compatibility route as a fallback. After an ordinary no-route result, the same compatibility route
+may be used only as bounded recovery when it passes the full geometry checks and pair-route policy.
+If it is invalid, the router throws `GRID_ROUTE_NOT_FOUND`.
 
-Ordinary no-route failures do not fall back to an unverified path.
+No failure path returns an unverified route.
 
-Routing instrumentation distinguishes resource fallbacks, bounded portal recovery, and the
-same-container fast path. Fast-path metrics record attempts, accepted routes, geometry-validation
-failures, and valid routes rejected because they exceeded the Manhattan lower bound.
+Routing instrumentation distinguishes resource fallbacks, bounded portal recovery, compatibility
+recovery, pair-bundle retries, hierarchy separation relaxation, and the same-container fast path.
+Fast-path metrics record attempts, accepted routes, geometry-validation failures, and valid routes
+rejected because they exceeded the Manhattan lower bound.
 
 ### 13. Render the selected polyline
 
