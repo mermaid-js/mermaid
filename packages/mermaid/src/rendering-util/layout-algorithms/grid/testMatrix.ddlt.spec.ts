@@ -198,13 +198,13 @@ describe('grid DDLT matrix fixtures', () => {
       {
         "baseAdjacencyEntries": 144,
         "baseVertices": 44,
-        "endpointOverlayBuilds": 3,
-        "endpointOverlayVertices": 28,
+        "endpointOverlayBuilds": 2,
+        "endpointOverlayVertices": 20,
         "estimatedBytes": 36704,
-        "expandedStates": 9,
+        "expandedStates": 7,
         "maxOpenSet": 8,
         "resourceLimitFallbacks": 0,
-        "searches": 3,
+        "searches": 2,
       }
     `);
   });

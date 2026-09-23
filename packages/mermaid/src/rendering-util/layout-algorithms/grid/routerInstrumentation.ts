@@ -54,6 +54,10 @@ export interface GridRoutingInstrumentation {
   fallbackReasons: Record<GridRoutingFallbackReason, number>;
   fallbackValidationFailures: number;
   compatibilitySegments: number;
+  compatibilityFastPathAttempts: number;
+  compatibilityFastPaths: number;
+  compatibilityFastPathValidationFailures: number;
+  compatibilityFastPathNonMinimalRoutes: number;
   compatibilityValidationFailures: number;
   routeLength: number;
   bendCount: number;
@@ -95,6 +99,10 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     },
     fallbackValidationFailures: 0,
     compatibilitySegments: 0,
+    compatibilityFastPathAttempts: 0,
+    compatibilityFastPaths: 0,
+    compatibilityFastPathValidationFailures: 0,
+    compatibilityFastPathNonMinimalRoutes: 0,
     compatibilityValidationFailures: 0,
     routeLength: 0,
     bendCount: 0,

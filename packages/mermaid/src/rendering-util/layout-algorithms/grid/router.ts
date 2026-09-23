@@ -2270,6 +2270,32 @@ export function routeGridEdges(
           (target.isGroup && isAncestorGroup(target.id, source, result.forest.nodeById)))
     );
   };
+  const compatibilityLcaAttachments = (
+    plan: EdgeRoutePlan
+  ): { start: SegmentAttachment; end: SegmentAttachment } => {
+    const sourceFinal = plan.source.chain.at(-1)!;
+    const targetFinal = plan.target.chain.at(-1)!;
+    const finalAttachment = (
+      endpoint: typeof plan.source,
+      final: (typeof plan.source.chain)[number]
+    ): SegmentAttachment => ({
+      ownerId: final.ownerId,
+      ...(endpoint.finalKind === 'boundary'
+        ? boundaryAttachment(plan.lcaContainerId, final.side, final.demandKey, result, demandCoords)
+        : itemAttachment(
+            final.ownerId,
+            final.side,
+            final.demandKey,
+            plan.lcaContainerId,
+            result,
+            demandCoords
+          )),
+    });
+    return {
+      start: finalAttachment(plan.source, sourceFinal),
+      end: finalAttachment(plan.target, targetFinal),
+    };
+  };
   const compatibilityPlanIsValid = (plan: EdgeRoutePlan): boolean => {
     const segmentIsValid = (
       containerId: GridContainerId,
@@ -2307,30 +2333,65 @@ export function routeGridEdges(
         }
       }
     }
-    const sourceFinal = plan.source.chain.at(-1)!;
-    const targetFinal = plan.target.chain.at(-1)!;
-    const finalAttachment = (
-      endpoint: typeof plan.source,
-      final: (typeof plan.source.chain)[number]
-    ): SegmentAttachment => ({
-      ownerId: final.ownerId,
-      ...(endpoint.finalKind === 'boundary'
-        ? boundaryAttachment(plan.lcaContainerId, final.side, final.demandKey, result, demandCoords)
-        : itemAttachment(
-            final.ownerId,
-            final.side,
-            final.demandKey,
-            plan.lcaContainerId,
-            result,
-            demandCoords
-          )),
-    });
-    return segmentIsValid(
-      plan.lcaContainerId,
-      finalAttachment(plan.source, sourceFinal),
-      finalAttachment(plan.target, targetFinal)
-    );
+    const attachments = compatibilityLcaAttachments(plan);
+    return segmentIsValid(plan.lcaContainerId, attachments.start, attachments.end);
   };
+  const compatibilityFastRoutes = new Map<string, Point[]>();
+  const compatibilityFastPathEnabled =
+    options.topologyCaps === undefined &&
+    options.searchCaps === undefined &&
+    options.onDualRouteComparison === undefined;
+  for (const plan of compatibilityFastPathEnabled ? eligiblePlans : []) {
+    const candidates = endpointCandidatesByEdge.get(plan.edge.id);
+    if (plan.bundleSize !== 1 || !candidates?.sources.length || !candidates.targets.length) {
+      continue;
+    }
+    const source = result.forest.nodeById.get(plan.edge.start!);
+    const target = result.forest.nodeById.get(plan.edge.end!);
+    if (!source || !target) {
+      continue;
+    }
+    const attachments = compatibilityLcaAttachments(plan);
+    const route = routeWithinContainer(
+      plan.lcaContainerId,
+      result,
+      attachments.start,
+      attachments.end,
+      plan.laneIndex
+    );
+    const normalized = normalizePolyline(route);
+    const first = normalized.points[0];
+    const last = normalized.points.at(-1);
+    if (!first || !last) {
+      continue;
+    }
+    const sourceCandidate = candidates.sources.find(
+      ({ port }) => port.x === first.x && port.y === first.y
+    );
+    const targetCandidate = candidates.targets.find(
+      ({ port }) => port.x === last.x && port.y === last.y
+    );
+    if (!sourceCandidate || !targetCandidate) {
+      continue;
+    }
+    if (metrics) {
+      metrics.compatibilityFastPathAttempts++;
+    }
+    const lowerBoundLength = Math.abs(first.x - last.x) + Math.abs(first.y - last.y);
+    if (!validateSameContainerRoute(route, source, target, plan.lcaContainerId, result)) {
+      if (metrics) {
+        metrics.compatibilityFastPathValidationFailures++;
+      }
+      continue;
+    }
+    if (routeLength(route) !== lowerBoundLength) {
+      if (metrics) {
+        metrics.compatibilityFastPathNonMinimalRoutes++;
+      }
+      continue;
+    }
+    compatibilityFastRoutes.set(plan.edge.id, route);
+  }
   const sparseHierarchyIds = new Set(
     plans
       .filter(
@@ -2348,7 +2409,7 @@ export function routeGridEdges(
   const routedContainerIds = plans
     .filter(
       (plan) =>
-        eligibleIds.has(plan.edge.id) ||
+        (eligibleIds.has(plan.edge.id) && !compatibilityFastRoutes.has(plan.edge.id)) ||
         sparseLcaIds.has(plan.edge.id) ||
         plan.edge.start === plan.edge.end
     )
@@ -2693,44 +2754,53 @@ export function routeGridEdges(
         lcaEnd,
         plan.laneIndex
       ));
-    const lcaPoints = eligibleIds.has(edge.id)
-      ? sparseSameContainerRoute(
-          plan,
-          endpointCandidatesByEdge.get(edge.id)!.sources,
-          endpointCandidatesByEdge.get(edge.id)!.targets,
-          sourceNode,
-          targetNode,
-          legacyRoute,
-          result,
-          context,
-          searchWorkspace,
-          endpointOverlayScratch.get(plan.lcaContainerId)!,
-          options,
-          pairRoutes.get(plan.pairKey) ?? []
-        )
-      : useSparseLca
-        ? sparseContainerSegment(
-            edge.id,
-            plan.lcaContainerId,
-            lcaStart,
-            lcaEnd,
+    const compatibilityFastRoute = compatibilityFastRoutes.get(edge.id);
+    const lcaPoints = compatibilityFastRoute
+      ? (() => {
+          if (metrics) {
+            metrics.compatibilityFastPaths++;
+          }
+          (context.occupancy.routes as RouterPoint[][]).push(compatibilityFastRoute);
+          return compatibilityFastRoute;
+        })()
+      : eligibleIds.has(edge.id)
+        ? sparseSameContainerRoute(
+            plan,
+            endpointCandidatesByEdge.get(edge.id)!.sources,
+            endpointCandidatesByEdge.get(edge.id)!.targets,
+            sourceNode,
+            targetNode,
             legacyRoute,
             result,
             context,
             searchWorkspace,
-            endpointOverlayScratch.get(plan.lcaContainerId),
+            endpointOverlayScratch.get(plan.lcaContainerId)!,
             options,
             pairRoutes.get(plan.pairKey) ?? []
           )
-        : validatedCompatibilitySegment(
-            edge.id,
-            plan.lcaContainerId,
-            lcaStart,
-            lcaEnd,
-            legacyRoute,
-            result,
-            metrics
-          );
+        : useSparseLca
+          ? sparseContainerSegment(
+              edge.id,
+              plan.lcaContainerId,
+              lcaStart,
+              lcaEnd,
+              legacyRoute,
+              result,
+              context,
+              searchWorkspace,
+              endpointOverlayScratch.get(plan.lcaContainerId),
+              options,
+              pairRoutes.get(plan.pairKey) ?? []
+            )
+          : validatedCompatibilitySegment(
+              edge.id,
+              plan.lcaContainerId,
+              lcaStart,
+              lcaEnd,
+              legacyRoute,
+              result,
+              metrics
+            );
 
     const points = combinePointChains([
       ...sourceChains,

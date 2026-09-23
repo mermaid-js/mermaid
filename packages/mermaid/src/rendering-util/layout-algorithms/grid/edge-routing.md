@@ -99,8 +99,10 @@ The router avoids the top of a subgraph when its title occupies that area. In th
 horizontal side instead.
 
 Side selection is a preference rather than an unconditional command. For ordinary same-container
-edges, the router generates candidates on all legal sides and lets route search select the best
-combination.
+edges, the router generates candidates on all legal sides. It first accepts the deterministic
+corridor route when its ports are legal, the complete route passes measured-geometry validation,
+and its length equals the Manhattan lower bound between those fixed ports. Otherwise, route search
+selects the best candidate combination.
 
 ### 3. Allocate attachment coordinates
 
@@ -130,7 +132,9 @@ that result rather than reading placement syntax itself.
 
 ### 4. Build a sparse topology for each required container
 
-The router builds topologies only for containers used by the planned routes.
+The router builds topologies only for containers used by planned routes that still require sparse
+search. Containers whose ordinary edges all satisfy the validated Manhattan-minimal fast path do
+not pay topology-construction or endpoint-overlay costs.
 
 For each container it:
 
@@ -176,9 +180,13 @@ the allocated boundary portals.
 
 ### 6. Route within one container
 
-If two attachment connection points are aligned and the direct orthogonal segment is valid, the
-router uses it immediately. This prevents the sparse topology from introducing a needless detour
-between already-visible attachments.
+Before sparse search, an unbundled ordinary same-container edge may use the deterministic corridor
+route described above. The fast path is disabled when test-only resource caps or dual-route
+comparison are requested, so those modes continue to exercise the sparse router.
+
+If sparse routing is still required and two attachment connection points are aligned, the router
+uses the direct orthogonal segment when it is valid. This prevents the sparse topology from
+introducing a needless detour between already-visible attachments.
 
 Otherwise, the connection points and their orthogonal projections are overlaid onto the container's
 visibility graph. The router then searches that graph.
@@ -309,8 +317,9 @@ checks. If it is invalid, the router throws `GRID_ROUTE_NOT_FOUND`.
 
 Ordinary no-route failures do not fall back to an unverified path.
 
-Routing instrumentation distinguishes resource fallbacks from bounded portal recovery. It records
-the number of alternative portal searches and the number that selected a replacement portal.
+Routing instrumentation distinguishes resource fallbacks, bounded portal recovery, and the
+same-container fast path. Fast-path metrics record attempts, accepted routes, geometry-validation
+failures, and valid routes rejected because they exceeded the Manhattan lower bound.
 
 ### 13. Render the selected polyline
 

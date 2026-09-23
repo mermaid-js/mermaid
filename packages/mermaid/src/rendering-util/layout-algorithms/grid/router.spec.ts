@@ -238,8 +238,10 @@ describe('grid router', () => {
     expect(metrics.bendCount).toBeGreaterThanOrEqual(0);
     expect(metrics.crossingCount).toBeGreaterThanOrEqual(0);
     expect(metrics.sharedLength).toBe(0);
-    expect(metrics.baseTopologyBuilds).toBe(1);
-    expect(metrics.searches).toBeGreaterThan(0);
+    expect(metrics.baseTopologyBuilds).toBe(0);
+    expect(metrics.searches).toBe(0);
+    expect(metrics.compatibilityFastPathAttempts).toBe(2);
+    expect(metrics.compatibilityFastPaths).toBe(2);
     expect(metrics.resourceLimitFallbacks).toBe(0);
     expect(metrics.fallbackReasons).toEqual({
       vertex_cap: 0,
@@ -507,6 +509,8 @@ describe('grid router', () => {
     expect(metrics.searches).toBeGreaterThan(0);
     expect(metrics.expandedStates).toBeGreaterThan(0);
     expect(metrics.maxOpenSet).toBeGreaterThan(0);
+    expect(metrics.compatibilityFastPathAttempts).toBe(1);
+    expect(metrics.compatibilityFastPathNonMinimalRoutes).toBe(1);
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
@@ -806,10 +810,16 @@ describe('grid router', () => {
       { cellGap: 20 }
     );
 
-    runGridLayoutCore(data);
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics);
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
     expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThanOrEqual(2);
+    expect(metrics.compatibilityFastPaths).toBe(0);
+    expect(metrics.compatibilityFastPathValidationFailures).toBe(1);
+    expect(metrics.baseTopologyBuilds).toBe(1);
+    expect(metrics.searches).toBeGreaterThan(0);
   });
 
   it('routes hierarchy edges to a root sibling in the same stacked cell', () => {

@@ -264,7 +264,7 @@ describe('grid determinism and performance', () => {
     }
   });
 
-  it.fails('lays out 1000 nodes and 500 edges within the deferred 500ms budget', () => {
+  it('lays out 1000 nodes and 500 edges within the 500ms budget', () => {
     const layout = largeSyntheticLayout();
     const start = performance.now();
     runGridLayoutCore(layout);
@@ -282,6 +282,12 @@ describe('grid determinism and performance', () => {
 
     expect(metrics.resourceLimitFallbacks).toBe(0);
     expect(metrics.fallbackValidationFailures).toBe(0);
+    expect(metrics.compatibilityFastPathAttempts).toBe(500);
+    expect(metrics.compatibilityFastPaths).toBe(500);
+    expect(metrics.compatibilityFastPathValidationFailures).toBe(0);
+    expect(metrics.compatibilityFastPathNonMinimalRoutes).toBe(0);
+    expect(metrics.baseTopologyBuilds).toBe(0);
+    expect(metrics.searches).toBe(0);
     expect(metrics.baseVertices).toBeLessThan(50_000);
     expect(metrics.baseAdjacencyEntries).toBeLessThan(200_000);
     expect(metrics.endpointOverlayVertices).toBeLessThanOrEqual(metrics.endpointOverlayBuilds * 32);
