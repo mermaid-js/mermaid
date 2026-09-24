@@ -53,18 +53,49 @@ const bboxOf = (sel: any): { width: number; height: number } | undefined => {
   return undefined;
 };
 
+// Greedy word-wrap so a long external label stacks into a few short centred
+// lines instead of one wide line that spills past its neighbours and the pool
+// border. ~15 chars/line keeps a 2-3 line block roughly as wide as a task.
+const MAX_LINE_CHARS = 15;
+const LINE_HEIGHT = 13;
+
+const wrapLabel = (text: string): string[] => {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = '';
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (candidate.length > MAX_LINE_CHARS && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) {
+    lines.push(current);
+  }
+  return lines.length ? lines : [text];
+};
+
 const externalLabel = (g: any, text: string, belowY: number): void => {
   if (!text) {
     return;
   }
   try {
+    const lines = wrapLabel(text);
     const t = g
       .append('text')
       .attr('class', 'bpmn-ext-label')
       .attr('text-anchor', 'middle')
       .attr('x', 0)
       .attr('y', belowY);
-    t.text(text);
+    lines.forEach((line, i) => {
+      t.append('tspan')
+        .attr('x', 0)
+        .attr('dy', i === 0 ? 0 : LINE_HEIGHT)
+        .text(line);
+    });
   } catch {
     /* ignore */
   }

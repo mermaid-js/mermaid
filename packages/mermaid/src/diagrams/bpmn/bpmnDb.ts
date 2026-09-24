@@ -234,6 +234,12 @@ const getData = (): LayoutData => {
       labelpos: 'c',
       thickness: 'normal',
       look: globalConfig.look,
+      // Keep the sequence-flow backbone straight and let the cross-pool message /
+      // association flows bend around it: dagre straightens higher-weight edges
+      // first, so a heavy sequence weight stops collaborator message flows from
+      // dragging the main process nodes out of rank (which is what produced the
+      // long edges cutting across nodes on the dense multi-pool diagrams).
+      weight: isMessage || isAssociation ? 1 : 8,
       minlen: 1,
       style: [],
     } as unknown as Edge);
@@ -253,9 +259,12 @@ const getData = (): LayoutData => {
     layoutAlgorithm: 'dagre',
     direction: state.direction,
     // Extra breathing room so external event/gateway labels do not collide and
-    // nodes are not cramped against lane borders.
-    nodeSpacing: Math.max(config.nodeSpacing, 60),
-    rankSpacing: Math.max(config.rankSpacing, 95),
+    // nodes are not cramped against lane borders. `nodeSpacing` is the gap between
+    // nodes sharing a rank (vertical under LR) and must clear the external label
+    // that hangs below every event/gateway glyph; `rankSpacing` is the between-rank
+    // gap (horizontal under LR) that keeps edge labels off the shapes.
+    nodeSpacing: Math.max(config.nodeSpacing, 80),
+    rankSpacing: Math.max(config.rankSpacing, 110),
     diagramPadding: config.diagramPadding,
     useMaxWidth: config.useMaxWidth,
     markers: ['point', 'circle', 'cross'],

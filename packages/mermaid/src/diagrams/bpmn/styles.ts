@@ -52,9 +52,19 @@ const getStyles: DiagramStylesProvider = (options: BpmnStyleOptions = {}) => {
   .marker.circle circle,
   .marker.circle path { fill: ${eventBkg} !important; stroke: ${line}; }
 
-  /* Conditional-flow labels sit cleanly on the edge. */
+  /* Conditional-flow labels sit cleanly on the edge, on an opaque chip so the
+     edge line never strikes through the text. HTML (foreignObject) labels are
+     the default under securityLevel 'loose', so the background must be set on
+     the .labelBkg div (background-color), not only as an SVG rect fill. */
   .edgeLabel { color: ${text}; }
   .edgeLabel rect, .edgeLabel foreignObject { fill: ${options.edgeLabelBackground ?? '#ffffff'}; }
+  .edgeLabel .labelBkg,
+  .edgeLabel foreignObject div.labelBkg,
+  .edgeLabel .label foreignObject > div {
+    background-color: ${options.edgeLabelBackground ?? '#ffffff'};
+    opacity: 0.92;
+    border-radius: 3px;
+  }
 
   .bpmn-lane rect,
   .cluster.bpmn-lane rect { fill: ${laneBkg}; stroke: ${laneBorder}; }
@@ -63,7 +73,19 @@ const getStyles: DiagramStylesProvider = (options: BpmnStyleOptions = {}) => {
 
   .bpmn-glyph { fill: none; stroke: ${border}; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
   .bpmn-glyph-bold { stroke-width: 2.4px; }
-  .bpmn-ext-label { fill: ${text}; font-size: 12px; dominant-baseline: hanging; }
+  /* External event/gateway labels carry a halo the colour of the lane fill so a
+     crossing edge does not slice through the text (paint-order draws the stroke
+     under the fill). */
+  .bpmn-ext-label {
+    fill: ${text};
+    font-size: 11px;
+    dominant-baseline: hanging;
+    paint-order: stroke;
+    stroke: ${laneBkg};
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
 `;
 };
 
