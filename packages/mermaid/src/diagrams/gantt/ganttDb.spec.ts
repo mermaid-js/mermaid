@@ -139,6 +139,23 @@ describe('when using the ganttDb', function () {
     expect(tasks[3].endTime.toISOString()).toEqual('1970-01-01T00:00:00.035Z');
   });
 
+  it('should treat integer start dates as seconds with dateFormat X', function () {
+    ganttDb.setDateFormat('X');
+    ganttDb.addSection('testa1');
+    ganttDb.addTask('test1', 'id1,10,20');
+    ganttDb.addTask('test2', 'id2,30,5s');
+    ganttDb.addTask('test3', 'id3,5,until id1');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime.toISOString()).toEqual('1970-01-01T00:00:10.000Z');
+    expect(tasks[0].endTime.toISOString()).toEqual('1970-01-01T00:00:20.000Z');
+    expect(tasks[1].startTime.toISOString()).toEqual('1970-01-01T00:00:30.000Z');
+    expect(tasks[1].endTime.toISOString()).toEqual('1970-01-01T00:00:35.000Z');
+    expect(tasks[2].startTime.toISOString()).toEqual('1970-01-01T00:00:05.000Z');
+    expect(tasks[2].endTime.toISOString()).toEqual('1970-01-01T00:00:10.000Z');
+  });
+
   it('should handle relative start date based on id regardless of sections', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('sec1');
