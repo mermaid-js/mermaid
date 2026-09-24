@@ -42,7 +42,7 @@ or
               : {event}
 ```
 
-**NOTE**: Both time period and event are simple text, and not limited to numbers.
+**NOTE**: Both time period and event are simple text, and not limited to numbers. A colon is only treated as a separator when it is followed by a space, so a time period like `2021-10-12 14:00` can contain colons.
 
 Let us look at the syntax for the example above.
 
