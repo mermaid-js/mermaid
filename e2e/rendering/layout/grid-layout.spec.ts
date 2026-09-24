@@ -109,7 +109,9 @@ flowchart TB
     expect(parseTranslate(start!.transform).y).toBeLessThan(parseTranslate(review!.transform).y);
   });
 
-  test('supported unified diagrams render with grid.columns=1', async ({ page }, testInfo) => {
+  test('agentflow, class, state, ER, requirement, and use case render with grid.columns=1', async ({
+    page,
+  }, testInfo) => {
     const cases = [
       {
         name: 'agentflow',
@@ -206,7 +208,9 @@ Customer --> Login`,
     }
   });
 
-  test('ER and mindmap authored ids control grid placement', async ({ page }, testInfo) => {
+  test('ER and mindmap authored ids determine configured grid rows and columns', async ({
+    page,
+  }, testInfo) => {
     const nodeCenter = async (label: string) => {
       const box = await page.locator('svg g.node').filter({ hasText: label }).first().boundingBox();
       expect(box).not.toBeNull();

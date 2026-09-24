@@ -53,11 +53,11 @@ describe('grid DDLT parity', () => {
     expect(geometrySignature(ddltLayout)).toEqual(geometrySignature(directLayout));
   }
 
-  it('uses the same prepare → measure → core orchestration in DDLT as production', async () => {
+  it('matches production geometry for the simple DDLT fixture', async () => {
     await expectProductionParity('simple');
   });
 
-  it('uses the same production orchestration for hierarchy portal fixtures', async () => {
+  it('matches production geometry for the hierarchy portal DDLT fixture', async () => {
     await expectProductionParity('routing-hierarchy-portals');
   });
 });

@@ -22,7 +22,7 @@ function config(overrides: Record<string, unknown> = {}): LayoutData['config'] {
 }
 
 describe('grid placement', () => {
-  it('defaults grid edges to rounded and validates curve options', () => {
+  it('defaults the grid curve and corner radius and replaces invalid values', () => {
     const defaults = readGridConfig({
       nodes: [],
       edges: [],

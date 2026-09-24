@@ -77,7 +77,7 @@ describe('sanitizeDirective', () => {
       });
     });
 
-    it('sanitizes grid placement ids and properties', () => {
+    it('drops invalid grid placement ids, non-object values, and unknown properties', () => {
       const args = {
         grid: {
           placements: {

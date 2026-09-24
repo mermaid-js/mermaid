@@ -68,8 +68,9 @@ describe('grid router search', () => {
     expect(metrics.maxOpenSet).toBeGreaterThan(0);
   });
 
-  it('takes a shortest obstacle detour and matches the dense oracle', () => {
+  it('matches the dense oracle for a shortest route along an obstacle boundary', () => {
     const topology = build([{ id: 'center', left: 40, right: 60, top: 30, bottom: 70 }]);
+    // The obstacle inflates to y=24. Its boundary is routable; only its interior is blocked.
     const source = vertexAt(topology, { x: 0, y: 24 });
     const target = vertexAt(topology, { x: 100, y: 24 });
 

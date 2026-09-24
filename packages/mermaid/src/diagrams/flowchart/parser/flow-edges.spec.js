@@ -145,6 +145,7 @@ A@{ row: 2, column: 3, horizontalAlign: left, verticalAlign: top }`);
           horizontalAlign: 'left',
           verticalAlign: 'top',
         });
+        expect(flow.parser.yy.getEdges()[0].id).toBe('id1');
       });
     });
     describe('double ended edges with ids and labels', function () {

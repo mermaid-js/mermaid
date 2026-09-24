@@ -242,7 +242,7 @@ describe('grid DDLT matrix fixtures', () => {
     });
   });
 
-  it('records representative route characteristics', async () => {
+  it('snapshots route quality metrics and signatures for representative fixtures', async () => {
     const characterization = [];
     for (const fixture of [
       'placement-matrix-tb',
@@ -320,7 +320,7 @@ describe('grid DDLT matrix fixtures', () => {
     `);
   });
 
-  it('records exact migration results for the complete grid corpus', async () => {
+  it('snapshots migration metrics and route signatures for every grid fixture', async () => {
     const characterization = [];
     for (const fixture of [
       'group-stack',
@@ -617,7 +617,7 @@ describe('grid DDLT matrix fixtures', () => {
     expect(bottom(inner)).toBeLessThan(bottom(groupNode));
   });
 
-  it('covers group/member, outside/member, and long HTML labels', async () => {
+  it('validates group/member fixtures and places the long HTML edge label', async () => {
     const groupMember = await loadGridFixtureWithResult('routing-group-member');
     const outsideMember = await loadGridFixtureWithResult('routing-outside-member');
 

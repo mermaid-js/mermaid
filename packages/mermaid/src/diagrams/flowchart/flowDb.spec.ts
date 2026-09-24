@@ -282,7 +282,7 @@ describe('flow db collapsible subgraphs', () => {
 });
 
 describe('flow db metadata propagation', () => {
-  it('preserves grid metadata on emitted leaf nodes', () => {
+  it('preserves grid and custom metadata on emitted leaf nodes', () => {
     flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
     flow.parser.parse(`flowchart TD

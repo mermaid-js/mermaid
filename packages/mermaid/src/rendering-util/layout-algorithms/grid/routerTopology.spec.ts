@@ -57,6 +57,8 @@ describe('grid router topology', () => {
         const low = Math.min(start, end);
         const high = Math.max(start, end);
         const blocked = (orientation: 'H' | 'V') => {
+          // A point probe on an outline is legal. A span is blocked only where the obstacle union
+          // has interior on both sides of the sweep line.
           const isBoundary = inflated.some((obstacle) =>
             orientation === 'H'
               ? obstacle.top === coordinate || obstacle.bottom === coordinate
@@ -142,7 +144,7 @@ describe('grid router topology', () => {
     }
   });
 
-  it('does not route along a shared boundary through the union interior', () => {
+  it('marks a shared boundary inside the obstacle union as blocked', () => {
     const result = topology([
       { id: 'left', left: 20, right: 44, top: 30, bottom: 70 },
       { id: 'right', left: 56, right: 80, top: 30, bottom: 70 },
@@ -236,9 +238,9 @@ describe('grid router topology', () => {
     );
   });
 
-  it('has geometry-only counts for compact and sparse logical-coordinate twins', () => {
-    const metricsCompact = createGridRoutingInstrumentation();
-    const metricsSparse = createGridRoutingInstrumentation();
+  it('reports repeatable topology counts for identical geometry', () => {
+    const firstMetrics = createGridRoutingInstrumentation();
+    const secondMetrics = createGridRoutingInstrumentation();
     const input = {
       containerId: '__grid_root__',
       ancestryPath: ['__grid_root__'],
@@ -249,21 +251,21 @@ describe('grid router topology', () => {
       ],
     };
 
-    const compact = buildContainerRoutingTopology(input, { metrics: metricsCompact });
-    const sparse = buildContainerRoutingTopology(input, { metrics: metricsSparse });
+    const first = buildContainerRoutingTopology(input, { metrics: firstMetrics });
+    const second = buildContainerRoutingTopology(input, { metrics: secondMetrics });
 
     expect({
-      vertices: compact.vertices.length,
-      adjacency: compact.adjacencyEntries,
-      events: metricsCompact.buildSweepEvents,
+      vertices: first.vertices.length,
+      adjacency: first.adjacencyEntries,
+      events: firstMetrics.buildSweepEvents,
     }).toEqual({
-      vertices: sparse.vertices.length,
-      adjacency: sparse.adjacencyEntries,
-      events: metricsSparse.buildSweepEvents,
+      vertices: second.vertices.length,
+      adjacency: second.adjacencyEntries,
+      events: secondMetrics.buildSweepEvents,
     });
-    expect(metricsCompact.baseTopologyBuilds).toBe(1);
-    expect(metricsCompact.containersBuilt).toBe(1);
-    expect(metricsCompact.estimatedBytes).toBeGreaterThan(0);
+    expect(firstMetrics.baseTopologyBuilds).toBe(1);
+    expect(firstMetrics.containersBuilt).toBe(1);
+    expect(firstMetrics.estimatedBytes).toBeGreaterThan(0);
   });
 
   it.each([

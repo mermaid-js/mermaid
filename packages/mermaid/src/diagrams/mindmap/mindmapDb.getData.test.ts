@@ -51,6 +51,7 @@ describe('MindmapDb getData function', () => {
       const rootNode = (result.nodes as MindmapLayoutNode[]).find((n) => n.id === '0');
       expect(rootNode).toBeDefined();
       expect(rootNode?.label).toBe('Root Node');
+      // Numeric IDs preserve tree and edge identity; authored IDs remain usable in layout config.
       expect(rootNode?.placementId).toBe('root');
       expect(rootNode?.level).toBe(0);
 

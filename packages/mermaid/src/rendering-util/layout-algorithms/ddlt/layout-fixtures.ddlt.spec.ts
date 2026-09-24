@@ -38,7 +38,7 @@ describe('DDLT layout-test fixture sweep', () => {
     );
   });
 
-  it('aggregate validateLayout report — grid', { timeout: 20_000 }, async () => {
+  it('validates the grid fixture score baseline', { timeout: 20_000 }, async () => {
     const fixtures = discoverLayoutTestFixtures().filter((fixture) => fixture.profile === 'grid');
     const items = [];
 

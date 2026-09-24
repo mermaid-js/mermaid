@@ -289,7 +289,7 @@ describe('grid router', () => {
     expect(labelNode?.y).toEqual(expect.any(Number));
   });
 
-  it('routes edges to group boundaries with finite orthogonal points', () => {
+  it('routes a leaf-to-group edge with finite orthogonal points', () => {
     const data = baseLayout(
       [
         group('g', 'Group', { row: 1, column: 1 }),
@@ -321,7 +321,7 @@ describe('grid router', () => {
       name: 'outside-to-member',
       edges: [edge('outside-to-member', 'outside', 'member')],
     },
-  ])('routes $name edges through safe group gutters', ({ edges }) => {
+  ])('routes $name edges without containment violations', ({ edges }) => {
     const data = baseLayout(
       [
         group('g', 'Group', { row: 1, column: 1 }),
@@ -398,7 +398,7 @@ describe('grid router', () => {
     expect(rerun.edges.map((item) => item.points)).toEqual(data.edges.map((item) => item.points));
   });
 
-  it('searches independently when a preferred pair lane is blocked', () => {
+  it('routes a four-edge bundle around a blocked lane with shared spans below 8px', () => {
     const data = baseLayout(
       [
         leaf('a', 80, 40, { row: 1, column: 1 }),
@@ -486,7 +486,7 @@ describe('grid router', () => {
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
-  it('selects the motivating straight route through unused cell space by tuple cost', () => {
+  it('selects a shortest straight route through unused cell space over the legacy detour', () => {
     const data = baseLayout(
       [
         leaf('v1', 80, 40, { row: 1, column: 1 }),
@@ -584,7 +584,7 @@ describe('grid router', () => {
     expect(rerun.edges.map(({ points }) => points)).toEqual(data.edges.map(({ points }) => points));
   });
 
-  it('uses measured bounds conservatively for nonrectangular same-container endpoints', () => {
+  it('routes around the inflated measured bounds of a nonrectangular blocker', () => {
     const source = leaf('source', 70, 70, { row: 1, column: 1 });
     source.shape = 'circle';
     const blocker = leaf('blocker', 80, 80, { row: 1, column: 2 });
@@ -839,7 +839,7 @@ describe('grid router', () => {
     expect(invalidRoutingIssues(data)).toEqual([]);
   });
 
-  it('uses sparse hierarchy routing when mixed-demand compatibility crosses stacked items', () => {
+  it('routes a mixed-demand hierarchy edge around intervening stacked items', () => {
     const data = baseLayout(
       [
         group('group', 'Group', { row: 1, column: 1 }),
@@ -862,7 +862,7 @@ describe('grid router', () => {
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
-  it('routes the exact vertical mixed-demand stack through local stack corridors', () => {
+  it('routes a vertical mixed-demand stack without invalid geometry', () => {
     const data = baseLayout(
       [
         group('group', 'Group', { row: 1, column: 1 }),

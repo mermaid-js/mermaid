@@ -218,7 +218,7 @@ describe('grid edge label helpers', () => {
     });
   });
 
-  it('creates missing label helpers per edge even when helper-shaped ids already exist', () => {
+  it('reuses existing label helpers and avoids collisions with helper-shaped user ids', () => {
     const existingHelperId = 'edge-label-a-b-prepared';
     const data: LayoutData = {
       nodes: [
@@ -320,7 +320,7 @@ describe('grid edge label helpers', () => {
     );
   });
 
-  it('reroutes crossing vertical foreign edges around a safe horizontal label gutter detour', () => {
+  it('reroutes crossing vertical edges around a horizontal edge label', () => {
     const data: LayoutData = {
       nodes: [
         manualNode('start', 50, 150),
@@ -397,7 +397,7 @@ describe('grid edge label helpers', () => {
     expect(labelNode?.y).toEqual(expect.any(Number));
   });
 
-  it('handles crowded vertical segments deterministically without invalid fallback overlap', () => {
+  it('keeps crowded vertical label routing structurally valid', () => {
     const data: LayoutData = {
       nodes: [
         manualNode('top', 250, 40),
@@ -457,7 +457,7 @@ describe('grid edge label helpers', () => {
     expect(labelNode?.y).toEqual(expect.any(Number));
   });
 
-  it('routes a short horizontal label outside tall endpoint nodes using inset connector legs', () => {
+  it('detours a label around tall endpoints when the direct gap is too short', () => {
     const data: LayoutData = {
       nodes: [manualNode('source', 260, 240, 220, 260), manualNode('target', 523, 240, 180, 220)],
       edges: [

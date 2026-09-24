@@ -153,7 +153,7 @@ describe('grid layout core', () => {
     expect(lrCoords).toEqual(tbCoords);
   });
 
-  it('precomputes adjacent row and column corridors without changing sparse track geometry', () => {
+  it('precomputes boundary and midpoint corridors for sparse rows and columns', () => {
     const data = layout([
       leaf('top-left', 40, 20, { row: 1, column: 1 }),
       leaf('bottom-right', 60, 30, { row: 100, column: 50 }),
