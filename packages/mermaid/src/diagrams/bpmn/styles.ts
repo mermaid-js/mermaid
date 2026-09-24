@@ -27,21 +27,34 @@ const getStyles: DiagramStylesProvider = (options: BpmnStyleOptions = {}) => {
   const laneBkg = options.bpmnLaneBkg ?? options.clusterBkg ?? '#ffffff';
   const laneBorder = options.bpmnPoolBorder ?? options.clusterBorder ?? border;
   const messageFlow = options.bpmnMessageFlow ?? line;
+  // Events and gateways read best as light BPMN shapes (not the node fill).
+  const eventBkg = options.bpmnEventBkg ?? options.background ?? '#ffffff';
 
   return `
   .bpmn-node .label { color: ${text}; }
   .bpmn-node.bpmn-task rect { fill: ${fill}; stroke: ${border}; }
-  .bpmn-node.bpmn-event circle { fill: ${options.clusterBkg ?? '#ffffff'}; stroke: ${border}; }
+  .bpmn-node.bpmn-event circle { fill: ${eventBkg}; stroke: ${border}; }
   .bpmn-node.bpmn-event-start circle { stroke-width: 1.5px; }
-  .bpmn-node.bpmn-event-end circle { stroke-width: 3px; }
+  .bpmn-node.bpmn-event-end circle { stroke-width: 3.5px !important; }
   .bpmn-node.bpmn-gateway polygon,
-  .bpmn-node.bpmn-gateway path { fill: ${options.clusterBkg ?? '#ffffff'}; stroke: ${border}; }
+  .bpmn-node.bpmn-gateway path { fill: ${eventBkg}; stroke: ${border}; }
   .bpmn-node.bpmn-data path,
   .bpmn-node.bpmn-data rect { fill: ${fill}; stroke: ${border}; }
 
-  .bpmn-edge path { stroke: ${line}; }
-  .bpmn-flow-message path { stroke: ${messageFlow}; stroke-dasharray: 6 4; }
-  .bpmn-flow-association path { stroke: ${line}; stroke-dasharray: 2 3; }
+  .edgePaths path,
+  .bpmn-edge { fill: none !important; stroke: ${line}; stroke-width: 1.5px; }
+  .bpmn-flow-message { stroke: ${messageFlow}; stroke-dasharray: 6 4; }
+  .bpmn-flow-association { stroke: ${line}; stroke-dasharray: 2 4; }
+
+  /* Edge markers (arrowheads) themed; message source is a hollow circle. */
+  .marker { fill: ${line}; stroke: ${line}; }
+  .marker.circle,
+  .marker.circle circle,
+  .marker.circle path { fill: ${eventBkg} !important; stroke: ${line}; }
+
+  /* Conditional-flow labels sit cleanly on the edge. */
+  .edgeLabel { color: ${text}; }
+  .edgeLabel rect, .edgeLabel foreignObject { fill: ${options.edgeLabelBackground ?? '#ffffff'}; }
 
   .bpmn-lane rect,
   .cluster.bpmn-lane rect { fill: ${laneBkg}; stroke: ${laneBorder}; }

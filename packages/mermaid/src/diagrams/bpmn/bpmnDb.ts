@@ -178,7 +178,7 @@ const getData = (): LayoutData => {
       label: sanitize(band.label),
       isGroup: true,
       shape: 'roundedWithTitle',
-      padding: 20,
+      padding: 30,
       look: globalConfig.look,
       colorIndex: band.colorIndex,
       cssClasses: 'bpmn-lane',
@@ -192,14 +192,20 @@ const getData = (): LayoutData => {
     // the circle/diamond small; the real label + marker are added in the renderer's
     // decoration pass (bpmnGlyphs).
     const externalLabel = node.kind === 'event' || node.kind === 'gateway';
+    // Sizes tuned to BPMN proportions: ~36px event, ~50px gateway, taller tasks.
+    // The circle/diamond radius is ~ padding/2 for an empty label, so these give
+    // ~36px events and ~52px gateways, harmonious with the ~120x56 tasks.
+    const padding =
+      node.kind === 'event' ? 34 : node.kind === 'gateway' ? 30 : node.kind === 'task' ? 18 : 12;
     nodes.push({
       id: node.id,
       label: externalLabel ? '' : sanitize(node.label ?? node.id),
       shape: nodeShape(node),
       isGroup: false,
-      padding: externalLabel ? 7 : 8,
+      padding,
       look: globalConfig.look,
       cssClasses: nodeClasses(node),
+      ...(node.kind === 'task' ? { width: 120 } : {}),
       ...(parentId ? { parentId } : {}),
     } as Node);
   }
@@ -220,8 +226,10 @@ const getData = (): LayoutData => {
         .filter(Boolean)
         .join(' '),
       pattern: isMessage ? 'dashed' : isAssociation ? 'dotted' : 'solid',
-      arrowTypeStart: isMessage ? 'circle' : 'none',
-      arrowTypeEnd: isAssociation ? 'none' : 'normal',
+      // BPMN: sequence = filled arrow; message = hollow-circle source + open arrow;
+      // association = no arrowhead.
+      arrowTypeStart: isMessage ? 'arrow_circle' : 'none',
+      arrowTypeEnd: isAssociation ? 'none' : 'arrow_point',
       ...(flow.label ? { label: sanitize(flow.label) } : {}),
       labelpos: 'c',
       thickness: 'normal',
@@ -244,8 +252,10 @@ const getData = (): LayoutData => {
     type: 'bpmn',
     layoutAlgorithm: 'dagre',
     direction: state.direction,
-    nodeSpacing: config.nodeSpacing,
-    rankSpacing: config.rankSpacing,
+    // Extra breathing room so external event/gateway labels do not collide and
+    // nodes are not cramped against lane borders.
+    nodeSpacing: Math.max(config.nodeSpacing, 60),
+    rankSpacing: Math.max(config.rankSpacing, 95),
     diagramPadding: config.diagramPadding,
     useMaxWidth: config.useMaxWidth,
     markers: ['point', 'circle', 'cross'],
