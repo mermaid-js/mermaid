@@ -435,6 +435,18 @@ columns 1
 
       logWarnSpy.mockRestore();
     });
+    it('should handle accTitle and accDescr', () => {
+      const str = `block-beta
+  accTitle: Dependencies
+  accDescr: How the parts depend on each other
+  columns 2
+  A B`;
+
+      block.parse(str);
+      expect(db.getAccTitle()).toBe('Dependencies');
+      expect(db.getAccDescription()).toBe('How the parts depend on each other');
+      expect(db.getBlocks().map((b) => b.id)).toEqual(['A', 'B']);
+    });
   });
 
   describe('prototype properties', function () {
