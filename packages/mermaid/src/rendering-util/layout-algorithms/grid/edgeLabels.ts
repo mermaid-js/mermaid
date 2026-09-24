@@ -5,6 +5,7 @@ import {
   polylineIntersectsRect,
   rectForNode,
   segmentIntersectsRectInterior,
+  terminalMarkerClearanceRect,
 } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
 import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
@@ -242,58 +243,6 @@ function groupTitleRect(node: Node): Rect | null {
   };
 }
 
-function markerClearanceRect(points: Point[], which: 'start' | 'end'): Rect | null {
-  if (points.length < 2) {
-    return null;
-  }
-  if (which === 'start') {
-    const [a, b] = points;
-    if (a.x === b.x) {
-      const top = Math.min(a.y, b.y);
-      return {
-        cx: a.x,
-        cy: top + EDGE_END_MARKER_CLEARANCE / 2,
-        left: a.x - 7,
-        right: a.x + 7,
-        top,
-        bottom: top + EDGE_END_MARKER_CLEARANCE,
-      };
-    }
-    const left = Math.min(a.x, b.x);
-    return {
-      cx: left + EDGE_END_MARKER_CLEARANCE / 2,
-      cy: a.y,
-      left,
-      right: left + EDGE_END_MARKER_CLEARANCE,
-      top: a.y - 7,
-      bottom: a.y + 7,
-    };
-  }
-
-  const a = points[points.length - 2];
-  const b = points[points.length - 1];
-  if (a.x === b.x) {
-    const bottom = Math.max(a.y, b.y);
-    return {
-      cx: b.x,
-      cy: bottom - EDGE_END_MARKER_CLEARANCE / 2,
-      left: b.x - 7,
-      right: b.x + 7,
-      top: bottom - EDGE_END_MARKER_CLEARANCE,
-      bottom,
-    };
-  }
-  const right = Math.max(a.x, b.x);
-  return {
-    cx: right - EDGE_END_MARKER_CLEARANCE / 2,
-    cy: b.y,
-    left: right - EDGE_END_MARKER_CLEARANCE,
-    right,
-    top: b.y - 7,
-    bottom: b.y + 7,
-  };
-}
-
 function incrementMetric(
   metrics: GridEdgeLabelInstrumentation | undefined,
   key: keyof GridEdgeLabelInstrumentation,
@@ -379,7 +328,15 @@ function candidateSegmentsFromSegments(segments: Segment[]): SegmentCandidate[] 
 
 function markerClearanceRectsFromPoints(points: Point[]): Rect[] {
   return ['start', 'end']
-    .map((which) => markerClearanceRect(points, which as 'start' | 'end'))
+    .map((which) =>
+      terminalMarkerClearanceRect(
+        points,
+        which as 'start' | 'end',
+        EDGE_END_MARKER_CLEARANCE,
+        7,
+        EPS
+      )
+    )
     .filter((rect): rect is Rect => rect !== null);
 }
 

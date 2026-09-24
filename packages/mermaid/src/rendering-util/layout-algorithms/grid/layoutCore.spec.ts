@@ -125,6 +125,8 @@ describe('grid layout core', () => {
     const middleTop = (middle.y ?? 0) - (middle.height ?? 0) / 2;
     const middleBottom = (middle.y ?? 0) + (middle.height ?? 0) / 2;
 
+    expect(outer.groupTitleRect).toMatchObject({ left: outerLeft, top: outerTop });
+    expect(middle.groupTitleRect).toMatchObject({ left: middleLeft, top: middleTop });
     expect(middleLeft).toBeGreaterThanOrEqual(outerLeft);
     expect(middleRight).toBeLessThanOrEqual(outerRight);
     expect(middleTop).toBeGreaterThanOrEqual(outerTop);

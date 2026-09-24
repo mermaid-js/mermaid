@@ -8,8 +8,10 @@ import {
   areExactlyAxisAligned,
   assignCompactPortalCoordinates,
   boundedAlternativePortalCoordinates,
+  validateSameContainerRoute,
 } from './router.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
+import { ROOT_CONTAINER_ID } from './types.js';
 
 function leaf(
   id: string,
@@ -450,6 +452,53 @@ describe('grid router', () => {
     runGridLayoutCore(data);
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+  });
+
+  it('rejects a terminal segment that passes through its destination node', () => {
+    const data = baseLayout(
+      [
+        leaf('source', 80, 40, { row: 1, column: 1 }),
+        leaf('target', 80, 40, { row: 1, column: 2 }),
+      ],
+      [],
+      { rowGap: 20, columnGap: 20 }
+    );
+
+    const result = runGridLayoutCore(data);
+    const source = data.nodes.find(({ id }) => id === 'source')!;
+    const target = data.nodes.find(({ id }) => id === 'target')!;
+    const sourceRight = (source.x ?? 0) + (source.width ?? 0) / 2;
+    const targetLeft = (target.x ?? 0) - (target.width ?? 0) / 2;
+    const targetRight = (target.x ?? 0) + (target.width ?? 0) / 2;
+    const targetTop = (target.y ?? 0) - (target.height ?? 0) / 2;
+
+    expect(
+      validateSameContainerRoute(
+        [
+          { x: sourceRight, y: source.y ?? 0 },
+          { x: sourceRight, y: targetTop - 20 },
+          { x: targetRight + 20, y: targetTop - 20 },
+          { x: targetRight + 20, y: target.y ?? 0 },
+          { x: targetLeft, y: target.y ?? 0 },
+        ],
+        source,
+        target,
+        ROOT_CONTAINER_ID,
+        result
+      )
+    ).toBe(false);
+  });
+
+  it('allocates distinct ports for repeated self-loops on the same node', () => {
+    const data = baseLayout(
+      [leaf('a', 800, 400, { row: 1, column: 1 })],
+      Array.from({ length: 5 }, (_, index) => edge(`loop-${index}`, 'a', 'a'))
+    );
+
+    runGridLayoutCore(data);
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    expect(new Set(data.edges.map(({ points }) => JSON.stringify(points))).size).toBe(5);
   });
 
   it('keeps reverse pair lanes distinct across hierarchy portals', () => {

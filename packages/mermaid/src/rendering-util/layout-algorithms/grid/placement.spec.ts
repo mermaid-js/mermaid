@@ -142,7 +142,7 @@ describe('grid placement', () => {
     warn.mockRestore();
   });
 
-  it('resolves authored placement ids while preserving internal id precedence', () => {
+  it('resolves generated nodes exclusively through their authored placement ids', () => {
     const items = [
       node('entity-CUSTOMER-0', undefined, 'CUSTOMER'),
       node('entity-ORDER-1', undefined, 'ORDER'),
@@ -162,16 +162,15 @@ describe('grid placement', () => {
 
     const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
     expect(() => validateGridPlacementMap(items, gridConfig)).not.toThrow();
-    expect(warn).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledWith(
+      '[grid]',
+      'Ignoring grid placement for unknown target "entity-ORDER-1"'
+    );
     const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
     const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
 
     expect(byId.get('entity-CUSTOMER-0')).toMatchObject({ row: 1, column: 1 });
-    expect(byId.get('entity-ORDER-1')).toMatchObject({ row: 2, column: 2 });
-    expect(warn).toHaveBeenCalledWith(
-      '[grid]',
-      'Ignoring grid placement for authored target "ORDER" because internal target "entity-ORDER-1" is also configured'
-    );
+    expect(byId.get('entity-ORDER-1')).toMatchObject({ row: 1, column: 2 });
     warn.mockRestore();
   });
 

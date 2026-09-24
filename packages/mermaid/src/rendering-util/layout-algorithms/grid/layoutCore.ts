@@ -350,7 +350,11 @@ function materializeAbsoluteGeometry(result: GridLayoutResult): void {
     }
 
     if (child.groupTitleRect) {
-      child.groupTitleRect = translateRect(child.groupTitleRect, frame.offsetX, frame.offsetY);
+      child.groupTitleRect = translateRect(
+        child.groupTitleRect,
+        child.x - (child.width ?? 0) / 2,
+        child.y - (child.height ?? 0) / 2
+      );
     }
 
     stack.push({

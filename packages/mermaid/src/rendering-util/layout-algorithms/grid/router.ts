@@ -1307,7 +1307,7 @@ function inflatedRect(node: Node): RouterRect {
   };
 }
 
-function validateSameContainerRoute(
+export function validateSameContainerRoute(
   points: readonly Point[],
   source: Node,
   target: Node,
@@ -1339,10 +1339,19 @@ function validateSameContainerRoute(
   for (const obstacle of children) {
     const rect = inflatedRect(obstacle);
     for (let index = 0; index < normalized.points.length - 1; index++) {
-      if (
+      const terminalObstacle =
         (obstacle.id === source.id && index === 0) ||
-        (obstacle.id === target.id && index === normalized.points.length - 2)
-      ) {
+        (obstacle.id === target.id && index === normalized.points.length - 2);
+      if (terminalObstacle) {
+        if (
+          segmentEntersRect(
+            normalized.points[index],
+            normalized.points[index + 1],
+            routerRect(obstacle)
+          )
+        ) {
+          return false;
+        }
         continue;
       }
       if (segmentEntersRect(normalized.points[index], normalized.points[index + 1], rect)) {
@@ -1374,10 +1383,19 @@ function validateContainerSegment(
   for (const obstacle of children) {
     const rect = inflatedRect(obstacle);
     for (let index = 0; index < normalized.points.length - 1; index++) {
-      if (
+      const terminalObstacle =
         (obstacle.id === startOwnerId && index === 0) ||
-        (obstacle.id === endOwnerId && index === normalized.points.length - 2)
-      ) {
+        (obstacle.id === endOwnerId && index === normalized.points.length - 2);
+      if (terminalObstacle) {
+        if (
+          segmentEntersRect(
+            normalized.points[index],
+            normalized.points[index + 1],
+            routerRect(obstacle)
+          )
+        ) {
+          return false;
+        }
         continue;
       }
       if (segmentEntersRect(normalized.points[index], normalized.points[index + 1], rect)) {
@@ -1819,7 +1837,8 @@ function sparseSameContainerRoute(
 
 function selfLoopAttachments(
   owner: Node,
-  side: GridSide
+  side: GridSide,
+  index: number
 ): { start: EndpointCandidate; target: EndpointCandidate } | undefined {
   const interval = sideInterval(owner, side);
   if (!interval || interval.high - interval.low < SELF_LOOP_PORT_GAP) {
@@ -1827,7 +1846,14 @@ function selfLoopAttachments(
   }
   const rect = rectForNode(owner);
   const center = (interval.low + interval.high) / 2;
-  const coordinates = [center - SELF_LOOP_PORT_GAP / 2, center + SELF_LOOP_PORT_GAP / 2];
+  const portOffset = index * SELF_LOOP_PORT_OFFSET_STEP;
+  const coordinates = [
+    center - SELF_LOOP_PORT_GAP / 2 - portOffset,
+    center + SELF_LOOP_PORT_GAP / 2 + portOffset,
+  ];
+  if (coordinates[0] < interval.low || coordinates[1] > interval.high) {
+    return undefined;
+  }
   const candidate = (coordinate: number): EndpointCandidate => {
     const port =
       side === 'left' || side === 'right'
@@ -1891,7 +1917,8 @@ function sparseSelfLoopRoute(
     throw gridError('GRID_ROUTE_NOT_FOUND', `Missing routing topology "${containerId}"`);
   }
   for (const side of orderedSelfLoopSides(owner, ownerSideCounts, selfLoopCounts)) {
-    const attachments = selfLoopAttachments(owner, side);
+    const index = selfLoopCounts.get(`${owner.id}:${side}`) ?? 0;
+    const attachments = selfLoopAttachments(owner, side, index);
     if (!attachments) {
       continue;
     }
@@ -1950,7 +1977,7 @@ function sparseSelfLoopRoute(
         return {
           points,
           side,
-          index: selfLoopCounts.get(`${owner.id}:${side}`) ?? 0,
+          index,
         };
       }
     } catch (error) {

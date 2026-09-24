@@ -49,6 +49,12 @@ describe('grid groups', () => {
     );
   });
 
+  it('rejects the reserved synthetic root id', () => {
+    expect(() => buildGridForest([group('__grid_root__')])).toThrow(
+      /Node id "__grid_root__" is reserved/
+    );
+  });
+
   it('supports 15,000 levels of valid nesting without overflowing the call stack', () => {
     const depth = 15_000;
     const nodes: Node[] = [group('g0')];

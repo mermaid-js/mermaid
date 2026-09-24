@@ -6,6 +6,7 @@ import {
   approxEqual,
   polylineIntersectsRect,
   segmentIntersectsRectInterior,
+  terminalMarkerClearanceRect,
 } from './helpers.js';
 import type { Point, Rect } from './types.js';
 
@@ -464,52 +465,6 @@ function hasTerminalMarker(e: _Edge, terminal: EdgeTerminal): boolean {
     return true;
   }
   return terminal === 'end' && /arrow_(point|cross|circle|barb)|double_arrow/.test(e.type);
-}
-
-function terminalMarkerClearanceRect(points: Point[], terminal: EdgeTerminal): Rect | null {
-  if (points.length < 2) {
-    return null;
-  }
-
-  const tip = terminal === 'end' ? points[points.length - 1] : points[0];
-  const inner = terminal === 'end' ? points[points.length - 2] : points[1];
-  const dx = inner.x - tip.x;
-  const dy = inner.y - tip.y;
-
-  if (Math.abs(dx) <= EPS && Math.abs(dy) <= EPS) {
-    return null;
-  }
-
-  const len = EPS_MARKER_CLEARANCE_LENGTH;
-  const half = EPS_MARKER_CLEARANCE_HALF_WIDTH;
-  if (Math.abs(dy) <= EPS) {
-    const x2 = tip.x + Math.sign(dx) * len;
-    const left = Math.min(tip.x, x2);
-    const right = Math.max(tip.x, x2);
-    return {
-      cx: (left + right) / 2,
-      cy: tip.y,
-      left,
-      right,
-      top: tip.y - half,
-      bottom: tip.y + half,
-    };
-  }
-  if (Math.abs(dx) <= EPS) {
-    const y2 = tip.y + Math.sign(dy) * len;
-    const top = Math.min(tip.y, y2);
-    const bottom = Math.max(tip.y, y2);
-    return {
-      cx: tip.x,
-      cy: (top + bottom) / 2,
-      left: tip.x - half,
-      right: tip.x + half,
-      top,
-      bottom,
-    };
-  }
-
-  return null;
 }
 
 function _polylineIsOrthogonal(points: Point[]): boolean {
@@ -1149,7 +1104,13 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           if (!hasTerminalMarker(ownerEdge, terminal)) {
             continue;
           }
-          const markerRect = terminalMarkerClearanceRect(ownerMeta.normalized.points, terminal);
+          const markerRect = terminalMarkerClearanceRect(
+            ownerMeta.normalized.points,
+            terminal,
+            EPS_MARKER_CLEARANCE_LENGTH,
+            EPS_MARKER_CLEARANCE_HALF_WIDTH,
+            EPS
+          );
           const overlap = markerRect ? rectsOverlap(labelRect, markerRect) : null;
           if (overlap) {
             issues.push({

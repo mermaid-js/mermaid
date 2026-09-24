@@ -17,6 +17,13 @@ export function buildGridForest(nodes: Node[]): GridForest {
   const helperNodeIds = new Set<string>();
 
   for (const node of nodes) {
+    if (node.id === ROOT_CONTAINER_ID) {
+      throw gridError(
+        'GRID_INVALID_CONTAINMENT',
+        `Node id "${ROOT_CONTAINER_ID}" is reserved for the grid layout root`,
+        { traversedIds: [node.id] }
+      );
+    }
     nodeById.set(node.id, node);
     if (isEdgeLabelNode(node)) {
       helperNodeIds.add(node.id);
