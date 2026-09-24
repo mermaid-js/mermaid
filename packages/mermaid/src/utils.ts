@@ -905,7 +905,9 @@ export const encodeEntities = function (text: string): string {
   txt = txt.replace(/#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);
 
-    const isInt = /^\+?\d+$/.test(innerTxt);
+    // Hexadecimal references are numeric too. Without this they take the named branch and
+    // lose the `#`, so `#x2665;` becomes `&x2665;`, which is not an entity at all.
+    const isInt = /^\+?\d+$/.test(innerTxt) || /^[Xx][\dA-Fa-f]+$/.test(innerTxt);
     if (isInt) {
       return 'ﬂ°°' + innerTxt + '¶ß';
     } else {
