@@ -94,8 +94,10 @@ describe('ErDB subgraph behavior', () => {
       expect(innerCluster.parentId).toBe(outerId);
       expect(customerNode.parentId).toBe(outerId);
       expect(customerNode.isGroup).toBe(false);
+      expect(customerNode.placementId).toBe('A');
       expect(accountNode.parentId).toBe(innerId);
       expect(accountNode.isGroup).toBe(false);
+      expect(accountNode.placementId).toBe('B');
     });
 
     it('returns edges connected to subgraphs', () => {

@@ -151,6 +151,9 @@ export function validateGridPlacementMap(
   const knownIds = new Set<string>();
   for (const item of items) {
     knownIds.add(item.id);
+    if (item.placementId) {
+      knownIds.add(item.placementId);
+    }
   }
   for (const [key] of config.placements) {
     if (!knownIds.has(key)) {
@@ -175,7 +178,18 @@ function resolveItemPlacement(
   sourceOrder: Map<string, number>,
   config: GridLayoutConfigNormalized
 ): GridResolvedPlacement {
-  const configPlacement = config.placements.get(item.id) ?? {};
+  const internalPlacement = config.placements.get(item.id);
+  const authoredPlacement =
+    item.placementId && item.placementId !== item.id
+      ? config.placements.get(item.placementId)
+      : undefined;
+  if (internalPlacement && authoredPlacement) {
+    log.warn(
+      GRID_LOG_PREFIX,
+      `Ignoring grid placement for authored target "${item.placementId}" because internal target "${item.id}" is also configured`
+    );
+  }
+  const configPlacement = internalPlacement ?? authoredPlacement ?? {};
   const metadataPlacement = ownPlacementFrom(item.metadata);
 
   for (const field of ['row', 'column', 'horizontalAlign', 'verticalAlign'] as const) {

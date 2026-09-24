@@ -384,7 +384,7 @@ export interface MermaidConfig {
  */
 export interface GridLayoutConfig {
   /**
-   * Mapping of emitted node ids to explicit grid placements.
+   * Mapping of authored placement ids or emitted node ids to explicit grid placements.
    */
   placements?: {
     [k: string]: GridPlacement;

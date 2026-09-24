@@ -62,6 +62,7 @@ export class ErDB implements DiagramDB {
     if (!this.entities.has(name)) {
       this.entities.set(name, {
         id: `entity-${name}-${this.entities.size}`,
+        placementId: name,
         label: name,
         attributes: [],
         alias,

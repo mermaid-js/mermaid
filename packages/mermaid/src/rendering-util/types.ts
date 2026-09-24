@@ -13,6 +13,8 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
 interface BaseNode {
   id: string;
+  /** Stable authored identifier used by layouts for user-facing configuration. */
+  placementId?: string;
   label?: string;
   description?: string[];
   /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */

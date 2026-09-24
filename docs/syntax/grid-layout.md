@@ -155,13 +155,13 @@ classDiagram
 config:
   layout: grid
   grid:
-   columnGap: 100
+   columnGap: 150
    rowGap: 100
    placements:
-    CUSTOMER : { row: 1, column: 1 }
-    ORDER: {row: 1, column: 2}
-    PAYMENT: {row: 2, column: 2}
-    LINE_ITEM: {row: 1, column: 3}
+    CUSTOMER: { row: 1, column: 1 }
+    ORDER: { row: 1, column: 2 }
+    PAYMENT: { row: 2, column: 2 }
+    LINE_ITEM: { row: 1, column: 3 }
 ---
 erDiagram
   CUSTOMER ||--o{ ORDER : places
@@ -174,13 +174,13 @@ erDiagram
 config:
   layout: grid
   grid:
-   columnGap: 100
+   columnGap: 150
    rowGap: 100
    placements:
-    CUSTOMER : { row: 1, column: 1 }
-    ORDER: {row: 1, column: 2}
-    PAYMENT: {row: 2, column: 2}
-    LINE_ITEM: {row: 1, column: 3}
+    CUSTOMER: { row: 1, column: 1 }
+    ORDER: { row: 1, column: 2 }
+    PAYMENT: { row: 2, column: 2 }
+    LINE_ITEM: { row: 1, column: 3 }
 ---
 erDiagram
   CUSTOMER ||--o{ ORDER : places
@@ -194,6 +194,8 @@ erDiagram
 ---
 config:
   layout: grid
+  grid:
+   columnGap: 200
 ---
 requirementDiagram
   requirement checkout {
@@ -215,6 +217,8 @@ requirementDiagram
 ---
 config:
   layout: grid
+  grid:
+   columnGap: 200
 ---
 requirementDiagram
   requirement checkout {
@@ -286,11 +290,11 @@ config:
   layout: grid
   grid:
     placements:
-      Release: {row: 2, column: 2}
-      Plan: {row: 1, column: 2}
-      Build: {row: 2, column: 2}
-      Test: {row: 3, column: 2}
-      Deploy: {row: 3, column: 2}
+      root: {row: 2, column: 2}
+      Plan: {row: 1, column: 1}
+      Build: {row: 1, column: 3}
+      Test: {row: 1, column: 4}
+      Deploy: {row: 3, column: 3}
 ---
 mindmap
   root((Release))
@@ -306,11 +310,11 @@ config:
   layout: grid
   grid:
     placements:
-      Release: {row: 2, column: 2}
-      Plan: {row: 1, column: 2}
-      Build: {row: 2, column: 2}
-      Test: {row: 3, column: 2}
-      Deploy: {row: 3, column: 2}
+      root: {row: 2, column: 2}
+      Plan: {row: 1, column: 1}
+      Build: {row: 1, column: 3}
+      Test: {row: 1, column: 4}
+      Deploy: {row: 3, column: 3}
 ---
 mindmap
   root((Release))
@@ -405,7 +409,7 @@ flowchart TB
   B --> C
 ```
 
-The placement-map keys are the node ids produced by the diagram type. Flowchart and agentflow ids are usually the ids you author directly.
+Placement-map keys use authored node identifiers when the diagram type provides them. This includes flowchart, agentflow, entity relationship, and mindmap identifiers. Other diagram types use the node ids they emit for layout.
 
 Placements for ids that are not present in the diagram are ignored with a console warning. This
 allows a shared or generated placement map to contain entries for optional nodes.
@@ -433,7 +437,7 @@ Horizontal alignment applies to each item. Vertical alignment applies to the who
 config:
   layout: grid
   grid:
-    cellGap: 16
+    cellGap: 25
 ---
 flowchart TB
   A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }
@@ -446,7 +450,7 @@ flowchart TB
 config:
   layout: grid
   grid:
-    cellGap: 16
+    cellGap: 25
 ---
 flowchart TB
   A["Alpha"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: bottom }

@@ -206,6 +206,79 @@ Customer --> Login`,
     }
   });
 
+  test('ER and mindmap authored ids control grid placement', async ({ page }, testInfo) => {
+    const nodeCenter = async (label: string) => {
+      const box = await page.locator('svg g.node').filter({ hasText: label }).first().boundingBox();
+      expect(box).not.toBeNull();
+      return {
+        x: box!.x + box!.width / 2,
+        y: box!.y + box!.height / 2,
+      };
+    };
+
+    await renderGraph(
+      page,
+      testInfo,
+      `---
+config:
+  layout: grid
+  grid:
+    placements:
+      CUSTOMER: { row: 1, column: 1 }
+      ORDER: { row: 1, column: 2 }
+      PAYMENT: { row: 2, column: 2 }
+      LINE_ITEM: { row: 1, column: 3 }
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE_ITEM : contains
+  ORDER ||--o| PAYMENT : has`,
+      { screenshot: false, name: 'grid-er-authored-placement-ids' }
+    );
+
+    const customer = await nodeCenter('CUSTOMER');
+    const order = await nodeCenter('ORDER');
+    const lineItem = await nodeCenter('LINE_ITEM');
+    const payment = await nodeCenter('PAYMENT');
+    expect(customer.x).toBeLessThan(order.x);
+    expect(order.x).toBeLessThan(lineItem.x);
+    expect(order.y).toBeLessThan(payment.y);
+
+    await renderGraph(
+      page,
+      testInfo,
+      `---
+config:
+  layout: grid
+  grid:
+    placements:
+      root: { row: 2, column: 2 }
+      Plan: { row: 1, column: 1 }
+      Build: { row: 3, column: 1 }
+      Test: { row: 1, column: 3 }
+      Deploy: { row: 3, column: 3 }
+---
+mindmap
+  root((Release))
+    Plan
+    Build
+      Test
+    Deploy`,
+      { screenshot: false, name: 'grid-mindmap-authored-placement-ids' }
+    );
+
+    const release = await nodeCenter('Release');
+    const plan = await nodeCenter('Plan');
+    const build = await nodeCenter('Build');
+    const test = await nodeCenter('Test');
+    const deploy = await nodeCenter('Deploy');
+    expect(plan.x).toBeLessThan(release.x);
+    expect(release.x).toBeLessThan(test.x);
+    expect(plan.y).toBeLessThan(release.y);
+    expect(release.y).toBeLessThan(build.y);
+    expect(build.y).toBeCloseTo(deploy.y, 0);
+  });
+
   test('grid flowchart also renders with SVG labels', async ({ page }, testInfo) => {
     await renderGraph(
       page,

@@ -556,7 +556,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     additionalProperties: false
     properties:
       placements:
-        description: Mapping of emitted node ids to explicit grid placements.
+        description: Mapping of authored placement ids or emitted node ids to explicit grid placements.
         type: object
         additionalProperties:
           $ref: '#/$defs/GridPlacement'

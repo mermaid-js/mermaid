@@ -262,6 +262,7 @@ export class MindmapDB {
 
     const processedNode: MindmapLayoutNode = {
       id: node.id.toString(),
+      placementId: node.nodeId,
       domId: 'node_' + node.id.toString(),
       label: node.descr,
       labelType: 'markdown',

@@ -51,12 +51,14 @@ describe('MindmapDb getData function', () => {
       const rootNode = (result.nodes as MindmapLayoutNode[]).find((n) => n.id === '0');
       expect(rootNode).toBeDefined();
       expect(rootNode?.label).toBe('Root Node');
+      expect(rootNode?.placementId).toBe('root');
       expect(rootNode?.level).toBe(0);
 
       // Check child nodes
       const child1 = (result.nodes as MindmapLayoutNode[]).find((n) => n.id === '1');
       expect(child1).toBeDefined();
       expect(child1?.label).toBe('Child 1');
+      expect(child1?.placementId).toBe('child1');
       expect(child1?.level).toBe(1);
 
       // Check edges

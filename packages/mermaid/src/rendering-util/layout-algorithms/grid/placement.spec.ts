@@ -3,9 +3,10 @@ import { log } from '../../../logger.js';
 import type { LayoutData, Node } from '../../types.js';
 import { readGridConfig, resolveGridPlacements, validateGridPlacementMap } from './placement.js';
 
-function node(id: string, metadata?: Record<string, unknown>): Node {
+function node(id: string, metadata?: Record<string, unknown>, placementId?: string): Node {
   return {
     id,
+    placementId,
     isGroup: false,
     shape: 'rect',
     width: 100,
@@ -137,6 +138,39 @@ describe('grid placement', () => {
     expect(warn).toHaveBeenCalledWith(
       '[grid]',
       'Ignoring grid placement for unknown target "unknown"'
+    );
+    warn.mockRestore();
+  });
+
+  it('resolves authored placement ids while preserving internal id precedence', () => {
+    const items = [
+      node('entity-CUSTOMER-0', undefined, 'CUSTOMER'),
+      node('entity-ORDER-1', undefined, 'ORDER'),
+    ];
+    const sourceOrder = new Map(items.map((item, index) => [item.id, index]));
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          CUSTOMER: { row: 1, column: 1 },
+          ORDER: { row: 1, column: 2 },
+          'entity-ORDER-1': { row: 2, column: 2 },
+        },
+      }),
+    } as LayoutData);
+
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    expect(() => validateGridPlacementMap(items, gridConfig)).not.toThrow();
+    expect(warn).not.toHaveBeenCalled();
+    const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(byId.get('entity-CUSTOMER-0')).toMatchObject({ row: 1, column: 1 });
+    expect(byId.get('entity-ORDER-1')).toMatchObject({ row: 2, column: 2 });
+    expect(warn).toHaveBeenCalledWith(
+      '[grid]',
+      'Ignoring grid placement for authored target "ORDER" because internal target "entity-ORDER-1" is also configured'
     );
     warn.mockRestore();
   });
