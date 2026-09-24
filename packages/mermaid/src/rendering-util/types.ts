@@ -13,6 +13,8 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
 interface BaseNode {
   id: string;
+  /** Stable authored identifier for layout configuration when `id` is generated for rendering. */
+  placementId?: string;
   label?: string;
   description?: string[];
   /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */
@@ -170,6 +172,7 @@ export interface Edge {
   endLabelLeft?: string;
   // Rendering specific properties
   curve?: string;
+  cornerRadius?: number;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;

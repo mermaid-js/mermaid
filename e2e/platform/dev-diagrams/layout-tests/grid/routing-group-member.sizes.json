@@ -1,0 +1,25 @@
+{
+  "nodes": [
+    {
+      "id": "M",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "O",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "edge-label-M-O-L_M_O_0",
+      "width": 120,
+      "height": 120
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "608674cd1dbeb32a9fc508e6e2211a4f7d4e42b382571e585d14fab0cb29f27b",
+    "capturedAt": "2026-09-22T04:56:49.469Z",
+    "capturedFrom": "browser-capture layout-tests/grid/routing-group-member.mmd theme=default look=classic layout=grid"
+  }
+}

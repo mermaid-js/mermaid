@@ -97,18 +97,18 @@ So write the core as one exported function, and have both the browser and your t
 
 ## A minimal layout
 
-The examples from here on build a layout called `grid`. No such layout ships with Mermaid. It stands in for whatever you are writing, and the code below is what you would write to create it.
+The examples from here on build a layout called `simple-grid`. Mermaid ships a production `grid` layout under `rendering-util/layout-algorithms/grid/`; the snippets here stay intentionally minimal and pedagogical so you can focus on the layout-maker contract rather than production complexity.
 
 Put the algorithm in `packages/mermaid/src/rendering-util/layout-algorithms/<name>/`. This one arranges leaf nodes in a grid and connects them with straight lines:
 
 ```ts
-// layout-algorithms/grid/layoutCore.ts
+// layout-algorithms/simple-grid/layoutCore.ts
 import type { LayoutData } from '../../types.js';
 
 const GAP = 60;
 
 /** DOM-free: positions come from measured sizes only. */
-export function runGridLayoutCore(data4Layout: LayoutData): void {
+export function runSimpleGridLayoutCore(data4Layout: LayoutData): void {
   const leaves = data4Layout.nodes.filter((node) => !node.isGroup);
   const columns = Math.ceil(Math.sqrt(leaves.length));
   const cell = Math.max(...leaves.map((n) => Math.max(n.width ?? 0, n.height ?? 0))) + GAP;
@@ -134,11 +134,11 @@ export function runGridLayoutCore(data4Layout: LayoutData): void {
 ```
 
 ```ts
-// layout-algorithms/grid/index.ts
+// layout-algorithms/simple-grid/index.ts
 import { createCommonLayoutRenderer } from '../common/index.js';
-import { runGridLayoutCore } from './layoutCore.js';
+import { runSimpleGridLayoutCore } from './layoutCore.js';
 
-export const render = createCommonLayoutRenderer({ runLayoutCore: runGridLayoutCore });
+export const render = createCommonLayoutRenderer({ runLayoutCore: runSimpleGridLayoutCore });
 ```
 
 That renders. It is also wrong in most of the ways a layout can be wrong.
@@ -152,7 +152,10 @@ registerLayoutLoaders([
   { name: 'dagre', loader: async () => await import('./layout-algorithms/dagre/index.js') },
   { name: 'swimlane', loader: async () => await import('./layout-algorithms/swimlanes/index.js') },
   // your new layout
-  { name: 'grid', loader: async () => await import('./layout-algorithms/grid/index.js') },
+  {
+    name: 'simple-grid',
+    loader: async () => await import('./layout-algorithms/simple-grid/index.js'),
+  },
 ]);
 ```
 
@@ -161,7 +164,7 @@ The loader is lazy, so the code only downloads when a diagram asks for it. `cose
 ```text
 ---
 config:
-  layout: grid
+  layout: simple-grid
 ---
 flowchart TB
   A --> B
@@ -466,16 +469,16 @@ Open `/dev/` and you get the explorer: the fixture tree on one side, the diagram
 For a diagram that is not in the fixture tree, copy the standalone page template instead:
 
 ```bash
-cp demos/dev/example.html demos/dev/grid.html
+cp demos/dev/example.html demos/dev/simple-grid.html
 ```
 
-That lands at `/dev/grid.html` on the same server. Put the diagram in the page and name your layout in the frontmatter:
+That lands at `/dev/simple-grid.html` on the same server. Put the diagram in the page and name your layout in the frontmatter:
 
 ```html
 <pre class="mermaid">
 ---
 config:
-  layout: grid
+  layout: simple-grid
 ---
 flowchart TB
   A --> B
@@ -569,7 +572,9 @@ import type { LayoutLoaderDefinition } from 'mermaid';
 
 const loader = async () => await import('./render.js');
 
-const layouts: LayoutLoaderDefinition[] = [{ name: 'grid', loader, algorithm: 'grid.compact' }];
+const layouts: LayoutLoaderDefinition[] = [
+  { name: 'simple-grid', loader, algorithm: 'simple-grid.compact' },
+];
 
 export default layouts;
 ```

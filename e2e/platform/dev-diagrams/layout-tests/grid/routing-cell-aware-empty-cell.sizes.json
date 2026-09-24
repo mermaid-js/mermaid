@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "v1",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "v2p",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "v2",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "v3",
+      "width": 180,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "970887280b509d6f0c679e81127bec6779d276eba43a5bf6925f3dac7182c046",
+    "capturedAt": "2026-09-21T23:15:42.423Z",
+    "capturedFrom": "browser-capture layout-tests/grid/routing-cell-aware-empty-cell.mmd theme=default look=classic layout=grid"
+  }
+}

@@ -54,5 +54,42 @@ describe('sanitizeDirective', () => {
       sanitizeDirective(args);
       expect(args.sankey.nodeColors).toEqual({ a: '#ff0000', b: 'rgb(0, 0, 0)' });
     });
+
+    it('preserves grid placements keyed by node id', () => {
+      const args = {
+        grid: {
+          placements: {
+            G: { row: 1, column: 2 },
+            'group.with-punctuation': {
+              horizontalAlign: 'left',
+              verticalAlign: 'bottom',
+            },
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.grid.placements).toEqual({
+        G: { row: 1, column: 2 },
+        'group.with-punctuation': {
+          horizontalAlign: 'left',
+          verticalAlign: 'bottom',
+        },
+      });
+    });
+
+    it('drops invalid grid placement ids, non-object values, and unknown properties', () => {
+      const args = {
+        grid: {
+          placements: {
+            valid: { row: 1, notAConfigKey: 'x' },
+            __proto__hack: { column: 1 },
+            constructorNode: { column: 2 },
+            scalar: 3,
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.grid.placements).toEqual({ valid: { row: 1 } });
+    });
   });
 });

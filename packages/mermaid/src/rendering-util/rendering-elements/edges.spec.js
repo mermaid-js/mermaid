@@ -11,8 +11,15 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
-import { insertEdge, resolveEdgeCurveType } from './edges.js';
+import {
+  generateRoundedPath,
+  insertEdge,
+  resolveEdgeCornerRadius,
+  resolveEdgeCurveType,
+} from './edges.js';
+import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
+import intersectRect from './intersect/intersect-rect.js';
 
 describe('resolveEdgeCurveType', () => {
   it('should return edge.curve when it is a string', () => {
@@ -36,6 +43,26 @@ describe('resolveEdgeCurveType', () => {
 
   it('should fall back to config flowchart.curve when edge.curve is null', () => {
     expect(resolveEdgeCurveType(null)).toBe('rounded');
+  });
+});
+
+describe('rounded edge corners', () => {
+  it('uses a valid configured radius and defaults invalid values', () => {
+    expect(resolveEdgeCornerRadius(12)).toBe(12);
+    expect(resolveEdgeCornerRadius(0)).toBe(0);
+    expect(resolveEdgeCornerRadius(-1)).toBe(5);
+    expect(resolveEdgeCornerRadius(Number.NaN)).toBe(5);
+  });
+
+  it('changes the rounded path geometry with the corner radius', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 40, y: 0 },
+      { x: 40, y: 40 },
+    ];
+
+    expect(generateRoundedPath(points, 5)).not.toBe(generateRoundedPath(points, 12));
+    expect(generateRoundedPath(points, 0)).toBe('M0,0L40,0Q40,0 40,0L40,40');
   });
 });
 
@@ -142,5 +169,157 @@ describe('insertEdge swimlane endpoint clipping', () => {
 
     expect(tail.intersect).toHaveBeenCalledWith({ x: 10, y: 14 });
     expect(renderedPoints[0]).toEqual(clippedStart);
+  });
+});
+
+describe('insertEdge grid endpoint geometry', () => {
+  it('clips router-owned ports to shape outlines with orthogonal endpoint doglegs', () => {
+    vi.mocked(getConfig).mockReturnValue({
+      layout: 'grid',
+      flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+      state: { arrowMarkerAbsolute: false },
+      handDrawnSeed: 0,
+    });
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const points = [
+      { x: 130, y: 110 },
+      { x: 100, y: 110 },
+      { x: 100, y: 34 },
+      { x: 80, y: 34 },
+    ];
+    const edge = {
+      id: 'v2p-v1',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'linear',
+      look: 'classic',
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'arrow_point',
+      points,
+    };
+    const tail = {
+      intersect: vi.fn(() => ({ x: 135, y: 101.25 })),
+    };
+    const head = {
+      intersect: vi.fn(() => ({ x: 75, y: 29.33 })),
+    };
+
+    insertEdge(svg, edge, null, 'flowchart-v2', tail, head, 'diagram');
+
+    const path = svg.select('path');
+    const renderedPoints = JSON.parse(atob(path.attr('data-points')));
+    expect(tail.intersect).toHaveBeenCalledWith(points[1]);
+    expect(head.intersect).toHaveBeenCalledWith(points.at(-2));
+    expect(renderedPoints).toEqual([
+      { x: 135, y: 101.25 },
+      { x: 100, y: 101.25 },
+      { x: 100, y: 110 },
+      { x: 100, y: 34 },
+      { x: 100, y: 29.33 },
+      { x: 75, y: 29.33 },
+    ]);
+    for (let index = 1; index < renderedPoints.length; index++) {
+      const previous = renderedPoints[index - 1];
+      const current = renderedPoints[index];
+      expect(current.x === previous.x || current.y === previous.y).toBe(true);
+    }
+  });
+
+  it('keeps rectangular outline points unchanged', () => {
+    vi.mocked(getConfig).mockReturnValue({
+      layout: 'grid',
+      flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+      state: { arrowMarkerAbsolute: false },
+      handDrawnSeed: 0,
+    });
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const points = [
+      { x: 140, y: 108 },
+      { x: 80, y: 108 },
+      { x: 80, y: 192 },
+      { x: 20, y: 192 },
+    ];
+    const edge = {
+      id: 'rectangular-grid-edge',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'linear',
+      look: 'classic',
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'arrow_point',
+      points,
+    };
+
+    insertEdge(
+      svg,
+      edge,
+      null,
+      'flowchart-v2',
+      {
+        intersect: vi.fn((point) =>
+          intersectRect({ x: 200, y: 100, width: 120, height: 60 }, point)
+        ),
+      },
+      {
+        intersect: vi.fn((point) =>
+          intersectRect({ x: -40, y: 200, width: 120, height: 60 }, point)
+        ),
+      },
+      'diagram'
+    );
+
+    expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual(points);
+  });
+
+  it('keeps a two-point route orthogonal when both shape outlines are inset', () => {
+    vi.mocked(getConfig).mockReturnValue({
+      layout: 'grid',
+      flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+      state: { arrowMarkerAbsolute: false },
+      handDrawnSeed: 0,
+    });
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'direct-grid-edge',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'linear',
+      look: 'classic',
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'arrow_point',
+      points: [
+        { x: 0, y: 10 },
+        { x: 100, y: 10 },
+      ],
+    };
+
+    insertEdge(
+      svg,
+      edge,
+      null,
+      'flowchart-v2',
+      { intersect: vi.fn(() => ({ x: -10, y: 5 })) },
+      { intersect: vi.fn(() => ({ x: 110, y: 15 })) },
+      'diagram'
+    );
+
+    expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual([
+      { x: -10, y: 5 },
+      { x: 50, y: 5 },
+      { x: 50, y: 15 },
+      { x: 110, y: 15 },
+    ]);
   });
 });

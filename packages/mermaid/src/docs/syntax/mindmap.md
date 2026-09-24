@@ -212,6 +212,8 @@ cspell:ignore Buzan
 
 ## Layouts
 
+For deterministic row and column placement, use the [grid layout](/syntax/grid-layout.html).
+
 Mermaid also supports a Tidy Tree layout for mindmaps.
 
 ```

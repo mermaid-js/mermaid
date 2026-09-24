@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-21T01:20:21.802Z",
+    "capturedFrom": "browser-capture layout-tests/grid/routing-outside-member.mmd theme=default look=classic",
+    "sourceSha256": "2d7a7fb4d22df53d5972ea7447b54dfe2de8ae16ba52bb7497562bbad123540b"
+  },
+  "nodes": [
+    {
+      "id": "M",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "O",
+      "width": 152,
+      "height": 45
+    }
+  ]
+}

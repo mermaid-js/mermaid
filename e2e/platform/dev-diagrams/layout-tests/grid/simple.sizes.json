@@ -1,0 +1,25 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "B",
+      "width": 180,
+      "height": 54
+    },
+    {
+      "id": "C",
+      "width": 180,
+      "height": 54
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "02fd41c407cad767a825bab2c2526fdd9f6f749b241769ba1d8ab7d540d35219",
+    "capturedAt": "2026-09-22T04:36:58.610Z",
+    "capturedFrom": "browser-capture layout-tests/grid/simple.mmd theme=default look=classic layout=grid"
+  }
+}

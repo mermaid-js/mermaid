@@ -2,6 +2,8 @@ import type { LayoutData } from '../../types.js';
 import { createEdgeLabelNodes } from '../swimlanes/edgeLabelNodes.js';
 import { prepareLayoutForSwimlanes } from '../swimlanes/helpers.js';
 import { runSwimlaneLayoutCore } from '../swimlanes/layoutCore.js';
+import { prepareGridLayout } from '../grid/edgeLabels.js';
+import { runGridLayoutCore } from '../grid/layoutCore.js';
 import type { LayoutTestBackend, LayoutTestBackendId, OrthogonalTrace } from './types.js';
 import { applyFixtureContentSizesStrict, applyFixtureLabelSizesStrict } from './fixtureSizes.js';
 import { parseMmdFileToLayoutData } from './parseToLayoutData.js';
@@ -62,6 +64,13 @@ export function runSwimlanesDdlt(layout: LayoutData, sizes: SizesFixture): void 
   (layout as LayoutData & { direction?: string }).direction = direction;
 }
 
+export function runGridDdlt(layout: LayoutData, sizes: SizesFixture): void {
+  prepareGridLayout(layout);
+  applyFixtureContentSizesStrict(layout, sizes);
+  (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'grid';
+  runGridLayoutCore(layout);
+}
+
 /**
  * Parse `.mmd`, apply fixture sizes, then run the given backend (mutates returned `LayoutData`).
  * Only `'swimlanes'` is supported on this branch; `'domus-orthogonal'` throws.
@@ -72,6 +81,11 @@ export async function parseApplySizesAndLayout(
   backendId: LayoutTestBackendId,
   _options?: { trace?: OrthogonalTrace }
 ): Promise<LayoutData> {
+  if (backendId === 'grid') {
+    const layout = await parseMmdFileToLayoutData(mmdPath, { stampFlowchartRendererFields: true });
+    runGridDdlt(layout, sizes);
+    return layout;
+  }
   if (backendId !== 'swimlanes') {
     domusBackendUnavailable();
   }
@@ -83,12 +97,21 @@ export async function parseApplySizesAndLayout(
 
 /** Returns a DOM-free layout runner. `swimlanes` must use `parseApplySizesAndLayout()` (needs fixture sizes mid-pipeline); `domus-orthogonal` throws. */
 export function getLayoutTestBackend(_id: LayoutTestBackendId): LayoutTestBackend {
+  if (_id === 'grid') {
+    return (layout: LayoutData) => {
+      prepareGridLayout(layout);
+      runGridLayoutCore(layout);
+    };
+  }
   domusBackendUnavailable();
 }
 
 export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBackendId[] {
   if (profile === 'swimlanes') {
     return ['swimlanes'];
+  }
+  if (profile === 'grid') {
+    return ['grid'];
   }
   return ['domus-orthogonal'];
 }

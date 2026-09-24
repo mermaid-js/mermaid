@@ -51,6 +51,20 @@ export type SankeyNodeAlignment = 'left' | 'right' | 'center' | 'justify';
  */
 export type DOMPurifyConfiguration = import('dompurify').Config;
 /**
+ * Horizontal alignment for items within a grid cell.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridHorizontalAlign".
+ */
+export type GridHorizontalAlign = 'left' | 'center' | 'right';
+/**
+ * Vertical alignment for items or stacks within a grid cell.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridVerticalAlign".
+ */
+export type GridVerticalAlign = 'top' | 'center' | 'bottom';
+/**
  * The style of labels in the sankey diagram.
  *
  *
@@ -245,6 +259,7 @@ export interface MermaidConfig {
      */
     keepEntryNodeOnTop?: boolean;
   };
+  grid?: GridLayoutConfig;
   darkMode?: boolean;
   /**
    * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
@@ -362,6 +377,93 @@ export interface MermaidConfig {
    *
    */
   suppressErrorRendering?: boolean;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridLayoutConfig".
+ */
+export interface GridLayoutConfig {
+  /**
+   * Mapping of authored placement ids or emitted node ids to explicit grid placements.
+   */
+  placements?: {
+    [k: string]: GridPlacement;
+  };
+  /**
+   * Non-negative integer candidate column count for auto-placed items; 0 means automatic.
+   */
+  columns?: number;
+  /**
+   * Pixel gap between occupied rows.
+   */
+  rowGap?: number;
+  /**
+   * Pixel gap between occupied columns.
+   */
+  columnGap?: number;
+  /**
+   * Pixel gap between stacked items that share an explicit cell.
+   */
+  cellGap?: number;
+  /**
+   * Minimum pixel padding inside groups on every side.
+   */
+  containerPadding?: number;
+  /**
+   * Clearance between a measured group title and its child grid.
+   */
+  titleGap?: number;
+  /**
+   * Default horizontal alignment within each grid cell.
+   */
+  horizontalAlign?: 'left' | 'center' | 'right';
+  /**
+   * Default vertical alignment for each grid cell stack.
+   */
+  verticalAlign?: 'top' | 'center' | 'bottom';
+  /**
+   * Curve style used to render grid edges.
+   */
+  curve?:
+    | 'basis'
+    | 'bumpX'
+    | 'bumpY'
+    | 'cardinal'
+    | 'catmullRom'
+    | 'linear'
+    | 'monotoneX'
+    | 'monotoneY'
+    | 'natural'
+    | 'step'
+    | 'stepAfter'
+    | 'stepBefore'
+    | 'rounded';
+  /**
+   * Pixel radius used for grid edges when curve is rounded.
+   */
+  edgeCornerRadius?: number;
+}
+/**
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "GridPlacement".
+ */
+export interface GridPlacement {
+  /**
+   * Positive integer row number local to the item's direct parent grid.
+   */
+  row?: number;
+  /**
+   * Positive integer column number local to the item's direct parent grid.
+   */
+  column?: number;
+  /**
+   * Horizontal alignment within the resolved grid cell.
+   */
+  horizontalAlign?: 'left' | 'center' | 'right';
+  /**
+   * Vertical alignment for the resolved grid cell stack.
+   */
+  verticalAlign?: 'top' | 'center' | 'bottom';
 }
 /**
  * The object containing configurations specific for flowcharts
