@@ -110,6 +110,7 @@
     "@types/micromatch": "^4.0.10",
     "@types/stylis": "^4.2.7",
     "ajv": "^8.17.1",
+    "bpmn-moddle": "^10.2.0",
     "canvas": "^3.2.3",
     "chokidar": "3.6.0",
     "concurrently": "^9.2.4",

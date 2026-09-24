@@ -435,6 +435,8 @@ properties:
     $ref: '#/$defs/RadarDiagramConfig'
   usecase:
     $ref: '#/$defs/UsecaseDiagramConfig'
+  bpmn:
+    $ref: '#/$defs/BpmnDiagramConfig'
   venn:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
@@ -2915,6 +2917,36 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  BpmnDiagramConfig:
+    title: BPMN Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for BPMN diagrams.
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+    properties:
+      nodeSpacing:
+        description: Horizontal spacing between BPMN elements.
+        type: number
+        minimum: 0
+        default: 50
+      rankSpacing:
+        description: Spacing between layers of the process (rank direction).
+        type: number
+        minimum: 0
+        default: 60
+      diagramPadding:
+        description: Padding around the whole diagram.
+        type: number
+        minimum: 0
+        default: 12
+      padding:
+        description: Padding inside pools and lanes.
+        type: number
+        minimum: 0
+        default: 20
 
   UsecaseDiagramConfig:
     title: Usecase Diagram Config

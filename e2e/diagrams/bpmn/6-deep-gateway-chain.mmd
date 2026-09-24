@@ -1,0 +1,41 @@
+%% Stress fixture: a single pool with a long linear gateway chain, several
+%% branch/end events and deliberately long event and gateway labels. Exercises
+%% external-label wrapping, edge-label backgrounds and rank spacing so the
+%% sequence backbone stays straight and readable.
+bpmn LR
+  pool "Support Automation Service"
+    start message t0 "Support ticket received from a customer"
+    task t1 "Classify the ticket category and urgency"
+    xor t2 "Ticket classified with sufficient confidence?"
+    task t3 "Enrich the ticket with account and order history"
+    xor t4 "Customer is on a priority-tier account?"
+    task t5 "Draft a suggested resolution from the knowledge base"
+    xor t6 "Automated resolution confidence above threshold?"
+    task t7 "Send the suggested resolution to the customer"
+    xor t8 "Customer confirmed the issue is resolved?"
+    task t9 "Record the ticket as automatically resolved"
+    end e1 "Ticket resolved without a human agent"
+    end e2 "Escalated to the human agent queue"
+    end e3 "Escalated to the priority human agent queue"
+    end e4 "Closed as unclassifiable for automation"
+  pool "Knowledge Base Service"
+    task kb1 "Search the knowledge base for matching articles"
+    task kb2 "Return the ranked candidate resolutions"
+
+  t0 --> t1 --> t2
+  t2 -- "classified" --> t3
+  t2 -->|default| e4
+  t3 --> t4
+  t4 -- "priority" --> e3
+  t4 -->|default| t5
+  t5 --> t6
+  t6 -- "confident" --> t7
+  t6 -->|default| e2
+  t7 --> t8
+  t8 -- "confirmed" --> t9
+  t8 -->|default| e2
+  t9 --> e1
+
+  kb1 --> kb2
+  t3 ==> kb1
+  kb2 ==> t5

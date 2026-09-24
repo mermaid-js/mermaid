@@ -178,6 +178,7 @@ function sidebarSyntax() {
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
         { text: 'Use Case Diagram', link: '/syntax/usecase' },
+        { text: 'BPMN 🔥', link: '/syntax/bpmn' },
         { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },

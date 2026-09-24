@@ -195,6 +195,11 @@ class Theme {
     this.nodeBorder = this.border1; // border 1
     this.clusterBkg = this.secondBkg;
     this.clusterBorder = this.border2;
+
+    /* BPMN diagram (optional; bpmn/styles.ts falls back to cluster/line vars). */
+    this.bpmnLaneBkg = this.bpmnLaneBkg || this.clusterBkg;
+    this.bpmnPoolBorder = this.bpmnPoolBorder || this.clusterBorder;
+    this.bpmnMessageFlow = this.bpmnMessageFlow || this.lineColor;
     this.defaultLinkColor = this.lineColor;
     this.titleColor = this.textColor;
     this.edgeLabelBackground = this.labelBackground;

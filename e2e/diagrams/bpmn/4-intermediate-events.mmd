@@ -1,0 +1,11 @@
+bpmn LR
+  start message s1 "Request received"
+  task:user t1 "Assess request"
+  intermediate timer i1 "Wait 2 days"
+  and g1
+  task:service t2 "Notify"
+  task:script t3 "Archive"
+  end e1 "Closed"
+  s1 --> t1 --> i1 --> g1
+  g1 --> t2 --> e1
+  g1 --> t3 --> e1

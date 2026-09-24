@@ -348,6 +348,7 @@ export interface MermaidConfig {
   treeView?: TreeViewDiagramConfig;
   radar?: RadarDiagramConfig;
   usecase?: UsecaseDiagramConfig;
+  bpmn?: BPMNDiagramConfig;
   venn?: VennDiagramConfig;
   'wardley-beta'?: WardleyDiagramConfig;
   cynefin?: CynefinDiagramConfig;
@@ -2444,6 +2445,30 @@ export interface UsecaseDiagramConfig extends BaseDiagramConfig {
    *
    */
   colorScheme?: 'role' | 'rotate';
+}
+/**
+ * The object containing configurations specific for BPMN diagrams.
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BpmnDiagramConfig".
+ */
+export interface BPMNDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Horizontal spacing between BPMN elements.
+   */
+  nodeSpacing?: number;
+  /**
+   * Spacing between layers of the process (rank direction).
+   */
+  rankSpacing?: number;
+  /**
+   * Padding around the whole diagram.
+   */
+  diagramPadding?: number;
+  /**
+   * Padding inside pools and lanes.
+   */
+  padding?: number;
 }
 /**
  * The object containing configurations specific for Venn diagrams.
