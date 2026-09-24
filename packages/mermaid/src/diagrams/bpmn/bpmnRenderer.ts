@@ -6,6 +6,7 @@ import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js
 import type { LayoutData } from '../../rendering-util/types.js';
 import utils from '../../utils.js';
 import type { BpmnDB } from './bpmnTypes.js';
+import { decorateBpmn } from './bpmnGlyphs.js';
 
 /** Main draw function using the unified rendering system. */
 const draw: DrawDefinition = async (_text, id, _version, diag) => {
@@ -30,6 +31,9 @@ const draw: DrawDefinition = async (_text, id, _version, diag) => {
   const svg = getDiagramElement(id, data4Layout.config.securityLevel);
 
   await render(data4Layout, svg);
+
+  // BPMN glyphs (event triggers, gateway markers, task icons) + external labels.
+  decorateBpmn(svg, id, bpmnDb.getModel());
 
   const padding = data4Layout.diagramPadding ?? 8;
   utils.insertTitle(svg, 'bpmnDiagramTitleText', 0, bpmnDb.getDiagramTitle?.() ?? '');

@@ -47,6 +47,10 @@ const getStyles: DiagramStylesProvider = (options: BpmnStyleOptions = {}) => {
   .cluster.bpmn-lane rect { fill: ${laneBkg}; stroke: ${laneBorder}; }
   .bpmn-lane .cluster-label,
   .bpmn-lane .nodeLabel { color: ${text}; }
+
+  .bpmn-glyph { fill: none; stroke: ${border}; stroke-width: 1.1px; stroke-linecap: round; stroke-linejoin: round; }
+  .bpmn-glyph-bold { stroke-width: 2.4px; }
+  .bpmn-ext-label { fill: ${text}; font-size: 12px; dominant-baseline: hanging; }
 `;
 };
 

@@ -87,7 +87,8 @@ const getConfig = (): Required<BpmnDiagramConfig> => {
 const EVENT_SHAPE: Record<EventPosition, string> = {
   start: 'circle',
   intermediate: 'dbl-circ',
-  end: 'dbl-circ',
+  // single circle; the thick BPMN end border comes from styles.ts
+  end: 'circle',
 };
 
 const eventClasses = (position: EventPosition, trigger: EventTrigger): string =>
@@ -186,12 +187,17 @@ const getData = (): LayoutData => {
 
   for (const node of state.nodes) {
     const parentId = nodeParent.get(node.id);
+    // Events and gateways are drawn as small fixed glyphs with the label rendered
+    // *outside* the shape (BPMN convention). Emitting an empty internal label keeps
+    // the circle/diamond small; the real label + marker are added in the renderer's
+    // decoration pass (bpmnGlyphs).
+    const externalLabel = node.kind === 'event' || node.kind === 'gateway';
     nodes.push({
       id: node.id,
-      label: sanitize(node.label ?? node.id),
+      label: externalLabel ? '' : sanitize(node.label ?? node.id),
       shape: nodeShape(node),
       isGroup: false,
-      padding: 8,
+      padding: externalLabel ? 7 : 8,
       look: globalConfig.look,
       cssClasses: nodeClasses(node),
       ...(parentId ? { parentId } : {}),
