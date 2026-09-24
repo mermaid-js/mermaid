@@ -1,0 +1,60 @@
+%% Stress fixture: a driver pool plus four collaborator pools reached only by
+%% message flows (5 pools, 9 message flows), a deep gateway chain and long
+%% event/gateway labels. Exercises cross-pool routing, external-label wrapping
+%% and pool containment on a dense multi-pool graph.
+bpmn LR
+  pool "Applicant (Web Portal)"
+    start a0 "Begin membership application"
+    task:user a1 "Enter personal and contact details"
+    task a2 "Load eligibility rules and pricing tiers"
+    xor a3 "Applicant meets minimum eligibility?"
+    task:user a4 "Choose plan and submit application"
+    xor a5 "Automated risk score acceptable?"
+    xor a6 "Manual review required before approval?"
+    task:user a7 "Provide additional documentation"
+    xor a8 "Payment authorised by the processor?"
+    task a9 "Review approved membership summary"
+    end a10 "Membership activated"
+    end a11 "Application declined"
+    end a12 "Payment failed"
+  pool "Identity Service"
+    task id1 "Verify submitted identity documents"
+    task id2 "Return verification decision and score"
+  pool "Pricing Service"
+    task pr1 "Return plan catalogue and pricing tiers"
+  pool "Risk Service"
+    task rk1 "Compute applicant risk score"
+    task rk2 "Queue the application for manual review"
+    task rk3 "Record the final underwriting decision"
+  pool "Payment Processor"
+    task py1 "Authorise the membership payment"
+    task py2 "Capture funds for the activated membership"
+
+  a0 --> a1 --> a2 --> a3
+  a3 -- "eligible" --> a4
+  a3 -->|default| a11
+  a4 --> a5
+  a5 -- "accepted" --> a8
+  a5 -->|default| a6
+  a6 -- "needs docs" --> a7
+  a6 -->|default| a11
+  a7 --> a5
+  a8 -- "authorised" --> a9
+  a8 -->|default| a12
+  a9 --> a10
+
+  %% intra-collaborator sequence flows
+  id1 --> id2
+  rk1 --> rk2 --> rk3
+  py1 --> py2
+
+  %% 9 cross-pool message flows
+  a1 ==> id1
+  id2 ==> a4
+  a2 ==> pr1
+  pr1 ==> a4
+  a4 ==> rk1
+  rk3 ==> a5
+  a6 ==> rk2
+  a4 ==> py1
+  py2 ==> a9
