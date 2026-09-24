@@ -413,6 +413,8 @@ const outlineEndpoint = (node, port, adjacent) => {
   const inwardDepth = vertical
     ? (outline.y - port.y) * inwardDirection
     : (outline.x - port.x) * inwardDirection;
+  // Rectangular ports already lie on their outline. Only move an endpoint when the shape boundary
+  // is strictly inward, otherwise clipping would push valid ports outward or reverse the terminal.
   if (inwardDepth <= GRID_ENDPOINT_EPSILON) {
     return undefined;
   }
@@ -448,6 +450,8 @@ const clipGridEndpointsToNodeOutlines = (points, tail, head) => {
     if (!vertical && !horizontal) {
       return points;
     }
+    // With no existing bend to reuse, split the span midway so clipping both ends cannot introduce
+    // a diagonal segment between differently shaped outlines.
     appendDistinctPoint(clipped, clippedFirst);
     if (vertical) {
       const middleY = (clippedFirst.y + clippedLast.y) / 2;

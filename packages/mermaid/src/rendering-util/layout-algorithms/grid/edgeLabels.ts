@@ -1603,6 +1603,8 @@ function rerouteSegmentAroundRect(
     skipNodeIds.add(ownLabelNodeId);
   }
 
+  // One detour may remove only the first intersection with a wide label. Accept strictly
+  // monotonic progress here; the bounded outer loop completes the reroute segment by segment.
   if (segment.orientation === 'H') {
     const minX = Math.min(a.x, b.x);
     const maxX = Math.max(a.x, b.x);
@@ -1743,6 +1745,8 @@ function rerouteForeignEdgeAroundLabels(
 ): Point[] | null {
   const initialPoints = pointsForEdge(edge, overrides, context);
   let currentPoints = initialPoints;
+  // A detour around a later label can re-enter an earlier reservation, so make one deterministic
+  // repair pass and one convergence pass before abandoning the edge-level recovery.
   for (let pass = 0; pass < 2; pass++) {
     let changed = false;
     for (const reservation of reservations) {
@@ -2305,6 +2309,8 @@ export function positionGridEdgeLabels(
             points = rerouted;
             overrides.set(edge.id, points);
           } else {
+            // Preserving a valid edge and anchored labels is safer than failing the whole layout.
+            // Record the unavoidable overlap so final validation permits only this edge-label pair.
             incrementMetric(instrumentation, 'labelOverlapFallbacks');
             for (const reservation of blockingReservations) {
               if (!polylineIntersectsRect(points, reservation.rect)) {

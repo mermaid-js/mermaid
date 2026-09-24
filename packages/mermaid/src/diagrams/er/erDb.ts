@@ -62,6 +62,7 @@ export class ErDB implements DiagramDB {
     if (!this.entities.has(name)) {
       this.entities.set(name, {
         id: `entity-${name}-${this.entities.size}`,
+        // Keep the generated rendering ID stable while exposing the authored entity name to layouts.
         placementId: name,
         label: name,
         attributes: [],

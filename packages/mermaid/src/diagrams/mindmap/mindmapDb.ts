@@ -262,6 +262,7 @@ export class MindmapDB {
 
     const processedNode: MindmapLayoutNode = {
       id: node.id.toString(),
+      // Edges use the numeric tree ID; layout configuration should use the authored node ID.
       placementId: node.nodeId,
       domId: 'node_' + node.id.toString(),
       label: node.descr,

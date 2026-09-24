@@ -178,6 +178,8 @@ function resolveItemPlacement(
   sourceOrder: Map<string, number>,
   config: GridLayoutConfigNormalized
 ): GridResolvedPlacement {
+  // Internal IDs remain valid for backward compatibility and are the more specific key when
+  // callers deliberately configure both the generated ID and its authored alias.
   const internalPlacement = config.placements.get(item.id);
   const authoredPlacement =
     item.placementId && item.placementId !== item.id

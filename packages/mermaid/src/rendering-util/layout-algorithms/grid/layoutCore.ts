@@ -476,6 +476,8 @@ export function runGridLayoutCore(
   );
   validatePlacementsBeforeLayout(forest, config, sourceOrder);
 
+  // Routing and label placement are transactional: a failed recovery must not leave partial
+  // coordinates on the shared render model. Commit only the geometry from a complete run.
   const working = cloneGridLayoutData(data);
   const result = runGridLayoutCoreInPlace(working, metrics, routingOptions);
   commitGridGeometry(working, data);

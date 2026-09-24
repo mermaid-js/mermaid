@@ -2399,6 +2399,8 @@ export function routeGridEdges(
     return segmentIsValid(plan.lcaContainerId, attachments.start, attachments.end);
   };
   const compatibilityFastRoutes = new Map<string, Point[]>();
+  // Diagnostic caps and dual-route comparison must exercise the sparse router. In normal
+  // rendering, reuse a validated Manhattan-minimal legacy route to avoid building topology.
   const compatibilityFastPathEnabled =
     options.topologyCaps === undefined &&
     options.searchCaps === undefined &&
@@ -2548,6 +2550,8 @@ export function routeGridEdges(
       entry.side === 'left' || entry.side === 'right'
         ? container?.horizontalCorridors
         : container?.verticalCorridors;
+    // Keep retries bounded and deterministic: nearby established corridors are preferred, with
+    // range endpoints available when the originally selected portal blocks a hierarchy segment.
     return boundedAlternativePortalCoordinates(
       selected.tangentialCoordinate,
       range.low,
@@ -2931,6 +2935,8 @@ export function routeGridEdges(
       continue;
     }
 
+    // A bundle is the retry unit because earlier siblings reserve corridors and portals for later
+    // ones. Restore every shared structure before changing route order or the retry becomes biased.
     const occupancyRoutes = context.occupancy.routes as RouterPoint[][];
     const occupancyLength = occupancyRoutes.length;
     const portalSnapshot = new Map(pairedPortals);

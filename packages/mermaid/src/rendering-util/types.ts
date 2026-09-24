@@ -13,7 +13,7 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
 interface BaseNode {
   id: string;
-  /** Stable authored identifier used by layouts for user-facing configuration. */
+  /** Stable authored identifier for layout configuration when `id` is generated for rendering. */
   placementId?: string;
   label?: string;
   description?: string[];
