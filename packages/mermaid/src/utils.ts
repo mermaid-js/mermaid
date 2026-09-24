@@ -251,10 +251,26 @@ export function interpolateToCurve(
 // i.e. only inside the query string or fragment: this is exactly where the affected content
 // lives, and it keeps the change from ever altering the scheme portion of the URL that
 // `sanitizeUrl` inspects for dangerous protocols.
+//
+// The placeholders are generated fresh on every call (a random token appended to a fixed
+// label) rather than reusing fixed marker text. A fixed marker could collide with text the
+// URL already contains -- e.g. a search link whose query literally includes that marker
+// text -- and the restoration step would then corrupt that unrelated, pre-existing text
+// instead of only the `%0A`/`%0D` sequences this call itself masked. A fresh random token
+// makes such a collision astronomically unlikely.
 const ENCODED_LF_REGEX = /%0[Aa]/g;
 const ENCODED_CR_REGEX = /%0[Dd]/g;
-const ENCODED_LF_PLACEHOLDER = 'MERMAID_PRESERVED_ENCODED_LF';
-const ENCODED_CR_PLACEHOLDER = 'MERMAID_PRESERVED_ENCODED_CR';
+
+function createEncodedNewlinePlaceholders(): { lf: string; cr: string } {
+  // Plain alphanumerics only: `sanitizeUrl` strips control characters and decodes HTML/URL
+  // entities while it runs, so the token must not resemble any of those or it could be
+  // mangled (or stripped) before we get a chance to restore it.
+  const token = `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+  return {
+    lf: `MERMAID_PRESERVED_ENCODED_LF_${token}`,
+    cr: `MERMAID_PRESERVED_ENCODED_CR_${token}`,
+  };
+}
 
 function sanitizeUrlPreservingEncodedNewlines(url: string): string {
   const splitIndex = url.search(/[#?]/);
@@ -263,15 +279,16 @@ function sanitizeUrlPreservingEncodedNewlines(url: string): string {
   }
 
   const head = url.slice(0, splitIndex);
+  const { lf: lfPlaceholder, cr: crPlaceholder } = createEncodedNewlinePlaceholders();
   const tail = url
     .slice(splitIndex)
-    .replace(ENCODED_LF_REGEX, ENCODED_LF_PLACEHOLDER)
-    .replace(ENCODED_CR_REGEX, ENCODED_CR_PLACEHOLDER);
+    .replace(ENCODED_LF_REGEX, lfPlaceholder)
+    .replace(ENCODED_CR_REGEX, crPlaceholder);
 
   return sanitizeUrl(head + tail)
-    .split(ENCODED_LF_PLACEHOLDER)
+    .split(lfPlaceholder)
     .join('%0A')
-    .split(ENCODED_CR_PLACEHOLDER)
+    .split(crPlaceholder)
     .join('%0D');
 }
 

@@ -386,6 +386,30 @@ describe('when formatting urls', function () {
     const result = utils.formatUrl(url, { securityLevel: 'strict' });
     expect(result).toEqual('about:blank');
   });
+  it('should not corrupt query text that already looks like the internal restoration placeholder', function () {
+    // Regression test: the restoration step used to key off fixed placeholder text
+    // (`MERMAID_PRESERVED_ENCODED_LF`/`...CR`), so a URL whose query string already
+    // contained that literal text -- e.g. a search engine's `q=` parameter -- would have
+    // it wrongly rewritten to `%0A`/`%0D` by the global restore. The placeholder is now
+    // randomized per call, so this text must survive completely untouched.
+    const url =
+      'https://example.com/search?q=MERMAID_PRESERVED_ENCODED_LF+and+MERMAID_PRESERVED_ENCODED_CR';
+
+    let result = utils.formatUrl(url, { securityLevel: 'loose' });
+    expect(result).toEqual(url);
+
+    result = utils.formatUrl(url, { securityLevel: 'strict' });
+    expect(result).toEqual(url);
+  });
+  it('should preserve encoded newlines alongside literal placeholder-shaped text without cross-contamination', function () {
+    // Combines a real %0A/%0D to preserve with literal placeholder-shaped text elsewhere
+    // in the query string, to prove the two are not confused with each other.
+    const url =
+      'https://example.com/issues/new?title=MERMAID_PRESERVED_ENCODED_LF&body=line1%0Aline2%0Dline3';
+
+    const result = utils.formatUrl(url, { securityLevel: 'strict' });
+    expect(result).toEqual(url);
+  });
 });
 
 describe('when initializing the id generator', function () {
