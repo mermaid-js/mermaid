@@ -18,6 +18,158 @@ flowchart TB
   B --> C@{ row: 2, column: 2 }
 ```
 
+## Examples for other diagram types
+
+The flowchart example above uses inline placement metadata. The following examples use automatic grid placement for the other supported diagram types.
+
+### Agentflow
+
+```mermaid-example
+---
+config:
+  layout: grid
+---
+agentflow-beta
+  request["Receive request"]@{ shape: input, row: 1, column: 1 }
+  plan["Plan work"]@{ shape: task, row: 1, column: 2  }
+  run["Run tool"]@{ shape: tool, row: 1, column: 3  }
+  publish["Publish result"]@{ shape: action, row: 1, column: 4  }
+
+  request --> plan --> run --> publish
+```
+
+### State diagram
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    columnGap: 300
+    placements:
+      Draft: { row: 1, column: 1 }
+      Review: { row: 1, column: 2 }
+      Published: { row: 2, column: 2 }
+---
+stateDiagram-v2
+
+  Draft --> Review
+  Review --> Published
+  Review --> Draft : changes requested
+```
+
+### Class diagram
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+   columnGap: 100
+   rowGap: 100
+   placements:
+    Customer: { row: 1, column: 1 }
+    Order: {row: 1, column: 2}
+    Payment: {row: 2, column: 2}
+    Shipment: {row: 1, column: 3}
+---
+classDiagram
+  Customer --> Order : places
+  Customer --> Payment : makes
+  Order --> Payment : pays with
+  Order --> Shipment : creates
+```
+
+### Entity relationship diagram
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+   columnGap: 100
+   rowGap: 100
+   placements:
+    CUSTOMER : { row: 1, column: 1 }
+    ORDER: {row: 1, column: 2}
+    PAYMENT: {row: 2, column: 2}
+    LINE_ITEM: {row: 1, column: 3}
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE_ITEM : contains
+  ORDER ||--o| PAYMENT : has
+```
+
+### Requirement diagram
+
+```mermaid-example
+---
+config:
+  layout: grid
+---
+requirementDiagram
+  requirement checkout {
+    id: 1
+    text: "Customers can complete an order"
+    risk: high
+    verifymethod: test
+  }
+
+  element storefront {
+    type: service
+    docref: "checkout"
+  }
+
+  storefront - satisfies -> checkout
+```
+
+### Use case diagram
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      Customer: {row: 2, column: 1}
+      Browse: {row: 1, column: 2}
+      Checkout: {row: 2, column: 2}
+      Track: {row: 3, column: 2}
+---
+usecase-beta
+  actor Customer
+  Browse("Browse products")
+  Checkout("Complete checkout")
+  Track("Track order")
+
+  Customer --> Browse
+  Customer --> Checkout
+  Customer --> Track
+```
+
+### Mindmap
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      Release: {row: 2, column: 2}
+      Plan: {row: 1, column: 2}
+      Build: {row: 2, column: 2}
+      Test: {row: 3, column: 2}
+      Deploy: {row: 3, column: 2}
+---
+mindmap
+  root((Release))
+    Plan
+    Build
+      Test
+    Deploy
+```
+
 ## Placement metadata
 
 Flowchart and agentflow nodes and expanded subgraphs accept four grid-specific metadata keys:
