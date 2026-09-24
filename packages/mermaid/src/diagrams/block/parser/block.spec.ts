@@ -447,6 +447,18 @@ columns 1
       expect(db.getAccDescription()).toBe('How the parts depend on each other');
       expect(db.getBlocks().map((b) => b.id)).toEqual(['A', 'B']);
     });
+    it('should handle a multiline accDescr', () => {
+      const str = `block-beta
+  accDescr {
+    How the parts
+    depend on each other
+  }
+  A`;
+
+      block.parse(str);
+      expect(db.getAccDescription()).toBe('How the parts\ndepend on each other');
+      expect(db.getBlocks().map((b) => b.id)).toEqual(['A']);
+    });
   });
 
   describe('prototype properties', function () {
