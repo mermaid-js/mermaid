@@ -9,6 +9,7 @@ export interface RadarAxis {
 export interface RadarCurve {
   name: string;
   entries: number[];
+  startEntries?: (number | null)[];
   label: string;
 }
 export interface RadarOptions {

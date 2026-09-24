@@ -13,7 +13,7 @@ const genIndexStyles = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const indexColor = (themeVariables as any)[`cScale${i}`];
     sections += `
-		.radarCurve-${i} {
+		.radarCurve-${i}, .radarCurveOutline-${i} {
 			color: ${indexColor};
 			fill: ${indexColor};
 			fill-opacity: ${radarOptions.curveOpacity};

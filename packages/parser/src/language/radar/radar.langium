@@ -33,13 +33,14 @@ fragment Entries:
 
 interface Entry {
     axis?: @Axis;
-    value: number;
+    range?: string;
+    value?: number;
 }
 DetailedEntry returns Entry:
-    axis=[Axis:ID] ':'? value=NUMBER
+    axis=[Axis:ID] ':'? (range=RANGE | value=NUMBER)
 ;
 NumberEntry returns Entry:
-    value=NUMBER
+    (range=RANGE | value=NUMBER)
 ;
 
 Option:
@@ -53,3 +54,4 @@ Option:
 ;   
 
 terminal GRATICULE returns string: 'circle' | 'polygon';
+terminal RANGE returns string: /\[[0-9]+(?:\.[0-9]+)?\.\.[0-9]+(?:\.[0-9]+)?\]/;
