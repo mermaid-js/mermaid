@@ -101,7 +101,7 @@ const decorateTask = (g: any, node: Extract<BpmnNode, { kind: 'task' }>): void =
 
 export function decorateBpmn(svg: SVG, diagramId: string, model: BpmnModel): void {
   for (const node of model.nodes) {
-    const g = svg.select<SVGGElement, unknown>(`g[id="${diagramId}-${node.id}"]`);
+    const g = svg.select<SVGGElement>(`g[id="${diagramId}-${node.id}"]`);
     if (g.empty()) {
       continue;
     }
