@@ -1078,6 +1078,11 @@ interface EndpointDemandEntry {
   opposite: Node;
 }
 
+interface EndpointSlotAssignment {
+  side: GridSide;
+  coordinate: number;
+}
+
 function sideOrder(side: GridSide): number {
   return side === 'right' ? 0 : side === 'bottom' ? 1 : side === 'left' ? 2 : 3;
 }
@@ -1127,6 +1132,34 @@ function compareEndpointDemands(
   );
 }
 
+function endpointDemandKey(demand: EndpointDemandEntry): string {
+  return `${demand.plan.edge.id}:${demand.role}`;
+}
+
+function compareEndpointDemandIdentity(a: EndpointDemandEntry, b: EndpointDemandEntry): number {
+  return (
+    endpointPairKey(a.plan.edge).localeCompare(endpointPairKey(b.plan.edge)) ||
+    `${a.plan.edge.start}|${a.plan.edge.end}`.localeCompare(
+      `${b.plan.edge.start}|${b.plan.edge.end}`
+    ) ||
+    a.plan.edge.id.localeCompare(b.plan.edge.id) ||
+    a.role.localeCompare(b.role)
+  );
+}
+
+function isPairSeparationError(error: unknown): boolean {
+  if (!(error instanceof Error) || !('details' in error)) {
+    return false;
+  }
+  const details = error.details;
+  return (
+    typeof details === 'object' &&
+    details !== null &&
+    'reason' in details &&
+    details.reason === 'pair-separation'
+  );
+}
+
 function preferredEndpointCoordinates(
   owner: Node,
   side: GridSide,
@@ -1143,7 +1176,12 @@ function preferredEndpointCoordinates(
     return new Map([[sorted[0], Math.max(interval.low, Math.min(interval.high, center))]]);
   }
   if ((interval.high - interval.low) / (sorted.length - 1) < MIN_PORT_SEPARATION_PX) {
-    return new Map();
+    return new Map(
+      sorted.map((demand, index) => [
+        demand,
+        interval.low + (index * (interval.high - interval.low)) / (sorted.length - 1),
+      ])
+    );
   }
   const desired = sorted.map(({ opposite }) => {
     const rect = rectForNode(opposite);
@@ -1165,10 +1203,97 @@ function preferredEndpointCoordinates(
   return new Map(sorted.map((demand, index) => [demand, coordinates[index] + shift]));
 }
 
+function endpointSideCapacity(owner: Node, side: GridSide): number {
+  const interval = sideInterval(owner, side);
+  if (!interval) {
+    return 0;
+  }
+  return 1 + Math.floor((interval.high - interval.low) / MIN_PORT_SEPARATION_PX);
+}
+
+function endpointSidePreferences(owner: Node, demand: EndpointDemandEntry): GridSide[] {
+  const oppositeRect = rectForNode(demand.opposite);
+  const preferred = preferredSide(owner, { x: oppositeRect.cx, y: oppositeRect.cy });
+  const ownerRect = rectForNode(owner);
+  return (['right', 'bottom', 'left', 'top'] as const)
+    .filter((side) => endpointSideCapacity(owner, side) > 0)
+    .sort((a, b) => {
+      if (a === preferred) {
+        return -1;
+      }
+      if (b === preferred) {
+        return 1;
+      }
+      const midpoint = (side: GridSide): Point =>
+        side === 'left' || side === 'right'
+          ? {
+              x: side === 'left' ? ownerRect.left : ownerRect.right,
+              y: ownerRect.cy,
+            }
+          : {
+              x: ownerRect.cx,
+              y: side === 'top' ? ownerRect.top : ownerRect.bottom,
+            };
+      const aPoint = midpoint(a);
+      const bPoint = midpoint(b);
+      const aDistance = Math.abs(aPoint.x - oppositeRect.cx) + Math.abs(aPoint.y - oppositeRect.cy);
+      const bDistance = Math.abs(bPoint.x - oppositeRect.cx) + Math.abs(bPoint.y - oppositeRect.cy);
+      return aDistance - bDistance || sideOrder(a) - sideOrder(b);
+    });
+}
+
+function allocateEndpointSlots(
+  owner: Node,
+  demands: readonly EndpointDemandEntry[]
+): ReadonlyMap<string, EndpointSlotAssignment> {
+  const assignedBySide = new Map<GridSide, EndpointDemandEntry[]>();
+  const capacities = new Map(
+    (['right', 'bottom', 'left', 'top'] as const).map((side) => [
+      side,
+      endpointSideCapacity(owner, side),
+    ])
+  );
+
+  for (const demand of [...demands].sort(compareEndpointDemandIdentity)) {
+    const preferences = endpointSidePreferences(owner, demand);
+    if (preferences.length === 0) {
+      continue;
+    }
+    const side =
+      preferences.find(
+        (candidate) =>
+          (assignedBySide.get(candidate)?.length ?? 0) < (capacities.get(candidate) ?? 0)
+      ) ?? preferences[0];
+    const assigned = assignedBySide.get(side) ?? [];
+    assigned.push(demand);
+    assignedBySide.set(side, assigned);
+  }
+
+  const assignments = new Map<string, EndpointSlotAssignment>();
+  for (const [side, assigned] of assignedBySide) {
+    const interval = sideInterval(owner, side);
+    if (!interval) {
+      continue;
+    }
+    const preferredCoordinates = preferredEndpointCoordinates(owner, side, assigned);
+    const sorted = [...assigned].sort((a, b) => compareEndpointDemands(a, b, side));
+    for (const [index, demand] of sorted.entries()) {
+      const coordinate =
+        preferredCoordinates.get(demand) ??
+        (sorted.length === 1
+          ? (interval.low + interval.high) / 2
+          : interval.low + (index * (interval.high - interval.low)) / (sorted.length - 1));
+      assignments.set(endpointDemandKey(demand), { side, coordinate });
+    }
+  }
+  return assignments;
+}
+
 function endpointCandidates(
   plan: EdgeRoutePlan,
   role: 'source' | 'target',
   demandsByOwner: ReadonlyMap<string, readonly EndpointDemandEntry[]>,
+  assignmentsByOwner: ReadonlyMap<string, ReadonlyMap<string, EndpointSlotAssignment>>,
   result: GridLayoutResult
 ): EndpointCandidate[] {
   const ownerId = role === 'source' ? plan.edge.start! : plan.edge.end!;
@@ -1213,6 +1338,11 @@ function endpointCandidates(
     });
   };
 
+  const assignment = assignmentsByOwner.get(ownerId)?.get(`${plan.edge.id}:${role}`);
+  if (assignment && plan.bundleSize === 1) {
+    addCandidate(assignment.side, assignment.coordinate, -2);
+  }
+
   if (plan.bundleSize > 1) {
     const side = preferredSide(owner, { x: oppositeRect.cx, y: oppositeRect.cy });
     const ownerRect = rectForNode(owner);
@@ -1221,46 +1351,17 @@ function endpointCandidates(
   }
 
   const ownerDemands = [...(demandsByOwner.get(ownerId) ?? [])];
-  if (plan.bundleSize === 1) {
-    for (const side of ['right', 'bottom', 'left', 'top'] as const) {
-      const preferredDemands = ownerDemands.filter(
-        ({ plan: demandPlan, opposite: demandOpposite }) => {
-          const rect = rectForNode(demandOpposite);
-          return (
-            demandPlan.bundleSize === 1 && preferredSide(owner, { x: rect.cx, y: rect.cy }) === side
-          );
-        }
-      );
-      const coordinates = preferredEndpointCoordinates(owner, side, preferredDemands);
-      const demand = preferredDemands.find((entry) => entry.plan === plan && entry.role === role);
-      const coordinate = demand ? coordinates.get(demand) : undefined;
-      if (coordinate !== undefined) {
-        addCandidate(side, coordinate, -1);
-      }
-    }
-  }
-
   for (const side of ['right', 'bottom', 'left', 'top'] as const) {
     const interval = sideInterval(owner, side);
     if (!interval) {
       continue;
     }
-    const demands = [...ownerDemands].sort((a, b) => compareEndpointDemands(a, b, side));
-    const demandIndex = demands.findIndex((entry) => entry.plan === plan && entry.role === role);
-    if (demandIndex < 0) {
+    const coordinates = preferredEndpointCoordinates(owner, side, ownerDemands);
+    const demand = ownerDemands.find((entry) => entry.plan === plan && entry.role === role);
+    const coordinate = demand ? coordinates.get(demand) : undefined;
+    if (coordinate === undefined) {
       continue;
     }
-    const spacing =
-      demands.length <= 1
-        ? Number.POSITIVE_INFINITY
-        : (interval.high - interval.low) / (demands.length - 1);
-    if (spacing < MIN_PORT_SEPARATION_PX) {
-      continue;
-    }
-    const coordinate =
-      demands.length === 1
-        ? (interval.low + interval.high) / 2
-        : interval.low + demandIndex * spacing;
     const rect = rectForNode(owner);
     const port =
       side === 'left' || side === 'right'
@@ -2295,12 +2396,30 @@ export function routeGridEdges(
     targetDemands.push({ plan, role: 'target', opposite: source });
     endpointDemandsByOwner.set(target.id, targetDemands);
   }
+  const endpointAssignmentsByOwner = new Map(
+    [...endpointDemandsByOwner].map(([ownerId, demands]) => {
+      const owner = result.forest.nodeById.get(ownerId);
+      return [ownerId, owner ? allocateEndpointSlots(owner, demands) : new Map()] as const;
+    })
+  );
   const endpointCandidatesByEdge = new Map(
     eligiblePlans.map((plan) => [
       plan.edge.id,
       {
-        sources: endpointCandidates(plan, 'source', endpointDemandsByOwner, result),
-        targets: endpointCandidates(plan, 'target', endpointDemandsByOwner, result),
+        sources: endpointCandidates(
+          plan,
+          'source',
+          endpointDemandsByOwner,
+          endpointAssignmentsByOwner,
+          result
+        ),
+        targets: endpointCandidates(
+          plan,
+          'target',
+          endpointDemandsByOwner,
+          endpointAssignmentsByOwner,
+          result
+        ),
       },
     ])
   );
@@ -2668,7 +2787,7 @@ export function routeGridEdges(
   const selfLoopCounts = new Map<string, number>();
   const pairRoutes = new Map<string, Point[][]>();
 
-  const routePlan = (plan: EdgeRoutePlan): void => {
+  const routePlan = (plan: EdgeRoutePlan, allowHierarchyRelaxation = true): void => {
     const edge = plan.edge;
     const sourceNode = edge.start ? result.forest.nodeById.get(edge.start) : undefined;
     const targetNode = edge.end ? result.forest.nodeById.get(edge.end) : undefined;
@@ -2913,12 +3032,17 @@ export function routeGridEdges(
       plan.bundleSize > 1 &&
       plan.source.chain.length + plan.target.chain.length > 2 &&
       routeHasDistinctPairPorts(points, committedPairRoutes);
-    if (plan.bundleSize > 1 && !satisfiesPairConstraints && !relaxHierarchySeparation) {
+    if (
+      plan.bundleSize > 1 &&
+      !satisfiesPairConstraints &&
+      (!relaxHierarchySeparation || !allowHierarchyRelaxation)
+    ) {
       if (metrics) {
         metrics.routesImpossible++;
       }
       throw gridError('GRID_ROUTE_NOT_FOUND', `No distinct lane route for "${edge.id}"`, {
         edgeId: edge.id,
+        reason: relaxHierarchySeparation ? 'pair-separation' : 'no-distinct-route',
       });
     }
     if (relaxHierarchySeparation && metrics) {
@@ -2995,6 +3119,7 @@ export function routeGridEdges(
           compatibilitySegments: metrics.compatibilitySegments,
           compatibilityRecoveries: metrics.compatibilityRecoveries,
           bundleSeparationRelaxations: metrics.bundleSeparationRelaxations,
+          routesImpossible: metrics.routesImpossible,
         }
       : undefined;
     const restorePairState = (): void => {
@@ -3033,14 +3158,18 @@ export function routeGridEdges(
         metrics.compatibilitySegments = metricSnapshot.compatibilitySegments;
         metrics.compatibilityRecoveries = metricSnapshot.compatibilityRecoveries;
         metrics.bundleSeparationRelaxations = metricSnapshot.bundleSeparationRelaxations;
+        metrics.routesImpossible = metricSnapshot.routesImpossible;
       }
     };
 
+    let initialError: unknown;
     try {
       for (const plan of pairPlans) {
-        routePlan(plan);
+        routePlan(plan, false);
       }
-    } catch (initialError) {
+      continue;
+    } catch (error) {
+      initialError = error;
       restorePairState();
       if (metrics) {
         metrics.bundleRetryAttempts++;
@@ -3055,16 +3184,24 @@ export function routeGridEdges(
           a.edge.id.localeCompare(b.edge.id)
         );
       });
+      let retryError: unknown;
       try {
         for (const plan of retryPlans) {
-          routePlan(plan);
+          routePlan(plan, false);
         }
         if (metrics) {
           metrics.bundleRetrySuccesses++;
         }
-      } catch {
+        continue;
+      } catch (error) {
+        retryError = error;
         restorePairState();
+      }
+      if (!isPairSeparationError(initialError) || !isPairSeparationError(retryError)) {
         throw initialError;
+      }
+      for (const plan of pairPlans) {
+        routePlan(plan);
       }
     }
   }

@@ -820,6 +820,47 @@ describe('grid router', () => {
     expect(metrics.resourceLimitFallbacks).toBe(0);
   });
 
+  it('routes high-degree endpoints when no side can preserve minimum port spacing', () => {
+    const data = baseLayout(
+      [
+        leaf('source', 80, 40, { row: 1, column: 1 }),
+        ...Array.from({ length: 19 }, (_, index) =>
+          leaf(`target-${index}`, 80, 40, { row: 1, column: index + 2 })
+        ),
+      ],
+      Array.from({ length: 19 }, (_, index) => edge(`edge-${index}`, 'source', `target-${index}`)),
+      { columnGap: 40 }
+    );
+
+    runGridLayoutCore(data);
+
+    expect(data.edges.every(({ points }) => (points?.length ?? 0) >= 2)).toBe(true);
+    expect(
+      new Set(data.edges.map(({ points }) => JSON.stringify(points?.[0]))).size
+    ).toBeGreaterThan(1);
+  });
+
+  it('retries hierarchy bundles strictly before relaxing separation', () => {
+    const data = baseLayout(
+      [
+        group('left-group', 'Left', { row: 1, column: 1 }),
+        leaf('source', 80, 40, { row: 1, column: 1 }, 'left-group'),
+        group('right-group', 'Right', { row: 1, column: 2 }),
+        leaf('target', 80, 40, { row: 1, column: 1 }, 'right-group'),
+      ],
+      Array.from({ length: 6 }, (_, index) => edge(`edge-${index}`, 'source', 'target')),
+      { rowGap: 50, columnGap: 90 }
+    );
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, metrics);
+
+    expect(data.edges.every(({ points }) => (points?.length ?? 0) >= 2)).toBe(true);
+    expect(metrics.bundleRetryAttempts).toBe(1);
+    expect(metrics.bundleRetrySuccesses).toBe(0);
+    expect(metrics.bundleSeparationRelaxations).toBeGreaterThan(0);
+  });
+
   it('excludes group titles and corners from same-container endpoint slots', () => {
     const data = baseLayout(
       [
