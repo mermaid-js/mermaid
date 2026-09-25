@@ -68,6 +68,13 @@ const getStyles = (
   }
   /* Classes common for multiple diagrams */
 
+  /* SVG2 maps foreignObject width/height to CSS, so a host page transition on
+     those properties animates the shrink from the measure box and getBBox()
+     then inflates the viewBox. */
+  & foreignObject {
+    transition-property: none !important;
+  }
+
   & .error-icon {
     fill: ${options.errorBkgColor};
   }
