@@ -221,6 +221,31 @@ properties:
           a taller, narrower drawing.
         type: number
         default: 4
+      wrappingStrategy:
+        description: |
+          Elk specific option that folds a long, thin drawing, such as a long
+          chain of steps, into several rows or columns so that its shape
+          approaches `aspectRatio`. Left unset, ELK does not wrap.
+
+          OFF keeps one strip. MULTI_EDGE cuts the chain wherever the cut
+          makes the drawing fit best, even where several edges cross the cut.
+          It applies to the top-level graph and to each subgraph laid out with
+          the layered algorithm.
+
+          ELK's SINGLE_EDGE strategy is not offered: it fails on any graph
+          with an edge label (https://github.com/eclipse-elk/elk/issues/1079).
+        type: string
+        enum:
+          - 'OFF'
+          - MULTI_EDGE
+      aspectRatio:
+        description: |
+          Elk specific option giving the width / height ratio the drawing should
+          approach, for example `1.78` for 16:9. `wrappingStrategy` uses it to
+          decide where to fold the drawing. A subgraph with its own layout
+          algorithm keeps that algorithm's ratio.
+        type: number
+        exclusiveMinimum: 0
       cycleBreakingStrategy:
         description: |
           This strategy decides how to find cycles in the graph and deciding which edges need adjustment to break loops.
