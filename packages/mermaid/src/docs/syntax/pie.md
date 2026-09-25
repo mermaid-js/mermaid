@@ -79,3 +79,9 @@ Possible pie diagram configuration parameters:
 | `donutHole`      | Donut hole ratio. Valid values are from `0` to `0.9`.                                                        | `0`           |
 | `legendPosition` | Legend's position relative to the chart. Valid values are `top`, `bottom`, `left`, `right`, and `center`.    | `right`       |
 | `highlightSlice` | Highlight specific slice with matching label. Set to 'hover' to highlight hovered slice.                     |               |
+
+The example also sets a [pie theme variable](../config/theming.md#pie-diagram-variables) under `themeVariables`, rather than under `pie`:
+
+| Theme variable        | Description                                   | Value format              | Default value |
+| --------------------- | --------------------------------------------- | ------------------------- | ------------- |
+| `pieOuterStrokeWidth` | Width of the pie chart's outer circle border. | CSS length (e.g. `"5px"`) | `"2px"`       |
