@@ -1,3 +1,4 @@
+import { renderThreatModel } from '../../threat-model/render.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramStyleClassDef } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
@@ -48,6 +49,9 @@ export const draw = async function (text: string, id: string, _version: string, 
     conf?.titleTopMargin || 0,
     diag.db.getDiagramTitle()
   );
+  if (diag.threatModel && svg.node()) {
+    renderThreatModel(svg.node()!, diag.threatModel, data4Layout);
+  }
   setupViewPortForSVG(svg, padding, 'flowchart', conf?.useMaxWidth || false);
 };
 
