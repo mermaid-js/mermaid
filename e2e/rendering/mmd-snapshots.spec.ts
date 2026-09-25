@@ -15,6 +15,17 @@ const fixtures = await collectMmdFixtures();
 assertUniqueSnapshotNames(fixtures);
 const fixtureTree = buildFixtureTree(fixtures);
 
+// Gantt fixtures are dated around 1010-10-10 and several of them exercise the
+// today marker, which the renderer places at `new Date()`. Pin the browser
+// clock to that date (as `rendering/gantt/gantt.spec.js` does) so the marker
+// lands inside the chart instead of billions of pixels to the right.
+const FIXED_CLOCKS: Record<string, string> = {
+  gantt: '1010-10-10',
+};
+
+const fixedClockFor = (relativePath: string): string | undefined =>
+  FIXED_CLOCKS[relativePath.split('/')[0]];
+
 const registerFixtureNode = (node: FixtureTree): void => {
   for (const segment of [...node.children.keys()].sort()) {
     test.describe(segment, () => {
@@ -31,6 +42,10 @@ const registerFixtureNode = (node: FixtureTree): void => {
         throw new Error(
           `Failed to read mmd fixture ${relativePath}: ${error instanceof Error ? error.message : String(error)}`
         );
+      }
+      const fixedClock = fixedClockFor(relativePath);
+      if (fixedClock) {
+        await page.clock.install({ time: new Date(fixedClock) });
       }
       // Mirror the fixture's storage path so Argos sheets group by diagram
       // folder (e.g. diagrams/packet) rather than the runner spec file.

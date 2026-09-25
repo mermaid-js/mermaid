@@ -42,7 +42,7 @@ import type {
   ParseResult,
   RenderResult,
 } from './types.js';
-import { decodeEntities } from './utils.js';
+import { decodeEntities, getErrorMessage } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { sanitizeCss } from './utils/sanitizeDirective.js';
 
@@ -592,6 +592,8 @@ const renderDiagram = async function (
     }
     diag = await Diagram.fromText('error');
     parseEncounteredException = error;
+    // Let the error diagram show what actually went wrong, not just "Syntax error in text"
+    diag.db.setErrorMessage?.(getErrorMessage(error));
   }
 
   // Get the temporary div element containing the svg

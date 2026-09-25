@@ -22,8 +22,8 @@ test.describe('Flowchart HandDrawn', () => {
     const style = await svg.getAttribute('style');
     expect(style).toMatch(/^max-width: [\d.]+px;$/);
     const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-    expect(maxWidthValue).toBeGreaterThanOrEqual(446 * 0.9);
-    expect(maxWidthValue).toBeLessThanOrEqual(446 * 1.1);
+    expect(maxWidthValue).toBeGreaterThanOrEqual(644 * 0.9);
+    expect(maxWidthValue).toBeLessThanOrEqual(644 * 1.1);
   });
   test('FDH39: should render a flowchart when useMaxWidth is false', async ({ page }, testInfo) => {
     await renderGraph(
@@ -40,8 +40,8 @@ test.describe('Flowchart HandDrawn', () => {
     );
     const svg = page.locator('svg');
     const width = parseFloat((await svg.getAttribute('width')) ?? '0');
-    expect(width).toBeGreaterThanOrEqual(446 * 0.9);
-    expect(width).toBeLessThanOrEqual(446 * 1.1);
+    expect(width).toBeGreaterThanOrEqual(644 * 0.9);
+    expect(width).toBeLessThanOrEqual(644 * 1.1);
     await expect(svg).not.toHaveAttribute('style');
   });
 

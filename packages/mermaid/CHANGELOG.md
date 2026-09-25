@@ -1,5 +1,338 @@
 # mermaid
 
+## 12.0.0
+
+### Major Changes
+
+- [#8213](https://github.com/mermaid-js/mermaid/pull/8213) [`33442fd`](https://github.com/mermaid-js/mermaid/commit/33442fddbf91852417ac2805afbd35aba0facbe1) Thanks [@aloisklink](https://github.com/aloisklink)! - chore!: require ES2024, Safari 17.4+, Node.JS v22.12+
+
+  Mermaid is now built to target Safari 17.4+ and ES2024. If you need to support
+  older browsers, you may need to polyfill or transpile mermaid.
+
+  Safari 17.4+ has been chosen as the floor, as unlike Firefox/Chrome,
+  older iOS devices don't get major Safari updates.
+
+  Node.JS v22.12+ is also declared as requirement in our `package.json` files,
+  but as mermaid requires a browser, this is mainly so we can use dependencies that
+  also declare a Node.JS v22.12+ requirement, without causing issues for users when
+  running `npm install`.
+
+- [#8155](https://github.com/mermaid-js/mermaid/pull/8155) [`810893c`](https://github.com/mermaid-js/mermaid/commit/810893c660ada9e223297a38adcf65d4f4e211a7) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat!: **ELK is now bundled with mermaid and is the default layout algorithm.**
+
+  ELK previously shipped as a separate `@mermaid-js/layout-elk` package that sites had to install and register. It is now part of mermaid itself and registered automatically, so `layout: elk` — and the `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box` and `elk.rectpacking` variants — work with no setup.
+
+  **This changes how existing diagrams look.** Flowchart, state, class, entity-relationship, requirement, use-case and agentflow diagrams that do not specify a `layout` are now laid out by ELK instead of dagre. To keep the previous layout, set dagre explicitly:
+
+  ```yaml
+  ---
+  config:
+    layout: dagre
+  ---
+  ```
+
+  or globally, `mermaid.initialize({ layout: 'dagre' })`.
+
+  Mindmap is unchanged: it keeps laying out with cose-bilkent unless a layout is explicitly requested (in the tiny build, which ships neither ELK nor cose-bilkent, it falls back to dagre).
+
+  Other notes:
+  - ELK is loaded as a separate chunk in the ESM builds, so it is only fetched when a diagram actually uses it. The single-file IIFE build (`mermaid.min.js`) inlines it and grows by roughly 500 kB gzipped.
+  - The **tiny** build deliberately omits ELK to stay small, and falls back to dagre for diagrams that ask for an ELK layout. Its size is unchanged.
+  - `@mermaid-js/layout-elk` is no longer needed on normal builds — existing `mermaid.registerLayoutLoaders(elkLayouts)` calls keep working and can be removed. It is still published, and remains the way to add ELK to the tiny build.
+  - `dist/mermaid.esm.min.mjs` now contains syntax that `es-module-lexer` (used by Vite) rejects with `content contains invalid JS syntax`. Bundler users are unaffected as long as they import the `mermaid` package specifier, which resolves to the core build; only builds that point Vite directly at that dist file need to switch to the package specifier or the core build.
+  - State diagrams now resolve their layout through the same registration check as every other diagram, so an unavailable layout falls back instead of failing to render.
+
+- [#8148](https://github.com/mermaid-js/mermaid/pull/8148) [`8603bdd`](https://github.com/mermaid-js/mermaid/commit/8603bdd4eca14da74a8d606517975f847c2f2055) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - **`redux-color` is now the default theme and `neo` the default look for ten diagram types** — flowchart, swimlane, class, ER, requirement, sequence, state, use case, Venn and agentflow. Those rendered without an explicit `theme` and `look` change appearance; every other diagram type keeps `default` and `classic`. To keep the previous appearance, set both explicitly — `mermaid.initialize({ theme: 'default', look: 'classic' })`, or the same two keys under `config` in front matter.
+
+  An unrecognised `theme` name now resolves to the default theme in name as well as in variables; previously the invalid name stayed in place while the default's variables were loaded, and every palette-aware stylesheet gates on the name. `theme: 'null'`, the documented way to disable the pre-defined themes, is unaffected. Note that `neo` paints node strokes with a gradient when the theme sets `useGradient`, which `base` does; setting a custom `nodeBorder` on `base` turns the gradient off.
+
+- [#8211](https://github.com/mermaid-js/mermaid/pull/8211) [`a19bd08`](https://github.com/mermaid-js/mermaid/commit/a19bd085b6994e3c0b142a5e152559eef49935de) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - **Removed: the `defaultRenderer` option of the `flowchart`, `class` and `state` config sections.**
+
+  Use the top-level `layout` option instead:
+
+  ```yaml
+  ---
+  config:
+    layout: dagre # or elk
+  ---
+  ```
+
+  ### Why
+
+  `defaultRenderer` named a rendering engine back when there was more than one. There is not.
+  All of its accepted values — `dagre`, `dagre-wrapper`, `dagre-d3` — had come to select the
+  same unified renderer, and its `elk` value did nothing but set `layout: elk` on your behalf.
+  The option's documented purpose no longer existed.
+
+  What it still did was stranger than doing nothing. The detectors branched on whether the
+  value was _recognised_, so a **valid** value routed a diagram to the modern renderer and an
+  **invalid** one silently routed it to the legacy renderer. Since the default was always a
+  valid value, the legacy `class` and `state` renderers were unreachable except by
+  misconfiguring the option.
+
+  ### What changes for you
+  - `layout` selects the layout algorithm, as it already did. Nothing else does.
+  - `graph`, `classDiagram` and `stateDiagram` always render with the unified diagram. This
+    was already true for every valid configuration.
+  - The legacy `flowchart`, `class` and `state` diagram ids are gone. `flowchart-v2`,
+    `classDiagram` and `stateDiagram` are what `detectType` now returns for that syntax.
+  - `flowchart-elk` as an explicit diagram keyword still works.
+
+  Configuration that still sets `defaultRenderer` is ignored rather than rejected, so nothing
+  throws — but it no longer has any effect, and diagrams that relied on
+  `flowchart: { defaultRenderer: 'elk' }` to get an ELK layout should set `layout: elk`.
+
+- [#8223](https://github.com/mermaid-js/mermaid/pull/8223) [`6df1149`](https://github.com/mermaid-js/mermaid/commit/6df1149ca906de887486275c83e54dd275d7b729) Thanks [@aloisklink](https://github.com/aloisklink)! - refactor!: remove layout internal exports
+
+  Remove the
+  `clearLayoutRenderState`, `createCommonLayoutRenderer`, `defaultMeasureLayout`, `paintLayoutData` functions,
+  and the `CommonLayout*` types from Mermaid's public API.
+
+  These functions were only used by the `@mermaid-js/layout-elk` package,
+  which now bundles them. Removing them makes it easier to avoid major versions
+  of mermaid.
+
+### Minor Changes
+
+- [#8048](https://github.com/mermaid-js/mermaid/pull/8048) [`7a3c1a8`](https://github.com/mermaid-js/mermaid/commit/7a3c1a832b80066850d179a36fa7a0a3690134c4) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: add UML use case diagrams with actors, use cases, system boundaries, relationships, stereotypes, notes, JSON tables, class and style support, accessibility metadata, and business variants.
+
+- [#8073](https://github.com/mermaid-js/mermaid/pull/8073) [`0cf3797`](https://github.com/mermaid-js/mermaid/commit/0cf3797eba3bdb0deb5577c9c60803ebf8fc961a) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: add the `agentflow-beta` diagram type for describing agentic workflows — agents, the flows they run, the tasks and tools inside them, and how control and data move between them.
+
+  ```mermaid
+  agentflow-beta TB
+    flow reviewer["Review Agent"]
+      changes["Gather changes"]@{ shape: input }
+      analyse["Analyse"]@{ shape: task }
+      lint["run_linter"]@{ shape: tool }
+      changes --> analyse --> lint
+    end
+  ```
+
+  - `flow … end` containers, a `global … end` scope block for nodes that must stay outside their referencing flow, and `connector` declarations for external systems.
+  - Node shapes addressed by domain-facing aliases (`task`, `tool`, `input`, `decision`, `refdoc`, `action`) via inline `@{ … }` metadata, and `@{ view: collapsed }` to fold a container down to a summary node.
+  - Edge operators carry semantics: `-->` sequence, `-.-` reference, `--x` failure, plus the labelled-branch form.
+  - `getSemanticModel()` projects the parsed diagram into a presentation-free semantic view for downstream consumers, and `getDiagnostics()` reports structured warnings with source positions.
+  - A `flowContainerStroke` theme variable across all built-in themes, and an `agentflow` config namespace for spacing, padding, and title margin.
+
+  The diagram is beta: the syntax may still change before it is declared stable.
+
+- [#8197](https://github.com/mermaid-js/mermaid/pull/8197) [`846fd65`](https://github.com/mermaid-js/mermaid/commit/846fd650b0bb6b13584279cdd3ca84f787dddd3d) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(agentflow): take the redux colour palette. Under `redux-color` and `redux-dark-color`, every agentflow node kind — tool, task, decision, input, refdoc, connector, action — gets its own colour from a fixed palette slot, so colour says what an element _is_ and stays put when the diagram is edited around it. Containers cycle a counter in declaration order, the way flowchart subgraphs do, from the slots above the kind range so a container frame never matches a node inside it. A collapsed container keeps its slot. `redux-dark-color` carries borders but no fills, so nodes there take palette strokes over the theme's own background. Agentflow also takes `redux-color` and `neo` as its own per-diagram defaults, so an agentflow diagram that sets neither renders with the palette; anything set in front matter, a directive or `initialize()` still wins.
+
+- [#8073](https://github.com/mermaid-js/mermaid/pull/8073) [`cd48a64`](https://github.com/mermaid-js/mermaid/commit/cd48a648e5d8aca47cdbc66bde7ca18626a9d32d) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: `defaultMeasureLayout` accepts a `unwrapGroupLabels` option so a layout engine can ask for cluster labels to be measured at their natural width instead of the `flowchart.wrappingWidth` fallback.
+
+  `insertCluster` paints a plain cluster label with an infinite width while the measurement pass wrapped it at 200px, so a layout that sizes compound nodes from the measured label sized them too narrow. Layouts now opt in explicitly; core no longer inspects the layout's name. Markdown cluster labels stay wrapped, since those are painted wrapped.
+
+  The bundled ELK layout opts in, which changes the size of labelled subgraphs in ELK-laid-out diagrams. Diagrams laid out with dagre are unaffected.
+
+- [#8073](https://github.com/mermaid-js/mermaid/pull/8073) [`0cf3797`](https://github.com/mermaid-js/mermaid/commit/0cf3797eba3bdb0deb5577c9c60803ebf8fc961a) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat: let a container pick its own ELK algorithm with `@{ algorithm: … }`, and add `elk.box` and `elk.rectpacking` to the selectable `layout` values.
+
+  A subgraph carrying `@{ algorithm: elk.box }` is laid out with that algorithm in its own coordinate system instead of inheriting the diagram's. Supported values are `elk.layered`, `elk.box`, `elk.rectpacking`, `elk.stress`, `elk.force`, `elk.mrtree`, `elk.radial`, and `elk.sporeOverlap`; anything else is ignored with a warning rather than handed to ELK, where an unknown id would abort the layout. Containers with edges crossing their boundary fall back to the inherited algorithm, since isolated layout and cross-boundary edges are incompatible.
+
+  Also in this release:
+  - ELK cluster labels are measured unwrapped, so a compound node is sized to fit its label instead of to a 200px wrapping width. **This changes the size — and therefore the layout — of existing ELK diagrams that have labelled subgraphs.**
+  - `elk.box` and `elk.rectpacking` place nodes but never route edges. Edges they leave unrouted now fall back to a straight line between the two node centres instead of failing the render.
+  - `keepEntryNodeOnTop` pins a cycle's true entry rather than the first-declared node when a back-edge feeds the entry, so recursive flows read from where they actually start.
+
+- [#8193](https://github.com/mermaid-js/mermaid/pull/8193) [`813c766`](https://github.com/mermaid-js/mermaid/commit/813c7665aa11c896469dee0ec57500169866aca6) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - **`theme`, `look` and `layout` can now be set per diagram type**, in each diagram's config section — `mermaid.initialize({ look: 'classic', flowchart: { look: 'handDrawn' } })`, or the same under `config` in front matter. The schema uses the same mechanism to give a diagram type its own default. Resolution, highest first: front matter or directive, `initialize()`, the diagram type's default, the global default; a diagram-scoped value beats a global one set in the same layer.
+
+  Swimlanes take `layout: swimlane` from that schema default instead of having it forced by their `init` hook, so `swimlane: { layout: ... }` and a `layout` in front matter are now honoured. An unregistered layout also always falls back to `dagre` with a warning rather than throwing — state diagrams skipped that fallback, and mindmaps threw when `cose-bilkent` was absent, as it is in `@mermaid-js/tiny`.
+
+- [#8147](https://github.com/mermaid-js/mermaid/pull/8147) [`43d9fbc`](https://github.com/mermaid-js/mermaid/commit/43d9fbcea919c37b1baa3de06dbdc66592683d52) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat(themes): class boxes and flowchart subgraph containers now take a per-item colour under the `redux-color` and `redux-dark-color` themes, cycling every 12 as ER entities already do. Collapsed subgraphs keep the slot they would have had expanded; nodes inside a subgraph stay uniform, and explicit `classDef` or `style` still wins over the palette.
+
+- [#8191](https://github.com/mermaid-js/mermaid/pull/8191) [`2878cf3`](https://github.com/mermaid-js/mermaid/commit/2878cf339cd294a64d71774b07636adeb1286991) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat(themes): composite states now take a per-container colour under the `redux-color` and `redux-dark-color` themes, as flowchart subgraphs already do. Each composite gets the palette's border colour on its outline and its background tint behind the title strip; nested composites each take the next colour, so depth stays readable. The body keeps the theme's own `compositeBackground`. `redux-dark-color` colours the outlines only, matching how it treats ER, requirement and sequence.
+
+  The concurrency regions produced by a `--` divider share the colour of the composite they split, rather than taking one of their own — the author wrote a single composite, so it is drawn as one thing in parts. Adding a `--` therefore leaves every other composite's colour untouched.
+
+  Under the `handDrawn` look, concurrency regions are now filled solid rather than hatched, so that they can carry the palette tint the same way every other look does.
+
+  States inside a composite stay uniform. A composite carrying its own `classDef` or `style` keeps those colours and takes no palette slot, and neither do its concurrency regions; the slot is still spent, so styling one composite does not shift the colours of the ones after it. Note that this opt-out is all-or-nothing: a `classDef` that sets only text properties, such as `font-weight`, still takes that composite out of the palette.
+
+- [#8176](https://github.com/mermaid-js/mermaid/pull/8176) [`16b9a7d`](https://github.com/mermaid-js/mermaid/commit/16b9a7db87a52baec3c5626c22d0fc2f546041ee) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat(themes): swimlane lanes take a per-lane colour under the `redux-color` and `redux-dark-color` themes, cycling every 12 as flowchart subgraphs do. The lane holding ungrouped nodes takes its own slot and now follows the diagram's `look`.
+
+- [#8178](https://github.com/mermaid-js/mermaid/pull/8178) [`75e6c30`](https://github.com/mermaid-js/mermaid/commit/75e6c30cba57a5716edce4cfe8c4d84e640c1ea3) Thanks [@knsv-bot](https://github.com/knsv-bot)! - feat(usecase): use case diagrams now take colour by role — actors, use cases and system boundaries each get their own colour from the new `usecaseActorBkg`/`usecaseActorBorder`, `usecaseBkg`/`usecaseBorder` and `usecaseBoundaryBkg`/`usecaseBoundaryBorder` theme variables, with `usecaseIncludeLine`/`usecaseExtendLine` separating the two dashed relationship kinds by hue. `redux-color` and `redux-dark-color` set them; every other theme is unchanged. Colour is keyed to the kind of element, so editing a diagram never recolours the elements around the edit. Set `usecase.colorScheme: 'rotate'` for the per-element palette cycle instead, and `classDef`/`style` still wins over both.
+
+- [#8211](https://github.com/mermaid-js/mermaid/pull/8211) [`a31ecb7`](https://github.com/mermaid-js/mermaid/commit/a31ecb7d83edfb9a51a3cd5087c1f39a6b64611d) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - feat: add `wrappingWidth` and `minNodeWidth` config to flowchart, state, usecase, and agentflow diagrams. `wrappingWidth` (now also available for state, usecase, and agentflow diagrams) caps the label width at 120 by default; the new `minNodeWidth` widens short labels to 120 by default so nodes get a uniform width.
+
+### Patch Changes
+
+- [#8211](https://github.com/mermaid-js/mermaid/pull/8211) [`dc2e453`](https://github.com/mermaid-js/mermaid/commit/dc2e4539a7493f25844a49fa83ce4a6b377d7815) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(block): restore node borders under looks that use a gradient stroke.
+
+  A block diagram rendered with `look: neo` lost its node borders entirely. The look-specific
+  rules set `stroke: url(#<svgId>-gradient)`, and those definitions were appended by
+  `rendering-util/render.ts` — which block does not use, since it runs its own render loop.
+  An `url(#…)` paint that resolves to nothing is painted as **none**, not as a fallback
+  colour, so the border disappeared rather than degrading to a plain stroke.
+
+  The definitions now live in `rendering-util/insertLookDefs.ts` and both render paths call
+  it, so the two cannot drift into producing different gradients.
+
+  This only became visible recently: block did not previously pass `look` to its nodes, so
+  none of the look-specific rules applied to it and the missing definitions went unnoticed.
+
+- [#8181](https://github.com/mermaid-js/mermaid/pull/8181) [`ce0302d`](https://github.com/mermaid-js/mermaid/commit/ce0302de41eb6bb4d813b0cf7ba83446b1762ef5) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix(block): apply the redux colour palette to composite blocks. Composites now take a per-container colour under `redux-color` and `redux-dark-color`, matching how flowchart subgraphs are coloured — one counter over containers, in declaration order, with the plain shapes left on the flat theme colour. The palette is opt-in: block does not default to `redux-color` the way flowchart and several other diagram types do, so set `theme: redux-color` (or `redux-dark-color`) explicitly to see it. `classDef`/`style` still win.
+
+- [#8211](https://github.com/mermaid-js/mermaid/pull/8211) [`ad98070`](https://github.com/mermaid-js/mermaid/commit/ad98070b0ede6b76e5a6abdfd36c8cbfe9e28a42) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(block): take the node border width from the theme, as every other diagram does.
+
+  `block/styles.ts` pinned `stroke-width: 1px` on node shapes while the flowchart, class and
+  state stylesheets all read `strokeWidth` from the theme. Under a theme that asks for more —
+  `neo` asks for 2 — a block rendered a visibly thinner border than an identical flowchart
+  node, and nothing downstream corrected it: the `neo` rules in the shared stylesheet set
+  `stroke` and `filter`, never `stroke-width`.
+
+  The gap was invisible until block began propagating `look` to its nodes, because until then
+  none of the look-specific rules applied to block at all.
+
+  Affects only themes whose `strokeWidth` is not 1. `neo` is 2; `neo-dark`, `base` and the
+  rest are unchanged.
+
+- [#8231](https://github.com/mermaid-js/mermaid/pull/8231) [`e2aab3f`](https://github.com/mermaid-js/mermaid/commit/e2aab3f0e0110477c00b01b0a2b36e35f1d3b65f) Thanks [@knsv-bot](https://github.com/knsv-bot)! - Use balanced Brandes-Koepf placement for the default ELK preset to improve alignment of branches and composite-state entries. Preserve named non-default presets and explicit placement/alignment options, including `NONE`. Some diagrams may become wider or taller; `depthFirst` retains the previous default layout.
+
+- [#7874](https://github.com/mermaid-js/mermaid/pull/7874) [`6b79518`](https://github.com/mermaid-js/mermaid/commit/6b795184bd55cccd7a3bf8ae75c26c670decde1f) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(c4): allow boundaries as relationship endpoints
+
+  A `Rel` (or `BiRel`/`Rel_*`) that referenced a boundary alias threw `references an unknown
+shape`, because endpoint lookup only searched shapes and not boundaries. Boundary aliases now
+  resolve as relationship endpoints. Fixes #4864.
+
+- [#8100](https://github.com/mermaid-js/mermaid/pull/8100) [`30325d4`](https://github.com/mermaid-js/mermaid/commit/30325d4984f48fd401c5d5bbb950879df2b3158d) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(c4): stop wrapping non-text named attributes that land in a text slot
+
+  A named attribute such as `$tags` or `$sprite` can arrive in the positional
+  slot of a text field when the argument before it is omitted. It was then
+  stored as `{ text: value }` rather than a string, so `$tags` given without a
+  description crashed rendering.
+
+- [#8148](https://github.com/mermaid-js/mermaid/pull/8148) [`c3ee3c7`](https://github.com/mermaid-js/mermaid/commit/c3ee3c72a165bef91528d2c840592a38f5f7830b) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(themes): `redux-dark`, `redux-dark-color` and `neo-dark` shipped `secondBkg` as the literal string `calculated`, so railroad rendered the invalid `fill: calculated`; it is now computed as `theme-dark` does. The same three themes had gantt done-task labels at 1.07:1 contrast — a light fill under their light task ink — now 5.7:1 or better. The ER and requirement stylesheets also validate `look` before interpolating it into a CSS selector.
+
+- [#8222](https://github.com/mermaid-js/mermaid/pull/8222) [`1ee934d`](https://github.com/mermaid-js/mermaid/commit/1ee934ddbaeeb5e44bddfc5e742b5230620e224c) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: stop ELK-laid-out diagrams logging `Unknown arrow type: arrow_open` once per edge.
+
+  ELK's arrow table put the edge _type_ `arrow_open` — which means "no arrowheads" — into the arrow-type slot, where `none` is the value that marks a deliberate absence. Anything else is reported as an unknown marker name. Diagrams whose db sets `arrowTypeStart` itself, such as flowcharts, never reached that fallback; state diagrams, which leave it unset, warned on every edge.
+
+  Rendering is unchanged: both spellings produced no start marker and the same geometry, since neither has a marker offset. Only the log noise goes away.
+
+- [#8204](https://github.com/mermaid-js/mermaid/pull/8204) [`a7831c5`](https://github.com/mermaid-js/mermaid/commit/a7831c5bb2a461aca7eb10bac387665a4735cbef) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: keep ELK subgraph frames out to the border anchor of edges that terminate on the group, so transitions to composite states no longer run along the cluster border
+
+- [#8155](https://github.com/mermaid-js/mermaid/pull/8155) [`0320406`](https://github.com/mermaid-js/mermaid/commit/0320406298ac99012b2bf1442316f0db9c4bf1ca) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(elk): a composite state or subgraph containing a loop now opens on its own start node.
+
+  Cycle breaking was resolved for the root graph but never passed to containers, so a
+  container laid out on its own fell back to ELK's default, `GREEDY`, while the root ran
+  whatever `elk.preset` asked for. The two then reversed different edges of the same cycle.
+
+  In a composite state that loops, greedy reverses the edge that turns an ordinary state
+  into a source, and sources sit on the first layer — so the diagram opened on that state
+  alongside its start circle instead of on the start circle alone. Dagre reverses the other
+  edge, which is why the two layout engines disagreed on the same diagram.
+
+  Containers now resolve cycle breaking from the preset exactly as the root does. Only
+  containers that actually contain a cycle change; an acyclic subgraph gives a cycle-breaking
+  strategy nothing to do. `preset: legacy` still reaches containers with `GREEDY`, so it keeps
+  reproducing the earlier rendering inside frames as well as outside them.
+
+- [#8228](https://github.com/mermaid-js/mermaid/pull/8228) [`e36b883`](https://github.com/mermaid-js/mermaid/commit/e36b8837b4145dc3ed8f21895d2dc8db1d0e9af2) Thanks [@knsv-bot](https://github.com/knsv-bot)! - Reserve subgraph title padding before ELK routes edges so attachments stay on the painted frame. Clip stale interior endpoints along the incoming segment, avoiding edges that run along the subgraph border.
+
+- [#8199](https://github.com/mermaid-js/mermaid/pull/8199) [`b993915`](https://github.com/mermaid-js/mermaid/commit/b9939159a1f069faa43d31798da9bd4f7353149c) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: keep ELK edges vertical at small nodes — the node now moves onto the routed line instead of the edge bending toward the node's off-centre position
+
+- [#8155](https://github.com/mermaid-js/mermaid/pull/8155) [`4e00c5c`](https://github.com/mermaid-js/mermaid/commit/4e00c5c85b365358e18a688b877cefa52644b69e) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: render ER relationship edges above subgraph backgrounds under the ELK layout instead of hiding them behind the cluster rect
+
+- [#8156](https://github.com/mermaid-js/mermaid/pull/8156) [`3f05015`](https://github.com/mermaid-js/mermaid/commit/3f050155058a0a6789a32580bd9b7f84d4597d45) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(er, requirement, timeline): stop the ER, requirement and timeline stylesheets emitting CSS the browser discards for the colour themes.
+
+  All three generate one rule per palette slot. ER and requirement looped to `THEME_COLOR_LIMIT` and indexed the palette by the loop counter, which goes wrong in both directions: a palette shorter than the limit emitted `stroke: undefined` for the overflow slots, and a palette _longer_ than it left entities stamped with a slot that had no rule at all, rendering unstyled beside coloured neighbours. Both now take the loop bound from the palette itself, which is the same length the boxes stamp with — so the rules emitted and the slots stamped cannot disagree. Both also bail before the loop for an empty palette, since wrapping alone is not enough there: `i % 0` is `NaN` and `[][NaN]` is `undefined`.
+
+  Timeline keeps looping to `THEME_COLOR_LIMIT` and wrapping, because it numbers `.section-N` classes rather than palette slots — nothing stamps those, so the palette cycles across however many sections exist.
+
+  `requirement` also emitted `fill: ;` — a property with no value, which is invalid — whenever there was no background palette. That is the live case for `redux-dark-color`, which ships a border palette and no background palette so that it colours outlines only. The declaration is now omitted instead.
+
+  None of these raises an error: the browser discards the invalid declaration, so the only symptom is a shape rendering unstyled.
+
+- [#8149](https://github.com/mermaid-js/mermaid/pull/8149) [`d57ed55`](https://github.com/mermaid-js/mermaid/commit/d57ed55a5482517927e5e4f4a9d0889078f4a902) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(docs): stop `docs:build` deleting the committed `docs/` directory when a later step fails.
+
+- [#7906](https://github.com/mermaid-js/mermaid/pull/7906) [`1fc5bb3`](https://github.com/mermaid-js/mermaid/commit/1fc5bb34c454f875292c244a00ea0ba288b3b5c2) Thanks [@knsv-bot](https://github.com/knsv-bot)! - perf: avoid quadratic parse cost on deeply-indented diagrams (~1.4 s → ~30 ms on a pathological fixture)
+
+- [#8211](https://github.com/mermaid-js/mermaid/pull/8211) [`b979eb4`](https://github.com/mermaid-js/mermaid/commit/b979eb400918425980d98049dc40eb5f131dd18d) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(handdrawn): tighten the hachure fill so shapes read as filled rather than striped.
+
+  The hand-drawn fill drew 4px-wide strokes 5.2px apart, which left visible diagonal
+  banding across every shape — legible as a texture up close, but at normal diagram size it
+  read as stripes rather than a fill. Strokes are now 1.5px at 1.5px spacing, so the fill
+  reads as an even tint while keeping the drawn edge quality.
+
+  The striped fill behind state-diagram start, end and fork markers moves the same way, so
+  those come out close to solid — which is what the UML convention asks for anyway.
+
+  Swimlane lane titles previously pinned their own stroke weight and so ignored the shared
+  value; they now follow it like every other shape.
+
+- [#8152](https://github.com/mermaid-js/mermaid/pull/8152) [`7ee4c3f`](https://github.com/mermaid-js/mermaid/commit/7ee4c3fb089f3a828f0213c0aa090ed5cacc310f) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: edges attach to non-rectangular shapes on the outline instead of half a pixel off it.
+
+  **This is not ELK-specific.** `intersectPolygon` is how every non-rectangular shape finds its edge attachment — diamond, stadium, hexagon, trapezoid, subroutine — in every layout, so a dagre-rendered flowchart with a decision diamond is affected exactly as much as an ELK one.
+
+  `intersectLine` comes from Graphics Gems, where the coordinates were integers and the numerator was nudged half a denominator away from zero so the integer division rounded instead of truncating. JavaScript division does neither, so the nudge stopped being a correction and became the whole error: every result came back displaced by `0.5 * sign(num) * sign(denom)`. The magnitude is always exactly half a unit, but the sign is per axis, because the numerator is computed separately for x and y while the denominator is shared — so the two axes could move the same way or opposite ways depending on the geometry, which is why it never looked like a constant offset anyone could spot by eye.
+
+  That was enough to give an otherwise orthogonal edge a tiny diagonal opening segment, and to put an attachment just inside the node it was meant to touch.
+
+  `question.ts` had been subtracting a flat 0.5 from both axes to compensate for diamonds. That only cancelled the bias when both signs came out positive, and doubled the error to a full unit when they did not — so the compensation goes along with the cause. **Rendered output moves by up to a pixel wherever a polygon shape terminates an edge.**
+
+- [#8048](https://github.com/mermaid-js/mermaid/pull/8048) [`a6ec7ff`](https://github.com/mermaid-js/mermaid/commit/a6ec7ffd8bffc015ef58d5fa74b06009b8083a7f) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: treat `</br>` as a line break in labels
+
+  `lineBreakRegex` only matched `<br>`, `<br/>` and `<br />`, so the malformed-but-common
+  `</br>` survived as literal text wherever labels render as plain SVG text. HTML parsers
+  already treat `</br>` as a `<br>`, so the tag appeared to work in HTML-label mode and
+  failed everywhere else. It is now accepted on both paths.
+
+  Also fixes `hasBreaks()` returning alternating results for the same input: it called
+  `.test()` on a global regex, which advances `lastIndex` between calls. `wrapLabel()` used
+  the same stateful check and could therefore re-wrap labels that already contained breaks.
+
+- [#8152](https://github.com/mermaid-js/mermaid/pull/8152) [`1246a55`](https://github.com/mermaid-js/mermaid/commit/1246a55fd371fd5a8ed40f617be676b08e57645f) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: don't draw a line hop that has no room next to a bend.
+
+  A crossing close to a corner used to get a hop squeezed into whatever space was left — as little as 2.9px against a requested 6px, opening exactly on the corner's tangent point. At that size the arc no longer clears the line it is meant to hop, so the two strokes still touch and the corner's curve runs straight into the arc's. It reads as a rendering fault rather than as a crossing.
+
+  Hops now keep a straight run clear of the bend, and one that would still have to shrink below 60% of the requested radius is dropped instead of drawn. An undrawn hop is an ordinary crossing, which is a much better failure than a broken-looking one.
+
+  **This changes swimlane diagrams as well as ELK ones.** Swimlanes are the existing consumer of line hops and have them on today, so a swimlane with a crossing near a bend will render differently even for someone not using ELK at all. It shows up wherever a layout stacks edges in narrow lanes: ELK routes subgraph-internal edges 10px apart, and 10px does not hold a 7.07px corner cut plus a 6px hop.
+
+  A crossing is also ignored now when it lands inside the stretch where either edge is rounding a bend. Crossings are found on polylines, but a rounded edge is not drawn as its polyline — it leaves the line up to 7.07px before each bend and rejoins it that far after. A crossing found inside that stretch is somewhere the stroke never goes, so the hop was arching over blank paper while the two lines carried on touching beside it.
+
+- [#8146](https://github.com/mermaid-js/mermaid/pull/8146) [`def4c81`](https://github.com/mermaid-js/mermaid/commit/def4c812e5dd4f6e089055ce2590abdae0269ee7) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(themes): `redux-color` and `redux-dark-color` now define every variable their base themes define, instead of silently falling back to untuned values for `primaryBorderColor`, `clusterBkg`, `clusterBorder`, `altBackground`, `compositeTitleBackground` and the state and requirement edge-label backgrounds. Pie, gantt and user-journey also read the theme palette rather than a single pale tint, so pie slices are distinguishable and gantt sections are visibly banded.
+
+- [#8189](https://github.com/mermaid-js/mermaid/pull/8189) [`3802472`](https://github.com/mermaid-js/mermaid/commit/38024722bf92511ce7aa60ce7552609ec339b6be) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(themes): venn circles follow the `redux-color` and `redux-dark-color` palettes. Neither theme defined any `venn*` variable, so every circle rendered in one flat colour.
+
+- [#8185](https://github.com/mermaid-js/mermaid/pull/8185) [`f5af413`](https://github.com/mermaid-js/mermaid/commit/f5af413186300f14d196a596146df2212af97065) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: sequence diagram actors under the `neo` look and `redux` themes. Notes no longer render bold,
+  a `rect` section band is no longer drawn white on white, and participants follow one vertical
+  model: every lifeline starts and ends on a shared line, all participant glyphs are one size with
+  their feet on a common edge, single-line labels share one baseline in the header and in the
+  mirrored footer, and a multiline label grows away from the lifeline instead of moving it. The
+  `classic` look is unchanged.
+
+- [#8157](https://github.com/mermaid-js/mermaid/pull/8157) [`a3a92ba`](https://github.com/mermaid-js/mermaid/commit/a3a92bac6a62c3df4359e17d555cd20e14503cde) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(sequence): index each actor colour palette by its own length.
+
+  Every actor-drawing call site read `bkgColorArray[actorCount % borderColorArray.length]` — one palette indexed by the other's length. Under `redux-color` both palettes have twelve entries, so the wrong length happens to give the right answer and nothing is visibly broken today. It goes wrong as soon as the two differ in length: the overflow actors resolve to `undefined`, and d3 then strips the inline fill for some actors and not others.
+
+  Both palettes now cycle within their own length, via a shared helper. An absent or empty palette still yields `undefined` rather than a substitute colour, which is what `redux-dark-color` relies on: it ships a border palette and an empty background palette so actors are outlined but not filled.
+
+- [#8232](https://github.com/mermaid-js/mermaid/pull/8232) [`e691042`](https://github.com/mermaid-js/mermaid/commit/e69104220b701575ab52012b9c807fead94679cb) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - Circle, double circle, Delay and Display nodes size themselves from the label's height as well as its width, so a wrapped label stays inside the outline. Each was sized from the width alone and clipped any label taller than it was wide, which `flowchart.wrappingWidth: 120` made common.
+
+  This replaces the wrapping exemption those shapes carried along with stadium and diamond: it stopped them wrapping at all, so a long label produced a single-line node hundreds of pixels wide. Stadium needs no exemption — its `w >= 1.5h` floor already keeps a wrapped label from closing the caps into a circle — and diamond never needed one.
+
+  Stacked (`docs`) and lined (`lin-doc`) document nodes lift their label clear of the wavy bottom edge by the wave's full depth rather than half of it, so the last line is no longer clipped by the trough. Plain `doc` already did this; the two variants had copied it with the offset halved. Node dimensions are unchanged.
+
+- [#8154](https://github.com/mermaid-js/mermaid/pull/8154) [`ba0deed`](https://github.com/mermaid-js/mermaid/commit/ba0deed758a7a8bb38155cee1b4f2374a96d14d7) Thanks [@aloisklink](https://github.com/aloisklink)! - fix: bundle `fastdom` to fix issues with global `define`
+
+- [#8227](https://github.com/mermaid-js/mermaid/pull/8227) [`b05824a`](https://github.com/mermaid-js/mermaid/commit/b05824a4739b3a8f2d054ff1b8a48361a441587b) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix(flowchart): stop stadium labels from wrapping into a circle and exempt selected shapes from automatic label wrapping.
+
+  Long stadium labels wrapped to `flowchart.wrappingWidth`, grew taller without growing wider, and turned the stadium into a circle. Stadium now keeps its semicircular caps with an outer width of at least 1.5 times its height and enough clearance that the label stays inside the arcs.
+
+  Stadium (`terminal`, `pill`), circle (`circ`), diamond (`diam`, `decision`, `question`), double circle (`dbl-circ`, `double-circle`), Display (`curv-trap`, `curved-trapezoid`, `display`) and Delay (`delay`, `half-rounded-rectangle`) no longer wrap their labels at `flowchart.wrappingWidth`. Explicit line breaks are kept, and an explicit node width still takes precedence.
+
+  Agentflow `decision` (`diamond`) nodes are exempt in the same way and do not wrap at `agentflow.wrappingWidth`.
+
+- [#8192](https://github.com/mermaid-js/mermaid/pull/8192) [`0ec29e9`](https://github.com/mermaid-js/mermaid/commit/0ec29e96e8c24d7d47ad140fefe924c4bd889ac2) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(state): draw the edge between a state and its note dashed under the `neo` look. It was rendering solid.
+
+  The dashes were expressed only as CSS — `.note-edge { stroke-dasharray: 5 }` — which is enough under `classic` but not under `neo`, where `insertEdge` writes an inline `stroke-dasharray` on every edge, computed from the path length so the arrow markers keep their gaps. An inline style outranks a stylesheet rule, so the note edge took the solid pattern and the `.note-edge` rule simply lost. The note edge now declares `pattern: 'dashed'`, which is what `insertEdge` reads to choose its dash generator. `classic` is unchanged.
+
+- [#8225](https://github.com/mermaid-js/mermaid/pull/8225) [`0d77926`](https://github.com/mermaid-js/mermaid/commit/0d7792650682257f2a9ec4932860960e019a6280) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix(swimlane): seed cycle removal from source nodes so feedback edges are reversed instead of forward flow edges. A cycle like `task --> decision --> fix --> task` no longer places `fix` in the middle of the `start --> task` flow line.
+
+- [#8211](https://github.com/mermaid-js/mermaid/pull/8211) [`93edd72`](https://github.com/mermaid-js/mermaid/commit/93edd728a566064dda37083151835847622e0e42) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: keep association markers apart on use-case ovals under ELK. Ovals get the same vertical padding as horizontal, edge attachment points on them are spread across the side, and the ELK renderer now accounts for every end-marker offset (extension, circle, cross, …) so a short entry stub can no longer flip a marker around.
+
+- Updated dependencies [[`33442fd`](https://github.com/mermaid-js/mermaid/commit/33442fddbf91852417ac2805afbd35aba0facbe1)]:
+  - @mermaid-js/parser@2.0.0
+
 ## 11.17.2
 
 ### Patch Changes

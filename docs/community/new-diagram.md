@@ -273,7 +273,7 @@ and your documentation cannot drift into examples that no longer work.
 Write your syntax page as `packages/mermaid/src/docs/syntax/<diagram>.md`. Edit only the files
 under `src/docs/`; the top-level `/docs` folder is generated and your changes there will be
 overwritten. Mark the version with the placeholder, as `usecase.md` does with
-`# Use case diagrams (<MERMAID_RELEASE_VERSION>+)`, and the release process substitutes the real
+`# Use case diagrams (12.0.0+)`, and the release process substitutes the real
 number.
 
 Add the page to the sidebar in `.vitepress/config.ts` under `sidebarSyntax()`. A page with no

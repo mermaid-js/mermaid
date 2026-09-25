@@ -287,6 +287,21 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
   return [endTime, renderEndTime];
 };
 
+/**
+ * Logs a warning about task ids that an `after` or `until` statement could not resolve.
+ *
+ * Unknown references fail silently and fall back to today's date, which makes typos and
+ * missing ids hard to spot. See https://github.com/mermaid-js/mermaid/issues/4121.
+ *
+ * @param {'after' | 'until'} keyword - The keyword holding the references.
+ * @param {string[]} ids - The ids that could not be found.
+ */
+const warnAboutUnknownTaskIds = function (keyword, ids) {
+  log.warn(
+    `Gantt: the "${keyword}" statement references unknown task id(s): ${ids.join(', ')}. Make sure the referenced tasks exist and declare an id. Milestones need both an id and a duration, e.g. "Milestone :milestone, m1, 2023-01-01, 0d".`
+  );
+};
+
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
@@ -307,11 +322,21 @@ const getStartDate = function (prevTime, dateFormat, str) {
   if (afterStatement !== null) {
     // check all after ids and take the latest
     let latestTask = null;
-    for (const id of afterStatement.groups.ids.split(' ')) {
-      let task = findTaskById(id);
-      if (task !== undefined && (!latestTask || task.endTime > latestTask.endTime)) {
+    const unknownIds = [];
+    const referencedIds = afterStatement.groups.ids.split(' ').filter((id) => id !== '');
+    for (const id of referencedIds) {
+      const task = findTaskById(id);
+      if (task === undefined) {
+        unknownIds.push(id);
+        continue;
+      }
+      if (!latestTask || task.endTime > latestTask.endTime) {
         latestTask = task;
       }
+    }
+
+    if (unknownIds.length > 0) {
+      warnAboutUnknownTaskIds('after', unknownIds);
     }
 
     if (latestTask) {
@@ -391,11 +416,21 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   if (untilStatement !== null) {
     // check all until ids and take the earliest
     let earliestTask = null;
-    for (const id of untilStatement.groups.ids.split(' ')) {
-      let task = findTaskById(id);
-      if (task !== undefined && (!earliestTask || task.startTime < earliestTask.startTime)) {
+    const unknownIds = [];
+    const referencedIds = untilStatement.groups.ids.split(' ').filter((id) => id !== '');
+    for (const id of referencedIds) {
+      const task = findTaskById(id);
+      if (task === undefined) {
+        unknownIds.push(id);
+        continue;
+      }
+      if (!earliestTask || task.startTime < earliestTask.startTime) {
         earliestTask = task;
       }
+    }
+
+    if (unknownIds.length > 0) {
+      warnAboutUnknownTaskIds('until', unknownIds);
     }
 
     if (earliestTask) {
@@ -417,7 +452,11 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
 
   let endTime = dayjs(prevTime);
   const [durationValue, durationUnit] = parseDuration(str);
-  if (!Number.isNaN(durationValue)) {
+  if (Number.isNaN(durationValue)) {
+    log.warn(
+      `Gantt: "${str}" is neither a valid date for the "${dateFormat.trim()}" date format nor a valid duration (e.g. "3d"), so it is ignored and the task gets a zero duration. Milestones need a duration too, e.g. "Milestone :milestone, m1, 2023-01-01, 0d".`
+    );
+  } else {
     const newEndTime = endTime.add(durationValue, durationUnit);
     if (newEndTime.isValid()) {
       endTime = newEndTime;

@@ -163,7 +163,7 @@ export async function createGraphWithElements(
         if (hasDom) {
           // `insertCluster` paints plain cluster labels through `createLabel`,
           // which uses an infinite width, while `labelHelper` falls back to
-          // `flowchart.wrappingWidth` (200px) when `node.width` is undefined —
+          // `flowchart.wrappingWidth` (default 120px) when `node.width` is undefined —
           // so measure and paint disagree. Layouts that size compound nodes
           // from this measurement opt into measuring the way it is painted.
           // Markdown labels are painted wrapped (`width: node.width`), so they
