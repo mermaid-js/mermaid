@@ -6,9 +6,25 @@ import rough from 'roughjs';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import type { D3Selection } from '../../../types.js';
 
+// Proportions taken from the c4model.com person, as fractions of the body width
+// unless stated otherwise.
+const HEAD_RADIUS_RATIO = 0.23;
+/** Of the head radius. */
+const HEAD_OVERLAP_RATIO = 0.27;
+const MIN_BODY_HEIGHT_RATIO = 0.6;
+const BODY_CORNER_RATIO = 0.177;
+/** Of the body height, so a short body keeps straight sides. */
+const MAX_BODY_CORNER_RATIO = 0.45;
+const MIN_HEAD_RADIUS = 16;
+/** Keeps a person-sized head on a body widened by a long unwrapped label. */
+const MAX_HEAD_RADIUS = 80;
+const MIN_BODY_WIDTH = 100;
+const DEFAULT_PADDING = 20;
+
 /**
  * Person shape: a circular head above a rounded-rectangle body, as used for
- * people/actors in C4 model notation.
+ * people/actors in C4 model notation. The label is centred on the part of the
+ * body the head does not cover.
  */
 export async function person<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
@@ -16,19 +32,16 @@ export async function person<T extends SVGGraphicsElement>(parent: D3Selection<T
 
   const { shapeSvg, bbox, label } = await labelHelper(parent, node, getNodeClasses(node));
 
-  const padding = node.padding ?? 20;
-  const w = Math.max(bbox.width + padding * 2, node.width ?? 0, 100);
-  // Proportions taken from the c4model.com person: head radius 0.23x the body
-  // width, overlapping the body by 0.27x the head radius, body corners 0.177x
-  // the width. The head is clamped so a body widened by a long unwrapped
-  // label keeps a person-sized head.
-  const headRadius = Math.min(Math.max(w * 0.23, 16), 56);
-  const overlap = headRadius * 0.27;
+  const padding = node.padding ?? DEFAULT_PADDING;
+  const w = Math.max(bbox.width + padding * 2, node.width ?? 0, MIN_BODY_WIDTH);
+  const headRadius = Math.min(Math.max(w * HEAD_RADIUS_RATIO, MIN_HEAD_RADIUS), MAX_HEAD_RADIUS);
+  const overlap = headRadius * HEAD_OVERLAP_RATIO;
   const bodyHeight = Math.max(
-    bbox.height + padding * 2,
+    overlap + bbox.height + padding * 2,
+    w * MIN_BODY_HEIGHT_RATIO,
     node.height ? node.height - (2 * headRadius - overlap) : 0
   );
-  const bodyRadius = Math.min(w * 0.177, bodyHeight * 0.45);
+  const bodyRadius = Math.min(w * BODY_CORNER_RATIO, bodyHeight * MAX_BODY_CORNER_RATIO);
   const totalHeight = bodyHeight + 2 * headRadius - overlap;
   const top = -totalHeight / 2;
   const bodyTop = top + 2 * headRadius - overlap;
@@ -74,10 +87,10 @@ export async function person<T extends SVGGraphicsElement>(parent: D3Selection<T
 
   updateNodeBounds(node, group);
 
-  const bodyCenterY = bodyTop + bodyHeight / 2;
+  const labelCenterY = bodyTop + overlap + (bodyHeight - overlap) / 2;
   label.attr(
     'transform',
-    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${bodyCenterY - bbox.height / 2 - (bbox.y - (bbox.top ?? 0))})`
+    `translate(${-(bbox.width / 2) - (bbox.x - (bbox.left ?? 0))}, ${labelCenterY - bbox.height / 2 - (bbox.y - (bbox.top ?? 0))})`
   );
 
   // Edge intersection outline: the head's exposed arc joined to the body's
