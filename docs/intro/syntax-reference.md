@@ -254,6 +254,28 @@ flowchart LR
 
 ```
 
+#### Wrapping a long chain into rows (v\<MERMAID_RELEASE_VERSION>+):
+
+A long sequence of steps drawn left to right becomes one very wide strip. ELK can fold it into several rows so the drawing approaches a target shape:
+
+- `wrappingStrategy: MULTI_EDGE` turns folding on. `OFF`, or leaving it unset, keeps one strip.
+- `aspectRatio` is the width / height ratio to aim for, for example `1.78` for 16:9.
+
+Both apply to the whole diagram and to each subgraph laid out with the layered algorithm. A subgraph that uses its own layout algorithm keeps that algorithm's aspect ratio.
+
+```
+---
+config:
+  layout: elk
+  elk:
+    wrappingStrategy: MULTI_EDGE
+    aspectRatio: 1.78
+---
+flowchart LR
+  A[Receive order] --> B[Check stock] --> C[Take payment] --> D[Pick items]
+  D --> E[Pack parcel] --> F[Print label] --> G[Dispatch] --> H[Delivered]
+```
+
 #### Using Dagre Layout with Classic Look:
 
 Another example:

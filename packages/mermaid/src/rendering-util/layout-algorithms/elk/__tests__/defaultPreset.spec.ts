@@ -84,6 +84,84 @@ describe('ELK preset configuration through initialize', () => {
       expect(options?.['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('LEFTUP');
     }
   });
+
+  it('passes layeringLayerBound to the root', () => {
+    const { elkGraph } = graphFor({ layeringLayerBound: 2 });
+    expect(elkGraph.layoutOptions['elk.layered.layering.coffmanGraham.layerBound']).toBe(2);
+  });
+});
+
+describe('ELK graph wrapping configuration', () => {
+  it('leaves wrapping and aspect ratio unset by default', () => {
+    const { elkGraph, nodeDb } = graphFor();
+    for (const options of [elkGraph.layoutOptions, nodeDb.group.layoutOptions]) {
+      expect(options?.['elk.layered.wrapping.strategy']).toBeUndefined();
+      expect(options?.['elk.aspectRatio']).toBeUndefined();
+    }
+  });
+
+  it('passes wrappingStrategy and aspectRatio to the root and to layered containers', () => {
+    const { elkGraph, nodeDb } = graphFor({ wrappingStrategy: 'MULTI_EDGE', aspectRatio: 1.78 });
+    for (const options of [elkGraph.layoutOptions, nodeDb.group.layoutOptions]) {
+      expect(options?.['elk.layered.wrapping.strategy']).toBe('MULTI_EDGE');
+      expect(options?.['elk.aspectRatio']).toBe(1.78);
+    }
+  });
+
+  const chainLength = 10;
+  const targetAspectRatio = 1.78;
+  const chain = (parentId?: string) => ({
+    nodes: [
+      ...(parentId ? [{ id: parentId, isGroup: true, label: parentId, padding: 8 }] : []),
+      ...Array.from({ length: chainLength }, (_, i) => ({
+        id: `n${i}`,
+        parentId,
+        isGroup: false,
+        label: `n${i}`,
+        shape: 'rect',
+        padding: 8,
+        width: 150,
+        height: 80,
+      })),
+    ],
+    edges: Array.from({ length: chainLength - 1 }, (_, i) => ({
+      id: `e${i}`,
+      start: `n${i}`,
+      end: `n${i + 1}`,
+      label: `step ${i}`,
+      width: 60,
+      height: 24,
+    })),
+  });
+  const aspectRatioOf = (nodes: { x: number; y: number; width: number; height: number }[]) => {
+    const left = Math.min(...nodes.map((n) => n.x - n.width / 2));
+    const right = Math.max(...nodes.map((n) => n.x + n.width / 2));
+    const top = Math.min(...nodes.map((n) => n.y - n.height / 2));
+    const bottom = Math.max(...nodes.map((n) => n.y + n.height / 2));
+    return (right - left) / (bottom - top);
+  };
+  const layOut = async (elk: MermaidConfig['elk'], parentId?: string) => {
+    mermaidAPI.initialize({ elk });
+    const data = { ...chain(parentId), direction: 'LR', config: getConfig() } as any;
+    await runElkLayoutCore(data, {
+      helpers: context,
+      options: { algorithm: 'elk.layered' },
+    } as any);
+    return aspectRatioOf(data.nodes.filter((node: { isGroup: boolean }) => !node.isGroup));
+  };
+
+  it.each([undefined, 'group'])(
+    'folds a long left-to-right chain into rows with MULTI_EDGE (parent: %s)',
+    async (parentId) => {
+      const strip = await layOut({}, parentId);
+      const wrapped = await layOut(
+        { wrappingStrategy: 'MULTI_EDGE', aspectRatio: targetAspectRatio },
+        parentId
+      );
+      expect(strip).toBeGreaterThan(chainLength);
+      expect(wrapped).toBeLessThan(strip / 2);
+    }
+  );
 });
 
 // Measurements from the courier-font TV/Console fixture. Run the real ELK core;
