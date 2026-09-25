@@ -67,6 +67,13 @@ describe('when working with site config', () => {
     expect(config.elk?.nodePlacementAlignment).toBeUndefined();
   });
 
+  it('leaves ELK graph wrapping and aspect ratio to ELK', () => {
+    const config = configApi.getConfig();
+
+    expect(config.elk?.wrappingStrategy).toBeUndefined();
+    expect(config.elk?.aspectRatio).toBeUndefined();
+  });
+
   it('should not force class diagram padding', () => {
     const config = configApi.getConfig();
 
