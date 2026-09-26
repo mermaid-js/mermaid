@@ -421,6 +421,8 @@ properties:
     $ref: '#/$defs/GitGraphDiagramConfig'
   c4:
     $ref: '#/$defs/C4DiagramConfig'
+  c4beta:
+    $ref: '#/$defs/C4BetaDiagramConfig'
   sankey:
     $ref: '#/$defs/SankeyDiagramConfig'
   packet:
@@ -1015,6 +1017,56 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       external_component_queueFont: { '$ref': '#/$defs/FontCalculator' }
       boundaryFont: { '$ref': '#/$defs/FontCalculator' }
       messageFont: { '$ref': '#/$defs/FontCalculator' }
+
+  C4BetaDiagramConfig:
+    title: C4 Beta Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for c4-beta diagrams
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+      - diagramPadding
+      - showStereotypes
+      - personWrappingWidth
+    properties:
+      diagramPadding:
+        description: |
+          The amount of padding around the diagram as a whole so that embedded
+          diagrams have margins, expressed in pixels.
+        type: integer
+        default: 10
+        minimum: 0
+      showStereotypes:
+        description: |
+          Whether elements show their stereotype, the `«Person»` or
+          `«Software System»` line above the name. This is the c4-beta
+          counterpart of `c4.showStereotypes`; use `hideStereotypes` to hide
+          it on some element kinds only.
+        type: boolean
+        default: true
+      hideStereotypes:
+        description: |
+          Element kinds whose stereotype line is hidden while
+          `showStereotypes` is on, for example `[person]`.
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          enum:
+            - person
+            - softwareSystem
+            - container
+            - component
+            - infrastructureNode
+      personWrappingWidth:
+        description: |
+          The width in pixels at which a person's label wraps. It is narrower
+          than `flowchart.wrappingWidth` because a person's body grows taller
+          with its width, so a wide label would give an oversized figure.
+        type: integer
+        default: 120
+        minimum: 0
 
   GitGraphDiagramConfig:
     title: Git Graph Diagram Config
