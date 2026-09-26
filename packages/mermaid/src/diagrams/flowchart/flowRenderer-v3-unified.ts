@@ -50,7 +50,7 @@ export const draw = async function (text: string, id: string, _version: string, 
     diag.db.getDiagramTitle()
   );
   if (diag.threatModel && svg.node()) {
-    renderThreatModel(svg.node()!, diag.threatModel, data4Layout);
+    renderThreatModel(svg.node(), diag.threatModel, data4Layout);
   }
   setupViewPortForSVG(svg, padding, 'flowchart', conf?.useMaxWidth || false);
 };

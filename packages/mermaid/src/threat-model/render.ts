@@ -20,7 +20,7 @@ export function renderThreatModel(svg: SVGSVGElement, model: ThreatModel, data: 
     parent.appendChild(node);
     return node;
   };
-  const byId = new Map(Array.from(svg.querySelectorAll('[id]')).map((node) => [node.id, node]));
+  const byId = new Map([...svg.querySelectorAll('[id]')].map((node) => [node.id, node]));
   for (const element of model.elements) {
     const layoutNode = data.nodes.find((node) => node.id === element.id);
     const domId =
@@ -55,7 +55,7 @@ export function renderThreatModel(svg: SVGSVGElement, model: ThreatModel, data: 
     const shapes =
       element.kind === 'flow'
         ? [target]
-        : Array.from(target.children).filter((child) =>
+        : [...target.children].filter((child) =>
             ['rect', 'circle', 'ellipse', 'polygon', 'path'].includes(child.tagName)
           );
     for (const shape of shapes) {

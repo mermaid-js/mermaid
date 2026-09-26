@@ -1,3 +1,4 @@
+// cspell:words codastre yapf
 /** Experimental, versioned annotations for ordinary Mermaid flowcharts. */
 export interface ThreatModel {
   version: 1;
@@ -65,7 +66,7 @@ const text: Rule = (v, p) => {
   }
 };
 const identifier: Rule = (v, p) => {
-  if (typeof v !== 'string' || !/^[a-zA-Z_][a-zA-Z0-9_-]*$/.test(v)) {
+  if (typeof v !== 'string' || !/^[A-Z_a-z][\w-]*$/.test(v)) {
     fail(p, 'expected an identifier: letters, digits, underscores, hyphens');
   }
 };
