@@ -1027,6 +1027,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     required:
       - useMaxWidth
       - diagramPadding
+      - showStereotypes
     properties:
       diagramPadding:
         description: |
@@ -1035,6 +1036,28 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: integer
         default: 10
         minimum: 0
+      showStereotypes:
+        description: |
+          Whether elements show their stereotype, the `«Person»` or
+          `«Software System»` line above the name. This is the c4-beta
+          counterpart of `c4.showStereotypes`; use `hideStereotypes` to hide
+          it on some element kinds only.
+        type: boolean
+        default: true
+      hideStereotypes:
+        description: |
+          Element kinds whose stereotype line is hidden while
+          `showStereotypes` is on, for example `[person]`.
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          enum:
+            - person
+            - softwareSystem
+            - container
+            - component
+            - infrastructureNode
 
   GitGraphDiagramConfig:
     title: Git Graph Diagram Config

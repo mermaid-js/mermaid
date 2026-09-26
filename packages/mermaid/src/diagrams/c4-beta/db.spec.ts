@@ -1,6 +1,7 @@
 import { parse } from '@mermaid-js/parser';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import * as configApi from '../../config.js';
 import { log } from '../../logger.js';
 import { C4BetaDB } from './db.js';
 import { populateDb } from './parser.js';
@@ -32,6 +33,36 @@ describe('c4-beta db', () => {
   const populate = async (text: string) => {
     populateDb(await parse('c4', text), db);
   };
+
+  describe('c4beta.showStereotypes and hideStereotypes', () => {
+    const diagram = `c4-beta context\nperson a "A" "Desc"\nsoftwareSystem b "B"\n`;
+    const labels = () => db.getData().nodes.map((node) => node.label);
+
+    afterEach(() => configApi.reset());
+
+    it('shows every stereotype by default', async () => {
+      await populate(diagram);
+      expect(labels()).toEqual([
+        '<small>&laquo;Person&raquo;</small><br/><b>A</b><br/>Desc',
+        '<small>&laquo;Software System&raquo;</small><br/><b>B</b>',
+      ]);
+    });
+
+    it('hides every stereotype when false', async () => {
+      configApi.addDirective({ c4beta: { showStereotypes: false } });
+      await populate(diagram);
+      expect(labels()).toEqual(['<b>A</b><br/>Desc', '<b>B</b>']);
+    });
+
+    it('hides the stereotype on the kinds hideStereotypes names', async () => {
+      configApi.addDirective({ c4beta: { hideStereotypes: ['person'] } });
+      await populate(diagram);
+      expect(labels()).toEqual([
+        '<b>A</b><br/>Desc',
+        '<small>&laquo;Software System&raquo;</small><br/><b>B</b>',
+      ]);
+    });
+  });
 
   it('should store kind, direction and title', async () => {
     await populate(exampleDiagram);
