@@ -1,4 +1,5 @@
 import { getConfig } from '../../config.js';
+import type { C4BetaDiagramConfig } from '../../config.type.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
@@ -62,12 +63,21 @@ const isLinePattern = (value: string): value is C4LinePattern => LINE_PATTERNS.h
 const escapeHtml = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-const buildElementLabel = (element: C4BetaElement): string => {
+/** Whether an element of `kind` shows its stereotype line under the c4beta config. */
+const showsStereotype = (
+  kind: C4ElementKind,
+  { showStereotypes = true, hideStereotypes = [] }: C4BetaDiagramConfig = {}
+): boolean => {
+  const hidden: readonly C4ElementKind[] = hideStereotypes;
+  return showStereotypes && !hidden.includes(kind);
+};
+
+const buildElementLabel = (element: C4BetaElement, showStereotype: boolean): string => {
   const displayName = ELEMENT_DISPLAY_NAMES[element.kind] ?? element.kind;
-  const lines: string[] = [
-    `<small>&laquo;${escapeHtml(displayName)}&raquo;</small>`,
-    `<b>${escapeHtml(element.name)}</b>`,
-  ];
+  const lines: string[] = showStereotype
+    ? [`<small>&laquo;${escapeHtml(displayName)}&raquo;</small>`]
+    : [];
+  lines.push(`<b>${escapeHtml(element.name)}</b>`);
   if (element.technology) {
     lines.push(`<small><i>[${escapeHtml(element.technology)}]</i></small>`);
   }
@@ -262,7 +272,7 @@ export class C4BetaDB implements DiagramDB {
       }
       nodes.push({
         id: element.id,
-        label: buildElementLabel(element),
+        label: buildElementLabel(element, showsStereotype(element.kind, config.c4beta)),
         parentId: element.parentId,
         isGroup: false,
         shape,

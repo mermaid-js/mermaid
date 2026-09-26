@@ -277,3 +277,22 @@ A `title` line sets the diagram title:
 ```
 title Internet Banking System - System Context
 ```
+
+### Stereotypes (v\<MERMAID_RELEASE_VERSION>+)
+
+Each element shows its C4 type as a stereotype line above its name, for example `«Person»`.
+Set `c4beta.showStereotypes: false` to hide it on every element.
+To hide it on some kinds only, list them in `c4beta.hideStereotypes`; the kinds are `person`, `softwareSystem`, `container`, `component` and `infrastructureNode`.
+
+```mermaid-example
+---
+config:
+  c4beta:
+    hideStereotypes: [person]
+---
+c4-beta context
+person user "User" "Uses the system."
+softwareSystem core "Core System"
+
+user --> core : "Manages accounts using"
+```

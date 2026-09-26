@@ -2104,6 +2104,26 @@ export interface C4BetaDiagramConfig extends BaseDiagramConfig {
    *
    */
   diagramPadding?: number;
+  /**
+   * Whether elements show their stereotype, the `«Person»` or
+   * `«Software System»` line above the name. This is the c4-beta
+   * counterpart of `c4.showStereotypes`; use `hideStereotypes` to hide
+   * it on some element kinds only.
+   *
+   */
+  showStereotypes?: boolean;
+  /**
+   * Element kinds whose stereotype line is hidden while
+   * `showStereotypes` is on, for example `[person]`.
+   *
+   */
+  hideStereotypes?: (
+    | 'person'
+    | 'softwareSystem'
+    | 'container'
+    | 'component'
+    | 'infrastructureNode'
+  )[];
 }
 /**
  * The object containing configurations specific for sankey diagrams.
