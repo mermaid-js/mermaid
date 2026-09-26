@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid threat modeling PoC</title>
+    <style>
+      body {
+        margin: 0;
+        font: 15px system-ui;
+        color: #172033;
+        background: #f1f5f9;
+      }
+      header {
+        padding: 16px 24px;
+        background: #172033;
+        color: white;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0 0 8px;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(300px, 38%) 1fr;
+        gap: 16px;
+        padding: 16px;
+      }
+      textarea {
+        box-sizing: border-box;
+        width: 100%;
+        height: 72vh;
+        padding: 12px;
+        font: 13px monospace;
+        tab-size: 2;
+      }
+      button {
+        margin: 8px 8px 8px 0;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      #preview {
+        overflow: auto;
+        background: white;
+        padding: 16px;
+        min-height: 65vh;
+      }
+      #error {
+        white-space: pre-wrap;
+        color: #991b1b;
+      }
+      #status {
+        padding: 8px 0;
+      }
+      details {
+        margin-top: 12px;
+      }
+      pre {
+        max-height: 45vh;
+        overflow: auto;
+      }
+      @media (max-width: 800px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+        textarea {
+          height: 45vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mermaid threat modeling — experimental PoC</h1>
+      Ordinary flowcharts + versioned YAML annotations. Edit together, review threats, export the
+      same model for agents.
+    </header>
+    <main>
+      <section>
+        <label for="source">Mermaid source (diagram and threat model)</label>
+        <textarea id="source" spellcheck="false"></textarea>
+        <button id="render">Validate & render</button>
+        <button id="source-download">Save .mmd</button>
+        <button id="json-download" disabled>Save model JSON</button>
+        <button id="svg-download" disabled>Save SVG</button>
+        <div id="error" role="alert"></div>
+        <details>
+          <summary>Working with this PoC</summary>
+          <p>
+            Add elements by their existing node IDs. Give annotated edges explicit IDs, e.g.
+            <code>API query@--> DB</code>. A subgraph becomes a trust boundary when annotated as
+            <code>kind: boundary</code>.
+          </p>
+          <p>
+            Record candidate threats, review severity and decisions, then add mitigation tasks and
+            evidence. Set model state explicitly; rendering is not security approval. No AI service
+            is called and no data is uploaded.
+          </p>
+          <p>
+            Evidence is a reference, not proof verified by Mermaid. Deployment warnings are
+            advisory.
+          </p>
+        </details>
+      </section>
+      <section>
+        <div id="status" role="status"></div>
+        <div id="preview"></div>
+        <details>
+          <summary>Machine-readable threat model</summary>
+          <pre id="json"></pre>
+        </details>
+      </section>
+    </main>
+    <script type="module">
+      import mermaid from '/packages/mermaid/src/mermaid.ts';
+      const source = document.querySelector('#source');
+      const preview = document.querySelector('#preview');
+      const error = document.querySelector('#error');
+      const status = document.querySelector('#status');
+      const json = document.querySelector('#json');
+      const renderButton = document.querySelector('#render');
+      let result;
+      let revision = 0;
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'strict',
+        flowchart: { htmlLabels: false },
+      });
+      function invalidate() {
+        result = undefined;
+        document.querySelector('#json-download').disabled = true;
+        document.querySelector('#svg-download').disabled = true;
+        status.textContent = 'Source changed — validate and render to refresh the result.';
+      }
+      source.addEventListener('input', () => {
+        revision++;
+        invalidate();
+      });
+      async function render() {
+        const current = revision;
+        invalidate();
+        error.textContent = '';
+        renderButton.disabled = true;
+        try {
+          const rendered = await mermaid.render(`threat-preview-${current}`, source.value);
+          if (current !== revision) {
+            return;
+          }
+          result = rendered;
+          preview.innerHTML = result.svg; // Mermaid sanitizes SVG in strict mode.
+          json.textContent = JSON.stringify(result.threatModel ?? null, null, 2);
+          status.textContent = result.threatModel
+            ? `${result.threatModel.state.toUpperCase()} · ${result.threatModel.threats.length} threats recorded`
+            : 'Ordinary Mermaid diagram — no threat model annotations.';
+          document.querySelector('#json-download').disabled = !result.threatModel;
+          document.querySelector('#svg-download').disabled = false;
+        } catch (e) {
+          if (current !== revision) {
+            return;
+          }
+          preview.replaceChildren();
+          json.textContent = '';
+          status.textContent = 'Invalid diagram or threat model';
+          error.textContent = String(e);
+        } finally {
+          renderButton.disabled = false;
+        }
+      }
+      function download(name, text, type) {
+        const url = URL.createObjectURL(new Blob([text], { type }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      renderButton.addEventListener('click', render);
+      document
+        .querySelector('#source-download')
+        .addEventListener('click', () => download('threat-model.mmd', source.value, 'text/plain'));
+      document
+        .querySelector('#json-download')
+        .addEventListener(
+          'click',
+          () =>
+            result?.threatModel &&
+            download(
+              'threat-model.json',
+              JSON.stringify(result.threatModel, null, 2),
+              'application/json'
+            )
+        );
+      document
+        .querySelector('#svg-download')
+        .addEventListener(
+          'click',
+          () => result && download('threat-model.svg', result.svg, 'image/svg+xml')
+        );
+      try {
+        const response = await fetch('./threat-model.mmd');
+        if (!response.ok) {
+          throw new Error(`Example load failed: ${response.status}`);
+        }
+        source.value = await response.text();
+        await render();
+      } catch (e) {
+        error.textContent = String(e);
+      }
+    </script>
+  </body>
+</html>

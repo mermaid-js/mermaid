@@ -22,6 +22,7 @@ import type { ParseOptions, ParseResult, RenderResult } from './types.js';
 import type { DetailedError } from './utils.js';
 import utils, { isDetailedError } from './utils.js';
 
+export type { ThreatModel, Threat } from './threat-model/model.js';
 export type {
   AsyncIconLoader,
   DetailedError,

@@ -1,9 +1,12 @@
 import type { GanttDiagramConfig, MermaidConfig } from '../config.type.js';
+import { parseThreatModel } from '../threat-model/model.js';
+import type { ThreatModel } from '../threat-model/model.js';
 import { matchFrontMatter } from './regexes.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
 
 interface FrontMatterMetadata {
+  threatModel?: ThreatModel;
   title?: string;
   // Allows custom display modes. Currently used for compact mode in gantt charts.
   displayMode?: GanttDiagramConfig['displayMode'];
@@ -50,6 +53,9 @@ export function extractFrontMatter(text: string): FrontMatterResult {
   parsed = typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
 
   const metadata: FrontMatterMetadata = {};
+  if (Object.hasOwn(parsed, 'threatModel')) {
+    metadata.threatModel = parseThreatModel(parsed.threatModel);
+  }
 
   // Only add properties that are explicitly supported, if they exist
   if (parsed.displayMode) {
