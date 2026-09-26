@@ -203,7 +203,7 @@ describe('c4-beta', () => {
       expect(relationship.technology).toBe('XML/HTTPS');
     });
 
-    it.each(['-->', '<--', '<-->'])('should handle the %s arrow', (arrow: string) => {
+    it.each(['-->', '<--', '<-->', '---'])('should handle the %s arrow', (arrow: string) => {
       const result = parse(`c4-beta context
         a ${arrow} b
       `);

@@ -11,7 +11,7 @@ export type C4ElementKind =
   | 'deploymentNode'
   | 'infrastructureNode';
 
-export type C4Arrow = '-->' | '<--' | '<-->';
+export type C4Arrow = '-->' | '<--' | '<-->' | '---';
 
 export interface C4BetaElement {
   id: string;

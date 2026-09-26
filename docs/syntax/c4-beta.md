@@ -122,6 +122,8 @@ In the C4 model every line is a **unidirectional**, specifically-labelled relati
 ```
 (N:)? <sourceId> --> <targetId> (: "Description" ("Technology")?)? (:::tag)*
 (N:)? <sourceId> <-- <targetId> (: "Description" ("Technology")?)? (:::tag)*
+(N:)? <sourceId> <--> <targetId> (: "Description" ("Technology")?)? (:::tag)*
+(N:)? <sourceId> --- <targetId> (: "Description" ("Technology")?)? (:::tag)*
 ```
 
 ```mermaid-example
@@ -160,6 +162,24 @@ softwareSystem core "Core System"
 softwareSystem partner "Partner System" :::external
 
 core <--> partner : "Syncs with"
+```
+
+`---` (v\<MERMAID_RELEASE_VERSION>+) draws an undirected line with no arrowhead. It is a mermaid extension with no Structurizr equivalent, and it is **discouraged** for the same reason: it hides the direction the C4 model asks a relationship to show. Use it only where direction is not the point of the view, such as a high-level overview for a non-technical audience. The label still reads from source to target:
+
+```mermaid-example
+c4-beta context
+person operator "Operator"
+softwareSystem core "Core System"
+
+operator --- core : "Operates"
+```
+
+```mermaid
+c4-beta context
+person operator "Operator"
+softwareSystem core "Core System"
+
+operator --- core : "Operates"
 ```
 
 ### Dynamic diagrams

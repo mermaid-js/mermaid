@@ -186,6 +186,22 @@ describe('c4-beta db', () => {
       expect(bidirectional.arrowTypeEnd).toBe('arrow_point');
     });
 
+    it('should draw no arrowhead on an undirected --- relationship', async () => {
+      await populate(`c4-beta context\nperson a "A"\nsoftwareSystem b "B"\na --- b : "Operates"\n`);
+      const { edges } = db.getData();
+      expect(edges[0].start).toBe('a');
+      expect(edges[0].end).toBe('b');
+      expect(edges[0].arrowTypeStart).toBe('none');
+      expect(edges[0].arrowTypeEnd).toBe('none');
+    });
+
+    it('should point a <-- relationship at its source only', async () => {
+      await populate(`c4-beta context\nperson a "A"\nsoftwareSystem b "B"\na <-- b\n`);
+      const { edges } = db.getData();
+      expect(edges[0].arrowTypeStart).toBe('arrow_point');
+      expect(edges[0].arrowTypeEnd).toBe('none');
+    });
+
     it('should map non-person elements to the rect shape', async () => {
       await populate(exampleDiagram);
       const { nodes } = db.getData();

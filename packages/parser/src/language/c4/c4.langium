@@ -53,6 +53,6 @@ C4StyleEntry:
     key=ID ':' value=(C4_HEX_COLOR | ID)
 ;
 
-terminal C4_ARROW: /<-->|<--|-->/;
+terminal C4_ARROW: /<-->|<--|-->|---/;
 terminal C4_TAG: /:::[\w]([-\w]*\w)?/;
 terminal C4_HEX_COLOR: /#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/;
