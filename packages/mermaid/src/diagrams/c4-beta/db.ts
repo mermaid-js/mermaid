@@ -276,6 +276,7 @@ export class C4BetaDB implements DiagramDB {
         parentId: element.parentId,
         isGroup: false,
         shape,
+        wrappingWidth: shape === 'person' ? config.c4beta?.personWrappingWidth : undefined,
         cssClasses: cssClasses.join(' '),
         cssStyles,
         padding: 8,
