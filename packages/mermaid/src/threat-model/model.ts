@@ -1,4 +1,3 @@
-// cspell:words codastre yapf
 /** Experimental, versioned annotations for ordinary Mermaid flowcharts. */
 export interface ThreatModel {
   version: 1;
