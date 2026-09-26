@@ -412,7 +412,7 @@ fall back to legacy rendering for KaTeX.
 
 ### logLevel?
 
-> `optional` **logLevel**: `0` | `2` | `1` | `"trace"` | `"debug"` | `"info"` | `"warn"` | `"error"` | `"fatal"` | `3` | `4` | `5`
+> `optional` **logLevel**: `0` | `"trace"` | `"debug"` | `1` | `"info"` | `2` | `"warn"` | `3` | `"error"` | `4` | `"fatal"` | `5`
 
 Defined in: [packages/mermaid/src/config.type.ts:269](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L269)
 

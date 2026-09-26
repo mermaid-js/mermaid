@@ -25,6 +25,8 @@
 - [RenderResult](interfaces/RenderResult.md)
 - [RunOptions](interfaces/RunOptions.md)
 - [SyncIconLoader](interfaces/SyncIconLoader.md)
+- [Threat](interfaces/Threat.md)
+- [ThreatModel](interfaces/ThreatModel.md)
 - [UnknownDiagramError](interfaces/UnknownDiagramError.md)
 
 ## Type Aliases
