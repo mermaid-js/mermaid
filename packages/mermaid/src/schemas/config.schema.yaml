@@ -1028,6 +1028,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       - useMaxWidth
       - diagramPadding
       - showStereotypes
+      - personWrappingWidth
     properties:
       diagramPadding:
         description: |
@@ -1058,6 +1059,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
             - container
             - component
             - infrastructureNode
+      personWrappingWidth:
+        description: |
+          The width in pixels at which a person's label wraps. It is narrower
+          than `flowchart.wrappingWidth` because a person's body grows taller
+          with its width, so a wide label would give an oversized figure.
+        type: integer
+        default: 120
+        minimum: 0
 
   GitGraphDiagramConfig:
     title: Git Graph Diagram Config

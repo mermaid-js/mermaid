@@ -493,3 +493,8 @@ softwareSystem core "Core System"
 
 user --> core : "Manages accounts using"
 ```
+
+### Person label width (v\<MERMAID_RELEASE_VERSION>+)
+
+A person's label wraps at `c4beta.personWrappingWidth` pixels, 120 by default, rather than at the flowchart wrapping width.
+A person's body grows taller as it gets wider, so a narrower label keeps the figure person-sized.

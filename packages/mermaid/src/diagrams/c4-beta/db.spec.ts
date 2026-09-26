@@ -64,6 +64,24 @@ describe('c4-beta db', () => {
     });
   });
 
+  describe('c4beta.personWrappingWidth', () => {
+    const diagram = `c4-beta context\nperson a "A"\nsoftwareSystem b "B"\n`;
+    const wrappingWidths = () => db.getData().nodes.map((node) => node.wrappingWidth);
+
+    afterEach(() => configApi.reset());
+
+    it('wraps a person label at 120px by default and leaves other shapes alone', async () => {
+      await populate(diagram);
+      expect(wrappingWidths()).toEqual([120, undefined]);
+    });
+
+    it('wraps a person label at the configured width', async () => {
+      configApi.addDirective({ c4beta: { personWrappingWidth: 90 } });
+      await populate(diagram);
+      expect(wrappingWidths()).toEqual([90, undefined]);
+    });
+  });
+
   it('should store kind, direction and title', async () => {
     await populate(exampleDiagram);
     expect(db.getKind()).toBe('context');

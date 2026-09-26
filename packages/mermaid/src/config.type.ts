@@ -2124,6 +2124,13 @@ export interface C4BetaDiagramConfig extends BaseDiagramConfig {
     | 'component'
     | 'infrastructureNode'
   )[];
+  /**
+   * The width in pixels at which a person's label wraps. It is narrower
+   * than `flowchart.wrappingWidth` because a person's body grows taller
+   * with its width, so a wide label would give an oversized figure.
+   *
+   */
+  personWrappingWidth?: number;
 }
 /**
  * The object containing configurations specific for sankey diagrams.
