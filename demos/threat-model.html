@@ -46,7 +46,24 @@
         overflow: auto;
         background: white;
         padding: 16px;
-        min-height: 65vh;
+        height: 72vh;
+        box-sizing: border-box;
+        scrollbar-gutter: stable;
+        overflow-anchor: none;
+      }
+      #preview > svg {
+        display: block;
+        max-width: none !important;
+      }
+      .viewer-controls {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      #zoom-level {
+        min-width: 5ch;
+        font-variant-numeric: tabular-nums;
       }
       #error {
         white-space: pre-wrap;
@@ -107,7 +124,21 @@
       </section>
       <section>
         <div id="status" role="status"></div>
-        <div id="preview"></div>
+        <div class="viewer-controls" role="group" aria-label="Diagram zoom">
+          <button id="zoom-out" disabled aria-label="Zoom out">−</button>
+          <output id="zoom-level" aria-live="polite" title="Scale relative to natural SVG size"
+            >—</output
+          >
+          <button id="zoom-in" disabled aria-label="Zoom in">+</button>
+          <button id="zoom-fit" disabled>Fit width</button>
+          <button id="zoom-actual" disabled>Actual size</button>
+        </div>
+        <div
+          id="preview"
+          tabindex="0"
+          role="region"
+          aria-label="Rendered diagram; scroll to navigate"
+        ></div>
         <details>
           <summary>Machine-readable threat model</summary>
           <pre id="json"></pre>
@@ -124,6 +155,63 @@
       const renderButton = document.querySelector('#render');
       let result;
       let revision = 0;
+      let zoom = 1;
+      let fitMode = true;
+      const zoomOut = document.querySelector('#zoom-out');
+      const zoomIn = document.querySelector('#zoom-in');
+      const zoomFit = document.querySelector('#zoom-fit');
+      const zoomActual = document.querySelector('#zoom-actual');
+      const zoomLevel = document.querySelector('#zoom-level');
+      const minZoom = 0.01;
+      const maxZoom = 8;
+
+      function updateZoomControls() {
+        const available = Boolean(result && preview.querySelector('svg'));
+        zoomOut.disabled = !available || zoom <= minZoom;
+        zoomIn.disabled = !available || zoom >= maxZoom;
+        zoomFit.disabled = !available;
+        zoomActual.disabled = !available;
+        zoomLevel.textContent = available ? `${Math.round(zoom * 100)}%` : '—';
+      }
+      function setZoom(next, fit = false) {
+        const svg = preview.querySelector('svg');
+        if (!result || !svg) return;
+        const box = svg.viewBox.baseVal;
+        if (!(box.width > 0 && box.height > 0)) return;
+        const oldZoom = zoom;
+        // Keep the current viewport center at the same point when zooming.
+        const centerX = (preview.scrollLeft + preview.clientWidth / 2 - 16) / oldZoom;
+        const centerY = (preview.scrollTop + preview.clientHeight / 2 - 16) / oldZoom;
+        fitMode = fit;
+        zoom = Math.max(minZoom, Math.min(maxZoom, next));
+        svg.style.width = `${box.width * zoom}px`;
+        svg.style.height = `${box.height * zoom}px`;
+        if (fit) {
+          preview.scrollLeft = 0;
+          preview.scrollTop = 0;
+        } else {
+          preview.scrollLeft = centerX * zoom + 16 - preview.clientWidth / 2;
+          preview.scrollTop = centerY * zoom + 16 - preview.clientHeight / 2;
+        }
+        updateZoomControls();
+      }
+      function fitWidth() {
+        const svg = preview.querySelector('svg');
+        if (!svg || !result) return;
+        setZoom(
+          Math.min(1, Math.max(1, preview.clientWidth - 32) / svg.viewBox.baseVal.width),
+          true
+        );
+      }
+      zoomOut.addEventListener('click', () => setZoom(zoom / 1.25));
+      zoomIn.addEventListener('click', () => setZoom(zoom * 1.25));
+      zoomFit.addEventListener('click', fitWidth);
+      zoomActual.addEventListener('click', () => setZoom(1));
+      const resizeObserver = new ResizeObserver(() => {
+        if (fitMode) fitWidth();
+      });
+      resizeObserver.observe(preview);
+
       mermaid.initialize({
         startOnLoad: false,
         securityLevel: 'strict',
@@ -132,6 +220,7 @@
       });
       function invalidate() {
         result = undefined;
+        updateZoomControls();
         document.querySelector('#json-download').disabled = true;
         document.querySelector('#svg-download').disabled = true;
         status.textContent = 'Source changed — validate and render to refresh the result.';
@@ -152,6 +241,7 @@
           }
           result = rendered;
           preview.innerHTML = result.svg; // Mermaid sanitizes SVG in strict mode.
+          fitWidth();
           json.textContent = JSON.stringify(result.threatModel ?? null, null, 2);
           status.textContent = result.threatModel
             ? `${result.threatModel.state.toUpperCase()} · ${result.threatModel.threats.length} threats recorded`

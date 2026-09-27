@@ -15,6 +15,10 @@ pnpm dev:vite
 
 Open **http://localhost:9000/threat-model.html**. The demo loads `demos/threat-model.mmd`. Edit the source, select **Validate & render**, and export Mermaid, SVG, or model JSON. Everything runs locally in the browser; no external AI provider is contacted. This is a source-development demo, not a standalone published editor.
 
+### Viewer zoom
+
+Use **+ / −** to zoom, **Fit width** to reset the view, and **Actual size** for 100% of the SVG's natural size. The preview has horizontal and vertical scrollbars for navigation. Fit-width mode adapts when the browser is resized. Zoom affects only the preview; downloaded SVGs and model data are unchanged.
+
 ## Minimal example
 
 ```mermaid
