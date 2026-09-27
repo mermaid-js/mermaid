@@ -1,3 +1,5 @@
+import { createBadgeLayer } from './badges.js';
+import { wrapText } from './text.js';
 import type { LayoutData } from '../rendering-util/types.js';
 import { deploymentBlockers } from './model.js';
 import type { Threat, ThreatModel } from './model.js';
@@ -21,6 +23,7 @@ export function renderThreatModel(svg: SVGSVGElement, model: ThreatModel, data: 
     return node;
   };
   const byId = new Map([...svg.querySelectorAll('[id]')].map((node) => [node.id, node]));
+  const addBadge = createBadgeLayer(svg);
   for (const element of model.elements) {
     const layoutNode = data.nodes.find((node) => node.id === element.id);
     const domId =
@@ -71,33 +74,19 @@ export function renderThreatModel(svg: SVGSVGElement, model: ThreatModel, data: 
       }
     }
     if (threats.length) {
-      const bounds = (target as SVGGraphicsElement).getBBox();
-      const badge = make('g', element.kind === 'flow' ? target.parentElement! : target);
-      badge.setAttribute('class', 'threat-model-badge');
-      badge.setAttribute('data-threat-target', element.id);
       const label =
         threats
           .slice(0, 3)
           .map((threat) => threat.id)
           .join(', ') + (threats.length > 3 ? ` +${threats.length - 3}` : '');
-      const width = label.length * 7.5 + 12;
-      const badgeX =
-        element.kind === 'flow'
-          ? bounds.x + bounds.width / 2 - width / 2
-          : bounds.x + bounds.width - width;
-      badge.setAttribute('transform', `translate(${badgeX}, ${bounds.y - 24})`);
-      const background = make('rect', badge);
-      background.setAttribute('width', String(width));
-      background.setAttribute('height', '20');
-      background.setAttribute('rx', '4');
-      background.setAttribute('style', `fill: ${color}; stroke: white; stroke-width: 1px`);
-      const text = make('text', badge);
-      text.setAttribute('x', '6');
-      text.setAttribute('y', '14');
-      text.setAttribute('style', 'font: bold 12px monospace; fill: white');
-      text.textContent = label;
-      make('title', badge).textContent =
-        `${element.id}: ${threats.map((threat) => `${threat.id} ${threat.title}`).join('; ')}`;
+      addBadge(
+        target as SVGGraphicsElement,
+        element.id,
+        element.kind === 'flow',
+        label,
+        `${element.id}: ${threats.map((threat) => `${threat.id} ${threat.title}`).join('; ')}`,
+        color
+      );
     }
   }
 
@@ -106,21 +95,36 @@ export function renderThreatModel(svg: SVGSVGElement, model: ThreatModel, data: 
   report.setAttribute('class', 'threat-model-register');
   report.setAttribute('role', 'group');
   report.setAttribute('aria-label', 'Threat model register');
+  // Keep a readable logical text size, then scale the whole register to the
+  // chart width. A wide architecture must not shrink the report into a tiny
+  // fixed-width column when the containing SVG is fitted to the viewport.
+  const reportWidth = Math.max(500, Math.min(800, box.width));
+  const reportScale = Math.max(1, box.width / reportWidth);
+  report.setAttribute(
+    'transform',
+    `translate(${box.x}, ${box.y + box.height + 24}) scale(${reportScale})`
+  );
   const background = make('rect', report);
   background.setAttribute('fill', '#fff');
   background.setAttribute('stroke', '#94a3b8');
   background.setAttribute('rx', '6');
-  let y = box.y + box.height + 36;
-  const x = box.x + 12;
-  const top = y - 22;
+  let y = 26;
+  const x = 12;
+  const top = 0;
   const line = (text: string, bold = false, color = '#0f172a') => {
-    // Fixed-width wrapping also handles long unbroken evidence URLs.
-    const chunks = text.match(/.{1,100}(?:\s|$)|.{1,100}/g) ?? [''];
+    const style = `font: ${bold ? 'bold ' : ''}13px monospace; fill: ${color}`;
+    const probe = make('text', report);
+    probe.setAttribute('style', style);
+    const chunks = wrapText(text, reportWidth - 24, (candidate) => {
+      probe.textContent = candidate;
+      return probe.getComputedTextLength?.() ?? [...candidate].length * 8;
+    });
+    probe.remove();
     for (const chunk of chunks) {
       const label = make('text', report);
       label.setAttribute('x', String(x));
       label.setAttribute('y', String(y));
-      label.setAttribute('style', `font: ${bold ? 'bold ' : ''}13px monospace; fill: ${color}`);
+      label.setAttribute('style', style);
       label.textContent = chunk;
       y += 19;
     }
@@ -139,11 +143,17 @@ export function renderThreatModel(svg: SVGSVGElement, model: ThreatModel, data: 
   line(
     'Outline = highest unresolved severity; green = resolved/excluded; dashed box = trust boundary.'
   );
-  for (const element of model.elements) {
-    line(
-      `${element.id} [${element.kind}${element.entryPoint ? ', entry point' : ''}]${element.assets?.length ? ` assets: ${element.assets.join(', ')}` : ''}`
-    );
+  line(
+    `${model.elements.length} annotated elements; ${model.threats.length} recorded threats.`,
+    true
+  );
+  for (const kind of ['actor', 'process', 'store', 'flow', 'boundary'] as const) {
+    const elements = model.elements.filter((element) => element.kind === kind);
+    if (elements.length) {
+      line(`${kind}: ${elements.map((element) => element.id).join(', ')}`);
+    }
   }
+  line('Full element descriptions, asset mappings and context are retained in model metadata.');
   if (!model.threats.length) {
     line('No threats recorded — this does not establish completeness.');
   }
@@ -174,9 +184,8 @@ export function renderThreatModel(svg: SVGSVGElement, model: ThreatModel, data: 
       line(`Evidence: ${threat.evidence.join(', ')}`);
     }
   }
-  const bounds = report.getBBox();
-  background.setAttribute('x', String(x - 12));
+  background.setAttribute('x', '0');
   background.setAttribute('y', String(top));
-  background.setAttribute('width', String(Math.max(bounds.width + 24, 500)));
+  background.setAttribute('width', String(reportWidth));
   background.setAttribute('height', String(y - top + 8));
 }

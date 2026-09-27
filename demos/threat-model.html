@@ -22,9 +22,12 @@
       }
       main {
         display: grid;
-        grid-template-columns: minmax(300px, 38%) 1fr;
+        grid-template-columns: minmax(300px, 38%) minmax(0, 1fr);
         gap: 16px;
         padding: 16px;
+      }
+      section {
+        min-width: 0;
       }
       textarea {
         box-sizing: border-box;
@@ -124,6 +127,7 @@
       mermaid.initialize({
         startOnLoad: false,
         securityLevel: 'strict',
+        htmlLabels: false,
         flowchart: { htmlLabels: false },
       });
       function invalidate() {

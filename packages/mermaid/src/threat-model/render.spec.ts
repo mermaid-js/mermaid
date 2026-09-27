@@ -76,6 +76,18 @@ describe('threat model SVG annotations', () => {
     renderThreatModel(svg, model, data);
     expect(svg.querySelector('circle')?.style.stroke).toBe('#c2410c');
   });
+  it('scales the register to a wide chart instead of leaving a tiny fixed-width column', () => {
+    const { svg, model, data } = scene();
+    Object.defineProperty(svg, 'getBBox', {
+      value: () => ({ x: 10, y: 0, width: 6000, height: 1500 }),
+    });
+    renderThreatModel(svg, model, data);
+    const report = svg.querySelector('.threat-model-register');
+    expect(report?.getAttribute('transform')).toBe('translate(10, 1524) scale(7.5)');
+    expect(report?.querySelector('rect')?.getAttribute('width')).toBe('800');
+    expect(report?.textContent).toContain('3 annotated elements; 1 recorded threats.');
+    expect(report?.textContent).toContain('process: API');
+  });
   it('keeps hidden targets in the register', () => {
     const { svg, model, data } = scene();
     svg.querySelector('#node-API')?.remove();
