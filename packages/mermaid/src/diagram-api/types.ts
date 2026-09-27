@@ -58,6 +58,8 @@ export interface DiagramDB {
   setDisplayMode?: (title: string) => void;
   setDiagramId?: (svgElementId: string) => void;
   bindFunctions?: (element: Element) => void;
+  setErrorMessage?: (message: string) => void;
+  getErrorMessage?: () => string | undefined;
 
   /**
    * Opt in to source-faithful parsing.
