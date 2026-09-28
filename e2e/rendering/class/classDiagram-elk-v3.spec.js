@@ -154,4 +154,25 @@ test.describe('Class diagram V3 ELK', () => {
       );
     });
   }
+
+  test('ELK-9: should keep dagre end labels centred, clear of the class box (#8329)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+    classDiagram
+      direction LR
+      class Animal {
+        +String name
+        +eat()
+      }
+      Animal "1" <|-- "many" Duck
+      Animal "1" <|-- "0..n" Fish
+      Duck "1" o-- "2..*" Feather
+      `,
+      { logLevel: 1, htmlLabels: true, fontFamily: 'arial', layout: 'dagre' }
+    );
+  });
 });

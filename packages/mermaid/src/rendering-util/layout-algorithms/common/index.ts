@@ -387,9 +387,8 @@ export function terminalLabelTranslate(
   path?: EdgeRenderPath
 ): { x?: number; y?: number } {
   const center = edge.terminalLabelCenters?.[key];
-  const size = edge.terminalLabelSizes?.[key];
-  if (center && size) {
-    return { x: center.x - size.centerX, y: center.y - size.centerY };
+  if (center) {
+    return { ...center };
   }
   if (!path) {
     return { x: edge.x, y: edge.y };

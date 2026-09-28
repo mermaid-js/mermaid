@@ -163,7 +163,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).startLeft = startEdgeLabelLeft;
     setTerminalWidth(fo, edge.startLabelLeft, slBox);
-    recordTerminalLabelSize(edge, 'startLeft', slBox, true, useHtmlLabels);
+    recordTerminalLabelSize(edge, 'startLeft', slBox);
   }
   if (edge.startLabelRight) {
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
@@ -191,14 +191,13 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).startRight = startEdgeLabelRight;
     setTerminalWidth(fo, edge.startLabelRight, slBox);
-    recordTerminalLabelSize(edge, 'startRight', slBox, true, useHtmlLabels);
+    recordTerminalLabelSize(edge, 'startRight', slBox);
   }
   if (edge.endLabelLeft) {
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
-    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     const endLabelElement = await createLabel(
-      endEdgeLabelLeft,
+      inner,
       edge.endLabelLeft,
       getLabelStyles(edge.labelStyle) || '',
       false,
@@ -220,15 +219,13 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).endLeft = endEdgeLabelLeft;
     setTerminalWidth(fo, edge.endLabelLeft, slBox);
-    recordTerminalLabelSize(edge, 'endLeft', slBox, false, useHtmlLabels);
+    recordTerminalLabelSize(edge, 'endLeft', slBox);
   }
   if (edge.endLabelRight) {
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
-    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
-
     const endLabelElement = await createLabel(
-      endEdgeLabelRight,
+      inner,
       edge.endLabelRight,
       getLabelStyles(edge.labelStyle) || '',
       false,
@@ -250,32 +247,22 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight, slBox);
-    recordTerminalLabelSize(edge, 'endRight', slBox, false, useHtmlLabels);
+    recordTerminalLabelSize(edge, 'endRight', slBox);
   }
   return labelElement;
 };
 
 /**
  * Record a terminal label's measured size so a layout can reserve room for it.
- * Start labels are centred on their group's origin; end labels are anchored at their top-left.
+ * Every terminal label is centred on its group's origin.
  *
  * @param {any} edge
  * @param {import('../types.js').TerminalLabelKey} key
- * @param {{ x?: number, y?: number, width: number, height: number }} box
- * @param {boolean} centered
- * @param {boolean} useHtmlLabels
+ * @param {{ width: number, height: number }} box
  */
-function recordTerminalLabelSize(edge, key, box, centered, useHtmlLabels) {
-  // HTML boxes come from getBoundingClientRect, whose x/y are viewport-absolute.
-  const originX = useHtmlLabels ? 0 : (box.x ?? 0);
-  const originY = useHtmlLabels ? 0 : (box.y ?? 0);
+function recordTerminalLabelSize(edge, key, box) {
   edge.terminalLabelSizes ??= {};
-  edge.terminalLabelSizes[key] = {
-    width: box.width,
-    height: box.height,
-    centerX: centered ? 0 : originX + box.width / 2,
-    centerY: centered ? 0 : originY + box.height / 2,
-  };
+  edge.terminalLabelSizes[key] = { width: box.width, height: box.height };
 }
 
 /**

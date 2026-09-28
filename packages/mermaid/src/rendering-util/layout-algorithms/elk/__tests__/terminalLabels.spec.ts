@@ -20,20 +20,8 @@ const elkRenderContext = {
   options: { algorithm: 'elk.layered' },
 } as any;
 
-// Sizes as `insertEdgeLabel` measures them: start labels are centred on their
-// group's origin, end labels are anchored at their top-left corner.
-const startLabel = (width: number): TerminalLabelSize => ({
-  width,
-  height: 16.5,
-  centerX: 0,
-  centerY: 0,
-});
-const endLabel = (width: number): TerminalLabelSize => ({
-  width,
-  height: 16.5,
-  centerX: width / 2,
-  centerY: 8.25,
-});
+// Sizes as `insertEdgeLabel` measures them; every terminal label is centred on its group's origin.
+const label = (width: number): TerminalLabelSize => ({ width, height: 16.5 });
 
 // A class box is a rectangle; `intersect` stands in for the one the DOM shape provides.
 const classNode = (id: string, width: number, height: number) => {
@@ -67,8 +55,8 @@ const relation = (
   startLabelRight: startText,
   endLabelLeft: endText,
   terminalLabelSizes: {
-    startRight: startLabel(startText.length * 6.1),
-    endLeft: endLabel(endText.length * 6.7),
+    startRight: label(startText.length * 6.1),
+    endLeft: label(endText.length * 6.7),
   },
 });
 
@@ -255,7 +243,7 @@ function customerDiagram() {
 function adjacentPortsDiagram() {
   const sized = (edge: any, start: number, end: number) => ({
     ...edge,
-    terminalLabelSizes: { startRight: startLabel(start), endLeft: endLabel(end) },
+    terminalLabelSizes: { startRight: label(start), endLeft: label(end) },
   });
   return {
     type: 'classDiagram',
@@ -305,8 +293,8 @@ function assertLabelsPlaced(data: any, { dagreSides = true } = {}) {
     for (const key of ['startRight', 'endLeft'] as TerminalLabelKey[]) {
       const size = edge.terminalLabelSizes[key];
       const { x, y } = terminalLabelTranslate(edge, key, edge.points);
-      const cx = x! + size.centerX;
-      const cy = y! + size.centerY;
+      const cx = x!;
+      const cy = y!;
       const labelBox = {
         x1: cx - size.width / 2,
         y1: cy - size.height / 2,

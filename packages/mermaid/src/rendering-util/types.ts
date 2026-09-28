@@ -144,8 +144,6 @@ export type TerminalLabelKey = 'startLeft' | 'startRight' | 'endLeft' | 'endRigh
 export interface TerminalLabelSize {
   width: number;
   height: number;
-  centerX: number;
-  centerY: number;
 }
 
 // Common properties for any edge in the system
@@ -177,7 +175,7 @@ export interface Edge {
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
-  /** Measured terminal labels; `centerX/Y` is the text centre relative to the label group's origin. */
+  /** Measured terminal labels, each centred on its label group's origin. */
   terminalLabelSizes?: Partial<Record<TerminalLabelKey, TerminalLabelSize>>;
   /** Terminal label centres placed by the layout; preferred over the along-the-path default. */
   terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
