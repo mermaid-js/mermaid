@@ -23,10 +23,7 @@ const isNodeInCluster = (id, clusterId) => {
     return true;
   }
   const clusterDescendants = descendants.get(clusterId);
-  return (
-    (clusterDescendants && clusterDescendants.includes(id)) ||
-    isDescendant(id, clusterId)
-  );
+  return clusterDescendants?.includes(id) || isDescendant(id, clusterId);
 };
 
 const edgeInCluster = (edge, clusterId) => {
