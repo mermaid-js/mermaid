@@ -426,26 +426,31 @@ describe('flow db repeated subgraph ids (issue #8326)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('does not apply a class to the drawn subgraph after a repeated declaration (dagre parity)', () => {
+  it('applies a class set after a repeated declaration to the merged subgraph', () => {
     parse(
       'flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend\nclassDef hot fill:#f00\nclass S hot'
     );
 
-    expect(subGraph('S')?.classes).not.toContain('hot');
-    expect(flowDb.getData().nodes.find((n) => n.id === 'S')?.cssClasses).not.toContain('hot');
+    expect(subGraph('S')?.classes).toContain('hot');
+    expect(flowDb.getData().nodes.find((n) => n.id === 'S')?.cssClasses).toContain('hot');
   });
 
-  it('pins collapsed metadata after a repeated declaration: undrawn copy gets it, members still hidden', () => {
-    parse('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend\nS@{ view: collapsed }');
+  it.each([
+    [
+      'after the repeated declaration',
+      'flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend\nS@{ view: collapsed }',
+    ],
+    [
+      'between the two declarations',
+      'flowchart LR\nsubgraph S\n  x\nend\nS@{ view: collapsed }\nsubgraph S\n  y\nend',
+    ],
+  ])('collapses a repeated subgraph when its collapsed metadata comes %s', (_, text) => {
+    parse(text);
 
-    // The metadata lands on the latest (undrawn) declaration, as the lookup
-    // keeps pointing there. The drawn entry stays an ordinary group, while the
-    // collapse check (which reads the lookup) still hides the members.
-    expect(subGraph('S')?.metadata).toBeUndefined();
+    expect(subGraph('S')?.metadata).toEqual({ view: 'collapsed' });
     const { nodes } = flowDb.getData();
     expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
-    expect(nodes.find((n) => n.id === 'S')?.isGroup).toBe(true);
-    expect(nodes.find((n) => n.id === 'S')?.shape).not.toBe('collapsedGroup');
+    expect(nodes.find((n) => n.id === 'S')?.shape).toBe('collapsedGroup');
     expect(nodes.find((n) => n.id === 'x')).toBeUndefined();
     expect(nodes.find((n) => n.id === 'y')).toBeUndefined();
   });

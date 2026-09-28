@@ -752,10 +752,9 @@ You have to call mermaid.initialize.`
     } else {
       this.subGraphs.push(subGraph);
     }
-    // The lookup deliberately points at the latest declaration, even when it was merged
-    // away: classes and metadata set afterwards land on that undrawn copy, matching
-    // dagre's long-standing behaviour for repeated ids.
-    this.subGraphLookup.set(id, subGraph);
+    // The lookup points at the subgraph that is drawn, so classes and metadata such as
+    // `view: collapsed` apply whichever declaration they follow.
+    this.subGraphLookup.set(id, existing ?? subGraph);
     return id;
   }
 
