@@ -1,7 +1,11 @@
 /* global injected */ // build-time constant injected via esbuild `define` (see .esbuild/util.ts)
 import { layout as dagreLayout } from 'dagre-d3-es/src/dagre/index.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
-import { createLayoutElementGroups, insertMeasuredNode } from '../../createGraph.js';
+import {
+  createLayoutElementGroups,
+  insertMeasuredNode,
+  measureGroupLabel,
+} from '../../createGraph.js';
 import { createCommonLayoutRenderer } from '../common/index.js';
 import { profiler } from '../../../profiler.js';
 import { updateNodeBounds } from '../../rendering-elements/shapes/util.js';
@@ -294,6 +298,20 @@ const measureDagreGraph = async ({
     log.info('Recursive edges', graph.edge(graph.edges()[0]));
   }
   const mergeSelfLoops = shouldMergeSelfLoopSegments(diagramType);
+  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
+  // The title reserve needs each cluster's label height before layout, but
+  // `insertCluster` only measures it while painting. Measure it the way it is painted:
+  // plain labels unwrapped, markdown labels wrapped. Skipped at the default margin,
+  // where the reserve is 0 whatever the label.
+  const measureClusterTitle = async (clusterNode) => {
+    if (subGraphTitleTotalMargin > 0) {
+      const unwrap = clusterNode.labelType !== 'markdown';
+      await measureGroupLabel(nodes, clusterNode, unwrap ? Number.POSITIVE_INFINITY : undefined);
+    }
+  };
+  if (parentCluster !== undefined) {
+    await measureClusterTitle(parentCluster.clusterData);
+  }
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
@@ -370,6 +388,7 @@ const measureDagreGraph = async ({
             graph
           );
           log.trace(findNonClusterChild(node.id, graph));
+          await measureClusterTitle(node);
           clusterDb.set(node.id, { id: findNonClusterChild(node.id, graph), node });
           // insertCluster(clusters, graph.node(v));
         } else {
@@ -425,7 +444,6 @@ const measureDagreGraph = async ({
 
   await processEdges();
 
-  const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   return {
     elem,
     graph,
@@ -508,6 +526,37 @@ const deepestClusterReserve = (graph, nodeId, subGraphTitleTotalMargin) => {
     }
   }
   return getClusterTitleReserve(graph.node(nodeId), subGraphTitleTotalMargin) + maxChild;
+};
+
+// How far a cluster's measured title overflows the flat margin the recursive painter
+// already applies. Zero at the default margin, and whenever the title fits.
+const titleOverflow = (node, subGraphTitleTotalMargin) =>
+  getClusterTitleReserve(node, subGraphTitleTotalMargin) - subGraphTitleTotalMargin;
+
+const ancestorTitleOverflow = (graph, nodeId, subGraphTitleTotalMargin) => {
+  if (subGraphTitleTotalMargin <= 0) {
+    return 0;
+  }
+  let total = 0;
+  let parentId = graph.parent(nodeId);
+  while (parentId !== undefined) {
+    total += titleOverflow(graph.node(parentId), subGraphTitleTotalMargin);
+    parentId = graph.parent(parentId);
+  }
+  return total;
+};
+
+const deepestTitleOverflow = (graph, nodeId, subGraphTitleTotalMargin) => {
+  if (subGraphTitleTotalMargin <= 0) {
+    return 0;
+  }
+  let maxChild = 0;
+  for (const childId of graph.children(nodeId)) {
+    if (graph.children(childId).length > 0) {
+      maxChild = Math.max(maxChild, deepestTitleOverflow(graph, childId, subGraphTitleTotalMargin));
+    }
+  }
+  return titleOverflow(graph.node(nodeId), subGraphTitleTotalMargin) + maxChild;
 };
 
 const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin) => {
@@ -643,9 +692,10 @@ const paintDagreLayoutCore = async ({
         ' height: ',
         node.height
       );
+      const ancestorOverflow = ancestorTitleOverflow(graph, v, subGraphTitleTotalMargin);
       if (node?.clusterNode) {
         // Adjust for padding when on root level
-        node.y += subGraphTitleTotalMargin;
+        node.y += subGraphTitleTotalMargin + ancestorOverflow;
 
         log.info(
           'A tainted cluster node XBX1',
@@ -672,7 +722,11 @@ const paintDagreLayoutCore = async ({
             node.height,
             graph.parent(v)
           );
-          node.height += subGraphTitleTotalMargin;
+          // Grow by every title overflow down the deepest nested chain, keeping the top edge
+          // in place, so children cleared below a tall title still fit inside.
+          const ownOverflow = deepestTitleOverflow(graph, v, subGraphTitleTotalMargin);
+          node.height += subGraphTitleTotalMargin + ownOverflow;
+          node.y += ownOverflow / 2 + ancestorOverflow;
           graph.node(node.parentId);
           const halfPadding = node?.padding / 2 || 0;
           const labelHeight = node?.labelBBox?.height || 0;
@@ -685,7 +739,7 @@ const paintDagreLayoutCore = async ({
         } else {
           // Regular node
           const parent = graph.node(node.parentId);
-          node.y += subGraphTitleTotalMargin / 2;
+          node.y += subGraphTitleTotalMargin / 2 + ancestorOverflow;
           log.info(
             'A regular node XBX1 - using the padding',
             node.id,
@@ -713,10 +767,22 @@ const paintDagreLayoutCore = async ({
   const edgeOffsetY = subGraphTitleTotalMargin / 2;
   const edgesToRender = getEdgesToRender(graph, edgeOffsetY, { mergeSelfLoops });
 
-  edgesToRender.forEach(function ({ edge, start, end }) {
+  edgesToRender.forEach(function ({ edge, start, end, placed }) {
     log.info('Edge ' + start + ' -> ' + end + ': ' + JSON.stringify(edge), edge);
 
-    edge.points.forEach((point) => (point.y += edgeOffsetY));
+    // A merged self-loop is built from its already-moved node, so it carries no overflow.
+    const startOverflow = placed
+      ? 0
+      : ancestorTitleOverflow(graph, start, subGraphTitleTotalMargin);
+    const endOverflow = placed ? 0 : ancestorTitleOverflow(graph, end, subGraphTitleTotalMargin);
+    const last = edge.points.length - 1;
+    const overflowAt = (index) =>
+      startOverflow + (endOverflow - startOverflow) * (last > 0 ? index / last : 0);
+    edge.points.forEach((point, index) => (point.y += edgeOffsetY + overflowAt(index)));
+    const midOverflow = overflowAt(last / 2);
+    if (typeof edge.y === 'number' && midOverflow !== 0) {
+      edge.y += midOverflow;
+    }
     const startNode = graph.node(start);
     const endNode = graph.node(end);
     const paths = insertEdge(edgePaths, edge, clusterDb, diagramType, startNode, endNode, id);
