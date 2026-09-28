@@ -18,25 +18,24 @@ const isDescendant = (id, ancestorId) => {
   return ancestorDescendants.includes(id);
 };
 
+const isNodeInCluster = (id, clusterId) => {
+  if (id === clusterId) {
+    return true;
+  }
+  const clusterDescendants = descendants.get(clusterId);
+  return (
+    (clusterDescendants && clusterDescendants.includes(id)) ||
+    isDescendant(id, clusterId)
+  );
+};
+
 const edgeInCluster = (edge, clusterId) => {
-  const clusterDescendants = descendants.get(clusterId) || [];
-  log.info('Descendants of ', clusterId, ' is ', clusterDescendants);
   log.info('Edge is ', edge);
   if (edge.v === clusterId || edge.w === clusterId) {
     return false;
   }
 
-  if (!clusterDescendants) {
-    log.debug('Tilt, ', clusterId, ',not in descendants');
-    return false;
-  }
-
-  return (
-    clusterDescendants.includes(edge.v) ||
-    isDescendant(edge.v, clusterId) ||
-    isDescendant(edge.w, clusterId) ||
-    clusterDescendants.includes(edge.w)
-  );
+  return isNodeInCluster(edge.v, clusterId) && isNodeInCluster(edge.w, clusterId);
 };
 
 const copy = (clusterId, graph, newGraph, rootId) => {
@@ -105,6 +104,12 @@ const copy = (clusterId, graph, newGraph, rootId) => {
               ' clusterId:',
               clusterId
             );
+            // Re-anchor crossing edge in outer graph to the cluster root before this child node is removed
+            const nextV = isNodeInCluster(edge.v, rootId) ? rootId : edge.v;
+            const nextW = isNodeInCluster(edge.w, rootId) ? rootId : edge.w;
+            if (nextV !== nextW) {
+              graph.setEdge(nextV, nextW, data, edge.name);
+            }
           }
         } catch (e) {
           log.error(e);

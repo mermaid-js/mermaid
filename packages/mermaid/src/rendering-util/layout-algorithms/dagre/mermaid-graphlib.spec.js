@@ -282,6 +282,17 @@ describe('Graphlib decorations', () => {
       // Orgs should be extracted into a clusterNode with rankdir: 'TB'
       expect(g.node('Orgs').clusterNode).toBe(true);
       expect(g.node('Orgs').graph.graph().rankdir).toBe('TB');
+
+      // Crossing edges should be re-anchored to the extracted clusterNode in the outer graph
+      expect(g.hasEdge('dev', 'Orgs', '2')).toBe(true);
+      expect(g.hasEdge('uat', 'Orgs', '3')).toBe(true);
+
+      // Subgraph internal graph should contain cluster children but NOT external nodes
+      const orgsGraph = g.node('Orgs').graph;
+      expect(orgsGraph.hasNode('org1')).toBe(true);
+      expect(orgsGraph.hasNode('org2')).toBe(true);
+      expect(orgsGraph.hasNode('dev')).toBe(false);
+      expect(orgsGraph.hasNode('uat')).toBe(false);
     });
 
     it('adjustClustersAndEdges the extracted graphs shall contain the correct data GLB11', function () {
