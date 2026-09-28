@@ -377,7 +377,10 @@ config_object
 // 	| actor_actor
 // 	;
 
-actor: ACTOR {$$={ type: 'addParticipant', actor:$1}};
+actor
+    : ACTOR {$$={ type: 'addParticipant', actor:$1}}
+    | 'link' {$$={ type: 'addParticipant', actor:$1}}
+    ;
 // actor_actor: ACTOR {$$={type: 'addActor', actor:$1}};
 
 signaltype
