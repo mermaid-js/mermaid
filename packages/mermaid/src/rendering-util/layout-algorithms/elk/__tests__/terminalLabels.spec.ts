@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { followMovedEndpoints, runElkLayoutCore } from '../render.js';
+import { followMovedEndpoints, runElkLayoutCore, slideTerminalLabelsOffFrames } from '../render.js';
 import { terminalLabelTranslate } from '../../common/index.js';
 import type { TerminalLabelKey, TerminalLabelSize } from '../../../types.js';
 
@@ -179,6 +179,71 @@ describe('ELK terminal (cardinality) labels', () => {
     }
   });
 
+  // #8335: an LR edge into another namespace; ELK put the HEAD label across that frame's border.
+  it('keeps a label that enters another namespace clear of its frame', async () => {
+    const data = crossNamespaceDiagram();
+    await runElkLayoutCore(data, elkRenderContext);
+    assertLabelsPlaced(data);
+    const frames = data.nodes
+      .filter((node: any) => node.isGroup)
+      .map((node: any) => ({
+        id: node.id,
+        x1: node.x - node.width / 2,
+        y1: node.y - node.height / 2,
+        x2: node.x + node.width / 2,
+        y2: node.y + node.height / 2,
+      }));
+    const problems: string[] = [];
+    for (const edge of data.edges) {
+      for (const [key, size] of Object.entries(edge.terminalLabelSizes) as [
+        TerminalLabelKey,
+        TerminalLabelSize,
+      ][]) {
+        const { x, y } = terminalLabelTranslate(edge, key, edge.points);
+        const box = {
+          x1: x! - size.width / 2,
+          y1: y! - size.height / 2,
+          x2: x! + size.width / 2,
+          y2: y! + size.height / 2,
+        };
+        // The renderer keeps a slid label 2px off every frame border.
+        const padded = { x1: box.x1 - 2, y1: box.y1 - 2, x2: box.x2 + 2, y2: box.y2 + 2 };
+        for (const frame of frames) {
+          const inside =
+            padded.x1 >= frame.x1 &&
+            padded.x2 <= frame.x2 &&
+            padded.y1 >= frame.y1 &&
+            padded.y2 <= frame.y2;
+          if (overlaps(padded, frame) && !inside) {
+            problems.push(`${edge.id} ${key} is within 2px of the ${frame.id} frame`);
+          }
+        }
+      }
+    }
+    expect(problems).toEqual([]);
+  });
+
+  // Clearing the frame outwards would need the label past the bend, off its end segment.
+  it('does not slide a label past the far end of its end segment', () => {
+    const edge = {
+      id: 'e',
+      label: '',
+      points: [
+        { x: 80, y: -40 },
+        { x: 80, y: 0 },
+        { x: 100, y: 0 },
+      ],
+      terminalLabelSizes: { endLeft: { width: 16, height: 16 } },
+      terminalLabelCenters: { endLeft: { x: 92, y: 12 } },
+    } as any;
+    const nodes = [
+      { id: 'G', isGroup: true, x: 145, y: 0, width: 110, height: 200 },
+      { id: 'N', isGroup: false, x: 130, y: 0, width: 60, height: 40 },
+    ] as any;
+    slideTerminalLabelsOffFrames([edge], nodes);
+    expect(edge.terminalLabelCenters.endLeft).toEqual({ x: 92, y: 12 });
+  });
+
   it('moves a placed label with an endpoint that a later pass slid along the side', () => {
     const edge = {
       id: 'e',
@@ -279,14 +344,41 @@ function adjacentPortsDiagram() {
   } as any;
 }
 
+// Sizes measured in the browser (arial), as `Order "*" --> "1..*" Product` across namespaces.
+function crossNamespaceDiagram() {
+  const group = (id: string) => ({ id, isGroup: true, label: id, shape: 'rect', padding: 16 });
+  return {
+    type: 'classDiagram',
+    direction: 'LR',
+    config: { elk: {} },
+    nodes: [
+      group('Shop'),
+      group('Catalog'),
+      // `intersect` reads the node it was built for, so set the parent on that object.
+      Object.assign(classNode('Order', 62.13, 81), { parentId: 'Shop' }),
+      Object.assign(classNode('Product', 76.94, 81), { parentId: 'Catalog' }),
+    ],
+    edges: [
+      {
+        ...relation('contains', 'Order', 'Product', 'none', '*', '1..*'),
+        arrowTypeEnd: 'dependency',
+        terminalLabelSizes: { startRight: label(4.28), endLeft: label(16.52) },
+      },
+    ],
+  } as any;
+}
+
 function assertLabelsPlaced(data: any, { dagreSides = true } = {}) {
-  const nodeBoxes = data.nodes.map((node: any) => ({
-    id: node.id,
-    x1: node.x - node.width / 2,
-    y1: node.y - node.height / 2,
-    x2: node.x + node.width / 2,
-    y2: node.y + node.height / 2,
-  }));
+  // A group is hollow; the frame test covers its border.
+  const nodeBoxes = data.nodes
+    .filter((node: any) => !node.isGroup)
+    .map((node: any) => ({
+      id: node.id,
+      x1: node.x - node.width / 2,
+      y1: node.y - node.height / 2,
+      x2: node.x + node.width / 2,
+      y2: node.y + node.height / 2,
+    }));
 
   const problems: string[] = [];
   for (const edge of data.edges) {
