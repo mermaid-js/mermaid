@@ -1,0 +1,207 @@
+import { describe, it, expect } from 'vitest';
+import { followMovedEndpoints, runElkLayoutCore } from '../render.js';
+import { terminalLabelTranslate } from '../../common/index.js';
+import type { TerminalLabelKey, TerminalLabelSize } from '../../../types.js';
+
+const log = {
+  debug: () => undefined,
+  error: () => undefined,
+  info: () => undefined,
+  warn: () => undefined,
+};
+
+const elkRenderContext = {
+  helpers: {
+    common: { lineBreakRegex: /<br\s*\/?>/gi },
+    getConfig: () => ({ flowchart: { wrappingWidth: 200 }, curve: undefined }),
+    interpolateToCurve: (curve: unknown) => curve,
+    log,
+  },
+  options: { algorithm: 'elk.layered' },
+} as any;
+
+// Sizes as `insertEdgeLabel` measures them: start labels are centred on their
+// group's origin, end labels are anchored at their top-left corner.
+const startLabel = (width: number): TerminalLabelSize => ({
+  width,
+  height: 16.5,
+  centerX: 0,
+  centerY: 0,
+});
+const endLabel = (width: number): TerminalLabelSize => ({
+  width,
+  height: 16.5,
+  centerX: width / 2,
+  centerY: 8.25,
+});
+
+// A class box is a rectangle; `intersect` stands in for the one the DOM shape provides.
+const classNode = (id: string, width: number, height: number) => {
+  const node: any = { id, isGroup: false, width, height, label: id, shape: 'classBox' };
+  node.intersect = (point: { x: number; y: number }) => {
+    const dx = point.x - node.x;
+    const dy = point.y - node.y;
+    const scale = Math.min(
+      dx ? width / 2 / Math.abs(dx) : Infinity,
+      dy ? height / 2 / Math.abs(dy) : Infinity
+    );
+    return { x: node.x + dx * Math.min(scale, 1), y: node.y + dy * Math.min(scale, 1) };
+  };
+  return node;
+};
+
+const relation = (
+  id: string,
+  start: string,
+  end: string,
+  arrowTypeStart: string,
+  startText: string,
+  endText: string
+) => ({
+  id,
+  start,
+  end,
+  arrowTypeStart,
+  arrowTypeEnd: 'none',
+  label: '',
+  startLabelRight: startText,
+  endLabelLeft: endText,
+  terminalLabelSizes: {
+    startRight: startLabel(startText.length * 6.1),
+    endLeft: endLabel(endText.length * 6.7),
+  },
+});
+
+const distanceToBox = (
+  p: { x: number; y: number },
+  b: { x1: number; y1: number; x2: number; y2: number }
+) => Math.hypot(Math.max(b.x1 - p.x, 0, p.x - b.x2), Math.max(b.y1 - p.y, 0, p.y - b.y2));
+
+// Relation markers are 18px long and 12px across (see `markers.js`).
+const markerBox = (points: { x: number; y: number }[], atStart: boolean) => {
+  const [tip, next] = atStart ? [points[0], points[1]] : [points.at(-1)!, points.at(-2)!];
+  const length = Math.hypot(next.x - tip.x, next.y - tip.y);
+  const base = {
+    x: tip.x + ((next.x - tip.x) / length) * 18,
+    y: tip.y + ((next.y - tip.y) / length) * 18,
+  };
+  return {
+    x1: Math.min(tip.x, base.x) - 6,
+    y1: Math.min(tip.y, base.y) - 6,
+    x2: Math.max(tip.x, base.x) + 6,
+    y2: Math.max(tip.y, base.y) + 6,
+  };
+};
+
+const boxGap = (
+  a: { x1: number; y1: number; x2: number; y2: number },
+  b: { x1: number; y1: number; x2: number; y2: number }
+) => Math.hypot(Math.max(a.x1 - b.x2, 0, b.x1 - a.x2), Math.max(a.y1 - b.y2, 0, b.y1 - a.y2));
+
+const overlaps = (
+  a: { x1: number; y1: number; x2: number; y2: number },
+  b: { x1: number; y1: number; x2: number; y2: number }
+) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+
+describe('ELK terminal (cardinality) labels', () => {
+  // #8329: `Animal "1" <|-- "many" Duck` in an LR class diagram.
+  it('keeps every cardinality label beside its own end, clear of its marker and the class boxes', async () => {
+    const data = animalDiagram();
+    await runElkLayoutCore(data, elkRenderContext);
+    assertLabelsPlaced(data);
+  });
+
+  // Only layered places end labels; the others leave them at the origin.
+  it.each(['elk.mrtree', 'elk.force'])(
+    'leaves the labels on the path default with %s',
+    async (algorithm) => {
+      const data = animalDiagram();
+      await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm } });
+      for (const edge of data.edges) {
+        expect(edge.terminalLabelCenters).toBeUndefined();
+      }
+    }
+  );
+
+  it('moves a placed label with an endpoint that a later pass slid along the side', () => {
+    const edge = {
+      id: 'e',
+      points: [
+        { x: 100, y: 58 },
+        { x: 140, y: 58 },
+        { x: 140, y: 20 },
+      ],
+      terminalLabelCenters: { startRight: { x: 105, y: 70 }, endLeft: { x: 150, y: 30 } },
+    } as any;
+    followMovedEndpoints(edge, { start: { x: 100, y: 50 }, end: { x: 140, y: 20 } });
+    expect(edge.terminalLabelCenters).toEqual({
+      startRight: { x: 105, y: 78 },
+      endLeft: { x: 150, y: 30 },
+    });
+  });
+});
+
+function animalDiagram() {
+  return {
+    type: 'classDiagram',
+    direction: 'LR',
+    config: { elk: {} },
+    nodes: [
+      classNode('Animal', 131, 135),
+      classNode('Duck', 58.2, 81),
+      classNode('Fish', 52.8, 81),
+      classNode('Feather', 74.6, 81),
+    ],
+    edges: [
+      relation('id_Animal_Duck_1', 'Animal', 'Duck', 'extension', '1', 'many'),
+      relation('id_Animal_Fish_2', 'Animal', 'Fish', 'extension', '1', '0..n'),
+      relation('id_Duck_Feather_3', 'Duck', 'Feather', 'aggregation', '1', '2..*'),
+    ],
+  } as any;
+}
+
+function assertLabelsPlaced(data: any) {
+  const nodeBoxes = data.nodes.map((node: any) => ({
+    id: node.id,
+    x1: node.x - node.width / 2,
+    y1: node.y - node.height / 2,
+    x2: node.x + node.width / 2,
+    y2: node.y + node.height / 2,
+  }));
+
+  const problems: string[] = [];
+  for (const edge of data.edges) {
+    for (const key of ['startRight', 'endLeft'] as TerminalLabelKey[]) {
+      const size = edge.terminalLabelSizes[key];
+      const { x, y } = terminalLabelTranslate(edge, key, edge.points);
+      const cx = x! + size.centerX;
+      const cy = y! + size.centerY;
+      const labelBox = {
+        x1: cx - size.width / 2,
+        y1: cy - size.height / 2,
+        x2: cx + size.width / 2,
+        y2: cy + size.height / 2,
+      };
+      const end = key.startsWith('start') ? edge.points[0] : edge.points.at(-1);
+      const marker = key.startsWith('start') ? edge.arrowTypeStart : edge.arrowTypeEnd;
+      const nearest = marker === 'none' ? end : markerBox(edge.points, key.startsWith('start'));
+      const gap = 'x1' in nearest ? boxGap(nearest, labelBox) : distanceToBox(nearest, labelBox);
+      if (gap > 12) {
+        problems.push(`${edge.id} ${key} is ${Math.round(gap)}px from its end`);
+      }
+      if (
+        marker !== 'none' &&
+        overlaps(labelBox, markerBox(edge.points, key.startsWith('start')))
+      ) {
+        problems.push(`${edge.id} ${key} touches its marker`);
+      }
+      for (const box of nodeBoxes) {
+        if (overlaps(labelBox, box)) {
+          problems.push(`${edge.id} ${key} under ${box.id}`);
+        }
+      }
+    }
+  }
+
+  expect(problems).toEqual([]);
+}

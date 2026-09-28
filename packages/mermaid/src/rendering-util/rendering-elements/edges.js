@@ -163,6 +163,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).startLeft = startEdgeLabelLeft;
     setTerminalWidth(fo, edge.startLabelLeft);
+    recordTerminalLabelSize(edge, 'startLeft', slBox, true, useHtmlLabels);
   }
   if (edge.startLabelRight) {
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
@@ -190,6 +191,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).startRight = startEdgeLabelRight;
     setTerminalWidth(fo, edge.startLabelRight);
+    recordTerminalLabelSize(edge, 'startRight', slBox, true, useHtmlLabels);
   }
   if (edge.endLabelLeft) {
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
@@ -218,6 +220,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).endLeft = endEdgeLabelLeft;
     setTerminalWidth(fo, edge.endLabelLeft);
+    recordTerminalLabelSize(edge, 'endLeft', slBox, false, useHtmlLabels);
   }
   if (edge.endLabelRight) {
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
@@ -247,9 +250,33 @@ export const insertEdgeLabel = async (elem, edge) => {
     }
     terminalLabels.get(edge.id).endRight = endEdgeLabelRight;
     setTerminalWidth(fo, edge.endLabelRight);
+    recordTerminalLabelSize(edge, 'endRight', slBox, false, useHtmlLabels);
   }
   return labelElement;
 };
+
+/**
+ * Record a terminal label's measured size so a layout can reserve room for it.
+ * Start labels are centred on their group's origin; end labels are anchored at their top-left.
+ *
+ * @param {any} edge
+ * @param {import('../types.js').TerminalLabelKey} key
+ * @param {{ x?: number, y?: number, width: number, height: number }} box
+ * @param {boolean} centered
+ * @param {boolean} useHtmlLabels
+ */
+function recordTerminalLabelSize(edge, key, box, centered, useHtmlLabels) {
+  // HTML boxes come from getBoundingClientRect, whose x/y are viewport-absolute.
+  const originX = useHtmlLabels ? 0 : (box.x ?? 0);
+  const originY = useHtmlLabels ? 0 : (box.y ?? 0);
+  edge.terminalLabelSizes ??= {};
+  edge.terminalLabelSizes[key] = {
+    width: box.width,
+    height: box.height,
+    centerX: centered ? 0 : originX + box.width / 2,
+    centerY: centered ? 0 : originY + box.height / 2,
+  };
+}
 
 /**
  * @param {any} fo

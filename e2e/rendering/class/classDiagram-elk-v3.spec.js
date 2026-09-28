@@ -56,3 +56,81 @@ test.describe('Class diagram V3 Dagre', () => {
     );
   });
 });
+
+test.describe('Class diagram V3 ELK', () => {
+  test('ELK-4: should keep cardinalities beside their ends and clear of class boxes (#8329)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      [
+        `
+    classDiagram
+      Customer "1" --> "*" Order : places
+      Order "1" *-- "1..*" LineItem : contains
+      LineItem "*" --> "1" Product : refers to
+      Customer "1" -- "0..1" Address : lives at
+      `,
+        `
+    classDiagram
+      direction LR
+      class Animal {
+        +String name
+        +eat()
+      }
+      Animal "1" <|-- "many" Duck
+      Animal "1" <|-- "0..n" Fish
+      Duck "1" o-- "2..*" Feather
+      `,
+      ],
+      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+    );
+  });
+
+  test('ELK-5: should keep cardinalities clear of class boxes with SVG labels (#8329)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      [
+        `
+    classDiagram
+      direction LR
+      class Animal {
+        +String name
+        +eat()
+      }
+      Animal "1" <|-- "many" Duck
+      Animal "1" <|-- "0..n" Fish
+      Duck "1" o-- "2..*" Feather
+      `,
+      ],
+      { logLevel: 1, htmlLabels: false, layout: 'elk' }
+    );
+  });
+
+  test('ELK-6: should keep cardinalities beside their ends across namespaces (#8329)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+    classDiagram
+      namespace Shop {
+        class Customer
+        class Order
+      }
+      namespace Catalog {
+        class Product
+      }
+      Customer "1" --> "*" Order : places
+      Order "*" --> "1..*" Product : contains
+      Customer "0..1" -- "1" Address : lives at
+      `,
+      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+    );
+  });
+});

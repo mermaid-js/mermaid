@@ -139,6 +139,15 @@ export interface NonClusterNode extends BaseNode {
 // Common properties for any node in the system
 export type Node = ClusterNode | NonClusterNode;
 
+export type TerminalLabelKey = 'startLeft' | 'startRight' | 'endLeft' | 'endRight';
+
+export interface TerminalLabelSize {
+  width: number;
+  height: number;
+  centerX: number;
+  centerY: number;
+}
+
 // Common properties for any edge in the system
 export interface Edge {
   id: string;
@@ -168,6 +177,10 @@ export interface Edge {
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
+  /** Measured terminal labels; `centerX/Y` is the text centre relative to the label group's origin. */
+  terminalLabelSizes?: Partial<Record<TerminalLabelKey, TerminalLabelSize>>;
+  /** Terminal label centres placed by the layout; preferred over the along-the-path default. */
+  terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;

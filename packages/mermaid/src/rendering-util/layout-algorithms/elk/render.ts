@@ -3,7 +3,7 @@ import {
   defaultMeasureLayout,
   type CommonLayoutRenderContext,
 } from '../common/index.js';
-import type { LayoutData } from '../../types.js';
+import type { LayoutData, TerminalLabelKey } from '../../types.js';
 import { setConfig } from '../../../diagram-api/diagramAPI.js';
 // @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
@@ -1132,11 +1132,48 @@ function addEdgesToElkGraph(
             'edgeLabels.placement': 'CENTER',
           },
         },
+        // Only layered places end labels; the other algorithms leave them at the origin.
+        ...((elkContext.rootLayoutOptions?.['elk.algorithm'] ??
+          elkContext.algorithm ??
+          'elk.layered') === 'elk.layered'
+          ? terminalElkLabels(edge)
+          : []),
       ],
     });
   });
 
   return graph;
+}
+
+/** Half the width of the relation markers (their paths span 12px, see `markers.js`). */
+const TERMINAL_LABEL_MARKER_CLEARANCE = 6;
+
+/**
+ * Hand the measured terminal (cardinality) labels to ELK as TAIL/HEAD labels so
+ * it reserves room for them beside the ports; left alone, they were painted
+ * along the path afterwards and landed under the neighbouring nodes (#8329).
+ */
+function terminalElkLabels(edge: Edge & { startLabelLeft?: string; endLabelRight?: string }) {
+  const texts: Record<TerminalLabelKey, string | undefined> = {
+    startLeft: edge.startLabelLeft,
+    startRight: edge.startLabelRight,
+    endLeft: edge.endLabelLeft,
+    endRight: edge.endLabelRight,
+  };
+  return Object.entries(edge.terminalLabelSizes ?? {}).map(([key, size]) => {
+    const atStart = key.startsWith('start');
+    const marker = atStart ? edge.arrowTypeStart : edge.arrowTypeEnd;
+    // Pad past the end's marker, which ELK does not know about.
+    const pad = marker && marker !== 'none' ? TERMINAL_LABEL_MARKER_CLEARANCE : 0;
+    return {
+      terminal: key as TerminalLabelKey,
+      // ELK skips a label without text.
+      text: texts[key as TerminalLabelKey],
+      width: size.width + 2 * pad,
+      height: size.height + 2 * pad,
+      layoutOptions: { 'edgeLabels.placement': atStart ? 'TAIL' : 'HEAD' },
+    };
+  });
 }
 
 function getEdgeStartEndPoint(edge: Edge, nodeDb: Record<string, NodeWithVertex>) {
@@ -1741,6 +1778,7 @@ function applyElkEdgeLayout(
   const edgeById = new Map(data4Layout.edges.map((edge) => [edge.id, edge]));
   // Opt-out rather than opt-in: the step this removes is never intentional.
   const straightenEdges = data4Layout.config.elk?.straightenEdges !== false;
+  const terminalLabelPorts = new Map<Edge, { start: P; end: P }>();
 
   // Alignment pre-pass: move degenerately-anchored small nodes onto their routed
   // lines BEFORE any edge points are built, so every edge — whichever side of the
@@ -1838,6 +1876,7 @@ function applyElkEdgeLayout(
 
     const section = edge.sections[0];
     const points = createEdgePointsFromSection(section, offset);
+    const elkPorts = { start: points[0], end: points[points.length - 1] };
     startNode.x = startNode.offset!.posX + startNode.width! / 2;
     startNode.y = startNode.offset!.posY + startNode.height! / 2;
     endNode.x = endNode.offset!.posX + endNode.width! / 2;
@@ -1870,10 +1909,54 @@ function applyElkEdgeLayout(
       layoutEdge.x = label.x + offset.x + label.width / 2;
       layoutEdge.y = label.y + offset.y + label.height / 2;
     }
+    for (const terminal of edge.labels ?? []) {
+      // A container algorithm other than layered leaves end labels unplaced at the origin;
+      // those keep the along-the-path default.
+      if (!terminal.terminal || (!terminal.x && !terminal.y)) {
+        continue;
+      }
+      layoutEdge.terminalLabelCenters ??= {};
+      layoutEdge.terminalLabelCenters[terminal.terminal as TerminalLabelKey] = {
+        x: terminal.x + offset.x + terminal.width / 2,
+        y: terminal.y + offset.y + terminal.height / 2,
+      };
+    }
+    if (layoutEdge.terminalLabelCenters) {
+      terminalLabelPorts.set(layoutEdge, elkPorts);
+    }
   });
 
   if (straightenEdges) {
     straightenEdgeTerminals(data4Layout.edges);
+  }
+  for (const [layoutEdge, ports] of terminalLabelPorts) {
+    followMovedEndpoints(layoutEdge, ports);
+  }
+}
+
+/**
+ * ELK places terminal labels beside the port it routed from, but the clipping
+ * and straightening passes can slide the endpoint along the node's side after
+ * that. Move each label with its endpoint so it stays beside the end it names.
+ */
+export function followMovedEndpoints(edge: Edge, ports: { start: P; end: P }): void {
+  const points = edge.points;
+  if (!points?.length || !edge.terminalLabelCenters) {
+    return;
+  }
+  const moved = {
+    start: { x: points[0].x - ports.start.x, y: points[0].y - ports.start.y },
+    end: {
+      x: points[points.length - 1].x - ports.end.x,
+      y: points[points.length - 1].y - ports.end.y,
+    },
+  };
+  for (const [key, center] of Object.entries(edge.terminalLabelCenters)) {
+    const delta = key.startsWith('start') ? moved.start : moved.end;
+    edge.terminalLabelCenters[key as TerminalLabelKey] = {
+      x: center.x + delta.x,
+      y: center.y + delta.y,
+    };
   }
 }
 
