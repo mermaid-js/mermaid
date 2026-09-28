@@ -99,6 +99,27 @@ describe('ChartTitle placement', () => {
     expect(titleX(drawables)).toBeCloseTo(chartConfig.width - titleWidth / 2);
   });
 
+  it('lets a title wider than the plot span the legend columns without overlapping the legend', () => {
+    const title = 'x'.repeat(32);
+    const titleWidth = title.length * chartConfig.titleFontSize;
+    const drawables = build({ ...chartConfig, showLegend: true }, makeChartData(title, 'series'));
+    const start = plotStartX(drawables, 'bottom-axis');
+    const titleText = findGroup(drawables, 'chart-title');
+    const marker = findGroup(drawables, 'legend.markers');
+    if (titleText?.type !== 'text' || marker?.type !== 'rect') {
+      throw new Error('chart title or legend was not rendered');
+    }
+    const legendX = marker.data[0].x - chartConfig.legendPadding;
+    const legendY = marker.data[0].y - chartConfig.legendPadding;
+    const { x, y } = titleText.data[0];
+
+    expect(x).toBeCloseTo((start + legendX) / 2);
+    expect(x + titleWidth / 2).toBeGreaterThan(legendX);
+    expect(x + titleWidth / 2).toBeLessThanOrEqual(chartConfig.width);
+    // The title row sits above the plot and legend, so spanning the legend's columns is safe.
+    expect(y + chartConfig.titleFontSize / 2).toBeLessThanOrEqual(legendY);
+  });
+
   it('centres a title wider than the chart on the chart', () => {
     const drawables = build(chartConfig, makeChartData('x'.repeat(40)));
 

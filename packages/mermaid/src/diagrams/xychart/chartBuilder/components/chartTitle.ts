@@ -58,7 +58,10 @@ export class ChartTitle implements ChartComponent {
       height: this.boundingRect.height,
     };
   }
-  /** Centre the title over [start, end], shifted as needed to keep it inside the chart. */
+  /**
+   * Centre the title over [start, end], shifted as needed to keep it inside the chart.
+   * The title has its own row above the plot and legend, so it may use the full chart width.
+   */
   alignTo(start: number, end: number): void {
     const halfWidth = Math.min(this.titleWidth, this.chartConfig.width) / 2;
     const center = Math.min(
