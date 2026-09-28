@@ -11,6 +11,11 @@ import { buildTarget, packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import { defaultOptions, getBuildConfig } from './util.js';
 import { DDLT_SIZE_CAPTURE_VERSION } from '../packages/mermaid/src/rendering-util/layout-algorithms/ddlt/captureContract.js';
+import {
+  reduceRegistryDocument,
+  type RegistrySummary,
+  type VersionsResponse,
+} from './dev-explorer/compare-versions.js';
 import 'dotenv/config';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -205,6 +210,44 @@ function normalizeCapturedNodeSizes(value: unknown): DevExplorerCapturedNodeSize
     });
   }
   return nodes;
+}
+
+// --- Compare tab: published mermaid versions ---------------------------------
+// The full npm registry documents are several MB, so they are fetched server-side,
+// reduced to { versions, time, distTags } and cached in memory.
+const VERSIONS_TTL_MS = 60 * 60 * 1000;
+let versionsCache: { at: number; data: VersionsResponse } | undefined;
+let versionsInFlight: Promise<VersionsResponse> | undefined;
+
+async function fetchRegistrySummary(pkg: string): Promise<RegistrySummary> {
+  const res = await fetch(`https://registry.npmjs.org/${pkg}`, {
+    headers: { accept: 'application/json' },
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!res.ok) {
+    throw new Error(`registry.npmjs.org/${pkg}: HTTP ${res.status}`);
+  }
+  return reduceRegistryDocument(await res.json());
+}
+
+async function getPublishedVersions(): Promise<VersionsResponse> {
+  if (versionsCache && Date.now() - versionsCache.at < VERSIONS_TTL_MS) {
+    return versionsCache.data;
+  }
+  versionsInFlight ??= (async () => {
+    try {
+      const [mermaid, layoutElk] = await Promise.all([
+        fetchRegistrySummary('mermaid'),
+        fetchRegistrySummary('@mermaid-js/layout-elk'),
+      ]);
+      const data = { mermaid, layoutElk };
+      versionsCache = { at: Date.now(), data };
+      return data;
+    } finally {
+      versionsInFlight = undefined;
+    }
+  })();
+  return versionsInFlight;
 }
 
 function resolveWithinDevExplorerRoot(requestedPath: unknown) {
@@ -495,6 +538,15 @@ async function createServer() {
       });
     } catch (_e) {
       res.status(400).json({ error: 'Invalid sizes payload' });
+    }
+  });
+
+  app.get('/dev/api/versions', async (_req, res) => {
+    try {
+      res.json(await getPublishedVersions());
+    } catch (e) {
+      console.warn('[dev-explorer] version list unavailable:', e);
+      res.status(502).json({ error: e instanceof Error ? e.message : String(e) });
     }
   });
 
