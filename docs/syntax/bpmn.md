@@ -499,6 +499,16 @@ bpmn-beta LR
   s1 --> t1 --> gw --> e1
 ```
 
+## What this beta covers
+
+`bpmn-beta` draws BPMN 2.0.2 process and collaboration diagrams: pools and lanes, events with all thirteen triggers, the five gateway types, tasks with their task types, collapsed sub-processes and call activities, boundary events, sequence and message flows, associations, data objects and stores, text annotations and groups. The [BPMN element reference](./bpmnElements.md) lists every BPMN 2.0 element as supported, reachable through a workaround, or not written yet.
+
+It does not read or write BPMN XML, so a diagram cannot be opened in, or imported from, a BPMN modelling tool.
+
+## From `bpmn-beta` to `bpmn`
+
+While the diagram is in beta, its syntax can change between releases. Once the syntax is declared stable, the keyword becomes `bpmn`, and `bpmn-beta` is meant to keep rendering, as `xychart-beta`, `packet-beta` and `sankey-beta` still do after those diagrams left beta.
+
 ## Current limitations
 
 - An event sub-process and a transaction have no syntax, so the two rules that depend on one are wider here than in the notation: `error`, `escalation` and `compensation` are accepted on any `start`, and `cancel` on any `boundary` or `end`. Every other position and trigger pair is checked.
