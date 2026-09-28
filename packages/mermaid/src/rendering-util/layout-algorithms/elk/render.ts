@@ -9,6 +9,7 @@ import { setConfig } from '../../../diagram-api/diagramAPI.js';
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
+import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
@@ -721,9 +722,30 @@ export function buildElkGraphFromLayoutData(
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
+    reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
+  }
   applyCyclicEntryConstraint(data4Layout, nodeDb);
 
   return { elkGraph, nodeDb, parentLookupDb };
+}
+
+/**
+ * Hand ELK the edges that re-enter a subgraph the other way round, so ELK sees no cycle through
+ * the collapsed subgraph and routes them downstream instead of around it. `applyElkEdgeLayout`
+ * restores the direction.
+ */
+function reverseSubgraphFeedbackEdges(elkGraph: { edges: any[] }, parentLookupDb: TreeData): void {
+  const flags = findSubgraphFeedbackEdges(
+    elkGraph.edges.map((edge) => ({ source: edge.sources[0], target: edge.targets[0] })),
+    parentLookupDb
+  );
+  elkGraph.edges.forEach((edge, index) => {
+    if (flags[index]) {
+      [edge.sources, edge.targets] = [edge.targets, edge.sources];
+      edge.layoutReversed = true;
+    }
+  });
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
@@ -1828,8 +1850,14 @@ function applyElkEdgeLayout(
       return;
     }
 
-    const startId = edge.sources?.[0] ?? edge.start;
-    const endId = edge.targets?.[0] ?? edge.end;
+    // A reversed edge was laid out from its target to its source. Everything below works in the
+    // edge's own direction, so its ends are swapped back here and its route reversed once built.
+    const reversed = edge.layoutReversed === true;
+    let startId = edge.sources?.[0] ?? edge.start;
+    let endId = edge.targets?.[0] ?? edge.end;
+    if (reversed) {
+      [startId, endId] = [endId, startId];
+    }
     const startNode = layoutState.nodeDb[startId];
     const endNode = layoutState.nodeDb[endId];
     if (!startNode || !endNode) {
@@ -1880,6 +1908,10 @@ function applyElkEdgeLayout(
 
     const section = edge.sections[0];
     const points = createEdgePointsFromSection(section, offset);
+    if (reversed) {
+      points.reverse();
+    }
+    // Captured after the reversal above, so `start` is the port at the edge's own source.
     const elkPorts = { start: points[0], end: points[points.length - 1] };
     startNode.x = startNode.offset!.posX + startNode.width! / 2;
     startNode.y = startNode.offset!.posY + startNode.height! / 2;
