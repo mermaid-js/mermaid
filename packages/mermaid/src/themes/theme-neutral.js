@@ -1,5 +1,5 @@
 import { invert, darken, lighten, adjust, isDark } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { applyOverride, mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
@@ -468,7 +468,7 @@ class Theme {
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
     keys.forEach((k) => {
-      this[k] = overrides[k];
+      this[k] = applyOverride(this[k], overrides[k]);
     });
   }
 }
