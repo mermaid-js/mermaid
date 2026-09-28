@@ -2081,7 +2081,7 @@ const TERMINAL_LABEL_FRAME_CLEARANCE = 2;
 /**
  * ELK can place the end label of an edge that crosses into another group
  * across that group's frame (#8335). Slide such a label along its end segment,
- * by the shortest distance, until it clears every frame — never past its end.
+ * by the shortest distance, until it clears every frame — never off that segment.
  */
 export function slideTerminalLabelsOffFrames(edges: Edge[], nodes: LayoutData['nodes']): void {
   const { hitsFrame, blocked } = terminalLabelObstacles(edges, nodes);
@@ -2103,13 +2103,15 @@ export function slideTerminalLabelsOffFrames(edges: Edge[], nodes: LayoutData['n
     const [far, end] = atStart ? [to, from] : [from, to];
     const dir = { x: (end.x - far.x) / length, y: (end.y - far.y) / length };
     const halfExtent = (Math.abs(dir.x) * size.width + Math.abs(dir.y) * size.height) / 2;
-    const reach = (c: P) => (c.x - end.x) * dir.x + (c.y - end.y) * dir.y + halfExtent;
+    // Where the label's centre sits along the segment: 0 at its end, -length at the far point.
+    const along = (c: P) => (c.x - end.x) * dir.x + (c.y - end.y) * dir.y;
+    const onSegment = (c: P) => along(c) + halfExtent <= 0 && along(c) - halfExtent >= -length;
     for (let step = 1; step <= length; step++) {
       const found = [step, -step]
         .map((shift) => ({ x: center.x + shift * dir.x, y: center.y + shift * dir.y }))
         .find(
           (moved) =>
-            reach(moved) <= 0 &&
+            onSegment(moved) &&
             !blocked(labelBox(moved, size), edge, key, segment, TERMINAL_LABEL_FRAME_CLEARANCE)
         );
       if (found) {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { followMovedEndpoints, runElkLayoutCore } from '../render.js';
+import { followMovedEndpoints, runElkLayoutCore, slideTerminalLabelsOffFrames } from '../render.js';
 import { terminalLabelTranslate } from '../../common/index.js';
 import type { TerminalLabelKey, TerminalLabelSize } from '../../../types.js';
 
@@ -206,16 +206,42 @@ describe('ELK terminal (cardinality) labels', () => {
           x2: x! + size.width / 2,
           y2: y! + size.height / 2,
         };
+        // The renderer keeps a slid label 2px off every frame border.
+        const padded = { x1: box.x1 - 2, y1: box.y1 - 2, x2: box.x2 + 2, y2: box.y2 + 2 };
         for (const frame of frames) {
           const inside =
-            box.x1 >= frame.x1 && box.x2 <= frame.x2 && box.y1 >= frame.y1 && box.y2 <= frame.y2;
-          if (overlaps(box, frame) && !inside) {
-            problems.push(`${edge.id} ${key} straddles the ${frame.id} frame`);
+            padded.x1 >= frame.x1 &&
+            padded.x2 <= frame.x2 &&
+            padded.y1 >= frame.y1 &&
+            padded.y2 <= frame.y2;
+          if (overlaps(padded, frame) && !inside) {
+            problems.push(`${edge.id} ${key} is within 2px of the ${frame.id} frame`);
           }
         }
       }
     }
     expect(problems).toEqual([]);
+  });
+
+  // Clearing the frame outwards would need the label past the bend, off its end segment.
+  it('does not slide a label past the far end of its end segment', () => {
+    const edge = {
+      id: 'e',
+      label: '',
+      points: [
+        { x: 80, y: -40 },
+        { x: 80, y: 0 },
+        { x: 100, y: 0 },
+      ],
+      terminalLabelSizes: { endLeft: { width: 16, height: 16 } },
+      terminalLabelCenters: { endLeft: { x: 92, y: 12 } },
+    } as any;
+    const nodes = [
+      { id: 'G', isGroup: true, x: 145, y: 0, width: 110, height: 200 },
+      { id: 'N', isGroup: false, x: 130, y: 0, width: 60, height: 40 },
+    ] as any;
+    slideTerminalLabelsOffFrames([edge], nodes);
+    expect(edge.terminalLabelCenters.endLeft).toEqual({ x: 92, y: 12 });
   });
 
   it('moves a placed label with an endpoint that a later pass slid along the side', () => {
