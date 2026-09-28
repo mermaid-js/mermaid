@@ -3,12 +3,13 @@ import {
   defaultMeasureLayout,
   type CommonLayoutRenderContext,
 } from '../common/index.js';
-import type { LayoutData } from '../../types.js';
+import type { LayoutData, TerminalLabelKey } from '../../types.js';
 import { setConfig } from '../../../diagram-api/diagramAPI.js';
 // @ts-ignore TODO: Investigate D3 issue
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
+import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
@@ -721,9 +722,30 @@ export function buildElkGraphFromLayoutData(
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
+    reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
+  }
   applyCyclicEntryConstraint(data4Layout, nodeDb);
 
   return { elkGraph, nodeDb, parentLookupDb };
+}
+
+/**
+ * Hand ELK the edges that re-enter a subgraph the other way round, so ELK sees no cycle through
+ * the collapsed subgraph and routes them downstream instead of around it. `applyElkEdgeLayout`
+ * restores the direction.
+ */
+function reverseSubgraphFeedbackEdges(elkGraph: { edges: any[] }, parentLookupDb: TreeData): void {
+  const flags = findSubgraphFeedbackEdges(
+    elkGraph.edges.map((edge) => ({ source: edge.sources[0], target: edge.targets[0] })),
+    parentLookupDb
+  );
+  elkGraph.edges.forEach((edge, index) => {
+    if (flags[index]) {
+      [edge.sources, edge.targets] = [edge.targets, edge.sources];
+      edge.layoutReversed = true;
+    }
+  });
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
@@ -1132,11 +1154,48 @@ function addEdgesToElkGraph(
             'edgeLabels.placement': 'CENTER',
           },
         },
+        // Only layered places end labels; the other algorithms leave them at the origin.
+        ...((elkContext.rootLayoutOptions?.['elk.algorithm'] ??
+          elkContext.algorithm ??
+          'elk.layered') === 'elk.layered'
+          ? terminalElkLabels(edge)
+          : []),
       ],
     });
   });
 
   return graph;
+}
+
+/** Half the width of the relation markers (their paths span 12px, see `markers.js`). */
+const TERMINAL_LABEL_MARKER_CLEARANCE = 6;
+
+/**
+ * Hand the measured terminal (cardinality) labels to ELK as TAIL/HEAD labels so
+ * it reserves room for them beside the ports; left alone, they were painted
+ * along the path afterwards and landed under the neighbouring nodes (#8329).
+ */
+function terminalElkLabels(edge: Edge & { startLabelLeft?: string; endLabelRight?: string }) {
+  const texts: Record<TerminalLabelKey, string | undefined> = {
+    startLeft: edge.startLabelLeft,
+    startRight: edge.startLabelRight,
+    endLeft: edge.endLabelLeft,
+    endRight: edge.endLabelRight,
+  };
+  return Object.entries(edge.terminalLabelSizes ?? {}).map(([key, size]) => {
+    const atStart = key.startsWith('start');
+    const marker = atStart ? edge.arrowTypeStart : edge.arrowTypeEnd;
+    // Pad past the end's marker, which ELK does not know about.
+    const pad = marker && marker !== 'none' ? TERMINAL_LABEL_MARKER_CLEARANCE : 0;
+    return {
+      terminal: key as TerminalLabelKey,
+      // ELK skips a label without text.
+      text: texts[key as TerminalLabelKey],
+      width: size.width + 2 * pad,
+      height: size.height + 2 * pad,
+      layoutOptions: { 'edgeLabels.placement': atStart ? 'TAIL' : 'HEAD' },
+    };
+  });
 }
 
 function getEdgeStartEndPoint(edge: Edge, nodeDb: Record<string, NodeWithVertex>) {
@@ -1741,6 +1800,11 @@ function applyElkEdgeLayout(
   const edgeById = new Map(data4Layout.edges.map((edge) => [edge.id, edge]));
   // Opt-out rather than opt-in: the step this removes is never intentional.
   const straightenEdges = data4Layout.config.elk?.straightenEdges !== false;
+  const terminalLabelPorts = new Map<Edge, { start: P; end: P }>();
+  // Centres from an earlier run on the same data would outlive a layout that places none.
+  for (const edge of data4Layout.edges) {
+    delete edge.terminalLabelCenters;
+  }
 
   // Alignment pre-pass: move degenerately-anchored small nodes onto their routed
   // lines BEFORE any edge points are built, so every edge — whichever side of the
@@ -1786,8 +1850,14 @@ function applyElkEdgeLayout(
       return;
     }
 
-    const startId = edge.sources?.[0] ?? edge.start;
-    const endId = edge.targets?.[0] ?? edge.end;
+    // A reversed edge was laid out from its target to its source. Everything below works in the
+    // edge's own direction, so its ends are swapped back here and its route reversed once built.
+    const reversed = edge.layoutReversed === true;
+    let startId = edge.sources?.[0] ?? edge.start;
+    let endId = edge.targets?.[0] ?? edge.end;
+    if (reversed) {
+      [startId, endId] = [endId, startId];
+    }
     const startNode = layoutState.nodeDb[startId];
     const endNode = layoutState.nodeDb[endId];
     if (!startNode || !endNode) {
@@ -1838,6 +1908,11 @@ function applyElkEdgeLayout(
 
     const section = edge.sections[0];
     const points = createEdgePointsFromSection(section, offset);
+    if (reversed) {
+      points.reverse();
+    }
+    // Captured after the reversal above, so `start` is the port at the edge's own source.
+    const elkPorts = { start: points[0], end: points[points.length - 1] };
     startNode.x = startNode.offset!.posX + startNode.width! / 2;
     startNode.y = startNode.offset!.posY + startNode.height! / 2;
     endNode.x = endNode.offset!.posX + endNode.width! / 2;
@@ -1870,10 +1945,264 @@ function applyElkEdgeLayout(
       layoutEdge.x = label.x + offset.x + label.width / 2;
       layoutEdge.y = label.y + offset.y + label.height / 2;
     }
+    for (const terminal of edge.labels ?? []) {
+      // A container algorithm other than layered leaves end labels unplaced at the origin;
+      // those keep the along-the-path default.
+      if (!terminal.terminal || (!terminal.x && !terminal.y)) {
+        continue;
+      }
+      layoutEdge.terminalLabelCenters ??= {};
+      layoutEdge.terminalLabelCenters[terminal.terminal as TerminalLabelKey] = {
+        x: terminal.x + offset.x + terminal.width / 2,
+        y: terminal.y + offset.y + terminal.height / 2,
+      };
+    }
+    if (layoutEdge.terminalLabelCenters) {
+      terminalLabelPorts.set(layoutEdge, elkPorts);
+    }
   });
 
   if (straightenEdges) {
     straightenEdgeTerminals(data4Layout.edges);
+  }
+  for (const [layoutEdge, ports] of terminalLabelPorts) {
+    followMovedEndpoints(layoutEdge, ports);
+  }
+  // Off the frames first: the mirrored spot of a label across a frame is across it too.
+  slideTerminalLabelsOffFrames(data4Layout.edges, data4Layout.nodes);
+  putTerminalLabelsOnTheirSide(data4Layout.edges, data4Layout.nodes);
+}
+
+interface Box {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+/** Whether segment a-b passes through the box (Liang-Barsky clip). */
+function segmentHitsBox(a: P, b: P, box: Box): boolean {
+  let t0 = 0;
+  let t1 = 1;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  for (const [p, q] of [
+    [-dx, a.x - box.x1],
+    [dx, box.x2 - a.x],
+    [-dy, a.y - box.y1],
+    [dy, box.y2 - a.y],
+  ]) {
+    if (p === 0) {
+      if (q < 0) {
+        return false;
+      }
+    } else if (p < 0) {
+      t0 = Math.max(t0, q / p);
+    } else {
+      t1 = Math.min(t1, q / p);
+    }
+  }
+  return t0 < t1;
+}
+
+const boxesOverlap = (a: Box, b: Box) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+
+const labelBox = (center: P, size: { width: number; height: number }): Box => ({
+  x1: center.x - size.width / 2,
+  y1: center.y - size.height / 2,
+  x2: center.x + size.width / 2,
+  y2: center.y + size.height / 2,
+});
+
+/**
+ * What a terminal label must not touch: class boxes, centre labels, group
+ * frames, other edges and other terminal labels. `frameClearance` keeps the
+ * label that far off a frame's border.
+ */
+function terminalLabelObstacles(edges: Edge[], nodes: LayoutData['nodes']) {
+  const placed = nodes.filter((node) => node.x !== undefined && node.y !== undefined);
+  const boxOf = (node: LayoutData['nodes'][number]) =>
+    labelBox({ x: node.x!, y: node.y! }, { width: node.width ?? 0, height: node.height ?? 0 });
+  const nodeBoxes = placed.filter((node) => !node.isGroup).map(boxOf);
+  // A group is hollow, so only its frame is in the way.
+  const frameSegments = placed
+    .filter((node) => node.isGroup)
+    .map(boxOf)
+    .flatMap(({ x1, y1, x2, y2 }): [P, P][] => [
+      [
+        { x: x1, y: y1 },
+        { x: x2, y: y1 },
+      ],
+      [
+        { x: x2, y: y1 },
+        { x: x2, y: y2 },
+      ],
+      [
+        { x: x2, y: y2 },
+        { x: x1, y: y2 },
+      ],
+      [
+        { x: x1, y: y2 },
+        { x: x1, y: y1 },
+      ],
+    ]);
+  const centreLabelBoxes = edges
+    .filter((edge) => edge.label && edge.width && edge.height && edge.x !== undefined)
+    .map((edge) =>
+      labelBox({ x: edge.x!, y: edge.y! }, { width: edge.width!, height: edge.height! })
+    );
+
+  const hitsFrame = (box: Box, frameClearance = 0) => {
+    const padded = {
+      x1: box.x1 - frameClearance,
+      y1: box.y1 - frameClearance,
+      x2: box.x2 + frameClearance,
+      y2: box.y2 + frameClearance,
+    };
+    return frameSegments.some(([a, b]) => segmentHitsBox(a, b, padded));
+  };
+  const blocked = (box: Box, edge: Edge, key: string, segment: number, frameClearance = 0) =>
+    nodeBoxes.some((node) => boxesOverlap(box, node)) ||
+    centreLabelBoxes.some((label) => boxesOverlap(box, label)) ||
+    hitsFrame(box, frameClearance) ||
+    edges.some((other) =>
+      (other.points ?? []).some(
+        (point, i, all) =>
+          i < all.length - 1 &&
+          !(other === edge && i === segment) &&
+          segmentHitsBox(point, all[i + 1], box)
+      )
+    ) ||
+    edges.some((other) =>
+      Object.entries(other.terminalLabelCenters ?? {}).some(([otherKey, otherCenter]) => {
+        const otherSize = other.terminalLabelSizes?.[otherKey as TerminalLabelKey];
+        return (
+          !(other === edge && otherKey === key) &&
+          otherSize !== undefined &&
+          boxesOverlap(box, labelBox(otherCenter, otherSize))
+        );
+      })
+    );
+  return { hitsFrame, blocked };
+}
+
+/** Each placed terminal label with its size and the end segment it sits beside. */
+function* placedTerminalLabels(edges: Edge[]) {
+  for (const edge of edges) {
+    const points = edge.points;
+    if (!points || points.length < 2 || !edge.terminalLabelCenters || !edge.terminalLabelSizes) {
+      continue;
+    }
+    for (const [key, center] of Object.entries(edge.terminalLabelCenters)) {
+      const size = edge.terminalLabelSizes[key as TerminalLabelKey];
+      const atStart = key.startsWith('start');
+      const segment = atStart ? 0 : points.length - 2;
+      const [from, to] = [points[segment], points[segment + 1]];
+      const length = Math.hypot(to.x - from.x, to.y - from.y);
+      if (!size || length === 0) {
+        continue;
+      }
+      yield { edge, key, center, size, atStart, segment, from, to, length };
+    }
+  }
+}
+
+/** How far a slid terminal label stays off a group frame's border. */
+const TERMINAL_LABEL_FRAME_CLEARANCE = 2;
+
+/**
+ * ELK can place the end label of an edge that crosses into another group
+ * across that group's frame (#8335). Slide such a label along its end segment,
+ * by the shortest distance, until it clears every frame — never off that segment.
+ */
+export function slideTerminalLabelsOffFrames(edges: Edge[], nodes: LayoutData['nodes']): void {
+  const { hitsFrame, blocked } = terminalLabelObstacles(edges, nodes);
+  for (const {
+    edge,
+    key,
+    center,
+    size,
+    atStart,
+    segment,
+    from,
+    to,
+    length,
+  } of placedTerminalLabels(edges)) {
+    if (!hitsFrame(labelBox(center, size))) {
+      continue;
+    }
+    // Unit direction from the far point of the end segment towards its end.
+    const [far, end] = atStart ? [to, from] : [from, to];
+    const dir = { x: (end.x - far.x) / length, y: (end.y - far.y) / length };
+    const halfExtent = (Math.abs(dir.x) * size.width + Math.abs(dir.y) * size.height) / 2;
+    // Where the label's centre sits along the segment: 0 at its end, -length at the far point.
+    const along = (c: P) => (c.x - end.x) * dir.x + (c.y - end.y) * dir.y;
+    const onSegment = (c: P) => along(c) + halfExtent <= 0 && along(c) - halfExtent >= -length;
+    for (let step = 1; step <= length; step++) {
+      const found = [step, -step]
+        .map((shift) => ({ x: center.x + shift * dir.x, y: center.y + shift * dir.y }))
+        .find(
+          (moved) =>
+            onSegment(moved) &&
+            !blocked(labelBox(moved, size), edge, key, segment, TERMINAL_LABEL_FRAME_CLEARANCE)
+        );
+      if (found) {
+        edge.terminalLabelCenters![key as TerminalLabelKey] = found;
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * ELK puts every end label on one fixed side of its edge, but a `…Right` label
+ * belongs on the right of the direction of travel and a `…Left` one on the left,
+ * which is where dagre puts them. Mirror a label that is on the wrong side
+ * across its end segment, which keeps its distance from the line and the
+ * marker — but only onto free space: ELK reserved room on its own side, and the
+ * mirrored spot can belong to an edge leaving a neighbouring port.
+ */
+export function putTerminalLabelsOnTheirSide(edges: Edge[], nodes: LayoutData['nodes']): void {
+  const { blocked } = terminalLabelObstacles(edges, nodes);
+  for (const { edge, key, center, size, segment, from, to, length } of placedTerminalLabels(
+    edges
+  )) {
+    // Unit normal pointing to the right of travel (y points down).
+    const normal = { x: -(to.y - from.y) / length, y: (to.x - from.x) / length };
+    const offset = (center.x - from.x) * normal.x + (center.y - from.y) * normal.y;
+    if (offset === 0 || offset > 0 === key.endsWith('Right')) {
+      continue;
+    }
+    const mirrored = { x: center.x - 2 * offset * normal.x, y: center.y - 2 * offset * normal.y };
+    if (!blocked(labelBox(mirrored, size), edge, key, segment)) {
+      edge.terminalLabelCenters![key as TerminalLabelKey] = mirrored;
+    }
+  }
+}
+
+/**
+ * ELK places terminal labels beside the port it routed from, but the clipping
+ * and straightening passes can slide the endpoint along the node's side after
+ * that. Move each label with its endpoint so it stays beside the end it names.
+ */
+export function followMovedEndpoints(edge: Edge, ports: { start: P; end: P }): void {
+  const points = edge.points;
+  if (!points?.length || !edge.terminalLabelCenters) {
+    return;
+  }
+  const moved = {
+    start: { x: points[0].x - ports.start.x, y: points[0].y - ports.start.y },
+    end: {
+      x: points[points.length - 1].x - ports.end.x,
+      y: points[points.length - 1].y - ports.end.y,
+    },
+  };
+  for (const [key, center] of Object.entries(edge.terminalLabelCenters)) {
+    const delta = key.startsWith('start') ? moved.start : moved.end;
+    edge.terminalLabelCenters[key as TerminalLabelKey] = {
+      x: center.x + delta.x,
+      y: center.y + delta.y,
+    };
   }
 }
 

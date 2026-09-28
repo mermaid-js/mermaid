@@ -477,6 +477,16 @@ test.describe('Usecase diagram', () => {
     await imgSnapshotTest(page, testInfo, 'usecase-beta');
   });
 
+  test('renders the error diagram for input that ends mid-statement', async ({
+    page,
+  }, testInfo) => {
+    await renderGraph(page, testInfo, 'usecase-beta\n  A -->', {
+      screenshot: false,
+      rejectErrorDiagram: false,
+    });
+    await expect(diagramSvg(page).first()).toHaveAttribute('aria-roledescription', 'error');
+  });
+
   // THEMED_DIAGRAM deliberately carries no classDef/style, so every colour on screen comes
   // from a theme variable. clusterBkg (system boundary), noteBkgColor/noteBorderColor (note),
   // and the actor/use-case fills are the ones most likely to regress on a dark background.
