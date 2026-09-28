@@ -345,6 +345,32 @@ test.describe('XY Chart', () => {
     await assertAxisLabelRotation(page, '0');
   });
 
+  test('should centre the title over the plot area', async ({ page }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+      xychart
+        title "Revenue multiple by year"
+        x-axis [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+        y-axis "EV / NTM (x)" 0 --> 40
+        bar [6, 5, 7, 12, 18, 35, 20, 10]
+        line [5, 4, 6, 9, 15, 28, 18, 8]
+      `,
+      {}
+    );
+
+    const { titleCenter, plotCenter } = await page.locator('svg').evaluate((svg) => {
+      const title = svg.querySelector('g.chart-title text').getBoundingClientRect();
+      const axis = svg.querySelector('g.bottom-axis g.axis-line path').getBoundingClientRect();
+      return {
+        titleCenter: title.x + title.width / 2,
+        plotCenter: axis.x + axis.width / 2,
+      };
+    });
+    expect(Math.abs(titleCenter - plotCenter)).toBeLessThan(1);
+  });
+
   test('x-axis range with same values is supported', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,
