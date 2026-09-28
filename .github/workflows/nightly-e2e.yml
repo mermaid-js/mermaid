@@ -1,0 +1,80 @@
+name: Nightly E2E
+
+# Fork-only (see the repository check below). Runs the pr + nightly tiers
+# once a day, and on demand via workflow_dispatch — the "simulated nightly"
+# button for testing this workflow without waiting for the schedule.
+#
+# No PR is associated with these runs, so there's nothing to gate or block —
+# this workflow only reports its own pass/fail. Check the last result by
+# filtering the Actions tab to the "Nightly E2E" workflow. No Slack/email
+# notification on failure (deliberately out of scope for now).
+on:
+  schedule:
+    # 02:00 UTC daily — low-traffic time, adjust as needed.
+    - cron: '0 2 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  e2e:
+    if: github.repository == 'pbrolin47/mermaid-pbrolin47'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+
+      - name: Build
+        run: pnpm build
+
+      - name: Compute pr+nightly spec pattern
+        id: scope
+        run: |
+          SPEC=$(node scripts/e2e-tier-scope.mjs pr nightly)
+          delim="ghadelim_$(openssl rand -hex 16)"
+          {
+            printf 'spec_pattern<<%s\n' "$delim"
+            printf '%s\n' "$SPEC"
+            printf '%s\n' "$delim"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Playwright run
+        env:
+          MERMAID_PORT: 9000
+          MERMAID_E2E_FIXTURE_TIER: pr,nightly
+          SPEC_PATTERN: ${{ steps.scope.outputs.spec_pattern }}
+          SHARD: ${{ matrix.containers }}
+          SHARD_TOTAL: ${{ strategy.job-total }}
+        run: |
+          IFS=',' read -ra SPECS <<< "$SPEC_PATTERN"
+          pnpm exec playwright test "${SPECS[@]}" --shard="${SHARD}/${SHARD_TOTAL}"
+
+      - name: Upload Playwright failure artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nightly-e2e-results-${{ matrix.containers }}
+          path: test-results/
+          retention-days: 3
+          if-no-files-found: ignore

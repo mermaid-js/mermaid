@@ -1,0 +1,13 @@
+---
+description:
+  Regression test (issue 7827) for a flat cyclic flow (brief -> ... -> decision
+  -> brief) verifying that with keepEntryNodeOnTop enabled, dagre keeps the
+  entry node at the top of the layout despite the back edge feeding into it from
+  the decision node.
+config:
+  layout: dagre
+---
+flowchart TD
+  brief --> web_sources --> academic_sources --> expert_voices --> synthesize --> decision
+  decision -->|Needs completion| brief
+  decision -->|If complete| format_output

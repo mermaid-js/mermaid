@@ -1,0 +1,31 @@
+---
+description: >-
+  `look: handDrawn` variant of `release/intake-review-complete.mmd` - the
+  same three-lane (Intake, Review, Complete) approval loop, rendered with
+  the rough.js sketch style.
+config:
+  logLevel: 0
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph Intake
+  start([Start])
+  task[Do work]
+  fix[Fix issues]
+  end
+
+  subgraph Review
+  decision{Ready?}
+  end
+
+  subgraph Complete
+  done((Done))
+  end
+
+  start --> task --> decision
+  decision -->|Yes| done
+  decision -->|No| fix
+  fix --> task

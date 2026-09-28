@@ -1,0 +1,12 @@
+---
+description: >-
+  Two overlapping line series where the first has no point labels at all and
+  the second has labels only on its first and last points ("Start", "Peak"),
+  verifying labeled and unlabeled series can coexist in the same chart.
+---
+xychart
+  title "Comparison"
+  x-axis [Q1, Q2, Q3, Q4]
+  y-axis "Value" 0 --> 100
+  line [20, 40, 60, 80]
+  line [30 "Start", 50, 70, 95 "Peak"]

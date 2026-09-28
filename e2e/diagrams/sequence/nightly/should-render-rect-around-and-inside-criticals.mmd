@@ -1,0 +1,20 @@
+---
+description: >-
+  No-frontmatter sequence diagram nesting `rect` background blocks both
+  around and inside a `critical`/`option` block: an outer rect wraps the
+  whole critical fragment, and a second rect is nested inside the
+  `option` branch, checking that rect coloring composes correctly with
+  critical fragment nesting.
+---
+sequenceDiagram
+  A ->> B: 1
+  rect rgb(204, 0, 102)
+  critical yes
+    C ->> C: 1
+  option no
+    rect rgb(0, 204, 204)
+      C ->> C: 0
+    end
+  end
+  end
+  B ->> A: Return
