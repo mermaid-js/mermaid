@@ -341,6 +341,7 @@ export interface MermaidConfig {
   kanban?: KanbanDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
+  c4beta?: C4BetaDiagramConfig;
   sankey?: SankeyDiagramConfig;
   packet?: PacketDiagramConfig;
   block?: BlockDiagramConfig;
@@ -2089,6 +2090,47 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
   external_component_queueFont?: FontCalculator;
   boundaryFont?: FontCalculator;
   messageFont?: FontCalculator;
+}
+/**
+ * The object containing configurations specific for c4-beta diagrams
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "C4BetaDiagramConfig".
+ */
+export interface C4BetaDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The amount of padding around the diagram as a whole so that embedded
+   * diagrams have margins, expressed in pixels.
+   *
+   */
+  diagramPadding?: number;
+  /**
+   * Whether elements show their stereotype, the `«Person»` or
+   * `«Software System»` line above the name. This is the c4-beta
+   * counterpart of `c4.showStereotypes`; use `hideStereotypes` to hide
+   * it on some element kinds only.
+   *
+   */
+  showStereotypes?: boolean;
+  /**
+   * Element kinds whose stereotype line is hidden while
+   * `showStereotypes` is on, for example `[person]`.
+   *
+   */
+  hideStereotypes?: (
+    | 'person'
+    | 'softwareSystem'
+    | 'container'
+    | 'component'
+    | 'infrastructureNode'
+  )[];
+  /**
+   * The width in pixels at which a person's label wraps. It is narrower
+   * than `flowchart.wrappingWidth` because a person's body grows taller
+   * with its width, so a wide label would give an oversized figure.
+   *
+   */
+  personWrappingWidth?: number;
 }
 /**
  * The object containing configurations specific for sankey diagrams.
