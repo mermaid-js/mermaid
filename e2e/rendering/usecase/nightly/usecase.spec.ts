@@ -61,6 +61,33 @@ securely\`") &lt;&lt;Main&gt;&gt;:::critical
   assocRel@{ animate: true, animation: fast }
 `;
 
+// No classDef or style here on purpose — the theme variables must supply every colour.
+const THEMED_DIAGRAM = `usecase-beta
+  accTitle: Themed use case example
+  accDescr: Exercises every themed element without any inline style overrides.
+  actor Normal("Normal User")
+  actor Hollow@{ type: hollow }
+  actor Business@{ business: true }
+
+  systemBoundary "Authentication System"
+    Login("Sign in")
+    Reset[Reset password]
+  end
+
+  Checkout("Checkout")@{ business: true }
+  Normal --> Login
+  Hollow --o Reset
+  Business --> Checkout
+  Login ..> : include Checkout
+  note for Login "Requires an active session"
+
+  json Payload@{
+    "region": "eu",
+    "tags": ["Red", "Green"]
+  }
+  Checkout --> Payload
+`;
+
 // Render without a screenshot — used by the behaviour tests below that assert on
 // the DOM/CSS rather than the rendered pixels.
 const renderForDom = async (
