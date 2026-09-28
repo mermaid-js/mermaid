@@ -6,6 +6,10 @@ import { expect, test } from '@playwright/test';
 const FIXTURE = 'layout-tests/simple-graph.mmd';
 
 test.describe('Dev Explorer compare tab', () => {
+  // The Dev Explorer is only served by the esbuild dev server (`pnpm dev`).
+  // Coverage runs use the Vite server (`pnpm dev:vite`), which has no `/dev/` route.
+  test.skip(!!process.env.E2E_COVERAGE, 'Dev Explorer is only served by `pnpm dev`');
+
   test('renders dev vs dev side by side with an empty pixel diff', async ({ page, context }) => {
     await context.route(
       (url) => !['localhost', '127.0.0.1'].includes(url.hostname),
