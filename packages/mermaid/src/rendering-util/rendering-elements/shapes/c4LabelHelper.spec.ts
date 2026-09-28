@@ -59,4 +59,18 @@ describe('c4LabelHelper', () => {
     // One line per section, none of them broken.
     expect(outerTspans(svg)).toBe(3);
   });
+
+  it('does not wrap when the root wrap is false', async () => {
+    setConfig({ wrap: false });
+    const svg = await renderLabel(c4Node());
+
+    expect(outerTspans(svg)).toBe(3);
+  });
+
+  it('lets the root wrap override c4.wrap', async () => {
+    setConfig({ wrap: true, c4: { wrap: false } });
+    const svg = await renderLabel(c4Node());
+
+    expect(outerTspans(svg)).toBeGreaterThan(3);
+  });
 });
