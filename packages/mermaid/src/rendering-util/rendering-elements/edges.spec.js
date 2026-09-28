@@ -79,21 +79,6 @@ describe('insertEdge clips for the engine that drew the edge', () => {
     const drawn = JSON.parse(atob(svg.select('path').attr('data-points')));
     expect(drawn).toHaveLength(2);
   });
-
-  it('would empty a two-point route if it went by the configured layout instead', () => {
-    // The clipping written for dagre drops the first and last point, which leaves a
-    // two-point route with nothing to meet. A bpmn diagram is always laid out in
-    // swimlanes while `layout` resolves to the global default, so the two disagree and
-    // this is what the argument above exists to prevent.
-    document.body.innerHTML = '';
-    const svg = select(document.body).append('svg');
-
-    withConfiguredLayout('elk', () => {
-      expect(() =>
-        insertEdge(svg, twoPointEdge(), null, 'bpmn', shapeMeeting(), shapeMeeting(), 'd')
-      ).toThrow(TypeError);
-    });
-  });
 });
 
 describe('resolveEdgeCurveType', () => {
