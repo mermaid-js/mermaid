@@ -1,7 +1,7 @@
 ---
 description: >-
   A class with a custom quoted text label (`C1["Class 1 with text label"]`)
-  combined with an `<<interface>>` annotation and a member, plus an
+  combined with an `interface` annotation and a member, plus an
   association to an undeclared class, under the dagre layout.
 config:
   logLevel: 1
@@ -10,7 +10,7 @@ config:
 ---
 classDiagram
   class C1["Class 1 with text label"] {
-  <<interface>>
+  &lt;&lt;interface&gt;&gt;
   +member1
   }
   C1 -->  C2

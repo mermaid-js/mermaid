@@ -1,7 +1,7 @@
 ---
 description: >-
   Generic class (Class01~T~) with attributes/methods, a bidirectional
-  labeled association, and an annotated `<<service>>` generic class block,
+  labeled association, and an annotated `service` generic class block,
   under the dagre layout, rendered with `htmlLabels: false` to verify
   generics render correctly without HTML labels.
 config:
@@ -16,7 +16,7 @@ classDiagram
   Class01 : int gorilla
   Class08 <--> C2: Cool label
   class Class10~T~ {
-    <<service>>
+    &lt;&lt;service&gt;&gt;
     int id
     test()
   }

@@ -16,7 +16,7 @@ classDiagram
 Do you love it?"
   Class01 <|-- AveryLongClass : Cool
   class Class01 {
-    <<interface>>
+    &lt;&lt;interface&gt;&gt;
   }
   Class03 "1" *-- "*" Class04
   Class05 "1" o-- "many" Class06
@@ -36,7 +36,7 @@ Do you love it?"
   Class01 : #int protectedMarmoset
   Class08 <--> C2: Cool label
   class Class10 {
-    <<service>>
+    &lt;&lt;service&gt;&gt;
     int id
     test()
   }

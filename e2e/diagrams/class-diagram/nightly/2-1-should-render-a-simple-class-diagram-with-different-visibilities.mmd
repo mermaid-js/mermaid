@@ -2,7 +2,7 @@
 description: >-
   A single interface class exposing private, public, and protected
   methods and fields (`-`, `+`, `#` prefixes) to check visibility-marker
-  rendering, with an `<<interface>>` stereotype. Uses classDiagram-v2
+  rendering, with an `interface` stereotype. Uses classDiagram-v2
   syntax with `flowchart.htmlLabels: false`.
 config:
   logLevel: 1
@@ -11,7 +11,7 @@ config:
 ---
 classDiagram-v2
   Class01 <|-- AveryLongClass : Cool
-  <<interface>> Class01
+  &lt;&lt;interface&gt;&gt; Class01
   Class01 : -privateMethod()
   Class01 : +publicMethod()
   Class01 : #protectedMethod()

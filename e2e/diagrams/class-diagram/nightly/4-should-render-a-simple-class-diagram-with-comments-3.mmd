@@ -2,14 +2,14 @@
 description: >-
   A `%% this is a comment` line mixed into an otherwise broad classDiagram
   relationship smoke test (inheritance, composition, aggregation,
-  dependency, link, an `<<interface>>` stereotype, and a class body
+  dependency, link, an `interface` stereotype, and a class body
   block), to verify comments are stripped correctly. Has no frontmatter
   config.
 ---
 classDiagram
   %% this is a comment
   Class01 <|-- AveryLongClass : Cool
-  <<interface>> Class01
+  &lt;&lt;interface&gt;&gt; Class01
   Class03 *-- Class04
   Class05 o-- Class06
   Class07 .. Class08
@@ -23,7 +23,7 @@ classDiagram
   Class01 : int gorilla
   Class08 <--> C2: Cool label
   class Class10 {
-  <<service>>
+  &lt;&lt;service&gt;&gt;
   int id
   test()
   }
