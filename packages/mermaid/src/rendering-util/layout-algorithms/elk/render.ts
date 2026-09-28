@@ -82,6 +82,8 @@ interface ElkSubgraphConfig {
   nodePlacementAlignment?: string;
   nodePlacementStrategy?: string;
   cycleBreakingStrategy?: string;
+  wrappingStrategy?: string;
+  aspectRatio?: number;
 }
 
 interface ElkPreparedLayout {
@@ -447,6 +449,10 @@ export function buildSubgraphLayoutOptions(
     // rather than on its own start node. Same key and same resolution as the
     // root, so `legacy` reproduces the old rendering inside frames too.
     'elk.layered.cycleBreaking.strategy': elkConfig?.cycleBreakingStrategy ?? preset.cycleBreaking,
+    // Also set here, because the root's wrapping does not fold a chain nested
+    // in a container. A container algorithm below replaces the aspect ratio.
+    'elk.layered.wrapping.strategy': elkConfig?.wrappingStrategy,
+    'elk.aspectRatio': elkConfig?.aspectRatio,
     // PORT_POSITION lets a node shift so an edge can leave straight rather than
     // bending immediately off the port.
     'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
@@ -934,6 +940,8 @@ function createRootElkGraph(
       'elk.layered.layering.strategy': data4Layout.config.elk?.layeringStrategy ?? preset.layering,
       // Only COFFMAN_GRAHAM reads this; the others ignore it.
       'elk.layered.layering.coffmanGraham.layerBound': data4Layout.config.elk?.layeringLayerBound,
+      'elk.layered.wrapping.strategy': data4Layout.config.elk?.wrappingStrategy,
+      'elk.aspectRatio': data4Layout.config.elk?.aspectRatio,
 
       // 'spacing.nodeNode': 120,
       // 'spacing.nodeNodeBetweenLayers': 25,
