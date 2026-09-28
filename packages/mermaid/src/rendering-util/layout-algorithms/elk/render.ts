@@ -1779,6 +1779,10 @@ function applyElkEdgeLayout(
   // Opt-out rather than opt-in: the step this removes is never intentional.
   const straightenEdges = data4Layout.config.elk?.straightenEdges !== false;
   const terminalLabelPorts = new Map<Edge, { start: P; end: P }>();
+  // Centres from an earlier run on the same data would outlive a layout that places none.
+  for (const edge of data4Layout.edges) {
+    delete edge.terminalLabelCenters;
+  }
 
   // Alignment pre-pass: move degenerately-anchored small nodes onto their routed
   // lines BEFORE any edge points are built, so every edge — whichever side of the
@@ -1984,10 +1988,36 @@ export function putTerminalLabelsOnTheirSide(edges: Edge[], nodes: LayoutData['n
     x2: center.x + size.width / 2,
     y2: center.y + size.height / 2,
   });
-  const nodeBoxes = nodes
-    .filter((node) => !node.isGroup && node.x !== undefined && node.y !== undefined)
-    .map((node) =>
-      labelBox({ x: node.x!, y: node.y! }, { width: node.width ?? 0, height: node.height ?? 0 })
+  const placed = nodes.filter((node) => node.x !== undefined && node.y !== undefined);
+  const boxOf = (node: LayoutData['nodes'][number]) =>
+    labelBox({ x: node.x!, y: node.y! }, { width: node.width ?? 0, height: node.height ?? 0 });
+  const nodeBoxes = placed.filter((node) => !node.isGroup).map(boxOf);
+  // A group is hollow, so only its frame is in the way.
+  const frameSegments = placed
+    .filter((node) => node.isGroup)
+    .map(boxOf)
+    .flatMap(({ x1, y1, x2, y2 }): [P, P][] => [
+      [
+        { x: x1, y: y1 },
+        { x: x2, y: y1 },
+      ],
+      [
+        { x: x2, y: y1 },
+        { x: x2, y: y2 },
+      ],
+      [
+        { x: x2, y: y2 },
+        { x: x1, y: y2 },
+      ],
+      [
+        { x: x1, y: y2 },
+        { x: x1, y: y1 },
+      ],
+    ]);
+  const centreLabelBoxes = edges
+    .filter((edge) => edge.label && edge.width && edge.height && edge.x !== undefined)
+    .map((edge) =>
+      labelBox({ x: edge.x!, y: edge.y! }, { width: edge.width!, height: edge.height! })
     );
 
   for (const edge of edges) {
@@ -2014,6 +2044,8 @@ export function putTerminalLabelsOnTheirSide(edges: Edge[], nodes: LayoutData['n
       const box = labelBox(mirrored, size);
       const blocked =
         nodeBoxes.some((node) => boxesOverlap(box, node)) ||
+        centreLabelBoxes.some((label) => boxesOverlap(box, label)) ||
+        frameSegments.some(([a, b]) => segmentHitsBox(a, b, box)) ||
         edges.some((other) =>
           (other.points ?? []).some(
             (point, i, all) =>

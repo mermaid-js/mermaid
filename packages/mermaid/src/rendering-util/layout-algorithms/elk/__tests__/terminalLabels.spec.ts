@@ -182,6 +182,15 @@ describe('ELK terminal (cardinality) labels', () => {
     }
   );
 
+  it('drops centres from an earlier layered run when the same data is laid out again', async () => {
+    const data = animalDiagram();
+    await runElkLayoutCore(data, elkRenderContext);
+    await runElkLayoutCore(data, { ...elkRenderContext, options: { algorithm: 'elk.mrtree' } });
+    for (const edge of data.edges) {
+      expect(edge.terminalLabelCenters).toBeUndefined();
+    }
+  });
+
   it('moves a placed label with an endpoint that a later pass slid along the side', () => {
     const edge = {
       id: 'e',
