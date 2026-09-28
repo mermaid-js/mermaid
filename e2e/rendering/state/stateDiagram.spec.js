@@ -20,8 +20,8 @@ test.describe('State diagram', () => {
     const style = await svg.getAttribute('style');
     expect(style).toMatch(/^max-width: [\d.]+px;$/);
     const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-    expect(maxWidthValue).toBeGreaterThanOrEqual(65);
-    expect(maxWidthValue).toBeLessThanOrEqual(85);
+    expect(maxWidthValue).toBeGreaterThanOrEqual(132);
+    expect(maxWidthValue).toBeLessThanOrEqual(172);
   });
   test('should render a state diagram when useMaxWidth is false', async ({ page }, testInfo) => {
     await renderGraph(
@@ -36,8 +36,8 @@ test.describe('State diagram', () => {
     );
     const svg = page.locator('svg');
     const width = parseFloat((await svg.getAttribute('width')) ?? '0');
-    expect(width).toBeGreaterThanOrEqual(65);
-    expect(width).toBeLessThanOrEqual(85);
+    expect(width).toBeGreaterThanOrEqual(132);
+    expect(width).toBeLessThanOrEqual(172);
     await expect(svg).not.toHaveAttribute('style');
   });
 });

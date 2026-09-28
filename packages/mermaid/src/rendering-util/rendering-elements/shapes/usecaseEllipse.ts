@@ -1,4 +1,6 @@
 import rough from 'roughjs';
+import { getConfig } from '../../../diagram-api/diagramAPI.js';
+import { stampColorSlot } from '../../../diagrams/common/colorThemeGate.js';
 import type { Bounds, D3Selection, Point } from '../../../types.js';
 import type { Node } from '../../types.js';
 import intersect from '../intersect/index.js';
@@ -13,10 +15,17 @@ export async function usecaseEllipse<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
   const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
 
+  // Per-item colour slot. A no-op unless the active theme carries a palette; `usecase/styles.ts`
+  // defines the matching `[data-color-id]` rules.
+  const { theme, themeVariables } = getConfig();
+  stampColorSlot(shapeSvg, node.colorIndex, theme, themeVariables.borderColorArray);
+
   // Calculate ellipse dimensions with padding
   const padding = halfPadding ?? 10;
+  // Same air above and below the label as beside it: a flatter oval leaves no
+  // room on its sides for the markers of several associations.
   const radiusX = bbox.width / 2 + padding * 2;
-  const radiusY = bbox.height / 2 + padding;
+  const radiusY = bbox.height / 2 + padding * 2;
 
   let ellipseElem;
   const { cssStyles } = node;

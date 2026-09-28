@@ -1,0 +1,13 @@
+---
+config:
+  layout: elk
+---
+stateDiagram-v2
+state apa {
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+}

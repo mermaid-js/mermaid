@@ -92,6 +92,34 @@ export interface CreateGraphOptions {
   unwrapGroupLabels?: boolean;
 }
 
+/**
+ * Resolves the flow direction that applies to a node: the `dir` of the nearest
+ * ancestor group that declares one (a subgraph or composite state with its own
+ * direction), falling back to the diagram-level direction. Direction-sensitive
+ * shapes (e.g. fork/join bars, which must run perpendicular to the flow) rely
+ * on this — the dagre path gets the same information via each subgraph's
+ * `rankdir` during its recursive render.
+ */
+function resolveNodeDir(
+  node: NonClusterNode,
+  nodeById: Map<string, LayoutData['nodes'][number]>,
+  diagramDir?: string
+): string | undefined {
+  let current: LayoutData['nodes'][number] | undefined = node;
+  const seen = new Set<string>();
+  while (current) {
+    if (current.dir) {
+      return current.dir;
+    }
+    if (!current.parentId || seen.has(current.parentId)) {
+      break;
+    }
+    seen.add(current.parentId);
+    current = nodeById.get(current.parentId);
+  }
+  return diagramDir;
+}
+
 export async function createGraphWithElements(
   element: D3Selection,
   data4Layout: LayoutData,
@@ -118,6 +146,8 @@ export async function createGraphWithElements(
   const { edgeLabels, nodes: nodesGroup } = groups;
 
   const nodeElements = new Map<string, D3Selection<SVGElement | SVGGElement>>();
+  const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
+  const diagramDir = (data4Layout as { direction?: string }).direction;
 
   // When the container element is detached (no real DOM — e.g. headless unit
   // tests that exercise the layout engine without rendering), `insertNode`
@@ -133,7 +163,7 @@ export async function createGraphWithElements(
         if (hasDom) {
           // `insertCluster` paints plain cluster labels through `createLabel`,
           // which uses an infinite width, while `labelHelper` falls back to
-          // `flowchart.wrappingWidth` (200px) when `node.width` is undefined —
+          // `flowchart.wrappingWidth` (default 120px) when `node.width` is undefined —
           // so measure and paint disagree. Layouts that size compound nodes
           // from this measurement opt into measuring the way it is painted.
           // Markdown labels are painted wrapped (`width: node.width`), so they
@@ -146,7 +176,7 @@ export async function createGraphWithElements(
         if (hasDom) {
           const childNodeEl = await insertMeasuredNode(nodesGroup, node, {
             config,
-            dir: node.dir,
+            dir: resolveNodeDir(node, nodeById, diagramDir),
           });
           nodeElements.set(node.id, childNodeEl);
         }

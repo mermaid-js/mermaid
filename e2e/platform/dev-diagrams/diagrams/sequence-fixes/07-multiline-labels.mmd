@@ -1,0 +1,8 @@
+sequenceDiagram
+  actor U as Multi<br/>line<br/>actor
+  participant P as Plain
+  participant B@{ "type" : "boundary" } as Single
+  participant C@{ "type" : "control" } as Two<br/>lines
+  participant DB@{ "type" : "database" } as Database
+  U ->> P: the lifelines should share one start
+  P ->> DB: and one end

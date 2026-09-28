@@ -17,12 +17,14 @@ import { addDiagrams } from './diagram-orchestration.js';
  *
  * This list is frozen — it documents the diagrams that predate the `-beta` policy and
  * were never released under a `-beta` keyword. Do not add new entries.
+ *
+ * The legacy `class`, `flowchart` and `state` ids were removed with the `defaultRenderer`
+ * option: nothing could reach them once every valid config routed to the unified ids.
  */
 const NEVER_BETA_DIAGRAMS = new Set([
   'c4',
   'kanban',
   'classDiagram',
-  'class',
   'er',
   'gantt',
   'info',
@@ -30,11 +32,9 @@ const NEVER_BETA_DIAGRAMS = new Set([
   'requirement',
   'sequence',
   'flowchart-v2',
-  'flowchart',
   'timeline',
   'gitGraph',
   'stateDiagram',
-  'state',
   'journey',
   'quadrantChart',
   'eventmodeling',

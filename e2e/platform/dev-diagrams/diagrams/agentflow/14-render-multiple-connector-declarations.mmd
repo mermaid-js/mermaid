@@ -1,0 +1,11 @@
+agentflow-beta LR
+  connector github["GitHub API"]
+  github@{ protocol: "http", endpoint: "https://api.github.com" }
+  connector slack["Slack API"]
+  slack@{ protocol: "http", endpoint: "https://slack.com/api" }
+
+  notify["notify_channel"]
+  notify@{ shape: action, connectorRef: "slack.post_message" }
+  create_issue["create_issue"]
+  create_issue@{ shape: tool, connectorRef: "github.create_issue" }
+  create_issue --> notify

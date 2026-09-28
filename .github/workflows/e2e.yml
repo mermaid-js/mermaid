@@ -63,9 +63,9 @@ env:
   # per-screenshot runs then both diff cleanly against it (each marked --subset).
   ARGOS_UPLOAD_BOTH: >-
     ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
-  # Shard JSON for a full-suite run vs a scoped (single-container) run.
+  # Scoped runs include the global mmd snapshots, so keep them sharded too.
   E2E_FULL_MATRIX: '[1,2,3,4,5,6,7,8]'
-  E2E_SCOPED_MATRIX: '[1]'
+  E2E_SCOPED_MATRIX: '[1,2]'
 
 jobs:
   cache:
@@ -304,7 +304,6 @@ jobs:
         id: playwright
         env:
           MERMAID_PORT: 9000
-          PLAYWRIGHT_COMMIT: ${{ github.sha }}
           # Enables native V8 coverage collection (page.coverage) on coverage runs.
           E2E_COVERAGE: ${{ (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop') && 'true' || '' }}
           # Job output via env — never interpolate spec globs into the shell via ${{ }}.

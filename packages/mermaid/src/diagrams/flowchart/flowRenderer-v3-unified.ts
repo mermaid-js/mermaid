@@ -33,11 +33,6 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.type = diag.type;
   data4Layout.layoutAlgorithm = getRegisteredLayoutAlgorithm(layout);
-  if (data4Layout.layoutAlgorithm === 'dagre' && layout === 'elk') {
-    log.warn(
-      'flowchart-elk was moved to an external package in Mermaid v11. Please refer [release notes](https://github.com/mermaid-js/mermaid/releases/tag/v11.0.0) for more details. This diagram will be rendered using `dagre` layout as a fallback.'
-    );
-  }
   data4Layout.direction = direction;
   data4Layout.nodeSpacing = conf?.nodeSpacing || 50;
   data4Layout.rankSpacing = conf?.rankSpacing || 50;
