@@ -294,4 +294,31 @@ Rel(a, b, "Uses")`);
     expect(edge.labelOffsetX).toBeUndefined();
     expect(edge.labelOffsetY).toBeUndefined();
   });
+
+  describe('relationship label wrapping', () => {
+    const db = () =>
+      parse(`C4Context
+Person(a, "A")
+System(b, "B")
+Rel(a, b, "Uses")`);
+
+    it('leaves the shared default wrap width in place by default', () => {
+      expect(getData(db(), config()).edges[0].labelWrapWidth).toBeUndefined();
+    });
+
+    it('stops wrapping when c4.wrap is false', () => {
+      const { edges } = getData(db(), { ...config(), c4: { ...config().c4, wrap: false } });
+      expect(edges[0].labelWrapWidth).toBe(Number.POSITIVE_INFINITY);
+    });
+
+    it('stops wrapping when the root wrap is false', () => {
+      const { edges } = getData(db(), { ...config(), wrap: false });
+      expect(edges[0].labelWrapWidth).toBe(Number.POSITIVE_INFINITY);
+    });
+
+    it('lets the root wrap override c4.wrap', () => {
+      const { edges } = getData(db(), { ...config(), wrap: true, c4: { wrap: false } });
+      expect(edges[0].labelWrapWidth).toBeUndefined();
+    });
+  });
 });
