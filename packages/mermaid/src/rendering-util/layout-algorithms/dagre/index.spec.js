@@ -1010,6 +1010,41 @@ clusterA --> C`
     }
   });
 
+  it.each([
+    // No edge crosses the subgraph, so it is extracted and rendered recursively.
+    ['a recursively-rendered', 'a --> b\nend\nc --> d'],
+    // An edge into the subgraph keeps it in the top-level graph.
+    ['a top-level', 'a\nend\nc --> a'],
+  ])('keeps %s cluster title taller than the margin clear of its children', async (_, rest) => {
+    const restoreDom = setupDom();
+
+    try {
+      // `layout` is pinned because the global default is elk, and `htmlLabels` is off
+      // because jsdom measures only SVG labels, through the getBBox stub.
+      const { svg } = await mermaidAPI.render(
+        'cluster-title-reserve-test',
+        `%%{init: {"layout": "dagre", "htmlLabels": false, "flowchart": {"subGraphTitleMargin": {"top": 5, "bottom": 5}}}}%%
+flowchart TD
+subgraph X[Title]
+${rest}`
+      );
+      const document = new JSDOM(svg).window.document;
+      const cluster = document.querySelector('.cluster[id$="-X"]');
+      // setupDom stubs every getBBox, title and node alike, to this height.
+      const stubbedHeight = 50;
+      const clusterTop = Number(cluster.querySelector('rect').getAttribute('y'));
+      const nodeTop = (id) => {
+        const transform = document.querySelector(`.node[id*="-${id}-"]`).getAttribute('transform');
+        const y = Number(/translate\([^,]+,\s*([^)]+)\)/.exec(transform)[1]);
+        return y - stubbedHeight / 2;
+      };
+
+      expect(nodeTop('a') - clusterTop).toBeGreaterThanOrEqual(stubbedHeight);
+    } finally {
+      restoreDom();
+    }
+  });
+
   it('renders hand-drawn class diagrams with nested namespaces', async () => {
     const restoreDom = setupDom();
 
