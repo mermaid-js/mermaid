@@ -1,0 +1,9 @@
+---
+config:
+  c4:
+    wrap: false
+---
+C4Context
+  Person(customer, "Personal Banking Customer", "A customer of the bank, with personal bank accounts")
+  System(banking, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments")
+  Rel(customer, banking, "Views account balances and makes payments using the web browser")
