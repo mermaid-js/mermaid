@@ -1,6 +1,7 @@
 import type { MermaidConfig } from '../../config.type.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
+import { isC4WrapEnabled } from '../../rendering-util/rendering-elements/shapes/c4LabelHelper.js';
 import type { C4Boundary, C4LabelNudge, C4Rel, C4Shape } from './c4Types.js';
 import { asColor, buildC4Node, buildEdgeLabel } from './c4ShapeAdapter.js';
 
@@ -91,6 +92,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const elementWidth = c4Config.width ?? 216;
   const look = config.look ?? 'classic';
   const useHtmlLabels = getEffectiveHtmlLabels(config);
+  const wrapLabels = isC4WrapEnabled(config);
   // C4Dynamic numbers each relationship in declaration order (1: ..., 2: ...).
   const isDynamic = db.getC4Type() === 'C4Dynamic';
 
@@ -163,6 +165,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       // `UpdateRelStyle($offsetX, $offsetY)`: applied to the placed label by the renderer,
       // since the shared pipeline decides where a label goes.
       ...labelNudge(rel),
+      ...(wrapLabels ? {} : { labelWrapWidth: Number.POSITIVE_INFINITY }),
       look,
     });
   });
