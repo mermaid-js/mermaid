@@ -64,6 +64,7 @@ person|softwareSystem|container|component|group|deploymentNode|infrastructureNod
 - `:::external` is a built-in convention tag that marks an element as outside the system under discussion. It renders the element in grey by default; override the look with a `style external ...` statement (see [Tags and styling](#tags-and-styling)).
 - `"Technology"` can only be given when a `"Description"` is present (use `""` for an empty description).
 - `person` elements render with the classic C4 person notation (head and body).
+- The element kind keywords above are also valid element ids and relationship endpoints, so `softwareSystem softwareSystem "System"` parses.
 
 ```mermaid-example
 c4-beta container
