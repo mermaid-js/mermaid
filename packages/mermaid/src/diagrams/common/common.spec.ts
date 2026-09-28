@@ -5,6 +5,7 @@ import {
   countOccurrence,
   hasBreaks,
   splitBreaks,
+  renderKatexSanitized,
 } from './common.js';
 
 describe('when securityLevel is antiscript, all script must be removed', () => {
@@ -157,5 +158,77 @@ describe('line breaks', () => {
       hasBreaks('a<br>b'),
       hasBreaks('<br>'),
     ]).toEqual([true, true, true, true]);
+  });
+});
+
+describe('renderKatexSanitized', () => {
+  beforeAll(() => {
+    // @ts-ignore -- injected is a build-time global
+    globalThis.injected = { version: '1.0.0', includeLargeFeatures: true };
+    // @ts-ignore -- stub MathMLElement so isMathMLSupported() returns true
+    window.MathMLElement = class {};
+  });
+
+  it('should wrap lines with formulas in display: block; white-space: normal;', async () => {
+    const text = 'This is a long sentence that Mermaid wraps onto several lines $$x^2$$';
+    const result = await renderKatexSanitized(text, {
+      securityLevel: 'strict',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('display: block; white-space: normal;');
+    expect(result).not.toContain('display: flex');
+    expect(result).not.toContain('white-space: nowrap');
+  });
+
+  it('should render math element as display: inline-block', async () => {
+    const text = 'Formula $$x^2$$ inline';
+    const result = await renderKatexSanitized(text, {
+      securityLevel: 'strict',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('<math style="display: inline-block;"');
+  });
+
+  it('should preserve spaces around math formulas (#6690)', async () => {
+    const text = 'hello $$x^2$$ world';
+    const result = await renderKatexSanitized(text, {
+      securityLevel: 'strict',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('hello <span class="katex">');
+    expect(result).toContain('</span> world');
+  });
+
+  it('should render consecutive formulas separated by text', async () => {
+    const text = 'From $$x(t)$$ to $$y(t)$$';
+    const result = await renderKatexSanitized(text, {
+      securityLevel: 'strict',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('From <span class="katex">');
+    expect(result).toContain('</span> to <span class="katex">');
+    expect(result).toContain('</span>');
+  });
+
+  it('should handle multiline labels with line breaks', async () => {
+    const text = 'Line 1<br/>Line 2 $$x^2$$';
+    const result = await renderKatexSanitized(text, {
+      securityLevel: 'strict',
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('<div>Line 1</div>');
+    expect(result).toContain(
+      '<div style="display: block; white-space: normal;">Line 2 <span class="katex">'
+    );
+  });
+
+  it('should render .katex-display with display: inline-block when legacy HTML mode is used', async () => {
+    const text = 'hello $$x^2$$ world';
+    const result = await renderKatexSanitized(text, {
+      securityLevel: 'strict',
+      forceLegacyMathML: true,
+      flowchart: { htmlLabels: true },
+    });
+    expect(result).toContain('class="katex-display" style="display: inline-block; margin: 0;"');
   });
 });
