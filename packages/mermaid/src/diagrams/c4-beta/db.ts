@@ -1,7 +1,7 @@
 import { getConfig } from '../../config.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
+import type { Edge, LayoutData, Node, NonClusterNode } from '../../rendering-util/types.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -238,8 +238,8 @@ export class C4BetaDB implements DiagramDB {
   private applyTags(
     element: C4BetaElement,
     cssClasses: string[],
-    defaultShape: Node['shape']
-  ): { cssStyles: string[]; shape: Node['shape'] } {
+    defaultShape: NonClusterNode['shape']
+  ): { cssStyles: string[]; shape: NonClusterNode['shape'] } {
     if (element.tags.includes('external')) {
       cssClasses.push('c4-external');
     }
@@ -318,7 +318,7 @@ export class C4BetaDB implements DiagramDB {
         continue;
       }
       const cssClasses = ['c4-shape', `c4-${element.kind}`];
-      const defaultShape: Node['shape'] = element.kind === 'person' ? 'person' : 'rect';
+      const defaultShape: NonClusterNode['shape'] = element.kind === 'person' ? 'person' : 'rect';
       const { cssStyles, shape } = this.applyTags(element, cssClasses, defaultShape);
       nodes.push({
         id: element.id,
