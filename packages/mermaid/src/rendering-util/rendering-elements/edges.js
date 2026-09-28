@@ -162,7 +162,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).startLeft = startEdgeLabelLeft;
-    setTerminalWidth(fo, edge.startLabelLeft);
+    setTerminalWidth(fo, edge.startLabelLeft, slBox);
     recordTerminalLabelSize(edge, 'startLeft', slBox, true, useHtmlLabels);
   }
   if (edge.startLabelRight) {
@@ -190,7 +190,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).startRight = startEdgeLabelRight;
-    setTerminalWidth(fo, edge.startLabelRight);
+    setTerminalWidth(fo, edge.startLabelRight, slBox);
     recordTerminalLabelSize(edge, 'startRight', slBox, true, useHtmlLabels);
   }
   if (edge.endLabelLeft) {
@@ -219,7 +219,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).endLeft = endEdgeLabelLeft;
-    setTerminalWidth(fo, edge.endLabelLeft);
+    setTerminalWidth(fo, edge.endLabelLeft, slBox);
     recordTerminalLabelSize(edge, 'endLeft', slBox, false, useHtmlLabels);
   }
   if (edge.endLabelRight) {
@@ -249,7 +249,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).endRight = endEdgeLabelRight;
-    setTerminalWidth(fo, edge.endLabelRight);
+    setTerminalWidth(fo, edge.endLabelRight, slBox);
     recordTerminalLabelSize(edge, 'endRight', slBox, false, useHtmlLabels);
   }
   return labelElement;
@@ -281,11 +281,13 @@ function recordTerminalLabelSize(edge, key, box, centered, useHtmlLabels) {
 /**
  * @param {any} fo
  * @param {any} value
+ * @param {{ width: number, height: number }} box - the measured label
  */
-function setTerminalWidth(fo, value) {
+export function setTerminalWidth(fo, value, box) {
   if (getEffectiveHtmlLabels(getConfig()) && fo) {
-    fo.style.width = value.length * 9 + 'px';
-    fo.style.height = '12px';
+    // Never smaller than the measured text; a fixed 12px height clipped it (#8329).
+    fo.style.width = Math.max(value.length * 9, box.width) + 'px';
+    fo.style.height = box.height + 'px';
   }
 }
 

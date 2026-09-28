@@ -3,4 +3,4 @@
 '@mermaid-js/layout-elk': patch
 ---
 
-fix(class): place cardinality labels beside their relation ends with the ELK layout instead of under the class boxes
+fix(class): place cardinality labels beside their relation ends with the ELK layout, on dagre's sides, and stop clipping their text

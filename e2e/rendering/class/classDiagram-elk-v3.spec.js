@@ -133,4 +133,25 @@ test.describe('Class diagram V3 ELK', () => {
       { logLevel: 1, htmlLabels: true, layout: 'elk' }
     );
   });
+
+  for (const [id, layout] of [
+    ['ELK-7', 'elk'],
+    ['ELK-8', 'dagre'],
+  ]) {
+    test(`${id}: should not clip cardinality text in a proportional font with ${layout} (#8329)`, async ({
+      page,
+    }, testInfo) => {
+      await imgSnapshotTest(
+        page,
+        testInfo,
+        `
+    classDiagram
+      Customer "1" --> "*" Order : places
+      Order "1" *-- "1..*" LineItem : contains
+      Customer "0..1" -- "1" Address : lives at
+      `,
+        { logLevel: 1, htmlLabels: true, fontFamily: 'arial', layout }
+      );
+    });
+  }
 });

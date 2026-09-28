@@ -1932,6 +1932,111 @@ function applyElkEdgeLayout(
   for (const [layoutEdge, ports] of terminalLabelPorts) {
     followMovedEndpoints(layoutEdge, ports);
   }
+  putTerminalLabelsOnTheirSide(data4Layout.edges, data4Layout.nodes);
+}
+
+interface Box {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+/** Whether segment a-b passes through the box (Liang-Barsky clip). */
+function segmentHitsBox(a: P, b: P, box: Box): boolean {
+  let t0 = 0;
+  let t1 = 1;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  for (const [p, q] of [
+    [-dx, a.x - box.x1],
+    [dx, box.x2 - a.x],
+    [-dy, a.y - box.y1],
+    [dy, box.y2 - a.y],
+  ]) {
+    if (p === 0) {
+      if (q < 0) {
+        return false;
+      }
+    } else if (p < 0) {
+      t0 = Math.max(t0, q / p);
+    } else {
+      t1 = Math.min(t1, q / p);
+    }
+  }
+  return t0 < t1;
+}
+
+const boxesOverlap = (a: Box, b: Box) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+
+/**
+ * ELK puts every end label on one fixed side of its edge, but a `…Right` label
+ * belongs on the right of the direction of travel and a `…Left` one on the left,
+ * which is where dagre puts them. Mirror a label that is on the wrong side
+ * across its end segment, which keeps its distance from the line and the
+ * marker — but only onto free space: ELK reserved room on its own side, and the
+ * mirrored spot can belong to an edge leaving a neighbouring port.
+ */
+export function putTerminalLabelsOnTheirSide(edges: Edge[], nodes: LayoutData['nodes']): void {
+  const labelBox = (center: P, size: { width: number; height: number }): Box => ({
+    x1: center.x - size.width / 2,
+    y1: center.y - size.height / 2,
+    x2: center.x + size.width / 2,
+    y2: center.y + size.height / 2,
+  });
+  const nodeBoxes = nodes
+    .filter((node) => !node.isGroup && node.x !== undefined && node.y !== undefined)
+    .map((node) =>
+      labelBox({ x: node.x!, y: node.y! }, { width: node.width ?? 0, height: node.height ?? 0 })
+    );
+
+  for (const edge of edges) {
+    const points = edge.points;
+    if (!points || points.length < 2 || !edge.terminalLabelCenters || !edge.terminalLabelSizes) {
+      continue;
+    }
+    for (const [key, center] of Object.entries(edge.terminalLabelCenters)) {
+      const size = edge.terminalLabelSizes[key as TerminalLabelKey];
+      const atStart = key.startsWith('start');
+      const segment = atStart ? 0 : points.length - 2;
+      const [from, to] = [points[segment], points[segment + 1]];
+      const length = Math.hypot(to.x - from.x, to.y - from.y);
+      if (!size || length === 0) {
+        continue;
+      }
+      // Unit normal pointing to the right of travel (y points down).
+      const normal = { x: -(to.y - from.y) / length, y: (to.x - from.x) / length };
+      const offset = (center.x - from.x) * normal.x + (center.y - from.y) * normal.y;
+      if (offset === 0 || offset > 0 === key.endsWith('Right')) {
+        continue;
+      }
+      const mirrored = { x: center.x - 2 * offset * normal.x, y: center.y - 2 * offset * normal.y };
+      const box = labelBox(mirrored, size);
+      const blocked =
+        nodeBoxes.some((node) => boxesOverlap(box, node)) ||
+        edges.some((other) =>
+          (other.points ?? []).some(
+            (point, i, all) =>
+              i < all.length - 1 &&
+              !(other === edge && i === segment) &&
+              segmentHitsBox(point, all[i + 1], box)
+          )
+        ) ||
+        edges.some((other) =>
+          Object.entries(other.terminalLabelCenters ?? {}).some(([otherKey, otherCenter]) => {
+            const otherSize = other.terminalLabelSizes?.[otherKey as TerminalLabelKey];
+            return (
+              !(other === edge && otherKey === key) &&
+              otherSize !== undefined &&
+              boxesOverlap(box, labelBox(otherCenter, otherSize))
+            );
+          })
+        );
+      if (!blocked) {
+        edge.terminalLabelCenters[key as TerminalLabelKey] = mirrored;
+      }
+    }
+  }
 }
 
 /**

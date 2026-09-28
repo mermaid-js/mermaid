@@ -98,6 +98,50 @@ const boxGap = (
   b: { x1: number; y1: number; x2: number; y2: number }
 ) => Math.hypot(Math.max(a.x1 - b.x2, 0, b.x1 - a.x2), Math.max(a.y1 - b.y2, 0, b.y1 - a.y2));
 
+// Which side of the direction of travel a point lies on, at the edge's start or end (screen
+// coordinates, y down). Dagre puts `…Right` labels on the right and `…Left` on the left.
+const sideOfTravel = (
+  points: { x: number; y: number }[],
+  atStart: boolean,
+  p: { x: number; y: number }
+) => {
+  const [a, b] = atStart ? [points[0], points[1]] : [points.at(-2)!, points.at(-1)!];
+  const cross = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+  return cross > 0 ? 'right' : 'left';
+};
+
+// Whether segment a-b passes through the box (Liang–Barsky clip).
+const segmentHitsBox = (
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  box: { x1: number; y1: number; x2: number; y2: number }
+) => {
+  let t0 = 0;
+  let t1 = 1;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  for (const [p, q] of [
+    [-dx, a.x - box.x1],
+    [dx, box.x2 - a.x],
+    [-dy, a.y - box.y1],
+    [dy, box.y2 - a.y],
+  ]) {
+    if (p === 0) {
+      if (q < 0) {
+        return false;
+      }
+    } else {
+      const t = q / p;
+      if (p < 0) {
+        t0 = Math.max(t0, t);
+      } else {
+        t1 = Math.min(t1, t);
+      }
+    }
+  }
+  return t0 < t1;
+};
+
 const overlaps = (
   a: { x1: number; y1: number; x2: number; y2: number },
   b: { x1: number; y1: number; x2: number; y2: number }
@@ -107,6 +151,21 @@ describe('ELK terminal (cardinality) labels', () => {
   // #8329: `Animal "1" <|-- "many" Duck` in an LR class diagram.
   it('keeps every cardinality label beside its own end, clear of its marker and the class boxes', async () => {
     const data = animalDiagram();
+    await runElkLayoutCore(data, elkRenderContext);
+    assertLabelsPlaced(data);
+  });
+
+  // Sizes measured in the browser (arial). Customer's two ports are ~22px apart, so the
+  // dagre side for "0..1" is taken by the neighbouring edge; it must stay on the free side.
+  it('keeps a label off a neighbouring edge that leaves an adjacent port', async () => {
+    const data = adjacentPortsDiagram();
+    await runElkLayoutCore(data, elkRenderContext);
+    assertLabelsPlaced(data, { dagreSides: false });
+  });
+
+  // #8329: the issue's top-down example; start and end labels go on opposite sides, as in dagre.
+  it('puts start and end labels on the same sides of a top-down edge as dagre', async () => {
+    const data = customerDiagram();
     await runElkLayoutCore(data, elkRenderContext);
     assertLabelsPlaced(data);
   });
@@ -160,7 +219,70 @@ function animalDiagram() {
   } as any;
 }
 
-function assertLabelsPlaced(data: any) {
+function customerDiagram() {
+  return {
+    type: 'classDiagram',
+    direction: 'TB',
+    config: { elk: {} },
+    nodes: [
+      classNode('Customer', 90, 81),
+      classNode('Order', 62, 81),
+      classNode('LineItem', 82, 81),
+      classNode('Product', 77, 81),
+      classNode('Address', 80, 81),
+    ],
+    edges: [
+      { ...relation('places', 'Customer', 'Order', 'none', '1', '*'), arrowTypeEnd: 'dependency' },
+      relation('contains', 'Order', 'LineItem', 'composition', '1', '1..*'),
+      {
+        ...relation('refersTo', 'LineItem', 'Product', 'none', '*', '1'),
+        arrowTypeEnd: 'dependency',
+      },
+      relation('livesAt', 'Customer', 'Address', 'none', '1', '0..1'),
+    ],
+  } as any;
+}
+
+function adjacentPortsDiagram() {
+  const sized = (edge: any, start: number, end: number) => ({
+    ...edge,
+    terminalLabelSizes: { startRight: startLabel(start), endLeft: endLabel(end) },
+  });
+  return {
+    type: 'classDiagram',
+    direction: 'TB',
+    // The schema defaults, so ELK orders the ports as it does in the browser.
+    config: {
+      elk: {
+        mergeEdges: false,
+        preset: 'default',
+        straightenEdges: true,
+        forceNodeModelOrder: false,
+        considerModelOrder: 'NODES_AND_EDGES',
+      },
+    },
+    nodes: [
+      classNode('Customer', 89.36, 81),
+      classNode('Order', 62.13, 81),
+      classNode('LineItem', 81.58, 81),
+      classNode('Address', 80.03, 81),
+    ],
+    edges: [
+      sized(
+        {
+          ...relation('places', 'Customer', 'Order', 'none', '1', '*'),
+          arrowTypeEnd: 'dependency',
+        },
+        6.13,
+        4.28
+      ),
+      sized(relation('contains', 'Order', 'LineItem', 'composition', '1', '1..*'), 6.13, 16.52),
+      sized(relation('livesAt', 'Customer', 'Address', 'none', '0..1', '1'), 18.36, 6.13),
+    ],
+  } as any;
+}
+
+function assertLabelsPlaced(data: any, { dagreSides = true } = {}) {
   const nodeBoxes = data.nodes.map((node: any) => ({
     id: node.id,
     x1: node.x - node.width / 2,
@@ -194,6 +316,24 @@ function assertLabelsPlaced(data: any) {
         overlaps(labelBox, markerBox(edge.points, key.startsWith('start')))
       ) {
         problems.push(`${edge.id} ${key} touches its marker`);
+      }
+      const wantSide = key.endsWith('Right') ? 'right' : 'left';
+      const side = sideOfTravel(edge.points, key.startsWith('start'), { x: cx, y: cy });
+      if (dagreSides && side !== wantSide) {
+        problems.push(
+          `${edge.id} ${key} is on the ${side} of its edge, dagre puts it on the ${wantSide}`
+        );
+      }
+      for (const other of data.edges) {
+        if (other === edge) {
+          continue;
+        }
+        for (let i = 0; i < other.points.length - 1; i++) {
+          if (segmentHitsBox(other.points[i], other.points[i + 1], labelBox)) {
+            problems.push(`${edge.id} ${key} is crossed by edge ${other.id}`);
+            break;
+          }
+        }
       }
       for (const box of nodeBoxes) {
         if (overlaps(labelBox, box)) {
