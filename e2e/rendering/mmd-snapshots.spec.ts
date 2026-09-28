@@ -12,13 +12,16 @@ import {
 } from '../helpers/mmd-snapshots.ts';
 import { imgSnapshotTest } from '../helpers/util.ts';
 
-// Set by CI (.github/workflows/e2e.yml) to 'pr' when a PR's e2e run is
-// scoped to the pr tier — narrows fixture collection to each diagram's
-// pr/ subfolder instead of every tier.
-const fixtureTier = process.env.MERMAID_E2E_FIXTURE_TIER;
+// Set by CI (.github/workflows/e2e.yml, .github/workflows/nightly-e2e.yml)
+// to a comma-separated tier list (e.g. 'pr' or 'pr,nightly') when a run is
+// scoped to specific tiers — narrows fixture collection to each diagram's
+// matching subfolder(s) instead of every tier.
+const fixtureTiers = process.env.MERMAID_E2E_FIXTURE_TIER?.split(',')
+  .map((tier) => tier.trim())
+  .filter(Boolean);
 const fixtures = await collectMmdFixtures(
   DIAGRAMS_DIR,
-  fixtureTier ? `*/${fixtureTier}/**/*.mmd` : undefined
+  fixtureTiers?.length ? fixtureTiers.map((tier) => `*/${tier}/**/*.mmd`) : undefined
 );
 // Fail fast if two fixtures would share a screenshot baseline (see helper).
 assertUniqueSnapshotNames(fixtures);

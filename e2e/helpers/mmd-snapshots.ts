@@ -106,7 +106,7 @@ export const buildFixtureTree = (relativePaths: readonly string[]): FixtureTree 
 
 export const collectMmdFixtures = async (
   diagramsDir = DIAGRAMS_DIR,
-  pattern = '**/*.mmd'
+  pattern: string | string[] = '**/*.mmd'
 ): Promise<string[]> => {
   return globby(pattern, { cwd: diagramsDir, onlyFiles: true });
 };
