@@ -738,9 +738,23 @@ You have to call mermaid.initialize.`
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
-    // Remove the members in the new subgraph if they already belong to another subgraph
-    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
-    this.subGraphs.push(subGraph);
+    // Remove the members in the new subgraph if they already belong to another subgraph.
+    // A subgraph never contains itself, so a redeclaration nested in its own body flattens.
+    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes.filter(
+      (nodeId) => nodeId !== id
+    );
+
+    // A repeated id merges its members into the first declaration, which keeps its
+    // title, direction and position, so every layout sees a single subgraph.
+    const existing = this.subGraphs.find((sg) => sg.id === id);
+    if (existing) {
+      existing.nodes.push(...subGraph.nodes);
+    } else {
+      this.subGraphs.push(subGraph);
+    }
+    // The lookup deliberately points at the latest declaration, even when it was merged
+    // away: classes and metadata set afterwards land on that undrawn copy, matching
+    // dagre's long-standing behaviour for repeated ids.
     this.subGraphLookup.set(id, subGraph);
     return id;
   }
