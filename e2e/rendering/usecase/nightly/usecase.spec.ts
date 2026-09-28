@@ -1,5 +1,5 @@
 import { test, expect, type Page, type TestInfo } from '@playwright/test';
-import { diagramSvg, renderGraph } from '../../../helpers/util';
+import { diagramSvg, renderGraph, imgSnapshotTest } from '../../../helpers/util';
 
 // The dev fixture coverage sweep ('covers every use-case dev fixture' and the
 // per-fixture renders of everything in e2e/platform/dev-diagrams/diagrams/use-case)
