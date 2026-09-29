@@ -13,7 +13,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
-import { createTooltip } from '../common/svgDrawCommon.js';
+import { createTooltip, hideTooltip } from '../common/svgDrawCommon.js';
 import { dataFetcher, reset as resetDataFetcher } from './dataFetcher.js';
 import { getDir } from './stateRenderer-v3-unified.js';
 import {
@@ -679,7 +679,7 @@ export class StateDB {
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
-        tooltipElem.transition().duration(500).style('opacity', 0);
+        hideTooltip(tooltipElem);
         const el = select(e.currentTarget as Element);
         el.classed('hover', false);
       });

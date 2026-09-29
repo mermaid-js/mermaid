@@ -18,7 +18,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import { createTooltip } from '../common/svgDrawCommon.js';
+import { createTooltip, hideTooltip } from '../common/svgDrawCommon.js';
 import type {
   AgentflowElementMapping,
   AgentflowSemanticModel,
@@ -1122,7 +1122,7 @@ You have to call mermaid.initialize.`
         el.classed('hover', true);
       })
       .on('mouseout', (e: MouseEvent) => {
-        tooltipElem.transition().duration(500).style('opacity', 0);
+        hideTooltip(tooltipElem);
         const el = select(e.currentTarget as Element);
         el.classed('hover', false);
       });
