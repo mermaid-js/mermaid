@@ -26,10 +26,15 @@ export class TextDimensionCalculatorWithFont implements TextDimensionCalculator 
       .attr('visibility', 'hidden')
       .attr('font-size', fontSize);
 
+    // computeDimensionOfText measures in screen pixels. When the SVG is scaled to fit its
+    // container (useMaxWidth), convert back to SVG user units so layout matches drawing.
+    const screenScale = elem.node()?.getScreenCTM?.()?.a;
+    const scale = screenScale && screenScale > 0 ? screenScale : 1;
+
     for (const t of texts) {
       const bbox = computeDimensionOfText(elem, 1, t);
-      const width = bbox ? bbox.width : t.length * fontSize;
-      const height = bbox ? bbox.height : fontSize;
+      const width = bbox ? bbox.width / scale : t.length * fontSize;
+      const height = bbox ? bbox.height / scale : fontSize;
       dimension.width = Math.max(dimension.width, width);
       dimension.height = Math.max(dimension.height, height);
     }

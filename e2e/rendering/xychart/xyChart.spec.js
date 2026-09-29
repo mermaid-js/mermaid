@@ -388,4 +388,55 @@ xychart-beta
     // Zero-width vertical line: Playwright's toBeVisible() treats a 0-bbox as hidden.
     await expect(page.locator('g.plot g.line-plot-0 path')).toHaveCount(1);
   });
+  test('should keep legend text inside a wide chart scaled down to fit (#8283)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+      xychart
+        title "Wide chart"
+        x-axis "Elapsed Time" 0 --> 10
+        y-axis "Percentage (%)" 0 --> 100
+        line "CPU" [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        line "RAM" [20, 30, 40, 50, 60, 70, 80, 90, 95, 90]
+      `,
+      { xyChart: { width: 4000 } }
+    );
+
+    // The 4000px wide SVG is scaled down to the viewport; text must still be measured
+    // in SVG units so the legend labels keep their right padding inside the viewBox.
+    const rightMargin = await page.locator('svg').evaluate((svg) => {
+      const svgBox = svg.getBoundingClientRect();
+      const scale = svgBox.width / svg.viewBox.baseVal.width;
+      return Math.min(
+        ...[...svg.querySelectorAll('g.legend text')].map(
+          (text) => (svgBox.right - text.getBoundingClientRect().right) / scale
+        )
+      );
+    });
+    // legendPadding defaults to 10; allow some slack for font rendering differences.
+    expect(rightMargin).toBeGreaterThan(5);
+  });
+
+  test('should drop the chart title when the chart is too short for it (#8283)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+      xychart
+        title "Too short for a title"
+        x-axis "Elapsed Time" 0 --> 10
+        y-axis "Percentage (%)" 0 --> 100
+        line "CPU" [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+      `,
+      { xyChart: { width: 1200, height: 60 } }
+    );
+
+    await expect(page.locator('g.chart-title text')).toHaveCount(0);
+    await expect(page.locator('g.plot g.line-plot-0 path')).toHaveCount(1);
+  });
 });
