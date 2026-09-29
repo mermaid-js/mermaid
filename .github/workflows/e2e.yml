@@ -255,8 +255,29 @@ jobs:
             exit 0
           fi
 
+          # Fork-only: a direct push to develop (i.e. a PR merge landing
+          # there) only runs the pr tier. On this fork, the merged PR
+          # already had to pass its own pr-tier gate before merging, so
+          # re-running the full suite here is redundant. Never true for
+          # upstream mermaid-js/mermaid, so this repo's e2e.yml keeps its
+          # original full-suite-on-push behavior below if ever synced/PR'd
+          # upstream.
+          if [ "$TARGET_HASH" = "develop" ] && [ "$IS_FORK_REPO" = "true" ]; then
+            SPEC=$(node scripts/e2e-tier-scope.mjs pr)
+            set_output spec_pattern "$SPEC"
+            set_output matrix "$E2E_SCOPED_MATRIX"
+            set_output fixture_tier "pr"
+            echo "[detect-scope] Fork push to develop — scoped to pr tier: ${SPEC}"
+            exit 0
+          fi
+
           # For direct pushes to a long-lived branch, always run the full suite
-          # (no PR diff to scope against).
+          # (no PR diff to scope against). Covers: upstream pushes to develop
+          # (the branch above only fires on the fork), and pushes to master —
+          # note master pushes don't actually reach this check today, since
+          # $TARGET_HASH resolves to a commit SHA rather than the literal
+          # string "master" unless master is the repo's default branch; they
+          # fall through to the merge-base diffing below instead.
           if [ "$TARGET_HASH" = "develop" ] || [ "$TARGET_HASH" = "master" ]; then
             emit_full
             echo "[detect-scope] Direct push to ${TARGET_HASH} — full suite."
