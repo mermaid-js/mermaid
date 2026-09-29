@@ -407,6 +407,8 @@ xychart-beta
 
     // The 4000px wide SVG is scaled down to the viewport; text must still be measured
     // in SVG units so the legend labels keep their right padding inside the viewBox.
+    // Guard the count first: Math.min() of no labels is Infinity and would pass.
+    await expect(page.locator('g.legend text')).toHaveCount(2);
     const rightMargin = await page.locator('svg').evaluate((svg) => {
       const svgBox = svg.getBoundingClientRect();
       const scale = svgBox.width / svg.viewBox.baseVal.width;
