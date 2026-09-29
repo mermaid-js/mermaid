@@ -3,6 +3,7 @@ import {
   buildElkGraphFromLayoutData,
   buildSubgraphLayoutOptions,
   clearContainerAlgorithmOptions,
+  closestPointOnPolyline,
   dir2ElkDirection,
   ensureEndMarkerSegmentLength,
   ensureStartMarkerSegmentLength,
@@ -13,6 +14,7 @@ import {
   resolveElkPreset,
   runElkLayoutCore,
   sanitizeElkEdgePoints,
+  straightenEdgeTerminals,
 } from '../render.js';
 import { onBorder, type P } from '../geometry.js';
 
@@ -652,6 +654,56 @@ describe('runElkLayoutCore', () => {
     expect(child.offset.y).toBeCloseTo(group.offset.posY);
     expect(layoutChild.x).toBeCloseTo(child.offset.posX + child.width / 2);
     expect(layoutChild.y).toBeCloseTo(child.offset.posY + child.height / 2);
+  });
+});
+
+describe('straightenEdgeTerminals label projection (#8292)', () => {
+  // Real-world jog from the `TERMINAL_JOG_MAX` fixture corpus: the channel at
+  // x in [218, 400] moves from y=119.5 to y=116.25. A label whose ELK-given
+  // position sat on the pre-straightening run (as `layoutEdge.x/y` always does
+  // — it is set before `straightenEdgeTerminals` runs) must move with it,
+  // instead of staying 3.25px off the new line.
+  const pts: P[] = [
+    { x: 193, y: 116.25 },
+    { x: 218, y: 116.25 },
+    { x: 218, y: 119.5 },
+    { x: 300, y: 119.5 },
+    { x: 400, y: 119.5 },
+    { x: 400, y: 300 },
+  ];
+
+  it('straightens the edge and reports it as changed', () => {
+    const edge = { id: 'e1', points: pts, x: 300, y: 119.5 } as any;
+    const changed = straightenEdgeTerminals([edge]);
+
+    expect(changed).toEqual([edge]);
+    expect(edge.points).toEqual([
+      { x: 193, y: 116.25 },
+      { x: 300, y: 116.25 },
+      { x: 400, y: 116.25 },
+      { x: 400, y: 300 },
+    ]);
+  });
+
+  it('projects a label sitting on the moved run onto the new route', () => {
+    const edge = { id: 'e1', points: pts, x: 300, y: 119.5 } as any;
+    straightenEdgeTerminals([edge]);
+
+    const projected = closestPointOnPolyline({ x: 300, y: 119.5 }, edge.points);
+
+    expect(projected).toEqual({ x: 300, y: 116.25 });
+  });
+
+  it('leaves an edge with no jog, and its label, untouched', () => {
+    const straight: P[] = [
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+    ];
+    const edge = { id: 'e2', points: straight, x: 50, y: 0 } as any;
+    const changed = straightenEdgeTerminals([edge]);
+
+    expect(changed).toEqual([]);
+    expect(edge.points).toBe(straight);
   });
 });
 

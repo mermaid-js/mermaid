@@ -1750,6 +1750,35 @@ function crossingCount(a: P[], b: P[]): number {
   return n;
 }
 
+/** Closest point to `p` on the segment `a`-`b`. */
+export function closestPointOnSegment(p: P, a: P, b: P): P {
+  const abx = b.x - a.x;
+  const aby = b.y - a.y;
+  const lenSq = abx * abx + aby * aby;
+  if (lenSq === 0) {
+    return a;
+  }
+  const t = Math.max(0, Math.min(1, ((p.x - a.x) * abx + (p.y - a.y) * aby) / lenSq));
+  return { x: a.x + t * abx, y: a.y + t * aby };
+}
+
+/** Closest point to `p` on the polyline `points`. */
+export function closestPointOnPolyline(p: P, points: P[]): P {
+  let best = points[0];
+  let bestDistSq = Infinity;
+  for (let i = 0; i < points.length - 1; i++) {
+    const candidate = closestPointOnSegment(p, points[i], points[i + 1]);
+    const dx = candidate.x - p.x;
+    const dy = candidate.y - p.y;
+    const distSq = dx * dx + dy * dy;
+    if (distSq < bestDistSq) {
+      bestDistSq = distSq;
+      best = candidate;
+    }
+  }
+  return best;
+}
+
 /**
  * Straighten the port-to-channel step on every edge that has one, but only
  * where doing so does not buy a crossing.
@@ -1759,9 +1788,15 @@ function crossingCount(a: P[], b: P[]): number {
  * runs onto the port's row, and that run can land in a lane something else
  * already occupies. Trading a barely-visible step for a new crossing is a bad
  * deal, so an edge that would cause one is left exactly as ELK routed it.
+ *
+ * Returns the edges whose points changed, so the caller can carry their main
+ * label along with the run it sat on (see the call site in
+ * `applyElkEdgeLayout`) — the label's `x`/`y` is set from ELK's own layout
+ * before this runs, and does not move on its own when a run does.
  */
-function straightenEdgeTerminals(edges: Edge[]): void {
+export function straightenEdgeTerminals(edges: Edge[]): Edge[] {
   const routes = edges.map((edge) => (edge as { points?: P[] }).points ?? []);
+  const changed: Edge[] = [];
 
   for (const [index, edge] of edges.entries()) {
     const original = routes[index];
@@ -1788,7 +1823,9 @@ function straightenEdgeTerminals(edges: Edge[]): void {
 
     (edge as { points?: P[] }).points = candidate;
     routes[index] = candidate;
+    changed.push(edge);
   }
+  return changed;
 }
 
 function applyElkEdgeLayout(
@@ -1963,7 +2000,18 @@ function applyElkEdgeLayout(
   });
 
   if (straightenEdges) {
-    straightenEdgeTerminals(data4Layout.edges);
+    const straightened = straightenEdgeTerminals(data4Layout.edges);
+    for (const edge of straightened) {
+      // The main label's `x`/`y` was set from ELK's placement on the
+      // pre-straightening route above; project it onto the new one so it
+      // stays centred on the run it sits on instead of beside it (#8292).
+      if (edge.x == null || edge.y == null || !edge.points?.length) {
+        continue;
+      }
+      const projected = closestPointOnPolyline({ x: edge.x, y: edge.y }, edge.points);
+      edge.x = projected.x;
+      edge.y = projected.y;
+    }
   }
   for (const [layoutEdge, ports] of terminalLabelPorts) {
     followMovedEndpoints(layoutEdge, ports);
