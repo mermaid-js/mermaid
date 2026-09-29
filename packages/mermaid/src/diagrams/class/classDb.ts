@@ -12,7 +12,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
-import { createTooltip } from '../common/svgDrawCommon.js';
+import { createTooltip, hideTooltip } from '../common/svgDrawCommon.js';
 import { ClassMember } from './classTypes.js';
 import type {
   ClassRelation,
@@ -547,7 +547,7 @@ export class ClassDB implements DiagramDB {
         el.classed('hover', true);
       })
       .on('mouseout', (event: MouseEvent) => {
-        tooltipElem.transition().duration(500).style('opacity', 0);
+        hideTooltip(tooltipElem);
         select(event.currentTarget as HTMLElement).classed('hover', false);
       });
   };
