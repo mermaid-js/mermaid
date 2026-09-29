@@ -1,0 +1,15 @@
+---
+config:
+  look: neo
+  theme: neo-dark
+---
+block-beta
+  columns 3
+  Start(("Start")) space:2
+  down<[" "]>(down) space:2
+  Decision{{"Make Decision"}} right<["Yes"]>(right) Process1["Process A"]
+  downAgain<["No"]>(down) space r3<["Done"]>(down)
+  Process2["Process B"] r2<["Done"]>(right) End(("End"))
+
+  style Start fill:#969;
+  style End fill:#696;

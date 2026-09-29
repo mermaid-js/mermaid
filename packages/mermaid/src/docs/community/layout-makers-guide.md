@@ -562,7 +562,7 @@ Profile before you optimize. Run the corpus, find the diagram where your `↳ ou
 
 ## Shipping as a separate package
 
-An external layout uses the same `render` signature and the same `createCommonLayoutRenderer`. Instead of editing the built-in registry, export a loader array and let the consumer register it:
+An external layout uses the same `render` signature. Instead of editing the built-in registry, export a loader array and let the consumer register it:
 
 ```ts
 import type { LayoutLoaderDefinition } from 'mermaid';
@@ -581,7 +581,7 @@ import layouts from 'my-mermaid-layout';
 mermaid.registerLayoutLoaders(layouts);
 ```
 
-The `algorithm` field is passed back to your renderer through `options`, which lets one package register several named variants that share an implementation. `packages/mermaid-layout-elk` does exactly this.
+The `algorithm` field is passed back to your renderer through `options`, which lets one package register several named variants that share an implementation.
 
 Package it separately when the layout pulls in a large dependency. Everything else belongs in the main package, where it gets covered by the fixture sweep.
 

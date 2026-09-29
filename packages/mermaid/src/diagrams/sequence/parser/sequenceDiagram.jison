@@ -32,7 +32,7 @@
 <CONFIG>[^\}]+                                                  { return 'CONFIG_CONTENT'; }
 <CONFIG>\}(?=\s+as\s)                                           { this.popState(); this.begin('ALIAS'); return 'CONFIG_END'; }
 <CONFIG>\}                                                      { this.popState(); this.popState(); return 'CONFIG_END'; }
-<ID>[^\<->\->:\n,;@\s]+(?=\@\{)                                 { yytext = yytext.trim(); return 'ACTOR'; }
+<ID>[^<>:\n,;@\s]+(?=\s*\@\{)                                   { yytext = yytext.trim(); return 'ACTOR'; }
 <ID>[^<>:\n,;@\s]+(?=\s+as\s)                                   { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ID>[^<>:\n,;@]+(?=\s*[\n;#]|$)                                 { yytext = yytext.trim(); this.popState(); return 'ACTOR'; }
 <ID>[^<>:\n,;@]*\<[^\n]*                                        { this.popState(); return 'INVALID'; }
@@ -59,10 +59,10 @@
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
-"links"                                                         return 'links';
-"link"                                                          return 'link';
-"properties"                                                    return 'properties';
-"details"                                                       return 'details';
+"links"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                      return 'links';
+"link"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                       return 'link';
+"properties"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                 return 'properties';
+"details"(?=[ \t]+[^\/\\\+\(\)<>:\n,;\s\-])                    return 'details';
 "over"                                                          return 'over';
 "note"                                                          return 'note';
 "activate"                                                      { this.begin('ID'); return 'activate'; }
@@ -377,7 +377,10 @@ config_object
 // 	| actor_actor
 // 	;
 
-actor: ACTOR {$$={ type: 'addParticipant', actor:$1}};
+actor
+    : ACTOR {$$={ type: 'addParticipant', actor:$1}}
+    | 'link' {$$={ type: 'addParticipant', actor:$1}}
+    ;
 // actor_actor: ACTOR {$$={type: 'addActor', actor:$1}};
 
 signaltype

@@ -1,9 +1,12 @@
 {
   "name": "@mermaid-js/examples",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Mermaid examples package",
   "author": "Sidharth Vinod",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "type": "module",
   "module": "./dist/mermaid-examples.core.mjs",
   "types": "./dist/mermaid.d.ts",

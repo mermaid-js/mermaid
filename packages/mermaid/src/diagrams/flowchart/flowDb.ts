@@ -742,10 +742,23 @@ You have to call mermaid.initialize.`
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
-    // Remove the members in the new subgraph if they already belong to another subgraph
-    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
-    this.subGraphs.push(subGraph);
-    this.subGraphLookup.set(id, subGraph);
+    // Remove the members in the new subgraph if they already belong to another subgraph.
+    // A subgraph never contains itself, so a redeclaration nested in its own body flattens.
+    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes.filter(
+      (nodeId) => nodeId !== id
+    );
+
+    // A repeated id merges its members into the first declaration, which keeps its
+    // title, direction and position, so every layout sees a single subgraph.
+    const existing = this.subGraphs.find((sg) => sg.id === id);
+    if (existing) {
+      existing.nodes.push(...subGraph.nodes);
+    } else {
+      this.subGraphs.push(subGraph);
+    }
+    // The lookup points at the subgraph that is drawn, so classes and metadata such as
+    // `view: collapsed` apply whichever declaration they follow.
+    this.subGraphLookup.set(id, existing ?? subGraph);
     return id;
   }
 
@@ -1078,6 +1091,7 @@ You have to call mermaid.initialize.`
           ...baseNode,
           isGroup: false,
           shape: this.getTypeFromVertex(vertex),
+          minWidth: config.flowchart?.minNodeWidth,
         });
       }
     }

@@ -1,0 +1,23 @@
+---
+config:
+  fontFamily: courier
+  flowchart:
+    wrappingWidth: 120
+    minNodeWidth: 120
+---
+flowchart TD
+  R[Choose how to continue from here] --> S([Choose how to continue from here])
+  R --> C((Choose how to continue from here))
+  R --> D{Choose how to continue from here}
+  S --> B([First chosen line<br/>Second chosen line])
+  C --> Q((First chosen line<br/>Second chosen line))
+  D --> A@{ shape: diamond, label: "First chosen line<br/>Second chosen line" }
+  B --> T(Choose how to continue from here)
+  Q --> T
+  A --> T
+  R --> DC(((Choose how to continue from here)))
+  R --> DP@{ shape: display, label: "Choose how to continue from here" }
+  R --> DL@{ shape: delay, label: "Choose how to continue from here" }
+  DC --> DCB@{ shape: dbl-circ, label: "First chosen line<br/>Second chosen line" }
+  DP --> DPB@{ shape: curv-trap, label: "First chosen line<br/>Second chosen line" }
+  DL --> DLB@{ shape: half-rounded-rectangle, label: "First chosen line<br/>Second chosen line" }

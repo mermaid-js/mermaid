@@ -43,8 +43,7 @@ test.describe('themeCSS balancing, it', () => {
   });
 });
 
-// TODO: Delete/Rename this describe, keeping the inner contents.
-test.describe('Pie Chart', () => {
+test.describe('Theme test', () => {
   // test.beforeEach(() => {
   //   await page.clock.install({ time: new Date('2014-06-09') });
   // });

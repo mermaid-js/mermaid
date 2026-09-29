@@ -2,6 +2,7 @@ import { FlowDB } from './flowDb.js';
 import type { FlowSubGraph, FlowText } from './types.js';
 import { log } from '../../logger.js';
 import { setSiteConfig, reset } from '../../config.js';
+import flow from './parser/flowParser.js';
 
 describe('flow db subgraphs', () => {
   let flowDb: FlowDB;
@@ -429,5 +430,114 @@ describe('flow db click callbacks', () => {
     flowDb.setClickEvent('nodeA', 'someCallback', '');
 
     expect(warn).not.toHaveBeenCalled();
+  });
+});
+
+describe('flow db repeated subgraph ids (issue #8326)', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+    flowDb.setGen('gen-2');
+    flow.parser.yy = flowDb;
+  });
+
+  const parse = (text: string) => flow.parser.parse(text);
+  const subGraphIds = () => flowDb.getSubGraphs().map((sg) => sg.id);
+  const subGraph = (id: string) => flowDb.getSubGraphs().find((sg) => sg.id === id);
+
+  it('merges a repeated subgraph id into a single subgraph', () => {
+    parse('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend');
+
+    expect(subGraphIds()).toEqual(['S']);
+    expect(subGraph('S')?.nodes).toEqual(['x', 'y']);
+  });
+
+  it('keeps the title of the first declaration', () => {
+    parse('flowchart LR\nsubgraph S [First]\n  x\nend\nsubgraph S [Second]\n  y\nend');
+
+    expect(subGraphIds()).toEqual(['S']);
+    expect(subGraph('S')?.title).toBe('First');
+  });
+
+  it('produces a single group node in getData with both members parented to it', () => {
+    parse('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend');
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.find((n) => n.id === 'S')?.isGroup).toBe(true);
+    expect(nodes.find((n) => n.id === 'x')?.parentId).toBe('S');
+    expect(nodes.find((n) => n.id === 'y')?.parentId).toBe('S');
+    const ids = nodes.map((n) => n.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('applies a class set after a repeated declaration to the merged subgraph', () => {
+    parse(
+      'flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend\nclassDef hot fill:#f00\nclass S hot'
+    );
+
+    expect(subGraph('S')?.classes).toContain('hot');
+    expect(flowDb.getData().nodes.find((n) => n.id === 'S')?.cssClasses).toContain('hot');
+  });
+
+  it.each([
+    [
+      'after the repeated declaration',
+      'flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  y\nend\nS@{ view: collapsed }',
+    ],
+    [
+      'between the two declarations',
+      'flowchart LR\nsubgraph S\n  x\nend\nS@{ view: collapsed }\nsubgraph S\n  y\nend',
+    ],
+  ])('collapses a repeated subgraph when its collapsed metadata comes %s', (_, text) => {
+    parse(text);
+
+    expect(subGraph('S')?.metadata).toEqual({ view: 'collapsed' });
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.find((n) => n.id === 'S')?.shape).toBe('collapsedGroup');
+    expect(nodes.find((n) => n.id === 'x')).toBeUndefined();
+    expect(nodes.find((n) => n.id === 'y')).toBeUndefined();
+  });
+
+  it('flattens a subgraph redeclared inside its own body instead of creating a cycle', () => {
+    parse('flowchart LR\nsubgraph S\n  subgraph S\n    x\n  end\n  y\nend');
+
+    expect(subGraphIds()).toEqual(['S']);
+    const members = subGraph('S')?.nodes ?? [];
+    expect(members).not.toContain('S');
+    expect(members).toEqual(expect.arrayContaining(['x', 'y']));
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.filter((n) => n.parentId === n.id)).toEqual([]);
+    expect(nodes.find((n) => n.id === 'x')?.parentId).toBe('S');
+    expect(nodes.find((n) => n.id === 'y')?.parentId).toBe('S');
+  });
+
+  it('merges an empty first declaration with a later one containing a nested subgraph', () => {
+    parse('flowchart LR\nsubgraph S\nend\nsubgraph S\n  subgraph T\n    y\n  end\nend');
+
+    expect([...subGraphIds()].sort()).toEqual(['S', 'T']);
+    expect(subGraph('S')?.nodes).toEqual(['T']);
+    expect(subGraph('T')?.nodes).toEqual(['y']);
+
+    const { nodes } = flowDb.getData();
+    expect(nodes.filter((n) => n.id === 'S')).toHaveLength(1);
+    expect(nodes.find((n) => n.id === 'T')?.parentId).toBe('S');
+    expect(nodes.find((n) => n.id === 'y')?.parentId).toBe('T');
+  });
+
+  it('keeps distinct and anonymous subgraphs separate', () => {
+    parse(
+      'flowchart LR\nsubgraph A\n  a\nend\nsubgraph B\n  b\nend\nsubgraph "Same Title"\n  c\nend\nsubgraph "Same Title"\n  d\nend'
+    );
+
+    const sgs = flowDb.getSubGraphs();
+    expect(sgs).toHaveLength(4);
+    expect(subGraph('A')?.nodes).toEqual(['a']);
+    expect(subGraph('B')?.nodes).toEqual(['b']);
+    expect(subGraph('subGraph2')?.nodes).toEqual(['c']);
+    expect(subGraph('subGraph3')?.nodes).toEqual(['d']);
   });
 });
