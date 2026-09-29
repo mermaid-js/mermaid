@@ -409,6 +409,7 @@ describe('flow db click callbacks', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    setSiteConfig({});
     reset();
   });
 
