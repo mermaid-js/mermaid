@@ -538,7 +538,7 @@ export class ClassDB implements DiagramDB {
         }
 
         const rect = (event.currentTarget as Element).getBoundingClientRect();
-        tooltipElem.transition().duration(200).style('opacity', '.9');
+        tooltipElem.interrupt().transition().duration(200).style('opacity', '.9');
         tooltipElem
           .html(DOMPurify.sanitize(title))
           .style('left', `${window.scrollX + rect.left + rect.width / 2}px`)

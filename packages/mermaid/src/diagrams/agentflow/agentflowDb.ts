@@ -1113,7 +1113,7 @@ You have to call mermaid.initialize.`
         }
         const rect = (e.currentTarget as Element)?.getBoundingClientRect();
 
-        tooltipElem.transition().duration(200).style('opacity', '.9');
+        tooltipElem.interrupt().transition().duration(200).style('opacity', '.9');
         tooltipElem
           .text(el.attr('title'))
           .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
