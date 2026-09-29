@@ -52,11 +52,7 @@ env:
   RUN_VISUAL_TEST: >-
     ${{ github.repository == 'mermaid-js/mermaid' && (github.event_name == 'workflow_dispatch' || github.event_name != 'pull_request' || !startsWith(github.head_ref, 'renovate/')) }}
   # Automatic runs always batch; manual runs can upload per-screenshot instead.
-  GROUP_ARGOS_IMAGES: >-
-    ${{
-      github.event_name != 'workflow_dispatch' && 'true' ||
-      (inputs.group_argos_images && 'true' || 'false')
-    }}
+  GROUP_ARGOS_IMAGES: 'false'
   # On a push to the baseline branch (develop), upload BOTH the grouped sheets
   # and the individual per-test screenshots in a single Argos build, so the
   # default build's baseline is a superset. Scoped grouped PRs and manual
