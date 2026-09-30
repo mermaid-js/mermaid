@@ -62,6 +62,10 @@ env:
   # Scoped runs include the global mmd snapshots, so keep them sharded too.
   E2E_FULL_MATRIX: '[1,2,3,4,5,6,7,8]'
   E2E_SCOPED_MATRIX: '[1,2]'
+  # pr-check + nightly-check together are a much bigger scope than pr-check
+  # alone (roughly 60% of the full suite by test count), so they get more
+  # shards than E2E_SCOPED_MATRIX but fewer than the full 8.
+  E2E_PR_NIGHTLY_MATRIX: '[1,2,3,4]'
 
 jobs:
   cache:
@@ -105,8 +109,9 @@ jobs:
     outputs:
       spec_pattern: ${{ steps.scope.outputs.spec_pattern }}
       matrix: ${{ steps.scope.outputs.matrix }}
-      # Set to 'pr' when this run is scoped to the pr tier (see below); read
-      # by the e2e job to narrow e2e/rendering/mmd-snapshots.spec.ts's
+      # Set to 'pr-check', or 'pr-check,nightly-check', when this run is
+      # scoped to those tiers (see below); read by the e2e job to narrow
+      # e2e/rendering/mmd-snapshots.spec.ts's
       # fixture collection. Empty on every other path (full/diff-scoped
       # runs collect every tier, as today).
       fixture_tier: ${{ steps.scope.outputs.fixture_tier }}
@@ -202,12 +207,16 @@ jobs:
 
           # Fork-only, PR-only label gating. Which label applies depends on
           # the PR's target branch:
-          #   - master: "run release test" gates the FULL suite (pr + nightly
-          #     + release tiers — domain is unused, so "full" already covers
-          #     everything those three tiers would). Not a lightweight check;
-          #     this is the release-readiness gate.
+          #   - master: "run release test" gates pr-check + nightly-check
+          #     (NOT visual-check — that tier is theme/look/layout/direction
+          #     combinatorial sweeps, deliberately excluded from this
+          #     automated gate since it's pixel/appearance content best
+          #     judged by the manual Applitools pass in e2e-applitools.yml
+          #     as part of the release process, not a parse-only check
+          #     here). Not a lightweight check relative to pr-check alone,
+          #     but no longer the full suite either.
           #   - anything else (develop, in practice): "run pr tests" gates
-          #     the pr tier only, as before.
+          #     the pr-check tier only, as before.
           # Both labels default to on for a freshly-opened PR (see the
           # ensure-pr-tier-label / ensure-release-label jobs, which add them
           # on 'opened'); PR_ACTION=opened is treated the same as the label
@@ -218,8 +227,11 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ] && [ "$IS_FORK_REPO" = "true" ]; then
             if [ "$PR_BASE_REF" = "master" ]; then
               if [ "$PR_ACTION" = "opened" ] || [ "$PR_HAS_RELEASE_LABEL" = "true" ]; then
-                emit_full
-                echo "[detect-scope] Fork PR -> master — 'run release test' active. Full suite."
+                SPEC=$(node scripts/e2e-tier-scope.mjs pr-check nightly-check)
+                set_output spec_pattern "$SPEC"
+                set_output matrix "$E2E_PR_NIGHTLY_MATRIX"
+                set_output fixture_tier "pr-check,nightly-check"
+                echo "[detect-scope] Fork PR -> master — 'run release test' active. Scoped to pr-check + nightly-check (visual-check excluded — see Applitools): ${SPEC}"
               else
                 emit_skip
                 set_output required_tests_missing "true"
@@ -229,11 +241,11 @@ jobs:
             fi
 
             if [ "$PR_ACTION" = "opened" ] || [ "$PR_HAS_RUN_LABEL" = "true" ]; then
-              SPEC=$(node scripts/e2e-tier-scope.mjs pr)
+              SPEC=$(node scripts/e2e-tier-scope.mjs pr-check)
               set_output spec_pattern "$SPEC"
               set_output matrix "$E2E_SCOPED_MATRIX"
-              set_output fixture_tier "pr"
-              echo "[detect-scope] Fork PR — 'run pr tests' active. Scoped to pr tier: ${SPEC}"
+              set_output fixture_tier "pr-check"
+              echo "[detect-scope] Fork PR — 'run pr tests' active. Scoped to pr-check tier: ${SPEC}"
             else
               emit_skip
               set_output required_tests_missing "true"
@@ -252,18 +264,18 @@ jobs:
           fi
 
           # Fork-only: a direct push to develop (i.e. a PR merge landing
-          # there) only runs the pr tier. On this fork, the merged PR
-          # already had to pass its own pr-tier gate before merging, so
+          # there) only runs the pr-check tier. On this fork, the merged PR
+          # already had to pass its own pr-check-tier gate before merging, so
           # re-running the full suite here is redundant. Never true for
           # upstream mermaid-js/mermaid, so this repo's e2e.yml keeps its
           # original full-suite-on-push behavior below if ever synced/PR'd
           # upstream.
           if [ "$TARGET_HASH" = "develop" ] && [ "$IS_FORK_REPO" = "true" ]; then
-            SPEC=$(node scripts/e2e-tier-scope.mjs pr)
+            SPEC=$(node scripts/e2e-tier-scope.mjs pr-check)
             set_output spec_pattern "$SPEC"
             set_output matrix "$E2E_SCOPED_MATRIX"
-            set_output fixture_tier "pr"
-            echo "[detect-scope] Fork push to develop — scoped to pr tier: ${SPEC}"
+            set_output fixture_tier "pr-check"
+            echo "[detect-scope] Fork push to develop — scoped to pr-check tier: ${SPEC}"
             exit 0
           fi
 
@@ -394,7 +406,7 @@ jobs:
                 name: label,
                 color: 'b60205',
                 description:
-                  "Gates the full e2e suite (pr+nightly+release tiers) on PRs targeting master (default on)",
+                  'Gates the pr-check + nightly-check tiers (not visual-check) on PRs targeting master (default on)',
               });
               await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
             }
@@ -473,7 +485,8 @@ jobs:
           # Job output via env — never interpolate spec globs into the shell via ${{ }}.
           SPEC_PATTERN: ${{ needs.detect-scope.outputs.spec_pattern }}
           # Read by e2e/rendering/mmd-snapshots.spec.ts to narrow fixture
-          # collection to a single tier (e.g. 'pr'); empty on every other run.
+          # collection to one or more tiers (e.g. 'pr-check', or
+          # 'pr-check,nightly-check'); empty on every other run.
           MERMAID_E2E_FIXTURE_TIER: ${{ needs.detect-scope.outputs.fixture_tier }}
           SHARD: ${{ matrix.containers }}
           SHARD_TOTAL: ${{ strategy.job-total }}

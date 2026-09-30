@@ -1,6 +1,6 @@
 name: Nightly E2E
 
-# Fork-only (see the repository check below). Runs the pr + nightly tiers
+# Fork-only (see the repository check below). Runs the pr-check + nightly-check tiers
 # once a day, and on demand via workflow_dispatch — the "simulated nightly"
 # button for testing this workflow without waiting for the schedule.
 #
@@ -51,7 +51,7 @@ jobs:
       - name: Compute pr+nightly spec pattern
         id: scope
         run: |
-          SPEC=$(node scripts/e2e-tier-scope.mjs pr nightly)
+          SPEC=$(node scripts/e2e-tier-scope.mjs pr-check nightly-check)
           delim="ghadelim_$(openssl rand -hex 16)"
           {
             printf 'spec_pattern<<%s\n' "$delim"
@@ -62,7 +62,7 @@ jobs:
       - name: Playwright run
         env:
           MERMAID_PORT: 9000
-          MERMAID_E2E_FIXTURE_TIER: pr,nightly
+          MERMAID_E2E_FIXTURE_TIER: pr-check,nightly-check
           SPEC_PATTERN: ${{ steps.scope.outputs.spec_pattern }}
           SHARD: ${{ matrix.containers }}
           SHARD_TOTAL: ${{ strategy.job-total }}
