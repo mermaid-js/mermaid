@@ -1,9 +1,25 @@
-import { it, describe, expect } from 'vitest';
+import { afterAll, beforeAll, it, describe, expect } from 'vitest';
 
 import { db } from './db.js';
 import { parser } from './parser.js';
 
 const { clear } = db;
+const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
+
+beforeAll(() => {
+  Object.defineProperty(SVGElement.prototype, 'getBBox', {
+    configurable: true,
+    value: () => ({ x: 0, y: 0, width: 100, height: 20 }),
+  });
+});
+
+afterAll(() => {
+  if (originalGetBBox) {
+    Object.defineProperty(SVGElement.prototype, 'getBBox', originalGetBBox);
+  } else {
+    Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+  }
+});
 
 describe('eventmodeling diagrams', () => {
   beforeEach(() => {
@@ -60,6 +76,21 @@ data ItemAddedData
     rf 02 cmd AddItem
     rf 03 evt ItemAdded`;
     await expect(parser.parse(str)).resolves.not.toThrow();
+  });
+
+  it('should keep explicit sources on a reset frame without inferring the previous frame', async () => {
+    await parser.parse(`eventmodeling
+      tf 01 ui UI
+      tf 02 cmd Command
+      tf 03 evt Event
+      rf 04 rmo ReadModel ->> 03
+      rf 05 ui OtherUI`);
+
+    const relations = db
+      .getState()
+      .relations.map(({ sourceBox, targetBox }) => [sourceBox.frame.name, targetBox.frame.name]);
+    expect(relations).toContainEqual(['03', '04']);
+    expect(relations).not.toContainEqual(['04', '05']);
   });
 
   it('should handle all entity types', async () => {
