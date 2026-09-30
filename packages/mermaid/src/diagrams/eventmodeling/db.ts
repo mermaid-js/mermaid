@@ -580,7 +580,7 @@ function findBoxByLineIndex(
 function decidePositionRelation(state: Context, _command: Command): Event[] {
   const command = _command as PositionRelation;
 
-  if (isEmResetFrame(command.frame) || isFirstFrame(command.index, command.frame)) {
+  if (isFirstFrame(command.index, command.frame)) {
     return [];
   }
 
@@ -594,6 +594,9 @@ function decidePositionRelation(state: Context, _command: Command): Event[] {
   if (command.sourceFrame) {
     sourceBox = findBoxByFrame(state.boxes, command.sourceFrame);
   } else {
+    if (isEmResetFrame(command.frame)) {
+      return [];
+    }
     sourceBox = findBoxByLineIndex(state.boxes, targetBox.swimlane.index, command.index - 1);
   }
 
