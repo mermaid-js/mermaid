@@ -36,6 +36,8 @@ interface LinkData {
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 const GRID_LAYOUT_METADATA_KEYS = ['row', 'column', 'horizontalAlign', 'verticalAlign'] as const;
 
+// Flowchart metadata is a broad author-facing object. Forward only the fields understood by layout
+// code so renderer nodes do not become a second, unsanitized metadata API.
 function pickFlowchartLayoutMetadata(
   metadata: NodeMetaData | undefined,
   includeContainerAlgorithm = false

@@ -155,6 +155,8 @@ export function validateGridPlacementMap(
   items: Iterable<Node>,
   config: GridLayoutConfigNormalized
 ): void {
+  // Diagram adapters may retain a generated rendering ID while exposing the authored ID expected
+  // by public placement maps. Fall back to `id` for diagrams whose IDs are already author-stable.
   const knownIds = new Set<string>();
   for (const item of items) {
     knownIds.add(item.placementId ?? item.id);
@@ -182,6 +184,8 @@ function resolveItemPlacement(
   sourceOrder: Map<string, number>,
   config: GridLayoutConfigNormalized
 ): GridResolvedPlacement {
+  // Resolve configuration through the authored identity while retaining the generated rendering
+  // identity for deterministic ordering and diagnostic context.
   const authoredPlacementId = item.placementId ?? item.id;
   const configPlacement = config.placements.get(authoredPlacementId) ?? {};
   const metadataPlacement = ownPlacementFrom(item.metadata);
