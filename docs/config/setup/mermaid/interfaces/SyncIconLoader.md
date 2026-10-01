@@ -10,7 +10,7 @@
 
 # Interface: SyncIconLoader
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/icons.ts:13
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:13](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L13)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > **icons**: `IconifyJSON`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/icons.ts:15
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:15](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L15)
 
 ---
 
@@ -26,4 +26,4 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > **name**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/icons.ts:14
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:14](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L14)
