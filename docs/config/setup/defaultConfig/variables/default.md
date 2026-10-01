@@ -12,7 +12,7 @@
 
 > `const` **default**: `RequiredDeep`<[`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)>
 
-Defined in: [packages/mermaid/src/defaultConfig.ts:18](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/defaultConfig.ts#L18)
+Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/defaultConfig.ts:18
 
 Default mermaid configuration options.
 
