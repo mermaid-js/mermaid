@@ -54,6 +54,8 @@ import type {
 } from './types.js';
 import { ROOT_CONTAINER_ID, gridError } from './types.js';
 
+// Sparse routing overlays edge-specific endpoints onto immutable container visibility graphs, then
+// validates every result before it can replace the deterministic corridor route.
 const ROUTER_DEBUG_KEY = 'grid-router';
 
 function recordFallback(
@@ -179,6 +181,8 @@ export function sparseSameContainerRoute(
         sideOrder(a.targetCandidate.side) - sideOrder(b.targetCandidate.side)
     );
 
+  // Candidate pairs are ordered by an admissible lower bound. Once a completed route is no worse
+  // than that bound, the pair cannot improve the current best and its overlay/search is skipped.
   for (const { sourceCandidate, targetCandidate, pairRank, lowerCost } of pairs) {
     if (best && compareTupleCost(best.result.cost, lowerCost) <= 0) {
       continue;
@@ -287,6 +291,8 @@ export function sparseSameContainerRoute(
     }
   }
   if (searchCap) {
+    // Resource caps select the compatibility route only after it passes the same geometry and bundle
+    // constraints; caps never weaken correctness.
     const legacy = legacyRoute();
     recordFallback(
       context,
@@ -398,6 +404,8 @@ export function sparseSelfLoopRoute(
   pairRoutes: readonly (readonly Point[])[],
   options: GridRoutingOptions
 ): { points: Point[]; side: GridSide; index: number } {
+  // Try sides in load order and reserve progressively wider port pairs for repeated loops on the
+  // same side.
   const containerId = owner.parentId ?? ROOT_CONTAINER_ID;
   const fallbackReason = context.fallbackContainers.get(containerId) as
     | GridRoutingFallbackReason
@@ -575,6 +583,8 @@ export function sparseContainerSegment(
     end: SegmentAttachment;
     select: readonly (() => void)[];
   }[] = [{ start, end, select: [] }];
+  // Alternatives are generated lazily only after the selected attachments fail. Their `select`
+  // callbacks commit portal-coordinate changes after a complete route validates.
   let alternativesAdded = false;
   const appendAlternatives = (): void => {
     if (alternativesAdded) {
@@ -748,6 +758,8 @@ export function sparseContainerSegment(
     return legacy;
   }
   const compatibility = legacyRoute();
+  // Exhausted sparse geometry may recover through the corridor router. Bundled hierarchy segments
+  // can share interior corridors only when their endpoint ports remain distinct.
   if (
     validateContainerSegment(compatibility, start.ownerId, end.ownerId, containerId, result) &&
     (routeSatisfiesPairConstraints(compatibility, pairRoutes) ||

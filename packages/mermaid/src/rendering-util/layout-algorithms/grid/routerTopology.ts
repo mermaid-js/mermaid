@@ -18,8 +18,12 @@ import type {
   RouterVertex,
 } from './types.js';
 
+// Builds immutable orthogonal visibility graphs per container. Endpoint-specific vertices are added
+// through bounded overlays so the expensive obstacle sweep is paid once per container.
 export const ROUTE_CLEARANCE_PX = 6;
 
+// Caps bound both adversarial geometry and ordinary large-diagram memory growth. Exceeding one is a
+// recoverable routing condition handled by the validated compatibility path.
 const DEFAULT_MAX_VERTICES = 50_000;
 const DEFAULT_MAX_ADJACENCY_ENTRIES = 200_000;
 export const DEFAULT_MAX_ROUTING_ESTIMATED_BYTES = 64 * 1024 * 1024;
@@ -63,6 +67,8 @@ interface IndexedBand {
 }
 
 class CompressedIntervalIndex implements OrthogonalIntervalIndex {
+  // Obstacle occupancy is constant between sorted boundaries, so bands share merged interval lists.
+  // Exact boundaries use strict intervals to allow visibility paths to run along obstacle edges.
   readonly coordinateCount: number;
   readonly intervalCount: number;
   private readonly byLow = new Map<number, IndexedBand>();
@@ -305,6 +311,8 @@ class OverlayMap<K, V> implements ReadonlyMap<K, V> {
 }
 
 function overlayArray<T>(base: readonly T[], additions: readonly T[]): readonly T[] {
+  // Numeric access and iteration are enough for search. A proxy avoids copying the immutable base
+  // array for every endpoint pair.
   return new Proxy([] as T[], {
     get(_target, property) {
       if (property === 'length') {
@@ -352,6 +360,8 @@ function overrideArray<T>(
 }
 
 export class EndpointOverlayScratch {
+  // One scratch object belongs to one base topology. The undo log clears only overridden base
+  // vertices, keeping reset cost proportional to the previous overlay rather than the whole graph.
   readonly addedVertices: RouterVertex[] = [];
   readonly adjacencyOverrides = new Map<number, readonly RouterArc[]>();
   readonly searchAdjacencyOverrides = new Map<number, readonly RouterSearchArc[]>();
@@ -440,6 +450,8 @@ function mergeObstacleIntervals(
 }
 
 function unionObstacles(obstacles: readonly RouterObstacle[]): RouterObstacle[] {
+  // Sweep x-slabs and merge active y-intervals into a non-overlapping obstacle union. This prevents
+  // intersecting inflated nodes and title exclusions from multiplying visibility vertices.
   const events = new Map<number, { starts: RouterObstacle[]; ends: RouterObstacle[] }>();
   for (const obstacle of obstacles) {
     const start = events.get(obstacle.left) ?? { starts: [], ends: [] };
@@ -531,6 +543,8 @@ function vertexRecordOrder(a: VertexRecord, b: VertexRecord): number {
 }
 
 function canonicalRecords(records: readonly VertexRecord[]): VertexRecord[] {
+  // Sorting before duplicate removal makes vertex identity and numeric ids independent of discovery
+  // order.
   const byPoint = new Map<string, VertexRecord>();
   for (const record of [...records].sort(vertexRecordOrder)) {
     const normalized = {
@@ -770,6 +784,8 @@ function buildVisibilityGraph(
   adjacency: ReadonlyMap<number, readonly RouterArc[]>;
   adjacencyEntries: number;
 } {
+  // Vertices connect only to their immediate visible neighbor on each shared x/y line; longer paths
+  // are represented by graph traversal instead of quadratic all-pairs arcs.
   const canonical = canonicalRecords(records).sort(vertexRecordOrder);
   enforceCap(canonical.length, caps.maxVertices ?? DEFAULT_MAX_VERTICES, 'vertex_cap');
   const vertices = canonical.map<RouterVertex>((record, id) =>
@@ -907,6 +923,8 @@ export function buildPairedPortal(
   side: GridSide,
   tangentialCoordinate: number
 ): PairedPortal {
+  // Interior and exterior points sit one clearance unit from the group boundary. The explicit
+  // transition is the only hierarchy-crossing arc and contributes one boundary transition to cost.
   const range = derivePortalRanges(ownerId, bounds, title).find((entry) => entry.side === side);
   if (!range || tangentialCoordinate < range.low || tangentialCoordinate > range.high) {
     throw new Error(`Illegal ${side} portal for "${ownerId}" at ${tangentialCoordinate}`);
@@ -955,6 +973,8 @@ export function buildContainerRoutingTopology(
   input: ContainerTopologyInput,
   options: BuildTopologyOptions = {}
 ): ContainerRoutingTopology {
+  // Build phases are normalize/inflate, union obstacles, seed corners and portal endpoints, project
+  // rays to blocking boundaries, then connect immediate line-of-sight neighbors.
   const bounds = normalizeRect(input.bounds);
   const inflated = [...input.obstacles, ...(input.titleExclusions ?? [])]
     .map((obstacle) => inflateAndClip(obstacle, bounds))
@@ -1053,6 +1073,8 @@ export function buildEndpointRoutingOverlay(
   reusableScratch?: EndpointOverlayScratch,
   lanePoints: readonly RouterPoint[] = []
 ): ContainerRoutingTopology {
+  // Overlays are intentionally tiny: two endpoints, optional bundle lane points, orthogonal
+  // projections, and four obstacle/bounds ray hits per endpoint. Local caps enforce that invariant.
   const scratch = reusableScratch ?? new EndpointOverlayScratch(base);
   scratch.reset(base);
   const endpointRecords: VertexRecord[] = [

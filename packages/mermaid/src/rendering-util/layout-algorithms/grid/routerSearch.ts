@@ -10,6 +10,8 @@ import type {
   RouterVertex,
 } from './types.js';
 
+// A* minimizes this tuple lexicographically. Length and bends dominate hierarchy transitions and
+// endpoint preference, which are deterministic tie-breakers rather than weighted approximations.
 export type RouterTupleCost = [
   length: number,
   bends: number,
@@ -57,6 +59,8 @@ const DEFAULT_MAX_EDGE_STATES = 100_000;
 const DEFAULT_MAX_INVOCATION_STATES = 2_000_000;
 
 export class RouterSearchWorkspace {
+  // Typed arrays are retained across searches to avoid allocating object-heavy state graphs for
+  // every endpoint candidate pair. State capacity grows geometrically and never shrinks mid-session.
   stateVertices = new Int32Array(256);
   orientations = new Uint8Array(256);
   gLengths = new Float64Array(256);
@@ -342,6 +346,8 @@ function search(
     );
   }
   function compareChains(a: number, b: number): number {
+    // Equal-cost states choose the lexicographically smaller predecessor chain. Four-level jump
+    // pointers reduce the common-prefix walk without retaining full paths per state.
     if (a === b) {
       return 0;
     }
@@ -383,6 +389,8 @@ function search(
   }
   let heapRoot = -1;
   let heapSize = 0;
+  // A pairing heap supports cheap melds in flat arrays, preserving workspace reuse and avoiding one
+  // allocation per queue node.
   function heapMeld(first: number, second: number): number {
     if (first < 0) {
       return second;
@@ -452,6 +460,8 @@ function search(
   };
   recordWorkspaceBytes();
   const commitExpandedStates = (): void => {
+    // Charge states once on every exit path, including cap exceptions, so the invocation-wide
+    // budget cannot be reset by trying another candidate pair.
     if (options.budget) {
       options.budget.expandedStates += expandedThisSearch;
     }
@@ -506,6 +516,8 @@ function search(
 
   while (heapSize > 0) {
     const next = heapRoot;
+    // The queue is ordered by the same admissible tuple prefix as the goal. Once its best state is
+    // worse than the best goal, no remaining state can improve the result.
     if (
       bestGoalCost &&
       (fLengths[next] - bestGoalCost[0] ||

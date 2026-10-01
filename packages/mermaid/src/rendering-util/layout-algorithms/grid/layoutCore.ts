@@ -513,6 +513,8 @@ function runGridLayoutCoreInPlace(
   }
   layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
   materializeAbsoluteGeometry(result);
+  // Routing consumes absolute node bounds and corridor coordinates, so it must run after the
+  // children-first sizing and top-down translation phases have both completed.
   routeGridEdges(data, result, metrics, routingOptions);
   return result;
 }
