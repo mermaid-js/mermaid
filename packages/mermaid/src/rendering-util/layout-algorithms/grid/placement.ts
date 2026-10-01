@@ -1,8 +1,10 @@
 import { log } from '../../../logger.js';
+import { resolveEdgeCornerRadius } from '../../edgeCornerRadius.js';
 import type { Node } from '../../types.js';
 import { compareCodeUnits } from '../layout-utils/helpers.js';
 import {
   GRID_DEFAULTS,
+  type GridCurve,
   type GridHorizontalAlign,
   type GridLayoutConfigNormalized,
   type GridPlacement,
@@ -14,6 +16,22 @@ import {
 } from './types.js';
 
 const GRID_LOG_PREFIX = '[grid]';
+const GRID_CURVES = new Set<GridCurve>([
+  'basis',
+  'bumpX',
+  'bumpY',
+  'cardinal',
+  'catmullRom',
+  'linear',
+  'monotoneX',
+  'monotoneY',
+  'natural',
+  'step',
+  'stepAfter',
+  'stepBefore',
+  'rounded',
+]);
+
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object';
 }
@@ -124,6 +142,11 @@ export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized
     verticalAlign: isGridVerticalAlign(raw.verticalAlign)
       ? raw.verticalAlign
       : GRID_DEFAULTS.verticalAlign,
+    curve:
+      typeof raw.curve === 'string' && GRID_CURVES.has(raw.curve)
+        ? raw.curve
+        : GRID_DEFAULTS.curve,
+    edgeCornerRadius: resolveEdgeCornerRadius(raw.edgeCornerRadius),
   };
 }
 

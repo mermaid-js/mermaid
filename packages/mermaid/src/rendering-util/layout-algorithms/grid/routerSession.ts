@@ -59,6 +59,8 @@ import { ROOT_CONTAINER_ID, gridError } from './types.js';
 interface BundleEdgeCheckpoint {
   edge: Edge;
   points: Edge['points'];
+  curve: Edge['curve'];
+  cornerRadius: Edge['cornerRadius'];
 }
 
 interface BundleCheckpoint {
@@ -89,6 +91,8 @@ function createBundleCheckpoint(
     edges: pairPlans.map(({ edge }) => ({
       edge,
       points: edge.points,
+      curve: edge.curve,
+      cornerRadius: edge.cornerRadius,
     })),
     instrumentedRoutesLength: instrumentedRoutes?.length,
     metrics: metrics ? createGridRoutingInstrumentationCheckpoint(metrics) : undefined,
@@ -118,6 +122,8 @@ function restoreBundleCheckpoint(
   }
   for (const edgeCheckpoint of checkpoint.edges) {
     edgeCheckpoint.edge.points = edgeCheckpoint.points;
+    edgeCheckpoint.edge.curve = edgeCheckpoint.curve;
+    edgeCheckpoint.edge.cornerRadius = edgeCheckpoint.cornerRadius;
   }
   if (instrumentedRoutes && checkpoint.instrumentedRoutesLength !== undefined) {
     instrumentedRoutes.length = checkpoint.instrumentedRoutesLength;
@@ -379,6 +385,8 @@ export class GridEdgeRoutingSession {
       const countKey = `${sourceNode.id}:${side}`;
       selfLoopCounts.set(countKey, index + 1);
       edge.points = points;
+      edge.curve = result.config.curve;
+      edge.cornerRadius = result.config.edgeCornerRadius;
       committedPairRoutes.push(points);
       pairRoutes.set(plan.pairKey, committedPairRoutes);
       if (metrics && instrumentedRoutes) {
@@ -610,6 +618,8 @@ export class GridEdgeRoutingSession {
       metrics.bundleSeparationRelaxations++;
     }
     edge.points = points;
+    edge.curve = result.config.curve;
+    edge.cornerRadius = result.config.edgeCornerRadius;
     committedPairRoutes.push(points);
     pairRoutes.set(plan.pairKey, committedPairRoutes);
     if (metrics && instrumentedRoutes) {

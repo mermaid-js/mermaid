@@ -12,8 +12,6 @@ import type { Point } from './types.js';
 
 /** General epsilon for coordinate comparisons */
 export const PIXEL_EPSILON = 1;
-/** @deprecated Use `PIXEL_EPSILON`; retained until validation migrates in the rendering layer. */
-export const EPS = PIXEL_EPSILON;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Segment representation for geometry processing
