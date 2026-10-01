@@ -7,6 +7,13 @@ import {
   isEdgeLabelNode,
 } from './types.js';
 
+/*
+ * Builds the containment model used by every later grid-layout phase.
+ *
+ * The returned forest excludes synthetic edge-label nodes from the geometry hierarchy, validates
+ * every parent reference, and orders groups children-first so nested containers can be measured
+ * before their parents.
+ */
 function asGroup(node: Node): (Node & { isGroup: true }) | undefined {
   return node.isGroup ? (node as Node & { isGroup: true }) : undefined;
 }
@@ -64,6 +71,8 @@ export function buildGridForest(nodes: Node[]): GridForest {
   const state = new Map<string, 0 | 1 | 2>();
   const postOrderGroups: (Node & { isGroup: true })[] = [];
 
+  // Use an explicit stack rather than recursion so deeply nested diagrams do not consume the
+  // JavaScript call stack. State 1 means "on the active path"; encountering it again is a cycle.
   interface VisitFrame {
     groupId: string;
     childGroups: (Node & { isGroup: true })[];
@@ -136,6 +145,8 @@ export function buildGridForest(nodes: Node[]): GridForest {
     }
   }
 
+  // Normally every group is reached from a root child. This second pass also validates malformed
+  // disconnected components and produces a useful cycle error instead of silently dropping them.
   for (const groupId of groupById.keys()) {
     if ((state.get(groupId) ?? 0) === 0) {
       visit(groupId);
@@ -159,6 +170,8 @@ export function isAncestorGroup(
 ): boolean {
   let current = node;
   const seen = new Set<string>();
+  // The forest builder already rejects cycles. The guard keeps this predicate safe when callers
+  // provide a partially constructed or independently sourced node map.
   while (current?.parentId) {
     if (current.parentId === ancestorId) {
       return true;
