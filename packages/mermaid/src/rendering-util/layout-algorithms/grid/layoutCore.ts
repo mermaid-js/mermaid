@@ -25,6 +25,15 @@ import {
   isFinitePositiveNumber,
 } from './types.js';
 
+/*
+ * Computes grid geometry in two coordinate systems:
+ *
+ * 1. Each container lays out its direct children in local coordinates, children-first.
+ * 2. A top-down pass translates those local results into absolute diagram coordinates.
+ *
+ * The public entry point runs both phases on a clone and commits only after the complete geometry
+ * succeeds, so invalid input cannot leave the caller's graph partially positioned.
+ */
 const GROUP_ROUTING_GUTTER = 24;
 const GROUP_ROUTING_CLEARANCE = 20;
 
@@ -87,6 +96,8 @@ function layoutContainer(
   const { cells } = resolveGridPlacements(directItems, sourceOrder, config);
   const cellEntries = [...cells.values()].sort((a, b) => a.row - b.row || a.column - b.column);
 
+  // A cell may contain an authored vertical stack. Columns and rows are sized from the largest
+  // complete stack in that track, which keeps neighboring cells aligned.
   const columnWidths = new Map<number, number>();
   const rowHeights = new Map<number, number>();
   const rows = new Set<number>();
@@ -143,6 +154,8 @@ function layoutContainer(
     ? contentTop + gridHeight + GROUP_ROUTING_CLEARANCE
     : contentTop + gridHeight + Math.max(config.rowGap / 2, GRID_DEFAULTS.containerPadding);
 
+  // Record the empty bands between tracks while geometry is available. The routing layer consumes
+  // these coordinates later without needing to reconstruct placement decisions.
   const verticalCorridors = new Set<number>([outerLeftCorridor, outerRightCorridor]);
   const horizontalCorridors = new Set<number>([outerTopCorridor, outerBottomCorridor]);
   const leftCorridorByColumn = new Map<number, number>();
@@ -284,6 +297,8 @@ function translateRect(
 function materializeAbsoluteGeometry(result: GridLayoutResult): void {
   const { forest, containers, itemMeta } = result;
 
+  // Container layout is local to its parent. Walk top-down with accumulated offsets so nodes,
+  // title rectangles, cell metadata, and routing corridors all move as one coordinate system.
   interface ShiftFrame {
     containerId: GridContainerId;
     offsetX: number;
@@ -378,6 +393,8 @@ function validatePlacementsBeforeLayout(
   config: GridLayoutConfigNormalized,
   sourceOrder: Map<string, number>
 ): void {
+  // Validate every container before mutating even the cloned geometry. This keeps failures
+  // independent of the order in which nested groups happen to be measured.
   for (const children of forest.childrenByParent.values()) {
     const directItems = sortBySourceOrder(
       children.filter((node) => !isEdgeLabelNode(node)),
@@ -388,6 +405,8 @@ function validatePlacementsBeforeLayout(
 }
 
 function commitGridGeometry(source: LayoutData, target: LayoutData): void {
+  // Preserve caller-owned node and edge identities. Downstream renderers may already hold
+  // references to these objects, so only calculated geometry is copied from the working graph.
   const sourceNodeById = new Map(source.nodes.map((node) => [node.id, node]));
   for (const targetNode of target.nodes) {
     const sourceNode = sourceNodeById.get(targetNode.id);
@@ -435,6 +454,8 @@ function cloneGridLayoutData(data: GridLayoutData): GridLayoutData {
 }
 
 function rebindGridForest(forest: GridForest, nodes: Node[]): GridForest {
+  // The calculation forest points at cloned nodes. Rebuild each collection against the committed
+  // caller-owned nodes before exposing the result to later routing and rendering phases.
   const nodeById = new Map(nodes.map((node) => [node.id, node]));
   const originalNode = (node: Node): Node => {
     const original = nodeById.get(node.id);
@@ -490,6 +511,8 @@ function runGridLayoutCoreInPlace(
     sourceOrder,
   };
 
+  // Post-order is the key sizing invariant: a group becomes a measured child only after all of its
+  // descendants have established the group's final width and height.
   for (const group of forest.postOrderGroups) {
     layoutContainer(group.id, result, result.containers, result.itemMeta);
   }
