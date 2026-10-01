@@ -289,6 +289,7 @@ export const GRID_DEFAULTS = {
 };
 
 export type GridLayoutData = LayoutData & {
+  // Use the public config contract here so grid does not grow a parallel internal config schema.
   config: MermaidConfig & {
     grid?: {
       placements?: Record<string, GridPlacement>;

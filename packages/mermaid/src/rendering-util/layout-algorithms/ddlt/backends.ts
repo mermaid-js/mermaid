@@ -64,6 +64,10 @@ export function runSwimlanesDdlt(layout: LayoutData, sizes: SizesFixture): void 
   (layout as LayoutData & { direction?: string }).direction = direction;
 }
 
+/**
+ * Mirrors the production grid prepare/measure/layout sequence while replacing DOM measurement
+ * with captured fixture sizes. Keep this adapter thin so DDLT exercises production layout code.
+ */
 export function runGridDdlt(layout: LayoutData, sizes: SizesFixture): void {
   prepareGridLayout(layout);
   applyFixtureContentSizesStrict(layout, sizes);
@@ -73,7 +77,8 @@ export function runGridDdlt(layout: LayoutData, sizes: SizesFixture): void {
 
 /**
  * Parse `.mmd`, apply fixture sizes, then run the given backend (mutates returned `LayoutData`).
- * Only `'swimlanes'` is supported on this branch; `'domus-orthogonal'` throws.
+ * Backends that need fixture sizes between preparation and layout are dispatched here.
+ * Unsupported backends throw rather than silently falling back to a different algorithm.
  */
 export async function parseApplySizesAndLayout(
   mmdPath: string,
@@ -95,7 +100,10 @@ export async function parseApplySizesAndLayout(
   return layout;
 }
 
-/** Returns a DOM-free layout runner. `swimlanes` must use `parseApplySizesAndLayout()` (needs fixture sizes mid-pipeline); `domus-orthogonal` throws. */
+/**
+ * Returns a DOM-free runner only for backends whose complete pipeline can run without a browser.
+ * Swimlanes must use `parseApplySizesAndLayout()` because it injects fixture sizes mid-pipeline.
+ */
 export function getLayoutTestBackend(_id: LayoutTestBackendId): LayoutTestBackend {
   if (_id === 'grid') {
     return (layout: LayoutData) => {
@@ -113,5 +121,7 @@ export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBacke
   if (profile === 'grid') {
     return ['grid'];
   }
+  // Legacy flowchart fixtures retain their historical DOMUS backend rather than changing meaning
+  // when new profiles are added.
   return ['domus-orthogonal'];
 }

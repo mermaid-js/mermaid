@@ -389,6 +389,8 @@ export class MindmapDB {
 
     const placements = userDefinedConfig.grid?.placements;
     if (placements) {
+      // Authored mindmap IDs are not required to be unique. Warn only when a placement makes that
+      // ambiguity observable; all matching rendering nodes intentionally share the placement.
       const placementIdCounts = new Map<string, number>();
       for (const node of processedNodes) {
         const placementId = node.placementId ?? node.id;
