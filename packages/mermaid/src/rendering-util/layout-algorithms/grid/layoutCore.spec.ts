@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { LayoutData, Node } from '../../types.js';
+import type { Edge, LayoutData, Node } from '../../types.js';
 import { runGridLayoutCore } from './layoutCore.js';
 
 function leaf(
@@ -77,6 +77,24 @@ describe('grid layout core', () => {
 
     expect(data.nodes[0]).toMatchObject({ x: 20, y: 10, width: 40, height: 20 });
     expect(result.itemMeta.get('only')).toMatchObject({ row: 1, column: 1 });
+  });
+
+  it('marks routed edges with their rendering capabilities', () => {
+    const data = layout(
+      [
+        leaf('source', 40, 20, { row: 1, column: 1 }),
+        leaf('target', 40, 20, { row: 1, column: 2 }),
+      ],
+      { curve: 'linear' }
+    );
+    data.edges.push({ id: 'source-target', start: 'source', end: 'target' } as Edge);
+
+    runGridLayoutCore(data);
+
+    expect(data.edges[0]).toMatchObject({
+      portClipping: 'outline-orthogonal',
+      skipCornerFix: true,
+    });
   });
 
   it('sizes stacked cells and applies horizontal/vertical alignment', () => {

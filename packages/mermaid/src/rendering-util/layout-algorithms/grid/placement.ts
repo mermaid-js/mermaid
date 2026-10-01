@@ -154,9 +154,7 @@ export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized
       ? raw.verticalAlign
       : GRID_DEFAULTS.verticalAlign,
     curve:
-      typeof raw.curve === 'string' && GRID_CURVES.has(raw.curve)
-        ? raw.curve
-        : GRID_DEFAULTS.curve,
+      typeof raw.curve === 'string' && GRID_CURVES.has(raw.curve) ? raw.curve : GRID_DEFAULTS.curve,
     edgeCornerRadius: resolveEdgeCornerRadius(raw.edgeCornerRadius),
   };
 }
