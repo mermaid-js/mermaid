@@ -10,7 +10,7 @@
 
 # Interface: ExternalDiagramDefinition
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/diagram-api/types.ts:141
+Defined in: [packages/mermaid/src/diagram-api/types.ts:141](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L141)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/dia
 
 > **detector**: `DiagramDetector`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/diagram-api/types.ts:143
+Defined in: [packages/mermaid/src/diagram-api/types.ts:143](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L143)
 
 ---
 
@@ -26,7 +26,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/dia
 
 > **id**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/diagram-api/types.ts:142
+Defined in: [packages/mermaid/src/diagram-api/types.ts:142](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L142)
 
 ---
 
@@ -34,4 +34,4 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/dia
 
 > **loader**: `DiagramLoader`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/diagram-api/types.ts:144
+Defined in: [packages/mermaid/src/diagram-api/types.ts:144](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/diagram-api/types.ts#L144)
