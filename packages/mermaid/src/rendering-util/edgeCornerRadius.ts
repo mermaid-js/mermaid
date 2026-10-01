@@ -1,3 +1,4 @@
+// Keep corner geometry consistent between the initial renderer and any later path rewrite.
 export const DEFAULT_EDGE_CORNER_RADIUS = 5;
 
 export function resolveEdgeCornerRadius(value: unknown): number {

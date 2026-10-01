@@ -518,7 +518,11 @@ function runGridLayoutCoreInPlace(
   }
   layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
   materializeAbsoluteGeometry(result);
+  // Routing consumes absolute node bounds and corridor coordinates, so it must run after the
+  // children-first sizing and top-down translation phases have both completed.
   routeGridEdges(data, result, metrics, routingOptions);
+  // Labels consume final routes and may transactionally reroute them, so they are the last layout
+  // phase before the working copy is committed to the render model.
   positionGridEdgeLabels(data, undefined, metrics);
   return result;
 }

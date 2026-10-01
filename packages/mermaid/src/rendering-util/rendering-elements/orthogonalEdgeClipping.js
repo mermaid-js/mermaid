@@ -1,3 +1,5 @@
+// Clips only terminal legs. Interior bends remain router-owned so label reservations, line hops,
+// and validation continue to observe the same orthogonal topology.
 const ENDPOINT_EPSILON = 1e-6;
 
 const isFinitePoint = (point) => point && Number.isFinite(point.x) && Number.isFinite(point.y);
@@ -16,6 +18,8 @@ const outlineEndpoint = (node, port, adjacent) => {
   if (!node?.intersect) {
     return undefined;
   }
+  // Intersect from the adjacent bend toward the node so shape-specific boundaries, not bounding
+  // boxes, determine the visible endpoint.
   const outline = node.intersect(adjacent);
   if (
     !isFinitePoint(outline) ||
@@ -52,6 +56,8 @@ export const clipOrthogonalEndpointsToNodeOutlines = (points, tail, head) => {
     return points;
   }
 
+  // Source and target decisions are independent: mixed shapes may require clipping at one end
+  // while the other endpoint is already on its outline.
   const first = points[0];
   const second = points[1];
   const penultimate = points[points.length - 2];

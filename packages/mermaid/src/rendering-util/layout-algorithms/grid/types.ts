@@ -29,6 +29,8 @@ export type GridCurve =
   | 'rounded';
 export type RouterVertexId = number;
 
+// Routing uses a compact orthogonal visibility graph. The richer arc form supports validation and
+// overlays; RouterSearchArc is the allocation-conscious representation consumed by hot searches.
 export interface RouterPoint {
   x: number;
   y: number;
@@ -53,6 +55,8 @@ export interface PortalRange {
   coordinate?: number;
 }
 
+// Crossing a group boundary is represented as two vertices plus one explicit transition. Keeping
+// both sides of the boundary prevents a route from accidentally treating hierarchy as open space.
 export interface PairedPortal {
   ownerId: string;
   side: GridSide;
@@ -102,6 +106,8 @@ export interface OrthogonalIntervalIndex {
 }
 
 export interface ContainerRoutingTopology {
+  // Base topologies are immutable and shared by all edges in a container. Optional accessors expose
+  // lightweight endpoint overlays without copying the base vertex and adjacency arrays.
   containerId: GridContainerId;
   bounds: RouterRect;
   obstacles: readonly RouterObstacle[];
@@ -124,6 +130,8 @@ export interface ContainerRoutingTopology {
 }
 
 export interface GridRoutingContext {
+  // Containers that exceed a topology cap are recorded here and routed through the validated
+  // compatibility path; resource exhaustion is degradation, not permission to emit invalid paths.
   topologies: Map<GridContainerId, ContainerRoutingTopology>;
   fallbackContainers: Map<GridContainerId, string>;
   searchBudget: { expandedStates: number };
@@ -142,6 +150,8 @@ export interface GridLayoutConfigNormalized {
   titleGap: number;
   horizontalAlign: GridHorizontalAlign;
   verticalAlign: GridVerticalAlign;
+  // Routing publishes these values on each edge so shared rendering and line hops use identical
+  // corner geometry without depending on grid internals.
   curve: GridCurve;
   edgeCornerRadius: number;
 }
@@ -208,6 +218,8 @@ export interface GridForest {
 }
 
 export interface GridAttachmentDemand {
+  // demandKey identifies one edge endpoint at one hierarchy boundary and remains stable across
+  // retries so portal coordinates can be captured and restored transactionally.
   ownerId: string;
   side: GridSide;
   edgeId: string;

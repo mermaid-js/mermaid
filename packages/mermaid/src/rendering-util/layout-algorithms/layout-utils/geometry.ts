@@ -10,7 +10,7 @@ import type { Point } from './types.js';
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** General epsilon for coordinate comparisons */
+/** Canonical one-pixel tolerance shared by routing geometry and final layout validation. */
 export const PIXEL_EPSILON = 1;
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -13,6 +13,8 @@ import type { Rect } from '../layout-utils/types.js';
 import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import { GRID_LABEL_PREFIX, gridError, isEdgeLabelNode, isFinitePositiveNumber } from './types.js';
 
+// Label placement is a post-routing transaction: reserve label rectangles, reroute affected
+// orthogonal edges, then publish only a pass whose labels and preserved anchors all validate.
 const LABEL_CLEARANCE = 6;
 const LABEL_GUTTER = 14;
 const LABEL_GUTTER_STEP = 18;
@@ -114,6 +116,8 @@ export interface GridEdgeLabelInstrumentation {
 }
 
 interface EdgeLabelContext {
+  // These indexes are updated with every provisional route so later searches see one coherent
+  // geometry snapshot rather than rescanning stale edge and obstacle arrays.
   edgeById: Map<string, Edge>;
   edgeGeometryById: Map<string, EdgeGeometryCache>;
   obstacleIndex: CompressedBoundsIndex<ObstacleEntry>;
@@ -553,6 +557,8 @@ function createEdgeLabelContext(
   data: LayoutData,
   metrics?: GridEdgeLabelInstrumentation
 ): EdgeLabelContext {
+  // A fresh context is the isolation boundary for one placement pass. Nothing indexed here is
+  // reused after rollback because route proposals and label reservations are pass-local.
   const context: EdgeLabelContext = {
     edgeById: new Map(),
     edgeGeometryById: new Map(),
@@ -869,6 +875,8 @@ function blockedCenterIntervals(
     return null;
   }
 
+  // Project every obstacle onto the candidate segment. The remaining interval gaps are the only
+  // centers worth testing, which keeps placement deterministic and avoids pixel-by-pixel search.
   const blocked: Interval[] = [];
   const bandBounds = obstacleBandQueryBounds(segment, labelNode);
   if (!bandBounds) {
@@ -1104,6 +1112,8 @@ function labelStillAnchored(
   placedLabelsByEdgeId: Map<string, PlacedLabel>
 ): boolean {
   const placed = placedLabelsByEdgeId.get(edgeId);
+  // Owner reroutes may change the supporting segment, but must still pass through the reserved
+  // label rectangle so the rendered label remains attached to its edge.
   return !placed || polylineIntersectsRect(points, placed.rect);
 }
 
@@ -1305,6 +1315,8 @@ function buildLabelDetourPoints(
     return null;
   }
 
+  // Keep the original terminal-adjacent anchors intact; marker clearance and node clipping own
+  // endpoint geometry, while label placement owns only the interior detour.
   const a = points[segmentIndex];
   const b = points[segmentIndex + 1];
   if (segment.orientation === 'H') {
@@ -1944,6 +1956,8 @@ function ensureUniqueGridLabelNodeId(edge: Edge, nodeById: Map<string, Node>): s
 }
 
 export function prepareGridLayout(data: LayoutData): void {
+  // Labels become measured helper nodes before grid sizing, but remain outside the placement
+  // forest. The original edge text is cleared so the shared renderer does not draw it twice.
   const nodeById = new Map<string, Node>();
   for (const node of data.nodes) {
     nodeById.set(node.id, node);
@@ -2029,6 +2043,8 @@ export function positionGridEdgeLabels(
     return;
   }
 
+  // The outer snapshot is the transaction boundary for the whole label phase. If both placement
+  // passes fail, restore every route and label coordinate exactly as routing produced them.
   const baseEdgePoints = new Map<string, Point[] | undefined>(
     data.edges.map((edge) => [edge.id, edge.points?.map((point) => ({ ...point }))])
   );
@@ -2062,6 +2078,8 @@ export function positionGridEdgeLabels(
   );
   let lastError: unknown;
   for (let pass = 1; pass <= 2; pass++) {
+    // Pass 1 prefers existing segments and foreign-edge reroutes. Pass 2 additionally permits
+    // owner-edge detours, using any valid route improvements retained from the first attempt.
     incrementMetric(instrumentation, 'labelPasses');
     const context = createEdgeLabelContext(data, instrumentation);
     const placedLabelsByEdgeId = new Map<string, PlacedLabel>();
@@ -2167,6 +2185,8 @@ export function positionGridEdgeLabels(
         upsertPlacedLabelObstacle(context, placedLabel);
       }
 
+      // Once every label has a provisional home, freeze the complete reservation set before
+      // rerouting. This prevents result order from changing which labels an edge must avoid.
       const frozenLabels = [...placedLabelsByEdgeId.values()];
       incrementMetric(instrumentation, 'frozenReservations', frozenLabels.length);
       if (routingInstrumentation) {
