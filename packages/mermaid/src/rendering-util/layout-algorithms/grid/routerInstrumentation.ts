@@ -2,6 +2,8 @@ import type { Point } from '../../../types.js';
 import { normalizePolyline, segmentsCross } from '../layout-utils/geometry.js';
 import { manhattanLength } from '../layout-utils/helpers.js';
 
+// Instrumentation doubles as observable behavior for retries. Work counters are cumulative, while
+// committed-output counters must roll back with a failed bundle attempt.
 export type GridRoutingFallbackReason =
   | 'vertex_cap'
   | 'adjacency_cap'
@@ -117,6 +119,8 @@ export const gridRoutingMetricDisposition = {
   routes: 'transactional',
 } as const satisfies Record<keyof GridRoutingInstrumentation, 'transactional' | 'cumulative'>;
 
+// Deriving checkpoint keys from the exhaustive disposition map forces every new metric to declare
+// whether retries preserve the work or restore the committed result.
 type TransactionalGridRoutingMetric = {
   [K in keyof typeof gridRoutingMetricDisposition]: (typeof gridRoutingMetricDisposition)[K] extends 'transactional'
     ? K
@@ -146,6 +150,8 @@ export interface GridRoutingInstrumentationCheckpoint {
 export function createGridRoutingInstrumentationCheckpoint(
   metrics: GridRoutingInstrumentation
 ): GridRoutingInstrumentationCheckpoint {
+  // Route arrays are append-only during an attempt, so lengths are sufficient and avoid cloning
+  // potentially large per-edge records on every bundle retry.
   return {
     routeOrderLength: metrics.routeOrder.length,
     routesLength: metrics.routes.length,
@@ -255,6 +261,8 @@ export function recordGridRoute(
   boundaryTransitionCount = 0,
   laneOffset = 0
 ): void {
+  // Quality metrics compare only against previously committed routes, matching visible route order
+  // and avoiding double-counting pairs.
   const normalized = normalizePolyline(points);
   let crossingCount = 0;
   let sharedLength = 0;

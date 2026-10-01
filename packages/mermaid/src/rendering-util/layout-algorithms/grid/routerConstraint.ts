@@ -17,6 +17,8 @@ import type {
 } from './types.js';
 import { isEdgeLabelNode } from './types.js';
 
+// Centralizes post-route validity checks so sparse routes, compatibility fallbacks, and bundle
+// retries all enforce the same obstacle-clearance and lane-separation contract.
 export function isPairSeparationError(error: unknown): boolean {
   if (!(error instanceof Error) || !('details' in error)) {
     return false;
@@ -72,6 +74,8 @@ export function validateSameContainerRoute(
   containerId: GridContainerId,
   result: GridLayoutResult
 ): boolean {
+  // Terminal segments may touch their own endpoint rectangles, but must leave them directly and
+  // every other segment must remain outside clearance-inflated child geometry.
   const normalized = normalizePolyline([...points]);
   if (
     normalized.points.length < 2 ||
@@ -194,6 +198,8 @@ function nonterminalSegments(points: readonly Point[]): OrthogonalSegment[] {
   ) {
     return [];
   }
+  // Pair lanes may share the short attachment stubs at nodes. Trim those stubs before measuring
+  // corridor overlap so only the independently routable interior is constrained.
   const trim = (segment: OrthogonalSegment, atStart: boolean): void => {
     if (segment.orientation === 'H') {
       const direction = Math.sign(segment.b.x - segment.a.x);
@@ -230,6 +236,8 @@ function pairSegmentsConflict(candidate: OrthogonalSegment, committed: Orthogona
     candidate.orientation === 'H'
       ? Math.abs(candidate.a.y - committed.a.y)
       : Math.abs(candidate.a.x - committed.a.x);
+  // Collinear overlap is illegal when lanes coincide for a meaningful distance or are closer than
+  // the configured lane spacing. Endpoint-only contact has zero overlap and remains legal.
   return (
     (separation === 0 && overlap >= LANE_SEPARATION_PX) ||
     (separation > 0 && separation < LANE_SEPARATION_PX)
@@ -294,6 +302,8 @@ export function endpointPairLowerBound(
   source: EndpointCandidate,
   target: EndpointCandidate
 ): readonly [length: number, bends: number] {
+  // This admissible lower bound includes both terminal stubs and the minimum bend count implied by
+  // endpoint orientations; candidate-pair search can safely prune against it.
   const sourceOrientation: GridOrientation =
     source.side === 'left' || source.side === 'right' ? 'H' : 'V';
   const targetOrientation: GridOrientation =

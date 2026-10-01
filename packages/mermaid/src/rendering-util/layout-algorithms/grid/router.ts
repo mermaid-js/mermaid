@@ -5,6 +5,8 @@ import { GridEdgeRoutingSession } from './routerSession.js';
 import type { TopologyResourceCaps } from './routerTopology.js';
 import type { GridLayoutResult } from './types.js';
 
+// Public routing facade. The implementation is split by phase so callers only depend on the
+// stable options and compatibility exports that predate the module extraction.
 export {
   areExactlyAxisAligned,
   boundedAlternativePortalCoordinates,
@@ -19,6 +21,7 @@ export interface GridRoutingDualRouteComparison {
 }
 
 export interface GridRoutingOptions {
+  // Caps are also test seams, so enabling them deliberately bypasses compatibility fast paths.
   topologyCaps?: TopologyResourceCaps;
   searchCaps?: RouterSearchCaps;
   onDualRouteComparison?: (comparison: GridRoutingDualRouteComparison) => void;
@@ -30,5 +33,6 @@ export function routeGridEdges(
   metrics?: GridRoutingInstrumentation,
   options: GridRoutingOptions = {}
 ): void {
+  // A fresh session owns every mutable routing structure and commits routes in deterministic order.
   new GridEdgeRoutingSession(layout, result, metrics, options).route();
 }
