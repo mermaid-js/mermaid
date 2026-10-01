@@ -38,6 +38,7 @@ the layer worktrees. No dependency installation or update is performed.
 - `grid/placement.ts` and `.spec.ts`: L1 internal placement/defaults; L3 curve/corner defaults; L4
   public config and authored placement IDs.
 - `grid/performance.spec.ts`: L2 routing resource/performance coverage; L3 label-index coverage.
+- `grid/routerSession.ts`: L2 routing transaction state; L3 curve/corner transaction fields.
 - `grid/testMatrix.ddlt.spec.ts`: routing assertions are L2 in purpose but the registered DDLT
   harness is deferred to L4.
 - `layout-utils/helpers.ts` and `.spec.ts`: L1 locale-independent deterministic ordering; L3 marker
@@ -164,7 +165,7 @@ L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerPlanning.ts
 L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.spec.ts
 L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.testUtils.ts
 L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSearch.ts
-L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSession.ts
+split	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSession.ts
 L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerSparse.ts
 L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.spec.ts
 L2	packages/mermaid/src/rendering-util/layout-algorithms/grid/routerTopology.ts

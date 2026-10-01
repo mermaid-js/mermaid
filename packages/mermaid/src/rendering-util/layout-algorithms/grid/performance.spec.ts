@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
+import {
+  createGridEdgeLabelInstrumentation,
+  positionGridEdgeLabels,
+  prepareGridLayout,
+} from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 
@@ -116,6 +121,120 @@ function largeSearchLayout(): LayoutData {
   };
 }
 
+function manualNode(id: string, x: number, y: number, width = 40, height = 40): Node {
+  return {
+    id,
+    x,
+    y,
+    width,
+    height,
+    isGroup: false,
+    shape: 'rect',
+  } as Node;
+}
+
+function manualEdge(
+  id: string,
+  start: string,
+  end: string,
+  points: { x: number; y: number }[],
+  label?: string
+): Edge {
+  return {
+    id,
+    start,
+    end,
+    points,
+    label,
+    arrowTypeStart: 'none',
+    arrowTypeEnd: 'arrow_point',
+    curve: 'linear',
+    type: 'arrow_point',
+  } as Edge;
+}
+
+function denseLabelRoutingLayout(): LayoutData {
+  const horizontalLabels = 12;
+  const verticalCrossings = 18;
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  const firstRowY = 120;
+  const rowStep = 56;
+  const leftX = 60;
+  const rightX = 980;
+  const topY = 40;
+  const bottomY = firstRowY + (horizontalLabels - 1) * rowStep + 80;
+  const firstColumnX = 190;
+  const columnStep = 36;
+
+  for (let row = 0; row < horizontalLabels; row++) {
+    const y = firstRowY + row * rowStep;
+    nodes.push(
+      manualNode(`h-left-${row}`, leftX, y, 20, 20),
+      manualNode(`h-right-${row}`, rightX, y, 20, 20)
+    );
+    edges.push(
+      manualEdge(
+        `h-${row}`,
+        `h-left-${row}`,
+        `h-right-${row}`,
+        [
+          { x: leftX + 20, y },
+          { x: rightX - 20, y },
+        ],
+        `label-${row}`
+      )
+    );
+  }
+
+  for (let column = 0; column < verticalCrossings; column++) {
+    const x = firstColumnX + column * columnStep;
+    nodes.push(
+      manualNode(`v-top-${column}`, x, topY, 20, 20),
+      manualNode(`v-bottom-${column}`, x, bottomY, 20, 20)
+    );
+    edges.push(
+      manualEdge(`v-${column}`, `v-top-${column}`, `v-bottom-${column}`, [
+        { x, y: topY + 20 },
+        { x, y: bottomY - 20 },
+      ])
+    );
+  }
+
+  return {
+    nodes,
+    edges,
+    config: {
+      layout: 'grid',
+    } as LayoutData['config'],
+  };
+}
+
+function fullSpanFallbackLayout(): LayoutData {
+  return {
+    nodes: [
+      manualNode('start', 40, 150, 20, 20),
+      manualNode('end', 460, 150, 20, 20),
+      manualNode('blocker', 250, 150, 80, 80),
+    ],
+    edges: [
+      manualEdge(
+        'wide-label',
+        'start',
+        'end',
+        [
+          { x: 50, y: 150 },
+          { x: 450, y: 150 },
+        ],
+        'wide label'
+      ),
+    ],
+    config: {
+      layout: 'grid',
+    } as LayoutData['config'],
+  };
+}
+
 describe('grid determinism and performance', () => {
   it('produces byte-equivalent geometry across repeated runs', () => {
     const baseline = representativeLayout();
@@ -193,5 +312,73 @@ describe('grid determinism and performance', () => {
     expect(metrics.endpointOverlayVertices).toBeLessThanOrEqual(metrics.endpointOverlayBuilds * 32);
     expect(metrics.expandedStates).toBeLessThan(2_000_000);
     expect(metrics.estimatedBytes).toBeLessThan(64 * 1024 * 1024);
+  });
+
+  it('uses coordinate-compressed label queries for very large coordinate spans', () => {
+    const layout = fullSpanFallbackLayout();
+    for (const node of layout.nodes) {
+      if (typeof node.x === 'number') {
+        node.x += 1_000_000_000;
+      }
+    }
+    for (const edge of layout.edges) {
+      edge.points = edge.points?.map((point) => ({ ...point, x: point.x + 1_000_000_000 }));
+    }
+    prepareGridLayout(layout);
+    const labelNode = layout.nodes.find((node) => node.id === layout.edges[0].labelNodeId);
+    if (labelNode) {
+      labelNode.width = 320;
+      labelNode.height = 28;
+    }
+
+    const metrics = createGridEdgeLabelInstrumentation();
+    positionGridEdgeLabels(layout, metrics);
+
+    expect(Number.isFinite(labelNode?.x)).toBe(true);
+    expect(Number.isFinite(labelNode?.y)).toBe(true);
+    expect(layout.edges[0].points?.length).toBeGreaterThan(2);
+    // These counters guard coordinate-compressed indexing: coordinate magnitude must not trigger
+    // span-sized allocation or fallback to full node/edge scans.
+    expect(metrics.fullNodeObstacleScans).toBe(0);
+    expect(metrics.fullEdgeScans).toBe(0);
+    expect(metrics.indexCoordinateCount).toBeLessThan(1_000);
+    expect(metrics.indexSpanAllocations).toBe(0);
+  });
+
+  it('indexes dense label routing instead of rescanning all nodes and edges per candidate', () => {
+    const layout = denseLabelRoutingLayout();
+    prepareGridLayout(layout);
+    for (const node of layout.nodes) {
+      if ((node as Node & { isEdgeLabel?: boolean }).isEdgeLabel) {
+        node.width = 56;
+        node.height = 24;
+      }
+    }
+
+    const metrics = createGridEdgeLabelInstrumentation();
+    positionGridEdgeLabels(layout, metrics);
+
+    expect(
+      layout.nodes
+        .filter((node) => (node as Node & { isEdgeLabel?: boolean }).isEdgeLabel)
+        .every((node) => Number.isFinite(node.x) && Number.isFinite(node.y))
+    ).toBe(true);
+    expect(
+      layout.edges
+        .filter((item) => item.id.startsWith('v-'))
+        .some((item) => (item.points?.length ?? 0) > 2)
+    ).toBe(true);
+    // These counters enforce the indexed-query and bounded-reroute contract; successful geometry
+    // alone would not reveal a quadratic full-scan implementation.
+    expect(
+      metrics.segmentRectQueries +
+        metrics.segmentBandQueries +
+        metrics.obstacleRectQueries +
+        metrics.obstacleBandQueries
+    ).toBeGreaterThan(0);
+    expect(metrics.fullNodeObstacleScans).toBe(0);
+    expect(metrics.fullEdgeScans).toBe(0);
+    expect(metrics.labelPasses).toBeLessThanOrEqual(2);
+    expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
   });
 });
