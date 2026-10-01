@@ -1,0 +1,29 @@
+---
+config:
+  layout: grid
+  securityLevel: loose
+  grid:
+    rowGap: 72
+    columnGap: 96
+---
+flowchart LR
+  subgraph G["Group"]
+    M["Member"]@{ row: 1, column: 1 }
+  end
+  G@{ row: 1, column: 1 }
+  O["Outside"]@{ row: 2, column: 4 }
+  Loop["Loop"]@{ row: 1, column: 5 }
+  Source([Source])@{ row: 2, column: 5 }
+  Target([Target])@{ row: 2, column: 6 }
+
+  G --> M
+  M --> G
+  M -->|<b>HTML label</b>| O
+  O --> M
+  Loop --> Loop
+  Loop --> Loop
+  Loop --> Loop
+  Source --> Target
+  Source --> Target
+  Source --> Target
+  Target --> Source

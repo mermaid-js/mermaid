@@ -1,0 +1,16 @@
+---
+config:
+  layout: grid
+  grid:
+    columnGap: 150
+    rowGap: 100
+    placements:
+      CUSTOMER: { row: 1, column: 1 }
+      ORDER: { row: 1, column: 2 }
+      PAYMENT: { row: 2, column: 2 }
+      LINE_ITEM: { row: 1, column: 3 }
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE_ITEM : contains
+  ORDER ||--o| PAYMENT : has

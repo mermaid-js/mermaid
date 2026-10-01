@@ -3,6 +3,7 @@ import { log } from '../../../logger.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
+import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 import { ROOT_CONTAINER_ID } from './types.js';
@@ -63,6 +64,16 @@ function baseLayout(nodes: Node[], edges: Edge[], grid: Record<string, unknown> 
       grid,
     } as LayoutData['config'],
   };
+}
+
+function sizeGridLabelNodes(data: LayoutData, width = 42, height = 18): void {
+  prepareGridLayout(data);
+  for (const node of data.nodes) {
+    if ((node as { isEdgeLabel?: boolean }).isEdgeLabel) {
+      node.width = width;
+      node.height = height;
+    }
+  }
 }
 
 function segmentLength(points: { x: number; y: number }[]): number {
@@ -165,6 +176,19 @@ function invalidRoutingIssues(data: LayoutData) {
 }
 
 describe('grid router', () => {
+  it('uses the configured edge curve and rounded corner radius', () => {
+    const data = baseLayout(
+      [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 2, column: 2 })],
+      [edge('a-b', 'a', 'b')],
+      { curve: 'rounded', edgeCornerRadius: 12 }
+    );
+
+    runGridLayoutCore(data);
+
+    expect(data.edges[0]).toMatchObject({ curve: 'rounded', cornerRadius: 12 });
+    expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThan(0);
+  });
+
   it('keeps routing deterministic when edge input order changes', () => {
     const build = () =>
       baseLayout(
@@ -187,7 +211,7 @@ describe('grid router', () => {
     );
   });
 
-  it('routes ordinary edges into valid orthogonal polylines', () => {
+  it('routes ordinary and labelled edges into valid orthogonal polylines', () => {
     const data = baseLayout(
       [
         group('g', 'Group', { row: 1, column: 1 }),
@@ -195,10 +219,11 @@ describe('grid router', () => {
         leaf('b', 90, 40, { row: 1, column: 2 }),
         leaf('c', 70, 40, { row: 2, column: 2 }),
       ],
-      [edge('e1', 'a', 'b'), edge('e3', 'a', 'c')],
+      [edge('e1', 'a', 'b'), edge('e3', 'a', 'c', 'labelled')],
       { rowGap: 40, columnGap: 40 }
     );
 
+    sizeGridLabelNodes(data, 60, 20);
     runGridLayoutCore(data);
 
     for (const routed of data.edges) {
@@ -209,6 +234,10 @@ describe('grid router', () => {
         expect(prev.x === next.x || prev.y === next.y).toBe(true);
       }
     }
+
+    const labelNode = data.nodes.find((node) => (node as { isEdgeLabel?: boolean }).isEdgeLabel);
+    expect(labelNode?.x).toEqual(expect.any(Number));
+    expect(labelNode?.y).toEqual(expect.any(Number));
   });
 
   it('routes a leaf-to-group edge with finite orthogonal points', () => {
