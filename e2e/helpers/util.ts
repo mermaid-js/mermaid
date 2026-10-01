@@ -157,7 +157,10 @@ export const openURLAndVerifyRendering = async (
     });
   } catch {
     try {
-      await diagramSvg(page).first().waitFor({ state: 'visible', timeout: 15_000 });
+      const renderedSvg = rejectErrorDiagram
+        ? diagramSvg(page).first()
+        : page.locator('svg').first();
+      await renderedSvg.waitFor({ state: 'visible', timeout: 15_000 });
     } catch (error) {
       const details = [...pageErrors, ...consoleErrors];
       if (details.length > 0) {
@@ -184,7 +187,7 @@ export const openURLAndVerifyRendering = async (
       await validation(iframe);
     }
   } else {
-    const svg = diagramSvg(page).first();
+    const svg = rejectErrorDiagram ? diagramSvg(page).first() : page.locator('svg').first();
     await expect(svg).toBeVisible();
     await expect(svg).not.toHaveAttribute('viewbox'); // cspell:ignore viewbox
 

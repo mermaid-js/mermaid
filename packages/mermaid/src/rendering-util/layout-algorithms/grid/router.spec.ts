@@ -69,6 +69,16 @@ function baseLayout(nodes: Node[], edges: Edge[], grid: Record<string, unknown> 
   };
 }
 
+function sizeGridLabelNodes(data: LayoutData, width = 42, height = 18): void {
+  prepareGridLayout(data);
+  for (const node of data.nodes) {
+    if ((node as { isEdgeLabel?: boolean }).isEdgeLabel) {
+      node.width = width;
+      node.height = height;
+    }
+  }
+}
+
 function segmentLength(points: { x: number; y: number }[]): number {
   if (points.length < 2) {
     return 0;
@@ -511,6 +521,18 @@ describe('grid router', () => {
     expect(validateLayout(data).ok).toBe(true);
   });
 
+  it('uses the configured edge curve and rounded corner radius', () => {
+    const data = baseLayout(
+      [leaf('a', 80, 40, { row: 1, column: 1 }), leaf('b', 80, 40, { row: 2, column: 2 })],
+      [edge('a-b', 'a', 'b')],
+      { curve: 'rounded', edgeCornerRadius: 12 }
+    );
+
+    runGridLayoutCore(data);
+    expect(data.edges[0]).toMatchObject({ curve: 'rounded', cornerRadius: 12 });
+    expect(normalizePolyline(data.edges[0].points ?? []).bends).toBeGreaterThan(0);
+  });
+
   it('keeps routing deterministic when edge input order changes', () => {
     const build = () =>
       baseLayout(
@@ -533,7 +555,7 @@ describe('grid router', () => {
     );
   });
 
-  it('routes ordinary edges into valid orthogonal polylines', () => {
+  it('routes ordinary and labelled edges into valid orthogonal polylines', () => {
     const data = baseLayout(
       [
         group('g', 'Group', { row: 1, column: 1 }),
@@ -541,14 +563,19 @@ describe('grid router', () => {
         leaf('b', 90, 40, { row: 1, column: 2 }),
         leaf('c', 70, 40, { row: 2, column: 2 }),
       ],
-      [edge('e1', 'a', 'b'), edge('e3', 'a', 'c')],
+      [edge('e1', 'a', 'b'), edge('e3', 'a', 'c', 'labelled')],
       { rowGap: 40, columnGap: 40 }
     );
 
+    sizeGridLabelNodes(data, 60, 20);
     runGridLayoutCore(data);
 
     expectFiniteOrthogonalRoutes(data);
     expect(invalidRoutingIssues(data)).toEqual([]);
+
+    const labelNode = data.nodes.find((node) => (node as { isEdgeLabel?: boolean }).isEdgeLabel);
+    expect(labelNode?.x).toEqual(expect.any(Number));
+    expect(labelNode?.y).toEqual(expect.any(Number));
   });
 
   it('routes a leaf-to-group edge with finite orthogonal points', () => {
