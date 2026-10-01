@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid Flowchart GRID Test Page</title>
+    <style>
+      body {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: Arial, sans-serif;
+      }
+
+      .examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+        gap: 1.5rem;
+      }
+
+      section {
+        min-width: 0;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+      }
+
+      section h2 {
+        margin-top: 0;
+      }
+
+      .mermaid {
+        overflow: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Flowchart GRID</h1>
+    <p>
+      These examples exercise grid placement and the visible edge-routing behavior. Resize the
+      browser or edit the diagrams to inspect different route choices.
+    </p>
+
+    <main class="examples">
+      <section>
+        <h2>Explicit and automatic placement</h2>
+        <p>
+          Explicit cells are reserved first. Row-only, column-only, and unplaced nodes fill the
+          remaining cells deterministically.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    columns: 3
+    rowGap: 45
+    columnGap: 55
+---
+flowchart TB
+  A["Explicit (1, 1)"]@{ row: 1, column: 1 }
+  B["Row 1"]@{ row: 1 }
+  C["Column 1"]@{ column: 1 }
+  D["Automatic"]
+  E["Explicit (3, 3)"]@{ row: 3, column: 3 }
+
+  A --> B
+  A --> C
+  B --> D
+  C --> D
+  D --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Shared cells and alignment</h2>
+        <p>
+          Nodes assigned to the same explicit cell form a vertical stack. Horizontal alignment
+          applies to each item; vertical alignment applies to the whole stack.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    cellGap: 18
+    rowGap: 55
+    columnGap: 80
+---
+flowchart TB
+  A["Wide top item"]@{ row: 1, column: 1, horizontalAlign: left, verticalAlign: center }
+  B["Middle"]@{ row: 1, column: 1, horizontalAlign: center, verticalAlign: center }
+  C["Right"]@{ row: 1, column: 1, horizontalAlign: right, verticalAlign: center }
+  D["Peer cell"]@{ row: 1, column: 2 }
+  E["Lower row"]@{ row: 2, column: 1 }
+
+  A --> B
+  B --> C
+  A --> D
+  C --> E
+  D --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Nested groups and hierarchy routing</h2>
+        <p>
+          Child coordinates are local to their immediate group. Boundary-crossing edges avoid group
+          titles and use explicit entry and exit points.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      Input: { row: 1, column: 1 }
+      Work: { row: 1, column: 2 }
+      Output: { row: 1, column: 3 }
+      A: { row: 1, column: 1 }
+      B: { row: 2, column: 1 }
+      C: { row: 1, column: 1 }
+      Nested: { row: 2, column: 1 }
+      D: { row: 1, column: 1 }
+      E: { row: 2, column: 1 }
+      F: { row: 1, column: 1 }
+    rowGap: 45
+    columnGap: 70
+---
+flowchart LR
+  subgraph Input["Input group"]
+    A["Receive"]
+    B["Validate"]
+  end
+
+  subgraph Work["Processing group"]
+    C["Dispatch"]
+    subgraph Nested["Nested group"]
+      D["Transform"]
+      E["Enrich"]
+    end
+  end
+
+  subgraph Output["Output group"]
+    F["Publish"]
+  end
+
+  A --> C
+  B --> D
+  C --> D
+  C --> E
+  D --> F
+  E --> F
+        </pre>
+      </section>
+
+      <section>
+        <h2>Parallel, reverse, and self-loop edges</h2>
+        <p>
+          Related edges use deterministic ports and lanes. Self-loops use separate ports on the same
+          node.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 85
+    columnGap: 130
+---
+flowchart LR
+  A["Producer"]@{ row: 1, column: 1 }
+  B["Broker"]@{ row: 1, column: 2 }
+  C["Consumer"]@{ row: 1, column: 3 }
+  D["Retry queue"]@{ row: 2, column: 2 }
+
+  A -->|normal| B
+  A -->|priority| B
+  B -->|acknowledge| A
+  B -->|deliver| C
+  B -->|redeliver| C
+  C -->|reject| B
+  B -->|retry| D
+  D -->|ready| B
+  D -->|wait| D
+        </pre>
+      </section>
+
+      <section>
+        <h2>Label-aware routing</h2>
+        <p>
+          Labels are placed after the first routing pass. Affected edges are rerouted around the
+          frozen label positions where space permits.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    rowGap: 70
+    columnGap: 90
+---
+flowchart TB
+  A["Request"]@{ row: 1, column: 1 }
+  B{"Authorized?"}@{ row: 2, column: 2 }
+  C["Process"]@{ row: 3, column: 1 }
+  D["Reject"]@{ row: 3, column: 3 }
+  E["Audit"]@{ row: 4, column: 2 }
+
+  A -->|validate credentials| B
+  B -->|yes: continue processing| C
+  B -->|no: return an error| D
+  C -->|record successful request| E
+  D -->|record rejected request| E
+  A -->|capture request metadata| E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Rounded orthogonal routes</h2>
+        <p>
+          The default rounded curve preserves the calculated orthogonal corridor while rounding its
+          corners.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    curve: rounded
+    edgeCornerRadius: 12
+    rowGap: 65
+    columnGap: 85
+---
+flowchart TB
+  A["Top left"]@{ row: 1, column: 1 }
+  B["Top right"]@{ row: 1, column: 3 }
+  C["Center obstacle"]@{ row: 2, column: 2 }
+  D["Bottom left"]@{ row: 3, column: 1 }
+  E["Bottom right"]@{ row: 3, column: 3 }
+
+  A --> E
+  B --> D
+  A --> C
+  C --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Linear orthogonal routes</h2>
+        <p>
+          The linear curve draws the same calculated route with square corners, which makes the
+          individual routing segments easy to inspect.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    curve: linear
+    rowGap: 65
+    columnGap: 85
+---
+flowchart TB
+  A["Top left"]@{ row: 1, column: 1 }
+  B["Top right"]@{ row: 1, column: 3 }
+  C["Center obstacle"]@{ row: 2, column: 2 }
+  D["Bottom left"]@{ row: 3, column: 1 }
+  E["Bottom right"]@{ row: 3, column: 3 }
+
+  A --> E
+  B --> D
+  A --> C
+  C --> E
+        </pre>
+      </section>
+
+      <section>
+        <h2>Interpolated routes</h2>
+        <p>
+          Interpolating curves use the calculated route points but can move outside the orthogonal
+          corridor. Compare this example with the rounded and linear versions.
+        </p>
+        <pre class="mermaid">
+---
+config:
+  layout: grid
+  grid:
+    curve: basis
+    rowGap: 65
+    columnGap: 85
+---
+flowchart TB
+  A["Top left"]@{ row: 1, column: 1 }
+  B["Top right"]@{ row: 1, column: 3 }
+  C["Center obstacle"]@{ row: 2, column: 2 }
+  D["Bottom left"]@{ row: 3, column: 1 }
+  E["Bottom right"]@{ row: 3, column: 3 }
+
+  A --> E
+  B --> D
+  A --> C
+  C --> E
+        </pre>
+      </section>
+    </main>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        startOnLoad: true,
+        logLevel: 3,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>
