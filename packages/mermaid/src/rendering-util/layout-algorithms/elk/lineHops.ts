@@ -51,6 +51,7 @@ export function applyElkLineJumps(
         Array.isArray(edge.points) && edge.points.length >= 2
     )
     .map((edge) => ({
+      // Line-hop rewriting is generic rendering work, so carry the edge's complete path style.
       id: edge.id,
       points: edge.points,
       curve: edge.curve,
