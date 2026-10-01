@@ -1,15 +1,18 @@
 import { log } from '../../../logger.js';
+import type { GridPlacement } from '../../../types.js';
+import {
+  isGridHorizontalAlign,
+  isGridVerticalAlign,
+  isValidGridCoordinate,
+} from '../../../utils/gridPlacement.js';
 import { resolveEdgeCornerRadius } from '../../edgeCornerRadius.js';
 import type { Node } from '../../types.js';
 import { compareCodeUnits } from '../layout-utils/helpers.js';
 import {
   GRID_DEFAULTS,
   type GridCurve,
-  type GridHorizontalAlign,
   type GridLayoutConfigNormalized,
-  type GridPlacement,
   type GridResolvedPlacement,
-  type GridVerticalAlign,
   type GridLayoutData,
   gridError,
   type GridCellStack,
@@ -40,22 +43,6 @@ const GRID_CURVES = new Set<GridCurve>([
 
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isGridHorizontalAlign(value: unknown): value is GridHorizontalAlign {
-  return value === 'left' || value === 'center' || value === 'right';
-}
-
-function isGridVerticalAlign(value: unknown): value is GridVerticalAlign {
-  return value === 'top' || value === 'center' || value === 'bottom';
-}
-
-function isValidGridCoordinate(value: unknown): value is number {
-  return typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
-}
-
-function placementId(node: Node): string {
-  return (node as Node & { placementId?: string }).placementId ?? node.id;
 }
 
 function ownPlacementFrom(value: unknown): Partial<GridPlacement> {
@@ -157,7 +144,9 @@ export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized
       : GRID_DEFAULTS.verticalAlign,
     // Normalize rendering options with placement so every routed edge receives one stable style.
     curve:
-      typeof raw.curve === 'string' && GRID_CURVES.has(raw.curve) ? raw.curve : GRID_DEFAULTS.curve,
+      typeof raw.curve === 'string' && GRID_CURVES.has(raw.curve as GridCurve)
+        ? (raw.curve as GridCurve)
+        : GRID_DEFAULTS.curve,
     edgeCornerRadius: resolveEdgeCornerRadius(raw.edgeCornerRadius),
   };
 }
@@ -168,7 +157,7 @@ export function validateGridPlacementMap(
 ): void {
   const knownIds = new Set<string>();
   for (const item of items) {
-    knownIds.add(placementId(item));
+    knownIds.add(item.placementId ?? item.id);
   }
   for (const [key] of config.placements) {
     if (!knownIds.has(key)) {
@@ -193,7 +182,7 @@ function resolveItemPlacement(
   sourceOrder: Map<string, number>,
   config: GridLayoutConfigNormalized
 ): GridResolvedPlacement {
-  const authoredPlacementId = placementId(item);
+  const authoredPlacementId = item.placementId ?? item.id;
   const configPlacement = config.placements.get(authoredPlacementId) ?? {};
   const metadataPlacement = ownPlacementFrom(item.metadata);
 

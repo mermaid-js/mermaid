@@ -1,3 +1,14 @@
+export type GridHorizontalAlign = 'left' | 'center' | 'right';
+export type GridVerticalAlign = 'top' | 'center' | 'bottom';
+
+// Only occupied rows and columns create tracks; empty indices contribute no size or additional gap.
+export interface GridPlacement {
+  row?: number;
+  column?: number;
+  horizontalAlign?: GridHorizontalAlign;
+  verticalAlign?: GridVerticalAlign;
+}
+
 export interface NodeMetaData {
   shape?: string;
   label?: string;
@@ -18,6 +29,10 @@ export interface NodeMetaData {
    * to it; `expanded` (the default) renders the subgraph normally.
    */
   view?: 'expanded' | 'collapsed';
+  row?: number;
+  column?: number;
+  horizontalAlign?: GridHorizontalAlign;
+  verticalAlign?: GridVerticalAlign;
 }
 
 export interface ParticipantMetaData {
