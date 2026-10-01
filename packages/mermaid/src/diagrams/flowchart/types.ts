@@ -46,6 +46,7 @@ export interface FlowVertex {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  metadata?: NodeMetaData;
 }
 
 export interface FlowText {
