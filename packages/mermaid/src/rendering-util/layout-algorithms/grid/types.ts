@@ -1,5 +1,6 @@
 import type { LayoutData, Node } from '../../types.js';
 import type { Point } from '../../../types.js';
+import { DEFAULT_EDGE_CORNER_RADIUS } from '../../edgeCornerRadius.js';
 import type {
   GridRoutingFallbackReason,
   GridRoutingInstrumentation,
@@ -160,6 +161,8 @@ export interface GridLayoutConfigNormalized {
   titleGap: number;
   horizontalAlign: GridHorizontalAlign;
   verticalAlign: GridVerticalAlign;
+  curve: GridCurve;
+  edgeCornerRadius: number;
 }
 
 export interface GridResolvedPlacement {
@@ -283,6 +286,8 @@ export const GRID_DEFAULTS = {
   titleGap: 8,
   horizontalAlign: 'center' as GridHorizontalAlign,
   verticalAlign: 'center' as GridVerticalAlign,
+  curve: 'rounded' as GridCurve,
+  edgeCornerRadius: DEFAULT_EDGE_CORNER_RADIUS,
 };
 
 export type GridLayoutData = LayoutData & {
@@ -297,6 +302,8 @@ export type GridLayoutData = LayoutData & {
       titleGap?: number;
       horizontalAlign?: GridHorizontalAlign;
       verticalAlign?: GridVerticalAlign;
+      curve?: GridCurve;
+      edgeCornerRadius?: number;
     };
   };
 };
