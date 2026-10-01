@@ -16,6 +16,7 @@ function walkSizesFiles(dir: string, acc: string[]): void {
 }
 
 function defaultProfileForRelId(relId: string): DdltFixtureProfile {
+  // Directory names are the compatibility fallback for fixtures predating manifest profiles.
   if (relId.startsWith('swimlanes/')) {
     return 'swimlanes';
   }

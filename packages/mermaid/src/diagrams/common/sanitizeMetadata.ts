@@ -1,5 +1,8 @@
 /**
- * Removes prototype-shaped own keys from parsed metadata recursively.
+ * Removes prototype-shaped own keys at the parser boundary before metadata is exposed or merged.
+ *
+ * Rebuilding objects also prevents a downstream consumer from accidentally treating an authored
+ * `__proto__` property as merge instructions. Values otherwise remain opaque to diagram adapters.
  */
 export function stripPrototypeKeys<T>(value: T): T {
   if (Array.isArray(value)) {
