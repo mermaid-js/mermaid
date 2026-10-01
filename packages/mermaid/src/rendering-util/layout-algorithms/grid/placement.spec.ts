@@ -34,6 +34,29 @@ describe('grid placement', () => {
     expect(gridConfig.placements.size).toBe(0);
   });
 
+  it('defaults the grid curve and corner radius and replaces invalid values', () => {
+    const defaults = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config(),
+    } as LayoutData);
+    expect(defaults).toMatchObject({ curve: 'rounded', edgeCornerRadius: 5 });
+
+    const rounded = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({ curve: 'rounded', edgeCornerRadius: 12 }),
+    } as LayoutData);
+    expect(rounded).toMatchObject({ curve: 'rounded', edgeCornerRadius: 12 });
+
+    const invalid = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({ curve: 'unknown', edgeCornerRadius: -1 }),
+    } as LayoutData);
+    expect(invalid).toMatchObject({ curve: 'rounded', edgeCornerRadius: 5 });
+  });
+
   it('resolves full, partial, automatic, sparse, and precedence cases deterministically', () => {
     const items = [
       node('explicit-a', { row: 1, column: 1 }),
