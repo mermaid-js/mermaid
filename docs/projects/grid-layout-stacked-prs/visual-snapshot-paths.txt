@@ -1,3 +1,0 @@
-e2e/__snapshots__/rendering/layout/grid-layout.spec.ts/grid-look-classic.png
-e2e/__snapshots__/rendering/layout/grid-layout.spec.ts/grid-look-handDrawn.png
-e2e/__snapshots__/rendering/layout/grid-layout.spec.ts/grid-look-neo.png
