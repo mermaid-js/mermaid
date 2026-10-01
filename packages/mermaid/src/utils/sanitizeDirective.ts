@@ -31,6 +31,8 @@ const sanitizeDictionaryConfig = (dict: Record<string, unknown>, valuePattern: R
   }
 };
 
+// Track the containing config section because `placements` contains authored node IDs that are not
+// present in configKeys and therefore needs shape validation instead of normal key recursion.
 const sanitizeDirectiveValue = (args: any, parentKey?: string): void => {
   log.debug('sanitizeDirective called with', args);
 
