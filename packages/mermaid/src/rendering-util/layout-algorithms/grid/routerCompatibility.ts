@@ -38,6 +38,8 @@ import type {
 } from './types.js';
 import { ROOT_CONTAINER_ID, gridError, isEdgeLabelNode } from './types.js';
 
+// Deterministic corridor routing remains the validated fast path and the resource-limit fallback
+// while sparse visibility routing is incrementally adopted for harder routes.
 const ROOT_OUTER_MARGIN = 24;
 
 export const SELF_LOOP_PORT_GAP = 18;
@@ -62,6 +64,8 @@ export function boundedAlternativePortalCoordinates(
   corridors: readonly number[],
   limit = 3
 ): number[] {
+  // Retry the nearest established corridors first, then the range's canonical midpoint and ends.
+  // The hard limit bounds hierarchy retry fan-out and keeps output independent of map iteration.
   const candidates = [
     ...corridors
       .filter((coordinate) => coordinate >= low && coordinate <= high)
@@ -123,6 +127,8 @@ export function routeWithinContainer(
   end: GridAttachment,
   variant: number
 ): Point[] {
+  // This compatibility router only chooses among measured grid corridors. `variant` selects the
+  // next deterministic dogleg when a bundle retry needs a different lane.
   const container = result.containers.get(containerId);
   if (!container) {
     throw gridError('GRID_ROUTE_NOT_FOUND', `Missing container layout "${containerId}"`);
@@ -304,6 +310,8 @@ function portalBoundaryPoint(portal: PairedPortal): Point {
 }
 
 export function portalAttachment(portal: PairedPortal, interior: boolean): SegmentAttachment {
+  // The visible port is the group boundary midpoint; search starts on one side of the clearance
+  // transition so each container topology remains independent.
   return {
     ownerId: portal.ownerId,
     port: portalBoundaryPoint(portal),
@@ -464,6 +472,7 @@ export function routeObstacleClearSelfLoop(
   selfLoopCounts: Map<string, number>,
   result: GridLayoutResult
 ): { points: Point[]; side: GridSide; index: number } {
+  // Side load determines preference, but fixed side ordering breaks ties deterministically.
   const rect = rectForNode(owner);
   const obstacles = selfLoopObstacles(owner, result);
   for (const side of orderedSelfLoopSides(owner, ownerSideCounts, selfLoopCounts)) {
@@ -511,6 +520,8 @@ export function rootContainerMeta(result: GridLayoutResult): void {
     minTop - ROOT_OUTER_MARGIN,
     maxBottom + ROOT_OUTER_MARGIN,
   ]);
+  // The synthetic root has no node bounds, so derive its routable domain from root cells and keep
+  // an outer track available for routes that must pass around the whole diagram.
   const verticalCorridors = new Set<number>([
     minLeft - ROOT_OUTER_MARGIN,
     maxRight + ROOT_OUTER_MARGIN,
@@ -631,6 +642,8 @@ export function buildRoutingContext(
   metrics: GridRoutingInstrumentation | undefined,
   options: GridRoutingOptions
 ): GridRoutingContext {
+  // Build each immutable container topology once. Per-edge endpoints are added later as cheap
+  // overlays, avoiding repeated obstacle sweeps for large diagrams.
   const context: GridRoutingContext = {
     topologies: new Map(),
     fallbackContainers: new Map(),
@@ -662,6 +675,8 @@ export function buildRoutingContext(
       const invocationMemoryCap =
         options.topologyCaps?.maxEstimatedBytes ?? DEFAULT_MAX_ROUTING_ESTIMATED_BYTES;
       if (estimatedBytes + topology.estimatedBytes > invocationMemoryCap) {
+        // Keep the invocation-wide cap honest: an individually valid topology may still exceed the
+        // aggregate budget when combined with topologies already retained by this routing session.
         context.fallbackContainers.set(containerId, 'estimated_memory_cap');
         continue;
       }
@@ -823,6 +838,8 @@ function prepareRoutingModes(
   metrics: GridRoutingInstrumentation | undefined,
   options: GridRoutingOptions
 ): PreparedRoutingModes {
+  // Classify every plan before building topologies: proven minimal corridor routes avoid sparse
+  // setup, while only containers needed by sparse LCA, hierarchy, or loop segments are materialized.
   const {
     plans,
     eligiblePlans,

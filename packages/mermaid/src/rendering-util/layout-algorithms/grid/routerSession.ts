@@ -56,6 +56,8 @@ import type {
 } from './types.js';
 import { ROOT_CONTAINER_ID, gridError } from './types.js';
 
+// The session is the transaction boundary for one routing invocation. It owns mutable reservations,
+// reusable search memory, and retry state while the base layout geometry remains read-only.
 interface BundleEdgeCheckpoint {
   edge: Edge;
   points: Edge['points'];
@@ -81,6 +83,8 @@ function createBundleCheckpoint(
   instrumentedRoutes: readonly Point[][] | undefined,
   metrics: GridRoutingInstrumentation | undefined
 ): BundleCheckpoint {
+  // Snapshot only state a failed bundle can mutate. Topologies and prepared plans are immutable and
+  // intentionally shared across attempts.
   const pairKey = pairPlans[0].pairKey;
   const committedPairRoutes = pairRoutes.get(pairKey);
   return {
@@ -160,6 +164,8 @@ export class GridEdgeRoutingSession {
     this.routed = true;
     this.prepare();
 
+    // Pair insertion order follows the already canonical plan order; Map preserves that order when
+    // bundles are routed as indivisible retry units.
     const plansByPair = new Map<string, EdgeRoutePlan[]>();
     for (const plan of this.prepared.orderedPlans) {
       const pairPlans = plansByPair.get(plan.pairKey) ?? [];
@@ -172,6 +178,8 @@ export class GridEdgeRoutingSession {
   }
 
   private prepare(): void {
+    // Preparation is front-loaded so routing attempts never observe partially built planning or
+    // topology state.
     rootContainerMeta(this.result);
     this.prepared = prepareEdgeRoutes(this.layout, this.result);
 
@@ -343,6 +351,8 @@ export class GridEdgeRoutingSession {
   }
 
   private routePlan(plan: EdgeRoutePlan, allowHierarchyRelaxation = true): void {
+    // A plan is routed in three phases: source ascent, one LCA-container segment, and reversed
+    // target descent. The chains are committed only after the combined route satisfies pair rules.
     const result = this.result;
     const routingContext = this.routingContext;
     const searchWorkspace = this.searchWorkspace;
@@ -659,6 +669,9 @@ export class GridEdgeRoutingSession {
   }
 
   private routeBundle(pairPlans: EdgeRoutePlan[]): void {
+    // Factorial retry strategies are deliberately avoided. Small bundles get one alternate stable
+    // ordering, then a final pass that may relax interior hierarchy separation while preserving
+    // distinct endpoint ports.
     const canRetry =
       pairPlans.length > 1 &&
       pairPlans.length <= 8 &&

@@ -13,6 +13,8 @@ import type {
 } from './types.js';
 import { ROOT_CONTAINER_ID, gridError } from './types.js';
 
+// Planning is deterministic and side-effect free: it resolves hierarchy chains, bundle lanes,
+// endpoint demand, and route order before the session creates any routing topology.
 const PORT_MARGIN = 4;
 const MIN_PORT_SEPARATION_PX = 4;
 export const TERMINAL_APPROACH_PX = 20;
@@ -28,6 +30,8 @@ export interface EdgeEndpointEntry {
 }
 
 export interface EdgeEndpointPlan {
+  // Entries walk from the endpoint outward toward the least common container. Each adjacent pair
+  // represents one hierarchy boundary that the final route must cross through a paired portal.
   chain: EdgeEndpointEntry[];
   finalKind: 'item' | 'boundary';
 }
@@ -195,6 +199,8 @@ function buildPairLanes(edges: Edge[]): Map<string, PairLane> {
 
   const out = new Map<string, PairLane>();
   for (const [pairKey, entries] of byPair) {
+    // Directed endpoint order and edge id make lane assignment stable even if input edges arrive in
+    // a different order.
     entries.sort(
       (a, b) =>
         compareCodeUnits(`${a.start}|${a.end}`, `${b.start}|${b.end}`) ||
@@ -251,6 +257,8 @@ export function assignCompactPortalCoordinates(
   low: number,
   high: number
 ): number[] {
+  // Forward/backward constraint passes enforce minimum spacing; the final common shift preserves
+  // the requested center of mass as far as the legal interval permits.
   const coordinates: number[] = [];
   for (const [index, coordinate] of desired.entries()) {
     coordinates.push(
@@ -278,6 +286,8 @@ function assignDemandCoordinates(
   plans: EdgeRoutePlan[],
   result: GridLayoutResult
 ): Map<string, number> {
+  // Allocate all demands for an owner side together. This prevents independently routed edges from
+  // selecting the same port and lets bundles retain symmetric lane offsets when capacity allows.
   const nodeById = result.forest.nodeById;
   const planByEdgeId = new Map(plans.map((plan) => [plan.edge.id, plan]));
   const incidentCounts = new Map<string, number>();
@@ -579,6 +589,8 @@ function allocateEndpointSlots(
   owner: Node,
   demands: readonly EndpointDemandEntry[]
 ): ReadonlyMap<string, EndpointSlotAssignment> {
+  // Assignment is greedy but deterministic: stable demand identity chooses first, geometric side
+  // preference chooses second, and side capacity prevents accidental over-subscription when possible.
   const assignedBySide = new Map<GridSide, EndpointDemandEntry[]>();
   const capacities = new Map(
     (['right', 'bottom', 'left', 'top'] as const).map((side) => [
@@ -672,6 +684,8 @@ function endpointCandidates(
   };
 
   const assignment = assignmentsByOwner.get(ownerId)?.get(`${plan.edge.id}:${role}`);
+  // Negative ranks reserve precedence for the globally allocated slot and the bundle lane. The
+  // remaining geometric alternatives are re-ranked after deterministic sorting.
   if (assignment && plan.bundleSize === 1) {
     addCandidate(assignment.side, assignment.coordinate, -2);
   }
@@ -715,6 +729,9 @@ export function prepareEdgeRoutes(
   layout: LayoutData,
   result: GridLayoutResult
 ): PreparedEdgeRoutes {
+  // Route order is a correctness input because committed routes constrain later bundle siblings.
+  // Harder hierarchy and loop routes go first, followed by fewer candidate combinations and stable
+  // lexical tie-breakers.
   const plans = collectRoutePlans(layout, result);
   const pairCounts = new Map<string, number>();
   const endpointIncidentCounts = new Map<string, number>();
