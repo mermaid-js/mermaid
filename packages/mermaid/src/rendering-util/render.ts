@@ -80,6 +80,10 @@ const registerDefaultLayoutLoaders = () => {
       name: 'swimlane',
       loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
     },
+    {
+      name: 'grid',
+      loader: async () => await import('./layout-algorithms/grid/index.js'),
+    },
     // elkjs is ~1.6 MB of source, so it is excluded from the tiny build along
     // with the other large features. `getRegisteredLayoutAlgorithm` then falls
     // back to dagre for diagrams that ask for an ELK layout there.

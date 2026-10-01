@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-22T03:36:00.000Z",
+    "capturedFrom": "browser-capture layout-tests/grid/routing-hierarchy-portals.mmd theme=default look=classic",
+    "sourceSha256": "c7dab532783a775a310b98da12cd6871ecf666c23da1136d9692d76dc74c265e"
+  },
+  "nodes": [
+    {
+      "id": "SOURCE",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "TARGET",
+      "width": 152,
+      "height": 45
+    }
+  ]
+}
