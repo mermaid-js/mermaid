@@ -12,4 +12,4 @@
 
 > `const` **default**: [`Mermaid`](../interfaces/Mermaid.md)
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/mermaid.ts:458
+Defined in: [packages/mermaid/src/mermaid.ts:458](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/mermaid.ts#L458)

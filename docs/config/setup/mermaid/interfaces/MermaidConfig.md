@@ -10,7 +10,7 @@
 
 # Interface: MermaidConfig
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:80
+Defined in: [packages/mermaid/src/config.type.ts:80](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L80)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **agentflow**: `AgentflowDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:350
+Defined in: [packages/mermaid/src/config.type.ts:350](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L350)
 
 ---
 
@@ -26,7 +26,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **altFontFamily**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:288
+Defined in: [packages/mermaid/src/config.type.ts:288](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L288)
 
 ---
 
@@ -34,7 +34,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **architecture**: `ArchitectureDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:362
+Defined in: [packages/mermaid/src/config.type.ts:362](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L362)
 
 ---
 
@@ -42,7 +42,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **arrowMarkerAbsolute**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:307
+Defined in: [packages/mermaid/src/config.type.ts:307](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L307)
 
 Controls whether or arrow markers in html code are absolute paths or anchors.
 This matters if you are using base tag settings.
@@ -53,7 +53,7 @@ This matters if you are using base tag settings.
 
 > `optional` **block**: `BlockDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:370
+Defined in: [packages/mermaid/src/config.type.ts:370](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L370)
 
 ---
 
@@ -61,7 +61,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **c4**: `C4DiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:367
+Defined in: [packages/mermaid/src/config.type.ts:367](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L367)
 
 ---
 
@@ -69,7 +69,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **class**: `ClassDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:355
+Defined in: [packages/mermaid/src/config.type.ts:355](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L355)
 
 ---
 
@@ -77,7 +77,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **cynefin**: `CynefinDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:377
+Defined in: [packages/mermaid/src/config.type.ts:377](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L377)
 
 ---
 
@@ -85,7 +85,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **darkMode**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:272
+Defined in: [packages/mermaid/src/config.type.ts:272](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L272)
 
 ---
 
@@ -93,7 +93,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **deterministicIds**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:340
+Defined in: [packages/mermaid/src/config.type.ts:340](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L340)
 
 This option controls if the generated ids of nodes in the SVG are
 generated randomly or based on a seed.
@@ -109,7 +109,7 @@ should not change unless content is changed.
 
 > `optional` **deterministicIDSeed**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:347
+Defined in: [packages/mermaid/src/config.type.ts:347](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L347)
 
 This option is the optional seed for deterministic ids.
 If set to `undefined` but deterministicIds is `true`, a simple number iterator is used.
@@ -121,7 +121,7 @@ You can set this attribute to base the seed on a static string.
 
 > `optional` **dompurifyConfig**: `Config`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:379
+Defined in: [packages/mermaid/src/config.type.ts:379](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L379)
 
 ---
 
@@ -129,7 +129,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **elk**: `object`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:128
+Defined in: [packages/mermaid/src/config.type.ts:128](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L128)
 
 #### considerModelOrder?
 
@@ -279,7 +279,7 @@ port, or would introduce a crossing.
 
 > `optional` **er**: `ErDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:357
+Defined in: [packages/mermaid/src/config.type.ts:357](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L357)
 
 ---
 
@@ -287,7 +287,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **eventmodeling**: `EventModelingDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:371
+Defined in: [packages/mermaid/src/config.type.ts:371](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L371)
 
 ---
 
@@ -295,7 +295,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **flowchart**: `FlowchartDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:348
+Defined in: [packages/mermaid/src/config.type.ts:348](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L348)
 
 ---
 
@@ -303,7 +303,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **fontFamily**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:287
+Defined in: [packages/mermaid/src/config.type.ts:287](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L287)
 
 Specifies the font to be used in the rendered diagrams.
 Can be any possible CSS `font-family`.
@@ -315,7 +315,7 @@ See <https://developer.mozilla.org/en-US/docs/Web/CSS/font-family>
 
 > `optional` **fontSize**: `number`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:381
+Defined in: [packages/mermaid/src/config.type.ts:381](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L381)
 
 ---
 
@@ -323,7 +323,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **forceLegacyMathML**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:329
+Defined in: [packages/mermaid/src/config.type.ts:329](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L329)
 
 This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS
 fonts and browser's MathML implementation, this option is recommended if consistent rendering is important.
@@ -335,7 +335,7 @@ If set to true, ignores legacyMathML.
 
 > `optional` **gantt**: `GanttDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:352
+Defined in: [packages/mermaid/src/config.type.ts:352](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L352)
 
 ---
 
@@ -343,7 +343,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **gitGraph**: `GitGraphDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:366
+Defined in: [packages/mermaid/src/config.type.ts:366](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L366)
 
 ---
 
@@ -351,7 +351,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **grid**: `GridLayoutConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:271
+Defined in: [packages/mermaid/src/config.type.ts:271](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L271)
 
 ---
 
@@ -359,7 +359,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **handDrawnSeed**: `number`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:110
+Defined in: [packages/mermaid/src/config.type.ts:110](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L110)
 
 Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.
 
@@ -369,7 +369,7 @@ Defines the seed to be used when using handDrawn look. This is important for the
 
 > `optional` **htmlLabels**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:280
+Defined in: [packages/mermaid/src/config.type.ts:280](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L280)
 
 Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.
 **Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.
@@ -382,7 +382,7 @@ over any diagram-specific settings.
 
 > `optional` **ishikawa**: `IshikawaDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:364
+Defined in: [packages/mermaid/src/config.type.ts:364](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L364)
 
 ---
 
@@ -390,7 +390,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **journey**: `JourneyDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:353
+Defined in: [packages/mermaid/src/config.type.ts:353](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L353)
 
 ---
 
@@ -398,7 +398,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **kanban**: `KanbanDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:365
+Defined in: [packages/mermaid/src/config.type.ts:365](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L365)
 
 ---
 
@@ -406,7 +406,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **layout**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:118
+Defined in: [packages/mermaid/src/config.type.ts:118](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L118)
 
 Defines which layout algorithm to use for rendering the diagram.
 
@@ -419,7 +419,7 @@ ELK to stay small and falls back to `dagre`.
 
 > `optional` **legacyMathML**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:322
+Defined in: [packages/mermaid/src/config.type.ts:322](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L322)
 
 This option specifies if Mermaid can expect the dependent to include KaTeX stylesheets for browsers
 without their own MathML implementation. If this option is disabled and MathML is not supported, the math
@@ -432,7 +432,7 @@ fall back to legacy rendering for KaTeX.
 
 > `optional` **logLevel**: `0` | `2` | `1` | `"trace"` | `"debug"` | `"info"` | `"warn"` | `"error"` | `"fatal"` | `3` | `4` | `5`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:293
+Defined in: [packages/mermaid/src/config.type.ts:293](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L293)
 
 This option decides the amount of logging to be used by mermaid.
 
@@ -442,7 +442,7 @@ This option decides the amount of logging to be used by mermaid.
 
 > `optional` **look**: `"neo"` | `"classic"` | `"handDrawn"`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:105
+Defined in: [packages/mermaid/src/config.type.ts:105](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L105)
 
 Defines which main look to use for the diagram.
 
@@ -452,7 +452,7 @@ Defines which main look to use for the diagram.
 
 > `optional` **markdownAutoWrap**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:382
+Defined in: [packages/mermaid/src/config.type.ts:382](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L382)
 
 ---
 
@@ -460,7 +460,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **maxEdges**: `number`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:127
+Defined in: [packages/mermaid/src/config.type.ts:127](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L127)
 
 Defines the maximum number of edges that can be drawn in a graph.
 
@@ -470,7 +470,7 @@ Defines the maximum number of edges that can be drawn in a graph.
 
 > `optional` **maxTextSize**: `number`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:122
+Defined in: [packages/mermaid/src/config.type.ts:122](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L122)
 
 The maximum allowed size of the users text diagram
 
@@ -480,7 +480,7 @@ The maximum allowed size of the users text diagram
 
 > `optional` **mindmap**: `MindmapDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:363
+Defined in: [packages/mermaid/src/config.type.ts:363](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L363)
 
 ---
 
@@ -488,7 +488,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **packet**: `PacketDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:369
+Defined in: [packages/mermaid/src/config.type.ts:369](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L369)
 
 ---
 
@@ -496,7 +496,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **pie**: `PieDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:358
+Defined in: [packages/mermaid/src/config.type.ts:358](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L358)
 
 ---
 
@@ -504,7 +504,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **quadrantChart**: `QuadrantChartConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:359
+Defined in: [packages/mermaid/src/config.type.ts:359](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L359)
 
 ---
 
@@ -512,7 +512,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **radar**: `RadarDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:373
+Defined in: [packages/mermaid/src/config.type.ts:373](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L373)
 
 ---
 
@@ -520,7 +520,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **railroad**: `RailroadDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:378
+Defined in: [packages/mermaid/src/config.type.ts:378](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L378)
 
 ---
 
@@ -528,7 +528,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **requirement**: `RequirementDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:361
+Defined in: [packages/mermaid/src/config.type.ts:361](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L361)
 
 ---
 
@@ -536,7 +536,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **sankey**: `SankeyDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:368
+Defined in: [packages/mermaid/src/config.type.ts:368](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L368)
 
 ---
 
@@ -544,7 +544,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **secure**: `string`\[]
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:314
+Defined in: [packages/mermaid/src/config.type.ts:314](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L314)
 
 This option controls which `currentConfig` keys are considered secure and
 can only be changed via call to `mermaid.initialize`.
@@ -556,7 +556,7 @@ This prevents malicious graph directives from overriding a site's default securi
 
 > `optional` **securityLevel**: `"strict"` | `"loose"` | `"antiscript"` | `"sandbox"`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:297
+Defined in: [packages/mermaid/src/config.type.ts:297](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L297)
 
 Level of trust for parsed diagram
 
@@ -566,7 +566,7 @@ Level of trust for parsed diagram
 
 > `optional` **sequence**: `SequenceDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:351
+Defined in: [packages/mermaid/src/config.type.ts:351](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L351)
 
 ---
 
@@ -574,7 +574,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **startOnLoad**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:301
+Defined in: [packages/mermaid/src/config.type.ts:301](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L301)
 
 Dictates whether mermaid starts on Page load
 
@@ -584,7 +584,7 @@ Dictates whether mermaid starts on Page load
 
 > `optional` **state**: `StateDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:356
+Defined in: [packages/mermaid/src/config.type.ts:356](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L356)
 
 ---
 
@@ -592,7 +592,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **suppressErrorRendering**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:388
+Defined in: [packages/mermaid/src/config.type.ts:388](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L388)
 
 Suppresses inserting 'Syntax error' diagram in the DOM.
 This is useful when you want to control how to handle syntax errors in your application.
@@ -603,7 +603,7 @@ This is useful when you want to control how to handle syntax errors in your appl
 
 > `optional` **swimlane**: `SwimlaneDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:349
+Defined in: [packages/mermaid/src/config.type.ts:349](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L349)
 
 ---
 
@@ -611,7 +611,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **theme**: `"default"` | `"base"` | `"dark"` | `"forest"` | `"neutral"` | `"neo"` | `"neo-dark"` | `"redux"` | `"redux-dark"` | `"redux-color"` | `"redux-dark-color"` | `"null"`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:86
+Defined in: [packages/mermaid/src/config.type.ts:86](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L86)
 
 Theme, the CSS style sheet.
 You may also use `themeCSS` to override this value.
@@ -622,7 +622,7 @@ You may also use `themeCSS` to override this value.
 
 > `optional` **themeCSS**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:100
+Defined in: [packages/mermaid/src/config.type.ts:100](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L100)
 
 ---
 
@@ -630,7 +630,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **themeVariables**: `any`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:99
+Defined in: [packages/mermaid/src/config.type.ts:99](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L99)
 
 ---
 
@@ -638,7 +638,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **timeline**: `TimelineDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:354
+Defined in: [packages/mermaid/src/config.type.ts:354](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L354)
 
 ---
 
@@ -646,7 +646,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **treeView**: `TreeViewDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:372
+Defined in: [packages/mermaid/src/config.type.ts:372](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L372)
 
 ---
 
@@ -654,7 +654,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **usecase**: `UsecaseDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:374
+Defined in: [packages/mermaid/src/config.type.ts:374](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L374)
 
 ---
 
@@ -662,7 +662,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **venn**: `VennDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:375
+Defined in: [packages/mermaid/src/config.type.ts:375](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L375)
 
 ---
 
@@ -670,7 +670,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **wardley-beta**: `WardleyDiagramConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:376
+Defined in: [packages/mermaid/src/config.type.ts:376](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L376)
 
 ---
 
@@ -678,7 +678,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **wrap**: `boolean`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:380
+Defined in: [packages/mermaid/src/config.type.ts:380](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L380)
 
 ---
 
@@ -686,4 +686,4 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/con
 
 > `optional` **xyChart**: `XYChartConfig`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/config.type.ts:360
+Defined in: [packages/mermaid/src/config.type.ts:360](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.type.ts#L360)

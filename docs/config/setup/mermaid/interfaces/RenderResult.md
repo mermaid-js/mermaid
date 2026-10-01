@@ -10,7 +10,7 @@
 
 # Interface: RenderResult
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/types.ts:149
+Defined in: [packages/mermaid/src/types.ts:153](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L153)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/typ
 
 > `optional` **bindFunctions**: (`element`) => `void`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/types.ts:167
+Defined in: [packages/mermaid/src/types.ts:171](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L171)
 
 Bind function to be called after the svg has been inserted into the DOM.
 This is necessary for adding event listeners to the elements in the svg.
@@ -45,7 +45,7 @@ bindFunctions?.(div); // To call bindFunctions only if it's present.
 
 > **diagramType**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/types.ts:157
+Defined in: [packages/mermaid/src/types.ts:161](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L161)
 
 The diagram type, e.g. 'flowchart', 'sequence', etc.
 
@@ -55,6 +55,6 @@ The diagram type, e.g. 'flowchart', 'sequence', etc.
 
 > **svg**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/types.ts:153
+Defined in: [packages/mermaid/src/types.ts:157](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L157)
 
 The svg code for the rendered graph.
