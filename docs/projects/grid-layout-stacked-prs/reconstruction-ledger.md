@@ -6,8 +6,11 @@ Pinned source snapshot: `d7ce16a49f13425078cd66137b6a51eb2a426c44`
 
 This ledger accounts for every path in the authoritative 140-path
 `source_base..source_snapshot` diff. `split` means the path has executable seams owned by more than
-one layer. Layer 4 restores the pinned source version of every source-diff path, so all 140 paths are
-listed in `exact-snapshot-paths.txt`.
+one layer. Layer 4 restores the pinned source version of every source-diff path before running the
+required generators. Of those paths, 134 remain byte-for-byte exact and are listed in
+`exact-snapshot-paths.txt`. Five generated TypeDoc paths are listed with the other generator-owned
+differences in `generated-doc-divergences.txt`. The browser spec has one release-layer reliability
+seam: two direct IIFE consumers explicitly wait for `window.mermaid` before evaluating it.
 
 ## Baseline validation
 
@@ -197,6 +200,12 @@ L4	packages/mermaid/src/utils/sanitizeDirective.ts
 
 The lower-layer internal config types are deliberate temporary seams. Layer 2 restores routing
 types, layer 3 restores rendering defaults and generic renderer contracts, and layer 4 restores the
-public type/config projection. The final branch must match the source snapshot byte-for-byte for
-every path in `exact-snapshot-paths.txt`. The only additional final-tree paths are this ledger and
-that verification list.
+public type/config projection. The final branch matches the source snapshot byte-for-byte for every
+path in `exact-snapshot-paths.txt`. Running `pnpm --filter mermaid docs:build` with the current
+checked-in toolchain regenerated 36 TypeDoc files: five source-diff paths and 31 additional generated
+paths. Those deterministic generator differences are the only source-snapshot content divergence
+from generated files and are enumerated in `generated-doc-divergences.txt`. The only hand-authored
+source divergence is the browser readiness wait described above. The other additional final-tree
+paths are this ledger and its verification lists. The three `grid-look-*` visual snapshots were
+regenerated with the current Playwright/browser environment, reviewed through the focused look
+tests, and are enumerated in `visual-snapshot-paths.txt`.

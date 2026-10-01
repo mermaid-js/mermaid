@@ -5,11 +5,6 @@ demos/index.html
 docs/community/layout-makers-guide.md
 docs/config/layouts.md
 docs/config/schema-docs/config-defs-grid-layout-config.md
-docs/config/setup/mermaid/interfaces/LayoutData.md
-docs/config/setup/mermaid/interfaces/MermaidConfig.md
-docs/config/setup/mermaid/interfaces/ParseOptions.md
-docs/config/setup/mermaid/interfaces/ParseResult.md
-docs/config/setup/mermaid/interfaces/RenderResult.md
 docs/syntax/agentflow.md
 docs/syntax/classDiagram.md
 docs/syntax/entityRelationshipDiagram.md
@@ -55,7 +50,6 @@ e2e/platform/dev-diagrams/layout-tests/grid/stack-default.mmd
 e2e/platform/dev-diagrams/layout-tests/grid/stack-default.sizes.json
 e2e/platform/dev-diagrams/layout-tests/grid/stack-gap-zero.mmd
 e2e/platform/dev-diagrams/layout-tests/grid/stack-gap-zero.sizes.json
-e2e/rendering/layout/grid-layout.spec.ts
 packages/mermaid/src/config.type.ts
 packages/mermaid/src/diagrams/agentflow/agentflowDb.ts
 packages/mermaid/src/diagrams/agentflow/parser/agentflow-metadata-no-validation.spec.ts

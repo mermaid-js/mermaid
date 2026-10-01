@@ -12,4 +12,4 @@
 
 > **InternalHelpers** = _typeof_ `internalHelpers`
 
-Defined in: [packages/mermaid/src/internals.ts:33](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/internals.ts#L33)
+Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/internals.ts:33
