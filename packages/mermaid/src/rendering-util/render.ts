@@ -80,6 +80,8 @@ const registerDefaultLayoutLoaders = () => {
       name: 'swimlane',
       loader: async () => await import('./layout-algorithms/swimlanes/index.js'),
     },
+    // Register the public name here, but keep the implementation behind the same lazy boundary as
+    // other optional layouts so importing Mermaid does not eagerly initialize grid internals.
     {
       name: 'grid',
       loader: async () => await import('./layout-algorithms/grid/index.js'),

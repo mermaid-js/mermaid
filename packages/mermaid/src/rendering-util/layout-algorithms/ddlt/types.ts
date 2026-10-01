@@ -25,7 +25,7 @@ export interface SizesFixture {
   nodes: FixtureNodeSize[];
 }
 
-/** How to prepare parsed `LayoutData` before running a layout backend. */
+/** Selects the diagram-specific preparation contract used before a DDLT backend runs. */
 export type DdltFixtureProfile = 'flowchart-domus' | 'swimlanes' | 'grid';
 
 export interface DdltManifestEntry {
@@ -40,6 +40,7 @@ export interface DdltManifest {
   fixtures?: DdltManifestEntry[];
 }
 
+/** Runtime backend selected from a fixture profile; kept separate so profiles can fan out later. */
 export type LayoutTestBackendId = 'domus-orthogonal' | 'swimlanes' | 'grid';
 
 /** Pure layout stage: mutates `layout` in place (DOM-free). */
