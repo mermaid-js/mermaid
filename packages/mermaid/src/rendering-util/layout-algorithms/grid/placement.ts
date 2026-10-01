@@ -13,6 +13,10 @@ import {
   type GridCellStack,
 } from './types.js';
 
+/*
+ * Normalizes placement input and deterministically assigns each direct child of a container to a
+ * grid cell. Placement metadata on a node takes precedence over the container-level placement map.
+ */
 const GRID_LOG_PREFIX = '[grid]';
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object';
@@ -161,6 +165,8 @@ function resolveItemPlacement(
   const configPlacement = config.placements.get(placementId(item)) ?? {};
   const metadataPlacement = ownPlacementFrom(item.metadata);
 
+  // Node metadata is closest to the authored node, so it deliberately wins over the shared map.
+  // Log disagreements to make an otherwise valid but surprising layout diagnosable.
   for (const field of ['row', 'column', 'horizontalAlign', 'verticalAlign'] as const) {
     if (
       Object.hasOwn(configPlacement, field) &&
@@ -248,6 +254,8 @@ export function resolveGridPlacements(
   const cells = new Map<string, GridCellStack>();
   const occupied = new Set<string>();
 
+  // Reserve fully specified cells first. Auto-placement must route around authored coordinates
+  // regardless of source order, while multiple explicit occupants intentionally form a stack.
   for (const placement of resolved) {
     if (!placement.explicitCell) {
       continue;
@@ -285,6 +293,8 @@ export function resolveGridPlacements(
   const candidateColumns =
     config.columns > 0 ? config.columns : Math.max(1, Math.ceil(Math.sqrt(sortedItems.length)));
 
+  // Partially specified placements scan only their missing axis. Fully automatic placements use a
+  // compact row-major grid whose default width keeps roughly square diagrams.
   for (const placement of resolved) {
     if (placement.explicitCell) {
       continue;
