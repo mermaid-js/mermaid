@@ -181,6 +181,11 @@ export interface Edge {
   terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
+  cornerRadius?: number;
+  /** Clips router-owned orthogonal ports to each rendered node's outline. */
+  portClipping?: 'outline-orthogonal';
+  /** Preserves the edge's routed points instead of applying the shared corner adjustment. */
+  skipCornerFix?: boolean;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;
