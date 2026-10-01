@@ -60,6 +60,7 @@ import { ROOT_CONTAINER_ID, gridError } from './types.js';
 // reusable search memory, and retry state while the base layout geometry remains read-only.
 interface BundleEdgeCheckpoint {
   edge: Edge;
+  // Geometry and its rendering contract commit together; retries must not leak either half.
   points: Edge['points'];
   curve: Edge['curve'];
   cornerRadius: Edge['cornerRadius'];
@@ -395,6 +396,7 @@ export class GridEdgeRoutingSession {
       const countKey = `${sourceNode.id}:${side}`;
       selfLoopCounts.set(countKey, index + 1);
       edge.points = points;
+      // The router owns the polyline; attach its curve contract at the same commit boundary.
       edge.curve = result.config.curve;
       edge.cornerRadius = result.config.edgeCornerRadius;
       committedPairRoutes.push(points);
@@ -628,6 +630,7 @@ export class GridEdgeRoutingSession {
       metrics.bundleSeparationRelaxations++;
     }
     edge.points = points;
+    // Publish style only after the route satisfies terminal and pair-separation invariants.
     edge.curve = result.config.curve;
     edge.cornerRadius = result.config.edgeCornerRadius;
     committedPairRoutes.push(points);

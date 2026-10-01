@@ -156,6 +156,8 @@ export interface GridLayoutConfigNormalized {
   titleGap: number;
   horizontalAlign: GridHorizontalAlign;
   verticalAlign: GridVerticalAlign;
+  // Routing publishes these values on each edge so shared rendering and line hops use identical
+  // corner geometry without depending on grid internals.
   curve: GridCurve;
   edgeCornerRadius: number;
 }

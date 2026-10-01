@@ -181,10 +181,11 @@ export interface Edge {
   terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
+  /** Corner radius shared by initial path generation and later generic path rewrites. */
   cornerRadius?: number;
-  /** Clips router-owned orthogonal ports to each rendered node's outline. */
+  /** Selects shape-aware clipping without coupling the shared renderer to a layout name. */
   portClipping?: 'outline-orthogonal';
-  /** Preserves the edge's routed points instead of applying the shared corner adjustment. */
+  /** Preserves router-owned terminal and bend invariants during shared rendering. */
   skipCornerFix?: boolean;
   labelpos?: string;
   labelStyle?: string[];

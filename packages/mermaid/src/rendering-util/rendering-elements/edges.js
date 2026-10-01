@@ -638,8 +638,8 @@ export const insertEdge = function (
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
 
-  // Apply exactly one endpoint-clipping policy; running generic clipping after a specialized
-  // policy would clip the rewritten points again and destroy router-owned geometry.
+  // Specialized clipping is selected by edge metadata rather than layout name so any orthogonal
+  // router can preserve its bends. Exactly one policy runs; clipping twice destroys owned ports.
   if (edge.portClipping === 'outline-orthogonal' && !skipIntersect) {
     points = clipOrthogonalEndpointsToNodeOutlines(points, tail, head);
   } else if (layout === 'swimlane') {
@@ -709,6 +709,7 @@ export const insertEdge = function (
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
+  // Routers can opt out when their points already encode every terminal and corner invariant.
   if (edgeCurveType !== 'rounded' && !edge.skipCornerFix) {
     lineData = fixCorners(lineData);
   }
@@ -792,6 +793,7 @@ export const insertEdge = function (
     edgeCurveType === 'rounded'
       ? generateRoundedPath(
           applyMarkerOffsetsToPoints(lineData, edge),
+          // Resolve here instead of in a layout so rounded rendering stays generic.
           resolveEdgeCornerRadius(edge.cornerRadius)
         )
       : lineFunction(lineData);
