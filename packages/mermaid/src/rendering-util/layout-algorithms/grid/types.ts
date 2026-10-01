@@ -1,3 +1,5 @@
+import type { MermaidConfig } from '../../../config.type.js';
+import type { GridHorizontalAlign, GridPlacement, GridVerticalAlign } from '../../../types.js';
 import type { LayoutData, Node } from '../../types.js';
 import type { Point } from '../../../types.js';
 import { DEFAULT_EDGE_CORNER_RADIUS } from '../../edgeCornerRadius.js';
@@ -7,14 +9,6 @@ export const ROOT_CONTAINER_ID = '__grid_root__';
 export const GRID_LABEL_PREFIX = 'edge-label-';
 
 export type GridContainerId = string;
-export type GridHorizontalAlign = 'left' | 'center' | 'right';
-export type GridVerticalAlign = 'top' | 'center' | 'bottom';
-export interface GridPlacement {
-  row?: number;
-  column?: number;
-  horizontalAlign?: GridHorizontalAlign;
-  verticalAlign?: GridVerticalAlign;
-}
 export type GridSide = 'left' | 'right' | 'top' | 'bottom';
 export type GridOrientation = 'H' | 'V';
 export type GridCurve =
@@ -271,7 +265,7 @@ export const GRID_DEFAULTS = {
 };
 
 export type GridLayoutData = LayoutData & {
-  config: LayoutData['config'] & {
+  config: MermaidConfig & {
     grid?: {
       placements?: Record<string, GridPlacement>;
       columns?: number;
