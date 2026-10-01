@@ -14,6 +14,7 @@ import {
   projectLabelOntoStraightenedRun,
   runElkLayoutCore,
   sanitizeElkEdgePoints,
+  separateOppositeEdgeLabels,
   straightenEdgeTerminals,
 } from '../render.js';
 import { onBorder, type P } from '../geometry.js';
@@ -836,6 +837,79 @@ describe('straightenEdgeTerminals label projection (#8292)', () => {
       best = Math.min(best, Math.hypot(dx, dy));
     }
     expect(best).toBeLessThan(0.5);
+  });
+});
+
+describe('separateOppositeEdgeLabels', () => {
+  // Reproduces the shape of a real bug: two opposite-direction edges between
+  // the same node pair (e.g. a stateDiagram-v2 composite state's "touch" /
+  // "idle 30s" transitions) end up with labels centred close enough together
+  // that a wide label pair overlaps, even though each edge's own x/y was
+  // individually well-placed — straightenEdgeTerminals' per-edge jog
+  // correction (or ELK's own routing) can legitimately pull the two edges'
+  // lines toward each other without either edge knowing about the other's
+  // label.
+  const edge = (
+    id: string,
+    start: string,
+    end: string,
+    label: string,
+    x: number,
+    width: number,
+    extra: Record<string, unknown> = {}
+  ) => ({ id, start, end, label, x, y: 489.5, width, height: 21, ...extra }) as any;
+
+  it('pulls a wide, overlapping label pair apart symmetrically', () => {
+    // Same numbers as the real bug: centres 38.13 apart, half-widths summing
+    // to more than that (17.125 + 24.1328125 = 41.26 > 38.13).
+    const touch = edge('e9', 'ScreenDimmed', 'ScreenOn', 'touch', 492.933, 34.25);
+    const idle = edge('e8', 'ScreenOn', 'ScreenDimmed', 'idle 30s', 531.067, 48.266);
+    const edges = [touch, idle];
+
+    separateOppositeEdgeLabels(edges);
+
+    const gap = idle.x! - touch.x!;
+    const required = touch.width! / 2 + idle.width! / 2 + 4;
+    expect(gap).toBeCloseTo(required, 5);
+    // Preserves the pair's shared midpoint rather than sliding both the same way.
+    expect((touch.x! + idle.x!) / 2).toBeCloseTo((492.933 + 531.067) / 2, 1);
+  });
+
+  it('leaves a short, already-clear label pair untouched', () => {
+    // "play"/"pause" numbers from the same diagram: 38.14 apart, half-widths
+    // summing to only 12.84 + 19.08 = 31.92 — well clear already.
+    const play = edge('e6', 'Paused', 'Playing', 'play', 284.933, 25.6875);
+    const pause = edge('e5', 'Playing', 'Paused', 'pause', 323.067, 38.15625);
+    const edges = [play, pause];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect(play.x).toBe(284.933);
+    expect(pause.x).toBe(323.067);
+  });
+
+  it('ignores edges between the same pair at meaningfully different heights', () => {
+    const a = edge('e1', 'A', 'B', 'wide label one', 100, 80, { y: 0 });
+    const b = edge('e2', 'B', 'A', 'wide label two', 110, 80, { y: 200 });
+    const edges = [a, b];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect(a.x).toBe(100);
+    expect(b.x).toBe(110);
+  });
+
+  it('ignores a node pair with more than two labelled edges', () => {
+    // Three edges between the same pair is outside the common case this
+    // guards; leave them exactly as computed rather than guessing.
+    const a = edge('e1', 'A', 'B', 'one', 100, 80);
+    const b = edge('e2', 'B', 'A', 'two', 110, 80);
+    const c = edge('e3', 'A', 'B', 'three', 105, 80);
+    const edges = [a, b, c];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect([a.x, b.x, c.x]).toEqual([100, 110, 105]);
   });
 });
 
