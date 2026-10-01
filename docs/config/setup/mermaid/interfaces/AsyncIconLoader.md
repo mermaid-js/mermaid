@@ -10,7 +10,7 @@
 
 # Interface: AsyncIconLoader
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/icons.ts:8
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:8](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L8)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > **loader**: () => `Promise`<`IconifyJSON`>
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/icons.ts:10
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:10](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L10)
 
 #### Returns
 
@@ -30,4 +30,4 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > **name**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/icons.ts:9
+Defined in: [packages/mermaid/src/rendering-util/icons.ts:9](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/icons.ts#L9)

@@ -10,7 +10,7 @@
 
 # Interface: RenderOptions
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/render.ts:12
+Defined in: [packages/mermaid/src/rendering-util/render.ts:12](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L12)
 
 ## Properties
 
@@ -18,4 +18,4 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > `optional` **algorithm**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/render.ts:13
+Defined in: [packages/mermaid/src/rendering-util/render.ts:13](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L13)

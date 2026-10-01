@@ -10,7 +10,7 @@
 
 # Interface: ParseResult
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/types.ts:118
+Defined in: [packages/mermaid/src/types.ts:122](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L122)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/typ
 
 > **config**: [`MermaidConfig`](MermaidConfig.md)
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/types.ts:126
+Defined in: [packages/mermaid/src/types.ts:130](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L130)
 
 The config passed as YAML frontmatter or directives
 
@@ -28,6 +28,6 @@ The config passed as YAML frontmatter or directives
 
 > **diagramType**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/types.ts:122
+Defined in: [packages/mermaid/src/types.ts:126](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L126)
 
 The diagram type, e.g. 'flowchart', 'sequence', etc.
