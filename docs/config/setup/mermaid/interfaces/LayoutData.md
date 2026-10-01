@@ -10,7 +10,7 @@
 
 # Interface: LayoutData
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/types.ts:243
+Defined in: [packages/mermaid/src/rendering-util/types.ts:247](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L247)
 
 ## Indexable
 
@@ -22,7 +22,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > **config**: [`MermaidConfig`](MermaidConfig.md)
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/types.ts:246
+Defined in: [packages/mermaid/src/rendering-util/types.ts:250](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L250)
 
 ---
 
@@ -30,7 +30,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > `optional` **diagramId**: `string`
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/types.ts:247
+Defined in: [packages/mermaid/src/rendering-util/types.ts:251](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L251)
 
 ---
 
@@ -38,7 +38,7 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > **edges**: `Edge`\[]
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/types.ts:245
+Defined in: [packages/mermaid/src/rendering-util/types.ts:249](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L249)
 
 ---
 
@@ -46,4 +46,4 @@ Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/ren
 
 > **nodes**: `Node`\[]
 
-Defined in: mermaid_worktrees/timmy/grid-layout-release/packages/mermaid/src/rendering-util/types.ts:244
+Defined in: [packages/mermaid/src/rendering-util/types.ts:248](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L248)
