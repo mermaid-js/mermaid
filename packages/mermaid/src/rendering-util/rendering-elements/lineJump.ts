@@ -61,6 +61,7 @@ export interface EdgeGeom {
    * corrupting smoothed geometry.
    */
   curve?: string;
+  /** Radius used by the original rounded path; rewrites must reproduce the same corner cuts. */
   cornerRadius?: number;
   /** Arrow type at the start (first point) — used to apply marker offset so
    * the rewritten path's endpoint matches the original rendered geometry and
@@ -419,6 +420,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
   // Match edges.js: shift the first/last point inward so arrow markers line up.
   const points = applyMarkerOffsets(rawPoints, edge);
   const rounded = edge.curve === 'rounded';
+  // A hop replaces the rendered path, so it must use the renderer's exact corner contract.
   const cornerRadius = resolveEdgeCornerRadius(edge.cornerRadius);
 
   // Jumps are indexed into the ORIGINAL (un-offset) segment list. For mid-

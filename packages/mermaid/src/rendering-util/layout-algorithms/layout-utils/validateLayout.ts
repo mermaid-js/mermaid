@@ -1105,6 +1105,8 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           if (!hasTerminalMarker(ownerEdge, terminal)) {
             continue;
           }
+          // Use the same terminal reservation as label placement; validation should enforce the
+          // routing contract rather than approximate marker clearance independently.
           const markerRect = terminalMarkerClearanceRect(
             ownerMeta.normalized.points,
             terminal,

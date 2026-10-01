@@ -15,6 +15,7 @@ export function applySwimlaneLineJumps(
   const edgeGeometries = data4Layout.edges
     .filter((edge) => Array.isArray(edge.points) && edge.points.length >= 2)
     .map((edge) => ({
+      // The shared line-hop pass must reconstruct the same corners the renderer originally drew.
       id: edge.id,
       points: edge.points!,
       curve: edge.curve,

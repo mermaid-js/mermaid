@@ -33,6 +33,12 @@ export function rectForNode(node: Node): Rect {
   };
 }
 
+/**
+ * Reserve the marker-facing portion of an orthogonal terminal segment.
+ *
+ * Placement and validation share this geometry so a label accepted during routing cannot later
+ * fail because the validator modeled the arrowhead clearance differently.
+ */
 export function terminalMarkerClearanceRect(
   points: Point[],
   terminal: 'start' | 'end',
