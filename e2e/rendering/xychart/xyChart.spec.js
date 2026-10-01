@@ -345,6 +345,32 @@ test.describe('XY Chart', () => {
     await assertAxisLabelRotation(page, '0');
   });
 
+  test('should centre the title over the plot area', async ({ page }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+      xychart
+        title "Revenue multiple by year"
+        x-axis [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+        y-axis "EV / NTM (x)" 0 --> 40
+        bar [6, 5, 7, 12, 18, 35, 20, 10]
+        line [5, 4, 6, 9, 15, 28, 18, 8]
+      `,
+      {}
+    );
+
+    const { titleCenter, plotCenter } = await page.locator('svg').evaluate((svg) => {
+      const title = svg.querySelector('g.chart-title text').getBoundingClientRect();
+      const axis = svg.querySelector('g.bottom-axis g.axis-line path').getBoundingClientRect();
+      return {
+        titleCenter: title.x + title.width / 2,
+        plotCenter: axis.x + axis.width / 2,
+      };
+    });
+    expect(Math.abs(titleCenter - plotCenter)).toBeLessThan(1);
+  });
+
   test('x-axis range with same values is supported', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,
@@ -360,6 +386,59 @@ xychart-beta
     );
 
     // Zero-width vertical line: Playwright's toBeVisible() treats a 0-bbox as hidden.
+    await expect(page.locator('g.plot g.line-plot-0 path')).toHaveCount(1);
+  });
+  test('should keep legend text inside a wide chart scaled down to fit (#8283)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+      xychart
+        title "Wide chart"
+        x-axis "Elapsed Time" 0 --> 10
+        y-axis "Percentage (%)" 0 --> 100
+        line "CPU" [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        line "RAM" [20, 30, 40, 50, 60, 70, 80, 90, 95, 90]
+      `,
+      { xyChart: { width: 4000 } }
+    );
+
+    // The 4000px wide SVG is scaled down to the viewport; text must still be measured
+    // in SVG units so the legend labels keep their right padding inside the viewBox.
+    // Guard the count first: Math.min() of no labels is Infinity and would pass.
+    await expect(page.locator('g.legend text')).toHaveCount(2);
+    const rightMargin = await page.locator('svg').evaluate((svg) => {
+      const svgBox = svg.getBoundingClientRect();
+      const scale = svgBox.width / svg.viewBox.baseVal.width;
+      return Math.min(
+        ...[...svg.querySelectorAll('g.legend text')].map(
+          (text) => (svgBox.right - text.getBoundingClientRect().right) / scale
+        )
+      );
+    });
+    // legendPadding defaults to 10; allow some slack for font rendering differences.
+    expect(rightMargin).toBeGreaterThan(5);
+  });
+
+  test('should drop the chart title when the chart is too short for it (#8283)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+      xychart
+        title "Too short for a title"
+        x-axis "Elapsed Time" 0 --> 10
+        y-axis "Percentage (%)" 0 --> 100
+        line "CPU" [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+      `,
+      { xyChart: { width: 1200, height: 60 } }
+    );
+
+    await expect(page.locator('g.chart-title text')).toHaveCount(0);
     await expect(page.locator('g.plot g.line-plot-0 path')).toHaveCount(1);
   });
 });
