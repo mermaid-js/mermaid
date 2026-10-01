@@ -1,5 +1,6 @@
 export interface EntityNode {
   id: string;
+  placementId: string;
   label: string;
   attributes: Attribute[];
   alias: string;
