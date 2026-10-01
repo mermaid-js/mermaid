@@ -15,6 +15,7 @@ export const GRID_VERTICAL_ALIGNMENTS = [
   'bottom',
 ] as const satisfies readonly GridVerticalAlign[];
 
+/** Grid coordinates are one-based author input, not zero-based internal cell indexes. */
 export function isValidGridCoordinate(value: unknown): value is number {
   return (
     typeof value === 'number' && Number.isFinite(value) && Number.isSafeInteger(value) && value > 0
@@ -33,6 +34,10 @@ export function isGridVerticalAlign(value: unknown): value is GridVerticalAlign 
   );
 }
 
+/**
+ * Sanitizes the user-keyed placement dictionary without treating authored node IDs as config keys.
+ * Only the fixed placement shape crosses the directive trust boundary.
+ */
 export function sanitizeGridPlacements(dict: Record<string, unknown>): void {
   for (const key of Object.keys(dict)) {
     const value = dict[key];
