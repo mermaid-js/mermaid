@@ -112,6 +112,11 @@ describe('generic parser', () => {
     ['test ~Array~Array~string[]~~~', 'test <Array<Array<string[]>>>'],
     ['~test', '~test'],
     ['~test~T~', '~test<T>'],
+    ['test~K, V~', 'test<K, V>'],
+    ['test~T1, T2, T3~', 'test<T1, T2, T3>'],
+    ['fn(Map~K, V, W~ m, List~T~ l)', 'fn(Map<K, V, W> m, List<T> l)'],
+    ['fn(Map~K, V~ m, Map~A, B~ n)', 'fn(Map<K, V> m, Map<A, B> n)'],
+    ['test~T1, T2, T3', 'test~T1, T2, T3'],
   ])('should parse generic types: %s to %s', (input: string, expected: string) => {
     expect(parseGenericTypes(input)).toEqual(expected);
   });
