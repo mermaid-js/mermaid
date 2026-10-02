@@ -1,3 +1,5 @@
+import type { ThreatModel } from './threat-model/model.js';
+
 export interface NodeMetaData {
   shape?: string;
   label?: string;
@@ -102,6 +104,8 @@ export interface ParseOptions {
 }
 
 export interface ParseResult {
+  /** Experimental structured threat model, when annotations are present. */
+  threatModel?: ThreatModel;
   /**
    * The diagram type, e.g. 'flowchart', 'sequence', etc.
    */
@@ -133,6 +137,8 @@ export type D3Selection<T extends SVGElement> = D3HtmlSelection<T>;
 export type D3HtmlSelection<T extends Element> = d3.Selection<T, unknown, Element | null, unknown>;
 
 export interface RenderResult {
+  /** Experimental structured threat model, when annotations are present. */
+  threatModel?: ThreatModel;
   /**
    * The svg code for the rendered graph.
    */
