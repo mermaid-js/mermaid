@@ -219,20 +219,18 @@ export const parseGenericTypes = function (input: string): string {
   for (let i = 0; i < inputSets.length; i++) {
     let thisSet = inputSets[i];
 
-    // if the original input included a value such as "~K, V~"", these will be split into
-    // an array of ["~K",","," V~"].
+    // if the original input included a value such as "~K, V, W~", these will be split into
+    // an array of ["~K", ",", " V", ",", " W~"].
     // This means that on each call of processSet, there will only be 1 ~ present
-    // To account for this, if we encounter a ",", we are checking the previous and next sets in the array
-    // to see if they contain matching ~'s
+    // To account for this, when a set holds a single ~, we look ahead past sets without a ~
+    // for the set holding the matching ~,
     // in which case we are assuming that they should be rejoined and sent to be processed
-    if (thisSet === ',' && i > 0 && i + 1 < inputSets.length) {
-      const previousSet = inputSets[i - 1];
-      const nextSet = inputSets[i + 1];
+    if (countOccurrence(thisSet, '~') === 1) {
+      const closingIndex = findClosingSet(inputSets, i + 2);
 
-      if (shouldCombineSets(previousSet, nextSet)) {
-        thisSet = previousSet + ',' + nextSet;
-        i++; // Move the index forward to skip the next iteration since we're combining sets
-        output.pop();
+      if (closingIndex !== -1) {
+        thisSet = inputSets.slice(i, closingIndex + 1).join('');
+        i = closingIndex; // Skip the sets we just combined
       }
     }
 
@@ -246,11 +244,17 @@ export const countOccurrence = (string: string, substring: string): number => {
   return Math.max(0, string.split(substring).length - 1);
 };
 
-const shouldCombineSets = (previousSet: string, nextSet: string): boolean => {
-  const prevCount = countOccurrence(previousSet, '~');
-  const nextCount = countOccurrence(nextSet, '~');
-
-  return prevCount === 1 && nextCount === 1;
+const findClosingSet = (sets: string[], start: number): number => {
+  for (let i = start; i < sets.length; i += 2) {
+    const count = countOccurrence(sets[i], '~');
+    if (count === 1) {
+      return i;
+    }
+    if (count > 1) {
+      return -1;
+    }
+  }
+  return -1;
 };
 
 const processSet = (input: string): string => {
