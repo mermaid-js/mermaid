@@ -113,6 +113,6 @@ Possible pie diagram configuration parameters:
 
 The example also sets a [pie theme variable](../config/theming.md#pie-diagram-variables) under `themeVariables`, rather than under `pie`:
 
-| Theme variable        | Description                                   | Value format                        | Default value |
-| --------------------- | --------------------------------------------- | ----------------------------------- | ------------- |
-| `pieOuterStrokeWidth` | Width of the pie chart's outer circle border. | Integer pixel length (e.g. `"5px"`) | `"2px"`       |
+| Theme variable        | Description                                   | Value format                                 | Default value |
+| --------------------- | --------------------------------------------- | -------------------------------------------- | ------------- |
+| `pieOuterStrokeWidth` | Width of the pie chart's outer circle border. | Whole-pixel value recommended (e.g. `"5px"`) | `"2px"`       |
