@@ -422,6 +422,7 @@ describe('flow db click callbacks', () => {
     expect(warn).toHaveBeenCalledTimes(1);
     expect(warn.mock.calls[0][0]).toContain('nodeA');
     expect(warn.mock.calls[0][0]).toContain('loose');
+    expect(warn.mock.calls[0][0]).toContain('strict');
   });
 
   it('does not warn when securityLevel is loose', () => {
