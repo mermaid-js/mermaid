@@ -256,6 +256,15 @@ properties:
           Only applies when the cyclic flow has no node without incoming edges: if the loop is fed from outside (e.g. a start node pointing into it), that component already has a natural source and nothing is pinned. Detection is also scoped per container, so cycles that cross a subgraph boundary are not detected.
         type: boolean
         default: false
+      orientFeedbackEdges:
+        description: |
+          Routes an edge that re-enters a subgraph downstream instead of around the subgraph.
+
+          ELK lays out a subgraph as one node of its parent graph. A node outside a subgraph that both receives an edge from it and sends one back into it therefore closes a cycle there, even when the nodes inside do not. ELK breaks that cycle by reversing one of the edges and routes it into the subgraph's input side, around the outside of the subgraph.
+
+          When enabled, such edges are found before layout, on the graph with each subgraph collapsed, and handed to ELK in the other direction. The edge is drawn with its arrowhead at its real target. Cycles between plain nodes are left to `cycleBreakingStrategy`.
+        type: boolean
+        default: true
   darkMode:
     type: boolean
     default: false
@@ -2741,6 +2750,20 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: Toggle to display or hide bit numbers.
         type: boolean
         default: true
+      bitOrder:
+        description: |
+          The direction each row is numbered in. `descending` mirrors every row so it reads from
+          that row's highest bit on the left down to its lowest bit on the right, the convention
+          used for hardware registers. Fields are still declared lowest bit first, and keep their
+          width.
+        type: string
+        enum:
+          - ascending
+          - descending
+        meta:enum:
+          ascending: Number each row from its lowest bit on the left up to its highest bit on the right.
+          descending: Number each row from its highest bit on the left down to its lowest bit on the right.
+        default: ascending
       paddingX:
         description: The horizontal padding between the blocks in a row.
         type: number
