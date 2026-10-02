@@ -279,5 +279,23 @@ ${prop} --> [*]`);
         stateDiagram.parser.yy.getRelations().map(({ id1, id2 }) => `${id1} --> ${id2}`)
       ).toEqual([`root_start --> ${name.trim()}`, 'A --> B']);
     });
+
+    it('should parse state as the source of a transition', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+    state --> B
+`);
+
+      expect(
+        stateDiagram.parser.yy.getRelations().map(({ id1, id2 }) => `${id1} --> ${id2}`)
+      ).toEqual(['state --> B']);
+    });
+
+    it('should parse state with a description', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+    state : desc
+`);
+
+      expect(stateDiagram.parser.yy.getStates().get('state')?.descriptions).toEqual(['desc']);
+    });
   });
 });
