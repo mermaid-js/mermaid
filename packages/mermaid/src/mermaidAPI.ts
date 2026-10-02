@@ -181,6 +181,20 @@ export const createCssStyles = (
             cssStyles.cssRules.length
           );
         });
+        if (htmlLabels) {
+          // Some flowchart shapes wrap their geometry in a group. Restrict these rules to
+          // normal node roots: rough shapes also reuse class names on inner groups.
+          ['path', 'circle'].forEach((cssElement) => {
+            cssStyles.insertRule(
+              cssImportantStyles(
+                `${styleClassDef.id}:not(.rough-node):not(.rough-node *)`,
+                `> g > ${cssElement}`,
+                styleClassDef.styles
+              ),
+              cssStyles.cssRules.length
+            );
+          });
+        }
       }
       // create the css styles for the tspan element and the text styles (only if there are textStyles)
       if (!isEmpty(styleClassDef.textStyles)) {
