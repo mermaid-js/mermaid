@@ -2,9 +2,15 @@
 import type { LayoutData } from '../../types.js';
 import {
   clipEdgeEndpointsToNodeBoundaries,
+  approachBordersSquarely,
+  cropEdgeEndsToShapes,
+  meetDiamondsAtTheirVertex,
   prepareEdgeEndpointsForRenderer,
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
+import { framePoolsTb } from './direction/framePoolsTb.js';
+import { linkParticipantBands } from './direction/participantLinks.js';
+import { separateParticipants } from './direction/separateParticipants.js';
 import { applyBtDirectionTransform, applyLrDirectionTransform } from './direction/lrTransform.js';
 import { portSwapToLShape } from './direction/portSwap.js';
 import { collapseShortTerminalStub } from './direction/terminalStub.js';
@@ -23,6 +29,7 @@ import { simplifyDetouredEdges } from './direction/detourSimplification.js';
 import { anchorLabelsToPolyline } from './direction/labelAnchoring.js';
 import { straightenCollinearSiblingDetours } from './direction/siblingSharedFaceRouting.js';
 import { nudgeSharedInteriorSubpaths } from './direction/sharedTrackNudging.js';
+import { clearAnchoredOverlaps, pinAnchoredNodes, squareAnchoredEdges } from './anchoredNodes.js';
 export { validateSwimlanesLayout } from './direction/validation.js';
 
 /** Applies direction transforms and post-routing cleanup to a swimlane layout. */
@@ -31,20 +38,27 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   const edges = layout.edges ?? [];
   const contentNodes = nodes.filter((n) => !n.isGroup);
 
-  // TB is the canonical orientation. LR/RL rotate rank progression onto X;
-  // BT mirrors the canonical Y progression. Cleanup passes below operate in
-  // whichever coordinate system this step leaves behind.
-  if (
-    (direction === 'LR' || direction === 'RL') &&
-    contentNodes.length > 0 &&
-    !applyLrDirectionTransform(layout, direction)
-  ) {
+  if ((direction === 'LR' || direction === 'RL') && !applyLrDirectionTransform(layout, direction)) {
     return;
+  }
+
+  if (direction !== 'LR' && direction !== 'RL') {
+    framePoolsTb(layout);
   }
 
   if (direction === 'BT' && contentNodes.length > 0 && !applyBtDirectionTransform(layout)) {
     return;
   }
+
+  const pins = pinAnchoredNodes(layout, {
+    space: 'final',
+    direction: direction === 'LR' || direction === 'RL' || direction === 'BT' ? direction : 'TB',
+  });
+  const settledPins = clearAnchoredOverlaps(layout, pins);
+  squareAnchoredEdges(layout, settledPins);
+
+  separateParticipants(layout, direction);
+  linkParticipantBands(layout);
 
   for (const edge of edges) {
     if ((edge as { isLayoutOnly?: boolean }).isLayoutOnly) {
@@ -149,4 +163,9 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // the edges again.
   liftTopLaneTitleBandsAboveRails(edges, nodeByIdMap);
   shiftLeftLaneTitleBandsLeftOfRails(edges, nodeByIdMap);
+
+  cropEdgeEndsToShapes(edges, nodeByIdMap);
+  meetDiamondsAtTheirVertex(edges, nodeByIdMap);
+  approachBordersSquarely(edges, nodeByIdMap);
+  anchorLabelsToPolyline(edges, nodeByIdMap);
 }

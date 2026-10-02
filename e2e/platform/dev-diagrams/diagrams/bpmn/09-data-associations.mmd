@@ -1,0 +1,16 @@
+bpmn-beta LR
+  pool "Order handling"
+    lane "Sales"
+      start s1 "Order received"
+      data-input d1 "Order form"
+      user task t1 "Check the order"
+      data-output d2 "Approval"
+      data-collection d3 "Line items"
+      end e1 "Filed"
+      note n1 "Against the price list"
+  s1 --> t1
+  t1 --> e1
+  d1 ..> t1
+  t1 ..> d2
+  d3 ..> t1
+  n1 ... t1
