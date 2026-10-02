@@ -29,8 +29,10 @@ import {
   select,
 } from 'd3';
 import rough from 'roughjs';
+import { resolveEdgeCornerRadius } from '../edgeCornerRadius.js';
 import createLabel from './createLabel.js';
 import { addEdgeMarkers } from './edgeMarker.ts';
+import { clipOrthogonalEndpointsToNodeOutlines } from './orthogonalEdgeClipping.js';
 import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
 
 /**
@@ -43,6 +45,8 @@ import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
 export const resolveEdgeCurveType = (edgeCurve) => {
   return typeof edgeCurve === 'string' ? edgeCurve : getConfig()?.flowchart?.curve;
 };
+
+export { resolveEdgeCornerRadius };
 
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
@@ -649,11 +653,15 @@ export const insertEdge = function (
     edgeClassStyles.push(edge.cssCompiledStyles[key]);
   }
 
-  // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
-  // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
-  // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
-  // clipping below, so their edge ports are unaffected by swimlanes.
-  if (layout === 'swimlane') {
+  // Specialized clipping is selected by edge metadata rather than layout name so any orthogonal
+  // router can preserve its bends. Exactly one policy runs; clipping twice destroys owned ports.
+  if (edge.portClipping === 'outline-orthogonal' && !skipIntersect) {
+    points = clipOrthogonalEndpointsToNodeOutlines(points, tail, head);
+  } else if (layout === 'swimlane') {
+    // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
+    // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
+    // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
+    // clipping below, so their edge ports are unaffected by swimlanes.
     if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
@@ -689,7 +697,7 @@ export const insertEdge = function (
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
   } else if (head.intersect && tail.intersect && !skipIntersect) {
-    // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
+    // Original clipping for layouts that do not own their final boundary ports.
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
@@ -716,9 +724,8 @@ export const insertEdge = function (
   let lineData = points.filter((p) => !Number.isNaN(p.y));
   // Resolve curve type: use edge.curve if it's a string, otherwise fall back to config default
   const edgeCurveType = resolveEdgeCurveType(edge.curve);
-  // Apply fixCorners for non-rounded curves to pre-round right-angle corners
-  // (rounded curve type uses generateRoundedPath instead)
-  if (edgeCurveType !== 'rounded') {
+  // Routers can opt out when their points already encode every terminal and corner invariant.
+  if (edgeCurveType !== 'rounded' && !edge.skipCornerFix) {
     lineData = fixCorners(lineData);
   }
   let curve = curveLinear;
@@ -799,7 +806,11 @@ export const insertEdge = function (
   let svgPath;
   let linePath =
     edgeCurveType === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      ? generateRoundedPath(
+          applyMarkerOffsetsToPoints(lineData, edge),
+          // Resolve here instead of in a layout so rounded rendering stays generic.
+          resolveEdgeCornerRadius(edge.cornerRadius)
+        )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));

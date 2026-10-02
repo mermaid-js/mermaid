@@ -17,6 +17,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { stripPrototypeKeys } from '../common/sanitizeMetadata.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   FlowClass,
@@ -33,6 +34,29 @@ interface LinkData {
 }
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
+const GRID_LAYOUT_METADATA_KEYS = ['row', 'column', 'horizontalAlign', 'verticalAlign'] as const;
+
+// Flowchart metadata is a broad author-facing object. Forward only the fields understood by layout
+// code so renderer nodes do not become a second, unsanitized metadata API.
+function pickFlowchartLayoutMetadata(
+  metadata: NodeMetaData | undefined,
+  includeContainerAlgorithm = false
+): Record<string, unknown> | undefined {
+  if (!metadata) {
+    return undefined;
+  }
+  const source = metadata as unknown as Record<string, unknown>;
+  const layoutMetadata: Record<string, unknown> = {};
+  for (const key of GRID_LAYOUT_METADATA_KEYS) {
+    if (Object.hasOwn(source, key)) {
+      layoutMetadata[key] = source[key];
+    }
+  }
+  if (includeContainerAlgorithm && Object.hasOwn(source, 'algorithm')) {
+    layoutMetadata.algorithm = source.algorithm;
+  }
+  return Object.keys(layoutMetadata).length > 0 ? layoutMetadata : undefined;
+}
 
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
 export class FlowDB implements DiagramDB {
@@ -148,7 +172,7 @@ export class FlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
-      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+      doc = stripPrototypeKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData);
     }
 
     // Check if this is metadata for an already-declared subgraph
@@ -233,6 +257,8 @@ export class FlowDB implements DiagramDB {
     }
 
     if (doc !== undefined) {
+      vertex.metadata = { ...vertex.metadata, ...doc };
+
       if (doc.shape) {
         if (doc.shape !== doc.shape.toLowerCase() || doc.shape.includes('_')) {
           throw new Error(`No such shape: ${doc.shape}. Shape names should be lowercase.`);
@@ -1075,6 +1101,7 @@ You have to call mermaid.initialize.`
         assetWidth: vertex.assetWidth,
         assetHeight: vertex.assetHeight,
         constraint: vertex.constraint,
+        metadata: pickFlowchartLayoutMetadata(vertex.metadata),
       };
       if (isGroup) {
         nodes.push({
@@ -1259,12 +1286,7 @@ You have to call mermaid.initialize.`
           isGroup: true,
           look: config.look,
           colorIndex: declarationIndex.get(subGraph.id),
-          // Forwarded so layout engines can read per-container settings such as
-          // `@{ algorithm: elk.box }`. `view` is consumed above; everything else
-          // is opaque here and simply passed through. The cast is the
-          // interface-vs-index-signature gap: `NodeMetaData` is an interface, so
-          // it is not structurally assignable to `Record<string, unknown>`.
-          metadata: subGraph.metadata as Record<string, unknown> | undefined,
+          metadata: pickFlowchartLayoutMetadata(subGraph.metadata, true),
         });
       }
     }

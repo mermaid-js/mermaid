@@ -262,6 +262,10 @@ export class MindmapDB {
 
     const processedNode: MindmapLayoutNode = {
       id: node.id.toString(),
+      // Edges use the numeric tree ID; layout configuration should use the authored node ID.
+      // TODO: Support occurrence selectors such as `service#1` and `service#2`, with the
+      // base ID as a shared fallback and the numbered placement overriding it by field.
+      placementId: node.nodeId,
       domId: 'node_' + node.id.toString(),
       label: node.descr,
       labelType: 'markdown',
@@ -372,6 +376,24 @@ export class MindmapDB {
 
     this.flattenNodes(mindmapRoot, processedNodes);
     this.generateEdges(mindmapRoot, processedEdges);
+
+    const placements = userDefinedConfig.grid?.placements;
+    if (placements) {
+      // Authored mindmap IDs are not required to be unique. Warn only when a placement makes that
+      // ambiguity observable; all matching rendering nodes intentionally share the placement.
+      const placementIdCounts = new Map<string, number>();
+      for (const node of processedNodes) {
+        const placementId = node.placementId ?? node.id;
+        placementIdCounts.set(placementId, (placementIdCounts.get(placementId) ?? 0) + 1);
+      }
+      for (const [placementId, count] of placementIdCounts) {
+        if (count > 1 && Object.hasOwn(placements, placementId)) {
+          log.warn(
+            `Grid placement "${placementId}" matches ${count} mindmap nodes with the same authored ID; all of them will receive that placement.`
+          );
+        }
+      }
+    }
 
     log.debug(
       `getData: processed ${processedNodes.length} nodes and ${processedEdges.length} edges`

@@ -8,6 +8,13 @@ import type { Node } from '../../types.js';
 import type { Point, Rect, PortSide } from './types.js';
 
 /**
+ * Compare strings by UTF-16 code units so algorithmic ordering is independent of locale and ICU.
+ */
+export function compareCodeUnits(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/**
  * Create a Rect from a Node's x, y, width, height properties.
  * The node's x, y are assumed to be the center coordinates.
  */
@@ -24,6 +31,60 @@ export function rectForNode(node: Node): Rect {
     top: cy - h / 2,
     bottom: cy + h / 2,
   };
+}
+
+/**
+ * Reserve the marker-facing portion of an orthogonal terminal segment.
+ *
+ * Placement and validation share this geometry so a label accepted during routing cannot later
+ * fail because the validator modeled the arrowhead clearance differently.
+ */
+export function terminalMarkerClearanceRect(
+  points: Point[],
+  terminal: 'start' | 'end',
+  length: number,
+  halfWidth: number,
+  tolerance = 0
+): Rect | null {
+  if (points.length < 2) {
+    return null;
+  }
+
+  const tip = terminal === 'end' ? points[points.length - 1] : points[0];
+  const inner = terminal === 'end' ? points[points.length - 2] : points[1];
+  const dx = inner.x - tip.x;
+  const dy = inner.y - tip.y;
+
+  if (Math.abs(dx) <= tolerance && Math.abs(dy) <= tolerance) {
+    return null;
+  }
+  if (Math.abs(dy) <= tolerance) {
+    const innerX = tip.x + Math.sign(dx) * length;
+    const left = Math.min(tip.x, innerX);
+    const right = Math.max(tip.x, innerX);
+    return {
+      cx: (left + right) / 2,
+      cy: tip.y,
+      left,
+      right,
+      top: tip.y - halfWidth,
+      bottom: tip.y + halfWidth,
+    };
+  }
+  if (Math.abs(dx) <= tolerance) {
+    const innerY = tip.y + Math.sign(dy) * length;
+    const top = Math.min(tip.y, innerY);
+    const bottom = Math.max(tip.y, innerY);
+    return {
+      cx: tip.x,
+      cy: (top + bottom) / 2,
+      left: tip.x - halfWidth,
+      right: tip.x + halfWidth,
+      top,
+      bottom,
+    };
+  }
+  return null;
 }
 
 /**

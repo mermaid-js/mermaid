@@ -36,6 +36,7 @@ build can opt back in.
 
 - **elk** (default): [ELK (Eclipse Layout Kernel)](https://www.eclipse.org/elk/). Bundled with Mermaid; no setup required. Specific ELK algorithms can be selected as `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box`, and `elk.rectpacking`.
 - **dagre**: Dagre layout for layered graphs
+- **grid**: Built-in deterministic row/column layout for unified renderers. See [Grid Layout](/syntax/grid-layout.html).
 - **cose-bilkent**: Cose Bilkent layout for force-directed graphs
 - **tidy-tree**: Tidy tree layout for hierarchical diagrams, from the [`@mermaid-js/layout-tidy-tree`](https://www.npmjs.com/package/@mermaid-js/layout-tidy-tree) package [Tidy Tree Configuration](/config/tidy-tree)
 
