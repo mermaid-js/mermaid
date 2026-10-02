@@ -179,6 +179,16 @@ gantt
     Final milestone : milestone, m2, 18:08, 4m
 ```
 
+The duration of a milestone can be omitted, in which case it defaults to `0d` and the milestone is placed exactly on its initial date (v<MERMAID_RELEASE_VERSION>+).
+
+```mermaid-example
+gantt
+    dateFormat YYYY-MM-DD
+    First milestone : milestone, m1, 2023-01-02
+    Task A : a1, after m1, 10d
+    Second milestone : milestone, m2, after a1
+```
+
 ### Vertical Markers
 
 The `vert` keyword lets you add vertical lines to your Gantt chart, making it easy to highlight important dates like deadlines, events, or checkpoints. These markers extend across the entire chart and are positioned based on the date you provide. Unlike milestones, vertical markers don’t take up a row. They’re purely visual reference points that help break up the timeline and make important moments easier to spot.
