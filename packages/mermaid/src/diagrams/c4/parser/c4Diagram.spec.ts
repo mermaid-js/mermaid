@@ -39,6 +39,22 @@ Person(Person, "Person", "Person")`);
     expect(onlyShape.label.text).toBe('Person');
   });
 
+  it('should allow a # in the title', function () {
+    c4.parser.parse(`C4Context
+title Relationship to a boundary (#4864)
+Person(Person, "Person", "Person")`);
+
+    expect(c4.parser.yy.getTitle()).toBe('Relationship to a boundary (#4864)');
+  });
+
+  it('should allow a # in the accDescription', function () {
+    c4.parser.parse(`C4Context
+accDescription Context diagram for issue #4864
+Person(Person, "Person", "Person")`);
+
+    expect(c4.parser.yy.getAccDescription()).toBe('Context diagram for issue #4864');
+  });
+
   it('should allow default in the parameters', function () {
     c4.parser.parse(`C4Context
 Person(default, "default", "default")`);
