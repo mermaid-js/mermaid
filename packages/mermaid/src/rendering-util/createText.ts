@@ -71,7 +71,10 @@ async function addHtmlSpan(
   }
 
   const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
-  if (bbox.width === width) {
+  // getBoundingClientRect() widths are subject to device-pixel quantization, so
+  // a clamped label can report e.g. 400.00006103515625 instead of exactly 400 —
+  // strict equality makes the wrap decision device-dependent.
+  if (Math.abs(bbox.width - width) < 1) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
