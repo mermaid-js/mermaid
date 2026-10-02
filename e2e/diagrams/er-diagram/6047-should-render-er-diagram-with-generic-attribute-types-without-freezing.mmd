@@ -1,0 +1,33 @@
+erDiagram
+    Context ||--|| CurrentContextNode : contains
+    Context {
+        Guid transactionGuid
+        string transactionId
+        Instrument2 instrument
+        decimal currentPosition
+        decimal desiredPosition
+    }
+    CurrentContextNode ||--|{ Orders : contains
+    CurrentContextNode ||--|| PreviousContextNode : accesses
+    CurrentContextNode {
+        string contextNodeId
+        string previousContextNodeId
+        string algoId
+        IList~Order~ orders "List of Orders"
+    }
+    PreviousContextNode {
+        string contextNodeId
+        string previousContextNodeId
+        IList~Order~ orders
+    }
+        Orders {
+        int orderId
+        string orderRef
+        IList~OrderHistory~ orderHistory "Order Adjustment History"
+    }
+    Orders ||--o{ OrderHistory : contains
+    OrderHistory {
+        int orderId
+        string orderRef
+        string status
+    }
