@@ -253,6 +253,17 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('stroke', (data) => data.strokeFill)
           .attr('stroke-width', (data) => data.strokeWidth);
         break;
+      case 'circle':
+        shapeGroup
+          .selectAll('circle')
+          .data(shape.data)
+          .enter()
+          .append('circle')
+          .attr('cx', (data) => data.x)
+          .attr('cy', (data) => data.y)
+          .attr('r', (data) => data.radius)
+          .attr('fill', (data) => data.fill);
+        break;
     }
   }
 };
