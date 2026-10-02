@@ -278,35 +278,50 @@ export function setTerminalWidth(fo, value, box) {
   }
 }
 
+/**
+ * Where to put an edge's label along its drawn path.
+ */
+export const resolveEdgeLabelPosition = (edge, paths) => {
+  let x = edge.x;
+  let y = edge.y;
+  if (paths?.updatedPath) {
+    const updatedMid = utils.calcLabelPosition(paths.updatedPath);
+    if (paths.originalPath) {
+      const originalMid = utils.calcLabelPosition(paths.originalPath);
+      x = edge.x + (updatedMid.x - originalMid.x);
+      y = edge.y + (updatedMid.y - originalMid.y);
+    } else {
+      x = updatedMid.x;
+      y = updatedMid.y;
+    }
+  }
+  return { x, y };
+};
+
 export const positionEdgeLabel = (edge, paths) => {
   log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
-  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths.updatedPath) {
-        x = pos.x;
-        y = pos.y;
-      }
-    }
+    const { x, y } = resolveEdgeLabelPosition(edge, paths);
+    log.debug(
+      'Moving label ' + edge.label + ' from (',
+      edge.x,
+      ',',
+      edge.y,
+      ') to (',
+      x,
+      ',',
+      y,
+      ') abc88'
+    );
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }
+
+  // `path` is still needed below for the terminal-label branches, which only read from it
+  // (they do not themselves reposition the main label).
+  const path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
 
   if (edge.startLabelLeft) {
     const el = terminalLabels.get(edge.id).startLeft;

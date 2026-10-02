@@ -2073,6 +2073,51 @@ function applyElkEdgeLayout(
   // Off the frames first: the mirrored spot of a label across a frame is across it too.
   slideTerminalLabelsOffFrames(data4Layout.edges, data4Layout.nodes);
   putTerminalLabelsOnTheirSide(data4Layout.edges, data4Layout.nodes);
+  separateOppositeEdgeLabels(data4Layout.edges);
+}
+
+/** Minimum clearance kept between two opposite-direction edges' labels, beyond their own half-widths. */
+const OPPOSITE_LABEL_MIN_GAP = 4;
+
+/**
+ * Push apart the labels of two opposite-direction edges between the same
+ * node pair when they'd otherwise overlap.
+ */
+export function separateOppositeEdgeLabels(edges: Edge[]): void {
+  const byPair = new Map<string, Edge[]>();
+  for (const edge of edges) {
+    if (edge.x == null || edge.y == null || !edge.label || !edge.width) {
+      continue;
+    }
+    const key = [edge.start ?? '', edge.end ?? ''].sort().join('\u0000');
+    const bucket = byPair.get(key);
+    if (bucket) {
+      bucket.push(edge);
+    } else {
+      byPair.set(key, [edge]);
+    }
+  }
+
+  for (const bucket of byPair.values()) {
+    if (bucket.length !== 2) {
+      continue;
+    }
+    const [a, b] = bucket;
+    // Labels drawn at meaningfully different heights are not actually
+    // competing for the same horizontal space, however close their x may be.
+    if (Math.abs(a.y! - b.y!) > Math.max(a.height ?? 0, b.height ?? 0)) {
+      continue;
+    }
+    const required = a.width! / 2 + b.width! / 2 + OPPOSITE_LABEL_MIN_GAP;
+    const current = b.x! - a.x!;
+    const deficit = required - Math.abs(current);
+    if (deficit <= 0) {
+      continue;
+    }
+    const sign = Math.sign(current) || 1;
+    a.x = a.x! - (sign * deficit) / 2;
+    b.x = b.x! + (sign * deficit) / 2;
+  }
 }
 
 interface Box {
