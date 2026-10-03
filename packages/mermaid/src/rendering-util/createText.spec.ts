@@ -99,4 +99,26 @@ describe('createText', () => {
       expect(output.textContent).toEqual(expected);
     }
   );
+
+  it('wraps HTML labels when max-width is rounded to a fractional pixel', async () => {
+    const wrappingWidth = 200;
+    const fractionalRoundingError = 0.5;
+    const getBoundingClientRect = vi
+      .spyOn(HTMLDivElement.prototype, 'getBoundingClientRect')
+      .mockReturnValue({ width: wrappingWidth - fractionalRoundingError } as DOMRect);
+
+    try {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+      const output = await createText(select(svgGroup), 'A long label', {
+        useHtmlLabels: true,
+        markdown: false,
+        width: wrappingWidth,
+      });
+
+      expect(output.querySelector('div')?.style.whiteSpace).toBe('break-spaces');
+    } finally {
+      getBoundingClientRect.mockRestore();
+    }
+  });
 });
