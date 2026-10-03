@@ -115,6 +115,7 @@ const getStyles: DiagramStylesProvider = (options) => {
     fill: none;
   }
   .mindmap-node-label {
+    color: ${options.textColor};
     dy: 1em;
     alignment-baseline: middle;
     text-anchor: middle;
