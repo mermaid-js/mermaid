@@ -222,15 +222,21 @@ export class ClassDB implements DiagramDB {
       !invalidTypes.includes(classRelation.relation.type2)
     ) {
       this.addClass(classRelation.id2);
-      this.addInterface(classRelation.id1, classRelation.id2);
-      classRelation.id1 = `interface${this.interfaces.length - 1}`;
+      const interfaceClassName = this.splitClassNameAndType(classRelation.id1).className;
+      if (!this.classes.has(interfaceClassName)) {
+        this.addInterface(classRelation.id1, classRelation.id2);
+        classRelation.id1 = `interface${this.interfaces.length - 1}`;
+      }
     } else if (
       classRelation.relation.type2 === this.relationType.LOLLIPOP &&
       !invalidTypes.includes(classRelation.relation.type1)
     ) {
       this.addClass(classRelation.id1);
-      this.addInterface(classRelation.id2, classRelation.id1);
-      classRelation.id2 = `interface${this.interfaces.length - 1}`;
+      const interfaceClassName = this.splitClassNameAndType(classRelation.id2).className;
+      if (!this.classes.has(interfaceClassName)) {
+        this.addInterface(classRelation.id2, classRelation.id1);
+        classRelation.id2 = `interface${this.interfaces.length - 1}`;
+      }
     } else {
       this.addClass(classRelation.id1);
       this.addClass(classRelation.id2);
