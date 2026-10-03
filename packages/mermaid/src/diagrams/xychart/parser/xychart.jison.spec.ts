@@ -50,6 +50,22 @@ describe('Testing xychart jison file', () => {
     expect(parserFnConstructor(str)).not.toThrow();
   });
 
+  it('parses unquoted accented Latin axis labels and titles', () => {
+    parser.parse(`xychart
+      x-axis [jan, fév, août]
+      y-axis Température -20 --> 50
+      bar [22, 23, 24]
+    `);
+
+    expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
+      { text: 'jan', type: 'text' },
+      { text: 'fév', type: 'text' },
+      { text: 'août', type: 'text' },
+    ]);
+    expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'Température', type: 'text' });
+    expect(mockDB.setYAxisRangeData).toHaveBeenCalledWith(-20, 50);
+  });
+
   it('parse title of the chart within "', () => {
     const str = 'xychart \n title "This is a title"';
     expect(parserFnConstructor(str)).not.toThrow();
