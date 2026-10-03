@@ -54,7 +54,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "classDef"                      { this.begin("style"); return 'CLASSDEF'; }
 "class"                         return 'CLASS';
 "subgraph"                      return 'SUBGRAPH';
-"end"\b\s*                      return 'END';
+"end"\b[ \t\r]*                      return 'END';
 "one or zero"                   return 'ZERO_OR_ONE';
 "one or more"                   return 'ONE_OR_MORE';
 "one or many"                   return 'ONE_OR_MORE';
@@ -103,7 +103,7 @@ u(?=[\.\-\|])                   return 'MD_PARENT';
 %% /* language grammar */
 
 start
-    : 'ER_DIAGRAM' document 'EOF' { /*console.log('finished parsing');*/ }
+    : 'ER_DIAGRAM' document { /*console.log('finished parsing');*/ }
     ;
 
 document
@@ -112,7 +112,7 @@ document
 	;
 
 line
-	: statement { $$ = $1 }
+	: statement separator { $$ = $1 }
 	| NEWLINE { $$=[];}
 	| EOF { $$=[];}
 	;
@@ -227,7 +227,7 @@ direction
     ;
 
 classDefStatement
-    : CLASSDEF idList stylesOpt separator {$$ = $CLASSDEF;yy.addClass($idList,$stylesOpt);}
+    : CLASSDEF idList stylesOpt {$$ = $CLASSDEF;yy.addClass($idList,$stylesOpt);}
     ;
 
 idList
@@ -242,7 +242,7 @@ classStatement
     ;
 
 styleStatement
-    : STYLE idList stylesOpt separator                           {;$$ = $STYLE;yy.addCssStyles($2,$stylesOpt);}
+    : STYLE idList stylesOpt                           {;$$ = $STYLE;yy.addCssStyles($2,$stylesOpt);}
     ;
 
 stylesOpt
