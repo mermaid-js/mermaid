@@ -1,5 +1,11 @@
 # Sequence diagrams
 
+<script setup>
+import IconsNote from './icons-note.md' 
+</script>
+
+<IconsNote />
+
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 
 Mermaid can render sequence diagrams.
