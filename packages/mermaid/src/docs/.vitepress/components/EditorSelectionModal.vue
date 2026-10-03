@@ -43,12 +43,6 @@ const handleStartFree = () => {
   window.open('https://mermaid.live/edit', '_blank');
 };
 
-const handleContinueToNewHome = () => {
-  void trackPlausibleEvent('editor-pick', { props: { choice: 'new-home' } });
-  close();
-  window.open('https://mermaid.ai/live/edit', '_blank');
-};
-
 const handleMouseDown = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
   if (
@@ -137,21 +131,14 @@ onUnmounted(() => {
           </div>
 
           <div class="flex flex-col gap-2">
-            <p class="mt-2 text-sm text-[#6B7280]">Mermaid has a new home</p>
             <button
               class="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 border-solid border border-[#E0095F] bg-white text-[#1E1A2E] hover:bg-[#E0095F] hover:text-white shadow-sm h-9 px-4 py-2 cursor-pointer"
-              @click="handleContinueToNewHome"
+              @click="handleStartFree"
             >
-              Continue to mermaid.ai/live
+              Continue to mermaid.live
               <svg class="size-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
               </svg>
-            </button>
-            <button
-              class="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 border-solid border border-[#E5E7EB] bg-white text-[#1E1A2E] hover:bg-[#E0095F] hover:text-white shadow-md h-9 px-4 py-2 cursor-pointer"
-              @click="handleStartFree"
-            >
-              Stay on mermaid.live
             </button>
           </div>
 
