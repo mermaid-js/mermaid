@@ -12,6 +12,7 @@
     "packages/parser/**",
     "packages/mermaid-layout-elk/**",
     "packages/mermaid-layout-tidy-tree/**",
+    "packages/mermaid-ssr/**",
     "packages/mermaid-zenuml/**",
     "packages/mermaid-example-diagram/**",
     "packages/examples/**",
