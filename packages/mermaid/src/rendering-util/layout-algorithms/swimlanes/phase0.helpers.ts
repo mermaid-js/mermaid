@@ -110,6 +110,15 @@ export function buildLayersFromRanks(
     }
     layers[Math.max(0, rankOf[v] ?? 0)].push(v);
   }
+
+  const sourceIndex = new Map<NodeId, number>();
+  for (const [i, id] of g.nodes.entries()) {
+    sourceIndex.set(id, i);
+  }
+  for (const layer of layers) {
+    layer.sort((a, b) => (sourceIndex.get(a) ?? 0) - (sourceIndex.get(b) ?? 0));
+  }
+
   return layers;
 }
 

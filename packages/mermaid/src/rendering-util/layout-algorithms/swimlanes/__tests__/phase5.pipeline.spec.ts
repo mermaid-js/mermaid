@@ -62,6 +62,22 @@ describe('Phase 5 — Pipeline (sugiyamaLayout)', () => {
     expect(res.reversed.length).toBe(1);
   });
 
+  it('Disconnected nodes preserve source order (#8355)', () => {
+    const g = mkGraph(['Sunday', 'Monday'], []);
+    const res = sugiyamaLayout(g, { nodeGap: 40, layerGap: 80, ignoreCrossLaneEdges: false });
+    const xSunday = res.coordinates.x.Sunday;
+    const xMonday = res.coordinates.x.Monday;
+    expect(xSunday).toBeLessThan(xMonday);
+  });
+
+  it('Disconnected nodes preserve source order with lane-aware layering (#8355)', () => {
+    const g = mkGraph(['Sunday', 'Monday'], []);
+    const res = sugiyamaLayout(g, { nodeGap: 40, layerGap: 80 });
+    const xSunday = res.coordinates.x.Sunday;
+    const xMonday = res.coordinates.x.Monday;
+    expect(xSunday).toBeLessThan(xMonday);
+  });
+
   it('Two-layer bipartite ordering reaches zero crossings', () => {
     // L0: A,B,C ; L1: X,Y,Z, connect A->X, B->Y, C->Z
     const g = mkGraph(
