@@ -137,6 +137,17 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].id).toEqual('des1');
     expect(tasks[0].task).toEqual('Design jison grammar');
   });
+  it('should report task data with more than three values', function () {
+    const str =
+      'gantt\n' +
+      'dateFormat YYYY-MM-DD\n' +
+      'section Documentation\n' +
+      'Task: task1, 2024-01-01, 2d, extra';
+
+    expect(parserFnConstructor(str)).toThrowError(
+      'Invalid Gantt task data: expected 1 to 3 comma-separated values, received 4: task1, 2024-01-01, 2d, extra'
+    );
+  });
   it('should handle a task with start/end time relative to other tasks', function () {
     const str =
       'gantt\n' +
