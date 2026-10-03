@@ -276,4 +276,4 @@ treeView-beta
 | highlightBg      | Highlight background fill                                 | rgba(255,193,7,0.15) |
 | highlightStroke  | Highlight border stroke                                   | #ffc107              |
 
-In the `dark`, `neo-dark`, `redux-dark`, and `redux-dark-color` themes, `labelColor` defaults to the theme's `textColor` and `lineColor` to the theme's `lineColor`.
+In the `dark`, `neo-dark`, `redux-dark`, and `redux-dark-color` themes, and in the `base` theme with `darkMode: true`, `labelColor` defaults to the theme's `textColor` and `lineColor` to the theme's `lineColor`.
