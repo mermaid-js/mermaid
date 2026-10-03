@@ -55,4 +55,20 @@ test.describe('Class diagram V3', () => {
       { logLevel: 1, htmlLabels: true }
     );
   });
+
+  test('6034: should render multiple self-references on the same class', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+    classDiagram
+      classG <-- classG : ref1
+      classG <-- classG : ref2
+      classG "1" --> "*" classG : ref3
+      `,
+      { layout: 'dagre' }
+    );
+  });
 });

@@ -112,14 +112,30 @@ const getSelfLoopSide = (graph, node, segments, originalNodeId, rankdir) => {
 };
 
 // Build a compact loop around the node instead of rendering dagre's long dummy-edge route.
-const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0) => {
+const SELF_LOOP_NEST_STEP = 16;
+const SELF_LOOP_LABEL_GAP = 4;
+
+// Additional loops on the same side are nested around the previous ones: wider endpoints so the
+// arrowheads don't stack, and pushed past the previous loop's label so the labels don't overlap.
+const getSelfLoopPoints = (
+  node,
+  side = 'top',
+  yOffset = 0,
+  labelWidth = 0,
+  { index: nestIndex = 0, extraDepth = 0 } = {}
+) => {
   const x = node.x;
   const y = node.y - yOffset;
   const halfWidth = node.width / 2;
   const halfHeight = node.height / 2;
   const maxSpan = Math.max(36, Math.min(100, node.width * 0.8));
-  const span = clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan);
-  const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48);
+  const baseSpan = clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan);
+  const sideLength = side === 'left' || side === 'right' ? node.height : node.width;
+  const span = Math.min(
+    baseSpan + nestIndex * 2 * SELF_LOOP_NEST_STEP,
+    Math.max(baseSpan, sideLength - 8)
+  );
+  const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48) + extraDepth;
 
   switch (side) {
     case 'bottom': {
@@ -163,7 +179,7 @@ const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0) => {
 };
 
 const getSelfLoopLabelPosition = (node, points, side = 'top', yOffset = 0, label = {}) => {
-  const gap = 4;
+  const gap = SELF_LOOP_LABEL_GAP;
   const x = node.x;
   const y = node.y - yOffset;
   const labelWidth = label.width ?? 0;
@@ -187,6 +203,7 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
   const selfLoopEdgeGroups = new Map();
   const edgesToRender = [];
   const rankdir = graph.graph()?.rankdir;
+  const selfLoopNestByNodeSide = new Map();
 
   graph.edges().forEach((e) => {
     const edge = graph.edge(e);
@@ -226,7 +243,15 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     };
     // Dagre uses the dummy route for layout; the SVG output should still be one logical edge.
     const side = getSelfLoopSide(graph, node, segments, originalEdge.start, rankdir);
-    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0);
+    const nestKey = `${originalEdge.start}:${side}`;
+    const nest = selfLoopNestByNodeSide.get(nestKey) ?? { index: 0, extraDepth: 0 };
+    const labelExtent = (side === 'left' || side === 'right' ? label.width : label.height) ?? 0;
+    selfLoopNestByNodeSide.set(nestKey, {
+      index: nest.index + 1,
+      extraDepth:
+        nest.extraDepth + Math.max(SELF_LOOP_NEST_STEP, labelExtent + 2 * SELF_LOOP_LABEL_GAP),
+    });
+    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0, nest);
     const labelPosition = getSelfLoopLabelPosition(node, points, side, yOffset, label);
     const mergedEdge = {
       ...middleSegment.edge,
@@ -682,12 +707,14 @@ export const prepareLayoutForDagre = (data4Layout) => {
   });
 
   log.debug('Edges:', data4Layout.edges);
-  data4Layout.edges.forEach((edge) => {
+  data4Layout.edges.forEach((edge, index) => {
     if (edge.start === edge.end) {
       // Keep the dagre dummy-node workaround for layout, then merge these segments before rendering.
       const nodeId = edge.start;
-      const specialId1 = nodeId + '---' + nodeId + '---1';
-      const specialId2 = nodeId + '---' + nodeId + '---2';
+      // Key the dummy nodes and segments per edge so multiple self-loops on one node don't overwrite each other.
+      const loopKey = edge.id ?? `${nodeId}-${index}`;
+      const specialId1 = nodeId + '---' + loopKey + '---1';
+      const specialId2 = nodeId + '---' + loopKey + '---2';
       const node = graph.node(nodeId);
       graph.setNode(specialId1, {
         domId: specialId1,
@@ -734,14 +761,14 @@ export const prepareLayoutForDagre = (data4Layout) => {
       edge1.endLabelLeft = '';
       edge1.endLabelRight = ''; // defensive
       edge1.startLabelLeft = ''; // defensive
-      edge1.id = nodeId + '-cyclic-special-1';
+      edge1.id = loopKey + '-cyclic-special-1';
       edgeMid.startLabelRight = '';
       edgeMid.startLabelLeft = ''; // defensive
       edgeMid.endLabelLeft = '';
       edgeMid.endLabelRight = ''; // defensive
       edgeMid.arrowTypeStart = 'none';
       edgeMid.arrowTypeEnd = 'none';
-      edgeMid.id = nodeId + '-cyclic-special-mid';
+      edgeMid.id = loopKey + '-cyclic-special-mid';
       edge2.label = '';
       edge2.startLabelRight = '';
       edge2.startLabelLeft = ''; // defensive
@@ -750,11 +777,11 @@ export const prepareLayoutForDagre = (data4Layout) => {
         edge1.fromCluster = nodeId;
         edge2.toCluster = nodeId;
       }
-      edge2.id = nodeId + '-cyclic-special-2';
+      edge2.id = loopKey + '-cyclic-special-2';
       edge2.arrowTypeStart = 'none';
-      graph.setEdge(nodeId, specialId1, edge1, nodeId + '-cyclic-special-0');
-      graph.setEdge(specialId1, specialId2, edgeMid, nodeId + '-cyclic-special-1');
-      graph.setEdge(specialId2, nodeId, edge2, nodeId + '-cyclic-special-2');
+      graph.setEdge(nodeId, specialId1, edge1, loopKey + '-cyclic-special-0');
+      graph.setEdge(specialId1, specialId2, edgeMid, loopKey + '-cyclic-special-1');
+      graph.setEdge(specialId2, nodeId, edge2, loopKey + '-cyclic-special-2');
     } else {
       graph.setEdge(edge.start, edge.end, { ...edge }, edge.id);
     }
