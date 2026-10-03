@@ -100,13 +100,13 @@ describe('Parsing Merge Statements', () => {
   it('should parse a merge with a branch name', () => {
     const result = parse(`gitGraph\n merge master\n`);
     const merge = result.value.statements[0] as Merge;
-    expect(merge.branch).toBe('master');
+    expect(merge.branches).toEqual(['master']);
   });
 
   it('should handle merges with additional properties', () => {
     const result = parse(`gitGraph\n  merge feature id:"m1" tag:"release" type:HIGHLIGHT\n`);
     const merge = result.value.statements[0] as Merge;
-    expect(merge.branch).toBe('feature');
+    expect(merge.branches).toEqual(['feature']);
     expect(merge.id).toBe('m1');
     expect(merge.tags).toEqual(['release']);
     expect(merge.type).toBe('HIGHLIGHT');
@@ -115,14 +115,31 @@ describe('Parsing Merge Statements', () => {
   it('should parse merge without any properties', () => {
     const result = parse(`gitGraph\n  merge feature\n`);
     const merge = result.value.statements[0] as Merge;
-    expect(merge.branch).toBe('feature');
+    expect(merge.branches).toEqual(['feature']);
   });
 
   it('should ignore malformed properties in merge statements', () => {
     const result = parse(`gitGraph\n  merge feature random:"ignored"\n`);
     const merge = result.value.statements[0] as Merge;
-    expect(merge.branch).toBe('feature');
+    expect(merge.branches).toEqual(['feature']);
     expect(merge.hasOwnProperty('random')).toBe(false);
+  });
+
+  it('should parse multiple branches separated by single space', () => {
+    const result = parse(`gitGraph\n merge feature1, feature2\n`);
+    const merge = result.value.statements[0] as Merge;
+    expect(merge.branches).toEqual(['feature1', 'feature2']);
+  });
+
+  it('should parse multiple branches with id/type/tag', () => {
+    const result = parse(
+      `gitGraph\n merge feature1, feature2 id: "m1" type: HIGHLIGHT tag: "v1"\n`
+    );
+    const merge = result.value.statements[0] as Merge;
+    expect(merge.branches).toEqual(['feature1', 'feature2']);
+    expect(merge.id).toBe('m1');
+    expect(merge.type).toBe('HIGHLIGHT');
+    expect(merge.tags).toEqual(['v1']);
   });
 });
 
