@@ -106,7 +106,7 @@ export class ClassDB implements DiagramDB {
   /**
    * Function called by parser when a node definition has been found.
    *
-   * @param id - ID of the class to add
+   * @param _id - ID of the class to add
    * @public
    */
   public addClass(_id: string) {
@@ -158,7 +158,7 @@ export class ClassDB implements DiagramDB {
    * Function to lookup domId from id in the graph definition.
    * When diagramId is set, returns the prefixed version for DOM uniqueness.
    *
-   * @param id - class ID to lookup
+   * @param _id - class ID to lookup
    * @public
    */
   public lookUpDomId(_id: string): string {
