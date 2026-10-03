@@ -45,13 +45,56 @@ const bboxOf = (el: Element): { x: number; y: number; width: number; height: num
     return { x: num(el, 'x'), y: num(el, 'y'), width: num(el, 'width'), height: num(el, 'height') };
   }
   if (tag === 'path') {
-    const ys = [...(el.getAttribute('d') ?? '').matchAll(/([\d.-]+)[\s,]([\d.-]+)/g)]
-      .map((m) => Number(m[2]))
-      .filter(Number.isFinite);
-    if (!ys.length) {
+    const d = el.getAttribute('d') ?? '';
+    let minY = Infinity,
+      maxY = -Infinity;
+    let currY = 0;
+    const commands = d.match(/[A-Za-z][^A-Za-z]*/g) ?? [];
+    for (const cmdStr of commands) {
+      const cmd = cmdStr[0];
+      const args = [...cmdStr.matchAll(/-?[\d.]+/g)].map((m) => Number(m[0]));
+      if (cmd === 'M' || cmd === 'L') {
+        for (let i = 1; i < args.length; i += 2) {
+          currY = args[i];
+          minY = Math.min(minY, currY);
+          maxY = Math.max(maxY, currY);
+        }
+      } else if (cmd === 'm' || cmd === 'l') {
+        for (let i = 1; i < args.length; i += 2) {
+          currY += args[i];
+          minY = Math.min(minY, currY);
+          maxY = Math.max(maxY, currY);
+        }
+      } else if (cmd === 'A') {
+        for (let i = 6; i < args.length; i += 7) {
+          currY = args[i];
+          minY = Math.min(minY, currY);
+          maxY = Math.max(maxY, currY);
+        }
+      } else if (cmd === 'a') {
+        for (let i = 6; i < args.length; i += 7) {
+          currY += args[i];
+          minY = Math.min(minY, currY);
+          maxY = Math.max(maxY, currY);
+        }
+      } else if (cmd === 'V') {
+        for (const arg of args) {
+          currY = arg;
+          minY = Math.min(minY, currY);
+          maxY = Math.max(maxY, currY);
+        }
+      } else if (cmd === 'v') {
+        for (const arg of args) {
+          currY += arg;
+          minY = Math.min(minY, currY);
+          maxY = Math.max(maxY, currY);
+        }
+      }
+    }
+    if (minY === Infinity) {
       return { x: 0, y: 0, width: 0, height: 0 };
     }
-    return { x: 0, y: Math.min(...ys), width: 10, height: Math.max(...ys) - Math.min(...ys) };
+    return { x: 0, y: minY, width: 10, height: maxY - minY };
   }
   if (tag === 'text' || tag === 'tspan') {
     const lines = Math.max(1, el.querySelectorAll('tspan').length);
@@ -202,7 +245,12 @@ describe('actor band model (neo, real pipeline)', () => {
         continue;
       }
       const bottoms = glyphs.map((el) => {
-        const b = applyOwnTranslate(el, bboxOf(el));
+        let b = bboxOf(el);
+        let curr: Element | null = el;
+        while (curr && curr !== g) {
+          b = applyOwnTranslate(curr, b);
+          curr = curr.parentElement;
+        }
         return b.y + b.height + (box.y - bboxOf(g).y);
       });
       glyphBottoms.set(g.getAttribute('data-id')!, Math.max(...bottoms));

@@ -1063,7 +1063,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
   // must not be able to move anything below it.
   rect.x = actor.x;
   rect.y = actorY;
-  const w = rect.width / 3;
+  const w = rect.width;
   const rx = w / 2;
   const ry = rx / (2.5 + w / 50);
   const h = bands ? GLYPH_BAND_HEIGHT : rect.width / 3;
@@ -1097,7 +1097,7 @@ const drawActorTypeDatabase = function (elem, actor, conf, isFooter, diagramId, 
   }
 
   // Both branches were identical — simplified to a single unconditional statement
-  cylinderGroup.attr('transform', `translate(${w}, ${ry})`);
+  cylinderGroup.attr('transform', `translate(0, ${ry})`);
   actor.rectData = rect;
   _drawTextCandidateFunc(conf, hasKatex(actor.description))(
     actor.description,
