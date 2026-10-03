@@ -18,6 +18,9 @@
 %x shapeData
 %x shapeDataStr
 %x shapeDataEndBracket
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 
 %%
 
@@ -48,6 +51,13 @@
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
 "kanban"		       {return 'KANBAN';}
+accTitle\s*":"\s*                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                               { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 ":::"              { this.begin('CLASS'); }
 <CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}
@@ -134,6 +144,12 @@ statement
 	| ICON                 { yy.decorateNode({icon: $1}); }
 	| CLASS                { yy.decorateNode({class: $1}); }
   | SPACELIST
+  | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
+  | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+  | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+  | SPACELIST acc_title acc_title_value  { $$=$3.trim();yy.setAccTitle($$); }
+  | SPACELIST acc_descr acc_descr_value  { $$=$3.trim();yy.setAccDescription($$); }
+  | SPACELIST acc_descr_multiline_value { $$=$2.trim();yy.setAccDescription($$); }
 	;
 
 
