@@ -359,7 +359,10 @@ export function layout(db: BlockDB) {
   layoutBlocks(root, db, padding);
   // Position blocks relative to parents
   // positionBlock(root, root, db);
-  log.debug('getBlocks', JSON.stringify(root, null, 2));
+  // Passed as an argument rather than pre-serialized: the string is built on every
+  // block render regardless of log level, and serializing the whole tree is both
+  // wasted work and a failure point for anything in it that JSON cannot represent.
+  log.debug('getBlocks', root);
 
   const { minX, minY, maxX, maxY } = findBounds(root);
 
