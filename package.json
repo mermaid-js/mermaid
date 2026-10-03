@@ -185,7 +185,7 @@
       "@isaacs/brace-expansion": "^5.0.1",
       "@babel/plugin-transform-modules-systemjs": "7.29.4",
       "dompurify": "3.4.12",
-      "js-yaml@<3.15.0": "3.15.0",
+      "js-yaml@<3.15.0": "4.3.2",
       "minimatch@10": "^10.2.6"
     },
     "patchedDependencies": {
