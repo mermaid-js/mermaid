@@ -242,6 +242,7 @@ class Theme {
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.nodeBorder;
     this.specialStateColor = this.lineColor;
+    this.stateBorder = this.stateBorder || this.nodeBorder;
 
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
@@ -389,6 +390,26 @@ class Theme {
         '#ECECFF,#8493A6,#FFC3A0,#DCDDE1,#B8E994,#D1A36F,#C3CDE6,#FFB6C1,#496078,#F8F3E3',
     };
 
+    /* treeView */
+    this.treeView = {
+      labelColor: this.treeView?.labelColor || 'black',
+      lineColor: this.treeView?.lineColor || 'black',
+      iconColor: this.treeView?.iconColor || '#546e7a',
+      descriptionColor: this.treeView?.descriptionColor || '#6a9955',
+      highlightBg: this.treeView?.highlightBg || 'rgba(255, 193, 7, 0.15)',
+      highlightStroke: this.treeView?.highlightStroke || '#ffc107',
+    };
+
+    /* packet */
+    this.packet = {
+      startByteColor: this.packet?.startByteColor || 'black',
+      endByteColor: this.packet?.endByteColor || 'black',
+      labelColor: this.packet?.labelColor || 'black',
+      titleColor: this.packet?.titleColor || 'black',
+      blockStrokeColor: this.packet?.blockStrokeColor || 'black',
+      blockFillColor: this.packet?.blockFillColor || '#efefef',
+    };
+
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
@@ -450,6 +471,7 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+    this.commitLineColor = this.commitLineColor ?? this.lineColor;
 
     /* -------------------------------------------------- */
     /* Event Modeling diagrams                             */
