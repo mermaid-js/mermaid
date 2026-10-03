@@ -1,5 +1,4 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
-import { v4 } from 'uuid';
 import type { D3Element } from '../../types.js';
 import { sanitizeText } from '../../diagrams/common/common.js';
 import { log } from '../../logger.js';
@@ -403,7 +402,7 @@ export class MindmapDB {
       shapes: Object.fromEntries(shapes),
       // Additional properties that layout algorithms might expect
       type: 'mindmap',
-      diagramId: 'mindmap-' + v4(),
+      diagramId: 'mindmap-' + crypto.randomUUID(),
     };
   }
 
