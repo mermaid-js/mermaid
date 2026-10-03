@@ -19,8 +19,12 @@ UpdateElementStyle(c, $shape="cylinder")
     );
 
     const svg = diagramSvg(page);
-    await expect(svg.locator('.node path')).toHaveCount(1);
-    await expect(svg.locator('.node > rect')).toHaveCount(2);
+    const node = (label) => svg.locator('.node').filter({ hasText: label });
+    await expect(node('As Cylinder').locator('path')).toHaveCount(1);
+    await expect(node('As Cylinder').locator('> rect')).toHaveCount(0);
+    await expect(node('As Folder').locator('path')).toHaveCount(0);
+    await expect(node('As Folder').locator('> rect')).toHaveCount(1);
+    await expect(node('Default').locator('> rect')).toHaveCount(1);
   });
 
   for (const shapesInRow of [2, 4]) {
@@ -84,9 +88,13 @@ Container(b, "Terminal", "Tech", "server-side app", $sprite="terminal")
     );
 
     const svg = diagramSvg(page);
+    const node = (label) => svg.locator('.node').filter({ hasText: label });
     await expect(svg.locator('image')).toHaveCount(0);
     await expect(svg.locator('svg')).toHaveCount(0);
-    await expect(svg.locator('.node > rect')).toHaveCount(2);
+    await expect(node('Browser').locator('> rect')).toHaveCount(1);
+    await expect(node('Browser').locator('path')).toHaveCount(0);
+    await expect(node('Terminal').locator('> rect')).toHaveCount(1);
+    await expect(node('Terminal').locator('path')).toHaveCount(0);
   });
 
   test('CHAR.descr-wrapping should use wrapped SVG text', async ({ page }, testInfo) => {
