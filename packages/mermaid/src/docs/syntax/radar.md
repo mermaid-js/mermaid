@@ -91,14 +91,40 @@ Values can be defined by a list of numbers or a list of key-value pairs. If key-
 
 Multiple curves can be defined in a single line.
 
+A scalar value fills from the diagram's minimum to that value. A range written as `[start..end]`
+fills only between its two values, allowing curves to form bands. Scalar and range entries may be
+combined in the same curve; scalar entries in such a curve still start at the diagram minimum.
+
 ```
 radar-beta
   axis axis1, axis2, axis3
   curve id1["Label1"]{1, 2, 3}
   curve id2["Label2"]{4, 5, 6}, id3{7, 8, 9}
   curve id4{ axis3: 30, axis1: 20, axis2: 10 }
+  curve id5["Band"]{[1..2], [2..4], [3..5]}
+  curve id6{axis1: [2..3], axis2: 4, axis3: [1..5]}
   ...
 ```
+
+### Range-valued Curves (v<MERMAID_RELEASE_VERSION>+)
+
+Use `[start..end]` entries when a curve should show an interval rather than filling from the chart
+minimum. The start and end may vary independently on every axis:
+
+```mermaid-example
+radar-beta
+  title Range-valued curve
+  axis A, B, C, D, E
+  curve c1{[4..7], [5..8], [6..9], [7..9], [4..8]}
+  min 0
+  max 10
+  ticks 5
+```
+
+The start must be less than or equal to the end. Equal endpoints, such as `[4..4]`, represent
+a zero-width interval at that axis, not a missing value. With circular graticules, the two
+boundaries are smoothed independently; the band fills the upper boundary's interior excluding
+the lower boundary's interior.
 
 ### Options
 
