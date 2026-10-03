@@ -734,6 +734,71 @@ clusterA --> C`
     }
   });
 
+  it('renders a self-loop on an empty subgraph id (#8202)', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      const { svg } = await mermaidAPI.render(
+        'empty-subgraph-self-loop-test',
+        `%%{init: {"layout": "dagre"}}%%
+flowchart TD
+S --> S
+subgraph S[t]
+end`
+      );
+      const dom = new JSDOM(svg);
+      const document = dom.window.document;
+      const edgePaths = [...document.querySelectorAll('.edgePaths path.flowchart-link')];
+
+      expect(document.querySelectorAll('.node')).toHaveLength(1);
+      expect(edgePaths).toHaveLength(1);
+      expectFinitePaths(edgePaths);
+    } finally {
+      restoreDom();
+    }
+  });
+
+  it('renders nested flowchart edges that start or end at a subgraph id (#8202)', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      const { svg } = await mermaidAPI.render(
+        'edge-to-subgraph-test',
+        `%%{init: {"layout": "dagre"}}%%
+flowchart TD
+    Check --> Decision
+    Decision -- Then --> ThenSequence
+    Decision -- Else --> ElseSequence
+    OuterSequence --> Chat
+
+    subgraph OuterSequence[Sequence]
+        subgraph InnerSequence[Sequence]
+            Check[Check]
+            Decision{Decision}
+
+            subgraph ThenSequence[Then]
+                Click[Click] --> Extract[Extract]
+            end
+
+            subgraph ElseSequence[Else]
+                Execute[Execute] --> GetContent[Get Content]
+            end
+        end
+    end`
+      );
+      const dom = new JSDOM(svg);
+      const document = dom.window.document;
+      const edgePaths = document.querySelectorAll('.edgePaths path.flowchart-link');
+
+      expect(document.querySelectorAll('.cluster')).toHaveLength(4);
+      expect(document.querySelectorAll('.node')).toHaveLength(7);
+      expect(edgePaths).toHaveLength(6);
+      expectFinitePaths(edgePaths);
+    } finally {
+      restoreDom();
+    }
+  });
+
   it('renders hand-drawn class diagrams with nested namespaces', async () => {
     const restoreDom = setupDom();
 
