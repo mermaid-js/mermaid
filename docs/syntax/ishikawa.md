@@ -64,3 +64,4 @@ ishikawa-beta
 - The first line is the event (problem) of the diagram.
 - Subsequent lines are causes of the event.
 - "Fishbone" structure is indicated by indentation.
+- Use `[]` to reserve an empty gap where a branch would otherwise be rendered.
