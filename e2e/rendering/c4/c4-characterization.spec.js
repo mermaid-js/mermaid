@@ -89,6 +89,28 @@ Container(b, "Terminal", "Tech", "server-side app", $sprite="terminal")
     await expect(svg.locator('.node > rect')).toHaveCount(2);
   });
 
+  test('CHAR.dynamic-repeated-pair should render every interaction between one pair', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `C4Dynamic
+title Repeated interactions between the same pair
+System(a, "A")
+System(b, "B")
+Rel(a, b, "Interaction 1")
+Rel(a, b, "Interaction 2")
+      `
+    );
+
+    // Both relationships are placed by the same grid rule and so share a position.
+    // This asserts that both are drawn and numbered, not where they sit.
+    const svg = diagramSvg(page);
+    await expect(svg).toContainText('1: Interaction 1');
+    await expect(svg).toContainText('2: Interaction 2');
+  });
+
   test('CHAR.descr-wrapping should use wrapped SVG text', async ({ page }, testInfo) => {
     await imgSnapshotTest(
       page,
