@@ -365,7 +365,34 @@ stateDiagram-v2
     }
 ```
 
-_You cannot define transitions between internal states belonging to different composite states_
+With `stateDiagram-v2`, you can define transitions between internal states belonging to different composite states.
+Define the composite states first, then declare the transitions outside their blocks using the internal state IDs:
+
+```mermaid-example
+stateDiagram-v2
+    state Offline {
+        Idle
+    }
+    state Online {
+        Connected
+    }
+
+    Idle --> Connected : connect
+    Connected --> Idle : disconnect
+```
+
+```mermaid
+stateDiagram-v2
+    state Offline {
+        Idle
+    }
+    state Online {
+        Connected
+    }
+
+    Idle --> Connected : connect
+    Connected --> Idle : disconnect
+```
 
 ## Choice
 
