@@ -1,12 +1,12 @@
 import type { SVG } from '../../../diagram-api/types.js';
 import type { InternalHelpers } from '../../../internals.js';
 import type { D3Selection } from '../../../types.js';
-import { log } from '../../../logger.js';
 import { profiler } from '../../../profiler.js';
 import { getConfig } from '../../../config.js';
 import utils from '../../../utils.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import { createGraphWithElements } from '../../createGraph.js';
+import type { CreateGraphOptions } from '../../createGraph.js';
 import { clear as clearClusters, insertCluster } from '../../rendering-elements/clusters.js';
 import {
   clear as clearEdges,
@@ -14,11 +14,12 @@ import {
   hasEdgeLabel,
   insertEdge,
   insertEdgeLabel,
+  resolveEdgeLabelPosition,
   terminalLabels,
 } from '../../rendering-elements/edges.js';
 import insertMarkers from '../../rendering-elements/markers.js';
 import { clear as clearNodes, positionNode } from '../../rendering-elements/nodes.js';
-import type { LayoutData, Edge, ClusterNode } from '../../types.js';
+import type { LayoutData, Edge, ClusterNode, TerminalLabelKey } from '../../types.js';
 import type { RenderOptions } from '../../render.js';
 import { clear as clearGraphlib } from '../dagre/mermaid-graphlib.js';
 
@@ -133,7 +134,17 @@ export function createCommonLayoutRenderer<
     options?: RenderOptions
   ): Promise<void> {
     const element = svg.select('g') as unknown as D3Selection<SVGElement>;
-    insertMarkers(element, data4Layout.markers, data4Layout.type, data4Layout.diagramId);
+    // Use the helper handed over by the host mermaid instance when there is one.
+    // External layout packages (elk, tidy-tree) are bundled with their own copy of
+    // these modules, and that copy's config module never sees `mermaid.initialize()`,
+    // so markers created through the statically imported `insertMarkers` read default
+    // theme variables instead of the diagram's.
+    (helpers?.insertMarkers ?? insertMarkers)(
+      element,
+      data4Layout.markers,
+      data4Layout.type,
+      data4Layout.diagramId
+    );
     clearLayoutRenderState();
 
     // Convenience struct containing everything you need to render
@@ -202,9 +213,10 @@ export function clearLayoutRenderState(): void {
 
 export async function defaultMeasureLayout(
   data4Layout: LayoutData,
-  { element }: CommonLayoutRenderContext
+  { element }: CommonLayoutRenderContext,
+  options?: CreateGraphOptions
 ): Promise<CommonLayoutMeasure> {
-  return await createGraphWithElements(element, data4Layout);
+  return await createGraphWithElements(element, data4Layout, options);
 }
 
 export async function paintLayoutData(
@@ -322,75 +334,46 @@ function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths):
   });
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths?.updatedPath) {
-        x = pos.x;
-        y = pos.y;
-      }
-    }
+    const { x, y } = resolveEdgeLabelPosition(edge, paths);
     el.attr('transform', `translate(${x}, ${y! + subGraphTitleTotalMargin / 2})`);
   }
 
-  if (edge?.startLabelLeft) {
-    const el = terminalLabels.get(edge.id).startLeft;
-    let x = edge?.x;
-    let y = edge?.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
-      x = pos.x;
-      y = pos.y;
+  for (const [key, text] of [
+    ['startLeft', edge.startLabelLeft],
+    ['startRight', edge.startLabelRight],
+    ['endLeft', edge.endLabelLeft],
+    ['endRight', edge.endLabelRight],
+  ] as const) {
+    if (text) {
+      const { x, y } = terminalLabelTranslate(edge, key, path);
+      terminalLabels.get(edge.id)[key].attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
   }
-  if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id).startRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(
-        edge.arrowTypeStart ? 10 : 0,
-        'start_right',
-        path
-      );
-      x = pos.x;
-      y = pos.y;
-    }
-    el.attr('transform', `translate(${x}, ${y})`);
+}
+
+const TERMINAL_LABEL_SIDES: Record<
+  TerminalLabelKey,
+  Parameters<typeof utils.calcTerminalLabelPosition>[1]
+> = {
+  startLeft: 'start_left',
+  startRight: 'start_right',
+  endLeft: 'end_left',
+  endRight: 'end_right',
+};
+
+/** Where to translate a terminal label's group: the layout's placement if it made one, else along the path. */
+export function terminalLabelTranslate(
+  edge: RenderedEdge,
+  key: TerminalLabelKey,
+  path?: EdgeRenderPath
+): { x?: number; y?: number } {
+  const center = edge.terminalLabelCenters?.[key];
+  if (center) {
+    return { ...center };
   }
-  if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id).endLeft;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
-      x = pos.x;
-      y = pos.y;
-    }
-    el.attr('transform', `translate(${x}, ${y})`);
+  if (!path) {
+    return { x: edge.x, y: edge.y };
   }
-  if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id).endRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
-      x = pos.x;
-      y = pos.y;
-    }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
+  const arrowType = key.startsWith('start') ? edge.arrowTypeStart : edge.arrowTypeEnd;
+  return utils.calcTerminalLabelPosition(arrowType ? 10 : 0, TERMINAL_LABEL_SIDES[key], path);
 }

@@ -1,0 +1,15 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice<<->>Alice: Bidirectional solid self-reference
+  Bob<<-->>Bob: Bidirectional dotted self-reference
+  Charlie<<->>Charlie: Another bidirectional solid
+  Alice<<-->>Alice: Another bidirectional dotted

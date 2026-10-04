@@ -1,0 +1,11 @@
+C4Component
+  title Component diagram for Internet Banking System - API Application
+
+  Container(spa, "Single Page Application", "javascript and angular", "Provides all the internet banking functionality to customers via their web browser.")
+
+  Container_Boundary(api, "API Application") {
+  Component(sign, "Sign In Controller", "MVC Rest Controller", "Allows users to sign in to the internet banking system")
+  }
+
+  Rel_Back(spa, sign, "Uses", "JSON/HTTPS")
+  UpdateRelStyle(spa, sign, $offsetY="-40")

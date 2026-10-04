@@ -1,0 +1,22 @@
+gitGraph BT:
+  commit id: "1"
+  commit id: "2"
+  branch nice_feature
+  checkout main
+  commit id: "3"
+  checkout nice_feature
+  commit id: "4"
+  checkout main
+  branch very_nice_feature
+  checkout very_nice_feature
+  commit id: "5"
+  checkout main
+  commit id: "6"
+  checkout nice_feature
+  commit id: "7"
+  checkout main
+  merge nice_feature
+  checkout very_nice_feature
+  commit id: "8"
+  checkout main
+  merge very_nice_feature

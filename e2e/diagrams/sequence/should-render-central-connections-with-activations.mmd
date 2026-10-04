@@ -1,0 +1,16 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice ()->>() Bob: Activate Bob
+  activate Bob
+  Bob ()-->> Charlie: Message to Charlie
+  Bob ()->>() Alice: Response to Alice
+  deactivate Bob

@@ -1,0 +1,16 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice ->> Bob: Normal message
+  Bob ()->>() Charlie: Central connection
+  Charlie -->> Alice: Normal dotted message
+  Alice ()<<-->>() Bob: Dual central connection
+  Bob -x Charlie: Normal cross message

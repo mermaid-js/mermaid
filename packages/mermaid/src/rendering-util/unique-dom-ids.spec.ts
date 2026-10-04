@@ -5,9 +5,14 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { FlowDB } from '../diagrams/flowchart/flowDb.js';
 import { ClassDB } from '../diagrams/class/classDb.js';
+import { AgentFlowDB } from '../diagrams/agentflow/agentflowDb.js';
 import { insertEdge } from './rendering-elements/edges.js';
 
 function addFlowVertex(db: FlowDB, id: string) {
+  db.addVertex(id, { text: id, type: 'text' } as any, undefined as any, [], [], '', {}, undefined);
+}
+
+function addAgentflowVertex(db: AgentFlowDB, id: string) {
   db.addVertex(id, { text: id, type: 'text' } as any, undefined as any, [], [], '', {}, undefined);
 }
 
@@ -42,6 +47,37 @@ describe('Unique DOM element IDs', () => {
       db.clear();
       addFlowVertex(db, 'A');
       // After clear, diagramId is empty so no prefix is applied
+      expect(db.lookUpDomId('A')).not.toContain('mermaid-0');
+    });
+  });
+
+  describe('AgentFlowDB.setDiagramId + lookUpDomId', () => {
+    let db: AgentFlowDB;
+    beforeEach(() => {
+      db = new AgentFlowDB();
+      addAgentflowVertex(db, 'A');
+      addAgentflowVertex(db, 'B');
+    });
+
+    it('always prefixes domId with diagramId', () => {
+      db.setDiagramId('mermaid-0');
+      expect(db.lookUpDomId('A')).toMatch(/^mermaid-0-agentflow-A-\d+$/);
+    });
+
+    it('produces unique domIds for same node across different diagram IDs', () => {
+      const db2 = new AgentFlowDB();
+      addAgentflowVertex(db2, 'A');
+
+      db.setDiagramId('mermaid-0');
+      db2.setDiagramId('mermaid-1');
+
+      expect(db.lookUpDomId('A')).not.toBe(db2.lookUpDomId('A'));
+    });
+
+    it('resets diagramId on clear()', () => {
+      db.setDiagramId('mermaid-0');
+      db.clear();
+      addAgentflowVertex(db, 'A');
       expect(db.lookUpDomId('A')).not.toContain('mermaid-0');
     });
   });

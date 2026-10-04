@@ -1,0 +1,24 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  actor Client@{ "type" : "actor" } AS Mobile Client
+  participant Gateway@{ "type" : "boundary" } as API Gateway
+  participant OrderSvc@{ "type" : "control" } as Order Service
+  participant Queue@{ "type" : "queue" } as Message Queue
+  participant DB@{ "type" : "database" } as Order Database
+  participant Logs@{ "type" : "collections" } as Audit Logs
+  Client ->> Gateway: Place order
+  Gateway ->> OrderSvc: Validate order
+  OrderSvc ->> Queue: Queue for processing  as well
+  OrderSvc ->> DB: Save order
+  OrderSvc ->> Logs: Log transaction
+  Queue -->> OrderSvc: Processing started AS Well
+  DB -->> OrderSvc: Order saved
+  Logs -->> OrderSvc: Logged
+  OrderSvc -->> Gateway: Order confirmed
+  Gateway -->> Client: Confirmation

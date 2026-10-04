@@ -1,0 +1,17 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Bob()->>Alice: Circle at source with solid arrow (RTL)
+  Charlie()-->>Bob: Circle at source with dotted arrow (RTL)
+  Bob()->Alice: Circle at source with open arrow (RTL)
+  Charlie()--xAlice: Circle at source with cross arrow (RTL)
+  Bob()--)Alice: Circle at source with close arrow (RTL)

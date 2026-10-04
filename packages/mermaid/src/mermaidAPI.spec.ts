@@ -477,6 +477,34 @@ describe('mermaidAPI', () => {
       );
     });
 
+    it.for([
+      // test for CSS sibling components
+      ['should namespace sibling combinator', '& ~ *', '#someId #someId~*'],
+      // CSS ignores these whitespace characters
+      ['should namespace sibling combinator', '& \n\t \r \f \r\n + *', '#someId #someId+*'],
+      /*
+       * Experimental column combinator,
+       * see https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Column_combinator
+       *
+       * Output whitespace will probably change once JSDOM supports it.
+       */
+      ['should namespace column combinator', '& || *', '#someId #someId || *'],
+      ['should namespace root if using unsupported declarations', '&', '#someId #someId'],
+      // child combinators and descent combinators are already namespaced
+      ['should not namespace child combinator', '& > *', '#someId>*'],
+      ['should not namespace descent combinator', '& *', '#someId *'],
+    ] as const)('%s %s to %s', ([_description, inputSelector, expectedSelector]) => {
+      const result = createUserStyles(
+        { ...mockConfig, themeCSS: `${inputSelector} { color: red; }` },
+        'someDiagram',
+        new Map(),
+        '#someId'
+      );
+      expect(result).toEqual(
+        `#someId .edge-pattern-dashed{stroke-dasharray:3;}${expectedSelector}{color:red;}`
+      );
+    });
+
     it('should remove unsupported at-rules from user CSS', () => {
       const result = createUserStyles(
         {
@@ -625,18 +653,18 @@ describe('mermaidAPI', () => {
     it('resets mermaid config to global defaults', () => {
       const config = {
         logLevel: 0,
-        securityLevel: 'loose',
+        htmlLabels: false,
       } as const;
       mermaidAPI.initialize(config);
-      mermaidAPI.setConfig({ securityLevel: 'strict', logLevel: 1 });
+      mermaidAPI.setConfig({ logLevel: 1, htmlLabels: true });
       expect(mermaidAPI.getConfig().logLevel).toBe(1);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(true);
       mermaidAPI.reset();
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('loose');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(false);
       mermaidAPI.globalReset();
       expect(mermaidAPI.getConfig().logLevel).toBe(5);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      expect(mermaidAPI.getConfig().htmlLabels).toBe(mermaidAPI.defaultConfig.htmlLabels);
     });
 
     it('prevents changes to site defaults (sneaky)', () => {
@@ -925,6 +953,23 @@ treeView-beta
       const iconNode = ensureNodeFromSelector('.treeView-node-icon', dom.window.document);
       ensureNodeFromSelector('path', iconNode);
       expect(dom.window.document.querySelector('use')).toBeNull();
+    });
+
+    jsdomIt('shows the actual parse error message in the error diagram', async () => {
+      const edges = Array.from({ length: 501 }, (_, index) => `N${index} --> N${index + 1}`).join(
+        '\n'
+      );
+
+      await expect(
+        mermaidAPI.render('flowchart-too-many-edges', `flowchart TD\n${edges}`)
+      ).rejects.toThrow(/Edge limit exceeded/);
+
+      // the error SVG stays in the document, check that it carries the message
+      const texts = [...document.querySelectorAll('.error-text')].map(
+        (element) => element.textContent ?? ''
+      );
+      expect(texts).toContain('Syntax error in text');
+      expect(texts.some((text) => text.includes('Edge limit exceeded'))).toBe(true);
     });
   });
 

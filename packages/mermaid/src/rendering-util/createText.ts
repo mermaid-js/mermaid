@@ -12,6 +12,7 @@ import {
   nonMarkdownToLines,
 } from '../rendering-util/handle-markdown-text.js';
 import { decodeEntities } from '../utils.js';
+import fastdom from './fastdom.js';
 import { getIconSVG, isIconAvailable } from './icons.js';
 import { splitLineToFitWidth } from './splitText.js';
 import type { MarkdownLine, MarkdownWord } from './types.js';
@@ -37,7 +38,8 @@ async function addHtmlSpan(
   classes: string,
   addBackground = false,
   // TODO: Make config mandatory
-  config: MermaidConfig = getConfig()
+  config: MermaidConfig = getConfig(),
+  minWidth = 0
 ) {
   const fo = element.append('foreignObject');
   // This is not the final width but used in order to make sure the foreign
@@ -68,12 +70,15 @@ async function addHtmlSpan(
     div.attr('class', 'labelBkg');
   }
 
-  let bbox = div.node()!.getBoundingClientRect();
+  const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
   if (bbox.width === width) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');
-    bbox = div.node()!.getBoundingClientRect();
+  } else if (bbox.width < minWidth) {
+    div.style('display', 'table');
+    div.style('width', minWidth + 'px');
+    div.style('text-align', 'center');
   }
 
   return fo.node()!;
@@ -312,6 +317,11 @@ export const createText = async (
      * The width to wrap the text within. Set to `Number.POSITIVE_INFINITY` for no wrapping.
      */
     width = 200,
+    /**
+     * The minimum width of the label; narrower text is widened to it. `0` disables it.
+     * Only applies to HTML labels — SVG text has no box to size.
+     */
+    minWidth = 0,
     addSvgBackground = false,
   } = {},
   config?: MermaidConfig
@@ -341,7 +351,15 @@ export const createText = async (
       label: hasKatex(text) ? inputForKatex : decodedReplacedText,
       labelStyle: style.replace('fill:', 'color:'),
     };
-    const vertexNode = await addHtmlSpan(el, node, width, classes, addSvgBackground, config);
+    const vertexNode = await addHtmlSpan(
+      el,
+      node,
+      width,
+      classes,
+      addSvgBackground,
+      config,
+      minWidth
+    );
     return vertexNode;
   } else {
     //sometimes the user might add br tags with 1 or more spaces in between, so we need to replace them with <br/>

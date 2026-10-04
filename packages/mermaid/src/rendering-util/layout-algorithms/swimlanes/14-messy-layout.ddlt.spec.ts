@@ -8,7 +8,7 @@ import { parseMmdFileToLayoutData } from '../ddlt/parseToLayoutData.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 
 const FIXTURE_ID = 'swimlanes/14-messy-layout';
-const FIXTURES_DIR = 'cypress/platform/dev-diagrams/layout-tests';
+const FIXTURES_DIR = 'e2e/platform/dev-diagrams/layout-tests';
 
 let diagramsRegistered = false;
 function registerDiagramsOnce(): void {

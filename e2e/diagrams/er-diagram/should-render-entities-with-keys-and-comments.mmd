@@ -1,0 +1,15 @@
+---
+config:
+  logLevel: 1
+---
+erDiagram
+  AUTHOR_WITH_LONG_ENTITY_NAME {
+    string name PK "comment"
+  }
+  AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+  BOOK {
+      string description
+      float price "price comment"
+      string title PK "title comment"
+      string author FK
+    }

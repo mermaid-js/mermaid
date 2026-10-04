@@ -1,0 +1,18 @@
+---
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    rotateCommitLabel: false
+    parallelCommits: false
+---
+gitGraph
+  commit id: "1" tag: "v1.0"
+  commit id: "2"
+  branch develop
+  checkout develop
+  commit id: "3" tag: "v1.1"
+  commit id: "4"
+  checkout main
+  merge develop tag: "v2.0"
+  commit id: "5"

@@ -1,0 +1,16 @@
+usecase-beta
+    direction LR
+
+    actor Customer
+
+    Checkout
+    Payment
+    Customer opens@-- "starts checkout" ---> Checkout
+    Checkout payment@..> : include Payment
+
+    classDef emphasized stroke:#d33,stroke-width:3px
+    class opens,payment emphasized
+
+    style opens stroke:#06c,stroke-width:4px
+    opens@{ animation: fast }
+    payment@{ animate: false }

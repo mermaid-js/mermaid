@@ -172,6 +172,13 @@ union A, B`,
     service db(database)[DB]
     api:R -- L:db`,
 
+  agentflow: `agentflow-beta TB
+    flow grp["Group"]
+      a["Alpha"]
+      b["Beta"]
+      a --> b
+    end`,
+
   wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]
@@ -201,6 +208,11 @@ union A, B`,
       "Restart service"
     chaotic
       "Page on-call"`,
+
+  usecase: `usecase-beta
+    actor User
+    Login("Sign in")
+    User --> Login`,
 
   eventmodeling: `eventmodeling
     tf 01 evt Start

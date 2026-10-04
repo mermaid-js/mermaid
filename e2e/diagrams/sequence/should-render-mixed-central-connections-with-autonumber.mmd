@@ -1,0 +1,35 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  participant David
+
+  Note over Alice,David: Normal arrows with central connections
+  Alice->>()Bob: CENTRAL_CONNECTION LTR
+  Bob->>()Alice: CENTRAL_CONNECTION RTL
+  Alice()->>Bob: CENTRAL_CONNECTION_REVERSE LTR
+  Bob()->>Alice: CENTRAL_CONNECTION_REVERSE RTL
+  Alice()->>()Bob: CENTRAL_CONNECTION_DUAL LTR
+  Bob()->>()Alice: CENTRAL_CONNECTION_DUAL RTL
+
+  Note over Alice,David: Reverse arrows with central connections
+  Bob/|-()Alice: Reverse with CENTRAL_CONNECTION LTR
+  Alice/|-()Bob: Reverse with CENTRAL_CONNECTION RTL
+  Bob()/|-Alice: Reverse with CENTRAL_CONNECTION_REVERSE LTR
+  Alice()/|-Bob: Reverse with CENTRAL_CONNECTION_REVERSE RTL
+  Bob()/|-()Alice: Reverse with CENTRAL_CONNECTION_DUAL LTR
+  Alice()/|-()Bob: Reverse with CENTRAL_CONNECTION_DUAL RTL
+
+  Note over Alice,David: Mixed with different participants
+  Alice->>()Charlie: Skip participant
+  Charlie()->>Alice: Back skip
+  Bob()->>()David: Another skip
+  David()->>()Bob: Return skip

@@ -39,6 +39,18 @@ describe('Test Alias for shapes', function () {
     expect(shapes['data-store']).toBe(shapes.datastore);
   });
 
+  // folder | directory
+  it('should support alias for folder shape ', function () {
+    expect(shapes.directory).toBe(shapes.folder);
+  });
+
+  // bucket | console | browser
+  it('should register the bucket, console and browser shapes ', function () {
+    expect(shapes.bucket).toBeDefined();
+    expect(shapes.console).toBeDefined();
+    expect(shapes.browser).toBeDefined();
+  });
+
   // diam | decision | diamond
   it('should support alias for diamond shape ', function () {
     expect(shapes.diam).toBe(shapes.decision);

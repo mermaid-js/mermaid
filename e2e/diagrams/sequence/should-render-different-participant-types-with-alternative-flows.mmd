@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor Client
+  participant MobileApp
+  participant CloudService@{ "type" : "boundary" }
+  participant DataProcessor@{ "type" : "control" }
+  participant Transaction@{ "type" : "entity" }
+  participant TransactionsDB@{ "type" : "database" }
+  participant EventBus@{ "type" : "queue" }
+
+  Client ->> MobileApp: Initiate transaction
+  MobileApp ->> CloudService: Authenticate
+  alt Authentication successful
+  CloudService -->> MobileApp: Auth token
+  MobileApp ->> DataProcessor: Process data
+  DataProcessor ->> Transaction: Create transaction
+  Transaction ->> TransactionsDB: Save record
+  TransactionsDB -->> Transaction: Confirmation
+  Transaction ->> EventBus: Publish event
+  EventBus -->> Client: Notification
+  else Authentication failed
+  CloudService -->> MobileApp: Error
+  MobileApp -->> Client: Show error
+  end

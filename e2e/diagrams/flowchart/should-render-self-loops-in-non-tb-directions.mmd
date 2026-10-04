@@ -1,0 +1,18 @@
+---
+config:
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+flowchart LR
+  A[LR loop] --> A
+  subgraph B[BT subgraph]
+  direction BT
+  B1[BT loop] --> B1
+  end
+  subgraph C[RL subgraph]
+  direction RL
+  C1[RL loop] --> C1
+  end
+  A --> B1
+  B1 --> C1

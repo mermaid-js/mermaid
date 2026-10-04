@@ -1,0 +1,20 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice/|-Alice: Solid top reverse self-reference
+  Bob\|-Bob: Solid bottom reverse self-reference
+  Charlie//-Charlie: Stick top reverse self-reference
+  Alice\\-Alice: Stick bottom reverse self-reference
+  Bob/|--Bob: Dotted solid top reverse self-reference
+  Charlie\|--Charlie: Dotted solid bottom reverse self-reference
+  Alice//--Alice: Dotted stick top reverse self-reference
+  Bob\\--Bob: Dotted stick bottom reverse self-reference

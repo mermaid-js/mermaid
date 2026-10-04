@@ -24,6 +24,7 @@ Doctave
 DokuWiki
 dompurify
 elkjs
+fastdom
 fcose
 fontawesome
 Fonticons
@@ -59,10 +60,12 @@ pixelmatch
 Podlite
 presetAttributify
 pyplot
+rectpacking
 redmine
 rehype
 roughjs
 rscratch
+scanline
 shiki
 Slidev
 sparkline
@@ -73,10 +76,12 @@ stylis
 Swimm
 Tachi
 termaid
+trybox
 tsbuildinfo
 tseslint
 Tuleap
 Typora
+uninstrumented
 unocss
 unplugin
 unstub

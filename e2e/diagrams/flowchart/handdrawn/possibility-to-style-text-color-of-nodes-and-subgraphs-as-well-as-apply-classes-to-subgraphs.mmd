@@ -1,0 +1,24 @@
+---
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  subgraph id1 [title is set]
+  A-->B
+  end
+  subgraph id2 [title]
+  E
+  end
+
+  B-->C
+
+  subgraph id3
+  C-->D
+  end
+  class id3,id2,A redBg;
+  class id3,A whiteTxt;
+  classDef redBg fill:#622;
+  classDef whiteTxt color: white;

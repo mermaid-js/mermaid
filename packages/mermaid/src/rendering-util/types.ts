@@ -15,6 +15,8 @@ interface BaseNode {
   id: string;
   label?: string;
   description?: string[];
+  /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */
+  stereotype?: string;
   parentId?: string;
   position?: string; // Keep, this is for notes 'left of', 'right of', etc. Move into nodeNode
   cssStyles?: string[]; // Renamed from `styles` to `cssStyles`
@@ -34,7 +36,6 @@ interface BaseNode {
   domId?: string; // When you create the node in the getData function you do not have the domId yet
   // Rendering specific properties for both Flowchart and State Diagram nodes
   dir?: string; // Only relevant for isGroup true, i.e. a sub-graph or composite state.
-  explicitDir?: boolean; // true only when the user wrote an explicit 'direction X' keyword
   haveCallback?: boolean;
   link?: string;
   linkTarget?: string;
@@ -43,6 +44,15 @@ interface BaseNode {
   isGroup?: boolean;
   width?: number;
   height?: number;
+  wrappingWidth?: number;
+  /** Minimum width of the label area; short labels are widened to it (see `minNodeWidth`). */
+  minWidth?: number;
+  /**
+   * Spread the points where edges attach to this node across its side, so end
+   * markers on neighbouring edges overlap as little as the side allows.
+   * Honoured by layouts that place attachment points themselves (ELK).
+   */
+  spreadPorts?: boolean;
   labelBBox?: {
     width: number;
     height: number;
@@ -83,6 +93,7 @@ interface BaseNode {
   defaultWidth?: number;
   imageAspectRatio?: number;
   constraint?: 'on' | 'off';
+  metadata?: Record<string, unknown>;
   layer?: number;
   order?: number;
   children?: NodeChildren;
@@ -128,6 +139,13 @@ export interface NonClusterNode extends BaseNode {
 // Common properties for any node in the system
 export type Node = ClusterNode | NonClusterNode;
 
+export type TerminalLabelKey = 'startLeft' | 'startRight' | 'endLeft' | 'endRight';
+
+export interface TerminalLabelSize {
+  width: number;
+  height: number;
+}
+
 // Common properties for any edge in the system
 export interface Edge {
   id: string;
@@ -136,6 +154,8 @@ export interface Edge {
   style?: string[];
   animate?: boolean;
   animation?: 'fast' | 'slow';
+  /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
+  metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges
   arrowhead?: string;
   arrowheadStyle?: string;
@@ -155,6 +175,10 @@ export interface Edge {
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
+  /** Measured terminal labels, each centred on its label group's origin. */
+  terminalLabelSizes?: Partial<Record<TerminalLabelKey, TerminalLabelSize>>;
+  /** Terminal label centres placed by the layout; preferred over the along-the-path default. */
+  terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;

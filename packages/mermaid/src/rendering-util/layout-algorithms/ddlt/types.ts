@@ -19,7 +19,7 @@ export interface SizesFixtureMetadata {
   capturedFrom?: string;
 }
 
-/** JSON shape of `*.sizes.json` under `cypress/platform/dev-diagrams/layout-tests`. */
+/** JSON shape of `*.sizes.json` under `e2e/platform/dev-diagrams/layout-tests`. */
 export interface SizesFixture {
   metadata?: SizesFixtureMetadata;
   nodes: FixtureNodeSize[];

@@ -1,0 +1,19 @@
+---
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+
+  subgraph lane1
+  B
+  A
+  C
+  end
+  subgraph lane2
+  D --> E --EB--> B
+  end
+  A --> D
+  A --AB--> B --> C

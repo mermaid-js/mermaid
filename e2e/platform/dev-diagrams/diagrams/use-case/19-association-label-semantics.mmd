@@ -1,0 +1,13 @@
+usecase-beta
+    direction LR
+
+    actor User
+    Login("Sign in")
+    Checkout("Checkout")
+    Payment("Process payment")
+    Discount("Apply discount")
+
+    User -- "include account details" --> Login
+    Login -- "extend active session" --> Checkout
+    Checkout ..> : include Payment
+    Discount ..> : extend Checkout
