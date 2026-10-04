@@ -918,6 +918,37 @@ class Color{
 
 ```
 
+### Alternative annotation delimiters (v\<MERMAID_RELEASE_VERSION>+)
+
+You can also use `«` and `»` instead of `<<` and `>>` in all three annotation forms:
+
+```mermaid-example
+classDiagram
+  class Shape «interface»
+  class Service
+  «service» Service
+  class Color {
+    «enumeration»
+    RED
+    BLUE
+  }
+```
+
+```mermaid
+classDiagram
+  class Shape «interface»
+  class Service
+  «service» Service
+  class Color {
+    «enumeration»
+    RED
+    BLUE
+  }
+```
+
+The HTML entities `&laquo;` and `&raquo;`, `&#171;` and `&#187;`, or `&#xAB;` and `&#xBB;` work as well.
+These forms produce the same annotations as `<<` and `>>`. Generic types keep their existing syntax.
+
 ## Comments
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
