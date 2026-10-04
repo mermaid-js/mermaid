@@ -1,0 +1,17 @@
+---
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart RL
+  subgraph two
+  b1
+  end
+  subgraph three
+  c2
+  end
+
+  three --> two
+  two --> c2

@@ -1,0 +1,18 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice->>Alice: Solid arrow self-reference
+  Bob-->>Bob: Dotted arrow self-reference
+  Charlie->Charlie: Open arrow self-reference
+  Alice-->Alice: Dotted open arrow self-reference
+  Bob-xBob: Cross arrow self-reference
+  Charlie--xCharlie: Dotted cross self-reference

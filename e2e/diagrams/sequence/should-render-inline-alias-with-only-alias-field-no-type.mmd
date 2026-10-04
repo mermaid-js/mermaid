@@ -1,0 +1,12 @@
+---
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant API@{ "alias": "Public API" }
+  participant Auth@{ "alias": "Auth Service" }
+  API ->> Auth: Request
+  Auth -->> API: Response

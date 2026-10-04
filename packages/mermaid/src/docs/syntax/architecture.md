@@ -254,7 +254,11 @@ By default, architecture diagrams start nodes at deterministic seed positions (`
 Via frontmatter:
 
 ```
-%%{init: {"architecture": {"randomize": true}}}%%
+---
+config:
+  architecture:
+    randomize: true
+---
 architecture-beta
     group api(cloud)[API]
     service db(database)[Database] in api
@@ -291,7 +295,11 @@ The following options pass through to the underlying [fcose](https://github.com/
 Example — bumping `idealEdgeLengthMultiplier` stretches the spacing between connected nodes in a chain:
 
 ```
-%%{init: {"architecture": {"idealEdgeLengthMultiplier": 3}}}%%
+---
+config:
+  architecture:
+    idealEdgeLengthMultiplier: 3
+---
 architecture-beta
     service a(server)[A]
     service b(server)[B]

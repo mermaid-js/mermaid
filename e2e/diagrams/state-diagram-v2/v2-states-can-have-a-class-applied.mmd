@@ -1,0 +1,11 @@
+---
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  [*] --> A
+  A --> B: test({ foo#colon; 'far' })
+  B --> [*]
+  classDef badBadEvent fill:#f00,color:white,font-weight:bold
+  class B badBadEvent

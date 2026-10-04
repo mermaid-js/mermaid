@@ -1,0 +1,17 @@
+wardley-beta
+  title Link Features Demo
+  size [1100, 800]
+
+  component User [0.95, 0.90]
+  component App [0.75, 0.75]
+  component API [0.60, 0.60]
+  component Cache [0.65, 0.45]
+  component Database [0.15, 0.80]
+  component Service [0.45, 0.50]
+
+  User -> App
+  App +> API; +>
+  API -> Database; constraint
+  API +<> Cache; +<>
+  Cache +< Service; +<
+  Service +'backup'> Database

@@ -6,7 +6,7 @@
     <title>Mermaid Dev Explorer</title>
 
     <link rel="stylesheet" href="/dev/vendor/shoelace/themes/dark.css" />
-    <link rel="stylesheet" href="/dev/styles.css?v=7" />
+    <link rel="stylesheet" href="/dev/styles.css?v=8" />
   </head>
   <body>
     <!-- Mermaid ESM + ELK layout loaders (required for `layout: 'elk'`) -->
@@ -22,6 +22,16 @@
 
           mermaid.registerLayoutLoaders(layouts);
 
+          mermaid.registerIconPacks([
+            {
+              name: 'fa',
+              loader: () =>
+                fetch('https://unpkg.com/@iconify-json/fa6-solid@1/icons.json').then((response) =>
+                  response.json()
+                ),
+            },
+          ]);
+
           // Keep the rest of the dev explorer simple: expose mermaid on window for the Lit components.
           window.mermaid = mermaid;
           return mermaid;
@@ -34,6 +44,6 @@
 
     <dev-explorer-app></dev-explorer-app>
 
-    <script type="module" src="/dev/assets/explorer-app.js?v=7"></script>
+    <script type="module" src="/dev/assets/explorer-app.js?v=8"></script>
   </body>
 </html>

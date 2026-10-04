@@ -1,0 +1,23 @@
+---
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  A[(cylindrical<br />shape<br />test)]
+  A -->|Get money| B1[(Go shopping 1)]
+  A -->|Get money| B2[(Go shopping 2)]
+  A -->|Get money| B3[(Go shopping 3)]
+  C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
+  B1 --> C
+  B2 --> C
+  B3 --> C
+  C -->|One| D[(Laptop)]
+  C -->|Two| E[(iPhone)]
+  C -->|Three| F[(Car)]
+  click A "index.html#link-clicked" "link test"
+  click B testClick "click test"
+  classDef someclass fill:#f96;
+  class A someclass;

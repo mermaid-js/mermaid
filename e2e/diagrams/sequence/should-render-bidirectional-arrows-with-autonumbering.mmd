@@ -1,0 +1,18 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice<<->>Bob: Bidirectional solid left to right
+  Bob<<->>Alice: Bidirectional solid right to left
+  Alice<<-->>Charlie: Bidirectional dotted left to right
+  Charlie<<-->>Alice: Bidirectional dotted right to left
+  Bob<<->>Charlie: Bidirectional solid
+  Charlie<<-->>Bob: Bidirectional dotted

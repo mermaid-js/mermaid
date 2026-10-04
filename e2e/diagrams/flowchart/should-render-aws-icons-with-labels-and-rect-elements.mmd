@@ -1,0 +1,6 @@
+flowchart TB
+  Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch", label: "CloudWatch" }
+  Route53@{ icon: "aws:arch-amazon-route-53", label: "Route 53" }
+  EKS@{ icon: "aws:arch-amazon-eks-cloud", label: "EKS Cloud" }
+  Cloudwatch --> Route53
+  Route53 --> EKS

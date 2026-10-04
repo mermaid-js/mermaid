@@ -1,0 +1,38 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  Alice->>Bob: Solid arrow (->>)
+  Alice-->>Bob: Dotted arrow (-->>)
+  Alice->Bob: Solid open arrow (->)
+  Alice-->Bob: Dotted open arrow (-->)
+  Alice-xBob: Solid cross (-x)
+  Alice--xBob: Dotted cross (--x)
+  Alice-)Bob: Solid point async (-)
+  Alice--)Bob: Dotted point async (--)
+  Alice<<->>Bob: Bidirectional solid (<<->>)
+  Alice<<-->>Bob: Bidirectional dotted (<<-->>)
+  Alice-|\Bob: Solid top half (-|\)
+  Alice-|/Bob: Solid bottom half (-|/)
+  Alice-\\Bob: Stick top half (-\\)
+  Alice-//Bob: Stick bottom half (-//)
+  Bob/|-Alice: Solid top reverse (/|-)
+  Bob\|-Alice: Solid bottom reverse (\|-)
+  Bob//-Alice: Stick top reverse (//-)
+  Bob\\-Alice: Stick bottom reverse (\\-)
+  Alice--|\Bob: Dotted solid top (--|\)
+  Alice--|/Bob: Dotted solid bottom (--|/)
+  Alice--\\Bob: Dotted stick top (--\\)
+  Alice--//Bob: Dotted stick bottom (--//)
+  Bob/|--Alice: Dotted solid top reverse (/|--)
+  Bob\|--Alice: Dotted solid bottom reverse (\|--)
+  Bob//--Alice: Dotted stick top reverse (//--)
+  Bob\\--Alice: Dotted stick bottom reverse (\\--)
+  Alice->>()Bob: Solid with central connection
+  Alice()-->>Bob: Dotted with reverse central
+  Alice()->>()Bob: Dual central connections

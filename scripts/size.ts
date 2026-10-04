@@ -54,8 +54,8 @@ const percentageDifference = (oldValue: number, newValue: number): string => {
 };
 
 const main = async () => {
-  const oldStats = await readStats('./cypress/snapshots/stats/base/**/*.json');
-  const newStats = await readStats('./cypress/snapshots/stats/head/**/*.json');
+  const oldStats = await readStats('./e2e/snapshots/stats/base/**/*.json');
+  const newStats = await readStats('./e2e/snapshots/stats/head/**/*.json');
   const diff = Object.entries(newStats)
     .filter(([, value]) => value > 2048)
     .map(([key, value]) => {

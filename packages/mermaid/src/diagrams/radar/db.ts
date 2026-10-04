@@ -18,6 +18,7 @@ import type {
   Entry,
 } from '../../../../parser/dist/src/language/generated/ast.js';
 import type { RadarAxis, RadarCurve, RadarOptions, RadarDB, RadarData } from './types.js';
+import { log } from '../../logger.js';
 
 const defaultOptions: RadarOptions = {
   showLegend: true,
@@ -26,6 +27,9 @@ const defaultOptions: RadarOptions = {
   min: 0,
   graticule: 'circle',
 };
+
+// Can't see people using more than this, since the gradient makes the diagram unreadable.
+const MAX_TICKS = 32;
 
 const defaultRadarData: RadarData = {
   axes: [],
@@ -103,6 +107,13 @@ const setOptions = (options: Option[]) => {
     min: (optionMap.min?.value as number) ?? defaultOptions.min,
     graticule: (optionMap.graticule?.value as 'circle' | 'polygon') ?? defaultOptions.graticule,
   };
+
+  if (data.options.ticks > MAX_TICKS) {
+    log.warn(
+      `Radar diagram ticks (${data.options.ticks}) exceeds maximum allowed (${MAX_TICKS}). Using ${MAX_TICKS} instead.`
+    );
+    data.options.ticks = MAX_TICKS;
+  }
 };
 
 const clear = () => {

@@ -74,6 +74,28 @@ vi.mock('../../rendering-elements/edges.js', () => ({
   insertEdge: mocks.insertEdge,
   insertEdgeLabel: mocks.insertEdgeLabel,
   terminalLabels: mocks.terminalLabels,
+  // Mirrors the real implementation in rendering-elements/edges.js, using this
+  // spec's own mocked `calcLabelPosition` so the delta-from-curve-fitting
+  // behavior is exercised the same way here as in production.
+  resolveEdgeLabelPosition: (
+    edge: Edge,
+    paths?: { originalPath?: unknown; updatedPath?: unknown }
+  ) => {
+    let x = edge.x;
+    let y = edge.y;
+    if (paths?.updatedPath) {
+      const updatedMid = mocks.calcLabelPosition(paths.updatedPath);
+      if (paths.originalPath) {
+        const originalMid = mocks.calcLabelPosition(paths.originalPath);
+        x = edge.x! + (updatedMid.x - originalMid.x);
+        y = edge.y! + (updatedMid.y - originalMid.y);
+      } else {
+        x = updatedMid.x;
+        y = updatedMid.y;
+      }
+    }
+    return { x, y };
+  },
 }));
 
 vi.mock('../../rendering-elements/markers.js', () => ({
@@ -290,7 +312,19 @@ describe('defaultMeasureLayout', () => {
     mocks.createGraphWithElements.mockResolvedValue(measured);
 
     await expect(defaultMeasureLayout(data, { element } as never)).resolves.toBe(measured);
-    expect(mocks.createGraphWithElements).toHaveBeenCalledWith(element, data);
+    expect(mocks.createGraphWithElements).toHaveBeenCalledWith(element, data, undefined);
+  });
+
+  it('forwards measurement options to createGraphWithElements', async () => {
+    const { defaultMeasureLayout } = await import('./index.js');
+    const data = layout();
+    const element = { name: 'root-g' };
+    mocks.createGraphWithElements.mockResolvedValue(measure());
+
+    await defaultMeasureLayout(data, { element } as never, { unwrapGroupLabels: true });
+    expect(mocks.createGraphWithElements).toHaveBeenCalledWith(element, data, {
+      unwrapGroupLabels: true,
+    });
   });
 });
 

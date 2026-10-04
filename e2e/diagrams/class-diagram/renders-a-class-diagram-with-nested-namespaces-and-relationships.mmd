@@ -1,0 +1,13 @@
+classDiagram-v2
+namespace Company.Project.Module.SubModule {
+  class Report {
+    +generatePDF(data: List)
+    +generateCSV(data: List)
+  }
+}
+namespace Company.Project.Module {
+  class Admin {
+    +generateReport()
+  }
+}
+Admin --> Report : generates

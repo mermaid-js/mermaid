@@ -1,0 +1,15 @@
+sequenceDiagram
+  A ->> B: 1
+  rect rgb(204, 0, 102)
+  loop check C
+    C ->> C: Every 10 seconds
+  end
+  end
+  A ->> B: 2
+  loop check D
+  C ->> D: 3
+  rect rgb(153, 153, 255)
+  D -->> D: 5
+  D --> C: 4
+  end
+  end

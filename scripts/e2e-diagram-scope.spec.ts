@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { detectScope, SPEC_BASE_DIR, SKIP } from './e2e-diagram-scope.mjs';
+import { detectScope, SPEC_BASE_DIR, DIAGRAMS_DIR, SKIP } from './e2e-diagram-scope.mjs';
+
+// Source folders mix kebab/camelCase; fixture folders are kebab. Compare on a
+// canonical lowercased, hyphen-stripped name.
+const canonical = (name: string) => name.toLowerCase().replace(/-/g, '');
 
 // The tests run in the repo root, so the spec subfolders created by the file
 // reorganisation are present on disk — no mocking needed.
@@ -14,7 +18,20 @@ describe('detectScope', () => {
       'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
       'packages/mermaid/src/diagrams/flowchart/flowchartRenderer.ts',
     ]);
-    expect(result).toBe(`${SPEC_BASE_DIR}/flowchart/**`);
+    expect(result.split(',')).toEqual(
+      expect.arrayContaining([
+        `${SPEC_BASE_DIR}/flowchart/`,
+        `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
+      ])
+    );
+  });
+
+  it('returns patterns that Playwright can compile as regular expressions', () => {
+    const result = detectScope(['packages/mermaid/src/diagrams/sequence/sequenceRenderer.ts']);
+
+    for (const pattern of result.split(',')) {
+      expect(() => new RegExp(pattern, 'gi')).not.toThrow();
+    }
   });
 
   it('falls back to full suite when rendering-util is touched', () => {
@@ -56,8 +73,39 @@ describe('detectScope', () => {
       'packages/mermaid/src/diagrams/pie/pieDb.ts',
     ]);
     expect(result.split(',')).toEqual(
-      expect.arrayContaining([`${SPEC_BASE_DIR}/gantt/**`, `${SPEC_BASE_DIR}/pie/**`])
+      expect.arrayContaining([
+        `${SPEC_BASE_DIR}/gantt/`,
+        `${SPEC_BASE_DIR}/pie/`,
+        `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
+      ])
     );
+  });
+
+  it('scopes a fixture-only change to the mmd snapshot runner (not the full suite)', () => {
+    const result = detectScope(['e2e/diagrams/pie/new-case.mmd']);
+    expect(result).toBe(`${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`);
+  });
+
+  it('includes the mmd runner when a fixture changes alongside a diagram source', () => {
+    const result = detectScope([
+      'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
+      'e2e/diagrams/flowchart/new-case.mmd',
+    ]);
+    expect(result.split(',')).toEqual(
+      expect.arrayContaining([
+        `${SPEC_BASE_DIR}/flowchart/`,
+        `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
+      ])
+    );
+  });
+
+  it('still falls back to full suite when shared code changes alongside a fixture', () => {
+    expect(
+      detectScope([
+        'packages/mermaid/src/rendering-util/edgeDetails.ts',
+        'e2e/diagrams/flowchart/new-case.mmd',
+      ])
+    ).toBe('');
   });
 
   it('falls back to full suite for a diagram with no spec subfolder', () => {
@@ -71,7 +119,9 @@ describe('detectScope', () => {
 
   it('scopes to the subfolder when a spec file in that subfolder is modified', () => {
     const result = detectScope([`${SPEC_BASE_DIR}/gantt/gantt.spec.js`]);
-    expect(result).toBe(`${SPEC_BASE_DIR}/gantt/**`);
+    expect(result.split(',')).toEqual(
+      expect.arrayContaining([`${SPEC_BASE_DIR}/gantt/`, `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`])
+    );
   });
 
   it('falls back to full suite for any spec at the rendering root (positional convention)', () => {
@@ -81,8 +131,8 @@ describe('detectScope', () => {
     expect(detectScope([`${SPEC_BASE_DIR}/brandNewCrossCutting.spec.ts`])).toBe('');
   });
 
-  it('falls back to full suite when a cypress/other spec is modified', () => {
-    expect(detectScope(['cypress/integration/other/xss.spec.js'])).toBe('');
+  it('falls back to full suite when an e2e/other spec is modified', () => {
+    expect(detectScope(['e2e/other/xss.spec.js'])).toBe('');
   });
 
   it('deduplicates when diagram source and its spec subfolder both change', () => {
@@ -91,7 +141,7 @@ describe('detectScope', () => {
       `${SPEC_BASE_DIR}/gantt/gantt.spec.js`,
     ]);
     // Both point to the same subfolder — should deduplicate
-    expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/**`).length).toBe(1);
+    expect(result.split(',').filter((s) => s === `${SPEC_BASE_DIR}/gantt/`).length).toBe(1);
   });
 });
 
@@ -136,7 +186,12 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
       'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
       'demos/sequence.html',
     ]);
-    expect(result).toBe(`${SPEC_BASE_DIR}/flowchart/**`);
+    expect(result.split(',')).toEqual(
+      expect.arrayContaining([
+        `${SPEC_BASE_DIR}/flowchart/`,
+        `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
+      ])
+    );
   });
 
   it('scopes to diagram when diagram source + docs both change', () => {
@@ -144,7 +199,12 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
       'packages/mermaid/src/diagrams/flowchart/flowchartDb.ts',
       'packages/mermaid/src/docs/syntax/flowchart.md',
     ]);
-    expect(result).toBe(`${SPEC_BASE_DIR}/flowchart/**`);
+    expect(result.split(',')).toEqual(
+      expect.arrayContaining([
+        `${SPEC_BASE_DIR}/flowchart/`,
+        `${SPEC_BASE_DIR}/mmd-snapshots.spec.ts`,
+      ])
+    );
   });
 
   it('falls back to full suite when shared code + docs both change', () => {
@@ -162,8 +222,8 @@ describe('ignorable files (docs-only, changesets, etc.)', () => {
   });
 });
 
-describe('SPEC_BASE_DIR subfolder coverage', () => {
-  it('every known diagram folder has a matching spec subfolder', async () => {
+describe('diagram coverage', () => {
+  it('every known diagram has either a rendering spec subfolder or mmd fixtures', async () => {
     const fs = await import('fs');
 
     const diagramsRoot = 'packages/mermaid/src/diagrams';
@@ -172,14 +232,22 @@ describe('SPEC_BASE_DIR subfolder coverage', () => {
       .filter((entry) => entry.isDirectory() && entry.name !== 'common')
       .map((entry) => entry.name);
 
-    const specFolders = new Set(
-      fs
-        .readdirSync(SPEC_BASE_DIR, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory())
-        .map((entry) => entry.name)
+    // A diagram is covered by a per-diagram spec subfolder OR by the global mmd
+    // snapshot runner (fixtures under e2e/diagrams/<name>/). The migration moved
+    // several diagrams (block, c4, packet, …) to fixtures only.
+    const covered = new Set(
+      [SPEC_BASE_DIR, DIAGRAMS_DIR].flatMap((dir) =>
+        fs
+          .readdirSync(dir, { withFileTypes: true })
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => canonical(entry.name))
+      )
     );
 
-    const missing = diagramFolders.filter((name) => !specFolders.has(name));
-    expect(missing, `Diagram folders without a spec subfolder: ${missing.join(', ')}`).toEqual([]);
+    const missing = diagramFolders.filter((name) => !covered.has(canonical(name)));
+    expect(
+      missing,
+      `Diagrams with no spec subfolder and no fixtures: ${missing.join(', ')}`
+    ).toEqual([]);
   });
 });

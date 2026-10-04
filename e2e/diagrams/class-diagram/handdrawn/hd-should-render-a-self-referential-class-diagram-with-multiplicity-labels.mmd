@@ -1,0 +1,13 @@
+---
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  class SelfReferential{
+  +int id
+  +int self_referential_id
+  +SelfReferential referenced
+  }
+  SelfReferential "1" --> "0..1" SelfReferential : referenced

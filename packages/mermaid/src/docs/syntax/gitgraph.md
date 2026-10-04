@@ -688,14 +688,20 @@ Mermaid supports a bunch of pre-defined themes which you can use to find the rig
 
 The following are the different pre-defined theme options:
 
-- `base`
-- `forest`
-- `dark`
+- `redux-color` (the default)
+- `redux-dark-color`
+- `redux`
+- `redux-dark`
 - `default`
 - `neutral`
+- `dark`
+- `forest`
+- `neo`
+- `neo-dark`
+- `base`
 
 **NOTE**: To change theme you can either use the `initialize` call or _directives_. Learn more about [directives](../config/directives.md)
-Let's put them to use, and see how our sample diagram looks in different themes:
+Let's put a few of them to use, and see how our sample diagram looks in different themes:
 
 ### Base Theme
 
@@ -801,7 +807,7 @@ config:
         merge release
 ```
 
-### Default Theme
+### The `default` Theme
 
 ```mermaid-example
 ---
@@ -963,7 +969,7 @@ Mermaid allows you to customize your diagram using theme variables which govern 
 
 For understanding let us take a sample diagram with theme `default`, the default values of the theme variables is picked automatically from the theme. Later on we will see how to override the default values of the theme variables.
 
-See how the default theme is used to set the colors for the branches:
+See how the `default` theme is used to set the colors for the branches:
 
 ```mermaid-example
 ---
@@ -1036,7 +1042,7 @@ See how the branch colors are changed to the values specified in the theme varia
 
 You can customize the branch label colors using the `gitBranchLabel0` to `gitBranchLabel7` theme variables. Mermaid allows you to set the colors for up-to 8 branches, where `gitBranchLabel0` variable will drive the value of the first branch label, `gitBranchLabel1` will drive the value of the second branch label and so on.
 
-Lets see how the default theme is used to set the colors for the branch labels:
+Lets see how the `default` theme is used to set the colors for the branch labels:
 
 Now let's override the default values for the `gitBranchLabel0` to `gitBranchLabel2` variables:
 

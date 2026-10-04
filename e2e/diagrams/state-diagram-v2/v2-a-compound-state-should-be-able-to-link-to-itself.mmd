@@ -1,0 +1,10 @@
+---
+config:
+  logLevel: 0
+---
+stateDiagram
+  state Active {
+  Idle
+  }
+  Inactive --> Idle: ACT
+  Active --> Active: LOG

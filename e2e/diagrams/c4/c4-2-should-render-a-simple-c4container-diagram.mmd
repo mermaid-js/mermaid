@@ -1,0 +1,12 @@
+C4Container
+  title Container diagram for Internet Banking System
+
+  System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system", $tags="v1.0")
+  Person(customer, Customer, "A customer of the bank, with personal bank accounts", $tags="v1.0")
+
+  Container_Boundary(c1, "Internet Banking") {
+  Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to customers via their web browser")
+  }
+
+  Rel(customer, spa, "Uses", "HTTPS")
+  Rel(email_system, customer, "Sends e-mails to")

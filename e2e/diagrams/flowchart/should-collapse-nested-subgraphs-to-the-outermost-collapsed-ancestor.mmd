@@ -1,0 +1,8 @@
+flowchart TD
+  Start --> inner
+  subgraph outer [Outer]
+    subgraph inner [Inner]
+      A --> B
+    end
+  end
+  outer@{ view: collapsed }

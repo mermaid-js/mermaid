@@ -1,0 +1,20 @@
+---
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice()/|-()Bob: Circles at both ends with solid top reverse (RTL)
+  Alice()\|-()Bob: Circles at both ends with solid bottom reverse (RTL)
+  Alice()//-()Bob: Circles at both ends with stick top reverse (RTL)
+  Alice()\\-()Bob: Circles at both ends with stick bottom reverse (RTL)
+  Alice()/|--()Bob: Circles at both ends with dotted solid top reverse (RTL)
+  Alice()\|--()Bob: Circles at both ends with dotted solid bottom reverse (RTL)
+  Alice()//--()Bob: Circles at both ends with dotted stick top reverse (RTL)
+  Alice()\\--()Bob: Circles at both ends with dotted stick bottom reverse (RTL)

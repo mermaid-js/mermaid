@@ -1,0 +1,11 @@
+C4Deployment
+title Deployment diagram
+Deployment_Node(dc, "Data Center", "us-east-1") {
+  Deployment_Node(srv, "App Server", "Ubuntu 22.04") {
+    Container(api, "API", "Java, Spring")
+  }
+  Deployment_Node(dbn, "DB Server", "Ubuntu 22.04") {
+    ContainerDb(db, "Database", "PostgreSQL")
+  }
+}
+Rel(api, db, "reads/writes", "JDBC")

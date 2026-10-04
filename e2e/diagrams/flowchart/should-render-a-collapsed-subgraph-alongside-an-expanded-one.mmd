@@ -1,0 +1,9 @@
+flowchart LR
+  subgraph g1 [Collapsed]
+    A1 --> A2
+  end
+  subgraph g2 [Expanded]
+    B1 --> B2
+  end
+  g1 --> g2
+  g1@{ view: collapsed }

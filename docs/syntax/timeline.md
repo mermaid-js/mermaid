@@ -367,14 +367,20 @@ Mermaid supports a bunch of pre-defined themes which you can use to find the rig
 
 The following are the different pre-defined theme options:
 
-- `base`
-- `forest`
-- `dark`
+- `redux-color` (the default)
+- `redux-dark-color`
+- `redux`
+- `redux-dark`
 - `default`
 - `neutral`
+- `dark`
+- `forest`
+- `neo`
+- `neo-dark`
+- `base`
 
 **NOTE**: To change theme you can either use the `initialize` call or _directives_. Learn more about [directives](../config/directives.md)
-Let's put them to use, and see how our sample diagram looks in different themes:
+Let's put a few of them to use, and see how our sample diagram looks in different themes:
 
 ### Base Theme
 
@@ -484,7 +490,7 @@ config:
           2010 : Pinterest
 ```
 
-### Default Theme
+### The `default` Theme
 
 ```mermaid-example
 ---
@@ -564,7 +570,7 @@ You can use this method to add mermaid including the timeline diagram to a web p
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
 </script>
 ```
 
