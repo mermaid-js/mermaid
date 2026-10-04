@@ -26,6 +26,15 @@ interface WardleyTheme {
   annotationStroke: string;
   annotationTextColor: string;
   annotationFill: string;
+  pioneersStroke: string;
+  pioneersFill: string;
+  settlersStroke: string;
+  settlersFill: string;
+  townplannersStroke: string;
+  townplannersFill: string;
+  ecosystemOuterFill: string;
+  ecosystemMiddleFill: string;
+  ecosystemInnerFill: string;
 }
 
 const getTheme = (): WardleyTheme => {
@@ -46,6 +55,15 @@ const getTheme = (): WardleyTheme => {
     annotationTextColor:
       themeVariables.wardley?.annotationTextColor ?? themeVariables.primaryTextColor ?? '#222',
     annotationFill: themeVariables.wardley?.annotationFill ?? themeVariables.background ?? '#fff',
+    pioneersStroke: themeVariables.wardley?.pioneersStroke ?? '#3490dd',
+    pioneersFill: themeVariables.wardley?.pioneersFill ?? '#3ccaf8',
+    settlersStroke: themeVariables.wardley?.settlersStroke ?? '#396dc0',
+    settlersFill: themeVariables.wardley?.settlersFill ?? '#599afa',
+    townplannersStroke: themeVariables.wardley?.townplannersStroke ?? '#4768c8',
+    townplannersFill: themeVariables.wardley?.townplannersFill ?? '#936ff9',
+    ecosystemOuterFill: themeVariables.wardley?.ecosystemOuterFill ?? '#d7d7d7',
+    ecosystemMiddleFill: themeVariables.wardley?.ecosystemMiddleFill ?? '#fff',
+    ecosystemInnerFill: themeVariables.wardley?.ecosystemInnerFill ?? '#fff',
   };
 };
 
@@ -70,6 +88,21 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
   const configValues = getConfigValues();
   const theme = getTheme();
   const squareSize = configValues.nodeRadius * 1.6; // Size of pipeline parent square nodes
+  // Ecosystem symbol radii (concentric circles); outer ring doubles as the link endpoint radius
+  const ecoOuterRadius = configValues.nodeRadius * 2;
+  const ecoMiddleRadius = configValues.nodeRadius * 1.65;
+  const ecoInnerRadius = configValues.nodeRadius * 0.65;
+  // Radius at which a link should terminate for a given node, matching the node's
+  // rendered outer edge: pipeline square corner, ecosystem outer ring, or default circle.
+  const getLinkRadius = (node: WardleyNode): number => {
+    if (node.isPipelineParent) {
+      return squareSize / Math.sqrt(2);
+    }
+    if (node.sourceStrategy === 'ecosystem') {
+      return ecoOuterRadius;
+    }
+    return configValues.nodeRadius;
+  };
   const db = diagObj.db as {
     getWardleyData: () => WardleyBuildResult;
     getDiagramTitle: () => string;
@@ -137,6 +170,20 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('fill', theme.linkStroke)
     .attr('stroke', 'none');
 
+  // Diagonal hatch pattern for ecosystem components
+  const hatchPattern = defs
+    .append('pattern')
+    .attr('id', `diagonalHatch-${id}`)
+    .attr('patternUnits', 'userSpaceOnUse')
+    .attr('width', 4)
+    .attr('height', 4);
+  hatchPattern
+    .append('path')
+    .attr('d', 'M 3,-1 l 2,2 M 0,0 l 4,4 M -1,3 l 2,2')
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1)
+    .attr('opacity', 0.5);
+
   root
     .append('rect')
     .attr('class', 'wardley-background')
@@ -164,6 +211,64 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
 
   const projectX = (value: number) => configValues.padding + (value / 100) * chartWidth;
   const projectY = (value: number) => height - configValues.padding - (value / 100) * chartHeight;
+
+  // Render attitude zones (pioneers/settlers/townplanners) behind axes/grid/components
+  if (data.attitudes.length > 0) {
+    const attitudeStyles: Record<
+      'pioneers' | 'settlers' | 'townplanners',
+      { stroke: string; fill: string; label: string }
+    > = {
+      pioneers: { stroke: theme.pioneersStroke, fill: theme.pioneersFill, label: 'Pioneers' },
+      settlers: { stroke: theme.settlersStroke, fill: theme.settlersFill, label: 'Settlers' },
+      townplanners: {
+        stroke: theme.townplannersStroke,
+        fill: theme.townplannersFill,
+        label: 'Town Planners',
+      },
+    };
+    const attitudesGroup = root.append('g').attr('class', 'wardley-attitudes');
+    data.attitudes.forEach((attitude) => {
+      const style = attitudeStyles[attitude.kind];
+      const px1 = projectX(attitude.x1);
+      const px2 = projectX(attitude.x2);
+      const py1 = projectY(attitude.y1);
+      const py2 = projectY(attitude.y2);
+      const rectX = Math.min(px1, px2);
+      const rectY = Math.min(py1, py2);
+      const rectW = Math.abs(px2 - px1);
+      const rectH = Math.abs(py2 - py1);
+      const group = attitudesGroup
+        .append('g')
+        .attr('class', `wardley-attitude wardley-attitude--${attitude.kind}`);
+      group
+        .append('rect')
+        .attr('x', rectX)
+        .attr('y', rectY)
+        .attr('width', rectW)
+        .attr('height', rectH)
+        .attr('fill', style.fill)
+        .attr('fill-opacity', 0.4)
+        .attr('stroke', style.stroke)
+        .attr('stroke-opacity', 0.7)
+        .attr('stroke-width', 2);
+      // Only render the zone label when the rectangle can plausibly contain it.
+      // Width is estimated (no DOM text measurement is available at render time),
+      // so very narrow or thin zones omit the label rather than spilling outside.
+      const estLabelWidth = style.label.length * configValues.axisFontSize * 0.6;
+      if (rectW >= estLabelWidth && rectH >= configValues.axisFontSize) {
+        const labelY = Math.min(rectY + 16, rectY + Math.max(rectH - 4, rectH / 2));
+        group
+          .append('text')
+          .attr('x', rectX + rectW / 2)
+          .attr('y', labelY)
+          .attr('text-anchor', 'middle')
+          .attr('font-size', configValues.axisFontSize)
+          .attr('font-weight', 'bold')
+          .attr('fill', style.stroke)
+          .text(style.label);
+      }
+    });
+  }
 
   const axisGroup = root.append('g').attr('class', 'wardley-axes');
   axisGroup
@@ -411,9 +516,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const sourceNode = data.nodes.find((n) => n.id === link.source)!;
-      const radius = sourceNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(sourceNode);
       const dx = targetPos.x - sourcePos.x;
       const dy = targetPos.y - sourcePos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -423,9 +526,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const sourceNode = data.nodes.find((n) => n.id === link.source)!;
-      const radius = sourceNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(sourceNode);
       const dx = targetPos.x - sourcePos.x;
       const dy = targetPos.y - sourcePos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -435,9 +536,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const targetNode = data.nodes.find((n) => n.id === link.target)!;
-      const radius = targetNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(targetNode);
       const dx = sourcePos.x - targetPos.x;
       const dy = sourcePos.y - targetPos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -447,9 +546,7 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       const sourcePos = positions.get(link.source)!;
       const targetPos = positions.get(link.target)!;
       const targetNode = data.nodes.find((n) => n.id === link.target)!;
-      const radius = targetNode.isPipelineParent
-        ? squareSize / Math.sqrt(2)
-        : configValues.nodeRadius;
+      const radius = getLinkRadius(targetNode);
       const dx = sourcePos.x - targetPos.x;
       const dy = sourcePos.y - targetPos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -643,11 +740,14 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('stroke', theme.componentStroke)
     .attr('stroke-width', 1);
 
-  // Render circles for normal nodes and pipeline child components (exclude market components and anchors)
+  // Render circles for normal nodes and pipeline child components (exclude market/ecosystem components and anchors)
   nodeEnter
     .filter(
       (node) =>
-        !node.isPipelineParent && node.sourceStrategy !== 'market' && node.className !== 'anchor'
+        !node.isPipelineParent &&
+        node.sourceStrategy !== 'market' &&
+        node.sourceStrategy !== 'ecosystem' &&
+        node.className !== 'anchor'
     )
     .append('circle')
     .attr('cx', (node) => positions.get(node.id)!.x)
@@ -727,6 +827,51 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
     .attr('fill', 'white')
     .attr('stroke', theme.componentStroke)
     .attr('stroke-width', 2);
+
+  // Render ecosystem symbol (concentric circles with diagonal hatch fill)
+  const ecosystemNodes = nodeEnter.filter((node) => node.sourceStrategy === 'ecosystem');
+
+  // Outer filled circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-outer')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoOuterRadius)
+    .attr('fill', theme.ecosystemOuterFill)
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1);
+
+  // Middle white circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-middle')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoMiddleRadius)
+    .attr('fill', theme.ecosystemMiddleFill)
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1);
+
+  // Hatch overlay over middle circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-hatch')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoMiddleRadius)
+    .attr('fill', `url(#diagonalHatch-${id})`);
+
+  // Inner white circle
+  ecosystemNodes
+    .append('circle')
+    .attr('class', 'wardley-ecosystem-inner')
+    .attr('cx', (node) => positions.get(node.id)!.x)
+    .attr('cy', (node) => positions.get(node.id)!.y)
+    .attr('r', ecoInnerRadius)
+    .attr('fill', theme.ecosystemInnerFill)
+    .attr('stroke', theme.componentStroke)
+    .attr('stroke-width', 1);
 
   // Render squares for pipeline parent nodes
   nodeEnter
