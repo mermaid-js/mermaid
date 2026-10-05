@@ -219,6 +219,36 @@ describe('insertEdge swimlane endpoint clipping', () => {
     expect(tail.intersect).toHaveBeenCalledWith({ x: 10, y: 14 });
     expect(renderedPoints[0]).toEqual(clippedStart);
   });
+
+  it('leaves exact endpoints alone when the edge skips intersection', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const first = { x: 10, y: 14 };
+    const last = { x: 90, y: 60 };
+    const edge = {
+      id: 'L_A3_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [first, { x: 10, y: 60 }, last],
+    };
+    const tail = { intersect: vi.fn(() => ({ x: 8, y: 12 })) };
+    const head = { intersect: vi.fn(() => ({ x: 92, y: 62 })) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram', true);
+
+    const renderedPoints = JSON.parse(atob(svg.select('path').attr('data-points')));
+
+    expect(tail.intersect).not.toHaveBeenCalled();
+    expect(head.intersect).not.toHaveBeenCalled();
+    expect(renderedPoints[0]).toEqual(first);
+    expect(renderedPoints.at(-1)).toEqual(last);
+  });
 });
 
 describe('setTerminalWidth', () => {
