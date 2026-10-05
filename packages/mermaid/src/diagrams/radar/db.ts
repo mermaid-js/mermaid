@@ -67,27 +67,51 @@ const setCurves = (curves: Curve[]) => {
     return {
       name: curve.name,
       label: curve.label ?? curve.name,
-      entries: computeCurveEntries(curve.entries),
+      ...computeCurveEntries(curve.entries),
     };
   });
 };
 
-const computeCurveEntries = (entries: Entry[]): number[] => {
+const computeCurveEntries = (entries: Entry[]): Pick<RadarCurve, 'entries' | 'startEntries'> => {
   // If entries have axis reference, we must order them according to the axes
-  if (entries[0].axis == undefined) {
-    return entries.map((entry) => entry.value);
-  }
-  const axes = getAxes();
-  if (axes.length === 0) {
-    throw new Error('Axes must be populated before curves for reference entries');
-  }
-  return axes.map((axis) => {
-    const entry = entries.find((entry) => entry.axis?.$refText === axis.name);
-    if (entry === undefined) {
-      throw new Error('Missing entry for axis ' + axis.label);
+  const orderedEntries = (() => {
+    if (entries[0].axis == undefined) {
+      return entries;
     }
-    return entry.value;
+    const axes = getAxes();
+    if (axes.length === 0) {
+      throw new Error('Axes must be populated before curves for reference entries');
+    }
+    return axes.map((axis) => {
+      const entry = entries.find((entry) => entry.axis?.$refText === axis.name);
+      if (entry === undefined) {
+        throw new Error('Missing entry for axis ' + axis.label);
+      }
+      return entry;
+    });
+  })();
+
+  const parsedEntries = orderedEntries.map((entry) => {
+    if (entry.range !== undefined) {
+      const [start, end] = entry.range.slice(1, -1).split('..').map(Number);
+      if (start > end) {
+        throw new Error(`Curve range start (${start}) must not exceed end (${end})`);
+      }
+      return { start, end };
+    }
+    if (entry.value === undefined) {
+      throw new Error('Curve entry must contain a value or range');
+    }
+    return { start: null, end: entry.value };
   });
+
+  const result: Pick<RadarCurve, 'entries' | 'startEntries'> = {
+    entries: parsedEntries.map(({ end }) => end),
+  };
+  if (parsedEntries.some(({ start }) => start !== null)) {
+    result.startEntries = parsedEntries.map(({ start }) => start);
+  }
+  return result;
 };
 
 const setOptions = (options: Option[]) => {
