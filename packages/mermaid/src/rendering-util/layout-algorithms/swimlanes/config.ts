@@ -45,4 +45,12 @@ export const COORDINATES = {
 
   /** Default horizontal gap between nodes (px) */
   DEFAULT_NODE_GAP: 40,
+
+  /**
+   * Room kept between an edge label and the nodes the edge joins (px). Anchoring
+   * keeps a label 12 from an edge's endpoint and buffers it by 3 from other
+   * geometry, so a label reserved between two ranks needs 15 to be anchored there;
+   * 16 leaves one pixel to spare.
+   */
+  EDGE_LABEL_CLEARANCE: 16,
 } as const;
