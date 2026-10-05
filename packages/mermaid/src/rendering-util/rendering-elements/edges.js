@@ -662,13 +662,19 @@ export const insertEdge = function (
         const newFirst = tail.intersect(firstInner);
 
         const originalLast = points[points.length - 1];
-        const isAxisAligned = (a, b) =>
-          Math.abs(a.x - b.x) < TOLERANCE || Math.abs(a.y - b.y) < TOLERANCE;
+        const sharesColumn = (a, b) => Math.abs(a.x - b.x) < TOLERANCE;
+        const sharesRow = (a, b) => Math.abs(a.y - b.y) < TOLERANCE;
         const candidateLast = head.intersect(lastInner);
-        const newLast =
-          !isAxisAligned(originalLast, lastInner) || isAxisAligned(candidateLast, lastInner)
-            ? candidateLast
-            : originalLast;
+        const wasOrthogonal =
+          sharesColumn(originalLast, lastInner) || sharesRow(originalLast, lastInner);
+        const wasVertical = wasOrthogonal && !sharesRow(originalLast, lastInner);
+        const wasHorizontal = wasOrthogonal && !sharesColumn(originalLast, lastInner);
+        const keepsAxis = wasVertical
+          ? sharesColumn(candidateLast, lastInner)
+          : wasHorizontal
+            ? sharesRow(candidateLast, lastInner)
+            : sharesColumn(candidateLast, lastInner) || sharesRow(candidateLast, lastInner);
+        const newLast = wasOrthogonal && !keepsAxis ? originalLast : candidateLast;
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
