@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { LayoutData } from '../../../types.js';
+import { COORDINATES } from '../config.js';
 import { createEdgeLabelNodes } from '../edgeLabelNodes.js';
 import { prepareLayoutForSwimlanes } from '../helpers.js';
 import { runSwimlaneLayoutCore } from '../layoutCore.js';
@@ -13,6 +14,8 @@ const NODE_SIZE = { width: 60, height: 40 };
 const SHORT_LABEL_SIZE = { width: 14, height: 21 };
 // Taller than the default 100px rank spacing.
 const TALL_LABEL_SIZE = { width: 40, height: 130 };
+// Wider than the nodes, so counting it would raise the average node width.
+const WIDE_LABEL_SIZE = { width: 400, height: 21 };
 
 function layOut(
   direction: Direction,
@@ -161,6 +164,23 @@ describe('swimlane edge labels do not change node ranks (#8327)', () => {
     expect(validateLayout(labelled).issues.map((issue) => issue.type)).not.toContain(
       'edge-label-overlaps-group-border'
     );
+  });
+
+  it('does not stretch the flow axis of an LR layout by the width of a label', () => {
+    const edges: EdgeSpec[] = [
+      ['A', 'B', 'wide'],
+      ['B', 'C'],
+    ];
+    const lanes = { s1: ['A', 'B', 'C'] };
+    const labelled = layOut('LR', lanes, edges, WIDE_LABEL_SIZE);
+    const plain = layOut('LR', lanes, withoutLabels(edges));
+
+    expect(ranks(labelled)).toEqual(ranks(plain));
+    const gap = (data: LayoutData) => alongFlow(data, 'LR').C - alongFlow(data, 'LR').A;
+    // LR stretches the flow axis by the nodes' own width to height ratio.
+    const stretch = NODE_SIZE.width / NODE_SIZE.height;
+    const reserved = (WIDE_LABEL_SIZE.width + 2 * COORDINATES.EDGE_LABEL_CLEARANCE) * stretch;
+    expect(gap(labelled)).toBeCloseTo(gap(plain) + reserved, 0);
   });
 
   it('gives a label a finite position when an endpoint has no rank', () => {
