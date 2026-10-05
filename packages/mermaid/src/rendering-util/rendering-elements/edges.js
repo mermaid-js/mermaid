@@ -641,7 +641,13 @@ export const insertEdge = function (
   // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
   // clipping below, so their edge ports are unaffected by swimlanes.
   if (layout === 'swimlane') {
-    if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
+    if (
+      !skipIntersect &&
+      head.intersect &&
+      tail.intersect &&
+      Array.isArray(points) &&
+      points.length >= 2
+    ) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
         points = [tail.intersect(points[1]), head.intersect(points[0])];
