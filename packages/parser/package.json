@@ -29,7 +29,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.21.0"
   },
   "keywords": [
     "mermaid",

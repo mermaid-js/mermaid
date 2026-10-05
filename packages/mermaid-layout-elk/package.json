@@ -34,7 +34,7 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=24.21.0"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
