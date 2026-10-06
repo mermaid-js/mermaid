@@ -682,9 +682,10 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     const effectiveLength = isDiamond ? sideLength * 0.3 : sideLength;
     const MAX_PORT_SPACING = 20; // cap spacing to avoid large detours
 
-    // Distribute ports evenly, clamped by MIN and MAX
+    // Distribute ports evenly, clamped by MIN and MAX, never beyond the side
     const spacing = Math.min(
       MAX_PORT_SPACING,
+      effectiveLength / (group.length - 1),
       Math.max(MIN_PORT_SPACING, effectiveLength / (group.length + 1))
     );
     const totalSpan = spacing * (group.length - 1);
