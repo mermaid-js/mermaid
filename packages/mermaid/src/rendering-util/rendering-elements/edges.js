@@ -695,7 +695,13 @@ export const insertEdge = function (
           : wasHorizontal
             ? sharesRow(candidateLast, lastInner)
             : sharesColumn(candidateLast, lastInner) || sharesRow(candidateLast, lastInner);
-        const newLast = wasOrthogonal && !keepsAxis ? originalLast : candidateLast;
+        const before = innerPoints.at(-2) ?? points[0];
+        const runsBack =
+          (lastInner.x - before.x) * (candidateLast.x - lastInner.x) +
+            (lastInner.y - before.y) * (candidateLast.y - lastInner.y) <
+          0;
+        const newLast =
+          wasOrthogonal && !keepsAxis ? originalLast : runsBack ? lastInner : candidateLast;
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
