@@ -200,7 +200,7 @@ describe('bpmnDb', () => {
       expect(edges[0]).toMatchObject({
         pattern: 'dashed',
         arrowTypeStart: 'arrow_hollow_circle',
-        arrowTypeEnd: 'arrow_open',
+        arrowTypeEnd: 'arrow_open_head',
       });
     });
 
@@ -296,7 +296,7 @@ describe('bpmnDb', () => {
     it('draws an association dotted, with an open head only when it points somewhere', () => {
       const { edges } = build(source);
       expect(edges.map((e) => [e.pattern, e.arrowTypeEnd, e.arrowTypeStart])).toEqual([
-        ['dotted', 'arrow_open', 'none'],
+        ['dotted', 'arrow_open_head', 'none'],
         ['dotted', 'none', 'none'],
       ]);
     });

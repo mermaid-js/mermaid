@@ -42,7 +42,7 @@ const arrowTypesMap = {
   arrow_barb: { type: 'barb', fill: true },
   arrow_barb_neo: { type: 'barb', fill: true },
   arrow_circle: { type: 'circle', fill: false },
-  arrow_open: { type: 'openArrow', fill: false },
+  arrow_open_head: { type: 'openArrow', fill: false },
   arrow_hollow_circle: { type: 'hollowCircle', fill: false },
   arrow_hierarchy: { type: 'hierarchy', fill: false },
   aggregation: { type: 'aggregation', fill: false },

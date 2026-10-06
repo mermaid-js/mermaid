@@ -210,7 +210,7 @@ export class BpmnDb {
           flow.kind === 'sequence'
             ? 'arrow_point'
             : flow.kind === 'message' || flow.directed
-              ? 'arrow_open'
+              ? 'arrow_open_head'
               : 'none',
         arrowTypeStart: flow.kind === 'message' ? 'arrow_hollow_circle' : 'none',
         style: [],

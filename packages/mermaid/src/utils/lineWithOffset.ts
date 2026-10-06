@@ -22,7 +22,7 @@ export const markerOffsets2 = {
   arrow_point: 4,
   arrow_cross: 12.5,
   arrow_circle: 12.5,
-  arrow_open: 4,
+  arrow_open_head: 4,
   arrow_hollow_circle: 8,
 } as const;
 

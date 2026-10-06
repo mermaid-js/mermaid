@@ -71,9 +71,9 @@ describe('addEdgeMarker', () => {
     );
   });
 
-  it('should add markers for arrow_hollow_circle:arrow_open', () => {
+  it('should add markers for arrow_hollow_circle:arrow_open_head', () => {
     const arrowTypeStart = 'arrow_hollow_circle';
-    const arrowTypeEnd = 'arrow_open';
+    const arrowTypeEnd = 'arrow_open_head';
     addEdgeMarkers(svgPath, { arrowTypeStart, arrowTypeEnd }, url, id, diagramType);
     expect(svgPath.attr).toHaveBeenCalledWith(
       'marker-start',
@@ -82,6 +82,21 @@ describe('addEdgeMarker', () => {
     expect(svgPath.attr).toHaveBeenCalledWith(
       'marker-end',
       `url(${url}#${id}_${diagramType}-openArrowEnd)`
+    );
+  });
+
+  it('should draw no marker for the arrow_open a block edge carries as its start type', () => {
+    addEdgeMarkers(
+      svgPath,
+      { arrowTypeStart: 'arrow_open', arrowTypeEnd: 'arrow_point' },
+      url,
+      id,
+      diagramType
+    );
+    expect(svgPath.attr).not.toHaveBeenCalledWith('marker-start', expect.anything());
+    expect(svgPath.attr).toHaveBeenCalledWith(
+      'marker-end',
+      `url(${url}#${id}_${diagramType}-pointEnd)`
     );
   });
 
