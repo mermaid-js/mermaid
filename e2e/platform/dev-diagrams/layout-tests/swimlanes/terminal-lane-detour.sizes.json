@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "A",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "A2",
+      "width": 171,
+      "height": 171
+    },
+    {
+      "id": "E",
+      "width": 171,
+      "height": 171
+    },
+    {
+      "id": "F",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "G",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "F2",
+      "width": 150,
+      "height": 51
+    },
+    {
+      "id": "B",
+      "width": 171,
+      "height": 171
+    },
+    {
+      "id": "C",
+      "width": 150,
+      "height": 51
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "a7c42e2c5b9d5fedbd61c62befee1f089ad9f889b644d8eb6ae5671475c70ea7",
+    "capturedAt": "2026-10-06T18:24:57.884Z",
+    "capturedFrom": "headless playwright layout-tests/swimlanes/terminal-lane-detour.mmd dev-viewer config theme=default look=classic"
+  }
+}
