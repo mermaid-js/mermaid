@@ -8,6 +8,16 @@ name: Nightly E2E
 # this workflow only reports its own pass/fail. Check the last result by
 # filtering the Actions tab to the "Nightly E2E" workflow. No Slack/email
 # notification on failure (deliberately out of scope for now).
+#
+# Screenshot capture + Argos upload (RUN_VISUAL_TEST below, argos-upload job)
+# only activate once this workflow runs on mermaid-js/mermaid — same gate
+# e2e.yml's argos-batch job uses, reusing that same Argos project/baseline.
+# On this fork it's always a no-op: there's no Argos project/credentials here,
+# so capturing screenshots with nothing to upload them to would just be wasted
+# work. The e2e job itself stays fork-only (unchanged) — this is this fork's
+# safe environment to validate the Playwright/tier plumbing in; flipping that
+# to mermaid-js/mermaid is a separate decision for whoever preps the upstream
+# PR, not implied by adding this.
 on:
   schedule:
     # 02:00 UTC daily — low-traffic time, adjust as needed.
@@ -20,6 +30,9 @@ permissions:
 defaults:
   run:
     shell: bash
+
+env:
+  RUN_VISUAL_TEST: ${{ github.repository == 'mermaid-js/mermaid' }}
 
 jobs:
   e2e:
@@ -78,3 +91,99 @@ jobs:
           path: test-results/
           retention-days: 3
           if-no-files-found: ignore
+
+      # Hand the captured PNGs to the argos-upload job below, which uploads
+      # them once. Mirrors e2e.yml's "Upload captured screenshots" step.
+      - name: Upload captured screenshots
+        if: ${{ env.RUN_VISUAL_TEST == 'true' && !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nightly-screenshots-${{ matrix.containers }}
+          path: e2e/screenshots/
+          retention-days: 1
+          if-no-files-found: ignore
+
+  # Uploads the nightly pr-check+nightly-check screenshots to Argos as a
+  # single (subset) build, diffed against the same develop baseline the PR
+  # runs in e2e.yml use — same Argos project, same reference branch, no
+  # separate setup needed once this runs on mermaid-js/mermaid. Writes the
+  # build's review URL to this run's Summary page, since (unlike a PR run)
+  # there's no PR here for Argos's own check to attach a link to.
+  #
+  # needs.e2e.result == 'success' requires every shard to pass (the matrix is
+  # fail-fast: false, so its result is failure if any shard failed) — a
+  # partial/failed run would otherwise upload an incomplete screenshot set.
+  argos-upload:
+    if: >-
+      ${{
+        github.repository == 'mermaid-js/mermaid' &&
+        needs.e2e.result == 'success'
+      }}
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download screenshot artifacts
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          pattern: nightly-screenshots-*
+          merge-multiple: true
+          path: e2e/screenshots
+
+      # Not a superset baseline (that's the develop-push build in e2e.yml) —
+      # --subset so this diffs cleanly against it, same as PR/manual runs
+      # there. Split into K parallel uploads sharing one nonce for the same
+      # reason e2e.yml's "Upload images to Argos" step does: nightly-check's
+      # ~1,375 fixtures are in the same volume range that already overflowed
+      # a single finalize request there (HTTP 413, "request entity too
+      # large") — Argos combines the indices into one build once all K report.
+      - name: Upload screenshots to Argos
+        id: argos
+        env:
+          ARGOS_SUBSET: true
+          ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t groups < <(
+            cd e2e/screenshots &&
+              find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
+              sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
+          )
+          K=5
+          : > argos-upload.log
+          for i in $(seq 1 "$K"); do
+            globs=()
+            for j in "${!groups[@]}"; do
+              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
+            done
+            [ ${#globs[@]} -eq 0 ] && continue
+            pnpm exec argos upload e2e/screenshots \
+              --build-name "Nightly E2E" \
+              --files "${globs[@]}" \
+              --parallel --parallel-total "$K" --parallel-index "$i" \
+              | tee -a argos-upload.log
+          done
+
+          BUILD_URL=$(grep -oE 'https://[^ ]*argos-ci\.com[^ ]*' argos-upload.log | tail -1 || true)
+          {
+            echo '## Argos visual diff'
+            echo ''
+            if [ -n "$BUILD_URL" ]; then
+              echo "Review this run's screenshots: $BUILD_URL"
+            else
+              echo '_Argos build URL not found in upload output — check the "Upload screenshots to Argos" step log._'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
