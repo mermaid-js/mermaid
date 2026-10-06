@@ -484,12 +484,19 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
     return info.absDy === 0 ? Infinity : info.absDx / info.absDy;
   };
-  const secondarySide = (info: EdgeSideInfo): SideT => {
+  const secondarySides = (info: EdgeSideInfo): [SideT, ...SideT[]] => {
     if (info.srcSide === 'top' || info.srcSide === 'bottom') {
-      return info.dxSign >= 0 ? 'right' : 'left';
+      if (info.dxSign === 0) {
+        return ['right', 'left'];
+      }
+      return [info.dxSign > 0 ? 'right' : 'left'];
     }
-    return info.dySign >= 0 ? 'bottom' : 'top';
+    if (info.dySign === 0) {
+      return ['bottom', 'top'];
+    }
+    return [info.dySign > 0 ? 'bottom' : 'top'];
   };
+  const secondarySide = (info: EdgeSideInfo): SideT => secondarySides(info)[0];
 
   // Group by (src, srcSide) so we can detect 2+ edges sharing a side.
   const sourceSideGroups = new Map<string, EdgeSideInfo[]>();
@@ -546,8 +553,15 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     // reassignment to its secondary side, bumping δ_s counters as we go.
     for (let g = 1; g < group.length; g++) {
       const info = group[g];
-      const secondary = secondarySide(info);
       const primaryLoad = sideLoad.get(loadKey(info.srcId, info.srcSide)) ?? 0;
+      // A target level with the source gives no secondary face a preference, so
+      // take the less loaded of the two (the first one on a tie).
+      const secondary = secondarySides(info).reduce((best, side) =>
+        (sideLoad.get(loadKey(info.srcId, side)) ?? 0) <
+        (sideLoad.get(loadKey(info.srcId, best)) ?? 0)
+          ? side
+          : best
+      );
       const secondaryLoad = sideLoad.get(loadKey(info.srcId, secondary)) ?? 0;
       // Only move to the secondary side if it's strictly less loaded
       // than the primary (avoids ping-ponging when both sides are
