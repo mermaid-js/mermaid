@@ -4,6 +4,7 @@ import { setLogLevel } from '../../../../logger.js';
 import type { LayoutData } from '../../../types.js';
 import { runSwimlanesDdlt } from '../../ddlt/backends.js';
 import { loadSizesFixture } from '../../ddlt/fixtureSizes.js';
+import type { SizesFixture } from '../../ddlt/types.js';
 import { parseMmdFileToLayoutData } from '../../ddlt/parseToLayoutData.js';
 
 const FIXTURES_DIR = 'e2e/platform/dev-diagrams/layout-tests/swimlanes';
@@ -21,22 +22,36 @@ export async function layOutFixture(
   name: string,
   measuredInViewer: NodeSizes = {}
 ): Promise<LayoutData> {
-  setLogLevel('fatal');
-  if (!registered) {
-    addDiagrams();
-    registered = true;
-  }
-  const base = resolve(process.cwd(), FIXTURES_DIR, name);
-  const sizes = loadSizesFixture(`${base}.sizes.json`);
+  const sizes = loadSizesFixture(`${resolve(process.cwd(), FIXTURES_DIR, name)}.sizes.json`);
   for (const node of sizes.nodes) {
     const measured = measuredInViewer[node.id];
     if (measured) {
       [node.width, node.height] = measured;
     }
   }
-  const layout = await parseMmdFileToLayoutData(`${base}.mmd`, {
-    stampFlowchartRendererFields: true,
-  });
+  return layOutWithSizes(name, sizes);
+}
+
+/** Lays out a fixture that has no captured sizes file, from the sizes the dev viewer measures. */
+export function layOutMeasured(name: string, measuredInViewer: NodeSizes): Promise<LayoutData> {
+  const nodes = Object.entries(measuredInViewer).map(([id, [width, height]]) => ({
+    id,
+    width,
+    height,
+  }));
+  return layOutWithSizes(name, { nodes });
+}
+
+async function layOutWithSizes(name: string, sizes: SizesFixture): Promise<LayoutData> {
+  setLogLevel('fatal');
+  if (!registered) {
+    addDiagrams();
+    registered = true;
+  }
+  const layout = await parseMmdFileToLayoutData(
+    `${resolve(process.cwd(), FIXTURES_DIR, name)}.mmd`,
+    { stampFlowchartRendererFields: true }
+  );
   (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'swimlane';
   runSwimlanesDdlt(layout, sizes);
   return layout;

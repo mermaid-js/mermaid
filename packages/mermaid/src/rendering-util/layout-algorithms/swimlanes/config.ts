@@ -12,6 +12,15 @@ export const EDGE_ROUTING = {
 
   /** Horizontal offset from lane boundary to corridor center (px) */
   LANE_MARGIN: 20,
+
+  /** Edge of the square the point marker draws an arrowhead in (px); see markers.js */
+  ARROWHEAD_SIZE: 8,
+
+  /** Clear space kept between two arrowheads that land side by side on one face (px) */
+  ARROWHEAD_GAP: 4,
+
+  /** Closest two edges may end on one face of a node: an arrowhead and the gap beside it (px) */
+  MIN_ARROWHEAD_SPACING: 12,
 } as const;
 
 /**
