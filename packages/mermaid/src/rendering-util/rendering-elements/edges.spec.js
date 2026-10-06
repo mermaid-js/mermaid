@@ -354,6 +354,37 @@ describe('insertEdge swimlane final segment axis', () => {
 
     expect(renderedPoints.at(-1)).toEqual(originalLast);
   });
+
+  it('does not append a final point behind the last bend', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // A shape whose boundary sits just behind the point the layout pinned: accepting it
+    // would run the last segment back against the direction the edge travelled.
+    const pinned = { x: 300, y: 100 };
+    const rect = { x: 350, y: 100, width: 104.6, height: 40 };
+    const edge = {
+      id: 'L_A5_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [{ x: 0, y: 0 }, { x: 0, y: 100 }, pinned, { ...pinned }],
+    };
+    const tail = { intersect: (point) => point };
+    const head = { intersect: (point) => intersectRect(rect, point) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const renderedPoints = JSON.parse(atob(svg.select('path').attr('data-points')));
+    const [beforeLast, last] = renderedPoints.slice(-2);
+
+    expect(last.x - beforeLast.x).toBeGreaterThanOrEqual(0);
+    expect(last).toEqual(pinned);
+  });
 });
 
 describe('insertEdge swimlane parallel ports', () => {
