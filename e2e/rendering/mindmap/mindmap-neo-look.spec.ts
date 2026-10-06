@@ -87,7 +87,7 @@ for (const theme of repaintedThemes) {
             });
           });
           for (const { label, contrast } of contrasts) {
-            expect(contrast, `contrast for "${label}"`).toBeGreaterThanOrEqual(3);
+            expect(contrast, `contrast for "${label}"`).toBeGreaterThanOrEqual(4.5);
           }
         }
       );
