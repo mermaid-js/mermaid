@@ -21,6 +21,9 @@ export const EDGE_ROUTING = {
 
   /** Closest two edges may end on one face of a node: an arrowhead and the gap beside it (px) */
   MIN_ARROWHEAD_SPACING: 12,
+
+  /** Distance under which a bend of one route and another route read as one stroke (px) */
+  ROUTE_TOUCH_TOLERANCE: 2,
 } as const;
 
 /**
