@@ -272,6 +272,9 @@ export class MindmapDB {
       padding: node.padding,
       cssClasses: classes,
       cssStyles: [],
+      // Mindmap styles don't set text-anchor: middle, so SVG-text labels must be
+      // offset by half their width to be centred (issue #8387)
+      centerLabel: true,
       look: conf.look,
       icon: node.icon,
       x: node.x,
