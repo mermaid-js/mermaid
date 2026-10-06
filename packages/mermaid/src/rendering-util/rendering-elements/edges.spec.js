@@ -356,6 +356,52 @@ describe('insertEdge swimlane final segment axis', () => {
   });
 });
 
+describe('insertEdge swimlane parallel ports', () => {
+  const NODE_WIDTH = 152;
+  const NODE_HEIGHT = 45;
+  const PORT_OFFSET = 13.5;
+  const MIN_PORT_SEPARATION = PORT_OFFSET / 2;
+  const BOUNDARY_TOLERANCE = 0.01;
+  const left = { x: 36, y: 0, width: NODE_WIDTH, height: NODE_HEIGHT };
+  const right = { x: 550.8, y: 0, width: NODE_WIDTH, height: NODE_HEIGHT };
+  const leftFace = left.x + NODE_WIDTH / 2;
+  const rightFace = right.x - NODE_WIDTH / 2;
+
+  const straightEdge = (id, from, to, y) => ({
+    id,
+    cssCompiledStyles: {},
+    style: [],
+    thickness: 'normal',
+    pattern: 'solid',
+    classes: 'flowchart-link',
+    curve: 'rounded',
+    look: 'neo',
+    arrowTypeEnd: 'arrow_point',
+    points: [
+      { x: from, y },
+      { x: to, y },
+    ],
+  });
+  const shape = (rect) => ({ intersect: (point) => intersectRect(rect, point) });
+  const drawn = (svg, edge, tail, head) => {
+    insertEdge(svg, edge, null, 'swimlane', shape(tail), shape(head), 'diagram');
+    return JSON.parse(atob(svg.select(`path[data-id="${edge.id}"]`).attr('data-points')));
+  };
+
+  it('keeps two opposing edges on their own ports instead of pulling them onto one line', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+
+    const forward = drawn(svg, straightEdge('L_A_B_0', leftFace, rightFace, 0), left, right);
+    const back = drawn(svg, straightEdge('L_B_A_0', rightFace, leftFace, PORT_OFFSET), right, left);
+
+    expect(Math.abs(back[0].y - forward[0].y)).toBeGreaterThanOrEqual(MIN_PORT_SEPARATION);
+    expect(Math.abs(back[1].y - forward[1].y)).toBeGreaterThanOrEqual(MIN_PORT_SEPARATION);
+    expect(Math.abs(back[0].x - rightFace)).toBeLessThan(BOUNDARY_TOLERANCE);
+    expect(Math.abs(back[1].x - leftFace)).toBeLessThan(BOUNDARY_TOLERANCE);
+  });
+});
+
 describe('setTerminalWidth', () => {
   // #8329: a hard-coded 12px height clipped the bottom of cardinalities whose text is 21px tall.
   it('never sizes the terminal label box smaller than the measured label', () => {

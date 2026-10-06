@@ -648,22 +648,28 @@ export const insertEdge = function (
       Array.isArray(points) &&
       points.length >= 2
     ) {
+      const TOLERANCE = 0.5;
+      const sharesColumn = (a, b) => Math.abs(a.x - b.x) < TOLERANCE;
+      const sharesRow = (a, b) => Math.abs(a.y - b.y) < TOLERANCE;
       if (points.length === 2) {
-        // Simple straight edge: just clip the two endpoints to the node boundaries.
-        points = [tail.intersect(points[1]), head.intersect(points[0])];
+        // A straight edge clips each end against the shape it leaves or enters. An
+        // axis-aligned one is a port, possibly offset from the node centre: each shape is
+        // asked about its own end so sibling ports stay parallel. A slanted one has no
+        // port, so each shape is asked about the far end to pick the face it faces.
+        const [first, last] = points;
+        points =
+          sharesColumn(first, last) || sharesRow(first, last)
+            ? [tail.intersect(first), head.intersect(last)]
+            : [tail.intersect(last), head.intersect(first)];
       } else {
         // For multi-segment paths, keep the inner bend points and just adjust the entry/exit
         // segments near the nodes.
         const innerPoints = points.slice(1, -1);
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
-        const TOLERANCE = 0.5;
-
         const newFirst = tail.intersect(firstInner);
 
         const originalLast = points[points.length - 1];
-        const sharesColumn = (a, b) => Math.abs(a.x - b.x) < TOLERANCE;
-        const sharesRow = (a, b) => Math.abs(a.y - b.y) < TOLERANCE;
         const candidateLast = head.intersect(lastInner);
         const wasOrthogonal =
           sharesColumn(originalLast, lastInner) || sharesRow(originalLast, lastInner);
