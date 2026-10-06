@@ -175,4 +175,28 @@ test.describe('Class diagram V3 ELK', () => {
       { logLevel: 1, htmlLabels: true, fontFamily: 'arial', layout: 'dagre' }
     );
   });
+
+  test('ELK-10: should keep a cardinality that enters another namespace off its frame (#8335)', async ({
+    page,
+  }, testInfo) => {
+    await imgSnapshotTest(
+      page,
+      testInfo,
+      `
+    classDiagram
+      direction LR
+      namespace Shop {
+        class Customer
+        class Order
+      }
+      namespace Catalog {
+        class Product
+      }
+      Customer "1" --> "*" Order : places
+      Order "*" --> "1..*" Product : contains
+      Customer "0..1" -- "1" Address : lives at
+      `,
+      { logLevel: 1, htmlLabels: true, layout: 'elk' }
+    );
+  });
 });
