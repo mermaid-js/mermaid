@@ -82,7 +82,11 @@ class CompressedIntervalIndex implements OrthogonalIntervalIndex {
     >
   ) {
     this.coordinateCount = new Set(bands.flatMap(({ low, high }) => [low, high])).size;
-    this.intervalCount = bands.reduce((total, band) => total + band.intervals.length, 0);
+    let intervalCount = bands.reduce((total, band) => total + band.intervals.length, 0);
+    for (const intervals of strictBoundaryIntervals.values()) {
+      intervalCount += intervals.length;
+    }
+    this.intervalCount = intervalCount;
     for (const band of bands) {
       this.byLow.set(band.low, band);
       this.byHigh.set(band.high, band);
@@ -625,7 +629,8 @@ function rayHit(
 
 function createIntervalIndex(
   obstacles: readonly RouterObstacle[],
-  orientation: GridOrientation
+  orientation: GridOrientation,
+  budget: { intervalCount: number; maxEstimatedBytes: number }
 ): OrthogonalIntervalIndex {
   const coordinates = [
     ...new Set(
@@ -659,10 +664,18 @@ function createIntervalIndex(
     );
   const freezeIntervals = (
     intervals: readonly { low: number; high: number }[]
-  ): readonly (readonly [number, number])[] =>
-    Object.freeze(
+  ): readonly (readonly [number, number])[] => {
+    const intervalCount = budget.intervalCount + intervals.length;
+    enforceCap(
+      estimatedTopologyBytes(0, 0, obstacles.length, intervalCount),
+      budget.maxEstimatedBytes,
+      'estimated_memory_cap'
+    );
+    budget.intervalCount = intervalCount;
+    return Object.freeze(
       intervals.map((interval) => Object.freeze([interval.low, interval.high] as const))
     );
+  };
   for (let index = 0; index < coordinates.length; index++) {
     const coordinate = coordinates[index];
     for (const obstacle of ends.get(coordinate) ?? []) {
@@ -993,8 +1006,17 @@ export function buildContainerRoutingTopology(
     ...obstacles.flatMap((obstacle) => cornerRecords(obstacle, obstacle.id)),
     ...portalRanges.flatMap((range) => portalRecords(range, bounds)),
   ]);
-  const horizontalIntervals = createIntervalIndex(obstacles, 'H');
-  const verticalIntervals = createIntervalIndex(obstacles, 'V');
+  const intervalBudget = {
+    intervalCount: 0,
+    maxEstimatedBytes: options.caps?.maxEstimatedBytes ?? DEFAULT_MAX_ROUTING_ESTIMATED_BYTES,
+  };
+  enforceCap(
+    estimatedTopologyBytes(0, 0, obstacles.length, 0),
+    intervalBudget.maxEstimatedBytes,
+    'estimated_memory_cap'
+  );
+  const horizontalIntervals = createIntervalIndex(obstacles, 'H', intervalBudget);
+  const verticalIntervals = createIntervalIndex(obstacles, 'V', intervalBudget);
   const projections: VertexRecord[] = [];
   const sides: readonly GridSide[] = ['left', 'right', 'top', 'bottom'];
   for (const seed of seeds) {

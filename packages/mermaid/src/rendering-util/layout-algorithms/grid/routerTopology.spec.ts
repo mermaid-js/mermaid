@@ -269,6 +269,31 @@ describe('grid router topology', () => {
     expect(firstMetrics.estimatedBytes).toBeGreaterThan(0);
   });
 
+  it('counts strict boundary intervals and enforces their memory cap during construction', () => {
+    const input = {
+      containerId: '__grid_root__',
+      ancestryPath: ['__grid_root__'],
+      bounds: { left: 0, right: 100, top: 0, bottom: 100 },
+      obstacles: [
+        { id: 'first', bounds: { left: 10, right: 30, top: 10, bottom: 40 } },
+        { id: 'second', bounds: { left: 60, right: 80, top: 30, bottom: 70 } },
+      ],
+    };
+
+    const topology = buildContainerRoutingTopology(input);
+
+    expect(topology.horizontalIntervals.intervalCount).toBe(6);
+    expect(topology.verticalIntervals.intervalCount).toBe(2);
+    expect(() =>
+      buildContainerRoutingTopology(input, { caps: { maxEstimatedBytes: 250 } })
+    ).toThrowError(
+      expect.objectContaining({
+        reason: 'estimated_memory_cap',
+        message: 'Grid routing estimated_memory_cap exceeded: 264 > 250',
+      })
+    );
+  });
+
   it.each([
     ['vertex_cap', { maxVertices: 1 }],
     ['adjacency_cap', { maxAdjacencyEntries: 1 }],
