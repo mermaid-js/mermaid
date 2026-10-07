@@ -138,7 +138,7 @@ Defined in: [packages/mermaid/src/config.type.ts:114](https://github.com/mermaid
 Elk specific option giving the width / height ratio the drawing should
 approach, for example `1.78` for 16:9. `wrappingStrategy` uses it to
 decide where to fold the drawing. A subgraph with its own layout
-algorithm keeps that algorithm's ratio.
+algorithm keeps that algorithm's ratio. Must be greater than zero.
 
 #### considerModelOrder?
 
