@@ -6,6 +6,11 @@ const init = Promise.all([
   mermaid.registerExternalDiagrams([zenuml]),
   mermaid.registerLayoutLoaders(tidyTreeLayout),
 ]);
+const fontAwesomePack = (name: string, pack: string) => ({
+  name,
+  loader: () =>
+    fetch(`https://unpkg.com/@iconify-json/${pack}/icons.json`).then((res) => res.json()),
+});
 mermaid.registerIconPacks([
   {
     name: 'logos',
@@ -19,6 +24,10 @@ mermaid.registerIconPacks([
         res.json()
       ),
   },
+  fontAwesomePack('fa', 'fa6-solid'),
+  fontAwesomePack('fas', 'fa6-solid'),
+  fontAwesomePack('far', 'fa6-regular'),
+  fontAwesomePack('fab', 'fa6-brands'),
 ]);
 
 export const render = async (id: string, code: string, config: MermaidConfig): Promise<string> => {
