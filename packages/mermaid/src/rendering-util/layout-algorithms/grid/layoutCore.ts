@@ -69,7 +69,6 @@ function layoutContainer(
   const padding = group ? Math.max(group.padding ?? 0, config.containerPadding) : 0;
   const titleBand = group ? titleBandFor(group, config.titleGap) : 0;
   const routingGutter = group ? GROUP_ROUTING_GUTTER : 0;
-  const contentLeft = group ? padding + routingGutter : 0;
   const contentTop = group ? padding + titleBand + routingGutter : 0;
 
   const directItems = (forest.childrenByParent.get(containerId) ?? []).filter(
@@ -108,13 +107,27 @@ function layoutContainer(
   const sortedRows = [...rows].sort((a, b) => a - b);
   const sortedColumns = [...columns].sort((a, b) => a - b);
 
+  const contentWidth = sortedColumns.reduce(
+    (total, column, index) =>
+      total + (columnWidths.get(column) ?? 0) + (index > 0 ? config.columnGap : 0),
+    0
+  );
+  // A title sets the minimum group width. If it is wider than the content and its insets,
+  // center the occupied tracks so the extra horizontal space is split evenly on both sides.
+  const width = group
+    ? Math.max(
+        contentWidth + (padding + routingGutter) * 2,
+        (group.labelBBox?.width ?? 0) + padding * 2
+      )
+    : contentWidth;
+  const contentLeft = group ? (width - contentWidth) / 2 : 0;
+
   const columnOrigins = new Map<number, number>();
   let xCursor = contentLeft;
   for (const column of sortedColumns) {
     columnOrigins.set(column, xCursor);
     xCursor += (columnWidths.get(column) ?? 0) + config.columnGap;
   }
-  const contentWidth = sortedColumns.length ? xCursor - config.columnGap - contentLeft : 0;
 
   const rowOrigins = new Map<number, number>();
   let yCursor = contentTop;
@@ -224,12 +237,6 @@ function layoutContainer(
     }
   }
 
-  const width = group
-    ? Math.max(
-        contentWidth + (padding + routingGutter) * 2,
-        (group.labelBBox?.width ?? 0) + padding * 2
-      )
-    : contentWidth;
   const height = group ? gridHeight + titleBand + (padding + routingGutter) * 2 : gridHeight;
 
   containers.set(containerId, {

@@ -191,6 +191,24 @@ describe('grid layout core', () => {
     expect(lrCoords).toEqual(tbCoords);
   });
 
+  it('centers content and routing corridors when the title determines the group width', () => {
+    const container = group('wide-title', 'Wide title');
+    container.labelBBox = { width: 200, height: 20 };
+    const child = leaf('child', 40, 20, { row: 1, column: 1 }, container.id);
+    const data = layout([container, child]);
+
+    const result = runGridLayoutCore(data);
+    const containerMeta = result.containers.get(container.id);
+
+    expect(container).toMatchObject({ x: 120, width: 240 });
+    expect(child).toMatchObject({ x: 120 });
+    expect(containerMeta).toMatchObject({
+      contentLeft: 100,
+      contentRight: 140,
+      verticalCorridors: [80, 160],
+    });
+  });
+
   it('precomputes boundary and midpoint corridors for sparse rows and columns', () => {
     const data = layout([
       leaf('top-left', 40, 20, { row: 1, column: 1 }),
