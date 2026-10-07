@@ -22,6 +22,10 @@ on:
     # 02:00 UTC daily — low-traffic time, adjust as needed.
     - cron: '0 2 * * *'
   workflow_dispatch: {}
+  # TEMPORARY — dry-running this workflow on this PR since it hasn't been
+  # merged to develop yet, so workflow_dispatch isn't registered. Remove this
+  # pull_request trigger before merging.
+  pull_request:
 
 permissions:
   contents: read
