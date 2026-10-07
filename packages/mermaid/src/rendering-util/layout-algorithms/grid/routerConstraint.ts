@@ -1,6 +1,6 @@
 import type { Point } from '../../../types.js';
 import type { Node } from '../../types.js';
-import { normalizePolyline } from '../layout-utils/geometry.js';
+import { normalizePolyline, PIXEL_EPSILON } from '../layout-utils/geometry.js';
 import { rectForNode } from '../layout-utils/helpers.js';
 import {
   LANE_SEPARATION_PX,
@@ -35,6 +35,86 @@ export function isPairSeparationError(error: unknown): boolean {
 export function routerRect(node: Node): RouterRect {
   const rect = rectForNode(node);
   return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
+}
+
+function canonicalizeOrthogonalPolyline(points: readonly Point[]): Point[] | undefined {
+  if (points.length < 2 || points.some(({ x, y }) => !Number.isFinite(x) || !Number.isFinite(y))) {
+    return undefined;
+  }
+
+  const collapsed: Point[] = [{ ...points[0] }];
+  for (let index = 1; index < points.length; index++) {
+    const point = points[index];
+    const previous = collapsed.at(-1)!;
+    const isNearDuplicate =
+      Math.abs(point.x - previous.x) <= PIXEL_EPSILON &&
+      Math.abs(point.y - previous.y) <= PIXEL_EPSILON;
+    if (!isNearDuplicate) {
+      collapsed.push({ ...point });
+      continue;
+    }
+    if (index !== points.length - 1) {
+      continue;
+    }
+    while (collapsed.length > 1) {
+      const beforePrevious = collapsed.at(-2)!;
+      if (
+        Math.abs(point.x - beforePrevious.x) > PIXEL_EPSILON ||
+        Math.abs(point.y - beforePrevious.y) > PIXEL_EPSILON
+      ) {
+        break;
+      }
+      collapsed.pop();
+    }
+    if (collapsed.length === 1) {
+      return undefined;
+    }
+    collapsed[collapsed.length - 1] = { ...point };
+  }
+  if (collapsed.length < 2) {
+    return undefined;
+  }
+
+  const orientations: GridOrientation[] = [];
+  for (let index = 0; index < collapsed.length - 1; index++) {
+    const a = collapsed[index];
+    const b = collapsed[index + 1];
+    const dx = Math.abs(b.x - a.x);
+    const dy = Math.abs(b.y - a.y);
+    if (dy <= PIXEL_EPSILON) {
+      orientations.push('H');
+    } else if (dx <= PIXEL_EPSILON) {
+      orientations.push('V');
+    } else {
+      return undefined;
+    }
+  }
+
+  const canonical = collapsed.map((point) => ({ ...point }));
+  for (let start = 0; start < orientations.length; ) {
+    const orientation = orientations[start];
+    let end = start + 1;
+    while (end < orientations.length && orientations[end] === orientation) {
+      end++;
+    }
+    const axis = orientation === 'H' ? 'y' : 'x';
+    if (
+      start === 0 &&
+      end === collapsed.length - 1 &&
+      collapsed[start][axis] !== collapsed[end][axis]
+    ) {
+      return undefined;
+    }
+    const coordinate = end === collapsed.length - 1 ? collapsed[end][axis] : collapsed[start][axis];
+    for (let pointIndex = start; pointIndex <= end; pointIndex++) {
+      if (Math.abs(collapsed[pointIndex][axis] - coordinate) > PIXEL_EPSILON) {
+        return undefined;
+      }
+      canonical[pointIndex][axis] = coordinate;
+    }
+    start = end;
+  }
+  return canonical;
 }
 
 function segmentEntersRect(a: Point, b: Point, rect: RouterRect): boolean {
@@ -76,12 +156,12 @@ export function validateSameContainerRoute(
 ): boolean {
   // Terminal segments may touch their own endpoint rectangles, but must leave them directly and
   // every other segment must remain outside clearance-inflated child geometry.
-  const normalized = normalizePolyline([...points]);
-  if (
-    normalized.points.length < 2 ||
-    normalized.points.some(({ x, y }) => !Number.isFinite(x) || !Number.isFinite(y)) ||
-    normalized.segments.some(({ orientation }) => orientation === 'Z')
-  ) {
+  const canonical = canonicalizeOrthogonalPolyline(points);
+  if (!canonical) {
+    return false;
+  }
+  const normalized = normalizePolyline(canonical);
+  if (normalized.points.length < 2) {
     return false;
   }
   if (
@@ -131,12 +211,12 @@ export function validateContainerSegment(
   containerId: GridContainerId,
   result: GridLayoutResult
 ): boolean {
-  const normalized = normalizePolyline([...points]);
-  if (
-    normalized.points.length < 2 ||
-    normalized.points.some(({ x, y }) => !Number.isFinite(x) || !Number.isFinite(y)) ||
-    normalized.segments.some(({ orientation }) => orientation === 'Z')
-  ) {
+  const canonical = canonicalizeOrthogonalPolyline(points);
+  if (!canonical) {
+    return false;
+  }
+  const normalized = normalizePolyline(canonical);
+  if (normalized.points.length < 2) {
     return false;
   }
   const children = (result.forest.childrenByParent.get(containerId) ?? []).filter(
