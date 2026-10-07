@@ -681,9 +681,14 @@ export const insertEdge = function (
             ? sharesRow(candidateLast, lastInner)
             : sharesColumn(candidateLast, lastInner) || sharesRow(candidateLast, lastInner);
         const before = innerPoints.at(-2) ?? points[0];
+        const endsAtBend =
+          Math.abs(originalLast.x - lastInner.x) < TOLERANCE &&
+          Math.abs(originalLast.y - lastInner.y) < TOLERANCE;
+        const heading = endsAtBend ? lastInner : originalLast;
+        const from = endsAtBend ? before : lastInner;
         const runsBack =
-          (lastInner.x - before.x) * (candidateLast.x - lastInner.x) +
-            (lastInner.y - before.y) * (candidateLast.y - lastInner.y) <
+          (heading.x - from.x) * (candidateLast.x - lastInner.x) +
+            (heading.y - from.y) * (candidateLast.y - lastInner.y) <
           0;
         const newLast =
           wasOrthogonal && !keepsAxis ? originalLast : runsBack ? lastInner : candidateLast;

@@ -385,6 +385,36 @@ describe('insertEdge swimlane final segment axis', () => {
     expect(last.x - beforeLast.x).toBeGreaterThanOrEqual(0);
     expect(last).toEqual(pinned);
   });
+
+  it('does not point the final segment against the original one when it turns at the last bend', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // The route arrives at the bend along a row and leaves it downwards. A boundary point
+    // above the bend shares its column and is perpendicular to the arriving segment, so
+    // only the original final segment shows that it would flip the arrow.
+    const bend = { x: 100, y: 0 };
+    const originalLast = { x: 100, y: 20 };
+    const edge = {
+      id: 'L_A6_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [{ x: 0, y: 0 }, bend, originalLast],
+    };
+    const tail = { intersect: (point) => point };
+    const head = { intersect: () => ({ x: 100, y: -20 }) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const renderedPoints = JSON.parse(atob(svg.select('path').attr('data-points')));
+
+    expect(renderedPoints.at(-1).y).toBeGreaterThanOrEqual(bend.y);
+  });
 });
 
 describe('insertEdge swimlane parallel ports', () => {
