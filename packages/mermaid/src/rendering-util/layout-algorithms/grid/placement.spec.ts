@@ -166,6 +166,38 @@ describe('grid placement', () => {
     warn.mockRestore();
   });
 
+  it('reports authored placement ids for invalid generated-node coordinates', () => {
+    const item = node('entity-CUSTOMER-0', undefined, 'CUSTOMER');
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          CUSTOMER: { row: 0, column: 1 },
+        },
+      }),
+    } as LayoutData);
+
+    let thrown: unknown;
+    try {
+      resolveGridPlacements([item], new Map([[item.id, 0]]), gridConfig);
+    } catch (error) {
+      thrown = error;
+    }
+
+    expect(thrown).toMatchObject({
+      code: 'GRID_INVALID_COORDINATE',
+      message:
+        'GRID_INVALID_COORDINATE: Invalid row for placement "CUSTOMER" (node "entity-CUSTOMER-0")',
+      details: {
+        nodeId: 'entity-CUSTOMER-0',
+        placementId: 'CUSTOMER',
+        field: 'row',
+        value: 0,
+      },
+    });
+  });
+
   it('rejects explicit null coordinates instead of treating them as omitted', () => {
     const items = [node('bad', { row: null, column: 1 })];
     const sourceOrder = new Map([['bad', 0]]);

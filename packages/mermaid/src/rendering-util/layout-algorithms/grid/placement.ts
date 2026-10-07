@@ -60,6 +60,7 @@ function ownPlacementFrom(value: unknown): Partial<GridPlacement> {
 
 function validateCoordinate(
   nodeId: string,
+  placementId: string,
   field: 'row' | 'column',
   value: unknown
 ): asserts value is number | undefined {
@@ -67,11 +68,17 @@ function validateCoordinate(
     return;
   }
   if (!isValidGridCoordinate(value)) {
-    throw gridError('GRID_INVALID_COORDINATE', `Invalid ${field} for "${nodeId}"`, {
-      nodeId,
-      field,
-      value,
-    });
+    const generatedNodeContext = nodeId === placementId ? '' : ` (node "${nodeId}")`;
+    throw gridError(
+      'GRID_INVALID_COORDINATE',
+      `Invalid ${field} for placement "${placementId}"${generatedNodeContext}`,
+      {
+        nodeId,
+        placementId,
+        field,
+        value,
+      }
+    );
   }
 }
 
@@ -162,7 +169,8 @@ function resolveItemPlacement(
   sourceOrder: Map<string, number>,
   config: GridLayoutConfigNormalized
 ): GridResolvedPlacement {
-  const configPlacement = config.placements.get(placementId(item)) ?? {};
+  const authoredPlacementId = placementId(item);
+  const configPlacement = config.placements.get(authoredPlacementId) ?? {};
   const metadataPlacement = ownPlacementFrom(item.metadata);
 
   // Node metadata is closest to the authored node, so it deliberately wins over the shared map.
@@ -186,8 +194,8 @@ function resolveItemPlacement(
   const column = Object.hasOwn(metadataPlacement, 'column')
     ? metadataPlacement.column
     : configPlacement.column;
-  validateCoordinate(item.id, 'row', row);
-  validateCoordinate(item.id, 'column', column);
+  validateCoordinate(item.id, authoredPlacementId, 'row', row);
+  validateCoordinate(item.id, authoredPlacementId, 'column', column);
 
   return {
     item,
