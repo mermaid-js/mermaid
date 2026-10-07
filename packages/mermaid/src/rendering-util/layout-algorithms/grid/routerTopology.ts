@@ -412,6 +412,8 @@ function normalizeRect(rect: RouterRect): RouterRect {
   const top = normalizeCoordinate(Math.min(rect.top, rect.bottom));
   const bottom = normalizeCoordinate(Math.max(rect.top, rect.bottom));
   if (left === right || top === bottom) {
+    // The production layout path should reject zero-area nodes before routing; this guards direct
+    // topology callers and invalid derived geometry.
     throw new Error('Grid routing rectangles must have positive area');
   }
   return { left, right, top, bottom };
