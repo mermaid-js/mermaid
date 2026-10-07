@@ -55,6 +55,21 @@ describe('grid groups', () => {
     );
   });
 
+  it.each([
+    {
+      name: 'regular nodes',
+      nodes: [leaf('duplicate'), leaf('duplicate')],
+    },
+    {
+      name: 'an edge-label helper and a regular node',
+      nodes: [{ ...leaf('duplicate'), isEdgeLabel: true } as Node, leaf('duplicate')],
+    },
+  ])('rejects duplicate ids for $name', ({ nodes }) => {
+    expect(() => buildGridForest(nodes)).toThrow(
+      'GRID_INVALID_CONTAINMENT: Duplicate node id "duplicate"'
+    );
+  });
+
   it('supports 15,000 levels of valid nesting without overflowing the call stack', () => {
     const depth = 15_000;
     const nodes: Node[] = [group('g0')];

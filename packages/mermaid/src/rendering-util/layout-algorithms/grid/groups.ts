@@ -31,6 +31,11 @@ export function buildGridForest(nodes: Node[]): GridForest {
         { traversedIds: [node.id] }
       );
     }
+    if (nodeById.has(node.id)) {
+      throw gridError('GRID_INVALID_CONTAINMENT', `Duplicate node id "${node.id}"`, {
+        traversedIds: [node.id],
+      });
+    }
     nodeById.set(node.id, node);
     if (isEdgeLabelNode(node)) {
       helperNodeIds.add(node.id);
