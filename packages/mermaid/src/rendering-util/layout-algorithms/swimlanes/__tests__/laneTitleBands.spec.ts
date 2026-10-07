@@ -162,4 +162,20 @@ describe('swimlane router: moving a left title band clear of a rail', () => {
 
     expect(lane.groupTitleRect).toEqual(LEFT_BAND);
   });
+
+  it.each(['lr', 'Lr'])(
+    'reads the layout direction %s as LR for a lane without its own',
+    (layout) => {
+      const lane = leftBandPass(
+        [
+          { x: 10, y: 150 },
+          { x: 60, y: 150 },
+        ],
+        undefined,
+        layout
+      );
+
+      expect(lane.groupTitleRect?.left).toBeLessThan(LEFT_BAND.left);
+    }
+  );
 });

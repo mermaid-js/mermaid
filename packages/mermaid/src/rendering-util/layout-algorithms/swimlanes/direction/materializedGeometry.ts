@@ -26,6 +26,9 @@ import type { Edge, Node } from '../../../types.js';
 const EPS_LOCAL = 1e-3;
 const MIN_SHARED = 8;
 
+const upperCaseDirection = (raw: unknown): string =>
+  typeof raw === 'string' ? raw.toUpperCase() : '';
+
 type PointLite = Point;
 type RectLite = RectBounds;
 type MaterializedEdge = Edge & { points?: PointLite[] };
@@ -750,8 +753,9 @@ export function liftTopLaneTitleBandsAboveRails(
     if (!(node as { isGroup?: boolean }).isGroup || (node as { parentId?: unknown }).parentId) {
       return undefined;
     }
-    const rawDirection = (node as { direction?: unknown }).direction ?? layoutDirection;
-    const direction = typeof rawDirection === 'string' ? rawDirection.toUpperCase() : '';
+    const direction = upperCaseDirection(
+      (node as { direction?: unknown }).direction ?? layoutDirection
+    );
     if (direction === 'LR' || direction === 'RL' || direction === 'BT') {
       return undefined;
     }
@@ -877,8 +881,10 @@ export function shiftLeftLaneTitleBandsLeftOfRails(
     if (!(node as { isGroup?: boolean }).isGroup || (node as { parentId?: unknown }).parentId) {
       return undefined;
     }
-    const rawDirection = (node as { direction?: unknown }).direction ?? layoutDirection;
-    if (rawDirection !== 'LR') {
+    const direction = upperCaseDirection(
+      (node as { direction?: unknown }).direction ?? layoutDirection
+    );
+    if (direction !== 'LR') {
       return undefined;
     }
     const rect = validTitleRect(node);
