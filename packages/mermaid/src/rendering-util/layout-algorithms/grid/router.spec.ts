@@ -722,6 +722,7 @@ describe('grid router', () => {
           expandedStates: 1,
         })
       );
+      expect(metrics.endpointOverlayBuilds).toBe(1);
     } finally {
       warn.mockRestore();
     }

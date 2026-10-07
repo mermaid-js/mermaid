@@ -75,14 +75,31 @@ export class RouterSearchWorkspace {
   heapChildren = new Int32Array(256);
   heapSiblings = new Int32Array(256);
   heapPairs: number[] = [];
+  touchedBestIndices: number[] = [];
+
+  constructor() {
+    this.best.fill(-1);
+  }
 
   reset(vertexCount: number): void {
     const bestLength = vertexCount * 3;
     if (this.best.length < bestLength) {
       this.best = new Int32Array(bestLength);
+      this.best.fill(-1);
+    } else {
+      for (const index of this.touchedBestIndices) {
+        this.best[index] = -1;
+      }
     }
-    this.best.fill(-1, 0, bestLength);
+    this.touchedBestIndices.length = 0;
     this.heapPairs.length = 0;
+  }
+
+  setBest(index: number, state: number): void {
+    if (this.best[index] < 0) {
+      this.touchedBestIndices.push(index);
+    }
+    this.best[index] = state;
   }
 
   ensureStateCapacity(required: number): void {
@@ -119,9 +136,25 @@ export class RouterSearchWorkspace {
       this.best.byteLength +
       this.heapChildren.byteLength +
       this.heapSiblings.byteLength +
-      this.heapPairs.length * 8
+      (this.heapPairs.length + this.touchedBestIndices.length) * 8
     );
   }
+}
+
+export function assertSearchBudgetAvailable(
+  options: Pick<RouterSearchOptions, 'metrics' | 'caps' | 'budget'>
+): void {
+  const edgeCap = options.caps?.maxExpandedStates ?? DEFAULT_MAX_EDGE_STATES;
+  const invocationCap = options.caps?.maxInvocationExpandedStates ?? DEFAULT_MAX_INVOCATION_STATES;
+  const invocationStart = options.budget?.expandedStates ?? options.metrics?.expandedStates ?? 0;
+  if (edgeCap > 0 && invocationStart < invocationCap) {
+    return;
+  }
+  throw new GridRoutingResourceLimitError(
+    'search_state_cap',
+    'Grid routing search-state cap exceeded',
+    invocationStart >= invocationCap ? 'invocation' : 'edge'
+  );
 }
 
 function growTypedArray<T extends Int32Array | Uint8Array | Float64Array>(
@@ -310,6 +343,7 @@ function search(
   if (metrics) {
     metrics.searches++;
   }
+  assertSearchBudgetAvailable(options);
   const workspace = options.workspace ?? new RouterSearchWorkspace();
   workspace.reset(topology.vertexCount ?? topology.vertices.length);
   let stateVertices = workspace.stateVertices;
@@ -484,7 +518,7 @@ function search(
   predecessors[0] = -1;
   depths[0] = 1;
   ancestor4[0] = -1;
-  best[stateIndex(sourceId, options.initialOrientation)] = 0;
+  workspace.setBest(stateIndex(sourceId, options.initialOrientation), 0);
   heapPush(0);
   if (metrics) {
     metrics.maxOpenSet = Math.max(metrics.maxOpenSet, heapSize);
@@ -640,7 +674,7 @@ function search(
         const parent2 = predecessors[current];
         const parent3 = parent2 >= 0 ? predecessors[parent2] : -1;
         ancestor4[candidate] = parent3 >= 0 ? predecessors[parent3] : -1;
-        best[index] = candidate;
+        workspace.setBest(index, candidate);
         heapPush(candidate);
       }
     } else {
@@ -721,7 +755,7 @@ function search(
         const parent2 = predecessors[current];
         const parent3 = parent2 >= 0 ? predecessors[parent2] : -1;
         ancestor4[candidate] = parent3 >= 0 ? predecessors[parent3] : -1;
-        best[index] = candidate;
+        workspace.setBest(index, candidate);
         heapPush(candidate);
       }
     }

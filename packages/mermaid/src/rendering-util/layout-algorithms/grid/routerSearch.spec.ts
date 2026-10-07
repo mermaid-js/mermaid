@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
-import { compareTupleCost, findShortestRoute } from './routerSearch.js';
+import { compareTupleCost, findShortestRoute, RouterSearchWorkspace } from './routerSearch.js';
 import { findDenseOracleRoute } from './routerSearch.testUtils.js';
 import {
   EndpointOverlayScratch,
@@ -217,13 +217,32 @@ describe('grid router search', () => {
     expect(metrics.expandedStates).toBe(1);
   });
 
+  it('reuses a workspace after capped searches without clearing untouched states', () => {
+    const topology = build([{ id: 'center', left: 40, right: 60, top: 30, bottom: 70 }]);
+    const source = vertexAt(topology, { x: 0, y: 24 });
+    const target = vertexAt(topology, { x: 100, y: 76 });
+    const workspace = new RouterSearchWorkspace();
+
+    expect(() =>
+      findShortestRoute(topology, source, target, {
+        workspace,
+        caps: { maxExpandedStates: 1 },
+      })
+    ).toThrowError(expect.objectContaining({ reason: 'search_state_cap' }));
+
+    expect(findShortestRoute(topology, source, target, { workspace })).toBeDefined();
+  });
+
   it('distinguishes invocation search-state exhaustion', () => {
     const topology = build([{ id: 'center', left: 40, right: 60, top: 30, bottom: 70 }]);
     const source = vertexAt(topology, { x: 0, y: 24 });
     const target = vertexAt(topology, { x: 100, y: 76 });
+    const workspace = new RouterSearchWorkspace();
+    const reset = vi.spyOn(workspace, 'reset');
 
     expect(() =>
       findShortestRoute(topology, source, target, {
+        workspace,
         budget: { expandedStates: 1 },
         caps: { maxInvocationExpandedStates: 1 },
       })
@@ -233,6 +252,7 @@ describe('grid router search', () => {
         searchStateScope: 'invocation',
       })
     );
+    expect(reset).not.toHaveBeenCalled();
   });
 
   it('rejects malformed graph invariants without treating them as no-route', () => {

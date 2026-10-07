@@ -34,6 +34,7 @@ import {
   type GridRoutingFallbackReason,
 } from './routerInstrumentation.js';
 import {
+  assertSearchBudgetAvailable,
   compareTupleCost,
   findShortestRoute,
   type RouterSearchResult,
@@ -188,6 +189,11 @@ export function sparseSameContainerRoute(
       continue;
     }
     try {
+      assertSearchBudgetAvailable({
+        metrics: context.metrics,
+        caps: options.searchCaps,
+        budget: context.searchBudget,
+      });
       const overlay = buildEndpointRoutingOverlay(
         topology,
         sourceCandidate.connect,
@@ -441,6 +447,11 @@ export function sparseSelfLoopRoute(
     }
     const { start, target } = attachments;
     try {
+      assertSearchBudgetAvailable({
+        metrics: context.metrics,
+        caps: options.searchCaps,
+        budget: context.searchBudget,
+      });
       const overlay = buildEndpointRoutingOverlay(
         topology,
         start.connect,
@@ -647,6 +658,11 @@ export function sparseContainerSegment(
           return direct;
         }
       }
+      assertSearchBudgetAvailable({
+        metrics: context.metrics,
+        caps: options.searchCaps,
+        budget: context.searchBudget,
+      });
       const overlay = buildEndpointRoutingOverlay(
         topology,
         attemptedStart.connect,
