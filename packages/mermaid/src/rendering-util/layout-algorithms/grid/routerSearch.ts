@@ -532,6 +532,13 @@ function search(
       continue;
     }
     if (expandedThisSearch >= edgeCap || invocationStart + expandedThisSearch >= invocationCap) {
+      if (bestGoalState >= 0 && bestGoalCost) {
+        if (metrics && options.recordOutcome !== false) {
+          metrics.routesFound++;
+        }
+        commitExpandedStates();
+        return reconstruct(bestGoalState, stateVertices, predecessors, bestGoalCost, vertexAt);
+      }
       commitExpandedStates();
       const searchStateScope =
         invocationStart + expandedThisSearch >= invocationCap ? 'invocation' : 'edge';

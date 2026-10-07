@@ -148,6 +148,40 @@ describe('grid router search', () => {
     expect(perturbed).toEqual(canonical);
   });
 
+  it('returns an already-found route when search-state caps interrupt tie resolution', () => {
+    const topology = build();
+    const source = vertexAt(topology, { x: 0, y: 0 });
+    const target = vertexAt(topology, { x: 100, y: 100 });
+    const canonical = findShortestRoute(topology, source, target);
+    const edgeMetrics = createGridRoutingInstrumentation();
+    const invocationMetrics = createGridRoutingInstrumentation();
+    const budget = { expandedStates: 0 };
+
+    const edgeCapped = findShortestRoute(topology, source, target, {
+      metrics: edgeMetrics,
+      caps: { maxExpandedStates: 3 },
+      queueOrder: 'reverse',
+    });
+    const invocationCapped = findShortestRoute(topology, source, target, {
+      metrics: invocationMetrics,
+      budget,
+      caps: { maxInvocationExpandedStates: 3 },
+      queueOrder: 'reverse',
+    });
+
+    expect(edgeCapped?.cost).toEqual(canonical?.cost);
+    expect(invocationCapped?.cost).toEqual(canonical?.cost);
+    expect(edgeCapped?.points).toEqual([
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+      { x: 100, y: 100 },
+    ]);
+    expect(invocationCapped?.points).toEqual(edgeCapped?.points);
+    expect(edgeMetrics).toMatchObject({ expandedStates: 3, routesFound: 1 });
+    expect(invocationMetrics).toMatchObject({ expandedStates: 3, routesFound: 1 });
+    expect(budget.expandedStates).toBe(3);
+  });
+
   it('accounts for reusable search workspace memory and enforces its cap', () => {
     const topology = build();
     const source = vertexAt(topology, { x: 0, y: 0 });
