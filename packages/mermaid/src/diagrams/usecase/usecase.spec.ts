@@ -1017,7 +1017,7 @@ style payloadEdge stroke:#f00`);
       expect(data.edges[7]).toMatchObject({
         id: 'include',
         relationshipType: 'include',
-        label: 'include',
+        label: '«include»',
         labelType: 'text',
         pattern: 'dotted',
         arrowTypeStart: 'none',
@@ -1026,7 +1026,7 @@ style payloadEdge stroke:#f00`);
       expect(data.edges[8]).toMatchObject({
         id: 'extend',
         relationshipType: 'extend',
-        label: 'extend',
+        label: '«extend»',
         pattern: 'dotted',
         arrowTypeEnd: 'arrow_point',
       });

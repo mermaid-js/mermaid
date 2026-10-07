@@ -209,7 +209,7 @@ describe('usecase renderer integration', () => {
       getUsecaseEdgeAccessibleName(
         edge({
           relationshipType: 'include',
-          label: 'include',
+          label: '«include»',
           sourceLabel: 'Checkout',
           targetLabel: 'Payment',
         })
