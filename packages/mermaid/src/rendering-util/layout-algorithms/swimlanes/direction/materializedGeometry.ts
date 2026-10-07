@@ -919,7 +919,8 @@ export function shiftLeftLaneTitleBandsLeftOfRails(
       return false;
     }
     const y = segment.a.y;
-    if (y <= rect.top + EPS_LOCAL || y >= rect.bottom - EPS_LOCAL) {
+    // A rail along the band's edge counts, as it does for validateLayout.
+    if (y < rect.top - EPS_LOCAL || y > rect.bottom + EPS_LOCAL) {
       return false;
     }
     return overlapLength(segment.a.x, segment.b.x, rect.left, rect.right) >= MIN_SHARED;

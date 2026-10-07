@@ -3,6 +3,7 @@ import type { LayoutData } from '../../../types.js';
 import { prepareLayoutForSwimlanes } from '../helpers.js';
 import { runSwimlaneLayoutCore } from '../layoutCore.js';
 import { validateLayout } from '../../layout-utils/validateLayout.js';
+import { shiftLeftLaneTitleBandsLeftOfRails } from '../direction/materializedGeometry.js';
 
 interface NodeSpec {
   id: string;
@@ -101,4 +102,64 @@ describe('swimlane router: a detour and the lane title bands', () => {
       expect(issueTypes(data)).toEqual([]);
     }
   );
+});
+
+type PassNodes = Parameters<typeof shiftLeftLaneTitleBandsLeftOfRails>[1];
+type PassEdges = Parameters<typeof shiftLeftLaneTitleBandsLeftOfRails>[0];
+
+const LEFT_BAND = { left: 0, right: 24, top: 100, bottom: 300 };
+
+/** One lane with its title band on the left, and one rail between the given points. */
+function leftBandPass(points: { x: number; y: number }[], laneDirection?: string, layout?: string) {
+  const lane: PassNodes extends Map<string, infer N> ? N : never = {
+    id: 'lane',
+    isGroup: true,
+    direction: laneDirection,
+    x: 100,
+    y: 200,
+    width: 200,
+    height: 200,
+    groupTitleRect: { ...LEFT_BAND },
+  };
+  const edges: PassEdges = [{ id: 'rail', start: 'a', end: 'b', points }];
+  shiftLeftLaneTitleBandsLeftOfRails(edges, new Map([['lane', lane]]), layout);
+  return lane;
+}
+
+describe('swimlane router: moving a left title band clear of a rail', () => {
+  it('moves the band for a rail lying on its top edge', () => {
+    const lane = leftBandPass(
+      [
+        { x: -40, y: LEFT_BAND.top },
+        { x: 60, y: LEFT_BAND.top },
+      ],
+      'LR'
+    );
+
+    expect(lane.groupTitleRect?.left).toBeLessThan(LEFT_BAND.left);
+  });
+
+  it('moves the band for a rail lying on its bottom edge', () => {
+    const lane = leftBandPass(
+      [
+        { x: -40, y: LEFT_BAND.bottom },
+        { x: 60, y: LEFT_BAND.bottom },
+      ],
+      'LR'
+    );
+
+    expect(lane.groupTitleRect?.left).toBeLessThan(LEFT_BAND.left);
+  });
+
+  it('leaves the band where it is for a rail clear of it', () => {
+    const lane = leftBandPass(
+      [
+        { x: -40, y: LEFT_BAND.top - 20 },
+        { x: 60, y: LEFT_BAND.top - 20 },
+      ],
+      'LR'
+    );
+
+    expect(lane.groupTitleRect).toEqual(LEFT_BAND);
+  });
 });
