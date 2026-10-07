@@ -540,19 +540,8 @@ function preferredEndpointCoordinates(
     const coordinate = side === 'left' || side === 'right' ? rect.cy : rect.cx;
     return clamp(coordinate, interval.low, interval.high);
   });
-  const coordinates: number[] = [];
-  for (const [index, element] of desired.entries()) {
-    coordinates.push(
-      index === 0 ? element : Math.max(element, coordinates[index - 1] + MIN_PORT_SEPARATION_PX)
-    );
-  }
-  const averageDesired = desired.reduce((sum, coordinate) => sum + coordinate, 0) / desired.length;
-  const averageAssigned =
-    coordinates.reduce((sum, coordinate) => sum + coordinate, 0) / coordinates.length;
-  const minimumShift = interval.low - coordinates[0];
-  const maximumShift = interval.high - coordinates[coordinates.length - 1];
-  const shift = clamp(averageDesired - averageAssigned, minimumShift, maximumShift);
-  return new Map(sorted.map((demand, index) => [demand, coordinates[index] + shift]));
+  const coordinates = assignCompactPortalCoordinates(desired, interval.low, interval.high);
+  return new Map(sorted.map((demand, index) => [demand, coordinates[index]]));
 }
 
 function endpointSideCapacity(owner: Node, side: GridSide): number {

@@ -9,7 +9,7 @@ function node(id: string, x: number, y: number): Node {
     isGroup: false,
     shape: 'rect',
     width: 40,
-    height: 20,
+    height: 40,
     x,
     y,
   } as Node;
@@ -46,5 +46,32 @@ describe('grid router planning', () => {
     expect(new Set(demandKeys).size).toBe(4);
     expect(prepared.demandCoords.size).toBe(4);
     expect(demandKeys.every((key) => prepared.demandCoords.has(key))).toBe(true);
+  });
+
+  it('keeps clustered endpoint coordinates within the preferred side interval', () => {
+    const nodes = [
+      node('owner', 0, 0),
+      node('upper', 100, -100),
+      node('lower-1', 100, 100),
+      node('lower-2', 100, 100),
+    ];
+    const edges = [
+      edge('upper-edge', 'owner', 'upper'),
+      edge('lower-edge-1', 'owner', 'lower-1'),
+      edge('lower-edge-2', 'owner', 'lower-2'),
+    ];
+    const layout = { nodes, edges } as LayoutData;
+    const result = {
+      forest: { nodeById: new Map(nodes.map((entry) => [entry.id, entry])) },
+      containers: new Map(),
+    } as GridLayoutResult;
+
+    const prepared = prepareEdgeRoutes(layout, result);
+    const sourceCandidates = edges.map(
+      ({ id }) => prepared.endpointCandidatesByEdge.get(id)!.sources[0]
+    );
+
+    expect(sourceCandidates.map(({ side }) => side)).toEqual(['right', 'right', 'right']);
+    expect(sourceCandidates.map(({ port }) => port.y).sort((a, b) => a - b)).toEqual([-14, 10, 14]);
   });
 });
