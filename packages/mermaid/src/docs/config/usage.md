@@ -348,6 +348,28 @@ const drawDiagram = async function () {
 4. Insert the SVG code into the DOM for presentation.
 5. Call the binding function that binds the events.
 
+### Selecting elements in a rendered SVG
+
+Some rendered SVG elements have a `data-id` attribute related to an item in the diagram source.
+For example, in a sequence diagram containing `participant Alice`, the participant element has
+`data-et="participant"` and `data-id="Alice"`. Once the SVG is in the page, you can select it with CSS
+or JavaScript:
+
+```css
+#graphDiv svg [data-et='participant'][data-id='Alice'] {
+  opacity: 0.5;
+}
+```
+
+```javascript
+const svg = document.querySelector('#graphDiv svg');
+const alice = svg?.querySelector('[data-et="participant"][data-id="Alice"]');
+```
+
+Scope the selector to the rendered SVG and include the element type when needed. The same `data-id`
+can appear on multiple elements (for example, a sequence participant and its lifeline), and not every
+diagram element has this attribute. It is not a unique DOM `id`.
+
 ## Example of a marked renderer
 
 This is the renderer used for transforming the documentation from Markdown to html with mermaid diagrams in the html.
