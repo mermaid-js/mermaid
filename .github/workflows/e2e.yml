@@ -142,10 +142,10 @@ jobs:
           TARGET_HASH: ${{ env.targetHash }}
           # PRs use base.ref (`master` / `develop`); merge_group uses `refs/heads/...`.
           BASE_REF: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref || '' }}
-          # Fork-only label gating (see the branch below). Never true for
-          # upstream mermaid-js/mermaid, so this repo's e2e.yml keeps its
-          # original diff-based-only behavior if ever synced/PR'd upstream.
-          IS_FORK_REPO: ${{ github.repository == 'pbrolin47/mermaid-pbrolin47' }}
+          # Upstream-only label gating (see the branch below). Never true on a
+          # fork, so a fork running this e2e.yml falls back to the original
+          # diff-based-only behavior instead.
+          IS_UPSTREAM_REPO: ${{ github.repository == 'mermaid-js/mermaid' }}
           PR_ACTION: ${{ github.event.action }}
           # Unlike BASE_REF above, this is PR-only (no merge_group fallback) —
           # it only decides which of the two label gates below applies.
@@ -205,7 +205,7 @@ jobs:
             exit 0
           fi
 
-          # Fork-only, PR-only label gating. Which label applies depends on
+          # Upstream-only, PR-only label gating. Which label applies depends on
           # the PR's target branch:
           #   - master: "run release test" gates pr-check + nightly-check
           #     (NOT visual-check — that tier is theme/look/layout/direction
@@ -224,18 +224,18 @@ jobs:
           # those jobs' API calls. Later pushes (synchronize) read the label
           # as it stands at push time, so removing it before pushing again
           # does skip e2e, per design.
-          if [ "$GITHUB_EVENT_NAME" = "pull_request" ] && [ "$IS_FORK_REPO" = "true" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ] && [ "$IS_UPSTREAM_REPO" = "true" ]; then
             if [ "$PR_BASE_REF" = "master" ]; then
               if [ "$PR_ACTION" = "opened" ] || [ "$PR_HAS_RELEASE_LABEL" = "true" ]; then
                 SPEC=$(node scripts/e2e-tier-scope.mjs pr-check nightly-check)
                 set_output spec_pattern "$SPEC"
                 set_output matrix "$E2E_PR_NIGHTLY_MATRIX"
                 set_output fixture_tier "pr-check,nightly-check"
-                echo "[detect-scope] Fork PR -> master — 'run release test' active. Scoped to pr-check + nightly-check (visual-check excluded — see Applitools): ${SPEC}"
+                echo "[detect-scope] PR -> master — 'run release test' active. Scoped to pr-check + nightly-check (visual-check excluded — see Applitools): ${SPEC}"
               else
                 emit_skip
                 set_output required_tests_missing "true"
-                echo "[detect-scope] Fork PR -> master — 'run release test' label not set. Skipping e2e (e2e-required will fail; a repo admin can still merge via the branch protection bypass)."
+                echo "[detect-scope] PR -> master — 'run release test' label not set. Skipping e2e (e2e-required will fail; a repo admin can still merge via the branch protection bypass)."
               fi
               exit 0
             fi
@@ -245,11 +245,11 @@ jobs:
               set_output spec_pattern "$SPEC"
               set_output matrix "$E2E_SCOPED_MATRIX"
               set_output fixture_tier "pr-check"
-              echo "[detect-scope] Fork PR — 'run pr tests' active. Scoped to pr-check tier: ${SPEC}"
+              echo "[detect-scope] PR — 'run pr tests' active. Scoped to pr-check tier: ${SPEC}"
             else
               emit_skip
               set_output required_tests_missing "true"
-              echo "[detect-scope] Fork PR — 'run pr tests' label not set. Skipping e2e (e2e-required will fail; a repo admin can still merge via the branch protection bypass)."
+              echo "[detect-scope] PR — 'run pr tests' label not set. Skipping e2e (e2e-required will fail; a repo admin can still merge via the branch protection bypass)."
             fi
             exit 0
           fi
@@ -263,25 +263,23 @@ jobs:
             exit 0
           fi
 
-          # Fork-only: a direct push to develop (i.e. a PR merge landing
-          # there) only runs the pr-check tier. On this fork, the merged PR
-          # already had to pass its own pr-check-tier gate before merging, so
-          # re-running the full suite here is redundant. Never true for
-          # upstream mermaid-js/mermaid, so this repo's e2e.yml keeps its
-          # original full-suite-on-push behavior below if ever synced/PR'd
-          # upstream.
-          if [ "$TARGET_HASH" = "develop" ] && [ "$IS_FORK_REPO" = "true" ]; then
+          # Upstream-only: a direct push to develop (i.e. a PR merge landing
+          # there) only runs the pr-check tier. The merged PR already had to
+          # pass its own pr-check-tier gate before merging, so re-running the
+          # full suite here is redundant. Never true on a fork, so a fork's
+          # e2e.yml keeps the original full-suite-on-push behavior below.
+          if [ "$TARGET_HASH" = "develop" ] && [ "$IS_UPSTREAM_REPO" = "true" ]; then
             SPEC=$(node scripts/e2e-tier-scope.mjs pr-check)
             set_output spec_pattern "$SPEC"
             set_output matrix "$E2E_SCOPED_MATRIX"
             set_output fixture_tier "pr-check"
-            echo "[detect-scope] Fork push to develop — scoped to pr-check tier: ${SPEC}"
+            echo "[detect-scope] Push to develop — scoped to pr-check tier: ${SPEC}"
             exit 0
           fi
 
           # For direct pushes to a long-lived branch, always run the full suite
-          # (no PR diff to scope against). Covers: upstream pushes to develop
-          # (the branch above only fires on the fork), and pushes to master —
+          # (no PR diff to scope against). Covers: a fork's pushes to develop
+          # (the branch above only fires upstream), and pushes to master —
           # note master pushes don't actually reach this check today, since
           # $TARGET_HASH resolves to a commit SHA rather than the literal
           # string "master" unless master is the repo's default branch; they
@@ -328,7 +326,7 @@ jobs:
             echo "[detect-scope] Cannot scope — full suite."
           fi
 
-  # Fork-only: makes the "run pr tests" label default-on for every
+  # Upstream-only: makes the "run pr tests" label default-on for every
   # freshly-opened PR (GitHub has no native default-label-on-PR feature).
   # Runs once per PR (action == 'opened'); removing the label afterward is a
   # deliberate opt-out and this job never re-adds it. continue-on-error
@@ -336,7 +334,7 @@ jobs:
   ensure-pr-tier-label:
     if: >-
       ${{
-        github.repository == 'pbrolin47/mermaid-pbrolin47' &&
+        github.repository == 'mermaid-js/mermaid' &&
         github.event_name == 'pull_request' &&
         github.event.action == 'opened'
       }}
@@ -369,14 +367,14 @@ jobs:
               await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
             }
 
-  # Fork-only: makes the "run release test" label default-on for every
+  # Upstream-only: makes the "run release test" label default-on for every
   # freshly-opened PR targeting master (the release-readiness gate — see the
   # PR_BASE_REF branch in detect-scope). Same pattern as ensure-pr-tier-label
   # above, scoped to master-bound PRs only.
   ensure-release-label:
     if: >-
       ${{
-        github.repository == 'pbrolin47/mermaid-pbrolin47' &&
+        github.repository == 'mermaid-js/mermaid' &&
         github.event_name == 'pull_request' &&
         github.event.action == 'opened' &&
         github.event.pull_request.base.ref == 'master'

@@ -1,7 +1,7 @@
 name: Nightly E2E
 
-# Fork-only (see the repository check below). Runs the pr-check + nightly-check tiers
-# once a day, and on demand via workflow_dispatch — the "simulated nightly"
+# Upstream-only (see the repository check below). Runs the pr-check + nightly-check
+# tiers once a day, and on demand via workflow_dispatch — the "simulated nightly"
 # button for testing this workflow without waiting for the schedule.
 #
 # No PR is associated with these runs, so there's nothing to gate or block —
@@ -10,14 +10,13 @@ name: Nightly E2E
 # notification on failure (deliberately out of scope for now).
 #
 # Screenshot capture + Argos upload (RUN_VISUAL_TEST below, argos-upload job)
-# only activate once this workflow runs on mermaid-js/mermaid — same gate
-# e2e.yml's argos-batch job uses, reusing that same Argos project/baseline.
-# On this fork it's always a no-op: there's no Argos project/credentials here,
-# so capturing screenshots with nothing to upload them to would just be wasted
-# work. The e2e job itself stays fork-only (unchanged) — this is this fork's
-# safe environment to validate the Playwright/tier plumbing in; flipping that
-# to mermaid-js/mermaid is a separate decision for whoever preps the upstream
-# PR, not implied by adding this.
+# use the same gate e2e.yml's argos-batch job uses, reusing that same Argos
+# project/baseline. On a fork this is always a no-op: there's no Argos
+# project/credentials there, so capturing screenshots with nothing to upload
+# them to would just be wasted work. The e2e job below stays gated to
+# mermaid-js/mermaid the same way; a fork wanting its own safe environment to
+# validate the Playwright/tier plumbing in would need to point this check at
+# its own repository instead.
 on:
   schedule:
     # 02:00 UTC daily — low-traffic time, adjust as needed.
@@ -36,7 +35,7 @@ env:
 
 jobs:
   e2e:
-    if: github.repository == 'pbrolin47/mermaid-pbrolin47'
+    if: github.repository == 'mermaid-js/mermaid'
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.62.1-noble
