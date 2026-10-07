@@ -74,6 +74,34 @@ describe('grid placement', () => {
     });
   });
 
+  it('advances partial-placement cursors past cells occupied by other placement modes', () => {
+    const items = [
+      node('explicit', { row: 1, column: 1 }),
+      node('row-a', { row: 1 }),
+      node('column-a', { column: 2 }),
+      node('auto-a'),
+      node('row-b', { row: 1 }),
+      node('column-b', { column: 2 }),
+      node('auto-b'),
+    ];
+    const sourceOrder = new Map(items.map((item, index) => [item.id, index]));
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({ columns: 3 }),
+    } as LayoutData);
+
+    const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(byId.get('row-a')).toMatchObject({ row: 1, column: 2 });
+    expect(byId.get('column-a')).toMatchObject({ row: 2, column: 2 });
+    expect(byId.get('auto-a')).toMatchObject({ row: 1, column: 3 });
+    expect(byId.get('row-b')).toMatchObject({ row: 1, column: 4 });
+    expect(byId.get('column-b')).toMatchObject({ row: 3, column: 2 });
+    expect(byId.get('auto-b')).toMatchObject({ row: 2, column: 1 });
+  });
+
   it.each([
     { field: 'row', value: 0 },
     { field: 'row', value: -1 },

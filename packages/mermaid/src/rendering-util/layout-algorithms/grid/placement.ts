@@ -214,16 +214,16 @@ function resolveItemPlacement(
   };
 }
 
-function nextFreeColumn(row: number, occupied: Set<string>): number {
-  let column = 1;
+function nextFreeColumn(row: number, occupied: Set<string>, startColumn: number): number {
+  let column = startColumn;
   while (occupied.has(`${row}:${column}`)) {
     column++;
   }
   return column;
 }
 
-function nextFreeRow(column: number, occupied: Set<string>): number {
-  let row = 1;
+function nextFreeRow(column: number, occupied: Set<string>, startRow: number): number {
+  let row = startRow;
   while (occupied.has(`${row}:${column}`)) {
     row++;
   }
@@ -305,23 +305,33 @@ export function resolveGridPlacements(
   const candidateColumns =
     config.columns > 0 ? config.columns : Math.max(1, Math.ceil(Math.sqrt(sortedItems.length)));
   let nextAutoIndex = 0;
+  const nextColumnByRow = new Map<number, number>();
+  const nextRowByColumn = new Map<number, number>();
 
   // Partially specified placements scan only their missing axis. Fully automatic placements use a
-  // compact row-major grid whose default width keeps roughly square diagrams. The automatic cursor
-  // only moves forward because occupied cells are never released.
+  // compact row-major grid whose default width keeps roughly square diagrams. Each cursor only
+  // moves forward because occupied cells are never released.
   for (const placement of resolved) {
     if (placement.explicitCell) {
       continue;
     }
 
     if (placement.explicitRow) {
-      // TODO: Repeated scans can become quadratic when many items target one row. Add a per-row
-      // cursor if profiling shows this path is significant.
-      placement.column = nextFreeColumn(placement.row, occupied);
+      const column = nextFreeColumn(
+        placement.row,
+        occupied,
+        nextColumnByRow.get(placement.row) ?? 1
+      );
+      placement.column = column;
+      nextColumnByRow.set(placement.row, column + 1);
     } else if (placement.explicitColumn) {
-      // TODO: Repeated scans can become quadratic when many items target one column. Add a
-      // per-column cursor if profiling shows this path is significant.
-      placement.row = nextFreeRow(placement.column, occupied);
+      const row = nextFreeRow(
+        placement.column,
+        occupied,
+        nextRowByColumn.get(placement.column) ?? 1
+      );
+      placement.row = row;
+      nextRowByColumn.set(placement.column, row + 1);
     } else {
       const next = nextAutoCell(occupied, candidateColumns, nextAutoIndex);
       placement.row = next.row;
