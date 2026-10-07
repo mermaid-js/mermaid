@@ -232,19 +232,23 @@ function nextFreeRow(column: number, occupied: Set<string>): number {
 
 function nextAutoCell(
   occupied: Set<string>,
-  candidateColumns: number
+  candidateColumns: number,
+  startIndex: number
 ): {
   row: number;
   column: number;
+  nextIndex: number;
 } {
-  let row = 1;
+  let index = startIndex;
+  // The occupied set is finite while the row-major coordinate space is unbounded, so a free cell
+  // must eventually be found.
   for (;;) {
-    for (let column = 1; column <= candidateColumns; column++) {
-      if (!occupied.has(`${row}:${column}`)) {
-        return { row, column };
-      }
+    const row = Math.floor(index / candidateColumns) + 1;
+    const column = (index % candidateColumns) + 1;
+    index++;
+    if (!occupied.has(`${row}:${column}`)) {
+      return { row, column, nextIndex: index };
     }
-    row++;
   }
 }
 
@@ -300,22 +304,29 @@ export function resolveGridPlacements(
 
   const candidateColumns =
     config.columns > 0 ? config.columns : Math.max(1, Math.ceil(Math.sqrt(sortedItems.length)));
+  let nextAutoIndex = 0;
 
   // Partially specified placements scan only their missing axis. Fully automatic placements use a
-  // compact row-major grid whose default width keeps roughly square diagrams.
+  // compact row-major grid whose default width keeps roughly square diagrams. The automatic cursor
+  // only moves forward because occupied cells are never released.
   for (const placement of resolved) {
     if (placement.explicitCell) {
       continue;
     }
 
     if (placement.explicitRow) {
+      // TODO: Repeated scans can become quadratic when many items target one row. Add a per-row
+      // cursor if profiling shows this path is significant.
       placement.column = nextFreeColumn(placement.row, occupied);
     } else if (placement.explicitColumn) {
+      // TODO: Repeated scans can become quadratic when many items target one column. Add a
+      // per-column cursor if profiling shows this path is significant.
       placement.row = nextFreeRow(placement.column, occupied);
     } else {
-      const next = nextAutoCell(occupied, candidateColumns);
+      const next = nextAutoCell(occupied, candidateColumns, nextAutoIndex);
       placement.row = next.row;
       placement.column = next.column;
+      nextAutoIndex = next.nextIndex;
     }
 
     const key = `${placement.row}:${placement.column}`;
