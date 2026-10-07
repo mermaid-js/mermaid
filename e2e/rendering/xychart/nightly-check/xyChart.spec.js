@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 
 const assertBarLabelsWithinBars = async (page, orientation = 'vertical') => {
   await page.locator('g.bar-plot-0').evaluate((plot, barOrientation) => {
