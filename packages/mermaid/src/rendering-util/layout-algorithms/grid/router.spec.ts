@@ -336,9 +336,12 @@ describe('grid router', () => {
       Array.from({ length: 10 }, (_, index) => edge(`e${index}`, 'a', 'b')),
       { rowGap: 0, columnGap: 12 }
     );
+    const before = structuredClone(data);
+
     expect(() => runGridLayoutCore(data)).toThrowError(
       /GRID_ROUTE_NOT_FOUND: No distinct lane route/
     );
+    expect(data).toEqual(before);
   });
 
   it('routes self-loops around adjacent nodes when track gaps are zero', () => {
@@ -624,10 +627,12 @@ describe('grid router', () => {
       { columnGap: 0 }
     );
     const metrics = createGridRoutingInstrumentation();
+    const before = structuredClone(data);
 
     expect(() =>
       runGridLayoutCore(data, metrics, { topologyCaps: { maxVertices: 1 } })
     ).toThrowError(/GRID_ROUTE_NOT_FOUND: Invalid legacy fallback/);
+    expect(data).toEqual(before);
     // The counters are necessary to prove the rejected geometry came from the configured fallback
     // and that fallback validation, rather than an unrelated routing failure, blocked the commit.
     expect(metrics.resourceLimitFallbacks).toBe(1);
@@ -734,9 +739,12 @@ describe('grid router', () => {
       [edge('a-b', 'a', 'b')],
       { columnGap: 40 }
     );
+    const before = structuredClone(data);
+
     expect(() => runGridLayoutCore(data)).toThrowError(
       /GRID_ROUTE_NOT_FOUND: No legal endpoint candidates/
     );
+    expect(data).toEqual(before);
   });
 
   it('routes high-degree endpoints when no side can preserve minimum port spacing', () => {
