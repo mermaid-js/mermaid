@@ -19,7 +19,7 @@ import {
  */
 const GRID_LOG_PREFIX = '[grid]';
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object';
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function isGridHorizontalAlign(value: unknown): value is GridHorizontalAlign {

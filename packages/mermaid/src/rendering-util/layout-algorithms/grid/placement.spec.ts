@@ -22,6 +22,18 @@ function config(overrides: Record<string, unknown> = {}): LayoutData['config'] {
 }
 
 describe('grid placement', () => {
+  it('ignores arrays where grid configuration expects keyed records', () => {
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: [{ row: 1, column: 1 }],
+      }),
+    } as LayoutData);
+
+    expect(gridConfig.placements.size).toBe(0);
+  });
+
   it('resolves full, partial, automatic, sparse, and precedence cases deterministically', () => {
     const items = [
       node('explicit-a', { row: 1, column: 1 }),
