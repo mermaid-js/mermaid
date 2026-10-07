@@ -320,5 +320,10 @@ Rel(a, b, "Uses")`);
       const { edges } = getData(db(), { ...config(), wrap: true, c4: { wrap: false } });
       expect(edges[0].labelWrapWidth).toBeUndefined();
     });
+
+    it('lets the root wrap: false win over an explicit c4.wrap: true', () => {
+      const { edges } = getData(db(), { ...config(), wrap: false, c4: { wrap: true } });
+      expect(edges[0].labelWrapWidth).toBe(Number.POSITIVE_INFINITY);
+    });
   });
 });
