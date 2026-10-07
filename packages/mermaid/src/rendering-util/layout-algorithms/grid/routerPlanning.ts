@@ -66,6 +66,10 @@ export function ownerGroupTitle(node: Node): boolean {
   return Boolean(node.groupTitleRect);
 }
 
+export function ownerSideKey(ownerId: string, side: GridSide): string {
+  return JSON.stringify([ownerId, side]);
+}
+
 function preferredSide(node: Node, toward: Point): GridSide {
   const rect = rectForNode(node);
   const dx = toward.x - rect.cx;
@@ -150,7 +154,7 @@ function buildEndpointPlan(
     chain.push({
       ownerId: current.id,
       side,
-      demandKey: `${edgeId}:${role}:${current.id}:${side}`,
+      demandKey: JSON.stringify([edgeId, role, current.id, side]),
       oppositeCoord: oppositeCoordFor(otherRect, side),
       preferredCoord: oppositeCoordFor(endpointRect, side),
       compactPortal: current.id !== endpoint.id,
@@ -319,18 +323,23 @@ function assignDemandCoordinates(
     }
   }
 
-  const byOwnerSide = new Map<string, GridAttachmentDemand[]>();
+  const byOwnerSide = new Map<
+    string,
+    { ownerId: string; side: GridSide; demands: GridAttachmentDemand[] }
+  >();
   for (const demand of demandByKey.values()) {
-    const key = `${demand.ownerId}:${demand.side}`;
-    if (!byOwnerSide.has(key)) {
-      byOwnerSide.set(key, []);
-    }
-    byOwnerSide.get(key)!.push(demand);
+    const key = ownerSideKey(demand.ownerId, demand.side);
+    const group = byOwnerSide.get(key) ?? {
+      ownerId: demand.ownerId,
+      side: demand.side,
+      demands: [],
+    };
+    group.demands.push(demand);
+    byOwnerSide.set(key, group);
   }
 
   const assigned = new Map<string, number>();
-  for (const [key, demands] of byOwnerSide) {
-    const [ownerId, side] = key.split(':') as [string, GridSide];
+  for (const { ownerId, side, demands } of byOwnerSide.values()) {
     const owner = nodeById.get(ownerId);
     if (!owner) {
       continue;

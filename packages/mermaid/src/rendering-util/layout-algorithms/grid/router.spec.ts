@@ -353,6 +353,24 @@ describe('grid router', () => {
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
   });
 
+  it.each([
+    ['edge id', 'owner', 'edge:loaded'],
+    ['owner id', 'owner:part', 'loaded'],
+  ])('accounts for occupied sides when the %s contains a colon', (_label, ownerId, edgeId) => {
+    const data = baseLayout(
+      [leaf('target', 80, 40, { row: 1, column: 1 }), leaf(ownerId, 80, 40, { row: 1, column: 2 })],
+      [edge(edgeId, ownerId, 'target'), edge('loop', ownerId, ownerId)],
+      { columnGap: 80 }
+    );
+
+    runGridLayoutCore(data);
+
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    const owner = data.nodes.find(({ id }) => id === ownerId)!;
+    const loop = data.edges.find(({ id }) => id === 'loop')!;
+    expect(loop.points?.[0].x).toBe((owner.x ?? 0) + (owner.width ?? 0) / 2);
+  });
+
   it('allocates distinct ports for repeated self-loops on the same node', () => {
     const data = baseLayout(
       [leaf('a', 800, 400, { row: 1, column: 1 })],

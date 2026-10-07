@@ -13,6 +13,7 @@ import {
 import {
   TERMINAL_APPROACH_PX,
   ownerGroupTitle,
+  ownerSideKey,
   type EdgeRoutePlan,
   type PreparedEdgeRoutes,
 } from './routerPlanning.js';
@@ -438,9 +439,9 @@ export function orderedSelfLoopSides(
       : ['left', 'right', 'top', 'bottom'];
   return sides.sort((a, b) => {
     const aCount =
-      (counts.get(`${node.id}:${a}`) ?? 0) + (selfLoopCounts.get(`${node.id}:${a}`) ?? 0);
+      (counts.get(ownerSideKey(node.id, a)) ?? 0) + (selfLoopCounts.get(`${node.id}:${a}`) ?? 0);
     const bCount =
-      (counts.get(`${node.id}:${b}`) ?? 0) + (selfLoopCounts.get(`${node.id}:${b}`) ?? 0);
+      (counts.get(ownerSideKey(node.id, b)) ?? 0) + (selfLoopCounts.get(`${node.id}:${b}`) ?? 0);
     return aCount - bCount;
   });
 }

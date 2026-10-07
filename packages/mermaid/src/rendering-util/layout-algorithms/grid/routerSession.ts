@@ -27,6 +27,7 @@ import {
 } from './routerConstraint.js';
 import {
   ownerGroupTitle,
+  ownerSideKey,
   prepareEdgeRoutes,
   sideInterval,
   type EdgeEndpointEntry,
@@ -191,10 +192,19 @@ export class GridEdgeRoutingSession {
       ])
     );
     this.instrumentedRoutes = this.metrics ? [] : undefined;
-    for (const demandKey of this.prepared.demandCoords.keys()) {
-      const [, , ownerId, side] = demandKey.split(':');
-      const key = `${ownerId}:${side}`;
-      this.ownerSideCounts.set(key, (this.ownerSideCounts.get(key) ?? 0) + 1);
+    const countedDemandKeys = new Set<string>();
+    for (const plan of this.prepared.orderedPlans) {
+      if (plan.edge.start === plan.edge.end) {
+        continue;
+      }
+      for (const entry of [...plan.source.chain, ...plan.target.chain]) {
+        if (countedDemandKeys.has(entry.demandKey)) {
+          continue;
+        }
+        countedDemandKeys.add(entry.demandKey);
+        const key = ownerSideKey(entry.ownerId, entry.side);
+        this.ownerSideCounts.set(key, (this.ownerSideCounts.get(key) ?? 0) + 1);
+      }
     }
   }
 
