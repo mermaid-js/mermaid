@@ -277,8 +277,8 @@ test.describe('Usecase diagram', () => {
       'aria-label',
       'extend from Optional flow to Sign in\nsecurely'
     );
-    await expect(page.locator('.edgeLabel [data-id="includeRel"]')).toContainText('include');
-    await expect(page.locator('.edgeLabel [data-id="extendRel"]')).toContainText('extend');
+    await expect(page.locator('.edgeLabel [data-id="includeRel"]')).toHaveText('«include»');
+    await expect(page.locator('.edgeLabel [data-id="extendRel"]')).toHaveText('«extend»');
 
     await expect(element(page, 'note-0')).toHaveAttribute('data-usecase-kind', 'note');
     await expect(element(page, 'note-0')).toHaveAttribute(
