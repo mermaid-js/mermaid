@@ -119,6 +119,14 @@ MERMAID_E2E_FIXTURE_TIER=pr-check,nightly-check pnpm exec playwright test e2e/re
 
 **See what a fixture would look like in Argos**, without needing real Argos credentials or touching any baseline: capture screenshots locally with `RUN_VISUAL_TEST=true` (remembering to clear `USE_APPLI` if it's set in your shell), then either browse `e2e/screenshots/` directly, or run `pnpm run screenshots:sheets` to composite them the same way CI does before upload.
 
+**Run the `visual-check` tier**: start the local dev server first (`pnpm dev`, in its own terminal) — the suite is large enough (900+ tests) that it's worth having it already warm rather than waiting on Playwright's own `webServer` auto-start/cold build on the first request:
+
+```bash
+pnpm playwright:visual-check
+```
+
+This isn't something you'd run as part of routine local development — it's only used when preparing a release, alongside the manual Applitools pass described in the tier table above. It runs both halves of the tier unconditionally (one does not get skipped if the other has a failure): the `.mmd` fixtures under every `e2e/diagrams/<diagram-type>/visual-check/` folder (via the global `mmd-snapshots.spec.ts` runner, selected by test title) and the hand-written specs under `e2e/rendering/<diagram-type>/visual-check/*.spec.ts` (selected by file path; currently only populated under `common-tests/`).
+
 ## Diagrams and screenshots
 
 The Dev Explorer (`/dev` route) — browse `.mmd` fixtures under the configured `MERMAID_DEV_EXPLORER_ROOT` and preview them rendered:
