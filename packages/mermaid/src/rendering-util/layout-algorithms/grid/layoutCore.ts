@@ -1,5 +1,4 @@
 import type { LayoutData, Node } from '../../types.js';
-import { compareCodeUnits } from '../layout-utils/helpers.js';
 import { buildGridForest } from './groups.js';
 import {
   buildGridSourceOrder,
@@ -13,7 +12,6 @@ import {
   type GridContainerId,
   type GridContainerLayoutMeta,
   type GridItemLayoutMeta,
-  type GridLayoutConfigNormalized,
   type GridForest,
   type GridLayoutResult,
   type GridLayoutData,
@@ -33,17 +31,6 @@ import {
  */
 const GROUP_ROUTING_GUTTER = 24;
 const GROUP_ROUTING_CLEARANCE = 20;
-
-function sortBySourceOrder(items: Node[], sourceOrder: Map<string, number>): Node[] {
-  return [...items].sort((a, b) => {
-    const aOrder = sourceOrder.get(a.id) ?? Number.MAX_SAFE_INTEGER;
-    const bOrder = sourceOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER;
-    if (aOrder !== bOrder) {
-      return aOrder - bOrder;
-    }
-    return compareCodeUnits(a.id, b.id);
-  });
-}
 
 function titleBandFor(node: Node, titleGap: number): number {
   if (!node.label || !node.labelBBox || !(node.labelBBox.height > 0)) {
@@ -85,9 +72,8 @@ function layoutContainer(
   const contentLeft = group ? padding + routingGutter : 0;
   const contentTop = group ? padding + titleBand + routingGutter : 0;
 
-  const directItems = sortBySourceOrder(
-    (forest.childrenByParent.get(containerId) ?? []).filter((node) => !isEdgeLabelNode(node)),
-    sourceOrder
+  const directItems = (forest.childrenByParent.get(containerId) ?? []).filter(
+    (node) => !isEdgeLabelNode(node)
   );
 
   const { cells } = resolveGridPlacements(directItems, sourceOrder, config);
@@ -385,22 +371,6 @@ function materializeAbsoluteGeometry(result: GridLayoutResult): void {
   }
 }
 
-function validatePlacementsBeforeLayout(
-  forest: GridForest,
-  config: GridLayoutConfigNormalized,
-  sourceOrder: Map<string, number>
-): void {
-  // Validate every container before mutating even the cloned geometry. This keeps failures
-  // independent of the order in which nested groups happen to be measured.
-  for (const children of forest.childrenByParent.values()) {
-    const directItems = sortBySourceOrder(
-      children.filter((node) => !isEdgeLabelNode(node)),
-      sourceOrder
-    );
-    resolveGridPlacements(directItems, sourceOrder, config);
-  }
-}
-
 function commitGridGeometry(source: LayoutData, target: LayoutData): void {
   // Preserve caller-owned node and edge identities. Downstream renderers may already hold
   // references to these objects, so only calculated geometry is copied from the working graph.
@@ -481,7 +451,6 @@ function runGridLayoutCoreInPlace(data: GridLayoutData): GridLayoutResult {
     data.nodes.filter((node) => !isEdgeLabelNode(node)),
     config
   );
-  validatePlacementsBeforeLayout(forest, config, sourceOrder);
 
   const result: GridLayoutResult = {
     forest,
