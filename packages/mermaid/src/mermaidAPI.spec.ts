@@ -971,6 +971,163 @@ treeView-beta
       expect(texts).toContain('Syntax error in text');
       expect(texts.some((text) => text.includes('Edge limit exceeded'))).toBe(true);
     });
+
+    for (const securityLevel of ['strict', 'sandbox'] as const) {
+      describe(`temporary rendering container (${securityLevel})`, () => {
+        beforeEach(() => {
+          mermaidAPI.initialize({ securityLevel });
+        });
+
+        jsdomIt('stays measurable and out of flow until rendering finishes', async () => {
+          const id = 'pending-render';
+          const temporaryId = `${securityLevel === 'sandbox' ? 'i' : 'd'}${id}`;
+          const diagram = await Diagram.fromText('flowchart TD; A-->B;');
+          let finishDrawing!: () => void;
+          const drawing = new Promise<void>((resolve) => {
+            finishDrawing = resolve;
+          });
+          const draw = vi.spyOn(diagram.renderer, 'draw').mockReturnValue(drawing);
+          const fromText = vi.spyOn(Diagram, 'fromText').mockResolvedValue(diagram);
+          const getComputedStyle = window.getComputedStyle.bind(window);
+          const dimensions = vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+            const style = getComputedStyle(element);
+            if (element.id === temporaryId) {
+              // JSDOM has no layout engine; browser tests cover actual measurements.
+              style.width = '612px';
+              style.height = '234px';
+            }
+            return style;
+          });
+          const rendering = mermaidAPI.render(id, 'flowchart TD; A-->B;');
+
+          try {
+            const temporaryElement = document.getElementById(temporaryId)!;
+            expect(temporaryElement.parentElement).toBe(document.body);
+            expect(temporaryElement.style.transition).toBe('none');
+            expect(temporaryElement.style.animation).toBe('none');
+            expect(temporaryElement.style.position).toBe('fixed');
+            expect(temporaryElement.style.display).not.toBe('none');
+            expect(temporaryElement.style.visibility).toBe('hidden');
+            expect(temporaryElement.style.opacity).toBe('0');
+            expect(temporaryElement.style.pointerEvents).toBe('none');
+            expect(temporaryElement.style.width).toBe('612px');
+            if (securityLevel === 'sandbox') {
+              expect(temporaryElement.style.height).toBe('234px');
+              expect(temporaryElement.getAttribute('sandbox')).toBe('');
+            }
+
+            finishDrawing();
+            const { svg } = await rendering;
+            expect(draw).toHaveBeenCalledOnce();
+            expect(document.getElementById(temporaryId)).toBeNull();
+            const output = ensureNodeFromSelector(
+              securityLevel === 'sandbox' ? 'iframe' : 'svg',
+              new JSDOM(svg).window.document
+            );
+            expect(output.getAttribute('style') ?? '').not.toMatch(
+              /position:\s*fixed|visibility:\s*hidden|opacity:\s*0/
+            );
+          } finally {
+            finishDrawing();
+            await rendering.catch(() => undefined);
+            dimensions.mockRestore();
+            fromText.mockRestore();
+            draw.mockRestore();
+          }
+        });
+
+        jsdomIt('does not hide or reposition a caller-supplied container', async () => {
+          const id = 'contained-render';
+          const container = document.createElement('div');
+          container.setAttribute('style', 'width: 321px; position: relative;');
+          document.body.append(container);
+          const originalStyle = container.getAttribute('style');
+          const diagram = await Diagram.fromText('flowchart TD; A-->B;');
+          const draw = vi.spyOn(diagram.renderer, 'draw').mockResolvedValue(undefined);
+          const fromText = vi.spyOn(Diagram, 'fromText').mockResolvedValue(diagram);
+
+          try {
+            const rendering = mermaidAPI.render(id, 'flowchart TD; A-->B;', container);
+            expect(container.getAttribute('style')).toBe(originalStyle);
+            const wrapper = container.firstElementChild as HTMLElement;
+            expect(wrapper.style.position).toBe('');
+            expect(wrapper.style.visibility).toBe('');
+            expect(wrapper.style.opacity).toBe('');
+            await rendering;
+            expect(container.getAttribute('style')).toBe(originalStyle);
+            expect(container.childElementCount).toBe(0);
+          } finally {
+            fromText.mockRestore();
+            draw.mockRestore();
+          }
+        });
+
+        for (const suppressErrorRendering of [false, true]) {
+          jsdomIt(
+            `handles a parse error with suppressErrorRendering=${suppressErrorRendering}`,
+            async () => {
+              mermaidAPI.initialize({ securityLevel, suppressErrorRendering });
+              const id = 'parse-failure';
+              await expect(mermaidAPI.render(id, 'not a diagram')).rejects.toThrow();
+              const wrapper = document.getElementById(
+                `${securityLevel === 'sandbox' ? 'i' : 'd'}${id}`
+              );
+              if (suppressErrorRendering) {
+                expect(wrapper).toBeNull();
+              } else {
+                expect(wrapper).not.toBeNull();
+                expect(wrapper!.getAttribute('style')).toBe(
+                  securityLevel === 'sandbox' ? 'width: 100%; height: 100%;' : null
+                );
+                const errorRoot =
+                  securityLevel === 'sandbox'
+                    ? (wrapper as HTMLIFrameElement).contentDocument!
+                    : wrapper!;
+                expect(errorRoot.querySelector('.error-text')?.textContent).toBe(
+                  'Syntax error in text'
+                );
+              }
+            }
+          );
+
+          jsdomIt(
+            `handles a draw error with suppressErrorRendering=${suppressErrorRendering}`,
+            async () => {
+              mermaidAPI.initialize({ securityLevel, suppressErrorRendering });
+              const id = 'draw-failure';
+              const diagram = await Diagram.fromText('flowchart TD; A-->B;');
+              const error = new Error('layout failed');
+              const draw = vi.spyOn(diagram.renderer, 'draw').mockRejectedValue(error);
+              const fromText = vi.spyOn(Diagram, 'fromText').mockResolvedValue(diagram);
+              try {
+                await expect(mermaidAPI.render(id, 'flowchart TD; A-->B;')).rejects.toBe(error);
+                const wrapper = document.getElementById(
+                  `${securityLevel === 'sandbox' ? 'i' : 'd'}${id}`
+                );
+                if (suppressErrorRendering) {
+                  expect(wrapper).toBeNull();
+                } else {
+                  expect(wrapper).not.toBeNull();
+                  expect(wrapper!.getAttribute('style')).toBe(
+                    securityLevel === 'sandbox' ? 'width: 100%; height: 100%;' : null
+                  );
+                  const errorRoot =
+                    securityLevel === 'sandbox'
+                      ? (wrapper as HTMLIFrameElement).contentDocument!
+                      : wrapper!;
+                  expect(errorRoot.querySelector('.error-text')?.textContent).toBe(
+                    'Syntax error in text'
+                  );
+                }
+              } finally {
+                fromText.mockRestore();
+                draw.mockRestore();
+              }
+            }
+          );
+        }
+      });
+    }
   });
 
   describe('getDiagramFromText', () => {
