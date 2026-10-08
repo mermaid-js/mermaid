@@ -10,18 +10,23 @@ import {
   terminalMarkerClearanceRect,
 } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
+import {
+  GRID_EDGE_END_MARKER_CLEARANCE,
+  GRID_LABEL_CLEARANCE,
+  gridLabelRequiredSegmentLength,
+} from './labelGeometry.js';
 import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import { GRID_LABEL_PREFIX, gridError, isEdgeLabelNode, isFinitePositiveNumber } from './types.js';
 
 // Label placement is a post-routing transaction: reserve label rectangles, reroute affected
 // orthogonal edges, then publish only a pass whose labels and preserved anchors all validate.
-const LABEL_CLEARANCE = 6;
+const LABEL_CLEARANCE = GRID_LABEL_CLEARANCE;
 const LABEL_GUTTER = 14;
 const LABEL_GUTTER_STEP = 18;
 const MAX_GUTTER_STEPS = 16;
 const MAX_DETOUR_LINE_CANDIDATES = 128;
 const MAX_DETOUR_CENTER_CANDIDATES = 64;
-const EDGE_END_MARKER_CLEARANCE = 12;
+const EDGE_END_MARKER_CLEARANCE = GRID_EDGE_END_MARKER_CLEARANCE;
 const LABEL_EPSILON = 1e-6;
 const MIN_SELF_PARALLEL_GAP = 7;
 const MIN_SELF_PARALLEL_OVERLAP = 8;
@@ -889,9 +894,9 @@ function rectSafeForLabel(
 }
 
 function requiredSegmentLength(node: Node, segment: Segment): number {
-  return segment.orientation === 'H'
-    ? (node.width ?? 0) + LABEL_CLEARANCE * 2
-    : (node.height ?? 0) + LABEL_CLEARANCE * 2;
+  return segment.orientation === 'Z'
+    ? 0
+    : gridLabelRequiredSegmentLength(node, segment.orientation);
 }
 
 function blockedCenterIntervals(
