@@ -1946,6 +1946,30 @@ Beginner's tip—a full example using interactive links in a html context:
 </body>
 ```
 
+### Hover (mouseover)
+
+There is no `mouseover` statement: `click` is the only interaction that can be declared in the diagram code. When a `click` statement has a tooltip, the tooltip is shown while the pointer is over the node, and the node gets the `hover` class for as long as it is hovered, so it can be styled with CSS.
+
+To run your own code when a node is hovered, attach the listeners to the rendered SVG yourself, for example:
+
+```html
+<div id="diagram"></div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  const element = document.querySelector('#diagram');
+  const { svg, bindFunctions } = await mermaid.render('myDiagram', 'flowchart LR\n  A --> B');
+  element.innerHTML = svg;
+  // Sets up `click` callbacks and tooltips, if the diagram has any.
+  bindFunctions?.(element);
+
+  for (const node of element.querySelectorAll('g.node')) {
+    // The id is `<diagram id>-flowchart-<node id>-<index>`, e.g. `myDiagram-flowchart-A-0`.
+    node.addEventListener('mouseenter', () => console.log('hovered', node.id));
+  }
+</script>
+```
+
 ### Comments
 
 Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
