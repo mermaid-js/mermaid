@@ -1,5 +1,6 @@
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { gridLabelSpanRequirement, type GridLabelSpanRequirement } from './labelGeometry.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import type {
   GridCellStack,
   GridContainerId,
@@ -26,7 +27,8 @@ export interface GridContainerLabelGaps {
 
 export function buildGridLabelRequirements(
   data: LayoutData,
-  forest: GridForest
+  forest: GridForest,
+  metrics?: GridRoutingInstrumentation
 ): GridLabelRequirements {
   const byContainer = new Map<GridContainerId, GridLabelledEdge[]>();
   const selfLoops = new Map<string, GridLabelSpanRequirement>();
@@ -34,6 +36,9 @@ export function buildGridLabelRequirements(
   for (const edge of data.edges) {
     if (!edge.start || !edge.end || !edge.labelNodeId) {
       continue;
+    }
+    if (metrics) {
+      metrics.labelSpacingEdgesExamined++;
     }
     const labelNode = forest.nodeById.get(edge.labelNodeId);
     const source = forest.nodeById.get(edge.start);
@@ -133,7 +138,8 @@ export function deriveGridContainerLabelGaps(
   sortedRows: readonly number[],
   sortedColumns: readonly number[],
   configuredRowGap: number,
-  configuredColumnGap: number
+  configuredColumnGap: number,
+  metrics?: GridRoutingInstrumentation
 ): GridContainerLabelGaps {
   const rowGapAfter = new Map<number, number>();
   const columnGapAfter = new Map<number, number>();
@@ -156,6 +162,9 @@ export function deriveGridContainerLabelGaps(
         requirement &&
         crossAxisFits(source.row, requirement.cross, sortedRows, rowHeights, configuredRowGap)
       ) {
+        if (metrics) {
+          metrics.labelSpacingEligibleEdges++;
+        }
         addGapRequirement(
           columnGapAfter,
           Math.min(source.column, target.column),
@@ -176,6 +185,9 @@ export function deriveGridContainerLabelGaps(
           configuredColumnGap
         )
       ) {
+        if (metrics) {
+          metrics.labelSpacingEligibleEdges++;
+        }
         addGapRequirement(
           rowGapAfter,
           Math.min(source.row, target.row),

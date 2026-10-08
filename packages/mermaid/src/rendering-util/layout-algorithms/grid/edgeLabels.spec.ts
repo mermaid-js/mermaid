@@ -161,14 +161,18 @@ describe('grid edge label helpers', () => {
     const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
     labelNode.width = 90;
     labelNode.height = 20;
+    const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(data);
+    runGridLayoutCore(data, { metrics });
 
     expect(data.edges[0].points).toBeDefined();
     expect(normalizePolyline(data.edges[0].points!).segments).toHaveLength(3);
     expectNoNonAdjacentConflicts(data.edges[0].points!);
     expect(labelNode.x).toBeLessThan((data.nodes[0].x ?? 0) - (data.nodes[0].width ?? 0) / 2);
     expect(labelNode.y).toBe(20);
+    expect(metrics.labelAwareSelfLoopCandidates).toBe(1);
+    expect(metrics.labelAwareSelfLoopsCommitted).toBe(1);
+    expect(metrics.labelAwareSelfLoopFallbacks).toBe(0);
     expect(validateLayout(data).ok).toBe(true);
   });
 

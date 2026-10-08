@@ -652,7 +652,8 @@ export function routeObstacleClearSelfLoop(
   ownerSideCounts: Map<string, number>,
   selfLoopCounts: Map<string, number>,
   result: GridLayoutResult,
-  labelRequirement?: GridLabelSpanRequirement
+  labelRequirement?: GridLabelSpanRequirement,
+  metrics?: GridRoutingInstrumentation
 ): { points: Point[]; side: GridSide; index: number } {
   // Side load determines preference, but fixed side ordering breaks ties deterministically.
   const rect = rectForNode(owner);
@@ -664,6 +665,9 @@ export function routeObstacleClearSelfLoop(
     const candidates = labelRequirement
       ? labelAwareSelfLoopCandidates(owner, side, index, demandCoord, labelRequirement)
       : [routeSelfLoop(owner, side, index, demandCoord)];
+    if (labelRequirement && metrics) {
+      metrics.labelAwareSelfLoopCandidates += candidates.length;
+    }
     for (const points of candidates) {
       if (!obstacles.some((obstacle) => polylineIntersectsRect(points, obstacle))) {
         return { points, side, index };
