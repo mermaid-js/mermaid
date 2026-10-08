@@ -164,6 +164,7 @@ export interface GridEdgeLabelInstrumentation {
   individualLabelRerouteSuccesses: number;
   labelOverlapFallbacks: number;
   labelOverlapReservations: number;
+  degenerateLabelRoutesSkipped: number;
   rollbacks: number;
   indexCoordinateCount: number;
   indexSpanAllocations: number;
@@ -215,6 +216,7 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     individualLabelRerouteSuccesses: 0,
     labelOverlapFallbacks: 0,
     labelOverlapReservations: 0,
+    degenerateLabelRoutesSkipped: 0,
     rollbacks: 0,
     indexCoordinateCount: 0,
     indexSpanAllocations: 0,
@@ -2060,6 +2062,27 @@ function isPreparedLabelNode(node: Node | undefined): node is NonClusterNode {
   return Boolean(node && isEdgeLabelNode(node));
 }
 
+function parkDegenerateLabel(
+  edge: Edge,
+  labelNode: Node,
+  nodeById: ReadonlyMap<string, Node>
+): void {
+  const routePoint = edge.points?.find(
+    (point) => Number.isFinite(point.x) && Number.isFinite(point.y)
+  );
+  const source = edge.start ? nodeById.get(edge.start) : undefined;
+  const target = edge.end ? nodeById.get(edge.end) : undefined;
+  const fallback =
+    routePoint ?? (source && hasFinitePosition(source) ? source : undefined) ?? target;
+  if (fallback && Number.isFinite(fallback.x) && Number.isFinite(fallback.y)) {
+    labelNode.x = fallback.x;
+    labelNode.y = fallback.y;
+    return;
+  }
+  delete labelNode.x;
+  delete labelNode.y;
+}
+
 function preferredGridLabelNodeId(edge: Edge): string {
   return `${GRID_LABEL_PREFIX}${edge.start ?? ''}-${edge.end ?? ''}-${edge.id}`;
 }
@@ -2144,9 +2167,9 @@ export function positionGridEdgeLabels(
     nodeById.set(node.id, node);
   }
 
-  const labelledEdges = data.edges
+  const preparedLabels = data.edges
     .map((edge, sourceIndex) => {
-      if (!edge.labelNodeId || !edge.points) {
+      if (!edge.labelNodeId) {
         return null;
       }
       const labelNode = nodeById.get(edge.labelNodeId);
@@ -2161,7 +2184,7 @@ export function positionGridEdgeLabels(
     })
     .filter((entry): entry is LabelWorkItem => entry !== null);
 
-  if (labelledEdges.length === 0) {
+  if (preparedLabels.length === 0) {
     return;
   }
 
@@ -2171,7 +2194,7 @@ export function positionGridEdgeLabels(
     data.edges.map((edge) => [edge.id, edge.points?.map((point) => ({ ...point }))])
   );
   const baseLabelPositions = new Map<string, { x?: number; y?: number }>(
-    labelledEdges.map(({ labelNode }) => [labelNode.id, { x: labelNode.x, y: labelNode.y }])
+    preparedLabels.map(({ labelNode }) => [labelNode.id, { x: labelNode.x, y: labelNode.y }])
   );
 
   const restoreBaseState = (): void => {
@@ -2183,7 +2206,7 @@ export function positionGridEdgeLabels(
         delete edge.points;
       }
     }
-    for (const { labelNode } of labelledEdges) {
+    for (const { labelNode } of preparedLabels) {
       const position = baseLabelPositions.get(labelNode.id);
       if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
         labelNode.x = position.x;
@@ -2195,9 +2218,19 @@ export function positionGridEdgeLabels(
     }
   };
 
-  const workItems = [...labelledEdges].sort(
-    (a, b) => a.sourceIndex - b.sourceIndex || compareCodeUnits(a.edge.id, b.edge.id)
-  );
+  const workItems = preparedLabels
+    .filter(({ edge, labelNode }) => {
+      if (normalizePolyline(edge.points ?? []).segments.length > 0) {
+        return true;
+      }
+      parkDegenerateLabel(edge, labelNode, nodeById);
+      incrementMetric(instrumentation, 'degenerateLabelRoutesSkipped');
+      return false;
+    })
+    .sort((a, b) => a.sourceIndex - b.sourceIndex || compareCodeUnits(a.edge.id, b.edge.id));
+  if (workItems.length === 0) {
+    return;
+  }
   let lastError: unknown;
   for (let pass = 1; pass <= 2; pass++) {
     // Pass 1 prefers existing segments and foreign-edge reroutes. Pass 2 additionally permits
