@@ -154,7 +154,7 @@ describe('grid determinism and performance', () => {
     }
   );
 
-  // Coverage instrumentation pushes this test past Vitest's 5-second default;
+  // Coverage instrumentation can push these large structural tests past Vitest's 5-second default;
   // non-coverage runs remain below it.
   it('keeps the 1000-node/500-edge case below structural and resource caps', () => {
     const layout = largeSyntheticLayout();
@@ -193,5 +193,5 @@ describe('grid determinism and performance', () => {
     expect(metrics.endpointOverlayVertices).toBeLessThanOrEqual(metrics.endpointOverlayBuilds * 32);
     expect(metrics.expandedStates).toBeLessThan(2_000_000);
     expect(metrics.estimatedBytes).toBeLessThan(64 * 1024 * 1024);
-  });
+  }, 10_000);
 });
