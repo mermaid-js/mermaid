@@ -24,6 +24,10 @@ export interface GridRoutingOptions {
   // Caps are also test seams, so enabling them deliberately bypasses compatibility fast paths.
   topologyCaps?: TopologyResourceCaps;
   searchCaps?: RouterSearchCaps;
+}
+
+/** @internal */
+export interface GridRoutingTestOptions extends GridRoutingOptions {
   onDualRouteComparison?: (comparison: GridRoutingDualRouteComparison) => void;
 }
 
@@ -31,7 +35,13 @@ export function routeGridEdges(
   layout: LayoutData,
   result: GridLayoutResult,
   metrics?: GridRoutingInstrumentation,
-  options: GridRoutingOptions = {}
+  options?: GridRoutingOptions
+): void;
+export function routeGridEdges(
+  layout: LayoutData,
+  result: GridLayoutResult,
+  metrics?: GridRoutingInstrumentation,
+  options: GridRoutingTestOptions = {}
 ): void {
   // A fresh session owns every mutable routing structure and commits routes in deterministic order.
   new GridEdgeRoutingSession(layout, result, metrics, options).route();

@@ -160,7 +160,7 @@ describe('grid determinism and performance', () => {
     const layout = largeSyntheticLayout();
     const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(layout, metrics);
+    runGridLayoutCore(layout, { metrics });
 
     // These counters enforce the large-case complexity and resource contract; valid geometry alone
     // would not detect a regression to per-edge topology construction or graph search.
@@ -179,7 +179,7 @@ describe('grid determinism and performance', () => {
     const layout = largeSearchLayout();
     const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(layout, metrics);
+    runGridLayoutCore(layout, { metrics });
 
     // These counters prove the large fixture exercises bounded search while sharing one topology;
     // output geometry alone cannot expose accidental per-edge topology or unbounded search growth.

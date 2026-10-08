@@ -602,7 +602,7 @@ describe('grid router', () => {
       );
       const metrics = createGridRoutingInstrumentation();
 
-      runGridLayoutCore(data, metrics, options);
+      runGridLayoutCore(data, { metrics, routing: options });
 
       expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
       // These counters prove the configured cap selected a validated fallback for the expected
@@ -631,7 +631,7 @@ describe('grid router', () => {
     const before = structuredClone(data);
 
     expect(() =>
-      runGridLayoutCore(data, metrics, { topologyCaps: { maxVertices: 1 } })
+      runGridLayoutCore(data, { metrics, routing: { topologyCaps: { maxVertices: 1 } } })
     ).toThrowError(/GRID_ROUTE_NOT_FOUND: Invalid legacy fallback/);
     expect(data).toEqual(before);
     // The counters are necessary to prove the rejected geometry came from the configured fallback
@@ -660,7 +660,7 @@ describe('grid router', () => {
     );
     const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(data, metrics, { topologyCaps: { maxVertices: 1 } });
+    runGridLayoutCore(data, { metrics, routing: { topologyCaps: { maxVertices: 1 } } });
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
     // A cross-group route has three independently capped hierarchy segments; these counters prove
@@ -682,8 +682,9 @@ describe('grid router', () => {
     );
     const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(data, metrics, {
-      searchCaps: { maxInvocationExpandedStates: 30 },
+    runGridLayoutCore(data, {
+      metrics,
+      routing: { searchCaps: { maxInvocationExpandedStates: 30 } },
     });
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
@@ -714,8 +715,9 @@ describe('grid router', () => {
     const metrics = createGridRoutingInstrumentation();
 
     try {
-      runGridLayoutCore(data, metrics, {
-        searchCaps: { maxInvocationExpandedStates: 1 },
+      runGridLayoutCore(data, {
+        metrics,
+        routing: { searchCaps: { maxInvocationExpandedStates: 1 } },
       });
 
       expect(invalidRoutingIssues(data)).toEqual([]);
@@ -788,7 +790,7 @@ describe('grid router', () => {
     const data = makeData();
     const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(data, metrics);
+    runGridLayoutCore(data, { metrics });
 
     expect(data.edges.every(({ points }) => (points?.length ?? 0) >= 2)).toBe(true);
     expect(invalidRoutingIssues(data)).toEqual([]);
@@ -833,7 +835,7 @@ describe('grid router', () => {
 
     const reversed = makeData(true);
     const reversedMetrics = createGridRoutingInstrumentation();
-    runGridLayoutCore(reversed, reversedMetrics);
+    runGridLayoutCore(reversed, { metrics: reversedMetrics });
 
     expect(
       Object.fromEntries(data.edges.map(({ id, points }) => [id, JSON.stringify(points)]))
@@ -1073,7 +1075,7 @@ describe('grid router', () => {
     );
     const metrics = createGridRoutingInstrumentation();
 
-    runGridLayoutCore(data, metrics);
+    runGridLayoutCore(data, { metrics });
 
     expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
     const owner = data.nodes.find(({ id }) => id === 'titled')!;
@@ -1204,8 +1206,10 @@ describe('grid router', () => {
     );
     const comparisons: unknown[] = [];
 
-    runGridLayoutCore(data, createGridRoutingInstrumentation(), {
-      onDualRouteComparison: (comparison) => comparisons.push(comparison),
+    runGridLayoutCore(data, {
+      routing: {
+        onDualRouteComparison: (comparison) => comparisons.push(comparison),
+      },
     });
 
     expect(comparisons).toEqual([

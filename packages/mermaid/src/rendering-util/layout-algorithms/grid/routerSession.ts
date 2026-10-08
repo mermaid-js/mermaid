@@ -1,7 +1,7 @@
 import type { Point } from '../../../types.js';
 import type { Edge, LayoutData } from '../../types.js';
 import { clamp, rectForNode } from '../layout-utils/helpers.js';
-import type { GridRoutingOptions } from './router.js';
+import type { GridRoutingTestOptions } from './router.js';
 import {
   boundedAlternativePortalCoordinates,
   buildRoutingContext,
@@ -177,7 +177,7 @@ export class GridEdgeRoutingSession {
     private readonly layout: LayoutData,
     private readonly result: GridLayoutResult,
     private readonly metrics: GridRoutingInstrumentation | undefined,
-    private readonly options: GridRoutingOptions
+    private readonly options: GridRoutingTestOptions
   ) {}
 
   route(): void {

@@ -4,7 +4,7 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { manhattanLength, polylineIntersectsRect, rectForNode } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
 import { isAncestorGroup } from './groups.js';
-import type { GridRoutingOptions } from './router.js';
+import type { GridRoutingTestOptions } from './router.js';
 import {
   routerRect,
   validateContainerSegment,
@@ -642,7 +642,7 @@ export function buildRoutingContext(
   containerIds: readonly GridContainerId[],
   result: GridLayoutResult,
   metrics: GridRoutingInstrumentation | undefined,
-  options: GridRoutingOptions
+  options: GridRoutingTestOptions
 ): GridRoutingContext {
   // Build each immutable container topology once. Per-edge endpoints are added later as cheap
   // overlays, avoiding repeated obstacle sweeps for large diagrams.
@@ -858,7 +858,7 @@ function prepareRoutingModes(
   prepared: PreparedEdgeRoutes,
   result: GridLayoutResult,
   metrics: GridRoutingInstrumentation | undefined,
-  options: GridRoutingOptions
+  options: GridRoutingTestOptions
 ): PreparedRoutingModes {
   // Classify every plan before building topologies: proven minimal corridor routes avoid sparse
   // setup, while only containers needed by sparse LCA, hierarchy, or loop segments are materialized.

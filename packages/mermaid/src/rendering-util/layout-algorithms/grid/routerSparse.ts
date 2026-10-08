@@ -3,7 +3,7 @@ import type { Point } from '../../../types.js';
 import type { Node } from '../../types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
 import { manhattanLength, rectForNode } from '../layout-utils/helpers.js';
-import type { GridRoutingOptions } from './router.js';
+import type { GridRoutingTestOptions } from './router.js';
 import {
   SELF_LOOP_PORT_GAP,
   SELF_LOOP_PORT_OFFSET_STEP,
@@ -160,7 +160,7 @@ export function sparseSameContainerRoute(
   context: GridRoutingContext,
   searchWorkspace: RouterSearchWorkspace,
   overlayScratch: EndpointOverlayScratch,
-  options: GridRoutingOptions,
+  options: GridRoutingTestOptions,
   pairRoutes: readonly (readonly Point[])[]
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(plan.lcaContainerId);
@@ -427,7 +427,7 @@ export function sparseSelfLoopRoute(
   ownerSideCounts: Map<string, number>,
   selfLoopCounts: Map<string, number>,
   pairRoutes: readonly (readonly Point[])[],
-  options: GridRoutingOptions
+  options: GridRoutingTestOptions
 ): { points: Point[]; side: GridSide; index: number } {
   // Try sides in load order and reserve progressively wider port pairs for repeated loops on the
   // same side.
@@ -566,7 +566,7 @@ export function sparseContainerSegment(
   context: GridRoutingContext,
   searchWorkspace: RouterSearchWorkspace,
   overlayScratch: EndpointOverlayScratch | undefined,
-  options: GridRoutingOptions,
+  options: GridRoutingTestOptions,
   pairRoutes: readonly (readonly Point[])[] = [],
   endAlternatives: () => readonly SegmentAttachmentAlternative[] = () => [],
   startAlternatives: () => readonly SegmentAttachmentAlternative[] = () => [],

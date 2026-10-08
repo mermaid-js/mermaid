@@ -6,7 +6,7 @@ import {
   resolveGridPlacements,
   validateGridPlacementMap,
 } from './placement.js';
-import { routeGridEdges, type GridRoutingOptions } from './router.js';
+import { routeGridEdges, type GridRoutingTestOptions } from './router.js';
 import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import {
   GRID_DEFAULTS,
@@ -463,8 +463,7 @@ function rebindGridForest(forest: GridForest, nodes: Node[]): GridForest {
 
 function runGridLayoutCoreInPlace(
   data: GridLayoutData,
-  metrics?: GridRoutingInstrumentation,
-  routingOptions?: GridRoutingOptions
+  options: GridLayoutCoreInternalOptions
 ): GridLayoutResult {
   const forest = buildGridForest(data.nodes);
   const config = readGridConfig(data);
@@ -491,27 +490,26 @@ function runGridLayoutCoreInPlace(
   materializeAbsoluteGeometry(result);
   // Routing consumes absolute node bounds and corridor coordinates, so it must run after the
   // children-first sizing and top-down translation phases have both completed.
-  routeGridEdges(data, result, metrics, routingOptions);
+  routeGridEdges(data, result, options.metrics, options.routing);
   return result;
 }
 
-export function runGridLayoutCore(data4Layout: LayoutData): GridLayoutResult;
+/** @internal */
+export interface GridLayoutCoreInternalOptions {
+  metrics?: GridRoutingInstrumentation;
+  routing?: GridRoutingTestOptions;
+}
+
 export function runGridLayoutCore(
   data4Layout: LayoutData,
-  metrics: GridRoutingInstrumentation,
-  routingOptions?: GridRoutingOptions
-): GridLayoutResult;
-export function runGridLayoutCore(
-  data4Layout: LayoutData,
-  metrics?: GridRoutingInstrumentation,
-  routingOptions?: GridRoutingOptions
+  options: GridLayoutCoreInternalOptions = {}
 ): GridLayoutResult {
   const data = data4Layout as GridLayoutData;
 
   // Geometry and routing are transactional: failed recovery must not leave partial coordinates
   // on the shared render model.
   const working = cloneGridLayoutData(data);
-  const result = runGridLayoutCoreInPlace(working, metrics, routingOptions);
+  const result = runGridLayoutCoreInPlace(working, options);
   commitGridGeometry(working, data);
   return {
     ...result,
