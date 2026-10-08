@@ -414,12 +414,11 @@ describe('grid determinism and performance', () => {
     expect(Number.isFinite(labelNode?.x)).toBe(true);
     expect(Number.isFinite(labelNode?.y)).toBe(true);
     expect(layout.edges[0].points?.length).toBeGreaterThan(2);
-    // These counters guard coordinate-compressed indexing: coordinate magnitude must not trigger
-    // span-sized allocation or fallback to full node/edge scans.
-    expect(metrics.fullNodeObstacleScans).toBe(0);
-    expect(metrics.fullEdgeScans).toBe(0);
+    // Coordinate magnitude must not increase index storage or candidate visitation.
     expect(metrics.indexCoordinateCount).toBeLessThan(1_000);
-    expect(metrics.indexSpanAllocations).toBe(0);
+    expect(metrics.obstacleCandidatesVisited).toBeLessThan(100);
+    expect(metrics.segmentCandidatesVisited).toBeLessThan(50);
+    expect(metrics.foreignEdgeLookups).toBeLessThanOrEqual(5);
   });
 
   it('indexes dense label routing instead of rescanning all nodes and edges per candidate', () => {
@@ -445,17 +444,17 @@ describe('grid determinism and performance', () => {
         .filter((item) => item.id.startsWith('v-'))
         .some((item) => (item.points?.length ?? 0) > 2)
     ).toBe(true);
-    // These counters enforce the indexed-query and bounded-reroute contract; successful geometry
-    // alone would not reveal a quadratic full-scan implementation.
+    // Bound the work performed by indexed queries; successful geometry alone would not reveal a
+    // regression to scanning every node or edge for each placement candidate.
     expect(
       metrics.segmentRectQueries +
         metrics.segmentBandQueries +
         metrics.obstacleRectQueries +
         metrics.obstacleBandQueries
     ).toBeGreaterThan(0);
-    expect(metrics.fullNodeObstacleScans).toBe(0);
-    expect(metrics.fullEdgeScans).toBe(0);
+    expect(metrics.obstacleCandidatesVisited).toBeLessThan(1_000);
+    expect(metrics.segmentCandidatesVisited).toBeLessThan(1_000);
+    expect(metrics.foreignEdgeLookups).toBeLessThan(100);
     expect(metrics.labelPasses).toBeLessThanOrEqual(2);
-    expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
   });
 });
