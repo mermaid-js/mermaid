@@ -19,20 +19,8 @@ function createChildOrderer(
   children: Map<NodeId, NodeId[]>,
   rankOf: Record<NodeId, number>,
   crossCounts: Map<NodeId, Map<NodeId, number>>,
-  minLayer: Map<NodeId, number>,
-  sourceIndex?: Map<NodeId, number>
+  minLayer: Map<NodeId, number>
 ): (node: NodeId) => NodeId[] {
-  const tieBreak = (a: NodeId, b: NodeId): number => {
-    if (sourceIndex) {
-      const ia = sourceIndex.get(a) ?? 0;
-      const ib = sourceIndex.get(b) ?? 0;
-      if (ia !== ib) {
-        return ia - ib;
-      }
-    }
-    return a.localeCompare(b);
-  };
-
   return (node: NodeId): NodeId[] => {
     const raw = children.get(node) ?? [];
     if (raw.length === 0) {
@@ -54,7 +42,7 @@ function createChildOrderer(
 
     future.sort((a, b) => {
       if (a.min === b.min) {
-        return tieBreak(a.child, b.child);
+        return a.child.localeCompare(b.child);
       }
       return a.min - b.min;
     });
@@ -70,7 +58,7 @@ function createChildOrderer(
       if (ma !== mb) {
         return ma - mb;
       }
-      return tieBreak(a, b);
+      return a.localeCompare(b);
     });
 
     return [...future.map((item) => item.child), ...present];
@@ -86,11 +74,6 @@ export function buildMultitreeLayerOrder(
   rankOf: Record<NodeId, number>,
   laneOf: (id: NodeId) => string | null
 ): NodeId[][] {
-  const sourceIndex = new Map<NodeId, number>();
-  for (const [i, id] of g.nodes.entries()) {
-    sourceIndex.set(id, i);
-  }
-
   const tree = buildDrivingTree(g, {
     rankHint: rankOf,
     laneOf,
@@ -106,13 +89,13 @@ export function buildMultitreeLayerOrder(
 
   const crossCounts = computeSubtreeCrossCounts(g, rankOf, tree);
 
-  const rootsSorted = [...roots].sort(compareByRankThenId(rankOf, sourceIndex));
+  const rootsSorted = [...roots].sort(compareByRankThenId(rankOf));
 
   // Annotate each node with the minimum layer in its subtree
-  const minLayer = annotateMinimumLayers(rootsSorted, children, rankOf, sourceIndex);
+  const minLayer = annotateMinimumLayers(rootsSorted, children, rankOf);
 
   // Create a function to order children by crossing counts
-  const orderChildren = createChildOrderer(children, rankOf, crossCounts, minLayer, sourceIndex);
+  const orderChildren = createChildOrderer(children, rankOf, crossCounts, minLayer);
 
   // Emit nodes in tree order
   let layers = emitNodesInTreeOrder(rootsSorted, g.nodes, rankOf, orderChildren);

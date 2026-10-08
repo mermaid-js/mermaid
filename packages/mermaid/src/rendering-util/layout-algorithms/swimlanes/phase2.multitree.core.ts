@@ -7,15 +7,14 @@ import type { NodeId } from './helpers.js';
 export function annotateMinimumLayers(
   nodes: NodeId[],
   children: Map<NodeId, NodeId[]>,
-  rankOf: Record<NodeId, number>,
-  sourceIndex?: Map<NodeId, number>
+  rankOf: Record<NodeId, number>
 ): Map<NodeId, number> {
   const minLayer = new Map<NodeId, number>();
 
   const annotate = (node: NodeId) => {
     let minL = rankOf[node] ?? 0;
     const childList = [...(children.get(node) ?? [])];
-    childList.sort(compareByRankThenId(rankOf, sourceIndex));
+    childList.sort(compareByRankThenId(rankOf));
     for (const child of childList) {
       annotate(child);
       const childMin = minLayer.get(child);
@@ -33,24 +32,11 @@ export function annotateMinimumLayers(
   return minLayer;
 }
 
-export function compareByRankThenId(
-  rankOf: Record<NodeId, number>,
-  sourceIndex?: Map<NodeId, number>
-) {
+export function compareByRankThenId(rankOf: Record<NodeId, number>) {
   return (a: NodeId, b: NodeId) => {
     const ra = rankOf[a] ?? 0;
     const rb = rankOf[b] ?? 0;
-    if (ra !== rb) {
-      return ra - rb;
-    }
-    if (sourceIndex) {
-      const ia = sourceIndex.get(a) ?? 0;
-      const ib = sourceIndex.get(b) ?? 0;
-      if (ia !== ib) {
-        return ia - ib;
-      }
-    }
-    return a.localeCompare(b);
+    return ra === rb ? a.localeCompare(b) : ra - rb;
   };
 }
 
