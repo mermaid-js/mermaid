@@ -12,6 +12,8 @@
  */
 
 import type { LayoutData, Node as MermaidNode } from '../../../types.js';
+import { buildLaneModel } from '../lanes.js';
+import { collectAnchoredIds } from '../anchoredNodes.js';
 import { PRECISION } from '../config.js';
 
 const EPS = PRECISION.EPSILON;
@@ -105,6 +107,20 @@ function chooseOrthogonalSide(
   return fallback;
 }
 
+/**
+ * The size of what is drawn for a node: `metadata.drawnExtent` when a shape draws
+ * smaller than its layout box (an event circle in a wider box), else the box itself.
+ * Ports, port spreading and endpoint clamping all use it, so edges meet the drawn outline.
+ */
+function drawnSize(node: MermaidNode, fallback: number): { w: number; h: number } {
+  const drawn = (node as { metadata?: { drawnExtent?: { width?: number; height?: number } } })
+    .metadata?.drawnExtent;
+  return {
+    w: drawn?.width ?? node.width ?? fallback,
+    h: drawn?.height ?? node.height ?? fallback,
+  };
+}
+
 function sharedLineEndpointCoord(line: RoutedLine, nextLine: RoutedLine): number {
   return Math.abs(line.to - nextLine.from) < EPS || Math.abs(line.to - nextLine.to) < EPS
     ? line.to
@@ -163,7 +179,8 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
   }
 
   // Identify Lanes (Top-level groups)
-  const topLevelGroups = nodes.filter((n) => n.isGroup && !n.parentId);
+  const laneModel = buildLaneModel(nodes);
+  const topLevelGroups = nodes.filter((n) => laneModel.isLane(n.id));
   for (const group of topLevelGroups) {
     const lane: LaneInfo = { id: group.id };
 
@@ -191,8 +208,11 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     // TB x becomes LR y, so the visual Y extent should use height, not width
     visualXHalfExtent: number;
   }
+  const anchoredIds = collectAnchoredIds(nodes);
   const obstacles: ObstacleRect[] = nodes
-    .filter((n) => !n.isGroup && !(n as { isEdgeLabel?: boolean }).isEdgeLabel)
+    .filter(
+      (n) => !n.isGroup && !(n as { isEdgeLabel?: boolean }).isEdgeLabel && !anchoredIds.has(n.id)
+    )
     .map((n) => {
       const w = n.width ?? 10;
       const h = n.height ?? 10;
@@ -240,9 +260,9 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
   // Direct port-for-side helper. Used by Step 6.2's sibling side-split
   // reassignment so the main routing loop can honor a side that does
   // not match `getOrthogonalPort`'s natural choice.
+
   const portForSide = (node: MermaidNode, side: OrthogonalSide): Point => {
-    const w = node.width ?? 10;
-    const h = node.height ?? 10;
+    const { w, h } = drawnSize(node, 10);
     const cx = node.x ?? 0;
     const cy = node.y ?? 0;
     switch (side) {
@@ -655,15 +675,17 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     // For diamond/rhombus shapes, the effective port area on pointy sides is
     // much smaller than the bounding box — use a fraction of the side length.
     const isVerticalSide = side === 'left' || side === 'right';
-    const sideLength = isVerticalSide ? (node.height ?? 10) : (node.width ?? 10);
+    const drawnBox = drawnSize(node, 10);
+    const sideLength = isVerticalSide ? drawnBox.h : drawnBox.w;
     const shape = (node as { shape?: string }).shape;
     const isDiamond = shape === 'question' || shape === 'diamond';
     const effectiveLength = isDiamond ? sideLength * 0.3 : sideLength;
     const MAX_PORT_SPACING = 20; // cap spacing to avoid large detours
 
-    // Distribute ports evenly, clamped by MIN and MAX
+    // Distribute ports evenly, clamped by MIN and MAX, never beyond the side
     const spacing = Math.min(
       MAX_PORT_SPACING,
+      effectiveLength / (group.length - 1),
       Math.max(MIN_PORT_SPACING, effectiveLength / (group.length + 1))
     );
     const totalSpan = spacing * (group.length - 1);
@@ -2189,6 +2211,11 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
       newPoints.push(pDstPort);
     }
 
+    const first = newPoints[0];
+    if (first && (Math.abs(first.x - pSrcPort.x) > EPS || Math.abs(first.y - pSrcPort.y) > EPS)) {
+      newPoints.unshift(pSrcPort);
+    }
+
     const filtered: Point[] = [];
     if (newPoints.length > 0) {
       filtered.push(newPoints[0]);
@@ -2229,8 +2256,7 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
   const nodeBoundaryClamp = (p: Point, node: MermaidNode): Point => {
     const cx = node.x ?? 0;
     const cy = node.y ?? 0;
-    const w = node.width ?? 0;
-    const h = node.height ?? 0;
+    const { w, h } = drawnSize(node, 0);
     if (w <= 0 || h <= 0) {
       return p;
     }
