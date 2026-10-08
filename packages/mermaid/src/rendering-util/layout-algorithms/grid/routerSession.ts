@@ -1,6 +1,6 @@
 import type { Point } from '../../../types.js';
 import type { Edge, LayoutData } from '../../types.js';
-import { clamp, compareCodeUnits, rectForNode } from '../layout-utils/helpers.js';
+import { clamp, rectForNode } from '../layout-utils/helpers.js';
 import type { GridRoutingOptions } from './router.js';
 import {
   boundaryAttachment,
@@ -669,23 +669,21 @@ export class GridEdgeRoutingSession {
   }
 
   private routeBundle(pairPlans: EdgeRoutePlan[]): void {
-    // Factorial retry strategies are deliberately avoided. Small bundles get one alternate stable
-    // ordering, then a final pass that may relax interior hierarchy separation while preserving
-    // distinct endpoint ports.
-    const canRetry =
+    // Small bundles first require strict pair separation. If that fails only because hierarchy
+    // interiors overlap, restore the whole bundle and retry with that separation relaxed while
+    // preserving distinct endpoint ports.
+    const canAttemptStrictSeparation =
       pairPlans.length > 1 &&
       pairPlans.length <= 8 &&
       pairPlans.every(({ edge }) => edge.start !== edge.end);
-    if (!canRetry) {
+    if (!canAttemptStrictSeparation) {
       for (const plan of pairPlans) {
         this.routePlan(plan);
       }
       return;
     }
-
     // A bundle is the retry unit because earlier siblings reserve pair corridors and portals for
-    // later ones. Restore every shared structure before changing route order or the retry becomes
-    // biased.
+    // later ones. Restore every shared structure before relaxing separation.
     const checkpoint = this.createBundleCheckpoint(pairPlans);
     let initialError: unknown;
     try {
@@ -696,35 +694,9 @@ export class GridEdgeRoutingSession {
     } catch (error) {
       initialError = error;
       this.restoreBundleCheckpoint(checkpoint);
-      if (this.metrics) {
-        this.metrics.bundleRetryAttempts++;
-      }
     }
 
-    const retryPlans = [...pairPlans].sort((a, b) => {
-      const aBoundaryCount = a.source.chain.length + a.target.chain.length - 2;
-      const bBoundaryCount = b.source.chain.length + b.target.chain.length - 2;
-      return (
-        bBoundaryCount - aBoundaryCount ||
-        Math.abs(b.laneOffset) - Math.abs(a.laneOffset) ||
-        a.laneOffset - b.laneOffset ||
-        compareCodeUnits(a.edge.id, b.edge.id)
-      );
-    });
-    let retryError: unknown;
-    try {
-      for (const plan of retryPlans) {
-        this.routePlan(plan, false);
-      }
-      if (this.metrics) {
-        this.metrics.bundleRetrySuccesses++;
-      }
-      return;
-    } catch (error) {
-      retryError = error;
-      this.restoreBundleCheckpoint(checkpoint);
-    }
-    if (!isPairSeparationError(initialError) || !isPairSeparationError(retryError)) {
+    if (!isPairSeparationError(initialError)) {
       throw initialError;
     }
     for (const plan of pairPlans) {

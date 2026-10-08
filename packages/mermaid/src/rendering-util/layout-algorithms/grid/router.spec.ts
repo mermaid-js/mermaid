@@ -793,13 +793,11 @@ describe('grid router', () => {
     expect(metrics).toMatchObject({
       hierarchyPortalPairs: 12,
       hierarchyPortalTransitionLength: 144,
-      hierarchyPortalAlternativeAttempts: 10,
+      hierarchyPortalAlternativeAttempts: 8,
       hierarchyPortalAlternativeSelections: 4,
       hierarchyBoundaryTransitions: 12,
       routesFound: 6,
       routesImpossible: 0,
-      bundleRetryAttempts: 1,
-      bundleRetrySuccesses: 0,
       bundleSeparationRelaxations: 2,
       routeOrder: ['edge-0', 'edge-1', 'edge-2', 'edge-3', 'edge-4', 'edge-5'],
     });

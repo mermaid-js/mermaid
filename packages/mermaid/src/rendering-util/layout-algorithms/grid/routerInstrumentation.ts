@@ -63,8 +63,6 @@ export interface GridRoutingInstrumentation {
   compatibilityFastPathNonMinimalRoutes: number;
   compatibilityRecoveries: number;
   compatibilityValidationFailures: number;
-  bundleRetryAttempts: number;
-  bundleRetrySuccesses: number;
   bundleSeparationRelaxations: number;
   routeLength: number;
   bendCount: number;
@@ -106,8 +104,6 @@ export const gridRoutingMetricDisposition = {
   compatibilityFastPathNonMinimalRoutes: 'cumulative',
   compatibilityRecoveries: 'transactional',
   compatibilityValidationFailures: 'cumulative',
-  bundleRetryAttempts: 'cumulative',
-  bundleRetrySuccesses: 'cumulative',
   bundleSeparationRelaxations: 'transactional',
   routeLength: 'transactional',
   bendCount: 'transactional',
@@ -206,8 +202,6 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     compatibilityFastPathNonMinimalRoutes: 0,
     compatibilityRecoveries: 0,
     compatibilityValidationFailures: 0,
-    bundleRetryAttempts: 0,
-    bundleRetrySuccesses: 0,
     bundleSeparationRelaxations: 0,
     routeLength: 0,
     bendCount: 0,
