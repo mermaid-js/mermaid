@@ -470,6 +470,16 @@ describe('grid edge label helpers', () => {
 
     positionGridEdgeLabels(data, metrics);
 
+    expect(data.edges.slice(1).map((edge) => edge.points)).toEqual([
+      [
+        { x: 220, y: 50 },
+        { x: 220, y: 270 },
+      ],
+      [
+        { x: 280, y: 50 },
+        { x: 280, y: 270 },
+      ],
+    ]);
     expect(data.edges[0].points?.length).toBeGreaterThan(2);
     expect(metrics.labelPasses).toBe(2);
     expect(metrics.frozenReservations).toBe(1);

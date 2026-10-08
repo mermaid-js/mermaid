@@ -2204,7 +2204,7 @@ export function positionGridEdgeLabels(
     data.edges.map((edge) => [edge.id, edge.points?.map((point) => ({ ...point }))])
   );
 
-  const restoreBaseState = (): void => {
+  const restoreBaseEdgePoints = (): void => {
     for (const edge of data.edges) {
       const points = baseEdgePoints.get(edge.id);
       if (points) {
@@ -2213,6 +2213,10 @@ export function positionGridEdgeLabels(
         delete edge.points;
       }
     }
+  };
+
+  const restoreBaseState = (): void => {
+    restoreBaseEdgePoints();
     for (const labelNode of labelNodes) {
       const position = baseLabelPositions.get(labelNode.id);
       if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
@@ -2241,7 +2245,7 @@ export function positionGridEdgeLabels(
   let lastError: unknown;
   for (let pass = 1; pass <= 2; pass++) {
     // Pass 1 prefers existing segments and foreign-edge reroutes. Pass 2 additionally permits
-    // owner-edge detours, using any valid route improvements retained from the first attempt.
+    // owner-edge detours, rebuilding every route from the original routing result.
     incrementMetric(instrumentation, 'labelPasses');
     const context = createEdgeLabelContext(data, instrumentation);
     const placedLabelsByEdgeId = new Map<string, PlacedLabel>();
@@ -2519,8 +2523,9 @@ export function positionGridEdgeLabels(
       return;
     } catch (error) {
       lastError = error;
-      // Pass 2 begins from any valid route work produced by pass 1, while
-      // provisional labels are cleared and rebuilt deterministically.
+      // A failed pass may contain detours around provisional label positions. Restore routing
+      // before retrying so the next pass depends only on the labels it successfully places.
+      restoreBaseEdgePoints();
       for (const { labelNode } of workItems) {
         delete labelNode.x;
         delete labelNode.y;
