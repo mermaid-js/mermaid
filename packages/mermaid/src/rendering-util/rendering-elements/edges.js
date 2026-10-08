@@ -46,8 +46,6 @@ export const resolveEdgeCurveType = (edgeCurve) => {
   return typeof edgeCurve === 'string' ? edgeCurve : getConfig()?.flowchart?.curve;
 };
 
-export { resolveEdgeCornerRadius };
-
 export const edgeLabels = new Map();
 export const terminalLabels = new Map();
 

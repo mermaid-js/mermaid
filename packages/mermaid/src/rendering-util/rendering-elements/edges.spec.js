@@ -14,10 +14,10 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 import {
   generateRoundedPath,
   insertEdge,
-  resolveEdgeCornerRadius,
   resolveEdgeCurveType,
   setTerminalWidth,
 } from './edges.js';
+import { resolveEdgeCornerRadius } from '../edgeCornerRadius.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
 import intersectPolygon from './intersect/intersect-polygon.js';
