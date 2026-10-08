@@ -210,7 +210,9 @@ function minimumBends(
   );
 }
 
-function orientationOrdinal(orientation: GridOrientation | undefined): number {
+type OrientationOrdinal = 0 | 1 | 2;
+
+function orientationOrdinal(orientation: GridOrientation | undefined): OrientationOrdinal {
   return orientation === undefined ? 0 : orientation === 'H' ? 1 : 2;
 }
 
@@ -547,7 +549,7 @@ function search(
     current: number,
     currentPoint: RouterPoint,
     to: number,
-    orientation: 1 | 2,
+    orientation: OrientationOrdinal,
     arcLength: number,
     boundaryTransitions: number
   ): void => {
