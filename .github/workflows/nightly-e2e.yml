@@ -124,6 +124,8 @@ jobs:
       }}
     needs: e2e
     runs-on: ubuntu-latest
+    outputs:
+      build_url: ${{ steps.argos.outputs.build_url }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -190,3 +192,49 @@ jobs:
               echo '_Argos build URL not found in upload output — check the "Upload screenshots to Argos" step log._'
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+          echo "build_url=$BUILD_URL" >> "$GITHUB_OUTPUT"
+
+  # Reports this run's outcome to Slack so a failure or a visual diff doesn't
+  # silently sit unnoticed in the Actions tab (see the no-Slack-yet note in
+  # the file header above — this job is what replaces it). always() so it
+  # still posts (as a failure summary) when e2e or argos-upload didn't
+  # succeed, instead of being skipped along with them.
+  notify-slack:
+    if: always() && github.repository == 'mermaid-js/mermaid'
+    needs: [e2e, argos-upload]
+    runs-on: ubuntu-latest
+    steps:
+      # Branches in bash rather than a nested GitHub Actions ternary so a
+      # failed e2e run gets an explicit "no visual diff to review" message
+      # instead of just silently omitting the Argos link.
+      - name: Build Slack message
+        id: message
+        env:
+          E2E_RESULT: ${{ needs.e2e.result }}
+          ARGOS_RESULT: ${{ needs['argos-upload'].result }}
+          BUILD_URL: ${{ needs['argos-upload'].outputs.build_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$E2E_RESULT" != "success" ]; then
+            TEXT="Nightly E2E: *failed* (one or more shards did not complete) — no visual diff to review. Run: $RUN_URL"
+          elif [ "$ARGOS_RESULT" != "success" ]; then
+            TEXT="Nightly E2E: passed, but the Argos screenshot upload failed — no visual diff link available. Run: $RUN_URL"
+          elif [ -n "$BUILD_URL" ]; then
+            TEXT="Nightly E2E: passed. Review visual diffs: $BUILD_URL"
+          else
+            TEXT="Nightly E2E: passed, but no Argos build URL was found in the upload output. Run: $RUN_URL"
+          fi
+          {
+            echo "text<<EOF"
+            echo "$TEXT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post result to Slack
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_IDS }}
+            text: ${{ toJson(steps.message.outputs.text) }}
