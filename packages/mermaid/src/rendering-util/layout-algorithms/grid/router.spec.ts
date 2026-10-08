@@ -250,6 +250,30 @@ describe('grid router', () => {
     }
   );
 
+  it('keeps a straight edge in a gap shorter than two terminal approaches', () => {
+    const data = baseLayout(
+      [
+        leaf('A', 80, 40, { row: 1, column: 1, horizontalAlign: 'left', verticalAlign: 'center' }),
+        leaf('B', 80, 40, {
+          row: 1,
+          column: 1,
+          horizontalAlign: 'center',
+          verticalAlign: 'center',
+        }),
+        leaf('D', 80, 40, { row: 1, column: 2 }),
+      ],
+      [edge('A-B', 'A', 'B'), edge('A-D', 'A', 'D')],
+      { cellGap: 18, rowGap: 55, columnGap: 80 }
+    );
+    runGridLayoutCore(data);
+
+    const straight = normalizePolyline(
+      data.edges.find(({ id }) => id === 'A-B')!.points ?? []
+    ).points;
+    expect(straight).toHaveLength(2);
+    expect(straight[0].x).toBe(straight[1].x);
+  });
+
   it('routes around a blocker on the aligned straight corridor', () => {
     const data = baseLayout(
       [

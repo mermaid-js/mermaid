@@ -898,8 +898,11 @@ export function prepareEdgeRoutes(
     const hasUnaligned = demands.some((demand) => !isAxisAlignedDemand(owner, demand));
     if (hasAligned && hasUnaligned) {
       coordinatedOwnerIds.add(ownerId);
-      for (const { plan } of demands) {
-        coordinatedEndpointIds.add(plan.edge.id);
+      // The aligned edge already has its straight route, so only the others need the sparse search.
+      for (const demand of demands) {
+        if (!isAxisAlignedDemand(owner, demand)) {
+          coordinatedEndpointIds.add(demand.plan.edge.id);
+        }
       }
     }
   }
