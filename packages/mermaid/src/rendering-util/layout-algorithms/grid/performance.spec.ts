@@ -121,6 +121,50 @@ function largeSearchLayout(): LayoutData {
   };
 }
 
+function labelledAdjacencyLayout(edgeCount = 50): LayoutData {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  for (let index = 0; index < edgeCount; index++) {
+    const firstColumn = index * 2 + 1;
+    const sourceId = `LS${index}`;
+    const targetId = `LT${index}`;
+    nodes.push(
+      node(sourceId, { row: 1, column: firstColumn }),
+      node(targetId, { row: 1, column: firstColumn + 1 })
+    );
+    edges.push({ ...edge(`LE${index}`, sourceId, targetId), label: `label-${index}` } as Edge);
+  }
+  return {
+    nodes,
+    edges,
+    config: {
+      layout: 'grid',
+      grid: { columnGap: 20 },
+    } as LayoutData['config'],
+  };
+}
+
+function labelledDeterminismLayout(): LayoutData {
+  const layout: LayoutData = {
+    nodes: [node('A', { row: 1, column: 1 }), node('B', { row: 1, column: 2 })],
+    edges: [
+      { ...edge('labelled', 'A', 'B'), label: 'wide label' } as Edge,
+      { ...edge('loop', 'A', 'A'), label: 'loop label' } as Edge,
+    ],
+    config: {
+      layout: 'grid',
+    } as LayoutData['config'],
+  };
+  prepareGridLayout(layout);
+  for (const helper of layout.nodes.filter(
+    (item) => (item as Node & { isEdgeLabel?: boolean }).isEdgeLabel
+  )) {
+    helper.width = 90;
+    helper.height = 20;
+  }
+  return layout;
+}
+
 function manualNode(id: string, x: number, y: number, width = 40, height = 40): Node {
   return {
     id,
@@ -260,6 +304,18 @@ describe('grid determinism and performance', () => {
     }
   });
 
+  it('keeps label-aware spacing and self-loop geometry byte-equivalent across 100 runs', () => {
+    const baseline = labelledDeterminismLayout();
+    runGridLayoutCore(baseline);
+    const expected = signature(baseline);
+
+    for (let index = 0; index < 100; index++) {
+      const next = labelledDeterminismLayout();
+      runGridLayoutCore(next);
+      expect(signature(next)).toBe(expected);
+    }
+  });
+
   // TODO: Move this wall-clock assertion to a benchmark harness when the repository has one.
   // CI runs unit tests with V8 coverage instrumentation, which adds substantial routing overhead.
   it.skipIf(Boolean(process.env.CI))(
@@ -313,6 +369,27 @@ describe('grid determinism and performance', () => {
     expect(metrics.expandedStates).toBeLessThan(2_000_000);
     expect(metrics.estimatedBytes).toBeLessThan(64 * 1024 * 1024);
   }, 10_000);
+
+  it('analyzes labelled boundaries once without adding routing passes', () => {
+    const layout = labelledAdjacencyLayout();
+    prepareGridLayout(layout);
+    for (const helper of layout.nodes.filter(
+      (item) => (item as Node & { isEdgeLabel?: boolean }).isEdgeLabel
+    )) {
+      helper.width = 90;
+      helper.height = 20;
+    }
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(layout, { metrics });
+
+    expect(metrics.labelSpacingEdgesExamined).toBe(50);
+    expect(metrics.labelSpacingEligibleEdges).toBe(50);
+    expect(metrics.labelSpacingBoundariesExpanded).toBe(50);
+    expect(metrics.labelSpacingPixelsAdded).toBe(50 * 96);
+    expect(metrics.baseTopologyBuilds).toBe(0);
+    expect(metrics.searches).toBe(0);
+  });
 
   it('uses coordinate-compressed label queries for very large coordinate spans', () => {
     const layout = fullSpanFallbackLayout();

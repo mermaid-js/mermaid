@@ -455,9 +455,16 @@ export function sparseSelfLoopRoute(
   const labelRequirement = result.labelRequirements.selfLoops.get(plan.edge.id);
   const fallbackReason = context.fallbackContainers.get(containerId);
   const legacyRoute = (): { points: Point[]; side: GridSide; index: number } =>
-    routeObstacleClearSelfLoop(owner, ownerSideCounts, selfLoopCounts, result, labelRequirement);
+    routeObstacleClearSelfLoop(
+      owner,
+      ownerSideCounts,
+      selfLoopCounts,
+      result,
+      labelRequirement,
+      context.metrics
+    );
   if (fallbackReason) {
-    return runValidatedFallback({
+    const fallback = runValidatedFallback({
       context,
       reason: fallbackReason,
       edgeId: plan.edge.id,
@@ -467,31 +474,49 @@ export function sparseSelfLoopRoute(
         validateSameContainerRoute(legacy.points, owner, owner, containerId, result) &&
         routeSatisfiesPairConstraints(legacy.points, pairRoutes),
     });
+    if (labelRequirement && context.metrics) {
+      context.metrics.labelAwareSelfLoopsCommitted++;
+    }
+    return fallback;
   }
   const topology = context.topologies.get(containerId);
   if (!topology || !overlayScratch) {
     throw gridError('GRID_ROUTE_NOT_FOUND', `Missing routing topology "${containerId}"`);
   }
-  for (const side of orderedSelfLoopSides(owner, ownerSideCounts, selfLoopCounts)) {
-    const index = selfLoopCounts.get(`${owner.id}:${side}`) ?? 0;
-    if (labelRequirement) {
+  const orderedSides = orderedSelfLoopSides(owner, ownerSideCounts, selfLoopCounts);
+  if (labelRequirement) {
+    for (const side of orderedSides) {
+      const index = selfLoopCounts.get(`${owner.id}:${side}`) ?? 0;
       const rect = rectForNode(owner);
       const demandCoord = side === 'left' || side === 'right' ? rect.cy : rect.cx;
-      for (const points of labelAwareSelfLoopCandidates(
+      const candidates = labelAwareSelfLoopCandidates(
         owner,
         side,
         index,
         demandCoord,
         labelRequirement
-      )) {
+      );
+      if (context.metrics) {
+        context.metrics.labelAwareSelfLoopCandidates += candidates.length;
+      }
+      for (const points of candidates) {
         if (
           validateSameContainerRoute(points, owner, owner, containerId, result) &&
           routeSatisfiesPairConstraints(points, pairRoutes)
         ) {
+          if (context.metrics) {
+            context.metrics.labelAwareSelfLoopsCommitted++;
+          }
           return { points, side, index };
         }
       }
     }
+    if (context.metrics) {
+      context.metrics.labelAwareSelfLoopFallbacks++;
+    }
+  }
+  for (const side of orderedSides) {
+    const index = selfLoopCounts.get(`${owner.id}:${side}`) ?? 0;
     const attachments = selfLoopAttachments(owner, side, index);
     if (!attachments) {
       continue;
@@ -573,7 +598,7 @@ export function sparseSelfLoopRoute(
       if (!(error instanceof GridRoutingResourceLimitError)) {
         throw error;
       }
-      return runValidatedFallback({
+      const fallback = runValidatedFallback({
         context,
         reason: error.reason,
         edgeId: plan.edge.id,
@@ -584,6 +609,10 @@ export function sparseSelfLoopRoute(
           validateSameContainerRoute(legacy.points, owner, owner, containerId, result) &&
           routeSatisfiesPairConstraints(legacy.points, pairRoutes),
       });
+      if (labelRequirement && context.metrics) {
+        context.metrics.labelAwareSelfLoopsCommitted++;
+      }
+      return fallback;
     }
   }
   if (context.metrics) {

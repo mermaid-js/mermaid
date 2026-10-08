@@ -48,6 +48,13 @@ export interface GridRoutingInstrumentation {
   hierarchyBoundaryTransitions: number;
   labelOverlayBuilds: number;
   labelOverlayVertices: number;
+  labelSpacingEdgesExamined: number;
+  labelSpacingEligibleEdges: number;
+  labelSpacingBoundariesExpanded: number;
+  labelSpacingPixelsAdded: number;
+  labelAwareSelfLoopCandidates: number;
+  labelAwareSelfLoopsCommitted: number;
+  labelAwareSelfLoopFallbacks: number;
   searches: number;
   expandedStates: number;
   maxOpenSet: number;
@@ -89,6 +96,13 @@ export const gridRoutingMetricDisposition = {
   hierarchyBoundaryTransitions: 'transactional',
   labelOverlayBuilds: 'cumulative',
   labelOverlayVertices: 'cumulative',
+  labelSpacingEdgesExamined: 'cumulative',
+  labelSpacingEligibleEdges: 'cumulative',
+  labelSpacingBoundariesExpanded: 'cumulative',
+  labelSpacingPixelsAdded: 'cumulative',
+  labelAwareSelfLoopCandidates: 'cumulative',
+  labelAwareSelfLoopsCommitted: 'transactional',
+  labelAwareSelfLoopFallbacks: 'cumulative',
   searches: 'cumulative',
   expandedStates: 'cumulative',
   maxOpenSet: 'cumulative',
@@ -182,6 +196,13 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
     hierarchyBoundaryTransitions: 0,
     labelOverlayBuilds: 0,
     labelOverlayVertices: 0,
+    labelSpacingEdgesExamined: 0,
+    labelSpacingEligibleEdges: 0,
+    labelSpacingBoundariesExpanded: 0,
+    labelSpacingPixelsAdded: 0,
+    labelAwareSelfLoopCandidates: 0,
+    labelAwareSelfLoopsCommitted: 0,
+    labelAwareSelfLoopFallbacks: 0,
     searches: 0,
     expandedStates: 0,
     maxOpenSet: 0,

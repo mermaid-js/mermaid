@@ -66,7 +66,8 @@ function layoutContainer(
   containerId: GridContainerId,
   result: GridLayoutResult,
   containers: Map<GridContainerId, GridContainerLayoutMeta>,
-  itemMeta: Map<string, GridItemLayoutMeta>
+  itemMeta: Map<string, GridItemLayoutMeta>,
+  metrics?: GridRoutingInstrumentation
 ): void {
   const { forest, config, sourceOrder } = result;
   const group = containerId === ROOT_CONTAINER_ID ? undefined : forest.groupById.get(containerId);
@@ -118,11 +119,26 @@ function layoutContainer(
     sortedRows,
     sortedColumns,
     config.rowGap,
-    config.columnGap
+    config.columnGap,
+    metrics
   );
   const rowGapAfter = (row: number) => Math.max(config.rowGap, labelGaps.rowGapAfter.get(row) ?? 0);
   const columnGapAfter = (column: number) =>
     Math.max(config.columnGap, labelGaps.columnGapAfter.get(column) ?? 0);
+  if (metrics) {
+    for (const gap of labelGaps.rowGapAfter.values()) {
+      if (gap > config.rowGap) {
+        metrics.labelSpacingBoundariesExpanded++;
+        metrics.labelSpacingPixelsAdded += gap - config.rowGap;
+      }
+    }
+    for (const gap of labelGaps.columnGapAfter.values()) {
+      if (gap > config.columnGap) {
+        metrics.labelSpacingBoundariesExpanded++;
+        metrics.labelSpacingPixelsAdded += gap - config.columnGap;
+      }
+    }
+  }
 
   const contentWidth = sortedColumns.reduce(
     (total, column, index) =>
@@ -502,15 +518,15 @@ function runGridLayoutCoreInPlace(
     containers: new Map(),
     itemMeta: new Map(),
     sourceOrder,
-    labelRequirements: buildGridLabelRequirements(data, forest),
+    labelRequirements: buildGridLabelRequirements(data, forest, options.metrics),
   };
 
   // Post-order is the key sizing invariant: a group becomes a measured child only after all of its
   // descendants have established the group's final width and height.
   for (const group of forest.postOrderGroups) {
-    layoutContainer(group.id, result, result.containers, result.itemMeta);
+    layoutContainer(group.id, result, result.containers, result.itemMeta, options.metrics);
   }
-  layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
+  layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta, options.metrics);
   materializeAbsoluteGeometry(result);
   // Routing consumes absolute node bounds and corridor coordinates, so it must run after the
   // children-first sizing and top-down translation phases have both completed.
