@@ -22,6 +22,7 @@ import type {
   FlowClass,
   FlowEdge,
   FlowLink,
+  FlowPhase,
   FlowSubGraph,
   FlowText,
   FlowVertex,
@@ -44,6 +45,9 @@ export class FlowDB implements DiagramDB {
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
+  private phasesEnabled = false;
+  private phases: FlowPhase[] = [];
+  private nodePhases = new Map<string, string>();
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -63,6 +67,7 @@ export class FlowDB implements DiagramDB {
     this.firstGraph = this.firstGraph.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.addSubGraph = this.addSubGraph.bind(this);
+    this.addPhase = this.addPhase.bind(this);
     this.addLink = this.addLink.bind(this);
     this.setLink = this.setLink.bind(this);
     this.updateLink = this.updateLink.bind(this);
@@ -77,6 +82,10 @@ export class FlowDB implements DiagramDB {
 
     this.lex = {
       firstGraph: this.firstGraph.bind(this),
+      enablePhases: () => {
+        this.phasesEnabled = true;
+      },
+      allowsPhases: () => this.phasesEnabled,
     };
 
     this.clear();
@@ -273,7 +282,34 @@ export class FlowDB implements DiagramDB {
       if (doc.h) {
         vertex.assetHeight = Number(doc.h);
       }
+      if (doc.phase !== undefined && this.phasesEnabled) {
+        this.assignPhase(id, String(doc.phase));
+      }
     }
+  }
+
+  /**
+   * Called by the parser for `phase id["Title"]`. The keyword is only lexed in swimlane
+   * diagrams, so this is never reached from a flowchart.
+   */
+  public addPhase(id: string, textObj?: FlowText) {
+    if (this.phases.some((phase) => phase.id === id)) {
+      throw new Error(`Phase "${id}" is declared twice.`);
+    }
+    let label = textObj ? this.sanitizeText(textObj.text.trim()) : id;
+    if (label.startsWith('"') && label.endsWith('"')) {
+      label = label.substring(1, label.length - 1);
+    }
+    this.phases.push({ id, label });
+  }
+
+  private assignPhase(nodeId: string, phaseId: string) {
+    if (!this.phases.some((phase) => phase.id === phaseId)) {
+      throw new Error(
+        `Unknown phase "${phaseId}" on node "${nodeId}". Declare it before the node with: phase ${phaseId}["Title"]`
+      );
+    }
+    this.nodePhases.set(nodeId, phaseId);
   }
 
   /**
@@ -655,6 +691,9 @@ You have to call mermaid.initialize.`
     this.diagramId = '';
     this.subGraphs = [];
     this.subGraphLookup = new Map();
+    this.phasesEnabled = false;
+    this.phases = [];
+    this.nodePhases = new Map();
     this.subCount = 0;
     this.tooltips = new Map();
     this.firstGraphFlag = true;
@@ -981,7 +1020,11 @@ You have to call mermaid.initialize.`
     return { nodes: res };
   }
 
-  public lex: { firstGraph: typeof FlowDB.prototype.firstGraph };
+  public lex: {
+    firstGraph: typeof FlowDB.prototype.firstGraph;
+    enablePhases: () => void;
+    allowsPhases: () => boolean;
+  };
 
   private getTypeFromVertex(vertex: FlowVertex): ShapeID {
     if (vertex.img) {
@@ -1334,7 +1377,11 @@ You have to call mermaid.initialize.`
       edges.push(edge);
     });
 
-    return { nodes, edges, other: {}, config };
+    const other: { phases?: FlowPhase[]; nodePhases?: Record<string, string> } =
+      this.phases.length > 0
+        ? { phases: [...this.phases], nodePhases: Object.fromEntries(this.nodePhases) }
+        : {};
+    return { nodes, edges, other, config };
   }
 
   public defaultConfig() {
