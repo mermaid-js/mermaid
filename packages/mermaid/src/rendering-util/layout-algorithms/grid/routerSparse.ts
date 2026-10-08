@@ -127,9 +127,7 @@ export function sparseSameContainerRoute(
   options: GridRoutingOptions,
   pairRoutes: readonly (readonly Point[])[]
 ): Point[] {
-  const fallbackReason = context.fallbackContainers.get(plan.lcaContainerId) as
-    | GridRoutingFallbackReason
-    | undefined;
+  const fallbackReason = context.fallbackContainers.get(plan.lcaContainerId);
   if (fallbackReason) {
     const legacy = legacyRoute();
     recordFallback(context, fallbackReason, plan.edge.id, plan.lcaContainerId);
@@ -413,9 +411,7 @@ export function sparseSelfLoopRoute(
   // Try sides in load order and reserve progressively wider port pairs for repeated loops on the
   // same side.
   const containerId = owner.parentId ?? ROOT_CONTAINER_ID;
-  const fallbackReason = context.fallbackContainers.get(containerId) as
-    | GridRoutingFallbackReason
-    | undefined;
+  const fallbackReason = context.fallbackContainers.get(containerId);
   const legacyRoute = (): { points: Point[]; side: GridSide; index: number } =>
     routeObstacleClearSelfLoop(owner, ownerSideCounts, selfLoopCounts, result);
   if (fallbackReason) {
@@ -564,9 +560,7 @@ export function sparseContainerSegment(
   startAlternatives: () => readonly SegmentAttachmentAlternative[] = () => [],
   allowSharedPairCorridors = false
 ): Point[] {
-  const fallbackReason = context.fallbackContainers.get(containerId) as
-    | GridRoutingFallbackReason
-    | undefined;
+  const fallbackReason = context.fallbackContainers.get(containerId);
   if (fallbackReason) {
     const legacy = legacyRoute();
     recordFallback(context, fallbackReason, edgeId, containerId);

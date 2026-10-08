@@ -1,6 +1,9 @@
 import type { LayoutData, Node } from '../../types.js';
 import type { Point } from '../../../types.js';
-import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
+import type {
+  GridRoutingFallbackReason,
+  GridRoutingInstrumentation,
+} from './routerInstrumentation.js';
 
 // The root participates in the same container algorithms as groups but has no backing Node.
 export const ROOT_CONTAINER_ID = '__grid_root__';
@@ -140,7 +143,7 @@ export interface GridRoutingContext {
   // Containers that exceed a topology cap are recorded here and routed through the validated
   // compatibility path; resource exhaustion is degradation, not permission to emit invalid paths.
   topologies: Map<GridContainerId, ContainerRoutingTopology>;
-  fallbackContainers: Map<GridContainerId, string>;
+  fallbackContainers: Map<GridContainerId, GridRoutingFallbackReason>;
   searchBudget: { expandedStates: number };
   searchBudgetWarningEmitted: boolean;
   baseEstimatedBytes: number;
