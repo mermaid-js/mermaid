@@ -97,7 +97,23 @@ Dense nested diagrams can require a hierarchy edge to share part of an internal 
 
 ## Edge labels
 
-Edge labels are placed after the initial routes are calculated. Mermaid attempts to move affected routes around the complete set of label reservations. If that is not possible, it retries individual labels.
+Measured labels between direct sibling nodes on adjacent rows or columns can raise only the shared
+track gap they need. The configured `rowGap` and `columnGap` remain defaults, but Mermaid treats
+them as minimums when a direct adjacent label needs more room. Other boundaries keep their
+configured gap.
+
+This preallocation applies only when the endpoints share a container and a row or column, occupy
+consecutive populated tracks, and the label fits the cross-axis track geometry. Non-adjacent,
+diagonal, hierarchy, and obstructed cases keep the normal routing and label fallback.
+
+Labelled self-loops are sized as a whole route. Mermaid first expands the U-shaped outer leg and,
+when the node side cannot hold the required port span, tries one bounded symmetric shoulder route.
+This keeps the common case to three segments instead of splicing a generic detour into a terminal
+leg.
+
+Labels are still finalized after the initial routes are calculated. Mermaid attempts to move
+affected routes around the complete set of label reservations. If that is not possible, it retries
+individual labels.
 
 As a final fallback, an edge can pass through another edge's label rather than failing the whole diagram. Node, group, title, marker-clearance, and own-label-anchor checks still apply.
 
