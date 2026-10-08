@@ -2166,6 +2166,16 @@ export function positionGridEdgeLabels(
   for (const node of data.nodes) {
     nodeById.set(node.id, node);
   }
+  // Coordinates belong to the previous invocation. Retain them only for rollback; the current
+  // placement pass must build its obstacle index from labels placed during this invocation.
+  const labelNodes = data.nodes.filter(isEdgeLabelNode);
+  const baseLabelPositions = new Map<string, { x?: number; y?: number }>(
+    labelNodes.map((labelNode) => [labelNode.id, { x: labelNode.x, y: labelNode.y }])
+  );
+  for (const labelNode of labelNodes) {
+    delete labelNode.x;
+    delete labelNode.y;
+  }
 
   const preparedLabels = data.edges
     .map((edge, sourceIndex) => {
@@ -2193,9 +2203,6 @@ export function positionGridEdgeLabels(
   const baseEdgePoints = new Map<string, Point[] | undefined>(
     data.edges.map((edge) => [edge.id, edge.points?.map((point) => ({ ...point }))])
   );
-  const baseLabelPositions = new Map<string, { x?: number; y?: number }>(
-    preparedLabels.map(({ labelNode }) => [labelNode.id, { x: labelNode.x, y: labelNode.y }])
-  );
 
   const restoreBaseState = (): void => {
     for (const edge of data.edges) {
@@ -2206,7 +2213,7 @@ export function positionGridEdgeLabels(
         delete edge.points;
       }
     }
-    for (const { labelNode } of preparedLabels) {
+    for (const labelNode of labelNodes) {
       const position = baseLabelPositions.get(labelNode.id);
       if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
         labelNode.x = position.x;

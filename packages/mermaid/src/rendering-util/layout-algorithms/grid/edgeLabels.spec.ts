@@ -137,6 +137,60 @@ describe('grid edge label helpers', () => {
     expect(validateLayout(data).ok).toBe(true);
   });
 
+  it('produces the same geometry when reused layout data contains stale label positions', () => {
+    const createData = (): LayoutData => {
+      const data: LayoutData = {
+        nodes: [
+          { ...node('a'), metadata: { row: 1, column: 1 } },
+          { ...node('b'), metadata: { row: 1, column: 3 } },
+          { ...node('c'), metadata: { row: 2, column: 1 } },
+          { ...node('d'), metadata: { row: 2, column: 3 } },
+        ],
+        edges: [
+          { ...edge('top', 'top label'), start: 'a', end: 'b' },
+          { ...edge('bottom', 'bottom label'), start: 'c', end: 'd' },
+        ],
+        config: { layout: 'grid' } as LayoutData['config'],
+      };
+      prepareGridLayout(data);
+      for (const edge of data.edges) {
+        const labelNode = data.nodes.find((item) => item.id === edge.labelNodeId)!;
+        labelNode.width = 80;
+        labelNode.height = 20;
+      }
+      return data;
+    };
+    const fresh = createData();
+    const reused = createData();
+    runGridLayoutCore(fresh);
+    runGridLayoutCore(reused);
+    const topLabel = reused.nodes.find((item) => item.id === reused.edges[0].labelNodeId)!;
+    const bottomLabel = reused.nodes.find((item) => item.id === reused.edges[1].labelNodeId)!;
+    bottomLabel.x = topLabel.x;
+    bottomLabel.y = topLabel.y;
+
+    runGridLayoutCore(reused);
+
+    expect(
+      reused.nodes.map((item) => ({
+        id: item.id,
+        x: item.x,
+        y: item.y,
+        width: item.width,
+        height: item.height,
+      }))
+    ).toEqual(
+      fresh.nodes.map((item) => ({
+        id: item.id,
+        x: item.x,
+        y: item.y,
+        width: item.width,
+        height: item.height,
+      }))
+    );
+    expect(reused.edges.map((item) => item.points)).toEqual(fresh.edges.map((item) => item.points));
+  });
+
   it('keeps a labelled self-loop from overlapping its own route', () => {
     const data: LayoutData = {
       nodes: [node('a')],
@@ -246,6 +300,70 @@ describe('grid edge label helpers', () => {
     expect(metrics.impactedEdgeReroutes).toBe(0);
     expect(routingMetrics.labelOverlayBuilds).toBe(1);
     expect(routingMetrics.labelOverlayVertices).toBe(4);
+  });
+
+  it('ignores stale label positions from a previous layout', () => {
+    const createData = (): LayoutData => {
+      const data: LayoutData = {
+        nodes: [
+          manualNode('top-start', 40, 100, 20, 20),
+          manualNode('top-end', 360, 100, 20, 20),
+          manualNode('bottom-start', 40, 200, 20, 20),
+          manualNode('bottom-end', 360, 200, 20, 20),
+        ],
+        edges: [
+          manualEdge(
+            'top',
+            'top-start',
+            'top-end',
+            [
+              { x: 50, y: 100 },
+              { x: 350, y: 100 },
+            ],
+            'top label'
+          ),
+          manualEdge(
+            'bottom',
+            'bottom-start',
+            'bottom-end',
+            [
+              { x: 50, y: 200 },
+              { x: 350, y: 200 },
+            ],
+            'bottom label'
+          ),
+        ],
+        config: { layout: 'grid' } as LayoutData['config'],
+      };
+      prepareGridLayout(data);
+      for (const edge of data.edges) {
+        const labelNode = data.nodes.find((item) => item.id === edge.labelNodeId)!;
+        labelNode.width = 80;
+        labelNode.height = 20;
+      }
+      return data;
+    };
+    const fresh = createData();
+    const reused = createData();
+    const staleLabel = reused.nodes.find((item) => item.id === reused.edges[1].labelNodeId)!;
+    staleLabel.x = 200;
+    staleLabel.y = 100;
+
+    positionGridEdgeLabels(fresh);
+    positionGridEdgeLabels(reused);
+
+    expect(reused.edges.map((edge) => edge.points)).toEqual(fresh.edges.map((edge) => edge.points));
+    expect(
+      reused.edges.map((edge) => {
+        const labelNode = reused.nodes.find((item) => item.id === edge.labelNodeId)!;
+        return { x: labelNode.x, y: labelNode.y };
+      })
+    ).toEqual(
+      fresh.edges.map((edge) => {
+        const labelNode = fresh.nodes.find((item) => item.id === edge.labelNodeId)!;
+        return { x: labelNode.x, y: labelNode.y };
+      })
+    );
   });
 
   it('parks degenerate-route labels without aborting valid label placement', () => {
@@ -396,6 +514,8 @@ describe('grid edge label helpers', () => {
     const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
     labelNode.width = 260;
     labelNode.height = 180;
+    labelNode.x = 123;
+    labelNode.y = 456;
     const originalPoints = structuredClone(data.edges[0].points);
     const metrics = createGridEdgeLabelInstrumentation();
     const routingMetrics = createGridRoutingInstrumentation();
@@ -404,8 +524,8 @@ describe('grid edge label helpers', () => {
       expect.objectContaining({ code: 'GRID_ROUTE_NOT_FOUND' })
     );
     expect(data.edges[0].points).toEqual(originalPoints);
-    expect(labelNode.x).toBeUndefined();
-    expect(labelNode.y).toBeUndefined();
+    expect(labelNode.x).toBe(123);
+    expect(labelNode.y).toBe(456);
     expect(metrics.labelPasses).toBe(2);
     expect(metrics.rollbacks).toBe(1);
     expect(routingMetrics.resourceLimitFallbacks).toBe(0);
