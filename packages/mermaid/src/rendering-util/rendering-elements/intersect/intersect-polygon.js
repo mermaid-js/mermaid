@@ -1,4 +1,5 @@
 import intersectLine from './intersect-line.js';
+import { getLineIntersectionOrigin } from './intersection-query.js';
 
 /**
  * Returns the point ({x, y}) at which the point argument intersects with the node argument assuming
@@ -7,6 +8,7 @@ import intersectLine from './intersect-line.js';
 function intersectPolygon(node, polyPoints, point) {
   let x1 = node.x;
   let y1 = node.y;
+  const lineOrigin = getLineIntersectionOrigin(point, node);
 
   let intersections = [];
 
@@ -29,7 +31,7 @@ function intersectPolygon(node, polyPoints, point) {
     let p1 = polyPoints[i];
     let p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
     let intersect = intersectLine(
-      node,
+      lineOrigin,
       point,
       { x: left + p1.x, y: top + p1.y },
       { x: left + p2.x, y: top + p2.y }

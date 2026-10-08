@@ -1,3 +1,5 @@
+import { withLineIntersectionOrigin } from './intersect/intersection-query.js';
+
 // Clips only terminal legs. Interior bends remain router-owned so label reservations, line hops,
 // and validation continue to observe the same orthogonal topology.
 const ENDPOINT_EPSILON = 1e-6;
@@ -18,17 +20,6 @@ const outlineEndpoint = (node, port, adjacent) => {
   if (!node?.intersect) {
     return undefined;
   }
-  // Intersect from the adjacent bend toward the node so shape-specific boundaries, not bounding
-  // boxes, determine the visible endpoint.
-  const outline = node.intersect(adjacent);
-  if (
-    !isFinitePoint(outline) ||
-    (Number.isFinite(node.x) &&
-      Number.isFinite(node.y) &&
-      samePoint(outline, { x: node.x, y: node.y }))
-  ) {
-    return undefined;
-  }
   const vertical = Math.abs(port.x - adjacent.x) <= ENDPOINT_EPSILON;
   const horizontal = Math.abs(port.y - adjacent.y) <= ENDPOINT_EPSILON;
   if (!vertical && !horizontal) {
@@ -37,6 +28,42 @@ const outlineEndpoint = (node, port, adjacent) => {
   const inwardDirection = vertical
     ? Math.sign(port.y - adjacent.y)
     : Math.sign(port.x - adjacent.x);
+  if (!inwardDirection) {
+    return undefined;
+  }
+  const axisSize = vertical ? node.height : node.width;
+  const terminalLength = vertical ? Math.abs(port.y - adjacent.y) : Math.abs(port.x - adjacent.x);
+  const canQueryTerminalAxis =
+    Number.isFinite(node.width) &&
+    node.width > 0 &&
+    Number.isFinite(node.height) &&
+    node.height > 0 &&
+    Number.isFinite(axisSize) &&
+    Number.isFinite(terminalLength);
+  const lineOrigin = vertical
+    ? { x: port.x, y: port.y + inwardDirection * (axisSize + terminalLength + 1) }
+    : { x: port.x + inwardDirection * (axisSize + terminalLength + 1), y: port.y };
+  // Shared shape intersections understand this optional origin and intersect the terminal axis
+  // instead of casting from the node centre. Older/custom intersections ignore it safely.
+  const outline = node.intersect(
+    canQueryTerminalAxis ? withLineIntersectionOrigin(adjacent, lineOrigin) : adjacent
+  );
+  if (
+    !isFinitePoint(outline) ||
+    (Number.isFinite(node.x) &&
+      Number.isFinite(node.y) &&
+      samePoint(outline, { x: node.x, y: node.y }))
+  ) {
+    return undefined;
+  }
+  // Never repair a centre-ray result with a sideways jog. Custom intersections that do not
+  // understand terminal-axis queries retain the router-owned port instead.
+  if (
+    (vertical && Math.abs(outline.x - port.x) > ENDPOINT_EPSILON) ||
+    (horizontal && Math.abs(outline.y - port.y) > ENDPOINT_EPSILON)
+  ) {
+    return undefined;
+  }
   const inwardDepth = vertical
     ? (outline.y - port.y) * inwardDirection
     : (outline.x - port.x) * inwardDirection;
