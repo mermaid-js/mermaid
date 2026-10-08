@@ -169,7 +169,7 @@ describe('grid router topology', () => {
     expect(points).toContainEqual(point(34, 0));
     expect(points).not.toContainEqual(point(34, 64));
     expect(result.vertices.length).toBeLessThanOrEqual(5 * result.seedCount + 32);
-    expect(result.adjacencyEntries).toBeLessThanOrEqual(8 * result.vertices.length);
+    expect(result.adjacencyEntries).toBeLessThanOrEqual(4 * result.vertices.length);
   });
 
   it('assigns stable exact ordinals and sorted immutable adjacency', () => {

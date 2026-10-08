@@ -25,7 +25,7 @@ export const ROUTE_CLEARANCE_PX = 6;
 // Caps bound both adversarial geometry and ordinary large-diagram memory growth. Exceeding one is a
 // recoverable routing condition handled by the validated compatibility path.
 const DEFAULT_MAX_VERTICES = 50_000;
-const DEFAULT_MAX_ADJACENCY_ENTRIES = 200_000;
+const MAX_VISIBILITY_ADJACENCY_PER_VERTEX = 4;
 export const DEFAULT_MAX_ROUTING_ESTIMATED_BYTES = 64 * 1024 * 1024;
 
 export interface RouterObstacleInput {
@@ -801,7 +801,8 @@ function buildVisibilityGraph(
   // Vertices connect only to their immediate visible neighbor on each shared x/y line; longer paths
   // are represented by graph traversal instead of quadratic all-pairs arcs.
   const canonical = canonicalRecords(records).sort(vertexRecordOrder);
-  enforceCap(canonical.length, caps.maxVertices ?? DEFAULT_MAX_VERTICES, 'vertex_cap');
+  const vertexCap = caps.maxVertices ?? DEFAULT_MAX_VERTICES;
+  enforceCap(canonical.length, vertexCap, 'vertex_cap');
   const vertices = canonical.map<RouterVertex>((record, id) =>
     Object.freeze({ id, ...record, point: Object.freeze({ ...record.point }) })
   );
@@ -890,7 +891,9 @@ function buildVisibilityGraph(
   }
   enforceCap(
     adjacencyEntries,
-    caps.maxAdjacencyEntries ?? DEFAULT_MAX_ADJACENCY_ENTRIES,
+    // Each vertex has at most one immediate visible neighbor in each cardinal direction. The
+    // override remains a test seam for exercising adjacency-cap fallback behavior.
+    caps.maxAdjacencyEntries ?? vertexCap * MAX_VISIBILITY_ADJACENCY_PER_VERTEX,
     'adjacency_cap'
   );
   return {
