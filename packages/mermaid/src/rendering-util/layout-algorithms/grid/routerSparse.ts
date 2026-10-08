@@ -183,10 +183,10 @@ export function sparseSameContainerRoute(
     );
 
   // Candidate pairs are ordered by an admissible lower bound. Once a completed route is no worse
-  // than that bound, the pair cannot improve the current best and its overlay/search is skipped.
+  // than that bound, neither this pair nor any remaining pair can improve the current best.
   for (const { sourceCandidate, targetCandidate, pairRank, lowerCost } of pairs) {
     if (best && compareTupleCost(best.result.cost, lowerCost) <= 0) {
-      continue;
+      break;
     }
     try {
       assertSearchBudgetAvailable({
