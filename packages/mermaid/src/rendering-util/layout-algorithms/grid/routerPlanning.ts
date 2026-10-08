@@ -59,6 +59,7 @@ export interface PreparedEdgeRoutes {
   demandCoords: Map<string, number>;
   endpointCandidatesByEdge: Map<string, EdgeRouteCandidates>;
   endpointIncidentCounts: Map<string, number>;
+  coordinatedEndpointIds: Set<string>;
 }
 
 export function ownerGroupTitle(node: Node): boolean {
@@ -573,12 +574,21 @@ function endpointSidePreferences(owner: Node, demand: EndpointDemandEntry): Grid
     });
 }
 
+function isAxisAlignedDemand(owner: Node, demand: EndpointDemandEntry): boolean {
+  const ownerRect = rectForNode(owner);
+  const oppositeRect = rectForNode(demand.opposite);
+  return (
+    Math.abs(ownerRect.cx - oppositeRect.cx) <= PIXEL_EPSILON ||
+    Math.abs(ownerRect.cy - oppositeRect.cy) <= PIXEL_EPSILON
+  );
+}
+
 function allocateEndpointSlots(
   owner: Node,
   demands: readonly EndpointDemandEntry[]
 ): ReadonlyMap<string, EndpointSlotAssignment> {
-  // Assignment is greedy but deterministic: stable demand identity chooses first, geometric side
-  // preference chooses second, and side capacity prevents accidental over-subscription when possible.
+  // Aligned edges get first choice of their direct side. Other edges prefer an unreserved side
+  // when possible, which keeps a straight approach from being displaced by a diagonal approach.
   const assignedBySide = new Map<GridSide, EndpointDemandEntry[]>();
   const capacities = new Map(
     (['right', 'bottom', 'left', 'top'] as const).map((side) => [
@@ -587,19 +597,40 @@ function allocateEndpointSlots(
     ])
   );
 
-  for (const demand of [...demands].sort(compareEndpointDemandIdentity)) {
+  const orderedDemands = [...demands].sort(compareEndpointDemandIdentity);
+  const alignedDemands = orderedDemands.filter((demand) => isAxisAlignedDemand(owner, demand));
+  const unalignedDemands = orderedDemands.filter((demand) => !isAxisAlignedDemand(owner, demand));
+  const reservedSides = new Set<GridSide>();
+  const assign = (demand: EndpointDemandEntry, avoidReserved: boolean): GridSide | undefined => {
     const preferences = endpointSidePreferences(owner, demand);
     if (preferences.length === 0) {
-      continue;
+      return undefined;
     }
+    const hasCapacity = (candidate: GridSide) =>
+      (assignedBySide.get(candidate)?.length ?? 0) < (capacities.get(candidate) ?? 0);
     const side =
       preferences.find(
-        (candidate) =>
-          (assignedBySide.get(candidate)?.length ?? 0) < (capacities.get(candidate) ?? 0)
-      ) ?? preferences[0];
+        (candidate) => hasCapacity(candidate) && (!avoidReserved || !reservedSides.has(candidate))
+      ) ?? preferences.find(hasCapacity);
+    if (!side) {
+      return undefined;
+    }
     const assigned = assignedBySide.get(side) ?? [];
     assigned.push(demand);
     assignedBySide.set(side, assigned);
+    return side;
+  };
+
+  for (const demand of alignedDemands) {
+    const side = assign(demand, false);
+    if (side) {
+      reservedSides.add(side);
+    }
+  }
+  for (const demand of unalignedDemands) {
+    if (!assign(demand, true)) {
+      assign(demand, false);
+    }
   }
 
   const assignments = new Map<string, EndpointSlotAssignment>();
@@ -767,6 +798,20 @@ export function prepareEdgeRoutes(
       return [ownerId, owner ? allocateEndpointSlots(owner, demands) : new Map()] as const;
     })
   );
+  const coordinatedEndpointIds = new Set<string>();
+  for (const [ownerId, demands] of endpointDemandsByOwner) {
+    const owner = result.forest.nodeById.get(ownerId);
+    if (!owner) {
+      continue;
+    }
+    const hasAligned = demands.some((demand) => isAxisAlignedDemand(owner, demand));
+    const hasUnaligned = demands.some((demand) => !isAxisAlignedDemand(owner, demand));
+    if (hasAligned && hasUnaligned) {
+      for (const { plan } of demands) {
+        coordinatedEndpointIds.add(plan.edge.id);
+      }
+    }
+  }
   const endpointCandidatesByEdge = new Map(
     eligiblePlans.map((plan) => [
       plan.edge.id,
@@ -836,5 +881,6 @@ export function prepareEdgeRoutes(
     demandCoords: assignDemandCoordinates(orderedPlans, result, endpointIncidentCounts),
     endpointCandidatesByEdge,
     endpointIncidentCounts,
+    coordinatedEndpointIds,
   };
 }

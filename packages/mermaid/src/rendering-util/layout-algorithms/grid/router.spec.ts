@@ -182,6 +182,56 @@ function expectFiniteOrthogonalRoutes(data: LayoutData): void {
 }
 
 describe('grid router', () => {
+  it('keeps an aligned edge straight and routes a diagonal edge into a separate endpoint side', () => {
+    const createLayout = (edges: Edge[]) =>
+      baseLayout(
+        [
+          leaf('A', 80, 40, { row: 1, column: 1 }),
+          leaf('C', 80, 40, { row: 2, column: 1 }),
+          leaf('D', 80, 40, { row: 1, column: 3 }),
+        ],
+        edges,
+        { columns: 3, rowGap: 45, columnGap: 55 }
+      );
+    const data = createLayout([edge('A-D', 'A', 'D'), edge('C-D', 'C', 'D')]);
+    runGridLayoutCore(data);
+
+    const aligned = data.edges.find(({ id }) => id === 'A-D')!;
+    const diagonal = data.edges.find(({ id }) => id === 'C-D')!;
+    const alignedPoints = normalizePolyline(aligned.points ?? []).points;
+    const diagonalPoints = normalizePolyline(diagonal.points ?? []).points;
+    const destination = data.nodes.find(({ id }) => id === 'D')!;
+    const destinationBounds = nodeRect(destination);
+
+    expect(alignedPoints.every(({ y }) => y === alignedPoints[0].y)).toBe(true);
+    expect(diagonalPoints.at(-1)!.y).toBe(destinationBounds.bottom);
+    expect(diagonalPoints.at(-2)!.y).toBeGreaterThan(destinationBounds.bottom);
+
+    const reversed = createLayout([edge('C-D', 'C', 'D'), edge('A-D', 'A', 'D')]);
+    runGridLayoutCore(reversed);
+    expect(Object.fromEntries(reversed.edges.map(({ id, points }) => [id, points]))).toEqual(
+      Object.fromEntries(data.edges.map(({ id, points }) => [id, points]))
+    );
+  });
+
+  it('routes around a blocker on the aligned straight corridor', () => {
+    const data = baseLayout(
+      [
+        leaf('A', 80, 40, { row: 1, column: 1 }),
+        leaf('C', 80, 40, { row: 2, column: 1 }),
+        leaf('B', 80, 40, { row: 1, column: 2 }),
+        leaf('D', 80, 40, { row: 1, column: 3 }),
+      ],
+      [edge('A-D', 'A', 'D'), edge('C-D', 'C', 'D')],
+      { columns: 3, rowGap: 45, columnGap: 55 }
+    );
+    runGridLayoutCore(data);
+
+    const aligned = data.edges.find(({ id }) => id === 'A-D')!;
+    expect(normalizePolyline(aligned.points ?? []).bends).toBeGreaterThan(0);
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+  });
+
   it.each([
     [80, 40],
     [100, 40],
@@ -582,14 +632,36 @@ describe('grid router', () => {
     runGridLayoutCore(data);
 
     const source = data.nodes.find(({ id }) => id === 'source')!;
-    const sourceTop = (source.y ?? 0) - (source.height ?? 0) / 2;
-    const sourceBottom = (source.y ?? 0) + (source.height ?? 0) / 2;
-    const ports = data.edges.map((item) => item.points![0]);
-    const ys = ports.map(({ y }) => y).sort((a, b) => a - b);
-    expect(ys[0]).toBeGreaterThanOrEqual(sourceTop + 6);
-    expect(ys.at(-1)).toBeLessThanOrEqual(sourceBottom - 6);
-    expect(ys[1] - ys[0]).toBeGreaterThanOrEqual(4);
-    expect(ys[2] - ys[1]).toBeGreaterThanOrEqual(4);
+    const bounds = nodeRect(source);
+    const portsBySide = new Map<string, number[]>();
+    for (const routed of data.edges) {
+      const port = routed.points![0];
+      const side =
+        port.x === bounds.left
+          ? 'left'
+          : port.x === bounds.right
+            ? 'right'
+            : port.y === bounds.top
+              ? 'top'
+              : port.y === bounds.bottom
+                ? 'bottom'
+                : undefined;
+      expect(side).toBeDefined();
+      const coordinate = side === 'left' || side === 'right' ? port.y : port.x;
+      const values = portsBySide.get(side!) ?? [];
+      values.push(coordinate);
+      portsBySide.set(side!, values);
+    }
+    for (const [side, coordinates] of portsBySide) {
+      const low = side === 'left' || side === 'right' ? bounds.top + 6 : bounds.left + 6;
+      const high = side === 'left' || side === 'right' ? bounds.bottom - 6 : bounds.right - 6;
+      const sorted = coordinates.sort((a, b) => a - b);
+      expect(sorted[0]).toBeGreaterThanOrEqual(low);
+      expect(sorted.at(-1)).toBeLessThanOrEqual(high);
+      for (let index = 1; index < sorted.length; index++) {
+        expect(sorted[index] - sorted[index - 1]).toBeGreaterThanOrEqual(4);
+      }
+    }
     for (const routed of data.edges) {
       expect(terminalLength(routed.points ?? [], true)).toBeGreaterThanOrEqual(12);
       expect(terminalLength(routed.points ?? [], false)).toBeGreaterThanOrEqual(12);

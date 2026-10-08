@@ -1075,6 +1075,7 @@ function prepareRoutingModes(
     demandCoords,
     endpointCandidatesByEdge,
     endpointIncidentCounts,
+    coordinatedEndpointIds,
   } = prepared;
   const hasIsolatedEndpoints = (plan: EdgeRoutePlan): boolean =>
     (endpointIncidentCounts.get(plan.edge.start!) ?? 0) === plan.bundleSize &&
@@ -1096,6 +1097,9 @@ function prepareRoutingModes(
     options.searchCaps === undefined &&
     options.onDualRouteComparison === undefined;
   for (const plan of compatibilityFastPathEnabled ? eligiblePlans : []) {
+    if (coordinatedEndpointIds.has(plan.edge.id)) {
+      continue;
+    }
     const candidates = endpointCandidatesByEdge.get(plan.edge.id);
     if (plan.bundleSize !== 1 || !candidates?.sources.length || !candidates.targets.length) {
       continue;
