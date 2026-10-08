@@ -239,6 +239,8 @@ export interface GridAttachmentDemand {
   oppositeCoord: number;
   preferredCoord: number;
   compactPortal: boolean;
+  // The next entry inward along the endpoint chain; a compact portal lines up with its port.
+  inner?: { demandKey: string; side: GridSide };
 }
 
 export interface GridAttachment {
