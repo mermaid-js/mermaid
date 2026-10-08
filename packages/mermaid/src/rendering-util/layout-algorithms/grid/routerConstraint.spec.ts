@@ -1,8 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import type { Node } from '../../types.js';
-import { validateSameContainerRoute } from './routerConstraint.js';
-import type { GridLayoutResult } from './types.js';
+import { endpointPairLowerBound, validateSameContainerRoute } from './routerConstraint.js';
+import type { EndpointCandidate } from './routerPlanning.js';
+import type { GridLayoutResult, GridSide } from './types.js';
 import { ROOT_CONTAINER_ID } from './types.js';
+
+function endpoint(side: GridSide, x: number, y: number): EndpointCandidate {
+  return {
+    ownerId: side,
+    side,
+    port: { x, y },
+    connect: { x, y },
+    rank: 0,
+  };
+}
 
 function routingFixture(): {
   source: Node;
@@ -36,6 +47,47 @@ function routingFixture(): {
 }
 
 describe('grid router constraints', () => {
+  it.each([
+    {
+      name: 'coincident horizontal endpoints',
+      source: endpoint('right', 0, 0),
+      target: endpoint('left', 0, 0),
+      expected: [40, 0],
+    },
+    {
+      name: 'coincident vertical endpoints',
+      source: endpoint('bottom', 0, 0),
+      target: endpoint('top', 0, 0),
+      expected: [40, 0],
+    },
+    {
+      name: 'coincident mixed-orientation endpoints',
+      source: endpoint('right', 0, 0),
+      target: endpoint('top', 0, 0),
+      expected: [40, 1],
+    },
+    {
+      name: 'horizontal displacement with horizontal endpoints',
+      source: endpoint('right', 0, 0),
+      target: endpoint('left', 10, 0),
+      expected: [50, 0],
+    },
+    {
+      name: 'vertical displacement with horizontal endpoints',
+      source: endpoint('right', 0, 0),
+      target: endpoint('left', 0, 10),
+      expected: [50, 2],
+    },
+    {
+      name: 'two-axis displacement with matching turn orientations',
+      source: endpoint('right', 0, 0),
+      target: endpoint('top', 10, 10),
+      expected: [60, 1],
+    },
+  ] as const)('computes an admissible lower bound for $name', ({ source, target, expected }) => {
+    expect(endpointPairLowerBound(source, target)).toEqual(expected);
+  });
+
   it('rejects a terminal segment that passes through its destination node', () => {
     const { source, target, result } = routingFixture();
 

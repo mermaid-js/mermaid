@@ -391,7 +391,9 @@ export function endpointPairLowerBound(
   const dx = Math.abs(source.connect.x - target.connect.x);
   const dy = Math.abs(source.connect.y - target.connect.y);
   let bends: number;
-  if (dx === 0 || dy === 0) {
+  if (dx === 0 && dy === 0) {
+    bends = Number(sourceOrientation !== targetOrientation);
+  } else if (dx === 0 || dy === 0) {
     const pathOrientation: GridOrientation = dx === 0 ? 'V' : 'H';
     bends =
       Number(sourceOrientation !== pathOrientation) + Number(targetOrientation !== pathOrientation);
