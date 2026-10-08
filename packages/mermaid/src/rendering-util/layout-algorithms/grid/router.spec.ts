@@ -197,6 +197,35 @@ describe('grid router', () => {
     expect(longestSharedNonterminalSubpath(data.edges[0], data.edges[1])).toBe(0);
   });
 
+  it('crosses unrelated diagonal edges perpendicularly instead of running them in parallel', () => {
+    const data = baseLayout(
+      [
+        leaf('tl', 90, 54, { row: 1, column: 1 }),
+        leaf('tr', 90, 54, { row: 1, column: 3 }),
+        leaf('bl', 90, 54, { row: 3, column: 1 }),
+        leaf('br', 90, 54, { row: 3, column: 3 }),
+      ],
+      [edge('e1', 'tl', 'br'), edge('e2', 'tr', 'bl')]
+    );
+    runGridLayoutCore(data);
+    const [first, second] = data.edges.map((e) => normalizePolyline(e.points ?? []).segments);
+    for (const a of first) {
+      for (const b of second) {
+        if (a.orientation !== b.orientation) {
+          continue;
+        }
+        const horizontal = a.orientation === 'H';
+        const overlap = horizontal
+          ? Math.min(Math.max(a.a.x, a.b.x), Math.max(b.a.x, b.b.x)) -
+            Math.max(Math.min(a.a.x, a.b.x), Math.min(b.a.x, b.b.x))
+          : Math.min(Math.max(a.a.y, a.b.y), Math.max(b.a.y, b.b.y)) -
+            Math.max(Math.min(a.a.y, a.b.y), Math.min(b.a.y, b.b.y));
+        const separation = horizontal ? Math.abs(a.a.y - b.a.y) : Math.abs(a.a.x - b.a.x);
+        expect(overlap > 0 && separation < 24).toBe(false);
+      }
+    }
+  });
+
   it('keeps routing deterministic when edge input order changes', () => {
     const build = () =>
       baseLayout(

@@ -91,7 +91,7 @@ If the router cannot find a valid path around node or group geometry, Mermaid re
 
 Parallel and reverse edges use separate endpoint ports and lanes when the available geometry permits it. Self-loops use separate ports on the same node.
 
-Unrelated edges in the same container are also kept off each other's corridors. A route that would share a segment with an earlier edge is nudged sideways, or re-routed through other ports or corridors; crossing is allowed. Layouts with more than 64 edges in a container keep the faster corridor routes, so overlaps can remain there.
+Unrelated edges in the same container are also kept off each other's corridors. A route that would run parallel to an earlier edge closer than 24px is re-routed through other ports or corridors, so edges that must cross do so at a single perpendicular point; crossing itself is allowed. Layouts with more than 64 edges in a container keep the faster corridor routes, so overlaps can remain there.
 
 Dense nested diagrams can require a hierarchy edge to share part of an internal corridor with a parallel or reverse edge. Endpoint ports remain distinct, but part of the rendered paths can overlap.
 

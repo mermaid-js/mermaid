@@ -988,13 +988,18 @@ function prepareRoutingModes(
       }
       continue;
     }
-    // A minimal route that shares a corridor with an earlier edge is nudged sideways. If no valid
-    // nudge exists the edge is demoted to sparse routing, which can pick other ports and corridors.
-    // Large layouts keep the fast path so they stay search-free within the performance contract.
+    // Small layouts demote a route that runs close and parallel to an earlier edge to sparse
+    // routing. Large layouts keep the fast path to stay search-free within the performance
+    // contract, nudging the route sideways when possible.
     let occupancy = routeOccupancy.get(plan.lcaContainerId);
     if (!occupancy) {
       occupancy = new RouteOccupancyIndex();
       routeOccupancy.set(plan.lcaContainerId, occupancy);
+    }
+    const conflicting = occupancy.conflictsWithRoute(normalized.points, plan.pairKey);
+    if (conflicting && eligiblePlans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
+      // The sparse router can choose other ports and corridors, which reads better than a nudge.
+      continue;
     }
     const separated = separateRouteFromOccupied(
       normalized.points,
@@ -1005,9 +1010,6 @@ function prepareRoutingModes(
         manhattanLength(candidate) === lowerBoundLength &&
         validateSameContainerRoute(candidate, source, target, plan.lcaContainerId, result)
     );
-    if (!separated && eligiblePlans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
-      continue;
-    }
     const finalRoute = separated ?? route;
     occupancy.add(finalRoute, plan.pairKey);
     compatibilityFastRoutes.set(plan.edge.id, finalRoute);

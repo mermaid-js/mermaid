@@ -1,11 +1,29 @@
 import type { Point } from '../../../types.js';
-import {
-  nonterminalSegments,
-  pairSegmentsConflict,
-  type OrthogonalSegment,
-} from './routerConstraint.js';
-import { LANE_SEPARATION_PX } from './routerPlanning.js';
+import { nonterminalSegments, type OrthogonalSegment } from './routerConstraint.js';
 import type { GridOrientation, RouterPoint } from './types.js';
+
+/**
+ * Parallel runs of different edges closer than this are hard to tell apart, so candidates avoid them.
+ * Perpendicular crossings are not affected.
+ */
+export const EDGE_CLEARANCE_PX = 24;
+
+function segmentsTooClose(candidate: OrthogonalSegment, committed: OrthogonalSegment): boolean {
+  if (candidate.orientation !== committed.orientation) {
+    return false;
+  }
+  const horizontal = candidate.orientation === 'H';
+  const lowOf = (segment: OrthogonalSegment) =>
+    horizontal ? Math.min(segment.a.x, segment.b.x) : Math.min(segment.a.y, segment.b.y);
+  const highOf = (segment: OrthogonalSegment) =>
+    horizontal ? Math.max(segment.a.x, segment.b.x) : Math.max(segment.a.y, segment.b.y);
+  const overlap =
+    Math.min(highOf(candidate), highOf(committed)) - Math.max(lowOf(candidate), lowOf(committed));
+  const separation = horizontal
+    ? Math.abs(candidate.a.y - committed.a.y)
+    : Math.abs(candidate.a.x - committed.a.x);
+  return overlap > 0 && separation < EDGE_CLEARANCE_PX;
+}
 
 interface OccupiedSegment {
   segment: OrthogonalSegment;
@@ -21,9 +39,9 @@ interface OccupancyLogEntry {
  * Container-scoped index of committed route segments.
  *
  * Routes from different edges must not share a corridor, so every routed edge registers its
- * nonterminal segments here and later candidates query it with the same conflict rule used for
- * bundle lanes (`pairSegmentsConflict`). Segments are bucketed by their fixed coordinate so a query
- * only inspects lines within the lane separation instead of every committed segment.
+ * nonterminal segments here and later candidates query it with the clearance rule
+ * (`segmentsTooClose`). Segments are bucketed by their fixed coordinate so a query
+ * only inspects lines within the clearance instead of every committed segment.
  *
  * Routes are append-only and can be truncated back to an earlier size, which is how bundle retries
  * roll back state.
@@ -86,7 +104,7 @@ export class RouteOccupancyIndex {
     let high = coordinates.length;
     while (low < high) {
       const middle = (low + high) >> 1;
-      if (coordinates[middle] <= coordinate - LANE_SEPARATION_PX) {
+      if (coordinates[middle] <= coordinate - EDGE_CLEARANCE_PX) {
         low = middle + 1;
       } else {
         high = middle;
@@ -94,11 +112,11 @@ export class RouteOccupancyIndex {
     }
     for (let index = low; index < coordinates.length; index++) {
       const key = coordinates[index];
-      if (key >= coordinate + LANE_SEPARATION_PX) {
+      if (key >= coordinate + EDGE_CLEARANCE_PX) {
         break;
       }
       for (const occupied of this.lines[orientation].get(key)!) {
-        if (occupied.pairKey !== pairKey && pairSegmentsConflict(candidate, occupied.segment)) {
+        if (occupied.pairKey !== pairKey && segmentsTooClose(candidate, occupied.segment)) {
           return true;
         }
       }
