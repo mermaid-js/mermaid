@@ -578,9 +578,21 @@ describe('[Text] when parsing', () => {
     expect(edges[0].text).toBe(',.?!+-*');
   });
 
-  it('should throw error at nested set of brackets', function () {
-    const str = 'graph TD; A[This is a () in text];';
-    expect(() => flow.parser.parse(str)).toThrowError("got 'PS'");
+  it('should handle parentheses in square bracket vertices', function () {
+    flow.parser.parse('graph TD; A[This is a () in text];');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('This is a () in text');
+  });
+
+  it('should handle parentheses wrapping words in square bracket vertices', function () {
+    flow.parser.parse('graph TD; A[Catabolisme (Demolition pour produire de l energie)] --> B;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').text).toBe('Catabolisme (Demolition pour produire de l energie)');
   });
 
   it('should throw error for strings and text at the same time', function () {
@@ -602,8 +614,11 @@ describe('[Text] when parsing', () => {
     expect(() => flow.parser.parse(str)).toThrowError("Expecting 'SQE'");
   });
 
-  it('should throw error', function () {
-    const str = `graph TD; node[hello ) world] --> works`;
-    expect(() => flow.parser.parse(str)).toThrowError("got 'PE'");
+  it('should handle an unbalanced closing parenthesis in square bracket vertices', function () {
+    flow.parser.parse(`graph TD; node[hello ) world] --> works`);
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('node').text).toBe('hello ) world');
   });
 });
