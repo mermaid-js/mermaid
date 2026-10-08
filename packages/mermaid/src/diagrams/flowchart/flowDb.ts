@@ -497,7 +497,11 @@ You have to call mermaid.initialize.`
 
   private setClickFun(id: string, functionName: string, functionArgs: string) {
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-    if (getConfig().securityLevel !== 'loose') {
+    const securityLevel = getConfig().securityLevel;
+    if (securityLevel !== 'loose') {
+      log.warn(
+        `Ignoring the click callback for node "${id}". Click callbacks require securityLevel "loose", but it is "${securityLevel}".`
+      );
       return;
     }
     if (functionName === undefined) {
