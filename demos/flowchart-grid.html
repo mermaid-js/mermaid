@@ -234,16 +234,16 @@ config:
     columnGap: 85
 ---
 flowchart TB
-  A["Top left"]@{ row: 1, column: 1 }
-  B["Top right"]@{ row: 1, column: 3 }
+  TL["Top left"]@{ row: 1, column: 1 }
+  TR["Top right"]@{ row: 1, column: 3 }
   C["Center obstacle"]@{ row: 2, column: 2 }
-  D["Bottom left"]@{ row: 3, column: 1 }
-  E["Bottom right"]@{ row: 3, column: 3 }
+  BL["Bottom left"]@{ row: 3, column: 1 }
+  BR["Bottom right"]@{ row: 3, column: 3 }
 
-  A --> E
-  B --> D
-  A --> C
-  C --> E
+  TL -->|TL-BR| BR
+  TR -->|TR-BL| BL
+  TL -->|TL-C| C
+  C -->|C-BR| BR
         </pre>
       </section>
 
@@ -263,16 +263,16 @@ config:
     columnGap: 85
 ---
 flowchart TB
-  A["Top left"]@{ row: 1, column: 1 }
-  B["Top right"]@{ row: 1, column: 3 }
+  TL["Top left"]@{ row: 1, column: 1 }
+  TR["Top right"]@{ row: 1, column: 3 }
   C["Center obstacle"]@{ row: 2, column: 2 }
-  D["Bottom left"]@{ row: 3, column: 1 }
-  E["Bottom right"]@{ row: 3, column: 3 }
+  BL["Bottom left"]@{ row: 3, column: 1 }
+  BR["Bottom right"]@{ row: 3, column: 3 }
 
-  A --> E
-  B --> D
-  A --> C
-  C --> E
+  TL -->|TL-BR| BR
+  TR -->|TR-BL| BL
+  TL -->|TL-C| C
+  C -->|C-BR| BR
         </pre>
       </section>
 
@@ -292,16 +292,16 @@ config:
     columnGap: 85
 ---
 flowchart TB
-  A["Top left"]@{ row: 1, column: 1 }
-  B["Top right"]@{ row: 1, column: 3 }
+  TL["Top left"]@{ row: 1, column: 1 }
+  TR["Top right"]@{ row: 1, column: 3 }
   C["Center obstacle"]@{ row: 2, column: 2 }
-  D["Bottom left"]@{ row: 3, column: 1 }
-  E["Bottom right"]@{ row: 3, column: 3 }
+  BL["Bottom left"]@{ row: 3, column: 1 }
+  BR["Bottom right"]@{ row: 3, column: 3 }
 
-  A --> E
-  B --> D
-  A --> C
-  C --> E
+  TL -->|TL-BR| BR
+  TR -->|TR-BL| BL
+  TL -->|TL-C| C
+  C -->|C-BR| BR
         </pre>
       </section>
     </main>
