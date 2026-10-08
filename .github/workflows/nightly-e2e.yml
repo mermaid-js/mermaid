@@ -175,11 +175,16 @@ jobs:
               if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
             done
             [ ${#globs[@]} -eq 0 ] && continue
+            # 2>&1 before the pipe: the CLI's spinner (ora) writes its
+            # "Build created: <url>" result to stderr, not stdout — without
+            # this, tee only ever sees stdout and BUILD_URL below is always
+            # empty, even though the Actions log view (which interleaves
+            # both streams) makes it look like it's being captured.
             pnpm exec argos upload e2e/screenshots \
               --build-name "Nightly E2E" \
               --files "${globs[@]}" \
               --parallel --parallel-total "$K" --parallel-index "$i" \
-              | tee -a argos-upload.log
+              2>&1 | tee -a argos-upload.log
           done
 
           BUILD_URL=$(grep -oE 'https://[^ ]*argos-ci\.com[^ ]*' argos-upload.log | tail -1 || true)
