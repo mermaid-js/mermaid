@@ -248,6 +248,69 @@ describe('grid edge label helpers', () => {
     expect(routingMetrics.labelOverlayVertices).toBe(4);
   });
 
+  it('parks degenerate-route labels without aborting valid label placement', () => {
+    const data: LayoutData = {
+      nodes: [
+        manualNode('empty-start', 40, 100),
+        manualNode('empty-end', 360, 100),
+        manualNode('point-start', 40, 200),
+        manualNode('point-end', 360, 200),
+        manualNode('valid-start', 40, 300),
+        manualNode('valid-end', 360, 300),
+      ],
+      edges: [
+        manualEdge('empty', 'empty-start', 'empty-end', [], 'empty route'),
+        manualEdge(
+          'point',
+          'point-start',
+          'point-end',
+          [
+            { x: 200, y: 200 },
+            { x: 200, y: 200 },
+          ],
+          'point route'
+        ),
+        manualEdge(
+          'valid',
+          'valid-start',
+          'valid-end',
+          [
+            { x: 80, y: 300 },
+            { x: 320, y: 300 },
+          ],
+          'valid route'
+        ),
+      ],
+      config: {
+        layout: 'grid',
+      } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    for (const edge of data.edges) {
+      const labelNode = data.nodes.find((item) => item.id === edge.labelNodeId)!;
+      labelNode.width = 70;
+      labelNode.height = 20;
+    }
+    const metrics = createGridEdgeLabelInstrumentation();
+
+    positionGridEdgeLabels(data, metrics);
+
+    const labelFor = (edgeId: string) => {
+      const edge = data.edges.find((item) => item.id === edgeId)!;
+      return data.nodes.find((item) => item.id === edge.labelNodeId)!;
+    };
+    expect(labelFor('empty')).toMatchObject({ x: 40, y: 100 });
+    expect(labelFor('point')).toMatchObject({ x: 200, y: 200 });
+    expect(labelFor('valid')).toMatchObject({ x: 200, y: 300 });
+    expect(data.edges[0].points).toEqual([]);
+    expect(data.edges[1].points).toEqual([
+      { x: 200, y: 200 },
+      { x: 200, y: 200 },
+    ]);
+    expect(metrics.degenerateLabelRoutesSkipped).toBe(2);
+    expect(metrics.labelPasses).toBe(1);
+  });
+
   it('reroutes an owning edge while preserving its frozen label anchor', () => {
     const data: LayoutData = {
       nodes: [
