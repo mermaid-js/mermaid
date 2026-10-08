@@ -164,6 +164,19 @@ function invalidRoutingIssues(data: LayoutData) {
   return validateLayout(data).issues.filter(({ type }) => invalidRoutingIssueTypes.has(type));
 }
 
+function expectFiniteOrthogonalRoutes(data: LayoutData): void {
+  for (const edge of data.edges) {
+    const points = edge.points ?? [];
+    expect(points.length).toBeGreaterThanOrEqual(2);
+    expect(points.every(({ x, y }) => Number.isFinite(x) && Number.isFinite(y))).toBe(true);
+    for (let index = 1; index < points.length; index++) {
+      expect(
+        points[index - 1].x === points[index].x || points[index - 1].y === points[index].y
+      ).toBe(true);
+    }
+  }
+}
+
 describe('grid router', () => {
   it('keeps routing deterministic when edge input order changes', () => {
     const build = () =>
@@ -201,14 +214,8 @@ describe('grid router', () => {
 
     runGridLayoutCore(data);
 
-    for (const routed of data.edges) {
-      expect(routed.points?.length).toBeGreaterThanOrEqual(2);
-      for (let index = 1; index < (routed.points?.length ?? 0); index++) {
-        const prev = routed.points![index - 1];
-        const next = routed.points![index];
-        expect(prev.x === next.x || prev.y === next.y).toBe(true);
-      }
-    }
+    expectFiniteOrthogonalRoutes(data);
+    expect(invalidRoutingIssues(data)).toEqual([]);
   });
 
   it('routes a leaf-to-group edge with finite orthogonal points', () => {
@@ -223,15 +230,9 @@ describe('grid router', () => {
     );
 
     runGridLayoutCore(data);
-    const points = data.edges[0].points ?? [];
-    expect(points.length).toBeGreaterThanOrEqual(2);
-    for (let index = 1; index < points.length; index++) {
-      expect(Number.isFinite(points[index].x)).toBe(true);
-      expect(Number.isFinite(points[index].y)).toBe(true);
-      expect(
-        points[index - 1].x === points[index].x || points[index - 1].y === points[index].y
-      ).toBe(true);
-    }
+
+    expectFiniteOrthogonalRoutes(data);
+    expect(invalidRoutingIssues(data)).toEqual([]);
   });
 
   it.each([
@@ -717,6 +718,7 @@ describe('grid router', () => {
         searchCaps: { maxInvocationExpandedStates: 1 },
       });
 
+      expect(invalidRoutingIssues(data)).toEqual([]);
       expect(warn).toHaveBeenCalledTimes(1);
       expect(warn).toHaveBeenCalledWith(
         'grid-router',
