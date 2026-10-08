@@ -176,6 +176,42 @@ describe('grid edge label helpers', () => {
     expect(validateLayout(data).ok).toBe(true);
   });
 
+  it('uses the same labelled self-loop geometry during resource fallback', () => {
+    const data: LayoutData = {
+      nodes: [node('a')],
+      edges: [
+        {
+          id: 'loop',
+          start: 'a',
+          end: 'a',
+          label: 'wide loop label',
+          arrowTypeStart: 'none',
+          arrowTypeEnd: 'arrow_point',
+          curve: 'linear',
+          type: 'arrow_point',
+        } as Edge,
+      ],
+      config: {
+        layout: 'grid',
+      } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 90;
+    labelNode.height = 20;
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(data, {
+      metrics,
+      routing: { topologyCaps: { maxVertices: 1 } },
+    });
+
+    expect(normalizePolyline(data.edges[0].points ?? []).segments).toHaveLength(3);
+    expect(metrics.resourceLimitFallbacks).toBe(1);
+    expect(metrics.labelAwareSelfLoopsCommitted).toBe(1);
+    expect(validateLayout(data).ok).toBe(true);
+  });
+
   it('places a fitting label on its existing segment without a routing pass', () => {
     const data: LayoutData = {
       nodes: [manualNode('a', 40, 100, 20, 20), manualNode('b', 360, 100, 20, 20)],
