@@ -3,8 +3,7 @@ import type { Edge, LayoutData, Node } from '../../types.js';
 import { PIXEL_EPSILON } from '../layout-utils/geometry.js';
 import { clamp, compareCodeUnits, rectForNode } from '../layout-utils/helpers.js';
 import { isAncestorGroup } from './groups.js';
-import { EDGE_CLEARANCE_PX } from './routerOccupancy.js';
-import { ROUTE_CLEARANCE_PX, routingPointKey } from './routerTopology.js';
+import { EDGE_CLEARANCE_PX, ROUTE_CLEARANCE_PX, routingPointKey } from './routerTopology.js';
 import type {
   GridAttachmentDemand,
   GridContainerId,
