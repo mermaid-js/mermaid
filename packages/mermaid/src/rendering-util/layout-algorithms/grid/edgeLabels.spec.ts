@@ -484,7 +484,6 @@ describe('grid edge label helpers', () => {
     expect(metrics.labelPasses).toBe(2);
     expect(metrics.frozenReservations).toBe(1);
     expect(metrics.impactedEdgeReroutes).toBeGreaterThanOrEqual(1);
-    expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
     expect(metrics.preservedAnchors).toBeGreaterThan(0);
     expect(metrics.rerouteCandidatesEvaluated).toBeGreaterThan(0);
     expect(
@@ -734,7 +733,6 @@ describe('grid edge label helpers', () => {
         .some((item) => (item.points?.length ?? 0) > 2)
     ).toBe(true);
     expect(metrics.impactedEdgeReroutes).toBeGreaterThan(1);
-    expect(metrics.maxReroutesPerEdgePerPass).toBe(1);
     expect(metrics.rerouteCandidatesEvaluated).toBeGreaterThan(0);
     expect(labelNode?.x).toEqual(expect.any(Number));
     expect(labelNode?.y).toEqual(expect.any(Number));

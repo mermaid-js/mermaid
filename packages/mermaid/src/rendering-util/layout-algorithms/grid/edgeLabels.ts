@@ -139,8 +139,6 @@ interface EdgeGeometryCache {
 }
 
 export interface GridEdgeLabelInstrumentation {
-  fullNodeObstacleScans: number;
-  fullEdgeScans: number;
   obstacleRectQueries: number;
   obstacleBandQueries: number;
   obstaclePolylineQueries: number;
@@ -152,7 +150,6 @@ export interface GridEdgeLabelInstrumentation {
   labelPasses: number;
   frozenReservations: number;
   impactedEdgeReroutes: number;
-  maxReroutesPerEdgePerPass: number;
   preservedAnchors: number;
   rerouteCandidatesEvaluated: number;
   rerouteRejectedBlockedRect: number;
@@ -167,7 +164,6 @@ export interface GridEdgeLabelInstrumentation {
   degenerateLabelRoutesSkipped: number;
   rollbacks: number;
   indexCoordinateCount: number;
-  indexSpanAllocations: number;
 }
 
 interface EdgeLabelContext {
@@ -191,8 +187,6 @@ type SegmentQueryMetric = 'segmentRectQueries' | 'segmentBandQueries';
 
 export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentation {
   return {
-    fullNodeObstacleScans: 0,
-    fullEdgeScans: 0,
     obstacleRectQueries: 0,
     obstacleBandQueries: 0,
     obstaclePolylineQueries: 0,
@@ -204,7 +198,6 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     labelPasses: 0,
     frozenReservations: 0,
     impactedEdgeReroutes: 0,
-    maxReroutesPerEdgePerPass: 0,
     preservedAnchors: 0,
     rerouteCandidatesEvaluated: 0,
     rerouteRejectedBlockedRect: 0,
@@ -219,7 +212,6 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     degenerateLabelRoutesSkipped: 0,
     rollbacks: 0,
     indexCoordinateCount: 0,
-    indexSpanAllocations: 0,
   };
 }
 
@@ -2489,13 +2481,6 @@ export function positionGridEdgeLabels(
         setEdgePoints(context, edge, points);
         incrementMetric(instrumentation, 'impactedEdgeReroutes');
       }
-      if (impacted.size > 0 && instrumentation) {
-        instrumentation.maxReroutesPerEdgePerPass = Math.max(
-          instrumentation.maxReroutesPerEdgePerPass,
-          1
-        );
-      }
-
       for (const { edge, labelNode } of workItems) {
         const reservation = placedLabelsByEdgeId.get(edge.id);
         if (
