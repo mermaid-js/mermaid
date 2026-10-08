@@ -26,6 +26,7 @@ export interface C4ShapeLike {
   shape?: string;
   sprite?: string;
   tags?: string;
+  showStereotype?: string;
 }
 
 const QUEUE_SHAPES = new Set([
@@ -113,6 +114,19 @@ const stereotypeText = (shape: C4ShapeLike): string => {
   return shape.techn?.text ? `[${stereotype}: ${shape.techn.text}]` : `[${stereotype}]`;
 };
 
+/**
+ * Whether an element shows its stereotype. `c4.showStereotypes` sets it for the
+ * diagram; `UpdateElementStyle(alias, $showStereotype="false")` overrides it for one
+ * element. Attribute values arrive as strings, and only `"false"` hides.
+ */
+export const showsStereotype = (
+  element: { showStereotype?: string },
+  config: Pick<C4DiagramConfig, 'showStereotypes'>
+): boolean =>
+  element.showStereotype === undefined
+    ? (config.showStereotypes ?? true)
+    : element.showStereotype !== 'false';
+
 /** The C4 element types, internal and external, that carry per-type config. */
 export const C4_ELEMENT_TYPES = (
   [
@@ -182,7 +196,9 @@ export const buildC4Node = (
   return {
     id: shape.alias,
     label: shape.label.text,
-    stereotype: stereotypeText(shape),
+    // Empty rather than undefined: the label helper dispatches to the C4 stacked
+    // label on `stereotype !== undefined`, and drops a section whose text is empty.
+    stereotype: showsStereotype(shape, config) ? stereotypeText(shape) : '',
     description: shape.descr?.text ? [shape.descr.text] : undefined,
     labelType: 'string',
     isGroup: false,
