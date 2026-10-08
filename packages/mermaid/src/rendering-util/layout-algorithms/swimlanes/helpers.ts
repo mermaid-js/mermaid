@@ -113,23 +113,17 @@ const isEmptyLane = (layout: LayoutData, nodes: Node[], laneId: string): boolean
   !nodes.some((node) => node.parentId === laneId) &&
   !(layout.edges ?? []).some((edge) => edge.start === laneId || edge.end === laneId);
 
-/**
- * A node listed in two lanes stays in the first, so the second can end up with nothing.
- * Warns for each such node and removes the lanes it emptied. A lane the author left empty
- * lost no member and stays, and so does one an edge points at.
- */
-function dropLanesEmptiedBySharedNodes(layout: LayoutData, nodes: Node[]): void {
-  const laneIds = new Set(nodes.filter(isLane).map((lane) => lane.id));
-  const emptied = new Set<string>();
-  for (const { node, keptBy, droppedFrom } of sharedMembers(layout)) {
-    if (laneIds.has(keptBy) && laneIds.has(droppedFrom)) {
-      log.warn(
-        `Swimlane node "${node}" is listed in lanes "${keptBy}" and "${droppedFrom}"; it is drawn in "${keptBy}" only.`
-      );
-      emptied.add(droppedFrom);
-    }
+/** The top-level lane a node sits in, following its parents up, or undefined outside every lane. */
+function topLevelLaneId(byId: Map<string, Node>, id: string): string | undefined {
+  let current = byId.get(id);
+  while (current?.parentId) {
+    current = byId.get(current.parentId);
   }
-  for (const laneId of emptied) {
+  return current && isLane(current) ? current.id : undefined;
+}
+
+function removeEmptyLanes(layout: LayoutData, nodes: Node[], laneIds: Set<string>): void {
+  for (const laneId of laneIds) {
     if (isEmptyLane(layout, nodes, laneId)) {
       nodes.splice(
         nodes.findIndex((node) => node.id === laneId),
@@ -137,6 +131,28 @@ function dropLanesEmptiedBySharedNodes(layout: LayoutData, nodes: Node[]): void 
       );
     }
   }
+}
+
+/**
+ * A node listed in two lanes stays in the first, so the second can end up with nothing.
+ * Warns for each such node and removes the lanes it emptied. A lane the author left empty
+ * lost no member and stays, and so does one an edge points at. The lane that kept the node
+ * can be the one around a subgraph nested in it, so `keptBy` is resolved up to its lane.
+ */
+function dropLanesEmptiedBySharedNodes(layout: LayoutData, nodes: Node[]): void {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const laneIds = new Set(nodes.filter(isLane).map((lane) => lane.id));
+  const emptied = new Set<string>();
+  for (const { node, keptBy, droppedFrom } of sharedMembers(layout)) {
+    const keptByLane = topLevelLaneId(byId, keptBy);
+    if (keptByLane && keptByLane !== droppedFrom && laneIds.has(droppedFrom)) {
+      log.warn(
+        `Swimlane node "${node}" is listed in lanes "${keptByLane}" and "${droppedFrom}"; it is drawn in "${keptByLane}" only.`
+      );
+      emptied.add(droppedFrom);
+    }
+  }
+  removeEmptyLanes(layout, nodes, emptied);
 }
 
 function warnAboutNestedGroups(nodes: Node[]): void {

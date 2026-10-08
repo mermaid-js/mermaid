@@ -97,6 +97,20 @@ describe('swimlane-beta lanes that parse but cannot be drawn as written (issue #
     );
   });
 
+  it('draws a node kept by a subgraph nested in a lane in that lane, without a stray empty lane', () => {
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+    const layout = prepared(
+      'swimlane-beta LR\nsubgraph lane1\n  subgraph inner\n    a\n  end\nend\nsubgraph lane2\n  a\nend'
+    );
+
+    expect(laneIds(layout)).toEqual(['lane1']);
+    expect(layout.nodes.find((node) => node.id === 'inner')?.parentId).toBe('lane1');
+    expect(warn).toHaveBeenCalledWith(
+      'Swimlane node "a" is listed in lanes "lane1" and "lane2"; it is drawn in "lane1" only.'
+    );
+  });
+
   it('keeps a lane the author declared empty', () => {
     const layout = prepared('swimlane-beta LR\nsubgraph l1\n  a\nend\nsubgraph l2\nend');
 

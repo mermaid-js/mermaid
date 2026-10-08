@@ -188,6 +188,26 @@ describe('prepareLayoutForSwimlanes lane lint', () => {
     expect(ids(layout)).toContain('phase1');
   });
 
+  it('resolves a node kept by a nested subgraph to the lane around it', () => {
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    const layout = layoutWith(
+      [
+        { id: 'lane1', isGroup: true },
+        { id: 'inner', isGroup: true, parentId: 'lane1' },
+        { id: 'a', isGroup: false, parentId: 'inner' },
+        { id: 'lane2', isGroup: true },
+      ],
+      { other: { droppedSubGraphMembers: [{ node: 'a', keptBy: 'inner', droppedFrom: 'lane2' }] } }
+    );
+
+    prepareLayoutForSwimlanes(layout);
+
+    expect(ids(layout)).toEqual(['lane1', 'inner', 'a']);
+    expect(warn).toHaveBeenCalledWith(
+      'Swimlane node "a" is listed in lanes "lane1" and "lane2"; it is drawn in "lane1" only.'
+    );
+  });
+
   it('ignores a node shared with a subgraph that is not a lane', () => {
     const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
     const layout = layoutWith(
