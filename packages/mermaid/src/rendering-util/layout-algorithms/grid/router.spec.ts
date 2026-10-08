@@ -214,6 +214,42 @@ describe('grid router', () => {
     );
   });
 
+  it.each([2, 3])(
+    'shares the destination side of a straight outgoing edge instead of detouring (E in row %i)',
+    (eRow) => {
+      const data = baseLayout(
+        [
+          leaf('A', 80, 40, { row: 1, column: 1 }),
+          leaf('B', 80, 40, { row: 1, column: 2 }),
+          leaf('C', 80, 40, { row: 2, column: 1 }),
+          leaf('D', 80, 40, { row: 1, column: 3 }),
+          leaf('E', 80, 40, { row: eRow, column: 3 }),
+        ],
+        [
+          edge('A-B', 'A', 'B'),
+          edge('A-C', 'A', 'C'),
+          edge('B-D', 'B', 'D'),
+          edge('C-D', 'C', 'D'),
+          edge('D-E', 'D', 'E'),
+        ],
+        { columns: 3, rowGap: 45, columnGap: 55 }
+      );
+      runGridLayoutCore(data);
+
+      const points = (id: string) =>
+        normalizePolyline(data.edges.find((candidate) => candidate.id === id)!.points ?? []).points;
+      const destination = nodeRect(data.nodes.find(({ id }) => id === 'D')!);
+      const incoming = points('C-D');
+      const outgoing = points('D-E');
+
+      expect(Math.min(...incoming.map(({ y }) => y))).toBeGreaterThanOrEqual(destination.top);
+      expect(incoming.at(-1)!.y).toBe(destination.bottom);
+      expect(outgoing[0].y).toBe(destination.bottom);
+      expect(outgoing.every(({ x }) => x === outgoing[0].x)).toBe(true);
+      expect(Math.abs(incoming.at(-1)!.x - outgoing[0].x)).toBeGreaterThanOrEqual(24);
+    }
+  );
+
   it('routes around a blocker on the aligned straight corridor', () => {
     const data = baseLayout(
       [
