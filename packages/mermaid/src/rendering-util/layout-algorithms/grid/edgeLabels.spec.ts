@@ -165,9 +165,11 @@ describe('grid edge label helpers', () => {
     runGridLayoutCore(data);
 
     expect(data.edges[0].points).toBeDefined();
+    expect(normalizePolyline(data.edges[0].points!).segments).toHaveLength(3);
     expectNoNonAdjacentConflicts(data.edges[0].points!);
-    expect(labelNode.x).toEqual(expect.any(Number));
-    expect(labelNode.y).toEqual(expect.any(Number));
+    expect(labelNode.x).toBeLessThan((data.nodes[0].x ?? 0) - (data.nodes[0].width ?? 0) / 2);
+    expect(labelNode.y).toBe(20);
+    expect(validateLayout(data).ok).toBe(true);
   });
 
   it('places a fitting label on its existing segment without a routing pass', () => {

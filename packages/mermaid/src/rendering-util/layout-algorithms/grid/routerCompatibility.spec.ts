@@ -4,6 +4,7 @@ import {
   areExactlyAxisAligned,
   boundedAlternativePortalCoordinates,
   combinePointChains,
+  labelAwareSelfLoopCandidates,
   orderedSelfLoopSides,
   reversePoints,
 } from './routerCompatibility.js';
@@ -23,6 +24,57 @@ describe('grid router compatibility', () => {
   it('requires exact axis alignment for the direct route shortcut', () => {
     expect(areExactlyAxisAligned({ x: 0, y: 0 }, { x: 0.5, y: 10 })).toBe(false);
     expect(areExactlyAxisAligned({ x: 0, y: 0 }, { x: 0, y: 10 })).toBe(true);
+  });
+
+  it('expands a labelled loop as one U when the owner side can hold the ports', () => {
+    const owner = {
+      id: 'owner',
+      isGroup: false,
+      x: 40,
+      y: 20,
+      width: 80,
+      height: 40,
+    } as Node;
+
+    expect(
+      labelAwareSelfLoopCandidates(owner, 'left', 0, 20, {
+        along: 90,
+        cross: 20,
+        startInset: 12,
+        endInset: 12,
+        requiredAlongSpan: 116,
+      })
+    ).toEqual([[point(0, 4), point(-51, 4), point(-51, 36), point(0, 36)]]);
+  });
+
+  it('uses one symmetric shoulder when the label span exceeds the owner side', () => {
+    const owner = {
+      id: 'owner',
+      isGroup: false,
+      x: 40,
+      y: 20,
+      width: 80,
+      height: 40,
+    } as Node;
+
+    const [candidate] = labelAwareSelfLoopCandidates(owner, 'top', 0, 40, {
+      along: 90,
+      cross: 20,
+      startInset: 12,
+      endInset: 12,
+      requiredAlongSpan: 116,
+    });
+
+    expect(candidate).toEqual([
+      point(31, 0),
+      point(31, -14),
+      point(-11, -14),
+      point(-11, -32),
+      point(91, -32),
+      point(91, -14),
+      point(49, -14),
+      point(49, 0),
+    ]);
   });
 
   it.each([
