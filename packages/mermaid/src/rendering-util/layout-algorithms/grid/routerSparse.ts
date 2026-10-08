@@ -89,6 +89,42 @@ function recordFallback(
   }
 }
 
+interface ValidatedFallbackOptions<T> {
+  context: GridRoutingContext;
+  reason: GridRoutingFallbackReason;
+  edgeId: string;
+  containerId: GridContainerId;
+  searchStateScope?: GridRoutingResourceLimitError['searchStateScope'];
+  route: () => T;
+  isValid: (fallback: T) => boolean;
+  includeContainerIdInError?: boolean;
+}
+
+function runValidatedFallback<T>({
+  context,
+  reason,
+  edgeId,
+  containerId,
+  searchStateScope,
+  route,
+  isValid,
+  includeContainerIdInError,
+}: ValidatedFallbackOptions<T>): T {
+  const fallback = route();
+  recordFallback(context, reason, edgeId, containerId, searchStateScope);
+  if (isValid(fallback)) {
+    return fallback;
+  }
+  if (context.metrics) {
+    context.metrics.fallbackValidationFailures++;
+  }
+  throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${edgeId}"`, {
+    edgeId,
+    ...(includeContainerIdInError ? { containerId } : {}),
+    reason,
+  });
+}
+
 /*
  * TODO: Consider an opt-in `grid.routingPolicy: 'best-effort'` mode while keeping validated
  * routing as the default.
@@ -129,21 +165,16 @@ export function sparseSameContainerRoute(
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(plan.lcaContainerId);
   if (fallbackReason) {
-    const legacy = legacyRoute();
-    recordFallback(context, fallbackReason, plan.edge.id, plan.lcaContainerId);
-    if (
-      !validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result) ||
-      (plan.bundleSize > 1 && !routeSatisfiesPairConstraints(legacy, pairRoutes))
-    ) {
-      if (context.metrics) {
-        context.metrics.fallbackValidationFailures++;
-      }
-      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${plan.edge.id}"`, {
-        edgeId: plan.edge.id,
-        reason: fallbackReason,
-      });
-    }
-    return legacy;
+    return runValidatedFallback({
+      context,
+      reason: fallbackReason,
+      edgeId: plan.edge.id,
+      containerId: plan.lcaContainerId,
+      route: legacyRoute,
+      isValid: (legacy) =>
+        validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result) &&
+        (plan.bundleSize <= 1 || routeSatisfiesPairConstraints(legacy, pairRoutes)),
+    });
   }
   const topology = context.topologies.get(plan.lcaContainerId);
   if (!topology) {
@@ -297,27 +328,17 @@ export function sparseSameContainerRoute(
   if (searchCap) {
     // Resource caps select the compatibility route only after it passes the same geometry and bundle
     // constraints; caps never weaken correctness.
-    const legacy = legacyRoute();
-    recordFallback(
+    return runValidatedFallback({
       context,
-      searchCap.reason,
-      plan.edge.id,
-      plan.lcaContainerId,
-      searchCap.searchStateScope
-    );
-    if (
-      !validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result) ||
-      (plan.bundleSize > 1 && !routeSatisfiesPairConstraints(legacy, pairRoutes))
-    ) {
-      if (context.metrics) {
-        context.metrics.fallbackValidationFailures++;
-      }
-      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${plan.edge.id}"`, {
-        edgeId: plan.edge.id,
-        reason: searchCap.reason,
-      });
-    }
-    return legacy;
+      reason: searchCap.reason,
+      edgeId: plan.edge.id,
+      containerId: plan.lcaContainerId,
+      searchStateScope: searchCap.searchStateScope,
+      route: legacyRoute,
+      isValid: (legacy) =>
+        validateSameContainerRoute(legacy, source, target, plan.lcaContainerId, result) &&
+        (plan.bundleSize <= 1 || routeSatisfiesPairConstraints(legacy, pairRoutes)),
+    });
   }
   if (!best) {
     if (context.metrics) {
@@ -415,21 +436,16 @@ export function sparseSelfLoopRoute(
   const legacyRoute = (): { points: Point[]; side: GridSide; index: number } =>
     routeObstacleClearSelfLoop(owner, ownerSideCounts, selfLoopCounts, result);
   if (fallbackReason) {
-    const legacy = legacyRoute();
-    recordFallback(context, fallbackReason, plan.edge.id, containerId);
-    if (
-      !validateSameContainerRoute(legacy.points, owner, owner, containerId, result) ||
-      !routeSatisfiesPairConstraints(legacy.points, pairRoutes)
-    ) {
-      if (context.metrics) {
-        context.metrics.fallbackValidationFailures++;
-      }
-      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${plan.edge.id}"`, {
-        edgeId: plan.edge.id,
-        reason: fallbackReason,
-      });
-    }
-    return legacy;
+    return runValidatedFallback({
+      context,
+      reason: fallbackReason,
+      edgeId: plan.edge.id,
+      containerId,
+      route: legacyRoute,
+      isValid: (legacy) =>
+        validateSameContainerRoute(legacy.points, owner, owner, containerId, result) &&
+        routeSatisfiesPairConstraints(legacy.points, pairRoutes),
+    });
   }
   const topology = context.topologies.get(containerId);
   if (!topology || !overlayScratch) {
@@ -518,21 +534,17 @@ export function sparseSelfLoopRoute(
       if (!(error instanceof GridRoutingResourceLimitError)) {
         throw error;
       }
-      const legacy = legacyRoute();
-      recordFallback(context, error.reason, plan.edge.id, containerId, error.searchStateScope);
-      if (
-        !validateSameContainerRoute(legacy.points, owner, owner, containerId, result) ||
-        !routeSatisfiesPairConstraints(legacy.points, pairRoutes)
-      ) {
-        if (context.metrics) {
-          context.metrics.fallbackValidationFailures++;
-        }
-        throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${plan.edge.id}"`, {
-          edgeId: plan.edge.id,
-          reason: error.reason,
-        });
-      }
-      return legacy;
+      return runValidatedFallback({
+        context,
+        reason: error.reason,
+        edgeId: plan.edge.id,
+        containerId,
+        searchStateScope: error.searchStateScope,
+        route: legacyRoute,
+        isValid: (legacy) =>
+          validateSameContainerRoute(legacy.points, owner, owner, containerId, result) &&
+          routeSatisfiesPairConstraints(legacy.points, pairRoutes),
+      });
     }
   }
   if (context.metrics) {
@@ -562,22 +574,17 @@ export function sparseContainerSegment(
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(containerId);
   if (fallbackReason) {
-    const legacy = legacyRoute();
-    recordFallback(context, fallbackReason, edgeId, containerId);
-    if (
-      !validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result) ||
-      !routeSatisfiesPairConstraints(legacy, pairRoutes)
-    ) {
-      if (context.metrics) {
-        context.metrics.fallbackValidationFailures++;
-      }
-      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${edgeId}"`, {
-        edgeId,
-        containerId,
-        reason: fallbackReason,
-      });
-    }
-    return legacy;
+    return runValidatedFallback({
+      context,
+      reason: fallbackReason,
+      edgeId,
+      containerId,
+      route: legacyRoute,
+      isValid: (legacy) =>
+        validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result) &&
+        routeSatisfiesPairConstraints(legacy, pairRoutes),
+      includeContainerIdInError: true,
+    });
   }
   const topology = context.topologies.get(containerId);
   if (!topology || !overlayScratch) {
@@ -750,22 +757,18 @@ export function sparseContainerSegment(
     if (!(error instanceof GridRoutingResourceLimitError)) {
       throw error;
     }
-    const legacy = legacyRoute();
-    recordFallback(context, error.reason, edgeId, containerId, error.searchStateScope);
-    if (
-      !validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result) ||
-      !routeSatisfiesPairConstraints(legacy, pairRoutes)
-    ) {
-      if (context.metrics) {
-        context.metrics.fallbackValidationFailures++;
-      }
-      throw gridError('GRID_ROUTE_NOT_FOUND', `Invalid legacy fallback for "${edgeId}"`, {
-        edgeId,
-        containerId,
-        reason: error.reason,
-      });
-    }
-    return legacy;
+    return runValidatedFallback({
+      context,
+      reason: error.reason,
+      edgeId,
+      containerId,
+      searchStateScope: error.searchStateScope,
+      route: legacyRoute,
+      isValid: (legacy) =>
+        validateContainerSegment(legacy, start.ownerId, end.ownerId, containerId, result) &&
+        routeSatisfiesPairConstraints(legacy, pairRoutes),
+      includeContainerIdInError: true,
+    });
   }
   const compatibility = legacyRoute();
   // Exhausted sparse geometry may recover through the corridor router. Bundled hierarchy segments

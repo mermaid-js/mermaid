@@ -543,6 +543,95 @@ function search(
       bestGoalCost = completedCost;
     }
   };
+  const relaxArc = (
+    current: number,
+    currentPoint: RouterPoint,
+    to: number,
+    orientation: 1 | 2,
+    arcLength: number,
+    boundaryTransitions: number
+  ): void => {
+    const nextPoint = vertexAt(to).point;
+    if (options.arcAllowed && !options.arcAllowed(currentPoint, nextPoint)) {
+      return;
+    }
+    if (
+      options.initialSide &&
+      predecessors[current] < 0 &&
+      movesTowardOwner(currentPoint, nextPoint, options.initialSide)
+    ) {
+      return;
+    }
+    if (
+      options.targetSide &&
+      to === targetId &&
+      movesTowardOwner(target.point, currentPoint, options.targetSide)
+    ) {
+      return;
+    }
+    const index = to * 3 + orientation;
+    const previous = best[index];
+    const length = gLengths[current] + arcLength;
+    const bends =
+      gBends[current] +
+      (orientations[current] !== 0 && orientations[current] !== orientation ? 1 : 0);
+    const nextBoundaryTransitions = gBoundaryTransitions[current] + boundaryTransitions;
+    const previousComparison =
+      previous >= 0
+        ? length - gLengths[previous] ||
+          bends - gBends[previous] ||
+          nextBoundaryTransitions - gBoundaryTransitions[previous]
+        : -1;
+    if (
+      previous >= 0 &&
+      (previousComparison > 0 ||
+        (previousComparison === 0 && compareChains(current, predecessors[previous]) >= 0))
+    ) {
+      return;
+    }
+    const candidate = stateCount++;
+    if (stateCount > stateVertices.length) {
+      workspace.ensureStateCapacity(stateCount);
+      stateVertices = workspace.stateVertices;
+      orientations = workspace.orientations;
+      gLengths = workspace.gLengths;
+      gBends = workspace.gBends;
+      gBoundaryTransitions = workspace.gBoundaryTransitions;
+      fLengths = workspace.fLengths;
+      fBends = workspace.fBends;
+      predecessors = workspace.predecessors;
+      depths = workspace.depths;
+      ancestor4 = workspace.ancestor4;
+      heapChildren = workspace.heapChildren;
+      heapSiblings = workspace.heapSiblings;
+      recordWorkspaceBytes();
+    }
+    stateVertices[candidate] = to;
+    orientations[candidate] = orientation;
+    gLengths[candidate] = length;
+    gBends[candidate] = bends;
+    gBoundaryTransitions[candidate] = nextBoundaryTransitions;
+    const candidateDx = Math.abs(nextPoint.x - target.point.x);
+    const candidateDy = Math.abs(nextPoint.y - target.point.y);
+    fLengths[candidate] = length + (useBendHeuristic ? candidateDx + candidateDy : 0);
+    fBends[candidate] =
+      bends +
+      (useBendHeuristic
+        ? minimumBends(
+            candidateDx,
+            candidateDy,
+            orientation === 1 ? 'H' : 'V',
+            options.targetOrientation
+          )
+        : 0);
+    predecessors[candidate] = current;
+    depths[candidate] = depths[current] + 1;
+    const parent2 = predecessors[current];
+    const parent3 = parent2 >= 0 ? predecessors[parent2] : -1;
+    ancestor4[candidate] = parent3 >= 0 ? predecessors[parent3] : -1;
+    workspace.setBest(index, candidate);
+    heapPush(candidate);
+  };
 
   while (heapSize > 0) {
     const next = heapRoot;
@@ -591,168 +680,27 @@ function search(
       topology.getSearchArcs?.(vertexId) ?? topology.searchAdjacencyByVertex?.[vertexId];
     if (compactArcs) {
       for (const arc of compactArcs) {
-        const nextPoint = vertexAt(arc.to).point;
-        if (options.arcAllowed && !options.arcAllowed(currentPoint, nextPoint)) {
-          continue;
-        }
-        if (
-          options.initialSide &&
-          predecessors[current] < 0 &&
-          movesTowardOwner(currentPoint, nextPoint, options.initialSide)
-        ) {
-          continue;
-        }
-        if (
-          options.targetSide &&
-          arc.to === targetId &&
-          movesTowardOwner(target.point, currentPoint, options.targetSide)
-        ) {
-          continue;
-        }
-        const orientation = arc.orientationOrdinal;
-        const index = arc.to * 3 + orientation;
-        const previous = best[index];
-        const length = gLengths[current] + arc.length;
-        const bends =
-          gBends[current] +
-          (orientations[current] !== 0 && orientations[current] !== orientation ? 1 : 0);
-        const boundaryTransitions = gBoundaryTransitions[current] + arc.boundaryTransitions;
-        const previousComparison =
-          previous >= 0
-            ? length - gLengths[previous] ||
-              bends - gBends[previous] ||
-              boundaryTransitions - gBoundaryTransitions[previous]
-            : -1;
-        if (
-          previous >= 0 &&
-          (previousComparison > 0 ||
-            (previousComparison === 0 && compareChains(current, predecessors[previous]) >= 0))
-        ) {
-          continue;
-        }
-        const candidate = stateCount++;
-        if (stateCount > stateVertices.length) {
-          workspace.ensureStateCapacity(stateCount);
-          stateVertices = workspace.stateVertices;
-          orientations = workspace.orientations;
-          gLengths = workspace.gLengths;
-          gBends = workspace.gBends;
-          gBoundaryTransitions = workspace.gBoundaryTransitions;
-          fLengths = workspace.fLengths;
-          fBends = workspace.fBends;
-          predecessors = workspace.predecessors;
-          depths = workspace.depths;
-          ancestor4 = workspace.ancestor4;
-          heapChildren = workspace.heapChildren;
-          heapSiblings = workspace.heapSiblings;
-          recordWorkspaceBytes();
-        }
-        stateVertices[candidate] = arc.to;
-        orientations[candidate] = orientation;
-        gLengths[candidate] = length;
-        gBends[candidate] = bends;
-        gBoundaryTransitions[candidate] = boundaryTransitions;
-        const candidateDx = Math.abs(nextPoint.x - target.point.x);
-        const candidateDy = Math.abs(nextPoint.y - target.point.y);
-        fLengths[candidate] = length + (useBendHeuristic ? candidateDx + candidateDy : 0);
-        fBends[candidate] =
-          bends +
-          (useBendHeuristic
-            ? minimumBends(
-                candidateDx,
-                candidateDy,
-                orientation === 1 ? 'H' : 'V',
-                options.targetOrientation
-              )
-            : 0);
-        predecessors[candidate] = current;
-        depths[candidate] = depths[current] + 1;
-        const parent2 = predecessors[current];
-        const parent3 = parent2 >= 0 ? predecessors[parent2] : -1;
-        ancestor4[candidate] = parent3 >= 0 ? predecessors[parent3] : -1;
-        workspace.setBest(index, candidate);
-        heapPush(candidate);
+        relaxArc(
+          current,
+          currentPoint,
+          arc.to,
+          arc.orientationOrdinal,
+          arc.length,
+          arc.boundaryTransitions
+        );
       }
     } else {
       for (const arc of topology.adjacencyByVertex?.[vertexId] ??
         topology.adjacency.get(vertexId) ??
         []) {
-        const nextPoint = vertexAt(arc.to).point;
-        if (options.arcAllowed && !options.arcAllowed(currentPoint, nextPoint)) {
-          continue;
-        }
-        if (
-          options.initialSide &&
-          predecessors[current] < 0 &&
-          movesTowardOwner(currentPoint, nextPoint, options.initialSide)
-        ) {
-          continue;
-        }
-        if (
-          options.targetSide &&
-          arc.to === targetId &&
-          movesTowardOwner(target.point, currentPoint, options.targetSide)
-        ) {
-          continue;
-        }
-        const orientation = orientationOrdinal(arc.orientation);
-        const index = arc.to * 3 + orientation;
-        const previous = best[index];
-        const length = gLengths[current] + arc.length;
-        const bends =
-          gBends[current] +
-          (orientations[current] !== 0 && orientations[current] !== orientation ? 1 : 0);
-        const boundaryTransitions = gBoundaryTransitions[current] + (arc.kind === 'portal' ? 1 : 0);
-        const previousComparison =
-          previous >= 0
-            ? length - gLengths[previous] ||
-              bends - gBends[previous] ||
-              boundaryTransitions - gBoundaryTransitions[previous]
-            : -1;
-        if (
-          previous >= 0 &&
-          (previousComparison > 0 ||
-            (previousComparison === 0 && compareChains(current, predecessors[previous]) >= 0))
-        ) {
-          continue;
-        }
-        const candidate = stateCount++;
-        if (stateCount > stateVertices.length) {
-          workspace.ensureStateCapacity(stateCount);
-          stateVertices = workspace.stateVertices;
-          orientations = workspace.orientations;
-          gLengths = workspace.gLengths;
-          gBends = workspace.gBends;
-          gBoundaryTransitions = workspace.gBoundaryTransitions;
-          fLengths = workspace.fLengths;
-          fBends = workspace.fBends;
-          predecessors = workspace.predecessors;
-          depths = workspace.depths;
-          ancestor4 = workspace.ancestor4;
-          heapChildren = workspace.heapChildren;
-          heapSiblings = workspace.heapSiblings;
-          recordWorkspaceBytes();
-        }
-        stateVertices[candidate] = arc.to;
-        orientations[candidate] = orientation;
-        gLengths[candidate] = length;
-        gBends[candidate] = bends;
-        gBoundaryTransitions[candidate] = boundaryTransitions;
-        const candidateDx = Math.abs(nextPoint.x - target.point.x);
-        const candidateDy = Math.abs(nextPoint.y - target.point.y);
-        fLengths[candidate] = length + (useBendHeuristic ? candidateDx + candidateDy : 0);
-        fBends[candidate] =
-          bends +
-          (useBendHeuristic
-            ? minimumBends(candidateDx, candidateDy, arc.orientation, options.targetOrientation)
-            : 0);
-        predecessors[candidate] = current;
-        depths[candidate] = depths[current] + 1;
-        const parent2 = predecessors[current];
-        const parent3 = parent2 >= 0 ? predecessors[parent2] : -1;
-        ancestor4[candidate] = parent3 >= 0 ? predecessors[parent3] : -1;
-        workspace.setBest(index, candidate);
-        heapPush(candidate);
+        relaxArc(
+          current,
+          currentPoint,
+          arc.to,
+          orientationOrdinal(arc.orientation),
+          arc.length,
+          arc.kind === 'portal' ? 1 : 0
+        );
       }
     }
     if (metrics) {
