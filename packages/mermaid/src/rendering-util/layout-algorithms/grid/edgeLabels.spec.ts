@@ -106,6 +106,37 @@ function expectNoNonAdjacentConflicts(points: NonNullable<Edge['points']>): void
 }
 
 describe('grid edge label helpers', () => {
+  it('expands an adjacent boundary so a measured label stays on the direct route', () => {
+    const data: LayoutData = {
+      nodes: [node('a'), node('b')],
+      edges: [
+        {
+          ...edge('labelled', 'long label'),
+          arrowTypeStart: 'none',
+          arrowTypeEnd: 'arrow_point',
+          curve: 'linear',
+          type: 'arrow_point',
+        } as Edge,
+      ],
+      config: {
+        layout: 'grid',
+      } as LayoutData['config'],
+    };
+
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 90;
+    labelNode.height = 20;
+
+    runGridLayoutCore(data);
+
+    const [a, b] = data.nodes;
+    expect((b.x ?? 0) - (b.width ?? 0) / 2 - ((a.x ?? 0) + (a.width ?? 0) / 2)).toBe(116);
+    expect(normalizePolyline(data.edges[0].points ?? []).segments).toHaveLength(1);
+    expect(labelNode).toMatchObject({ x: 138, y: 20 });
+    expect(validateLayout(data).ok).toBe(true);
+  });
+
   it('keeps a labelled self-loop from overlapping its own route', () => {
     const data: LayoutData = {
       nodes: [node('a')],

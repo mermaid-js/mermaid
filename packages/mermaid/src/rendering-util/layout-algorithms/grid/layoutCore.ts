@@ -1,6 +1,7 @@
 import type { LayoutData, Node } from '../../types.js';
 import { positionGridEdgeLabels } from './edgeLabels.js';
 import { buildGridForest } from './groups.js';
+import { buildGridLabelRequirements, deriveGridContainerLabelGaps } from './labelSpacing.js';
 import {
   buildGridSourceOrder,
   readGridConfig,
@@ -109,10 +110,25 @@ function layoutContainer(
 
   const sortedRows = [...rows].sort((a, b) => a - b);
   const sortedColumns = [...columns].sort((a, b) => a - b);
+  const labelGaps = deriveGridContainerLabelGaps(
+    result.labelRequirements.byContainer.get(containerId) ?? [],
+    cells,
+    rowHeights,
+    columnWidths,
+    sortedRows,
+    sortedColumns,
+    config.rowGap,
+    config.columnGap
+  );
+  const rowGapAfter = (row: number) => Math.max(config.rowGap, labelGaps.rowGapAfter.get(row) ?? 0);
+  const columnGapAfter = (column: number) =>
+    Math.max(config.columnGap, labelGaps.columnGapAfter.get(column) ?? 0);
 
   const contentWidth = sortedColumns.reduce(
     (total, column, index) =>
-      total + (columnWidths.get(column) ?? 0) + (index > 0 ? config.columnGap : 0),
+      total +
+      (columnWidths.get(column) ?? 0) +
+      (index < sortedColumns.length - 1 ? columnGapAfter(column) : 0),
     0
   );
   // A title sets the minimum group width. If it is wider than the content and its insets,
@@ -127,18 +143,20 @@ function layoutContainer(
 
   const columnOrigins = new Map<number, number>();
   let xCursor = contentLeft;
-  for (const column of sortedColumns) {
+  for (const [index, column] of sortedColumns.entries()) {
     columnOrigins.set(column, xCursor);
-    xCursor += (columnWidths.get(column) ?? 0) + config.columnGap;
+    xCursor +=
+      (columnWidths.get(column) ?? 0) +
+      (index < sortedColumns.length - 1 ? columnGapAfter(column) : 0);
   }
 
   const rowOrigins = new Map<number, number>();
   let yCursor = contentTop;
-  for (const row of sortedRows) {
+  for (const [index, row] of sortedRows.entries()) {
     rowOrigins.set(row, yCursor);
-    yCursor += (rowHeights.get(row) ?? 0) + config.rowGap;
+    yCursor += (rowHeights.get(row) ?? 0) + (index < sortedRows.length - 1 ? rowGapAfter(row) : 0);
   }
-  const gridHeight = sortedRows.length ? yCursor - config.rowGap - contentTop : 0;
+  const gridHeight = sortedRows.length ? yCursor - contentTop : 0;
 
   const outerLeftCorridor = group
     ? contentLeft - GROUP_ROUTING_CLEARANCE
@@ -484,6 +502,7 @@ function runGridLayoutCoreInPlace(
     containers: new Map(),
     itemMeta: new Map(),
     sourceOrder,
+    labelRequirements: buildGridLabelRequirements(data, forest),
   };
 
   // Post-order is the key sizing invariant: a group becomes a measured child only after all of its
