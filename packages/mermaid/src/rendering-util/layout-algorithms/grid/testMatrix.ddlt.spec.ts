@@ -70,7 +70,7 @@ async function loadGridFixtureWithResult(
   });
   prepareGridLayout(layout);
   applyFixtureContentSizesStrict(layout, sizes);
-  const result = metrics ? runGridLayoutCore(layout, metrics) : runGridLayoutCore(layout);
+  const result = metrics ? runGridLayoutCore(layout, { metrics }) : runGridLayoutCore(layout);
   return { layout, result };
 }
 
