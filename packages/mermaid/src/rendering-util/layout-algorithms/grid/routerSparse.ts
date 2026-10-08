@@ -165,7 +165,11 @@ export function sparseSameContainerRoute(
   overlayScratch: EndpointOverlayScratch,
   options: GridRoutingTestOptions,
   pairRoutes: readonly (readonly Point[])[],
-  occupied?: { index: RouteOccupancyIndex; pairKey: string }
+  occupied?: {
+    index: RouteOccupancyIndex;
+    pairKey: string;
+    prioritizeEndpointCandidates?: boolean;
+  }
 ): Point[] {
   const fallbackReason = context.fallbackContainers.get(plan.lcaContainerId);
   if (fallbackReason) {
@@ -217,7 +221,7 @@ export function sparseSameContainerRoute(
 
   // Candidate pairs are ordered by an admissible lower bound. Once a completed route is no worse
   // than that bound, neither this pair nor any remaining pair can improve the current best.
-  const searchPairs = (avoidOccupied: boolean): void => {
+  const searchPairs = (avoidOccupied: boolean, preferredCandidatesOnly = false): void => {
     const arcAllowed: ((from: RouterPoint, to: RouterPoint) => boolean) | undefined =
       plan.bundleSize > 1 || avoidOccupied
         ? (from, to) =>
@@ -225,6 +229,9 @@ export function sparseSameContainerRoute(
             !(avoidOccupied && occupied!.index.conflictsWithArc(from, to, occupied!.pairKey))
         : undefined;
     for (const { sourceCandidate, targetCandidate, pairRank, lowerCost } of pairs) {
+      if (preferredCandidatesOnly && pairRank !== 0) {
+        continue;
+      }
       if (best && compareTupleCost(best.result.cost, lowerCost) <= 0) {
         break;
       }
@@ -341,7 +348,13 @@ export function sparseSameContainerRoute(
   };
   // Prefer a route that does not share a corridor with another edge. Sharing is the last resort,
   // so a failed constrained search retries without it instead of reporting no route.
-  searchPairs(occupied !== undefined && occupied.index.size > 0);
+  const avoidOccupied = occupied !== undefined && occupied.index.size > 0;
+  if (occupied?.prioritizeEndpointCandidates) {
+    searchPairs(avoidOccupied, true);
+  }
+  if (!best) {
+    searchPairs(avoidOccupied);
+  }
   if (!best && !searchCap && occupied !== undefined && occupied.index.size > 0) {
     searchPairs(false);
   }

@@ -516,7 +516,11 @@ export class GridEdgeRoutingSession {
             endpointOverlayScratch.get(plan.lcaContainerId)!,
             options,
             pairRoutes.get(plan.pairKey) ?? [],
-            { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
+            {
+              index: this.occupancyFor(plan.lcaContainerId),
+              pairKey: plan.pairKey,
+              prioritizeEndpointCandidates: this.prepared.coordinatedEndpointIds.has(edge.id),
+            }
           )
         : useSparseLca
           ? sparseContainerSegment(
