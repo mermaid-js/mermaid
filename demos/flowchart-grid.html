@@ -177,9 +177,7 @@ flowchart LR
 
   A -->|normal| B
   A -->|priority| B
-  B -->|acknowledge| A
   B -->|deliver| C
-  B -->|redeliver| C
   C -->|reject| B
   B -->|retry| D
   D -->|ready| B
