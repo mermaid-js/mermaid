@@ -70,7 +70,7 @@ Metadata items are separated by a comma, `,`. Valid tags are `active`, `done`, `
 After processing the tags, the remaining metadata items are interpreted as follows:
 
 1. If a single item is specified, it determines when the task ends. It can either be a specific date/time or a duration. If a duration is specified, it is added to the start date of the task to determine the end date of the task, taking into account any exclusions.
-2. If two items are specified, the last item is interpreted as in the previous case. The first item can either specify an explicit start date/time (in the format specified by `dateFormat`) or reference another task using `after <otherTaskID> [[otherTaskID2 [otherTaskID3]]...]`. In the latter case, the start date of the task will be set according to the latest end date of any referenced task.
+2. If two items are specified, the last item is interpreted as in the previous case. The first item can either specify an explicit start date/time (in the format specified by `dateFormat`) or reference another task using `after <otherTaskID> [[otherTaskID2 [otherTaskID3]]...]`. In the latter case, the start date of the task will be set according to the latest end date of any referenced task. If the first item is neither a valid date nor an `after` statement, it is used as the ID of the task, and the task starts at the end date of the preceding task (e.g. `a2, 20d`).
 3. If three items are specified, the last two will be interpreted as in the previous case. The first item will denote the ID of the task, which can be referenced using the `later <taskID>` syntax.
 
 | Metadata syntax                                      | Start date                                          | End date                                              | ID       |
@@ -87,6 +87,8 @@ After processing the tags, the remaining metadata items are interpreted as follo
 | `after <otherTaskID>, <length>`                      | End date of previously specified task `otherTaskID` | Start date + `length`                                 | n/a      |
 | `<startDate>, until <otherTaskId>`                   | `startdate` as interpreted using `dateformat`       | Start date of previously specified task `otherTaskID` | n/a      |
 | `after <otherTaskId>, until <otherTaskId>`           | End date of previously specified task `otherTaskID` | Start date of previously specified task `otherTaskID` | n/a      |
+| `<taskID>, <endDate>`                                | End date of preceding task                          | `enddate` as interpreted using `dateformat`           | `taskID` |
+| `<taskID>, <length>`                                 | End date of preceding task                          | Start date + `length`                                 | `taskID` |
 | `<endDate>`                                          | End date of preceding task                          | `enddate` as interpreted using `dateformat`           | n/a      |
 | `<length>`                                           | End date of preceding task                          | Start date + `length`                                 | n/a      |
 | `until <otherTaskId>`                                | End date of preceding task                          | Start date of previously specified task `otherTaskID` | n/a      |

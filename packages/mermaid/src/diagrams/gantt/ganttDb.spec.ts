@@ -539,6 +539,51 @@ describe('when using the ganttDb', function () {
     expect(ganttDb.getTodayMarker()).toEqual(expected);
   });
 
+  describe('when a task is defined with an id and a length only (issue #7339)', function () {
+    beforeEach(function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addSection('Section1');
+      ganttDb.addTask('A task', 'a1, 2014-01-01, 30d');
+      ganttDb.addTask('Another task1', 'after a1, 20d');
+    });
+
+    it('should start the task at the end of the previous task and use the given id', function () {
+      ganttDb.addTask('Another task2', 'a2, 20d');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[2].id).toBe('a2');
+      expect(tasks[2].startTime).toEqual(new Date(2014, 1, 20));
+      expect(tasks[2].endTime).toEqual(new Date(2014, 2, 12));
+    });
+
+    it('should allow other tasks to reference the id', function () {
+      ganttDb.addTask('Another task2', 'a2, 20d');
+      ganttDb.addSection('Section2');
+      ganttDb.addTask('Dependent task', 'after a2, 1d');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[3].startTime).toEqual(new Date(2014, 2, 12));
+    });
+
+    it('should support an id followed by an end date', function () {
+      ganttDb.addTask('Another task2', 'a2, 2014-03-01');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[2].id).toBe('a2');
+      expect(tasks[2].startTime).toEqual(new Date(2014, 1, 20));
+      expect(tasks[2].endTime).toEqual(new Date(2014, 2, 1));
+    });
+
+    it('should still treat a valid date as the start date', function () {
+      ganttDb.addTask('Another task2', '2014-05-01, 2d');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[2].id).toBe('task2');
+      expect(tasks[2].startTime).toEqual(new Date(2014, 4, 1));
+    });
+
+    it('should still reject invalid dates that contain no letters', function () {
+      ganttDb.addTask('Another task2', '20140501, 2d');
+      expect(() => ganttDb.getTasks()).toThrowError('Invalid date:20140501');
+    });
+  });
+
   it('should reject dates with ridiculous years', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
