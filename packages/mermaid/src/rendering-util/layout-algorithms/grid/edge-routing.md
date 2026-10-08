@@ -12,8 +12,8 @@ The calculated route is an orthogonal polyline made from horizontal and vertical
 - may use unused space within a grid cell
 - crosses group boundaries when connecting nodes in different groups
 - chooses attachment sides and coordinates automatically
-- reserves the direct side for an edge aligned with a shared endpoint; other incident edges prefer
-  an unreserved side when available
+- keeps an edge aligned with a shared endpoint on its straight port; other incident edges share
+  that side only when their port can sit at least 24px away, and otherwise prefer an unreserved side
 - produces the same route for the same diagram and configuration
 
 Grid cells are placement regions, not obstacles. An edge can cross an unused part of a cell as long as it does not cross protected node or group geometry.
