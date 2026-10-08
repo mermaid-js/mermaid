@@ -274,6 +274,24 @@ describe('grid router', () => {
     expect(straight[0].x).toBe(straight[1].x);
   });
 
+  it('keeps edges that enter the same group off a shared corridor', () => {
+    const data = baseLayout(
+      [
+        leaf('C', 80, 40, { row: 1, column: 1 }),
+        group('Nested', 'Nested', { row: 2, column: 1 }),
+        leaf('D', 80, 40, { row: 1, column: 1 }, 'Nested'),
+        leaf('E', 80, 40, { row: 2, column: 1 }, 'Nested'),
+      ],
+      [edge('C-D', 'C', 'D'), edge('C-E', 'C', 'E')],
+      { rowGap: 45, columnGap: 70 }
+    );
+    runGridLayoutCore(data);
+
+    expect(invalidRoutingIssues(data)).toEqual([]);
+    const [first, second] = data.edges;
+    expect(longestSharedNonterminalSubpath(first, second)).toBe(0);
+  });
+
   it('routes around a blocker on the aligned straight corridor', () => {
     const data = baseLayout(
       [
