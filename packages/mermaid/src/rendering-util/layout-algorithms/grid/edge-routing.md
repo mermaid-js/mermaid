@@ -72,6 +72,10 @@ candidate. After the invocation budget is exhausted, later routes that still req
 use the validated corridor fallback. Edges accepted by the corridor fast path do not consume the
 sparse-search budget.
 
+Every sparse-search attempt consumes the shared invocation budget, including endpoint or portal
+candidates and bundle attempts whose routing state is later rolled back for a relaxed retry.
+Checkpoints restore committed routing state, not work already performed.
+
 This is a safety bound, not a fairness guarantee. A complex edge early in the route order can leave
 less search capacity for unrelated later edges. When the shared invocation budget is first
 exhausted, Mermaid emits one warning with the first affected edge and container. Individual

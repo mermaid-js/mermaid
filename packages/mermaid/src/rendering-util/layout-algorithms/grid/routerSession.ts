@@ -669,7 +669,8 @@ export class GridEdgeRoutingSession {
       return;
     }
     // A bundle is the retry unit because earlier siblings reserve pair corridors and portals for
-    // later ones. Restore every shared structure before relaxing separation.
+    // later ones. Restore every transactional structure before relaxing separation. The cumulative
+    // search budget intentionally retains work performed by the discarded attempt.
     const checkpoint = this.createBundleCheckpoint(pairPlans);
     let initialError: unknown;
     try {
