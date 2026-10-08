@@ -5,6 +5,7 @@ import type {
   GridRoutingFallbackReason,
   GridRoutingInstrumentation,
 } from './routerInstrumentation.js';
+import type { GridLabelRequirements } from './labelSpacing.js';
 
 // The root participates in the same container algorithms as groups but has no backing Node.
 export const ROOT_CONTAINER_ID = '__grid_root__';
@@ -253,6 +254,7 @@ export interface GridLayoutResult {
   containers: Map<GridContainerId, GridContainerLayoutMeta>;
   itemMeta: Map<string, GridItemLayoutMeta>;
   sourceOrder: Map<string, number>;
+  labelRequirements: GridLabelRequirements;
 }
 
 export interface GridError extends Error {
