@@ -1241,7 +1241,8 @@ function rerouteLineCandidates(
   segment: Segment,
   blockedRect: Rect,
   context: EdgeLabelContext,
-  skipNodeIds: ReadonlySet<string>
+  skipNodeIds: ReadonlySet<string>,
+  lane?: RerouteLane
 ): number[] {
   const anchor = segment.orientation === 'H' ? segment.a.y : segment.a.x;
   const candidates: number[] = [];
@@ -1272,7 +1273,23 @@ function rerouteLineCandidates(
     addRect(obstacle.rect);
   }
 
-  return uniqueSortedCandidates(candidates, anchor).slice(0, MAX_DETOUR_LINE_CANDIDATES);
+  const sorted = uniqueSortedCandidates(candidates, anchor);
+  const sideCandidates =
+    lane?.orientation === segment.orientation
+      ? sorted.filter((candidate) => {
+          if (lane.side === 'top') {
+            return candidate < blockedRect.top;
+          }
+          if (lane.side === 'bottom') {
+            return candidate > blockedRect.bottom;
+          }
+          if (lane.side === 'left') {
+            return candidate < blockedRect.left;
+          }
+          return candidate > blockedRect.right;
+        })
+      : sorted;
+  return sideCandidates.slice(0, MAX_DETOUR_LINE_CANDIDATES);
 }
 
 function detourCenterCandidates(
@@ -1608,13 +1625,50 @@ function reducesBlockedIntersections(
   );
 }
 
+interface RerouteLane {
+  key: string;
+  orientation: 'H' | 'V';
+  side: 'top' | 'bottom' | 'left' | 'right';
+}
+
+function rerouteLane(
+  points: readonly Point[],
+  blockedRect: Rect,
+  blockingReservations: readonly PlacedLabel[]
+): RerouteLane | null {
+  const segment = normalizePolyline([...points]).segments.find((candidate) =>
+    segmentIntersectsRectInterior(candidate.a, candidate.b, blockedRect)
+  );
+  if (!segment || segment.orientation === 'Z') {
+    return null;
+  }
+
+  const side =
+    segment.orientation === 'H'
+      ? Math.abs(segment.a.y - blockedRect.top) <= Math.abs(blockedRect.bottom - segment.a.y)
+        ? 'top'
+        : 'bottom'
+      : Math.abs(segment.a.x - blockedRect.left) <= Math.abs(blockedRect.right - segment.a.x)
+        ? 'left'
+        : 'right';
+  const reservationIds = blockingReservations
+    .map((reservation) => reservation.edgeId)
+    .sort(compareCodeUnits);
+  return {
+    key: JSON.stringify([reservationIds, segment.orientation, side]),
+    orientation: segment.orientation,
+    side,
+  };
+}
+
 function rerouteSegmentAroundRect(
   edge: Edge,
   points: Point[],
   segmentIndex: number,
   blockedRect: Rect,
   context: EdgeLabelContext,
-  placedLabelsByEdgeId: Map<string, PlacedLabel>
+  placedLabelsByEdgeId: Map<string, PlacedLabel>,
+  lane?: RerouteLane
 ): Point[] | null {
   const normalized = normalizePolyline(points);
   const baselineScore = blockedIntersectionScore(normalized.points, blockedRect);
@@ -1643,7 +1697,7 @@ function rerouteSegmentAroundRect(
       return null;
     }
 
-    for (const y of rerouteLineCandidates(segment, blockedRect, context, skipNodeIds)) {
+    for (const y of rerouteLineCandidates(segment, blockedRect, context, skipNodeIds, lane)) {
       incrementMetric(context.metrics, 'rerouteCandidatesEvaluated');
       const candidatePoints = normalizePolyline([
         ...normalized.points.slice(0, segmentIndex),
@@ -1687,7 +1741,7 @@ function rerouteSegmentAroundRect(
     return null;
   }
 
-  for (const x of rerouteLineCandidates(segment, blockedRect, context, skipNodeIds)) {
+  for (const x of rerouteLineCandidates(segment, blockedRect, context, skipNodeIds, lane)) {
     incrementMetric(context.metrics, 'rerouteCandidatesEvaluated');
     const candidatePoints = normalizePolyline([
       ...normalized.points.slice(0, segmentIndex),
@@ -1728,7 +1782,8 @@ function rerouteForeignEdgeAroundRect(
   blockedRect: Rect,
   context: EdgeLabelContext,
   placedLabelsByEdgeId: Map<string, PlacedLabel>,
-  overrides: EdgePointOverrides
+  overrides: EdgePointOverrides,
+  lane?: RerouteLane
 ): Point[] | null {
   let currentPoints = pointsForEdge(edge, overrides, context);
   for (let attempt = 0; attempt < 8; attempt++) {
@@ -1753,7 +1808,8 @@ function rerouteForeignEdgeAroundRect(
       segmentIndex,
       blockedRect,
       context,
-      placedLabelsByEdgeId
+      placedLabelsByEdgeId,
+      lane
     );
     if (!rerouted) {
       return null;
@@ -2295,7 +2351,7 @@ export function positionGridEdgeLabels(
         }
       }
 
-      let rerouteOrdinal = 0;
+      const rerouteLaneOrdinals = new Map<string, number>();
       for (const edge of data.edges) {
         if (!impacted.has(edge.id)) {
           continue;
@@ -2324,8 +2380,10 @@ export function positionGridEdgeLabels(
             }),
             { ...blockingReservations[0].rect }
           );
+          const lane = rerouteLane(points, combinedRect, blockingReservations);
+          const rerouteOrdinal = lane ? (rerouteLaneOrdinals.get(lane.key) ?? 0) : 0;
           // Leave one full separation lane beyond the 6 px label clearance;
-          // successive impacted routes receive distinct deterministic lanes.
+          // only routes avoiding the same reservation set on the same side share an ordinal.
           const lanePadding = (rerouteOrdinal + 2) * 12;
           const blockedRect: Rect = {
             cx: combinedRect.cx,
@@ -2340,8 +2398,10 @@ export function positionGridEdgeLabels(
             blockedRect,
             context,
             placedLabelsByEdgeId,
-            overrides
+            overrides,
+            lane ?? undefined
           );
+          const usedScopedLane = rerouted !== null;
           rerouted ??= rerouteForeignEdgeAroundLabels(
             edge,
             blockingReservations,
@@ -2352,6 +2412,9 @@ export function positionGridEdgeLabels(
           if (rerouted) {
             points = rerouted;
             overrides.set(edge.id, points);
+            if (lane && usedScopedLane) {
+              rerouteLaneOrdinals.set(lane.key, rerouteOrdinal + 1);
+            }
           } else {
             // Preserving a valid edge and anchored labels is safer than failing the whole layout.
             // Record the unavoidable overlap so final validation permits only this edge-label pair.
@@ -2381,7 +2444,6 @@ export function positionGridEdgeLabels(
         }
         setEdgePoints(context, edge, points);
         incrementMetric(instrumentation, 'impactedEdgeReroutes');
-        rerouteOrdinal++;
       }
       if (impacted.size > 0 && instrumentation) {
         instrumentation.maxReroutesPerEdgePerPass = Math.max(

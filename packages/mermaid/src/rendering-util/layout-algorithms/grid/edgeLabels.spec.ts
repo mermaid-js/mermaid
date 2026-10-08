@@ -547,6 +547,61 @@ describe('grid edge label helpers', () => {
     expect(labelNode?.y).toEqual(expect.any(Number));
   });
 
+  it('scopes reroute lanes to the blocking label and detour side', () => {
+    const crossingCount = 40;
+    const nodes: Node[] = [manualNode('start', -500, 300), manualNode('target', 1800, 300)];
+    const edges: Edge[] = [
+      manualEdge(
+        'labelled-horizontal',
+        'start',
+        'target',
+        [
+          { x: -460, y: 300 },
+          { x: 1760, y: 300 },
+        ],
+        'wide label'
+      ),
+    ];
+    for (let index = 0; index < crossingCount; index++) {
+      const ordinal = index + 1;
+      const x = 100 + ordinal * 26;
+      nodes.push(
+        manualNode(`top-${ordinal}`, x, -100, 20, 20),
+        manualNode(`bottom-${ordinal}`, x, 700, 20, 20)
+      );
+      edges.push(
+        manualEdge(`v-${ordinal}`, `top-${ordinal}`, `bottom-${ordinal}`, [
+          { x, y: -90 },
+          { x, y: 690 },
+        ])
+      );
+    }
+    const data: LayoutData = {
+      nodes,
+      edges,
+      config: {
+        layout: 'grid',
+      } as LayoutData['config'],
+    };
+
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((node) => node.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 1100;
+    labelNode.height = 20;
+
+    positionGridEdgeLabels(data);
+
+    const labelLeft = labelNode.x! - labelNode.width / 2;
+    const labelRight = labelNode.x! + labelNode.width / 2;
+    const firstRightCrossing = data.edges
+      .slice(1)
+      .find((edge) => edge.points![0].x > labelNode.x!)!;
+    const xs = firstRightCrossing.points!.map((point) => point.x);
+    const overshoot = Math.max(labelLeft - Math.min(...xs), Math.max(...xs) - labelRight, 0);
+    expect(overshoot).toBeLessThanOrEqual(48);
+    expect(validateLayout(data).ok).toBe(true);
+  });
+
   it('keeps crowded vertical label routing structurally valid', () => {
     const data: LayoutData = {
       nodes: [
