@@ -4,6 +4,7 @@ import { normalizePolyline, segmentsCross, type Segment } from '../layout-utils/
 import {
   clamp,
   compareCodeUnits,
+  orthogonalPolylineContainsPoint,
   polylineIntersectsRect,
   rectForNode,
   segmentIntersectsRectInterior,
@@ -1160,9 +1161,9 @@ function labelStillAnchored(
   placedLabelsByEdgeId: Map<string, PlacedLabel>
 ): boolean {
   const placed = placedLabelsByEdgeId.get(edgeId);
-  // Owner reroutes may change the supporting segment, but must still pass through the reserved
-  // label rectangle so the rendered label remains attached to its edge.
-  return !placed || polylineIntersectsRect(points, placed.rect);
+  // Owner reroutes may change the supporting segment, but the reserved center must remain on the
+  // polyline. Merely touching the label border would leave the rendered label beside its edge.
+  return !placed || orthogonalPolylineContainsPoint(points, placed.center, LABEL_EPSILON);
 }
 
 function detourOffsets(crossHalfSize: number): number[] {

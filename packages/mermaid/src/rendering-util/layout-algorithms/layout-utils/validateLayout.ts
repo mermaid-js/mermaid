@@ -4,7 +4,7 @@ import { DEBUG_KEY } from './debug.js';
 import {
   rectForNode,
   approxEqual,
-  polylineIntersectsRect,
+  orthogonalPolylineContainsPoint,
   segmentIntersectsRectInterior,
   terminalMarkerClearanceRect,
 } from './helpers.js';
@@ -944,14 +944,18 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       }
     }
 
-    // Check edge-label-off-edge: when an edge carries a `labelNodeId` it is
-    // expected to thread through that label node (label-as-waypoint model).
-    // The rendered label text sits at the label node's center, so if the
-    // edge's polyline does not intersect the label's rectangle at all, the
-    // label visually floats off the edge. Flag that as a hard violation.
+    // Check edge-label-off-edge: the owning edge must pass through the rendered label center.
+    // Border or corner contact leaves the label visually beside the route.
     if (ownLabelId) {
       const labelRect = nodeRects.get(ownLabelId);
-      if (labelRect && !polylineIntersectsRect(points, labelRect)) {
+      if (
+        labelRect &&
+        !orthogonalPolylineContainsPoint(
+          points,
+          { x: labelRect.cx, y: labelRect.cy },
+          PIXEL_EPSILON
+        )
+      ) {
         issues.push({
           type: 'edge-label-off-edge',
           message: `Edge "${edgeId}" does not pass through its label node "${ownLabelId}"`,

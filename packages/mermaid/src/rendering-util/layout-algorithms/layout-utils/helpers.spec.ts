@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   clamp,
   compareCodeUnits,
+  orthogonalPolylineContainsPoint,
   pointInsideAnyRectInterior,
   terminalMarkerClearanceRect,
 } from './helpers.js';
@@ -28,6 +29,45 @@ describe('domus/core/helpers', () => {
     expect(pointInsideAnyRectInterior({ x: 5, y: 5 } as any, rects)).toBe(true);
     expect(pointInsideAnyRectInterior({ x: 20, y: 5 } as any, rects)).toBe(false); // boundary
     expect(pointInsideAnyRectInterior({ x: 15, y: 5 } as any, rects)).toBe(false);
+  });
+
+  it('requires an orthogonal polyline to pass through the requested point', () => {
+    expect(
+      orthogonalPolylineContainsPoint(
+        [
+          { x: 0, y: 10 },
+          { x: 20, y: 10 },
+        ],
+        { x: 10, y: 10 }
+      )
+    ).toBe(true);
+    expect(
+      orthogonalPolylineContainsPoint(
+        [
+          { x: 0, y: 0 },
+          { x: 0, y: 20 },
+        ],
+        { x: 0, y: 10 }
+      )
+    ).toBe(true);
+    expect(
+      orthogonalPolylineContainsPoint(
+        [
+          { x: 0, y: 0 },
+          { x: 20, y: 0 },
+        ],
+        { x: 10, y: 1 }
+      )
+    ).toBe(false);
+    expect(
+      orthogonalPolylineContainsPoint(
+        [
+          { x: 0, y: 0 },
+          { x: 10, y: 10 },
+        ],
+        { x: 5, y: 5 }
+      )
+    ).toBe(false);
   });
 
   it('builds terminal marker clearance inward from the terminal tip', () => {

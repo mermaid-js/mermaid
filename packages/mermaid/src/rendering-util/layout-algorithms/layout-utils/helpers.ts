@@ -101,6 +101,35 @@ export function approxEqual(a: number, b: number, tol = 1e-6): boolean {
   return Math.abs(a - b) <= tol;
 }
 
+export function orthogonalPolylineContainsPoint(
+  points: Point[],
+  point: Point,
+  tolerance = 1e-6
+): boolean {
+  for (let index = 1; index < points.length; index++) {
+    const a = points[index - 1];
+    const b = points[index];
+    if (approxEqual(a.y, b.y, tolerance) && !approxEqual(a.x, b.x, tolerance)) {
+      if (
+        approxEqual(point.y, a.y, tolerance) &&
+        point.x >= Math.min(a.x, b.x) - tolerance &&
+        point.x <= Math.max(a.x, b.x) + tolerance
+      ) {
+        return true;
+      }
+    } else if (approxEqual(a.x, b.x, tolerance) && !approxEqual(a.y, b.y, tolerance)) {
+      if (
+        approxEqual(point.x, a.x, tolerance) &&
+        point.y >= Math.min(a.y, b.y) - tolerance &&
+        point.y <= Math.max(a.y, b.y) + tolerance
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 /**
  * Calculate the total Manhattan length of a polyline.
  */
