@@ -20,6 +20,7 @@ import {
 } from './edges.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
+import intersectPolygon from './intersect/intersect-polygon.js';
 import intersectRect from './intersect/intersect-rect.js';
 
 describe('insertEdge clips for the engine that drew the edge', () => {
@@ -376,7 +377,54 @@ describe('insertEdge swimlane endpoint clipping', () => {
 });
 
 describe('insertEdge orthogonal endpoint clipping', () => {
-  it('clips router-owned ports to shape outlines with orthogonal endpoint doglegs', () => {
+  it('clips offset polygon ports along the terminal axis without adding a backtrack', () => {
+    vi.mocked(getConfig).mockReturnValue({
+      layout: 'dagre',
+      flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+      state: { arrowMarkerAbsolute: false },
+      handDrawnSeed: 0,
+    });
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const diamond = [
+      { x: 0, y: 40 },
+      { x: 40, y: 0 },
+      { x: 80, y: 40 },
+      { x: 40, y: 80 },
+    ];
+    const tail = { x: 100, y: 100, width: 80, height: 80 };
+    tail.intersect = (point) => intersectPolygon(tail, diamond, point);
+    const points = [
+      { x: 80, y: 60 },
+      { x: 80, y: 20 },
+      { x: 300, y: 20 },
+    ];
+    const edge = {
+      id: 'offset-diamond-port',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'linear',
+      look: 'classic',
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'none',
+      portClipping: 'outline-orthogonal',
+      skipCornerFix: true,
+      points,
+    };
+
+    insertEdge(svg, edge, null, 'flowchart-v2', tail, {}, 'diagram');
+
+    expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual([
+      { x: 80, y: 80 },
+      { x: 80, y: 20 },
+      { x: 300, y: 20 },
+    ]);
+  });
+
+  it('clips router-owned ports along their terminal axes', () => {
     vi.mocked(getConfig).mockReturnValue({
       layout: 'dagre',
       flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
@@ -407,10 +455,10 @@ describe('insertEdge orthogonal endpoint clipping', () => {
       points,
     };
     const tail = {
-      intersect: vi.fn(() => ({ x: 135, y: 101.25 })),
+      intersect: vi.fn(() => ({ x: 135, y: 110 })),
     };
     const head = {
-      intersect: vi.fn(() => ({ x: 75, y: 29.33 })),
+      intersect: vi.fn(() => ({ x: 75, y: 34 })),
     };
 
     insertEdge(svg, edge, null, 'flowchart-v2', tail, head, 'diagram');
@@ -420,12 +468,10 @@ describe('insertEdge orthogonal endpoint clipping', () => {
     expect(tail.intersect).toHaveBeenCalledWith(points[1]);
     expect(head.intersect).toHaveBeenCalledWith(points.at(-2));
     expect(renderedPoints).toEqual([
-      { x: 135, y: 101.25 },
-      { x: 100, y: 101.25 },
+      { x: 135, y: 110 },
       { x: 100, y: 110 },
       { x: 100, y: 34 },
-      { x: 100, y: 29.33 },
-      { x: 75, y: 29.33 },
+      { x: 75, y: 34 },
     ]);
     for (let index = 1; index < renderedPoints.length; index++) {
       const previous = renderedPoints[index - 1];
@@ -486,7 +532,7 @@ describe('insertEdge orthogonal endpoint clipping', () => {
     expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual(points);
   });
 
-  it('keeps a two-point route orthogonal when both shape outlines are inset', () => {
+  it('keeps a two-point route orthogonal when both shape outlines are inset on its axis', () => {
     vi.mocked(getConfig).mockReturnValue({
       layout: 'dagre',
       flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
@@ -519,17 +565,58 @@ describe('insertEdge orthogonal endpoint clipping', () => {
       edge,
       null,
       'flowchart-v2',
+      { intersect: vi.fn(() => ({ x: -10, y: 10 })) },
+      { intersect: vi.fn(() => ({ x: 110, y: 10 })) },
+      'diagram'
+    );
+
+    expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual([
+      { x: -10, y: 10 },
+      { x: 50, y: 10 },
+      { x: 110, y: 10 },
+    ]);
+  });
+
+  it('keeps router-owned ports when a custom intersection cannot follow the terminal axis', () => {
+    vi.mocked(getConfig).mockReturnValue({
+      layout: 'dagre',
+      flowchart: { curve: 'rounded', arrowMarkerAbsolute: false },
+      state: { arrowMarkerAbsolute: false },
+      handDrawnSeed: 0,
+    });
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const points = [
+      { x: 0, y: 10 },
+      { x: 100, y: 10 },
+    ];
+    const edge = {
+      id: 'unsupported-axis-clipping',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'linear',
+      look: 'classic',
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'none',
+      portClipping: 'outline-orthogonal',
+      skipCornerFix: true,
+      points,
+    };
+
+    insertEdge(
+      svg,
+      edge,
+      null,
+      'flowchart-v2',
       { intersect: vi.fn(() => ({ x: -10, y: 5 })) },
       { intersect: vi.fn(() => ({ x: 110, y: 15 })) },
       'diagram'
     );
 
-    expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual([
-      { x: -10, y: 5 },
-      { x: 50, y: 5 },
-      { x: 50, y: 15 },
-      { x: 110, y: 15 },
-    ]);
+    expect(JSON.parse(atob(svg.select('path').attr('data-points')))).toEqual(points);
   });
 
   it('skips grid endpoint clipping when skipIntersect is true', () => {
