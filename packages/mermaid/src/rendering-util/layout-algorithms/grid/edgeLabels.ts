@@ -1,6 +1,6 @@
 import type { Point } from '../../../types.js';
 import type { Edge, LayoutData, Node, NonClusterNode } from '../../types.js';
-import { normalizePolyline, type Segment } from '../layout-utils/geometry.js';
+import { normalizePolyline, segmentsCross, type Segment } from '../layout-utils/geometry.js';
 import {
   clamp,
   compareCodeUnits,
@@ -23,6 +23,8 @@ const MAX_DETOUR_LINE_CANDIDATES = 128;
 const MAX_DETOUR_CENTER_CANDIDATES = 64;
 const EDGE_END_MARKER_CLEARANCE = 12;
 const LABEL_EPSILON = 1e-6;
+const MIN_SELF_PARALLEL_GAP = 7;
+const MIN_SELF_PARALLEL_OVERLAP = 8;
 
 interface Interval {
   start: number;
@@ -55,6 +57,53 @@ interface Bounds {
   right: number;
   top: number;
   bottom: number;
+}
+
+function rangeOverlapLength(
+  firstStart: number,
+  firstEnd: number,
+  secondStart: number,
+  secondEnd: number
+) {
+  const start = Math.max(Math.min(firstStart, firstEnd), Math.min(secondStart, secondEnd));
+  const end = Math.min(Math.max(firstStart, firstEnd), Math.max(secondStart, secondEnd));
+  return Math.max(0, end - start);
+}
+
+function polylineHasSelfConflict(points: readonly Point[]): boolean {
+  const segments = normalizePolyline([...points]).segments;
+  for (let firstIndex = 0; firstIndex < segments.length; firstIndex++) {
+    const first = segments[firstIndex];
+    for (let secondIndex = firstIndex + 2; secondIndex < segments.length; secondIndex++) {
+      const second = segments[secondIndex];
+      if (segmentsCross(first, second)) {
+        return true;
+      }
+      if (first.orientation !== second.orientation || first.orientation === 'Z') {
+        continue;
+      }
+
+      const sameAxis =
+        first.orientation === 'H'
+          ? Math.abs(first.a.y - second.a.y) <= LABEL_EPSILON
+          : Math.abs(first.a.x - second.a.x) <= LABEL_EPSILON;
+      const overlap =
+        first.orientation === 'H'
+          ? rangeOverlapLength(first.a.x, first.b.x, second.a.x, second.b.x)
+          : rangeOverlapLength(first.a.y, first.b.y, second.a.y, second.b.y);
+      if (sameAxis && overlap > LABEL_EPSILON) {
+        return true;
+      }
+      const gap =
+        first.orientation === 'H'
+          ? Math.abs(first.a.y - second.a.y)
+          : Math.abs(first.a.x - second.a.x);
+      if (!sameAxis && gap < MIN_SELF_PARALLEL_GAP && overlap >= MIN_SELF_PARALLEL_OVERLAP) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 interface ObstacleEntry {
@@ -1432,7 +1481,8 @@ function buildExtendedLabelDetourPoints(
   segment: Segment,
   labelNode: Node,
   centerAlong: number,
-  detourLineCoord: number
+  detourLineCoord: number,
+  separateEntryAndExit: boolean
 ): Point[] | null {
   if (!isFinitePositiveNumber(labelNode.width) || !isFinitePositiveNumber(labelNode.height)) {
     return null;
@@ -1440,6 +1490,8 @@ function buildExtendedLabelDetourPoints(
 
   const a = points[segmentIndex];
   const b = points[segmentIndex + 1];
+  // Self-loop terminal segments are short; quarter points keep the entry and exit lanes distinct.
+  const insetDivisor = separateEntryAndExit ? 4 : 2;
   if (segment.orientation === 'H') {
     const span = labelNode.width + LABEL_CLEARANCE * 2;
     const x1 = centerAlong - span / 2;
@@ -1447,7 +1499,7 @@ function buildExtendedLabelDetourPoints(
     const xDirection = b.x >= a.x ? 1 : -1;
     const segmentInset = Math.max(
       0,
-      Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.x - a.x) / 2 - LABEL_EPSILON)
+      Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.x - a.x) / insetDivisor - LABEL_EPSILON)
     );
     const entryX = a.x + xDirection * segmentInset;
     const exitX = b.x - xDirection * segmentInset;
@@ -1473,7 +1525,7 @@ function buildExtendedLabelDetourPoints(
   const yDirection = b.y >= a.y ? 1 : -1;
   const segmentInset = Math.max(
     0,
-    Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.y - a.y) / 2 - LABEL_EPSILON)
+    Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.y - a.y) / insetDivisor - LABEL_EPSILON)
   );
   const entryY = a.y + yDirection * segmentInset;
   const exitY = b.y - yDirection * segmentInset;
@@ -1783,9 +1835,14 @@ function labelPlacementWithExtendedDetour(
         segment,
         labelNode,
         centerAlong,
-        detourLineCoord
+        detourLineCoord,
+        edge.start === edge.end
       );
       if (!candidatePoints) {
+        continue;
+      }
+
+      if (edge.start === edge.end && polylineHasSelfConflict(candidatePoints)) {
         continue;
       }
 
@@ -1876,6 +1933,10 @@ function labelPlacementWithDetour(
         detourLineCoord
       );
       if (!candidatePoints) {
+        continue;
+      }
+
+      if (edge.start === edge.end && polylineHasSelfConflict(candidatePoints)) {
         continue;
       }
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
+import { normalizePolyline } from '../layout-utils/geometry.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import {
   createGridEdgeLabelInstrumentation,
@@ -61,7 +62,83 @@ function manualEdge(
   } as Edge;
 }
 
+function rangeOverlapLength(
+  firstStart: number,
+  firstEnd: number,
+  secondStart: number,
+  secondEnd: number
+) {
+  const start = Math.max(Math.min(firstStart, firstEnd), Math.min(secondStart, secondEnd));
+  const end = Math.min(Math.max(firstStart, firstEnd), Math.max(secondStart, secondEnd));
+  return Math.max(0, end - start);
+}
+
+function expectNoNonAdjacentConflicts(points: NonNullable<Edge['points']>): void {
+  const segments = normalizePolyline(points).segments;
+  for (let firstIndex = 0; firstIndex < segments.length; firstIndex++) {
+    for (let secondIndex = firstIndex + 2; secondIndex < segments.length; secondIndex++) {
+      const first = segments[firstIndex];
+      const second = segments[secondIndex];
+      if (first.orientation !== second.orientation || first.orientation === 'Z') {
+        continue;
+      }
+      const sameAxis =
+        first.orientation === 'H'
+          ? Math.abs(first.a.y - second.a.y) <= 1e-6
+          : Math.abs(first.a.x - second.a.x) <= 1e-6;
+      const overlap =
+        first.orientation === 'H'
+          ? rangeOverlapLength(first.a.x, first.b.x, second.a.x, second.b.x)
+          : rangeOverlapLength(first.a.y, first.b.y, second.a.y, second.b.y);
+      if (sameAxis) {
+        expect(overlap).toBeLessThanOrEqual(1e-6);
+        continue;
+      }
+      if (overlap >= 8) {
+        const gap =
+          first.orientation === 'H'
+            ? Math.abs(first.a.y - second.a.y)
+            : Math.abs(first.a.x - second.a.x);
+        expect(gap).toBeGreaterThanOrEqual(7);
+      }
+    }
+  }
+}
+
 describe('grid edge label helpers', () => {
+  it('keeps a labelled self-loop from overlapping its own route', () => {
+    const data: LayoutData = {
+      nodes: [node('a')],
+      edges: [
+        {
+          id: 'loop',
+          start: 'a',
+          end: 'a',
+          label: 'wide loop label',
+          arrowTypeStart: 'none',
+          arrowTypeEnd: 'arrow_point',
+          curve: 'linear',
+          type: 'arrow_point',
+        } as Edge,
+      ],
+      config: {
+        layout: 'grid',
+      } as LayoutData['config'],
+    };
+
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 90;
+    labelNode.height = 20;
+
+    runGridLayoutCore(data);
+
+    expect(data.edges[0].points).toBeDefined();
+    expectNoNonAdjacentConflicts(data.edges[0].points!);
+    expect(labelNode.x).toEqual(expect.any(Number));
+    expect(labelNode.y).toEqual(expect.any(Number));
+  });
+
   it('places a fitting label on its existing segment without a routing pass', () => {
     const data: LayoutData = {
       nodes: [manualNode('a', 40, 100, 20, 20), manualNode('b', 360, 100, 20, 20)],
