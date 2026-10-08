@@ -9,6 +9,7 @@ import {
   SELF_LOOP_PORT_GAP,
   SELF_LOOP_PORT_OFFSET_STEP,
   areExactlyAxisAligned,
+  labelAwareSelfLoopCandidates,
   orderedSelfLoopSides,
   routeObstacleClearSelfLoop,
   type SegmentAttachment,
@@ -451,9 +452,10 @@ export function sparseSelfLoopRoute(
   // Try sides in load order and reserve progressively wider port pairs for repeated loops on the
   // same side.
   const containerId = owner.parentId ?? ROOT_CONTAINER_ID;
+  const labelRequirement = result.labelRequirements.selfLoops.get(plan.edge.id);
   const fallbackReason = context.fallbackContainers.get(containerId);
   const legacyRoute = (): { points: Point[]; side: GridSide; index: number } =>
-    routeObstacleClearSelfLoop(owner, ownerSideCounts, selfLoopCounts, result);
+    routeObstacleClearSelfLoop(owner, ownerSideCounts, selfLoopCounts, result, labelRequirement);
   if (fallbackReason) {
     return runValidatedFallback({
       context,
@@ -472,6 +474,24 @@ export function sparseSelfLoopRoute(
   }
   for (const side of orderedSelfLoopSides(owner, ownerSideCounts, selfLoopCounts)) {
     const index = selfLoopCounts.get(`${owner.id}:${side}`) ?? 0;
+    if (labelRequirement) {
+      const rect = rectForNode(owner);
+      const demandCoord = side === 'left' || side === 'right' ? rect.cy : rect.cx;
+      for (const points of labelAwareSelfLoopCandidates(
+        owner,
+        side,
+        index,
+        demandCoord,
+        labelRequirement
+      )) {
+        if (
+          validateSameContainerRoute(points, owner, owner, containerId, result) &&
+          routeSatisfiesPairConstraints(points, pairRoutes)
+        ) {
+          return { points, side, index };
+        }
+      }
+    }
     const attachments = selfLoopAttachments(owner, side, index);
     if (!attachments) {
       continue;
