@@ -14,6 +14,7 @@ import {
   TERMINAL_APPROACH_PX,
   ownerGroupTitle,
   ownerSideKey,
+  type EdgeEndpointPlan,
   type EdgeRoutePlan,
   type PreparedEdgeRoutes,
 } from './routerPlanning.js';
@@ -756,6 +757,40 @@ export function compatibilityLcaAttachments(
   };
 }
 
+export interface CompatibilitySegmentAttachments {
+  containerId: GridContainerId;
+  start: SegmentAttachment;
+  end: SegmentAttachment;
+}
+
+export function compatibilityHierarchyAttachments(
+  endpoint: EdgeEndpointPlan,
+  result: GridLayoutResult,
+  demandCoords: Map<string, number>
+): CompatibilitySegmentAttachments[] {
+  return endpoint.chain.slice(0, -1).map((from, index) => {
+    const to = endpoint.chain[index + 1];
+    return {
+      containerId: to.ownerId,
+      start: {
+        ownerId: from.ownerId,
+        ...itemAttachment(
+          from.ownerId,
+          from.side,
+          from.demandKey,
+          to.ownerId,
+          result,
+          demandCoords
+        ),
+      },
+      end: {
+        ownerId: to.ownerId,
+        ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
+      },
+    };
+  });
+}
+
 function compatibilityPlanIsValid(
   plan: EdgeRoutePlan,
   result: GridLayoutResult,
@@ -773,26 +808,13 @@ function compatibilityPlanIsValid(
       containerId,
       result
     );
-  for (const chain of [plan.source.chain, plan.target.chain]) {
-    for (let index = 0; index < chain.length - 1; index++) {
-      const from = chain[index];
-      const to = chain[index + 1];
-      const start: SegmentAttachment = {
-        ownerId: from.ownerId,
-        ...itemAttachment(
-          from.ownerId,
-          from.side,
-          from.demandKey,
-          to.ownerId,
-          result,
-          demandCoords
-        ),
-      };
-      const end: SegmentAttachment = {
-        ownerId: to.ownerId,
-        ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-      };
-      if (!segmentIsValid(to.ownerId, start, end)) {
+  for (const endpoint of [plan.source, plan.target]) {
+    for (const { containerId, start, end } of compatibilityHierarchyAttachments(
+      endpoint,
+      result,
+      demandCoords
+    )) {
+      if (!segmentIsValid(containerId, start, end)) {
         return false;
       }
     }

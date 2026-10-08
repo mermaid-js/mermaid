@@ -3,10 +3,11 @@ import type { Edge, LayoutData } from '../../types.js';
 import { clamp, rectForNode } from '../layout-utils/helpers.js';
 import type { GridRoutingOptions } from './router.js';
 import {
-  boundaryAttachment,
   boundedAlternativePortalCoordinates,
   buildRoutingContext,
   combinePointChains,
+  compatibilityHierarchyAttachments,
+  compatibilityLcaAttachments,
   groupBoundaryEndpointAttachment,
   itemAttachment,
   portalAttachment,
@@ -438,8 +439,12 @@ export class GridEdgeRoutingSession {
     const sourceFinal = plan.source.chain[plan.source.chain.length - 1];
     const targetFinal = plan.target.chain[plan.target.chain.length - 1];
     const useSparseLca = sparseLcaIds.has(edge.id);
-    const lcaStart: SegmentAttachment = useSparseLca
-      ? plan.source.finalKind === 'boundary'
+    const compatibilityLca = useSparseLca
+      ? undefined
+      : compatibilityLcaAttachments(plan, result, demandCoords);
+    const lcaStart: SegmentAttachment = compatibilityLca
+      ? compatibilityLca.start
+      : plan.source.finalKind === 'boundary'
         ? groupBoundaryEndpointAttachment(
             sourceFinal.ownerId,
             sourceFinal.side,
@@ -449,28 +454,10 @@ export class GridEdgeRoutingSession {
           )
         : plan.source.chain.length > 1
           ? portalAttachment(this.pairedPortal(sourceFinal), false)
-          : this.itemSegmentAttachment(sourceFinal, plan.lcaContainerId)
-      : {
-          ownerId: sourceFinal.ownerId,
-          ...(plan.source.finalKind === 'boundary'
-            ? boundaryAttachment(
-                plan.lcaContainerId,
-                sourceFinal.side,
-                sourceFinal.demandKey,
-                result,
-                demandCoords
-              )
-            : itemAttachment(
-                sourceFinal.ownerId,
-                sourceFinal.side,
-                sourceFinal.demandKey,
-                plan.lcaContainerId,
-                result,
-                demandCoords
-              )),
-        };
-    const lcaEnd: SegmentAttachment = useSparseLca
-      ? plan.target.finalKind === 'boundary'
+          : this.itemSegmentAttachment(sourceFinal, plan.lcaContainerId);
+    const lcaEnd: SegmentAttachment = compatibilityLca
+      ? compatibilityLca.end
+      : plan.target.finalKind === 'boundary'
         ? groupBoundaryEndpointAttachment(
             targetFinal.ownerId,
             targetFinal.side,
@@ -480,26 +467,7 @@ export class GridEdgeRoutingSession {
           )
         : plan.target.chain.length > 1
           ? portalAttachment(this.pairedPortal(targetFinal), false)
-          : this.itemSegmentAttachment(targetFinal, plan.lcaContainerId)
-      : {
-          ownerId: targetFinal.ownerId,
-          ...(plan.target.finalKind === 'boundary'
-            ? boundaryAttachment(
-                plan.lcaContainerId,
-                targetFinal.side,
-                targetFinal.demandKey,
-                result,
-                demandCoords
-              )
-            : itemAttachment(
-                targetFinal.ownerId,
-                targetFinal.side,
-                targetFinal.demandKey,
-                plan.lcaContainerId,
-                result,
-                demandCoords
-              )),
-        };
+          : this.itemSegmentAttachment(targetFinal, plan.lcaContainerId);
     let legacyLcaPoints: Point[] | undefined;
     const legacyRoute = () =>
       (legacyLcaPoints ??= routeWithinContainer(
@@ -566,38 +534,29 @@ export class GridEdgeRoutingSession {
             );
 
     const routeHierarchyChain = (endpoint: EdgeEndpointPlan, chains: Point[][]): void => {
-      for (let index = 0; index < endpoint.chain.length - 1; index++) {
-        const from = endpoint.chain[index];
-        const to = endpoint.chain[index + 1];
-        if (!sparseHierarchyIds.has(edge.id)) {
-          const start: SegmentAttachment = {
-            ownerId: from.ownerId,
-            ...itemAttachment(
-              from.ownerId,
-              from.side,
-              from.demandKey,
-              to.ownerId,
-              result,
-              demandCoords
-            ),
-          };
-          const end: SegmentAttachment = {
-            ownerId: to.ownerId,
-            ...boundaryAttachment(to.ownerId, to.side, to.demandKey, result, demandCoords),
-          };
+      if (!sparseHierarchyIds.has(edge.id)) {
+        for (const { containerId, start, end } of compatibilityHierarchyAttachments(
+          endpoint,
+          result,
+          demandCoords
+        )) {
           chains.push(
             validatedCompatibilitySegment(
               edge.id,
-              to.ownerId,
+              containerId,
               start,
               end,
-              () => routeWithinContainer(to.ownerId, result, start, end, plan.laneIndex),
+              () => routeWithinContainer(containerId, result, start, end, plan.laneIndex),
               result,
               metrics
             )
           );
-          continue;
         }
+        return;
+      }
+      for (let index = 0; index < endpoint.chain.length - 1; index++) {
+        const from = endpoint.chain[index];
+        const to = endpoint.chain[index + 1];
         const start =
           index === 0
             ? this.itemSegmentAttachment(from, to.ownerId)
