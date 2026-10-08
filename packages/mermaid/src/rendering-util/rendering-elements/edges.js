@@ -373,6 +373,47 @@ export const positionEdgeLabel = (edge, paths) => {
   }
 };
 
+/** Distance below which two coordinates count as the same row or column. */
+const AXIS_TOLERANCE = 0.5;
+const sharesColumn = (a, b) => Math.abs(a.x - b.x) < AXIS_TOLERANCE;
+const sharesRow = (a, b) => Math.abs(a.y - b.y) < AXIS_TOLERANCE;
+const coincides = (a, b) => sharesColumn(a, b) && sharesRow(a, b);
+
+/** Whether the shape intersection stays on the axis the layout's final segment ran along. */
+function keepsArrivalAxis(originalLast, lastInner, candidate) {
+  if (sharesColumn(originalLast, lastInner) && !sharesRow(originalLast, lastInner)) {
+    return sharesColumn(candidate, lastInner);
+  }
+  if (sharesRow(originalLast, lastInner) && !sharesColumn(originalLast, lastInner)) {
+    return sharesRow(candidate, lastInner);
+  }
+  return sharesColumn(candidate, lastInner) || sharesRow(candidate, lastInner);
+}
+
+/** Whether the segment to the candidate points against the direction the edge was travelling. */
+function runsAgainstHeading(originalLast, lastInner, before, candidate) {
+  const endsAtBend = coincides(originalLast, lastInner);
+  const heading = endsAtBend ? lastInner : originalLast;
+  const from = endsAtBend ? before : lastInner;
+  return (
+    (heading.x - from.x) * (candidate.x - lastInner.x) +
+      (heading.y - from.y) * (candidate.y - lastInner.y) <
+    0
+  );
+}
+
+/** Picks the point where a swimlane edge docks on its head shape. */
+function dockFinalPoint(originalLast, lastInner, before, candidate) {
+  const wasOrthogonal = sharesColumn(originalLast, lastInner) || sharesRow(originalLast, lastInner);
+  if (wasOrthogonal && !keepsArrivalAxis(originalLast, lastInner, candidate)) {
+    return originalLast;
+  }
+  if (runsAgainstHeading(originalLast, lastInner, before, candidate)) {
+    return lastInner;
+  }
+  return candidate;
+}
+
 // Swimlanes-only helper, kept module-private: it self-gates to `-to-label` edges
 // (the swimlanes edge-label waypoint mechanism) and is called only from insertEdge's
 // `layout === 'swimlane'` branch, so it is a no-op for every other layout.
@@ -663,9 +704,6 @@ export const insertEdge = function (
       Array.isArray(points) &&
       points.length >= 2
     ) {
-      const TOLERANCE = 0.5;
-      const sharesColumn = (a, b) => Math.abs(a.x - b.x) < TOLERANCE;
-      const sharesRow = (a, b) => Math.abs(a.y - b.y) < TOLERANCE;
       if (points.length === 2) {
         // A straight edge clips each end against the shape it leaves or enters. An
         // axis-aligned one is a port, possibly offset from the node centre: each shape is
@@ -686,36 +724,17 @@ export const insertEdge = function (
 
         const originalLast = points[points.length - 1];
         const candidateLast = head.intersect(lastInner);
-        const wasOrthogonal =
-          sharesColumn(originalLast, lastInner) || sharesRow(originalLast, lastInner);
-        const wasVertical = wasOrthogonal && !sharesRow(originalLast, lastInner);
-        const wasHorizontal = wasOrthogonal && !sharesColumn(originalLast, lastInner);
-        const keepsAxis = wasVertical
-          ? sharesColumn(candidateLast, lastInner)
-          : wasHorizontal
-            ? sharesRow(candidateLast, lastInner)
-            : sharesColumn(candidateLast, lastInner) || sharesRow(candidateLast, lastInner);
         const before = innerPoints.at(-2) ?? points[0];
-        const endsAtBend =
-          Math.abs(originalLast.x - lastInner.x) < TOLERANCE &&
-          Math.abs(originalLast.y - lastInner.y) < TOLERANCE;
-        const heading = endsAtBend ? lastInner : originalLast;
-        const from = endsAtBend ? before : lastInner;
-        const runsBack =
-          (heading.x - from.x) * (candidateLast.x - lastInner.x) +
-            (heading.y - from.y) * (candidateLast.y - lastInner.y) <
-          0;
-        const newLast =
-          wasOrthogonal && !keepsAxis ? originalLast : runsBack ? lastInner : candidateLast;
+        const newLast = dockFinalPoint(originalLast, lastInner, before, candidateLast);
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
         const lastIsDuplicate =
-          Math.abs(newLast.x - lastInner.x) < TOLERANCE &&
-          Math.abs(newLast.y - lastInner.y) < TOLERANCE;
+          Math.abs(newLast.x - lastInner.x) < AXIS_TOLERANCE &&
+          Math.abs(newLast.y - lastInner.y) < AXIS_TOLERANCE;
         const firstIsDuplicate =
-          Math.abs(newFirst.x - firstInner.x) < TOLERANCE &&
-          Math.abs(newFirst.y - firstInner.y) < TOLERANCE;
+          Math.abs(newFirst.x - firstInner.x) < AXIS_TOLERANCE &&
+          Math.abs(newFirst.y - firstInner.y) < AXIS_TOLERANCE;
 
         const startPoints = firstIsDuplicate ? [] : [newFirst];
         const endPoints = lastIsDuplicate ? [] : [newLast];
