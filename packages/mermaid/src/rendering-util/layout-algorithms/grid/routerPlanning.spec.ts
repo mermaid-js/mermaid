@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { assignCompactPortalCoordinates, prepareEdgeRoutes } from './routerPlanning.js';
+import { derivePortalRanges } from './routerTopology.js';
 import type { GridLayoutResult } from './types.js';
 
 function node(id: string, x: number, y: number): Node {
@@ -73,5 +74,49 @@ describe('grid router planning', () => {
 
     expect(sourceCandidates.map(({ side }) => side)).toEqual(['right', 'right', 'right']);
     expect(sourceCandidates.map(({ port }) => port.y).sort((a, b) => a - b)).toEqual([-14, 10, 14]);
+  });
+
+  it('keeps clustered hierarchy portals separated inside the topology range', () => {
+    const owner = {
+      id: 'owner',
+      isGroup: true,
+      shape: 'rect',
+      label: 'Owner',
+      x: 0,
+      y: 0,
+      width: 40,
+      height: 40,
+    } as Node;
+    const nodes = [
+      owner,
+      { ...node('source-1', 0, -15), parentId: owner.id },
+      { ...node('source-2', 0, -15), parentId: owner.id },
+      node('target-1', 100, -15),
+      node('target-2', 100, -15),
+    ];
+    const edges = [edge('edge-1', 'source-1', 'target-1'), edge('edge-2', 'source-2', 'target-2')];
+    const layout = { nodes, edges } as LayoutData;
+    const result = {
+      forest: { nodeById: new Map(nodes.map((entry) => [entry.id, entry])) },
+      containers: new Map(),
+    } as GridLayoutResult;
+
+    const prepared = prepareEdgeRoutes(layout, result);
+    const coordinates = prepared.plans
+      .map((plan) => plan.source.chain.find(({ ownerId }) => ownerId === owner.id))
+      .map((entry) => prepared.demandCoords.get(entry!.demandKey)!)
+      .sort((a, b) => a - b);
+    const range = derivePortalRanges(owner.id, {
+      left: -20,
+      right: 20,
+      top: -20,
+      bottom: 20,
+    }).find(({ side }) => side === 'right')!;
+
+    expect(coordinates).toEqual([-14, -10]);
+    expect(
+      coordinates.every((coordinate) => coordinate >= range.low && coordinate <= range.high)
+    ).toBe(true);
+    expect(coordinates[1] - coordinates[0]).toBeGreaterThanOrEqual(4);
   });
 });

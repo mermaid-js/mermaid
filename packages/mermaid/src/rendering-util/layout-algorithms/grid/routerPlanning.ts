@@ -15,7 +15,6 @@ import { ROOT_CONTAINER_ID, gridError } from './types.js';
 
 // Planning is deterministic and side-effect free: it resolves hierarchy chains, bundle lanes,
 // endpoint demand, and route order before the session creates any routing topology.
-const PORT_MARGIN = 4;
 const MIN_PORT_SEPARATION_PX = 4;
 export const TERMINAL_APPROACH_PX = 20;
 export const LANE_SEPARATION_PX = 8;
@@ -346,11 +345,15 @@ function assignDemandCoordinates(
     }
     const rect = rectForNode(owner);
     let low =
-      side === 'left' || side === 'right' ? rect.top + PORT_MARGIN : rect.left + PORT_MARGIN;
+      side === 'left' || side === 'right'
+        ? rect.top + ROUTE_CLEARANCE_PX
+        : rect.left + ROUTE_CLEARANCE_PX;
     const high =
-      side === 'left' || side === 'right' ? rect.bottom - PORT_MARGIN : rect.right - PORT_MARGIN;
+      side === 'left' || side === 'right'
+        ? rect.bottom - ROUTE_CLEARANCE_PX
+        : rect.right - ROUTE_CLEARANCE_PX;
     if ((side === 'left' || side === 'right') && owner.groupTitleRect) {
-      low = Math.max(low, owner.groupTitleRect.bottom + PORT_MARGIN);
+      low = Math.max(low, owner.groupTitleRect.bottom + ROUTE_CLEARANCE_PX);
     }
     const span = Math.max(0, high - low);
     demands.sort(
