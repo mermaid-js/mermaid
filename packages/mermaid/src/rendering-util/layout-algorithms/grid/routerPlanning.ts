@@ -27,6 +27,7 @@ export interface EdgeEndpointEntry {
   oppositeCoord: number;
   preferredCoord: number;
   compactPortal: boolean;
+  inner?: { demandKey: string; side: GridSide };
 }
 
 export interface EdgeEndpointPlan {
@@ -159,6 +160,9 @@ function buildEndpointPlan(
       oppositeCoord: oppositeCoordFor(otherRect, side),
       preferredCoord: oppositeCoordFor(endpointRect, side),
       compactPortal: current.id !== endpoint.id,
+      inner: chain.length
+        ? { demandKey: chain[chain.length - 1].demandKey, side: chain[chain.length - 1].side }
+        : undefined,
     });
 
     if (
@@ -311,6 +315,7 @@ function assignDemandCoordinates(
           oppositeCoord: entry.oppositeCoord,
           preferredCoord: entry.preferredCoord,
           compactPortal: entry.compactPortal,
+          inner: entry.inner,
         });
       }
     }
@@ -331,8 +336,18 @@ function assignDemandCoordinates(
     byOwnerSide.set(key, group);
   }
 
+  // Ports are placed before the compact portals that line up with them, innermost group first.
+  const depthOf = (ownerId: string): number => {
+    const owner = nodeById.get(ownerId);
+    return owner ? containerChain(owner, nodeById).length : 0;
+  };
+  const orderedOwnerSides = [...byOwnerSide.values()].sort(
+    (a, b) =>
+      Number(a.demands.every((d) => d.compactPortal)) -
+        Number(b.demands.every((d) => d.compactPortal)) || depthOf(b.ownerId) - depthOf(a.ownerId)
+  );
   const assigned = new Map<string, number>();
-  for (const { ownerId, side, demands } of byOwnerSide.values()) {
+  for (const { ownerId, side, demands } of orderedOwnerSides) {
     const owner = nodeById.get(ownerId);
     if (!owner) {
       continue;
@@ -382,7 +397,13 @@ function assignDemandCoordinates(
           ? container?.horizontalCorridors
           : container?.verticalCorridors;
       const preferredCoordinate = (demand: GridAttachmentDemand): number => {
-        const clamped = clamp(demand.preferredCoord, low, high);
+        const innerCoord = demand.inner ? assigned.get(demand.inner.demandKey) : undefined;
+        const alignedWithInner =
+          demand.inner !== undefined &&
+          innerCoord !== undefined &&
+          (demand.inner.side === 'left' || demand.inner.side === 'right') ===
+            (side === 'left' || side === 'right');
+        const clamped = clamp(alignedWithInner ? innerCoord : demand.preferredCoord, low, high);
         const nearest = corridorCoordinates?.reduce(
           (best, coordinate) =>
             Math.abs(coordinate - clamped) < Math.abs(best - clamped) ? coordinate : best,

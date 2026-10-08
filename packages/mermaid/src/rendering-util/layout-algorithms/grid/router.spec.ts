@@ -292,6 +292,27 @@ describe('grid router', () => {
     expect(longestSharedNonterminalSubpath(first, second)).toBe(0);
   });
 
+  it('lines group portals up with the item ports so edges take a single jog', () => {
+    const data = baseLayout(
+      [
+        group('Work', 'Work', { row: 1, column: 2 }),
+        group('Nested', 'Nested', { row: 2, column: 1 }, 'Work'),
+        leaf('D', 80, 40, { row: 1, column: 1 }, 'Nested'),
+        leaf('E', 80, 40, { row: 2, column: 1 }, 'Nested'),
+        group('Output', 'Output', { row: 1, column: 3 }),
+        leaf('F', 80, 40, { row: 1, column: 1 }, 'Output'),
+      ],
+      [edge('D-F', 'D', 'F'), edge('E-F', 'E', 'F')],
+      { rowGap: 45, columnGap: 70 }
+    );
+    runGridLayoutCore(data);
+
+    expect(invalidRoutingIssues(data)).toEqual([]);
+    for (const item of data.edges) {
+      expect(normalizePolyline(item.points ?? []).bends).toBe(2);
+    }
+  });
+
   it('routes around a blocker on the aligned straight corridor', () => {
     const data = baseLayout(
       [
