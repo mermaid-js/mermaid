@@ -10,7 +10,7 @@
 
 # Interface: ParseResult
 
-Defined in: [packages/mermaid/src/types.ts:122](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L122)
+Defined in: [packages/mermaid/src/types.ts:123](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L123)
 
 ## Properties
 
@@ -18,7 +18,7 @@ Defined in: [packages/mermaid/src/types.ts:122](https://github.com/mermaid-js/me
 
 > **config**: [`MermaidConfig`](MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/types.ts:130](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L130)
+Defined in: [packages/mermaid/src/types.ts:131](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L131)
 
 The config passed as YAML frontmatter or directives
 
@@ -28,6 +28,6 @@ The config passed as YAML frontmatter or directives
 
 > **diagramType**: `string`
 
-Defined in: [packages/mermaid/src/types.ts:126](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L126)
+Defined in: [packages/mermaid/src/types.ts:127](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L127)
 
 The diagram type, e.g. 'flowchart', 'sequence', etc.
