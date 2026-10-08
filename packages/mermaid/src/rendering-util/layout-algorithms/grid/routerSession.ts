@@ -67,6 +67,7 @@ interface BundleEdgeCheckpoint {
 interface BundleCheckpoint {
   pairKey: string;
   pairRoutes: Point[][] | undefined;
+  demandKeys: string[];
   pairedPortals: Map<string, PairedPortal>;
   demandCoords: Map<string, number>;
   edges: BundleEdgeCheckpoint[];
@@ -86,11 +87,31 @@ function createBundleCheckpoint(
   // intentionally shared across attempts.
   const pairKey = pairPlans[0].pairKey;
   const committedPairRoutes = pairRoutes.get(pairKey);
+  const demandKeys = [
+    ...new Set(
+      pairPlans.flatMap((plan) =>
+        [...plan.source.chain, ...plan.target.chain].map(({ demandKey }) => demandKey)
+      )
+    ),
+  ];
+  const bundlePairedPortals = new Map<string, PairedPortal>();
+  const bundleDemandCoords = new Map<string, number>();
+  for (const demandKey of demandKeys) {
+    const portal = pairedPortals.get(demandKey);
+    if (portal) {
+      bundlePairedPortals.set(demandKey, portal);
+    }
+    const coordinate = demandCoords.get(demandKey);
+    if (coordinate !== undefined) {
+      bundleDemandCoords.set(demandKey, coordinate);
+    }
+  }
   return {
     pairKey,
     pairRoutes: committedPairRoutes ? [...committedPairRoutes] : undefined,
-    pairedPortals: new Map(pairedPortals),
-    demandCoords: new Map(demandCoords),
+    demandKeys,
+    pairedPortals: bundlePairedPortals,
+    demandCoords: bundleDemandCoords,
     edges: pairPlans.map(({ edge }) => ({
       edge,
       points: edge.points,
@@ -113,13 +134,19 @@ function restoreBundleCheckpoint(
   } else {
     pairRoutes.delete(checkpoint.pairKey);
   }
-  pairedPortals.clear();
-  for (const [key, portal] of checkpoint.pairedPortals) {
-    pairedPortals.set(key, portal);
-  }
-  demandCoords.clear();
-  for (const [key, coordinate] of checkpoint.demandCoords) {
-    demandCoords.set(key, coordinate);
+  for (const demandKey of checkpoint.demandKeys) {
+    const portal = checkpoint.pairedPortals.get(demandKey);
+    if (portal) {
+      pairedPortals.set(demandKey, portal);
+    } else {
+      pairedPortals.delete(demandKey);
+    }
+    const coordinate = checkpoint.demandCoords.get(demandKey);
+    if (coordinate !== undefined) {
+      demandCoords.set(demandKey, coordinate);
+    } else {
+      demandCoords.delete(demandKey);
+    }
   }
   for (const edgeCheckpoint of checkpoint.edges) {
     edgeCheckpoint.edge.points = edgeCheckpoint.points;
