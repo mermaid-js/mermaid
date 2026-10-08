@@ -2,8 +2,6 @@
 
 This is a contributor-facing manual for the `e2e/` test suite's tier structure — why it exists, how it's organized, which flags/labels control it, and how to work with it locally.
 
-**Scope note:** this document describes the setup on this fork (`mermaid-js/mermaid`) specifically — fork-only for now, not (yet) proposed upstream. Some of what's described here (the `run pr tests`/`run release test` labels, the nightly workflow, the branch-protection gating) only exists on this fork; the underlying tier folder structure and fixtures are the part that could travel upstream on its own later.
-
 ## Why this exists
 
 Before this restructuring, every PR ran the entire e2e suite — every diagram, every theme variant, every look/handdrawn combination — on every push. That's thorough, but it's expensive in two ways that scale badly as the suite grows:
@@ -51,6 +49,8 @@ flowchart TD
 - **`e2e/other/<tier>/*.spec.{js,ts}`** — cross-cutting specs that aren't about any single diagram type (XSS/security tests, GHSA regression tests, `iife`/embed tests, page-interaction tests, external-diagram loading). Only `pr-check/` is populated today.
 - **`e2e/helpers/`** — shared test infrastructure: `util.ts` (the `imgSnapshotTest`/`renderGraph`/`verifyScreenshot` helpers every spec uses) and `mmd-snapshots.ts` (fixture discovery/metadata for the global runner).
 
+Not every `<diagram-type>/<tier>/` directory has content yet — some are intentionally empty, left in place as containers for tests that haven't been written. An empty tier folder isn't stray or safe to delete; it's scaffolding for the layout above, matching a diagram type or tier that's expected to gain coverage later.
+
 ### The three tiers
 
 | Tier            | Intent                                                                                                                                                                     | Runs on                                                                                                                                         |
@@ -61,6 +61,16 @@ flowchart TD
 
 A fixture or spec's tier is purely a function of which subfolder it lives in — there's no separate registry or config file to update.
 
+If you're new to this structure, here's how to decide where a new test belongs:
+
+- **Adding a new diagram feature or syntax?** Add one small `pr-check` fixture covering the happy path — this is what every PR runs, so it catches an obvious regression immediately. If the feature has several meaningfully different shapes/variants/edge cases worth covering, add those as additional fixtures under `nightly-check` instead of piling them all into `pr-check` — `pr-check` is meant to stay small and fast, not become exhaustive.
+- **Fixing a rendering bug?** Add a `pr-check` fixture that reproduces the bug (the minimal diagram that triggered it), so this exact regression is caught on every future PR. Only drop it into `nightly-check` instead if it's a narrow, rarely-hit edge case where running it on every PR isn't worth the extra time.
+- **Backfilling broad coverage for something that already works** (e.g. every node-shape × edge-type combination, a sweep of config options)? That bulk volume belongs in `nightly-check` — it's comprehensive by design and only needs to run once a day, not on every push.
+- **Testing a purely visual/appearance difference** — how a diagram looks under a different theme, `handDrawn` look, layout direction, or similar, where the underlying structure/parsing is unaffected? That's `visual-check`. It's pixel/appearance content reviewed by a human via Applitools, not something an automated parse-only assertion can usefully judge.
+- **Does your test need to assert on something beyond "did it render without erroring"?** — a DOM/CSS assertion, a `.click()` interaction, directive-vs-`initialize()` precedence, a multi-diagram array, custom `mermaid.initialize()` config — that can't be expressed as a static `.mmd` fixture. Write a hand-written spec instead, under `e2e/rendering/<diagram-type>/<tier>/*.spec.{js,ts}` if it's about one specific diagram type, or `e2e/other/<tier>/*.spec.{js,ts}` if it's cross-cutting (security/XSS, embed/`iife`, page interactions, external-diagram loading, and similar). The same tier logic above still applies to these — a fast smoke-test spec goes in `pr-check`, a more exhaustive one in `nightly-check`.
+
+When in doubt, default to `pr-check` for anything a feature's author would want caught immediately, and move broader/slower coverage to `nightly-check`.
+
 ## How CI decides what to run
 
 ```mermaid
@@ -69,7 +79,7 @@ flowchart TD
   start -->|"PR → develop"| pr_label{"'run pr tests'<br/>label set?"}
   start -->|"PR → master"| release_label{"'run release test'<br/>label set?"}
   start -->|"Push to develop<br/>(e.g. a PR merge)"| push_develop["pr-check tier only"]
-  start -->|"Push to master"| push_master["diff-based scoping<br/>(unchanged, pre-existing)"]
+  start -->|"Push to master"| push_master["pr-check + nightly-check tiers"]
   start -->|"Scheduled (daily) or<br/>manual 'simulated nightly'"| nightly_run["pr-check + nightly-check tiers"]
 
   pr_label -->|yes, or PR just opened| pr_scoped["pr-check tier only"]
@@ -83,7 +93,7 @@ Both labels — `run pr tests` and `run release test` — default to **on**: a s
 
 Note that `run release test` — despite its name — does **not** gate the `visual-check` tier. `visual-check` is theme/look/layout/direction combinatorial sweeps: pixel/appearance content that's better judged by a human during the manual Applitools pass (`e2e-applitools.yml`) than by an automated parse-only check here. The label name is a holdover from before this tier split; renaming it is tracked separately and out of scope for this doc.
 
-This label-gating logic, and the nightly/scheduled workflow, are **fork-specific** — every branch of this logic is guarded by a check that it's running on this fork, not upstream `mermaid-js/mermaid`. If this file (or the underlying `e2e.yml`) is ever synced upstream, none of the label/tier behavior activates there.
+This label-gating logic, and the nightly/scheduled workflow, are **upstream-only** — every branch of this logic is guarded by a check that it's running on `mermaid-js/mermaid`, not a fork. On a fork, e2e.yml falls back to its original full-suite/diff-based-scoping behavior, and the nightly workflow's own job is a no-op (there's no Argos project/credentials there to make screenshot capture worthwhile).
 
 ## Flags and environment variables
 

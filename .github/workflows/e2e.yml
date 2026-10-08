@@ -277,14 +277,23 @@ jobs:
             exit 0
           fi
 
-          # For direct pushes to a long-lived branch, always run the full suite
-          # (no PR diff to scope against). Covers: a fork's pushes to develop
-          # (the branch above only fires upstream), and pushes to master —
-          # note master pushes don't actually reach this check today, since
-          # $TARGET_HASH resolves to a commit SHA rather than the literal
-          # string "master" unless master is the repo's default branch; they
-          # fall through to the merge-base diffing below instead.
-          if [ "$TARGET_HASH" = "develop" ] || [ "$TARGET_HASH" = "master" ]; then
+          # Upstream-only: a direct push to master (i.e. a "run release test"
+          # gated PR merging there) mirrors the develop branch above — the
+          # merged PR already had to pass pr-check + nightly-check before
+          # merging, so re-running the full suite here is redundant.
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$GITHUB_REF" = "refs/heads/master" ] && [ "$IS_UPSTREAM_REPO" = "true" ]; then
+            SPEC=$(node scripts/e2e-tier-scope.mjs pr-check nightly-check)
+            set_output spec_pattern "$SPEC"
+            set_output matrix "$E2E_PR_NIGHTLY_MATRIX"
+            set_output fixture_tier "pr-check,nightly-check"
+            echo "[detect-scope] Push to master — scoped to pr-check + nightly-check: ${SPEC}"
+            exit 0
+          fi
+
+          # For a direct push to develop on a fork (the branch above only
+          # fires upstream), always run the full suite — no PR diff to scope
+          # against.
+          if [ "$TARGET_HASH" = "develop" ]; then
             emit_full
             echo "[detect-scope] Direct push to ${TARGET_HASH} — full suite."
             exit 0
