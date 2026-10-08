@@ -110,6 +110,9 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
 
   const finalizeRenderedEdges = (): void => {
     resolveRenderedOrthogonalCrossings(edges, nodeByIdMap);
+    // Crossing cleanup can bring a route onto a face another edge already leaves or
+    // enters from, so split shared terminal lanes again before endpoints are pinned.
+    separateSharedRenderedTerminalLanes(edges, nodeByIdMap);
     reassignCrossingExternalRailChannels(edges, nodeByIdMap);
     shortcutRedundantOrthogonalJogs(edges, nodeByIdMap);
     anchorLabelsToPolyline(edges, nodeByIdMap);
