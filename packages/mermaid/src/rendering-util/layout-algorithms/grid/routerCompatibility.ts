@@ -663,7 +663,6 @@ export function buildRoutingContext(
       const topology = buildContainerRoutingTopology(
         {
           containerId,
-          ancestryPath: [containerId],
           bounds: containerBounds(containerId, result),
           obstacles: children.map((node) => ({ id: node.id, bounds: routerRect(node) })),
           titleExclusions: title

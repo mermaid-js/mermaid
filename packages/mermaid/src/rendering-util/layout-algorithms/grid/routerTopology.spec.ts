@@ -5,6 +5,7 @@ import {
   buildContainerRoutingTopology,
   buildPairedPortal,
   derivePortalRanges,
+  routingPointKey,
 } from './routerTopology.js';
 import type { RouterPoint } from './types.js';
 
@@ -17,13 +18,16 @@ function topology(
 ) {
   return buildContainerRoutingTopology({
     containerId: '__grid_root__',
-    ancestryPath: ['__grid_root__'],
     bounds: { left: 0, right: 100, top: 0, bottom: 100 },
     obstacles: obstacles.map(({ id, ...bounds }) => ({ id, bounds })),
   });
 }
 
 describe('grid router topology', () => {
+  it('normalizes negative zero in routing point keys', () => {
+    expect(routingPointKey(point(-0, -0))).toBe('0:0');
+  });
+
   it('matches a brute-force obstacle union and interval oracle on randomized cases', () => {
     let state = 0x71ab_19e3;
     const random = () => {
@@ -113,7 +117,6 @@ describe('grid router topology', () => {
   it('uses inflated measured geometry and title exclusions as obstacles', () => {
     const result = buildContainerRoutingTopology({
       containerId: 'group',
-      ancestryPath: ['__grid_root__', 'group'],
       bounds: { left: 0, right: 120, top: 0, bottom: 100 },
       obstacles: [{ id: 'leaf', bounds: { left: 20, right: 40, top: 30, bottom: 50 } }],
       titleExclusions: [{ id: 'group-title', bounds: { left: 50, right: 90, top: 4, bottom: 14 } }],
@@ -244,7 +247,6 @@ describe('grid router topology', () => {
     const secondMetrics = createGridRoutingInstrumentation();
     const input = {
       containerId: '__grid_root__',
-      ancestryPath: ['__grid_root__'],
       bounds: { left: 0, right: 220, top: 0, bottom: 100 },
       obstacles: [
         { id: 'first', bounds: { left: 20, right: 80, top: 30, bottom: 70 } },
@@ -272,7 +274,6 @@ describe('grid router topology', () => {
   it('counts strict boundary intervals and enforces their memory cap during construction', () => {
     const input = {
       containerId: '__grid_root__',
-      ancestryPath: ['__grid_root__'],
       bounds: { left: 0, right: 100, top: 0, bottom: 100 },
       obstacles: [
         { id: 'first', bounds: { left: 10, right: 30, top: 10, bottom: 40 } },
@@ -303,7 +304,6 @@ describe('grid router topology', () => {
       buildContainerRoutingTopology(
         {
           containerId: '__grid_root__',
-          ancestryPath: ['__grid_root__'],
           bounds: { left: 0, right: 100, top: 0, bottom: 100 },
           obstacles: [{ id: 'center', bounds: { left: 40, right: 60, top: 40, bottom: 60 } }],
         },

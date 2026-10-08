@@ -23,7 +23,6 @@ import {
 } from './routerConstraint.js';
 import {
   TERMINAL_APPROACH_PX,
-  routingPointKey,
   sideInterval,
   sideOrder,
   type EdgeRoutePlan,
@@ -44,6 +43,7 @@ import {
 import {
   buildEndpointRoutingOverlay,
   DEFAULT_MAX_ROUTING_ESTIMATED_BYTES,
+  routingPointKey,
   type EndpointOverlayScratch,
 } from './routerTopology.js';
 import type {

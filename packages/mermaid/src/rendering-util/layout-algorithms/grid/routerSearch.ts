@@ -320,8 +320,7 @@ function search(
     >,
   sourceId: number,
   targetId: number,
-  options: RouterSearchOptions,
-  useHeuristic: boolean
+  options: RouterSearchOptions
 ): RouterSearchResult | undefined {
   const vertexAt = (id: number): RouterVertex => {
     const vertex = topology.getVertex?.(id) ?? topology.vertices[id];
@@ -332,9 +331,6 @@ function search(
   };
   const source = vertexAt(sourceId);
   const target = vertexAt(targetId);
-  if (!source || !target) {
-    throw new Error('Grid routing search source and target must be topology vertices');
-  }
   if (!options.topologyValidated) {
     validateSearchTopology(topology);
   }
@@ -362,7 +358,7 @@ function search(
   const heapPairs = workspace.heapPairs;
   let stateCount = 1;
   const endpointCandidateRank = options.endpointCandidateRank ?? 0;
-  const useBendHeuristic = useHeuristic && options.heuristic !== 'zero';
+  const useBendHeuristic = options.heuristic !== 'zero';
   function nonCostOrder(a: number, b: number): number {
     return (
       stateVertices[a] - stateVertices[b] ||
@@ -794,5 +790,5 @@ export function findShortestRoute(
   targetId: number,
   options: RouterSearchOptions = {}
 ): RouterSearchResult | undefined {
-  return search(topology, sourceId, targetId, options, true);
+  return search(topology, sourceId, targetId, options);
 }

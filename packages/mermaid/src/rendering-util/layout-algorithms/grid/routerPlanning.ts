@@ -3,7 +3,7 @@ import type { Edge, LayoutData, Node } from '../../types.js';
 import { PIXEL_EPSILON } from '../layout-utils/geometry.js';
 import { clamp, compareCodeUnits, rectForNode } from '../layout-utils/helpers.js';
 import { isAncestorGroup } from './groups.js';
-import { ROUTE_CLEARANCE_PX } from './routerTopology.js';
+import { ROUTE_CLEARANCE_PX, routingPointKey } from './routerTopology.js';
 import type {
   GridAttachmentDemand,
   GridContainerId,
@@ -287,21 +287,13 @@ export function assignCompactPortalCoordinates(
 
 function assignDemandCoordinates(
   plans: EdgeRoutePlan[],
-  result: GridLayoutResult
+  result: GridLayoutResult,
+  endpointIncidentCounts: ReadonlyMap<string, number>
 ): Map<string, number> {
   // Allocate all demands for an owner side together. This prevents independently routed edges from
   // selecting the same port and lets bundles retain symmetric lane offsets when capacity allows.
   const nodeById = result.forest.nodeById;
   const planByEdgeId = new Map(plans.map((plan) => [plan.edge.id, plan]));
-  const incidentCounts = new Map<string, number>();
-  for (const plan of plans) {
-    if (plan.edge.start) {
-      incidentCounts.set(plan.edge.start, (incidentCounts.get(plan.edge.start) ?? 0) + 1);
-    }
-    if (plan.edge.end && plan.edge.end !== plan.edge.start) {
-      incidentCounts.set(plan.edge.end, (incidentCounts.get(plan.edge.end) ?? 0) + 1);
-    }
-  }
   const demandByKey = new Map<string, GridAttachmentDemand>();
   for (const plan of plans) {
     if (plan.edge.start === plan.edge.end) {
@@ -370,8 +362,8 @@ function assignDemandCoordinates(
         (plan) =>
           plan &&
           plan.bundleSize === demands.length &&
-          incidentCounts.get(plan.edge.start!) === plan.bundleSize &&
-          incidentCounts.get(plan.edge.end!) === plan.bundleSize
+          endpointIncidentCounts.get(plan.edge.start!) === plan.bundleSize &&
+          endpointIncidentCounts.get(plan.edge.end!) === plan.bundleSize
       )
     ) {
       const center = (low + high) / 2;
@@ -441,6 +433,7 @@ interface EndpointSlotAssignment {
 }
 
 export function sideOrder(side: GridSide): number {
+  // Endpoint preference order is independent of topology's canonical record ordering.
   return side === 'right' ? 0 : side === 'bottom' ? 1 : side === 'left' ? 2 : 3;
 }
 
@@ -507,12 +500,6 @@ function compareEndpointDemandIdentity(a: EndpointDemandEntry, b: EndpointDemand
     compareCodeUnits(a.plan.edge.id, b.plan.edge.id) ||
     compareCodeUnits(a.role, b.role)
   );
-}
-
-export function routingPointKey(point: RouterPoint): string {
-  const x = Object.is(point.x, -0) ? 0 : point.x;
-  const y = Object.is(point.y, -0) ? 0 : point.y;
-  return `${x}:${y}`;
 }
 
 function preferredEndpointCoordinates(
@@ -846,7 +833,7 @@ export function prepareEdgeRoutes(
     eligiblePlans,
     eligibleIds: new Set(eligiblePlans.map(({ edge }) => edge.id)),
     orderedPlans,
-    demandCoords: assignDemandCoordinates(orderedPlans, result),
+    demandCoords: assignDemandCoordinates(orderedPlans, result, endpointIncidentCounts),
     endpointCandidatesByEdge,
     endpointIncidentCounts,
   };

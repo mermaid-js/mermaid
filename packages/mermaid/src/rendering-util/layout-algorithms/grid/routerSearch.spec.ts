@@ -14,7 +14,6 @@ function build(
 ): ContainerRoutingTopology {
   return buildContainerRoutingTopology({
     containerId: '__grid_root__',
-    ancestryPath: ['__grid_root__'],
     bounds: { left: 0, right: 100, top: 0, bottom: 100 },
     obstacles: obstacles.map(({ id, ...bounds }) => ({ id, bounds })),
   });

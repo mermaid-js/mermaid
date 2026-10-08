@@ -35,7 +35,6 @@ export interface RouterObstacleInput {
 
 export interface ContainerTopologyInput {
   containerId: string;
-  ancestryPath: readonly string[];
   bounds: RouterRect;
   obstacles: readonly RouterObstacleInput[];
   titleExclusions?: readonly RouterObstacleInput[];
@@ -522,11 +521,11 @@ function unionObstacles(obstacles: readonly RouterObstacle[]): RouterObstacle[] 
   );
 }
 
-function pointKey(point: RouterPoint): string {
+export function routingPointKey(point: RouterPoint): string {
   return `${normalizeCoordinate(point.x)}:${normalizeCoordinate(point.y)}`;
 }
 
-function sideOrdinal(side?: GridSide): number {
+function topologySideOrdinal(side?: GridSide): number {
   return side === 'left'
     ? 0
     : side === 'right'
@@ -541,7 +540,7 @@ function sideOrdinal(side?: GridSide): number {
 function vertexRecordOrder(a: VertexRecord, b: VertexRecord): number {
   return (
     compareCodeUnits(a.kind, b.kind) ||
-    sideOrdinal(a.side) - sideOrdinal(b.side) ||
+    topologySideOrdinal(a.side) - topologySideOrdinal(b.side) ||
     a.point.x - b.point.x ||
     a.point.y - b.point.y ||
     compareCodeUnits(a.ownerId ?? '', b.ownerId ?? '')
@@ -560,7 +559,7 @@ function canonicalRecords(records: readonly VertexRecord[]): VertexRecord[] {
         y: normalizeCoordinate(record.point.y),
       },
     };
-    const key = pointKey(normalized.point);
+    const key = routingPointKey(normalized.point);
     if (!byPoint.has(key)) {
       byPoint.set(key, normalized);
     }
@@ -997,7 +996,7 @@ export function buildContainerRoutingTopology(
   const obstacles = unionObstacles(inflated);
   const portalRanges = [...(input.portalRanges ?? [])].sort(
     (a, b) =>
-      sideOrdinal(a.side) - sideOrdinal(b.side) ||
+      topologySideOrdinal(a.side) - topologySideOrdinal(b.side) ||
       a.low - b.low ||
       a.high - b.high ||
       compareCodeUnits(a.ownerId, b.ownerId)
@@ -1064,7 +1063,7 @@ export function buildContainerRoutingTopology(
     obstacles: Object.freeze(obstacles.map((obstacle) => Object.freeze(obstacle))),
     vertices: Object.freeze(vertices),
     pointVertexIds: new ImmutableMap(
-      new Map(vertices.map(({ id, point }) => [pointKey(point), id]))
+      new Map(vertices.map(({ id, point }) => [routingPointKey(point), id]))
     ),
     horizontalVertexLines: indexVertexLines(vertices, 'H'),
     verticalVertexLines: indexVertexLines(vertices, 'V'),
@@ -1131,7 +1130,7 @@ export function buildEndpointRoutingOverlay(
     }
   }
   const additions = canonicalRecords(endpointRecords)
-    .filter(({ point }) => !base.pointVertexIds.has(pointKey(point)))
+    .filter(({ point }) => !base.pointVertexIds.has(routingPointKey(point)))
     .sort(vertexRecordOrder);
   enforceCap(additions.length, 32, 'vertex_cap');
   scratch.addedVertices.push(
@@ -1264,7 +1263,7 @@ export function buildEndpointRoutingOverlay(
     vertexCount
   );
   for (const vertex of scratch.addedVertices) {
-    scratch.pointOverrides.set(pointKey(vertex.point), vertex.id);
+    scratch.pointOverrides.set(routingPointKey(vertex.point), vertex.id);
   }
   return Object.freeze({
     ...base,
