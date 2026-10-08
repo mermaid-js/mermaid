@@ -36,13 +36,42 @@ function topoSortByGenerationIfAcyclic(g: Graph): NodeId[] | null {
   return order.length === g.nodes.length ? order : null;
 }
 
+function topologicalOrder(g: Graph, direction: LayeringOptions['direction']): NodeId[] {
+  const sorted = direction === 'LR' ? topoSortByGenerationIfAcyclic(g) : topoSortIfAcyclic(g);
+  return sorted ?? [...g.nodes].sort();
+}
+
+/**
+ * Hands out the lowest layer a node may use so that bands stack: a band starts below the
+ * last layer any earlier band used. Without a `bandOf` every node's floor is layer 0.
+ */
+function createBandFloor(bandOf: LayeringOptions['bandOf']) {
+  let currentBand: number | undefined;
+  let floor = 0;
+  let lowestUsed = -1;
+  return {
+    floorFor(id: NodeId): number {
+      if (bandOf && bandOf(id) !== currentBand) {
+        currentBand = bandOf(id);
+        floor = lowestUsed + 1;
+      }
+      return floor;
+    },
+    record(rank: number): void {
+      lowestUsed = Math.max(lowestUsed, rank);
+    },
+  };
+}
+
 // Lane-aware compact layering: one node per (layer, lane); inter-lane edges can stay on same layer
 export function assignLayers_LaneAwareCompact(gAcyclic: Graph, opts?: LayeringOptions): Layering {
   const g = normalizeGraph(gAcyclic);
-  const order =
-    opts?.direction === 'LR'
-      ? (topoSortByGenerationIfAcyclic(g) ?? [...g.nodes].sort())
-      : (topoSortIfAcyclic(g) ?? [...g.nodes].sort());
+  const order = topologicalOrder(g, opts?.direction);
+  // Bands are placed one after the other. Sorting is stable, so the order inside a band is the
+  // topological one, and since every edge runs forward or inside a band it stays topological.
+  const bandOf = opts?.bandOf;
+  const visiting = bandOf ? [...order].sort((a, b) => bandOf(a) - bandOf(b)) : order;
+  const bands = createBandFloor(bandOf);
 
   // Determine a lane id for each node: top-level parent id, or fall back to node id if none
   const topLaneOf = createTopLaneResolver(g);
@@ -60,26 +89,21 @@ export function assignLayers_LaneAwareCompact(gAcyclic: Graph, opts?: LayeringOp
     }
     return 1;
   };
+  const rankFromPredecessors = (v: NodeId): number =>
+    incoming(g, v).reduce(
+      (base, e) => Math.max(base, (rankOf[e.src] ?? 0) + edgeWeight(e.src, v)),
+      0
+    );
 
-  for (const v of order) {
-    const node = g.nodeById.get(v) as any;
-    if (node?.isGroup) {
-      continue;
-    } // do not assign ranks/capacity to lane/group containers
-    const preds = incoming(g, v);
-    let base = 0;
-    if (preds.length > 0) {
-      for (const e of preds) {
-        const u = e.src;
-        const ru = rankOf[u] ?? 0;
-        base = Math.max(base, ru + edgeWeight(u, v));
-      }
+  for (const v of visiting) {
+    if (g.nodeById.get(v)?.isGroup) {
+      continue; // do not assign ranks/capacity to lane/group containers
     }
     const lane = laneOf(v);
-    const nf = nextFree.get(lane) ?? 0;
-    const L = Math.max(base, nf);
+    const L = Math.max(rankFromPredecessors(v), nextFree.get(lane) ?? 0, bands.floorFor(v));
     rankOf[v] = L;
     nextFree.set(lane, L + 1);
+    bands.record(L);
   }
 
   const layers = buildLayersFromRanks(g, order, rankOf, { skipGroups: true });
