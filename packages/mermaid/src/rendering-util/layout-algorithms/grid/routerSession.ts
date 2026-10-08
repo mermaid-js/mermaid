@@ -543,7 +543,8 @@ export class GridEdgeRoutingSession {
                 plan.source.finalKind === 'item' && plan.source.chain.length > 1
                   ? this.alternativePairedPortals(sourceFinal, false)
                   : [],
-              plan.bundleSize > 1
+              plan.bundleSize > 1,
+              { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
             )
           : validatedCompatibilitySegment(
               edge.id,
@@ -644,7 +645,7 @@ export class GridEdgeRoutingSession {
     committedPairRoutes.push(points);
     pairRoutes.set(plan.pairKey, committedPairRoutes);
     // Fast routes were registered while routing modes were prepared.
-    if (!compatibilityFastRoute) {
+    if (!compatibilityFastRoute && !this.modes.occupancyRegisteredIds.has(edge.id)) {
       this.occupancyFor(plan.lcaContainerId).add(lcaPoints, plan.pairKey);
     }
     if (metrics && instrumentedRoutes) {

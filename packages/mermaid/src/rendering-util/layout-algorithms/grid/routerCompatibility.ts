@@ -61,6 +61,8 @@ export interface PreparedRoutingModes {
   sparseLcaIds: Set<string>;
   routedContainerIds: GridContainerId[];
   routeOccupancy: Map<GridContainerId, RouteOccupancyIndex>;
+  // Hierarchy edges whose compatibility route is already in the occupancy index.
+  occupancyRegisteredIds: Set<string>;
 }
 
 const MAX_PLANS_FOR_OVERLAP_DEMOTION = 64;
@@ -1156,18 +1158,51 @@ function prepareRoutingModes(
     occupancy.add(finalRoute, plan.pairKey);
     compatibilityFastRoutes.set(plan.edge.id, finalRoute);
   }
-  const sparseHierarchyIds = new Set(
-    plans
-      .filter(
-        (plan) =>
-          !eligibleIds.has(plan.edge.id) &&
-          plan.edge.start !== plan.edge.end &&
-          (plan.bundleSize > 1 ||
-            hasIsolatedEndpoints(plan) ||
-            !compatibilityPlanIsValid(plan, result, demandCoords))
-      )
-      .map(({ edge }) => edge.id)
-  );
+  // A hierarchy edge keeps its compatibility route unless that route runs along another edge's
+  // corridor. Conflicting edges are demoted to sparse routing, which can pick other corridors.
+  const occupancyRegisteredIds = new Set<string>();
+  const overlappingHierarchyIds = new Set<string>();
+  const sparseCandidate = (plan: EdgeRoutePlan): boolean =>
+    !eligibleIds.has(plan.edge.id) &&
+    plan.edge.start !== plan.edge.end &&
+    (plan.bundleSize > 1 ||
+      hasIsolatedEndpoints(plan) ||
+      !compatibilityPlanIsValid(plan, result, demandCoords));
+  if (plans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
+    for (const plan of prepared.orderedPlans) {
+      if (
+        eligibleIds.has(plan.edge.id) ||
+        plan.edge.start === plan.edge.end ||
+        hasAncestorEndpoint(plan) ||
+        sparseCandidate(plan)
+      ) {
+        continue;
+      }
+      const attachments = compatibilityLcaAttachments(plan, result, demandCoords);
+      const route = routeWithinContainer(
+        plan.lcaContainerId,
+        result,
+        attachments.start,
+        attachments.end,
+        plan.laneIndex
+      );
+      let occupancy = routeOccupancy.get(plan.lcaContainerId);
+      if (!occupancy) {
+        occupancy = new RouteOccupancyIndex();
+        routeOccupancy.set(plan.lcaContainerId, occupancy);
+      }
+      if (occupancy.conflictsWithRoute(route, plan.pairKey)) {
+        overlappingHierarchyIds.add(plan.edge.id);
+      } else {
+        occupancy.add(route, plan.pairKey);
+        occupancyRegisteredIds.add(plan.edge.id);
+      }
+    }
+  }
+  const sparseHierarchyIds = new Set([
+    ...plans.filter(sparseCandidate).map(({ edge }) => edge.id),
+    ...overlappingHierarchyIds,
+  ]);
   const sparseLcaIds = new Set([
     ...sparseHierarchyIds,
     ...plans.filter(hasAncestorEndpoint).map(({ edge }) => edge.id),
@@ -1190,5 +1225,6 @@ function prepareRoutingModes(
     sparseLcaIds,
     routedContainerIds,
     routeOccupancy,
+    occupancyRegisteredIds,
   };
 }
