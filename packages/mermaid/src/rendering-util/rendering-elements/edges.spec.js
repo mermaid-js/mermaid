@@ -415,6 +415,60 @@ describe('insertEdge swimlane final segment axis', () => {
 
     expect(renderedPoints.at(-1).y).toBeGreaterThanOrEqual(bend.y);
   });
+
+  describe('when the shape centre is off the row the edge enters on', () => {
+    // A wide shape whose centre sits below the row: the ray from the last bend to the
+    // centre meets the face a fraction of a pixel off the row, inside the axis tolerance.
+    const ROW = 0;
+    const CENTRE_OFFSET = 7.5;
+    const WIDTH = 180;
+    const ARROW_POINT_OFFSET = 4;
+
+    const dockedPoints = (gap) => {
+      document.body.innerHTML = '';
+      const svg = select(document.body).append('svg');
+      const rect = { x: 0, y: ROW + CENTRE_OFFSET, width: WIDTH, height: 27 };
+      const bend = { x: WIDTH / 2 + gap, y: ROW };
+      const edge = {
+        id: 'L_A7_E_0',
+        cssCompiledStyles: {},
+        style: [],
+        thickness: 'normal',
+        pattern: 'solid',
+        classes: 'flowchart-link',
+        curve: 'rounded',
+        look: 'neo',
+        arrowTypeEnd: 'arrow_point',
+        points: [{ x: 300, y: -40 }, { x: 300, y: ROW }, bend, { x: 0, y: ROW }],
+      };
+      const tail = { intersect: (point) => point };
+      const head = { intersect: (point) => intersectRect(rect, point) };
+
+      insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+      return JSON.parse(atob(svg.select('path').attr('data-points')));
+    };
+
+    it('ends a stub shorter than the arrowhead on the bend instead of running it backwards', () => {
+      const GAP = 1.25;
+      const points = dockedPoints(GAP);
+      const last = points.at(-1);
+      const previous = points.at(-2);
+
+      expect(last.y).toBe(ROW);
+      expect(Math.hypot(last.x - previous.x, last.y - previous.y)).toBeGreaterThanOrEqual(
+        ARROW_POINT_OFFSET
+      );
+    });
+
+    it('keeps a longer final segment on the row it arrived on', () => {
+      const GAP = 5;
+      const last = dockedPoints(GAP).at(-1);
+
+      expect(last.y).toBe(ROW);
+      expect(last.x).toBeLessThan(WIDTH / 2 + GAP);
+    });
+  });
 });
 
 describe('insertEdge swimlane parallel ports', () => {

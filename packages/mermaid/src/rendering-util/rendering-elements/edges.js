@@ -390,11 +390,15 @@ function keepsArrivalAxis(originalLast, lastInner, candidate) {
   return sharesColumn(candidate, lastInner) || sharesRow(candidate, lastInner);
 }
 
+/** The last segment the layout drew into the node, as the point it heads for and where it left. */
+function arrivalSegment(originalLast, lastInner, before) {
+  return coincides(originalLast, lastInner)
+    ? { heading: lastInner, from: before }
+    : { heading: originalLast, from: lastInner };
+}
+
 /** Whether the segment to the candidate points against the direction the edge was travelling. */
-function runsAgainstHeading(originalLast, lastInner, before, candidate) {
-  const endsAtBend = coincides(originalLast, lastInner);
-  const heading = endsAtBend ? lastInner : originalLast;
-  const from = endsAtBend ? before : lastInner;
+function runsAgainstHeading({ heading, from }, lastInner, candidate) {
   return (
     (heading.x - from.x) * (candidate.x - lastInner.x) +
       (heading.y - from.y) * (candidate.y - lastInner.y) <
@@ -402,16 +406,28 @@ function runsAgainstHeading(originalLast, lastInner, before, candidate) {
   );
 }
 
-/** Picks the point where a swimlane edge docks on its head shape. */
+/** Moves the candidate onto the row or column the arriving segment ran along. */
+function snapToArrivalAxis({ heading, from }, lastInner, candidate) {
+  if (sharesRow(heading, from) && !sharesColumn(heading, from)) {
+    return { x: candidate.x, y: lastInner.y };
+  }
+  if (sharesColumn(heading, from) && !sharesRow(heading, from)) {
+    return { x: lastInner.x, y: candidate.y };
+  }
+  return candidate;
+}
+
+/** Picks the point where a swimlane edge docks on its head shape, on the axis it arrived on. */
 function dockFinalPoint(originalLast, lastInner, before, candidate) {
   const wasOrthogonal = sharesColumn(originalLast, lastInner) || sharesRow(originalLast, lastInner);
   if (wasOrthogonal && !keepsArrivalAxis(originalLast, lastInner, candidate)) {
     return originalLast;
   }
-  if (runsAgainstHeading(originalLast, lastInner, before, candidate)) {
+  const arrival = arrivalSegment(originalLast, lastInner, before);
+  if (runsAgainstHeading(arrival, lastInner, candidate)) {
     return lastInner;
   }
-  return candidate;
+  return snapToArrivalAxis(arrival, lastInner, candidate);
 }
 
 // Swimlanes-only helper, kept module-private: it self-gates to `-to-label` edges
@@ -729,9 +745,11 @@ export const insertEdge = function (
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
+        // A final segment shorter than the arrowhead's pull-back would be drawn backwards,
+        // so such a stub is dropped too and the edge ends on the bend.
+        const minFinalSegment = Math.max(AXIS_TOLERANCE, markerOffsets[edge.arrowTypeEnd] ?? 0);
         const lastIsDuplicate =
-          Math.abs(newLast.x - lastInner.x) < AXIS_TOLERANCE &&
-          Math.abs(newLast.y - lastInner.y) < AXIS_TOLERANCE;
+          Math.hypot(newLast.x - lastInner.x, newLast.y - lastInner.y) < minFinalSegment;
         const firstIsDuplicate =
           Math.abs(newFirst.x - firstInner.x) < AXIS_TOLERANCE &&
           Math.abs(newFirst.y - firstInner.y) < AXIS_TOLERANCE;
