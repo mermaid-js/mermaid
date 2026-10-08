@@ -248,7 +248,7 @@ export function validateContainerSegment(
   return true;
 }
 
-interface OrthogonalSegment {
+export interface OrthogonalSegment {
   a: Point;
   b: Point;
   orientation: GridOrientation;
@@ -260,7 +260,7 @@ function segmentSpan(segment: OrthogonalSegment): { low: number; high: number } 
     : { low: Math.min(segment.a.y, segment.b.y), high: Math.max(segment.a.y, segment.b.y) };
 }
 
-function nonterminalSegments(points: readonly Point[]): OrthogonalSegment[] {
+export function nonterminalSegments(points: readonly Point[]): OrthogonalSegment[] {
   const segments = normalizePolyline([...points])
     .segments.filter((segment) => segment.orientation !== 'Z')
     .map((segment) => ({
@@ -302,7 +302,10 @@ function nonterminalSegments(points: readonly Point[]): OrthogonalSegment[] {
   return segments.filter(({ a, b }) => a.x !== b.x || a.y !== b.y);
 }
 
-function pairSegmentsConflict(candidate: OrthogonalSegment, committed: OrthogonalSegment): boolean {
+export function pairSegmentsConflict(
+  candidate: OrthogonalSegment,
+  committed: OrthogonalSegment
+): boolean {
   if (candidate.orientation !== committed.orientation) {
     return false;
   }

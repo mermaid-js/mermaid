@@ -10,7 +10,9 @@ import {
   validateContainerSegment,
   validateSameContainerRoute,
 } from './routerConstraint.js';
+import { RouteOccupancyIndex } from './routerOccupancy.js';
 import {
+  LANE_SEPARATION_PX,
   TERMINAL_APPROACH_PX,
   ownerGroupTitle,
   ownerSideKey,
@@ -57,6 +59,54 @@ export interface PreparedRoutingModes {
   sparseHierarchyIds: Set<string>;
   sparseLcaIds: Set<string>;
   routedContainerIds: GridContainerId[];
+  routeOccupancy: Map<GridContainerId, RouteOccupancyIndex>;
+}
+
+const MAX_PLANS_FOR_OVERLAP_DEMOTION = 64;
+const MAX_FAST_ROUTE_SEPARATION_STEPS = 4;
+
+/**
+ * Moves one interior segment of a minimal corridor route sideways until it no longer shares a
+ * corridor with another edge's route. Shifting an interior segment keeps both terminal stubs and
+ * the Manhattan length, so the result is accepted only if it still passes the caller's validation.
+ */
+function separateRouteFromOccupied(
+  route: readonly Point[],
+  occupancy: RouteOccupancyIndex,
+  pairKey: string,
+  isAcceptable: (candidate: Point[]) => boolean
+): Point[] | undefined {
+  if (!occupancy.conflictsWithRoute(route, pairKey)) {
+    return [...route];
+  }
+  const points = normalizePolyline([...route]).points;
+  for (let step = 1; step <= MAX_FAST_ROUTE_SEPARATION_STEPS; step++) {
+    for (const sign of [1, -1]) {
+      const delta = sign * step * LANE_SEPARATION_PX;
+      for (let index = 1; index < points.length - 2; index++) {
+        const vertical = points[index].x === points[index + 1].x;
+        const shifted = points.map((point, pointIndex) =>
+          pointIndex === index || pointIndex === index + 1
+            ? vertical
+              ? { x: point.x + delta, y: point.y }
+              : { x: point.x, y: point.y + delta }
+            : point
+        );
+        if (!occupancy.conflictsWithRoute(shifted, pairKey) && isAcceptable(shifted)) {
+          return shifted;
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+function terminalStubsAreLongEnough(points: readonly Point[]): boolean {
+  const stub = (a: Point, b: Point) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+  return (
+    stub(points[0], points[1]) >= TERMINAL_APPROACH_PX &&
+    stub(points.at(-1)!, points.at(-2)!) >= TERMINAL_APPROACH_PX
+  );
 }
 
 export function boundedAlternativePortalCoordinates(
@@ -884,6 +934,7 @@ function prepareRoutingModes(
     );
   };
   const compatibilityFastRoutes = new Map<string, Point[]>();
+  const routeOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
   const compatibilityFastPathEnabled =
     options.topologyCaps === undefined &&
     options.searchCaps === undefined &&
@@ -937,7 +988,29 @@ function prepareRoutingModes(
       }
       continue;
     }
-    compatibilityFastRoutes.set(plan.edge.id, route);
+    // A minimal route that shares a corridor with an earlier edge is nudged sideways. If no valid
+    // nudge exists the edge is demoted to sparse routing, which can pick other ports and corridors.
+    // Large layouts keep the fast path so they stay search-free within the performance contract.
+    let occupancy = routeOccupancy.get(plan.lcaContainerId);
+    if (!occupancy) {
+      occupancy = new RouteOccupancyIndex();
+      routeOccupancy.set(plan.lcaContainerId, occupancy);
+    }
+    const separated = separateRouteFromOccupied(
+      normalized.points,
+      occupancy,
+      plan.pairKey,
+      (candidate) =>
+        terminalStubsAreLongEnough(candidate) &&
+        manhattanLength(candidate) === lowerBoundLength &&
+        validateSameContainerRoute(candidate, source, target, plan.lcaContainerId, result)
+    );
+    if (!separated && eligiblePlans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
+      continue;
+    }
+    const finalRoute = separated ?? route;
+    occupancy.add(finalRoute, plan.pairKey);
+    compatibilityFastRoutes.set(plan.edge.id, finalRoute);
   }
   const sparseHierarchyIds = new Set(
     plans
@@ -972,5 +1045,6 @@ function prepareRoutingModes(
     sparseHierarchyIds,
     sparseLcaIds,
     routedContainerIds,
+    routeOccupancy,
   };
 }

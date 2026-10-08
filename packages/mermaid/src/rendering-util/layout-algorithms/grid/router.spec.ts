@@ -178,6 +178,25 @@ function expectFiniteOrthogonalRoutes(data: LayoutData): void {
 }
 
 describe('grid router', () => {
+  it.each([
+    [80, 40],
+    [100, 40],
+    [120, 60],
+  ])('does not overlap unrelated diagonal edges (%ix%i nodes)', (width, height) => {
+    const data = baseLayout(
+      [
+        leaf('tl', width, height, { row: 1, column: 1 }),
+        leaf('tr', width, height, { row: 1, column: 2 }),
+        leaf('bl', width, height, { row: 2, column: 1 }),
+        leaf('br', width, height, { row: 2, column: 2 }),
+      ],
+      [edge('e1', 'tl', 'br'), edge('e2', 'tr', 'bl')]
+    );
+    runGridLayoutCore(data);
+    expectFiniteOrthogonalRoutes(data);
+    expect(longestSharedNonterminalSubpath(data.edges[0], data.edges[1])).toBe(0);
+  });
+
   it('keeps routing deterministic when edge input order changes', () => {
     const build = () =>
       baseLayout(

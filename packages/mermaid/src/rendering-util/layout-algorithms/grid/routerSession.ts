@@ -43,6 +43,7 @@ import {
   type GridRoutingInstrumentation,
   type GridRoutingInstrumentationCheckpoint,
 } from './routerInstrumentation.js';
+import { RouteOccupancyIndex } from './routerOccupancy.js';
 import { RouterSearchWorkspace } from './routerSearch.js';
 import {
   sparseContainerSegment,
@@ -67,6 +68,7 @@ interface BundleEdgeCheckpoint {
 
 interface BundleCheckpoint {
   pairKey: string;
+  occupancy: { index: RouteOccupancyIndex; size: number } | undefined;
   pairRoutes: Point[][] | undefined;
   demandKeys: string[];
   pairedPortals: Map<string, PairedPortal>;
@@ -82,7 +84,8 @@ function createBundleCheckpoint(
   pairedPortals: ReadonlyMap<string, PairedPortal>,
   demandCoords: ReadonlyMap<string, number>,
   instrumentedRoutes: readonly Point[][] | undefined,
-  metrics: GridRoutingInstrumentation | undefined
+  metrics: GridRoutingInstrumentation | undefined,
+  routeOccupancy: ReadonlyMap<GridContainerId, RouteOccupancyIndex>
 ): BundleCheckpoint {
   // Snapshot only state a failed bundle can mutate. Topologies and prepared plans are immutable and
   // intentionally shared across attempts.
@@ -107,8 +110,11 @@ function createBundleCheckpoint(
       bundleDemandCoords.set(demandKey, coordinate);
     }
   }
+  // Pair members share endpoints, so they share one LCA container and one occupancy index.
+  const occupancyIndex = routeOccupancy.get(pairPlans[0].lcaContainerId);
   return {
     pairKey,
+    occupancy: occupancyIndex ? { index: occupancyIndex, size: occupancyIndex.size } : undefined,
     pairRoutes: committedPairRoutes ? [...committedPairRoutes] : undefined,
     demandKeys,
     pairedPortals: bundlePairedPortals,
@@ -130,6 +136,7 @@ function restoreBundleCheckpoint(
   instrumentedRoutes: Point[][] | undefined,
   metrics: GridRoutingInstrumentation | undefined
 ): void {
+  checkpoint.occupancy?.index.truncate(checkpoint.occupancy.size);
   if (checkpoint.pairRoutes) {
     pairRoutes.set(checkpoint.pairKey, [...checkpoint.pairRoutes]);
   } else {
@@ -498,7 +505,8 @@ export class GridEdgeRoutingSession {
             searchWorkspace,
             endpointOverlayScratch.get(plan.lcaContainerId)!,
             options,
-            pairRoutes.get(plan.pairKey) ?? []
+            pairRoutes.get(plan.pairKey) ?? [],
+            { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
           )
         : useSparseLca
           ? sparseContainerSegment(
@@ -618,6 +626,10 @@ export class GridEdgeRoutingSession {
     edge.points = points;
     committedPairRoutes.push(points);
     pairRoutes.set(plan.pairKey, committedPairRoutes);
+    // Fast routes were registered while routing modes were prepared.
+    if (!compatibilityFastRoute) {
+      this.occupancyFor(plan.lcaContainerId).add(lcaPoints, plan.pairKey);
+    }
     if (metrics && instrumentedRoutes) {
       const boundaryTransitionCount = plan.source.chain.length + plan.target.chain.length - 2;
       recordGridRoute(
@@ -632,14 +644,25 @@ export class GridEdgeRoutingSession {
     }
   }
 
+  private occupancyFor(containerId: GridContainerId): RouteOccupancyIndex {
+    let occupancy = this.modes.routeOccupancy.get(containerId);
+    if (!occupancy) {
+      occupancy = new RouteOccupancyIndex();
+      this.modes.routeOccupancy.set(containerId, occupancy);
+    }
+    return occupancy;
+  }
+
   private createBundleCheckpoint(pairPlans: readonly EdgeRoutePlan[]): BundleCheckpoint {
+    this.occupancyFor(pairPlans[0].lcaContainerId);
     return createBundleCheckpoint(
       pairPlans,
       this.pairRoutes,
       this.pairedPortals,
       this.prepared.demandCoords,
       this.instrumentedRoutes,
-      this.metrics
+      this.metrics,
+      this.modes.routeOccupancy
     );
   }
 
