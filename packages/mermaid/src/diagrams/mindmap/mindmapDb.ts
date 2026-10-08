@@ -188,24 +188,31 @@ export class MindmapDB {
   }
 
   /**
-   * Assign section numbers to nodes based on their position relative to root
+   * Assign color sections by top-level branch (default) or structural depth.
    * @param node - The mindmap node to process
    * @param sectionNumber - The section number to assign (undefined for root)
+   * @param depth - Distance from the root, independent of indentation width
+   * @param colorByDepth - Whether to assign sections by depth instead of top-level branch
    */
-  public assignSections(node: MindmapNode, sectionNumber?: number): void {
+  public assignSections(
+    node: MindmapNode,
+    sectionNumber?: number,
+    depth = 0,
+    colorByDepth = false
+  ): void {
     // For root node, section should be undefined (not -1)
     if (node.level === 0) {
       node.section = undefined;
     } else {
       // For non-root nodes, assign the section number
-      node.section = sectionNumber;
+      node.section = colorByDepth ? (depth - 1) % (MAX_SECTIONS - 1) : sectionNumber;
     }
     // For root node's children, assign section numbers based on their index
     // For other nodes, inherit parent's section number
     if (node.children) {
       for (const [index, child] of node.children.entries()) {
         const childSectionNumber = node.level === 0 ? index % (MAX_SECTIONS - 1) : sectionNumber;
-        this.assignSections(child, childSectionNumber);
+        this.assignSections(child, childSectionNumber, depth + 1, colorByDepth);
       }
     }
   }
@@ -367,7 +374,7 @@ export class MindmapDB {
     log.debug('getData: mindmapRoot', mindmapRoot, config);
 
     // Assign section numbers to all nodes based on their position relative to root
-    this.assignSections(mindmapRoot);
+    this.assignSections(mindmapRoot, undefined, 0, config.mindmap?.colorBy === 'depth');
 
     // Convert tree structure to flat arrays
     const processedNodes: MindmapLayoutNode[] = [];
