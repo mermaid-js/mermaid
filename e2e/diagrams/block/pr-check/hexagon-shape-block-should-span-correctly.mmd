@@ -1,0 +1,12 @@
+---
+description: >-
+  Hexagon-shaped blocks (`{{"..."}}`) at different positions in a 3-column
+  grid, including two single-column hexagons flanking a spacer and one
+  hexagon spanning all 3 columns via `:3`, verifying hexagon width and span
+  calculation alongside plain square blocks with HTML-escaped label text.
+---
+block-beta
+  columns 3
+  A1{{"Opening tag"}} space A3{{"Closing tag"}}
+  B1["&lt;tagname&gt;"] B2["content"] B3["&lt;/tagname&gt;"]
+  C{{"Element"}}:3

@@ -1,0 +1,25 @@
+---
+description: >-
+  A `json` block attached to a use case via a relationship, with mixed
+  value types (out-of-order numeric-looking keys, an array, a nested
+  object) and a classDef plus inline style applied to the json node.
+---
+usecase-beta
+  direction LR
+
+  actor Analyst
+  Inspect("Inspect payload")
+  json Payload@{
+    "2": "second in source",
+    "1": "first after 2",
+    "colors": ["Red", "Green"],
+    "address": { "city": "Oslo" },
+    "items": [{ "name": "Book" }],
+    "empty": {}
+  }:::data
+
+  Analyst --> Inspect
+  Inspect --> Payload
+
+  classDef data stroke:#3572a5
+  style Payload stroke-width:2px

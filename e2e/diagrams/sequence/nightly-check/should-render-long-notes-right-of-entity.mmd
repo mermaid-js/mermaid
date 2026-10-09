@@ -1,0 +1,13 @@
+---
+description: >-
+  No-frontmatter sequence diagram with an `entity`-typed participant and a
+  plain actor, where a very long `Note right of` text is attached to the
+  entity shape, checking that long note content wraps/sizes correctly
+  against that specific participant shape.
+---
+sequenceDiagram
+  participant Alice@{ "type" : "entity" }
+  actor Bob
+  Alice->>Bob: Hola
+  Note right of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

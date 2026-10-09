@@ -1,0 +1,20 @@
+---
+description: >-
+  Two sibling subgraphs ("customers" containing CUSTOMER, "orders"
+  containing ORDER) are connected by a relationship drawn between the
+  subgraph ids themselves (customers ||--o{ orders) rather than their
+  member entities, contrasting with the sibling "across-subgraphs"
+  fixture, which links the two entities directly.
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph customers
+  CUSTOMER
+  end
+
+  subgraph orders
+  ORDER
+  end
+
+  customers ||--o{ orders : places

@@ -1,0 +1,18 @@
+---
+description: >-
+  C4Context diagram exercising the directional Rel variants in one place:
+  default Rel plus Rel_U, Rel_D, Rel_L and Rel_R fanning out from a single
+  System to four others.
+---
+C4Context
+title Relationship directions
+System(a, "A")
+System(b, "B")
+System(c, "C")
+System(d, "D")
+System(e, "E")
+Rel(a, b, "Rel (default)")
+Rel_U(a, c, "Rel_U")
+Rel_D(a, d, "Rel_D")
+Rel_L(a, e, "Rel_L")
+Rel_R(b, c, "Rel_R")

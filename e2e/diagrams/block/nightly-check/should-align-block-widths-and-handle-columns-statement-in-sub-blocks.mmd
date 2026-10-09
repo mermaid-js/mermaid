@@ -1,0 +1,16 @@
+---
+description: >-
+  A single anonymous sub-block explicitly set to `columns 1` holds three
+  plain ids, followed by two top-level ids — verifying a `columns` statement
+  inside one level of sub-block correctly aligns block widths with the
+  top-level blocks around it.
+---
+block
+  block
+  columns 1
+  id1
+  id2
+  id2.1
+  end
+  id3
+  id4

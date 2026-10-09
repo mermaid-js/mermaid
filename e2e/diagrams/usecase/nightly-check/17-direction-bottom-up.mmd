@@ -1,0 +1,17 @@
+---
+description: >-
+  A simple three-step linear flow (Browse -> Checkout -> Download receipt)
+  rendered with `direction BT` (bottom to top). Companion to
+  18-direction-right-to-left.mmd.
+---
+usecase-beta
+    direction BT
+
+    actor Customer
+    Browse("Browse catalog")
+    Checkout("Checkout")
+    Receipt[Download receipt]
+
+    Customer --> Browse
+    Browse --> Checkout
+    Checkout --> Receipt

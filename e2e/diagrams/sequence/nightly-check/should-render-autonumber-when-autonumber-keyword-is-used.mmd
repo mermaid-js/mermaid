@@ -1,0 +1,17 @@
+---
+description: >-
+  Autonumbering enabled via the `autonumber` keyword directly in the
+  diagram source (rather than through config), applied across a loop block
+  and a note -- contrast with the sibling variant that enables numbering
+  purely through the `showSequenceNumbers` config option.
+---
+sequenceDiagram
+  autonumber
+  Alice->>John: Hello John, how are you?
+  loop Healthcheck
+  John->>John: Fight against hypochondria
+  end
+  Note right of John: Rational thoughts!
+  John-->>Alice: Great!
+  John->>Bob: How about you?
+  Bob-->>John: Jolly good!

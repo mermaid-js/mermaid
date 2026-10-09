@@ -1,0 +1,17 @@
+---
+description: >-
+  A 3-item bar chart with labelRotation set to 120 — above the allowed
+  range, checking that the renderer clamps back to a normal (0°)
+  rotation instead of applying the out-of-range value. Companion to
+  label-rotation-clamped-below-limit.mmd.
+config:
+  xyChart:
+    xAxis:
+      showLabel: true
+      labelRotation: 120
+---
+xychart
+  title "Items Sold"
+  x-axis "Item" [ Monitor, Mouse, Keyboard ]
+  y-axis "Number of Sales"
+  bar    [ 51, 72, 36 ]

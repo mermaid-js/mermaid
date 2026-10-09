@@ -1,0 +1,31 @@
+---
+description: >-
+  Sibling and nested `opt` blocks with titles long enough to overflow the
+  block width, combined with activation bars (`+`/`-`). No wrap config is
+  set, so the long titles are expected to overflow rather than wrap --
+  contrast with the "-wrapping" sibling variant.
+---
+sequenceDiagram
+  participant A
+  participant B
+  participant C
+  participant D
+  participant E
+  participant G
+
+  A ->>+ B: Task 1
+  opt this is an opt with a long title that will overflow
+  B ->>+ C: Task 2
+  C -->>- B: Return
+  end
+
+  A ->> D: Task 3
+  opt this is another opt with a long title that will overflow
+  D ->>+ E: Task 4
+  opt this is a nested opt with a long title that will overflow
+  E ->>+ G: Task 5
+  G -->>- E: Return
+  end
+  E ->> E: Task 6
+  end
+  D -->> A: Complete

@@ -1,0 +1,9 @@
+---
+description: >-
+  Verifies that the '&' multi-node chain syntax tolerates irregular extra
+  spacing around the '&' separators when mixing a classic bracket-labeled node
+  (n2["label for n2"]) with nodes using the newer @{ label: ... } shape-data
+  syntax (n4, n5) in the same statement.
+---
+flowchart TB
+  n2["label for n2"] &   n4@{ label: "label for n4"}   & n5@{ label: "label for n5"}
