@@ -1,0 +1,34 @@
+---
+config:
+  layout: grid
+  grid:
+    curve: rounded
+    edgeCornerRadius: 18
+    rowGap: 48
+    columnGap: 120
+---
+flowchart LR
+  D{"Diamond"}@{ row: 2, column: 1 }
+  DT["Diamond top"]@{ row: 1, column: 2 }
+  DM["Diamond middle"]@{ row: 2, column: 2 }
+  DB["Diamond bottom"]@{ row: 3, column: 2 }
+
+  C(("Circle"))@{ row: 5, column: 1 }
+  CT["Circle top"]@{ row: 4, column: 2 }
+  CM["Circle middle"]@{ row: 5, column: 2 }
+  CB["Circle bottom"]@{ row: 6, column: 2 }
+
+  H{{"Hexagon"}}@{ row: 8, column: 1 }
+  HT["Hexagon top"]@{ row: 7, column: 2 }
+  HM["Hexagon middle"]@{ row: 8, column: 2 }
+  HB["Hexagon bottom"]@{ row: 9, column: 2 }
+
+  D --> DT
+  D --> DM
+  D --> DB
+  C --> CT
+  C --> CM
+  C --> CB
+  H --> HT
+  H --> HM
+  H --> HB
