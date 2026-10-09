@@ -1,0 +1,18 @@
+---
+description: >-
+  treemap-beta with a "Main" section containing a plain leaf (A), a nested
+  sub-section (B) whose two leaves inherit a classDef (important), and a
+  leaf (C) styled via a second classDef (secondary) that uses
+  stroke-dasharray. Exercises applying multiple distinct classDef styles
+  within a single diagram.
+---
+treemap-beta
+  "Main"
+    "A": 20
+    "B":::important
+      "B1": 10
+      "B2": 15
+    "C": 5:::secondary
+
+  classDef important fill:#f96,stroke:#333,stroke-width:2px;
+  classDef secondary fill:#6cf,stroke:#333,stroke-dasharray:5 5;

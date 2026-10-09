@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that a diamond-shaped node fanning out to multiple targets via the &
+  edge shorthand still computes correct boundary intersection points when that
+  node is also a member of a subgraph.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+flowchart LR
+  A{A} --> B & C
+  subgraph "subbe"
+  A
+  end

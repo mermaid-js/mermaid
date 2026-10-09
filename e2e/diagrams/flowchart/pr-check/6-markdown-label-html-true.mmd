@@ -1,0 +1,13 @@
+---
+description: >-
+  Markdown-string labels (backtick-quoted: bold, italic) with htmlLabels: true,
+  so labels render through the foreignObject/HTML path. Pairs with
+  7-markdown-label-html-false.mmd, same label content, only htmlLabels differs.
+  A multi-line (bullet-list) markdown label was tried first and is not valid
+  syntax here -- a literal newline inside a quoted node label breaks the
+  flowchart parser regardless of markdown wrapping -- so this stays single-line.
+config:
+  htmlLabels: true
+---
+flowchart TD
+  A["`This is **bold** and *italic* text`"] --> B["`A second markdown label`"]

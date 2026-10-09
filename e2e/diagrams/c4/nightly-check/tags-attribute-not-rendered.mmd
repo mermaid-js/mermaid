@@ -1,0 +1,11 @@
+---
+description: >-
+  A Person and a System each carrying a $tags="v1.0" attribute — the current
+  renderer accepts the attribute without erroring but does not display it
+  anywhere on the diagram.
+---
+C4Context
+title Tags attribute (not shown by current renderer)
+Person(p, "Person", "desc", $tags="v1.0")
+System(s, "System", "desc", $tags="v1.0")
+Rel(p, s, "Uses")

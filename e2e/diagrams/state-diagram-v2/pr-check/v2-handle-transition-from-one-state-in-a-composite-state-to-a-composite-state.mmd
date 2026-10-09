@@ -1,0 +1,19 @@
+---
+description: >-
+  Two composite states S1 (containing sub1, sub2) and S2 (containing sub4),
+  with both a top-level S1 --> S2 transition and a cross-boundary transition
+  from S1's child sub1 directly to S2's child sub4.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  state S1 {
+  sub1 -->sub2
+  }
+
+  state S2 {
+  sub4
+  }
+  S1 --> S2
+  sub1 --> sub4

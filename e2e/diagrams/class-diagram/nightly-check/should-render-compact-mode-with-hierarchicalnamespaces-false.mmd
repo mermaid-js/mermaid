@@ -1,0 +1,27 @@
+---
+description: >-
+  classDiagram with hierarchicalNamespaces disabled, rendering dot-notation nested
+  namespaces (Company.Engineering.Backend/Frontend) in compact/flat form rather than as
+  nested containers, with cross-namespace relationships.
+config:
+  class:
+    hierarchicalNamespaces: false
+---
+classDiagram
+  namespace Company.Engineering.Backend {
+  class Developer {
+    +writeCode()
+  }
+  }
+  namespace Company.Engineering.Frontend {
+  class Designer {
+    +createMockup()
+  }
+  }
+  namespace Company {
+  class CEO {
+    +makeDecisions()
+  }
+  }
+  CEO --> Developer : oversees
+  CEO --> Designer : oversees

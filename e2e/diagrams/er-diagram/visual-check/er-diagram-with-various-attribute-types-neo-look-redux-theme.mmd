@@ -1,0 +1,18 @@
+---
+description: >-
+  ER diagram covering a single entity covering every attribute type variant
+  (plain, array, varchar with length, generic), rendered under the "neo" look
+  with the "redux" theme.
+config:
+  look: neo
+  theme: redux
+---
+erDiagram
+    PRODUCT {
+        int id PK
+        string name
+        string[] tags
+        varchar(255) description
+        type~T~ genericType
+        float price
+    }
