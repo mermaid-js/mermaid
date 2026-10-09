@@ -1,0 +1,16 @@
+---
+description: >-
+  Minimal classDiagram-v2 with four classes joined only by plain `--` link
+  relations (one labeled "Inheritance", one "link", two unlabeled). Uses
+  `flowchart.htmlLabels: false`.
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+classDiagram-v2
+
+  classA -- classB : Inheritance
+  classA -- classC : link
+  classC -- classD : link
+  classB -- classD

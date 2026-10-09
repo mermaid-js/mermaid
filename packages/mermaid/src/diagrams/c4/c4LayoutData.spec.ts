@@ -1,4 +1,4 @@
-import { setConfig } from '../../config.js';
+import { setConfig, setSiteConfig } from '../../config.js';
 import c4Db from './c4Db.js';
 // @ts-ignore: JISON doesn't support types
 import c4 from './parser/c4Diagram.jison';
@@ -219,13 +219,24 @@ UpdateRelStyle(a, b, $lineColor="red;background:url(x)", $textColor="blue;conten
     expect(nodes.find((node) => node.id === 'a')?.link).toBe('https://example.com/');
   });
 
-  // The link is written to `xlink:href` unescaped, and the SVG-level DOMPurify pass is
-  // skipped at `securityLevel: 'loose'`, so the scheme has to be rejected here.
   it('neutralises a $link that carries a javascript: scheme', () => {
     const db = parse(`C4Context\nPerson(a, "A", "desc", $link="javascript:alert(1)")`);
 
     const { nodes } = getData(db, config());
-    expect(nodes.find((node) => node.id === 'a')?.link).not.toContain('javascript:');
+    expect(nodes.find((node) => node.id === 'a')?.link).toBe('about:blank');
+  });
+
+  // Like a flowchart link, `securityLevel: 'loose'` is the author's explicit trust choice.
+  it('keeps a $link as written at securityLevel loose', () => {
+    setSiteConfig({ securityLevel: 'loose' });
+    try {
+      const db = parse(`C4Context\nPerson(a, "A", "desc", $link="javascript:alert(1)")`);
+
+      const { nodes } = getData(db, config());
+      expect(nodes.find((node) => node.id === 'a')?.link).toBe('javascript:alert(1)');
+    } finally {
+      setSiteConfig({ securityLevel: 'strict' });
+    }
   });
 
   // `UpdateElementStyle` resolves its alias against the elements first and then the

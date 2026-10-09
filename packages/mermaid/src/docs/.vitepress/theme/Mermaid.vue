@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  <div v-html="svg"></div>
+  <div class="mermaid-diagram" v-html="svg"></div>
 </template>
 
 <script setup>

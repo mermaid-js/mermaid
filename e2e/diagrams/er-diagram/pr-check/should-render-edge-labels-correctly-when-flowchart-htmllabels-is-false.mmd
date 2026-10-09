@@ -1,0 +1,17 @@
+---
+description: >-
+  Sets flowchart.htmlLabels to false in config to force SVG (non-HTML) edge
+  label rendering, then renders a CUSTOMER/ORDER/LINE-ITEM/ADDRESS/INVOICE
+  schema with both single-word and quoted multi-word relationship labels,
+  verifying labels stay legible without HTML label support.
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE-ITEM : contains
+  CUSTOMER ||--|{ ADDRESS : "invoiced at"
+  CUSTOMER ||--|{ ADDRESS : "receives goods at"
+  ORDER ||--o{ INVOICE : "liable for"

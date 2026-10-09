@@ -1,0 +1,12 @@
+---
+description: >-
+  A Person carrying a $link="https://example.com" attribute. The unified
+  renderer wraps the node in an <a xlink:href> anchor (asserted in
+  e2e/rendering/c4/pr-check/c4-link.spec.js); the screenshot only records
+  how it looks.
+---
+C4Context
+title Link attribute (not shown by current renderer)
+Person(p, "Person", "desc", $link="https://example.com")
+System(s, "System", "desc")
+Rel(p, s, "Uses")
