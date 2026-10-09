@@ -1372,6 +1372,34 @@ function detourReturnCoordinate(
   return detourLine + direction * (labelHalfSize + LABEL_CLEARANCE);
 }
 
+interface DetourAxis {
+  along(point: Point): number;
+  cross(point: Point): number;
+  point(along: number, cross: number): Point;
+  labelAlongSize(labelNode: Node): number;
+  labelCrossSize(labelNode: Node): number;
+}
+
+const HORIZONTAL_DETOUR_AXIS: DetourAxis = {
+  along: (point) => point.x,
+  cross: (point) => point.y,
+  point: (along, cross) => ({ x: along, y: cross }),
+  labelAlongSize: (labelNode) => labelNode.width ?? 0,
+  labelCrossSize: (labelNode) => labelNode.height ?? 0,
+};
+
+const VERTICAL_DETOUR_AXIS: DetourAxis = {
+  along: (point) => point.y,
+  cross: (point) => point.x,
+  point: (along, cross) => ({ x: cross, y: along }),
+  labelAlongSize: (labelNode) => labelNode.height ?? 0,
+  labelCrossSize: (labelNode) => labelNode.width ?? 0,
+};
+
+function detourAxis(segment: Segment): DetourAxis {
+  return segment.orientation === 'H' ? HORIZONTAL_DETOUR_AXIS : VERTICAL_DETOUR_AXIS;
+}
+
 function buildLabelDetourPoints(
   points: Point[],
   segmentIndex: number,
@@ -1388,108 +1416,63 @@ function buildLabelDetourPoints(
   // endpoint geometry, while label placement owns only the interior detour.
   const a = points[segmentIndex];
   const b = points[segmentIndex + 1];
-  if (segment.orientation === 'H') {
-    const span = labelNode.width + LABEL_CLEARANCE * 2;
-    const x1 = centerAlong - span / 2;
-    const x2 = centerAlong + span / 2;
-    const minX = Math.min(a.x, b.x);
-    const maxX = Math.max(a.x, b.x);
-    const extendsBeforeStart = x1 < minX - LABEL_EPSILON;
-    const extendsAfterEnd = x2 > maxX + LABEL_EPSILON;
-    const xDirection = b.x >= a.x ? 1 : -1;
-    const segmentInset = Math.max(
-      0,
-      Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.x - a.x) / 2 - LABEL_EPSILON)
-    );
-    const entryX = a.x + xDirection * segmentInset;
-    const exitX = b.x - xDirection * segmentInset;
-    if (!extendsBeforeStart && !extendsAfterEnd) {
-      return normalizePolyline([
-        ...points.slice(0, segmentIndex),
-        a,
-        { x: x1, y: segment.a.y },
-        { x: x1, y: detourLineCoord },
-        { x: x2, y: detourLineCoord },
-        { x: x2, y: segment.a.y },
-        b,
-        ...points.slice(segmentIndex + 2),
-      ]).points;
-    }
-
-    const returnY = detourReturnCoordinate(segment.a.y, detourLineCoord, labelNode.height / 2);
-    const detourPoints: Point[] = [...points.slice(0, segmentIndex), a];
-    if (extendsBeforeStart) {
-      detourPoints.push(
-        { x: entryX, y: segment.a.y },
-        { x: entryX, y: returnY },
-        { x: x1, y: returnY },
-        { x: x1, y: detourLineCoord }
-      );
-    } else {
-      detourPoints.push({ x: x1, y: segment.a.y }, { x: x1, y: detourLineCoord });
-    }
-    detourPoints.push({ x: x2, y: detourLineCoord });
-    if (extendsAfterEnd) {
-      detourPoints.push(
-        { x: x2, y: returnY },
-        { x: exitX, y: returnY },
-        { x: exitX, y: segment.a.y }
-      );
-    } else {
-      detourPoints.push({ x: x2, y: segment.a.y });
-    }
-    detourPoints.push(b, ...points.slice(segmentIndex + 2));
-    return normalizePolyline(detourPoints).points;
-  }
-
-  const span = labelNode.height + LABEL_CLEARANCE * 2;
-  const y1 = centerAlong - span / 2;
-  const y2 = centerAlong + span / 2;
-  const minY = Math.min(a.y, b.y);
-  const maxY = Math.max(a.y, b.y);
-  const extendsBeforeStart = y1 < minY - LABEL_EPSILON;
-  const extendsAfterEnd = y2 > maxY + LABEL_EPSILON;
-  const yDirection = b.y >= a.y ? 1 : -1;
+  const axis = detourAxis(segment);
+  const sourceLine = axis.cross(segment.a);
+  const aAlong = axis.along(a);
+  const bAlong = axis.along(b);
+  const span = axis.labelAlongSize(labelNode) + LABEL_CLEARANCE * 2;
+  const detourStart = centerAlong - span / 2;
+  const detourEnd = centerAlong + span / 2;
+  const extendsBeforeStart = detourStart < Math.min(aAlong, bAlong) - LABEL_EPSILON;
+  const extendsAfterEnd = detourEnd > Math.max(aAlong, bAlong) + LABEL_EPSILON;
+  const alongDirection = bAlong >= aAlong ? 1 : -1;
   const segmentInset = Math.max(
     0,
-    Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.y - a.y) / 2 - LABEL_EPSILON)
+    Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(bAlong - aAlong) / 2 - LABEL_EPSILON)
   );
-  const entryY = a.y + yDirection * segmentInset;
-  const exitY = b.y - yDirection * segmentInset;
+  const entryAlong = aAlong + alongDirection * segmentInset;
+  const exitAlong = bAlong - alongDirection * segmentInset;
   if (!extendsBeforeStart && !extendsAfterEnd) {
     return normalizePolyline([
       ...points.slice(0, segmentIndex),
       a,
-      { x: segment.a.x, y: y1 },
-      { x: detourLineCoord, y: y1 },
-      { x: detourLineCoord, y: y2 },
-      { x: segment.a.x, y: y2 },
+      axis.point(detourStart, sourceLine),
+      axis.point(detourStart, detourLineCoord),
+      axis.point(detourEnd, detourLineCoord),
+      axis.point(detourEnd, sourceLine),
       b,
       ...points.slice(segmentIndex + 2),
     ]).points;
   }
 
-  const returnX = detourReturnCoordinate(segment.a.x, detourLineCoord, labelNode.width / 2);
+  const returnLine = detourReturnCoordinate(
+    sourceLine,
+    detourLineCoord,
+    axis.labelCrossSize(labelNode) / 2
+  );
   const detourPoints: Point[] = [...points.slice(0, segmentIndex), a];
   if (extendsBeforeStart) {
     detourPoints.push(
-      { x: segment.a.x, y: entryY },
-      { x: returnX, y: entryY },
-      { x: returnX, y: y1 },
-      { x: detourLineCoord, y: y1 }
+      axis.point(entryAlong, sourceLine),
+      axis.point(entryAlong, returnLine),
+      axis.point(detourStart, returnLine),
+      axis.point(detourStart, detourLineCoord)
     );
   } else {
-    detourPoints.push({ x: segment.a.x, y: y1 }, { x: detourLineCoord, y: y1 });
+    detourPoints.push(
+      axis.point(detourStart, sourceLine),
+      axis.point(detourStart, detourLineCoord)
+    );
   }
-  detourPoints.push({ x: detourLineCoord, y: y2 });
+  detourPoints.push(axis.point(detourEnd, detourLineCoord));
   if (extendsAfterEnd) {
     detourPoints.push(
-      { x: returnX, y: y2 },
-      { x: returnX, y: exitY },
-      { x: segment.a.x, y: exitY }
+      axis.point(detourEnd, returnLine),
+      axis.point(exitAlong, returnLine),
+      axis.point(exitAlong, sourceLine)
     );
   } else {
-    detourPoints.push({ x: segment.a.x, y: y2 });
+    detourPoints.push(axis.point(detourEnd, sourceLine));
   }
   detourPoints.push(b, ...points.slice(segmentIndex + 2));
   return normalizePolyline(detourPoints).points;
@@ -1512,54 +1495,35 @@ function buildExtendedLabelDetourPoints(
   const b = points[segmentIndex + 1];
   // Self-loop terminal segments are short; quarter points keep the entry and exit lanes distinct.
   const insetDivisor = separateEntryAndExit ? 4 : 2;
-  if (segment.orientation === 'H') {
-    const span = labelNode.width + LABEL_CLEARANCE * 2;
-    const x1 = centerAlong - span / 2;
-    const x2 = centerAlong + span / 2;
-    const xDirection = b.x >= a.x ? 1 : -1;
-    const segmentInset = Math.max(
-      0,
-      Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.x - a.x) / insetDivisor - LABEL_EPSILON)
-    );
-    const entryX = a.x + xDirection * segmentInset;
-    const exitX = b.x - xDirection * segmentInset;
-    const returnY = detourReturnCoordinate(segment.a.y, detourLineCoord, labelNode.height / 2);
-    return normalizePolyline([
-      ...points.slice(0, segmentIndex),
-      a,
-      { x: entryX, y: segment.a.y },
-      { x: entryX, y: detourLineCoord },
-      { x: x1, y: detourLineCoord },
-      { x: x2, y: detourLineCoord },
-      { x: x2, y: returnY },
-      { x: exitX, y: returnY },
-      { x: exitX, y: segment.a.y },
-      b,
-      ...points.slice(segmentIndex + 2),
-    ]).points;
-  }
-
-  const span = labelNode.height + LABEL_CLEARANCE * 2;
-  const y1 = centerAlong - span / 2;
-  const y2 = centerAlong + span / 2;
-  const yDirection = b.y >= a.y ? 1 : -1;
+  const axis = detourAxis(segment);
+  const sourceLine = axis.cross(segment.a);
+  const aAlong = axis.along(a);
+  const bAlong = axis.along(b);
+  const span = axis.labelAlongSize(labelNode) + LABEL_CLEARANCE * 2;
+  const detourStart = centerAlong - span / 2;
+  const detourEnd = centerAlong + span / 2;
+  const alongDirection = bAlong >= aAlong ? 1 : -1;
   const segmentInset = Math.max(
     0,
-    Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(b.y - a.y) / insetDivisor - LABEL_EPSILON)
+    Math.min(EDGE_END_MARKER_CLEARANCE, Math.abs(bAlong - aAlong) / insetDivisor - LABEL_EPSILON)
   );
-  const entryY = a.y + yDirection * segmentInset;
-  const exitY = b.y - yDirection * segmentInset;
-  const returnX = detourReturnCoordinate(segment.a.x, detourLineCoord, labelNode.width / 2);
+  const entryAlong = aAlong + alongDirection * segmentInset;
+  const exitAlong = bAlong - alongDirection * segmentInset;
+  const returnLine = detourReturnCoordinate(
+    sourceLine,
+    detourLineCoord,
+    axis.labelCrossSize(labelNode) / 2
+  );
   return normalizePolyline([
     ...points.slice(0, segmentIndex),
     a,
-    { x: segment.a.x, y: entryY },
-    { x: detourLineCoord, y: entryY },
-    { x: detourLineCoord, y: y1 },
-    { x: detourLineCoord, y: y2 },
-    { x: returnX, y: y2 },
-    { x: returnX, y: exitY },
-    { x: segment.a.x, y: exitY },
+    axis.point(entryAlong, sourceLine),
+    axis.point(entryAlong, detourLineCoord),
+    axis.point(detourStart, detourLineCoord),
+    axis.point(detourEnd, detourLineCoord),
+    axis.point(detourEnd, returnLine),
+    axis.point(exitAlong, returnLine),
+    axis.point(exitAlong, sourceLine),
     b,
     ...points.slice(segmentIndex + 2),
   ]).points;
