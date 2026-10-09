@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 // Dev Explorer "Compare" tab (issue #8328). Both panes load the local dev
 // bundle, so the test needs no network: every non-localhost request is
 // aborted, and the published-version list is stubbed as unavailable.
-const FIXTURE = 'layout-tests/simple-graph.mmd';
+const FIXTURE = 'platform/dev-diagrams/layout-tests/simple-graph.mmd';
 
 test.describe('Dev Explorer compare tab', () => {
   // The Dev Explorer is only served by the esbuild dev server (`pnpm dev`).
@@ -20,7 +20,7 @@ test.describe('Dev Explorer compare tab', () => {
     );
 
     const params = new URLSearchParams({
-      path: 'layout-tests',
+      path: 'platform/dev-diagrams/layout-tests',
       file: FIXTURE,
       tab: 'compare',
       left: 'dev',
@@ -76,7 +76,9 @@ test.describe('Dev Explorer compare tab', () => {
   });
 
   test('leaves theme, layout and look unset by default', async ({ page }) => {
-    await page.goto(`/dev/?path=layout-tests&file=${encodeURIComponent(FIXTURE)}`);
+    await page.goto(
+      `/dev/?path=platform/dev-diagrams/layout-tests&file=${encodeURIComponent(FIXTURE)}`
+    );
     const selects = page.locator('.viewer-controls sl-select');
     for (const i of [0, 1, 2]) {
       await expect(selects.nth(i)).toHaveJSProperty('value', 'unset');
