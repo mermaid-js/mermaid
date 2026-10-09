@@ -27,6 +27,7 @@ export interface EdgeEndpointEntry {
   oppositeCoord: number;
   preferredCoord: number;
   compactPortal: boolean;
+  ambiguousSides?: readonly GridSide[];
   inner?: { demandKey: string; side: GridSide };
 }
 
@@ -149,9 +150,26 @@ function buildEndpointPlan(
   for (;;) {
     const parentId = current.parentId ?? ROOT_CONTAINER_ID;
     const parent = nodeById.get(parentId);
+    const currentCenter = { x: current.x ?? 0, y: current.y ?? 0 };
+    const dx = otherCenter.x - currentCenter.x;
+    const dy = otherCenter.y - currentCenter.y;
+    const titleAvoidanceTie =
+      dy < 0 &&
+      Math.abs(dx) <= PIXEL_EPSILON &&
+      Boolean((current.isGroup && current.groupTitleRect) || parent?.groupTitleRect);
+    const directSideCandidates: GridSide[] = [];
+    if (Math.abs(Math.abs(dx) - Math.abs(dy)) <= PIXEL_EPSILON && Math.abs(dx) > PIXEL_EPSILON) {
+      directSideCandidates.push(dx >= 0 ? 'right' : 'left', dy >= 0 ? 'bottom' : 'top');
+    }
+    const topBlocked = Boolean(
+      (current.isGroup && current.groupTitleRect) || parent?.groupTitleRect
+    );
+    const ambiguousSides = (
+      titleAvoidanceTie ? (['left', 'right'] as GridSide[]) : directSideCandidates
+    ).filter((candidate) => candidate !== 'top' || !topBlocked);
     let side = preferredSide(current, otherCenter);
     if (side === 'top' && parent?.groupTitleRect) {
-      side = otherCenter.x >= (current.x ?? 0) ? 'right' : 'left';
+      side = dx >= 0 ? 'right' : 'left';
     }
     chain.push({
       ownerId: current.id,
@@ -160,6 +178,7 @@ function buildEndpointPlan(
       oppositeCoord: oppositeCoordFor(otherRect, side),
       preferredCoord: oppositeCoordFor(endpointRect, side),
       compactPortal: current.id !== endpoint.id,
+      ambiguousSides: ambiguousSides.length > 1 ? ambiguousSides : undefined,
       inner: chain.length
         ? { demandKey: chain[chain.length - 1].demandKey, side: chain[chain.length - 1].side }
         : undefined,
@@ -227,11 +246,84 @@ function buildPairLanes(edges: Edge[]): Map<string, PairLane> {
   return out;
 }
 
+function resolveAmbiguousEndpointSides(plans: EdgeRoutePlan[], result: GridLayoutResult): void {
+  // Reserve geometrically preferred sides first. Equal-cost endpoint choices then use the legal
+  // side with the fewest strong reservations, preserving the original preference as a stable tie.
+  const reserved = new Map<string, number>();
+  const reservationKey = (ownerId: string, side: GridSide) => ownerSideKey(ownerId, side);
+  for (const plan of plans) {
+    for (const entry of [...plan.source.chain, ...plan.target.chain]) {
+      if (!entry.ambiguousSides) {
+        const key = reservationKey(entry.ownerId, entry.side);
+        reserved.set(key, (reserved.get(key) ?? 0) + 1);
+      }
+    }
+  }
+
+  const resolveEndpoint = (
+    plan: EdgeRoutePlan,
+    endpoint: EdgeEndpointPlan,
+    role: 'source' | 'target'
+  ): void => {
+    const ambiguous = endpoint.chain.filter(({ ambiguousSides }) => ambiguousSides);
+    if (ambiguous.length === 0) {
+      return;
+    }
+    const legalSides = (['right', 'bottom', 'left', 'top'] as const).filter(
+      (side) =>
+        ambiguous.every((entry) => entry.ambiguousSides?.includes(side)) &&
+        ambiguous.every((entry) => {
+          const owner = result.forest.nodeById.get(entry.ownerId);
+          return owner !== undefined && sideInterval(owner, side) !== undefined;
+        })
+    );
+    const selected = legalSides.sort(
+      (a, b) =>
+        ambiguous.reduce(
+          (count, entry) => count + (reserved.get(reservationKey(entry.ownerId, a)) ?? 0),
+          0
+        ) -
+          ambiguous.reduce(
+            (count, entry) => count + (reserved.get(reservationKey(entry.ownerId, b)) ?? 0),
+            0
+          ) || Number(a !== ambiguous[0].side) - Number(b !== ambiguous[0].side)
+    )[0];
+    if (!selected) {
+      return;
+    }
+    for (const entry of ambiguous) {
+      entry.side = selected;
+      const owner = result.forest.nodeById.get(entry.ownerId);
+      const oppositeId = role === 'source' ? plan.edge.end : plan.edge.start;
+      const opposite = oppositeId ? result.forest.nodeById.get(oppositeId) : undefined;
+      if (owner && opposite) {
+        entry.oppositeCoord = oppositeCoordFor(rectForNode(opposite), selected);
+        entry.preferredCoord = oppositeCoordFor(rectForNode(owner), selected);
+      }
+    }
+    for (const [index, entry] of endpoint.chain.entries()) {
+      entry.demandKey = JSON.stringify([plan.edge.id, role, entry.ownerId, entry.side]);
+      entry.inner =
+        index > 0
+          ? {
+              demandKey: endpoint.chain[index - 1].demandKey,
+              side: endpoint.chain[index - 1].side,
+            }
+          : undefined;
+    }
+  };
+
+  for (const plan of plans) {
+    resolveEndpoint(plan, plan.source, 'source');
+    resolveEndpoint(plan, plan.target, 'target');
+  }
+}
+
 function collectRoutePlans(layout: LayoutData, result: GridLayoutResult): EdgeRoutePlan[] {
   const nodeById = result.forest.nodeById;
   const pairLanes = buildPairLanes(layout.edges);
 
-  return layout.edges.map((edge) => {
+  const plans = layout.edges.map((edge) => {
     const source = edge.start ? nodeById.get(edge.start) : undefined;
     const target = edge.end ? nodeById.get(edge.end) : undefined;
     if (!source || !target) {
@@ -259,6 +351,8 @@ function collectRoutePlans(layout: LayoutData, result: GridLayoutResult): EdgeRo
       pairKey: pairLane.pairKey,
     };
   });
+  resolveAmbiguousEndpointSides(plans, result);
+  return plans;
 }
 
 export function assignCompactPortalCoordinates(
