@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that combining a classDef with a direct style override correctly sets
+  a node's fill, stroke, and text color, under the hand-drawn look.
+config:
+  look: handDrawn
+  fontFamily: courier
+  logLevel: 0
+---
+graph LR
+  foo-->bar
+
+  classDef foo fill:lightblue,color:green,stroke:#FF9E2C,font-weight:bold
+  style foo fill:#F99,stroke-width:2px,stroke:#F0F
+  style bar fill:#999,color: #00ff00, stroke-width:10px,stroke:#0F0

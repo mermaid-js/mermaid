@@ -1651,6 +1651,12 @@ export interface ArchitectureDiagramConfig extends BaseDiagramConfig {
  * via the `definition` "MindmapDiagramConfig".
  */
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
+  /**
+   * Color nodes by their top-level branch or by their depth in the tree.
+   * Depth is counted from the root, independently of indentation width.
+   *
+   */
+  colorBy?: 'branch' | 'depth';
   padding?: number;
   maxNodeWidth?: number;
   /**

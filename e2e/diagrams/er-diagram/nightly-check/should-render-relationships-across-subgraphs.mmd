@@ -1,0 +1,21 @@
+---
+description: >-
+  Two sibling subgraphs ("customers" containing CUSTOMER, "orders"
+  containing ORDER) are connected by a relationship drawn directly between
+  the two member entities rather than the subgraphs themselves, testing
+  edge routing across subgraph boundaries - contrast with the sibling
+  "relationships-between-subgraphs" fixture, which links the subgraphs
+  directly instead.
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph customers
+  CUSTOMER
+  end
+
+  subgraph orders
+  ORDER
+  end
+
+  CUSTOMER ||--o{ ORDER : places

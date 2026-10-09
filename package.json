@@ -55,6 +55,7 @@
     "contributors": "tsx scripts/updateContributors.ts",
     "playwright": "playwright test",
     "playwright:ui": "playwright test --ui",
+    "playwright:visual-check": "playwright test visual-check; e1=$?; playwright test e2e/rendering/mmd-snapshots.spec.ts -g \"visual-check\"; e2=$?; [ \"$e1\" -eq 0 ] && [ \"$e2\" -eq 0 ]",
     "playwright:install": "playwright install chromium",
     "coverage:e2e:clean": "rimraf .nyc_output coverage/playwright",
     "coverage:merge": "tsx scripts/coverage.ts",
