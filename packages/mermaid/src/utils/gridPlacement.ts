@@ -34,6 +34,71 @@ export function isGridVerticalAlign(value: unknown): value is GridVerticalAlign 
   );
 }
 
+export function validateGridCoordinate(
+  placementId: string,
+  field: 'row' | 'column',
+  value: unknown,
+  nodeId = placementId
+): asserts value is number | undefined {
+  if (value === undefined) {
+    return;
+  }
+  if (!isValidGridCoordinate(value)) {
+    const generatedNodeContext = nodeId === placementId ? '' : ` (node "${nodeId}")`;
+    const error = new Error(
+      `GRID_INVALID_COORDINATE: Invalid ${field} for placement "${placementId}"${generatedNodeContext}`
+    ) as Error & {
+      code: 'GRID_INVALID_COORDINATE';
+      details: Record<string, unknown>;
+    };
+    error.code = 'GRID_INVALID_COORDINATE';
+    error.details = {
+      nodeId,
+      placementId,
+      field,
+      value,
+    };
+    throw error;
+  }
+}
+
+export function validateGridPlacementCoordinates(
+  placements: unknown,
+  items: Iterable<{ id: string; metadata?: unknown }>
+): void {
+  if (typeof placements === 'object' && placements !== null && !Array.isArray(placements)) {
+    for (const [placementId, value] of Object.entries(placements)) {
+      if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        continue;
+      }
+      const placement = value as Record<string, unknown>;
+      if (Object.hasOwn(placement, 'row')) {
+        validateGridCoordinate(placementId, 'row', placement.row);
+      }
+      if (Object.hasOwn(placement, 'column')) {
+        validateGridCoordinate(placementId, 'column', placement.column);
+      }
+    }
+  }
+
+  for (const item of items) {
+    if (
+      typeof item.metadata !== 'object' ||
+      item.metadata === null ||
+      Array.isArray(item.metadata)
+    ) {
+      continue;
+    }
+    const metadata = item.metadata as Record<string, unknown>;
+    if (Object.hasOwn(metadata, 'row')) {
+      validateGridCoordinate(item.id, 'row', metadata.row);
+    }
+    if (Object.hasOwn(metadata, 'column')) {
+      validateGridCoordinate(item.id, 'column', metadata.column);
+    }
+  }
+}
+
 /**
  * Sanitizes the user-keyed placement dictionary without treating authored node IDs as config keys.
  * Only the fixed placement shape crosses the directive trust boundary.
@@ -53,6 +118,10 @@ export function sanitizeGridPlacements(dict: Record<string, unknown>): void {
     }
     const placement = value as Record<string, unknown>;
     for (const placementKey of Object.keys(placement)) {
+      if (placementKey === 'row' || placementKey === 'column') {
+        validateGridCoordinate(key, placementKey, placement[placementKey]);
+        continue;
+      }
       if (!isValidGridPlacementProperty(placementKey, placement[placementKey])) {
         log.debug('sanitize deleting grid placement property:', placementKey);
         delete placement[placementKey];
@@ -63,9 +132,6 @@ export function sanitizeGridPlacements(dict: Record<string, unknown>): void {
 
 function isValidGridPlacementProperty(key: string, value: unknown): boolean {
   switch (key) {
-    case 'row':
-    case 'column':
-      return isValidGridCoordinate(value);
     case 'horizontalAlign':
       return isGridHorizontalAlign(value);
     case 'verticalAlign':
