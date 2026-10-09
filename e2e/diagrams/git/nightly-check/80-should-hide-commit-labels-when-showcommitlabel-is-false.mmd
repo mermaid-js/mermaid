@@ -1,0 +1,21 @@
+---
+description: >-
+  Same develop-branch scenario as the showCommitLabel-true test, but with `showCommitLabel:
+  false`, verifying commit id labels are hidden when the directive is disabled.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: false
+    rotateCommitLabel: false
+    parallelCommits: false
+---
+gitGraph
+  commit id: "1"
+  commit id: "2"
+  branch develop
+  checkout develop
+  commit id: "3"
+  commit id: "4"
+  checkout main
+  commit id: "5"
+  commit id: "6"

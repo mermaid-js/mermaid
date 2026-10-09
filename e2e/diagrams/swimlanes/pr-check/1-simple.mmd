@@ -1,0 +1,21 @@
+---
+description: >-
+  Minimal smoke test for the swimlane diagram type: two lanes (Dep1, Dep2)
+  connected by a straight four-node chain, rendered left-to-right.
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph Dep1
+   Start
+   Process1
+  end
+  subgraph Dep2
+  Process2
+  Process3
+  end
+
+  Start --> Process1 --> Process2 --> Process3

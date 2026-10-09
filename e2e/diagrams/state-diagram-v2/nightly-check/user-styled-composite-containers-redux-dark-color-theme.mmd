@@ -1,0 +1,21 @@
+---
+description: >-
+  State diagram composite-container colouring: a composite (Outer) containing a
+  user-styled sub-composite (Pinned, via classDef+class) alongside a plain one
+  (Plain) — verifies a styled composite opts out of the palette entirely rather
+  than only partially. Rendered under the "redux-dark-color" theme.
+config:
+  theme: redux-dark-color
+---
+stateDiagram-v2
+    classDef pinned fill:#111827,stroke:#F59E0B,color:#F9FAFB
+    state Outer {
+      [*] --> Step
+      state Pinned {
+        [*] --> Held
+      }
+      state Plain {
+        [*] --> Free
+      }
+    }
+    class Pinned pinned

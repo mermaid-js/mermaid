@@ -1,0 +1,29 @@
+---
+description: >-
+  Larger worked example: an LLM connector, nested flow containers ("Coffee Team"
+  > "Researcher"/"Designer"), an input node carrying a literal `value`, tool
+  nodes with `params`/`returns`/`connectorRef` metadata, a flow-level
+  `instruction` annotation, and a refdoc linked via a dotted edge.
+---
+agentflow-beta TB
+  connector llm["LLM API"]
+  llm@{ protocol: "http", endpoint: "https://api.example.com/chat" }
+
+  flow coffee_team["Coffee Team"]
+    city["city"]@{ shape: input, value: "Stockholm" }
+
+    flow researcher["Researcher"]
+      research["research_location"]@{ shape: tool, params: "city :: String", returns: "Report" }
+      write["write_copy"]@{ shape: tool, connectorRef: "llm.chat", returns: "CoffeeCopy" }
+      city --> research --> write
+    end
+    researcher@{ instruction: "Research the city and draft English coffee copy citing sources." }
+
+    flow designer["Designer"]
+      render["generate_html"]@{ shape: tool, connectorRef: "llm.chat", returns: "String" }
+      brand["Nordic Brand Guide"]@{ shape: refdoc }
+      render -.- brand
+    end
+
+    researcher --> designer
+  end

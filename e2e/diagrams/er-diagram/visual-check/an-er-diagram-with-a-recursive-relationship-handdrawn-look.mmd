@@ -1,0 +1,11 @@
+---
+description: >-
+  An entity (CUSTOMER) with a self-referential relationship under the handDrawn
+  look.
+config:
+  look: handDrawn
+---
+erDiagram
+    CUSTOMER ||..o{ CUSTOMER : refers
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains

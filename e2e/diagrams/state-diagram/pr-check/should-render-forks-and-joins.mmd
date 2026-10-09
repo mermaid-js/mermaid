@@ -1,0 +1,21 @@
+---
+description: >-
+  Legacy v1 state diagram exercising explicit fork and
+  join state annotations at the top level: a fork splits into
+  State2/State3, which then rejoin at a join state before continuing to
+  State4.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  state fork_state &lt;&lt;fork&gt;&gt;
+  [*] --> fork_state
+  fork_state --> State2
+  fork_state --> State3
+
+  state join_state &lt;&lt;join&gt;&gt;
+  State2 --> join_state
+  State3 --> join_state
+  join_state --> State4
+  State4 --> [*]
