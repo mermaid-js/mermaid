@@ -298,6 +298,20 @@ describe('flow db metadata propagation', () => {
     });
   });
 
+  it('preserves inline grid metadata for node ids beginning with double underscores', () => {
+    flow.parser.yy = new FlowDB();
+    flow.parser.yy.clear();
+    flow.parser.parse(`flowchart TD
+      __start@{ row: 2, column: 3 }`);
+
+    const { nodes } = flow.parser.yy.getData();
+    const node = nodes.find((item: { id: string }) => item.id === '__start');
+    expect(node?.metadata).toEqual({
+      row: 2,
+      column: 3,
+    });
+  });
+
   it('strips prototype-shaped metadata keys before forwarding them', () => {
     flow.parser.yy = new FlowDB();
     flow.parser.yy.clear();
