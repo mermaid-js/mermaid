@@ -292,6 +292,32 @@ describe('grid router', () => {
     expect(longestSharedNonterminalSubpath(first, second)).toBe(0);
   });
 
+  it('does not let a later hierarchy route displace an earlier sparse route', () => {
+    const data = baseLayout(
+      [
+        leaf('C', 80, 40, { row: 1, column: 1 }),
+        group('Work', 'Work', { row: 1, column: 2 }),
+        group('Nested', 'Nested', { row: 2, column: 1 }, 'Work'),
+        leaf('D', 80, 40, { row: 1, column: 1 }, 'Nested'),
+        leaf('E', 80, 40, { row: 2, column: 1 }, 'Nested'),
+      ],
+      [edge('C-D', 'C', 'D'), edge('C-E', 'C', 'E')],
+      { rowGap: 45, columnGap: 70 }
+    );
+    runGridLayoutCore(data);
+
+    expect(invalidRoutingIssues(data)).toEqual([]);
+    const [toD, toE] = data.edges;
+    expect(longestSharedNonterminalSubpath(toD, toE)).toBe(0);
+    const endpointYs = [
+      data.nodes.find(({ id }) => id === 'C')?.y ?? 0,
+      data.nodes.find(({ id }) => id === 'D')?.y ?? 0,
+    ];
+    const routeYs = toD.points?.map(({ y }) => y) ?? [];
+    expect(Math.min(...routeYs)).toBeGreaterThanOrEqual(Math.min(...endpointYs) - 1);
+    expect(Math.max(...routeYs)).toBeLessThanOrEqual(Math.max(...endpointYs) + 1);
+  });
+
   it('lines group portals up with the item ports so edges take a single jog', () => {
     const data = baseLayout(
       [

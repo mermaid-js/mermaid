@@ -433,6 +433,51 @@ function assignDemandCoordinates(
       assigned.set(demand.demandKey, low + step * index);
     });
   }
+
+  // Keep a nearly aligned hierarchy route on one exact coordinate. Sub-pixel differences between
+  // independently allocated endpoint and portal slots are otherwise normalized away as a diagonal,
+  // which unnecessarily demotes the route to sparse search.
+  for (const plan of plans) {
+    if (plan.bundleSize !== 1) {
+      continue;
+    }
+    const sourceFinal = plan.source.chain.at(-1);
+    const targetFinal = plan.target.chain.at(-1);
+    if (!sourceFinal || !targetFinal) {
+      continue;
+    }
+    const verticalSide = (side: GridSide) => side === 'left' || side === 'right';
+    if (verticalSide(sourceFinal.side) !== verticalSide(targetFinal.side)) {
+      continue;
+    }
+    const sourceCoord = assigned.get(sourceFinal.demandKey);
+    const targetCoord = assigned.get(targetFinal.demandKey);
+    if (
+      sourceCoord === undefined ||
+      targetCoord === undefined ||
+      Math.abs(sourceCoord - targetCoord) > PIXEL_EPSILON
+    ) {
+      continue;
+    }
+    const entries = [...plan.source.chain, ...plan.target.chain];
+    if (entries.some((entry) => verticalSide(entry.side) !== verticalSide(sourceFinal.side))) {
+      continue;
+    }
+    const alignedCoord = [sourceCoord, targetCoord].find((coordinate) =>
+      entries.every((entry) => {
+        const owner = nodeById.get(entry.ownerId);
+        const interval = owner ? sideInterval(owner, entry.side) : undefined;
+        return (
+          interval !== undefined &&
+          coordinate >= interval.low - PIXEL_EPSILON &&
+          coordinate <= interval.high + PIXEL_EPSILON
+        );
+      })
+    );
+    if (alignedCoord !== undefined) {
+      entries.forEach((entry) => assigned.set(entry.demandKey, alignedCoord));
+    }
+  }
   return assigned;
 }
 
