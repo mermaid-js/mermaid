@@ -6,6 +6,7 @@ import {
   approxEqual,
   hasTerminalMarker,
   orthogonalPolylineContainsPoint,
+  polylineIntersectsRect,
   segmentIntersectsRectInterior,
   terminalMarkerClearanceRect,
 } from './helpers.js';
@@ -125,6 +126,14 @@ export interface Issue {
   nodeIds?: string[];
   edgeId?: string;
   details?: Record<string, unknown>;
+}
+
+export interface ValidateLayoutOptions {
+  /**
+   * Require each owning edge to pass through the rendered label center.
+   * The shared default only requires intersection with the label rectangle.
+   */
+  requireEdgeLabelCenter?: boolean;
 }
 
 export interface ValidateLayoutResult {
@@ -536,7 +545,10 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
  *
  * Also computes scoring based on bends and crossings.
  */
-export function validateLayout(layout: LayoutData): ValidateLayoutResult {
+export function validateLayout(
+  layout: LayoutData,
+  options: ValidateLayoutOptions = {}
+): ValidateLayoutResult {
   const issues: Issue[] = [];
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
@@ -924,18 +936,20 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       }
     }
 
-    // Check edge-label-off-edge: the owning edge must pass through the rendered label center.
-    // Border or corner contact leaves the label visually beside the route.
+    // Check edge-label-off-edge. Most layouts require the owning edge to intersect the rendered
+    // label rectangle; grid opts into the stricter center-anchor contract.
     if (ownLabelId) {
       const labelRect = nodeRects.get(ownLabelId);
-      if (
+      const labelIsAnchored =
         labelRect &&
-        !orthogonalPolylineContainsPoint(
-          points,
-          { x: labelRect.cx, y: labelRect.cy },
-          PIXEL_EPSILON
-        )
-      ) {
+        (options.requireEdgeLabelCenter
+          ? orthogonalPolylineContainsPoint(
+              points,
+              { x: labelRect.cx, y: labelRect.cy },
+              PIXEL_EPSILON
+            )
+          : polylineIntersectsRect(points, labelRect));
+      if (labelRect && !labelIsAnchored) {
         issues.push({
           type: 'edge-label-off-edge',
           message: `Edge "${edgeId}" does not pass through its label node "${ownLabelId}"`,
