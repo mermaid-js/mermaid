@@ -65,6 +65,51 @@ ${elementFontStyles()}
   .c4-shape line {
     stroke-width: 2px;
   }
+  /* Boundaries render as unified clusters: a dashed, unfilled box with its
+     label above the contents. */
+  .cluster rect {
+    fill: none;
+    stroke: ${options.lineColor ?? '#666666'};
+    stroke-width: 1px;
+    stroke-dasharray: 8 4;
+  }
+  .cluster .cluster-label,
+  .cluster .nodeLabel {
+    color: ${options.textColor ?? '#333333'};
+    fill: ${options.textColor ?? '#333333'};
+    font-size: 0.9em;
+  }
+  /* Relationships: dashed lines with an arrowhead, as on c4model.com. */
+  .edgePaths .path,
+  path.c4-rel {
+    stroke: ${options.lineColor ?? '#666666'};
+    fill: none;
+    stroke-width: 1.5px;
+    stroke-dasharray: 6 4;
+  }
+  .edgePaths .marker {
+    fill: ${options.lineColor ?? '#666666'};
+    stroke: ${options.lineColor ?? '#666666'};
+  }
+  /* Relationship labels: smaller, on an opaque background so they stay legible over lines. */
+  .edgeLabel {
+    font-size: 0.85em;
+    background-color: ${options.background ?? '#ffffff'};
+  }
+  .edgeLabel .label foreignObject {
+    overflow: visible;
+  }
+  /* The label is centred on its line, so it needs an opaque backing or the line
+     shows through between the glyphs. The wrapper div carries it for an HTML
+     label; a plain SVG label (htmlLabels: false) has a rect instead. */
+  .edgeLabel .labelBkg {
+    background-color: ${options.background ?? '#ffffff'};
+    opacity: 1;
+  }
+  .edgeLabel rect {
+    fill: ${options.background ?? '#ffffff'};
+    opacity: 1;
+  }
 `;
 
 export default getStyles;
