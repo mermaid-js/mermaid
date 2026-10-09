@@ -1,0 +1,24 @@
+---
+description:
+  Renders a subgraph (Outer) containing two nested child subgraphs (InnerOne,
+  InnerTwo) alongside an unrelated top-level sibling subgraph (Sibling) under
+  the plain redux theme, checking that nested containers are colored distinctly
+  from their parent and from the sibling at the outer level.
+config:
+  theme: "redux"
+---
+
+  flowchart LR
+    subgraph Outer
+      subgraph InnerOne
+        A[one] --> B[two]
+      end
+      subgraph InnerTwo
+        C[three]
+      end
+    end
+    subgraph Sibling
+      D[four]
+    end
+    B --> C
+    C --> D

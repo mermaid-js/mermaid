@@ -954,6 +954,23 @@ treeView-beta
       ensureNodeFromSelector('path', iconNode);
       expect(dom.window.document.querySelector('use')).toBeNull();
     });
+
+    jsdomIt('shows the actual parse error message in the error diagram', async () => {
+      const edges = Array.from({ length: 501 }, (_, index) => `N${index} --> N${index + 1}`).join(
+        '\n'
+      );
+
+      await expect(
+        mermaidAPI.render('flowchart-too-many-edges', `flowchart TD\n${edges}`)
+      ).rejects.toThrow(/Edge limit exceeded/);
+
+      // the error SVG stays in the document, check that it carries the message
+      const texts = [...document.querySelectorAll('.error-text')].map(
+        (element) => element.textContent ?? ''
+      );
+      expect(texts).toContain('Syntax error in text');
+      expect(texts.some((text) => text.includes('Edge limit exceeded'))).toBe(true);
+    });
   });
 
   describe('getDiagramFromText', () => {

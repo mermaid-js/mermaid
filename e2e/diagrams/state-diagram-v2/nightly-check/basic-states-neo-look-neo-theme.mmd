@@ -1,0 +1,22 @@
+---
+description: >-
+  State diagram covering five states fully interconnected (every pair gets a
+  transition) in a single chain from and back to [*], rendered under the "neo"
+  look with the "neo" theme.
+config:
+  look: neo
+  theme: neo
+---
+stateDiagram-v2
+    [*] --> State1
+    State1 --> State2
+    State1 --> State3
+    State1 --> State4
+    State1 --> State5
+    State2 --> State3
+    State2 --> State4
+    State2 --> State5
+    State3 --> State4
+    State3 --> State5
+    State4 --> State5
+    State5 --> [*]

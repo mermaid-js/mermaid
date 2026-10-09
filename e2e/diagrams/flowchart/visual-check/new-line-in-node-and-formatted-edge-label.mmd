@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that a markdown-string node label containing an explicit newline plus
+  **bold** formatting, and a bold-formatted edge label, render correctly when
+  htmlLabels is enabled (the HTML foreignObject label path), as the counterpart
+  to the htmlLabels-disabled variant of this fixture.
+config:
+  flowchart:
+    titleTopMargin: 0
+---
+%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+  b("`The dog in **the** hog.(1)
+  NL`") --"`1o **bold**`"--> c

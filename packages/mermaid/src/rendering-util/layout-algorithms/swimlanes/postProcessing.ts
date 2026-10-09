@@ -110,6 +110,9 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
 
   const finalizeRenderedEdges = (): void => {
     resolveRenderedOrthogonalCrossings(edges, nodeByIdMap);
+    // Crossing cleanup can bring a route onto a face another edge already leaves or
+    // enters from, so split shared terminal lanes again before endpoints are pinned.
+    separateSharedRenderedTerminalLanes(edges, nodeByIdMap);
     reassignCrossingExternalRailChannels(edges, nodeByIdMap);
     shortcutRedundantOrthogonalJogs(edges, nodeByIdMap);
     anchorLabelsToPolyline(edges, nodeByIdMap);
@@ -141,12 +144,12 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // Swimlane title bands are visual headers, not routing obstacles. After all
   // edge geometry is final, move the aligned title bands out of any clear rail
   // that still crosses the title section.
-  liftTopLaneTitleBandsAboveRails(edges, nodeByIdMap);
-  shiftLeftLaneTitleBandsLeftOfRails(edges, nodeByIdMap);
+  liftTopLaneTitleBandsAboveRails(edges, nodeByIdMap, direction);
+  shiftLeftLaneTitleBandsLeftOfRails(edges, nodeByIdMap, direction);
   // Moving one aligned title band can expose a second title/rail interaction
   // after the group bounds settle. The passes are idempotent, so one bounded
   // repeat keeps headers out of late crossing-cleanup routes without rerouting
   // the edges again.
-  liftTopLaneTitleBandsAboveRails(edges, nodeByIdMap);
-  shiftLeftLaneTitleBandsLeftOfRails(edges, nodeByIdMap);
+  liftTopLaneTitleBandsAboveRails(edges, nodeByIdMap, direction);
+  shiftLeftLaneTitleBandsLeftOfRails(edges, nodeByIdMap, direction);
 }

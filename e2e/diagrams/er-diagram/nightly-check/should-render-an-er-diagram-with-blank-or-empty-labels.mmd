@@ -1,0 +1,13 @@
+---
+description: >-
+  Three many-to-many relationships (BOOK-AUTHOR, BOOK-GENRE, AUTHOR-GENRE)
+  whose labels are an empty string, a single space, and two spaces
+  respectively, checking that blank or whitespace-only relationship labels
+  don't break layout or rendering.
+config:
+  logLevel: 1
+---
+erDiagram
+  BOOK }|..|{ AUTHOR : ""
+  BOOK }|..|{ GENRE : " "
+  AUTHOR }|..|{ GENRE : "  "

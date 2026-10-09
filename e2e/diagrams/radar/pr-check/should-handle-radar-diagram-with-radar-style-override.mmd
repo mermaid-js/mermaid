@@ -1,0 +1,15 @@
+---
+description: >-
+  Radar diagram with a `themeVariables.radar.axisColor` override (red) on
+  the base theme, verifying radar-specific style variables can be
+  overridden independently of general chart theming, using a minimal
+  3-axis single-curve dataset.
+config:
+  theme: base
+  themeVariables:
+    radar:
+      axisColor: '#FF0000'
+---
+radar-beta
+  axis A,B,C
+  curve mycurve{1,2,3}

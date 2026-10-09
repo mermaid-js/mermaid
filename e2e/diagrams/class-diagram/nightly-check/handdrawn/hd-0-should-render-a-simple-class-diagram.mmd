@@ -1,0 +1,17 @@
+---
+description: >-
+  Hand-drawn-look class diagram using plain undirected association arrows
+  (`--`) between four classes (classA-classD) forming a small link graph,
+  with one edge labeled "Inheritance" despite using a plain link rather
+  than an actual inheritance arrow.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+
+  classA -- classB : Inheritance
+  classA -- classC : link
+  classC -- classD : link
+  classB -- classD

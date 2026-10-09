@@ -1,0 +1,25 @@
+---
+description: >-
+  Current "flowchart TD" syntax with an accTitle/accDescr pair, rendered under
+  the "default" theme via an in-body %%{init}%% directive (rather than
+  frontmatter config) — companion to the legacy-graph-syntax variant of the same
+  theme.
+---
+%%{init: { 'logLevel': 0, 'theme': 'default'} }%%
+flowchart TD
+  accTitle: This is a title
+  accDescr: This is a description
+
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  B --> G[Another]
+  C ==>|One| D[Laptop]
+  C x--x|Two| E[iPhone]
+  C o--o|Three| F[fa:fa-car Car]
+  subgraph section
+    C
+    D
+    E
+    F
+    G
+  end
