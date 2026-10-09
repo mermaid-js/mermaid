@@ -1,0 +1,11 @@
+---
+description: >-
+  Relationship labels that are empty, a single space, and multiple spaces,
+  verifying blank labels don't break layout under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+    BOOK }|..|{ AUTHOR : ""
+    BOOK }|..|{ GENRE : " "
+    AUTHOR }|..|{ GENRE : "  "

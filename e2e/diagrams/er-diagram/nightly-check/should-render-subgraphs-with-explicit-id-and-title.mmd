@@ -1,0 +1,17 @@
+---
+description: >-
+  A subgraph is declared with an explicit id plus a separate quoted
+  display title (subgraph domain["Customer Domain"]), verifying the
+  subgraph renders using the title text while still being addressable by
+  its id - contrast with the sibling "quoted-ids" fixture, whose subgraph
+  id is itself the quoted string with no separate title.
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph domain["Customer Domain"]
+  CUSTOMER
+  ORDER
+  end
+
+  CUSTOMER ||--o{ ORDER : places

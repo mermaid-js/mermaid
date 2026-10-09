@@ -1,0 +1,28 @@
+---
+description:
+  In a top-to-bottom flowchart, checks a direct edge between two sibling child
+  subgraphs nested inside the same parent (sub_one --> sub_two) alongside an
+  outgoing edge from a node declared directly in the parent subgraph to a node
+  outside all subgraphs (_one --> b), including a source comment noting the
+  declaration-order sensitivity of this case.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+
+  subgraph one[One]
+  subgraph sub_one[Sub One]
+  _sub_one
+  end
+  subgraph sub_two[Sub Two]
+  _sub_two
+  end
+  _one
+  end
+
+  %% here, either the first or the second one
+  sub_one --> sub_two
+  _one --> b

@@ -1,0 +1,22 @@
+---
+description: >-
+  Self-referencing reverse arrows (solid/stick, top/bottom, dotted) with a
+  circle marker only at the source end, autonumber disabled.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice()/|-Alice: Circle at source with solid top reverse
+  Bob()\|-Bob: Circle at source with solid bottom reverse
+  Charlie()//-Charlie: Circle at source with stick top reverse
+  Alice()\\-Alice: Circle at source with stick bottom reverse
+  Bob()/|--Bob: Circle at source with dotted solid top reverse
+  Charlie()\|--Charlie: Circle at source with dotted solid bottom reverse
+  Alice()//--Alice: Circle at source with dotted stick top reverse
+  Bob()\\--Bob: Circle at source with dotted stick bottom reverse

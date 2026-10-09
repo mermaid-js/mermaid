@@ -1,0 +1,12 @@
+---
+description: >-
+  A linear three-service chain (A→B→C) rendered with fcose's default layout
+  knobs — the baseline companion to the increased-idealEdgeLengthMultiplier
+  variant of the same chain, so the two only differ by that one config value.
+---
+architecture-beta
+  service a(server)[A]
+  service b(server)[B]
+  service c(server)[C]
+  a:R --> L:b
+  b:R --> L:c

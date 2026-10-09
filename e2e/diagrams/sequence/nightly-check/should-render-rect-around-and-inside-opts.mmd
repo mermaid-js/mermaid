@@ -1,0 +1,25 @@
+---
+description: >-
+  No-frontmatter sequence diagram nesting `rect` background blocks both
+  around and inside two separate `opt` blocks: the first opt is wrapped by
+  an outer rect and also contains a nested rect, while the second opt
+  contains only a nested rect, checking that rect coloring composes
+  correctly across multiple opt fragments.
+---
+sequenceDiagram
+  A ->> B: 1
+  rect rgb(204, 0, 102)
+  opt maybe
+    C -->> D: Do something
+    rect rgb(0, 204, 204)
+      C ->> C: 0
+    end
+  end
+  end
+
+  opt possibly
+  rect rgb(0, 204, 204)
+    C ->> C: 0
+  end
+  end
+  B ->> A: Return

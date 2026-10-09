@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that a rhombus/diamond-shaped node can fan out to multiple targets in
+  a single statement using the & node-list edge shorthand, with dagre computing
+  correct intersection points on the diamond boundary for both resulting edges.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+flowchart LR
+  A{A} --> B & C

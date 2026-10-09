@@ -1,0 +1,15 @@
+---
+description:
+  Verifies there is no naming collision between mermaid's reserved 'default'
+  classDef (used to style all unclassed nodes) and a user-defined node whose
+  literal id is also 'default', ensuring the node named 'default' still renders
+  with the classDef's styling and doesn't break parsing.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+graph TD
+  classDef default fill:#a34,stroke:#000,stroke-width:4px,color:#fff
+  hello --> default
