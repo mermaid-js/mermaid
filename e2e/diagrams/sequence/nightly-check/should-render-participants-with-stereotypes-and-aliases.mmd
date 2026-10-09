@@ -1,0 +1,24 @@
+---
+description: >-
+  Classic-look sequence diagram where participants combine typed
+  `@{ "type": ... }` stereotypes (boundary, control, database, entity)
+  with the separate `as` keyword for the display alias, rather than an
+  inline `alias` field in the config object as in the sibling
+  "-inline-alias-in-config-object" fixture.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant API@{ "type" : "boundary" } as Public API
+  participant Auth@{ "type" : "control" } as Auth Controller
+  participant DB@{ "type" : "database" } as User Database
+  participant Cache@{ "type" : "entity" } as Cache Layer
+  API ->> Auth: Authenticate request
+  Auth ->> DB: Query user
+  DB -->> Auth: User data
+  Auth ->> Cache: Store session
+  Cache -->> Auth: Confirmed
+  Auth -->> API: Token

@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that when htmlLabels is disabled, an HTML tag embedded in a node
+  label (<strong>Haiya</strong>) is escaped and shown as literal text rather
+  than being rendered as markup.
+config:
+  layout: dagre
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+flowchart TD
+  a["<strong>Haiya</strong>"]---->b

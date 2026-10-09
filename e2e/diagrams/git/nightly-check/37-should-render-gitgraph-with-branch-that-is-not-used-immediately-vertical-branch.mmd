@@ -1,0 +1,13 @@
+---
+description: >-
+  Vertical (TB) counterpart of the branch-not-used-immediately test.
+---
+gitGraph TB:
+  commit id:"1-abcdefg"
+  branch x
+  checkout main
+  commit id:"2-abcdefg"
+  checkout x
+  commit id:"3-abcdefg"
+  checkout main
+  merge x

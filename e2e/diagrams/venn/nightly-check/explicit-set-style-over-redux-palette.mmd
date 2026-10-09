@@ -1,0 +1,14 @@
+---
+description: >-
+  Two sets (A, B) under the "redux-color" theme's automatic palette, where
+  set A also carries an explicit `style A fill:#00ff00` statement — checks
+  that the explicit style takes precedence over the palette-assigned
+  colour.
+config:
+  theme: redux-color
+---
+venn-beta
+  set A
+  set B
+  union A, B
+  style A fill:#00ff00

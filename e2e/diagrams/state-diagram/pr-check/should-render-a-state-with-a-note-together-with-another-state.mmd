@@ -1,0 +1,17 @@
+---
+description: >-
+  Legacy v1 state diagram note rendering with special characters (+, -) in
+  the state description, note text, and transition label, plus an HTML
+  <br/> line break inside a note-left annotation.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  State1: The state with a note +,-
+  note right of State1
+  Important information! You can write +,-
+  notes.
+  end note
+  State1 --> State2 : With +,-
+  note left of State2 : This is the note +,-<br/>

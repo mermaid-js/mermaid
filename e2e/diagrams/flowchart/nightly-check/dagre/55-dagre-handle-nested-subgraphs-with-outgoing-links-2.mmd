@@ -1,0 +1,28 @@
+---
+description:
+  Regression test for an edge drawn directly between two sibling subgraphs
+  nested inside a parent subgraph, alongside an edge from a node inside the
+  subgraph to a node declared only outside it, checking that dagre routes both
+  unambiguously.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+
+  subgraph one[One]
+  subgraph sub_one[Sub One]
+  _sub_one
+  end
+  subgraph sub_two[Sub Two]
+  _sub_two
+  end
+  _one
+  end
+
+  %% here, either the first or the second one
+  sub_one --> sub_two
+  _one --> b

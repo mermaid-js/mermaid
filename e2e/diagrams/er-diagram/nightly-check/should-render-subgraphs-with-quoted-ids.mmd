@@ -1,0 +1,16 @@
+---
+description: >-
+  A subgraph whose id itself is a quoted multi-word string
+  (subgraph "Customer Domain") with no separate title, later referenced
+  by that same quoted string as the source of a relationship to ORDER,
+  contrasting with the sibling "explicit-id-and-title" fixture, which uses
+  a plain id plus a separate bracketed title.
+config:
+  logLevel: 1
+---
+erDiagram
+  subgraph "Customer Domain"
+  CUSTOMER
+  end
+
+  "Customer Domain" ||--o{ ORDER : contains

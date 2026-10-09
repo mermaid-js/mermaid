@@ -1,0 +1,19 @@
+---
+description: >-
+  Every basic association arrow/marker combination — plain, reversed,
+  unmarked, circle-end on both sides, and cross-end on both sides —
+  between two actors and two use cases.
+---
+usecase-beta
+    direction LR
+    actor User
+    actor Support
+    Start("Start workflow")
+    Finish("Finish workflow")
+    User --> Start
+    Start <-- Support
+    Start -- Finish
+    User --o Finish
+    Start o-- Support
+    User --x Finish
+    Finish x-- Support

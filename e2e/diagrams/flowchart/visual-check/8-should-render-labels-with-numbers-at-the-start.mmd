@@ -1,0 +1,9 @@
+---
+description:
+  Checks that a node whose id/label is purely numeric ('1') parses and renders
+  correctly inside a subgraph, using semicolon-terminated statement syntax
+  (graph TB;subgraph ...;1;end;).
+config:
+  fontFamily: courier
+---
+graph TB;subgraph "number as labels";1;end;

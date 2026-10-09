@@ -1,0 +1,20 @@
+---
+description: >-
+  A top-level `global` block declaring one shared refdoc node, referenced via
+  dotted links from two independent sibling flow containers — demonstrating a
+  resource scoped outside any single flow.
+---
+agentflow-beta TB
+  global
+    corpus["Shared corpus"]@{ shape: refdoc }
+  end
+
+  flow summariser["Summariser"]
+    summarise["Summarise"]@{ shape: task }
+    summarise -.- corpus
+  end
+
+  flow indexer["Indexer"]
+    index["Build index"]@{ shape: task }
+    index -.- corpus
+  end
