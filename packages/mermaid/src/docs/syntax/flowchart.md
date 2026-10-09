@@ -636,7 +636,7 @@ flowchart TD
 
 #### Parameters
 
-- **icon**: The name of the icon from the registered icon pack.
+- **icon**: The name of the icon from the registered icon pack. If no pack is registered for a FontAwesome name such as `fas:tag` and HTML labels are on, the shape draws the FontAwesome CSS icon instead, see [Basic support for fontawesome](#basic-support-for-fontawesome). Any other name that is not registered is drawn as a blue square with a question mark.
 - **form**: Specifies the background shape of the icon. If not defined there will be no background to icon. Options include:
   - `square`
   - `circle`
@@ -1394,8 +1394,20 @@ You can register your own FontAwesome icon pack following the ["Registering icon
 
 Supported prefixes: `fa`, `fab`, `fas`, `far`, `fal`, `fad`.
 
+For example, this registers the free FontAwesome 6 solid icons under the `fa` and `fas` prefixes:
+
+```js
+mermaid.registerIconPacks(
+  ['fa', 'fas'].map((name) => ({
+    name,
+    loader: () =>
+      fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
+  }))
+);
+```
+
 ```note
-Note that it will fall back to FontAwesome CSS if FontAwesome packs are not registered.
+If FontAwesome packs are not registered, labels such as `fa:fa-twitter` fall back to the FontAwesome CSS. The `icon` shape does the same when HTML labels are on; with HTML labels off it draws a blue square with a question mark.
 ```
 
 ### Register FontAwesome CSS
