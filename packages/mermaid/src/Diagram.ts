@@ -5,6 +5,7 @@ import { UnknownDiagramError } from './errors.js';
 import defaultConfig from './defaultConfig.js';
 import { log } from './logger.js';
 import { encodeEntities } from './utils.js';
+import { validateGridPlacementCoordinates } from './utils/gridPlacement.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramCode, DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 
@@ -81,6 +82,10 @@ export class Diagram {
       db.setFrontmatterLineOffset?.(code.frontmatterLineOffset);
     }
     await parser.parse(textToParse);
+    if (config.layout === 'grid') {
+      validateGridPlacementCoordinates(config.grid?.placements, []);
+    }
+    db.validate?.();
     return new Diagram(type, textToParse, db, parser, renderer);
   }
 
