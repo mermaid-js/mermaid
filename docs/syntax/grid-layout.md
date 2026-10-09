@@ -4,7 +4,7 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/grid-layout.md](../../packages/mermaid/src/docs/syntax/grid-layout.md).
 
-# Grid Layout
+# Grid Layout (v\<MERMAID_RELEASE_VERSION>+)
 
 ## Introduction
 
