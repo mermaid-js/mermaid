@@ -295,6 +295,7 @@ describe('grid router', () => {
     const nestedRight = (nested.x ?? 0) + (nested.width ?? 0) / 2;
     expect(Math.max(...(first.points?.map(({ x }) => x) ?? []))).toBeGreaterThan(nestedRight);
     expect(Math.min(...(second.points?.map(({ x }) => x) ?? []))).toBeLessThan(nestedLeft);
+    expect(first.points?.[0].x).toBeGreaterThan(second.points?.[0].x ?? Number.POSITIVE_INFINITY);
   });
 
   it('does not let a later hierarchy route displace an earlier sparse route', () => {
