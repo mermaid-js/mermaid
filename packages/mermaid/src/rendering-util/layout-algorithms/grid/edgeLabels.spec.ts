@@ -459,6 +459,43 @@ describe('grid edge label helpers', () => {
     expect(metrics.labelPasses).toBe(0);
   });
 
+  it('falls back to anchored route midpoints when the shared index-work cap is exhausted', () => {
+    const data: LayoutData = {
+      nodes: [manualNode('a', 40, 100), manualNode('b', 360, 100)],
+      edges: [
+        manualEdge(
+          'capped',
+          'a',
+          'b',
+          [
+            { x: 80, y: 100 },
+            { x: 320, y: 100 },
+          ],
+          'bounded work'
+        ),
+      ],
+      config: { layout: 'grid' } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 80;
+    labelNode.height = 20;
+    const originalPoints = structuredClone(data.edges[0].points);
+    const metrics = createGridEdgeLabelInstrumentation();
+    const routingMetrics = createGridRoutingInstrumentation();
+
+    positionGridEdgeLabels(data, metrics, routingMetrics, { maxIndexWork: 0 });
+
+    expect(data.edges[0].points).toEqual(originalPoints);
+    expect(labelNode).toMatchObject({ x: 200, y: 100 });
+    expect(metrics.labelPasses).toBe(1);
+    expect(metrics.indexWorkUnits).toBe(0);
+    expect(metrics.indexWorkLimitFallbacks).toBe(1);
+    expect(routingMetrics.resourceLimitFallbacks).toBe(1);
+    expect(routingMetrics.fallbackReasons.label_index_work_cap).toBe(1);
+    expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+  });
+
   it('reroutes an owning edge while preserving its frozen label anchor', () => {
     const data: LayoutData = {
       nodes: [
@@ -513,6 +550,8 @@ describe('grid edge label helpers', () => {
     ]);
     expect(data.edges[0].points?.length).toBeGreaterThan(2);
     expect(metrics.labelPasses).toBe(2);
+    expect(metrics.indexWorkUnits).toBeGreaterThan(0);
+    expect(metrics.indexWorkLimitFallbacks).toBe(0);
     expect(routingMetrics.labelOverlayBuilds).toBe(1);
     expect(routingMetrics.labelOverlayVertices).toBe(4);
     expect(metrics.frozenReservations).toBe(1);

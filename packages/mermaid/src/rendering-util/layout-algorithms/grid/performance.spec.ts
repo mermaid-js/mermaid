@@ -419,6 +419,8 @@ describe('grid determinism and performance', () => {
     expect(metrics.obstacleCandidatesVisited).toBeLessThan(100);
     expect(metrics.segmentCandidatesVisited).toBeLessThan(50);
     expect(metrics.foreignEdgeLookups).toBeLessThanOrEqual(5);
+    expect(metrics.indexWorkUnits).toBeGreaterThan(0);
+    expect(metrics.indexWorkLimitFallbacks).toBe(0);
   });
 
   it('indexes dense label routing instead of rescanning all nodes and edges per candidate', () => {
@@ -456,5 +458,7 @@ describe('grid determinism and performance', () => {
     expect(metrics.segmentCandidatesVisited).toBeLessThan(1_000);
     expect(metrics.foreignEdgeLookups).toBeLessThan(100);
     expect(metrics.labelPasses).toBeLessThanOrEqual(2);
+    expect(metrics.indexWorkUnits).toBeGreaterThan(0);
+    expect(metrics.indexWorkLimitFallbacks).toBe(0);
   });
 });
