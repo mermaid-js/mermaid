@@ -61,8 +61,6 @@ export interface PreparedRoutingModes {
   sparseLcaIds: Set<string>;
   routedContainerIds: GridContainerId[];
   routeOccupancy: Map<GridContainerId, RouteOccupancyIndex>;
-  // Hierarchy edges whose compatibility route is already in the occupancy index.
-  occupancyRegisteredIds: Set<string>;
 }
 
 const MAX_PLANS_FOR_OVERLAP_DEMOTION = 64;
@@ -1158,16 +1156,14 @@ function prepareRoutingModes(
     occupancy.add(finalRoute, plan.pairKey);
     compatibilityFastRoutes.set(plan.edge.id, finalRoute);
   }
-  // A hierarchy edge keeps its compatibility route unless that route runs along another edge's
-  // corridor. Conflicting edges are demoted to sparse routing, which can pick other corridors.
-  const occupancyRegisteredIds = new Set<string>();
-  const overlappingHierarchyIds = new Set<string>();
   const sparseCandidate = (plan: EdgeRoutePlan): boolean =>
     !eligibleIds.has(plan.edge.id) &&
     plan.edge.start !== plan.edge.end &&
     (plan.bundleSize > 1 ||
       hasIsolatedEndpoints(plan) ||
       !compatibilityPlanIsValid(plan, result, demandCoords));
+  const planningOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
+  const overlappingHierarchyIds = new Set<string>();
   if (plans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
     for (const plan of prepared.orderedPlans) {
       if (
@@ -1186,16 +1182,15 @@ function prepareRoutingModes(
         attachments.end,
         plan.laneIndex
       );
-      let occupancy = routeOccupancy.get(plan.lcaContainerId);
+      let occupancy = planningOccupancy.get(plan.lcaContainerId);
       if (!occupancy) {
         occupancy = new RouteOccupancyIndex();
-        routeOccupancy.set(plan.lcaContainerId, occupancy);
+        planningOccupancy.set(plan.lcaContainerId, occupancy);
       }
       if (occupancy.conflictsWithRoute(route, plan.pairKey)) {
         overlappingHierarchyIds.add(plan.edge.id);
       } else {
         occupancy.add(route, plan.pairKey);
-        occupancyRegisteredIds.add(plan.edge.id);
       }
     }
   }
@@ -1225,6 +1220,5 @@ function prepareRoutingModes(
     sparseLcaIds,
     routedContainerIds,
     routeOccupancy,
-    occupancyRegisteredIds,
   };
 }
