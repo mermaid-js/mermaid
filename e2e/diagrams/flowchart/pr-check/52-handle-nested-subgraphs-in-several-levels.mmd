@@ -1,0 +1,25 @@
+---
+description:
+  Verifies three-level-deep subgraph nesting (O contains A, A contains nodes a/b
+  plus subgraph B, B contains c), with edges that cross multiple nesting levels
+  at once (b --> B and a --> c).
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TB
+  b-->B
+  a-->c
+  subgraph O
+  A
+  end
+  subgraph B
+  c
+  end
+  subgraph A
+    a
+    b
+    B
+  end

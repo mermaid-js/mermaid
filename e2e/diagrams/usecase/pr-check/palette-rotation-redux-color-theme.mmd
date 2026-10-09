@@ -1,0 +1,36 @@
+---
+description: >-
+  The same themed use-case diagram as themed-elements-redux-color-theme.mmd, but
+  with usecase.colorScheme: "rotate" — every actor/use-case/boundary takes its
+  own slot from the theme's categorical palette instead of its role colour.
+config:
+  theme: redux-color
+  usecase:
+    diagramPadding: 24
+    useMaxWidth: true
+    colorScheme: rotate
+---
+usecase-beta
+  accTitle: Themed use case example
+  accDescr: Exercises every themed element without any inline style overrides.
+  actor Normal("Normal User")
+  actor Hollow@{ type: hollow }
+  actor Business@{ business: true }
+
+  systemBoundary "Authentication System"
+    Login("Sign in")
+    Reset[Reset password]
+  end
+
+  Checkout("Checkout")@{ business: true }
+  Normal --> Login
+  Hollow --o Reset
+  Business --> Checkout
+  Login ..> : include Checkout
+  note for Login "Requires an active session"
+
+  json Payload@{
+    "region": "eu",
+    "tags": ["Red", "Green"]
+  }
+  Checkout --> Payload

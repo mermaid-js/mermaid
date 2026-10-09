@@ -1,0 +1,17 @@
+---
+description: >-
+  Hand-drawn class diagram applying two classDef styles to the same class
+  simultaneously — one via the inline `:::pink` shorthand and one via a
+  `cssClass "Class10" bold` statement — rendered with htmlLabels disabled;
+  the sibling without the "-without-htmllabels" suffix repeats this with
+  htmlLabels enabled.
+config:
+  logLevel: 1
+  htmlLabels: false
+  look: handDrawn
+---
+classDiagram
+  class Class10:::pink
+  cssClass "Class10" bold
+  classDef pink fill:#f9f
+  classDef bold stroke:#333,stroke-width:6px,color:#fff

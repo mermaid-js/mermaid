@@ -1,0 +1,17 @@
+---
+description: >-
+  Attribute key markers (PK, FK) across two related entities under the elk
+  layout.
+config:
+  layout: elk
+---
+erDiagram
+  AUTHOR_WITH_LONG_ENTITY_NAME {
+    string name PK
+  }
+  AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+  BOOK {
+      float price
+      string author FK
+      string title PK
+    }

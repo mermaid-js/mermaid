@@ -1,0 +1,12 @@
+---
+description: >-
+  CUSTOMER and ADDRESS are connected by two separate identifying
+  one-to-many relationships ("invoiced at" and "receives goods at"),
+  verifying that multiple distinct edges between the same pair of entities
+  render as separate, correctly labeled relationships.
+config:
+  logLevel: 1
+---
+erDiagram
+  CUSTOMER ||--|{ ADDRESS : "invoiced at"
+  CUSTOMER ||--|{ ADDRESS : "receives goods at"

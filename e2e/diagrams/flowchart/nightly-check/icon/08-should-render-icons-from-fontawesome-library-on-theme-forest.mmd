@@ -1,0 +1,14 @@
+---
+description: >-
+  Verifies that Font Awesome brand/solid icons (fab:/fa: syntax) embedded in
+  node labels render correctly under the forest theme, across a chain of five
+  icon-labeled nodes (Twitter, Facebook, Coffee, Car, GitHub).
+config:
+  theme: "forest"
+---
+flowchart TD
+            A("fab:fa-twitter Twitter") --> B("fab:fa-facebook Facebook")
+            B --> C("fa:fa-coffee Coffee")
+            C --> D("fa:fa-car Car")
+            D --> E("fab:fa-github GitHub")
+        

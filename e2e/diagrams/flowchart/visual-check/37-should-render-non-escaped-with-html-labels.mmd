@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that with htmlLabels enabled and securityLevel set to loose, an HTML
+  tag inside a node label's quoted string (<strong>Haiya</strong>) is rendered
+  as actual formatted HTML rather than escaped text.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+graph TD
+  a["<strong>Haiya</strong>"]-->b

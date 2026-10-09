@@ -1,0 +1,13 @@
+---
+description: >-
+  An entity attribute block covering an array type (string[]) and a generic type
+  (type~T~) under the handDrawn look.
+config:
+  look: handDrawn
+---
+erDiagram
+    BOOK {
+      string title
+      string[] authors
+      type~T~ type
+    }

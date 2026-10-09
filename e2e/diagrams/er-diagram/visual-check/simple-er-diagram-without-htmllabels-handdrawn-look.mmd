@@ -1,0 +1,11 @@
+---
+description: >-
+  Minimal two-entity ER diagram (CUSTOMER/ORDER/LINE-ITEM) with htmlLabels
+  disabled under the handDrawn look.
+config:
+  look: handDrawn
+  htmlLabels: false
+---
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains

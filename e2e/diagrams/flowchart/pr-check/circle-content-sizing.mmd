@@ -1,0 +1,11 @@
+%% Circles size from their label, not flowchart.minNodeWidth (#8352); the rects still follow it.
+flowchart LR
+  subgraph circles["circle"]
+    direction TB
+    ct[Start] --> c1((a)) --> c2((Circle)) --> c3((A considerably longer circle label that wraps)) --> cb(End)
+  end
+  subgraph doubles["dbl-circ"]
+    direction TB
+    dt[Start] --> d1(((a))) --> d2(((Circle))) --> d3(((A considerably longer circle label that wraps))) --> db(End)
+  end
+  circles ~~~ doubles

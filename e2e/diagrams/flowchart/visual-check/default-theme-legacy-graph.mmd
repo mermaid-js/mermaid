@@ -1,0 +1,26 @@
+---
+description: >-
+  Legacy "graph TD" flowchart syntax (not "flowchart TD") with an
+  accTitle/accDescr pair, rendered under the "default" theme via config; the
+  in-body directive only sets logLevel, not theme — verifying legacy-syntax
+  diagrams still pick up a config-supplied theme.
+config:
+  theme: default
+---
+%%{init: { 'logLevel': 0} }%%
+graph TD
+  accTitle: This is a title
+  accDescr: This is a description
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  B --> G[/Another/]
+  C ==>|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]
+  subgraph section
+    C
+    D
+    E
+    F
+    G
+  end

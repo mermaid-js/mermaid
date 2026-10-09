@@ -1,0 +1,27 @@
+---
+description:
+  Fully interconnects the document, notched-pentagon, lined-cylinder,
+  stacked-document, and half-rounded-rectangle node shapes (every shape linked
+  to every other) under the 'redux' theme with the 'neo' look, verifying this
+  batch of 5 shapes renders correctly and stays visually distinct under this
+  theme/look combination.
+config:
+  look: "neo"
+  theme: "redux"
+---
+flowchart TB
+  n00@{ shape: document, label: 'This is a label for document shape' }
+  n11@{ shape: notched-pentagon, label: 'This is a label for notched-pentagon shape' }
+  n22@{ shape: lined-cylinder, label: 'This is a label for lined-cylinder shape' }
+  n33@{ shape: stacked-document, label: 'This is a label for stacked-document shape' }
+  n44@{ shape: half-rounded-rectangle, label: 'This is a label for half-rounded-rectangle shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n00 --> n44
+  n11 --> n22
+  n11 --> n33
+  n11 --> n44
+  n22 --> n33
+  n22 --> n44
+  n33 --> n44

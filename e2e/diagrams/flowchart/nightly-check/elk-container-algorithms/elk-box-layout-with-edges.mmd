@@ -1,0 +1,18 @@
+---
+description:
+  Exercises the elk.box sub-algorithm, which positions nodes but does not route
+  edges, so every edge here must fall back to a straight line between node
+  centers. Guards against a regression where missing route data crashes on
+  `points.filter`, and where the labelled edge's missing ELK label position
+  renders as `translate(undefined, NaN)` instead of falling back correctly.
+config:
+  layout: elk.box
+---
+%% elk.box places nodes but does not route edges. Every edge here relies on the
+%% straight-line fallback; without it the render throws on `points.filter`.
+%% One edge is labelled: an unrouted edge has no ELK label position either, and
+%% an unset one renders as `translate(undefined, NaN)`.
+flowchart TD
+  A[Start] -->|labelled| B[Middle]
+  B --> C[End]
+  A --> C

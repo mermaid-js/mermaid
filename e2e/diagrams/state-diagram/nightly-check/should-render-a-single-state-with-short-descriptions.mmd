@@ -1,0 +1,14 @@
+---
+description: >-
+  Legacy v1 state diagram declaring two disconnected, unrelated aliased
+  states (a long display name on a short id "long1", and a single
+  character display name "A" on a long id "longlonglongid") with no
+  transitions between them, testing label/id length combinations in
+  isolation.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  state "A long long name" as long1
+  state "A" as longlonglongid

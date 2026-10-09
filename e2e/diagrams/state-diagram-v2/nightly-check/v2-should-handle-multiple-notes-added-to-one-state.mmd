@@ -1,0 +1,13 @@
+---
+description: >-
+  A single state (MyState) with two notes attached - one via `note left of`
+  and one via `note right of` - testing that a state can carry notes on
+  both sides simultaneously.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  MyState
+  note left of MyState : I am a lefty
+  note right of MyState : I am a righty

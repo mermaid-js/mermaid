@@ -1,0 +1,47 @@
+---
+description: >-
+  Regression fixture: a dense many-to-many edge mesh between two lanes
+  (Dep1/Dep2, 3 nodes each, fully cross-connected both ways) that
+  documents an edge routing path intruding into the lane title label.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+      subgraph Dep1
+        Dep1.Proc1
+        Dep1.Proc2
+        Dep1.Proc3
+      end
+
+      subgraph Dep2
+        Dep2.Proc1
+        Dep2.Proc2
+        Dep2.Proc3
+      end
+
+
+      Dep1.Proc1 --> Dep2.Proc1
+      Dep1.Proc1 --> Dep2.Proc2
+      Dep1.Proc1 --> Dep2.Proc3
+
+      Dep1.Proc2 --> Dep2.Proc1
+      Dep1.Proc2 --> Dep2.Proc2
+      Dep1.Proc2 --> Dep2.Proc3
+
+      Dep1.Proc3 --> Dep2.Proc1
+      Dep1.Proc3 --> Dep2.Proc2
+      Dep1.Proc3 --> Dep2.Proc3
+
+      Dep2.Proc1 --> Dep1.Proc1
+      Dep1.Proc1 --> Dep1.Proc2
+      Dep1.Proc1 --> Dep1.Proc3
+
+      Dep2.Proc2 --> Dep1.Proc1
+      Dep2.Proc2 --> Dep1.Proc2
+      Dep2.Proc2 --> Dep1.Proc3
+
+      Dep2.Proc3 --> Dep1.Proc1
+      Dep2.Proc3 --> Dep1.Proc2
+      Dep2.Proc3 --> Dep1.Proc3

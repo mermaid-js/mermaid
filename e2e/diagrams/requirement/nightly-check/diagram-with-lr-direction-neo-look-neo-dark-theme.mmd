@@ -1,0 +1,23 @@
+---
+description: >-
+  Requirement diagram covering an explicit `direction LR` statement, rendered
+  under the "neo" look with the "neo-dark" theme.
+config:
+  look: neo
+  theme: neo-dark
+---
+requirementDiagram
+    direction LR
+    requirement req_a {
+        id: 1
+        text: req A.
+        risk: low
+        verifymethod: analysis
+    }
+    requirement req_b {
+        id: 2
+        text: req B.
+        risk: medium
+        verifymethod: inspection
+    }
+    req_a - derives -> req_b

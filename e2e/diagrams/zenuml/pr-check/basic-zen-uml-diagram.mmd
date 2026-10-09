@@ -1,0 +1,13 @@
+---
+description: >-
+  Basic ZenUML sequence diagram exercising nested method-call blocks, an
+  if-conditional message, and a self-call within the innermost block.
+---
+zenuml
+  A.method() {
+  if(x) {
+    B.method() {
+      selfCall() { return X }
+    }
+  }
+  }
