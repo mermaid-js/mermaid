@@ -4,7 +4,7 @@
  * This module contains geometry helpers, distance calculations, and other
  * low-level utilities used across the routing stages.
  */
-import type { Node } from '../../types.js';
+import type { Edge, Node } from '../../types.js';
 import type { Point, Rect, PortSide } from './types.js';
 
 /**
@@ -85,6 +85,25 @@ export function terminalMarkerClearanceRect(
     };
   }
   return null;
+}
+
+export function hasTerminalMarker(edge: Edge, terminal: 'start' | 'end'): boolean {
+  const markerType = terminal === 'start' ? edge.arrowTypeStart : edge.arrowTypeEnd;
+  if (typeof markerType === 'string') {
+    const trimmed = markerType.trim();
+    if (trimmed.length > 0) {
+      return trimmed !== 'none' && trimmed !== 'arrow_open';
+    }
+  }
+
+  if (typeof edge.type !== 'string') {
+    return false;
+  }
+  // Flowchart/swimlane edges often carry marker semantics in `type`.
+  if (terminal === 'start' && edge.type.startsWith('double_')) {
+    return true;
+  }
+  return terminal === 'end' && /arrow_(point|cross|circle|barb)|double_arrow/.test(edge.type);
 }
 
 /**
