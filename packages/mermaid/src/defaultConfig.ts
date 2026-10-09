@@ -41,6 +41,12 @@ const config: RequiredDeep<MermaidConfig> = {
     orientFeedbackEdges: true,
   },
   themeCSS: undefined,
+  c4beta: {
+    ...defaultConfigJson.c4beta,
+    // Undefined rather than `[]`: `configKeys` skips array values, and a key
+    // missing from it is dropped from front matter.
+    hideStereotypes: undefined,
+  },
 
   // add non-JSON default config values
   themeVariables: theme.default.getThemeVariables(),
