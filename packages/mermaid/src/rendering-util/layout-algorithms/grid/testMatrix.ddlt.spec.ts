@@ -206,12 +206,12 @@ describe('grid DDLT matrix fixtures', () => {
       {
         "baseAdjacencyEntries": 144,
         "baseVertices": 44,
-        "endpointOverlayBuilds": 1,
-        "endpointOverlayVertices": 8,
-        "expandedStates": 2,
-        "maxOpenSet": 4,
+        "endpointOverlayBuilds": 3,
+        "endpointOverlayVertices": 32,
+        "expandedStates": 12,
+        "maxOpenSet": 8,
         "resourceLimitFallbacks": 0,
-        "searches": 1,
+        "searches": 3,
       }
     `);
     expect(metrics.estimatedBytes).toBeLessThanOrEqual(CELL_AWARE_MAX_ESTIMATED_BYTES);
