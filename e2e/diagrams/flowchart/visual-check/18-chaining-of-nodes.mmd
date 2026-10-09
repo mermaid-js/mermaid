@@ -1,0 +1,11 @@
+---
+description:
+  Verifies that chained arrow syntax (`a --> b --> c`) in a single statement
+  correctly creates two separate edges, a->b and b->c.
+config:
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  a --> b --> c

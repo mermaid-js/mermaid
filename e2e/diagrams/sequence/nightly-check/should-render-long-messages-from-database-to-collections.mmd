@@ -1,0 +1,12 @@
+---
+description: >-
+  No-frontmatter sequence diagram between a `database`-typed and a
+  `collections`-typed participant, where the database sends a very long
+  message to the collections shape, checking long-message wrapping against
+  those two specific participant shapes.
+---
+sequenceDiagram
+  participant Alice@{ "type" : "database" }
+  participant Bob@{ "type" : "collections" }
+  Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

@@ -1,0 +1,14 @@
+---
+description: >-
+  Variant of should-render-a-long-descriptions-instead-of-id-when-available.mmd
+  where the aliased state S1 also gets an extra inline description ("The
+  description") appended on the same `state ... as S1: ...` line,
+  combining the long-name alias with a further description.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+
+  [*] --> S1
+  state "Some long name" as S1: The description

@@ -1,0 +1,13 @@
+---
+description: >-
+  classDiagram with two classes (C1, C2) declared and related inside a namespace block, plus
+  two additional classes (C3, C4) declared separately outside any namespace.
+---
+classDiagram
+  namespace Namespace1 {
+  class C1
+  class C2
+  }
+  C1 --> C2
+  class C3
+  class C4

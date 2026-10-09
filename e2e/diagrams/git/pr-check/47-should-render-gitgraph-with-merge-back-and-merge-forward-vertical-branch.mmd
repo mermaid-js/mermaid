@@ -1,0 +1,22 @@
+---
+description: >-
+  Vertical (TB) gitgraph with parallelCommits: true, where sibling branch-A
+  and branch-B merge into each other in both directions (branch-A merges
+  branch-B, then branch-B merges branch-A), testing back-and-forth merge
+  rendering.
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph TB:
+  commit id:"1-abcdefg"
+
+  branch branch-A
+  branch branch-B
+  commit id:"2-abcdefg"
+
+  checkout branch-A
+  merge branch-B
+
+  checkout branch-B
+  merge branch-A

@@ -1,0 +1,17 @@
+---
+description: >-
+  Default-orientation gitgraph where two feature branches (feature-001,
+  feature-002) both branch off main from the same commit, and feature-002
+  is merged into feature-001.
+---
+gitGraph
+  commit id:"1-abcdefg"
+  commit id:"2-abcdefg"
+  branch feature-001
+  commit id:"3-abcdefg"
+  commit id:"4-abcdefg"
+  checkout main
+  branch feature-002
+  commit id:"5-abcdefg"
+  checkout feature-001
+  merge feature-002

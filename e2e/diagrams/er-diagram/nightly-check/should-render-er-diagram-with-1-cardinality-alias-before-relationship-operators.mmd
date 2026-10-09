@@ -1,0 +1,14 @@
+---
+description: >-
+  Uses the numeric "1" cardinality alias placed before relationship
+  operators (1--1, 1--o{, 1--|{, 1..1) across four entity pairs, covering
+  exactly-one, one-to-many, one-or-more, and dotted exactly-one
+  relationship styles expressed with the shorthand numeric alias.
+config:
+  logLevel: 1
+---
+erDiagram
+  CUSTOMER 1--1 ORDER : "exactly one"
+  ORDER 1--o{ LINE-ITEM : "one to many"
+  PRODUCT 1--|{ CATEGORY : "one or more"
+  USER 1..1 PROFILE : "exactly one optional"

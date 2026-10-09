@@ -1,0 +1,30 @@
+---
+description: >-
+  Hand-drawn look classDiagram with namespaces nested via actual brace syntax (namespace
+  Platform containing namespace Auth and namespace Data) rather than dot notation, plus a
+  class relating into each nested namespace.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  namespace Platform {
+  namespace Auth {
+    class UserService {
+      +login()
+      +logout()
+    }
+  }
+  namespace Data {
+    class Repository {
+      +find()
+      +save()
+    }
+  }
+  class Gateway {
+    +route()
+  }
+  }
+  Gateway --> UserService : delegates
+  Gateway --> Repository : delegates
