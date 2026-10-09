@@ -28,6 +28,8 @@ const LABEL_GUTTER_STEP = 18;
 const MAX_GUTTER_STEPS = 16;
 const MAX_DETOUR_LINE_CANDIDATES = 128;
 const MAX_DETOUR_CENTER_CANDIDATES = 64;
+// Match the router's invocation-wide search budget: retries share one deterministic work ceiling.
+const DEFAULT_MAX_INDEX_WORK = 2_000_000;
 const EDGE_END_MARKER_CLEARANCE = GRID_EDGE_END_MARKER_CLEARANCE;
 const LABEL_EPSILON = 1e-6;
 const MIN_SELF_PARALLEL_GAP = 7;
@@ -165,8 +167,14 @@ export interface GridEdgeLabelInstrumentation {
   labelOverlapReservations: number;
   degenerateLabelRoutesSkipped: number;
   unmeasuredLabelsSkipped: number;
+  indexWorkUnits: number;
+  indexWorkLimitFallbacks: number;
   rollbacks: number;
   indexCoordinateCount: number;
+}
+
+export interface GridEdgeLabelOptions {
+  maxIndexWork?: number;
 }
 
 interface EdgeLabelContext {
@@ -214,6 +222,8 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     labelOverlapReservations: 0,
     degenerateLabelRoutesSkipped: 0,
     unmeasuredLabelsSkipped: 0,
+    indexWorkUnits: 0,
+    indexWorkLimitFallbacks: 0,
     rollbacks: 0,
     indexCoordinateCount: 0,
   };
@@ -226,12 +236,42 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
  * compressed entries is both simpler and more predictable than rebuilding a
  * tree after every provisional reservation.
  */
+class LabelIndexWorkLimitError extends Error {
+  constructor() {
+    super('Grid label index work cap exceeded');
+    this.name = 'LabelIndexWorkLimitError';
+  }
+}
+
+class LabelIndexWorkBudget {
+  private used = 0;
+
+  constructor(
+    private readonly limit: number,
+    private readonly metrics?: GridEdgeLabelInstrumentation
+  ) {}
+
+  charge(units: number): void {
+    if (units <= 0) {
+      return;
+    }
+    if (this.used + units > this.limit) {
+      throw new LabelIndexWorkLimitError();
+    }
+    this.used += units;
+    incrementMetric(this.metrics, 'indexWorkUnits', units);
+  }
+}
+
 class CompressedBoundsIndex<T extends { id: string; bounds: Bounds }> {
   private readonly entriesById = new Map<string, T>();
   private sortedByLeft: T[] = [];
   private dirty = false;
 
-  constructor(private readonly metrics?: GridEdgeLabelInstrumentation) {}
+  constructor(
+    private readonly workBudget: LabelIndexWorkBudget,
+    private readonly metrics?: GridEdgeLabelInstrumentation
+  ) {}
 
   upsert(entry: T): void {
     const isNew = !this.entriesById.has(entry.id);
@@ -251,6 +291,10 @@ class CompressedBoundsIndex<T extends { id: string; bounds: Bounds }> {
 
   query(bounds: Bounds): T[] {
     if (this.dirty) {
+      const entryCount = this.entriesById.size;
+      // Charge a deterministic n log n estimate before sorting so the cap is independent of the
+      // JavaScript engine's comparison order.
+      this.workBudget.charge(entryCount * Math.max(1, Math.ceil(Math.log2(entryCount + 1))));
       this.sortedByLeft = [...this.entriesById.values()].sort(
         (a, b) => a.bounds.left - b.bounds.left || compareCodeUnits(a.id, b.id)
       );
@@ -258,6 +302,7 @@ class CompressedBoundsIndex<T extends { id: string; bounds: Bounds }> {
     }
     const result: T[] = [];
     for (const entry of this.sortedByLeft) {
+      this.workBudget.charge(1);
       if (entry.bounds.left > bounds.right) {
         break;
       }
@@ -603,6 +648,7 @@ function upsertPlacedLabelObstacle(context: EdgeLabelContext, placedLabel: Place
 
 function createEdgeLabelContext(
   data: LayoutData,
+  workBudget: LabelIndexWorkBudget,
   metrics?: GridEdgeLabelInstrumentation
 ): EdgeLabelContext {
   // A fresh context is the isolation boundary for one placement pass. Nothing indexed here is
@@ -610,10 +656,10 @@ function createEdgeLabelContext(
   const context: EdgeLabelContext = {
     edgeById: new Map(),
     edgeGeometryById: new Map(),
-    obstacleIndex: new CompressedBoundsIndex<ObstacleEntry>(metrics),
-    placedLabelIndex: new CompressedBoundsIndex<ObstacleEntry>(metrics),
-    groupBorderIndex: new CompressedBoundsIndex<BorderEntry>(metrics),
-    segmentIndex: new CompressedBoundsIndex<EdgeSegmentEntry>(metrics),
+    obstacleIndex: new CompressedBoundsIndex<ObstacleEntry>(workBudget, metrics),
+    placedLabelIndex: new CompressedBoundsIndex<ObstacleEntry>(workBudget, metrics),
+    groupBorderIndex: new CompressedBoundsIndex<BorderEntry>(workBudget, metrics),
+    segmentIndex: new CompressedBoundsIndex<EdgeSegmentEntry>(workBudget, metrics),
     searchBounds: { left: 0, right: 0, top: 0, bottom: 0 },
     metrics,
   };
@@ -2043,6 +2089,28 @@ function parkDegenerateLabel(
   delete labelNode.y;
 }
 
+function placeLabelAtRouteMidpoint(
+  edge: Edge,
+  labelNode: Node,
+  nodeById: ReadonlyMap<string, Node>
+): void {
+  let longestSegment: Segment | undefined;
+  for (const segment of normalizePolyline(edge.points ?? []).segments) {
+    if (segment.orientation === 'Z') {
+      continue;
+    }
+    if (!longestSegment || segmentLength(segment) > segmentLength(longestSegment)) {
+      longestSegment = segment;
+    }
+  }
+  if (!longestSegment) {
+    parkDegenerateLabel(edge, labelNode, nodeById);
+    return;
+  }
+  labelNode.x = (longestSegment.a.x + longestSegment.b.x) / 2;
+  labelNode.y = (longestSegment.a.y + longestSegment.b.y) / 2;
+}
+
 function preferredGridLabelNodeId(edge: Edge): string {
   return `${GRID_LABEL_PREFIX}${edge.start ?? ''}-${edge.end ?? ''}-${edge.id}`;
 }
@@ -2120,7 +2188,8 @@ export function prepareGridLayout(data: LayoutData): void {
 export function positionGridEdgeLabels(
   data: LayoutData,
   instrumentation?: GridEdgeLabelInstrumentation,
-  routingInstrumentation?: GridRoutingInstrumentation
+  routingInstrumentation?: GridRoutingInstrumentation,
+  options: GridEdgeLabelOptions = {}
 ): void {
   const nodeById = new Map<string, Node>();
   for (const node of data.nodes) {
@@ -2202,12 +2271,18 @@ export function positionGridEdgeLabels(
   if (workItems.length === 0) {
     return;
   }
+  const configuredIndexWork = options.maxIndexWork ?? DEFAULT_MAX_INDEX_WORK;
+  const indexWorkLimit =
+    Number.isFinite(configuredIndexWork) && configuredIndexWork >= 0
+      ? Math.floor(configuredIndexWork)
+      : DEFAULT_MAX_INDEX_WORK;
+  const indexWorkBudget = new LabelIndexWorkBudget(indexWorkLimit, instrumentation);
   let lastError: unknown;
   for (let pass = 1; pass <= 2; pass++) {
     // Pass 1 prefers existing segments and foreign-edge reroutes. Pass 2 additionally permits
     // owner-edge detours, rebuilding every route from the original routing result.
     incrementMetric(instrumentation, 'labelPasses');
-    const context = createEdgeLabelContext(data, instrumentation);
+    const context = createEdgeLabelContext(data, indexWorkBudget, instrumentation);
     const placedLabelsByEdgeId = new Map<string, PlacedLabel>();
     const allowedOverlapsByLabelEdgeId = new Map<string, Set<string>>();
     const passStartPoints = new Map(
@@ -2475,6 +2550,18 @@ export function positionGridEdgeLabels(
       }
       return;
     } catch (error) {
+      if (error instanceof LabelIndexWorkLimitError) {
+        restoreBaseEdgePoints();
+        for (const { edge, labelNode } of workItems) {
+          placeLabelAtRouteMidpoint(edge, labelNode, nodeById);
+        }
+        incrementMetric(instrumentation, 'indexWorkLimitFallbacks');
+        if (routingInstrumentation) {
+          routingInstrumentation.resourceLimitFallbacks++;
+          routingInstrumentation.fallbackReasons.label_index_work_cap++;
+        }
+        return;
+      }
       lastError = error;
       // A failed pass may contain detours around provisional label positions. Restore routing
       // before retrying so the next pass depends only on the labels it successfully places.
