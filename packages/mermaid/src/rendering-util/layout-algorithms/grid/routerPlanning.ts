@@ -133,6 +133,16 @@ function oppositeCoordFor(rect: ReturnType<typeof rectForNode>, side: GridSide):
   return side === 'left' || side === 'right' ? rect.cy : rect.cx;
 }
 
+function sideMidpoint(rect: ReturnType<typeof rectForNode>, side: GridSide): Point {
+  return side === 'left' || side === 'right'
+    ? { x: side === 'left' ? rect.left : rect.right, y: rect.cy }
+    : { x: rect.cx, y: side === 'top' ? rect.top : rect.bottom };
+}
+
+function tangentialCoordinate(point: Point, side: GridSide): number {
+  return side === 'left' || side === 'right' ? point.y : point.x;
+}
+
 function buildEndpointPlan(
   endpoint: Node,
   other: Node,
@@ -156,13 +166,13 @@ function buildEndpointPlan(
     const titleAvoidanceTie =
       dy < 0 &&
       Math.abs(dx) <= PIXEL_EPSILON &&
-      Boolean((current.isGroup && current.groupTitleRect) || parent?.groupTitleRect);
+      Boolean((current.isGroup ? current.groupTitleRect : undefined) ?? parent?.groupTitleRect);
     const directSideCandidates: GridSide[] = [];
     if (Math.abs(Math.abs(dx) - Math.abs(dy)) <= PIXEL_EPSILON && Math.abs(dx) > PIXEL_EPSILON) {
       directSideCandidates.push(dx >= 0 ? 'right' : 'left', dy >= 0 ? 'bottom' : 'top');
     }
     const topBlocked = Boolean(
-      (current.isGroup && current.groupTitleRect) || parent?.groupTitleRect
+      (current.isGroup ? current.groupTitleRect : undefined) ?? parent?.groupTitleRect
     );
     const ambiguousSides = (
       titleAvoidanceTie ? (['left', 'right'] as GridSide[]) : directSideCandidates
@@ -328,6 +338,24 @@ function resolveAmbiguousEndpointSides(plans: EdgeRoutePlan[], result: GridLayou
     );
   for (const { plan, endpoint, role } of endpoints) {
     resolveEndpoint(plan, endpoint, role);
+  }
+
+  for (const plan of plans) {
+    const sourceFinal = plan.source.chain.at(-1);
+    const targetFinal = plan.target.chain.at(-1);
+    const sourceOwner = sourceFinal ? result.forest.nodeById.get(sourceFinal.ownerId) : undefined;
+    const targetOwner = targetFinal ? result.forest.nodeById.get(targetFinal.ownerId) : undefined;
+    if (!sourceFinal || !targetFinal || !sourceOwner || !targetOwner) {
+      continue;
+    }
+    const sourcePoint = sideMidpoint(rectForNode(sourceOwner), sourceFinal.side);
+    const targetPoint = sideMidpoint(rectForNode(targetOwner), targetFinal.side);
+    for (const entry of plan.source.chain) {
+      entry.oppositeCoord = tangentialCoordinate(targetPoint, entry.side);
+    }
+    for (const entry of plan.target.chain) {
+      entry.oppositeCoord = tangentialCoordinate(sourcePoint, entry.side);
+    }
   }
 }
 
@@ -722,7 +750,6 @@ function endpointSideCapacity(owner: Node, side: GridSide): number {
 function endpointSidePreferences(owner: Node, demand: EndpointDemandEntry): GridSide[] {
   const oppositeRect = rectForNode(demand.opposite);
   const preferred = preferredSide(owner, { x: oppositeRect.cx, y: oppositeRect.cy });
-  const ownerRect = rectForNode(owner);
   return (['right', 'bottom', 'left', 'top'] as const)
     .filter((side) => endpointSideCapacity(owner, side) > 0)
     .sort((a, b) => {
@@ -732,18 +759,9 @@ function endpointSidePreferences(owner: Node, demand: EndpointDemandEntry): Grid
       if (b === preferred) {
         return 1;
       }
-      const midpoint = (side: GridSide): Point =>
-        side === 'left' || side === 'right'
-          ? {
-              x: side === 'left' ? ownerRect.left : ownerRect.right,
-              y: ownerRect.cy,
-            }
-          : {
-              x: ownerRect.cx,
-              y: side === 'top' ? ownerRect.top : ownerRect.bottom,
-            };
-      const aPoint = midpoint(a);
-      const bPoint = midpoint(b);
+      const ownerRect = rectForNode(owner);
+      const aPoint = sideMidpoint(ownerRect, a);
+      const bPoint = sideMidpoint(ownerRect, b);
       const aDistance = Math.abs(aPoint.x - oppositeRect.cx) + Math.abs(aPoint.y - oppositeRect.cy);
       const bDistance = Math.abs(bPoint.x - oppositeRect.cx) + Math.abs(bPoint.y - oppositeRect.cy);
       return aDistance - bDistance || sideOrder(a) - sideOrder(b);
