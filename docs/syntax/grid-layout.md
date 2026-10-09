@@ -413,6 +413,10 @@ flowchart TB
 
 Placement-map keys use authored node identifiers when the diagram type provides them. This includes flowchart, agentflow, entity relationship, and mindmap identifiers. Other diagram types use the node ids they emit for layout.
 
+Placement-map keys beginning with `__` are removed by Mermaid's recursive configuration sanitizer
+as a prototype-pollution precaution. For flowchart and agentflow nodes with such ids, use inline
+placement metadata instead.
+
 Placements for ids that are not present in the diagram are ignored with a console warning. This
 allows a shared or generated placement map to contain entries for optional nodes.
 
