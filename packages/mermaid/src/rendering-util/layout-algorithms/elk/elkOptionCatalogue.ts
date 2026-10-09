@@ -130,13 +130,11 @@ export const PLACEMENT_OPTIONS: Record<string, unknown> = {
   // 'elk.direction': 'UP',
   // ELK ignores this key in every spelling; the gap derives from spacing.baseValue.
   // 'elk.spacing.edgeNode': 20,
-  // Only applies when wrapping.strategy is on, and it is off.
+  // Only applies when `elk.wrappingStrategy` is set, and it is unset by default.
   // 'elk.layered.wrapping.cutting.strategy': 'ARD',
   // Routes reversed edges in their own band. No effect measured here.
   // 'elk.layered.feedbackEdges': true,
   // ─── Tried and parked ───
-  // 'elk.layered.wrapping.strategy': 'MULTI_EDGE',
-  // 'elk.layered.wrapping.strategy': 'SINGLE_EDGE',
   // 'elk.layered.crossingMinimization.semiInteractive': true,
   // 'elk.layered.edgeRouting.splines.sloppy.layerSpacingFactor': 1,
   // 'elk.layered.edgeRouting.polyline.slopedEdgeZoneWidth': 4.0,
