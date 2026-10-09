@@ -565,10 +565,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     additionalProperties: false
     properties:
       placements:
-        description: Mapping of authored placement ids or emitted node ids to explicit grid placements.
+        description: Mapping of authored placement ids or emitted node ids to explicit grid placements. Arrays target repeated ids in source order; a single object is equivalent to a one-item array.
         type: object
         additionalProperties:
-          $ref: '#/$defs/GridPlacement'
+          oneOf:
+            - $ref: '#/$defs/GridPlacement'
+            - type: array
+              minItems: 1
+              items:
+                $ref: '#/$defs/GridPlacement'
         default: {}
       columns:
         description: Non-negative integer candidate column count for auto-placed items; 0 means automatic.

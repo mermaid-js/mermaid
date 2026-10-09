@@ -229,6 +229,83 @@ describe('grid placement', () => {
     warn.mockRestore();
   });
 
+  it('maps placement arrays to matching authored ids in source order', () => {
+    const items = [
+      node('rendered-2', undefined, 'service'),
+      node('rendered-1', undefined, 'service'),
+      node('rendered-3', undefined, 'service'),
+    ];
+    const sourceOrder = new Map([
+      ['rendered-1', 0],
+      ['rendered-2', 1],
+      ['rendered-3', 2],
+    ]);
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          service: [
+            { row: 1, column: 1 },
+            { row: 1, column: 2 },
+          ],
+        },
+      }),
+    } as LayoutData);
+
+    const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(byId.get('rendered-1')).toMatchObject({ row: 1, column: 1 });
+    expect(byId.get('rendered-2')).toMatchObject({ row: 1, column: 2 });
+    expect(byId.get('rendered-3')).toMatchObject({ explicitRow: false, explicitColumn: false });
+  });
+
+  it('treats a single placement object as a one-item occurrence array', () => {
+    const items = [
+      node('rendered-1', undefined, 'service'),
+      node('rendered-2', undefined, 'service'),
+    ];
+    const sourceOrder = new Map(items.map((item, index) => [item.id, index]));
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          service: { row: 1, column: 2 },
+        },
+      }),
+    } as LayoutData);
+
+    const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(byId.get('rendered-1')).toMatchObject({ row: 1, column: 2 });
+    expect(byId.get('rendered-2')).toMatchObject({ explicitRow: false, explicitColumn: false });
+  });
+
+  it('warns when a placement array has more entries than matching nodes', () => {
+    const item = node('rendered-1', undefined, 'service');
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          service: [{ row: 1 }, { row: 2 }],
+        },
+      }),
+    } as LayoutData);
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+    validateGridPlacementMap([item], gridConfig);
+
+    expect(warn).toHaveBeenCalledWith(
+      '[grid]',
+      'Ignoring 1 extra grid placement occurrence(s) for target "service"; found 1 matching node(s)'
+    );
+    warn.mockRestore();
+  });
+
   it('reports authored placement ids for invalid generated-node coordinates', () => {
     const item = node('entity-CUSTOMER-0', undefined, 'CUSTOMER');
     const gridConfig = readGridConfig({
