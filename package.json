@@ -174,7 +174,7 @@
     "typescript-eslint": "^8.38.0",
     "vite": "^7.3.6",
     "vite-plugin-istanbul": "^7.0.0",
-    "vitest": "^3.2.7",
+    "vitest": "^4.0.0",
     "wait-on": "^9.0.4"
   },
   "nyc": {
