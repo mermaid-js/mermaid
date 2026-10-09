@@ -4,10 +4,10 @@ config:
 ---
 flowchart TB
   TL["Top left"]@{ row: 1, column: 1 }
-  TR["Top right"]@{ row: 1, column: 3 }
-  BL["Bottom left"]@{ row: 3, column: 1 }
-  BR["Bottom right"]@{ row: 3, column: 3 }
+  TR["Top right"]@{ row: 1, column: 2 }
+  BL["Bottom left"]@{ row: 2, column: 1 }
+  BR["Bottom right"]@{ row: 2, column: 2 }
 
   TL --> BR
-  TR --> BL
-
+  TL --> BL
+  BL --> TR
