@@ -381,14 +381,10 @@ export class ErDB implements DiagramDB {
 
     const subGraphs = this.getSubGraphs();
     const parentDB = new Map<string, string>();
-    const subGraphDB = new Map<string, boolean>();
 
     // Setup the subgraph data for adding nodes
     for (let i = subGraphs.length - 1; i >= 0; i--) {
       const subGraph = subGraphs[i];
-      if (subGraph.nodes.length > 0) {
-        subGraphDB.set(subGraph.id, true);
-      }
       for (const id of subGraph.nodes) {
         parentDB.set(id, subGraph.id);
       }

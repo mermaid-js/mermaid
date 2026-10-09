@@ -4,11 +4,9 @@ import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 
 export let clusterDb = new Map();
 let descendants = new Map();
-let parents = new Map();
 
 export const clear = () => {
   descendants.clear();
-  parents.clear();
   clusterDb.clear();
 };
 
@@ -121,7 +119,6 @@ export const extractDescendants = (id, graph) => {
   let res = [...children];
 
   for (const child of children) {
-    parents.set(child, id);
     res = [...res, ...extractDescendants(child, graph)];
   }
 
