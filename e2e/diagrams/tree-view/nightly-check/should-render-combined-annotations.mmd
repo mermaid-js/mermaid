@@ -1,0 +1,16 @@
+---
+description: >-
+  Tests combining multiple per-node annotations together on a single node
+  (App.tsx carries a class annotation, an explicit icon override, and a
+  description comment simultaneously), alongside sibling nodes that use only
+  a subset of those annotations.
+---
+treeView-beta
+  my-project/
+  src/
+      App.tsx :::highlight icon(fa:bell) ## main component
+      index.js ## entry point
+      styles.css
+  .env ## environment variables
+  Dockerfile
+  package.json

@@ -1,0 +1,14 @@
+---
+description: >-
+  Sequence diagram with `sequence.wrap: true`, where a long wrapped message
+  precedes a `loop` block, checking that the loop frame renders with a
+  slight margin rather than tightly hugging the wrapped message above it.
+config:
+  sequence:
+    wrap: true
+---
+sequenceDiagram
+  Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  loop Loopy
+  Bob->>Alice: Pasten
+  end

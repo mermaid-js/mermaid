@@ -1,0 +1,12 @@
+---
+description: Two entities grouped inside a `subgraph` block under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+    subgraph customers
+      CUSTOMER
+      ORDER
+    end
+
+    CUSTOMER ||--o{ ORDER : places

@@ -1,0 +1,21 @@
+---
+description: >-
+  Top-level diagram direction LR with two composite states each overriding
+  it locally - A set to direction BT and C set to direction RL - testing
+  that per-composite `direction` statements are respected independently of
+  the outer diagram direction.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  direction LR
+  state A {
+  direction BT
+  a --> b
+  }
+  state C {
+  direction RL
+  c --> d
+  }
+  A --> C

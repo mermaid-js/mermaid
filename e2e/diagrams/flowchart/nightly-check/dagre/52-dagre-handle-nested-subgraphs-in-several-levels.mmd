@@ -1,0 +1,26 @@
+---
+description:
+  Regression test for multi-level nested subgraphs where node identifiers
+  collide with subgraph identifiers, verifying dagre correctly nests and
+  connects nodes and subgraphs across three levels of containment.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TB
+  b-->B
+  a-->c
+  subgraph O
+  A
+  end
+  subgraph B
+  c
+  end
+  subgraph A
+    a
+    b
+    B
+  end

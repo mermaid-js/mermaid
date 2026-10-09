@@ -1,0 +1,21 @@
+---
+description: >-
+  A simple architecture-beta diagram (one group with a database, two disks,
+  and a server) that declares `title`, `accTitle`, and `accDescr` directly
+  in the diagram body, verifying those accessibility/title statements are
+  supported and rendered correctly.
+---
+architecture-beta
+  title Simple Architecture Diagram
+  accTitle: Accessibility Title
+  accDescr: Accessibility Description
+  group api(cloud)[API]
+
+  service db(database)[Database] in api
+  service disk1(disk)[Storage] in api
+  service disk2(disk)[Storage] in api
+  service server(server)[Server] in api
+
+  db:L -- R:server
+  disk1:T -- B:server
+  disk2:T -- B:db

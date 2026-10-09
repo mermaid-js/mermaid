@@ -1,0 +1,18 @@
+---
+description: >-
+  Attribute-level free-text comments across two related entities, with
+  htmlLabels disabled under the elk layout.
+config:
+  layout: elk
+  htmlLabels: false
+---
+erDiagram
+  AUTHOR_WITH_LONG_ENTITY_NAME {
+    string name "comment"
+  }
+  AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+  BOOK {
+      string author
+      string title "author comment"
+      float price "price comment"
+    }
