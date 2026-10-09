@@ -1,0 +1,12 @@
+---
+description: >-
+  Kanban fixture exercising the `ticket` metadata key
+  (@{ ticket: MC-2037 }) on one item to verify the ticket-reference badge
+  renders. No `ticketBaseUrl` config is set here, so it renders without a
+  hyperlink.
+---
+kanban
+  id1[Todo]
+  docs[Create Documentation]
+  id2[In progress]
+  docs[Create Blog about the new diagram]@{ ticket: MC-2037 }

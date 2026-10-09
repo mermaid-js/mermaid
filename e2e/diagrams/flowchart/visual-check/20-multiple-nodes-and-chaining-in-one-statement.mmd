@@ -1,0 +1,14 @@
+---
+description:
+  Verifies the `-- label -->` edge-label syntax, an inline class-shorthand
+  assignment (`:::exClass`), and the `&` multi-node operator combined with
+  chaining, all within one semicolon-terminated statement (`A -- hello -->
+  B:::exClass & C --> D;`).
+config:
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph TD
+  A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
+  classDef exClass background:#bbb,border:1px solid red;

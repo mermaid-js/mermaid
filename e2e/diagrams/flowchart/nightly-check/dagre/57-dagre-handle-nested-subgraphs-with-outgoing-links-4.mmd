@@ -1,0 +1,19 @@
+---
+description:
+  Regression test for a node that is referenced inside one subgraph's internal
+  edge and also explicitly declared as a member of a different subgraph,
+  verifying dagre assigns it consistently to a single subgraph.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  subgraph A
+  a -->b
+  end
+  subgraph B
+  b
+  end

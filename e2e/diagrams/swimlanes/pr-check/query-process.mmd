@@ -1,0 +1,41 @@
+---
+description: >-
+  Three-lane query-escalation flow ("Head of Engineering", StatusSeeker,
+  "Tech Lead") where an incoming query is routed up the chain until someone
+  can answer it, using the dedicated `layout: swimlane` engine with both
+  ignoreCrossLaneEdges and optimizeRanksByCrossings enabled. The "Head of
+  Engineering" lane is declared first in the source, before the lanes that
+  feed into it - unlike the sibling `8-query-process-2`, which declares
+  lanes in flow order and omits the swimlane tuning options.
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+  layout: swimlane
+  swimlane:
+    ignoreCrossLaneEdges: true
+    optimizeRanksByCrossings: true
+---
+swimlane-beta LR
+
+  subgraph "Head of Engineering"
+    E{Can answer?}
+    E --Yes--> F(Answer)
+    E --No --> G(Investigate) --> F2(Answer)
+  end
+
+  subgraph StatusSeeker
+  A(Incoming query)
+  A2{Knows<br/>which team?}
+  end
+
+  subgraph "Tech Lead"
+    B{Can answer?}
+    B --Yes--> C(Answer)
+
+  end
+  A --> A2
+  A2 --Yes --> B
+  A2 --No --> E
+  B --No --> E
