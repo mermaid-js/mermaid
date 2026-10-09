@@ -645,7 +645,7 @@ export class GridEdgeRoutingSession {
     committedPairRoutes.push(points);
     pairRoutes.set(plan.pairKey, committedPairRoutes);
     // Fast routes were registered while routing modes were prepared.
-    if (!compatibilityFastRoute && !this.modes.occupancyRegisteredIds.has(edge.id)) {
+    if (!compatibilityFastRoute) {
       this.occupancyFor(plan.lcaContainerId).add(lcaPoints, plan.pairKey);
     }
     if (metrics && instrumentedRoutes) {
