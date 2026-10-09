@@ -303,6 +303,12 @@ The example below shows an example of how this could be used. The example just l
 </script>
 ```
 
+When no container is supplied, Mermaid measures the diagram in a hidden temporary
+element that does not take space in the page layout. The element is removed after
+a successful render; insert the returned SVG wherever it should appear. Error
+diagrams remain visible when rendering fails, unless `suppressErrorRendering` is
+enabled. If you supply a container, its visibility remains under your control.
+
 To determine the type of diagram present in a given text, you can utilize the `mermaid.detectType` function, as demonstrated in the example below.
 
 ```html

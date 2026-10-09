@@ -526,6 +526,7 @@ const renderDiagram = async function (
   const isLooseSecurityLevel = config.securityLevel === SECURITY_LVL_LOOSE;
 
   const fontFamily = config.fontFamily;
+  let restoreTemporaryStyles: (() => void) | undefined;
 
   // -------------------------------------------------------------------------------
   // Define the root d3 node
@@ -564,6 +565,33 @@ const renderDiagram = async function (
     }
 
     appendDivSvgG(root, id, enclosingDivID);
+
+    // Rendering measures labels in the DOM, so the temporary element cannot use
+    // display:none. Keep its original measurement width (and iframe viewport)
+    // while preventing it from painting or taking space in the host layout.
+    const temporaryElement = document.getElementById(isSandboxed ? iFrameID : enclosingDivID)!;
+    const originalStyle = temporaryElement.getAttribute('style');
+    const { width, height } = window.getComputedStyle(temporaryElement);
+    temporaryElement.style.transition = 'none';
+    temporaryElement.style.animation = 'none';
+    temporaryElement.style.position = 'fixed';
+    temporaryElement.style.top = '0';
+    temporaryElement.style.left = '0';
+    temporaryElement.style.width = width;
+    if (isSandboxed) {
+      temporaryElement.style.height = height;
+    }
+    temporaryElement.style.visibility = 'hidden';
+    temporaryElement.style.opacity = '0';
+    temporaryElement.style.pointerEvents = 'none';
+
+    restoreTemporaryStyles = () => {
+      if (originalStyle === null) {
+        temporaryElement.removeAttribute('style');
+      } else {
+        temporaryElement.setAttribute('style', originalStyle);
+      }
+    };
   }
 
   // -------------------------------------------------------------------------------
@@ -619,6 +647,7 @@ const renderDiagram = async function (
       removeTempElements();
     } else {
       errorRenderer.draw(text, id, injected.version);
+      restoreTemporaryStyles?.();
     }
     throw e;
   }
@@ -665,6 +694,7 @@ const renderDiagram = async function (
     : serializeSvg();
 
   if (parseEncounteredException) {
+    restoreTemporaryStyles?.();
     throw parseEncounteredException;
   }
 
