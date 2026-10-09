@@ -318,6 +318,63 @@ describe('grid router', () => {
     expect(Math.max(...routeYs)).toBeLessThanOrEqual(Math.max(...endpointYs) + 1);
   });
 
+  it.each(['LR', 'TB', 'BT'])(
+    'reserves a strongly preferred group side before placing an ambiguous hierarchy route in %s',
+    (direction) => {
+      const data = baseLayout(
+        [
+          group('Work', 'Work', { row: 1, column: 2 }),
+          leaf('C', 80, 40, { row: 1, column: 1 }, 'Work'),
+          group('Nested', 'Nested', { row: 2, column: 1 }, 'Work'),
+          leaf('D', 80, 40, { row: 1, column: 1 }, 'Nested'),
+          leaf('E', 80, 40, { row: 2, column: 1 }, 'Nested'),
+          group('Output', 'Output', { row: 1, column: 3 }),
+          leaf('F', 80, 40, { row: 1, column: 1 }, 'Output'),
+        ],
+        [edge('C-E', 'C', 'E'), edge('D-F', 'D', 'F')],
+        { rowGap: 45, columnGap: 70 }
+      );
+      data.direction = direction;
+      runGridLayoutCore(data);
+
+      expect(invalidRoutingIssues(data)).toEqual([]);
+      const nested = data.nodes.find(({ id }) => id === 'Nested')!;
+      const toE = data.edges.find(({ id }) => id === 'C-E')!;
+      const toF = data.edges.find(({ id }) => id === 'D-F')!;
+      expect(Math.min(...(toE.points?.map(({ x }) => x) ?? []))).toBeLessThan(
+        (nested.x ?? 0) - (nested.width ?? 0) / 2
+      );
+      const endpointYs = [
+        data.nodes.find(({ id }) => id === 'D')?.y ?? 0,
+        data.nodes.find(({ id }) => id === 'F')?.y ?? 0,
+      ];
+      const routeYs = toF.points?.map(({ y }) => y) ?? [];
+      expect(Math.min(...routeYs)).toBeGreaterThanOrEqual(Math.min(...endpointYs) - 1);
+      expect(Math.max(...routeYs)).toBeLessThanOrEqual(Math.max(...endpointYs) + 1);
+    }
+  );
+
+  it('reserves a horizontal side before assigning a diagonal hierarchy route vertically', () => {
+    const data = baseLayout(
+      [
+        group('Work', 'Work', { row: 1, column: 1 }),
+        leaf('A', 80, 40, { row: 1, column: 1 }, 'Work'),
+        leaf('B', 80, 40, { row: 1, column: 2 }, 'Work'),
+        group('Nested', 'Nested', { row: 2, column: 2 }, 'Work'),
+        leaf('C', 80, 40, { row: 1, column: 1 }, 'Nested'),
+      ],
+      [edge('A-C', 'A', 'C'), edge('A-B', 'A', 'B')],
+      { rowGap: 82, columnGap: 70 }
+    );
+    runGridLayoutCore(data);
+
+    expect(invalidRoutingIssues(data)).toEqual([]);
+    const diagonal = data.edges.find(({ id }) => id === 'A-C')!;
+    const horizontal = data.edges.find(({ id }) => id === 'A-B')!;
+    expect(diagonal.points?.[0].x).toBe(diagonal.points?.[1].x);
+    expect(horizontal.points?.[0].y).toBe(horizontal.points?.[1].y);
+  });
+
   it('lines group portals up with the item ports so edges take a single jog', () => {
     const data = baseLayout(
       [
