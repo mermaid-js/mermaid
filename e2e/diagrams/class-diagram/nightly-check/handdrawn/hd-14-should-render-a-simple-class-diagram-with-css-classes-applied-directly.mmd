@@ -1,0 +1,18 @@
+---
+description: >-
+  Hand-drawn class diagram applying a CSS class directly via the inline
+  `:::exClass2` shorthand on the class declaration, contrasting with the
+  "hd-13" sibling which uses the standalone `cssClass` statement for the
+  same effect.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  class Class10:::exClass2 {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }

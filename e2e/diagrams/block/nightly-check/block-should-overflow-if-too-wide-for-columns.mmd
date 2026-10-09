@@ -1,0 +1,14 @@
+---
+description: >-
+  In a 2-column grid, blocks are given explicit spans of 2, 3, 1, and 2
+  columns respectively — two of which (`overflow:3` and `also_overflow:2`
+  following a `short:1`) exceed the declared 2-column width, verifying blocks
+  overflow the grid gracefully rather than breaking layout when their span
+  is wider than the available columns.
+---
+block-beta
+  columns 2
+  fit:2
+  overflow:3
+  short:1
+  also_overflow:2

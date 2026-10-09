@@ -1,0 +1,9 @@
+---
+description: >-
+  Message text ending in a trailing `<br/>` and text containing a doubled
+  `<br/><br/>`, checking that empty lines produced by line-break tags at the
+  end or middle of a message render without error.
+---
+sequenceDiagram
+  Alice->>John: Hello John<br/>
+  John-->>Alice: Great<br/><br/>day!

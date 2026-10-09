@@ -1,0 +1,9 @@
+---
+description:
+  Regression check that the graph still renders without breaking layout when
+  node labels contain <img> tags that have no src attribute, i.e. missing/broken
+  images.
+---
+flowchart TD
+  B[<img>]
+  B-->C[<img>]

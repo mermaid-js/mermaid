@@ -1,0 +1,25 @@
+---
+description: >-
+  Sequence diagram covering autonumber, a "par"/"and" parallel block, nested
+  activations, and a note, with an accTitle/accDescr pair, rendered under the
+  "default" theme via an in-body %%{init}%% directive.
+---
+%%{init: { 'logLevel': 0, 'theme': 'default'} }%%
+sequenceDiagram
+  accTitle: This is a title
+  accDescr: This is a description
+
+  autonumber
+  par Action 1
+    Alice->>John: Hello John, how are you?
+  and Action 2
+    Alice->>Bob: Hello Bob, how are you?
+  end
+  Alice->>+John: Hello John, how are you?
+  Alice->>+John: John, can you hear me?
+  John-->>-Alice: Hi Alice, I can hear you!
+  Note right of John: John is perceptive
+  John-->>-Alice: I feel great!
+  loop Every minute
+    John-->Alice: Great!
+  end

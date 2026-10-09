@@ -1,0 +1,12 @@
+---
+description: >-
+  PEG syntax (railroad-peg-beta) covering ordered choice (`/`), the `<-`
+  rule-definition arrow, and the `+` one-or-more suffix, in an
+  arithmetic-expression grammar.
+---
+railroad-peg-beta
+Expression <- Term (("+" / "-") Term)* ;
+Term <- Factor (("*" / "/") Factor)* ;
+Factor <- Number / "(" Expression ")" ;
+Number <- Digit+ ;
+Digit <- "0" / "1" / "2" / "3" ;

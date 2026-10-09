@@ -1,0 +1,21 @@
+---
+description: >-
+  A small architecture-beta diagram (one VM in a nested group, a web app and
+  database in a sibling subscription group) rendered with an explicit
+  `seed: 42` override, verifying that setting a custom seed still produces a
+  deterministic layout.
+config:
+  architecture:
+    seed: 42
+---
+architecture-beta
+  group sub1(cloud)[Subscription A]
+  group vnet1(cloud)[VNet A] in sub1
+  service vm1(server)[VM] in vnet1
+
+  group sub2(cloud)[Subscription B]
+  service web(server)[Web App] in sub2
+  service db(database)[Registry] in sub2
+
+  vm1:R --> L:web
+  web:R --> L:db

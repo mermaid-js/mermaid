@@ -1,0 +1,16 @@
+---
+description: >-
+  Default vertical-orientation bar chart with showDataLabel enabled and a
+  bar series mixing negative and decimal values (-2.5, 0.75, 5.1) against a
+  negative-to-positive y-axis range, verifying data labels format decimals
+  and negatives correctly. Vertical counterpart to the horizontal
+  decimal/negative variant.
+config:
+  xyChart:
+    showDataLabel: true
+---
+  xychart
+  title "Decimal and Negative Values"
+  x-axis Categories [A, B, C]
+  y-axis -10 --> 10
+  bar [ -2.5, 0.75, 5.1 ]
