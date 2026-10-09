@@ -157,9 +157,7 @@ export const openURLAndVerifyRendering = async (
     });
   } catch {
     try {
-      const renderedSvg = rejectErrorDiagram
-        ? diagramSvg(page).first()
-        : page.locator('svg').first();
+      const renderedSvg = diagramSvg(page).first();
       await renderedSvg.waitFor({ state: 'visible', timeout: 15_000 });
     } catch (error) {
       const details = [...pageErrors, ...consoleErrors];
@@ -187,7 +185,7 @@ export const openURLAndVerifyRendering = async (
       await validation(iframe);
     }
   } else {
-    const svg = rejectErrorDiagram ? diagramSvg(page).first() : page.locator('svg').first();
+    const svg = diagramSvg(page).first();
     await expect(svg).toBeVisible();
     await expect(svg).not.toHaveAttribute('viewbox'); // cspell:ignore viewbox
 
