@@ -290,6 +290,11 @@ describe('grid router', () => {
     expect(invalidRoutingIssues(data)).toEqual([]);
     const [first, second] = data.edges;
     expect(longestSharedNonterminalSubpath(first, second)).toBe(0);
+    const nested = data.nodes.find(({ id }) => id === 'Nested')!;
+    const nestedLeft = (nested.x ?? 0) - (nested.width ?? 0) / 2;
+    const nestedRight = (nested.x ?? 0) + (nested.width ?? 0) / 2;
+    expect(Math.max(...(first.points?.map(({ x }) => x) ?? []))).toBeGreaterThan(nestedRight);
+    expect(Math.min(...(second.points?.map(({ x }) => x) ?? []))).toBeLessThan(nestedLeft);
   });
 
   it('does not let a later hierarchy route displace an earlier sparse route', () => {
