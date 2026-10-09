@@ -2,11 +2,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { log } from '../../../logger.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout as validateSharedLayout } from '../layout-utils/validateLayout.js';
 import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 import { ROOT_CONTAINER_ID } from './types.js';
+
+const validateLayout = (data: LayoutData) =>
+  validateSharedLayout(data, { requireEdgeLabelCenter: true });
 
 function leaf(
   id: string,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout as validateSharedLayout } from '../layout-utils/validateLayout.js';
 import {
   createGridEdgeLabelInstrumentation,
   prepareGridLayout,
@@ -9,6 +9,9 @@ import {
 } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
+
+const validateLayout = (data: LayoutData) =>
+  validateSharedLayout(data, { requireEdgeLabelCenter: true });
 
 function node(id: string): Node {
   return {
