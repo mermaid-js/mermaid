@@ -1,0 +1,10 @@
+---
+description: Two entities grouped inside a `subgraph` block.
+---
+erDiagram
+    subgraph customers
+      CUSTOMER
+      ORDER
+    end
+
+    CUSTOMER ||--o{ ORDER : places

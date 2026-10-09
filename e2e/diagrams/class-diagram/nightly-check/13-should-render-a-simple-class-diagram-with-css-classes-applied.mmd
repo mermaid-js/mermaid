@@ -1,0 +1,19 @@
+---
+description: >-
+  A class with generic-type members gets a CSS class applied via the
+  standalone `cssClass "Class10" exClass2` statement. Uses classDiagram-v2
+  syntax with `flowchart.htmlLabels: false`.
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+classDiagram-v2
+  class Class10 {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }
+
+  cssClass "Class10" exClass2

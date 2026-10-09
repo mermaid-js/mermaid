@@ -1,0 +1,28 @@
+---
+description: >-
+  Regression test for issue #6593: BT gitGraph with two sibling branches (nice_feature and
+  very_nice_feature) both forked from main, each merged back into main independently, verifying
+  correct rendering of multiple separate merges into the same branch.
+---
+gitGraph BT:
+  commit id: "1"
+  commit id: "2"
+  branch nice_feature
+  checkout main
+  commit id: "3"
+  checkout nice_feature
+  commit id: "4"
+  checkout main
+  branch very_nice_feature
+  checkout very_nice_feature
+  commit id: "5"
+  checkout main
+  commit id: "6"
+  checkout nice_feature
+  commit id: "7"
+  checkout main
+  merge nice_feature
+  checkout very_nice_feature
+  commit id: "8"
+  checkout main
+  merge very_nice_feature

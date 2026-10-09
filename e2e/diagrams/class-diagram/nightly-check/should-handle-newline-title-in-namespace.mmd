@@ -1,0 +1,21 @@
+---
+description: >-
+  classDiagram with a backtick-quoted class name containing multiple embedded newlines,
+  declared inside a namespace block with member attributes and methods, verifying multi-line
+  titles render correctly inside namespaces.
+---
+classDiagram
+  namespace testingNamespace {
+  class `This
+  Title
+  Has
+  Many
+  Newlines` {
+    +String Also
+    -String Many
+    #int Members
+    +And()
+    -Many()
+    #Methods()
+  }
+  }

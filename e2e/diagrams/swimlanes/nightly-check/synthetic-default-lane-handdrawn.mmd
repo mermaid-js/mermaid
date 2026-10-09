@@ -1,0 +1,18 @@
+---
+description: >-
+  Same synthetic default lane setup as synthetic-default-lane-colour.mmd
+  (a Loose node with no explicit subgraph, feeding into OwnedLane), but
+  rendered with the handDrawn look — checks the synthetic lane is drawn
+  as rough paths rather than plain rects.
+config:
+  theme: redux-color
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+  subgraph OwnedLane
+    A[Owned node]
+  end
+  Loose[Loose node] --> A

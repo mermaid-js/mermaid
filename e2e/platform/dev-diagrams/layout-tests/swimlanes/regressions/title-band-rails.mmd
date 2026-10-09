@@ -1,0 +1,33 @@
+---
+config:
+  layout: swimlane
+  flowchart:
+    nodeSpacing: 40
+    rankSpacing: 90
+---
+swimlane-beta LR
+
+  subgraph TechLead["Tech Lead"]
+    TL_CA(Tech review)
+    TL_Ans(Answer)
+    TL_CA --> TL_Ans
+  end
+
+  subgraph StatusSeeker
+    A(Incoming query)
+    B(Route query)
+    A --> B
+  end
+
+  subgraph HoE["Head of Engineering"]
+    HE_CA(Engineering review)
+    HE_Ans(Answer)
+    HE_Inv(Investigate)
+    HE_Ans2(Answer)
+    HE_CA --> HE_Inv --> HE_Ans2
+    HE_CA --> HE_Ans
+  end
+
+  B --> TL_CA
+  B --> HE_CA
+  TL_CA --> HE_CA
