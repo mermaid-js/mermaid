@@ -180,6 +180,7 @@ function sidebarSyntax() {
         { text: 'Use Case Diagram', link: '/syntax/usecase' },
         { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
+        { text: 'C4 Diagram (beta) 🔥', link: '/syntax/c4-beta' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
         { text: 'Timeline', link: '/syntax/timeline' },
         { text: 'ZenUML', link: '/syntax/zenuml' },
