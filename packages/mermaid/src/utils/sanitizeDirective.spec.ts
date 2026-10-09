@@ -103,21 +103,14 @@ describe('sanitizeDirective', () => {
       expect(args.grid.placements).toEqual({ valid: { row: 1 } });
     });
 
-    it('deletes grid placement values that do not match the schema', () => {
+    it('deletes invalid grid alignments but preserves valid placement properties', () => {
       const args = {
         grid: {
           placements: {
             mixed: {
-              row: 'first',
               column: 2,
               horizontalAlign: 'middle',
               verticalAlign: 'bottom',
-            },
-            invalid: {
-              row: 0,
-              column: 1.5,
-              horizontalAlign: {},
-              verticalAlign: null,
             },
           },
         },
@@ -125,8 +118,26 @@ describe('sanitizeDirective', () => {
       sanitizeDirective(args);
       expect(args.grid.placements).toEqual({
         mixed: { column: 2, verticalAlign: 'bottom' },
-        invalid: {},
       });
+    });
+
+    it.each([
+      ['row', 0],
+      ['row', 'first'],
+      ['column', 1.5],
+      ['column', null],
+    ])('rejects invalid grid placement %s values', (field, value) => {
+      const args = {
+        grid: {
+          placements: {
+            A: { [field]: value },
+          },
+        },
+      };
+
+      expect(() => sanitizeDirective(args)).toThrow(
+        `GRID_INVALID_COORDINATE: Invalid ${field} for placement "A"`
+      );
     });
 
     it('does not apply grid placement sanitization outside grid config', () => {

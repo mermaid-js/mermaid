@@ -8,6 +8,7 @@ import { getStepDuration, isStepEdge } from '../../rendering-util/edgeStep.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
+import { validateGridPlacementCoordinates } from '../../utils/gridPlacement.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -1432,6 +1433,14 @@ You have to call mermaid.initialize.`
         ? { droppedSubGraphMembers: [...this.droppedSubGraphMembers] }
         : {};
     return { nodes, edges, other, config };
+  }
+
+  public validate() {
+    const config = getConfig();
+    if (config.layout !== 'grid') {
+      return;
+    }
+    validateGridPlacementCoordinates(undefined, [...this.vertices.values(), ...this.subGraphs]);
   }
 
   public defaultConfig() {

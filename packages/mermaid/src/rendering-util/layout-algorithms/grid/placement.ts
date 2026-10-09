@@ -3,7 +3,7 @@ import type { GridPlacement } from '../../../types.js';
 import {
   isGridHorizontalAlign,
   isGridVerticalAlign,
-  isValidGridCoordinate,
+  validateGridCoordinate,
 } from '../../../utils/gridPlacement.js';
 import { resolveEdgeCornerRadius } from '../../edgeCornerRadius.js';
 import type { Node } from '../../types.js';
@@ -63,30 +63,6 @@ function ownPlacementFrom(value: unknown): Partial<GridPlacement> {
     placement.verticalAlign = value.verticalAlign;
   }
   return placement;
-}
-
-function validateCoordinate(
-  nodeId: string,
-  placementId: string,
-  field: 'row' | 'column',
-  value: unknown
-): asserts value is number | undefined {
-  if (value === undefined) {
-    return;
-  }
-  if (!isValidGridCoordinate(value)) {
-    const generatedNodeContext = nodeId === placementId ? '' : ` (node "${nodeId}")`;
-    throw gridError(
-      'GRID_INVALID_COORDINATE',
-      `Invalid ${field} for placement "${placementId}"${generatedNodeContext}`,
-      {
-        nodeId,
-        placementId,
-        field,
-        value,
-      }
-    );
-  }
 }
 
 export function buildGridSourceOrder(nodes: Node[]): Map<string, number> {
@@ -211,8 +187,8 @@ function resolveItemPlacement(
   const column = Object.hasOwn(metadataPlacement, 'column')
     ? metadataPlacement.column
     : configPlacement.column;
-  validateCoordinate(item.id, authoredPlacementId, 'row', row);
-  validateCoordinate(item.id, authoredPlacementId, 'column', column);
+  validateGridCoordinate(authoredPlacementId, 'row', row, item.id);
+  validateGridCoordinate(authoredPlacementId, 'column', column, item.id);
 
   return {
     item,
