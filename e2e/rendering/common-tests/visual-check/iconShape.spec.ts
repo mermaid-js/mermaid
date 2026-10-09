@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 
-import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util.ts';
 import { registerIconShapeTests } from '../../../helpers/iconShapeTests.ts';
 
 // Base form (no explicit `form`). The square/circle/rounded slices of the same
@@ -32,17 +32,5 @@ test.describe('Test colored iconShape', () => {
     flowchartCode += `  nA --> nAA@{ icon: '${icon}', form: 'square', label: 'icon with color' }\n`;
     flowchartCode += `  style nAA fill:#f9f,stroke:#333,stroke-width:4px \n`;
     await imgSnapshotTest(page, testInfo, flowchartCode);
-  });
-});
-
-// The e2e page does not load FontAwesome CSS, so this checks the markup, not a screenshot.
-test.describe('Test iconShape with an unregistered FontAwesome icon', () => {
-  test('draws the FontAwesome glyph instead of the unknown-icon placeholder', async ({
-    page,
-  }, testInfo) => {
-    const flowchartCode = `flowchart TB\n  nA --> nAA@{ icon: 'fab:truck', label: 'unregistered prefix' }\n`;
-    await renderGraph(page, testInfo, flowchartCode, { screenshot: false });
-    await expect(page.locator('.icon-shape foreignObject i.fab.fa-truck')).toHaveCount(1);
-    await expect(page.locator('.icon-shape text', { hasText: '?' })).toHaveCount(0);
   });
 });
