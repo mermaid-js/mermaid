@@ -79,9 +79,14 @@ export function buildGridSourceOrder(nodes: Node[]): Map<string, number> {
 export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized {
   const raw = isObjectRecord(data.config?.grid) ? data.config.grid : {};
   const placementsRaw = isObjectRecord(raw.placements) ? raw.placements : {};
-  const placements = new Map<string, GridPlacement>();
+  const placements = new Map<string, GridPlacement[]>();
   for (const key of Object.keys(placementsRaw)) {
-    placements.set(key, ownPlacementFrom(placementsRaw[key]));
+    const value = placementsRaw[key];
+    const occurrencePlacements = Array.isArray(value) ? value : [value];
+    placements.set(
+      key,
+      occurrencePlacements.map((placement) => ownPlacementFrom(placement))
+    );
   }
 
   return {
@@ -133,13 +138,22 @@ export function validateGridPlacementMap(
 ): void {
   // Diagram adapters may retain a generated rendering ID while exposing the authored ID expected
   // by public placement maps. Fall back to `id` for diagrams whose IDs are already author-stable.
-  const knownIds = new Set<string>();
+  const knownIdCounts = new Map<string, number>();
   for (const item of items) {
-    knownIds.add(item.placementId ?? item.id);
+    const placementId = item.placementId ?? item.id;
+    knownIdCounts.set(placementId, (knownIdCounts.get(placementId) ?? 0) + 1);
   }
-  for (const [key] of config.placements) {
-    if (!knownIds.has(key)) {
+  for (const [key, placements] of config.placements) {
+    const matchingItems = knownIdCounts.get(key) ?? 0;
+    if (matchingItems === 0) {
       log.warn(GRID_LOG_PREFIX, `Ignoring grid placement for unknown target "${key}"`);
+      continue;
+    }
+    if (placements.length > matchingItems) {
+      log.warn(
+        GRID_LOG_PREFIX,
+        `Ignoring ${placements.length - matchingItems} extra grid placement occurrence(s) for target "${key}"; found ${matchingItems} matching node(s)`
+      );
     }
   }
 }
@@ -158,12 +172,13 @@ function itemComparator(sourceOrder: Map<string, number>) {
 function resolveItemPlacement(
   item: Node,
   sourceOrder: Map<string, number>,
-  config: GridLayoutConfigNormalized
+  config: GridLayoutConfigNormalized,
+  occurrenceIndex: number
 ): GridResolvedPlacement {
   // Resolve configuration through the authored identity while retaining the generated rendering
   // identity for deterministic ordering and diagnostic context.
   const authoredPlacementId = item.placementId ?? item.id;
-  const configPlacement = config.placements.get(authoredPlacementId) ?? {};
+  const configPlacement = config.placements.get(authoredPlacementId)?.[occurrenceIndex] ?? {};
   const metadataPlacement = ownPlacementFrom(item.metadata);
 
   // Node metadata is closest to the authored node, so it deliberately wins over the shared map.
@@ -254,7 +269,13 @@ export function resolveGridPlacements(
   cells: Map<string, GridCellStack>;
 } {
   const sortedItems = [...items].sort(itemComparator(sourceOrder));
-  const resolved = sortedItems.map((item) => resolveItemPlacement(item, sourceOrder, config));
+  const occurrenceByPlacementId = new Map<string, number>();
+  const resolved = sortedItems.map((item) => {
+    const placementId = item.placementId ?? item.id;
+    const occurrenceIndex = occurrenceByPlacementId.get(placementId) ?? 0;
+    occurrenceByPlacementId.set(placementId, occurrenceIndex + 1);
+    return resolveItemPlacement(item, sourceOrder, config, occurrenceIndex);
+  });
 
   const cells = new Map<string, GridCellStack>();
   const occupied = new Set<string>();
