@@ -1,0 +1,24 @@
+---
+description: >-
+  Legacy v1 state diagram with the same fork/join pattern as
+  should-render-forks-and-joins.mmd, but nested one level deep inside a
+  composite state (TV) rather than at the diagram's top level.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*]-->TV
+
+  state TV {
+  state fork_state &lt;&lt;fork&gt;&gt;
+  [*] --> fork_state
+  fork_state --> State2
+  fork_state --> State3
+
+  state join_state &lt;&lt;join&gt;&gt;
+  State2 --> join_state
+  State3 --> join_state
+  join_state --> State4
+  State4 --> [*]
+  }

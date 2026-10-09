@@ -149,25 +149,23 @@ export async function parse<T extends DiagramAST>(
   return result.value;
 }
 
+/** Chevrotain marks missing locations (EOF, inserted tokens) with -1 (v13+) or NaN (older). */
+const formatLocation = (value: number | undefined): number | '?' =>
+  value !== undefined && value >= 0 ? value : '?';
+
 export class MermaidParseError extends Error {
   constructor(public result: ParseResult<DiagramAST>) {
     const lexerErrors: string = result.lexerErrors
       .map((err) => {
-        const line = err.line !== undefined && !isNaN(err.line) ? err.line : '?';
-        const column = err.column !== undefined && !isNaN(err.column) ? err.column : '?';
+        const line = formatLocation(err.line);
+        const column = formatLocation(err.column);
         return `Lexer error on line ${line}, column ${column}: ${err.message}`;
       })
       .join('\n');
     const parserErrors: string = result.parserErrors
       .map((err) => {
-        const line =
-          err.token.startLine !== undefined && !isNaN(err.token.startLine)
-            ? err.token.startLine
-            : '?';
-        const column =
-          err.token.startColumn !== undefined && !isNaN(err.token.startColumn)
-            ? err.token.startColumn
-            : '?';
+        const line = formatLocation(err.token.startLine);
+        const column = formatLocation(err.token.startColumn);
         return `Parse error on line ${line}, column ${column}: ${err.message}`;
       })
       .join('\n');

@@ -1,0 +1,21 @@
+---
+description:
+  Renders two sibling subgraphs (One, Two) under the redux-color theme where a
+  classDef recolors a node inside One and an inline style directive recolors the
+  Two container itself, checking that explicit user styling overrides the
+  theme's automatic subgraph coloring.
+config:
+  theme: "redux-color"
+---
+
+  flowchart LR
+    subgraph One
+      X[node] --> Y[node]
+    end
+    subgraph Two
+      Z[node]
+    end
+    classDef mine fill:#ff0000,stroke:#000000
+    class X mine
+    style Two fill:#00ff00,stroke:#0000ff
+    Y --> Z

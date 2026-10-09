@@ -1,0 +1,18 @@
+---
+description:
+  Regression test (issue 7659) verifying dagre's edge-merging behavior for
+  converging edges created via the & shorthand, checking that shared edge
+  segments are merged consistently both inside and outside a subgraph.
+config:
+  layout: dagre
+---
+flowchart TD
+  subgraph S1
+  A & B --> C
+  end
+  subgraph S2
+  D
+  E
+  F
+  end
+  D & E --> F

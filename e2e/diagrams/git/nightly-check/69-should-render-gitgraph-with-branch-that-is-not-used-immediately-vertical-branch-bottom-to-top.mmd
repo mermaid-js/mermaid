@@ -1,0 +1,15 @@
+---
+description: >-
+  BT gitGraph where branch x is declared but not checked out immediately — main continues with a
+  commit first — before switching to x, committing, and merging back into main. Tests deferred
+  branch usage.
+---
+gitGraph BT:
+  commit id:"1-abcdefg"
+  branch x
+  checkout main
+  commit id:"2-abcdefg"
+  checkout x
+  commit id:"3-abcdefg"
+  checkout main
+  merge x

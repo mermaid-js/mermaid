@@ -1,0 +1,32 @@
+---
+description:
+  Fully interconnects the lined-document, tagged-document, brace-l, comment,
+  braces, and brace-r node shapes (every shape linked to every other) under the
+  'neo-dark' theme with the 'neo' look, verifying this batch of 6 shapes renders
+  correctly and stays visually distinct under this theme/look combination.
+config:
+  look: "neo"
+  theme: "neo-dark"
+---
+flowchart TB
+  n00@{ shape: lined-document, label: 'This is a label for lined-document shape' }
+  n11@{ shape: tagged-document, label: 'This is a label for tagged-document shape' }
+  n22@{ shape: brace-l, label: 'This is a label for brace-l shape' }
+  n33@{ shape: comment, label: 'This is a label for comment shape' }
+  n44@{ shape: braces, label: 'This is a label for braces shape' }
+  n55@{ shape: brace-r, label: 'This is a label for brace-r shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n00 --> n44
+  n00 --> n55
+  n11 --> n22
+  n11 --> n33
+  n11 --> n44
+  n11 --> n55
+  n22 --> n33
+  n22 --> n44
+  n22 --> n55
+  n33 --> n44
+  n33 --> n55
+  n44 --> n55

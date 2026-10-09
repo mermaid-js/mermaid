@@ -55,6 +55,7 @@
     "contributors": "tsx scripts/updateContributors.ts",
     "playwright": "playwright test",
     "playwright:ui": "playwright test --ui",
+    "playwright:visual-check": "playwright test visual-check; e1=$?; playwright test e2e/rendering/mmd-snapshots.spec.ts -g \"visual-check\"; e2=$?; [ \"$e1\" -eq 0 ] && [ \"$e2\" -eq 0 ]",
     "playwright:install": "playwright install chromium",
     "coverage:e2e:clean": "rimraf .nyc_output coverage/playwright",
     "coverage:merge": "tsx scripts/coverage.ts",
@@ -151,13 +152,14 @@
     "jison": "^0.4.18",
     "js-yaml": "^4.3.0",
     "jsdom": "^26.1.0",
-    "langium-cli": "~4.2.1",
+    "langium-cli": "~4.4.0",
     "lint-staged": "^16.1.6",
     "lit": "^3.3.3",
     "markdown-table": "^3.0.4",
     "monocart-coverage-reports": "^2.12.12",
     "nyc": "^17.1.0",
     "path-browserify": "^1.0.1",
+    "pixelmatch": "^7.2.0",
     "playwright": "^1.62.1",
     "prettier": "^3.6.2",
     "prettier-plugin-jsdoc": "^1.3.3",
@@ -180,20 +182,12 @@
   },
   "pnpm": {
     "overrides": {
-      "langium": "4.2.1",
       "dependency-tree": "11.4.3",
       "@isaacs/brace-expansion": "^5.0.1",
       "@babel/plugin-transform-modules-systemjs": "7.29.4",
       "dompurify": "3.4.12",
       "js-yaml@<3.15.0": "3.15.0",
       "minimatch@10": "^10.2.6"
-    },
-    "packageExtensions": {
-      "langium@4.2.1": {
-        "dependencies": {
-          "@chevrotain/regexp-to-ast": "11.1.2"
-        }
-      }
     },
     "patchedDependencies": {
       "fastdom": "patches/fastdom.patch",

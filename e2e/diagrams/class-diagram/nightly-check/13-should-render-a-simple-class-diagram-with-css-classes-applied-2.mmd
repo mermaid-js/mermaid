@@ -1,0 +1,18 @@
+---
+description: >-
+  A class with generic-type members gets a CSS class applied via the
+  standalone `cssClass "Class10" exClass2` statement. Uses a top-level
+  `htmlLabels: true` config key.
+config:
+  logLevel: 1
+  htmlLabels: true
+---
+classDiagram
+  class Class10 {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }
+
+  cssClass "Class10" exClass2
