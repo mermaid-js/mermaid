@@ -121,6 +121,43 @@ describe('sanitizeDirective', () => {
       });
     });
 
+    it('preserves occurrence-indexed grid placement arrays', () => {
+      const args = {
+        grid: {
+          placements: {
+            service: [
+              { row: 1, column: 1 },
+              { row: 1, column: 2, horizontalAlign: 'right', unknown: true },
+            ],
+          },
+        },
+      };
+
+      sanitizeDirective(args);
+
+      expect(args.grid.placements).toEqual({
+        service: [
+          { row: 1, column: 1 },
+          { row: 1, column: 2, horizontalAlign: 'right' },
+        ],
+      });
+    });
+
+    it.each([{ service: [] }, { service: [null] }, { service: [{ row: 1 }, 'invalid'] }])(
+      'drops invalid grid placement arrays %#',
+      ({ service }) => {
+        const args = {
+          grid: {
+            placements: { service },
+          },
+        };
+
+        sanitizeDirective(args);
+
+        expect(args.grid.placements).toEqual({});
+      }
+    );
+
     it.each([
       ['row', 0],
       ['row', 'first'],
@@ -137,6 +174,20 @@ describe('sanitizeDirective', () => {
 
       expect(() => sanitizeDirective(args)).toThrow(
         `GRID_INVALID_COORDINATE: Invalid ${field} for placement "A"`
+      );
+    });
+
+    it('reports the array index for invalid occurrence coordinates', () => {
+      const args = {
+        grid: {
+          placements: {
+            service: [{ row: 1 }, { row: 0 }],
+          },
+        },
+      };
+
+      expect(() => sanitizeDirective(args)).toThrow(
+        'GRID_INVALID_COORDINATE: Invalid row for placement "service[1]"'
       );
     });
 

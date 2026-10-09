@@ -2,9 +2,13 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MindmapDB } from './mindmapDb.js';
 import type { MindmapLayoutNode, MindmapLayoutEdge } from './mindmapDb.js';
 import type { Edge } from '../../rendering-util/types.js';
+import {
+  buildGridSourceOrder,
+  readGridConfig,
+  resolveGridPlacements,
+} from '../../rendering-util/layout-algorithms/grid/placement.js';
 import type * as ConfigModule from '../../config.js';
 import { getUserDefinedConfig } from '../../config.js';
-import { log } from '../../logger.js';
 
 // Mock the getConfig function
 vi.mock('../../diagram-api/diagramAPI.js', () => ({
@@ -157,26 +161,39 @@ describe('MindmapDb getData function', () => {
       expect(uniqueIds.size).toBe(3); // All IDs should be unique
     });
 
-    it('warns when a grid placement targets duplicate authored node IDs', () => {
-      vi.mocked(getUserDefinedConfig).mockReturnValue({
-        layout: 'grid',
-        grid: {
-          placements: {
-            duplicate: { row: 1 },
-          },
-        },
-      });
-      const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    it('preserves duplicate authored node IDs for occurrence-indexed grid placement', () => {
       db.addNode(0, 'root', 'Root', 0);
       db.addNode(1, 'duplicate', 'First', 0);
       db.addNode(1, 'duplicate', 'Second', 0);
 
-      db.getData();
-
-      expect(warn).toHaveBeenCalledWith(
-        'Grid placement "duplicate" matches 2 mindmap nodes with the same authored ID; all of them will receive that placement.'
+      const result = db.getData();
+      const duplicates = result.nodes.filter((node) => node.placementId === 'duplicate');
+      const config = readGridConfig({
+        ...result,
+        config: {
+          ...result.config,
+          grid: {
+            placements: {
+              duplicate: [
+                { row: 1, column: 1 },
+                { row: 1, column: 2 },
+              ],
+            },
+          },
+        },
+      });
+      const { placements } = resolveGridPlacements(
+        result.nodes,
+        buildGridSourceOrder(result.nodes),
+        config
       );
-      warn.mockRestore();
+      const duplicatePlacements = placements.filter(({ item }) => item.placementId === 'duplicate');
+
+      expect(duplicates.map((node) => node.id)).toEqual(['1', '2']);
+      expect(duplicatePlacements).toEqual([
+        expect.objectContaining({ item: expect.objectContaining({ id: '1' }), row: 1, column: 1 }),
+        expect.objectContaining({ item: expect.objectContaining({ id: '2' }), row: 1, column: 2 }),
+      ]);
     });
 
     it('should handle nodes with missing optional properties', () => {
