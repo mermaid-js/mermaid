@@ -7,11 +7,11 @@ config:
     columnGap: 96
 ---
 flowchart LR
+  O["Outside"]@{ row: 1, column: 1 }
   subgraph G["Group"]
     M["Member"]@{ row: 1, column: 1 }
   end
   G@{ row: 1, column: 2 }
-  O["Outside"]@{ row: 1, column: 1 }
 
   G --> M
   O --> G
