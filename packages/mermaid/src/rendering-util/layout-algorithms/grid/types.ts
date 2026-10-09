@@ -145,7 +145,7 @@ export interface GridRoutingContext {
 }
 
 export interface GridLayoutConfigNormalized {
-  placements: Map<string, GridPlacement>;
+  placements: Map<string, GridPlacement[]>;
   columns: number;
   rowGap: number;
   columnGap: number;

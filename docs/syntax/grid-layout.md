@@ -413,6 +413,45 @@ flowchart TB
 
 Placement-map keys use authored node identifiers when the diagram type provides them. This includes flowchart, agentflow, entity relationship, and mindmap identifiers. Other diagram types use the node ids they emit for layout.
 
+When an authored identifier occurs more than once, use an array to place each occurrence in source
+order. A single placement object is equivalent to an array with one entry. Occurrences without a
+matching entry are placed automatically, and extra entries are ignored with a console warning.
+Inline metadata still takes precedence over the matching placement-map entry.
+
+```mermaid-example
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      service:
+        - { row: 1, column: 1 }
+        - { row: 1, column: 2 }
+---
+mindmap
+  root((Services))
+    service[API]
+    service[Worker]
+    service[Automatically placed]
+```
+
+```mermaid
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      service:
+        - { row: 1, column: 1 }
+        - { row: 1, column: 2 }
+---
+mindmap
+  root((Services))
+    service[API]
+    service[Worker]
+    service[Automatically placed]
+```
+
 Placement-map keys beginning with `__` are removed by Mermaid's recursive configuration sanitizer
 as a prototype-pollution precaution. For flowchart and agentflow nodes with such ids, use inline
 placement metadata instead.
