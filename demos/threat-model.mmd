@@ -1,0 +1,104 @@
+---
+title: Tenant API threat model
+threatModel:
+  version: 1
+  id: tenant-api
+  title: Tenant API security review
+  state: draft
+  identification:
+    codastreProject: example-api
+    codastreService: tenant-api
+    owners: [API team]
+    yapfTicket: YAPF-123
+    securityReviewTicket: SECENG-456
+  context:
+    - id: design
+      description: Tenant API design and authorization requirements
+      source: https://example.org/design
+  dependencies:
+    - model: iam-base
+      description: Assumes IAM verifies token signatures and audience
+  assumptions:
+    - IAM is available and validates bearer tokens
+  assets:
+    - id: customer-data
+      description: Customer records and email addresses
+      classification: confidential PII
+    - id: bearer-token
+      description: Short-lived user credentials
+      classification: secret
+  actors:
+    - id: malicious-tenant
+      description: Authenticated customer attempting cross-tenant access
+      intent: Read another customer's records
+      access: Public API with a valid tenant token
+  elements:
+    - id: User
+      kind: actor
+      actor: malicious-tenant
+    - id: API
+      kind: process
+      description: Validates identity and enforces tenant authorization
+      entryPoint: true
+      assets: [bearer-token, customer-data]
+    - id: DB
+      kind: store
+      assets: [customer-data]
+    - id: request
+      kind: flow
+      assets: [bearer-token]
+    - id: query
+      kind: flow
+      assets: [customer-data]
+    - id: Cloud
+      kind: boundary
+      description: Trusted service network; callers are untrusted
+  threats:
+    - id: T1
+      title: Cross-tenant record disclosure
+      description: An authenticated tenant supplies another tenant's record ID; a missing ownership check exposes customer data.
+      targets: [API, query]
+      category: information-disclosure
+      severity: high
+      score:
+        value: 8
+        method: Example internal risk score (0–10)
+        rationale: Public entry point and confidential customer data
+      status: open
+      actors: [malicious-tenant]
+      context: [design]
+      decision: Reduce risk before release
+      mitigation: Bind every database query to the authenticated tenant and test cross-tenant denial
+      tickets: [https://example.org/issues/SEC-1]
+    - id: T2
+      title: Credential interception
+      description: An on-path attacker intercepts bearer tokens sent over plaintext HTTP.
+      targets: [request]
+      category: information-disclosure
+      severity: high
+      status: mitigated
+      mitigation: Require TLS at ingress and disable plaintext listeners
+      evidence: [https://example.org/repository/ingress.yaml]
+    - id: T3
+      title: Direct public database access
+      description: An Internet attacker connects directly to the database listener.
+      targets: [DB, Cloud]
+      category: elevation-of-privilege
+      severity: critical
+      status: excluded
+      decision: No public route exists; retained as an excluded candidate for later reassessment
+  notes:
+    - Example only. Evidence URLs are placeholders, not verified mitigations.
+  changelog:
+    - date: '2026-09-25'
+      author: API team
+      description: Initial threat modeling session; authorization remediation remains open
+---
+flowchart LR
+  User[External tenant]
+  subgraph Cloud[Service trust boundary]
+    API((Tenant API))
+    DB[(Customer database)]
+    API query@-->|Tenant-scoped query| DB
+  end
+  User request@-->|HTTPS + bearer token| API

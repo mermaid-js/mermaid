@@ -105,7 +105,11 @@ async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseRe
     // Pass the whole DiagramCode object so diagrams that report source
     // positions see the same text (and frontmatter offset) that render() uses.
     const diagram = await Diagram.fromText(code);
-    return { diagramType: diagram.type, config };
+    return {
+      diagramType: diagram.type,
+      config,
+      ...(diagram.threatModel ? { threatModel: diagram.threatModel } : {}),
+    };
   } catch (error) {
     if (parseOptions?.suppressErrors) {
       return false;
@@ -678,6 +682,7 @@ const renderDiagram = async function (
     diagramType,
     svg: svgCode,
     bindFunctions: diag.db.bindFunctions,
+    ...(diag.threatModel ? { threatModel: diag.threatModel } : {}),
   };
 };
 
