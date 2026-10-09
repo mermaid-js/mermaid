@@ -52,6 +52,9 @@ flowchart TB
     const svg = page.locator('svg').first();
     await expect(svg.locator('.error-icon').first()).toBeVisible();
     await expect(svg.locator('.error-text').first()).toHaveText('Syntax error in text');
+    await expect(svg.locator('.error-text')).toContainText([
+      'GRID_INVALID_COORDINATE: Invalid row for placement "A"',
+    ]);
   });
 
   test('flowchart grid keeps accessibility text, links, callbacks, and inline placement ordering', async ({

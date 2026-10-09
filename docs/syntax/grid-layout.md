@@ -339,6 +339,8 @@ Coordinates are:
 - local to the direct parent group
 - sparse but collapsed (rows `1` and `100` render as adjacent occupied tracks)
 
+Invalid `row` or `column` values are rejected during parsing with an error that identifies the placement and field.
+
 When inline metadata and `config.grid.placements` both set the same property, inline metadata takes precedence.
 
 ```mermaid-example
