@@ -266,6 +266,7 @@ Communication tools and platforms
 
 ### Other
 
+- [Article Studio: Convert Markdown with Mermaid diagrams into X Articles](https://md2xarticle.com)
 - [Bisheng](https://www.npmjs.com/package/bisheng)
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
