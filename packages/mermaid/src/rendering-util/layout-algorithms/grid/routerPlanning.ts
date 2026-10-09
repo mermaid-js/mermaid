@@ -293,6 +293,8 @@ function resolveAmbiguousEndpointSides(plans: EdgeRoutePlan[], result: GridLayou
     }
     for (const entry of ambiguous) {
       entry.side = selected;
+      const key = reservationKey(entry.ownerId, selected);
+      reserved.set(key, (reserved.get(key) ?? 0) + 1);
       const owner = result.forest.nodeById.get(entry.ownerId);
       const oppositeId = role === 'source' ? plan.edge.end : plan.edge.start;
       const opposite = oppositeId ? result.forest.nodeById.get(oppositeId) : undefined;
@@ -313,9 +315,19 @@ function resolveAmbiguousEndpointSides(plans: EdgeRoutePlan[], result: GridLayou
     }
   };
 
-  for (const plan of plans) {
-    resolveEndpoint(plan, plan.source, 'source');
-    resolveEndpoint(plan, plan.target, 'target');
+  const endpoints = plans
+    .flatMap((plan) => [
+      { plan, endpoint: plan.source, role: 'source' as const },
+      { plan, endpoint: plan.target, role: 'target' as const },
+    ])
+    .sort((a, b) =>
+      compareCodeUnits(
+        `${a.plan.edge.start ?? ''}|${a.plan.edge.end ?? ''}|${a.plan.edge.id}|${a.role}`,
+        `${b.plan.edge.start ?? ''}|${b.plan.edge.end ?? ''}|${b.plan.edge.id}|${b.role}`
+      )
+    );
+  for (const { plan, endpoint, role } of endpoints) {
+    resolveEndpoint(plan, endpoint, role);
   }
 }
 
