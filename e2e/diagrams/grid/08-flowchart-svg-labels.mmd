@@ -1,11 +1,12 @@
 ---
 config:
   layout: grid
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
   grid:
     columns: 1
 ---
 flowchart TB
-  A -->|next| B
-  B -->|finish| C
+  A -- "`Bold **edge label**`" --> B
+  B -->|Some
+  Split
+  Lines| C
