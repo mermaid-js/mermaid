@@ -1,0 +1,17 @@
+---
+description: >-
+  Sets er.useMaxWidth to false and includes standalone entities with no
+  relationships (DEAD_PARROT, HERMIT) alongside a self-referencing
+  many-to-many SOCIALITE relationship and a RECLUSE-SOCIALITE edge, checking
+  that unconnected entities still render correctly when max-width scaling is
+  disabled.
+config:
+  er:
+    useMaxWidth: false
+---
+erDiagram
+    DEAD_PARROT
+    HERMIT
+    RECLUSE
+    SOCIALITE }o--o{ SOCIALITE : "interacts with"
+    RECLUSE }o--o{ SOCIALITE : avoids

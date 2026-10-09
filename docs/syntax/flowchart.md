@@ -85,8 +85,7 @@ Use double quotes and backticks "\` text \`" to enclose the markdown text.
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -99,8 +98,7 @@ flowchart LR
 ```mermaid
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
     markdown["`This **is** _Markdown_`"]
@@ -145,6 +143,125 @@ Possible FlowChart orientations are:
 - BT - Bottom to top
 - RL - Right to left
 - LR - Left to right
+
+## Default theme, look and layout (v12.0.0+)
+
+Flowcharts use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+```mermaid
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', flowchart: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
 
 ## Node shapes
 
@@ -324,53 +441,61 @@ This syntax creates a node A as a rectangle. It renders in the same way as `A["A
 
 Below is a comprehensive list of the newly introduced shapes and their corresponding semantic meanings, short names, and aliases:
 
-| **Semantic Name**                 | **Shape Name**         | **Short Name** | **Description**                | **Alias Supported**                                              |
-| --------------------------------- | ---------------------- | -------------- | ------------------------------ | ---------------------------------------------------------------- |
-| Card                              | Notched Rectangle      | `notch-rect`   | Represents a card              | `card`, `notched-rectangle`                                      |
-| Collate                           | Hourglass              | `hourglass`    | Represents a collate operation | `collate`, `hourglass`                                           |
-| Com Link                          | Lightning Bolt         | `bolt`         | Communication link             | `com-link`, `lightning-bolt`                                     |
-| Comment                           | Curly Brace            | `brace`        | Adds a comment                 | `brace-l`, `comment`                                             |
-| Comment Right                     | Curly Brace            | `brace-r`      | Adds a comment                 |                                                                  |
-| Comment with braces on both sides | Curly Braces           | `braces`       | Adds a comment                 |                                                                  |
-| Data Input/Output                 | Lean Right             | `lean-r`       | Represents input or output     | `in-out`, `lean-right`                                           |
-| Data Input/Output                 | Lean Left              | `lean-l`       | Represents output or input     | `lean-left`, `out-in`                                            |
-| Database                          | Cylinder               | `cyl`          | Database storage               | `cylinder`, `database`, `db`                                     |
-| Decision                          | Diamond                | `diam`         | Decision-making step           | `decision`, `diamond`, `question`                                |
-| Delay                             | Half-Rounded Rectangle | `delay`        | Represents a delay             | `half-rounded-rectangle`                                         |
-| Direct Access Storage             | Horizontal Cylinder    | `h-cyl`        | Direct access storage          | `das`, `horizontal-cylinder`                                     |
-| Disk Storage                      | Lined Cylinder         | `lin-cyl`      | Disk storage                   | `disk`, `lined-cylinder`                                         |
-| Display                           | Curved Trapezoid       | `curv-trap`    | Represents a display           | `curved-trapezoid`, `display`                                    |
-| Divided Process                   | Divided Rectangle      | `div-rect`     | Divided process shape          | `div-proc`, `divided-process`, `divided-rectangle`               |
-| Document                          | Document               | `doc`          | Represents a document          | `doc`, `document`                                                |
-| Event                             | Rounded Rectangle      | `rounded`      | Represents an event            | `event`                                                          |
-| Extract                           | Triangle               | `tri`          | Extraction process             | `extract`, `triangle`                                            |
-| Fork/Join                         | Filled Rectangle       | `fork`         | Fork or join in process flow   | `join`                                                           |
-| Internal Storage                  | Window Pane            | `win-pane`     | Internal storage               | `internal-storage`, `window-pane`                                |
-| Junction                          | Filled Circle          | `f-circ`       | Junction point                 | `filled-circle`, `junction`                                      |
-| Lined Document                    | Lined Document         | `lin-doc`      | Lined document                 | `lined-document`                                                 |
-| Lined/Shaded Process              | Lined Rectangle        | `lin-rect`     | Lined process shape            | `lin-proc`, `lined-process`, `lined-rectangle`, `shaded-process` |
-| Loop Limit                        | Trapezoidal Pentagon   | `notch-pent`   | Loop limit step                | `loop-limit`, `notched-pentagon`                                 |
-| Manual File                       | Flipped Triangle       | `flip-tri`     | Manual file operation          | `flipped-triangle`, `manual-file`                                |
-| Manual Input                      | Sloped Rectangle       | `sl-rect`      | Manual input step              | `manual-input`, `sloped-rectangle`                               |
-| Manual Operation                  | Trapezoid Base Top     | `trap-t`       | Represents a manual task       | `inv-trapezoid`, `manual`, `trapezoid-top`                       |
-| Multi-Document                    | Stacked Document       | `docs`         | Multiple documents             | `documents`, `st-doc`, `stacked-document`                        |
-| Multi-Process                     | Stacked Rectangle      | `st-rect`      | Multiple processes             | `processes`, `procs`, `stacked-rectangle`                        |
-| Odd                               | Odd                    | `odd`          | Odd shape                      |                                                                  |
-| Paper Tape                        | Flag                   | `flag`         | Paper tape                     | `paper-tape`                                                     |
-| Prepare Conditional               | Hexagon                | `hex`          | Preparation or condition step  | `hexagon`, `prepare`                                             |
-| Priority Action                   | Trapezoid Base Bottom  | `trap-b`       | Priority action                | `priority`, `trapezoid`, `trapezoid-bottom`                      |
-| Process                           | Rectangle              | `rect`         | Standard process shape         | `proc`, `process`, `rectangle`                                   |
-| Start                             | Circle                 | `circle`       | Starting point                 | `circ`                                                           |
-| Start                             | Small Circle           | `sm-circ`      | Small starting point           | `small-circle`, `start`                                          |
-| Stop                              | Double Circle          | `dbl-circ`     | Represents a stop point        | `double-circle`                                                  |
-| Stop                              | Framed Circle          | `fr-circ`      | Stop point                     | `framed-circle`, `stop`                                          |
-| Stored Data                       | Bow Tie Rectangle      | `bow-rect`     | Stored data                    | `bow-tie-rectangle`, `stored-data`                               |
-| Subprocess                        | Framed Rectangle       | `fr-rect`      | Subprocess                     | `framed-rectangle`, `subproc`, `subprocess`, `subroutine`        |
-| Summary                           | Crossed Circle         | `cross-circ`   | Summary                        | `crossed-circle`, `summary`                                      |
-| Tagged Document                   | Tagged Document        | `tag-doc`      | Tagged document                | `tag-doc`, `tagged-document`                                     |
-| Tagged Process                    | Tagged Rectangle       | `tag-rect`     | Tagged process                 | `tag-proc`, `tagged-process`, `tagged-rectangle`                 |
-| Terminal Point                    | Stadium                | `stadium`      | Terminal point                 | `pill`, `terminal`                                               |
-| Text Block                        | Text Block             | `text`         | Text block                     |                                                                  |
+| **Semantic Name**                 | **Shape Name**            | **Short Name** | **Description**                             | **Alias Supported**                                              |
+| --------------------------------- | ------------------------- | -------------- | ------------------------------------------- | ---------------------------------------------------------------- |
+| Bang                              | Bang                      | `bang`         | Bang                                        | `bang`                                                           |
+| Browser                           | Browser                   | `browser`      | Browser window                              |                                                                  |
+| Bucket                            | Bucket                    | `bucket`       | Object storage bucket                       |                                                                  |
+| Card                              | Notched Rectangle         | `notch-rect`   | Represents a card                           | `card`, `notched-rectangle`                                      |
+| Cloud                             | Cloud                     | `cloud`        | cloud                                       | `cloud`                                                          |
+| Collate                           | Hourglass                 | `hourglass`    | Represents a collate operation              | `collate`, `hourglass`                                           |
+| Com Link                          | Lightning Bolt            | `bolt`         | Communication link                          | `com-link`, `lightning-bolt`                                     |
+| Comment                           | Curly Brace               | `brace`        | Adds a comment                              | `brace-l`, `comment`                                             |
+| Comment Right                     | Curly Brace               | `brace-r`      | Adds a comment                              |                                                                  |
+| Comment with braces on both sides | Curly Braces              | `braces`       | Adds a comment                              |                                                                  |
+| Console                           | Console (terminal window) | `console`      | Terminal or console window                  |                                                                  |
+| Data Input/Output                 | Lean Right                | `lean-r`       | Represents input or output                  | `in-out`, `lean-right`                                           |
+| Data Input/Output                 | Lean Left                 | `lean-l`       | Represents output or input                  | `lean-left`, `out-in`                                            |
+| Data Store                        | Data Store                | `datastore`    | Data flow diagram data store                | `data-store`                                                     |
+| Database                          | Cylinder                  | `cyl`          | Database storage                            | `cylinder`, `database`, `db`                                     |
+| Decision                          | Diamond                   | `diam`         | Decision-making step                        | `decision`, `diamond`, `question`                                |
+| Delay                             | Half-Rounded Rectangle    | `delay`        | Represents a delay                          | `half-rounded-rectangle`                                         |
+| Direct Access Storage             | Horizontal Cylinder       | `h-cyl`        | Direct access storage                       | `das`, `horizontal-cylinder`                                     |
+| Disk Storage                      | Lined Cylinder            | `lin-cyl`      | Disk storage                                | `disk`, `lined-cylinder`                                         |
+| Display                           | Curved Trapezoid          | `curv-trap`    | Represents a display                        | `curved-trapezoid`, `display`                                    |
+| Divided Process                   | Divided Rectangle         | `div-rect`     | Divided process shape                       | `div-proc`, `divided-process`, `divided-rectangle`               |
+| Document                          | Document                  | `doc`          | Represents a document                       | `doc`, `document`                                                |
+| Event                             | Rounded Rectangle         | `rounded`      | Represents an event                         | `event`                                                          |
+| Extract                           | Triangle                  | `tri`          | Extraction process                          | `extract`, `triangle`                                            |
+| Folder                            | Folder                    | `folder`       | Folder or directory                         | `directory`                                                      |
+| Fork/Join                         | Filled Rectangle          | `fork`         | Fork or join in process flow                | `join`                                                           |
+| Internal Storage                  | Window Pane               | `win-pane`     | Internal storage                            | `internal-storage`, `window-pane`                                |
+| Junction                          | Filled Circle             | `f-circ`       | Junction point                              | `filled-circle`, `junction`                                      |
+| Lined Document                    | Lined Document            | `lin-doc`      | Lined document                              | `lined-document`                                                 |
+| Lined/Shaded Process              | Lined Rectangle           | `lin-rect`     | Lined process shape                         | `lin-proc`, `lined-process`, `lined-rectangle`, `shaded-process` |
+| Loop Limit                        | Trapezoidal Pentagon      | `notch-pent`   | Loop limit step                             | `loop-limit`, `notched-pentagon`                                 |
+| Manual File                       | Flipped Triangle          | `flip-tri`     | Manual file operation                       | `flipped-triangle`, `manual-file`                                |
+| Manual Input                      | Sloped Rectangle          | `sl-rect`      | Manual input step                           | `manual-input`, `sloped-rectangle`                               |
+| Manual Operation                  | Trapezoid Base Top        | `trap-t`       | Represents a manual task                    | `inv-trapezoid`, `manual`, `trapezoid-top`                       |
+| Multi-Document                    | Stacked Document          | `docs`         | Multiple documents                          | `documents`, `st-doc`, `stacked-document`                        |
+| Multi-Process                     | Stacked Rectangle         | `st-rect`      | Multiple processes                          | `processes`, `procs`, `stacked-rectangle`                        |
+| Odd                               | Odd                       | `odd`          | Odd shape                                   |                                                                  |
+| Paper Tape                        | Flag                      | `flag`         | Paper tape                                  | `paper-tape`                                                     |
+| Person                            | Person                    | `person`       | Person (circular head above a rounded body) |                                                                  |
+| Prepare Conditional               | Hexagon                   | `hex`          | Preparation or condition step               | `hexagon`, `prepare`                                             |
+| Priority Action                   | Trapezoid Base Bottom     | `trap-b`       | Priority action                             | `priority`, `trapezoid`, `trapezoid-bottom`                      |
+| Process                           | Rectangle                 | `rect`         | Standard process shape                      | `proc`, `process`, `rectangle`                                   |
+| Start                             | Circle                    | `circle`       | Starting point                              | `circ`                                                           |
+| Start                             | Small Circle              | `sm-circ`      | Small starting point                        | `small-circle`, `start`                                          |
+| Stop                              | Double Circle             | `dbl-circ`     | Represents a stop point                     | `double-circle`                                                  |
+| Stop                              | Framed Circle             | `fr-circ`      | Stop point                                  | `framed-circle`, `stop`                                          |
+| Stored Data                       | Bow Tie Rectangle         | `bow-rect`     | Stored data                                 | `bow-tie-rectangle`, `stored-data`                               |
+| Subprocess                        | Framed Rectangle          | `fr-rect`      | Subprocess                                  | `framed-rectangle`, `subproc`, `subprocess`, `subroutine`        |
+| Summary                           | Crossed Circle            | `cross-circ`   | Summary                                     | `crossed-circle`, `summary`                                      |
+| Tagged Document                   | Tagged Document           | `tag-doc`      | Tagged document                             | `tag-doc`, `tagged-document`                                     |
+| Tagged Process                    | Tagged Rectangle          | `tag-rect`     | Tagged process                              | `tag-proc`, `tagged-process`, `tagged-rectangle`                 |
+| Terminal Point                    | Stadium                   | `stadium`      | Terminal point                              | `pill`, `terminal`                                               |
+| Text Block                        | Text Block                | `text`         | Text block                                  |                                                                  |
 
 ### Example Flowchart with New Shapes
 
@@ -524,6 +649,18 @@ flowchart TD
 ```mermaid
 flowchart TD
     A@{ shape: lean-l, label: "Output/Input" }
+```
+
+### Datastore (Top and bottom border)
+
+```mermaid-example
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
+```
+
+```mermaid
+flowchart TD
+    A@{ shape: datastore, label: "Datastore" }
 ```
 
 ### Priority Action (Trapezoid Base Bottom)
@@ -983,11 +1120,23 @@ flowchart TD
   - `b`
 - **w**: The width of the image. If not defined, this will default to the natural width of the image.
 - **h**: The height of the image. If not defined, this will default to the natural height of the image.
-- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the height (`h`) accordingly to the width (`w`). If not defined, this will default to `off` Possible values are:
+- **constraint**: Determines if the image should constrain the node size. This setting also ensures the image maintains its original aspect ratio, adjusting the width (`w`) accordingly to the height (`h`). If not defined, this will default to `off` Possible values are:
   - `on`
   - `off`
 
-These new shapes provide additional flexibility and visual appeal to your flowcharts, making them more informative and engaging.
+If you want to resize an image, but keep the same aspect ratio, set `h`, and set `constraint: on` to constrain the aspect ratio. E.g.
+
+```mermaid-example
+flowchart TD
+  %% My image with a constrained aspect ratio
+  A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
+```
+
+```mermaid
+flowchart TD
+  %% My image with a constrained aspect ratio
+  A@{ img: "https://mermaid.js.org/favicon.svg", label: "My example image label", pos: "t", h: 60, constraint: "on" }
+```
 
 ## Links between nodes
 
@@ -1627,6 +1776,50 @@ flowchart LR
     outside ---> top2
 ```
 
+### Collapsible subgraphs (v11.17.0+)
+
+A subgraph can be collapsed into a single compact node by attaching the metadata
+`@{ view: collapsed }` to its id. This is useful for hiding the internals of a
+group while still showing how it connects to the rest of the diagram.
+
+```mermaid-example
+flowchart TD
+    Start --> one
+    subgraph one [My Group]
+        A --> B
+        B --> C
+    end
+    one --> End
+    one@{ view: collapsed }
+```
+
+```mermaid
+flowchart TD
+    Start --> one
+    subgraph one [My Group]
+        A --> B
+        B --> C
+    end
+    one --> End
+    one@{ view: collapsed }
+```
+
+The metadata is attached with the existing `id@{ ... }` statement syntax, where
+`id` is the subgraph id (use `subgraph id [Title]` to give a subgraph an explicit
+id). When a subgraph is collapsed:
+
+- Its internal nodes are hidden and it is drawn as a single node carrying the
+  subgraph's title.
+- Edges that cross the subgraph boundary are **redirected to the collapsed node**.
+- Edges that are entirely internal to the collapsed subgraph are dropped (they
+  would otherwise become self-loops on the collapsed node).
+- For nested subgraphs, a collapse resolves to the **outermost** collapsed
+  ancestor, so an edge pointing at a deeply nested node lands on the outermost
+  collapsed group.
+
+`view: expanded` is the default and renders the subgraph normally, so omitting the
+metadata (or setting `view: expanded`) keeps the existing behavior.
+
 ## Markdown Strings
 
 The "Markdown Strings" feature enhances flowcharts and mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
@@ -1634,8 +1827,7 @@ The "Markdown Strings" feature enhances flowcharts and mind maps by offering a m
 ```mermaid-example
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
@@ -1651,8 +1843,7 @@ end
 ```mermaid
 ---
 config:
-  flowchart:
-    htmlLabels: false
+  htmlLabels: false
 ---
 flowchart LR
 subgraph "One"
@@ -1783,7 +1974,8 @@ Beginner's tip—a full example using interactive links in a html context:
     };
     const config = {
       startOnLoad: true,
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+      htmlLabels: true,
+      flowchart: { useMaxWidth: true, curve: 'cardinal' },
       securityLevel: 'loose',
     };
     mermaid.initialize(config);
@@ -1832,15 +2024,54 @@ It is possible to style the type of curve used for lines between items, if the d
 Available curve styles include `basis`, `bumpX`, `bumpY`, `cardinal`, `catmullRom`, `linear`, `monotoneX`, `monotoneY`,
 `natural`, `step`, `stepAfter`, and `stepBefore`.
 
+For a full list of available curves, including an explanation of custom curves, refer to
+the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+
+Line styling can be achieved in two ways:
+
+1. Change the curve style of all the lines
+2. Change the curve style of a particular line
+
+#### Diagram level curve style
+
 In this example, a left-to-right graph uses the `stepBefore` curve style:
 
 ```
-%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+---
+config:
+  flowchart:
+    curve: stepBefore
+---
 graph LR
 ```
 
-For a full list of available curves, including an explanation of custom curves, refer to
-the [Shapes](https://d3js.org/d3-shape/curve) documentation in the [d3-shape](https://github.com/d3/d3-shape/) project.
+#### Edge level curve style using Edge IDs (v11.10.0+)
+
+You can assign IDs to [edges](#attaching-an-id-to-edges). After assigning an ID you can modify the line style by modifying the edge's `curve` property using the following syntax:
+
+```mermaid-example
+flowchart LR
+    A e1@==> B
+    A e2@--> C
+    e1@{ curve: linear }
+    e2@{ curve: natural }
+```
+
+```mermaid
+flowchart LR
+    A e1@==> B
+    A e2@--> C
+    e1@{ curve: linear }
+    e2@{ curve: natural }
+```
+
+```info
+Any edge curve style modified at the edge level overrides the diagram level style.
+```
+
+```info
+If the same edge is modified multiple times the last modification will be rendered.
+```
 
 ### Styling a node
 
@@ -1923,35 +2154,24 @@ flowchart LR
 
 ### CSS classes
 
-It is also possible to predefine classes in CSS styles that can be applied from the graph definition as in the example
-below:
+> **Note:** Applying styles to Mermaid nodes via external CSS (e.g., `.cssClass > rect { fill: ... }`) does **not** work reliably. Mermaid's internal styles are injected with `!important` and scoped to the SVG element ID, giving them higher specificity than external CSS rules. External CSS will be silently overridden.
+>
+> The recommended approach is to use the `classDef` syntax shown in the [Classes](#classes) section above, which works correctly and is the intended styling mechanism.
+>
+> If external CSS is strictly required, every property must use `!important` to override Mermaid's styles — but this is not recommended.
 
-**Example style**
-
-```html
-<style>
-  .cssClass > rect {
-    fill: #ff0000;
-    stroke: #ffff00;
-    stroke-width: 4px;
-  }
-</style>
-```
-
-**Example definition**
+**Working approach — use `classDef` instead:**
 
 ```mermaid-example
 flowchart LR
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
+    A:::myStyle --> B
+    classDef myStyle fill:#ff0000,stroke:#ffff00,stroke-width:4px
 ```
 
 ```mermaid
 flowchart LR
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
+    A:::myStyle --> B
+    classDef myStyle fill:#ff0000,stroke:#ffff00,stroke-width:4px
 ```
 
 ### Default class
@@ -1986,7 +2206,7 @@ flowchart TD
 
 There are two ways to display these FontAwesome icons:
 
-### Register FontAwesome icon packs (v\<MERMAID_RELEASE_VERSION>+)
+### Register FontAwesome icon packs (v11.7.0+)
 
 You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 
@@ -2069,21 +2289,25 @@ flowchart LR
 
 ### Renderer
 
-The layout of the diagram is done with the renderer. The default renderer is dagre.
+The layout of the diagram is done with the layout algorithm. The default is
+[ELK](https://www.eclipse.org/elk/), which handles larger and more complex
+diagrams well and is bundled with Mermaid.
 
-Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
-
-The _elk_ renderer is an experimental feature.
-You can change the renderer to elk by adding this directive:
+To use the classic Dagre layout instead:
 
 ```
 config:
-  flowchart:
-    defaultRenderer: "elk"
+  layout: dagre
 ```
 
-> **Note**
-> Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
+The `flowchart-elk` diagram type still works, but is no longer needed — it
+predates `layout` and selected what is now the default.
+
+The `defaultRenderer` option of the `flowchart`, `class` and `state` config
+sections was removed in v12. It named a rendering engine at a time when there
+was more than one; all of its values had come to mean the same renderer, and
+its `elk` value only ever set `layout: elk` on your behalf. Use `layout`
+directly.
 
 ### Width
 

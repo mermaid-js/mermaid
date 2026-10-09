@@ -106,7 +106,7 @@ export const isValidArchitectureDirectionPair = function (
   return x !== 'LL' && x !== 'RR' && x !== 'TT' && x !== 'BB';
 };
 
-export type ArchitectureDirectionPairMap = Partial<Record<ArchitectureDirectionPair, string>>;
+export type ArchitectureDirectionPairMap = Map<ArchitectureDirectionPair, string>;
 
 /**
  * Creates a pair of the directions of each side of an edge. This function should be used instead of manually creating it to ensure that the source is always the first character.
@@ -131,9 +131,9 @@ export const getArchitectureDirectionPair = function (
  * @returns a new [x, y] coordinate pair
  */
 export const shiftPositionByArchitectureDirectionPair = function (
-  [x, y]: number[],
+  [x, y]: [number, number],
   pair: ArchitectureDirectionPair
-): number[] {
+): [number, number] {
   const lhs = pair[0] as ArchitectureDirection;
   const rhs = pair[1] as ArchitectureDirection;
   if (isArchitectureDirectionX(lhs)) {
@@ -230,6 +230,13 @@ export interface ArchitectureGroup {
   in?: string;
 }
 
+export type ArchitectureAlignmentDirection = 'row' | 'column';
+
+export interface ArchitectureLayoutHint {
+  direction: ArchitectureAlignmentDirection;
+  members: string[];
+}
+
 export interface ArchitectureEdge<DT = ArchitectureDirection> {
   lhsId: string;
   lhsDir: DT;
@@ -254,29 +261,29 @@ export interface ArchitectureDB extends DiagramDBBase<ArchitectureDiagramConfig>
   getGroups: () => ArchitectureGroup[];
   addEdge: (edge: ArchitectureEdge) => void;
   getEdges: () => ArchitectureEdge[];
+  addLayoutHint: (hint: ArchitectureLayoutHint) => void;
+  getLayoutHints: () => ArchitectureLayoutHint[];
   setElementForId: (id: string, element: D3Element) => void;
   getElementById: (id: string) => D3Element;
   getDataStructures: () => ArchitectureDataStructures;
 }
 
-export type ArchitectureAdjacencyList = Record<string, ArchitectureDirectionPairMap>;
-export type ArchitectureSpatialMap = Record<string, number[]>;
+export type ArchitectureAdjacencyList = Map<string, ArchitectureDirectionPairMap>;
+export type ArchitectureSpatialMap = Map<string, [number, number]>;
 
 /**
  * Maps the direction that groups connect from.
  *
- * **Outer key**: ID of group A
- *
- * **Inner key**: ID of group B
- *
- * **Value**: 'vertical' or 'horizontal'
- *
- * Note: tmp[groupA][groupB] == tmp[groupB][groupA]
+ * **Key**: `groupA-groupB`, where groupA and groupB are the JSON string ids of the two groups in alphabetical order.
  */
-export type ArchitectureGroupAlignments = Record<
-  string,
-  Record<string, Exclude<ArchitectureAlignment, 'bend'>>
+export type ArchitectureGroupAlignments = Map<
+  `${string}-${string}`,
+  Exclude<ArchitectureAlignment, 'bend'>
 >;
+export const architectureGroupAlignmentKey = (groupA: string, groupB: string) => {
+  const [lowerGroupId, upperGroupId] = [groupA, groupB].sort();
+  return `${JSON.stringify(lowerGroupId)}-${JSON.stringify(upperGroupId)}` as const;
+};
 
 export interface ArchitectureDataStructures {
   adjList: ArchitectureAdjacencyList;
@@ -285,13 +292,14 @@ export interface ArchitectureDataStructures {
 }
 
 export interface ArchitectureState extends Record<string, unknown> {
-  nodes: Record<string, ArchitectureNode>;
-  groups: Record<string, ArchitectureGroup>;
+  nodes: Map<string, ArchitectureNode>;
+  groups: Map<string, ArchitectureGroup>;
   edges: ArchitectureEdge[];
-  registeredIds: Record<string, 'node' | 'group'>;
+  registeredIds: Map<string, 'node' | 'group'>;
   dataStructures?: ArchitectureDataStructures;
-  elements: Record<string, D3Element>;
+  elements: Map<string, D3Element>;
   config: ArchitectureDiagramConfig;
+  layoutHints: ArchitectureLayoutHint[];
 }
 
 /*=======================================*\

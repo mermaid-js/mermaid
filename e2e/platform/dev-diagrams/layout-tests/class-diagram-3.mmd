@@ -1,0 +1,22 @@
+classDiagram
+  class AuthService {
+    +login(username: string, password: string): boolean
+    +logout(): void
+    +register(): void
+  }
+
+  class User {
+    -username: string
+    -password: string
+    -role: Role
+    +changePassword(): void
+  }
+
+  class Role {
+    -name: string
+    -permissions: string[]
+    +hasPermission(): boolean
+  }
+
+  AuthService --> User
+  User --> Role

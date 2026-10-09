@@ -1,0 +1,35 @@
+{
+  "nodes": [
+    {
+      "id": "order_complete",
+      "width": 160.59375,
+      "height": 112
+    },
+    {
+      "id": "edge-label-order_complete-details-L_order_complete_details_0",
+      "width": 15.578125,
+      "height": 21
+    },
+    {
+      "id": "sales_process",
+      "width": 115.59375,
+      "height": 51
+    },
+    {
+      "id": "places_order",
+      "width": 109.046875,
+      "height": 45
+    },
+    {
+      "id": "details",
+      "width": 118.375,
+      "height": 45
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "21f0e7c08d644293dea6b00e697f70bd028d8bac0403cc0823563b7e024d1200",
+    "capturedAt": "2026-05-28T10:54:53.713Z",
+    "capturedFrom": "dev-explorer layout-tests/swimlanes/11-commant2.mmd theme=redux-dark look=neo layout=swimlane"
+  }
+}

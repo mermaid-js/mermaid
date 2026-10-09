@@ -5,6 +5,7 @@ import { packageOptions } from '../.build/common.js';
 
 async function createServer() {
   const app = express();
+  const port = process.env.MERMAID_PORT ?? 9000;
 
   // Create Vite server in middleware mode
   const vite = await createViteServer({
@@ -20,11 +21,11 @@ async function createServer() {
   }
   app.use(vite.middlewares);
   app.use(express.static('demos'));
-  app.use(express.static('cypress/platform'));
+  app.use(express.static('e2e/platform'));
 
-  app.listen(9000, () => {
+  app.listen(port, () => {
     // eslint-disable-next-line no-console
-    console.log(`Listening on http://localhost:9000`);
+    console.log(`Listening on http://localhost:${port}`);
   });
 }
 

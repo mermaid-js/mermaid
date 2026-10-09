@@ -1,12 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type * as d3 from 'd3';
-import type { SetRequired } from 'type-fest';
+import type { SetOptional, SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
 import type { BaseDiagramConfig, MermaidConfig } from '../config.type.js';
+import type { DiagramOrientation } from '../diagrams/git/gitGraphTypes.js';
 
 export interface DiagramMetadata {
   title?: string;
   config?: MermaidConfig;
+}
+
+/**
+ * Preprocessed code produced by `preprocessDiagram`. Diagrams that set
+ * {@link DiagramDB.preserveCommentsWhenParsing} are parsed from `withComments`
+ * and receive `frontmatterLineOffset`; all other diagrams are parsed from
+ * `cleaned` and behave exactly as before.
+ */
+export interface DiagramCode {
+  /** Original source text, untouched. */
+  raw: string;
+  /** Fully processed text: CRLF normalised, frontmatter removed, directives removed, comments stripped. */
+  cleaned: string;
+  /** Text after frontmatter/directive removal but before comment cleanup. */
+  withComments?: string;
+  /** Number of lines occupied by YAML frontmatter (0 if none). */
+  frontmatterLineOffset?: number;
 }
 
 export interface InjectUtils {
@@ -35,9 +53,31 @@ export interface DiagramDB {
   getAccTitle?: () => string;
   setAccDescription?: (description: string) => void;
   getAccDescription?: () => string;
-
+  getDirection?: () => string | undefined;
+  setDirection?: (dir: DiagramOrientation) => void;
   setDisplayMode?: (title: string) => void;
+  setDiagramId?: (svgElementId: string) => void;
   bindFunctions?: (element: Element) => void;
+  setErrorMessage?: (message: string) => void;
+  getErrorMessage?: () => string | undefined;
+
+  /**
+   * Opt in to source-faithful parsing.
+   *
+   * When `true`, `Diagram.fromText` parses the text with `%%` comments still in
+   * place ({@link DiagramCode.withComments}) instead of the comment-stripped
+   * {@link DiagramCode.cleaned}, so parser positions line up with the source the
+   * author wrote. Only diagrams that report source positions need this; every
+   * other diagram leaves it unset and parses `cleaned` as before.
+   */
+  readonly preserveCommentsWhenParsing?: boolean;
+
+  /**
+   * Receives the number of lines occupied by YAML frontmatter, which the parser
+   * never sees. Diagrams that report source positions add this to their parser
+   * line numbers so the positions refer to the original source.
+   */
+  setFrontmatterLineOffset?: (offset: number) => void;
 }
 
 /**
@@ -61,7 +101,14 @@ export type DiagramDBBase<T extends BaseDiagramConfig> = {
 // It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
 export interface DiagramStyleClassDef {
   id: string;
+  /**
+   * The styles to apply to the class for HTML rendering.
+   * These are expected to be CSS property declarations without a trailing semicolon, e.g. `color: red`.
+   */
   styles?: string[];
+  /**
+   * The styles to apply to `<tspan>` elements with the given class.
+   */
   textStyles?: string[];
 }
 
@@ -91,17 +138,13 @@ export interface DiagramDefinition {
   ) => void;
 }
 
-export interface DetectorRecord {
-  detector: DiagramDetector;
-  loader?: DiagramLoader;
-}
-
 export interface ExternalDiagramDefinition {
   id: string;
   detector: DiagramDetector;
   loader: DiagramLoader;
 }
 
+export type DetectorRecord = SetOptional<Omit<ExternalDiagramDefinition, 'id'>, 'loader'>;
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 export type DiagramLoader = () => Promise<{ id: string; diagram: DiagramDefinition }>;
 
@@ -131,4 +174,4 @@ export type SVG = d3.Selection<SVGSVGElement, unknown, Element | null, unknown>;
 
 export type SVGGroup = d3.Selection<SVGGElement, unknown, Element | null, unknown>;
 
-export type DiagramStylesProvider = (options?: any) => string;
+export type DiagramStylesProvider = (options?: any, svgId?: string) => string;

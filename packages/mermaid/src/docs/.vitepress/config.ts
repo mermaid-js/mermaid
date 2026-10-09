@@ -1,8 +1,10 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
-import packageJson from '../../../package.json' assert { type: 'json' };
-import MermaidExample from './mermaid-markdown-all.js';
+import packageJson from '../../../package.json' with { type: 'json' };
 import { addCanonicalUrls } from './canonical-urls.js';
+import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
+import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
+import MermaidExample from './mermaid-markdown-all.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -26,7 +28,10 @@ export default defineConfig({
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
-  transformPageData: addCanonicalUrls,
+  transformPageData: (pageData) => {
+    addCanonicalUrls(pageData);
+    applyHomePageHeroCopy(pageData, docsHostname());
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     ['meta', { property: 'og:title', content: 'Mermaid' }],
@@ -43,18 +48,10 @@ export default defineConfig({
       'meta',
       { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
     ],
-    [
-      'script',
-      {
-        defer: 'true',
-        'data-domain': 'mermaid.js.org',
-        // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
-        src: 'https://p.mermaid.live/js/script.tagged-events.outbound-links.js',
-      },
-    ],
   ],
   themeConfig: {
-    logo: '/favicon.svg',
+    logo: getHeaderLogo(docsHostname()),
+    logoLink: getHeaderLogoLink(docsHostname()),
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
@@ -81,15 +78,25 @@ export default defineConfig({
         icon: {
           svg: '<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490.16 490.16"><defs><mask id="Mask"><rect x="0" y="0" width="490.16" height="490.16" fill="white" /><path fill="black" d="M407.48,111.18A165.2,165.2,0,0,0,245.08,220,165.2,165.2,0,0,0,82.68,111.18a165.5,165.5,0,0,0,72.06,143.64,88.81,88.81,0,0,1,38.53,73.45v50.86H296.9V328.27a88.8,88.8,0,0,1,38.52-73.45,165.41,165.41,0,0,0,72.06-143.64Z"/><path fill="black" d="M160.63,328.27a56.09,56.09,0,0,0-24.27-46.49,198.74,198.74,0,0,1-28.54-23.66A196.87,196.87,0,0,1,82.53,227V379.13h78.1Z"/><path fill="black" d="M329.53,328.27a56.09,56.09,0,0,1,24.27-46.49,198.74,198.74,0,0,0,28.54-23.66A196.87,196.87,0,0,0,407.63,227V379.13h-78.1Z"/></mask><style>.cls-1{fill:#76767B;}.cls-1:hover{fill:#FF3570}</style></defs><rect class="cls-1" width="490.16" height="490.16" rx="84.61" mask="url(#Mask)" /></svg>',
         },
-        link: 'https://www.mermaidchart.com/',
+        link: 'https://mermaid.ai/',
       },
     ],
   },
 });
 
+/**
+ * Get the deployment hostname from DOCS_HOSTNAME env var.
+ * Defaults to 'mermaid.js.org' if not set.
+ */
+function docsHostname(): string {
+  return (
+    ((globalThis as any).process?.env?.DOCS_HOSTNAME as string | undefined) ?? 'mermaid.js.org'
+  );
+}
+
 // Top (across the page) menu
 function nav() {
-  return [
+  const baseNav = [
     { text: 'Docs', link: '/intro/', activeMatch: '/intro/' },
     {
       text: 'Tutorials',
@@ -127,6 +134,8 @@ function nav() {
       rel: 'external',
     },
   ];
+
+  return withConditionalHomeNav(baseNav, docsHostname());
 }
 
 function sidebarAll() {
@@ -155,6 +164,7 @@ function sidebarSyntax() {
       collapsed: false,
       items: [
         { text: 'Flowchart', link: '/syntax/flowchart' },
+        { text: 'Swimlanes Diagram', link: '/syntax/swimlanes' },
         { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
         { text: 'Class Diagram', link: '/syntax/classDiagram' },
         { text: 'State Diagram', link: '/syntax/stateDiagram' },
@@ -167,6 +177,7 @@ function sidebarSyntax() {
         { text: 'Pie Chart', link: '/syntax/pie' },
         { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
         { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
+        { text: 'Use Case Diagram', link: '/syntax/usecase' },
         { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
         { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
         { text: 'Mindmaps', link: '/syntax/mindmap' },
@@ -179,6 +190,16 @@ function sidebarSyntax() {
         { text: 'Kanban 🔥', link: '/syntax/kanban' },
         { text: 'Architecture 🔥', link: '/syntax/architecture' },
         { text: 'Radar 🔥', link: '/syntax/radar' },
+        { text: 'Event Modeling 🔥', link: '/syntax/eventmodeling' },
+        { text: 'Treemap 🔥', link: '/syntax/treemap' },
+        { text: 'Venn 🔥', link: '/syntax/venn' },
+        { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
+        { text: 'Wardley 🔥', link: '/syntax/wardley' },
+        { text: 'Cynefin 🔥', link: '/syntax/cynefin' },
+        { text: 'TreeView 🔥', link: '/syntax/treeView' },
+        // Agentflow is deliberately not listed while it is beta. The page at
+        // `/syntax/agentflow` still builds and is reachable by URL; it is just
+        // not announced in the nav until the syntax is declared stable.
         { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
@@ -202,6 +223,7 @@ function sidebarConfig() {
         { text: 'Accessibility', link: '/config/accessibility' },
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
+        { text: 'Layouts', link: '/config/layouts' },
       ],
     },
   ];
@@ -231,6 +253,7 @@ function sidebarCommunity() {
         { text: 'Getting Started', link: '/community/intro' },
         { text: 'Contributing to Mermaid', link: '/community/contributing' },
         { text: 'Adding Diagrams', link: '/community/new-diagram' },
+        { text: 'Adding Layouts', link: '/community/layout-makers-guide' },
         { text: 'Questions and Suggestions', link: '/community/questions-and-suggestions' },
         { text: 'Security', link: '/community/security' },
       ],

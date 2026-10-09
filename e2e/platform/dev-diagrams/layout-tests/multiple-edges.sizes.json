@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "4b44b206207276d47ccc7238931953922b759ea1acc28b3483f9758892a943b3",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev theme=default layout=domus look=classic useMaxWidth=1"
+  },
+  "nodes": [
+    {
+      "id": "a",
+      "width": 67.796875,
+      "height": 51
+    },
+    {
+      "id": "b",
+      "width": 67.796875,
+      "height": 51
+    },
+    {
+      "id": "c",
+      "width": 67,
+      "height": 51
+    },
+    {
+      "id": "d",
+      "width": 67.796875,
+      "height": 51
+    }
+  ]
+}

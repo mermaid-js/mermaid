@@ -7,12 +7,9 @@ import type {
 const id = 'flowchart-elk';
 
 const detector: DiagramDetector = (txt, config = {}): boolean => {
-  if (
-    // If diagram explicitly states flowchart-elk
-    /^\s*flowchart-elk/.test(txt) ||
-    // If a flowchart/graph diagram has their default renderer set to elk
-    (/^\s*flowchart|graph/.test(txt) && config?.flowchart?.defaultRenderer === 'elk')
-  ) {
+  // Only the explicit `flowchart-elk` keyword. A flowchart that wants ELK asks for it with
+  // `layout: elk`, which needs no detector of its own.
+  if (/^\s*flowchart-elk/.test(txt)) {
     config.layout = 'elk';
     return true;
   }

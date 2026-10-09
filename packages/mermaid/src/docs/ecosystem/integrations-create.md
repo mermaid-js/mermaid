@@ -10,9 +10,7 @@ Applications that support Mermaid files [SHOULD](https://datatracker.ietf.org/do
 
 ### MIME Type
 
-The recommended [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml) for Mermaid media is `text/vnd.mermaid`.
-
-Currently pending [IANA](https://www.iana.org/) recognition.
+The recommended [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml) for Mermaid media is [`text/vnd.mermaid`](https://www.iana.org/assignments/media-types/application/vnd.mermaid).
 
 ## Showcase
 

@@ -23,7 +23,22 @@ const config: RequiredDeep<MermaidConfig> = {
   elk: {
     // mergeEdges is needed here to be considered
     mergeEdges: false,
-    nodePlacementStrategy: 'BRANDES_KOEPF',
+    straightenEdges: true,
+    lineHops: true,
+    preset: 'default',
+    // Left undefined so `??` can tell "the user chose this" from "nobody did",
+    // which is what lets `elk.preset` supply a value while an explicit setting
+    // still wins. Listed rather than omitted so `configKeys` still finds them.
+    nodePlacementStrategy: undefined,
+    layeringStrategy: undefined,
+    cycleBreakingStrategy: undefined,
+    layeringLayerBound: 4,
+    nodePlacementAlignment: undefined,
+
+    forceNodeModelOrder: false,
+    considerModelOrder: 'NODES_AND_EDGES',
+    keepEntryNodeOnTop: false,
+    orientFeedbackEdges: true,
   },
   themeCSS: undefined,
 
@@ -54,7 +69,15 @@ const config: RequiredDeep<MermaidConfig> = {
     },
   },
   class: {
+    // Built from scratch rather than spread from the schema, so the appearance defaults
+    // have to be carried across by hand; the rest stay off, `padding` above all — the
+    // schema default of 5 would change class node dimensions on the unified renderer.
+    // Optional chaining: the docs scripts short-circuit `.schema.yaml` to `{}`.
+    theme: defaultConfigJson.class?.theme,
+    look: defaultConfigJson.class?.look,
+    layout: defaultConfigJson.class?.layout,
     hideEmptyMembersBox: false,
+    hierarchicalNamespaces: true,
   },
   gantt: {
     ...defaultConfigJson.gantt,
@@ -259,8 +282,64 @@ const config: RequiredDeep<MermaidConfig> = {
   packet: {
     ...defaultConfigJson.packet,
   },
+  eventmodeling: {
+    ...defaultConfigJson.eventmodeling,
+  },
+  treeView: {
+    ...defaultConfigJson.treeView,
+    useWidth: undefined,
+  },
   radar: {
     ...defaultConfigJson.radar,
+  },
+  usecase: {
+    ...defaultConfigJson.usecase,
+  },
+  railroad: {
+    ...defaultConfigJson.railroad,
+    // Railroad colors and typography derive from the active theme unless explicitly overridden.
+    fontSize: undefined,
+    fontFamily: undefined,
+    terminalFill: undefined,
+    terminalStroke: undefined,
+    terminalTextColor: undefined,
+    nonTerminalFill: undefined,
+    nonTerminalStroke: undefined,
+    nonTerminalTextColor: undefined,
+    lineColor: undefined,
+    markerFill: undefined,
+    commentFill: undefined,
+    commentStroke: undefined,
+    commentTextColor: undefined,
+    specialFill: undefined,
+    specialStroke: undefined,
+    ruleNameColor: undefined,
+  },
+  ishikawa: {
+    ...defaultConfigJson.ishikawa,
+  },
+  sankey: {
+    ...defaultConfigJson.sankey,
+    // Set so that `configKeys` includes this key for sanitizeDirective
+    nodeColors: undefined,
+  },
+  treemap: {
+    useMaxWidth: true,
+    padding: 10,
+    diagramPadding: 8,
+    showValues: true,
+    nodeWidth: 100,
+    nodeHeight: 40,
+    borderWidth: 1,
+    valueFontSize: 12,
+    labelFontSize: 14,
+    valueFormat: ',',
+  },
+  venn: {
+    ...defaultConfigJson.venn,
+  },
+  cynefin: {
+    ...defaultConfigJson.cynefin,
   },
 };
 

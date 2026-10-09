@@ -1,0 +1,249 @@
+/**
+ * Config file for API Extractor.  For more info, please visit: https://api-extractor.com
+ */
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+
+  /**
+   * (REQUIRED) Specifies the .d.ts file to be used as the starting point for analysis.  API Extractor
+   * analyzes the symbols exported by this module.
+   *
+   * The file extension must be ".d.ts" and not ".ts".
+   *
+   * The path is resolved relative to the folder of the config file that contains the setting; to change this,
+   * prepend a folder token such as "<projectFolder>".
+   *
+   * SUPPORTED TOKENS: <projectFolder>, <packageName>, <unscopedPackageName>
+   */
+  "mainEntryPointFilePath": "<projectFolder>/dist/src/index.d.ts",
+
+  /**
+   * A list of NPM package names whose exports should be treated as part of this package.
+   *
+   * For example, suppose that Webpack is used to generate a distributed bundle for the project "library1",
+   * and another NPM package "library2" is embedded in this bundle.  Some types from library2 may become part
+   * of the exported API for library1, but by default API Extractor would generate a .d.ts rollup that explicitly
+   * imports library2.  To avoid this, we might specify:
+   *
+   *   "bundledPackages": [ "library2" ],
+   *
+   * This would direct API Extractor to embed those types directly in the .d.ts rollup, as if they had been
+   * local files for library1.
+   *
+   * The "bundledPackages" elements may specify glob patterns using minimatch syntax.  To ensure deterministic
+   * output, globs are expanded by matching explicitly declared top-level dependencies only.  For example,
+   * the pattern below will NOT match "@my-company/example" unless it appears in a field such as "dependencies"
+   * or "devDependencies" of the project's package.json file:
+   *
+   *   "bundledPackages": [ "@my-company/*" ],
+   */
+  "bundledPackages": [
+    "langium",
+    // Dependencies of langium
+    "chevrotain",
+    // Skip bundling `@chevrotain/types` since api-extractor doesn't like it
+    "chevrotain-allstar",
+    "vscode-languageserver",
+    "vscode-languageserver-textdocument",
+    "vscode-uri",
+    "vscode-jsonrpc",
+    "vscode-languageserver-types",
+    "vscode-languageserver-protocol"
+  ],
+
+  /**
+   * Specifies what type of newlines API Extractor should use when writing output files.  By default, the output files
+   * will be written with Windows-style newlines.  To use POSIX-style newlines, specify "lf" instead.
+   * To use the OS's default newline kind, specify "os".
+   *
+   * DEFAULT VALUE: "crlf"
+   */
+  "newlineKind": "lf",
+
+  /**
+   * Specifies how API Extractor sorts members of an enum when generating the .api.json file. By default, the output
+   * files will be sorted alphabetically, which is "by-name". To keep the ordering in the source code, specify
+   * "preserve".
+   *
+   * DEFAULT VALUE: "by-name"
+   */
+  // "enumMemberOrder": "by-name",
+
+  /**
+   * Set to true when invoking API Extractor's test harness. When `testMode` is true, the `toolVersion` field in the
+   * .api.json file is assigned an empty string to prevent spurious diffs in output files tracked for tests.
+   *
+   * DEFAULT VALUE: "false"
+   */
+  // "testMode": false,
+
+  /**
+   * Determines how the TypeScript compiler engine will be invoked by API Extractor.
+   */
+  "compiler": {
+    /**
+     * Specifies the path to the tsconfig.json file to be used by API Extractor when analyzing the project.
+     *
+     * The path is resolved relative to the folder of the config file that contains the setting; to change this,
+     * prepend a folder token such as "<projectFolder>".
+     *
+     * Note: This setting will be ignored if "overrideTsconfig" is used.
+     *
+     * SUPPORTED TOKENS: <projectFolder>, <packageName>, <unscopedPackageName>
+     * DEFAULT VALUE: "<projectFolder>/tsconfig.json"
+     */
+    // "tsconfigFilePath": "<projectFolder>/tsconfig.json",
+    /**
+     * Provides a compiler configuration that will be used instead of reading the tsconfig.json file from disk.
+     * The object must conform to the TypeScript tsconfig schema:
+     *
+     * http://json.schemastore.org/tsconfig
+     *
+     * If omitted, then the tsconfig.json file will be read from the "projectFolder".
+     *
+     * DEFAULT VALUE: no overrideTsconfig section
+     */
+    // "overrideTsconfig": {
+    //   . . .
+    // }
+    /**
+     * This option causes the compiler to be invoked with the --skipLibCheck option. This option is not recommended
+     * and may cause API Extractor to produce incomplete or incorrect declarations, but it may be required when
+     * dependencies contain declarations that are incompatible with the TypeScript engine that API Extractor uses
+     * for its analysis.  Where possible, the underlying issue should be fixed rather than relying on skipLibCheck.
+     *
+     * DEFAULT VALUE: false
+     */
+    // "skipLibCheck": true,
+  },
+
+  /**
+   * Configures how the API report file (*.api.md) will be generated.
+   */
+  "apiReport": {
+    /**
+     * (REQUIRED) Whether to generate an API report.
+     */
+    "enabled": false
+  },
+
+  /**
+   * Configures how the doc model file (*.api.json) will be generated.
+   */
+  "docModel": {
+    /**
+     * (REQUIRED) Whether to generate a doc model file.
+     */
+    "enabled": false
+  },
+
+  /**
+   * Configures how the .d.ts rollup file will be generated.
+   */
+  "dtsRollup": {
+    /**
+     * (REQUIRED) Whether to generate the .d.ts rollup file.
+     */
+    "enabled": true,
+
+    /**
+     * Specifies the output path for a .d.ts rollup file to be generated without any trimming.
+     * This file will include all declarations that are exported by the main entry point.
+     *
+     * If the path is an empty string, then this file will not be written.
+     *
+     * The path is resolved relative to the folder of the config file that contains the setting; to change this,
+     * prepend a folder token such as "<projectFolder>".
+     *
+     * SUPPORTED TOKENS: <projectFolder>, <packageName>, <unscopedPackageName>
+     * DEFAULT VALUE: "<projectFolder>/dist/<unscopedPackageName>.d.ts"
+     */
+    "untrimmedFilePath": "<projectFolder>/dist/src/index.d.ts"
+  },
+
+  /**
+   * Configures how the tsdoc-metadata.json file will be generated.
+   */
+  "tsdocMetadata": {
+    /**
+     * Whether to generate the tsdoc-metadata.json file.
+     *
+     * DEFAULT VALUE: true
+     */
+    "enabled": false
+  },
+
+  /**
+   * Configures how API Extractor reports error and warning messages produced during analysis.
+   *
+   * There are three sources of messages:  compiler messages, API Extractor messages, and TSDoc messages.
+   */
+  "messages": {
+    /**
+     * Configures handling of diagnostic messages reported by the TypeScript compiler engine while analyzing
+     * the input .d.ts files.
+     *
+     * TypeScript message identifiers start with "TS" followed by an integer.  For example: "TS2551"
+     *
+     * DEFAULT VALUE:  A single "default" entry with logLevel=warning.
+     */
+    "compilerMessageReporting": {
+      /**
+       * Configures the default routing for messages that don't match an explicit rule in this table.
+       */
+      "default": {
+        /**
+         * Specifies whether the message should be written to the the tool's output log.  Note that
+         * the "addToApiReportFile" property may supersede this option.
+         *
+         * Possible values: "error", "warning", "none"
+         *
+         * Errors cause the build to fail and return a nonzero exit code.  Warnings cause a production build fail
+         * and return a nonzero exit code.  For a non-production build (e.g. when "api-extractor run" includes
+         * the "--local" option), the warning is displayed but the build will not fail.
+         *
+         * DEFAULT VALUE: "warning"
+         */
+        "logLevel": "warning"
+      }
+    },
+
+    /**
+     * Configures handling of messages reported by API Extractor during its analysis.
+     *
+     * API Extractor message identifiers start with "ae-".  For example: "ae-extra-release-tag"
+     *
+     * DEFAULT VALUE: See api-extractor-defaults.json for the complete table of extractorMessageReporting mappings
+     */
+    "extractorMessageReporting": {
+      "default": {
+        "logLevel": "warning"
+      },
+      "ae-forgotten-export": {
+        /** Most of our typescript files are generated by langium */
+        "logLevel": "none"
+      },
+      "ae-missing-release-tag": {
+        /** Most of our typescript files are generated by langium */
+        "logLevel": "none"
+      }
+    },
+
+    /**
+     * Configures handling of messages reported by the TSDoc parser when analyzing code comments.
+     *
+     * TSDoc message identifiers start with "tsdoc-".  For example: "tsdoc-link-tag-unescaped-text"
+     *
+     * DEFAULT VALUE:  A single "default" entry with logLevel=warning.
+     */
+    "tsdocMessageReporting": {
+      "default": {
+        /**
+         * We have lots of TSDoc warnings in bundled types that we don't have
+         * control over.
+         */
+        "logLevel": "none"
+      }
+    }
+  }
+}

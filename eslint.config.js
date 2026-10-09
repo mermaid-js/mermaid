@@ -1,6 +1,6 @@
 import cspell from '@cspell/eslint-plugin';
 import eslint from '@eslint/js';
-import cypress from 'eslint-plugin-cypress';
+import compat from 'eslint-plugin-compat';
 import jsdoc from 'eslint-plugin-jsdoc';
 import json from 'eslint-plugin-json';
 import lodash from 'eslint-plugin-lodash';
@@ -17,9 +17,11 @@ export default tseslint.config(
   ...tseslint.configs.stylisticTypeChecked,
   {
     ignores: [
+      '**/*.d.ts',
       '**/dist/',
       '**/node_modules/',
       '.git/',
+      '.claude/',
       '**/generated/',
       '**/coverage/',
       'packages/mermaid/src/config.type.ts',
@@ -40,10 +42,8 @@ export default tseslint.config(
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.es2020,
+        ...globals.es2024,
         ...globals.jest,
-        cy: 'readonly',
-        Cypress: 'readonly',
       },
     },
   },
@@ -54,7 +54,6 @@ export default tseslint.config(
       'no-only-tests': noOnlyTests,
       lodash,
       unicorn,
-      cypress,
       markdown,
       tsdoc,
       jsdoc,
@@ -64,11 +63,22 @@ export default tseslint.config(
       'no-console': 'error',
       'no-prototype-builtins': 'off',
       'no-unused-vars': 'off',
-      'cypress/no-async-tests': 'off',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'fastdom',
+              message:
+                'Use the `fastdom` wrapper from `rendering-util/fastdom.ts` instead of importing `fastdom` directly.',
+            },
+          ],
+        },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -154,9 +164,57 @@ export default tseslint.config(
     },
   },
   {
-    files: ['cypress/**', 'demos/**'],
+    // Lint rules for bundled code only (e.g. what ships in the final bundles)
+    files: ['packages/*/src/**/*.{ts,js}'],
+    ignores: ['**/*.spec.{ts,js}', '**/docs/**', '**/__mocks__/**'],
+    plugins: {
+      // Browser-compatibility lint for web/ES APIs.
+      // Follows the browserslist setting in our `package.json`.
+      compat,
+    },
+    settings: {
+      // Lint ECMAScript built-ins (e.g. `Array.prototype.toSorted`),
+      // since we don't polyfill for ES APIs.
+      lintAllEsApis: true,
+    },
+    rules: {
+      'compat/compat': 'error',
+    },
+  },
+  {
+    files: ['e2e/**', 'demos/**', '.esbuild/**'],
     rules: {
       'no-console': 'off',
+      // Dev tooling files often use lower-friction style (single-line ifs,
+      // type aliases over interfaces). Loosen the strict project rules here.
+      curly: 'off',
+      'prefer-const': 'warn',
+      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      'unicorn/no-lonely-if': 'off',
+    },
+  },
+  {
+    // TODO(swimlanes): the swimlanes / ddlt / layout-utils layout-algorithm code
+    // was authored against a sibling repo's lint baseline and still trips some
+    // project-strict style rules (mostly in its own spec files). These are
+    // loosened here as tracked tech debt — the intent is to bring this code to
+    // the project lint baseline and remove this override entirely.
+    // The shared production helpers (createGraph.ts, cloneLayoutDataForMeasure.ts,
+    // lineJump.ts) were brought to baseline and removed from this override; the
+    // lineJump *specs* stay here since, like the other layout specs, they use
+    // console for debug output.
+    files: [
+      'packages/mermaid/src/rendering-util/layout-algorithms/swimlanes/**',
+      'packages/mermaid/src/rendering-util/layout-algorithms/ddlt/**',
+      'packages/mermaid/src/rendering-util/layout-algorithms/layout-utils/**',
+      'packages/mermaid/src/rendering-util/rendering-elements/lineJump*.spec.ts',
+    ],
+    rules: {
+      'no-console': 'off',
+      curly: 'off',
+      'unicorn/no-lonely-if': 'off',
+      '@typescript-eslint/require-await': 'off',
     },
   },
   {
@@ -189,14 +247,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.spec.{ts,js}', 'cypress/**', 'demos/**', '**/docs/**'],
+    files: ['**/*.spec.{ts,js}', 'e2e/**', 'demos/**', '**/docs/**'],
     rules: {
       'jsdoc/require-jsdoc': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
     },
   },
   {
-    files: ['**/*.spec.{ts,js}', 'tests/**', 'cypress/**/*.js'],
+    files: ['**/*.spec.{ts,js}', 'tests/**', 'e2e/**/*.js'],
     rules: {
       '@cspell/spellchecker': [
         'error',

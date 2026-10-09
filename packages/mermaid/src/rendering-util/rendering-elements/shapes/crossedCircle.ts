@@ -46,6 +46,7 @@ export function crossedCircle<T extends SVGGraphicsElement>(parent: D3Selection<
 
   const crossedCircle = shapeSvg.insert(() => circleNode, ':first-child');
   crossedCircle.insert(() => lineNode);
+  crossedCircle.attr('class', 'outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     crossedCircle.selectAll('path').attr('style', cssStyles);

@@ -1,8 +1,9 @@
 import { select as d3select } from 'd3';
 import type { Diagram } from '../../Diagram.js';
 import * as configApi from '../../config.js';
-import insertMarkers from '../../dagre-wrapper/markers.js';
 import { log } from '../../logger.js';
+import insertMarkers from '../../rendering-util/rendering-elements/markers.js';
+import { insertLookDefs } from '../../rendering-util/insertLookDefs.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { BlockDB } from './blockDB.js';
 import { layout } from './layout.js';
@@ -20,6 +21,7 @@ export const draw = async function (
 ): Promise<void> {
   const { securityLevel, block: conf } = configApi.getConfig();
   const db = diagObj.db as BlockDB;
+  db.setDiagramId(id);
   let sandboxElement: any;
   if (securityLevel === 'sandbox') {
     sandboxElement = d3select('#i' + id);
@@ -33,6 +35,11 @@ export const draw = async function (
     securityLevel === 'sandbox'
       ? root.select<SVGSVGElement>(`[id="${id}"]`)
       : d3select<SVGSVGElement, unknown>(`[id="${id}"]`);
+
+  // The look-specific stylesheet rules reference these by id. Block runs its own render
+  // loop rather than `rendering-util/render.ts`, so it has to ask for them: without them a
+  // `look: neo` block resolves `stroke: url(#…-gradient)` to nothing and loses its borders.
+  insertLookDefs(svg, configApi.getConfig());
 
   // Define the supported markers for the diagram
   const markers = ['point', 'circle', 'cross'];
@@ -52,8 +59,14 @@ export const draw = async function (
 
   // Establish svg dimensions and get width and height
   // Why, oh why ????
-  if (bounds) {
-    const bounds2 = bounds;
+  const renderedBounds = nodes.node()?.getBBox();
+  const bounds2 =
+    renderedBounds &&
+    Number.isFinite(renderedBounds.width) &&
+    Number.isFinite(renderedBounds.height)
+      ? renderedBounds
+      : bounds;
+  if (bounds2) {
     const magicFactor = Math.max(1, Math.round(0.125 * (bounds2.width / bounds2.height)));
     const height = bounds2.height + magicFactor + 10;
     const width = bounds2.width + 10;

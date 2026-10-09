@@ -16,7 +16,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const svgWidth = bitWidth * bitsPerRow + 2;
   const svg: SVG = selectSvgElement(id);
 
-  svg.attr('viewbox', `0 0 ${svgWidth} ${svgHeight}`);
+  svg.attr('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
   configureSvgSize(svg, svgHeight, svgWidth, config.useMaxWidth);
 
   for (const [word, packet] of words.entries()) {
@@ -37,13 +37,27 @@ const drawWord = (
   svg: SVG,
   word: PacketWord,
   rowNumber: number,
-  { rowHeight, paddingX, paddingY, bitWidth, bitsPerRow, showBits }: Required<PacketDiagramConfig>
+  {
+    rowHeight,
+    paddingX,
+    paddingY,
+    bitWidth,
+    bitsPerRow,
+    showBits,
+    bitOrder,
+  }: Required<PacketDiagramConfig>
 ) => {
   const group: SVGGroup = svg.append('g');
   const wordY = rowNumber * (rowHeight + paddingY) + paddingY;
+  const descending = bitOrder === 'descending';
   for (const block of word) {
-    const blockX = (block.start % bitsPerRow) * bitWidth + 1;
-    const width = (block.end - block.start + 1) * bitWidth - paddingX;
+    const bits = block.end - block.start + 1;
+    // Column the block starts at within its row. `descending` mirrors the row, so the row
+    // reads from its highest bit down to its lowest, as hardware registers are drawn.
+    const firstColumn = block.start % bitsPerRow;
+    const column = descending ? bitsPerRow - firstColumn - bits : firstColumn;
+    const blockX = column * bitWidth + 1;
+    const width = bits * bitWidth - paddingX;
     // Block rectangle
     group
       .append('rect')
@@ -66,8 +80,13 @@ const drawWord = (
     if (!showBits) {
       continue;
     }
+    // A mirrored block runs from its highest bit on the left down to its lowest on the right.
+    const [leadingBit, trailingBit] = descending
+      ? [block.end, block.start]
+      : [block.start, block.end];
+
     // Start byte count
-    const isSingleBlock = block.end === block.start;
+    const isSingleBlock = bits === 1;
     const bitNumberY = wordY - 2;
     group
       .append('text')
@@ -76,7 +95,7 @@ const drawWord = (
       .attr('class', 'packetByte start')
       .attr('dominant-baseline', 'auto')
       .attr('text-anchor', isSingleBlock ? 'middle' : 'start')
-      .text(block.start);
+      .text(leadingBit);
 
     // Draw end byte count if it is not the same as start byte count
     if (!isSingleBlock) {
@@ -87,7 +106,7 @@ const drawWord = (
         .attr('class', 'packetByte end')
         .attr('dominant-baseline', 'auto')
         .attr('text-anchor', 'end')
-        .text(block.end);
+        .text(trailingBit);
     }
   }
 };

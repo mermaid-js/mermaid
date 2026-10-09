@@ -1,14 +1,16 @@
-import { log } from '../logger.js';
 import type { ExtendedIconifyIcon, IconifyIcon, IconifyJSON } from '@iconify/types';
 import type { IconifyIconCustomisations } from '@iconify/utils';
 import { getIconData, iconToHTML, iconToSVG, replaceIDs, stringToIcon } from '@iconify/utils';
+import { getConfig } from '../config.js';
+import { sanitizeText } from '../diagrams/common/common.js';
+import { log } from '../logger.js';
 
-interface AsyncIconLoader {
+export interface AsyncIconLoader {
   name: string;
   loader: () => Promise<IconifyJSON>;
 }
 
-interface SyncIconLoader {
+export interface SyncIconLoader {
   name: string;
   icons: IconifyJSON;
 }
@@ -100,5 +102,5 @@ export const getIconSVG = async (
     ...renderData.attributes,
     ...extraAttributes,
   });
-  return svg;
+  return sanitizeText(svg, getConfig());
 };

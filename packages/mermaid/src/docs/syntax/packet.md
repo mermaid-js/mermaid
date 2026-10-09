@@ -11,18 +11,18 @@ This diagram type is particularly useful for developers, network engineers, educ
 ## Syntax
 
 ```
-packet-beta
+packet
 start: "Block name" %% Single-bit block
 start-end: "Block name" %% Multi-bit blocks
 ... More Fields ...
 ```
 
-### Bits Syntax (v<MERMAID_RELEASE_VERSION>+)
+### Bits Syntax (v11.7.0+)
 
 Using start and end bit counts can be difficult, especially when modifying a design. For this we add a bit count field, which starts from the end of the previous field automagically. Use `+<count>` to set the number of bits, thus:
 
 ```
-packet-beta
+packet
 +1: "Block name" %% Single-bit block
 +8: "Block name" %% 8-bit block
 9-15: "Manually set start and end, it's fine to mix and match"
@@ -35,7 +35,7 @@ packet-beta
 ---
 title: "TCP Packet"
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"
@@ -56,7 +56,7 @@ packet-beta
 ```
 
 ```mermaid-example
-packet-beta
+packet
 title UDP Packet
 +16: "Source Port"
 +16: "Destination Port"
@@ -69,6 +69,29 @@ title UDP Packet
 
 - **Ranges**: Each line after the title represents a different field in the packet. The range (e.g., `0-15`) indicates the bit positions in the packet.
 - **Field Description**: A brief description of what the field represents, enclosed in quotes.
+
+### Bit Numbering Order (v12.0.0+)
+
+Rows are numbered from their lowest bit on the left up to their highest bit on the right, which suits network packets. Hardware registers are conventionally drawn the other way round, with the most significant bit on the left and bit 0 on the right. Set `bitOrder: descending` to mirror every row:
+
+```mermaid-example
+---
+config:
+  packet:
+    showBits: true
+    bitOrder: descending
+    bitsPerRow: 16
+---
+packet
+0-7: "DATA"
+8-11: "TYPE"
+12: "EN"
+13-15: "RESERVED"
+```
+
+Only the drawing is mirrored. Fields are still declared lowest bit first (`0-7`, never `7-0`) and keep their width, so the same diagram can be switched between the two conventions by changing `bitOrder` alone.
+
+Each row is mirrored on its own, so a packet wider than `bitsPerRow` reads as a stack of words that each run from their highest bit down to their lowest: with the default `bitsPerRow: 32`, the second row runs from bit 63 down to bit 32, not down to bit 0. A row that is not completely filled is padded on the left, keeping its lowest bit flush against the right edge.
 
 ## Configuration
 
@@ -104,7 +127,7 @@ config:
     packet:
       startByteColor: red
 ---
-packet-beta
+packet
 0-15: "Source Port"
 16-31: "Destination Port"
 32-63: "Sequence Number"

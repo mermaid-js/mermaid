@@ -1,0 +1,15 @@
+---
+description: >-
+  Two empty classes get the same CSS class applied via a single
+  comma-separated `cssClass "Class10, class20" exClass2` statement (note
+  the lowercase "class20", checking class-name matching is
+  case-insensitive). Uses a top-level `htmlLabels: true` config key.
+config:
+  logLevel: 1
+  htmlLabels: true
+---
+classDiagram
+  class Class10
+  class Class20
+
+  cssClass "Class10, class20" exClass2

@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that the `flowchart.nodeSpacing` config option controls the
+  horizontal gap between sibling nodes at the same rank; the fixture actually
+  configures this to 50px despite the filename referencing 100.
+config:
+  flowchart:
+    nodeSpacing: 100
+  fontFamily: courier
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  %% this is a comment
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

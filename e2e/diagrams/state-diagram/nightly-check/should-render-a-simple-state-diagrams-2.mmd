@@ -1,0 +1,15 @@
+---
+description: >-
+  Legacy v1 state diagram with State1 branching to two sibling states
+  (State2, State3) and also transitioning directly to the final state,
+  a slightly more branched variant than should-render-a-simple-state-diagrams.mmd
+  (single linear path) and should-render-a-simple-state-diagram.mmd (v2 syntax).
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*] --> State1
+  State1 --> State2
+  State1 --> State3
+  State1 --> [*]

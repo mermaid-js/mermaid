@@ -185,6 +185,37 @@ timeline
           Bullet 4 : sub-point 4a : sub-point 4b
 ```
 
+### Direction (v11.14.0+)
+
+Timeline can change its direction by the keyword after `timeline`.
+
+```mermaid-example
+timeline TD
+  title MermaidChart 2023 Timeline
+    section 2023 Q1 <br> Release Personal Tier
+      Bullet 1 : sub-point 1a : sub-point 1b
+      Bullet 2 : sub-point 2a : sub-point 2b
+    section 2023 Q2 <br> Release XYZ Tier
+      Bullet 3 : sub-point <br> 3a : sub-point 3b
+      Bullet 4 : sub-point 4a : sub-point 4b
+```
+
+```mermaid
+timeline TD
+  title MermaidChart 2023 Timeline
+    section 2023 Q1 <br> Release Personal Tier
+      Bullet 1 : sub-point 1a : sub-point 1b
+      Bullet 2 : sub-point 2a : sub-point 2b
+    section 2023 Q2 <br> Release XYZ Tier
+      Bullet 3 : sub-point <br> 3a : sub-point 3b
+      Bullet 4 : sub-point 4a : sub-point 4b
+```
+
+Possible directions are:
+
+- `LR`: Left to right (default)
+- `TD`: Top top down.
+
 ## Styling of time periods and events
 
 As explained earlier, each section has a color scheme, and each time period and event under a section follow the similar color scheme.
@@ -336,14 +367,20 @@ Mermaid supports a bunch of pre-defined themes which you can use to find the rig
 
 The following are the different pre-defined theme options:
 
-- `base`
-- `forest`
-- `dark`
+- `redux-color` (the default)
+- `redux-dark-color`
+- `redux`
+- `redux-dark`
 - `default`
 - `neutral`
+- `dark`
+- `forest`
+- `neo`
+- `neo-dark`
+- `base`
 
 **NOTE**: To change theme you can either use the `initialize` call or _directives_. Learn more about [directives](../config/directives.md)
-Let's put them to use, and see how our sample diagram looks in different themes:
+Let's put a few of them to use, and see how our sample diagram looks in different themes:
 
 ### Base Theme
 
@@ -453,7 +490,7 @@ config:
           2010 : Pinterest
 ```
 
-### Default Theme
+### The `default` Theme
 
 ```mermaid-example
 ---
@@ -533,7 +570,7 @@ You can use this method to add mermaid including the timeline diagram to a web p
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
 </script>
 ```
 

@@ -1,15 +1,19 @@
 import { build } from 'esbuild';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { packageOptions } from '../.build/common.js';
 import { generateLangium } from '../.build/generateLangium.js';
 import type { MermaidBuildOptions } from './util.js';
 import { defaultOptions, getBuildConfig } from './util.js';
 
 const shouldVisualize = process.argv.includes('--visualize');
+// Opt-in: build a profiling-enabled artifact (`pnpm build:esbuild --profiling`).
+// Off by default so released bundles never carry the profiler.
+const shouldProfile = process.argv.includes('--profiling');
 
 const buildPackage = async (entryName: keyof typeof packageOptions) => {
   const commonOptions: MermaidBuildOptions = {
     ...defaultOptions,
+    profiling: shouldProfile,
     options: packageOptions[entryName],
   } as const;
   const buildConfigs: MermaidBuildOptions[] = [
@@ -73,7 +77,6 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
 };
 
 const handler = (e) => {
-  // eslint-disable-next-line no-console
   console.error(e);
   process.exit(1);
 };
@@ -90,6 +93,7 @@ const buildTinyMermaid = async () => {
   tinyPkg.version = mermaidPkg.version;
 
   await writeFile('./packages/tiny/package.json', JSON.stringify(tinyPkg, null, 2) + '\n');
+  await cp('./packages/mermaid/CHANGELOG.md', './packages/tiny/CHANGELOG.md');
 };
 
 const main = async () => {

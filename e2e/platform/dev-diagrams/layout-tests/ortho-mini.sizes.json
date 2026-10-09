@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "B",
+      "width": 232,
+      "height": 129
+    },
+    {
+      "id": "D",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "E",
+      "width": 232,
+      "height": 66
+    },
+    {
+      "id": "F",
+      "width": 232,
+      "height": 150
+    },
+    {
+      "id": "K",
+      "width": 108.78125,
+      "height": 45
+    },
+    {
+      "id": "L",
+      "width": 232,
+      "height": 87
+    },
+    {
+      "id": "J",
+      "width": 158.0625,
+      "height": 45
+    },
+    {
+      "id": "edge-label-F-K-L_F_K_0",
+      "width": 200,
+      "height": 21
+    },
+    {
+      "id": "edge-label-D-L-L_D_L_0",
+      "width": 106.640625,
+      "height": 21
+    },
+    {
+      "id": "edge-label-E-J-L_E_J_0",
+      "width": 200,
+      "height": 42
+    }
+  ],
+  "metadata": {
+    "captureVersion": 1,
+    "sourceSha256": "1057549ca6ee4ead74fcbfc52b3882f2e12916be834a61f0d4a6e6f887ccf8f8",
+    "capturedAt": "2026-05-06T00:00:00.000Z",
+    "capturedFrom": "browser-dev layout-tests/ortho-mini.mmd theme=default look=classic"
+  }
+}

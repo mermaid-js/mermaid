@@ -1,3 +1,5 @@
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import * as diagramAPI from '../../diagram-api/diagramAPI.js';
 import quadrantDb from './quadrantDb.js';
 
 describe('quadrant unit tests', () => {
@@ -46,5 +48,22 @@ describe('quadrant unit tests', () => {
     expect(() => quadrantDb.parseStyles(styles)).toThrowError(
       'value for stroke-width 30 is invalid, please use a valid number of pixels (eg. 10px)'
     );
+  });
+});
+
+describe('quadrant db runtime config', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    quadrantDb.clear();
+  });
+
+  it('should call getConfig at sanitization time, not at module load time', () => {
+    const spy = vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({} as any);
+
+    quadrantDb.setXAxisLeftText({ text: 'left label', type: 'text' });
+
+    // getConfig must have been called during setXAxisLeftText (call-time read),
+    // not only once at module import time.
+    expect(spy).toHaveBeenCalled();
   });
 });

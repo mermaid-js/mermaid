@@ -132,6 +132,14 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
     const prevMaxValue = isLinearAxisData(xyChartData.xAxis) ? xyChartData.xAxis.max : -Infinity;
     setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
   }
+
+  // When a band axis is defined, truncate data to match the number of categories
+  // to prevent orphaned bars/lines from rendering in unlabeled chart space.
+  // This also ensures the Y-axis range is computed only from visible data points.
+  if (isBandAxisData(xyChartData.xAxis) && data.length > xyChartData.xAxis.categories.length) {
+    data = data.slice(0, xyChartData.xAxis.categories.length);
+  }
+
   if (!hasSetYAxis) {
     setYAxisRangeFromPlotData(data);
   }
@@ -143,12 +151,13 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   if (isLinearAxisData(xyChartData.xAxis)) {
     const min = xyChartData.xAxis.min;
     const max = xyChartData.xAxis.max;
-    const step = (max - min) / (data.length - 1);
-    const categories: string[] = [];
-    for (let i = min; i <= max; i += step) {
-      categories.push(`${i}`);
+    if (data.length === 1) {
+      // For backwards compatibility, avoid divide-by-zero error
+      retData = [[`${min}`, data[0]]];
+    } else {
+      const step = (max - min) / (data.length - 1);
+      retData = data.map((datum, index) => [`${min + index * step}`, datum]);
     }
-    retData = categories.map((c, i) => [c, data[i]]);
   }
 
   return retData;
@@ -158,21 +167,33 @@ function getPlotColorFromPalette(plotIndex: number): string {
   return plotColorPalette[plotIndex === 0 ? 0 : plotIndex % plotColorPalette.length];
 }
 
-function setLineData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+interface ParsedDataPoint {
+  value: number;
+  label: string;
+}
+
+function setLineData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const labels = data.map((d) => (d.label ? textSanitizer(d.label) : ''));
+  const plotData = transformDataWithoutCategory(values);
+  const hasAnyLabel = labels.some((l) => l !== '');
   xyChartData.plots.push({
     type: 'line',
+    title: textSanitizer(title.text),
     strokeFill: getPlotColorFromPalette(plotIndex),
     strokeWidth: 2,
     data: plotData,
+    ...(hasAnyLabel ? { pointLabels: labels } : {}),
   });
   plotIndex++;
 }
 
-function setBarData(title: NormalTextType, data: number[]) {
-  const plotData = transformDataWithoutCategory(data);
+function setBarData(title: NormalTextType, data: ParsedDataPoint[]) {
+  const values = data.map((d) => d.value);
+  const plotData = transformDataWithoutCategory(values);
   xyChartData.plots.push({
     type: 'bar',
+    title: textSanitizer(title.text),
     fill: getPlotColorFromPalette(plotIndex),
     data: plotData,
   });

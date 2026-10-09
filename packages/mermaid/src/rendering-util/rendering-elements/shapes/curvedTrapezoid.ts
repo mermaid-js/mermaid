@@ -17,12 +17,25 @@ export async function curvedTrapezoid<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const labelPaddingX = node.look === 'neo' ? 16 : nodePadding;
+  const labelPaddingY = node.look === 'neo' ? 12 : nodePadding;
+  const minWidth = 20,
+    minHeight = 5;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const minWidth = 80,
-    minHeight = 20;
-  const w = Math.max(minWidth, (bbox.width + (node.padding ?? 0) * 2) * 1.25, node?.width ?? 0);
-  const h = Math.max(minHeight, bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+  const h = Math.max(minHeight, bbox.height + labelPaddingY * 2, node?.height ?? 0);
   const radius = h / 2;
+  // The label is centred between a chevron of width h/4 and a cap of radius h/2, so reserve
+  // the larger of the two on both sides. The old flat 1.25 multiplier stood in for both and
+  // stopped covering them once the label was tall enough for h to dominate its width.
+  const capClearance = radius - Math.sqrt(Math.max(0, radius ** 2 - (bbox.height / 2) ** 2));
+  const sideClearance = Math.max(h / 4, capClearance);
+  const w = Math.max(
+    minWidth,
+    bbox.width + labelPaddingX * 2 + sideClearance * 2,
+    (bbox.width + labelPaddingX * 2) * 1.25,
+    node?.width ?? 0
+  );
 
   const { cssStyles } = node;
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
@@ -52,7 +65,7 @@ export async function curvedTrapezoid<T extends SVGGraphicsElement>(
   const shapeNode = rc.path(pathData, options);
 
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', cssStyles);

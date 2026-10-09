@@ -29,6 +29,107 @@ sequenceDiagram
 >
 > If unavoidable, one must use parentheses(), quotation marks "", or brackets {},\[], to enclose the word "end". i.e : (end), \[end], {end}.
 
+## Default theme and look (v12.0.0+)
+
+Sequence diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+sequenceDiagram
+  autonumber
+  actor Customer
+  participant Web as Web app
+  participant API as API gateway
+  participant Bank
+  Customer->>Web: Place order
+  Web->>API: POST /orders
+  activate API
+  API->>Bank: Authorise payment
+  Bank-->>API: Approved
+  API-->>Web: 201 Created
+  deactivate API
+  Web-->>Customer: Order confirmed
+  Note over Customer,Bank: One order, one transaction
+```
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Customer
+  participant Web as Web app
+  participant API as API gateway
+  participant Bank
+  Customer->>Web: Place order
+  Web->>API: POST /orders
+  activate API
+  API->>Bank: Authorise payment
+  Bank-->>API: Approved
+  API-->>Web: 201 Created
+  deactivate API
+  Web-->>Customer: Order confirmed
+  Note over Customer,Bank: One order, one transaction
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+  autonumber
+  actor Customer
+  participant Web as Web app
+  participant API as API gateway
+  participant Bank
+  Customer->>Web: Place order
+  Web->>API: POST /orders
+  activate API
+  API->>Bank: Authorise payment
+  Bank-->>API: Approved
+  API-->>Web: 201 Created
+  deactivate API
+  Web-->>Customer: Order confirmed
+  Note over Customer,Bank: One order, one transaction
+```
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+---
+sequenceDiagram
+  autonumber
+  actor Customer
+  participant Web as Web app
+  participant API as API gateway
+  participant Bank
+  Customer->>Web: Place order
+  Web->>API: POST /orders
+  activate API
+  API->>Bank: Authorise payment
+  Bank-->>API: Approved
+  API-->>Web: 201 Created
+  deactivate API
+  Web-->>Customer: Order confirmed
+  Note over Customer,Bank: One order, one transaction
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ sequence: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
 ## Syntax
 
 ### Participants
@@ -74,9 +175,133 @@ sequenceDiagram
     Bob->>Alice: Hi Alice
 ```
 
+### Boundary
+
+If you want to use the boundary symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "boundary" }
+    participant Bob
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "boundary" }
+    participant Bob
+    Alice->>Bob: Request from boundary
+    Bob->>Alice: Response to boundary
+```
+
+### Control
+
+If you want to use the control symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "control" }
+    participant Bob
+    Alice->>Bob: Control request
+    Bob->>Alice: Control response
+```
+
+### Entity
+
+If you want to use the entity symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "entity" }
+    participant Bob
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "entity" }
+    participant Bob
+    Alice->>Bob: Entity request
+    Bob->>Alice: Entity response
+```
+
+### Database
+
+If you want to use the database symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "database" }
+    participant Bob
+    Alice->>Bob: DB query
+    Bob->>Alice: DB result
+```
+
+### Collections
+
+If you want to use the collections symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "collections" }
+    participant Bob
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "collections" }
+    participant Bob
+    Alice->>Bob: Collections request
+    Bob->>Alice: Collections response
+```
+
+### Queue
+
+If you want to use the queue symbol for a participant, use the JSON configuration syntax as shown below.
+
+```mermaid-example
+sequenceDiagram
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice@{ "type" : "queue" }
+    participant Bob
+    Alice->>Bob: Queue message
+    Bob->>Alice: Queue response
+```
+
 ### Aliases
 
-The actor can have a convenient identifier and a descriptive label.
+The actor can have a convenient identifier and a descriptive label. Aliases can be defined in two ways: using external syntax with the `as` keyword, or inline within the configuration object.
+
+#### External Alias Syntax
+
+You can define an alias using the `as` keyword after the participant declaration:
 
 ```mermaid-example
 sequenceDiagram
@@ -93,6 +318,78 @@ sequenceDiagram
     A->>J: Hello John, how are you?
     J->>A: Great!
 ```
+
+The external alias syntax also works with participant stereotype configurations, allowing you to combine type specification with aliases:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary" } as Public API
+    actor DB@{ "type": "database" } as User Database
+    participant Svc@{ "type": "control" } as Auth Service
+    API->>Svc: Authenticate
+    Svc->>DB: Query user
+    DB-->>Svc: User data
+    Svc-->>API: Token
+```
+
+```mermaid
+sequenceDiagram
+    participant API@{ "type": "boundary" } as Public API
+    actor DB@{ "type": "database" } as User Database
+    participant Svc@{ "type": "control" } as Auth Service
+    API->>Svc: Authenticate
+    Svc->>DB: Query user
+    DB-->>Svc: User data
+    Svc-->>API: Token
+```
+
+#### Inline Alias Syntax
+
+Alternatively, you can define an alias directly inside the configuration object using the `"alias"` field. This works with both `participant` and `actor` keywords:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Public API" }
+    participant Auth@{ "type": "control", "alias": "Auth Service" }
+    participant DB@{ "type": "database", "alias": "User Database" }
+    API->>Auth: Login request
+    Auth->>DB: Query user
+    DB-->>Auth: User data
+    Auth-->>API: Access token
+```
+
+```mermaid
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Public API" }
+    participant Auth@{ "type": "control", "alias": "Auth Service" }
+    participant DB@{ "type": "database", "alias": "User Database" }
+    API->>Auth: Login request
+    Auth->>DB: Query user
+    DB-->>Auth: User data
+    Auth-->>API: Access token
+```
+
+#### Alias Precedence
+
+When both inline alias (in the configuration object) and external alias (using `as` keyword) are provided, the **external alias takes precedence**:
+
+```mermaid-example
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Internal Name" } as External Name
+    participant DB@{ "type": "database", "alias": "Internal DB" } as External DB
+    API->>DB: Query
+    DB-->>API: Result
+```
+
+```mermaid
+sequenceDiagram
+    participant API@{ "type": "boundary", "alias": "Internal Name" } as External Name
+    participant DB@{ "type": "database", "alias": "Internal DB" } as External DB
+    API->>DB: Query
+    DB-->>API: Result
+```
+
+In the example above, "External Name" and "External DB" will be displayed, not "Internal Name" and "Internal DB".
 
 ### Actor Creation and Destruction (v10.3.0+)
 
@@ -145,6 +442,9 @@ And fixing diagram code does not get rid of this error and rendering of all othe
 
 The actor(s) can be grouped in vertical boxes. You can define a color (if not, it will be transparent) and/or a descriptive label using the following notation:
 
+> **Note**
+> For colored boxes, the color value must be placed **before** the optional description.
+
 ```
 box Aqua Group Description
 ... actors ...
@@ -158,7 +458,16 @@ end
 box rgba(33,66,99,0.5)
 ... actors ...
 end
+box hsl(10, 40%, 90%)
+... actors ...
+end
+box hsla(10, 40%, 90%, 0.5)
+... actors ...
+end
 ```
+
+> **Warning**
+> **Hex colors** (e.g., `#ff0000`) are currently **not supported** as the `#` character is interpreted as comment syntax.
 
 > **Note**
 > If your group name is a color you can force the color to be transparent:
@@ -209,7 +518,11 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
-There are ten types of arrows currently supported:
+Lines can be solid or dotted, and can end with various types of arrowheads, crosses, or open arrows.
+
+#### Supported Arrow Types
+
+**Standard Arrow Types**
 
 | Type     | Description                                          |
 | -------- | ---------------------------------------------------- |
@@ -223,6 +536,58 @@ There are ten types of arrows currently supported:
 | `--x`    | Dotted line with a cross at the end                  |
 | `-)`     | Solid line with an open arrow at the end (async)     |
 | `--)`    | Dotted line with a open arrow at the end (async)     |
+
+**Half-Arrows (v11.12.3+)**
+
+The following half-arrow types are supported for more expressive sequence diagrams. Both solid and dotted variants are available by increasing the number of dashes (`-` → `--`).
+
+---
+
+| Type    | Description                                          |
+| ------- | ---------------------------------------------------- |
+| `-\|\`  | Solid line with top half arrowhead                   |
+| `--\|\` | Dotted line with top half arrowhead                  |
+| `-\|/`  | Solid line with bottom half arrowhead                |
+| `--\|/` | Dotted line with bottom half arrowhead               |
+| `/\|-`  | Solid line with reverse top half arrowhead           |
+| `/\|--` | Dotted line with reverse top half arrowhead          |
+| `\\-`   | Solid line with reverse bottom half arrowhead        |
+| `\\--`  | Dotted line with reverse bottom half arrowhead       |
+| `-\\`   | Solid line with top stick half arrowhead             |
+| `--\\`  | Dotted line with top stick half arrowhead            |
+| `-//`   | Solid line with bottom stick half arrowhead          |
+| `--//`  | Dotted line with bottom stick half arrowhead         |
+| `//-`   | Solid line with reverse top stick half arrowhead     |
+| `//--`  | Dotted line with reverse top stick half arrowhead    |
+| `\\-`   | Solid line with reverse bottom stick half arrowhead  |
+| `\\--`  | Dotted line with reverse bottom stick half arrowhead |
+
+## Central Connections (v11.12.3+)
+
+Mermaid sequence diagrams support **central lifeline connections** using a `()`.
+This is useful to represent messages or signals that connect to a central point, rather than from one actor directly to another.
+
+To indicate a central connection, append `()` to the arrow syntax.
+
+#### Basic Syntax
+
+```mermaid-example
+sequenceDiagram
+    participant Alice
+    participant John
+    Alice->>()John: Hello John
+    Alice()->>John: How are you?
+    John()->>()Alice: Great!
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant John
+    Alice->>()John: Hello John
+    Alice()->>John: How are you?
+    John()->>()Alice: Great!
+```
 
 ## Activations
 
@@ -717,6 +1082,16 @@ sequenceDiagram
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
+```
+
+### Start and Increment values (v11.15.0+)
+
+It is possible to specify a starting value and an increment value for automatic numbering. Both the starting value and increment value can include decimals up to the hundredths place.
+
+Use the following syntax in your diagram definition:
+
+```
+autonumber <start> <increment>
 ```
 
 ## Actor Menus

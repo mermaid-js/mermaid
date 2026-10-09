@@ -1,3 +1,5 @@
+import { select } from 'd3';
+import DOMPurify from 'dompurify';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { log } from '../../logger.js';
 import { generateId } from '../../utils.js';
@@ -11,6 +13,7 @@ import {
   setAccTitle,
   setDiagramTitle,
 } from '../common/commonDb.js';
+import { createTooltip } from '../common/svgDrawCommon.js';
 import { dataFetcher, reset as resetDataFetcher } from './dataFetcher.js';
 import { getDir } from './stateRenderer-v3-unified.js';
 import {
@@ -161,6 +164,13 @@ export interface NodeData {
   centerLabel?: boolean;
   position?: string;
   description?: string | string[];
+  labelType?: string;
+  /** Palette slot for container shapes; see `nextColorSlot` in `dataFetcher.ts`. */
+  colorIndex?: number;
+  /** Width at which the label wraps; defaults from `state.wrappingWidth` in `getData`. */
+  wrappingWidth?: number;
+  /** Minimum width of the label area; defaults from `state.minNodeWidth` in `getData`. */
+  minWidth?: number;
 }
 
 export interface Edge {
@@ -178,6 +188,11 @@ export interface Edge {
   thickness: string;
   classes: string;
   look: MermaidConfig['look'];
+  /**
+   * Stroke pattern, read by `insertEdge`. The note edge is the only state edge that sets
+   * it; see the note-edge push in `dataFetcher.ts` for why the CSS class is not enough.
+   */
+  pattern?: 'solid' | 'dotted' | 'dashed';
 }
 
 /**
@@ -203,6 +218,7 @@ export class StateDB {
   private startEndCount = 0;
   private dividerCnt = 0;
   private links = new Map<string, { url: string; tooltip: string }>();
+  private funs: ((element: Element) => void)[] = []; // cspell:ignore funs
 
   static readonly relationType = {
     AGGREGATION: 0,
@@ -218,6 +234,7 @@ export class StateDB {
     this.getDividerId = this.getDividerId.bind(this);
     this.setDirection = this.setDirection.bind(this);
     this.trimColon = this.trimColon.bind(this);
+    this.bindFunctions = this.bindFunctions.bind(this);
   }
 
   /**
@@ -452,6 +469,7 @@ export class StateDB {
   clear(saveCommon?: boolean) {
     this.nodes = [];
     this.edges = [];
+    this.funs = [this.setupToolTips.bind(this)];
     this.documents = { root: newDoc() };
     this.currentDocument = this.documents.root;
 
@@ -637,6 +655,36 @@ export class StateDB {
     return this.classes;
   }
 
+  private setupToolTips(element: Element) {
+    const tooltipElem = createTooltip();
+
+    const svg = select(element).select('svg');
+
+    const nodes = svg.selectAll('g.node, g.rough-node');
+    nodes
+      .on('mouseover', (e: MouseEvent) => {
+        const el = select(e.currentTarget as Element);
+        const title = el.attr('title');
+
+        if (title === null) {
+          return;
+        }
+        const rect = (e.currentTarget as Element)?.getBoundingClientRect();
+
+        tooltipElem.transition().duration(200).style('opacity', '.9');
+        tooltipElem
+          .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
+          .style('top', window.scrollY + rect.bottom + 'px');
+        tooltipElem.html(DOMPurify.sanitize(title));
+        el.classed('hover', true);
+      })
+      .on('mouseout', (e: MouseEvent) => {
+        tooltipElem.transition().duration(500).style('opacity', 0);
+        const el = select(e.currentTarget as Element);
+        el.classed('hover', false);
+      });
+  }
+
   /**
    * Add a (style) class or css class to a state with the given id.
    * If the state isn't already in the list of known states, add it.
@@ -681,6 +729,12 @@ export class StateDB {
     this.getState(itemId)?.textStyles?.push(cssClassName);
   }
 
+  public bindFunctions(element: Element) {
+    this.funs.forEach((fun) => {
+      fun(element);
+    });
+  }
+
   /**
    * Finds the direction statement in the root document.
    * @returns the direction statement if present
@@ -708,6 +762,12 @@ export class StateDB {
 
   getData() {
     const config = getConfig();
+    for (const node of this.nodes) {
+      node.wrappingWidth ??= config.state?.wrappingWidth;
+      if (!node.isGroup) {
+        node.minWidth ??= config.state?.minNodeWidth;
+      }
+    }
     return {
       nodes: this.nodes,
       edges: this.edges,

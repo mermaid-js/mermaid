@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> Active
+    state Active {
+      [*] --> NumLockOff
+      NumLockOff --> NumLockOn
+      NumLockOn --> NumLockOff
+      --
+      [*] --> CapsLockOff
+      CapsLockOff --> CapsLockOn
+      CapsLockOn --> CapsLockOff
+    }

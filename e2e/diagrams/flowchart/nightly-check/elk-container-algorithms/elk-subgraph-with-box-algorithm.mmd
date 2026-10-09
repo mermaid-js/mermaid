@@ -1,0 +1,19 @@
+---
+description: >-
+  Verifies that a subgraph can override the diagram's default ELK layout
+  algorithm for itself using the `@{ algorithm: … }` shape-data syntax, here
+  setting the `grp` subgraph to elk.box while the rest of the flowchart uses the
+  default elk algorithm.
+config:
+  layout: elk
+---
+%% A subgraph opting into its own ELK algorithm via `@{ algorithm: … }`.
+flowchart TD
+  start[Start] --> grp
+  subgraph grp[Grouped]
+    a[One]
+    b[Two]
+    c[Three]
+  end
+  grp@{ algorithm: elk.box }
+  grp --> done[Done]

@@ -29,8 +29,7 @@ import { log } from './logger.js';
 import { detectType } from './diagram-api/detectType.js';
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
-import memoize from 'lodash-es/memoize.js';
-import merge from 'lodash-es/merge.js';
+import { memoize, merge } from 'es-toolkit/compat';
 import { directiveRegex } from './diagram-api/regexes.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
 
@@ -423,11 +422,11 @@ function calcTerminalLabelPosition(
     cardinalityPosition.x = Math.sin(angle + Math.PI) * d + (points[0].x + center.x) / 2;
     cardinalityPosition.y = -Math.cos(angle + Math.PI) * d + (points[0].y + center.y) / 2;
   } else if (position === 'end_right') {
-    cardinalityPosition.x = Math.sin(angle - Math.PI) * d + (points[0].x + center.x) / 2 - 5;
-    cardinalityPosition.y = -Math.cos(angle - Math.PI) * d + (points[0].y + center.y) / 2 - 5;
+    cardinalityPosition.x = Math.sin(angle - Math.PI) * d + (points[0].x + center.x) / 2;
+    cardinalityPosition.y = -Math.cos(angle - Math.PI) * d + (points[0].y + center.y) / 2;
   } else if (position === 'end_left') {
-    cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2 - 5;
-    cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2 - 5;
+    cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
+    cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
   } else {
     cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
     cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
@@ -567,7 +566,7 @@ export const wrapLabel: (label: string, maxWidth: number, config: WrapLabelConfi
         { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
         config
       );
-      if (common.lineBreakRegex.test(label)) {
+      if (common.hasBreaks(label)) {
         return label;
       }
       const words = label.split(' ').filter(Boolean);
@@ -884,6 +883,7 @@ export default {
   runFunc,
   entityDecode,
   insertTitle,
+  isLabelCoordinateInPath,
   parseFontSize,
   InitIDGenerator,
 };
@@ -917,6 +917,7 @@ export const encodeEntities = function (text: string): string {
 };
 
 /**
+ * Partially reverts encoding done via {@link encodeEntities}
  *
  * @param  text - text to be decoded
  * @returns
@@ -959,4 +960,24 @@ export function handleUndefinedAttr(
   attrValue: Parameters<d3.Selection<BaseType, unknown, HTMLElement, any>['attr']>[1] | undefined
 ) {
   return attrValue ?? null;
+}
+
+/**
+ * Checks if the  x or y coordinate of the edge label
+ * appears in the given SVG path data string.
+ *
+ * @param point  - The Point object with x and y properties to check.
+ * @param dAttr  - SVG path data string (the 'd' attribute of an SVG path element).
+ * @returns      - True if the rounded x or y coordinate of the edge label is found
+ *                 in the sanitized path data string; otherwise, false.
+ */
+export function isLabelCoordinateInPath(point: Point, dAttr: string) {
+  const roundedX = Math.round(point.x);
+  const roundedY = Math.round(point.y);
+
+  const sanitizedD = dAttr.replace(/(\d+\.\d+)/g, (match) =>
+    Math.round(parseFloat(match)).toString()
+  );
+
+  return sanitizedD.includes(roundedX.toString()) || sanitizedD.includes(roundedY.toString());
 }

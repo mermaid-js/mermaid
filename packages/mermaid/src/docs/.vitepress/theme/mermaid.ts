@@ -1,12 +1,23 @@
 import mermaid, { type MermaidConfig } from 'mermaid';
 import zenuml from '../../../../../mermaid-zenuml/dist/mermaid-zenuml.core.mjs';
+import tidyTreeLayout from '../../../../../mermaid-layout-tidy-tree/dist/mermaid-layout-tidy-tree.core.mjs';
 
-const init = mermaid.registerExternalDiagrams([zenuml]);
+const init = Promise.all([
+  mermaid.registerExternalDiagrams([zenuml]),
+  mermaid.registerLayoutLoaders(tidyTreeLayout),
+]);
 mermaid.registerIconPacks([
   {
     name: 'logos',
     loader: () =>
       fetch('https://unpkg.com/@iconify-json/logos/icons.json').then((res) => res.json()),
+  },
+  {
+    name: 'material-icon-theme',
+    loader: () =>
+      fetch('https://unpkg.com/@iconify-json/material-icon-theme/icons.json').then((res) =>
+        res.json()
+      ),
   },
 ]);
 

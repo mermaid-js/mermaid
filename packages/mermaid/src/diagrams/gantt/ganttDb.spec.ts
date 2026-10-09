@@ -2,6 +2,7 @@
 import dayjs from 'dayjs';
 import ganttDb from './ganttDb.js';
 import { convert } from '../../tests/util.js';
+import { log } from '../../logger.js';
 
 describe('when using the ganttDb', function () {
   beforeEach(function () {
@@ -282,6 +283,44 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].task).toEqual('test1');
   });
 
+  it('should not infinite loop when excluding everything', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends,monday,tuesday,wednesday,thursday,friday');
+    ganttDb.setWeekend('saturday');
+    ganttDb.addSection('weekends skip test');
+    ganttDb.addTask('test1', 'id1,2019-02-01,7d');
+
+    expect(() => ganttDb.getTasks()).toThrowError('Failed to find a valid date');
+
+    // Fridays are now allowed, so it should not throw an error
+    ganttDb.clear();
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.setExcludes('weekends,monday,tuesday,wednesday,thursday');
+    ganttDb.setWeekend('saturday');
+    ganttDb.addSection('weekends skip test');
+    ganttDb.addTask('test1', 'id1,2019-02-01,7d');
+    expect(() => ganttDb.getTasks()).not.toThrow();
+  });
+
+  it('should merge tokens across multiple setExcludes calls (issue #6270)', function () {
+    ganttDb.setExcludes('weekends');
+    ganttDb.setExcludes('2019-02-06');
+    ganttDb.setExcludes('friday, monday');
+    expect(ganttDb.getExcludes()).toEqual(['weekends', '2019-02-06', 'friday', 'monday']);
+  });
+
+  it('should dedupe tokens across multiple setExcludes calls (issue #6270)', function () {
+    ganttDb.setExcludes('weekends,2019-02-06');
+    ganttDb.setExcludes('weekends 2019-02-07');
+    expect(ganttDb.getExcludes()).toEqual(['weekends', '2019-02-06', '2019-02-07']);
+  });
+
+  it('should merge tokens across multiple setIncludes calls (issue #6270)', function () {
+    ganttDb.setIncludes('2019-02-06');
+    ganttDb.setIncludes('2019-02-07,2019-02-08');
+    expect(ganttDb.getIncludes()).toEqual(['2019-02-06', '2019-02-07', '2019-02-08']);
+  });
+
   it('should maintain the order in which tasks are created', function () {
     ganttDb.setAccTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');
@@ -504,5 +543,78 @@ describe('when using the ganttDb', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
     expect(() => ganttDb.getTasks()).toThrowError('Invalid date:202304');
+  });
+
+  it('should handle seconds-only format with valid numeric values (issue #5496)', function () {
+    ganttDb.setDateFormat('ss');
+    ganttDb.addSection('Network Request');
+    ganttDb.addTask('RTT', 'rtt, 0, 20');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0].task).toBe('RTT');
+    expect(tasks[0].id).toBe('rtt');
+  });
+
+  it('should handle dates with year typo like 202 instead of 2024 (issue #5496)', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('Vacation');
+    ganttDb.addTask('London Trip 1', '2024-12-01, 7d');
+    ganttDb.addTask('London Trip 2', '202-12-01, 7d');
+    const tasks = ganttDb.getTasks();
+    expect(tasks).toHaveLength(2);
+    // First task should be in year 2024
+    expect(tasks[0].startTime.getFullYear()).toBe(2024);
+    // Second task will be parsed as year 202 (fallback to new Date())
+    expect(tasks[1].startTime.getFullYear()).toBe(202);
+  });
+
+  describe('when a task references a task id that does not exist', function () {
+    it('should warn about unknown ids in an "after" statement (issue #4121)', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task1', 'id1,2013-01-01,2d');
+      ganttDb.addTask('task2', 'id2,after m1,1d');
+
+      ganttDb.getTasks();
+
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('m1'));
+      warnSpy.mockRestore();
+    });
+
+    it('should warn about unknown ids in an "until" statement', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task1', 'id1,2013-01-01,until m1');
+
+      ganttDb.getTasks();
+
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('m1'));
+      warnSpy.mockRestore();
+    });
+
+    it('should not warn when every referenced id exists', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('task1', 'id1,2013-01-01,2d');
+      ganttDb.addTask('task2', 'id2,after id1,1d');
+
+      ganttDb.getTasks();
+
+      expect(warnSpy).not.toHaveBeenCalled();
+      warnSpy.mockRestore();
+    });
+
+    it('should warn when a milestone is declared without a duration (issue #4121)', function () {
+      const warnSpy = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      // Without a duration, `m1` is parsed as the duration instead of as the id
+      ganttDb.addTask('M1', 'milestone, 2023-01-01, m1');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].endTime).toEqual(tasks[0].startTime);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('m1'));
+      warnSpy.mockRestore();
+    });
   });
 });

@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a node's shape and label are preserved across repeated
+  references (via chained edges, style, and linkStyle) rather than being reset,
+  under the hand-drawn look.
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  A(( )) -->|step 1| B(( ))
+  B(( )) -->|step 2| C(( ))
+  C(( )) -->|step 3| D(( ))
+  linkStyle 1 stroke:greenyellow,stroke-width:2px
+  style C fill:greenyellow,stroke:green,stroke-width:4px

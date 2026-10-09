@@ -1,0 +1,145 @@
+# Venn diagrams (v11.12.3+)
+
+Venn diagrams show relationships between sets using overlapping circles.
+
+> **Warning**
+> This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+
+## Default theme and look (v12.0.0+)
+
+Venn diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+venn-beta
+  title What makes a good feature
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible["Buildable"]
+  union Feasible,Viable["Sustainable"]
+  union Desirable,Viable["Marketable"]
+  union Desirable,Feasible,Viable["Ship it"]
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+---
+venn-beta
+  title What makes a good feature
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible["Buildable"]
+  union Feasible,Viable["Sustainable"]
+  union Desirable,Viable["Marketable"]
+  union Desirable,Feasible,Viable["Ship it"]
+```
+
+Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping them to one diagram type — `mermaid.initialize({ venn: { theme: 'default', look: 'classic' } })` —
+does it for that type alone.
+
+## Syntax
+
+- Start with `venn-beta`.
+- Use `set` for a single set name.
+- Use `union` for an overlap of two or more set names.
+- Identifiers in `union` must be defined by earlier `set` lines.
+- Set identifiers can be bare words (`A`, `Set_1`) or quoted strings (`"Foo Bar"`).
+
+```mermaid-example
+venn-beta
+  title "Team overlap"
+  set Frontend
+  set Backend
+  union Frontend,Backend["APIs"]
+```
+
+### Labels
+
+Use bracket syntax `["..."]` to set a display label while keeping the identifier short:
+
+```mermaid-example
+venn-beta
+  set A["Alpha"]
+  set B["Beta"]
+  union A,B["AB"]
+```
+
+### Higher-arity unions
+
+`union` accepts three or more set names. The diagram renders the implied
+pairwise overlaps automatically, so the label on the higher-arity union has a
+visible region to sit in:
+
+```mermaid-example
+venn-beta
+  set Desirable
+  set Feasible
+  set Viable
+  union Desirable,Feasible,Viable["Innovation"]
+```
+
+### Sizes
+
+Use `:N` suffix to set the size of a set or union:
+
+```mermaid-example
+venn-beta
+  set A["Alpha"]:20
+  set B["Beta"]:12
+  union A,B["AB"]:3
+```
+
+### Text nodes
+
+- Use `text` to place labels inside a set or union.
+- Indented `text` lines attach to the most recent `set` or `union`.
+- Use bracket syntax `["..."]` to set a display label for text nodes.
+
+```mermaid-example
+venn-beta
+  set A["Frontend"]
+    text A1["React"]
+    text A2["Design Systems"]
+  set B["Backend"]
+    text B1["API"]
+  union A,B["Shared"]
+    text AB1["OpenAPI"]
+```
+
+### Styling
+
+Use `style` statements to apply visual styles to sets, unions, and text nodes:
+
+- `fill`: change the fill color
+- `color`: change the text color
+- `stroke`: change the stroke color
+- `stroke-width`: change the stroke width
+- `fill-opacity`: change the fill opacity
+
+```mermaid-example
+venn-beta
+  set A["Alpha"]:20
+    text A1["React"]
+    text A2["Design Systems"]
+  set B["Beta"]:12
+  union A,B["AB"]:3
+  style A fill:#ff6b6b
+  style A,B color:#333
+  style A1 color:red
+```

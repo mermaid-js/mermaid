@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/mermaid-zenuml",
-  "version": "0.3.0",
+  "version": "1.0.1",
   "description": "MermaidJS plugin for ZenUML integration",
   "module": "dist/mermaid-zenuml.core.mjs",
   "types": "dist/detector.d.ts",
@@ -32,14 +32,17 @@
     "Dong Cai (https://github.com/dontry)"
   ],
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "dependencies": {
-    "@zenuml/core": "^3.31.1"
+    "@zenuml/core": "^3.47.9"
   },
   "devDependencies": {
     "mermaid": "workspace:^"
   },
   "peerDependencies": {
-    "mermaid": "^10 || ^11"
+    "mermaid": "^10 || ^11 || ^12"
   },
   "files": [
     "dist"

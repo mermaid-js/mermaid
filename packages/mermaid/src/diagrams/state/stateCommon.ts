@@ -32,7 +32,7 @@ export const DIVIDER_TYPE = 'divider';
 export const G_EDGE_STYLE = 'fill:none';
 export const G_EDGE_ARROWHEADSTYLE = 'fill: #333';
 export const G_EDGE_LABELPOS = 'c';
-export const G_EDGE_LABELTYPE = 'text';
+export const G_EDGE_LABELTYPE = 'markdown';
 export const G_EDGE_THICKNESS = 'normal';
 
 export const SHAPE_STATE = 'rect';

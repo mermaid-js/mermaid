@@ -1,0 +1,21 @@
+---
+description: >-
+  An outer `columns 1` sub-block nests an inner sub-block set to
+  `columns 3` (holding two plain ids and a labeled circle), followed by a
+  sibling id in the outer sub-block and a top-level id after it —
+  verifying width alignment holds through two levels of nested `columns`
+  statements before dropping back to a single top-level block.
+---
+block
+  columns 1
+  block
+  columns 1
+  block
+    columns 3
+    id1
+    id2
+    id2.1(("XYZ"))
+  end
+  id48
+  end
+  id3

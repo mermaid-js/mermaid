@@ -1,0 +1,307 @@
+---
+references:
+  - "File: /packages/mermaid/src/mermaidAPI.ts"
+  - "File: /packages/mermaid/src/mermaid.ts"
+generationTime: 2025-01-28T16:30:00.000Z
+---
+sequenceDiagram
+    participant User as User/Browser
+    participant Mermaid as mermaid.ts
+    participant Queue as executionQueue
+    participant API as mermaidAPI.ts
+    participant Config as configApi
+    participant Preprocessor as preprocessDiagram
+    participant DiagramAPI as diagram-api
+    participant Diagram as Diagram.fromText
+    participant Renderer as diagram.renderer
+    participant Styles as Styling System
+    participant DOM as DOM/SVG
+
+    Note over User, DOM: Mermaid Complete API Flow
+
+    %% Initialization Phase
+    User->>+Mermaid: mermaid.initialize(config)
+    Mermaid->>+API: mermaidAPI.initialize(config)
+    
+    API->>API: assignWithDepth({}, userOptions)
+    API->>API: handle legacy fontFamily config
+    API->>Config: saveConfigFromInitialize(options)
+    
+    alt Theme Configuration Available
+        API->>API: check if theme in theme object
+        API->>API: set themeVariables from theme
+    else Default Theme
+        API->>API: use default theme variables
+    end
+    
+    API->>Config: setSiteConfig(options) or getSiteConfig()
+    API->>API: setLogLevel(config.logLevel)
+    API->>DiagramAPI: addDiagrams()
+    
+    API-->>-Mermaid: initialization complete
+    Mermaid-->>-User: ready to render
+
+    %% Content Loaded Event
+    User->>DOM: document.load event
+    DOM->>+Mermaid: contentLoaded()
+    
+    opt startOnLoad is true
+        Mermaid->>Config: getConfig()
+        Config-->>Mermaid: { startOnLoad: true }
+        Mermaid->>Mermaid: run()
+    end
+    
+    Mermaid-->>-DOM: event handling complete
+
+    %% Main Run Function
+    User->>+Mermaid: mermaid.run(options)
+    
+    Mermaid->>Mermaid: runThrowsErrors(options)
+    Mermaid->>Config: getConfig()
+    Config-->>Mermaid: configuration object
+    
+    alt nodes provided
+        Mermaid->>Mermaid: use provided nodes
+    else querySelector provided
+        Mermaid->>DOM: document.querySelectorAll(querySelector)
+        DOM-->>Mermaid: nodesToProcess
+    end
+    
+    Mermaid->>Mermaid: new InitIDGenerator(deterministicIds, seed)
+    
+    loop For each diagram element
+        Mermaid->>DOM: check element.getAttribute('data-processed')
+        
+        opt not processed
+            Mermaid->>DOM: element.setAttribute('data-processed', 'true')
+            Mermaid->>Mermaid: generate unique id
+            Mermaid->>DOM: get element.innerHTML
+            Mermaid->>Mermaid: entityDecode and clean text
+            Mermaid->>Mermaid: detectInit(txt)
+            
+            Mermaid->>Queue: render(id, txt, element)
+        end
+    end
+    
+    Mermaid-->>-User: processing initiated
+
+    %% Render Function (Queued)
+    activate Queue
+    Queue->>+API: mermaidAPI.render(id, text, container)
+    
+    API->>DiagramAPI: addDiagrams()
+    API->>+Preprocessor: processAndSetConfigs(text)
+    
+    Preprocessor->>Preprocessor: preprocessDiagram(text)
+    Preprocessor->>Config: reset()
+    Preprocessor->>Config: addDirective(processed.config)
+    Preprocessor-->>-API: { code, config }
+    
+    API->>Config: getConfig()
+    Config-->>API: current configuration
+    
+    opt text length > maxTextSize
+        API->>API: text = MAX_TEXTLENGTH_EXCEEDED_MSG
+    end
+    
+    API->>API: setup id selectors and element IDs
+    API->>API: determine security level (sandbox/loose)
+
+    %% DOM Setup
+    alt svgContainingElement provided
+        alt isSandboxed
+            API->>DOM: sandboxedIframe(select(svgContainingElement), iFrameID)
+            API->>DOM: select iframe contentDocument body
+        else
+            API->>DOM: select(svgContainingElement)
+        end
+    else no container
+        API->>API: removeExistingElements(document, id, divId, iFrameId)
+        alt isSandboxed
+            API->>DOM: sandboxedIframe(select('body'), iFrameID)
+        else
+            API->>DOM: select('body')
+        end
+    end
+    
+    API->>DOM: appendDivSvgG(root, id, enclosingDivID, fontFamily, XMLNS_XLINK_STD)
+
+    %% Diagram Creation
+    API->>+Diagram: Diagram.fromText(text, { title: processed.title })
+    
+    Diagram->>DiagramAPI: detect diagram type
+    Diagram->>DiagramAPI: load appropriate diagram
+    Diagram-->>-API: diagram instance
+    
+    opt parsing error occurred
+        API->>+Diagram: Diagram.fromText('error')
+        Diagram-->>-API: error diagram
+        API->>API: store parseEncounteredException
+    end
+
+    %% Style Generation
+    API->>DOM: get svg element and firstChild
+    API->>Renderer: diag.renderer.getClasses(text, diag)
+    Renderer-->>API: diagramClassDefs
+    
+    API->>+Styles: createUserStyles(config, diagramType, diagramClassDefs, idSelector)
+    
+    Styles->>Styles: createCssStyles(config, classDefs)
+    
+    opt config.themeCSS defined
+        Styles->>Styles: append themeCSS
+    end
+    
+    opt fontFamily configured
+        Styles->>Styles: add CSS variables for fonts
+    end
+    
+    opt classDefs exist
+        loop For each styleClassDef
+            opt has styles
+                Styles->>Styles: cssImportantStyles for each CSS element
+            end
+            opt has textStyles
+                Styles->>Styles: cssImportantStyles for tspan elements
+            end
+        end
+    end
+    
+    Styles->>Styles: getStyles(graphType, userCSSstyles, themeVariables)
+    Styles->>Styles: serialize(compile(svgId{allStyles}), stringify)
+    Styles-->>-API: compiled CSS rules
+    
+    API->>DOM: create style element
+    API->>DOM: style.innerHTML = rules
+    API->>DOM: svg.insertBefore(style, firstChild)
+
+    %% Diagram Rendering
+    API->>+Renderer: diag.renderer.draw(text, id, version, diag)
+    
+    Renderer->>Renderer: diagram-specific rendering logic
+    Renderer->>DOM: create SVG elements
+    Renderer->>DOM: apply positioning and styling
+    Renderer-->>-API: rendered diagram
+    
+    opt rendering error
+        alt suppressErrorRendering
+            API->>API: removeTempElements()
+            API->>Mermaid: throw error
+        else
+            API->>Renderer: errorRenderer.draw(text, id, version)
+        end
+    end
+
+    %% Accessibility and Cleanup
+    API->>DOM: select svg element
+    API->>Diagram: diag.db.getAccTitle()
+    API->>Diagram: diag.db.getAccDescription()
+    API->>API: addA11yInfo(diagramType, svgNode, a11yTitle, a11yDescr)
+    
+    API->>DOM: set xmlns for foreignobject elements
+    API->>DOM: get innerHTML from enclosing div
+    
+    API->>+API: cleanUpSvgCode(svgCode, isSandboxed, arrowMarkerAbsolute)
+    
+    opt not useArrowMarkerUrls and not sandboxed
+        API->>API: replace marker-end URLs with anchors
+    end
+    
+    API->>API: decodeEntities(svgCode)
+    API->>API: replace <br> with <br/>
+    API-->>-API: cleaned SVG code
+    
+    alt isSandboxed
+        API->>+API: putIntoIFrame(svgCode, svgEl)
+        API->>API: calculate iframe height
+        API->>API: toBase64 encode SVG content
+        API->>API: create iframe with sandbox attributes
+        API-->>-API: iframe HTML
+    else not loose security
+        API->>API: DOMPurify.sanitize(svgCode, options)
+    end
+    
+    API->>API: attachFunctions()
+    API->>API: removeTempElements()
+    
+    opt parseEncounteredException
+        API->>Mermaid: throw parseEncounteredException
+    end
+    
+    API-->>-Queue: { diagramType, svg: svgCode, bindFunctions }
+
+    %% Return to Web Integration
+    activate Mermaid
+    Queue-->>Mermaid: render result
+    Mermaid->>DOM: element.innerHTML = svg
+    
+    opt postRenderCallback
+        Mermaid->>User: postRenderCallback(id)
+    end
+    
+    opt bindFunctions exist
+        Mermaid->>DOM: bindFunctions(element)
+    end
+    deactivate Mermaid
+
+    %% Parse Function Flow
+    User->>+Mermaid: mermaid.parse(text, parseOptions)
+    activate Queue
+    
+    Queue->>+API: mermaidAPI.parse(text, parseOptions)
+    
+    API->>DiagramAPI: addDiagrams()
+    API->>Preprocessor: processAndSetConfigs(text)
+    Preprocessor-->>API: { code, config }
+    API->>Diagram: getDiagramFromText(code)
+    Diagram-->>API: diagram instance
+    API-->>-Queue: { diagramType: diagram.type, config }
+    
+    Queue-->>-Mermaid: parse result
+    Mermaid-->>-User: ParseResult or false
+
+    %% External Diagram Registration
+    User->>+Mermaid: registerExternalDiagrams(diagrams, options)
+    
+    Mermaid->>DiagramAPI: addDiagrams()
+    Mermaid->>DiagramAPI: registerLazyLoadedDiagrams(...diagrams)
+    
+    opt lazyLoad is false
+        Mermaid->>DiagramAPI: loadRegisteredDiagrams()
+    end
+    
+    Mermaid-->>-User: registration complete
+
+    %% Error Handling
+    Note over Mermaid, API: Error Handling Throughout
+    alt Error occurs
+        API->>Mermaid: throw error
+        Mermaid->>+Mermaid: handleError(error, errors, parseError)
+        
+        Mermaid->>Mermaid: log.warn(error)
+        
+        alt isDetailedError
+            Mermaid->>User: parseError(error.str, error.hash)
+        else
+            Mermaid->>User: parseError(error)
+        end
+        
+        opt not suppressErrors
+            Mermaid->>User: throw error
+        end
+        
+        Mermaid-->>-User: error handled
+    end
+
+    %% Configuration Details
+    Note over Config: Configuration Functions
+    Note right of Config: Functions:<br/>- reset()<br/>- getConfig()<br/>- setConfig()<br/>- getSiteConfig()<br/>- updateSiteConfig()<br/>- saveConfigFromInitialize()
+    
+    Note over Styles: CSS Generation
+    Note right of Styles: Features:<br/>- createCssStyles()<br/>- createUserStyles()<br/>- cssImportantStyles()<br/>- Theme integration<br/>- Class definitions
+    
+    Note over API: Security Levels
+    Note right of API: Modes:<br/>- sandbox: iframe isolation<br/>- loose: minimal sanitization<br/>- default: DOMPurify sanitization
+    
+    Note over API: Helper Functions
+    Note right of API: Utilities:<br/>- cleanUpSvgCode()<br/>- putIntoIFrame()<br/>- appendDivSvgG()<br/>- removeExistingElements() 

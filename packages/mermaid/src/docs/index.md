@@ -4,11 +4,10 @@ sidebar: false
 
 title: Mermaid
 titleTemplate: Diagramming and charting tool
-
 hero:
-  name: Mermaid
-  text: Diagramming and charting tool
-  tagline: JavaScript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
+  name: <span class="home-header">Mermaid.js now lives</span>
+  text: at <a href="https://Mermaid.ai/open-source?utm_medium=hero&utm_campaign=variant_a&utm_source=mermaid_js" class="home-link">mermaid.ai</a>
+  tagline: One home for the open-source library and the platform built around it. More resources for the project, a clearer path for contributors, and a team committed to keeping Mermaid open, always.
 
   image:
     light: /hero-chart.svg
@@ -22,7 +21,7 @@ hero:
       rel: external
     - theme: alt
       text: Get started
-      link: /intro/
+      link: https://mermaid.ai/open-source/intro/
 
 features:
   - icon:

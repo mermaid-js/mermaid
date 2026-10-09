@@ -5,17 +5,17 @@
 Mermaid
 </h1>
 <p align="center">
-Generate diagrams from markdown-like text.
+Generate diagrams from Markdown-like text.
 <p>
 <p align="center">
   <a href="https://www.npmjs.com/package/mermaid"><img src="https://img.shields.io/npm/v/mermaid?color=ff3670&label="></a>
 <p>
 
 <p align="center">
-<a href="https://mermaid.live/"><b>Live Editor!</b></a>
+<a href="https://mermaid.ai/live/"><b>Live Editor!</b></a>
 </p>
 <p align="center">
- <a href="https://mermaid.js.org">📖 Documentation</a> | <a href="https://mermaid.js.org/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
+ <a href="https://mermaid.ai/open-source/">📖 Documentation</a> | <a href="https://mermaid.ai/open-source/intro/">🚀 Getting Started</a> | <a href="https://www.jsdelivr.com/package/npm/mermaid">🌐 CDN</a> | <a href="https://discord.gg/sKeNQX4Wtj" title="Discord invite">🙌 Join Us</a>
 </p>
 <p align="center">
 <a href="./README.zh-CN.md">简体中文</a>
@@ -95,9 +95,19 @@ In our release process we rely heavily on visual regression tests using [applito
 
 <!-- </Main description> -->
 
-## Mermaid AI Bot
+## Features
 
-[Mermaid](https://codeparrot.ai/oracle?owner=mermaid-js&repo=mermaid) Bot will help you understand this repository better. You can ask for code examples, installation guide, debugging help and much more.
+- **20+ Diagram Types** – Flowchart, Sequence, Class, State, ER, Gantt, Pie, Git Graph, Mindmap, Timeline, Sankey, and more
+- **Markdown-Inspired Syntax** – Write diagrams as text, no drag-and-drop required
+- **No Design Tool Needed** – Generate professional diagrams straight from code
+- **Live Editor** – Prototype instantly at [mermaid.live](https://mermaid.live)
+- **Version-Control Friendly** – Diagrams live as text, so diffs and reviews just work
+- **Native GitHub Rendering** – Mermaid code blocks render directly in Markdown on GitHub
+- **Highly Customizable** – Themes, colors, fonts, and layout directions
+- **Security First** – Built-in sanitization plus a sandboxed rendering mode
+- **Lightweight** – Small footprint, no heavy dependencies
+- **Active Community** – Frequent releases and thousands of contributors
+- **Open Source** – MIT licensed
 
 ## Examples
 

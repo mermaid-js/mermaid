@@ -36,7 +36,7 @@ jobs:
           # since some days have 25 hours instead of 24.
           TZ: America/Los_Angeles
         run: |
-          pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts --coverage
+          pnpm exec vitest run ./packages/mermaid/src/diagrams/gantt/ganttDb.spec.ts
 
       - name: Verify out-of-tree build with TypeScript
         run: |

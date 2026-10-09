@@ -12,7 +12,10 @@ import {
   EmptyFileSystem,
 } from 'langium';
 import { CommonValueConverter } from '../common/valueConverter.js';
-import { MermaidGeneratedSharedModule, GitGraphGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  GitGraphGrammarGeneratedModule as GitGraphGeneratedModule,
+} from '../generated/module.js';
 import { GitGraphTokenBuilder } from './tokenBuilder.js';
 
 interface GitGraphAddedServices {

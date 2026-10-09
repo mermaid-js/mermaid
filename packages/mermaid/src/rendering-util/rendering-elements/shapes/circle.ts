@@ -1,18 +1,33 @@
-import { log } from '../../../logger.js';
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
-import intersect from '../intersect/index.js';
-import type { Node } from '../../types.js';
-import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import type { D3Selection } from '../../../types.js';
+import { log } from '../../../logger.js';
+import type { Bounds, D3Selection, Point } from '../../../types.js';
 import { handleUndefinedAttr } from '../../../utils.js';
+import type { MindmapOptions, Node, ShapeRenderOptions } from '../../types.js';
+import intersect from '../intersect/index.js';
+import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
+import { getNodeClasses, labelHelper, updateNodeBounds } from './util.js';
 
-export async function circle<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
+export async function circle<T extends SVGGraphicsElement>(
+  parent: D3Selection<T>,
+  node: Node,
+  options?: MindmapOptions | ShapeRenderOptions
+) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node));
+  // A min width would inflate the radius on both axes, leaving short labels in a large, empty circle.
+  const { shapeSvg, bbox, halfPadding } = await labelHelper(parent, node, getNodeClasses(node), {
+    ignoreMinWidth: true,
+  });
 
-  const radius = bbox.width / 2 + halfPadding;
+  // Calculate radius based on look type
+  const labelPadding = 16;
+  const padding = options?.padding ?? halfPadding;
+  // Half the label box's diagonal, not half its width: a circle sized from the width alone
+  // clips every label taller than it is wide, which is what a narrow wrappingWidth produces.
+  const labelRadius = Math.sqrt(bbox.width ** 2 + bbox.height ** 2) / 2;
+  // The diagonal already contains the label, so neo needs only one padding step (as doubleCircle's inner ring).
+  const radius = node.look === 'neo' ? labelRadius + labelPadding : labelRadius + padding;
+
   let circleElem;
   const { cssStyles } = node;
 
@@ -35,7 +50,10 @@ export async function circle<T extends SVGGraphicsElement>(parent: D3Selection<T
   }
 
   updateNodeBounds(node, circleElem);
-
+  node.calcIntersect = function (bounds: Bounds, point: Point) {
+    const radius = bounds.width / 2;
+    return intersect.circle(bounds, radius, point);
+  };
   node.intersect = function (point) {
     log.info('Circle intersect', node, radius, point);
     return intersect.circle(node, radius, point);

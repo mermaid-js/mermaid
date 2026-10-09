@@ -75,3 +75,14 @@ img.resizable-img {
     min-height: unset;
   }
 }
+
+a.home-link {
+  text-decoration: underline;
+  color: var(--vp-c-brand-1);
+}
+
+.VPHomeHero .heading .name.clip.oss-home-name-clip {
+  --vp-home-hero-name-color: var(--vp-c-text-1);
+  --vp-home-hero-name-background: none;
+  color: var(--vp-c-text-1);
+}

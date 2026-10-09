@@ -1,0 +1,15 @@
+---
+description: >-
+  Composite state "Active" (containing child state Idle) with a
+  self-transition (Active --> Active: LOG), verifying a compound state can
+  link to itself. Uses the legacy `stateDiagram` grammar rather than
+  `stateDiagram-v2`.
+config:
+  logLevel: 0
+---
+stateDiagram
+  state Active {
+  Idle
+  }
+  Inactive --> Idle: ACT
+  Active --> Active: LOG

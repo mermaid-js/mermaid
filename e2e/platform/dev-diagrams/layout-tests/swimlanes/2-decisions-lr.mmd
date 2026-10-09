@@ -1,0 +1,22 @@
+swimlane-beta LR
+        subgraph Dep1
+          Start
+        end
+        subgraph Dep2
+          Process1
+          Decision1
+          Process2
+          Process5
+        end
+        subgraph Dep3
+          Process3
+          Decision2
+        end
+        subgraph Dep4
+          Process4
+          Process6
+          Finish
+        end
+        Start --> Process1 --> Decision1 --> Process2 --> Decision2
+        Decision1 --> Process3
+        Process3 --> Process4 --> Decision2 --> Process6 & Process5--> Finish

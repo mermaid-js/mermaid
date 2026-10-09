@@ -1,11 +1,15 @@
-import { labelHelper, updateNodeBounds, getNodeClasses } from './util.js';
+import {
+  labelHelper,
+  updateNodeBounds,
+  getNodeClasses,
+  generateCirclePoints,
+  createPathFromPoints,
+} from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
 import { styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import rough from 'roughjs';
-import { createRoundedRectPathD } from './roundedRectPath.js';
 import type { D3Selection } from '../../../types.js';
-import { handleUndefinedAttr } from '../../../utils.js';
 
 export const createStadiumPathD = (
   x: number,
@@ -52,44 +56,74 @@ export const createStadiumPathD = (
   ].join(' ');
 };
 
+const arcPointCount = 50;
+
+const stadiumDimensions = (
+  bbox: Pick<DOMRect, 'width' | 'height'>,
+  paddingX: number,
+  paddingY: number
+) => {
+  const h = bbox.height + paddingY;
+  // The sampled arcs sit just inside the circles. Use their inscribed circle
+  // for label clearance, and account for the missing horizontal extrema when
+  // enforcing the outer aspect ratio.
+  const inscribedDiameter = h * Math.cos(Math.PI / (2 * (arcPointCount - 1)));
+  const capWidthAtLabel = Math.sqrt(Math.max(0, inscribedDiameter ** 2 - bbox.height ** 2));
+  const w = Math.max(
+    bbox.width + h / 4 + paddingX,
+    1.5 * h + (h - inscribedDiameter),
+    bbox.width + paddingX + h - capWidthAtLabel
+  );
+  return { w, h };
+};
+
 export async function stadium<T extends SVGGraphicsElement>(parent: D3Selection<T>, node: Node) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
+  const nodePadding = node.padding ?? 0;
+  const paddingX = node.look === 'neo' ? 40 : nodePadding;
+  const paddingY = node.look === 'neo' ? 24 : nodePadding;
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
+  const { w, h } = stadiumDimensions(bbox, paddingX, paddingY);
 
-  const h = bbox.height + node.padding;
-  const w = bbox.width + h / 4 + node.padding;
-
-  let rect;
+  const radius = h / 2;
   const { cssStyles } = node;
-  if (node.look === 'handDrawn') {
-    // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
-    const rc = rough.svg(shapeSvg);
-    const options = userNodeOverrides(node, {});
+  // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
+  const rc = rough.svg(shapeSvg);
+  const options = userNodeOverrides(node, {});
 
-    const pathData = createRoundedRectPathD(-w / 2, -h / 2, w, h, h / 2);
-    const roughNode = rc.path(pathData, options);
-
-    rect = shapeSvg.insert(() => roughNode, ':first-child');
-    rect.attr('class', 'basic label-container').attr('style', handleUndefinedAttr(cssStyles));
-  } else {
-    rect = shapeSvg.insert('rect', ':first-child');
-
-    rect
-      .attr('class', 'basic label-container')
-      .attr('style', nodeStyles)
-      .attr('rx', h / 2)
-      .attr('ry', h / 2)
-      .attr('x', -w / 2)
-      .attr('y', -h / 2)
-      .attr('width', w)
-      .attr('height', h);
+  if (node.look !== 'handDrawn') {
+    options.roughness = 0;
+    options.fillStyle = 'solid';
   }
 
-  updateNodeBounds(node, rect);
+  const points = [
+    { x: -w / 2 + radius, y: -h / 2 },
+    { x: w / 2 - radius, y: -h / 2 },
+    ...generateCirclePoints(-w / 2 + radius, 0, radius, arcPointCount, 90, 270),
+    { x: w / 2 - radius, y: h / 2 },
+    ...generateCirclePoints(w / 2 - radius, 0, radius, arcPointCount, 270, 450),
+  ];
+
+  const pathData = createPathFromPoints(points);
+  const shapeNode = rc.path(pathData, options);
+
+  const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
+  polygon.attr('class', 'basic label-container outer-path');
+
+  if (cssStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', cssStyles);
+  }
+
+  if (nodeStyles && node.look !== 'handDrawn') {
+    polygon.selectChildren('path').attr('style', nodeStyles);
+  }
+
+  updateNodeBounds(node, polygon);
 
   node.intersect = function (point) {
-    return intersect.rect(node, point);
+    const pos = intersect.polygon(node, points, point);
+    return pos;
   };
 
   return shapeSvg;

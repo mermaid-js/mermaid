@@ -10,12 +10,9 @@
 
 # mermaid
 
-## Classes
-
-- [UnknownDiagramError](classes/UnknownDiagramError.md)
-
 ## Interfaces
 
+- [AsyncIconLoader](interfaces/AsyncIconLoader.md)
 - [DetailedError](interfaces/DetailedError.md)
 - [ExternalDiagramDefinition](interfaces/ExternalDiagramDefinition.md)
 - [LayoutData](interfaces/LayoutData.md)
@@ -27,9 +24,12 @@
 - [RenderOptions](interfaces/RenderOptions.md)
 - [RenderResult](interfaces/RenderResult.md)
 - [RunOptions](interfaces/RunOptions.md)
+- [SyncIconLoader](interfaces/SyncIconLoader.md)
+- [UnknownDiagramError](interfaces/UnknownDiagramError.md)
 
 ## Type Aliases
 
+- [IconLoader](type-aliases/IconLoader.md)
 - [InternalHelpers](type-aliases/InternalHelpers.md)
 - [ParseErrorFunction](type-aliases/ParseErrorFunction.md)
 - [SVG](type-aliases/SVG.md)

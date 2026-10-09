@@ -18,12 +18,35 @@ export async function halfRoundedRectangle<T extends SVGGraphicsElement>(
 ) {
   const { labelStyles, nodeStyles } = styles2String(node);
   node.labelStyle = labelStyles;
-  const minWidth = 80,
-    minHeight = 50;
+  const minWidth = 15,
+    minHeight = 10;
+
+  const paddingX = node.look === 'neo' ? 16 : (node.padding ?? 0);
+  const paddingY = node.look === 'neo' ? 12 : (node.padding ?? 0);
+
+  if (node.width || node.height) {
+    node.height = (node?.height ?? 0) - paddingY * 2;
+    if (node.height < minHeight) {
+      node.height = minHeight;
+    }
+
+    node.width = (node?.width ?? 0) - paddingX * 2;
+    if (node.width < minWidth) {
+      node.width = minWidth;
+    }
+  }
+
   const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const w = Math.max(minWidth, bbox.width + (node.padding ?? 0) * 2, node?.width ?? 0);
-  const h = Math.max(minHeight, bbox.height + (node.padding ?? 0) * 2, node?.height ?? 0);
+
+  const h = (node?.height ? node?.height : Math.max(minHeight, bbox.height)) + paddingY * 2;
   const radius = h / 2;
+  // The label is centred, so it has to clear the semicircular right cap at its own top and
+  // bottom corners -- not just at the vertical middle, where the cap is widest.
+  const capClearance = radius - Math.sqrt(Math.max(0, radius ** 2 - (bbox.height / 2) ** 2));
+  // Doubled: the label is centred, so widening only by the clearance moves its centre right
+  // along with the outline and the corner stays outside.
+  const w =
+    (node?.width ? node?.width : Math.max(minWidth, bbox.width) + capClearance * 2) + paddingX * 2;
   const { cssStyles } = node;
 
   // @ts-expect-error -- Passing a D3.Selection seems to work for some reason
@@ -46,7 +69,7 @@ export async function halfRoundedRectangle<T extends SVGGraphicsElement>(
   const pathData = createPathFromPoints(points);
   const shapeNode = rc.path(pathData, options);
   const polygon = shapeSvg.insert(() => shapeNode, ':first-child');
-  polygon.attr('class', 'basic label-container');
+  polygon.attr('class', 'basic label-container outer-path');
 
   if (cssStyles && node.look !== 'handDrawn') {
     polygon.selectChildren('path').attr('style', cssStyles);

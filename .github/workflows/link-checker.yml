@@ -7,17 +7,10 @@
 name: Link Checker
 
 on:
-  push:
-    branches:
-      - develop
-      - master
-  pull_request:
-    branches:
-      - master
+  # The Link Checker is disabled from running automatically. It can still be
+  # triggered manually via workflow_dispatch. To re-enable automatic runs,
+  # restore the push/pull_request/schedule triggers below.
   workflow_dispatch:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron: '30 8 * * *'
 
 permissions: # added using https://github.com/step-security/secure-repo
   contents: read
@@ -32,7 +25,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Restore lychee cache
-        uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: .lycheecache
           key: cache-lychee-${{ github.sha }}

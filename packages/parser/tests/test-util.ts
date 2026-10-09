@@ -13,6 +13,10 @@ import type {
   PacketServices,
   GitGraph,
   GitGraphServices,
+  EventModel,
+  EventModelingServices,
+  TreeView,
+  TreeViewServices,
 } from '../src/language/index.js';
 import {
   createArchitectureServices,
@@ -21,6 +25,8 @@ import {
   createRadarServices,
   createPacketServices,
   createGitGraphServices,
+  createEventModelingServices,
+  createTreeViewServices,
 } from '../src/language/index.js';
 
 const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -32,9 +38,10 @@ const consoleMock = vi.spyOn(console, 'log').mockImplementation(() => undefined)
  * @param result - the result `parse` function.
  */
 export function expectNoErrorsOrAlternatives(result: ParseResult) {
-  expect(result.lexerErrors).toHaveLength(0);
-  expect(result.parserErrors).toHaveLength(0);
-
+  expect.soft(result.lexerErrors).toHaveLength(0);
+  expect.soft(result.parserErrors).toHaveLength(0);
+  // To see what the error is, in the logs.
+  expect(result.lexerErrors[0]).toBeUndefined();
   expect(consoleMock).not.toHaveBeenCalled();
   consoleMock.mockReset();
 }
@@ -104,3 +111,25 @@ export function createGitGraphTestServices() {
   return { services: gitGraphServices, parse };
 }
 export const gitGraphParse = createGitGraphTestServices().parse;
+
+const eventModelingServices: EventModelingServices = createEventModelingServices().EventModel;
+const eventModelingParser: LangiumParser = eventModelingServices.parser.LangiumParser;
+
+export function createEventModelingTestServices() {
+  const parse = (input: string) => {
+    return eventModelingParser.parse<EventModel>(input);
+  };
+
+  return { services: gitGraphServices, parse };
+}
+export const eventModelingParse = createEventModelingTestServices().parse;
+const treeViewServices: TreeViewServices = createTreeViewServices().TreeView;
+const treeViewParser: LangiumParser = treeViewServices.parser.LangiumParser;
+export function createTreeViewTestServices() {
+  const parse = (input: string) => {
+    return treeViewParser.parse<TreeView>(input);
+  };
+
+  return { services: treeViewServices, parse };
+}
+export const treeViewParse = createTreeViewTestServices().parse;

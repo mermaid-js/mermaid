@@ -1,0 +1,32 @@
+---
+description: >-
+  Base-theme sequence diagram with `autonumber`, exercising self-referencing
+  messages (actor messaging itself) across normal solid/dotted/open arrows,
+  reverse arrows, and bidirectional arrows, grouped under `Note over`
+  section headers. This is the base subset of the sibling
+  "-with-central-connections" file, which adds central-connection (`()`)
+  variants of the same scenarios on top of this one.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+
+  Note over Alice,Charlie: Normal arrows
+  Alice->>Alice: Normal solid
+  Bob-->>Bob: Normal dotted
+  Charlie->Charlie: Normal open
+
+  Note over Alice,Charlie: Reverse arrows
+  Alice/|-Alice: Reverse solid top
+  Bob\|-Bob: Reverse solid bottom
+
+  Note over Alice,Charlie: Bidirectional arrows
+  Charlie<<->>Charlie: Bidirectional solid
+  Alice<<-->>Alice: Bidirectional dotted

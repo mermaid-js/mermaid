@@ -9,7 +9,7 @@ import utils from '../../utils.js';
 export const draw = async function (text: string, id: string, _version: string, diag: any) {
   log.info('REF0:');
   log.info('Drawing requirement diagram (unified)', id);
-  const { securityLevel, state: conf, layout } = getConfig();
+  const { securityLevel, state: conf, layout, look } = getConfig();
 
   const data4Layout = diag.db.getData() as LayoutData;
 
@@ -21,7 +21,10 @@ export const draw = async function (text: string, id: string, _version: string, 
 
   data4Layout.nodeSpacing = conf?.nodeSpacing ?? 50;
   data4Layout.rankSpacing = conf?.rankSpacing ?? 50;
-  data4Layout.markers = ['requirement_contains', 'requirement_arrow'];
+  data4Layout.markers =
+    look === 'neo'
+      ? ['requirement_contains_neo', 'requirement_arrow_neo']
+      : ['requirement_contains', 'requirement_arrow'];
   data4Layout.diagramId = id;
   await render(data4Layout, svg);
   const padding = 8;

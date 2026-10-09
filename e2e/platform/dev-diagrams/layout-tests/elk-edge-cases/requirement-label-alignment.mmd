@@ -1,0 +1,28 @@
+%% Validate ELK requirement body-label alignment and styling.
+requirementDiagram
+  direction TB
+
+  functionalRequirement req_login:::blue {
+    id: REQ_LOGIN_001
+    text: The user can sign in with a registered account and see a useful validation error.
+    risk: medium
+    verifymethod: test
+  }
+
+  element ui_form:::bold {
+    type: login_form
+    docref: UX_LOGIN
+  }
+
+  element auth_service {
+    type: backend_service
+    docref: AUTH_SVC
+  }
+
+  ui_form - satisfies -> req_login
+  auth_service - traces -> req_login
+
+  classDef bold font-weight:bold
+  classDef blue stroke:lightblue,color:#0000ff
+  classDef default fill:pink
+  style auth_service color:green,stroke:#16a34a

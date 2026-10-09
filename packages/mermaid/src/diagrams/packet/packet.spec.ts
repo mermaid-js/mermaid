@@ -1,32 +1,40 @@
 import { it, describe, expect } from 'vitest';
-import { db } from './db.js';
+import { PacketDB } from './db.js';
 import { parser } from './parser.js';
 
-const { clear, getPacket, getDiagramTitle, getAccTitle, getAccDescription } = db;
-
 describe('packet diagrams', () => {
+  let db: PacketDB;
   beforeEach(() => {
-    clear();
+    db = new PacketDB();
+    if (parser.parser) {
+      parser.parser.yy = db;
+    }
   });
 
   it('should handle a packet-beta definition', async () => {
     const str = `packet-beta`;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot('[]');
+    expect(db.getPacket()).toMatchInlineSnapshot('[]');
+  });
+
+  it('should handle a packet definition', async () => {
+    const str = `packet`;
+    await expect(parser.parse(str)).resolves.not.toThrow();
+    expect(db.getPacket()).toMatchInlineSnapshot('[]');
   });
 
   it('should handle diagram with data and title', async () => {
-    const str = `packet-beta
+    const str = `packet
     title Packet diagram
     accTitle: Packet accTitle
     accDescr: Packet accDescription
     0-10: "test"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getDiagramTitle()).toMatchInlineSnapshot('"Packet diagram"');
-    expect(getAccTitle()).toMatchInlineSnapshot('"Packet accTitle"');
-    expect(getAccDescription()).toMatchInlineSnapshot('"Packet accDescription"');
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getDiagramTitle()).toMatchInlineSnapshot('"Packet diagram"');
+    expect(db.getAccTitle()).toMatchInlineSnapshot('"Packet accTitle"');
+    expect(db.getAccDescription()).toMatchInlineSnapshot('"Packet accDescription"');
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -41,12 +49,12 @@ describe('packet diagrams', () => {
   });
 
   it('should handle single bits', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-10: "test"
     11: "single"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -67,12 +75,12 @@ describe('packet diagrams', () => {
   });
 
   it('should handle bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +8: "byte"
     +16: "word"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -93,12 +101,12 @@ describe('packet diagrams', () => {
   });
 
   it('should handle bit counts with bit or bits', async () => {
-    const str = `packet-beta
+    const str = `packet
     +8: "byte"
     +16: "word"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -119,12 +127,12 @@ describe('packet diagrams', () => {
   });
 
   it('should split into multiple rows', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-10: "test"
     11-90: "multiple"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -161,12 +169,12 @@ describe('packet diagrams', () => {
   });
 
   it('should split into multiple rows when cut at exact length', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     17-63: "multiple"
     `;
     await expect(parser.parse(str)).resolves.not.toThrow();
-    expect(getPacket()).toMatchInlineSnapshot(`
+    expect(db.getPacket()).toMatchInlineSnapshot(`
       [
         [
           {
@@ -195,7 +203,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     18-20: "error"
     `;
@@ -205,7 +213,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous with bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +16: "test"
     18-20: "error"
     `;
@@ -215,7 +223,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous for single packets', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     18: "error"
     `;
@@ -225,7 +233,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous for single packets with bit counts', async () => {
-    const str = `packet-beta
+    const str = `packet
     +16: "test"
     18: "error"
     `;
@@ -235,7 +243,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if numbers are not continuous for single packets - 2', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     17: "good"
     19: "error"
@@ -246,7 +254,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if end is less than start', async () => {
-    const str = `packet-beta
+    const str = `packet
     0-16: "test"
     25-20: "error"
     `;
@@ -256,7 +264,7 @@ describe('packet diagrams', () => {
   });
 
   it('should throw error if bit count is 0', async () => {
-    const str = `packet-beta
+    const str = `packet
     +0: "test"
     `;
     await expect(parser.parse(str)).rejects.toThrowErrorMatchingInlineSnapshot(

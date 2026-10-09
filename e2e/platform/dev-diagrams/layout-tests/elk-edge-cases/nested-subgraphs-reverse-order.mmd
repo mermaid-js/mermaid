@@ -1,0 +1,13 @@
+%% Validate ELK painting of nested subgraphs when the child group is declared before the parent.
+flowchart LR
+  a --> b
+
+  subgraph A[Parent group]
+    B
+  end
+
+  subgraph B[Child group]
+    b
+  end
+
+  b --> c[Outside node]

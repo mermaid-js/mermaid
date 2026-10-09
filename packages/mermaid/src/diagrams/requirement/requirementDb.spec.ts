@@ -29,6 +29,17 @@ describe('requirementDb', () => {
     expect(relationship).toBeDefined();
   });
 
+  it('should create unique edge ids for parallel relationships', () => {
+    requirementDb.addRequirement('src', 'Requirement');
+    requirementDb.addRequirement('dst', 'Requirement');
+    requirementDb.addRelationship('traces' as RelationshipType, 'src', 'dst');
+    requirementDb.addRelationship('contains' as RelationshipType, 'src', 'dst');
+
+    const edgeIds = requirementDb.getData().edges.map((edge) => edge.id);
+
+    expect(edgeIds).toEqual(['src-dst-0', 'src-dst-1']);
+  });
+
   it('should detect single class', () => {
     requirementDb.defineClass(['a'], ['stroke-width: 8px']);
     const classes = requirementDb.getClasses();

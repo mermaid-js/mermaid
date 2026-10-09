@@ -1,4 +1,4 @@
-grammar Architecture
+grammar ArchitectureGrammar
 import "../common/common";
 import "arch";
 
@@ -17,6 +17,7 @@ fragment Statement:
     | services+=Service
     | junctions+=Junction
     | edges+=Edge
+    | alignments+=Alignment
 ;
 
 fragment LeftPort:
@@ -45,6 +46,10 @@ Junction:
 
 Edge:
     lhsId=ID lhsGroup?=ARROW_GROUP? Arrow rhsId=ID rhsGroup?=ARROW_GROUP? EOL
+;
+
+Alignment:
+    'align' direction=('row' | 'column') members+=ID (members+=ID)+ EOL
 ;
 
 terminal ARROW_DIRECTION: 'L' | 'R' | 'T' | 'B';

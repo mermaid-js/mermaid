@@ -5,7 +5,7 @@
     :style="tooltipStyle"
   >
     <span class="mdi mdi-open-in-new"></span>
-    Opens in MermaidChart.com
+    Opens in mermaid.ai
   </div>
 </template>
 
@@ -34,8 +34,7 @@ const hideTooltip = () => {
 const handleMouseOver = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
   if (
-    (target.matches('a[href*="mermaidchart.com"]') ||
-      target.matches('button[onclick*="mermaidchart.com"]')) &&
+    (target.matches('a[href*="mermaid.ai"]') || target.matches('button[onclick*="mermaid.ai"]')) &&
     !target.matches('.no-tooltip') &&
     !target.matches('.VPSocialLink')
   ) {

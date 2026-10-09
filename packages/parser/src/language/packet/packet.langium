@@ -1,9 +1,9 @@
-grammar Packet
+grammar PacketGrammar
 import "../common/common";
 
 entry Packet:
   NEWLINE*
-  "packet-beta"
+  ("packet"| "packet-beta")
   (
     TitleAndAccessibilities
     | blocks+=PacketBlock

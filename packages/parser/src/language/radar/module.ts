@@ -12,7 +12,10 @@ import {
   inject,
 } from 'langium';
 import { CommonValueConverter } from '../common/valueConverter.js';
-import { MermaidGeneratedSharedModule, RadarGeneratedModule } from '../generated/module.js';
+import {
+  MermaidGeneratedSharedModule,
+  RadarGrammarGeneratedModule as RadarGeneratedModule,
+} from '../generated/module.js';
 import { RadarTokenBuilder } from './tokenBuilder.js';
 
 /**

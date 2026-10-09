@@ -15,4 +15,12 @@ describe('class diagram', function () {
       expect(() => parser.parse(`classDiagram\nnamespace ${prop} {\n\tclass A\n}`)).not.toThrow();
     });
   });
+
+  describe('backtick escaping', function () {
+    it('should handle backtick-quoted namespace names', function () {
+      expect(() =>
+        parser.parse(`classDiagram\nnamespace \`A::B\` {\n\tclass \`IPC::Sender\`\n}`)
+      ).not.toThrow();
+    });
+  });
 });

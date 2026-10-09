@@ -1,11 +1,11 @@
-import { vi } from 'vitest';
+import { expect, vi } from 'vitest';
 import utils, { calculatePoint, cleanAndMerge, detectDirective } from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
-import memoize from 'lodash-es/memoize.js';
-import { MockedD3 } from './tests/MockedD3.js';
+import { memoize } from 'es-toolkit/compat';
 import { preprocessDiagram } from './preprocess.js';
+import { MOCKED_BBOX, ensureNodeFromSelector, jsdomIt } from './tests/util.js';
 
 addDiagrams();
 
@@ -62,6 +62,37 @@ describe('when assignWithDepth: should merge objects within objects', function (
       foobar: 'foobar',
       boofar: 1,
     });
+  });
+  it('should handle `null` values', function () {
+    const config_0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
+    const config_1 = { foo: 'foo', bar: null, foobar: 'foobar' };
+    const result = assignWithDepth(config_0, config_1);
+    expect(result).toEqual({
+      foo: 'foo',
+      bar: { foo: 'bar' },
+      foobar: 'foobar',
+      boofar: 1,
+    });
+  });
+  it('should handle `undefined` values', function () {
+    // explicit `undefined` values are assignable
+    const config_0 = { foo: 'bar', bar: undefined, extra: undefined };
+    const config_1 = { foo: undefined, bar: { foo: 'bar' } };
+    const result = assignWithDepth(config_0, config_1);
+    expect(result).toEqual({ foo: undefined, bar: { foo: 'bar' }, extra: undefined });
+  });
+  it('should avoid prototype pollution', function () {
+    const result = assignWithDepth(
+      {},
+      {
+        // On browsers/Node.JS, `__proto__` is a special prop in object literals,
+        // but this syntax declares a new property named `__proto__`.
+        ['__proto__']: { polluted: 'yes' },
+      }
+    );
+    expect(Object.getPrototypeOf(result)).toEqual(Object.prototype);
+    expect(result).to.deep.equal({ ['__proto__']: { polluted: 'yes' } });
+    expect({}).not.toHaveProperty('polluted');
   });
   it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 2)', function () {
     const config_0 = {
@@ -157,7 +188,7 @@ describe('when detecting chart type ', function () {
   it('should handle a graph definition', function () {
     const str = 'graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
   it('should handle a wrap directive', () => {
     const wrap = { type: 'wrap', args: null };
@@ -247,13 +278,13 @@ Alice->Bob: hi`;
   it('should handle a graph definition with leading spaces', function () {
     const str = '    graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
 
   it('should handle a graph definition with leading spaces and newline', function () {
     const str = '  \n  graph TB\nbfs1:queue';
     const type = detectType(str);
-    expect(type).toBe('flowchart');
+    expect(type).toBe('flowchart-v2');
   });
   it('should handle a graph definition for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue';
@@ -369,53 +400,34 @@ describe('when initializing the id generator', function () {
 });
 
 describe('when inserting titles', function () {
-  const svg = new MockedD3('svg');
-  const mockedElement = {
-    getBBox: vi.fn().mockReturnValue({ x: 10, y: 11, width: 100, height: 200 }),
-  };
-  const fauxTitle = new MockedD3('title');
-
-  beforeEach(() => {
-    svg.node = vi.fn().mockReturnValue(mockedElement);
-  });
-
-  it('does nothing if the title is empty', function () {
-    const svgAppendSpy = vi.spyOn(svg, 'append');
+  jsdomIt('does nothing if the title is empty', function ({ svg }) {
     utils.insertTitle(svg, 'testClass', 0, '');
-    expect(svgAppendSpy).not.toHaveBeenCalled();
+    const titleNode = document.querySelector('svg > text');
+    expect(titleNode).toBeNull();
   });
 
-  it('appends the title as a text item with the given title text', function () {
-    const svgAppendSpy = vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleTextSpy = vi.spyOn(fauxTitle, 'text');
-
+  jsdomIt('appends the title as a text item with the given title text', function ({ svg }) {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(svgAppendSpy).toHaveBeenCalled();
-    expect(titleTextSpy).toHaveBeenCalledWith('test title');
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.innerHTML).toBe('test title');
   });
 
-  it('x value is the bounds x position + half of the bounds width', () => {
-    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
-
+  jsdomIt('x value is the bounds x position + half of the bounds width', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(titleAttrSpy).toHaveBeenCalledWith('x', 10 + 100 / 2);
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.getAttribute('x')).toBe(`${MOCKED_BBOX.x + MOCKED_BBOX.width / 2}`);
   });
 
-  it('y value is the negative of given title top margin', () => {
-    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
-
+  jsdomIt('y value is the negative of given title top margin', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(titleAttrSpy).toHaveBeenCalledWith('y', -5);
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.getAttribute('y')).toBe(`${MOCKED_BBOX.y - 5}`);
   });
 
-  it('class is the given css class', () => {
-    vi.spyOn(svg, 'append').mockReturnValue(fauxTitle);
-    const titleAttrSpy = vi.spyOn(fauxTitle, 'attr');
-
+  jsdomIt('class is the given css class', ({ svg }) => {
     utils.insertTitle(svg, 'testClass', 5, 'test title');
-    expect(titleAttrSpy).toHaveBeenCalledWith('class', 'testClass');
+    const titleNode = ensureNodeFromSelector('svg > text');
+    expect(titleNode.getAttribute('class')).toBe('testClass');
   });
 });
 
@@ -582,5 +594,24 @@ describe('calculatePoint', () => {
     expect(() => calculatePoint(points, distanceToTraverse)).toThrow(
       'Could not find a suitable point for the given distance'
     );
+  });
+});
+
+describe('calcTerminalLabelPosition', () => {
+  // #8329: callers centre terminal labels on this point, so an end label must be placed
+  // exactly like a start label, mirrored: no extra offset for its top-left corner.
+  it('places an end label as the mirror image of a start label on a straight edge', () => {
+    const path = [
+      { x: 0, y: 0 },
+      { x: 200, y: 0 },
+    ];
+    const start = utils.calcTerminalLabelPosition(0, 'start_right', path);
+    const end = utils.calcTerminalLabelPosition(0, 'end_left', path);
+    expect(end.x).toBeCloseTo(200 - start.x);
+    expect(end.y).toBeCloseTo(-start.y);
+    const startLeft = utils.calcTerminalLabelPosition(0, 'start_left', path);
+    const endRight = utils.calcTerminalLabelPosition(0, 'end_right', path);
+    expect(endRight.x).toBeCloseTo(200 - startLeft.x);
+    expect(endRight.y).toBeCloseTo(-startLeft.y);
   });
 });

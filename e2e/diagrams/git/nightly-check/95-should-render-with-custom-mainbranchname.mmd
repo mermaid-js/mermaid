@@ -1,0 +1,23 @@
+---
+description: >-
+  gitGraph with `mainBranchName: 'trunk'` configured, renaming the default main branch to 'trunk'
+  and referencing it via `checkout trunk`, verifying the custom main-branch name is honored
+  throughout rendering.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    rotateCommitLabel: false
+    parallelCommits: false
+    mainBranchName: 'trunk'
+---
+gitGraph
+  commit id: "1"
+  commit id: "2"
+  branch develop
+  checkout develop
+  commit id: "3"
+  commit id: "4"
+  checkout trunk
+  commit id: "5"
+  commit id: "6"

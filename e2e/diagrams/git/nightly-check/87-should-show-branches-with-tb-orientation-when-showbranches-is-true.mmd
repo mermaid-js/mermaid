@@ -1,0 +1,20 @@
+---
+description: >-
+  TB (top-to-bottom) oriented gitGraph with a develop branch off main and `showBranches: true`,
+  verifying branch lines render correctly in the TB orientation.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    rotateCommitLabel: false
+    parallelCommits: false
+---
+gitGraph TB:
+  commit id: "1"
+  commit id: "2"
+  branch develop
+  checkout develop
+  commit id: "3"
+  commit id: "4"
+  checkout main
+  commit id: "5"

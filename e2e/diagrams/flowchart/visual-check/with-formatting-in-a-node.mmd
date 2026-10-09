@@ -1,0 +1,20 @@
+---
+description:
+  Verifies that markdown formatting (bold text via backtick-quoted strings)
+  inside a diamond/decision node label renders correctly alongside multiple
+  incoming and outgoing labeled edges, with htmlLabels enabled so formatting is
+  rendered via HTML foreignObject content.
+config:
+  flowchart:
+    titleTopMargin: 0
+---
+%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+  a{"`The **cat** in the hat`"} -- 1o --> b
+  a -- 2o --> c
+  a -- 3o --> d
+  g --2i--> a
+  d --1i--> a
+  h --3i -->a
+  b --> d(The dog in the hog)
+  c --> d

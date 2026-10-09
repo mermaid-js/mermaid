@@ -1,0 +1,380 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+import db from './db.js';
+import { parser } from './parser.js';
+
+/**
+ * Integration tests for the treeView parser pipeline.
+ *
+ * Tests the full flow: Langium grammar → value converter → populate() → db.
+ * Previously these tested parseNodeContent() directly; now parsing is handled
+ * by the Langium grammar with structured terminals.
+ */
+
+/** Helper: parse input and return the root's first child node from db */
+async function parseAndGetNode(line: string, index = 0) {
+  db.clear();
+  await parser.parse(`treeView-beta\n${line}`);
+  const root = db.getRoot();
+  return root.children[index];
+}
+
+describe('treeView parser integration', () => {
+  beforeEach(() => {
+    db.clear();
+  });
+
+  describe('bare labels', () => {
+    it('should parse a simple filename', async () => {
+      const node = await parseAndGetNode('index.js');
+      expect(node.name).toBe('index.js');
+      expect(node.nodeType).toBe('file');
+    });
+
+    it('should detect directory from trailing slash', async () => {
+      const node = await parseAndGetNode('src/');
+      expect(node.name).toBe('src');
+      expect(node.nodeType).toBe('directory');
+      expect(node.icon).toBeUndefined();
+    });
+
+    it('should parse dotfiles', async () => {
+      const node = await parseAndGetNode('.gitignore');
+      expect(node.name).toBe('.gitignore');
+      expect(node.nodeType).toBe('file');
+      expect(node.icon).toBeUndefined();
+    });
+
+    it('should parse filenames with hyphens', async () => {
+      const node = await parseAndGetNode('docker-compose.yml');
+      expect(node.name).toBe('docker-compose.yml');
+      expect(node.icon).toBeUndefined();
+    });
+  });
+
+  describe('quoted labels', () => {
+    it('should strip double quotes', async () => {
+      const node = await parseAndGetNode('"my file.js"');
+      expect(node.name).toBe('my file.js');
+      expect(node.nodeType).toBe('file');
+    });
+
+    it('should strip single quotes', async () => {
+      const node = await parseAndGetNode("'my folder/'");
+      expect(node.name).toBe('my folder');
+      expect(node.nodeType).toBe('directory');
+    });
+
+    it('should handle empty quoted string', async () => {
+      const node = await parseAndGetNode('""');
+      expect(node.name).toBe('');
+    });
+  });
+
+  describe(':::class annotation', () => {
+    it('should extract class from bare label', async () => {
+      const node = await parseAndGetNode('index.js :::highlight');
+      expect(node.name).toBe('index.js');
+      expect(node.cssClass).toBe('highlight');
+    });
+
+    it('should extract class from quoted label', async () => {
+      const node = await parseAndGetNode('"my file.js" :::important');
+      expect(node.name).toBe('my file.js');
+      expect(node.cssClass).toBe('important');
+    });
+
+    it('should handle class with hyphens', async () => {
+      const node = await parseAndGetNode('file.ts :::my-class');
+      expect(node.cssClass).toBe('my-class');
+    });
+  });
+
+  describe('icon() annotation', () => {
+    it('should extract icon override', async () => {
+      const node = await parseAndGetNode('data.bin icon(folder)');
+      expect(node.name).toBe('data.bin');
+      expect(node.icon).toBe('folder');
+    });
+
+    it('should accept prefixed iconify names', async () => {
+      const node = await parseAndGetNode('App.tsx icon(logos:react)');
+      expect(node.name).toBe('App.tsx');
+      expect(node.icon).toBe('logos:react');
+    });
+  });
+
+  describe('## description', () => {
+    it('should extract description from bare label', async () => {
+      const node = await parseAndGetNode('index.js ## entry point');
+      expect(node.name).toBe('index.js');
+      expect(node.description).toBe('entry point');
+    });
+
+    it('should extract description from quoted label', async () => {
+      const node = await parseAndGetNode('"my file.js" ## the main file');
+      expect(node.name).toBe('my file.js');
+      expect(node.description).toBe('the main file');
+    });
+
+    it('should handle description with no text after ##', async () => {
+      const node = await parseAndGetNode('file.txt ##');
+      expect(node.name).toBe('file.txt');
+      expect(node.description).toBeUndefined();
+    });
+  });
+
+  describe('combined annotations', () => {
+    it('should handle all annotations together', async () => {
+      const node = await parseAndGetNode(
+        'App.tsx :::highlight icon(logos:react) ## main component'
+      );
+      expect(node.name).toBe('App.tsx');
+      expect(node.cssClass).toBe('highlight');
+      expect(node.icon).toBe('logos:react');
+      expect(node.description).toBe('main component');
+    });
+
+    it('should handle quoted label with all annotations', async () => {
+      const node = await parseAndGetNode(
+        '"my app.tsx" :::highlight icon(logos:react) ## main component'
+      );
+      expect(node.name).toBe('my app.tsx');
+      expect(node.cssClass).toBe('highlight');
+      expect(node.icon).toBe('logos:react');
+      expect(node.description).toBe('main component');
+    });
+
+    it('should handle directory with class', async () => {
+      const node = await parseAndGetNode('src/ :::highlight');
+      expect(node.name).toBe('src');
+      expect(node.nodeType).toBe('directory');
+      expect(node.cssClass).toBe('highlight');
+      expect(node.icon).toBeUndefined();
+    });
+  });
+
+  describe('bare labels with spaces', () => {
+    it('should handle folder names with spaces', async () => {
+      const node = await parseAndGetNode('My Documents/');
+      expect(node.name).toBe('My Documents');
+      expect(node.nodeType).toBe('directory');
+      expect(node.icon).toBeUndefined();
+    });
+
+    it('should handle folder names with spaces and annotations', async () => {
+      const node = await parseAndGetNode('My Documents/ :::highlight');
+      expect(node.name).toBe('My Documents');
+      expect(node.nodeType).toBe('directory');
+      expect(node.cssClass).toBe('highlight');
+    });
+
+    it('should handle file names with spaces', async () => {
+      const node = await parseAndGetNode('my file.ts ## some description');
+      expect(node.name).toBe('my file.ts');
+      expect(node.nodeType).toBe('file');
+      expect(node.icon).toBeUndefined();
+      expect(node.description).toBe('some description');
+    });
+
+    it('should preserve consecutive spaces and unicode in bare names', async () => {
+      const node = await parseAndGetNode('But  _  _ton💓.tsx');
+      expect(node.name).toBe('But  _  _ton💓.tsx');
+      expect(node.nodeType).toBe('file');
+    });
+
+    it('should preserve consecutive spaces and unicode in quoted names', async () => {
+      const node = await parseAndGetNode('"But  _  _ton💓.tsx"');
+      expect(node.name).toBe('But  _  _ton💓.tsx');
+    });
+
+    it('should trim trailing whitespace from bare names', async () => {
+      const node = await parseAndGetNode('index.js  ');
+      expect(node.name).toBe('index.js');
+    });
+  });
+
+  describe('default icons', () => {
+    it('should not assign an icon without an annotation — defaults are resolved at render time', async () => {
+      const file = await parseAndGetNode('utils.ts');
+      expect(file.icon).toBeUndefined();
+      const dir = await parseAndGetNode('components/');
+      expect(dir.icon).toBeUndefined();
+    });
+  });
+
+  describe('icon suppression', () => {
+    it('should set icon to none for icon(none)', async () => {
+      const node = await parseAndGetNode('index.js icon(none)');
+      expect(node.name).toBe('index.js');
+      expect(node.icon).toBe('none');
+    });
+
+    it('should set icon to none for empty icon()', async () => {
+      const node = await parseAndGetNode('index.js icon()');
+      expect(node.name).toBe('index.js');
+      expect(node.icon).toBe('none');
+    });
+
+    it('should suppress icon on a directory', async () => {
+      const node = await parseAndGetNode('src/ icon(none)');
+      expect(node.name).toBe('src');
+      expect(node.nodeType).toBe('directory');
+      expect(node.icon).toBe('none');
+    });
+
+    it('should combine icon(none) with other annotations', async () => {
+      const node = await parseAndGetNode('app.ts icon(none) :::highlight ## entry point');
+      expect(node.name).toBe('app.ts');
+      expect(node.icon).toBe('none');
+      expect(node.cssClass).toBe('highlight');
+      expect(node.description).toBe('entry point');
+    });
+  });
+});
+
+/**
+ * AST equivalence tests: box-drawing input should produce the same tree
+ * as equivalent indent-based input.
+ */
+
+interface NodeSnapshot {
+  name: string;
+  nodeType: string;
+  level: number;
+  cssClass?: string;
+  icon?: string;
+  description?: string;
+  children: NodeSnapshot[];
+}
+
+function collectNodes(node: {
+  name: string;
+  nodeType: string;
+  level: number;
+  cssClass?: string;
+  icon?: string;
+  description?: string;
+  children: (typeof node)[];
+}): NodeSnapshot {
+  return {
+    name: node.name,
+    nodeType: node.nodeType,
+    level: node.level,
+    ...(node.cssClass ? { cssClass: node.cssClass } : {}),
+    ...(node.icon ? { icon: node.icon } : {}),
+    ...(node.description ? { description: node.description } : {}),
+    children: node.children.map(collectNodes),
+  };
+}
+
+describe('box-drawing ↔ indent equivalence', () => {
+  beforeEach(() => {
+    db.clear();
+  });
+
+  it('flat list', async () => {
+    const indent = `treeView-beta
+    src/
+        index.js
+        App.tsx
+    package.json`;
+
+    const boxDraw = `treeView-beta
+├── src/
+│   ├── index.js
+│   └── App.tsx
+└── package.json`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
+  });
+
+  it('nested directories', async () => {
+    const indent = `treeView-beta
+    src/
+        components/
+            Button.tsx
+            Modal.tsx
+        utils/
+            helpers.ts
+    README.md`;
+
+    const boxDraw = `treeView-beta
+├── src/
+│   ├── components/
+│   │   ├── Button.tsx
+│   │   └── Modal.tsx
+│   └── utils/
+│       └── helpers.ts
+└── README.md`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
+  });
+
+  it('with annotations', async () => {
+    const indent = `treeView-beta
+    src/
+        App.tsx :::highlight ## main component
+        index.js ## entry point
+    package.json`;
+
+    const boxDraw = `treeView-beta
+├── src/
+│   ├── App.tsx :::highlight ## main component
+│   └── index.js ## entry point
+└── package.json`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
+  });
+
+  it('deeply nested (4 levels)', async () => {
+    const indent = `treeView-beta
+    a/
+        b/
+            c/
+                d.txt
+            e.txt
+        f.txt`;
+
+    const boxDraw = `treeView-beta
+└── a/
+    ├── b/
+    │   ├── c/
+    │   │   └── d.txt
+    │   └── e.txt
+    └── f.txt`;
+
+    db.clear();
+    await parser.parse(indent);
+    const indentTree = collectNodes(db.getRoot());
+
+    db.clear();
+    await parser.parse(boxDraw);
+    const boxTree = collectNodes(db.getRoot());
+
+    expect(boxTree).toEqual(indentTree);
+  });
+});

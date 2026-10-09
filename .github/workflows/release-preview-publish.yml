@@ -5,6 +5,10 @@ on:
     branches:
       - 'release/**'
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   publish-preview:
     runs-on: ubuntu-latest
@@ -23,6 +27,8 @@ jobs:
 
       - name: Install Packages
         run: |
+          # Use hoisted mode to avoid `bundleDependencies` issues
+          echo 'nodeLinker: "hoisted"' >> pnpm-workspace.yaml
           pnpm install --frozen-lockfile
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
@@ -30,15 +36,74 @@ jobs:
       - name: Install Json
         run: npm i json@11.0.0 --global
 
-      - name: Publish
-        working-directory: ./packages/mermaid
+      # Shared by every publish step below, so all three packages carry the same
+      # preview version and can be installed as a matching set.
+      - name: Compute preview version
+        id: preview
         run: |
           PREVIEW_VERSION=$(git log --oneline "origin/$GITHUB_REF_NAME" ^"origin/master" | wc -l)
-          VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
-          echo $VERSION
-          npm version --no-git-tag-version --allow-same-version $VERSION
-          npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+          VERSION=$(echo "${GITHUB_REF}" | tail -c +20)-preview.$PREVIEW_VERSION
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing preview version $VERSION"
+
+      - name: Configure registry
+        run: |
+          npm set //npm.pkg.github.com/:_authToken "${GITHUB_TOKEN}"
           npm set registry https://npm.pkg.github.com/mermaid-js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish mermaid
+        working-directory: ./packages/mermaid
+        run: |
+          npm version --no-git-tag-version --allow-same-version "$VERSION"
           json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
           json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
-          npm publish
+          # We don't publish a separate `@mermaid-js/parser` so bundle it instead
+          json -I -f package.json -e 'this.bundleDependencies??=[]' -e 'this.bundleDependencies.push("@mermaid-js/parser")'
+          pnpm pack
+          npm publish --tag preview *.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.preview.outputs.version }}
+          # Prevent `npm publish` from failing if the docs verification fails.
+          ONLY_WARN_ON_VERIFY_ERROR: 'true'
+
+      # `@mermaid-js/layout-elk` and `@mermaid-js/tiny` are already scoped to the
+      # org, so unlike `mermaid` they need no rename. Publishing them alongside
+      # lets a preview be exercised the way users combine them: ELK bundled in
+      # mermaid, and ELK registered onto the tiny build, which omits it.
+      - name: Publish layout-elk and tiny
+        run: |
+          # Every package is attempted even after one fails, and the step fails
+          # at the end. Under `bash -e` a failing subshell aborted the loop, so
+          # `tiny` was never attempted while `layout-elk` was being refused —
+          # its own publishability stayed unknown across every failed run.
+          failed=''
+          for pkg in mermaid-layout-elk tiny; do
+            (
+              cd "packages/$pkg"
+              npm version --no-git-tag-version --allow-same-version "$VERSION"
+              json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"'
+              # The preview `mermaid` is published under a different name
+              # (`@mermaid-js/mermaid`), so a `mermaid` peer range can never be
+              # satisfied by a preview install. Drop it rather than emit an
+              # unmet-peer warning on every install.
+              json -I -f package.json -e 'delete this.peerDependencies'
+              pnpm pack
+              # Both packages must stay *public* in the org's GitHub Packages
+              # settings. While they were `internal`, this step failed with
+              # `403 permission_denied: write_package`; `@mermaid-js/mermaid`
+              # published from the same job and the same `GITHUB_TOKEN` because
+              # it is public. `--access` is not the lever — npm already sends
+              # `public access` without it, and passing it changed nothing.
+              npm publish --tag preview *.tgz
+            ) || failed="$failed $pkg"
+          done
+          if [ -n "$failed" ]; then
+            echo "::error::preview publish failed for:$failed"
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.preview.outputs.version }}

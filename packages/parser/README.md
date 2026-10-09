@@ -44,20 +44,16 @@ ValueConverter -->> Package: Return AST
 ```
 
 - When to override `TokenBuilder`?
-
   - To override keyword rules.
   - To override terminal rules that need a custom function.
   - To manually reorder the list of rules.
 
 - When to override `Lexer`?
-
   - To modify input before tokenizing.
   - To insert/modify tokens that cannot or have not been parsed.
 
 - When to override `LangiumParser`?
-
   - To insert or modify attributes that can't be parsed.
 
 - When to override `ValueConverter`?
-
   - To modify the returned value from the parser.

@@ -10,9 +10,9 @@
 
 # Type Alias: ParseErrorFunction()
 
-> **ParseErrorFunction**: (`err`, `hash`?) => `void`
+> **ParseErrorFunction** = (`err`, `hash?`) => `void`
 
-Defined in: [packages/mermaid/src/Diagram.ts:10](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/Diagram.ts#L10)
+Defined in: [packages/mermaid/src/Diagram.ts:12](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/Diagram.ts#L12)
 
 ## Parameters
 
