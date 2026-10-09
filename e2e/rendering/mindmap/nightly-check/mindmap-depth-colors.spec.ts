@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { imgSnapshotTest } from '../../helpers/util.ts';
+import { imgSnapshotTest } from '../../../helpers/util';
 
 // Frontmatter exercises diagram-local configuration, including the new option.
 const diagram = `---
