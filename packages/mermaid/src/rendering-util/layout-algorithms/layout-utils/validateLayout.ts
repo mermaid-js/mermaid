@@ -1,9 +1,10 @@
-import type { LayoutData, Node, Edge as _Edge } from '../../types.js';
+import type { LayoutData, Node } from '../../types.js';
 import { log } from '../../../logger.js';
 import { DEBUG_KEY } from './debug.js';
 import {
   rectForNode,
   approxEqual,
+  hasTerminalMarker,
   orthogonalPolylineContainsPoint,
   segmentIntersectsRectInterior,
   terminalMarkerClearanceRect,
@@ -444,27 +445,6 @@ function labelRectForEdge(e: unknown): Rect | null {
     return null;
   }
   return { cx: x, cy: y, left: x - w / 2, right: x + w / 2, top: y - h / 2, bottom: y + h / 2 };
-}
-
-type EdgeTerminal = 'start' | 'end';
-
-function hasTerminalMarker(e: _Edge, terminal: EdgeTerminal): boolean {
-  const markerType = terminal === 'start' ? e.arrowTypeStart : e.arrowTypeEnd;
-  if (typeof markerType === 'string') {
-    const trimmed = markerType.trim();
-    if (trimmed.length > 0 && trimmed !== 'none' && trimmed !== 'arrow_open') {
-      return true;
-    }
-  }
-
-  if (typeof e.type !== 'string') {
-    return false;
-  }
-  // Flowchart/swimlane edges often carry marker semantics in `type`.
-  if (terminal === 'start' && e.type.startsWith('double_')) {
-    return true;
-  }
-  return terminal === 'end' && /arrow_(point|cross|circle|barb)|double_arrow/.test(e.type);
 }
 
 function _polylineIsOrthogonal(points: Point[]): boolean {

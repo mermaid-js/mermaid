@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
+import type { Edge } from '../../types.js';
 import {
   clamp,
   compareCodeUnits,
+  hasTerminalMarker,
   orthogonalPolylineContainsPoint,
   pointInsideAnyRectInterior,
   terminalMarkerClearanceRect,
@@ -115,5 +117,31 @@ describe('domus/core/helpers', () => {
         7
       )
     ).toMatchObject({ left: 3, right: 17, top: 0, bottom: 12 });
+  });
+
+  it('detects only terminals that render markers', () => {
+    const edge = {
+      arrowTypeStart: 'none',
+      arrowTypeEnd: 'arrow_point',
+      type: 'arrow_point',
+    } as Edge;
+
+    expect(hasTerminalMarker(edge, 'start')).toBe(false);
+    expect(hasTerminalMarker(edge, 'end')).toBe(true);
+    expect(
+      hasTerminalMarker({ ...edge, arrowTypeEnd: 'arrow_open', type: undefined } as Edge, 'end')
+    ).toBe(false);
+    expect(
+      hasTerminalMarker(
+        { ...edge, arrowTypeStart: 'none', type: 'double_arrow_point' } as Edge,
+        'start'
+      )
+    ).toBe(false);
+    expect(
+      hasTerminalMarker(
+        { ...edge, arrowTypeStart: undefined, type: 'double_arrow_point' } as Edge,
+        'start'
+      )
+    ).toBe(true);
   });
 });

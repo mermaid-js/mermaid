@@ -429,6 +429,36 @@ describe('grid edge label helpers', () => {
     expect(metrics.labelPasses).toBe(1);
   });
 
+  it('counts labels skipped before measurement', () => {
+    const data: LayoutData = {
+      nodes: [manualNode('a', 40, 100), manualNode('b', 360, 100)],
+      edges: [
+        manualEdge(
+          'unmeasured',
+          'a',
+          'b',
+          [
+            { x: 80, y: 100 },
+            { x: 320, y: 100 },
+          ],
+          'waiting for measurement'
+        ),
+      ],
+      config: { layout: 'grid' } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    const metrics = createGridEdgeLabelInstrumentation();
+
+    positionGridEdgeLabels(data, metrics);
+
+    expect(labelNode).toMatchObject({ width: 0, height: 0 });
+    expect(labelNode.x).toBeUndefined();
+    expect(labelNode.y).toBeUndefined();
+    expect(metrics.unmeasuredLabelsSkipped).toBe(1);
+    expect(metrics.labelPasses).toBe(0);
+  });
+
   it('reroutes an owning edge while preserving its frozen label anchor', () => {
     const data: LayoutData = {
       nodes: [
@@ -467,8 +497,9 @@ describe('grid edge label helpers', () => {
     labelNode.width = 300;
     labelNode.height = 28;
     const metrics = createGridEdgeLabelInstrumentation();
+    const routingMetrics = createGridRoutingInstrumentation();
 
-    positionGridEdgeLabels(data, metrics);
+    positionGridEdgeLabels(data, metrics, routingMetrics);
 
     expect(data.edges.slice(1).map((edge) => edge.points)).toEqual([
       [
@@ -482,6 +513,8 @@ describe('grid edge label helpers', () => {
     ]);
     expect(data.edges[0].points?.length).toBeGreaterThan(2);
     expect(metrics.labelPasses).toBe(2);
+    expect(routingMetrics.labelOverlayBuilds).toBe(1);
+    expect(routingMetrics.labelOverlayVertices).toBe(4);
     expect(metrics.frozenReservations).toBe(1);
     expect(metrics.impactedEdgeReroutes).toBeGreaterThanOrEqual(1);
     expect(metrics.preservedAnchors).toBeGreaterThan(0);

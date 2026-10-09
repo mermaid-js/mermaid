@@ -4,6 +4,7 @@ import { normalizePolyline, segmentsCross, type Segment } from '../layout-utils/
 import {
   clamp,
   compareCodeUnits,
+  hasTerminalMarker,
   orthogonalPolylineContainsPoint,
   polylineIntersectsRect,
   rectForNode,
@@ -163,6 +164,7 @@ export interface GridEdgeLabelInstrumentation {
   labelOverlapFallbacks: number;
   labelOverlapReservations: number;
   degenerateLabelRoutesSkipped: number;
+  unmeasuredLabelsSkipped: number;
   rollbacks: number;
   indexCoordinateCount: number;
 }
@@ -211,6 +213,7 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     labelOverlapFallbacks: 0,
     labelOverlapReservations: 0,
     degenerateLabelRoutesSkipped: 0,
+    unmeasuredLabelsSkipped: 0,
     rollbacks: 0,
     indexCoordinateCount: 0,
   };
@@ -381,27 +384,23 @@ function candidateSegmentsFromSegments(segments: Segment[]): SegmentCandidate[] 
   }));
 }
 
-function markerClearanceRectsFromPoints(points: Point[]): Rect[] {
-  return ['start', 'end']
-    .map((which) =>
-      terminalMarkerClearanceRect(
-        points,
-        which as 'start' | 'end',
-        EDGE_END_MARKER_CLEARANCE,
-        7,
-        LABEL_EPSILON
-      )
+function markerClearanceRectsFromPoints(edge: Edge, points: Point[]): Rect[] {
+  const terminals = ['start', 'end'] as const;
+  return terminals
+    .filter((terminal) => hasTerminalMarker(edge, terminal))
+    .map((terminal) =>
+      terminalMarkerClearanceRect(points, terminal, EDGE_END_MARKER_CLEARANCE, 7, LABEL_EPSILON)
     )
     .filter((rect): rect is Rect => rect !== null);
 }
 
-function buildEdgeGeometry(points: Point[]): EdgeGeometryCache {
+function buildEdgeGeometry(edge: Edge, points: Point[]): EdgeGeometryCache {
   const normalized = normalizePolyline(points);
   return {
     points: normalized.points,
     segments: normalized.segments,
     candidateSegments: candidateSegmentsFromSegments(normalized.segments),
-    markerRects: markerClearanceRectsFromPoints(normalized.points),
+    markerRects: markerClearanceRectsFromPoints(edge, normalized.points),
   };
 }
 
@@ -457,7 +456,7 @@ function markerClearanceRectsForEdge(
       return cached.markerRects;
     }
   }
-  return markerClearanceRectsFromPoints(pointsForEdge(edge, overrides, context));
+  return markerClearanceRectsFromPoints(edge, pointsForEdge(edge, overrides, context));
 }
 
 function rangeOverlaps(aStart: number, aEnd: number, bStart: number, bEnd: number): boolean {
@@ -588,7 +587,7 @@ function storeEdgeGeometry(
 }
 
 function setEdgePoints(context: EdgeLabelContext, edge: Edge, points: Point[]): void {
-  const geometry = buildEdgeGeometry(points);
+  const geometry = buildEdgeGeometry(edge, points);
   edge.points = geometry.points.map(clonePoint);
   storeEdgeGeometry(context, edge.id, geometry);
 }
@@ -669,7 +668,7 @@ function createEdgeLabelContext(
 
   for (const edge of data.edges) {
     context.edgeById.set(edge.id, edge);
-    const geometry = buildEdgeGeometry(edge.points ?? []);
+    const geometry = buildEdgeGeometry(edge, edge.points ?? []);
     storeEdgeGeometry(context, edge.id, geometry);
     const pointBounds = boundsForPoints(geometry.points);
     if (pointBounds) {
@@ -739,7 +738,11 @@ function queryForeignSegments(
       if (edgeId === selfEdgeId) {
         continue;
       }
-      const geometry = buildEdgeGeometry(points);
+      const edge = context.edgeById.get(edgeId);
+      if (!edge) {
+        continue;
+      }
+      const geometry = buildEdgeGeometry(edge, points);
       geometry.segments.forEach((segment, index) => {
         const segmentBounds = boundsForSegment(segment);
         if (!boundsOverlap(segmentBounds, bounds)) {
@@ -2176,11 +2179,11 @@ export function positionGridEdgeLabels(
         return null;
       }
       const labelNode = nodeById.get(edge.labelNodeId);
-      if (
-        !labelNode ||
-        !isFinitePositiveNumber(labelNode.width) ||
-        !isFinitePositiveNumber(labelNode.height)
-      ) {
+      if (!labelNode) {
+        return null;
+      }
+      if (!isFinitePositiveNumber(labelNode.width) || !isFinitePositiveNumber(labelNode.height)) {
+        incrementMetric(instrumentation, 'unmeasuredLabelsSkipped');
         return null;
       }
       return { edge, labelNode, sourceIndex };
