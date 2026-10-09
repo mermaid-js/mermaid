@@ -101,6 +101,16 @@ stateDiagram-v2
     stateId
 ```
 
+The `state` keyword can also precede an id, both at the top level and inside a composite state:
+
+```mermaid-example
+stateDiagram-v2
+    state s1
+    state Composite {
+        state s2
+    }
+```
+
 Another way is by using the state keyword with a description as per below:
 
 ```mermaid-example
