@@ -132,7 +132,7 @@ describe('detectScope', () => {
   });
 
   it('falls back to full suite when an e2e/other spec is modified', () => {
-    expect(detectScope(['e2e/other/xss.spec.js'])).toBe('');
+    expect(detectScope(['e2e/other/pr/xss.spec.js'])).toBe('');
   });
 
   it('deduplicates when diagram source and its spec subfolder both change', () => {

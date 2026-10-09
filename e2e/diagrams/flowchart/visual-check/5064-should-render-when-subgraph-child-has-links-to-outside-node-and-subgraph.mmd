@@ -1,0 +1,12 @@
+---
+description:
+  Checks that a node (In) inside a subgraph (Sub) can simultaneously receive an
+  edge from an outside node (Out --> In) and an edge from its own parent
+  subgraph container (Sub --> In) without layout errors.
+---
+flowchart TB
+  Out --> In
+  subgraph Sub
+  In
+  end
+  Sub --> In

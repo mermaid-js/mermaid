@@ -616,3 +616,107 @@ dev-explorer-app .empty {
 dev-explorer-app sl-breadcrumb::part(base) {
   font-size: 12px;
 }
+
+/* --- Compare tab ---------------------------------------------------------- */
+
+dev-explorer-app dev-compare-panel {
+  display: block;
+  height: 100%;
+}
+
+dev-explorer-app .compare-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+dev-explorer-app .compare-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-bg);
+}
+
+dev-explorer-app .compare-toolbar .control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+dev-explorer-app .compare-toolbar .label {
+  font-size: 12px;
+  color: var(--muted);
+  user-select: none;
+}
+
+dev-explorer-app .compare-version-select {
+  width: 190px;
+}
+
+dev-explorer-app .compare-diff-same {
+  color: #4ade80;
+  font-size: 12px;
+}
+
+dev-explorer-app .compare-diff-changed {
+  color: #f0abfc;
+  font-size: 12px;
+}
+
+dev-explorer-app .compare-diff-error {
+  color: #fbbf24;
+  font-size: 12px;
+}
+
+dev-explorer-app .compare-panes {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px;
+}
+
+dev-explorer-app .compare-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+dev-explorer-app .compare-pane-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+dev-explorer-app .compare-pane-title {
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+dev-explorer-app .compare-pane iframe {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  background: #fff;
+}
+
+dev-explorer-app .compare-pane-empty {
+  padding: 16px;
+  color: var(--muted);
+  font-size: 13px;
+}

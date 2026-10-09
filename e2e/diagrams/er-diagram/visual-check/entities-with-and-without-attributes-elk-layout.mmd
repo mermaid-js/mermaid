@@ -1,0 +1,11 @@
+---
+description: >-
+  An entity (BOOK) with two separate attribute blocks merged together, alongside
+  a plain entity (AUTHOR) with no attributes under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+    BOOK { string title }
+    AUTHOR }|..|{ BOOK : writes
+    BOOK { float price }

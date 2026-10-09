@@ -1,0 +1,15 @@
+---
+description: >-
+  Gantt chart where a task depends on two predecessors at once via
+  "after b a" (multiple space-separated IDs), alongside a crit task and
+  an active task, with a single excluded weekday.
+---
+gantt
+  dateFormat  YYYY-MM-DD
+  axisFormat  %d/%m
+  title Adding GANTT diagram to mermaid
+  excludes weekdays 2014-01-10
+
+  apple :a, 2017-07-20, 1w
+  banana :crit, b, 2017-07-23, 1d
+  cherry :active, c, after b a, 1d

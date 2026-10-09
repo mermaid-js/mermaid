@@ -1,0 +1,16 @@
+---
+description: >-
+  Edge-type vocabulary smoke test: a decision node with two labeled branches
+  ("yes"/"no"), an `--x` terminated/blocked edge back to the decision, and a
+  dotted `-.-` reference link to a refdoc.
+---
+agentflow-beta TB
+  check["Tests pass?"]@{ shape: decision }
+  ship["Ship it"]@{ shape: action }
+  fix["Fix the build"]@{ shape: task }
+  logs["Build logs"]@{ shape: refdoc }
+
+  check -- yes --> ship
+  check -- no --> fix
+  fix --x check
+  fix -.- logs

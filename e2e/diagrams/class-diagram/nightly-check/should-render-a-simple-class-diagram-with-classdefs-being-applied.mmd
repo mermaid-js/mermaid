@@ -1,0 +1,14 @@
+---
+description: >-
+  classDiagram applying two classDef styles to the same class - pink via the `:::` shorthand
+  and bold via a separate `cssClass` statement - with htmlLabels enabled, verifying both
+  styling paths combine correctly.
+config:
+  logLevel: 1
+  htmlLabels: true
+---
+classDiagram
+  class Class10:::pink
+  cssClass "Class10" bold
+  classDef pink fill:#f9f
+  classDef bold stroke:#333,stroke-width:6px,color:#fff

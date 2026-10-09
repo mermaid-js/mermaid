@@ -1,0 +1,13 @@
+---
+description: >-
+  Generalization relationship (Class01 <|-- AveryLongClass) plus a static
+  method declared with the `$` suffix, rendered with `htmlLabels: false` in
+  config to confirm the static-method marker renders correctly without HTML
+  labels.
+config:
+  logLevel: 1
+  htmlLabels: false
+---
+classDiagram
+  Class01 <|-- AveryLongClass : Cool
+  Class01 : someMethod()$

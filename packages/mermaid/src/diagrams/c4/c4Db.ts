@@ -31,8 +31,8 @@ const TEXT_FIELDS = new Set(['label', 'descr', 'techn', 'type']);
  * Values may arrive as a raw positional value or a single `{ key: value }` named
  * override; `undefined` is skipped so an earlier-set value is not clobbered.
  *
- * A `$link` becomes an `xlink:href` on the rendered element, so it is sanitized here,
- * where flowchart and class diagrams sanitize theirs.
+ * A `$link` becomes an `xlink:href` on the rendered element. As in flowchart and class
+ * diagrams it is sanitized unless `securityLevel` is `loose`, where it is kept as written.
  */
 const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
   bag: Bag,

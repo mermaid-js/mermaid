@@ -1,0 +1,20 @@
+---
+description:
+  Verifies that node labels containing characters and syntax markdown does not
+  support (multi-line curly-brace labels, literal "<" comparisons, GitHub issue
+  URLs, markdown-styled subgraph titles, and unordered/ordered list syntax in
+  backtick labels) render as raw/plain text instead of being misinterpreted,
+  with default htmlLabels enabled.
+---
+flowchart TB
+    mermaid{"What is
+yourmermaid version?"} --> v10["<11"] --"`<**1**1`"--> fine["No bug"]
+    mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+    subgraph subgraph1["`How to fix **fix**`"]
+        broken --> B["B"]
+    end
+    githost["Github, Gitlab, BitBucket, etc."]
+    githost2["`Github, Gitlab, BitBucket, etc.`"]
+    a["`1.`"]
+    b["`- x`"]
+      
