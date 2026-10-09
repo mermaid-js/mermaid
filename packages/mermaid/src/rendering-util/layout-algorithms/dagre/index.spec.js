@@ -488,10 +488,16 @@ describe('getEdgesToRender', () => {
     }
   });
 
-  it('stacks self-loops that resolve to the same side of the node', () => {
+  it.each([
+    ['TB', 0, -12],
+    ['BT', 0, 12],
+    ['LR', 12, 0],
+    ['RL', -12, 0],
+  ])('stacks self-loops outward without shifting along the node in %s', (rankdir, dx, dy) => {
     // https://github.com/mermaid-js/mermaid/issues/6888 — a node can carry
     // several self-loops; they must not all render on exactly the same path.
     const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir });
     graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
 
     const makeSelfLoopSegments = (edgeId, label) => {
@@ -536,11 +542,14 @@ describe('getEdgesToRender', () => {
     expect(second.edge.id).toBe('A-A-second');
     expect(first.edge.label).toBe('first');
     expect(second.edge.label).toBe('second');
-    // Same side (the default, no layout hints), so the second loop is stacked
-    // further out from the node instead of overlapping the first.
+    // With no layout hints, the direction selects the side. Move the second loop
+    // outward on that side without moving it or its label along the node.
     expect(second.edge.points).not.toEqual(first.edge.points);
-    expect(second.edge.points[0].x).toBe(first.edge.points[0].x);
-    expect(second.edge.points[0].y).toBe(first.edge.points[0].y - 12);
+    expect(second.edge.points).toEqual(
+      first.edge.points.map(({ x, y }) => ({ x: x + dx, y: y + dy }))
+    );
+    expect(second.edge.x).toBe(first.edge.x + dx);
+    expect(second.edge.y).toBe(first.edge.y + dy);
   });
 
   it('renders one arc per self-loop through the full DAGRE pipeline', async () => {

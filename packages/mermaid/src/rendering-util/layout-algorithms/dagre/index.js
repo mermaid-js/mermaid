@@ -174,7 +174,7 @@ const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0, loop
   if (loopIndex > 0) {
     const shift = loopIndex * SELF_LOOP_STACK_GAP;
     const dx = side === 'right' ? shift : side === 'left' ? -shift : 0;
-    const dy = side === 'bottom' ? shift : -shift;
+    const dy = side === 'bottom' ? shift : side === 'top' ? -shift : 0;
     points = points.map((point) => ({ x: point.x + dx, y: point.y + dy }));
   }
 
