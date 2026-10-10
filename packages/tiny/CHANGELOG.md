@@ -1,5 +1,79 @@
 # mermaid
 
+## 12.1.0
+
+### Minor Changes
+
+- [#8303](https://github.com/mermaid-js/mermaid/pull/8303) [`9140716`](https://github.com/mermaid-js/mermaid/commit/9140716e72d1c1a3eb82bd5b25786e44f0cb6163) Thanks [@filipsajdak](https://github.com/filipsajdak)! - feat: add the `elk.orientFeedbackEdges` option, enabled by default. With the ELK layout, an edge from a node that a subgraph feeds back into that subgraph is now routed downstream instead of around the subgraph. This changes the layout of existing ELK diagrams that contain such edges; set `elk.orientFeedbackEdges: false` to keep the previous routing.
+
+- [#8250](https://github.com/mermaid-js/mermaid/pull/8250) [`fd4f5f2`](https://github.com/mermaid-js/mermaid/commit/fd4f5f26546110b4da281b44d60f94644f9a146c) Thanks [@kartben](https://github.com/kartben)! - feat: add a `bitOrder` option to packet diagrams. It defaults to `ascending`, which is the current
+  behaviour, and `descending` mirrors every row so it reads from that row's highest bit down to its
+  lowest. Fields are still declared lowest bit first and keep their width, so switching a diagram
+  between the two conventions only means changing `bitOrder`.
+
+### Patch Changes
+
+- [#8330](https://github.com/mermaid-js/mermaid/pull/8330) [`50c9e55`](https://github.com/mermaid-js/mermaid/commit/50c9e555a17725e50a9cf92f4a0876710e44a53a) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: upgrade chevrotain to 13 so mermaid no longer pulls in vulnerable `lodash-es@4.17.23`
+
+- [#8259](https://github.com/mermaid-js/mermaid/pull/8259) [`4c90f5c`](https://github.com/mermaid-js/mermaid/commit/4c90f5c4487c5c5628e28073454e88708af26bfb) Thanks [@afonsojanu](https://github.com/afonsojanu)! - fix(sequence): allow whitespace between an actor name and its `@{ ... }` config object
+
+  `participant Bob@{ "type" : "database" }` parsed fine, but adding a single space before the
+  config object (`participant Bob @{ "type" : "database" }`) failed with a confusing parse error,
+  even though the plain form without a config object tolerates trailing whitespace just fine.
+
+- [#8339](https://github.com/mermaid-js/mermaid/pull/8339) [`c7fa1a5`](https://github.com/mermaid-js/mermaid/commit/c7fa1a550cf024ce1c74faece36ecf18a5935c5e) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: keep ELK class-diagram cardinalities off namespace frames
+
+- [#8334](https://github.com/mermaid-js/mermaid/pull/8334) [`d67331d`](https://github.com/mermaid-js/mermaid/commit/d67331d927d90e53ed0cd6da7e031f3513866d41) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(class): place cardinality labels beside their relation ends on dagre's sides with ELK, centre dagre's end labels, and stop clipping their text
+
+- [#8344](https://github.com/mermaid-js/mermaid/pull/8344) [`99a050b`](https://github.com/mermaid-js/mermaid/commit/99a050ba56c834569df4d9891c70fd23ffe92203) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix: with the ELK layout, an edge label could sit up to 16px beside its edge instead of centred on it, when the edge's terminal jog was straightened after the label's position was computed. The label is now re-projected onto the straightened route
+
+- [#8276](https://github.com/mermaid-js/mermaid/pull/8276) [`3101c7d`](https://github.com/mermaid-js/mermaid/commit/3101c7da2add126d0e1f3e256f408620efdd987e) Thanks [@mir-ashiq](https://github.com/mir-ashiq)! - fix(error): show the actual error message in the error diagram
+
+  When a diagram fails to parse, the error diagram now draws the real error message below the
+  "Syntax error in text" headline, wrapped to at most four lines. Hosts that only show the SVG
+  (GitHub, GitLab, Obsidian, exported images) no longer hide what actually went wrong, e.g. that the
+  flowchart edge limit was exceeded and `maxEdges` needs raising via `mermaid.initialize`.
+
+- [#8296](https://github.com/mermaid-js/mermaid/pull/8296) [`aa29345`](https://github.com/mermaid-js/mermaid/commit/aa29345b9a5c58346fb457396614cfd349a94e68) Thanks [@pentaoa](https://github.com/pentaoa)! - fix: preserve explicit source relations on event modeling reset frames
+
+- [#8297](https://github.com/mermaid-js/mermaid/pull/8297) [`967bbde`](https://github.com/mermaid-js/mermaid/commit/967bbdeb1b47a46f9f73c65d009d1dd19381cc05) Thanks [@pentaoa](https://github.com/pentaoa)! - fix: reject duplicate event modeling frame IDs before rendering
+
+- [#8337](https://github.com/mermaid-js/mermaid/pull/8337) [`147f343`](https://github.com/mermaid-js/mermaid/commit/147f343c863f537e1acd4d1df527eccfc88574c8) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: a flowchart that declares the same subgraph id more than once now renders as one merged subgraph with the ELK layout instead of producing NaN geometry. Classes and `view: collapsed` set on a repeated subgraph now apply to it, whichever declaration they follow.
+
+- [#8203](https://github.com/mermaid-js/mermaid/pull/8203) [`40ef7b4`](https://github.com/mermaid-js/mermaid/commit/40ef7b47259cb9dd335583298917c69d1174e2cb) Thanks [@MFA-G](https://github.com/MFA-G)! - perf(frontmatter): replace the quadratic front matter regex on hot paths
+
+  `frontMatterRegex` backtracks polynomially on whitespace-heavy input, so a
+  diagram well inside the default `maxTextSize` could stall parsing for over a
+  second. `detectType` and `extractFrontMatter` now use a linear scanner that
+  matches the regex result exactly, leaving no document stripped differently.
+
+- [#8254](https://github.com/mermaid-js/mermaid/pull/8254) [`351d7d2`](https://github.com/mermaid-js/mermaid/commit/351d7d21af7f8e1dba6e021bef7e0c30f3deb92f) Thanks [@galshir](https://github.com/galshir)! - fix: warn when a gantt task references an unknown `after`/`until` task id, or when its end value is neither a valid date nor a valid duration
+
+- [#8249](https://github.com/mermaid-js/mermaid/pull/8249) [`b657a2c`](https://github.com/mermaid-js/mermaid/commit/b657a2c0735e60d9049d5078a550e0625cf42b2e) Thanks [@mir-ashiq](https://github.com/mir-ashiq)! - fix(sequence): allow hyphenated actor and participant names when a config object is attached
+
+- [#8300](https://github.com/mermaid-js/mermaid/pull/8300) [`c38a565`](https://github.com/mermaid-js/mermaid/commit/c38a56597c07ce6af62081aa3f1536c09a101a42) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix: A partial override of an object-valued theme variable such as `xyChart`, `radar` or `cynefin` keeps the values the theme generates for the keys it leaves out
+
+- [#8333](https://github.com/mermaid-js/mermaid/pull/8333) [`8afd83c`](https://github.com/mermaid-js/mermaid/commit/8afd83c9fd7a4b9dfdc08cd620fbf38978bb7982) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: upgrade the parser to langium 4.4 / chevrotain 13 so bundles no longer include `lodash-es@4.17.23`
+
+- [#8285](https://github.com/mermaid-js/mermaid/pull/8285) [`859f1f8`](https://github.com/mermaid-js/mermaid/commit/859f1f81a23836552b60cdfece9af5d11fca12c7) Thanks [@mir-ashiq](https://github.com/mir-ashiq)! - fix(sequence): allow actor-menu keywords as participant ids in messages
+
+  A participant declared as `Link` (or `Links`, `Properties`, `Details`) could not be used as a
+  message endpoint: the lexer matched the name as the `link` statement keyword and the parse failed.
+  The `link`, `links`, `properties` and `details` keywords are now only recognized when an actor
+  follows them on the same line, so participant ids that happen to spell these words work in
+  messages, while the statements themselves keep parsing as before.
+
+- [#8282](https://github.com/mermaid-js/mermaid/pull/8282) [`b6d952d`](https://github.com/mermaid-js/mermaid/commit/b6d952db3bff4e601c1025d544d207eae5d664b4) Thanks [@belomaxorka](https://github.com/belomaxorka)! - fix(sequence): allow `Link` as a participant ID in messages and actor menus
+
+  Preserve the ID's case and alias while keeping the `link` and `links` menu commands supported.
+
+- [#8345](https://github.com/mermaid-js/mermaid/pull/8345) [`7917c1a`](https://github.com/mermaid-js/mermaid/commit/7917c1a5dfdc5a436c2aece25c359561181b9731) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: xychart measures text in SVG units so legends no longer clip on wide charts scaled to fit their container, and the chart title is dropped instead of overflowing when the chart is too short for it
+
+- [#8338](https://github.com/mermaid-js/mermaid/pull/8338) [`4a722fb`](https://github.com/mermaid-js/mermaid/commit/4a722fb62769cd3e9a572410b4ad33b0e46adae8) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: Centre the xychart title over the plot area instead of the whole chart
+
+- Updated dependencies [[`8afd83c`](https://github.com/mermaid-js/mermaid/commit/8afd83c9fd7a4b9dfdc08cd620fbf38978bb7982)]:
+  - @mermaid-js/parser@2.0.1
+
 ## 12.0.0
 
 ### Major Changes

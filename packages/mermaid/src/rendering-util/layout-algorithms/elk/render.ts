@@ -1646,6 +1646,19 @@ function axisOf(a: P, b: P): 'h' | 'v' | undefined {
 }
 
 /**
+ * A run displaced by `straightenFront`, in both its original and its
+ * straightened position, so a label that was riding along it can be moved
+ * with it — see `applyElkEdgeLayout`'s use of `straightenEdgeTerminals`.
+ * Both a and b are given in the original (unreversed) coordinate frame,
+ * regardless of whether this run came from the front or back straightening
+ * pass.
+ */
+export interface StraightenedRun {
+  old: { a: P; b: P };
+  new: { a: P; b: P };
+}
+
+/**
  * Straighten the port-to-channel staircase at either end of a clipped route,
  * leaving both ports where they are.
  *
@@ -1653,13 +1666,31 @@ function axisOf(a: P, b: P): 'h' | 'v' | undefined {
  * identity.
  */
 export function straightenTerminalJogs(points: P[]): P[] {
-  let pts = straightenFront(points) ?? points;
-  const reversed = [...pts].reverse();
-  const fixedEnd = straightenFront(reversed);
-  if (fixedEnd) {
-    pts = fixedEnd.reverse();
+  return straightenTerminalJogsWithRuns(points).points;
+}
+
+/** Same as `straightenTerminalJogs`, but also reports which run(s) moved. */
+function straightenTerminalJogsWithRuns(points: P[]): {
+  points: P[];
+  runs: StraightenedRun[];
+} {
+  const runs: StraightenedRun[] = [];
+  let pts = points;
+
+  const front = straightenFront(pts);
+  if (front) {
+    pts = front.points;
+    runs.push(front.run);
   }
-  return pts;
+
+  const reversed = [...pts].reverse();
+  const back = straightenFront(reversed);
+  if (back) {
+    pts = back.points.reverse();
+    runs.push(back.run);
+  }
+
+  return { points: pts, runs };
 }
 
 /**
@@ -1676,7 +1707,7 @@ export function straightenTerminalJogs(points: P[]): P[] {
  * The run is only moved when the point after it is not the far terminal, since
  * that would move the other end's port and reintroduce the same problem there.
  */
-function straightenFront(pts: P[]): P[] | null {
+function straightenFront(pts: P[]): { points: P[]; run: StraightenedRun } | null {
   if (pts.length < 5) {
     return null;
   }
@@ -1722,9 +1753,13 @@ function straightenFront(pts: P[]): P[] | null {
   for (let i = 2; i <= last; i++) {
     moved[i] = axis === 'h' ? { x: pts[i].x, y: p0.y } : { x: p0.x, y: pts[i].y };
   }
+  const run: StraightenedRun = {
+    old: { a: pts[2], b: pts[last] },
+    new: { a: moved[2], b: moved[last] },
+  };
   // p1 and p2 are now collinear with p0 and the rest of the run.
   moved.splice(1, 2);
-  return moved;
+  return { points: moved, run };
 }
 
 /** Do two axis-aligned segments cross at a point interior to both? */
@@ -1750,45 +1785,161 @@ function crossingCount(a: P[], b: P[]): number {
   return n;
 }
 
+/** Where `p`'s projection onto the LINE through `a`-`b` falls, clamped to the segment. */
+function paramOnSegment(p: P, a: P, b: P): number {
+  const abx = b.x - a.x;
+  const aby = b.y - a.y;
+  const lenSq = abx * abx + aby * aby;
+  if (lenSq === 0) {
+    return 0;
+  }
+  return Math.max(0, Math.min(1, ((p.x - a.x) * abx + (p.y - a.y) * aby) / lenSq));
+}
+
+/** The point at parameter `t` (0 = `a`, 1 = `b`) along `a`-`b`. */
+function pointAtParam(a: P, b: P, t: number): P {
+  return { x: a.x + t * (b.x - a.x), y: a.y + t * (b.y - a.y) };
+}
+
+/**
+ * Project a label sitting on one of an edge's straightened runs onto that
+ * run's new position.
+ *
+ * Deliberately scoped to just the run(s) `straightenEdgeTerminals` actually
+ * moved, rather than searching the edge's whole route: an unrelated,
+ * unchanged segment elsewhere on the route (e.g. a return leg) can be nearer
+ * to the label's old position than the run that moved is, and snapping to it
+ * would put the label on the wrong part of the edge entirely. Nearness is
+ * judged on each run's ORIGINAL position — the same point along the run
+ * (by parameter, not by nearest-point-after-the-fact) is then read off its
+ * new position, since a run only ever moves perpendicular to itself.
+ */
+export function projectLabelOntoStraightenedRun(label: P, runs: StraightenedRun[]): P | null {
+  let best: { distSq: number; point: P } | null = null;
+  for (const run of runs) {
+    const t = paramOnSegment(label, run.old.a, run.old.b);
+    const oldPoint = pointAtParam(run.old.a, run.old.b, t);
+    const dx = oldPoint.x - label.x;
+    const dy = oldPoint.y - label.y;
+    const distSq = dx * dx + dy * dy;
+    if (!best || distSq < best.distSq) {
+      best = { distSq, point: pointAtParam(run.new.a, run.new.b, t) };
+    }
+  }
+  return best?.point ?? null;
+}
+
+interface Box {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+/** Whether segment a-b passes through the box (Liang-Barsky clip). */
+function segmentHitsBox(a: P, b: P, box: Box): boolean {
+  let t0 = 0;
+  let t1 = 1;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  for (const [p, q] of [
+    [-dx, a.x - box.x1],
+    [dx, box.x2 - a.x],
+    [-dy, a.y - box.y1],
+    [dy, box.y2 - a.y],
+  ]) {
+    if (p === 0) {
+      if (q < 0) {
+        return false;
+      }
+    } else if (p < 0) {
+      t0 = Math.max(t0, q / p);
+    } else {
+      t1 = Math.min(t1, q / p);
+    }
+  }
+  return t0 < t1;
+}
+
+const labelBox = (center: P, size: { width: number; height: number }): Box => ({
+  x1: center.x - size.width / 2,
+  y1: center.y - size.height / 2,
+  x2: center.x + size.width / 2,
+  y2: center.y + size.height / 2,
+});
+
 /**
  * Straighten the port-to-channel step on every edge that has one, but only
- * where doing so does not buy a crossing.
+ * where doing so does not buy a crossing or a label overlap.
  *
  * Runs once over the finished layout rather than per edge, because the decision
  * needs the other edges: the step is removed by displacing one of this edge's
  * runs onto the port's row, and that run can land in a lane something else
  * already occupies. Trading a barely-visible step for a new crossing is a bad
- * deal, so an edge that would cause one is left exactly as ELK routed it.
+ * deal, so an edge that would cause one is left exactly as ELK routed it. So is
+ * one that would leave ELK's reserved label lane for a label over an edge (#8368).
+ *
+ * Returns, for each edge whose points changed, the run(s) that moved, so the
+ * caller can carry the edge's main label along with the specific run it sat
+ * on (see `projectLabelOntoStraightenedRun` and the call site in
+ * `applyElkEdgeLayout`) — the label's `x`/`y` is set from ELK's own layout
+ * before this runs, and does not move on its own when a run does.
  */
-function straightenEdgeTerminals(edges: Edge[]): void {
+export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: StraightenedRun[] }[] {
   const routes = edges.map((edge) => (edge as { points?: P[] }).points ?? []);
+  const labels = edges.map((edge) =>
+    edge.x == null || edge.y == null || !edge.label || !edge.width || !edge.height
+      ? undefined
+      : { centre: { x: edge.x, y: edge.y }, size: { width: edge.width, height: edge.height } }
+  );
+  const covers = (route: P[], label: (typeof labels)[number]) => {
+    const box = label && labelBox(label.centre, label.size);
+    return (
+      !!box && route.some((p, i) => i < route.length - 1 && segmentHitsBox(p, route[i + 1], box))
+    );
+  };
+  const changed: { edge: Edge; runs: StraightenedRun[] }[] = [];
 
   for (const [index, edge] of edges.entries()) {
     const original = routes[index];
     if (original.length < 5) {
       continue;
     }
-    const candidate = straightenTerminalJogs(original);
+    const { points: candidate, runs } = straightenTerminalJogsWithRuns(original);
     if (candidate === original) {
       continue;
     }
 
+    // Where the label lands if this goes ahead: the call site carries it along.
+    const label = labels[index];
+    const moved = label && projectLabelOntoStraightenedRun(label.centre, runs);
+    const candidateLabel = label && moved ? { centre: moved, size: label.size } : label;
+
     let before = 0;
     let after = 0;
+    // Net counts, as for crossings: label-over-edge pairs in either direction.
+    let coveredBefore = 0;
+    let coveredAfter = 0;
     for (const [other, route] of routes.entries()) {
       if (other === index || route.length < 2) {
         continue;
       }
       before += crossingCount(original, route);
       after += crossingCount(candidate, route);
+      coveredBefore += Number(covers(route, label)) + Number(covers(original, labels[other]));
+      coveredAfter +=
+        Number(covers(route, candidateLabel)) + Number(covers(candidate, labels[other]));
     }
-    if (after > before) {
+    if (after > before || coveredAfter > coveredBefore) {
       continue;
     }
 
     (edge as { points?: P[] }).points = candidate;
     routes[index] = candidate;
+    labels[index] = candidateLabel;
+    changed.push({ edge, runs });
   }
+  return changed;
 }
 
 function applyElkEdgeLayout(
@@ -1963,7 +2114,21 @@ function applyElkEdgeLayout(
   });
 
   if (straightenEdges) {
-    straightenEdgeTerminals(data4Layout.edges);
+    const straightened = straightenEdgeTerminals(data4Layout.edges);
+    for (const { edge, runs } of straightened) {
+      // The main label's `x`/`y` was set from ELK's placement on the
+      // pre-straightening route above; project it onto the run it was
+      // actually riding on so it stays centred on the line instead of beside
+      // it (#8292).
+      if (edge.x == null || edge.y == null) {
+        continue;
+      }
+      const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
+      if (projected) {
+        edge.x = projected.x;
+        edge.y = projected.y;
+      }
+    }
   }
   for (const [layoutEdge, ports] of terminalLabelPorts) {
     followMovedEndpoints(layoutEdge, ports);
@@ -1971,48 +2136,54 @@ function applyElkEdgeLayout(
   // Off the frames first: the mirrored spot of a label across a frame is across it too.
   slideTerminalLabelsOffFrames(data4Layout.edges, data4Layout.nodes);
   putTerminalLabelsOnTheirSide(data4Layout.edges, data4Layout.nodes);
+  separateOppositeEdgeLabels(data4Layout.edges);
 }
 
-interface Box {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-}
+/** Minimum clearance kept between two opposite-direction edges' labels, beyond their own half-widths. */
+const OPPOSITE_LABEL_MIN_GAP = 4;
 
-/** Whether segment a-b passes through the box (Liang-Barsky clip). */
-function segmentHitsBox(a: P, b: P, box: Box): boolean {
-  let t0 = 0;
-  let t1 = 1;
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  for (const [p, q] of [
-    [-dx, a.x - box.x1],
-    [dx, box.x2 - a.x],
-    [-dy, a.y - box.y1],
-    [dy, box.y2 - a.y],
-  ]) {
-    if (p === 0) {
-      if (q < 0) {
-        return false;
-      }
-    } else if (p < 0) {
-      t0 = Math.max(t0, q / p);
+/**
+ * Push apart the labels of two opposite-direction edges between the same
+ * node pair when they'd otherwise overlap.
+ */
+export function separateOppositeEdgeLabels(edges: Edge[]): void {
+  const byPair = new Map<string, Edge[]>();
+  for (const edge of edges) {
+    if (edge.x == null || edge.y == null || !edge.label || !edge.width) {
+      continue;
+    }
+    const key = [edge.start ?? '', edge.end ?? ''].sort().join('\u0000');
+    const bucket = byPair.get(key);
+    if (bucket) {
+      bucket.push(edge);
     } else {
-      t1 = Math.min(t1, q / p);
+      byPair.set(key, [edge]);
     }
   }
-  return t0 < t1;
+
+  for (const bucket of byPair.values()) {
+    if (bucket.length !== 2) {
+      continue;
+    }
+    const [a, b] = bucket;
+    // Labels drawn at meaningfully different heights are not actually
+    // competing for the same horizontal space, however close their x may be.
+    if (Math.abs(a.y! - b.y!) > Math.max(a.height ?? 0, b.height ?? 0)) {
+      continue;
+    }
+    const required = a.width! / 2 + b.width! / 2 + OPPOSITE_LABEL_MIN_GAP;
+    const current = b.x! - a.x!;
+    const deficit = required - Math.abs(current);
+    if (deficit <= 0) {
+      continue;
+    }
+    const sign = Math.sign(current) || 1;
+    a.x = a.x! - (sign * deficit) / 2;
+    b.x = b.x! + (sign * deficit) / 2;
+  }
 }
 
 const boxesOverlap = (a: Box, b: Box) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
-
-const labelBox = (center: P, size: { width: number; height: number }): Box => ({
-  x1: center.x - size.width / 2,
-  y1: center.y - size.height / 2,
-  x2: center.x + size.width / 2,
-  y2: center.y + size.height / 2,
-});
 
 /**
  * What a terminal label must not touch: class boxes, centre labels, group

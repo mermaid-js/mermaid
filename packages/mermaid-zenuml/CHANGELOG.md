@@ -1,5 +1,11 @@
 # @mermaid-js/mermaid-zenuml
 
+## 1.0.1
+
+### Patch Changes
+
+- [#8248](https://github.com/mermaid-js/mermaid/pull/8248) [`3e9f40b`](https://github.com/mermaid-js/mermaid/commit/3e9f40b92704f27961be8b295f4c9c92828753e4) Thanks [@sidharthv96](https://github.com/sidharthv96)! - Support Mermaid 12 in the ZenUML plugin while retaining Mermaid 10 and 11 compatibility.
+
 ## 1.0.0
 
 ### Major Changes

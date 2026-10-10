@@ -1,0 +1,21 @@
+---
+description: >-
+  Requirement diagram covering a relationship written with the reverse arrow
+  direction (`<- copies -` instead of `- copies ->`), rendered under the "neo"
+  look with the "redux-dark-color" theme.
+config:
+  look: neo
+  theme: redux-dark-color
+---
+requirementDiagram
+    requirement sys_req {
+        id: 10
+        text: system level requirement.
+        risk: high
+        verifymethod: test
+    }
+    element design_doc {
+        type: document
+        docRef: docs/design.md
+    }
+    sys_req <- copies - design_doc
