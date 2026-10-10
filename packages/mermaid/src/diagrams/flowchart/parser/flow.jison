@@ -556,7 +556,7 @@ clickStatement
     ;
 
 styleStatement:STYLE SPACE idString SPACE stylesOpt
-    {$$ = $STYLE;yy.addVertex($idString,undefined,undefined,$stylesOpt);}
+    {$$ = $STYLE;$idString.split(',').forEach(id => yy.addVertex(id,undefined,undefined,$stylesOpt));}
     ;
 
 linkStyleStatement

@@ -26,6 +26,42 @@ describe('[Style] when parsing', () => {
     expect(vert.get('Q').styles[0]).toBe('background:#fff');
   });
 
+  it.each(['A', 'A,B', 'A,B,C'])(
+    'should apply styles to each vertex in %s without creating a combined vertex',
+    function (ids) {
+      flow.parser.parse(`graph TD;A[Start]-->B(Stop)-->C;D;style ${ids} fill:#f00,stroke:#333;`);
+
+      const vertices = flow.parser.yy.getVertices();
+      expect([...vertices.keys()]).toEqual(['A', 'B', 'C', 'D']);
+      for (const id of ['A', 'B', 'C', 'D']) {
+        expect(vertices.get(id).styles).toEqual(
+          ids.split(',').includes(id) ? ['fill:#f00', 'stroke:#333'] : []
+        );
+      }
+      expect(vertices.get('A').text).toBe('Start');
+      expect(vertices.get('A').type).toBe('square');
+      expect(vertices.get('B').text).toBe('Stop');
+      expect(vertices.get('B').type).toBe('round');
+    }
+  );
+
+  it('should keep subsequent styles specific to their target vertex', function () {
+    flow.parser.parse('graph TD;A-->B;style A,B fill:#f00;style A stroke:#333;');
+
+    const vertices = flow.parser.yy.getVertices();
+    expect(vertices.get('A').styles).toEqual(['fill:#f00', 'stroke:#333']);
+    expect(vertices.get('B').styles).toEqual(['fill:#f00']);
+  });
+
+  it('should create each unknown vertex targeted by a style', function () {
+    flow.parser.parse('graph TD;style A,B fill:#f00;');
+
+    const vertices = flow.parser.yy.getVertices();
+    expect([...vertices.keys()]).toEqual(['A', 'B']);
+    expect(vertices.get('A').styles).toEqual(['fill:#f00']);
+    expect(vertices.get('B').styles).toEqual(['fill:#f00']);
+  });
+
   it('should handle multiple styles for a vortex', function () {
     const res = flow.parser.parse('graph TD;style R background:#fff,border:1px solid red;');
 

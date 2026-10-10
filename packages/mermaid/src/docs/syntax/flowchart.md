@@ -1301,6 +1301,16 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
+The same styles can be applied to multiple nodes by separating their IDs with commas (v<MERMAID_RELEASE_VERSION>+):
+
+```mermaid-example
+flowchart LR
+    A[Start] --> B[Process] --> C[Stop]
+    style A,B fill:#f00,stroke:#333,stroke-width:2px
+```
+
+This styles both `A` and `B`, leaving `C` unchanged. As with `class`, commas separate node IDs; escaping a comma in a node ID with `\,` is not supported.
+
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
