@@ -1,0 +1,18 @@
+---
+description: >-
+  Default-orientation gitgraph where branch1 accumulates more commits than
+  main between its branch point and merge back, causing commits to land at
+  overlapping positions - a layout stress test for overlapping commits.
+---
+gitGraph
+  commit id:"s1"
+  commit id:"s2"
+  branch branch1
+  commit id:"s3"
+  commit id:"s4"
+  checkout main
+  commit id:"s5"
+  checkout branch1
+  commit id:"s6"
+  commit id:"s7"
+  merge main

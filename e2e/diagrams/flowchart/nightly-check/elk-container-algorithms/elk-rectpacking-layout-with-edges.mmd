@@ -1,0 +1,15 @@
+---
+description:
+  Exercises the elk.rectpacking sub-algorithm, which, like elk.box, returns no
+  edge sections, forcing every edge onto the straight-line fallback. The
+  labelled edge additionally verifies that the fallback also sets a valid label
+  position rather than leaving it unset.
+config:
+  layout: elk.rectpacking
+---
+%% Same as the elk.box fixture: rectpacking returns no edge sections. The
+%% labelled edge covers the label position, which the fallback must also set.
+flowchart TD
+  A[Start] -->|labelled| B[Middle]
+  B --> C[End]
+  A --> C

@@ -1,0 +1,15 @@
+---
+description: >-
+  Verifies that an edge (Start --> A) targeting a node deeply nested inside two
+  levels of subgraphs (Inner within Outer) gets redirected to point at the
+  outermost subgraph once that outer subgraph is collapsed (outer@{ view:
+  collapsed }), rather than pointing at a hidden internal node.
+---
+flowchart TD
+  subgraph outer [Outer]
+    subgraph inner [Inner]
+      A --> B
+    end
+  end
+  Start --> A
+  outer@{ view: collapsed }

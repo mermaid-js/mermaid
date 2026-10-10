@@ -8,6 +8,10 @@ interface ChevrotainParseConfig {
   visit: (cst: CstNode) => void;
 }
 
+/** Chevrotain marks missing locations (EOF, inserted tokens) with -1 (v13+) or NaN (older). */
+export const isKnownLocation = (value: number | undefined): value is number =>
+  value !== undefined && value >= 0;
+
 /** Runs a singleton lexer/parser pair and visits the resulting CST. */
 export function runChevrotainParse(config: ChevrotainParseConfig, input: string): void {
   const lexResult = config.lexer.tokenize(input);
@@ -16,8 +20,8 @@ export function runChevrotainParse(config: ChevrotainParseConfig, input: string)
     // they enrich parser errors. Attach the position here so both failure modes report
     // the same fields.
     const lexError = lexResult.errors[0];
-    const start = Number.isFinite(lexError.offset) ? lexError.offset : input.length;
-    const end = start + (Number.isFinite(lexError.length) ? lexError.length : 0);
+    const start = isKnownLocation(lexError.offset) ? lexError.offset : input.length;
+    const end = start + (isKnownLocation(lexError.length) ? lexError.length : 0);
     throw new Error(
       `Error lexing ${config.diagramType} diagram: ${lexError.message} at line ${
         lexError.line ?? 1

@@ -1,7 +1,6 @@
 import type { SVG } from '../../../diagram-api/types.js';
 import type { InternalHelpers } from '../../../internals.js';
 import type { D3Selection } from '../../../types.js';
-import { log } from '../../../logger.js';
 import { profiler } from '../../../profiler.js';
 import { getConfig } from '../../../config.js';
 import utils from '../../../utils.js';
@@ -15,11 +14,12 @@ import {
   hasEdgeLabel,
   insertEdge,
   insertEdgeLabel,
+  resolveEdgeLabelPosition,
   terminalLabels,
 } from '../../rendering-elements/edges.js';
 import insertMarkers from '../../rendering-elements/markers.js';
 import { clear as clearNodes, positionNode } from '../../rendering-elements/nodes.js';
-import type { LayoutData, Edge, ClusterNode } from '../../types.js';
+import type { LayoutData, Edge, ClusterNode, TerminalLabelKey } from '../../types.js';
 import type { RenderOptions } from '../../render.js';
 import { clear as clearGraphlib } from '../dagre/mermaid-graphlib.js';
 
@@ -300,7 +300,8 @@ async function paintLayoutEdge(
     getRenderedNode(edge.start, edge, nodeById, context, options),
     getRenderedNode(edge.end, edge, nodeById, context, options),
     data4Layout.diagramId,
-    shouldSkipIntersect(edge, options)
+    shouldSkipIntersect(edge, options),
+    data4Layout.layoutAlgorithm
   ) as EdgeRenderPaths | undefined;
 
   if (hasEdgeLabel(edge)) {
@@ -340,75 +341,46 @@ function positionRenderedEdgeLabel(
   const labelOffsetY = configuredOffsetY ?? subGraphTitleTotalMargin / 2;
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths?.updatedPath) {
-        x = pos.x;
-        y = pos.y;
-      }
-    }
+    const { x, y } = resolveEdgeLabelPosition(edge, paths);
     el.attr('transform', `translate(${x}, ${y! + labelOffsetY})`);
   }
 
-  if (edge?.startLabelLeft) {
-    const el = terminalLabels.get(edge.id).startLeft;
-    let x = edge?.x;
-    let y = edge?.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
-      x = pos.x;
-      y = pos.y;
+  for (const [key, text] of [
+    ['startLeft', edge.startLabelLeft],
+    ['startRight', edge.startLabelRight],
+    ['endLeft', edge.endLabelLeft],
+    ['endRight', edge.endLabelRight],
+  ] as const) {
+    if (text) {
+      const { x, y } = terminalLabelTranslate(edge, key, path);
+      terminalLabels.get(edge.id)[key].attr('transform', `translate(${x}, ${y})`);
     }
-    el.attr('transform', `translate(${x}, ${y})`);
   }
-  if (edge.startLabelRight) {
-    const el = terminalLabels.get(edge.id).startRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(
-        edge.arrowTypeStart ? 10 : 0,
-        'start_right',
-        path
-      );
-      x = pos.x;
-      y = pos.y;
-    }
-    el.attr('transform', `translate(${x}, ${y})`);
+}
+
+const TERMINAL_LABEL_SIDES: Record<
+  TerminalLabelKey,
+  Parameters<typeof utils.calcTerminalLabelPosition>[1]
+> = {
+  startLeft: 'start_left',
+  startRight: 'start_right',
+  endLeft: 'end_left',
+  endRight: 'end_right',
+};
+
+/** Where to translate a terminal label's group: the layout's placement if it made one, else along the path. */
+export function terminalLabelTranslate(
+  edge: RenderedEdge,
+  key: TerminalLabelKey,
+  path?: EdgeRenderPath
+): { x?: number; y?: number } {
+  const center = edge.terminalLabelCenters?.[key];
+  if (center) {
+    return { ...center };
   }
-  if (edge.endLabelLeft) {
-    const el = terminalLabels.get(edge.id).endLeft;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
-      x = pos.x;
-      y = pos.y;
-    }
-    el.attr('transform', `translate(${x}, ${y})`);
+  if (!path) {
+    return { x: edge.x, y: edge.y };
   }
-  if (edge.endLabelRight) {
-    const el = terminalLabels.get(edge.id).endRight;
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
-      x = pos.x;
-      y = pos.y;
-    }
-    el.attr('transform', `translate(${x}, ${y})`);
-  }
+  const arrowType = key.startsWith('start') ? edge.arrowTypeStart : edge.arrowTypeEnd;
+  return utils.calcTerminalLabelPosition(arrowType ? 10 : 0, TERMINAL_LABEL_SIDES[key], path);
 }

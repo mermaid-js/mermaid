@@ -1,0 +1,11 @@
+---
+description: >-
+  A single state (A, labeled "Google") with a `click` directive linking to an
+  external URL and a tooltip title, rendered with securityLevel loose so the
+  clickable link overlay is generated.
+config:
+  securityLevel: loose
+---
+stateDiagram-v2
+  A: Google
+  click A "https://google.com" "Visit Google"

@@ -507,6 +507,20 @@ const getData = (): UsecaseLayoutData => {
     });
   }
 
+  for (const node of nodes) {
+    node.wrappingWidth ??= config.wrappingWidth;
+    // Actors are glyphs with a caption, not boxes -- a minimum width would only
+    // pad their layout footprint.
+    if (!node.isGroup && !node.shape.startsWith('usecaseActor')) {
+      node.minWidth ??= config.minNodeWidth;
+    }
+    // Several association edges can end on one side of a use case, each with its
+    // own marker; spread their attachment points so the markers stay apart.
+    if (node.shape === 'usecaseEllipse' || node.shape === 'usecaseBusiness') {
+      node.spreadPorts = true;
+    }
+  }
+
   return {
     nodes,
     edges,

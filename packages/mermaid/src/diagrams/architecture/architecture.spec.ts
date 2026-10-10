@@ -1,4 +1,4 @@
-import { it, describe, expect, vi, beforeEach, afterEach } from 'vitest';
+import { assert, it, describe, expect, vi, beforeEach, afterEach } from 'vitest';
 import cytoscape from 'cytoscape';
 import { parser } from './architectureParser.js';
 import { ArchitectureDB } from './architectureDb.js';
@@ -7,8 +7,8 @@ describe('architecture diagrams', () => {
   let db: ArchitectureDB;
   beforeEach(() => {
     db = new ArchitectureDB();
-    // @ts-expect-error since type is set to undefined we will have error
-    parser.parser?.yy = db;
+    assert(parser.parser);
+    parser.parser.yy = db;
   });
 
   describe('architecture diagram definitions', () => {

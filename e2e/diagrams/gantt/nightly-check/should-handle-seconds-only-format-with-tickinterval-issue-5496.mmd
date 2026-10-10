@@ -1,0 +1,13 @@
+---
+description: >-
+  Regression test for issue #5496 — uses a seconds-only "dateFormat ss"
+  with "tickInterval 1second" for a short network-request timeline,
+  verifying seconds-only date parsing/formatting.
+---
+gantt
+  tickInterval 1second
+  dateFormat ss
+  axisFormat %s
+
+  section Network Request
+  RTT : rtt, 0, 20

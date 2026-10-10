@@ -22,8 +22,10 @@ export async function usecaseEllipse<T extends SVGGraphicsElement>(
 
   // Calculate ellipse dimensions with padding
   const padding = halfPadding ?? 10;
+  // Same air above and below the label as beside it: a flatter oval leaves no
+  // room on its sides for the markers of several associations.
   const radiusX = bbox.width / 2 + padding * 2;
-  const radiusY = bbox.height / 2 + padding;
+  const radiusY = bbox.height / 2 + padding * 2;
 
   let ellipseElem;
   const { cssStyles } = node;

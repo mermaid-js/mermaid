@@ -1,0 +1,17 @@
+---
+description: >-
+  Regression fixture (per its own source comment): a node declared inside a
+  `global` block stays anchored at root level even though a flow container
+  immediately references it, instead of being pulled into that container.
+---
+%% Without the `global` block, referencing A inside the flow would pull it
+%% into the container. Declaring it global anchors it at root level.
+agentflow-beta TB
+
+global
+  A["Shared input"]
+end
+
+flow pipeline["Pipeline"]
+  A --> B["Process"] --> C["Publish"]
+end

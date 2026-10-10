@@ -1,0 +1,14 @@
+---
+description: >-
+  Legacy v1 state diagram note whose text uses five different HTML
+  line-break variants (<br>, <br/>, <br />, and a tab-spaced <br	/>) on
+  consecutive lines, exercising note line-break parsing robustness.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  State1
+  note right of State1
+  Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
+  end note
