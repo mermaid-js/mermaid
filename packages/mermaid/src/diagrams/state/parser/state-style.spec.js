@@ -396,4 +396,159 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
       });
     });
   });
+
+  describe('linkStyle statement for transitions', () => {
+    it('applies an indexed style to the selected transition and its label', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        A --> B: first
+        B --> C: second
+        linkStyle 1 stroke:#f00,stroke-width:4px,color:blue`);
+
+      const data4Layout = stateDiagram.parser.yy.getData();
+
+      expect(data4Layout.edges[0].style).toBe('fill:none');
+      expect(data4Layout.edges[1].style).toEqual([
+        'fill:none',
+        'stroke:#f00',
+        'stroke-width:4px',
+        'color:blue',
+      ]);
+      expect(data4Layout.edges[1].labelStyle).toEqual([
+        'stroke:#f00',
+        'stroke-width:4px',
+        'color:blue',
+      ]);
+    });
+
+    it('applies a default style to transitions without styling internal note edges', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        A --> B: first
+        note right of B: context
+        B --> C: second
+        linkStyle default stroke:#999,stroke-width:2px,color:#333`);
+
+      const data4Layout = stateDiagram.parser.yy.getData();
+      const transitions = data4Layout.edges.filter((edge) => edge.classes === 'transition');
+      const noteEdge = data4Layout.edges.find((edge) => edge.classes.includes('note-edge'));
+
+      expect(transitions).toHaveLength(2);
+      for (const transition of transitions) {
+        expect(transition.style).toEqual([
+          'fill:none',
+          'stroke:#999',
+          'stroke-width:2px',
+          'color:#333',
+        ]);
+        expect(transition.labelStyle).toEqual(['stroke:#999', 'stroke-width:2px', 'color:#333']);
+      }
+      expect(noteEdge.style).toBe('fill:none');
+      expect(noteEdge.labelStyle).toBe('');
+    });
+
+    it('uses the last default and indexed declarations while keeping indexed styles most specific', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        A --> B
+        B --> C
+        C --> D
+        linkStyle 0,2 stroke:#f80,stroke-width:2px
+        linkStyle default stroke:#999,color:gray
+        linkStyle 2 stroke:#00f,color:blue
+        linkStyle default stroke:#333,color:black`);
+
+      const { edges } = stateDiagram.parser.yy.getData();
+
+      expect(edges[0].style).toEqual([
+        'fill:none',
+        'color:black',
+        'stroke:#f80',
+        'stroke-width:2px',
+      ]);
+      expect(edges[1].style).toEqual(['fill:none', 'stroke:#333', 'color:black']);
+      expect(edges[2].style).toEqual(['fill:none', 'stroke:#00f', 'color:blue']);
+      expect(edges[2].labelStyle).toEqual(['stroke:#00f', 'color:blue']);
+    });
+
+    it('numbers nested transitions in deterministic source order and accepts declarations before edges', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        linkStyle 0,2 stroke:#c00
+        A --> B: outer first
+        state Group {
+          C --> D: nested
+        }
+        B --> Group: outer last`);
+
+      const transitions = stateDiagram.parser.yy
+        .getData()
+        .edges.filter((edge) => edge.classes === 'transition');
+
+      expect(transitions.map(({ start, end }) => [start, end])).toEqual([
+        ['A', 'B'],
+        ['C', 'D'],
+        ['B', 'Group'],
+      ]);
+      expect(transitions[0].style).toEqual(['fill:none', 'stroke:#c00']);
+      expect(transitions[1].style).toBe('fill:none');
+      expect(transitions[2].style).toEqual(['fill:none', 'stroke:#c00']);
+    });
+
+    it('does not count note connector edges in indexed link styles', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        A
+        note right of A: context
+        A --> B
+        B --> C
+        linkStyle 1 stroke:#0a0`);
+
+      const { edges } = stateDiagram.parser.yy.getData();
+      const transitions = edges.filter((edge) => edge.classes === 'transition');
+      const noteEdge = edges.find((edge) => edge.classes.includes('note-edge'));
+
+      expect(transitions[0].style).toBe('fill:none');
+      expect(transitions[1].style).toEqual(['fill:none', 'stroke:#0a0']);
+      expect(noteEdge.style).toBe('fill:none');
+    });
+
+    it('supports escaped commas in CSS values and an optional trailing semicolon', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        A --> B
+        linkStyle 0 stroke-dasharray:5\\,5,font-family:Arial\\,sans-serif;`);
+
+      const { edges } = stateDiagram.parser.yy.getData();
+
+      expect(edges[0].style).toEqual([
+        'fill:none',
+        'stroke-dasharray:5,5',
+        'font-family:Arial,sans-serif',
+      ]);
+    });
+
+    it('requires the targets and styles to stay on the linkStyle line', () => {
+      expect(() =>
+        stateDiagram.parser.parse(`stateDiagram-v2
+          A --> B
+          linkStyle 0
+          B --> C`)
+      ).toThrow();
+    });
+
+    it('reports indexed styles that are outside the transition range', () => {
+      expect(() =>
+        stateDiagram.parser.parse(`stateDiagram-v2
+          A --> B
+          linkStyle 1 stroke:#f00`)
+      ).toThrow(
+        'The index 1 for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and 0. (Help: Ensure that the index is within the range of existing transitions.)'
+      );
+    });
+
+    it('reports indexed styles when the diagram has no transitions', () => {
+      expect(() =>
+        stateDiagram.parser.parse(`stateDiagram-v2
+          A
+          linkStyle 0 stroke:#f00`)
+      ).toThrow(
+        'The index 0 for linkStyle is out of bounds because the state diagram has no transitions.'
+      );
+    });
+  });
 });
