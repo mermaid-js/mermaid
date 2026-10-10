@@ -1,0 +1,464 @@
+import { describe, expect, it } from 'vitest';
+import type { Edge, LayoutData, Node } from '../../types.js';
+import {
+  createGridEdgeLabelInstrumentation,
+  positionGridEdgeLabels,
+  prepareGridLayout,
+} from './edgeLabels.js';
+import { runGridLayoutCore } from './layoutCore.js';
+import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
+
+function node(id: string, metadata?: Record<string, unknown>): Node {
+  return {
+    id,
+    isGroup: false,
+    shape: 'rect',
+    width: 80,
+    height: 40,
+    metadata,
+  } as Node;
+}
+
+function edge(id: string, start: string, end: string): Edge {
+  return {
+    id,
+    start,
+    end,
+    arrowTypeStart: 'none',
+    arrowTypeEnd: 'arrow_point',
+  } as Edge;
+}
+
+function signature(layout: LayoutData) {
+  return JSON.stringify({
+    nodes: layout.nodes.map((item) => ({
+      id: item.id,
+      x: item.x,
+      y: item.y,
+      width: item.width,
+      height: item.height,
+    })),
+    edges: layout.edges.map((item) => ({
+      id: item.id,
+      points: item.points,
+    })),
+  });
+}
+
+function representativeLayout(): LayoutData {
+  return {
+    nodes: [
+      node('A', { row: 1, column: 1 }),
+      node('B', { row: 2, column: 1 }),
+      node('C', { row: 2, column: 2 }),
+      node('D', { row: 3, column: 2 }),
+      node('E', { row: 4, column: 1 }),
+    ],
+    edges: [edge('e1', 'A', 'B'), edge('e2', 'B', 'C'), edge('e3', 'C', 'D'), edge('e4', 'B', 'E')],
+    config: {
+      layout: 'grid',
+      grid: { rowGap: 32, columnGap: 36 },
+    } as LayoutData['config'],
+  };
+}
+
+function representativeParallelLayout(): LayoutData {
+  return {
+    nodes: [node('A', { row: 1, column: 1 }), node('B', { row: 1, column: 2 })],
+    edges: [
+      edge('loop-1', 'A', 'A'),
+      edge('loop-2', 'A', 'A'),
+      edge('e1', 'A', 'B'),
+      edge('e2', 'A', 'B'),
+      edge('e3', 'A', 'B'),
+      edge('e4', 'B', 'A'),
+    ],
+    config: {
+      layout: 'grid',
+      grid: { columnGap: 60 },
+    } as LayoutData['config'],
+  };
+}
+
+function largeSyntheticLayout(): LayoutData {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  for (let index = 0; index < 1000; index++) {
+    nodes.push(node(`N${index}`));
+  }
+  for (let index = 0; index < 500; index++) {
+    edges.push(edge(`E${index}`, `N${index}`, `N${index + 500}`));
+  }
+  return {
+    nodes,
+    edges,
+    config: {
+      layout: 'grid',
+      grid: { columns: 32 },
+    } as LayoutData['config'],
+  };
+}
+
+function largeSearchLayout(): LayoutData {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  for (let index = 0; index < 200; index++) {
+    const row = index * 2 + 1;
+    nodes.push(
+      node(`L${index}`, { row, column: 1 }),
+      node(`R${index}`, { row, column: 3 }),
+      node(`B${index}`, { row: row + 1, column: 2 })
+    );
+    edges.push(edge(`E${index}`, `L${index}`, `R${index}`));
+  }
+  return {
+    nodes,
+    edges,
+    config: {
+      layout: 'grid',
+      grid: { rowGap: 32, columnGap: 36 },
+    } as LayoutData['config'],
+  };
+}
+
+function labelledAdjacencyLayout(edgeCount = 50): LayoutData {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  for (let index = 0; index < edgeCount; index++) {
+    const firstColumn = index * 2 + 1;
+    const sourceId = `LS${index}`;
+    const targetId = `LT${index}`;
+    nodes.push(
+      node(sourceId, { row: 1, column: firstColumn }),
+      node(targetId, { row: 1, column: firstColumn + 1 })
+    );
+    edges.push({ ...edge(`LE${index}`, sourceId, targetId), label: `label-${index}` } as Edge);
+  }
+  return {
+    nodes,
+    edges,
+    config: {
+      layout: 'grid',
+      grid: { columnGap: 20 },
+    } as LayoutData['config'],
+  };
+}
+
+function labelledDeterminismLayout(): LayoutData {
+  const layout: LayoutData = {
+    nodes: [node('A', { row: 1, column: 1 }), node('B', { row: 1, column: 2 })],
+    edges: [
+      { ...edge('labelled', 'A', 'B'), label: 'wide label' } as Edge,
+      { ...edge('loop', 'A', 'A'), label: 'loop label' } as Edge,
+    ],
+    config: {
+      layout: 'grid',
+    } as LayoutData['config'],
+  };
+  prepareGridLayout(layout);
+  for (const helper of layout.nodes.filter(
+    (item) => (item as Node & { isEdgeLabel?: boolean }).isEdgeLabel
+  )) {
+    helper.width = 90;
+    helper.height = 20;
+  }
+  return layout;
+}
+
+function manualNode(id: string, x: number, y: number, width = 40, height = 40): Node {
+  return {
+    id,
+    x,
+    y,
+    width,
+    height,
+    isGroup: false,
+    shape: 'rect',
+  } as Node;
+}
+
+function manualEdge(
+  id: string,
+  start: string,
+  end: string,
+  points: { x: number; y: number }[],
+  label?: string
+): Edge {
+  return {
+    id,
+    start,
+    end,
+    points,
+    label,
+    arrowTypeStart: 'none',
+    arrowTypeEnd: 'arrow_point',
+    curve: 'linear',
+    type: 'arrow_point',
+  } as Edge;
+}
+
+function denseLabelRoutingLayout(): LayoutData {
+  const horizontalLabels = 12;
+  const verticalCrossings = 18;
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  const firstRowY = 120;
+  const rowStep = 56;
+  const leftX = 60;
+  const rightX = 980;
+  const topY = 40;
+  const bottomY = firstRowY + (horizontalLabels - 1) * rowStep + 80;
+  const firstColumnX = 190;
+  const columnStep = 36;
+
+  for (let row = 0; row < horizontalLabels; row++) {
+    const y = firstRowY + row * rowStep;
+    nodes.push(
+      manualNode(`h-left-${row}`, leftX, y, 20, 20),
+      manualNode(`h-right-${row}`, rightX, y, 20, 20)
+    );
+    edges.push(
+      manualEdge(
+        `h-${row}`,
+        `h-left-${row}`,
+        `h-right-${row}`,
+        [
+          { x: leftX + 20, y },
+          { x: rightX - 20, y },
+        ],
+        `label-${row}`
+      )
+    );
+  }
+
+  for (let column = 0; column < verticalCrossings; column++) {
+    const x = firstColumnX + column * columnStep;
+    nodes.push(
+      manualNode(`v-top-${column}`, x, topY, 20, 20),
+      manualNode(`v-bottom-${column}`, x, bottomY, 20, 20)
+    );
+    edges.push(
+      manualEdge(`v-${column}`, `v-top-${column}`, `v-bottom-${column}`, [
+        { x, y: topY + 20 },
+        { x, y: bottomY - 20 },
+      ])
+    );
+  }
+
+  return {
+    nodes,
+    edges,
+    config: {
+      layout: 'grid',
+    } as LayoutData['config'],
+  };
+}
+
+function fullSpanFallbackLayout(): LayoutData {
+  return {
+    nodes: [
+      manualNode('start', 40, 150, 20, 20),
+      manualNode('end', 460, 150, 20, 20),
+      manualNode('blocker', 250, 150, 80, 80),
+    ],
+    edges: [
+      manualEdge(
+        'wide-label',
+        'start',
+        'end',
+        [
+          { x: 50, y: 150 },
+          { x: 450, y: 150 },
+        ],
+        'wide label'
+      ),
+    ],
+    config: {
+      layout: 'grid',
+    } as LayoutData['config'],
+  };
+}
+
+describe('grid determinism and performance', () => {
+  it('produces byte-equivalent geometry across repeated runs', () => {
+    const baseline = representativeLayout();
+    runGridLayoutCore(baseline);
+    const expected = signature(baseline);
+
+    for (let index = 0; index < 100; index++) {
+      const next = structuredClone(representativeLayout());
+      runGridLayoutCore(next);
+      expect(signature(next)).toBe(expected);
+    }
+  });
+
+  it('keeps parallel/reverse route arrays byte-equivalent across 100 runs', () => {
+    const baseline = representativeParallelLayout();
+    runGridLayoutCore(baseline);
+    const expected = signature(baseline);
+
+    for (let index = 0; index < 100; index++) {
+      const next = structuredClone(representativeParallelLayout());
+      runGridLayoutCore(next);
+      expect(signature(next)).toBe(expected);
+    }
+  });
+
+  it('keeps label-aware spacing and self-loop geometry byte-equivalent across 100 runs', () => {
+    const baseline = labelledDeterminismLayout();
+    runGridLayoutCore(baseline);
+    const expected = signature(baseline);
+
+    for (let index = 0; index < 100; index++) {
+      const next = labelledDeterminismLayout();
+      runGridLayoutCore(next);
+      expect(signature(next)).toBe(expected);
+    }
+  });
+
+  // TODO: Move this wall-clock assertion to a benchmark harness when the repository has one.
+  // CI runs unit tests with V8 coverage instrumentation, which adds substantial routing overhead.
+  it.skipIf(Boolean(process.env.CI))(
+    'lays out 1000 nodes and 500 edges within the 1-second budget',
+    () => {
+      const layout = largeSyntheticLayout();
+      const start = performance.now();
+      runGridLayoutCore(layout);
+      const elapsed = performance.now() - start;
+      expect(elapsed).toBeLessThan(1000);
+    }
+  );
+
+  // Coverage instrumentation can push these large structural tests past Vitest's 5-second default;
+  // non-coverage runs remain below it.
+  it('keeps the 1000-node/500-edge case below structural and resource caps', () => {
+    const layout = largeSyntheticLayout();
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(layout, { metrics });
+
+    // These counters enforce the large-case complexity and resource contract; valid geometry alone
+    // would not detect a regression to per-edge topology construction or graph search.
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+    expect(metrics.fallbackValidationFailures).toBe(0);
+    expect(metrics.baseTopologyBuilds).toBe(0);
+    expect(metrics.searches).toBe(0);
+    expect(metrics.baseVertices).toBeLessThan(50_000);
+    expect(metrics.baseAdjacencyEntries).toBeLessThan(200_000);
+    expect(metrics.endpointOverlayVertices).toBeLessThanOrEqual(metrics.endpointOverlayBuilds * 32);
+    expect(metrics.expandedStates).toBeLessThan(2_000_000);
+    expect(metrics.estimatedBytes).toBeLessThan(64 * 1024 * 1024);
+  }, 10_000);
+
+  it('keeps a large search-routed case below structural and resource caps', () => {
+    const layout = largeSearchLayout();
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(layout, { metrics });
+
+    // These counters prove the large fixture exercises bounded search while sharing one topology;
+    // output geometry alone cannot expose accidental per-edge topology or unbounded search growth.
+    expect(metrics.resourceLimitFallbacks).toBe(0);
+    expect(metrics.fallbackValidationFailures).toBe(0);
+    expect(metrics.baseTopologyBuilds).toBe(1);
+    expect(metrics.searches).toBeGreaterThan(0);
+    expect(metrics.searches).toBeLessThanOrEqual(200);
+    expect(metrics.baseVertices).toBeLessThan(50_000);
+    expect(metrics.baseAdjacencyEntries).toBeLessThan(200_000);
+    expect(metrics.endpointOverlayVertices).toBeLessThanOrEqual(metrics.endpointOverlayBuilds * 32);
+    expect(metrics.expandedStates).toBeLessThan(2_000_000);
+    expect(metrics.estimatedBytes).toBeLessThan(64 * 1024 * 1024);
+  }, 10_000);
+
+  it('analyzes labelled boundaries once without adding routing passes', () => {
+    const layout = labelledAdjacencyLayout();
+    prepareGridLayout(layout);
+    for (const helper of layout.nodes.filter(
+      (item) => (item as Node & { isEdgeLabel?: boolean }).isEdgeLabel
+    )) {
+      helper.width = 90;
+      helper.height = 20;
+    }
+    const metrics = createGridRoutingInstrumentation();
+
+    runGridLayoutCore(layout, { metrics });
+
+    expect(metrics.labelSpacingEdgesExamined).toBe(50);
+    expect(metrics.labelSpacingEligibleEdges).toBe(50);
+    expect(metrics.labelSpacingBoundariesExpanded).toBe(50);
+    expect(metrics.labelSpacingPixelsAdded).toBe(50 * 96);
+    expect(metrics.baseTopologyBuilds).toBe(0);
+    expect(metrics.searches).toBe(0);
+  });
+
+  it('uses coordinate-compressed label queries for very large coordinate spans', () => {
+    const layout = fullSpanFallbackLayout();
+    for (const node of layout.nodes) {
+      if (typeof node.x === 'number') {
+        node.x += 1_000_000_000;
+      }
+    }
+    for (const edge of layout.edges) {
+      edge.points = edge.points?.map((point) => ({ ...point, x: point.x + 1_000_000_000 }));
+    }
+    prepareGridLayout(layout);
+    const labelNode = layout.nodes.find((node) => node.id === layout.edges[0].labelNodeId);
+    if (labelNode) {
+      labelNode.width = 320;
+      labelNode.height = 28;
+    }
+
+    const metrics = createGridEdgeLabelInstrumentation();
+    positionGridEdgeLabels(layout, metrics);
+
+    expect(Number.isFinite(labelNode?.x)).toBe(true);
+    expect(Number.isFinite(labelNode?.y)).toBe(true);
+    expect(layout.edges[0].points?.length).toBeGreaterThan(2);
+    // Coordinate magnitude must not increase index storage or candidate visitation.
+    expect(metrics.indexCoordinateCount).toBeLessThan(1_000);
+    expect(metrics.obstacleCandidatesVisited).toBeLessThan(100);
+    expect(metrics.segmentCandidatesVisited).toBeLessThan(50);
+    expect(metrics.foreignEdgeLookups).toBeLessThanOrEqual(5);
+    expect(metrics.indexWorkUnits).toBeGreaterThan(0);
+    expect(metrics.indexWorkLimitFallbacks).toBe(0);
+  });
+
+  it('indexes dense label routing instead of rescanning all nodes and edges per candidate', () => {
+    const layout = denseLabelRoutingLayout();
+    prepareGridLayout(layout);
+    for (const node of layout.nodes) {
+      if ((node as Node & { isEdgeLabel?: boolean }).isEdgeLabel) {
+        node.width = 56;
+        node.height = 24;
+      }
+    }
+
+    const metrics = createGridEdgeLabelInstrumentation();
+    positionGridEdgeLabels(layout, metrics);
+
+    expect(
+      layout.nodes
+        .filter((node) => (node as Node & { isEdgeLabel?: boolean }).isEdgeLabel)
+        .every((node) => Number.isFinite(node.x) && Number.isFinite(node.y))
+    ).toBe(true);
+    expect(
+      layout.edges
+        .filter((item) => item.id.startsWith('v-'))
+        .some((item) => (item.points?.length ?? 0) > 2)
+    ).toBe(true);
+    // Bound the work performed by indexed queries; successful geometry alone would not reveal a
+    // regression to scanning every node or edge for each placement candidate.
+    expect(
+      metrics.segmentRectQueries +
+        metrics.segmentBandQueries +
+        metrics.obstacleRectQueries +
+        metrics.obstacleBandQueries
+    ).toBeGreaterThan(0);
+    expect(metrics.obstacleCandidatesVisited).toBeLessThan(1_000);
+    expect(metrics.segmentCandidatesVisited).toBeLessThan(1_000);
+    expect(metrics.foreignEdgeLookups).toBeLessThan(100);
+    expect(metrics.labelPasses).toBeLessThanOrEqual(2);
+    expect(metrics.indexWorkUnits).toBeGreaterThan(0);
+    expect(metrics.indexWorkLimitFallbacks).toBe(0);
+  });
+});

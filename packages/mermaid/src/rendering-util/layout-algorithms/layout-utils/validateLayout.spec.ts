@@ -721,6 +721,64 @@ describe('validateLayout new geometric issues', () => {
     expect(types).not.toContain('edge-label-off-edge');
   });
 
+  it.each([
+    {
+      name: 'crosses the label away from its center',
+      sharedDefaultAnchored: true,
+      points: [
+        { x: 20, y: -5 },
+        { x: 180, y: -5 },
+      ],
+    },
+    {
+      name: 'runs along the label border',
+      sharedDefaultAnchored: true,
+      points: [
+        { x: 20, y: -10 },
+        { x: 180, y: -10 },
+      ],
+    },
+    {
+      name: 'touches only a label corner',
+      sharedDefaultAnchored: false,
+      points: [
+        { x: 20, y: -10 },
+        { x: 85, y: -10 },
+        { x: 85, y: -40 },
+        { x: 180, y: -40 },
+      ],
+    },
+  ])(
+    'supports layout-specific label anchoring when the owning edge $name',
+    ({ points, sharedDefaultAnchored }) => {
+      const a = mkNode('A', 0, 0);
+      const b = mkNode('B', 200, 0);
+      const label: Node = {
+        id: 'edge-label-A-B-e1',
+        x: 100,
+        y: 0,
+        width: 30,
+        height: 20,
+        isGroup: false,
+        isEdgeLabel: true,
+      } as any;
+      const e = {
+        id: 'e1',
+        start: 'A',
+        end: 'B',
+        type: 'arrow',
+        labelNodeId: 'edge-label-A-B-e1',
+        points,
+      } as unknown as Edge;
+      const layout: LayoutData = { nodes: [a, b, label], edges: [e], config: {} as any };
+
+      expect(getIssueTypes(layout).includes('edge-label-off-edge')).toBe(!sharedDefaultAnchored);
+      expect(
+        validateLayout(layout, { requireEdgeLabelCenter: true }).issues.map((issue) => issue.type)
+      ).toContain('edge-label-off-edge');
+    }
+  );
+
   it('flags edge-endpoint-inside-node when an edge endpoint sits inside a non-endpoint node', () => {
     // Edge from S to T, but its end point lands inside an unrelated obstacle
     // node O rather than on T's boundary.

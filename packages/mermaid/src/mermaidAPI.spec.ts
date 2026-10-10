@@ -862,6 +862,52 @@ graph TD;A--x|text including URL space|B;`)
           }
         `);
     });
+
+    it('rejects invalid inline grid coordinates', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 0 }`)
+      ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
+    });
+
+    it('rejects invalid frontmatter grid coordinates', async () => {
+      await expect(
+        mermaidAPI.parse(`---
+config:
+  layout: grid
+  grid:
+    placements:
+      A:
+        row: 0
+---
+flowchart TB
+  A`)
+      ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
+    });
+
+    it('rejects invalid initialized grid coordinates', async () => {
+      mermaidAPI.initialize({});
+      mermaidAPI.initialize({
+        layout: 'grid',
+        grid: {
+          placements: {
+            A: { row: 0 },
+          },
+        },
+      });
+
+      try {
+        await expect(mermaidAPI.parse('flowchart TB\n  A')).rejects.toThrow(
+          'GRID_INVALID_COORDINATE: Invalid row for placement "A"'
+        );
+      } finally {
+        mermaidAPI.initialize({});
+      }
+    });
   });
 
   describe('render', () => {
@@ -970,6 +1016,30 @@ treeView-beta
       );
       expect(texts).toContain('Syntax error in text');
       expect(texts.some((text) => text.includes('Edge limit exceeded'))).toBe(true);
+    });
+
+    jsdomIt('shows invalid grid coordinates in the error diagram', async () => {
+      await expect(
+        mermaidAPI.render(
+          'flowchart-invalid-grid-coordinate',
+          `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: 0 }`
+        )
+      ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
+
+      const texts = [...document.querySelectorAll('.error-text')].map(
+        (element) => element.textContent ?? ''
+      );
+      expect(texts).toContain('Syntax error in text');
+      expect(
+        texts.some((text) =>
+          text.includes('GRID_INVALID_COORDINATE: Invalid row for placement "A"')
+        )
+      ).toBe(true);
     });
   });
 

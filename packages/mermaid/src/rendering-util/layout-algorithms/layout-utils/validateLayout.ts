@@ -1,16 +1,19 @@
-import type { LayoutData, Node, Edge as _Edge } from '../../types.js';
+import type { LayoutData, Node, Edge } from '../../types.js';
 import { log } from '../../../logger.js';
 import { DEBUG_KEY } from './debug.js';
 import {
   rectForNode,
   approxEqual,
+  hasTerminalMarker,
+  orthogonalPolylineContainsPoint,
   polylineIntersectsRect,
   segmentIntersectsRectInterior,
+  terminalMarkerClearanceRect,
 } from './helpers.js';
 import type { Point, Rect } from './types.js';
 
 type PortSide = 'N' | 'E' | 'S' | 'W';
-import { EPS, normalizePolyline, distance, segmentsCross } from './geometry.js';
+import { PIXEL_EPSILON, normalizePolyline, distance, segmentsCross } from './geometry.js';
 import type { Segment, NormalizedPolyline } from './geometry.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -125,6 +128,14 @@ export interface Issue {
   details?: Record<string, unknown>;
 }
 
+export interface ValidateLayoutOptions {
+  /**
+   * Require each owning edge to pass through the rendered label center.
+   * The shared default only requires intersection with the label rectangle.
+   */
+  requireEdgeLabelCenter?: boolean;
+}
+
 export interface ValidateLayoutResult {
   ok: boolean;
   issues: Issue[];
@@ -196,13 +207,13 @@ function isSwimlaneGroup(node: Node | undefined): boolean {
 function direction(a: Point, b: Point): 'E' | 'W' | 'N' | 'S' | null {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
-  if (Math.abs(dx) <= EPS && Math.abs(dy) <= EPS) {
+  if (Math.abs(dx) <= PIXEL_EPSILON && Math.abs(dy) <= PIXEL_EPSILON) {
     return null;
   }
-  if (Math.abs(dy) <= EPS) {
+  if (Math.abs(dy) <= PIXEL_EPSILON) {
     return dx > 0 ? 'E' : 'W';
   }
-  if (Math.abs(dx) <= EPS) {
+  if (Math.abs(dx) <= PIXEL_EPSILON) {
     return dy > 0 ? 'S' : 'N';
   }
   return null;
@@ -232,14 +243,14 @@ function collinearOverlap(s1: Segment, s2: Segment): number {
     return 0;
   }
   if (s1.orientation === 'H') {
-    // Both horizontal: check if same y (within EPS)
-    if (Math.abs(s1.a.y - s2.a.y) > EPS) {
+    // Both horizontal: check if same y (within PIXEL_EPSILON)
+    if (Math.abs(s1.a.y - s2.a.y) > PIXEL_EPSILON) {
       return 0;
     }
     return rangeOverlap(s1.a.x, s1.b.x, s2.a.x, s2.b.x);
   } else {
-    // Both vertical: check if same x (within EPS)
-    if (Math.abs(s1.a.x - s2.a.x) > EPS) {
+    // Both vertical: check if same x (within PIXEL_EPSILON)
+    if (Math.abs(s1.a.x - s2.a.x) > PIXEL_EPSILON) {
       return 0;
     }
     return rangeOverlap(s1.a.y, s1.b.y, s2.a.y, s2.b.y);
@@ -445,73 +456,6 @@ function labelRectForEdge(e: unknown): Rect | null {
   return { cx: x, cy: y, left: x - w / 2, right: x + w / 2, top: y - h / 2, bottom: y + h / 2 };
 }
 
-type EdgeTerminal = 'start' | 'end';
-
-function hasTerminalMarker(e: _Edge, terminal: EdgeTerminal): boolean {
-  const markerType = terminal === 'start' ? e.arrowTypeStart : e.arrowTypeEnd;
-  if (typeof markerType === 'string') {
-    const trimmed = markerType.trim();
-    if (trimmed.length > 0 && trimmed !== 'none' && trimmed !== 'arrow_open') {
-      return true;
-    }
-  }
-
-  if (typeof e.type !== 'string') {
-    return false;
-  }
-  // Flowchart/swimlane edges often carry marker semantics in `type`.
-  if (terminal === 'start' && e.type.startsWith('double_')) {
-    return true;
-  }
-  return terminal === 'end' && /arrow_(point|cross|circle|barb)|double_arrow/.test(e.type);
-}
-
-function terminalMarkerClearanceRect(points: Point[], terminal: EdgeTerminal): Rect | null {
-  if (points.length < 2) {
-    return null;
-  }
-
-  const tip = terminal === 'end' ? points[points.length - 1] : points[0];
-  const inner = terminal === 'end' ? points[points.length - 2] : points[1];
-  const dx = inner.x - tip.x;
-  const dy = inner.y - tip.y;
-
-  if (Math.abs(dx) <= EPS && Math.abs(dy) <= EPS) {
-    return null;
-  }
-
-  const len = EPS_MARKER_CLEARANCE_LENGTH;
-  const half = EPS_MARKER_CLEARANCE_HALF_WIDTH;
-  if (Math.abs(dy) <= EPS) {
-    const x2 = tip.x + Math.sign(dx) * len;
-    const left = Math.min(tip.x, x2);
-    const right = Math.max(tip.x, x2);
-    return {
-      cx: (left + right) / 2,
-      cy: tip.y,
-      left,
-      right,
-      top: tip.y - half,
-      bottom: tip.y + half,
-    };
-  }
-  if (Math.abs(dx) <= EPS) {
-    const y2 = tip.y + Math.sign(dy) * len;
-    const top = Math.min(tip.y, y2);
-    const bottom = Math.max(tip.y, y2);
-    return {
-      cx: tip.x,
-      cy: (top + bottom) / 2,
-      left: tip.x - half,
-      right: tip.x + half,
-      top,
-      bottom,
-    };
-  }
-
-  return null;
-}
-
 function _polylineIsOrthogonal(points: Point[]): boolean {
   for (let i = 0; i < points.length - 1; i++) {
     const a = points[i];
@@ -567,11 +511,11 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
     }
     const x = seg.a.x;
     const distanceToSide = side === 'W' ? rect.left - x : x - rect.right;
-    if (distanceToSide < -EPS || distanceToSide > EPS_ENDPOINT_BAND + EPS) {
+    if (distanceToSide < -PIXEL_EPSILON || distanceToSide > EPS_ENDPOINT_BAND + PIXEL_EPSILON) {
       return null;
     }
     const overlap = rangeOverlap(seg.a.y, seg.b.y, rect.top, rect.bottom);
-    return overlap > EPS ? Math.max(0, distanceToSide) : null;
+    return overlap > PIXEL_EPSILON ? Math.max(0, distanceToSide) : null;
   }
 
   if (seg.orientation !== 'H') {
@@ -579,11 +523,11 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
   }
   const y = seg.a.y;
   const distanceToSide = side === 'N' ? rect.top - y : y - rect.bottom;
-  if (distanceToSide < -EPS || distanceToSide > EPS_ENDPOINT_BAND + EPS) {
+  if (distanceToSide < -PIXEL_EPSILON || distanceToSide > EPS_ENDPOINT_BAND + PIXEL_EPSILON) {
     return null;
   }
   const overlap = rangeOverlap(seg.a.x, seg.b.x, rect.left, rect.right);
-  return overlap > EPS ? Math.max(0, distanceToSide) : null;
+  return overlap > PIXEL_EPSILON ? Math.max(0, distanceToSide) : null;
 }
 
 /**
@@ -601,11 +545,14 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
  *
  * Also computes scoring based on bends and crossings.
  */
-export function validateLayout(layout: LayoutData): ValidateLayoutResult {
+export function validateLayout(
+  layout: LayoutData,
+  options: ValidateLayoutOptions = {}
+): ValidateLayoutResult {
   const issues: Issue[] = [];
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
-  const edgeById = new Map<string, _Edge>();
+  const edgeById = new Map<string, Edge>();
   for (const e of edges) {
     if (e?.id != null) {
       edgeById.set(String(e.id), e);
@@ -908,8 +855,9 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
     for (const [groupId, titleRect] of groupTitleRects) {
       const hit = firstInteriorRectHit(points, titleRect, startAttach, endAttach, (a, b) => {
         const touchesStartAttach =
-          distance(a, startAttach) <= EPS || distance(b, startAttach) <= EPS;
-        const touchesEndAttach = distance(a, endAttach) <= EPS || distance(b, endAttach) <= EPS;
+          distance(a, startAttach) <= PIXEL_EPSILON || distance(b, startAttach) <= PIXEL_EPSILON;
+        const touchesEndAttach =
+          distance(a, endAttach) <= PIXEL_EPSILON || distance(b, endAttach) <= PIXEL_EPSILON;
         return (
           (touchesStartAttach && sNode ? isAncestorGroup(groupId, sNode, byId) : false) ||
           (touchesEndAttach && tNode ? isAncestorGroup(groupId, tNode, byId) : false)
@@ -988,14 +936,20 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       }
     }
 
-    // Check edge-label-off-edge: when an edge carries a `labelNodeId` it is
-    // expected to thread through that label node (label-as-waypoint model).
-    // The rendered label text sits at the label node's center, so if the
-    // edge's polyline does not intersect the label's rectangle at all, the
-    // label visually floats off the edge. Flag that as a hard violation.
+    // Check edge-label-off-edge. Most layouts require the owning edge to intersect the rendered
+    // label rectangle; grid opts into the stricter center-anchor contract.
     if (ownLabelId) {
       const labelRect = nodeRects.get(ownLabelId);
-      if (labelRect && !polylineIntersectsRect(points, labelRect)) {
+      const labelIsAnchored =
+        labelRect &&
+        (options.requireEdgeLabelCenter
+          ? orthogonalPolylineContainsPoint(
+              points,
+              { x: labelRect.cx, y: labelRect.cy },
+              PIXEL_EPSILON
+            )
+          : polylineIntersectsRect(points, labelRect));
+      if (labelRect && !labelIsAnchored) {
         issues.push({
           type: 'edge-label-off-edge',
           message: `Edge "${edgeId}" does not pass through its label node "${ownLabelId}"`,
@@ -1149,7 +1103,15 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           if (!hasTerminalMarker(ownerEdge, terminal)) {
             continue;
           }
-          const markerRect = terminalMarkerClearanceRect(ownerMeta.normalized.points, terminal);
+          // Use the same terminal reservation as label placement; validation should enforce the
+          // routing contract rather than approximate marker clearance independently.
+          const markerRect = terminalMarkerClearanceRect(
+            ownerMeta.normalized.points,
+            terminal,
+            EPS_MARKER_CLEARANCE_LENGTH,
+            EPS_MARKER_CLEARANCE_HALF_WIDTH,
+            PIXEL_EPSILON
+          );
           const overlap = markerRect ? rectsOverlap(labelRect, markerRect) : null;
           if (overlap) {
             issues.push({
@@ -1347,7 +1309,7 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
   // ─────────────────────────────────────────────────────────────────────────────
   const sortedEdges = [...edgeMetas].sort((a, b) => a.id.localeCompare(b.id));
   const segmentTouchesPoint = (seg: Segment, p: Point): boolean =>
-    distance(seg.a, p) <= EPS || distance(seg.b, p) <= EPS;
+    distance(seg.a, p) <= PIXEL_EPSILON || distance(seg.b, p) <= PIXEL_EPSILON;
   const isTerminalSegmentForNode = (em: EdgeMeta, seg: Segment, nodeId: string): boolean => {
     if (em.startId === nodeId && segmentTouchesPoint(seg, em.normalized.points[0])) {
       return true;
@@ -1403,7 +1365,7 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
           if (
             projectedOverlap >= L_MIN_SHARED &&
             gap != null &&
-            gap > EPS &&
+            gap > PIXEL_EPSILON &&
             gap < EPS_PARALLEL_EDGE_GAP
           ) {
             const allInCorridor =

@@ -157,7 +157,8 @@ export const openURLAndVerifyRendering = async (
     });
   } catch {
     try {
-      await diagramSvg(page).first().waitFor({ state: 'visible', timeout: 15_000 });
+      const renderedSvg = diagramSvg(page).first();
+      await renderedSvg.waitFor({ state: 'visible', timeout: 15_000 });
     } catch (error) {
       const details = [...pageErrors, ...consoleErrors];
       if (details.length > 0) {

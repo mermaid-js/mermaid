@@ -265,6 +265,9 @@ properties:
           When enabled, such edges are found before layout, on the graph with each subgraph collapsed, and handed to ELK in the other direction. The edge is drawn with its arrowhead at its real target. Cycles between plain nodes are left to `cycleBreakingStrategy`.
         type: boolean
         default: true
+  grid:
+    $ref: '#/$defs/GridLayoutConfig'
+    default: {}
   darkMode:
     type: boolean
     default: false
@@ -523,6 +526,118 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         description: |
           Defines which layout algorithm to use for rendering the diagram.
         type: string
+  GridHorizontalAlign:
+    description: Horizontal alignment for items within a grid cell.
+    type: string
+    enum:
+      - left
+      - center
+      - right
+  GridVerticalAlign:
+    description: Vertical alignment for items or stacks within a grid cell.
+    type: string
+    enum:
+      - top
+      - center
+      - bottom
+  GridPlacement:
+    title: Grid Placement
+    type: object
+    additionalProperties: false
+    properties:
+      row:
+        description: Positive integer row number local to the item's direct parent grid.
+        type: integer
+        minimum: 1
+      column:
+        description: Positive integer column number local to the item's direct parent grid.
+        type: integer
+        minimum: 1
+      horizontalAlign:
+        description: Horizontal alignment within the resolved grid cell.
+        $ref: '#/$defs/GridHorizontalAlign'
+      verticalAlign:
+        description: Vertical alignment for the resolved grid cell stack.
+        $ref: '#/$defs/GridVerticalAlign'
+  GridLayoutConfig:
+    title: Grid Layout Config
+    type: object
+    additionalProperties: false
+    properties:
+      placements:
+        description: Mapping of authored placement ids or emitted node ids to explicit grid placements. Arrays target repeated ids in source order; a single object is equivalent to a one-item array.
+        type: object
+        additionalProperties:
+          oneOf:
+            - $ref: '#/$defs/GridPlacement'
+            - type: array
+              minItems: 1
+              items:
+                $ref: '#/$defs/GridPlacement'
+        default: {}
+      columns:
+        description: Non-negative integer candidate column count for auto-placed items; 0 means automatic.
+        type: integer
+        minimum: 0
+        default: 0
+      rowGap:
+        description: Pixel gap between occupied rows.
+        type: number
+        minimum: 0
+        default: 50
+      columnGap:
+        description: Pixel gap between occupied columns.
+        type: number
+        minimum: 0
+        default: 50
+      cellGap:
+        description: Pixel gap between stacked items that share an explicit cell.
+        type: number
+        minimum: 0
+        default: 20
+      containerPadding:
+        description: Minimum pixel padding inside groups on every side.
+        type: number
+        minimum: 0
+        default: 20
+      titleGap:
+        description: Clearance between a measured group title and its child grid.
+        type: number
+        minimum: 0
+        default: 8
+      horizontalAlign:
+        description: Default horizontal alignment within each grid cell.
+        $ref: '#/$defs/GridHorizontalAlign'
+        default: center
+      verticalAlign:
+        description: Default vertical alignment for each grid cell stack.
+        $ref: '#/$defs/GridVerticalAlign'
+        default: center
+      curve:
+        description: Curve style used to render grid edges.
+        type: string
+        enum:
+          [
+            'basis',
+            'bumpX',
+            'bumpY',
+            'cardinal',
+            'catmullRom',
+            'linear',
+            'monotoneX',
+            'monotoneY',
+            'natural',
+            'step',
+            'stepAfter',
+            'stepBefore',
+            'rounded',
+          ]
+        default: rounded
+      edgeCornerRadius:
+        description: Pixel radius used for grid edges when curve is rounded.
+        type: number
+        minimum: 0
+        default: 5
   C4DiagramConfig:
     title: C4 Diagram Config
     allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]

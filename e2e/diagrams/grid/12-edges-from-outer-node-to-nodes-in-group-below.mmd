@@ -1,0 +1,21 @@
+---
+config:
+  layout: grid
+  grid:
+    placements:
+      C: { row: 1, column: 1 }
+      Nested: { row: 2, column: 1 }
+      D: { row: 1, column: 1 }
+      E: { row: 2, column: 1 }
+    rowGap: 45
+    columnGap: 70
+---
+flowchart LR
+  C
+  subgraph Nested
+    D
+    E
+  end
+
+  C --> D
+  C --> E
