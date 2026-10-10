@@ -102,12 +102,45 @@ test.describe('Interaction', () => {
         'Clicked By Gant test1 test2 test3'
       );
     });
+
+    test('gitGraph: should handle a click on a commit with a bound url', async ({ page }) => {
+      const commitLinks = page.getByRole('link', { name: 'Commit Tooltip', exact: true });
+      await expect(commitLinks).toHaveCount(2);
+      await expect(commitLinks.first()).toHaveAttribute('target', '_blank');
+      const popupPromise = page.waitForEvent('popup');
+      await commitLinks.first().click();
+      const popup = await popupPromise;
+      await expect(popup).toHaveURL('/empty.html');
+    });
+
+    test('gitGraph: should handle a click on a branch with a bound url', async ({ page }) => {
+      const branchLink = page.getByRole('link', { name: 'Branch Tooltip', exact: true });
+      await expect(branchLink).toHaveCount(1);
+      await branchLink.click();
+      await expect(page).toHaveURL('/empty.html');
+    });
+
+    test('gitGraph: should handle a click on a tag with a bound url', async ({ page }) => {
+      const tagLink = page.getByRole('link', { name: 'Tag Tooltip', exact: true });
+      await expect(tagLink).toHaveCount(1);
+      await tagLink.click();
+      await expect(page).toHaveURL('/empty.html');
+    });
   });
 
   test.describe('Interaction - security level tight', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto('/click_security_strict.html');
     });
+
+    test('gitGraph: should not create interactive links in strict mode', async ({ page }) => {
+      const gitGraph = page.locator('svg').filter({ has: page.locator('.commit-bullets') });
+      await expect(gitGraph).toHaveCount(1);
+      await expect(gitGraph).toBeVisible();
+      await expect(gitGraph.locator('a')).toHaveCount(0);
+      await expect(gitGraph.locator('.clickable')).toHaveCount(0);
+    });
+
     test('should handle a click on a node without a bound function', async ({ page }) => {
       await page.locator('.node').filter({ hasText: 'Function1' }).click();
       await expect(page.locator('.created-by-click')).toHaveCount(0);
