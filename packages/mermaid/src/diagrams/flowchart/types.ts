@@ -90,6 +90,13 @@ export interface FlowSubGraph {
   metadata?: NodeMetaData;
 }
 
+/** A node a subgraph listed but lost to an earlier, unrelated subgraph that lists it too. */
+export interface DroppedSubGraphMember {
+  node: string;
+  keptBy: string;
+  droppedFrom: string;
+}
+
 export interface FlowLink {
   length?: number;
   stroke: string;

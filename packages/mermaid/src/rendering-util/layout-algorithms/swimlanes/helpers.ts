@@ -1,3 +1,4 @@
+import { log } from '../../../logger.js';
 import type {
   LayoutData,
   Node as MermaidNode,
@@ -95,9 +96,80 @@ function assignTopLaneTitleRect(lane: Node): void {
   };
 }
 
+interface SharedMember {
+  node: string;
+  keptBy: string;
+  droppedFrom: string;
+}
+
+const isLane = (node: Node): boolean => !!node.isGroup && !node.parentId;
+
+function sharedMembers(layout: LayoutData): SharedMember[] {
+  const members: unknown = layout.other?.droppedSubGraphMembers;
+  return Array.isArray(members) ? members : [];
+}
+
+const isEmptyLane = (layout: LayoutData, nodes: Node[], laneId: string): boolean =>
+  !nodes.some((node) => node.parentId === laneId) &&
+  !(layout.edges ?? []).some((edge) => edge.start === laneId || edge.end === laneId);
+
+/** The top-level lane a node sits in, following its parents up, or undefined outside every lane. */
+function topLevelLaneId(byId: Map<string, Node>, id: string): string | undefined {
+  let current = byId.get(id);
+  while (current?.parentId) {
+    current = byId.get(current.parentId);
+  }
+  return current && isLane(current) ? current.id : undefined;
+}
+
+function removeEmptyLanes(layout: LayoutData, nodes: Node[], laneIds: Set<string>): void {
+  for (const laneId of laneIds) {
+    if (isEmptyLane(layout, nodes, laneId)) {
+      nodes.splice(
+        nodes.findIndex((node) => node.id === laneId),
+        1
+      );
+    }
+  }
+}
+
+/**
+ * A node listed in two lanes stays in the first, so the second can end up with nothing.
+ * Warns for each such node and removes the lanes it emptied. A lane the author left empty
+ * lost no member and stays, and so does one an edge points at. The lane that kept the node
+ * can be the one around a subgraph nested in it, so `keptBy` is resolved up to its lane.
+ */
+function dropLanesEmptiedBySharedNodes(layout: LayoutData, nodes: Node[]): void {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const laneIds = new Set(nodes.filter(isLane).map((lane) => lane.id));
+  const emptied = new Set<string>();
+  for (const { node, keptBy, droppedFrom } of sharedMembers(layout)) {
+    const keptByLane = topLevelLaneId(byId, keptBy);
+    if (keptByLane && keptByLane !== droppedFrom && laneIds.has(droppedFrom)) {
+      log.warn(
+        `Swimlane node "${node}" is listed in lanes "${keptByLane}" and "${droppedFrom}"; it is drawn in "${keptByLane}" only.`
+      );
+      emptied.add(droppedFrom);
+    }
+  }
+  removeEmptyLanes(layout, nodes, emptied);
+}
+
+function warnAboutNestedGroups(nodes: Node[]): void {
+  for (const node of nodes) {
+    if (node.isGroup && node.parentId) {
+      log.warn(
+        `Swimlane subgraph "${node.id}" is nested in "${node.parentId}"; only top-level subgraphs are lanes, so it is drawn as a plain box.`
+      );
+    }
+  }
+}
+
 export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
+  dropLanesEmptiedBySharedNodes(layout, nodes);
+  warnAboutNestedGroups(nodes);
   for (const node of layout.nodes ?? []) {
     if (node.isGroup && !node.parentId) {
       node.shape = 'swimlane';

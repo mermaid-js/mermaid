@@ -129,6 +129,8 @@ If no direction is set, the diagram uses `TB`.
 
 Use `subgraph` to create a lane. In a swimlane diagram, top-level subgraphs are rendered as swimlanes. A lane ends with `end`.
 
+A node belongs to one lane. If two lanes list the same node, it stays in the first lane, and a lane left with no nodes by that is not drawn, unless an edge points at the lane. A subgraph nested inside a lane is drawn as a plain box, not as a lane, and a node in it belongs to the lane around it. Both cases are reported as warnings in the log. Warnings only show when the `logLevel` option is `warn` or lower; the default is `fatal`.
+
 ```mermaid-example
 swimlane-beta
   subgraph Sales
