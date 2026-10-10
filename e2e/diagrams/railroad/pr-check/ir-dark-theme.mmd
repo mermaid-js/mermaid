@@ -1,0 +1,11 @@
+---
+description: >-
+  IR syntax rendered under the "dark" theme, verifying railroad diagram colours
+  adapt correctly.
+config:
+  theme: dark
+---
+railroad-beta
+value = choice(nonterminal("string"), nonterminal("number"), nonterminal("object"), nonterminal("array"), terminal("true"), terminal("false"), terminal("null")) ;
+number = oneOrMore(nonterminal("digit")) ;
+digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3")) ;

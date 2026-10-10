@@ -1,0 +1,20 @@
+---
+description: >-
+  Association and include/extend edges whose labels deliberately echo the
+  relationship-keyword vocabulary ("include account details", "extend
+  active session") on plain `--` associations, checking that label text
+  is never mistaken for the `include`/`extend` keyword syntax.
+---
+usecase-beta
+    direction LR
+
+    actor User
+    Login("Sign in")
+    Checkout("Checkout")
+    Payment("Process payment")
+    Discount("Apply discount")
+
+    User -- "include account details" --> Login
+    Login -- "extend active session" --> Checkout
+    Checkout ..> : include Payment
+    Discount ..> : extend Checkout

@@ -1,0 +1,39 @@
+---
+description: >-
+  Regression fixture for issue #7802: same chained decision-node layout as
+  issue-7802-1.mmd, but H's label is padded to a medium width ("H----").
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+subgraph X1
+  A(Start)
+  B{{B------}}
+  I[I]
+  id1[(Database)]
+end
+subgraph X3
+  Sys1
+  E
+end
+subgraph X2
+  C{{C------------}}
+  D{{D}}
+  F
+  G@{ shape: notch-pent }
+  H
+  exit(Exit)
+end
+  A --> Sys1
+  --> B
+  --> C
+  --> D
+  --> E
+  --> F
+  --> G
+  %% try make it longer
+  --> H[H----]
+  --> I
+  --> exit

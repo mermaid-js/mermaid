@@ -1,0 +1,20 @@
+---
+description: >-
+  Same plain bidirectional self-reference arrows (`<<->>` solid and
+  `<<-->>` dotted, no circle markers) as the with-autonumber sibling, but
+  with autonumber disabled to isolate whether numbering affects self-loop
+  layout.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice<<->>Alice: Bidirectional solid self-reference
+  Bob<<-->>Bob: Bidirectional dotted self-reference
+  Charlie<<->>Charlie: Another bidirectional solid
+  Alice<<-->>Alice: Another bidirectional dotted

@@ -1,0 +1,12 @@
+---
+description:
+  Basic smoke test verifying that a simple flowchart with square, round, and
+  diamond decision nodes, labeled edges, and a FontAwesome icon in a node label
+  renders correctly under default configuration.
+---
+flowchart TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

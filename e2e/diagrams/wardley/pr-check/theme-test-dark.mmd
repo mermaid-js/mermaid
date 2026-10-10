@@ -1,0 +1,23 @@
+---
+description: >-
+  A 5-component Wardley map (User anchor -> App -> API -> Database/Cache) with a
+  custom canvas size and one evolve annotation, rendered under the "dark" theme.
+config:
+  theme: dark
+---
+wardley-beta
+title Theme Test - dark
+size [1100, 800]
+
+anchor User [0.95, 0.85]
+component App [0.75, 0.70]
+component API [0.55, 0.55]
+component Database [0.30, 0.60]
+component Cache [0.50, 0.40]
+
+User -> App
+App -> API
+API -> Database
+API -> Cache
+
+evolve Database 0.80

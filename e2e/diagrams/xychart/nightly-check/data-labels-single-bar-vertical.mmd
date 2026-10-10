@@ -1,0 +1,15 @@
+---
+description: >-
+  A single-category, single-bar chart (one "jan" bar, value 4000, range
+  3000-12000) with showDataLabel enabled, in the default vertical
+  orientation — the minimal edge case for the bar/label pairing logic.
+  Horizontal counterpart: data-labels-single-bar-horizontal.mmd.
+config:
+  xyChart:
+    showDataLabel: true
+---
+xychart
+  title "Sales Revenue"
+  x-axis Months [jan]
+  y-axis "Revenue (in $)" 3000 --> 12000
+  bar [4000]

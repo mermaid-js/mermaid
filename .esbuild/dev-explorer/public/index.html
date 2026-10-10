@@ -22,15 +22,16 @@
 
           mermaid.registerLayoutLoaders(layouts);
 
-          mermaid.registerIconPacks([
-            {
-              name: 'fa',
-              loader: () =>
-                fetch('https://unpkg.com/@iconify-json/fa6-solid@1/icons.json').then((response) =>
-                  response.json()
-                ),
-            },
-          ]);
+          // Legacy Font Awesome syntax (`fa:fa-bell`, `fab:fa-twitter`, ...) falls back to
+          // `<i class="fa fa-bell">`/`<i class="fab fa-twitter">` elements whenever no matching
+          // iconify pack is registered (see createText.ts's isIconAvailable/getIconSVG fallback).
+          // Loading the real Font Awesome webfont CSS covers every prefix (fa/fab/fas/far/fal/fak)
+          // in one step, matching what e2e/platform/viewer.js does for the Playwright test harness,
+          // instead of registering separate iconify packs per prefix via a live unpkg fetch.
+          const faLink = document.createElement('link');
+          faLink.rel = 'stylesheet';
+          faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css';
+          document.head.appendChild(faLink);
 
           // Keep the rest of the dev explorer simple: expose mermaid on window for the Lit components.
           window.mermaid = mermaid;

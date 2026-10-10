@@ -1,0 +1,18 @@
+---
+description: >-
+  All 8 message-arrow variants (->>/-->>/->/-->/-x/--x/->>+/-->>+) between the
+  same two participants.
+config:
+  look: classic
+---
+sequenceDiagram
+  participant A@{ "type" : "actor" }
+  participant B@{ "type" : "boundary" }
+  A ->> B: ->> message 0
+  A -->> B: -->> message 1
+  A -> B: -> message 2
+  A --> B: --> message 3
+  A -x B: -x message 4
+  A --x B: --x message 5
+  A ->>+ B: ->>+ message 6
+  A -->>+ B: -->>+ message 7

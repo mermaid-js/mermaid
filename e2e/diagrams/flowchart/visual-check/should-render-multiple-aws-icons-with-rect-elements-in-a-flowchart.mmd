@@ -1,0 +1,12 @@
+---
+description: >-
+  Verifies that multiple AWS icon-shaped nodes (via @{ icon: "aws:..." }) can be
+  chained together in the same flowchart with plain edges, without a custom
+  label, exercising rendering of several icon shapes at once.
+---
+flowchart TB
+  Cloudwatch@{ icon: "aws:arch-amazon-cloudwatch" }
+  Cloudfront@{ icon: "aws:arch-amazon-route-53" }
+  Route53@{ icon: "aws:arch-amazon-eks-cloud" }
+  Cloudwatch --> Cloudfront
+  Cloudfront --> Route53

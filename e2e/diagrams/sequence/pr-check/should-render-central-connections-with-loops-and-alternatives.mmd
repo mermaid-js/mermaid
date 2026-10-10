@@ -1,0 +1,24 @@
+---
+description: >-
+  Central-connection arrow syntax (`()->>()`, `()-->>`) combined with loop
+  and alt/else control-flow blocks, including a bidirectional dual central
+  connection and a central cross message inside the alt branches.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  loop Every minute
+  Alice ()->>() Bob: Central heartbeat
+  Bob ()-->> Charlie: Forward heartbeat
+  end
+  alt Success
+  Charlie ()<<-->>() Alice: Success response
+  else Failure
+  Charlie ()-x() Alice: Failure response
+  end

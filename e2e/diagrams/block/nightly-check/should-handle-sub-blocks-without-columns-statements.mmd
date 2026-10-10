@@ -1,0 +1,14 @@
+---
+description: >-
+  A sub-block containing two plain blocks (D, E) with no `columns` statement
+  of its own, nested below a top-level 2-column row (C, A, B) — verifying
+  sub-blocks fall back to sensible default layout when no explicit `columns`
+  value is given.
+---
+block
+  columns 2
+  C A B
+  block
+  D
+  E
+  end
