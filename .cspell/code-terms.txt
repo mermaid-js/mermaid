@@ -90,6 +90,7 @@ linebreak
 LINETYPE
 LINKSTYLE
 LLABEL
+LOCALAPPDATA
 loglevel
 logline
 logmeta
@@ -177,6 +178,7 @@ USECASE
 verifymethod
 VERIFYMTHD
 WARN_DOCSDIR_DOESNT_MATCH
+WINDIR
 Wirth
 worktree
 worktrees
