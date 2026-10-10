@@ -114,11 +114,12 @@ that id.
 <click>[^\s\n]*          return 'CLICK';
 
 "flowchart-elk"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
-"swimlane-beta"          {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"swimlane-beta"          {if(yy.lex.firstGraph()){this.begin("dir");} yy.lex.enablePhases(); return 'GRAPH';}
 "graph"                  {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
+"phase"(?=[^\S\n\r]+\w)  { if (yy.lex.allowsPhases()) { return 'PHASE'; } return 'NODE_STRING'; }
 
 "_self"                  return 'LINK_TARGET';
 "_blank"                 return 'LINK_TARGET';
@@ -385,6 +386,10 @@ statement
     // {$$=yy.addSubGraph($textNoTags,$document,$textNoTags);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$document,undefined);}
+    | PHASE SPACE idString SQS text SQE separator
+    {yy.addPhase($idString,$text);$$=[];}
+    | PHASE SPACE idString separator
+    {yy.addPhase($idString);$$=[];}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$acc_descr_value.trim();yy.setAccDescription($$); }

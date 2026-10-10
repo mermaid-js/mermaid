@@ -12,6 +12,11 @@ export interface LayeringOptions {
   optimizeRanksByCrossings?: boolean;
   /** Diagram direction, used by lane-aware rank heuristics with direction-specific failure modes. */
   direction?: 'TB' | 'LR' | 'BT' | 'RL';
+  /**
+   * The band (swimlane phase) a node is drawn in. Bands stack in index order: a node never
+   * shares a layer with a node of another band.
+   */
+  bandOf?: (id: NodeId) => number;
 }
 
 /**

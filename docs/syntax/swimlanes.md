@@ -244,6 +244,58 @@ swimlane-beta LR
   lead --> quote --> review --> approve
 ```
 
+### Phases (vMERMAID_RELEASE_VERSION+)
+
+Lanes show who does the work. Phases add a second axis across the lanes that shows the stage the work is in. Declare each phase with `phase`, then name the phase of a node in its `@{ }` metadata.
+
+```mermaid-example
+swimlane-beta LR
+  phase intake["Intake"]
+  phase review["Review"]
+  phase closeout["Closeout"]
+
+  subgraph underwriting [Underwriting]
+    receive["Receive request"]@{ phase: intake }
+    assess["Assess"]@{ phase: review }
+    sign["Sign off"]@{ phase: closeout }
+  end
+
+  subgraph servicing [Servicing]
+    log["Log request"]@{ phase: intake }
+    close["Close file"]@{ phase: closeout }
+  end
+
+  log --> receive --> assess --> sign --> close
+```
+
+```mermaid
+swimlane-beta LR
+  phase intake["Intake"]
+  phase review["Review"]
+  phase closeout["Closeout"]
+
+  subgraph underwriting [Underwriting]
+    receive["Receive request"]@{ phase: intake }
+    assess["Assess"]@{ phase: review }
+    sign["Sign off"]@{ phase: closeout }
+  end
+
+  subgraph servicing [Servicing]
+    log["Log request"]@{ phase: intake }
+    close["Close file"]@{ phase: closeout }
+  end
+
+  log --> receive --> assess --> sign --> close
+```
+
+Phases are drawn as bands across all the lanes, in the order they are declared. Each band has a title strip, on the left of the lanes in `TB` and `BT` diagrams and above them in `LR` and `RL` diagrams.
+
+- Declare a phase before the nodes that use it. A node that names a phase nobody declared is an error.
+- Every node of a phase is drawn after every node of the phase declared before it. An arrow that runs back to an earlier phase is drawn as a return arrow.
+- A node that names no phase goes into a last band without a title.
+- `phase id` without a title uses the id as the title.
+- `phase` is only a keyword in swimlane diagrams. Elsewhere it is an ordinary node id.
+
 ### Nodes
 
 Nodes use flowchart-style shape syntax. The id is written first, and the label is written inside the shape.
