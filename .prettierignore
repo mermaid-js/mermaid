@@ -22,3 +22,6 @@ demos/dev/**
 !/demos/dev/example.html
 # TODO: Lots of errors to fix
 e2e/platform/state-refactor.html
+
+# Generated syntax metadata
+packages/syntax-metadata/src/generated/
