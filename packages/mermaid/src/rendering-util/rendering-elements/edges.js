@@ -162,7 +162,8 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).startLeft = startEdgeLabelLeft;
-    setTerminalWidth(fo, edge.startLabelLeft);
+    setTerminalWidth(fo, edge.startLabelLeft, slBox);
+    recordTerminalLabelSize(edge, 'startLeft', slBox);
   }
   if (edge.startLabelRight) {
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
@@ -189,14 +190,14 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).startRight = startEdgeLabelRight;
-    setTerminalWidth(fo, edge.startLabelRight);
+    setTerminalWidth(fo, edge.startLabelRight, slBox);
+    recordTerminalLabelSize(edge, 'startRight', slBox);
   }
   if (edge.endLabelLeft) {
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
-    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     const endLabelElement = await createLabel(
-      endEdgeLabelLeft,
+      inner,
       edge.endLabelLeft,
       getLabelStyles(edge.labelStyle) || '',
       false,
@@ -217,15 +218,14 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).endLeft = endEdgeLabelLeft;
-    setTerminalWidth(fo, edge.endLabelLeft);
+    setTerminalWidth(fo, edge.endLabelLeft, slBox);
+    recordTerminalLabelSize(edge, 'endLeft', slBox);
   }
   if (edge.endLabelRight) {
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
-    // TODO: Remove? `inner` is not used
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
-
     const endLabelElement = await createLabel(
-      endEdgeLabelRight,
+      inner,
       edge.endLabelRight,
       getLabelStyles(edge.labelStyle) || '',
       false,
@@ -246,51 +246,82 @@ export const insertEdgeLabel = async (elem, edge) => {
       terminalLabels.set(edge.id, {});
     }
     terminalLabels.get(edge.id).endRight = endEdgeLabelRight;
-    setTerminalWidth(fo, edge.endLabelRight);
+    setTerminalWidth(fo, edge.endLabelRight, slBox);
+    recordTerminalLabelSize(edge, 'endRight', slBox);
   }
   return labelElement;
 };
 
 /**
+ * Record a terminal label's measured size so a layout can reserve room for it.
+ * Every terminal label is centred on its group's origin.
+ *
+ * @param {any} edge
+ * @param {import('../types.js').TerminalLabelKey} key
+ * @param {{ width: number, height: number }} box
+ */
+function recordTerminalLabelSize(edge, key, box) {
+  edge.terminalLabelSizes ??= {};
+  edge.terminalLabelSizes[key] = { width: box.width, height: box.height };
+}
+
+/**
  * @param {any} fo
  * @param {any} value
+ * @param {{ width: number, height: number }} box - the measured label
  */
-function setTerminalWidth(fo, value) {
+export function setTerminalWidth(fo, value, box) {
   if (getEffectiveHtmlLabels(getConfig()) && fo) {
-    fo.style.width = value.length * 9 + 'px';
-    fo.style.height = '12px';
+    // Never smaller than the measured text; a fixed 12px height clipped it (#8329).
+    fo.style.width = Math.max(value.length * 9, box.width) + 'px';
+    fo.style.height = box.height + 'px';
   }
 }
 
+/**
+ * Where to put an edge's label along its drawn path.
+ */
+export const resolveEdgeLabelPosition = (edge, paths) => {
+  let x = edge.x;
+  let y = edge.y;
+  if (paths?.updatedPath) {
+    const updatedMid = utils.calcLabelPosition(paths.updatedPath);
+    if (paths.originalPath) {
+      const originalMid = utils.calcLabelPosition(paths.originalPath);
+      x = edge.x + (updatedMid.x - originalMid.x);
+      y = edge.y + (updatedMid.y - originalMid.y);
+    } else {
+      x = updatedMid.x;
+      y = updatedMid.y;
+    }
+  }
+  return { x, y };
+};
+
 export const positionEdgeLabel = (edge, paths) => {
   log.debug('Moving label abc88 ', edge.id, edge.label, edgeLabels.get(edge.id), paths);
-  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(siteConfig);
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
-    let x = edge.x;
-    let y = edge.y;
-    if (path) {
-      const pos = utils.calcLabelPosition(path);
-      log.debug(
-        'Moving label ' + edge.label + ' from (',
-        x,
-        ',',
-        y,
-        ') to (',
-        pos.x,
-        ',',
-        pos.y,
-        ') abc88'
-      );
-      if (paths.updatedPath) {
-        x = pos.x;
-        y = pos.y;
-      }
-    }
+    const { x, y } = resolveEdgeLabelPosition(edge, paths);
+    log.debug(
+      'Moving label ' + edge.label + ' from (',
+      edge.x,
+      ',',
+      edge.y,
+      ') to (',
+      x,
+      ',',
+      y,
+      ') abc88'
+    );
     el.attr('transform', `translate(${x}, ${y + subGraphTitleTotalMargin / 2})`);
   }
+
+  // `path` is still needed below for the terminal-label branches, which only read from it
+  // (they do not themselves reposition the main label).
+  const path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
 
   if (edge.startLabelLeft) {
     const el = terminalLabels.get(edge.id).startLeft;
@@ -598,14 +629,16 @@ export const insertEdge = function (
   startNode,
   endNode,
   diagramId,
-  skipIntersect = false
+  skipIntersect = false,
+  layoutAlgorithm = undefined
 ) {
   if (!diagramId) {
     throw new Error(
       `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
     );
   }
-  const { handDrawnSeed, layout } = getConfig();
+  const { handDrawnSeed, layout: configuredLayout } = getConfig();
+  const layout = layoutAlgorithm ?? configuredLayout;
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = startNode;
@@ -623,7 +656,13 @@ export const insertEdge = function (
   // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
   // clipping below, so their edge ports are unaffected by swimlanes.
   if (layout === 'swimlane') {
-    if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
+    if (
+      !skipIntersect &&
+      head.intersect &&
+      tail.intersect &&
+      Array.isArray(points) &&
+      points.length >= 2
+    ) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
         points = [tail.intersect(points[0]), head.intersect(points[1])];

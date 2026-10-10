@@ -1,0 +1,15 @@
+---
+description: >-
+  Exercises the different edge stroke and arrowhead styles supported in
+  flowchart syntax: a solid arrow, a dotted line ending in a circle, a thick
+  line ending in a cross, and an invisible link, all rendered together under
+  dagre layout.
+config:
+  layout: "dagre"
+---
+
+      flowchart LR
+      A-->B
+      B-.-oC
+      C==xD
+      D ~~~ A

@@ -1,0 +1,11 @@
+---
+description: >-
+  Regression test for issue #7503: a 5-column grid where each row mixes a
+  narrow (`:1`) block with a long text label and a wide (`:4`) block with an
+  even longer label, verifying that the wide, heavily-labeled blocks don't
+  cause the narrow column's width to shrink or misalign across rows.
+---
+block-beta
+  columns 5
+  PA["Paid proceeds (actual) $613"]:1 DEF["Deficit $5,155"]:4
+  CA["Cash back (actual) $128"]:1 SPO["Spoilage (35 unsold) $5,640"]:4

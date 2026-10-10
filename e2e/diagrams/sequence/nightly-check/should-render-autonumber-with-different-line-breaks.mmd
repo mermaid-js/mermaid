@@ -1,0 +1,12 @@
+---
+description: >-
+  Autonumbering combined with messages using different `<br>` line-break tag
+  variants (`<br>`, `<br/>`, `<br />`), checking sequence numbers render
+  correctly alongside multiline message text.
+---
+sequenceDiagram
+  autonumber
+  Alice->>John: Hello John,<br>how are you?
+  Alice->>John: John,<br/>can you hear me?
+  John-->>Alice: Hi Alice,<br />I can hear you!
+  John-->>Alice: I feel great!

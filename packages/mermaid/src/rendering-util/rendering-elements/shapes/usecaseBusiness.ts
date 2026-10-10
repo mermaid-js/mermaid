@@ -59,6 +59,7 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
       useHtmlLabels: node.useHtmlLabels,
       padding: 0,
       centerLabel: true,
+      width: node.wrappingWidth,
     });
     stereotypeLabel = stereotype.label.attr('class', 'label usecase-stereotype');
     stereotypeBox = stereotype.bbox;
@@ -68,8 +69,9 @@ export async function usecaseBusiness<T extends SVGGraphicsElement>(
   const labelHeight = labelBox.height + (stereotypeBox?.height ?? 0) + labelGap;
   const labelWidth = Math.max(labelBox.width, stereotypeBox?.width ?? 0);
   const padding = halfPadding ?? 10;
+  // Same vertical air as `usecaseEllipse`, so both ovals share one silhouette.
   const radiusX = labelWidth / 2 + padding * 2;
-  const radiusY = labelHeight / 2 + padding;
+  const radiusY = labelHeight / 2 + padding * 2;
   const markerInset = Math.min(Math.max(padding / 5, 1), padding / 2);
   const markerStartX = labelWidth / 2 + markerInset;
   const markerEndX = radiusX - markerInset;

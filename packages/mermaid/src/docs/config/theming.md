@@ -30,7 +30,7 @@ Themes can now be customized at the site-wide level, or on individual Mermaid di
 
 ## Per-diagram defaults
 
-Not every diagram type defaults to the same theme and look. Since v<MERMAID_RELEASE_VERSION>
+Not every diagram type defaults to the same theme and look. Since v12.0.0
 these do, to the `redux-color` theme and the `neo` look. The name on the left is the **config key** — what you write to
 scope a setting to that diagram, which is not always the keyword the diagram starts with:
 

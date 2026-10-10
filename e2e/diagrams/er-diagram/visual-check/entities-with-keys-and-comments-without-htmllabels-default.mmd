@@ -1,0 +1,18 @@
+---
+description: >-
+  Attributes combining a key marker and a comment on the same line, with
+  htmlLabels disabled.
+config:
+  htmlLabels: false
+---
+erDiagram
+  AUTHOR_WITH_LONG_ENTITY_NAME {
+    string name PK "comment"
+  }
+  AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+  BOOK {
+      string description
+      float price "price comment"
+      string title PK "title comment"
+      string author FK
+    }

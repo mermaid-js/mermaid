@@ -1,0 +1,17 @@
+---
+description: >-
+  Participants that declare both an inline `"alias"` field in the `@{...}`
+  metadata and an external `as`/`AS` alias, verifying the external alias
+  ("External Name" / "External DB") takes priority and is what actually
+  renders.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant API@{ "type" : "boundary", "alias": "Internal Name" } as External Name
+  participant DB@{ "type" : "database", "alias": "Internal DB" } AS External DB
+  API ->> DB: Query
+  DB -->> API: Result

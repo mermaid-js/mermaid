@@ -1,0 +1,24 @@
+---
+description: >-
+  Self-referencing reverse arrows (solid/stick, top/bottom, dotted) with a
+  circle marker at the destination end only, autonumber disabled - the
+  no-autonumber counterpart of should-render-self-reference-with-reverse-
+  arrows-and-central-connection-with-autonumber.mmd.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice/|-()Alice: Solid top reverse with circle at destination
+  Bob\|-()Bob: Solid bottom reverse with circle at destination
+  Charlie//-()Charlie: Stick top reverse with circle at destination
+  Alice\\-()Alice: Stick bottom reverse with circle at destination
+  Bob/|--()Bob: Dotted solid top reverse with circle at destination
+  Charlie\|--()Charlie: Dotted solid bottom reverse with circle at destination
+  Alice//--()Alice: Dotted stick top reverse with circle at destination
+  Bob\\--()Bob: Dotted stick bottom reverse with circle at destination

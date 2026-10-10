@@ -1,0 +1,32 @@
+---
+description: >-
+  Legacy v1 state diagram chaining two sibling composite states (TV, then
+  Console) at the top level, where Console itself contains a further
+  nested composite state (Playing), exercising multiple composite states
+  plus three levels of nesting in one diagram.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*]-->TV
+
+  state TV {
+  [*] --> Off: Off to start with
+  On --> Off : Turn off
+  Off --> On : Turn on
+  }
+
+  TV--> Console
+
+  state Console {
+  [*] --> Off2: Off to start with
+  On2--> Off2 : Turn off
+  Off2 --> On2 : Turn on
+  On2-->Playing
+
+  state Playing {
+    Alive --> Dead
+    Dead-->Alive
+   }
+  }

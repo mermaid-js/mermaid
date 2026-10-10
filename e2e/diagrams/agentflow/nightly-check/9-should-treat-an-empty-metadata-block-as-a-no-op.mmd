@@ -1,0 +1,16 @@
+---
+description: >-
+  Regression test for empty `@{ }` metadata blocks (one multi-line, one
+  single-line with only whitespace) which used to crash the whole diagram
+  with "Cannot read properties of null (reading 'shape')"; they should be
+  treated as a no-op alongside a normally-shaped node.
+---
+%% Regression: an empty multi-line `@{ }` block used to crash the whole
+%% diagram with "Cannot read properties of null (reading 'shape')".
+agentflow-beta TB
+  newtask["Example"]@{
+}
+  other["Other"]@{   }
+  newtask --> other
+  styled["Styled"]@{ shape: task }
+  other --> styled

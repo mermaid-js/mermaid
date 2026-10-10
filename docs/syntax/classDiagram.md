@@ -72,9 +72,9 @@ classDiagram
     }
 ```
 
-## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
+## Default theme, look and layout (v12.0.0+)
 
-Class diagrams use the `redux-color` theme and the `neo` look by default. Not every diagram type
+Class diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
 
@@ -138,6 +138,7 @@ in a diagram's front matter draws it the way Mermaid did before:
 config:
   theme: default
   look: classic
+  layout: dagre
 ---
 classDiagram
   class Customer {
@@ -166,6 +167,7 @@ classDiagram
 config:
   theme: default
   look: classic
+  layout: dagre
 ---
 classDiagram
   class Customer {
@@ -189,9 +191,9 @@ classDiagram
   Order --> Payment : settled by
 ```
 
-Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
-and scoping them to one diagram type — `mermaid.initialize({ class: { theme: 'default', look: 'classic' } })` —
-does it for that type alone.
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', class: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
 
 ## Syntax
 

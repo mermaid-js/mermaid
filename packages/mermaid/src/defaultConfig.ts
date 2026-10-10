@@ -33,12 +33,12 @@ const config: RequiredDeep<MermaidConfig> = {
     layeringStrategy: undefined,
     cycleBreakingStrategy: undefined,
     layeringLayerBound: 4,
-    // Brandes-Koepf specific; inert unless nodePlacementStrategy is set back to it.
-    nodePlacementAlignment: 'NONE',
+    nodePlacementAlignment: undefined,
 
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
     keepEntryNodeOnTop: false,
+    orientFeedbackEdges: true,
   },
   themeCSS: undefined,
 
@@ -76,7 +76,6 @@ const config: RequiredDeep<MermaidConfig> = {
     theme: defaultConfigJson.class?.theme,
     look: defaultConfigJson.class?.look,
     layout: defaultConfigJson.class?.layout,
-    defaultRenderer: 'dagre-wrapper',
     hideEmptyMembersBox: false,
     hierarchicalNamespaces: true,
   },

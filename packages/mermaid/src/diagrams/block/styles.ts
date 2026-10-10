@@ -14,6 +14,7 @@ export interface BlockChartStyleOptions {
   mainBkg: string;
   nodeBorder: string;
   nodeTextColor: string;
+  strokeWidth?: number;
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
@@ -101,7 +102,11 @@ const getStyles = (options: BlockChartStyleOptions) =>
   .node path {
     fill: ${options.mainBkg};
     stroke: ${options.nodeBorder};
-    stroke-width: 1px;
+    /* From the theme, as every other diagram does. Pinned at 1px here, so block drew a
+       thinner border than an identical flowchart node under any theme asking for more --
+       the neo theme asks for 2. Nothing downstream corrected it: the neo rules set stroke
+       and filter, never stroke-width. */
+    stroke-width: ${options.strokeWidth ?? 1}px;
   }
   .flowchart-label text {
     text-anchor: middle;
