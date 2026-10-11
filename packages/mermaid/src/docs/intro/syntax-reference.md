@@ -40,7 +40,7 @@ One should **beware the use of some words or symbols** that can break diagrams. 
 | [`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968)                      | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
 | **Flow-Charts**                                                                      |                                                                         |                                                   |
 | 'end'                                                                                | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
-| [Nodes inside Nodes](../syntax/flowchart.md?id=special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
+| [Nodes inside Nodes](../syntax/flowchart.md#special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
 
 ## Mermaid Live Editor
 
