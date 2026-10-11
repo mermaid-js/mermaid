@@ -36,12 +36,12 @@ describe('Nodes named click', () => {
       expect(flowDb.getEdges()[0]).toMatchObject({ start: 'click', end: 'abc' });
     });
 
-    it('preserves click commands targeting a node named &', () => {
+    it.each(['&', '&a'])('preserves click commands targeting a node named %s', (nodeId) => {
       const setClickEvent = vi.spyOn(flowDb, 'setClickEvent');
-      flow.parser.parse(`flowchart LR\n& --> B\nclick${whitespace}& callback`);
+      flow.parser.parse(`flowchart LR\n${nodeId} --> B\nclick${whitespace}${nodeId} callback`);
 
-      expect(setClickEvent).toHaveBeenCalledWith('&', 'callback');
-      expect([...flowDb.getVertices().keys()]).toEqual(['&', 'B']);
+      expect(setClickEvent).toHaveBeenCalledWith(nodeId, 'callback');
+      expect([...flowDb.getVertices().keys()]).toEqual([nodeId, 'B']);
       expect(flowDb.getEdges()).toHaveLength(1);
     });
 
