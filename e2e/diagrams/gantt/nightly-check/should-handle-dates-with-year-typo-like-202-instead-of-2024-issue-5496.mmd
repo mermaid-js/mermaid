@@ -1,0 +1,16 @@
+---
+description: >-
+  Regression test for issue #5496 — a task uses a mistyped 3-digit year
+  ("202-12-01" instead of "2024-12-01") alongside a correctly-dated
+  task with the same label, verifying the parser handles the malformed
+  year gracefully.
+---
+gantt
+  title Schedule
+  dateFormat YYYY-MM-DD
+  tickInterval 1week
+  axisFormat %m-%d
+
+  section Vacation
+  London : 2024-12-01, 7d
+  London : 202-12-01, 7d

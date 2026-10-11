@@ -1,0 +1,37 @@
+---
+description: >-
+  Use-case diagram covering every themed element (actor, hollow actor, business
+  actor, use case, boundary, note, json block, include relationship) under the
+  "redux-color" theme. Deliberately carries no classDef/style overrides, so
+  every colour on screen comes from theme variables — exercises clusterBkg
+  (system boundary), note background/border, and actor/use-case fills.
+config:
+  theme: redux-color
+  usecase:
+    diagramPadding: 24
+    useMaxWidth: true
+---
+usecase-beta
+  accTitle: Themed use case example
+  accDescr: Exercises every themed element without any inline style overrides.
+  actor Normal("Normal User")
+  actor Hollow@{ type: hollow }
+  actor Business@{ business: true }
+
+  systemBoundary "Authentication System"
+    Login("Sign in")
+    Reset[Reset password]
+  end
+
+  Checkout("Checkout")@{ business: true }
+  Normal --> Login
+  Hollow --o Reset
+  Business --> Checkout
+  Login ..> : include Checkout
+  note for Login "Requires an active session"
+
+  json Payload@{
+    "region": "eu",
+    "tags": ["Red", "Green"]
+  }
+  Checkout --> Payload

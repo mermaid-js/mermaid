@@ -1,0 +1,15 @@
+---
+description: >-
+  State1 branches out to two sibling states (State2, State3) and also
+  transitions directly to the end state [*] - a simple fan-out plus
+  early-exit shape, distinguishing it from the single-path variant in
+  v2-should-render-a-simple-state-diagrams.mmd.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  [*] --> State1
+  State1 --> State2
+  State1 --> State3
+  State1 --> [*]

@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a classDef applied to several nodes via a class statement
+  correctly sets fill, text color, font-weight, and stroke on each of them,
+  under the hand-drawn look.
+config:
+  look: handDrawn
+  fontFamily: courier
+---
+graph TD
+  1A --> 1B
+  1B --> 1C
+  1C --> D
+  1C --> E
+
+  classDef processHead fill:#888888,color:white,font-weight:bold,stroke-width:3px,stroke:#001f3f
+  class 1A,1B,D,E processHead

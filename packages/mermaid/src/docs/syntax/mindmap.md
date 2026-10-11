@@ -110,6 +110,70 @@ mindmap
 
 More shapes will be added, beginning with the shapes available in flowcharts.
 
+## Coloring by depth (v<MERMAID_RELEASE_VERSION>+)
+
+By default, mindmaps use a different color for each top-level branch. Descendants inherit their branch's color. Set `mindmap.colorBy` to `depth` to give all nodes at the same hierarchy level the same color, across every branch:
+
+```mermaid-example
+---
+config:
+  mindmap:
+    colorBy: depth
+---
+mindmap
+  root((mindmap))
+    origins{{Origins}}
+      history[Long history]
+        Popularisation
+        British popular psychology author Tony Buzan
+    research{{Research}}
+      uses[Uses]
+        Creative techniques
+```
+
+Depth counts parent-child relationships, not spaces: the root has depth 0, its children have depth 1, and their children have depth 2. Uneven indentation does not change the color of nodes that share a depth.
+
+With the classic look, the root uses `git0` for its background and `gitBranchLabel0` for its label (`redux` themes color HTML labels with `nodeBorder` instead). Depths 1 through 11 use `cScale1` through `cScale11` for backgrounds and `cScaleLabel1` through `cScaleLabel11` for labels. Deeper levels repeat those eleven colors. Each edge uses the `cScale` color of its child node.
+
+To choose the color of each level, set those variables with the `base` theme and pick contrasting background and label colors. The `neo` look colors the root label with `cScaleLabel0`, so set it too. In the `neo` look, also set `useGradient: false`, because otherwise `base` paints every node with `mainBkg`:
+
+```mermaid-example
+---
+config:
+  theme: base
+  mindmap:
+    colorBy: depth
+  themeVariables:
+    git0: '#374151'
+    gitBranchLabel0: '#ffffff'
+    cScaleLabel0: '#ffffff'
+    cScale1: '#bfdbfe'
+    cScaleLabel1: '#172554'
+    cScale2: '#bbf7d0'
+    cScaleLabel2: '#14532d'
+    cScale3: '#fde68a'
+    cScaleLabel3: '#451a03'
+---
+mindmap
+  root((mindmap))
+    origins{{Origins}}
+      history[Long history]
+        Popularisation
+        British popular psychology author Tony Buzan
+    research{{Research}}
+      uses[Uses]
+        Creative techniques
+```
+
+Depth mode uses the same theme styles as branch coloring and only changes which nodes share a color. In the `neo` look, some themes use one background for every node in both modes:
+
+- Themes with `useGradient` enabled paint every node, including the root, with `mainBkg`. It is on by default in `base`, `dark`, `forest`, `neo`, `neo-dark` and `neutral`. Set `themeVariables.useGradient: false` to show depth colors on node backgrounds.
+- `neutral`, `redux` and `redux-dark` paint every node below the root with `mainBkg` even without the gradient, and use one label color for all of them.
+
+In the `neo` look, the root label uses `cScaleLabel0` (`cScaleLabel1` in `neutral`, `nodeBorder` in `redux` themes). Edges keep their depth colors, except in `neo-dark` and the `redux` themes.
+
+Set `mindmap.colorBy` to `branch` (the default) to restore branch coloring.
+
 # Icons and classes
 
 ## Icons

@@ -1,0 +1,11 @@
+---
+description: >-
+  Entities styled via classDef + `class` statement, plus one entity's inline
+  `:::blue` shorthand.
+---
+erDiagram
+      c[CUSTOMER]
+      p[PERSON]:::blue
+      classDef bold font-size:24px, font-weight: bold
+      classDef blue stroke:lightblue, color: #0000FF
+      class c,p bold

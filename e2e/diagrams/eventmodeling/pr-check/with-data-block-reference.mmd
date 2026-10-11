@@ -1,0 +1,18 @@
+---
+description: >-
+  A command carrying inline data (`{ productId: 7 }`) and an event
+  referencing a separate named `data` block (`[[ItemAddedData]]`) defined
+  later in the diagram — verifies both inline and referenced data-block
+  syntax.
+---
+eventmodeling
+
+tf 01 ui CartScreen
+tf 02 cmd AddItem { productId: 7 }
+tf 03 evt ItemAdded [[ItemAddedData]]
+
+data ItemAddedData
+{
+  productId: 7,
+  quantity: 1
+}
