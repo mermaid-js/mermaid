@@ -36,14 +36,13 @@ describe('Nodes named click', () => {
       expect(flowDb.getEdges()[0]).toMatchObject({ start: 'click', end: 'abc' });
     });
 
-    it('supports click in a group of source nodes', () => {
-      flow.parser.parse(`flowchart LR\nclick${whitespace}& A --> B;`);
+    it('preserves click commands targeting a node named &', () => {
+      const setClickEvent = vi.spyOn(flowDb, 'setClickEvent');
+      flow.parser.parse(`flowchart LR\n& --> B\nclick${whitespace}& callback`);
 
-      expect([...flowDb.getVertices().keys()]).toEqual(['click', 'A', 'B']);
-      expect(flowDb.getEdges()).toMatchObject([
-        { start: 'click', end: 'B' },
-        { start: 'A', end: 'B' },
-      ]);
+      expect(setClickEvent).toHaveBeenCalledWith('&', 'callback');
+      expect([...flowDb.getVertices().keys()]).toEqual(['&', 'B']);
+      expect(flowDb.getEdges()).toHaveLength(1);
     });
 
     it.each(['callback', 'call callback()'])('preserves the %s click command', (command) => {
