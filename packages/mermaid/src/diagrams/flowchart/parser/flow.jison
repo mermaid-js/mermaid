@@ -143,7 +143,7 @@ that id.
 .*direction\s+LR[^\n]*       return 'direction_lr';
 .*direction\s+TD[^\n]*       return 'direction_td';
 
-[^\s\"]+\@(?=[^\{\"])               { return 'LINK_ID'; }
+[^\s\"\[\]\(\)\{\}\|]+\@(?=[^\{\"])   { return 'LINK_ID'; }
 [0-9]+                       return 'NUM';
 \#                           return 'BRKT';
 ":::"                        return 'STYLE_SEPARATOR';
@@ -402,6 +402,8 @@ shapeData:
 
 vertexStatement: vertexStatement link node shapeData
         { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    | vertexStatement link node shapeData spaceList
+        { yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     | vertexStatement link node
         { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
@@ -409,6 +411,10 @@ vertexStatement: vertexStatement link node shapeData
     |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
     |node shapeData {
         /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
+        yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
+        $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
+    }
+    |node shapeData spaceList {
         yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
         $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
     }
