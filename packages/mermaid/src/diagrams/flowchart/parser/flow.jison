@@ -109,7 +109,9 @@ line was introduced with 'click'.
 that id.
 'click <id>' can be followed by href or call commands in any desired order
 */
-"click"[\s]+             this.begin("click");
+// Leave edges and node groups to the normal node rules. Reject whitespace too,
+// so the match cannot backtrack to a shorter run of spaces before an edge.
+"click"[\s]+(?![\s&]|[xo<]?(\-\-|\=\=|\-\.|\.+\-)|\~\~\~)    this.begin("click");
 <click>[\s\n]            this.popState();
 <click>[^\s\n]*          return 'CLICK';
 
