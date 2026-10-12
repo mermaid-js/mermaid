@@ -539,6 +539,33 @@ describe('when using the ganttDb', function () {
     expect(ganttDb.getTodayMarker()).toEqual(expected);
   });
 
+  describe('when the date format has a UTC offset (issue #7026)', function () {
+    it('should parse dates whose offset differs from the local timezone', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD HH:mm ZZ');
+      ganttDb.addSection('offsets');
+      ganttDb.addTask('test1', 'id1,2025-10-16 00:00 -0800,2025-10-17 12:00 -0800');
+      ganttDb.addTask('test2', 'id2,2025-10-16 00:00 +0530,1d');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].startTime.toISOString()).toEqual('2025-10-16T08:00:00.000Z');
+      expect(tasks[0].endTime.toISOString()).toEqual('2025-10-17T20:00:00.000Z');
+      expect(tasks[1].startTime.toISOString()).toEqual('2025-10-15T18:30:00.000Z');
+    });
+    it('should accept offsets written with a colon or as "Z"', function () {
+      ganttDb.setDateFormat('YYYY-MM-DDTHH:mm:ssZ');
+      ganttDb.addSection('offsets');
+      ganttDb.addTask('test1', 'id1,2025-10-16T00:00:00-08:00,2025-10-16T12:00:00Z');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].startTime.toISOString()).toEqual('2025-10-16T08:00:00.000Z');
+      expect(tasks[0].endTime.toISOString()).toEqual('2025-10-16T12:00:00.000Z');
+    });
+    it('should still reject dates that do not match the date format', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD HH:mm ZZ');
+      ganttDb.addSection('offsets');
+      ganttDb.addTask('test1', 'id1,2025-13-16 00:00 -0800,1d');
+      expect(() => ganttDb.getTasks()).toThrowError('Invalid date:2025-13-16 00:00 -0800');
+    });
+  });
+
   it('should reject dates with ridiculous years', function () {
     ganttDb.setDateFormat('YYYYMMDD');
     ganttDb.addTask('test1', 'id1,202304,1d');
