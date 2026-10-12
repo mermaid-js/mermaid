@@ -52,4 +52,5 @@ dictionaries:
 ignorePaths:
   - '*.txt' # do not spell check local dictionaries
 
+
 # cspell:dictionary misc-terms

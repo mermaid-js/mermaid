@@ -16,6 +16,6 @@ Defined in: [packages/mermaid/src/rendering-util/render.ts:12](https://github.co
 
 ### algorithm?
 
-> `optional` **algorithm**: `string`
+> `optional` **algorithm?**: `string`
 
 Defined in: [packages/mermaid/src/rendering-util/render.ts:13](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/render.ts#L13)

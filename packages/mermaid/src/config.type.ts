@@ -220,11 +220,7 @@ export interface MermaidConfig {
      *
      */
     cycleBreakingStrategy?:
-      | 'GREEDY'
-      | 'DEPTH_FIRST'
-      | 'INTERACTIVE'
-      | 'MODEL_ORDER'
-      | 'GREEDY_MODEL_ORDER';
+      'GREEDY' | 'DEPTH_FIRST' | 'INTERACTIVE' | 'MODEL_ORDER' | 'GREEDY_MODEL_ORDER';
     /**
      * The node order given by the model does not change to produce a better layout. E.g. if node A is before node B in the model this is not changed during crossing minimization. This assumes that the node model order is already respected before crossing minimization. This can be achieved by setting considerModelOrder.strategy to NODES_AND_EDGES.
      *

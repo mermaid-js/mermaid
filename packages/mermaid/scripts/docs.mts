@@ -366,8 +366,7 @@ export function transformMarkdownAst({
       const filePathFromRoot = posix.join('packages/mermaid', originalFilename);
       yamlFrontMatter.value = dump({
         ...(load(yamlFrontMatter.value, { schema: JSON_SCHEMA }) as
-          | Record<string, unknown>
-          | undefined),
+          Record<string, unknown> | undefined),
         editLink: `https://github.com/mermaid-js/mermaid/edit/develop/${filePathFromRoot}`,
       });
     }

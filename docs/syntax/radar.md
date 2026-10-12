@@ -184,8 +184,7 @@ Please refer to the [configuration](/config/schema-docs/config-defs-radar-diagra
 > themeVariables:
 > cScale0: "#FF0000"
 > cScale1: "#00FF00"
->
-> ---
+> ------------------
 
 Radar charts support the color scales `cScale${i}` where `i` is a number from `0` to the theme's maximum number of colors in its color scale. Usually, the maximum number of colors is `12`.
 
@@ -206,8 +205,7 @@ Radar charts support the color scales `cScale${i}` where `i` is a number from `0
 > themeVariables:
 > radar:
 > axisColor: "#FF0000"
->
-> ---
+> --------------------
 
 | Property             | Description                  | Default Value |
 | -------------------- | ---------------------------- | ------------- |

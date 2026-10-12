@@ -566,8 +566,7 @@ export function liftObstacleHuggingSameSideRails(
   const middleRail = (
     points: PointLite[]
   ):
-    | { index: number; horizontal: boolean; vertical: boolean; segment: SegmentLite }
-    | undefined => {
+    { index: number; horizontal: boolean; vertical: boolean; segment: SegmentLite } | undefined => {
     const segments = segmentsFor(points);
     if (segments.length !== 3) {
       return undefined;

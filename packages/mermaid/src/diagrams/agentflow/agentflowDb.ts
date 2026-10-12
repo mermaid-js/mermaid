@@ -628,8 +628,7 @@ export class AgentFlowDB implements DiagramDB {
     // `translation` stays undefined and the original error is rethrown
     // untouched — never a half-rewritten one.
     let translation:
-      | { message: string; markLine: number; markColumn: number; hash: unknown }
-      | undefined;
+      { message: string; markLine: number; markColumn: number; hash: unknown } | undefined;
     try {
       const isInline = !metadata.includes('\n');
       // Buffer the DB actually handed to yaml.load — kept in lock-step with the

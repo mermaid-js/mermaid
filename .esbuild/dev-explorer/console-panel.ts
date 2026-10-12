@@ -257,20 +257,22 @@ export class DevConsolePanel extends LitElement {
           </sl-button>
         </div>
         <div class="console-body">
-          ${visible.length === 0
-            ? html`<div class="empty">No logs yet.</div>`
-            : visible.map((l) => {
-                const lvl = displayLevel(l);
-                return html`
-                  <div class="logline">
-                    <div class="logmeta">
-                      <sl-badge variant=${displayVariant(lvl)}>${lvl}</sl-badge>
-                      <span class="path">${formatTs(l.ts)}</span>
+          ${
+            visible.length === 0
+              ? html`<div class="empty">No logs yet.</div>`
+              : visible.map((l) => {
+                  const lvl = displayLevel(l);
+                  return html`
+                    <div class="logline">
+                      <div class="logmeta">
+                        <sl-badge variant=${displayVariant(lvl)}>${lvl}</sl-badge>
+                        <span class="path">${formatTs(l.ts)}</span>
+                      </div>
+                      <div>${l.message}</div>
                     </div>
-                    <div>${l.message}</div>
-                  </div>
-                `;
-              })}
+                  `;
+                })
+          }
         </div>
       </div>
     `;

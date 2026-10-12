@@ -55,10 +55,10 @@ export const clear = () => {
 export const hasEdgeLabel = (edge) =>
   Boolean(
     edge.label ||
-      edge.startLabelLeft ||
-      edge.startLabelRight ||
-      edge.endLabelLeft ||
-      edge.endLabelRight
+    edge.startLabelLeft ||
+    edge.startLabelRight ||
+    edge.endLabelLeft ||
+    edge.endLabelRight
   );
 
 export const getLabelStyles = (styleArray) => {

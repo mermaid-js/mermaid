@@ -210,12 +210,18 @@ export class DevFileExplorer extends LitElement {
       </div>
 
       <div class="content">
-        ${this.error
-          ? html`<div class="empty">Error: <span class="path">${this.error}</span></div>`
-          : nothing}
-        ${!this.error && !this.loading && this.entries.length === 0
-          ? html`<div class="empty">No folders or <span class="path">.mmd</span> files here.</div>`
-          : nothing}
+        ${
+          this.error
+            ? html`<div class="empty">Error: <span class="path">${this.error}</span></div>`
+            : nothing
+        }
+        ${
+          !this.error && !this.loading && this.entries.length === 0
+            ? html`<div class="empty">
+                No folders or <span class="path">.mmd</span> files here.
+              </div>`
+            : nothing
+        }
 
         <div class="list">
           ${this.entries.map((e) => {
@@ -273,11 +279,13 @@ export class DevFileExplorer extends LitElement {
               }
             }}
           ></sl-input>
-          ${this.createError
-            ? html`<div class="empty" style="color: var(--sl-color-danger-600, #b00020);">
-                ${this.createError}
-              </div>`
-            : nothing}
+          ${
+            this.createError
+              ? html`<div class="empty" style="color: var(--sl-color-danger-600, #b00020);">
+                  ${this.createError}
+                </div>`
+              : nothing
+          }
         </div>
         <sl-button slot="footer" variant="default" @click=${() => this.#closeCreate()}>
           Cancel

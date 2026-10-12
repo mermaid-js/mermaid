@@ -16,7 +16,7 @@ Defined in: [packages/mermaid/src/types.ts:96](https://github.com/mermaid-js/mer
 
 ### suppressErrors?
 
-> `optional` **suppressErrors**: `boolean`
+> `optional` **suppressErrors?**: `boolean`
 
 Defined in: [packages/mermaid/src/types.ts:101](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/types.ts#L101)
 

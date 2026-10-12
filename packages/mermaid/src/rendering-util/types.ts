@@ -249,15 +249,7 @@ export interface RenderData {
 // This refactored approach ensures that common properties are included in the base `Node` and `Edge` interfaces, with specific types extending these bases with additional properties as needed. This maintains flexibility while ensuring type safety and reducing redundancy.
 
 export type LayoutMethod =
-  | 'dagre'
-  | 'dagre-wrapper'
-  | 'elk'
-  | 'neato'
-  | 'dot'
-  | 'circo'
-  | 'fdp'
-  | 'osage'
-  | 'grid';
+  'dagre' | 'dagre-wrapper' | 'elk' | 'neato' | 'dot' | 'circo' | 'fdp' | 'osage' | 'grid';
 
 export interface ShapeRenderOptions {
   config: MermaidConfig;

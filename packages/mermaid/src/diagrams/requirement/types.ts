@@ -22,13 +22,7 @@ export interface Requirement {
 }
 
 export type RelationshipType =
-  | 'contains'
-  | 'copies'
-  | 'derives'
-  | 'satisfies'
-  | 'verifies'
-  | 'refines'
-  | 'traces';
+  'contains' | 'copies' | 'derives' | 'satisfies' | 'verifies' | 'refines' | 'traces';
 
 export interface Relation {
   type: RelationshipType;

@@ -1293,11 +1293,13 @@ export class DevDiagramViewer extends LitElement {
         <div style="min-width: 0;">
           <div class="title">
             Diagram
-            ${this.#siblingIndex >= 0 && this.siblings.length > 0
-              ? html`<span class="subtle"
-                  >(${this.#siblingIndex + 1}/${this.siblings.length})</span
-                >`
-              : nothing}
+            ${
+              this.#siblingIndex >= 0 && this.siblings.length > 0
+                ? html`<span class="subtle"
+                    >(${this.#siblingIndex + 1}/${this.siblings.length})</span
+                  >`
+                : nothing
+            }
           </div>
           <div class="path">${this.filePath}</div>
         </div>
@@ -1399,9 +1401,11 @@ export class DevDiagramViewer extends LitElement {
         ${this.loading ? html`<div class="subtle">rendering…</div>` : nothing}
       </div>
 
-      ${this.error
-        ? html`<div class="empty">Error: <span class="path">${this.error}</span></div>`
-        : nothing}
+      ${
+        this.error
+          ? html`<div class="empty">Error: <span class="path">${this.error}</span></div>`
+          : nothing
+      }
 
       <div class="content">
         <sl-tab-group
@@ -1654,54 +1658,64 @@ export class DevDiagramViewer extends LitElement {
             size="small"
             variant="primary"
             ?loading=${this.profileRunning}
-            ?disabled=${this.profileRunning ||
-            this.profileLayouts.length === 0 ||
-            (this.profileScope === 'diagram' && !this.source)}
+            ?disabled=${
+              this.profileRunning ||
+              this.profileLayouts.length === 0 ||
+              (this.profileScope === 'diagram' && !this.source)
+            }
             @click=${() => void this.#runProfile()}
           >
             <sl-icon slot="prefix" name="stopwatch"></sl-icon>
             Run profile
           </sl-button>
-          ${this.profileRunning
-            ? html`
-                <sl-button size="small" variant="default" @click=${() => this.#cancelProfile()}>
-                  Stop
-                </sl-button>
-                <span class="subtle">${this.profileProgress}</span>
-              `
-            : nothing}
+          ${
+            this.profileRunning
+              ? html`
+                  <sl-button size="small" variant="default" @click=${() => this.#cancelProfile()}>
+                    Stop
+                  </sl-button>
+                  <span class="subtle">${this.profileProgress}</span>
+                `
+              : nothing
+          }
         </div>
 
-        ${this.profileError
-          ? html`<div class="empty">Error: <span class="path">${this.profileError}</span></div>`
-          : nothing}
-        ${this.profileResults?.length
-          ? html`
-              <div class="profile-actions">
-                <sl-button
-                  size="small"
-                  variant="default"
-                  ?disabled=${this.profileRunning}
-                  @click=${() => void this.#copyProfileJson()}
-                >
-                  <sl-icon slot="prefix" name="clipboard"></sl-icon>
-                  Copy JSON
-                </sl-button>
-                ${this.profileCopyMsg
-                  ? html`<span class="subtle">${this.profileCopyMsg}</span>`
-                  : nothing}
-              </div>
-              ${this.#renderProfileTable(this.profileResults)}
-            `
-          : !this.profileRunning && !this.profileError
-            ? html`<div class="subtle">
-                Pick layouts and a scope, then “Run profile”. Each
-                ${this.profileScope === 'folder' ? 'diagram in the folder' : 'run'} renders
-                ${this.profileIterations}× per layout; the fastest and slowest runs are dropped and
-                the rest averaged. The score is total render time across the set (lower is better),
-                so you can track optimizations.
-              </div>`
-            : nothing}
+        ${
+          this.profileError
+            ? html`<div class="empty">Error: <span class="path">${this.profileError}</span></div>`
+            : nothing
+        }
+        ${
+          this.profileResults?.length
+            ? html`
+                <div class="profile-actions">
+                  <sl-button
+                    size="small"
+                    variant="default"
+                    ?disabled=${this.profileRunning}
+                    @click=${() => void this.#copyProfileJson()}
+                  >
+                    <sl-icon slot="prefix" name="clipboard"></sl-icon>
+                    Copy JSON
+                  </sl-button>
+                  ${
+                    this.profileCopyMsg
+                      ? html`<span class="subtle">${this.profileCopyMsg}</span>`
+                      : nothing
+                  }
+                </div>
+                ${this.#renderProfileTable(this.profileResults)}
+              `
+            : !this.profileRunning && !this.profileError
+              ? html`<div class="subtle">
+                  Pick layouts and a scope, then “Run profile”. Each
+                  ${this.profileScope === 'folder' ? 'diagram in the folder' : 'run'} renders
+                  ${this.profileIterations}× per layout; the fastest and slowest runs are dropped
+                  and the rest averaged. The score is total render time across the set (lower is
+                  better), so you can track optimizations.
+                </div>`
+              : nothing
+        }
       </div>
     `;
   }
@@ -1730,9 +1744,9 @@ export class DevDiagramViewer extends LitElement {
             ${results.map(
               (r) =>
                 html`<th>
-                  ${r.layout}${r.failures
-                    ? html`<span class="profile-fail"> ⚠${r.failures}</span>`
-                    : nothing}
+                  ${r.layout}${
+                    r.failures ? html`<span class="profile-fail"> ⚠${r.failures}</span>` : nothing
+                  }
                 </th>`
             )}
           </tr>
@@ -1782,44 +1796,48 @@ export class DevDiagramViewer extends LitElement {
         </tbody>
       </table>
 
-      ${multi
-        ? html`
-            <div class="profile-meta">per-diagram total (ms)</div>
-            <table class="profile-table">
-              <thead>
-                <tr>
-                  <th class="phase">diagram</th>
-                  ${results.map((r) => html`<th>${r.layout}</th>`)}
-                </tr>
-              </thead>
-              <tbody>
-                ${diagrams.map((d, di) => {
-                  const rowVals = results
-                    .map((r) => r.perDiagram[di]?.stats?.total)
-                    .filter((v): v is number => typeof v === 'number');
-                  const bestVal = rowVals.length ? Math.min(...rowVals) : NaN;
-                  return html`
-                    <tr>
-                      <th class="phase">${baseName(d.diagram)}</th>
-                      ${results.map((r) => {
-                        const dr = r.perDiagram[di];
-                        const v = dr?.stats?.total;
-                        const isBest = typeof v === 'number' && v === bestVal;
-                        return html`<td class=${isBest ? 'best' : ''}>
-                          ${dr?.stats
-                            ? fmtMs(v!)
-                            : dr?.failures
-                              ? html`<span class="profile-fail">fail</span>`
-                              : '–'}
-                        </td>`;
-                      })}
-                    </tr>
-                  `;
-                })}
-              </tbody>
-            </table>
-          `
-        : nothing}
+      ${
+        multi
+          ? html`
+              <div class="profile-meta">per-diagram total (ms)</div>
+              <table class="profile-table">
+                <thead>
+                  <tr>
+                    <th class="phase">diagram</th>
+                    ${results.map((r) => html`<th>${r.layout}</th>`)}
+                  </tr>
+                </thead>
+                <tbody>
+                  ${diagrams.map((d, di) => {
+                    const rowVals = results
+                      .map((r) => r.perDiagram[di]?.stats?.total)
+                      .filter((v): v is number => typeof v === 'number');
+                    const bestVal = rowVals.length ? Math.min(...rowVals) : NaN;
+                    return html`
+                      <tr>
+                        <th class="phase">${baseName(d.diagram)}</th>
+                        ${results.map((r) => {
+                          const dr = r.perDiagram[di];
+                          const v = dr?.stats?.total;
+                          const isBest = typeof v === 'number' && v === bestVal;
+                          return html`<td class=${isBest ? 'best' : ''}>
+                            ${
+                              dr?.stats
+                                ? fmtMs(v!)
+                                : dr?.failures
+                                  ? html`<span class="profile-fail">fail</span>`
+                                  : '–'
+                            }
+                          </td>`;
+                        })}
+                      </tr>
+                    `;
+                  })}
+                </tbody>
+              </table>
+            `
+          : nothing
+      }
     `;
   }
 }
