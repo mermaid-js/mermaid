@@ -327,16 +327,18 @@ const parseDateStrict = function (str, dateFormat) {
   if (!offsetMatch || !looseDate.isValid()) {
     return date;
   }
-  const [offsetText, sign, hours, minutes] = offsetMatch;
-  const offset = offsetText === 'Z' ? 0 : (sign === '-' ? -1 : 1) * (+hours * 60 + +minutes);
-  const formatted = looseDate.utcOffset(offset).format(format);
-  // dayjs formats a zero offset as "+00:00" or "+0000", never as "Z"
-  const candidates =
-    offsetText === 'Z'
-      ? ['+00:00', '+0000'].map(
-          (zero) => str.slice(0, offsetMatch.index) + zero + str.slice(offsetMatch.index + 1)
-        )
-      : [str];
+  const [offsetText, sign, hours = '0', minutes = '0'] = offsetMatch;
+  if (+hours > 23 || +minutes > 59) {
+    return date;
+  }
+  const offset = (sign === '-' ? -1 : 1) * (+hours * 60 + +minutes);
+  // Format the date as UTC shifted by the input's offset (`utcOffset()` can't be used, since it
+  // reads offsets of up to 16 minutes as hours), so the offset is formatted as "+00:00"/"+0000"
+  const formatted = looseDate.utc().add(offset, 'minute').format(format);
+  const candidates = ['+00:00', '+0000'].map(
+    (zero) =>
+      str.slice(0, offsetMatch.index) + zero + str.slice(offsetMatch.index + offsetText.length)
+  );
   return candidates.includes(formatted) ? looseDate : date;
 };
 

@@ -558,11 +558,27 @@ describe('when using the ganttDb', function () {
       expect(tasks[0].startTime.toISOString()).toEqual('2025-10-16T08:00:00.000Z');
       expect(tasks[0].endTime.toISOString()).toEqual('2025-10-16T12:00:00.000Z');
     });
+    it('should handle offsets of a few minutes', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD HH:mm Z');
+      ganttDb.addSection('offsets');
+      ganttDb.addTask('test1', 'id1,2025-10-16 00:00 +00:15,2025-10-16 00:00 -00:15');
+      const tasks = ganttDb.getTasks();
+      expect(tasks[0].startTime.toISOString()).toEqual('2025-10-15T23:45:00.000Z');
+      expect(tasks[0].endTime.toISOString()).toEqual('2025-10-16T00:15:00.000Z');
+    });
     it('should still reject dates that do not match the date format', function () {
       ganttDb.setDateFormat('YYYY-MM-DD HH:mm ZZ');
       ganttDb.addSection('offsets');
       ganttDb.addTask('test1', 'id1,2025-13-16 00:00 -0800,1d');
       expect(() => ganttDb.getTasks()).toThrowError('Invalid date:2025-13-16 00:00 -0800');
+    });
+    it('should reject out-of-range offsets', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD HH:mm Z');
+      ganttDb.addSection('offsets');
+      ganttDb.addTask('test1', 'id1,2025-10-16 00:00 +00:00,2025-10-17 00:00 +25:00');
+      const tasks = ganttDb.getTasks();
+      // an end date that is not a valid date gives the task a zero duration
+      expect(tasks[0].endTime).toEqual(tasks[0].startTime);
     });
   });
 
