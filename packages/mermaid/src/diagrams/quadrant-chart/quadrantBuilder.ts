@@ -32,8 +32,7 @@ export interface QuadrantTextType extends Point {
 }
 
 export interface QuadrantPointType
-  extends Point,
-    Pick<StylesObject, 'strokeColor' | 'strokeWidth'> {
+  extends Point, Pick<StylesObject, 'strokeColor' | 'strokeWidth'> {
   fill: string;
   radius: number;
   text: QuadrantTextType;
@@ -76,8 +75,9 @@ export interface QuadrantBuilderData {
   points: QuadrantPointInputType[];
 }
 
-export interface QuadrantBuilderConfig
-  extends Required<Omit<QuadrantChartConfig, keyof BaseDiagramConfig>> {
+export interface QuadrantBuilderConfig extends Required<
+  Omit<QuadrantChartConfig, keyof BaseDiagramConfig>
+> {
   showXAxis: boolean;
   showYAxis: boolean;
   showTitle: boolean;

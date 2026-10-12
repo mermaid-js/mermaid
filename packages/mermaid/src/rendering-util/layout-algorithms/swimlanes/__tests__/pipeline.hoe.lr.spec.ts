@@ -134,8 +134,7 @@ function sizeLabelNode(nodeId: string, layout: LayoutData, width: number, height
 
 function labelNodeIdForEdge(layout: LayoutData, edgeId: string): string | undefined {
   const edge = layout.edges?.find((edge) => edge.id === edgeId) as
-    | (Edge & { labelNodeId?: string })
-    | undefined;
+    (Edge & { labelNodeId?: string }) | undefined;
   return edge?.labelNodeId;
 }
 

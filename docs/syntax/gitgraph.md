@@ -64,11 +64,11 @@ Mermaid syntax for a gitgraph is very straight-forward and simple. It follows a 
 
 First thing you do is to declare your diagram type using the **gitgraph** keyword. This `gitgraph` keyword, tells Mermaid that you wish to draw a gitgraph, and parse the diagram code accordingly.
 
-Each gitgraph, is initialized with **_main_** branch. So unless you create a different branch, by-default the commits will go to the main branch. This is driven with how git works, where in the beginning you always start with the main branch (formerly called as **_master_** branch). And by-default, `main` branch is set as your **_current branch_**.
+Each gitgraph, is initialized with _**main**_ branch. So unless you create a different branch, by-default the commits will go to the main branch. This is driven with how git works, where in the beginning you always start with the main branch (formerly called as _**master**_ branch). And by-default, `main` branch is set as your _**current branch**_.
 
-You make use of **_commit_** keyword to register a commit on the current branch. Let see how this works:
+You make use of _**commit**_ keyword to register a commit on the current branch. Let see how this works:
 
-A simple gitgraph showing three commits on the default (**_main_**) branch:
+A simple gitgraph showing three commits on the default (_**main**_) branch:
 
 ```mermaid-example
     gitGraph
@@ -250,7 +250,7 @@ In Mermaid, in order to merge or join to an existing branch, you make use of the
 
 Usage example: `merge develop`
 
-When Mermaid, reads the `merge` keyword, it finds the given branch and its head commit (the last commit on that branch), and joins it with the head commit on the **current branch**. Each merge results in a **_merge commit_**, represented in the diagram with **filled double circle**.
+When Mermaid, reads the `merge` keyword, it finds the given branch and its head commit (the last commit on that branch), and joins it with the head commit on the **current branch**. Each merge results in a _**merge commit**_, represented in the diagram with **filled double circle**.
 
 Let us modify our previous example to merge our two branches:
 

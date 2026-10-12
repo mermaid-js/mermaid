@@ -109,11 +109,7 @@ const populateDb = (ast: Wardley, db: WardleyDB) => {
       ? (component.label.negY ? -1 : 1) * component.label.offsetY
       : undefined;
     const sourceStrategy = component.decorator?.strategy as
-      | 'build'
-      | 'buy'
-      | 'outsource'
-      | 'market'
-      | undefined;
+      'build' | 'buy' | 'outsource' | 'market' | undefined;
 
     db.addNode(
       component.name,

@@ -224,9 +224,9 @@ When using the ELK layout, you can further refine the diagram’s configuration,
 - To combine parallel edges, use mergeEdges: true | false.
 - To configure node placement, use nodePlacementStrategy with the following options:
   - SIMPLE
-  - NETWORK_SIMPLEX
-  - LINEAR_SEGMENTS
-  - BRANDES_KOEPF (default)
+  - NETWORK\_SIMPLEX
+  - LINEAR\_SEGMENTS
+  - BRANDES\_KOEPF (default)
 - To configure Brandes-Koepf node placement alignment, use nodePlacementAlignment with the following options:
   - NONE
   - LEFTUP

@@ -130,7 +130,7 @@ const splitLabels = (doc: Document, datumTop: number) => {
   const footer = new Map<string, number>();
   for (const t of doc.querySelectorAll('text.actor')) {
     const y = Number(t.getAttribute('y'));
-    (y <= datumTop ? header : footer).set(t.textContent!, y);
+    (y <= datumTop ? header : footer).set(t.textContent, y);
   }
   return { header, footer };
 };

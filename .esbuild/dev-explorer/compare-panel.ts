@@ -385,20 +385,24 @@ export class DevComparePanel extends LitElement {
           <span class="compare-pane-title">${label}</span>
           <span class="subtle">${pane.status}${size ? ` · ${size}` : ''}</span>
         </div>
-        ${unresolved
-          ? html`<div class="compare-pane-empty">
-              ${this.versionsError
-                ? 'Version list unavailable (offline?) — pick “dev” or an explicit version.'
-                : 'Resolving the latest published version…'}
-            </div>`
-          : keyed(
-              `${side}:${pane.version}:${pane.generation}`,
-              html`<iframe
-                data-side=${side}
-                title=${`${side} pane: ${label}`}
-                src="/dev/compare-pane.html"
-              ></iframe>`
-            )}
+        ${
+          unresolved
+            ? html`<div class="compare-pane-empty">
+                ${
+                  this.versionsError
+                    ? 'Version list unavailable (offline?) — pick “dev” or an explicit version.'
+                    : 'Resolving the latest published version…'
+                }
+              </div>`
+            : keyed(
+                `${side}:${pane.version}:${pane.generation}`,
+                html`<iframe
+                  data-side=${side}
+                  title=${`${side} pane: ${label}`}
+                  src="/dev/compare-pane.html"
+                ></iframe>`
+              )
+        }
       </div>
     `;
   }
@@ -454,11 +458,13 @@ export class DevComparePanel extends LitElement {
             Diff
           </sl-button>
           ${this.#renderDiffStatus()}
-          ${this.versionsError
-            ? html`<span class="compare-diff-error"
-                >Version list unavailable (offline?): ${this.versionsError}</span
-              >`
-            : nothing}
+          ${
+            this.versionsError
+              ? html`<span class="compare-diff-error"
+                  >Version list unavailable (offline?): ${this.versionsError}</span
+                >`
+              : nothing
+          }
         </div>
         <div class="compare-panes">${this.#renderPane('left')} ${this.#renderPane('right')}</div>
       </div>

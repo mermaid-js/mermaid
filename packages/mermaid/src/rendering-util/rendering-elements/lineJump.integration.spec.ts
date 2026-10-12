@@ -120,10 +120,7 @@ async function runSwimlanes(fixture: SizesFixture): Promise<LayoutData> {
   const layerGap = layout.config.flowchart?.rankSpacing ?? 100;
 
   const direction = ((layout as LayoutData & { direction?: string }).direction ?? 'TB') as
-    | 'TB'
-    | 'LR'
-    | 'BT'
-    | 'RL';
+    'TB' | 'LR' | 'BT' | 'RL';
 
   const { ordered, coordinates } = sugiyamaLayout(g, {
     nodeGap,

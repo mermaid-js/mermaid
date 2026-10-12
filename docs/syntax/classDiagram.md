@@ -862,7 +862,7 @@ classDiagram
   class Shape <<interface>>
 ```
 
-- In a **_separate line_** after a class is defined:
+- In a _**separate line**_ after a class is defined:
 
 ```mermaid-example
 classDiagram
@@ -880,7 +880,7 @@ Shape : noOfVertices
 Shape : draw()
 ```
 
-- In a **_nested structure_** along with the class definition:
+- In a _**nested structure**_ along with the class definition:
 
 ```mermaid-example
 classDiagram

@@ -2758,8 +2758,7 @@ function buildEdgeData(
 
   edgeData.curve = elkContext.interpolateToCurve(
     getCurve(edge.curve ?? edge.interpolate, defaults.defaultInterpolate, defaults.confCurve) as
-      | string
-      | undefined,
+      string | undefined,
     curveLinear
   );
 

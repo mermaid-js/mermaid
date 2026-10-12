@@ -30,8 +30,8 @@ pie title Pets adopted by volunteers
 Drawing a pie chart is really simple in mermaid.
 
 - Start with `pie` keyword to begin the diagram
-  - `showData` to render the actual data values after the legend text. This is **_OPTIONAL_**
-- Followed by `title` keyword and its value in string to give a title to the pie-chart. This is **_OPTIONAL_**
+  - `showData` to render the actual data values after the legend text. This is _**OPTIONAL**_
+- Followed by `title` keyword and its value in string to give a title to the pie-chart. This is _**OPTIONAL**_
 - Followed by dataSet. Pie slices will be ordered clockwise in the same order as the labels.
   - `label` for a section in the pie diagram within `" "` quotes.
   - Followed by `:` colon as separator

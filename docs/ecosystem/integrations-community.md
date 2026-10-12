@@ -57,7 +57,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [SVG diagram generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) ✅
 - [GNU Octave](https://octave.org/) ✅
-  - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
+  - [octave\_mermaid\_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
 - [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
 - [JetBrains IDEs](https://www.jetbrains.com)
   - [Mermaid Plugin](https://plugins.jetbrains.com/plugin/20146-mermaid)

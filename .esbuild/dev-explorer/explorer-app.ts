@@ -119,26 +119,30 @@ export class DevExplorerApp extends LitElement {
   render() {
     return html`
       <div class="app">
-        ${this.mode === 'explorer'
-          ? html`
-              <dev-file-explorer
-                .path=${this.dirPath}
-                .sseToken=${this.sseToken}
-                @navigate=${(e: CustomEvent<{ path: string }>) => this.#goToDir(e.detail.path)}
-                @open-file=${(e: CustomEvent<{ path: string }>) => this.#openFile(e.detail.path)}
-              ></dev-file-explorer>
-            `
-          : nothing}
-        ${this.mode === 'viewer'
-          ? html`
-              <dev-diagram-viewer
-                .filePath=${this.filePath}
-                .sseToken=${this.sseToken}
-                @open-file=${(e: CustomEvent<{ path: string }>) => this.#openFile(e.detail.path)}
-                @back=${this.#backToExplorer}
-              ></dev-diagram-viewer>
-            `
-          : nothing}
+        ${
+          this.mode === 'explorer'
+            ? html`
+                <dev-file-explorer
+                  .path=${this.dirPath}
+                  .sseToken=${this.sseToken}
+                  @navigate=${(e: CustomEvent<{ path: string }>) => this.#goToDir(e.detail.path)}
+                  @open-file=${(e: CustomEvent<{ path: string }>) => this.#openFile(e.detail.path)}
+                ></dev-file-explorer>
+              `
+            : nothing
+        }
+        ${
+          this.mode === 'viewer'
+            ? html`
+                <dev-diagram-viewer
+                  .filePath=${this.filePath}
+                  .sseToken=${this.sseToken}
+                  @open-file=${(e: CustomEvent<{ path: string }>) => this.#openFile(e.detail.path)}
+                  @back=${this.#backToExplorer}
+                ></dev-diagram-viewer>
+              `
+            : nothing
+        }
       </div>
     `;
   }
