@@ -1,0 +1,20 @@
+---
+description: >-
+  Same BT-orientation develop-branch scenario as the showCommitLabel-true BT test, but with
+  `showCommitLabel: false`, verifying commit labels are hidden in BT orientation.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: false
+    rotateCommitLabel: false
+    parallelCommits: false
+---
+gitGraph BT:
+  commit id: "1"
+  commit id: "2"
+  branch develop
+  checkout develop
+  commit id: "3"
+  commit id: "4"
+  checkout main
+  commit id: "5"

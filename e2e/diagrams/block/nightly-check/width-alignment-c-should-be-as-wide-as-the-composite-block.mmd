@@ -1,0 +1,13 @@
+---
+description: >-
+  A sub-block containing a rounded block A with a long text label plus a
+  plain block B is followed by a top-level block C — verifying that C, at
+  the outer level, is widened to match the full width of the composite
+  sub-block above it (whose own width is driven by A's label).
+---
+block
+  block
+  A("This is the text")
+  B
+  end
+  C
