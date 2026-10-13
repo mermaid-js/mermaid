@@ -1,0 +1,26 @@
+---
+description: >-
+  classDiagram-v2 with namespaces nested via brace syntax (namespace Platform containing
+  namespace Auth and namespace Data) rather than dot notation, plus a class relating into
+  each nested namespace.
+---
+classDiagram-v2
+  namespace Platform {
+  namespace Auth {
+    class UserService {
+      +login()
+      +logout()
+    }
+  }
+  namespace Data {
+    class Repository {
+      +find()
+      +save()
+    }
+  }
+  class Gateway {
+    +route()
+  }
+  }
+  Gateway --> UserService : delegates
+  Gateway --> Repository : delegates

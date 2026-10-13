@@ -1,0 +1,17 @@
+---
+description: >-
+  Class with a generic type parameter (`~T~`) whose methods declare array
+  parameter types and array/bool return types (`test(int[] ids) bool`,
+  `testArray() bool[]`), to check method return-type rendering. Uses
+  classDiagram-v2 syntax with `flowchart.htmlLabels: false`.
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+classDiagram-v2
+  class Class10~T~ {
+  int[] id
+  test(int[] ids) bool
+  testArray() bool[]
+  }

@@ -87,7 +87,7 @@
     "dompurify": "^3.4.12",
     "elkjs": "^0.9.3",
     "es-toolkit": "^1.45.1",
-    "katex": "^0.16.47",
+    "katex": "^0.18.0",
     "khroma": "^2.1.0",
     "marked": "^16.3.0",
     "roughjs": "^4.6.6",

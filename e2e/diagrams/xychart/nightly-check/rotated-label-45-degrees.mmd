@@ -1,0 +1,16 @@
+---
+description: >-
+  A 19-month bar chart of git commit counts, with x-axis labels shown and
+  labelRotation set to 45 — checks that a rotation within the allowed
+  range is applied as-is to each x-axis label.
+config:
+  xyChart:
+    xAxis:
+      showLabel: true
+      labelRotation: 45
+---
+xychart
+  title "Git Commits per Month"
+  x-axis "Date" [ 2023-04, 2023-05, 2023-06, 2023-07, 2023-08, 2023-09, 2023-10, 2023-11, 2023-12, 2024-01, 2024-02, 2024-03, 2024-04, 2024-05, 2024-06, 2024-07, 2024-08, 2024-09, 2024-10 ]
+  y-axis "Number of Commits"
+  bar    [ 344, 523, 81, 7, 3, 3, 5, 17, 5, 2, 7, 6, 4, 2, 9, 31, 79, 70, 50 ]

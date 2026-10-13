@@ -1,0 +1,17 @@
+---
+description: >-
+  Same generic-collection-type member diagram (`List~int~`, `List~bool~`,
+  array types) as the '-without-htmllabels' sibling, but with `htmlLabels:
+  true` set explicitly, under the dagre layout.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  class Class10~T~ {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }

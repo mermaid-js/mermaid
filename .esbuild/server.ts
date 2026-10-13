@@ -166,10 +166,7 @@ interface DevExplorerCapturedNodeSize {
   height: number;
 }
 
-const devExplorerRootAbs = resolve(
-  process.cwd(),
-  process.env.MERMAID_DEV_EXPLORER_ROOT ?? 'e2e/platform/dev-diagrams'
-);
+const devExplorerRootAbs = resolve(process.cwd(), process.env.MERMAID_DEV_EXPLORER_ROOT ?? 'e2e');
 
 // Starter content written when a new diagram is created from the Dev Explorer.
 const DEFAULT_NEW_DIAGRAM = `flowchart TD\n  A[Start] --> B[End]\n`;
