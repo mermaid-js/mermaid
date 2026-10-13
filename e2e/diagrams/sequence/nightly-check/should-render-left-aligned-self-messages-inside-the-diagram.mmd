@@ -1,0 +1,15 @@
+---
+description: >-
+  Sequence diagram with `sequence.messageAlign: left` and self-messages on the
+  middle and last participants, verifying that self-message text stays centred
+  on its lifeline instead of overlapping the next lifeline or being clipped at
+  the right edge (#3325).
+config:
+  sequence:
+    messageAlign: left
+---
+sequenceDiagram
+  Alice->>Bob: Hello
+  Bob->>Bob: A long self message<br>on the middle participant
+  Bob->>Carol: Hello
+  Carol->>Carol: A long self message<br>on the last participant

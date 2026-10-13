@@ -30,6 +30,7 @@ function mockDiagram(name = 'svg') {
       return children;
     },
     __name: name,
+    _groups: [[{ getBBox: () => ({ height: 14 }) }]],
     append(n) {
       const child = mockDiagram(n);
       children.push(child);
@@ -93,4 +94,56 @@ describe('drawMessage (#3594)', () => {
     expect(textObj.x).toBe(Math.min(startx, stopx));
     expect(textObj.width).toBe(Math.abs(stopx - startx));
   });
+});
+
+describe('drawMessage self-message alignment (#3325)', () => {
+  // boundMessage sizes the diagram for self-message text centred on the lifeline,
+  // so whatever the alignment, the text must stay there.
+  it.each(['left', 'center', 'right'])(
+    'keeps %s-aligned self-message text centred on the lifeline',
+    async (messageAlign) => {
+      setConf({
+        messageFontFamily: 'sans-serif',
+        messageFontSize: 14,
+        messageFontWeight: '400',
+        messageAlign,
+        wrapPadding: 10,
+        arrowMarkerAbsolute: false,
+        showSequenceNumbers: false,
+      });
+      const { drawText } = await vi.importActual('./svgDraw.js');
+      vi.mocked(svgDraw.drawText).mockImplementationOnce(drawText);
+
+      const diagram = mockDiagram();
+      const lifelineX = 200;
+      const textWidth = 40; // from the calculateTextDimensions mock
+      const sequenceDb = new SequenceDB();
+      const msgModel = {
+        startx: lifelineX,
+        stopx: lifelineX,
+        starty: 40,
+        stopy: 90,
+        message: 'self call',
+        type: sequenceDb.LINETYPE.SOLID,
+        sequenceIndex: 1,
+        sequenceVisible: false,
+        id: '0',
+        from: 'Bob',
+        to: 'Bob',
+        fromBounds: lifelineX - 20,
+        toBounds: lifelineX + 20,
+      };
+      const msg = { type: sequenceDb.LINETYPE.SOLID, centralConnection: 0 };
+
+      await drawMessage(diagram, msgModel, 100, { db: sequenceDb }, msg, 'test-id');
+
+      const textElem = diagram.__children.find((child) => child.__name === 'text');
+      const attr = (name) => textElem.attr.mock.calls.find(([key]) => key === name)[1];
+      const x = attr('x');
+      const textLeft = { start: x, middle: x - textWidth / 2, end: x - textWidth }[
+        attr('text-anchor')
+      ];
+      expect(textLeft).toBe(lifelineX - textWidth / 2);
+    }
+  );
 });
