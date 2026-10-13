@@ -1,0 +1,27 @@
+---
+description: >-
+  Five sequential swimlanes (Intake/Review/Build/Ship/Support), each expected
+  to take a distinct colour slot under the "redux-color" theme.
+config:
+  theme: redux-color
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+    subgraph Intake
+      A[Request]
+    end
+    subgraph Review
+      B[Check]
+    end
+    subgraph Build
+      C[Assemble]
+    end
+    subgraph Ship
+      D[Deliver]
+    end
+    subgraph Support
+      E[Follow up]
+    end
+    A --> B --> C --> D --> E

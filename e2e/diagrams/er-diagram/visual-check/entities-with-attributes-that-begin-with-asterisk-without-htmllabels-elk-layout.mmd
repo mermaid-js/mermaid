@@ -1,0 +1,20 @@
+---
+description: >-
+  Attribute names prefixed with an asterisk on two related entities, with
+  htmlLabels disabled under the elk layout.
+config:
+  layout: elk
+  htmlLabels: false
+---
+erDiagram
+    BOOK {
+      int         *id
+      string      name
+      varchar(99) summary
+    }
+    BOOK }o..o{ STORE : soldBy
+    STORE {
+      int         *id
+      string      name
+      varchar(50) address
+    }

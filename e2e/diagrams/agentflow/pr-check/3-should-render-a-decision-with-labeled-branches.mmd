@@ -1,0 +1,10 @@
+---
+description: >-
+  A single `decision`-shaped node with three labeled outgoing branches
+  (bug/feature/question), each routing to a different downstream node.
+---
+agentflow-beta TB
+  triage["Triage"]@{ shape: decision }
+  triage -- bug --> bugfix["Bug Fix"]
+  triage -- feature --> feature_work["Feature Work"]
+  triage -- question --> answer["Answer"]
