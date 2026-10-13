@@ -6,6 +6,7 @@ let direction = 'LR';
 const sections = [];
 const tasks = [];
 const rawTasks = [];
+let processedTaskCount = 0;
 
 export const getCommonDb = () => commonDb;
 
@@ -14,6 +15,7 @@ export const clear = function () {
   tasks.length = 0;
   currentSection = '';
   rawTasks.length = 0;
+  processedTaskCount = 0;
   direction = 'LR';
   commonDb.clear();
 };
@@ -44,7 +46,8 @@ export const getTasks = function () {
     iterationCount++;
   }
 
-  tasks.push(...rawTasks);
+  tasks.push(...rawTasks.slice(processedTaskCount));
+  processedTaskCount = rawTasks.length;
 
   return tasks;
 };
