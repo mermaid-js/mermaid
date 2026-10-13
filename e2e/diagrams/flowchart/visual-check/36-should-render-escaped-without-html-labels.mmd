@@ -1,0 +1,12 @@
+---
+description:
+  Verifies that with htmlLabels disabled, an HTML tag written inside a node
+  label's quoted string (<strong>Haiya</strong>) is escaped and shown as literal
+  text rather than being interpreted as markup.
+config:
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+graph TD
+  a["<strong>Haiya</strong>"]-->b

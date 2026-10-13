@@ -126,3 +126,26 @@ describe('ChartTitle placement', () => {
     expect(titleX(drawables)).toBeCloseTo(chartConfig.width / 2);
   });
 });
+
+describe('ChartTitle space', () => {
+  it('drops the title instead of overflowing a chart too short to fit it', () => {
+    // The plot reserves 50% of the height, leaving 30px; the title needs 20 + 2 * 10 = 40px.
+    const config = { ...chartConfig, height: 60 };
+    const drawables = build(config, makeChartData('Title'));
+
+    expect(findGroup(drawables, 'chart-title')).toBeUndefined();
+    const plotBars = findGroup(drawables, 'plot.bar-plot-0');
+    if (plotBars?.type !== 'rect') {
+      throw new Error('bar plot was not rendered');
+    }
+    for (const bar of plotBars.data) {
+      expect(bar.y + bar.height).toBeLessThanOrEqual(config.height);
+    }
+  });
+
+  it('keeps the title when the chart is tall enough', () => {
+    const drawables = build({ ...chartConfig, height: 100 }, makeChartData('Title'));
+
+    expect(findGroup(drawables, 'chart-title')).toBeDefined();
+  });
+});

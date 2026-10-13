@@ -1,0 +1,14 @@
+---
+description: >-
+  Composite block e spans all 3 columns and contains a single unsized child
+  block, f, which expands to fill the composite's entire available width,
+  followed by a top-level block g in the next row. Simpler single-child
+  sibling of the "f and g should split the available space" fixture.
+---
+block
+  columns 3
+  a:3
+  block:e:3
+  f
+  end
+  g

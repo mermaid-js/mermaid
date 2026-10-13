@@ -1,0 +1,22 @@
+---
+description: >-
+  Feature test for GitHub issue #6617: assigns explicit ids to individual edges
+  via the `e1@-->` syntax, then configures each edge's curve type independently
+  (natural, stepAfter, monotoneY, bumpY, linear, catmullRom, cardinal) through
+  `edgeId@{ curve: ... }`, verifying per-edge curve styling overrides work
+  across a shared node graph.
+---
+flowchart TD
+  A e1@-->B e5@--> E
+  E e7@--> D
+  B e3@-->D
+  A e2@-->C e4@-->D
+  C e6@--> F
+  F e8@--> D
+  e1@{ curve: natural }
+  e2@{ curve: stepAfter }
+  e3@{ curve: monotoneY }
+  e4@{ curve: bumpY }
+  e5@{ curve: linear }
+  e6@{ curve: catmullRom }
+  e7@{ curve: cardinal }

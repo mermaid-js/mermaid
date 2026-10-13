@@ -1,0 +1,19 @@
+---
+description: >-
+  Hand-drawn class diagram testing a namespace block containing two classes
+  (C1, C2) with a relationship between them, plus two classes (C3, C4)
+  declared outside any namespace to verify namespaced and global-scope
+  classes coexist.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  namespace Namespace1 {
+  class C1
+  class C2
+  }
+  C1 --> C2
+  class C3
+  class C4

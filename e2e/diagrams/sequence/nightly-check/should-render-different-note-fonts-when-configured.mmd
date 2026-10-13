@@ -1,0 +1,14 @@
+---
+description: >-
+  Minimal sequence diagram with a `note left of` statement whose frontmatter
+  config overrides `sequence.noteFontSize` and `sequence.noteFontFamily`,
+  verifying that note text font settings are honored.
+config:
+  sequence:
+    noteFontSize: 18
+    noteFontFamily: Arial
+---
+sequenceDiagram
+  Alice->>Bob: I'm short
+  note left of Alice: I should have bigger fonts
+  Bob->>Alice: Short as well
