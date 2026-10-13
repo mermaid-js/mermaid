@@ -32,9 +32,11 @@ const createLinks = (tm: CoreTeam): CoreTeam => {
 };
 
 const teamMembers = plainTeamMembers.map((tm) => createLinks(tm));
-teamMembers.sort(
-  (a, b) => contributorUsernames.indexOf(a.github) - contributorUsernames.indexOf(b.github)
-);
+const getContributorRank = (username: string) => {
+  const index = contributorUsernames.indexOf(username);
+  return index === -1 ? Infinity : index;
+};
+teamMembers.sort((a, b) => getContributorRank(a.github) - getContributorRank(b.github));
 teamMembers.unshift(createLinks(knut));
 
 export { teamMembers };

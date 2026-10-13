@@ -1,0 +1,18 @@
+---
+description: >-
+  A node (Loose node) with no explicit subgraph feeding into a node inside
+  an explicit lane (OwnedLane), under the redux-color theme — checks that
+  the synthetically-created default lane gets its own distinct colour
+  slot. Companion to synthetic-default-lane-handdrawn.mmd and
+  default-swimlane-for-unassigned-nodes.mmd.
+config:
+  theme: redux-color
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+  subgraph OwnedLane
+    A[Owned node]
+  end
+  Loose[Loose node] --> A

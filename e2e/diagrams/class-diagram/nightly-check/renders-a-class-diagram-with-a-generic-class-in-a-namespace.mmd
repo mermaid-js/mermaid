@@ -1,0 +1,12 @@
+---
+description: >-
+  classDiagram-v2 with a generic class (GenericClass~T~) declared inside a namespace,
+  verifying generic type parameter syntax renders correctly within a namespace container.
+---
+classDiagram-v2
+namespace Company.Project.Module {
+  class GenericClass~T~ {
+    +addItem(item: T)
+    +getItem() T
+  }
+}

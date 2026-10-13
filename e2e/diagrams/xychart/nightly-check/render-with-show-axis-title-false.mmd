@@ -1,0 +1,18 @@
+---
+description: >-
+  Sales Revenue bar+line chart with showTitle set to false on both the
+  x-axis and y-axis, verifying axis titles ("Months", "Revenue (in $)")
+  can be hidden while tick labels, ticks, and the axis line remain visible.
+config:
+  xyChart:
+    xAxis:
+      showTitle: false
+    yAxis:
+      showTitle: false
+---
+xychart
+  title "Sales Revenue"
+  x-axis Months [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
+  y-axis "Revenue (in $)" 4000 --> 11000
+  bar [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
+  line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
