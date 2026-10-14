@@ -13,6 +13,11 @@ export type CheckFitFunction = (text: MarkdownLine) => boolean;
 
 interface BaseNode {
   id: string;
+  /**
+   * Stable authored identifier used to resolve placement maps when `id` is generated for rendering.
+   * Edges and DOM lookup continue to use `id`; layouts use this field only as a configuration key.
+   */
+  placementId?: string;
   label?: string;
   description?: string[];
   /** Stereotype line rendered between label and description in multi-section labels, e.g. `[Container: Node.js]`. */
@@ -181,6 +186,12 @@ export interface Edge {
   terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
+  /** Corner radius shared by initial path generation and later generic path rewrites. */
+  cornerRadius?: number;
+  /** Selects shape-aware clipping without coupling the shared renderer to a layout name. */
+  portClipping?: 'outline-orthogonal';
+  /** Preserves router-owned terminal and bend invariants during shared rendering. */
+  skipCornerFix?: boolean;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;

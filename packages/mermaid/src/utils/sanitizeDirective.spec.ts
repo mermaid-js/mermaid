@@ -54,5 +54,153 @@ describe('sanitizeDirective', () => {
       sanitizeDirective(args);
       expect(args.sankey.nodeColors).toEqual({ a: '#ff0000', b: 'rgb(0, 0, 0)' });
     });
+
+    it('preserves grid placements keyed by node id', () => {
+      const args = {
+        grid: {
+          placements: {
+            G: { row: 1, column: 2 },
+            protocolGateway: { row: 2 },
+            prototypeA: { column: 3 },
+            constraintSolver: { horizontalAlign: 'center' },
+            constructorNode: { verticalAlign: 'top' },
+            __proto__hack: { row: 4 },
+            'group.with-punctuation': {
+              horizontalAlign: 'left',
+              verticalAlign: 'bottom',
+            },
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.grid.placements).toEqual({
+        G: { row: 1, column: 2 },
+        protocolGateway: { row: 2 },
+        prototypeA: { column: 3 },
+        constraintSolver: { horizontalAlign: 'center' },
+        constructorNode: { verticalAlign: 'top' },
+        __proto__hack: { row: 4 },
+        'group.with-punctuation': {
+          horizontalAlign: 'left',
+          verticalAlign: 'bottom',
+        },
+      });
+    });
+
+    it('drops unsafe grid placement ids, non-object values, and unknown properties', () => {
+      const args = {
+        grid: {
+          placements: {
+            valid: { row: 1, notAConfigKey: 'x' },
+            ['__proto__']: { column: 1 },
+            constructor: { column: 2 },
+            prototype: { column: 3 },
+            scalar: 3,
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.grid.placements).toEqual({ valid: { row: 1 } });
+    });
+
+    it('deletes invalid grid alignments but preserves valid placement properties', () => {
+      const args = {
+        grid: {
+          placements: {
+            mixed: {
+              column: 2,
+              horizontalAlign: 'middle',
+              verticalAlign: 'bottom',
+            },
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.grid.placements).toEqual({
+        mixed: { column: 2, verticalAlign: 'bottom' },
+      });
+    });
+
+    it('preserves occurrence-indexed grid placement arrays', () => {
+      const args = {
+        grid: {
+          placements: {
+            service: [
+              { row: 1, column: 1 },
+              { row: 1, column: 2, horizontalAlign: 'right', unknown: true },
+            ],
+          },
+        },
+      };
+
+      sanitizeDirective(args);
+
+      expect(args.grid.placements).toEqual({
+        service: [
+          { row: 1, column: 1 },
+          { row: 1, column: 2, horizontalAlign: 'right' },
+        ],
+      });
+    });
+
+    it.each([{ service: [] }, { service: [null] }, { service: [{ row: 1 }, 'invalid'] }])(
+      'drops invalid grid placement arrays %#',
+      ({ service }) => {
+        const args = {
+          grid: {
+            placements: { service },
+          },
+        };
+
+        sanitizeDirective(args);
+
+        expect(args.grid.placements).toEqual({});
+      }
+    );
+
+    it.each([
+      ['row', 0],
+      ['row', 'first'],
+      ['column', 1.5],
+      ['column', null],
+    ])('rejects invalid grid placement %s values', (field, value) => {
+      const args = {
+        grid: {
+          placements: {
+            A: { [field]: value },
+          },
+        },
+      };
+
+      expect(() => sanitizeDirective(args)).toThrow(
+        `GRID_INVALID_COORDINATE: Invalid ${field} for placement "A"`
+      );
+    });
+
+    it('reports the array index for invalid occurrence coordinates', () => {
+      const args = {
+        grid: {
+          placements: {
+            service: [{ row: 1 }, { row: 0 }],
+          },
+        },
+      };
+
+      expect(() => sanitizeDirective(args)).toThrow(
+        'GRID_INVALID_COORDINATE: Invalid row for placement "service[1]"'
+      );
+    });
+
+    it('does not apply grid placement sanitization outside grid config', () => {
+      const args = {
+        flowchart: {
+          placements: {
+            protocolGateway: { row: 1 },
+          },
+        },
+      };
+      sanitizeDirective(args);
+      expect(args.flowchart.placements).toEqual({});
+    });
   });
 });

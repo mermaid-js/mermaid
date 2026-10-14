@@ -2,6 +2,13 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MindmapDB } from './mindmapDb.js';
 import type { MindmapLayoutNode, MindmapLayoutEdge } from './mindmapDb.js';
 import type { Edge } from '../../rendering-util/types.js';
+import {
+  buildGridSourceOrder,
+  readGridConfig,
+  resolveGridPlacements,
+} from '../../rendering-util/layout-algorithms/grid/placement.js';
+import type * as ConfigModule from '../../config.js';
+import { getUserDefinedConfig } from '../../config.js';
 
 // Mock the getConfig function
 vi.mock('../../diagram-api/diagramAPI.js', () => ({
@@ -15,10 +22,19 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
+vi.mock('../../config.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof ConfigModule>();
+  return {
+    ...actual,
+    getUserDefinedConfig: vi.fn(() => ({})),
+  };
+});
+
 describe('MindmapDb getData function', () => {
   let db: MindmapDB;
 
   beforeEach(() => {
+    vi.mocked(getUserDefinedConfig).mockReturnValue({});
     db = new MindmapDB();
     // Clear the database before each test
     db.clear();
@@ -51,12 +67,15 @@ describe('MindmapDb getData function', () => {
       const rootNode = (result.nodes as MindmapLayoutNode[]).find((n) => n.id === '0');
       expect(rootNode).toBeDefined();
       expect(rootNode?.label).toBe('Root Node');
+      // Numeric IDs preserve tree and edge identity; authored IDs remain usable in layout config.
+      expect(rootNode?.placementId).toBe('root');
       expect(rootNode?.level).toBe(0);
 
       // Check child nodes
       const child1 = (result.nodes as MindmapLayoutNode[]).find((n) => n.id === '1');
       expect(child1).toBeDefined();
       expect(child1?.label).toBe('Child 1');
+      expect(child1?.placementId).toBe('child1');
       expect(child1?.level).toBe(1);
 
       // Check edges
@@ -140,6 +159,41 @@ describe('MindmapDb getData function', () => {
 
       expect(edgeIds).toHaveLength(3);
       expect(uniqueIds.size).toBe(3); // All IDs should be unique
+    });
+
+    it('preserves duplicate authored node IDs for occurrence-indexed grid placement', () => {
+      db.addNode(0, 'root', 'Root', 0);
+      db.addNode(1, 'duplicate', 'First', 0);
+      db.addNode(1, 'duplicate', 'Second', 0);
+
+      const result = db.getData();
+      const duplicates = result.nodes.filter((node) => node.placementId === 'duplicate');
+      const config = readGridConfig({
+        ...result,
+        config: {
+          ...result.config,
+          grid: {
+            placements: {
+              duplicate: [
+                { row: 1, column: 1 },
+                { row: 1, column: 2 },
+              ],
+            },
+          },
+        },
+      });
+      const { placements } = resolveGridPlacements(
+        result.nodes,
+        buildGridSourceOrder(result.nodes),
+        config
+      );
+      const duplicatePlacements = placements.filter(({ item }) => item.placementId === 'duplicate');
+
+      expect(duplicates.map((node) => node.id)).toEqual(['1', '2']);
+      expect(duplicatePlacements).toEqual([
+        expect.objectContaining({ item: expect.objectContaining({ id: '1' }), row: 1, column: 1 }),
+        expect.objectContaining({ item: expect.objectContaining({ id: '2' }), row: 1, column: 2 }),
+      ]);
     });
 
     it('should handle nodes with missing optional properties', () => {

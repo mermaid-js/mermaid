@@ -1,0 +1,18 @@
+---
+config:
+  layout: grid
+  securityLevel: loose
+  grid:
+    rowGap: 32
+    columnGap: 40
+---
+flowchart TB
+  A["Start"]@{ row: 1, column: 1 }
+  B["Review"]@{ row: 2, column: 1 }
+  C["Docs"]@{ row: 2, column: 2 }
+  D["Callback"]@{ row: 3, column: 1 }
+  click C href "https://mermaid.ai/" "Open Mermaid Website"
+  click D call gridCallback() "Run callback"
+  A --> B
+  B --> C
+  B --> D

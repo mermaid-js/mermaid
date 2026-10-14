@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "captureVersion": 1,
+    "capturedAt": "2026-09-21T01:25:29.195Z",
+    "capturedFrom": "browser-capture layout-tests/grid/routing-loops-parallel-lr.mmd theme=default look=classic",
+    "sourceSha256": "608f3406afa9ed39385b165a04c399f6bd789b3d060b6769fc0beda39248e26b"
+  },
+  "nodes": [
+    {
+      "id": "Loop",
+      "width": 152,
+      "height": 45
+    },
+    {
+      "id": "Source",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "Target",
+      "width": 171.2268829345703,
+      "height": 45
+    },
+    {
+      "id": "Lone",
+      "width": 152,
+      "height": 66
+    }
+  ]
+}
