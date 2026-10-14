@@ -21,3 +21,5 @@ minimumReleaseAgeExclude:
   - vitest@3.2.6
   # Renovate security update: katex@0.18.2
   - katex@0.18.2
+  # Renovate security update: esbuild@0.28.1
+  - esbuild@0.28.1
