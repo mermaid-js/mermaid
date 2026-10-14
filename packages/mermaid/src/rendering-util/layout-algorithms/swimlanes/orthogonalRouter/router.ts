@@ -484,12 +484,19 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
     return info.absDy === 0 ? Infinity : info.absDx / info.absDy;
   };
-  const secondarySide = (info: EdgeSideInfo): SideT => {
+  const secondarySides = (info: EdgeSideInfo): [SideT, ...SideT[]] => {
     if (info.srcSide === 'top' || info.srcSide === 'bottom') {
-      return info.dxSign >= 0 ? 'right' : 'left';
+      if (info.dxSign === 0) {
+        return ['right', 'left'];
+      }
+      return [info.dxSign > 0 ? 'right' : 'left'];
     }
-    return info.dySign >= 0 ? 'bottom' : 'top';
+    if (info.dySign === 0) {
+      return ['bottom', 'top'];
+    }
+    return [info.dySign > 0 ? 'bottom' : 'top'];
   };
+  const secondarySide = (info: EdgeSideInfo): SideT => secondarySides(info)[0];
 
   // Group by (src, srcSide) so we can detect 2+ edges sharing a side.
   const sourceSideGroups = new Map<string, EdgeSideInfo[]>();
@@ -546,8 +553,15 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     // reassignment to its secondary side, bumping δ_s counters as we go.
     for (let g = 1; g < group.length; g++) {
       const info = group[g];
-      const secondary = secondarySide(info);
       const primaryLoad = sideLoad.get(loadKey(info.srcId, info.srcSide)) ?? 0;
+      // A target level with the source gives no secondary face a preference, so
+      // take the less loaded of the two (the first one on a tie).
+      const secondary = secondarySides(info).reduce((best, side) =>
+        (sideLoad.get(loadKey(info.srcId, side)) ?? 0) <
+        (sideLoad.get(loadKey(info.srcId, best)) ?? 0)
+          ? side
+          : best
+      );
       const secondaryLoad = sideLoad.get(loadKey(info.srcId, secondary)) ?? 0;
       // Only move to the secondary side if it's strictly less loaded
       // than the primary (avoids ping-ponging when both sides are
@@ -606,6 +620,63 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     sideLoad.set(loadKey(info.srcId, info.srcSide), Math.max(0, primaryLoad - 1));
     sideLoad.set(loadKey(info.srcId, secondary), 1);
     info.srcSide = secondary;
+  }
+
+  // ----- Step 6.2c: keep an in-edge off the face an out-edge leaves ---
+  //
+  // A hexagon's left and right faces end in a single vertex, so an in-edge and
+  // an out-edge sharing one of them meet at that vertex: the arrowhead sits on
+  // the departing edge's first stretch. Port groups are keyed by role, so
+  // nothing separates them. Move the in-edge to its secondary face when no
+  // out-edge uses it and it carries no committed load.
+  const hasVertexFaces = (node: MermaidNode | undefined): boolean => {
+    const shape = (node as { shape?: string } | undefined)?.shape;
+    return shape === 'hexagon' || shape === 'notch-pent';
+  };
+  const outSidesByNode = new Map<string, Set<SideT>>();
+  for (const info of sideInfoByIdx.values()) {
+    if (!outSidesByNode.has(info.srcId)) {
+      outSidesByNode.set(info.srcId, new Set());
+    }
+    outSidesByNode.get(info.srcId)!.add(info.srcSide);
+  }
+  const secondaryDstSide = (info: EdgeSideInfo): SideT => {
+    if (info.dstSide === 'top' || info.dstSide === 'bottom') {
+      return info.dxSign >= 0 ? 'left' : 'right';
+    }
+    return info.dySign >= 0 ? 'top' : 'bottom';
+  };
+  for (const info of sideInfoByIdx.values()) {
+    if (!hasVertexFaces(nodeById.get(info.dstId))) {
+      continue;
+    }
+    const outSides = outSidesByNode.get(info.dstId);
+    if (!outSides?.has(info.dstSide)) {
+      continue;
+    }
+    const secondary = secondaryDstSide(info);
+    if (outSides.has(secondary) || (sideLoad.get(loadKey(info.dstId, secondary)) ?? 0) > 0) {
+      continue;
+    }
+    const primaryLoad = sideLoad.get(loadKey(info.dstId, info.dstSide)) ?? 0;
+    sideLoad.set(loadKey(info.dstId, info.dstSide), Math.max(0, primaryLoad - 1));
+    sideLoad.set(loadKey(info.dstId, secondary), 1);
+    info.dstSide = secondary;
+    // The edge now arrives vertically. If it would still leave the face an
+    // in-edge of its source arrives on, leave from the face that looks at the
+    // target instead, so the pair do not share that face's port.
+    const facing: SideT = info.dySign >= 0 ? 'bottom' : 'top';
+    if (
+      (secondary === 'top' || secondary === 'bottom') &&
+      inSidesByNode.get(info.srcId)?.has(info.srcSide) &&
+      !inSidesByNode.get(info.srcId)?.has(facing) &&
+      (sideLoad.get(loadKey(info.srcId, facing)) ?? 0) === 0
+    ) {
+      const srcLoad = sideLoad.get(loadKey(info.srcId, info.srcSide)) ?? 0;
+      sideLoad.set(loadKey(info.srcId, info.srcSide), Math.max(0, srcLoad - 1));
+      sideLoad.set(loadKey(info.srcId, facing), 1);
+      info.srcSide = facing;
+    }
   }
 
   // ----- Step 6.3: port-group build (uses possibly-reassigned sides) --
