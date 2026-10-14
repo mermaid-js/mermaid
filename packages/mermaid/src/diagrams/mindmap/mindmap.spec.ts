@@ -362,4 +362,37 @@ root
     const child2 = mm.children[1];
     expect(child2.nodeId).toEqual('B');
   });
+  describe('accessibility', function () {
+    it('MMP-26 should handle accTitle and accDescr', function () {
+      const str = `mindmap
+  accTitle: My title
+  accDescr: My description
+  root((mindmap))
+    Origins`;
+      mindmap.parse(str);
+      expect(mindmap.yy.getAccTitle()).toEqual('My title');
+      expect(mindmap.yy.getAccDescription()).toEqual('My description');
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.nodeId).toEqual('root');
+      expect(mm.children.length).toEqual(1);
+      expect(mm.children[0].nodeId).toEqual('Origins');
+    });
+    it('MMP-27 should handle a multiline accDescr', function () {
+      const str = `mindmap
+accTitle: My title
+accDescr {
+  This is my
+  multiline description
+}
+root
+  A`;
+      mindmap.parse(str);
+      expect(mindmap.yy.getAccTitle()).toEqual('My title');
+      expect(mindmap.yy.getAccDescription()).toEqual('This is my\nmultiline description');
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.nodeId).toEqual('root');
+      expect(mm.children.length).toEqual(1);
+      expect(mm.children[0].nodeId).toEqual('A');
+    });
+  });
 });
