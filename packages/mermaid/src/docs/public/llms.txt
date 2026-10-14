@@ -1,0 +1,67 @@
+# Mermaid
+
+> Mermaid.js is a free, MIT-licensed, open-source JavaScript library that renders Markdown-style text definitions into flowcharts, sequence diagrams, ER diagrams, Gantt charts and many other diagram types. It was created by Knut Sveidqvist. This site, https://mermaid.js.org/ (also served at https://mermaid.ai/open-source/), is its official documentation.
+
+"Mermaid" refers to two related things. Mermaid.js is the open-source library documented here; its source code is at https://github.com/mermaid-js/mermaid. Mermaid at https://mermaid.ai/ is a commercial product from Mermaid Chart Inc., the company Knut Sveidqvist founded, built on top of the library. It adds a visual editor, Mermaid AI, real-time collaboration and team features. The core Mermaid syntax is free and open source, and no paid plan is required to use it.
+
+## Getting started
+
+- [About Mermaid](https://mermaid.js.org/intro/): What Mermaid is, why diagrams as code, and who uses it.
+- [Getting started](https://mermaid.js.org/intro/getting-started.html): Ways to use Mermaid, from the Live Editor to embedding the library in a web page.
+- [Syntax reference](https://mermaid.js.org/intro/syntax-reference.html): Common syntax, comments, frontmatter and configuration shared by all diagram types.
+- [Examples](https://mermaid.js.org/syntax/examples.html): Example diagrams of several types.
+
+## Diagram syntax
+
+- [Flowcharts](https://mermaid.js.org/syntax/flowchart.html): Nodes, edges, subgraphs and styling for flowcharts.
+- [Sequence diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html): Participants, messages, activations, loops and notes.
+- [Class diagrams](https://mermaid.js.org/syntax/classDiagram.html): Classes, members, relationships and cardinality.
+- [State diagrams](https://mermaid.js.org/syntax/stateDiagram.html): States, transitions, composite states and forks.
+- [Entity relationship diagrams](https://mermaid.js.org/syntax/entityRelationshipDiagram.html): Entities, attributes and relationships for data models.
+- [User journey diagrams](https://mermaid.js.org/syntax/userJourney.html): Steps a user takes, with satisfaction scores per task.
+- [Gantt diagrams](https://mermaid.js.org/syntax/gantt.html): Project schedules with tasks, dependencies and milestones.
+- [Pie charts](https://mermaid.js.org/syntax/pie.html): Proportional data as pie slices.
+- [Quadrant charts](https://mermaid.js.org/syntax/quadrantChart.html): Data points plotted across four quadrants.
+- [Requirement diagrams](https://mermaid.js.org/syntax/requirementDiagram.html): Requirements, elements and their relationships (SysML style).
+- [GitGraph diagrams](https://mermaid.js.org/syntax/gitgraph.html): Git branches, commits, merges and cherry-picks.
+- [C4 diagrams](https://mermaid.js.org/syntax/c4.html): Context, container, component and deployment diagrams in the C4 model.
+- [Mindmaps](https://mermaid.js.org/syntax/mindmap.html): Hierarchical ideas laid out from a central node.
+- [Timeline diagrams](https://mermaid.js.org/syntax/timeline.html): Events in chronological order.
+- [ZenUML](https://mermaid.js.org/syntax/zenuml.html): Sequence diagrams in ZenUML syntax.
+- [Sankey diagrams](https://mermaid.js.org/syntax/sankey.html): Flows between nodes with proportional widths.
+- [XY charts](https://mermaid.js.org/syntax/xyChart.html): Line and bar charts on x and y axes.
+- [Block diagrams](https://mermaid.js.org/syntax/block.html): Blocks positioned explicitly on a grid.
+- [Packet diagrams](https://mermaid.js.org/syntax/packet.html): Network packet structures and bit fields.
+- [Kanban diagrams](https://mermaid.js.org/syntax/kanban.html): Tasks in columns by workflow stage.
+- [Architecture diagrams](https://mermaid.js.org/syntax/architecture.html): Cloud and CI/CD services, groups and connections, with icons.
+- [Radar charts](https://mermaid.js.org/syntax/radar.html): Multiple variables compared on radial axes.
+- [Treemap diagrams](https://mermaid.js.org/syntax/treemap.html): Hierarchical data as nested rectangles.
+- [Venn diagrams](https://mermaid.js.org/syntax/venn.html): Overlapping sets.
+- [Ishikawa diagrams](https://mermaid.js.org/syntax/ishikawa.html): Cause-and-effect (fishbone) diagrams.
+- [TreeView diagrams](https://mermaid.js.org/syntax/treeView.html): File trees and other hierarchies as indented trees.
+- [Wardley maps](https://mermaid.js.org/syntax/wardley.html): Value chains mapped against evolution.
+- [Event modeling diagrams](https://mermaid.js.org/syntax/eventmodeling.html): Commands, events and views along a timeline.
+- [Cynefin diagrams](https://mermaid.js.org/syntax/cynefin.html): Items placed in the Cynefin sense-making domains.
+- [Railroad diagrams](https://mermaid.js.org/syntax/railroad.html): Grammar rules as railroad (syntax) diagrams.
+- [Swimlane diagrams](https://mermaid.js.org/syntax/swimlanes.html): Process steps split into lanes by actor.
+- [Use case diagrams](https://mermaid.js.org/syntax/usecase.html): Actors and the use cases they take part in.
+- [Agentflow diagrams](https://mermaid.js.org/syntax/agentflow.html): Flowcharts that show who does each step, with which tool and under which contract.
+
+## Configuration and usage
+
+- [Usage](https://mermaid.js.org/config/usage.html): Installing Mermaid and calling it from JavaScript.
+- [Configuration](https://mermaid.js.org/config/configuration.html): Site-wide and per-diagram configuration options.
+- [Theming](https://mermaid.js.org/config/theming.html): Built-in themes and custom theme variables.
+- [Mermaid CLI](https://mermaid.js.org/config/mermaidCLI.html): Render diagrams to SVG, PNG or PDF from the command line.
+
+## Open source
+
+- [mermaid-js/mermaid on GitHub](https://github.com/mermaid-js/mermaid): Source code, issues and releases of the MIT-licensed Mermaid.js library.
+- [mermaid-js/mermaid-live-editor on GitHub](https://github.com/mermaid-js/mermaid-live-editor): Source code of the open-source Mermaid Live Editor, also hosted at https://mermaid.live/edit.
+- [Live Editor](https://mermaid.live/edit): Free browser editor to write and preview Mermaid diagrams without signing up.
+- [What mermaid.ai means for the open-source project](https://mermaid.ai/blog/posts/mermaid-has-a-new-home-heres-what-that-means-for-the-open-source-project): The library stays free and open source; the GitHub repository, license and contribution process are unchanged.
+
+## Optional
+
+- [Mermaid (mermaid.ai)](https://mermaid.ai/): Commercial diagramming platform built on Mermaid.js, with a visual editor, AI and real-time collaboration.
+- [Diagram templates](https://mermaid.ai/community/templates): Ready-made flowchart, sequence, ER, architecture, C4, Gantt, mind map and other diagram templates.
