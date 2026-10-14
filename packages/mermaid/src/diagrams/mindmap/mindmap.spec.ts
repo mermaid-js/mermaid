@@ -394,5 +394,16 @@ root
       expect(mm.children.length).toEqual(1);
       expect(mm.children[0].nodeId).toEqual('A');
     });
+    it('MMP-28 should not consume the next line when accTitle is empty', function () {
+      const str = `mindmap
+accTitle:
+root
+  A`;
+      mindmap.parse(str);
+      expect(mindmap.yy.getAccTitle()).toEqual('');
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.nodeId).toEqual('root');
+      expect(mm.children[0].nodeId).toEqual('A');
+    });
   });
 });

@@ -24,9 +24,9 @@
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
 "mindmap"		       return 'MINDMAP';
-accTitle\s*":"\s*                                { this.begin("acc_title");return 'acc_title'; }
+accTitle\s*":"[ \t]*                             { this.begin("acc_title");return 'acc_title'; }
 <acc_title>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_title_value"; }
-accDescr\s*":"\s*                                { this.begin("acc_descr");return 'acc_descr'; }
+accDescr\s*":"[ \t]*                             { this.begin("acc_descr");return 'acc_descr'; }
 <acc_descr>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_descr_value"; }
 accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
 <acc_descr_multiline>[\}]                       { this.popState(); }
