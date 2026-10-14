@@ -31,6 +31,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
   - [Mermaid Macro for Confluence](https://marketplace.atlassian.com/apps/1231150/mermaid-macro-for-confluence?hosting=cloud&tab=overview)
   - [Mermaid Plugin for Confluence](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
   - [EliteSoft Mermaid Charts and Diagrams](https://marketplace.atlassian.com/apps/1227286/elitesoft-mermaid-charts-and-diagrams?hosting=cloud&tab=overview)
+  - [Mermaid Diagrams & Gantt for Confluence](https://marketplace.atlassian.com/apps/2223387997/mermaid-diagrams-gantt-for-confluence?hosting=cloud&tab=overview)
   - [Auto convert diagrams in Jira](https://github.com/coddingtonbear/jirafs-mermaid)
   - [Mermaid Charts & Diagrams for Jira](https://marketplace.atlassian.com/apps/1224537/)
   - [Mermaid for Jira Cloud - Draw UML diagrams easily](https://marketplace.atlassian.com/apps/1223053/mermaid-for-jira-cloud-draw-uml-diagrams-easily?hosting=cloud&tab=overview)
