@@ -7,6 +7,7 @@
 %x acc_descr
 %x acc_descr_multiline
 %x style
+%x role
 
 %%
 accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
@@ -30,7 +31,13 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "#"                             return 'BRKT';
 ","                             return 'COMMA';
 ":::"                           return 'STYLE_SEPARATOR';
-":"                             return 'COLON';
+":"                             { this.begin("role"); return 'COLON'; }
+<role>[ \t\r]+                   /* skip whitespace */
+<role>[\n]+                     { this.popState(); return 'NEWLINE'; }
+<role><<EOF>>                    { this.popState(); return 'EOF'; }
+<role>\"[^"]*\"                 { this.popState(); return 'WORD'; }
+<role>([^\x00-\x7F]|\w|\-|\*|\.)+ { this.popState(); return 'UNICODE_TEXT'; }
+<role>.                         return yytext[0];
 <block>\s+                      /* skip whitespace in block */
 <block>\b((?:PK)|(?:FK)|(?:UK))\b      return 'ATTRIBUTE_KEY'
 <block>([^\s]*)[~].*[~]([^\s]*)        return 'ATTRIBUTE_WORD';
