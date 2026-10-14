@@ -264,6 +264,43 @@ describe('mermaidAPI', () => {
       expect(styles).toMatch(/(.*)\n:root {--mermaid-alt-font-family: sans-serif(.*)/);
     });
 
+    it.each([{ htmlLabels: true }, { flowchart: { htmlLabels: true } }])(
+      'styles nested normal shapes without matching rough outlines or label icons: %j',
+      (config) => {
+        const styles = createCssStyles(
+          config,
+          new Map([
+            ['nested', { id: 'nested', styles: ['fill: red', 'stroke: blue'], textStyles: [] }],
+          ])
+        );
+        const selectors = [...styles.matchAll(/([^{}]+){[^{}]*}/g)].map((match) => match[1].trim());
+        const dom = new JSDOM(`<svg xmlns="http://www.w3.org/2000/svg">
+          <g class="node nested">
+            <rect id="direct" />
+            <g><path id="path" /><circle id="circle" /></g>
+            <g class="label"><g><svg><path id="icon" /><circle id="icon-circle" /></svg></g></g>
+          </g>
+          <g class="rough-node nested">
+            <g><path id="outline" fill="none" /></g>
+            <g class="nested node"><g><path id="inner-outline" fill="none" /></g></g>
+          </g>
+        </svg>`);
+        const matches = (id: string) => {
+          const element = dom.window.document.getElementById(id)!;
+          return selectors.some((selector) => element.matches(selector));
+        };
+
+        expect(matches('direct')).toBe(true);
+        expect(matches('path')).toBe(true);
+        expect(matches('circle')).toBe(true);
+        expect(matches('outline')).toBe(false);
+        expect(matches('inner-outline')).toBe(false);
+        expect(matches('icon')).toBe(false);
+        expect(matches('icon-circle')).toBe(false);
+        dom.window.close();
+      }
+    );
+
     describe('there are some classDefs', () => {
       const classDef1 = {
         id: 'classDef1',
@@ -386,6 +423,7 @@ describe('mermaidAPI', () => {
                 mocked_config_no_htmlLabels,
                 new Map(Object.entries(classDefs))
               );
+              expect(styles).not.toContain(':not(.rough-node):not(.rough-node *)');
               htmlElements.forEach((htmlElement) => {
                 expect_styles_matchesHtmlElements(styles, htmlElement);
               });
@@ -415,7 +453,9 @@ describe('mermaidAPI', () => {
       const expectedStyles =
         '.default {color: red;}' +
         '\n.classDef1 > * {prop: style1-1 !important;}' +
-        '\n.classDef1 span {prop: style1-1 !important;}';
+        '\n.classDef1 span {prop: style1-1 !important;}' +
+        '\n.classDef1:not(.rough-node):not(.rough-node *) > g > path {prop: style1-1 !important;}' +
+        '\n.classDef1:not(.rough-node):not(.rough-node *) > g > circle {prop: style1-1 !important;}';
       expect(getStyles).toHaveBeenCalledWith(
         'flowchart-v2',
         expectedStyles,
@@ -458,7 +498,7 @@ describe('mermaidAPI', () => {
         '#someId'
       );
       expect(result).toEqual(
-        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}'
+        '#someId .edge-pattern-dashed{stroke-dasharray:3;}#someId .default{color:red;}#someId .classDef2>*{color:purple;}#someId .classDef2 span{color:purple;}#someId .classDef2:not(.rough-node):not(.rough-node *)>g>path{color:purple;}#someId .classDef2:not(.rough-node):not(.rough-node *)>g>circle{color:purple;}'
       );
     });
 
