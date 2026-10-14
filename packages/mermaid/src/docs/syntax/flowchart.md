@@ -943,7 +943,14 @@ It is possible to put text within quotes in order to render more troublesome cha
 
 ```mermaid-example
 flowchart LR
-    id1["This is the (text) in the box"]
+    id1("This is the [text] in the box")
+```
+
+Parentheses do not need to be quoted inside a square-bracket node, so this renders as written:
+
+```mermaid-example
+flowchart LR
+    id1[This is the (text) in the box]
 ```
 
 ### Entity codes to escape characters

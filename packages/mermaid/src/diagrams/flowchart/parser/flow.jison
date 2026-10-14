@@ -14,6 +14,7 @@
 %x dir
 %x vertex
 %x text
+%x sqText
 %x ellipseText
 %x trapText
 %x edgeText
@@ -278,11 +279,14 @@ that id.
 <*>"("                { this.pushState("text"); return 'PS'; }
 
 <text>"]"            { this.popState(); return 'SQE'; }
-<*>"["                { this.pushState("text"); return 'SQS'; }
+<sqText>"]"          { this.popState(); return 'SQE'; }
+<*>"["                { this.pushState("sqText"); return 'SQS'; }
 
 <text>(\})            { this.popState(); return 'DIAMOND_STOP' }
 <*>"{"                { this.pushState("text"); return 'DIAMOND_START' }
 <text>[^\[\]\(\)\{\}\|\"]+    return "TEXT";
+// Square bracket labels keep parentheses as plain text, so `A[foo (bar)]` needs no quoting.
+<sqText>[^\[\]\{\}\|\"]+      return "TEXT";
 
 "\""                  return 'QUOTE';
 (\r?\n)+              return 'NEWLINE';
