@@ -493,6 +493,13 @@ describe('given text representing a method, ', function () {
       expect(classMember.getDisplayDetails().displayText).toBe(expectedMethodNameAndParameters);
     });
 
+    it('should keep every parameter when two parameters are composite generics', function () {
+      const str = 'putAll(Map~K, V~ a, Map~K, V~ b)';
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe('putAll(Map<K, V> a, Map<K, V> b)');
+    });
+
     it('should handle public visibility', function () {
       const str = '+' + methodNameAndParameters;
 
@@ -548,6 +555,15 @@ describe('given text representing a method, ', function () {
 
       const classMember = new ClassMember(str, 'method');
       expect(classMember.getDisplayDetails().displayText).toBe('getTimes() : List<T>');
+    });
+
+    it('should parse more than two type arguments', function () {
+      const str = `my_generic_method() list~T1, T2, T3~`;
+
+      const classMember = new ClassMember(str, 'method');
+      expect(classMember.getDisplayDetails().displayText).toBe(
+        'my_generic_method() : list<T1, T2, T3>'
+      );
     });
 
     it('should handle public visibility', function () {
