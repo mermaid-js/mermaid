@@ -298,7 +298,7 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
  */
 const warnAboutUnknownTaskIds = function (keyword, ids) {
   log.warn(
-    `Gantt: the "${keyword}" statement references unknown task id(s): ${ids.join(', ')}. Make sure the referenced tasks exist and declare an id. Milestones need both an id and a duration, e.g. "Milestone :milestone, m1, 2023-01-01, 0d".`
+    `Gantt: the "${keyword}" statement references unknown task id(s): ${ids.join(', ')}. Make sure the referenced tasks exist and declare an id, e.g. "Milestone :milestone, m1, 2023-01-01".`
   );
 };
 
@@ -454,7 +454,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   const [durationValue, durationUnit] = parseDuration(str);
   if (Number.isNaN(durationValue)) {
     log.warn(
-      `Gantt: "${str}" is neither a valid date for the "${dateFormat.trim()}" date format nor a valid duration (e.g. "3d"), so it is ignored and the task gets a zero duration. Milestones need a duration too, e.g. "Milestone :milestone, m1, 2023-01-01, 0d".`
+      `Gantt: "${str}" is neither a valid date for the "${dateFormat.trim()}" date format nor a valid duration (e.g. "3d"), so it is ignored and the task gets a zero duration. If it was meant to be a milestone id, put it before the date, e.g. "Milestone :milestone, m1, 2023-01-01".`
     );
   } else {
     const newEndTime = endTime.add(durationValue, durationUnit);
@@ -463,6 +463,25 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     }
   }
   return endTime.toDate();
+};
+
+/**
+ * Checks whether a string can be used as the start of a task, i.e. whether it is an `after`
+ * statement or a date that {@link getStartDate} accepts.
+ *
+ * @param {string} str - The start data to check.
+ * @returns {boolean} `true` if `str` is valid start data.
+ */
+const isValidStartData = function (str) {
+  if (/^after\s+/.test(str.trim())) {
+    return true;
+  }
+  try {
+    getStartDate(undefined, dateFormat, str);
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 let taskCnt = 0;
@@ -564,6 +583,19 @@ const parseData = function (prevTaskId, dataStr) {
       };
       break;
     case 2:
+      // A milestone is a single instant, so `id, startDate` is allowed and defaults to a zero
+      // duration instead of treating the id as a start date. See issue #4121.
+      if (task.milestone && !isValidStartData(data[0]) && isValidStartData(data[1])) {
+        task.id = parseId(data[0]);
+        task.startTime = {
+          type: 'getStartDate',
+          startData: data[1],
+        };
+        task.endTime = {
+          data: '0d',
+        };
+        break;
+      }
       task.id = parseId();
       task.startTime = {
         type: 'getStartDate',
