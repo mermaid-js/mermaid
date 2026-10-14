@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ThreatModel } from '../threat-model/model.js';
 import type * as d3 from 'd3';
 import type { SetOptional, SetRequired } from 'type-fest';
 import type { Diagram } from '../Diagram.js';
@@ -17,6 +18,8 @@ export interface DiagramMetadata {
  * `cleaned` and behave exactly as before.
  */
 export interface DiagramCode {
+  /** Validated, opt-in security annotations. */
+  threatModel?: ThreatModel;
   /** Original source text, untouched. */
   raw: string;
   /** Fully processed text: CRLF normalised, frontmatter removed, directives removed, comments stripped. */

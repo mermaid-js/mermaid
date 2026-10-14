@@ -1,3 +1,6 @@
+import { validateFlowchart } from './threat-model/flowchart.js';
+import type { ThreatModel } from './threat-model/model.js';
+import type { FlowDB } from './diagrams/flowchart/flowDb.js';
 import * as configApi from './config.js';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI.js';
 import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
@@ -81,7 +84,15 @@ export class Diagram {
       db.setFrontmatterLineOffset?.(code.frontmatterLineOffset);
     }
     await parser.parse(textToParse);
-    return new Diagram(type, textToParse, db, parser, renderer);
+    if (code.threatModel) {
+      if (type !== 'flowchart-v2') {
+        throw new Error(
+          'Threat modeling currently supports flowchart/graph with the default renderer only'
+        );
+      }
+      validateFlowchart(code.threatModel, db as FlowDB);
+    }
+    return new Diagram(type, textToParse, db, parser, renderer, code.threatModel);
   }
 
   private constructor(
@@ -89,7 +100,8 @@ export class Diagram {
     public text: string,
     public db: DiagramDefinition['db'],
     public parser: DiagramDefinition['parser'],
-    public renderer: DiagramDefinition['renderer']
+    public renderer: DiagramDefinition['renderer'],
+    public threatModel?: ThreatModel
   ) {}
 
   async render(id: string, version: string) {

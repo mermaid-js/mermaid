@@ -27,7 +27,7 @@ const processFrontmatter = (code: string) => {
     config.gantt.displayMode = displayMode;
   }
 
-  return { title, config, text };
+  return { title, config, text, threatModel: metadata.threatModel };
 };
 
 const processDirectives = (code: string) => {
@@ -57,9 +57,10 @@ const processDirectives = (code: string) => {
  */
 export function preprocessDiagram(code: string) {
   const rawCode = code;
-  const normalizedCode = cleanupText(code);
+  // Preserve literal text in YAML (including evidence and descriptions).
+  const normalizedCode = code.replace(/\r\n?/g, '\n');
   const frontMatterResult = processFrontmatter(normalizedCode);
-  const directiveResult = processDirectives(frontMatterResult.text);
+  const directiveResult = processDirectives(cleanupText(frontMatterResult.text));
   const config = cleanAndMerge(frontMatterResult.config, directiveResult.directive);
   const withComments = directiveResult.text;
   const cleanedCode = cleanupComments(withComments);
@@ -84,6 +85,7 @@ export function preprocessDiagram(code: string) {
       cleaned: cleanedCode,
       withComments,
       frontmatterLineOffset,
+      ...(frontMatterResult.threatModel ? { threatModel: frontMatterResult.threatModel } : {}),
     },
     title: frontMatterResult.title,
     config,
