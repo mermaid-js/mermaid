@@ -64,18 +64,20 @@ flowchart LR
     id1[This is the text in the box]
 ```
 
-#### Unicode text
+#### Unicode text and emoji
 
-Use `"` to enclose the unicode text.
+Use `"` to enclose Unicode text, including emoji, in a node label.
 
 ```mermaid-example
 flowchart LR
     id["This ❤ Unicode"]
+    greeting["Hello 🥰"]
 ```
 
 ```mermaid
 flowchart LR
     id["This ❤ Unicode"]
+    greeting["Hello 🥰"]
 ```
 
 #### Markdown formatting
