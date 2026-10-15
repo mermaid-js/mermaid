@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   anchorFootprints,
+  clearAnchoredOverlaps,
   squareAnchoredEdges,
   collectAnchoredIds,
   defaultAnchorSide,
@@ -8,6 +9,7 @@ import {
   readAnchor,
   resolveAnchorHostId,
 } from '../anchoredNodes.js';
+import type { AnchorPin } from '../anchoredNodes.js';
 import type { LayoutData, Node } from '../../../types.js';
 
 const node = (id: string, extra: Partial<Node> = {}): Node => ({ id, ...extra }) as Node;
@@ -388,5 +390,98 @@ describe('reserving the room an anchored run is placed in', () => {
     pinAnchoredNodes(asLayout(nodes), { space: 'final', direction: 'TB' });
     expect(nodes[1].y! - 30).toBe(-18);
     expect(50 - anchorFootprints(nodes, 'TB').get('h')!.before).toBeLessThanOrEqual(-18);
+  });
+});
+
+describe('clearing an anchored node off what it overlaps', () => {
+  const box = (id: string, x: number, y: number, width: number, height: number, extra = {}) =>
+    node(id, { x, y, width, height, ...extra } as Partial<Node>);
+
+  const standing = (id: string, x: number, y: number) =>
+    anchored(id, { hostId: 'h', gap: 20 }, { x, y, width: 40, height: 60 });
+
+  const pinFor = (id: string, x: number, y: number): AnchorPin => ({
+    nodeId: id,
+    hostId: 'h',
+    side: 'right',
+    x,
+    y,
+    outward: { x: 1, y: 0 },
+  });
+
+  const lane = (right: number) =>
+    node('lane', {
+      isGroup: true,
+      x: right - 200,
+      y: 50,
+      width: 400,
+      height: 200,
+      metadata: { laneRole: 'lane' },
+    } as Partial<Node>);
+
+  it('steps a stand-off outward until it is clear, and returns the pin where it came to rest', () => {
+    const layout = asLayout([host('h'), box('other', 190, 12, 40, 40), standing('a', 190, 12)]);
+    const [cleared] = clearAnchoredOverlaps(layout, [pinFor('a', 190, 12)]);
+
+    // The obstacle spans x 170..210; each step is 8, so the first clear place is 230.
+    expect(cleared).toEqual({ ...pinFor('a', 230, 12) });
+    expect(layout.nodes?.[2].x).toBe(230);
+    expect(layout.nodes?.[2].y).toBe(12);
+  });
+
+  it('returns the pin it was given when nothing is in the way', () => {
+    const layout = asLayout([host('h'), standing('a', 190, 12)]);
+    const pin = pinFor('a', 190, 12);
+
+    expect(clearAnchoredOverlaps(layout, [pin])).toEqual([pin]);
+    expect(layout.nodes?.[1].x).toBe(190);
+  });
+
+  it('does not treat its own host as something to clear', () => {
+    const layout = asLayout([host('h'), standing('a', 120, 50)]);
+    const pin = pinFor('a', 120, 50);
+
+    expect(clearAnchoredOverlaps(layout, [pin])).toEqual([pin]);
+    expect(layout.nodes?.[1].x).toBe(120);
+  });
+
+  it('leaves a node where it was if clearing would carry it out of its lane', () => {
+    const parented = { ...host('h'), parentId: 'lane' } as Node;
+    const layout = asLayout([
+      lane(230),
+      parented,
+      box('other', 190, 12, 40, 40),
+      standing('a', 190, 12),
+    ]);
+    const pin = pinFor('a', 190, 12);
+
+    expect(clearAnchoredOverlaps(layout, [pin])).toEqual([pin]);
+    expect(layout.nodes?.[3].x).toBe(190);
+    expect(layout.nodes?.[3].y).toBe(12);
+  });
+
+  it('keeps stepping when the lane has room for it', () => {
+    const parented = { ...host('h'), parentId: 'lane' } as Node;
+    const layout = asLayout([
+      lane(400),
+      parented,
+      box('other', 190, 12, 40, 40),
+      standing('a', 190, 12),
+    ]);
+
+    expect(clearAnchoredOverlaps(layout, [pinFor('a', 190, 12)])[0].x).toBe(230);
+  });
+
+  it('passes a node with no gap through, and still clears later nodes off it', () => {
+    const onBorder = anchored('e', { hostId: 'h' }, { x: 200, y: 50, width: 36, height: 36 });
+    const layout = asLayout([host('h'), onBorder, standing('b', 200, 50)]);
+    const edge = pinFor('e', 200, 50);
+
+    const [first, second] = clearAnchoredOverlaps(layout, [edge, pinFor('b', 200, 50)]);
+
+    expect(first).toBe(edge);
+    expect(layout.nodes?.[1].x).toBe(200);
+    // The border node spans x 182..218, so the first clear place for the 40-wide node is 240.
+    expect(second.x).toBe(240);
   });
 });
