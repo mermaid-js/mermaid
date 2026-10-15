@@ -1,0 +1,26 @@
+---
+description:
+  Fully interconnects the subroutine, cylinder, circle, doublecircle, and odd
+  node shapes (every shape linked to every other) under the 'neo-dark' theme
+  with the 'neo' look, verifying this batch of 5 shapes renders correctly and
+  stays visually distinct under this theme/look combination.
+config:
+  look: "neo"
+  theme: "neo-dark"
+---
+flowchart TB
+  n00@{ shape: subroutine, label: 'This is a label for subroutine shape' }
+  n11@{ shape: cylinder, label: 'This is a label for cylinder shape' }
+  n22@{ shape: circle, label: 'This is a label for circle shape' }
+  n33@{ shape: doublecircle, label: 'This is a label for doublecircle shape' }
+  n44@{ shape: odd, label: 'This is a label for odd shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n00 --> n44
+  n11 --> n22
+  n11 --> n33
+  n11 --> n44
+  n22 --> n33
+  n22 --> n44
+  n33 --> n44

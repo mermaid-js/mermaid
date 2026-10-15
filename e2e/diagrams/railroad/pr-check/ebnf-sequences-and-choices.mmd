@@ -1,0 +1,10 @@
+---
+description: >-
+  EBNF syntax (railroad-ebnf-beta) covering repetition (`*`), grouping, and
+  alternation (`|`) in an expression/term/number/digit grammar.
+---
+railroad-ebnf-beta
+expression = term ( "+" term | "-" term )* ;
+term = number | "(" expression ")" ;
+number = digit+ ;
+digit = "0" | "1" | "2" ;

@@ -1,0 +1,18 @@
+---
+description:
+  Verifies that an edge whose target is a subgraph itself (`P1 --> P1.5`)
+  renders its arrowhead correctly at the subgraph's boundary rather than
+  pointing into its interior, and that a subgraph id/title containing a period
+  character (`P1.5`) is parsed correctly.
+---
+flowchart TD
+  P1
+  P1 -->P1.5
+  subgraph P1.5
+  P2
+  P2.5(( A ))
+  P3
+  end
+  P2 --> P4
+  P3 --> P6
+  P1.5 --> P5

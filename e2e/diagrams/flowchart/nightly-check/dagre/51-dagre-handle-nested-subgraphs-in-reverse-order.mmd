@@ -1,0 +1,20 @@
+---
+description:
+  Regression test (duplicate of the reverse-order nested-subgraph case) for a
+  node sharing its identifier with a subgraph declared later in the source,
+  verifying dagre still resolves it to the correct subgraph.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  a -->b
+  subgraph A
+  B
+  end
+  subgraph B
+  b
+  end
