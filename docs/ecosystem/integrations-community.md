@@ -272,6 +272,7 @@ Communication tools and platforms
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
+- [MacMD Viewer: Read Markdown files with Mermaid diagrams on macOS](https://macmdviewer.com) ✅
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
