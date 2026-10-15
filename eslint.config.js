@@ -248,6 +248,9 @@ export default tseslint.config(
   },
   {
     files: ['packages/mermaid/src/**/*.{ts,js}'],
+    // The legacy C4 grid still seeds its row budget from the display; the unified layout
+    // that replaces it does not.
+    ignores: ['packages/mermaid/src/diagrams/c4/c4Renderer.ts'],
     rules: {
       'no-restricted-globals': [
         'error',
