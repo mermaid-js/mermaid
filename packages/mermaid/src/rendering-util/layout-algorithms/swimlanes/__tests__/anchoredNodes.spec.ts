@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  MAX_ANCHOR_GAP,
   anchorFootprints,
   clearAnchoredOverlaps,
   squareAnchoredEdges,
@@ -41,6 +42,28 @@ describe('readAnchor', () => {
 
   it('drops a non-finite slot', () => {
     expect(readAnchor(anchored('b', { hostId: 't1', slot: Number.NaN }))).toEqual({ hostId: 't1' });
+  });
+
+  it('keeps a gap that stands the node off its host', () => {
+    expect(readAnchor(anchored('b', { hostId: 't1', gap: 20 }))).toEqual({
+      hostId: 't1',
+      gap: 20,
+    });
+  });
+
+  it.each([0, -4, Number.NaN, Number.POSITIVE_INFINITY, '20'])('drops a gap of %s', (gap) => {
+    expect(readAnchor(anchored('b', { hostId: 't1', gap }))).toEqual({ hostId: 't1' });
+  });
+
+  it('clamps a gap too large to place, so no coordinate turns infinite', () => {
+    expect(readAnchor(anchored('b', { hostId: 't1', gap: 1e308 }))?.gap).toBe(MAX_ANCHOR_GAP);
+
+    const layout = asLayout([
+      host('t1'),
+      anchored('b', { hostId: 't1', gap: 1e308 }, { width: 40, height: 60 }),
+    ]);
+    pinAnchoredNodes(layout, { space: 'final', direction: 'LR' });
+    expect(Number.isFinite(layout.nodes[1].y)).toBe(true);
   });
 
   it('ignores a node with no metadata', () => {
