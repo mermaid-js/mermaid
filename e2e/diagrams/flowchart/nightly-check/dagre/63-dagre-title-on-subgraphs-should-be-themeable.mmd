@@ -1,0 +1,20 @@
+---
+description:
+  Verifies that subgraph title text color respects the titleColor theme variable
+  when using the base theme with custom theme variables and dark mode enabled.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+%%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+flowchart LR
+  subgraph A
+  a --> b
+  end
+  subgraph B
+  i -->f
+  end
+  A --> B

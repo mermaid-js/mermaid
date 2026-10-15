@@ -1,0 +1,16 @@
+---
+description: >-
+  Entity name aliases: a bare identifier alias (p[Person]) and a quoted-string
+  alias (c["Customer Account"]) under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+  p[Person] {
+    varchar(64) firstName
+    varchar(64) lastName
+  }
+  c["Customer Account"] {
+    varchar(128) email
+  }
+  p ||--o| c : has

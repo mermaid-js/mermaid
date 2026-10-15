@@ -1,0 +1,23 @@
+---
+description: >-
+  Nested composite blocks (an "outer" container holding two inner containers,
+  plus a top-level sibling) under the "redux-dark-color" redux colour theme —
+  verifies the palette applies at more than one nesting depth.
+config:
+  theme: redux-dark-color
+  look: neo
+---
+block-beta
+  columns 1
+  block:outer
+    columns 1
+    block:inner1
+      a["one"] b["two"]
+    end
+    block:inner2
+      c["three"]
+    end
+  end
+  block:sibling
+    d["four"]
+  end

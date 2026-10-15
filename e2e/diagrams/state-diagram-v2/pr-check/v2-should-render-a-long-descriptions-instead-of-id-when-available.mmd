@@ -1,0 +1,13 @@
+---
+description: >-
+  A single state S1 given a display name via `state "Some long name" as
+  S1`; verifies the long descriptive name is rendered in place of the bare
+  state ID.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+
+  [*] --> S1
+  state "Some long name" as S1
