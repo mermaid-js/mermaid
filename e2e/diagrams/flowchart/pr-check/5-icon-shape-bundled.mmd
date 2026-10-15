@@ -1,0 +1,11 @@
+---
+description:
+  Icon-shape node using `fa:bell`, an icon name served by the static,
+  locally-registered `fa` pack in e2e/platform/viewer.js — not a live network
+  fetch (matching the pattern already proven in e2e/helpers/iconShapeTests.ts).
+  Deliberately not the full icon-shape combinatorial matrix (form/look/label
+  variants), which belongs in the nightly tier.
+---
+flowchart TD
+  A[Start] --> B@{ icon: 'fa:bell', label: 'Notify' }
+  B --> C[End]

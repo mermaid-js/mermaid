@@ -1,0 +1,16 @@
+---
+description: >-
+  Two actors (Customer, Administrator) with three use cases, one of them
+  written with square-bracket node shorthand — the simplest baseline
+  use-case diagram.
+---
+usecase-beta
+    direction LR
+    actor Customer("Customer")
+    actor Admin("Administrator")
+    Browse("Browse catalog")
+    Checkout("Place order")
+    Manage[Manage catalog]
+    Customer --> Browse
+    Customer --> Checkout
+    Admin --> Manage

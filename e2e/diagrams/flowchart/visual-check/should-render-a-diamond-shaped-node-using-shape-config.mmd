@@ -1,0 +1,9 @@
+---
+description: >-
+  Verifies that the new-syntax shape-data directive @{ shape: diam } renders a
+  node as a diamond/decision shape, as an alternative to the legacy {..}
+  node-syntax for diamonds.
+---
+flowchart BT
+  n2["Untitled Node"] --> n1["Diamond"]
+  n1@{ shape: diam}

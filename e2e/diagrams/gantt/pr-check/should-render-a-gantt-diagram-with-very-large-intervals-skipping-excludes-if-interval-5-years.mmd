@@ -1,0 +1,20 @@
+---
+description: >-
+  Performance/edge-case test with an enormous date range — one task
+  starts in the year 9999 while others sit in 2022 — combined with a
+  small tickInterval of 1day and excludes weekends, exercising the code
+  path that skips per-tick exclude-date checks when the total tick
+  count would otherwise be excessive.
+---
+gantt
+  title A long Gantt Diagram
+  dateFormat   YYYY-MM-DD
+  axisFormat   %m-%d
+  tickInterval 1day
+  excludes     weekends
+  section Section
+  A task           : a1, 9999-10-01, 30d
+  Another task     : after a1, 20d
+  section Another
+  Task in sec      : 2022-10-20, 12d
+  another task     : 24d
