@@ -26,6 +26,9 @@ import type { Edge, Node } from '../../../types.js';
 const EPS_LOCAL = 1e-3;
 const MIN_SHARED = 8;
 
+const upperCaseDirection = (raw: unknown): string =>
+  typeof raw === 'string' ? raw.toUpperCase() : '';
+
 type PointLite = Point;
 type RectLite = RectBounds;
 type MaterializedEdge = Edge & { points?: PointLite[] };
@@ -710,9 +713,14 @@ export function liftObstacleHuggingSameSideRails(
   }
 }
 
+/**
+ * Moves top-lane title bands above any rail that crosses them. A lane with no
+ * `direction` of its own takes the layout's `direction`.
+ */
 export function liftTopLaneTitleBandsAboveRails(
   edges: MaterializedEdge[],
-  nodeByIdMap: Map<string, MaterializedNode>
+  nodeByIdMap: Map<string, MaterializedNode>,
+  layoutDirection?: string
 ): void {
   const CLEARANCE = 4;
 
@@ -745,8 +753,9 @@ export function liftTopLaneTitleBandsAboveRails(
     if (!(node as { isGroup?: boolean }).isGroup || (node as { parentId?: unknown }).parentId) {
       return undefined;
     }
-    const rawDirection = (node as { direction?: unknown }).direction;
-    const direction = typeof rawDirection === 'string' ? rawDirection.toUpperCase() : '';
+    const direction = upperCaseDirection(
+      (node as { direction?: unknown }).direction ?? layoutDirection
+    );
     if (direction === 'LR' || direction === 'RL' || direction === 'BT') {
       return undefined;
     }
@@ -776,7 +785,8 @@ export function liftTopLaneTitleBandsAboveRails(
       return false;
     }
     const y = segment.a.y;
-    if (y <= rect.top + EPS_LOCAL || y >= rect.bottom - EPS_LOCAL) {
+    // A rail along the band's edge counts, as it does for validateLayout.
+    if (y < rect.top - EPS_LOCAL || y > rect.bottom + EPS_LOCAL) {
       return false;
     }
     return overlapLength(segment.a.x, segment.b.x, rect.left, rect.right) >= MIN_SHARED;
@@ -831,9 +841,14 @@ export function liftTopLaneTitleBandsAboveRails(
   }
 }
 
+/**
+ * Moves left-lane title bands of an LR layout left of any rail that crosses them.
+ * A lane with no `direction` of its own takes the layout's `direction`.
+ */
 export function shiftLeftLaneTitleBandsLeftOfRails(
   edges: MaterializedEdge[],
-  nodeByIdMap: Map<string, MaterializedNode>
+  nodeByIdMap: Map<string, MaterializedNode>,
+  layoutDirection?: string
 ): void {
   const CLEARANCE = 4;
 
@@ -866,8 +881,10 @@ export function shiftLeftLaneTitleBandsLeftOfRails(
     if (!(node as { isGroup?: boolean }).isGroup || (node as { parentId?: unknown }).parentId) {
       return undefined;
     }
-    const rawDirection = (node as { direction?: unknown }).direction;
-    if (rawDirection !== 'LR') {
+    const direction = upperCaseDirection(
+      (node as { direction?: unknown }).direction ?? layoutDirection
+    );
+    if (direction !== 'LR') {
       return undefined;
     }
     const rect = validTitleRect(node);
@@ -896,7 +913,8 @@ export function shiftLeftLaneTitleBandsLeftOfRails(
       return false;
     }
     const x = segment.a.x;
-    if (x <= rect.left + EPS_LOCAL || x >= rect.right - EPS_LOCAL) {
+    // A rail along the band's edge counts, as it does for validateLayout.
+    if (x < rect.left - EPS_LOCAL || x > rect.right + EPS_LOCAL) {
       return false;
     }
     return overlapLength(segment.a.y, segment.b.y, rect.top, rect.bottom) >= MIN_SHARED;
@@ -907,7 +925,8 @@ export function shiftLeftLaneTitleBandsLeftOfRails(
       return false;
     }
     const y = segment.a.y;
-    if (y <= rect.top + EPS_LOCAL || y >= rect.bottom - EPS_LOCAL) {
+    // A rail along the band's edge counts, as it does for validateLayout.
+    if (y < rect.top - EPS_LOCAL || y > rect.bottom + EPS_LOCAL) {
       return false;
     }
     return overlapLength(segment.a.x, segment.b.x, rect.left, rect.right) >= MIN_SHARED;

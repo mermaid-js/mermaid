@@ -1,0 +1,16 @@
+---
+description: >-
+  Verifies that a subgraph explicitly marked collapsed (g1@{ view: collapsed })
+  renders as a single collapsed node while a sibling subgraph (g2) renders
+  normally expanded with its internal nodes visible, and that the connecting
+  edge between the two subgraphs still renders correctly.
+---
+flowchart LR
+  subgraph g1 [Collapsed]
+    A1 --> A2
+  end
+  subgraph g2 [Expanded]
+    B1 --> B2
+  end
+  g1 --> g2
+  g1@{ view: collapsed }

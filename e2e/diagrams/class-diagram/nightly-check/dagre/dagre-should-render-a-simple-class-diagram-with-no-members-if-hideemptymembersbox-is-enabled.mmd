@@ -1,0 +1,15 @@
+---
+description: >-
+  A single empty class rendered with `class.hideEmptyMembersBox: true` set
+  in config, under the dagre layout, verifying the members box is omitted
+  entirely rather than rendered empty (contrast with the plain 'no-members'
+  sibling where the empty box is shown).
+config:
+  logLevel: 1
+  class:
+    htmlLabels: true
+    hideEmptyMembersBox: true
+  layout: dagre
+---
+classDiagram
+  class Class10

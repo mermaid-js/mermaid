@@ -1,0 +1,20 @@
+---
+description: >-
+  Gitgraph covering showBranches: false (hides branch lines/labels) and
+  showCommitLabel: false (hides commit id labels), with NORMAL/HIGHLIGHT/REVERSE
+  commits still present, rendered under the "neo" look with the "redux-dark"
+  theme.
+config:
+  look: neo
+  theme: redux-dark
+---
+gitGraph
+  commit id: "1"
+  branch develop
+  checkout develop
+  commit id: "2" type: HIGHLIGHT
+  commit id: "3" type: REVERSE
+  checkout main
+  commit id: "4" tag: "v1.0"
+  merge develop id: "merge-1"
+  commit id: "5"

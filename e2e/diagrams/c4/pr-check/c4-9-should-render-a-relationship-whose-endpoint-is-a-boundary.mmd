@@ -1,0 +1,15 @@
+---
+description: >-
+  C4Context diagram where a Rel's source endpoint is a Container_Boundary
+  itself (banking) rather than an element inside it, checking that
+  relationships can attach directly to boundary containers.
+---
+C4Context
+  title Relationship to a boundary
+
+  Container_Boundary(banking, "Internet Banking") {
+    Container(spa, "SPA", "JavaScript", "Front-end")
+  }
+  System_Ext(email, "Email System", "External mail")
+
+  Rel(banking, email, "Forwards alerts")

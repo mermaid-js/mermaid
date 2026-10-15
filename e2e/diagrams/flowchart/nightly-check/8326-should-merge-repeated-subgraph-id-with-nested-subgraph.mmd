@@ -1,0 +1,9 @@
+%% An empty first declaration merges with a later one containing a nested subgraph (issue #8326).
+flowchart LR
+subgraph S
+end
+subgraph S
+  subgraph T
+    y
+  end
+end

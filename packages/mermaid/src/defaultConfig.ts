@@ -38,6 +38,7 @@ const config: RequiredDeep<MermaidConfig> = {
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
     keepEntryNodeOnTop: false,
+    orientFeedbackEdges: true,
   },
   themeCSS: undefined,
 

@@ -1,0 +1,15 @@
+---
+description:
+  Verifies that Mermaid's '#quot;' character-code escape sequence decodes to a
+  literal double-quote character inside hexagon node labels when htmlLabels is
+  enabled, comparing a node using plain apostrophes against one using the
+  encoded quote sequence.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TB
+  a{{"Lorem 'ipsum' dolor 'sit' amet, 'consectetur' adipiscing 'elit'."}}
+  --> b{{"Lorem #quot;ipsum#quot; dolor #quot;sit#quot; amet,#quot;consectetur#quot; adipiscing #quot;elit#quot;."}}

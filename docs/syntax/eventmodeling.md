@@ -68,6 +68,8 @@ tf 03 evt ItemAdded
 
 Each Time Frame is referenced by a **unique number** in order to distinguish one from another and also to be able to reference it when needed. Depending on the complexity of the diagram it should be enough to have just two digit number or more. Imagine you are typing a BASIC program on your ZX Spectrum always starting with a two digit number, but the order of the numbers does not matter, just the uniqueness in the whole timeline.
 
+Reusing a number for another Time Frame or Reset Frame produces an error. Give each frame its own number before referring to it with `->>`.
+
 The Time Frame also contains an **Entity Identifier**, e.g. in case of `01` Time Frame it is `CartUI`. One Entity Identifier can be used multiple times in the timeline for example when you want to express invocations of the same event in different points in time.
 
 Relaxed notation would look like this:
@@ -246,6 +248,8 @@ data ItemAdded {
 
 By default the diagram builds the relations based on the inference. But modeling a more complex business flow requires to break such inference from time to time. For that you can use a different type of Time Frame called **Reset Frame**. It is represented by a `rf` / `resetframe` token.
 
+A reset frame stops the inferred relation from the preceding frame. You can still connect it to a specific earlier frame with `->>`.
+
 Compact version:
 
 ```mermaid-example
@@ -300,6 +304,24 @@ resetframe 04 event External.InventoryChanged
 timeframe 05 processor InventoryProcessor
 timeframe 06 command ChangeInventory
 timeframe 07 event Cart.InventoryChanged
+```
+
+For example, this read model receives input from `ItemAdded` without inferring a relation from `OtherUI`:
+
+```mermaid-example
+eventmodeling
+
+tf 01 evt ItemAdded
+tf 02 ui OtherUI
+rf 03 rmo CartItems ->> 01
+```
+
+```mermaid
+eventmodeling
+
+tf 01 evt ItemAdded
+tf 02 ui OtherUI
+rf 03 rmo CartItems ->> 01
 ```
 
 ### Multiple relations
