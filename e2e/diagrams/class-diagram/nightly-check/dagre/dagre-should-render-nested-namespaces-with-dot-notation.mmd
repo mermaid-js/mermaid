@@ -1,0 +1,29 @@
+---
+description: >-
+  Dagre-layout class diagram using dot-notation namespace names to express
+  nesting (Company.Engineering.Backend, Company.Engineering.Frontend,
+  Company.Engineering) with a TechLead class in the parent namespace
+  leading classes declared in the two child namespaces.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  namespace Company.Engineering.Backend {
+  class Developer {
+    +writeCode()
+  }
+  }
+  namespace Company.Engineering.Frontend {
+  class Designer {
+    +createMockup()
+  }
+  }
+  namespace Company.Engineering {
+  class TechLead {
+    +planSprint()
+  }
+  }
+  TechLead --> Developer : leads
+  TechLead --> Designer : leads

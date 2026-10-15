@@ -1,0 +1,18 @@
+---
+description: >-
+  Composite state "apa" under the ELK layout, where transitions form a cycle
+  (Still <-> Moving, Moving -> Crash) that loops back to the state marked as
+  the composite's [*] start, verifying ELK positions the loop correctly
+  relative to the initial state.
+config:
+  layout: elk
+---
+stateDiagram-v2
+state apa {
+    [*] --> Still
+    Still --> [*]
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+}
