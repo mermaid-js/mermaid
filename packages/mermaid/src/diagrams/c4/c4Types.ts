@@ -144,3 +144,12 @@ export type C4DrawConfig = Omit<
   messageFont: () => C4Font;
   textPlacement?: string;
 } & Record<string, unknown>;
+
+/**
+ * What `UpdateRelStyle($offsetX, $offsetY)` adds to a relationship's edge: the nudge is applied
+ * to the label after the shared pipeline has placed it, so it stays out of the shared Edge type.
+ */
+export interface C4LabelNudge {
+  labelOffsetX?: number;
+  labelOffsetY?: number;
+}
