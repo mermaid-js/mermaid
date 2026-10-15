@@ -21,14 +21,17 @@ async function layout(code: string, size?: { width: number; height: number }) {
   return out;
 }
 
-// Both ends of B's self-loop should sit on B's border.
+// B's self-loop should start and end on B's border and go outside B in between.
 function expectLoopAttached(data: LayoutData) {
   const b = data.nodes.find((n) => n.id === 'B')!;
   const pts = data.edges.find((e) => e.start === 'B' && e.end === 'B')!.points!;
+  const dx = (p: { x: number }) => Math.abs(p.x - b.x!) - b.width! / 2;
+  const dy = (p: { y: number }) => Math.abs(p.y - b.y!) - b.height! / 2;
   for (const p of [pts[0], pts.at(-1)!]) {
-    expect(Math.abs(p.x - b.x!)).toBeLessThanOrEqual(b.width! / 2 + 0.5);
-    expect(Math.abs(p.y - b.y!)).toBeLessThanOrEqual(b.height! / 2 + 0.5);
+    // inside or on the box, and touching one of its sides
+    expect(Math.max(dx(p), dy(p))).toBeCloseTo(0, 0);
   }
+  expect(pts.some((p) => dx(p) > 1 || dy(p) > 1)).toBe(true);
 }
 
 describe('swimlane self-loops (#8446)', () => {
