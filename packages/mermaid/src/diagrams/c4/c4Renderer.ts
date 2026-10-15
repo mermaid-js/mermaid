@@ -42,6 +42,7 @@ interface BoundsData {
   stopx?: number;
   starty?: number;
   stopy?: number;
+  widthLimit?: number;
 }
 
 interface NextBoundsData {
@@ -61,12 +62,6 @@ let globalBoundaryMaxX = 0,
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
 
-/**
- * The widest row the grid can produce: `c4ShapeInRow` elements at their nominal width,
- * each with a margin on either side. Boundary text wraps to this.
- */
-const maxRowWidth = () => conf.width * c4ShapeInRow + conf.c4ShapeMargin * c4ShapeInRow * 2;
-
 parser.yy = c4Db;
 
 let conf = {} as C4DrawConfig;
@@ -83,6 +78,7 @@ class Bounds {
     this.data.stopx = undefined;
     this.data.starty = undefined;
     this.data.stopy = undefined;
+    this.data.widthLimit = undefined;
 
     this.nextData = {} as NextBoundsData;
     this.nextData.startx = undefined;
@@ -118,6 +114,7 @@ class Bounds {
     this.nextData.cnt = this.nextData.cnt + 1;
     // `setData()` seeds the bounds before any `insert()` call.
     const nextStopx = this.nextData.stopx!;
+    const widthLimit = this.data.widthLimit!;
     let _startx =
       this.nextData.startx === this.nextData.stopx
         ? nextStopx + c4Shape.margin
@@ -125,9 +122,7 @@ class Bounds {
     let _stopx = _startx + c4Shape.width;
     let _starty = this.nextData.starty! + c4Shape.margin * 2;
     let _stopy = _starty + c4Shape.height;
-    // A row holds `c4ShapeInRow` elements however wide they measure, so the same
-    // source always breaks rows in the same place.
-    if (this.nextData.cnt > c4ShapeInRow) {
+    if (_startx >= widthLimit || _stopx >= widthLimit || this.nextData.cnt > c4ShapeInRow) {
       _startx = this.nextData.startx! + c4Shape.margin + conf.nextLinePaddingX;
       _starty = this.nextData.stopy! + c4Shape.margin * 2;
 
@@ -158,6 +153,7 @@ class Bounds {
       stopx: undefined,
       starty: undefined,
       stopy: undefined,
+      widthLimit: undefined,
     };
     this.nextData = {
       startx: undefined,
@@ -445,6 +441,13 @@ async function drawInsideBoundary(
 ) {
   const db = diagObj.db as C4DB;
   const currentBounds = new Bounds(diagObj);
+  // Calculate the width limit of the boundary.  label/type 的长度，
+  currentBounds.data.widthLimit =
+    parentBounds.data.widthLimit! / Math.min(c4BoundaryInRow, currentBoundaries.length);
+  // Math.min(
+  //   conf.width * conf.c4ShapeInRow + conf.c4ShapeMargin * conf.c4ShapeInRow * 2,
+  //   parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundaries.length)
+  // );
   for (const [i, currentBoundary] of currentBoundaries.entries()) {
     let Y = 0;
     currentBoundary.image = { width: 0, height: 0, Y: 0 };
@@ -465,7 +468,7 @@ async function drawInsideBoundary(
       currentBoundary,
       currentBoundaryTextWrap,
       currentBoundaryLabelConf,
-      maxRowWidth()
+      currentBounds.data.widthLimit
     );
     label.Y = Y + 8;
     Y = label.Y + label.height;
@@ -478,7 +481,7 @@ async function drawInsideBoundary(
         currentBoundary,
         currentBoundaryTextWrap,
         currentBoundaryTypeConf,
-        maxRowWidth()
+        currentBounds.data.widthLimit
       );
       type.Y = Y + 5;
       Y = type.Y + type.height;
@@ -492,7 +495,7 @@ async function drawInsideBoundary(
         currentBoundary,
         currentBoundaryTextWrap,
         currentBoundaryDescrConf,
-        maxRowWidth()
+        currentBounds.data.widthLimit
       );
       descr.Y = Y + 20;
       Y = descr.Y + descr.height;
@@ -589,6 +592,7 @@ export const draw = async function (_text: string, id: string, _version: string,
     conf.diagramMarginY
   );
 
+  screenBounds.data.widthLimit = screen.availWidth;
   globalBoundaryMaxX = conf.diagramMarginX;
   globalBoundaryMaxY = conf.diagramMarginY;
 
