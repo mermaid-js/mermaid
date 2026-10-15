@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid compare pane</title>
+    <!--
+      One pane of the Dev Explorer "Compare" tab. Each pane loads exactly one
+      mermaid version (mermaid keeps global state, so a version change means a
+      fresh iframe) and renders whatever the parent sends it.
+
+      Protocol (postMessage, parent <-> pane):
+        pane   -> parent  { type: 'ready' }                       page loaded, listening
+        parent -> pane    { type: 'load', version, bundle }       bundle = BundleDescriptor
+        pane   -> parent  { type: 'loaded', version }
+        parent -> pane    { type: 'render', source, config, background, requestId }
+        pane   -> parent  { type: 'rendered', svg, width, height, requestId }
+        pane   -> parent  { type: 'error', message, requestId }  requestId null = load error
+        parent -> pane    { type: 'overlay', dataUrl }           diff image, or null to clear
+    -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      body {
+        padding: 12px;
+        box-sizing: border-box;
+      }
+      #stage {
+        position: relative;
+        display: inline-block;
+      }
+      #stage > svg {
+        display: block;
+        max-width: none !important;
+      }
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        image-rendering: pixelated;
+      }
+      #msg {
+        font-size: 13px;
+        line-height: 1.4;
+        white-space: pre-wrap;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+      #msg.error {
+        color: #b91c1c;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 8px 10px;
+      }
+      #msg:empty {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="msg">Waiting for a version…</div>
+    <div id="stage"><div id="svg-host"></div></div>
+
+    <script type="module">
+      const msgEl = document.getElementById('msg');
+      const stage = document.getElementById('stage');
+      let svgHost = document.getElementById('svg-host');
+
+      /** @type {Promise<{ mermaid: any, bundle: any }> | undefined} */
+      let loading;
+      let renderCount = 0;
+      // Renders run one at a time: mermaid's render state is global.
+      let renderChain = Promise.resolve();
+
+      function post(message) {
+        // Same-origin with the Dev Explorer; the parent also checks `event.source`.
+        window.parent.postMessage(message, window.location.origin);
+      }
+
+      function showMessage(text, isError = false) {
+        msgEl.textContent = text;
+        msgEl.className = isError ? 'error' : '';
+      }
+
+      function errorMessage(e) {
+        if (e instanceof Error) return e.message || String(e);
+        if (typeof e === 'string') return e;
+        // mermaid 8/9 parse errors are sometimes plain objects ({ str, hash }).
+        if (e && typeof e === 'object') return e.str || e.message || JSON.stringify(e);
+        return String(e);
+      }
+
+      function loadClassicScript(src) {
+        return new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = src;
+          s.onload = () => resolve();
+          s.onerror = () => reject(new Error(`Failed to load ${src}`));
+          document.head.appendChild(s);
+        });
+      }
+
+      async function loadBundle(bundle) {
+        let mermaid;
+        if (bundle.format === 'esm') {
+          const mod = await import(bundle.mermaidUrl);
+          mermaid = mod.default ?? mod.mermaid ?? mod;
+          if (bundle.elkUrl && typeof mermaid.registerLayoutLoaders === 'function') {
+            try {
+              const elk = await import(bundle.elkUrl);
+              mermaid.registerLayoutLoaders(elk.default);
+            } catch (e) {
+              console.warn('[compare-pane] layout-elk failed to load', e);
+            }
+          }
+          if (typeof mermaid.registerIconPacks === 'function') {
+            mermaid.registerIconPacks([
+              {
+                name: 'fa',
+                loader: () =>
+                  fetch('https://unpkg.com/@iconify-json/fa6-solid@1/icons.json').then((r) =>
+                    r.json()
+                  ),
+              },
+            ]);
+          }
+        } else {
+          await loadClassicScript(bundle.mermaidUrl);
+          mermaid = window.mermaid;
+        }
+        if (!mermaid) {
+          throw new Error(`mermaid ${bundle.version} did not expose a mermaid object`);
+        }
+        return { mermaid, bundle };
+      }
+
+      async function renderWith({ mermaid, bundle }, id, source, config) {
+        if (typeof mermaid.initialize === 'function') await mermaid.initialize(config);
+        else await mermaid.mermaidAPI.initialize(config);
+        if (bundle.api === 'async') {
+          const result = await mermaid.render(id, source);
+          return typeof result === 'string' ? result : result.svg;
+        }
+        // 8.x / 9.x (and older): callback API. Some 9.x releases also return the
+        // SVG string synchronously; some late 9.x return a promise.
+        const renderApi =
+          mermaid.mermaidAPI && typeof mermaid.mermaidAPI.render === 'function'
+            ? mermaid.mermaidAPI
+            : mermaid;
+        return await new Promise((resolve, reject) => {
+          let done = false;
+          const finish = (svg) => {
+            if (done) return;
+            done = true;
+            resolve(svg);
+          };
+          try {
+            const ret = renderApi.render(id, source, (svg) => finish(svg));
+            if (typeof ret === 'string') {
+              finish(ret);
+            } else if (ret && typeof ret.then === 'function') {
+              ret.then((r) => finish(typeof r === 'string' ? r : r?.svg), reject);
+            } else if (!done) {
+              // Callback APIs call back synchronously; give async ones a moment.
+              setTimeout(() => {
+                if (!done) reject(new Error('render() produced no SVG'));
+              }, 10_000);
+            }
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      // Pin the SVG to its intrinsic size so both panes overlay pixel for pixel.
+      function normalizeSvg(svgEl) {
+        let width = 0;
+        let height = 0;
+        const vb = svgEl.viewBox?.baseVal;
+        if (vb && vb.width > 0 && vb.height > 0) {
+          width = vb.width;
+          height = vb.height;
+        } else {
+          const rect = svgEl.getBoundingClientRect();
+          width = rect.width;
+          height = rect.height;
+        }
+        width = Math.max(1, Math.ceil(width));
+        height = Math.max(1, Math.ceil(height));
+        svgEl.setAttribute('width', String(width));
+        svgEl.setAttribute('height', String(height));
+        svgEl.style.maxWidth = 'none';
+        return { width, height };
+      }
+
+      function cleanupStrayNodes(id) {
+        // Old versions leave their scratch containers behind on error.
+        for (const sel of [`#d${id}`, `#${id}`, `#i${id}`]) {
+          document.querySelectorAll(sel).forEach((el) => {
+            if (!stage.contains(el)) el.remove();
+          });
+        }
+      }
+
+      async function handleRender({ source, config, background, requestId }) {
+        if (background) {
+          document.documentElement.style.background = background;
+          document.body.style.background = background;
+        }
+        if (!loading) {
+          post({ type: 'error', message: 'No version loaded', requestId });
+          return;
+        }
+        let loaded;
+        try {
+          loaded = await loading;
+        } catch (e) {
+          post({ type: 'error', message: errorMessage(e), requestId });
+          return;
+        }
+        const id = `compare-${++renderCount}-${Math.random().toString(16).slice(2)}`;
+        try {
+          const svg = await renderWith(loaded, id, source, config);
+          if (typeof svg !== 'string' || !svg.includes('<svg')) {
+            throw new Error('render() did not return an SVG string');
+          }
+          const host = document.createElement('div');
+          host.id = 'svg-host';
+          host.innerHTML = svg;
+          svgHost.replaceWith(host);
+          svgHost = host;
+          const svgEl = host.querySelector('svg');
+          if (!svgEl) throw new Error('rendered output contains no <svg>');
+          const { width, height } = normalizeSvg(svgEl);
+          // XML serialization so the string also works as an <img> source (the
+          // parent rasterises it for the diff overlay).
+          const xml = new XMLSerializer().serializeToString(svgEl);
+          showMessage('');
+          post({ type: 'rendered', svg: xml, width, height, requestId });
+        } catch (e) {
+          const message = errorMessage(e);
+          svgHost.innerHTML = '';
+          showMessage(`Render error (${loaded.bundle.version}):\n${message}`, true);
+          post({ type: 'error', message, requestId });
+        } finally {
+          cleanupStrayNodes(id);
+        }
+      }
+
+      function handleOverlay({ dataUrl }) {
+        let img = document.getElementById('overlay');
+        if (!dataUrl) {
+          img?.remove();
+          return;
+        }
+        if (!img) {
+          img = document.createElement('img');
+          img.id = 'overlay';
+          img.alt = '';
+          stage.appendChild(img);
+        }
+        img.onload = () => {
+          // Draw at 1 CSS px per canvas px so it lines up with the SVG.
+          img.style.width = `${img.naturalWidth}px`;
+          img.style.height = `${img.naturalHeight}px`;
+        };
+        img.src = dataUrl;
+      }
+
+      window.addEventListener('message', (event) => {
+        if (event.source !== window.parent || event.origin !== window.location.origin) return;
+        const msg = event.data;
+        if (!msg || typeof msg !== 'object') return;
+        if (msg.type === 'load') {
+          if (loading) return; // one version per pane; the parent recreates the iframe to switch
+          const bundle = msg.bundle;
+          showMessage(
+            `Loading mermaid ${msg.version}${bundle.bestEffort ? ' (best effort)' : ''}…`
+          );
+          loading = loadBundle(bundle);
+          loading.then(
+            () => {
+              showMessage('');
+              post({ type: 'loaded', version: msg.version });
+            },
+            (e) => {
+              const message = `Could not load mermaid ${msg.version}: ${errorMessage(e)}`;
+              showMessage(message, true);
+              post({ type: 'error', message, requestId: null });
+            }
+          );
+        } else if (msg.type === 'render') {
+          renderChain = renderChain.then(() => handleRender(msg));
+        } else if (msg.type === 'overlay') {
+          handleOverlay(msg);
+        }
+      });
+
+      post({ type: 'ready' });
+    </script>
+  </body>
+</html>

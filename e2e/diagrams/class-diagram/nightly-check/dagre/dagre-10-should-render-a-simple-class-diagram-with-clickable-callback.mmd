@@ -1,0 +1,24 @@
+---
+description: >-
+  Generic classes with inheritance and composition relationships, a labeled
+  association, and an annotated service class under the dagre layout, with a
+  `callback` statement binding Class01 to a JS function call and tooltip
+  (as opposed to the `link` URL variant used in the non-dagre '9' series).
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  Class01~T~ <|-- AveryLongClass : Cool
+  Class03~T~ *-- Class04~T~
+  Class01 : size()
+  Class01 : int chimp
+  Class01 : int gorilla
+  Class08 <--> C2: Cool label
+  class Class10~T~ {
+    &lt;&lt;service&gt;&gt;
+    int id
+    test()
+  }
+  callback Class01 "functionCall" "A Tooltip"
