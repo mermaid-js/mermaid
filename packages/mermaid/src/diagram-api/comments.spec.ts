@@ -89,4 +89,49 @@ graph TD
       "
     `);
   });
+
+  it('should keep lines starting with %% inside a quoted string', () => {
+    const text = `graph
+  a---b["first line
+  %% second line
+  third line"]
+%% This is a comment
+`;
+    expect(cleanupComments(text)).toMatchInlineSnapshot(`
+      "graph
+        a---b["first line
+        %% second line
+        third line"]
+      "
+    `);
+  });
+
+  it('should keep lines starting with %% inside a markdown string', () => {
+    const text = `graph
+  a["\`**first line**
+  %% _second line_\`"]
+`;
+    expect(cleanupComments(text)).toMatchInlineSnapshot(`
+      "graph
+        a["\`**first line**
+        %% _second line_\`"]
+      "
+    `);
+  });
+
+  it('should ignore quotes inside removed comments', () => {
+    const text = `graph
+%% A comment with an "unbalanced quote
+  A-->B
+%% This is a comment
+  B["label"]
+%% This is another comment
+`;
+    expect(cleanupComments(text)).toMatchInlineSnapshot(`
+      "graph
+        A-->B
+        B["label"]
+      "
+    `);
+  });
 });
