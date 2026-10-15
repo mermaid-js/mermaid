@@ -90,6 +90,12 @@ export interface FlowSubGraph {
   metadata?: NodeMetaData;
 }
 
+/** A swimlane phase: a band across the lanes, declared with `phase id["Title"]`. */
+export interface FlowPhase {
+  id: string;
+  label: string;
+}
+
 export interface FlowLink {
   length?: number;
   stroke: string;

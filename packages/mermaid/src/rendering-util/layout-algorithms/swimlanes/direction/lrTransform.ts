@@ -174,14 +174,16 @@ export function applyLrDirectionTransform(
 
   const titleBandSize = 36;
 
+  // Scale by the diagram's own nodes: an edge label must not stretch the flow axis.
+  const scaledNodes = contentNodes.filter((n) => !n.isEdgeLabel);
   let totalWidth = 0;
   let totalHeight = 0;
-  for (const n of contentNodes) {
+  for (const n of scaledNodes) {
     totalWidth += n.width ?? 0;
     totalHeight += n.height ?? 0;
   }
-  const avgWidth = totalWidth / contentNodes.length;
-  const avgHeight = totalHeight / contentNodes.length;
+  const avgWidth = totalWidth / scaledNodes.length;
+  const avgHeight = totalHeight / scaledNodes.length;
   const horizontalScaleFactor = avgHeight > 0 ? Math.max(1, avgWidth / avgHeight) : 1;
 
   for (const n of contentNodes) {
