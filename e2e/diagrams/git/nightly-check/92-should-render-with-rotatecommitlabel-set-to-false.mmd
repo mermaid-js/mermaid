@@ -1,0 +1,20 @@
+---
+description: >-
+  Same named-commit develop-branch scenario as the rotateCommitLabel-true test, but with
+  `rotateCommitLabel: false`, verifying commit labels render horizontally rather than rotated.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    rotateCommitLabel: false
+    parallelCommits: false
+---
+gitGraph
+  commit id: "Alpha"
+  commit id: "Beta"
+  branch develop
+  checkout develop
+  commit id: "Gamma"
+  commit id: "Delta"
+  checkout main
+  commit id: "Epsilon"

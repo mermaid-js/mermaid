@@ -1,0 +1,19 @@
+---
+description: >-
+  Same sibling-nesting deployment layout as diagram-types/deployment-diagram.mmd
+  (Data Center containing an App Server and a DB Server, each wrapping a
+  Container/ContainerDb), but built with the Node/Node_L/Node_R alias
+  macros instead of Deployment_Node, to verify the aliases behave
+  identically.
+---
+C4Deployment
+title Deployment node aliases
+Node(dc, "Data Center", "us-east-1") {
+  Node_L(srv, "App Server", "Ubuntu 22.04") {
+    Container(api, "API", "Java, Spring")
+  }
+  Node_R(dbn, "DB Server", "Ubuntu 22.04") {
+    ContainerDb(db, "Database", "PostgreSQL")
+  }
+}
+Rel(api, db, "reads/writes", "JDBC")

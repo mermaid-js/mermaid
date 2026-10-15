@@ -1,0 +1,15 @@
+---
+description: >-
+  Same combined `:::pink` inline shorthand and `cssClass "Class10" bold`
+  styling diagram as the '-without-htmllabels' sibling, but with
+  `htmlLabels: true`, under the dagre layout.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  class Class10:::pink
+  cssClass "Class10" bold
+  classDef pink fill:#f9f
+  classDef bold stroke:#333,stroke-width:6px,color:#fff
