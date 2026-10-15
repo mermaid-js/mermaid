@@ -629,14 +629,16 @@ export const insertEdge = function (
   startNode,
   endNode,
   diagramId,
-  skipIntersect = false
+  skipIntersect = false,
+  layoutAlgorithm = undefined
 ) {
   if (!diagramId) {
     throw new Error(
       `insertEdge: missing diagramId for edge "${edge.id}" — edge IDs require a diagram prefix for uniqueness`
     );
   }
-  const { handDrawnSeed, layout } = getConfig();
+  const { handDrawnSeed, layout: configuredLayout } = getConfig();
+  const layout = layoutAlgorithm ?? configuredLayout;
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = startNode;
@@ -654,7 +656,13 @@ export const insertEdge = function (
   // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
   // clipping below, so their edge ports are unaffected by swimlanes.
   if (layout === 'swimlane') {
-    if (head.intersect && tail.intersect && Array.isArray(points) && points.length >= 2) {
+    if (
+      !skipIntersect &&
+      head.intersect &&
+      tail.intersect &&
+      Array.isArray(points) &&
+      points.length >= 2
+    ) {
       if (points.length === 2) {
         // Simple straight edge: just clip the two endpoints to the node boundaries.
         points = [tail.intersect(points[0]), head.intersect(points[1])];

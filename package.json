@@ -55,6 +55,8 @@
     "contributors": "tsx scripts/updateContributors.ts",
     "playwright": "playwright test",
     "playwright:ui": "playwright test --ui",
+    "playwright:release-test": "MERMAID_E2E_FIXTURE_TIER=pr-check,nightly-check USE_APPLI=true APPLITOOLS_BRANCH=release-baseline playwright test $(node scripts/e2e-tier-scope.mjs pr-check nightly-check | tr ',' ' ')",
+    "playwright:release-test:extended": "MERMAID_E2E_FIXTURE_TIER=visual-check USE_APPLI=true APPLITOOLS_BRANCH=release-baseline-extended playwright test $(node scripts/e2e-tier-scope.mjs visual-check | tr ',' ' ')",
     "playwright:install": "playwright install chromium",
     "coverage:e2e:clean": "rimraf .nyc_output coverage/playwright",
     "coverage:merge": "tsx scripts/coverage.ts",

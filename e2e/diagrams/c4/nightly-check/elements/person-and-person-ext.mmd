@@ -1,0 +1,10 @@
+---
+description: >-
+  Minimal C4Context diagram exercising the Person and Person_Ext element
+  types with a single Rel between them.
+---
+C4Context
+title Person elements
+Person(p, "Internal Person", "An authenticated user")
+Person_Ext(pe, "External Person", "An anonymous visitor")
+Rel(pe, p, "Contacts")

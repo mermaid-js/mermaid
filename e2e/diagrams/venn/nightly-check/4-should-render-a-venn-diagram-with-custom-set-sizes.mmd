@@ -1,0 +1,15 @@
+---
+description: >-
+  Three-set venn with explicit numeric sizes on every set and every overlap
+  region (sets 20/15/10, pairwise overlaps 5/3/2, triple overlap 1) — tests
+  full custom sizing across a 3-set diagram rather than just the two-set
+  case.
+---
+venn-beta
+  set A:20
+  set B:15
+  set C:10
+  union A, B:5
+  union B, C:3
+  union A, C:2
+  union A, B, C:1
