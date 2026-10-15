@@ -8,6 +8,10 @@ const ANCHOR_SIDES = new Set(['top', 'right', 'bottom', 'left']);
 
 const ANCHOR_GAP = 8;
 
+// Far beyond any lane a diagram draws, and small enough that a stand-off keeps every
+// coordinate it feeds finite.
+export const MAX_ANCHOR_GAP = 10_000;
+
 const OUTWARD: Record<AnchorSide, { x: number; y: number }> = {
   top: { x: 0, y: -1 },
   bottom: { x: 0, y: 1 },
@@ -38,7 +42,9 @@ export function readAnchor(node: Node | undefined): NodeAnchor | undefined {
     hostId,
     ...(typeof side === 'string' && ANCHOR_SIDES.has(side) ? { side: side as AnchorSide } : {}),
     ...(typeof slot === 'number' && Number.isFinite(slot) ? { slot } : {}),
-    ...(typeof gap === 'number' && Number.isFinite(gap) && gap > 0 ? { gap } : {}),
+    ...(typeof gap === 'number' && Number.isFinite(gap) && gap > 0
+      ? { gap: Math.min(gap, MAX_ANCHOR_GAP) }
+      : {}),
   };
 }
 
