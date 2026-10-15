@@ -13,6 +13,7 @@
 
 import type { LayoutData, Node as MermaidNode } from '../../../types.js';
 import { PRECISION } from '../config.js';
+import { lrHorizontalScale } from '../direction/lrTransform.js';
 
 const EPS = PRECISION.EPSILON;
 
@@ -117,15 +118,16 @@ function pointOnLine(line: RoutedLine, along: number): Point {
 
 /**
  * Small loop on the right side of the node for edges like `A --> A`.
- * In LR/RL the layout gets rotated later, so the node's height is used here.
+ * In LR/RL the layout gets rotated and stretched later, so pass that stretch
+ * as `lrScale` to keep both ends of the loop on the node.
  */
-function selfLoopPoints(node: MermaidNode, transposed: boolean): Point[] {
+function selfLoopPoints(node: MermaidNode, lrScale?: number): Point[] {
   const x = node.x ?? 0;
   const y = node.y ?? 0;
   const w = node.width ?? 0;
   const h = node.height ?? 0;
-  const right = x + (transposed ? h : w) / 2;
-  const quarterH = h / 4;
+  const right = x + (lrScale ? h : w) / 2;
+  const quarterH = lrScale ? Math.min(h, w / lrScale) / 4 : h / 4;
   const outX = right + ANCHOR_OFFSET;
   return [
     { x: right, y: y - quarterH },
@@ -766,7 +768,9 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     if (e.start === e.end) {
       const node = nodeById.get(e.start);
       if (node) {
-        e.points = selfLoopPoints(node, direction === 'LR' || direction === 'RL');
+        const lrScale =
+          direction === 'LR' || direction === 'RL' ? lrHorizontalScale(nodes) : undefined;
+        e.points = selfLoopPoints(node, lrScale);
       }
       continue;
     }
