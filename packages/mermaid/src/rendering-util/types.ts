@@ -182,6 +182,8 @@ export interface Edge {
   // Rendering specific properties
   curve?: string;
   labelpos?: string;
+  /** Wrap width for the edge label; `Number.POSITIVE_INFINITY` disables wrapping. */
+  labelWrapWidth?: number;
   labelStyle?: string[];
   minlen?: number;
   pattern?: string;
