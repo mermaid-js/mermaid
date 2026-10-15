@@ -354,5 +354,22 @@ const keyify = (obj: any, prefix = ''): string[] =>
     return [...res, prefix + el];
   }, []);
 
-export const configKeys = new Set<string>(keyify(config, ''));
+// Theme variables that only some themes define (e.g. `stateBorder` in the redux themes) or that
+// only diagram styles read must still be allowed through `sanitizeDirective`.
+const themeVariableKeys = Object.values(theme).flatMap(({ getThemeVariables }) =>
+  keyify(getThemeVariables(), '')
+);
+const diagramStyleThemeVariableKeys = [
+  // treeView/styles.ts
+  'iconColor',
+  'descriptionColor',
+  'highlightBg',
+  'highlightStroke',
+];
+
+export const configKeys = new Set<string>([
+  ...keyify(config, ''),
+  ...themeVariableKeys,
+  ...diagramStyleThemeVariableKeys,
+]);
 export default config;
