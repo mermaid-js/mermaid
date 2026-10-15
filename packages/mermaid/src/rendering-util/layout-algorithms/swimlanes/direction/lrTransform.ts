@@ -1,6 +1,6 @@
 import type { LayoutData } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
-import { anchorFootprints, collectAnchoredIds } from '../anchoredNodes.js';
+import { anchorFootprints, collectAnchoredIds, type AnchorFootprint } from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -230,6 +230,22 @@ function stackEmptyBands(
   }
 }
 
+// Grows a host to cover the room its anchored run is placed in: out from its border by
+// `beyond`, and along it from `before` to `after` either side of its centre.
+function withAnchorFootprint(host: LayoutNode, footprint: AnchorFootprint): LayoutNode {
+  const x = host.x ?? 0;
+  const half = (host.width ?? 0) / 2;
+  const left = Math.min(x - half, x - footprint.before);
+  const right = Math.max(x + half, x + footprint.after);
+  return {
+    ...host,
+    x: (left + right) / 2,
+    y: (host.y ?? 0) + footprint.beyond / 2,
+    width: right - left,
+    height: (host.height ?? 0) + footprint.beyond,
+  };
+}
+
 export function applyLrDirectionTransform(
   layout: LayoutData,
   direction: Direction = 'LR'
@@ -335,16 +351,7 @@ export function applyLrDirectionTransform(
     }
     const bucket = childrenByLane.get(laneId) ?? [];
     const footprint = footprints.get(n.id);
-    bucket.push(
-      footprint
-        ? {
-            ...n,
-            y: (n.y ?? 0) + footprint.beyond / 2,
-            width: Math.max(n.width ?? 0, 2 * footprint.across),
-            height: (n.height ?? 0) + footprint.beyond,
-          }
-        : n
-    );
+    bucket.push(footprint ? withAnchorFootprint(n, footprint) : n);
     childrenByLane.set(laneId, bucket);
   }
 
