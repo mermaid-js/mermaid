@@ -96,6 +96,7 @@ function assignTopLaneTitleRect(lane: Node): void {
   };
 }
 
+// Mirrors DroppedSubGraphMember in the flowchart types, which a rendering-util module must not import.
 interface SharedMember {
   node: string;
   keptBy: string;
@@ -124,11 +125,9 @@ function topLevelLaneId(byId: Map<string, Node>, id: string): string | undefined
 
 function removeEmptyLanes(layout: LayoutData, nodes: Node[], laneIds: Set<string>): void {
   for (const laneId of laneIds) {
-    if (isEmptyLane(layout, nodes, laneId)) {
-      nodes.splice(
-        nodes.findIndex((node) => node.id === laneId),
-        1
-      );
+    const index = nodes.findIndex((node) => node.id === laneId);
+    if (index >= 0 && isEmptyLane(layout, nodes, laneId)) {
+      nodes.splice(index, 1);
     }
   }
 }
