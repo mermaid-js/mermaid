@@ -1,0 +1,11 @@
+---
+description: >-
+  Per-message `wrap:` prefix on a long message from a control-shaped
+  participant to an entity-shaped participant, with a short reply message
+  left unwrapped.
+---
+sequenceDiagram
+  participant Alice@{ "type" : "control" }
+  participant Bob@{ "type" : "entity" }
+  Alice->>Bob:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

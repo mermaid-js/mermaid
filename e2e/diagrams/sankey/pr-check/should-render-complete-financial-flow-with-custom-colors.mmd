@@ -1,0 +1,46 @@
+---
+description: >-
+  Sankey diagram of an Apple-style financial flow (product lines into
+  Revenue, through Cost of Revenue, Gross Profit, Op Expenses/Profit, Tax,
+  Net Profit) exercising the full set of sankey config options: explicit
+  width/height, outlined label style, showValues, a $/B prefix/suffix, and
+  per-node custom colors. Superset of should-render-labels-with-apple-
+  style-outlined-text.mmd, which uses the same link data but only sets
+  width/height/labelStyle.
+config:
+  sankey:
+    width: 800
+    height: 500
+    labelStyle: outlined
+    showValues: true
+    prefix: $
+    suffix: B
+    nodeColors:
+      iPhone: '#6e6e73'
+      Mac: '#6e6e73'
+      iPad: '#6e6e73'
+      Wearables: '#6e6e73'
+      Products: '#6e6e73'
+      Services: '#6e6e73'
+      Revenue: '#424245'
+      Cost of Revenue: '#ff3b30'
+      Gross Profit: '#34c759'
+      Op Expenses: '#ff3b30'
+      Op Profit: '#34c759'
+      Tax: '#ff3b30'
+      Net Profit: '#34c759'
+---
+sankey
+
+  iPhone,Products,205
+  Mac,Products,40
+  iPad,Products,29
+  Wearables,Products,41
+  Products,Revenue,315
+  Services,Revenue,78
+  Revenue,Cost of Revenue,223
+  Revenue,Gross Profit,170
+  Gross Profit,Op Expenses,51
+  Gross Profit,Op Profit,119
+  Op Profit,Tax,19
+  Op Profit,Net Profit,100
