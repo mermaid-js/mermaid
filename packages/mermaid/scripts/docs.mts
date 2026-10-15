@@ -54,6 +54,8 @@ import mm from 'micromatch';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
 import { visit } from 'unist-util-visit';
+// Reads the schema as a file rather than importing it, so it needs no load hook.
+import { buildBpmnConfig, buildBpmnEventMatrix, buildBpmnTaskTypes } from './bpmnDocsTables.mjs';
 
 // short-circuit `.schema.yaml` imports, so that we can safely import `shapes.js`
 register('./loadHook.mjs', import.meta.url);
@@ -253,6 +255,9 @@ const injectPlaceholders = (text: string): string =>
 
 const virtualGenerators: Record<string, () => string> = {
   shapesTable: buildShapeDoc,
+  bpmnEventMatrix: buildBpmnEventMatrix,
+  bpmnTaskTypes: buildBpmnTaskTypes,
+  bpmnConfig: buildBpmnConfig,
 };
 
 const transformIncludeStatements = (file: string, text: string): string => {

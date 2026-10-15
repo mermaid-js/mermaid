@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid BPMN Diagram Demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 20px;
+      }
+
+      h1,
+      h2 {
+        color: #333;
+      }
+
+      .demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 32px;
+        align-items: start;
+      }
+
+      .demo .source {
+        background: #fff;
+        color: #333;
+        border: 1px solid #e0e0e0;
+        padding: 16px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        overflow-x: auto;
+        white-space: pre;
+        margin: 0;
+      }
+
+      .demo .rendered {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 16px;
+        min-height: 80px;
+        overflow-x: auto;
+      }
+
+      .demo .rendered .mermaid {
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>BPMN Diagram Demo</h1>
+    <p>
+      Each example shows the <strong>input syntax</strong> (left) alongside the
+      <strong>rendered output</strong> (right).
+    </p>
+
+    <h2>Pools, lanes and a boundary event</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  pool "Order handling"
+    lane "Sales"
+      start message s1 "Order received"
+      user task t1 "Approve order"
+        boundary timer b1 "2 days"
+      xor gw "Approved?"
+    lane "Warehouse"
+      service task t2 "Pick items"
+      end e1 "Shipped"
+  s1 --> t1 --> gw
+  gw -- yes --> t2 --> e1
+  b1 --> t2
+        </pre>
+      </div>
+    </div>
+
+    <h2>Catching events, one per trigger</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  lane "Catching"
+    start message a1 "Message"
+    intermediate timer a2 "Timer"
+    intermediate conditional a3 "Conditional"
+    intermediate signal a4 "Signal"
+    intermediate link a5 "Link"
+    intermediate multiple a6 "Multiple"
+        </pre>
+      </div>
+    </div>
+
+    <h2>Throwing events are filled</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  lane "Throwing"
+    throw message b1 "Message"
+    throw escalation b2 "Escalation"
+    throw signal b3 "Signal"
+    end error b4 "Error"
+    end terminate b5 "Terminate"
+        </pre>
+      </div>
+    </div>
+
+    <h2>Gateways and activity types</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  lane "Work"
+    xor g1 "Exclusive"
+    and g2 "Parallel"
+    or g3 "Inclusive"
+    event-gateway g4 "Event based"
+    complex g5 "Complex"
+    user task t1 "User"
+    service task t2 "Service"
+    script task t3 "Script"
+    manual task t4 "Manual"
+    subprocess sp1 "Sub-process"
+    call c1 "Call activity"
+        </pre>
+      </div>
+    </div>
+
+    <h2>Artifacts and a group</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  lane "Fulfilment"
+    start s1 "Begin"
+    group "Warehouse work"
+      task t1 "Pick items"
+      task t2 "Pack"
+    data d1 "Pick list"
+    data-store ds1 "Inventory"
+    note n1 "Stock checked nightly"
+    end e1 "Done"
+  s1 --> t1 --> t2 --> e1
+        </pre>
+      </div>
+    </div>
+
+    <h2>A message flow between two pools</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  pool "Customer"
+    lane "Buyer"
+      start s1 "Needs goods"
+      task t1 "Place order"
+  pool "Supplier"
+    lane "Sales"
+      task t2 "Receive order"
+      end e1 "Fulfilled"
+  s1 --> t1
+  t1 -.-> t2
+  t2 --> e1
+        </pre>
+      </div>
+    </div>
+
+    <h2>Data associations</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+bpmn-beta LR
+  pool "Order handling"
+    lane "Sales"
+      start s1 "Order received"
+      data-input in1 "Order form"
+      user task t1 "Check the order"
+      data-output out1 "Approval"
+      data-collection many "Line items"
+      end e1 "Filed"
+      note n1 "Against the price list"
+  s1 --> t1
+  t1 --> e1
+  in1 ..> t1
+  t1 ..> out1
+  many ..> t1
+  n1 ... t1
+        </pre>
+      </div>
+    </div>
+
+    <h2>Retuned through theme variables</h2>
+    <div class="demo">
+      <pre class="source"></pre>
+      <div class="rendered">
+        <pre class="mermaid">
+---
+config:
+  themeVariables:
+    bpmn:
+      activityFill: '#eef6ff'
+      activityStroke: '#2563eb'
+      gatewayFill: '#fff7ed'
+      gatewayStroke: '#ea580c'
+      laneStroke: '#64748b'
+---
+bpmn-beta LR
+  lane "Themed"
+    start s1 "Begin"
+    user task t1 "Work"
+    xor gw "Done?"
+    end e1 "End"
+  s1 --> t1 --> gw --> e1
+        </pre>
+      </div>
+    </div>
+
+    <script type="module">
+      // Copy mermaid source text into the paired .source panel before mermaid runs
+      for (const demo of document.querySelectorAll('.demo')) {
+        const mermaidPre = demo.querySelector('.mermaid');
+        const sourcePre = demo.querySelector('.source');
+        if (mermaidPre && sourcePre) {
+          // Dedent: strip common leading whitespace
+          const raw = mermaidPre.textContent || '';
+          const lines = raw.split('\n');
+          // Drop leading/trailing empty lines
+          while (lines.length > 0 && lines[0].trim() === '') lines.shift();
+          while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+          const minIndent = Math.min(
+            ...lines.filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length)
+          );
+          sourcePre.textContent = lines.map((l) => l.slice(minIndent)).join('\n');
+        }
+      }
+
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({
+        logLevel: 1,
+        securityLevel: 'loose',
+      });
+    </script>
+  </body>
+</html>

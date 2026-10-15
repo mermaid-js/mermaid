@@ -1,0 +1,19 @@
+bpmn-beta LR
+title Message flows between four participants
+  pool "Laboratorium"
+    lane "Systemy"
+      end message a1 "Raport przekazany"
+  pool "Scudo AI Desktop"
+    lane "Operator"
+      start message b1 "Operator wskazuje pliki"
+      end b2 "Gotowe"
+  pool "SharePoint"
+    lane "Graph"
+      task c1 "Zapis pliku w kanale"
+  pool "Gabinet"
+    lane "Lekarz"
+      end d1 "Lekarz odczytuje raport"
+  a1 -.-> b1
+  b1 --> b2
+  b2 -.-> c1
+  c1 -.-> d1
