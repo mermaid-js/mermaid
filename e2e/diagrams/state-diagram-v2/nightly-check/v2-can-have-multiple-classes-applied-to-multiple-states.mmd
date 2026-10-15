@@ -1,0 +1,25 @@
+---
+description: >-
+  A Still/Moving/Crash state-machine flow where three different classDefs
+  (notMoving, movement, badBadEvent) are applied via `class` statements,
+  including state Crash receiving two classes in sequence - tests that
+  multiple classes can be applied across and onto the same state.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  classDef notMoving fill:white
+  classDef movement font-style:italic;
+  classDef badBadEvent fill:#f00,color:white,font-weight:bold
+
+  [*] --> Still
+  Still --> [*]
+  Still --> Moving
+  Moving --> Still
+  Moving --> Crash
+  Crash --> [*]
+
+  class Still notMoving
+  class Moving, Crash movement
+  class Crash badBadEvent

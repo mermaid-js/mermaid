@@ -1,0 +1,17 @@
+---
+description: >-
+  Two empty classes get the same CSS class applied via a single
+  comma-separated `cssClass "Class10, class20" exClass2` statement (note
+  the lowercase "class20", checking class-name matching is
+  case-insensitive). Uses classDiagram-v2 syntax with
+  `flowchart.htmlLabels: false`.
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+classDiagram-v2
+  class Class10
+  class Class20
+
+  cssClass "Class10, class20" exClass2

@@ -18,6 +18,11 @@ const genSections: DiagramStylesProvider = (options) => {
 
   for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
     const sw = '' + (look === 'neo' ? Math.max(10 - (i - 1) * 2, 2) : 17 - 3 * i);
+    // HTML labels must follow the neo fill swap too, so they use the same color as SVG text.
+    const neoLabel =
+      theme === 'redux' || theme === 'redux-dark'
+        ? options.nodeBorder
+        : options['cScaleLabel' + (theme === 'neutral' ? 1 : i)];
     sections += `
     .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle, .section-${
       i - 1
@@ -59,8 +64,9 @@ const genSections: DiagramStylesProvider = (options) => {
     [data-look="neo"].section-edge-${i - 1}{
       stroke: ${theme?.includes('redux') || theme === 'neo-dark' ? options.nodeBorder : options['cScale' + i]};
     }
-    [data-look="neo"].mindmap-node.section-${i - 1} text {
-     fill: ${theme === 'redux' || theme === 'redux-dark' ? options.nodeBorder : options['cScaleLabel' + (theme === 'neutral' ? 1 : i)]};
+    [data-look="neo"].mindmap-node.section-${i - 1} text, [data-look="neo"].mindmap-node.section-${i - 1} span {
+     fill: ${neoLabel};
+     color: ${neoLabel};
     }
     `;
   }
@@ -88,6 +94,9 @@ const getStyles: DiagramStylesProvider = (options) => {
   // svgId is passed inside options by the caller in packages/mermaid/src/styles.ts
   // as `themes[type]({ ...options, svgId })`. The second parameter is never populated.
   const svgId: string | undefined = options.svgId;
+  const neoRootLabel = theme?.includes('redux')
+    ? options.nodeBorder
+    : options['cScaleLabel' + (theme === 'neutral' ? 1 : 0)];
   const scopedDropShadow = options.dropShadow
     ? options.dropShadow.replace('url(#drop-shadow)', `url(${svgId}-drop-shadow)`)
     : 'none';
@@ -127,8 +136,9 @@ const getStyles: DiagramStylesProvider = (options) => {
   [data-look="neo"].mindmap-node.section-root rect, [data-look="neo"].mindmap-node.section-root path, [data-look="neo"].mindmap-node.section-root circle, [data-look="neo"].mindmap-node.section-root polygon  {
     fill: ${theme?.includes('redux') ? options.mainBkg : options.git0};
   }
-  [data-look="neo"].mindmap-node.section-root .text-inner-tspan {
-    fill:  ${theme?.includes('redux') ? options.nodeBorder : options['cScaleLabel' + (theme === 'neutral' ? 1 : 0)]};
+  [data-look="neo"].mindmap-node.section-root .text-inner-tspan, [data-look="neo"].mindmap-node.section-root span {
+    fill: ${neoRootLabel};
+    color: ${neoRootLabel};
   }
   ${options.useGradient && svgId && options.mainBkg ? genGradient(options.THEME_COLOR_LIMIT, svgId, options.mainBkg) : ''}
 `;

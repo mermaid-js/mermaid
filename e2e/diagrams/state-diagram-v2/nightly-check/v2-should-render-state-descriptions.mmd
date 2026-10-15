@@ -1,0 +1,15 @@
+---
+description: >-
+  Two states declared with long quoted display names via `state "..." as`
+  aliases, where XState2 also receives an additional inline `: New line`
+  description appended after its alias declaration - tests combining
+  alias-based and colon-based description syntax on the same state.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  state "Long state description" as XState1
+  state "Another Long state description" as XState2
+  XState2 : New line
+  XState1 --> XState2

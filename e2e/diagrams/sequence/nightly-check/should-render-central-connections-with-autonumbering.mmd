@@ -1,0 +1,24 @@
+---
+description: >-
+  Base-theme sequence diagram with `autonumber` enabled, exercising several
+  central-connection arrow placements (`()` at destination, at source, on
+  both ends, and combined with a dotted reverse or dual bidirectional
+  arrow) to confirm autonumbering stays correct alongside the
+  central-connection marker.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice->>()Bob: Central connection at destination
+  Bob()->>Alice: Reverse central at source
+  Alice()->>()Bob: Dual central connections
+  Bob->>()Charlie: Another central connection
+  Charlie()-->>Alice: Reverse central dotted
+  Alice()<<-->>()Bob: Dual central bidirectional

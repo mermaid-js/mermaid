@@ -1,0 +1,13 @@
+---
+description: >-
+  Sequence diagram with `sequence.noteAlign: right`, where a `note left of`
+  contains explicit `<br>` line breaks, verifying that multi-line note
+  text is right-aligned as configured.
+config:
+  sequence:
+    noteAlign: right
+---
+sequenceDiagram
+  Alice->>Bob: I'm short
+  note left of Alice: I am right aligned<br>but also<br>multiline
+  Bob->>Alice: Short as well

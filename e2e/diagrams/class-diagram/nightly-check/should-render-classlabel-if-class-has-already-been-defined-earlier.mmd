@@ -1,0 +1,8 @@
+---
+description: >-
+  classDiagram where a class (Duck) is first referenced via a relationship, then given a
+  text label through a later `class` declaration, verifying the label applies retroactively.
+---
+classDiagram
+  Animal <|-- Duck
+  class Duck["Duck with text label"]

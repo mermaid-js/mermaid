@@ -1,0 +1,20 @@
+---
+description:
+  Tests the same subgraph-to-subgraph link and cross-subgraph node link pattern
+  as the analogous TB/BT fixtures (S1 --> S2 plus sub1 --> sub4), but with the
+  flowchart set to RL (right-to-left) direction.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart RL
+  subgraph S1
+   sub1 -->sub2
+  end
+  subgraph S2
+   sub4
+  end
+  S1 --> S2
+  sub1 --> sub4
