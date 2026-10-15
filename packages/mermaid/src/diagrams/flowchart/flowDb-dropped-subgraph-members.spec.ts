@@ -40,6 +40,14 @@ describe('members a subgraph loses to an earlier subgraph', () => {
     );
   });
 
+  it('records nothing when the keeping subgraph is nested deeper in the dropping one', () => {
+    expect(
+      dropped(
+        'flowchart LR\nsubgraph L1\n  subgraph M\n    subgraph I\n      a\n    end\n  end\n  a\nend'
+      )
+    ).toEqual({});
+  });
+
   it('records nothing when a repeated subgraph id lists a node again', () => {
     expect(dropped('flowchart LR\nsubgraph S\n  x\nend\nsubgraph S\n  x\n  y\nend')).toEqual({});
   });

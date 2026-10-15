@@ -763,8 +763,8 @@ You have to call mermaid.initialize.`
 
   /**
    * Notes each member `subGraph` listed but lost to an earlier subgraph. An earlier
-   * subgraph that `subGraph` lists itself is nested in it, and a repeated id is one subgraph,
-   * so neither is a conflict.
+   * subgraph nested anywhere inside `subGraph` is not a conflict, and neither is a
+   * repeated id, which is one subgraph.
    */
   private recordDroppedMembers(subGraph: FlowSubGraph, uniqueNodes: string[]) {
     const kept = new Set(uniqueNodes);
@@ -773,10 +773,25 @@ You have to call mermaid.initialize.`
         continue;
       }
       const owner = this.subGraphs.find((sg) => sg.nodes.includes(node));
-      if (owner && owner.id !== subGraph.id && !subGraph.nodes.includes(owner.id)) {
+      if (owner && owner.id !== subGraph.id && !this.isNestedIn(owner.id, subGraph)) {
         this.droppedSubGraphMembers.push({ node, keptBy: owner.id, droppedFrom: subGraph.id });
       }
     }
+  }
+
+  /** Whether the subgraph `id` sits under `ancestor`, at any depth, among the subgraphs so far. */
+  private isNestedIn(id: string, ancestor: FlowSubGraph): boolean {
+    const visited = new Set<string>();
+    let current: string | undefined = id;
+    while (current !== undefined && !visited.has(current)) {
+      if (ancestor.nodes.includes(current)) {
+        return true;
+      }
+      visited.add(current);
+      const child: string = current;
+      current = this.subGraphs.find((sg) => sg.nodes.includes(child))?.id;
+    }
+    return false;
   }
 
   private getPosForId(id: string) {
