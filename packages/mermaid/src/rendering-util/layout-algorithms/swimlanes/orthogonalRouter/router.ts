@@ -115,6 +115,26 @@ function pointOnLine(line: RoutedLine, along: number): Point {
   return line.orient === 'vertical' ? { x: line.coord, y: along } : { x: along, y: line.coord };
 }
 
+/**
+ * Small loop on the right side of the node for edges like `A --> A`.
+ * In LR/RL the layout gets rotated later, so the node's height is used here.
+ */
+function selfLoopPoints(node: MermaidNode, transposed: boolean): Point[] {
+  const x = node.x ?? 0;
+  const y = node.y ?? 0;
+  const w = node.width ?? 0;
+  const h = node.height ?? 0;
+  const right = x + (transposed ? h : w) / 2;
+  const quarterH = h / 4;
+  const outX = right + ANCHOR_OFFSET;
+  return [
+    { x: right, y: y - quarterH },
+    { x: outX, y: y - quarterH },
+    { x: outX, y: y + quarterH },
+    { x: right, y: y + quarterH },
+  ];
+}
+
 // ---------------------------------------------------------------------------
 // Orthogonal Router Implementation
 // ---------------------------------------------------------------------------
@@ -742,8 +762,12 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     if (e.points && e.points.length > 0) {
       continue;
     }
-    // Skip self-loops
+    // Self-loops get a fixed loop instead of A* routing (#8446)
     if (e.start === e.end) {
+      const node = nodeById.get(e.start);
+      if (node) {
+        e.points = selfLoopPoints(node, direction === 'LR' || direction === 'RL');
+      }
       continue;
     }
 
@@ -2269,6 +2293,10 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
     const srcId = (edge as { start?: string }).start;
     const dstId = (edge as { end?: string }).end;
+    // Self-loop ends are already on the node border, clamping breaks them in LR
+    if (srcId === dstId) {
+      continue;
+    }
     const src = srcId ? nodeById.get(srcId) : undefined;
     const dst = dstId ? nodeById.get(dstId) : undefined;
     if (src) {
