@@ -113,6 +113,48 @@ const stereotypeText = (shape: C4ShapeLike): string => {
   return shape.techn?.text ? `[${stereotype}: ${shape.techn.text}]` : `[${stereotype}]`;
 };
 
+const escapeHtml = (txt: string): string =>
+  txt
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+
+/**
+ * A C4 relationship label: name, then optional `[technology]` and description, one per
+ * line. `<br/>` separates the lines either way, since it is a line break in an HTML
+ * label and a line delimiter in a plain SVG one. The emphasis tags only render as
+ * emphasis in an HTML label; with `htmlLabels` off they would show as literal text, so
+ * the plain form carries the same words without them.
+ */
+export const buildEdgeLabel = (
+  rel: { label: C4Text; techn?: C4Text; descr?: C4Text },
+  useHtmlLabels = true
+): string => {
+  const name = rel.label.text;
+  const techn = rel.techn?.text;
+  const descr = rel.descr?.text;
+  if (!useHtmlLabels) {
+    return [name, techn && `[${techn}]`, descr]
+      .filter((part): part is string => Boolean(part))
+      .join('<br/>');
+  }
+  // Each line is built from its own part: reading a filtered list back by position shifted
+  // every later part up whenever an earlier one was empty.
+  const lines: string[] = [];
+  if (name) {
+    lines.push(`<b>${escapeHtml(name)}</b>`);
+  }
+  if (techn) {
+    lines.push(`<small><i>[${escapeHtml(techn)}]</i></small>`);
+  }
+  if (descr) {
+    lines.push(`<small>${escapeHtml(descr)}</small>`);
+  }
+  return lines.join('<br/>');
+};
+
 /** The C4 element types, internal and external, that carry per-type config. */
 export const C4_ELEMENT_TYPES = (
   [
