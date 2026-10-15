@@ -1,6 +1,12 @@
 import * as configApi from '../../config.js';
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
-import { hasPalette, isColorTheme, paletteSlotCount, safeLook } from '../common/colorThemeGate.js';
+import {
+  hasPalette,
+  isColorTheme,
+  paletteSlotCount,
+  safeColor,
+  safeLook,
+} from '../common/colorThemeGate.js';
 
 interface UsecaseStyleOptions {
   actorBkg?: string;
@@ -96,11 +102,11 @@ const genColor: DiagramStylesProvider = (options) => {
   // `colorIndex % borderColorArray.length`, so deriving the bound from the same length is
   // what keeps the emitted rules and the stamped ids from disagreeing.
   for (let i = 0; i < paletteSlotCount(borderColorArray); i++) {
-    const borderColor = borderColorArray[i];
+    const borderColor = safeColor(borderColorArray[i]);
     // The background palette is a separate array that may be shorter, so it still wraps --
     // guarded by `hasBkgColors`, since `i % 0` is NaN and `[][NaN]` is `undefined`.
     // `redux-dark-color` is the live no-background case: it colours outlines only.
-    const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
+    const fill = hasBkgColors ? `fill: ${safeColor(bkgColorArray[i % bkgColorArray.length])};` : '';
     const slot = `[data-look="${look}"][data-color-id="color-${i}"]`;
 
     /* System boundaries, in both schemes. A boundary is a container, and numbering the
