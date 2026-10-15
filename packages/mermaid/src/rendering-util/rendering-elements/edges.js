@@ -373,6 +373,63 @@ export const positionEdgeLabel = (edge, paths) => {
   }
 };
 
+/** Distance below which two coordinates count as the same row or column. */
+const AXIS_TOLERANCE = 0.5;
+const sharesColumn = (a, b) => Math.abs(a.x - b.x) < AXIS_TOLERANCE;
+const sharesRow = (a, b) => Math.abs(a.y - b.y) < AXIS_TOLERANCE;
+const coincides = (a, b) => sharesColumn(a, b) && sharesRow(a, b);
+
+/** Whether the shape intersection stays on the axis the layout's final segment ran along. */
+function keepsArrivalAxis(originalLast, lastInner, candidate) {
+  if (sharesColumn(originalLast, lastInner) && !sharesRow(originalLast, lastInner)) {
+    return sharesColumn(candidate, lastInner);
+  }
+  if (sharesRow(originalLast, lastInner) && !sharesColumn(originalLast, lastInner)) {
+    return sharesRow(candidate, lastInner);
+  }
+  return sharesColumn(candidate, lastInner) || sharesRow(candidate, lastInner);
+}
+
+/** The last segment the layout drew into the node, as the point it heads for and where it left. */
+function arrivalSegment(originalLast, lastInner, before) {
+  return coincides(originalLast, lastInner)
+    ? { heading: lastInner, from: before }
+    : { heading: originalLast, from: lastInner };
+}
+
+/** Whether the segment to the candidate points against the direction the edge was travelling. */
+function runsAgainstHeading({ heading, from }, lastInner, candidate) {
+  return (
+    (heading.x - from.x) * (candidate.x - lastInner.x) +
+      (heading.y - from.y) * (candidate.y - lastInner.y) <
+    0
+  );
+}
+
+/** Moves the candidate onto the row or column the arriving segment ran along. */
+function snapToArrivalAxis({ heading, from }, lastInner, candidate) {
+  if (sharesRow(heading, from) && !sharesColumn(heading, from)) {
+    return { x: candidate.x, y: lastInner.y };
+  }
+  if (sharesColumn(heading, from) && !sharesRow(heading, from)) {
+    return { x: lastInner.x, y: candidate.y };
+  }
+  return candidate;
+}
+
+/** Picks the point where a swimlane edge docks on its head shape, on the axis it arrived on. */
+function dockFinalPoint(originalLast, lastInner, before, candidate) {
+  const wasOrthogonal = sharesColumn(originalLast, lastInner) || sharesRow(originalLast, lastInner);
+  if (wasOrthogonal && !keepsArrivalAxis(originalLast, lastInner, candidate)) {
+    return originalLast;
+  }
+  const arrival = arrivalSegment(originalLast, lastInner, before);
+  if (runsAgainstHeading(arrival, lastInner, candidate)) {
+    return lastInner;
+  }
+  return snapToArrivalAxis(arrival, lastInner, candidate);
+}
+
 // Swimlanes-only helper, kept module-private: it self-gates to `-to-label` edges
 // (the swimlanes edge-label waypoint mechanism) and is called only from insertEdge's
 // `layout === 'swimlane'` branch, so it is a no-op for every other layout.
@@ -664,30 +721,38 @@ export const insertEdge = function (
       points.length >= 2
     ) {
       if (points.length === 2) {
-        // Simple straight edge: just clip the two endpoints to the node boundaries.
-        points = [tail.intersect(points[0]), head.intersect(points[1])];
+        // A straight edge clips each end against the shape it leaves or enters. An
+        // axis-aligned one is a port, possibly offset from the node centre: each shape is
+        // asked about its own end so sibling ports stay parallel. A slanted one has no
+        // port, so each shape is asked about the far end to pick the face it faces.
+        const [first, last] = points;
+        points =
+          sharesColumn(first, last) || sharesRow(first, last)
+            ? [tail.intersect(first), head.intersect(last)]
+            : [tail.intersect(last), head.intersect(first)];
       } else {
         // For multi-segment paths, keep the inner bend points and just adjust the entry/exit
         // segments near the nodes.
         const innerPoints = points.slice(1, -1);
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
-        const TOLERANCE = 0.5;
-        const lastIsPinned =
-          Math.abs(points[points.length - 1].x - lastInner.x) < TOLERANCE &&
-          Math.abs(points[points.length - 1].y - lastInner.y) < TOLERANCE;
-
         const newFirst = tail.intersect(firstInner);
-        const newLast = lastIsPinned ? lastInner : head.intersect(lastInner);
+
+        const originalLast = points[points.length - 1];
+        const candidateLast = head.intersect(lastInner);
+        const before = innerPoints.at(-2) ?? points[0];
+        const newLast = dockFinalPoint(originalLast, lastInner, before, candidateLast);
 
         // When the boundary intersection lands ~on the inner point, skip it to
         // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
+        // A final segment shorter than the arrowhead's pull-back would be drawn backwards,
+        // so such a stub is dropped too and the edge ends on the bend.
+        const minFinalSegment = Math.max(AXIS_TOLERANCE, markerOffsets[edge.arrowTypeEnd] ?? 0);
         const lastIsDuplicate =
-          Math.abs(newLast.x - lastInner.x) < TOLERANCE &&
-          Math.abs(newLast.y - lastInner.y) < TOLERANCE;
+          Math.hypot(newLast.x - lastInner.x, newLast.y - lastInner.y) < minFinalSegment;
         const firstIsDuplicate =
-          Math.abs(newFirst.x - firstInner.x) < TOLERANCE &&
-          Math.abs(newFirst.y - firstInner.y) < TOLERANCE;
+          Math.abs(newFirst.x - firstInner.x) < AXIS_TOLERANCE &&
+          Math.abs(newFirst.y - firstInner.y) < AXIS_TOLERANCE;
 
         const startPoints = firstIsDuplicate ? [] : [newFirst];
         const endPoints = lastIsDuplicate ? [] : [newLast];
@@ -807,7 +872,12 @@ export const insertEdge = function (
   let svgPath;
   let linePath =
     edgeCurveType === 'rounded'
-      ? generateRoundedPath(applyMarkerOffsetsToPoints(lineData, edge), 5)
+      ? generateRoundedPath(
+          applyMarkerOffsetsToPoints(lineData, edge, {
+            coincidentTerminals: layout === 'swimlane',
+          }),
+          5
+        )
       : lineFunction(lineData);
   const edgeStyles = Array.isArray(edge.style) ? edge.style : [edge.style];
   let strokeColor = edgeStyles.find((style) => style?.startsWith('stroke:'));
@@ -1050,7 +1120,20 @@ function calculateDeltaAndAngle(point1, point2) {
 }
 
 // Function to adjust the first and last points of the points array
-export function applyMarkerOffsetsToPoints(points, edge) {
+const SAME_POINT = 1e-6;
+
+const isSamePoint = (a, b) => Math.abs(a.x - b.x) < SAME_POINT && Math.abs(a.y - b.y) < SAME_POINT;
+
+function firstDistinct(points, from, step) {
+  for (let at = from + step; at >= 0 && at < points.length; at += step) {
+    if (!isSamePoint(points[at], points[from])) {
+      return at;
+    }
+  }
+  return -1;
+}
+
+export function applyMarkerOffsetsToPoints(points, edge, { coincidentTerminals = false } = {}) {
   // Copy the points array to avoid mutating the original data
   const newPoints = points.map((point) => ({ ...point }));
 
@@ -1059,15 +1142,19 @@ export function applyMarkerOffsetsToPoints(points, edge) {
     const offsetValue = markerOffsets[edge.arrowTypeStart];
 
     const point1 = points[0];
-    const point2 = points[1];
+    const towards = coincidentTerminals ? firstDistinct(points, 0, 1) : 1;
 
-    const { angle } = calculateDeltaAndAngle(point1, point2);
+    if (towards !== -1) {
+      const { angle } = calculateDeltaAndAngle(point1, points[towards]);
 
-    const offsetX = offsetValue * Math.cos(angle);
-    const offsetY = offsetValue * Math.sin(angle);
+      const offsetX = offsetValue * Math.cos(angle);
+      const offsetY = offsetValue * Math.sin(angle);
 
-    newPoints[0].x = point1.x + offsetX;
-    newPoints[0].y = point1.y + offsetY;
+      for (let at = 0; at < towards; at++) {
+        newPoints[at].x = points[at].x + offsetX;
+        newPoints[at].y = points[at].y + offsetY;
+      }
+    }
   }
 
   // Handle the last point (end of the edge)
@@ -1076,15 +1163,19 @@ export function applyMarkerOffsetsToPoints(points, edge) {
     const offsetValue = markerOffsets[edge.arrowTypeEnd];
 
     const point1 = points[n - 1];
-    const point2 = points[n - 2];
+    const towards = coincidentTerminals ? firstDistinct(points, n - 1, -1) : n - 2;
 
-    const { angle } = calculateDeltaAndAngle(point2, point1);
+    if (towards !== -1) {
+      const { angle } = calculateDeltaAndAngle(points[towards], point1);
 
-    const offsetX = offsetValue * Math.cos(angle);
-    const offsetY = offsetValue * Math.sin(angle);
+      const offsetX = offsetValue * Math.cos(angle);
+      const offsetY = offsetValue * Math.sin(angle);
 
-    newPoints[n - 1].x = point1.x - offsetX;
-    newPoints[n - 1].y = point1.y - offsetY;
+      for (let at = n - 1; at > towards; at--) {
+        newPoints[at].x = points[at].x - offsetX;
+        newPoints[at].y = points[at].y - offsetY;
+      }
+    }
   }
 
   return newPoints;
