@@ -1,0 +1,15 @@
+---
+description: >-
+  c4.showStereotypes set to false hides the type line on every element and on
+  the boundary, while names and descriptions still lay out.
+config:
+  c4:
+    showStereotypes: false
+---
+C4Context
+title Stereotypes hidden
+Enterprise_Boundary(b1, "Bank") {
+Person(p, "Person", "desc")
+System(s, "System", "desc")
+}
+Rel(p, s, "Uses")
