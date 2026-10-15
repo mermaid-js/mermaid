@@ -1,0 +1,11 @@
+---
+description: >-
+  Minimal two-entity ER diagram (CUSTOMER/ORDER/LINE-ITEM) with htmlLabels
+  disabled under the elk layout.
+config:
+  layout: elk
+  htmlLabels: false
+---
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains

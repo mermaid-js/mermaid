@@ -1,0 +1,15 @@
+---
+description: >-
+  Flowchart with theme: neutral set via frontmatter config, expected to
+  render nodes grey. Companion to the initialize-config (forest/green) and
+  no-config (default) variants of the same shape.
+config:
+  theme: neutral
+---
+graph TD
+  A(Start) --> B[/Another/]
+  A[/Another/] --> C[End]
+  subgraph section
+  B
+  C
+  end

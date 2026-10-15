@@ -1,0 +1,28 @@
+---
+description: >-
+  Vertical gitgraph with three branches (main, nice_feature,
+  very_nice_feature) where nice_feature merges into main with a custom id
+  and tag ("my merge commit"), while very_nice_feature stays unmerged.
+---
+gitGraph TB:
+  commit id: "1"
+  commit id: "2"
+  branch nice_feature
+  checkout nice_feature
+  commit id: "3"
+  checkout main
+  commit id: "4"
+  checkout nice_feature
+  branch very_nice_feature
+  checkout very_nice_feature
+  commit id: "5"
+  checkout main
+  commit id: "6"
+  checkout nice_feature
+  commit id: "7"
+  checkout main
+  merge nice_feature id: "12345" tag: "my merge commit"
+  checkout very_nice_feature
+  commit id: "8"
+  checkout main
+  commit id: "9"

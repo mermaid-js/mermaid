@@ -1,0 +1,20 @@
+---
+description: >-
+  Composite-state diagram (a nested "Working" state) under the "redux" redux
+  colour theme, exercising compositeTitleBackground and altBackground — theme
+  variables that a flat state diagram wouldn't touch.
+config:
+  theme: redux
+---
+stateDiagram-v2
+  [*] --> Idle
+  Idle --> Working: start
+  state Working {
+    [*] --> Fetching
+    Fetching --> Parsing: bytes ready
+    Parsing --> [*]
+  }
+  Working --> Idle: done
+  Working --> Failed: error
+  Failed --> Idle: retry
+  Failed --> [*]

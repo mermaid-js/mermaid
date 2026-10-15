@@ -1,0 +1,13 @@
+---
+description: >-
+  Legacy v1 state diagram where state S1 is aliased to a long display name
+  ("Some long name") via `state "..." as S1`, verifying the long name is
+  shown in place of the short id when rendering.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+
+  [*] --> S1
+  state "Some long name" as S1

@@ -1,0 +1,27 @@
+---
+description:
+  Fully interconnects the triangle, sloped-rectangle, horizontal-cylinder,
+  flipped-triangle, and hourglass node shapes (every shape linked to every
+  other) under the 'redux' theme with the 'neo' look, verifying this batch of 5
+  shapes renders correctly and stays visually distinct under this theme/look
+  combination.
+config:
+  look: "neo"
+  theme: "redux"
+---
+flowchart TB
+  n00@{ shape: triangle, label: 'This is a label for triangle shape' }
+  n11@{ shape: sloped-rectangle, label: 'This is a label for sloped-rectangle shape' }
+  n22@{ shape: horizontal-cylinder, label: 'This is a label for horizontal-cylinder shape' }
+  n33@{ shape: flipped-triangle, label: 'This is a label for flipped-triangle shape' }
+  n44@{ shape: hourglass, label: 'This is a label for hourglass shape' }
+  n00 --> n11
+  n00 --> n22
+  n00 --> n33
+  n00 --> n44
+  n11 --> n22
+  n11 --> n33
+  n11 --> n44
+  n22 --> n33
+  n22 --> n44
+  n33 --> n44

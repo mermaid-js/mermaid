@@ -596,3 +596,22 @@ describe('calculatePoint', () => {
     );
   });
 });
+
+describe('calcTerminalLabelPosition', () => {
+  // #8329: callers centre terminal labels on this point, so an end label must be placed
+  // exactly like a start label, mirrored: no extra offset for its top-left corner.
+  it('places an end label as the mirror image of a start label on a straight edge', () => {
+    const path = [
+      { x: 0, y: 0 },
+      { x: 200, y: 0 },
+    ];
+    const start = utils.calcTerminalLabelPosition(0, 'start_right', path);
+    const end = utils.calcTerminalLabelPosition(0, 'end_left', path);
+    expect(end.x).toBeCloseTo(200 - start.x);
+    expect(end.y).toBeCloseTo(-start.y);
+    const startLeft = utils.calcTerminalLabelPosition(0, 'start_left', path);
+    const endRight = utils.calcTerminalLabelPosition(0, 'end_right', path);
+    expect(endRight.x).toBeCloseTo(200 - startLeft.x);
+    expect(endRight.y).toBeCloseTo(-startLeft.y);
+  });
+});

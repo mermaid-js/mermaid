@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that a FontAwesome icon shorthand (fa:fa-car) renders correctly both
+  inside a node label and inside an edge label on the same diagram.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  C -->|fa:fa-car Car| F[fa:fa-car Car]
