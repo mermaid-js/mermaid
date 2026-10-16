@@ -221,6 +221,15 @@ it('markdownToLines - Inline code', () => {
       { content: 'here', type: 'normal' },
     ],
   ]);
+
+  expect(markdownToLines('a `x\ny` b')).toEqual([
+    [
+      { content: 'a', type: 'normal' },
+      { content: '`x', type: 'normal' },
+      { content: 'y`', type: 'normal' },
+      { content: 'b', type: 'normal' },
+    ],
+  ]);
 });
 
 it('markdownToLines - Inline code inside formatting', () => {

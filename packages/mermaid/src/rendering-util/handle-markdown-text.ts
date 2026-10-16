@@ -52,8 +52,9 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
   function processNode(node: MarkedToken, parentType: MarkdownWordType = 'normal') {
     if (node.type === 'text' || node.type === 'codespan') {
       // Inline code has no styling in labels, so show it as written (backticks included),
-      // the same way markdownToHTML does
-      const textLines = (node.type === 'codespan' ? node.raw : node.text).split('\n');
+      // the same way markdownToHTML does. A code span stays on one line, like in HTML.
+      const content = node.type === 'codespan' ? node.raw.replace(/\n/g, ' ') : node.text;
+      const textLines = content.split('\n');
       textLines.forEach((textLine, index) => {
         if (index !== 0) {
           currentLine++;
