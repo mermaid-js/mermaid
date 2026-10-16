@@ -154,9 +154,11 @@
         -privateProperty : string
         #ProtectedProperty : string
         ~InternalProperty : string
-        ~AnotherInternalProperty : List~List~string~~
+        ~AnotherInternalProperty : List~List~string~ ~
       }
-      class People List~List~Person~~
+      class People {
+        +List~List~Person~~ members
+      }
     </pre>
     <hr />
     <pre class="mermaid">
@@ -164,7 +166,7 @@
       namespace Company.Project.Module {
         class GenericClass~T~ {
           +addItem(item: T)
-          +getItem() T
+          +getItem() : T
         }
       }
     </pre>
