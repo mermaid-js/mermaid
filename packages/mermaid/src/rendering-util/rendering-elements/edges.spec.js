@@ -292,7 +292,22 @@ describe('resolveEdgeLabelPosition', () => {
       }
     );
 
-    expect(position).toEqual({ x: 0, y: 0 });
+    // Unplaced labels sit on the updated path midpoint, not the SVG origin.
+    expect(position).toEqual({ x: 46, y: 0 });
+  });
+
+  it('uses the original path midpoint when no updated path exists', () => {
+    expect(
+      resolveEdgeLabelPosition(
+        { label: '<p></p>' },
+        {
+          originalPath: [
+            { x: 0, y: 0 },
+            { x: 80, y: 0 },
+          ],
+        }
+      )
+    ).toEqual({ x: 40, y: 0 });
   });
 });
 
@@ -312,7 +327,7 @@ describe('positionEdgeLabel empty HTML labels', () => {
       }
     );
 
-    expect(label.attr('transform')).toBe('translate(0, 0)');
+    expect(label.attr('transform')).toBe('translate(20, 10)');
   });
 });
 

@@ -290,18 +290,24 @@ export function setTerminalWidth(fo, value, box) {
 export const resolveEdgeLabelPosition = (edge, paths) => {
   let x = edge.x;
   let y = edge.y;
+  const placed = Number.isFinite(edge.x) && Number.isFinite(edge.y);
   if (paths?.updatedPath) {
     const updatedMid = utils.calcLabelPosition(paths.updatedPath);
     // Shifting from an unplaced label is `undefined + delta`, which is NaN.
     // Only apply the curve-fitting delta when the layout actually placed it.
-    if (paths.originalPath && Number.isFinite(edge.x) && Number.isFinite(edge.y)) {
+    if (paths.originalPath && placed) {
       const originalMid = utils.calcLabelPosition(paths.originalPath);
       x = edge.x + (updatedMid.x - originalMid.x);
       y = edge.y + (updatedMid.y - originalMid.y);
-    } else if (!paths.originalPath) {
+    } else {
+      // Unplaced labels follow the drawn path midpoint (updated when present).
       x = updatedMid.x;
       y = updatedMid.y;
     }
+  } else if (paths?.originalPath && !placed) {
+    const originalMid = utils.calcLabelPosition(paths.originalPath);
+    x = originalMid.x;
+    y = originalMid.y;
   }
   return {
     x: Number.isFinite(x) ? x : 0,
