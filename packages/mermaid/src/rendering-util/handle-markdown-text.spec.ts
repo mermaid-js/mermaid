@@ -207,7 +207,7 @@ it('markdownToLines - Inline code', () => {
   expect(markdownToLines('the `superstar`!')).toEqual([
     [
       { content: 'the', type: 'normal' },
-      { content: 'superstar', type: 'normal' },
+      { content: '`superstar`', type: 'normal' },
       { content: '!', type: 'normal' },
     ],
   ]);
@@ -215,9 +215,9 @@ it('markdownToLines - Inline code', () => {
   expect(markdownToLines('use `npm run build` here')).toEqual([
     [
       { content: 'use', type: 'normal' },
-      { content: 'npm', type: 'normal' },
+      { content: '`npm', type: 'normal' },
       { content: 'run', type: 'normal' },
-      { content: 'build', type: 'normal' },
+      { content: 'build`', type: 'normal' },
       { content: 'here', type: 'normal' },
     ],
   ]);
@@ -227,10 +227,10 @@ it('markdownToLines - Inline code inside formatting', () => {
   expect(markdownToLines('**bold `code`** and *em `code`*')).toEqual([
     [
       { content: 'bold', type: 'strong' },
-      { content: 'code', type: 'strong' },
+      { content: '`code`', type: 'strong' },
       { content: 'and', type: 'normal' },
       { content: 'em', type: 'em' },
-      { content: 'code', type: 'em' },
+      { content: '`code`', type: 'em' },
     ],
   ]);
 });
