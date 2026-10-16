@@ -65,6 +65,9 @@ export const addTask = function (period, length, event) {
 export const addEvent = function (event) {
   // fetch current task with currentTaskId
   const currentTask = rawTasks.find((task) => task.id === currentTaskId - 1);
+  if (!currentTask) {
+    throw new Error(`The event "${event}" has no time period before it. Add a time period first.`);
+  }
   //add event to the events array
   currentTask.events.push(event);
 };
