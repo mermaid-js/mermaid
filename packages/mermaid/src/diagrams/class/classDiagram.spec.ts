@@ -2252,21 +2252,21 @@ describe('class db class', () => {
 });
 
 describe('given a class diagram with a member that is not a method, ', function () {
-  it('should keep a member with a closing parenthesis but no method shape among the attributes', () => {
+  it('should keep text that does not have the shape of a method among the attributes', () => {
     const classDb = new ClassDB();
     parser.yy = classDb;
 
     parser.parse(
-      'classDiagram\n' + 'C1: #int pr)otectedMarmoset\n' + 'C1: (a)\n' + 'C1: +getTime() int'
+      'classDiagram\n' + 'C1: +getTime) int\n' + 'C1: (int x)\n' + 'C1: +getName() string'
     );
 
     const c1 = classDb.getClass('C1');
     expect(c1.members.map((member) => member.getDisplayDetails().displayText)).toEqual([
-      '#int pr)otectedMarmoset',
-      '(a)',
+      '+getTime) int',
+      '(int x)',
     ]);
     expect(c1.methods.map((method) => method.getDisplayDetails().displayText)).toEqual([
-      '+getTime() : int',
+      '+getName() : string',
     ]);
   });
 });
