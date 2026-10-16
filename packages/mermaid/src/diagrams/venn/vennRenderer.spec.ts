@@ -55,6 +55,23 @@ describe('vennRenderer', () => {
     expect(colored?.style.color).toBe('rgb(255, 0, 0)');
   });
 
+  it('renders text nodes in intersections regardless of set order', async () => {
+    document.body.innerHTML = '<svg id="venn"></svg>';
+    const diagram = createDiagram({
+      getSubsetData: () => [
+        { sets: ['A'], size: 10, label: 'A' },
+        { sets: ['B'], size: 10, label: 'B' },
+        { sets: ['A', 'B'], size: 5, label: 'AB' },
+      ],
+      getTextData: () => [{ sets: ['B', 'A'], id: 'node_in_ab', label: undefined }],
+    });
+
+    await draw('', 'venn', '1.0', diagram);
+
+    const nodes = [...document.querySelectorAll<HTMLDivElement>('.venn-text-node')];
+    expect(nodes.some((node) => node.textContent === 'node_in_ab')).toBe(true);
+  });
+
   it('applies theme colors to circles', async () => {
     document.body.innerHTML = '<svg id="venn"></svg>';
     const diagram = createDiagram();
