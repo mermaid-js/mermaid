@@ -81,64 +81,42 @@ export class ClassMember {
     let potentialClassifier = '';
 
     if (this.memberType === 'method') {
-      const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
+      const methodRegEx = /([#+~-])?(.+)\((.*)\)([$*]{0,2})(.*?)([$*]{0,2})$/;
       const match = methodRegEx.exec(input);
       if (match) {
-        const detectedVisibility = match[1] ? match[1].trim() : '';
-
-        if (visibilityValues.includes(detectedVisibility)) {
-          this.visibility = detectedVisibility as Visibility;
-        }
-
-        this.id = match[2];
+        this.visibility = (match[1] ? match[1].trim() : '') as Visibility;
+        this.id = match[2].trim();
         this.parameters = match[3] ? match[3].trim() : '';
         potentialClassifier = match[4] ? match[4].trim() : '';
         this.returnType = match[5] ? match[5].trim() : '';
 
         if (potentialClassifier === '') {
-          const lastChar = this.returnType.substring(this.returnType.length - 1);
-          if (/[$*]/.exec(lastChar)) {
-            potentialClassifier = lastChar;
-            this.returnType = this.returnType.substring(0, this.returnType.length - 1);
-          }
+          potentialClassifier = match[6] ? match[6].trim() : '';
         }
       }
     } else {
-      const length = input.length;
-      const firstChar = input.substring(0, 1);
-      const lastChar = input.substring(length - 1);
+      const fieldRegEx = /([#+~-])?(.*?)([$*]{0,2})$/;
+      const match = fieldRegEx.exec(input);
 
-      if (visibilityValues.includes(firstChar)) {
-        this.visibility = firstChar as Visibility;
+      if (match) {
+        this.visibility = (match[1] ? match[1].trim() : '') as Visibility;
+        this.id = match[2] ? match[2].trim() : '';
+        potentialClassifier = match[3] ? match[3].trim() : '';
       }
-
-      if (/[$*]/.exec(lastChar)) {
-        potentialClassifier = lastChar;
-      }
-
-      this.id = input.substring(
-        this.visibility === '' ? 0 : 1,
-        potentialClassifier === '' ? length : length - 1
-      );
     }
 
     this.classifier = potentialClassifier;
-    // Preserve one space only
-    this.id = this.id.startsWith(' ') ? ' ' + this.id.trim() : this.id.trim();
-
-    const combinedText = `${this.visibility ? '\\' + this.visibility : ''}${parseGenericTypes(this.id)}${this.memberType === 'method' ? `(${parseGenericTypes(this.parameters)})${this.returnType ? ' : ' + parseGenericTypes(this.returnType) : ''}` : ''}`;
-    this.text = combinedText.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-    if (this.text.startsWith('\\&lt;')) {
-      this.text = this.text.replace('\\&lt;', '~');
-    }
   }
 
   parseClassifier() {
     switch (this.classifier) {
-      case '*':
-        return 'font-style:italic;';
       case '$':
         return 'text-decoration:underline;';
+      case '*':
+        return 'font-style:italic;';
+      case '$*':
+      case '*$':
+        return 'text-decoration:underline;font-style:italic;';
       default:
         return '';
     }
