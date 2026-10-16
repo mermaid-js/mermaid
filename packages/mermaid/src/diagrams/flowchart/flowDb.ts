@@ -672,13 +672,13 @@ You have to call mermaid.initialize.`
   }
 
   public addSubGraph(
-    _id: { text: string },
+    _id: { text: string } | undefined,
     list: string[],
-    _title: { text: string; type: string }
+    _title: { text: string; type: string } | undefined
   ) {
-    let id: string | undefined = _id.text.trim();
-    let title = _title.text;
-    if (_id === _title && /\s/.exec(_title.text)) {
+    let id: string | undefined = _id?.text.trim();
+    let title = _title?.text;
+    if (_id !== undefined && _id === _title && /\s/.exec(_title.text)) {
       id = undefined;
     }
 
