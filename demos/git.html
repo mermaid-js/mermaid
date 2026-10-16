@@ -51,8 +51,7 @@
       commit
       checkout main
       merge newbranch
-      </pre
-    >
+    </pre>
     <h2>Continuous development graph</h2>
     <pre class="mermaid">
     ---
@@ -200,6 +199,63 @@
       merge develop
       </pre
     >
+    <h2>Multiple branch merge graph</h2>
+    <pre class="mermaid">
+    ---
+    title: Multiple branch merge (left-to-right)
+    ---
+    gitGraph LR:
+    commit
+    branch feature1
+    checkout feature1
+    commit
+    checkout main
+    branch feature2
+    checkout feature2
+    commit
+    checkout main
+    branch feature3
+    checkout feature3
+    commit
+    commit
+    checkout main
+    commit
+    merge feature1, feature2, feature3
+    </pre>
+
+    <pre class="mermaid">
+    ---
+    title: Multiple branch merge (top-to-bottom)
+    ---
+    gitGraph TB:
+    commit
+    branch feature1
+    checkout feature1
+    commit
+    checkout main
+    branch feature2
+    checkout feature2
+    commit
+    checkout main
+    merge feature1, feature2
+    </pre>
+
+    <pre class="mermaid">
+    ---
+    title: Multiple branch merge (bottom-to-top)
+    ---
+    gitGraph BT:
+    commit
+    branch feature1
+    checkout feature1
+    commit
+    checkout main
+    branch feature2
+    checkout feature2
+    commit
+    checkout main
+    merge feature1, feature2
+    </pre>
     <h2>Cherry-pick from branch graph</h2>
     <pre class="mermaid">
     ---
