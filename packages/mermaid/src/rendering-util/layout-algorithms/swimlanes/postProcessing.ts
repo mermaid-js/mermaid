@@ -109,7 +109,11 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   swapDestinationTerminalTailsToReduceCrossings(edges, nodeByIdMap);
 
   const finalizeRenderedEdges = (): void => {
-    resolveRenderedOrthogonalCrossings(edges, nodeByIdMap);
+    // Self-loops are left out: rerouting them breaks the loop
+    resolveRenderedOrthogonalCrossings(
+      edges.filter((e) => e.start !== e.end),
+      nodeByIdMap
+    );
     // Crossing cleanup can bring a route onto a face another edge already leaves or
     // enters from, so split shared terminal lanes again before endpoints are pinned.
     separateSharedRenderedTerminalLanes(edges, nodeByIdMap);
