@@ -26,6 +26,10 @@ const getStyles = (options) =>
   }
 
   /* Link styling */
+  .sankey-diagram {
+    isolation: isolate;
+  }
+
   .link {
     fill: none;
     stroke-opacity: 0.5;
