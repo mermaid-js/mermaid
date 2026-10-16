@@ -2250,3 +2250,23 @@ describe('class db class', () => {
     }
   });
 });
+
+describe('given a class diagram with a member that is not a method, ', function () {
+  it('should keep a member with a closing parenthesis but no method shape among the attributes', () => {
+    const classDb = new ClassDB();
+    parser.yy = classDb;
+
+    parser.parse(
+      'classDiagram\n' + 'C1: #int pr)otectedMarmoset\n' + 'C1: (a)\n' + 'C1: +getTime() int'
+    );
+
+    const c1 = classDb.getClass('C1');
+    expect(c1.members.map((member) => member.getDisplayDetails().displayText)).toEqual([
+      '#int pr)otectedMarmoset',
+      '(a)',
+    ]);
+    expect(c1.methods.map((method) => method.getDisplayDetails().displayText)).toEqual([
+      '+getTime() : int',
+    ]);
+  });
+});
