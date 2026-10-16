@@ -13,7 +13,7 @@ import {
   getDiagramTitle,
 } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
-import { ClassMember } from './classTypes.js';
+import { ClassMember, isMethodText } from './classTypes.js';
 import type {
   ClassRelation,
   ClassNode,
@@ -287,7 +287,7 @@ export class ClassDB implements DiagramDB {
       if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
         // its an annotation
         theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
-      } else if (memberString.indexOf(')') > 0) {
+      } else if (isMethodText(memberString)) {
         //its a method
         theClass.methods.push(new ClassMember(memberString, 'method'));
       } else if (memberString) {

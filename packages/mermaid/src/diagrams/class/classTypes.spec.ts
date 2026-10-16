@@ -760,3 +760,19 @@ describe('given text representing an attribute', () => {
     });
   });
 });
+
+describe('given text read as a method that does not look like one, ', function () {
+  it('should read a member with a closing but no opening parenthesis as an attribute', function () {
+    const classMember = new ClassMember('#int pr)otectedMarmoset', 'method');
+
+    expect(classMember.memberType).toBe('attribute');
+    expect(classMember.getDisplayDetails().displayText).toBe('#int pr)otectedMarmoset');
+  });
+
+  it('should read a member that starts with its parentheses as an attribute', function () {
+    const classMember = new ClassMember('(a)', 'method');
+
+    expect(classMember.memberType).toBe('attribute');
+    expect(classMember.getDisplayDetails().displayText).toBe('(a)');
+  });
+});
