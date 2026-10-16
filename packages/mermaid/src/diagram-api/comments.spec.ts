@@ -7,6 +7,8 @@ describe('comments', () => {
 
 %% This is a comment
 %% This is another comment
+%% The following is an empty comment
+%%
 graph TD
     A-->B
 %% This is a comment
@@ -31,7 +33,7 @@ graph TD
 
     B-->C
 %% This is a comment
-`;
+%%`;
     expect(cleanupComments(text)).toMatchInlineSnapshot(`
       "%%{init: {'theme': 'forest'}}%%
       %%{ init: {'theme': 'space before init'}}%%
