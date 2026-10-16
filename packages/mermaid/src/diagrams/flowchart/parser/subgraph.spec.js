@@ -352,4 +352,19 @@ describe('when parsing subgraphs', function () {
     expect(edges.find((e) => e.start === 'C' && e.end === 'one')).toBeDefined();
     expect(edges.find((e) => e.end === 'A')).toBeUndefined();
   });
+  it('should handle a subgraph without an id or a title', function () {
+    flow.parser.parse('graph TB\nsubgraph\n\ta1-->a2\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].id).toMatch(/^subGraph\d+$/);
+    expect(subgraphs[0].title).toBe('');
+    expect(subgraphs[0].nodes).toEqual(['a2', 'a1']);
+  });
+  it('should handle an empty subgraph without an id or a title', function () {
+    flow.parser.parse('graph TB\nsubgraph\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].title).toBe('');
+    expect(subgraphs[0].nodes).toEqual([]);
+  });
 });

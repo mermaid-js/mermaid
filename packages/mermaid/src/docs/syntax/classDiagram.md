@@ -173,6 +173,8 @@ UML provides mechanisms to represent class members such as attributes and method
 
 Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and all others as attributes.
 
+A member that contains a closing parenthesis `)` but is not written as `name(parameters)`, such as `+getTime) int`, is reported as an error. Remove the `)` to make it an attribute.
+
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
 
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
