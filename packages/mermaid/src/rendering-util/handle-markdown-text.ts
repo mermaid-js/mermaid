@@ -50,7 +50,8 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
   let currentLine = 0;
 
   function processNode(node: MarkedToken, parentType: MarkdownWordType = 'normal') {
-    if (node.type === 'text') {
+    // Inline code (`code`) has no special styling in SVG labels, so keep its text as plain words
+    if (node.type === 'text' || node.type === 'codespan') {
       const textLines = node.text.split('\n');
       textLines.forEach((textLine, index) => {
         if (index !== 0) {
