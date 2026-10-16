@@ -280,22 +280,33 @@ export function setTerminalWidth(fo, value, box) {
 
 /**
  * Where to put an edge's label along its drawn path.
+ *
+ * A layout can leave `x`/`y` unset when the label's measured box has no area
+ * (dagre's `injectEdgeLabelProxies` requires both dimensions). Those values are
+ * written straight into an SVG transform, so a missing coordinate has to stay
+ * a finite number — `undefined + margin` is `NaN`, and the attribute becomes
+ * `translate(undefined, NaN)` (#6086).
  */
 export const resolveEdgeLabelPosition = (edge, paths) => {
   let x = edge.x;
   let y = edge.y;
   if (paths?.updatedPath) {
     const updatedMid = utils.calcLabelPosition(paths.updatedPath);
-    if (paths.originalPath) {
+    // Shifting from an unplaced label is `undefined + delta`, which is NaN.
+    // Only apply the curve-fitting delta when the layout actually placed it.
+    if (paths.originalPath && Number.isFinite(edge.x) && Number.isFinite(edge.y)) {
       const originalMid = utils.calcLabelPosition(paths.originalPath);
       x = edge.x + (updatedMid.x - originalMid.x);
       y = edge.y + (updatedMid.y - originalMid.y);
-    } else {
+    } else if (!paths.originalPath) {
       x = updatedMid.x;
       y = updatedMid.y;
     }
   }
-  return { x, y };
+  return {
+    x: Number.isFinite(x) ? x : 0,
+    y: Number.isFinite(y) ? y : 0,
+  };
 };
 
 export const positionEdgeLabel = (edge, paths) => {

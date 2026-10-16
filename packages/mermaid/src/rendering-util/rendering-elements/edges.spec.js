@@ -11,7 +11,14 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
-import { insertEdge, resolveEdgeCurveType, setTerminalWidth } from './edges.js';
+import {
+  edgeLabels,
+  insertEdge,
+  positionEdgeLabel,
+  resolveEdgeCurveType,
+  resolveEdgeLabelPosition,
+  setTerminalWidth,
+} from './edges.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
 
@@ -248,6 +255,64 @@ describe('insertEdge swimlane endpoint clipping', () => {
     expect(head.intersect).not.toHaveBeenCalled();
     expect(renderedPoints[0]).toEqual(first);
     expect(renderedPoints.at(-1)).toEqual(last);
+  });
+});
+
+describe('resolveEdgeLabelPosition', () => {
+  it('shifts a placed label when curve fitting moves the path', () => {
+    expect(
+      resolveEdgeLabelPosition(
+        { x: 10, y: 20 },
+        {
+          originalPath: [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+          ],
+          updatedPath: [
+            { x: 0, y: 0 },
+            { x: 16, y: 0 },
+          ],
+        }
+      )
+    ).toEqual({ x: 13, y: 20 });
+  });
+
+  it('returns a finite position when the layout left the label unplaced (#6086)', () => {
+    const position = resolveEdgeLabelPosition(
+      { label: '<p></p>' },
+      {
+        originalPath: [
+          { x: 0, y: 0 },
+          { x: 80, y: 0 },
+        ],
+        updatedPath: [
+          { x: 2, y: 0 },
+          { x: 90, y: 0 },
+        ],
+      }
+    );
+
+    expect(position).toEqual({ x: 0, y: 0 });
+  });
+});
+
+describe('positionEdgeLabel empty HTML labels', () => {
+  it('does not write translate(undefined, NaN) for an unplaced label (#6086)', () => {
+    document.body.innerHTML = '';
+    const label = select(document.body).append('svg').append('g').attr('class', 'edgeLabel');
+    edgeLabels.set('empty-html', label);
+
+    positionEdgeLabel(
+      { id: 'empty-html', label: '<p></p>' },
+      {
+        originalPath: [
+          { x: 0, y: 0 },
+          { x: 40, y: 20 },
+        ],
+      }
+    );
+
+    expect(label.attr('transform')).toBe('translate(0, 0)');
   });
 });
 
