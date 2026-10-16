@@ -761,18 +761,14 @@ describe('given text representing an attribute', () => {
   });
 });
 
-describe('given text read as a method that does not look like one, ', function () {
-  it('should read a method typed without its opening parenthesis as an attribute', function () {
-    const classMember = new ClassMember('+getTime) int', 'method');
-
-    expect(classMember.memberType).toBe('attribute');
-    expect(classMember.getDisplayDetails().displayText).toBe('+getTime) int');
+describe('given text routed to a method that is not written as one, ', function () {
+  it('should report a method typed without its opening parenthesis', function () {
+    expect(() => new ClassMember('+getTime) int', 'method')).toThrow(
+      'Invalid class member "+getTime) int": it contains ")" but is not written as name(parameters)'
+    );
   });
 
-  it('should read parameters with no method name in front of them as an attribute', function () {
-    const classMember = new ClassMember('(int x)', 'method');
-
-    expect(classMember.memberType).toBe('attribute');
-    expect(classMember.getDisplayDetails().displayText).toBe('(int x)');
+  it('should report parameters with no method name in front of them', function () {
+    expect(() => new ClassMember('(int x)', 'method')).toThrow('Invalid class member "(int x)"');
   });
 });

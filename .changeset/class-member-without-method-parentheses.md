@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix: a class member with a closing parenthesis but no `name(...)` in front of it is drawn as an attribute instead of throwing a TypeError
+fix: a class member that contains a `)` but is not written as `name(...)` reports an error that says so, instead of throwing a TypeError

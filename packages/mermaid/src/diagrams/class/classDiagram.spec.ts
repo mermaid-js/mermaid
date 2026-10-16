@@ -2251,19 +2251,26 @@ describe('class db class', () => {
   });
 });
 
-describe('given a class diagram with a member that is not a method, ', function () {
-  it('should keep text that does not have the shape of a method among the attributes', () => {
+describe('given a class diagram with a member that has a ")" but is not a method, ', function () {
+  const parseMembers = (...members: string[]) => {
     const classDb = new ClassDB();
     parser.yy = classDb;
+    parser.parse(['classDiagram', 'class C1 {', ...members.map((m) => `  ${m}`), '}'].join('\n'));
+    return classDb.getClass('C1');
+  };
 
-    parser.parse(
-      'classDiagram\n' + 'C1: +getTime) int\n' + 'C1: (int x)\n' + 'C1: +getName() string'
-    );
+  it('should report the member instead of throwing a TypeError', () => {
+    expect(() => parseMembers('+getTime) int')).toThrow('Invalid class member "+getTime) int"');
+    expect(() => parseMembers('(int x)')).toThrow('Invalid class member "(int x)"');
+  });
 
-    const c1 = classDb.getClass('C1');
+  it('should keep reading text without a ")" after its first character as an attribute', () => {
+    const c1 = parseMembers('getTime(int x', '(', ')', '+getName() string');
+
     expect(c1.members.map((member) => member.getDisplayDetails().displayText)).toEqual([
-      '+getTime) int',
-      '(int x)',
+      'getTime(int x',
+      '(',
+      ')',
     ]);
     expect(c1.methods.map((method) => method.getDisplayDetails().displayText)).toEqual([
       '+getName() : string',

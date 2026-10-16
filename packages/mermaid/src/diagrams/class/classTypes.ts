@@ -24,11 +24,6 @@ export interface ClassNode {
 export type Visibility = '#' | '+' | '~' | '-' | '';
 export const visibilityValues = ['#', '+', '~', '-', ''];
 
-const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
-
-/** Whether `text` has the `name(...)` shape of a method, as opposed to an attribute. */
-export const isMethodText = (text: string) => methodRegEx.test(text);
-
 /**
  * Parses and stores class diagram member variables/methods.
  *
@@ -85,29 +80,34 @@ export class ClassMember {
   parseMember(input: string) {
     let potentialClassifier = '';
 
-    const match = this.memberType === 'method' ? methodRegEx.exec(input) : null;
-    if (match) {
-      const detectedVisibility = match[1] ? match[1].trim() : '';
+    if (this.memberType === 'method') {
+      const methodRegEx = /([#+~-])?(.+)\((.*)\)([\s$*])?(.*)([$*])?/;
+      const match = methodRegEx.exec(input);
+      if (match) {
+        const detectedVisibility = match[1] ? match[1].trim() : '';
 
-      if (visibilityValues.includes(detectedVisibility)) {
-        this.visibility = detectedVisibility as Visibility;
-      }
-
-      this.id = match[2];
-      this.parameters = match[3] ? match[3].trim() : '';
-      potentialClassifier = match[4] ? match[4].trim() : '';
-      this.returnType = match[5] ? match[5].trim() : '';
-
-      if (potentialClassifier === '') {
-        const lastChar = this.returnType.substring(this.returnType.length - 1);
-        if (/[$*]/.exec(lastChar)) {
-          potentialClassifier = lastChar;
-          this.returnType = this.returnType.substring(0, this.returnType.length - 1);
+        if (visibilityValues.includes(detectedVisibility)) {
+          this.visibility = detectedVisibility as Visibility;
         }
+
+        this.id = match[2];
+        this.parameters = match[3] ? match[3].trim() : '';
+        potentialClassifier = match[4] ? match[4].trim() : '';
+        this.returnType = match[5] ? match[5].trim() : '';
+
+        if (potentialClassifier === '') {
+          const lastChar = this.returnType.substring(this.returnType.length - 1);
+          if (/[$*]/.exec(lastChar)) {
+            potentialClassifier = lastChar;
+            this.returnType = this.returnType.substring(0, this.returnType.length - 1);
+          }
+        }
+      } else {
+        throw new Error(
+          `Invalid class member "${input}": it contains ")" but is not written as name(parameters). Remove the ")" to make it an attribute.`
+        );
       }
     } else {
-      // Text read as a method that has no `name(...)` in it, such as `#int pr)ot`, is an attribute.
-      this.memberType = 'attribute';
       const length = input.length;
       const firstChar = input.substring(0, 1);
       const lastChar = input.substring(length - 1);
