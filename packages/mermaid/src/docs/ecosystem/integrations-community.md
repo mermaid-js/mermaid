@@ -54,6 +54,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [GNU Octave](https://octave.org/) ✅
   - [octave_mermaid_js](https://github.com/CNOCTAVE/octave_mermaid_js) ✅
 - [HackMD](https://hackmd.io/c/tutorials/%2F%40docs%2Fflowchart-en#Create-more-complex-flowcharts) ✅
+- [IQ Mermaid](https://iq-mermaid.com) - Free online Mermaid editor with a visual canvas kept in sync with the source, in 34 interface languages
 - [JetBrains IDEs](https://www.jetbrains.com)
   - [Mermaid Plugin](https://plugins.jetbrains.com/plugin/20146-mermaid)
   - [Mermaid Studio](https://plugins.jetbrains.com/plugin/29870-mermaid-studio)
