@@ -762,17 +762,17 @@ describe('given text representing an attribute', () => {
 });
 
 describe('given text read as a method that does not look like one, ', function () {
-  it('should read a member with a closing but no opening parenthesis as an attribute', function () {
-    const classMember = new ClassMember('#int pr)otectedMarmoset', 'method');
+  it('should read a method typed without its opening parenthesis as an attribute', function () {
+    const classMember = new ClassMember('+getTime) int', 'method');
 
     expect(classMember.memberType).toBe('attribute');
-    expect(classMember.getDisplayDetails().displayText).toBe('#int pr)otectedMarmoset');
+    expect(classMember.getDisplayDetails().displayText).toBe('+getTime) int');
   });
 
-  it('should read a member that starts with its parentheses as an attribute', function () {
-    const classMember = new ClassMember('(a)', 'method');
+  it('should read parameters with no method name in front of them as an attribute', function () {
+    const classMember = new ClassMember('(int x)', 'method');
 
     expect(classMember.memberType).toBe('attribute');
-    expect(classMember.getDisplayDetails().displayText).toBe('(a)');
+    expect(classMember.getDisplayDetails().displayText).toBe('(int x)');
   });
 });
