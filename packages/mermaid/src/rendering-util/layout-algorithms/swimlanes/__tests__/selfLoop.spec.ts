@@ -8,7 +8,11 @@ import { runSwimlaneLayoutCore } from '../layoutCore.js';
 import { applySyntheticContentSizes, applySyntheticLabelSizes } from '../../ddlt/fixtureSizes.js';
 
 // Runs the swimlane layout without a browser. `size` overrides node B's box.
-async function layout(code: string, size?: { width: number; height: number }) {
+async function layout(
+  code: string,
+  size?: { width: number; height: number },
+  labelHeight?: number
+) {
   const diagram = await Diagram.fromText(code);
   const db = diagram.db as { getData: () => LayoutData; getDirection: () => string };
   const data = db.getData();
@@ -17,6 +21,9 @@ async function layout(code: string, size?: { width: number; height: number }) {
   Object.assign(data.nodes.find((n) => n.id === 'B')!, size);
   const out = Object.assign(createEdgeLabelNodes(data), { direction: db.getDirection() });
   applySyntheticLabelSizes(out);
+  for (const n of out.nodes.filter((n) => labelHeight && n.isEdgeLabel)) {
+    n.height = labelHeight;
+  }
   runSwimlaneLayoutCore(out);
   return out;
 }
@@ -83,5 +90,32 @@ describe('swimlane self-loops (#8446)', () => {
       height: 100,
     });
     expectLoopAttached(data);
+  });
+
+  it('keeps a tall loop label clear of the next node', async () => {
+    const data = await layout(
+      'swimlane-beta TD\nsubgraph MD\n  B\n  C\nend\nB -->|tall| B\nB --> C',
+      undefined,
+      300
+    );
+    const label = data.nodes.find((n) => n.isEdgeLabel && n.edgeStart === 'B')!;
+    const c = data.nodes.find((n) => n.id === 'C')!;
+    expect(label.y! + label.height! / 2).toBeLessThan(c.y! - c.height! / 2);
+  });
+
+  it('keeps two loop labels on one node apart', async () => {
+    const data = await layout(
+      'swimlane-beta TD\nsubgraph MD\n  B\nend\nB -->|first| B\nB -->|second| B'
+    );
+    const [l1, l2] = data.nodes.filter((n) => n.isEdgeLabel && n.edgeStart === 'B');
+    const apart =
+      Math.abs(l1.x! - l2.x!) >= (l1.width! + l2.width!) / 2 ||
+      Math.abs(l1.y! - l2.y!) >= (l1.height! + l2.height!) / 2;
+    expect(apart).toBe(true);
+    // the second loop goes around the first one instead of on top of it
+    const [p1, p2] = data.edges
+      .filter((e) => e.start === 'B' && e.end === 'B')
+      .map((e) => e.points!);
+    expect(Math.max(...p2.map((p) => p.x))).toBeGreaterThan(Math.max(...p1.map((p) => p.x)));
   });
 });

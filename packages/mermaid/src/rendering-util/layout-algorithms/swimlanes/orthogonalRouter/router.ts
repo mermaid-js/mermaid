@@ -123,14 +123,22 @@ function pointOnLine(line: RoutedLine, along: number): Point {
  * In LR/RL the layout gets rotated and stretched later, so pass that stretch
  * as `lrScale` to keep both ends of the loop on the node.
  */
-function selfLoopPoints(node: MermaidNode, side: 1 | -1, lrScale?: number): Point[] {
+// `extra` pushes the loop further out and `rise` makes it taller, so several
+// loops on one node nest instead of overlapping
+function selfLoopPoints(
+  node: MermaidNode,
+  side: 1 | -1,
+  lrScale?: number,
+  extra = 0,
+  rise = 0
+): Point[] {
   const x = node.x ?? 0;
   const y = node.y ?? 0;
   const w = node.width ?? 0;
   const h = node.height ?? 0;
   const edgeX = x + (side * (lrScale ? h : w)) / 2;
-  const quarterH = lrScale ? Math.min(h, w / lrScale) / 4 : h / 4;
-  const outX = edgeX + side * ANCHOR_OFFSET;
+  const quarterH = (lrScale ? Math.min(h, w / lrScale) / 4 : h / 4) + rise;
+  const outX = edgeX + side * (ANCHOR_OFFSET + extra);
   return [
     { x: edgeX, y: y - quarterH },
     { x: outX, y: y - quarterH },
@@ -756,6 +764,7 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     return { pSrcPort, pDstPort, srcSide, dstSide };
   };
 
+  const loopsSoFar = new Map<string, { extra: number; count: number }>();
   for (const i of routingOrder) {
     const e = edges[i];
     edgeSegmentIndices[i] = [];
@@ -772,7 +781,20 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
       if (node) {
         const lrScale =
           direction === 'LR' || direction === 'RL' ? lrHorizontalScale(nodes) : undefined;
-        e.points = selfLoopPoints(node, selfLoopSide(node, data), lrScale);
+        const prev = loopsSoFar.get(e.start) ?? { extra: 0, count: 0 };
+        e.points = selfLoopPoints(
+          node,
+          selfLoopSide(node, data),
+          lrScale,
+          prev.extra,
+          prev.count * 6
+        );
+        // The next loop goes around this one and its label
+        const label = nodeById.get((e as { labelNodeId?: string }).labelNodeId ?? '');
+        loopsSoFar.set(e.start, {
+          extra: prev.extra + (label?.width ?? 0) + 8,
+          count: prev.count + 1,
+        });
       }
       continue;
     }

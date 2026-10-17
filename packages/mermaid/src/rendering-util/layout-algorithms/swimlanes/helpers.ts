@@ -219,12 +219,16 @@ export function writeBackToLayoutData(
   }
 
   const allNodes = layout.nodes ?? [];
+  // Several loops on one node nest outward (see selfLoopPoints in the router)
+  const loopLabelStack = new Map<NodeId, number>();
   for (const label of allNodes.filter(isSelfLoopLabel)) {
     const owner = nodeMap.get(label.edgeStart!);
     if (owner?.x !== undefined && owner.y !== undefined) {
-      const offset = (owner.width ?? 0) / 2 + SELF_LOOP_LABEL_GAP + (label.width ?? 0) / 2;
+      const taken = loopLabelStack.get(owner.id) ?? 0;
+      const offset = (owner.width ?? 0) / 2 + SELF_LOOP_LABEL_GAP + taken + (label.width ?? 0) / 2;
       label.x = owner.x + selfLoopSide(owner, layout) * offset;
       label.y = owner.y;
+      loopLabelStack.set(owner.id, taken + (label.width ?? 0) + 8);
     }
   }
 

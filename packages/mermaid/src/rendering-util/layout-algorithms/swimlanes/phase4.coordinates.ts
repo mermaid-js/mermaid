@@ -32,9 +32,12 @@ export function assignCoordinates(
   const getHeight = (id: NodeId) => getNode(id)?.height ?? 0;
   // Self-loop label room on both sides; the loop side is picked later
   const loopRoom = new Map<NodeId, number>();
+  const loopHeight = new Map<NodeId, number>();
   for (const n of gWithDummies.layout.nodes ?? []) {
     if (isSelfLoopLabel(n)) {
-      loopRoom.set(n.edgeStart!, SELF_LOOP_LABEL_GAP + (n.width ?? 0));
+      const id = n.edgeStart!;
+      loopRoom.set(id, (loopRoom.get(id) ?? 0) + SELF_LOOP_LABEL_GAP + (n.width ?? 0));
+      loopHeight.set(id, Math.max(loopHeight.get(id) ?? 0, n.height ?? 0));
     }
   }
   const slotWidth = (id: NodeId) => getWidth(id) + 2 * (loopRoom.get(id) ?? 0);
@@ -42,7 +45,7 @@ export function assignCoordinates(
   const laneOrderGlobal = resolveTopLaneOrder(gWithDummies, opts?.laneOrder);
 
   const layerHeights: number[] = layers.map((layer) =>
-    layer.reduce((m, v) => Math.max(m, getHeight(v)), 0)
+    layer.reduce((m, v) => Math.max(m, getHeight(v), loopHeight.get(v) ?? 0), 0)
   );
 
   // LR/RL transforms turn width into horizontal span, so widen layer gaps up front.
