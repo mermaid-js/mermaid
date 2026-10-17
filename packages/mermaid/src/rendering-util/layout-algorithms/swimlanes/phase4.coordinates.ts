@@ -1,4 +1,5 @@
 import type { Graph, OrderedLayers, Coordinates, NodeId, EdgeRef } from './helpers.js';
+import { SELF_LOOP_LABEL_GAP, isSelfLoopLabel } from './helpers.js';
 import { COORDINATES } from './config.js';
 import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
 
@@ -29,11 +30,22 @@ export function assignCoordinates(
   const getNode = (id: NodeId) => gWithDummies.nodeById.get(id) as any;
   const getWidth = (id: NodeId) => getNode(id)?.width ?? 0;
   const getHeight = (id: NodeId) => getNode(id)?.height ?? 0;
+  // Self-loop label room on both sides; the loop side is picked later
+  const loopRoom = new Map<NodeId, number>();
+  const loopHeight = new Map<NodeId, number>();
+  for (const n of gWithDummies.layout.nodes ?? []) {
+    if (isSelfLoopLabel(n)) {
+      const id = n.edgeStart!;
+      loopRoom.set(id, (loopRoom.get(id) ?? 0) + SELF_LOOP_LABEL_GAP + (n.width ?? 0));
+      loopHeight.set(id, Math.max(loopHeight.get(id) ?? 0, n.height ?? 0));
+    }
+  }
+  const slotWidth = (id: NodeId) => getWidth(id) + 2 * (loopRoom.get(id) ?? 0);
   const topLaneOf = createTopLaneResolver(gWithDummies);
   const laneOrderGlobal = resolveTopLaneOrder(gWithDummies, opts?.laneOrder);
 
   const layerHeights: number[] = layers.map((layer) =>
-    layer.reduce((m, v) => Math.max(m, getHeight(v)), 0)
+    layer.reduce((m, v) => Math.max(m, getHeight(v), loopHeight.get(v) ?? 0), 0)
   );
 
   // LR/RL transforms turn width into horizontal span, so widen layer gaps up front.
@@ -82,12 +94,12 @@ export function assignCoordinates(
     }
     for (const [L, ids] of Object.entries(perLane)) {
       const total =
-        ids.reduce((s, id) => s + getWidth(id), 0) + nodeGap * Math.max(0, ids.length - 1);
+        ids.reduce((s, id) => s + slotWidth(id), 0) + nodeGap * Math.max(0, ids.length - 1);
       laneWidth[L] = Math.max(laneWidth[L] ?? 0, total);
     }
     if (hasNullLane && nullIds.length) {
       const totalNull =
-        nullIds.reduce((s, id) => s + getWidth(id), 0) + nodeGap * Math.max(0, nullIds.length - 1);
+        nullIds.reduce((s, id) => s + slotWidth(id), 0) + nodeGap * Math.max(0, nullIds.length - 1);
       (laneWidth as any).null = Math.max((laneWidth as any).null ?? 0, totalNull) as any;
     }
   }
@@ -136,7 +148,7 @@ export function assignCoordinates(
         y[id] = yOffset + layerH / 2;
       } else {
         // Preserve phase 3 order while spreading nodes around the lane center.
-        const widths = nodesInLane.map((id) => getWidth(id));
+        const widths = nodesInLane.map((id) => slotWidth(id));
         const total = widths.reduce((a, b) => a + b, 0) + nodeGap * (nodesInLane.length - 1);
         let start = cx - total / 2;
         for (const [i, id] of nodesInLane.entries()) {
