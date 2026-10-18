@@ -169,12 +169,13 @@ When using the ELK layout, you can further refine the diagram’s configuration,
   - LINEAR_SEGMENTS
   - BRANDES_KOEPF (default)
 - To configure Brandes-Koepf node placement alignment, use nodePlacementAlignment with the following options:
-  - NONE (default)
+  - NONE
   - LEFTUP
   - LEFTDOWN
   - RIGHTUP
   - RIGHTDOWN
   - BALANCED
+- When nodePlacementAlignment is not set, the alignment comes from the `elk.preset` option: BALANCED for the `default` preset, and NONE for the named non-default presets `legacy`, `modelOrder` and `depthFirst`. Use `preset: depthFirst` to get the former default layout, or set nodePlacementAlignment explicitly to override the preset.
 
 **Example configuration:**
 

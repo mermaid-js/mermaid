@@ -144,9 +144,9 @@ Possible FlowChart orientations are:
 - RL - Right to left
 - LR - Left to right
 
-## Default theme and look (v\<MERMAID_RELEASE_VERSION>+)
+## Default theme, look and layout (v12.0.0+)
 
-Flowcharts use the `redux-color` theme and the `neo` look by default. Not every diagram type
+Flowcharts use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
 does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
 for the order in which Mermaid decides.
 
@@ -208,6 +208,7 @@ in a diagram's front matter draws it the way Mermaid did before:
 config:
   theme: default
   look: classic
+  layout: dagre
 ---
 flowchart LR
   subgraph Client
@@ -235,6 +236,7 @@ flowchart LR
 config:
   theme: default
   look: classic
+  layout: dagre
 ---
 flowchart LR
   subgraph Client
@@ -257,9 +259,9 @@ flowchart LR
   Auth -. token .-> UI
 ```
 
-Passing the same two keys to `mermaid.initialize()` does it for every diagram on the page,
-and scoping them to one diagram type — `mermaid.initialize({ flowchart: { theme: 'default', look: 'classic' } })` —
-does it for that type alone.
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', flowchart: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
 
 ## Node shapes
 
@@ -2261,9 +2263,14 @@ config:
   layout: dagre
 ```
 
-The older `flowchart.defaultRenderer: "elk"` directive and the `flowchart-elk`
-diagram type still work, but are no longer needed — they predate `layout` and
-selected a renderer that is now the default.
+The `flowchart-elk` diagram type still works, but is no longer needed — it
+predates `layout` and selected what is now the default.
+
+The `defaultRenderer` option of the `flowchart`, `class` and `state` config
+sections was removed in v12. It named a rendering engine at a time when there
+was more than one; all of its values had come to mean the same renderer, and
+its `elk` value only ever set `layout: elk` on your behalf. Use `layout`
+directly.
 
 ### Width
 

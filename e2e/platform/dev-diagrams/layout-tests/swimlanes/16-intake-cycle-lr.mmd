@@ -1,0 +1,24 @@
+---
+config:
+  logLevel: 0
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+    minNodeWidth: 200
+---
+swimlane-beta LR
+  subgraph Intake
+  start([Start])
+  task[Do work]
+  fix[Fix issues]
+  end
+
+  subgraph Review
+  decision{Ready?}
+  end
+
+
+  start --> task --> decision
+  decision -->|No| fix
+  fix --> task

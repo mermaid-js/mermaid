@@ -79,16 +79,16 @@ export const PLACEMENT_OPTIONS: Record<string, unknown> = {
   // 'elk.layered.considerModelOrder.strategy': 'PREFER_NODES',  // order nodes, let edges move
   // ─── Node placement — the coordinate within the layer ───
   // Wired to `elk.nodePlacementStrategy`; uncomment to override that config.
-  // 'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',  // our default: balanced
-  // 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',    // ELK default: straight long edges
+  // 'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',  // balanced; root under modelOrder/depthFirst
+  // 'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',    // ELK default and ours: straight long edges
   // 'elk.layered.nodePlacement.strategy': 'LINEAR_SEGMENTS',  // keeps chains aligned
   // 'elk.layered.nodePlacement.strategy': 'SIMPLE',           // cheapest, least tidy
   // Shifts nodes to straighten edges rather than centre them in the layer.
   // 'elk.layered.nodePlacement.favorStraightEdges': true,
   // 'elk.layered.nodePlacement.favorStraightEdges': false,
   // Brandes-Koepf only: which of its four candidate alignments to keep.
-  // 'elk.layered.nodePlacement.bk.fixedAlignment': 'NONE',      // pick the shortest result
-  // 'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',  // average all four
+  // 'elk.layered.nodePlacement.bk.fixedAlignment': 'NONE',      // pick the shortest result; named presets
+  // 'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',  // average all four; default preset
   // 'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTUP',
   // 'elk.layered.nodePlacement.bk.fixedAlignment': 'RIGHTUP',
   // 'elk.layered.nodePlacement.bk.fixedAlignment': 'LEFTDOWN',

@@ -5,13 +5,20 @@ import {
   clearContainerAlgorithmOptions,
   dir2ElkDirection,
   ensureEndMarkerSegmentLength,
+  ensureStartMarkerSegmentLength,
   evenGroupFrames,
   findCyclicEntryNodes,
   prepareLayoutForElk,
   resolveContainerAlgorithm,
   resolveElkPreset,
+  projectLabelOntoStraightenedRun,
   runElkLayoutCore,
+  sanitizeElkEdgePoints,
+  separateOppositeEdgeLabels,
+  straightenEdgeTerminals,
 } from '../render.js';
+import { onBorder, type P } from '../geometry.js';
+import intersect from '../../../rendering-elements/intersect/index.js';
 
 const log = {
   debug: () => undefined,
@@ -68,10 +75,22 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.padding']).toBe('[top=29,left=15,bottom=15,right=15]');
   });
 
-  it('leaves the size of a plain subgraph to ELK, as before', () => {
+  it('reserves title padding while leaving child layout and height to ELK', () => {
     const opts = buildSubgraphLayoutOptions(
       { padding: 8, labelData: { width: 44, height: 14 } },
       { mergeEdges: true },
+      'layered'
+    );
+    expect(opts['nodeSize.constraints']).toBe('[MINIMUM_SIZE, NODE_LABELS]');
+    expect(opts['nodeSize.minimum']).toBe('(52, 0)');
+  });
+
+  it('reserves no title width for cluster shapes that paint no title', () => {
+    // A state-diagram note group carries the note's text as its label, but the
+    // note node inside paints it; the group frame has no title strip.
+    const opts = buildSubgraphLayoutOptions(
+      { shape: 'noteGroup', padding: 16, labelData: { width: 336, height: 40 } },
+      undefined,
       'layered'
     );
     expect(opts['nodeSize.constraints']).toBeUndefined();
@@ -99,7 +118,7 @@ describe('buildSubgraphLayoutOptions', () => {
     );
     expect(opts['elk.algorithm']).toBe('layered');
     expect(opts['elk.direction']).toBe('RIGHT');
-    expect(opts['nodeSize.minimum']).toBeUndefined();
+    expect(opts['nodeSize.minimum']).toBe('(30, 0)');
   });
 
   it('omits direction-specific options when node has no dir', () => {
@@ -118,9 +137,9 @@ describe('buildSubgraphLayoutOptions', () => {
     expect(opts['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
   });
 
-  it('defaults nodePlacementAlignment to NONE', () => {
+  it('defaults nodePlacementAlignment to BALANCED', () => {
     const opts = buildSubgraphLayoutOptions({}, { mergeEdges: true }, 'layered');
-    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('BALANCED');
   });
 
   it('passes through nodePlacementAlignment from config', () => {
@@ -132,11 +151,9 @@ describe('buildSubgraphLayoutOptions', () => {
     const opts = buildSubgraphLayoutOptions({}, undefined, 'layered');
     expect(opts['elk.layered.mergeEdges']).toBeUndefined();
     // With no config at all the `default` preset supplies the placement
-    // strategy. Containers are BRANDES_KOEPF while the root is NETWORK_SIMPLEX:
-    // network simplex inside a frame produced routes that left a subgraph on
-    // its bounding-box corner, so containers keep the strategy that does not.
+    // strategy and alignment for both the root and its containers.
     expect(opts['elk.layered.nodePlacement.strategy']).toBe('BRANDES_KOEPF');
-    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('NONE');
+    expect(opts['elk.layered.nodePlacement.bk.fixedAlignment']).toBe('BALANCED');
   });
 
   it('lets an explicit strategy beat the preset', () => {
@@ -195,9 +212,8 @@ describe('buildSubgraphLayoutOptions', () => {
     // reach containers too — leaving them on the new strategy would make it a
     // half-restore that still lays subgraph contents out differently.
     expect(placement('legacy')).toBe('BRANDES_KOEPF');
-    // `default` and `depthFirst` place the ROOT with NETWORK_SIMPLEX but keep
-    // containers on BRANDES_KOEPF — the two sides are tuned separately on
-    // purpose, so a change to one must not be assumed to carry to the other.
+    // Both presets keep container placement on BRANDES_KOEPF even though
+    // their root placement now differs.
     expect(placement('depthFirst')).toBe('BRANDES_KOEPF');
     expect(placement('default')).toBe('BRANDES_KOEPF');
   });
@@ -454,7 +470,7 @@ describe('buildElkGraphFromLayoutData', () => {
 
     expect(state.elkGraph.layoutOptions['elk.direction']).toBe('RIGHT');
     expect(state.elkGraph.layoutOptions['elk.layered.nodePlacement.bk.fixedAlignment']).toBe(
-      'NONE'
+      'BALANCED'
     );
     expect(state.elkGraph.children).toHaveLength(2);
 
@@ -643,6 +659,648 @@ describe('runElkLayoutCore', () => {
   });
 });
 
+describe('straightenEdgeTerminals label projection (#8292)', () => {
+  // Real-world jog from the `TERMINAL_JOG_MAX` fixture corpus: the channel at
+  // x in [218, 400] moves from y=119.5 to y=116.25. A label whose ELK-given
+  // position sat on the pre-straightening run (as `layoutEdge.x/y` always does
+  // — it is set before `straightenEdgeTerminals` runs) must move with it,
+  // instead of staying 3.25px off the new line.
+  const pts: P[] = [
+    { x: 193, y: 116.25 },
+    { x: 218, y: 116.25 },
+    { x: 218, y: 119.5 },
+    { x: 300, y: 119.5 },
+    { x: 400, y: 119.5 },
+    { x: 400, y: 300 },
+  ];
+
+  it('straightens the edge and reports the run that moved', () => {
+    const edge = { id: 'e1', points: pts, x: 300, y: 119.5 } as any;
+    const changed = straightenEdgeTerminals([edge]);
+
+    expect(changed).toEqual([
+      {
+        edge,
+        runs: [
+          {
+            old: { a: { x: 218, y: 119.5 }, b: { x: 400, y: 119.5 } },
+            new: { a: { x: 218, y: 116.25 }, b: { x: 400, y: 116.25 } },
+          },
+        ],
+      },
+    ]);
+    expect(edge.points).toEqual([
+      { x: 193, y: 116.25 },
+      { x: 300, y: 116.25 },
+      { x: 400, y: 116.25 },
+      { x: 400, y: 300 },
+    ]);
+  });
+
+  it('projects a label sitting on the moved run onto the new route', () => {
+    const edge = { id: 'e1', points: pts, x: 300, y: 119.5 } as any;
+    const [{ runs }] = straightenEdgeTerminals([edge]);
+
+    const projected = projectLabelOntoStraightenedRun({ x: 300, y: 119.5 }, runs);
+
+    expect(projected).toEqual({ x: 300, y: 116.25 });
+  });
+
+  // The bug this guards against: naively searching the whole (post-
+  // straightening) route for the nearest point can pick an unrelated,
+  // unchanged segment instead of the run that actually moved, if that
+  // segment happens to sit closer to the label's old position. Here a static
+  // "return leg" at y=118 passes directly under the label's x, and is nearer
+  // to the label's old spot (distance 1.5) than the straightened run's new
+  // position is (distance 3.25) — so a whole-route nearest-point search would
+  // wrongly snap the label onto the return leg. Scoping the search to just the
+  // run(s) `straightenEdgeTerminals` reports avoids that entirely.
+  it('projects onto the moved run even when an unchanged segment sits nearer to the old label position', () => {
+    const withReturnLeg: P[] = [
+      ...pts, // last point is { x: 400, y: 300 }
+      { x: 350, y: 300 },
+      { x: 250, y: 118 },
+      { x: 350, y: 118 }, // passes under (300, 119.5) at distance 1.5
+    ];
+    const edge = { id: 'e1', points: withReturnLeg, x: 300, y: 119.5 } as any;
+    const [{ runs }] = straightenEdgeTerminals([edge]);
+
+    // The return leg itself must be unchanged.
+    expect(edge.points.slice(-2)).toEqual([
+      { x: 250, y: 118 },
+      { x: 350, y: 118 },
+    ]);
+
+    const projected = projectLabelOntoStraightenedRun({ x: 300, y: 119.5 }, runs);
+
+    expect(projected).toEqual({ x: 300, y: 116.25 });
+  });
+
+  it('leaves an edge with no jog, and its label, untouched', () => {
+    const straight: P[] = [
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+    ];
+    const edge = { id: 'e2', points: straight, x: 50, y: 0 } as any;
+    const changed = straightenEdgeTerminals([edge]);
+
+    expect(changed).toEqual([]);
+    expect(edge.points).toBe(straight);
+  });
+
+  // Unlike the tests above, this goes through the real pipeline
+  // (`runElkLayoutCore`) end to end, so it fails if the label-projection at
+  // the `applyElkEdgeLayout` call site were ever removed — the unit tests above
+  // only exercise `straightenEdgeTerminals`/`projectLabelOntoStraightenedRun`
+  // directly and would keep passing even if that call site were deleted.
+  //
+  // This exact node/edge layout is a minimal, real ELK output found by
+  // randomized search that reliably produces a terminal jog on a labelled
+  // edge (e1, "L1"): ELK's own port/channel misalignment for e1 leaves the
+  // label ~14px off the line once straightening moves the run, without the
+  // fix.
+  it('centres a real edge label on its route after a real ELK layout straightens it (#8292)', async () => {
+    const data = {
+      direction: 'TD',
+      config: { elk: {} },
+      nodes: [
+        { id: 'l0n0', isGroup: false, width: 94, height: 30, label: 'l0n0', shape: 'rect' },
+        { id: 'l0n1', isGroup: false, width: 53, height: 46, label: 'l0n1', shape: 'rect' },
+        { id: 'l0n2', isGroup: false, width: 160, height: 46, label: 'l0n2', shape: 'rect' },
+        { id: 'l0n3', isGroup: false, width: 168, height: 42, label: 'l0n3', shape: 'rect' },
+        { id: 'l1n0', isGroup: false, width: 153, height: 45, label: 'l1n0', shape: 'rect' },
+        { id: 'l1n1', isGroup: false, width: 160, height: 63, label: 'l1n1', shape: 'rect' },
+        { id: 'l1n2', isGroup: false, width: 148, height: 65, label: 'l1n2', shape: 'rect' },
+        { id: 'l1n3', isGroup: false, width: 129, height: 49, label: 'l1n3', shape: 'rect' },
+      ],
+      edges: [
+        {
+          id: 'e1',
+          start: 'l0n0',
+          end: 'l1n0',
+          type: 'arrow_point',
+          label: 'L1',
+          width: 22,
+          height: 14,
+        },
+        {
+          id: 'e2',
+          start: 'l0n0',
+          end: 'l1n3',
+          type: 'arrow_point',
+          label: 'L2',
+          width: 33,
+          height: 14,
+        },
+        { id: 'e3', start: 'l0n1', end: 'l1n0', type: 'arrow_point' },
+        { id: 'e4', start: 'l0n1', end: 'l1n3', type: 'arrow_point' },
+        { id: 'e5', start: 'l0n2', end: 'l1n1', type: 'arrow_point' },
+        {
+          id: 'e6',
+          start: 'l0n2',
+          end: 'l1n0',
+          type: 'arrow_point',
+          label: 'L6',
+          width: 16,
+          height: 14,
+        },
+        {
+          id: 'e7',
+          start: 'l0n3',
+          end: 'l1n2',
+          type: 'arrow_point',
+          label: 'L7',
+          width: 34,
+          height: 14,
+        },
+        { id: 'e8', start: 'l0n3', end: 'l1n1', type: 'arrow_point' },
+      ],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const edge = data.edges.find((e: any) => e.id === 'e1');
+    expect(edge.points.length).toBeGreaterThanOrEqual(5); // must have a jog to straighten
+
+    let best = Infinity;
+    for (let i = 0; i < edge.points.length - 1; i++) {
+      const a = edge.points[i];
+      const b = edge.points[i + 1];
+      const abx = b.x - a.x;
+      const aby = b.y - a.y;
+      const lenSq = abx * abx + aby * aby;
+      const t =
+        lenSq === 0
+          ? 0
+          : Math.max(0, Math.min(1, ((edge.x - a.x) * abx + (edge.y - a.y) * aby) / lenSq));
+      const dx = a.x + t * abx - edge.x;
+      const dy = a.y + t * aby - edge.y;
+      best = Math.min(best, Math.hypot(dx, dy));
+    }
+    expect(best).toBeLessThan(0.5);
+  });
+});
+
+describe('straightenEdgeTerminals keeps labels off other edges (#8368)', () => {
+  // Independent of the implementation's clip: every route here is orthogonal.
+  const segmentHitsBox = (a: P, b: P, box: { x1: number; y1: number; x2: number; y2: number }) =>
+    Math.max(a.x, b.x) >= box.x1 &&
+    Math.min(a.x, b.x) <= box.x2 &&
+    Math.max(a.y, b.y) >= box.y1 &&
+    Math.min(a.y, b.y) <= box.y2;
+
+  /** Ids of the edges whose route passes through `labelled`'s label box. */
+  const edgesUnderLabel = (edges: any[], labelled: any) => {
+    const box = {
+      x1: labelled.x - labelled.width / 2,
+      y1: labelled.y - labelled.height / 2,
+      x2: labelled.x + labelled.width / 2,
+      y2: labelled.y + labelled.height / 2,
+    };
+    return edges
+      .filter(
+        (other) =>
+          other !== labelled &&
+          other.points.some(
+            (p: P, i: number, all: P[]) => i < all.length - 1 && segmentHitsBox(p, all[i + 1], box)
+          )
+      )
+      .map((other) => other.id);
+  };
+
+  /** What `applyElkEdgeLayout` does: straighten, then carry each label along. */
+  const straightenAndProject = (edges: any[]) => {
+    for (const { edge, runs } of straightenEdgeTerminals(edges)) {
+      if (edge.x == null || edge.y == null) {
+        continue;
+      }
+      const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
+      if (projected) {
+        edge.x = projected.x;
+        edge.y = projected.y;
+      }
+    }
+  };
+
+  // The routes ELK produced for the issue diagram, before straightening. Both
+  // Draft <-> Review edges carry a 12px jog at Draft; straightening both pulls
+  // them to within 7px of each other, under the 20px-high `changes` label.
+  const forward = () => ({
+    id: 'L_A_B_0',
+    points: [
+      { x: 74.34375, y: 54.61979166666667 },
+      { x: 94.34375, y: 54.61979166666667 },
+      { x: 94.34375, y: 42.203125 },
+      { x: 142.8125, y: 42.203125 },
+      { x: 191.28125, y: 42.203125 },
+      { x: 191.28125, y: 45.96875 },
+      { x: 211.28125, y: 45.96875 },
+      { x: 223.26566632092, y: 45.96875 },
+    ],
+  });
+  const back = () => ({
+    id: 'L_B_A_0',
+    label: 'changes',
+    x: 142.8125,
+    y: 73.203125,
+    width: 56.9375,
+    height: 20,
+    points: [
+      { x: 223.26566632092, y: 69.9375 },
+      { x: 211.28125, y: 69.9375 },
+      { x: 191.28125, y: 69.9375 },
+      { x: 191.28125, y: 73.703125 },
+      { x: 94.34375, y: 73.703125 },
+      { x: 94.34375, y: 61.28645833333333 },
+      { x: 74.34375, y: 61.28645833333333 },
+    ],
+  });
+
+  it('does not straighten a labelled edge onto a route its label would then cover', () => {
+    const edges = [forward(), back()];
+    straightenAndProject(edges);
+
+    expect(edgesUnderLabel(edges, edges[1])).toEqual([]);
+    expect(edges[0].points).not.toEqual(forward().points);
+    expect(edges[1].points).toEqual(back().points);
+  });
+
+  it('does not straighten an edge through a label placed before it', () => {
+    const edges = [back(), forward()];
+    straightenAndProject(edges);
+
+    expect(edgesUnderLabel(edges, edges[0])).toEqual([]);
+    expect(edges[0].points).not.toEqual(back().points);
+    expect(edges[1].points).toEqual(forward().points);
+  });
+
+  it('keeps the edge label of the issue diagram clear of the parallel edge after a real ELK layout', async () => {
+    // The `intersect` the DOM renderer installs on each shape: ELK's ports
+    // attach to the outline through it, and that is what leaves the jogs.
+    const rect = function (this: any, p: P) {
+      return intersect.rect(this, p);
+    };
+    const diamond = function (this: any, p: P) {
+      const s = this.width;
+      const corners = [
+        { x: s / 2, y: 0 },
+        { x: s, y: -s / 2 },
+        { x: s / 2, y: -s },
+        { x: 0, y: -s / 2 },
+      ];
+      return intersect.polygon(this, corners, p);
+    };
+    const data = {
+      direction: 'LR',
+      config: {
+        elk: {
+          mergeEdges: false,
+          straightenEdges: true,
+          lineHops: true,
+          preset: 'default',
+          layeringLayerBound: 4,
+          forceNodeModelOrder: false,
+          considerModelOrder: 'NODES_AND_EDGES',
+          keepEntryNodeOnTop: false,
+          orientFeedbackEdges: true,
+        },
+      },
+      nodes: [
+        {
+          id: 'A',
+          isGroup: false,
+          width: 62.34375,
+          height: 40,
+          label: 'Draft',
+          shape: 'squareRect',
+          intersect: rect,
+        },
+        {
+          id: 'B',
+          isGroup: false,
+          width: 91.90625,
+          height: 91.90625,
+          label: 'Review',
+          shape: 'diamond',
+          intersect: diamond,
+        },
+        {
+          id: 'C',
+          isGroup: false,
+          width: 93.5,
+          height: 40,
+          label: 'Published',
+          shape: 'squareRect',
+          intersect: rect,
+        },
+      ],
+      edges: [
+        { id: 'L_A_B_0', start: 'A', end: 'B', type: 'arrow_point' },
+        {
+          id: 'L_B_C_0',
+          start: 'B',
+          end: 'C',
+          type: 'arrow_point',
+          label: 'approved',
+          width: 62.390625,
+          height: 20,
+        },
+        {
+          id: 'L_B_A_0',
+          start: 'B',
+          end: 'A',
+          type: 'arrow_point',
+          label: 'changes',
+          width: 56.9375,
+          height: 20,
+        },
+      ],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const changes = data.edges.find((e: any) => e.id === 'L_B_A_0');
+    expect(edgesUnderLabel(data.edges, changes)).toEqual([]);
+    // Straightening still applies where it is harmless: A --> B leaves Draft without a jog.
+    const [start, , third] = data.edges[0].points;
+    expect(third.y).toBe(start.y);
+  });
+});
+
+describe('separateOppositeEdgeLabels', () => {
+  // Reproduces the shape of a real bug: two opposite-direction edges between
+  // the same node pair (e.g. a stateDiagram-v2 composite state's "touch" /
+  // "idle 30s" transitions) end up with labels centred close enough together
+  // that a wide label pair overlaps, even though each edge's own x/y was
+  // individually well-placed — straightenEdgeTerminals' per-edge jog
+  // correction (or ELK's own routing) can legitimately pull the two edges'
+  // lines toward each other without either edge knowing about the other's
+  // label.
+  const edge = (
+    id: string,
+    start: string,
+    end: string,
+    label: string,
+    x: number,
+    width: number,
+    extra: Record<string, unknown> = {}
+  ) => ({ id, start, end, label, x, y: 489.5, width, height: 21, ...extra }) as any;
+
+  it('pulls a wide, overlapping label pair apart symmetrically', () => {
+    // Same numbers as the real bug: centres 38.13 apart, half-widths summing
+    // to more than that (17.125 + 24.1328125 = 41.26 > 38.13).
+    const touch = edge('e9', 'ScreenDimmed', 'ScreenOn', 'touch', 492.933, 34.25);
+    const idle = edge('e8', 'ScreenOn', 'ScreenDimmed', 'idle 30s', 531.067, 48.266);
+    const edges = [touch, idle];
+
+    separateOppositeEdgeLabels(edges);
+
+    const gap = idle.x! - touch.x!;
+    const required = touch.width! / 2 + idle.width! / 2 + 4;
+    expect(gap).toBeCloseTo(required, 5);
+    // Preserves the pair's shared midpoint rather than sliding both the same way.
+    expect((touch.x! + idle.x!) / 2).toBeCloseTo((492.933 + 531.067) / 2, 1);
+  });
+
+  it('leaves a short, already-clear label pair untouched', () => {
+    // "play"/"pause" numbers from the same diagram: 38.14 apart, half-widths
+    // summing to only 12.84 + 19.08 = 31.92 — well clear already.
+    const play = edge('e6', 'Paused', 'Playing', 'play', 284.933, 25.6875);
+    const pause = edge('e5', 'Playing', 'Paused', 'pause', 323.067, 38.15625);
+    const edges = [play, pause];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect(play.x).toBe(284.933);
+    expect(pause.x).toBe(323.067);
+  });
+
+  it('ignores edges between the same pair at meaningfully different heights', () => {
+    const a = edge('e1', 'A', 'B', 'wide label one', 100, 80, { y: 0 });
+    const b = edge('e2', 'B', 'A', 'wide label two', 110, 80, { y: 200 });
+    const edges = [a, b];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect(a.x).toBe(100);
+    expect(b.x).toBe(110);
+  });
+
+  it('ignores a node pair with more than two labelled edges', () => {
+    // Three edges between the same pair is outside the common case this
+    // guards; leave them exactly as computed rather than guessing.
+    const a = edge('e1', 'A', 'B', 'one', 100, 80);
+    const b = edge('e2', 'B', 'A', 'two', 110, 80);
+    const c = edge('e3', 'A', 'B', 'three', 105, 80);
+    const edges = [a, b, c];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect([a.x, b.x, c.x]).toEqual([100, 110, 105]);
+  });
+});
+
+describe('group title padding and edge attachment', () => {
+  type ClipNode = Parameters<typeof sanitizeElkEdgePoints>[1];
+  const frame = (id: string, x: number, y: number, width: number, height: number): ClipNode => ({
+    id,
+    x,
+    y,
+    width,
+    height,
+    isGroup: true,
+    offset: { posX: x - width / 2, posY: y - height / 2, x: 0, y: 0, depth: 0, width, height },
+  });
+
+  // Measured sizes from elk-legacy-preset-regression.mmd: default/neo has
+  // 152px children under a 197.671875px title. Classic's 180px children and
+  // redux's narrower title mask the missing 8px of title padding.
+  it.each([
+    [197.671875, 152],
+    [197.671875, 180],
+    [164.96875, 152],
+    [164.96875, 180],
+    [191.75, 152],
+    [192, 152],
+    [192.25, 152],
+  ])(
+    'reserves title %s plus padding before routing around child width %s',
+    async (title, child) => {
+      const data = {
+        direction: 'LR',
+        config: {
+          elk: { nodePlacementStrategy: 'BRANDES_KOEPF', nodePlacementAlignment: 'BALANCED' },
+        },
+        nodes: [
+          { id: 'org', width: 152, height: 40, shape: 'rect', label: 'org' },
+          {
+            id: 'platform',
+            isGroup: true,
+            padding: 8,
+            label: 'Platform and infrastructure',
+            labelBBox: { width: title, height: 24 },
+          },
+          {
+            id: 'infra',
+            parentId: 'platform',
+            width: child,
+            height: 200,
+            shape: 'rect',
+            label: 'infra',
+          },
+        ],
+        edges: [{ id: 'edge', start: 'org', end: 'platform' }],
+      } as any;
+      const result = await runElkLayoutCore(data, elkRenderContext);
+      const rawGroup = result.children!.find((node: any) => node.id === 'platform');
+      const group = data.nodes.find((node: any) => node.id === 'platform');
+      expect(rawGroup.width).toBeGreaterThanOrEqual(title + 8);
+      expect(group.width).toBeGreaterThanOrEqual(title + 8);
+      const points: P[] = data.edges[0].points;
+      expect(onBorder(group, points.at(-1)!)).toBe(true);
+      expect(points.at(-1)).toEqual(result.edges![0].sections[0].endPoint);
+    }
+  );
+
+  it.each([false, true])(
+    'trims interior points on both ends (other endpoint is group: %s)',
+    (otherIsGroup) => {
+      const other = {
+        x: -100,
+        y: 130,
+        width: 40,
+        height: 40,
+        offset: { posX: -120, posY: 110 },
+        isGroup: otherIsGroup,
+      } as any;
+      const group = {
+        x: 100,
+        y: 100,
+        width: 100,
+        height: 120,
+        offset: { posX: 50, posY: 40 },
+        isGroup: true,
+      } as any;
+      const points = [
+        { x: -100, y: 130 },
+        { x: -80, y: 130 },
+        { x: 20, y: 130 },
+        { x: 53, y: 130 },
+        { x: 60, y: 130 },
+        { x: 100, y: 100 },
+      ];
+      const expected = [
+        { x: -80, y: 130 },
+        { x: 20, y: 130 },
+        { x: 50, y: 130 },
+      ];
+      expect(sanitizeElkEdgePoints(points, other, group, log)).toEqual(expected);
+      expect(sanitizeElkEdgePoints([...points].reverse(), group, other, log)).toEqual(
+        [...expected].reverse()
+      );
+    }
+  );
+
+  it('keeps valid group anchors unchanged', () => {
+    const source = {
+      x: -100,
+      y: 130,
+      width: 40,
+      height: 40,
+      offset: { posX: -120, posY: 110 },
+      isGroup: true,
+    } as any;
+    const target = {
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 120,
+      offset: { posX: 50, posY: 40 },
+      isGroup: true,
+    } as any;
+    const route = [
+      { x: -80, y: 130 },
+      { x: 20, y: 130 },
+      { x: 50, y: 130 },
+    ];
+    expect(
+      sanitizeElkEdgePoints(
+        [{ x: source.x, y: source.y }, ...route, { x: target.x, y: target.y }],
+        source,
+        target,
+        log
+      )
+    ).toEqual(route);
+  });
+
+  it.each([
+    [
+      { x: 20, y: 130 },
+      { x: 60, y: 130 },
+      { x: 50, y: 130 },
+    ],
+    [
+      { x: 180, y: 130 },
+      { x: 140, y: 130 },
+      { x: 150, y: 130 },
+    ],
+    [
+      { x: 80, y: 10 },
+      { x: 80, y: 60 },
+      { x: 80, y: 40 },
+    ],
+    [
+      { x: 80, y: 190 },
+      { x: 80, y: 140 },
+      { x: 80, y: 160 },
+    ],
+    [
+      { x: 20, y: 50 },
+      { x: 80, y: 150 },
+      { x: 50, y: 100 },
+    ],
+    [
+      { x: 20, y: 10 },
+      { x: 80, y: 70 },
+      { x: 50, y: 40 },
+    ],
+  ])('clips the actual crossing from %j through %j to %j', (outside, inside, crossing) => {
+    const group = frame('group', 100, 100, 100, 120);
+    const source = frame('source', outside.x - 20, outside.y, 40, 40);
+    const points = [{ x: source.x!, y: source.y! }, outside, inside, { x: 100, y: 100 }];
+    const expected = [outside, crossing];
+    expect(sanitizeElkEdgePoints(points, source, group, log)).toEqual(expected);
+    expect(sanitizeElkEdgePoints([...points].reverse(), group, source, log)).toEqual(
+      [...expected].reverse()
+    );
+  });
+
+  it('keeps the title minimum when cross-boundary edges replace a container algorithm', async () => {
+    const data = {
+      direction: 'LR',
+      config: { elk: {} },
+      nodes: [
+        { id: 'org', width: 152, height: 40, label: 'org' },
+        {
+          id: 'platform',
+          isGroup: true,
+          padding: 8,
+          label: 'Platform and infrastructure',
+          labelBBox: { width: 197.671875, height: 24 },
+          metadata: { algorithm: 'elk.box' },
+        },
+        { id: 'infra', parentId: 'platform', width: 152, height: 200, label: 'infra' },
+      ],
+      edges: [{ id: 'edge', start: 'infra', end: 'org' }],
+    } as any;
+    const result = await runElkLayoutCore(data, elkRenderContext);
+    const group = result.children!.find((node: any) => node.id === 'platform');
+    expect(group.layoutOptions['elk.hierarchyHandling']).toBe('INCLUDE_CHILDREN');
+    expect(group.layoutOptions['elk.algorithm']).toBeUndefined();
+    expect(group.width).toBeGreaterThanOrEqual(205.671875);
+  });
+});
+
 describe('small-node edge anchoring', () => {
   // A start/end state circle is 14px across — smaller than twice the 12px
   // ports-surrounding margin — so ELK's anchor for it lands off-centre and is
@@ -792,6 +1450,63 @@ describe('ensureEndMarkerSegmentLength', () => {
     ];
 
     expect(ensureEndMarkerSegmentLength(points, circleBounds, 4, log)).toEqual(points);
+  });
+
+  it('removes the stub an off-centre port leaves outside an ellipse for a wide marker', () => {
+    // `Coupon --|> Checkout`: ELK's port sits on the bbox border 9px above the
+    // centre-line, the ellipse outline is 9.5px further in, and the extension
+    // marker pulls the end back 17.25px — past the port, flipping the arrow.
+    const ellipseBounds = { x: 408, y: 190, width: 160, height: 58 };
+    const points = [
+      { x: 308, y: 199 },
+      { x: 328, y: 199 },
+      { x: 337.54, y: 199 },
+    ];
+
+    expect(ensureEndMarkerSegmentLength(points, ellipseBounds, 17.25, log)).toEqual([
+      points[0],
+      points[2],
+    ]);
+  });
+});
+
+describe('ensureStartMarkerSegmentLength', () => {
+  const log = { debug: () => undefined };
+  const ellipseBounds = { x: 408, y: 190, width: 160, height: 58 };
+
+  it('removes the source bbox exit point when the first marker segment is too short', () => {
+    const points = [
+      { x: 478.46, y: 199 },
+      { x: 488, y: 199 },
+      { x: 508, y: 199 },
+      { x: 508, y: 260 },
+    ];
+
+    expect(ensureStartMarkerSegmentLength(points, ellipseBounds, 17.25, log)).toEqual([
+      points[0],
+      points[2],
+      points[3],
+    ]);
+  });
+
+  it('keeps real bends that are not on the source bounds', () => {
+    const points = [
+      { x: 478.46, y: 199 },
+      { x: 484, y: 203 },
+      { x: 508, y: 260 },
+    ];
+
+    expect(ensureStartMarkerSegmentLength(points, ellipseBounds, 17.25, log)).toEqual(points);
+  });
+
+  it('keeps source exit segments that already have marker runway', () => {
+    const points = [
+      { x: 448, y: 190 },
+      { x: 488, y: 190 },
+      { x: 508, y: 260 },
+    ];
+
+    expect(ensureStartMarkerSegmentLength(points, ellipseBounds, 4, log)).toEqual(points);
   });
 });
 
@@ -1294,16 +2009,15 @@ describe('resolveElkPreset', () => {
     expect(resolveElkPreset('legacy').cycleBreaking).toBe('GREEDY');
   });
 
-  it('keeps depthFirst as a name for what default already is', () => {
-    // Not a distinct combination — a label, so a diagram can say depth-first
-    // rather than depend on the default staying put.
-    expect(resolveElkPreset('depthFirst')).toEqual(resolveElkPreset('default'));
-  });
-
-  it('differs from default in cycle breaking alone for modelOrder', () => {
-    const { cycleBreaking: _a, ...restDefault } = resolveElkPreset('default');
-    const { cycleBreaking: _b, ...restModelOrder } = resolveElkPreset('modelOrder');
-    expect(restModelOrder).toEqual(restDefault);
+  it('preserves depthFirst and modelOrder placement independently of default', () => {
+    for (const name of ['depthFirst', 'modelOrder']) {
+      expect(resolveElkPreset(name)).toMatchObject({
+        layering: 'NETWORK_SIMPLEX',
+        placement: 'NETWORK_SIMPLEX',
+        containerPlacement: 'BRANDES_KOEPF',
+        alignment: 'NONE',
+      });
+    }
   });
 
   it('falls back to default for an unknown name, including __proto__', () => {

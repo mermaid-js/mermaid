@@ -1,0 +1,16 @@
+{
+  "name": "@mermaid-js/release-verification",
+  "version": "1.0.0",
+  "description": "Standalone browser checks against the packaged mermaid release artifacts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "node setup.mjs --from-checkout ../..",
+    "verify": "node verify.mjs",
+    "test": "pnpm setup && pnpm verify"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
+}

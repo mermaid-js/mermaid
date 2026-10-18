@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>b) tiny falls back to dagre</title>
+  </head>
+  <body>
+    <h1>b) tiny (no ELK) falls back to dagre</h1>
+    <div id="out"></div>
+    <script src="./node_modules/@mermaid-js/tiny/dist/mermaid.tiny.js"></script>
+    <script type="module">
+      // tiny is an IIFE bundle: it exposes `globalThis.mermaid`, not ES exports.
+      const LOG_LEVEL = 'warn';
+      const captured = [];
+      for (const level of ['warn', 'error']) {
+        const original = console[level].bind(console);
+        console[level] = (...args) => {
+          captured.push(level + ': ' + args.map(String).join(' '));
+          original(...args);
+        };
+      }
+
+      const FLOW =
+        'flowchart TD\n A[Start] --> B{Choose}\n B -->|one| C[One]\n B -->|two| D[Two]\n A --> D';
+      const STATE = 'stateDiagram-v2\n [*] --> Idle\n Idle --> Busy: work\n Busy --> Idle: done';
+
+      const render = async (id, code, config) => {
+        mermaid.initialize({ startOnLoad: false, logLevel: LOG_LEVEL, ...config });
+        const { svg } = await mermaid.render(id, code);
+        const host = document.createElement('div');
+        host.innerHTML = svg;
+        return {
+          role: host.querySelector('svg')?.getAttribute('aria-roledescription') ?? null,
+          nodes: host.querySelectorAll('.node').length,
+          geometry: [...host.querySelectorAll('.node')]
+            .map((n) => n.getAttribute('transform'))
+            .join('|'),
+          svg,
+        };
+      };
+
+      const result = { checks: [], warnings: [] };
+      const check = (name, pass, detail) => result.checks.push({ name, pass: !!pass, detail });
+
+      try {
+        // No layout configured: the shipped default is `elk`, which tiny omits.
+        const flowDefault = await render('b-flow-default', FLOW, {});
+        const flowDagre = await render('b-flow-dagre', FLOW, { layout: 'dagre' });
+        const flowElkAsked = await render('b-flow-elk-asked', FLOW, { layout: 'elk' });
+        const stateDefault = await render('b-state-default', STATE, {});
+        const stateDagre = await render('b-state-dagre', STATE, { layout: 'dagre' });
+
+        document.getElementById('out').innerHTML = flowDefault.svg;
+
+        check(
+          'flowchart still renders with no layout configured',
+          flowDefault.role === 'flowchart-v2' && flowDefault.nodes === 4,
+          flowDefault.role + ', ' + flowDefault.nodes + ' nodes'
+        );
+        check(
+          'flowchart default geometry is identical to explicit dagre',
+          flowDefault.geometry === flowDagre.geometry && flowDefault.geometry.length > 0
+        );
+        check(
+          'asking for elk explicitly also falls back to dagre',
+          flowElkAsked.geometry === flowDagre.geometry
+        );
+        check(
+          'state diagram still renders with no layout configured',
+          stateDefault.role === 'stateDiagram' && stateDefault.nodes >= 2,
+          stateDefault.role + ', ' + stateDefault.nodes + ' nodes'
+        );
+        check(
+          'state default geometry is identical to explicit dagre',
+          stateDefault.geometry === stateDagre.geometry && stateDefault.geometry.length > 0
+        );
+
+        // The fallback is meant to be announced, not silent.
+        const fellBack = captured.filter((m) => /not registered/i.test(m) && /dagre/i.test(m));
+        check(
+          'fallback is announced via a warning',
+          fellBack.length > 0,
+          fellBack[0] ?? 'no fallback warning seen'
+        );
+        const unexpected = captured.filter((m) => !/not registered/i.test(m));
+        check(
+          'no unexpected warnings or errors',
+          unexpected.length === 0,
+          unexpected.join(' ~ ') || 'none'
+        );
+
+        result.warnings = captured;
+        result.ok = result.checks.every((c) => c.pass);
+      } catch (e) {
+        result.ok = false;
+        result.error = String(e?.stack ?? e).slice(0, 900);
+      }
+      window.__result = result;
+    </script>
+  </body>
+</html>

@@ -11,13 +11,17 @@
       </div>
     </div>
   </div>
-  <div v-html="svg"></div>
+  <div class="mermaid-diagram" v-html="svg"></div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import { render } from './mermaid';
 import { buildExampleConfig } from './exampleConfig';
+import { watchColorScheme } from './colorScheme';
+import '@fontsource/open-sans/400.css';
+import '@fontsource/open-sans/400-italic.css';
+import '@fontsource-variable/recursive/index.css';
 
 const props = defineProps({
   graph: {
@@ -41,15 +45,14 @@ const editableContent = ref(null);
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 const contentEditable = ref(isFirefox ? 'true' : 'plaintext-only');
 
-let mut = null;
+let stopWatching = null;
 
 const updateCode = (event) => {
   code.value = event.target.innerText;
 };
 
 onMounted(async () => {
-  mut = new MutationObserver(() => renderChart());
-  mut.observe(document.documentElement, { attributes: true });
+  stopWatching = watchColorScheme(() => renderChart());
 
   if (editableContent.value) {
     // Set the initial value of the contenteditable element
@@ -83,7 +86,7 @@ onMounted(async () => {
     }, 100);
 });
 
-onUnmounted(() => mut.disconnect());
+onUnmounted(() => stopWatching?.());
 
 const renderChart = async () => {
   console.log('rendering chart' + props.id + code.value);

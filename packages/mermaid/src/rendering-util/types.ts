@@ -45,6 +45,14 @@ interface BaseNode {
   width?: number;
   height?: number;
   wrappingWidth?: number;
+  /** Minimum width of the label area; short labels are widened to it (see `minNodeWidth`). */
+  minWidth?: number;
+  /**
+   * Spread the points where edges attach to this node across its side, so end
+   * markers on neighbouring edges overlap as little as the side allows.
+   * Honoured by layouts that place attachment points themselves (ELK).
+   */
+  spreadPorts?: boolean;
   labelBBox?: {
     width: number;
     height: number;
@@ -131,6 +139,13 @@ export interface NonClusterNode extends BaseNode {
 // Common properties for any node in the system
 export type Node = ClusterNode | NonClusterNode;
 
+export type TerminalLabelKey = 'startLeft' | 'startRight' | 'endLeft' | 'endRight';
+
+export interface TerminalLabelSize {
+  width: number;
+  height: number;
+}
+
 // Common properties for any edge in the system
 export interface Edge {
   id: string;
@@ -160,6 +175,10 @@ export interface Edge {
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
+  /** Measured terminal labels, each centred on its label group's origin. */
+  terminalLabelSizes?: Partial<Record<TerminalLabelKey, TerminalLabelSize>>;
+  /** Terminal label centres placed by the layout; preferred over the along-the-path default. */
+  terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;

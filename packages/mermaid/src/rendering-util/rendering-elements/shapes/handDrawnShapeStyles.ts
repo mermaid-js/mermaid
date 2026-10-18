@@ -7,8 +7,8 @@ export const solidStateFill = (color: string) => {
   return {
     fill: color,
     hachureAngle: 120, // angle of hachure,
-    hachureGap: 4,
-    fillWeight: 2,
+    hachureGap: 1.5,
+    fillWeight: 1.5,
     roughness: 0.7,
     stroke: color,
     seed: handDrawnSeed,
@@ -116,8 +116,8 @@ export const userNodeOverrides = (node: Node, options: any) => {
       roughness: 0.7,
       fill: stylesMap.get('fill') || mainBkg,
       fillStyle: 'hachure', // solid fill
-      fillWeight: 4,
-      hachureGap: 5.2,
+      fillWeight: 1.5,
+      hachureGap: 1.5,
       stroke: stylesMap.get('stroke') || nodeBorder,
       seed: handDrawnSeed,
       strokeWidth: stylesMap.get('stroke-width')?.replace('px', '') || 1.3,

@@ -1,5 +1,31 @@
 import { describe, it, expect } from 'vitest';
-import { anyCommentRegex, stripAnyComments } from './regexes.js';
+import {
+  anyCommentRegex,
+  frontMatterRegex,
+  matchFrontMatter,
+  stripAnyComments,
+} from './regexes.js';
+
+/**
+ * Per-call cost of `run`, measured as the minimum over `trials` samples of the mean of
+ * `iterations` calls.
+ *
+ * A single pass over the small input takes tens of microseconds, so one GC pause or scheduler
+ * hiccup on a shared CI runner can inflate an averaged sample several-fold. Noise only ever adds
+ * time, so the minimum over repeated trials is the stable estimate of the true cost; it is what
+ * keeps the ratios below from flaking on a loaded machine.
+ */
+const fastestRun = (run: () => unknown, trials = 5, iterations = 5): number => {
+  let fastest = Infinity;
+  for (let trial = 0; trial < trials; trial++) {
+    const t0 = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      run();
+    }
+    fastest = Math.min(fastest, (performance.now() - t0) / iterations);
+  }
+  return fastest;
+};
 
 // The exported `anyCommentRegex` is the published, pre-optimization pattern and serves as the
 // equivalence oracle: `stripAnyComments` must strip comments byte-for-byte identically to
@@ -49,21 +75,22 @@ describe('stripAnyComments', () => {
   it.each([
     ['all-whitespace lines', (n: number) => ('\n' + ' '.repeat(4)).repeat(n)],
     ['`%%` runs with no terminating newline', (n: number) => '%%' + 'x%%'.repeat(n)],
-    ['deep indents', (n: number) => (' '.repeat(400) + 'classDef x fill:#fff\n').repeat(n)],
   ])('scales linearly on %s', (_label, build) => {
     // Scaling, not a wall-clock bound. The previous version of this test asserted "under 200ms"
     // on one fixed input, which a quadratic implementation passes comfortably — and did, for
     // both shapes above. Doubling the input should roughly double the work; quadratic would
     // quadruple it.
+    //
+    // Only shapes that are quadratic in the line count belong here. A deeply indented document
+    // (hundreds of spaces per line, no `%%`) is quadratic in the indent width but linear in the
+    // number of lines, so the released regex passes this ratio on it too; it proves nothing, and
+    // at several megabytes per input it turns the ratio into a memory-bandwidth measurement that
+    // flakes on shared runners.
     const measure = (n: number) => {
       const input = build(n);
       // Warm up so the first call does not carry compilation cost into the ratio.
       stripAnyComments(input);
-      const t0 = performance.now();
-      for (let i = 0; i < 5; i++) {
-        stripAnyComments(input);
-      }
-      return (performance.now() - t0) / 5;
+      return fastestRun(() => stripAnyComments(input));
     };
 
     const small = measure(4000);
@@ -71,6 +98,90 @@ describe('stripAnyComments', () => {
 
     // 4x the input. Linear predicts ~4x, quadratic ~16x. The bar is set at 8 so ordinary timing
     // noise on a loaded machine cannot fail it while a return to quadratic still does.
+    expect(large / Math.max(small, 0.01)).toBeLessThan(8);
+  });
+});
+
+// Same arrangement as above: the exported `frontMatterRegex` is the released pattern and the
+// equivalence oracle. `matchFrontMatter` must agree with it on which block matches, what the
+// indent and body are, and how much text is consumed — the only difference is avoiding the
+// O(n²) backtracking on ambiguous whitespace.
+
+const legacyMatch = (text: string) => {
+  const matches = text.match(frontMatterRegex);
+  return matches ? { indent: matches[1], body: matches[2], length: matches[0].length } : undefined;
+};
+
+const FRONT_MATTER_CORPUS: string[] = [
+  '---\ntitle: Hello\n---\ngraph TD\n  A-->B\n',
+  '---\ntitle: Hello\n---\n',
+  '---\r\ntitle: CRLF\r\n---\r\ngraph TD\n',
+  '  ---\n  title: indented\n  ---\ngraph TD\n',
+  '\t---\n\ttitle: tab indented\n\t---\ngraph TD\n',
+  // Indented `---` inside a multi-line scalar must not close the block (#7613).
+  '---\ntitle: |\n  ---\n  still the body\n---\ngraph TD\n',
+  // The divergence called out in #8200: greedy `\s*` in the opening pushes the body start past a
+  // newline, so the block closes at the *last* fence rather than the second one.
+  '---\n\n---\n\nMORE\n---\n',
+  '---\n\n\n---\ngraph TD\n',
+  '---   \ntitle: trailing spaces on the fence\n---   \ngraph TD\n',
+  '---\ntitle: many trailing newlines\n---\n\n\n\ngraph TD\n',
+  '---\ntitle: no trailing newline after close\n---',
+  '---\ntitle: unterminated\ngraph TD\n',
+  '---\n',
+  '---',
+  '----\nfour dashes\n----\n',
+  '  ---\nclose at a different indent\n---\n',
+  '---\nopen at col0\n  ---\n',
+  'graph TD\n---\nnot at the start\n---\n',
+  '',
+  '\n\n\n',
+  'graph TD\n  A-->B\n',
+  // The reported quadratic shape, small instance: agreement matters here, speed is asserted below.
+  '---\n' + ' \n'.repeat(20),
+  '---\n' + ' \n'.repeat(20) + '---\n',
+];
+
+describe('matchFrontMatter', () => {
+  it('matches identically to frontMatterRegex', () => {
+    for (const input of FRONT_MATTER_CORPUS) {
+      expect(matchFrontMatter(input), JSON.stringify(input)).toStrictEqual(legacyMatch(input));
+    }
+  });
+
+  it('matches identically to frontMatterRegex on random fence-and-whitespace strings', () => {
+    // The corpus above covers the shapes we reasoned about; this covers the ones we did not.
+    // Deterministic PRNG so a failure is reproducible from the printed input alone.
+    let seed = 0x2f6e2b1;
+    const random = () => {
+      seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+      return seed / 0x7fffffff;
+    };
+    const pieces = ['---', '----', '\n', '\r\n', '\r', ' ', '\t', 'a', 'title: x', ''];
+
+    for (let i = 0; i < 3000; i++) {
+      let input = '';
+      const length = 1 + Math.floor(random() * 12);
+      for (let j = 0; j < length; j++) {
+        input += pieces[Math.floor(random() * pieces.length)];
+      }
+      expect(matchFrontMatter(input), JSON.stringify(input)).toStrictEqual(legacyMatch(input));
+    }
+  });
+
+  it('scales linearly on whitespace-heavy input that never closes', () => {
+    // `'---\n' + ' \n'.repeat(n)` is the shape from the CodeQL alert: the released regex is
+    // quadratic on it (38ms / 161ms / 619ms at n = 4k / 8k / 16k). Ratio rather than a wall-clock
+    // bound, for the reason given above.
+    const measure = (n: number) => {
+      const input = '---\n' + ' \n'.repeat(n);
+      matchFrontMatter(input);
+      return fastestRun(() => matchFrontMatter(input));
+    };
+
+    const small = measure(4000);
+    const large = measure(16000);
+
     expect(large / Math.max(small, 0.01)).toBeLessThan(8);
   });
 });
