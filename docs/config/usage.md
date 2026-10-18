@@ -440,7 +440,7 @@ bindEventHandler('change', 'code', textFieldUpdated);
 | `mermaid.mermaidAPI.render(id, text, container)` | `await mermaid.render(id, text, container)`                                                   |
 | `mermaid.mermaidAPI.parse(text, options)`        | `await mermaid.parse(text, options)`                                                          |
 | `mermaid.mermaidAPI.getDiagramFromText(text)`    | `await mermaid.parse(text)` for the diagram type and its config, `mermaid.render` for the SVG |
-| `mermaid.mermaidAPI.getConfig()`                 | the config you pass to `mermaid.initialize`, or the `config` returned by `mermaid.parse`      |
+| `mermaid.mermaidAPI.getConfig()`                 | No direct replacement (see below)                                                             |
 
 `getDiagramFromText` returned mermaid's internal diagram object (its parser, database and renderer). Those internals are not part of the public API and change between versions, so there is no public replacement for them. To find out what kind of diagram some text is, and how it is configured, use `mermaid.parse`:
 
@@ -451,6 +451,8 @@ if (result) {
   console.log(result.config); // config from the frontmatter or directives in `text`
 }
 ```
+
+`getConfig` returned the current merged configuration (defaults, the `initialize` config and any diagram config). There is no non-deprecated public function for that. If you need the configuration you initialized mermaid with, keep a reference to the object you pass to `mermaid.initialize`. Note that the `config` returned by `mermaid.parse` only contains the configuration set in the diagram text itself (frontmatter or directives), not the merged result.
 
 If your use case is not covered, please [open a discussion](https://github.com/mermaid-js/mermaid/discussions).
 
