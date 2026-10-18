@@ -10,7 +10,8 @@ import mermaid from './mermaid.js';
  */
 
 const docsDir = join(__dirname, 'docs');
-const diagramBlock = /^```(mermaid|mermaid-example|mermaid-nocode)[^\S\n]*\n([\S\s]*?)^```/gm;
+const diagramBlock =
+  /^```(mermaid|mermaid-example|mermaid-nocode)[^\S\n]*\n([\S\s]*?)^`{3,}[^\S\n]*$/gm;
 
 const findMarkdownFiles = (dir: string): string[] =>
   readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
