@@ -420,6 +420,30 @@ describe('when parsing directions', function () {
     ]);
   });
 
+  it('should give step edges the default step duration', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+     B e2@--> C
+    e1@{ step: 1 }
+      `);
+
+    const [stepped, plain] = flow.parser.yy.getData().edges;
+    expect(stepped.stepDuration).toBe(1);
+    expect('stepDuration' in plain).toBe(false);
+  });
+
+  it('should take the step duration from the flowchart config', function () {
+    setConfig({ flowchart: { stepDuration: 0.5 } });
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+    e1@{ step: 1 }
+      `);
+
+    const [edge] = flow.parser.yy.getData().edges;
+    setConfig({ flowchart: { stepDuration: 1 } });
+    expect(edge.stepDuration).toBe(0.5);
+  });
+
   it('should ignore a step that is not a positive integer', function () {
     flow.parser.parse(`flowchart LR
      A e1@--> B

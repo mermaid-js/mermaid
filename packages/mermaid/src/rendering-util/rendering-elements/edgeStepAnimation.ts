@@ -1,7 +1,7 @@
 import type { Edge } from '../types.js';
 import type { SVGGroup } from '../../diagram-api/types.js';
 
-/** Seconds the travelling dot spends on one step. */
+/** Seconds the travelling dot spends on one step when `flowchart.stepDuration` is not set. */
 export const EDGE_STEP_DURATION = 1;
 
 export interface EdgeStepTiming {
@@ -15,6 +15,10 @@ export const isStepEdge = (
   edge: Pick<Edge, 'step'>
 ): edge is Pick<Edge, 'step'> & { step: number } =>
   typeof edge.step === 'number' && Number.isInteger(edge.step) && edge.step > 0;
+
+/** The configured step length in seconds, or the default when it is not a positive number. */
+export const getStepDuration = (value: unknown): number =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : EDGE_STEP_DURATION;
 
 /** When the dot for `step` starts, how long it runs, and how long it waits before the next loop. */
 export const getEdgeStepTiming = (
@@ -89,7 +93,11 @@ export const insertEdgeStepDot = (
   if (!isStepEdge(edge) || !pathData) {
     return;
   }
-  const { begin, dur, gap } = getEdgeStepTiming(edge.step, edge.stepCount ?? edge.step);
+  const { begin, dur, gap } = getEdgeStepTiming(
+    edge.step,
+    edge.stepCount ?? edge.step,
+    getStepDuration(edge.stepDuration)
+  );
   const motionId = toAnimationId(`${diagramId}-${edge.id}-step`);
   const dot = elem
     .append('circle')
