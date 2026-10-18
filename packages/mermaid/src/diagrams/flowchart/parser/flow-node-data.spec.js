@@ -449,17 +449,21 @@ describe('when parsing directions', function () {
   });
 
   it('should mark step edges for a number badge only when stepNumbers is on', function () {
+    const previous = getConfig().flowchart?.stepNumbers;
     setConfig({ flowchart: { stepNumbers: true } });
-    flow.parser.parse(`flowchart LR
+    try {
+      flow.parser.parse(`flowchart LR
      A e1@--> B
      B e2@--> C
     e1@{ step: 1 }
       `);
 
-    const [stepped, plain] = flow.parser.yy.getData().edges;
-    setConfig({ flowchart: { stepNumbers: false } });
-    expect(stepped.showStepNumber).toBe(true);
-    expect('showStepNumber' in plain).toBe(false);
+      const [stepped, plain] = flow.parser.yy.getData().edges;
+      expect(stepped.showStepNumber).toBe(true);
+      expect('showStepNumber' in plain).toBe(false);
+    } finally {
+      setConfig({ flowchart: { stepNumbers: previous } });
+    }
   });
 
   it('should leave step edges without a number badge by default', function () {

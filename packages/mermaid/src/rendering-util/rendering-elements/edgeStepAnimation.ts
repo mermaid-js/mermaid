@@ -227,13 +227,33 @@ const square = (point: PathPoint, half: number): BadgeObstacle => ({
   halfHeight: half,
 });
 
-const boxedObstacle = (node: Element): BadgeObstacle | undefined => {
+const translationOf = (node: Element): PathPoint => {
   const match = TRANSLATE.exec(node.getAttribute('transform') ?? '');
-  if (!match) {
+  return match ? { x: Number(match[1]), y: Number(match[2]) } : { x: 0, y: 0 };
+};
+
+/** The summed `translate(...)` of `node` and its ancestors up to the SVG: its offset in SVG coordinates. */
+const offsetInSvg = (node: Element | null | undefined): PathPoint => {
+  const offset = { x: 0, y: 0 };
+  for (
+    let current = node;
+    current && current.localName !== 'svg';
+    current = current.parentElement
+  ) {
+    const { x, y } = translationOf(current);
+    offset.x += x;
+    offset.y += y;
+  }
+  return offset;
+};
+
+const boxedObstacle = (node: Element, origin: PathPoint): BadgeObstacle | undefined => {
+  if (!TRANSLATE.test(node.getAttribute('transform') ?? '')) {
     return undefined;
   }
-  const x = Number(match[1]);
-  const y = Number(match[2]);
+  const offset = offsetInSvg(node);
+  const x = offset.x - origin.x;
+  const y = offset.y - origin.y;
   if (node.classList.contains('edge-step-badge')) {
     return square({ x, y }, STEP_BADGE_RADIUS);
   }
@@ -258,14 +278,20 @@ const readPoints = (path: Element): PathPoint[] => {
   }
 };
 
-const arrowheadObstacles = (path: Element): BadgeObstacle[] => {
+const arrowheadObstacles = (path: Element, origin: PathPoint): BadgeObstacle[] => {
   const points = readPoints(path).filter(
     (point) => Number.isFinite(point?.x) && Number.isFinite(point?.y)
   );
   if (points.length === 0) {
     return [];
   }
-  return [points[0], points[points.length - 1]].map((point) => square(point, STEP_ARROWHEAD_HALF));
+  const offset = offsetInSvg(path);
+  return [points[0], points[points.length - 1]].map((point) =>
+    square(
+      { x: point.x + offset.x - origin.x, y: point.y + offset.y - origin.y },
+      STEP_ARROWHEAD_HALF
+    )
+  );
 };
 
 /** What a badge must not cover: badges, labels, nodes, every edge's arrowheads and this edge's label. */
@@ -275,12 +301,13 @@ export const collectBadgeObstacles = (
   points: PathPoint[]
 ): BadgeObstacle[] => {
   const node = elem.node();
-  const root = node?.parentElement ?? node;
+  const root = node?.closest('svg') ?? node?.parentElement ?? node;
+  const origin = offsetInSvg(node);
   const boxed = [...(root?.querySelectorAll('.edge-step-badge, .edgeLabel, .node') ?? [])]
-    .map(boxedObstacle)
+    .map((obstacle) => boxedObstacle(obstacle, origin))
     .filter((obstacle): obstacle is BadgeObstacle => obstacle !== undefined);
-  const arrowheads = [...(root?.querySelectorAll('path[data-edge="true"]') ?? [])].flatMap(
-    arrowheadObstacles
+  const arrowheads = [...(root?.querySelectorAll('path[data-edge="true"]') ?? [])].flatMap((path) =>
+    arrowheadObstacles(path, origin)
   );
   const placed = [...boxed, ...arrowheads];
   if (!edge.label || points.length === 0) {

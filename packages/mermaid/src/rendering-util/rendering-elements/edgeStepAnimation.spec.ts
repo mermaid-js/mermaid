@@ -457,6 +457,27 @@ describe('insertEdgeStepBadge', () => {
     expect(translateOf(svg.select('g.edge-step-badge'))).toBe('translate(0,65)');
   });
 
+  it('with a node inside a nested subgraph root, keeps clear of it in badge coordinates', () => {
+    const nested = svg.append('g').attr('class', 'root').attr('transform', 'translate(0,100)');
+    const node = nested.append('g').attr('class', 'node').attr('transform', 'translate(0,-75)');
+    node.node().getBBox = () => ({ x: -20, y: -10, width: 40, height: 20 });
+
+    insertEdgeStepBadge(group, numbered('e1', 1), { points: line });
+
+    expect(translateOf(svg.select('g.edge-step-badge'))).toBe('translate(0,65)');
+  });
+
+  it('with the badge inside a nested subgraph root, keeps clear of an outer node', () => {
+    const nested = svg.append('g').attr('class', 'root').attr('transform', 'translate(0,100)');
+    const inner = nested.append('g').attr('class', 'edgePaths');
+    const node = svg.append('g').attr('class', 'node').attr('transform', 'translate(0,125)');
+    node.node().getBBox = () => ({ x: -20, y: -10, width: 40, height: 20 });
+
+    insertEdgeStepBadge(inner, numbered('e1', 1), { points: line });
+
+    expect(translateOf(nested.select('g.edge-step-badge'))).toBe('translate(0,65)');
+  });
+
   it('keeps its full size on a very short edge', () => {
     insertEdgeStepBadge(group, numbered('e1', 1), { points: line, pathNode: straightPath(4) });
 
