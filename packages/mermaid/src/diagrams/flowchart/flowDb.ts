@@ -722,7 +722,17 @@ You have to call mermaid.initialize.`
       }
     }
 
-    id = id ?? 'subGraph' + this.subCount;
+    if (id === undefined) {
+      // A generated id must not be one a subgraph or a node already has, or the new subgraph
+      // would be merged into that subgraph or share its id with that node.
+      const isTaken = (candidate: string) =>
+        this.subGraphs.some((subGraph) => subGraph.id === candidate) ||
+        this.vertices.has(candidate);
+      while (isTaken('subGraph' + this.subCount)) {
+        this.subCount = this.subCount + 1;
+      }
+      id = 'subGraph' + this.subCount;
+    }
     title = title || '';
     title = this.sanitizeText(title);
     this.subCount = this.subCount + 1;
