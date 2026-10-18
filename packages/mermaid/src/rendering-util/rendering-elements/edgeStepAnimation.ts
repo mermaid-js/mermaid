@@ -30,7 +30,11 @@ export const getEdgeStepTiming = (
   };
 };
 
-const toAnimationId = (value: string) => value.replace(/\W/g, '_');
+/** A distinct id safe in animation `begin` references: starts with a letter, keeps letters and digits, encodes every other character as `_hex_`. */
+export const toAnimationId = (value: string) =>
+  `step_${Array.from(value, (char) =>
+    /[\dA-Za-z]/.test(char) ? char : `_${(char.codePointAt(0) ?? 0).toString(16)}_`
+  ).join('')}`;
 
 const pathStartTranslate = (pathData: string) => {
   const start = /^m\s*(-?[\d.e]+)[\s,]+(-?[\d.e]+)/i.exec(pathData.trim());

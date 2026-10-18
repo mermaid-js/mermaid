@@ -6,6 +6,7 @@ import {
   getEdgeStepTiming,
   insertEdgeStepDot,
   isStepEdge,
+  toAnimationId,
 } from './edgeStepAnimation.js';
 
 const stepEdge = (id: string, step?: number, stepCount?: number): Edge =>
@@ -50,11 +51,13 @@ describe('insertEdgeStepDot', () => {
 
     const motion = svg.select('circle.edge-step-dot animateMotion');
     expect(motion.attr('path')).toBe('M0,0L0,100');
-    expect(motion.attr('id')).toBe('diagram_1_e2_step');
-    expect(motion.attr('begin')).toBe('1s;diagram_1_e2_step.end+2s');
+    expect(motion.attr('id')).toBe('step_diagram_2d_1_2d_e2_2d_step');
+    expect(motion.attr('begin')).toBe('1s;step_diagram_2d_1_2d_e2_2d_step.end+2s');
     expect(motion.attr('dur')).toBe('1s');
     expect(svg.select('circle').attr('transform')).toBe('translate(0,0) scale(0)');
-    expect(svg.select('animateTransform').attr('begin')).toBe('diagram_1_e2_step.begin');
+    expect(svg.select('animateTransform').attr('begin')).toBe(
+      'step_diagram_2d_1_2d_e2_2d_step.begin'
+    );
     expect(svg.select('circle').attr('style')).toContain('fill:red');
   });
 
@@ -102,10 +105,31 @@ describe('insertEdgeStepDot', () => {
     );
   });
 
+  it('with a diagram id starting with a digit, references a motion id starting with a letter', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', '1diagram');
+
+    const begin = svg.select('circle animateTransform').attr('begin');
+    expect(begin).toBe('step_1diagram_2d_e1_2d_step.begin');
+  });
+
   it('adds nothing for an edge without a step', () => {
     insertEdgeStepDot(group, stepEdge('e1'), 'M0,0L0,100', 'diagram-1');
 
     expect(svg.node().innerHTML).toBe('<g></g>');
+  });
+});
+
+describe('toAnimationId', () => {
+  it('with edge ids that differ only in punctuation, returns distinct ids', () => {
+    const ids = ['a-b', 'a_b', 'a.b', 'a b', 'a_2d_b'].map(toAnimationId);
+
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('with a value starting with a digit, returns an id starting with a letter', () => {
+    const id = toAnimationId('1diagram-e1-step');
+
+    expect(id).toMatch(/^[A-Za-z]\w*$/);
   });
 });
 
