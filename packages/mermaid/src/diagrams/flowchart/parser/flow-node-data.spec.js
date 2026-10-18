@@ -400,6 +400,51 @@ describe('when parsing directions', function () {
     expect(data4Layout.edges[2].animate).toEqual(false);
   });
 
+  it('should order edges for the step animation', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+     B e2@--> C
+     B e3@--> D
+     C e4@--> E
+    e1@{ step: 1 }
+    e2@{ step: 2 }
+    e3@{ step: 2 }
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.edges.map((edge) => [edge.id, edge.step, edge.stepCount])).toEqual([
+      ['e1', 1, 2],
+      ['e2', 2, 2],
+      ['e3', 2, 2],
+      ['e4', undefined, undefined],
+    ]);
+  });
+
+  it('should ignore a step that is not a positive integer', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+     B e2@--> C
+    e1@{ step: 0 }
+    e2@{ step: 1.5 }
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.edges.every((edge) => !('step' in edge) && !('stepCount' in edge))).toBe(
+      true
+    );
+  });
+
+  it('should leave edges without a step free of step data', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+    e1@{ animate: true }
+      `);
+
+    const [edge] = flow.parser.yy.getData().edges;
+    expect('step' in edge).toBe(false);
+    expect('stepCount' in edge).toBe(false);
+  });
+
   it.skip('should be possible to use @  syntax to add labels with trail spaces', function () {
     const res = flow.parser.parse(
       `flowchart TB

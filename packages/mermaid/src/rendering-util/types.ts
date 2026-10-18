@@ -154,6 +154,10 @@ export interface Edge {
   style?: string[];
   animate?: boolean;
   animation?: 'fast' | 'slow';
+  /** Order in which the step animation dot travels this edge (1 = first). */
+  step?: number;
+  /** Highest `step` in the diagram, so every step edge shares one loop length. */
+  stepCount?: number;
   /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
   metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges
