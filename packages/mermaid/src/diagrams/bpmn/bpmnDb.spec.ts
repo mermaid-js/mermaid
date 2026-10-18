@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { bpmnIcons } from '../../rendering-util/rendering-elements/shapes/bpmnIcons.js';
 import { db } from './bpmnDb.js';
+import { parser } from './parser/bpmn.chevrotain.js';
 import { EVENT_TRIGGERS, TASK_TYPES, TRIGGERS_BY_POSITION, positionsFor } from './types.js';
 
 /** An event at a position, with a host where the position needs one. */
@@ -361,5 +362,11 @@ describe('bpmnDb', () => {
       (db.clear(), db.parse('bpmn-beta LR\n  lane "L"\n    task t "T"'), db)
     ) as unknown as { laneLayering?: string };
     expect(data.laneLayering).toBe('branches');
+  });
+
+  it('refuses a flow to an undeclared element when the source is parsed, before any render', () => {
+    expect(() =>
+      parser.parse('bpmn-beta LR\n  pool "P"\n    lane "L"\n      user task a "A"\n  a --> zzz\n')
+    ).toThrow(/refers to "zzz", which is not declared/);
   });
 });

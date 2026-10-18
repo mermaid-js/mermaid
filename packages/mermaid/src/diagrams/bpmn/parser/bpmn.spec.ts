@@ -155,4 +155,39 @@ accDescr {
     expect(parsed.nodes.at(-1)?.id).toBe('titles');
     expect(parsed.title).toBeUndefined();
   });
+
+  describe('flows to undeclared elements', () => {
+    const declared = 'bpmn-beta LR\n  pool p "P"\n    lane l "L"\n      user task a "A"\n';
+
+    it('accepts a flow between declared elements', () => {
+      expect(parseBpmn(`${declared}      task b "B"\n  a --> b\n`).flows).toHaveLength(1);
+    });
+
+    it('refuses a flow to an undeclared target and names it', () => {
+      expect(() => parseBpmn(`${declared}  a --> zzz\n`)).toThrow(
+        'BPMN error: the flow "a --> zzz" refers to "zzz", which is not declared. Declare it as an element before using it.'
+      );
+    });
+
+    it('refuses a flow from an undeclared source and names it', () => {
+      expect(() => parseBpmn(`${declared}  zzz --> a\n`)).toThrow(/refers to "zzz"/);
+    });
+
+    it('names the source when both ends are undeclared', () => {
+      expect(() => parseBpmn('bpmn-beta LR\n  c1 --> d1\n')).toThrow(/refers to "c1"/);
+    });
+
+    it('refuses an undeclared end of a message flow', () => {
+      expect(() => parseBpmn(`${declared}  a -.-> zzz\n`)).toThrow(/"a -\.-> zzz" refers to "zzz"/);
+    });
+
+    it('refuses an undeclared end of an association', () => {
+      expect(() => parseBpmn(`${declared}  a ..> zzz\n`)).toThrow(/"a \.\.> zzz" refers to "zzz"/);
+      expect(() => parseBpmn(`${declared}  a ... zzz\n`)).toThrow(/refers to "zzz"/);
+    });
+
+    it('refuses a boundary event attach to an undeclared host', () => {
+      expect(() => parseBpmn(`${declared}  b1 --> zzz\n`)).toThrow(/refers to "b1"/);
+    });
+  });
 });
