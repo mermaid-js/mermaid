@@ -535,4 +535,44 @@ describe('c4-beta db', () => {
     expect(db.getKind()).toBe('context');
     expect(db.getDirection()).toBe('TB');
   });
+
+  describe('an id declared inside an element with the same id', () => {
+    it.each([
+      ['group', 'group g "G" {\n  group g "G" {\n  }\n}'],
+      ['softwareSystem', 'softwareSystem s "S" {\n  softwareSystem s "S" {\n  }\n}'],
+      ['deploymentNode', 'deploymentNode dc "DC" {\n  deploymentNode dc "DC" {\n  }\n}'],
+    ])('should be rejected for a %s nested in itself', async (_kind, body) => {
+      await expect(populate(`c4-beta context\n${body}`)).rejects.toThrow(
+        /^c4-beta: the id "(g|s|dc)" is declared inside an element with the same id\. Every element needs its own id\.$/
+      );
+    });
+
+    it('should be rejected when the id repeats an ancestor further up', async () => {
+      await expect(
+        populate(`c4-beta context
+group a "A" {
+  group b "B" {
+    group a "A again" {
+    }
+  }
+}`)
+      ).rejects.toThrow('c4-beta: the id "a" is declared inside an element with the same id.');
+    });
+
+    it('should keep rendering sibling elements that share an id', async () => {
+      await populate(`c4-beta context
+softwareSystem s "S1"
+softwareSystem s "S2"`);
+      expect(db.getData().nodes).toHaveLength(2);
+    });
+
+    it('should keep accepting nested elements with distinct ids', async () => {
+      await populate(`c4-beta context
+group g "G" {
+  group h "H" {
+  }
+}`);
+      expect(db.getData().nodes.map((node) => node.id)).toEqual(['g', 'h']);
+    });
+  });
 });
