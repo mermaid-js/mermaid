@@ -3,11 +3,22 @@ import { select } from 'd3';
 import DOMPurify from 'dompurify';
 import type { Edge } from '../types.js';
 import {
+  chooseBadgePosition,
+  contrastRatio,
+  createPathSampler,
   escapeCssIdentifier,
   getEdgeStepTiming,
   getStepDuration,
+  insertEdgeStepBadge,
   insertEdgeStepDot,
+  insertEdgeStepMarks,
   isStepEdge,
+  pickBadgeTextColor,
+  placeQueuedStepBadges,
+  pointAlongPolyline,
+  STEP_BADGE_FONT_SIZE,
+  STEP_BADGE_FRACTIONS,
+  STEP_BADGE_RADIUS,
   toAnimationId,
 } from './edgeStepAnimation.js';
 
@@ -210,5 +221,318 @@ describe('escapeCssIdentifier', () => {
       'plain-id_2',
       'caf\u00e9',
     ]);
+  });
+});
+
+describe('pointAlongPolyline', () => {
+  it('walks the polyline by length, across segments', () => {
+    const points = [
+      { x: 0, y: 0 },
+      { x: 0, y: 10 },
+      { x: 30, y: 10 },
+    ];
+
+    const point = pointAlongPolyline(points, 0.25);
+
+    expect(point).toEqual({ x: 0, y: 10 });
+  });
+
+  it('interpolates inside a segment', () => {
+    const point = pointAlongPolyline(
+      [
+        { x: 0, y: 0 },
+        { x: 100, y: 0 },
+      ],
+      0.25
+    );
+
+    expect(point).toEqual({ x: 25, y: 0 });
+  });
+
+  it('skips points that are not numbers and returns nothing for an empty edge', () => {
+    expect(pointAlongPolyline([{ x: 5, y: Number.NaN }], 0.25)).toBeUndefined();
+    expect(pointAlongPolyline([{ x: 5, y: 7 }], 0.25)).toEqual({ x: 5, y: 7 });
+  });
+});
+
+const straightPath = (length: number) => ({
+  getTotalLength: () => length,
+  getPointAtLength: (distance: number) => ({ x: 0, y: distance }),
+});
+
+const translateOf = (badge: any) => badge.attr('transform');
+
+describe('createPathSampler', () => {
+  it('follows the rendered curve, not the straight line between the routed points', () => {
+    const curve = {
+      getTotalLength: () => 100,
+      getPointAtLength: (distance: number) => ({ x: distance, y: (distance * distance) / 100 }),
+    };
+    const sample = createPathSampler(
+      [
+        { x: 0, y: 0 },
+        { x: 100, y: 100 },
+      ],
+      curve
+    );
+
+    const point = sample(0.5);
+
+    expect(point).toEqual({ x: 50, y: 25 });
+  });
+
+  it('walks the routed points when the path has no length', () => {
+    const sample = createPathSampler(
+      [
+        { x: 0, y: 0 },
+        { x: 100, y: 0 },
+      ],
+      { getTotalLength: () => 0, getPointAtLength: () => ({ x: 9, y: 9 }) }
+    );
+
+    const point = sample(0.25);
+
+    expect(point).toEqual({ x: 25, y: 0 });
+  });
+});
+
+describe('chooseBadgePosition', () => {
+  const sample = createPathSampler([], straightPath(200));
+
+  it('keeps the first preferred spot when nothing is in the way', () => {
+    const point = chooseBadgePosition(sample, []);
+
+    expect(point).toEqual({ x: 0, y: STEP_BADGE_FRACTIONS[0] * 200 });
+  });
+
+  it('moves along the edge to the next spot clear of another badge', () => {
+    const point = chooseBadgePosition(sample, [
+      { x: 0, y: 50, halfWidth: STEP_BADGE_RADIUS, halfHeight: STEP_BADGE_RADIUS },
+    ]);
+
+    expect(point).toEqual({ x: 0, y: 70 });
+  });
+
+  it('when no spot on the edge clears its arrowheads, sits just beside the edge', () => {
+    const short = createPathSampler(
+      [
+        { x: 0, y: 0 },
+        { x: 36, y: 0 },
+      ],
+      null
+    );
+    const arrowheads = [0, 36].map((x) => ({ x, y: 0, halfWidth: 8, halfHeight: 8 }));
+
+    const point = chooseBadgePosition(short, arrowheads);
+
+    expect(point?.x).toBeCloseTo(18);
+    expect(point?.y).toBeCloseTo(14);
+  });
+
+  it('with nowhere clear on or beside the edge, takes the spot with the most room', () => {
+    const short = createPathSampler([], straightPath(60));
+
+    const point = chooseBadgePosition(short, [{ x: 0, y: 30, halfWidth: 22, halfHeight: 22 }]);
+
+    expect(point).toEqual({ x: 0, y: 6 });
+  });
+});
+
+describe('pickBadgeTextColor', () => {
+  it('keeps the theme background when it is readable on the badge', () => {
+    const color = pickBadgeTextColor('#333333', ['#ffffff', '#333333']);
+
+    expect(color).toBe('#ffffff');
+  });
+
+  it('falls to the next theme colour when the background matches a light badge', () => {
+    const color = pickBadgeTextColor('#ffff00', ['#ffffff', '#333333']);
+
+    expect(color).toBe('#333333');
+  });
+
+  it('with no readable theme colour, picks black or white by contrast', () => {
+    const color = pickBadgeTextColor('#eeeeee', ['#dddddd']);
+
+    expect(color).toBe('#000000');
+  });
+
+  it('with a fill it cannot read, keeps the first theme colour', () => {
+    const color = pickBadgeTextColor('currentColor', ['#ffffff']);
+
+    expect(color).toBe('#ffffff');
+  });
+});
+
+describe('contrastRatio', () => {
+  it('rates black on white 21:1 and an unknown colour 0', () => {
+    expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21);
+    expect(contrastRatio('currentColor', '#ffffff')).toBe(0);
+  });
+});
+
+describe('insertEdgeStepBadge', () => {
+  let svg: any;
+  let group: any;
+  const line = [
+    { x: 0, y: 0 },
+    { x: 0, y: 100 },
+  ];
+  const numbered = (id: string, step: number, extra: Partial<Edge> = {}) =>
+    ({ ...stepEdge(id, step, 3), showStepNumber: true, ...extra }) as Edge;
+
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    svg = select(document.body).append('svg').attr('id', 'diagram-1');
+    group = svg.append('g').append('g').attr('class', 'edgePaths');
+  });
+
+  it('shows the step number a quarter of the way along the edge, text readable on the fill', () => {
+    insertEdgeStepBadge(group, numbered('e3', 3), {
+      points: line,
+      color: 'stroke:#333333',
+      textColors: ['#ffffff'],
+    });
+
+    const badge = svg.select('g.edge-step-badge');
+    expect(translateOf(badge)).toBe('translate(0,25)');
+    expect(badge.select('circle').attr('fill')).toBe('#333333');
+    expect(badge.select('text').text()).toBe('3');
+    expect(badge.select('text').attr('fill')).toBe('#ffffff');
+  });
+
+  it('places the badge on the rendered path when one is given', () => {
+    insertEdgeStepBadge(group, numbered('e1', 1), { points: line, pathNode: straightPath(40) });
+
+    expect(translateOf(svg.select('g.edge-step-badge'))).toBe('translate(0,10)');
+  });
+
+  it("keeps clear of the edge's own label", () => {
+    insertEdgeStepBadge(group, numbered('e1', 1, { label: 'yes', width: 80, height: 100 }), {
+      points: [
+        { x: 0, y: 0 },
+        { x: 0, y: 200 },
+      ],
+      pathNode: straightPath(200),
+    });
+
+    expect(translateOf(svg.select('g.edge-step-badge'))).toBe('translate(0,30)');
+  });
+
+  it('keeps clear of a badge already placed on a crossing edge', () => {
+    group.append('g').attr('class', 'edge-step-badge').attr('transform', 'translate(0,25)');
+
+    insertEdgeStepBadge(group, numbered('e2', 2), { points: line });
+
+    expect(translateOf(svg.selectAll('g.edge-step-badge').filter(':last-child'))).toBe(
+      'translate(0,65)'
+    );
+  });
+
+  it("keeps clear of every edge's arrowheads", () => {
+    group
+      .append('path')
+      .attr('data-edge', 'true')
+      .attr(
+        'data-points',
+        btoa(
+          JSON.stringify([
+            { x: 50, y: 25 },
+            { x: 0, y: 25 },
+          ])
+        )
+      );
+
+    insertEdgeStepBadge(group, numbered('e1', 1), { points: line });
+
+    expect(translateOf(svg.select('g.edge-step-badge'))).toBe('translate(0,65)');
+  });
+
+  it('keeps clear of node boxes', () => {
+    const node = group.append('g').attr('class', 'node').attr('transform', 'translate(0,30)');
+    node.node().getBBox = () => ({ x: -20, y: -10, width: 40, height: 20 });
+
+    insertEdgeStepBadge(group, numbered('e1', 1), { points: line });
+
+    expect(translateOf(svg.select('g.edge-step-badge'))).toBe('translate(0,65)');
+  });
+
+  it('keeps its full size on a very short edge', () => {
+    insertEdgeStepBadge(group, numbered('e1', 1), { points: line, pathNode: straightPath(4) });
+
+    const badge = svg.select('g.edge-step-badge');
+    expect(Number(badge.select('circle').attr('r'))).toBe(STEP_BADGE_RADIUS);
+    expect(Number(badge.select('text').attr('font-size'))).toBe(STEP_BADGE_FONT_SIZE);
+  });
+
+  it('adds nothing unless step numbers are turned on', () => {
+    insertEdgeStepBadge(group, stepEdge('e1', 1, 1), { points: line, color: 'red' });
+
+    expect(group.node().innerHTML).toBe('');
+  });
+
+  it('keeps the badge when the SVG is sanitized for securityLevel strict', () => {
+    insertEdgeStepBadge(group, numbered('e1', 1), { points: line, color: 'red' });
+
+    const clean = DOMPurify.sanitize(svg.node().outerHTML, {
+      ADD_TAGS: ['foreignobject'],
+      ADD_ATTR: ['dominant-baseline'],
+      HTML_INTEGRATION_POINTS: { foreignobject: true },
+    });
+
+    expect(clean).toContain('class="edge-step-badge"');
+    expect(clean).toContain('>1</text>');
+  });
+});
+
+describe('insertEdgeStepMarks', () => {
+  let svg: any;
+  let root: any;
+  let edges: any;
+  const points = [
+    { x: 0, y: 0 },
+    { x: 0, y: 100 },
+  ];
+
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    svg = select(document.body).append('svg');
+    root = svg.append('g').attr('class', 'root');
+    edges = root.append('g').attr('class', 'edgePaths');
+  });
+
+  it('draws the dot and highlight at once and holds the badge back', () => {
+    const edge = { ...stepEdge('e1', 1, 2), showStepNumber: true } as Edge;
+
+    insertEdgeStepMarks(edges, edge, 'M0,0L0,100', 'diagram-1', { points, color: 'red' });
+
+    const classes = [...edges.node().children].map((node: Element) => node.getAttribute('class'));
+    expect(classes).toEqual(['edge-step-highlight', 'edge-step-dot']);
+  });
+
+  it('puts the badges in one layer above later edges once the diagram is placed', () => {
+    const first = { ...stepEdge('e1', 1, 2), showStepNumber: true } as Edge;
+    const second = { ...stepEdge('e2', 2, 2), showStepNumber: true } as Edge;
+    insertEdgeStepMarks(edges, first, 'M0,0L0,100', 'diagram-1', { points, color: 'red' });
+    insertEdgeStepMarks(edges, second, 'M0,0L0,100', 'diagram-1', { points, color: 'red' });
+
+    placeQueuedStepBadges(svg.node());
+
+    const layer = root.node().lastElementChild;
+    expect(layer.getAttribute('class')).toBe('edge-step-badges');
+    expect([...layer.children].map((node: Element) => node.getAttribute('data-step'))).toEqual([
+      '1',
+      '2',
+    ]);
+    expect(edges.selectAll('g.edge-step-badge').size()).toBe(0);
+  });
+
+  it('adds nothing when no edge asked for a step number', () => {
+    insertEdgeStepMarks(edges, stepEdge('e1', 1, 1), 'M0,0L0,100', 'diagram-1', { points });
+    const before = root.node().innerHTML;
+
+    placeQueuedStepBadges(svg.node());
+
+    expect(root.node().innerHTML).toBe(before);
   });
 });

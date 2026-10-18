@@ -160,6 +160,8 @@ export interface Edge {
   stepCount?: number;
   /** Seconds the dot spends on each step (`flowchart.stepDuration`). */
   stepDuration?: number;
+  /** Whether a badge shows this edge's `step` number (`flowchart.stepNumbers`). */
+  showStepNumber?: boolean;
   /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
   metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges

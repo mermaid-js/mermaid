@@ -1295,6 +1295,7 @@ You have to call mermaid.initialize.`
       0
     );
     const stepDuration = getStepDuration(config.flowchart?.stepDuration);
+    const stepNumber = config.flowchart?.stepNumbers === true ? { showStepNumber: true } : {};
     e.forEach((rawEdge, index) => {
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
       const styles = [...(e.defaultStyle ?? [])];
@@ -1344,7 +1345,9 @@ You have to call mermaid.initialize.`
         look: config.look,
         animate: rawEdge.animate,
         animation: rawEdge.animation,
-        ...(isStepEdge(rawEdge) ? { step: rawEdge.step, stepCount, stepDuration } : {}),
+        ...(isStepEdge(rawEdge)
+          ? { step: rawEdge.step, stepCount, stepDuration, ...stepNumber }
+          : {}),
         curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
       };
 

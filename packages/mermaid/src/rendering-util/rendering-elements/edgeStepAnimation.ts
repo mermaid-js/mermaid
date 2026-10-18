@@ -1,9 +1,51 @@
+import { select } from 'd3';
 import type { Selection } from 'd3';
+// @ts-expect-error Incorrect khroma types
+import { channel } from 'khroma';
 import type { Edge } from '../types.js';
 import type { SVGGroup } from '../../diagram-api/types.js';
+import utils from '../../utils.js';
 
 /** Seconds the travelling dot spends on one step when `flowchart.stepDuration` is not set. */
 export const EDGE_STEP_DURATION = 1;
+
+/** Where along an edge the step badge may sit, as fractions of its length, in order of preference. */
+export const STEP_BADGE_FRACTIONS = [0.25, 0.35, 0.15, 0.65, 0.75, 0.5, 0.85, 0.1, 0.9];
+
+/** Badge radius in diagram units; the badge keeps this size whatever the edge length. */
+export const STEP_BADGE_RADIUS = 9;
+/** Badge text size in diagram units. */
+export const STEP_BADGE_FONT_SIZE = 11;
+
+const STEP_BADGE_GAP = 2;
+const STEP_ARROWHEAD_HALF = 8;
+const STEP_BADGE_OFFSET = 14;
+const STEP_TANGENT_STEP = 0.01;
+const MIN_TEXT_CONTRAST = 4.5;
+const TRANSLATE = /translate\(\s*(-?[\d.e]+)[\s,]+(-?[\d.e]+)/i;
+
+interface PathPoint {
+  x: number;
+  y: number;
+}
+
+/** Something on the diagram the badge must not cover: a box around a centre. */
+export interface BadgeObstacle extends PathPoint {
+  halfWidth: number;
+  halfHeight: number;
+}
+
+interface PathGeometry {
+  getTotalLength?: () => number;
+  getPointAtLength?: (distance: number) => PathPoint;
+}
+
+export interface StepBadgeOptions {
+  points: PathPoint[];
+  pathNode?: PathGeometry | null;
+  color?: string;
+  textColors?: (string | undefined)[];
+}
 
 export interface EdgeStepTiming {
   begin: number;
@@ -83,6 +125,235 @@ const ensureReducedMotionStyle = (elem: SVGGroup, diagramId: string) => {
   svg.appendChild(style);
 };
 
+/** The point `fraction` of the way along the polyline through `points`, by length. */
+export const pointAlongPolyline = (
+  points: PathPoint[],
+  fraction: number
+): PathPoint | undefined => {
+  const valid = points.filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+  if (valid.length === 0) {
+    return undefined;
+  }
+  const lengths = valid
+    .slice(1)
+    .map((point, index) => Math.hypot(point.x - valid[index].x, point.y - valid[index].y));
+  let remaining = lengths.reduce((total, length) => total + length, 0) * fraction;
+  for (const [index, length] of lengths.entries()) {
+    if (remaining <= length && length > 0) {
+      const ratio = remaining / length;
+      const from = valid[index];
+      const to = valid[index + 1];
+      return { x: from.x + (to.x - from.x) * ratio, y: from.y + (to.y - from.y) * ratio };
+    }
+    remaining -= length;
+  }
+  return valid[valid.length - 1];
+};
+
+/** Samples the rendered path by length, falling back to the routed points when it has no geometry. */
+export const createPathSampler = (points: PathPoint[], pathNode?: PathGeometry | null) => {
+  const length = typeof pathNode?.getTotalLength === 'function' ? pathNode.getTotalLength() : 0;
+  const getPoint = pathNode?.getPointAtLength?.bind(pathNode);
+  if (length > 0 && getPoint) {
+    return (fraction: number): PathPoint | undefined => {
+      const { x, y } = getPoint(length * fraction);
+      return { x, y };
+    };
+  }
+  return (fraction: number) => pointAlongPolyline(points, fraction);
+};
+
+const roomAround = (point: PathPoint, obstacles: BadgeObstacle[]) =>
+  Math.min(
+    Number.POSITIVE_INFINITY,
+    ...obstacles.map((obstacle) => {
+      const dx = Math.max(Math.abs(point.x - obstacle.x) - obstacle.halfWidth, 0);
+      const dy = Math.max(Math.abs(point.y - obstacle.y) - obstacle.halfHeight, 0);
+      return Math.hypot(dx, dy) - STEP_BADGE_RADIUS;
+    })
+  );
+
+const besideThePath = (
+  sample: (fraction: number) => PathPoint | undefined,
+  fraction: number
+): PathPoint[] => {
+  const point = sample(fraction);
+  const before = sample(Math.max(fraction - STEP_TANGENT_STEP, 0));
+  const after = sample(Math.min(fraction + STEP_TANGENT_STEP, 1));
+  if (!point || !before || !after) {
+    return [];
+  }
+  const length = Math.hypot(after.x - before.x, after.y - before.y);
+  if (length === 0) {
+    return [];
+  }
+  const normal = { x: -(after.y - before.y) / length, y: (after.x - before.x) / length };
+  return [1, -1].map((side) => ({
+    x: point.x + normal.x * STEP_BADGE_OFFSET * side,
+    y: point.y + normal.y * STEP_BADGE_OFFSET * side,
+  }));
+};
+
+/** The first preferred spot on the edge clear of every obstacle, then beside it, else the roomiest. */
+export const chooseBadgePosition = (
+  sample: (fraction: number) => PathPoint | undefined,
+  obstacles: BadgeObstacle[]
+): PathPoint | undefined => {
+  const candidates = [
+    ...STEP_BADGE_FRACTIONS.map(sample),
+    ...STEP_BADGE_FRACTIONS.flatMap((fraction) => besideThePath(sample, fraction)),
+  ];
+  let best: PathPoint | undefined;
+  let bestRoom = Number.NEGATIVE_INFINITY;
+  for (const point of candidates) {
+    if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+      continue;
+    }
+    const room = roomAround(point, obstacles);
+    if (room >= STEP_BADGE_GAP) {
+      return point;
+    }
+    if (room > bestRoom) {
+      best = point;
+      bestRoom = room;
+    }
+  }
+  return best;
+};
+
+const square = (point: PathPoint, half: number): BadgeObstacle => ({
+  ...point,
+  halfWidth: half,
+  halfHeight: half,
+});
+
+const boxedObstacle = (node: Element): BadgeObstacle | undefined => {
+  const match = TRANSLATE.exec(node.getAttribute('transform') ?? '');
+  if (!match) {
+    return undefined;
+  }
+  const x = Number(match[1]);
+  const y = Number(match[2]);
+  if (node.classList.contains('edge-step-badge')) {
+    return square({ x, y }, STEP_BADGE_RADIUS);
+  }
+  const box = (node as SVGGraphicsElement).getBBox?.();
+  if (!box) {
+    return undefined;
+  }
+  return {
+    x: x + box.x + box.width / 2,
+    y: y + box.y + box.height / 2,
+    halfWidth: box.width / 2,
+    halfHeight: box.height / 2,
+  };
+};
+
+const readPoints = (path: Element): PathPoint[] => {
+  try {
+    const points: unknown = JSON.parse(atob(path.getAttribute('data-points') ?? ''));
+    return Array.isArray(points) ? (points as PathPoint[]) : [];
+  } catch {
+    return [];
+  }
+};
+
+const arrowheadObstacles = (path: Element): BadgeObstacle[] => {
+  const points = readPoints(path).filter(
+    (point) => Number.isFinite(point?.x) && Number.isFinite(point?.y)
+  );
+  if (points.length === 0) {
+    return [];
+  }
+  return [points[0], points[points.length - 1]].map((point) => square(point, STEP_ARROWHEAD_HALF));
+};
+
+/** What a badge must not cover: badges, labels, nodes, every edge's arrowheads and this edge's label. */
+export const collectBadgeObstacles = (
+  elem: SVGGroup,
+  edge: Edge,
+  points: PathPoint[]
+): BadgeObstacle[] => {
+  const node = elem.node();
+  const root = node?.parentElement ?? node;
+  const boxed = [...(root?.querySelectorAll('.edge-step-badge, .edgeLabel, .node') ?? [])]
+    .map(boxedObstacle)
+    .filter((obstacle): obstacle is BadgeObstacle => obstacle !== undefined);
+  const arrowheads = [...(root?.querySelectorAll('path[data-edge="true"]') ?? [])].flatMap(
+    arrowheadObstacles
+  );
+  const placed = [...boxed, ...arrowheads];
+  if (!edge.label || points.length === 0) {
+    return placed;
+  }
+  const { x, y } = utils.calcLabelPosition(points);
+  return [
+    ...placed,
+    { x, y, halfWidth: (edge.width ?? 0) / 2, halfHeight: (edge.height ?? 0) / 2 },
+  ];
+};
+
+const linearChannel = (value: number) => {
+  const srgb = value / 255;
+  return srgb <= 0.03928 ? srgb / 12.92 : ((srgb + 0.055) / 1.055) ** 2.4;
+};
+
+const relativeLuminance = (color: string): number | undefined => {
+  try {
+    const [r, g, b] = (['r', 'g', 'b'] as const).map((part) => linearChannel(channel(color, part)));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  } catch {
+    return undefined;
+  }
+};
+
+/** The WCAG contrast ratio of two colours, or 0 when either cannot be read. */
+export const contrastRatio = (first: string, second: string): number => {
+  const a = relativeLuminance(first);
+  const b = relativeLuminance(second);
+  if (a === undefined || b === undefined) {
+    return 0;
+  }
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+};
+
+/** The first candidate readable on `fill` (4.5:1), else the one with the most contrast. */
+export const pickBadgeTextColor = (fill: string, candidates: (string | undefined)[]): string => {
+  const options = [...candidates.filter((color): color is string => !!color), '#ffffff', '#000000'];
+  const scored = options.map((color) => ({ color, ratio: contrastRatio(fill, color) }));
+  const readable = scored.find(({ ratio }) => ratio >= MIN_TEXT_CONTRAST);
+  return (readable ?? scored.reduce((best, next) => (next.ratio > best.ratio ? next : best))).color;
+};
+
+/** Appends a badge with the step number on a step edge when `flowchart.stepNumbers` is on. */
+export const insertEdgeStepBadge = (elem: SVGGroup, edge: Edge, options: StepBadgeOptions) => {
+  if (!isStepEdge(edge) || !edge.showStepNumber) {
+    return;
+  }
+  const position = chooseBadgePosition(
+    createPathSampler(options.points, options.pathNode),
+    collectBadgeObstacles(elem, edge, options.points)
+  );
+  if (!position) {
+    return;
+  }
+  const fill = options.color?.replace(/^stroke:\s*/, '') ?? 'currentColor';
+  const badge = elem
+    .append('g')
+    .attr('class', 'edge-step-badge')
+    .attr('transform', `translate(${position.x},${position.y})`)
+    .attr('pointer-events', 'none')
+    .attr('data-step', edge.step);
+  badge.append('circle').attr('r', STEP_BADGE_RADIUS).attr('fill', fill);
+  badge
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'central')
+    .attr('font-size', STEP_BADGE_FONT_SIZE)
+    .attr('fill', pickBadgeTextColor(fill, options.textColors ?? []))
+    .text(String(edge.step));
+};
+
 /** Shows `target` only while the step's dot is moving, by lifting its parked `scale(0)`. */
 const showWhileStepPlays = <E extends SVGElement>(
   target: Selection<E, unknown, Element | null, unknown>,
@@ -152,4 +423,51 @@ export const insertEdgeStepDot = (
     .attr('fill', 'remove');
   showWhileStepPlays(dot, motionId, dur);
   ensureReducedMotionStyle(elem, diagramId);
+};
+
+interface QueuedBadge {
+  elem: SVGGroup;
+  edge: Edge;
+  options: StepBadgeOptions;
+}
+
+const queuedBadges = new WeakMap<Element, QueuedBadge[]>();
+
+const badgeLayer = (root: Element) =>
+  root.querySelector(':scope > g.edge-step-badges') ??
+  root.appendChild(root.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'g'));
+
+/** Draws the badges queued for `svg` in a layer above everything else, once the whole diagram is in place. */
+export const placeQueuedStepBadges = (svg: Element | null | undefined) => {
+  const queued = svg ? queuedBadges.get(svg) : undefined;
+  if (!svg || !queued) {
+    return;
+  }
+  queuedBadges.delete(svg);
+  for (const { elem, edge, options } of queued) {
+    const root = elem.node()?.parentElement;
+    if (!root) {
+      continue;
+    }
+    const layer = badgeLayer(root);
+    layer.setAttribute('class', 'edge-step-badges');
+    insertEdgeStepBadge(select(layer as SVGGElement) as unknown as SVGGroup, edge, options);
+  }
+};
+
+/** Draws a step edge's dot and highlight now and queues its badge for `placeQueuedStepBadges`. */
+export const insertEdgeStepMarks = (
+  elem: SVGGroup,
+  edge: Edge,
+  pathData: string,
+  diagramId: string,
+  badge: StepBadgeOptions
+) => {
+  insertEdgeStepDot(elem, edge, pathData, diagramId, badge.color);
+  const node = elem.node();
+  const svg = node?.ownerSVGElement ?? node;
+  if (!svg || !isStepEdge(edge) || !edge.showStepNumber) {
+    return;
+  }
+  queuedBadges.set(svg, [...(queuedBadges.get(svg) ?? []), { elem, edge, options: badge }]);
 };
