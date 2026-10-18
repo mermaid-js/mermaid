@@ -81,7 +81,7 @@ softwareSystem mainframe "Mainframe Banking System" :::external
 
 ### Nesting and boundaries
 
-Any element can contain other elements using braces. An element with children is rendered as a boundary:
+Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary. An element cannot be declared inside an element with the same id; the diagram is rejected with an error naming the id:
 
 ```mermaid-example
 c4-beta container
