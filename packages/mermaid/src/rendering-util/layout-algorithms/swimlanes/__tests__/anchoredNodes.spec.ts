@@ -788,3 +788,235 @@ describe('standing off each border of a host', () => {
     );
   });
 });
+
+describe('routing the line from an anchored node to its host', () => {
+  interface Point {
+    x: number;
+    y: number;
+  }
+
+  const route = (
+    side: AnchorPin['side'],
+    at: Partial<Node>,
+    options: { hostBox?: Partial<Node>; face?: unknown; edge?: Record<string, unknown> } = {}
+  ) => {
+    const nodes = [
+      node('h', { x: 100, y: 50, width: 100, height: 80, ...options.hostBox } as Partial<Node>),
+      node('a', {
+        width: 40,
+        height: 60,
+        ...at,
+        ...(options.face === undefined ? {} : { metadata: { attachFace: options.face } }),
+      } as Partial<Node>),
+    ];
+    const edge = { id: 'e', start: 'a', end: 'h', points: [{ x: -1, y: -1 }], ...options.edge };
+    const layout = { nodes, edges: [edge] } as unknown as LayoutData;
+    const pin: AnchorPin = {
+      nodeId: 'a',
+      hostId: 'h',
+      side,
+      x: 0,
+      y: 0,
+      outward: { x: 0, y: 1 },
+    };
+    squareAnchoredEdges(layout, [pin]);
+    return layout.edges?.[0].points as Point[];
+  };
+
+  const pts = (...pairs: [number, number][]): Point[] => pairs.map(([x, y]) => ({ x, y }));
+
+  // The host spans x 50..150 and y 10..90. A line may land 8 inside either end of the
+  // border it meets, so on the top and bottom it lands within x 58..142 and on the left and
+  // right within y 18..82.
+  describe('on the way across the border', () => {
+    it.each([
+      ['bottom', { x: 200, y: 140 }, pts([200, 140], [200, 95], [142, 95], [142, 50])],
+      ['top', { x: 200, y: -40 }, pts([200, -40], [200, 5], [142, 5], [142, 50])],
+      ['right', { x: 190, y: 150 }, pts([190, 150], [145, 150], [145, 82], [100, 82])],
+      ['left', { x: 10, y: 150 }, pts([10, 150], [55, 150], [55, 82], [100, 82])],
+    ] as const)('steps in to the nearest landing on the %s border', (side, at, expected) => {
+      expect(route(side, at)).toEqual(expected);
+    });
+
+    it.each([
+      ['bottom', { x: 100, y: 140 }, pts([100, 140], [100, 50])],
+      ['top', { x: 100, y: -40 }, pts([100, -40], [100, 50])],
+      ['right', { x: 190, y: 50 }, pts([190, 50], [100, 50])],
+      ['left', { x: 10, y: 50 }, pts([10, 50], [100, 50])],
+    ] as const)(
+      'runs straight at a host abreast of the node on the %s border',
+      (side, at, expected) => {
+        expect(route(side, at)).toEqual(expected);
+      }
+    );
+
+    it('steps across for a landing one unit away, and not for one closer than that', () => {
+      expect(route('bottom', { x: 143, y: 140 })).toEqual(
+        pts([143, 140], [143, 95], [142, 95], [142, 50])
+      );
+      expect(route('bottom', { x: 142.5, y: 140 })).toEqual(pts([142.5, 140], [142, 50]));
+    });
+
+    it('lands on the host centre when the border is too short to leave an inset', () => {
+      expect(route('bottom', { x: 100, y: 140 }, { hostBox: { width: 10 } })).toEqual(
+        pts([100, 140], [100, 50])
+      );
+      expect(route('bottom', { x: 130, y: 140 }, { hostBox: { width: 10 } })).toEqual(
+        pts([130, 140], [130, 95], [100, 95], [100, 50])
+      );
+    });
+
+    it('lands on the host centre when the host has no extent', () => {
+      expect(route('bottom', { x: 200, y: 140 }, { hostBox: { width: undefined } })).toEqual(
+        pts([200, 140], [200, 95], [100, 95], [100, 50])
+      );
+    });
+  });
+
+  describe('leaving the node by a face', () => {
+    it.each([
+      ['right', pts([100, 140], [136, 140], [136, 50])],
+      ['left', pts([100, 140], [64, 140], [64, 50])],
+    ] as const)(
+      'leaves a node on the bottom border by its %s face before turning',
+      (face, expected) => {
+        expect(route('bottom', { x: 100, y: 140 }, { face })).toEqual(expected);
+      }
+    );
+
+    it.each([
+      ['top', pts([190, 150], [190, 104], [145, 104], [145, 82], [100, 82])],
+      ['bottom', pts([190, 150], [190, 196], [145, 196], [145, 82], [100, 82])],
+    ] as const)(
+      'leaves a node on the right border by its %s face before turning',
+      (face, expected) => {
+        expect(route('right', { x: 190, y: 150 }, { face })).toEqual(expected);
+      }
+    );
+
+    it('turns at the stub and then steps across when the stub lands past the border', () => {
+      expect(route('bottom', { x: 130, y: 140 }, { face: 'right' })).toEqual(
+        pts([130, 140], [166, 140], [166, 95], [142, 95], [142, 50])
+      );
+    });
+
+    it.each([
+      ['bottom', 'top'],
+      ['bottom', 'bottom'],
+      ['right', 'left'],
+      ['right', 'right'],
+    ] as const)('ignores a face along the way out: the %s border, face %s', (side, face) => {
+      const at = side === 'bottom' ? { x: 100, y: 140 } : { x: 190, y: 50 };
+      expect(route(side, at, { face })).toEqual(route(side, at));
+    });
+
+    it.each(['diagonal', '', 5, null, ['left']])('ignores an attach face of %j', (face) => {
+      expect(route('bottom', { x: 100, y: 140 }, { face })).toEqual(
+        route('bottom', { x: 100, y: 140 })
+      );
+    });
+
+    it('measures the stub from the node own half-extent, which is nothing without a size', () => {
+      expect(route('bottom', { x: 100, y: 140, width: undefined }, { face: 'right' })).toEqual(
+        pts([100, 140], [116, 140], [116, 50])
+      );
+    });
+  });
+
+  describe('which line it squares', () => {
+    it('squares a line that runs from the host to the node, reading the points back to front', () => {
+      const out = route('bottom', { x: 200, y: 140 });
+      const back = route('bottom', { x: 200, y: 140 }, { edge: { start: 'h', end: 'a' } });
+      expect(back).toEqual([...out].reverse());
+    });
+
+    it('leaves a line between two nodes that are not pinned alone', () => {
+      const layout = {
+        nodes: [host('h'), node('p', { x: 0, y: 0 }), node('q', { x: 5, y: 5 })],
+        edges: [{ id: 'e', start: 'p', end: 'q', points: pts([1, 1]) }],
+      } as unknown as LayoutData;
+      squareAnchoredEdges(layout, []);
+      expect(layout.edges?.[0].points).toEqual(pts([1, 1]));
+    });
+
+    it('leaves a line with a missing end alone', () => {
+      expect(route('bottom', { x: 200, y: 140 }, { edge: { end: undefined } })).toEqual(
+        pts([-1, -1])
+      );
+      expect(route('bottom', { x: 200, y: 140 }, { edge: { start: undefined } })).toEqual(
+        pts([-1, -1])
+      );
+    });
+
+    it('copes with a layout that has no nodes or no edges', () => {
+      expect(() => {
+        squareAnchoredEdges({} as LayoutData, []);
+        squareAnchoredEdges({ nodes: [host('h')] } as LayoutData, []);
+      }).not.toThrow();
+    });
+
+    it('leaves a line alone when the pinned node is not in the layout', () => {
+      const layout = {
+        nodes: [host('h')],
+        edges: [{ id: 'e', start: 'ghost', end: 'h', points: pts([1, 1]) }],
+      } as unknown as LayoutData;
+      const pin: AnchorPin = {
+        nodeId: 'ghost',
+        hostId: 'h',
+        side: 'bottom',
+        x: 0,
+        y: 0,
+        outward: { x: 0, y: 1 },
+      };
+      squareAnchoredEdges(layout, [pin]);
+      expect(layout.edges?.[0].points).toEqual(pts([1, 1]));
+    });
+
+    it('leaves a line alone when the host is not in the layout', () => {
+      const layout = {
+        nodes: [node('a', { x: 0, y: 0, width: 4, height: 4 })],
+        edges: [{ id: 'e', start: 'a', end: 'ghost', points: pts([1, 1]) }],
+      } as unknown as LayoutData;
+      const pin: AnchorPin = {
+        nodeId: 'a',
+        hostId: 'ghost',
+        side: 'bottom',
+        x: 0,
+        y: 0,
+        outward: { x: 0, y: 1 },
+      };
+      squareAnchoredEdges(layout, [pin]);
+      expect(layout.edges?.[0].points).toEqual(pts([1, 1]));
+    });
+  });
+
+  describe('when a position is not a finite number', () => {
+    const bad = [
+      ['undefined', undefined],
+      ['NaN', Number.NaN],
+      ['Infinity', Number.POSITIVE_INFINITY],
+    ] as const;
+
+    it.each(bad)('keeps the route it had when the node x is %s', (_label, value) => {
+      expect(route('bottom', { x: value, y: 140 })).toEqual(pts([-1, -1]));
+    });
+
+    it.each(bad)('keeps the route it had when the node y is %s', (_label, value) => {
+      expect(route('bottom', { x: 100, y: value })).toEqual(pts([-1, -1]));
+    });
+
+    it.each(bad)('keeps the route it had when the host x is %s', (_label, value) => {
+      expect(route('bottom', { x: 100, y: 140 }, { hostBox: { x: value } })).toEqual(pts([-1, -1]));
+    });
+
+    it.each(bad)('keeps the route it had when the host y is %s', (_label, value) => {
+      expect(route('bottom', { x: 100, y: 140 }, { hostBox: { y: value } })).toEqual(pts([-1, -1]));
+    });
+
+    it('keeps the route it had, for a line drawn from the host, too', () => {
+      expect(
+        route('bottom', { x: Number.NaN, y: 140 }, { edge: { start: 'h', end: 'a' } })
+      ).toEqual(pts([-1, -1]));
+    });
+  });
+});
