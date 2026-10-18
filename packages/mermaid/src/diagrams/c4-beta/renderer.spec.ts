@@ -169,4 +169,13 @@ deploymentNode ec2 "EC2" "" "Ubuntu" instances "4" {
     expect(svg).toContain('c4-instances');
     expect(svg).toContain('x4');
   });
+
+  jsdomIt('should refuse to render an element nested in an element with the same id', async () => {
+    await expect(
+      mermaidAPI.render(
+        'c4beta-render-same-id',
+        'c4-beta context\ngroup g "G" {\n  group g "G" {\n  }\n}'
+      )
+    ).rejects.toThrow('c4-beta: the id "g" is declared inside an element with the same id.');
+  });
 });

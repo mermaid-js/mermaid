@@ -106,7 +106,27 @@ export class C4BetaDB implements DiagramDB {
   private kind: C4DiagramKind = 'context';
 
   public addElement(element: C4BetaElement) {
+    if (this.isDeclaredInsideSameId(element)) {
+      throw new Error(
+        `c4-beta: the id "${element.id}" is declared inside an element with the same id. Every element needs its own id.`
+      );
+    }
     this.elements.push(element);
+  }
+
+  // Elements are added parent first, so every ancestor is already stored.
+  // The most recent element with an id is the one that opened the enclosing block.
+  private isDeclaredInsideSameId(element: C4BetaElement): boolean {
+    const visited = new Set<string>();
+    let ancestorId = element.parentId;
+    while (ancestorId !== undefined && !visited.has(ancestorId)) {
+      if (ancestorId === element.id) {
+        return true;
+      }
+      visited.add(ancestorId);
+      ancestorId = this.elements.findLast((candidate) => candidate.id === ancestorId)?.parentId;
+    }
+    return false;
   }
 
   public addRelationship(relationship: C4BetaRelationship) {
