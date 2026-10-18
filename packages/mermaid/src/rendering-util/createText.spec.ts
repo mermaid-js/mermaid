@@ -100,25 +100,37 @@ describe('createText', () => {
     }
   );
 
-  it('wraps HTML labels when max-width is rounded to a fractional pixel', async () => {
-    const wrappingWidth = 200;
-    const fractionalRoundingError = 0.5;
-    const getBoundingClientRect = vi
-      .spyOn(HTMLDivElement.prototype, 'getBoundingClientRect')
-      .mockReturnValue({ width: wrappingWidth - fractionalRoundingError } as DOMRect);
+  const wrappingWidth = 200;
 
-    try {
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
-      const output = await createText(select(svgGroup), 'A long label', {
-        useHtmlLabels: true,
-        markdown: false,
-        width: wrappingWidth,
-      });
+  it.for([
+    // max-width clamped, but the browser rounded the measurement to a fractional pixel
+    { measuredWidth: wrappingWidth - 0.5, expectedWhiteSpace: 'break-spaces' },
+    // exactly one pixel of rounding is still treated as clamped
+    { measuredWidth: wrappingWidth - 1, expectedWhiteSpace: 'break-spaces' },
+    // clearly shorter than max-width, so the label must stay on one line
+    { measuredWidth: wrappingWidth - 1.5, expectedWhiteSpace: 'nowrap' },
+  ])(
+    'sets white-space to $expectedWhiteSpace when an HTML label measures $measuredWidth px',
+    async ({ measuredWidth, expectedWhiteSpace }) => {
+      const getBoundingClientRect = vi
+        .spyOn(HTMLDivElement.prototype, 'getBoundingClientRect')
+        .mockReturnValue({ width: measuredWidth } as DOMRect);
 
-      expect(output.querySelector('div')?.style.whiteSpace).toBe('break-spaces');
-    } finally {
-      getBoundingClientRect.mockRestore();
+      try {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const svgGroup = svg.appendChild(
+          document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        );
+        const output = await createText(select(svgGroup), 'A long label', {
+          useHtmlLabels: true,
+          markdown: false,
+          width: wrappingWidth,
+        });
+
+        expect(output.querySelector('div')?.style.whiteSpace).toBe(expectedWhiteSpace);
+      } finally {
+        getBoundingClientRect.mockRestore();
+      }
     }
-  });
+  );
 });
