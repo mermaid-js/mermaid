@@ -696,3 +696,95 @@ describe('keeping the runs of different hosts and borders apart', () => {
     expect(anchorFootprints(nodes, 'LR').get('h')?.beyond).toBe(80);
   });
 });
+
+describe('pinning only against a host that has a finite box', () => {
+  const pinAgainst = (hostBox: Partial<Node>) => {
+    const layout = asLayout([
+      node('h', { x: 100, y: 50, width: 100, height: 80, ...hostBox } as Partial<Node>),
+      anchored('a', { hostId: 'h', side: 'bottom' }, { width: 36, height: 36 }),
+    ]);
+    const pins = pinAnchoredNodes(layout, { space: 'final', direction: 'TB' });
+    return { pins, placed: layout.nodes[1] };
+  };
+
+  it.each(['x', 'y', 'width', 'height'] as const)('pins against a host with a finite %s', (key) => {
+    expect(pinAgainst({ [key]: 10 }).pins).toHaveLength(1);
+  });
+
+  it.each(['x', 'y', 'width', 'height'] as const)(
+    'leaves the node unplaced when the host %s is missing',
+    (key) => {
+      const { pins, placed } = pinAgainst({ [key]: undefined });
+      expect(pins).toEqual([]);
+      expect(placed.x).toBeUndefined();
+      expect(placed.y).toBeUndefined();
+    }
+  );
+
+  it.each([
+    ['NaN', Number.NaN],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['-Infinity', Number.NEGATIVE_INFINITY],
+  ])('leaves the node unplaced when a host measure is %s', (_label, value) => {
+    for (const key of ['x', 'y', 'width', 'height'] as const) {
+      const { pins, placed } = pinAgainst({ [key]: value });
+      expect(pins, key).toEqual([]);
+      expect(placed.x, key).toBeUndefined();
+      expect(placed.y, key).toBeUndefined();
+    }
+  });
+
+  it('leaves the node unplaced when a host measure is a string', () => {
+    expect(pinAgainst({ x: '100' as unknown as number }).pins).toEqual([]);
+  });
+
+  it('still pins the nodes of a host that has a box when another host has none', () => {
+    const layout = asLayout([
+      host('good'),
+      node('bad', { x: Number.NaN, y: 0, width: 10, height: 10 } as Partial<Node>),
+      anchored('onBad', { hostId: 'bad', side: 'bottom' }, { width: 36, height: 36 }),
+      anchored('onGood', { hostId: 'good', side: 'bottom' }, { width: 36, height: 36 }),
+    ]);
+    const pins = pinAnchoredNodes(layout, { space: 'final', direction: 'TB' });
+
+    expect(pins.map((pin) => pin.nodeId)).toEqual(['onGood']);
+  });
+});
+
+describe('standing off each border of a host', () => {
+  const standOff = (side: string) => {
+    const layout = asLayout([
+      host('h'),
+      anchored('a', { hostId: 'h', side, gap: 20 }, { width: 40, height: 60 }),
+    ]);
+    const [pin] = pinAnchoredNodes(layout, { space: 'final', direction: 'TB' });
+    return { x: layout.nodes[1].x, y: layout.nodes[1].y, outward: pin.outward };
+  };
+
+  // The host spans x 50..150 and y 10..90. A 40x60 node clears its border by 20 plus its
+  // own half-extent across the border; down the left and right it is also moved clear of
+  // the flow through the host's middle by half its height plus 8.
+  it.each([
+    ['top', { x: 100, y: -40, outward: { x: 0, y: -1 } }],
+    ['bottom', { x: 100, y: 140, outward: { x: 0, y: 1 } }],
+    ['left', { x: 10, y: 12, outward: { x: -1, y: 0 } }],
+    ['right', { x: 190, y: 12, outward: { x: 1, y: 0 } }],
+  ])('places a node stood off the %s border and reports the way out', (side, expected) => {
+    expect(standOff(side)).toEqual(expected);
+  });
+
+  it.each([
+    ['top', { x: 0, y: -1 }],
+    ['bottom', { x: 0, y: 1 }],
+    ['left', { x: -1, y: 0 }],
+    ['right', { x: 1, y: 0 }],
+  ])('reports the outward normal of the %s border for a node sitting on it', (side, outward) => {
+    const layout = asLayout([
+      host('h'),
+      anchored('a', { hostId: 'h', side }, { width: 36, height: 36 }),
+    ]);
+    expect(pinAnchoredNodes(layout, { space: 'final', direction: 'TB' })[0].outward).toEqual(
+      outward
+    );
+  });
+});
