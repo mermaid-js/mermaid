@@ -857,7 +857,7 @@ In this snippet:
 **Note on Escaping Commas:**
 When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
 
-### Step-by-step flow animation
+### Step-by-step flow animation (v<MERMAID_RELEASE_VERSION>+)
 
 Edges can also play in order, which is handy for showing how a request moves through a system. Give an edge a `step` number and a dot travels along it when that step comes up. The dot visits step 1, then step 2, and so on, and starts again after the last step. Edges that share a step number play at the same time.
 
