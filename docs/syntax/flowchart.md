@@ -1955,7 +1955,7 @@ To run your own code when a node is hovered, attach the listeners to the rendere
 ```html
 <div id="diagram"></div>
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
 
   const element = document.querySelector('#diagram');
   const { svg, bindFunctions } = await mermaid.render('myDiagram', 'flowchart LR\n  A --> B');
