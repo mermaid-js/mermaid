@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { select } from 'd3';
+import DOMPurify from 'dompurify';
 import type { Edge } from '../types.js';
 import {
   escapeCssIdentifier,
@@ -69,7 +70,7 @@ describe('insertEdgeStepDot', () => {
     expect(motion.attr('begin')).toBe('1s;step_diagram_2d_1_2d_e2_2d_step.end+2s');
     expect(motion.attr('dur')).toBe('1s');
     expect(svg.select('circle').attr('transform')).toBe('translate(0,0) scale(0)');
-    expect(svg.select('animateTransform').attr('begin')).toBe(
+    expect(svg.select('circle animateTransform').attr('begin')).toBe(
       'step_diagram_2d_1_2d_e2_2d_step.begin'
     );
     expect(svg.select('circle').attr('style')).toContain('fill:red');
@@ -81,7 +82,7 @@ describe('insertEdgeStepDot', () => {
     const motion = svg.select('animateMotion');
     expect(motion.attr('dur')).toBe('0.5s');
     expect(motion.attr('begin')).toBe('0.5s;step_diagram_2d_1_2d_e2_2d_step.end+1s');
-    expect(svg.select('animateTransform').attr('dur')).toBe('0.5s');
+    expect(svg.select('circle animateTransform').attr('dur')).toBe('0.5s');
   });
 
   it('parks the hidden dot at the start of its path so the diagram bounds do not grow', () => {
@@ -104,6 +105,45 @@ describe('insertEdgeStepDot', () => {
     expect(styles.size()).toBe(1);
     expect(styles.text()).toContain('prefers-reduced-motion: reduce');
     expect(styles.text()).toContain('#diagram-1 .edge-step-dot');
+    expect(styles.text()).toContain('#diagram-1 .edge-step-highlight');
+  });
+
+  it('highlights the edge stroke for exactly the time its dot travels', () => {
+    insertEdgeStepDot(group, stepEdge('e2', 2, 3), 'M10,20L10,100', 'diagram-1', 'stroke:red');
+
+    const highlight = svg.select('path.edge-step-highlight');
+    const show = highlight.select('animateTransform');
+    expect(highlight.attr('d')).toBe('M10,20L10,100');
+    expect(highlight.attr('stroke')).toBe('red');
+    expect(highlight.attr('fill')).toBe('none');
+    expect(highlight.attr('pointer-events')).toBe('none');
+    expect(highlight.attr('transform')).toBe('translate(10,20) scale(0)');
+    expect(show.attr('begin')).toBe('step_diagram_2d_1_2d_e2_2d_step.begin');
+    expect(show.attr('dur')).toBe('1s');
+    expect(show.attr('values')).toBe('1;1');
+  });
+
+  it('draws the highlight under the dot so the dot stays visible', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', 'diagram-1');
+
+    const tags = [...group.node().children].map((child: Element) => child.tagName);
+    expect(tags).toEqual(['path', 'circle']);
+  });
+
+  it('keeps every animation element when the SVG is sanitized for securityLevel strict', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 2), 'M0,0L0,100', 'diagram-1', 'red');
+
+    const clean = DOMPurify.sanitize(svg.node().outerHTML, {
+      ADD_TAGS: ['foreignobject'],
+      ADD_ATTR: ['dominant-baseline'],
+      HTML_INTEGRATION_POINTS: { foreignobject: true },
+    });
+    const sanitized = new DOMParser().parseFromString(clean, 'text/html');
+    expect(sanitized.querySelectorAll('animateMotion[path][begin][dur]')).toHaveLength(1);
+    expect(sanitized.querySelectorAll('animateTransform[begin][values]')).toHaveLength(2);
+    expect(sanitized.querySelector('.edge-step-highlight')?.getAttribute('transform')).toBe(
+      'translate(0,0) scale(0)'
+    );
   });
 
   it('escapes a diagram id that starts with a digit so the reduced-motion rule still matches', () => {
