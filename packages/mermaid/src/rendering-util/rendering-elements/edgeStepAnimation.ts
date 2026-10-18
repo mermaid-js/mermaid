@@ -32,6 +32,11 @@ export const getEdgeStepTiming = (
 
 const toAnimationId = (value: string) => value.replace(/\W/g, '_');
 
+const pathStartTranslate = (pathData: string) => {
+  const start = /^m\s*(-?[\d.e]+)[\s,]+(-?[\d.e]+)/i.exec(pathData.trim());
+  return start ? `translate(${start[1]},${start[2]}) ` : '';
+};
+
 const ensureReducedMotionStyle = (elem: SVGGroup, diagramId: string) => {
   const node = elem.node();
   const svg = node?.ownerSVGElement ?? node?.closest?.('svg') ?? node;
@@ -62,7 +67,7 @@ export const insertEdgeStepDot = (
     .append('circle')
     .attr('class', 'edge-step-dot')
     .attr('r', 4)
-    .attr('transform', 'scale(0)')
+    .attr('transform', `${pathStartTranslate(pathData)}scale(0)`)
     .attr('data-step', edge.step);
   const fill = color?.replace(/^stroke:\s*/, '');
   if (fill) {

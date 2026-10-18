@@ -48,9 +48,15 @@ describe('insertEdgeStepDot', () => {
     expect(motion.attr('id')).toBe('diagram_1_e2_step');
     expect(motion.attr('begin')).toBe('1s;diagram_1_e2_step.end+2s');
     expect(motion.attr('dur')).toBe('1s');
-    expect(svg.select('circle').attr('transform')).toBe('scale(0)');
+    expect(svg.select('circle').attr('transform')).toBe('translate(0,0) scale(0)');
     expect(svg.select('animateTransform').attr('begin')).toBe('diagram_1_e2_step.begin');
     expect(svg.select('circle').attr('style')).toContain('fill:red');
+  });
+
+  it('parks the hidden dot at the start of its path so the diagram bounds do not grow', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M120.5,40L120.5,140', 'diagram-1');
+
+    expect(svg.select('circle').attr('transform')).toBe('translate(120.5,40) scale(0)');
   });
 
   it('fills the dot with the bare colour when given a whole stroke declaration', () => {
