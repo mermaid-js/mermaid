@@ -508,3 +508,93 @@ describe('clearing an anchored node off what it overlaps', () => {
     expect(second.x).toBe(240);
   });
 });
+
+describe('reading an anchor strictly', () => {
+  const read = (anchorTo: unknown) => readAnchor(anchored('b', anchorTo));
+
+  it.each(['top', 'right', 'bottom', 'left'] as const)('keeps the %s border as a side', (side) => {
+    expect(read({ hostId: 't1', side })).toStrictEqual({ hostId: 't1', side });
+  });
+
+  it.each([5, null, '', 'TOP', 'diagonal', ['top']])(
+    'leaves the side out when it is %j, rather than carrying an undefined key',
+    (side) => {
+      expect(read({ hostId: 't1', side })).toStrictEqual({ hostId: 't1' });
+    }
+  );
+
+  it.each([Number.NaN, Number.POSITIVE_INFINITY, '2', null])(
+    'leaves the slot out when it is %j, rather than carrying an undefined key',
+    (slot) => {
+      expect(read({ hostId: 't1', slot })).toStrictEqual({ hostId: 't1' });
+    }
+  );
+
+  it('keeps a slot of zero and a negative slot, which are valid places in a run', () => {
+    expect(read({ hostId: 't1', slot: 0 })).toStrictEqual({ hostId: 't1', slot: 0 });
+    expect(read({ hostId: 't1', slot: -3 })).toStrictEqual({ hostId: 't1', slot: -3 });
+  });
+
+  it.each([0, -4, Number.NaN, Number.POSITIVE_INFINITY, '20', null])(
+    'leaves the gap out when it is %j, rather than carrying an undefined key',
+    (gap) => {
+      expect(read({ hostId: 't1', gap })).toStrictEqual({ hostId: 't1' });
+    }
+  );
+
+  it('keeps a gap exactly at the ceiling and clamps one beyond it', () => {
+    expect(read({ hostId: 't1', gap: MAX_ANCHOR_GAP })?.gap).toBe(MAX_ANCHOR_GAP);
+    expect(read({ hostId: 't1', gap: MAX_ANCHOR_GAP + 1 })?.gap).toBe(MAX_ANCHOR_GAP);
+  });
+
+  it.each([null, undefined, 0, false, '', 'hostId', 7, true])(
+    'ignores an anchorTo of %j',
+    (anchorTo) => {
+      expect(read(anchorTo)).toBeUndefined();
+    }
+  );
+
+  it('ignores a missing node', () => {
+    expect(readAnchor(undefined)).toBeUndefined();
+  });
+
+  it.each([5, null, true, {}, ['t1']])('ignores a host id of %j that is not a string', (hostId) => {
+    expect(read({ hostId })).toBeUndefined();
+  });
+
+  it('ignores an anchor that names no host', () => {
+    expect(read({ side: 'left' })).toBeUndefined();
+  });
+
+  it('tells a self-anchor from an anchor to another node by id', () => {
+    expect(readAnchor(anchored('b', { hostId: 'a' }))).toStrictEqual({ hostId: 'a' });
+    expect(readAnchor(anchored('a', { hostId: 'a' }))).toBeUndefined();
+  });
+});
+
+describe('resolving a host through a chain that ends in a cycle', () => {
+  const byId = (nodes: Node[]) => new Map(nodes.map((n) => [n.id, n]));
+
+  it('returns undefined when the chain runs into a cycle that does not include the start', () => {
+    const nodes = [
+      anchored('a', { hostId: 'b' }),
+      anchored('b', { hostId: 'c' }),
+      anchored('c', { hostId: 'b' }),
+    ];
+    expect(resolveAnchorHostId('a', byId(nodes))).toBeUndefined();
+  });
+
+  it('returns undefined for an id that is not in the graph at all', () => {
+    expect(resolveAnchorHostId('ghost', byId([host('t1')]))).toBeUndefined();
+  });
+
+  it('stops at the first node that is not itself anchored, however long the chain', () => {
+    const nodes = [
+      host('t1'),
+      anchored('b1', { hostId: 't1' }),
+      anchored('b2', { hostId: 'b1' }),
+      anchored('b3', { hostId: 'b2' }),
+    ];
+    expect(resolveAnchorHostId('b3', byId(nodes))).toBe('t1');
+  });
+});
