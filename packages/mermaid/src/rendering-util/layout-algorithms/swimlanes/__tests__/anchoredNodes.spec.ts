@@ -1020,3 +1020,324 @@ describe('routing the line from an anchored node to its host', () => {
     });
   });
 });
+
+describe('how far a stand-off is cleared, and what stops it', () => {
+  // A 40x60 stand-off sits at (200, 200): x 180..220, y 170..230. It is cleared off
+  // whatever lies on the inward side of it, by steps of 8 along the way out.
+  const START = { x: 200, y: 200 };
+
+  const way = {
+    right: { outward: { x: 1, y: 0 }, step: { x: 1, y: 0 } },
+    left: { outward: { x: -1, y: 0 }, step: { x: -1, y: 0 } },
+    bottom: { outward: { x: 0, y: 1 }, step: { x: 0, y: 1 } },
+    top: { outward: { x: 0, y: -1 }, step: { x: 0, y: -1 } },
+  } as const;
+  type Way = keyof typeof way;
+  const ways = Object.keys(way) as Way[];
+
+  const standing = (extra: Partial<Node> = {}) =>
+    anchored('a', { hostId: 'h', gap: 20 }, { ...START, width: 40, height: 60, ...extra });
+
+  const pinTowards = (direction: Way, at = START): AnchorPin => ({
+    nodeId: 'a',
+    hostId: 'h',
+    side: direction,
+    x: at.x,
+    y: at.y,
+    outward: way[direction].outward,
+  });
+
+  // A 40x40 obstacle on the inward side of the stand-off, `into` pixels inside it when
+  // positive and `into` pixels short of it when negative.
+  const obstacle = (direction: Way, into: number): Node => {
+    const spot = {
+      right: { x: START.x - 40 + into, y: START.y },
+      left: { x: START.x + 40 - into, y: START.y },
+      bottom: { x: START.x, y: START.y - 50 + into },
+      top: { x: START.x, y: START.y + 50 - into },
+    }[direction];
+    return node('o', { ...spot, width: 40, height: 40 } as Partial<Node>);
+  };
+
+  const clear = (direction: Way, others: Node[], extra: Partial<Node> = {}) => {
+    const a = standing(extra);
+    const layout = asLayout([host('h'), ...others, a]);
+    const pin = pinTowards(direction);
+    const [cleared] = clearAnchoredOverlaps(layout, [pin]);
+    return { cleared, pin, a };
+  };
+
+  const stepped = (direction: Way, steps: number) => ({
+    x: START.x + way[direction].step.x * 8 * steps,
+    y: START.y + way[direction].step.y * 8 * steps,
+  });
+
+  describe.each(ways)('on a stand-off going %s', (direction) => {
+    it('moves one step to clear an obstacle that reaches 5px into it', () => {
+      const { cleared, a } = clear(direction, [obstacle(direction, 5)]);
+      expect({ x: a.x, y: a.y }).toEqual(stepped(direction, 1));
+      expect({ x: cleared.x, y: cleared.y }).toEqual(stepped(direction, 1));
+    });
+
+    it('moves for an obstacle that reaches 2px into it', () => {
+      const { a } = clear(direction, [obstacle(direction, 2)]);
+      expect({ x: a.x, y: a.y }).toEqual(stepped(direction, 1));
+    });
+
+    it('lets an obstacle reach 1px into it, which is the tolerance', () => {
+      const { cleared, pin, a } = clear(direction, [obstacle(direction, 1)]);
+      expect(cleared).toBe(pin);
+      expect({ x: a.x, y: a.y }).toEqual(START);
+    });
+
+    it.each([0, -3])('does not move for an obstacle %ipx short of it', (into) => {
+      const { cleared, pin, a } = clear(direction, [obstacle(direction, into)]);
+      expect(cleared).toBe(pin);
+      expect({ x: a.x, y: a.y }).toEqual(START);
+    });
+
+    it('is stopped by a lane edge it just reaches, and put back by one it would cross', () => {
+      const edges = { l: -1000, r: 1000, t: -1000, b: 1000 };
+      const reach = { right: 'r', left: 'l', bottom: 'b', top: 't' } as const;
+      const landing = {
+        right: START.x + 20 + 8,
+        left: START.x - 20 - 8,
+        bottom: START.y + 30 + 8,
+        top: START.y - 30 - 8,
+      }[direction];
+      const inLane = (edge: number, laneRole = 'lane') => {
+        const box = { ...edges, [reach[direction]]: edge };
+        const parented = { ...host('h'), parentId: 'lane' } as Node;
+        const lane = node('lane', {
+          isGroup: true,
+          x: (box.l + box.r) / 2,
+          y: (box.t + box.b) / 2,
+          width: box.r - box.l,
+          height: box.b - box.t,
+          metadata: { laneRole },
+        } as Partial<Node>);
+        const a = standing();
+        const pin = pinTowards(direction);
+        const [cleared] = clearAnchoredOverlaps(
+          asLayout([lane, parented, obstacle(direction, 5), a]),
+          [pin]
+        );
+        return { cleared, pin, a };
+      };
+
+      const fits = inLane(landing);
+      expect({ x: fits.a.x, y: fits.a.y }).toEqual(stepped(direction, 1));
+
+      const crosses = inLane(landing + (direction === 'right' || direction === 'bottom' ? -1 : 1));
+      expect(crosses.cleared).toBe(crosses.pin);
+      expect({ x: crosses.a.x, y: crosses.a.y }).toEqual(START);
+    });
+  });
+
+  describe('on the extent of what it measures', () => {
+    // The obstacle stands 3px clear of the stand-off on each side, so it only overlaps if
+    // its extent or the stand-off's is miscomputed.
+    it.each([
+      ['left of it', { x: START.x - 43, y: START.y }],
+      ['right of it', { x: START.x + 43, y: START.y }],
+      ['above it', { x: START.x, y: START.y - 53 }],
+      ['below it', { x: START.x, y: START.y + 53 }],
+    ])('leaves an obstacle 3px clear %s', (_where, spot) => {
+      const wide = node('o', { ...spot, width: 40, height: 40 } as Partial<Node>);
+      const { cleared, pin, a } = clear('right', [wide]);
+      expect(cleared).toBe(pin);
+      expect({ x: a.x, y: a.y }).toEqual(START);
+    });
+
+    it.each([
+      ['far above', { x: START.x, y: -300 }],
+      ['far below', { x: START.x, y: 700 }],
+      ['far to the left', { x: -300, y: START.y }],
+      ['far to the right', { x: 700, y: START.y }],
+    ])('leaves an obstacle %s', (_where, spot) => {
+      const far = node('o', { ...spot, width: 40, height: 40 } as Partial<Node>);
+      const { cleared, pin } = clear('right', [far]);
+      expect(cleared).toBe(pin);
+    });
+
+    it('takes an obstacle with no position or size as occupying nothing', () => {
+      const { cleared, pin } = clear('right', [node('o')]);
+      expect(cleared).toBe(pin);
+    });
+
+    it('takes a stand-off with no size as a point, which clears the obstacle edge by 1px', () => {
+      const bare = node('o', { x: START.x, y: START.y, width: 40, height: 40 } as Partial<Node>);
+      const { a } = clear('right', [bare], { width: undefined, height: undefined });
+      // The obstacle ends at x 220, so a point is clear from 219 on: the first step of 8 past it.
+      expect(a.x).toBe(224);
+    });
+  });
+
+  describe('on how long it keeps stepping', () => {
+    it('gives up after 24 steps against something it cannot clear, and rests there', () => {
+      const wall = node('wall', { ...START, width: 10_000, height: 10_000 } as Partial<Node>);
+      const { cleared, a } = clear('right', [wall]);
+      expect(a.x).toBe(START.x + 24 * 8);
+      expect(cleared.x).toBe(START.x + 24 * 8);
+      expect(cleared.y).toBe(START.y);
+    });
+  });
+
+  describe('on what it reports', () => {
+    it('reports the place the node rests at, not the place the pin was handed in', () => {
+      const stale = pinTowards('right', { x: 999, y: 999 });
+      const layout = asLayout([host('h'), obstacle('right', 5), standing()]);
+      const [cleared] = clearAnchoredOverlaps(layout, [stale]);
+      expect({ x: cleared.x, y: cleared.y }).toEqual(stepped('right', 1));
+    });
+
+    it('hands back the pin it was given, whatever its position says, when nothing moved', () => {
+      const stale = pinTowards('right', { x: 999, y: 999 });
+      const layout = asLayout([host('h'), standing()]);
+      expect(clearAnchoredOverlaps(layout, [stale])[0]).toBe(stale);
+    });
+
+    it('does not take a node at the origin to be in the way of a stand-off', () => {
+      const a = standing({ x: 0, y: 0 });
+      const pin = pinTowards('right', { x: 0, y: 0 });
+      const [cleared] = clearAnchoredOverlaps(asLayout([host('h'), a]), [pin]);
+      expect(cleared).toBe(pin);
+      expect({ x: a.x, y: a.y }).toEqual({ x: 0, y: 0 });
+    });
+  });
+
+  describe('on the other nodes it clears', () => {
+    it('clears a later stand-off off an earlier one that stands off too', () => {
+      const first = anchored(
+        'first',
+        { hostId: 'h', gap: 20 },
+        { ...START, width: 40, height: 60 }
+      );
+      const second = anchored(
+        'second',
+        { hostId: 'h', gap: 20 },
+        { ...START, width: 40, height: 60 }
+      );
+      const layout = asLayout([host('h'), first, second]);
+      const pins = [
+        { ...pinTowards('right'), nodeId: 'first' },
+        { ...pinTowards('right'), nodeId: 'second' },
+      ];
+      const [one, two] = clearAnchoredOverlaps(layout, pins);
+
+      expect(one).toBe(pins[0]);
+      expect(first.x).toBe(START.x);
+      expect(second.x).toBe(START.x + 5 * 8);
+      expect(two.x).toBe(START.x + 5 * 8);
+    });
+
+    it('leaves a node with no gap where it is, even on top of something', () => {
+      const onBorder = anchored('a', { hostId: 'h' }, { ...START, width: 40, height: 60 });
+      const pin = pinTowards('right');
+      const layout = asLayout([host('h'), obstacle('right', 5), onBorder]);
+
+      expect(clearAnchoredOverlaps(layout, [pin])[0]).toBe(pin);
+      expect({ x: onBorder.x, y: onBorder.y }).toEqual(START);
+    });
+
+    it('leaves a pinned node that carries no anchor where it is', () => {
+      const plain = node('a', { ...START, width: 40, height: 60 } as Partial<Node>);
+      const pin = pinTowards('right');
+      const layout = asLayout([host('h'), obstacle('right', 5), plain]);
+
+      expect(clearAnchoredOverlaps(layout, [pin])[0]).toBe(pin);
+      expect({ x: plain.x, y: plain.y }).toEqual(START);
+    });
+
+    it('passes a pin through for a node that is not in the layout, and goes on to the next', () => {
+      const ghost: AnchorPin = { ...pinTowards('right'), nodeId: 'ghost' };
+      const real = pinTowards('right');
+      const a = standing();
+      const layout = asLayout([host('h'), obstacle('right', 5), a]);
+
+      const [first, second] = clearAnchoredOverlaps(layout, [ghost, real]);
+
+      expect(first).toBe(ghost);
+      expect(second.x).toBe(START.x + 8);
+      expect(a.x).toBe(START.x + 8);
+    });
+  });
+
+  describe('on the lane it must stay inside', () => {
+    const laneAround = (extra: Record<string, unknown>) =>
+      node('lane', {
+        isGroup: true,
+        x: START.x,
+        y: START.y,
+        width: 100,
+        height: 400,
+        ...extra,
+      } as Partial<Node>);
+
+    // The lane spans x 150..250. The wall covers x 170..230, so the stand-off has to be
+    // carried out to x 249 to clear it, which is past the lane's right edge.
+    const runInto = (hostParent: Partial<Node>, ...groups: Node[]) => {
+      const parented = { ...host('h'), ...hostParent } as Node;
+      const a = standing();
+      const pin = pinTowards('right');
+      const wall = node('wall', { ...START, width: 60, height: 60 } as Partial<Node>);
+      const [cleared] = clearAnchoredOverlaps(asLayout([...groups, parented, wall, a]), [pin]);
+      return { cleared, pin, a };
+    };
+
+    it('stays in a pool as it does in a lane', () => {
+      const { cleared, pin, a } = runInto(
+        { parentId: 'lane' },
+        laneAround({ id: 'lane', metadata: { laneRole: 'pool' } })
+      );
+      expect(cleared).toBe(pin);
+      expect({ x: a.x, y: a.y }).toEqual(START);
+    });
+
+    it('walks up past a parent that is no lane to the lane above it', () => {
+      const { cleared, pin, a } = runInto(
+        { parentId: 'group' },
+        laneAround({ id: 'lane', metadata: { laneRole: 'lane' } }),
+        node('group', { isGroup: true, parentId: 'lane', metadata: {} } as Partial<Node>)
+      );
+      expect(cleared).toBe(pin);
+      expect({ x: a.x, y: a.y }).toEqual(START);
+    });
+
+    it('walks up past a parent that has no metadata at all', () => {
+      const { cleared, pin } = runInto(
+        { parentId: 'group' },
+        laneAround({ id: 'lane', metadata: { laneRole: 'lane' } }),
+        node('group', { isGroup: true, parentId: 'lane' } as Partial<Node>)
+      );
+      expect(cleared).toBe(pin);
+    });
+
+    it('is not held in by a group that is neither a lane nor a pool', () => {
+      const { a } = runInto(
+        { parentId: 'group' },
+        laneAround({ id: 'group', metadata: { laneRole: 'cluster' } })
+      );
+      expect(a.x).toBeGreaterThan(START.x);
+    });
+
+    it('is not held in by a group with no role', () => {
+      const { a } = runInto({ parentId: 'group' }, laneAround({ id: 'group' }));
+      expect(a.x).toBeGreaterThan(START.x);
+    });
+
+    it('clears a host whose parent is not in the layout as if it had no lane', () => {
+      const { a } = runInto({ parentId: 'ghost' });
+      expect(a.x).toBeGreaterThan(START.x);
+    });
+
+    it('stops climbing when the parents loop back on themselves', () => {
+      const { a } = runInto(
+        { parentId: 'one' },
+        node('one', { isGroup: true, parentId: 'two' } as Partial<Node>),
+        node('two', { isGroup: true, parentId: 'one' } as Partial<Node>)
+      );
+      expect(a.x).toBeGreaterThan(START.x);
+    });
+  });
+});
