@@ -1,7 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { select } from 'd3';
 import type { Edge } from '../types.js';
-import { getEdgeStepTiming, insertEdgeStepDot, isStepEdge } from './edgeStepAnimation.js';
+import {
+  escapeCssIdentifier,
+  getEdgeStepTiming,
+  insertEdgeStepDot,
+  isStepEdge,
+} from './edgeStepAnimation.js';
 
 const stepEdge = (id: string, step?: number, stepCount?: number): Edge =>
   ({ id, step, stepCount }) as Edge;
@@ -75,9 +80,48 @@ describe('insertEdgeStepDot', () => {
     expect(styles.text()).toContain('#diagram-1 .edge-step-dot');
   });
 
+  it('escapes a diagram id that starts with a digit so the reduced-motion rule still matches', () => {
+    svg.attr('id', '1diagram');
+
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', '1diagram');
+
+    const rule = svg.select('style.edge-step-style').text();
+    expect(rule).toContain('#\\31 diagram .edge-step-dot');
+    expect(rule).not.toContain('#1diagram');
+  });
+
+  it('escapes special characters in the diagram id so the reduced-motion rule still matches', () => {
+    svg.attr('id', 'my.diagram:1 #a');
+
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', 'my.diagram:1 #a');
+
+    const rule = svg.select('style.edge-step-style').text();
+    expect(rule).toContain('#my\\.diagram\\:1\\ \\#a .edge-step-dot');
+    expect(document.querySelector('#my\\.diagram\\:1\\ \\#a .edge-step-dot')).toBe(
+      svg.select('circle').node()
+    );
+  });
+
   it('adds nothing for an edge without a step', () => {
     insertEdgeStepDot(group, stepEdge('e1'), 'M0,0L0,100', 'diagram-1');
 
     expect(svg.node().innerHTML).toBe('<g></g>');
+  });
+});
+
+describe('escapeCssIdentifier', () => {
+  it('with a leading digit or a lone hyphen, escapes them the way CSS.escape does', () => {
+    const inputs = ['1diagram', '-1x', '-', 'a\u0001b', 'plain-id_2', 'caf\u00e9'];
+
+    const escaped = inputs.map((input) => escapeCssIdentifier(input));
+
+    expect(escaped).toEqual([
+      '\\31 diagram',
+      '-\\31 x',
+      '\\-',
+      'a\\1 b',
+      'plain-id_2',
+      'caf\u00e9',
+    ]);
   });
 });

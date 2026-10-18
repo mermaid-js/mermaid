@@ -37,13 +37,37 @@ const pathStartTranslate = (pathData: string) => {
   return start ? `translate(${start[1]},${start[2]}) ` : '';
 };
 
+const escapeCssIdentifierFallback = (value: string) =>
+  Array.from(value, (char, index) => {
+    const code = char.codePointAt(0) ?? 0;
+    if (code === 0) {
+      return '\uFFFD';
+    }
+    const isControl = code <= 0x1f || code === 0x7f;
+    const isLeadingDigit =
+      /\d/.test(char) && (index === 0 || (index === 1 && value.startsWith('-')));
+    if (isControl || isLeadingDigit) {
+      return `\\${code.toString(16)} `;
+    }
+    if (value === '-') {
+      return '\\-';
+    }
+    return code >= 0x80 || /[\w-]/.test(char) ? char : `\\${char}`;
+  }).join('');
+
+/** Escapes a string for use as a CSS identifier, using `CSS.escape` when the environment has it. */
+export const escapeCssIdentifier = (value: string) =>
+  typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+    ? CSS.escape(value)
+    : escapeCssIdentifierFallback(value);
+
 const ensureReducedMotionStyle = (elem: SVGGroup, diagramId: string) => {
   const node = elem.node();
   const svg = node?.ownerSVGElement ?? node?.closest?.('svg') ?? node;
   if (!svg || svg.querySelector('style.edge-step-style')) {
     return;
   }
-  const scope = diagramId ? `#${diagramId} ` : '';
+  const scope = diagramId ? `#${escapeCssIdentifier(diagramId)} ` : '';
   const style = svg.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'style');
   style.setAttribute('class', 'edge-step-style');
   style.textContent = `@media (prefers-reduced-motion: reduce) { ${scope}.edge-step-dot { display: none; } }`;
