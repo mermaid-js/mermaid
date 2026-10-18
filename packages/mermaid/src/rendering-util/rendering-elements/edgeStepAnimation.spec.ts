@@ -80,7 +80,7 @@ describe('insertEdgeStepDot', () => {
 
     const motion = svg.select('animateMotion');
     expect(motion.attr('dur')).toBe('0.5s');
-    expect(motion.attr('begin')).toBe('0.5s;diagram_1_e2_step.end+1s');
+    expect(motion.attr('begin')).toBe('0.5s;step_diagram_2d_1_2d_e2_2d_step.end+1s');
     expect(svg.select('animateTransform').attr('dur')).toBe('0.5s');
   });
 

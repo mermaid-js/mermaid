@@ -1,6 +1,6 @@
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
-import { setConfig } from '../../../config.js';
+import { getConfig, setConfig } from '../../../config.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -433,15 +433,19 @@ describe('when parsing directions', function () {
   });
 
   it('should take the step duration from the flowchart config', function () {
+    const previous = getConfig().flowchart?.stepDuration;
     setConfig({ flowchart: { stepDuration: 0.5 } });
-    flow.parser.parse(`flowchart LR
+    try {
+      flow.parser.parse(`flowchart LR
      A e1@--> B
     e1@{ step: 1 }
       `);
 
-    const [edge] = flow.parser.yy.getData().edges;
-    setConfig({ flowchart: { stepDuration: 1 } });
-    expect(edge.stepDuration).toBe(0.5);
+      const [edge] = flow.parser.yy.getData().edges;
+      expect(edge.stepDuration).toBe(0.5);
+    } finally {
+      setConfig({ flowchart: { stepDuration: previous } });
+    }
   });
 
   it('should ignore a step that is not a positive integer', function () {
