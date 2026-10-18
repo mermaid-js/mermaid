@@ -53,6 +53,12 @@ describe('insertEdgeStepDot', () => {
     expect(svg.select('circle').attr('style')).toContain('fill:red');
   });
 
+  it('fills the dot with the bare colour when given a whole stroke declaration', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', 'diagram-1', 'stroke:red');
+
+    expect(svg.select('circle').attr('style')).toBe('fill:red;stroke:none');
+  });
+
   it('adds a single reduced-motion rule however many step edges there are', () => {
     insertEdgeStepDot(group, stepEdge('e1', 1, 2), 'M0,0L0,100', 'diagram-1');
     insertEdgeStepDot(group, stepEdge('e2', 2, 2), 'M0,0L0,100', 'diagram-1');

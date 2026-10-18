@@ -1,4 +1,5 @@
 import type { Edge } from '../types.js';
+import type { SVGGroup } from '../../diagram-api/types.js';
 
 /** Seconds the travelling dot spends on one step. */
 export const EDGE_STEP_DURATION = 1;
@@ -31,7 +32,7 @@ export const getEdgeStepTiming = (
 
 const toAnimationId = (value: string) => value.replace(/\W/g, '_');
 
-const ensureReducedMotionStyle = (elem: any, diagramId: string) => {
+const ensureReducedMotionStyle = (elem: SVGGroup, diagramId: string) => {
   const node = elem.node();
   const svg = node?.ownerSVGElement ?? node?.closest?.('svg') ?? node;
   if (!svg || svg.querySelector('style.edge-step-style')) {
@@ -46,7 +47,7 @@ const ensureReducedMotionStyle = (elem: any, diagramId: string) => {
 
 /** Appends the dot that travels along a step edge, plus the reduced-motion rule once per SVG. */
 export const insertEdgeStepDot = (
-  elem: any,
+  elem: SVGGroup,
   edge: Edge,
   pathData: string,
   diagramId: string,
@@ -63,8 +64,9 @@ export const insertEdgeStepDot = (
     .attr('r', 4)
     .attr('transform', 'scale(0)')
     .attr('data-step', edge.step);
-  if (color) {
-    dot.attr('style', `fill:${color};stroke:none`);
+  const fill = color?.replace(/^stroke:\s*/, '');
+  if (fill) {
+    dot.attr('style', `fill:${fill};stroke:none`);
   }
   dot
     .append('animateMotion')
