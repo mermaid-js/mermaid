@@ -290,4 +290,15 @@ banking <--> mainframe : "Syncs with"
       expect(ast.relationships[2].arrow).toBe('<-->');
     });
   });
+
+  describe('unclosed braces', () => {
+    it.each([1, 3, 4, 5, 40])(
+      'should report one parse error, and not throw, for %i unclosed braces',
+      (depth: number) => {
+        const result = parse(`c4-beta context\n${'group team "Team A" {\n'.repeat(depth)}`);
+        expect(result.parserErrors).toHaveLength(1);
+        expect(result.parserErrors[0].message).toContain("Expecting token of type '}'");
+      }
+    );
+  });
 });
