@@ -405,6 +405,30 @@ class BpmnVisitor extends BpmnBaseVisitor {
 
 const visitor = new BpmnVisitor();
 
+const arrowOf = (flow: ParsedFlow): string => {
+  if (flow.kind === 'message') {
+    return '-.->';
+  }
+  if (flow.kind === 'association') {
+    return flow.directed ? '..>' : '...';
+  }
+  return '-->';
+};
+
+/** A flow end that names no declared element has nothing to attach to, so it is refused here. */
+function assertFlowsReferToDeclaredElements({ nodes, flows }: ParsedDiagram): void {
+  const declared = new Set(nodes.map((node) => node.id));
+  for (const flow of flows) {
+    for (const id of [flow.from, flow.to]) {
+      if (!declared.has(id)) {
+        throw new Error(
+          `BPMN error: the flow "${flow.from} ${arrowOf(flow)} ${flow.to}" refers to "${id}", which is not declared. Declare it as an element before using it.`
+        );
+      }
+    }
+  }
+}
+
 export function parseBpmn(input: string): ParsedDiagram {
   const lexed = bpmnLexer.tokenize(input);
   if (lexed.errors.length > 0) {
@@ -419,5 +443,7 @@ export function parseBpmn(input: string): ParsedDiagram {
   }
   visitor.reset();
   visitor.visit(cst);
-  return visitor.result();
+  const parsed = visitor.result();
+  assertFlowsReferToDeclaredElements(parsed);
+  return parsed;
 }
