@@ -598,3 +598,101 @@ describe('resolving a host through a chain that ends in a cycle', () => {
     expect(resolveAnchorHostId('b3', byId(nodes))).toBe('t1');
   });
 });
+
+describe('ordering a run along the border', () => {
+  const sized = { width: 36, height: 36 };
+
+  const runOf = (anchors: { id: string; slot?: number }[]) => {
+    const layout = asLayout([
+      host('t1'),
+      ...anchors.map(({ id, slot }) =>
+        anchored(
+          id,
+          { hostId: 't1', side: 'bottom', ...(slot === undefined ? {} : { slot }) },
+          sized
+        )
+      ),
+    ]);
+    pinAnchoredNodes(layout, { space: 'final', direction: 'TB' });
+    const xOf = (id: string) => layout.nodes.find((n) => n.id === id)!.x!;
+    return anchors.map(({ id }) => id).sort((a, b) => xOf(a) - xOf(b));
+  };
+
+  it('keeps declaration order when no node has a slot', () => {
+    expect(runOf([{ id: 'p' }, { id: 'q' }, { id: 'r' }])).toEqual(['p', 'q', 'r']);
+  });
+
+  it('keeps declaration order between nodes that share a slot', () => {
+    expect(
+      runOf([
+        { id: 'p', slot: 1 },
+        { id: 'q', slot: 1 },
+        { id: 'r', slot: 1 },
+      ])
+    ).toEqual(['p', 'q', 'r']);
+  });
+
+  it('puts a slotted node ahead of an unslotted one declared before it', () => {
+    expect(runOf([{ id: 'plain' }, { id: 'slotted', slot: 5 }])).toEqual(['slotted', 'plain']);
+  });
+
+  it('puts a slotted node ahead of an unslotted one declared after it', () => {
+    expect(runOf([{ id: 'slotted', slot: 5 }, { id: 'plain' }])).toEqual(['slotted', 'plain']);
+  });
+
+  it('treats a slot of zero as a place, not as no slot', () => {
+    expect(runOf([{ id: 'plain' }, { id: 'zero', slot: 0 }])).toEqual(['zero', 'plain']);
+  });
+
+  it('orders slotted nodes by slot and leaves the unslotted ones after them in declaration order', () => {
+    expect(
+      runOf([{ id: 'u1' }, { id: 's3', slot: 3 }, { id: 'u2' }, { id: 's1', slot: 1 }])
+    ).toEqual(['s1', 's3', 'u1', 'u2']);
+  });
+});
+
+describe('keeping the runs of different hosts and borders apart', () => {
+  const sized = { width: 36, height: 36 };
+
+  it('packs each host and each border as a run of its own', () => {
+    const second = { ...host('t2'), x: 400 } as Node;
+    const layout = asLayout([
+      host('t1'),
+      second,
+      anchored('a1', { hostId: 't1', side: 'bottom' }, sized),
+      anchored('a2', { hostId: 't2', side: 'bottom' }, sized),
+      anchored('a3', { hostId: 't1', side: 'top' }, sized),
+    ]);
+    pinAnchoredNodes(layout, { space: 'final', direction: 'TB' });
+
+    const at = (id: string) => {
+      const found = layout.nodes.find((n) => n.id === id)!;
+      return { x: found.x, y: found.y };
+    };
+    // Each is alone in its run, so each is centred on its own host's border.
+    expect(at('a1')).toEqual({ x: 100, y: 90 });
+    expect(at('a2')).toEqual({ x: 400, y: 90 });
+    expect(at('a3')).toEqual({ x: 100, y: 10 });
+  });
+
+  it('reserves room for a dangling stand-off nowhere', () => {
+    const nodes = [anchored('a', { hostId: 'missing', gap: 20 }, { width: 40, height: 60 })];
+    expect(anchorFootprints(nodes, 'LR').size).toBe(0);
+  });
+
+  it('reserves the room of a host that is laid out, keyed by that host', () => {
+    const nodes = [host('h'), anchored('a', { hostId: 'h', gap: 20 }, { width: 40, height: 60 })];
+    expect([...anchorFootprints(nodes, 'LR').keys()]).toEqual(['h']);
+  });
+
+  it('reaches no further for a node on the border than the nodes standing off it need', () => {
+    const nodes = [
+      host('h'),
+      anchored('a', { hostId: 'h', gap: 20 }, { width: 40, height: 60 }),
+      anchored('tall', { hostId: 'h' }, { width: 36, height: 200 }),
+    ];
+    // Across the page, the node stood off needs 20 + 60 beyond the border. The one sitting
+    // on the border stands no gap off, so its own 200 is not room it asks for.
+    expect(anchorFootprints(nodes, 'LR').get('h')?.beyond).toBe(80);
+  });
+});
