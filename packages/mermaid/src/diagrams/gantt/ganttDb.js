@@ -50,6 +50,7 @@ export const clear = function () {
   currentSection = '';
   funs = [];
   taskCnt = 0;
+  usedTaskIds = new Set();
   lastTask = undefined;
   lastTaskID = undefined;
   rawTasks = [];
@@ -466,6 +467,8 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
 };
 
 let taskCnt = 0;
+// IDs handed out so far, so that a generated ID never reuses an explicit one such as `task2`.
+let usedTaskIds = new Set();
 /**
  * Checks whether the first of two items in a task definition is a task id rather than a start.
  *
@@ -490,11 +493,17 @@ const isTaskId = function (str) {
 };
 
 const parseId = function (idStr) {
-  if (idStr === undefined) {
-    taskCnt = taskCnt + 1;
-    return 'task' + taskCnt;
+  if (idStr !== undefined) {
+    usedTaskIds.add(idStr);
+    return idStr;
   }
-  return idStr;
+  let id;
+  do {
+    taskCnt = taskCnt + 1;
+    id = 'task' + taskCnt;
+  } while (usedTaskIds.has(id));
+  usedTaskIds.add(id);
+  return id;
 };
 // id, startDate, endDate
 // id, startDate, length

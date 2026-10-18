@@ -582,6 +582,15 @@ describe('when using the ganttDb', function () {
       ganttDb.addTask('Another task2', '20140501, 2d');
       expect(() => ganttDb.getTasks()).toThrowError('Invalid date:20140501');
     });
+
+    it('should not reuse an explicit id for a later task without an id', function () {
+      ganttDb.addTask('Another task2', 'task2, 1d');
+      ganttDb.addTask('Another task3', '2d');
+      const tasks = ganttDb.getTasks();
+      expect(tasks.map((t) => t.id)).toEqual(['a1', 'task1', 'task2', 'task3']);
+      expect(tasks[3].startTime).toEqual(new Date(2014, 1, 21));
+      expect(tasks[3].endTime).toEqual(new Date(2014, 1, 23));
+    });
   });
 
   it('should reject dates with ridiculous years', function () {
