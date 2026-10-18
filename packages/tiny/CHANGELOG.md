@@ -1,5 +1,31 @@
 # mermaid
 
+## 12.2.0
+
+### Minor Changes
+
+- [#8394](https://github.com/mermaid-js/mermaid/pull/8394) [`6ac38cb`](https://github.com/mermaid-js/mermaid/commit/6ac38cb4441f67a29336cb3039c1a63e7a87d969) Thanks [@jackroberts236](https://github.com/jackroberts236)! - feat: Add opt-in mindmap coloring by hierarchy depth using `mindmap.colorBy: depth` and the existing theme palette.
+
+### Patch Changes
+
+- [#8409](https://github.com/mermaid-js/mermaid/pull/8409) [`419ee68`](https://github.com/mermaid-js/mermaid/commit/419ee6855da1ee1170445164e8ba9850ef279568) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: size circle and double-circle nodes from their label instead of `minNodeWidth`, and trim neo circle padding
+
+- [#8395](https://github.com/mermaid-js/mermaid/pull/8395) [`2fb3ff1`](https://github.com/mermaid-js/mermaid/commit/2fb3ff1d9f4f74478f28096e3e38565378b9f686) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: ELK no longer straightens an edge terminal when that would put a label over another edge, or an edge through a label
+
+- [#8394](https://github.com/mermaid-js/mermaid/pull/8394) [`cbf89ab`](https://github.com/mermaid-js/mermaid/commit/cbf89ab1377a8e7febff2614d7cbd5f78dd3d87c) Thanks [@jackroberts236](https://github.com/jackroberts236)! - fix: Keep mindmap HTML labels readable in the neo look on themes that repaint node backgrounds
+
+- [#8390](https://github.com/mermaid-js/mermaid/pull/8390) [`430ac9b`](https://github.com/mermaid-js/mermaid/commit/430ac9b4de28ec360df92df0adf998523a57ce4d) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: Centre mindmap node labels when `htmlLabels` is false
+
+- [#8161](https://github.com/mermaid-js/mermaid/pull/8161) [`d7532ed`](https://github.com/mermaid-js/mermaid/commit/d7532edcc2d8dbb7563469884ebdfda4fe85994b) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix: scope a swimlane cluster's DOM id like every other cluster, so two diagrams on one page do not collide
+
+- [#8270](https://github.com/mermaid-js/mermaid/pull/8270) [`ad8d61a`](https://github.com/mermaid-js/mermaid/commit/ad8d61ad3fe2a2262970e3a9059e308a99680891) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(rendering): clip an edge for the layout engine that drew it, so a diagram pinning its own engine (bpmn, swimlanes) still renders when the configured default is another one
+
+- [#8383](https://github.com/mermaid-js/mermaid/pull/8383) [`9d41c0f`](https://github.com/mermaid-js/mermaid/commit/9d41c0fbf856fc71aff93e4ed55a38c9cc932a76) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): split shared terminal lanes again after crossing cleanup, so an edge that detours around another lane no longer ends on the same attachment point as a neighbouring edge
+
+- [#8384](https://github.com/mermaid-js/mermaid/pull/8384) [`6c67397`](https://github.com/mermaid-js/mermaid/commit/6c67397dee4422a07646dd0b8960f1fcf64849e8) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): move a lane's title band clear of an edge that crosses it, in LR diagrams whose lanes carry no direction of their own and when the edge runs along the band's border
+
+- [#8366](https://github.com/mermaid-js/mermaid/pull/8366) [`40124c3`](https://github.com/mermaid-js/mermaid/commit/40124c3a471040cdf92269dda43c737d7431f8f2) Thanks [@SwastikTripathi](https://github.com/SwastikTripathi)! - fix: swimlane nodes with no edges keep their source order inside a lane instead of being sorted by ID
+
 ## 12.1.0
 
 ### Minor Changes
