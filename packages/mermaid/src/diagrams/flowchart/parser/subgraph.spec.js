@@ -352,4 +352,40 @@ describe('when parsing subgraphs', function () {
     expect(edges.find((e) => e.start === 'C' && e.end === 'one')).toBeDefined();
     expect(edges.find((e) => e.end === 'A')).toBeUndefined();
   });
+  it('should handle a subgraph without an id or a title', function () {
+    flow.parser.parse('graph TB\nsubgraph\n\ta1-->a2\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].id).toMatch(/^subGraph\d+$/);
+    expect(subgraphs[0].title).toBe('');
+    expect(subgraphs[0].nodes).toEqual(['a2', 'a1']);
+  });
+  it('should handle an empty subgraph without an id or a title', function () {
+    flow.parser.parse('graph TB\nsubgraph\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(1);
+    expect(subgraphs[0].title).toBe('');
+    expect(subgraphs[0].nodes).toEqual([]);
+  });
+  it('should not merge a subgraph without an id into an explicit subGraph<N>', function () {
+    flow.parser.parse('graph TB\nsubgraph subGraph1\n\ta1\nend\nsubgraph\n\tb1\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+    expect(new Set(subgraphs.map((subgraph) => subgraph.id)).size).toBe(2);
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph1').nodes).toEqual(['a1']);
+    expect(subgraphs.flatMap((subgraph) => subgraph.nodes).sort()).toEqual(['a1', 'b1']);
+  });
+  it('should not merge a subgraph whose title has spaces into an explicit subGraph<N>', function () {
+    flow.parser.parse('graph TB\nsubgraph subGraph1\n\ta1\nend\nsubgraph Some Title\n\tb1\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph1').nodes).toEqual(['a1']);
+    expect(subgraphs.find((subgraph) => subgraph.title === 'Some Title').nodes).toEqual(['b1']);
+  });
+  it('should not give a subgraph without an id the id of a node', function () {
+    flow.parser.parse('graph TB\nsubGraph0 --> b1\nsubgraph\n\tc1\nend');
+    const [subgraph] = flow.parser.yy.getSubGraphs();
+    expect(subgraph.id).not.toBe('subGraph0');
+    expect(subgraph.nodes).toEqual(['c1']);
+  });
 });
