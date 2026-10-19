@@ -2250,3 +2250,57 @@ describe('class db class', () => {
     }
   });
 });
+
+describe('lollipop interface namespaces', () => {
+  let classDb: ClassDB;
+  beforeEach(() => {
+    classDb = new ClassDB();
+    parser.yy = classDb;
+  });
+  it.each([
+    [
+      'classDiagram\nnamespace Kitchen {\nclass Dishwasher\n}\nDishwasher --() power',
+      'Kitchen',
+      true,
+    ],
+    [
+      'classDiagram\nnamespace Kitchen {\nclass Dishwasher\n}\npower ()-- Dishwasher',
+      'Kitchen',
+      true,
+    ],
+    [
+      'classDiagram\nDishwasher --() power\nnamespace Kitchen {\nclass Dishwasher\n}',
+      'Kitchen',
+      true,
+    ],
+    [
+      'classDiagram\nnamespace House {\nnamespace Kitchen {\nclass Dishwasher\n}\n}\nDishwasher --() power',
+      'House.Kitchen',
+      true,
+    ],
+    [
+      'classDiagram\nnamespace House.Kitchen {\nclass Dishwasher\n}\nDishwasher --() power',
+      'House.Kitchen',
+      false,
+    ],
+    [
+      'classDiagram\nnamespace Kitchen {\nclass Dishwasher~T~\n}\nDishwasher~T~ --() power',
+      'Kitchen',
+      true,
+    ],
+    ['classDiagram\nDishwasher --() power', undefined, true],
+  ])('places lollipop interfaces with their class: %s', async (str, parentId, hierarchical) => {
+    const { setConfig } = await import('../../diagram-api/diagramAPI.js');
+    const { reset } = await import('../../config.js');
+    setConfig({ class: { hierarchicalNamespaces: hierarchical } });
+    try {
+      parser.parse(str);
+      const { nodes } = classDb.getData();
+      const interfaceNode = nodes.find((node) => node.id === 'interface0');
+      expect(interfaceNode).toBeDefined();
+      expect(interfaceNode?.parentId).toBe(parentId);
+    } finally {
+      reset();
+    }
+  });
+});
