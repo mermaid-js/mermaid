@@ -1,0 +1,15 @@
+---
+description: >-
+  Association class outside a namespace, attached to a relation between two
+  classes inside it. The anchor point stays inside the namespace.
+---
+classDiagram
+  namespace University {
+    class Student
+    class Course
+  }
+  Student "*" enrollment@-- "*" Course : takes
+  Enrollment .. enrollment
+  class Enrollment {
+    +int grade
+  }

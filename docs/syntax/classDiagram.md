@@ -595,6 +595,38 @@ classDiagram
   foo ()-- Class01
 ```
 
+### Association Classes (v\<MERMAID_RELEASE_VERSION>+)
+
+An association class holds the attributes of the relation between two other classes. Give the relation an edge id by writing `id@` right before the link, then connect the association class to that id with a dashed link: `AssociationClass .. id`. It is drawn as a dashed line from the association class to a point on the relation.
+
+```mermaid-example
+classDiagram
+    Student "*" enrollment@-- "*" Course : takes
+    Enrollment .. enrollment
+    class Enrollment {
+        +Date enrolledOn
+        +int grade
+    }
+```
+
+```mermaid
+classDiagram
+    Student "*" enrollment@-- "*" Course : takes
+    Enrollment .. enrollment
+    class Enrollment {
+        +Date enrolledOn
+        +int grade
+    }
+```
+
+- The edge id comes before the link, and after the multiplicity if there is one: `A "1" id@--> "*" B`.
+- A relation can have more than one association class.
+- The relation has to be declared before the `AssociationClass .. id` line. A misspelled id is not an error, it creates a new class with that name.
+- An edge id can contain letters, digits, `_` and `-`.
+- `AssociationClass .. id` takes no label or multiplicity.
+- An edge id cannot be the name of a class, and an association class cannot be one of the two classes of its relation.
+- The anchor point sits on the relation, but where exactly depends on the layout, so it is not always the exact middle.
+
 ## Define Namespace
 
 A namespace groups classes.
