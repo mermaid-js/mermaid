@@ -68,6 +68,7 @@ const getData = function () {
       shape: 'kanbanSection',
       level: section.level,
       look: conf.look,
+      ...(section.cssClasses ? { cssClasses: section.cssClasses } : {}),
     } satisfies KanbanNode;
     _nodes.push(node);
     const children = nodes.filter((n) => n.parentId === section.id);
@@ -88,6 +89,7 @@ const getData = function () {
         rx: 5,
         ry: 5,
         cssStyles: ['text-align: left'],
+        ...(item.cssClasses ? { cssClasses: item.cssClasses } : {}),
       } satisfies KanbanNode;
       _nodes.push(childNode);
     }
