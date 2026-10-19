@@ -268,6 +268,51 @@ describe('when using the ganttDb', function () {
     expect(tasks[6].task).toEqual('test7');
   });
 
+  it.each(convert`
+    dateFormat                    | taskData                                                        | taskId         | excludes              | expectedEnd
+    ${'DD.MM.YYYY'}                | ${'01.10.2021,31.10.2021'}                                       | ${'task1'}     | ${'weekends'}         | ${new Date(2021, 9, 31)}
+    ${'YYYY-MM-DD HH:mm:ss'}        | ${'deadline,2025-08-16 09:47:34,2025-08-25 17:36:40'}              | ${'deadline'}  | ${'weekends'}         | ${new Date(2025, 7, 25, 17, 36, 40)}
+    ${'DD.MM.YYYY'}                | ${'deadline,01.10.2021,08.10.2021'}                              | ${'deadline'}  | ${'04.10.2021'}       | ${new Date(2021, 9, 8)}
+  `)(
+    'should preserve explicit end dates with $dateFormat when excluding $excludes',
+    ({ dateFormat, taskData, taskId, excludes, expectedEnd }) => {
+      ganttDb.setDateFormat(dateFormat);
+      ganttDb.setExcludes(excludes);
+      ganttDb.addTask('deadline', taskData);
+      ganttDb.addTask('following', ['following,after ', taskId, ',1d'].join(''));
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].endTime).toEqual(expectedEnd);
+      expect(tasks[0].renderEndTime).toBeNull();
+      expect(tasks[1].startTime).toEqual(expectedEnd);
+    }
+  );
+
+  it('should preserve inclusive end dates with a custom date format when excluding weekends', function () {
+    ganttDb.setDateFormat('DD.MM.YYYY');
+    ganttDb.enableInclusiveEndDates();
+    ganttDb.setExcludes('weekends');
+    ganttDb.addTask('deadline', 'deadline,01.10.2021,31.10.2021');
+    ganttDb.addTask('following', 'following,after deadline,1d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].endTime).toEqual(new Date(2021, 10, 1));
+    expect(tasks[0].renderEndTime).toBeNull();
+    expect(tasks[1].startTime).toEqual(new Date(2021, 10, 1));
+  });
+
+  it('should extend durations with a custom date format when excluding weekends', function () {
+    ganttDb.setDateFormat('DD.MM.YYYY');
+    ganttDb.setExcludes('weekends');
+    ganttDb.addTask('duration', 'duration,01.10.2021,3d');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].endTime).toEqual(new Date(2021, 9, 6));
+  });
+
   it('should ignore weekends starting on friday', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.setExcludes('weekends');
