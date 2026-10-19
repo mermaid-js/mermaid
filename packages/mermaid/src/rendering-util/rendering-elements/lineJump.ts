@@ -733,7 +733,9 @@ export function applyLineJumpsToSvg(
     // marker body. Our rewritten path has a different length, so without
     // updating the "on" portion the hidden tail ends up in the wrong place.
     const originalStyle = pathEl.getAttribute('style') ?? '';
-    const dasharrayMatch = /stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)/.exec(
+    // Anchored to the four-number form: a dashed or dotted edge has a longer array, and
+    // rewriting that to the solid form would turn it into a solid line.
+    const dasharrayMatch = /stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)\s*(?:;|$)/.exec(
       originalStyle
     );
     const preservedOValueS = dasharrayMatch ? Number.parseFloat(dasharrayMatch[1]) : null;

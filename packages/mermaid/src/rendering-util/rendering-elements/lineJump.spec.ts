@@ -693,6 +693,41 @@ describe('lineJump', () => {
       expect(style).toMatch(/stroke:\s*#000/);
     });
 
+    it('keeps the stroke-dasharray of dashed edges, so they stay dashed', () => {
+      const edges: EdgeGeom[] = [
+        {
+          id: 'horiz',
+          points: [
+            { x: 0, y: 5 },
+            { x: 20, y: 5 },
+          ],
+          curve: 'linear',
+        },
+        {
+          id: 'vert',
+          points: [
+            { x: 10, y: 0 },
+            { x: 10, y: 20 },
+          ],
+          curve: 'linear',
+        },
+      ];
+      const { group } = makeGroup([
+        { id: 'horiz', d: 'M0,5 L20,5' },
+        { id: 'vert', d: 'M10,0 L10,20' },
+      ]);
+      const horizPath = group.node()!.querySelector('path[data-id="horiz"]')!;
+      horizPath.setAttribute(
+        'style',
+        'stroke-dasharray: 0 0 2 2 2 2 2 2 0; stroke-dashoffset: 0; stroke: #000;'
+      );
+      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 60;
+
+      applyLineJumpsToSvg(group, edges, ARC_CONFIG);
+
+      expect(horizPath.getAttribute('style')).toMatch(/stroke-dasharray:\s*0 0 2 2 2 2 2 2 0;/);
+    });
+
     it('does nothing when disabled', () => {
       const edges: EdgeGeom[] = [
         {
