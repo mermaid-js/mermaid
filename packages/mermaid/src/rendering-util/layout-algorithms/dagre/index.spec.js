@@ -54,15 +54,38 @@ const expectFinitePaths = (paths) => {
   }
 };
 
+const dagreSiteConfig = {
+  deterministicIds: true,
+  deterministicIDSeed: '',
+  flowchart: { htmlLabels: false },
+  logLevel: 5,
+  layout: 'elk',
+};
+
+const expectFiniteEdgeLabelTransforms = (svg) => {
+  const dom = new JSDOM(svg);
+  const transforms = [...dom.window.document.querySelectorAll('g.edgeLabel')]
+    .map((label) => label.getAttribute('transform'))
+    .filter(Boolean);
+
+  expect(transforms.length).toBeGreaterThan(0);
+  for (const transform of transforms) {
+    const match = /^translate\((-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\)$/.exec(transform);
+    expect(match, transform).not.toBeNull();
+    const x = Number(match[1]);
+    const y = Number(match[2]);
+    expect(Number.isFinite(x)).toBe(true);
+    expect(Number.isFinite(y)).toBe(true);
+    // The origin is what the browser falls back to after rejecting the invalid
+    // attribute. A real placement sits on the edge, away from 0,0.
+    expect(x !== 0 || y !== 0).toBe(true);
+  }
+};
+
 describe('getEdgesToRender', () => {
   beforeAll(async () => {
     await mermaid.registerExternalDiagrams([]);
-    mermaid.initialize({
-      deterministicIds: true,
-      deterministicIDSeed: '',
-      flowchart: { htmlLabels: false },
-      logLevel: 5,
-    });
+    mermaid.initialize(dagreSiteConfig);
   });
 
   it('copies DAGRE node and edge layout back onto LayoutData', () => {
@@ -380,6 +403,57 @@ describe('getEdgesToRender', () => {
     expect(edgesToRender[0]).toEqual({ edge, start: 'A', end: 'B' });
   });
 
+  it('places a zero-area HTML label on the edge when dagre assigned no coordinates (#6086)', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setNode('A', { id: 'A' });
+    graph.setNode('B', { id: 'B' });
+    const edge = {
+      id: 'A-B',
+      start: 'A',
+      end: 'B',
+      label: '<p></p>',
+      width: 0,
+      height: 0,
+      points: [
+        { x: 10, y: 20 },
+        { x: 10, y: 80 },
+      ],
+    };
+    graph.setEdge('A', 'B', edge, 'A-B');
+
+    const edgesToRender = getEdgesToRender(graph);
+
+    // Halfway along the layout route, in the same pre-offset space dagre uses.
+    expect(edgesToRender[0].edge.x).toBe(10);
+    expect(edgesToRender[0].edge.y).toBe(50);
+  });
+
+  it('keeps a label position dagre already assigned', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setNode('A', { id: 'A' });
+    graph.setNode('B', { id: 'B' });
+    const edge = {
+      id: 'A-B',
+      start: 'A',
+      end: 'B',
+      label: 'yes',
+      width: 12,
+      height: 8,
+      x: 4,
+      y: 9,
+      points: [
+        { x: 0, y: 0 },
+        { x: 40, y: 0 },
+      ],
+    };
+    graph.setEdge('A', 'B', edge, 'A-B');
+
+    const edgesToRender = getEdgesToRender(graph);
+
+    expect(edgesToRender[0].edge.x).toBe(4);
+    expect(edgesToRender[0].edge.y).toBe(9);
+  });
+
   it('keeps self-loop layout segments unchanged when merging is disabled', () => {
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
@@ -501,6 +575,41 @@ describe('getEdgesToRender', () => {
     expect(() => runDagreLayoutCore(data4Layout, {})).toThrow(
       'runDagreLayoutCore requires measureDagreLayout to run first'
     );
+  });
+
+  it('renders empty HTML edge labels with a finite transform under dagre (#6086)', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      mermaid.initialize({
+        ...dagreSiteConfig,
+        layout: 'dagre',
+        htmlLabels: true,
+      });
+      const diagrams = [
+        [
+          'empty-html-state-label',
+          `stateDiagram-v2
+    [*] --> Still : <p></p>
+    Still --> [*]`,
+        ],
+        [
+          'empty-html-flowchart-label',
+          `flowchart LR
+    A -->|<p></p>| B`,
+        ],
+      ];
+
+      for (const [id, code] of diagrams) {
+        const { svg } = await mermaidAPI.render(id, code);
+        expect(svg).not.toContain('translate(undefined');
+        expect(svg).not.toMatch(/translate\([^)]*NaN/);
+        expectFiniteEdgeLabelTransforms(svg);
+      }
+    } finally {
+      mermaid.initialize(dagreSiteConfig);
+      restoreDom();
+    }
   });
 
   it('renders a flowchart self-loop as one SVG path', async () => {
