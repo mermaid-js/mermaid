@@ -14,7 +14,15 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
   const db = diagObj.db as typeof XYChartDB;
   const themeConfig = db.getChartThemeConfig();
   const chartConfig = db.getChartConfig();
-  const labelData = db.getXYChartData().plots[0].data.map((data) => data[1]);
+  // Bar labels come from the plot that owns the shape: the chart builder tags each
+  // bar series' drawable group with its index into `plots` (`bar-plot-N`), so a
+  // chart with several bar series labels every series with its own values (#8475).
+  const getPlotLabelData = (shape: DrawableElem) => {
+    const plotGroup = shape.groupTexts.find((groupText) => /-plot-\d+$/.test(groupText));
+    const plotIndex = Number(/(\d+)$/.exec(plotGroup ?? '')?.[1] ?? 0);
+    const { plots } = db.getXYChartData();
+    return (plots[plotIndex] ?? plots[0]).data.map((data) => data[1]);
+  };
   function getDominantBaseLine(horizontalPos: TextVerticalPos) {
     return horizontalPos === 'top' ? 'text-before-edge' : 'middle';
   }
@@ -100,6 +108,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
           .attr('stroke-width', (data) => data.strokeWidth);
 
         if (chartConfig.showDataLabel) {
+          const labelData = getPlotLabelData(shape);
           const showDataLabelOutsideBar = chartConfig.showDataLabelOutsideBar;
 
           if (chartConfig.chartOrientation === 'horizontal') {
