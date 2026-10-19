@@ -160,9 +160,18 @@ export class FlowDB implements DiagramDB {
       return;
     }
 
-    // Check if this is an edge
+    // Node metadata uses different properties from edge metadata, so an explicit
+    // node definition must not be swallowed by a same-named edge.
+    const isNodeDefinition =
+      type !== undefined ||
+      (doc &&
+        ['shape', 'label', 'labelType', 'icon', 'form', 'pos', 'img', 'constraint', 'w', 'h'].some(
+          (key) => Object.hasOwn(doc, key)
+        ));
+    // Only metadata statements can refer to edges. A node declaration may use
+    // the same ID as an edge and must still create or update that node.
     const edge = this.edges.find((e) => e.id === id);
-    if (edge) {
+    if (edge && metadata !== undefined && !isNodeDefinition) {
       const edgeDoc = doc as EdgeMetaData;
       if (edgeDoc?.animate !== undefined) {
         edge.animate = edgeDoc.animate;
