@@ -791,7 +791,7 @@ export class ClassDB implements DiagramDB {
       const noteParentId = hierarchical ? note.parent : this.resolveExplicitAncestor(note.parent);
       const noteNode: Node = {
         id: note.id,
-        label: note.text,
+        label: note.text.replace(/\\n/g, '<br />'),
         isGroup: false,
         shape: 'note',
         padding: config.class!.padding ?? 6,
