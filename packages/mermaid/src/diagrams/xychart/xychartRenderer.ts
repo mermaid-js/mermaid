@@ -110,6 +110,16 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
         if (chartConfig.showDataLabel) {
           const labelData = getPlotLabelData(shape);
           const showDataLabelOutsideBar = chartConfig.showDataLabelOutsideBar;
+          // Skip bars without a matching label value before stringifying, so a
+          // shorter label series can never crash the renderer.
+          const getValidBarItems = () =>
+            shape.data.flatMap((d, i) => {
+              const label = labelData[i];
+              if (label === undefined || d.width <= 0 || d.height <= 0) {
+                return [];
+              }
+              return [{ data: d, label: label.toString() }];
+            });
 
           if (chartConfig.chartOrientation === 'horizontal') {
             // Factor to approximate each character's width.
@@ -118,9 +128,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
             const rightMargin = 10;
 
             // Filter out bars that have zero width or height.
-            const validItems = shape.data
-              .map((d, i) => ({ data: d, label: labelData[i].toString() }))
-              .filter((item) => item.data.width > 0 && item.data.height > 0);
+            const validItems = getValidBarItems();
 
             // Helper function to check if the text fits horizontally with a 10px right margin.
             function fitsHorizontally(item: BarItem, fontSize: number): boolean {
@@ -170,9 +178,7 @@ export const draw = (txt: string, id: string, _version: string, diagObj: Diagram
             const yOffset = 10;
 
             // filter out bars that have zero width or height.
-            const validItems = shape.data
-              .map((d, i) => ({ data: d, label: labelData[i].toString() }))
-              .filter((item) => item.data.width > 0 && item.data.height > 0);
+            const validItems = getValidBarItems();
 
             // Helper function that checks if the text with a given fontSize fits within the bar boundaries.
             function fitsInBar(item: BarItem, fontSize: number, yOffset: number): boolean {
