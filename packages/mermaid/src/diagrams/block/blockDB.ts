@@ -4,7 +4,13 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import common from '../common/common.js';
-import { clear as commonClear } from '../common/commonDb.js';
+import {
+  clear as commonClear,
+  getAccDescription,
+  getAccTitle,
+  setAccDescription,
+  setAccTitle,
+} from '../common/commonDb.js';
 import type { Block, ClassDef } from './blockTypes.js';
 
 // Initialize the node database for simple lookups
@@ -384,6 +390,10 @@ const db = {
   generateId,
   setDiagramId,
   getDiagramId,
+  setAccTitle,
+  getAccTitle,
+  setAccDescription,
+  getAccDescription,
 } as const;
 
 export type BlockDB = typeof db & DiagramDB;
