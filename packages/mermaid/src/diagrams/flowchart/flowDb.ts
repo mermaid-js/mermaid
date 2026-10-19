@@ -372,14 +372,44 @@ You have to call mermaid.initialize.`
   }
 
   /**
-   * Updates a link's line interpolation algorithm
+   * Resolves a `linkStyle` position to `'default'` or an in-range edge index.
+   *
+   * The grammar hands positions over as raw lexemes, so an index arrives as a string
+   * (`'1'`, not `1`). The bounds check used to sit behind `typeof pos === 'number'` and
+   * therefore never ran: an out-of-range index fell through to `this.edges[pos]` and
+   * threw a bare `TypeError` instead of the message it means to give.
    */
-  public updateLinkInterpolate(positions: ('default' | number)[], interpolate: string) {
+  private resolveLinkPosition(pos: number | string): 'default' | number {
+    if (pos === 'default') {
+      return 'default';
+    }
+
+    const index = Number(pos);
+
+    if (!Number.isInteger(index) || index < 0 || index >= this.edges.length) {
+      throw new Error(
+        `The index ${pos} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
+          this.edges.length - 1
+        }. (Help: Ensure that the index is within the range of existing edges.)`
+      );
+    }
+
+    return index;
+  }
+
+  /**
+   * Updates a link's line interpolation algorithm
+   *
+   * `positions` holds edge indices as the grammar produced them (strings), or the
+   * literal `'default'`.
+   */
+  public updateLinkInterpolate(positions: (number | string)[], interpolate: string) {
     positions.forEach((pos) => {
-      if (pos === 'default') {
+      const position = this.resolveLinkPosition(pos);
+      if (position === 'default') {
         this.edges.defaultInterpolate = interpolate;
       } else {
-        this.edges[pos].interpolate = interpolate;
+        this.edges[position].interpolate = interpolate;
       }
     });
   }
@@ -387,26 +417,22 @@ You have to call mermaid.initialize.`
   /**
    * Updates a link with a style
    *
+   * `positions` holds edge indices as the grammar produced them (strings), or the
+   * literal `'default'`.
    */
-  public updateLink(positions: ('default' | number)[], style: string[]) {
+  public updateLink(positions: (number | string)[], style: string[]) {
     positions.forEach((pos) => {
-      if (typeof pos === 'number' && pos >= this.edges.length) {
-        throw new Error(
-          `The index ${pos} for linkStyle is out of bounds. Valid indices for linkStyle are between 0 and ${
-            this.edges.length - 1
-          }. (Help: Ensure that the index is within the range of existing edges.)`
-        );
-      }
-      if (pos === 'default') {
+      const position = this.resolveLinkPosition(pos);
+      if (position === 'default') {
         this.edges.defaultStyle = style;
       } else {
-        this.edges[pos].style = style;
-        // if edges[pos].style does have fill not set, set it to none
+        this.edges[position].style = style;
+        // if edges[position].style does have fill not set, set it to none
         if (
-          (this.edges[pos]?.style?.length ?? 0) > 0 &&
-          !this.edges[pos]?.style?.some((s) => s?.startsWith('fill'))
+          (this.edges[position]?.style?.length ?? 0) > 0 &&
+          !this.edges[position]?.style?.some((s) => s?.startsWith('fill'))
         ) {
-          this.edges[pos]?.style?.push('fill:none');
+          this.edges[position]?.style?.push('fill:none');
         }
       }
     });
