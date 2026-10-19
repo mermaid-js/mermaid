@@ -105,17 +105,19 @@ const addEdgeMarker = (
     const colorId = strokeColor.replace(/[^\dA-Za-z]/g, '_');
     const coloredMarkerId = `${originalMarkerId}_${colorId}`;
 
+    const markerDocument = svgPath.node()!.ownerDocument;
+
     // Check if the colored marker already exists
-    if (!document.getElementById(coloredMarkerId)) {
+    if (!markerDocument.getElementById(coloredMarkerId)) {
       // Get the original marker
-      const originalMarker = document.getElementById(originalMarkerId);
+      const originalMarker = markerDocument.getElementById(originalMarkerId);
       if (originalMarker) {
         // Clone the marker and create colored version
         const coloredMarker = originalMarker.cloneNode(true) as Element;
         coloredMarker.id = coloredMarkerId;
 
         // Apply colors to the paths inside the marker
-        const paths = coloredMarker.querySelectorAll('path, circle, line');
+        const paths = coloredMarker.querySelectorAll('path, polygon, circle, line');
         paths.forEach((path) => {
           path.setAttribute('stroke', strokeColor);
 
