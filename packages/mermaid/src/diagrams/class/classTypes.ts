@@ -162,10 +162,16 @@ export interface ClassRelation {
   title: string;
   text: string;
   style: string[];
+  /** Ids of the association classes attached to this relation */
+  associationClasses?: string[];
+  /** Edge id (`A rel@-- B`), lets an association class refer to this relation */
+  id?: string;
   relation: {
     type1: number;
     type2: number;
     lineType: number;
+    /** Edge id as parsed, moved to `ClassRelation.id` by `addRelation` */
+    id?: string;
   };
 }
 
