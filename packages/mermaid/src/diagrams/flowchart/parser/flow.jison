@@ -402,8 +402,10 @@ shapeData:
 
 vertexStatement: vertexStatement link node shapeData
         { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    // Same action as the rule above: `spaceList` cannot be empty (spaceList: SPACE spaceList | SPACE),
+    // so making the trailing spaces optional in a single rule would introduce a grammar conflict.
     | vertexStatement link node shapeData spaceList
-        { yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     | vertexStatement link node
         { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |  vertexStatement link node spaceList
@@ -414,7 +416,10 @@ vertexStatement: vertexStatement link node shapeData
         yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
         $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
     }
+    // Same action as `node shapeData`: `spaceList` cannot be empty (spaceList: SPACE spaceList | SPACE),
+    // so making the trailing spaces optional in a single rule would introduce a grammar conflict.
     |node shapeData spaceList {
+        /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
         yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
         $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
     }

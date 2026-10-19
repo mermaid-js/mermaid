@@ -176,6 +176,11 @@ A@{ shape: 'rect' }
       { name: 'diamond node + no space before edge id', graph: 'A{bla}e1@--> B' },
       { name: 'circle node + no space before edge id', graph: 'A((bla))e1@--> B' },
       { name: 'odd node + no space before edge id', graph: 'A>bla]e1@--> B' },
+      { name: 'stadium node + no space before edge id', graph: 'A([bla])e1@--> B' },
+      { name: 'subroutine node + no space before edge id', graph: 'A[[bla]]e1@--> B' },
+      { name: 'cylinder node + no space before edge id', graph: 'A[(bla)]e1@--> B' },
+      { name: 'hexagon node + no space before edge id', graph: 'A{{bla}}e1@--> B' },
+      { name: 'trapezoid node + no space before edge id', graph: 'A[/bla/]e1@--> B' },
     ];
 
     cases.forEach(({ name, graph }) => {
@@ -241,6 +246,23 @@ A@{ shape: 'rect' }
       expect(nodes.length).toBe(1);
       expect(nodes[0].id).toBe('A');
       expect(nodes[0].shape).toBe('circle');
+    });
+
+    // The node bracket characters are excluded from the edge id token on purpose:
+    // that is what keeps `A[bla]e1@--> B` from being read as one single edge id.
+    describe('edge ids may not contain node bracket characters', function () {
+      const invalidIds = [
+        { chars: '[ ]', graph: 'A e[1]@--> B' },
+        { chars: '( )', graph: 'A e(1)@--> B' },
+        { chars: '{ }', graph: 'A e{1}@--> B' },
+        { chars: '|', graph: 'A e|1|@--> B' },
+      ];
+
+      invalidIds.forEach(({ chars, graph }) => {
+        it(`should reject an edge id containing ${chars} [${graph}]`, function () {
+          expect(() => flow.parser.parse(`flowchart TD\n${graph}`)).toThrow();
+        });
+      });
     });
   });
 
