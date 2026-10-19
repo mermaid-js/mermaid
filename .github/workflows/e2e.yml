@@ -645,7 +645,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p e2e/argos-baseline
-          cp -r e2e/sheets/. e2e/argos-baseline/
+          # Sheets are only built when GROUP_ARGOS_IMAGES is 'true'.
+          if [ -d e2e/sheets ]; then cp -r e2e/sheets/. e2e/argos-baseline/; fi
           cp -r e2e/screenshots/. e2e/argos-baseline/
 
           # Round-robin the leaf directories (those that directly hold images)
@@ -684,12 +685,37 @@ jobs:
           ARGOS_SUBSET: true
         run: pnpm run argos:upload-sheets
 
-      # Manual per-screenshot runs (workflow_dispatch with group_argos_images=false).
+      # GROUP_ARGOS_IMAGES is always 'false' (sheets were disabled), so this is
+      # now the only upload path for every scoped PR/merge-queue/manual run —
+      # not just rare manual ones, as the step name once implied. Split into K
+      # parallel uploads sharing one nonce for the same reason the baseline
+      # upload above does: a scoped run's screenshot volume can still exceed
+      # Argos's single-request finalize body limit (HTTP 413, "request entity
+      # too large") when uploaded unsplit.
       - name: Upload individual screenshots to Argos
         if: env.GROUP_ARGOS_IMAGES != 'true'
         env:
           ARGOS_SUBSET: true
-        run: pnpm exec argos upload e2e/screenshots
+          ARGOS_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t groups < <(
+            cd e2e/screenshots &&
+              find . -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) |
+              sed 's#/[^/]*$##' | sort -u | sed 's#^\./##'
+          )
+          K=5
+          for i in $(seq 1 "$K"); do
+            globs=()
+            for j in "${!groups[@]}"; do
+              if [ $(( j % K + 1 )) -eq "$i" ]; then globs+=( "${groups[$j]}/*.{png,jpg,jpeg}" ); fi
+            done
+            [ ${#globs[@]} -eq 0 ] && continue
+            pnpm exec argos upload e2e/screenshots \
+              --files "${globs[@]}" \
+              --parallel --parallel-total "$K" --parallel-index "$i"
+          done
 
   e2e-required:
     if: always()
