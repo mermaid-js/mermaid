@@ -2,7 +2,7 @@ import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
 import { labelHelper, getNodeClasses } from './util.js';
 import { styles2String } from './handDrawnShapeStyles.js';
-import { faceProjectIntersect, positionLabelBelow, reserveBounds } from './bpmnShapeCore.js';
+import { faceProjectIntersect, reserveBounds } from './bpmnShapeCore.js';
 
 export async function bpmnAnnotation<T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -34,7 +34,6 @@ export async function bpmnAnnotation<T extends SVGGraphicsElement>(
         : `M${-width / 2 + 6},${-height / 2} h-6 V${height / 2} h6`
     );
 
-  positionLabelBelow(label, bbox, 0);
   const textLeft = face === 'right' ? -width / 2 + padding : -width / 2 + padding + 6;
   label.attr(
     'transform',
