@@ -744,6 +744,16 @@ You have to call mermaid.initialize.`
       (nodeId) => nodeId !== id
     );
 
+    // A member subgraph that already lists this one, directly or through its own nested
+    // subgraphs, would make the two contain each other, and laying that out never finishes.
+    // This subgraph keeps the member and is dropped from inside it.
+    for (const nodeId of subGraph.nodes) {
+      const member = this.subGraphLookup.get(nodeId);
+      if (member) {
+        this.removeFromDescendants(member, id, new Set());
+      }
+    }
+
     // A repeated id merges its members into the first declaration, which keeps its
     // title, direction and position, so every layout sees a single subgraph.
     const existing = this.subGraphs.find((sg) => sg.id === id);
@@ -756,6 +766,23 @@ You have to call mermaid.initialize.`
     // `view: collapsed` apply whichever declaration they follow.
     this.subGraphLookup.set(id, existing ?? subGraph);
     return id;
+  }
+
+  /**
+   * Remove `id` from the members of `subGraph` and of every subgraph nested in it.
+   */
+  private removeFromDescendants(subGraph: FlowSubGraph, id: string, seen: Set<string>) {
+    if (seen.has(subGraph.id)) {
+      return;
+    }
+    seen.add(subGraph.id);
+    subGraph.nodes = subGraph.nodes.filter((nodeId) => nodeId !== id);
+    for (const nodeId of subGraph.nodes) {
+      const member = this.subGraphLookup.get(nodeId);
+      if (member) {
+        this.removeFromDescendants(member, id, seen);
+      }
+    }
   }
 
   private getPosForId(id: string) {
