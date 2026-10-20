@@ -65,8 +65,10 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
         });
       });
     } else if (node.type === 'strong' || node.type === 'em') {
+      // keep the outer style when bold and italic are nested
+      const type = parentType === 'normal' || parentType === node.type ? node.type : 'strongEm';
       node.tokens.forEach((contentNode) => {
-        processNode(contentNode as MarkedToken, node.type);
+        processNode(contentNode as MarkedToken, type);
       });
     } else if (node.type === 'html') {
       lines[currentLine].push({ content: node.text, type: 'normal' });
