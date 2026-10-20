@@ -1,0 +1,38 @@
+---
+description: >-
+  Broad classDiagram relationship smoke test (inheritance, composition,
+  aggregation, dependency, link, realization, an `&lt;&lt;interface&gt;&gt;`
+  stereotype, visibility markers, and a class body block) forced onto the
+  `dagre` layout engine with a top-level `htmlLabels: true` config key.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  Class01 <|-- AveryLongClass : Cool
+  class Class01 {
+    &lt;&lt;interface&gt;&gt;
+  }
+  Class03 *-- Class04
+  Class05 o-- Class06
+  Class07 .. Class08
+  Class09 --> C2 : Where am i?
+  Class09 --* C3
+  Class09 --|> Class07
+  Class12 <|.. Class08
+  Class11 ..>Class12
+  Class07 : equals()
+  Class07 : Object[] elementData
+  Class01 : size()
+  Class01 : int chimp
+  Class01 : int gorilla
+  Class01 : -int privateChimp
+  Class01 : +int publicGorilla
+  Class01 : #int protectedMarmoset
+  Class08 <--> C2: Cool label
+  class Class10 {
+  &lt;&lt;service&gt;&gt;
+  int id
+  test()
+  }

@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that a self-loop edge (a node pointing back to itself) can carry a
+  text label such as |retry| or |again|, and that the loop and its label render
+  correctly with htmlLabels disabled.
+config:
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+flowchart TD
+  A[Start] -->|retry| A
+  B[Process] -->|again| B
+  A --> B

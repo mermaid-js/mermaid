@@ -1,6 +1,7 @@
 import type { SVGGroup } from '../../../diagram-api/types.js';
 import type { Axis } from './components/axis/index.js';
 import { getAxis } from './components/axis/index.js';
+import type { ChartTitle } from './components/chartTitle.js';
 import { getChartTitleComponent } from './components/chartTitle.js';
 import { getChartLegendComponent } from './components/legend.js';
 import type { Plot } from './components/plot/index.js';
@@ -16,7 +17,7 @@ import { isBarPlot } from './interfaces.js';
 
 export class Orchestrator {
   private componentStore: {
-    title: ChartComponent;
+    title: ChartTitle;
     plot: Plot;
     xAxis: Axis;
     yAxis: Axis;
@@ -112,6 +113,7 @@ export class Orchestrator {
     });
 
     this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
+    this.componentStore.title.alignTo(plotX, plotX + chartWidth);
     this.componentStore.legend.setBoundingBoxXY({
       x: plotX + chartWidth,
       y: plotY + Math.max((chartHeight - legendSpace.height) / 2, 0),
@@ -182,6 +184,7 @@ export class Orchestrator {
     });
 
     this.componentStore.plot.setBoundingBoxXY({ x: plotX, y: plotY });
+    this.componentStore.title.alignTo(plotX, plotX + chartWidth);
     this.componentStore.legend.setBoundingBoxXY({
       x: plotX + chartWidth,
       y: plotY + Math.max((chartHeight - legendSpace.height) / 2, 0),

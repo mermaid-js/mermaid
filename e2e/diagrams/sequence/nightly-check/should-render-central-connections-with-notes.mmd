@@ -1,0 +1,20 @@
+---
+description: >-
+  Classic-look sequence diagram combining central-connection arrows with
+  `Note over` and `Note right of` statements, checking that note placement
+  is unaffected by the `()` central-connection marker on adjacent messages.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice ()->>() Bob: Central connection
+  Note over Alice,Bob: Central connection note
+  Bob ()-->> Charlie: Reverse central connection
+  Note right of Charlie: Response note
+  Charlie ()<<-->>() Alice: Dual central connection

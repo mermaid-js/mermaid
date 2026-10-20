@@ -1,0 +1,22 @@
+---
+description: >-
+  Two named/id'd edges (an association and an include relationship) with a
+  classDef, an inline style statement, and per-edge `animation`/`animate`
+  overrides applied via the `@{...}` edge-property syntax.
+---
+usecase-beta
+    direction LR
+
+    actor Customer
+
+    Checkout
+    Payment
+    Customer opens@-- "starts checkout" ---> Checkout
+    Checkout payment@..> : include Payment
+
+    classDef emphasized stroke:#d33,stroke-width:3px
+    class opens,payment emphasized
+
+    style opens stroke:#06c,stroke-width:4px
+    opens@{ animation: fast }
+    payment@{ animate: false }

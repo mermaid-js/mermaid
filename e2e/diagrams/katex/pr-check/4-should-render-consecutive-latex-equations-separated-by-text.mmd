@@ -1,0 +1,12 @@
+---
+description: >-
+  Flowchart testing a single label containing two separate KaTeX equations
+  separated by plain text ("From $$x(t)$$ to $$y(t)$$"), alongside a
+  simpler single-equation label, to verify multiple consecutive LaTeX
+  expressions render correctly within one node label.
+config:
+  fontFamily: courier
+---
+graph TD
+  A["From $$x(t)$$"] --> B{"$$\tilde{x}(t)$$"};
+  C["From $$x(t)$$ to $$y(t)$$"] --> D{"$$\tilde{x}(t)$$"};

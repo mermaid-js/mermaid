@@ -1,0 +1,12 @@
+---
+description: >-
+  Simplest possible legacy v1 state diagram: a single linear path from the
+  initial state through State1 to the final state, used as a baseline
+  smoke test.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*] --> State1
+  State1 --> [*]
