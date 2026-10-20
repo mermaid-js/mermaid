@@ -1,0 +1,16 @@
+bpmn-beta LR
+  pool "Order handling"
+    lane "Sales"
+      start message s1 "Order received"
+      user task t1 "Approve order"
+      service task t2 "Charge the customer card"
+    lane "Warehouse"
+      service task t3 "Pick items from the shelves"
+      end message e1 "Customer has been notified of shipment"
+  pool "Courier"
+  pool "Supplier"
+  s1 --> t1
+  t1 --> t2
+  t2 --> t3
+  t3 --> e1
+  t1 --> e1

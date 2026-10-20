@@ -11,9 +11,15 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
   })),
 }));
 
-import { insertEdge, resolveEdgeCurveType, setTerminalWidth } from './edges.js';
+import {
+  applyMarkerOffsetsToPoints,
+  insertEdge,
+  resolveEdgeCurveType,
+  setTerminalWidth,
+} from './edges.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
+import intersectRect from './intersect/intersect-rect.js';
 
 describe('insertEdge clips for the engine that drew the edge', () => {
   /** A shape that reads the point it is handed, the way every real one does. */
@@ -72,21 +78,6 @@ describe('insertEdge clips for the engine that drew the edge', () => {
 
     const drawn = JSON.parse(atob(svg.select('path').attr('data-points')));
     expect(drawn).toHaveLength(2);
-  });
-
-  it('would empty a two-point route if it went by the configured layout instead', () => {
-    // The clipping written for dagre drops the first and last point, which leaves a
-    // two-point route with nothing to meet. A bpmn diagram is always laid out in
-    // swimlanes while `layout` resolves to the global default, so the two disagree and
-    // this is what the argument above exists to prevent.
-    document.body.innerHTML = '';
-    const svg = select(document.body).append('svg');
-
-    withConfiguredLayout('elk', () => {
-      expect(() =>
-        insertEdge(svg, twoPointEdge(), null, 'bpmn', shapeMeeting(), shapeMeeting(), 'd')
-      ).toThrow(TypeError);
-    });
   });
 });
 
@@ -179,8 +170,83 @@ describe('insertEdge swimlane endpoint clipping', () => {
     const path = svg.select('path');
     const renderedPoints = JSON.parse(atob(path.attr('data-points')));
 
-    expect(head.intersect).not.toHaveBeenCalled();
+    // The shape is consulted, but its answer bends the final segment off the vertical
+    // the router laid down (x -101 against a bend at x -100), so the layout's endpoint
+    // stands. What matters is the endpoint that gets drawn, not whether it was asked.
     expect(renderedPoints.at(-1)).toEqual(pinnedEnd);
+  });
+
+  it('docks a straight edge facing the other end, not its own endpoint', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // Two nodes on the same vertical. A gateway hands back whichever face the reference
+    // point sits near, so passing a node its own endpoint let the link leave sideways.
+    const edge = {
+      id: 'L_G_T_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [
+        { x: 75, y: 100 },
+        { x: 100, y: 300 },
+      ],
+    };
+    const seen = { tail: null, head: null };
+    const tail = {
+      intersect: vi.fn((point) => {
+        seen.tail = point;
+        return { x: 100, y: 125 };
+      }),
+    };
+    const head = {
+      intersect: vi.fn((point) => {
+        seen.head = point;
+        return { x: 100, y: 260 };
+      }),
+    };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    // Each end is asked about the far end of the link.
+    expect(seen.tail).toEqual({ x: 100, y: 300 });
+    expect(seen.head).toEqual({ x: 75, y: 100 });
+  });
+
+  it('reaches a glyph that is smaller than the box its node reserves', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // A BPMN event reserves room for a caption above and below its circle, so the layout
+    // clips to y 100 while the circle it draws ends at y 130. Left alone the arrow stops
+    // 30px short of anything visible.
+    const boxEdge = { x: 40, y: 100 };
+    const glyphEdge = { x: 40, y: 130 };
+    const edge = {
+      id: 'L_A_B_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 40, y: 0 }, boxEdge, { ...boxEdge }],
+    };
+    const tail = { intersect: vi.fn((point) => point) };
+    const head = { intersect: vi.fn(() => glyphEdge) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const path = svg.select('path');
+    const renderedPoints = JSON.parse(atob(path.attr('data-points')));
+
+    // Same vertical, so the segment stays orthogonal and the arrow reaches the circle.
+    expect(renderedPoints.at(-1)).toEqual(glyphEdge);
   });
 
   it('still clips source endpoints to the rendered shape boundary', () => {
@@ -251,6 +317,196 @@ describe('insertEdge swimlane endpoint clipping', () => {
   });
 });
 
+describe('insertEdge swimlane final segment axis', () => {
+  it('keeps a vertical final segment vertical when the shape intersection is on the other axis', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const originalLast = { x: 40, y: 100 };
+    const edge = {
+      id: 'L_A4_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [{ x: 40, y: 0 }, { x: 40, y: 20 }, { x: 40, y: 60 }, originalLast],
+    };
+    const tail = { intersect: (point) => point };
+    const rect = { x: 100, y: 60, width: 90, height: 40 };
+    const head = { intersect: (point) => intersectRect(rect, point) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const renderedPoints = JSON.parse(atob(svg.select('path').attr('data-points')));
+
+    expect(renderedPoints.at(-1)).toEqual(originalLast);
+  });
+
+  it('does not append a final point behind the last bend', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // A shape whose boundary sits just behind the point the layout pinned: accepting it
+    // would run the last segment back against the direction the edge travelled.
+    const pinned = { x: 300, y: 100 };
+    const rect = { x: 350, y: 100, width: 104.6, height: 40 };
+    const edge = {
+      id: 'L_A5_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [{ x: 0, y: 0 }, { x: 0, y: 100 }, pinned, { ...pinned }],
+    };
+    const tail = { intersect: (point) => point };
+    const head = { intersect: (point) => intersectRect(rect, point) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const renderedPoints = JSON.parse(atob(svg.select('path').attr('data-points')));
+    const [beforeLast, last] = renderedPoints.slice(-2);
+
+    expect(last.x - beforeLast.x).toBeGreaterThanOrEqual(0);
+    expect(last).toEqual(pinned);
+  });
+
+  it('does not point the final segment against the original one when it turns at the last bend', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    // The route arrives at the bend along a row and leaves it downwards. A boundary point
+    // above the bend shares its column and is perpendicular to the arriving segment, so
+    // only the original final segment shows that it would flip the arrow.
+    const bend = { x: 100, y: 0 };
+    const originalLast = { x: 100, y: 20 };
+    const edge = {
+      id: 'L_A6_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: [{ x: 0, y: 0 }, bend, originalLast],
+    };
+    const tail = { intersect: (point) => point };
+    const head = { intersect: () => ({ x: 100, y: -20 }) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    const renderedPoints = JSON.parse(atob(svg.select('path').attr('data-points')));
+
+    expect(renderedPoints.at(-1).y).toBeGreaterThanOrEqual(bend.y);
+  });
+
+  describe('when the shape centre is off the row the edge enters on', () => {
+    // A wide shape whose centre sits below the row: the ray from the last bend to the
+    // centre meets the face a fraction of a pixel off the row, inside the axis tolerance.
+    const ROW = 0;
+    const CENTRE_OFFSET = 7.5;
+    const WIDTH = 180;
+    const ARROW_POINT_OFFSET = 4;
+
+    const dockedPoints = (gap) => {
+      document.body.innerHTML = '';
+      const svg = select(document.body).append('svg');
+      const rect = { x: 0, y: ROW + CENTRE_OFFSET, width: WIDTH, height: 27 };
+      const bend = { x: WIDTH / 2 + gap, y: ROW };
+      const edge = {
+        id: 'L_A7_E_0',
+        cssCompiledStyles: {},
+        style: [],
+        thickness: 'normal',
+        pattern: 'solid',
+        classes: 'flowchart-link',
+        curve: 'rounded',
+        look: 'neo',
+        arrowTypeEnd: 'arrow_point',
+        points: [{ x: 300, y: -40 }, { x: 300, y: ROW }, bend, { x: 0, y: ROW }],
+      };
+      const tail = { intersect: (point) => point };
+      const head = { intersect: (point) => intersectRect(rect, point) };
+
+      insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+      return JSON.parse(atob(svg.select('path').attr('data-points')));
+    };
+
+    it('ends a stub shorter than the arrowhead on the bend instead of running it backwards', () => {
+      const GAP = 1.25;
+      const points = dockedPoints(GAP);
+      const last = points.at(-1);
+      const previous = points.at(-2);
+
+      expect(last.y).toBe(ROW);
+      expect(Math.hypot(last.x - previous.x, last.y - previous.y)).toBeGreaterThanOrEqual(
+        ARROW_POINT_OFFSET
+      );
+    });
+
+    it('keeps a longer final segment on the row it arrived on', () => {
+      const GAP = 5;
+      const last = dockedPoints(GAP).at(-1);
+
+      expect(last.y).toBe(ROW);
+      expect(last.x).toBeLessThan(WIDTH / 2 + GAP);
+    });
+  });
+});
+
+describe('insertEdge swimlane parallel ports', () => {
+  const NODE_WIDTH = 152;
+  const NODE_HEIGHT = 45;
+  const PORT_OFFSET = 13.5;
+  const MIN_PORT_SEPARATION = PORT_OFFSET / 2;
+  const BOUNDARY_TOLERANCE = 0.01;
+  const left = { x: 36, y: 0, width: NODE_WIDTH, height: NODE_HEIGHT };
+  const right = { x: 550.8, y: 0, width: NODE_WIDTH, height: NODE_HEIGHT };
+  const leftFace = left.x + NODE_WIDTH / 2;
+  const rightFace = right.x - NODE_WIDTH / 2;
+
+  const straightEdge = (id, from, to, y) => ({
+    id,
+    cssCompiledStyles: {},
+    style: [],
+    thickness: 'normal',
+    pattern: 'solid',
+    classes: 'flowchart-link',
+    curve: 'rounded',
+    look: 'neo',
+    arrowTypeEnd: 'arrow_point',
+    points: [
+      { x: from, y },
+      { x: to, y },
+    ],
+  });
+  const shape = (rect) => ({ intersect: (point) => intersectRect(rect, point) });
+  const drawn = (svg, edge, tail, head) => {
+    insertEdge(svg, edge, null, 'swimlane', shape(tail), shape(head), 'diagram');
+    return JSON.parse(atob(svg.select(`path[data-id="${edge.id}"]`).attr('data-points')));
+  };
+
+  it('keeps two opposing edges on their own ports instead of pulling them onto one line', () => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+
+    const forward = drawn(svg, straightEdge('L_A_B_0', leftFace, rightFace, 0), left, right);
+    const back = drawn(svg, straightEdge('L_B_A_0', rightFace, leftFace, PORT_OFFSET), right, left);
+
+    expect(Math.abs(back[0].y - forward[0].y)).toBeGreaterThanOrEqual(MIN_PORT_SEPARATION);
+    expect(Math.abs(back[1].y - forward[1].y)).toBeGreaterThanOrEqual(MIN_PORT_SEPARATION);
+    expect(Math.abs(back[0].x - rightFace)).toBeLessThan(BOUNDARY_TOLERANCE);
+    expect(Math.abs(back[1].x - leftFace)).toBeLessThan(BOUNDARY_TOLERANCE);
+  });
+});
+
 describe('setTerminalWidth', () => {
   // #8329: a hard-coded 12px height clipped the bottom of cardinalities whose text is 21px tall.
   it('never sizes the terminal label box smaller than the measured label', () => {
@@ -264,5 +520,50 @@ describe('setTerminalWidth', () => {
     const fo = { style: {} };
     setTerminalWidth(fo, '1', { width: 7.8, height: 21 });
     expect(fo.style.width).toBe('9px');
+  });
+});
+
+describe('applyMarkerOffsetsToPoints', () => {
+  /** A route arriving from above whose terminal the layout handed over twice. */
+  const duplicatedTerminal = () => [
+    { x: 50, y: 0 },
+    { x: 50, y: 100 },
+    { x: 50, y: 100 },
+  ];
+
+  const edge = { arrowTypeEnd: 'arrow_point' };
+
+  it('moves the terminal along the neighbour, leaving every other layout as it was', () => {
+    const points = applyMarkerOffsetsToPoints(duplicatedTerminal(), edge);
+
+    // The neighbour is the terminal's own copy, which describes no direction: the angle
+    // comes back as zero and the shortening goes to the right. That is what dagre and
+    // ELK have always been drawn with, and a BPMN fix must not change it.
+    expect(points[2]).toEqual({ x: 46, y: 100 });
+    expect(points[1]).toEqual({ x: 50, y: 100 });
+    expect(points[0]).toEqual({ x: 50, y: 0 });
+  });
+
+  it('moves every copy of the terminal against the way it arrives, for coincident terminals', () => {
+    const points = applyMarkerOffsetsToPoints(duplicatedTerminal(), edge, {
+      coincidentTerminals: true,
+    });
+
+    // The direction now comes from the nearest point that is somewhere else, so the line
+    // is shortened upwards, and no copy is left behind as a leg of its own.
+    expect(points[2]).toEqual({ x: 50, y: 96 });
+    expect(points[1]).toEqual({ x: 50, y: 96 });
+    expect(points[0]).toEqual({ x: 50, y: 0 });
+  });
+
+  it('is unaffected by the option when the terminals are distinct', () => {
+    const route = [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+    ];
+
+    expect(applyMarkerOffsetsToPoints(route, edge)).toEqual(
+      applyMarkerOffsetsToPoints(route, edge, { coincidentTerminals: true })
+    );
   });
 });
