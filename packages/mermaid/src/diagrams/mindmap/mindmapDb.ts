@@ -158,6 +158,11 @@ export class MindmapDB {
 
     const config = getConfig();
     const node = this.nodes[this.nodes.length - 1];
+    if (!node) {
+      throw new Error(
+        'A mindmap decoration (::icon or :::class) needs a node before it. Put it on the line after the node it belongs to.'
+      );
+    }
     if (decoration.icon) {
       node.icon = sanitizeText(decoration.icon, config);
     }
