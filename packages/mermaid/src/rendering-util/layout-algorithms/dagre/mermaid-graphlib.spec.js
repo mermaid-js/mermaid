@@ -1,6 +1,7 @@
 import * as graphlibJson from 'dagre-d3-es/src/graphlib/json.js';
 import * as graphlib from 'dagre-d3-es/src/graphlib/index.js';
 import {
+  clear,
   validate,
   adjustClustersAndEdges,
   extractDescendants,
@@ -398,6 +399,73 @@ flowchart TB
     // log.trace('Graph after', graphlibJson.write(g))
     expect(aGraph.parent('c')).toBe('B');
     expect(aGraph.parent('B')).toBe(undefined);
+  });
+  it('adjustClustersAndEdges should extract nested clusters linked to each other GLB78', function () {
+    /*
+stateDiagram-v2
+  state Top {
+    state Child1 {
+      A --> B
+    }
+    state Child2 {
+      C --> GrandChild
+      state GrandChild {
+        GreatGrandChild1 --> GreatGrandChild2
+        state GreatGrandChild1 {
+          E --> F
+        }
+        state GreatGrandChild2 {
+          G --> H
+        }
+      }
+    }
+  }
+    */
+    clear();
+    for (const id of [
+      'Top',
+      'Child1',
+      'Child2',
+      'GrandChild',
+      'GreatGrandChild1',
+      'GreatGrandChild2',
+    ]) {
+      g.setNode(id, { id });
+    }
+    for (const id of ['A', 'B', 'C', 'E', 'F', 'G', 'H']) {
+      g.setNode(id, { id });
+    }
+    g.setParent('Child1', 'Top');
+    g.setParent('Child2', 'Top');
+    g.setParent('A', 'Child1');
+    g.setParent('B', 'Child1');
+    g.setParent('C', 'Child2');
+    g.setParent('GrandChild', 'Child2');
+    g.setParent('GreatGrandChild1', 'GrandChild');
+    g.setParent('GreatGrandChild2', 'GrandChild');
+    g.setParent('E', 'GreatGrandChild1');
+    g.setParent('F', 'GreatGrandChild1');
+    g.setParent('G', 'GreatGrandChild2');
+    g.setParent('H', 'GreatGrandChild2');
+    g.setEdge('A', 'B', { data: 'link1' }, '1');
+    g.setEdge('C', 'GrandChild', { data: 'link2' }, '2');
+    g.setEdge('GreatGrandChild1', 'GreatGrandChild2', { data: 'link3' }, '3');
+    g.setEdge('E', 'F', { data: 'link4' }, '4');
+    g.setEdge('G', 'H', { data: 'link5' }, '5');
+
+    adjustClustersAndEdges(g);
+
+    const child2Graph = g.node('Top').graph.node('Child2').graph;
+    const grandChildGraph = child2Graph.node('GrandChild').graph;
+    expect(grandChildGraph.nodes()).toEqual(['GreatGrandChild1', 'GreatGrandChild2']);
+    expect(grandChildGraph.node('GreatGrandChild1').clusterNode).toBe(true);
+    expect(grandChildGraph.node('GreatGrandChild2').clusterNode).toBe(true);
+    expect(grandChildGraph.edges()).toEqual([
+      { v: 'GreatGrandChild1', w: 'GreatGrandChild2', name: '3' },
+    ]);
+    expect(validate(grandChildGraph)).toBe(true);
+    expect(grandChildGraph.node('GreatGrandChild1').graph.nodes()).toEqual(['E', 'F']);
+    expect(grandChildGraph.node('GreatGrandChild2').graph.nodes()).toEqual(['G', 'H']);
   });
 });
 describe('extractDescendants', function () {
