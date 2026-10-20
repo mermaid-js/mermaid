@@ -22,6 +22,10 @@ describe('diagram-orchestration', () => {
       { text: 'swimlane-beta TD;', expected: 'swimlane' },
       { text: 'error', expected: 'error' },
       { text: 'C4Context;', expected: 'c4' },
+      { text: 'C4Container', expected: 'c4' },
+      { text: 'C4Component', expected: 'c4' },
+      { text: 'C4Dynamic', expected: 'c4' },
+      { text: 'C4Deployment', expected: 'c4' },
       { text: 'classDiagram', expected: 'classDiagram' },
       { text: 'classDiagram-v2', expected: 'classDiagram' },
       { text: 'erDiagram', expected: 'er' },
@@ -93,6 +97,17 @@ describe('diagram-orchestration', () => {
         detectType(`pie title: "flowchart"
       flowchart: 1 "pie" pie: 2 "pie"`)
       ).toBe('pie');
+    });
+
+    it('should not detect c4 when other diagrams only mention a C4 keyword', () => {
+      // The C4 detector regex used to match C4Container/C4Component/C4Dynamic/C4Deployment
+      // anywhere in the text, because the `^\s*` anchor only applied to the first
+      // alternative. Diagrams that merely mention these keywords were detected as c4
+      // and failed to render.
+      expect(detectType('flowchart LR\n  a[Web app] --> b[C4Container view]')).toBe('flowchart-v2');
+      expect(detectType('sequenceDiagram\n  A->>B: draw the C4Deployment diagram')).toBe(
+        'sequence'
+      );
     });
   });
 });
