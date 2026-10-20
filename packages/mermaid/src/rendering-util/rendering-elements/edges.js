@@ -663,7 +663,7 @@ export const insertEdge = function (
     // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
     // clipping below, so their edge ports are unaffected by swimlanes.
     if (
-      skipIntersect &&
+      !skipIntersect &&
       head.intersect &&
       tail.intersect &&
       Array.isArray(points) &&
