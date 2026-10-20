@@ -117,6 +117,9 @@ individual labels.
 
 As a final fallback, an edge can pass through another edge's label rather than failing the whole diagram. Node, group, title, marker-clearance, and own-label-anchor checks still apply.
 
+Very wide labels crossed by many edges can still cause routes to bend close to their source or
+target nodes, even when label avoidance succeeds.
+
 ## Edge curves
 
 The orthogonal points are the calculated route. `grid.curve` controls how the shared renderer draws those points:
