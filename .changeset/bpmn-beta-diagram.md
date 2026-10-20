@@ -25,6 +25,7 @@ bpmn-beta LR
 - The five gateways, the seven task types, sub-processes and call activities.
 - Sequence, labelled and message flows, the last with its own edge markers.
 - Data objects, data stores, text annotations and groups.
+- A note stands beside, and a line lands on, the gateway or event a reader sees, not the larger box reserved around its caption.
 - A `bpmn` config namespace for spacing, and a `themeVariables.bpmn` block covering every colour the notation paints with.
 
 The diagram is beta: the syntax may still change before it is declared stable.

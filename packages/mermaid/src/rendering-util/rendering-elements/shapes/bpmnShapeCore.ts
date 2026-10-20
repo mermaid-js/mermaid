@@ -1,7 +1,7 @@
 import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
 import { updateNodeBounds } from './util.js';
-import { getIconSVG, registerIconPacks } from '../../icons.js';
+import { getIconSVG, isIconPackRegistered, registerIconPacks } from '../../icons.js';
 
 export const EVENT_DIAMETER = 36;
 export const GATEWAY_SIZE = 50;
@@ -25,6 +25,9 @@ let iconsRegistered: Promise<void> | undefined;
 
 export async function ensureBpmnIcons(): Promise<void> {
   iconsRegistered ??= import('./bpmnIcons.js').then(({ bpmnIcons }) => {
+    if (isIconPackRegistered(bpmnIcons.prefix)) {
+      return;
+    }
     registerIconPacks([{ name: bpmnIcons.prefix, icons: bpmnIcons }]);
   });
   return iconsRegistered;
