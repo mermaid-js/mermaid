@@ -740,4 +740,56 @@ describe('Raykov orthogonal router (algo-op.md)', () => {
       expect(hitObstacle).toBe(false);
     });
   });
+
+  describe('Port spreading on a shape drawn smaller than its box', () => {
+    it('keeps every spread port on the drawn side', () => {
+      // A 36px circle drawn in a 100x120 layout box, entered by three edges from the left.
+      const drawnSide = 36;
+      const target = mkNode('T', 400, 150, { width: 100, height: 120 });
+      const withDrawnExtent = {
+        ...target,
+        metadata: { drawnExtent: { width: drawnSide, height: drawnSide } },
+      };
+      const sources = [100, 150, 200].map((y, i) => mkNode(`S${i}`, 100, y));
+      const edges = sources.map((s, i) => mkEdge(`e${i}`, s.id, 'T'));
+      const data: TestLayout = {
+        nodes: [...sources, withDrawnExtent],
+        edges,
+        config: {},
+      };
+
+      routeEdgesOrthogonal(data as unknown as LayoutData);
+
+      for (const edge of edges) {
+        const end = edge.points![edge.points!.length - 1];
+        expect(Math.abs(end.y - target.y)).toBeLessThanOrEqual(drawnSide / 2);
+      }
+    });
+
+    it.each([6, 7])('keeps %i ports on a 36px side and distinct', (count) => {
+      const drawnSide = 36;
+      const target = mkNode('T', 400, 300, { width: 100, height: 120 });
+      const withDrawnExtent = {
+        ...target,
+        metadata: { drawnExtent: { width: drawnSide, height: drawnSide } },
+      };
+      const sources = Array.from({ length: count }, (_, i) =>
+        mkNode(`S${i}`, 0, target.y + (i - (count - 1) / 2) * 12, { width: 20, height: 10 })
+      );
+      const edges = sources.map((s, i) => mkEdge(`e${i}`, s.id, 'T'));
+      const data: TestLayout = {
+        nodes: [...sources, withDrawnExtent],
+        edges,
+        config: {},
+      };
+
+      routeEdgesOrthogonal(data as unknown as LayoutData);
+
+      const ends = edges.map((edge) => edge.points![edge.points!.length - 1].y);
+      for (const y of ends) {
+        expect(Math.abs(y - target.y)).toBeLessThanOrEqual(drawnSide / 2);
+      }
+      expect(new Set(ends.map((y) => y.toFixed(3))).size).toBe(count);
+    });
+  });
 });

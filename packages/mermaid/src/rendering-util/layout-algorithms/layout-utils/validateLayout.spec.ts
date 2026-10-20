@@ -20,6 +20,10 @@ function mkEdge(
   return { id, start, end, type: 'arrow', points } as any;
 }
 
+function anchored(id: string, hostId: string, x: number, y: number): Node {
+  return { ...mkNode(id, x, y, 20, 20), metadata: { anchorTo: { hostId } } } as any;
+}
+
 function getIssueTypes(layout: LayoutData): string[] {
   const res = validateLayout(layout);
   return res.issues.map((i) => i.type);
@@ -656,6 +660,31 @@ describe('validateLayout new geometric issues', () => {
 
     const types = getIssueTypes(layout);
     expect(types).toContain('node-border-hugging');
+  });
+
+  it('does NOT flag node-overlap for a node pinned to its host border', () => {
+    // An anchored node is drawn centred on the border it names, so it always covers
+    // part of its host. That is the notation, not a layout fault.
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), anchored('b', 'h', 20, -10)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(getIssueTypes(layout)).not.toContain('node-overlap');
+  });
+
+  it('does NOT flag node-overlap for a node pinned through a chain of anchors', () => {
+    // `b2` names `b1` as its host, but `b1` is itself anchored, so the pinning puts
+    // `b2` on `h` - the same border its chain resolves to. The exemption has to follow
+    // the same chain or it reports the overlap the pinning just created.
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), anchored('b1', 'h', 20, -10), anchored('b2', 'b1', 20, 14)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(getIssueTypes(layout)).not.toContain('node-overlap');
   });
 
   it('flags edge-label-off-edge when a labelled edge polyline does not cross its own label node', () => {
