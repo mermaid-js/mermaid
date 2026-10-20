@@ -151,4 +151,18 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
+
+  it('should keep lines starting with %% inside a multi-line node label', function () {
+    flow.parser.parse(
+      cleanupComments('graph\n  a---b["first line\n  %% second line\n  third line"]\n%% Comment')
+    );
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert.get('b').text).toBe('first line\n  %% second line\n  third line');
+    expect(edges.length).toBe(1);
+    expect(edges[0].start).toBe('a');
+    expect(edges[0].end).toBe('b');
+  });
 });
