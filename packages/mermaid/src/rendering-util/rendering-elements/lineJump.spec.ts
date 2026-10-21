@@ -756,13 +756,13 @@ describe('lineJump', () => {
         'style',
         'stroke-dasharray: 0 9 42 9; stroke-dashoffset: 0; stroke: #000;stroke-dasharray: 5 5;'
       );
-      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 60;
+      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 70;
 
       applyLineJumpsToSvg(group, edges, ARC_CONFIG);
 
       const style = horizPath.getAttribute('style');
       expect(style).toMatch(/stroke-dasharray:\s*5 5/);
-      expect(style).toMatch(/stroke-dasharray:\s*0 9 \d+ 9/);
+      expect(style).toMatch(/stroke-dasharray:\s*0 9 52 9/);
     });
 
     it('does nothing when disabled', () => {
