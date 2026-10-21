@@ -177,6 +177,12 @@ describe('when parsing directions', function () {
 
     expect(flow.parser.yy.getTooltip('A')).toEqual('123');
   });
+  it('should keep a zero tooltip', function () {
+    const res = flow.parser.parse(`flowchart LR
+      A@{ tooltip: 0 } --> B`);
+
+    expect(flow.parser.yy.getTooltip('A')).toEqual('0');
+  });
 
   it('should sanitize tooltip metadata the same as click tooltips', function () {
     const res = flow.parser.parse(`flowchart LR
