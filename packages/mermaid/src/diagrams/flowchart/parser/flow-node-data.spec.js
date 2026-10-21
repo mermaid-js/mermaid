@@ -409,6 +409,11 @@ describe('when parsing directions', function () {
       'a@{ shape: circle, label: "Node label" } --> b',
       'b --> a@{ shape: circle, label: "Node label" }',
       'a & b --> C',
+      'a:::animated --> b',
+      'b --> a:::animated',
+      'a@{} --> b',
+      'b --> a@{ animate: true }',
+      'a@{ animate: true } & b --> C',
       'a',
     ])('should create a node for %s after declaring a same-named edge', (statement) => {
       flow.parser.parse(`flowchart LR
@@ -428,6 +433,10 @@ describe('when parsing directions', function () {
       if (statement.includes('shape: circle')) {
         expect(vertices.get('a')).toMatchObject({ text: 'Node label', type: 'circle' });
       }
+      if (statement.includes(':::animated')) {
+        expect(vertices.get('a').classes).toContain('animated');
+      }
+      expect(flow.parser.yy.getEdges()[0].animate).toBeUndefined();
     });
 
     it('should keep a node declared before a same-named edge', () => {
@@ -500,6 +509,48 @@ describe('when parsing directions', function () {
         animate: true,
         classes: ['animated'],
       });
+    });
+
+    it('should apply class-only edge statements without creating a node', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B
+        e1:::animated
+      `);
+
+      expect([...flow.parser.yy.getVertices().keys()]).toEqual(['A', 'B']);
+      expect(flow.parser.yy.getEdges()[0].classes).toEqual(['animated']);
+    });
+
+    it('should preserve explicit same-named nodes when applying classes', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B
+        e1[Node label]:::highlight
+        e1:::animated
+      `);
+
+      expect(flow.parser.yy.getVertices().get('e1')).toMatchObject({
+        text: 'Node label',
+        classes: ['highlight', 'animated'],
+      });
+      expect(flow.parser.yy.getEdges()[0].classes).toEqual(['highlight', 'animated']);
+    });
+
+    it('should preserve node and edge registration order in a chain', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B --> e1[Node label]:::highlight --> A@{ label: "Updated A" }
+        style B fill:red
+      `);
+
+      const vertices = flow.parser.yy.getVertices();
+      expect([...vertices.keys()]).toEqual(['A', 'B', 'e1']);
+      expect(vertices.get('A').text).toBe('Updated A');
+      expect(vertices.get('B').styles).toEqual(['fill:red']);
+      expect(vertices.get('e1')).toMatchObject({
+        text: 'Node label',
+        type: 'square',
+        classes: ['highlight'],
+      });
+      expect(flow.parser.yy.getEdges()[0].classes).toEqual(['highlight']);
     });
 
     it('should preserve node labels, shapes and classes with grouped metadata', () => {

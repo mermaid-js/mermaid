@@ -366,7 +366,19 @@ spaceList
 
 statement
     : vertexStatement separator
-    { $$=$vertexStatement.nodes}
+    {
+        const isNode = $vertexStatement.links.length > 0 || $vertexStatement.vertices.length > 1;
+        const registerVertices = (vertices) => vertices.forEach((vertex) => {
+            yy.addVertex(vertex.id, vertex.text, vertex.type, undefined, undefined, undefined, vertex.props, vertex.metadata, isNode ? 'node' : vertex.className ? 'class' : undefined);
+            if (vertex.className) yy.setClass(vertex.id, vertex.className);
+        });
+        registerVertices($vertexStatement.vertices);
+        $vertexStatement.links.forEach((link) => {
+            registerVertices(link.vertices);
+            yy.addLink(link.start, link.end, link.data);
+        });
+        $$ = $vertexStatement.nodes;
+    }
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -401,11 +413,11 @@ shapeData:
     ;
 
 vertexStatement: vertexStatement link node
-        { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+        { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids.concat($vertexStatement.nodes), vertices: $vertexStatement.vertices, links: $vertexStatement.links.concat({ start: $vertexStatement.stmt, end: ids, data: $link, vertices: $node }) }; }
     |  vertexStatement link node spaceList
-        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
-    |node { /* console.warn('vertexStatement: single node', $node); */ $$ = {stmt: $node, nodes:$node }}
+        { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids.concat($vertexStatement.nodes), vertices: $vertexStatement.vertices, links: $vertexStatement.links.concat({ start: $vertexStatement.stmt, end: ids, data: $link, vertices: $node }) }; }
+    |node spaceList { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids, vertices: $node, links: [] }; }
+    |node { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids, vertices: $node, links: [] }; }
     ;
 
 node: styledVertex
@@ -414,16 +426,16 @@ node: styledVertex
         { $$ = $node.concat($styledVertex); /*console.warn('pip', $node[0], $styledVertex, $$);*/  }
     ;
 
-// Register a vertex only after its optional metadata has been parsed. In particular,
-// an edge metadata statement must not first create a bare node with the edge's ID.
+// Keep the parsed descriptor until the whole statement identifies whether it is
+// a link endpoint, a standalone node, or an edge metadata/class reference.
 styledVertex: vertex
-        { $$ = $vertex.id; yy.addVertex($$, $vertex.text, $vertex.type, undefined, undefined, undefined, $vertex.props); }
+        { $$ = $vertex; }
     | vertex shapeData
-        { $$ = $vertex.id; yy.addVertex($$, $vertex.text, $vertex.type, undefined, undefined, undefined, $vertex.props, $shapeData); }
+        { $$ = { ...$vertex, metadata: $shapeData }; }
     | vertex STYLE_SEPARATOR idString
-        { $$ = $vertex.id; yy.addVertex($$, $vertex.text, $vertex.type, undefined, undefined, undefined, $vertex.props); yy.setClass($$, $idString); }
+        { $$ = { ...$vertex, className: $idString }; }
     | vertex STYLE_SEPARATOR idString shapeData
-        { $$ = $vertex.id; yy.addVertex($$, $vertex.text, $vertex.type, undefined, undefined, undefined, $vertex.props, $shapeData); yy.setClass($$, $idString); }
+        { $$ = { ...$vertex, className: $idString, metadata: $shapeData }; }
     ;
 
 vertex:  idString SQS text SQE
