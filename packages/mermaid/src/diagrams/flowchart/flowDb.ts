@@ -132,7 +132,8 @@ export class FlowDB implements DiagramDB {
     classes: string[],
     dir: string,
     props = {},
-    metadata: any
+    metadata: any,
+    context?: 'node' | 'class'
   ) {
     if (!id || id.trim().length === 0) {
       return;
@@ -160,9 +161,23 @@ export class FlowDB implements DiagramDB {
       return;
     }
 
-    // Check if this is an edge
+    // Node metadata uses different properties from edge metadata, so an explicit
+    // node definition must not be swallowed by a same-named edge.
+    const isNodeDefinition =
+      type !== undefined ||
+      (doc &&
+        ['shape', 'label', 'labelType', 'icon', 'form', 'pos', 'img', 'constraint', 'w', 'h'].some(
+          (key) => Object.hasOwn(doc, key)
+        ));
+    // Link endpoints always refer to nodes, even with empty or edge metadata.
+    // Standalone metadata and class statements may instead refer to an edge.
     const edge = this.edges.find((e) => e.id === id);
-    if (edge) {
+    if (
+      edge &&
+      context !== 'node' &&
+      (metadata !== undefined || context === 'class') &&
+      !isNodeDefinition
+    ) {
       const edgeDoc = doc as EdgeMetaData;
       if (edgeDoc?.animate !== undefined) {
         edge.animate = edgeDoc.animate;

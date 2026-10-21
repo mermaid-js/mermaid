@@ -1,0 +1,13 @@
+---
+description: >-
+  Renders nodes sharing named-edge IDs, including empty endpoint metadata,
+  while a class-only named-edge statement does not add a node.
+---
+flowchart LR
+  A[bla] a@--> B
+  a --> b
+  C e1@--> D
+  e1:::highlight
+  A empty@--> C
+  empty@{} --> b
+  classDef highlight stroke:#000,stroke-width:3px

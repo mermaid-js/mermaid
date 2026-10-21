@@ -366,7 +366,19 @@ spaceList
 
 statement
     : vertexStatement separator
-    { $$=$vertexStatement.nodes}
+    {
+        const isNode = $vertexStatement.links.length > 0 || $vertexStatement.vertices.length > 1;
+        const registerVertices = (vertices) => vertices.forEach((vertex) => {
+            yy.addVertex(vertex.id, vertex.text, vertex.type, undefined, undefined, undefined, vertex.props, vertex.metadata, isNode ? 'node' : vertex.className ? 'class' : undefined);
+            if (vertex.className) yy.setClass(vertex.id, vertex.className);
+        });
+        registerVertices($vertexStatement.vertices);
+        $vertexStatement.links.forEach((link) => {
+            registerVertices(link.vertices);
+            yy.addLink(link.start, link.end, link.data);
+        });
+        $$ = $vertexStatement.nodes;
+    }
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -400,80 +412,66 @@ shapeData:
     { $$ = $1; }
     ;
 
-vertexStatement: vertexStatement link node shapeData
-        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    // Same action as the rule above: `spaceList` cannot be empty (spaceList: SPACE spaceList | SPACE),
-    // so making the trailing spaces optional in a single rule would introduce a grammar conflict.
-    | vertexStatement link node shapeData spaceList
-        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    | vertexStatement link node
-        { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+vertexStatement: vertexStatement link node
+        { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids.concat($vertexStatement.nodes), vertices: $vertexStatement.vertices, links: $vertexStatement.links.concat({ start: $vertexStatement.stmt, end: ids, data: $link, vertices: $node }) }; }
     |  vertexStatement link node spaceList
-        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
-    |node shapeData {
-        /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
-        yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
-        $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
-    }
-    // Same action as `node shapeData`: `spaceList` cannot be empty (spaceList: SPACE spaceList | SPACE),
-    // so making the trailing spaces optional in a single rule would introduce a grammar conflict.
-    |node shapeData spaceList {
-        /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
-        yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData);
-        $$ = {stmt: $node, nodes:$node, shapeData: $shapeData}
-    }
-    |node { /* console.warn('vertexStatement: single node', $node); */ $$ = {stmt: $node, nodes:$node }}
+        { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids.concat($vertexStatement.nodes), vertices: $vertexStatement.vertices, links: $vertexStatement.links.concat({ start: $vertexStatement.stmt, end: ids, data: $link, vertices: $node }) }; }
+    |node spaceList { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids, vertices: $node, links: [] }; }
+    |node { var ids = $node.map((vertex) => vertex.id); $$ = { stmt: ids, nodes: ids, vertices: $node, links: [] }; }
     ;
 
 node: styledVertex
         { /*console.warn('nod', $styledVertex);*/ $$ = [$styledVertex];}
-    | node shapeData spaceList AMP spaceList styledVertex
-        {  yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); $$ = $node.concat($styledVertex); /*console.warn('pip2', $node[0], $styledVertex, $$);*/  }
     | node spaceList AMP spaceList styledVertex
         { $$ = $node.concat($styledVertex); /*console.warn('pip', $node[0], $styledVertex, $$);*/  }
     ;
 
+// Keep the parsed descriptor until the whole statement identifies whether it is
+// a link endpoint, a standalone node, or an edge metadata/class reference.
 styledVertex: vertex
-        { /* console.warn('nodc', $vertex);*/ $$ = $vertex;}
+        { $$ = $vertex; }
+    | vertex shapeData
+        { $$ = { ...$vertex, metadata: $shapeData }; }
     | vertex STYLE_SEPARATOR idString
-        {$$ = $vertex;yy.setClass($vertex,$idString)}
+        { $$ = { ...$vertex, className: $idString }; }
+    | vertex STYLE_SEPARATOR idString shapeData
+        { $$ = { ...$vertex, className: $idString, metadata: $shapeData }; }
     ;
 
 vertex:  idString SQS text SQE
-        {$$ = $idString;yy.addVertex($idString,$text,'square');}
+        { $$ = { id: $idString, text: $text, type: 'square' }; }
     | idString DOUBLECIRCLESTART text DOUBLECIRCLEEND
-        {$$ = $idString;yy.addVertex($idString,$text,'doublecircle');}
+        { $$ = { id: $idString, text: $text, type: 'doublecircle' }; }
     | idString PS PS text PE PE
-        {$$ = $idString;yy.addVertex($idString,$text,'circle');}
+        { $$ = { id: $idString, text: $text, type: 'circle' }; }
     | idString '(-' text '-)'
-        {$$ = $idString;yy.addVertex($idString,$text,'ellipse');}
+        { $$ = { id: $idString, text: $text, type: 'ellipse' }; }
     | idString STADIUMSTART text STADIUMEND
-        {$$ = $idString;yy.addVertex($idString,$text,'stadium');}
+        { $$ = { id: $idString, text: $text, type: 'stadium' }; }
     | idString SUBROUTINESTART text SUBROUTINEEND
-        {$$ = $idString;yy.addVertex($idString,$text,'subroutine');}
+        { $$ = { id: $idString, text: $text, type: 'subroutine' }; }
     | idString VERTEX_WITH_PROPS_START NODE_STRING\[field] COLON NODE_STRING\[value] PIPE text SQE
-        {$$ = $idString;yy.addVertex($idString,$text,'rect',undefined,undefined,undefined, Object.fromEntries([[$field, $value]]));}
+        { $$ = { id: $idString, text: $text, type: 'rect', props: Object.fromEntries([[$field, $value]]) }; }
     | idString CYLINDERSTART text CYLINDEREND
-        {$$ = $idString;yy.addVertex($idString,$text,'cylinder');}
+        { $$ = { id: $idString, text: $text, type: 'cylinder' }; }
     | idString PS text PE
-        {$$ = $idString;yy.addVertex($idString,$text,'round');}
+        { $$ = { id: $idString, text: $text, type: 'round' }; }
     | idString DIAMOND_START text DIAMOND_STOP
-        {$$ = $idString;yy.addVertex($idString,$text,'diamond');}
+        { $$ = { id: $idString, text: $text, type: 'diamond' }; }
     | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP
-        {$$ = $idString;yy.addVertex($idString,$text,'hexagon');}
+        { $$ = { id: $idString, text: $text, type: 'hexagon' }; }
     | idString TAGEND text SQE
-        {$$ = $idString;yy.addVertex($idString,$text,'odd');}
+        { $$ = { id: $idString, text: $text, type: 'odd' }; }
     | idString TRAPSTART text TRAPEND
-        {$$ = $idString;yy.addVertex($idString,$text,'trapezoid');}
+        { $$ = { id: $idString, text: $text, type: 'trapezoid' }; }
     | idString INVTRAPSTART text INVTRAPEND
-        {$$ = $idString;yy.addVertex($idString,$text,'inv_trapezoid');}
+        { $$ = { id: $idString, text: $text, type: 'inv_trapezoid' }; }
     | idString TRAPSTART text INVTRAPEND
-        {$$ = $idString;yy.addVertex($idString,$text,'lean_right');}
+        { $$ = { id: $idString, text: $text, type: 'lean_right' }; }
     | idString INVTRAPSTART text TRAPEND
-        {$$ = $idString;yy.addVertex($idString,$text,'lean_left');}
+        { $$ = { id: $idString, text: $text, type: 'lean_left' }; }
     | idString
-        { /*console.warn('h: ', $idString);*/$$ = $idString;yy.addVertex($idString);}
+        { $$ = { id: $idString }; }
     ;
 
 

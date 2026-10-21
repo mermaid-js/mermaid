@@ -400,6 +400,176 @@ describe('when parsing directions', function () {
     expect(data4Layout.edges[2].animate).toEqual(false);
   });
 
+  describe('node and edge ID collisions', () => {
+    it.each([
+      'a --> b',
+      'b --> a',
+      'a[Node label] --> b',
+      'a[Node label]@{} --> b',
+      'a@{ shape: circle, label: "Node label" } --> b',
+      'b --> a@{ shape: circle, label: "Node label" }',
+      'a & b --> C',
+      'a:::animated --> b',
+      'b --> a:::animated',
+      'a@{} --> b',
+      'b --> a@{ animate: true }',
+      'a@{ animate: true } & b --> C',
+      'a',
+    ])('should create a node for %s after declaring a same-named edge', (statement) => {
+      flow.parser.parse(`flowchart LR
+        A[bla] a@--> B
+        ${statement}
+      `);
+
+      const vertices = flow.parser.yy.getVertices();
+      expect(vertices.has('a')).toBe(true);
+      for (const edge of flow.parser.yy.getEdges()) {
+        expect(vertices.has(edge.start)).toBe(true);
+        expect(vertices.has(edge.end)).toBe(true);
+      }
+      if (statement.includes('[Node label]')) {
+        expect(vertices.get('a').text).toBe('Node label');
+      }
+      if (statement.includes('shape: circle')) {
+        expect(vertices.get('a')).toMatchObject({ text: 'Node label', type: 'circle' });
+      }
+      if (statement.includes(':::animated')) {
+        expect(vertices.get('a').classes).toContain('animated');
+      }
+      expect(flow.parser.yy.getEdges()[0].animate).toBeUndefined();
+    });
+
+    it('should keep a node declared before a same-named edge', () => {
+      flow.parser.parse(`flowchart LR
+        a[Node label] --> b
+        A a@--> B
+        a --> C
+      `);
+
+      expect([...flow.parser.yy.getVertices().keys()]).toEqual(['a', 'b', 'A', 'B', 'C']);
+      expect(flow.parser.yy.getVertices().get('a').text).toBe('Node label');
+      expect(flow.parser.yy.getEdges()[1].id).toBe('a');
+    });
+
+    it('should apply edge metadata without creating a node for the edge ID', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B
+        e1@{ animate: true, animation: fast, curve: basis }
+        e1@{ animate: false }
+      `);
+
+      const data = flow.parser.yy.getData();
+      expect(data.nodes.map((node) => node.id)).toEqual(['A', 'B']);
+      expect(data.edges).toHaveLength(1);
+      expect(data.edges[0]).toMatchObject({
+        id: 'e1',
+        animate: false,
+        animation: 'fast',
+        curve: 'basis',
+      });
+    });
+
+    it('should configure an edge while preserving a same-named node', () => {
+      flow.parser.parse(`flowchart LR
+        A a@--> B
+        a[Node label] --> b
+        a@{ animate: true, animation: slow, curve: stepBefore }
+      `);
+
+      const data = flow.parser.yy.getData();
+      expect(data.nodes.map((node) => node.id)).toEqual(['A', 'B', 'a', 'b']);
+      expect(data.nodes.find((node) => node.id === 'a').label).toBe('Node label');
+      expect(data.edges[0]).toMatchObject({
+        id: 'a',
+        animate: true,
+        animation: 'slow',
+        curve: 'stepBefore',
+      });
+    });
+
+    it('should keep empty edge metadata from creating a node', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B
+        e1@{}
+      `);
+
+      expect([...flow.parser.yy.getVertices().keys()]).toEqual(['A', 'B']);
+      expect(flow.parser.yy.getEdges()[0].id).toBe('e1');
+    });
+
+    it('should preserve edge classes with metadata without creating a node', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B
+        e1:::animated@{ animate: true }
+      `);
+
+      expect([...flow.parser.yy.getVertices().keys()]).toEqual(['A', 'B']);
+      expect(flow.parser.yy.getEdges()[0]).toMatchObject({
+        id: 'e1',
+        animate: true,
+        classes: ['animated'],
+      });
+    });
+
+    it('should apply class-only edge statements without creating a node', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B
+        e1:::animated
+      `);
+
+      expect([...flow.parser.yy.getVertices().keys()]).toEqual(['A', 'B']);
+      expect(flow.parser.yy.getEdges()[0].classes).toEqual(['animated']);
+    });
+
+    it('should preserve explicit same-named nodes when applying classes', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B
+        e1[Node label]:::highlight
+        e1:::animated
+      `);
+
+      expect(flow.parser.yy.getVertices().get('e1')).toMatchObject({
+        text: 'Node label',
+        classes: ['highlight', 'animated'],
+      });
+      expect(flow.parser.yy.getEdges()[0].classes).toEqual(['highlight', 'animated']);
+    });
+
+    it('should preserve node and edge registration order in a chain', () => {
+      flow.parser.parse(`flowchart LR
+        A e1@--> B --> e1[Node label]:::highlight --> A@{ label: "Updated A" }
+        style B fill:red
+      `);
+
+      const vertices = flow.parser.yy.getVertices();
+      expect([...vertices.keys()]).toEqual(['A', 'B', 'e1']);
+      expect(vertices.get('A').text).toBe('Updated A');
+      expect(vertices.get('B').styles).toEqual(['fill:red']);
+      expect(vertices.get('e1')).toMatchObject({
+        text: 'Node label',
+        type: 'square',
+        classes: ['highlight'],
+      });
+      expect(flow.parser.yy.getEdges()[0].classes).toEqual(['highlight']);
+    });
+
+    it('should preserve node labels, shapes and classes with grouped metadata', () => {
+      flow.parser.parse(`flowchart LR
+        A[Original]:::highlight@{ shape: circle } & B@{ label: "Node B" } --> C
+      `);
+
+      const vertices = flow.parser.yy.getVertices();
+      expect([...vertices.keys()]).toEqual(['A', 'B', 'C']);
+      expect(vertices.get('A')).toMatchObject({
+        text: 'Original',
+        type: 'circle',
+        classes: ['highlight'],
+      });
+      expect(vertices.get('B').text).toBe('Node B');
+      expect(flow.parser.yy.getEdges()).toHaveLength(2);
+    });
+  });
+
   it.skip('should be possible to use @  syntax to add labels with trail spaces', function () {
     const res = flow.parser.parse(
       `flowchart TB
