@@ -273,6 +273,9 @@ export class FlowDB implements DiagramDB {
       if (doc.h) {
         vertex.assetHeight = Number(doc.h);
       }
+      if (doc.tooltip) {
+        this.setTooltip(id, String(doc.tooltip));
+      }
     }
   }
 

@@ -144,6 +144,56 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].shape).toEqual('rounded');
     expect(data4Layout.nodes[0].label).toEqual('DD');
   });
+
+  it('should store tooltip metadata on a node', function () {
+    const res = flow.parser.parse(`flowchart LR
+      A@{ tooltip: "Some text" } --> B`);
+
+    expect(flow.parser.yy.getTooltip('A')).toEqual('Some text');
+    expect(flow.parser.yy.getData().nodes[0].tooltip).toEqual('Some text');
+  });
+
+  it('should combine tooltip metadata with other node metadata', function () {
+    const res = flow.parser.parse(`flowchart LR
+      B@{ shape: circle, tooltip: "Round" } --> C`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes[0].shape).toEqual('circle');
+    expect(data4Layout.nodes[0].tooltip).toEqual('Round');
+    expect(flow.parser.yy.getTooltip('B')).toEqual('Round');
+  });
+
+  it('should leave tooltip undefined when node metadata omits it', function () {
+    const res = flow.parser.parse(`flowchart LR
+      A --> B`);
+
+    expect(flow.parser.yy.getTooltip('A')).toBeUndefined();
+    expect(flow.parser.yy.getData().nodes[0].tooltip).toBeUndefined();
+  });
+
+  it('should convert a numeric tooltip to a string', function () {
+    const res = flow.parser.parse(`flowchart LR
+      A@{ tooltip: 123 } --> B`);
+
+    expect(flow.parser.yy.getTooltip('A')).toEqual('123');
+  });
+
+  it('should sanitize tooltip metadata the same as click tooltips', function () {
+    const res = flow.parser.parse(`flowchart LR
+      A@{ tooltip: "<script>alert(1)</script> safe" } --> B`);
+
+    expect(flow.parser.yy.getTooltip('A')).toContain('safe');
+    expect(flow.parser.yy.getTooltip('A')).not.toContain('<script>');
+  });
+
+  it('should keep existing click tooltip behavior unchanged', function () {
+    const res = flow.parser.parse(`flowchart LR
+      A --> B
+      click A callback "tooltip"`);
+
+    expect(flow.parser.yy.getTooltip('A')).toEqual('tooltip');
+  });
+
   it('should be possible to link to a node with more data', function () {
     const res = flow.parser.parse(`flowchart TB
       A --> D@{

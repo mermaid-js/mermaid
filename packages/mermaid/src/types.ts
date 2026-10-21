@@ -13,6 +13,10 @@ export interface NodeMetaData {
   ticket?: string;
   labelType?: string;
   /**
+   * Tooltip text shown when hovering over the node.
+   */
+  tooltip?: string;
+  /**
    * Expand/collapse state for subgraphs (flowchart). `collapsed` draws the
    * subgraph as a single compact node and redirects boundary-crossing edges
    * to it; `expanded` (the default) renders the subgraph normally.
