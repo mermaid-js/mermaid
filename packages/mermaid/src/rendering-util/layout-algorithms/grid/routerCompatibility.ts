@@ -1074,6 +1074,7 @@ function prepareRoutingModes(
   };
   const compatibilityFastRoutes = new Map<string, Point[]>();
   const routeOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
+  const overlapDemotionEnabled = plans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION;
   const compatibilityFastPathEnabled =
     options.topologyCaps === undefined &&
     options.searchCaps === undefined &&
@@ -1139,7 +1140,7 @@ function prepareRoutingModes(
       routeOccupancy.set(plan.lcaContainerId, occupancy);
     }
     const conflicting = occupancy.conflictsWithRoute(normalized.points, plan.pairKey);
-    if (conflicting && eligiblePlans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
+    if (conflicting && overlapDemotionEnabled) {
       // The sparse router can choose other ports and corridors, which reads better than a nudge.
       continue;
     }
@@ -1164,7 +1165,7 @@ function prepareRoutingModes(
       !compatibilityPlanIsValid(plan, result, demandCoords));
   const planningOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
   const overlappingHierarchyIds = new Set<string>();
-  if (plans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION) {
+  if (overlapDemotionEnabled) {
     for (const plan of prepared.orderedPlans) {
       if (
         eligibleIds.has(plan.edge.id) ||
