@@ -6,17 +6,27 @@ import {
 } from './gridPlacement.js';
 
 describe('grid placement validation', () => {
-  it('accepts positive safe integer coordinates', () => {
-    expect(isValidGridCoordinate(1)).toBe(true);
-    expect(isValidGridCoordinate(Number.MAX_SAFE_INTEGER)).toBe(true);
-  });
-
-  it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, '1', {}, null])(
-    'rejects invalid coordinate %j',
+  it.each([Number.MIN_SAFE_INTEGER, -1, 0, 1, Number.MAX_SAFE_INTEGER])(
+    'accepts safe integer coordinate %j',
     (value) => {
-      expect(isValidGridCoordinate(value)).toBe(false);
+      expect(isValidGridCoordinate(value)).toBe(true);
     }
   );
+
+  it.each([
+    1.5,
+    -1.5,
+    Number.MIN_SAFE_INTEGER - 1,
+    Number.MAX_SAFE_INTEGER + 1,
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+    '1',
+    {},
+    null,
+  ])('rejects invalid coordinate %j', (value) => {
+    expect(isValidGridCoordinate(value)).toBe(false);
+  });
 
   it('accepts only supported alignment values', () => {
     expect(isGridHorizontalAlign('left')).toBe(true);

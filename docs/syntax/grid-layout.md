@@ -335,9 +335,13 @@ Flowchart and agentflow nodes and expanded subgraphs accept four grid-specific m
 
 Coordinates are:
 
-- positive integers starting at `1`
+- safe integers, including `0` and negative values
 - local to the direct parent group
 - sparse but collapsed (rows `1` and `100` render as adjacent occupied tracks)
+
+Rows are ordered from smallest to largest, top to bottom; columns are ordered from smallest to
+largest, left to right. The values identify tracks, not physical offsets. A graph containing a
+single node at `(-5, 0)` renders identically to a graph containing a single node at `(1, 1)`.
 
 Invalid `row` or `column` values are rejected during parsing with an error that identifies the placement and field.
 
@@ -469,6 +473,9 @@ If either coordinate is omitted, Mermaid fills it deterministically:
 - when both are omitted, Mermaid scans row-major using `grid.columns` when it is greater than `0`; otherwise, it uses `ceil(sqrt(itemCount))`
 
 Automatic placement runs independently within each group. Two or more direct siblings with the same explicit `(row, column)` share one cell as a vertical stack in declaration order.
+
+Automatic placement starts at `1` on each omitted axis, regardless of explicit coordinates.
+Use `0` or negative coordinates to place items above or to the left of the automatic grid.
 
 ## Alignment and stacking
 

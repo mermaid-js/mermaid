@@ -137,14 +137,47 @@ describe('grid placement', () => {
     expect(byId.get('auto-b')).toMatchObject({ row: 2, column: 1 });
   });
 
+  it('resolves signed coordinates, zero overrides, and stacks without shifting auto-placement', () => {
+    const items = [
+      node('stack-a', { row: -2, column: 0 }),
+      node('stack-b', { row: -2, column: 0 }),
+      node('row-only', { row: -2 }),
+      node('column-only', { column: 0 }),
+      node('auto'),
+      node('metadata-wins', { column: 0 }),
+    ];
+    const sourceOrder = new Map(items.map((item, index) => [item.id, index]));
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          'metadata-wins': { row: 0, column: -3 },
+        },
+      }),
+    } as LayoutData);
+
+    const { placements, cells } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(cells.get('-2:0')?.items.map((placement) => placement.item.id)).toEqual([
+      'stack-a',
+      'stack-b',
+    ]);
+    expect(byId.get('row-only')).toMatchObject({ row: -2, column: 1 });
+    expect(byId.get('column-only')).toMatchObject({ row: 1, column: 0 });
+    expect(byId.get('auto')).toMatchObject({ row: 1, column: 1 });
+    expect(byId.get('metadata-wins')).toMatchObject({
+      row: 0,
+      column: 0,
+      explicitCell: true,
+    });
+  });
+
   it.each([
-    { field: 'row', value: 0 },
-    { field: 'row', value: -1 },
     { field: 'row', value: 1.5 },
     { field: 'row', value: Number.NaN },
     { field: 'row', value: '2' },
-    { field: 'column', value: 0 },
-    { field: 'column', value: -1 },
     { field: 'column', value: 1.5 },
     { field: 'column', value: Number.NaN },
     { field: 'column', value: '2' },
@@ -313,7 +346,7 @@ describe('grid placement', () => {
       edges: [],
       config: config({
         placements: {
-          CUSTOMER: { row: 0, column: 1 },
+          CUSTOMER: { row: 0.5, column: 1 },
         },
       }),
     } as LayoutData);
@@ -333,7 +366,7 @@ describe('grid placement', () => {
         nodeId: 'entity-CUSTOMER-0',
         placementId: 'CUSTOMER',
         field: 'row',
-        value: 0,
+        value: 0.5,
       },
     });
   });

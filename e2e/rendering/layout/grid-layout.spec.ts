@@ -45,7 +45,7 @@ config:
   layout: grid
 ---
 flowchart TB
-  A["Invalid placement"]@{ row: 0, column: 1 }`,
+  A["Invalid placement"]@{ row: 0.5, column: 1 }`,
       { rejectErrorDiagram: false, screenshot: false }
     );
 
@@ -55,6 +55,37 @@ flowchart TB
     await expect(svg.locator('.error-text')).toContainText([
       'GRID_INVALID_COORDINATE: Invalid row for placement "A"',
     ]);
+  });
+
+  test('orders negative, zero, and positive tracks before automatic placement', async ({
+    page,
+  }, testInfo) => {
+    await renderGraph(
+      page,
+      testInfo,
+      `---
+config:
+  layout: grid
+  grid:
+    placements:
+      Zero: { row: 0, column: 0 }
+---
+flowchart TB
+  Negative@{ row: -5, column: -3 } --> Zero
+  Zero --> Automatic`,
+      { screenshot: false }
+    );
+
+    await assertDiagramNotError(page);
+    await assertFiniteViewBox(page);
+    await assertFiniteEdgePaths(page);
+    const negative = await nodeCenter(page, 'Negative');
+    const zero = await nodeCenter(page, 'Zero');
+    const automatic = await nodeCenter(page, 'Automatic');
+    expect(negative.x).toBeLessThan(zero.x);
+    expect(negative.y).toBeLessThan(zero.y);
+    expect(zero.x).toBeLessThan(automatic.x);
+    expect(zero.y).toBeLessThan(automatic.y);
   });
 
   test('flowchart grid keeps accessibility text, links, callbacks, and inline placement ordering', async ({
