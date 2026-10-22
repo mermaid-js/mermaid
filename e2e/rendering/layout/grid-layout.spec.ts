@@ -36,26 +36,33 @@ const nodeCenter = async (page: Parameters<typeof diagramSvg>[0], label: string)
 };
 
 test.describe('grid layout rendering', () => {
-  test('renders the error diagram for an invalid grid placement', async ({ page }, testInfo) => {
-    await renderGraph(
+  for (const { coordinate, received } of [
+    { coordinate: '0.5', received: '0.5 (number)' },
+    { coordinate: 'first', received: '"first" (string)' },
+  ]) {
+    test(`renders the error diagram for an invalid grid placement ${coordinate}`, async ({
       page,
-      testInfo,
-      `---
+    }, testInfo) => {
+      await renderGraph(
+        page,
+        testInfo,
+        `---
 config:
   layout: grid
 ---
 flowchart TB
-  A["Invalid placement"]@{ row: 0.5, column: 1 }`,
-      { rejectErrorDiagram: false, screenshot: false }
-    );
+  A["Invalid placement"]@{ row: ${coordinate}, column: 1 }`,
+        { rejectErrorDiagram: false, screenshot: false }
+      );
 
-    const svg = page.locator('svg').first();
-    await expect(svg.locator('.error-icon').first()).toBeVisible();
-    await expect(svg.locator('.error-text').first()).toHaveText('Syntax error in text');
-    await expect(svg.locator('.error-text')).toContainText([
-      'GRID_INVALID_COORDINATE: Invalid row for placement "A"',
-    ]);
-  });
+      const svg = page.locator('svg').first();
+      await expect(svg.locator('.error-icon').first()).toBeVisible();
+      await expect(svg.locator('.error-text').first()).toHaveText('Syntax error in text');
+      expect((await svg.locator('.error-text').allTextContents()).join(' ')).toContain(
+        `GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received ${received}.`
+      );
+    });
+  }
 
   test('orders negative, zero, and positive tracks before automatic placement', async ({
     page,
