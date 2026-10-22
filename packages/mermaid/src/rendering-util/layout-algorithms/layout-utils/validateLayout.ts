@@ -1,4 +1,4 @@
-import type { LayoutData, Node } from '../../types.js';
+import type { LayoutData, Node, Edge } from '../../types.js';
 import { log } from '../../../logger.js';
 import { DEBUG_KEY } from './debug.js';
 import {
@@ -552,7 +552,7 @@ export function validateLayout(
   const issues: Issue[] = [];
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
-  const edgeById = new Map<string, _Edge>();
+  const edgeById = new Map<string, Edge>();
   for (const e of edges) {
     if (e?.id != null) {
       edgeById.set(String(e.id), e);
