@@ -34,31 +34,31 @@ export interface NormalizedPolyline {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Get segment orientation */
-export function segmentOrientation(a: Point, b: Point): 'H' | 'V' | 'Z' {
+export function segmentOrientation(a: Point, b: Point, tolerance = PIXEL_EPSILON): 'H' | 'V' | 'Z' {
   const dx = Math.abs(b.x - a.x);
   const dy = Math.abs(b.y - a.y);
-  if (dx <= PIXEL_EPSILON && dy <= PIXEL_EPSILON) {
+  if (dx <= tolerance && dy <= tolerance) {
     return 'Z';
   }
-  if (dy <= PIXEL_EPSILON) {
+  if (dy <= tolerance) {
     return 'H';
   }
   return 'V';
 }
 
 /** Create segments from consecutive point pairs */
-export function segmentsFromPoints(points: Point[]): Segment[] {
+export function segmentsFromPoints(points: Point[], tolerance = PIXEL_EPSILON): Segment[] {
   const segments: Segment[] = [];
   for (let i = 0; i < points.length - 1; i++) {
     const a = points[i];
     const b = points[i + 1];
-    segments.push({ a, b, orientation: segmentOrientation(a, b) });
+    segments.push({ a, b, orientation: segmentOrientation(a, b, tolerance) });
   }
   return segments;
 }
 
 /** Merge consecutive collinear segments */
-export function mergeCollinear(segments: Segment[]): Segment[] {
+export function mergeCollinear(segments: Segment[], tolerance = PIXEL_EPSILON): Segment[] {
   if (segments.length === 0) {
     return [];
   }
@@ -79,8 +79,8 @@ export function mergeCollinear(segments: Segment[]): Segment[] {
     if (current.orientation === next.orientation) {
       if (
         current.orientation === 'H' &&
-        Math.abs(current.b.y - next.a.y) <= PIXEL_EPSILON &&
-        Math.abs(current.a.y - next.a.y) <= PIXEL_EPSILON
+        Math.abs(current.b.y - next.a.y) <= tolerance &&
+        Math.abs(current.a.y - next.a.y) <= tolerance
       ) {
         // Extend horizontal segment
         current.b = next.b;
@@ -88,8 +88,8 @@ export function mergeCollinear(segments: Segment[]): Segment[] {
       }
       if (
         current.orientation === 'V' &&
-        Math.abs(current.b.x - next.a.x) <= PIXEL_EPSILON &&
-        Math.abs(current.a.x - next.a.x) <= PIXEL_EPSILON
+        Math.abs(current.b.x - next.a.x) <= tolerance &&
+        Math.abs(current.a.x - next.a.x) <= tolerance
       ) {
         // Extend vertical segment
         current.b = next.b;
@@ -110,16 +110,16 @@ export function mergeCollinear(segments: Segment[]): Segment[] {
 }
 
 /** Normalize a polyline: remove zero-length, merge collinear, count bends */
-export function normalizePolyline(points: Point[]): NormalizedPolyline {
+export function normalizePolyline(points: Point[], tolerance = PIXEL_EPSILON): NormalizedPolyline {
   if (points.length < 2) {
     return { points: [...points], segments: [], bends: 0 };
   }
 
   // Create segments and filter zero-length
-  const rawSegments = segmentsFromPoints(points).filter((s) => s.orientation !== 'Z');
+  const rawSegments = segmentsFromPoints(points, tolerance).filter((s) => s.orientation !== 'Z');
 
   // Merge collinear
-  const merged = mergeCollinear(rawSegments);
+  const merged = mergeCollinear(rawSegments, tolerance);
 
   // Rebuild points from merged segments
   const newPoints: Point[] = [];
