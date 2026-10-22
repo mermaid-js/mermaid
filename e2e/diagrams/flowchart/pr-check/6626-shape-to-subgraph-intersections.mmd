@@ -1,0 +1,13 @@
+---
+description:
+  Keeps an edge attached to its diamond source when targeting a subgraph,
+  reproducing issue 6626.
+config:
+  layout: dagre
+---
+flowchart LR
+  subgraph c
+    i --> h
+  end
+  f{9} --> x{d}
+  f --> c

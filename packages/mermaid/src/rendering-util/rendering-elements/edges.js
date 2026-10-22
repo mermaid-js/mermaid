@@ -701,11 +701,16 @@ export const insertEdge = function (
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
     points.push(head.intersect(points[points.length - 1]));
+  } else if (tail.intersect && head.clusterNode && !skipIntersect) {
+    points = [tail.intersect(points[1]), ...points.slice(1)];
   }
   const pointsStr = btoa(JSON.stringify(points));
   if (edge.toCluster) {
     log.info('to cluster abc88', clusterDb.get(edge.toCluster));
-    points = cutPathAtIntersect(edge.points, clusterDb.get(edge.toCluster).node);
+    points = cutPathAtIntersect(points, clusterDb.get(edge.toCluster).node).filter(
+      (point, index, clipped) =>
+        index === 0 || point.x !== clipped[index - 1].x || point.y !== clipped[index - 1].y
+    );
 
     pointsHasChanged = true;
   }

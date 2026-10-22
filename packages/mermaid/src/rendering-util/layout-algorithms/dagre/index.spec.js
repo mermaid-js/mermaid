@@ -12,7 +12,49 @@ import {
 import mermaid from '../../../mermaid.js';
 import { mermaidAPI } from '../../../mermaidAPI.js';
 
-const setupDom = () => {
+const svgNumbers = (value) => (value.match(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/gi) || []).map(Number);
+
+const translation = (element) => svgNumbers(element.getAttribute('transform') || '0 0');
+
+const polygonPoints = (element) => {
+  const coordinates = svgNumbers(element.getAttribute('points'));
+  return Array.from({ length: coordinates.length / 2 }, (_, index) =>
+    coordinates.slice(index * 2, index * 2 + 2)
+  );
+};
+
+const distanceToSegment = (point, start, end) => {
+  const dx = end[0] - start[0];
+  const dy = end[1] - start[1];
+  const fraction = Math.max(
+    0,
+    Math.min(1, ((point[0] - start[0]) * dx + (point[1] - start[1]) * dy) / (dx * dx + dy * dy))
+  );
+  return Math.hypot(point[0] - start[0] - fraction * dx, point[1] - start[1] - fraction * dy);
+};
+
+const sourceBoundaryDistance = (node, point) => {
+  const shape = node.querySelector(':scope > polygon, :scope > circle');
+  const nodeOffset = translation(node);
+  const shapeOffset = translation(shape);
+  const localPoint = point.map((value, index) => value - nodeOffset[index] - shapeOffset[index]);
+  if (shape.tagName === 'circle') {
+    return Math.abs(
+      Math.hypot(
+        localPoint[0] - Number(shape.getAttribute('cx')),
+        localPoint[1] - Number(shape.getAttribute('cy'))
+      ) - Number(shape.getAttribute('r'))
+    );
+  }
+  const points = polygonPoints(shape);
+  return Math.min(
+    ...points.map((start, index) =>
+      distanceToSegment(localPoint, start, points[(index + 1) % points.length])
+    )
+  );
+};
+
+const setupDom = ({ measureSvgGeometry = false } = {}) => {
   const oldWindow = globalThis.window;
   const oldDocument = globalThis.document;
   const oldMutationObserver = globalThis.MutationObserver;
@@ -20,12 +62,45 @@ const setupDom = () => {
     url: 'http://localhost/',
     resources: 'usable',
     beforeParse(window) {
-      window.Element.prototype.getBBox = () => ({
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 50,
-      });
+      window.Element.prototype.getBBox = function () {
+        if (measureSvgGeometry && this.matches('g.node')) {
+          const shape = this.querySelector(':scope > polygon, :scope > circle, :scope > rect');
+          if (shape) {
+            const bounds = shape.getBBox();
+            const [x, y] = translation(shape);
+            return { ...bounds, x: bounds.x + x, y: bounds.y + y };
+          }
+        }
+        if (measureSvgGeometry && this.matches('polygon')) {
+          const points = polygonPoints(this);
+          const xs = points.map(([x]) => x);
+          const ys = points.map(([, y]) => y);
+          return {
+            x: Math.min(...xs),
+            y: Math.min(...ys),
+            width: Math.max(...xs) - Math.min(...xs),
+            height: Math.max(...ys) - Math.min(...ys),
+          };
+        }
+        if (measureSvgGeometry && this.matches('circle')) {
+          const radius = Number(this.getAttribute('r'));
+          return {
+            x: Number(this.getAttribute('cx')) - radius,
+            y: Number(this.getAttribute('cy')) - radius,
+            width: 2 * radius,
+            height: 2 * radius,
+          };
+        }
+        if (measureSvgGeometry && this.matches('rect')) {
+          return {
+            x: Number(this.getAttribute('x')),
+            y: Number(this.getAttribute('y')),
+            width: Number(this.getAttribute('width')),
+            height: Number(this.getAttribute('height')),
+          };
+        }
+        return { x: 0, y: 0, width: 100, height: 50 };
+      };
       window.Element.prototype.getComputedTextLength = () => 50;
     },
   });
@@ -709,6 +784,110 @@ SelfReferential "1" --> "0..1" SelfReferential : referenced`
       restoreDom();
     }
   });
+
+  it.each(
+    ['LR', 'RL', 'TB', 'BT'].flatMap((direction) =>
+      ['f{9}', 'f((9))'].flatMap((source) =>
+        ['', 'h --> outside'].map((externalConnection) => ({
+          direction,
+          source,
+          externalConnection,
+        }))
+      )
+    )
+  )(
+    'keeps the rendered source boundary for $direction $source with external link $externalConnection (#6626)',
+    async ({ direction, source, externalConnection }) => {
+      const restoreDom = setupDom({ measureSvgGeometry: true });
+
+      try {
+        const { svg } = await mermaidAPI.render(
+          'shape-to-subgraph-test',
+          `---
+config:
+  layout: dagre
+---
+flowchart ${direction}
+subgraph c
+  i --> h
+end
+${source} --> x{d}
+f --> c
+${externalConnection}`
+        );
+        const dom = new JSDOM(svg);
+        const document = dom.window.document;
+        const path = document.querySelector('.edgePaths path[data-id="L_f_c_0"]');
+        const coordinates = svgNumbers(path.getAttribute('d'));
+        const node = document.querySelector('.node[id*="-flowchart-f-"]');
+
+        expectFinitePaths([path]);
+        expect(sourceBoundaryDistance(node, coordinates.slice(0, 2))).toBeLessThan(0.51);
+        if (externalConnection) {
+          const cluster = document.querySelector('.cluster[id$="-c"] > rect');
+          const end = coordinates.slice(-2);
+          const x = Number(cluster.getAttribute('x'));
+          const y = Number(cluster.getAttribute('y'));
+          const width = Number(cluster.getAttribute('width'));
+          const height = Number(cluster.getAttribute('height'));
+          if (direction === 'LR' || direction === 'RL') {
+            expect(end[0] + (direction === 'LR' ? 4 : -4)).toBeCloseTo(
+              direction === 'LR' ? x : x + width,
+              3
+            );
+            expect(end[1]).toBeGreaterThan(y);
+            expect(end[1]).toBeLessThan(y + height);
+          } else {
+            expect(end[1] + (direction === 'TB' ? 4 : -4)).toBeCloseTo(
+              direction === 'TB' ? y : y + height,
+              3
+            );
+            expect(end[0]).toBeGreaterThan(x);
+            expect(end[0]).toBeLessThan(x + width);
+          }
+          expect(path.getAttribute('marker-end')).toContain('pointEnd');
+        }
+      } finally {
+        restoreDom();
+      }
+    }
+  );
+
+  it.each(['LR', 'RL', 'TB', 'BT'])(
+    'keeps cluster connections and self-loops finite in %s (#6626)',
+    async (direction) => {
+      const restoreDom = setupDom({ measureSvgGeometry: true });
+      try {
+        const { svg } = await mermaidAPI.render(
+          'shape-to-subgraph-controls',
+          `---
+config:
+  layout: dagre
+---
+flowchart ${direction}
+subgraph c
+  i --> h
+end
+subgraph d
+  j --> k
+end
+f{9} <--> c
+c --> f
+c --> d
+c --> c
+f --> f
+h --> outside
+k --> outside2`
+        );
+        const dom = new JSDOM(svg);
+        const paths = dom.window.document.querySelectorAll('.edgePaths path');
+        expect(paths).toHaveLength(9);
+        expectFinitePaths(paths);
+      } finally {
+        restoreDom();
+      }
+    }
+  );
 
   it('renders a flowchart subgraph through the shared paint path', async () => {
     const restoreDom = setupDom();

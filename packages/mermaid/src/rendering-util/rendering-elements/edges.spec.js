@@ -14,6 +14,9 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 import { insertEdge, resolveEdgeCurveType, setTerminalWidth } from './edges.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
+import intersectCircle from './intersect/intersect-circle.js';
+import intersectPolygon from './intersect/intersect-polygon.js';
+import intersectRect from './intersect/intersect-rect.js';
 
 describe('insertEdge clips for the engine that drew the edge', () => {
   /** A shape that reads the point it is handed, the way every real one does. */
@@ -264,5 +267,143 @@ describe('setTerminalWidth', () => {
     const fo = { style: {} };
     setTerminalWidth(fo, '1', { width: 7.8, height: 21 });
     expect(fo.style.width).toBe('9px');
+  });
+});
+
+describe('insertEdge subgraph boundary clipping', () => {
+  const source = { x: 0, y: 0, width: 80, height: 80 };
+  const target = { x: 300, y: 50, width: 80, height: 80 };
+  const clusterDb = new Map([
+    ['source', { node: { ...source, width: 120, height: 120 } }],
+    ['target', { node: { ...target, width: 200, height: 160 } }],
+  ]);
+  const diamond = [
+    { x: 40, y: 0 },
+    { x: 80, y: -40 },
+    { x: 40, y: -80 },
+    { x: 0, y: -40 },
+  ];
+  const shapes = [
+    {
+      name: 'diamond',
+      intersect: (point) => intersectPolygon(source, diamond, point),
+      start: [26.667, 13.333],
+    },
+    {
+      name: 'circle',
+      intersect: (point) => intersectCircle(source, 40, point),
+      start: [35.777, 17.889],
+    },
+    {
+      name: 'rectangle',
+      intersect: (point) => intersectRect(source, point),
+      start: [40, 20],
+    },
+  ];
+  const createEdge = () => ({
+    id: 'L_f_c_0',
+    cssCompiledStyles: {},
+    style: [],
+    thickness: 'normal',
+    pattern: 'solid',
+    classes: 'flowchart-link',
+    curve: 'linear',
+    look: 'classic',
+    arrowTypeEnd: 'arrow_point',
+    toCluster: 'target',
+    points: [
+      { x: 40, y: 20 },
+      { x: 100, y: 50 },
+      { x: 250, y: 50 },
+      { x: 260, y: 50 },
+    ],
+  });
+  const render = (edge, tail, head, layout = 'dagre', skipIntersect = false) => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    insertEdge(svg, edge, clusterDb, 'flowchart', tail, head, 'diagram', skipIntersect, layout);
+    return svg.select('path').attr('d');
+  };
+  const rectangleHead = { intersect: (point) => intersectRect(target, point) };
+
+  describe.each(['dagre', 'swimlane'])('%s', (layout) => {
+    describe.each(['classic', 'neo'])('%s', (look) => {
+      it.each(shapes)(
+        'keeps the $name source on its boundary when targeting a subgraph',
+        (shape) => {
+          const path = render({ ...createEdge(), look }, shape, rectangleHead, layout);
+          const start = /^M([^,]+),([^L]+)/.exec(path).slice(1).map(Number);
+          expect(start[0]).toBeCloseTo(shape.start[0], 3);
+          expect(start[1]).toBeCloseTo(shape.start[1], 3);
+          expect(path).toMatch(/L196,50$/);
+        }
+      );
+    });
+  });
+
+  it.each(shapes.slice(0, 2))('keeps the hand-drawn $name source near its boundary', (shape) => {
+    const configured = vi.mocked(getConfig);
+    const previous = configured.getMockImplementation();
+    configured.mockImplementationOnce(() => ({ ...previous(), handDrawnSeed: 42 }));
+    const path = render({ ...createEdge(), look: 'handDrawn' }, shape, rectangleHead);
+    const start = path
+      .match(/-?\d+(?:\.\d+)?/g)
+      .slice(0, 2)
+      .map(Number);
+    expect(Math.hypot(start[0] - shape.start[0], start[1] - shape.start[1])).toBeLessThan(1);
+  });
+
+  it.each(shapes)('clips the $name source when the target subgraph was extracted', (shape) => {
+    const edge = { ...createEdge(), toCluster: undefined };
+    const path = render(edge, shape, { ...target, clusterNode: true });
+    const start = /^M([^,]+),([^L]+)/.exec(path).slice(1).map(Number);
+    expect(start[0]).toBeCloseTo(shape.start[0], 3);
+    expect(start[1]).toBeCloseTo(shape.start[1], 3);
+    expect(path).toMatch(/L256,50$/);
+  });
+
+  it('preserves the source port on an extracted subgraph edge when intersection is skipped', () => {
+    const edge = { ...createEdge(), toCluster: undefined };
+    const path = render(edge, shapes[0], { ...target, clusterNode: true }, 'dagre', true);
+    expect(path).toBe('M40,20L100,50L250,50L256,50');
+  });
+
+  it('keeps a finite arrow tip when an inner point already meets the target subgraph', () => {
+    const edge = createEdge();
+    edge.points[2] = { x: 200, y: 50 };
+    const head = { intersect: (point) => intersectRect(clusterDb.get('target').node, point) };
+    const path = render(edge, shapes[0], head);
+    expect(path).toBe('M26.667,13.333L100,50L196,50');
+  });
+
+  it('preserves exact source endpoints when intersection is skipped', () => {
+    const edge = createEdge();
+    edge.points[0] = { x: 30, y: 15 };
+    const path = render(edge, shapes[0], rectangleHead, 'dagre', true);
+    expect(path).toBe('M30,15L100,50L196,50');
+  });
+
+  it('keeps the circular target boundary when starting at a subgraph', () => {
+    const edge = {
+      ...createEdge(),
+      toCluster: undefined,
+      fromCluster: 'source',
+      arrowTypeEnd: 'none',
+      points: [
+        { x: 40, y: 20 },
+        { x: 100, y: 50 },
+        { x: 250, y: 75 },
+        { x: 260, y: 70 },
+      ],
+    };
+    const path = render(edge, shapes[2], {
+      intersect: (point) => intersectCircle(target, 40, point),
+    });
+    expect(path).toBe('M60,40L100,50L250,75L264.223,67.889');
+  });
+
+  it('clips both subgraph boundaries when connecting two subgraphs', () => {
+    const path = render({ ...createEdge(), fromCluster: 'source' }, shapes[2], rectangleHead);
+    expect(path).toBe('M60,40L100,50L196,50');
   });
 });
