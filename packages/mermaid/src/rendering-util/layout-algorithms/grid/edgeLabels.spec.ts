@@ -233,6 +233,41 @@ describe('grid edge label helpers', () => {
     expect(validateLayout(data).ok).toBe(true);
   });
 
+  it('preserves subpixel self-loop detours when anchoring a measured label', () => {
+    const data: LayoutData = {
+      nodes: [manualNode('a', 35, 22.5, 70, 45)],
+      edges: [
+        manualEdge(
+          'loop',
+          'a',
+          'a',
+          [
+            { x: 0, y: 6 },
+            { x: -32, y: 6 },
+            { x: -32, y: 39 },
+            { x: 0, y: 39 },
+          ],
+          'label'
+        ),
+      ],
+      config: { layout: 'grid' } as LayoutData['config'],
+    };
+    prepareGridLayout(data);
+    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    labelNode.width = 35;
+    labelNode.height = 21;
+
+    positionGridEdgeLabels(data);
+
+    const points = data.edges[0].points!;
+    for (let index = 1; index < points.length; index++) {
+      expect(
+        points[index].x === points[index - 1].x || points[index].y === points[index - 1].y
+      ).toBe(true);
+    }
+    expect(validateLayout(data).ok).toBe(true);
+  });
+
   it('uses the same labelled self-loop geometry during resource fallback', () => {
     const data: LayoutData = {
       nodes: [node('a')],
