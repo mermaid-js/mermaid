@@ -246,6 +246,43 @@ describe('Testing quadrantChart jison file', () => {
     clearMocks();
     str = 'QuadRantChart   \n     Point1 : [1.2, 0.4]   ';
     expect(parserFnConstructor(str)).toThrow();
+
+    clearMocks();
+    str = 'quadrantChart\nPoint1: [1.0, 0.5]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Point1', type: 'text' },
+      '',
+      '1.0',
+      '0.5',
+      []
+    );
+
+    clearMocks();
+    str = 'quadrantChart\nPoint2: [0.5, 1.0]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Point2', type: 'text' },
+      '',
+      '0.5',
+      '1.0',
+      []
+    );
+
+    clearMocks();
+    str = 'quadrantChart\nPoint3: [1.00, 1.000]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Point3', type: 'text' },
+      '',
+      '1.00',
+      '1.000',
+      []
+    );
+
+    clearMocks();
+    str = 'quadrantChart\nPoint4: [0.5, 1.05]';
+    expect(parserFnConstructor(str)).toThrow();
   });
 
   it('should be able to parse the whole chart', () => {
