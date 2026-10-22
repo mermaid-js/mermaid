@@ -546,13 +546,15 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     additionalProperties: false
     properties:
       row:
-        description: Positive integer row number local to the item's direct parent grid.
+        description: Safe integer row number local to the item's direct parent grid, including zero and negative values.
         type: integer
-        minimum: 1
+        minimum: -9007199254740991
+        maximum: 9007199254740991
       column:
-        description: Positive integer column number local to the item's direct parent grid.
+        description: Safe integer column number local to the item's direct parent grid, including zero and negative values.
         type: integer
-        minimum: 1
+        minimum: -9007199254740991
+        maximum: 9007199254740991
       horizontalAlign:
         description: Horizontal alignment within the resolved grid cell.
         $ref: '#/$defs/GridHorizontalAlign'

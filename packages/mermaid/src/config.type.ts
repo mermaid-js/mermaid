@@ -458,11 +458,11 @@ export interface GridLayoutConfig {
  */
 export interface GridPlacement {
   /**
-   * Positive integer row number local to the item's direct parent grid.
+   * Safe integer row number local to the item's direct parent grid, including zero and negative values.
    */
   row?: number;
   /**
-   * Positive integer column number local to the item's direct parent grid.
+   * Safe integer column number local to the item's direct parent grid, including zero and negative values.
    */
   column?: number;
   /**

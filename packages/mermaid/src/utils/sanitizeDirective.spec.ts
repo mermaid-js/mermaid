@@ -158,8 +158,26 @@ describe('sanitizeDirective', () => {
       }
     );
 
+    it('preserves zero and negative coordinates in placement objects and arrays', () => {
+      const args = {
+        grid: {
+          placements: {
+            A: { row: 0, column: -2 },
+            service: [{ row: -3, column: 0 }],
+          },
+        },
+      };
+
+      sanitizeDirective(args);
+
+      expect(args.grid.placements).toEqual({
+        A: { row: 0, column: -2 },
+        service: [{ row: -3, column: 0 }],
+      });
+    });
+
     it.each([
-      ['row', 0],
+      ['row', 0.5],
       ['row', 'first'],
       ['column', 1.5],
       ['column', null],
@@ -181,7 +199,7 @@ describe('sanitizeDirective', () => {
       const args = {
         grid: {
           placements: {
-            service: [{ row: 1 }, { row: 0 }],
+            service: [{ row: 1 }, { row: 0.5 }],
           },
         },
       };

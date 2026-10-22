@@ -20,9 +20,9 @@ Configuration for Mermaid's built-in `grid` layout.
 
 ## `GridPlacement`
 
-| Property          | Type                      | Description                                              |
-| ----------------- | ------------------------- | -------------------------------------------------------- |
-| `row`             | `integer`                 | Positive row number local to the direct parent group.    |
-| `column`          | `integer`                 | Positive column number local to the direct parent group. |
-| `horizontalAlign` | `left \| center \| right` | Item alignment within the resolved cell.                 |
-| `verticalAlign`   | `top \| center \| bottom` | Stack alignment within the resolved cell.                |
+| Property          | Type                      | Description                                                                                      |
+| ----------------- | ------------------------- | ------------------------------------------------------------------------------------------------ |
+| `row`             | `integer`                 | Safe integer row number local to the direct parent group, including zero and negative values.    |
+| `column`          | `integer`                 | Safe integer column number local to the direct parent group, including zero and negative values. |
+| `horizontalAlign` | `left \| center \| right` | Item alignment within the resolved cell.                                                         |
+| `verticalAlign`   | `top \| center \| bottom` | Stack alignment within the resolved cell.                                                        |
