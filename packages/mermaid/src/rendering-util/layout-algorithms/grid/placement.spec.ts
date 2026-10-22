@@ -361,7 +361,7 @@ describe('grid placement', () => {
     expect(thrown).toMatchObject({
       code: 'GRID_INVALID_COORDINATE',
       message:
-        'GRID_INVALID_COORDINATE: Invalid row for placement "CUSTOMER" (node "entity-CUSTOMER-0")',
+        'GRID_INVALID_COORDINATE: Invalid row for placement "CUSTOMER" (node "entity-CUSTOMER-0"): expected a safe integer; received 0.5 (number).',
       details: {
         nodeId: 'entity-CUSTOMER-0',
         placementId: 'CUSTOMER',

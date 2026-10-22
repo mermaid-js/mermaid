@@ -343,7 +343,12 @@ Rows are ordered from smallest to largest, top to bottom; columns are ordered fr
 largest, left to right. The values identify tracks, not physical offsets. A graph containing a
 single node at `(-5, 0)` renders identically to a graph containing a single node at `(1, 1)`.
 
-Invalid `row` or `column` values are rejected during parsing with an error that identifies the placement and field.
+Invalid `row` or `column` values are rejected during parsing with a `GRID_INVALID_COORDINATE`
+error that identifies the placement, field, received value and type, and the safe-integer
+requirement. This applies to inline metadata, frontmatter, directives, and initialized
+configuration. Strings (including numeric strings), fractional numbers, `null`, non-finite
+numbers, and unsafe integers are rejected without coercion, rounding, or automatic placement.
+Numeric `1.0` is an integer and is accepted.
 
 When inline metadata and `config.grid.placements` both set the same property, inline metadata takes precedence.
 

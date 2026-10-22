@@ -908,51 +908,63 @@ flowchart TB
       }
     );
 
-    it('rejects invalid inline grid coordinates', async () => {
-      await expect(
-        mermaidAPI.parse(`---
+    describe.each(['inline', 'frontmatter', 'directive', 'initialize'] as const)(
+      'invalid grid coordinates from %s',
+      (entryPoint) => {
+        it.each([
+          { field: 'row', value: 'first', received: '"first" (string)' },
+          { field: 'column', value: 'first', received: '"first" (string)' },
+          { field: 'row', value: '1', received: '"1" (string)' },
+          { field: 'column', value: '1', received: '"1" (string)' },
+          { field: 'row', value: 1.5, received: '1.5 (number)' },
+          { field: 'column', value: 1.5, received: '1.5 (number)' },
+          { field: 'row', value: null, received: 'null (null)' },
+          { field: 'column', value: null, received: 'null (null)' },
+        ])('rejects $field=$received without coercion', async ({ field, value, received }) => {
+          const placement = { [field]: value };
+          const placementText = JSON.stringify(placement);
+          const diagram = 'flowchart TB\n  A';
+          const definitions = {
+            inline: `---
 config:
   layout: grid
 ---
-flowchart TB
-  A@{ row: 0.5 }`)
-      ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
-    });
-
-    it('rejects invalid frontmatter grid coordinates', async () => {
-      await expect(
-        mermaidAPI.parse(`---
+${diagram}@${placementText}`,
+            frontmatter: `---
 config:
   layout: grid
   grid:
     placements:
-      A:
-        row: 0.5
+      A: ${placementText}
 ---
-flowchart TB
-  A`)
-      ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
-    });
+${diagram}`,
+            directive: `%%{init: {"layout": "grid", "grid": {"placements": {"A": ${placementText}}}}}%%
+${diagram}`,
+            initialize: diagram,
+          };
+          const expectedError = {
+            code: 'GRID_INVALID_COORDINATE',
+            message: `GRID_INVALID_COORDINATE: Invalid ${field} for placement "A": expected a safe integer; received ${received}.`,
+            details: { nodeId: 'A', placementId: 'A', field, value },
+          };
 
-    it('rejects invalid initialized grid coordinates', async () => {
-      mermaidAPI.initialize({});
-      mermaidAPI.initialize({
-        layout: 'grid',
-        grid: {
-          placements: {
-            A: { row: 0.5 },
-          },
-        },
-      });
+          if (entryPoint === 'initialize') {
+            mermaidAPI.initialize({ layout: 'grid', grid: { placements: { A: placement } } });
+          }
 
-      try {
-        await expect(mermaidAPI.parse('flowchart TB\n  A')).rejects.toThrow(
-          'GRID_INVALID_COORDINATE: Invalid row for placement "A"'
-        );
-      } finally {
-        mermaidAPI.initialize({});
+          try {
+            await expect(mermaidAPI.parse(definitions[entryPoint])).rejects.toMatchObject(
+              expectedError
+            );
+            await expect(
+              mermaidAPI.parse(definitions[entryPoint], { suppressErrors: true })
+            ).resolves.toBe(false);
+          } finally {
+            mermaidAPI.initialize({});
+          }
+        });
       }
-    });
+    );
   });
 
   describe('render', () => {
@@ -1064,6 +1076,8 @@ treeView-beta
     });
 
     jsdomIt('shows invalid grid coordinates in the error diagram', async () => {
+      const message =
+        'GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received 0.5 (number).';
       await expect(
         mermaidAPI.render(
           'flowchart-invalid-grid-coordinate',
@@ -1074,17 +1088,13 @@ config:
 flowchart TB
   A@{ row: 0.5 }`
         )
-      ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
+      ).rejects.toThrow(message);
 
       const texts = [...document.querySelectorAll('.error-text')].map(
         (element) => element.textContent ?? ''
       );
       expect(texts).toContain('Syntax error in text');
-      expect(
-        texts.some((text) =>
-          text.includes('GRID_INVALID_COORDINATE: Invalid row for placement "A"')
-        )
-      ).toBe(true);
+      expect(texts.join(' ')).toContain(message);
     });
   });
 
