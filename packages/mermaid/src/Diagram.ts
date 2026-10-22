@@ -82,6 +82,8 @@ export class Diagram {
       db.setFrontmatterLineOffset?.(code.frontmatterLineOffset);
     }
     await parser.parse(textToParse);
+    // Validate configured placements for every diagram type without loading the layout renderer.
+    // Diagram DBs validate their own inline placement metadata through the hook below.
     if (config.layout === 'grid') {
       validateGridPlacementCoordinates(config.grid?.placements, []);
     }
