@@ -863,6 +863,51 @@ graph TD;A--x|text including URL space|B;`)
         `);
     });
 
+    it.each([
+      { row: 0, column: -2 },
+      { row: -2, column: 0 },
+    ])(
+      'accepts signed grid coordinates ($row, $column) through each entry point',
+      async (placement) => {
+        const { row, column } = placement;
+        const sources = [
+          `---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ row: ${row}, column: ${column} }`,
+          `---
+config:
+  layout: grid
+  grid:
+    placements:
+      A: { row: ${row}, column: ${column} }
+---
+flowchart TB
+  A`,
+          `%%{init: {"layout": "grid", "grid": {"placements": {"A": ${JSON.stringify(placement)}}}}}%%
+flowchart TB
+  A`,
+        ];
+
+        for (const source of sources) {
+          await expect(mermaidAPI.parse(source)).resolves.toMatchObject({
+            diagramType: 'flowchart-v2',
+          });
+        }
+
+        mermaidAPI.initialize({ layout: 'grid', grid: { placements: { A: placement } } });
+        try {
+          await expect(mermaidAPI.parse('flowchart TB\n  A')).resolves.toMatchObject({
+            diagramType: 'flowchart-v2',
+          });
+        } finally {
+          mermaidAPI.initialize({});
+        }
+      }
+    );
+
     it('rejects invalid inline grid coordinates', async () => {
       await expect(
         mermaidAPI.parse(`---
@@ -870,7 +915,7 @@ config:
   layout: grid
 ---
 flowchart TB
-  A@{ row: 0 }`)
+  A@{ row: 0.5 }`)
       ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
     });
 
@@ -882,7 +927,7 @@ config:
   grid:
     placements:
       A:
-        row: 0
+        row: 0.5
 ---
 flowchart TB
   A`)
@@ -895,7 +940,7 @@ flowchart TB
         layout: 'grid',
         grid: {
           placements: {
-            A: { row: 0 },
+            A: { row: 0.5 },
           },
         },
       });
@@ -1027,7 +1072,7 @@ config:
   layout: grid
 ---
 flowchart TB
-  A@{ row: 0 }`
+  A@{ row: 0.5 }`
         )
       ).rejects.toThrow('GRID_INVALID_COORDINATE: Invalid row for placement "A"');
 
