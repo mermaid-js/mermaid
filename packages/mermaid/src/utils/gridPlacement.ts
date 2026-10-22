@@ -43,8 +43,23 @@ export function validateGridCoordinate(
   }
   if (!isValidGridCoordinate(value)) {
     const generatedNodeContext = nodeId === placementId ? '' : ` (node "${nodeId}")`;
+    const valueType = value === null ? 'null' : typeof value;
+    let received: string;
+    switch (typeof value) {
+      case 'string':
+        received = JSON.stringify(value);
+        break;
+      case 'number':
+      case 'bigint':
+      case 'boolean':
+      case 'symbol':
+        received = String(value);
+        break;
+      default:
+        received = value === null ? 'null' : Array.isArray(value) ? '[array]' : `[${typeof value}]`;
+    }
     const error = new Error(
-      `GRID_INVALID_COORDINATE: Invalid ${field} for placement "${placementId}"${generatedNodeContext}`
+      `GRID_INVALID_COORDINATE: Invalid ${field} for placement "${placementId}"${generatedNodeContext}: expected a safe integer; received ${received} (${valueType}).`
     ) as Error & {
       code: 'GRID_INVALID_COORDINATE';
       details: Record<string, unknown>;
