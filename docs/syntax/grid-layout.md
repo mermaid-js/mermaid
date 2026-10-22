@@ -350,6 +350,10 @@ configuration. Strings (including numeric strings), fractional numbers, `null`, 
 numbers, and unsafe integers are rejected without coercion, rounding, or automatic placement.
 Numeric `1.0` is an integer and is accepted.
 
+In flowcharts using grid layout, unrecognized inline node or subgraph metadata keys produce a
+console warning naming the item and key. Parsing still succeeds. For example, `column 2` (missing
+the colon) is an unknown key, not a column coordinate, so that column is placed automatically.
+
 When inline metadata and `config.grid.placements` both set the same property, inline metadata takes precedence.
 
 ```mermaid-example

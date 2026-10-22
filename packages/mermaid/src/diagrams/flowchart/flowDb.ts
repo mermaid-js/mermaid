@@ -36,6 +36,23 @@ interface LinkData {
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 const GRID_LAYOUT_METADATA_KEYS = ['row', 'column', 'horizontalAlign', 'verticalAlign'] as const;
+const FLOWCHART_METADATA_KEYS = new Set<string>([
+  'shape',
+  'label',
+  'icon',
+  'form',
+  'pos',
+  'img',
+  'w',
+  'h',
+  'constraint',
+  'priority',
+  'assigned',
+  'ticket',
+  'labelType',
+  'view',
+  ...GRID_LAYOUT_METADATA_KEYS,
+] satisfies (keyof NodeMetaData)[]);
 
 // Flowchart metadata is a broad author-facing object. Forward only the fields understood by layout
 // code so renderer nodes do not become a second, unsanitized metadata API.
@@ -1365,7 +1382,19 @@ You have to call mermaid.initialize.`
     if (config.layout !== 'grid') {
       return;
     }
-    validateGridPlacementCoordinates(undefined, [...this.vertices.values(), ...this.subGraphs]);
+    const items = [...this.vertices.values(), ...this.subGraphs];
+    validateGridPlacementCoordinates(undefined, items);
+    for (const item of items) {
+      const isSubgraph = this.subGraphLookup.has(item.id);
+      for (const key of Object.keys(item.metadata ?? {})) {
+        if (FLOWCHART_METADATA_KEYS.has(key) || (isSubgraph && key === 'algorithm')) {
+          continue;
+        }
+        log.warn(
+          `Unknown metadata key "${key}" on ${isSubgraph ? 'subgraph' : 'node'} "${item.id}" with grid layout.`
+        );
+      }
+    }
   }
 
   public defaultConfig() {

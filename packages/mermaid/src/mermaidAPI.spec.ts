@@ -1,4 +1,4 @@
-import { assert, beforeEach, describe, expect, it, vi } from 'vitest';
+import { assert, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import assignWithDepth from './assignWithDepth.js';
 import type { MermaidConfig } from './config.type.js';
@@ -47,6 +47,7 @@ import { toBase64 } from './utils/base64.js';
 import { StateDB } from './diagrams/state/stateDb.js';
 import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
 import { JSDOM } from 'jsdom';
+import { log } from './logger.js';
 
 /**
  * @see https://vitest.dev/guide/mocking.html Mock part of a module
@@ -907,6 +908,95 @@ flowchart TB
         }
       }
     );
+
+    describe('unknown inline grid metadata', () => {
+      beforeEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      afterEach(() => {
+        vi.restoreAllMocks();
+        mermaidAPI.initialize({});
+      });
+
+      it.each([
+        { metadata: 'row: 1, column 2', key: 'column 2' },
+        { metadata: 'column: 1, row 2', key: 'row 2' },
+        { metadata: 'column: 3, row 1', key: 'row 1' },
+        { metadata: 'row: 1, custom: value', key: 'custom' },
+      ])(
+        'warns about "$key" during parsing without rejecting the diagram',
+        async ({ metadata, key }) => {
+          const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+          await expect(
+            mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  A@{ ${metadata} }`)
+          ).resolves.toMatchObject({ diagramType: 'flowchart-v2' });
+
+          expect(warn).toHaveBeenCalledExactlyOnceWith(
+            `Unknown metadata key "${key}" on node "A" with grid layout.`
+          );
+        }
+      );
+
+      it('warns about unknown subgraph metadata', async () => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  subgraph group
+    A
+  end
+  group@{ algorithm: elk.box, row 2 }`);
+
+        expect(warn).toHaveBeenCalledExactlyOnceWith(
+          'Unknown metadata key "row 2" on subgraph "group" with grid layout.'
+        );
+      });
+
+      it('accepts supported node and subgraph metadata alongside grid placement', async () => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await mermaidAPI.parse(`---
+config:
+  layout: grid
+---
+flowchart TB
+  subgraph group
+    A@{ shape: rect, label: "Service", row: 1, column: 2, horizontalAlign: left, verticalAlign: top }
+  end
+  group@{ algorithm: elk.box, view: expanded, row: 0, column: -1 }`);
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+
+      it.each(['dagre', 'elk'])('does not warn about unknown metadata with %s', async (layout) => {
+        const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+        await expect(
+          mermaidAPI.parse(`---
+config:
+  layout: ${layout}
+---
+flowchart TB
+  A@{ row: 1, column 2, custom: value }
+  subgraph group
+    B
+  end
+  group@{ row 2 }`)
+        ).resolves.toMatchObject({ diagramType: 'flowchart-v2' });
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+    });
 
     describe.each(['inline', 'frontmatter', 'directive', 'initialize'] as const)(
       'invalid grid coordinates from %s',
