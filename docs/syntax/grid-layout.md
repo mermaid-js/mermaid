@@ -463,7 +463,8 @@ mindmap
 
 Placement-map keys beginning with `__` are removed by Mermaid's recursive configuration sanitizer
 as a prototype-pollution precaution. For flowchart and agentflow nodes with such ids, use inline
-placement metadata instead.
+placement metadata instead. Inline placement metadata is only supported by flowchart and agentflow;
+for other diagram types, use node ids that do not begin with `__`.
 
 Placements for ids that are not present in the diagram are ignored with a console warning. This
 allows a shared or generated placement map to contain entries for optional nodes.
