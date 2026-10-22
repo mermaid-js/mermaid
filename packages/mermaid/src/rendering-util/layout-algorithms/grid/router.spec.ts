@@ -439,6 +439,57 @@ describe('grid router', () => {
     expect(longestSharedNonterminalSubpath(data.edges[0], data.edges[1])).toBe(0);
   });
 
+  describe.each(['same-container', 'self-loop', 'group-crossing'] as const)(
+    'overlap demotion with unrelated %s edges',
+    (kind) => {
+      it.each([64, 65])('uses the diagram-wide cutoff at %i plans', (planCount) => {
+        const nodes = [
+          leaf('tl', 80, 40, { row: 1, column: 1 }),
+          leaf('tr', 80, 40, { row: 1, column: 2 }),
+          leaf('bl', 80, 40, { row: 2, column: 1 }),
+          leaf('br', 80, 40, { row: 2, column: 2 }),
+          group('unrelated', 'Unrelated', { row: 3, column: 3 }),
+        ];
+        const edges = [edge('e1', 'tl', 'br'), edge('e2', 'tr', 'bl')];
+        for (let index = 0; index < planCount - 2; index++) {
+          const sourceId = `source-${index}`;
+          const targetId = `target-${index}`;
+          const innerId = `inner-${index}`;
+          if (kind === 'group-crossing') {
+            nodes.push(group(innerId, 'Inner', { row: index + 1, column: 1 }, 'unrelated'));
+          }
+          nodes.push(
+            leaf(
+              sourceId,
+              80,
+              40,
+              { row: kind === 'group-crossing' ? 1 : index + 1, column: 1 },
+              kind === 'group-crossing' ? innerId : 'unrelated'
+            )
+          );
+          if (kind !== 'self-loop') {
+            nodes.push(leaf(targetId, 80, 40, { row: index + 1, column: 2 }, 'unrelated'));
+          }
+          edges.push(
+            edge(`unrelated-${index}`, sourceId, kind === 'self-loop' ? sourceId : targetId)
+          );
+        }
+        const data = baseLayout(nodes, edges);
+
+        runGridLayoutCore(data);
+
+        expect(invalidRoutingIssues(data)).toEqual([]);
+        const sharedLength = longestSharedNonterminalSubpath(data.edges[0], data.edges[1]);
+        if (planCount === 64) {
+          expect(sharedLength).toBe(0);
+        } else {
+          // Characterize the temporary corridor overlap until local repair replaces the cutoff.
+          expect(sharedLength).toBeGreaterThan(0);
+        }
+      });
+    }
+  );
+
   it('crosses unrelated diagonal edges perpendicularly instead of running them in parallel', () => {
     const data = baseLayout(
       [
