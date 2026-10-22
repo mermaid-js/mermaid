@@ -3,6 +3,7 @@ import {
   isGridHorizontalAlign,
   isGridVerticalAlign,
   isValidGridCoordinate,
+  validateGridCoordinate,
 } from './gridPlacement.js';
 
 describe('grid placement validation', () => {
@@ -26,6 +27,25 @@ describe('grid placement validation', () => {
     null,
   ])('rejects invalid coordinate %j', (value) => {
     expect(isValidGridCoordinate(value)).toBe(false);
+  });
+
+  it.each([
+    { value: 'first', received: '"first" (string)' },
+    { value: '1', received: '"1" (string)' },
+    { value: 1.5, received: '1.5 (number)' },
+    { value: Number.NaN, received: 'NaN (number)' },
+    { value: Number.POSITIVE_INFINITY, received: 'Infinity (number)' },
+    { value: Number.NEGATIVE_INFINITY, received: '-Infinity (number)' },
+    { value: Number.MAX_SAFE_INTEGER + 1, received: '9007199254740992 (number)' },
+    { value: null, received: 'null (null)' },
+    { value: false, received: 'false (boolean)' },
+    { value: { toString: null }, received: '[object] (object)' },
+    { value: [1], received: '[array] (object)' },
+    { value: () => 1, received: '[function] (function)' },
+  ])('explains the safe integer requirement for $received', ({ value, received }) => {
+    expect(() => validateGridCoordinate('A', 'row', value)).toThrow(
+      `GRID_INVALID_COORDINATE: Invalid row for placement "A": expected a safe integer; received ${received}.`
+    );
   });
 
   it('accepts only supported alignment values', () => {
