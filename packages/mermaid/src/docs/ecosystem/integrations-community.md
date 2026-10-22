@@ -270,6 +270,8 @@ Communication tools and platforms
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
 - [mermaid-isomorphic](https://github.com/remcohaszing/mermaid-isomorphic)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
+- [Moxie Docs Mermaid Editor: Free in-browser editor with shareable links and SVG export](https://moxiedocs.com/mermaid-diagram-editor)
+  - [SQL to ER diagram generator](https://moxiedocs.com/sql-er-diagram-generator)
 - [NiceGUI: Let any browser be the frontend of your Python code](https://nicegui.io) ✅
   - [ui.mermaid(...)](https://nicegui.io/documentation/mermaid)
 - [Reveal.js](https://github.com/hakimel/reveal.js)
@@ -282,4 +284,4 @@ Communication tools and platforms
 - [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
-<!--- cspell:ignore Blazorade HueHive --->
+<!--- cspell:ignore Blazorade HueHive Moxie --->
