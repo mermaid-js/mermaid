@@ -8,6 +8,7 @@ import type { ClusterShapeID } from '../../rendering-util/rendering-elements/clu
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
+import { validateGridPlacementCoordinates } from '../../utils/gridPlacement.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -1943,6 +1944,13 @@ You have to call mermaid.initialize.`
       config,
       connectors: this.getConnectors(),
     };
+  }
+
+  public validate() {
+    if (getConfig().layout !== 'grid') {
+      return;
+    }
+    validateGridPlacementCoordinates(undefined, [...this.vertices.values(), ...this.subGraphs]);
   }
 
   public defaultConfig() {
