@@ -1,0 +1,26 @@
+---
+config:
+  layout: grid
+  grid:
+    columns: 3
+    rowGap: 45
+    columnGap: 55
+    placements:
+      A: { row: 1, column: 1 }
+      B: { row: 1, column: 2 }
+      C: { row: 2, column: 1 }
+      D: { row: 1, column: 3 }
+      E: { row: 2, column: 3 }
+---
+flowchart TB
+  A[A]
+  B[B]
+  C[C]
+  D[D]
+  E[E]
+
+  A --> B
+  A --> C
+  B --> D
+  C --> D
+  D --> E

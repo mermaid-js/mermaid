@@ -1,0 +1,16 @@
+---
+config:
+  layout: grid
+  securityLevel: loose
+  grid:
+    rowGap: 72
+    columnGap: 96
+---
+flowchart LR
+  Source([Source])@{ row: 2, column: 5 }
+  Target([Target])@{ row: 2, column: 6 }
+
+  Source --> Target
+  Source --> Target
+  Source --> Target
+  Target --> Source
