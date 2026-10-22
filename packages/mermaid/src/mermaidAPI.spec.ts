@@ -909,6 +909,66 @@ flowchart TB
       }
     );
 
+    describe.each(['node', 'subgraph'])('inline agentflow grid coordinates on a %s', (target) => {
+      beforeEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      afterEach(() => {
+        mermaidAPI.initialize({});
+      });
+
+      const definition = (metadata: Record<string, unknown>, layout = 'grid') => {
+        const placement = JSON.stringify(metadata);
+        const body =
+          target === 'node'
+            ? `request["Receive"]@${placement}`
+            : `flow pipeline@${placement}\n  request["Receive"]\nend`;
+        return `---
+config:
+  layout: ${layout}
+---
+agentflow-beta
+${body}`;
+      };
+
+      it.each([
+        { field: 'row', value: 'first' },
+        { field: 'column', value: 'first' },
+        { field: 'row', value: 1.5 },
+        { field: 'column', value: 1.5 },
+        { field: 'row', value: null },
+        { field: 'column', value: null },
+      ])('rejects $field=$value during parsing', async ({ field, value }) => {
+        const source = definition({ [field]: value });
+        const id = target === 'node' ? 'request' : 'pipeline';
+
+        await expect(mermaidAPI.parse(source)).rejects.toMatchObject({
+          code: 'GRID_INVALID_COORDINATE',
+          details: { nodeId: id, placementId: id, field, value },
+        });
+        await expect(mermaidAPI.parse(source, { suppressErrors: true })).resolves.toBe(false);
+      });
+
+      it.each([{ row: 0, column: -2 }, { row: -2, column: 0 }, {}])(
+        'accepts signed or omitted coordinates %j with arbitrary metadata',
+        async (placement) => {
+          await expect(
+            mermaidAPI.parse(definition({ ...placement, custom: 'preserved' }))
+          ).resolves.toMatchObject({ diagramType: 'agentflow' });
+        }
+      );
+
+      it.each(['dagre', 'elk'])(
+        'does not validate grid coordinates when layout is %s',
+        async (layout) => {
+          await expect(
+            mermaidAPI.parse(definition({ row: 'first', column: 1.5 }, layout))
+          ).resolves.toMatchObject({ diagramType: 'agentflow' });
+        }
+      );
+    });
+
     describe('unknown inline grid metadata', () => {
       beforeEach(() => {
         mermaidAPI.initialize({});
