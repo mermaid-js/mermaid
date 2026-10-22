@@ -15,11 +15,9 @@ export const GRID_VERTICAL_ALIGNMENTS = [
   'bottom',
 ] as const satisfies readonly GridVerticalAlign[];
 
-/** Grid coordinates are one-based author input, not zero-based internal cell indexes. */
+/** Grid coordinates identify ordered tracks, not physical offsets or array indexes. */
 export function isValidGridCoordinate(value: unknown): value is number {
-  return (
-    typeof value === 'number' && Number.isFinite(value) && Number.isSafeInteger(value) && value > 0
-  );
+  return typeof value === 'number' && Number.isSafeInteger(value);
 }
 
 export function isGridHorizontalAlign(value: unknown): value is GridHorizontalAlign {
