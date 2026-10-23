@@ -1,0 +1,15 @@
+---
+description: >-
+  Two bar series with showDataLabel enabled: the second series ("after") has
+  distinct values [95, 60, 130] and must be labelled with those values, not
+  with the first series' values [380, 210, 140]. Regression test for
+  github.com/mermaid-js/mermaid/issues/8475.
+config:
+  xyChart:
+    showDataLabel: true
+---
+xychart
+  x-axis [orders, search, profile]
+  y-axis "p95 (ms)" 0 --> 450
+  bar "before" [380, 210, 140]
+  bar "after" [95, 60, 130]
