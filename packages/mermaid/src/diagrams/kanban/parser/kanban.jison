@@ -48,6 +48,9 @@
 \s*\%\%.*          {yy.getLogger().trace('Found comment',yytext); return 'SPACELINE';}
 // \%\%[^\n]*\n                             /* skip comments */
 "kanban"		       {return 'KANBAN';}
+"style"[ \t]+[^ \t\r\n\(\[\)\{\}@]+[ \t]+[a-z-]+[ \t]*":"[^\n]* {
+                      throw new Error('Unsupported kanban style statement: ' + yytext.trim());
+                    }
 ":::"              { this.begin('CLASS'); }
 <CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}

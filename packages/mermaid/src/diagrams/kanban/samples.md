@@ -35,7 +35,7 @@ kanban
 
 ```
 
-Background color for section
+Columns and tasks
 
 ```mermaid
 kanban
@@ -48,10 +48,9 @@ kanban
   id7[In progress]
     id8[Design grammar]
 
-  style n2 stroke:#AA00FF,fill:#E1BEE7
 ```
 
-Background color for section
+Task metadata
 
 ```mermaid
 kanban
@@ -70,10 +69,9 @@ kanban
     priority: high
     descr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   }
-  style n1 stroke:#AA00FF,fill:#E1BEE7
 ```
 
-Background color for section
+Task metadata
 
 ```mermaid
 ---
@@ -98,7 +96,6 @@ kanban
     priority: high
     descr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   }
-  style n1 stroke:#AA00FF,fill:#E1BEE7
 ```
 
 priority - dedicated
