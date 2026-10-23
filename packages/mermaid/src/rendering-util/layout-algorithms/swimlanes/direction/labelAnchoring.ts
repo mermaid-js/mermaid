@@ -226,6 +226,22 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
       continue;
     }
 
+    // Self-loop: put the label just outside the loop's outer side
+    const loop = edge.start === edge.end ? dedupeConsecutivePoints(pts) : [];
+    const owner = nodeByIdMap.get(edge.start ?? '');
+    if (owner && loop.length === 4) {
+      const [, a, b] = loop;
+      const k = Math.abs(a.x - b.x) < EPS ? 'x' : 'y';
+      labelNode.x = (a.x + b.x) / 2;
+      labelNode.y = (a.y + b.y) / 2;
+      labelNode[k] = a[k] + Math.sign(a[k] - (owner[k] ?? 0)) * (4 + (k === 'x' ? lw : lh) / 2);
+      placedLabelRects.push({
+        labelId,
+        rect: rectFromCenterSize(labelNode.x, labelNode.y, lw, lh),
+      });
+      continue;
+    }
+
     // Collect every non-zero segment with orientation.
     const segments: SegmentCandidate[] = [];
     for (let i = 0; i < pts.length - 1; i++) {

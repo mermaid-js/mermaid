@@ -147,6 +147,18 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
   return mirrorAxis(layout, 'y');
 }
 
+/** How much LR/RL stretches the old TB y axis when it becomes the new x axis. */
+export function lrHorizontalScale(nodes: LayoutData['nodes']): number {
+  const contentNodes = (nodes ?? []).filter((n) => !n.isGroup);
+  let totalWidth = 0;
+  let totalHeight = 0;
+  for (const n of contentNodes) {
+    totalWidth += n.width ?? 0;
+    totalHeight += n.height ?? 0;
+  }
+  return totalHeight > 0 ? Math.max(1, totalWidth / totalHeight) : 1;
+}
+
 export function applyLrDirectionTransform(
   layout: LayoutData,
   direction: Direction = 'LR'
@@ -174,15 +186,7 @@ export function applyLrDirectionTransform(
 
   const titleBandSize = 36;
 
-  let totalWidth = 0;
-  let totalHeight = 0;
-  for (const n of contentNodes) {
-    totalWidth += n.width ?? 0;
-    totalHeight += n.height ?? 0;
-  }
-  const avgWidth = totalWidth / contentNodes.length;
-  const avgHeight = totalHeight / contentNodes.length;
-  const horizontalScaleFactor = avgHeight > 0 ? Math.max(1, avgWidth / avgHeight) : 1;
+  const horizontalScaleFactor = lrHorizontalScale(nodes);
 
   for (const n of contentNodes) {
     const x0 = n.x ?? 0;

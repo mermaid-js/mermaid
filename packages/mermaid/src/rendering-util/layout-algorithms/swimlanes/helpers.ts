@@ -10,6 +10,22 @@ export type Node = MermaidNode;
 export type NodeId = Node['id'];
 export type EdgeId = MermaidEdge['id'];
 
+/** Space between a node and its self-loop label: the loop plus a few px. */
+export const SELF_LOOP_LABEL_GAP = 24;
+
+export const isSelfLoopLabel = (n?: Node): boolean => !!n?.isEdgeLabel && n.edgeStart === n.edgeEnd;
+
+/** Self-loop side: right (1), or left (-1) when another edge already leaves to the right. */
+export function selfLoopSide(node: Node, layout: Layout): 1 | -1 {
+  const right = (node.x ?? 0) + (node.width ?? 0) / 2;
+  const busy = (layout.edges ?? []).some((e) => {
+    const otherId = e.start === node.id ? e.end : e.end === node.id ? e.start : undefined;
+    const other = otherId !== node.id && layout.nodes.find((n) => n.id === otherId);
+    return !e.isLayoutOnly && !!other && (other.x ?? 0) - (other.width ?? 0) / 2 > right;
+  });
+  return busy ? -1 : 1;
+}
+
 export interface EdgeRef {
   id: EdgeId;
   src: NodeId;
@@ -164,7 +180,7 @@ export function toGraphView(layout: LayoutData): Graph {
 
   const allNodes = layout.nodes ?? [];
   const groupNodes = allNodes.filter((n) => n.isGroup);
-  const nonGroupNodes = allNodes.filter((n) => !n.isGroup);
+  const nonGroupNodes = allNodes.filter((n) => !n.isGroup && !isSelfLoopLabel(n));
 
   const nodesInGroupOrder = [...groupNodes].reverse();
   const nodes: NodeId[] = [...nodesInGroupOrder, ...nonGroupNodes].map((n) => n.id);
@@ -203,6 +219,19 @@ export function writeBackToLayoutData(
   }
 
   const allNodes = layout.nodes ?? [];
+  // Several loops on one node nest outward (see selfLoopPoints in the router)
+  const loopLabelStack = new Map<NodeId, number>();
+  for (const label of allNodes.filter(isSelfLoopLabel)) {
+    const owner = nodeMap.get(label.edgeStart!);
+    if (owner?.x !== undefined && owner.y !== undefined) {
+      const taken = loopLabelStack.get(owner.id) ?? 0;
+      const offset = (owner.width ?? 0) / 2 + SELF_LOOP_LABEL_GAP + taken + (label.width ?? 0) / 2;
+      label.x = owner.x + selfLoopSide(owner, layout) * offset;
+      label.y = owner.y;
+      loopLabelStack.set(owner.id, taken + (label.width ?? 0) + 8);
+    }
+  }
+
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
   const topLevelGroups: Node[] = [];
   for (const group of allNodes) {

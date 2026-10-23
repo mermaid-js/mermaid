@@ -13,6 +13,8 @@
 
 import type { LayoutData, Node as MermaidNode } from '../../../types.js';
 import { PRECISION } from '../config.js';
+import { lrHorizontalScale } from '../direction/lrTransform.js';
+import { selfLoopSide } from '../helpers.js';
 
 const EPS = PRECISION.EPSILON;
 
@@ -113,6 +115,36 @@ function sharedLineEndpointCoord(line: RoutedLine, nextLine: RoutedLine): number
 
 function pointOnLine(line: RoutedLine, along: number): Point {
   return line.orient === 'vertical' ? { x: line.coord, y: along } : { x: along, y: line.coord };
+}
+
+/**
+ * Small loop on one side of the node for edges like `A --> A`
+ * (`side` 1 = right, -1 = left).
+ * In LR/RL the layout gets rotated and stretched later, so pass that stretch
+ * as `lrScale` to keep both ends of the loop on the node.
+ */
+// `extra` pushes the loop further out and `rise` makes it taller, so several
+// loops on one node nest instead of overlapping
+function selfLoopPoints(
+  node: MermaidNode,
+  side: 1 | -1,
+  lrScale?: number,
+  extra = 0,
+  rise = 0
+): Point[] {
+  const x = node.x ?? 0;
+  const y = node.y ?? 0;
+  const w = node.width ?? 0;
+  const h = node.height ?? 0;
+  const edgeX = x + (side * (lrScale ? h : w)) / 2;
+  const quarterH = (lrScale ? Math.min(h, w / lrScale) / 4 : h / 4) + rise;
+  const outX = edgeX + side * (ANCHOR_OFFSET + extra);
+  return [
+    { x: edgeX, y: y - quarterH },
+    { x: outX, y: y - quarterH },
+    { x: outX, y: y + quarterH },
+    { x: edgeX, y: y + quarterH },
+  ];
 }
 
 // ---------------------------------------------------------------------------
@@ -732,6 +764,7 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     return { pSrcPort, pDstPort, srcSide, dstSide };
   };
 
+  const loopsSoFar = new Map<string, { extra: number; count: number }>();
   for (const i of routingOrder) {
     const e = edges[i];
     edgeSegmentIndices[i] = [];
@@ -742,8 +775,27 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     if (e.points && e.points.length > 0) {
       continue;
     }
-    // Skip self-loops
+    // Self-loops get a fixed loop instead of A* routing (#8446)
     if (e.start === e.end) {
+      const node = nodeById.get(e.start);
+      if (node) {
+        const lrScale =
+          direction === 'LR' || direction === 'RL' ? lrHorizontalScale(nodes) : undefined;
+        const prev = loopsSoFar.get(e.start) ?? { extra: 0, count: 0 };
+        e.points = selfLoopPoints(
+          node,
+          selfLoopSide(node, data),
+          lrScale,
+          prev.extra,
+          prev.count * 6
+        );
+        // The next loop goes around this one and its label
+        const label = nodeById.get((e as { labelNodeId?: string }).labelNodeId ?? '');
+        loopsSoFar.set(e.start, {
+          extra: prev.extra + (label?.width ?? 0) + 8,
+          count: prev.count + 1,
+        });
+      }
       continue;
     }
 
@@ -2269,6 +2321,10 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
     const srcId = (edge as { start?: string }).start;
     const dstId = (edge as { end?: string }).end;
+    // Self-loop ends are already on the node border, clamping breaks them in LR
+    if (srcId === dstId) {
+      continue;
+    }
     const src = srcId ? nodeById.get(srcId) : undefined;
     const dst = dstId ? nodeById.get(dstId) : undefined;
     if (src) {
