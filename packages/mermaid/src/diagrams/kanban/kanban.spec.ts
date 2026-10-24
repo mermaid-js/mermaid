@@ -27,6 +27,16 @@ ${indent}style card stroke:#AA00FF,fill:#E1BEE7`;
       }
     );
 
+    it.each(['--accent2', '--accent_color'])(
+      'should reject unsupported style statements with custom property %s',
+      (property) => {
+        expect(() => kanban.parse(`kanban\n  todo[Todo]\n  style todo ${property}:red`)).toThrow(
+          `Unsupported kanban style statement: style todo ${property}:red`
+        );
+        expect(kanbanDB.getData().nodes.map((node) => node.id)).toEqual(['todo']);
+      }
+    );
+
     it('should allow style in node ids, labels, and comments', () => {
       kanban.parse(`kanban
   style[Style guide]
