@@ -80,6 +80,18 @@ describe('Treemap Parser', () => {
       expect(rows.map((row) => row.indent)).toEqual([undefined, 2, 2, undefined]);
       expect((rows[1].item as Leaf).value).toBe(10);
     });
+
+    it('should ignore trailing whitespace before Windows line endings', () => {
+      const result = parse('treemap\r\n"Section" \r\n  "Leaf1": 10 \r\n  "Leaf2": 20\t\r\n');
+      expectNoErrorsOrAlternatives(result);
+      const rows = result.value.TreemapRows;
+      expect(rows.map((row) => (row.item as Section | Leaf).name)).toEqual([
+        'Section',
+        'Leaf1',
+        'Leaf2',
+      ]);
+      expect(rows.map((row) => row.indent)).toEqual([undefined, 2, 2]);
+    });
   });
 
   describe('Data Types', () => {
