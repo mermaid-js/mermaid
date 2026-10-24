@@ -54,6 +54,28 @@ ${indent}style card stroke:#AA00FF,fill:#E1BEE7`;
       ]);
     });
 
+    it.each(['style card COLOR:red', 'style card --Accent:red', 'STYLE card background-COLOR:red'])(
+      'should reject unsupported style statements regardless of case: %s',
+      (statement) => {
+        expect(() => kanban.parse(`kanban\n  todo[Todo]\n    card[Card]\n  ${statement}`)).toThrow(
+          `Unsupported kanban style statement: ${statement}`
+        );
+        expect(kanbanDB.getData().nodes.map((node) => node.id)).toEqual(['todo', 'card']);
+      }
+    );
+
+    it('should preserve uppercase style-like text inside labels', () => {
+      kanban.parse(`kanban
+  todo[Todo]
+    guide[style Guide Owner: Alice]
+`);
+
+      expect(kanbanDB.getData().nodes.map((node) => node.label)).toEqual([
+        'Todo',
+        'style Guide Owner: Alice',
+      ]);
+    });
+
     it('KNBN-1 should handle a simple root definition abc122', function () {
       const str = `kanban
     root`;
