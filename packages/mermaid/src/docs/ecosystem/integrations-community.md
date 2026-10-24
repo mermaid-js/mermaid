@@ -280,6 +280,7 @@ Communication tools and platforms
 - [Schema3D](https://schema3d.com) - Browser-only 3D visualizer for Mermaid ER diagrams (also SQL / DrawDB); shareable URL, no live DB
 - [speccharts: Turn your test suites into specification diagrams](https://github.com/arnaudrenaud/speccharts)
 - [termaid: Render Mermaid diagrams as Unicode art in the terminal](https://github.com/fasouto/termaid)
+- [termd: Terminal markdown viewer that draws Mermaid diagrams as text](https://github.com/ekalinin/termd)
 - [Vitepress Plugin](https://github.com/sametcn99/vitepress-mermaid-renderer)
 
 <!--- cspell:ignore Blazorade HueHive --->
