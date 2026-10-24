@@ -1,0 +1,13 @@
+---
+description: >-
+  Multiple relationships sharing entities (CUSTOMER/ORDER/ADDRESS/INVOICE),
+  verifying edge labels stay centered with htmlLabels disabled.
+config:
+  htmlLabels: false
+---
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains
+    CUSTOMER ||--|{ ADDRESS : "invoiced at"
+    CUSTOMER ||--|{ ADDRESS : "receives goods at"
+    ORDER ||--o{ INVOICE : "liable for"

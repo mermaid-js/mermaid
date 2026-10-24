@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that the flowchart rankSpacing configuration option controls the
+  vertical spacing between ranks, under the hand-drawn look.
+config:
+  look: handDrawn
+  flowchart:
+    rankSpacing: '100'
+  fontFamily: courier
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  %% this is a comment
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

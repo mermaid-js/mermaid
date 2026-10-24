@@ -1,0 +1,23 @@
+---
+description: >-
+  Five ungrouped servers in a plus/star layout, identical in structure to
+  the edge-labels fixture, but connected with directed `-->` arrows instead
+  of undirected/labeled edges — checking directional-arrow rendering across
+  every compass-port combination.
+---
+architecture-beta
+  service servC(server)[Server 1]
+  service servL(server)[Server 2]
+  service servR(server)[Server 3]
+  service servT(server)[Server 4]
+  service servB(server)[Server 5]
+
+  servC:L --> R:servL
+  servC:R --> L:servR
+  servC:T --> B:servT
+  servC:B --> T:servB
+
+  servL:T --> L:servT
+  servL:B --> L:servB
+  servR:T --> R:servT
+  servR:B --> R:servB

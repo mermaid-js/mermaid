@@ -1,0 +1,21 @@
+---
+description: >-
+  Classic-look sequence diagram combining central-connection arrows (the
+  `()` marker denoting an open circle terminator) with activation bars,
+  verifying that activate/deactivate rendering lines up correctly on an
+  actor whose arrows use the central-connection syntax.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice ()->>() Bob: Activate Bob
+  activate Bob
+  Bob ()-->> Charlie: Message to Charlie
+  Bob ()->>() Alice: Response to Alice
+  deactivate Bob
