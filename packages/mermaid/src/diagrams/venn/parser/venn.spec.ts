@@ -243,6 +243,7 @@ describe('Venn diagram', function () {
   test.each([
     ['#35;x', '#x'],
     ['#quot;x', '"x'],
+    ['#35;&amp;x', '#&amp;x'],
     ['x', 'x'],
     ['&amp;x', '&amp;x'],
   ])('unknown set %j is reported as %j', (label, shown) => {
