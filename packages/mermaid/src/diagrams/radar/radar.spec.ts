@@ -185,6 +185,10 @@ describe('radar diagrams', () => {
         expect(relativeRadius(0, 0, 0, 100)).toBe(0);
       });
 
+      it('should place a curve with equal nonzero bounds at the center', () => {
+        expect(relativeRadius(5, 5, 5, 100)).toBe(0);
+      });
+
       it('should handle min value', () => {
         expect(relativeRadius(0, 0, 10, 100)).toBe(0);
       });
