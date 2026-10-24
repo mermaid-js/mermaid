@@ -12,6 +12,8 @@ Mermaid’s Kanban diagram allows you to create visual representations of tasks 
 
 A Kanban diagram in Mermaid starts with the kanban keyword, followed by the definition of columns (stages) and tasks within those columns.
 
+Kanban diagrams do not support `style <id> <css>` statements. These statements produce a parse error instead of adding a column. To use such text as a task or column label, enclose it in square brackets.
+
 ```mermaid-example
 kanban
   column1[Column Title]
