@@ -937,11 +937,10 @@ export const decodeEntityPlaceholders = (text: string): string => {
   if (!text.includes('ﬂ°')) {
     return text;
   }
-  const html = decodeEntities(text);
-  if (typeof document !== 'undefined') {
-    return entityDecode(html);
-  }
-  return html;
+  return text.replace(/ﬂ°°\d+¶ß|ﬂ°\w+¶ß/g, (placeholder) => {
+    const html = decodeEntities(placeholder);
+    return typeof document !== 'undefined' ? entityDecode(html) : html;
+  });
 };
 
 export const isString = (value: unknown): value is string => {

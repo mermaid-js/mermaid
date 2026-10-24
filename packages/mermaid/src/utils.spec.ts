@@ -623,11 +623,16 @@ describe('decodeEntityPlaceholders', () => {
     expect(decodeEntityPlaceholders(encodeEntities('&amp;x'))).toBe('&amp;x');
   });
 
+  it('decodes only placeholder spans when mixed with a typed amp sequence', () => {
+    expect(decodeEntityPlaceholders(encodeEntities('#35;&amp;x'))).toBe('#&amp;x');
+  });
+
   it('keeps the HTML reference when there is no DOM', () => {
     vi.stubGlobal('document', undefined);
     try {
       expect(decodeEntityPlaceholders(encodeEntities('#35;x'))).toBe('&#35;x');
       expect(decodeEntityPlaceholders(encodeEntities('#quot;x'))).toBe('&quot;x');
+      expect(decodeEntityPlaceholders(encodeEntities('#35;&amp;x'))).toBe('&#35;&amp;x');
       expect(decodeEntityPlaceholders('x')).toBe('x');
       expect(decodeEntityPlaceholders('&amp;x')).toBe('&amp;x');
     } finally {
