@@ -2,6 +2,7 @@
 import venn from './venn.jison';
 import { db } from '../vennDB.js';
 import { expect } from 'vitest';
+import { encodeEntities } from '../../../utils.js';
 
 describe('Venn diagram', function () {
   beforeEach(function () {
@@ -237,6 +238,22 @@ describe('Venn diagram', function () {
         union Foo,Buz
     `;
     expect(() => venn.parse(str)).toThrow('unknown set identifier');
+  });
+
+  test.each([
+    ['#35;x', '#x'],
+    ['#quot;x', '"x'],
+    ['x', 'x'],
+    ['&amp;x', '&amp;x'],
+  ])('unknown set %j is reported as %j', (label, shown) => {
+    const diagram = `venn-beta
+        set A
+        union A,"B${label}"
+    `;
+    expect(() => venn.parse(encodeEntities(diagram))).toThrowError(
+      `unknown set identifier: B${shown}`
+    );
+    expect(() => venn.parse(encodeEntities(diagram))).not.toThrowError(/ﬂ°/);
   });
 
   test('quoted identifiers', () => {

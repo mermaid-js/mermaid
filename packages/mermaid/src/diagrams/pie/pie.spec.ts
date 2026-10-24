@@ -1,6 +1,7 @@
 import { parser } from './pieParser.js';
 import { DEFAULT_PIE_DB, db } from './pieDb.js';
 import { setConfig } from '../../diagram-api/diagramAPI.js';
+import { encodeEntities } from '../../utils.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -163,6 +164,21 @@ describe('pie', () => {
       }).rejects.toThrowError(
         '"dogs" has invalid value: -60.67. Negative values are not allowed in pie charts. All slice values must be >= 0.'
       );
+    });
+
+    describe('entity placeholders in errors', () => {
+      it.each([
+        ['#35;x', '#x'],
+        ['#quot;x', '"x'],
+        ['x', 'x'],
+        ['&amp;x', '&amp;x'],
+      ])('shows %j as %j', async (label, shown) => {
+        const parsed = parser.parse(encodeEntities(`pie\n"${label}" : -1\n`));
+        await expect(parsed).rejects.toThrowError(
+          `"${shown}" has invalid value: -1. Negative values are not allowed in pie charts. All slice values must be >= 0.`
+        );
+        await expect(parsed).rejects.not.toThrowError(/ﬂ°/);
+      });
     });
 
     it('should handle unsafe properties', async () => {

@@ -4,6 +4,7 @@ import { parser } from './parser.js';
 import { relativeRadius, closedRoundCurve } from './renderer.js';
 import { Diagram } from '../../Diagram.js';
 import mermaidAPI from '../../mermaidAPI.js';
+import { encodeEntities } from '../../utils.js';
 
 const {
   clear,
@@ -173,6 +174,23 @@ describe('radar diagrams', () => {
       await expect(parser.parse(str)).resolves.not.toThrow();
       expect(getOptions().ticks).toBe(expected);
     }
+  });
+
+  describe('entity placeholders in errors', () => {
+    it.each([
+      ['#35;x', '#x'],
+      ['#quot;x', '"x'],
+      ['x', 'x'],
+      ['&amp;x', '&amp;x'],
+    ])('shows %j as %j', async (label, shown) => {
+      const diagram = `radar-beta
+      axis a["${label}"], b
+      curve c{ b: 1 }
+      `;
+      const parsed = parser.parse(encodeEntities(diagram));
+      await expect(parsed).rejects.toThrowError(`Missing entry for axis ${shown}`);
+      await expect(parsed).rejects.not.toThrowError(/ﬂ°/);
+    });
   });
 
   describe('renderer', () => {

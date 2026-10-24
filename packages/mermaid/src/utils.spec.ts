@@ -1,5 +1,11 @@
 import { expect, vi } from 'vitest';
-import utils, { calculatePoint, cleanAndMerge, detectDirective } from './utils.js';
+import utils, {
+  calculatePoint,
+  cleanAndMerge,
+  decodeEntityPlaceholders,
+  detectDirective,
+  encodeEntities,
+} from './utils.js';
 import assignWithDepth from './assignWithDepth.js';
 import { detectType } from './diagram-api/detectType.js';
 import { addDiagrams } from './diagram-api/diagram-orchestration.js';
@@ -594,6 +600,39 @@ describe('calculatePoint', () => {
     expect(() => calculatePoint(points, distanceToTraverse)).toThrow(
       'Could not find a suitable point for the given distance'
     );
+  });
+});
+
+describe('decodeEntityPlaceholders', () => {
+  it('decodes a numeric code to the character a label is drawn as', () => {
+    expect(decodeEntityPlaceholders(encodeEntities('#35;x'))).toBe('#x');
+    expect(encodeEntities('#35;x')).toContain('ﬂ°');
+  });
+
+  it('decodes a named code to the character a label is drawn as', () => {
+    expect(decodeEntityPlaceholders(encodeEntities('#quot;x'))).toBe('"x');
+    expect(encodeEntities('#quot;x')).toContain('ﬂ°');
+  });
+
+  it('leaves plain text unchanged', () => {
+    expect(decodeEntityPlaceholders('x')).toBe('x');
+  });
+
+  it('leaves an amp sequence unchanged', () => {
+    expect(decodeEntityPlaceholders('&amp;x')).toBe('&amp;x');
+    expect(decodeEntityPlaceholders(encodeEntities('&amp;x'))).toBe('&amp;x');
+  });
+
+  it('keeps the HTML reference when there is no DOM', () => {
+    vi.stubGlobal('document', undefined);
+    try {
+      expect(decodeEntityPlaceholders(encodeEntities('#35;x'))).toBe('&#35;x');
+      expect(decodeEntityPlaceholders(encodeEntities('#quot;x'))).toBe('&quot;x');
+      expect(decodeEntityPlaceholders('x')).toBe('x');
+      expect(decodeEntityPlaceholders('&amp;x')).toBe('&amp;x');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
 
