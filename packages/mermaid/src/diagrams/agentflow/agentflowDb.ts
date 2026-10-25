@@ -823,14 +823,15 @@ You have to call mermaid.initialize.`
    * Resolves a `linkStyle` position to `'default'` or an in-range edge index.
    *
    * The grammar hands an index over as a string (`'1'`), so it is read as a number
-   * here. Anything that is not an existing edge's index throws the bounds error.
+   * here. A string is an index only when it is plain digits. Anything that is not
+   * an existing edge's index throws the bounds error.
    */
   private resolveLinkPosition(pos: number | string): 'default' | number {
     if (pos === 'default') {
       return 'default';
     }
 
-    const index = Number(pos);
+    const index = typeof pos === 'string' && !/^\d+$/.test(pos) ? Number.NaN : Number(pos);
 
     if (!Number.isInteger(index) || index < 0 || index >= this.edges.length) {
       throw new Error(

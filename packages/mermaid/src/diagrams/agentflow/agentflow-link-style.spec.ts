@@ -83,6 +83,17 @@ describe('linkStyle index bounds through the grammar', () => {
     expect(() => db.updateLinkInterpolate([-1], 'basis')).toThrow(/index -1 for linkStyle/);
   });
 
+  it.each(['', ' ', ' 1 ', '+1', '1.0', '1e0', '0x1'])(
+    'rejects the string %j, which Number() reads as an edge index but the grammar never produces',
+    (pos) => {
+      const db = parse(`${oneEdge}\n  a --> b`);
+      expect(() => db.updateLink([pos], ['stroke:red'])).toThrow(/for linkStyle is out of bounds/);
+      expect(() => db.updateLinkInterpolate([pos], 'basis')).toThrow(
+        /for linkStyle is out of bounds/
+      );
+    }
+  );
+
   it('styles the edge a valid index names', () => {
     const db = parse(`${oneEdge}\n  linkStyle 0 stroke:red`);
     expect(db.getEdges()[0].style).toEqual(['stroke:red', 'fill:none']);
