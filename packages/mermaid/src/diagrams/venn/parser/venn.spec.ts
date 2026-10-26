@@ -252,4 +252,29 @@ describe('Venn diagram', function () {
       expect.objectContaining({ sets: ['Buz', 'Foo Bar'], size: 2.5 }),
     ]);
   });
+
+  test('identifiers that start with a keyword followed by a hyphen are not misread as keywords', () => {
+    const str = `venn-beta
+      set set-theory
+      set B
+      union set-theory,B["both"]
+    `;
+    venn.parse(str);
+    expect(db.getSubsetData()).toEqual([
+      expect.objectContaining({ sets: ['set-theory'], size: 10 }),
+      expect.objectContaining({ sets: ['B'], size: 10 }),
+      expect.objectContaining({ sets: ['B', 'set-theory'], size: 2.5, label: 'both' }),
+    ]);
+  });
+
+  test('text node id starting with a keyword prefix is parsed as an identifier', () => {
+    const str = `venn-beta
+set A
+text A text-books
+    `;
+    venn.parse(str);
+    expect(db.getTextData()).toEqual([
+      expect.objectContaining({ sets: ['A'], id: 'text-books', label: undefined }),
+    ]);
+  });
 });
