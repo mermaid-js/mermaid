@@ -1017,7 +1017,7 @@ style payloadEdge stroke:#f00`);
       expect(data.edges[7]).toMatchObject({
         id: 'include',
         relationshipType: 'include',
-        label: 'include',
+        label: '«include»',
         labelType: 'text',
         pattern: 'dotted',
         arrowTypeStart: 'none',
@@ -1026,7 +1026,8 @@ style payloadEdge stroke:#f00`);
       expect(data.edges[8]).toMatchObject({
         id: 'extend',
         relationshipType: 'extend',
-        label: 'extend',
+        label: '«extend»',
+        labelType: 'text',
         pattern: 'dotted',
         arrowTypeEnd: 'arrow_point',
       });
@@ -1036,6 +1037,7 @@ style payloadEdge stroke:#f00`);
         pattern: 'solid',
         arrowTypeEnd: 'extension',
       });
+      expect(data.edges[9].label).toBeUndefined();
       expect(data.edges[10]).toMatchObject({
         id: 'note-0-edge',
         source: 'note-0',
