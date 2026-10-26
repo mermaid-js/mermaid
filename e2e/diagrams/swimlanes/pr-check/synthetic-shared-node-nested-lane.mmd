@@ -1,0 +1,15 @@
+---
+description: >-
+  A node kept by a subgraph nested in the first lane, and listed again in a
+  second lane: the node stays in the first lane and the emptied second lane
+  is removed.
+---
+swimlane-beta LR
+  subgraph lane1[Performer A]
+    subgraph inner[Nested]
+      a["step one"]
+    end
+  end
+  subgraph lane2[Phase 1]
+    a
+  end

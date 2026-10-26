@@ -422,11 +422,11 @@ function calcTerminalLabelPosition(
     cardinalityPosition.x = Math.sin(angle + Math.PI) * d + (points[0].x + center.x) / 2;
     cardinalityPosition.y = -Math.cos(angle + Math.PI) * d + (points[0].y + center.y) / 2;
   } else if (position === 'end_right') {
-    cardinalityPosition.x = Math.sin(angle - Math.PI) * d + (points[0].x + center.x) / 2 - 5;
-    cardinalityPosition.y = -Math.cos(angle - Math.PI) * d + (points[0].y + center.y) / 2 - 5;
+    cardinalityPosition.x = Math.sin(angle - Math.PI) * d + (points[0].x + center.x) / 2;
+    cardinalityPosition.y = -Math.cos(angle - Math.PI) * d + (points[0].y + center.y) / 2;
   } else if (position === 'end_left') {
-    cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2 - 5;
-    cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2 - 5;
+    cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
+    cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
   } else {
     cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
     cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;

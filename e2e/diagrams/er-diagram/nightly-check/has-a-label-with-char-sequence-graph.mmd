@@ -1,0 +1,12 @@
+---
+description: >-
+  A single aliased entity, p[Photograph], with typed attributes. The alias
+  text contains the substring "graph" (Photo-graph), guarding against a
+  historical parser bug where a label containing that character sequence
+  was misinterpreted.
+---
+erDiagram
+  p[Photograph] {
+  varchar(12) jobId
+  date dateCreated
+  }
