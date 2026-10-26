@@ -147,6 +147,29 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
   return mirrorAxis(layout, 'y');
 }
 
+/**
+ * How far the LR/RL transform stretches the flow axis: the diagram's own nodes' average
+ * width over their average height, never below 1. Edge labels and groups do not count, so a
+ * label cannot stretch the flow axis.
+ */
+export function flowAxisStretch(
+  nodes: readonly { width?: number; height?: number; isGroup?: boolean; isEdgeLabel?: boolean }[]
+): number {
+  const scaledNodes = nodes.filter((n) => !n.isGroup && !n.isEdgeLabel);
+  if (scaledNodes.length === 0) {
+    return 1;
+  }
+  let totalWidth = 0;
+  let totalHeight = 0;
+  for (const n of scaledNodes) {
+    totalWidth += n.width ?? 0;
+    totalHeight += n.height ?? 0;
+  }
+  const avgWidth = totalWidth / scaledNodes.length;
+  const avgHeight = totalHeight / scaledNodes.length;
+  return avgHeight > 0 ? Math.max(1, avgWidth / avgHeight) : 1;
+}
+
 export function applyLrDirectionTransform(
   layout: LayoutData,
   direction: Direction = 'LR'
@@ -174,17 +197,7 @@ export function applyLrDirectionTransform(
 
   const titleBandSize = 36;
 
-  // Scale by the diagram's own nodes: an edge label must not stretch the flow axis.
-  const scaledNodes = contentNodes.filter((n) => !n.isEdgeLabel);
-  let totalWidth = 0;
-  let totalHeight = 0;
-  for (const n of scaledNodes) {
-    totalWidth += n.width ?? 0;
-    totalHeight += n.height ?? 0;
-  }
-  const avgWidth = totalWidth / scaledNodes.length;
-  const avgHeight = totalHeight / scaledNodes.length;
-  const horizontalScaleFactor = avgHeight > 0 ? Math.max(1, avgWidth / avgHeight) : 1;
+  const horizontalScaleFactor = flowAxisStretch(nodes);
 
   for (const n of contentNodes) {
     const x0 = n.x ?? 0;

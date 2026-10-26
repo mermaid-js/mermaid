@@ -1,5 +1,6 @@
 import type { Graph, OrderedLayers, Coordinates, NodeId, EdgeRef, Node } from './helpers.js';
 import { COORDINATES } from './config.js';
+import { flowAxisStretch } from './direction/lrTransform.js';
 import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
 
 export interface CoordOptions {
@@ -145,10 +146,13 @@ export function assignCoordinates(
   // on both sides. It keeps its own spacing as well, because that is where the router
   // runs edges across the gap, and a label squeezed into it has nowhere to dodge them.
   // Labels sharing a gap sit side by side, so the tallest one decides.
+  // The LR/RL transform stretches the flow axis, so a label's extent is reserved divided
+  // by that stretch and measures its own width once transformed.
+  const flowStretch = isHorizontal ? flowAxisStretch(gWithDummies.layout?.nodes ?? []) : 1;
   const labelGapNeed: number[] = layers.map(() => 0);
   for (const { labelId, gap } of gapLabels) {
     const extent = isHorizontal ? getWidth(labelId) : getHeight(labelId);
-    const need = extent + 2 * COORDINATES.EDGE_LABEL_CLEARANCE;
+    const need = (extent + 2 * COORDINATES.EDGE_LABEL_CLEARANCE) / flowStretch;
     labelGapNeed[gap] = Math.max(labelGapNeed[gap], need);
   }
   for (const [gap, need] of labelGapNeed.entries()) {
