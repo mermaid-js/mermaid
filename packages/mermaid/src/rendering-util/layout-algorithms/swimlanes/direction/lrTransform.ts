@@ -159,6 +159,42 @@ function mirroredSide(side: AnchorSide): AnchorSide {
   return side === 'right' ? 'left' : side;
 }
 
+function growAlongBorder(
+  box: Box,
+  host: Box,
+  side: AnchorSide,
+  footprint: AnchorFootprint,
+  mirrored: boolean
+): void {
+  if (side === 'top' || side === 'bottom') {
+    const centreX = (host.left + host.right) / 2;
+    const [before, after] = mirrored
+      ? [footprint.after, footprint.before]
+      : [footprint.before, footprint.after];
+    box.left = Math.min(box.left, centreX - before);
+    box.right = Math.max(box.right, centreX + after);
+    return;
+  }
+  const centreY = (host.top + host.bottom) / 2;
+  box.top = Math.min(box.top, centreY - footprint.before);
+  box.bottom = Math.max(box.bottom, centreY + footprint.after);
+}
+
+const GROW_OUTWARD: Record<AnchorSide, (box: Box, host: Box, beyond: number) => void> = {
+  top: (box, host, beyond) => {
+    box.top = Math.min(box.top, host.top - beyond);
+  },
+  bottom: (box, host, beyond) => {
+    box.bottom = Math.max(box.bottom, host.bottom + beyond);
+  },
+  left: (box, host, beyond) => {
+    box.left = Math.min(box.left, host.left - beyond);
+  },
+  right: (box, host, beyond) => {
+    box.right = Math.max(box.right, host.right + beyond);
+  },
+};
+
 // Grows `box` to hold a run standing off `host` on `side`: out from that border by `beyond`,
 // and along it from `before` to `after` either side of the host's centre. `mirrored` flips
 // the x axis, as RL does after the lanes are sized.
@@ -169,23 +205,8 @@ function reserveOnSide(
   footprint: AnchorFootprint,
   mirrored: boolean
 ): void {
-  const centre = { x: (host.left + host.right) / 2, y: (host.top + host.bottom) / 2 };
-  if (side === 'top' || side === 'bottom') {
-    const [before, after] = mirrored
-      ? [footprint.after, footprint.before]
-      : [footprint.before, footprint.after];
-    box.left = Math.min(box.left, centre.x - before);
-    box.right = Math.max(box.right, centre.x + after);
-  } else {
-    box.top = Math.min(box.top, centre.y - footprint.before);
-    box.bottom = Math.max(box.bottom, centre.y + footprint.after);
-  }
-  const edge = { top: host.top, bottom: host.bottom, left: host.left, right: host.right };
-  box.top = side === 'top' ? Math.min(box.top, edge.top - footprint.beyond) : box.top;
-  box.bottom =
-    side === 'bottom' ? Math.max(box.bottom, edge.bottom + footprint.beyond) : box.bottom;
-  box.left = side === 'left' ? Math.min(box.left, edge.left - footprint.beyond) : box.left;
-  box.right = side === 'right' ? Math.max(box.right, edge.right + footprint.beyond) : box.right;
+  growAlongBorder(box, host, side, footprint, mirrored);
+  GROW_OUTWARD[side](box, host, footprint.beyond);
 }
 
 // Grows a host to cover the room each run standing off it is placed in. The runs are keyed by
