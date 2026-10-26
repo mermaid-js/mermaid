@@ -1,0 +1,19 @@
+---
+description: >-
+  Primary key (PK) and foreign key (FK) attribute annotations without any
+  accompanying comments, the baseline key-marker test distinct from the
+  sibling "keys-and-comments" fixture which adds comment strings to the
+  same keys.
+config:
+  logLevel: 1
+---
+erDiagram
+  AUTHOR_WITH_LONG_ENTITY_NAME {
+    string name PK
+  }
+  AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+  BOOK {
+      float price
+      string author FK
+      string title PK
+    }

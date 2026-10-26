@@ -1,0 +1,12 @@
+---
+description: >-
+  Attribute types carrying an explicit length parameter (varchar(99),
+  string(255)) under the elk layout.
+config:
+  layout: elk
+---
+erDiagram
+    CLUSTER {
+      varchar(99) name
+      string(255) description
+    }

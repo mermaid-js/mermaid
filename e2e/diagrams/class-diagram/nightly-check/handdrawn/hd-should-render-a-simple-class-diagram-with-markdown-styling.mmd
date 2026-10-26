@@ -1,0 +1,20 @@
+---
+description: >-
+  Hand-drawn class diagram testing markdown-style emphasis syntax
+  (single/double underscore and asterisk markers for italic/bold) embedded
+  in attribute and method text, rendered with htmlLabels enabled; the
+  "-without-htmllabels" sibling repeats this with htmlLabels disabled.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  class Class10 {
+  +attribute *italic**
+  ~attribute **bold***
+  _italicmethod_()
+  __boldmethod__()
+  _+_swim_()a_
+  __+quack() test__
+  }

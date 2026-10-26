@@ -1,0 +1,12 @@
+---
+description: >-
+  Single-state smoke test for the `style` statement, which applies fill,
+  border, and text color directly to a state (AState) without going through
+  a classDef/class pair.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  AState
+  style AState fill:#636,border:1px solid red,color:white;
