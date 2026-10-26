@@ -416,6 +416,35 @@ describe('insertEdge swimlane final segment axis', () => {
     expect(renderedPoints.at(-1).y).toBeGreaterThanOrEqual(bend.y);
   });
 
+  const renderStubbedEdge = (arrowTypeEnd, originalLast = { x: 10, y: 100 }) => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'L_A7_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd,
+      points: [{ x: 0, y: 0 }, { x: 0, y: 100 }, originalLast],
+    };
+    const tail = { intersect: (point) => point };
+    const head = { intersect: () => ({ x: originalLast.x / 2, y: originalLast.y }) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    return JSON.parse(atob(svg.select('path').attr('data-points')));
+  };
+
+  it('keeps a stub that turns into the node even when it is shorter than the arrowhead pull-back', () => {
+    const renderedPoints = renderStubbedEdge('aggregation');
+
+    expect(renderedPoints.at(-1)).toEqual({ x: 10, y: 100 });
+  });
+
   describe('when the shape centre is off the row the edge enters on', () => {
     // A wide shape whose centre sits below the row: the ray from the last bend to the
     // centre meets the face a fraction of a pixel off the row, inside the axis tolerance.
