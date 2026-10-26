@@ -218,4 +218,61 @@ accDescr {
       expect(() => parseBpmn(`${HEAD}  a --> a --> zzz\n`)).toThrow(/line 4, column 9: /);
     });
   });
+  describe('ids', () => {
+    const HEAD = 'bpmn-beta LR\n  lane l "L"\n';
+
+    it('refuses a second element with the same id, at the second one', () => {
+      expect(() => parseBpmn(`${HEAD}    task a "A"\n    task a "B"\n`)).toThrow(
+        'BPMN error at line 4, column 10: "a" is already declared'
+      );
+    });
+
+    it('refuses an id shared by elements of different kinds', () => {
+      expect(() => parseBpmn(`${HEAD}    task l "A"\n`)).toThrow(/"l" is already declared/);
+    });
+
+    it('does not hand a generated id to an element that a later line names', () => {
+      const parsed = parseBpmn(`${HEAD}    task "X"\n    task task-1 "Y"\n`);
+      expect(parsed.nodes.map((node) => node.id)).toEqual(['l', 'task-2', 'task-1']);
+    });
+  });
+
+  describe('containment', () => {
+    const HEAD = 'bpmn-beta LR\n  lane l "L"\n';
+
+    it.each([
+      ['a task under a task', '    task a "A"\n      task b "B"\n', 4, 7],
+      ['a lane under a task', '    task a "A"\n      lane m "M"\n', 4, 7],
+      ['an event under a task', '    task a "A"\n      start s "S"\n', 4, 7],
+      ['a data object under a task', '    task a "A"\n      data d "D"\n', 4, 7],
+      ['a boundary event under a gateway', '    xor g "G"\n      boundary timer b "B"\n', 4, 7],
+      ['a boundary event under a lane', '    boundary timer b "B"\n', 3, 5],
+    ])('refuses %s, at the nested element', (_name, body, line, column) => {
+      expect(() => parseBpmn(`${HEAD}${body}`)).toThrow(`at line ${line}, column ${column}`);
+    });
+
+    it('refuses a boundary event with no host at all', () => {
+      expect(() => parseBpmn('bpmn-beta LR\n  boundary timer b "B"\n')).toThrow(
+        /line 2, column 3: .*boundary event .*activity/
+      );
+    });
+
+    it.each(['task', 'subprocess', 'call'])('accepts a boundary event under a %s', (activity) => {
+      const parsed = parseBpmn(`${HEAD}    ${activity} a "A"\n      boundary timer b "B"\n`);
+      expect(parsed.nodes.find((node) => node.id === 'b')?.parentId).toBe('a');
+    });
+
+    it('accepts contents under a pool, a lane and a group', () => {
+      const parsed = parseBpmn(
+        'bpmn-beta LR\n  pool p "P"\n    lane l "L"\n      task a "A"\n  group g "G"\n    task b "B"\n'
+      );
+      expect(parsed.nodes.map((node) => node.parentId)).toEqual([
+        undefined,
+        'p',
+        'l',
+        undefined,
+        'g',
+      ]);
+    });
+  });
 });

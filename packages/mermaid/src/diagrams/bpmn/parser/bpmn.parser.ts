@@ -183,7 +183,18 @@ const atText = (where: Location | undefined): string =>
 /** Where each parsed node and flow was written, kept beside them so they stay plain data. */
 const written = new WeakMap<object, Location>();
 
-const remember = (parsed: object, token: IToken): void => {
+/** The first token a rule consumed, which is where its statement starts. */
+const firstTokenOf = (rule: CstNode): IToken | undefined => {
+  const tokens = Object.values(rule.children).flatMap((children) =>
+    children.map((child) => ('tokenType' in child ? child : firstTokenOf(child)))
+  );
+  return tokens.reduce<IToken | undefined>(
+    (first, token) => (token && (!first || token.startOffset < first.startOffset) ? token : first),
+    undefined
+  );
+};
+
+const remember = (parsed: object, token: IToken | undefined): void => {
   const where = locationOf(token);
   if (where) {
     written.set(parsed, where);
@@ -200,6 +211,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
   private accTitle: string | undefined;
   private accDescr: string | undefined;
   private generated = 0;
+  private declared = new Set<string>();
 
   private baseLevel: number | undefined;
 
@@ -216,6 +228,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
     this.accTitle = undefined;
     this.accDescr = undefined;
     this.generated = 0;
+    this.declared = new Set();
     this.baseLevel = undefined;
   }
 
@@ -238,6 +251,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
     for (const line of (ctx.line as CstNode[] | undefined) ?? []) {
       this.visit(line);
     }
+    this.assignGeneratedIds();
     this.assignParents();
   }
 
@@ -253,6 +267,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
       const rule = (ctx[key] as CstNode[] | undefined)?.[0];
       if (rule) {
         const node = this.visit(rule) as ParsedNode;
+        remember(node, firstTokenOf(rule));
         this.baseLevel ??= level;
         node.level = Math.max(0, level - this.baseLevel);
         this.nodes.push(node);
@@ -373,6 +388,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
     return {
       id: imageOf(ctx.Identifier?.[0]),
       label: quoted ? quoted.image.slice(1, -1) : '',
+      at: locationOf(ctx.Identifier?.[0]),
     };
   }
 
@@ -412,9 +428,34 @@ class BpmnVisitor extends BpmnBaseVisitor {
     kind: ParsedNode['kind'],
     keyword: string
   ): ParsedNode {
-    const named = this.visit((ctx.nameAndLabel as CstNode[])[0]) as { id: string; label: string };
-    const id = named.id || `${keyword}-${++this.generated}`;
-    return { kind, keyword, id, label: named.label || named.id || '', level: 0 };
+    const named = this.visit((ctx.nameAndLabel as CstNode[])[0]) as {
+      id: string;
+      label: string;
+      at?: Location;
+    };
+    if (named.id) {
+      this.declare(named.id, named.at);
+    }
+    return { kind, keyword, id: named.id, label: named.label || named.id || '', level: 0 };
+  }
+
+  private declare(id: string, at?: Location) {
+    if (this.declared.has(id)) {
+      throw new Error(
+        `BPMN error${atText(at)}: "${id}" is already declared. Give each element its own id.`
+      );
+    }
+    this.declared.add(id);
+  }
+
+  /** An element written without an id gets one that no element names. */
+  private assignGeneratedIds() {
+    for (const node of this.nodes.filter((candidate) => !candidate.id)) {
+      do {
+        node.id = `${node.keyword}-${++this.generated}`;
+      } while (this.declared.has(node.id));
+      this.declared.add(node.id);
+    }
   }
 
   private assignParents() {
@@ -425,7 +466,31 @@ class BpmnVisitor extends BpmnBaseVisitor {
           break;
         }
       }
+      assertPlaced(
+        node,
+        this.nodes.find((candidate) => candidate.id === node.parentId)
+      );
     }
+  }
+}
+
+const CONTAINER_KINDS = new Set<ParsedNode['kind']>(['pool', 'lane', 'group']);
+
+/** Only a pool, a lane or a group holds other elements, and a boundary event sits on an activity. */
+function assertPlaced(node: ParsedNode, parent: ParsedNode | undefined): void {
+  const where = `BPMN error${atText(written.get(node))}`;
+  if (node.keyword === 'boundary') {
+    if (parent?.kind !== 'activity') {
+      throw new Error(
+        `${where}: a boundary event must be indented under the activity it is attached to.`
+      );
+    }
+    return;
+  }
+  if (parent && !CONTAINER_KINDS.has(parent.kind)) {
+    throw new Error(
+      `${where}: a ${node.keyword} cannot be indented under the ${parent.keyword} "${parent.id}", because only a pool, a lane or a group holds other elements.`
+    );
   }
 }
 

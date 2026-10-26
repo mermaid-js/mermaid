@@ -173,9 +173,13 @@ describe('bpmnDb', () => {
       ...['xor', 'and', 'or', 'event-gateway', 'complex'].map((g) => `${g} g_${g} "G"`),
       'subprocess sub "S"',
     ];
-    const { nodes } = build(
-      `bpmn-beta LR\n  lane "L"\n${statements.map((s) => `    ${s}`).join('\n')}`
-    );
+    // A boundary event is attached by sitting directly under an activity.
+    const isBoundary = (statement: string) => statement.startsWith('boundary');
+    const indented = [
+      ...statements.filter(isBoundary).map((s) => `      ${s}`),
+      ...statements.filter((s) => !isBoundary(s)).map((s) => `    ${s}`),
+    ];
+    const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    task host "H"\n${indented.join('\n')}`);
 
     const missing = nodes
       .map((node) => glyph(node as Node & Drawn))
@@ -230,7 +234,7 @@ describe('bpmnDb', () => {
       ['end message x "X"', true],
       ['throw compensation x "X"', true],
     ])('marks %s as throwing: %s', (statement, throws) => {
-      const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    ${statement}`);
+      const { nodes } = build(eventSource(statement.split(' ')[0], statement.split(' ')[1], 'x'));
       expect(nodeById(nodes, 'x').cssClasses?.includes('bpmn-throw')).toBe(throws);
     });
 
