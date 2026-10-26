@@ -112,12 +112,15 @@ function chooseOrthogonalSide(
  * smaller than its layout box (an event circle in a wider box), else the box itself.
  * Ports, port spreading and endpoint clamping all use it, so edges meet the drawn outline.
  */
+const isDrawableSize = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0;
+
 function drawnSize(node: MermaidNode, fallback: number): { w: number; h: number } {
-  const drawn = (node as { metadata?: { drawnExtent?: { width?: number; height?: number } } })
+  const drawn = (node as { metadata?: { drawnExtent?: { width?: unknown; height?: unknown } } })
     .metadata?.drawnExtent;
   return {
-    w: drawn?.width ?? node.width ?? fallback,
-    h: drawn?.height ?? node.height ?? fallback,
+    w: isDrawableSize(drawn?.width) ? drawn.width : (node.width ?? fallback),
+    h: isDrawableSize(drawn?.height) ? drawn.height : (node.height ?? fallback),
   };
 }
 
