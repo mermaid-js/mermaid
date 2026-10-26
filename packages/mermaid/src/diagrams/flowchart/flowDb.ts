@@ -19,6 +19,7 @@ import {
 } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
+  DroppedSubGraphMember,
   FlowClass,
   FlowEdge,
   FlowLink,
@@ -48,6 +49,7 @@ export class FlowDB implements DiagramDB {
   private phasesEnabled = false;
   private phases: FlowPhase[] = [];
   private nodePhases = new Map<string, string>();
+  private droppedSubGraphMembers: DroppedSubGraphMember[] = [];
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -694,6 +696,7 @@ You have to call mermaid.initialize.`
     this.phasesEnabled = false;
     this.phases = [];
     this.nodePhases = new Map();
+    this.droppedSubGraphMembers = [];
     this.subCount = 0;
     this.tooltips = new Map();
     this.firstGraphFlag = true;
@@ -779,9 +782,9 @@ You have to call mermaid.initialize.`
 
     // Remove the members in the new subgraph if they already belong to another subgraph.
     // A subgraph never contains itself, so a redeclaration nested in its own body flattens.
-    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes.filter(
-      (nodeId) => nodeId !== id
-    );
+    const uniqueNodes = this.makeUniq(subGraph, this.subGraphs).nodes;
+    this.recordDroppedMembers(subGraph, uniqueNodes);
+    subGraph.nodes = uniqueNodes.filter((nodeId) => nodeId !== id);
 
     // A repeated id merges its members into the first declaration, which keeps its
     // title, direction and position, so every layout sees a single subgraph.
@@ -795,6 +798,39 @@ You have to call mermaid.initialize.`
     // `view: collapsed` apply whichever declaration they follow.
     this.subGraphLookup.set(id, existing ?? subGraph);
     return id;
+  }
+
+  /**
+   * Notes each member `subGraph` listed but lost to an earlier subgraph. An earlier
+   * subgraph nested anywhere inside `subGraph` is not a conflict, and neither is a
+   * repeated id, which is one subgraph.
+   */
+  private recordDroppedMembers(subGraph: FlowSubGraph, uniqueNodes: string[]) {
+    const kept = new Set(uniqueNodes);
+    for (const node of subGraph.nodes) {
+      if (kept.has(node) || node === subGraph.id) {
+        continue;
+      }
+      const owner = this.subGraphs.find((sg) => sg.nodes.includes(node));
+      if (owner && owner.id !== subGraph.id && !this.isNestedIn(owner.id, subGraph)) {
+        this.droppedSubGraphMembers.push({ node, keptBy: owner.id, droppedFrom: subGraph.id });
+      }
+    }
+  }
+
+  /** Whether the subgraph `id` sits under `ancestor`, at any depth, among the subgraphs so far. */
+  private isNestedIn(id: string, ancestor: FlowSubGraph): boolean {
+    const visited = new Set<string>();
+    let current: string | undefined = id;
+    while (current !== undefined && !visited.has(current)) {
+      if (ancestor.nodes.includes(current)) {
+        return true;
+      }
+      visited.add(current);
+      const child: string = current;
+      current = this.subGraphs.find((sg) => sg.nodes.includes(child))?.id;
+    }
+    return false;
   }
 
   private getPosForId(id: string) {
@@ -1377,10 +1413,18 @@ You have to call mermaid.initialize.`
       edges.push(edge);
     });
 
-    const other: { phases?: FlowPhase[]; nodePhases?: Record<string, string> } =
-      this.phases.length > 0
+    const other: {
+      phases?: FlowPhase[];
+      nodePhases?: Record<string, string>;
+      droppedSubGraphMembers?: DroppedSubGraphMember[];
+    } = {
+      ...(this.phases.length > 0
         ? { phases: [...this.phases], nodePhases: Object.fromEntries(this.nodePhases) }
-        : {};
+        : {}),
+      ...(this.droppedSubGraphMembers.length > 0
+        ? { droppedSubGraphMembers: [...this.droppedSubGraphMembers] }
+        : {}),
+    };
     return { nodes, edges, other, config };
   }
 
