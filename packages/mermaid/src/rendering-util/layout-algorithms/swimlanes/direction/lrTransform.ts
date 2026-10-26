@@ -1,6 +1,11 @@
 import type { LayoutData } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
-import { anchorFootprints, collectAnchoredIds, type AnchorFootprint } from '../anchoredNodes.js';
+import {
+  anchorFootprints,
+  collectAnchoredIds,
+  type AnchorFootprint,
+  type AnchorSide,
+} from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -230,19 +235,85 @@ function stackEmptyBands(
   }
 }
 
-// Grows a host to cover the room its anchored run is placed in: out from its border by
-// `beyond`, and along it from `before` to `after` either side of its centre.
-function withAnchorFootprint(host: LayoutNode, footprint: AnchorFootprint): LayoutNode {
+interface Box {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+type SideFootprints = Partial<Record<AnchorSide, AnchorFootprint>>;
+
+const ANCHOR_SIDES: AnchorSide[] = ['top', 'right', 'bottom', 'left'];
+
+function mirroredSide(side: AnchorSide): AnchorSide {
+  if (side === 'left') {
+    return 'right';
+  }
+  return side === 'right' ? 'left' : side;
+}
+
+// Grows `box` to hold a run standing off `host` on `side`: out from that border by `beyond`,
+// and along it from `before` to `after` either side of the host's centre. `mirrored` flips
+// the x axis, as RL does after the lanes are sized.
+function reserveOnSide(
+  box: Box,
+  host: Box,
+  side: AnchorSide,
+  footprint: AnchorFootprint,
+  mirrored: boolean
+): void {
+  const centre = { x: (host.left + host.right) / 2, y: (host.top + host.bottom) / 2 };
+  if (side === 'top' || side === 'bottom') {
+    const [before, after] = mirrored
+      ? [footprint.after, footprint.before]
+      : [footprint.before, footprint.after];
+    box.left = Math.min(box.left, centre.x - before);
+    box.right = Math.max(box.right, centre.x + after);
+  } else {
+    box.top = Math.min(box.top, centre.y - footprint.before);
+    box.bottom = Math.max(box.bottom, centre.y + footprint.after);
+  }
+  const edge = { top: host.top, bottom: host.bottom, left: host.left, right: host.right };
+  box.top = side === 'top' ? Math.min(box.top, edge.top - footprint.beyond) : box.top;
+  box.bottom =
+    side === 'bottom' ? Math.max(box.bottom, edge.bottom + footprint.beyond) : box.bottom;
+  box.left = side === 'left' ? Math.min(box.left, edge.left - footprint.beyond) : box.left;
+  box.right = side === 'right' ? Math.max(box.right, edge.right + footprint.beyond) : box.right;
+}
+
+// Grows a host to cover the room each run standing off it is placed in. The runs are keyed by
+// the side they stand on as drawn, so RL reserves them on the side the mirror will turn
+// into it.
+function withAnchorFootprints(
+  host: LayoutNode,
+  footprints: SideFootprints,
+  direction: Direction
+): LayoutNode {
   const x = host.x ?? 0;
-  const half = (host.width ?? 0) / 2;
-  const left = Math.min(x - half, x - footprint.before);
-  const right = Math.max(x + half, x + footprint.after);
+  const y = host.y ?? 0;
+  const halfWidth = (host.width ?? 0) / 2;
+  const halfHeight = (host.height ?? 0) / 2;
+  const own: Box = {
+    left: x - halfWidth,
+    right: x + halfWidth,
+    top: y - halfHeight,
+    bottom: y + halfHeight,
+  };
+  const grown: Box = { ...own };
+  const mirrored = direction === 'RL';
+  for (const side of ANCHOR_SIDES) {
+    const footprint = footprints[side];
+    if (footprint) {
+      reserveOnSide(grown, own, mirrored ? mirroredSide(side) : side, footprint, mirrored);
+    }
+  }
   return {
     ...host,
-    x: (left + right) / 2,
-    y: (host.y ?? 0) + footprint.beyond / 2,
-    width: right - left,
-    height: (host.height ?? 0) + footprint.beyond,
+    x: (grown.left + grown.right) / 2,
+    y: (grown.top + grown.bottom) / 2,
+    width: grown.right - grown.left,
+    height: grown.bottom - grown.top,
   };
 }
 
@@ -351,7 +422,7 @@ export function applyLrDirectionTransform(
     }
     const bucket = childrenByLane.get(laneId) ?? [];
     const footprint = footprints.get(n.id);
-    bucket.push(footprint ? withAnchorFootprint(n, footprint) : n);
+    bucket.push(footprint ? withAnchorFootprints(n, footprint, direction) : n);
     childrenByLane.set(laneId, bucket);
   }
 
