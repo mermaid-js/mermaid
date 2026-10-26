@@ -152,7 +152,9 @@ function bucketByHostAndSide(
     }
     const side = sideOf(anchor);
     const key = `${side}:${hostId}`;
-    buckets.set(key, [...(buckets.get(key) ?? []), { node, anchor, index, side, hostId }]);
+    const bucket = buckets.get(key) ?? [];
+    bucket.push({ node, anchor, index, side, hostId });
+    buckets.set(key, bucket);
   });
   for (const bucket of buckets.values()) {
     bucket.sort(compareBucketEntries);
