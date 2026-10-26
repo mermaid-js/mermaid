@@ -169,13 +169,18 @@ MERMAID_E2E_FIXTURE_TIER=pr-check,nightly-check pnpm exec playwright test e2e/re
 
 **See what a fixture would look like in Argos**, without needing real Argos credentials or touching any baseline: capture screenshots locally with `RUN_VISUAL_TEST=true` (remembering to clear `USE_APPLI` if it's set in your shell), then either browse `e2e/screenshots/` directly, or run `pnpm run screenshots:sheets` to composite them the same way CI does before upload.
 
-**Run the `visual-check` tier**: start the local dev server first (`pnpm dev`, in its own terminal) — the suite is large enough (900+ tests) that it's worth having it already warm rather than waiting on Playwright's own `webServer` auto-start/cold build on the first request:
+**Run a release test against Applitools**: start the local dev server first (`pnpm dev`, in its own terminal) — the suite is large enough that it's worth having it already warm rather than waiting on Playwright's own `webServer` auto-start/cold build on the first request. Neither of these is something you'd run as part of routine local development — they're only used when preparing a release:
 
 ```bash
-pnpm playwright:visual-check
+# Core release check: pr-check + nightly-check tiers, against the "release-baseline" Applitools branch.
+pnpm playwright:release-test
+
+# Extended release check: the visual-check tier (theme/look/layout combinatorial sweeps),
+# against its own separate "release-baseline-extended" Applitools branch.
+pnpm playwright:release-test:extended
 ```
 
-This isn't something you'd run as part of routine local development — it's only used when preparing a release, alongside the manual Applitools pass described in the tier table above. It runs both halves of the tier unconditionally (one does not get skipped if the other has a failure): the `.mmd` fixtures under every `e2e/diagrams/<diagram-type>/visual-check/` folder (via the global `mmd-snapshots.spec.ts` runner, selected by test title) and the hand-written specs under `e2e/rendering/<diagram-type>/visual-check/*.spec.ts` (selected by file path; currently only populated under `common-tests/`).
+Both scripts set `USE_APPLI=true`, so every screenshot is verified against Applitools instead of the Argos/local-snapshot path, and both pin `APPLITOOLS_BRANCH` to a fixed, long-lived branch name rather than letting the SDK derive one from the current git branch — so re-running either script, from whatever branch you're on, keeps comparing against the same accumulated baseline. The two scripts use separate baseline branches deliberately: the core and extended checks differ enough in scope and cadence that mixing both into one branch would make the Applitools review history harder to read.
 
 ## Diagrams and screenshots
 

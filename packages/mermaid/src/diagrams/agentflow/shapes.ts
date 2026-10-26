@@ -17,6 +17,7 @@ export const SHAPE_ALIASES: ReadonlyMap<string, string> = new Map([
   ['task', 'roundedRect'],
   ['tool', 'subroutine'],
   ['input', 'lean-right'],
+  ['lean_right', 'lean-right'],
   ['decision', 'diamond'],
   ['refdoc', 'lin-doc'],
   ['action', 'hexagon'],
