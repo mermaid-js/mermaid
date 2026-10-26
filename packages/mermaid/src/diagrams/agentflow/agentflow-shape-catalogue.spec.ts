@@ -125,4 +125,26 @@ describe('agentflow shape catalogue', () => {
     });
     expect(db.getDiagnostics()).toStrictEqual([]);
   });
+
+  // The `[/…/]` short form reaches the DB as `lean_right` (underscore),
+  // which used to fall through to roundedRect with a SHAPE_UNSUPPORTED warning.
+  it('treats the [/…/] short form as an input, same as shape: input', () => {
+    const db = parse(`agentflow-beta TB
+flow f["F"]
+  a[/Slanted/]
+  m["Meta"]@{ shape: input }
+  a --> m
+end`);
+
+    const shapes = Object.fromEntries(db.getData().nodes.map((n) => [n.id, n.shape]));
+    expect(shapes.a).toBe('lean-right');
+    expect(shapes.a).toBe(shapes.m);
+
+    const vertices = db.getSemanticModel().vertices;
+    const a = vertices.find((v) => v.id === 'a');
+    expect(a?.shape).toBe('lean-right');
+    expect(a?.vertexKind).toBe('input');
+
+    expect(db.getDiagnostics()).toStrictEqual([]);
+  });
 });
