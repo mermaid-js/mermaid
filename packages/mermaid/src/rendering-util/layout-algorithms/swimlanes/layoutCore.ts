@@ -3,6 +3,7 @@ import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProces
 import { toGraphView, writeBackToLayoutData } from './helpers.js';
 import { phaseShortfalls } from './phaseBands.js';
 import type { PhaseGrowth } from './phases.js';
+import { warnUnusedPhases } from './phases.js';
 import { sugiyamaLayout } from './pipeline.js';
 import { routeEdgesOrthogonal } from './orthogonalRouter/router.js';
 
@@ -40,6 +41,7 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
     });
     writeBackToLayoutData(graph, ordered, coordinates, { nodeGap, layerGap });
   };
+  warnUnusedPhases(data4Layout);
   place();
   // A band can only be measured once the nodes are placed, so a title too long for its band
   // sends the layout round again with the room it lacks.

@@ -294,7 +294,9 @@ Phases are drawn as bands across all the lanes, in the order they are declared. 
 - Every node of a phase is drawn after every node of the phase declared before it. An arrow that runs back to an earlier phase is drawn as a return arrow.
 - A node that names no phase goes into a last band without a title.
 - `phase id` without a title uses the id as the title.
-- `phase` is only a keyword in swimlane diagrams. Elsewhere it is an ordinary node id.
+- A band grows to hold its title, so a long title never overlaps the next band.
+- A phase that no node names draws no band and logs a warning.
+- `phase` is a keyword only at the start of a statement in a swimlane diagram. Anywhere else, and in every other diagram, it is an ordinary id, so `style phase fill:#f00` styles a node named `phase`.
 
 ### Nodes
 

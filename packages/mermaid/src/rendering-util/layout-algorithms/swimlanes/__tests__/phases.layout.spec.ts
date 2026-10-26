@@ -6,6 +6,7 @@ import type { LayoutData } from '../../../types.js';
 import { createEdgeLabelNodes } from '../edgeLabelNodes.js';
 import { prepareLayoutForSwimlanes } from '../helpers.js';
 import { runSwimlaneLayoutCore } from '../layoutCore.js';
+import { log } from '../../../../logger.js';
 import { reset, setConfig } from '../../../../config.js';
 import { createText } from '../../../createText.js';
 import {
@@ -332,6 +333,40 @@ describe('phase bands that must hold a title', () => {
     expect(once.nodes.map(({ id, x, y }) => [id, x, y])).toEqual(
       twice.nodes.map(({ id, x, y }) => [id, x, y])
     );
+  });
+});
+
+describe('a declared phase that no node uses', () => {
+  const warned = (text: string) => {
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    laidOut(text);
+    const messages = warn.mock.calls.map((call) => call.join(' ')).filter((m) => /phase/i.test(m));
+    warn.mockRestore();
+    return messages;
+  };
+
+  it('is named in a warning once, and draws no band', () => {
+    const text = source('TB').replace(
+      'phase p3["Closeout"]',
+      'phase p3["Closeout"]\nphase p4["Spare"]'
+    );
+
+    const messages = warned(text);
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toContain('"p4"');
+    expect(computePhaseBands(laidOut(text)).map(({ id }) => id)).toEqual(['p1', 'p2', 'p3']);
+  });
+
+  it('is named even when no node uses any phase', () => {
+    const messages = warned('swimlane-beta\nphase p1["One"]\nsubgraph l1\n  a\nend');
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toContain('"p1"');
+  });
+
+  it('stays quiet when every phase has a node', () => {
+    expect(warned(source('TB'))).toEqual([]);
   });
 });
 

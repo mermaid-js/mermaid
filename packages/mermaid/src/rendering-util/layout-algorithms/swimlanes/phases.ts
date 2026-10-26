@@ -1,3 +1,4 @@
+import { log } from '../../../logger.js';
 import type { LayoutData } from '../../types.js';
 import type { EdgeRef, Graph, Layering, NodeId } from './helpers.js';
 import { buildLayersFromRanks } from './phase0.helpers.js';
@@ -137,5 +138,19 @@ export function growPhaseGaps(
   }
   for (const [gap, extra] of requested.entries()) {
     gaps[gap] += extra;
+  }
+}
+
+const PHASES_LOG_PREFIX = '[SwimlanePhases]';
+
+/** Warns of each declared phase that no node names, since it draws no band. */
+export function warnUnusedPhases(layout: LayoutData): void {
+  const phases: SwimlanePhase[] = layout.other?.phases ?? [];
+  const used = new Set(Object.values<string>(layout.other?.nodePhases ?? {}));
+  for (const phase of phases.filter(({ id }) => !used.has(id))) {
+    log.warn(
+      PHASES_LOG_PREFIX,
+      `Phase "${phase.id}" has no nodes, so it draws no band. Give a node @{ phase: ${phase.id} } or remove the declaration.`
+    );
   }
 }
