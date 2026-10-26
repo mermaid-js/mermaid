@@ -87,14 +87,22 @@ export const sanitizeDirective = (args: any): void => {
   }
 
   if (args.themeVariables) {
-    for (const k of Object.keys(args.themeVariables)) {
-      const val = args.themeVariables[k];
-      if (val?.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
-        args.themeVariables[k] = '';
-      }
+    blankUnsafeCssValues(args.themeVariables);
+    // The bpmn values are written into the stylesheet like the top-level ones.
+    if (args.themeVariables.bpmn && typeof args.themeVariables.bpmn === 'object') {
+      blankUnsafeCssValues(args.themeVariables.bpmn);
     }
   }
   log.debug('After sanitization', args);
+};
+
+const blankUnsafeCssValues = (values: Record<string, unknown>): void => {
+  for (const k of Object.keys(values)) {
+    const val = values[k];
+    if (typeof val === 'string' && !/^[\d "#%(),.;A-Za-z]+$/.test(val)) {
+      values[k] = '';
+    }
+  }
 };
 
 export const sanitizeCss = (str: string): string => {

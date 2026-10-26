@@ -55,4 +55,20 @@ describe('sanitizeDirective', () => {
       expect(args.sankey.nodeColors).toEqual({ a: '#ff0000', b: 'rgb(0, 0, 0)' });
     });
   });
+
+  describe('nested bpmn theme variables', () => {
+    it.each(['}', '{', 'red; } body { x', 'url(https://x)'])('drops %s', (value) => {
+      const args = { themeVariables: { bpmn: { eventFill: value, gatewayFill: '#ffcc00' } } };
+      sanitizeDirective(args);
+      expect(args.themeVariables.bpmn).toEqual({ eventFill: '', gatewayFill: '#ffcc00' });
+    });
+
+    it('keeps a numeric width and a colour function', () => {
+      const args = {
+        themeVariables: { bpmn: { eventStrokeWidth: 0, edgeStroke: 'rgb(1, 2, 3)' } },
+      };
+      sanitizeDirective(args);
+      expect(args.themeVariables.bpmn).toEqual({ eventStrokeWidth: 0, edgeStroke: 'rgb(1, 2, 3)' });
+    });
+  });
 });
