@@ -1,0 +1,103 @@
+name: PR Default Labels
+
+# Makes the "run pr tests" / "run release test" labels default-on for every
+# freshly-opened PR (GitHub has no native default-label-on-PR feature). This
+# used to live in e2e.yml as two `pull_request`-triggered jobs, but that
+# trigger hands a read-only GITHUB_TOKEN to any run originating from a fork
+# PR — the common case for external contributors, not an edge case — so the
+# label-add silently failed there (continue-on-error masked it as a passing
+# job). pull_request_target runs using this workflow file from the base
+# repo with the full permissions declared below, regardless of where the PR
+# comes from. This is safe specifically because these jobs never check out
+# or execute any code from the PR itself — they only call the fixed script
+# below via the GitHub API.
+on:
+  pull_request_target:
+    types:
+      - opened
+      # Retargeting an already-open PR (e.g. develop -> master) fires
+      # 'edited', never 'opened' again — without this, such a PR would never
+      # get "run release test" and would need a manual label add forever.
+      - edited
+
+permissions:
+  contents: read
+
+jobs:
+  # github.event.changes.base is only present on an 'edited' event that
+  # actually changed the base ref — an unrelated edit (title, body, etc.)
+  # never matches this, so it can't re-add a label someone removed on purpose.
+  ensure-pr-tier-label:
+    if: >-
+      ${{
+        github.repository == 'mermaid-js/mermaid' &&
+        (github.event.action == 'opened' || github.event.changes.base != null)
+      }}
+    runs-on: ubuntu-slim
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Add default "run pr tests" label
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const label = 'run pr tests';
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            try {
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
+            } catch (error) {
+              if (error.status !== 404) {
+                throw error;
+              }
+              // Label doesn't exist in the repo yet — create it, then retry once.
+              await github.rest.issues.createLabel({
+                owner,
+                repo,
+                name: label,
+                color: '0e8a16',
+                description: "Scopes this PR's e2e run to the pr/ tier (default on)",
+              });
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
+            }
+
+  # Scoped to master-bound PRs only — the release-readiness gate (see the
+  # PR_BASE_REF branch in e2e.yml's detect-scope job). Also fires when an
+  # already-open PR gets retargeted to master (github.event.changes.base is
+  # only set on a base-ref-changing 'edited' event, so an unrelated edit
+  # can't re-add a label someone removed on purpose).
+  ensure-release-label:
+    if: >-
+      ${{
+        github.repository == 'mermaid-js/mermaid' &&
+        github.event.pull_request.base.ref == 'master' &&
+        (github.event.action == 'opened' || github.event.changes.base != null)
+      }}
+    runs-on: ubuntu-slim
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Add default "run release test" label
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const label = 'run release test';
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            try {
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
+            } catch (error) {
+              if (error.status !== 404) {
+                throw error;
+              }
+              // Label doesn't exist in the repo yet — create it, then retry once.
+              await github.rest.issues.createLabel({
+                owner,
+                repo,
+                name: label,
+                color: 'b60205',
+                description:
+                  'Gates the pr-check + nightly-check tiers (not visual-check) on PRs targeting master (default on)',
+              });
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [label] });
+            }
