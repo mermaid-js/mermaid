@@ -818,6 +818,75 @@ describe('pinning only against a host that has a finite box', () => {
   });
 });
 
+describe('placing only a node that has a finite size', () => {
+  const sizes = [
+    ['width', Number.NaN],
+    ['height', Number.NaN],
+    ['width', Number.POSITIVE_INFINITY],
+    ['height', Number.NEGATIVE_INFINITY],
+  ] as const;
+
+  const withBadNode = (key: 'width' | 'height', value: number) => {
+    const bad = anchored('bad', { hostId: 'h', side: 'bottom' }, {
+      width: 36,
+      height: 36,
+      [key]: value,
+    } as Partial<Node>);
+    const good = anchored('good', { hostId: 'h', side: 'bottom' }, { width: 36, height: 36 });
+    const nodes = [host('h'), bad, good];
+    return { nodes, bad, good };
+  };
+
+  it.each(sizes)('leaves a node unplaced when its %s is %s', (key, value) => {
+    const { nodes, bad } = withBadNode(key, value);
+    const pins = pinAnchoredNodes(asLayout(nodes), { space: 'final', direction: 'TB' });
+    expect(pins.map((pin) => pin.nodeId)).toEqual(['good']);
+    expect(bad.x).toBeUndefined();
+    expect(bad.y).toBeUndefined();
+  });
+
+  it.each(sizes)('packs the rest as if a node with a %s of %s were not there', (key, value) => {
+    const { nodes, good } = withBadNode(key, value);
+    pinAnchoredNodes(asLayout(nodes), { space: 'final', direction: 'TB' });
+    expect({ x: good.x, y: good.y }).toEqual({ x: 100, y: 90 });
+  });
+
+  it.each(sizes)('reserves no room for a node with a %s of %s', (key, value) => {
+    const { nodes } = withBadNode(key, value);
+    nodes[1].metadata = { anchorTo: { hostId: 'h', side: 'bottom', gap: 20 } };
+    nodes[2].metadata = { anchorTo: { hostId: 'h', side: 'bottom', gap: 20 } };
+    expect(anchorFootprints(nodes, 'TB').get('h')?.bottom).toEqual({
+      before: 18,
+      after: 18,
+      beyond: 56,
+    });
+  });
+
+  it.each(sizes)('leaves a line alone when the node %s is %s', (key, value) => {
+    const placed = node('a', {
+      x: 100,
+      y: 200,
+      width: 36,
+      height: 36,
+      [key]: value,
+    } as Partial<Node>);
+    const layout = {
+      nodes: [host('h'), placed],
+      edges: [{ id: 'e', start: 'a', end: 'h', points: [{ x: 1, y: 2 }] }],
+    } as unknown as LayoutData;
+    const pin: AnchorPin = {
+      nodeId: 'a',
+      hostId: 'h',
+      side: 'bottom',
+      x: 100,
+      y: 200,
+      outward: { x: 0, y: 1 },
+    };
+    squareAnchoredEdges(layout, [pin]);
+    expect(layout.edges?.[0].points).toEqual([{ x: 1, y: 2 }]);
+  });
+});
+
 describe('standing off each border of a host', () => {
   const standOff = (side: string) => {
     const layout = asLayout([
@@ -1343,10 +1412,8 @@ describe('how far a stand-off is cleared, and what stops it', () => {
 
     // The lane spans x 150..250. The wall covers x 170..230, so the stand-off has to be
     // carried out to x 249 to clear it, which is past the lane's right edge.
-    const runInto = (
-      hostParent: Partial<Node>,
-      ...groups: Node[]
-    ) => runWith(undefined, hostParent, ...groups);
+    const runInto = (hostParent: Partial<Node>, ...groups: Node[]) =>
+      runWith(undefined, hostParent, ...groups);
 
     const runWith = (
       isLane: ((group: Node) => boolean) | undefined,
