@@ -193,7 +193,12 @@ export function assignCoordinates(
   const gapLabelGroups = new Map<string, GapLabel[]>();
   for (const label of gapLabels) {
     const key = `${label.gap}:${topLaneOf(label.labelId)}`;
-    gapLabelGroups.set(key, [...(gapLabelGroups.get(key) ?? []), label]);
+    const group = gapLabelGroups.get(key);
+    if (group) {
+      group.push(label);
+    } else {
+      gapLabelGroups.set(key, [label]);
+    }
   }
   for (const group of gapLabelGroups.values()) {
     const L = topLaneOf(group[0].labelId);
@@ -207,10 +212,13 @@ export function assignCoordinates(
   }
   // Labels in a row stack outward from the row's nodes on their side. The lane grows
   // by the wider side on both sides, so the nodes keep the lane's centre.
+  const rowLabelSpans = new Map<string, number>();
+  for (const { labelId, rank, lane, side } of rowLabels) {
+    const key = `${rank}:${lane}:${side}`;
+    rowLabelSpans.set(key, (rowLabelSpans.get(key) ?? 0) + nodeGap + getWidth(labelId));
+  }
   const rowLabelSpan = (rank: number, lane: string | null, side: RowLabel['side']) =>
-    rowLabels
-      .filter((l) => l.rank === rank && l.lane === lane && l.side === side)
-      .reduce((sum, l) => sum + nodeGap + getWidth(l.labelId), 0);
+    rowLabelSpans.get(`${rank}:${lane}:${side}`) ?? 0;
   for (const { rank, lane } of rowLabels) {
     const nodesWidth = layers[rank]
       .filter((id) => topLaneOf(id) === lane)
