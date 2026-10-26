@@ -239,6 +239,23 @@ describe('Venn diagram', function () {
     expect(() => venn.parse(str)).toThrow('unknown set identifier');
   });
 
+  test('indented keyword-prefix identifier does not corrupt a later non-indented text statement', () => {
+    // Regression: <bol> fires INDENT_TEXT before "text-5" but the text rule's negative
+    // lookahead rejects it, so consumeIndentText was never cleared.  The IDENTIFIER rule
+    // now clears the flag so the subsequent non-indented "text" statement still gets TEXT.
+    const str = `venn-beta
+set A
+  text-5
+text A A2
+`;
+    venn.parse(str);
+    expect(db.getSubsetData()).toEqual([expect.objectContaining({ sets: ['A'], size: 10 })]);
+    expect(db.getTextData()).toEqual([
+      expect.objectContaining({ sets: ['A'], id: 'text-5' }),
+      expect.objectContaining({ sets: ['A'], id: 'A2' }),
+    ]);
+  });
+
   test('quoted identifiers', () => {
     const str = `venn-beta
         set "Foo Bar"
