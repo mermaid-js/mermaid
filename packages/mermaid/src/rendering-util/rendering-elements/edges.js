@@ -430,6 +430,27 @@ function dockFinalPoint(originalLast, lastInner, before, candidate) {
   return snapToArrivalAxis(arrival, lastInner, candidate);
 }
 
+/** The arrowhead's pull-back for a marker type; a type the table does not own pulls back nothing. */
+function markerPullBack(arrowType) {
+  const offset = Object.hasOwn(markerOffsets, arrowType) ? markerOffsets[arrowType] : 0;
+  return Number.isFinite(offset) ? offset : 0;
+}
+
+/**
+ * The point a swimlane edge ends on after its last bend, or `undefined` when it ends on the bend.
+ * A final segment that continues straight on and is shorter than the arrowhead's pull-back
+ * would be drawn backwards, so it is dropped. A stub that turns into the node keeps the layout's
+ * end, because the arrowhead must point at the node it enters.
+ */
+function finalDockPoint({ originalLast, lastInner, newLast, minLength }) {
+  const turned = !coincides(originalLast, lastInner);
+  const length = Math.hypot(newLast.x - lastInner.x, newLast.y - lastInner.y);
+  if (length >= Math.max(AXIS_TOLERANCE, minLength)) {
+    return newLast;
+  }
+  return turned && length >= AXIS_TOLERANCE ? originalLast : undefined;
+}
+
 // Swimlanes-only helper, kept module-private: it self-gates to `-to-label` edges
 // (the swimlanes edge-label waypoint mechanism) and is called only from insertEdge's
 // `layout === 'swimlane'` branch, so it is a no-op for every other layout.
@@ -743,19 +764,18 @@ export const insertEdge = function (
         const before = innerPoints.at(-2) ?? points[0];
         const newLast = dockFinalPoint(originalLast, lastInner, before, candidateLast);
 
-        // When the boundary intersection lands ~on the inner point, skip it to
-        // avoid a zero-length final segment (keeps the entry/exit segment orthogonal).
-        // A final segment shorter than the arrowhead's pull-back would be drawn backwards,
-        // so such a stub is dropped too and the edge ends on the bend.
-        const minFinalSegment = Math.max(AXIS_TOLERANCE, markerOffsets[edge.arrowTypeEnd] ?? 0);
-        const lastIsDuplicate =
-          Math.hypot(newLast.x - lastInner.x, newLast.y - lastInner.y) < minFinalSegment;
+        const finalPoint = finalDockPoint({
+          originalLast,
+          lastInner,
+          newLast,
+          minLength: markerPullBack(edge.arrowTypeEnd),
+        });
         const firstIsDuplicate =
           Math.abs(newFirst.x - firstInner.x) < AXIS_TOLERANCE &&
           Math.abs(newFirst.y - firstInner.y) < AXIS_TOLERANCE;
 
         const startPoints = firstIsDuplicate ? [] : [newFirst];
-        const endPoints = lastIsDuplicate ? [] : [newLast];
+        const endPoints = finalPoint ? [finalPoint] : [];
 
         points = [...startPoints, ...innerPoints, ...endPoints];
       }
