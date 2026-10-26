@@ -112,6 +112,12 @@ describe('insertEdgeStepDot', () => {
     expect(svg.select('circle').attr('aria-hidden')).toBe('true');
   });
 
+  it('hides the decorative highlight from assistive technology', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', 'diagram-1');
+
+    expect(svg.select('path.edge-step-highlight').attr('aria-hidden')).toBe('true');
+  });
+
   it('with an empty diagram id, scopes the reduced-motion rule to the svg id', () => {
     insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', '');
 

@@ -117,6 +117,7 @@ export const insertEdgeStepDot = (
   const highlight = elem
     .append('path')
     .attr('class', 'edge-step-highlight')
+    .attr('aria-hidden', 'true')
     .attr('d', pathData)
     .attr('fill', 'none')
     .attr('stroke', fill ?? 'currentColor')
