@@ -417,13 +417,12 @@ bpmn-beta LR
 
 The `bpmn` config namespace controls spacing:
 
-| **Key**          | **Type** | **Default** | **Description**                                                  |
-| ---------------- | -------- | ----------- | ---------------------------------------------------------------- |
-| `layout`         | string   | `swimlane`  | Defines which layout algorithm to use for rendering the diagram. |
-| `titleTopMargin` | number   | `25`        | The margin above the diagram title.                              |
-| `diagramPadding` | number   | `12`        | The padding around the whole diagram.                            |
-| `nodeSpacing`    | number   | `35`        | The distance between two elements in the same rank of a lane.    |
-| `rankSpacing`    | number   | `40`        | The distance between two ranks of a lane.                        |
+| **Key**          | **Type** | **Default** | **Description**                                               |
+| ---------------- | -------- | ----------- | ------------------------------------------------------------- |
+| `titleTopMargin` | number   | `25`        | The margin above the diagram title.                           |
+| `diagramPadding` | number   | `12`        | The padding around the whole diagram.                         |
+| `nodeSpacing`    | number   | `35`        | The distance between two elements in the same rank of a lane. |
+| `rankSpacing`    | number   | `40`        | The distance between two ranks of a lane.                     |
 
 A BPMN process is drawn in pools and lanes, so the diagram is always laid out in swimlanes:
 a `layout` set globally or under `bpmn` has no effect.

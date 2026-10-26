@@ -260,13 +260,12 @@ bpmn-beta LR
 
 ## Configuration
 
-| **Key**          | **Type** | **Default** | **Description**                                                  |
-| ---------------- | -------- | ----------- | ---------------------------------------------------------------- |
-| `layout`         | string   | `swimlane`  | Defines which layout algorithm to use for rendering the diagram. |
-| `titleTopMargin` | number   | `25`        | The margin above the diagram title.                              |
-| `diagramPadding` | number   | `12`        | The padding around the whole diagram.                            |
-| `nodeSpacing`    | number   | `35`        | The distance between two elements in the same rank of a lane.    |
-| `rankSpacing`    | number   | `40`        | The distance between two ranks of a lane.                        |
+| **Key**          | **Type** | **Default** | **Description**                                               |
+| ---------------- | -------- | ----------- | ------------------------------------------------------------- |
+| `titleTopMargin` | number   | `25`        | The margin above the diagram title.                           |
+| `diagramPadding` | number   | `12`        | The padding around the whole diagram.                         |
+| `nodeSpacing`    | number   | `35`        | The distance between two elements in the same rank of a lane. |
+| `rankSpacing`    | number   | `40`        | The distance between two ranks of a lane.                     |
 
 Colours come from `themeVariables.bpmn`, which is described on the [syntax page](./bpmn.md).
 
