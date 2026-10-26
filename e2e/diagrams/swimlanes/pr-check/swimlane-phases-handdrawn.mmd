@@ -1,0 +1,28 @@
+---
+description: >-
+  Phases drawn with look handDrawn; the seed is fixed so the sketch is the same on every run.
+config:
+  logLevel: 0
+  look: handDrawn
+  handDrawnSeed: 1
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TB
+  phase intake["Intake"]
+  phase review["Review"]
+  phase closeout["Closeout"]
+
+  subgraph customer [Customer]
+    ask["Submit request"]@{ phase: intake }
+    accept["Accept result"]@{ phase: closeout }
+  end
+
+  subgraph support [Support]
+    triage["Triage"]@{ phase: intake }
+    assess["Assess"]@{ phase: review }
+    reply["Send reply"]@{ phase: closeout }
+  end
+
+  ask --> triage --> assess --> reply --> accept
