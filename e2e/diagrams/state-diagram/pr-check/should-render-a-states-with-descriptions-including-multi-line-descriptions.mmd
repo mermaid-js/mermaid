@@ -1,0 +1,16 @@
+---
+description: >-
+  Legacy v1 state diagram testing state description text: State1 gets a
+  single-line description while State2 accumulates a multi-line
+  description from two separate "State2: ..." declaration lines.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  State1: This a single line description
+  State2: This a multi line description
+  State2: here comes the multi part
+  [*] --> State1
+  State1 --> State2
+  State2 --> [*]

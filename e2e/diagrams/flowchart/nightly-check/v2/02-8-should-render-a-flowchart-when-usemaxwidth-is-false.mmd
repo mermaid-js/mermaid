@@ -1,0 +1,16 @@
+---
+description:
+  Verifies that the same decision-node flowchart renders at its natural
+  (intrinsic) size, without stretching to fill the container, when useMaxWidth
+  is explicitly set to false.
+config:
+  flowchart:
+    useMaxWidth: false
+---
+flowchart TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      

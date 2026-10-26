@@ -1,0 +1,10 @@
+---
+description: >-
+  No-frontmatter sequence diagram between two plain actors with a very
+  long `Note left of` text, checking that long note content wraps/sizes
+  correctly for the default actor shape.
+---
+sequenceDiagram
+  Alice->>Bob: Hola
+  Note left of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

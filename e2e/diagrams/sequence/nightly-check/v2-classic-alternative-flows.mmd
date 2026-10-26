@@ -1,0 +1,15 @@
+---
+description: An `alt`/`else` block covering a success and a failure branch.
+config:
+  look: classic
+---
+sequenceDiagram
+  participant A@{ "type" : "actor" }
+  participant B@{ "type" : "boundary" }
+  alt Successful case
+    A ->> B: Request
+    B -->> A: Success
+  else Failure case
+    A ->> B: Request
+    B --x A: Failure
+  end

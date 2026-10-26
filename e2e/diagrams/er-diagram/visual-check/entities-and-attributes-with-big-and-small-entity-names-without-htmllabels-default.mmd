@@ -1,0 +1,12 @@
+---
+description: A very long entity name related to a short one, with htmlLabels disabled.
+config:
+  htmlLabels: false
+---
+erDiagram
+    PRIVATE_FINANCIAL_INSTITUTION {
+      string name
+      int    turnover
+    }
+    PRIVATE_FINANCIAL_INSTITUTION ||..|{ EMPLOYEE : employs
+    EMPLOYEE { bool officer_of_firm }

@@ -1,0 +1,13 @@
+---
+description: >-
+  Smoke test for all three agentflow edge types in one diagram - a solid
+  flow edge (`-->`), a dotted reference edge (`-.-`) to a `refdoc` node, and
+  a failure edge (`--x`) - plus a labeled decision branch (`-- yes -->`).
+---
+agentflow-beta TB
+  A["Data Source"] --> B["Process"]
+  B -.- C["Schema Ref"]
+  B --x D["Failure Handler"]
+  E["Decision"] -- yes --> F["Approved"]
+  C@{ shape: refdoc }
+  E@{ shape: decision }

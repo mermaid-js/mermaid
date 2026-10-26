@@ -1,0 +1,24 @@
+---
+description: >-
+  classDiagram with a backtick-quoted class name spanning many embedded newlines, given both
+  member attributes/methods and an Interface annotation, verifying multi-line titles
+  combine correctly with stereotype annotations.
+---
+classDiagram
+  class `This
+  Title
+  Has
+  Many
+  Newlines` {
+  +String Also
+  -String Many
+  #int Members
+  +And()
+  -Many()
+  #Methods()
+  }
+  &lt;&lt;Interface&gt;&gt; `This
+  Title
+  Has
+  Many
+  Newlines`
