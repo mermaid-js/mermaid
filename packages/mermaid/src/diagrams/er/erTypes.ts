@@ -1,5 +1,7 @@
 export interface EntityNode {
   id: string;
+  /** Authored entity name used by placement maps; `id` remains the generated rendering identity. */
+  placementId: string;
   label: string;
   attributes: Attribute[];
   alias: string;

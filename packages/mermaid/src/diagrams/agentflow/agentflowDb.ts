@@ -8,6 +8,7 @@ import type { ClusterShapeID } from '../../rendering-util/rendering-elements/clu
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
+import { validateGridPlacementCoordinates } from '../../utils/gridPlacement.js';
 import common from '../common/common.js';
 import {
   setAccTitle,
@@ -18,6 +19,7 @@ import {
   setDiagramTitle,
   getDiagramTitle,
 } from '../common/commonDb.js';
+import { stripPrototypeKeys } from '../common/sanitizeMetadata.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
   AgentflowElementMapping,
@@ -110,33 +112,6 @@ const SUBROUTINE_ALIASES = new Set<string>([
 const SUBGRAPH_TYPE_TO_SHAPE: Record<NonNullable<FlowSubGraph['type']>, ClusterShapeID> = {
   flow: 'flowGroup',
 };
-
-/**
- * Remove `__proto__` / `constructor` / `prototype` own keys from parsed `@{ }`
- * metadata, recursively.
- *
- * js-yaml defines `__proto__` with `Object.defineProperty` and the metadata
- * spreads copy it as an own property, so nothing is polluted inside mermaid.
- * But `metadata` and `getSemanticModel()` are consumer-facing, and a downstream
- * `merge(target, node.metadata)` over an authored `__proto__` key would
- * pollute. Strip it at the parse boundary so no consumer inherits the hazard.
- */
-function stripPrototypeKeys<T>(value: T): T {
-  if (Array.isArray(value)) {
-    return value.map((entry) => stripPrototypeKeys(entry)) as T;
-  }
-  if (value === null || typeof value !== 'object') {
-    return value;
-  }
-  const clean: Record<string, unknown> = {};
-  for (const key of Object.keys(value)) {
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
-      continue;
-    }
-    clean[key] = stripPrototypeKeys((value as Record<string, unknown>)[key]);
-  }
-  return clean as T;
-}
 
 /**
  * Strip line-trailing commas from a multi-line `@{ … }` metadata body.
@@ -1969,6 +1944,13 @@ You have to call mermaid.initialize.`
       config,
       connectors: this.getConnectors(),
     };
+  }
+
+  public validate() {
+    if (getConfig().layout !== 'grid') {
+      return;
+    }
+    validateGridPlacementCoordinates(undefined, [...this.vertices.values(), ...this.subGraphs]);
   }
 
   public defaultConfig() {

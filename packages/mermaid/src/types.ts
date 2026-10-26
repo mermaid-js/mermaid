@@ -1,3 +1,18 @@
+export type GridHorizontalAlign = 'left' | 'center' | 'right';
+export type GridVerticalAlign = 'top' | 'center' | 'bottom';
+
+/**
+ * Authored grid placement using safe integers, including zero and negative values.
+ * Omitted coordinates remain eligible for automatic placement.
+ * Only occupied rows and columns create tracks; empty indices contribute no size or additional gap.
+ */
+export interface GridPlacement {
+  row?: number;
+  column?: number;
+  horizontalAlign?: GridHorizontalAlign;
+  verticalAlign?: GridVerticalAlign;
+}
+
 export interface NodeMetaData {
   shape?: string;
   label?: string;
@@ -18,6 +33,11 @@ export interface NodeMetaData {
    * to it; `expanded` (the default) renders the subgraph normally.
    */
   view?: 'expanded' | 'collapsed';
+  /** Inline grid placement metadata forwarded to layout after diagram-specific fields are handled. */
+  row?: number;
+  column?: number;
+  horizontalAlign?: GridHorizontalAlign;
+  verticalAlign?: GridVerticalAlign;
 }
 
 export interface ParticipantMetaData {

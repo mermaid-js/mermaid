@@ -10,7 +10,7 @@
 
 # Interface: LayoutData
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:236](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L236)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:247](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L247)
 
 ## Indexable
 
@@ -22,7 +22,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:236](https://github.co
 
 > **config**: [`MermaidConfig`](MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:239](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L239)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:250](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L250)
 
 ---
 
@@ -30,7 +30,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:239](https://github.co
 
 > `optional` **diagramId**: `string`
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:240](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L240)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:251](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L251)
 
 ---
 
@@ -38,7 +38,7 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:240](https://github.co
 
 > **edges**: `Edge`\[]
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:238](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L238)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:249](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L249)
 
 ---
 
@@ -46,4 +46,4 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:238](https://github.co
 
 > **nodes**: `Node`\[]
 
-Defined in: [packages/mermaid/src/rendering-util/types.ts:237](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L237)
+Defined in: [packages/mermaid/src/rendering-util/types.ts:248](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L248)

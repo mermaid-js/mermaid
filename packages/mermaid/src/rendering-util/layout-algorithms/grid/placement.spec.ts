@@ -34,6 +34,29 @@ describe('grid placement', () => {
     expect(gridConfig.placements.size).toBe(0);
   });
 
+  it('defaults the grid curve and corner radius and replaces invalid values', () => {
+    const defaults = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config(),
+    } as LayoutData);
+    expect(defaults).toMatchObject({ curve: 'rounded', edgeCornerRadius: 5 });
+
+    const rounded = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({ curve: 'rounded', edgeCornerRadius: 12 }),
+    } as LayoutData);
+    expect(rounded).toMatchObject({ curve: 'rounded', edgeCornerRadius: 12 });
+
+    const invalid = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({ curve: 'unknown', edgeCornerRadius: -1 }),
+    } as LayoutData);
+    expect(invalid).toMatchObject({ curve: 'rounded', edgeCornerRadius: 5 });
+  });
+
   it('resolves full, partial, automatic, sparse, and precedence cases deterministically', () => {
     const items = [
       node('explicit-a', { row: 1, column: 1 }),
@@ -114,14 +137,47 @@ describe('grid placement', () => {
     expect(byId.get('auto-b')).toMatchObject({ row: 2, column: 1 });
   });
 
+  it('resolves signed coordinates, zero overrides, and stacks without shifting auto-placement', () => {
+    const items = [
+      node('stack-a', { row: -2, column: 0 }),
+      node('stack-b', { row: -2, column: 0 }),
+      node('row-only', { row: -2 }),
+      node('column-only', { column: 0 }),
+      node('auto'),
+      node('metadata-wins', { column: 0 }),
+    ];
+    const sourceOrder = new Map(items.map((item, index) => [item.id, index]));
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          'metadata-wins': { row: 0, column: -3 },
+        },
+      }),
+    } as LayoutData);
+
+    const { placements, cells } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(cells.get('-2:0')?.items.map((placement) => placement.item.id)).toEqual([
+      'stack-a',
+      'stack-b',
+    ]);
+    expect(byId.get('row-only')).toMatchObject({ row: -2, column: 1 });
+    expect(byId.get('column-only')).toMatchObject({ row: 1, column: 0 });
+    expect(byId.get('auto')).toMatchObject({ row: 1, column: 1 });
+    expect(byId.get('metadata-wins')).toMatchObject({
+      row: 0,
+      column: 0,
+      explicitCell: true,
+    });
+  });
+
   it.each([
-    { field: 'row', value: 0 },
-    { field: 'row', value: -1 },
     { field: 'row', value: 1.5 },
     { field: 'row', value: Number.NaN },
     { field: 'row', value: '2' },
-    { field: 'column', value: 0 },
-    { field: 'column', value: -1 },
     { field: 'column', value: 1.5 },
     { field: 'column', value: Number.NaN },
     { field: 'column', value: '2' },
@@ -206,6 +262,83 @@ describe('grid placement', () => {
     warn.mockRestore();
   });
 
+  it('maps placement arrays to matching authored ids in source order', () => {
+    const items = [
+      node('rendered-2', undefined, 'service'),
+      node('rendered-1', undefined, 'service'),
+      node('rendered-3', undefined, 'service'),
+    ];
+    const sourceOrder = new Map([
+      ['rendered-1', 0],
+      ['rendered-2', 1],
+      ['rendered-3', 2],
+    ]);
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          service: [
+            { row: 1, column: 1 },
+            { row: 1, column: 2 },
+          ],
+        },
+      }),
+    } as LayoutData);
+
+    const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(byId.get('rendered-1')).toMatchObject({ row: 1, column: 1 });
+    expect(byId.get('rendered-2')).toMatchObject({ row: 1, column: 2 });
+    expect(byId.get('rendered-3')).toMatchObject({ explicitRow: false, explicitColumn: false });
+  });
+
+  it('treats a single placement object as a one-item occurrence array', () => {
+    const items = [
+      node('rendered-1', undefined, 'service'),
+      node('rendered-2', undefined, 'service'),
+    ];
+    const sourceOrder = new Map(items.map((item, index) => [item.id, index]));
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          service: { row: 1, column: 2 },
+        },
+      }),
+    } as LayoutData);
+
+    const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
+    const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
+
+    expect(byId.get('rendered-1')).toMatchObject({ row: 1, column: 2 });
+    expect(byId.get('rendered-2')).toMatchObject({ explicitRow: false, explicitColumn: false });
+  });
+
+  it('warns when a placement array has more entries than matching nodes', () => {
+    const item = node('rendered-1', undefined, 'service');
+    const gridConfig = readGridConfig({
+      nodes: [],
+      edges: [],
+      config: config({
+        placements: {
+          service: [{ row: 1 }, { row: 2 }],
+        },
+      }),
+    } as LayoutData);
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+
+    validateGridPlacementMap([item], gridConfig);
+
+    expect(warn).toHaveBeenCalledWith(
+      '[grid]',
+      'Ignoring 1 extra grid placement occurrence(s) for target "service"; found 1 matching node(s)'
+    );
+    warn.mockRestore();
+  });
+
   it('reports authored placement ids for invalid generated-node coordinates', () => {
     const item = node('entity-CUSTOMER-0', undefined, 'CUSTOMER');
     const gridConfig = readGridConfig({
@@ -213,7 +346,7 @@ describe('grid placement', () => {
       edges: [],
       config: config({
         placements: {
-          CUSTOMER: { row: 0, column: 1 },
+          CUSTOMER: { row: 0.5, column: 1 },
         },
       }),
     } as LayoutData);
@@ -228,12 +361,12 @@ describe('grid placement', () => {
     expect(thrown).toMatchObject({
       code: 'GRID_INVALID_COORDINATE',
       message:
-        'GRID_INVALID_COORDINATE: Invalid row for placement "CUSTOMER" (node "entity-CUSTOMER-0")',
+        'GRID_INVALID_COORDINATE: Invalid row for placement "CUSTOMER" (node "entity-CUSTOMER-0"): expected a safe integer; received 0.5 (number).',
       details: {
         nodeId: 'entity-CUSTOMER-0',
         placementId: 'CUSTOMER',
         field: 'row',
-        value: 0,
+        value: 0.5,
       },
     });
   });

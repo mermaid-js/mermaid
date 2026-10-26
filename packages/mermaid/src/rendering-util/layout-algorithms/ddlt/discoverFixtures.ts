@@ -16,7 +16,14 @@ function walkSizesFiles(dir: string, acc: string[]): void {
 }
 
 function defaultProfileForRelId(relId: string): DdltFixtureProfile {
-  return relId.startsWith('swimlanes/') ? 'swimlanes' : 'flowchart-domus';
+  // Directory names are the compatibility fallback for fixtures predating manifest profiles.
+  if (relId.startsWith('swimlanes/')) {
+    return 'swimlanes';
+  }
+  if (relId.startsWith('grid/')) {
+    return 'grid';
+  }
+  return 'flowchart-domus';
 }
 
 function loadManifest(baseDir: string): DdltManifest {

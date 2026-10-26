@@ -1,13 +1,18 @@
 import { log } from '../../../logger.js';
+import type { GridPlacement } from '../../../types.js';
+import {
+  isGridHorizontalAlign,
+  isGridVerticalAlign,
+  validateGridCoordinate,
+} from '../../../utils/gridPlacement.js';
+import { resolveEdgeCornerRadius } from '../../edgeCornerRadius.js';
 import type { Node } from '../../types.js';
 import { compareCodeUnits } from '../layout-utils/helpers.js';
 import {
   GRID_DEFAULTS,
-  type GridHorizontalAlign,
+  type GridCurve,
   type GridLayoutConfigNormalized,
-  type GridPlacement,
   type GridResolvedPlacement,
-  type GridVerticalAlign,
   type GridLayoutData,
   gridError,
   type GridCellStack,
@@ -18,24 +23,26 @@ import {
  * grid cell. Placement metadata on a node takes precedence over the container-level placement map.
  */
 const GRID_LOG_PREFIX = '[grid]';
+// Grid accepts the same named curves as the shared edge renderer; rejecting unknown values here
+// keeps layout metadata serializable and leaves renderer fallback behavior unambiguous.
+const GRID_CURVES = new Set<GridCurve>([
+  'basis',
+  'bumpX',
+  'bumpY',
+  'cardinal',
+  'catmullRom',
+  'linear',
+  'monotoneX',
+  'monotoneY',
+  'natural',
+  'step',
+  'stepAfter',
+  'stepBefore',
+  'rounded',
+]);
+
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isGridHorizontalAlign(value: unknown): value is GridHorizontalAlign {
-  return value === 'left' || value === 'center' || value === 'right';
-}
-
-function isGridVerticalAlign(value: unknown): value is GridVerticalAlign {
-  return value === 'top' || value === 'center' || value === 'bottom';
-}
-
-function isValidGridCoordinate(value: unknown): value is number {
-  return typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
-}
-
-function placementId(node: Node): string {
-  return (node as Node & { placementId?: string }).placementId ?? node.id;
 }
 
 function ownPlacementFrom(value: unknown): Partial<GridPlacement> {
@@ -58,30 +65,6 @@ function ownPlacementFrom(value: unknown): Partial<GridPlacement> {
   return placement;
 }
 
-function validateCoordinate(
-  nodeId: string,
-  placementId: string,
-  field: 'row' | 'column',
-  value: unknown
-): asserts value is number | undefined {
-  if (value === undefined) {
-    return;
-  }
-  if (!isValidGridCoordinate(value)) {
-    const generatedNodeContext = nodeId === placementId ? '' : ` (node "${nodeId}")`;
-    throw gridError(
-      'GRID_INVALID_COORDINATE',
-      `Invalid ${field} for placement "${placementId}"${generatedNodeContext}`,
-      {
-        nodeId,
-        placementId,
-        field,
-        value,
-      }
-    );
-  }
-}
-
 export function buildGridSourceOrder(nodes: Node[]): Map<string, number> {
   const order = new Map<string, number>();
   let index = 0;
@@ -96,9 +79,14 @@ export function buildGridSourceOrder(nodes: Node[]): Map<string, number> {
 export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized {
   const raw = isObjectRecord(data.config?.grid) ? data.config.grid : {};
   const placementsRaw = isObjectRecord(raw.placements) ? raw.placements : {};
-  const placements = new Map<string, GridPlacement>();
+  const placements = new Map<string, GridPlacement[]>();
   for (const key of Object.keys(placementsRaw)) {
-    placements.set(key, ownPlacementFrom(placementsRaw[key]));
+    const value = placementsRaw[key];
+    const occurrencePlacements = Array.isArray(value) ? value : [value];
+    placements.set(
+      key,
+      occurrencePlacements.map((placement) => ownPlacementFrom(placement))
+    );
   }
 
   return {
@@ -135,6 +123,12 @@ export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized
     verticalAlign: isGridVerticalAlign(raw.verticalAlign)
       ? raw.verticalAlign
       : GRID_DEFAULTS.verticalAlign,
+    // Normalize rendering options with placement so every routed edge receives one stable style.
+    curve:
+      typeof raw.curve === 'string' && GRID_CURVES.has(raw.curve as GridCurve)
+        ? (raw.curve as GridCurve)
+        : GRID_DEFAULTS.curve,
+    edgeCornerRadius: resolveEdgeCornerRadius(raw.edgeCornerRadius),
   };
 }
 
@@ -142,13 +136,24 @@ export function validateGridPlacementMap(
   items: Iterable<Node>,
   config: GridLayoutConfigNormalized
 ): void {
-  const knownIds = new Set<string>();
+  // Diagram adapters may retain a generated rendering ID while exposing the authored ID expected
+  // by public placement maps. Fall back to `id` for diagrams whose IDs are already author-stable.
+  const knownIdCounts = new Map<string, number>();
   for (const item of items) {
-    knownIds.add(placementId(item));
+    const placementId = item.placementId ?? item.id;
+    knownIdCounts.set(placementId, (knownIdCounts.get(placementId) ?? 0) + 1);
   }
-  for (const [key] of config.placements) {
-    if (!knownIds.has(key)) {
+  for (const [key, placements] of config.placements) {
+    const matchingItems = knownIdCounts.get(key) ?? 0;
+    if (matchingItems === 0) {
       log.warn(GRID_LOG_PREFIX, `Ignoring grid placement for unknown target "${key}"`);
+      continue;
+    }
+    if (placements.length > matchingItems) {
+      log.warn(
+        GRID_LOG_PREFIX,
+        `Ignoring ${placements.length - matchingItems} extra grid placement occurrence(s) for target "${key}"; found ${matchingItems} matching node(s)`
+      );
     }
   }
 }
@@ -167,10 +172,13 @@ function itemComparator(sourceOrder: Map<string, number>) {
 function resolveItemPlacement(
   item: Node,
   sourceOrder: Map<string, number>,
-  config: GridLayoutConfigNormalized
+  config: GridLayoutConfigNormalized,
+  occurrenceIndex: number
 ): GridResolvedPlacement {
-  const authoredPlacementId = placementId(item);
-  const configPlacement = config.placements.get(authoredPlacementId) ?? {};
+  // Resolve configuration through the authored identity while retaining the generated rendering
+  // identity for deterministic ordering and diagnostic context.
+  const authoredPlacementId = item.placementId ?? item.id;
+  const configPlacement = config.placements.get(authoredPlacementId)?.[occurrenceIndex] ?? {};
   const metadataPlacement = ownPlacementFrom(item.metadata);
 
   // Node metadata is closest to the authored node, so it deliberately wins over the shared map.
@@ -194,8 +202,8 @@ function resolveItemPlacement(
   const column = Object.hasOwn(metadataPlacement, 'column')
     ? metadataPlacement.column
     : configPlacement.column;
-  validateCoordinate(item.id, authoredPlacementId, 'row', row);
-  validateCoordinate(item.id, authoredPlacementId, 'column', column);
+  validateGridCoordinate(authoredPlacementId, 'row', row, item.id);
+  validateGridCoordinate(authoredPlacementId, 'column', column, item.id);
 
   return {
     item,
@@ -261,7 +269,13 @@ export function resolveGridPlacements(
   cells: Map<string, GridCellStack>;
 } {
   const sortedItems = [...items].sort(itemComparator(sourceOrder));
-  const resolved = sortedItems.map((item) => resolveItemPlacement(item, sourceOrder, config));
+  const occurrenceByPlacementId = new Map<string, number>();
+  const resolved = sortedItems.map((item) => {
+    const placementId = item.placementId ?? item.id;
+    const occurrenceIndex = occurrenceByPlacementId.get(placementId) ?? 0;
+    occurrenceByPlacementId.set(placementId, occurrenceIndex + 1);
+    return resolveItemPlacement(item, sourceOrder, config, occurrenceIndex);
+  });
 
   const cells = new Map<string, GridCellStack>();
   const occupied = new Set<string>();
