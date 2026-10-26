@@ -141,41 +141,6 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
 
 const LANE_TITLE_BAND = 36;
 
-function stackEmptyBands(
-  bands: LayoutNode[],
-  opts: {
-    top: number;
-    centerX: number;
-    laneLeft: number;
-    laneWidth: number;
-    titleBandSize: number;
-    fontSize: number;
-  }
-): void {
-  let top = opts.top;
-  for (const band of bands) {
-    const titleRun =
-      (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
-    const height = Math.max(
-      2 * opts.titleBandSize,
-      2 * (band.padding ?? 0),
-      titleRun + opts.titleBandSize
-    );
-    band.x = opts.centerX;
-    band.y = top + height / 2;
-    band.width = opts.laneWidth;
-    band.height = height;
-    band.swimlaneContentTop = top;
-    band.groupTitleRect = {
-      left: opts.laneLeft,
-      right: opts.laneLeft + opts.titleBandSize,
-      top,
-      bottom: top + height,
-    };
-    top += height;
-  }
-}
-
 interface Box {
   left: number;
   right: number;
@@ -281,25 +246,7 @@ export function applyLrDirectionTransform(
   }
 
   if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-    const emptyModel = buildLaneModel(nodes);
-    const emptyBands = nodes.filter((n) => emptyModel.isLane(n.id));
-    if (emptyBands.length === 0) {
-      return false;
-    }
-    const titleBand = LANE_TITLE_BAND;
-    const bandWidth = 6 * titleBand;
-    stackEmptyBands(emptyBands, {
-      top: 0,
-      centerX: titleBand + bandWidth / 2,
-      laneLeft: titleBand,
-      laneWidth: bandWidth,
-      titleBandSize: titleBand,
-      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
-    });
-    if (direction === 'RL') {
-      mirrorAxis(layout, 'x');
-    }
-    return true;
+    return false;
   }
 
   const titleBandSize = LANE_TITLE_BAND;
@@ -401,18 +348,6 @@ export function applyLrDirectionTransform(
   }
 
   if (globalMinXChild === Infinity || globalMaxXChild === -Infinity) {
-    const emptyWidth = 6 * titleBandSize;
-    stackEmptyBands(laneNodes, {
-      top: 0,
-      centerX: titleBandSize + emptyWidth / 2,
-      laneLeft: titleBandSize,
-      laneWidth: emptyWidth,
-      titleBandSize,
-      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
-    });
-    if (direction === 'RL') {
-      mirrorAxis(layout, 'x');
-    }
     return true;
   }
 
@@ -462,22 +397,6 @@ export function applyLrDirectionTransform(
       bottom: laneBottom,
     };
   }
-
-  const placed = new Set(laneBounds.map((entry) => entry.lane));
-  stackEmptyBands(
-    laneNodes.filter((lane) => !placed.has(lane)),
-    {
-      top: laneBounds.reduce(
-        (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
-        laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
-      ),
-      centerX,
-      laneLeft,
-      laneWidth,
-      titleBandSize,
-      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
-    }
-  );
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');
