@@ -251,6 +251,15 @@ accDescr {
       expect(() => parseBpmn(`${HEAD}${body}`)).toThrow(`at line ${line}, column ${column}`);
     });
 
+    it.each([
+      ['an event under a task', '    task a "A"\n      end s "S"\n', 'an end cannot be indented'],
+      ['a task under a task', '    task a "A"\n      task b "B"\n', 'a task cannot be indented'],
+      ['a note under a task', '    task a "A"\n      note n "N"\n', 'a note cannot be indented'],
+      ['a gateway under a task', '    task a "A"\n      xor g "G"\n', 'an xor cannot be indented'],
+    ])('names %s with the article its word needs', (_name, body, message) => {
+      expect(() => parseBpmn(`${HEAD}${body}`)).toThrow(message);
+    });
+
     it('refuses a boundary event with no host at all', () => {
       expect(() => parseBpmn('bpmn-beta LR\n  boundary timer b "B"\n')).toThrow(
         /line 2, column 3: .*boundary event .*activity/

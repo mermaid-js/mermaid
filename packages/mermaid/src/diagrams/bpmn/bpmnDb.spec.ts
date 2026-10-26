@@ -114,6 +114,15 @@ describe('bpmnDb', () => {
         );
       });
 
+      it('writes "an" before a position that starts with a vowel', () => {
+        expect(() => build(eventSource('intermediate'))).toThrow(
+          'an intermediate event must name what triggers it.'
+        );
+        expect(() => build(eventSource('end', 'conditional'))).toThrow(
+          'an end event cannot carry the conditional trigger.'
+        );
+      });
+
       it('names the line the refused event is written on', () => {
         expect(() => build(eventSource('start', 'link'))).toThrow('at line 3');
       });

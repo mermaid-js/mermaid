@@ -180,6 +180,9 @@ const locationOf = (token: IToken | undefined): Location | undefined =>
 const atText = (where: Location | undefined): string =>
   where ? ` at line ${where.line}, column ${where.column}` : '';
 
+/** The article a keyword takes in a message: `an` before a vowel sound (`end`, `intermediate`, `xor`). */
+const articleFor = (word: string): string => (/^[aeiox]/i.test(word) ? 'an' : 'a');
+
 /** Where each parsed node and flow was written, kept beside them so they stay plain data. */
 const written = new WeakMap<object, Location>();
 
@@ -308,14 +311,16 @@ class BpmnVisitor extends BpmnBaseVisitor {
     }
     const where = atText(locationOf(at)).trim();
     if (trigger === 'none') {
-      throw new Error(`BPMN error ${where}: a ${keyword} event must name what triggers it.`);
+      throw new Error(
+        `BPMN error ${where}: ${articleFor(keyword)} ${keyword} event must name what triggers it.`
+      );
     }
     const positions = positionsFor(trigger);
     const instead = positions.length
       ? ` The notation draws ${trigger} on ${listOf(positions)} events.`
       : '';
     throw new Error(
-      `BPMN error ${where}: a ${keyword} event cannot carry the ${trigger} trigger.${instead}`
+      `BPMN error ${where}: ${articleFor(keyword)} ${keyword} event cannot carry the ${trigger} trigger.${instead}`
     );
   }
 
@@ -489,7 +494,7 @@ function assertPlaced(node: ParsedNode, parent: ParsedNode | undefined): void {
   }
   if (parent && !CONTAINER_KINDS.has(parent.kind)) {
     throw new Error(
-      `${where}: a ${node.keyword} cannot be indented under the ${parent.keyword} "${parent.id}", because only a pool, a lane or a group holds other elements.`
+      `${where}: ${articleFor(node.keyword)} ${node.keyword} cannot be indented under the ${parent.keyword} "${parent.id}", because only a pool, a lane or a group holds other elements.`
     );
   }
 }
