@@ -1,0 +1,32 @@
+---
+description: >-
+  Relationship labels with 1 to 5 `<br/>`-separated lines, across four
+  entity-alias pairs under the handDrawn look.
+config:
+  look: handDrawn
+---
+erDiagram
+  p[Person] {
+      string firstName
+      string lastName
+  }
+  a["Customer Account"] {
+      string email
+  }
+
+  b["Customer Account Secondary"] {
+    string email
+  }
+
+  c["Customer Account Tertiary"] {
+    string email
+  }
+
+  d["Customer Account Nth"] {
+    string email
+  }
+
+  p ||--o| a : "has<br />one"
+  p ||--o| b : "has<br />one<br />two"
+  p ||--o| c : "has<br />one<br/>two<br />three"
+  p ||--o| d : "has<br />one<br />two<br/>three<br />...<br/>Nth"

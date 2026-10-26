@@ -1,5 +1,5 @@
 import type { GanttDiagramConfig, MermaidConfig } from '../config.type.js';
-import { frontMatterRegex } from './regexes.js';
+import { matchFrontMatter } from './regexes.js';
 // The "* as yaml" part is necessary for tree-shaking
 import * as yaml from 'js-yaml';
 
@@ -22,8 +22,8 @@ export interface FrontMatterResult {
  * @returns text with frontmatter stripped out
  */
 export function extractFrontMatter(text: string): FrontMatterResult {
-  const matches = text.match(frontMatterRegex);
-  if (!matches) {
+  const match = matchFrontMatter(text);
+  if (!match) {
     return {
       text,
       metadata: {},
@@ -31,13 +31,13 @@ export function extractFrontMatter(text: string): FrontMatterResult {
   }
 
   // Dedent by the captured indent — js-yaml rejects tab-indented documents.
-  const indent = matches[1];
+  const indent = match.indent;
   const yamlBody = indent
-    ? matches[2]
+    ? match.body
         .split('\n')
         .map((line) => (line.startsWith(indent) ? line.slice(indent.length) : line))
         .join('\n')
-    : matches[2];
+    : match.body;
 
   let parsed: FrontMatterMetadata =
     yaml.load(yamlBody, {
@@ -63,7 +63,7 @@ export function extractFrontMatter(text: string): FrontMatterResult {
   }
 
   return {
-    text: text.slice(matches[0].length),
+    text: text.slice(match.length),
     metadata,
   };
 }

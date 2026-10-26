@@ -1,0 +1,16 @@
+---
+description: >-
+  Horizontal-orientation bar chart with showDataLabel enabled over a small
+  three-category dataset, verifying bar data labels position correctly at
+  the end of each horizontal bar. Horizontal counterpart to the vertical
+  "multiple bar plots" variant.
+config:
+  xyChart:
+    showDataLabel: true
+    chartOrientation: horizontal
+---
+  xychart
+  title "Multiple Bar Plots"
+  x-axis Categories [A, B, C]
+  y-axis "Values" 0 --> 100
+  bar [10, 50, 90]

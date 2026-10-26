@@ -1,0 +1,18 @@
+---
+description: >-
+  Two lanes (Intake, Delivery) connected end-to-end, rendered without
+  specifying swimlane.layout explicitly, confirming the default layout
+  engine still produces a standalone swimlane diagram.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph Intake
+    A[Request]
+  end
+  subgraph Delivery
+    B[Build]
+  end
+  A --> B
