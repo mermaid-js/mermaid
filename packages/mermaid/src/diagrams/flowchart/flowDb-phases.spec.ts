@@ -129,13 +129,31 @@ describe('the phase keyword away from the start of a statement', () => {
   });
 
   it('still declares a phase after a semicolon, a blank line and indentation', () => {
-    const { other } = parse(
-      'swimlane-beta LR\na; phase p1["One"]\n\n   phase p2["Two"]'
-    ).getData();
+    const { other } = parse('swimlane-beta LR\na; phase p1["One"]\n\n   phase p2["Two"]').getData();
 
     expect(other.phases).toEqual([
       { id: 'p1', label: 'One' },
       { id: 'p2', label: 'Two' },
+    ]);
+  });
+
+  it('reports phases and the members a subgraph loses side by side', () => {
+    const { other } = parse(
+      [
+        'swimlane-beta LR',
+        'phase p1["Intake"]',
+        'subgraph lane1',
+        '  a@{ phase: p1 }',
+        'end',
+        'subgraph lane2',
+        '  a',
+        'end',
+      ].join('\n')
+    ).getData();
+
+    expect(other.phases).toEqual([{ id: 'p1', label: 'Intake' }]);
+    expect(other.droppedSubGraphMembers).toEqual([
+      { node: 'a', keptBy: 'lane1', droppedFrom: 'lane2' },
     ]);
   });
 });
