@@ -13,7 +13,10 @@ export interface NodeMetaData {
   ticket?: string;
   labelType?: string;
   /**
-   * Tooltip text shown when hovering over the node.
+   * Text shown when the user hovers over the node.
+   * In flowcharts it is sanitized the same way as `click` tooltips, and only
+   * appears once `bindFunctions` has run after rendering (`mermaid.run()` does
+   * this automatically). Applies to nodes only; ignored on subgraphs.
    */
   tooltip?: string;
   /**
