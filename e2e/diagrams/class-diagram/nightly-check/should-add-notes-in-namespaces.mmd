@@ -1,0 +1,13 @@
+---
+description: >-
+  classDiagram testing free-standing and class-attached notes both outside and inside a
+  namespace block, verifying note placement works correctly in both scopes.
+---
+classDiagram
+  note "This is a outer note"
+  note for C1 "This is a outer note for C1"
+  namespace Namespace1 {
+  note "This is a inner note"
+  note for C1 "This is a inner note for C1"
+  class C1
+  }

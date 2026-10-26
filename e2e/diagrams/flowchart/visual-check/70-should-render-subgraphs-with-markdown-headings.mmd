@@ -1,0 +1,12 @@
+---
+description:
+  Checks that a subgraph title written as a markdown string (backtick-delimited,
+  using **bold** markdown syntax) is parsed and rendered as a formatted heading
+  rather than literal text.
+config:
+  fontFamily: courier
+---
+graph TB
+  subgraph "`**strong**`"
+  a1-->a2
+  end

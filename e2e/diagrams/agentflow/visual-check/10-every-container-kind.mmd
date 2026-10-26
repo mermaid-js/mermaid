@@ -1,0 +1,29 @@
+---
+description: >-
+  Three flow containers exercising different container roles in one diagram: an
+  orchestrator ending in a decision, a workers container with a tool-and-refdoc
+  pair, and a collapsed archive container reached by both a normal edge and an
+  `--x` terminated edge.
+---
+agentflow-beta TB
+  flow orchestrator["Orchestrator"]
+    gather["Gather Input"]@{ shape: input }
+    plan["Plan"]@{ shape: task }
+    decide["Ready?"]@{ shape: decision }
+    gather --> plan --> decide
+  end
+
+  flow workers["Workers"]
+    search["web_search"]@{ shape: tool }
+    notes["Notes"]@{ shape: refdoc }
+    search -.- notes
+  end
+
+  flow archive["Archive"]
+    store["Store"]
+  end
+  archive@{ view: "collapsed" }
+
+  decide --> search
+  notes --> archive
+  decide --x archive

@@ -1,0 +1,27 @@
+---
+description: >-
+  Gitgraph covering TB direction, parallelCommits: true (disables temporal
+  spacing), a custom mainBranchName ("production"), and a quoted branch name
+  ("hotfix/v1.1"), rendered under the "neo" look with the "redux" theme.
+config:
+  gitGraph:
+    parallelCommits: true
+    mainBranchName: production
+  look: neo
+  theme: redux
+---
+gitGraph TB:
+  commit id: "init" tag: "v0.1"
+  branch staging
+  checkout staging
+  commit id: "s1"
+  commit id: "s2" type: HIGHLIGHT
+  checkout production
+  commit id: "p1"
+  merge staging id: "deploy-1" tag: "v1.0"
+  commit id: "p2" type: REVERSE
+  branch "hotfix/v1.1"
+  checkout "hotfix/v1.1"
+  commit id: "hf1"
+  checkout production
+  merge "hotfix/v1.1" id: "deploy-2" tag: "v1.1"
