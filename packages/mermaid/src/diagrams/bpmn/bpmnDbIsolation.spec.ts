@@ -9,13 +9,13 @@ const TWO = 'bpmn-beta TB\n  lane "L"\n    task two "Two"\n    task three "Three
 const ids = (db: BpmnDb) => db.getData().nodes.map((node) => node.id);
 
 /** The way `Diagram.fromText` hands the parser the db it just took from the definition. */
-const parseInto = (db: BpmnDb, text: string) => {
+const parseInto = async (db: BpmnDb, text: string) => {
   const yy = parser.parser;
   if (!yy) {
     throw new Error('the bpmn parser exposes no yy');
   }
   yy.yy = db;
-  parser.parse(text);
+  await parser.parse(text);
 };
 
 describe('bpmn db isolation', () => {
@@ -23,23 +23,23 @@ describe('bpmn db isolation', () => {
     expect(diagram.db).not.toBe(diagram.db);
   });
 
-  it('keeps two diagrams parsed back to back apart', () => {
+  it('keeps two diagrams parsed back to back apart', async () => {
     const first = new BpmnDb();
     const second = new BpmnDb();
-    parseInto(first, ONE);
-    parseInto(second, TWO);
+    await parseInto(first, ONE);
+    await parseInto(second, TWO);
     expect(ids(first)).toEqual(['lane-1', 'one']);
     expect(ids(second)).toEqual(['lane-1', 'two', 'three']);
     expect(first.getDirection()).toBe('LR');
     expect(second.getDirection()).toBe('TB');
   });
 
-  it('keeps two diagrams parsed interleaved apart', () => {
+  it('keeps two diagrams parsed interleaved apart', async () => {
     const first = new BpmnDb();
     const second = new BpmnDb();
-    parseInto(first, ONE);
+    await parseInto(first, ONE);
     first.setDiagramId('first');
-    parseInto(second, TWO);
+    await parseInto(second, TWO);
     second.setDiagramId('second');
     expect(first.getData().diagramId).toBe('first');
     expect(second.getData().diagramId).toBe('second');
@@ -47,16 +47,16 @@ describe('bpmn db isolation', () => {
   });
 
   describe('clear', () => {
-    it('forgets the parsed diagram', () => {
+    it('forgets the parsed diagram', async () => {
       const db = new BpmnDb();
-      parseInto(db, TWO);
+      await parseInto(db, TWO);
       db.clear();
       expect(ids(db)).toEqual([]);
     });
 
-    it('forgets the direction', () => {
+    it('forgets the direction', async () => {
       const db = new BpmnDb();
-      parseInto(db, TWO);
+      await parseInto(db, TWO);
       db.clear();
       expect(db.getDirection()).toBe('LR');
     });
@@ -68,9 +68,9 @@ describe('bpmn db isolation', () => {
       expect(db.getData().diagramId).toBe('');
     });
 
-    it('forgets the title and the accessibility text', () => {
+    it('forgets the title and the accessibility text', async () => {
       const db = new BpmnDb();
-      parseInto(db, `${ONE}\n  title Heading\n  accTitle: T\n  accDescr: D`);
+      await parseInto(db, `${ONE}\n  title Heading\n  accTitle: T\n  accDescr: D`);
       db.clear();
       expect([db.getDiagramTitle(), db.getAccTitle(), db.getAccDescription()]).toEqual([
         '',

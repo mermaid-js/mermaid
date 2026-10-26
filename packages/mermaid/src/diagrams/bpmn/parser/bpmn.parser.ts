@@ -3,6 +3,7 @@ import type { CstNode, IToken } from 'chevrotain';
 import * as t from './bpmn.tokens.js';
 import { bpmnTokens } from './bpmn.tokens.js';
 import { TRIGGERS_BY_POSITION, positionsFor } from '../types.js';
+import { isKnownLocation, runChevrotainParse } from '../../common/parser/runChevrotainParse.js';
 
 const listOf = (items: string[]): string =>
   items.length > 1 ? `${items.slice(0, -1).join(', ')} or ${items[items.length - 1]}` : items[0];
@@ -166,6 +167,29 @@ export interface ParsedDiagram {
 
 const imageOf = (token?: IToken) => token?.image ?? '';
 
+interface Location {
+  line: number;
+  column: number;
+}
+
+const locationOf = (token: IToken | undefined): Location | undefined =>
+  token && isKnownLocation(token.startLine) && isKnownLocation(token.startColumn)
+    ? { line: token.startLine, column: token.startColumn }
+    : undefined;
+
+const atText = (where: Location | undefined): string =>
+  where ? ` at line ${where.line}, column ${where.column}` : '';
+
+/** Where each parsed node and flow was written, kept beside them so they stay plain data. */
+const written = new WeakMap<object, Location>();
+
+const remember = (parsed: object, token: IToken): void => {
+  const where = locationOf(token);
+  if (where) {
+    written.set(parsed, where);
+  }
+};
+
 const arrowLabel = (image: string) => image.replace(/^--/, '').replace(/-+>$/, '').trim();
 
 class BpmnVisitor extends BpmnBaseVisitor {
@@ -267,7 +291,7 @@ class BpmnVisitor extends BpmnBaseVisitor {
     if (!allowed || allowed.includes(trigger)) {
       return;
     }
-    const where = `at line ${at?.startLine ?? '?'}`;
+    const where = atText(locationOf(at)).trim();
     if (trigger === 'none') {
       throw new Error(`BPMN error ${where}: a ${keyword} event must name what triggers it.`);
     }
@@ -371,13 +395,15 @@ class BpmnVisitor extends BpmnBaseVisitor {
       }
       const name = connector.tokenType.name;
       const isAssociation = name === 'AssociationArrow' || name === 'AssociationLine';
-      this.flows.push({
+      const parsedFlow: ParsedFlow = {
         from: from.image,
         to: to.image,
         kind: isAssociation ? 'association' : name === 'MessageArrow' ? 'message' : 'sequence',
         ...(isAssociation ? { directed: name === 'AssociationArrow' } : {}),
         label: name === 'LabelledArrow' ? arrowLabel(connector.image) : undefined,
-      });
+      };
+      remember(parsedFlow, from);
+      this.flows.push(parsedFlow);
     }
   }
 
@@ -422,28 +448,49 @@ function assertFlowsReferToDeclaredElements({ nodes, flows }: ParsedDiagram): vo
     for (const id of [flow.from, flow.to]) {
       if (!declared.has(id)) {
         throw new Error(
-          `BPMN error: the flow "${flow.from} ${arrowOf(flow)} ${flow.to}" refers to "${id}", which is not declared. Declare it as an element before using it.`
+          `BPMN error${atText(written.get(flow))}: the flow "${flow.from} ${arrowOf(flow)} ${flow.to}" refers to "${id}", which is not declared. Declare it as an element before using it.`
         );
       }
     }
   }
 }
 
+const LINE_BREAK = /\r\n|\r|\n/;
+
+/** Where chevrotain's last error stands; a missing token (end of input) sits after the last character. */
+function syntaxErrorLocation(input: string, token: IToken): Location {
+  const known = locationOf(token);
+  if (known) {
+    return known;
+  }
+  const lines = input.split(LINE_BREAK);
+  return { line: lines.length, column: lines[lines.length - 1].length + 1 };
+}
+
 export function parseBpmn(input: string): ParsedDiagram {
-  const lexed = bpmnLexer.tokenize(input);
-  if (lexed.errors.length > 0) {
-    const first = lexed.errors[0];
-    throw new Error(`BPMN lexing error at line ${first.line ?? '?'}: ${first.message}`);
+  bpmnParser.input = [];
+  try {
+    runChevrotainParse(
+      {
+        diagramType: 'bpmn',
+        lexer: bpmnLexer,
+        parser: bpmnParser,
+        entry: () => bpmnParser.diagram(),
+        visit: (cst) => {
+          visitor.reset();
+          visitor.visit(cst);
+          assertFlowsReferToDeclaredElements(visitor.result());
+        },
+      },
+      input
+    );
+  } catch (error) {
+    const syntaxError = bpmnParser.errors[0];
+    if (!syntaxError) {
+      throw error;
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`${message}${atText(syntaxErrorLocation(input, syntaxError.token))}`);
   }
-  bpmnParser.input = lexed.tokens;
-  const cst = bpmnParser.diagram();
-  if (bpmnParser.errors.length > 0) {
-    const first = bpmnParser.errors[0];
-    throw new Error(`BPMN parse error at line ${first.token?.startLine ?? '?'}: ${first.message}`);
-  }
-  visitor.reset();
-  visitor.visit(cst);
-  const parsed = visitor.result();
-  assertFlowsReferToDeclaredElements(parsed);
-  return parsed;
+  return visitor.result();
 }

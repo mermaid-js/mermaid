@@ -165,7 +165,7 @@ accDescr {
 
     it('refuses a flow to an undeclared target and names it', () => {
       expect(() => parseBpmn(`${declared}  a --> zzz\n`)).toThrow(
-        'BPMN error: the flow "a --> zzz" refers to "zzz", which is not declared. Declare it as an element before using it.'
+        'BPMN error at line 5, column 3: the flow "a --> zzz" refers to "zzz", which is not declared. Declare it as an element before using it.'
       );
     });
 
@@ -188,6 +188,34 @@ accDescr {
 
     it('refuses a boundary event attach to an undeclared host', () => {
       expect(() => parseBpmn(`${declared}  b1 --> zzz\n`)).toThrow(/refers to "b1"/);
+    });
+  });
+  describe('error locations', () => {
+    const HEAD = 'bpmn-beta LR\n  lane l "L"\n    task a "A"\n';
+
+    it.each([
+      ['an empty diagram', '', 1, 1],
+      ['a dangling flow', `${HEAD}  a -->`, 4, 8],
+      ['a dangling flow with a newline after it', `${HEAD}  a -->\n`, 4, 8],
+      ['an unclosed quote', `${HEAD}    task b "B\n`, 4, 12],
+      ['a keyword used as an id', `${HEAD}    task end "E"\n`, 4, 10],
+    ])('names a real line and column for %s', (_name, input, line, column) => {
+      let message = '';
+      try {
+        parseBpmn(input);
+      } catch (error) {
+        message = error instanceof Error ? error.message : String(error);
+      }
+      expect(message).toContain(`line ${line}, column ${column}`);
+      expect(message).not.toMatch(/-1|NaN|\?/);
+    });
+
+    it('gives the undeclared-flow error the location of the flow', () => {
+      expect(() => parseBpmn(`${HEAD}  a --> zzz\n`)).toThrow(/^BPMN error at line 4, column 3: /);
+    });
+
+    it('gives the second flow of a chain the location of its own source', () => {
+      expect(() => parseBpmn(`${HEAD}  a --> a --> zzz\n`)).toThrow(/line 4, column 9: /);
     });
   });
 });
