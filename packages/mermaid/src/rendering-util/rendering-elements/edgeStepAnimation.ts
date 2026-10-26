@@ -410,9 +410,10 @@ const showWhileStepPlays = <E extends SVGElement>(
   motionId: string,
   dur: number
 ) => {
-  // The parked transform keeps the target hidden at the path start. While the step plays, this
-  // animateTransform replaces it with scale(1) (it is not additive), dropping the translate so
-  // animateMotion alone positions the dot; fill="remove" restores the parked transform after.
+  // The parked transform keeps the target (the dot or the highlight) hidden at the path start. While
+  // the step plays, this animateTransform replaces it with scale(1) (it is not additive), dropping
+  // the translate so the highlight lies on its own path and animateMotion alone positions the dot;
+  // fill="remove" restores the parked transform after.
   target
     .append('animateTransform')
     .attr('attributeName', 'transform')
