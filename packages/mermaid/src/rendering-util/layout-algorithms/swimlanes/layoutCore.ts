@@ -1,5 +1,4 @@
 import type { LayoutData } from '../../types.js';
-import { getUserDefinedConfig } from '../../../config.js';
 import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProcessing.js';
 import { toGraphView, writeBackToLayoutData } from './helpers.js';
 import { sugiyamaLayout } from './pipeline.js';
@@ -22,12 +21,16 @@ function spacing(layout: LayoutData, key: 'nodeSpacing' | 'rankSpacing', fallbac
   );
 }
 
+/**
+ * Whether lanes share one row: the layout's own `swimlane.ignoreCrossLaneEdges`, true when it
+ * says nothing. A layout that asks for branch-wise layering never shares a row, because the
+ * config it carries holds the default, which cannot tell the producer's request from a choice.
+ */
 function compactsLanesToOneRow(data4Layout: LayoutData): boolean {
-  const chosen = getUserDefinedConfig().swimlane?.ignoreCrossLaneEdges;
-  if (typeof chosen === 'boolean') {
-    return chosen;
+  if (data4Layout.laneLayering === 'branches') {
+    return false;
   }
-  return data4Layout.laneLayering !== 'branches';
+  return data4Layout.config.swimlane?.ignoreCrossLaneEdges ?? true;
 }
 
 function getSwimlaneDirection(data4Layout: LayoutData): SwimlaneDirection {
