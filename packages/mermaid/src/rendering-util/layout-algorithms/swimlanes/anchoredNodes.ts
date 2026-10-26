@@ -236,7 +236,24 @@ const sharesSpace = (a: ReturnType<typeof boxOf>, b: ReturnType<typeof boxOf>) =
 const CLEARING_STEP = 8;
 const CLEARING_TRIES = 24;
 
-export function clearAnchoredOverlaps(layout: LayoutData, pins: AnchorPin[]): AnchorPin[] {
+/** Whether a group is a lane or a pool, going by the `laneRole` its producer set. */
+export const hasLaneRole = (group: Node): boolean => {
+  const role = group.metadata?.laneRole;
+  return role === 'lane' || role === 'pool';
+};
+
+/**
+ * Moves a stood-off node clear of what it overlaps, never out of the lane its host sits in.
+ *
+ * `isLane` says which group is a lane. The default reads `metadata.laneRole`, so a producer
+ * must set it on its lanes and pools or pass a resolver of its own; a group that is not
+ * recognised as a lane does not hold the node in.
+ */
+export function clearAnchoredOverlaps(
+  layout: LayoutData,
+  pins: AnchorPin[],
+  isLane: (group: Node) => boolean = hasLaneRole
+): AnchorPin[] {
   const nodes = layout.nodes ?? [];
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const pinned = new Set(pins.map((pin) => pin.nodeId));
@@ -253,8 +270,7 @@ export function clearAnchoredOverlaps(layout: LayoutData, pins: AnchorPin[]): An
       if (!parent) {
         return undefined;
       }
-      const role = (parent as { metadata?: { laneRole?: string } }).metadata?.laneRole;
-      if (role === 'lane' || role === 'pool') {
+      if (isLane(parent)) {
         return boxOf(parent);
       }
       at = parent;

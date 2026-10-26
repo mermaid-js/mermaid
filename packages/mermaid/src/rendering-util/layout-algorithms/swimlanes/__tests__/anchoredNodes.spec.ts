@@ -1343,12 +1343,25 @@ describe('how far a stand-off is cleared, and what stops it', () => {
 
     // The lane spans x 150..250. The wall covers x 170..230, so the stand-off has to be
     // carried out to x 249 to clear it, which is past the lane's right edge.
-    const runInto = (hostParent: Partial<Node>, ...groups: Node[]) => {
+    const runInto = (
+      hostParent: Partial<Node>,
+      ...groups: Node[]
+    ) => runWith(undefined, hostParent, ...groups);
+
+    const runWith = (
+      isLane: ((group: Node) => boolean) | undefined,
+      hostParent: Partial<Node>,
+      ...groups: Node[]
+    ) => {
       const parented = { ...host('h'), ...hostParent } as Node;
       const a = standing();
       const pin = pinTowards('right');
       const wall = node('wall', { ...START, width: 60, height: 60 } as Partial<Node>);
-      const [cleared] = clearAnchoredOverlaps(asLayout([...groups, parented, wall, a]), [pin]);
+      const [cleared] = clearAnchoredOverlaps(
+        asLayout([...groups, parented, wall, a]),
+        [pin],
+        isLane
+      );
       return { cleared, pin, a };
     };
 
@@ -1390,6 +1403,25 @@ describe('how far a stand-off is cleared, and what stops it', () => {
 
     it('is not held in by a group with no role', () => {
       const { a } = runInto({ parentId: 'group' }, laneAround({ id: 'group' }));
+      expect(a.x).toBeGreaterThan(START.x);
+    });
+
+    it('holds a node in the group a custom resolver calls a lane', () => {
+      const { cleared, pin, a } = runWith(
+        (group) => group.id === 'lane',
+        { parentId: 'lane' },
+        laneAround({ id: 'lane' })
+      );
+      expect(cleared).toBe(pin);
+      expect({ x: a.x, y: a.y }).toEqual(START);
+    });
+
+    it('lets a custom resolver release a group that carries a lane role', () => {
+      const { a } = runWith(
+        () => false,
+        { parentId: 'lane' },
+        laneAround({ id: 'lane', metadata: { laneRole: 'lane' } })
+      );
       expect(a.x).toBeGreaterThan(START.x);
     });
 
