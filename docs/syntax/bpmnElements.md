@@ -19,7 +19,7 @@ This page is the lookup. It answers two questions the tour does not:
 - I know the BPMN element I want - what do I write for it, and is it supported at all?
 - The parser refused my diagram - what exactly did it refuse, and why?
 
-Everything here is generated from, or checked against, the grammar it describes.
+The trigger, task-type and configuration tables on these pages are generated from the grammar and the schema, and every example is rendered in CI.
 
 ## Writing an element
 
@@ -235,8 +235,8 @@ one it was joined to first.
 Only the sequence flow takes a label, and only in the `-- text -->` form. There is no `|text|`
 form, and no labelled form of `-.->`, `..>` or `...`.
 
-Flows chain, and a chain may mix kinds: `a --> b --> c`. Both ends must be bare ids - an
-element cannot be declared inside a flow.
+Flows chain, and a chain may mix kinds: `a --> b -.-> c` is a sequence flow followed by a message flow. Both
+ends must be bare ids - an element cannot be declared inside a flow.
 
 ```mermaid-example
 bpmn-beta LR
@@ -348,34 +348,54 @@ has syntax here.
 ## What the parser refuses
 
 Reading stops at the first error, and the diagram is replaced by the error diagram. There are
-four kinds.
+seven kinds. Every message names the line and the column of the statement it refuses, except
+that a lexing error also lists the character range.
 
-**A word it cannot read.** `BPMN lexing error at line N: ...`
+**A word it cannot read.** `Error lexing bpmn diagram: ... at line N, column C [start,end)`
 
-**A line it cannot parse.** `BPMN parse error at line N: ...`
+**A line it cannot parse.** `Error parsing bpmn diagram: ... at line N, column C`
 
 **An event that does not say what it waits for.** Only `intermediate` and `boundary`:
 
 ```txt
-BPMN error at line 3: a intermediate event must name what triggers it.
+BPMN error at line N, column C: an intermediate event must name what triggers it.
 ```
 
 **A trigger at a position the notation does not draw it at**, which names where it does belong:
 
 ```txt
-BPMN error at line 3: a start event cannot carry the terminate trigger.
+BPMN error at line 3, column 11: a start event cannot carry the terminate trigger.
 The notation draws terminate on end events.
+```
+
+**An id that is already taken.** The second one is refused, and an id the diagram generates for
+an element with no id of its own skips every id you wrote:
+
+```txt
+BPMN error at line N, column C: "a" is already declared. Give each element its own id.
+```
+
+**An element indented where nothing can hold it.** Only a pool, a lane or a group holds other
+elements, and a boundary event has to sit directly under the activity it is attached to:
+
+```txt
+BPMN error at line N, column C: a task cannot be indented under the task "a", because only a pool, a lane or a group holds other elements.
+BPMN error at line N, column C: a boundary event must be indented under the activity it is attached to.
+```
+
+**A flow to an element that is not declared:**
+
+```txt
+BPMN error at line N, column C: the flow "a --> ghost" refers to "ghost", which is not declared. Declare it as an element before using it.
 ```
 
 ## What it does not check
 
-These pass the parser and reach the drawing, where they show up as something looking wrong
+These pass the parser and reach the drawing, where they can show up as something looking wrong
 rather than as a message:
 
-- **A flow naming an element that does not exist.** It is passed to the layout as written.
-- **Two elements sharing an id.** The later one is not reported.
-- **Nesting that makes no sense**, such as a lane inside an event, or a boundary event whose
-  parent is not an activity.
+- **A pool inside a pool or a lane, or a lane under a group.** Containment is only refused where
+  the element cannot be held at all, not where the notation would not nest it.
 
 ## Not drawn yet
 
