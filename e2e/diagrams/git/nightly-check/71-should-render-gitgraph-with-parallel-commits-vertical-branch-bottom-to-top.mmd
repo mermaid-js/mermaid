@@ -1,0 +1,22 @@
+---
+description: >-
+  BT gitGraph with `parallelCommits: true` set via frontmatter config, containing develop and
+  feature branches with interleaved commits, verifying commits render aligned in parallel columns
+  rather than purely sequentially.
+config:
+  gitGraph:
+    parallelCommits: true
+---
+gitGraph BT:
+  commit id:"1-abcdefg"
+  commit id:"2-abcdefg"
+  branch develop
+  commit id:"3-abcdefg"
+  commit id:"4-abcdefg"
+  checkout main
+  branch feature
+  commit id:"5-abcdefg"
+  commit id:"6-abcdefg"
+  checkout main
+  commit id:"7-abcdefg"
+  commit id:"8-abcdefg"

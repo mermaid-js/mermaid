@@ -1,0 +1,27 @@
+---
+description:
+  Verifies that classDef-based styling can be applied to both a regular node and
+  a subgraph via the class statement, and that linkStyle can target edges by
+  numeric index to override their stroke and text color.
+config:
+  layout: dagre
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  A[Christmas] ==> D
+  A[Christmas] -->|Get money| B(Go shopping)
+  A[Christmas] ==> C
+  subgraph T ["Test"]
+  A
+  B
+  C
+  end
+
+  classDef Test fill:#F84E68,stroke:#333,color:white;
+  class A,T Test
+  classDef TestSub fill:green;
+  class T TestSub
+  linkStyle 0,1 color:orange, stroke: orange;

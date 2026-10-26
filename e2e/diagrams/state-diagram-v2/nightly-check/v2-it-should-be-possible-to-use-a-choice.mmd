@@ -1,0 +1,17 @@
+---
+description: >-
+  Washing-machine style flow using a `<<choice>>` pseudo-state (MyChoice)
+  that branches into Washing or Drying after On, testing the choice/
+  decision node syntax.
+config:
+  logLevel: 0
+---
+stateDiagram-v2
+  [*] --> Off
+  Off --> On
+  state MyChoice [[choice]]
+  On --> MyChoice
+  MyChoice --> Washing
+  MyChoice --> Drying
+  Washing --> Finished
+  Finished --> [*]
