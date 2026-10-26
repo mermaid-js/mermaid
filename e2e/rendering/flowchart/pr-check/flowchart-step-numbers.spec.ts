@@ -74,23 +74,25 @@ test.describe('flowchart step numbers', () => {
       await pauseStepAnimationAt(1.5)(svg);
 
       const layout = await svg.evaluate((element: SVGSVGElement) => {
+        const scale = element.getScreenCTM()?.a ?? 1;
         const ends = [
           ...element.querySelectorAll<SVGPathElement>('path[data-edge="true"]'),
-        ].flatMap((path) => [
-          path.getPointAtLength(0),
-          path.getPointAtLength(path.getTotalLength()),
-        ]);
-        const badges = [...element.querySelectorAll('g.edge-step-badge')].map((badge) => {
-          const [, x, y] = /translate\(([\d.e-]+),([\d.e-]+)\)/.exec(
-            badge.getAttribute('transform') ?? ''
-          )!;
-          return { x: Number(x), y: Number(y) };
+        ].flatMap((path) => {
+          const toScreen = path.getScreenCTM() ?? undefined;
+          return [0, path.getTotalLength()].map((at) =>
+            path.getPointAtLength(at).matrixTransform(toScreen)
+          );
         });
-        const nearest = Math.min(
-          ...badges.flatMap((badge) =>
-            ends.map((end) => Math.hypot(badge.x - end.x, badge.y - end.y))
-          )
-        );
+        const badges = [...element.querySelectorAll('g.edge-step-badge circle')].map((circle) => {
+          const box = circle.getBoundingClientRect();
+          return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+        });
+        const nearest =
+          Math.min(
+            ...badges.flatMap((badge) =>
+              ends.map((end) => Math.hypot(badge.x - end.x, badge.y - end.y))
+            )
+          ) / scale;
         const layer = element.querySelector('g.edge-step-badges');
         const lastDot = [...element.querySelectorAll('circle.edge-step-dot')].pop();
         return {
