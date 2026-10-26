@@ -3,7 +3,7 @@ import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
 } from './erDiagram-oldHardcodedValues.js';
-import { mkBorder } from './theme-helpers.js';
+import { applyOverride, mkBorder } from './theme-helpers.js';
 
 class Theme {
   constructor() {
@@ -482,7 +482,7 @@ class Theme {
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
     keys.forEach((k) => {
-      this[k] = overrides[k];
+      this[k] = applyOverride(this[k], overrides[k]);
     });
   }
 }

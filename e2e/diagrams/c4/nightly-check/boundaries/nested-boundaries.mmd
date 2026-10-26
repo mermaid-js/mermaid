@@ -1,0 +1,13 @@
+---
+description: >-
+  C4Context diagram exercising boundary nesting depth: an Enterprise_Boundary
+  containing a System_Boundary containing a single System, checking that two
+  levels of boundary nesting render correctly.
+---
+C4Context
+title Nested boundaries
+Enterprise_Boundary(e, "Enterprise") {
+  System_Boundary(s, "System") {
+    System(sys, "System", "deeply nested")
+  }
+}

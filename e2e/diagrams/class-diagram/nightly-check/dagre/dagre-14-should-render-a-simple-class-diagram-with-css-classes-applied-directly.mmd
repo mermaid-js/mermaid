@@ -1,0 +1,18 @@
+---
+description: >-
+  Same generic-collection/array-typed class as the '-13' sibling, but the
+  CSS class is applied directly inline via the `class Class10:::exClass2`
+  shorthand rather than a separate `cssClass` statement, under the dagre
+  layout.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  class Class10:::exClass2 {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }

@@ -1,0 +1,20 @@
+---
+description: >-
+  Two parallel paths (a->b->c->d->e and x->c->y) sharing node c, at a fixed
+  width of 410 with useMaxWidth disabled, so node x-positions are deterministic.
+  sankey.nodeAlignment is set to "center".
+config:
+  sankey:
+    nodeAlignment: center
+    width: 410
+    useMaxWidth: false
+---
+sankey
+
+  a,b,8
+  b,c,8
+  c,d,8
+  d,e,8
+
+  x,c,4
+  c,y,4
