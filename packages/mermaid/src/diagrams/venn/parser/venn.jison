@@ -37,7 +37,7 @@
 \#[0-9a-fA-F]{3,8}                                                    { return 'HEXCOLOR'; }
 rgba\(\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*\) { return 'RGBACOLOR'; }
 rgb\(\s*[0-9.]+\s*[,]\s*[0-9.]+\s*[,]\s*[0-9.]+\s*\)                  { return 'RGBCOLOR'; }
-[A-Za-z_][A-Za-z0-9\-_]*                                              { return 'IDENTIFIER'; }
+[A-Za-z_][A-Za-z0-9\-_]*                                              { if (yy.consumeIndentText) { yy.consumeIndentText = false; } return 'IDENTIFIER'; }
 \"[^\"]*\"                                                            { return 'STRING'; }
 
 ","  { return 'COMMA'; }
