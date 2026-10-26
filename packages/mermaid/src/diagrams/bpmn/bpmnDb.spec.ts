@@ -364,6 +364,56 @@ describe('bpmnDb', () => {
     expect(data.laneLayering).toBe('branches');
   });
 
+  describe('how edges meet a shape', () => {
+    const profileOf = (source: string, id: string) => {
+      const metadata = nodeById(build(source).nodes, id).metadata ?? {};
+      return {
+        endpointProfile: metadata.endpointProfile,
+        oneLinePerVertex: metadata.oneLinePerVertex,
+        captionBelow: metadata.captionBelow,
+      };
+    };
+    const inLane = (statement: string) => `bpmn-beta LR\n  lane "L"\n    ${statement}`;
+
+    it.each([
+      ['start', 'start e "E"'],
+      ['intermediate', 'intermediate message e "E"'],
+      ['end', 'end e "E"'],
+    ])('meets an %s event at its vertex', (_position, statement) => {
+      expect(profileOf(inLane(statement), 'e')).toEqual({
+        endpointProfile: 'vertex',
+        oneLinePerVertex: undefined,
+        captionBelow: undefined,
+      });
+    });
+
+    it('meets a boundary event at its vertex', () => {
+      expect(profileOf(eventSource('boundary', 'timer'), 'e').endpointProfile).toBe('vertex');
+    });
+
+    it('gives a gateway a vertex per edge and leaves its bottom to the caption', () => {
+      expect(profileOf(inLane('xor gw "G"'), 'gw')).toEqual({
+        endpointProfile: 'vertex',
+        oneLinePerVertex: true,
+        captionBelow: true,
+      });
+    });
+
+    it.each([
+      ['a task', 'task t "T"', 't'],
+      ['a data object', 'data d "D"', 'd'],
+      ['a data store', 'data-store s "S"', 's'],
+      ['an annotation', 'note a "A"', 'a'],
+    ])('has %s approached squarely on a flat side', (_name, statement, id) => {
+      expect(profileOf(inLane(statement), id).endpointProfile).toBe('flat');
+    });
+
+    it('sets none on a lane', () => {
+      const bands = build(inLane('task t "T"')).nodes.filter((n) => n.isGroup);
+      expect(bands.map((band) => band.metadata?.endpointProfile)).toEqual([undefined]);
+    });
+  });
+
   it('refuses a flow to an undeclared element when the source is parsed, before any render', () => {
     expect(() =>
       parser.parse('bpmn-beta LR\n  pool "P"\n    lane "L"\n      user task a "A"\n  a --> zzz\n')
