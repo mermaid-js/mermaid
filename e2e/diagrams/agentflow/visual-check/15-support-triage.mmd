@@ -1,0 +1,50 @@
+---
+description: >-
+  The "kitchen sink" fixture: two connectors (LLM, CRM), a global refdoc, four
+  flow containers (triage/resolve/escalate/audit) covering every node shape and
+  container feature, a flow-level `instruction`, severity-labeled branching
+  edges, dotted reference links, and a collapsed audit container reached by both
+  a normal and an `--x` edge. Also the one representative fixture used for
+  per-theme colour-palette testing.
+---
+agentflow-beta TB
+  connector llm["LLM API"]
+  llm@{ protocol: "http", endpoint: "https://api.example.com/chat" }
+  connector crm["CRM"]
+  crm@{ protocol: "http", endpoint: "https://crm.example.com/v2" }
+
+  global
+    policy["Support Policy"]@{ shape: refdoc }
+  end
+
+  flow triage["Triage Agent"]
+    ticket["ticket"]@{ shape: input, value: "INC-4417" }
+    classify["classify_intent"]@{ shape: tool, connectorRef: "llm.chat", returns: "Intent" }
+    severity["Severity?"]@{ shape: decision }
+    ticket --> classify --> severity
+  end
+  triage@{ instruction: "Classify the ticket and decide how urgent it is." }
+
+  flow resolve["Resolution Agent"]
+    lookup["fetch_account"]@{ shape: tool, connectorRef: "crm.get", params: "id :: String" }
+    draft["draft_reply"]@{ shape: task }
+    send["send_reply"]@{ shape: tool, connectorRef: "crm.post" }
+    lookup --> draft --> send
+  end
+
+  flow escalate["Escalation Agent"]
+    page["page_oncall"]@{ shape: tool }
+    handoff["Handoff Notes"]@{ shape: refdoc }
+    page -.- handoff
+  end
+
+  flow audit["Audit"]
+    record["record_outcome"]@{ shape: task }
+  end
+  audit@{ view: "collapsed" }
+
+  severity -->|"low"| resolve
+  severity -->|"high"| escalate
+  classify -.- policy
+  resolve --> audit
+  escalate --x audit

@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that literal angle-bracket characters (< and >) combined with &&
+  inside node text render as plain characters rather than being misinterpreted
+  as HTML tags, for both a plain quoted-string label and a markdown (backtick)
+  label, when htmlLabels is disabled.
+config:
+  htmlLabels: false
+---
+flowchart TD
+  a["**Plain text**:
+  5 > 3 && 2 < 4"]
+  b["`**Markdown**:<br> 5 > 3 && 2 < 4`"]

@@ -1,0 +1,16 @@
+---
+description: >-
+  A single interface class exposing private, public, and protected
+  methods and fields (`-`, `+`, `#` prefixes) to check visibility-marker
+  rendering, with an `interface` stereotype. Has no frontmatter
+  config.
+---
+classDiagram
+  Class01 <|-- AveryLongClass : Cool
+  &lt;&lt;interface&gt;&gt; Class01
+  Class01 : -privateMethod()
+  Class01 : +publicMethod()
+  Class01 : #protectedMethod()
+  Class01 : -int privateChimp
+  Class01 : +int publicGorilla
+  Class01 : #int protectedMarmoset

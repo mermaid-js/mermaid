@@ -156,6 +156,23 @@ describe('MindmapDb getData function', () => {
       expect(node.y).toBeUndefined();
     });
 
+    it('should centre labels of every node shape (issue #8387)', () => {
+      db.addNode(0, 'root', 'Cell', db.nodeType.CIRCLE);
+      db.addNode(1, 'a', 'Square', db.nodeType.RECT);
+      db.addNode(1, 'b', 'Rounded', db.nodeType.ROUNDED_RECT);
+      db.addNode(1, 'c', 'Hexagon', db.nodeType.HEXAGON);
+      db.addNode(1, 'd', 'Cloud', db.nodeType.CLOUD);
+      db.addNode(1, 'e', 'Bang', db.nodeType.BANG);
+      db.addNode(1, 'f', 'Default', db.nodeType.DEFAULT);
+
+      const result = db.getData();
+
+      expect(result.nodes).toHaveLength(7);
+      result.nodes.forEach((node) => {
+        expect(node.centerLabel).toBe(true);
+      });
+    });
+
     it('should assign correct section classes based on sibling position', () => {
       // Create the example mindmap structure:
       // A
