@@ -1,11 +1,11 @@
 import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
-import { renderGraph } from '../../helpers/util.ts';
+import { renderGraph } from '../../../helpers/util.ts';
 import {
   EVENT_TRIGGERS,
   TASK_TYPES,
   TRIGGERS_BY_POSITION,
-} from '../../../packages/mermaid/src/diagrams/bpmn/types.js';
+} from '../../../../packages/mermaid/src/diagrams/bpmn/types.js';
 
 /**
  * The element set of the OMG Analytic conformance sub-class, one case per element.

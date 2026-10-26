@@ -1,0 +1,18 @@
+---
+description: >-
+  A note stands on the left of a gateway, and a task sits on the gateway's left
+  in the same row. The room for the note is reserved on the left, so the task
+  is laid clear of it instead of under it.
+---
+bpmn-beta TB
+  lane "Review"
+    start s1 "Start"
+    task before "Pre-check"
+    xor gw "Approved?"
+    note n1 "Needs a second signature"
+    task after "Archive"
+  s1 --> before
+  s1 --> gw
+  before --> after
+  gw --> after
+  n1 ... gw

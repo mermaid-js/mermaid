@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { bpmnIcons } from '../../rendering-util/rendering-elements/shapes/bpmnIcons.js';
-import { db } from './bpmnDb.js';
+import { BpmnDb } from './bpmnDb.js';
 import { parser } from './parser/bpmn.chevrotain.js';
 import { EVENT_TRIGGERS, TASK_TYPES, TRIGGERS_BY_POSITION, positionsFor } from './types.js';
+
+const db = new BpmnDb();
 
 /** An event at a position, with a host where the position needs one. */
 const eventSource = (position: string, trigger?: string, id = 'e'): string => {
@@ -171,9 +173,13 @@ describe('bpmnDb', () => {
       ...['xor', 'and', 'or', 'event-gateway', 'complex'].map((g) => `${g} g_${g} "G"`),
       'subprocess sub "S"',
     ];
-    const { nodes } = build(
-      `bpmn-beta LR\n  lane "L"\n${statements.map((s) => `    ${s}`).join('\n')}`
-    );
+    // A boundary event is attached by sitting directly under an activity.
+    const isBoundary = (statement: string) => statement.startsWith('boundary');
+    const indented = [
+      ...statements.filter(isBoundary).map((s) => `      ${s}`),
+      ...statements.filter((s) => !isBoundary(s)).map((s) => `    ${s}`),
+    ];
+    const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    task host "H"\n${indented.join('\n')}`);
 
     const missing = nodes
       .map((node) => glyph(node as Node & Drawn))
@@ -228,7 +234,7 @@ describe('bpmnDb', () => {
       ['end message x "X"', true],
       ['throw compensation x "X"', true],
     ])('marks %s as throwing: %s', (statement, throws) => {
-      const { nodes } = build(`bpmn-beta LR\n  lane "L"\n    ${statement}`);
+      const { nodes } = build(eventSource(statement.split(' ')[0], statement.split(' ')[1], 'x'));
       expect(nodeById(nodes, 'x').cssClasses?.includes('bpmn-throw')).toBe(throws);
     });
 
@@ -362,6 +368,56 @@ describe('bpmnDb', () => {
       (db.clear(), db.parse('bpmn-beta LR\n  lane "L"\n    task t "T"'), db)
     ) as unknown as { laneLayering?: string };
     expect(data.laneLayering).toBe('branches');
+  });
+
+  describe('how edges meet a shape', () => {
+    const profileOf = (source: string, id: string) => {
+      const metadata = nodeById(build(source).nodes, id).metadata ?? {};
+      return {
+        endpointProfile: metadata.endpointProfile,
+        oneLinePerVertex: metadata.oneLinePerVertex,
+        captionBelow: metadata.captionBelow,
+      };
+    };
+    const inLane = (statement: string) => `bpmn-beta LR\n  lane "L"\n    ${statement}`;
+
+    it.each([
+      ['start', 'start e "E"'],
+      ['intermediate', 'intermediate message e "E"'],
+      ['end', 'end e "E"'],
+    ])('meets an %s event at its vertex', (_position, statement) => {
+      expect(profileOf(inLane(statement), 'e')).toEqual({
+        endpointProfile: 'vertex',
+        oneLinePerVertex: undefined,
+        captionBelow: undefined,
+      });
+    });
+
+    it('meets a boundary event at its vertex', () => {
+      expect(profileOf(eventSource('boundary', 'timer'), 'e').endpointProfile).toBe('vertex');
+    });
+
+    it('gives a gateway a vertex per edge and leaves its bottom to the caption', () => {
+      expect(profileOf(inLane('xor gw "G"'), 'gw')).toEqual({
+        endpointProfile: 'vertex',
+        oneLinePerVertex: true,
+        captionBelow: true,
+      });
+    });
+
+    it.each([
+      ['a task', 'task t "T"', 't'],
+      ['a data object', 'data d "D"', 'd'],
+      ['a data store', 'data-store s "S"', 's'],
+      ['an annotation', 'note a "A"', 'a'],
+    ])('has %s approached squarely on a flat side', (_name, statement, id) => {
+      expect(profileOf(inLane(statement), id).endpointProfile).toBe('flat');
+    });
+
+    it('sets none on a lane', () => {
+      const bands = build(inLane('task t "T"')).nodes.filter((n) => n.isGroup);
+      expect(bands.map((band) => band.metadata?.endpointProfile)).toEqual([undefined]);
+    });
   });
 
   it('refuses a flow to an undeclared element when the source is parsed, before any render', () => {

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { LayoutData, Node, Edge } from '../../types.js';
 import { validateLayout } from './validateLayout.js';
+import { isAnchoredTo } from '../swimlanes/anchoredNodes.js';
 
 interface Point {
   x: number;
@@ -24,8 +25,11 @@ function anchored(id: string, hostId: string, x: number, y: number): Node {
   return { ...mkNode(id, x, y, 20, 20), metadata: { anchorTo: { hostId } } } as any;
 }
 
-function getIssueTypes(layout: LayoutData): string[] {
-  const res = validateLayout(layout);
+function getIssueTypes(layout: LayoutData, attached = false): string[] {
+  const res = validateLayout(
+    layout,
+    attached ? { isAttached: isAnchoredTo(layout.nodes ?? []) } : {}
+  );
   return res.issues.map((i) => i.type);
 }
 
@@ -671,7 +675,31 @@ describe('validateLayout new geometric issues', () => {
       config: {} as any,
     };
 
-    expect(getIssueTypes(layout)).not.toContain('node-overlap');
+    expect(getIssueTypes(layout, true)).not.toContain('node-overlap');
+  });
+
+  it('does NOT flag node-overlap for a pair the caller says is attached', () => {
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), mkNode('b', 20, -10)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(validateLayout(layout).issues.map((i) => i.type)).toContain('node-overlap');
+    const attached = validateLayout(layout, {
+      isAttached: (nodeId, toId) => nodeId === 'b' && toId === 'h',
+    });
+    expect(attached.issues.map((i) => i.type)).not.toContain('node-overlap');
+  });
+
+  it('knows nothing of swimlane anchors unless the caller passes the hook', () => {
+    const layout: LayoutData = {
+      nodes: [mkNode('h', 0, 0), anchored('b', 'h', 20, -10)],
+      edges: [],
+      config: {} as any,
+    };
+
+    expect(getIssueTypes(layout)).toContain('node-overlap');
   });
 
   it('does NOT flag node-overlap for a node pinned through a chain of anchors', () => {
@@ -684,7 +712,7 @@ describe('validateLayout new geometric issues', () => {
       config: {} as any,
     };
 
-    expect(getIssueTypes(layout)).not.toContain('node-overlap');
+    expect(getIssueTypes(layout, true)).not.toContain('node-overlap');
   });
 
   it('flags edge-label-off-edge when a labelled edge polyline does not cross its own label node', () => {

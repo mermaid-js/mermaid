@@ -79,6 +79,21 @@ describe('insertEdge clips for the engine that drew the edge', () => {
     const drawn = JSON.parse(atob(svg.select('path').attr('data-points')));
     expect(drawn).toHaveLength(2);
   });
+
+  it('would empty a two-point route if it went by the configured layout instead', () => {
+    // The clipping written for dagre drops the first and last point, which leaves a
+    // two-point route with nothing to meet. A bpmn diagram is always laid out in
+    // swimlanes while `layout` resolves to the global default, so the two disagree and
+    // this is what the argument above exists to prevent.
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+
+    withConfiguredLayout('elk', () => {
+      expect(() =>
+        insertEdge(svg, twoPointEdge(), null, 'bpmn', shapeMeeting(), shapeMeeting(), 'd')
+      ).toThrow(TypeError);
+    });
+  });
 });
 
 describe('resolveEdgeCurveType', () => {
@@ -406,6 +421,46 @@ describe('insertEdge swimlane final segment axis', () => {
     expect(renderedPoints.at(-1).y).toBeGreaterThanOrEqual(bend.y);
   });
 
+  const renderStubbedEdge = (arrowTypeEnd, originalLast = { x: 10, y: 100 }) => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'L_A7_E_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd,
+      points: [{ x: 0, y: 0 }, { x: 0, y: 100 }, originalLast],
+    };
+    const tail = { intersect: (point) => point };
+    const head = { intersect: () => ({ x: originalLast.x / 2, y: originalLast.y }) };
+
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+    return JSON.parse(atob(svg.select('path').attr('data-points')));
+  };
+
+  it('keeps a stub that turns into the node even when it is shorter than the arrowhead pull-back', () => {
+    const renderedPoints = renderStubbedEdge('aggregation');
+
+    expect(renderedPoints.at(-1)).toEqual({ x: 10, y: 100 });
+  });
+
+  it.each(['constructor', '__proto__'])(
+    'ignores the inherited key %s when looking up the arrowhead pull-back',
+    (arrowTypeEnd) => {
+      // A stub shorter than the axis tolerance continues straight on and is dropped
+      // whatever the marker is, unless the lookup turns the minimum into NaN.
+      const renderedPoints = renderStubbedEdge(arrowTypeEnd, { x: 0, y: 100.3 });
+
+      expect(renderedPoints.at(-1)).toEqual({ x: 0, y: 100 });
+    }
+  );
+
   describe('when the shape centre is off the row the edge enters on', () => {
     // A wide shape whose centre sits below the row: the ray from the last bend to the
     // centre meets the face a fraction of a pixel off the row, inside the axis tolerance.
@@ -524,6 +579,24 @@ describe('setTerminalWidth', () => {
 });
 
 describe('applyMarkerOffsetsToPoints', () => {
+  describe('a BPMN message flow', () => {
+    const messageFlow = { arrowTypeStart: 'arrow_hollow_circle', arrowTypeEnd: 'arrow_open_head' };
+    const route = [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+    ];
+
+    it('is pulled back from the ring at its start, so the line does not show through it', () => {
+      const [start] = applyMarkerOffsetsToPoints(route, messageFlow);
+      expect(start.y).toBeCloseTo(8);
+    });
+
+    it('is pulled back from the open arrowhead at its end', () => {
+      const [, end] = applyMarkerOffsetsToPoints(route, messageFlow);
+      expect(end.y).toBeCloseTo(96);
+    });
+  });
+
   /** A route arriving from above whose terminal the layout handed over twice. */
   const duplicatedTerminal = () => [
     { x: 50, y: 0 },

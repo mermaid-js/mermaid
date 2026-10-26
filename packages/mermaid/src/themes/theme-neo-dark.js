@@ -1,5 +1,5 @@
 import { adjust, darken, invert, isDark, lighten, rgba } from 'khroma';
-import { applyOverride, mkBorder } from './theme-helpers.js';
+import { applyOverride, bpmnThemeVariables, mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
@@ -309,29 +309,7 @@ class Theme {
     // Every BPMN colour is a theme variable so a diagram can be retuned without
     // editing diagrams/bpmn/styles.ts, which is the only stylesheet that can reach
     // these shapes (mermaid scopes diagram CSS with the svg id).
-    this.bpmn = {
-      eventFill: this.bpmn?.eventFill || '#2B2F36',
-      eventStroke: this.bpmn?.eventStroke || '#D6DAE1',
-      eventStrokeWidth: this.bpmn?.eventStrokeWidth || 1.6,
-      endEventStroke: this.bpmn?.endEventStroke || '#E08076',
-      endEventStrokeWidth: this.bpmn?.endEventStrokeWidth || 3.4,
-      gatewayFill: this.bpmn?.gatewayFill || '#3A3323',
-      gatewayStroke: this.bpmn?.gatewayStroke || '#D8B75A',
-      gatewayStrokeWidth: this.bpmn?.gatewayStrokeWidth || 1.6,
-      activityFill: this.bpmn?.activityFill || '#26313F',
-      activityStroke: this.bpmn?.activityStroke || '#7FA9DA',
-      activityStrokeWidth: this.bpmn?.activityStrokeWidth || 1.6,
-      glyphColor: this.bpmn?.glyphColor || '#D6DAE1',
-      dataFill: this.bpmn?.dataFill || '#2B2F36',
-      dataStroke: this.bpmn?.dataStroke || '#D6DAE1',
-      annotationStroke: this.bpmn?.annotationStroke || '#8A93A1',
-      laneFill: this.bpmn?.laneFill || 'transparent',
-      laneStroke: this.bpmn?.laneStroke || '#4A515D',
-      laneLabelColor: this.bpmn?.laneLabelColor || this.titleColor,
-      labelColor: this.bpmn?.labelColor || this.nodeTextColor || this.primaryTextColor,
-      edgeStroke: this.bpmn?.edgeStroke || this.lineColor,
-      messageStroke: this.bpmn?.messageStroke || this.lineColor,
-    };
+    this.bpmn = bpmnThemeVariables(this);
 
     /* xychart */
     this.xyChart = {

@@ -13,6 +13,7 @@ import { parseBpmn } from './parser/bpmn.parser.js';
 import type { ParsedDiagram, ParsedFlow, ParsedNode } from './parser/bpmn.parser.js';
 
 type BpmnShape = NonNullable<NonClusterNode['shape']>;
+type NodeMetadata = Record<string, unknown>;
 
 const EVENT_SHAPES: Record<string, BpmnShape> = {
   start: 'bpmn-start',
@@ -34,6 +35,22 @@ const EDGE_PATTERNS: Record<ParsedFlow['kind'], Edge['pattern']> = {
   sequence: 'solid',
   message: 'dashed',
   association: 'dotted',
+};
+
+/** How edges meet each drawn shape; the layout reads these keys without knowing a BPMN shape. */
+const POINTED: NodeMetadata = { endpointProfile: 'vertex' };
+const FLAT_SIDED: NodeMetadata = { endpointProfile: 'flat' };
+
+const ENDPOINT_PROFILES: Partial<Record<BpmnShape, NodeMetadata>> = {
+  'bpmn-start': POINTED,
+  'bpmn-intermediate': POINTED,
+  'bpmn-boundary': POINTED,
+  'bpmn-end': POINTED,
+  'bpmn-gateway': { ...POINTED, oneLinePerVertex: true, captionBelow: true },
+  'bpmn-activity': FLAT_SIDED,
+  'bpmn-data': FLAT_SIDED,
+  'bpmn-data-store': FLAT_SIDED,
+  'bpmn-annotation': FLAT_SIDED,
 };
 
 const ARTIFACT_KINDS = new Set<ParsedNode['kind']>(['data', 'store', 'annotation']);
@@ -71,12 +88,15 @@ const drawnAs = (node: ParsedNode): Drawn => {
   }
 };
 
+const emptyDiagram = (): ParsedDiagram => ({ direction: 'LR', nodes: [], flows: [] });
+
 export class BpmnDb {
-  private parsed: ParsedDiagram = { direction: 'LR', nodes: [], flows: [] };
+  private parsed: ParsedDiagram = emptyDiagram();
   private diagramId = '';
 
   public clear() {
-    this.parsed = { direction: 'LR', nodes: [], flows: [] };
+    this.parsed = emptyDiagram();
+    this.diagramId = '';
     commonClear();
   }
 
@@ -178,6 +198,7 @@ export class BpmnDb {
             : {}),
           ...(parsed.qualifier === 'collection' ? { isCollection: true } : {}),
           ...(parsed.kind === 'annotation' ? { attachFace: besideHost ? 'right' : 'left' } : {}),
+          ...(isGroup ? {} : ENDPOINT_PROFILES[shape]),
         },
         cssClasses: [
           ...(isGroup ? [`bpmn-${parsed.kind}`] : []),
@@ -233,6 +254,3 @@ export class BpmnDb {
     } satisfies LayoutData;
   }
 }
-
-export const db = new BpmnDb();
-export default db;

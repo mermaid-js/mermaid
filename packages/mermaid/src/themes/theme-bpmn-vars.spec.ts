@@ -60,4 +60,34 @@ describe('bpmn theme variables', () => {
     const bpmn = getBpmn(name) ?? {};
     expect(Number(bpmn.endEventStrokeWidth)).toBeGreaterThan(Number(bpmn.eventStrokeWidth));
   });
+
+  describe('follows the theme', () => {
+    const palette = (name: keyof typeof themes, overrides: Record<string, unknown> = {}) => {
+      const bpmn = getBpmn(name, overrides) ?? {};
+      return [bpmn.activityFill, bpmn.activityStroke, bpmn.gatewayFill, bpmn.eventFill].join(' ');
+    };
+
+    it('draws forest, neutral and base in different colours', () => {
+      const palettes = new Set([palette('forest'), palette('neutral'), palette('base')]);
+      expect(palettes.size).toBe(3);
+    });
+
+    it('lets a custom primaryColor on the base theme recolour the activities', () => {
+      const orange = getBpmn('base', { primaryColor: '#ff6600' });
+      const blue = getBpmn('base', { primaryColor: '#0066ff' });
+      expect(orange?.activityFill).toBe('#ff6600');
+      expect(blue?.activityFill).toBe('#0066ff');
+      expect(palette('base', { primaryColor: '#ff6600' })).not.toBe(palette('base'));
+    });
+
+    it.each(themeNames)('%s keeps a stroke width the user set to 0', (name) => {
+      const bpmn = getBpmn(name, { bpmn: { eventStrokeWidth: 0, activityStrokeWidth: 0 } });
+      expect([bpmn?.eventStrokeWidth, bpmn?.activityStrokeWidth]).toEqual([0, 0]);
+    });
+
+    it.each(themeNames)('%s keeps the colours the user did not set', (name) => {
+      const bpmn = getBpmn(name, { bpmn: { activityFill: '#abcdef' } });
+      expect(bpmn?.gatewayFill).toBe(getBpmn(name)?.gatewayFill);
+    });
+  });
 });

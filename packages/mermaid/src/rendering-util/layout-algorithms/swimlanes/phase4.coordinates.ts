@@ -1,7 +1,27 @@
 import type { Graph, OrderedLayers, Coordinates, NodeId, EdgeRef } from './helpers.js';
 import { COORDINATES } from './config.js';
 import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
-import { anchorFootprints } from './anchoredNodes.js';
+import { anchorFootprints, defaultAnchorSide, type AnchorSide } from './anchoredNodes.js';
+
+const OPPOSITE_SIDE: Record<AnchorSide, AnchorSide> = {
+  left: 'right',
+  right: 'left',
+  top: 'bottom',
+  bottom: 'top',
+};
+
+/** The length of a run of nodes along the lane, with the room each node's stood-off nodes take between it and its neighbours. */
+function runLength(
+  extents: number[],
+  leadReaches: number[],
+  trailReaches: number[],
+  nodeGap: number
+): number {
+  const between = extents
+    .slice(1)
+    .reduce((sum, _extent, i) => sum + trailReaches[i] + leadReaches[i + 1], 0);
+  return extents.reduce((a, b) => a + b, 0) + between + nodeGap * Math.max(0, extents.length - 1);
+}
 
 export interface CoordOptions {
   layerGap?: number; // vertical distance between layers
@@ -80,28 +100,32 @@ export function assignCoordinates(
   const laneOrderColumns: (string | null)[] = [...(hasNullLane ? [null] : []), ...lanesUsed];
 
   const footprints = anchorFootprints(gWithDummies.layout?.nodes ?? [], direction);
-  const reachOf = (id: NodeId) => footprints.get(id)?.beyond ?? 0;
+  const trailingSide = defaultAnchorSide('final', direction);
+  const reachOn = (side: AnchorSide) => (id: NodeId) => footprints.get(id)?.[side]?.beyond ?? 0;
+  const reachAfter = reachOn(trailingSide);
+  const reachBefore = reachOn(OPPOSITE_SIDE[trailingSide]);
 
   const runHalves = (
     ids: NodeId[],
     extentOf: (id: NodeId) => number
-  ): { spread: NodeId[]; beside: NodeId[]; left: number; right: number } => {
+  ): { spread: NodeId[]; beside: NodeId[]; left: number; right: number; lead: number } => {
     const centred = ids.filter((id) => inSomeFlow.has(id));
     const loose = ids.filter((id) => !inSomeFlow.has(id));
     const spread = centred.length > 0 ? centred : loose;
     const beside = centred.length > 0 ? loose : [];
 
-    const extents = spread.map(extentOf);
-    const reaches = spread.map(reachOf);
-    const total =
-      extents.reduce((a, b) => a + b, 0) +
-      reaches.slice(0, -1).reduce((a, b) => a + b, 0) +
-      nodeGap * Math.max(0, spread.length - 1);
-    let tail = reaches.length > 0 ? reaches[reaches.length - 1] : 0;
+    const total = runLength(
+      spread.map(extentOf),
+      spread.map(reachBefore),
+      spread.map(reachAfter),
+      nodeGap
+    );
+    const lead = spread.length > 0 ? reachBefore(spread[0]) : 0;
+    let tail = spread.length > 0 ? reachAfter(spread[spread.length - 1]) : 0;
     for (const id of beside) {
-      tail += nodeGap + extentOf(id) + reachOf(id);
+      tail += nodeGap + reachBefore(id) + extentOf(id) + reachAfter(id);
     }
-    return { spread, beside, left: total / 2, right: total / 2 + tail };
+    return { spread, beside, left: total / 2 + lead, right: total / 2 + tail, lead };
   };
 
   const laneSizeExtent = (id: NodeId) => Math.max(getWidth(id), crossExtent(id));
@@ -168,27 +192,28 @@ export function assignCoordinates(
       }
       const extentOf = (id: NodeId) => (L === null ? getWidth(id) : crossExtent(id));
       const axis = laneAxis.get(L) ?? 0;
-      const { spread, beside, left } = runHalves(nodesInLane, extentOf);
+      const { spread, beside, left, lead } = runHalves(nodesInLane, extentOf);
 
       const extents = spread.map(extentOf);
-      const reaches = spread.map(reachOf);
-      let start = axis - left;
+      const leadReaches = spread.map(reachBefore);
+      const trailReaches = spread.map(reachAfter);
+      let start = axis - left + lead;
       for (const [i, id] of spread.entries()) {
         const w = extents[i];
         x[id] = start + w / 2;
         y[id] = yOffset + layerH / 2;
         start += w;
         if (i < spread.length - 1) {
-          start += reaches[i] + nodeGap;
+          start += trailReaches[i] + leadReaches[i + 1] + nodeGap;
         }
       }
-      start += reaches.length > 0 ? reaches[reaches.length - 1] : 0;
+      start += trailReaches.length > 0 ? trailReaches[trailReaches.length - 1] : 0;
       for (const id of beside) {
         const w = extentOf(id);
-        start += nodeGap;
+        start += nodeGap + reachBefore(id);
         x[id] = start + w / 2;
         y[id] = yOffset + layerH / 2;
-        start += w + reachOf(id);
+        start += w + reachAfter(id);
       }
     }
 

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { diagramSvg, imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { diagramSvg, imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 test.describe('bpmn-beta characterization', () => {
   test('CHAR.event-position-trigger should refuse a combination the notation forbids', async ({

@@ -165,7 +165,7 @@ accDescr {
 
     it('refuses a flow to an undeclared target and names it', () => {
       expect(() => parseBpmn(`${declared}  a --> zzz\n`)).toThrow(
-        'BPMN error: the flow "a --> zzz" refers to "zzz", which is not declared. Declare it as an element before using it.'
+        'BPMN error at line 5, column 3: the flow "a --> zzz" refers to "zzz", which is not declared. Declare it as an element before using it.'
       );
     });
 
@@ -188,6 +188,91 @@ accDescr {
 
     it('refuses a boundary event attach to an undeclared host', () => {
       expect(() => parseBpmn(`${declared}  b1 --> zzz\n`)).toThrow(/refers to "b1"/);
+    });
+  });
+  describe('error locations', () => {
+    const HEAD = 'bpmn-beta LR\n  lane l "L"\n    task a "A"\n';
+
+    it.each([
+      ['an empty diagram', '', 1, 1],
+      ['a dangling flow', `${HEAD}  a -->`, 4, 8],
+      ['a dangling flow with a newline after it', `${HEAD}  a -->\n`, 4, 8],
+      ['an unclosed quote', `${HEAD}    task b "B\n`, 4, 12],
+      ['a keyword used as an id', `${HEAD}    task end "E"\n`, 4, 10],
+    ])('names a real line and column for %s', (_name, input, line, column) => {
+      let message = '';
+      try {
+        parseBpmn(input);
+      } catch (error) {
+        message = error instanceof Error ? error.message : String(error);
+      }
+      expect(message).toContain(`line ${line}, column ${column}`);
+      expect(message).not.toMatch(/-1|NaN|\?/);
+    });
+
+    it('gives the undeclared-flow error the location of the flow', () => {
+      expect(() => parseBpmn(`${HEAD}  a --> zzz\n`)).toThrow(/^BPMN error at line 4, column 3: /);
+    });
+
+    it('gives the second flow of a chain the location of its own source', () => {
+      expect(() => parseBpmn(`${HEAD}  a --> a --> zzz\n`)).toThrow(/line 4, column 9: /);
+    });
+  });
+  describe('ids', () => {
+    const HEAD = 'bpmn-beta LR\n  lane l "L"\n';
+
+    it('refuses a second element with the same id, at the second one', () => {
+      expect(() => parseBpmn(`${HEAD}    task a "A"\n    task a "B"\n`)).toThrow(
+        'BPMN error at line 4, column 10: "a" is already declared'
+      );
+    });
+
+    it('refuses an id shared by elements of different kinds', () => {
+      expect(() => parseBpmn(`${HEAD}    task l "A"\n`)).toThrow(/"l" is already declared/);
+    });
+
+    it('does not hand a generated id to an element that a later line names', () => {
+      const parsed = parseBpmn(`${HEAD}    task "X"\n    task task-1 "Y"\n`);
+      expect(parsed.nodes.map((node) => node.id)).toEqual(['l', 'task-2', 'task-1']);
+    });
+  });
+
+  describe('containment', () => {
+    const HEAD = 'bpmn-beta LR\n  lane l "L"\n';
+
+    it.each([
+      ['a task under a task', '    task a "A"\n      task b "B"\n', 4, 7],
+      ['a lane under a task', '    task a "A"\n      lane m "M"\n', 4, 7],
+      ['an event under a task', '    task a "A"\n      start s "S"\n', 4, 7],
+      ['a data object under a task', '    task a "A"\n      data d "D"\n', 4, 7],
+      ['a boundary event under a gateway', '    xor g "G"\n      boundary timer b "B"\n', 4, 7],
+      ['a boundary event under a lane', '    boundary timer b "B"\n', 3, 5],
+    ])('refuses %s, at the nested element', (_name, body, line, column) => {
+      expect(() => parseBpmn(`${HEAD}${body}`)).toThrow(`at line ${line}, column ${column}`);
+    });
+
+    it('refuses a boundary event with no host at all', () => {
+      expect(() => parseBpmn('bpmn-beta LR\n  boundary timer b "B"\n')).toThrow(
+        /line 2, column 3: .*boundary event .*activity/
+      );
+    });
+
+    it.each(['task', 'subprocess', 'call'])('accepts a boundary event under a %s', (activity) => {
+      const parsed = parseBpmn(`${HEAD}    ${activity} a "A"\n      boundary timer b "B"\n`);
+      expect(parsed.nodes.find((node) => node.id === 'b')?.parentId).toBe('a');
+    });
+
+    it('accepts contents under a pool, a lane and a group', () => {
+      const parsed = parseBpmn(
+        'bpmn-beta LR\n  pool p "P"\n    lane l "L"\n      task a "A"\n  group g "G"\n    task b "B"\n'
+      );
+      expect(parsed.nodes.map((node) => node.parentId)).toEqual([
+        undefined,
+        'p',
+        'l',
+        undefined,
+        'g',
+      ]);
     });
   });
 });

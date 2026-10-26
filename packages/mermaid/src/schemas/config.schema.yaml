@@ -2439,17 +2439,12 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
     description: |
       The object containing configurations specific for the bpmn diagram type.
 
-      BPMN lays out through the swimlane engine, so lane membership constrains
-      placement; the spacing keys below control the grid inside a lane.
+      BPMN always lays out through the swimlane engine, because only it can draw
+      pools and lanes, so a `layout` set globally or for `bpmn` has no effect on
+      it. The spacing keys below control the grid inside a lane.
     type: object
     unevaluatedProperties: false
     properties:
-      layout:
-        $ref: '#/$defs/BaseDiagramConfig/properties/layout'
-        # The swimlane engine is the only layout that treats lane membership as a placement
-        # constraint. Declared here rather than forced by the diagram, so a `layout` the user
-        # sets globally or for `bpmn` still wins.
-        default: 'swimlane'
       titleTopMargin:
         description: The margin above the diagram title.
         type: number

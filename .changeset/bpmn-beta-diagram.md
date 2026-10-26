@@ -26,6 +26,7 @@ bpmn-beta LR
 - Sequence, labelled and message flows, the last with its own edge markers.
 - Data objects, data stores, text annotations and groups.
 - A note stands beside, and a line lands on, the gateway or event a reader sees, not the larger box reserved around its caption.
-- A `bpmn` config namespace for spacing, and a `themeVariables.bpmn` block covering every colour the notation paints with.
+- A `bpmn` config namespace for spacing, and a `themeVariables.bpmn` block covering every colour the notation paints with. Unset colours follow the active theme and its `themeVariables`, so `forest`, `neutral` and a `base` theme with its own `primaryColor` each look different.
+- Mistakes are refused with the line and column they sit at: a syntax error, an id declared twice, an element indented under one that cannot hold it, a boundary event with no host, and a flow to an element that was never declared.
 
 The diagram is beta: the syntax may still change before it is declared stable.

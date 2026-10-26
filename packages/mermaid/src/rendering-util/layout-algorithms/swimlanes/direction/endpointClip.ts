@@ -507,20 +507,26 @@ function dropAxisBacktracks(points: Point[]): Point[] {
 const VERTEX_SIDES = ['top', 'bottom', 'left', 'right'] as const;
 type VertexSide = (typeof VERTEX_SIDES)[number];
 
-const POINTED_SHAPES = new Set([
-  'bpmn-gateway',
-  'bpmn-start',
-  'bpmn-intermediate',
-  'bpmn-boundary',
-  'bpmn-end',
-]);
-
-function meetsAtVertices(node: any): boolean {
-  return POINTED_SHAPES.has(node?.shape) && Boolean(node?.metadata?.drawnExtent);
+/**
+ * How a producer wants edges to meet a node, set on `metadata.endpointProfile`:
+ * `vertex` for a shape that is pointed where its box is not (an edge ends on the drawn
+ * outline), `flat` for one with flat sides an edge should approach squarely.
+ * `metadata.oneLinePerVertex` asks that each edge take a vertex of its own, and
+ * `metadata.captionBelow` that the bottom vertex is left to a caption written under the shape.
+ */
+function endpointProfileOf(node: any): 'vertex' | 'flat' | undefined {
+  const profile = node?.metadata?.endpointProfile;
+  return profile === 'vertex' || profile === 'flat' ? profile : undefined;
 }
 
+function meetsAtVertices(node: any): boolean {
+  return endpointProfileOf(node) === 'vertex' && Boolean(node?.metadata?.drawnExtent);
+}
+
+const isFlagged = (node: any, key: string): boolean => node?.metadata?.[key] === true;
+
 function wantsOneLinePerCorner(node: any): boolean {
-  return node?.shape === 'bpmn-gateway';
+  return isFlagged(node, 'oneLinePerVertex');
 }
 
 function vertexOf(node: any, side: VertexSide): Point | undefined {
@@ -550,7 +556,7 @@ function vertexOf(node: any, side: VertexSide): Point | undefined {
 function writesAQuestionBelow(node: any): boolean {
   const drawn = node?.metadata?.drawnExtent;
   return (
-    node?.shape === 'bpmn-gateway' &&
+    isFlagged(node, 'captionBelow') &&
     Boolean(drawn) &&
     (node?.height ?? 0) - (drawn?.height ?? 0) > 1
   );
@@ -729,13 +735,6 @@ export function cropEdgeEndsToShapes(edges: unknown[], nodeByIdMap: Map<string, 
 
 const SQUARE_APPROACH_STUB = 18;
 
-const FLAT_SIDED_SHAPES = new Set([
-  'bpmn-activity',
-  'bpmn-data',
-  'bpmn-data-store',
-  'bpmn-annotation',
-]);
-
 export function approachBordersSquarely(edges: unknown[], nodeByIdMap: Map<string, any>) {
   for (const edge of edges) {
     const candidate = edge as {
@@ -750,7 +749,7 @@ export function approachBordersSquarely(edges: unknown[], nodeByIdMap: Map<strin
     for (const atStart of [true, false]) {
       const id = atStart ? candidate.start : candidate.end;
       const node = id ? nodeByIdMap.get(id) : undefined;
-      if (!node || node.isGroup || !FLAT_SIDED_SHAPES.has(node.shape)) {
+      if (!node || node.isGroup || endpointProfileOf(node) !== 'flat') {
         continue;
       }
       const rect = endpointRectOf(node);

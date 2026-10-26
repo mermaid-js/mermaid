@@ -1,5 +1,4 @@
 import type { LayoutData } from '../../types.js';
-import { getUserDefinedConfig } from '../../../config.js';
 import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProcessing.js';
 import { toGraphView, writeBackToLayoutData } from './helpers.js';
 import { sugiyamaLayout } from './pipeline.js';
@@ -22,12 +21,20 @@ function spacing(layout: LayoutData, key: 'nodeSpacing' | 'rankSpacing', fallbac
   );
 }
 
+/**
+ * Whether lanes share one row: the author's own choice (`ignoreCrossLaneEdgesChosen`) when the
+ * layout carries one, else false for a layout that asks for branch-wise layering, else the
+ * layout's `swimlane.ignoreCrossLaneEdges`, true when it says nothing.
+ */
 function compactsLanesToOneRow(data4Layout: LayoutData): boolean {
-  const chosen = getUserDefinedConfig().swimlane?.ignoreCrossLaneEdges;
+  const chosen = data4Layout.ignoreCrossLaneEdgesChosen;
   if (typeof chosen === 'boolean') {
     return chosen;
   }
-  return data4Layout.laneLayering !== 'branches';
+  if (data4Layout.laneLayering === 'branches') {
+    return false;
+  }
+  return data4Layout.config.swimlane?.ignoreCrossLaneEdges ?? true;
 }
 
 function getSwimlaneDirection(data4Layout: LayoutData): SwimlaneDirection {

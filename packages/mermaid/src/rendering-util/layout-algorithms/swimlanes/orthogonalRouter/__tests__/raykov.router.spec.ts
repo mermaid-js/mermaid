@@ -791,5 +791,21 @@ describe('Raykov orthogonal router (algo-op.md)', () => {
       }
       expect(new Set(ends.map((y) => y.toFixed(3))).size).toBe(count);
     });
+
+    it.each([0, -5, Number.NaN, Number.POSITIVE_INFINITY])(
+      'ignores a drawn extent of %s and routes to the layout box',
+      (bad) => {
+        const routeTo = (metadata?: object) => {
+          const target = { ...mkNode('T', 400, 150, { width: 100, height: 120 }), metadata };
+          const sources = [100, 150, 200].map((y, i) => mkNode(`S${i}`, 100, y));
+          const edges = sources.map((s, i) => mkEdge(`e${i}`, s.id, 'T'));
+          const data: TestLayout = { nodes: [...sources, target], edges, config: {} };
+          routeEdgesOrthogonal(data as unknown as LayoutData);
+          return edges.map((edge) => edge.points);
+        };
+
+        expect(routeTo({ drawnExtent: { width: bad, height: bad } })).toEqual(routeTo());
+      }
+    );
   });
 });

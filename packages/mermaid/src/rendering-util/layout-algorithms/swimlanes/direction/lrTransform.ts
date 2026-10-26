@@ -1,6 +1,11 @@
 import type { LayoutData } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
-import { anchorFootprints, collectAnchoredIds, type AnchorFootprint } from '../anchoredNodes.js';
+import {
+  anchorFootprints,
+  collectAnchoredIds,
+  type AnchorFootprint,
+  type AnchorSide,
+} from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -230,19 +235,106 @@ function stackEmptyBands(
   }
 }
 
-// Grows a host to cover the room its anchored run is placed in: out from its border by
-// `beyond`, and along it from `before` to `after` either side of its centre.
-function withAnchorFootprint(host: LayoutNode, footprint: AnchorFootprint): LayoutNode {
+interface Box {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+type SideFootprints = Partial<Record<AnchorSide, AnchorFootprint>>;
+
+const ANCHOR_SIDES: AnchorSide[] = ['top', 'right', 'bottom', 'left'];
+
+function mirroredSide(side: AnchorSide): AnchorSide {
+  if (side === 'left') {
+    return 'right';
+  }
+  return side === 'right' ? 'left' : side;
+}
+
+function growAlongBorder(
+  box: Box,
+  host: Box,
+  side: AnchorSide,
+  footprint: AnchorFootprint,
+  mirrored: boolean
+): void {
+  if (side === 'top' || side === 'bottom') {
+    const centreX = (host.left + host.right) / 2;
+    const [before, after] = mirrored
+      ? [footprint.after, footprint.before]
+      : [footprint.before, footprint.after];
+    box.left = Math.min(box.left, centreX - before);
+    box.right = Math.max(box.right, centreX + after);
+    return;
+  }
+  const centreY = (host.top + host.bottom) / 2;
+  box.top = Math.min(box.top, centreY - footprint.before);
+  box.bottom = Math.max(box.bottom, centreY + footprint.after);
+}
+
+const GROW_OUTWARD: Record<AnchorSide, (box: Box, host: Box, beyond: number) => void> = {
+  top: (box, host, beyond) => {
+    box.top = Math.min(box.top, host.top - beyond);
+  },
+  bottom: (box, host, beyond) => {
+    box.bottom = Math.max(box.bottom, host.bottom + beyond);
+  },
+  left: (box, host, beyond) => {
+    box.left = Math.min(box.left, host.left - beyond);
+  },
+  right: (box, host, beyond) => {
+    box.right = Math.max(box.right, host.right + beyond);
+  },
+};
+
+// Grows `box` to hold a run standing off `host` on `side`: out from that border by `beyond`,
+// and along it from `before` to `after` either side of the host's centre. `mirrored` flips
+// the x axis, as RL does after the lanes are sized.
+function reserveOnSide(
+  box: Box,
+  host: Box,
+  side: AnchorSide,
+  footprint: AnchorFootprint,
+  mirrored: boolean
+): void {
+  growAlongBorder(box, host, side, footprint, mirrored);
+  GROW_OUTWARD[side](box, host, footprint.beyond);
+}
+
+// Grows a host to cover the room each run standing off it is placed in. The runs are keyed by
+// the side they stand on as drawn, so RL reserves them on the side the mirror will turn
+// into it.
+function withAnchorFootprints(
+  host: LayoutNode,
+  footprints: SideFootprints,
+  direction: Direction
+): LayoutNode {
   const x = host.x ?? 0;
-  const half = (host.width ?? 0) / 2;
-  const left = Math.min(x - half, x - footprint.before);
-  const right = Math.max(x + half, x + footprint.after);
+  const y = host.y ?? 0;
+  const halfWidth = (host.width ?? 0) / 2;
+  const halfHeight = (host.height ?? 0) / 2;
+  const own: Box = {
+    left: x - halfWidth,
+    right: x + halfWidth,
+    top: y - halfHeight,
+    bottom: y + halfHeight,
+  };
+  const grown: Box = { ...own };
+  const mirrored = direction === 'RL';
+  for (const side of ANCHOR_SIDES) {
+    const footprint = footprints[side];
+    if (footprint) {
+      reserveOnSide(grown, own, mirrored ? mirroredSide(side) : side, footprint, mirrored);
+    }
+  }
   return {
     ...host,
-    x: (left + right) / 2,
-    y: (host.y ?? 0) + footprint.beyond / 2,
-    width: right - left,
-    height: (host.height ?? 0) + footprint.beyond,
+    x: (grown.left + grown.right) / 2,
+    y: (grown.top + grown.bottom) / 2,
+    width: grown.right - grown.left,
+    height: grown.bottom - grown.top,
   };
 }
 
@@ -351,7 +443,7 @@ export function applyLrDirectionTransform(
     }
     const bucket = childrenByLane.get(laneId) ?? [];
     const footprint = footprints.get(n.id);
-    bucket.push(footprint ? withAnchorFootprint(n, footprint) : n);
+    bucket.push(footprint ? withAnchorFootprints(n, footprint, direction) : n);
     childrenByLane.set(laneId, bucket);
   }
 

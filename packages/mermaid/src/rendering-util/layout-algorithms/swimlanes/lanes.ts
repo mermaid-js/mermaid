@@ -90,3 +90,9 @@ export function buildLaneModel(nodes: Node[]): LaneModel {
     hasPools: pools.size > 0,
   };
 }
+
+/** For callers that hold things in a lane: whether a group is a lane, as `buildLaneModel` decides it. */
+export function isLaneIn(nodes: Node[]): (group: Node) => boolean {
+  const model = buildLaneModel(nodes);
+  return (group) => model.isLane(group.id);
+}

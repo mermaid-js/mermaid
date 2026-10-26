@@ -238,6 +238,8 @@ export interface LayoutData {
   edges: Edge[];
   config: MermaidConfig;
   diagramId?: string;
+  /** `branches` asks a swimlane layout to layer each branch of the flow on its own. */
+  laneLayering?: 'branches';
   [key: string]: any; // Additional properties not yet defined
 }
 

@@ -610,19 +610,15 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
 /**
  * The object containing configurations specific for the bpmn diagram type.
  *
- * BPMN lays out through the swimlane engine, so lane membership constrains
- * placement; the spacing keys below control the grid inside a lane.
+ * BPMN always lays out through the swimlane engine, because only it can draw
+ * pools and lanes, so a `layout` set globally or for `bpmn` has no effect on
+ * it. The spacing keys below control the grid inside a lane.
  *
  *
  * This interface was referenced by `MermaidConfig`'s JSON-Schema
  * via the `definition` "BpmnDiagramConfig".
  */
 export interface BPMNDiagramConfig extends BaseDiagramConfig {
-  /**
-   * Defines which layout algorithm to use for rendering the diagram.
-   *
-   */
-  layout?: string;
   /**
    * The margin above the diagram title.
    */

@@ -1,7 +1,7 @@
 import type { Page, TestInfo } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 import { readFileSync, readdirSync } from 'node:fs';
-import { imgSnapshotTest, renderGraph } from '../../helpers/util.ts';
+import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 const BPMN_FIXTURE_DIR = 'e2e/platform/dev-diagrams/diagrams/bpmn';
 
