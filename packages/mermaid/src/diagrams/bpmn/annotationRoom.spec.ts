@@ -22,7 +22,7 @@ const GATEWAY_DIAMOND = 50;
 
 function laidOutFixture(): LayoutData {
   db.clear();
-  db.parse(readFileSync(FIXTURE, 'utf8').replace(/^---[\s\S]*?---\n/, ''));
+  db.parse(readFileSync(FIXTURE, 'utf8').replace(/^---[\S\s]*?---\n/, ''));
   const layout = db.getData();
   for (const node of layout.nodes) {
     const box = node.shape ? BOXES[node.shape] : undefined;
