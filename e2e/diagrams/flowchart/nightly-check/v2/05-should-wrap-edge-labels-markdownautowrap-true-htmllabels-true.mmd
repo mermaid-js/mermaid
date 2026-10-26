@@ -1,0 +1,16 @@
+---
+description:
+  Verifies that long plain-text and markdown node/edge labels auto-wrap onto
+  multiple lines when markdownAutoWrap is true and htmlLabels is true. Split
+  from a single upstream test that rendered three config variants side by side
+  into this standalone fixture.
+config:
+  markdownAutoWrap: true
+  htmlLabels: true
+title: "Testing with {\"markdownAutoWrap\":true,\"htmlLabels\":true}"
+---
+flowchart TD
+    A["This is a really long line of plain text that will autowrap and support \n newlines too."]
+    B["`This is a really long line of **markdown** text that will autowrap, unless markdownAutoWrap:false is set.`"]
+    A -- "Plain text **labels** in flowcharts will autowrap,like node labels. \n Newline characters work too." --> B
+    B -- "`**Markdown** edge labels will autowrap, unless markdownAutoWrap: false is set`" --> C

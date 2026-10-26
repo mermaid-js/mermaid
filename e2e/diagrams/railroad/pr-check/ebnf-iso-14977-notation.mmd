@@ -1,0 +1,9 @@
+---
+description: >-
+  EBNF syntax using ISO 14977 repetition-grouping notation (`{ ... }`) for
+  zero-or-more, in an identifier/letter/digit grammar.
+---
+railroad-ebnf-beta
+identifier = letter , { letter | digit | "_" } ;
+letter = "a" | "b" | "c" ;
+digit = "0" | "1" | "2" ;

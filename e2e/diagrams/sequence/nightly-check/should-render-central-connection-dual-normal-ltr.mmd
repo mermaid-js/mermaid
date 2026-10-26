@@ -1,0 +1,22 @@
+---
+description: >-
+  Dual central-connection circles (circle at both source and destination,
+  `()->>()`) applied to the "normal" arrow family (solid, dotted, open,
+  cross, close), with Alice as the sender throughout (left-to-right) --
+  part of a matched LTR/RTL pair.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice()->>()Bob: Circles at both ends with solid arrow
+  Alice()-->>()Bob: Circles at both ends with dotted arrow
+  Alice()->()Bob: Circles at both ends with open arrow
+  Alice()--x()Bob: Circles at both ends with cross arrow
+  Alice()--)()Bob: Circles at both ends with close arrow

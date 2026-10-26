@@ -1,0 +1,20 @@
+---
+description: >-
+  BT (bottom-to-top) oriented gitGraph with a develop branch off main and `showCommitLabel: true`,
+  verifying commit id labels render correctly in the BT orientation.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    rotateCommitLabel: false
+    parallelCommits: false
+---
+gitGraph BT:
+  commit id: "1"
+  commit id: "2"
+  branch develop
+  checkout develop
+  commit id: "3"
+  commit id: "4"
+  checkout main
+  commit id: "5"

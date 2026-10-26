@@ -1,0 +1,17 @@
+---
+description: >-
+  Hand-drawn class diagram focused on method return-type syntax — array
+  parameter/return types (`test(int[] ids) bool`, `testArray() bool[]`) on
+  a generic class — rendered with htmlLabels enabled; the "hd-11-1" sibling
+  repeats this with htmlLabels disabled.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  class Class10~T~ {
+  int[] id
+  test(int[] ids) bool
+  testArray() bool[]
+  }

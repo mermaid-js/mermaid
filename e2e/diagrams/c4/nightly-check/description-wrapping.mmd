@@ -1,0 +1,13 @@
+---
+description: >-
+  A Person and a System each carrying a long description, with wrap
+  enabled — verifies the description text actually wraps across multiple
+  SVG tspan lines rather than overflowing on one line.
+config:
+  wrap: true
+---
+C4Context
+title Description wrapping
+Person(p, "Person", "A customer of the bank with personal bank accounts and a long description that should wrap across multiple lines")
+System(s, "System", "Allows customers to view information about their bank accounts and make payments")
+Rel(p, s, "Uses")

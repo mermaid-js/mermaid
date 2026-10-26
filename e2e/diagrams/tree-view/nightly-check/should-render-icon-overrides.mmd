@@ -1,0 +1,12 @@
+---
+description: >-
+  Tests explicit per-node `icon(...)` overrides using a prefixed icon name
+  (fa:bell) and a bare icon-pack name (folder) on files, overriding whatever
+  default icon would otherwise be inferred from the file extension.
+---
+treeView-beta
+  data/
+  model.bin icon(fa:bell)
+  weights.h5 icon(folder)
+  src/
+  index.js
