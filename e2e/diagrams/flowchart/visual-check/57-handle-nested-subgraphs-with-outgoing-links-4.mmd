@@ -1,0 +1,19 @@
+---
+description:
+  In a left-to-right flowchart, checks how mermaid assigns subgraph ownership
+  when a node (b) is first introduced via an edge inside subgraph A (a --> b)
+  but is then explicitly declared as belonging to a separate subgraph B
+  afterward.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart LR
+  subgraph A
+  a -->b
+  end
+  subgraph B
+  b
+  end

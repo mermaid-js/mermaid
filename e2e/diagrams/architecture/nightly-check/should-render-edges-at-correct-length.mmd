@@ -1,0 +1,13 @@
+---
+description: >-
+  A single "cell" service connected to two others ("colspan" and "rowspan")
+  with differently-sized labels on the R/L and B/T ports, checking that edge
+  length adapts to the label/node sizes rather than using a fixed length
+  that would overlap or leave excess gaps.
+---
+architecture-beta
+  service cell[Table Cell]
+  service colspan[colspan]
+  service rowspan[rowspan]
+  cell:R --> L:colspan
+  cell:B --> T:rowspan

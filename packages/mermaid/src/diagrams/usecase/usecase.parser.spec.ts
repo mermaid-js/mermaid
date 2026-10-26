@@ -779,6 +779,15 @@ ${body}`;
     await expectGrammarErrorAt(source, '<<', occurrenceLocation(source, '<<'));
   });
 
+  it.each([
+    ['declaration', 'actor'],
+    ['edge', 'A -->'],
+  ])('locates an unterminated %s at the end of input', async (_kind, body) => {
+    const source = `usecase-beta
+${body}`;
+    await expectGrammarErrorAt(source, '', sourceLocation(source, source.length, source.length));
+  });
+
   it('rejects business icon, awesome, and rectangular declarations at exact locations', async () => {
     const icon = `usecase-beta
 actor Icon@{ icon: "fa:user", business: true }`;

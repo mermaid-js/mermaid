@@ -1,0 +1,48 @@
+---
+description: >-
+  Class diagram covering
+  inheritance/composition/aggregation/association/link/dependency/realization
+  relationship types plus member annotations, with an accTitle/accDescr pair,
+  rendered under the "neutral" theme via an in-body %%{init}%% directive.
+---
+%%{init: { 'logLevel': 0, 'theme': 'neutral'} }%%
+classDiagram
+  accTitle: This is a title
+  accDescr: This is a description
+
+  Animal "*" <|-- "1" Duck
+  Animal "1" <|-- "10" Fish
+  Animal <|-- Zebra
+  Animal : +int age
+  Animal : +String gender
+  Animal: +isMammal()
+  Animal: +mate()
+  class Duck{
+    +String beakColor
+    +swim()
+    +quack()
+  }
+  class Fish{
+    -int sizeInFeet
+    -canEat()
+  }
+  class Zebra{
+    +bool is_wild
+    +run()
+  }
+classA <|-- classB
+classC *-- classD
+classE o-- classF
+classG <-- classH
+classI -- classJ
+classK <.. classL
+classM <|.. classN
+classO .. classP
+classA --|> classB : Inheritance
+classC --* classD : Composition
+classE --o classF : Aggregation
+classG --> classH : Association
+classI -- classJ : Link(Solid)
+classK ..> classL : Dependency
+classM ..|> classN : Realization
+classO .. classP : Link(Dashed)

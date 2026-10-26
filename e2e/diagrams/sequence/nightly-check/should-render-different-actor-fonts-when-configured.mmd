@@ -1,0 +1,13 @@
+---
+description: >-
+  Minimal two-message sequence diagram whose frontmatter config overrides
+  `sequence.actorFontSize` and `sequence.actorFontFamily`, verifying that
+  actor label font settings are honored.
+config:
+  sequence:
+    actorFontSize: 18
+    actorFontFamily: times
+---
+sequenceDiagram
+  Alice->>Bob: I'm short
+  Bob->>Alice: Short as well

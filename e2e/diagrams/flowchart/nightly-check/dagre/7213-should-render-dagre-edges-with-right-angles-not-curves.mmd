@@ -1,0 +1,27 @@
+---
+description:
+  Regression test (issue 7213) verifying that dagre-layout edges, including five
+  parallel duplicate edges between the same pair of nodes and edges fanning out
+  via the & shorthand across subgraph boundaries, are drawn with right-angled
+  (rectilinear) segments rather than smooth curves.
+config:
+  layout: dagre
+---
+flowchart LR
+  subgraph G1
+  N00
+  N11
+  N12
+  N13
+  end
+  subgraph G2
+  N21
+  N22
+  end
+  N00 --- N01 & N02 & N03 & N04 & N05
+  N00 --- N11 & N12 & N13 & N22
+  N11 --- N22
+  N11 --- N22
+  N11 --- N22
+  N11 --- N22
+  N11 --- N22

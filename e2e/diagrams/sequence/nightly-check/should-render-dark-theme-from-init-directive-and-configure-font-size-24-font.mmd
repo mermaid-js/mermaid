@@ -1,0 +1,13 @@
+---
+description: >-
+  Minimal sequence diagram with no YAML frontmatter, using an `%%{init}%%`
+  directive instead to set the dark theme and a 24px font size, verifying
+  that theme/font configuration supplied via the init directive (rather
+  than frontmatter `config`) is honored.
+---
+%%{init: {'theme': 'dark', 'config': {'fontSize': 24}}}%%
+sequenceDiagram
+  Alice->>John: Hello John, how are you?
+  Alice->>John: John, can you hear me?
+  John-->>Alice: Hi Alice, I can hear you!
+  John-->>Alice: I feel great!
