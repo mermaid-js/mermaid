@@ -1,0 +1,19 @@
+---
+description: >-
+  State diagram covering a composite state (Active) containing its own
+  Running/Paused sub-cycle, rendered under the "neo" look with the "redux"
+  theme.
+config:
+  look: neo
+  theme: redux
+---
+stateDiagram-v2
+    [*] --> Active
+    state Active {
+      [*] --> Running
+      Running --> Paused
+      Paused --> Running
+      Running --> [*]
+    }
+    Active --> Inactive
+    Inactive --> [*]

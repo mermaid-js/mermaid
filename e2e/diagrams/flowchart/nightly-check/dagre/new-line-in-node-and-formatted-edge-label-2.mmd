@@ -1,0 +1,14 @@
+---
+description:
+  Verifies that markdown-string node and edge labels (backtick-delimited,
+  supporting **bold** text and an explicit newline) render correctly when
+  htmlLabels is disabled.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart LR
+  b("`The dog in **the** hog.(1)
+  NL`") --"`1o **bold**`"--> c

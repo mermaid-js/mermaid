@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a flowchart rendered with the hand-drawn look respects
+  useMaxWidth set to false, sizing the SVG to its content instead of stretching
+  to fill the container.
+config:
+  look: "handDrawn"
+  flowchart:
+    useMaxWidth: false
+---
+graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      

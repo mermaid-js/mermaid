@@ -1,0 +1,13 @@
+---
+description: >-
+  A `rect` background block with no explicit color argument, so it must
+  fall back to a theme-aware default background rather than a hardcoded
+  color; wraps two request/response message pairs between Alice and John.
+---
+sequenceDiagram
+  rect
+  Alice->>John: Hello John, how are you?
+  Alice->>John: John, can you hear me?
+  John-->>Alice: Hi Alice, I can hear you!
+  John-->>Alice: I feel great!
+  end

@@ -1,0 +1,17 @@
+---
+description: >-
+  ER diagram covering a self-referential relationship (EMPLOYEE manages
+  EMPLOYEE) alongside a normal one, rendered under the "neo" look with the "neo"
+  theme.
+config:
+  look: neo
+  theme: neo
+---
+erDiagram
+    EMPLOYEE {
+        int id PK
+        string name
+        int managerId FK
+    }
+    EMPLOYEE ||--o{ EMPLOYEE : manages
+    DEPARTMENT ||--|{ EMPLOYEE : employs

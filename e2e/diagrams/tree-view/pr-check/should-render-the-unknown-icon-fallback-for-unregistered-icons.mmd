@@ -1,0 +1,10 @@
+---
+description: >-
+  Tests the fallback rendering when an explicit `icon(...)` reference names
+  an icon that isn't registered in any loaded icon pack
+  (`unregistered:icon`), confirming an unknown/fallback icon is shown
+  instead of an error.
+---
+treeView-beta
+  src/
+      index.js icon(unregistered:icon)

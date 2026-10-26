@@ -1,0 +1,8 @@
+---
+description: >-
+  ABNF syntax (railroad-abnf-beta) covering `/` alternation and `*(...)`
+  repetition, in a URI-scheme-like grammar.
+---
+railroad-abnf-beta
+scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." ) ;
+digit = "0" / "1" / "2" / "3" ;

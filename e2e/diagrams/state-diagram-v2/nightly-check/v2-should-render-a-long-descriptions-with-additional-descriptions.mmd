@@ -1,0 +1,14 @@
+---
+description: >-
+  State S1 declared with both a quoted alias (`state "Some long name" as
+  S1`) and an additional inline description text ("The description") on
+  the same line - tests combining an alias display name with a further
+  description string.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+
+  [*] --> S1
+  state "Some long name" as S1: The description
