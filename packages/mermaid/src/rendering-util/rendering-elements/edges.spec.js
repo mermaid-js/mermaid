@@ -579,6 +579,24 @@ describe('setTerminalWidth', () => {
 });
 
 describe('applyMarkerOffsetsToPoints', () => {
+  describe('a BPMN message flow', () => {
+    const messageFlow = { arrowTypeStart: 'arrow_hollow_circle', arrowTypeEnd: 'arrow_open_head' };
+    const route = [
+      { x: 0, y: 0 },
+      { x: 0, y: 100 },
+    ];
+
+    it('is pulled back from the ring at its start, so the line does not show through it', () => {
+      const [start] = applyMarkerOffsetsToPoints(route, messageFlow);
+      expect(start.y).toBeCloseTo(8);
+    });
+
+    it('is pulled back from the open arrowhead at its end', () => {
+      const [, end] = applyMarkerOffsetsToPoints(route, messageFlow);
+      expect(end.y).toBeCloseTo(96);
+    });
+  });
+
   /** A route arriving from above whose terminal the layout handed over twice. */
   const duplicatedTerminal = () => [
     { x: 50, y: 0 },
