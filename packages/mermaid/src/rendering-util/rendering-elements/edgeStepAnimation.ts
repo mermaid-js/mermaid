@@ -16,7 +16,8 @@ export const STEP_BADGE_FONT_SIZE = 11;
 
 const STEP_BADGE_GAP = 2;
 const STEP_BADGE_FALLBACK_FILL = '#333333';
-const STEP_ARROWHEAD_HALF = 8;
+const STEP_ARROWHEAD_LENGTH = 12;
+const STEP_ARROWHEAD_HALF_WIDTH = 6;
 const STEP_BADGE_OFFSET = 14;
 const STEP_TANGENT_STEP = 0.01;
 const MIN_TEXT_CONTRAST = 4.5;
@@ -266,6 +267,22 @@ const readPoints = (path: Element): PathPoint[] => {
   }
 };
 
+/** The box an arrowhead covers: from `tip` back towards `from` for the arrowhead's length. */
+export const arrowheadObstacle = (tip: PathPoint, from: PathPoint): BadgeObstacle => {
+  const length = Math.hypot(tip.x - from.x, tip.y - from.y);
+  if (length === 0) {
+    return square(tip, STEP_ARROWHEAD_LENGTH);
+  }
+  const along = { x: (tip.x - from.x) / length, y: (tip.y - from.y) / length };
+  const half = STEP_ARROWHEAD_LENGTH / 2;
+  return {
+    x: tip.x - along.x * half,
+    y: tip.y - along.y * half,
+    halfWidth: Math.abs(along.x) * half + Math.abs(along.y) * STEP_ARROWHEAD_HALF_WIDTH,
+    halfHeight: Math.abs(along.y) * half + Math.abs(along.x) * STEP_ARROWHEAD_HALF_WIDTH,
+  };
+};
+
 const arrowheadObstacles = (path: Element, origin: PathPoint): BadgeObstacle[] => {
   const points = readPoints(path).filter(
     (point) => Number.isFinite(point?.x) && Number.isFinite(point?.y)
@@ -274,12 +291,15 @@ const arrowheadObstacles = (path: Element, origin: PathPoint): BadgeObstacle[] =
     return [];
   }
   const offset = offsetInSvg(path);
-  return [points[0], points[points.length - 1]].map((point) =>
-    square(
-      { x: point.x + offset.x - origin.x, y: point.y + offset.y - origin.y },
-      STEP_ARROWHEAD_HALF
-    )
-  );
+  const toSvg = (point: PathPoint) => ({
+    x: point.x + offset.x - origin.x,
+    y: point.y + offset.y - origin.y,
+  });
+  const last = points.length - 1;
+  return [
+    arrowheadObstacle(toSvg(points[0]), toSvg(points[Math.min(1, last)])),
+    arrowheadObstacle(toSvg(points[last]), toSvg(points[Math.max(last - 1, 0)])),
+  ];
 };
 
 /** What no badge may cover, in SVG coordinates: labels, nodes and every edge's arrowheads. */
@@ -334,6 +354,11 @@ export const pickBadgeTextColor = (fill: string, candidates: (string | undefined
   return (readable ?? scored.reduce((best, next) => (next.ratio > best.ratio ? next : best))).color;
 };
 
+const bareColor = (color?: string) => {
+  const bare = color?.replace(/^stroke:\s*/, '').trim();
+  return bare === '' ? undefined : bare;
+};
+
 /**
  * Appends a badge with the step number on a step edge when `flowchart.stepNumbers` is on, clear of
  * `obstacles` (SVG coordinates). Returns the badge's own box in SVG coordinates.
@@ -361,7 +386,7 @@ export const insertEdgeStepBadge = (
     return undefined;
   }
   // A resolved colour, not currentColor, so the text contrast check below can read it.
-  const fill = options.color?.replace(/^stroke:\s*/, '') ?? STEP_BADGE_FALLBACK_FILL;
+  const fill = bareColor(options.color) ?? STEP_BADGE_FALLBACK_FILL;
   const badge = elem
     .append('g')
     .attr('class', 'edge-step-badge')

@@ -109,4 +109,51 @@ test.describe('flowchart step numbers', () => {
       expect(layout).toEqual({ badges: 2, clearOfArrowheads: true, layerAboveDots: true });
     });
   });
+
+  test('should keep the badge of a short edge clear of the arrowhead after its label', async ({
+    page,
+  }, testInfo) => {
+    const shortEdge = `flowchart LR
+  Cache e2@-->|a much longer label| DB[(DB)]
+  DB e3@-->|row| Cache
+  e2@{ step: 2 }
+  e3@{ step: 3 }`;
+    const options = {
+      fontFamily: '"trebuchet ms", verdana, arial, sans-serif',
+      flowchart: { stepNumbers: true },
+    };
+    await imgSnapshotTest(page, testInfo, shortEdge, options, false, async (svg) => {
+      await pauseStepAnimationAt(1.5)(svg);
+
+      const nearest = await svg.evaluate((element: SVGSVGElement) => {
+        const scale = element.getScreenCTM()?.a ?? 1;
+        const tips = [
+          ...element.querySelectorAll<SVGPathElement>('path[data-edge="true"]'),
+        ].flatMap((path) => {
+          const points = JSON.parse(atob(path.getAttribute('data-points') ?? '')) as DOMPointInit[];
+          const toScreen = path.getScreenCTM() ?? undefined;
+          const ends = [
+            path.getAttribute('marker-start') ? points[0] : undefined,
+            path.getAttribute('marker-end') ? points[points.length - 1] : undefined,
+          ];
+          return ends
+            .filter((end): end is DOMPointInit => end !== undefined)
+            .map((end) => DOMPoint.fromPoint(end).matrixTransform(toScreen));
+        });
+        const badges = [...element.querySelectorAll('g.edge-step-badge circle')].map((circle) => {
+          const box = circle.getBoundingClientRect();
+          return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+        });
+        return (
+          Math.min(
+            ...badges.flatMap((badge) =>
+              tips.map((tip) => Math.hypot(badge.x - tip.x, badge.y - tip.y))
+            )
+          ) / scale
+        );
+      });
+
+      expect(nearest).toBeGreaterThanOrEqual(23);
+    });
+  });
 });

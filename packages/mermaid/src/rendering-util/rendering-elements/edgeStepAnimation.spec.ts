@@ -3,6 +3,7 @@ import { select } from 'd3';
 import DOMPurify from 'dompurify';
 import { getStepDuration, isStepEdge, type Edge } from '../types.js';
 import {
+  arrowheadObstacle,
   chooseBadgePosition,
   contrastRatio,
   createPathSampler,
@@ -364,6 +365,17 @@ describe('chooseBadgePosition', () => {
     expect(point?.y).toBeCloseTo(14);
   });
 
+  it('with a short edge whose label fills its front, keeps the badge clear of the arrowhead base', () => {
+    const tip = { x: 80, y: 0 };
+    const short = createPathSampler([{ x: 0, y: 0 }, tip], null);
+    const label = { x: 25, y: 0, halfWidth: 20, halfHeight: 8 };
+
+    const point = chooseBadgePosition(short, [label, arrowheadObstacle(tip, { x: 0, y: 0 })]);
+
+    expect(point).toEqual({ x: 60, y: 14 });
+    expect(Math.hypot(tip.x - 60, tip.y - 14)).toBeGreaterThanOrEqual(12 + STEP_BADGE_RADIUS + 2);
+  });
+
   it('with nowhere clear on or beside the edge, takes the spot with the most room', () => {
     const short = createPathSampler([], straightPath(60));
 
@@ -482,6 +494,15 @@ describe('insertEdgeStepBadge', () => {
     expect(badge.select('circle').attr('fill')).toBe('#333333');
     expect(badge.select('text').attr('fill')).toBe('#ffffff');
   });
+
+  it.each(['', 'stroke:'])(
+    'with the colour %j, fills the badge with the resolved fallback colour',
+    (color) => {
+      insertEdgeStepBadge(group, numbered('e1', 1), { points: line, color });
+
+      expect(svg.select('g.edge-step-badge circle').attr('fill')).toBe('#333333');
+    }
+  );
 
   it("keeps clear of every edge's arrowheads", () => {
     group
