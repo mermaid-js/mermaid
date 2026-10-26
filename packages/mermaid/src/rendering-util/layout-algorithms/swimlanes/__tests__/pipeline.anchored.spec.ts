@@ -170,6 +170,53 @@ describe('anchored nodes in the swimlane pipeline', () => {
     }
   });
 
+  // An anchored node that names its own side stands there, so the room for it is reserved
+  // on that side: a aside on the left of the host must not end up under a left-hand node.
+  it('keeps a left-hand annotation inside the room reserved on the left of its host', () => {
+    const inLane = (id: string, width: number, height: number): Node =>
+      ({ id, isGroup: false, width, height, parentId: 'lane1' }) as unknown as Node;
+    const layout = {
+      nodes: [
+        {
+          id: 'lane1',
+          isGroup: true,
+          width: 0,
+          height: 0,
+          metadata: { laneRole: 'lane', laneIndex: 0 },
+        } as unknown as Node,
+        inLane('gw', 50, 50),
+        inLane('host', 50, 50),
+        inLane('aside', 100, 50),
+        {
+          id: 'note',
+          isGroup: false,
+          width: 120,
+          height: 60,
+          parentId: 'lane1',
+          metadata: { anchorTo: { hostId: 'host', gap: 18, side: 'left' } },
+        } as unknown as Node,
+      ],
+      edges: [
+        { id: 'e1', start: 'gw', end: 'host', type: 'normal' },
+        { id: 'e2', start: 'gw', end: 'aside', type: 'normal' },
+      ],
+      config: { flowchart: { nodeSpacing: 40, rankSpacing: 80 } },
+      direction: 'TB',
+      laneLayering: 'branches',
+    } as unknown as LayoutData;
+    runSwimlaneLayoutCore(layout);
+
+    const aside = find(layout, 'aside');
+    const host = find(layout, 'host');
+    const note = find(layout, 'note');
+    const noteRight = note.x! + note.width! / 2;
+    const asideRight = aside.x! + aside.width! / 2;
+
+    expect(note.x).toBeLessThan(host.x!);
+    expect(noteRight).toBeLessThanOrEqual(host.x! - host.width! / 2);
+    expect(note.x! - note.width! / 2).toBeGreaterThanOrEqual(asideRight);
+  });
+
   it('leaves an anchored node with a missing host in the ordinary layout', () => {
     const layout = buildLayout(
       [box('A'), box('B'), anchor('orphan', 'nope')],
