@@ -1,0 +1,14 @@
+---
+description: >-
+  Two empty classes get the same CSS class applied through both
+  mechanisms at once: a comma-separated `cssClass "Class10, Class20"
+  exClass2` statement covering both classes, plus a redundant inline
+  `class Class20:::exClass2` shorthand on one of them. Has no frontmatter
+  config.
+---
+classDiagram
+  class Class10
+  class Class20
+
+  cssClass "Class10, Class20" exClass2
+  class Class20:::exClass2

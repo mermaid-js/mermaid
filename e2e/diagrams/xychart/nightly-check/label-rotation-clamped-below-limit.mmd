@@ -1,0 +1,16 @@
+---
+description: >-
+  The same 3-item bar chart as label-rotation-clamped-above-limit.mmd, with
+  labelRotation set to -100 instead — below the allowed range, checking
+  that the renderer clamps back to a normal (0°) rotation.
+config:
+  xyChart:
+    xAxis:
+      showLabel: true
+      labelRotation: -100
+---
+xychart
+  title "Items Sold"
+  x-axis "Item" [ Monitor, Mouse, Keyboard ]
+  y-axis "Number of Sales"
+  bar    [ 51, 72, 36 ]

@@ -1,0 +1,14 @@
+---
+description: >-
+  Same rect-with-no-explicit-color scenario as the base-theme variant, but
+  rendered under the dark theme to verify the theme-aware default
+  background adapts correctly.
+---
+%%{init: {'theme': 'dark'}}%%
+sequenceDiagram
+  rect
+  Alice->>John: Hello John, how are you?
+  Alice->>John: John, can you hear me?
+  John-->>Alice: Hi Alice, I can hear you!
+  John-->>Alice: I feel great!
+  end

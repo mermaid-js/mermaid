@@ -273,6 +273,8 @@ ApplyCoupon ..> : extend Checkout
 ApplyCoupon --|> Checkout
 ```
 
+Include and extend relationships display the UML labels `«include»` and `«extend»`. The input syntax remains `..> : include` and `..> : extend`.
+
 For include, the source use case includes the target use case. For extend, the source use case extends the target base use case. Generalization points from the specialized actor or use case to the general actor or use case. Include and extend require use case endpoints. Generalization requires two actors or two use cases.
 
 ### Edge IDs, styles, animation, and length

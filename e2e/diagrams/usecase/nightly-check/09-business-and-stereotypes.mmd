@@ -1,0 +1,18 @@
+---
+description: >-
+  The `business: true` marker combined with stereotypes
+  (`&lt;&lt;Employee&gt;&gt;`, `&lt;&lt;Core&gt;&gt;`, `&lt;&lt;Record&gt;&gt;`)
+  across an actor, a hollow business actor, a use case, and a
+  square-bracket node.
+---
+usecase-beta
+    direction LR
+
+    actor SalesAgent("Sales agent")@{ business: true } &lt;&lt;Employee&gt;&gt;
+    actor Broker@{ type: hollow, business: true }
+    Quote("Prepare quote")@{ business: true } &lt;&lt;Core&gt;&gt;
+    Archive[Archive quote] &lt;&lt;Record&gt;&gt;
+
+    SalesAgent --> Quote
+    Broker --> Quote
+    Quote --> Archive

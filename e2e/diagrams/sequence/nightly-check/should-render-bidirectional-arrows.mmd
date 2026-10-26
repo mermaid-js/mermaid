@@ -1,0 +1,14 @@
+---
+description: >-
+  Bidirectional solid (`<<->>`) and dotted (`<<-->>`) arrows in both
+  directions between the same two participants, plus a plain open arrow and
+  a normal solid arrow mixed in -- no autonumbering, unlike the sibling
+  "-with-autonumbering" variant.
+---
+sequenceDiagram
+  Alice<<->>John: Hello John, how are you?
+  Alice<<-->>John: Hi Alice, I can hear you!
+  John<<->>Alice: This also works the other way
+  John<<-->>Alice: Yes
+  Alice->John: Test
+  John->>Alice: Still works
