@@ -1,0 +1,41 @@
+---
+description: >-
+  Requirement diagram covering three requirement kinds, two elements, and five
+  relationships woven together in one larger diagram, rendered under the "neo"
+  look with the "redux-dark" theme.
+config:
+  look: neo
+  theme: redux-dark
+---
+requirementDiagram
+    requirement sys_req {
+        id: 1
+        text: the system shall perform the action.
+        risk: high
+        verifymethod: test
+    }
+    functionalRequirement func_req {
+        id: 1.1
+        text: the system shall respond within 100ms.
+        risk: medium
+        verifymethod: demonstration
+    }
+    performanceRequirement perf_req {
+        id: 1.2
+        text: throughput must exceed 1000 requests per second.
+        risk: high
+        verifymethod: test
+    }
+    element hw_element {
+        type: hardware
+        docRef: specs/hw_spec.pdf
+    }
+    element sw_element {
+        type: software
+        docRef: github.com/org/repo
+    }
+    hw_element - satisfies -> sys_req
+    sw_element - verifies -> func_req
+    sys_req - contains -> func_req
+    sys_req - contains -> perf_req
+    func_req - traces -> perf_req

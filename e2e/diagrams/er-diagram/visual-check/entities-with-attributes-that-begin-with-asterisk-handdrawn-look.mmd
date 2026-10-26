@@ -1,0 +1,19 @@
+---
+description: >-
+  Attribute names prefixed with an asterisk (*id) on two related entities under
+  the handDrawn look.
+config:
+  look: handDrawn
+---
+erDiagram
+    BOOK {
+      int         *id
+      string      name
+      varchar(99) summary
+    }
+    BOOK }o..o{ STORE : soldBy
+    STORE {
+      int         *id
+      string      name
+      varchar(50) address
+    }

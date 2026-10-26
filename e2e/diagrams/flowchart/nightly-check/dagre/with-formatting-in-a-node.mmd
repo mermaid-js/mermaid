@@ -1,0 +1,20 @@
+---
+description:
+  Verifies a markdown-formatted (bold) diamond decision node with several
+  numbered inbound and outbound edge labels and converging edges into a shared
+  node, with htmlLabels enabled.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+%%{init: {"flowchart": {"htmlLabels": true}} }%%
+flowchart LR
+  a{"`The **cat** in the hat`"} -- 1o --> b
+  a -- 2o --> c
+  a -- 3o --> d
+  g --2i--> a
+  d --1i--> a
+  h --3i -->a
+  b --> d(The dog in the hog)
+  c --> d

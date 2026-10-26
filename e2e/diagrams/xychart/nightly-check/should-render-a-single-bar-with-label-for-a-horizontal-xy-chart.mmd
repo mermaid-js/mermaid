@@ -1,0 +1,15 @@
+---
+description: >-
+  Edge-case chart with a single category and a single bar value (75) in
+  horizontal orientation with showDataLabel enabled, verifying data-label
+  placement is correct when there is only one bar to lay out.
+config:
+  xyChart:
+    showDataLabel: true
+    chartOrientation: horizontal
+---
+  xychart
+  title "Single Bar Chart"
+  x-axis Categories [A]
+  y-axis "Value" 0 --> 100
+  bar [75]

@@ -1568,6 +1568,54 @@ end`);
     expect(messages[4].message).toBe('I am good thanks!');
   });
 
+  it.each(['Link', 'link', 'LINK'])('should use %s as a declared message endpoint', async (id) => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+participant A
+participant ${id} as Channel
+A->>${id}: message
+${id}-->>A: reply
+`);
+
+    expect([...diagram.db.getActors().keys()]).toEqual(['A', id]);
+    expect(diagram.db.getActors().get(id).description).toBe('Channel');
+    expect(diagram.db.getMessages()).toMatchObject([
+      { from: 'A', to: id, message: 'message' },
+      { from: id, to: 'A', message: 'reply' },
+    ]);
+  });
+
+  it.each(['Link', 'link', 'LINK'])('should use %s as an implicit message endpoint', async (id) => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+${id}->>A: message
+A-->>${id}: reply
+`);
+
+    expect([...diagram.db.getActors().keys()]).toEqual([id, 'A']);
+    expect(diagram.db.getMessages()).toMatchObject([
+      { from: id, to: 'A', message: 'message' },
+      { from: 'A', to: id, message: 'reply' },
+    ]);
+  });
+
+  it.each(['Link', 'link', 'LINK'])('should attach actor-menu links to %s', async (id) => {
+    const diagram = await Diagram.fromText(`
+sequenceDiagram
+participant A
+participant ${id} as Channel
+link A: Help @ https://example.com/help
+link ${id}: Help @ https://example.com/channel
+links ${id}: { "Repo": "https://example.com/repo" }
+`);
+
+    const actors = diagram.db.getActors();
+    expect(actors.get('A').links.Help).toBe('https://example.com/help');
+    expect(actors.get(id).links.Help).toBe('https://example.com/channel');
+    expect(actors.get(id).links.Repo).toBe('https://example.com/repo');
+    expect(actors.get(id).description).toBe('Channel');
+  });
+
   it('should handle links', async () => {
     const diagram = await Diagram.fromText(`
 sequenceDiagram
