@@ -3,12 +3,9 @@ import * as yaml from 'js-yaml';
 import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
-import {
-  getStepDuration,
-  isStepEdge,
-} from '../../rendering-util/rendering-elements/edgeStepAnimation.js';
+import { getStepDuration } from '../../rendering-util/rendering-elements/edgeStepAnimation.js';
 import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
-import type { Edge, Node } from '../../rendering-util/types.js';
+import { isStepEdge, type Edge, type Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
 import common from '../common/common.js';

@@ -280,3 +280,9 @@ export type KanbanNode = Node & {
   icon?: string;
   level: number;
 };
+
+/** True when the edge takes part in the step animation (a positive integer `step`). */
+export const isStepEdge = (
+  edge: Pick<Edge, 'step'>
+): edge is Pick<Edge, 'step'> & { step: number } =>
+  typeof edge.step === 'number' && Number.isInteger(edge.step) && edge.step > 0;
