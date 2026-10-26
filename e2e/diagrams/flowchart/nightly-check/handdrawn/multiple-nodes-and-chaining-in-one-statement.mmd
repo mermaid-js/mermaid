@@ -1,0 +1,13 @@
+---
+description:
+  Verifies that the '&' syntax for grouping multiple nodes in a single edge
+  statement, combined with chaining, produces the correct set of edges, under
+  the hand-drawn look.
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  a --> b & c--> d

@@ -1,0 +1,16 @@
+---
+description: >-
+  Hand-drawn class diagram with a class (Duck) that declares only methods
+  (swim, quack) and no attributes, verifying the members box renders
+  correctly when one member kind is absent; the "no-methods-only-
+  attributes" sibling tests the opposite case.
+config:
+  logLevel: 1
+  htmlLabels: true
+  look: handDrawn
+---
+classDiagram
+  class Duck {
+  +swim()
+  +quack()
+  }

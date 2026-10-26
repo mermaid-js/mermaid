@@ -71,6 +71,35 @@ describe('addEdgeMarker', () => {
     );
   });
 
+  it('should add markers for arrow_hollow_circle:arrow_open_head', () => {
+    const arrowTypeStart = 'arrow_hollow_circle';
+    const arrowTypeEnd = 'arrow_open_head';
+    addEdgeMarkers(svgPath, { arrowTypeStart, arrowTypeEnd }, url, id, diagramType);
+    expect(svgPath.attr).toHaveBeenCalledWith(
+      'marker-start',
+      `url(${url}#${id}_${diagramType}-hollowCircleStart)`
+    );
+    expect(svgPath.attr).toHaveBeenCalledWith(
+      'marker-end',
+      `url(${url}#${id}_${diagramType}-openArrowEnd)`
+    );
+  });
+
+  it('should draw no marker for the arrow_open a block edge carries as its start type', () => {
+    addEdgeMarkers(
+      svgPath,
+      { arrowTypeStart: 'arrow_open', arrowTypeEnd: 'arrow_point' },
+      url,
+      id,
+      diagramType
+    );
+    expect(svgPath.attr).not.toHaveBeenCalledWith('marker-start', expect.anything());
+    expect(svgPath.attr).toHaveBeenCalledWith(
+      'marker-end',
+      `url(${url}#${id}_${diagramType}-pointEnd)`
+    );
+  });
+
   it('should not add invalid markers', () => {
     const arrowTypeStart = 'this is an invalid marker';
     const arrowTypeEnd = ') url(https://my-malicious-site.example)';

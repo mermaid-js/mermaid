@@ -1,0 +1,18 @@
+---
+description: >-
+  C4Deployment diagram with a Deployment_Node (Data Center) containing two
+  sibling nested Deployment_Nodes (App Server, DB Server), each wrapping a
+  Container/ContainerDb respectively, connected by a single Rel — exercises
+  sibling nesting rather than the linear deep-nesting chain used elsewhere.
+---
+C4Deployment
+title Deployment diagram
+Deployment_Node(dc, "Data Center", "us-east-1") {
+  Deployment_Node(srv, "App Server", "Ubuntu 22.04") {
+    Container(api, "API", "Java, Spring")
+  }
+  Deployment_Node(dbn, "DB Server", "Ubuntu 22.04") {
+    ContainerDb(db, "Database", "PostgreSQL")
+  }
+}
+Rel(api, db, "reads/writes", "JDBC")

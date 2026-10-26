@@ -1,0 +1,18 @@
+---
+description: >-
+  The same linear three-service chain (A→B→C) as the default-fcose-knobs
+  fixture, but with architecture.idealEdgeLengthMultiplier set to 3 —
+  visibly stretches the gap between successive nodes, chosen as a clean
+  demonstration of the knob (unlike the 3-DB→MCP #6120 repro, whose spatial
+  overlap comes from the BFS map collapsing siblings before fcose runs, which
+  this knob cannot fix).
+config:
+  architecture:
+    idealEdgeLengthMultiplier: 3
+---
+architecture-beta
+  service a(server)[A]
+  service b(server)[B]
+  service c(server)[C]
+  a:R --> L:b
+  b:R --> L:c

@@ -1,0 +1,20 @@
+---
+description: >-
+  Tests overriding the timeline's per-column color scale (`cScale0`,
+  `cScale1`, `cScale2` theme variables) via an init directive to red, green,
+  and blue on the `default` theme.
+---
+ %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'cScale0': '#ff0000',
+              'cScale1': '#00ff00',
+              'cScale2': '#0000ff'
+       } } }%%
+timeline
+  title History of Social Media Platform
+  2002 : LinkedIn
+  2004 : Facebook : Google
+  2005 : YouTube
+  2006 : Twitter
+  2007 : Tumblr
+  2008 : Instagram
+  2010 : Pinterest

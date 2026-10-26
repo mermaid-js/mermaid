@@ -1,0 +1,17 @@
+---
+description: >-
+  Every block shape mermaid can draw, all inside one container, under the
+  "redux-dark-color" redux colour theme — the plain shapes are deliberately left
+  uncoloured (parity with flowchart nodes); only the container around them
+  should pick up a palette colour.
+config:
+  theme: redux-dark-color
+  look: neo
+---
+block-beta
+  columns 1
+  block:shapes
+    columns 4
+    sq["Square"] rn(("Circle")) di{"Diamond"} hx{{"Hexagon"}}
+    st(["Stadium"]) sr[["Subroutine"]] lr[/"Lean"/] tr[/"Trapezoid"\]
+  end

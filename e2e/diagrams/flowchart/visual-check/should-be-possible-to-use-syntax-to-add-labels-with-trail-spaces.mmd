@@ -1,0 +1,11 @@
+---
+description: >-
+  Verifies that the @{ label: ... } shape-data syntax for attaching a label to a
+  node parses correctly when each node is declared on its own separate line (no
+  '&' multi-node chaining involved), alongside a node using the classic
+  bracket-label syntax.
+---
+flowchart TB
+  n2["label for n2"]
+  n4@{ label: "label for n4"}
+  n5@{ label: "label for n5"}
