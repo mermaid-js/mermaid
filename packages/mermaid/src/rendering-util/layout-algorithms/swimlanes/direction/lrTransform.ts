@@ -15,65 +15,6 @@ function buildNodeMap(nodes: LayoutNode[]): Map<string, LayoutNode> {
   return new Map(nodes.map((node) => [node.id, node]));
 }
 
-function framePoolsLr(
-  nodes: LayoutNode[],
-  laneModel: ReturnType<typeof buildLaneModel>,
-  laneLeft: number,
-  titleBandSize: number
-): void {
-  if (!laneModel.hasPools) {
-    return;
-  }
-  const byId = new Map(nodes.map((node) => [node.id, node]));
-  const poolBand = titleBandSize;
-  const anchoredIds = collectAnchoredIds(nodes);
-
-  for (const node of nodes) {
-    if (laneModel.isLane(node.id) && typeof node.x === 'number') {
-      node.x += poolBand;
-      if (node.groupTitleRect) {
-        node.groupTitleRect.left += poolBand;
-        node.groupTitleRect.right += poolBand;
-      }
-    }
-  }
-  for (const node of nodes) {
-    if (
-      !laneModel.isLane(node.id) &&
-      !laneModel.isPool(node.id) &&
-      !anchoredIds.has(node.id) &&
-      typeof node.x === 'number'
-    ) {
-      node.x += poolBand;
-      if (node.groupTitleRect) {
-        node.groupTitleRect.left += poolBand;
-        node.groupTitleRect.right += poolBand;
-      }
-    }
-  }
-
-  for (const [poolId, laneIds] of laneModel.lanesByPool) {
-    const pool = byId.get(poolId);
-    const lanes = laneIds
-      .map((id: string) => byId.get(id))
-      .filter((lane): lane is LayoutNode => Boolean(lane));
-    if (!pool || lanes.length === 0) {
-      continue;
-    }
-    const top = Math.min(...lanes.map((lane) => (lane.y ?? 0) - (lane.height ?? 0) / 2));
-    const bottom = Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2));
-    const right = Math.max(...lanes.map((lane) => (lane.x ?? 0) + (lane.width ?? 0) / 2));
-    const left = laneLeft;
-
-    pool.x = (left + right) / 2;
-    pool.width = right - left;
-    pool.y = (top + bottom) / 2;
-    pool.height = bottom - top;
-    pool.swimlaneContentTop = top;
-    pool.groupTitleRect = { left, right: left + poolBand, top, bottom };
-  }
-}
-
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
   const seen = new Set<string>([group.id]);
   let depth = 0;
@@ -355,7 +296,6 @@ export function applyLrDirectionTransform(
       titleBandSize: titleBand,
       fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
     });
-    framePoolsLr(nodes, emptyModel, titleBand, titleBand);
     if (direction === 'RL') {
       mirrorAxis(layout, 'x');
     }
@@ -470,7 +410,6 @@ export function applyLrDirectionTransform(
       titleBandSize,
       fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
     });
-    framePoolsLr(nodes, laneModel, titleBandSize, titleBandSize);
     if (direction === 'RL') {
       mirrorAxis(layout, 'x');
     }
@@ -539,8 +478,6 @@ export function applyLrDirectionTransform(
       fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
     }
   );
-
-  framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');
