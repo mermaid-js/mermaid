@@ -38,10 +38,85 @@ export interface PhaseBand {
   separator?: Segment;
 }
 
-const hasBox = (node: LayoutData['nodes'][number]): node is Required<typeof node> =>
+type BoxedNode = Required<LayoutData['nodes'][number]>;
+
+const hasBox = (node: LayoutData['nodes'][number]): node is BoxedNode =>
   [node.x, node.y, node.width, node.height].every(
     (value) => typeof value === 'number' && Number.isFinite(value)
   );
+
+interface Span {
+  start: number;
+  end: number;
+}
+
+interface LaneBox {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+const laneBoxOf = (lanes: BoxedNode[]): LaneBox => ({
+  left: Math.min(...lanes.map((lane) => lane.x - lane.width / 2)),
+  right: Math.max(...lanes.map((lane) => lane.x + lane.width / 2)),
+  top: Math.min(...lanes.map((lane) => lane.y - lane.height / 2)),
+  bottom: Math.max(...lanes.map((lane) => lane.y + lane.height / 2)),
+});
+
+const widen = (span: Span | undefined, start: number, end: number): Span => ({
+  start: Math.min(span?.start ?? start, start),
+  end: Math.max(span?.end ?? end, end),
+});
+
+/** The stretch of the flow axis each band's nodes cover, in flow order. */
+function bandSpans(
+  nodes: LayoutData['nodes'],
+  assignment: NonNullable<ReturnType<typeof readPhaseAssignment>>,
+  alongX: boolean
+): [number, Span][] {
+  const spans = new Map<number, Span>();
+  for (const node of nodes) {
+    if (node.isGroup || !hasBox(node)) {
+      continue;
+    }
+    const start = alongX ? node.x - node.width / 2 : node.y - node.height / 2;
+    const band = assignment.bandOf(node.id);
+    spans.set(band, widen(spans.get(band), start, start + (alongX ? node.width : node.height)));
+  }
+  return [...spans.entries()].sort(([, a], [, b]) => a.start - b.start);
+}
+
+const titleCell = (box: LaneBox, alongX: boolean, start: number, end: number): Rect =>
+  alongX
+    ? {
+        x: start,
+        y: box.top - PHASE_TITLE_THICKNESS,
+        width: end - start,
+        height: PHASE_TITLE_THICKNESS,
+      }
+    : {
+        x: box.left - PHASE_TITLE_THICKNESS,
+        y: start,
+        width: PHASE_TITLE_THICKNESS,
+        height: end - start,
+      };
+
+const separatorAt = (box: LaneBox, alongX: boolean, end: number): Segment =>
+  alongX
+    ? { x1: end, y1: box.top - PHASE_TITLE_THICKNESS, x2: end, y2: box.bottom }
+    : { x1: box.left - PHASE_TITLE_THICKNESS, y1: end, x2: box.right, y2: end };
+
+/** Where a band starts and ends: mid-gap towards a neighbour, the lane edge where there is none. */
+const bandEnds = (
+  span: Span,
+  previous: Span | undefined,
+  next: Span | undefined,
+  flow: Span
+): Span => ({
+  start: previous ? (previous.end + span.start) / 2 : flow.start,
+  end: next ? (span.end + next.start) / 2 : flow.end,
+});
 
 /**
  * Bands in flow order, measured from where the nodes finally are. Measuring the final
@@ -52,65 +127,28 @@ const hasBox = (node: LayoutData['nodes'][number]): node is Required<typeof node
 export function computePhaseBands(layout: LayoutData): PhaseBand[] {
   const assignment = readPhaseAssignment(layout);
   const nodes = layout.nodes ?? [];
-  const lanes = nodes.filter((node) => node.isGroup && !node.parentId && hasBox(node));
+  const lanes = nodes.filter(
+    (node): node is BoxedNode => node.isGroup === true && !node.parentId && hasBox(node)
+  );
   if (!assignment || lanes.length === 0) {
     return [];
   }
 
   const alongX = layout.direction === 'LR' || layout.direction === 'RL';
-  const left = Math.min(...lanes.map((lane) => lane.x! - lane.width! / 2));
-  const right = Math.max(...lanes.map((lane) => lane.x! + lane.width! / 2));
-  const top = Math.min(...lanes.map((lane) => lane.y! - lane.height! / 2));
-  const bottom = Math.max(...lanes.map((lane) => lane.y! + lane.height! / 2));
-  const flowStart = alongX ? left : top;
-  const flowEnd = alongX ? right : bottom;
-
-  const spans = new Map<number, { start: number; end: number }>();
-  for (const node of nodes) {
-    if (node.isGroup || !hasBox(node)) {
-      continue;
-    }
-    const start = alongX ? node.x - node.width / 2 : node.y - node.height / 2;
-    const end = start + (alongX ? node.width : node.height);
-    const band = assignment.bandOf(node.id);
-    const span = spans.get(band);
-    spans.set(band, {
-      start: Math.min(span?.start ?? start, start),
-      end: Math.max(span?.end ?? end, end),
-    });
-  }
-  const ordered = [...spans.entries()].sort(([, a], [, b]) => a.start - b.start);
+  const box = laneBoxOf(lanes);
+  const flow = alongX ? { start: box.left, end: box.right } : { start: box.top, end: box.bottom };
+  const ordered = bandSpans(nodes, assignment, alongX);
 
   return ordered.map(([band, span], index) => {
-    const previous = ordered[index - 1]?.[1];
     const next = ordered[index + 1]?.[1];
-    const start = previous ? (previous.end + span.start) / 2 : flowStart;
-    const end = next ? (span.end + next.start) / 2 : flowEnd;
+    const { start, end } = bandEnds(span, ordered[index - 1]?.[1], next, flow);
     const phase = assignment.phases[band];
-    const title: Rect = alongX
-      ? {
-          x: start,
-          y: top - PHASE_TITLE_THICKNESS,
-          width: end - start,
-          height: PHASE_TITLE_THICKNESS,
-        }
-      : {
-          x: left - PHASE_TITLE_THICKNESS,
-          y: start,
-          width: PHASE_TITLE_THICKNESS,
-          height: end - start,
-        };
-    const separator: Segment | undefined = !next
-      ? undefined
-      : alongX
-        ? { x1: end, y1: top - PHASE_TITLE_THICKNESS, x2: end, y2: bottom }
-        : { x1: left - PHASE_TITLE_THICKNESS, y1: end, x2: right, y2: end };
     return {
       id: phase?.id ?? '',
       label: phase?.label ?? '',
-      title,
+      title: titleCell(box, alongX, start, end),
       titleReadsUpward: !alongX,
-      separator,
+      separator: next ? separatorAt(box, alongX, end) : undefined,
     };
   });
 }

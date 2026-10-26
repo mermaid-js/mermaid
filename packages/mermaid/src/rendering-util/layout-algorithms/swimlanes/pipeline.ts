@@ -6,6 +6,7 @@ import { assignLayers_Gravity } from './phase2.gravity.js';
 import { assignLayers_LaneAwareCompact } from './phase2.laneAwareCompact.js';
 import { makeProperLayering } from './phase2.dummies.js';
 import { orderLayers } from './phase3.ordering.js';
+import type { CoordOptions } from './phase4.coordinates.js';
 import { assignCoordinates } from './phase4.coordinates.js';
 import { LAYERING } from './config.js';
 import { AUTOMATIC_LANE_ORDERING_RESTARTS, optimizeTopLaneOrder } from './laneOrdering.js';
@@ -33,6 +34,16 @@ export interface LayoutResult {
   layering: Layering;
   ordered: OrderedLayers;
   coordinates: Coordinates;
+}
+
+function coordinateOptions(opts: LayoutOptions | undefined, laneOrder?: string[]): CoordOptions {
+  return {
+    layerGap: opts?.layerGap,
+    nodeGap: opts?.nodeGap,
+    direction: opts?.direction,
+    laneOrder,
+    phaseGrowth: opts?.phaseGrowth,
+  };
 }
 
 export function sugiyamaLayout(g: Graph, opts?: LayoutOptions): LayoutResult {
@@ -76,13 +87,11 @@ export function sugiyamaLayout(g: Graph, opts?: LayoutOptions): LayoutResult {
   const ordered = orderLayers(properLayering, graphWithDummies, { laneOrder });
 
   // Phase 4: coordinates
-  const coordinates = assignCoordinates(ordered, graphWithDummies, {
-    layerGap: opts?.layerGap,
-    nodeGap: opts?.nodeGap,
-    direction: opts?.direction,
-    laneOrder,
-    phaseGrowth: opts?.phaseGrowth,
-  });
+  const coordinates = assignCoordinates(
+    ordered,
+    graphWithDummies,
+    coordinateOptions(opts, laneOrder)
+  );
 
   return {
     acyclic: gAcyclic,

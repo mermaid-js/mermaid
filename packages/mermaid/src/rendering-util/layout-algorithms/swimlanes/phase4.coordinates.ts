@@ -1,7 +1,7 @@
 import type { Graph, OrderedLayers, Coordinates, NodeId, EdgeRef, Node } from './helpers.js';
 import { COORDINATES } from './config.js';
 import type { PhaseGrowth } from './phases.js';
-import { growPhaseGaps, readPhaseAssignment } from './phases.js';
+import { reservePhaseRoom } from './phases.js';
 import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
 
 export interface CoordOptions {
@@ -157,17 +157,7 @@ export function assignCoordinates(
   for (const [gap, need] of labelGapNeed.entries()) {
     extraLayerGaps[gap] += need;
   }
-  const phaseAssignment = readPhaseAssignment(gWithDummies.layout);
-  if (phaseAssignment && opts?.phaseGrowth) {
-    const layoutIds = new Set((gWithDummies.layout?.nodes ?? []).map((node) => node.id));
-    growPhaseGaps(
-      extraLayerGaps,
-      layers,
-      phaseAssignment,
-      (id) => layoutIds.has(id),
-      opts.phaseGrowth
-    );
-  }
+  reservePhaseRoom(extraLayerGaps, layers, gWithDummies.layout, opts);
 
   const laneWidth: Record<string, number> = Object.create(null);
   for (const L of lanesUsed) {

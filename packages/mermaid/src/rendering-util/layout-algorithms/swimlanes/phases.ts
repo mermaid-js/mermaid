@@ -22,6 +22,22 @@ export interface PhaseAssignment {
   bandOf: (id: NodeId) => number;
 }
 
+/** The phase of every node; an edge label is a layout node of its own and stays with its source. */
+function withEdgeLabelPhases(
+  layout: LayoutData,
+  nodePhases: Record<string, string>
+): Map<string, string> {
+  const phaseOfNode = new Map<string, string>(Object.entries(nodePhases));
+  for (const edge of layout.edges ?? []) {
+    const labelNodeId = (edge as { labelNodeId?: string }).labelNodeId;
+    const sourcePhase = phaseOfNode.get(edge.start ?? '');
+    if (labelNodeId && sourcePhase !== undefined) {
+      phaseOfNode.set(labelNodeId, sourcePhase);
+    }
+  }
+  return phaseOfNode;
+}
+
 /** The phases the flowchart database handed over, or undefined when no node has one. */
 export function readPhaseAssignment(layout: LayoutData): PhaseAssignment | undefined {
   const phases: unknown = layout.other?.phases;
@@ -30,15 +46,7 @@ export function readPhaseAssignment(layout: LayoutData): PhaseAssignment | undef
     return undefined;
   }
   const indexOfPhase = new Map<string, number>(phases.map((phase, index) => [phase.id, index]));
-  const phaseOfNode = new Map<string, string>(Object.entries(nodePhases));
-  // An edge label is a layout node of its own; it stays in the band of the node the edge leaves.
-  for (const edge of layout.edges ?? []) {
-    const labelNodeId = (edge as { labelNodeId?: string }).labelNodeId;
-    const sourcePhase = phaseOfNode.get(edge.start ?? '');
-    if (labelNodeId && sourcePhase !== undefined) {
-      phaseOfNode.set(labelNodeId, sourcePhase);
-    }
-  }
+  const phaseOfNode = withEdgeLabelPhases(layout, nodePhases);
   return {
     phases,
     bandOf: (id) => indexOfPhase.get(phaseOfNode.get(id) ?? '') ?? phases.length,
@@ -103,10 +111,32 @@ export function enforcePhaseBands(
   };
 }
 
+/** The first and last layer a band occupies, or undefined when it has none. */
+function layerRange(bandOfLayer: (number | undefined)[], band: number) {
+  const first = bandOfLayer.indexOf(band);
+  return first < 0 ? undefined : { first, last: bandOfLayer.lastIndexOf(band) };
+}
+
 /**
- * Widens the gaps around each band that asks to grow. A gap is shared by the two bands it
- * separates, so each side counts half; a band at the end of the flow has one gap, which then
- * carries the whole growth twice over. A gap two bands ask for takes the larger request.
+ * Where a band of `layerCount` layers asks for room, by gap index: the gap before its first
+ * layer and the gap after its last. A gap is shared by the two bands it separates, so each
+ * side counts half, and a band at the end of the flow has one gap, which carries the whole
+ * growth twice over.
+ */
+function gapRequests(
+  range: { first: number; last: number },
+  layerCount: number,
+  need: number
+): [number, number][] {
+  const before = range.first > 0 ? range.first - 1 : undefined;
+  const after = range.last < layerCount - 1 ? range.last : undefined;
+  const share = before !== undefined && after !== undefined ? need : 2 * need;
+  return [before, after].flatMap((gap) => (gap === undefined ? [] : [[gap, share]]));
+}
+
+/**
+ * Widens the gaps around each band that asks to grow. A gap two bands ask for takes the
+ * larger request.
  */
 export function growPhaseGaps(
   gaps: number[],
@@ -121,23 +151,29 @@ export function growPhaseGaps(
   });
   const requested = gaps.map(() => 0);
   for (const [band, phase] of assignment.phases.entries()) {
-    const first = bandOfLayer.indexOf(band);
-    const last = bandOfLayer.lastIndexOf(band);
-    const need = growth[phase.id];
-    if (first < 0 || !need) {
-      continue;
-    }
-    const before = first > 0 ? first - 1 : undefined;
-    const after = last < layers.length - 1 ? last : undefined;
-    const share = before !== undefined && after !== undefined ? need : 2 * need;
-    for (const gap of [before, after]) {
-      if (gap !== undefined) {
-        requested[gap] = Math.max(requested[gap], share);
-      }
+    const range = layerRange(bandOfLayer, band);
+    for (const [gap, share] of range
+      ? gapRequests(range, layers.length, growth[phase.id] ?? 0)
+      : []) {
+      requested[gap] = Math.max(requested[gap], share);
     }
   }
   for (const [gap, extra] of requested.entries()) {
     gaps[gap] += extra;
+  }
+}
+
+/** Reserves the room the bands ask for, when a growth was asked of this layout. */
+export function reservePhaseRoom(
+  gaps: number[],
+  layers: NodeId[][],
+  layout: LayoutData | undefined,
+  options: { phaseGrowth?: PhaseGrowth } | undefined
+): void {
+  const assignment = layout && readPhaseAssignment(layout);
+  if (assignment && options?.phaseGrowth) {
+    const ids = new Set((layout.nodes ?? []).map((node) => node.id));
+    growPhaseGaps(gaps, layers, assignment, (id) => ids.has(id), options.phaseGrowth);
   }
 }
 
