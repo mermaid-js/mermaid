@@ -185,11 +185,18 @@ describe('when parsing directions', function () {
   });
 
   it('should sanitize tooltip metadata the same as click tooltips', function () {
-    const res = flow.parser.parse(`flowchart LR
-      A@{ tooltip: "<script>alert(1)</script> safe" } --> B`);
+    const unsafe = '<script>alert(1)</script> safe';
 
-    expect(flow.parser.yy.getTooltip('A')).toContain('safe');
-    expect(flow.parser.yy.getTooltip('A')).not.toContain('<script>');
+    flow.parser.parse(`flowchart TB
+      A@{ tooltip: "${unsafe}" } --> B
+      C --> D
+      click C callback "${unsafe}"`);
+
+    const metadataTooltip = flow.parser.yy.getTooltip('A');
+    const clickTooltip = flow.parser.yy.getTooltip('C');
+
+    expect(clickTooltip).toBeDefined();
+    expect(metadataTooltip).toEqual(clickTooltip);
   });
 
   it('should keep existing click tooltip behavior unchanged', function () {
