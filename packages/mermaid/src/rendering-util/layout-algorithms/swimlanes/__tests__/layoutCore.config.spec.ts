@@ -47,4 +47,13 @@ describe('the swimlane engine reads its options from the layout data', () => {
     runSwimlaneLayoutCore(layout);
     expect(rowsOf(layout)).toBe(3);
   });
+
+  it('lets the author choice override a branch-wise layout', () => {
+    const layout = chain(
+      { ignoreCrossLaneEdges: false },
+      { laneLayering: 'branches', ignoreCrossLaneEdgesChosen: true }
+    );
+    runSwimlaneLayoutCore(layout);
+    expect(rowsOf(layout)).toBe(2);
+  });
 });

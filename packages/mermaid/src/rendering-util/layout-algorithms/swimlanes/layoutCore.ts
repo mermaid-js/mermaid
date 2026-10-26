@@ -22,11 +22,15 @@ function spacing(layout: LayoutData, key: 'nodeSpacing' | 'rankSpacing', fallbac
 }
 
 /**
- * Whether lanes share one row: the layout's own `swimlane.ignoreCrossLaneEdges`, true when it
- * says nothing. A layout that asks for branch-wise layering never shares a row, because the
- * config it carries holds the default, which cannot tell the producer's request from a choice.
+ * Whether lanes share one row: the author's own choice (`ignoreCrossLaneEdgesChosen`) when the
+ * layout carries one, else false for a layout that asks for branch-wise layering, else the
+ * layout's `swimlane.ignoreCrossLaneEdges`, true when it says nothing.
  */
 function compactsLanesToOneRow(data4Layout: LayoutData): boolean {
+  const chosen = data4Layout.ignoreCrossLaneEdgesChosen;
+  if (typeof chosen === 'boolean') {
+    return chosen;
+  }
   if (data4Layout.laneLayering === 'branches') {
     return false;
   }
