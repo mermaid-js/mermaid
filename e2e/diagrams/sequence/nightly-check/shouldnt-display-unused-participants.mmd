@@ -1,0 +1,10 @@
+---
+description: >-
+  A single declared-but-unused participant, with
+  `sequence.hideUnusedParticipants: true` set via an in-body %%{init}%%
+  directive — verifies the unused participant is hidden rather than rendered
+  empty.
+---
+%%{init: { "config": { "sequence": {"hideUnusedParticipants": true }}}}%%
+sequenceDiagram
+participant a

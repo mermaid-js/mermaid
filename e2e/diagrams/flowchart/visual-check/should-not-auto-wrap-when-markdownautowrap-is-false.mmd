@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that when markdownAutoWrap is set to false, markdown-string node
+  labels with their own explicit line breaks (bold text, italic text, and
+  bracketed units on separate lines) are rendered using exactly those manual
+  breaks instead of being automatically re-wrapped by mermaid.
+config:
+  markdownAutoWrap: false
+---
+flowchart TD
+  angular_velocity["`**angular_velocity**
+  *angular_displacement / duration*
+  [rad/s, 1/s]
+  {vector}`"]
+  frequency["frequency
+  (1 / period_duration)
+  [Hz, 1/s]"]

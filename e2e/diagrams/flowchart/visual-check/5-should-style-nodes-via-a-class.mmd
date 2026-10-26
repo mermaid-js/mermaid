@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a single classDef with multiple CSS properties (fill, color,
+  font-weight, stroke-width, stroke) can be applied to several nodes at once via
+  one `class` statement, across a chain of node ids that include numeric-leading
+  identifiers.
+config:
+  fontFamily: courier
+---
+graph TD
+  1A --> 1B
+  1B --> 1C
+  1C --> D
+  1C --> E
+
+  classDef processHead fill:#888888,color:white,font-weight:bold,stroke-width:3px,stroke:#001f3f
+  class 1A,1B,D,E processHead

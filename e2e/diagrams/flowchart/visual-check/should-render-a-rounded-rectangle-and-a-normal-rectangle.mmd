@@ -1,0 +1,12 @@
+---
+description: >-
+  Verifies that the shape-data directives @{ shape: rounded } and @{ shape: rect
+  } correctly render a rounded-corner rectangle and a plain square-corner
+  rectangle side by side, distinguishing the two rectangle variants introduced
+  by the new shape config syntax.
+---
+flowchart BT
+  n2["Untitled Node"] --> n1["Rounded Rectangle"]
+  n3["Untitled Node"] --> n1
+  n1@{ shape: rounded}
+  n3@{ shape: rect}

@@ -1,0 +1,15 @@
+---
+description: >-
+  Flowchart with theme: forest set via frontmatter config, expected to render
+  nodes green. Companion to the frontmatter-config (neutral/grey) and
+  no-config (default) variants of the same shape.
+config:
+  theme: forest
+---
+graph TD
+  A(Forest) --> B[/Another/]
+  A --> C[End]
+  subgraph section
+  B
+  C
+  end
