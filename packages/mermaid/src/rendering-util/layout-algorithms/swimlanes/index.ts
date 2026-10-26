@@ -15,8 +15,11 @@ function prepareSwimlaneLayout(data4Layout: LayoutData): void {
   data4Layout.edges = transformedData.edges;
 }
 
-function afterSwimlanePaint(data4Layout: LayoutData, context: CommonLayoutPaintContext): void {
-  paintPhaseBands(data4Layout, context);
+async function afterSwimlanePaint(
+  data4Layout: LayoutData,
+  context: CommonLayoutPaintContext
+): Promise<void> {
+  await paintPhaseBands(data4Layout, context);
   applySwimlaneLineJumps(data4Layout, context);
 }
 

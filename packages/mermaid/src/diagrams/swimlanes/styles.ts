@@ -30,12 +30,6 @@ const getStyles = (options: FlowChartStyleOptions): string =>
     fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};
   }
-  .swimlane-phase-label {
-    fill: ${options.titleColor};
-    font-family: ${options.fontFamily};
-    text-anchor: middle;
-    dominant-baseline: central;
-  }
   .swimlane-phase-separator {
     stroke: ${options.clusterBorder};
     stroke-dasharray: ${PHASE_SEPARATOR_DASH};

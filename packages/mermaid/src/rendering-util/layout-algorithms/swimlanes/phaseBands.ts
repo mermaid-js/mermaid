@@ -1,9 +1,15 @@
+import { select } from 'd3';
+import { evaluate, getConfig } from '../../../config.js';
 import type { D3Selection } from '../../../types.js';
+import { createText } from '../../createText.js';
 import type { LayoutData } from '../../types.js';
 import { readPhaseAssignment } from './phases.js';
 
 /** The title strip is as thick as a lane title band plus the room a rotated label needs. */
 export const PHASE_TITLE_THICKNESS = 28;
+
+/** Clear space kept at each end of a title along the flow: half the strip's thickness. */
+export const PHASE_TITLE_MARGIN = PHASE_TITLE_THICKNESS / 2;
 
 interface Rect {
   x: number;
@@ -108,11 +114,35 @@ export function computePhaseBands(layout: LayoutData): PhaseBand[] {
   });
 }
 
+/**
+ * Draws a phase title the way a lane title is drawn, on one line, and returns its size so
+ * the layout can reserve room for it and the painter can centre it.
+ */
+export async function createPhaseTitle(
+  parent: D3Selection<SVGGElement>,
+  label: string
+): Promise<{ element: D3Selection<SVGGElement>; width: number; height: number }> {
+  const useHtmlLabels = evaluate(getConfig().flowchart?.htmlLabels);
+  const element = parent.append('g').attr('class', 'cluster-label swimlane-phase-label');
+  const text = await createText(element, label, {
+    useHtmlLabels,
+    isNode: true,
+    width: Number.POSITIVE_INFINITY,
+  });
+  const { width, height } = useHtmlLabels
+    ? text.children[0].getBoundingClientRect()
+    : text.getBBox();
+  if (useHtmlLabels) {
+    select(text).attr('width', width).attr('height', height);
+  }
+  return { element, width, height };
+}
+
 /** Draws the phase bands: a title strip per band and a line between bands. */
-export function paintPhaseBands<T extends SVGElement>(
+export async function paintPhaseBands<T extends SVGElement>(
   layout: LayoutData,
   { element }: { element: D3Selection<T> }
-): void {
+): Promise<void> {
   const bands = computePhaseBands(layout);
   if (bands.length === 0) {
     return;
@@ -137,17 +167,7 @@ export function paintPhaseBands<T extends SVGElement>(
       .attr('width', band.title.width)
       .attr('height', band.title.height);
     if (band.label) {
-      const centreX = band.title.x + band.title.width / 2;
-      const centreY = band.title.y + band.title.height / 2;
-      const text = cell
-        .append('text')
-        .attr('class', 'swimlane-phase-label')
-        .attr('x', centreX)
-        .attr('y', centreY)
-        .text(band.label);
-      if (band.titleReadsUpward) {
-        text.attr('transform', `rotate(-90 ${centreX} ${centreY})`);
-      }
+      await paintPhaseLabel(cell, band);
     }
     if (band.separator) {
       group
@@ -159,4 +179,15 @@ export function paintPhaseBands<T extends SVGElement>(
         .attr('y2', band.separator.y2);
     }
   }
+}
+
+async function paintPhaseLabel(cell: D3Selection<SVGGElement>, band: PhaseBand): Promise<void> {
+  const { element, width, height } = await createPhaseTitle(cell, band.label);
+  const centreX = band.title.x + band.title.width / 2;
+  const centreY = band.title.y + band.title.height / 2;
+  const turn = band.titleReadsUpward ? ' rotate(-90)' : '';
+  element.attr(
+    'transform',
+    `translate(${centreX}, ${centreY})${turn} translate(${-width / 2}, ${-height / 2})`
+  );
 }
