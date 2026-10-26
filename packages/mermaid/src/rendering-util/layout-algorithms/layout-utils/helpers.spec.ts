@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { clamp, pointInsideAnyRectInterior } from './helpers.js';
+import { clamp, compareCodeUnits, pointInsideAnyRectInterior } from './helpers.js';
 
 describe('domus/core/helpers', () => {
+  it('compares strings by locale-independent UTF-16 code-unit order', () => {
+    expect(['ä', 'a', 'A', 'aa'].sort(compareCodeUnits)).toEqual(['A', 'a', 'aa', 'ä']);
+    expect(compareCodeUnits('same', 'same')).toBe(0);
+  });
+
   it('clamp clamps to inclusive bounds', () => {
     expect(clamp(0, 1, 2)).toBe(1);
     expect(clamp(1, 1, 2)).toBe(1);
