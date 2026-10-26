@@ -1,0 +1,15 @@
+---
+description: >-
+  Three sets with a triple union (labeled "ABC") plus only two of the three
+  possible pairwise unions declared (A,B and B,C — the A,C union is
+  omitted), checking that a partially-specified set of pairwise subsets
+  still renders correctly.
+---
+venn-beta
+  title Partial Pairwise
+  set A
+  set B
+  set C
+  union A,B,C["ABC"]
+  union A,B["AB"]
+  union B,C["BC"]

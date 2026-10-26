@@ -1,0 +1,23 @@
+---
+description: >-
+  A "Web hook life cycle" journey with three sections and a deliberately
+  long legend label ("Darkoob userf deliberately increasing the size of
+  this label...") — checks that the diagram content is pushed right far
+  enough to maintain spacing from a wide legend.
+config:
+  journey:
+    useMaxWidth: true
+---
+journey
+title  Web hook life cycle
+section Darkoob
+  Make preBuilt:5: Darkoob user
+  register slug : 5: Darkoob userf deliberately increasing the size of this label to check if distance between legend and diagram is  maintained
+  Map slug to a Prebuilt Job:5: Darkoob user
+section External Service
+  set Darkoob slug as hook for an Event : 5 : admin Exjjjnjjjj qwerty
+  listen to the events : 5 :  External Service
+  call darkoob endpoint : 5 : External Service
+section Darkoob
+  check for inputs : 5 : DarkoobAPI
+  run the prebuilt job : 5 : DarkoobAPI

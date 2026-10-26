@@ -1,0 +1,35 @@
+---
+description: >-
+  Regression test for issue #4648: verifies that external edges linking nodes
+  across three sibling subgraphs, each declaring a different internal direction
+  (Group1 is TB while Group2 and Group3 are LR), render correctly despite the
+  mismatched internal layouts.
+config:
+  htmlLabels: true
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+
+  subgraph Group1
+  direction TB
+  A1 --> A2
+  A2 --> A3
+  end
+
+  subgraph Group2
+  direction LR
+  B1 --> B2
+  B2 --> B3
+  end
+
+  subgraph Group3
+  direction LR
+  C1 --> C2
+  C2 --> C3
+  end
+
+  %% External connections between subgraphs
+  A3 --- B1
+  B3 --- C1

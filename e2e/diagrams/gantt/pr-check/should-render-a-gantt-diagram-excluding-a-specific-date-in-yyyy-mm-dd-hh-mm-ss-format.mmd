@@ -1,0 +1,12 @@
+---
+description: >-
+  Excludes a single specific calendar date (2025-07-07) using the
+  YYYY-MM-DD HH:mm:ss dateFormat, with a task spanning across that
+  excluded date via "after".
+---
+gantt
+  dateFormat  YYYY-MM-DD HH:mm:ss
+  excludes    2025-07-07
+  section     Section
+  A task      :a1, 2025-07-04 20:30:30, 2025-07-08 10:30:30
+  Another task:after a1, 20h
