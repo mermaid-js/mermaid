@@ -165,6 +165,12 @@ describe('Testing quadrantChart jison file', () => {
     }
   });
 
+  it('does not swallow the next line after a comment with CR line endings', () => {
+    const str = 'quadrantChart\rA: [0.3, 0.6] %% note\rB: [0.4, 0.7]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledTimes(2);
+  });
+
   it('should be able to parse quadrant2 text', () => {
     let str = 'quadrantChart\nquadrant-2 do';
     expect(parserFnConstructor(str)).not.toThrow();
