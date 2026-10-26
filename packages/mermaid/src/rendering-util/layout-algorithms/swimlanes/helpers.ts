@@ -1,10 +1,11 @@
+import { log } from '../../../logger.js';
 import type {
   LayoutData,
   Node as MermaidNode,
   Edge as MermaidEdge,
   ClusterNode,
 } from '../../types.js';
-import { buildLaneModel } from './lanes.js';
+import { buildLaneModel, type LaneModel } from './lanes.js';
 import { collectAnchoredIds, resolveAnchorHostId } from './anchoredNodes.js';
 
 export type Layout = LayoutData;
@@ -97,10 +98,74 @@ function assignTopLaneTitleRect(lane: Node): void {
   };
 }
 
+// Mirrors DroppedSubGraphMember in the flowchart types, which a rendering-util module must not import.
+interface SharedMember {
+  node: string;
+  keptBy: string;
+  droppedFrom: string;
+}
+
+function sharedMembers(layout: LayoutData): SharedMember[] {
+  const members: unknown = layout.other?.droppedSubGraphMembers;
+  return Array.isArray(members) ? members : [];
+}
+
+const isEmptyLane = (layout: LayoutData, nodes: Node[], laneId: string): boolean =>
+  !nodes.some((node) => node.parentId === laneId) &&
+  !(layout.edges ?? []).some((edge) => edge.start === laneId || edge.end === laneId);
+
+/** The lane a node sits in, or the node itself when it is a lane; undefined outside every lane. */
+function laneIdOrSelf(model: LaneModel, id: string): string | undefined {
+  return model.isLane(id) ? id : (model.laneIdOf(id) ?? undefined);
+}
+
+function removeEmptyLanes(layout: LayoutData, nodes: Node[], laneIds: Set<string>): void {
+  for (const laneId of laneIds) {
+    const index = nodes.findIndex((node) => node.id === laneId);
+    if (index >= 0 && isEmptyLane(layout, nodes, laneId)) {
+      nodes.splice(index, 1);
+    }
+  }
+}
+
+/**
+ * A node listed in two lanes stays in the first, so the second can end up with nothing.
+ * Warns for each such node and removes the lanes it emptied. A lane the author left empty
+ * lost no member and stays, and so does one an edge points at. The lane that kept the node
+ * can be the one around a subgraph nested in it, so `keptBy` is resolved up to its lane.
+ */
+function dropLanesEmptiedBySharedNodes(layout: LayoutData, nodes: Node[]): void {
+  const model = buildLaneModel(nodes);
+  const laneIds = new Set(nodes.filter((node) => model.isLane(node.id)).map((lane) => lane.id));
+  const emptied = new Set<string>();
+  for (const { node, keptBy, droppedFrom } of sharedMembers(layout)) {
+    const keptByLane = laneIdOrSelf(model, keptBy);
+    if (keptByLane && keptByLane !== droppedFrom && laneIds.has(droppedFrom)) {
+      log.warn(
+        `Swimlane node "${node}" is listed in lanes "${keptByLane}" and "${droppedFrom}"; it is drawn in "${keptByLane}" only.`
+      );
+      emptied.add(droppedFrom);
+    }
+  }
+  removeEmptyLanes(layout, nodes, emptied);
+}
+
+function warnAboutNestedGroups(nodes: Node[], model: LaneModel): void {
+  for (const node of nodes) {
+    if (node.isGroup && !model.isLane(node.id) && !model.isPool(node.id)) {
+      log.warn(
+        `Swimlane subgraph "${node.id}" is nested in "${node.parentId}"; only top-level subgraphs are lanes, so it is drawn as a plain box.`
+      );
+    }
+  }
+}
+
 export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
+  dropLanesEmptiedBySharedNodes(layout, nodes);
   const laneModel = buildLaneModel(nodes);
+  warnAboutNestedGroups(nodes, laneModel);
   for (const node of nodes) {
     const isLane = laneModel.isLane(node.id);
     if (!isLane && !laneModel.isPool(node.id)) {
