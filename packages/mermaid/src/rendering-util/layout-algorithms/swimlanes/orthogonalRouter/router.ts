@@ -107,17 +107,20 @@ function chooseOrthogonalSide(
   return fallback;
 }
 
+const isDrawableSize = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value) && value > 0;
+
 /**
  * The size of what is drawn for a node: `metadata.drawnExtent` when a shape draws
  * smaller than its layout box (an event circle in a wider box), else the box itself.
  * Ports, port spreading and endpoint clamping all use it, so edges meet the drawn outline.
  */
 function drawnSize(node: MermaidNode, fallback: number): { w: number; h: number } {
-  const drawn = (node as { metadata?: { drawnExtent?: { width?: number; height?: number } } })
+  const drawn = (node as { metadata?: { drawnExtent?: { width?: unknown; height?: unknown } } })
     .metadata?.drawnExtent;
   return {
-    w: drawn?.width ?? node.width ?? fallback,
-    h: drawn?.height ?? node.height ?? fallback,
+    w: isDrawableSize(drawn?.width) ? drawn.width : (node.width ?? fallback),
+    h: isDrawableSize(drawn?.height) ? drawn.height : (node.height ?? fallback),
   };
 }
 
@@ -260,7 +263,6 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
   // Direct port-for-side helper. Used by Step 6.2's sibling side-split
   // reassignment so the main routing loop can honor a side that does
   // not match `getOrthogonalPort`'s natural choice.
-
   const portForSide = (node: MermaidNode, side: OrthogonalSide): Point => {
     const { w, h } = drawnSize(node, 10);
     const cx = node.x ?? 0;

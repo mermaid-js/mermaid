@@ -1,6 +1,11 @@
 import type { LayoutData } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
-import { anchorFootprints, collectAnchoredIds, type AnchorFootprint } from '../anchoredNodes.js';
+import {
+  anchorFootprints,
+  collectAnchoredIds,
+  type AnchorFootprint,
+  type AnchorSide,
+} from '../anchoredNodes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number] & { swimlaneContentTop?: number };
 type Direction = 'LR' | 'RL';
@@ -8,65 +13,6 @@ type Axis = 'x' | 'y';
 
 function buildNodeMap(nodes: LayoutNode[]): Map<string, LayoutNode> {
   return new Map(nodes.map((node) => [node.id, node]));
-}
-
-function framePoolsLr(
-  nodes: LayoutNode[],
-  laneModel: ReturnType<typeof buildLaneModel>,
-  laneLeft: number,
-  titleBandSize: number
-): void {
-  if (!laneModel.hasPools) {
-    return;
-  }
-  const byId = new Map(nodes.map((node) => [node.id, node]));
-  const poolBand = titleBandSize;
-  const anchoredIds = collectAnchoredIds(nodes);
-
-  for (const node of nodes) {
-    if (laneModel.isLane(node.id) && typeof node.x === 'number') {
-      node.x += poolBand;
-      if (node.groupTitleRect) {
-        node.groupTitleRect.left += poolBand;
-        node.groupTitleRect.right += poolBand;
-      }
-    }
-  }
-  for (const node of nodes) {
-    if (
-      !laneModel.isLane(node.id) &&
-      !laneModel.isPool(node.id) &&
-      !anchoredIds.has(node.id) &&
-      typeof node.x === 'number'
-    ) {
-      node.x += poolBand;
-      if (node.groupTitleRect) {
-        node.groupTitleRect.left += poolBand;
-        node.groupTitleRect.right += poolBand;
-      }
-    }
-  }
-
-  for (const [poolId, laneIds] of laneModel.lanesByPool) {
-    const pool = byId.get(poolId);
-    const lanes = laneIds
-      .map((id: string) => byId.get(id))
-      .filter((lane): lane is LayoutNode => Boolean(lane));
-    if (!pool || lanes.length === 0) {
-      continue;
-    }
-    const top = Math.min(...lanes.map((lane) => (lane.y ?? 0) - (lane.height ?? 0) / 2));
-    const bottom = Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2));
-    const right = Math.max(...lanes.map((lane) => (lane.x ?? 0) + (lane.width ?? 0) / 2));
-    const left = laneLeft;
-
-    pool.x = (left + right) / 2;
-    pool.width = right - left;
-    pool.y = (top + bottom) / 2;
-    pool.height = bottom - top;
-    pool.swimlaneContentTop = top;
-    pool.groupTitleRect = { left, right: left + poolBand, top, bottom };
-  }
 }
 
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
@@ -195,54 +141,106 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
 
 const LANE_TITLE_BAND = 36;
 
-function stackEmptyBands(
-  bands: LayoutNode[],
-  opts: {
-    top: number;
-    centerX: number;
-    laneLeft: number;
-    laneWidth: number;
-    titleBandSize: number;
-    fontSize: number;
-  }
-): void {
-  let top = opts.top;
-  for (const band of bands) {
-    const titleRun =
-      (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
-    const height = Math.max(
-      2 * opts.titleBandSize,
-      2 * (band.padding ?? 0),
-      titleRun + opts.titleBandSize
-    );
-    band.x = opts.centerX;
-    band.y = top + height / 2;
-    band.width = opts.laneWidth;
-    band.height = height;
-    band.swimlaneContentTop = top;
-    band.groupTitleRect = {
-      left: opts.laneLeft,
-      right: opts.laneLeft + opts.titleBandSize,
-      top,
-      bottom: top + height,
-    };
-    top += height;
-  }
+interface Box {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
 }
 
-// Grows a host to cover the room its anchored run is placed in: out from its border by
-// `beyond`, and along it from `before` to `after` either side of its centre.
-function withAnchorFootprint(host: LayoutNode, footprint: AnchorFootprint): LayoutNode {
+type SideFootprints = Partial<Record<AnchorSide, AnchorFootprint>>;
+
+const ANCHOR_SIDES: AnchorSide[] = ['top', 'right', 'bottom', 'left'];
+
+function mirroredSide(side: AnchorSide): AnchorSide {
+  if (side === 'left') {
+    return 'right';
+  }
+  return side === 'right' ? 'left' : side;
+}
+
+function growAlongBorder(
+  box: Box,
+  host: Box,
+  side: AnchorSide,
+  footprint: AnchorFootprint,
+  mirrored: boolean
+): void {
+  if (side === 'top' || side === 'bottom') {
+    const centreX = (host.left + host.right) / 2;
+    const [before, after] = mirrored
+      ? [footprint.after, footprint.before]
+      : [footprint.before, footprint.after];
+    box.left = Math.min(box.left, centreX - before);
+    box.right = Math.max(box.right, centreX + after);
+    return;
+  }
+  const centreY = (host.top + host.bottom) / 2;
+  box.top = Math.min(box.top, centreY - footprint.before);
+  box.bottom = Math.max(box.bottom, centreY + footprint.after);
+}
+
+const GROW_OUTWARD: Record<AnchorSide, (box: Box, host: Box, beyond: number) => void> = {
+  top: (box, host, beyond) => {
+    box.top = Math.min(box.top, host.top - beyond);
+  },
+  bottom: (box, host, beyond) => {
+    box.bottom = Math.max(box.bottom, host.bottom + beyond);
+  },
+  left: (box, host, beyond) => {
+    box.left = Math.min(box.left, host.left - beyond);
+  },
+  right: (box, host, beyond) => {
+    box.right = Math.max(box.right, host.right + beyond);
+  },
+};
+
+// Grows `box` to hold a run standing off `host` on `side`: out from that border by `beyond`,
+// and along it from `before` to `after` either side of the host's centre. `mirrored` flips
+// the x axis, as RL does after the lanes are sized.
+function reserveOnSide(
+  box: Box,
+  host: Box,
+  side: AnchorSide,
+  footprint: AnchorFootprint,
+  mirrored: boolean
+): void {
+  growAlongBorder(box, host, side, footprint, mirrored);
+  GROW_OUTWARD[side](box, host, footprint.beyond);
+}
+
+// Grows a host to cover the room each run standing off it is placed in. The runs are keyed by
+// the side they stand on as drawn, so RL reserves them on the side the mirror will turn
+// into it.
+function withAnchorFootprints(
+  host: LayoutNode,
+  footprints: SideFootprints,
+  direction: Direction
+): LayoutNode {
   const x = host.x ?? 0;
-  const half = (host.width ?? 0) / 2;
-  const left = Math.min(x - half, x - footprint.before);
-  const right = Math.max(x + half, x + footprint.after);
+  const y = host.y ?? 0;
+  const halfWidth = (host.width ?? 0) / 2;
+  const halfHeight = (host.height ?? 0) / 2;
+  const own: Box = {
+    left: x - halfWidth,
+    right: x + halfWidth,
+    top: y - halfHeight,
+    bottom: y + halfHeight,
+  };
+  const grown: Box = { ...own };
+  const mirrored = direction === 'RL';
+  for (const side of ANCHOR_SIDES) {
+    const footprint = footprints[side];
+    if (footprint) {
+      reserveOnSide(grown, own, mirrored ? mirroredSide(side) : side, footprint, mirrored);
+    }
+  }
   return {
     ...host,
-    x: (left + right) / 2,
-    y: (host.y ?? 0) + footprint.beyond / 2,
-    width: right - left,
-    height: (host.height ?? 0) + footprint.beyond,
+    x: (grown.left + grown.right) / 2,
+    y: (grown.top + grown.bottom) / 2,
+    width: grown.right - grown.left,
+    height: grown.bottom - grown.top,
   };
 }
 
@@ -269,26 +267,7 @@ export function applyLrDirectionTransform(
   }
 
   if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-    const emptyModel = buildLaneModel(nodes);
-    const emptyBands = nodes.filter((n) => emptyModel.isLane(n.id));
-    if (emptyBands.length === 0) {
-      return false;
-    }
-    const titleBand = LANE_TITLE_BAND;
-    const bandWidth = 6 * titleBand;
-    stackEmptyBands(emptyBands, {
-      top: 0,
-      centerX: titleBand + bandWidth / 2,
-      laneLeft: titleBand,
-      laneWidth: bandWidth,
-      titleBandSize: titleBand,
-      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
-    });
-    framePoolsLr(nodes, emptyModel, titleBand, titleBand);
-    if (direction === 'RL') {
-      mirrorAxis(layout, 'x');
-    }
-    return true;
+    return false;
   }
 
   const titleBandSize = LANE_TITLE_BAND;
@@ -351,7 +330,7 @@ export function applyLrDirectionTransform(
     }
     const bucket = childrenByLane.get(laneId) ?? [];
     const footprint = footprints.get(n.id);
-    bucket.push(footprint ? withAnchorFootprint(n, footprint) : n);
+    bucket.push(footprint ? withAnchorFootprints(n, footprint, direction) : n);
     childrenByLane.set(laneId, bucket);
   }
 
@@ -390,19 +369,6 @@ export function applyLrDirectionTransform(
   }
 
   if (globalMinXChild === Infinity || globalMaxXChild === -Infinity) {
-    const emptyWidth = 6 * titleBandSize;
-    stackEmptyBands(laneNodes, {
-      top: 0,
-      centerX: titleBandSize + emptyWidth / 2,
-      laneLeft: titleBandSize,
-      laneWidth: emptyWidth,
-      titleBandSize,
-      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
-    });
-    framePoolsLr(nodes, laneModel, titleBandSize, titleBandSize);
-    if (direction === 'RL') {
-      mirrorAxis(layout, 'x');
-    }
     return true;
   }
 
@@ -452,24 +418,6 @@ export function applyLrDirectionTransform(
       bottom: laneBottom,
     };
   }
-
-  const placed = new Set(laneBounds.map((entry) => entry.lane));
-  stackEmptyBands(
-    laneNodes.filter((lane) => !placed.has(lane)),
-    {
-      top: laneBounds.reduce(
-        (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
-        laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
-      ),
-      centerX,
-      laneLeft,
-      laneWidth,
-      titleBandSize,
-      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
-    }
-  );
-
-  framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');

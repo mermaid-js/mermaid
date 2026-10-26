@@ -143,7 +143,13 @@ describe('buildLaneModel with pools', () => {
  * A group with no parent, spelled out inline. The leading negation is excluded because
  * `!isGroup && !parentId` selects loose content, which is a different question.
  */
-const INLINE_LANE_TEST = /(^|[^\w!.])[\w.]*isGroup\s*&&\s*!\s*[\w.]*parentId/;
+const INLINE_LANE_TEST = new RegExp(
+  [
+    String.raw`(^|[^\w!.])[\w.]*isGroup\s*&&\s*!\s*[\w.]*parentId`,
+    // The negated form, `!isGroup || parentId`, with or without a cast around the node.
+    String.raw`!\s*\(?[^|&;\n]*?isGroup[^|&;\n]*\|\|\s*[^!\s][^|&;\n]*parentId`,
+  ].join('|')
+);
 
 const swimlanesRoot = () => {
   const candidates = [
@@ -177,6 +183,16 @@ describe('one definition of a lane', () => {
     expect(
       INLINE_LANE_TEST.test('const loose = nodes.filter((n) => !n.isGroup && !n.parentId);')
     ).toBe(false);
+  });
+
+  it('recognises the negated form, cast or not', () => {
+    expect(INLINE_LANE_TEST.test('if (!node.isGroup || node.parentId) return;')).toBe(true);
+    expect(
+      INLINE_LANE_TEST.test(
+        'if (!(node as { isGroup?: boolean }).isGroup || (node as { parentId?: unknown }).parentId) {'
+      )
+    ).toBe(true);
+    expect(INLINE_LANE_TEST.test('if (!node.isGroup || !node.parentId) return;')).toBe(false);
   });
 
   it('is answered by lanes.ts alone, so no call site can drift from it', () => {

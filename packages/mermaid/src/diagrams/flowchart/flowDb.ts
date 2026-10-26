@@ -35,6 +35,20 @@ interface LinkData {
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
+// Set by a diagram that models pools and lanes itself, never by the author of a `@{ }` block.
+const INTERNAL_METADATA_KEYS = ['laneRole', 'laneIndex', 'drawnExtent'];
+
+function withoutInternalKeys(doc: NodeMetaData): NodeMetaData {
+  if (!doc || typeof doc !== 'object') {
+    return doc;
+  }
+  const kept = { ...doc };
+  for (const key of INTERNAL_METADATA_KEYS) {
+    Reflect.deleteProperty(kept, key);
+  }
+  return kept;
+}
+
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
@@ -150,7 +164,7 @@ export class FlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
-      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+      doc = withoutInternalKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData);
     }
 
     // Check if this is metadata for an already-declared subgraph
@@ -158,7 +172,9 @@ export class FlowDB implements DiagramDB {
     // route the metadata onto the subgraph instead of creating a vertex.
     const subGraph = this.subGraphLookup.get(id);
     if (subGraph && doc) {
-      subGraph.metadata = { ...subGraph.metadata, ...doc };
+      if (Object.keys(doc).length > 0) {
+        subGraph.metadata = { ...subGraph.metadata, ...doc };
+      }
       return;
     }
 
