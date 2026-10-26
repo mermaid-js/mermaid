@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import type { Node, Edge } from '../../rendering-util/types.js';
 import { bpmnIcons } from '../../rendering-util/rendering-elements/shapes/bpmnIcons.js';
-import { db } from './bpmnDb.js';
+import { BpmnDb } from './bpmnDb.js';
 import { parser } from './parser/bpmn.chevrotain.js';
 import { EVENT_TRIGGERS, TASK_TYPES, TRIGGERS_BY_POSITION, positionsFor } from './types.js';
+
+const db = new BpmnDb();
 
 /** An event at a position, with a host where the position needs one. */
 const eventSource = (position: string, trigger?: string, id = 'e'): string => {

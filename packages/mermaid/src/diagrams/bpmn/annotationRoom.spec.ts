@@ -3,7 +3,8 @@ import { resolve } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { LayoutData, Node } from '../../rendering-util/types.js';
 import { runSwimlaneLayoutCore } from '../../rendering-util/layout-algorithms/swimlanes/layoutCore.js';
-import { db } from './bpmnDb.js';
+import { BpmnDb } from './bpmnDb.js';
+const db = new BpmnDb();
 
 const FIXTURE = resolve(
   process.cwd(),

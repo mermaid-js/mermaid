@@ -88,12 +88,15 @@ const drawnAs = (node: ParsedNode): Drawn => {
   }
 };
 
+const emptyDiagram = (): ParsedDiagram => ({ direction: 'LR', nodes: [], flows: [] });
+
 export class BpmnDb {
-  private parsed: ParsedDiagram = { direction: 'LR', nodes: [], flows: [] };
+  private parsed: ParsedDiagram = emptyDiagram();
   private diagramId = '';
 
   public clear() {
-    this.parsed = { direction: 'LR', nodes: [], flows: [] };
+    this.parsed = emptyDiagram();
+    this.diagramId = '';
     commonClear();
   }
 
@@ -251,6 +254,3 @@ export class BpmnDb {
     } satisfies LayoutData;
   }
 }
-
-export const db = new BpmnDb();
-export default db;
