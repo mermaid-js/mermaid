@@ -1,0 +1,11 @@
+---
+description: >-
+  classDiagram with backtick-quoted namespace and class identifiers containing special
+  characters (`A::B`, `IPC::Sender`), verifying backtick-escaped names parse correctly in
+  both namespace and relationship contexts.
+---
+classDiagram
+  namespace `A::B` {
+  class `IPC::Sender`
+  }
+  RenderProcessHost --|> `IPC::Sender`

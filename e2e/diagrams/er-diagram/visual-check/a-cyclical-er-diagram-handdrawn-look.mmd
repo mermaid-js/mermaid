@@ -1,0 +1,9 @@
+---
+description: A three-entity relationship cycle (A→B→C→A) under the handDrawn look.
+config:
+  look: handDrawn
+---
+erDiagram
+    A ||--|{ B : likes
+    B ||--|{ C : likes
+    C ||--|{ A : likes

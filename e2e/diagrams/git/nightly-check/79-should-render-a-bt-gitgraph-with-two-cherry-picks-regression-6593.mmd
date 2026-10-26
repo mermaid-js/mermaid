@@ -1,0 +1,22 @@
+---
+description: >-
+  Regression test for issue #6593: BT gitGraph with two separate cherry-picks from develop into
+  main at different points in the commit history, verifying repeated cherry-pick rendering.
+---
+gitGraph BT:
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"
+  checkout main
+  cherry-pick id:"C"
+  commit id:"FOUR"

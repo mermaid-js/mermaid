@@ -1,0 +1,15 @@
+---
+description: >-
+  Edge-case chart with a single category and a single bar value (75) in the
+  default vertical orientation with showDataLabel enabled, verifying data
+  label placement when there is only one bar to lay out. Vertical
+  counterpart to the horizontal single-bar variant.
+config:
+  xyChart:
+    showDataLabel: true
+---
+  xychart
+  title "Single Bar Chart"
+  x-axis Categories [A]
+  y-axis "Value" 0 --> 100
+  bar [75]

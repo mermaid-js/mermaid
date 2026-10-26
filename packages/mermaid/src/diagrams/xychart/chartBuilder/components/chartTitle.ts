@@ -15,6 +15,7 @@ import { TextDimensionCalculatorWithFont } from '../textDimensionCalculator.js';
 export class ChartTitle implements ChartComponent {
   private boundingRect: BoundingRect;
   private showChartTitle: boolean;
+  private titleWidth = 0;
   constructor(
     private textDimensionCalculator: TextDimensionCalculator,
     private chartConfig: XYChartConfig,
@@ -41,13 +42,13 @@ export class ChartTitle implements ChartComponent {
     const widthRequired = Math.max(titleDimension.width, availableSpace.width);
     const heightRequired = titleDimension.height + 2 * this.chartConfig.titlePadding;
     if (
-      titleDimension.width <= widthRequired &&
-      titleDimension.height <= heightRequired &&
+      heightRequired <= availableSpace.height &&
       this.chartConfig.showTitle &&
       this.chartData.title
     ) {
       this.boundingRect.width = widthRequired;
       this.boundingRect.height = heightRequired;
+      this.titleWidth = titleDimension.width;
       this.showChartTitle = true;
     }
 
@@ -55,6 +56,19 @@ export class ChartTitle implements ChartComponent {
       width: this.boundingRect.width,
       height: this.boundingRect.height,
     };
+  }
+  /**
+   * Centre the title over [start, end], shifted as needed to keep it inside the chart.
+   * The title has its own row above the plot and legend, so it may use the full chart width.
+   */
+  alignTo(start: number, end: number): void {
+    const halfWidth = Math.min(this.titleWidth, this.chartConfig.width) / 2;
+    const center = Math.min(
+      Math.max((start + end) / 2, halfWidth),
+      this.chartConfig.width - halfWidth
+    );
+    this.boundingRect.x = center - halfWidth;
+    this.boundingRect.width = halfWidth * 2;
   }
   getDrawableElements(): DrawableElem[] {
     const drawableElem: DrawableElem[] = [];
@@ -85,7 +99,7 @@ export function getChartTitleComponent(
   chartData: XYChartData,
   chartThemeConfig: XYChartThemeConfig,
   tmpSVGGroup: SVGGroup
-): ChartComponent {
+): ChartTitle {
   const textDimensionCalculator = new TextDimensionCalculatorWithFont(tmpSVGGroup);
   return new ChartTitle(textDimensionCalculator, chartConfig, chartData, chartThemeConfig);
 }

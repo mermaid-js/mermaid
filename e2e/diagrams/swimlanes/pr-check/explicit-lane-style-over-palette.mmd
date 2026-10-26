@@ -1,0 +1,21 @@
+---
+description: >-
+  Two lanes (Palette, Styled) under the redux-color theme's automatic lane
+  palette, where lane "Styled" also carries an explicit `style` statement —
+  checks that the explicit style takes precedence over the palette-assigned
+  colour.
+config:
+  theme: redux-color
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TD
+  subgraph Palette
+    A[Slot colour]
+  end
+  subgraph Styled
+    B[Own colour]
+  end
+  A --> B
+  style Styled fill:#00ff00,stroke:#0000ff

@@ -1,0 +1,16 @@
+---
+description: >-
+  Frontmatter config block sets treemap.valueFormat to '$0,0' (dollar sign
+  with thousands separator, no decimals). "Sales by Region" section with
+  four seven-figure leaf values, verifying currency plus thousands-
+  separator formatting configured through frontmatter config.
+config:
+  treemap:
+    valueFormat: '$0,0'
+---
+treemap-beta
+  "Sales by Region"
+    "North": 1234567
+    "South": 7654321
+    "East": 4567890
+    "West": 9876543
