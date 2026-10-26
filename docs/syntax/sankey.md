@@ -228,6 +228,22 @@ Bio-conversion,Solid,280.322
 Bio-conversion,Gas,81.144
 ```
 
+### Whitespace
+
+Leading and trailing whitespace around the header and each CSV record is ignored, including spaces and tabs. Lines containing only whitespace are treated as empty lines. Whitespace at line edges inside a multiline quoted field is kept; whitespace around the whole label is still trimmed.
+
+```mermaid-example
+sankey
+  "Pumped heat","Heating and cooling, homes",193.026
+  "Pumped heat","Heating and cooling, commercial",70.672
+```
+
+```mermaid
+sankey
+  "Pumped heat","Heating and cooling, homes",193.026
+  "Pumped heat","Heating and cooling, commercial",70.672
+```
+
 ### Commas
 
 If you need to have a comma, wrap it in double quotes:
