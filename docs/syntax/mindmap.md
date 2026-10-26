@@ -180,7 +180,7 @@ mindmap
 
 More shapes will be added, beginning with the shapes available in flowcharts.
 
-## Coloring by depth (v\<MERMAID_RELEASE_VERSION>+)
+## Coloring by depth (v12.2.0+)
 
 By default, mindmaps use a different color for each top-level branch. Descendants inherit their branch's color. Set `mindmap.colorBy` to `depth` to give all nodes at the same hierarchy level the same color, across every branch:
 
