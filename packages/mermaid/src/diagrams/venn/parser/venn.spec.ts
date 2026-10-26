@@ -239,6 +239,27 @@ describe('Venn diagram', function () {
     expect(() => venn.parse(str)).toThrow('unknown set identifier');
   });
 
+  test('bare title followed by a newline is a parse error, not a silent title theft', () => {
+    const str = `venn-beta
+title
+set A
+set B
+`;
+    expect(() => venn.parse(str)).toThrow();
+  });
+
+  test('title with text on the same line still works', () => {
+    const str = `venn-beta
+title My Diagram
+set A
+set B
+union A,B
+`;
+    venn.parse(str);
+    expect(db.getDiagramTitle()).toBe('My Diagram');
+    expect(db.getSubsetData()).toHaveLength(3);
+  });
+
   test('quoted identifiers', () => {
     const str = `venn-beta
         set "Foo Bar"
