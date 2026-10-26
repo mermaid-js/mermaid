@@ -162,4 +162,38 @@ describe('a link ending on a participant', () => {
     linkParticipantBands(layout);
     expect(layout.edges[0].points).toEqual(routed);
   });
+
+  it('leaves a flow to a lane to the router when the layout has no pools', () => {
+    const routed = [
+      { x: 50, y: 110 },
+      { x: 50, y: 150 },
+      { x: 0, y: 150 },
+      { x: 0, y: 110 },
+    ];
+    const layout = asLayout(
+      [band('l1', 40, 80, 'lane'), band('l2', 156, 80, 'lane'), inside('b', 'l1', 60)],
+      [link('toLane', 'b', 'l2', routed)]
+    );
+    linkParticipantBands(layout);
+    expect(layout.edges[0].points).toEqual([
+      { x: 50, y: 110 },
+      { x: 50, y: 150 },
+      { x: 0, y: 150 },
+      { x: 0, y: 110 },
+    ]);
+  });
+
+  it('still links a node to a lane when the layout has pools', () => {
+    const layout = asLayout(
+      [
+        band('p1', 40, 80, 'pool'),
+        band('p2', 156, 80, 'pool'),
+        { ...band('l2', 156, 80, 'lane'), parentId: 'p2' } as Node,
+        inside('a', 'p1', 40),
+      ],
+      [link('toLane', 'a', 'l2')]
+    );
+    linkParticipantBands(layout);
+    expect(layout.edges[0].points).toHaveLength(2);
+  });
 });

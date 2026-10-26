@@ -60,3 +60,43 @@ describe('a pool in the swimlane pipeline', () => {
     expect(shop.x! - shop.width! / 2).toBeLessThan(sales.x! - sales.width! / 2);
   });
 });
+
+/** Two plain lanes, or the same two inside one pool, with a flow from a node to the second lane. */
+function flowToLane(pooled: boolean): LayoutData {
+  const holder = pooled ? 'shop' : undefined;
+  return {
+    nodes: [
+      ...(pooled ? [pool('shop')] : []),
+      lane('L1', holder),
+      lane('L2', holder),
+      box('A', 'L1'),
+      box('B', 'L1'),
+      box('C', 'L2'),
+    ],
+    edges: [
+      { id: 'eAB', start: 'A', end: 'B', type: 'normal' },
+      { id: 'eBC', start: 'B', end: 'C', type: 'normal' },
+      { id: 'eBL2', start: 'B', end: 'L2', type: 'normal' },
+    ],
+    config: { flowchart: { nodeSpacing: 40, rankSpacing: 80 } },
+    direction: 'TB',
+  } as unknown as LayoutData;
+}
+
+describe('a flow to a lane', () => {
+  it('is routed round the nodes when the layout has no pool', () => {
+    const layout = flowToLane(false);
+    runSwimlaneLayoutCore(layout);
+
+    const points = layout.edges.find((edge) => edge.id === 'eBL2')!.points!;
+    expect(points.length).toBeGreaterThan(2);
+  });
+
+  it('runs straight between the facing borders when the layout has a pool', () => {
+    const layout = flowToLane(true);
+    runSwimlaneLayoutCore(layout);
+
+    const points = layout.edges.find((edge) => edge.id === 'eBL2')!.points!;
+    expect(points).toHaveLength(2);
+  });
+});

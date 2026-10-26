@@ -1,5 +1,5 @@
 import type { LayoutData } from '../../../types.js';
-import { buildLaneModel } from '../lanes.js';
+import { buildLaneModel, readLaneRole } from '../lanes.js';
 
 type LayoutNode = NonNullable<LayoutData['nodes']>[number];
 type LayoutEdge = NonNullable<LayoutData['edges']>[number];
@@ -74,8 +74,42 @@ function runBetween(from: Box, to: Box, index: number, count: number): [Point, P
   return null;
 }
 
+type EndsOf = (edge: LayoutEdge) => [string, string] | null;
+
+function drawRuns(
+  linksPerPair: Map<string, LayoutEdge[]>,
+  endsOf: EndsOf,
+  byId: Map<string, LayoutNode>
+): void {
+  for (const links of linksPerPair.values()) {
+    for (const [index, edge] of links.entries()) {
+      const ends = endsOf(edge);
+      if (!ends) {
+        continue;
+      }
+      const from = boxOf(byId.get(ends[0]));
+      const to = boxOf(byId.get(ends[1]));
+      if (!from || !to) {
+        continue;
+      }
+      const run = runBetween(from, to, index, links.length);
+      if (run) {
+        (edge as { points?: Point[] }).points = run;
+      }
+    }
+  }
+}
+
+/**
+ * Draws each flow that ends on a pool or a lane as a straight run between the facing borders.
+ * A layout without a pool is left alone, so a plain swimlane routes a flow to a lane as it
+ * always has.
+ */
 export function linkParticipantBands(layout: LayoutData): void {
   const nodes = layout.nodes ?? [];
+  if (!nodes.some((node) => readLaneRole(node) === 'pool')) {
+    return;
+  }
   const laneModel = buildLaneModel(nodes);
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const isBand = (id: string) => laneModel.isPool(id) || laneModel.isLane(id);
@@ -103,21 +137,5 @@ export function linkParticipantBands(layout: LayoutData): void {
     linksPerPair.set(key, [...(linksPerPair.get(key) ?? []), edge]);
   }
 
-  for (const links of linksPerPair.values()) {
-    for (const [index, edge] of links.entries()) {
-      const ends = endsOf(edge);
-      if (!ends) {
-        continue;
-      }
-      const from = boxOf(byId.get(ends[0]));
-      const to = boxOf(byId.get(ends[1]));
-      if (!from || !to) {
-        continue;
-      }
-      const run = runBetween(from, to, index, links.length);
-      if (run) {
-        (edge as { points?: Point[] }).points = run;
-      }
-    }
-  }
+  drawRuns(linksPerPair, endsOf, byId);
 }
