@@ -1,25 +1,12 @@
 import type { Selection } from 'd3';
-import type { Edge } from '../types.js';
+import { EDGE_STEP_DURATION, getStepDuration, isStepEdge, type Edge } from '../types.js';
 import type { SVGGroup } from '../../diagram-api/types.js';
-
-/** Seconds the travelling dot spends on one step when `flowchart.stepDuration` is not set. */
-export const EDGE_STEP_DURATION = 1;
 
 export interface EdgeStepTiming {
   begin: number;
   dur: number;
   gap: number;
 }
-
-/** True when the edge takes part in the step animation (a positive integer `step`). */
-export const isStepEdge = (
-  edge: Pick<Edge, 'step'>
-): edge is Pick<Edge, 'step'> & { step: number } =>
-  typeof edge.step === 'number' && Number.isInteger(edge.step) && edge.step > 0;
-
-/** The configured step length in seconds, or the default when it is not a positive number. */
-export const getStepDuration = (value: unknown): number =>
-  typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : EDGE_STEP_DURATION;
 
 /** When the dot for `step` starts, how long it runs, and how long it waits before the next loop. */
 export const getEdgeStepTiming = (
@@ -73,10 +60,13 @@ export const escapeCssIdentifier = (value: string) =>
 const ensureReducedMotionStyle = (elem: SVGGroup, diagramId: string) => {
   const node = elem.node();
   const svg = node?.ownerSVGElement ?? node?.closest?.('svg') ?? node;
-  if (!svg || svg.querySelector('style.edge-step-style')) {
+  const scopeId = diagramId || svg?.getAttribute('id');
+  // Never emit an unscoped rule: it would hide the dots of every other diagram on the page.
+  if (!svg || !scopeId || svg.querySelector('style.edge-step-style')) {
     return;
   }
-  const scope = diagramId ? `#${escapeCssIdentifier(diagramId)} ` : '';
+  const scope = `#${escapeCssIdentifier(scopeId)} `;
+  // Appended as a raw <style>, outside compileCSS/stylis, so it must carry the diagram id scope itself.
   const style = svg.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'style');
   style.setAttribute('class', 'edge-step-style');
   style.textContent = `@media (prefers-reduced-motion: reduce) { ${scope}.edge-step-dot, ${scope}.edge-step-highlight { display: none; } }`;
@@ -89,6 +79,9 @@ const showWhileStepPlays = <E extends SVGElement>(
   motionId: string,
   dur: number
 ) => {
+  // The parked transform keeps the target hidden at the path start. While the step plays, this
+  // animateTransform replaces it with scale(1) (it is not additive), dropping the translate so
+  // animateMotion alone positions the dot; fill="remove" restores the parked transform after.
   target
     .append('animateTransform')
     .attr('attributeName', 'transform')
@@ -138,10 +131,11 @@ export const insertEdgeStepDot = (
     .append('circle')
     .attr('class', 'edge-step-dot')
     .attr('r', 4)
+    .attr('aria-hidden', 'true')
     .attr('transform', parked)
     .attr('data-step', edge.step);
   if (fill) {
-    dot.attr('style', `fill:${fill};stroke:none`);
+    dot.attr('fill', fill).attr('stroke', 'none');
   }
   dot
     .append('animateMotion')
