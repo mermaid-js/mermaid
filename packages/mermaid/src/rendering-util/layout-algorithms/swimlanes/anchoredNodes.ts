@@ -184,33 +184,41 @@ export interface AnchorFootprint {
   beyond: number;
 }
 
-export function anchorFootprints(
-  nodes: Node[],
-  direction?: Direction
-): Map<string, AnchorFootprint> {
-  const side = defaultAnchorSide('final', direction ?? 'TB');
+function footprintOf(bucket: BucketEntry[], side: AnchorSide): AnchorFootprint {
   const horizontal = side === 'top' || side === 'bottom';
   const alongBorder = (node: Node) => (horizontal ? (node.width ?? 0) : (node.height ?? 0));
   const reach = (node: Node) => (horizontal ? (node.height ?? 0) : (node.width ?? 0));
+  const { offsets } = packAlongBorder(bucket.map((entry) => alongBorder(entry.node)));
+  let before = 0;
+  let after = 0;
+  let beyond = 0;
+  bucket.forEach((entry, position) => {
+    const clearance = entry.anchor.gap ?? 0;
+    const half = alongBorder(entry.node) / 2;
+    const centre = centreAlongBorder(offsets[position], horizontal, clearance, half);
+    before = Math.max(before, half - centre);
+    after = Math.max(after, centre + half);
+    beyond = Math.max(beyond, clearance > 0 ? clearance + reach(entry.node) : 0);
+  });
+  return { before, after, beyond };
+}
 
-  const footprints = new Map<string, AnchorFootprint>();
-  for (const bucket of bucketByHostAndSide(nodes, () => side).values()) {
+/**
+ * The room each run of stood-off nodes needs, per host and per side the run stands on: a
+ * node's own `side` when it has one, otherwise the side its direction defaults to.
+ */
+export function anchorFootprints(
+  nodes: Node[],
+  direction?: Direction
+): Map<string, Partial<Record<AnchorSide, AnchorFootprint>>> {
+  const fallback = defaultAnchorSide('final', direction ?? 'TB');
+  const footprints = new Map<string, Partial<Record<AnchorSide, AnchorFootprint>>>();
+  for (const bucket of bucketByHostAndSide(nodes, (anchor) => anchor.side ?? fallback).values()) {
     if (!bucket.some((entry) => entry.anchor.gap)) {
       continue;
     }
-    const { offsets } = packAlongBorder(bucket.map((entry) => alongBorder(entry.node)));
-    let before = 0;
-    let after = 0;
-    let beyond = 0;
-    bucket.forEach((entry, position) => {
-      const clearance = entry.anchor.gap ?? 0;
-      const half = alongBorder(entry.node) / 2;
-      const centre = centreAlongBorder(offsets[position], horizontal, clearance, half);
-      before = Math.max(before, half - centre);
-      after = Math.max(after, centre + half);
-      beyond = Math.max(beyond, clearance > 0 ? clearance + reach(entry.node) : 0);
-    });
-    footprints.set(bucket[0].hostId, { before, after, beyond });
+    const { hostId, side } = bucket[0];
+    footprints.set(hostId, { ...footprints.get(hostId), [side]: footprintOf(bucket, side) });
   }
   return footprints;
 }

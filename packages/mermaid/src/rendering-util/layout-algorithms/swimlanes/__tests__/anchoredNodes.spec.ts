@@ -277,7 +277,11 @@ describe('standing a node off its host', () => {
   it('reports the room a run needs, so a caller can reserve it', () => {
     const nodes = [host('h'), stood('a', 20, { width: 40, height: 60 })];
     // Across the page a node stands below its host, so it reaches by its height.
-    expect(anchorFootprints(nodes, 'LR').get('h')).toEqual({ before: 20, after: 20, beyond: 80 });
+    expect(anchorFootprints(nodes, 'LR').get('h')?.bottom).toEqual({
+      before: 20,
+      after: 20,
+      beyond: 80,
+    });
   });
 
   it('measures the reach along the way the diagram runs', () => {
@@ -287,7 +291,11 @@ describe('standing a node off its host', () => {
     // and whatever the layout put in the space it was not given is drawn over. The node is
     // also moved clear of the flow through the host's middle, so all of it is reserved
     // before the host's centre: its height plus the 8 it stands clear by.
-    expect(anchorFootprints(nodes, 'TB').get('h')).toEqual({ before: 68, after: 0, beyond: 60 });
+    expect(anchorFootprints(nodes, 'TB').get('h')?.right).toEqual({
+      before: 68,
+      after: 0,
+      beyond: 60,
+    });
   });
 
   it('leaves a node sitting on the border out of the reserved room', () => {
@@ -386,7 +394,9 @@ describe('reserving the room an anchored run is placed in', () => {
       const nodes = [host('h'), ...fixtures[name]()];
       const layout = asLayout(nodes);
       pinAnchoredNodes(layout, { space: 'final', direction });
-      const footprint = anchorFootprints(nodes, direction).get('h')!;
+      const footprint = anchorFootprints(nodes, direction).get('h')![
+        defaultAnchorSide('final', direction)
+      ]!;
       const hostNode = nodes[0];
 
       const horizontal = alongAxis(direction) === 'x';
@@ -412,7 +422,64 @@ describe('reserving the room an anchored run is placed in', () => {
     const nodes = [host('h'), stood('a', { width: 40, height: 60 })];
     pinAnchoredNodes(asLayout(nodes), { space: 'final', direction: 'TB' });
     expect(nodes[1].y! - 30).toBe(-18);
-    expect(50 - anchorFootprints(nodes, 'TB').get('h')!.before).toBeLessThanOrEqual(-18);
+    expect(50 - anchorFootprints(nodes, 'TB').get('h')!.right!.before).toBeLessThanOrEqual(-18);
+  });
+});
+
+describe('reserving the room on the side a node is anchored to', () => {
+  const stoodOn = (side: string) =>
+    anchored('a', { hostId: 'h', gap: 20, side }, { width: 40, height: 60 });
+
+  const ALONG_X = new Set<string>(['top', 'bottom']);
+
+  const OUTWARD_SIGN = { top: -1, bottom: 1, left: -1, right: 1 } as const;
+
+  describe.each([
+    ['TB', 'left', { before: 68, after: 0, beyond: 60 }],
+    ['TB', 'top', { before: 20, after: 20, beyond: 80 }],
+    ['LR', 'left', { before: 68, after: 0, beyond: 60 }],
+    ['LR', 'top', { before: 20, after: 20, beyond: 80 }],
+  ] as const)('running %s with side %s', (direction, side, expected) => {
+    it('reserves the room on that side, and on no other', () => {
+      const nodes = [host('h'), stoodOn(side)];
+      const reserved = anchorFootprints(nodes, direction).get('h');
+      expect(reserved?.[side]).toEqual(expected);
+      expect(Object.keys(reserved ?? {})).toEqual([side]);
+    });
+
+    it('holds the placed node inside the room reserved on that side', () => {
+      const nodes = [host('h'), stoodOn(side)];
+      pinAnchoredNodes(asLayout(nodes), { space: 'final', direction });
+      const footprint = anchorFootprints(nodes, direction).get('h')![side]!;
+      const [hostNode, placed] = nodes;
+
+      const horizontal = ALONG_X.has(side);
+      const centre = horizontal ? hostNode.x! : hostNode.y!;
+      const half = (horizontal ? placed.width! : placed.height!) / 2;
+      const at = horizontal ? placed.x! : placed.y!;
+      expect(at - half).toBeGreaterThanOrEqual(centre - footprint.before);
+      expect(at + half).toBeLessThanOrEqual(centre + footprint.after);
+
+      const hostEdge = horizontal ? hostNode.height! / 2 : hostNode.width! / 2;
+      const hostCentre = horizontal ? hostNode.y! : hostNode.x!;
+      const reach = (horizontal ? placed.height! : placed.width!) / 2;
+      const placedCentre = horizontal ? placed.y! : placed.x!;
+      const sign = OUTWARD_SIGN[side];
+      const outer = (placedCentre + sign * reach - (hostCentre + sign * hostEdge)) * sign;
+      expect(outer).toBeGreaterThanOrEqual(0);
+      expect(outer).toBeLessThanOrEqual(footprint.beyond);
+    });
+  });
+
+  it('reserves each side of a host as a run of its own', () => {
+    const nodes = [
+      host('h'),
+      anchored('a', { hostId: 'h', gap: 20, side: 'left' }, { width: 40, height: 60 }),
+      anchored('b', { hostId: 'h', gap: 20, side: 'top' }, { width: 120, height: 30 }),
+    ];
+    const reserved = anchorFootprints(nodes, 'TB').get('h');
+    expect(reserved?.left).toEqual({ before: 68, after: 0, beyond: 60 });
+    expect(reserved?.top).toEqual({ before: 60, after: 60, beyond: 50 });
   });
 });
 
@@ -693,7 +760,7 @@ describe('keeping the runs of different hosts and borders apart', () => {
     ];
     // Across the page, the node stood off needs 20 + 60 beyond the border. The one sitting
     // on the border stands no gap off, so its own 200 is not room it asks for.
-    expect(anchorFootprints(nodes, 'LR').get('h')?.beyond).toBe(80);
+    expect(anchorFootprints(nodes, 'LR').get('h')?.bottom?.beyond).toBe(80);
   });
 });
 
