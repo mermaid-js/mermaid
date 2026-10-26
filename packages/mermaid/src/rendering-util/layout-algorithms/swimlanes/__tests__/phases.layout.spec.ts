@@ -185,6 +185,24 @@ describe('phases in the swimlane layout', () => {
     );
   });
 
+  it('keeps the bands off the middle phase when a labelled edge jumps over it', () => {
+    // The label of an edge that spans two ranks sits in a gap of the middle phase, not in the
+    // source phase, so it must not stretch the first band into the second.
+    const middle = 'subgraph l3\n  b2@{ phase: p2 }\nend\nb --> b2 --> c';
+    const layout = laidOut(source('TB', `${middle}\na -- "needs review" --> c`));
+
+    const [first, second, third] = computePhaseBands(layout);
+    const middleNodes = span(layout, ['b', 'b2'], false);
+
+    const label = layout.nodes.find((node) => node.id.startsWith('edge-label-'));
+    expect(label?.y).toBeGreaterThanOrEqual(first.title.y);
+    expect(label?.y).toBeLessThanOrEqual(first.title.y + first.title.height);
+    expect(first.title.y + first.title.height).toBeLessThanOrEqual(middleNodes.start);
+    expect(second.title.y).toBeLessThanOrEqual(middleNodes.start);
+    expect(second.title.y + second.title.height).toBeGreaterThanOrEqual(middleNodes.end);
+    expect(third.title.y).toBeGreaterThanOrEqual(middleNodes.end);
+  });
+
   it('puts a node that names no phase after every phase', () => {
     const layout = laidOut(source('TB', 'subgraph l3\n  z\nend'));
 
