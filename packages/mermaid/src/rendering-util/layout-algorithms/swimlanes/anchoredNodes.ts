@@ -132,6 +132,9 @@ interface BucketEntry {
   hostId: string;
 }
 
+const hasUsableSize = (node: Node) =>
+  [node.width, node.height].every((size) => size === undefined || Number.isFinite(size));
+
 function bucketByHostAndSide(
   nodes: Node[],
   sideOf: (anchor: NodeAnchor) => AnchorSide
@@ -140,7 +143,7 @@ function bucketByHostAndSide(
   const buckets = new Map<string, BucketEntry[]>();
   nodes.forEach((node, index) => {
     const anchor = readAnchor(node);
-    if (!anchor) {
+    if (!anchor || !hasUsableSize(node)) {
       return;
     }
     const hostId = resolveAnchorHostId(node.id, byId);
@@ -392,44 +395,50 @@ function attachFaceOf(node: Node | undefined): AnchorSide | undefined {
     : undefined;
 }
 
+const isFiniteNumber = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value);
+
+const canRoute = (node: Node, host: Node) =>
+  hasUsableSize(node) && [node.x, node.y, host.x, host.y].every(isFiniteNumber);
+
+const pointAt = (alongX: boolean, along: number, across: number) =>
+  alongX ? { x: along, y: across } : { x: across, y: along };
+
+const sizeAlong = (node: Node, alongX: boolean) => (alongX ? node.width : node.height) ?? 0;
+
+const leavesSideways = (face: AnchorSide | undefined, alongX: boolean) =>
+  alongX ? face === 'left' || face === 'right' : face === 'top' || face === 'bottom';
+
+function exitAlong(centre: number, half: number, face: AnchorSide | undefined, sideways: boolean) {
+  if (!sideways) {
+    return centre;
+  }
+  return centre + (face === 'left' || face === 'top' ? -(half + STUB_REACH) : half + STUB_REACH);
+}
+
 function stubToHost(node: Node, host: Node, pin: AnchorPin): { x: number; y: number }[] | null {
-  const nx = node.x;
-  const ny = node.y;
-  const hx = host.x;
-  const hy = host.y;
-  if (![nx, ny, hx, hy].every((v) => typeof v === 'number' && Number.isFinite(v))) {
+  if (!canRoute(node, host)) {
     return null;
   }
   const alongX = pin.side === 'top' || pin.side === 'bottom';
-  const hostAlong = alongX ? hx! : hy!;
-  const hostHalf = ((alongX ? host.width : host.height) ?? 0) / 2;
-  const reach = Math.max(0, hostHalf - BORDER_INSET);
+  const [nAlong, nAcross] = alongX ? [node.x!, node.y!] : [node.y!, node.x!];
+  const [hAlong, hAcross] = alongX ? [host.x!, host.y!] : [host.y!, host.x!];
+  const reach = Math.max(0, sizeAlong(host, alongX) / 2 - BORDER_INSET);
 
   const face = attachFaceOf(node);
-  const sideways = alongX
-    ? face === 'left' || face === 'right'
-    : face === 'top' || face === 'bottom';
-  const half = ((alongX ? node.width : node.height) ?? 0) / 2;
-  const exit = sideways
-    ? (alongX ? nx! : ny!) +
-      (face === 'left' || face === 'top' ? -(half + STUB_REACH) : half + STUB_REACH)
-    : alongX
-      ? nx!
-      : ny!;
-  const enter = clamp(exit, hostAlong - reach, hostAlong + reach);
-  const mid = alongX ? (ny! + hy!) / 2 : (nx! + hx!) / 2;
+  const sideways = leavesSideways(face, alongX);
+  const exit = exitAlong(nAlong, sizeAlong(node, alongX) / 2, face, sideways);
+  const enter = clamp(exit, hAlong - reach, hAlong + reach);
+  const mid = (nAcross + hAcross) / 2;
 
-  const at = (along: number, across: number) =>
-    alongX ? { x: along, y: across } : { x: across, y: along };
-
-  const path = [at(alongX ? nx! : ny!, alongX ? ny! : nx!)];
+  const path = [pointAt(alongX, nAlong, nAcross)];
   if (sideways) {
-    path.push(at(exit, alongX ? ny! : nx!));
+    path.push(pointAt(alongX, exit, nAcross));
   }
   if (Math.abs(enter - exit) >= 1) {
-    path.push(at(exit, mid), at(enter, mid));
+    path.push(pointAt(alongX, exit, mid), pointAt(alongX, enter, mid));
   }
-  path.push(at(enter, alongX ? hy! : hx!));
+  path.push(pointAt(alongX, enter, hAcross));
   return path;
 }
 
