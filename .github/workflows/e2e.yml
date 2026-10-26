@@ -572,7 +572,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p e2e/argos-baseline
-          cp -r e2e/sheets/. e2e/argos-baseline/
+          # Sheets are only built when GROUP_ARGOS_IMAGES is 'true'.
+          if [ -d e2e/sheets ]; then cp -r e2e/sheets/. e2e/argos-baseline/; fi
           cp -r e2e/screenshots/. e2e/argos-baseline/
 
           # Round-robin the leaf directories (those that directly hold images)
