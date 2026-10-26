@@ -66,6 +66,12 @@ export function resolveAnchorHostId(id: string, byId: Map<string, Node>): string
   return undefined;
 }
 
+/** For a validator's `isAttached`: whether `nodeId` is pinned to `toId` through its anchor chain. */
+export function isAnchoredTo(nodes: Node[]): (nodeId: string, toId: string) => boolean {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  return (nodeId, toId) => resolveAnchorHostId(nodeId, byId) === toId;
+}
+
 export function collectAnchoredIds(nodes: Node[]): Set<string> {
   const byId = new Map(nodes.map((node) => [node.id, node]));
   const ids = new Set<string>();
