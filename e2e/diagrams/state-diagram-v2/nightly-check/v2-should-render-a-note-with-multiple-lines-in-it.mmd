@@ -1,0 +1,18 @@
+---
+description: >-
+  A single state (State1) with a `note right of` block spanning five
+  literal text lines, testing multi-line note rendering (as distinct from
+  `<br>`-based line breaks).
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  State1: The state with a note
+  note right of State1
+  Important information! You
+  can write
+  notes with multiple lines...
+  Here is another line...
+  And another line...
+  end note

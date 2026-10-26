@@ -1,0 +1,16 @@
+---
+description: >-
+  The same fishbone diagram as should-render-usemaxwidth-true.mmd (effect
+  Blurry Photo with Process/User cause branches, each nested one level
+  deeper with one sub-cause), rendered with ishikawa.useMaxWidth explicitly
+  set to false — renders at its natural fixed pixel width instead.
+config:
+  ishikawa:
+    useMaxWidth: false
+---
+ishikawa-beta
+    Blurry Photo
+        Process
+            Out of focus
+        User
+            Shaky hands

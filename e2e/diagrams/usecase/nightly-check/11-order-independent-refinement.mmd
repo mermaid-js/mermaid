@@ -1,0 +1,14 @@
+---
+description: >-
+  Relationships declared before the actor/use-case declarations they
+  reference (including a bare string-literal use case, "Request support",
+  that's never explicitly declared or connected) — checks that element
+  order in the source doesn't affect the rendered diagram.
+---
+usecase-beta
+    Customer --> Login
+    Customer --> Reset
+
+    actor Customer("Customer")
+    Login[Sign in]
+    "Request support"

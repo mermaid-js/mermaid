@@ -1,0 +1,24 @@
+---
+description: >-
+  Sets an outer diagram direction (direction LR) with a nested subgraph
+  ("domain") overriding it with its own direction TB, plus a relationship
+  from a standalone PRODUCT entity to the subgraph itself and an internal
+  CUSTOMER-ORDER relationship, verifying per-subgraph direction overrides
+  layout independently of the parent direction.
+config:
+  logLevel: 1
+---
+erDiagram
+  direction LR
+
+  subgraph domain
+  direction TB
+
+  CUSTOMER
+  ORDER
+  end
+
+  PRODUCT
+
+  PRODUCT||--o{ domain: links
+  CUSTOMER ||--o{ ORDER : places
