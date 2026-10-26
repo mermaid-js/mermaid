@@ -1,0 +1,14 @@
+---
+description: >-
+  A minimal 1 --> 2 flow using bare numeric state ids, with a transition
+  label containing an escaped special character (`#colon;`) and braces/
+  quotes - tests label width/length calculation with special characters
+  and numeric ids.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram-v2
+  [*] --> 1
+  1 --> 2: test({ foo#colon; 'far' })
+  2 --> [*]

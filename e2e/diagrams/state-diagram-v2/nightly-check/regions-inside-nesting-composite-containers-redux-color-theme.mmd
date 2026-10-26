@@ -1,0 +1,24 @@
+---
+description: >-
+  State diagram composite-container colouring: a concurrency region (Concurrent)
+  nested inside a composite (Machine), alongside a separately-nested composite
+  (Finish > Deep) — verifies concurrent regions get matching colours while
+  unrelated composites stay distinct. Rendered under the "redux-color" theme.
+config:
+  theme: redux-color
+---
+stateDiagram-v2
+    state Machine {
+      state Concurrent {
+        [*] --> Left
+        --
+        [*] --> Right
+      }
+      Concurrent --> Finish
+      state Finish {
+        [*] --> Flush
+        state Deep {
+          [*] --> Done
+        }
+      }
+    }

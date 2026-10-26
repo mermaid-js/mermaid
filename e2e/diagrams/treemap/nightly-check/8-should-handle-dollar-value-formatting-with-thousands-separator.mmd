@@ -1,0 +1,20 @@
+---
+description: >-
+  Frontmatter sets treemap.valueFormat to '$0,0' (dollar sign with
+  thousands separator, no decimals). Uses the `treemap` diagram keyword
+  (not treemap-beta) with a "Budget" hierarchy of Operations/Marketing
+  sections and multiple six-figure leaf values, verifying currency
+  formatting with thousands separators renders correctly.
+config:
+  treemap:
+    valueFormat: '$0,0'
+---
+treemap
+  "Budget"
+    "Operations"
+      "Salaries": 700000
+      "Equipment": 200000
+      "Supplies": 100000
+    "Marketing"
+      "Advertising": 400000
+      "Events": 100000

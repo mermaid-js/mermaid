@@ -1,0 +1,15 @@
+---
+description: >-
+  Regression test for frontmatter YAML parsing when the config value
+  (theme: forest) is written without quotes, verifying the diagram still
+  renders correctly rather than failing to parse.
+config:
+  theme: forest
+---
+graph TD
+  A(Start) --> B[/Another/]
+  A[/Another/] --> C[End]
+  subgraph section
+  B
+  C
+  end
