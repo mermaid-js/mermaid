@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { select } from 'd3';
-import { isStepEdge, type Edge } from '../types.js';
+import { getStepDuration, isStepEdge, type Edge } from '../types.js';
 import {
   escapeCssIdentifier,
   getEdgeStepTiming,
-  getStepDuration,
   insertEdgeStepDot,
   toAnimationId,
 } from './edgeStepAnimation.js';

@@ -1,18 +1,11 @@
-import { isStepEdge, type Edge } from '../types.js';
+import { EDGE_STEP_DURATION, getStepDuration, isStepEdge, type Edge } from '../types.js';
 import type { SVGGroup } from '../../diagram-api/types.js';
-
-/** Seconds the travelling dot spends on one step when `flowchart.stepDuration` is not set. */
-export const EDGE_STEP_DURATION = 1;
 
 export interface EdgeStepTiming {
   begin: number;
   dur: number;
   gap: number;
 }
-
-/** The configured step length in seconds, or the default when it is not a positive number. */
-export const getStepDuration = (value: unknown): number =>
-  typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : EDGE_STEP_DURATION;
 
 /** When the dot for `step` starts, how long it runs, and how long it waits before the next loop. */
 export const getEdgeStepTiming = (
