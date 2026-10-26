@@ -5,7 +5,12 @@ import { buildLayersFromRanks } from './phase0.helpers.js';
 export interface SwimlanePhase {
   id: string;
   label: string;
+  /** Room the drawn title needs along the flow, in px; set once the title is measured. */
+  titleExtent?: number;
 }
+
+/** Extra room, in px, a phase asks for along the flow, by phase id. */
+export type PhaseGrowth = Record<string, number>;
 
 export interface PhaseAssignment {
   phases: SwimlanePhase[];
@@ -95,4 +100,42 @@ export function enforcePhaseBands(
     rankOf,
     dummy: layering.dummy,
   };
+}
+
+/**
+ * Widens the gaps around each band that asks to grow. A gap is shared by the two bands it
+ * separates, so each side counts half; a band at the end of the flow has one gap, which then
+ * carries the whole growth twice over. A gap two bands ask for takes the larger request.
+ */
+export function growPhaseGaps(
+  gaps: number[],
+  layers: NodeId[][],
+  assignment: PhaseAssignment,
+  isNode: (id: NodeId) => boolean,
+  growth: PhaseGrowth
+): void {
+  const bandOfLayer = layers.map((layer) => {
+    const node = layer.find(isNode);
+    return node === undefined ? undefined : assignment.bandOf(node);
+  });
+  const requested = gaps.map(() => 0);
+  for (const [band, phase] of assignment.phases.entries()) {
+    const first = bandOfLayer.indexOf(band);
+    const last = bandOfLayer.lastIndexOf(band);
+    const need = growth[phase.id];
+    if (first < 0 || !need) {
+      continue;
+    }
+    const before = first > 0 ? first - 1 : undefined;
+    const after = last < layers.length - 1 ? last : undefined;
+    const share = before !== undefined && after !== undefined ? need : 2 * need;
+    for (const gap of [before, after]) {
+      if (gap !== undefined) {
+        requested[gap] = Math.max(requested[gap], share);
+      }
+    }
+  }
+  for (const [gap, extra] of requested.entries()) {
+    gaps[gap] += extra;
+  }
 }

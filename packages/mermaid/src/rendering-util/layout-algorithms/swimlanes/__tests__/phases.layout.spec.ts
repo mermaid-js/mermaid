@@ -8,7 +8,13 @@ import { prepareLayoutForSwimlanes } from '../helpers.js';
 import { runSwimlaneLayoutCore } from '../layoutCore.js';
 import { reset, setConfig } from '../../../../config.js';
 import { createText } from '../../../createText.js';
-import { PHASE_TITLE_THICKNESS, computePhaseBands, paintPhaseBands } from '../phaseBands.js';
+import {
+  PHASE_TITLE_MARGIN,
+  PHASE_TITLE_THICKNESS,
+  computePhaseBands,
+  measurePhaseTitles,
+  paintPhaseBands,
+} from '../phaseBands.js';
 
 const NODE_WIDTH = 100;
 const NODE_HEIGHT = 40;
@@ -36,7 +42,11 @@ const source = (direction: string, extra = '') =>
     extra,
   ].join('\n');
 
-const laidOut = (text: string, swimlane: Record<string, unknown> = {}): LayoutData => {
+const laidOut = (
+  text: string,
+  swimlane: Record<string, unknown> = {},
+  titleExtents: Record<string, number> = {}
+): LayoutData => {
   const flowDb = new FlowDB();
   flowDb.setGen('gen-2');
   flow.parser.yy = flowDb;
@@ -49,6 +59,13 @@ const laidOut = (text: string, swimlane: Record<string, unknown> = {}): LayoutDa
     ...layout.config,
     flowchart: { nodeSpacing: NODE_SPACING, rankSpacing: RANK_SPACING },
     swimlane,
+  };
+  layout.other = {
+    ...layout.other,
+    phases: layout.other?.phases?.map((phase: { id: string }) => ({
+      ...phase,
+      titleExtent: titleExtents[phase.id],
+    })),
   };
   prepareLayoutForSwimlanes(layout);
   for (const node of layout.nodes) {
@@ -274,6 +291,50 @@ const stubTextMeasurement = () => {
   };
 };
 
+describe('phase bands that must hold a title', () => {
+  const LONG_TITLE = 900;
+  const extentOf = (band: ReturnType<typeof computePhaseBands>[number]) =>
+    band.titleReadsUpward ? band.title.height : band.title.width;
+
+  it.each(DIRECTIONS)('grows a long first, middle and last title to fit in %s', (direction) => {
+    for (const long of ['p1', 'p2', 'p3']) {
+      const bands = computePhaseBands(laidOut(source(direction), {}, { [long]: LONG_TITLE }));
+
+      const band = bands.find(({ id }) => id === long)!;
+      expect(extentOf(band), `${direction} ${long}`).toBeGreaterThanOrEqual(LONG_TITLE - 0.5);
+    }
+  });
+
+  it.each(DIRECTIONS)('keeps the neighbouring bands apart in %s', (direction) => {
+    const bands = computePhaseBands(laidOut(source(direction), {}, { p2: LONG_TITLE }));
+    const startOf = (band: (typeof bands)[number]) =>
+      band.titleReadsUpward ? band.title.y : band.title.x;
+
+    const ordered = [...bands].sort((a, b) => startOf(a) - startOf(b));
+    for (const [index, band] of ordered.slice(0, -1).entries()) {
+      expect(startOf(band) + extentOf(band)).toBeLessThanOrEqual(startOf(ordered[index + 1]) + 0.5);
+    }
+  });
+
+  it('lays a diagram out as before when every title fits', () => {
+    const plain = laidOut(source('TB'));
+    const short = laidOut(source('TB'), {}, { p1: 10, p2: 10, p3: 10 });
+
+    expect(short.nodes.map(({ id, x, y }) => [id, x, y])).toEqual(
+      plain.nodes.map(({ id, x, y }) => [id, x, y])
+    );
+  });
+
+  it('lays out the same diagram twice with the same result', () => {
+    const once = laidOut(source('LR'), {}, { p2: LONG_TITLE });
+    const twice = laidOut(source('LR'), {}, { p2: LONG_TITLE });
+
+    expect(once.nodes.map(({ id, x, y }) => [id, x, y])).toEqual(
+      twice.nodes.map(({ id, x, y }) => [id, x, y])
+    );
+  });
+});
+
 describe('painting phase bands', () => {
   let restoreMeasurement: () => void;
   beforeEach(() => {
@@ -335,6 +396,21 @@ describe('painting phase bands', () => {
     const root = await paint('swimlane-beta\nsubgraph l1\n  a\nend');
 
     expect(all(root, '.swimlane-phases')).toHaveLength(0);
+  });
+
+  it('measures each title as its width and a margin at both ends', async () => {
+    const layout = laidOut(source('TB'));
+    document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"><g id="root"></g></svg>';
+    const root = document.querySelector<SVGGElement>('#root')!;
+
+    await measurePhaseTitles(layout, select(root));
+
+    expect(layout.other.phases.map((phase: { titleExtent: number }) => phase.titleExtent)).toEqual(
+      ['Intake', 'Review', 'Closeout'].map(
+        (title) => title.length * CHAR_WIDTH + 2 * PHASE_TITLE_MARGIN
+      )
+    );
+    expect(root.children).toHaveLength(0);
   });
 
   describe.each([true, false])('with htmlLabels %s', (htmlLabels) => {

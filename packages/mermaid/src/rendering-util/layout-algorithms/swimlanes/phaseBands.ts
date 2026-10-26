@@ -3,6 +3,7 @@ import { evaluate, getConfig } from '../../../config.js';
 import type { D3Selection } from '../../../types.js';
 import { createText } from '../../createText.js';
 import type { LayoutData } from '../../types.js';
+import type { PhaseGrowth, SwimlanePhase } from './phases.js';
 import { readPhaseAssignment } from './phases.js';
 
 /** The title strip is as thick as a lane title band plus the room a rotated label needs. */
@@ -114,6 +115,25 @@ export function computePhaseBands(layout: LayoutData): PhaseBand[] {
   });
 }
 
+/** Smallest shortfall, in px, worth another layout pass: below it a title fits to the pixel. */
+const SHORTFALL_TOLERANCE = 0.5;
+
+/** How much longer each band must get, along the flow, to hold its measured title. */
+export function phaseShortfalls(layout: LayoutData): PhaseGrowth {
+  const titleExtents = new Map(
+    (readPhaseAssignment(layout)?.phases ?? []).map((phase) => [phase.id, phase.titleExtent])
+  );
+  const shortfalls: PhaseGrowth = {};
+  for (const band of computePhaseBands(layout)) {
+    const extent = band.titleReadsUpward ? band.title.height : band.title.width;
+    const shortfall = (titleExtents.get(band.id) ?? 0) - extent;
+    if (shortfall > SHORTFALL_TOLERANCE) {
+      shortfalls[band.id] = shortfall;
+    }
+  }
+  return shortfalls;
+}
+
 /**
  * Draws a phase title the way a lane title is drawn, on one line, and returns its size so
  * the layout can reserve room for it and the painter can centre it.
@@ -190,4 +210,23 @@ async function paintPhaseLabel(cell: D3Selection<SVGGElement>, band: PhaseBand):
     'transform',
     `translate(${centreX}, ${centreY})${turn} translate(${-width / 2}, ${-height / 2})`
   );
+}
+
+/** Records on each declared phase the room its title needs along the flow. */
+export async function measurePhaseTitles<T extends SVGElement>(
+  layout: LayoutData,
+  element: D3Selection<T>
+): Promise<void> {
+  const phases: SwimlanePhase[] | undefined = layout.other?.phases;
+  if (!Array.isArray(phases)) {
+    return;
+  }
+  const scratch = element.append('g');
+  const measured: SwimlanePhase[] = [];
+  for (const phase of phases) {
+    const { width } = await createPhaseTitle(scratch, phase.label);
+    measured.push({ ...phase, titleExtent: width + 2 * PHASE_TITLE_MARGIN });
+  }
+  scratch.remove();
+  layout.other = { ...layout.other, phases: measured };
 }

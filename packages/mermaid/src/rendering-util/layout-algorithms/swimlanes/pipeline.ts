@@ -9,6 +9,7 @@ import { orderLayers } from './phase3.ordering.js';
 import { assignCoordinates } from './phase4.coordinates.js';
 import { LAYERING } from './config.js';
 import { AUTOMATIC_LANE_ORDERING_RESTARTS, optimizeTopLaneOrder } from './laneOrdering.js';
+import type { PhaseGrowth } from './phases.js';
 import { enforcePhaseBands, readPhaseAssignment, reversePhaseBackEdges } from './phases.js';
 
 export interface LayoutOptions {
@@ -22,6 +23,8 @@ export interface LayoutOptions {
   nodeGap?: number;
   // Direction (for proper spacing calculation)
   direction?: 'TB' | 'LR' | 'BT' | 'RL';
+  // Room, by phase id, to add to the bands that cannot hold their title
+  phaseGrowth?: PhaseGrowth;
 }
 
 export interface LayoutResult {
@@ -78,6 +81,7 @@ export function sugiyamaLayout(g: Graph, opts?: LayoutOptions): LayoutResult {
     nodeGap: opts?.nodeGap,
     direction: opts?.direction,
     laneOrder,
+    phaseGrowth: opts?.phaseGrowth,
   });
 
   return {

@@ -1,6 +1,8 @@
 import type { LayoutData } from '../../types.js';
 import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProcessing.js';
 import { toGraphView, writeBackToLayoutData } from './helpers.js';
+import { phaseShortfalls } from './phaseBands.js';
+import type { PhaseGrowth } from './phases.js';
 import { sugiyamaLayout } from './pipeline.js';
 import { routeEdgesOrthogonal } from './orthogonalRouter/router.js';
 
@@ -18,7 +20,6 @@ function getSwimlaneDirection(data4Layout: LayoutData): SwimlaneDirection {
  * before calling the same function.
  */
 export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirection {
-  const g = toGraphView(data4Layout);
   const nodeGap = data4Layout.config.flowchart?.nodeSpacing ?? 40;
   const layerGap = data4Layout.config.flowchart?.rankSpacing ?? 100;
   const ignoreCrossLaneEdges = data4Layout.config.swimlane?.ignoreCrossLaneEdges ?? true;
@@ -26,15 +27,26 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
   const automaticLaneOrdering = data4Layout.config.swimlane?.automaticLaneOrdering ?? false;
   const direction = getSwimlaneDirection(data4Layout);
 
-  const { ordered, coordinates } = sugiyamaLayout(g, {
-    nodeGap,
-    layerGap,
-    ignoreCrossLaneEdges,
-    optimizeRanksByCrossings,
-    automaticLaneOrdering,
-    direction,
-  });
-  writeBackToLayoutData(g, ordered, coordinates, { nodeGap, layerGap });
+  const place = (phaseGrowth?: PhaseGrowth) => {
+    const graph = toGraphView(data4Layout);
+    const { ordered, coordinates } = sugiyamaLayout(graph, {
+      nodeGap,
+      layerGap,
+      ignoreCrossLaneEdges,
+      optimizeRanksByCrossings,
+      automaticLaneOrdering,
+      direction,
+      phaseGrowth,
+    });
+    writeBackToLayoutData(graph, ordered, coordinates, { nodeGap, layerGap });
+  };
+  place();
+  // A band can only be measured once the nodes are placed, so a title too long for its band
+  // sends the layout round again with the room it lacks.
+  const shortfalls = phaseShortfalls(data4Layout);
+  if (Object.keys(shortfalls).length > 0) {
+    place(shortfalls);
+  }
 
   // The layout phases above position nodes only; they do not emit edge routing.
   // Reset any edge points carried on the input so routeEdgesOrthogonal below is
