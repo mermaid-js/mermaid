@@ -143,6 +143,28 @@ describe('Testing quadrantChart jison file', () => {
     expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({ text: 'Plan(* +=[❤', type: 'text' });
   });
 
+  it('keeps the character before an inline comment in quadrant text', () => {
+    for (const [label, expected] of [
+      ['ab c', 'ab c'],
+      ['a.b', 'a.b'],
+      ['Plan 2', 'Plan 2'],
+    ]) {
+      clearMocks();
+      expect(parserFnConstructor(`quadrantChart\nquadrant-1 ${label}%% comment`)).not.toThrow();
+      expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({ text: expected, type: 'text' });
+    }
+  });
+
+  it('skips comments after horizontal whitespace without losing the next line', () => {
+    for (const whitespace of ['\t', '\u00a0']) {
+      clearMocks();
+      const str = `quadrantChart\nA: [0.3, 0.6]${whitespace}%% note\nB: [0.4, 0.7]`;
+      expect(parserFnConstructor(str)).not.toThrow();
+      expect(mockDB.addPoint).toHaveBeenCalledTimes(2);
+      expect(mockDB.addClass).not.toHaveBeenCalled();
+    }
+  });
+
   it('should be able to parse quadrant2 text', () => {
     let str = 'quadrantChart\nquadrant-2 do';
     expect(parserFnConstructor(str)).not.toThrow();

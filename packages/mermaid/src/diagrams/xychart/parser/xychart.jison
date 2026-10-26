@@ -13,7 +13,7 @@
 %s data_inner
 %%
 \%\%(?!\{)[^\n]*                          /* skip comments */
-[^\}]\%\%[^\n]*                           /* skip comments */
+[^\S\r\n]\%\%[^\n]*                     /* skip comments after horizontal whitespace */
 <axis_data>(\r?\n)                        { this.popState(); return 'NEWLINE'; }
 <data>(\r?\n)                             { this.popState(); return 'NEWLINE'; }
 [\n\r]+                                   return 'NEWLINE';

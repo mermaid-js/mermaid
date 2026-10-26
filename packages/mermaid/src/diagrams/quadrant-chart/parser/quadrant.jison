@@ -14,7 +14,7 @@
 %x class_name
 %%
 \%\%(?!\{)[^\n]*                         /* skip comments */
-[^\}]\%\%[^\n]*                          /* skip comments */
+[^\S\r\n]\%\%[^\n]*                    /* skip comments after horizontal whitespace */
 [\n\r]+                                  return 'NEWLINE';
 \%\%[^\n]*                               /* do nothing */
 
