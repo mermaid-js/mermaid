@@ -29,6 +29,21 @@ describe('Sankey diagram', function () {
       sankey.parser.parse(graphDefinition);
     });
 
+    for (const value of ['abc', '1x', '"1,000"', 'Infinity']) {
+      it(`rejects the invalid value ${value}`, () => {
+        expect(() => sankey.parser.parse(`sankey-beta\na,b,${value}`)).toThrow(
+          'Invalid sankey value'
+        );
+        expect(db.getGraph().links).toHaveLength(0);
+      });
+    }
+
+    it('accepts finite decimal and exponent values', () => {
+      sankey.parser.parse('sankey-beta\na,b,1.25\nb,c,1e2');
+
+      expect(db.getGraph().links.map(({ value }) => value)).toEqual([1.25, 100]);
+    });
+
     it('allows __proto__ as id with sankey-beta syntax', function () {
       sankey.parser.parse(
         prepareTextForParsing(`sankey-beta
