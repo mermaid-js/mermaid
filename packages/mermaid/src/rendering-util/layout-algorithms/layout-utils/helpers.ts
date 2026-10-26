@@ -8,6 +8,13 @@ import type { Node } from '../../types.js';
 import type { Point, Rect, PortSide } from './types.js';
 
 /**
+ * Compare strings by UTF-16 code units so algorithmic ordering is independent of locale and ICU.
+ */
+export function compareCodeUnits(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/**
  * Create a Rect from a Node's x, y, width, height properties.
  * The node's x, y are assumed to be the center coordinates.
  */
