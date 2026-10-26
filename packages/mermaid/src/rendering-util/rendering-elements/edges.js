@@ -432,8 +432,8 @@ function dockFinalPoint(originalLast, lastInner, before, candidate) {
 
 /** The arrowhead's pull-back for a marker type; a type the table does not own pulls back nothing. */
 function markerPullBack(arrowType) {
-  const offset = markerOffsets[arrowType] ?? 0;
-  return offset;
+  const offset = Object.hasOwn(markerOffsets, arrowType) ? markerOffsets[arrowType] : 0;
+  return Number.isFinite(offset) ? offset : 0;
 }
 
 /**

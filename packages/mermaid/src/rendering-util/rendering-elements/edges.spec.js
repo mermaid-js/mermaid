@@ -445,6 +445,17 @@ describe('insertEdge swimlane final segment axis', () => {
     expect(renderedPoints.at(-1)).toEqual({ x: 10, y: 100 });
   });
 
+  it.each(['constructor', '__proto__'])(
+    'ignores the inherited key %s when looking up the arrowhead pull-back',
+    (arrowTypeEnd) => {
+      // A stub shorter than the axis tolerance continues straight on and is dropped
+      // whatever the marker is, unless the lookup turns the minimum into NaN.
+      const renderedPoints = renderStubbedEdge(arrowTypeEnd, { x: 0, y: 100.3 });
+
+      expect(renderedPoints.at(-1)).toEqual({ x: 0, y: 100 });
+    }
+  );
+
   describe('when the shape centre is off the row the edge enters on', () => {
     // A wide shape whose centre sits below the row: the ray from the last bend to the
     // centre meets the face a fraction of a pixel off the row, inside the axis tolerance.
