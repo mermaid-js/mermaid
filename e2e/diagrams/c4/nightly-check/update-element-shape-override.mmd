@@ -1,0 +1,14 @@
+---
+description: >-
+  Three containers where UpdateElementStyle overrides two of them to
+  non-default shapes ($shape="folder", $shape="cylinder"), leaving the third
+  as the default rectangle — verifies supported shape overrides apply
+  (folder is not yet supported by the renderer and falls back).
+---
+C4Container
+title UpdateElementStyle shape override (folder not yet supported)
+Container(a, "Default", "Tech", "no override")
+Container(b, "As Folder", "Tech", "shape override")
+Container(c, "As Cylinder", "Tech", "shape override")
+UpdateElementStyle(b, $shape="folder")
+UpdateElementStyle(c, $shape="cylinder")

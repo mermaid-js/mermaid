@@ -1,0 +1,22 @@
+---
+description: >-
+  State diagram covering four fully interconnected states, each carrying a
+  `state X: description` annotation, rendered under the "neo" look with the
+  "neo-dark" theme.
+config:
+  look: neo
+  theme: neo-dark
+---
+stateDiagram-v2
+    [*] --> State1
+    State1 --> State2
+    State1 --> State3
+    State1 --> State4
+    State2 --> State3
+    State2 --> State4
+    State3 --> State4
+    state State1: Description 1
+    state State2: Description 2
+    state State3: Description 3
+    state State4: Description 4
+    State4 --> [*]

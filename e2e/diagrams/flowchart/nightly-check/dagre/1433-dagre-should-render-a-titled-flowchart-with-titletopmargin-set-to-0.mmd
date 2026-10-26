@@ -1,0 +1,11 @@
+---
+description:
+  Checks that the flowchart.titleTopMargin configuration option can be set to 0
+  without errors when rendering a minimal dagre flowchart with a single edge.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+flowchart TD
+  A --> B

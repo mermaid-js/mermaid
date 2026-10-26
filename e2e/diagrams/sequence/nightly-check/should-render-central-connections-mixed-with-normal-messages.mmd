@@ -1,0 +1,21 @@
+---
+description: >-
+  Central-connection messages (a dual circle solid arrow and a dual circle
+  bidirectional arrow) interleaved with ordinary non-central messages
+  (solid and cross) across three participants, checking the two message
+  families coexist correctly in one flow.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  participant Charlie
+  Alice ->> Bob: Normal message
+  Bob ()->>() Charlie: Central connection
+  Charlie -->> Alice: Normal dotted message
+  Alice ()<<-->>() Bob: Dual central connection
+  Bob -x Charlie: Normal cross message
