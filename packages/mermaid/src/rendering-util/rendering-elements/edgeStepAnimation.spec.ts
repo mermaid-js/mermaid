@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { select } from 'd3';
-import type { Edge } from '../types.js';
+import { isStepEdge, type Edge } from '../types.js';
 import {
   escapeCssIdentifier,
   getEdgeStepTiming,
   insertEdgeStepDot,
-  isStepEdge,
   toAnimationId,
 } from './edgeStepAnimation.js';
 
@@ -58,7 +57,7 @@ describe('insertEdgeStepDot', () => {
     expect(svg.select('animateTransform').attr('begin')).toBe(
       'step_diagram_2d_1_2d_e2_2d_step.begin'
     );
-    expect(svg.select('circle').attr('style')).toContain('fill:red');
+    expect(svg.select('circle').attr('fill')).toBe('red');
   });
 
   it('parks the hidden dot at the start of its path so the diagram bounds do not grow', () => {
@@ -70,7 +69,38 @@ describe('insertEdgeStepDot', () => {
   it('fills the dot with the bare colour when given a whole stroke declaration', () => {
     insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', 'diagram-1', 'stroke:red');
 
-    expect(svg.select('circle').attr('style')).toBe('fill:red;stroke:none');
+    const dot = svg.select('circle');
+    expect(dot.attr('fill')).toBe('red');
+    expect(dot.attr('stroke')).toBe('none');
+    expect(dot.attr('style')).toBeNull();
+  });
+
+  it('sets the dot colour as an attribute so a colour with a semicolon cannot add declarations', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', 'diagram-1', 'red;opacity:0');
+
+    const dot = svg.select('circle');
+    expect(dot.attr('fill')).toBe('red;opacity:0');
+    expect(dot.attr('style')).toBeNull();
+  });
+
+  it('hides the decorative dot from assistive technology', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', 'diagram-1');
+
+    expect(svg.select('circle').attr('aria-hidden')).toBe('true');
+  });
+
+  it('with an empty diagram id, scopes the reduced-motion rule to the svg id', () => {
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', '');
+
+    expect(svg.select('style.edge-step-style').text()).toContain('#diagram-1 .edge-step-dot');
+  });
+
+  it('with no diagram id and no svg id, emits no unscoped reduced-motion rule', () => {
+    svg.attr('id', null);
+
+    insertEdgeStepDot(group, stepEdge('e1', 1, 1), 'M0,0L0,100', '');
+
+    expect(svg.selectAll('style').size()).toBe(0);
   });
 
   it('adds a single reduced-motion rule however many step edges there are', () => {
