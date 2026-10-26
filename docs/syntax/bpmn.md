@@ -164,10 +164,10 @@ _event sub-process_ rather than a process, and `cancel` belongs to a _transactio
 is no syntax for either, so they are accepted on any `start`, and on any `boundary` or
 `end`, respectively.
 
-A pair the notation does not draw is refused while the diagram is read, naming the line and where that trigger does belong:
+A pair the notation does not draw is refused while the diagram is read, naming the line, the column and where that trigger does belong:
 
 ```
-BPMN error at line 3: a start event cannot carry the terminate trigger.
+BPMN error at line 3, column 11: a start event cannot carry the terminate trigger.
 The notation draws terminate on end events.
 ```
 
@@ -425,9 +425,8 @@ The `bpmn` config namespace controls spacing:
 | `nodeSpacing`    | number   | `35`        | The distance between two elements in the same rank of a lane.    |
 | `rankSpacing`    | number   | `40`        | The distance between two ranks of a lane.                        |
 
-A BPMN process is drawn in pools and lanes, so `layout` is declared in the schema rather
-than forced by the renderer: it sits below a `layout` of your own, and the diagram is laid
-out in swimlanes whichever you choose.
+A BPMN process is drawn in pools and lanes, so the diagram is always laid out in swimlanes:
+a `layout` set globally or under `bpmn` has no effect.
 
 ```mermaid-example
 ---
@@ -462,6 +461,10 @@ bpmn-beta LR
 ## Theming
 
 Every colour a BPMN element is painted with is a theme variable under `themeVariables.bpmn`, so the whole notation can be retuned without styling individual elements: `eventFill`, `eventStroke`, `eventStrokeWidth`, `endEventStroke`, `endEventStrokeWidth`, `gatewayFill`, `gatewayStroke`, `gatewayStrokeWidth`, `activityFill`, `activityStroke`, `activityStrokeWidth`, `glyphColor`, `dataFill`, `dataStroke`, `annotationStroke`, `laneFill`, `laneStroke`, `laneLabelColor`, `labelColor`, `edgeStroke`, and `messageStroke`.
+
+Unless you set one of them, each colour follows the theme: activities take `primaryColor`, gateways `secondaryColor`, events and data `tertiaryColor`, and lines `lineColor`, with activity and gateway outlines darkened or lightened until they stand out from the background. So `forest`, `neutral` and a `base` theme with your own `themeVariables` each draw BPMN in their own colours.
+
+The BPMN element shapes do not use the hand-drawn renderer, so `look: handDrawn` draws them plain.
 
 ```mermaid-example
 ---
