@@ -15,6 +15,7 @@ export const STEP_BADGE_RADIUS = 9;
 export const STEP_BADGE_FONT_SIZE = 11;
 
 const STEP_BADGE_GAP = 2;
+const STEP_BADGE_FALLBACK_FILL = '#333333';
 const STEP_ARROWHEAD_HALF = 8;
 const STEP_BADGE_OFFSET = 14;
 const STEP_TANGENT_STEP = 0.01;
@@ -244,9 +245,6 @@ const boxedObstacle = (node: Element, origin: PathPoint): BadgeObstacle | undefi
   const offset = offsetInSvg(node);
   const x = offset.x - origin.x;
   const y = offset.y - origin.y;
-  if (node.classList.contains('edge-step-badge')) {
-    return square({ x, y }, STEP_BADGE_RADIUS);
-  }
   const box = (node as SVGGraphicsElement).getBBox?.();
   if (!box) {
     return undefined;
@@ -284,30 +282,24 @@ const arrowheadObstacles = (path: Element, origin: PathPoint): BadgeObstacle[] =
   );
 };
 
-/** What a badge must not cover: badges, labels, nodes, every edge's arrowheads and this edge's label. */
-export const collectBadgeObstacles = (
-  elem: SVGGroup,
-  edge: Edge,
-  points: PathPoint[]
-): BadgeObstacle[] => {
-  const node = elem.node();
-  const root = node?.closest('svg') ?? node?.parentElement ?? node;
-  const origin = offsetInSvg(node);
-  const boxed = [...(root?.querySelectorAll('.edge-step-badge, .edgeLabel, .node') ?? [])]
+/** What no badge may cover, in SVG coordinates: labels, nodes and every edge's arrowheads. */
+export const collectBadgeObstacles = (root: Element | null | undefined): BadgeObstacle[] => {
+  const origin = { x: 0, y: 0 };
+  const boxed = [...(root?.querySelectorAll('.edgeLabel, .node') ?? [])]
     .map((obstacle) => boxedObstacle(obstacle, origin))
     .filter((obstacle): obstacle is BadgeObstacle => obstacle !== undefined);
   const arrowheads = [...(root?.querySelectorAll('path[data-edge="true"]') ?? [])].flatMap((path) =>
     arrowheadObstacles(path, origin)
   );
-  const placed = [...boxed, ...arrowheads];
+  return [...boxed, ...arrowheads];
+};
+
+const edgeLabelObstacles = (edge: Edge, points: PathPoint[]): BadgeObstacle[] => {
   if (!edge.label || points.length === 0) {
-    return placed;
+    return [];
   }
   const { x, y } = utils.calcLabelPosition(points);
-  return [
-    ...placed,
-    { x, y, halfWidth: (edge.width ?? 0) / 2, halfHeight: (edge.height ?? 0) / 2 },
-  ];
+  return [{ x, y, halfWidth: (edge.width ?? 0) / 2, halfHeight: (edge.height ?? 0) / 2 }];
 };
 
 const linearChannel = (value: number) => {
@@ -342,19 +334,34 @@ export const pickBadgeTextColor = (fill: string, candidates: (string | undefined
   return (readable ?? scored.reduce((best, next) => (next.ratio > best.ratio ? next : best))).color;
 };
 
-/** Appends a badge with the step number on a step edge when `flowchart.stepNumbers` is on. */
-export const insertEdgeStepBadge = (elem: SVGGroup, edge: Edge, options: StepBadgeOptions) => {
+/**
+ * Appends a badge with the step number on a step edge when `flowchart.stepNumbers` is on, clear of
+ * `obstacles` (SVG coordinates). Returns the badge's own box in SVG coordinates.
+ */
+export const insertEdgeStepBadge = (
+  elem: SVGGroup,
+  edge: Edge,
+  options: StepBadgeOptions,
+  obstacles: BadgeObstacle[] = collectBadgeObstacles(elem.node()?.closest('svg'))
+): BadgeObstacle | undefined => {
   if (!isStepEdge(edge) || !edge.showStepNumber) {
-    return;
+    return undefined;
   }
-  const position = chooseBadgePosition(
-    createPathSampler(options.points, options.pathNode),
-    collectBadgeObstacles(elem, edge, options.points)
-  );
+  const origin = offsetInSvg(elem.node());
+  const local = obstacles.map((obstacle) => ({
+    ...obstacle,
+    x: obstacle.x - origin.x,
+    y: obstacle.y - origin.y,
+  }));
+  const position = chooseBadgePosition(createPathSampler(options.points, options.pathNode), [
+    ...local,
+    ...edgeLabelObstacles(edge, options.points),
+  ]);
   if (!position) {
-    return;
+    return undefined;
   }
-  const fill = options.color?.replace(/^stroke:\s*/, '') ?? 'currentColor';
+  // A resolved colour, not currentColor, so the text contrast check below can read it.
+  const fill = options.color?.replace(/^stroke:\s*/, '') ?? STEP_BADGE_FALLBACK_FILL;
   const badge = elem
     .append('g')
     .attr('class', 'edge-step-badge')
@@ -369,6 +376,7 @@ export const insertEdgeStepBadge = (elem: SVGGroup, edge: Edge, options: StepBad
     .attr('font-size', STEP_BADGE_FONT_SIZE)
     .attr('fill', pickBadgeTextColor(fill, options.textColors ?? []))
     .text(String(edge.step));
+  return square({ x: position.x + origin.x, y: position.y + origin.y }, STEP_BADGE_RADIUS);
 };
 
 /** Shows `target` only while the step's dot is moving, by lifting its parked `scale(0)`. */
@@ -455,9 +463,15 @@ interface QueuedBadge {
 
 const queuedBadges = new WeakMap<Element, QueuedBadge[]>();
 
-const badgeLayer = (root: Element) =>
-  root.querySelector(':scope > g.edge-step-badges') ??
-  root.appendChild(root.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'g'));
+const badgeLayer = (root: Element) => {
+  const existing = root.querySelector(':scope > g.edge-step-badges');
+  if (existing) {
+    return existing;
+  }
+  const layer = root.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'g');
+  layer.setAttribute('class', 'edge-step-badges');
+  return root.appendChild(layer);
+};
 
 /** Draws the badges queued for `svg` in a layer above everything else, once the whole diagram is in place. */
 export const placeQueuedStepBadges = (svg: Element | null | undefined) => {
@@ -466,14 +480,17 @@ export const placeQueuedStepBadges = (svg: Element | null | undefined) => {
     return;
   }
   queuedBadges.delete(svg);
+  const obstacles = collectBadgeObstacles(svg);
   for (const { elem, edge, options } of queued) {
     const root = elem.node()?.parentElement;
     if (!root) {
       continue;
     }
-    const layer = badgeLayer(root);
-    layer.setAttribute('class', 'edge-step-badges');
-    insertEdgeStepBadge(select(layer as SVGGElement) as unknown as SVGGroup, edge, options);
+    const layer = select(badgeLayer(root) as SVGGElement) as unknown as SVGGroup;
+    const placed = insertEdgeStepBadge(layer, edge, options, obstacles);
+    if (placed) {
+      obstacles.push(placed);
+    }
   }
 };
 
