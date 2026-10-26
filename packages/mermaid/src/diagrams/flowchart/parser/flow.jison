@@ -119,7 +119,7 @@ that id.
 "flowchart"              {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
-"phase"(?=[^\S\n\r]+\w)  { if (yy.lex.allowsPhases()) { return 'PHASE'; } return 'NODE_STRING'; }
+"phase"(?=[^\S\n\r]+\w)  { if (yy.lex.allowsPhases() && /(^|[\n\r;])[^\S\n\r]*$/.test(this.matched.slice(0, -yytext.length))) { return 'PHASE'; } return 'NODE_STRING'; }
 
 "_self"                  return 'LINK_TARGET';
 "_blank"                 return 'LINK_TARGET';

@@ -103,3 +103,39 @@ describe('the phase keyword outside a declaration', () => {
     expect(flowDb.getData().other).toEqual({});
   });
 });
+
+describe('the phase keyword away from the start of a statement', () => {
+  const ID_AFTER_KEYWORD = [
+    ['classDef phase fill:#f00', 'classDef phase fill:#f00\na'],
+    ['class a phase', 'classDef phase fill:#f00\na\nclass a phase'],
+    ['style phase fill:#f00', 'phase\nstyle phase fill:#f00'],
+  ] as const;
+
+  it.each(['swimlane-beta', 'flowchart'])(
+    'parses a node named phase in a node, class and style statement in %s',
+    (header) => {
+      for (const [, body] of ID_AFTER_KEYWORD) {
+        expect(() => parse(`${header} LR\n${body}`), body).not.toThrow();
+      }
+    }
+  );
+
+  it('applies the class named phase to the node', () => {
+    const vertices = parse(
+      'swimlane-beta LR\nclassDef phase fill:#f00\na\nclass a phase'
+    ).getVertices();
+
+    expect(vertices.get('a')?.classes).toEqual(['phase']);
+  });
+
+  it('still declares a phase after a semicolon, a blank line and indentation', () => {
+    const { other } = parse(
+      'swimlane-beta LR\na; phase p1["One"]\n\n   phase p2["Two"]'
+    ).getData();
+
+    expect(other.phases).toEqual([
+      { id: 'p1', label: 'One' },
+      { id: 'p2', label: 'Two' },
+    ]);
+  });
+});
