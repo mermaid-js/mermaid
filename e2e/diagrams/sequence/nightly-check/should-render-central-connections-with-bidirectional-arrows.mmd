@@ -1,0 +1,17 @@
+---
+description: >-
+  Classic-look sequence diagram with two participants exercising
+  dual-central bidirectional arrows: a solid bidirectional arrow and a
+  dotted bidirectional arrow, each with the `()` central-connection marker
+  on both ends.
+config:
+  look: classic
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+sequenceDiagram
+  participant Alice
+  participant Bob
+  Alice ()<<->>() Bob: Bidirectional solid
+  Alice ()<<-->>() Bob: Bidirectional dotted

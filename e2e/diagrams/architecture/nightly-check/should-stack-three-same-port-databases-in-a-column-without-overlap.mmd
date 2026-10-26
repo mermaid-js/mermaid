@@ -1,0 +1,17 @@
+---
+description: >-
+  Three databases inside a group all connect from the same right-to-left
+  port pair (`:R --> L:`) into a single MCP server, combined with an
+  explicit `align column db1 db2 db3`, verifying the three same-port
+  siblings stack vertically without overlapping.
+---
+architecture-beta
+  group api(cloud)[API]
+  service db1(database)[DB1] in api
+  service db2(database)[DB2] in api
+  service db3(database)[DB3] in api
+  service mcp(server)[MCP] in api
+  db1:R --> L:mcp
+  db2:R --> L:mcp
+  db3:R --> L:mcp
+  align column db1 db2 db3

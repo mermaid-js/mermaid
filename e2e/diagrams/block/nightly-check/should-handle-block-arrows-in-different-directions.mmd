@@ -1,0 +1,13 @@
+---
+description: >-
+  Seven block-arrows arranged in a compass-like 3-column layout (down, right,
+  x+y combined "Sync", left, up, x, y), each surrounded by `space` blocks to
+  position it on its own side — verifying block-arrows in every direction
+  render correctly when laid out spatially around a center point.
+---
+block
+  columns 3
+  space blockArrowId1<["down"]>(down) space
+  blockArrowId2<["right"]>(right) blockArrowId3<["Sync"]>(x, y) blockArrowId4<["left"]>(left)
+  space blockArrowId5<["up"]>(up) space
+  blockArrowId6<["x"]>(x) space blockArrowId7<["y"]>(y)

@@ -1,0 +1,18 @@
+---
+description: >-
+  A single lane (StyledLane) with two nodes, using an inline `style`
+  statement on node A and a `linkStyle` statement on the connecting edge
+  to override fill, stroke, and stroke-width.
+config:
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph StyledLane
+    A[Styled node]
+    B[Linked node]
+  end
+  A --> B
+  style A fill:#ff99cc,stroke:#003366,stroke-width:5px,color:#111111
+  linkStyle 0 stroke:#ff6600,stroke-width:5px

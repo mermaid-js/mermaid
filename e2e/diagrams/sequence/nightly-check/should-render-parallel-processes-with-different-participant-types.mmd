@@ -1,0 +1,30 @@
+---
+description: >-
+  No-frontmatter sequence diagram combining all the typed participant
+  kinds (`actor`, plain `participant`, `boundary`, `control`, `entity`,
+  `database`, `queue`) with a `par ... and ... end` parallel block (payment
+  processing and inventory reservation running concurrently) in an
+  order-processing flow.
+---
+sequenceDiagram
+  participant Customer@{ "type": "actor" }
+  participant Frontend@{ "type": "participant" }
+  participant PaymentService@{ "type": "boundary" }
+  participant InventoryManager@{ "type": "control" }
+  participant Order@{ "type": "entity" }
+  participant OrdersDB@{ "type": "database" }
+  participant NotificationQueue@{ "type": "queue" }
+
+  Customer ->> Frontend: Place order
+  Frontend ->> Order: Create order
+  par Parallel Processing
+  Order ->> PaymentService: Process payment
+  and
+  Order ->> InventoryManager: Reserve items
+  end
+  PaymentService -->> Order: Payment confirmed
+  InventoryManager -->> Order: Items reserved
+  Order ->> OrdersDB: Save finalized order
+  OrdersDB -->> Order: Order saved
+  Order ->> NotificationQueue: Send confirmation
+  NotificationQueue -->> Customer: Order confirmation

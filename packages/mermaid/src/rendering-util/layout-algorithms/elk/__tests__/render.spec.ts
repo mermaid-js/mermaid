@@ -11,10 +11,14 @@ import {
   prepareLayoutForElk,
   resolveContainerAlgorithm,
   resolveElkPreset,
+  projectLabelOntoStraightenedRun,
   runElkLayoutCore,
   sanitizeElkEdgePoints,
+  separateOppositeEdgeLabels,
+  straightenEdgeTerminals,
 } from '../render.js';
 import { onBorder, type P } from '../geometry.js';
+import intersect from '../../../rendering-elements/intersect/index.js';
 
 const log = {
   debug: () => undefined,
@@ -652,6 +656,447 @@ describe('runElkLayoutCore', () => {
     expect(child.offset.y).toBeCloseTo(group.offset.posY);
     expect(layoutChild.x).toBeCloseTo(child.offset.posX + child.width / 2);
     expect(layoutChild.y).toBeCloseTo(child.offset.posY + child.height / 2);
+  });
+});
+
+describe('straightenEdgeTerminals label projection (#8292)', () => {
+  // Real-world jog from the `TERMINAL_JOG_MAX` fixture corpus: the channel at
+  // x in [218, 400] moves from y=119.5 to y=116.25. A label whose ELK-given
+  // position sat on the pre-straightening run (as `layoutEdge.x/y` always does
+  // — it is set before `straightenEdgeTerminals` runs) must move with it,
+  // instead of staying 3.25px off the new line.
+  const pts: P[] = [
+    { x: 193, y: 116.25 },
+    { x: 218, y: 116.25 },
+    { x: 218, y: 119.5 },
+    { x: 300, y: 119.5 },
+    { x: 400, y: 119.5 },
+    { x: 400, y: 300 },
+  ];
+
+  it('straightens the edge and reports the run that moved', () => {
+    const edge = { id: 'e1', points: pts, x: 300, y: 119.5 } as any;
+    const changed = straightenEdgeTerminals([edge]);
+
+    expect(changed).toEqual([
+      {
+        edge,
+        runs: [
+          {
+            old: { a: { x: 218, y: 119.5 }, b: { x: 400, y: 119.5 } },
+            new: { a: { x: 218, y: 116.25 }, b: { x: 400, y: 116.25 } },
+          },
+        ],
+      },
+    ]);
+    expect(edge.points).toEqual([
+      { x: 193, y: 116.25 },
+      { x: 300, y: 116.25 },
+      { x: 400, y: 116.25 },
+      { x: 400, y: 300 },
+    ]);
+  });
+
+  it('projects a label sitting on the moved run onto the new route', () => {
+    const edge = { id: 'e1', points: pts, x: 300, y: 119.5 } as any;
+    const [{ runs }] = straightenEdgeTerminals([edge]);
+
+    const projected = projectLabelOntoStraightenedRun({ x: 300, y: 119.5 }, runs);
+
+    expect(projected).toEqual({ x: 300, y: 116.25 });
+  });
+
+  // The bug this guards against: naively searching the whole (post-
+  // straightening) route for the nearest point can pick an unrelated,
+  // unchanged segment instead of the run that actually moved, if that
+  // segment happens to sit closer to the label's old position. Here a static
+  // "return leg" at y=118 passes directly under the label's x, and is nearer
+  // to the label's old spot (distance 1.5) than the straightened run's new
+  // position is (distance 3.25) — so a whole-route nearest-point search would
+  // wrongly snap the label onto the return leg. Scoping the search to just the
+  // run(s) `straightenEdgeTerminals` reports avoids that entirely.
+  it('projects onto the moved run even when an unchanged segment sits nearer to the old label position', () => {
+    const withReturnLeg: P[] = [
+      ...pts, // last point is { x: 400, y: 300 }
+      { x: 350, y: 300 },
+      { x: 250, y: 118 },
+      { x: 350, y: 118 }, // passes under (300, 119.5) at distance 1.5
+    ];
+    const edge = { id: 'e1', points: withReturnLeg, x: 300, y: 119.5 } as any;
+    const [{ runs }] = straightenEdgeTerminals([edge]);
+
+    // The return leg itself must be unchanged.
+    expect(edge.points.slice(-2)).toEqual([
+      { x: 250, y: 118 },
+      { x: 350, y: 118 },
+    ]);
+
+    const projected = projectLabelOntoStraightenedRun({ x: 300, y: 119.5 }, runs);
+
+    expect(projected).toEqual({ x: 300, y: 116.25 });
+  });
+
+  it('leaves an edge with no jog, and its label, untouched', () => {
+    const straight: P[] = [
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+    ];
+    const edge = { id: 'e2', points: straight, x: 50, y: 0 } as any;
+    const changed = straightenEdgeTerminals([edge]);
+
+    expect(changed).toEqual([]);
+    expect(edge.points).toBe(straight);
+  });
+
+  // Unlike the tests above, this goes through the real pipeline
+  // (`runElkLayoutCore`) end to end, so it fails if the label-projection at
+  // the `applyElkEdgeLayout` call site were ever removed — the unit tests above
+  // only exercise `straightenEdgeTerminals`/`projectLabelOntoStraightenedRun`
+  // directly and would keep passing even if that call site were deleted.
+  //
+  // This exact node/edge layout is a minimal, real ELK output found by
+  // randomized search that reliably produces a terminal jog on a labelled
+  // edge (e1, "L1"): ELK's own port/channel misalignment for e1 leaves the
+  // label ~14px off the line once straightening moves the run, without the
+  // fix.
+  it('centres a real edge label on its route after a real ELK layout straightens it (#8292)', async () => {
+    const data = {
+      direction: 'TD',
+      config: { elk: {} },
+      nodes: [
+        { id: 'l0n0', isGroup: false, width: 94, height: 30, label: 'l0n0', shape: 'rect' },
+        { id: 'l0n1', isGroup: false, width: 53, height: 46, label: 'l0n1', shape: 'rect' },
+        { id: 'l0n2', isGroup: false, width: 160, height: 46, label: 'l0n2', shape: 'rect' },
+        { id: 'l0n3', isGroup: false, width: 168, height: 42, label: 'l0n3', shape: 'rect' },
+        { id: 'l1n0', isGroup: false, width: 153, height: 45, label: 'l1n0', shape: 'rect' },
+        { id: 'l1n1', isGroup: false, width: 160, height: 63, label: 'l1n1', shape: 'rect' },
+        { id: 'l1n2', isGroup: false, width: 148, height: 65, label: 'l1n2', shape: 'rect' },
+        { id: 'l1n3', isGroup: false, width: 129, height: 49, label: 'l1n3', shape: 'rect' },
+      ],
+      edges: [
+        {
+          id: 'e1',
+          start: 'l0n0',
+          end: 'l1n0',
+          type: 'arrow_point',
+          label: 'L1',
+          width: 22,
+          height: 14,
+        },
+        {
+          id: 'e2',
+          start: 'l0n0',
+          end: 'l1n3',
+          type: 'arrow_point',
+          label: 'L2',
+          width: 33,
+          height: 14,
+        },
+        { id: 'e3', start: 'l0n1', end: 'l1n0', type: 'arrow_point' },
+        { id: 'e4', start: 'l0n1', end: 'l1n3', type: 'arrow_point' },
+        { id: 'e5', start: 'l0n2', end: 'l1n1', type: 'arrow_point' },
+        {
+          id: 'e6',
+          start: 'l0n2',
+          end: 'l1n0',
+          type: 'arrow_point',
+          label: 'L6',
+          width: 16,
+          height: 14,
+        },
+        {
+          id: 'e7',
+          start: 'l0n3',
+          end: 'l1n2',
+          type: 'arrow_point',
+          label: 'L7',
+          width: 34,
+          height: 14,
+        },
+        { id: 'e8', start: 'l0n3', end: 'l1n1', type: 'arrow_point' },
+      ],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const edge = data.edges.find((e: any) => e.id === 'e1');
+    expect(edge.points.length).toBeGreaterThanOrEqual(5); // must have a jog to straighten
+
+    let best = Infinity;
+    for (let i = 0; i < edge.points.length - 1; i++) {
+      const a = edge.points[i];
+      const b = edge.points[i + 1];
+      const abx = b.x - a.x;
+      const aby = b.y - a.y;
+      const lenSq = abx * abx + aby * aby;
+      const t =
+        lenSq === 0
+          ? 0
+          : Math.max(0, Math.min(1, ((edge.x - a.x) * abx + (edge.y - a.y) * aby) / lenSq));
+      const dx = a.x + t * abx - edge.x;
+      const dy = a.y + t * aby - edge.y;
+      best = Math.min(best, Math.hypot(dx, dy));
+    }
+    expect(best).toBeLessThan(0.5);
+  });
+});
+
+describe('straightenEdgeTerminals keeps labels off other edges (#8368)', () => {
+  // Independent of the implementation's clip: every route here is orthogonal.
+  const segmentHitsBox = (a: P, b: P, box: { x1: number; y1: number; x2: number; y2: number }) =>
+    Math.max(a.x, b.x) >= box.x1 &&
+    Math.min(a.x, b.x) <= box.x2 &&
+    Math.max(a.y, b.y) >= box.y1 &&
+    Math.min(a.y, b.y) <= box.y2;
+
+  /** Ids of the edges whose route passes through `labelled`'s label box. */
+  const edgesUnderLabel = (edges: any[], labelled: any) => {
+    const box = {
+      x1: labelled.x - labelled.width / 2,
+      y1: labelled.y - labelled.height / 2,
+      x2: labelled.x + labelled.width / 2,
+      y2: labelled.y + labelled.height / 2,
+    };
+    return edges
+      .filter(
+        (other) =>
+          other !== labelled &&
+          other.points.some(
+            (p: P, i: number, all: P[]) => i < all.length - 1 && segmentHitsBox(p, all[i + 1], box)
+          )
+      )
+      .map((other) => other.id);
+  };
+
+  /** What `applyElkEdgeLayout` does: straighten, then carry each label along. */
+  const straightenAndProject = (edges: any[]) => {
+    for (const { edge, runs } of straightenEdgeTerminals(edges)) {
+      if (edge.x == null || edge.y == null) {
+        continue;
+      }
+      const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
+      if (projected) {
+        edge.x = projected.x;
+        edge.y = projected.y;
+      }
+    }
+  };
+
+  // The routes ELK produced for the issue diagram, before straightening. Both
+  // Draft <-> Review edges carry a 12px jog at Draft; straightening both pulls
+  // them to within 7px of each other, under the 20px-high `changes` label.
+  const forward = () => ({
+    id: 'L_A_B_0',
+    points: [
+      { x: 74.34375, y: 54.61979166666667 },
+      { x: 94.34375, y: 54.61979166666667 },
+      { x: 94.34375, y: 42.203125 },
+      { x: 142.8125, y: 42.203125 },
+      { x: 191.28125, y: 42.203125 },
+      { x: 191.28125, y: 45.96875 },
+      { x: 211.28125, y: 45.96875 },
+      { x: 223.26566632092, y: 45.96875 },
+    ],
+  });
+  const back = () => ({
+    id: 'L_B_A_0',
+    label: 'changes',
+    x: 142.8125,
+    y: 73.203125,
+    width: 56.9375,
+    height: 20,
+    points: [
+      { x: 223.26566632092, y: 69.9375 },
+      { x: 211.28125, y: 69.9375 },
+      { x: 191.28125, y: 69.9375 },
+      { x: 191.28125, y: 73.703125 },
+      { x: 94.34375, y: 73.703125 },
+      { x: 94.34375, y: 61.28645833333333 },
+      { x: 74.34375, y: 61.28645833333333 },
+    ],
+  });
+
+  it('does not straighten a labelled edge onto a route its label would then cover', () => {
+    const edges = [forward(), back()];
+    straightenAndProject(edges);
+
+    expect(edgesUnderLabel(edges, edges[1])).toEqual([]);
+    expect(edges[0].points).not.toEqual(forward().points);
+    expect(edges[1].points).toEqual(back().points);
+  });
+
+  it('does not straighten an edge through a label placed before it', () => {
+    const edges = [back(), forward()];
+    straightenAndProject(edges);
+
+    expect(edgesUnderLabel(edges, edges[0])).toEqual([]);
+    expect(edges[0].points).not.toEqual(back().points);
+    expect(edges[1].points).toEqual(forward().points);
+  });
+
+  it('keeps the edge label of the issue diagram clear of the parallel edge after a real ELK layout', async () => {
+    // The `intersect` the DOM renderer installs on each shape: ELK's ports
+    // attach to the outline through it, and that is what leaves the jogs.
+    const rect = function (this: any, p: P) {
+      return intersect.rect(this, p);
+    };
+    const diamond = function (this: any, p: P) {
+      const s = this.width;
+      const corners = [
+        { x: s / 2, y: 0 },
+        { x: s, y: -s / 2 },
+        { x: s / 2, y: -s },
+        { x: 0, y: -s / 2 },
+      ];
+      return intersect.polygon(this, corners, p);
+    };
+    const data = {
+      direction: 'LR',
+      config: {
+        elk: {
+          mergeEdges: false,
+          straightenEdges: true,
+          lineHops: true,
+          preset: 'default',
+          layeringLayerBound: 4,
+          forceNodeModelOrder: false,
+          considerModelOrder: 'NODES_AND_EDGES',
+          keepEntryNodeOnTop: false,
+          orientFeedbackEdges: true,
+        },
+      },
+      nodes: [
+        {
+          id: 'A',
+          isGroup: false,
+          width: 62.34375,
+          height: 40,
+          label: 'Draft',
+          shape: 'squareRect',
+          intersect: rect,
+        },
+        {
+          id: 'B',
+          isGroup: false,
+          width: 91.90625,
+          height: 91.90625,
+          label: 'Review',
+          shape: 'diamond',
+          intersect: diamond,
+        },
+        {
+          id: 'C',
+          isGroup: false,
+          width: 93.5,
+          height: 40,
+          label: 'Published',
+          shape: 'squareRect',
+          intersect: rect,
+        },
+      ],
+      edges: [
+        { id: 'L_A_B_0', start: 'A', end: 'B', type: 'arrow_point' },
+        {
+          id: 'L_B_C_0',
+          start: 'B',
+          end: 'C',
+          type: 'arrow_point',
+          label: 'approved',
+          width: 62.390625,
+          height: 20,
+        },
+        {
+          id: 'L_B_A_0',
+          start: 'B',
+          end: 'A',
+          type: 'arrow_point',
+          label: 'changes',
+          width: 56.9375,
+          height: 20,
+        },
+      ],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const changes = data.edges.find((e: any) => e.id === 'L_B_A_0');
+    expect(edgesUnderLabel(data.edges, changes)).toEqual([]);
+    // Straightening still applies where it is harmless: A --> B leaves Draft without a jog.
+    const [start, , third] = data.edges[0].points;
+    expect(third.y).toBe(start.y);
+  });
+});
+
+describe('separateOppositeEdgeLabels', () => {
+  // Reproduces the shape of a real bug: two opposite-direction edges between
+  // the same node pair (e.g. a stateDiagram-v2 composite state's "touch" /
+  // "idle 30s" transitions) end up with labels centred close enough together
+  // that a wide label pair overlaps, even though each edge's own x/y was
+  // individually well-placed — straightenEdgeTerminals' per-edge jog
+  // correction (or ELK's own routing) can legitimately pull the two edges'
+  // lines toward each other without either edge knowing about the other's
+  // label.
+  const edge = (
+    id: string,
+    start: string,
+    end: string,
+    label: string,
+    x: number,
+    width: number,
+    extra: Record<string, unknown> = {}
+  ) => ({ id, start, end, label, x, y: 489.5, width, height: 21, ...extra }) as any;
+
+  it('pulls a wide, overlapping label pair apart symmetrically', () => {
+    // Same numbers as the real bug: centres 38.13 apart, half-widths summing
+    // to more than that (17.125 + 24.1328125 = 41.26 > 38.13).
+    const touch = edge('e9', 'ScreenDimmed', 'ScreenOn', 'touch', 492.933, 34.25);
+    const idle = edge('e8', 'ScreenOn', 'ScreenDimmed', 'idle 30s', 531.067, 48.266);
+    const edges = [touch, idle];
+
+    separateOppositeEdgeLabels(edges);
+
+    const gap = idle.x! - touch.x!;
+    const required = touch.width! / 2 + idle.width! / 2 + 4;
+    expect(gap).toBeCloseTo(required, 5);
+    // Preserves the pair's shared midpoint rather than sliding both the same way.
+    expect((touch.x! + idle.x!) / 2).toBeCloseTo((492.933 + 531.067) / 2, 1);
+  });
+
+  it('leaves a short, already-clear label pair untouched', () => {
+    // "play"/"pause" numbers from the same diagram: 38.14 apart, half-widths
+    // summing to only 12.84 + 19.08 = 31.92 — well clear already.
+    const play = edge('e6', 'Paused', 'Playing', 'play', 284.933, 25.6875);
+    const pause = edge('e5', 'Playing', 'Paused', 'pause', 323.067, 38.15625);
+    const edges = [play, pause];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect(play.x).toBe(284.933);
+    expect(pause.x).toBe(323.067);
+  });
+
+  it('ignores edges between the same pair at meaningfully different heights', () => {
+    const a = edge('e1', 'A', 'B', 'wide label one', 100, 80, { y: 0 });
+    const b = edge('e2', 'B', 'A', 'wide label two', 110, 80, { y: 200 });
+    const edges = [a, b];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect(a.x).toBe(100);
+    expect(b.x).toBe(110);
+  });
+
+  it('ignores a node pair with more than two labelled edges', () => {
+    // Three edges between the same pair is outside the common case this
+    // guards; leave them exactly as computed rather than guessing.
+    const a = edge('e1', 'A', 'B', 'one', 100, 80);
+    const b = edge('e2', 'B', 'A', 'two', 110, 80);
+    const c = edge('e3', 'A', 'B', 'three', 105, 80);
+    const edges = [a, b, c];
+
+    separateOppositeEdgeLabels(edges);
+
+    expect([a.x, b.x, c.x]).toEqual([100, 110, 105]);
   });
 });
 

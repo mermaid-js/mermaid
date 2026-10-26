@@ -1,0 +1,12 @@
+---
+description:
+  Verifies HTML-tag escaping in a node label (<strong>Haiya</strong>) when
+  htmlLabels is disabled at both the top-level and flowchart-specific config,
+  using a longer arrow (---->) between the nodes.
+config:
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+flowchart TD
+  a["<strong>Haiya</strong>"]---->b

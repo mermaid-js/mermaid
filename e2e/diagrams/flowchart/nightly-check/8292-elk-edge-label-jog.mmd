@@ -1,0 +1,7 @@
+flowchart TD
+    A --> B{Decision}
+    B -- Yes --> C[Done]
+    B -- No --> D[Step 1]
+    D --> E{Again?}
+    E -- Yes --> C
+    E -- No --> F[Stop]

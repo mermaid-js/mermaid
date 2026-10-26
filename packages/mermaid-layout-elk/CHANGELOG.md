@@ -1,5 +1,14 @@
 # @mermaid-js/layout-elk
 
+## 1.0.1
+
+### Patch Changes
+
+- [#8334](https://github.com/mermaid-js/mermaid/pull/8334) [`d67331d`](https://github.com/mermaid-js/mermaid/commit/d67331d927d90e53ed0cd6da7e031f3513866d41) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix(class): place cardinality labels beside their relation ends on dagre's sides with ELK, centre dagre's end labels, and stop clipping their text
+
+- Updated dependencies [[`50c9e55`](https://github.com/mermaid-js/mermaid/commit/50c9e555a17725e50a9cf92f4a0876710e44a53a), [`4c90f5c`](https://github.com/mermaid-js/mermaid/commit/4c90f5c4487c5c5628e28073454e88708af26bfb), [`c7fa1a5`](https://github.com/mermaid-js/mermaid/commit/c7fa1a550cf024ce1c74faece36ecf18a5935c5e), [`d67331d`](https://github.com/mermaid-js/mermaid/commit/d67331d927d90e53ed0cd6da7e031f3513866d41), [`99a050b`](https://github.com/mermaid-js/mermaid/commit/99a050ba56c834569df4d9891c70fd23ffe92203), [`9140716`](https://github.com/mermaid-js/mermaid/commit/9140716e72d1c1a3eb82bd5b25786e44f0cb6163), [`3101c7d`](https://github.com/mermaid-js/mermaid/commit/3101c7da2add126d0e1f3e256f408620efdd987e), [`aa29345`](https://github.com/mermaid-js/mermaid/commit/aa29345b9a5c58346fb457396614cfd349a94e68), [`967bbde`](https://github.com/mermaid-js/mermaid/commit/967bbdeb1b47a46f9f73c65d009d1dd19381cc05), [`147f343`](https://github.com/mermaid-js/mermaid/commit/147f343c863f537e1acd4d1df527eccfc88574c8), [`40ef7b4`](https://github.com/mermaid-js/mermaid/commit/40ef7b47259cb9dd335583298917c69d1174e2cb), [`351d7d2`](https://github.com/mermaid-js/mermaid/commit/351d7d21af7f8e1dba6e021bef7e0c30f3deb92f), [`b657a2c`](https://github.com/mermaid-js/mermaid/commit/b657a2c0735e60d9049d5078a550e0625cf42b2e), [`c38a565`](https://github.com/mermaid-js/mermaid/commit/c38a56597c07ce6af62081aa3f1536c09a101a42), [`fd4f5f2`](https://github.com/mermaid-js/mermaid/commit/fd4f5f26546110b4da281b44d60f94644f9a146c), [`8afd83c`](https://github.com/mermaid-js/mermaid/commit/8afd83c9fd7a4b9dfdc08cd620fbf38978bb7982), [`859f1f8`](https://github.com/mermaid-js/mermaid/commit/859f1f81a23836552b60cdfece9af5d11fca12c7), [`b6d952d`](https://github.com/mermaid-js/mermaid/commit/b6d952db3bff4e601c1025d544d207eae5d664b4), [`7917c1a`](https://github.com/mermaid-js/mermaid/commit/7917c1a5dfdc5a436c2aece25c359561181b9731), [`4a722fb`](https://github.com/mermaid-js/mermaid/commit/4a722fb62769cd3e9a572410b4ad33b0e46adae8)]:
+  - mermaid@12.1.0
+
 ## 1.0.0
 
 ### Major Changes

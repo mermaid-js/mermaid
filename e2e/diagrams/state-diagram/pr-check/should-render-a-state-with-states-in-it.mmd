@@ -1,0 +1,15 @@
+---
+description: >-
+  Legacy v1 state diagram with two levels of nested composite states
+  (PilotCockpit containing Parent containing a bare state C), exercising
+  deep composite-state nesting without any transitions.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  state PilotCockpit {
+    state  Parent {
+      C
+    }
+  }
