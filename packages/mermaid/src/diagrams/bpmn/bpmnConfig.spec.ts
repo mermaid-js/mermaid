@@ -4,7 +4,9 @@ import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 import { mermaidAPI } from '../../mermaidAPI.js';
 import { jsdomIt } from '../../tests/util.js';
 import defaultConfig from '../../defaultConfig.js';
+import type { MermaidConfig } from '../../config.type.js';
 import { BpmnDb } from './bpmnDb.js';
+import { diagram } from './diagram.js';
 
 const PROCESS = 'bpmn-beta LR\n  lane "L"\n    start s "Start"\n    task t "Work"\n  s --> t';
 
@@ -42,5 +44,18 @@ describe('bpmn layout engine', () => {
     const { svg } = await mermaidAPI.render('bpmn-config-render', PROCESS);
     expect(svg).toContain('<svg');
     expect(svg).toContain('bpmn-flow-sequence');
+  });
+
+  // `insertEdge` reads the absolute-marker flag from the flowchart and state sections only.
+  it('mirrors arrowMarkerAbsolute into the flowchart section the edge painter reads', () => {
+    const cnf: MermaidConfig = { arrowMarkerAbsolute: true };
+    diagram.init?.(cnf);
+    expect(cnf.flowchart?.arrowMarkerAbsolute).toBe(true);
+  });
+
+  it('asks the layout to layer each branch on its own', () => {
+    const bpmnDb = new BpmnDb();
+    bpmnDb.parse(PROCESS);
+    expect(bpmnDb.getData().laneLayering).toBe('branches');
   });
 });
