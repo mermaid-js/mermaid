@@ -15,13 +15,24 @@ on:
   pull_request_target:
     types:
       - opened
+      # Retargeting an already-open PR (e.g. develop -> master) fires
+      # 'edited', never 'opened' again — without this, such a PR would never
+      # get "run release test" and would need a manual label add forever.
+      - edited
 
 permissions:
   contents: read
 
 jobs:
+  # github.event.changes.base is only present on an 'edited' event that
+  # actually changed the base ref — an unrelated edit (title, body, etc.)
+  # never matches this, so it can't re-add a label someone removed on purpose.
   ensure-pr-tier-label:
-    if: github.repository == 'mermaid-js/mermaid'
+    if: >-
+      ${{
+        github.repository == 'mermaid-js/mermaid' &&
+        (github.event.action == 'opened' || github.event.changes.base != null)
+      }}
     runs-on: ubuntu-slim
     permissions:
       pull-requests: write
@@ -51,12 +62,16 @@ jobs:
             }
 
   # Scoped to master-bound PRs only — the release-readiness gate (see the
-  # PR_BASE_REF branch in e2e.yml's detect-scope job).
+  # PR_BASE_REF branch in e2e.yml's detect-scope job). Also fires when an
+  # already-open PR gets retargeted to master (github.event.changes.base is
+  # only set on a base-ref-changing 'edited' event, so an unrelated edit
+  # can't re-add a label someone removed on purpose).
   ensure-release-label:
     if: >-
       ${{
         github.repository == 'mermaid-js/mermaid' &&
-        github.event.pull_request.base.ref == 'master'
+        github.event.pull_request.base.ref == 'master' &&
+        (github.event.action == 'opened' || github.event.changes.base != null)
       }}
     runs-on: ubuntu-slim
     permissions:
