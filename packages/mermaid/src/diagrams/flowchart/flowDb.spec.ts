@@ -496,3 +496,42 @@ describe('flow db repeated subgraph ids (issue #8326)', () => {
     expect(subGraph('subGraph3')?.nodes).toEqual(['d']);
   });
 });
+
+describe('flow db keys only a diagram with pools may set', () => {
+  const build = (meta?: string) => {
+    const flowDb = new FlowDB();
+    const add = (id: string) =>
+      flowDb.addVertex(id, { text: id, type: 'text' }, undefined, [], [], '', {}, undefined);
+    ['A', 'B', 'C'].forEach(add);
+    flowDb.addSubGraph({ text: 'P' }, ['L1', 'L2'], { text: 'Company', type: 'text' });
+    flowDb.addSubGraph({ text: 'L1' }, ['A', 'B'], { text: 'Sales', type: 'text' });
+    flowDb.addSubGraph({ text: 'L2' }, ['C'], { text: 'Ops', type: 'text' });
+    if (meta) {
+      const [id, ...rest] = meta.split('|');
+      flowDb.addVertex(
+        id,
+        undefined as unknown as FlowText,
+        undefined,
+        [],
+        [],
+        '',
+        {},
+        rest.join('|')
+      );
+    }
+    return flowDb.getData().nodes;
+  };
+
+  it.each([
+    ['laneRole', 'P|laneRole: pool'],
+    ['laneIndex', 'L1|laneIndex: 1'],
+    ['drawnExtent', 'L1|drawnExtent: { width: 5, height: 5 }'],
+  ])('drops %s from the metadata of a subgraph', (_key, meta) => {
+    expect(build(meta)).toEqual(build());
+  });
+
+  it('keeps the other keys a subgraph is given', () => {
+    const nodes = build('L1|laneRole: pool\nalgorithm: elk.box');
+    expect(nodes.find((n) => n.id === 'L1')?.metadata).toEqual({ algorithm: 'elk.box' });
+  });
+});
