@@ -7,9 +7,9 @@ test.describe('Test iconShape with an unregistered FontAwesome icon', () => {
   test('draws the FontAwesome glyph instead of the unknown-icon placeholder', async ({
     page,
   }, testInfo) => {
-    const flowchartCode = `flowchart TB\n  nA --> nAA@{ icon: 'fab:truck', label: 'unregistered prefix' }\n`;
+    const flowchartCode = `flowchart TB\n  nA --> nAA@{ icon: 'fab:github', label: 'unregistered prefix' }\n`;
     await renderGraph(page, testInfo, flowchartCode, { screenshot: false });
-    await expect(page.locator('.icon-shape foreignObject i.fab.fa-truck')).toHaveCount(1);
+    await expect(page.locator('.icon-shape foreignObject i.fab.fa-github')).toHaveCount(1);
     await expect(page.locator('.icon-shape text', { hasText: '?' })).toHaveCount(0);
   });
 });
