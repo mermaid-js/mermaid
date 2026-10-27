@@ -156,6 +156,116 @@ A@{ shape: 'rect' }
     });
   });
 
+  // Issue #7032: edge id (`e1@`) written right after a node with square brackets or shape data
+  describe('edge ids attached to the preceding node (#7032)', function () {
+    const cases = [
+      { name: 'square brackets + space before edge id', graph: 'A[bla] e1@--> B' },
+      { name: 'square brackets + no space before edge id', graph: 'A[bla]e1@--> B' },
+      {
+        name: 'shape data (full) + no space before edge id',
+        graph: 'A@{shape:circle, label: bla}e1@--> B',
+      },
+      {
+        name: 'shape data (full) + space before edge id',
+        graph: 'A@{shape:circle, label: bla} e1@--> B',
+      },
+      { name: 'shape data, trailing comma + space', graph: 'A@{shape:circle, }e1@--> B' },
+      { name: 'shape data, trailing comma', graph: 'A@{shape:circle,}e1@--> B' },
+      { name: 'shape data, no trailing comma', graph: 'A@{shape:circle}e1@--> B' },
+      { name: 'round node + no space before edge id', graph: 'A(bla)e1@--> B' },
+      { name: 'diamond node + no space before edge id', graph: 'A{bla}e1@--> B' },
+      { name: 'circle node + no space before edge id', graph: 'A((bla))e1@--> B' },
+      { name: 'odd node + no space before edge id', graph: 'A>bla]e1@--> B' },
+      { name: 'stadium node + no space before edge id', graph: 'A([bla])e1@--> B' },
+      { name: 'subroutine node + no space before edge id', graph: 'A[[bla]]e1@--> B' },
+      { name: 'cylinder node + no space before edge id', graph: 'A[(bla)]e1@--> B' },
+      { name: 'hexagon node + no space before edge id', graph: 'A{{bla}}e1@--> B' },
+      { name: 'trapezoid node + no space before edge id', graph: 'A[/bla/]e1@--> B' },
+    ];
+
+    cases.forEach(({ name, graph }) => {
+      it(`should parse and set the edge id to e1: ${name} [${graph}]`, function () {
+        flow.parser.parse(`flowchart TD\n${graph}`);
+
+        const edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(1);
+        expect(edges[0].id).toBe('e1');
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+      });
+    });
+
+    it('should handle a chain of shape data nodes with edge ids', function () {
+      flow.parser.parse('flowchart TD\nA@{shape:circle} e1@--> B@{shape:circle} e2@--> C');
+
+      const nodes = flow.parser.yy.getData().nodes;
+      const edges = flow.parser.yy.getEdges();
+
+      expect(nodes.map((n) => n.id).sort()).toEqual(['A', 'B', 'C']);
+      expect(edges.length).toBe(2);
+      expect(edges[0].id).toBe('e1');
+      expect(edges[0].start).toBe('A');
+      expect(edges[0].end).toBe('B');
+      expect(edges[1].id).toBe('e2');
+      expect(edges[1].start).toBe('B');
+      expect(edges[1].end).toBe('C');
+    });
+
+    it('should handle a shape data node followed by trailing spaces', function () {
+      flow.parser.parse('flowchart TD\nA@{shape:circle}   ');
+
+      const nodes = flow.parser.yy.getData().nodes;
+      const edges = flow.parser.yy.getEdges();
+
+      expect(nodes.length).toBe(1);
+      expect(nodes[0].id).toBe('A');
+      expect(edges.length).toBe(0);
+    });
+
+    // `shape: circle` (with a space) is valid YAML, so here the shape metadata is
+    // really applied - this proves the shape data survives the trailing spaceList.
+    it('should keep the shape data of nodes followed by spaces', function () {
+      flow.parser.parse('flowchart TD\nA@{shape: circle} e1@--> B@{shape: circle} e2@--> C');
+
+      const nodes = flow.parser.yy.getData().nodes;
+      const edges = flow.parser.yy.getEdges();
+
+      expect(nodes.find((n) => n.id === 'A').shape).toBe('circle');
+      expect(nodes.find((n) => n.id === 'B').shape).toBe('circle');
+      expect(edges.length).toBe(2);
+      expect(edges[0].id).toBe('e1');
+      expect(edges[1].id).toBe('e2');
+    });
+
+    it('should keep the shape data of a node at the end of a line with trailing spaces', function () {
+      flow.parser.parse('flowchart TD\nA@{shape: circle}   ');
+
+      const nodes = flow.parser.yy.getData().nodes;
+
+      expect(nodes.length).toBe(1);
+      expect(nodes[0].id).toBe('A');
+      expect(nodes[0].shape).toBe('circle');
+    });
+
+    // The node bracket characters are excluded from the edge id token on purpose:
+    // that is what keeps `A[bla]e1@--> B` from being read as one single edge id.
+    describe('edge ids may not contain node bracket characters', function () {
+      const invalidIds = [
+        { chars: '[ ]', graph: 'A e[1]@--> B' },
+        { chars: '( )', graph: 'A e(1)@--> B' },
+        { chars: '{ }', graph: 'A e{1}@--> B' },
+        { chars: '|', graph: 'A e|1|@--> B' },
+      ];
+
+      invalidIds.forEach(({ chars, graph }) => {
+        it(`should reject an edge id containing ${chars} [${graph}]`, function () {
+          expect(() => flow.parser.parse(`flowchart TD\n${graph}`)).toThrow();
+        });
+      });
+    });
+  });
+
   describe('edges', function () {
     doubleEndedEdges.forEach((edgeType) => {
       it(`should handle ${edgeType.stroke} ${edgeType.type} with no text`, function () {
