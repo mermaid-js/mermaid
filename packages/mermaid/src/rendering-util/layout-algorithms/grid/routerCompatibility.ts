@@ -61,6 +61,7 @@ const SELF_LOOP_TRACK_GAP = 18;
 export const SELF_LOOP_PORT_OFFSET_STEP = 4;
 
 export interface PreparedRoutingModes {
+  overlapAvoidanceEnabled: boolean;
   compatibilityFastRoutes: Map<string, Point[]>;
   sparseHierarchyIds: Set<string>;
   sparseLcaIds: Set<string>;
@@ -68,7 +69,7 @@ export interface PreparedRoutingModes {
   routeOccupancy: Map<GridContainerId, RouteOccupancyIndex>;
 }
 
-const MAX_PLANS_FOR_OVERLAP_DEMOTION = 64;
+const MAX_PLANS_FOR_OVERLAP_AVOIDANCE = 64;
 const MAX_FAST_ROUTE_SEPARATION_STEPS = 4;
 
 /**
@@ -1092,7 +1093,7 @@ function prepareRoutingModes(
   };
   const compatibilityFastRoutes = new Map<string, Point[]>();
   const routeOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
-  const overlapDemotionEnabled = plans.length <= MAX_PLANS_FOR_OVERLAP_DEMOTION;
+  const overlapAvoidanceEnabled = plans.length <= MAX_PLANS_FOR_OVERLAP_AVOIDANCE;
   const compatibilityFastPathEnabled =
     options.topologyCaps === undefined &&
     options.searchCaps === undefined &&
@@ -1158,7 +1159,7 @@ function prepareRoutingModes(
       routeOccupancy.set(plan.lcaContainerId, occupancy);
     }
     const conflicting = occupancy.conflictsWithRoute(normalized.points, plan.pairKey);
-    if (conflicting && overlapDemotionEnabled) {
+    if (conflicting && overlapAvoidanceEnabled) {
       // The sparse router can choose other ports and corridors, which reads better than a nudge.
       continue;
     }
@@ -1183,7 +1184,7 @@ function prepareRoutingModes(
       !compatibilityPlanIsValid(plan, result, demandCoords));
   const planningOccupancy = new Map<GridContainerId, RouteOccupancyIndex>();
   const overlappingHierarchyIds = new Set<string>();
-  if (overlapDemotionEnabled) {
+  if (overlapAvoidanceEnabled) {
     for (const plan of prepared.orderedPlans) {
       if (
         eligibleIds.has(plan.edge.id) ||
@@ -1234,6 +1235,7 @@ function prepareRoutingModes(
       ...plan.target.chain.slice(1).map(({ ownerId }) => ownerId),
     ]);
   return {
+    overlapAvoidanceEnabled,
     compatibilityFastRoutes,
     sparseHierarchyIds,
     sparseLcaIds,
