@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Org chart Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+
+  <body>
+    <h1>Org chart diagram demo</h1>
+
+    <h2>Hierarchy with staff nodes</h2>
+    <pre class="mermaid">
+orgchart-beta
+    CEO "Anna Andersson"
+        staff CFO "Bo Berg"
+        staff HR "Carina Carlson"
+        Engineering "David Dahl"
+            Development "Eva Ek"
+            Systems "Fred Ford"
+        Sales "Greta Gran"
+            Europe "Helena Holm"
+    </pre>
+
+    <h2>Several staff nodes and unbalanced branches</h2>
+    <pre class="mermaid">
+orgchart-beta
+    ceo[CEO] "Anna Andersson"
+        staff Finance
+        staff HR
+        staff Legal
+        Engineering
+            staff Quality "Ida Ives"
+            Platform
+                Infrastructure
+                Security
+            Product
+        Sales
+    </pre>
+
+    <h2>Hand-drawn look</h2>
+    <pre class="mermaid">
+---
+config:
+  look: handDrawn
+  handDrawnSeed: 42
+---
+orgchart-beta
+    CEO "Anna Andersson"
+        staff Finance
+        staff HR
+        staff Legal
+        Engineering
+            staff Quality
+            Development
+            Systems
+        Sales
+            Europe
+    </pre>
+
+    <h2>Dark theme</h2>
+    <pre class="mermaid">
+%%{init: { 'theme': 'dark' } }%%
+orgchart-beta
+    CEO "Anna Andersson"
+        staff CFO "Bo Berg"
+        Engineering "David Dahl"
+        Sales "Greta Gran"
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+
+      mermaid.initialize({
+        theme: 'default',
+        startOnLoad: true,
+        logLevel: 0,
+      });
+    </script>
+  </body>
+</html>
