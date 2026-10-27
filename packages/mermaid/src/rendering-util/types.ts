@@ -154,6 +154,10 @@ export interface Edge {
   style?: string[];
   animate?: boolean;
   animation?: 'fast' | 'slow';
+  /** Order in which the step animation dot travels this edge (1 = first). */
+  step?: number;
+  /** Highest `step` in the diagram, so every step edge shares one loop length. */
+  stepCount?: number;
   /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
   metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges
@@ -274,3 +278,9 @@ export type KanbanNode = Node & {
   icon?: string;
   level: number;
 };
+
+/** True when the edge takes part in the step animation (a positive integer `step`). */
+export const isStepEdge = (
+  edge: Pick<Edge, 'step'>
+): edge is Pick<Edge, 'step'> & { step: number } =>
+  typeof edge.step === 'number' && Number.isInteger(edge.step) && edge.step > 0;
