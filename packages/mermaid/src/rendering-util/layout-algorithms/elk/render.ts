@@ -1877,7 +1877,9 @@ const labelBox = (center: P, size: { width: number; height: number }): Box => ({
  * runs onto the port's row, and that run can land in a lane something else
  * already occupies. Trading a barely-visible step for a new crossing is a bad
  * deal, so an edge that would cause one is left exactly as ELK routed it. So is
- * one that would leave ELK's reserved label lane for a label over an edge (#8368).
+ * one that would leave ELK's reserved label lane for a label over an edge (#8368)
+ * or over another edge's label, as the two labels of a bidirectional pair would
+ * when both runs close in on their port rows.
  *
  * Returns, for each edge whose points changed, the run(s) that moved, so the
  * caller can carry the edge's main label along with the specific run it sat
@@ -1898,6 +1900,8 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
       !!box && route.some((p, i) => i < route.length - 1 && segmentHitsBox(p, route[i + 1], box))
     );
   };
+  const overlaps = (a: (typeof labels)[number], b: (typeof labels)[number]) =>
+    !!a && !!b && boxesOverlap(labelBox(a.centre, a.size), labelBox(b.centre, b.size));
   const changed: { edge: Edge; runs: StraightenedRun[] }[] = [];
 
   for (const [index, edge] of edges.entries()) {
@@ -1926,9 +1930,14 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
       }
       before += crossingCount(original, route);
       after += crossingCount(candidate, route);
-      coveredBefore += Number(covers(route, label)) + Number(covers(original, labels[other]));
+      coveredBefore +=
+        Number(covers(route, label)) +
+        Number(covers(original, labels[other])) +
+        Number(overlaps(label, labels[other]));
       coveredAfter +=
-        Number(covers(route, candidateLabel)) + Number(covers(candidate, labels[other]));
+        Number(covers(route, candidateLabel)) +
+        Number(covers(candidate, labels[other])) +
+        Number(overlaps(candidateLabel, labels[other]));
     }
     if (after > before || coveredAfter > coveredBefore) {
       continue;
@@ -2166,9 +2175,9 @@ export function separateOppositeEdgeLabels(edges: Edge[]): void {
       continue;
     }
     const [a, b] = bucket;
-    // Labels drawn at meaningfully different heights are not actually
-    // competing for the same horizontal space, however close their x may be.
-    if (Math.abs(a.y! - b.y!) > Math.max(a.height ?? 0, b.height ?? 0)) {
+    // Labels whose boxes do not share any height are not actually competing
+    // for the same horizontal space, however close their x may be.
+    if (Math.abs(a.y! - b.y!) >= ((a.height ?? 0) + (b.height ?? 0)) / 2) {
       continue;
     }
     const required = a.width! / 2 + b.width! / 2 + OPPOSITE_LABEL_MIN_GAP;
