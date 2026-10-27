@@ -1,5 +1,13 @@
+import type { Selection } from 'd3';
 import { EDGE_STEP_DURATION, getStepDuration, isStepEdge, type Edge } from '../types.js';
 import type { SVGGroup } from '../../diagram-api/types.js';
+
+/** Stroke width of the highlight drawn over the edge while its step plays. */
+export const STEP_HIGHLIGHT_STROKE_WIDTH = 4;
+/** Stroke opacity of the step highlight, so the edge line stays visible under it. */
+export const STEP_HIGHLIGHT_STROKE_OPACITY = 0.6;
+/** Radius of the dot that travels along a step edge. */
+export const STEP_DOT_RADIUS = 4;
 
 export interface EdgeStepTiming {
   begin: number;
@@ -68,11 +76,34 @@ const ensureReducedMotionStyle = (elem: SVGGroup, diagramId: string) => {
   // Appended as a raw <style>, outside compileCSS/stylis, so it must carry the diagram id scope itself.
   const style = svg.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'style');
   style.setAttribute('class', 'edge-step-style');
-  style.textContent = `@media (prefers-reduced-motion: reduce) { ${scope}.edge-step-dot { display: none; } }`;
+  style.textContent = `@media (prefers-reduced-motion: reduce) { ${scope}.edge-step-dot, ${scope}.edge-step-highlight { display: none; } }`;
   svg.appendChild(style);
 };
 
-/** Appends the dot that travels along a step edge, plus the reduced-motion rule once per SVG. */
+/** Shows `target` only while the step's dot is moving, by lifting its parked `scale(0)`. */
+const showWhileStepPlays = <E extends SVGElement>(
+  target: Selection<E, unknown, Element | null, unknown>,
+  motionId: string,
+  dur: number
+) => {
+  // The parked transform keeps the target (the dot or the highlight) hidden at the path start. While
+  // the step plays, this animateTransform replaces it with scale(1) (it is not additive), dropping
+  // the translate so the highlight lies on its own path and animateMotion alone positions the dot;
+  // fill="remove" restores the parked transform after.
+  target
+    .append('animateTransform')
+    .attr('attributeName', 'transform')
+    .attr('type', 'scale')
+    .attr('values', '1;1')
+    .attr('dur', `${dur}s`)
+    .attr('begin', `${motionId}.begin`)
+    .attr('fill', 'remove');
+};
+
+/**
+ * Appends the dot that travels along a step edge and a highlight stroke shown while it travels,
+ * plus the reduced-motion rule once per SVG.
+ */
 export const insertEdgeStepDot = (
   elem: SVGGroup,
   edge: Edge,
@@ -89,14 +120,29 @@ export const insertEdgeStepDot = (
     getStepDuration(edge.stepDuration)
   );
   const motionId = toAnimationId(`${diagramId}-${edge.id}-step`);
+  const parked = `${pathStartTranslate(pathData)}scale(0)`;
+  const fill = color?.replace(/^stroke:\s*/, '');
+  const highlight = elem
+    .append('path')
+    .attr('class', 'edge-step-highlight')
+    .attr('aria-hidden', 'true')
+    .attr('d', pathData)
+    .attr('fill', 'none')
+    .attr('stroke', fill ?? 'currentColor')
+    .attr('stroke-width', STEP_HIGHLIGHT_STROKE_WIDTH)
+    .attr('stroke-linecap', 'round')
+    .attr('stroke-opacity', STEP_HIGHLIGHT_STROKE_OPACITY)
+    .attr('pointer-events', 'none')
+    .attr('transform', parked)
+    .attr('data-step', edge.step);
+  showWhileStepPlays(highlight, motionId, dur);
   const dot = elem
     .append('circle')
     .attr('class', 'edge-step-dot')
-    .attr('r', 4)
+    .attr('r', STEP_DOT_RADIUS)
     .attr('aria-hidden', 'true')
-    .attr('transform', `${pathStartTranslate(pathData)}scale(0)`)
+    .attr('transform', parked)
     .attr('data-step', edge.step);
-  const fill = color?.replace(/^stroke:\s*/, '');
   if (fill) {
     dot.attr('fill', fill).attr('stroke', 'none');
   }
@@ -107,16 +153,6 @@ export const insertEdgeStepDot = (
     .attr('dur', `${dur}s`)
     .attr('begin', `${begin}s;${motionId}.end+${gap}s`)
     .attr('fill', 'remove');
-  // The parked transform keeps the dot hidden at the path start. While the step plays, this
-  // animateTransform replaces it with scale(1) (it is not additive), dropping the translate so
-  // animateMotion alone positions the dot; fill="remove" restores the parked transform after.
-  dot
-    .append('animateTransform')
-    .attr('attributeName', 'transform')
-    .attr('type', 'scale')
-    .attr('values', '1;1')
-    .attr('dur', `${dur}s`)
-    .attr('begin', `${motionId}.begin`)
-    .attr('fill', 'remove');
+  showWhileStepPlays(dot, motionId, dur);
   ensureReducedMotionStyle(elem, diagramId);
 };
