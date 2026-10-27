@@ -10,6 +10,7 @@ import {
   markerOffsets,
   markerOffsets2,
 } from '../../utils/lineWithOffset.js';
+import { insertEdgeStepDot } from './edgeStepAnimation.js';
 import { getSubGraphTitleMargins } from '../../utils/subGraphTitleMargins.js';
 
 import {
@@ -899,6 +900,15 @@ export const insertEdge = function (
   svgPath.attr('data-points', pointsStr);
   // Add data attributes for neo look support
   svgPath.attr('data-look', handleUndefinedAttr(edge.look));
+  if (edge.step !== undefined) {
+    insertEdgeStepDot(
+      elem,
+      edge,
+      linePath,
+      diagramId,
+      strokeColor ?? getConfig().themeVariables?.lineColor
+    );
+  }
   // DEBUG code, adds a red circle at each edge coordinate
   // cornerPoints.forEach((point) => {
   //   elem
