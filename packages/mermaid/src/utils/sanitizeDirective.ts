@@ -90,7 +90,7 @@ export const sanitizeDirective = (args: any): void => {
     blankUnsafeCssValues(args.themeVariables);
     // The bpmn values are written into the stylesheet like the top-level ones.
     if (args.themeVariables.bpmn && typeof args.themeVariables.bpmn === 'object') {
-      blankNonCssValues(args.themeVariables.bpmn);
+      dropNonCssValues(args.themeVariables.bpmn);
     }
   }
   log.debug('After sanitization', args);
@@ -98,13 +98,15 @@ export const sanitizeDirective = (args: any): void => {
 
 // Every bpmn value is a colour or a width that the stylesheet writes out as text, and a
 // template literal turns an array or an object into text this check never saw, so only a
-// safe string or a finite number may stay.
-const blankNonCssValues = (values: Record<string, unknown>): void => {
+// safe string or a finite number may stay. A rejected key is removed, not blanked, so the
+// theme's own value for it still applies.
+const dropNonCssValues = (values: Record<string, unknown>): void => {
   blankUnsafeCssValues(values);
   for (const k of Object.keys(values)) {
     const val = values[k];
-    if (typeof val !== 'string' && !(typeof val === 'number' && Number.isFinite(val))) {
-      values[k] = '';
+    const isSafeString = typeof val === 'string' && val !== '';
+    if (!isSafeString && !(typeof val === 'number' && Number.isFinite(val))) {
+      delete values[k];
     }
   }
 };
