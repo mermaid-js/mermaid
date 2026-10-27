@@ -90,10 +90,23 @@ export const sanitizeDirective = (args: any): void => {
     blankUnsafeCssValues(args.themeVariables);
     // The bpmn values are written into the stylesheet like the top-level ones.
     if (args.themeVariables.bpmn && typeof args.themeVariables.bpmn === 'object') {
-      blankUnsafeCssValues(args.themeVariables.bpmn);
+      blankNonCssValues(args.themeVariables.bpmn);
     }
   }
   log.debug('After sanitization', args);
+};
+
+// Every bpmn value is a colour or a width that the stylesheet writes out as text, and a
+// template literal turns an array or an object into text this check never saw, so only a
+// safe string or a finite number may stay.
+const blankNonCssValues = (values: Record<string, unknown>): void => {
+  blankUnsafeCssValues(values);
+  for (const k of Object.keys(values)) {
+    const val = values[k];
+    if (typeof val !== 'string' && !(typeof val === 'number' && Number.isFinite(val))) {
+      values[k] = '';
+    }
+  }
 };
 
 const blankUnsafeCssValues = (values: Record<string, unknown>): void => {

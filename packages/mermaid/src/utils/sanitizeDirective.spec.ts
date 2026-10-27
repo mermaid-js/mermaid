@@ -63,6 +63,27 @@ describe('sanitizeDirective', () => {
       expect(args.themeVariables.bpmn).toEqual({ eventFill: '', gatewayFill: '#ffcc00' });
     });
 
+    // A value that is not a string reaches the stylesheet through a template literal, which
+    // turns an array into text the string check never saw.
+    it.each([
+      ['an array holding a rule breaker', ['red}#x{background:url(https://evil.example/leak)}']],
+      ['an array of plain colours', ['red', 'blue']],
+      ['an object', { toString: 'red}x{' }],
+      ['a boolean', true],
+      ['NaN', Number.NaN],
+      ['Infinity', Number.POSITIVE_INFINITY],
+    ])('drops %s', (_name, value) => {
+      const args = { themeVariables: { bpmn: { laneFill: value, gatewayFill: '#ffcc00' } } };
+      sanitizeDirective(args);
+      expect(args.themeVariables.bpmn).toEqual({ laneFill: '', gatewayFill: '#ffcc00' });
+    });
+
+    it('leaves no null behind', () => {
+      const args = { themeVariables: { bpmn: { laneFill: null, gatewayFill: '#ffcc00' } } };
+      sanitizeDirective(args);
+      expect(args.themeVariables.bpmn).toEqual({ gatewayFill: '#ffcc00' });
+    });
+
     it('keeps a numeric width and a colour function', () => {
       const args = {
         themeVariables: { bpmn: { eventStrokeWidth: 0, edgeStroke: 'rgb(1, 2, 3)' } },
