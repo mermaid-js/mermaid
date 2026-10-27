@@ -24,6 +24,7 @@ import {
 import type { OrthogonalSegment, Point, RectBounds, RectSide } from './geometry.js';
 import type { Edge, Node } from '../../../types.js';
 import { EDGE_ROUTING } from '../config.js';
+import { buildLaneModel } from '../lanes.js';
 
 const EPS_LOCAL = 1e-3;
 const MIN_SHARED = 8;
@@ -751,8 +752,10 @@ export function liftTopLaneTitleBandsAboveRails(
     return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
   };
 
+  const laneModel = buildLaneModel([...nodeByIdMap.values()]);
+
   const topLaneTitleFor = (node: MaterializedNode): LaneTitle | undefined => {
-    if (!(node as { isGroup?: boolean }).isGroup || (node as { parentId?: unknown }).parentId) {
+    if (!laneModel.isLane(node.id)) {
       return undefined;
     }
     const direction = upperCaseDirection(
@@ -879,8 +882,10 @@ export function shiftLeftLaneTitleBandsLeftOfRails(
     return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
   };
 
+  const laneModel = buildLaneModel([...nodeByIdMap.values()]);
+
   const leftLaneTitleFor = (node: MaterializedNode): LaneTitle | undefined => {
-    if (!(node as { isGroup?: boolean }).isGroup || (node as { parentId?: unknown }).parentId) {
+    if (!laneModel.isLane(node.id)) {
       return undefined;
     }
     const direction = upperCaseDirection(
