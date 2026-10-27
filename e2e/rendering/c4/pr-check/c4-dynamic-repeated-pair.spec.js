@@ -23,6 +23,6 @@ Rel(a, b, "Interaction 2")
   // Both relationships are placed by the same grid rule and so share a position.
   // This asserts that both are drawn and numbered, not where they sit.
   const svg = diagramSvg(page);
-  await expect(svg).toContainText('1: Interaction 1');
-  await expect(svg).toContainText('2: Interaction 2');
+  await expect(svg.getByText('1: Interaction 1', { exact: true })).toHaveCount(1);
+  await expect(svg.getByText('2: Interaction 2', { exact: true })).toHaveCount(1);
 });
