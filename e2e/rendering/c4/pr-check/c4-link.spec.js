@@ -39,6 +39,9 @@ Rel(p, s, "Uses")
     );
 
     const link = diagramSvg(page).locator('g.nodes a');
-    await expect(link).not.toHaveAttribute('xlink:href', /^javascript:/);
+    // The node stays wrapped in its anchor, but the unsafe URL is dropped: the anchor carries
+    // no xlink:href at all. Counting the anchor first keeps the negation from passing on nothing.
+    await expect(link).toHaveCount(1);
+    await expect(link).not.toHaveAttribute('xlink:href');
   });
 });
