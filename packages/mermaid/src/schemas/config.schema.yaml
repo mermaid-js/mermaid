@@ -2665,6 +2665,14 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         exclusiveMinimum: 0
         default: 1
 
+      stepNumbers:
+        description: |
+          If true, each edge with a `step` number shows that number in a small
+          badge, so the order of the step-by-step flow can be read without
+          watching the animation.
+        type: boolean
+        default: false
+
       inheritDir:
         type: boolean
         default: false

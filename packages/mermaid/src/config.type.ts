@@ -499,6 +499,13 @@ export interface FlowchartDiagramConfig extends BaseDiagramConfig {
    */
   stepDuration?: number;
   /**
+   * If true, each edge with a `step` number shows that number in a small
+   * badge, so the order of the step-by-step flow can be read without
+   * watching the animation.
+   *
+   */
+  stepNumbers?: boolean;
+  /**
    * If true, subgraphs without explicit direction will inherit the global graph direction
    * (e.g., LR, TB, RL, BT). Defaults to false to preserve legacy layout behavior.
    *
