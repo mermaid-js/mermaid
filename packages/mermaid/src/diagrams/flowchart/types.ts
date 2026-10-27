@@ -68,6 +68,7 @@ export interface FlowEdge {
   id?: string;
   animation?: 'fast' | 'slow';
   animate?: boolean;
+  step?: number;
 }
 
 export interface FlowClass {
