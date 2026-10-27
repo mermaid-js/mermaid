@@ -298,6 +298,32 @@ describe('grid router', () => {
     expect(first.points?.[0].x).toBeGreaterThan(second.points?.[0].x ?? Number.POSITIVE_INFINITY);
   });
 
+  it.each([{}, { rowGap: 45, columnGap: 70 }])(
+    'keeps fanned-out hierarchy edges from one group off each other with spacing %j',
+    (grid) => {
+      const data = baseLayout(
+        [
+          group('G', 'G', { row: 1, column: 1 }),
+          leaf('A', 80, 40, { row: 1, column: 1 }, 'G'),
+          leaf('B', 80, 40, { row: 2, column: 1 }, 'G'),
+          leaf('C', 80, 40, { row: 1, column: 2 }),
+          leaf('D', 80, 40, { row: 2, column: 2 }),
+          leaf('E', 80, 40, { row: 3, column: 2 }),
+        ],
+        [edge('A-E', 'A', 'E'), edge('B-D', 'B', 'D'), edge('A-C', 'A', 'C')],
+        grid
+      );
+      runGridLayoutCore(data);
+
+      expect(invalidRoutingIssues(data)).toEqual([]);
+      for (const [index, first] of data.edges.entries()) {
+        for (const second of data.edges.slice(index + 1)) {
+          expect(longestSharedNonterminalSubpath(first, second)).toBe(0);
+        }
+      }
+    }
+  );
+
   it('does not let a later hierarchy route displace an earlier sparse route', () => {
     const data = baseLayout(
       [
