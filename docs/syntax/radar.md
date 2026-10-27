@@ -108,6 +108,8 @@ radar-beta
 
 Each axis is represented by an ID and an optional label.
 
+Axis and curve IDs can start with keyword prefixes, for example `circles`, `trueNorth`, and `titles`.
+
 Multiple axes can be defined in a single line.
 
 ```
