@@ -297,7 +297,7 @@ bpmn-beta LR
 
 Every colour a BPMN element is painted with is a theme variable under `themeVariables.bpmn`, so the whole notation can be retuned without styling individual elements: `eventFill`, `eventStroke`, `eventStrokeWidth`, `endEventStroke`, `endEventStrokeWidth`, `gatewayFill`, `gatewayStroke`, `gatewayStrokeWidth`, `activityFill`, `activityStroke`, `activityStrokeWidth`, `glyphColor`, `dataFill`, `dataStroke`, `annotationStroke`, `laneFill`, `laneStroke`, `laneLabelColor`, `labelColor`, `edgeStroke`, and `messageStroke`.
 
-Unless you set one of them, each colour follows the theme: activities take `primaryColor`, gateways `secondaryColor`, events and data `tertiaryColor`, and lines `lineColor`, with activity and gateway outlines darkened or lightened until they stand out from the background. So `forest`, `neutral` and a `base` theme with your own `themeVariables` each draw BPMN in their own colours.
+Unless you set one of them, each colour follows the theme: activities take `primaryColor`, gateways `secondaryColor`, events and data `tertiaryColor`, and lines `lineColor`, with activity and gateway outlines darkened or lightened until they stand out from the background. So `forest`, `neutral` and a `base` theme with your own `themeVariables` each draw BPMN in their own colours. A value under `themeVariables.bpmn` has to be a string or a number: anything else, such as a list, is ignored and the theme's colour is used.
 
 The BPMN element shapes do not use the hand-drawn renderer, so `look: handDrawn` draws them plain.
 
