@@ -1,8 +1,5 @@
-import { isStepEdge, type Edge } from '../types.js';
+import { EDGE_STEP_DURATION, getStepDuration, isStepEdge, type Edge } from '../types.js';
 import type { SVGGroup } from '../../diagram-api/types.js';
-
-/** Seconds the travelling dot spends on one step. */
-export const EDGE_STEP_DURATION = 1;
 
 export interface EdgeStepTiming {
   begin: number;
@@ -86,7 +83,11 @@ export const insertEdgeStepDot = (
   if (!isStepEdge(edge) || !pathData) {
     return;
   }
-  const { begin, dur, gap } = getEdgeStepTiming(edge.step, edge.stepCount ?? edge.step);
+  const { begin, dur, gap } = getEdgeStepTiming(
+    edge.step,
+    edge.stepCount ?? edge.step,
+    getStepDuration(edge.stepDuration)
+  );
   const motionId = toAnimationId(`${diagramId}-${edge.id}-step`);
   const dot = elem
     .append('circle')

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { select } from 'd3';
-import { isStepEdge, type Edge } from '../types.js';
+import { getStepDuration, isStepEdge, type Edge } from '../types.js';
 import {
   escapeCssIdentifier,
   getEdgeStepTiming,
@@ -8,8 +8,8 @@ import {
   toAnimationId,
 } from './edgeStepAnimation.js';
 
-const stepEdge = (id: string, step?: number, stepCount?: number): Edge =>
-  ({ id, step, stepCount }) as Edge;
+const stepEdge = (id: string, step?: number, stepCount?: number, stepDuration?: number): Edge =>
+  ({ id, step, stepCount, stepDuration }) as Edge;
 
 describe('isStepEdge', () => {
   it.each([1, 2, 10])('accepts the positive integer %s', (step) => {
@@ -19,6 +19,19 @@ describe('isStepEdge', () => {
   it.each([undefined, 0, -1, 1.5, Number.NaN])('rejects %s', (step) => {
     expect(isStepEdge({ step })).toBe(false);
   });
+});
+
+describe('getStepDuration', () => {
+  it.each([0.25, 1, 3])('keeps the positive duration %s', (value) => {
+    expect(getStepDuration(value)).toBe(value);
+  });
+
+  it.each([undefined, 0, -1, Number.NaN, Number.POSITIVE_INFINITY, '2'])(
+    'falls back to one second for %s',
+    (value) => {
+      expect(getStepDuration(value)).toBe(1);
+    }
+  );
 });
 
 describe('getEdgeStepTiming', () => {
@@ -58,6 +71,15 @@ describe('insertEdgeStepDot', () => {
       'step_diagram_2d_1_2d_e2_2d_step.begin'
     );
     expect(svg.select('circle').attr('fill')).toBe('red');
+  });
+
+  it('times the dot with the configured step duration', () => {
+    insertEdgeStepDot(group, stepEdge('e2', 2, 3, 0.5), 'M0,0L0,100', 'diagram-1');
+
+    const motion = svg.select('animateMotion');
+    expect(motion.attr('dur')).toBe('0.5s');
+    expect(motion.attr('begin')).toBe('0.5s;step_diagram_2d_1_2d_e2_2d_step.end+1s');
+    expect(svg.select('animateTransform').attr('dur')).toBe('0.5s');
   });
 
   it('parks the hidden dot at the start of its path so the diagram bounds do not grow', () => {

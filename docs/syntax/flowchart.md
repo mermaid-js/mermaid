@@ -1454,7 +1454,34 @@ flowchart LR
 
 - Edges without a `step` are drawn as usual, so a diagram with no `step` looks exactly as before.
 - `step` must be a positive whole number (`1`, `2`, `3`, ...). Other values are ignored.
-- Each step lasts one second.
+- Each step lasts one second by default. Set `flowchart.stepDuration` (in seconds, v\<MERMAID_RELEASE_VERSION>+) to make the flow faster or slower:
+
+```mermaid-example
+---
+config:
+  flowchart:
+    stepDuration: 0.5
+---
+flowchart LR
+  Client e1@--> API
+  API e2@--> Client
+  e1@{ step: 1 }
+  e2@{ step: 2 }
+```
+
+```mermaid
+---
+config:
+  flowchart:
+    stepDuration: 0.5
+---
+flowchart LR
+  Client e1@--> API
+  API e2@--> Client
+  e1@{ step: 1 }
+  e2@{ step: 2 }
+```
+
 - When the reader's system asks for reduced motion (`prefers-reduced-motion: reduce`), the dot is hidden and the diagram is static.
 - `step` can be combined with `animate` or `animation` if you also want the edge's dashes to move.
 
