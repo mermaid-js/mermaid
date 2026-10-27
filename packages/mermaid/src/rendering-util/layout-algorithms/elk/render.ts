@@ -1924,22 +1924,20 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
     // Net counts, as for crossings: label-over-edge pairs in either direction.
     let coveredBefore = 0;
     let coveredAfter = 0;
+    // A label landing on another label is never worth it, whatever it clears.
+    let collides = false;
     for (const [other, route] of routes.entries()) {
       if (other === index || route.length < 2) {
         continue;
       }
       before += crossingCount(original, route);
       after += crossingCount(candidate, route);
-      coveredBefore +=
-        Number(covers(route, label)) +
-        Number(covers(original, labels[other])) +
-        Number(overlaps(label, labels[other]));
+      coveredBefore += Number(covers(route, label)) + Number(covers(original, labels[other]));
       coveredAfter +=
-        Number(covers(route, candidateLabel)) +
-        Number(covers(candidate, labels[other])) +
-        Number(overlaps(candidateLabel, labels[other]));
+        Number(covers(route, candidateLabel)) + Number(covers(candidate, labels[other]));
+      collides ||= overlaps(candidateLabel, labels[other]) && !overlaps(label, labels[other]);
     }
-    if (after > before || coveredAfter > coveredBefore) {
+    if (after > before || coveredAfter > coveredBefore || collides) {
       continue;
     }
 

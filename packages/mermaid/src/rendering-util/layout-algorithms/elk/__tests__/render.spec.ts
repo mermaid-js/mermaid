@@ -1091,6 +1091,24 @@ describe('straightenEdgeTerminals keeps the labels of a bidirectional pair apart
     expect(edges[0].points).not.toEqual(make()[0].points);
     expect(edges[1].points).toEqual(make()[1].points);
   });
+
+  it('does not trade a route under the label for a collision with another label', () => {
+    // An unlabelled edge passes under the back label where it sits now but not
+    // where straightening would put it, so the label-over-edge count drops by
+    // as much as the label-over-label count rises.
+    const under = {
+      id: 'L_C_D_0',
+      points: [
+        { x: 2300, y: 105 },
+        { x: 2430, y: 105 },
+      ],
+    };
+    const edges = [forward(), back(), under];
+    straightenAndProject(edges);
+
+    expect(labelsOverlap(edges[0], edges[1])).toBe(false);
+    expect(edges[1].points).toEqual(back().points);
+  });
 });
 
 describe('separateOppositeEdgeLabels', () => {
