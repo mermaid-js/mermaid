@@ -1454,6 +1454,7 @@ flowchart LR
 
 - Edges without a `step` are drawn as usual, so a diagram with no `step` looks exactly as before.
 - While its dot travels, the edge is highlighted with a thicker stroke in the edge's colour (v\<MERMAID_RELEASE_VERSION>+). The highlight has the class `edge-step-highlight`, so it can be restyled with `themeCSS`.
+- Set `flowchart.stepNumbers: true` (v\<MERMAID_RELEASE_VERSION>+) to show each edge's step number in a small badge, so the order can be read without watching the animation, in print, or when motion is reduced. It is off by default. The badge sits on the edge clear of labels, nodes, arrowheads and other badges (just beside the edge when it is too short), and is drawn above every edge and moving dot. The badge has the class `edge-step-badge`, so it can be restyled with `themeCSS`. Its size is fixed in diagram units, so when the diagram is scaled down to fit its container (`useMaxWidth`) the badge shrinks with it; set `flowchart.useMaxWidth: false` to keep it full size.
 - `step` must be a positive whole number (`1`, `2`, `3`, ...). Other values are ignored.
 - Each step lasts one second by default. Set `flowchart.stepDuration` (in seconds, v\<MERMAID_RELEASE_VERSION>+) to make the flow faster or slower:
 
