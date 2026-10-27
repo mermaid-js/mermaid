@@ -278,11 +278,10 @@ export const bounds = {
   },
 };
 
-const fills = conf.sectionFills;
-const textColours = conf.sectionColours;
-
 export const drawTasks = function (diagram, tasks, verticalPos, diagramId) {
   const conf = getConfig().journey;
+  const fills = conf.sectionFills;
+  const textColours = conf.sectionColours;
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   const taskPos = verticalPos + sectionVHeight;
