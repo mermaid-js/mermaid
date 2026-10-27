@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { select } from 'd3';
 import DOMPurify from 'dompurify';
-import { getStepDuration, isStepEdge, type Edge } from '../types.js';
+import { getStepDuration, isStepEdge } from '../edgeStep.js';
+import type { Edge } from '../types.js';
 import {
   arrowheadObstacle,
   chooseBadgePosition,

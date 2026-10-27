@@ -2,7 +2,8 @@ import { select } from 'd3';
 import type { Selection } from 'd3';
 // @ts-expect-error Incorrect khroma types
 import { channel } from 'khroma';
-import { EDGE_STEP_DURATION, getStepDuration, isStepEdge, type Edge } from '../types.js';
+import { EDGE_STEP_DURATION, getStepDuration, isStepEdge } from '../edgeStep.js';
+import type { Edge } from '../types.js';
 import type { SVGGroup } from '../../diagram-api/types.js';
 import utils from '../../utils.js';
 
