@@ -46,6 +46,13 @@ export interface StepBadgeOptions {
   textColors?: (string | undefined)[];
 }
 
+/** Stroke width of the highlight drawn over the edge while its step plays. */
+export const STEP_HIGHLIGHT_STROKE_WIDTH = 4;
+/** Stroke opacity of the step highlight, so the edge line stays visible under it. */
+export const STEP_HIGHLIGHT_STROKE_OPACITY = 0.6;
+/** Radius of the dot that travels along a step edge. */
+export const STEP_DOT_RADIUS = 4;
+
 export interface EdgeStepTiming {
   begin: number;
   dur: number;
@@ -453,9 +460,9 @@ export const insertEdgeStepDot = (
     .attr('d', pathData)
     .attr('fill', 'none')
     .attr('stroke', fill ?? 'currentColor')
-    .attr('stroke-width', 4)
+    .attr('stroke-width', STEP_HIGHLIGHT_STROKE_WIDTH)
     .attr('stroke-linecap', 'round')
-    .attr('stroke-opacity', 0.6)
+    .attr('stroke-opacity', STEP_HIGHLIGHT_STROKE_OPACITY)
     .attr('pointer-events', 'none')
     .attr('transform', parked)
     .attr('data-step', edge.step);
@@ -463,7 +470,7 @@ export const insertEdgeStepDot = (
   const dot = elem
     .append('circle')
     .attr('class', 'edge-step-dot')
-    .attr('r', 4)
+    .attr('r', STEP_DOT_RADIUS)
     .attr('aria-hidden', 'true')
     .attr('transform', parked)
     .attr('data-step', edge.step);
