@@ -291,6 +291,89 @@ describe('getEdgesToRender', () => {
     expect(graph.node('L')).toMatchObject({ y: 175, height: 40 });
   });
 
+  it('reserves the top margin as well as a label taller than the total margin', () => {
+    // The label is painted `top` below the cluster's top edge, so it ends at top + height.
+    // Children must start at or below that, not at the label height alone.
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 120,
+      labelBBox: { height: 40 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 100, width: 80, height: 40 });
+    graph.setParent('L', 'O');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 20,
+      subGraphTitleTopMargin: 10,
+    });
+
+    // O reserve = max(40 + 10, 20) = 50; its centre moves by baseline 10 + half the growth 25.
+    expect(graph.node('O')).toMatchObject({ y: 135, height: 170 });
+    // The leaf clears the 50 reserve: its top (y - 20) lies at or below the label bottom.
+    const clusterTop = graph.node('O').y - graph.node('O').height / 2;
+    const labelBottom = clusterTop + 10 + 40;
+    expect(graph.node('L').y - graph.node('L').height / 2).toBeGreaterThanOrEqual(labelBottom);
+  });
+
+  it('keeps a nested tall label clear of its own and every ancestor label', () => {
+    const graph = new Graph({ multigraph: true, compound: true });
+    graph.setGraph({ rankdir: 'TB' });
+    graph.setNode('O', {
+      id: 'O',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 180,
+      labelBBox: { height: 40 },
+    });
+    graph.setNode('I', {
+      id: 'I',
+      x: 100,
+      y: 110,
+      width: 160,
+      height: 120,
+      labelBBox: { height: 30 },
+    });
+    graph.setNode('L', { id: 'L', x: 100, y: 120, width: 80, height: 40 });
+    graph.setParent('I', 'O');
+    graph.setParent('L', 'I');
+    const data4Layout = {
+      nodes: [
+        { id: 'O', isGroup: true },
+        { id: 'I', isGroup: true },
+        { id: 'L', isGroup: false },
+      ],
+      edges: [],
+    };
+
+    applyDagreLayoutResult(data4Layout, {
+      graph,
+      mergeSelfLoops: true,
+      subGraphTitleTotalMargin: 20,
+      subGraphTitleTopMargin: 10,
+    });
+
+    // O reserve = 50, I reserve = 40; O grows by 90, I by 40.
+    expect(graph.node('O')).toMatchObject({ y: 155, height: 270 });
+    expect(graph.node('I')).toMatchObject({ y: 190, height: 160 });
+    // The leaf clears both: baseline 10 + 50 + 40 above its dagre y.
+    expect(graph.node('L')).toMatchObject({ y: 220 });
+  });
+
   it('shifts a recursively-rendered cluster by its ancestors reserve, without resizing it', () => {
     // A cluster with no external connections is extracted into its own sub-graph and comes
     // back as a `clusterNode` placeholder, which already contains its own header. Nested
