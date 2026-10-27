@@ -4,6 +4,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { imgSnapshotTest, renderGraph } from '../../../helpers/util.ts';
 
 const BPMN_FIXTURE_DIR = 'e2e/platform/dev-diagrams/diagrams/bpmn';
+// The fixtures that e2e/diagrams/bpmn/pr-check already snapshots under their own names.
+const SNAPSHOTTED_ELSEWHERE_DIR = 'e2e/diagrams/bpmn/pr-check';
 
 // Derived from the filesystem so a newly added fixture is swept automatically; a
 // hardcoded list drifts out of date the first time someone adds one.
@@ -13,6 +15,10 @@ const BPMN_FIXTURES = readdirSync(BPMN_FIXTURE_DIR)
 
 // viewer.js injects the source with innerHTML, so raw `&`, `<` and `>` in a fixture
 // have to be entity-escaped to survive the round trip.
+const SNAPSHOTTED_ELSEWHERE = new Set(
+  readdirSync(SNAPSHOTTED_ELSEWHERE_DIR).filter((file) => file.endsWith('.mmd'))
+);
+
 const asMermaidElementSource = (source: string): string =>
   source.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -22,9 +28,15 @@ const fixtureSource = (file: string): string =>
 test.describe('bpmn-beta', () => {
   for (const file of BPMN_FIXTURES) {
     test(`renders ${file}`, async ({ page }, testInfo) => {
-      await imgSnapshotTest(page, testInfo, fixtureSource(file), {
-        screenshotPath: `bpmn/${file.replace(/\.mmd$/, '')}`,
-      });
+      // One baseline per fixture in the PR tier: a fixture that the fixture sweep already
+      // snapshots is only rendered and checked here.
+      if (SNAPSHOTTED_ELSEWHERE.has(file)) {
+        await renderGraph(page, testInfo, fixtureSource(file), { screenshot: false });
+      } else {
+        await imgSnapshotTest(page, testInfo, fixtureSource(file), {
+          screenshotPath: `bpmn/${file.replace(/\.mmd$/, '')}`,
+        });
+      }
       await expect(page.locator('svg[aria-roledescription="bpmn"]')).toHaveCount(1);
     });
   }
