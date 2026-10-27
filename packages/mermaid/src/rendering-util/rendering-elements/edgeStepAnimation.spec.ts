@@ -504,24 +504,34 @@ describe('insertEdgeStepBadge', () => {
     }
   );
 
-  it("keeps clear of every edge's arrowheads", () => {
-    group
-      .append('path')
-      .attr('data-edge', 'true')
-      .attr(
-        'data-points',
-        btoa(
-          JSON.stringify([
-            { x: 50, y: 25 },
-            { x: 0, y: 25 },
-          ])
-        )
-      );
+  it.each([
+    ['marker-end', 'translate(0,65)'],
+    ['marker-start', 'translate(0,25)'],
+    ['none', 'translate(0,25)'],
+  ])(
+    "with an edge ending at the badge and its %s marker, keeps clear of the edge's arrowheads only at marked ends (%s)",
+    (marker, expected) => {
+      const path = group
+        .append('path')
+        .attr('data-edge', 'true')
+        .attr(
+          'data-points',
+          btoa(
+            JSON.stringify([
+              { x: 50, y: 25 },
+              { x: 0, y: 25 },
+            ])
+          )
+        );
+      if (marker !== 'none') {
+        path.attr(marker, 'url(#diagram-1_flowchart-v2-pointEnd)');
+      }
 
-    insertEdgeStepBadge(group, numbered('e1', 1), { points: line });
+      insertEdgeStepBadge(group, numbered('e1', 1), { points: line });
 
-    expect(translateOf(svg.select('g.edge-step-badge'))).toBe('translate(0,65)');
-  });
+      expect(translateOf(svg.select('g.edge-step-badge'))).toBe(expected);
+    }
+  );
 
   it('keeps clear of node boxes', () => {
     const node = group.append('g').attr('class', 'node').attr('transform', 'translate(0,30)');

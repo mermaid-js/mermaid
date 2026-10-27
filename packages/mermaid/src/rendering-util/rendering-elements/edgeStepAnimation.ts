@@ -290,6 +290,11 @@ export const arrowheadObstacle = (tip: PathPoint, from: PathPoint): BadgeObstacl
   };
 };
 
+const hasMarker = (path: Element, attribute: 'marker-start' | 'marker-end') => {
+  const value = path.getAttribute(attribute);
+  return !!value && value !== 'none';
+};
+
 const arrowheadObstacles = (path: Element, origin: PathPoint): BadgeObstacle[] => {
   const points = readPoints(path).filter(
     (point) => Number.isFinite(point?.x) && Number.isFinite(point?.y)
@@ -303,13 +308,17 @@ const arrowheadObstacles = (path: Element, origin: PathPoint): BadgeObstacle[] =
     y: point.y + offset.y - origin.y,
   });
   const last = points.length - 1;
-  return [
-    arrowheadObstacle(toSvg(points[0]), toSvg(points[Math.min(1, last)])),
-    arrowheadObstacle(toSvg(points[last]), toSvg(points[Math.max(last - 1, 0)])),
-  ];
+  const obstacles: BadgeObstacle[] = [];
+  if (hasMarker(path, 'marker-start')) {
+    obstacles.push(arrowheadObstacle(toSvg(points[0]), toSvg(points[Math.min(1, last)])));
+  }
+  if (hasMarker(path, 'marker-end')) {
+    obstacles.push(arrowheadObstacle(toSvg(points[last]), toSvg(points[Math.max(last - 1, 0)])));
+  }
+  return obstacles;
 };
 
-/** What no badge may cover, in SVG coordinates: labels, nodes and every edge's arrowheads. */
+/** What no badge may cover, in SVG coordinates: labels, nodes and the arrowheads at every edge's marked ends. */
 export const collectBadgeObstacles = (root: Element | null | undefined): BadgeObstacle[] => {
   const origin = { x: 0, y: 0 };
   const boxed = [...(root?.querySelectorAll('.edgeLabel, .node') ?? [])]
