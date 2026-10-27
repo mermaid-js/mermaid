@@ -41,7 +41,7 @@ describe('Grid DDLT - wide-label-crossings.mmd', () => {
 
     const labelledEdge = layout.edges.find((edge) => edge.start === 'start')!;
     const labelNode = layout.nodes.find((node) => node.id === labelledEdge.labelNodeId)!;
-    const crossingEdges = layout.edges.filter((edge) => edge.start.startsWith('top'));
+    const crossingEdges = layout.edges.filter((edge) => edge.start?.startsWith('top'));
     const labelRect = rectForNode(labelNode);
 
     expect(crossingEdges).toHaveLength(5);
