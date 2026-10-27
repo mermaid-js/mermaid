@@ -564,7 +564,7 @@ const deepestTitleOverflow = (graph, nodeId, subGraphTitleTotalMargin, topMargin
   return titleOverflow(graph.node(nodeId), subGraphTitleTotalMargin, topMargin) + maxChild;
 };
 
-const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin, topMargin = 0) => {
+const normalizeDagreNode = (graph, nodeId, subGraphTitleTotalMargin, topMargin) => {
   const node = graph.node(nodeId);
   if (!node) {
     return undefined;
