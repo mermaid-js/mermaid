@@ -33,7 +33,7 @@ xychart
 ## Syntax
 
 > **Note**
-> Text values can be written without `"`, and the spaces between their words are kept. Enclose the value in `"` if it contains other characters, such as `,`, `:`, `[`, `]` or `"`, or if you need to keep extra spaces or leading and trailing spaces.
+> Text values can be written without `"`, and the spaces between their words are kept. Enclose the value in `"` if it contains other characters, such as `,`, `:`, `[`, `]` or `"`, or if you need to keep a run of extra spaces between words. The diagram title is trimmed at both ends even when quoted.
 
 ### Orientations
 
