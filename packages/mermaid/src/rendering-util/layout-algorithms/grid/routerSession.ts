@@ -544,7 +544,9 @@ export class GridEdgeRoutingSession {
                   ? this.alternativePairedPortals(sourceFinal, false)
                   : [],
               plan.bundleSize > 1,
-              { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
+              this.modes.overlapAvoidanceEnabled
+                ? { index: this.occupancyFor(plan.lcaContainerId), pairKey: plan.pairKey }
+                : undefined
             )
           : validatedCompatibilitySegment(
               edge.id,

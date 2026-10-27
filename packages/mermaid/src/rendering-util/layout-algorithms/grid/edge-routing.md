@@ -96,13 +96,14 @@ Parallel and reverse edges use separate endpoint ports and lanes when the availa
 Unrelated edges in the same container are also kept off each other's corridors. A route that would run parallel to an earlier edge closer than 24px is re-routed through other ports or corridors, so edges that must cross do so at a single perpendicular point; crossing itself is allowed.
 
 Known caveat: overlap-driven switching from corridor routes to sparse routing is limited to diagrams
-with at most 64 edge-routing plans. Both same-container and hierarchy overlap checks use the total
-plan count across the whole diagram, including self-loops, parallel and reverse edges, and edges
-that cross group boundaries. Above 64 plans, the router skips this extra overlap-avoidance work and
-can retain overlapping corridor routes even after bounded separation attempts. Adding unrelated
-edges in another group can therefore cause previously separated edges to overlap. This temporary
-performance guard does not disable other sparse-routing rules or resource limits; local overlap
-repair remains deferred.
+with at most 64 edge-routing plans. The same cutoff applies to the extra occupied-corridor avoidance
+pass for a sparse hierarchy route's segment in its least common ancestor container. Both use the
+total plan count across the whole diagram, including self-loops, parallel and reverse edges, and
+edges that cross group boundaries. Above 64 plans, the router skips these steps and can retain
+overlapping routes even after bounded separation attempts. Adding unrelated edges in another group
+can therefore cause previously separated edges to overlap. This temporary performance guard does
+not disable normal sparse routing, geometry validation, parallel and reverse edge separation, or
+resource limits; local overlap repair remains deferred.
 
 Dense nested diagrams can require a hierarchy edge to share part of an internal corridor with a parallel or reverse edge. Endpoint ports remain distinct, but part of the rendered paths can overlap.
 

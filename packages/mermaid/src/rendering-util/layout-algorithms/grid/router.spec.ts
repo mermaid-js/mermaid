@@ -550,6 +550,45 @@ describe('grid router', () => {
     }
   );
 
+  it.each([
+    [64, false],
+    [65, true],
+  ])(
+    'uses the diagram-wide hierarchy-segment overlap cutoff at %i plans',
+    (planCount, aboveCutoff) => {
+      const nodes = [
+        group('G', 'G', { row: 1, column: 1 }),
+        leaf('A', 80, 40, { row: 1, column: 1 }, 'G'),
+        leaf('B', 80, 40, { row: 1, column: 2 }, 'G'),
+        group('H', 'H', { row: 2, column: 2 }),
+        leaf('C', 80, 40, { row: 1, column: 1 }, 'H'),
+        leaf('D', 80, 40, { row: 1, column: 2 }, 'H'),
+        group('unrelated', 'Unrelated', { row: 3, column: 3 }),
+      ];
+      const edges = [edge('A-D', 'A', 'D'), edge('B-C', 'B', 'C')];
+      for (let index = 0; index < planCount - 2; index++) {
+        const sourceId = `source-${index}`;
+        const targetId = `target-${index}`;
+        nodes.push(
+          leaf(sourceId, 80, 40, { row: index + 1, column: 1 }, 'unrelated'),
+          leaf(targetId, 80, 40, { row: index + 1, column: 2 }, 'unrelated')
+        );
+        edges.push(edge(`unrelated-${index}`, sourceId, targetId));
+      }
+      const data = baseLayout(nodes, edges);
+      runGridLayoutCore(data);
+
+      expect(invalidRoutingIssues(data)).toEqual([]);
+      const sharedLength = longestSharedNonterminalSubpath(data.edges[0], data.edges[1]);
+      if (aboveCutoff) {
+        // Above the cutoff, sparse hierarchy routes skip the occupied-corridor avoidance pass.
+        expect(sharedLength).toBeGreaterThan(0);
+      } else {
+        expect(sharedLength).toBe(0);
+      }
+    }
+  );
+
   it('crosses unrelated diagonal edges perpendicularly instead of running them in parallel', () => {
     const data = baseLayout(
       [
