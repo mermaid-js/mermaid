@@ -306,10 +306,7 @@ function resolveAmbiguousEndpointSides(plans: EdgeRoutePlan[], result: GridLayou
       const key = reservationKey(entry.ownerId, selected);
       reserved.set(key, (reserved.get(key) ?? 0) + 1);
       const owner = result.forest.nodeById.get(entry.ownerId);
-      const oppositeId = role === 'source' ? plan.edge.end : plan.edge.start;
-      const opposite = oppositeId ? result.forest.nodeById.get(oppositeId) : undefined;
-      if (owner && opposite) {
-        entry.oppositeCoord = oppositeCoordFor(rectForNode(opposite), selected);
+      if (owner) {
         entry.preferredCoord = oppositeCoordFor(rectForNode(owner), selected);
       }
     }
@@ -530,6 +527,21 @@ function assignDemandCoordinates(
         side === 'left' || side === 'right'
           ? container?.horizontalCorridors
           : container?.verticalCorridors;
+      const innerCoordinate = (demand: GridAttachmentDemand): number => {
+        const inner = demand.inner ? demandByKey.get(demand.inner.demandKey) : undefined;
+        const innerOwner = inner ? nodeById.get(inner.ownerId) : undefined;
+        const coordinate = inner ? assigned.get(inner.demandKey) : undefined;
+        if (!inner || !innerOwner || coordinate === undefined) {
+          return demand.preferredCoord;
+        }
+        const point = sideMidpoint(rectForNode(innerOwner), inner.side);
+        if (inner.side === 'left' || inner.side === 'right') {
+          point.y = coordinate;
+        } else {
+          point.x = coordinate;
+        }
+        return tangentialCoordinate(point, side);
+      };
       const preferredCoordinate = (demand: GridAttachmentDemand): number => {
         const innerCoord = demand.inner ? assigned.get(demand.inner.demandKey) : undefined;
         const alignedWithInner =
@@ -552,6 +564,12 @@ function assignDemandCoordinates(
         continue;
       }
       if (span >= MIN_PORT_SEPARATION_PX * (demands.length - 1)) {
+        demands.sort(
+          (a, b) =>
+            innerCoordinate(a) - innerCoordinate(b) ||
+            a.oppositeCoord - b.oppositeCoord ||
+            compareCodeUnits(a.edgeId, b.edgeId)
+        );
         const desired = demands.map(preferredCoordinate);
         const coordinates = assignCompactPortalCoordinates(desired, low, high);
         demands.forEach((demand, index) => assigned.set(demand.demandKey, coordinates[index]));
