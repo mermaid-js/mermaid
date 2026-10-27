@@ -4,6 +4,7 @@ import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import { getStepDuration, isStepEdge } from '../../rendering-util/edgeStep.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
@@ -197,6 +198,13 @@ export class FlowDB implements DiagramDB {
       }
       if (edgeDoc?.curve !== undefined) {
         edge.interpolate = edgeDoc.curve;
+      }
+      if (edgeDoc?.step !== undefined) {
+        if (isStepEdge(edgeDoc)) {
+          edge.step = edgeDoc.step;
+        } else {
+          log.warn(`Ignoring step on edge ${id}: expected a positive integer`, edgeDoc.step);
+        }
       }
       return;
     }
@@ -1338,6 +1346,12 @@ You have to call mermaid.initialize.`
     });
 
     const e = this.getEdges();
+    const stepCount = e.reduce(
+      (max, rawEdge) => (isStepEdge(rawEdge) ? Math.max(max, rawEdge.step) : max),
+      0
+    );
+    const stepDuration = getStepDuration(config.flowchart?.stepDuration);
+    const stepNumber = config.flowchart?.stepNumbers === true ? { showStepNumber: true } : {};
     e.forEach((rawEdge, index) => {
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
       const styles = [...(e.defaultStyle ?? [])];
@@ -1387,6 +1401,9 @@ You have to call mermaid.initialize.`
         look: config.look,
         animate: rawEdge.animate,
         animation: rawEdge.animation,
+        ...(isStepEdge(rawEdge)
+          ? { step: rawEdge.step, stepCount, stepDuration, ...stepNumber }
+          : {}),
         curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
       };
 
