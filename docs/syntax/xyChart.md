@@ -33,7 +33,7 @@ xychart
 ## Syntax
 
 > **Note**
-> All text values that contain only one word can be written without `"`. If a text value has many words in it, specifically if it contains spaces, enclose the value in `"`
+> Text values can be written without `"`, and the spaces between their words are kept. Enclose the value in `"` if it contains other characters, such as `,`, `:`, `[`, `]` or `"`, or if you need to keep extra spaces or leading and trailing spaces.
 
 ### Orientations
 
@@ -57,7 +57,7 @@ xychart
 ```
 
 > **Note**
-> If the title is a single word one no need to use `"`, but if it has space `"` is needed
+> The title can be written without `"` even if it has spaces; use `"` if it contains special characters.
 
 ### x-axis
 
