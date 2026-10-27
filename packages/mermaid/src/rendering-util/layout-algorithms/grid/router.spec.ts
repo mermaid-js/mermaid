@@ -324,6 +324,40 @@ describe('grid router', () => {
     }
   );
 
+  it('keeps hierarchy edges from sibling items to one outside node off a shared corridor', () => {
+    const data = baseLayout(
+      [
+        group('G', 'G', { row: 1, column: 1 }),
+        leaf('A', 80, 40, { row: 1, column: 1 }, 'G'),
+        leaf('B', 80, 40, { row: 1, column: 2 }, 'G'),
+        leaf('C', 80, 40, { row: 2, column: 2 }),
+      ],
+      [edge('A-C', 'A', 'C'), edge('B-C', 'B', 'C')]
+    );
+    runGridLayoutCore(data);
+
+    expect(invalidRoutingIssues(data)).toEqual([]);
+    expect(longestSharedNonterminalSubpath(data.edges[0], data.edges[1])).toBe(0);
+  });
+
+  it('keeps crossing hierarchy edges between two groups off a shared corridor', () => {
+    const data = baseLayout(
+      [
+        group('G', 'G', { row: 1, column: 1 }),
+        leaf('A', 80, 40, { row: 1, column: 1 }, 'G'),
+        leaf('B', 80, 40, { row: 1, column: 2 }, 'G'),
+        group('H', 'H', { row: 2, column: 2 }),
+        leaf('C', 80, 40, { row: 1, column: 1 }, 'H'),
+        leaf('D', 80, 40, { row: 1, column: 2 }, 'H'),
+      ],
+      [edge('A-D', 'A', 'D'), edge('B-C', 'B', 'C')]
+    );
+    runGridLayoutCore(data);
+
+    expect(invalidRoutingIssues(data)).toEqual([]);
+    expect(longestSharedNonterminalSubpath(data.edges[0], data.edges[1])).toBe(0);
+  });
+
   it('does not let a later hierarchy route displace an earlier sparse route', () => {
     const data = baseLayout(
       [
