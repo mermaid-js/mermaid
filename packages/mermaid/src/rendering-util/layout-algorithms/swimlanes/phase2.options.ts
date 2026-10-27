@@ -1,4 +1,5 @@
 import type { Graph, NodeId } from './helpers.js';
+import { buildLaneModel, readLaneIndex } from './lanes.js';
 
 /**
  * Options controlling how layers are assigned in the Sugiyama pipeline.
@@ -21,30 +22,10 @@ export interface LayeringOptions {
  * does not belong to any lane.
  */
 export function buildTopLaneMap(g: Graph): Map<NodeId, string | null> {
+  const model = buildLaneModel(g.layout.nodes ?? []);
   const cache = new Map<NodeId, string | null>();
-
-  const resolve = (id: NodeId): string | null => {
-    if (cache.has(id)) {
-      return cache.get(id)!;
-    }
-    const node = g.nodeById.get(id) as any;
-    if (!node) {
-      cache.set(id, null);
-      return null;
-    }
-    const parentId = node.parentId as NodeId | undefined;
-    if (!parentId) {
-      cache.set(id, null);
-      return null;
-    }
-    const parentLane = resolve(parentId);
-    const lane = parentLane ?? parentId;
-    cache.set(id, lane);
-    return lane;
-  };
-
   for (const id of g.nodes) {
-    resolve(id);
+    cache.set(id, model.laneIdOf(id));
   }
   return cache;
 }
@@ -55,9 +36,29 @@ export function createTopLaneResolver(g: Graph): (id: NodeId) => string | null {
 }
 
 export function buildTopLaneOrder(g: Graph): string[] {
+  const nodes = g.layout.nodes ?? [];
+  const model = buildLaneModel(nodes);
+  const laneNodes = nodes.filter((node) => model.isLane(node.id));
+
+  const indexed = laneNodes.filter((node) => readLaneIndex(node) !== undefined);
+  if (indexed.length > 0 && indexed.length === laneNodes.length) {
+    return [...indexed]
+      .sort((a, b) => (readLaneIndex(a) ?? 0) - (readLaneIndex(b) ?? 0))
+      .map((node) => node.id);
+  }
+
+  if (!model.hasPools) {
+    return [...new Set(laneNodes.map((node) => node.id))].reverse();
+  }
+
   const lanes: string[] = [];
-  for (const node of g.layout.nodes ?? []) {
-    if (node.isGroup && !node.parentId) {
+  for (const node of nodes) {
+    if (node.parentId) {
+      continue;
+    }
+    if (model.isPool(node.id)) {
+      lanes.push(...(model.lanesByPool.get(node.id) ?? []));
+    } else if (model.isLane(node.id)) {
       lanes.push(node.id);
     }
   }
