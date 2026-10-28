@@ -918,6 +918,7 @@ graph TD;A--x|text including URL space|B;`)
           text: '---\ntitle: x\n---\nagentflow-beta TB\n%% note\n  a --> ]',
           line: 6,
         },
+        { case: 'sankey blank lines', text: 'sankey-beta\n\na,b,1\n\n\nc d', line: 6 },
         { case: 'sankey comment', text: 'sankey-beta\n%% note\na,b,1\nc d', line: 4 },
         {
           case: 'sankey front matter',
@@ -953,6 +954,11 @@ graph TD;A--x|text including URL space|B;`)
           case: 'front matter and a kept comment',
           text: '---\ntitle: x\n---\nagentflow-beta TB\n%% note\n  a --> ]',
           hash: { line: 5 },
+        },
+        {
+          case: 'sankey blank lines',
+          text: 'sankey-beta\n\na,b,1\n\n\nc d',
+          hash: { line: 5, loc: { first_line: 6, last_line: 6 } },
         },
       ])('in the jison hash after $case', async ({ text, hash }) => {
         expect(await parseError(text)).toMatchObject({ hash });
