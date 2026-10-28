@@ -248,6 +248,39 @@ describe('Testing quadrantChart jison file', () => {
     expect(parserFnConstructor(str)).toThrow();
   });
 
+  it.each([
+    'quadrant-1x',
+    'quadrant-12',
+    'x-axisy',
+    'my-quadrant-1',
+    'Sub x-axis',
+    'My classDef',
+    'Title',
+  ])('parses %s as a point name instead of a statement keyword', (name) => {
+    expect(parserFnConstructor(`quadrantChart\n${name}: [0.5, 0.5]`)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: name, type: 'text' },
+      '',
+      '0.5',
+      '0.5',
+      []
+    );
+  });
+
+  it('keeps statement keywords in quadrant and axis labels', () => {
+    expect(
+      parserFnConstructor('quadrantChart\nquadrant-1 Move to quadrant-2\nx-axis my x-axis label')
+    ).not.toThrow();
+    expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({
+      text: 'Move to quadrant-2',
+      type: 'text',
+    });
+    expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+      text: 'my x-axis label',
+      type: 'text',
+    });
+  });
+
   it('should be able to parse the whole chart', () => {
     const str = `quadrantChart
       title Analytics and Business Intelligence Platforms
