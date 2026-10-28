@@ -1,0 +1,61 @@
+---
+description: >-
+  The same complete use-case contract as small-representative-visual-snapshot.mmd, 
+  rendered under the handDrawn look.
+config:
+  look: handDrawn
+  usecase:
+    diagramPadding: 24
+    useMaxWidth: true
+---
+usecase-beta
+  accTitle: Complete use case example
+  accDescr: Actors interact with authentication, payment, notes, and JSON data.
+  actor Normal("Normal User") &lt;&lt;Human&gt;&gt;
+  actor Hollow@{ type: hollow, business: true }
+  actor Awesome@{ type: awesome }
+  actor Icon@{ icon: "fa:bell" }
+  actor UnknownIcon@{ icon: "fa:not-registered" }
+  actor BusinessActor@{ business: true }
+
+  systemBoundary "Authentication System":::framed
+    actor ContainedActor("Contained actor")
+    Login("`**Sign in**
+securely`") &lt;&lt;Main&gt;&gt;:::critical
+    Reset[Reset password]
+  end
+  "Authentication System"@{ type: package }
+
+  Payment("Payment")
+  Extra("Optional flow")
+  Checkout("Checkout")@{ business: true } &lt;&lt;Core&gt;&gt;
+  Literal("**Literal markers**")
+  Hostile("&lt;img src=x onerror=alert#40;1#41;&gt;")
+
+  Normal assocRel@-- "`opens **session**`" --> Login
+  Hollow circleRel@--o Reset
+  Awesome crossRel@--x Normal
+  Awesome generalRel@--|> Normal
+  Login includeRel@..> : include Payment
+  Extra extendRel@..> : extend Login
+  Checkout --> Payment
+  note for Login "`Requires an **active session**`"
+
+  json Payload@{
+    "2": "two",
+    "1": "one",
+    "colors": ["Red", "Green"],
+    "address": { "city": "Oslo" },
+    "empty": {}
+  }
+  Payment jsonRel@--> Payload
+
+  classDef framed fill:#fdf6e3,stroke:#6c71c4,stroke-width:3px
+  classDef critical fill:#fff3cd,stroke:#b58900
+  classDef emphasized stroke:#268bd2,stroke-width:3px
+  class assocRel emphasized
+  style Authentication_System fill:#fdf6e3,stroke:#6c71c4,stroke-width:3px
+  style Checkout stroke:#dc322f,stroke-width:4px
+  style Payload fill:#eef7ff,stroke:#123456
+  style assocRel stroke:#2aa198,stroke-width:5px
+  assocRel@{ animate: true, animation: fast }

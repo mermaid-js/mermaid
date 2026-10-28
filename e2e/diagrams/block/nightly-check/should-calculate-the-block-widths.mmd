@@ -1,0 +1,14 @@
+---
+description: >-
+  A 2-column block-beta grid where a sub-block contains a wide-labeled block
+  ("I am a wide one") alongside a plain id, followed by a top-level block in
+  the next row — verifying the outer grid's column width is calculated to
+  accommodate the wide content inside the nested sub-block.
+---
+block-beta
+  columns 2
+  block
+  id2["I am a wide one"]
+  id1
+  end
+  id["Next row"]

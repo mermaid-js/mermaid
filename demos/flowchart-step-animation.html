@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mermaid Flowchart Step Animation Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+  </head>
+  <body>
+    <h1>Flowchart step animation</h1>
+    <h2>Cache-aside read, one edge per step</h2>
+    <pre class="mermaid">
+      flowchart LR
+        Client e1@--> API
+        API e2@--> Cache
+        Cache e3@-->|miss| DB
+        DB e4@--> API
+        API e5@--> Client
+        e1@{ step: 1 }
+        e2@{ step: 2 }
+        e3@{ step: 3 }
+        e4@{ step: 4 }
+        e5@{ step: 5 }
+    </pre>
+
+    <h2>Fan-out: edges sharing a step play together</h2>
+    <pre class="mermaid">
+      flowchart TD
+        Producer e1@--> Queue
+        Queue e2@--> WorkerA
+        Queue e3@--> WorkerB
+        WorkerA e4@--> Store
+        WorkerB e5@--> Store
+        e1@{ step: 1 }
+        e2@{ step: 2 }
+        e3@{ step: 2 }
+        e4@{ step: 3 }
+        e5@{ step: 3 }
+    </pre>
+
+    <h2>Step mixed with the existing dash animation and a plain edge</h2>
+    <pre class="mermaid">
+      flowchart LR
+        A e1@--> B
+        B e2@--> C
+        C --> D
+        e1@{ step: 1, animate: true }
+        e2@{ step: 2 }
+    </pre>
+
+    <h2>No step: renders as before</h2>
+    <pre class="mermaid">
+      flowchart LR
+        A --> B --> C
+    </pre>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      mermaid.initialize({ logLevel: 3 });
+    </script>
+  </body>
+</html>

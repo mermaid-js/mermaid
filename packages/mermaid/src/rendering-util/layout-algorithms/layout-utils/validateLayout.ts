@@ -134,6 +134,11 @@ export interface ValidateLayoutOptions {
    * The shared default only requires intersection with the label rectangle.
    */
   requireEdgeLabelCenter?: boolean;
+  /**
+   * Whether `nodeId` is drawn attached to `toId`, so covering part of it is the notation
+   * and not an overlap. Asked in both directions for each pair; absent means no node is.
+   */
+  isAttached?: (nodeId: string, toId: string) => boolean;
 }
 
 export interface ValidateLayoutResult {
@@ -624,6 +629,10 @@ export function validateLayout(
       const aContainsB = aNode.isGroup && isAncestorGroup(aId, bNode, byId);
       const bContainsA = bNode.isGroup && isAncestorGroup(bId, aNode, byId);
       if (aContainsB || bContainsA) {
+        continue;
+      }
+
+      if (options.isAttached?.(aId, bId) || options.isAttached?.(bId, aId)) {
         continue;
       }
 

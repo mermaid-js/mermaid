@@ -2621,6 +2621,23 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 120
 
+      stepDuration:
+        description: |
+          Seconds the travelling dot spends on each step of the step-by-step
+          flow animation (edges with a `step` number). Diagrams without `step`
+          edges are not affected.
+        type: number
+        exclusiveMinimum: 0
+        default: 1
+
+      stepNumbers:
+        description: |
+          If true, each edge with a `step` number shows that number in a small
+          badge, so the order of the step-by-step flow can be read without
+          watching the animation.
+        type: boolean
+        default: false
+
       inheritDir:
         type: boolean
         default: false

@@ -1,0 +1,20 @@
+---
+description: >-
+  State diagram covering a composite state (Active) with two independent
+  concurrent regions (NumLock/CapsLock), separated by `--`, rendered under the
+  "neo" look with the "redux-dark" theme.
+config:
+  look: neo
+  theme: redux-dark
+---
+stateDiagram-v2
+    [*] --> Active
+    state Active {
+      [*] --> NumLockOff
+      NumLockOff --> NumLockOn
+      NumLockOn --> NumLockOff
+      --
+      [*] --> CapsLockOff
+      CapsLockOff --> CapsLockOn
+      CapsLockOn --> CapsLockOff
+    }
