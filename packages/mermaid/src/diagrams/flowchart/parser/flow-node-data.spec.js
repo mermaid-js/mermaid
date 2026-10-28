@@ -32,6 +32,33 @@ describe('when parsing directions', function () {
     expect(data4Layout.nodes[0].label).toEqual('D');
   });
 
+  it('should handle whitespace between a node id and its shape data', function () {
+    flow.parser.parse(`flowchart TB
+      D @{ shape: rounded }
+      E	@{ shape: circle } --> F  @{ shape: diamond }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(3);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[0].label).toEqual('D');
+    expect(data4Layout.nodes[1].shape).toEqual('circle');
+    expect(data4Layout.nodes[1].label).toEqual('E');
+    expect(data4Layout.nodes[2].shape).toEqual('diamond');
+    expect(data4Layout.nodes[2].label).toEqual('F');
+    expect(data4Layout.edges.length).toBe(1);
+  });
+
+  it('should handle whitespace before shape data with & and edges', function () {
+    flow.parser.parse(`flowchart TB
+      D @{ shape: rounded } & E --> F @{ shape: circle }`);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.nodes.length).toBe(3);
+    expect(data4Layout.nodes[0].shape).toEqual('rounded');
+    expect(data4Layout.nodes[2].shape).toEqual('circle');
+    expect(data4Layout.edges.length).toBe(2);
+  });
+
   it('should handle basic shape data statements with &', function () {
     const res = flow.parser.parse(`flowchart TB
       D@{ shape: rounded } & E`);

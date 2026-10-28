@@ -38,7 +38,7 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
 // <acc_descr_multiline>.*[^\n]*                {  return "acc_descr_line"}
 
 
-\@\{                                            {
+[ \t]*\@\{                                      {
                                                     // console.log('=> shapeData', yytext);
                                                     this.pushState("shapeData"); yytext=""; return 'SHAPE_DATA' }
 <shapeData>["]                                  {
