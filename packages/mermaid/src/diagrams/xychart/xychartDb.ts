@@ -130,7 +130,12 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   if (!hasSetXAxis) {
     const prevMinValue = isLinearAxisData(xyChartData.xAxis) ? xyChartData.xAxis.min : Infinity;
     const prevMaxValue = isLinearAxisData(xyChartData.xAxis) ? xyChartData.xAxis.max : -Infinity;
-    setXAxisRangeData(Math.min(prevMinValue, 1), Math.max(prevMaxValue, data.length));
+    xyChartData.xAxis = {
+      type: 'linear',
+      title: xyChartData.xAxis.title,
+      min: Math.min(prevMinValue, 1),
+      max: Math.max(prevMaxValue, data.length),
+    };
   }
 
   // When a band axis is defined, truncate data to match the number of categories
@@ -151,7 +156,9 @@ function transformDataWithoutCategory(data: number[]): SimplePlotDataType {
   if (isLinearAxisData(xyChartData.xAxis)) {
     const min = xyChartData.xAxis.min;
     const max = xyChartData.xAxis.max;
-    if (data.length === 1) {
+    if (!hasSetXAxis) {
+      retData = data.map((datum, index) => [`${index + 1}`, datum]);
+    } else if (data.length === 1) {
       // For backwards compatibility, avoid divide-by-zero error
       retData = [[`${min}`, data[0]]];
     } else {
