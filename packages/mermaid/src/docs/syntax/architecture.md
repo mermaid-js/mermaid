@@ -75,7 +75,7 @@ service database1(database)[My Database] in private_api
 The syntax for declaring an edge is:
 
 ```
-{serviceId}{{group}}?:{T|B|L|R} {<}?--{>}? {T|B|L|R}:{serviceId}{{group}}?
+{serviceId}{{group}}?:{T|B|L|R} {<}?(--|-[title]-){>}? {T|B|L|R}:{serviceId}{{group}}?
 ```
 
 #### Edge Direction
@@ -107,6 +107,25 @@ subnet:R --> L:gateway
 ```
 
 creates an edge with the arrow going into the `gateway` service
+
+#### Edge titles
+
+A title can be added to an edge by replacing `--` with `-[title]-`. Arrows and the `{group}` modifier work the same way as on edges without a title.
+
+For example:
+
+```mermaid-example
+architecture-beta
+    group aws(cloud)[AWS]
+    group azure(cloud)[Azure]
+
+    service awsHub(internet)[Hub] in aws
+    service azureHub(internet)[Hub] in azure
+
+    awsHub:R <-[SD-WAN]-> L:azureHub
+```
+
+creates an edge titled `SD-WAN` between the `awsHub` and `azureHub` services, with arrows on both sides.
 
 #### Edges out of Groups
 

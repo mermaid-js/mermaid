@@ -165,6 +165,45 @@ describe('architecture', () => {
     });
   });
 
+  describe('should handle edge titles', () => {
+    it.each([
+      ['a:R -[SD-WAN]- L:b', 'SD-WAN', false, false],
+      ['a:R <-[SD-WAN]-> L:b', 'SD-WAN', true, true],
+      ['a:R -[GitOps sync, v2]-> L:b', 'GitOps sync, v2', false, true],
+    ])('should parse "%s"', (edgeDef, title, lhsInto, rhsInto) => {
+      const context = `architecture-beta
+            service a(server)[A]
+            service b(server)[B]
+            ${edgeDef}
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+
+      const edge = result.value.edges?.[0];
+      expect(edge).toBeDefined();
+      expect(edge?.title).toBe(title);
+      expect(edge?.lhsInto).toBe(lhsInto);
+      expect(edge?.rhsInto).toBe(rhsInto);
+    });
+
+    it('should parse an edge title with the {group} modifier', () => {
+      const context = `architecture-beta
+            group g1(cloud)[G1]
+            group g2(cloud)[G2]
+            service a(server)[A] in g1
+            service b(server)[B] in g2
+            a{group}:R -[peering]-> L:b{group}
+            `;
+      const result = parse(context);
+      expectNoErrorsOrAlternatives(result);
+
+      const edge = result.value.edges?.[0];
+      expect(edge?.title).toBe('peering');
+      expect(edge?.lhsGroup).toBe(true);
+      expect(edge?.rhsGroup).toBe(true);
+    });
+  });
+
   describe('should handle non-ASCII and punctuation in unquoted titles', () => {
     it.each([
       '采集器',
