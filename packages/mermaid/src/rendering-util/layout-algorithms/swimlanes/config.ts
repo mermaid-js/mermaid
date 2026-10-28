@@ -3,6 +3,12 @@
  * Centralizes all magic numbers and default values for maintainability.
  */
 
+/** Clear space kept between two arrowheads that land side by side on one face (px) */
+const ARROWHEAD_GAP = 4;
+
+/** Stroke width of an edge line (px); the flowchart `.flowchart-link` style default */
+const EDGE_STROKE_WIDTH = 2;
+
 /**
  * Edge routing and spacing constants
  */
@@ -16,14 +22,18 @@ export const EDGE_ROUTING = {
   /** Edge of the square the point marker draws an arrowhead in (px); see markers.js */
   ARROWHEAD_SIZE: 8,
 
-  /** Clear space kept between two arrowheads that land side by side on one face (px) */
-  ARROWHEAD_GAP: 4,
+  ARROWHEAD_GAP,
 
   /** Closest two edges may end on one face of a node: an arrowhead and the gap beside it (px) */
   MIN_ARROWHEAD_SPACING: 12,
 
-  /** Distance under which a bend of one route and another route read as one stroke (px) */
-  ROUTE_TOUCH_TOLERANCE: 2,
+  EDGE_STROKE_WIDTH,
+
+  /**
+   * Distance under which a bend of one route and another route read as one stroke (px): the
+   * gap kept between arrowheads plus the stroke width, the least a reader can see between two lines
+   */
+  ROUTE_TOUCH_TOLERANCE: ARROWHEAD_GAP + EDGE_STROKE_WIDTH,
 } as const;
 
 /**

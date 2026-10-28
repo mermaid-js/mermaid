@@ -1,25 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { LayoutData } from '../../../types.js';
+import { VIEWER_SIZES_13_DISAGREE_EXITS_B_C_D } from './viewerMeasuredSizes.js';
 import { layOutFixture } from './viewerSizedLayout.js';
 
 interface Pt {
   x: number;
   y: number;
 }
-
-// What the dev viewer measures for 13-disagree-exits-b-c-d.mmd.
-const VIEWER_SIZES = {
-  A: [150, 51],
-  B: [204, 91],
-  I: [152, 45],
-  Sys1: [152, 45],
-  E: [152, 45],
-  C: [204, 91],
-  D: [204, 91],
-  F: [152, 45],
-  G: [152, 45],
-  H: [152, 45],
-} as const;
 
 const SAME_POINT = 1;
 const MIN_SHARED_RUN = 1;
@@ -60,7 +47,10 @@ function incomingAgainstOutgoing(layout: LayoutData, nodeId: string) {
 
 describe('an incoming and an outgoing edge on a non-rectangular node', () => {
   it('13-disagree-exits-b-c-d: never end where, or run along where, B -> C leaves B', async () => {
-    const layout = await layOutFixture('13-disagree-exits-b-c-d', VIEWER_SIZES);
+    const layout = await layOutFixture(
+      '13-disagree-exits-b-c-d',
+      VIEWER_SIZES_13_DISAGREE_EXITS_B_C_D
+    );
     const pairs = incomingAgainstOutgoing(layout, 'B');
     expect(pairs.length).toBeGreaterThan(0);
     for (const { incoming, outgoing } of pairs) {

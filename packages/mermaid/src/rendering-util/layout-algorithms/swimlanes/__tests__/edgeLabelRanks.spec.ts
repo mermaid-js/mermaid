@@ -166,7 +166,7 @@ describe('swimlane edge labels do not change node ranks (#8327)', () => {
     );
   });
 
-  it('does not stretch the flow axis of an LR layout by the width of a label', () => {
+  it('gives an LR label its own width and clearance along the flow, no more', () => {
     const edges: EdgeSpec[] = [
       ['A', 'B', 'wide'],
       ['B', 'C'],
@@ -177,9 +177,7 @@ describe('swimlane edge labels do not change node ranks (#8327)', () => {
 
     expect(ranks(labelled)).toEqual(ranks(plain));
     const gap = (data: LayoutData) => alongFlow(data, 'LR').C - alongFlow(data, 'LR').A;
-    // LR stretches the flow axis by the nodes' own width to height ratio.
-    const stretch = NODE_SIZE.width / NODE_SIZE.height;
-    const reserved = (WIDE_LABEL_SIZE.width + 2 * COORDINATES.EDGE_LABEL_CLEARANCE) * stretch;
+    const reserved = WIDE_LABEL_SIZE.width + 2 * COORDINATES.EDGE_LABEL_CLEARANCE;
     expect(gap(labelled)).toBeCloseTo(gap(plain) + reserved, 0);
   });
 
