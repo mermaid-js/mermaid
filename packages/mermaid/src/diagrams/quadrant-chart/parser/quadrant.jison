@@ -32,6 +32,7 @@
 <acc_descr_multiline>[\}]                { this.popState(); }
 <acc_descr_multiline>[^\}]*              return "acc_descr_multiline_value";
 
+<bol>(?:"x-axis"|"y-axis"|"quadrant-1"|"quadrant-2"|"quadrant-3"|"quadrant-4")(?=[ \t]*\:) { this.begin('body'); return 'ALPHA'; }
 <bol>"x-axis"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'X-AXIS'; }
 <bol>"y-axis"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'Y-AXIS'; }
 " "*\-\-+\>" "*                  return 'AXIS-TEXT-DELIMITER'

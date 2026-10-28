@@ -290,6 +290,20 @@ describe('Testing quadrantChart jison file', () => {
     expect(mockDB.setDiagramTitle).not.toHaveBeenCalled();
   });
 
+  it.each(['x-axis', 'y-axis', 'quadrant-1', 'quadrant-2', 'quadrant-3', 'quadrant-4'])(
+    'parses spaced %s as a point name',
+    (name) => {
+      expect(parserFnConstructor(`quadrantChart\n${name} : [0.5, 0.5]`)).not.toThrow();
+      expect(mockDB.addPoint).toHaveBeenCalledWith(
+        { text: name, type: 'text' },
+        '',
+        '0.5',
+        '0.5',
+        []
+      );
+    }
+  );
+
   it('accepts quoted axis labels and semicolon statement separators', () => {
     expect(parserFnConstructor('quadrantChart;x-axis"Low";quadrant-1"Leaders"')).not.toThrow();
     expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({ text: 'Low', type: 'text' });
