@@ -65,6 +65,30 @@ ${elementFontStyles()}
   .c4-shape line {
     stroke-width: 2px;
   }
+  /* Relationships: dashed lines with an arrowhead, as on c4model.com. */
+  .edgePaths .path,
+  path.c4-rel {
+    stroke: ${options.lineColor ?? '#666666'};
+    fill: none;
+    stroke-width: 1.5px;
+    stroke-dasharray: 6 4;
+  }
+  .edgePaths .marker {
+    fill: ${options.lineColor ?? '#666666'};
+    stroke: ${options.lineColor ?? '#666666'};
+  }
+  /* Relationship labels: smaller, on an opaque background so they stay legible over lines. */
+  .edgeLabel {
+    font-size: 0.85em;
+    background-color: ${options.background ?? '#ffffff'};
+  }
+  .edgeLabel .label foreignObject {
+    overflow: visible;
+  }
+  .edgeLabel rect {
+    fill: ${options.background ?? '#ffffff'};
+    opacity: 1;
+  }
 `;
 
 export default getStyles;
