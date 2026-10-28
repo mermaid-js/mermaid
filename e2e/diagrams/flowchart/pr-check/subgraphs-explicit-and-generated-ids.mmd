@@ -1,0 +1,14 @@
+---
+description: >-
+  A subgraph that is declared with the id subGraph1, followed by one with no
+  id: the second gets its own id and is drawn as a separate box. It used to
+  take the id subGraph1 and be merged into the first.
+---
+flowchart LR
+  subgraph subGraph1
+    a1 --> a2
+  end
+  subgraph
+    b1 --> b2
+  end
+  a2 --> b1

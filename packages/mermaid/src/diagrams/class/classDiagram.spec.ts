@@ -2250,3 +2250,30 @@ describe('class db class', () => {
     }
   });
 });
+
+describe('given a class diagram with a member that has a ")" but is not a method, ', function () {
+  const parseMembers = (...members: string[]) => {
+    const classDb = new ClassDB();
+    parser.yy = classDb;
+    parser.parse(['classDiagram', 'class C1 {', ...members.map((m) => `  ${m}`), '}'].join('\n'));
+    return classDb.getClass('C1');
+  };
+
+  it('should report the member instead of throwing a TypeError', () => {
+    expect(() => parseMembers('+getTime) int')).toThrow('Invalid class member "+getTime) int"');
+    expect(() => parseMembers('(int x)')).toThrow('Invalid class member "(int x)"');
+  });
+
+  it('should keep reading text without a ")" after its first character as an attribute', () => {
+    const c1 = parseMembers('getTime(int x', '(', ')', '+getName() string');
+
+    expect(c1.members.map((member) => member.getDisplayDetails().displayText)).toEqual([
+      'getTime(int x',
+      '(',
+      ')',
+    ]);
+    expect(c1.methods.map((method) => method.getDisplayDetails().displayText)).toEqual([
+      '+getName() : string',
+    ]);
+  });
+});
