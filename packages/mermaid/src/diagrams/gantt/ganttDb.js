@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import dayjsIsoWeek from 'dayjs/plugin/isoWeek.js';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat.js';
 import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat.js';
+import dayjsUtc from 'dayjs/plugin/utc.js';
 import { log } from '../../logger.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import utils from '../../utils.js';
@@ -20,6 +21,7 @@ import {
 dayjs.extend(dayjsIsoWeek);
 dayjs.extend(dayjsCustomParseFormat);
 dayjs.extend(dayjsAdvancedFormat);
+dayjs.extend(dayjsUtc);
 
 const WEEKEND_START_DAY = { friday: 5, saturday: 6 };
 let dateFormat = '';
@@ -302,6 +304,44 @@ const warnAboutUnknownTaskIds = function (keyword, ids) {
   );
 };
 
+/**
+ * Parses a date string with dayjs in strict mode.
+ *
+ * dayjs' strict mode formats the parsed date in the local timezone and compares the result with
+ * the input, so a date with an explicit UTC offset (`Z` or `ZZ` in the format) is only accepted
+ * when that offset matches the local one. When that happens, the date is compared in the offset
+ * from the input instead.
+ *
+ * @param {string} str - The date string to parse.
+ * @param {string} dateFormat - Dayjs date format string.
+ * @returns {dayjs.Dayjs} The parsed date, which is invalid if `str` does not match `dateFormat`.
+ */
+const parseDateStrict = function (str, dateFormat) {
+  const format = dateFormat.trim();
+  const date = dayjs(str, format, true);
+  if (date.isValid() || !format.replace(/\[[^\]]*]/g, '').includes('Z')) {
+    return date;
+  }
+  const offsetMatch = [...str.matchAll(/Z|([+-])(\d\d):?(\d\d)/g)].pop();
+  const looseDate = dayjs(str, format);
+  if (!offsetMatch || !looseDate.isValid()) {
+    return date;
+  }
+  const [offsetText, sign, hours = '0', minutes = '0'] = offsetMatch;
+  if (+hours > 23 || +minutes > 59) {
+    return date;
+  }
+  const offset = (sign === '-' ? -1 : 1) * (+hours * 60 + +minutes);
+  // Format the date as UTC shifted by the input's offset (`utcOffset()` can't be used, since it
+  // reads offsets of up to 16 minutes as hours), so the offset is formatted as "+00:00"/"+0000"
+  const formatted = looseDate.utc().add(offset, 'minute').format(format);
+  const candidates = ['+00:00', '+0000'].map(
+    (zero) =>
+      str.slice(0, offsetMatch.index) + zero + str.slice(offsetMatch.index + offsetText.length)
+  );
+  return candidates.includes(formatted) ? looseDate : date;
+};
+
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
@@ -348,7 +388,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 
   // Check for actual date set using dayjs strict parsing
-  let mDate = dayjs(str, dateFormat.trim(), true);
+  let mDate = parseDateStrict(str, dateFormat);
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
@@ -442,7 +482,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   }
 
   // check for actual date
-  let parsedDate = dayjs(str, dateFormat.trim(), true);
+  let parsedDate = parseDateStrict(str, dateFormat);
   if (parsedDate.isValid()) {
     if (inclusive) {
       parsedDate = parsedDate.add(1, 'd');
