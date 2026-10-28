@@ -82,6 +82,12 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('A "quoted" chart');
   });
 
+  it('keeps internal backticks inside a markdown string', () => {
+    const str = 'xychart\n title "`A `code` B`"';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('A `code` B');
+  });
+
   it('parse chart orientation', () => {
     const str = 'xychart vertical';
     expect(parserFnConstructor(str)).not.toThrow();
