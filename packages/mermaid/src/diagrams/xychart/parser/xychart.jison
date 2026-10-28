@@ -48,9 +48,9 @@
 
 
 
-(?:"`)                                    { this.pushState("md_string"); }
-<md_string>(?:(?!`\").)+                  { return "MD_STR"; }
-<md_string>(?:`")                         { this.popState(); }
+["][`]                                    { this.pushState("md_string"); }
+<md_string>[^`"]+                         { return "MD_STR"; }
+<md_string>[`]["]                         { this.popState(); }
 ["]                                       this.pushState("string");
 <string>["]                               this.popState();
 <string>[^"]*                             return "STR";

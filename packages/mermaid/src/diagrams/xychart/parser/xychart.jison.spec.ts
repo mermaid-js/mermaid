@@ -61,6 +61,21 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('oneLinertitle');
   });
 
+  it('recognizes markdown strings in chart and series labels', () => {
+    const str = 'xychart\n title "`md`"\n x-axis "`**bold**`" ["`**a**`", b]\n line "`*s*`" [1, 2]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('md');
+    expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: '**bold**', type: 'markdown' });
+    expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
+      { text: '**a**', type: 'markdown' },
+      { text: 'b', type: 'text' },
+    ]);
+    expect(mockDB.setLineData).toHaveBeenCalledWith({ text: '*s*', type: 'markdown' }, [
+      dp(1),
+      dp(2),
+    ]);
+  });
+
   it('parse chart orientation', () => {
     const str = 'xychart vertical';
     expect(parserFnConstructor(str)).not.toThrow();
