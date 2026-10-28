@@ -76,6 +76,12 @@ describe('Testing xychart jison file', () => {
     ]);
   });
 
+  it('keeps double quotes inside a markdown string', () => {
+    const str = 'xychart\n title "`A "quoted" chart`"';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('A "quoted" chart');
+  });
+
   it('parse chart orientation', () => {
     const str = 'xychart vertical';
     expect(parserFnConstructor(str)).not.toThrow();
