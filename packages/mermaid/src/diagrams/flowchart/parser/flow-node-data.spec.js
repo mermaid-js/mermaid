@@ -59,6 +59,14 @@ describe('when parsing directions', function () {
     expect(data4Layout.edges.length).toBe(2);
   });
 
+  it('should not allow a newline between a node id and its shape data', function () {
+    expect(() =>
+      flow.parser.parse(`flowchart TB
+      D
+      @{ shape: rounded }`)
+    ).toThrow(/Parse error/);
+  });
+
   it('should handle basic shape data statements with &', function () {
     const res = flow.parser.parse(`flowchart TB
       D@{ shape: rounded } & E`);
