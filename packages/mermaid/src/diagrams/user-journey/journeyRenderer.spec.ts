@@ -5,15 +5,11 @@ import { bounds, drawTasks } from './journeyRenderer.js';
 describe('journey renderer', () => {
   afterEach(() => {
     configApi.reset();
+    configApi.setSiteConfig({});
+    configApi.saveConfigFromInitialize({});
   });
 
-  it('should fill sections with the sectionFills configured at draw time', () => {
-    const config = configApi.getConfig();
-    configApi.reset({
-      ...config,
-      journey: { ...config.journey, sectionFills: ['#ff0000', '#00ff00'] },
-    });
-
+  const drawnFills = (selector: string) => {
     document.body.innerHTML = '';
     const diagram = select(document.body).append('svg');
     bounds.init();
@@ -27,10 +23,31 @@ describe('journey renderer', () => {
       'journey'
     );
 
-    const fills = diagram
-      .selectAll('rect.journey-section')
+    return diagram
+      .selectAll(selector)
       .nodes()
-      .map((rect) => (rect as Element).getAttribute('fill'));
-    expect(fills).toEqual(['#ff0000', '#00ff00']);
+      .map((rect) => ({
+        attr: (rect as SVGElement).getAttribute('fill'),
+        style: (rect as SVGElement).style.getPropertyValue('fill'),
+      }));
+  };
+
+  it('should fill sections and tasks with the sectionFills the user set, also as a style', () => {
+    // What mermaid.initialize() does with the user's options
+    const options = { journey: { sectionFills: ['#ff0000', '#00ff00'] } };
+    configApi.saveConfigFromInitialize(options);
+    configApi.setSiteConfig(options);
+
+    const expected = [
+      { attr: '#ff0000', style: '#ff0000' },
+      { attr: '#00ff00', style: '#00ff00' },
+    ];
+    expect(drawnFills('rect.journey-section')).toEqual(expected);
+    expect(drawnFills('rect.task')).toEqual(expected);
+  });
+
+  it('should leave the theme in charge of the fill when sectionFills is not set', () => {
+    const styles = drawnFills('rect.journey-section').map(({ style }) => style);
+    expect(styles).toEqual(['', '']);
   });
 });
