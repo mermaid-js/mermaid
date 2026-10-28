@@ -700,6 +700,60 @@ const generateDashArray = (len, oValueS, oValueE) => {
   return dashArray;
 };
 
+/** @type {Record<string, string>} */
+const EDGE_THICKNESS_CLASS = {
+  normal: 'edge-thickness-normal',
+  thick: 'edge-thickness-thick',
+  invisible: 'edge-thickness-invisible',
+};
+
+/** @type {Record<string, string>} */
+const EDGE_PATTERN_CLASS = {
+  solid: 'edge-pattern-solid',
+  dotted: 'edge-pattern-dotted',
+  dashed: 'edge-pattern-dashed',
+};
+
+/**
+ * Thickness and pattern classes come from `edge.thickness` and `edge.pattern`.
+ * Flowchart and agentflow also store a default
+ * `edge-thickness-normal edge-pattern-solid` pair on `edge.classes`, so a thick
+ * or dotted edge used to carry both the real class and the default. Once a
+ * thickness or pattern value has been resolved, drop only the `edge.classes`
+ * tokens that name a different thickness or pattern. `flowchart-link` and any
+ * other class stay. When thickness or pattern is unset, a class on
+ * `edge.classes` is the only source of that stroke and is kept, including when
+ * it differs from the normal/solid fallback this function still emits.
+ * @param {import('../types.js').Edge} edge
+ * @returns {string}
+ */
+const mergeEdgeStrokeClasses = (edge) => {
+  const resolvedThickness = EDGE_THICKNESS_CLASS[edge.thickness];
+  const resolvedPattern = EDGE_PATTERN_CLASS[edge.pattern];
+  const thicknessChosen = resolvedThickness !== undefined;
+  const patternChosen = resolvedPattern !== undefined;
+  const thicknessClass = resolvedThickness ?? 'edge-thickness-normal';
+  const patternClass = resolvedPattern ?? 'edge-pattern-solid';
+
+  const extra = [];
+  const seen = new Set([thicknessClass, patternClass]);
+  for (const token of String(edge.classes ?? '').split(/\s+/)) {
+    if (!token || seen.has(token)) {
+      continue;
+    }
+    if (thicknessChosen && token.startsWith('edge-thickness-')) {
+      continue;
+    }
+    if (patternChosen && token.startsWith('edge-pattern-')) {
+      continue;
+    }
+    seen.add(token);
+    extra.push(token);
+  }
+
+  return [thicknessClass, patternClass, ...extra].join(' ');
+};
+
 export const insertEdge = function (
   elem,
   edge,
@@ -863,33 +917,7 @@ export const insertEdge = function (
   const { x, y } = getLineFunctionsWithOffset(edge);
   const lineFunction = line().x(x).y(y).curve(curve);
 
-  let strokeClasses;
-  switch (edge.thickness) {
-    case 'normal':
-      strokeClasses = 'edge-thickness-normal';
-      break;
-    case 'thick':
-      strokeClasses = 'edge-thickness-thick';
-      break;
-    case 'invisible':
-      strokeClasses = 'edge-thickness-invisible';
-      break;
-    default:
-      strokeClasses = 'edge-thickness-normal';
-  }
-  switch (edge.pattern) {
-    case 'solid':
-      strokeClasses += ' edge-pattern-solid';
-      break;
-    case 'dotted':
-      strokeClasses += ' edge-pattern-dotted';
-      break;
-    case 'dashed':
-      strokeClasses += ' edge-pattern-dashed';
-      break;
-    default:
-      strokeClasses += ' edge-pattern-solid';
-  }
+  let strokeClasses = mergeEdgeStrokeClasses(edge);
   let svgPath;
   let linePath =
     edgeCurveType === 'rounded'
@@ -921,13 +949,7 @@ export const insertEdge = function (
     svgPath = select(svgPathNode)
       .select('path')
       .attr('id', `${diagramId}-${edge.id}`)
-      .attr(
-        'class',
-        ' ' +
-          strokeClasses +
-          (edge.classes ? ' ' + edge.classes : '') +
-          (animationClass ? ' ' + animationClass : '')
-      )
+      .attr('class', ' ' + strokeClasses + (animationClass ? ' ' + animationClass : ''))
       .attr('style', edgeStyles ? edgeStyles.reduce((acc, style) => acc + ';' + style, '') : '');
     let d = svgPath.attr('d');
     svgPath.attr('d', d);
@@ -944,13 +966,7 @@ export const insertEdge = function (
       .append('path')
       .attr('d', linePath)
       .attr('id', `${diagramId}-${edge.id}`)
-      .attr(
-        'class',
-        ' ' +
-          strokeClasses +
-          (edge.classes ? ' ' + edge.classes : '') +
-          (animationClass ? ' ' + animationClass : '')
-      )
+      .attr('class', ' ' + strokeClasses + (animationClass ? ' ' + animationClass : ''))
       .attr('style', pathStyle);
 
     //eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
