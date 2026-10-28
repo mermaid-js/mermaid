@@ -47,6 +47,8 @@ describe('svgDraw', function () {
           links: {
             'IP address': '',
             'Port number': '#',
+            'Escaped port': 'ﬂ°°35¶ß',
+            'Encoded port': '%23',
             Documentation: 'https://example.com/docs',
           },
           actorCnt: 1,
@@ -58,11 +60,13 @@ describe('svgDraw', function () {
       );
 
       const entries = svg.__children[0].__children.slice(1);
-      expect(entries.map((entry) => entry.__name)).toEqual(['g', 'g', 'a']);
+      expect(entries.map((entry) => entry.__name)).toEqual(['g', 'g', 'g', 'g', 'a']);
       expect(entries[0].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
       expect(entries[1].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
-      expect(entries[2].attr).toHaveBeenCalledWith('xlink:href', 'https://example.com/docs');
-      expect(entries[2].attr).toHaveBeenCalledWith('target', '_blank');
+      expect(entries[2].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
+      expect(entries[3].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
+      expect(entries[4].attr).toHaveBeenCalledWith('xlink:href', 'https://example.com/docs');
+      expect(entries[4].attr).toHaveBeenCalledWith('target', '_blank');
     });
   });
 

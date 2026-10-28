@@ -1,6 +1,6 @@
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import * as configApi from '../../config.js';
-import { ZERO_WIDTH_SPACE, parseFontSize } from '../../utils.js';
+import { ZERO_WIDTH_SPACE, decodeEntities, parseFontSize } from '../../utils.js';
 import common, {
   calculateMathMLDimensions,
   hasKatex,
@@ -115,8 +115,11 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
     var linkY = 20;
     for (let key in links) {
       const destination = typeof links[key] === 'string' ? links[key].trim() : '';
-      const sanitizedLink = destination && destination !== '#' ? sanitizeUrl(destination) : '';
-      const hasLink = Boolean(sanitizedLink && sanitizedLink !== 'about:blank');
+      const sanitizedLink = destination ? sanitizeUrl(destination) : '';
+      const normalizedLink = decodeEntities(sanitizedLink);
+      const hasLink = Boolean(
+        sanitizedLink && sanitizedLink !== 'about:blank' && !/^(?:#|&?#35;)$/.test(normalizedLink)
+      );
       const linkElem = g.append(hasLink ? 'a' : 'g');
       if (hasLink) {
         linkElem.attr('xlink:href', sanitizedLink);
