@@ -267,6 +267,35 @@ describe('Testing quadrantChart jison file', () => {
     );
   });
 
+  it('preserves spaces after a quoted point-name prefix', () => {
+    expect(parserFnConstructor('quadrantChart\n"Team" Alpha: [0.5, 0.5]')).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Team Alpha', type: 'text' },
+      '',
+      '0.5',
+      '0.5',
+      []
+    );
+  });
+
+  it('parses a spaced Title point instead of a title directive', () => {
+    expect(parserFnConstructor('quadrantChart\nTitle : [0.5, 0.5]')).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Title', type: 'text' },
+      '',
+      '0.5',
+      '0.5',
+      []
+    );
+    expect(mockDB.setDiagramTitle).not.toHaveBeenCalled();
+  });
+
+  it('accepts quoted axis labels and semicolon statement separators', () => {
+    expect(parserFnConstructor('quadrantChart;x-axis"Low";quadrant-1"Leaders"')).not.toThrow();
+    expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({ text: 'Low', type: 'text' });
+    expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({ text: 'Leaders', type: 'text' });
+  });
+
   it('keeps statement keywords in quadrant and axis labels', () => {
     expect(
       parserFnConstructor('quadrantChart\nquadrant-1 Move to quadrant-2\nx-axis my x-axis label')

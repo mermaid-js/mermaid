@@ -20,7 +20,8 @@
 \%\%[^\n]*                               /* do nothing */
 
 <bol>[ \t]+                              /* skip indentation */
-<bol>"title"(?=[ \t\n\r]|$)[ \t]*    { this.begin("title");return 'title'; }
+<bol>"title"(?=[ \t]*\:)              { this.begin('body'); return 'ALPHA'; }
+<bol>"title"(?=[ \t\n\r";]|$)[ \t]* { this.begin("title");return 'title'; }
 <title>(?!\n|;|#)*[^\n]*                 { this.popState(); return "title_value"; }
 
 <bol>accTitle\s*":"\s*                  { this.begin("acc_title");return 'acc_title'; }
@@ -31,20 +32,20 @@
 <acc_descr_multiline>[\}]                { this.popState(); }
 <acc_descr_multiline>[^\}]*              return "acc_descr_multiline_value";
 
-<bol>"x-axis"(?=[ \t\n\r]|$)[ \t]*  { this.begin('body'); return 'X-AXIS'; }
-<bol>"y-axis"(?=[ \t\n\r]|$)[ \t]*  { this.begin('body'); return 'Y-AXIS'; }
+<bol>"x-axis"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'X-AXIS'; }
+<bol>"y-axis"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'Y-AXIS'; }
 " "*\-\-+\>" "*                  return 'AXIS-TEXT-DELIMITER'
-<bol>"quadrant-1"(?=[ \t\n\r]|$)[ \t]* { this.begin('body'); return 'QUADRANT_1'; }
-<bol>"quadrant-2"(?=[ \t\n\r]|$)[ \t]* { this.begin('body'); return 'QUADRANT_2'; }
-<bol>"quadrant-3"(?=[ \t\n\r]|$)[ \t]* { this.begin('body'); return 'QUADRANT_3'; }
-<bol>"quadrant-4"(?=[ \t\n\r]|$)[ \t]* { this.begin('body'); return 'QUADRANT_4'; }
+<bol>"quadrant-1"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_1'; }
+<bol>"quadrant-2"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_2'; }
+<bol>"quadrant-3"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_3'; }
+<bol>"quadrant-4"(?=[ \t\n\r";]|$)[ \t]* { this.begin('body'); return 'QUADRANT_4'; }
 <bol>"classDef"(?=[ \t])              { this.begin('body'); return 'CLASSDEF'; }
 
 ["][`]                                   { this.begin("md_string");}
 <md_string>[^`"]+                        { return "MD_STR";}
 <md_string>[`]["]                        { this.popState();}
 ["]                                      this.begin("string");
-<string>["]                              this.popState();
+<string>["]                              { this.popState(); this.begin('body'); }
 <string>[^"]*                            return "STR";
 
 \:\:\:                                   {this.begin('class_name')}
@@ -56,7 +57,7 @@
 <point_x>\s*\,\s*                        {this.popState(); this.begin('point_y');}
 <point_y>(1)|(0(.\d+)?)                  {this.popState(); return 'point_y';}
 
-<INITIAL,bol>"quadrantChart"(?=[ \t\n\r]|$)[ \t]* { this.begin('bol'); return 'QUADRANT'; }
+<INITIAL,bol>"quadrantChart"(?=[ \t\n\r";]|$)[ \t]* { this.begin('bol'); return 'QUADRANT'; }
 <bol>[^ \t\n\r]                        { this.begin('body'); this.unput(yytext); }
 
 [A-Za-z]+                                return 'ALPHA';
