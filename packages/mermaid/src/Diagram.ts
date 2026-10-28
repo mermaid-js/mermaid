@@ -4,6 +4,7 @@ import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
 import defaultConfig from './defaultConfig.js';
 import { log } from './logger.js';
+import { remapParseErrorLines } from './diagram-api/sourceLines.js';
 import { encodeEntities } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramCode, DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
@@ -46,7 +47,7 @@ const prepareDb = (
 };
 
 /**
- * The text the parser of a diagram with `db` reads.
+ * The text the parser of a diagram with `db` reads, and the source line of each of its lines.
  *
  * Diagrams that report source positions set `preserveCommentsWhenParsing`
  * so that parser positions stay meaningful in original-source space. Every
@@ -61,17 +62,18 @@ const prepareDb = (
  * truncation path.
  */
 const selectSource = (code: DiagramCode, db: DiagramDefinition['db'], config: MermaidConfig) => {
+  const cleaned = { text: code.cleaned, sourceLines: code.cleanedSourceLines ?? [] };
   if (!db.preserveCommentsWhenParsing || !code.withComments) {
-    return code.cleaned;
+    return cleaned;
   }
   const maxTextSize = config.maxTextSize ?? defaultConfig.maxTextSize;
   if (code.withComments.length > maxTextSize) {
     log.warn(
       `Comment-preserving source exceeds maxTextSize (${code.withComments.length} > ${maxTextSize}); parsing the comment-stripped text instead. Reported source positions will not account for comment lines.`
     );
-    return code.cleaned;
+    return cleaned;
   }
-  return code.withComments;
+  return { text: code.withComments, sourceLines: code.withCommentsSourceLines ?? [] };
 };
 
 /**
@@ -95,13 +97,19 @@ export class Diagram {
     await ensureDiagramRegistered(type);
     const { db, parser, renderer, init } = getDiagram(type);
     prepareDb({ db, parser, init }, config, metadata);
-    const textToParse = encodeEntities(selectSource(code, db, config)) + '\n';
+    const source = selectSource(code, db, config);
+    const textToParse = encodeEntities(source.text) + '\n';
     // Pass frontmatter line offset so positions can be adjusted to match the
     // original source (which includes frontmatter) shown in the editor.
     if (code.frontmatterLineOffset) {
       db.setFrontmatterLineOffset?.(code.frontmatterLineOffset);
     }
-    await parser.parse(textToParse);
+    try {
+      await parser.parse(textToParse);
+    } catch (error) {
+      remapParseErrorLines(error, source.sourceLines);
+      throw error;
+    }
     return new Diagram(type, textToParse, db, parser, renderer);
   }
 
