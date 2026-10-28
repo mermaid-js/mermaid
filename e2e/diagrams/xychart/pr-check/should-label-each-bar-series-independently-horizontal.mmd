@@ -1,0 +1,15 @@
+---
+description: >-
+  Horizontal orientation: two bar series with showDataLabel enabled, verifying
+  each bar shows its own series value and not always the first series' values.
+  Regression test for github.com/mermaid-js/mermaid/issues/8475.
+config:
+  xyChart:
+    showDataLabel: true
+    chartOrientation: horizontal
+---
+xychart
+  x-axis [orders, search, profile]
+  y-axis "p95 (ms)" 0 --> 450
+  bar "before" [380, 210, 140]
+  bar "after" [95, 60, 130]
