@@ -61,6 +61,86 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('oneLinertitle');
   });
 
+  describe('unquoted text keeps the spaces between its words', () => {
+    it('title', () => {
+      expect(parserFnConstructor('xychart \n title Sales Report')).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('Sales Report');
+    });
+
+    it('x-axis title', () => {
+      expect(parserFnConstructor('xychart \n x-axis Big Months')).not.toThrow();
+      expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'Big Months', type: 'text' });
+    });
+
+    it('y-axis title', () => {
+      expect(parserFnConstructor('xychart \n y-axis Total Sales')).not.toThrow();
+      expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'Total Sales', type: 'text' });
+    });
+
+    it('x-axis title and categories', () => {
+      expect(parserFnConstructor('xychart \n x-axis Big Months [jan feb, mar]')).not.toThrow();
+      expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'Big Months', type: 'text' });
+      expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
+        { text: 'jan feb', type: 'text' },
+        { text: 'mar', type: 'text' },
+      ]);
+    });
+
+    it('line and bar titles', () => {
+      expect(
+        parserFnConstructor('xychart \n line Net Profit [1, 2]\n bar Gross Sales [3]')
+      ).not.toThrow();
+      expect(mockDB.setLineData).toHaveBeenCalledWith({ text: 'Net Profit', type: 'text' }, [
+        dp(1),
+        dp(2),
+      ]);
+      expect(mockDB.setBarData).toHaveBeenCalledWith({ text: 'Gross Sales', type: 'text' }, [
+        dp(3),
+      ]);
+    });
+
+    it('keeps punctuation and digits that sit between the words', () => {
+      expect(
+        parserFnConstructor('xychart \n title Q1 2024 - R&D + Ops = Total_Cost')
+      ).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('Q1 2024 - R&D + Ops = Total_Cost');
+    });
+
+    it('does not add a space where the source had none', () => {
+      expect(parserFnConstructor('xychart \n title R&D-2024 plan')).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('R&D-2024 plan');
+    });
+
+    it('collapses a run of spaces or tabs between words to one space', () => {
+      expect(parserFnConstructor('xychart \n title Sales   \t  Report')).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('Sales Report');
+    });
+
+    it('trims only the ends', () => {
+      expect(parserFnConstructor('xychart \n y-axis   Total   Sales   \n')).not.toThrow();
+      expect(mockDB.setYAxisTitle).toHaveBeenCalledWith({ text: 'Total Sales', type: 'text' });
+    });
+
+    it('renders a line break after a trailing space as one space', () => {
+      expect(parserFnConstructor('xychart \n title Sales \nReport')).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('Sales Report');
+    });
+
+    it('still ends the statement at a line break with no trailing space', () => {
+      expect(parserFnConstructor('xychart \n title Sales\nReport')).toThrow();
+    });
+
+    it('does not bring back an empty quoted string between two words', () => {
+      expect(parserFnConstructor('xychart \n title a "" b')).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('a b');
+    });
+
+    it('leaves a quoted title untouched', () => {
+      expect(parserFnConstructor('xychart \n title "Sales   Report"')).not.toThrow();
+      expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('Sales   Report');
+    });
+  });
+
   it('parse chart orientation', () => {
     const str = 'xychart vertical';
     expect(parserFnConstructor(str)).not.toThrow();
@@ -213,7 +293,7 @@ describe('Testing xychart jison file', () => {
     expect(mockDB.setXAxisTitle).toHaveBeenCalledWith({ text: 'xAxisName', type: 'text' });
     expect(mockDB.setXAxisBand).toHaveBeenCalledWith([
       { text: 'cat1  with space', type: 'text' },
-      { text: 'cat2asdf', type: 'text' },
+      { text: 'cat2 asdf', type: 'text' },
       { text: 'cat3', type: 'text' },
     ]);
   });
