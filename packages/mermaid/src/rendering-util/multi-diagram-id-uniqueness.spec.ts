@@ -228,6 +228,13 @@ union A, B`,
     tf 02 evt End
     rf 03 readmodel ReadModel01 ->> 01 ->> 02 { a: true }
     rf 04 rmo ReadModel02 ->> 01 ->> 02`,
+
+  orgchart: `orgchart-beta
+    ceo[CEO] "Anna Andersson"
+      staff cfo[CFO] "Bo Berg"
+      Engineering
+        Development
+      Sales`,
 };
 
 async function renderTwoAndCheckIds(
