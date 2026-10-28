@@ -200,13 +200,13 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
 
 /**
  * How far the LR/RL transform stretches the flow axis: the diagram's own nodes' average
- * width over their average height, never below 1. Edge labels and groups do not count, so a
- * label cannot stretch the flow axis.
+ * width over their average height, never below 1. Edge labels, groups and anchored nodes do
+ * not count, so none of them can stretch the flow axis. Pass the whole node list: every
+ * caller then agrees on the stretch whatever it has filtered for its own use.
  */
-export function flowAxisStretch(
-  nodes: readonly { width?: number; height?: number; isGroup?: boolean; isEdgeLabel?: boolean }[]
-): number {
-  const scaledNodes = nodes.filter((n) => !n.isGroup && !n.isEdgeLabel);
+export function flowAxisStretch(nodes: NonNullable<LayoutData['nodes']>): number {
+  const anchoredIds = collectAnchoredIds(nodes);
+  const scaledNodes = nodes.filter((n) => !n.isGroup && !n.isEdgeLabel && !anchoredIds.has(n.id));
   if (scaledNodes.length === 0) {
     return 1;
   }
@@ -408,7 +408,7 @@ export function applyLrDirectionTransform(
 
   const titleBandSize = LANE_TITLE_BAND;
 
-  const horizontalScaleFactor = flowAxisStretch(contentNodes);
+  const horizontalScaleFactor = flowAxisStretch(nodes);
 
   for (const n of contentNodes) {
     const x0 = n.x ?? 0;
