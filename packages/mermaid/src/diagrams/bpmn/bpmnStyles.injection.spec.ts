@@ -36,4 +36,28 @@ describe('bpmn theme variables reaching the stylesheet', () => {
   it('still writes a colour the author set', () => {
     expect(stylesheet({ laneFill: '#abcdef' }, true)).toContain('#abcdef');
   });
+
+  describe('a rejected value', () => {
+    const REJECTED = [
+      ['an unsafe string', PAYLOAD[0]],
+      ['an array', PAYLOAD],
+      ['an object', { toString: 'red}x{' }],
+    ] as const;
+
+    it.each(REJECTED)('leaves no empty declaration for %s', (_name, value) => {
+      expect(stylesheet({ laneFill: value }, true)).not.toMatch(/:\s*;/);
+    });
+
+    it.each(REJECTED)('leaves the theme value of the key in place for %s', (_name, value) => {
+      const args = { themeVariables: { bpmn: { laneFill: value } } };
+      sanitizeDirective(args);
+      expect(getThemeVariables(args.themeVariables).bpmn?.laneFill).toBe(
+        getThemeVariables({}).bpmn?.laneFill
+      );
+    });
+
+    it('leaves no empty declaration when the sanitiser is bypassed with an empty string', () => {
+      expect(stylesheet({ laneFill: '' }, false)).not.toMatch(/:\s*;/);
+    });
+  });
 });

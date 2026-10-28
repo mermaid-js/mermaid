@@ -57,10 +57,10 @@ describe('sanitizeDirective', () => {
   });
 
   describe('nested bpmn theme variables', () => {
-    it.each(['}', '{', 'red; } body { x', 'url(https://x)'])('drops %s', (value) => {
+    it.each(['}', '{', 'red; } body { x', 'url(https://x)'])('removes %s', (value) => {
       const args = { themeVariables: { bpmn: { eventFill: value, gatewayFill: '#ffcc00' } } };
       sanitizeDirective(args);
-      expect(args.themeVariables.bpmn).toEqual({ eventFill: '', gatewayFill: '#ffcc00' });
+      expect(args.themeVariables.bpmn).toEqual({ gatewayFill: '#ffcc00' });
     });
 
     // A value that is not a string reaches the stylesheet through a template literal, which
@@ -72,10 +72,10 @@ describe('sanitizeDirective', () => {
       ['a boolean', true],
       ['NaN', Number.NaN],
       ['Infinity', Number.POSITIVE_INFINITY],
-    ])('drops %s', (_name, value) => {
+    ])('removes %s', (_name, value) => {
       const args = { themeVariables: { bpmn: { laneFill: value, gatewayFill: '#ffcc00' } } };
       sanitizeDirective(args);
-      expect(args.themeVariables.bpmn).toEqual({ laneFill: '', gatewayFill: '#ffcc00' });
+      expect(args.themeVariables.bpmn).toEqual({ gatewayFill: '#ffcc00' });
     });
 
     it('leaves no null behind', () => {

@@ -16,12 +16,14 @@ import {
   orthogonalSegmentsStrictlyCross,
   portForRectSide,
   rectOfNodeBounds,
+  routesTouchAtBend,
   sameAxisSegmentOverlapLength,
   segmentHitsAnyRect,
   simplifyPolyline,
 } from './geometry.js';
 import type { OrthogonalSegment, Point, RectBounds, RectSide } from './geometry.js';
 import type { Edge, Node } from '../../../types.js';
+import { EDGE_ROUTING } from '../config.js';
 import { buildLaneModel } from '../lanes.js';
 
 const EPS_LOCAL = 1e-3;
@@ -2162,6 +2164,9 @@ export function resolveRenderedOrthogonalCrossings(
       0
     );
 
+  const touchesAtBend = (first: PointLite[], second: PointLite[]): boolean =>
+    routesTouchAtBend(first, second, EDGE_ROUTING.ROUTE_TOUCH_TOLERANCE);
+
   const pathHasSegmentConflict = (
     edge: MaterializedEdge,
     path: PointLite[],
@@ -2178,6 +2183,9 @@ export function resolveRenderedOrthogonalCrossings(
             return true;
           }
         }
+      }
+      if (touchesAtBend(path, replacementPointsFor(other, replacements))) {
+        return true;
       }
     }
     return false;
@@ -2382,13 +2390,15 @@ export function resolveRenderedOrthogonalCrossings(
       const targetYTracks =
         side === 'top' || side === 'bottom' ? outwardTracksForSide(side) : externalYTracks;
       for (const track of externalXTracks) {
-        pushOrthogonalCandidate(candidates, [
-          first,
-          departure,
-          { x: track, y: departure.y },
-          { x: track, y: dst.y },
-          dst,
-        ]);
+        if (sideIsHorizontal(side)) {
+          pushOrthogonalCandidate(candidates, [
+            first,
+            departure,
+            { x: track, y: departure.y },
+            { x: track, y: dst.y },
+            dst,
+          ]);
+        }
         for (const targetTrack of targetYTracks) {
           pushOrthogonalCandidate(candidates, [
             first,
@@ -2416,13 +2426,15 @@ export function resolveRenderedOrthogonalCrossings(
       const targetXTracks =
         side === 'left' || side === 'right' ? outwardTracksForSide(side) : externalXTracks;
       for (const track of externalYTracks) {
-        pushOrthogonalCandidate(candidates, [
-          first,
-          departure,
-          { x: departure.x, y: track },
-          { x: dst.x, y: track },
-          dst,
-        ]);
+        if (!sideIsHorizontal(side)) {
+          pushOrthogonalCandidate(candidates, [
+            first,
+            departure,
+            { x: departure.x, y: track },
+            { x: dst.x, y: track },
+            dst,
+          ]);
+        }
         for (const targetTrack of targetXTracks) {
           pushOrthogonalCandidate(candidates, [
             first,
@@ -2489,6 +2501,7 @@ export function resolveRenderedOrthogonalCrossings(
 
   const sharedTrackConflictsFor = (
     edge: MaterializedEdge,
+    candidatePath: PointLite[],
     candidateSegments: SegmentLite[],
     baseSegments: Map<MaterializedEdge, SegmentLite[]>
   ): Set<MaterializedEdge> => {
@@ -2504,7 +2517,8 @@ export function resolveRenderedOrthogonalCrossings(
             (otherSegment) =>
               sameAxisSegmentOverlapLength(candidateSegment, otherSegment, 0.5) >= MIN_SHARED
           )
-        )
+        ) ||
+        touchesAtBend(candidatePath, replacementPointsFor(other))
       ) {
         conflicts.add(other);
       }
@@ -2563,6 +2577,7 @@ export function resolveRenderedOrthogonalCrossings(
         segments: candidate.candidateSegments,
         sharedTrackConflicts: sharedTrackConflictsFor(
           edge,
+          candidate.candidate,
           candidate.candidateSegments,
           baseSegments
         ),
@@ -2627,7 +2642,7 @@ export function resolveRenderedOrthogonalCrossings(
         (secondSegment) =>
           sameAxisSegmentOverlapLength(firstSegment, secondSegment, 0.5) >= MIN_SHARED
       )
-    );
+    ) || touchesAtBend(firstCandidate.path, secondCandidate.path);
 
   const pairCandidatesAreCompatible = (
     first: PairOption,

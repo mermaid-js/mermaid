@@ -54,11 +54,12 @@ const fade = (color: string, opacity: number) => {
 const px = (value: string | number) => (typeof value === 'number' ? `${value}px` : value);
 
 const isCssValue = (value: unknown): value is string | number =>
-  typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value));
+  (typeof value === 'string' && value !== '') ||
+  (typeof value === 'number' && Number.isFinite(value));
 
 // The values come from the diagram's init directive, so what is typed as a string may be an
 // array or an object at run time, and the template literals below would write it out as
-// text. Only a string or a finite number counts as set; anything else falls back.
+// text. Only a non-empty string or a finite number counts as set; anything else falls back.
 const cssValuesOnly = (values: Partial<BpmnThemeOptions>): Partial<BpmnThemeOptions> =>
   Object.fromEntries(
     Object.entries(values).filter(([, value]) => isCssValue(value))
