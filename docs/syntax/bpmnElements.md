@@ -349,7 +349,9 @@ has syntax here.
 
 Reading stops at the first error, and the diagram is replaced by the error diagram. There are
 seven kinds. Every message names the line and the column of the statement it refuses, except
-that a lexing error also lists the character range.
+that a lexing error also lists the character range. The line is a line of what you wrote: front
+matter, directives and `%%` comments written before the diagram are counted. The character range
+is counted in the text the parser reads, which has no front matter and no directives.
 
 **A word it cannot read.** `Error lexing bpmn diagram: ... at line N, column C [start,end)`
 
