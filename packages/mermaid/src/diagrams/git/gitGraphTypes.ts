@@ -22,7 +22,7 @@ export interface BranchDB {
 }
 
 export interface MergeDB {
-  branch: string;
+  branches: string[];
   id: string;
   type?: number;
   tags?: string[];
@@ -69,7 +69,7 @@ export interface BranchAst {
 
 export interface MergeAst {
   $type: 'Merge';
-  branch: string;
+  branches: string[];
   id?: string;
   tags?: string[];
   type?: 'NORMAL' | 'REVERSE' | 'HIGHLIGHT';
