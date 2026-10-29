@@ -248,6 +248,31 @@ describe('Testing quadrantChart jison file', () => {
     expect(parserFnConstructor(str)).toThrow();
   });
 
+  it('should be able to parse 1 with a fractional part of zeros in points', () => {
+    let str = 'quadrantChart\npoint1: [1.0, 0.5]\npoint2: [0.5, 1.00]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'point1', type: 'text' },
+      '',
+      '1.0',
+      '0.5',
+      []
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'point2', type: 'text' },
+      '',
+      '0.5',
+      '1.00',
+      []
+    );
+
+    for (const point of ['[1.05, 0.5]', '[1.2, 0.5]', '[0.5, 1.2]']) {
+      clearMocks();
+      str = `quadrantChart\npoint1: ${point}`;
+      expect(parserFnConstructor(str)).toThrow();
+    }
+  });
+
   it('should be able to parse the whole chart', () => {
     const str = `quadrantChart
       title Analytics and Business Intelligence Platforms
