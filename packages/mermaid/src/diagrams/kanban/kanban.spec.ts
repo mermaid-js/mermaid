@@ -12,6 +12,70 @@ describe('when parsing a kanban ', function () {
     setLogLevel('trace');
   });
   describe('hierarchy', function () {
+    it.each(['', '  ', '\t'])(
+      'should reject unsupported style statements with indentation %j',
+      (indent) => {
+        const str = `kanban
+  todo[Todo]
+    card[Card]
+${indent}style card stroke:#AA00FF,fill:#E1BEE7`;
+
+        expect(() => kanban.parse(str)).toThrow(
+          'Unsupported kanban style statement: style card stroke:#AA00FF,fill:#E1BEE7'
+        );
+        expect(kanbanDB.getData().nodes.map((node) => node.id)).toEqual(['todo', 'card']);
+      }
+    );
+
+    it.each(['--accent2', '--accent_color'])(
+      'should reject unsupported style statements with custom property %s',
+      (property) => {
+        expect(() => kanban.parse(`kanban\n  todo[Todo]\n  style todo ${property}:red`)).toThrow(
+          `Unsupported kanban style statement: style todo ${property}:red`
+        );
+        expect(kanbanDB.getData().nodes.map((node) => node.id)).toEqual(['todo']);
+      }
+    );
+
+    it('should allow style in node ids, labels, and comments', () => {
+      kanban.parse(`kanban
+  style[Style guide]
+    styleGuide[style card fill:red]
+    style guide
+    style guide text[Style fill:red]
+  %% style card fill:red
+`);
+
+      expect(kanbanDB.getData().nodes.map((node) => node.label)).toEqual([
+        'Style guide',
+        'style card fill:red',
+        'style guide',
+        'Style fill:red',
+      ]);
+    });
+
+    it.each(['style card COLOR:red', 'style card --Accent:red', 'STYLE card background-COLOR:red'])(
+      'should reject unsupported style statements regardless of case: %s',
+      (statement) => {
+        expect(() => kanban.parse(`kanban\n  todo[Todo]\n    card[Card]\n  ${statement}`)).toThrow(
+          `Unsupported kanban style statement: ${statement}`
+        );
+        expect(kanbanDB.getData().nodes.map((node) => node.id)).toEqual(['todo', 'card']);
+      }
+    );
+
+    it('should preserve uppercase style-like text inside labels', () => {
+      kanban.parse(`kanban
+  todo[Todo]
+    guide[style Guide Owner: Alice]
+`);
+
+      expect(kanbanDB.getData().nodes.map((node) => node.label)).toEqual([
+        'Todo',
+        'style Guide Owner: Alice',
+      ]);
+    });
+
     it('KNBN-1 should handle a simple root definition abc122', function () {
       const str = `kanban
     root`;
