@@ -4,6 +4,7 @@ import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import { getStepDuration, isStepEdge } from '../../rendering-util/edgeStep.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
@@ -19,6 +20,7 @@ import {
 } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
+  DroppedSubGraphMember,
   FlowClass,
   FlowEdge,
   FlowLink,
@@ -34,6 +36,20 @@ interface LinkData {
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
+// Set by a diagram that models pools and lanes itself, never by the author of a `@{ }` block.
+const INTERNAL_METADATA_KEYS = ['laneRole', 'laneIndex', 'drawnExtent'];
+
+function withoutInternalKeys(doc: NodeMetaData): NodeMetaData {
+  if (!doc || typeof doc !== 'object') {
+    return doc;
+  }
+  const kept = { ...doc };
+  for (const key of INTERNAL_METADATA_KEYS) {
+    Reflect.deleteProperty(kept, key);
+  }
+  return kept;
+}
+
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
@@ -44,6 +60,7 @@ export class FlowDB implements DiagramDB {
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
+  private droppedSubGraphMembers: DroppedSubGraphMember[] = [];
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -148,7 +165,7 @@ export class FlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
-      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+      doc = withoutInternalKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData);
     }
 
     // Check if this is metadata for an already-declared subgraph
@@ -156,7 +173,9 @@ export class FlowDB implements DiagramDB {
     // route the metadata onto the subgraph instead of creating a vertex.
     const subGraph = this.subGraphLookup.get(id);
     if (subGraph && doc) {
-      subGraph.metadata = { ...subGraph.metadata, ...doc };
+      if (Object.keys(doc).length > 0) {
+        subGraph.metadata = { ...subGraph.metadata, ...doc };
+      }
       return;
     }
 
@@ -172,6 +191,13 @@ export class FlowDB implements DiagramDB {
       }
       if (edgeDoc?.curve !== undefined) {
         edge.interpolate = edgeDoc.curve;
+      }
+      if (edgeDoc?.step !== undefined) {
+        if (isStepEdge(edgeDoc)) {
+          edge.step = edgeDoc.step;
+        } else {
+          log.warn(`Ignoring step on edge ${id}: expected a positive integer`, edgeDoc.step);
+        }
       }
       return;
     }
@@ -655,6 +681,7 @@ You have to call mermaid.initialize.`
     this.diagramId = '';
     this.subGraphs = [];
     this.subGraphLookup = new Map();
+    this.droppedSubGraphMembers = [];
     this.subCount = 0;
     this.tooltips = new Map();
     this.firstGraphFlag = true;
@@ -740,9 +767,9 @@ You have to call mermaid.initialize.`
 
     // Remove the members in the new subgraph if they already belong to another subgraph.
     // A subgraph never contains itself, so a redeclaration nested in its own body flattens.
-    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes.filter(
-      (nodeId) => nodeId !== id
-    );
+    const uniqueNodes = this.makeUniq(subGraph, this.subGraphs).nodes;
+    this.recordDroppedMembers(subGraph, uniqueNodes);
+    subGraph.nodes = uniqueNodes.filter((nodeId) => nodeId !== id);
 
     // A repeated id merges its members into the first declaration, which keeps its
     // title, direction and position, so every layout sees a single subgraph.
@@ -756,6 +783,39 @@ You have to call mermaid.initialize.`
     // `view: collapsed` apply whichever declaration they follow.
     this.subGraphLookup.set(id, existing ?? subGraph);
     return id;
+  }
+
+  /**
+   * Notes each member `subGraph` listed but lost to an earlier subgraph. An earlier
+   * subgraph nested anywhere inside `subGraph` is not a conflict, and neither is a
+   * repeated id, which is one subgraph.
+   */
+  private recordDroppedMembers(subGraph: FlowSubGraph, uniqueNodes: string[]) {
+    const kept = new Set(uniqueNodes);
+    for (const node of subGraph.nodes) {
+      if (kept.has(node) || node === subGraph.id) {
+        continue;
+      }
+      const owner = this.subGraphs.find((sg) => sg.nodes.includes(node));
+      if (owner && owner.id !== subGraph.id && !this.isNestedIn(owner.id, subGraph)) {
+        this.droppedSubGraphMembers.push({ node, keptBy: owner.id, droppedFrom: subGraph.id });
+      }
+    }
+  }
+
+  /** Whether the subgraph `id` sits under `ancestor`, at any depth, among the subgraphs so far. */
+  private isNestedIn(id: string, ancestor: FlowSubGraph): boolean {
+    const visited = new Set<string>();
+    let current: string | undefined = id;
+    while (current !== undefined && !visited.has(current)) {
+      if (ancestor.nodes.includes(current)) {
+        return true;
+      }
+      visited.add(current);
+      const child: string = current;
+      current = this.subGraphs.find((sg) => sg.nodes.includes(child))?.id;
+    }
+    return false;
   }
 
   private getPosForId(id: string) {
@@ -1279,6 +1339,12 @@ You have to call mermaid.initialize.`
     });
 
     const e = this.getEdges();
+    const stepCount = e.reduce(
+      (max, rawEdge) => (isStepEdge(rawEdge) ? Math.max(max, rawEdge.step) : max),
+      0
+    );
+    const stepDuration = getStepDuration(config.flowchart?.stepDuration);
+    const stepNumber = config.flowchart?.stepNumbers === true ? { showStepNumber: true } : {};
     e.forEach((rawEdge, index) => {
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
       const styles = [...(e.defaultStyle ?? [])];
@@ -1328,13 +1394,20 @@ You have to call mermaid.initialize.`
         look: config.look,
         animate: rawEdge.animate,
         animation: rawEdge.animation,
+        ...(isStepEdge(rawEdge)
+          ? { step: rawEdge.step, stepCount, stepDuration, ...stepNumber }
+          : {}),
         curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
       };
 
       edges.push(edge);
     });
 
-    return { nodes, edges, other: {}, config };
+    const other: { droppedSubGraphMembers?: DroppedSubGraphMember[] } =
+      this.droppedSubGraphMembers.length > 0
+        ? { droppedSubGraphMembers: [...this.droppedSubGraphMembers] }
+        : {};
+    return { nodes, edges, other, config };
   }
 
   public defaultConfig() {
