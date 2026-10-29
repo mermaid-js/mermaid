@@ -126,7 +126,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     x: bounds.x,
     y: bounds.y,
     positioned,
-    intersect: undefined,
+    intersect: undefined as Block['intersect'],
     padding: padding ?? getConfig()?.block?.padding ?? 0,
     widthInColumns: vertex.widthInColumns ?? 1,
     colorIndex: vertex.colorIndex,
