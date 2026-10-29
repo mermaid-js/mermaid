@@ -172,9 +172,12 @@ interface Location {
   column: number;
 }
 
+// The lines the text being parsed was shifted up by, so an error names a line of the source.
+let lineOffset = 0;
+
 const locationOf = (token: IToken | undefined): Location | undefined =>
   token && isKnownLocation(token.startLine) && isKnownLocation(token.startColumn)
-    ? { line: token.startLine, column: token.startColumn }
+    ? { line: token.startLine + lineOffset, column: token.startColumn }
     : undefined;
 
 const atText = (where: Location | undefined): string =>
@@ -534,11 +537,16 @@ function syntaxErrorLocation(input: string, token: IToken): Location {
     return known;
   }
   const lines = input.split(LINE_BREAK);
-  return { line: lines.length, column: lines[lines.length - 1].length + 1 };
+  return { line: lines.length + lineOffset, column: lines[lines.length - 1].length + 1 };
 }
 
-export function parseBpmn(input: string): ParsedDiagram {
+/**
+ * Parses `input`. A located error names the line of the source the text came from: pass the
+ * number of lines that were removed in front of `input` (front matter) as `precedingLines`.
+ */
+export function parseBpmn(input: string, precedingLines = 0): ParsedDiagram {
   bpmnParser.input = [];
+  lineOffset = precedingLines;
   try {
     runChevrotainParse(
       {
@@ -551,6 +559,7 @@ export function parseBpmn(input: string): ParsedDiagram {
           visitor.visit(cst);
           assertFlowsReferToDeclaredElements(visitor.result());
         },
+        lineOffset: precedingLines,
       },
       input
     );

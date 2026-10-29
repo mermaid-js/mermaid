@@ -93,6 +93,14 @@ const emptyDiagram = (): ParsedDiagram => ({ direction: 'LR', nodes: [], flows: 
 export class BpmnDb {
   private parsed: ParsedDiagram = emptyDiagram();
   private diagramId = '';
+  private frontmatterLineOffset = 0;
+
+  /** Keeps `%%` comment lines in the text, so a line of it is a line of the source. */
+  public readonly preserveCommentsWhenParsing = true;
+
+  public setFrontmatterLineOffset(offset: number) {
+    this.frontmatterLineOffset = offset;
+  }
 
   public clear() {
     this.parsed = emptyDiagram();
@@ -101,7 +109,7 @@ export class BpmnDb {
   }
 
   public parse(input: string) {
-    this.parsed = parseBpmn(input);
+    this.parsed = parseBpmn(input, this.frontmatterLineOffset);
     if (this.parsed.title) {
       setDiagramTitle(this.parsed.title);
     }
