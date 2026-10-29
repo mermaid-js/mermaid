@@ -217,6 +217,9 @@ statement
   | classDefStatement
   | cssClassStatement
   | styleStatement
+  | acc_title acc_title_value { yy.setAccTitle($2.trim()); $$ = []; }
+  | acc_descr acc_descr_value { yy.setAccDescription($2.trim()); $$ = []; }
+  | acc_descr_multiline_value { yy.setAccDescription($1.trim()); $$ = []; }
 	;
 
 nodeStatement
