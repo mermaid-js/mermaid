@@ -47,6 +47,44 @@ describe('Sankey diagram', function () {
       );
     });
 
+    // Non-ASCII labels used to fail with "Expecting 'DQUOTE', got 'ESCAPED_TEXT'",
+    // because the TEXTDATA lexer rule only covered U+0020-U+007E.
+    // Built as a line array rather than an indented template literal so that no
+    // leading whitespace is introduced: leading indentation before a quoted field
+    // is a separate, pre-existing limitation (the indent lexes as an empty field).
+    const nonAsciiDiagram = [
+      '网站,注册,40',
+      '"注册","免费试用",30',
+      '"Café","Départ",20',
+      'Дом,Уход,10',
+      '"网站,主站","跳出",5',
+      'b😀,c,1', // astral plane: a surrogate pair, matched one half at a time
+    ].join('\n');
+
+    const nonAsciiNodes = [
+      '网站',
+      '注册',
+      '免费试用',
+      'Café',
+      'Départ',
+      'Дом',
+      'Уход',
+      '网站,主站',
+      '跳出',
+      'b😀',
+      'c',
+    ];
+
+    for (const syntax of ['sankey-beta', 'sankey'] as const) {
+      it(`parses non-ASCII labels with ${syntax} syntax`, function () {
+        sankey.parser.parse(prepareTextForParsing(`${syntax}\n${nonAsciiDiagram}`));
+
+        const graph = sankey.parser.yy.getGraph();
+        expect(graph.links).toHaveLength(6);
+        expect(graph.nodes).toEqual(expect.arrayContaining(nonAsciiNodes.map((id) => ({ id }))));
+      });
+    }
+
     const issue7528PerformanceDiagram = `
       Agricultural 'waste',Bio-conversion,124.729
       Bio-conversion,Liquid,0.597
