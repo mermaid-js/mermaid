@@ -10,6 +10,7 @@ import {
   segmentBoundsOverlapRect,
 } from './geometry.js';
 import type { RectBounds } from './geometry.js';
+import { buildLaneModel } from '../lanes.js';
 
 const EPS = 1e-3;
 const MARKER_CLEARANCE_LENGTH = 10;
@@ -110,10 +111,10 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
   // this, labels whose anchor crosses a lane boundary are reported as
   // node-overlap violations against sibling lane groups.
   const laneGroups: { id: string; rect: RectLite }[] = [];
+  const laneModel = buildLaneModel([...nodeByIdMap.values()]);
   for (const n of nodeByIdMap.values()) {
     const isGroup = n.isGroup;
-    const parentId = n.parentId;
-    if (isGroup && !parentId) {
+    if (laneModel.isLane(n.id)) {
       const rect = rectOfNodeBounds(n);
       if (rect) {
         laneGroups.push({
