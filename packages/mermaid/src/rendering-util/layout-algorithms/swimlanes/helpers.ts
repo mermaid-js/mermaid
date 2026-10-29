@@ -209,8 +209,13 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   }
 }
 
+/**
+ * The graph the Sugiyama phases lay out. Edge-label nodes and their layout-only
+ * edges are left out, and a labelled edge takes part as itself, so a label never
+ * changes a node's rank. `assignCoordinates` places the labels.
+ */
 export function toGraphView(layout: LayoutData): Graph {
-  const allNodes = layout.nodes ?? [];
+  const allNodes = (layout.nodes ?? []).filter((n) => !n.isEdgeLabel);
   const byId = new Map<NodeId, Node>(allNodes.map((n) => [n.id, n]));
 
   const anchoredIds = collectAnchoredIds(allNodes);
@@ -228,14 +233,7 @@ export function toGraphView(layout: LayoutData): Graph {
   for (const e of layout.edges ?? []) {
     const rawSrc = typeof e.start === 'string' ? e.start : undefined;
     const rawDst = typeof e.end === 'string' ? e.end : undefined;
-    if (!rawSrc || !rawDst) {
-      continue;
-    }
-    // Exclude labelled originals from Sugiyama: their routing is carried by
-    // the two layout-only virtual edges A→label and label→B, which create the
-    // correct layer/ordering constraints. Including the original as well would
-    // double-count rank pressure and inflate crossing penalties.
-    if ((e as MermaidEdge & { labelNodeId?: string }).labelNodeId) {
+    if (!rawSrc || !rawDst || e.isLayoutOnly) {
       continue;
     }
     const src = hostOf(rawSrc);
@@ -307,6 +305,14 @@ export function writeBackToLayoutData(
 
   const allNodes = layout.nodes ?? [];
   const anchoredIds = collectAnchoredIds(allNodes);
+  // Edge labels have no rank; their seed position comes from the coordinates.
+  // Anchoring moves them onto the routed edge later.
+  for (const label of allNodes) {
+    if (label.isEdgeLabel && coords.x[label.id] != null && coords.y[label.id] != null) {
+      label.x = coords.x[label.id];
+      label.y = coords.y[label.id];
+    }
+  }
   const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
   const laneModel = buildLaneModel(allNodes);
   const topLevelGroups: Node[] = [];
@@ -314,6 +320,10 @@ export function writeBackToLayoutData(
     if (laneModel.isLane(group.id)) {
       topLevelGroups.push(group);
     }
+    // A lane is sized across the flow by its nodes: the room reserved for edge labels
+    // reaches it through the column spacing, and anchoring moves each label onto its
+    // edge later. Along the flow it also holds the labels, which can be taller than
+    // the row of nodes they sit beside.
     const children = allNodes.filter((n) => n.parentId === group.id && !anchoredIds.has(n.id));
     let minX = Infinity;
     let maxX = -Infinity;
@@ -325,8 +335,10 @@ export function writeBackToLayoutData(
       const cw = child.width ?? 0;
       const ch = child.height ?? 0;
       if (cx != null && cy != null) {
-        minX = Math.min(minX, cx - cw / 2);
-        maxX = Math.max(maxX, cx + cw / 2);
+        if (!child.isEdgeLabel) {
+          minX = Math.min(minX, cx - cw / 2);
+          maxX = Math.max(maxX, cx + cw / 2);
+        }
         minY = Math.min(minY, cy - ch / 2);
         maxY = Math.max(maxY, cy + ch / 2);
       }
