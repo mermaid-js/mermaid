@@ -2048,6 +2048,28 @@ It is also possible to add style to multiple links in a single statement, by sep
 linkStyle 1,2,7 color:blue;
 ```
 
+#### Styling links by their text (v\<MERMAID_RELEASE_VERSION>+)
+
+Instead of a link number, a quoted text selects every link whose text matches it. This keeps the style attached to the right links when links are added or reordered. A style set for a link by its number takes precedence over one set by text, and a text that no link has is ignored.
+
+```mermaid-example
+flowchart LR
+    A -- Success --> B
+    A -- Failure --> C
+    B -- Success --> D
+    linkStyle "Success" stroke:green
+    linkStyle "Failure" stroke:red
+```
+
+```mermaid
+flowchart LR
+    A -- Success --> B
+    A -- Failure --> C
+    B -- Success --> D
+    linkStyle "Success" stroke:green
+    linkStyle "Failure" stroke:red
+```
+
 ### Styling line curves
 
 It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
