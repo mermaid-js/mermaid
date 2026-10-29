@@ -963,6 +963,28 @@ graph TD;A--x|text including URL space|B;`)
       ])('in the jison hash after $case', async ({ text, hash }) => {
         expect(await parseError(text)).toMatchObject({ hash });
       });
+
+      // The agentflow db writes source lines into the `hash` of its own `@{ }` errors, so the
+      // remap leaves a hash alone when the message names no line of the parsed text.
+      const AGENTFLOW_SHAPE_ERROR =
+        'agentflow-beta TB\n\n  content_ref@{ shape: procs,* type: "BilingualContent" }\n';
+      it.each([
+        { case: 'nothing removed', text: AGENTFLOW_SHAPE_ERROR, line: 3 },
+        { case: 'front matter', text: `---\ntitle: x\n---\n${AGENTFLOW_SHAPE_ERROR}`, line: 6 },
+        { case: 'a comment', text: `%% note\n${AGENTFLOW_SHAPE_ERROR}`, line: 4 },
+        {
+          case: 'front matter and a comment',
+          text: `---\ntitle: x\n---\n%% note\n${AGENTFLOW_SHAPE_ERROR}`,
+          line: 7,
+        },
+      ])(
+        'keeps the source lines an agentflow shape error already has after $case',
+        async ({ text, line }) => {
+          expect(await parseError(text)).toMatchObject({
+            hash: { line: line - 1, loc: { first_line: line } },
+          });
+        }
+      );
     });
   });
 

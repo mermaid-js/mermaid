@@ -94,7 +94,9 @@ const remapHash = (hash: Record<string, unknown>, toSource: (line: number) => nu
 /**
  * Rewrites, in place, the lines a jison or Langium parse error reports in the text it parsed
  * into the source lines they come from: the message, the stack and jison's `hash.line` and
- * `hash.loc`. Columns, and errors in any other format, are left as they are.
+ * `hash.loc`. The hash is rewritten only when the message named such a line: an error whose
+ * message names none has had its hash written in source lines by the diagram. Columns, and
+ * errors in any other format, are left as they are.
  */
 export const remapParseErrorLines = (error: unknown, sourceLines: SourceLines): void => {
   if (!(error instanceof Error)) {
@@ -110,8 +112,9 @@ export const remapParseErrorLines = (error: unknown, sourceLines: SourceLines): 
   if (error.stack) {
     error.stack = remapMessage(error.stack);
   }
+  const namesParsedLine = error.message.search(lineInMessage) >= 0;
   error.message = remapMessage(error.message);
-  if ('hash' in error && isRecord(error.hash)) {
+  if (namesParsedLine && 'hash' in error && isRecord(error.hash)) {
     remapHash(error.hash, toSource);
   }
 };

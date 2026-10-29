@@ -130,6 +130,14 @@ describe('remapParseErrorLines', () => {
     expect(error.message).toBe(message);
   });
 
+  it('leaves the hash alone when the message names no line of the parsed text', () => {
+    const hash = { line: 2, loc: { first_line: 3, last_line: 3, first_column: 4, last_column: 5 } };
+    const error = Object.assign(new Error('bad shape data (3:5)'), { hash: structuredClone(hash) });
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe('bad shape data (3:5)');
+    expect(error.hash).toEqual(hash);
+  });
+
   it('ignores a thrown value that is not an Error', () => {
     expect(() => remapParseErrorLines('Parse error on line 2', sourceLines)).not.toThrow();
   });
