@@ -224,6 +224,8 @@ flowchart LR
     id1{This is the text in the box}
 ```
 
+Rhombi are drawn 1.6 times as wide as they are tall (v<MERMAID_RELEASE_VERSION>+), so they stay close to the height of the nodes around them.
+
 ### A hexagon node
 
 ```mermaid-example
