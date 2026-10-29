@@ -2,12 +2,48 @@ import type { Graph, OrderedLayers, Coordinates, NodeId, EdgeRef, Node } from '.
 import { COORDINATES } from './config.js';
 import { flowAxisStretch } from './direction/lrTransform.js';
 import { createTopLaneResolver, resolveTopLaneOrder } from './phase2.options.js';
+import { anchorFootprints, defaultAnchorSide, type AnchorSide } from './anchoredNodes.js';
+
+const OPPOSITE_SIDE: Record<AnchorSide, AnchorSide> = {
+  left: 'right',
+  right: 'left',
+  top: 'bottom',
+  bottom: 'top',
+};
+
+/** The length of a run of nodes along the lane, with the room each node's stood-off nodes take between it and its neighbours. */
+function runLength(
+  extents: number[],
+  leadReaches: number[],
+  trailReaches: number[],
+  nodeGap: number
+): number {
+  const between = extents
+    .slice(1)
+    .reduce((sum, _extent, i) => sum + trailReaches[i] + leadReaches[i + 1], 0);
+  return extents.reduce((a, b) => a + b, 0) + between + nodeGap * Math.max(0, extents.length - 1);
+}
+
+type LaneHalves = Map<string | null, { left: number; right: number }>;
+
+/** Widens a lane so it holds `width` centred on its axis, which keeps its nodes where they were. */
+function holdLaneWidth(halves: LaneHalves, lane: string | null, width: number): void {
+  const half = halves.get(lane);
+  if (half) {
+    half.left = Math.max(half.left, width / 2);
+    half.right = Math.max(half.right, width / 2);
+  }
+}
 
 export interface CoordOptions {
   layerGap?: number; // vertical distance between layers
   nodeGap?: number; // horizontal gap between siblings inside a lane
   laneGap?: number; // horizontal gap between lanes (clusters)
   direction?: 'TB' | 'LR' | 'BT' | 'RL'; // layout direction for proper spacing
+
+  spreadByOwnExtent?: boolean;
+
+  gapIsRoomBetween?: boolean;
   laneOrder?: string[];
 }
 
@@ -59,6 +95,17 @@ export function assignCoordinates(
   const getNode = (id: NodeId) => labelById.get(id) ?? gWithDummies.nodeById.get(id);
   const getWidth = (id: NodeId) => getNode(id)?.width ?? 0;
   const getHeight = (id: NodeId) => getNode(id)?.height ?? 0;
+
+  const spreadByOwnExtent = opts?.spreadByOwnExtent ?? false;
+  const crossExtent = (id: NodeId) =>
+    isHorizontal && spreadByOwnExtent ? getHeight(id) : getWidth(id);
+
+  const inSomeFlow = new Set<NodeId>();
+  for (const e of gWithDummies.edges) {
+    inSomeFlow.add(e.src);
+    inSomeFlow.add(e.dst);
+  }
+
   const topLaneOfNode = createTopLaneResolver(gWithDummies);
   const labelLane = new Map<NodeId, string | null>();
   const topLaneOf = (id: NodeId) =>
@@ -138,7 +185,8 @@ export function assignCoordinates(
       const nextLayerMaxHeight = layerHeights[i + 1];
 
       const normalSpacing = thisLayerMaxHeight / 2 + nextLayerMaxHeight / 2;
-      const requiredSpacing = (thisLayerMaxWidth + nextLayerMaxWidth) / 2;
+      const requiredSpacing =
+        (thisLayerMaxWidth + nextLayerMaxWidth) / 2 + (opts?.gapIsRoomBetween ? layerGap : 0);
       extraLayerGaps[i] = Math.max(0, requiredSpacing - normalSpacing - layerGap);
     }
   }
@@ -159,33 +207,57 @@ export function assignCoordinates(
     extraLayerGaps[gap] += need;
   }
 
-  const laneWidth: Record<string, number> = Object.create(null);
-  for (const L of lanesUsed) {
-    laneWidth[L] = 0;
-  }
-  if (hasNullLane) {
-    (laneWidth as any).null = 0 as any;
+  const footprints = anchorFootprints(gWithDummies.layout?.nodes ?? [], direction);
+  const trailingSide = defaultAnchorSide('final', direction);
+  const reachOn = (side: AnchorSide) => (id: NodeId) => footprints.get(id)?.[side]?.beyond ?? 0;
+  const reachAfter = reachOn(trailingSide);
+  const reachBefore = reachOn(OPPOSITE_SIDE[trailingSide]);
+
+  const runHalves = (
+    ids: NodeId[],
+    extentOf: (id: NodeId) => number
+  ): { spread: NodeId[]; beside: NodeId[]; left: number; right: number; lead: number } => {
+    const centred = ids.filter((id) => inSomeFlow.has(id));
+    const loose = ids.filter((id) => !inSomeFlow.has(id));
+    const spread = centred.length > 0 ? centred : loose;
+    const beside = centred.length > 0 ? loose : [];
+
+    const total = runLength(
+      spread.map(extentOf),
+      spread.map(reachBefore),
+      spread.map(reachAfter),
+      nodeGap
+    );
+    const lead = spread.length > 0 ? reachBefore(spread[0]) : 0;
+    let tail = spread.length > 0 ? reachAfter(spread[spread.length - 1]) : 0;
+    for (const id of beside) {
+      tail += nodeGap + reachBefore(id) + extentOf(id) + reachAfter(id);
+    }
+    return { spread, beside, left: total / 2 + lead, right: total / 2 + tail, lead };
+  };
+
+  const laneSizeExtent = (id: NodeId) => Math.max(getWidth(id), crossExtent(id));
+
+  const laneHalves: LaneHalves = new Map();
+  for (const L of laneOrderColumns) {
+    laneHalves.set(L, { left: 0, right: 0 });
   }
   for (const layer of layers) {
-    const perLane: Record<string, string[]> = Object.create(null);
-    const nullIds: string[] = [];
+    const perLane = new Map<string | null, NodeId[]>();
     for (const id of layer) {
       const L = topLaneOf(id);
-      if (L === null) {
-        nullIds.push(id);
-      } else {
-        (perLane[L] ||= []).push(id);
+      perLane.set(L, [...(perLane.get(L) ?? []), id]);
+    }
+    for (const [L, ids] of perLane) {
+      const half = laneHalves.get(L);
+      if (!half) {
+        continue;
       }
-    }
-    for (const [L, ids] of Object.entries(perLane)) {
-      const total =
-        ids.reduce((s, id) => s + getWidth(id), 0) + nodeGap * Math.max(0, ids.length - 1);
-      laneWidth[L] = Math.max(laneWidth[L] ?? 0, total);
-    }
-    if (hasNullLane && nullIds.length) {
-      const totalNull =
-        nullIds.reduce((s, id) => s + getWidth(id), 0) + nodeGap * Math.max(0, nullIds.length - 1);
-      (laneWidth as any).null = Math.max((laneWidth as any).null ?? 0, totalNull) as any;
+      const { left, right } = runHalves(ids, (id) =>
+        L === null ? getWidth(id) : laneSizeExtent(id)
+      );
+      half.left = Math.max(half.left, left);
+      half.right = Math.max(half.right, right);
     }
   }
   // Labels between ranks are anchored inside their lane, so the lane must hold them.
@@ -207,7 +279,7 @@ export function assignCoordinates(
         (sum, l, i) => sum + getWidth(l.labelId) + (i > 0 ? nodeGap : 0),
         0
       );
-      laneWidth[L] = Math.max(laneWidth[L] ?? 0, span);
+      holdLaneWidth(laneHalves, L, span);
     }
   }
   // Labels in a row stack outward from the row's nodes on their side. The lane grows
@@ -224,23 +296,22 @@ export function assignCoordinates(
       .filter((id) => topLaneOf(id) === lane)
       .reduce((sum, id, i) => sum + getWidth(id) + (i > 0 ? nodeGap : 0), 0);
     const side = Math.max(rowLabelSpan(rank, lane, 'before'), rowLabelSpan(rank, lane, 'after'));
-    const key = lane ?? 'null';
-    laneWidth[key] = Math.max(laneWidth[key] ?? 0, nodesWidth + 2 * side);
+    holdLaneWidth(laneHalves, lane, nodesWidth + 2 * side);
   }
 
-  const centerX = new Map<string | null, number>();
+  const laneAxis = new Map<string | null, number>();
   {
-    const widths = laneOrderColumns.map(
-      (L) => (L === null ? ((laneWidth as any).null as number) : laneWidth[L]) ?? 0
-    );
+    const widths = laneOrderColumns.map((L) => {
+      const half = laneHalves.get(L);
+      return (half?.left ?? 0) + (half?.right ?? 0);
+    });
     const totalW =
       widths.reduce((a, b) => a + b, 0) + laneGap * Math.max(0, laneOrderColumns.length - 1);
     let cursor = -totalW / 2;
     for (let i = 0; i < laneOrderColumns.length; i++) {
       const L = laneOrderColumns[i];
       const w = widths[i] ?? 0;
-      const cx = cursor + w / 2;
-      centerX.set(L, cx);
+      laneAxis.set(L, cursor + (laneHalves.get(L)?.left ?? w / 2));
       cursor += w;
       if (i < laneOrderColumns.length - 1) {
         cursor += laneGap;
@@ -266,22 +337,30 @@ export function assignCoordinates(
       if (nodesInLane.length === 0) {
         continue;
       }
-      const cx = centerX.get(L)!;
-      if (nodesInLane.length === 1) {
-        const id = nodesInLane[0];
-        x[id] = cx;
+      const extentOf = (id: NodeId) => (L === null ? getWidth(id) : crossExtent(id));
+      const axis = laneAxis.get(L) ?? 0;
+      const { spread, beside, left, lead } = runHalves(nodesInLane, extentOf);
+
+      const extents = spread.map(extentOf);
+      const leadReaches = spread.map(reachBefore);
+      const trailReaches = spread.map(reachAfter);
+      let start = axis - left + lead;
+      for (const [i, id] of spread.entries()) {
+        const w = extents[i];
+        x[id] = start + w / 2;
         y[id] = yOffset + layerH / 2;
-      } else {
-        // Preserve phase 3 order while spreading nodes around the lane center.
-        const widths = nodesInLane.map((id) => getWidth(id));
-        const total = widths.reduce((a, b) => a + b, 0) + nodeGap * (nodesInLane.length - 1);
-        let start = cx - total / 2;
-        for (const [i, id] of nodesInLane.entries()) {
-          const w = widths[i];
-          x[id] = start + w / 2;
-          y[id] = yOffset + layerH / 2;
-          start += w + nodeGap;
+        start += w;
+        if (i < spread.length - 1) {
+          start += trailReaches[i] + leadReaches[i + 1] + nodeGap;
         }
+      }
+      start += trailReaches.length > 0 ? trailReaches[trailReaches.length - 1] : 0;
+      for (const id of beside) {
+        const w = extentOf(id);
+        start += nodeGap + reachBefore(id);
+        x[id] = start + w / 2;
+        y[id] = yOffset + layerH / 2;
+        start += w + reachAfter(id);
       }
     }
 

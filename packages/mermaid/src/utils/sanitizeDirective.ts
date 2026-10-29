@@ -87,14 +87,37 @@ export const sanitizeDirective = (args: any): void => {
   }
 
   if (args.themeVariables) {
-    for (const k of Object.keys(args.themeVariables)) {
-      const val = args.themeVariables[k];
-      if (val?.match && !val.match(/^[\d "#%(),.;A-Za-z]+$/)) {
-        args.themeVariables[k] = '';
-      }
+    blankUnsafeCssValues(args.themeVariables);
+    // The bpmn values are written into the stylesheet like the top-level ones.
+    if (args.themeVariables.bpmn && typeof args.themeVariables.bpmn === 'object') {
+      dropNonCssValues(args.themeVariables.bpmn);
     }
   }
   log.debug('After sanitization', args);
+};
+
+// Every bpmn value is a colour or a width that the stylesheet writes out as text, and a
+// template literal turns an array or an object into text this check never saw, so only a
+// safe string or a finite number may stay. A rejected key is removed, not blanked, so the
+// theme's own value for it still applies.
+const dropNonCssValues = (values: Record<string, unknown>): void => {
+  blankUnsafeCssValues(values);
+  for (const k of Object.keys(values)) {
+    const val = values[k];
+    const isSafeString = typeof val === 'string' && val !== '';
+    if (!isSafeString && !(typeof val === 'number' && Number.isFinite(val))) {
+      delete values[k];
+    }
+  }
+};
+
+const blankUnsafeCssValues = (values: Record<string, unknown>): void => {
+  for (const k of Object.keys(values)) {
+    const val = values[k];
+    if (typeof val === 'string' && !/^[\d "#%(),.;A-Za-z]+$/.test(val)) {
+      values[k] = '';
+    }
+  }
 };
 
 export const sanitizeCss = (str: string): string => {

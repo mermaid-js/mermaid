@@ -1,0 +1,82 @@
+import { describe, expect, it } from 'vitest';
+import { BpmnDb } from './bpmnDb.js';
+import { diagram } from './diagram.js';
+import { parser } from './parser/bpmn.chevrotain.js';
+
+const ONE = 'bpmn-beta LR\n  lane "L"\n    task one "One"';
+const TWO = 'bpmn-beta TB\n  lane "L"\n    task two "Two"\n    task three "Three"';
+
+const ids = (db: BpmnDb) => db.getData().nodes.map((node) => node.id);
+
+/** The way `Diagram.fromText` hands the parser the db it just took from the definition. */
+const parseInto = async (db: BpmnDb, text: string) => {
+  const yy = parser.parser;
+  if (!yy) {
+    throw new Error('the bpmn parser exposes no yy');
+  }
+  yy.yy = db;
+  await parser.parse(text);
+};
+
+describe('bpmn db isolation', () => {
+  it('gives every render a fresh db', () => {
+    expect(diagram.db).not.toBe(diagram.db);
+  });
+
+  it('keeps two diagrams parsed back to back apart', async () => {
+    const first = new BpmnDb();
+    const second = new BpmnDb();
+    await parseInto(first, ONE);
+    await parseInto(second, TWO);
+    expect(ids(first)).toEqual(['lane-1', 'one']);
+    expect(ids(second)).toEqual(['lane-1', 'two', 'three']);
+    expect(first.getDirection()).toBe('LR');
+    expect(second.getDirection()).toBe('TB');
+  });
+
+  it('keeps two diagrams parsed interleaved apart', async () => {
+    const first = new BpmnDb();
+    const second = new BpmnDb();
+    await parseInto(first, ONE);
+    first.setDiagramId('first');
+    await parseInto(second, TWO);
+    second.setDiagramId('second');
+    expect(first.getData().diagramId).toBe('first');
+    expect(second.getData().diagramId).toBe('second');
+    expect(ids(first)).toEqual(['lane-1', 'one']);
+  });
+
+  describe('clear', () => {
+    it('forgets the parsed diagram', async () => {
+      const db = new BpmnDb();
+      await parseInto(db, TWO);
+      db.clear();
+      expect(ids(db)).toEqual([]);
+    });
+
+    it('forgets the direction', async () => {
+      const db = new BpmnDb();
+      await parseInto(db, TWO);
+      db.clear();
+      expect(db.getDirection()).toBe('LR');
+    });
+
+    it('forgets the diagram id', () => {
+      const db = new BpmnDb();
+      db.setDiagramId('earlier');
+      db.clear();
+      expect(db.getData().diagramId).toBe('');
+    });
+
+    it('forgets the title and the accessibility text', async () => {
+      const db = new BpmnDb();
+      await parseInto(db, `${ONE}\n  title Heading\n  accTitle: T\n  accDescr: D`);
+      db.clear();
+      expect([db.getDiagramTitle(), db.getAccTitle(), db.getAccDescription()]).toEqual([
+        '',
+        '',
+        '',
+      ]);
+    });
+  });
+});
