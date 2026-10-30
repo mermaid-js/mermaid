@@ -563,7 +563,7 @@ async function drawInsideBoundary(
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  */
 export const draw = async function (_text: string, id: string, _version: string, diagObj: Diagram) {
-  conf = getRequiredConfig('c4') as C4DrawConfig;
+  conf = assignWithDepth({}, getRequiredConfig('c4')) as C4DrawConfig;
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sandbox mode
   const { root } = getDiagramRoot(id, securityLevel);
