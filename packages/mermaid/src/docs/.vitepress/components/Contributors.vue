@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { withSiteBase } from '../theme/siteBase.js';
 import { contributors } from '../contributors';
 </script>
 
@@ -14,7 +15,7 @@ import { contributors } from '../contributors';
     >
       <img
         loading="lazy"
-        :src="avatar"
+        :src="withSiteBase(avatar)"
         width="50"
         height="50"
         rounded-full

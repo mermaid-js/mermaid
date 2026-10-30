@@ -104,12 +104,17 @@ export const urlRedirectMap: Record<string, string> = {
 /**
  *
  * @param link - The old documentation URL.
- * @returns The new documentation path.
+ * @param base - The site's base path, e.g. `/open-source/`.
+ * @returns The new documentation path, relative to the base.
  */
-export const getRedirect = (url: URL): string | undefined => {
+export const getRedirect = (url: URL, base = '/'): string | undefined => {
+  const pathname = url.pathname.startsWith(base)
+    ? `/${url.pathname.slice(base.length)}`
+    : url.pathname;
+
   // Redirects for deprecated vitepress URLs
-  if (url.pathname in urlRedirectMap) {
-    return `${urlRedirectMap[url.pathname]}${url.hash}`;
+  if (pathname in urlRedirectMap) {
+    return `${urlRedirectMap[pathname]}${url.hash}`;
   }
 
   // Redirects for old docs URLs

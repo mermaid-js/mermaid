@@ -75,3 +75,11 @@ test.each([...Object.values(idRedirectMap), ...Object.values(urlRedirectMap)])(
     expect(existsSync(join(generatedDocsDir, `${page}.md`))).toBe(true);
   }
 );
+
+test.each([
+  ['https://mermaid.ai/open-source/misc/faq.html', 'config/faq.html'],
+  ['https://mermaid.ai/open-source/#/flowchart.md?id=my-id', 'syntax/flowchart.html#my-id'],
+  ['https://mermaid.ai/open-source/syntax/flowchart.html', undefined],
+])('should process url %s under the /open-source/ base to %s', (link: string, path) => {
+  expect(getRedirect(new URL(link), '/open-source/')).toBe(path);
+});
