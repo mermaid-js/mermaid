@@ -7,10 +7,6 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 > A treemap diagram displays hierarchical data as a set of nested rectangles. Each branch of the tree is represented by a rectangle, which is then tiled with smaller rectangles representing sub-branches.
 
-```warning
-This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
-```
-
 ## Introduction
 
 Treemap diagrams are an effective way to visualize hierarchical data and show proportions between categories and subcategories. The size of each rectangle is proportional to the value it represents, making it easy to compare different parts of a hierarchy.

@@ -10,9 +10,6 @@ Ishikawa diagrams are used to represent causes of a specific event (or a problem
 They are also known as fishbone diagrams, herringbone diagrams or cause-and-effect diagrams.
 The diagram resembles a fish skeleton, with the main problem at the head and the causes branching off from the spine.
 
-> **Warning**
-> This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
-
 ## Syntax
 
 ```mermaid

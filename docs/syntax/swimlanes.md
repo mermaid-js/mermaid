@@ -7,7 +7,7 @@
 # Swimlanes Diagram (v11.16.0+)
 
 > **Warning**
-> This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+> Swimlane diagrams are in beta. Diagrams start with the `swimlane-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 
 A swimlane diagram shows a process divided by responsibility. Each lane represents an actor, team, system, or phase, and the nodes inside the lane show the work that happens there. Arrows show the order of work and the handoffs between lanes.
 
