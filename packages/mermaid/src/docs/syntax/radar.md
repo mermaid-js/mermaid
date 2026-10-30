@@ -1,4 +1,12 @@
+---
+description: 'Compare data series across several axes in a circular radar (spider) chart, with graticule, scale, and legend options.'
+---
+
 # Radar Diagram (v11.6.0+)
+
+```warning
+Radar diagrams are in beta. Diagrams start with the `radar-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
 
 ## Introduction
 

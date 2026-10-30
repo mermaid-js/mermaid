@@ -2,16 +2,20 @@ import type {
   PlausibleConfig,
   PlausibleEventOptions,
 } from '@plausible-analytics/tracker/plausible.js';
+import type { PlausibleSettings } from '../plausibleSettings.js';
 
 interface PlausibleTracker {
   init: (config: PlausibleConfig) => void;
   track: (eventName: string, options: PlausibleEventOptions) => void;
 }
 
+// Set at build time from `getPlausibleSettings()` in `vite.config.ts`
+declare const __DOCS_PLAUSIBLE__: PlausibleSettings;
+
 const plausibleConfig = {
-  domain: 'mermaid.js.org',
-  // All tracked stats are public and available at https://p.mermaid.live/mermaid.js.org
-  endpoint: 'https://p.mermaid.live/api/event',
+  // mermaid.js.org stats are public at https://p.mermaid.live/mermaid.js.org
+  domain: __DOCS_PLAUSIBLE__.domain,
+  endpoint: __DOCS_PLAUSIBLE__.endpoint,
   bindToWindow: true,
   autoCapturePageviews: true,
   outboundLinks: true,
