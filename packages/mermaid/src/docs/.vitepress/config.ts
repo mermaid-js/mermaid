@@ -147,6 +147,7 @@ function sidebarAll() {
         { text: 'About Mermaid', link: '/intro/' },
         { text: 'Getting Started', link: '/intro/getting-started' },
         { text: 'Syntax and Configuration', link: '/intro/syntax-reference' },
+        { text: 'Examples', link: '/syntax/all-examples' },
       ],
     },
     ...sidebarSyntax(),

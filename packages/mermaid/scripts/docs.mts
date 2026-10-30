@@ -41,10 +41,11 @@ import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import { dump, load, JSON_SCHEMA } from 'js-yaml';
-import type { Code, ListItem, PhrasingContent, Root, Text, YAML } from 'mdast';
+import type { Code, ListItem, PhrasingContent, Root, RootContent, Text, YAML } from 'mdast';
 import { register } from 'node:module';
 import { posix, dirname, relative, join } from 'path';
 import mermaidPackageJson from '../package.json' with { type: 'json' };
+import { diagramData } from '../../examples/src/index.js';
 import prettier from 'prettier';
 import { remark } from 'remark';
 import remarkFrontmatter from 'remark-frontmatter';
@@ -163,6 +164,29 @@ export function buildShapeDoc() {
 }
 
 /**
+ * Builds markdown with every example from the `@mermaid-js/examples` package, grouped by diagram.
+ */
+export function buildDiagramExamplesDoc() {
+  return remark()
+    .use(remarkGfm)
+    .stringify({
+      type: 'root',
+      children: diagramData.flatMap(({ name, description, examples }): RootContent[] => [
+        { type: 'heading', depth: 2, children: [{ type: 'text', value: name }] },
+        { type: 'paragraph', children: [{ type: 'text', value: description }] },
+        ...examples.flatMap(({ title, code }): RootContent[] => [
+          { type: 'heading', depth: 3, children: [{ type: 'text', value: title }] },
+          { type: 'code', lang: MERMAID_DIAGRAM_ONLY, value: code },
+          { type: 'html', value: '<details>\n<summary>Code</summary>' },
+          { type: 'code', lang: 'text', value: code },
+          { type: 'html', value: '</details>' },
+        ]),
+      ]),
+    })
+    .toString();
+}
+
+/**
  * Given a source file name and path, return the documentation destination full path and file name
  * Create the destination path if it does not already exist.
  *
@@ -253,6 +277,7 @@ const injectPlaceholders = (text: string): string =>
 
 const virtualGenerators: Record<string, () => string> = {
   shapesTable: buildShapeDoc,
+  diagramExamples: buildDiagramExamplesDoc,
 };
 
 const transformIncludeStatements = (file: string, text: string): string => {
