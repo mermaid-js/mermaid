@@ -24,7 +24,7 @@ flowchart TD
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 flowchart TD
     A[Christmas] -->|Get money| B(Go shopping)
     B --> C{Let me think}
@@ -58,7 +58,7 @@ flowchart TD
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 flowchart TD
     Start([Visit online store]) --> Browse[Browse products]
     Browse --> Cart[Add items to cart]
@@ -104,7 +104,7 @@ flowchart LR
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 flowchart LR
     subgraph dev[Development]
         Code[Write code] --> PR[Open pull request]
@@ -149,7 +149,7 @@ flowchart TD
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 flowchart TD
     Form@{ shape: manual-input, label: "User fills in form" }
     Docs@{ shape: docs, label: "Uploaded documents" }
@@ -213,7 +213,7 @@ C4Context
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 C4Context
     title System Context diagram for Internet Banking System
     Enterprise_Boundary(b0, "BankBoundary0") {
@@ -282,7 +282,7 @@ C4Container
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 C4Container
     title Container diagram for Internet Banking System
 
@@ -344,7 +344,7 @@ ishikawa-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 
 ishikawa-beta
     Blurry Photo
@@ -397,7 +397,7 @@ ishikawa-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 
 ishikawa-beta
     Late Food Delivery
@@ -449,7 +449,7 @@ kanban
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 config:
   kanban:
@@ -488,7 +488,7 @@ kanban
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 kanban
   Todo
     [Buy groceries]
@@ -535,7 +535,7 @@ classDiagram
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 classDiagram
     Animal <|-- Duck
     Animal <|-- Fish
@@ -613,7 +613,7 @@ need to implement authorize()"
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 classDiagram
     direction LR
     class Customer {
@@ -679,7 +679,7 @@ sequenceDiagram
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     Alice->>+John: John, can you hear me?
@@ -719,7 +719,7 @@ sequenceDiagram
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 sequenceDiagram
     autonumber
     actor Customer
@@ -773,7 +773,7 @@ sequenceDiagram
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 sequenceDiagram
     participant App as Mobile App
     participant API as Order Service
@@ -813,7 +813,7 @@ pie title Pets adopted by volunteers
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
@@ -836,7 +836,7 @@ pie showData title Where the workday goes (minutes)
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 pie showData title Where the workday goes (minutes)
     "Focused work" : 210
     "Meetings" : 120
@@ -868,7 +868,7 @@ journey
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 journey
     title My working day
     section Go to work
@@ -903,7 +903,7 @@ journey
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 journey
     title Ordering groceries online
     section Browse and select
@@ -950,7 +950,7 @@ mindmap
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 mindmap
   root((mindmap))
     Origins
@@ -1000,7 +1000,7 @@ mindmap
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 mindmap
   root((Summer Trip))
     Destination
@@ -1082,7 +1082,7 @@ requirementDiagram
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 requirementDiagram
 
     requirement rider_safety {
@@ -1156,7 +1156,7 @@ radar-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 title: "Grades"
 ---
@@ -1193,7 +1193,7 @@ radar-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 radar-beta
   title Frontend Framework Comparison
   axis perf["Performance"], dx["Dev Experience"], eco["Ecosystem"]
@@ -1229,7 +1229,7 @@ stateDiagram-v2
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
@@ -1270,7 +1270,7 @@ stateDiagram-v2
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 stateDiagram-v2
     direction LR
     [*] --> Placed
@@ -1323,7 +1323,7 @@ stateDiagram-v2
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 stateDiagram-v2
     state battery_check <<choice>>
     [*] --> PowerOn
@@ -1382,7 +1382,7 @@ erDiagram
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ ORDER_ITEM : contains
@@ -1458,7 +1458,7 @@ erDiagram
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 erDiagram
     USER ||--o{ SUBSCRIPTION : has
     PLAN ||--o{ SUBSCRIPTION : "subscribed via"
@@ -1530,7 +1530,7 @@ gitGraph
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 gitGraph
     commit id: "a3f82c1"
     branch develop
@@ -1577,7 +1577,7 @@ gitGraph
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 gitGraph
     commit id: "initial setup"
     branch develop
@@ -1614,7 +1614,7 @@ gitGraph TB:
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 gitGraph TB:
     commit id: "v2 groundwork"
     commit id: "schema migration" type: HIGHLIGHT
@@ -1647,7 +1647,7 @@ architecture-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 architecture-beta
     group api(cloud)[API]
 
@@ -1687,7 +1687,7 @@ architecture-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 architecture-beta
     group frontend(cloud)[Frontend]
     group backend(cloud)[Backend]
@@ -1727,7 +1727,7 @@ architecture-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 architecture-beta
     service user(internet)[User]
     service lb(server)[Load Balancer]
@@ -1761,7 +1761,7 @@ xychart-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -1790,7 +1790,7 @@ xychart-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 config:
   xyChart:
@@ -1825,7 +1825,7 @@ xychart-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 config:
   themeVariables:
@@ -1863,7 +1863,7 @@ Budget,Savings,1700
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 sankey-beta
 
 Salary,Budget,3000
@@ -1896,7 +1896,7 @@ Offer,Hired,14
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 sankey-beta
 
 Applications,Screening,120
@@ -1995,7 +1995,7 @@ Wind,Electricity grid,289.366
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 config:
   sankey:
@@ -2099,7 +2099,7 @@ gantt
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 gantt
     title Product Launch Plan
     dateFormat YYYY-MM-DD
@@ -2146,7 +2146,7 @@ gantt
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 gantt
     title Website Redesign Project
     dateFormat YYYY-MM-DD
@@ -2192,7 +2192,7 @@ timeline
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 timeline
     title History of Social Media Platform
     2002 : LinkedIn
@@ -2222,7 +2222,7 @@ timeline
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 timeline
     title Product Roadmap 2024
     section Q1 Foundations
@@ -2263,7 +2263,7 @@ quadrantChart
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 quadrantChart
     title Reach and engagement of campaigns
     x-axis Low Reach --> High Reach
@@ -2305,7 +2305,7 @@ quadrantChart
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 quadrantChart
     title Task Prioritization
     x-axis Not Urgent --> Urgent
@@ -2358,7 +2358,7 @@ packet
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 title: "TCP Packet"
 ---
@@ -2399,7 +2399,7 @@ title UDP Packet
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 packet
 title UDP Packet
 +16: "Source Port"
@@ -2435,7 +2435,7 @@ block-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 block-beta
   columns 3
   user(("User")):3
@@ -2474,7 +2474,7 @@ columns 1
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 block-beta
 columns 1
   db(("DB"))
@@ -2525,7 +2525,7 @@ treemap-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 config:
   treemap:
@@ -2571,7 +2571,7 @@ classDef warning fill:#f96,stroke:#333;
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 treemap-beta
 "Storage Used"
     "Media":::warning
@@ -2612,7 +2612,7 @@ Admin --> ViewReports
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 usecase-beta
 actor User("User")
 actor Admin("Administrator")
@@ -2654,7 +2654,7 @@ SupportAgent --> HandleReturns
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 usecase-beta
 actor Customer("Customer")
 actor SupportAgent("Support agent")
@@ -2697,7 +2697,7 @@ Manager --> Developer
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 usecase-beta
 actor Developer("Developer")
 actor Reviewer("Reviewer")
@@ -2737,7 +2737,7 @@ tf 08 rmo OrderStatus ->> 07
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 eventmodeling
 
 tf 01 ui ShopUI
@@ -2782,7 +2782,7 @@ data ItemAdded {
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 eventmodeling
 
 tf 01 ui CartUI
@@ -2829,7 +2829,7 @@ venn-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 venn-beta
     title "Finding the Product Sweet Spot"
     set Desirable
@@ -2863,7 +2863,7 @@ venn-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 venn-beta
     title "Where our teams overlap"
     set FE["Frontend"]:18
@@ -2903,7 +2903,7 @@ treeView-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 treeView-beta
             my-project/
                 src/
@@ -2936,7 +2936,7 @@ treeView-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 treeView-beta
             "Team Drive"
                 "Quarterly Reports"
@@ -2973,7 +2973,7 @@ treeView-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 config:
   treeView:
@@ -3021,7 +3021,7 @@ treeView-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 ---
 config:
   treeView:
@@ -3062,7 +3062,7 @@ treeView-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 treeView-beta
             🚀 rocket-app/
                 📦 packages/
@@ -3117,7 +3117,7 @@ note "A generic note appeared" [0.23, 0.33]
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 wardley-beta
 title Tea Shop
 size [1100, 800]
@@ -3180,7 +3180,7 @@ evolve Standardized Reports 0.85
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 wardley-beta
 title Data Evolution Pipeline
 size [1100, 800]
@@ -3232,7 +3232,7 @@ Smart Kettle -> Kettle
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 wardley-beta
 title Kettle Evolution Pipeline
 size [1100, 800]
@@ -3358,7 +3358,7 @@ note "Voting members: Adobe, Amazon, Apple, Google, Meta, Microsoft, Netflix, Sa
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 wardley-beta
 title GPT Tokeniser
 size [1100, 800]
@@ -3493,7 +3493,7 @@ cynefin-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 cynefin-beta
   title Incident Response
 
@@ -3553,7 +3553,7 @@ cynefin-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 cynefin-beta
   title Product Strategy
 
@@ -3616,7 +3616,7 @@ railroad-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-beta
     title Expression Grammar
 
@@ -3660,7 +3660,7 @@ railroad-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-beta
     title JSON Grammar
 
@@ -3693,7 +3693,7 @@ railroad-ebnf-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-ebnf-beta
     title Expression Grammar
 
@@ -3725,7 +3725,7 @@ railroad-ebnf-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-ebnf-beta
     title Semantic Version
 
@@ -3760,7 +3760,7 @@ railroad-abnf-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-abnf-beta
     title Email Address
 
@@ -3786,7 +3786,7 @@ railroad-abnf-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-abnf-beta
     title Phone Number
 
@@ -3817,7 +3817,7 @@ railroad-peg-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-peg-beta
     title Calculator Grammar
 
@@ -3844,7 +3844,7 @@ railroad-peg-beta
 <details>
 <summary>Code</summary>
 
-```text
+```mermaid-example
 railroad-peg-beta
     title Identifiers (keywords excluded)
 

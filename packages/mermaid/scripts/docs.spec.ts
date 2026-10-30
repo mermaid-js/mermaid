@@ -77,6 +77,30 @@ describe('docs.mts', () => {
           });
         });
 
+        describe('language = "mermaid-collapsed"', () => {
+          const contents = beforeCodeLine + '```mermaid-collapsed\n' + diagram_text + '\n```\n';
+
+          it('adds the diagram, then the code inside <details>', async () => {
+            const result = (
+              await remarkBuilder()
+                .use(transformMarkdownAst, { originalFilename })
+                .process(contents)
+            ).toString();
+            expect(result).toEqual(
+              beforeCodeLine +
+                '\n' +
+                '```mermaid\n' +
+                diagram_text +
+                '\n```\n' +
+                '\n<details>\n<summary>Code</summary>\n' +
+                '\n```mermaid-example\n' +
+                diagram_text +
+                '\n```\n' +
+                '\n</details>\n'
+            );
+          });
+        });
+
         it('calls transformToBlockQuote with the node information', async () => {
           const lang_keyword = 'note';
           const contents =
@@ -181,9 +205,7 @@ This Markdown should be kept.
         expect(doc).toContain(`## ${name}`);
         for (const { title, code } of examples) {
           expect(doc).toContain(`### ${title}`);
-          expect(doc).toContain(
-            `\`\`\`mermaid-nocode\n${code}\n\`\`\`\n\n<details>\n<summary>Code</summary>\n\n\`\`\`text\n${code}\n\`\`\`\n\n</details>`
-          );
+          expect(doc).toContain(`\`\`\`mermaid-collapsed\n${code}\n\`\`\``);
         }
       }
     });
