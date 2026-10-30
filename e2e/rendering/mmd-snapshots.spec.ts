@@ -1,6 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { test as base, type Page, type TestInfo } from '@playwright/test';
-import { collectCoverage, startCoverage } from '../helpers/coverage.ts';
+import type { TestInfo } from '@playwright/test';
 import {
   assertUniqueSnapshotNames,
   buildFixtureTree,
@@ -11,31 +10,8 @@ import {
   readFixtureMetadata,
   type FixtureTree,
 } from '../helpers/mmd-snapshots.ts';
-import { imgSnapshotTest, renderInPage } from '../helpers/util.ts';
-
-// One e2e.html page per worker: fixtures render into it via window.renderGraph
-// instead of reloading the page and its bundles for every test.
-const test = base.extend<object, { workerPage: Page }>({
-  workerPage: [
-    async ({ browser }, use, workerInfo) => {
-      const { baseURL, viewport, deviceScaleFactor, timezoneId } = workerInfo.project.use;
-      const context = await browser.newContext({
-        baseURL,
-        viewport,
-        deviceScaleFactor,
-        timezoneId,
-      });
-      const page = await context.newPage();
-      await startCoverage(page);
-      await page.goto('/e2e.html');
-      await page.waitForFunction(() => typeof (window as any).renderGraph === 'function');
-      await use(page);
-      await collectCoverage(page);
-      await context.close();
-    },
-    { scope: 'worker' },
-  ],
-});
+import { imgSnapshotTest } from '../helpers/util.ts';
+import { renderShared, test } from '../helpers/workerPage.ts';
 
 // Set by CI (.github/workflows/e2e.yml, .github/workflows/nightly-e2e.yml)
 // to a comma-separated tier list (e.g. 'pr' or 'pr,nightly') when a run is
@@ -146,25 +122,7 @@ const registerFixtureNode = (node: FixtureTree): void => {
         fixtureBaseName(relativePath),
         { tag: tags },
         async ({ workerPage, browser }, testInfo) => {
-          const source = prepare(testInfo);
-          if (testInfo.retry === 0) {
-            await renderInPage(workerPage, testInfo, source, { screenshotPath });
-            return;
-          }
-          // Retry on a fresh page (which Playwright traces on retry) so a failure
-          // can't be an artifact of the shared one.
-          const { baseURL, viewport, deviceScaleFactor, timezoneId } = testInfo.project.use;
-          const context = await browser.newContext({
-            baseURL,
-            viewport,
-            deviceScaleFactor,
-            timezoneId,
-          });
-          try {
-            await imgSnapshotTest(await context.newPage(), testInfo, source, { screenshotPath });
-          } finally {
-            await context.close();
-          }
+          await renderShared(workerPage, browser, testInfo, prepare(testInfo), { screenshotPath });
         }
       );
     }
