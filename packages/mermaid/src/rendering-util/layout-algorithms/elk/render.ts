@@ -10,6 +10,14 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
+import {
+  type ElkDirection,
+  type ElkEdgeLike,
+  containerOrigins,
+  findSeparatedGroups,
+  splitAtGroupPorts,
+  stitchPortSegments,
+} from './groupPorts.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
@@ -698,6 +706,11 @@ export async function runElkLayoutCore(
   elkContext.log.info('Drawing flowchart using v4 renderer', elk);
 
   const graph = await runElkLayout(elk, layoutState.elkGraph, elkContext.log);
+  graph.edges = stitchPortSegments(
+    graph.edges ?? [],
+    containerOrigins(graph),
+    layoutState.parentLookupDb
+  );
   applyElkLayoutResult(data4Layout, graph, layoutState, elkContext.log);
   orderNodesForElkPaint(data4Layout.nodes);
   return graph;
@@ -715,19 +728,86 @@ export function buildElkGraphFromLayoutData(
   );
 
   const dir = (data4Layout as { direction?: string }).direction ?? 'DOWN';
-  elkGraph.layoutOptions['elk.direction'] = dir2ElkDirection(dir);
+  const rootDirection = dir2ElkDirection(dir);
+  elkGraph.layoutOptions['elk.direction'] = rootDirection;
 
   const parentLookupDb = addSubGraphs(data4Layout.nodes, elkContext.log);
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
-  configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  const separated =
+    elkGraph.layoutOptions['elk.algorithm'] === 'elk.layered'
+      ? findSeparatedGroups(
+          directionGroups(data4Layout.nodes),
+          rootDirection,
+          edgeEnds(elkGraph, nodeDb),
+          parentLookupDb
+        )
+      : new Map<string, ElkDirection>();
+  configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log, separated);
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
   applyCyclicEntryConstraint(data4Layout, nodeDb);
+  routeThroughGroupPorts(elkGraph, nodeDb, parentLookupDb, separated, rootDirection);
 
   return { elkGraph, nodeDb, parentLookupDb };
+}
+
+function directionGroups(nodes: Node[]) {
+  return nodes
+    .filter((node) => node.isGroup)
+    .map((node) => ({
+      id: node.id,
+      parentId: node.parentId,
+      direction: node.dir ? dir2ElkDirection(node.dir) : undefined,
+      ownAlgorithm: resolveContainerAlgorithm(node.metadata?.algorithm) !== undefined,
+    }));
+}
+
+function edgeEnds(elkGraph: { edges: ElkEdgeLike[] }, nodeDb: Record<string, NodeWithVertex>) {
+  return elkGraph.edges
+    .map((edge) => ({ source: edge.sources[0], target: edge.targets[0] }))
+    .filter(({ source, target }) => nodeDb[source] && nodeDb[target]);
+}
+
+/**
+ * Keep a subgraph in its own direction when edges cross its frame (#4648): lay it out on its own
+ * and route each crossing edge through ports on the frame. `runElkLayoutCore` joins the pieces
+ * back into one route per edge.
+ */
+function routeThroughGroupPorts(
+  elkGraph: { edges: ElkEdgeLike[] },
+  nodeDb: Record<string, NodeWithVertex>,
+  parentLookupDb: TreeData,
+  separated: ReadonlyMap<string, ElkDirection>,
+  rootDirection: ElkDirection
+): void {
+  if (separated.size === 0) {
+    return;
+  }
+  const { edges, ports } = splitAtGroupPorts(
+    elkGraph.edges,
+    parentLookupDb,
+    separated,
+    rootDirection
+  );
+  elkGraph.edges = edges;
+  for (const [id, direction] of separated) {
+    const group = nodeDb[id];
+    group.layoutOptions ??= {};
+    if (resolveContainerAlgorithm(group.metadata?.algorithm)) {
+      clearContainerAlgorithmOptions(group.layoutOptions);
+      Object.assign(group.layoutOptions, groupTitleSizeOptions(group));
+    }
+    group.layoutOptions['elk.direction'] = direction;
+    group.layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
+    const groupPorts = ports.get(id);
+    if (groupPorts) {
+      group.ports = groupPorts;
+      group.layoutOptions['elk.portConstraints'] = 'FIXED_SIDE';
+    }
+  }
 }
 
 /**
@@ -1251,7 +1331,8 @@ function configureCrossHierarchyEdges(
   elkGraph: { edges: any[] },
   nodeDb: Record<string, NodeWithVertex>,
   parentLookupDb: TreeData,
-  log: ElkLayoutContext['log']
+  log: ElkLayoutContext['log'],
+  separated: ReadonlyMap<string, ElkDirection>
 ): void {
   log.debug('APA01 processing edges, count:', elkGraph.edges.length);
   elkGraph.edges.forEach((edge: any, index: number) => {
@@ -1264,8 +1345,8 @@ function configureCrossHierarchyEdges(
 
     if (nodeDb[source] && nodeDb[target] && nodeDb[source].parentId !== nodeDb[target].parentId) {
       const ancestorId = findCommonAncestor(source, target, parentLookupDb);
-      setIncludeChildrenPolicy(nodeDb, source, ancestorId, log);
-      setIncludeChildrenPolicy(nodeDb, target, ancestorId, log);
+      setIncludeChildrenPolicy(nodeDb, source, ancestorId, log, separated);
+      setIncludeChildrenPolicy(nodeDb, target, ancestorId, log, separated);
     }
   });
 }
@@ -1274,13 +1355,23 @@ function setIncludeChildrenPolicy(
   nodeDb: Record<string, NodeWithVertex>,
   nodeId: string,
   ancestorId: string,
-  log: ElkLayoutContext['log']
+  log: ElkLayoutContext['log'],
+  separated: ReadonlyMap<string, ElkDirection>
 ): void {
   const node = nodeDb[nodeId];
 
   if (!node) {
     return;
   }
+  if (!separated.has(node.id)) {
+    includeChildren(node, log);
+  }
+  if (node.id !== ancestorId && node.parentId) {
+    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log, separated);
+  }
+}
+
+function includeChildren(node: NodeWithVertex, log: ElkLayoutContext['log']): void {
   node.layoutOptions ??= {};
 
   // If this node has a user-specified custom algorithm (e.g. elk.box) with
@@ -1297,9 +1388,6 @@ function setIncludeChildrenPolicy(
   }
 
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
-  if (node.id !== ancestorId && node.parentId) {
-    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log);
-  }
 }
 
 async function runElkLayout(
@@ -1402,6 +1490,10 @@ export function collectDescendantIds(elkNode: any, into = new Set<string>()): Se
  * long shallow diagonal that hugged the frame's side. Only the terminal point
  * on the group is added, never the edge's other points: those belong to the
  * layout outside the frame.
+ *
+ * An edge routed through a port on the group's frame (`crossings`, see
+ * `routeThroughGroupPorts`) adds the port for the same reason: the frame must
+ * still meet the edge where the edge leaves it.
  */
 function internalEdgePoints(
   graph: ElkLayoutResult,
@@ -1411,27 +1503,57 @@ function internalEdgePoints(
 ): P[] {
   const points: P[] = [];
   for (const edge of graph.edges ?? []) {
-    const source = edge.sources?.[0] ?? edge.start;
-    const target = edge.targets?.[0] ?? edge.end;
-    const isInternal = descendants.has(source) && descendants.has(target);
-    const attachesAtStart = source === groupId;
-    const attachesAtEnd = target === groupId;
-    if (!isInternal && !attachesAtStart && !attachesAtEnd) {
+    const { source, target } = laidOutEnds(edge);
+    const own = [
+      ...framePortsOf(edge, groupId),
+      ...sectionPointsInGroup(
+        edge,
+        descendants.has(source) && descendants.has(target),
+        source === groupId,
+        target === groupId
+      ),
+    ];
+    if (own.length === 0) {
       continue;
     }
     const offset = calcOffset(source, target, layoutState.parentLookupDb, layoutState.nodeDb);
-    for (const section of edge.sections ?? []) {
-      const sectionPoints = isInternal
-        ? [section.startPoint, ...(section.bendPoints ?? []), section.endPoint]
-        : [attachesAtStart ? section.startPoint : null, attachesAtEnd ? section.endPoint : null];
-      for (const p of sectionPoints) {
-        if (p) {
-          points.push({ x: p.x + offset.x, y: p.y + offset.y });
-        }
-      }
-    }
+    points.push(...own.map((p) => ({ x: p.x + offset.x, y: p.y + offset.y })));
   }
   return points;
+}
+
+function laidOutEnds(edge: {
+  sources?: string[];
+  targets?: string[];
+  start?: string;
+  end?: string;
+}): { source: string; target: string } {
+  return {
+    source: edge.sources?.[0] ?? edge.start ?? '',
+    target: edge.targets?.[0] ?? edge.end ?? '',
+  };
+}
+
+function framePortsOf(edge: { crossings?: ElkEdgeLike['crossings'] }, groupId: string): P[] {
+  return (edge.crossings ?? [])
+    .filter((crossing) => crossing.groupId === groupId)
+    .map((crossing) => crossing.point);
+}
+
+function sectionPointsInGroup(
+  edge: { sections?: ElkEdgeLike['sections'] },
+  isInternal: boolean,
+  attachesAtStart: boolean,
+  attachesAtEnd: boolean
+): P[] {
+  return (edge.sections ?? []).flatMap((section) =>
+    isInternal
+      ? [section.startPoint, ...(section.bendPoints ?? []), section.endPoint]
+      : [
+          ...(attachesAtStart ? [section.startPoint] : []),
+          ...(attachesAtEnd ? [section.endPoint] : []),
+        ]
+  );
 }
 
 export function evenGroupFrames(
