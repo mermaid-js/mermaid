@@ -56,7 +56,7 @@ export default defineConfig({
     addNoindex(pageData);
   },
   head: [
-    ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', type: 'image/x-icon', href: `${getSiteBase(siteUrl)}favicon.ico` }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:image', content: `${siteUrl}mermaid-logo-horizontal.png` }],
     ['meta', { property: 'og:image:width', content: '1200' }],
