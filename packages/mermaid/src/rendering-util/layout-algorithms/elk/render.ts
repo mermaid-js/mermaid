@@ -11,6 +11,7 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
 import { applyElkLineJumps } from './lineHops.js';
+import { type ElkDirection, nodesToSpreadPorts } from './spreadArrowheads.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
@@ -721,6 +722,7 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
+  spreadCrowdedArrowheads(data4Layout, nodeDb, parentLookupDb);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
@@ -1074,21 +1076,63 @@ function createElkNode(node: Node): NodeWithVertex {
     child.width = node.width ?? 0;
     child.height = node.height ?? 0;
     if (node.spreadPorts) {
-      // ELK packs a fixed-size node's implicit ports (the attachment points of
-      // port-less edges) tightly around the middle of a side; CENTER alignment
-      // spreads them as far as the side allows. That is the whole lever: the
-      // node-level `elk.spacing.portPort` and `elk.spacing.portsSurrounding`
-      // options are ignored for implicit ports (measured with elkjs 0.9.3), and
-      // the root's corner margin still bounds the spread — a 38px side holds
-      // three ports about 8px apart.
-      child.layoutOptions = {
-        ...child.layoutOptions,
-        'elk.portAlignment.default': 'CENTER',
-      };
+      spreadPorts(child);
     }
   }
 
   return child;
+}
+
+/**
+ * ELK packs a fixed-size node's implicit ports (the attachment points of
+ * port-less edges) tightly around the middle of a side; CENTER alignment
+ * spreads them as far as the side allows. That is the whole lever: the
+ * node-level `elk.spacing.portPort` and `elk.spacing.portsSurrounding`
+ * options are ignored for implicit ports (measured with elkjs 0.12.0), and
+ * the root's corner margin still bounds the spread: ports sit 2px inside
+ * it, so a 38px side holds three ports 9px apart.
+ */
+function spreadPorts(elkNode: NodeWithVertex): void {
+  elkNode.layoutOptions = {
+    ...elkNode.layoutOptions,
+    'elk.portAlignment.default': 'CENTER',
+  };
+}
+
+/**
+ * The direction the layout around a node runs in: that of its nearest ancestor
+ * with a direction of its own, else the diagram's.
+ */
+function directionAround(
+  nodeId: string,
+  nodeById: Map<string, Node>,
+  parentById: Record<string, string>,
+  diagramDirection: ElkDirection
+): ElkDirection {
+  for (let id = parentById[nodeId]; id !== undefined; id = parentById[id]) {
+    const dir = nodeById.get(id)?.dir;
+    if (dir) {
+      return dir2ElkDirection(dir);
+    }
+  }
+  return diagramDirection;
+}
+
+/** Spread the ports of every node whose arrowheads ELK would otherwise stack. */
+function spreadCrowdedArrowheads(
+  data4Layout: LayoutData,
+  nodeDb: Record<string, NodeWithVertex>,
+  parentLookupDb: TreeData
+): void {
+  const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
+  const diagramDirection = dir2ElkDirection((data4Layout as { direction?: string }).direction);
+  const crowded = nodesToSpreadPorts(data4Layout.nodes, data4Layout.edges, {
+    directionOf: (id) => directionAround(id, nodeById, parentLookupDb.parentById, diagramDirection),
+    cornerMargin: PORTS_SURROUNDING_MARGIN,
+  });
+  for (const id of crowded) {
+    spreadPorts(nodeDb[id]);
+  }
 }
 
 function getMeasuredLabelData(node: Node, config: any): LabelData {
