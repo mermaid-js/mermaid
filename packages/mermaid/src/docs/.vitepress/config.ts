@@ -7,6 +7,7 @@ import { betaSyntaxPages } from './betaDiagrams.js';
 import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
 import MermaidExample from './mermaid-markdown-all.js';
+import { addNoindex, isNoindexPage } from './noindexPages.js';
 import { addPageMetadata } from './pageMetadata.js';
 import { getDocsHostname, getSiteBase, getSiteUrl } from './siteUrl.js';
 
@@ -32,6 +33,7 @@ export default defineConfig({
   markdown: allMarkdownTransformers,
   sitemap: {
     hostname: siteUrl,
+    transformItems: (items) => items.filter((item) => !isNoindexPage(item.url)),
   },
   buildEnd: ({ outDir }) => {
     writeFileSync(
@@ -51,6 +53,7 @@ export default defineConfig({
       siteUrl
     );
     applyHomePageHeroCopy(pageData, getDocsHostname());
+    addNoindex(pageData);
   },
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
