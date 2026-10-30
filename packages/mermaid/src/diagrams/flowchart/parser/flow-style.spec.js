@@ -35,7 +35,9 @@ describe('[Style] when parsing', () => {
       expect([...vertices.keys()]).toEqual(['A', 'B', 'C', 'D']);
       for (const id of ['A', 'B', 'C', 'D']) {
         expect(vertices.get(id).styles).toEqual(
-          ids.split(',').includes(id) ? ['fill:#f00', 'stroke:#333'] : []
+          ids.split(',').map((target) => target.trim()).includes(id)
+  ? ['fill:#f00', 'stroke:#333']
+  : []
         );
       }
       expect(vertices.get('A').text).toBe('Start');
