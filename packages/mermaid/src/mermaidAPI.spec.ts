@@ -829,6 +829,18 @@ graph TD;A--x|text including URL space|B;`)
 `);
     });
 
+    it('applies a dotted front matter key as if it were absent, and its nested form as set', async () => {
+      const diagram = 'graph TD;A-->B;';
+      const dotted = await mermaidAPI.parse(
+        `---\nconfig:\n  flowchart.curve: linear\n---\n${diagram}`
+      );
+      const nested = await mermaidAPI.parse(
+        `---\nconfig:\n  flowchart:\n    curve: linear\n---\n${diagram}`
+      );
+      expect(dotted.config).toEqual({});
+      expect(nested.config).toEqual({ flowchart: { curve: 'linear' } });
+    });
+
     it('returns merged config when defined in frontmatter and directive', async () => {
       await expect(
         mermaidAPI.parse(`---
