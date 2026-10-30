@@ -811,9 +811,6 @@ export const draw = (text: string, id: string, _version: string, diagObj: Diagra
       if (node.className === 'evolved') {
         return theme.evolutionStroke;
       }
-      if (node.className === 'anchor') {
-        return '#000';
-      }
       return theme.componentLabelColor;
     })
     .attr('font-size', configValues.labelFontSize)
