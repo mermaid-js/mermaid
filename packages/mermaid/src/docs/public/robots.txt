@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mermaid.ai/open-source/sitemap.xml
+Sitemap: https://mermaid.js.org/sitemap.xml

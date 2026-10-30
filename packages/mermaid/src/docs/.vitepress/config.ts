@@ -1,7 +1,6 @@
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' with { type: 'json' };
-import { canonicalConfig } from './canonical-config.js';
 import { addCanonicalUrls } from './canonical-urls.js';
 import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
@@ -26,11 +25,7 @@ export default defineConfig({
   base: '/',
   markdown: allMarkdownTransformers,
   sitemap: {
-    hostname: `${canonicalConfig.baseUrl}/`,
-    transformItems: (items) =>
-      items.map((item) =>
-        item.url.endsWith('/') ? { ...item, url: `${item.url}index.html` } : item
-      ),
+    hostname: 'https://mermaid.js.org/',
   },
   ignoreDeadLinks: [
     // ignore all localhost links
