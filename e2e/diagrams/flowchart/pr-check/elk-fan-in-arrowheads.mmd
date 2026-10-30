@@ -1,0 +1,8 @@
+%%{init: {'layout': 'elk'}}%%
+%% Four edges end on one side of a one-line node; their arrowheads stay apart instead of stacking.
+flowchart LR
+  A["Web shop"] --> M["Order queue"]
+  B["Mobile app"] --> M
+  C["Phone desk"] --> M
+  D["Partner feed"] --> M
+  M --> X["Fulfil"]
