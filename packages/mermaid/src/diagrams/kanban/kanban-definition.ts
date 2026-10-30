@@ -1,5 +1,4 @@
-// @ts-ignore: JISON doesn't support types
-import parser from './parser/kanban.jison';
+import parser from './parser/kanban.chevrotain.js';
 import db from './kanbanDb.js';
 import renderer from './kanbanRenderer.js';
 import styles from './styles.js';
