@@ -16,8 +16,8 @@ const MermaidExample = (md: MarkdownRenderer) => {
       <Suspense> 
       <template #default>
       <Mermaid id="mermaid-${key}" :showCode="${
-        language === 'mermaid-example'
-      }" graph="${encodeURIComponent(token.content)}"></Mermaid>
+        language === 'mermaid-example' || language === 'mermaid-collapsed'
+      }" :collapsed="${language === 'mermaid-collapsed'}" graph="${encodeURIComponent(token.content)}"></Mermaid>
       </template>
         <!-- loading state via #fallback slot -->
         <template #fallback>
