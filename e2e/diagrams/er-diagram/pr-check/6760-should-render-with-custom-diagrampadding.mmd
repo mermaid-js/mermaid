@@ -1,0 +1,13 @@
+---
+description: >-
+  Regression fixture tied to issue #6760. Frontmatter sets er.diagramPadding
+  to 50 on the minimal CUSTOMER-ORDER-LINE_ITEM diagram to verify the
+  configured padding is applied around the whole rendered diagram instead of
+  a fixed 8px.
+config:
+  er:
+    diagramPadding: 50
+---
+erDiagram
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ LINE-ITEM : contains
