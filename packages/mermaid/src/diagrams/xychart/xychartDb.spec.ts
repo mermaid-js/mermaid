@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import db from './xychartDb.js';
+// @ts-ignore: Jison doesn't support types.
+import parser from './parser/xychart.jison';
 
 /**
  * Helper to build ParsedDataPoint[] from plain numbers,
@@ -122,5 +124,87 @@ describe('xychartDb', () => {
         expect(chartData.yAxis.max).toBe(50);
       }
     });
+  });
+});
+
+describe('automatic x-axis range across series', () => {
+  beforeEach(() => db.clear());
+  afterEach(() => db.clear());
+
+  it('extends an automatic range for a longer later series', () => {
+    db.setLineData({ text: 'first', type: 'text' }, pts(10, 20));
+    db.setBarData({ text: 'second', type: 'text' }, pts(30, 40, 50, 60));
+
+    const data = db.getXYChartData();
+    expect(data.xAxis).toMatchObject({ type: 'linear', min: 1, max: 4 });
+    expect(data.plots[0].data).toEqual([
+      ['1', 10],
+      ['2', 20],
+    ]);
+    expect(data.plots[1].data).toEqual([
+      ['1', 30],
+      ['2', 40],
+      ['3', 50],
+      ['4', 60],
+    ]);
+  });
+
+  it.each(['xychart', 'xychart horizontal'])('infers the range through the %s parser', (header) => {
+    parser.parser.yy = db;
+    parser.parse(`${header}\nline [10, 20]\nbar [30, 40, 50, 60]`);
+    const data = db.getXYChartData();
+    expect(data.xAxis).toMatchObject({ min: 1, max: 4 });
+    expect(data.plots[1].data).toEqual([
+      ['1', 30],
+      ['2', 40],
+      ['3', 50],
+      ['4', 60],
+    ]);
+  });
+
+  it('keeps shorter later series at their sample positions', () => {
+    db.setBarData({ text: 'first', type: 'text' }, pts(1, 2, 3, 4));
+    db.setLineData({ text: 'second', type: 'text' }, pts(5, 6));
+    db.setLineData({ text: 'single', type: 'text' }, pts(7));
+    const data = db.getXYChartData();
+    expect(data.xAxis).toMatchObject({ min: 1, max: 4 });
+    expect(data.plots[1].data).toEqual([
+      ['1', 5],
+      ['2', 6],
+    ]);
+    expect(data.plots[2].data).toEqual([['1', 7]]);
+  });
+
+  it('keeps an explicit range unchanged for differently sized series', () => {
+    db.setXAxisRangeData(10, 20);
+    db.setLineData({ text: 'first', type: 'text' }, pts(10, 20));
+    db.setBarData({ text: 'second', type: 'text' }, pts(30, 40, 50));
+    expect(db.getXYChartData().xAxis).toMatchObject({ min: 10, max: 20 });
+    expect(db.getXYChartData().plots[1].data).toEqual([
+      ['10', 30],
+      ['15', 40],
+      ['20', 50],
+    ]);
+  });
+});
+
+describe('automatic x-axis drawable coordinates', () => {
+  beforeEach(() => db.clear());
+  afterEach(() => db.clear());
+  it('builds finite drawable shapes from differing series lengths', () => {
+    parser.parser.yy = db;
+    parser.parse('xychart\nline [10, 20]\nbar [30, 40, 50, 60]');
+    const shapes = db.getDrawableElem();
+    expect(shapes.length).toBeGreaterThan(0);
+    const checkFiniteNumbers = (value: unknown): void => {
+      if (typeof value === 'number') {
+        expect(Number.isFinite(value)).toBe(true);
+      } else if (Array.isArray(value)) {
+        value.forEach(checkFiniteNumbers);
+      } else if (value !== null && typeof value === 'object') {
+        Object.values(value).forEach(checkFiniteNumbers);
+      }
+    };
+    checkFiniteNumbers(shapes);
   });
 });
