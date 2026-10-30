@@ -324,7 +324,7 @@ interface TransformMarkdownAstOptions {
  *
  * For any AST node that is a code block: transform it as needed:
  * - blocks marked as MERMAID_DIAGRAM_ONLY will be set to a 'mermaid' code block so it will be rendered as (only) a diagram
- * - blocks marked as MERMAID_EXAMPLE_KEYWORDS will be copied and the original node will be a code only block and the copy with be rendered as the diagram
+ * - blocks marked as MERMAID_EXAMPLE_KEYWORDS will be copied and the copy will be rendered as the diagram, followed by the original node as a code only block
  * - blocks marked as MERMAID_COLLAPSED_KEYWORD will be rendered as the diagram followed by the code, collapsed
  * - blocks marked as BLOCK_QUOTE_KEYWORDS will be transformed into block quotes
  *
@@ -351,10 +351,10 @@ export function transformMarkdownAst({
       } else if (MERMAID_EXAMPLE_KEYWORDS.includes(node.lang)) {
         // If Vitepress, return only the original node with the language now set to 'mermaid-example' (will be rendered using custom renderer)
         // Else Return 2 nodes:
-        //   1. the original node with the language now set to 'mermaid-example' (will be rendered as code), and
-        //   2. a copy of the original node with the language set to 'mermaid' (will be rendered as a diagram)
+        //   1. a copy of the original node with the language set to 'mermaid' (will be rendered as a diagram), and
+        //   2. the original node with the language now set to 'mermaid-example' (will be rendered as code)
         node.lang = MERMAID_CODE_ONLY_KEYWORD;
-        return vitepress ? [node] : [node, Object.assign({}, node, { lang: MERMAID_KEYWORD })];
+        return vitepress ? [node] : [Object.assign({}, node, { lang: MERMAID_KEYWORD }), node];
       } else if (node.lang === MERMAID_COLLAPSED_KEYWORD) {
         // Vitepress renders this with the custom renderer; GitHub gets the diagram, then the code in <details>
         return vitepress

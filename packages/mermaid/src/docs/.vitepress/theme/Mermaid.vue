@@ -1,5 +1,5 @@
 <template>
-  <div v-if="props.collapsed" class="mermaid-diagram" v-html="svg"></div>
+  <div class="mermaid-diagram" v-html="svg"></div>
   <component :is="props.collapsed ? 'details' : 'div'" v-if="props.showCode">
     <summary v-if="props.collapsed">Code</summary>
     <h5 v-else>Code:</h5>
@@ -13,7 +13,6 @@
       </div>
     </div>
   </component>
-  <div v-if="!props.collapsed" class="mermaid-diagram" v-html="svg"></div>
 </template>
 
 <script setup>

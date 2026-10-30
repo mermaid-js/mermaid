@@ -12,7 +12,7 @@
 
 ### An example of a timeline
 
-```mermaid-example
+```mermaid
 timeline
     title History of Social Media Platform
     2002 : LinkedIn
@@ -22,7 +22,7 @@ timeline
     2006 : Twitter
 ```
 
-```mermaid
+```mermaid-example
 timeline
     title History of Social Media Platform
     2002 : LinkedIn
@@ -62,7 +62,7 @@ or
 
 Let us look at the syntax for the example above.
 
-```mermaid-example
+```mermaid
 timeline
     title History of Social Media Platform
     2002 : LinkedIn
@@ -71,7 +71,7 @@ timeline
     2006 : Twitter
 ```
 
-```mermaid
+```mermaid-example
 timeline
     title History of Social Media Platform
     2002 : LinkedIn
@@ -95,7 +95,7 @@ If no section is defined, all time periods will be placed in the default section
 
 Let us look at an example, where we have grouped the time periods in sections.
 
-```mermaid-example
+```mermaid
 timeline
     title Timeline of Industrial Revolution
     section 17th-20th century
@@ -107,7 +107,7 @@ timeline
         Industry 5.0 : Artificial intelligence, Big data, 3D printing
 ```
 
-```mermaid
+```mermaid-example
 timeline
     title Timeline of Industrial Revolution
     section 17th-20th century
@@ -131,20 +131,6 @@ You can also use `<br>` to force a line break.
 
 Let us look at another example, where we have a long time period, and a long event.
 
-```mermaid-example
-timeline
-        title England's History Timeline
-        section Stone Age
-          7600 BC : Britain's oldest known house was built in Orkney, Scotland
-          6000 BC : Sea levels rise and Britain becomes an island.<br> The people who live here are hunter-gatherers.
-        section Bronze Age
-          2300 BC : People arrive from Europe and settle in Britain. <br>They bring farming and metalworking.
-                  : New styles of pottery and ways of burying the dead appear.
-          2200 BC : The last major building works are completed at Stonehenge.<br> People now bury their dead in stone circles.
-                  : The first metal objects are made in Britain.Some other nice things happen. it is a good time to be alive.
-
-```
-
 ```mermaid
 timeline
         title England's History Timeline
@@ -160,6 +146,20 @@ timeline
 ```
 
 ```mermaid-example
+timeline
+        title England's History Timeline
+        section Stone Age
+          7600 BC : Britain's oldest known house was built in Orkney, Scotland
+          6000 BC : Sea levels rise and Britain becomes an island.<br> The people who live here are hunter-gatherers.
+        section Bronze Age
+          2300 BC : People arrive from Europe and settle in Britain. <br>They bring farming and metalworking.
+                  : New styles of pottery and ways of burying the dead appear.
+          2200 BC : The last major building works are completed at Stonehenge.<br> People now bury their dead in stone circles.
+                  : The first metal objects are made in Britain.Some other nice things happen. it is a good time to be alive.
+
+```
+
+```mermaid
 timeline
         title MermaidChart 2023 Timeline
         section 2023 Q1 <br> Release Personal Tier
@@ -172,7 +172,7 @@ timeline
           Bullet 4 : sub-point 4a : sub-point 4b
 ```
 
-```mermaid
+```mermaid-example
 timeline
         title MermaidChart 2023 Timeline
         section 2023 Q1 <br> Release Personal Tier
@@ -189,7 +189,7 @@ timeline
 
 Timeline can change its direction by the keyword after `timeline`.
 
-```mermaid-example
+```mermaid
 timeline TD
   title MermaidChart 2023 Timeline
     section 2023 Q1 <br> Release Personal Tier
@@ -200,7 +200,7 @@ timeline TD
       Bullet 4 : sub-point 4a : sub-point 4b
 ```
 
-```mermaid
+```mermaid-example
 timeline TD
   title MermaidChart 2023 Timeline
     section 2023 Q1 <br> Release Personal Tier
@@ -224,7 +224,7 @@ However, if there is no section defined, then we have two possibilities:
 
 1. Style time periods individually, i.e. each time period(and its corresponding events) will have its own color scheme. This is the DEFAULT behavior.
 
-```mermaid-example
+```mermaid
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -234,7 +234,7 @@ However, if there is no section defined, then we have two possibilities:
 
 ```
 
-```mermaid
+```mermaid-example
     timeline
         title History of Social Media Platform
           2002 : LinkedIn
@@ -264,7 +264,7 @@ mermaid.initialize({
 
 let us look at same example, where we have disabled the multiColor option.
 
-```mermaid-example
+```mermaid
 ---
 config:
   logLevel: 'debug'
@@ -281,7 +281,7 @@ config:
 
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   logLevel: 'debug'
@@ -311,7 +311,7 @@ Example:
 
 Now let's override the default values for the `cScale0` to `cScale2` variables:
 
-```mermaid-example
+```mermaid
 ---
 config:
   logLevel: 'debug'
@@ -335,7 +335,7 @@ config:
 
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   logLevel: 'debug'
@@ -384,7 +384,7 @@ Let's put a few of them to use, and see how our sample diagram looks in differen
 
 ### Base Theme
 
-```mermaid-example
+```mermaid
 ---
 config:
   logLevel: 'debug'
@@ -401,7 +401,7 @@ config:
           2010 : Pinterest
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   logLevel: 'debug'
@@ -420,7 +420,7 @@ config:
 
 ### Forest Theme
 
-```mermaid-example
+```mermaid
 ---
 config:
   logLevel: 'debug'
@@ -437,7 +437,7 @@ config:
           2010 : Pinterest
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   logLevel: 'debug'
@@ -456,7 +456,7 @@ config:
 
 ### Dark Theme
 
-```mermaid-example
+```mermaid
 ---
 config:
   logLevel: 'debug'
@@ -473,7 +473,7 @@ config:
           2010 : Pinterest
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   logLevel: 'debug'
@@ -492,7 +492,7 @@ config:
 
 ### The `default` Theme
 
-```mermaid-example
+```mermaid
 ---
 config:
   logLevel: 'debug'
@@ -509,7 +509,7 @@ config:
           2010 : Pinterest
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   logLevel: 'debug'
@@ -528,7 +528,7 @@ config:
 
 ### Neutral Theme
 
-```mermaid-example
+```mermaid
 ---
 config:
   logLevel: 'debug'
@@ -545,7 +545,7 @@ config:
           2010 : Pinterest
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   logLevel: 'debug'

@@ -57,7 +57,7 @@ describe('docs.mts', () => {
             const contents =
               beforeCodeLine + '```' + lang_keyword + '\n' + diagram_text + '\n```\n';
 
-            it('changes the language to "mermaid-example" and adds a copy of the code block with language = "mermaid"', async () => {
+            it('adds a copy of the code block with language = "mermaid" before it, and changes its language to "mermaid-example"', async () => {
               const result = (
                 await remarkBuilder()
                   .use(transformMarkdownAst, { originalFilename })
@@ -66,10 +66,10 @@ describe('docs.mts', () => {
               expect(result).toEqual(
                 beforeCodeLine +
                   '\n' +
-                  '```mermaid-example\n' +
+                  '```mermaid\n' +
                   diagram_text +
                   '\n```\n' +
-                  '\n```mermaid\n' +
+                  '\n```mermaid-example\n' +
                   diagram_text +
                   '\n```\n'
               );

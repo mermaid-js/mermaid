@@ -14,12 +14,6 @@ This page contains a collection of examples of diagrams and charts that can be c
 
 ## Basic Pie Chart
 
-```mermaid-example
-pie title NETFLIX
-         "Time spent looking for movie" : 90
-         "Time spent watching it" : 10
-```
-
 ```mermaid
 pie title NETFLIX
          "Time spent looking for movie" : 90
@@ -27,13 +21,19 @@ pie title NETFLIX
 ```
 
 ```mermaid-example
+pie title NETFLIX
+         "Time spent looking for movie" : 90
+         "Time spent watching it" : 10
+```
+
+```mermaid
 pie title What Voldemort doesn't have?
          "FRIENDS" : 2
          "FAMILY" : 3
          "NOSE" : 45
 ```
 
-```mermaid
+```mermaid-example
 pie title What Voldemort doesn't have?
          "FRIENDS" : 2
          "FAMILY" : 3
@@ -42,7 +42,7 @@ pie title What Voldemort doesn't have?
 
 ## Basic sequence diagram
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice ->> Bob: Hello Bob, how are you?
     Bob-->>John: How about you John?
@@ -54,7 +54,7 @@ sequenceDiagram
     Alice->John: Yes... John, how are you?
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice ->> Bob: Hello Bob, how are you?
     Bob-->>John: How about you John?
@@ -68,7 +68,7 @@ sequenceDiagram
 
 ## Basic flowchart
 
-```mermaid-example
+```mermaid
 graph LR
     A[Square Rect] -- Link text --> B((Circle))
     A --> C(Round Rect)
@@ -76,7 +76,7 @@ graph LR
     C --> D
 ```
 
-```mermaid
+```mermaid-example
 graph LR
     A[Square Rect] -- Link text --> B((Circle))
     A --> C(Round Rect)
@@ -86,7 +86,7 @@ graph LR
 
 ## Larger flowchart with some styling
 
-```mermaid-example
+```mermaid
 graph TB
     sq[Square shape] --> ci((Circle shape))
 
@@ -110,7 +110,7 @@ graph TB
      class di orange
 ```
 
-```mermaid
+```mermaid-example
 graph TB
     sq[Square shape] --> ci((Circle shape))
 
@@ -136,7 +136,7 @@ graph TB
 
 ## SequenceDiagram: Loops, alt and opt
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     loop Daily query
         Alice->>Bob: Hello Bob, how are you?
@@ -152,7 +152,7 @@ sequenceDiagram
     end
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     loop Daily query
         Alice->>Bob: Hello Bob, how are you?
@@ -170,7 +170,7 @@ sequenceDiagram
 
 ## SequenceDiagram: Message to self in loop
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     participant Bob
@@ -184,7 +184,7 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant Bob
@@ -200,7 +200,7 @@ sequenceDiagram
 
 ## Sequence Diagram: Blogging app service communication
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant web as Web Browser
     participant blog as Blog Service
@@ -232,7 +232,7 @@ sequenceDiagram
 
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant web as Web Browser
     participant blog as Blog Service
@@ -266,7 +266,7 @@ sequenceDiagram
 
 ## A commit flow diagram.
 
-```mermaid-example
+```mermaid
 gitGraph:
     commit "Ashish"
     branch newbranch
@@ -282,7 +282,7 @@ gitGraph:
     commit
 ```
 
-```mermaid
+```mermaid-example
 gitGraph:
     commit "Ashish"
     branch newbranch
