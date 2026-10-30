@@ -2,6 +2,7 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import { sanitizeText } from '../common/common.js';
 import { formatUrl } from '../../utils.js';
+import { log } from '../../logger.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -653,6 +654,9 @@ export const updateLayoutConfig = function (
   c4ShapeInRowParam: ParserAttribute,
   c4BoundaryInRowParam: ParserAttribute
 ) {
+  log.warn(
+    'UpdateLayoutConfig is accepted so that PlantUML sources parse, but it has no effect: the layout engine decides how many shapes and boundaries share a row.'
+  );
   let c4ShapeInRowValue = c4ShapeInRow;
   let c4BoundaryInRowValue = c4BoundaryInRow;
 
