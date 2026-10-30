@@ -41,7 +41,7 @@ import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import { dump, load, JSON_SCHEMA } from 'js-yaml';
-import type { Code, ListItem, PhrasingContent, Root, RootContent, Text, YAML } from 'mdast';
+import type { Code, Link, ListItem, PhrasingContent, Root, RootContent, Text, YAML } from 'mdast';
 import { register } from 'node:module';
 import { posix, dirname, relative, join } from 'path';
 import mermaidPackageJson from '../package.json' with { type: 'json' };
@@ -545,6 +545,13 @@ async function transformJsonSchema(file: string) {
 
       if (listText.value.startsWith('tsType: ')) {
         listText.value = listText.value.replace(/tsType: (.*)/g, 'tsType: `$1`');
+      }
+    });
+
+    // VitePress turns `_` into `-` in heading ids
+    visit(markdownAst as Root, 'link', (link: Link) => {
+      if (link.url.startsWith('#')) {
+        link.url = link.url.replaceAll('_', '-');
       }
     });
 
