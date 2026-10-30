@@ -248,6 +248,82 @@ describe('Testing quadrantChart jison file', () => {
     expect(parserFnConstructor(str)).toThrow();
   });
 
+  it.each([
+    'quadrant-1x',
+    'quadrant-12',
+    'x-axisy',
+    'my-quadrant-1',
+    'Sub x-axis',
+    'My classDef',
+    'Title',
+  ])('parses %s as a point name instead of a statement keyword', (name) => {
+    expect(parserFnConstructor(`quadrantChart\n${name}: [0.5, 0.5]`)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: name, type: 'text' },
+      '',
+      '0.5',
+      '0.5',
+      []
+    );
+  });
+
+  it('preserves spaces after a quoted point-name prefix', () => {
+    expect(parserFnConstructor('quadrantChart\n"Team" Alpha: [0.5, 0.5]')).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Team Alpha', type: 'text' },
+      '',
+      '0.5',
+      '0.5',
+      []
+    );
+  });
+
+  it('parses a spaced Title point instead of a title directive', () => {
+    expect(parserFnConstructor('quadrantChart\nTitle : [0.5, 0.5]')).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'Title', type: 'text' },
+      '',
+      '0.5',
+      '0.5',
+      []
+    );
+    expect(mockDB.setDiagramTitle).not.toHaveBeenCalled();
+  });
+
+  it.each(['x-axis', 'y-axis', 'quadrant-1', 'quadrant-2', 'quadrant-3', 'quadrant-4'])(
+    'parses spaced %s as a point name',
+    (name) => {
+      expect(parserFnConstructor(`quadrantChart\n${name} : [0.5, 0.5]`)).not.toThrow();
+      expect(mockDB.addPoint).toHaveBeenCalledWith(
+        { text: name, type: 'text' },
+        '',
+        '0.5',
+        '0.5',
+        []
+      );
+    }
+  );
+
+  it('accepts quoted axis labels and semicolon statement separators', () => {
+    expect(parserFnConstructor('quadrantChart;x-axis"Low";quadrant-1"Leaders"')).not.toThrow();
+    expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({ text: 'Low', type: 'text' });
+    expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({ text: 'Leaders', type: 'text' });
+  });
+
+  it('keeps statement keywords in quadrant and axis labels', () => {
+    expect(
+      parserFnConstructor('quadrantChart\nquadrant-1 Move to quadrant-2\nx-axis my x-axis label')
+    ).not.toThrow();
+    expect(mockDB.setQuadrant1Text).toHaveBeenCalledWith({
+      text: 'Move to quadrant-2',
+      type: 'text',
+    });
+    expect(mockDB.setXAxisLeftText).toHaveBeenCalledWith({
+      text: 'my x-axis label',
+      type: 'text',
+    });
+  });
+
   it('should be able to parse the whole chart', () => {
     const str = `quadrantChart
       title Analytics and Business Intelligence Platforms
