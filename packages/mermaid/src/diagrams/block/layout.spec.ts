@@ -46,4 +46,31 @@ describe('layout runtime config', () => {
     expect(result1).not.toEqual(result2);
     expect(result1!.width).toBeLessThan(result2!.width);
   });
+
+  it('should not throw when block size contains a non-serializable node', () => {
+    const fakeNode: any = { tagName: 'g' };
+    fakeNode.ownerSVGElement = fakeNode;
+    fakeNode.__reactFiber$abc123 = fakeNode;
+
+    const root: Block = {
+      id: 'root',
+      type: 'square',
+      columns: 1,
+      children: [
+        {
+          id: 'b1',
+          type: 'square',
+          children: [],
+          size: { width: 100, height: 50, x: 0, y: 0, node: fakeNode } as any,
+        },
+      ],
+    };
+
+    const makeDb = (block: Block): BlockDB =>
+      ({ getBlock: (id: string) => (id === 'root' ? block : undefined) }) as unknown as BlockDB;
+
+    vi.spyOn(diagramAPI, 'getConfig').mockReturnValue({ block: { padding: 8 } } as any);
+
+    expect(() => layout(makeDb(root))).not.toThrow();
+  });
 });
