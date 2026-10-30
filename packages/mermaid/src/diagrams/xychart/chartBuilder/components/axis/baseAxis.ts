@@ -88,6 +88,26 @@ export abstract class BaseAxis implements Axis {
     this.recalculateScale();
   }
 
+  /**
+   * Suppresses the axis entirely when the space reserved for it is too small
+   * to draw the structural parts (axis line and tick marks) it is configured
+   * to show. Without this, a chart that reserves almost all of its canvas for
+   * the plot (plotReservedSpacePercent close to 100) renders the fragments
+   * that do fit (e.g. a lone axis line) squeezed against the plot boundary.
+   */
+  private suppressAxisIfSpaceIsInsufficient(): void {
+    const axisIsIncomplete =
+      (this.axisConfig.showAxisLine && !this.showAxisLine) ||
+      (this.axisConfig.showTick && !this.showTick);
+    if (axisIsIncomplete) {
+      this.showAxisLine = false;
+      this.showLabel = false;
+      this.showTick = false;
+      this.showTitle = false;
+      this.outerPadding = 0;
+    }
+  }
+
   private calculateSpaceIfDrawnHorizontally(availableSpace: Dimension) {
     let availableHeight = availableSpace.height;
     if (this.axisConfig.showAxisLine && availableHeight > this.axisConfig.axisLineWidth) {
@@ -131,6 +151,10 @@ export abstract class BaseAxis implements Axis {
         this.showTitle = true;
       }
     }
+    this.suppressAxisIfSpaceIsInsufficient();
+    if (!this.showAxisLine && !this.showLabel && !this.showTick && !this.showTitle) {
+      availableHeight = availableSpace.height;
+    }
     this.boundingRect.width = availableSpace.width;
     this.boundingRect.height = availableSpace.height - availableHeight;
   }
@@ -166,6 +190,10 @@ export abstract class BaseAxis implements Axis {
         availableWidth -= widthRequired;
         this.showTitle = true;
       }
+    }
+    this.suppressAxisIfSpaceIsInsufficient();
+    if (!this.showAxisLine && !this.showLabel && !this.showTick && !this.showTitle) {
+      availableWidth = availableSpace.width;
     }
     this.boundingRect.width = availableSpace.width - availableWidth;
     this.boundingRect.height = availableSpace.height;
