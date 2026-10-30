@@ -44,7 +44,7 @@ function renderD3Box(
     text
       .append('span')
       .style('display', 'table-cell')
-      .style('color', themeVariables.textColor)
+      .style('color', themeVariables.textColor ?? 'inherit')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
       .html(box.text);
