@@ -1,4 +1,4 @@
-export type MarkdownWordType = 'normal' | 'strong' | 'em';
+export type MarkdownWordType = 'normal' | 'strong' | 'em' | 'strongEm';
 import type { MermaidConfig } from '../config.type.js';
 import type { ClusterShapeID } from './rendering-elements/clusters.js';
 import type { ShapeID } from './rendering-elements/shapes.js';
