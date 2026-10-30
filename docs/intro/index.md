@@ -67,7 +67,7 @@ In our release process we rely heavily on visual regression tests using [applito
 
 ## Diagram Types
 
-### [Flowchart](../syntax/flowchart.md?id=flowcharts-basic-syntax)
+### [Flowchart](../syntax/flowchart.md#flowcharts-basic-syntax)
 
 ```mermaid-example
 graph TD;

@@ -1,6 +1,6 @@
 ## Diagram Types
 
-### [Flowchart](../syntax/flowchart.md?id=flowcharts-basic-syntax)
+### [Flowchart](../syntax/flowchart.md#flowcharts-basic-syntax)
 
 ```mermaid-example
 graph TD;
