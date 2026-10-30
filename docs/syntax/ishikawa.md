@@ -15,7 +15,7 @@ The diagram resembles a fish skeleton, with the main problem at the head and the
 
 ## Syntax
 
-```mermaid-example
+```mermaid
 ishikawa-beta
     Blurry Photo
     Process
@@ -38,7 +38,7 @@ ishikawa-beta
         Too dark
 ```
 
-```mermaid
+```mermaid-example
 ishikawa-beta
     Blurry Photo
     Process

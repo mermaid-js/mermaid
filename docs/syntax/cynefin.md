@@ -96,7 +96,7 @@ Common transitions:
 
 ### Basic example
 
-```mermaid-example
+```mermaid
 cynefin-beta
   title Incident Response
 
@@ -119,7 +119,7 @@ cynefin-beta
     "Unknown failure mode"
 ```
 
-```mermaid
+```mermaid-example
 cynefin-beta
   title Incident Response
 
@@ -144,7 +144,7 @@ cynefin-beta
 
 ### With transitions
 
-```mermaid-example
+```mermaid
 cynefin-beta
   title Strategy Categorization
 
@@ -166,7 +166,7 @@ cynefin-beta
   chaotic --> complex : "Stabilized"
 ```
 
-```mermaid
+```mermaid-example
 cynefin-beta
   title Strategy Categorization
 
@@ -192,7 +192,7 @@ cynefin-beta
 
 The domains themselves render even with no items, useful as a teaching or worksheet template.
 
-```mermaid-example
+```mermaid
 cynefin-beta
   title Cynefin Framework
 
@@ -202,7 +202,7 @@ cynefin-beta
   chaotic
 ```
 
-```mermaid
+```mermaid-example
 cynefin-beta
   title Cynefin Framework
 

@@ -10,7 +10,7 @@
 
 ## Example
 
-```mermaid-example
+```mermaid
 architecture-beta
     group api(cloud)[API]
 
@@ -24,7 +24,7 @@ architecture-beta
     disk2:T -- B:db
 ```
 
-```mermaid
+```mermaid-example
 architecture-beta
     group api(cloud)[API]
 
@@ -163,7 +163,7 @@ Pick the axis based on how the listed members are connected:
 
 Three databases all feeding `mcp` via right-to-left edges → stack them in a column:
 
-```mermaid-example
+```mermaid
 architecture-beta
     group api(cloud)[API]
     service db1(database)[DB1] in api
@@ -176,7 +176,7 @@ architecture-beta
     align column db1 db2 db3
 ```
 
-```mermaid
+```mermaid-example
 architecture-beta
     group api(cloud)[API]
     service db1(database)[DB1] in api
@@ -191,7 +191,7 @@ architecture-beta
 
 Three sources all feeding `proc` via top-to-bottom edges → arrange them in a row:
 
-```mermaid-example
+```mermaid
 architecture-beta
     service src1(server)[Source 1]
     service src2(server)[Source 2]
@@ -203,7 +203,7 @@ architecture-beta
     align row src1 src2 src3
 ```
 
-```mermaid
+```mermaid-example
 architecture-beta
     service src1(server)[Source 1]
     service src2(server)[Source 2]
@@ -223,7 +223,7 @@ The order of members in the `align` directive determines their order along the a
 
 `align row` only pins the y-coordinate of its members. To produce a clean grid where columns also align across tiers, pair each `align row` with one or more `align column` directives. The columns can span as many rows as you like — chain every node that should share an x-coordinate, even across groups.
 
-```mermaid-example
+```mermaid
 architecture-beta
     group sources(cloud)[Sources]
         service src_a(server)[Source A] in sources
@@ -256,7 +256,7 @@ architecture-beta
     align column src_c db_three
 ```
 
-```mermaid
+```mermaid-example
 architecture-beta
     group sources(cloud)[Sources]
         service src_a(server)[Source A] in sources
@@ -303,7 +303,7 @@ The syntax for declaring a junction is:
 junction {junction id} (in {parent id})?
 ```
 
-```mermaid-example
+```mermaid
 architecture-beta
     service left_disk(disk)[Disk]
     service top_disk(disk)[Disk]
@@ -321,7 +321,7 @@ architecture-beta
     bottom_gateway:T -- B:junctionRight
 ```
 
-```mermaid
+```mermaid-example
 architecture-beta
     service left_disk(disk)[Disk]
     service top_disk(disk)[Disk]
@@ -413,7 +413,7 @@ Users can use any of the 200,000+ icons available in iconify.design, or add othe
 
 After the icons are installed, they can be used in the architecture diagram by using the format "name:icon-name", where name is the value used when registering the icon pack.
 
-```mermaid-example
+```mermaid
 architecture-beta
     group api(logos:aws-lambda)[API]
 
@@ -427,7 +427,7 @@ architecture-beta
     disk2:T -- B:db
 ```
 
-```mermaid
+```mermaid-example
 architecture-beta
     group api(logos:aws-lambda)[API]
 

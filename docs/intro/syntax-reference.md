@@ -22,7 +22,7 @@ Unknown words and misspellings will break a diagram, while parameters silently f
 
 **Example** : The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
 
-```mermaid-example
+```mermaid
 erDiagram
           CUSTOMER }|..|{ DELIVERY-ADDRESS : has
           CUSTOMER ||--o{ ORDER : places
@@ -34,7 +34,7 @@ erDiagram
           PRODUCT ||--o{ ORDER-ITEM : "ordered in"
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
           CUSTOMER }|..|{ DELIVERY-ADDRESS : has
           CUSTOMER ||--o{ ORDER : places
@@ -88,7 +88,7 @@ Frontmatter is the term for adding YAML metadata at the start of code. This allo
 
 Frontmatter uses YAML syntax. It requires any indentation to be consistent and settings are case sensitive. Mermaid will silently ignore misspelling, but badly formed parameters will break the diagram.
 
-```mermaid-example
+```mermaid
 ---
 title: Frontmatter Example
 displayMode: compact
@@ -104,7 +104,7 @@ gantt
         House : 1986, 3y
 ```
 
-```mermaid
+```mermaid-example
 ---
 title: Frontmatter Example
 displayMode: compact
@@ -148,7 +148,7 @@ Note that the `neo` look paints node strokes with a gradient when the active the
 
 You can select a look by adding the look parameter in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid-example
+```mermaid
 ---
 config:
   look: handDrawn
@@ -160,7 +160,7 @@ flowchart LR
   B -->|No| D[Stop]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   look: handDrawn
@@ -189,7 +189,7 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 You can specify the layout algorithm directly in the metadata section of your Mermaid diagram code. Here’s an example:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: elk
@@ -202,7 +202,7 @@ flowchart TB
   B -->|No| D[Stop]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk

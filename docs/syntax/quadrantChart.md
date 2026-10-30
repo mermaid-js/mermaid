@@ -10,7 +10,7 @@
 
 ## Example
 
-```mermaid-example
+```mermaid
 quadrantChart
     title Reach and engagement of campaigns
     x-axis Low Reach --> High Reach
@@ -27,7 +27,7 @@ quadrantChart
     Campaign F: [0.35, 0.78]
 ```
 
-```mermaid
+```mermaid-example
 quadrantChart
     title Reach and engagement of campaigns
     x-axis Low Reach --> High Reach
@@ -147,7 +147,7 @@ Points are used to plot a circle inside the quadrantChart. The syntax is `<text>
 
 ## Example on config and theme
 
-```mermaid-example
+```mermaid
 ---
 config:
   quadrantChart:
@@ -165,7 +165,7 @@ quadrantChart
   quadrant-4 Delete
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   quadrantChart:
@@ -226,7 +226,7 @@ classDef class3 color: #f00fff, radius : 10
 
 ## Example on styling
 
-```mermaid-example
+```mermaid
 quadrantChart
   title Reach and engagement of campaigns
   x-axis Low Reach --> High Reach
@@ -246,7 +246,7 @@ quadrantChart
   classDef class3 color: #f00fff, radius : 10
 ```
 
-```mermaid
+```mermaid-example
 quadrantChart
   title Reach and engagement of campaigns
   x-axis Low Reach --> High Reach

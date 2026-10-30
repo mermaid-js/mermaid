@@ -19,14 +19,14 @@ Mermaid can render railroad diagrams from several grammar notations. Pick the ke
 | PEG             | `railroad-peg-beta`  | Parsing Expression Grammar                                                       |
 | IR (primitives) | `railroad-beta`      | Mermaid's railroad intermediate representation, written as explicit constructors |
 
-```mermaid-example
+```mermaid
 railroad-ebnf-beta
 title "Digit Definition"
 
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 title "Digit Definition"
 
@@ -55,13 +55,13 @@ Terminals are literal strings enclosed in quotes; non-terminals are identifiers 
 - `"text"` or `'text'` - terminal (literal string)
 - `identifier` - non-terminal (rule reference)
 
-```mermaid-example
+```mermaid
 railroad-ebnf-beta
 letter = "a" | "b" | "c" ;
 identifier = letter ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 letter = "a" | "b" | "c" ;
 identifier = letter ;
@@ -74,12 +74,12 @@ Elements appearing one after another define a sequence:
 - W3C notation: `A B C`
 - ISO 14977 notation: `A , B , C`
 
-```mermaid-example
+```mermaid
 railroad-ebnf-beta
 greeting = "Hello" " " "World" ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 greeting = "Hello" " " "World" ;
 ```
@@ -88,12 +88,12 @@ greeting = "Hello" " " "World" ;
 
 The pipe symbol (`|`) indicates alternatives:
 
-```mermaid-example
+```mermaid
 railroad-ebnf-beta
 sign = "+" | "-" ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 sign = "+" | "-" ;
 ```
@@ -105,7 +105,7 @@ Optional elements can appear zero or one time:
 - W3C notation: `A?`
 - ISO 14977 notation: `[ A ]`
 
-```mermaid-example
+```mermaid
 railroad-ebnf-beta
 title "Optional Sign"
 
@@ -114,7 +114,7 @@ number = sign? digit+ ;
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 title "Optional Sign"
 
@@ -134,7 +134,7 @@ One or more repetitions:
 
 - W3C notation: `A+`
 
-```mermaid-example
+```mermaid
 railroad-ebnf-beta
 title "Identifier with Repetition"
 
@@ -143,7 +143,7 @@ letter = "a" | "b" | "c" | "d" | "e" ;
 digit = "0" | "1" | "2" ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 title "Identifier with Repetition"
 
@@ -156,13 +156,13 @@ digit = "0" | "1" | "2" ;
 
 Parentheses group elements together:
 
-```mermaid-example
+```mermaid
 railroad-ebnf-beta
 expression = term ( ( "+" | "-" ) term )* ;
 term = "number" ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 expression = term ( ( "+" | "-" ) term )* ;
 term = "number" ;
@@ -205,17 +205,6 @@ The minus operator excludes certain alternatives:
 
 ### EBNF Examples
 
-```mermaid-example
-railroad-ebnf-beta
-title "Arithmetic Expression Grammar"
-
-expression = term ( ( "+" | "-" ) term )* ;
-term = factor ( ( "*" | "/" ) factor )* ;
-factor = number | "(" expression ")" ;
-number = digit+ ;
-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-```
-
 ```mermaid
 railroad-ebnf-beta
 title "Arithmetic Expression Grammar"
@@ -228,6 +217,17 @@ digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 ```
 
 ```mermaid-example
+railroad-ebnf-beta
+title "Arithmetic Expression Grammar"
+
+expression = term ( ( "+" | "-" ) term )* ;
+term = factor ( ( "*" | "/" ) factor )* ;
+factor = number | "(" expression ")" ;
+number = digit+ ;
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+```
+
+```mermaid
 railroad-ebnf-beta
 title "JSON Grammar"
 
@@ -238,7 +238,7 @@ array = "[" [ element ( "," element )* ] "]" ;
 member = string ":" element ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-ebnf-beta
 title "JSON Grammar"
 
@@ -261,16 +261,6 @@ ABNF (Augmented Backus-Naur Form, [RFC 5234](https://datatracker.ietf.org/doc/ht
 - Terminals can be quoted strings (`"text"`) or numeric values (`%x41`, `%d65`, `%b1000001`, including ranges like `%x30-39`)
 - Comments start with `;` and run to the end of the line
 
-```mermaid-example
-railroad-abnf-beta
-title "Email Address"
-
-address = local-part "@" domain ;
-local-part = 1*( ALPHA / DIGIT / "." / "-" ) ;
-domain = label *( "." label ) ;
-label = 1*( ALPHA / DIGIT / "-" ) ;
-```
-
 ```mermaid
 railroad-abnf-beta
 title "Email Address"
@@ -282,6 +272,16 @@ label = 1*( ALPHA / DIGIT / "-" ) ;
 ```
 
 ```mermaid-example
+railroad-abnf-beta
+title "Email Address"
+
+address = local-part "@" domain ;
+local-part = 1*( ALPHA / DIGIT / "." / "-" ) ;
+domain = label *( "." label ) ;
+label = 1*( ALPHA / DIGIT / "-" ) ;
+```
+
+```mermaid
 railroad-abnf-beta
 title "Phone Number"
 
@@ -290,7 +290,7 @@ country-code = 1*DIGIT ;
 subscriber = 1*( DIGIT / "-" / " " ) ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-abnf-beta
 title "Phone Number"
 
@@ -312,17 +312,6 @@ PEG (Parsing Expression Grammar) describes recursive-descent parsers with ordere
 - Terminals are quoted strings (`"text"` or `'text'`)
 - Comments start with `#` and run to the end of the line
 
-```mermaid-example
-railroad-peg-beta
-title "Calculator Grammar"
-
-Expression <- Term (("+" / "-") Term)* ;
-Term <- Factor (("*" / "/") Factor)* ;
-Factor <- Number / "(" Expression ")" ;
-Number <- Digit+ ;
-Digit <- "0" / "1" / "2" / "3" / "4" / "5" / "6" / "7" / "8" / "9" ;
-```
-
 ```mermaid
 railroad-peg-beta
 title "Calculator Grammar"
@@ -335,6 +324,17 @@ Digit <- "0" / "1" / "2" / "3" / "4" / "5" / "6" / "7" / "8" / "9" ;
 ```
 
 ```mermaid-example
+railroad-peg-beta
+title "Calculator Grammar"
+
+Expression <- Term (("+" / "-") Term)* ;
+Term <- Factor (("*" / "/") Factor)* ;
+Factor <- Number / "(" Expression ")" ;
+Number <- Digit+ ;
+Digit <- "0" / "1" / "2" / "3" / "4" / "5" / "6" / "7" / "8" / "9" ;
+```
+
+```mermaid
 railroad-peg-beta
 title "Identifiers (keywords excluded)"
 
@@ -343,7 +343,7 @@ Keyword <- "if" / "else" / "while" ;
 Letter <- "a" / "b" / "c" / "_" ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-peg-beta
 title "Identifiers (keywords excluded)"
 
@@ -367,7 +367,7 @@ The `railroad-beta` keyword uses Mermaid's railroad intermediate representation 
 | `oneOrMore(a)`        | One or more                   |
 | `special("text")`     | Special sequence              |
 
-```mermaid-example
+```mermaid
 railroad-beta
 title Expression Grammar
 
@@ -393,7 +393,7 @@ number = oneOrMore(nonterminal("digit")) ;
 digit = choice(terminal("0"), terminal("1"), terminal("2"), terminal("3"), terminal("4"), terminal("5"), terminal("6"), terminal("7"), terminal("8"), terminal("9")) ;
 ```
 
-```mermaid
+```mermaid-example
 railroad-beta
 title Expression Grammar
 

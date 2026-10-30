@@ -10,14 +10,14 @@
 
 Mermaid can render sequence diagrams.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
     Alice-)John: See you later!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
@@ -39,7 +39,7 @@ The same diagram, drawn both ways:
 
 ### With the defaults
 
-```mermaid-example
+```mermaid
 sequenceDiagram
   autonumber
   actor Customer
@@ -57,7 +57,7 @@ sequenceDiagram
   Note over Customer,Bank: One order, one transaction
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
   autonumber
   actor Customer
@@ -80,7 +80,7 @@ sequenceDiagram
 Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
 in a diagram's front matter draws it the way Mermaid did before:
 
-```mermaid-example
+```mermaid
 ---
 config:
   theme: default
@@ -103,7 +103,7 @@ sequenceDiagram
   Note over Customer,Bank: One order, one transaction
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   theme: default
@@ -139,7 +139,7 @@ rendered in order of appearance in the diagram source text. Sometimes you might 
 different order than how they appear in the first message. It is possible to specify the actor's order of
 appearance by doing the following:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     participant Bob
@@ -147,7 +147,7 @@ sequenceDiagram
     Alice->>Bob: Hi Bob
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant Bob
@@ -159,7 +159,7 @@ sequenceDiagram
 
 If you specifically want to use the actor symbol instead of a rectangle with text you can do so by using actor statements as per below.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     actor Alice
     actor Bob
@@ -167,7 +167,7 @@ sequenceDiagram
     Bob->>Alice: Hi Alice
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     actor Alice
     actor Bob
@@ -179,7 +179,7 @@ sequenceDiagram
 
 If you want to use the boundary symbol for a participant, use the JSON configuration syntax as shown below.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "boundary" }
     participant Bob
@@ -187,7 +187,7 @@ sequenceDiagram
     Bob->>Alice: Response to boundary
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice@{ "type" : "boundary" }
     participant Bob
@@ -199,7 +199,7 @@ sequenceDiagram
 
 If you want to use the control symbol for a participant, use the JSON configuration syntax as shown below.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "control" }
     participant Bob
@@ -207,7 +207,7 @@ sequenceDiagram
     Bob->>Alice: Control response
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice@{ "type" : "control" }
     participant Bob
@@ -219,7 +219,7 @@ sequenceDiagram
 
 If you want to use the entity symbol for a participant, use the JSON configuration syntax as shown below.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "entity" }
     participant Bob
@@ -227,7 +227,7 @@ sequenceDiagram
     Bob->>Alice: Entity response
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice@{ "type" : "entity" }
     participant Bob
@@ -239,7 +239,7 @@ sequenceDiagram
 
 If you want to use the database symbol for a participant, use the JSON configuration syntax as shown below.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "database" }
     participant Bob
@@ -247,7 +247,7 @@ sequenceDiagram
     Bob->>Alice: DB result
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice@{ "type" : "database" }
     participant Bob
@@ -259,7 +259,7 @@ sequenceDiagram
 
 If you want to use the collections symbol for a participant, use the JSON configuration syntax as shown below.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "collections" }
     participant Bob
@@ -267,7 +267,7 @@ sequenceDiagram
     Bob->>Alice: Collections response
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice@{ "type" : "collections" }
     participant Bob
@@ -279,7 +279,7 @@ sequenceDiagram
 
 If you want to use the queue symbol for a participant, use the JSON configuration syntax as shown below.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice@{ "type" : "queue" }
     participant Bob
@@ -287,7 +287,7 @@ sequenceDiagram
     Bob->>Alice: Queue response
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice@{ "type" : "queue" }
     participant Bob
@@ -303,7 +303,7 @@ The actor can have a convenient identifier and a descriptive label. Aliases can 
 
 You can define an alias using the `as` keyword after the participant declaration:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant A as Alice
     participant J as John
@@ -311,7 +311,7 @@ sequenceDiagram
     J->>A: Great!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant A as Alice
     participant J as John
@@ -321,7 +321,7 @@ sequenceDiagram
 
 The external alias syntax also works with participant stereotype configurations, allowing you to combine type specification with aliases:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant API@{ "type": "boundary" } as Public API
     actor DB@{ "type": "database" } as User Database
@@ -332,7 +332,7 @@ sequenceDiagram
     Svc-->>API: Token
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant API@{ "type": "boundary" } as Public API
     actor DB@{ "type": "database" } as User Database
@@ -347,7 +347,7 @@ sequenceDiagram
 
 Alternatively, you can define an alias directly inside the configuration object using the `"alias"` field. This works with both `participant` and `actor` keywords:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant API@{ "type": "boundary", "alias": "Public API" }
     participant Auth@{ "type": "control", "alias": "Auth Service" }
@@ -358,7 +358,7 @@ sequenceDiagram
     Auth-->>API: Access token
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant API@{ "type": "boundary", "alias": "Public API" }
     participant Auth@{ "type": "control", "alias": "Auth Service" }
@@ -373,7 +373,7 @@ sequenceDiagram
 
 When both inline alias (in the configuration object) and external alias (using `as` keyword) are provided, the **external alias takes precedence**:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant API@{ "type": "boundary", "alias": "Internal Name" } as External Name
     participant DB@{ "type": "database", "alias": "Internal DB" } as External DB
@@ -381,7 +381,7 @@ sequenceDiagram
     DB-->>API: Result
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant API@{ "type": "boundary", "alias": "Internal Name" } as External Name
     participant DB@{ "type": "database", "alias": "Internal DB" } as External DB
@@ -402,7 +402,7 @@ A --> B: Hello
 
 Create directives support actor/participant distinction and aliases. The sender or the recipient of a message can be destroyed but only the recipient can be created.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->>Bob: Hello Bob, how are you ?
     Bob->>Alice: Fine, thank you. And you?
@@ -416,7 +416,7 @@ sequenceDiagram
     Bob->>Alice: I agree
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>Bob: Hello Bob, how are you ?
     Bob->>Alice: Fine, thank you. And you?
@@ -478,7 +478,7 @@ box transparent Aqua
 end
 ```
 
-```mermaid-example
+```mermaid
     sequenceDiagram
     box Purple Alice & John
     participant A
@@ -494,7 +494,7 @@ end
     B->>C: Hello Charley, how are you?
 ```
 
-```mermaid
+```mermaid-example
     sequenceDiagram
     box Purple Alice & John
     participant A
@@ -571,7 +571,7 @@ To indicate a central connection, append `()` to the arrow syntax.
 
 #### Basic Syntax
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     participant John
@@ -580,7 +580,7 @@ sequenceDiagram
     John()->>()Alice: Great!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant John
@@ -593,7 +593,7 @@ sequenceDiagram
 
 It is possible to activate and deactivate an actor. (de)activation can be dedicated declarations:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     activate John
@@ -601,7 +601,7 @@ sequenceDiagram
     deactivate John
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     activate John
@@ -611,13 +611,13 @@ sequenceDiagram
 
 There is also a shortcut notation by appending `+`/`-` suffix to the message arrow:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     John-->>-Alice: Great!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     John-->>-Alice: Great!
@@ -625,7 +625,7 @@ sequenceDiagram
 
 Activations can be stacked for same actor:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     Alice->>+John: John, can you hear me?
@@ -633,7 +633,7 @@ sequenceDiagram
     John-->>-Alice: I feel great!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     Alice->>+John: John, can you hear me?
@@ -648,13 +648,13 @@ Note \[ right of | left of | over ] \[Actor]: Text in note content
 
 See the example below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant John
     Note right of John: Text in note
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant John
     Note right of John: Text in note
@@ -662,13 +662,13 @@ sequenceDiagram
 
 It is also possible to create notes spanning two participants:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
     Note over Alice,John: A typical interaction
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->John: Hello John, how are you?
     Note over Alice,John: A typical interaction
@@ -678,13 +678,13 @@ sequenceDiagram
 
 Line break can be added to Note and Message:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
@@ -692,14 +692,14 @@ sequenceDiagram
 
 Line breaks in Actor names requires aliases:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice as Alice<br/>Johnson
     Alice->John: Hello John,<br/>how are you?
     Note over Alice,John: A typical interaction<br/>But now in two lines
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice as Alice<br/>Johnson
     Alice->John: Hello John,<br/>how are you?
@@ -718,7 +718,7 @@ end
 
 See the example below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
     loop Every minute
@@ -726,7 +726,7 @@ sequenceDiagram
     end
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->John: Hello John, how are you?
     loop Every minute
@@ -756,7 +756,7 @@ end
 
 See the example below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->>Bob: Hello Bob, how are you?
     alt is sick
@@ -769,7 +769,7 @@ sequenceDiagram
     end
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>Bob: Hello Bob, how are you?
     alt is sick
@@ -800,7 +800,7 @@ end
 
 See the example below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     par Alice to Bob
         Alice->>Bob: Hello guys!
@@ -811,7 +811,7 @@ sequenceDiagram
     John-->>Alice: Hi Alice!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     par Alice to Bob
         Alice->>Bob: Hello guys!
@@ -824,7 +824,7 @@ sequenceDiagram
 
 It is also possible to nest parallel blocks.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     par Alice to Bob
         Alice->>Bob: Go help John
@@ -838,7 +838,7 @@ sequenceDiagram
     end
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     par Alice to Bob
         Alice->>Bob: Go help John
@@ -870,7 +870,7 @@ end
 
 See the example below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
@@ -881,7 +881,7 @@ sequenceDiagram
     end
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
@@ -894,14 +894,14 @@ sequenceDiagram
 
 It is also possible to have no options at all
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
     end
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     critical Establish a connection to the DB
         Service-->DB: connect
@@ -924,7 +924,7 @@ end
 
 See the example below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Consumer-->API: Book something
     API-->BookingService: Start booking process
@@ -934,7 +934,7 @@ sequenceDiagram
     API-->BillingService: Start billing process
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Consumer-->API: Book something
     API-->BookingService: Start booking process
@@ -970,7 +970,7 @@ end
 
 See the examples below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     participant John
@@ -989,7 +989,7 @@ sequenceDiagram
 
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant John
@@ -1012,14 +1012,14 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment
     John-->>Alice: Great!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment
@@ -1030,13 +1030,13 @@ sequenceDiagram
 
 It is possible to escape characters using the syntax exemplified here.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     A->>B: I #9829; you!
     B->>A: I #9829; you #infin; times more!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     A->>B: I #9829; you!
     B->>A: I #9829; you #infin; times more!
@@ -1058,7 +1058,7 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 
 It can also be turned on via the diagram code as in the diagram:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     autonumber
     Alice->>John: Hello John, how are you?
@@ -1071,7 +1071,7 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     autonumber
     Alice->>John: Hello John, how are you?
@@ -1104,7 +1104,7 @@ This can be configured by adding one or more link lines with the format:
 link <actor>: <link-label> @ <link-url>
 ```
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     participant John
@@ -1117,7 +1117,7 @@ sequenceDiagram
     Alice-)John: See you later!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant John
@@ -1142,7 +1142,7 @@ links <actor>: <json-formatted link-name link-url pairs>
 
 An example is below:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     participant John
@@ -1153,7 +1153,7 @@ sequenceDiagram
     Alice-)John: See you later!
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant John

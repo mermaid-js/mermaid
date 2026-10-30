@@ -440,14 +440,14 @@ Documentation is located in the [`packages/mermaid/src/docs`](https://github.com
 
 The contents of [mermaid.js.org](https://mermaid.js.org/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid.js.org/) once published.
 
-```mermaid-example
+```mermaid
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 
   source["Edit /packages/mermaid/src/docs"] -- automatic processing--> published["View /docs which will be published on Official Website"]
 ```
 
-```mermaid
+```mermaid-example
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 

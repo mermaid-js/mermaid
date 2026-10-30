@@ -1,4 +1,5 @@
 <template>
+  <div class="mermaid-diagram" v-html="svg"></div>
   <div v-if="props.showCode">
     <h5>Code:</h5>
     <div class="language-mermaid">
@@ -11,7 +12,6 @@
       </div>
     </div>
   </div>
-  <div class="mermaid-diagram" v-html="svg"></div>
 </template>
 
 <script setup>
