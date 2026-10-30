@@ -13,6 +13,13 @@ export interface NodeMetaData {
   ticket?: string;
   labelType?: string;
   /**
+   * Text shown when the user hovers over the node.
+   * In flowcharts it is sanitized the same way as `click` tooltips, and only
+   * appears once `bindFunctions` has run after rendering (`mermaid.run()` does
+   * this automatically). Applies to nodes only; ignored on subgraphs.
+   */
+  tooltip?: string;
+  /**
    * Expand/collapse state for subgraphs (flowchart). `collapsed` draws the
    * subgraph as a single compact node and redirects boundary-crossing edges
    * to it; `expanded` (the default) renders the subgraph normally.
