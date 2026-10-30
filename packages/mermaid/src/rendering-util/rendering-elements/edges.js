@@ -96,7 +96,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       isNode: false,
       markdown: isMarkdown,
       // Plain text edge labels should auto-wrap, markdown edge labels respect markdownAutoWrap config
-      width: isMarkdown ? markdownWidth : undefined,
+      width: isMarkdown ? markdownWidth : edge.labelWrapWidth,
     },
     config
   );
