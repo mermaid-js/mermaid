@@ -566,9 +566,32 @@ clickStatement
     | CLICK STR\[link] SPACE STR\[tooltip] SPACE LINK_TARGET    {$$ = $CLICK;yy.setLink($CLICK, $link, $LINK_TARGET);yy.setTooltip($CLICK, $tooltip);}
     ;
 
-styleStatement:STYLE SPACE idString SPACE stylesOpt
-    {$$ = $STYLE;yy.addVertex($idString,undefined,undefined,$stylesOpt);}
+
+styleStatement: STYLE SPACE styleTargetList SPACE stylesOpt
+    {$$ = $STYLE;$styleTargetList.forEach(id => yy.addVertex(id,undefined,undefined,$stylesOpt));}
     ;
+
+styleTargetList
+    : styleTarget
+      {$$ = [$styleTarget];}
+    | styleTargetList styleTargetSeparator styleTarget
+      {$styleTargetList.push($styleTarget);$$ = $styleTargetList;}
+    ;
+
+styleTargetSeparator
+    : COMMA
+    | COMMA SPACE
+    ;
+
+styleTarget
+    : styleTargetToken
+      {$$ = $styleTargetToken;}
+    | styleTarget styleTargetToken
+      {$$ = $styleTarget + '' + $styleTargetToken;}
+    ;
+
+styleTargetToken: NUM | NODE_STRING | DOWN | MINUS | DEFAULT | COLON | AMP | BRKT | MULT | UNICODE_TEXT;
+
 
 linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
