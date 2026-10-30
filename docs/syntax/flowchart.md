@@ -1764,11 +1764,26 @@ flowchart LR
   B1 --> B2
 ```
 
-#### Limitation
+#### Links across the subgraph border
 
-If any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
+With the ELK layout (the default), a subgraph keeps its direction when its nodes are linked to the outside. Such a link leaves the subgraph on the side facing downstream in the direction of the graph around it, and enters on the side facing upstream: in a `flowchart LR`, it leaves on the right and enters on the left, then runs inside the subgraph in the subgraph's own direction.
+
+The subgraph inherits the direction of the parent graph instead, as it does with every other layout, when:
+
+- no link runs between two nodes inside it, so its direction has nothing to order;
+- it also sets a layout algorithm of its own, such as `@{ algorithm: elk.box }`;
+- it, or a subgraph inside it, holds a link between a subgraph and one of its own nodes;
+- the diagram uses an ELK algorithm other than `elk.layered`.
+
+No warning is logged in these cases.
+
+With the dagre layout (`layout: dagre`), if any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
 
 ```mermaid-example
+---
+config:
+  layout: dagre
+---
 flowchart LR
     subgraph subgraph1
         direction TB
@@ -1788,6 +1803,10 @@ flowchart LR
 ```
 
 ```mermaid
+---
+config:
+  layout: dagre
+---
 flowchart LR
     subgraph subgraph1
         direction TB
