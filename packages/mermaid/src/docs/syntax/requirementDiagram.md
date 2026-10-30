@@ -1,3 +1,7 @@
+---
+description: 'Model SysML v1.6 requirements and elements with risk and verification attributes, linked by relationships such as satisfies and traces.'
+---
+
 # Requirement Diagram
 
 > A Requirement diagram provides a visualization for requirements and their connections, to each other and other documented elements. The modeling specs follow those defined by SysML v1.6.
