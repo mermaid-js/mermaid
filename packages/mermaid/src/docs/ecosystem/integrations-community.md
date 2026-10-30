@@ -58,6 +58,7 @@ To add an integration to this list, see the [Integrations - create page](./integ
 - [JetBrains IDEs](https://www.jetbrains.com)
   - [Mermaid Plugin](https://plugins.jetbrains.com/plugin/20146-mermaid)
   - [Mermaid Studio](https://plugins.jetbrains.com/plugin/29870-mermaid-studio)
+- [MarkView](https://markview.io/features) - Desktop Markdown reader for macOS, Windows, and Linux with built-in Mermaid rendering. ✅
 - [MonsterWriter](https://www.monsterwriter.com/) ✅
 - [Joplin](https://joplinapp.org) ✅
 - [LiveBook](https://livebook.dev) ✅
