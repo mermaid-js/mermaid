@@ -26,7 +26,7 @@ describe('[Style] when parsing', () => {
     expect(vert.get('Q').styles[0]).toBe('background:#fff');
   });
 
-  it.each(['A', 'A,B', 'A,B,C'])(
+  it.each(['A', 'A,B', 'A,B,C', 'A, B', 'A, B, C'])(
     'should apply styles to each vertex in %s without creating a combined vertex',
     function (ids) {
       flow.parser.parse(`graph TD;A[Start]-->B(Stop)-->C;D;style ${ids} fill:#f00,stroke:#333;`);
