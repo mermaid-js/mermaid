@@ -12,7 +12,7 @@
 
 > **getEffectiveHtmlLabels**(`config`): `boolean`
 
-Defined in: [packages/mermaid/src/config.ts:352](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L352)
+Defined in: [packages/mermaid/src/config.ts:387](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L387)
 
 Helper function to handle deprecated flowchart.htmlLabels
 
