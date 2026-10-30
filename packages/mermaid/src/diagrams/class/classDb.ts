@@ -361,7 +361,8 @@ export class ClassDB implements DiagramDB {
       }
 
       this.classes.forEach((value) => {
-        if (value.cssClasses.includes(id)) {
+        // `cssClasses` is a space separated list, so compare whole class names, not substrings
+        if (value.cssClasses.split(' ').includes(id)) {
           value.styles.push(...style.flatMap((s) => s.split(',')));
         }
       });
