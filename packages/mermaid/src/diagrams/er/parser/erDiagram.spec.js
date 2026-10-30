@@ -178,6 +178,41 @@ describe('when parsing ER diagram it...', function () {
       const entities = erDb.getEntities();
       expect(entities.has(entity)).toBe(true);
     });
+
+    describe.each(['one', 'One', 'ONE', 'many', 'Many', 'MANY', 'to', 'To', 'TO'])(
+      'named after the keyword %s',
+      (name) => {
+        it('can be a stand-alone entity', function () {
+          erDiagram.parser.parse(`erDiagram\n${name}\n`);
+          expect([...erDb.getEntities().keys()]).toEqual([name]);
+        });
+
+        it('can have attributes', function () {
+          erDiagram.parser.parse(`erDiagram\n${name} {\n string field\n}\n`);
+          const entities = erDb.getEntities();
+          expect([...entities.keys()]).toEqual([name]);
+          expect(entities.get(name).attributes.length).toBe(1);
+        });
+
+        it('can be used in a relationship', function () {
+          erDiagram.parser.parse(
+            `erDiagram\n${name} ||--o{ OTHER : has\nOTHER ||--|| ${name} : is`
+          );
+          const entities = erDb.getEntities();
+          expect([...entities.keys()]).toEqual([name, 'OTHER']);
+          expect(erDb.getRelationships().length).toBe(2);
+        });
+
+        it('can be used in a relationship that spells out its cardinalities', function () {
+          erDiagram.parser.parse(`erDiagram\n${name} one to many OTHER : has`);
+          const relationships = erDb.getRelationships();
+          expect([...erDb.getEntities().keys()]).toEqual([name, 'OTHER']);
+          expect(relationships[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
+          expect(relationships[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+          expect(relationships[0].relSpec.relType).toBe(erDb.Identification.IDENTIFYING);
+        });
+      }
+    );
   });
 
   describe('attribute name', () => {
