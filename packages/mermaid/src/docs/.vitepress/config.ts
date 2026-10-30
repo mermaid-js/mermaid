@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
@@ -30,7 +30,13 @@ export default defineConfig({
   base: getSiteBase(siteUrl),
   markdown: allMarkdownTransformers,
   sitemap: {
-    hostname: 'https://mermaid.js.org/',
+    hostname: siteUrl,
+  },
+  buildEnd: ({ outDir }) => {
+    writeFileSync(
+      join(outDir, 'robots.txt'),
+      `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}sitemap.xml\n`
+    );
   },
   ignoreDeadLinks: [
     // ignore all localhost links
