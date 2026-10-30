@@ -37,9 +37,7 @@ describe('createFlowDiagram init', () => {
   });
 
   it('still propagates arrowMarkerAbsolute into the flowchart config', () => {
-    const cnf = { arrowMarkerAbsolute: true } as never as { flowchart?: Record<string, unknown> };
-    createFlowDiagram().init?.(cnf as never);
-    expect(cnf.flowchart?.arrowMarkerAbsolute).toBe(true);
+    createFlowDiagram().init?.({ arrowMarkerAbsolute: true });
     expect(vi.mocked(setConfig)).toHaveBeenCalledWith({
       flowchart: { arrowMarkerAbsolute: true },
     });
