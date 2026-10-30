@@ -25,7 +25,7 @@ interface EndpointEdge {
   end?: string;
 }
 
-const SELF_LOOP_STEP = 12;
+const SELF_LOOP_STEP = 16;
 
 function endpointContextFor(edge: unknown, nodeByIdMap: Map<string, any>, minPoints: number) {
   const candidate = edge as EndpointEdge;

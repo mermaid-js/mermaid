@@ -16,9 +16,12 @@ export type EdgeId = MermaidEdge['id'];
 /**
  * Space between a node and its self-loop label: the loop plus a few px.
  * Keep in step with ANCHOR_OFFSET (20) in the router and the 4px label gap in
- * labelAnchoring.ts. Nested loops add the label size + 8 here and in the router.
+ * labelAnchoring.ts.
  */
 export const SELF_LOOP_LABEL_GAP = 24;
+
+/** Nested loops: how far the next loop sits past the previous loop's label. */
+export const SELF_LOOP_NEST_GAP = 12;
 
 export const isSelfLoopLabel = (n?: Node): boolean => !!n?.isEdgeLabel && n.edgeStart === n.edgeEnd;
 
@@ -347,7 +350,7 @@ export function writeBackToLayoutData(
       const offset = (owner.width ?? 0) / 2 + SELF_LOOP_LABEL_GAP + taken + (label.width ?? 0) / 2;
       label.x = owner.x + selfLoopSide(owner, layout.edges ?? [], nodeMap) * offset;
       label.y = owner.y;
-      loopLabelStack.set(owner.id, taken + (label.width ?? 0) + 8);
+      loopLabelStack.set(owner.id, taken + (label.width ?? 0) + SELF_LOOP_NEST_GAP);
     }
   }
 

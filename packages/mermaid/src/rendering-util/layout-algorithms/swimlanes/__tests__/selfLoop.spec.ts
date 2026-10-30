@@ -144,6 +144,8 @@ describe('swimlane self-loops (#8446)', () => {
     const b = data.nodes.find((n) => n.id === 'B')!;
     const loops = data.edges.filter((e) => e.start === 'B' && e.end === 'B');
     expect(loops).toHaveLength(4);
+    // no two loops share a track, which is what makes cleanup reshape them
+    expect(new Set(loops.map(({ points }) => points![0].y)).size).toBe(4);
     for (const { points } of loops) {
       expect(points!.length).toBeGreaterThan(3);
       for (const p of [points![0], points!.at(-1)!]) {

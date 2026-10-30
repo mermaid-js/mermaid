@@ -16,7 +16,7 @@ import { buildLaneModel } from '../lanes.js';
 import { collectAnchoredIds } from '../anchoredNodes.js';
 import { PRECISION } from '../config.js';
 import { flowAxisStretch } from '../direction/lrTransform.js';
-import { selfLoopSide } from '../helpers.js';
+import { SELF_LOOP_NEST_GAP, selfLoopSide } from '../helpers.js';
 
 const EPS = PRECISION.EPSILON;
 
@@ -142,17 +142,21 @@ function pointOnLine(line: RoutedLine, along: number): Point {
  * In LR/RL the layout gets rotated and stretched later, so pass that stretch
  * as `lrScale` to keep both ends of the loop on the node.
  */
-// `extra` pushes the loop further out and `rise` makes it taller, so several
-// loops on one node nest instead of overlapping. `minReach` is how tall the loop
-// must be to clear the labels inside it. The ends stay on the node, so a taller
-// loop also returns its `reach`, for finishSelfLoops to step up to after cleanup
+// `extra` pushes the loop further out. One loop sits at quarter height; several
+// spread along the side (`index` of `total`), so their arrowheads don't bunch up.
+// `minReach` is how tall the loop must be to clear the labels inside it. The ends
+// stay on the node, so a taller loop also returns its `reach`, for finishSelfLoops
+// to step up to after cleanup
 function selfLoopPoints(
   node: MermaidNode,
   side: 1 | -1,
-  lrScale?: number,
-  extra = 0,
-  rise = 0,
-  minReach = 0
+  lrScale: number | undefined,
+  {
+    extra,
+    index,
+    total,
+    minReach,
+  }: { extra: number; index: number; total: number; minReach: number }
 ): { points: Point[]; reach?: number } {
   const x = node.x ?? 0;
   const y = node.y ?? 0;
@@ -160,8 +164,9 @@ function selfLoopPoints(
   const h = node.height ?? 0;
   const edgeX = x + (side * (lrScale ? h : w)) / 2;
   const quarterH = (lrScale ? Math.min(h, w / lrScale) : h) / 4;
-  const reach = Math.max(quarterH + rise, minReach);
-  const endY = Math.min(reach, Math.max(quarterH, (lrScale ? w / lrScale : h) / 2 - 4));
+  const lowest = quarterH / 2;
+  const highest = Math.max(quarterH, (lrScale ? w / lrScale : h) / 2 - 4);
+  const endY = total > 1 ? lowest + ((highest - lowest) * index) / (total - 1) : quarterH;
   const outX = edgeX + side * (ANCHOR_OFFSET + extra);
   return {
     points: [
@@ -170,7 +175,8 @@ function selfLoopPoints(
       { x: outX, y: y + endY },
       { x: edgeX, y: y + endY },
     ],
-    reach: reach > endY ? reach * (lrScale ?? 1) : undefined,
+    // A tiny step looks worse than a slightly tight fit
+    reach: minReach > endY + 4 ? minReach * (lrScale ?? 1) : undefined,
   };
 }
 
@@ -868,7 +874,13 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
   };
 
   const lrScale = direction === 'LR' || direction === 'RL' ? flowAxisStretch(nodes) : undefined;
-  const loopsSoFar = new Map<string, { extra: number; count: number; minReach: number }>();
+  const loopTotals = new Map<string, number>();
+  for (const e of edges) {
+    if (e.start && e.start === e.end) {
+      loopTotals.set(e.start, (loopTotals.get(e.start) ?? 0) + 1);
+    }
+  }
+  const loopsSoFar = new Map<string, { extra: number; index: number; minReach: number }>();
   for (const i of routingOrder) {
     const e = edges[i];
     edgeSegmentIndices[i] = [];
@@ -883,14 +895,12 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     if (e.start === e.end) {
       const node = nodeById.get(e.start);
       if (node) {
-        const prev = loopsSoFar.get(e.start) ?? { extra: 0, count: 0, minReach: 0 };
+        const prev = loopsSoFar.get(e.start) ?? { extra: 0, index: 0, minReach: 0 };
         const { points, reach } = selfLoopPoints(
           node,
           selfLoopSide(node, data.edges ?? [], nodeById),
           lrScale,
-          prev.extra,
-          prev.count * 6,
-          prev.minReach
+          { ...prev, total: loopTotals.get(e.start) ?? 1 }
         );
         e.points = points;
         ((e.__originalEdge ?? e) as { selfLoopReach?: number }).selfLoopReach = reach;
@@ -900,9 +910,9 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
         const labelAcross = (lrScale ? label?.height : label?.width) ?? 0;
         const labelAlong = (lrScale ? (label?.width ?? 0) / lrScale : label?.height) ?? 0;
         loopsSoFar.set(e.start, {
-          extra: prev.extra + labelAcross + 8,
-          count: prev.count + 1,
-          minReach: Math.max(prev.minReach + 6, labelAlong / 2 + 4),
+          extra: prev.extra + labelAcross + SELF_LOOP_NEST_GAP,
+          index: prev.index + 1,
+          minReach: Math.max(prev.minReach + 6, labelAlong / 2 + 6),
         });
       }
       continue;
