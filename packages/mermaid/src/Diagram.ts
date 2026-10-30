@@ -4,12 +4,77 @@ import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
 import defaultConfig from './defaultConfig.js';
 import { log } from './logger.js';
+import { remapParseErrorLines } from './diagram-api/sourceLines.js';
 import { encodeEntities } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramCode, DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
+import type { MermaidConfig } from './config.type.js';
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: any) => void;
+
+/** Registers the diagram `type` from its loader, unless it is registered already. */
+const ensureDiagramRegistered = async (type: string): Promise<void> => {
+  try {
+    getDiagram(type);
+  } catch {
+    const loader = getDiagramLoader(type);
+    if (!loader) {
+      throw new UnknownDiagramError(`Diagram ${type} not found.`);
+    }
+    // Diagram not available, loading it.
+    // new diagram will try getDiagram again and if fails then it is a valid throw
+    const { id, diagram } = await loader();
+    registerDiagram(id, diagram);
+  }
+};
+
+const prepareDb = (
+  { db, parser, init }: Pick<DiagramDefinition, 'db' | 'parser' | 'init'>,
+  config: MermaidConfig,
+  metadata: Pick<DiagramMetadata, 'title'>
+) => {
+  if (parser.parser) {
+    // The parser.parser.yy is only present in JISON parsers. So, we'll only set if required.
+    parser.parser.yy = db;
+  }
+  db.clear?.();
+  init?.(config);
+  // This block was added for legacy compatibility. Use frontmatter instead of adding more special cases.
+  if (metadata.title) {
+    db.setDiagramTitle?.(metadata.title);
+  }
+};
+
+/**
+ * The text the parser of a diagram with `db` reads, and the source line of each of its lines.
+ *
+ * Diagrams that report source positions set `preserveCommentsWhenParsing`
+ * so that parser positions stay meaningful in original-source space. Every
+ * other diagram parses the comment-stripped text, as before.
+ *
+ * `cleaned` is `withComments` with the comment lines removed, so the two
+ * can differ without bound — a diagram padded with `%%` comments has a tiny
+ * `cleaned` and an arbitrarily large `withComments`. Whichever string we
+ * pick is the one the lexer walks, so the cap is enforced here, on the
+ * string actually being handed over, rather than on `cleaned` alone. This
+ * covers `parse()` as well as `render()`; only the latter has its own
+ * truncation path.
+ */
+const selectSource = (code: DiagramCode, db: DiagramDefinition['db'], config: MermaidConfig) => {
+  const cleaned = { text: code.cleaned, sourceLines: code.cleanedSourceLines ?? [] };
+  if (!db.preserveCommentsWhenParsing || !code.withComments) {
+    return cleaned;
+  }
+  const maxTextSize = config.maxTextSize ?? defaultConfig.maxTextSize;
+  if (code.withComments.length > maxTextSize) {
+    log.warn(
+      `Comment-preserving source exceeds maxTextSize (${code.withComments.length} > ${maxTextSize}); parsing the comment-stripped text instead. Reported source positions will not account for comment lines.`
+    );
+    return cleaned;
+  }
+  return { text: code.withComments, sourceLines: code.withCommentsSourceLines ?? [] };
+};
 
 /**
  * An object representing a parsed mermaid diagram definition.
@@ -29,58 +94,22 @@ export class Diagram {
         : codeObjectOrText;
     const config = configApi.getConfig();
     const type = detectType(code.cleaned, config);
-    try {
-      getDiagram(type);
-    } catch {
-      const loader = getDiagramLoader(type);
-      if (!loader) {
-        throw new UnknownDiagramError(`Diagram ${type} not found.`);
-      }
-      // Diagram not available, loading it.
-      // new diagram will try getDiagram again and if fails then it is a valid throw
-      const { id, diagram } = await loader();
-      registerDiagram(id, diagram);
-    }
+    await ensureDiagramRegistered(type);
     const { db, parser, renderer, init } = getDiagram(type);
-    if (parser.parser) {
-      // The parser.parser.yy is only present in JISON parsers. So, we'll only set if required.
-      parser.parser.yy = db;
-    }
-    db.clear?.();
-    init?.(config);
-    // This block was added for legacy compatibility. Use frontmatter instead of adding more special cases.
-    if (metadata.title) {
-      db.setDiagramTitle?.(metadata.title);
-    }
-    // Diagrams that report source positions set `preserveCommentsWhenParsing`
-    // so that parser positions stay meaningful in original-source space. Every
-    // other diagram parses the comment-stripped text, as before.
-    //
-    // `cleaned` is `withComments` with the comment lines removed, so the two
-    // can differ without bound — a diagram padded with `%%` comments has a tiny
-    // `cleaned` and an arbitrarily large `withComments`. Whichever string we
-    // pick is the one the lexer walks, so the cap is enforced here, on the
-    // string actually being handed over, rather than on `cleaned` alone. This
-    // covers `parse()` as well as `render()`; only the latter has its own
-    // truncation path.
-    let source = code.cleaned;
-    if (db.preserveCommentsWhenParsing && code.withComments) {
-      const maxTextSize = config.maxTextSize ?? defaultConfig.maxTextSize;
-      if (code.withComments.length > maxTextSize) {
-        log.warn(
-          `Comment-preserving source exceeds maxTextSize (${code.withComments.length} > ${maxTextSize}); parsing the comment-stripped text instead. Reported source positions will not account for comment lines.`
-        );
-      } else {
-        source = code.withComments;
-      }
-    }
-    const textToParse = encodeEntities(source) + '\n';
+    prepareDb({ db, parser, init }, config, metadata);
+    const source = selectSource(code, db, config);
+    const textToParse = encodeEntities(source.text) + '\n';
     // Pass frontmatter line offset so positions can be adjusted to match the
     // original source (which includes frontmatter) shown in the editor.
     if (code.frontmatterLineOffset) {
       db.setFrontmatterLineOffset?.(code.frontmatterLineOffset);
     }
-    await parser.parse(textToParse);
+    try {
+      await parser.parse(textToParse);
+    } catch (error) {
+      remapParseErrorLines(error, source.sourceLines);
+      throw error;
+    }
     return new Diagram(type, textToParse, db, parser, renderer);
   }
 
