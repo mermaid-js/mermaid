@@ -13,17 +13,25 @@ export type Node = MermaidNode;
 export type NodeId = Node['id'];
 export type EdgeId = MermaidEdge['id'];
 
-/** Space between a node and its self-loop label: the loop plus a few px. */
+/**
+ * Space between a node and its self-loop label: the loop plus a few px.
+ * Keep in step with ANCHOR_OFFSET (20) in the router and the 4px label gap in
+ * labelAnchoring.ts. Nested loops add the label size + 8 here and in the router.
+ */
 export const SELF_LOOP_LABEL_GAP = 24;
 
 export const isSelfLoopLabel = (n?: Node): boolean => !!n?.isEdgeLabel && n.edgeStart === n.edgeEnd;
 
 /** Self-loop side: right (1), or left (-1) when another edge already leaves to the right. */
-export function selfLoopSide(node: Node, layout: Layout): 1 | -1 {
+export function selfLoopSide(
+  node: Node,
+  edges: readonly MermaidEdge[],
+  nodeById: ReadonlyMap<string, Node>
+): 1 | -1 {
   const right = (node.x ?? 0) + (node.width ?? 0) / 2;
-  const busy = (layout.edges ?? []).some((e) => {
+  const busy = edges.some((e) => {
     const otherId = e.start === node.id ? e.end : e.end === node.id ? e.start : undefined;
-    const other = otherId !== node.id && layout.nodes.find((n) => n.id === otherId);
+    const other = otherId !== node.id && otherId !== undefined && nodeById.get(otherId);
     return !e.isLayoutOnly && !!other && (other.x ?? 0) - (other.width ?? 0) / 2 > right;
   });
   return busy ? -1 : 1;
@@ -337,7 +345,7 @@ export function writeBackToLayoutData(
     if (owner?.x !== undefined && owner.y !== undefined) {
       const taken = loopLabelStack.get(owner.id) ?? 0;
       const offset = (owner.width ?? 0) / 2 + SELF_LOOP_LABEL_GAP + taken + (label.width ?? 0) / 2;
-      label.x = owner.x + selfLoopSide(owner, layout) * offset;
+      label.x = owner.x + selfLoopSide(owner, layout.edges ?? [], nodeMap) * offset;
       label.y = owner.y;
       loopLabelStack.set(owner.id, taken + (label.width ?? 0) + 8);
     }

@@ -118,4 +118,72 @@ describe('swimlane self-loops (#8446)', () => {
       .map((e) => e.points!);
     expect(Math.max(...p2.map((p) => p.x))).toBeGreaterThan(Math.max(...p1.map((p) => p.x)));
   });
+
+  it.each(['TD', 'LR', 'RL', 'BT'])('keeps both loop ends on a diamond in %s', async (dir) => {
+    const data = await layout(
+      `swimlane-beta ${dir}\nsubgraph MD\n  A\n  B{ok?}\nend\nA --> B\nB -->|no| B`
+    );
+    const b = data.nodes.find((n) => n.id === 'B')!;
+    const pts = data.edges.find((e) => e.start === 'B' && e.end === 'B')!.points!;
+    for (const p of [pts[0], pts.at(-1)!]) {
+      const onBorder =
+        Math.abs(p.x - b.x!) / (b.width! / 2) + Math.abs(p.y - b.y!) / (b.height! / 2);
+      expect(onBorder).toBeCloseTo(1, 1);
+    }
+    // the loop goes around the diamond's tip, not through it
+    const outside = (p: { x: number; y: number }) =>
+      Math.abs(p.x - b.x!) > b.width! / 2 || Math.abs(p.y - b.y!) > b.height! / 2;
+    expect(pts.some(outside)).toBe(true);
+    expectLabelBesideLoop(data);
+  });
+
+  it('keeps all the ends on the node when many loops share it', async () => {
+    const data = await layout(
+      'swimlane-beta TD\nsubgraph MD\n  B\nend\nB -->|a| B\nB -->|b| B\nB -->|c| B\nB -->|d| B'
+    );
+    const b = data.nodes.find((n) => n.id === 'B')!;
+    const loops = data.edges.filter((e) => e.start === 'B' && e.end === 'B');
+    expect(loops).toHaveLength(4);
+    for (const { points } of loops) {
+      expect(points!.length).toBeGreaterThan(3);
+      for (const p of [points![0], points!.at(-1)!]) {
+        expect(p.x).toBeCloseTo(b.x! + b.width! / 2, 0);
+        expect(Math.abs(p.y - b.y!)).toBeLessThan(b.height! / 2);
+      }
+    }
+  });
+
+  it.each(['TD', 'LR'])('takes the outer loop around a tall label in %s', async (dir) => {
+    const data = await layout(
+      `swimlane-beta ${dir}\nsubgraph MD\n  B\nend\nB -->|tall| B\nB -->|again| B`,
+      undefined,
+      120
+    );
+    const b = data.nodes.find((n) => n.id === 'B')!;
+    const [inner, outer] = data.edges.filter((e) => e.start === 'B' && e.end === 'B');
+    const label = data.nodes.find((n) => n.id === inner.labelNodeId)!;
+    const pts = outer.points!;
+    // the loop survives layout: in TD it steps up around the tall label
+    expect(new Set(pts.map((p) => `${p.x},${p.y}`)).size).toBe(dir === 'TD' ? 8 : 4);
+    // no part of the outer loop touches the inner loop's label
+    const hitsLabel = pts.slice(1).some((p, i) => {
+      const [x0, x1] = [pts[i].x, p.x].sort((m, n) => m - n);
+      const [y0, y1] = [pts[i].y, p.y].sort((m, n) => m - n);
+      return (
+        x1 > label.x! - label.width! / 2 &&
+        x0 < label.x! + label.width! / 2 &&
+        y1 > label.y! - label.height! / 2 &&
+        y0 < label.y! + label.height! / 2
+      );
+    });
+    expect(hitsLabel).toBe(false);
+    // and its ends still touch B
+    for (const p of [pts[0], pts.at(-1)!]) {
+      const gap = Math.max(
+        Math.abs(p.x - b.x!) - b.width! / 2,
+        Math.abs(p.y - b.y!) - b.height! / 2
+      );
+      expect(gap).toBeCloseTo(0, 0);
+    }
+  });
 });

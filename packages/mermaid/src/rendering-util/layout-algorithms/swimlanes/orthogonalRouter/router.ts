@@ -143,27 +143,35 @@ function pointOnLine(line: RoutedLine, along: number): Point {
  * as `lrScale` to keep both ends of the loop on the node.
  */
 // `extra` pushes the loop further out and `rise` makes it taller, so several
-// loops on one node nest instead of overlapping
+// loops on one node nest instead of overlapping. `minReach` is how tall the loop
+// must be to clear the labels inside it. The ends stay on the node, so a taller
+// loop also returns its `reach`, for finishSelfLoops to step up to after cleanup
 function selfLoopPoints(
   node: MermaidNode,
   side: 1 | -1,
   lrScale?: number,
   extra = 0,
-  rise = 0
-): Point[] {
+  rise = 0,
+  minReach = 0
+): { points: Point[]; reach?: number } {
   const x = node.x ?? 0;
   const y = node.y ?? 0;
   const w = node.width ?? 0;
   const h = node.height ?? 0;
   const edgeX = x + (side * (lrScale ? h : w)) / 2;
-  const quarterH = (lrScale ? Math.min(h, w / lrScale) / 4 : h / 4) + rise;
+  const quarterH = (lrScale ? Math.min(h, w / lrScale) : h) / 4;
+  const reach = Math.max(quarterH + rise, minReach);
+  const endY = Math.min(reach, Math.max(quarterH, (lrScale ? w / lrScale : h) / 2 - 4));
   const outX = edgeX + side * (ANCHOR_OFFSET + extra);
-  return [
-    { x: edgeX, y: y - quarterH },
-    { x: outX, y: y - quarterH },
-    { x: outX, y: y + quarterH },
-    { x: edgeX, y: y + quarterH },
-  ];
+  return {
+    points: [
+      { x: edgeX, y: y - endY },
+      { x: outX, y: y - endY },
+      { x: outX, y: y + endY },
+      { x: edgeX, y: y + endY },
+    ],
+    reach: reach > endY ? reach * (lrScale ?? 1) : undefined,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -859,7 +867,8 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     return { pSrcPort, pDstPort, srcSide, dstSide };
   };
 
-  const loopsSoFar = new Map<string, { extra: number; count: number }>();
+  const lrScale = direction === 'LR' || direction === 'RL' ? flowAxisStretch(nodes) : undefined;
+  const loopsSoFar = new Map<string, { extra: number; count: number; minReach: number }>();
   for (const i of routingOrder) {
     const e = edges[i];
     edgeSegmentIndices[i] = [];
@@ -874,21 +883,26 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     if (e.start === e.end) {
       const node = nodeById.get(e.start);
       if (node) {
-        const lrScale =
-          direction === 'LR' || direction === 'RL' ? flowAxisStretch(nodes) : undefined;
-        const prev = loopsSoFar.get(e.start) ?? { extra: 0, count: 0 };
-        e.points = selfLoopPoints(
+        const prev = loopsSoFar.get(e.start) ?? { extra: 0, count: 0, minReach: 0 };
+        const { points, reach } = selfLoopPoints(
           node,
-          selfLoopSide(node, data),
+          selfLoopSide(node, data.edges ?? [], nodeById),
           lrScale,
           prev.extra,
-          prev.count * 6
+          prev.count * 6,
+          prev.minReach
         );
-        // The next loop goes around this one and its label
+        e.points = points;
+        ((e.__originalEdge ?? e) as { selfLoopReach?: number }).selfLoopReach = reach;
+        // The next loop goes around this one and its label. LR/RL rotate the
+        // layout later, which swaps the label's sides and stretches its width
         const label = nodeById.get((e as { labelNodeId?: string }).labelNodeId ?? '');
+        const labelAcross = (lrScale ? label?.height : label?.width) ?? 0;
+        const labelAlong = (lrScale ? (label?.width ?? 0) / lrScale : label?.height) ?? 0;
         loopsSoFar.set(e.start, {
-          extra: prev.extra + (label?.width ?? 0) + 8,
+          extra: prev.extra + labelAcross + 8,
           count: prev.count + 1,
+          minReach: Math.max(prev.minReach + 6, labelAlong / 2 + 4),
         });
       }
       continue;

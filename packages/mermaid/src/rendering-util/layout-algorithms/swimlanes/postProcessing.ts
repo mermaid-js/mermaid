@@ -2,6 +2,7 @@
 import type { LayoutData } from '../../types.js';
 import {
   clipEdgeEndpointsToNodeBoundaries,
+  finishSelfLoops,
   prepareEdgeEndpointsForRenderer,
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
@@ -144,6 +145,7 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // present in the pre-materialized route, so run the bounded cleanup once
   // more and then re-prepare the endpoints it reshaped.
   finalizeRenderedEdges();
+  finishSelfLoops(edges, nodeByIdMap);
 
   // Swimlane title bands are visual headers, not routing obstacles. After all
   // edge geometry is final, move the aligned title bands out of any clear rail

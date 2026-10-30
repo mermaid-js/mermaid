@@ -25,6 +25,8 @@ interface EndpointEdge {
   end?: string;
 }
 
+const SELF_LOOP_STEP = 12;
+
 function endpointContextFor(edge: unknown, nodeByIdMap: Map<string, any>, minPoints: number) {
   const candidate = edge as EndpointEdge;
   if (candidate.isLayoutOnly || !candidate.points || candidate.points.length < minPoints) {
@@ -465,5 +467,65 @@ export function prepareEdgeEndpointsForRenderer(edges: unknown[], nodeByIdMap: M
       { ...newPts[newPts.length - 1] },
     ];
     context.edge.points = duplicated;
+  }
+}
+
+/** Lifts a loop to `reach` from the node's centre: straight out of the node, then up. */
+function stepSelfLoop([a, b, c, d]: Point[], center: Point, reach: number): Point[] {
+  const along = sameX(b, c, EPS) ? 'y' : 'x';
+  const across = along === 'y' ? 'x' : 'y';
+  const at = (alongPos: number, acrossPos: number) =>
+    ({ [along]: alongPos, [across]: acrossPos }) as unknown as Point;
+  const stepAt = a[across] + Math.sign(b[across] - a[across]) * SELF_LOOP_STEP;
+  const far = (p: Point) => center[along] + Math.sign(p[along] - center[along]) * reach;
+  return [
+    a,
+    at(a[along], stepAt),
+    at(far(a), stepAt),
+    at(far(a), b[across]),
+    at(far(d), c[across]),
+    at(far(d), stepAt),
+    at(d[along], stepAt),
+    d,
+  ];
+}
+
+/** Slides a loop's end along its stub to a diamond's border, which is further in than its box. */
+function dockOnDiamond(end: Point, next: Point, node: Point & { width: number; height: number }) {
+  const [halfW, halfH] = [node.width / 2, node.height / 2];
+  return sameY(end, next, EPS)
+    ? {
+        x: node.x + Math.sign(end.x - node.x) * halfW * (1 - Math.abs(end.y - node.y) / halfH),
+        y: end.y,
+      }
+    : {
+        x: end.x,
+        y: node.y + Math.sign(end.y - node.y) * halfH * (1 - Math.abs(end.x - node.x) / halfW),
+      };
+}
+
+/**
+ * Last touches on self-loops. This runs after the cleanup passes because they expect
+ * a plain four-point loop with its ends on the node's box, and flatten anything else.
+ */
+export function finishSelfLoops(edges: unknown[], nodeByIdMap: Map<string, any>) {
+  for (const edge of edges) {
+    const context = endpointContextFor(edge, nodeByIdMap, 4);
+    const node = nodeByIdMap.get(context?.edge.start ?? '');
+    if (!context || !node || context.edge.start !== context.edge.end) {
+      continue;
+    }
+    const reach = (edge as { selfLoopReach?: number }).selfLoopReach;
+    const isDiamond = node.shape === 'question' || node.shape === 'diamond';
+    const loop = dedupeConsecutivePoints(context.points, EPS);
+    if (loop.length !== 4 || (!reach && !isDiamond)) {
+      continue;
+    }
+    const pts = reach ? stepSelfLoop(loop, node, reach) : loop;
+    const first = isDiamond ? dockOnDiamond(pts[0], pts[1], node) : pts[0];
+    const last = isDiamond
+      ? dockOnDiamond(pts[pts.length - 1], pts[pts.length - 2], node)
+      : pts[pts.length - 1];
+    context.edge.points = [first, { ...first }, ...pts.slice(1, -1), last, { ...last }];
   }
 }
