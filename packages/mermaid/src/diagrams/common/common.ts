@@ -22,27 +22,33 @@ export const getRows = (s?: string): string[] => {
   return str.split('#br#');
 };
 
-const setupDompurifyHooksIfNotSetup = (() => {
-  let setup = false;
+let hooksSetup = false;
+const purifiers = new Map<string, typeof DOMPurify | null>();
 
-  return () => {
-    if (!setup) {
-      setupDompurifyHooks();
-      setup = true;
+// The shared instance only gets the hooks once a script-removing sanitize has run;
+// the configured instances follow it, so they sanitize exactly as it would.
+const setupDompurifyHooksIfNotSetup = () => {
+  if (!hooksSetup) {
+    setupDompurifyHooks(DOMPurify);
+    for (const purify of purifiers.values()) {
+      if (purify) {
+        setupDompurifyHooks(purify);
+      }
     }
-  };
-})();
+    hooksSetup = true;
+  }
+};
 
-function setupDompurifyHooks() {
+function setupDompurifyHooks(purify: typeof DOMPurify) {
   const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
 
-  DOMPurify.addHook('beforeSanitizeAttributes', (node) => {
+  purify.addHook('beforeSanitizeAttributes', (node) => {
     if (node.tagName === 'A' && node.hasAttribute('target')) {
       node.setAttribute(TEMPORARY_ATTRIBUTE, node.getAttribute('target') ?? '');
     }
   });
 
-  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  purify.addHook('afterSanitizeAttributes', (node) => {
     if (node.tagName === 'A' && node.hasAttribute(TEMPORARY_ATTRIBUTE)) {
       node.setAttribute('target', node.getAttribute(TEMPORARY_ATTRIBUTE) ?? '');
       node.removeAttribute(TEMPORARY_ATTRIBUTE);
@@ -62,9 +68,33 @@ function setupDompurifyHooks() {
 export const removeScript = (txt: string): string => {
   setupDompurifyHooksIfNotSetup();
 
-  const sanitizedText = DOMPurify.sanitize(txt);
+  const sanitizedText = configuredPurifier('script', {})?.sanitize(txt) ?? DOMPurify.sanitize(txt);
 
   return sanitizedText;
+};
+
+/**
+ * A DOMPurify instance with `config` set once, so `sanitize` stops re-parsing the
+ * config on every call. It has the same hooks as the shared instance. Returns null
+ * where DOMPurify cannot make instances, and callers fall back to the shared one.
+ */
+const configuredPurifier = (key: string, config: Parameters<typeof DOMPurify.setConfig>[0]) => {
+  let purify = purifiers.get(key);
+  if (purify === undefined) {
+    purify = null;
+    if (typeof window !== 'undefined' && typeof DOMPurify === 'function') {
+      const instance = DOMPurify(window);
+      if (instance.isSupported) {
+        if (hooksSetup) {
+          setupDompurifyHooks(instance);
+        }
+        instance.setConfig(config);
+        purify = instance;
+      }
+    }
+    purifiers.set(key, purify);
+  }
+  return purify;
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
@@ -89,9 +119,11 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
-    text = DOMPurify.sanitize(sanitizeMore(text, config), {
-      FORBID_TAGS: ['style'],
-    }).toString();
+    const label = sanitizeMore(text, config);
+    text = (
+      configuredPurifier('label', { FORBID_TAGS: ['style'] })?.sanitize(label) ??
+      DOMPurify.sanitize(label, { FORBID_TAGS: ['style'] })
+    ).toString();
   }
   return text;
 };

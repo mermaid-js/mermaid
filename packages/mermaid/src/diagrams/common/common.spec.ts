@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+import { afterEach, vi } from 'vitest';
 import {
   sanitizeText,
   removeScript,
@@ -157,5 +159,40 @@ describe('line breaks', () => {
       hasBreaks('a<br>b'),
       hasBreaks('<br>'),
     ]).toEqual([true, true, true, true]);
+  });
+});
+
+describe('sanitizeText with the default DOMPurify config', () => {
+  const config = { securityLevel: 'strict', htmlLabels: true } as const;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('does not route labels through the shared DOMPurify instance', () => {
+    const shared = vi.spyOn(DOMPurify, 'sanitize');
+    sanitizeText('<p>Step 1</p>', config);
+    sanitizeText('plain label', config);
+    expect(shared).not.toHaveBeenCalled();
+  });
+
+  it('sanitizes exactly as the shared instance does with the same config', () => {
+    removeScript('');
+    const inputs = [
+      'plain label',
+      '<p>Step <b>1</b></p>',
+      '<style>p { color: red }</style><p>styled</p>',
+      '<img src=x onerror=alert(1)>',
+      '<a href="https://mermaid.js.org/" target="_blank">link</a>',
+      '<script>alert(1)</script>text',
+      '<svg><g onload="alert(1)"><text>t</text></g></svg>',
+      'a &amp; b &lt; c',
+    ];
+    for (const input of inputs) {
+      const expected = DOMPurify.sanitize(removeScript(input), {
+        FORBID_TAGS: ['style'],
+      }).toString();
+      expect(sanitizeText(input, config)).toBe(expected);
+    }
   });
 });
