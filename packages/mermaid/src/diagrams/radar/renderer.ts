@@ -179,7 +179,10 @@ export function relativeRadius(
   radius: number
 ): number {
   const clippedValue = Math.min(Math.max(value, minValue), maxValue);
-  return (radius * (clippedValue - minValue)) / (maxValue - minValue);
+  const product = radius * (clippedValue - minValue);
+  return Number.isFinite(product)
+    ? product / (maxValue - minValue)
+    : radius * ((clippedValue - minValue) / (maxValue - minValue));
 }
 
 export function closedRoundCurve(points: { x: number; y: number }[], tension: number): string {
