@@ -1,3 +1,7 @@
+---
+description: 'Learn what Mermaid is, why diagramming and documentation benefit from text-based diagrams, and see examples of the diagram types Mermaid supports.'
+---
+
 # About Mermaid
 
 **Mermaid lets you create diagrams and visualizations using text and code.**

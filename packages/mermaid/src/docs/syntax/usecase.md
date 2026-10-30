@@ -1,3 +1,7 @@
+---
+description: 'Mermaid UML use case diagram syntax: actors, use cases, system boundaries, and include/extend relationships for describing system behavior.'
+---
+
 # Use case diagrams (12.0.0+)
 
 ```warning

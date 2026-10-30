@@ -1,3 +1,7 @@
+---
+description: 'Mermaid railroad (syntax) diagram syntax: render grammar rules written in EBNF, ABNF, or PEG notation as railroad diagrams for documenting languages.'
+---
+
 # Railroad Diagrams (v11.16.0+)
 
 ```warning

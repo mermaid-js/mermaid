@@ -1,3 +1,7 @@
+---
+description: 'Mermaid Sankey diagram syntax: describe flows between nodes in a CSV-like format, where link widths are proportional to flow quantities.'
+---
+
 # Sankey diagram (v10.3.0+)
 
 > A sankey diagram is a visualization used to depict a flow from one set of values to another.

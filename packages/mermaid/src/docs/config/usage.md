@@ -1,3 +1,7 @@
+---
+description: 'How to use Mermaid in a web page or app: install from npm or a CDN, initialize, render with the API, bind events, and choose a security level.'
+---
+
 # Usage
 
 Mermaid is a JavaScript tool that makes use of a Markdown based syntax to render customizable diagrams, charts and visualizations.

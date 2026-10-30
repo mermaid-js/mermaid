@@ -1,3 +1,7 @@
+---
+description: 'Mermaid Ishikawa (fishbone / cause-and-effect) diagram syntax: place a problem at the head and branch categories of causes off the spine.'
+---
+
 # Ishikawa diagram (v11.12.3+)
 
 Ishikawa diagrams are used to represent causes of a specific event (or a problem).

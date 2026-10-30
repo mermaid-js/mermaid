@@ -1,3 +1,7 @@
+---
+description: 'Mermaid Cynefin framework diagram syntax: place items in the clear, complicated, complex, chaotic, and confused domains to guide decision-making.'
+---
+
 # Cynefin Framework Diagram (v11.16.0+)
 
 ```warning

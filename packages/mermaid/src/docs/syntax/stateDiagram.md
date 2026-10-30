@@ -1,3 +1,7 @@
+---
+description: 'Mermaid state diagram syntax: states, transitions, composite states, choice, fork and join, concurrency, notes, and styling for modeling state machines.'
+---
+
 # State diagrams
 
 > "A state diagram is a type of diagram used in computer science and related fields to describe the behavior of systems.

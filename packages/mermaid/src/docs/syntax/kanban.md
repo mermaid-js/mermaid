@@ -1,3 +1,7 @@
+---
+description: 'Mermaid Kanban diagram syntax: define columns for workflow stages and tasks with metadata such as assignee, ticket, and priority.'
+---
+
 # Mermaid Kanban Diagram Documentation
 
 Mermaid’s Kanban diagram allows you to create visual representations of tasks moving through different stages of a workflow. This guide explains how to use the Kanban diagram syntax, based on the provided example.

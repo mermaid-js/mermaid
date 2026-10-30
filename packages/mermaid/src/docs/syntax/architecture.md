@@ -1,3 +1,7 @@
+---
+description: 'Mermaid architecture diagram syntax: services, groups, junctions, edges, and icons for illustrating cloud and CI/CD deployment architectures.'
+---
+
 # Architecture Diagrams Documentation (v11.1.0+)
 
 ```warning

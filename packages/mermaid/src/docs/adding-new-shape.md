@@ -1,3 +1,7 @@
+---
+description: 'Reference for Mermaid’s custom SVG shapes library: shape helpers and utilities, and how to add a new shape for use in diagrams.'
+---
+
 # Custom SVG Shapes Library
 
 This library provides a collection of custom SVG shapes, utilities, and helpers for generating diagram components. The shapes are designed to be used within an SVG container and include a variety of common and complex shapes.

@@ -1,3 +1,7 @@
+---
+description: 'Overview of Mermaid diagram syntax: diagram type declarations, comments, frontmatter, configuration, and the syntax pitfalls to avoid.'
+---
+
 # Diagram Syntax
 
 Mermaid's syntax is used to create diagrams. You'll find that it is not too tricky and can be learned in a day. The next sections dive deep into the syntax of each diagram type.

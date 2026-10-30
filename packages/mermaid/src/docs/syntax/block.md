@@ -1,4 +1,5 @@
 ---
+description: 'Mermaid block diagram syntax: arrange blocks in columns, span widths, nest composite blocks, and connect them with edges for full control over layout.'
 title: Block Diagram Syntax
 outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---

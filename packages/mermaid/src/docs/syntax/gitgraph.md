@@ -1,3 +1,7 @@
+---
+description: 'Mermaid GitGraph syntax: commits, branches, checkouts, merges, cherry-picks, tags, and orientation for visualizing Git branching strategies.'
+---
+
 # GitGraph Diagrams
 
 > A Git Graph is a pictorial representation of git commits and git actions(commands) on various branches.
