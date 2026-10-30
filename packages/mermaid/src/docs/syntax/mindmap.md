@@ -247,19 +247,7 @@ Formatting:
 
 ## Integrating with your library/website.
 
-Mindmap uses the experimental lazy loading & async rendering features which could change in the future. From version 9.4.0 this diagram is included in mermaid but use lazy loading in order to keep the size of mermaid down. This is important in order to be able to add additional diagrams going forward.
-
-You can still use the pre 9.4.0 method to add mermaid with mindmaps to a web page:
-
-```html
-<script type="module">
-  import mermaid from '<CDN_URL>/mermaid@9.3.0/dist/mermaid.esm.min.mjs';
-  import mindmap from '<CDN_URL>/@mermaid-js/mermaid-mindmap@9.3.0/dist/mermaid-mindmap.esm.min.mjs';
-  await mermaid.registerExternalDiagrams([mindmap]);
-</script>
-```
-
-From version 9.4.0 you can simplify this code to:
+Mindmap is included in mermaid and loaded on demand, the first time a page uses it, which keeps the initial download small. No extra setup is needed:
 
 ```html
 <script type="module">

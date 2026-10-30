@@ -564,9 +564,7 @@ config:
 
 ## Integrating with your library/website
 
-Timeline uses experimental lazy loading & async rendering features which could change in the future.The lazy loading is important in order to be able to add additional diagrams going forward.
-
-You can use this method to add mermaid including the timeline diagram to a web page:
+Timeline is included in mermaid and loaded on demand, the first time a page uses it, which keeps the initial download small. No extra setup is needed:
 
 ```html
 <script type="module">

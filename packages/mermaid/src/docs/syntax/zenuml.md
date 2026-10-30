@@ -301,14 +301,12 @@ zenuml
 
 ## Integrating with your library/website.
 
-Zenuml uses the experimental lazy loading & async rendering features which could change in the future.
-
-You can use this method to add mermaid including the zenuml diagram to a web page:
+ZenUML is not bundled with mermaid. Load the `@mermaid-js/mermaid-zenuml` package alongside mermaid and register it as an external diagram:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  import zenuml from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-zenuml@0.1.0/dist/mermaid-zenuml.esm.min.mjs';
+  import mermaid from '<CDN_URL>/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
+  import zenuml from '<CDN_URL>/@mermaid-js/mermaid-zenuml@1/dist/mermaid-zenuml.esm.min.mjs';
   await mermaid.registerExternalDiagrams([zenuml]);
 </script>
 ```
