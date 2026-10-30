@@ -53,6 +53,7 @@ accDescr\s*"{"\s*                               { this.begin("acc_descr_multilin
                                                     // console.log('shapeData', yytext);
                                                     const re = /\n\s*/g;
                                                     yytext = yytext.replace(re,"<br/>");
+                                                    yytext = yytext.replace(/\\/g, "\\\\");
                                                     return 'SHAPE_DATA'}
 <shapeData>[^}^"]+                                {
                                                     // console.log('shapeData', yytext);
