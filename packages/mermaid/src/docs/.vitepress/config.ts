@@ -3,7 +3,6 @@ import { join } from 'node:path';
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' with { type: 'json' };
-import { addCanonicalUrls } from './canonical-urls.js';
 import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
 import MermaidExample from './mermaid-markdown-all.js';
@@ -32,7 +31,6 @@ export default defineConfig({
     /^https?:\/\/localhost/,
   ],
   transformPageData: (pageData, { siteConfig }) => {
-    addCanonicalUrls(pageData);
     addPageMetadata(
       pageData,
       readFileSync(join(siteConfig.srcDir, pageData.relativePath), 'utf8'),

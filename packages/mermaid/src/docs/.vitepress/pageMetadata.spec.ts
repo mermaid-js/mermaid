@@ -1,6 +1,6 @@
 import type { PageData } from 'vitepress';
 import { describe, expect, it } from 'vitest';
-import { addPageMetadata, getPageDescription } from './pageMetadata.js';
+import { addPageMetadata, getPageDescription, getPageUrl } from './pageMetadata.js';
 
 describe('getPageDescription', () => {
   it('uses the first paragraph, skipping frontmatter, headings, code and notes', () => {
@@ -79,6 +79,16 @@ Mermaid can render Pie Chart diagrams.
   });
 });
 
+describe('getPageUrl', () => {
+  it.each([
+    ['index.md', 'https://mermaid.js.org/'],
+    ['intro/index.md', 'https://mermaid.js.org/intro/'],
+    ['syntax/pie.md', 'https://mermaid.js.org/syntax/pie.html'],
+  ])('maps %s to %s', (relativePath, url) => {
+    expect(getPageUrl(relativePath)).toBe(url);
+  });
+});
+
 describe('addPageMetadata', () => {
   const siteDescription = 'Create diagrams and visualizations using text and code.';
   const page = (overrides: Partial<PageData>): PageData => ({
@@ -113,7 +123,7 @@ describe('addPageMetadata', () => {
           content: 'A pie chart is a circular statistical graphic, divided into slices.',
         },
       ],
-      ['meta', { property: 'og:url', content: 'https://mermaid.ai/open-source/syntax/pie.html' }],
+      ['meta', { property: 'og:url', content: 'https://mermaid.js.org/syntax/pie.html' }],
     ]);
   });
 
@@ -149,7 +159,7 @@ describe('addPageMetadata', () => {
     ]);
     expect(pageData.frontmatter.head).toContainEqual([
       'meta',
-      { property: 'og:url', content: 'https://mermaid.ai/open-source/' },
+      { property: 'og:url', content: 'https://mermaid.js.org/' },
     ]);
   });
 });

@@ -1,7 +1,7 @@
 import type { HeadConfig, PageData } from 'vitepress';
-import { getPageCanonicalUrl } from './canonical-urls.js';
 
 const SITE_NAME = 'Mermaid';
+const SITE_URL = 'https://mermaid.js.org/';
 const MAX_DESCRIPTION_LENGTH = 160;
 const MIN_DESCRIPTION_LENGTH = 40;
 
@@ -63,6 +63,12 @@ export const getPageDescription = (markdown: string): string | undefined => {
 };
 
 /**
+ * The URL a page is served at, in the form VitePress uses for the sitemap.
+ */
+export const getPageUrl = (relativePath: string): string =>
+  SITE_URL + relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '.html');
+
+/**
  * VitePress transformPageData hook: fills in the page description from its first paragraph
  * (unless set in frontmatter) and adds per-page Open Graph title, description and URL.
  */
@@ -78,7 +84,7 @@ export const addPageMetadata = (
   const head: HeadConfig[] = [
     ['meta', { property: 'og:title', content: title }],
     ['meta', { property: 'og:description', content: pageData.description || siteDescription }],
-    ['meta', { property: 'og:url', content: getPageCanonicalUrl(pageData.relativePath) }],
+    ['meta', { property: 'og:url', content: getPageUrl(pageData.relativePath) }],
   ];
   pageData.frontmatter.head = [...(pageData.frontmatter.head ?? []), ...head];
 };
