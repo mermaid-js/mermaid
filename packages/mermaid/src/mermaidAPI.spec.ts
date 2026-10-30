@@ -667,6 +667,15 @@ describe('mermaidAPI', () => {
       expect(mermaidAPI.getConfig().htmlLabels).toBe(mermaidAPI.defaultConfig.htmlLabels);
     });
 
+    it('returns a mutable copy from getConfig and setConfig', () => {
+      const fromGet = mermaidAPI.getConfig();
+      const fromSet = mermaidAPI.setConfig({ fontSize: 20 });
+      expect(fromSet.fontSize).toBe(20);
+      fromGet.flowchart!.curve = 'linear';
+      fromSet.flowchart!.curve = 'linear';
+      expect(mermaidAPI.getConfig().flowchart?.curve).not.toBe('linear');
+    });
+
     it('prevents changes to site defaults (sneaky)', () => {
       const config: any = {
         logLevel: 0,

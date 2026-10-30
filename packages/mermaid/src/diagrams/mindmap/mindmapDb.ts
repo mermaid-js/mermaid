@@ -359,10 +359,7 @@ export class MindmapDB {
     const userDefinedConfig = getUserDefinedConfig();
     const hasUserDefinedLayout = userDefinedConfig.layout !== undefined;
 
-    const finalConfig = config;
-    if (!hasUserDefinedLayout) {
-      finalConfig.layout = 'cose-bilkent';
-    }
+    const finalConfig = hasUserDefinedLayout ? config : { ...config, layout: 'cose-bilkent' };
 
     if (!mindmapRoot) {
       return {

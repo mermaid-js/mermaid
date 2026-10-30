@@ -12,10 +12,4 @@ export const diagram: DiagramDefinition = {
   },
   renderer,
   styles,
-  init: (cnf) => {
-    if (!cnf.state) {
-      cnf.state = {};
-    }
-    cnf.state.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-  },
 };
