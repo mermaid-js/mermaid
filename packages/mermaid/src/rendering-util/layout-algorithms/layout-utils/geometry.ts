@@ -10,10 +10,8 @@ import type { Point } from './types.js';
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** One rendered pixel is the tolerance boundary for layout geometry comparisons. */
+/** Canonical one-pixel tolerance shared by routing geometry and final layout validation. */
 export const PIXEL_EPSILON = 1;
-/** @deprecated Use `PIXEL_EPSILON`; retained until validation migrates in the rendering layer. */
-export const EPS = PIXEL_EPSILON;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Segment representation for geometry processing

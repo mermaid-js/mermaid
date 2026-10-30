@@ -2,10 +2,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { log } from '../../../logger.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
-import { validateLayout } from '../layout-utils/validateLayout.js';
+import { validateLayout as validateSharedLayout } from '../layout-utils/validateLayout.js';
+import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
 import { ROOT_CONTAINER_ID } from './types.js';
+
+const validateLayout = (data: LayoutData) =>
+  validateSharedLayout(data, { requireEdgeLabelCenter: true });
 
 function leaf(
   id: string,
@@ -224,6 +228,49 @@ describe('grid router', () => {
         expect(overlap > 0 && separation < 24).toBe(false);
       }
     }
+  });
+
+  it('uses expanded label boundaries when separating unrelated routes', () => {
+    const data = baseLayout(
+      [
+        leaf('tl', 90, 54, { row: 1, column: 1 }),
+        leaf('tr', 90, 54, { row: 1, column: 3 }),
+        leaf('bl', 90, 54, { row: 3, column: 1 }),
+        leaf('br', 90, 54, { row: 3, column: 3 }),
+      ],
+      [edge('labelled', 'tl', 'tr', 'wide label'), edge('e1', 'tl', 'br'), edge('e2', 'tr', 'bl')]
+    );
+    prepareGridLayout(data);
+    const helper = data.nodes.find((node) => node.id === data.edges[0].labelNodeId)!;
+    helper.width = 120;
+    helper.height = 20;
+
+    runGridLayoutCore(data);
+
+    expect(
+      data.nodes.find((node) => node.id === 'tr')!.x! -
+        data.nodes.find((node) => node.id === 'tl')!.x! -
+        90
+    ).toBe(146);
+    const [first, second] = data.edges
+      .slice(1)
+      .map((item) => normalizePolyline(item.points ?? []).segments);
+    for (const a of first) {
+      for (const b of second) {
+        if (a.orientation !== b.orientation) {
+          continue;
+        }
+        const horizontal = a.orientation === 'H';
+        const overlap = horizontal
+          ? Math.min(Math.max(a.a.x, a.b.x), Math.max(b.a.x, b.b.x)) -
+            Math.max(Math.min(a.a.x, a.b.x), Math.min(b.a.x, b.b.x))
+          : Math.min(Math.max(a.a.y, a.b.y), Math.max(b.a.y, b.b.y)) -
+            Math.max(Math.min(a.a.y, a.b.y), Math.min(b.a.y, b.b.y));
+        const separation = horizontal ? Math.abs(a.a.y - b.a.y) : Math.abs(a.a.x - b.a.x);
+        expect(overlap > 0 && separation < 24).toBe(false);
+      }
+    }
+    expect(validateLayout(data).ok).toBe(true);
   });
 
   it('keeps routing deterministic when edge input order changes', () => {

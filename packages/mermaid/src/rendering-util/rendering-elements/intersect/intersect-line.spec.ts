@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import intersectEllipse from './intersect-ellipse.js';
 import intersectLine from './intersect-line.js';
 import intersectPolygon from './intersect-polygon.js';
+import intersectRect from './intersect-rect.js';
+import { withLineIntersectionOrigin } from './intersection-query.js';
 
 interface Point {
   x: number;
@@ -117,5 +120,52 @@ describe('intersectPolygon', () => {
 
     expect(result.x).toBeCloseTo(250, 9);
     expect(result.y).toBeCloseTo(200, 9);
+  });
+
+  it('intersects an offset terminal axis instead of pulling it toward the node centre', () => {
+    const node = { x: 100, y: 100, width: 80, height: 80 };
+    const points = [
+      { x: 0, y: 40 },
+      { x: 40, y: 0 },
+      { x: 80, y: 40 },
+      { x: 40, y: 80 },
+    ];
+
+    const result = intersectPolygon(
+      node,
+      points,
+      withLineIntersectionOrigin({ x: 80, y: 20 }, { x: 80, y: 181 })
+    );
+
+    expect(result.x).toBeCloseTo(80, 9);
+    expect(result.y).toBeCloseTo(80, 9);
+  });
+});
+
+describe('terminal-axis intersection queries', () => {
+  it('intersects a rectangle along an offset terminal axis', () => {
+    const node = { x: 100, y: 100, width: 80, height: 80 };
+
+    const result = intersectRect(
+      node,
+      withLineIntersectionOrigin({ x: 80, y: 20 }, { x: 80, y: 181 })
+    );
+
+    expect(result.x).toBeCloseTo(80, 9);
+    expect(result.y).toBeCloseTo(60, 9);
+  });
+
+  it('intersects an ellipse along an offset terminal axis', () => {
+    const node = { x: 100, y: 100 };
+
+    const result = intersectEllipse(
+      node,
+      40,
+      40,
+      withLineIntersectionOrigin({ x: 80, y: 20 }, { x: 80, y: 181 })
+    );
+
+    expect(result.x).toBeCloseTo(80, 9);
+    expect(result.y).toBeCloseTo(100 - Math.sqrt(1200), 9);
   });
 });

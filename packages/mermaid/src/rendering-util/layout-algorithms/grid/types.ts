@@ -1,9 +1,11 @@
 import type { LayoutData, Node } from '../../types.js';
 import type { Point } from '../../../types.js';
+import { DEFAULT_EDGE_CORNER_RADIUS } from '../../edgeCornerRadius.js';
 import type {
   GridRoutingFallbackReason,
   GridRoutingInstrumentation,
 } from './routerInstrumentation.js';
+import type { GridLabelRequirements } from './labelSpacing.js';
 
 // The root participates in the same container algorithms as groups but has no backing Node.
 export const ROOT_CONTAINER_ID = '__grid_root__';
@@ -160,6 +162,10 @@ export interface GridLayoutConfigNormalized {
   titleGap: number;
   horizontalAlign: GridHorizontalAlign;
   verticalAlign: GridVerticalAlign;
+  // Routing publishes these values on each edge so shared rendering and line hops use identical
+  // corner geometry without depending on grid internals.
+  curve: GridCurve;
+  edgeCornerRadius: number;
 }
 
 export interface GridResolvedPlacement {
@@ -248,6 +254,7 @@ export interface GridLayoutResult {
   containers: Map<GridContainerId, GridContainerLayoutMeta>;
   itemMeta: Map<string, GridItemLayoutMeta>;
   sourceOrder: Map<string, number>;
+  labelRequirements: GridLabelRequirements;
 }
 
 export interface GridError extends Error {
@@ -283,6 +290,8 @@ export const GRID_DEFAULTS = {
   titleGap: 8,
   horizontalAlign: 'center' as GridHorizontalAlign,
   verticalAlign: 'center' as GridVerticalAlign,
+  curve: 'rounded' as GridCurve,
+  edgeCornerRadius: DEFAULT_EDGE_CORNER_RADIUS,
 };
 
 export type GridLayoutData = LayoutData & {
@@ -297,6 +306,8 @@ export type GridLayoutData = LayoutData & {
       titleGap?: number;
       horizontalAlign?: GridHorizontalAlign;
       verticalAlign?: GridVerticalAlign;
+      curve?: GridCurve;
+      edgeCornerRadius?: number;
     };
   };
 };

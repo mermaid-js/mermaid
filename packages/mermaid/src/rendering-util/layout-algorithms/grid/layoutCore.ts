@@ -1,5 +1,7 @@
 import type { LayoutData, Node } from '../../types.js';
+import { positionGridEdgeLabels } from './edgeLabels.js';
 import { buildGridForest } from './groups.js';
+import { buildGridLabelRequirements, deriveGridContainerLabelGaps } from './labelSpacing.js';
 import {
   buildGridSourceOrder,
   readGridConfig,
@@ -64,7 +66,8 @@ function layoutContainer(
   containerId: GridContainerId,
   result: GridLayoutResult,
   containers: Map<GridContainerId, GridContainerLayoutMeta>,
-  itemMeta: Map<string, GridItemLayoutMeta>
+  itemMeta: Map<string, GridItemLayoutMeta>,
+  metrics?: GridRoutingInstrumentation
 ): void {
   const { forest, config, sourceOrder } = result;
   const group = containerId === ROOT_CONTAINER_ID ? undefined : forest.groupById.get(containerId);
@@ -108,10 +111,40 @@ function layoutContainer(
 
   const sortedRows = [...rows].sort((a, b) => a - b);
   const sortedColumns = [...columns].sort((a, b) => a - b);
+  const labelGaps = deriveGridContainerLabelGaps(
+    result.labelRequirements.byContainer.get(containerId) ?? [],
+    cells,
+    rowHeights,
+    columnWidths,
+    sortedRows,
+    sortedColumns,
+    config.rowGap,
+    config.columnGap,
+    metrics
+  );
+  const rowGapAfter = (row: number) => Math.max(config.rowGap, labelGaps.rowGapAfter.get(row) ?? 0);
+  const columnGapAfter = (column: number) =>
+    Math.max(config.columnGap, labelGaps.columnGapAfter.get(column) ?? 0);
+  if (metrics) {
+    for (const gap of labelGaps.rowGapAfter.values()) {
+      if (gap > config.rowGap) {
+        metrics.labelSpacingBoundariesExpanded++;
+        metrics.labelSpacingPixelsAdded += gap - config.rowGap;
+      }
+    }
+    for (const gap of labelGaps.columnGapAfter.values()) {
+      if (gap > config.columnGap) {
+        metrics.labelSpacingBoundariesExpanded++;
+        metrics.labelSpacingPixelsAdded += gap - config.columnGap;
+      }
+    }
+  }
 
   const contentWidth = sortedColumns.reduce(
     (total, column, index) =>
-      total + (columnWidths.get(column) ?? 0) + (index > 0 ? config.columnGap : 0),
+      total +
+      (columnWidths.get(column) ?? 0) +
+      (index < sortedColumns.length - 1 ? columnGapAfter(column) : 0),
     0
   );
   // A title sets the minimum group width. If it is wider than the content and its insets,
@@ -126,18 +159,20 @@ function layoutContainer(
 
   const columnOrigins = new Map<number, number>();
   let xCursor = contentLeft;
-  for (const column of sortedColumns) {
+  for (const [index, column] of sortedColumns.entries()) {
     columnOrigins.set(column, xCursor);
-    xCursor += (columnWidths.get(column) ?? 0) + config.columnGap;
+    xCursor +=
+      (columnWidths.get(column) ?? 0) +
+      (index < sortedColumns.length - 1 ? columnGapAfter(column) : 0);
   }
 
   const rowOrigins = new Map<number, number>();
   let yCursor = contentTop;
-  for (const row of sortedRows) {
+  for (const [index, row] of sortedRows.entries()) {
     rowOrigins.set(row, yCursor);
-    yCursor += (rowHeights.get(row) ?? 0) + config.rowGap;
+    yCursor += (rowHeights.get(row) ?? 0) + (index < sortedRows.length - 1 ? rowGapAfter(row) : 0);
   }
-  const gridHeight = sortedRows.length ? yCursor - config.rowGap - contentTop : 0;
+  const gridHeight = sortedRows.length ? yCursor - contentTop : 0;
 
   const outerLeftCorridor = group
     ? contentLeft - GROUP_ROUTING_CLEARANCE
@@ -407,6 +442,10 @@ function commitGridGeometry(source: LayoutData, target: LayoutData): void {
       continue;
     }
     targetEdge.points = sourceEdge.points?.map((point) => ({ ...point }));
+    targetEdge.curve = sourceEdge.curve;
+    targetEdge.cornerRadius = sourceEdge.cornerRadius;
+    targetEdge.portClipping = 'outline-orthogonal';
+    targetEdge.skipCornerFix = sourceEdge.curve === 'linear';
   }
 }
 
@@ -479,18 +518,22 @@ function runGridLayoutCoreInPlace(
     containers: new Map(),
     itemMeta: new Map(),
     sourceOrder,
+    labelRequirements: buildGridLabelRequirements(data, forest, options.metrics),
   };
 
   // Post-order is the key sizing invariant: a group becomes a measured child only after all of its
   // descendants have established the group's final width and height.
   for (const group of forest.postOrderGroups) {
-    layoutContainer(group.id, result, result.containers, result.itemMeta);
+    layoutContainer(group.id, result, result.containers, result.itemMeta, options.metrics);
   }
-  layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
+  layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta, options.metrics);
   materializeAbsoluteGeometry(result);
   // Routing consumes absolute node bounds and corridor coordinates, so it must run after the
   // children-first sizing and top-down translation phases have both completed.
   routeGridEdges(data, result, options.metrics, options.routing);
+  // Labels consume final routes and may transactionally reroute them, so they are the last layout
+  // phase before the working copy is committed to the render model.
+  positionGridEdgeLabels(data, undefined, options.metrics);
   return result;
 }
 
@@ -506,8 +549,8 @@ export function runGridLayoutCore(
 ): GridLayoutResult {
   const data = data4Layout as GridLayoutData;
 
-  // Geometry and routing are transactional: failed recovery must not leave partial coordinates
-  // on the shared render model.
+  // Routing and label placement are transactional: a failed recovery must not leave partial
+  // coordinates on the shared render model. Commit only the geometry from a complete run.
   const working = cloneGridLayoutData(data);
   const result = runGridLayoutCoreInPlace(working, options);
   commitGridGeometry(working, data);
