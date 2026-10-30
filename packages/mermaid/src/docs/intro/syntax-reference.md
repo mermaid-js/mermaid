@@ -6,6 +6,53 @@ Syntax, together with Deployment and Configuration constitute the whole of Merma
 
 Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid.live), it is also a great practice area.
 
+## Diagram availability by version
+
+An application that embeds Mermaid may use an older version than the [Live Editor](https://mermaid.live). Run the `info` diagram in that application to check its Mermaid version before using a newer diagram type. The versions below refer to published Mermaid releases, not the version of this documentation site.
+
+The **first available** column gives the earliest release verified for each type. For older types marked **9.2.0 or earlier**, the type was already present in 9.2.0, but this table does not claim that 9.2.0 was its first release. **Unprefixed since** records when a diagram that began with a `-beta` keyword also gained a keyword without that suffix; it does not mean the older keyword stopped working. A dash means no beta-to-unprefixed transition is recorded: the keyword either started without `-beta` or remains beta-only.
+
+| Diagram                                                       | Keyword                           | First available  | Unprefixed since |
+| ------------------------------------------------------------- | --------------------------------- | ---------------- | ---------------- |
+| [Agentflow](../syntax/agentflow.md)                           | `agentflow-beta`                  | 12.0.0           | —                |
+| [Architecture](../syntax/architecture.md)                     | `architecture-beta`               | 11.1.0           | —                |
+| [Block](../syntax/block.md)                                   | `block-beta`, `block`             | 10.8.0           | 11.10.0          |
+| [C4](../syntax/c4.md)                                         | `C4Context` and other C4 keywords | 9.2.0 or earlier | —                |
+| [Class](../syntax/classDiagram.md)                            | `classDiagram`                    | 9.2.0 or earlier | —                |
+| [Cynefin](../syntax/cynefin.md)                               | `cynefin-beta`                    | 11.16.0          | —                |
+| [Entity relationship](../syntax/entityRelationshipDiagram.md) | `erDiagram`                       | 9.2.0 or earlier | —                |
+| [Event modeling](../syntax/eventmodeling.md)                  | `eventmodeling`                   | 11.15.0          | —                |
+| [Flowchart](../syntax/flowchart.md)                           | `flowchart`, `graph`              | 9.2.0 or earlier | —                |
+| [Gantt](../syntax/gantt.md)                                   | `gantt`                           | 9.2.0 or earlier | —                |
+| [Git graph](../syntax/gitgraph.md)                            | `gitGraph`                        | 9.2.0 or earlier | —                |
+| [Ishikawa](../syntax/ishikawa.md)                             | `ishikawa-beta`, `ishikawa`       | 11.13.0          | 11.13.0          |
+| [Kanban](../syntax/kanban.md)                                 | `kanban`                          | 11.4.0           | —                |
+| [Mindmap](../syntax/mindmap.md)                               | `mindmap`                         | 9.4.0            | —                |
+| [Packet](../syntax/packet.md)                                 | `packet-beta`, `packet`           | 11.0.0           | 11.9.0           |
+| [Pie](../syntax/pie.md)                                       | `pie`                             | 9.2.0 or earlier | —                |
+| [Quadrant chart](../syntax/quadrantChart.md)                  | `quadrantChart`                   | 10.2.0           | —                |
+| [Radar](../syntax/radar.md)                                   | `radar-beta`                      | 11.6.0           | —                |
+| [Railroad](../syntax/railroad.md)                             | `railroad-beta` and variants      | 11.16.0          | —                |
+| [Requirement](../syntax/requirementDiagram.md)                | `requirementDiagram`              | 9.2.0 or earlier | —                |
+| [Sankey](../syntax/sankey.md)                                 | `sankey-beta`, `sankey`           | 10.3.0           | 11.10.0          |
+| [Sequence](../syntax/sequenceDiagram.md)                      | `sequenceDiagram`                 | 9.2.0 or earlier | —                |
+| [State](../syntax/stateDiagram.md)                            | `stateDiagram`, `stateDiagram-v2` | 9.2.0 or earlier | —                |
+| [Swimlane](../syntax/swimlanes.md)                            | `swimlane-beta`                   | 11.16.0          | —                |
+| [Timeline](../syntax/timeline.md)                             | `timeline`                        | 9.4.0            | —                |
+| [Tree view](../syntax/treeView.md)                            | `treeView-beta`                   | 11.14.0          | —                |
+| [Treemap](../syntax/treemap.md)                               | `treemap-beta`, `treemap`         | 11.8.0           | 11.8.0           |
+| [Use case](../syntax/usecase.md)                              | `usecase-beta`                    | 12.0.0           | —                |
+| [User journey](../syntax/userJourney.md)                      | `journey`                         | 9.2.0 or earlier | —                |
+| [Venn](../syntax/venn.md)                                     | `venn-beta`                       | 11.13.0          | —                |
+| [Wardley](../syntax/wardley.md)                               | `wardley-beta`                    | 11.14.0          | —                |
+| [XY chart](../syntax/xyChart.md)                              | `xychart-beta`, `xychart`         | 10.6.0           | 11.10.0          |
+
+[ZenUML](../syntax/zenuml.md) is an external diagram plugin, so its availability depends on whether the embedding application registers `@mermaid-js/mermaid-zenuml`; a Mermaid core version alone does not establish support.
+
+The `info` utility mentioned above reports Mermaid's version rather than drawing a diagram, so it is not listed as a diagram type here.
+
+The railroad variants are `railroad-ebnf-beta`, `railroad-abnf-beta`, and `railroad-peg-beta`.
+
 ## Syntax Structure
 
 One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate. The only exception to this a [Frontmatter](#frontmatter-for-diagram-code) configuration.
