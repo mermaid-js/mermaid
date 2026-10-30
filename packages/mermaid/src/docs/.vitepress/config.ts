@@ -45,7 +45,9 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:image', content: `${siteUrl}mermaid-logo-horizontal.svg` }],
+    ['meta', { property: 'og:image', content: `${siteUrl}mermaid-logo-horizontal.png` }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
   ],
   themeConfig: {
     logo: getHeaderLogo(getDocsHostname()),
