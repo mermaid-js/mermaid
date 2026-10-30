@@ -1942,6 +1942,26 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
   return changed;
 }
 
+/**
+ * Move each edge's main label onto the run its route was just moved along.
+ *
+ * The label's `x`/`y` was set from ELK's placement on the pre-move route;
+ * projecting it onto the run it was actually riding on keeps it centred on the
+ * line instead of beside it (#8292).
+ */
+function carryLabelsAlong(moved: { edge: Edge; runs: StraightenedRun[] }[]): void {
+  for (const { edge, runs } of moved) {
+    if (edge.x == null || edge.y == null) {
+      continue;
+    }
+    const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
+    if (projected) {
+      edge.x = projected.x;
+      edge.y = projected.y;
+    }
+  }
+}
+
 function applyElkEdgeLayout(
   data4Layout: LayoutData,
   graph: ElkLayoutResult,
@@ -2114,21 +2134,7 @@ function applyElkEdgeLayout(
   });
 
   if (straightenEdges) {
-    const straightened = straightenEdgeTerminals(data4Layout.edges);
-    for (const { edge, runs } of straightened) {
-      // The main label's `x`/`y` was set from ELK's placement on the
-      // pre-straightening route above; project it onto the run it was
-      // actually riding on so it stays centred on the line instead of beside
-      // it (#8292).
-      if (edge.x == null || edge.y == null) {
-        continue;
-      }
-      const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
-      if (projected) {
-        edge.x = projected.x;
-        edge.y = projected.y;
-      }
-    }
+    carryLabelsAlong(straightenEdgeTerminals(data4Layout.edges));
   }
   for (const [layoutEdge, ports] of terminalLabelPorts) {
     followMovedEndpoints(layoutEdge, ports);
