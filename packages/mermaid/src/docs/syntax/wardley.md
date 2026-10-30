@@ -1,3 +1,7 @@
+---
+description: 'Map components by visibility and evolution, connect value-chain dependencies, and show movement and annotations.'
+---
+
 # Wardley Maps (v11.14.0+)
 
 ```warning

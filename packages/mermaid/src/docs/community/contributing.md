@@ -1,3 +1,7 @@
+---
+description: 'The Mermaid contributing guide: set up the development environment, run tests, follow code conventions, and submit pull requests and documentation.'
+---
+
 # Mermaid Contributing Guide
 
 You decided to take part in the development? Welcome!

@@ -1,3 +1,7 @@
+---
+description: 'Show relationships between sets with overlapping circles, labels, sizes, text nodes, and styling.'
+---
+
 # Venn diagrams (v11.12.3+)
 
 ```warning

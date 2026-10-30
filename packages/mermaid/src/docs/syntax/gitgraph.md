@@ -1,3 +1,7 @@
+---
+description: 'Visualize Git branching strategies with commits, branches, checkouts, merges, cherry-picks, and tags.'
+---
+
 # GitGraph Diagrams
 
 > A Git Graph is a pictorial representation of git commits and git actions(commands) on various branches.

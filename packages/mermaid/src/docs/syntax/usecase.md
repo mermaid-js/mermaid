@@ -1,3 +1,7 @@
+---
+description: 'Describe system behavior with UML actors, use cases, system boundaries, and include/extend relationships.'
+---
+
 # Use case diagrams (12.0.0+)
 
 ```warning

@@ -1,3 +1,7 @@
+---
+description: 'Map the causes of a problem as a fishbone (cause-and-effect) diagram, with cause categories branching off a central spine.'
+---
+
 # Ishikawa diagram (v11.12.3+)
 
 Ishikawa diagrams are used to represent causes of a specific event (or a problem).

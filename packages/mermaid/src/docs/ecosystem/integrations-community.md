@@ -1,3 +1,7 @@
+---
+description: 'Tools, editors, wikis, documentation generators, and other applications that support Mermaid diagrams, both official and community-built.'
+---
+
 # Integrations
 
 ## Official integration

@@ -1,4 +1,5 @@
 ---
+description: 'Visualize hierarchical data as nested rectangles sized by value, with sections, leaf nodes, and styling.'
 title: Treemap Diagram Syntax
 outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---

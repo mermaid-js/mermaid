@@ -1,4 +1,5 @@
 ---
+description: 'Divide a process into lanes by actor, team, or system to show who owns each step and where work is handed off.'
 title: Swimlanes Diagram Syntax
 outline: 'deep'
 ---

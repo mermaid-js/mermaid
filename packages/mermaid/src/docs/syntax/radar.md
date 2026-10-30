@@ -1,3 +1,7 @@
+---
+description: 'Compare data series across several axes in a circular radar (spider) chart, with graticule, scale, and legend options.'
+---
+
 # Radar Diagram (v11.6.0+)
 
 ```warning

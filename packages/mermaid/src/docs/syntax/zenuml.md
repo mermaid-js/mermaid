@@ -1,3 +1,7 @@
+---
+description: 'Write sequence diagrams in ZenUML syntax, with participants, sync and async messages, nested calls, loops, conditionals, and try/catch.'
+---
+
 # ZenUML
 
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.

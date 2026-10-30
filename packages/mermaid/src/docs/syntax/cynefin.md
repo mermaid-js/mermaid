@@ -1,3 +1,7 @@
+---
+description: 'Guide decision-making by placing items in the clear, complicated, complex, chaotic, and confused domains of the Cynefin framework.'
+---
+
 # Cynefin Framework Diagram (v11.16.0+)
 
 ```warning

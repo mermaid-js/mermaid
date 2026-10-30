@@ -1,3 +1,7 @@
+---
+description: 'Illustrate cloud and CI/CD deployments with services, groups, junctions, and icons connected by edges.'
+---
+
 # Architecture Diagrams Documentation (v11.1.0+)
 
 ```warning

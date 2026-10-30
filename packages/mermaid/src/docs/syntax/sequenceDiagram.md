@@ -1,3 +1,7 @@
+---
+description: 'Model interactions over time with participants, messages, activations, notes, loops, alt/opt/par blocks, and sequence numbering.'
+---
+
 # Sequence diagrams
 
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.

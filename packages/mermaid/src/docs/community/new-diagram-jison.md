@@ -1,3 +1,7 @@
+---
+description: 'Legacy guide to adding a Mermaid diagram with a JISON grammar. JISON is deprecated; new diagrams must use Langium.'
+---
+
 # Adding a New Diagram/Chart (Deprecated) 📊
 
 ```warning
