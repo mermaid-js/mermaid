@@ -94,5 +94,29 @@ describe('diagram-orchestration', () => {
       flowchart: 1 "pie" pie: 2 "pie"`)
       ).toBe('pie');
     });
+
+    describe.each(['C4Context', 'C4Container', 'C4Component', 'C4Dynamic', 'C4Deployment'])(
+      'C4 detection for %s',
+      (keyword) => {
+        it.each(['', ' ', '\t', '\n', ' \t\r\n  '])(
+          'detects a C4 declaration after leading whitespace %j',
+          (whitespace) => {
+            expect(detectType(`${whitespace}${keyword}\n`)).toBe('c4');
+          }
+        );
+
+        it('does not detect C4 from a flowchart node label', () => {
+          expect(detectType(`flowchart LR\n  a[Web app] --> b[${keyword} view]`)).toBe(
+            'flowchart-v2'
+          );
+        });
+
+        it('does not detect C4 from a sequence diagram message', () => {
+          expect(detectType(`sequenceDiagram\n  A->>B: draw the ${keyword} diagram`)).toBe(
+            'sequence'
+          );
+        });
+      }
+    );
   });
 });
