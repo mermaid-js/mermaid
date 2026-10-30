@@ -95,14 +95,18 @@ function generateCanonicalUrl(relativePath: string, config: CanonicalUrlConfig):
 }
 
 /**
+ * The canonical URL of a page, as added to its head by {@link addCanonicalUrls}
+ */
+export function getPageCanonicalUrl(relativePath: string): string {
+  return generateCanonicalUrl(relativePath, canonicalConfig);
+}
+
+/**
  * VitePress transformPageData hook to add canonical URLs
  */
 export function addCanonicalUrls(pageData: PageData): void {
-  const config = canonicalConfig;
-
   // Generate canonical URL
-  const canonicalUrl = generateCanonicalUrl(pageData.relativePath, config);
-  transformPath(pageData.relativePath, config);
+  const canonicalUrl = getPageCanonicalUrl(pageData.relativePath);
   addCanonicalToHead(pageData, canonicalUrl);
 }
 

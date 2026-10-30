@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' with { type: 'json' };
@@ -5,6 +7,7 @@ import { addCanonicalUrls } from './canonical-urls.js';
 import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
 import MermaidExample from './mermaid-markdown-all.js';
+import { addPageMetadata } from './pageMetadata.js';
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -28,22 +31,18 @@ export default defineConfig({
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
-  transformPageData: (pageData) => {
+  transformPageData: (pageData, { siteConfig }) => {
     addCanonicalUrls(pageData);
+    addPageMetadata(
+      pageData,
+      readFileSync(join(siteConfig.srcDir, pageData.relativePath), 'utf8'),
+      siteConfig.site.description
+    );
     applyHomePageHeroCopy(pageData, docsHostname());
   },
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-    ['meta', { property: 'og:title', content: 'Mermaid' }],
-    [
-      'meta',
-      {
-        property: 'og:description',
-        content: 'Create diagrams and visualizations using text and code.',
-      },
-    ],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:url', content: 'https://mermaid.js.org' }],
     [
       'meta',
       { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
