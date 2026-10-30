@@ -56,3 +56,47 @@ graph TD;
   A-->B;
   B-->C;
 ```
+
+## Spacing (v\<MERMAID_RELEASE_VERSION>+)
+
+`nodeSpacing` is the gap between two nodes of one layer and `rankSpacing` the gap between two layers. The `elk` layout reads them for flowchart, state, class, requirement and agentflow diagrams.
+
+ELK spaces nodes by its own measure, so the two options are read against their default of `50`: the default keeps ELK's gaps, `25` halves them and `100` doubles them. This holds at the top level and inside subgraphs, where the gaps are wider to begin with.
+
+The default:
+
+```mermaid-example
+---
+config:
+  layout: elk
+---
+flowchart LR
+  A[Web shop] --> M[Order queue]
+  B[Mobile app] --> M
+  C[Phone desk] --> M
+  M --> X[Fulfil]
+```
+
+Half the gaps:
+
+```mermaid-example
+---
+config:
+  layout: elk
+  flowchart:
+    nodeSpacing: 25
+    rankSpacing: 25
+---
+flowchart LR
+  A[Web shop] --> M[Order queue]
+  B[Mobile app] --> M
+  C[Phone desk] --> M
+  M --> X[Fulfil]
+```
+
+Where the options do not apply:
+
+- A value that is not a positive number is ignored, and a value below `10` is read as `10`: below that ELK has no room left to route an edge into a node and the frames of neighbouring subgraphs overlap.
+- A subgraph that selects its own algorithm with `@{ algorithm: ... }` keeps that algorithm's spacing. When an edge crosses its border it falls back to the layered layout and then follows these options.
+- ER diagrams do not read them under `elk`, because their own defaults (`140` and `80`) are not ELK's.
+- The `dagre` layout reads the values as pixels, as before.
