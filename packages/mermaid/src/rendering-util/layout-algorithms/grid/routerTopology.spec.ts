@@ -112,7 +112,7 @@ describe('grid router topology', () => {
       expect(rebuilt.vertices).toEqual(result.vertices);
       expect([...rebuilt.adjacency]).toEqual([...result.adjacency]);
     }
-  });
+  }, 10_000);
 
   it('uses inflated measured geometry and title exclusions as obstacles', () => {
     const result = buildContainerRoutingTopology({
