@@ -5,6 +5,8 @@ import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 import { SequenceDB } from './sequenceDb.js';
 
+const renderedElements = vi.hoisted(() => []);
+
 beforeAll(async () => {
   // Is required to load the sequence diagram
   await Diagram.fromText('sequenceDiagram');
@@ -18,16 +20,23 @@ beforeAll(async () => {
  *   textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
  */
 vi.mock('d3', () => {
-  const NewD3 = function () {
+  const NewD3 = function (tag) {
+    const attributes = {};
+    if (tag) {
+      renderedElements.push({ tag, attributes });
+    }
     function returnThis() {
       return this;
     }
     return {
-      append: function () {
-        return NewD3();
+      append: function (tag) {
+        return NewD3(tag);
       },
       lower: returnThis,
-      attr: returnThis,
+      attr: function (name, value) {
+        attributes[name] = value;
+        return this;
+      },
       style: returnThis,
       text: returnThis,
       // [0][0] (below) is required by drawText() in packages/mermaid/src/diagrams/sequence/svgDraw.js
@@ -1953,6 +1962,172 @@ describe('when rendering a sequenceDiagram APA', function () {
     };
     setSiteConfig({ logLevel: 5, sequence: conf });
   });
+  const messageEndpoints = () =>
+    renderedElements
+      .filter(({ attributes }) => attributes.class?.startsWith('messageLine'))
+      .map(({ tag, attributes }) => {
+        if (tag === 'line') {
+          return {
+            start: [attributes.x1, attributes.y1],
+            end: [attributes.x2, attributes.y2],
+          };
+        }
+        let start;
+        let x;
+        let y;
+        for (const command of attributes.d.match(/[CHMV][^CHMV]*/g)) {
+          const values = command
+            .slice(1)
+            .match(/-?\d+(?:\.\d+)?/g)
+            .map(Number);
+          if (command[0] === 'H') {
+            x = values[0];
+          } else if (command[0] === 'V') {
+            y = values[0];
+          } else {
+            [x, y] = values.slice(-2);
+          }
+          start ??= [x, y];
+        }
+        return { start, end: [x, y] };
+      });
+
+  const activationRectangles = () =>
+    renderedElements
+      .filter(({ tag, attributes }) => tag === 'rect' && /^activation\d$/.test(attributes.class))
+      .map(({ attributes: { x, y, width, height } }) => ({ x, y, width, height }));
+
+  it.each([false, true])(
+    'connects nested self-calls to their activation, rightAngles=%s',
+    async (rightAngles) => {
+      setSiteConfig({ look: 'classic', sequence: { ...conf, rightAngles, activationWidth: 10 } });
+      renderedElements.length = 0;
+      const str = `sequenceDiagram
+    Alice->>+Bob: request
+    Bob->>+Bob: A
+    Bob-->>-Bob: return A
+    Bob->>+Bob: B
+    Bob-->>-Bob: return B
+    Bob-->>-Alice: response`;
+      const diagram = await Diagram.fromText(str);
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+      const endpoints = messageEndpoints();
+      const rectangles = activationRectangles();
+      expect(endpoints).toHaveLength(6);
+      expect(rectangles).toHaveLength(3);
+      const [a, b, parent] = rectangles;
+      for (const [entry, returning, rect] of [
+        [endpoints[1], endpoints[2], a],
+        [endpoints[3], endpoints[4], b],
+      ]) {
+        expect(entry.end).toEqual([rect.x + rect.width, rect.y]);
+        expect(returning.start).toEqual([rect.x + rect.width, rect.y + rect.height]);
+        expect(returning.end[0]).toBe(parent.x + parent.width);
+        expect(returning.end[1]).toBeGreaterThan(parent.y);
+        expect(returning.end[1]).toBeLessThan(parent.y + parent.height);
+      }
+      expect(a.height).toBeGreaterThan(0);
+      expect(a.height).toBe(b.height);
+      expect(parent.y + parent.height).toBe(endpoints[5].start[1]);
+
+      renderedElements.length = 0;
+      const control = str
+        .replaceAll('Bob->>+Bob', 'Bob->>Bob')
+        .replaceAll('Bob-->>-Bob', 'Bob-->>Bob');
+      const controlDiagram = await Diagram.fromText(control);
+      await controlDiagram.renderer.draw(control, 'tst', '1.2.3', controlDiagram);
+      const controlEndpoints = messageEndpoints();
+      expect(endpoints.map(({ start, end }) => [start[1], end[1]])).toEqual(
+        controlEndpoints.map(({ start, end }) => [start[1], end[1]])
+      );
+      expect([endpoints[0], endpoints[5]]).toEqual([controlEndpoints[0], controlEndpoints[5]]);
+      expect(parent).toEqual(activationRectangles()[0]);
+    }
+  );
+
+  it.each([false, true])(
+    'connects self-calls across activation depths, rightAngles=%s',
+    async (rightAngles) => {
+      setSiteConfig({ look: 'classic', sequence: { ...conf, rightAngles, activationWidth: 10 } });
+      renderedElements.length = 0;
+      const str = `sequenceDiagram
+    Bob->>+Bob: first activation
+    Bob->>Bob: same activation
+    Bob->>+Bob: nested activation
+    Bob->>+Bob: third activation
+    Bob-->>-Bob: return to second
+    Bob-->>-Bob: return to first
+    Bob-->>-Bob: return to lifeline
+    Bob->>Bob: no activation`;
+      const diagram = await Diagram.fromText(str);
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+      const endpoints = messageEndpoints();
+      const rectangles = activationRectangles();
+      expect(endpoints).toHaveLength(8);
+      expect(rectangles).toHaveLength(3);
+      const [third, second, first] = rectangles;
+      for (const [entry, returning, rect] of [
+        [endpoints[0], endpoints[6], first],
+        [endpoints[2], endpoints[5], second],
+        [endpoints[3], endpoints[4], third],
+      ]) {
+        expect(entry.end).toEqual([rect.x + rect.width, rect.y]);
+        expect(returning.start).toEqual([rect.x + rect.width, rect.y + rect.height]);
+      }
+      for (const [returning, parent] of [
+        [endpoints[4], second],
+        [endpoints[5], first],
+      ]) {
+        expect(returning.end[0]).toBe(parent.x + parent.width);
+        expect(returning.end[1]).toBeGreaterThan(parent.y);
+        expect(returning.end[1]).toBeLessThan(parent.y + parent.height);
+      }
+      expect(endpoints[1].start[0]).toBe(first.x + first.width);
+      expect(endpoints[1].end[0]).toBe(first.x + first.width);
+      expect(endpoints[1].start[1]).toBeGreaterThan(first.y);
+      expect(endpoints[1].end[1]).toBeLessThan(first.y + first.height);
+      const bob = diagram.db.getActors().get('Bob');
+      const lifeline = bob.x + bob.width / 2 + 1;
+      expect(endpoints[0].start[0]).toBe(lifeline);
+      expect(endpoints[6].end[0]).toBe(lifeline);
+      expect(endpoints[7].start[0]).toBe(lifeline);
+      expect(endpoints[7].end[0]).toBe(lifeline);
+
+      renderedElements.length = 0;
+      const control = str.replaceAll('->>+Bob', '->>Bob').replaceAll('-->>-Bob', '-->>Bob');
+      const controlDiagram = await Diagram.fromText(control);
+      await controlDiagram.renderer.draw(control, 'tst', '1.2.3', controlDiagram);
+      const controlEndpoints = messageEndpoints();
+      expect(endpoints.map(({ start, end }) => [start[1], end[1]])).toEqual(
+        controlEndpoints.map(({ start, end }) => [start[1], end[1]])
+      );
+      expect(endpoints[7]).toEqual(controlEndpoints[7]);
+    }
+  );
+
+  it.each([false, true])(
+    'keeps a self-call activation attached across inter-actor messages, rightAngles=%s',
+    async (rightAngles) => {
+      setSiteConfig({ look: 'classic', sequence: { ...conf, rightAngles, activationWidth: 10 } });
+      renderedElements.length = 0;
+      const str = `sequenceDiagram
+    Alice->>+Bob: request
+    Bob->>+Bob: nested
+    Bob->>Alice: progress
+    Bob-->>-Bob: return
+    Bob-->>-Alice: response`;
+      const diagram = await Diagram.fromText(str);
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+      const endpoints = messageEndpoints();
+      const [child] = activationRectangles();
+      expect([child.x + child.width, child.y]).toEqual(endpoints[1].end);
+      expect([child.x + child.width, child.y + child.height]).toEqual(endpoints[3].start);
+    }
+  );
+
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
     it(`
 it should handle one actor, when textPlacement is ${textPlacement}`, async () => {

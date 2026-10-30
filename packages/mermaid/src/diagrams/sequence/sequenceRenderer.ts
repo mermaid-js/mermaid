@@ -146,13 +146,13 @@ export const bounds = {
 
     this.updateBounds(_startx, _starty, _stopx, _stopy);
   },
-  newActivation: function (message, diagram, actors) {
+  newActivation: function (message, diagram, actors, starty = this.verticalPos + 2) {
     const actorRect = actors.get(message.from);
     const stackedSize = actorActivations(message.from).length || 0;
     const x = actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
     this.activations.push({
       startx: x,
-      starty: this.verticalPos + 2,
+      starty,
       stopx: x + conf.activationWidth,
       stopy: undefined,
       actor: message.from,
@@ -497,6 +497,7 @@ export const drawMessage = async function (
     const isReverse = isReverseArrowType(msg, diagObj);
     const isBidirectional = isBidirectionalArrowType(msg, diagObj);
     const lineStartX = startx + (isAutoNumberOn && (isReverse || isBidirectional) ? 10 : 0);
+    const lineStopX = msgModel.selfStopx ?? startx;
 
     if (conf.rightAngles) {
       line = diagram
@@ -505,7 +506,7 @@ export const drawMessage = async function (
           'd',
           `M  ${lineStartX},${lineStartY} H ${
             startx + common.getMax(conf.width / 2, textWidth / 2)
-          } V ${lineStartY + 25} H ${startx}`
+          } V ${lineStartY + 25} H ${lineStopX}`
         );
     } else {
       line = diagram
@@ -521,11 +522,11 @@ export const drawMessage = async function (
             ',' +
             (lineStartY - 10) +
             ' ' +
-            (startx + 60) +
+            (lineStopX + 60) +
             ',' +
             (lineStartY + 30) +
             ' ' +
-            startx +
+            lineStopX +
             ',' +
             (lineStartY + 20)
         );
@@ -1120,7 +1121,7 @@ export const draw = async function (_text: string, id: string, _version: string,
    */
   function activeEnd(msg: any, verticalPos: number) {
     const activationData = bounds.endActivation(msg);
-    if (activationData.starty + 18 > verticalPos) {
+    if (msg.activationY === undefined && activationData.starty + 18 > verticalPos) {
       activationData.starty = verticalPos - 6;
       verticalPos += 12;
     }
@@ -1153,7 +1154,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         await drawNote(diagram, noteModel, msg.id);
         break;
       case diagObj.db.LINETYPE.ACTIVE_START:
-        bounds.newActivation(msg, diagram, actors);
+        bounds.newActivation(msg, diagram, actors, msg.activationY);
         break;
       case diagObj.db.LINETYPE.CENTRAL_CONNECTION:
         bounds.newActivation(msg, diagram, actors);
@@ -1162,7 +1163,7 @@ export const draw = async function (_text: string, id: string, _version: string,
         bounds.newActivation(msg, diagram, actors);
         break;
       case diagObj.db.LINETYPE.ACTIVE_END:
-        activeEnd(msg, bounds.getVerticalPos());
+        activeEnd(msg, msg.activationY ?? bounds.getVerticalPos());
         break;
       case diagObj.db.LINETYPE.LOOP_START:
         adjustLoopHeightForWrap(
@@ -1324,6 +1325,13 @@ export const draw = async function (_text: string, id: string, _version: string,
           msgModel.from = msg.from;
           msgModel.to = msg.to;
           const lineStartY = await boundMessage(diagram, msgModel);
+          if (msgModel.selfStopx !== undefined) {
+            const nextMessage = messages[index + 1];
+            nextMessage.activationY =
+              nextMessage.type === diagObj.db.LINETYPE.ACTIVE_START
+                ? lineStartY + (conf.rightAngles ? 25 : 20)
+                : lineStartY;
+          }
           adjustCreatedDestroyedData(
             msg,
             msgModel,
@@ -2043,7 +2051,7 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
   const stack = [];
   let current, noteModel, msgModel;
 
-  for (const msg of messages) {
+  for (const [index, msg] of messages.entries()) {
     switch (msg.type) {
       case diagObj.db.LINETYPE.LOOP_START:
       case diagObj.db.LINETYPE.ALT_START:
@@ -2116,6 +2124,20 @@ const calculateLoopBounds = async function (messages, actors, _maxWidthPerActor,
       });
     } else {
       msgModel = buildMessageModel(msg, actors, diagObj);
+      const nextMessage = messages[index + 1];
+      if (msg.from && msg.from === msg.to && nextMessage?.from === msg.from) {
+        const activations = actorActivations(msg.from);
+        const actor = actors.get(msg.from);
+        const lifeline = actor.x + actor.width / 2;
+        if (nextMessage.type === diagObj.db.LINETYPE.ACTIVE_START) {
+          msgModel.selfStopx = Math.max(
+            lifeline + 1,
+            lifeline + ((activations.length + 1) * conf.activationWidth) / 2
+          );
+        } else if (nextMessage.type === diagObj.db.LINETYPE.ACTIVE_END) {
+          msgModel.selfStopx = activations.at(-2)?.stopx ?? lifeline + 1;
+        }
+      }
       msg.msgModel = msgModel;
       if (msgModel.startx && msgModel.stopx && stack.length > 0) {
         stack.forEach((stk) => {
