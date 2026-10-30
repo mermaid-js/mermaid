@@ -1,0 +1,16 @@
+---
+config:
+  layout: elk
+  flowchart:
+    nodeSpacing: 100
+    rankSpacing: 100
+---
+%% Under ELK, nodeSpacing and rankSpacing scale the gaps against their default of 50, at the top level and inside the subgraph (issue #7930).
+flowchart LR
+  subgraph intake [Intake]
+    A[Web shop] --> M[Order queue]
+    B[Mobile app] --> M
+    C[Phone desk] --> M
+  end
+  M -->|accepted| X[Fulfil]
+  M -->|rejected| Y[Audit log]
