@@ -38,6 +38,38 @@ export const MockD3 = (name, parent) => {
 };
 
 describe('svgDraw', function () {
+  describe('drawPopup', function () {
+    it('renders menu entries without a destination as text, while keeping real links', function () {
+      const svg = MockD3('svg');
+      svgDraw.drawPopup(
+        svg,
+        {
+          links: {
+            'IP address': '',
+            'Port number': '#',
+            'Escaped port': 'ﬂ°°35¶ß',
+            'Encoded port': '%23',
+            Documentation: 'https://example.com/docs',
+          },
+          actorCnt: 1,
+          rectData: { x: 0, width: 100, height: 40 },
+        },
+        100,
+        { textPlacement: 'old' },
+        false
+      );
+
+      const entries = svg.__children[0].__children.slice(1);
+      expect(entries.map((entry) => entry.__name)).toEqual(['g', 'g', 'g', 'g', 'a']);
+      expect(entries[0].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
+      expect(entries[1].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
+      expect(entries[2].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
+      expect(entries[3].attr).not.toHaveBeenCalledWith('xlink:href', expect.anything());
+      expect(entries[4].attr).toHaveBeenCalledWith('xlink:href', 'https://example.com/docs');
+      expect(entries[4].attr).toHaveBeenCalledWith('target', '_blank');
+    });
+  });
+
   describe('drawRect', function () {
     it('should read config at render time for each rect', function () {
       vi.mocked(configApi.getConfig)
