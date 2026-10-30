@@ -8,7 +8,8 @@ export class LinePlot {
     private xAxis: Axis,
     private yAxis: Axis,
     private orientation: XYChartConfig['chartOrientation'],
-    private plotIndex: number
+    private plotIndex: number,
+    private labelColor: string
   ) {}
 
   getDrawableElement(): DrawableElem[] {
@@ -61,7 +62,7 @@ export class LinePlot {
             x: py + labelOffset,
             y: px,
             text: label,
-            fill: this.plotData.strokeFill,
+            fill: this.labelColor,
             verticalPos: 'middle',
             horizontalPos: 'left',
             fontSize,
@@ -72,7 +73,7 @@ export class LinePlot {
             x: px,
             y: py - labelOffset,
             text: label,
-            fill: this.plotData.strokeFill,
+            fill: this.labelColor,
             verticalPos: 'middle',
             horizontalPos: 'center',
             fontSize,
