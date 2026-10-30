@@ -10,6 +10,12 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
+import {
+  changesSpacing,
+  resolveSpacingScales,
+  UNCHANGED_SPACING,
+  type SpacingScales,
+} from './spacing.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
@@ -180,6 +186,11 @@ const ARROW_MAP: Record<string, [string, string]> = {
 const PORTS_SURROUNDING_MARGIN = 12;
 /** The margin spelled as an ELK margin, because `spacing.portsSurrounding` takes one. */
 const PORTS_SURROUNDING = `[top=${PORTS_SURROUNDING_MARGIN},left=${PORTS_SURROUNDING_MARGIN},bottom=${PORTS_SURROUNDING_MARGIN},right=${PORTS_SURROUNDING_MARGIN}]`;
+/**
+ * `spacing.baseValue` of the root graph. ELK derives its gap between two nodes, and between two
+ * layers, from it: 40 px each.
+ */
+const ROOT_SPACING_BASE_VALUE = 40;
 /** Padding between a subgraph frame and its children. ELK's own default is 12. */
 const SUBGRAPH_PADDING = 24;
 /**
@@ -218,6 +229,8 @@ const DEFAULT_SUBGRAPH_SPACING_BASE_VALUE = 24;
  * carrying two values for it and no say in which one won.
  */
 const DEFAULT_SUBGRAPH_NODE_SPACING = 50;
+/** Straight run an edge gets before the node it enters, inside a subgraph. */
+const SUBGRAPH_EDGE_NODE_SPACING = 30;
 /** Inner padding reserved around a container that runs its own algorithm. */
 const CONTAINER_PADDING = 15;
 /** Same, for `elk.rectpacking`, which packs tighter. */
@@ -265,16 +278,27 @@ const CONTAINER_ALGORITHM_OVERRIDES = [
  * Undo the algorithm-scoped options on a container, restoring the values a
  * plain subgraph would have had.
  */
-export function clearContainerAlgorithmOptions(layoutOptions: Record<string, unknown>): void {
+export function clearContainerAlgorithmOptions(
+  layoutOptions: Record<string, unknown>,
+  spacing: SpacingScales = UNCHANGED_SPACING
+): void {
   for (const key of CONTAINER_ALGORITHM_OVERRIDES) {
     delete layoutOptions[key];
   }
   // `spacing.baseValue` and `spacing.nodeNode` are base options that the
-  // rectpacking overrides stomp on, so restore the defaults rather than leaving
-  // them unset. Missing the second one would silently hand the container back
+  // rectpacking overrides stomp on, so restore them rather than leaving them
+  // unset. Missing the second one would silently hand the container back
   // ELK's own node spacing instead of ours.
-  layoutOptions['spacing.baseValue'] = DEFAULT_SUBGRAPH_SPACING_BASE_VALUE;
-  layoutOptions['spacing.nodeNode'] = DEFAULT_SUBGRAPH_NODE_SPACING;
+  Object.assign(layoutOptions, subgraphSpacingOptions(spacing));
+}
+
+/** The spacing of a plain subgraph: its own defaults, scaled by what the diagram asked for. */
+function subgraphSpacingOptions(spacing: SpacingScales): Record<string, number> {
+  return {
+    'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
+    'spacing.nodeNode': DEFAULT_SUBGRAPH_NODE_SPACING * spacing.node,
+    'elk.layered.spacing.edgeNodeBetweenLayers': SUBGRAPH_EDGE_NODE_SPACING * spacing.rank,
+  };
 }
 
 /**
@@ -377,7 +401,8 @@ export function buildSubgraphLayoutOptions(
   },
   elkConfig: ElkSubgraphConfig | undefined,
   algorithm: string | undefined,
-  log?: ElkLayoutContext['log']
+  log?: ElkLayoutContext['log'],
+  spacing: SpacingScales = UNCHANGED_SPACING
 ): Record<string, unknown> {
   // Every group gets its painted title width as a floor via
   // `groupTitleSizeOptions` below. Containers that run their own algorithm
@@ -416,7 +441,7 @@ export function buildSubgraphLayoutOptions(
     // `right-angles-not-curves` starts tripping `edge-parallel-segment-too-close`
     // because this spacing also separates edges running alongside each other in
     // the layer gap. 30 is the lowest value that keeps the corpus clean.
-    'elk.layered.spacing.edgeNodeBetweenLayers': 30,
+    'elk.layered.spacing.edgeNodeBetweenLayers': SUBGRAPH_EDGE_NODE_SPACING,
     // Separation between edges sharing a lane. Also raised off the base value,
     // so that lowering the base does not leave parallel edges touching.
     'elk.spacing.edgeEdge': 20,
@@ -492,6 +517,10 @@ export function buildSubgraphLayoutOptions(
     layoutOptions['elk.algorithm'] = algorithm;
     layoutOptions['elk.direction'] = dir2ElkDirection(node.dir);
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
+  }
+
+  if (!algo && changesSpacing(spacing)) {
+    Object.assign(layoutOptions, subgraphSpacingOptions(spacing));
   }
 
   // Container-scoped experiments. Spacing, padding and label placement only
@@ -721,7 +750,13 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
-  configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
+  configureCrossHierarchyEdges(
+    elkGraph,
+    nodeDb,
+    parentLookupDb,
+    elkContext.log,
+    resolveSpacingScales(data4Layout)
+  );
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
@@ -945,7 +980,7 @@ function createRootElkGraph(
         data4Layout.config.elk?.nodePlacementAlignment ?? preset.alignment,
       'elk.layered.mergeEdges': data4Layout.config.elk?.mergeEdges,
       'elk.direction': 'DOWN',
-      'spacing.baseValue': 40,
+      'spacing.baseValue': ROOT_SPACING_BASE_VALUE,
 
       'elk.layered.crossingMinimization.forceNodeModelOrder':
         data4Layout.config.elk?.forceNodeModelOrder,
@@ -986,6 +1021,16 @@ function createRootElkGraph(
     children: [],
     edges: [],
   };
+
+  const spacing = resolveSpacingScales(data4Layout);
+  if (changesSpacing(spacing)) {
+    Object.assign(graph.layoutOptions, {
+      // Every gap ELK derives from the base value, the one between layers among them, follows
+      // the rank spacing; the gap within a layer is then stated on its own.
+      'spacing.baseValue': ROOT_SPACING_BASE_VALUE * spacing.rank,
+      'spacing.nodeNode': ROOT_SPACING_BASE_VALUE * spacing.node,
+    });
+  }
 
   // Optimize spacing when rectpacking is the root algorithm.
   if (algorithm === 'elk.rectpacking') {
@@ -1238,7 +1283,8 @@ function configureSubgraphNodes(
       node,
       data4Layout.config.elk,
       elkContext.algorithm,
-      elkContext.log
+      elkContext.log,
+      resolveSpacingScales(data4Layout)
     );
     delete node.x;
     delete node.y;
@@ -1251,7 +1297,8 @@ function configureCrossHierarchyEdges(
   elkGraph: { edges: any[] },
   nodeDb: Record<string, NodeWithVertex>,
   parentLookupDb: TreeData,
-  log: ElkLayoutContext['log']
+  log: ElkLayoutContext['log'],
+  spacing: SpacingScales
 ): void {
   log.debug('APA01 processing edges, count:', elkGraph.edges.length);
   elkGraph.edges.forEach((edge: any, index: number) => {
@@ -1264,8 +1311,8 @@ function configureCrossHierarchyEdges(
 
     if (nodeDb[source] && nodeDb[target] && nodeDb[source].parentId !== nodeDb[target].parentId) {
       const ancestorId = findCommonAncestor(source, target, parentLookupDb);
-      setIncludeChildrenPolicy(nodeDb, source, ancestorId, log);
-      setIncludeChildrenPolicy(nodeDb, target, ancestorId, log);
+      setIncludeChildrenPolicy(nodeDb, source, ancestorId, log, spacing);
+      setIncludeChildrenPolicy(nodeDb, target, ancestorId, log, spacing);
     }
   });
 }
@@ -1274,7 +1321,8 @@ function setIncludeChildrenPolicy(
   nodeDb: Record<string, NodeWithVertex>,
   nodeId: string,
   ancestorId: string,
-  log: ElkLayoutContext['log']
+  log: ElkLayoutContext['log'],
+  spacing: SpacingScales
 ): void {
   const node = nodeDb[nodeId];
 
@@ -1292,13 +1340,13 @@ function setIncludeChildrenPolicy(
     resolveContainerAlgorithm(node.metadata?.algorithm)
   ) {
     log.debug('Dropping explicit algorithm for node', node.id, 'due to cross-boundary edges');
-    clearContainerAlgorithmOptions(node.layoutOptions);
+    clearContainerAlgorithmOptions(node.layoutOptions, spacing);
     Object.assign(node.layoutOptions, groupTitleSizeOptions(node));
   }
 
   node.layoutOptions['elk.hierarchyHandling'] = 'INCLUDE_CHILDREN';
   if (node.id !== ancestorId && node.parentId) {
-    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log);
+    setIncludeChildrenPolicy(nodeDb, node.parentId, ancestorId, log, spacing);
   }
 }
 
