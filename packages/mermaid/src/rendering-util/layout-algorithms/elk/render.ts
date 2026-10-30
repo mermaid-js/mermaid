@@ -83,6 +83,8 @@ interface ElkSubgraphConfig {
   nodePlacementAlignment?: string;
   nodePlacementStrategy?: string;
   cycleBreakingStrategy?: string;
+  wrappingStrategy?: string;
+  aspectRatio?: number;
 }
 
 interface ElkPreparedLayout {
@@ -448,6 +450,10 @@ export function buildSubgraphLayoutOptions(
     // rather than on its own start node. Same key and same resolution as the
     // root, so `legacy` reproduces the old rendering inside frames too.
     'elk.layered.cycleBreaking.strategy': elkConfig?.cycleBreakingStrategy ?? preset.cycleBreaking,
+    // Also set here, because the root's wrapping does not fold a chain nested
+    // in a container. A container algorithm below replaces the aspect ratio.
+    'elk.layered.wrapping.strategy': elkConfig?.wrappingStrategy,
+    'elk.aspectRatio': elkConfig?.aspectRatio,
     // PORT_POSITION lets a node shift so an edge can leave straight rather than
     // bending immediately off the port.
     'elk.layered.nodePlacement.networkSimplex.nodeFlexibility': 'PORT_POSITION',
@@ -726,8 +732,58 @@ export function buildElkGraphFromLayoutData(
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
   applyCyclicEntryConstraint(data4Layout, nodeDb);
+  applyFrameWrappingCorrection(elkGraph);
 
   return { elkGraph, nodeDb, parentLookupDb };
+}
+
+interface ElkSizedNode {
+  width?: number;
+  height?: number;
+  labels?: { height?: number }[];
+  children?: ElkSizedNode[];
+}
+
+function leafArea(node: ElkSizedNode): number {
+  return node.children?.length
+    ? node.children.reduce((sum, child) => sum + leafArea(child), 0)
+    : (node.width ?? 0) * (node.height ?? 0);
+}
+
+/**
+ * The area a top-level node takes once laid out. A frame is estimated as the
+ * square holding its leaves, grown by its padding and its title strip, which
+ * is what ELK adds after it has chosen where to cut.
+ */
+function laidOutArea(node: ElkSizedNode): number {
+  if (!node.children?.length) {
+    return leafArea(node);
+  }
+  const side = Math.sqrt(leafArea(node)) + 2 * SUBGRAPH_PADDING;
+  return side * (side + (node.labels?.[0]?.height ?? 0));
+}
+
+/**
+ * ELK sizes the folded rows from the leaves' own area, before frames add their
+ * padding and title. Four framed steps then look half their real size and the
+ * chain stays a single column. `wrapping.correctionFactor` scales the target
+ * width by the same ratio, so the fold lands near the requested aspect ratio.
+ *
+ * Only a wrapped graph with frames is touched; every other graph keeps ELK's
+ * own choice.
+ */
+export function applyFrameWrappingCorrection(elkGraph: {
+  layoutOptions: Record<string, unknown>;
+  children?: ElkSizedNode[];
+}): void {
+  const strategy = elkGraph.layoutOptions['elk.layered.wrapping.strategy'];
+  const nodes = elkGraph.children ?? [];
+  if (!strategy || strategy === 'OFF' || !nodes.some((node) => node.children?.length)) {
+    return;
+  }
+  const bare = nodes.reduce((sum, node) => sum + leafArea(node), 0);
+  const framed = nodes.reduce((sum, node) => sum + laidOutArea(node), 0);
+  elkGraph.layoutOptions['elk.layered.wrapping.correctionFactor'] = Math.sqrt(framed / bare);
 }
 
 /**
@@ -956,6 +1012,8 @@ function createRootElkGraph(
       'elk.layered.layering.strategy': data4Layout.config.elk?.layeringStrategy ?? preset.layering,
       // Only COFFMAN_GRAHAM reads this; the others ignore it.
       'elk.layered.layering.coffmanGraham.layerBound': data4Layout.config.elk?.layeringLayerBound,
+      'elk.layered.wrapping.strategy': data4Layout.config.elk?.wrappingStrategy,
+      'elk.aspectRatio': data4Layout.config.elk?.aspectRatio,
 
       // 'spacing.nodeNode': 120,
       // 'spacing.nodeNodeBetweenLayers': 25,

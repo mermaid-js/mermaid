@@ -1,0 +1,17 @@
+---
+config:
+  layout: elk
+  elk:
+    wrappingStrategy: MULTI_EDGE
+    aspectRatio: 1.78
+---
+flowchart LR
+  A[Receive order] -->|validate| B[Check stock]
+  B -->|reserve| C[Reserve items]
+  C -->|charge| D[Take payment]
+  D -->|confirm| E[Send confirmation]
+  E -->|pick| F[Pick items]
+  F -->|pack| G[Pack parcel]
+  G -->|label| H[Print label]
+  H -->|hand over| I[Dispatch]
+  I -->|track| J[Delivered]
