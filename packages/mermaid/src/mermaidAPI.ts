@@ -778,7 +778,10 @@ export const mermaidAPI = Object.freeze({
    * @deprecated This function does nothing. It will be overwritten by the next
    *             call to {@link render} or {@link parse}.
    */
-  setConfig: configApi.setConfig,
+  setConfig: (conf: MermaidConfig): MermaidConfig => {
+    configApi.setConfig(conf);
+    return configApi.getConfigCopy();
+  },
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,
   reset: () => {
