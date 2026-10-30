@@ -6,7 +6,7 @@
     <div class="language-mermaid">
       <button class="copy"></button>
       <span class="lang">mermaid</span>
-      <pre><code :contenteditable="contentEditable" @input="updateCode"  @keydown.meta.enter="renderChart" @keydown.ctrl.enter="renderChart" ref="editableContent" class="editable-code"></code></pre>
+      <pre><code :contenteditable="contentEditable" @input="updateCode"  @keydown.meta.enter="renderChart" @keydown.ctrl.enter="renderChart" class="editable-code">{{ initialCode }}</code></pre>
       <div class="buttons-container">
         <span>{{ ctrlSymbol }} + Enter</span><span>|</span>
         <button @click="renderChart">Run ▶</button>
@@ -44,9 +44,9 @@ const props = defineProps({
 });
 
 const svg = ref('');
-const code = ref(decodeURIComponent(props.graph));
+const initialCode = decodeURIComponent(props.graph);
+const code = ref(initialCode);
 const ctrlSymbol = ref('Ctrl');
-const editableContent = ref(null);
 const contentEditable = ref('plaintext-only');
 const diagram = ref(null);
 
@@ -69,13 +69,6 @@ onMounted(async () => {
       void renderChart();
     }
   });
-
-  if (editableContent.value) {
-    // Set the initial value of the contenteditable element
-    // We cannot bind using `{{ code }}` because it will rerender the whole component
-    // when the value changes, shifting the cursor when enter is used
-    editableContent.value.textContent = code.value;
-  }
 
   observer = new IntersectionObserver(
     (entries) => {
