@@ -1,0 +1,13 @@
+%% A subgraph keeps its direction TB although an edge leaves it and another enters it (#4648).
+flowchart LR
+    order["Order placed"] --> intake
+    subgraph intake ["Intake"]
+        direction TB
+        i1["Validate address"] --> i2["Check stock"] --> i3["Reserve items"]
+    end
+    subgraph packing ["Packing"]
+        direction TB
+        p1["Pick items"] --> p2["Pack parcel"] --> p3["Print label"]
+    end
+    i3 -- "reserved" --> p1
+    p3 -- "labelled" --> courier["Hand to courier"]

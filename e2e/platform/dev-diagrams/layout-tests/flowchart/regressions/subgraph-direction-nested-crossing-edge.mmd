@@ -1,0 +1,13 @@
+%% A TB diagram with an LR subgraph nested in a TB one; edges leave both frames (#6785).
+flowchart TB
+    start["Parcel received"] --> sorting
+    subgraph sorting ["Sorting"]
+        direction LR
+        s1["Scan"] --> s2["Weigh"]
+        subgraph bins ["Bins"]
+            direction TB
+            b1["Small"] --> b2["Large"]
+        end
+        s2 --> b1
+    end
+    b2 --> load["Load van"]

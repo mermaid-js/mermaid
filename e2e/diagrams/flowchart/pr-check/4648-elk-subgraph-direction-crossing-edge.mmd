@@ -1,0 +1,12 @@
+%%{init: {'layout': 'elk'}}%%
+%% Two TB subgraphs in an LR flowchart stay columns although a labelled edge runs between them (issue #4648).
+flowchart LR
+    subgraph intake ["Intake"]
+        direction TB
+        a1["Receive"] --> a2["Check"] --> a3["Reserve"]
+    end
+    subgraph dispatch ["Dispatch"]
+        direction TB
+        b1["Pick"] --> b2["Pack"] --> b3["Label"]
+    end
+    a3 -- "reserved" --> b1
