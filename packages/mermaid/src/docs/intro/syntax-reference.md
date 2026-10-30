@@ -10,7 +10,10 @@ Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid.live)
 
 One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate. The only exception to this a [Frontmatter](#frontmatter-for-diagram-code) configuration.
 
-Line comments can ignore anything on the line after '%% '.
+A comment line starts with `%%` (after optional whitespace). Diagram-type detection
+and preprocessing remove these whole lines. Inline `%%` text is left for the
+individual diagram parser, so it should not be used as a general inline-comment
+syntax. `%%{...}%%` configuration directives are handled separately.
 
 Unknown words and misspellings will break a diagram, while parameters silently fail.
 
