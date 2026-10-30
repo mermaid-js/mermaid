@@ -52,7 +52,7 @@ export async function startCoverage(page: Page): Promise<void> {
 }
 
 /** Stop coverage and cache the raw V8 data; global-teardown emits the lcov. */
-export async function collectCoverage(page: Page, _testInfo: TestInfo): Promise<void> {
+export async function collectCoverage(page: Page, _testInfo?: TestInfo): Promise<void> {
   const state = page as unknown as CoverageState;
   if (!COVERAGE || !state.__covStarted || state.__covDone) {
     return;
@@ -60,4 +60,15 @@ export async function collectCoverage(page: Page, _testInfo: TestInfo): Promise<
   state.__covDone = true;
   const coverage = await page.coverage.stopJSCoverage();
   await new CoverageReport(coverageOptions).add(coverage);
+}
+
+/** Cache what has run so far and keep collecting, e.g. before a reload discards the page's scripts. */
+export async function flushCoverage(page: Page): Promise<void> {
+  const state = page as unknown as CoverageState;
+  if (!COVERAGE || !state.__covStarted || state.__covDone) {
+    return;
+  }
+  const coverage = await page.coverage.stopJSCoverage();
+  await new CoverageReport(coverageOptions).add(coverage);
+  await page.coverage.startJSCoverage({ resetOnNavigation: false });
 }

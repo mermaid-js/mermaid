@@ -2,12 +2,12 @@
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
-import { expect, type Page, type TestInfo } from '@playwright/test';
+import { expect, type ConsoleMessage, type Page, type TestInfo } from '@playwright/test';
 import { Buffer } from 'buffer';
 import type { MermaidConfig } from '../../packages/mermaid/src/config.type.js';
 import { applitoolsBatch, applitoolsTestName } from './applitools.ts';
 import { buildCaptureMetadata, writeArgosMetadataSidecar } from './argos-metadata.ts';
-import { collectCoverage, startCoverage } from './coverage.js';
+import { collectCoverage, flushCoverage, startCoverage } from './coverage.js';
 
 interface E2EConfig {
   listUrl?: boolean;
@@ -70,6 +70,19 @@ export const mermaidUrl = (
   return url;
 };
 
+const withE2EDefaults = (options: E2EMermaidConfig): E2EMermaidConfig => ({
+  ...options,
+  fontFamily: options.fontFamily ?? 'courier',
+  // @ts-ignore TODO: Fix type of fontSize
+  fontSize: options.fontSize ?? '16px',
+  sequence: {
+    ...(options.sequence ?? {}),
+    actorFontFamily: 'courier',
+    noteFontFamily: options.sequence?.noteFontFamily ?? 'courier',
+    messageFontFamily: 'courier',
+  },
+});
+
 export const imgSnapshotTest = async (
   page: Page,
   testInfo: TestInfo,
@@ -78,21 +91,46 @@ export const imgSnapshotTest = async (
   api = false,
   validation?: any
 ): Promise<void> => {
-  const options: E2EMermaidConfig = {
-    ..._options,
-    fontFamily: _options.fontFamily ?? 'courier',
-    // @ts-ignore TODO: Fix type of fontSize
-    fontSize: _options.fontSize ?? '16px',
-    sequence: {
-      ...(_options.sequence ?? {}),
-      actorFontFamily: 'courier',
-      noteFontFamily: _options.sequence?.noteFontFamily ?? 'courier',
-      messageFontFamily: 'courier',
-    },
-  };
-
+  const options = withE2EDefaults(_options);
   const url: string = mermaidUrl(graphStr, options, api);
   await openURLAndVerifyRendering(page, testInfo, url, options, validation);
+};
+
+/**
+ * Renders into an already-open `e2e.html` page instead of navigating, so a worker
+ * can reuse one page (and its loaded bundles) across tests.
+ */
+export const renderInPage = async (
+  page: Page,
+  testInfo: TestInfo,
+  graphStr: string,
+  _options: E2EMermaidConfig = {}
+): Promise<void> => {
+  const options = withE2EDefaults(_options);
+  const url = mermaidUrl(graphStr, options, false);
+  const errors = captureBrowserErrors(page);
+  try {
+    await page.evaluate((graphObj) => (window as any).renderGraph(graphObj), {
+      code: graphStr,
+      mermaid: options,
+    });
+    await verifyRendering(page, testInfo, url, options, errors);
+  } finally {
+    errors.stop();
+  }
+  // A screenshot of an element larger than the viewport resizes it temporarily, which
+  // shifts text layout in later renders on the same page until it reloads.
+  const box = await diagramSvg(page).first().boundingBox();
+  const viewport = page.viewportSize();
+  if (
+    box &&
+    viewport &&
+    (box.x + box.width > viewport.width || box.y + box.height > viewport.height)
+  ) {
+    await flushCoverage(page);
+    await page.reload();
+    await page.waitForFunction(() => typeof (window as any).renderGraph === 'function');
+  }
 };
 
 export const urlSnapshotTest = async (
@@ -127,28 +165,58 @@ export const assertDiagramNotError = async (page: Page): Promise<void> => {
   await expect(svg.locator('.error-icon')).toHaveCount(0);
 };
 
+interface BrowserErrors {
+  pageErrors: string[];
+  consoleErrors: string[];
+  stop: () => void;
+}
+
+// Capture browser-side errors so a render failure reports the real cause
+// instead of a bare "svg not visible" timeout.
+const captureBrowserErrors = (page: Page): BrowserErrors => {
+  const pageErrors: string[] = [];
+  const consoleErrors: string[] = [];
+  const onPageError = (error: Error) => pageErrors.push(`[pageerror] ${error.message}`);
+  const onConsole = (msg: ConsoleMessage) => {
+    if (msg.type() === 'error') {
+      consoleErrors.push(`[console.error] ${msg.text()}`);
+    }
+  };
+  page.on('pageerror', onPageError);
+  page.on('console', onConsole);
+  return {
+    pageErrors,
+    consoleErrors,
+    stop: () => {
+      page.off('pageerror', onPageError);
+      page.off('console', onConsole);
+    },
+  };
+};
+
 export const openURLAndVerifyRendering = async (
   page: Page,
   testInfo: TestInfo,
   url: string,
+  options: E2EMermaidConfig,
+  validation?: any
+): Promise<void> => {
+  const errors = captureBrowserErrors(page);
+  await startCoverage(page);
+  await page.goto(url);
+  await verifyRendering(page, testInfo, url, options, errors, validation);
+  await collectCoverage(page, testInfo);
+};
+
+const verifyRendering = async (
+  page: Page,
+  testInfo: TestInfo,
+  url: string,
   { screenshot = true, rejectErrorDiagram = true, ...options }: E2EMermaidConfig,
+  { pageErrors, consoleErrors }: BrowserErrors,
   validation?: any
 ): Promise<void> => {
   const name: string = shortenScreenshotName(options.name ?? testInfo.titlePath.join(' '));
-
-  // Capture browser-side errors so a render failure reports the real cause
-  // instead of a bare "svg not visible" timeout.
-  const pageErrors: string[] = [];
-  const consoleErrors: string[] = [];
-  page.on('pageerror', (error) => pageErrors.push(`[pageerror] ${error.message}`));
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') {
-      consoleErrors.push(`[console.error] ${msg.text()}`);
-    }
-  });
-
-  await startCoverage(page);
-  await page.goto(url);
 
   // Prefer the explicit rendered flag from viewer.js; fall back to SVG visibility.
   try {
@@ -200,8 +268,6 @@ export const openURLAndVerifyRendering = async (
   if (screenshot) {
     await verifyScreenshot(page, testInfo, name, options.screenshotPath, url);
   }
-
-  await collectCoverage(page, testInfo);
 };
 
 export const verifyScreenshot = async (
