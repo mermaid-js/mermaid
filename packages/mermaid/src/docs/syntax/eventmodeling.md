@@ -1,3 +1,7 @@
+---
+description: 'Show how information changes in a system by arranging triggers, commands, events, and read models in swimlanes along a timeline.'
+---
+
 # Event Modeling Diagram (v11.15.0+)
 
 ## Introduction

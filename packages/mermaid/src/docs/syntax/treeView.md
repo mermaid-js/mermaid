@@ -1,4 +1,12 @@
+---
+description: 'Draw directory-like hierarchies with file and folder icons, connector lines, and optional annotations.'
+---
+
 # TreeView Diagram (v11.14.0+)
+
+```warning
+TreeView diagrams are in beta. Diagrams start with the `treeView-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
 
 ## Introduction
 

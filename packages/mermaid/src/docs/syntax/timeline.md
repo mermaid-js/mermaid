@@ -1,6 +1,8 @@
-# Timeline Diagram
+---
+description: 'Show a chronology of events grouped by time period and section, with customizable colors and themes.'
+---
 
-> Timeline: This is an experimental diagram for now. The syntax and properties can change in future releases. The syntax is stable except for the icon integration which is the experimental part.
+# Timeline Diagram
 
 "A timeline is a type of diagram used to illustrate a chronology of events, dates, or periods of time. It is usually presented graphically to indicate the passing of time, and it is usually organized chronologically. A basic timeline presents a list of events in chronological order, usually using dates as markers. A timeline can also be used to show the relationship between events, such as the relationship between the events of a person's life" [(Wikipedia)](https://en.wikipedia.org/wiki/Timeline).
 
@@ -353,9 +355,7 @@ config:
 
 ## Integrating with your library/website
 
-Timeline uses experimental lazy loading & async rendering features which could change in the future.The lazy loading is important in order to be able to add additional diagrams going forward.
-
-You can use this method to add mermaid including the timeline diagram to a web page:
+Timeline is included in mermaid and loaded on demand, the first time a page uses it, which keeps the initial download small. No extra setup is needed:
 
 ```html
 <script type="module">

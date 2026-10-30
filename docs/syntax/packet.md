@@ -37,30 +37,6 @@ packet
 
 ## Examples
 
-```mermaid-example
----
-title: "TCP Packet"
----
-packet
-0-15: "Source Port"
-16-31: "Destination Port"
-32-63: "Sequence Number"
-64-95: "Acknowledgment Number"
-96-99: "Data Offset"
-100-105: "Reserved"
-106: "URG"
-107: "ACK"
-108: "PSH"
-109: "RST"
-110: "SYN"
-111: "FIN"
-112-127: "Window"
-128-143: "Checksum"
-144-159: "Urgent Pointer"
-160-191: "(Options and Padding)"
-192-255: "Data (variable length)"
-```
-
 ```mermaid
 ---
 title: "TCP Packet"
@@ -86,6 +62,30 @@ packet
 ```
 
 ```mermaid-example
+---
+title: "TCP Packet"
+---
+packet
+0-15: "Source Port"
+16-31: "Destination Port"
+32-63: "Sequence Number"
+64-95: "Acknowledgment Number"
+96-99: "Data Offset"
+100-105: "Reserved"
+106: "URG"
+107: "ACK"
+108: "PSH"
+109: "RST"
+110: "SYN"
+111: "FIN"
+112-127: "Window"
+128-143: "Checksum"
+144-159: "Urgent Pointer"
+160-191: "(Options and Padding)"
+192-255: "Data (variable length)"
+```
+
+```mermaid
 packet
 title UDP Packet
 +16: "Source Port"
@@ -95,7 +95,7 @@ title UDP Packet
 64-95: "Data (variable length)"
 ```
 
-```mermaid
+```mermaid-example
 packet
 title UDP Packet
 +16: "Source Port"
@@ -114,7 +114,7 @@ title UDP Packet
 
 Rows are numbered from their lowest bit on the left up to their highest bit on the right, which suits network packets. Hardware registers are conventionally drawn the other way round, with the most significant bit on the left and bit 0 on the right. Set `bitOrder: descending` to mirror every row:
 
-```mermaid-example
+```mermaid
 ---
 config:
   packet:
@@ -129,7 +129,7 @@ packet
 13-15: "RESERVED"
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   packet:

@@ -1,3 +1,7 @@
+---
+description: 'Where to ask questions, request features, or report bugs for Mermaid, and how to search existing issues and discussions first.'
+---
+
 # Questions or Suggestions?
 
 ## Search for Existing Issue
