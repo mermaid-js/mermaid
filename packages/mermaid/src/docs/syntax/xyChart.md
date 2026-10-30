@@ -234,7 +234,7 @@ xychart
 
 ## Per-point text labels for line charts (v11.16.0+)
 
-Each data point in a `line` can optionally include a quoted string label after the numeric value. Labels render above points in vertical orientation, or to the right in horizontal orientation, using the line's stroke color.
+Each data point in a `line` can optionally include a quoted string label after the numeric value. Labels render above points in vertical orientation, or to the right in horizontal orientation, using the `dataLabelColor` of the theme.
 
 ```mermaid-example
 xychart
