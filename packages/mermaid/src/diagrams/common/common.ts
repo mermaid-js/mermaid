@@ -86,6 +86,7 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (!text) {
     return text;
   }
+  text = text.replace(katexRegex, (math) => math.replace(/\\&/g, '\\&amp;').replace(/</g, '&lt;'));
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
@@ -93,7 +94,7 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
       FORBID_TAGS: ['style'],
     }).toString();
   }
-  return text;
+  return text.replace(katexRegex, (math) => math.replace(/\\&amp;/g, '\\&'));
 };
 
 export const sanitizeTextOrArray = (
@@ -348,11 +349,17 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
       .join('')
       .replace(katexRegex, (_, c) =>
         katex
-          .renderToString(c, {
-            throwOnError: true,
-            displayMode: true,
-            output: outputMode,
-          })
+          .renderToString(
+            c
+              .replace(/(?<!\\)&lt;/g, '<')
+              .replace(/(?<!\\)&gt;/g, '>')
+              .replace(/(?<!\\)&amp;/g, '&'),
+            {
+              throwOnError: true,
+              displayMode: true,
+              output: outputMode,
+            }
+          )
           .replace(/\n/g, ' ')
           .replace(/<annotation.*<\/annotation>/g, '')
       );
