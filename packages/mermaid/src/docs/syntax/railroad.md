@@ -1,5 +1,9 @@
 # Railroad Diagrams (v11.16.0+)
 
+```warning
+Railroad diagrams are in beta. Diagrams start with one of the `-beta` keywords below, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
+
 > Railroad diagrams (also known as syntax diagrams or grammar diagrams) are a visual representation of context-free grammars. They provide a graphical way to understand and document language syntax, making complex grammar rules easier to comprehend.
 
 Railroad diagrams were first popularized by Niklaus Wirth in his "Pascal User Manual" (1974) and remain widely used today, notably on [JSON.org](https://www.json.org/) for documenting the JSON syntax.

@@ -6,6 +6,9 @@
 
 # Radar Diagram (v11.6.0+)
 
+> **Warning**
+> Radar diagrams are in beta. Diagrams start with the `radar-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
 ## Introduction
 
 A radar diagram is a simple way to plot low-dimensional data in a circular format.

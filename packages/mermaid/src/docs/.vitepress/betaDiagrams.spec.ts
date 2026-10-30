@@ -25,3 +25,17 @@ describe('betaSyntaxPages', () => {
     expect(betaSyntaxPages.has(page)).toBe(usesBetaKeyword && !optionalBetaKeywordPages.has(page));
   });
 });
+
+const betaNotice = /^```warning\n.+ (?:is|are) in beta\. .+\n```$/m;
+const stabilityClaim = /experimental diagram|new diagram type|(?:is|are) in \**beta\**/i;
+
+describe('beta notices', () => {
+  it.each(pages)('shows the beta notice on %s only if it is beta', (page) => {
+    const markdown = readFileSync(join(syntaxDir, `${page}.md`), 'utf8');
+    if (betaSyntaxPages.has(page)) {
+      expect(markdown).toMatch(betaNotice);
+    } else {
+      expect(markdown).not.toMatch(stabilityClaim);
+    }
+  });
+});

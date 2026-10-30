@@ -1,5 +1,9 @@
 # Wardley Maps (v11.14.0+)
 
+```warning
+Wardley maps are in beta. Diagrams start with the `wardley-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
+
 > Wardley Maps are visual representations of business strategy that map value chains and component evolution. They help identify strategic opportunities, dependencies, and guide technology decisions.
 
 ## Introduction

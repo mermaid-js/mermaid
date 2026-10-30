@@ -6,6 +6,9 @@
 
 # TreeView Diagram (v11.14.0+)
 
+> **Warning**
+> TreeView diagrams are in beta. Diagrams start with the `treeView-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
 ## Introduction
 
 A TreeView diagram is used to represent hierarchical data in the form of a directory-like structure, with file/folder icons, connector lines, and optional annotations.
