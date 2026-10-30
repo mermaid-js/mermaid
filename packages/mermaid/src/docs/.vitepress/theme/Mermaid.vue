@@ -1,7 +1,8 @@
 <template>
   <div class="mermaid-diagram" v-html="svg"></div>
-  <div v-if="props.showCode">
-    <h5>Code:</h5>
+  <component :is="props.collapsed ? 'details' : 'div'" v-if="props.showCode">
+    <summary v-if="props.collapsed">Code</summary>
+    <h5 v-else>Code:</h5>
     <div class="language-mermaid">
       <button class="copy"></button>
       <span class="lang">mermaid</span>
@@ -11,7 +12,7 @@
         <button @click="renderChart">Run ▶</button>
       </div>
     </div>
-  </div>
+  </component>
 </template>
 
 <script setup>
@@ -35,6 +36,10 @@ const props = defineProps({
   showCode: {
     type: Boolean,
     default: true,
+  },
+  collapsed: {
+    type: Boolean,
+    default: false,
   },
 });
 
