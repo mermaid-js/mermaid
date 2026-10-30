@@ -1,6 +1,8 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import { sanitizeText } from '../common/common.js';
+import { formatUrl } from '../../utils.js';
+import { log } from '../../logger.js';
 import {
   setAccTitle,
   getAccTitle,
@@ -8,6 +10,8 @@ import {
   setAccDescription,
 } from '../common/commonDb.js';
 import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
+import type { LayoutData } from '../../rendering-util/types.js';
+import { getData as buildLayoutData } from './c4LayoutData.js';
 
 /**
  * The parser may pass a plain string or an object with a single
@@ -27,6 +31,9 @@ const TEXT_FIELDS = new Set(['label', 'descr', 'techn', 'type']);
  *
  * Values may arrive as a raw positional value or a single `{ key: value }` named
  * override; `undefined` is skipped so an earlier-set value is not clobbered.
+ *
+ * A `$link` becomes an `xlink:href` on the rendered element. As in flowchart and class
+ * diagrams it is sanitized unless `securityLevel` is `loose`, where it is kept as written.
  */
 const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
   bag: Bag,
@@ -36,16 +43,19 @@ const assignAttributes = <Bag extends C4Shape | C4Boundary | C4Rel>(
     if (value === undefined) {
       continue;
     }
-    if (typeof value === 'object') {
-      const [key, val] = Object.entries(value)[0];
+    // A named override arrives as a single `{ key: value }`; a positional value keeps
+    // the field it was declared for.
+    const named = typeof value === 'object';
+    const [key, val] = named ? Object.entries(value)[0] : [field, value];
+    if (key === 'link') {
+      bag[key] = formatUrl(val, getConfig());
+    } else {
       // Same rule as the positional text slots: a text field is stored as `{ text }`
       // whichever slot it arrived through. `System_Boundary` and friends splice their
       // kind in as a positional argument, so an explicit `$type` shifts along into this
       // one and would otherwise land here as a bare string and overwrite the wrapped
       // value the type slot just set.
-      bag[key] = TEXT_FIELDS.has(key) ? { text: val } : val;
-    } else {
-      bag[field] = value;
+      bag[key] = named && TEXT_FIELDS.has(key) ? { text: val } : val;
     }
   }
 };
@@ -72,6 +82,7 @@ let wrapEnabled: boolean | undefined = false;
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
 let c4Type: string | undefined;
+let direction = 'TB';
 
 export const getC4Type = function () {
   return c4Type;
@@ -643,6 +654,9 @@ export const updateLayoutConfig = function (
   c4ShapeInRowParam: ParserAttribute,
   c4BoundaryInRowParam: ParserAttribute
 ) {
+  log.warn(
+    'UpdateLayoutConfig is accepted so that PlantUML sources parse, but it has no effect: the layout engine decides how many shapes and boundaries share a row.'
+  );
   let c4ShapeInRowValue = c4ShapeInRow;
   let c4BoundaryInRowValue = c4BoundaryInRow;
 
@@ -731,6 +745,22 @@ export const autoWrap = function () {
   return wrapEnabled;
 };
 
+export const setDirection = function (dir: string) {
+  direction = dir;
+};
+
+export const getDirection = function () {
+  return direction;
+};
+
+/** The parsed diagram as the unified rendering pipeline consumes it. */
+export const getData = function (): LayoutData {
+  return buildLayoutData(
+    { getC4ShapeArray, getBoundaries, getRels, getC4Type, getDirection },
+    getConfig()
+  );
+};
+
 export const clear = function () {
   c4ShapeArray = [];
   boundaries = [createGlobalBoundary()];
@@ -744,6 +774,7 @@ export const clear = function () {
   wrapEnabled = false;
   c4ShapeInRow = 4;
   c4BoundaryInRow = 2;
+  direction = 'TB';
 };
 
 export const LINETYPE = {
@@ -825,5 +856,8 @@ export default {
   PLACEMENT,
   setTitle,
   setC4Type,
+  setDirection,
+  getDirection,
+  getData,
   // apply,
 };
