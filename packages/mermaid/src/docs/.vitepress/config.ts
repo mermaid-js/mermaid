@@ -1,11 +1,16 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' with { type: 'json' };
 import { betaSyntaxPages } from './betaDiagrams.js';
-import { addCanonicalUrls } from './canonical-urls.js';
 import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
 import MermaidExample from './mermaid-markdown-all.js';
+import { addPageMetadata } from './pageMetadata.js';
+import { getDocsHostname, getSiteBase, getSiteUrl } from './siteUrl.js';
+
+const siteUrl = getSiteUrl();
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -23,39 +28,40 @@ export default defineConfig({
   lang: 'en-US',
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
-  base: '/',
+  base: getSiteBase(siteUrl),
   markdown: allMarkdownTransformers,
   sitemap: {
-    hostname: 'https://mermaid.js.org/',
+    hostname: siteUrl,
+  },
+  buildEnd: ({ outDir }) => {
+    writeFileSync(
+      join(outDir, 'robots.txt'),
+      `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}sitemap.xml\n`
+    );
   },
   ignoreDeadLinks: [
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
-  transformPageData: (pageData) => {
-    addCanonicalUrls(pageData);
-    applyHomePageHeroCopy(pageData, docsHostname());
+  transformPageData: (pageData, { siteConfig }) => {
+    addPageMetadata(
+      pageData,
+      readFileSync(join(siteConfig.srcDir, pageData.relativePath), 'utf8'),
+      siteConfig.site.description,
+      siteUrl
+    );
+    applyHomePageHeroCopy(pageData, getDocsHostname());
   },
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-    ['meta', { property: 'og:title', content: 'Mermaid' }],
-    [
-      'meta',
-      {
-        property: 'og:description',
-        content: 'Create diagrams and visualizations using text and code.',
-      },
-    ],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:url', content: 'https://mermaid.js.org' }],
-    [
-      'meta',
-      { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
-    ],
+    ['meta', { property: 'og:image', content: `${siteUrl}mermaid-logo-horizontal.png` }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
   ],
   themeConfig: {
-    logo: getHeaderLogo(docsHostname()),
-    logoLink: getHeaderLogoLink(docsHostname()),
+    logo: getHeaderLogo(getDocsHostname()),
+    logoLink: getHeaderLogoLink(getDocsHostname()),
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
@@ -87,16 +93,6 @@ export default defineConfig({
     ],
   },
 });
-
-/**
- * Get the deployment hostname from DOCS_HOSTNAME env var.
- * Defaults to 'mermaid.js.org' if not set.
- */
-function docsHostname(): string {
-  return (
-    ((globalThis as any).process?.env?.DOCS_HOSTNAME as string | undefined) ?? 'mermaid.js.org'
-  );
-}
 
 // Top (across the page) menu
 function nav() {
@@ -139,7 +135,7 @@ function nav() {
     },
   ];
 
-  return withConditionalHomeNav(baseNav, docsHostname());
+  return withConditionalHomeNav(baseNav, getDocsHostname());
 }
 
 function sidebarAll() {
