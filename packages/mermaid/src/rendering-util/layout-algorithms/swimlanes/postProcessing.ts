@@ -2,6 +2,7 @@
 import type { LayoutData } from '../../types.js';
 import {
   clipEdgeEndpointsToNodeBoundaries,
+  finishSelfLoops,
   prepareEdgeEndpointsForRenderer,
 } from './direction/endpointClip.js';
 import { orthogonalizePolyline, simplifyPolyline } from './direction/geometry.js';
@@ -109,7 +110,11 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   swapDestinationTerminalTailsToReduceCrossings(edges, nodeByIdMap);
 
   const finalizeRenderedEdges = (): void => {
-    resolveRenderedOrthogonalCrossings(edges, nodeByIdMap);
+    // Self-loops are left out: rerouting them breaks the loop
+    resolveRenderedOrthogonalCrossings(
+      edges.filter((e) => e.start !== e.end),
+      nodeByIdMap
+    );
     // Crossing cleanup can bring a route onto a face another edge already leaves or
     // enters from, so split shared terminal lanes again before endpoints are pinned.
     separateSharedRenderedTerminalLanes(edges, nodeByIdMap);
@@ -140,6 +145,7 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // present in the pre-materialized route, so run the bounded cleanup once
   // more and then re-prepare the endpoints it reshaped.
   finalizeRenderedEdges();
+  finishSelfLoops(edges, nodeByIdMap);
 
   // Swimlane title bands are visual headers, not routing obstacles. After all
   // edge geometry is final, move the aligned title bands out of any clear rail

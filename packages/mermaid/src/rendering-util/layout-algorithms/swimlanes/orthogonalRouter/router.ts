@@ -15,6 +15,8 @@ import type { LayoutData, Node as MermaidNode } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
 import { collectAnchoredIds } from '../anchoredNodes.js';
 import { PRECISION } from '../config.js';
+import { flowAxisStretch } from '../direction/lrTransform.js';
+import { SELF_LOOP_NEST_GAP, selfLoopSide } from '../helpers.js';
 
 const EPS = PRECISION.EPSILON;
 
@@ -132,6 +134,50 @@ function sharedLineEndpointCoord(line: RoutedLine, nextLine: RoutedLine): number
 
 function pointOnLine(line: RoutedLine, along: number): Point {
   return line.orient === 'vertical' ? { x: line.coord, y: along } : { x: along, y: line.coord };
+}
+
+/**
+ * Small loop on one side of the node for edges like `A --> A`
+ * (`side` 1 = right, -1 = left).
+ * In LR/RL the layout gets rotated and stretched later, so pass that stretch
+ * as `lrScale` to keep both ends of the loop on the node.
+ */
+// `extra` pushes the loop further out. One loop sits at quarter height; several
+// spread along the side (`index` of `total`), so their arrowheads don't bunch up.
+// `minReach` is how tall the loop must be to clear the labels inside it. The ends
+// stay on the node, so a taller loop also returns its `reach`, for finishSelfLoops
+// to step up to after cleanup
+function selfLoopPoints(
+  node: MermaidNode,
+  side: 1 | -1,
+  lrScale: number | undefined,
+  {
+    extra,
+    index,
+    total,
+    minReach,
+  }: { extra: number; index: number; total: number; minReach: number }
+): { points: Point[]; reach?: number } {
+  const x = node.x ?? 0;
+  const y = node.y ?? 0;
+  const w = node.width ?? 0;
+  const h = node.height ?? 0;
+  const edgeX = x + (side * (lrScale ? h : w)) / 2;
+  const quarterH = (lrScale ? Math.min(h, w / lrScale) : h) / 4;
+  const lowest = quarterH / 2;
+  const highest = Math.max(quarterH, (lrScale ? w / lrScale : h) / 2 - 4);
+  const endY = total > 1 ? lowest + ((highest - lowest) * index) / (total - 1) : quarterH;
+  const outX = edgeX + side * (ANCHOR_OFFSET + extra);
+  return {
+    points: [
+      { x: edgeX, y: y - endY },
+      { x: outX, y: y - endY },
+      { x: outX, y: y + endY },
+      { x: edgeX, y: y + endY },
+    ],
+    // A tiny step looks worse than a slightly tight fit
+    reach: minReach > endY + 4 ? minReach * (lrScale ?? 1) : undefined,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -827,6 +873,14 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     return { pSrcPort, pDstPort, srcSide, dstSide };
   };
 
+  const lrScale = direction === 'LR' || direction === 'RL' ? flowAxisStretch(nodes) : undefined;
+  const loopTotals = new Map<string, number>();
+  for (const e of edges) {
+    if (e.start && e.start === e.end) {
+      loopTotals.set(e.start, (loopTotals.get(e.start) ?? 0) + 1);
+    }
+  }
+  const loopsSoFar = new Map<string, { extra: number; index: number; minReach: number }>();
   for (const i of routingOrder) {
     const e = edges[i];
     edgeSegmentIndices[i] = [];
@@ -837,8 +891,30 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     if (e.points && e.points.length > 0) {
       continue;
     }
-    // Skip self-loops
+    // Self-loops get a fixed loop instead of A* routing (#8446)
     if (e.start === e.end) {
+      const node = nodeById.get(e.start);
+      if (node) {
+        const prev = loopsSoFar.get(e.start) ?? { extra: 0, index: 0, minReach: 0 };
+        const { points, reach } = selfLoopPoints(
+          node,
+          selfLoopSide(node, data.edges ?? [], nodeById),
+          lrScale,
+          { ...prev, total: loopTotals.get(e.start) ?? 1 }
+        );
+        e.points = points;
+        ((e.__originalEdge ?? e) as { selfLoopReach?: number }).selfLoopReach = reach;
+        // The next loop goes around this one and its label. LR/RL rotate the
+        // layout later, which swaps the label's sides and stretches its width
+        const label = nodeById.get((e as { labelNodeId?: string }).labelNodeId ?? '');
+        const labelAcross = (lrScale ? label?.height : label?.width) ?? 0;
+        const labelAlong = (lrScale ? (label?.width ?? 0) / lrScale : label?.height) ?? 0;
+        loopsSoFar.set(e.start, {
+          extra: prev.extra + labelAcross + SELF_LOOP_NEST_GAP,
+          index: prev.index + 1,
+          minReach: Math.max(prev.minReach + 6, labelAlong / 2 + 6),
+        });
+      }
       continue;
     }
 
@@ -2368,6 +2444,10 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     }
     const srcId = (edge as { start?: string }).start;
     const dstId = (edge as { end?: string }).end;
+    // Self-loop ends are already on the node border, clamping breaks them in LR
+    if (srcId === dstId) {
+      continue;
+    }
     const src = srcId ? nodeById.get(srcId) : undefined;
     const dst = dstId ? nodeById.get(dstId) : undefined;
     if (src) {
