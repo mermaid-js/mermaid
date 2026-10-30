@@ -230,6 +230,42 @@ root
       expect(sections[0].cssClasses).toEqual('m-4 p-8');
       expect(sections[0].icon).toEqual('bomb');
     });
+
+    it('KNBN-38 getData() should include cssClasses for child items decorated with :::', function () {
+      const str = `kanban
+    col1[Column 1]
+      item1[Task One]
+      :::urgent highlight
+      item2[Task Two]
+    `;
+
+      kanban.parse(str);
+
+      const data = kanban.yy.getData();
+      const sections = kanban.yy.getSections();
+      const children = data.nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+
+      expect(children.length).toEqual(2);
+      const item1 = children.find((n: KanbanNode) => n.id === 'item1');
+      expect(item1?.cssClasses).toEqual('urgent highlight');
+      const item2 = children.find((n: KanbanNode) => n.id === 'item2');
+      expect(item2?.cssClasses).toBeUndefined();
+    });
+
+    it('KNBN-39 getData() should include cssClasses for section nodes decorated with :::', function () {
+      const str = `kanban
+    col1[Column One]
+    :::featured
+      item1[Task]
+    `;
+
+      kanban.parse(str);
+
+      const data = kanban.yy.getData();
+      const sectionNode = data.nodes.find((n: KanbanNode) => n.id === 'col1');
+
+      expect(sectionNode?.cssClasses).toEqual('featured');
+    });
   });
   describe('descriptions', function () {
     it('KNBN-17 should be possible to use node syntax in the descriptions', function () {
