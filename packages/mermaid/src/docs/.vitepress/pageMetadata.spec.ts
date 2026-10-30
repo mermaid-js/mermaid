@@ -1,6 +1,6 @@
 import type { PageData } from 'vitepress';
 import { describe, expect, it } from 'vitest';
-import { addPageMetadata, getPageDescription, getPageUrl } from './pageMetadata.js';
+import { addPageMetadata, getPageDescription } from './pageMetadata.js';
 
 describe('getPageDescription', () => {
   it('uses the first paragraph, skipping frontmatter, headings, code and notes', () => {
@@ -79,18 +79,9 @@ Mermaid can render Pie Chart diagrams.
   });
 });
 
-describe('getPageUrl', () => {
-  it.each([
-    ['index.md', 'https://mermaid.js.org/'],
-    ['intro/index.md', 'https://mermaid.js.org/intro/'],
-    ['syntax/pie.md', 'https://mermaid.js.org/syntax/pie.html'],
-  ])('maps %s to %s', (relativePath, url) => {
-    expect(getPageUrl(relativePath)).toBe(url);
-  });
-});
-
 describe('addPageMetadata', () => {
   const siteDescription = 'Create diagrams and visualizations using text and code.';
+  const siteUrl = 'https://mermaid.js.org/';
   const page = (overrides: Partial<PageData>): PageData => ({
     title: 'Pie chart diagrams',
     titleTemplate: undefined,
@@ -107,12 +98,14 @@ describe('addPageMetadata', () => {
     addPageMetadata(
       pageData,
       'A pie chart is a circular statistical graphic, divided into slices.',
-      siteDescription
+      siteDescription,
+      siteUrl
     );
 
     expect(pageData.description).toBe(
       'A pie chart is a circular statistical graphic, divided into slices.',
-      siteDescription
+      siteDescription,
+      siteUrl
     );
     expect(pageData.frontmatter.head).toEqual([
       ['meta', { property: 'og:title', content: 'Pie chart diagrams | Mermaid' }],
@@ -132,7 +125,8 @@ describe('addPageMetadata', () => {
     addPageMetadata(
       pageData,
       'A pie chart is a circular statistical graphic, divided into slices.',
-      siteDescription
+      siteDescription,
+      siteUrl
     );
 
     expect(pageData.description).toBe('From frontmatter.');
@@ -140,7 +134,7 @@ describe('addPageMetadata', () => {
 
   it('falls back to the site description when the page has no prose', () => {
     const pageData = page({});
-    addPageMetadata(pageData, '# Title', siteDescription);
+    addPageMetadata(pageData, '# Title', siteDescription, siteUrl);
 
     expect(pageData.description).toBe('');
     expect(pageData.frontmatter.head).toContainEqual([
@@ -151,7 +145,7 @@ describe('addPageMetadata', () => {
 
   it('uses the site name as the title of the home page', () => {
     const pageData = page({ title: 'Mermaid', relativePath: 'index.md' });
-    addPageMetadata(pageData, '', siteDescription);
+    addPageMetadata(pageData, '', siteDescription, siteUrl);
 
     expect(pageData.frontmatter.head).toContainEqual([
       'meta',

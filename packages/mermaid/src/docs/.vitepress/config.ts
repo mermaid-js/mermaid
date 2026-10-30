@@ -7,6 +7,9 @@ import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './head
 import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
 import MermaidExample from './mermaid-markdown-all.js';
 import { addPageMetadata } from './pageMetadata.js';
+import { getDocsHostname, getSiteBase, getSiteUrl } from './siteUrl.js';
+
+const siteUrl = getSiteUrl();
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -24,7 +27,7 @@ export default defineConfig({
   lang: 'en-US',
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
-  base: '/',
+  base: getSiteBase(siteUrl),
   markdown: allMarkdownTransformers,
   ignoreDeadLinks: [
     // ignore all localhost links
@@ -34,21 +37,19 @@ export default defineConfig({
     addPageMetadata(
       pageData,
       readFileSync(join(siteConfig.srcDir, pageData.relativePath), 'utf8'),
-      siteConfig.site.description
+      siteConfig.site.description,
+      siteUrl
     );
-    applyHomePageHeroCopy(pageData, docsHostname());
+    applyHomePageHeroCopy(pageData, getDocsHostname());
   },
   head: [
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    [
-      'meta',
-      { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
-    ],
+    ['meta', { property: 'og:image', content: `${siteUrl}mermaid-logo-horizontal.svg` }],
   ],
   themeConfig: {
-    logo: getHeaderLogo(docsHostname()),
-    logoLink: getHeaderLogoLink(docsHostname()),
+    logo: getHeaderLogo(getDocsHostname()),
+    logoLink: getHeaderLogoLink(getDocsHostname()),
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
@@ -80,16 +81,6 @@ export default defineConfig({
     ],
   },
 });
-
-/**
- * Get the deployment hostname from DOCS_HOSTNAME env var.
- * Defaults to 'mermaid.js.org' if not set.
- */
-function docsHostname(): string {
-  return (
-    ((globalThis as any).process?.env?.DOCS_HOSTNAME as string | undefined) ?? 'mermaid.js.org'
-  );
-}
 
 // Top (across the page) menu
 function nav() {
@@ -132,7 +123,7 @@ function nav() {
     },
   ];
 
-  return withConditionalHomeNav(baseNav, docsHostname());
+  return withConditionalHomeNav(baseNav, getDocsHostname());
 }
 
 function sidebarAll() {
