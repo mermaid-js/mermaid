@@ -19,6 +19,7 @@ import type {
   MergeDB,
   BranchDB,
   CherryPickDB,
+  GitGraphLink,
 } from './gitGraphTypes.js';
 import { commitType } from './gitGraphTypes.js';
 import { ImperativeState } from '../../utils/imperativeState.js';
@@ -35,6 +36,7 @@ interface GitGraphState {
   direction: DiagramOrientation;
   seq: number;
   options: any;
+  links: Map<string, GitGraphLink>;
 }
 
 const DEFAULT_GITGRAPH_CONFIG: Required<GitGraphDiagramConfig> = DEFAULT_CONFIG.gitGraph;
@@ -60,6 +62,7 @@ const state = new ImperativeState<GitGraphState>(() => {
     direction: 'LR',
     seq: 0,
     options: {},
+    links: new Map(),
   };
 });
 
@@ -266,7 +269,9 @@ export const cherryPick = function (cherryPickDB: CherryPickDB) {
   log.debug('Entering cherryPick:', sourceId, targetId, tags);
   const config = getConfig();
   sourceId = common.sanitizeText(sourceId, config);
-  targetId = common.sanitizeText(targetId, config);
+  if (targetId) {
+    targetId = common.sanitizeText(targetId, config);
+  }
 
   tags = tags?.map((tag) => common.sanitizeText(tag, config));
 
@@ -495,6 +500,47 @@ export const getHead = function () {
   return state.records.head;
 };
 
+export const setLink = (
+  id: string,
+  link: string,
+  type: 'commit' | 'branch' | 'tag',
+  tooltip?: string,
+  target?: '_self' | '_blank' | '_parent' | '_top'
+): void => {
+  const config = getConfig();
+  const sanitizedId = common.sanitizeText(id, config);
+  state.records.links.set(`${type}:${sanitizedId}`, {
+    id: sanitizedId,
+    link,
+    tooltip,
+    target: target || '_self',
+    type: type,
+  });
+};
+
+export const getLinks = (): Map<string, GitGraphLink> => {
+  return state.records.links;
+};
+
+export const getLink = (
+  id: string,
+  type?: 'commit' | 'branch' | 'tag'
+): GitGraphLink | undefined => {
+  const config = getConfig();
+  const sanitizedId = common.sanitizeText(id, config);
+  if (type) {
+    return (
+      state.records.links.get(`${type}:${sanitizedId}`) ?? state.records.links.get(sanitizedId)
+    );
+  }
+  return (
+    state.records.links.get(sanitizedId) ??
+    state.records.links.get(`commit:${sanitizedId}`) ??
+    state.records.links.get(`branch:${sanitizedId}`) ??
+    state.records.links.get(`tag:${sanitizedId}`)
+  );
+};
+
 export const db: GitGraphDB = {
   commitType,
   getConfig,
@@ -522,4 +568,7 @@ export const db: GitGraphDB = {
   setAccDescription,
   setDiagramTitle,
   getDiagramTitle,
+  setLink,
+  getLink,
+  getLinks,
 };

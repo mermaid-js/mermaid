@@ -1,6 +1,7 @@
 import { log } from '../../logger.js';
 import { db } from './gitGraphAst.js';
 import { parser } from './gitGraphParser.js';
+import getStyles from './styles.js';
 
 describe('when parsing a gitGraph', function () {
   beforeEach(function () {
@@ -1386,6 +1387,16 @@ describe('when parsing a gitGraph', function () {
       const config = db.getConfig();
       expect(config).toBeDefined();
       expect(config).toHaveProperty('parallelCommits');
+    });
+  });
+
+  describe('getStyles', () => {
+    it('should include keyboard focus-visible selectors for clickable elements', () => {
+      const styles = getStyles({});
+      expect(styles).toContain('a:focus-visible .clickable text');
+      expect(styles).toContain('a:focus-visible .commit.clickable circle');
+      expect(styles).toContain('a:focus-visible .commit.clickable rect:not(.commit-label-bkg)');
+      expect(styles).toContain('a:focus-visible .commit.clickable path');
     });
   });
 });
