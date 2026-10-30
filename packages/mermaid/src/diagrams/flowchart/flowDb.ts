@@ -836,7 +836,13 @@ You have to call mermaid.initialize.`
       return;
     }
     seen.add(subGraph.id);
+    const removed = subGraph.nodes.includes(id);
     subGraph.nodes = subGraph.nodes.filter((nodeId) => nodeId !== id);
+    if (removed) {
+      this.droppedSubGraphMembers = this.droppedSubGraphMembers.filter(
+        (member) => member.node !== id || member.keptBy !== subGraph.id
+      );
+    }
     for (const nodeId of subGraph.nodes) {
       const member = this.subGraphLookup.get(nodeId);
       if (member) {
