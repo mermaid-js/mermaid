@@ -1,5 +1,5 @@
 <template>
-  <div class="mermaid-diagram" v-html="svg"></div>
+  <div ref="diagram" class="mermaid-diagram" :class="{ pending: !svg }" v-html="svg"></div>
   <component :is="props.collapsed ? 'details' : 'div'" v-if="props.showCode">
     <summary v-if="props.collapsed">Code</summary>
     <h5 v-else>Code:</h5>
@@ -48,8 +48,10 @@ const code = ref(decodeURIComponent(props.graph));
 const ctrlSymbol = ref('Ctrl');
 const editableContent = ref(null);
 const contentEditable = ref('plaintext-only');
+const diagram = ref(null);
 
 let stopWatching = null;
+let observer = null;
 
 const updateCode = (event) => {
   code.value = event.target.innerText;
@@ -62,7 +64,11 @@ onMounted(async () => {
   if (navigator.userAgent.toLowerCase().includes('firefox')) {
     contentEditable.value = 'true';
   }
-  stopWatching = watchColorScheme(() => renderChart());
+  stopWatching = watchColorScheme(() => {
+    if (svg.value) {
+      void renderChart();
+    }
+  });
 
   if (editableContent.value) {
     // Set the initial value of the contenteditable element
@@ -71,6 +77,25 @@ onMounted(async () => {
     editableContent.value.textContent = code.value;
   }
 
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        observer?.disconnect();
+        observer = null;
+        void renderFirstTime();
+      }
+    },
+    { rootMargin: '1000px 0px' }
+  );
+  observer.observe(diagram.value);
+});
+
+onUnmounted(() => {
+  stopWatching?.();
+  observer?.disconnect();
+});
+
+const renderFirstTime = async () => {
   await renderChart();
 
   //refresh images on first render
@@ -94,9 +119,7 @@ onMounted(async () => {
         });
       }
     }, 100);
-});
-
-onUnmounted(() => stopWatching?.());
+};
 
 const renderChart = async () => {
   const hasDarkClass = document.documentElement.classList.contains('dark');
@@ -113,6 +136,10 @@ const renderChart = async () => {
 </script>
 
 <style>
+.mermaid-diagram.pending {
+  min-height: 150px;
+}
+
 .editable-code:focus {
   outline: none; /* Removes the default focus indicator */
 }
