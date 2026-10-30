@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mermaid.js.org/sitemap.xml

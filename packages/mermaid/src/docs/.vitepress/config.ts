@@ -25,6 +25,9 @@ export default defineConfig({
   description: 'Create diagrams and visualizations using text and code.',
   base: '/',
   markdown: allMarkdownTransformers,
+  sitemap: {
+    hostname: 'https://mermaid.js.org/',
+  },
   ignoreDeadLinks: [
     // ignore all localhost links
     /^https?:\/\/localhost/,
