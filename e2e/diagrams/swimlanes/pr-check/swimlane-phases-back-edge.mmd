@@ -1,0 +1,27 @@
+---
+description: >-
+  An edge from a later phase (Closeout) back to an earlier one (Review) stays inside the band order.
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TB
+  phase intake["Intake"]
+  phase review["Review"]
+  phase closeout["Closeout"]
+
+  subgraph customer [Customer]
+    ask["Submit request"]@{ phase: intake }
+    accept["Accept result"]@{ phase: closeout }
+  end
+
+  subgraph support [Support]
+    triage["Triage"]@{ phase: intake }
+    assess["Assess"]@{ phase: review }
+    reply["Send reply"]@{ phase: closeout }
+  end
+
+  ask --> triage --> assess --> reply --> accept
+  reply -.-> assess

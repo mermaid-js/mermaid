@@ -18,6 +18,8 @@ export interface NodeMetaData {
    * to it; `expanded` (the default) renders the subgraph normally.
    */
   view?: 'expanded' | 'collapsed';
+  /** The id of the phase a swimlane node belongs to, declared with a `phase` statement. */
+  phase?: string;
 }
 
 export interface ParticipantMetaData {
