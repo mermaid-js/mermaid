@@ -394,6 +394,8 @@ properties:
     $ref: '#/$defs/FlowchartDiagramConfig'
   swimlane:
     $ref: '#/$defs/SwimlaneDiagramConfig'
+  bpmn:
+    $ref: '#/$defs/BpmnDiagramConfig'
   agentflow:
     $ref: '#/$defs/AgentflowDiagramConfig'
   sequence:
@@ -2430,6 +2432,39 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
           source swimlane order can carry semantic meaning.
         type: boolean
         default: false
+
+  BpmnDiagramConfig:
+    title: BPMN Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: |
+      The object containing configurations specific for the bpmn diagram type.
+
+      BPMN always lays out through the swimlane engine, because only it can draw
+      pools and lanes, so a `layout` set globally or for `bpmn` has no effect on
+      it. The spacing keys below control the grid inside a lane.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      titleTopMargin:
+        description: The margin above the diagram title.
+        type: number
+        minimum: 0
+        default: 25
+      diagramPadding:
+        description: The padding around the whole diagram.
+        type: number
+        minimum: 0
+        default: 12
+      nodeSpacing:
+        description: The distance between two elements in the same rank of a lane.
+        type: number
+        minimum: 0
+        default: 35
+      rankSpacing:
+        description: The distance between two ranks of a lane.
+        type: number
+        minimum: 0
+        default: 40
 
   AgentflowDiagramConfig:
     title: Agentflow Diagram Config

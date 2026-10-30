@@ -332,6 +332,7 @@ export interface MermaidConfig {
   deterministicIDSeed?: string;
   flowchart?: FlowchartDiagramConfig;
   swimlane?: SwimlaneDiagramConfig;
+  bpmn?: BPMNDiagramConfig;
   agentflow?: AgentflowDiagramConfig;
   sequence?: SequenceDiagramConfig;
   gantt?: GanttDiagramConfig;
@@ -619,6 +620,35 @@ export interface SwimlaneDiagramConfig extends BaseDiagramConfig {
    *
    */
   automaticLaneOrdering?: boolean;
+}
+/**
+ * The object containing configurations specific for the bpmn diagram type.
+ *
+ * BPMN always lays out through the swimlane engine, because only it can draw
+ * pools and lanes, so a `layout` set globally or for `bpmn` has no effect on
+ * it. The spacing keys below control the grid inside a lane.
+ *
+ *
+ * This interface was referenced by `MermaidConfig`'s JSON-Schema
+ * via the `definition` "BpmnDiagramConfig".
+ */
+export interface BPMNDiagramConfig extends BaseDiagramConfig {
+  /**
+   * The margin above the diagram title.
+   */
+  titleTopMargin?: number;
+  /**
+   * The padding around the whole diagram.
+   */
+  diagramPadding?: number;
+  /**
+   * The distance between two elements in the same rank of a lane.
+   */
+  nodeSpacing?: number;
+  /**
+   * The distance between two ranks of a lane.
+   */
+  rankSpacing?: number;
 }
 /**
  * The object containing configurations specific for the agentflow diagram type.

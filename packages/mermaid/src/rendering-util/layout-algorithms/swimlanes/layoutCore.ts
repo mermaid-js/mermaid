@@ -3,8 +3,39 @@ import { postProcessSwimlaneLayout, validateSwimlanesLayout } from './postProces
 import { toGraphView, writeBackToLayoutData } from './helpers.js';
 import { sugiyamaLayout } from './pipeline.js';
 import { routeEdgesOrthogonal } from './orthogonalRouter/router.js';
+import { pinAnchoredNodes } from './anchoredNodes.js';
 
 export type SwimlaneDirection = 'TB' | 'LR' | 'BT' | 'RL';
+
+function numberAt(source: object | undefined, key: string): number | undefined {
+  const value = source === undefined ? undefined : Reflect.get(source, key);
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : undefined;
+}
+
+function spacing(layout: LayoutData, key: 'nodeSpacing' | 'rankSpacing', fallback: number) {
+  return (
+    numberAt(layout.config, key) ??
+    numberAt(layout, key) ??
+    numberAt(layout.config.flowchart, key) ??
+    fallback
+  );
+}
+
+/**
+ * Whether lanes share one row: the author's own choice (`ignoreCrossLaneEdgesChosen`) when the
+ * layout carries one, else false for a layout that asks for branch-wise layering, else the
+ * layout's `swimlane.ignoreCrossLaneEdges`, true when it says nothing.
+ */
+function compactsLanesToOneRow(data4Layout: LayoutData): boolean {
+  const chosen = data4Layout.ignoreCrossLaneEdgesChosen;
+  if (typeof chosen === 'boolean') {
+    return chosen;
+  }
+  if (data4Layout.laneLayering === 'branches') {
+    return false;
+  }
+  return data4Layout.config.swimlane?.ignoreCrossLaneEdges ?? true;
+}
 
 function getSwimlaneDirection(data4Layout: LayoutData): SwimlaneDirection {
   return ((data4Layout as LayoutData & { direction?: string }).direction ??
@@ -19,9 +50,9 @@ function getSwimlaneDirection(data4Layout: LayoutData): SwimlaneDirection {
  */
 export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirection {
   const g = toGraphView(data4Layout);
-  const nodeGap = data4Layout.config.flowchart?.nodeSpacing ?? 40;
-  const layerGap = data4Layout.config.flowchart?.rankSpacing ?? 100;
-  const ignoreCrossLaneEdges = data4Layout.config.swimlane?.ignoreCrossLaneEdges ?? true;
+  const nodeGap = spacing(data4Layout, 'nodeSpacing', 40);
+  const layerGap = spacing(data4Layout, 'rankSpacing', 100);
+  const ignoreCrossLaneEdges = compactsLanesToOneRow(data4Layout);
   const optimizeRanksByCrossings = data4Layout.config.swimlane?.optimizeRanksByCrossings ?? true;
   const automaticLaneOrdering = data4Layout.config.swimlane?.automaticLaneOrdering ?? false;
   const direction = getSwimlaneDirection(data4Layout);
@@ -33,8 +64,12 @@ export function runSwimlaneLayoutCore(data4Layout: LayoutData): SwimlaneDirectio
     optimizeRanksByCrossings,
     automaticLaneOrdering,
     direction,
+    spreadByOwnExtent: data4Layout.laneLayering === 'branches',
+    gapIsRoomBetween: data4Layout.laneLayering === 'branches',
   });
   writeBackToLayoutData(g, ordered, coordinates, { nodeGap, layerGap });
+
+  pinAnchoredNodes(data4Layout, { space: 'canonical', direction });
 
   // The layout phases above position nodes only; they do not emit edge routing.
   // Reset any edge points carried on the input so routeEdgesOrthogonal below is

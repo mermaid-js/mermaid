@@ -15,6 +15,65 @@ function buildNodeMap(nodes: LayoutNode[]): Map<string, LayoutNode> {
   return new Map(nodes.map((node) => [node.id, node]));
 }
 
+function framePoolsLr(
+  nodes: LayoutNode[],
+  laneModel: ReturnType<typeof buildLaneModel>,
+  laneLeft: number,
+  titleBandSize: number
+): void {
+  if (!laneModel.hasPools) {
+    return;
+  }
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const poolBand = titleBandSize;
+  const anchoredIds = collectAnchoredIds(nodes);
+
+  for (const node of nodes) {
+    if (laneModel.isLane(node.id) && typeof node.x === 'number') {
+      node.x += poolBand;
+      if (node.groupTitleRect) {
+        node.groupTitleRect.left += poolBand;
+        node.groupTitleRect.right += poolBand;
+      }
+    }
+  }
+  for (const node of nodes) {
+    if (
+      !laneModel.isLane(node.id) &&
+      !laneModel.isPool(node.id) &&
+      !anchoredIds.has(node.id) &&
+      typeof node.x === 'number'
+    ) {
+      node.x += poolBand;
+      if (node.groupTitleRect) {
+        node.groupTitleRect.left += poolBand;
+        node.groupTitleRect.right += poolBand;
+      }
+    }
+  }
+
+  for (const [poolId, laneIds] of laneModel.lanesByPool) {
+    const pool = byId.get(poolId);
+    const lanes = laneIds
+      .map((id: string) => byId.get(id))
+      .filter((lane): lane is LayoutNode => Boolean(lane));
+    if (!pool || lanes.length === 0) {
+      continue;
+    }
+    const top = Math.min(...lanes.map((lane) => (lane.y ?? 0) - (lane.height ?? 0) / 2));
+    const bottom = Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2));
+    const right = Math.max(...lanes.map((lane) => (lane.x ?? 0) + (lane.width ?? 0) / 2));
+    const left = laneLeft;
+
+    pool.x = (left + right) / 2;
+    pool.width = right - left;
+    pool.y = (top + bottom) / 2;
+    pool.height = bottom - top;
+    pool.swimlaneContentTop = top;
+    pool.groupTitleRect = { left, right: left + poolBand, top, bottom };
+  }
+}
+
 function groupDepth(group: LayoutNode, nodeById: Map<string, LayoutNode>): number {
   const seen = new Set<string>([group.id]);
   let depth = 0;
@@ -141,13 +200,13 @@ export function applyBtDirectionTransform(layout: LayoutData): boolean {
 
 /**
  * How far the LR/RL transform stretches the flow axis: the diagram's own nodes' average
- * width over their average height, never below 1. Edge labels and groups do not count, so a
- * label cannot stretch the flow axis.
+ * width over their average height, never below 1. Edge labels, groups and anchored nodes do
+ * not count, so none of them can stretch the flow axis. Pass the whole node list: every
+ * caller then agrees on the stretch whatever it has filtered for its own use.
  */
-export function flowAxisStretch(
-  nodes: readonly { width?: number; height?: number; isGroup?: boolean; isEdgeLabel?: boolean }[]
-): number {
-  const scaledNodes = nodes.filter((n) => !n.isGroup && !n.isEdgeLabel);
+export function flowAxisStretch(nodes: NonNullable<LayoutData['nodes']>): number {
+  const anchoredIds = collectAnchoredIds(nodes);
+  const scaledNodes = nodes.filter((n) => !n.isGroup && !n.isEdgeLabel && !anchoredIds.has(n.id));
   if (scaledNodes.length === 0) {
     return 1;
   }
@@ -163,6 +222,41 @@ export function flowAxisStretch(
 }
 
 const LANE_TITLE_BAND = 36;
+
+function stackEmptyBands(
+  bands: LayoutNode[],
+  opts: {
+    top: number;
+    centerX: number;
+    laneLeft: number;
+    laneWidth: number;
+    titleBandSize: number;
+    fontSize: number;
+  }
+): void {
+  let top = opts.top;
+  for (const band of bands) {
+    const titleRun =
+      (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
+    const height = Math.max(
+      2 * opts.titleBandSize,
+      2 * (band.padding ?? 0),
+      titleRun + opts.titleBandSize
+    );
+    band.x = opts.centerX;
+    band.y = top + height / 2;
+    band.width = opts.laneWidth;
+    band.height = height;
+    band.swimlaneContentTop = top;
+    band.groupTitleRect = {
+      left: opts.laneLeft,
+      right: opts.laneLeft + opts.titleBandSize,
+      top,
+      bottom: top + height,
+    };
+    top += height;
+  }
+}
 
 interface Box {
   left: number;
@@ -290,12 +384,31 @@ export function applyLrDirectionTransform(
   }
 
   if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-    return false;
+    const emptyModel = buildLaneModel(nodes);
+    const emptyBands = nodes.filter((n) => emptyModel.isLane(n.id));
+    if (emptyBands.length === 0) {
+      return false;
+    }
+    const titleBand = LANE_TITLE_BAND;
+    const bandWidth = 6 * titleBand;
+    stackEmptyBands(emptyBands, {
+      top: 0,
+      centerX: titleBand + bandWidth / 2,
+      laneLeft: titleBand,
+      laneWidth: bandWidth,
+      titleBandSize: titleBand,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, emptyModel, titleBand, titleBand);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
+    return true;
   }
 
   const titleBandSize = LANE_TITLE_BAND;
 
-  const horizontalScaleFactor = flowAxisStretch(contentNodes);
+  const horizontalScaleFactor = flowAxisStretch(nodes);
 
   for (const n of contentNodes) {
     const x0 = n.x ?? 0;
@@ -384,6 +497,19 @@ export function applyLrDirectionTransform(
   }
 
   if (globalMinXChild === Infinity || globalMaxXChild === -Infinity) {
+    const emptyWidth = 6 * titleBandSize;
+    stackEmptyBands(laneNodes, {
+      top: 0,
+      centerX: titleBandSize + emptyWidth / 2,
+      laneLeft: titleBandSize,
+      laneWidth: emptyWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    });
+    framePoolsLr(nodes, laneModel, titleBandSize, titleBandSize);
+    if (direction === 'RL') {
+      mirrorAxis(layout, 'x');
+    }
     return true;
   }
 
@@ -433,6 +559,24 @@ export function applyLrDirectionTransform(
       bottom: laneBottom,
     };
   }
+
+  const placed = new Set(laneBounds.map((entry) => entry.lane));
+  stackEmptyBands(
+    laneNodes.filter((lane) => !placed.has(lane)),
+    {
+      top: laneBounds.reduce(
+        (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
+        laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
+      ),
+      centerX,
+      laneLeft,
+      laneWidth,
+      titleBandSize,
+      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+    }
+  );
+
+  framePoolsLr(nodes, laneModel, laneLeft, titleBandSize);
 
   if (direction === 'RL') {
     mirrorAxis(layout, 'x');
