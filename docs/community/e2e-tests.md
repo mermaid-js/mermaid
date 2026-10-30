@@ -32,7 +32,7 @@ Roughly a **4x reduction in wall-clock time** and **\~90% less total CI compute*
 
 Two parallel trees hold the suite's content:
 
-```mermaid-example
+```mermaid
 flowchart TD
   subgraph diagrams["e2e/diagrams/<diagram-type>/"]
     direction LR
@@ -50,7 +50,7 @@ flowchart TD
   diagrams -->|discovered & rendered by| runner
 ```
 
-```mermaid
+```mermaid-example
 flowchart TD
   subgraph diagrams["e2e/diagrams/<diagram-type>/"]
     direction LR
@@ -97,7 +97,7 @@ When in doubt, default to `pr-check` for anything a feature's author would want 
 
 ## How CI decides what to run
 
-```mermaid-example
+```mermaid
 flowchart TD
   start{"What triggered this run?"}
   start -->|"PR → develop"| pr_label{"'run pr tests'<br/>label set?"}
@@ -113,7 +113,7 @@ flowchart TD
   release_label -->|no| blocked2["e2e skipped —<br/>required check fails"]
 ```
 
-```mermaid
+```mermaid-example
 flowchart TD
   start{"What triggered this run?"}
   start -->|"PR → develop"| pr_label{"'run pr tests'<br/>label set?"}

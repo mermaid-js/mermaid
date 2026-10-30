@@ -1,3 +1,7 @@
+---
+description: 'How to report security vulnerabilities in Mermaid , best practices for safely rendering diagrams, and how to configure DOMPurify.'
+---
+
 # Security
 
 The Mermaid team takes the security of Mermaid and the applications that use Mermaid seriously. This page describes how to report any vulnerabilities you may find, and lists best practices to minimize the risk of introducing a vulnerability.

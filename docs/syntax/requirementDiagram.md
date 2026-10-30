@@ -10,7 +10,7 @@
 
 Rendering requirements is straightforward.
 
-```mermaid-example
+```mermaid
     requirementDiagram
 
     requirement test_req {
@@ -27,7 +27,7 @@ Rendering requirements is straightforward.
     test_entity - satisfies -> test_req
 ```
 
-```mermaid
+```mermaid-example
     requirementDiagram
 
     requirement test_req {
@@ -54,7 +54,7 @@ The same diagram, drawn both ways:
 
 ### With the defaults
 
-```mermaid-example
+```mermaid
 requirementDiagram
   requirement checkout_req {
     id: 1
@@ -75,7 +75,7 @@ requirementDiagram
   checkout_service - satisfies -> payment_req
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
   requirement checkout_req {
     id: 1
@@ -101,7 +101,7 @@ requirementDiagram
 Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
 in a diagram's front matter draws it the way Mermaid did before:
 
-```mermaid-example
+```mermaid
 ---
 config:
   theme: default
@@ -128,7 +128,7 @@ requirementDiagram
   checkout_service - satisfies -> payment_req
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   theme: default
@@ -208,7 +208,7 @@ In places where user defined text is possible (like names, requirement text, ele
 
 Example:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement "__test_req__" {
@@ -219,7 +219,7 @@ requirement "__test_req__" {
 }
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement "__test_req__" {
@@ -256,7 +256,7 @@ Each relationship is labeled in the diagram.
 
 This example uses all features of the diagram.
 
-```mermaid-example
+```mermaid
     requirementDiagram
 
     requirement test_req {
@@ -326,7 +326,7 @@ This example uses all features of the diagram.
     test_req <- copies - test_entity2
 ```
 
-```mermaid
+```mermaid-example
     requirementDiagram
 
     requirement test_req {
@@ -407,7 +407,7 @@ The diagram can be rendered in different directions using the `direction` statem
 
 Example:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 direction LR
@@ -426,7 +426,7 @@ element test_entity {
 test_entity - satisfies -> test_req
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 direction LR
@@ -453,7 +453,7 @@ Requirements and elements can be styled using direct styling or classes. As a ru
 
 Use the `style` keyword to apply CSS styles directly:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement test_req {
@@ -471,7 +471,7 @@ style test_req fill:#ffa,stroke:#000, color: green
 style test_entity fill:#f9f,stroke:#333, color: blue
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement test_req {
@@ -493,7 +493,7 @@ style test_entity fill:#f9f,stroke:#333, color: blue
 
 Define reusable styles using `classDef`:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement test_req {
@@ -511,7 +511,7 @@ classDef important fill:#f96,stroke:#333,stroke-width:4px
 classDef test fill:#ffa,stroke:#000
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement test_req {
@@ -567,7 +567,7 @@ test_elem:::myClass
 
 ### Combined Example
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement test_req:::important {
@@ -587,7 +587,7 @@ class test_entity important
 style test_entity fill:#f9f,stroke:#333
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement test_req:::important {

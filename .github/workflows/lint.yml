@@ -2,11 +2,15 @@ name: Lint
 
 on:
   push:
+    branches-ignore:
+      - 'renovate/**'
   merge_group:
   pull_request:
   workflow_dispatch:
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ startsWith(github.head_ref || github.ref_name, 'renovate/') }}
 
 permissions:
   contents: write
