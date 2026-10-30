@@ -45,6 +45,39 @@ flowchart
 
 ```
 
+### Write nested options as nested YAML
+
+The frontmatter is parsed as YAML without expanding dots.
+`elk.mergeEdges: true` is therefore one key named `elk.mergeEdges`, not the option `mergeEdges` of the `elk` section.
+Mermaid ignores that key and renders as if the option were not set.
+Write the section and the option on separate levels:
+
+```yaml
+config:
+  elk:
+    mergeEdges: true
+```
+
+When a key directly under `config:` contains dots and starts with the name of a config section, such as `elk`, `flowchart` or `themeVariables`, mermaid logs a warning that names the key and shows the nested form.
+A section is any option of the default configuration that holds nested options, so `dompurifyConfig`, which has no default, is not one.
+The key stays ignored.
+The warning shows at most four parts of the key, and cuts the key and each part at 80 characters.
+
+The default `logLevel` is `fatal`, so the warning is invisible until you lower it to `warn` (or `3`) or below when you initialize mermaid:
+
+```js
+mermaid.initialize({ logLevel: 'warn' });
+```
+
+A `logLevel` in the frontmatter does not turn the warning on, because mermaid reads the log level only when it initializes.
+
+These dotted keys are ignored without a warning:
+
+- Keys that do not start with a config section, such as `foo.bar`, a plain option such as `theme.mode`, or a list option such as `secure`.
+- Keys with an empty part, such as `elk.` or `elk..mergeEdges`.
+- Keys inside a section, such as `"elk.mergeEdges"` under `flowchart:`.
+- Keys in a `%%{init}%%` directive or in `mermaid.initialize()`, which this check does not read.
+
 ## Theme configuration
 
 ## Starting mermaid
