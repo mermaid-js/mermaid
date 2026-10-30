@@ -6,6 +6,10 @@ describe('getSiteUrl', () => {
     expect(getSiteUrl({})).toBe('https://mermaid.js.org/');
   });
 
+  it('treats an empty DOCS_SITE_URL as unset', () => {
+    expect(getSiteUrl({ DOCS_SITE_URL: '' })).toBe('https://mermaid.js.org/');
+  });
+
   it('reads DOCS_SITE_URL and adds a trailing slash', () => {
     expect(getSiteUrl({ DOCS_SITE_URL: 'https://mermaid.ai/open-source' })).toBe(
       'https://mermaid.ai/open-source/'
@@ -36,6 +40,10 @@ describe('getDocsHostname', () => {
 
   it('prefers DOCS_HOSTNAME when set', () => {
     expect(getDocsHostname({ DOCS_HOSTNAME: 'mermaid.ai' })).toBe('mermaid.ai');
+  });
+
+  it('ignores an empty DOCS_HOSTNAME', () => {
+    expect(getDocsHostname({ DOCS_HOSTNAME: '' })).toBe('mermaid.js.org');
   });
 });
 

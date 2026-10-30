@@ -8,7 +8,7 @@ const DEFAULT_SITE_URL = 'https://mermaid.js.org/';
  * the sitemap, robots.txt and absolute links such as `og:url`.
  */
 export const getSiteUrl = (env: Env = process.env): string => {
-  const value = env.DOCS_SITE_URL ?? DEFAULT_SITE_URL;
+  const value = env.DOCS_SITE_URL?.length ? env.DOCS_SITE_URL : DEFAULT_SITE_URL;
   let url: URL;
   try {
     url = new URL(value);
@@ -22,7 +22,7 @@ export const getSiteBase = (siteUrl: string): string => new URL(siteUrl).pathnam
 
 /** The deployment hostname: `DOCS_HOSTNAME` if set, otherwise the host of the site URL. */
 export const getDocsHostname = (env: Env = process.env): string =>
-  env.DOCS_HOSTNAME ?? new URL(getSiteUrl(env)).hostname;
+  env.DOCS_HOSTNAME?.length ? env.DOCS_HOSTNAME : new URL(getSiteUrl(env)).hostname;
 
 /** The URL a page is served at, in the form VitePress uses for the sitemap. */
 export const getPageUrl = (relativePath: string, siteUrl: string): string =>
