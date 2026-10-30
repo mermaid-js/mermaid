@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid quadrant chart syntax: plot data points on a two-axis grid split into four quadrants, with axis labels, point styling, and theming.'
+description: 'Plot data points on a two-axis grid split into four quadrants, with axis labels, point styling, and theming.'
 ---
 
 # Quadrant Chart

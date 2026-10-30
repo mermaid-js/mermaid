@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid railroad (syntax) diagram syntax: render grammar rules written in EBNF, ABNF, or PEG notation as railroad diagrams for documenting languages.'
+description: 'Document languages by rendering grammar rules written in EBNF, ABNF, or PEG notation as railroad (syntax) diagrams.'
 ---
 
 # Railroad Diagrams (v11.16.0+)

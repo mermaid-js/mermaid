@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid XY chart syntax: draw bar and line charts with categorical or numeric x-axes, titles, orientation, and per-chart theming.'
+description: 'Draw bar and line charts with categorical or numeric x-axes, titles, horizontal or vertical orientation, and theming.'
 ---
 
 # XY Chart

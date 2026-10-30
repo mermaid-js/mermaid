@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid Kanban diagram syntax: define columns for workflow stages and tasks with metadata such as assignee, ticket, and priority.'
+description: 'Show tasks moving through workflow stages as columns, with task metadata such as assignee, ticket, and priority.'
 ---
 
 # Mermaid Kanban Diagram Documentation

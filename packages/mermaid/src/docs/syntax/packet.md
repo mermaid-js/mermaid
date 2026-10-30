@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid packet diagram syntax: visualize the bit-level structure and fields of network packets and protocol headers.'
+description: 'Visualize the bit-level structure of network packets and protocol headers by defining fields over bit ranges.'
 ---
 
 # Packet Diagram (v11.0.0+)

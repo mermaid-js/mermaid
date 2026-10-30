@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid radar (spider) chart syntax: compare multiple data series across several axes in a circular plot, with graticule, scale, and legend options.'
+description: 'Compare data series across several axes in a circular radar (spider) chart, with graticule, scale, and legend options.'
 ---
 
 # Radar Diagram (v11.6.0+)

@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid state diagram syntax: states, transitions, composite states, choice, fork and join, concurrency, notes, and styling for modeling state machines.'
+description: 'Model state machines with states, transitions, composite states, choice, fork and join, concurrency, and notes.'
 ---
 
 # State diagrams

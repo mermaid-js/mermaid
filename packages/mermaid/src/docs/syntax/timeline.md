@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid timeline diagram syntax: list events chronologically by time period, group them into sections, and customize colors and themes.'
+description: 'Show a chronology of events grouped by time period and section, with customizable colors and themes.'
 ---
 
 # Timeline Diagram

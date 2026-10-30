@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid GitGraph syntax: commits, branches, checkouts, merges, cherry-picks, tags, and orientation for visualizing Git branching strategies.'
+description: 'Visualize Git branching strategies with commits, branches, checkouts, merges, cherry-picks, and tags.'
 ---
 
 # GitGraph Diagrams

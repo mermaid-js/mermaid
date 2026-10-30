@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid user journey diagram syntax: map the steps users take to complete a task, grouped into sections and scored by satisfaction per actor.'
+description: 'Map the steps users take to complete a task, grouped into sections and scored by satisfaction for each actor.'
 ---
 
 # User Journey Diagram

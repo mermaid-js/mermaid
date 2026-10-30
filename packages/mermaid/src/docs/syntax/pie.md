@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid pie chart syntax: define labeled slices with numeric values, show raw data, and configure titles and text positions.'
+description: 'Draw pie charts from labeled values, with optional titles, raw data display, and text positioning.'
 ---
 
 # Pie chart diagrams

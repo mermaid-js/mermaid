@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid TreeView diagram syntax: draw directory-like hierarchies with file and folder icons, connector lines, and optional annotations.'
+description: 'Draw directory-like hierarchies with file and folder icons, connector lines, and optional annotations.'
 ---
 
 # TreeView Diagram (v11.14.0+)

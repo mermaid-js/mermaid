@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid UML class diagram syntax: classes, members, methods, generics, relationships, cardinality, annotations, namespaces, and styling.'
+description: 'Model object-oriented structure with UML classes, members, methods, generics, relationships, cardinality, annotations, and namespaces.'
 ---
 
 # Class diagrams

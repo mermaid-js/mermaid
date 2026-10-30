@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid Ishikawa (fishbone / cause-and-effect) diagram syntax: place a problem at the head and branch categories of causes off the spine.'
+description: 'Map the causes of a problem as a fishbone (cause-and-effect) diagram, with cause categories branching off a central spine.'
 ---
 
 # Ishikawa diagram (v11.12.3+)

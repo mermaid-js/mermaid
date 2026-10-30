@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid entity relationship (ER) diagram syntax: entities, attributes, keys, and crow’s foot relationship cardinality for modeling database schemas.'
+description: 'Model database schemas with entities, attributes, keys, and crow’s foot notation for relationship cardinality.'
 ---
 
 # Entity Relationship Diagrams

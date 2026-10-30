@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid sequence diagram syntax: participants, messages, activations, notes, loops, alt/opt/par blocks, and sequence numbering for modeling interactions.'
+description: 'Model interactions over time with participants, messages, activations, notes, loops, alt/opt/par blocks, and sequence numbering.'
 ---
 
 # Sequence diagrams

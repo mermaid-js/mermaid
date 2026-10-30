@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid mindmap syntax: build a hierarchy of ideas from indentation, with node shapes, icons, classes, and Markdown strings.'
+description: 'Organize ideas into a hierarchy using indentation, with node shapes, icons, classes, and Markdown strings.'
 ---
 
 # Mindmap

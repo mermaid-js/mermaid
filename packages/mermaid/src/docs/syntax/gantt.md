@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid Gantt chart syntax: tasks, sections, dependencies, milestones, date formats, excluded days, and axis settings for project schedules.'
+description: 'Plan project schedules with tasks, sections, dependencies, milestones, date formats, excluded days, and axis settings.'
 ---
 
 # Gantt diagrams

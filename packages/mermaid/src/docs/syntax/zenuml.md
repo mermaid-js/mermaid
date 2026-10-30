@@ -1,5 +1,5 @@
 ---
-description: 'Render sequence diagrams in Mermaid using the ZenUML syntax: participants, sync and async messages, nested calls, loops, conditionals, and try/catch.'
+description: 'Write sequence diagrams in ZenUML syntax, with participants, sync and async messages, nested calls, loops, conditionals, and try/catch.'
 ---
 
 # ZenUML

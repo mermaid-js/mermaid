@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid Sankey diagram syntax: describe flows between nodes in a CSV-like format, where link widths are proportional to flow quantities.'
+description: 'Show flows between nodes, with link widths proportional to flow quantities, defined in a CSV-like format.'
 ---
 
 # Sankey diagram (v10.3.0+)

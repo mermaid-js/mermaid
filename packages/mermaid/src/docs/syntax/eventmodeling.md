@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid Event Modeling diagram syntax: arrange triggers, commands, events, and read models in swimlanes along a timeline to show how information changes.'
+description: 'Show how information changes in a system by arranging triggers, commands, events, and read models in swimlanes along a timeline.'
 ---
 
 # Event Modeling Diagram (v11.15.0+)

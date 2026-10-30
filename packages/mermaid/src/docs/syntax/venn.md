@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid Venn diagram syntax: show relationships between sets with overlapping circles, labels, sizes, text nodes, and styling.'
+description: 'Show relationships between sets with overlapping circles, labels, sizes, text nodes, and styling.'
 ---
 
 # Venn diagrams (v11.12.3+)

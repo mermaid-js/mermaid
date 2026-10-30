@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid agentflow syntax: describe LLM agent systems as flowcharts with nested containers, agents, tools, and the contracts that hold at each step.'
+description: 'Describe LLM agent systems as flowcharts, with nested containers, agents, tools, and the contracts that hold at each step.'
 ---
 
 # Agentflow (v12.0.0+)

@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid requirement diagram syntax (SysML v1.6): requirements, elements, risk and verification attributes, and relationships such as satisfies and traces.'
+description: 'Model SysML v1.6 requirements and elements with risk and verification attributes, linked by relationships such as satisfies and traces.'
 ---
 
 # Requirement Diagram

@@ -1,5 +1,5 @@
 ---
-description: 'Mermaid flowchart syntax: nodes, shapes, edges, arrow types, subgraphs, styling, click interactions, and direction for building flowcharts from text.'
+description: 'Build flowcharts from text with nodes, shapes, edges, arrow types, subgraphs, styling, click interactions, and direction.'
 title: Flowcharts Syntax
 ---
 
