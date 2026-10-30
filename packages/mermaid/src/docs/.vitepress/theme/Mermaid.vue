@@ -45,10 +45,9 @@ const props = defineProps({
 
 const svg = ref('');
 const code = ref(decodeURIComponent(props.graph));
-const ctrlSymbol = ref(navigator.platform.includes('Mac') ? '⌘' : 'Ctrl');
+const ctrlSymbol = ref('Ctrl');
 const editableContent = ref(null);
-const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-const contentEditable = ref(isFirefox ? 'true' : 'plaintext-only');
+const contentEditable = ref('plaintext-only');
 
 let stopWatching = null;
 
@@ -57,6 +56,12 @@ const updateCode = (event) => {
 };
 
 onMounted(async () => {
+  if (navigator.platform.includes('Mac')) {
+    ctrlSymbol.value = '⌘';
+  }
+  if (navigator.userAgent.toLowerCase().includes('firefox')) {
+    contentEditable.value = 'true';
+  }
   stopWatching = watchColorScheme(() => renderChart());
 
   if (editableContent.value) {
@@ -94,7 +99,6 @@ onMounted(async () => {
 onUnmounted(() => stopWatching?.());
 
 const renderChart = async () => {
-  console.log('rendering chart' + props.id + code.value);
   const hasDarkClass = document.documentElement.classList.contains('dark');
   const mermaidConfig = buildExampleConfig(code.value, hasDarkClass);
   let svgCode = await render(props.id, code.value, mermaidConfig);
