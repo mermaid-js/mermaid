@@ -42,6 +42,10 @@ async function addHtmlSpan(
   minWidth = 0
 ) {
   const fo = element.append('foreignObject');
+  // Host pages often set * { transition-duration } for reduced motion.
+  // Width/height on foreignObject are CSS geometry, so the shrink from the
+  // measure box would otherwise animate and leave getBBox() at that size.
+  fo.node()?.style.setProperty('transition', 'none', 'important');
   // This is not the final width but used in order to make sure the foreign
   // object in firefox gets a width at all. The final width is fetched from the div
   fo.attr('width', `${Math.min(10 * width, maxSafeSizeForWidth)}px`);
