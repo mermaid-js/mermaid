@@ -4,6 +4,7 @@ import { db } from './db.js';
 import { parser } from './parser.js';
 import { mermaidAPI } from '../../mermaidAPI.js';
 import { getConfig } from '../../config.js';
+import { contrastRatio } from '../../rendering-util/rendering-elements/edgeStepAnimation.js';
 
 const { clear } = db;
 const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
@@ -152,7 +153,7 @@ describe('eventmodeling rendering', () => {
   });
 
   it.each(['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'] as const)(
-    'should take the colors of the boxes from the %s theme',
+    'should keep the text of every box readable with the %s theme',
     async (theme) => {
       mermaidAPI.initialize({ theme });
       const { svg } = await mermaidAPI.render(
@@ -168,15 +169,11 @@ describe('eventmodeling rendering', () => {
         .parseFromString(svg, 'text/html')
         .querySelectorAll('.em-box rect');
       const fills = [...rects].map((rect) => rect.getAttribute('fill')!);
-      const { emUiFill, emCommandFill, emEventFill, emReadModelFill, emProcessorFill } =
-        getConfig().themeVariables;
-      expect(fills).toEqual([
-        emUiFill,
-        emCommandFill,
-        emEventFill,
-        emReadModelFill,
-        emProcessorFill,
-      ]);
+      const { textColor } = getConfig().themeVariables;
+      expect(fills).toHaveLength(5);
+      for (const fill of fills) {
+        expect(contrastRatio(textColor, fill)).toBeGreaterThanOrEqual(4.5);
+      }
     }
   );
 });

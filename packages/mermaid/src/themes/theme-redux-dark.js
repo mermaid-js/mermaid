@@ -410,13 +410,13 @@ class Theme {
 
     this.emUiFill = this.emUiFill || '#2d2d2d';
     this.emUiStroke = this.emUiStroke || '#555';
-    this.emProcessorFill = this.emProcessorFill || lighten('#5a3d5c', 10);
+    this.emProcessorFill = this.emProcessorFill || '#5a3d5c';
     this.emProcessorStroke = this.emProcessorStroke || '#8a6d8c';
-    this.emReadModelFill = this.emReadModelFill || lighten('#3d5a2d', 10);
+    this.emReadModelFill = this.emReadModelFill || '#3d5a2d';
     this.emReadModelStroke = this.emReadModelStroke || '#6d8c5c';
-    this.emCommandFill = this.emCommandFill || lighten('#2d3d5a', 10);
+    this.emCommandFill = this.emCommandFill || '#2d3d5a';
     this.emCommandStroke = this.emCommandStroke || '#5c6d8c';
-    this.emEventFill = this.emEventFill || lighten('#5a452d', 10);
+    this.emEventFill = this.emEventFill || '#5a452d';
     this.emEventStroke = this.emEventStroke || '#8c755c';
     this.emSwimlaneBackgroundOdd = this.emSwimlaneBackgroundOdd || lighten(this.background, 5);
     this.emSwimlaneBackgroundStroke =
