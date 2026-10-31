@@ -150,4 +150,33 @@ describe('eventmodeling rendering', () => {
     expected.style.color = getConfig().themeVariables.textColor;
     expect((box as HTMLElement).style.color).toBe(expected.style.color);
   });
+
+  it.each(['dark', 'neo-dark', 'redux-dark', 'redux-dark-color'] as const)(
+    'should take the colors of the boxes from the %s theme',
+    async (theme) => {
+      mermaidAPI.initialize({ theme });
+      const { svg } = await mermaidAPI.render(
+        `eventmodeling-${theme}`,
+        `eventmodeling
+    tf 01 ui Screen
+    tf 02 cmd Command
+    tf 03 evt Event
+    tf 04 rmo Model
+    tf 05 pcr Processor`
+      );
+      const rects = new DOMParser()
+        .parseFromString(svg, 'text/html')
+        .querySelectorAll('.em-box rect');
+      const fills = [...rects].map((rect) => rect.getAttribute('fill')!);
+      const { emUiFill, emCommandFill, emEventFill, emReadModelFill, emProcessorFill } =
+        getConfig().themeVariables;
+      expect(fills).toEqual([
+        emUiFill,
+        emCommandFill,
+        emEventFill,
+        emReadModelFill,
+        emProcessorFill,
+      ]);
+    }
+  );
 });
