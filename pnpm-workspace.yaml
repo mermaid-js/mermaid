@@ -4,3 +4,6 @@ packages:
   - 'packages/mermaid/src/docs'
   - 'packages/mermaid/src/vitepress'
   - 'tests/*'
+minimumReleaseAgeExclude:
+  # Renovate security update: js-yaml@4.3.2
+  - js-yaml@4.3.2
