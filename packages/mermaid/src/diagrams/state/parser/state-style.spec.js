@@ -216,6 +216,43 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
           const relation = stateA.doc[0];
           expect(relation.state1.classes[0]).toEqual('exampleStyleClass');
         });
+
+        it('applies the class to the rendered node inside a composite state', () => {
+          stateDiagram.parser.parse(`stateDiagram-v2
+          state A {
+            a:::badEvent --> b
+          }
+          B:::badEvent --> [*]
+          classDef badEvent fill:#f00,color:white`);
+
+          const nodes = stateDiagram.parser.yy.getData().nodes;
+          const a = nodes.find((node) => node.id === 'a');
+          const b = nodes.find((node) => node.id === 'b');
+          const B = nodes.find((node) => node.id === 'B');
+
+          expect(a.cssClasses).toContain('badEvent');
+          expect(a.cssCompiledStyles).toEqual(['fill:#f00', 'color:white']);
+          expect(b.cssClasses).not.toContain('badEvent');
+          expect(B.cssCompiledStyles).toEqual(['fill:#f00', 'color:white']);
+        });
+
+        it('applies classDef, class and style statements inside a composite state', () => {
+          stateDiagram.parser.parse(`stateDiagram-v2
+          state A {
+            classDef badEvent fill:#f00
+            a --> b
+            class a badEvent
+            style b stroke:#00f
+          }`);
+
+          const nodes = stateDiagram.parser.yy.getData().nodes;
+          const a = nodes.find((node) => node.id === 'a');
+          const b = nodes.find((node) => node.id === 'b');
+
+          expect(a.cssClasses).toContain('badEvent');
+          expect(a.cssCompiledStyles).toEqual(['fill:#f00']);
+          expect(b.cssStyles).toEqual(['stroke:#00f']);
+        });
       });
 
       describe('comments parsing', () => {
