@@ -1995,7 +1995,7 @@ function isRouted(edge: Edge): edge is RoutedEdge {
 
 interface TitleSlideContext {
   titles: Box[];
-  nodeBoxes: { id: string; box: Box }[];
+  nodeBoxes: Box[];
   nodeById: Map<string, Node>;
   edges: RoutedEdge[];
 }
@@ -2156,17 +2156,14 @@ function labelBoxes(edges: Edge[]): Box[] {
 
 /** What `label` sits on: a node, another label, or another edge's route. */
 function labelConflicts(label: Box, others: RoutedEdge[], context: TitleSlideContext): number {
-  const obstacles = [...context.nodeBoxes.map(({ box }) => box), ...labelBoxes(others)];
+  const obstacles = [...context.nodeBoxes, ...labelBoxes(others)];
   return (
     obstacles.filter((box) => boxesOverlap(label, box)).length +
     others.filter(({ points }) => routeHitsBox(points, label)).length
   );
 }
 
-/**
- * What `route`, and the label riding on it, runs into that the edge should
- * not: a node other than its own ends, another edge's label or route.
- */
+/** What `route`, and the label riding on it, runs into: a node, another edge's label or route. */
 function routeConflicts(
   edge: RoutedEdge,
   route: P[],
@@ -2174,12 +2171,9 @@ function routeConflicts(
   context: TitleSlideContext
 ): number {
   const others = context.edges.filter((other) => other !== edge);
-  const foreign = context.nodeBoxes
-    .filter(({ id }) => id !== edge.start && id !== edge.end)
-    .map(({ box }) => box);
   const crossings = others.reduce((sum, other) => sum + crossingCount(route, other.points), 0);
   return (
-    countHits(route, [...foreign, ...labelBoxes(others)]) +
+    countHits(route, [...context.nodeBoxes, ...labelBoxes(others)]) +
     crossings +
     (label ? labelConflicts(label, others, context) : 0)
   );
@@ -2293,10 +2287,7 @@ export function slideEdgesOffClusterTitles(
   const routed = edges.filter(isRouted);
   const context: TitleSlideContext = {
     titles,
-    nodeBoxes: nodes.flatMap((node) => {
-      const box = node.isGroup ? undefined : placedBox(node);
-      return box ? [{ id: node.id, box }] : [];
-    }),
+    nodeBoxes: nodes.flatMap((node) => (node.isGroup ? [] : (placedBox(node) ?? []))),
     nodeById: new Map(nodes.map((node) => [node.id, node])),
     edges: routed,
   };
