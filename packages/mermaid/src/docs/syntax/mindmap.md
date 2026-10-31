@@ -247,6 +247,22 @@ Formatting:
 - For italics, use single asterisks \* before and after the text.
 - With traditional strings, you needed to add <br> tags for text to wrap in nodes. However, markdown strings automatically wrap text when it becomes too long and allows you to start a new line by simply using a newline character instead of a <br> tag.
 
+## Accessibility (v<MERMAID_RELEASE_VERSION>+)
+
+Mindmaps support the `accTitle` and `accDescr` keywords for adding an accessible title and description to the diagram. See [Accessibility Options](../config/accessibility.md) for more details.
+
+```mermaid-example
+mindmap
+  accTitle: Mindmap accessibility title
+  accDescr {
+    A mindmap with a root
+    and two children
+  }
+  root((mindmap))
+    Origins
+    Research
+```
+
 ## Integrating with your library/website.
 
 Mindmap is included in mermaid and loaded on demand, the first time a page uses it, which keeps the initial download small. No extra setup is needed:
