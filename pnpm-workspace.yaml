@@ -4,3 +4,6 @@ packages:
   - 'packages/mermaid/src/docs'
   - 'packages/mermaid/src/vitepress'
   - 'tests/*'
+minimumReleaseAgeExclude:
+  # Renovate security update: minimatch@11.0.3
+  - minimatch@11.0.3
