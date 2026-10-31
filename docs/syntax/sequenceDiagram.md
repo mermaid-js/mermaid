@@ -1269,7 +1269,7 @@ Individual actors can be styled inline or by attaching a reusable class. This ad
 
 **Inline `style` statement.** Apply styles to a single actor by name:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     participant Bob
@@ -1278,7 +1278,7 @@ sequenceDiagram
     Bob-->>Alice: Hi back
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant Bob
@@ -1289,7 +1289,7 @@ sequenceDiagram
 
 **Reusable `classDef` and `class` statements.** Define a class once and attach it to one or more actors. This mirrors the `classDef` / `class` pattern used in flowchart diagrams:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     classDef important fill:#fbb,stroke:#f00,stroke-width:3px
     participant Alice
@@ -1300,7 +1300,7 @@ sequenceDiagram
     Bob->>Carol: Forwarding
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     classDef important fill:#fbb,stroke:#f00,stroke-width:3px
     participant Alice

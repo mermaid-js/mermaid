@@ -53,7 +53,15 @@ const participant = (name: string, extra: Record<string, unknown> = {}) => ({
 const drawRect = async (actor: ReturnType<typeof participant>) => {
   document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
   const svg = select(document.querySelector<SVGSVGElement>('svg')!);
-  await svgDraw.drawActor(svg, actor, conf, false, 'test-id', undefined, new Map([[actor.name, 0]]));
+  await svgDraw.drawActor(
+    svg,
+    actor,
+    conf,
+    false,
+    'test-id',
+    undefined,
+    new Map([[actor.name, 0]])
+  );
   return document.querySelector<SVGRectElement>('rect.actor')!;
 };
 
