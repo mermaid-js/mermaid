@@ -1,3 +1,7 @@
+---
+description: 'How to use Mermaid in a web page or app: install from npm or a CDN, initialize, render with the API, bind events, and choose a security level.'
+---
+
 # Usage
 
 Mermaid is a JavaScript tool that makes use of a Markdown based syntax to render customizable diagrams, charts and visualizations.
@@ -157,7 +161,7 @@ Registering the package also makes the named ELK algorithms available — `elk.s
 
 ## Enabling Click Event and Tags in Nodes
 
-A `securityLevel` configuration has to first be cleared. `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. This was introduced in version 8.2 as a security improvement, aimed at preventing malicious use.
+A `securityLevel` configuration has to first be cleared. `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. It is a security measure, aimed at preventing malicious use.
 
 **It is the site owner's responsibility to discriminate between trustworthy and untrustworthy user-bases and we encourage the use of discretion.**
 
@@ -175,8 +179,7 @@ Values:
 - **sandbox**: With this security level, all rendering takes place in a sandboxed iframe. This prevents any JavaScript from running in the context. This may hinder interactive functionality of the diagram, like scripts, popups in the sequence diagram, links to other tabs or targets, etc.
 
 ```note
-This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
-**sandbox** security level is still in the beta version.
+With the default `securityLevel` (`strict`), tags in flowcharts are encoded as tags and clicking is disabled.
 ```
 
 **If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing. This allows clicks and tags are allowed.**

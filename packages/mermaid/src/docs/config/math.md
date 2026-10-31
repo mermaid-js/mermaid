@@ -1,3 +1,7 @@
+---
+description: 'Render mathematical expressions in Mermaid flowcharts and sequence diagrams with KaTeX, including legacy and MathML rendering options.'
+---
+
 # Math Configuration (v10.9.0+)
 
 Mermaid supports rendering mathematical expressions through the [KaTeX](https://katex.org/) typesetter.

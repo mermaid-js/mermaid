@@ -6,13 +6,11 @@
 
 # Mindmap
 
-> Mindmap: This is an experimental diagram for now. The syntax and properties can change in future releases. The syntax is stable except for the icon integration which is the experimental part.
-
 "A mind map is a diagram used to visually organize information into a hierarchy, showing relationships among pieces of the whole. It is often created around a single concept, drawn as an image in the center of a blank page, to which associated representations of ideas such as images, words and parts of words are added. Major ideas are connected directly to the central concept, and other ideas branch out from those major ideas." Wikipedia
 
 ### An example of a mindmap.
 
-```mermaid-example
+```mermaid
 mindmap
   root((mindmap))
     Origins
@@ -33,7 +31,7 @@ mindmap
 
 ```
 
-```mermaid
+```mermaid-example
 mindmap
   root((mindmap))
     Origins
@@ -70,7 +68,7 @@ mindmap
 
 In summary is a simple text outline where there is one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
 
-```mermaid-example
+```mermaid
 mindmap
 Root
     A
@@ -78,7 +76,7 @@ Root
       C
 ```
 
-```mermaid
+```mermaid-example
 mindmap
 Root
     A
@@ -96,84 +94,84 @@ Mindmap can show the following shapes:
 
 ### Square
 
-```mermaid-example
+```mermaid
 mindmap
     id[I am a square]
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     id[I am a square]
 ```
 
 ### Rounded square
 
-```mermaid-example
+```mermaid
 mindmap
     id(I am a rounded square)
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     id(I am a rounded square)
 ```
 
 ### Circle
 
-```mermaid-example
+```mermaid
 mindmap
     id((I am a circle))
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     id((I am a circle))
 ```
 
 ### Bang
 
-```mermaid-example
+```mermaid
 mindmap
     id))I am a bang((
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     id))I am a bang((
 ```
 
 ### Cloud
 
-```mermaid-example
+```mermaid
 mindmap
     id)I am a cloud(
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     id)I am a cloud(
 ```
 
 ### Hexagon
 
-```mermaid-example
+```mermaid
 mindmap
     id{{I am a hexagon}}
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     id{{I am a hexagon}}
 ```
 
 ### Default
 
-```mermaid-example
+```mermaid
 mindmap
     I am the default shape
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     I am the default shape
 ```
@@ -184,7 +182,7 @@ More shapes will be added, beginning with the shapes available in flowcharts.
 
 By default, mindmaps use a different color for each top-level branch. Descendants inherit their branch's color. Set `mindmap.colorBy` to `depth` to give all nodes at the same hierarchy level the same color, across every branch:
 
-```mermaid-example
+```mermaid
 ---
 config:
   mindmap:
@@ -201,7 +199,7 @@ mindmap
         Creative techniques
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   mindmap:
@@ -224,7 +222,7 @@ With the classic look, the root uses `git0` for its background and `gitBranchLab
 
 To choose the color of each level, set those variables with the `base` theme and pick contrasting background and label colors. The `neo` look colors the root label with `cScaleLabel0`, so set it too. In the `neo` look, also set `useGradient: false`, because otherwise `base` paints every node with `mainBkg`:
 
-```mermaid-example
+```mermaid
 ---
 config:
   theme: base
@@ -252,7 +250,7 @@ mindmap
         Creative techniques
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   theme: base
@@ -295,7 +293,7 @@ Set `mindmap.colorBy` to `branch` (the default) to restore branch coloring.
 
 As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. _This is not something a diagram author can do but has to be done with the site administrator or the integrator_. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parenthesis like in the following example where icons for material design and [Font Awesome 5](https://fontawesome.com/v5/search?o=r&m=free) are displayed. The intention is that this approach should be used for all diagrams supporting icons. **Experimental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
 
-```mermaid-example
+```mermaid
 mindmap
     Root
         A
@@ -304,7 +302,7 @@ mindmap
         ::icon(mdi mdi-skull-outline)
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     Root
         A
@@ -317,7 +315,7 @@ mindmap
 
 Again the syntax for adding classes is similar to flowcharts. You can add classes using a triple colon following a number of css classes separated by space. In the following example one of the nodes has two custom classes attached urgent turning the background red and the text white and large increasing the font size:
 
-```mermaid-example
+```mermaid
 mindmap
     Root
         A[A]
@@ -326,7 +324,7 @@ mindmap
         C
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     Root
         A[A]
@@ -351,7 +349,7 @@ mindmap
 
 This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is neither a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
 
-```mermaid-example
+```mermaid
 mindmap
 Root
     A
@@ -359,7 +357,7 @@ Root
       C
 ```
 
-```mermaid
+```mermaid-example
 mindmap
 Root
     A
@@ -371,7 +369,7 @@ Root
 
 The "Markdown Strings" feature enhances mind maps by offering a more versatile string type, which supports text formatting options such as bold and italics, and automatically wraps text within labels.
 
-```mermaid-example
+```mermaid
 mindmap
     id1["`**Root** with
 a second line
@@ -380,7 +378,7 @@ Unicode works too: 🤓`"]
       id3[Regular labels still works]
 ```
 
-```mermaid
+```mermaid-example
 mindmap
     id1["`**Root** with
 a second line
@@ -397,19 +395,7 @@ Formatting:
 
 ## Integrating with your library/website.
 
-Mindmap uses the experimental lazy loading & async rendering features which could change in the future. From version 9.4.0 this diagram is included in mermaid but use lazy loading in order to keep the size of mermaid down. This is important in order to be able to add additional diagrams going forward.
-
-You can still use the pre 9.4.0 method to add mermaid with mindmaps to a web page:
-
-```html
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9.3.0/dist/mermaid.esm.min.mjs';
-  import mindmap from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9.3.0/dist/mermaid-mindmap.esm.min.mjs';
-  await mermaid.registerExternalDiagrams([mindmap]);
-</script>
-```
-
-From version 9.4.0 you can simplify this code to:
+Mindmap is included in mermaid and loaded on demand, the first time a page uses it, which keeps the initial download small. No extra setup is needed:
 
 ```html
 <script type="module">
