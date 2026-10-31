@@ -173,7 +173,10 @@ export const drawSection = function (elem, section, conf) {
   rect.class = 'journey-section section-type-' + section.num;
   rect.rx = 3;
   rect.ry = 3;
-  drawRect(g, rect);
+  const rectElem = drawRect(g, rect);
+  if (section.styleFill) {
+    rectElem.style('fill', section.fill);
+  }
 
   _drawTextCandidateFunc(conf)(
     section.text,
@@ -228,7 +231,10 @@ export const drawTask = function (elem, task, conf, diagramId) {
   rect.class = 'task task-type-' + task.num;
   rect.rx = 3;
   rect.ry = 3;
-  drawRect(g, rect);
+  const rectElem = drawRect(g, rect);
+  if (task.styleFill) {
+    rectElem.style('fill', task.fill);
+  }
 
   let xPos = task.x + 14;
   task.people.forEach((person) => {
