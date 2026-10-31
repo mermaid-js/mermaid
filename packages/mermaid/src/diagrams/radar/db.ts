@@ -1,7 +1,7 @@
 import { getConfig as commonGetConfig } from '../../config.js';
 import type { RadarDiagramConfig } from '../../config.type.js';
 import DEFAULT_CONFIG from '../../defaultConfig.js';
-import { cleanAndMerge } from '../../utils.js';
+import { cleanAndMerge, decodeEntityPlaceholders } from '../../utils.js';
 import {
   clear as commonClear,
   getAccDescription,
@@ -84,7 +84,7 @@ const computeCurveEntries = (entries: Entry[]): number[] => {
   return axes.map((axis) => {
     const entry = entries.find((entry) => entry.axis?.$refText === axis.name);
     if (entry === undefined) {
-      throw new Error('Missing entry for axis ' + axis.label);
+      throw new Error('Missing entry for axis ' + decodeEntityPlaceholders(axis.label));
     }
     return entry.value;
   });
