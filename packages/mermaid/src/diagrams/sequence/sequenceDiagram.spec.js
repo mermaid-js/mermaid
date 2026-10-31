@@ -3119,19 +3119,22 @@ Bob->>Alice:Got it!
       expect(actors.get('Alice')).toBeDefined();
     });
 
+    // The ';' tests below use named colors on purpose: encodeEntities() runs before the
+    // parser and turns '#f00;' into an entity placeholder, so a hex color right before
+    // ';' never reaches the lexer.
     it('should keep CSS rule terminator stripping in classDef values', async () => {
       // The ';prop:value' tail stays inside the classDef statement, gets split
       // into its own declaration, and is dropped by sanitizeCssDeclaration().
       const diagram = await Diagram.fromText(`
       sequenceDiagram
-      classDef evil fill:#f00;background:url(http://attacker)
+      classDef evil fill:red;background:url(http://attacker)
       participant Alice
       Alice->>Alice: test
       `);
       const classes = diagram.db.getClasses();
       const evil = classes.get('evil');
       expect(evil).toBeDefined();
-      expect(evil.styles).toEqual(['fill:#f00']);
+      expect(evil.styles).toEqual(['fill:red']);
       // The tail must not leak out as a separate statement or actor.
       expect(diagram.db.getActors().has('background')).toBe(false);
       expect(diagram.db.getMessages().length).toBe(1);
@@ -3141,11 +3144,11 @@ Bob->>Alice:Got it!
       const diagram = await Diagram.fromText(`
       sequenceDiagram
       participant Alice
-      style Alice fill:#f00; stroke:#00f;background:url(http://attacker)
+      style Alice fill:red; stroke:blue;background:url(http://attacker)
       Alice->>Alice: test
       `);
       const alice = diagram.db.getActors().get('Alice');
-      expect(alice.styles).toEqual(['fill:#f00', 'stroke:#00f']);
+      expect(alice.styles).toEqual(['fill:red', 'stroke:blue']);
       expect(diagram.db.getActors().has('background')).toBe(false);
     });
 
@@ -3154,9 +3157,9 @@ Bob->>Alice:Got it!
       sequenceDiagram
       participant Alice
       participant Bob
-      style Alice fill:#f00;Alice->>Bob: hi;Note right of Bob: ok
+      style Alice fill:red;Alice->>Bob: hi;Note right of Bob: ok
       `);
-      expect(diagram.db.getActors().get('Alice').styles).toEqual(['fill:#f00']);
+      expect(diagram.db.getActors().get('Alice').styles).toEqual(['fill:red']);
       const messages = diagram.db.getMessages();
       expect(messages.map((m) => m.message)).toEqual(['hi', 'ok']);
     });

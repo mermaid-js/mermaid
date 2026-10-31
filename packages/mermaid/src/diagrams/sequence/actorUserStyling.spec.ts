@@ -4,10 +4,28 @@
  * user styling must not get the palette inline, or the user's colors never show.
  */
 import { select } from 'd3';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import defaultConfig from '../../defaultConfig.js';
 import themes from '../../themes/index.js';
 import svgDraw from './svgDraw.js';
+
+// jsdom has no layout, so drawActor's measurement needs a stub.
+const originalGetBBox = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getBBox');
+
+beforeAll(() => {
+  Object.defineProperty(SVGElement.prototype, 'getBBox', {
+    configurable: true,
+    value: () => ({ x: 0, y: 0, width: 150, height: 65 }) as DOMRect,
+  });
+});
+
+afterAll(() => {
+  if (originalGetBBox) {
+    Object.defineProperty(SVGElement.prototype, 'getBBox', originalGetBBox);
+  } else {
+    Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+  }
+});
 
 const conf = {
   ...defaultConfig.sequence,
