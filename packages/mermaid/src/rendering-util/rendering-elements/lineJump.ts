@@ -733,9 +733,12 @@ export function applyLineJumpsToSvg(
     // marker body. Our rewritten path has a different length, so without
     // updating the "on" portion the hidden tail ends up in the wrong place.
     const originalStyle = pathEl.getAttribute('style') ?? '';
-    const dasharrayMatch = /stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)/.exec(
-      originalStyle
-    );
+    // Anchored at the start: edges.js prepends the generated declaration, so a later user
+    // `stroke-dasharray` (linkStyle/classDef) must be left alone or the edge turns solid.
+    // Anchored to the four-number form: a dashed or dotted edge has a longer array, and
+    // rewriting that to the solid form would turn it into a solid line.
+    const dasharrayMatch =
+      /^stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)\s*(?:;|$)/.exec(originalStyle);
     const preservedOValueS = dasharrayMatch ? Number.parseFloat(dasharrayMatch[1]) : null;
     const preservedOValueE = dasharrayMatch ? Number.parseFloat(dasharrayMatch[2]) : null;
 
@@ -751,7 +754,7 @@ export function applyLineJumpsToSvg(
       const onLen = Math.max(0, newLen - preservedOValueS - preservedOValueE);
       const newDasharray = `0 ${preservedOValueS} ${onLen} ${preservedOValueE}`;
       const cleaned = originalStyle
-        .replace(/stroke-dasharray\s*:[^;]*;?/g, `stroke-dasharray: ${newDasharray};`)
+        .replace(/^stroke-dasharray\s*:[^;]*;?/, `stroke-dasharray: ${newDasharray};`)
         .replace(/;\s*;+/g, ';');
       pathEl.setAttribute('style', cleaned);
     }
