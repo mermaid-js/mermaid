@@ -455,7 +455,10 @@ const drawActorTypeParticipant = function (elem, actor, conf, isFooter, diagramI
   const rectElem = drawRect(g, rect);
 
   const actorCount = actorIndexMap.get(actor.name) ?? 0;
-  if (COLOR_THEMES.has(theme)) {
+  // Inline styles outrank the generated user-style classes, so skip the
+  // palette colors when the actor has its own style or class.
+  const hasUserStyling = actor.styles?.length > 0 || actor.classes?.length > 0;
+  if (COLOR_THEMES.has(theme) && !hasUserStyling) {
     rectElem.style('stroke', paletteColor(borderColorArray, actorCount));
     rectElem.style('fill', paletteColor(bkgColorArray, actorCount));
   }

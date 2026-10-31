@@ -57,7 +57,7 @@
 "break"                                                         { this.begin('LINE'); return 'break'; }
 <LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
 <STYLE_STMT>((?!\n)\s)+                                         /* skip same-line whitespace */
-<STYLE_STMT>[^\n;]*                                             { this.popState(); return 'styleRestOfLine'; }
+<STYLE_STMT>[^\n;]*(?:";"(?![^\S\n]*(?:title|accTitle|accDescr)[^\S\n]*":")[^\S\n]*[A-Za-z-]+[^\S\n]*":"[^\n;]*)*    { /* keep ";prop:value" tails in the statement so they get sanitized */ this.popState(); return 'styleRestOfLine'; }
 classDef(?=\s)                                                  { this.begin('STYLE_STMT'); return 'classDef'; }
 style(?=\s)                                                     { this.begin('STYLE_STMT'); return 'style'; }
 class(?=\s)                                                     { this.begin('STYLE_STMT'); return 'class'; }
@@ -193,9 +193,9 @@ statement
   | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
-	| 'classDef' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]*)/); if(m) { yy.addClass(m[1], [m[2]]); } }
-	| 'style' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]*)/); if(m) { $$ = {type: 'applyStyle', actor: m[1], styleStr: [m[2]]}; } }
-	| 'class' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+([\s\S]+)/); if(m) { $$ = {type: 'applyClass', actor: m[1], className: m[2].trim()}; } }
+	| 'classDef' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+(\S[\s\S]*)$/); if(m) { yy.addClass(m[1], [m[2]]); } $$ = []; }
+	| 'style' styleRestOfLine { var m = $2.trim().match(/^(\S+)\s+(\S[\s\S]*)$/); $$ = m ? {type: 'applyStyle', actor: m[1], styleStr: [m[2]]} : []; }
+	| 'class' styleRestOfLine { var m = $2.split(';')[0].trim().match(/^(\S[\s\S]*?)\s+(\S+)$/); $$ = m ? {type: 'applyClass', actor: m[1], className: m[2]} : []; }
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});

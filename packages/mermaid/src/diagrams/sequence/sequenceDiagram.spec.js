@@ -3120,8 +3120,8 @@ Bob->>Alice:Got it!
     });
 
     it('should keep CSS rule terminator stripping in classDef values', async () => {
-      // The JISON [^\n;]* capture stops at ';', so user input cannot embed
-      // a rule terminator that would close the scoped block prematurely.
+      // The ';prop:value' tail stays inside the classDef statement, gets split
+      // into its own declaration, and is dropped by sanitizeCssDeclaration().
       const diagram = await Diagram.fromText(`
       sequenceDiagram
       classDef evil fill:#f00;background:url(http://attacker)
@@ -3130,12 +3130,65 @@ Bob->>Alice:Got it!
       `);
       const classes = diagram.db.getClasses();
       const evil = classes.get('evil');
-      // The class entry exists, but sanitizeCssDeclaration() in sequenceDb
-      // strips any value containing url(), so the dangerous declaration is
-      // dropped before it can reach the rendered <style> tag.
       expect(evil).toBeDefined();
-      expect(evil.styles.join(',')).not.toContain('url(');
-      expect(evil.styles.join(',')).not.toContain('attacker');
+      expect(evil.styles).toEqual(['fill:#f00']);
+      // The tail must not leak out as a separate statement or actor.
+      expect(diagram.db.getActors().has('background')).toBe(false);
+      expect(diagram.db.getMessages().length).toBe(1);
+    });
+
+    it('should keep a semicolon-separated style tail inside the style statement', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      style Alice fill:#f00; stroke:#00f;background:url(http://attacker)
+      Alice->>Alice: test
+      `);
+      const alice = diagram.db.getActors().get('Alice');
+      expect(alice.styles).toEqual(['fill:#f00', 'stroke:#00f']);
+      expect(diagram.db.getActors().has('background')).toBe(false);
+    });
+
+    it('should still treat ";" after a style statement as a statement separator', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      style Alice fill:#f00;Alice->>Bob: hi;Note right of Bob: ok
+      `);
+      expect(diagram.db.getActors().get('Alice').styles).toEqual(['fill:#f00']);
+      const messages = diagram.db.getMessages();
+      expect(messages.map((m) => m.message)).toEqual(['hi', 'ok']);
+    });
+
+    it('should attach a class to a comma-separated actor list with spaces', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef highlighted fill:#f9f
+      participant Alice
+      participant Bob
+      class Alice, Bob highlighted
+      Alice->>Bob: hi
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Alice').classes).toEqual(['highlighted']);
+      expect(actors.get('Bob').classes).toEqual(['highlighted']);
+    });
+
+    it('should ignore malformed style, class and classDef lines without crashing', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      participant Alice
+      classDef foo
+      style Alice
+      class Alice
+      Alice->>Alice: still renders
+      `);
+      expect(diagram.db.getClasses().has('foo')).toBe(false);
+      const alice = diagram.db.getActors().get('Alice');
+      expect(alice.styles ?? []).toEqual([]);
+      expect(alice.classes ?? []).toEqual([]);
+      expect(diagram.db.getMessages().length).toBe(1);
     });
 
     it('should reject classDef declarations containing dangerous CSS functions', async () => {
