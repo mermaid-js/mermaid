@@ -1,5 +1,4 @@
 import { readFileSync } from 'node:fs';
-import type { TestInfo } from '@playwright/test';
 import {
   assertUniqueSnapshotNames,
   buildFixtureTree,
@@ -10,8 +9,7 @@ import {
   readFixtureMetadata,
   type FixtureTree,
 } from '../helpers/mmd-snapshots.ts';
-import { imgSnapshotTest } from '../helpers/util.ts';
-import { renderShared, test } from '../helpers/workerPage.ts';
+import { test } from '../helpers/workerPage.ts';
 
 // Set by CI (.github/workflows/e2e.yml, .github/workflows/nightly-e2e.yml)
 // to a comma-separated tier list (e.g. 'pr' or 'pr,nightly') when a run is
@@ -83,7 +81,12 @@ const registerFixtureNode = (node: FixtureTree): void => {
     const metadata = readFixtureMetadata(relativePath);
     const tags = metadata?.tags?.map((tag) => (tag.startsWith('@') ? tag : `@${tag}`));
 
-    const prepare = (testInfo: TestInfo) => {
+    // Mirror the fixture's storage path so Argos sheets group by diagram
+    // folder (e.g. diagrams/packet) rather than the runner spec file.
+    const screenshotPath = `diagrams/${relativePath.replace(/\.mmd$/i, '')}`;
+    const clock = fixedClockFor(relativePath);
+
+    test(fixtureBaseName(relativePath), { tag: tags }, async ({ renderShared }, testInfo) => {
       testInfo.annotations.push({ type: 'order-seed', description: String(orderSeed) });
       if (metadata?.description) {
         testInfo.annotations.push({ type: 'description', description: metadata.description });
@@ -93,39 +96,17 @@ const registerFixtureNode = (node: FixtureTree): void => {
         // invisible short of opening the fixture's folder directly.
         testInfo.annotations.push({ type: 'metadata', description: 'No metadata found for test' });
       }
+
+      let source: string;
       try {
-        return readFileSync(fixturePath(relativePath), 'utf8');
+        source = readFileSync(fixturePath(relativePath), 'utf8');
       } catch (error) {
         throw new Error(
           `Failed to read mmd fixture ${relativePath}: ${error instanceof Error ? error.message : String(error)}`
         );
       }
-    };
-    // Mirror the fixture's storage path so Argos sheets group by diagram
-    // folder (e.g. diagrams/packet) rather than the runner spec file.
-    const screenshotPath = `diagrams/${relativePath.replace(/\.mmd$/i, '')}`;
-    const fixedClock = fixedClockFor(relativePath);
-
-    if (fixedClock) {
-      // A pinned clock would leak into later fixtures, so these keep a fresh page.
-      test(fixtureBaseName(relativePath), { tag: tags }, async ({ page }, testInfo) => {
-        const source = prepare(testInfo);
-        // setFixedTime over install: never advances, so a diagram whose own
-        // date parsing defaults to "now" can't resolve to a slightly later
-        // instant than a render-time `new Date()` call (e.g. the today
-        // marker) just because rendering took some real time to run.
-        await page.clock.setFixedTime(new Date(fixedClock));
-        await imgSnapshotTest(page, testInfo, source, { screenshotPath });
-      });
-    } else {
-      test(
-        fixtureBaseName(relativePath),
-        { tag: tags },
-        async ({ workerPage, browser }, testInfo) => {
-          await renderShared(workerPage, browser, testInfo, prepare(testInfo), { screenshotPath });
-        }
-      );
-    }
+      await renderShared(source, { screenshotPath, clock });
+    });
   }
 };
 

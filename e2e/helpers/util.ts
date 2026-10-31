@@ -24,7 +24,7 @@ interface E2EConfig {
   /** Fail when mermaid renders its syntax-error diagram instead of the requested type. Default true. */
   rejectErrorDiagram?: boolean;
 }
-type E2EMermaidConfig = MermaidConfig & E2EConfig;
+export type E2EMermaidConfig = MermaidConfig & E2EConfig;
 
 interface CodeObject {
   code: string | string[];
@@ -129,8 +129,12 @@ export const renderInPage = async (
   ) {
     await flushCoverage(page);
     await page.reload();
-    await page.waitForFunction(() => typeof (window as any).renderGraph === 'function');
+    await waitForRenderGraph(page);
   }
+};
+
+export const waitForRenderGraph = async (page: Page): Promise<void> => {
+  await page.waitForFunction(() => typeof (window as any).renderGraph === 'function');
 };
 
 export const urlSnapshotTest = async (
@@ -205,7 +209,7 @@ export const openURLAndVerifyRendering = async (
   await startCoverage(page);
   await page.goto(url);
   await verifyRendering(page, testInfo, url, options, errors, validation);
-  await collectCoverage(page, testInfo);
+  await collectCoverage(page);
 };
 
 const verifyRendering = async (

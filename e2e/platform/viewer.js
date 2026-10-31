@@ -62,53 +62,10 @@ const contentLoaded = async function () {
   }
 };
 
-const initialHead = new Set(document.head.children);
-
-window.renderGraph = async (graphObj) => {
-  window.rendered = false;
-  for (const node of [...document.head.children]) {
-    if (!initialHead.has(node)) {
-      node.remove();
-    }
-  }
-  document.body.replaceChildren();
-  document.body.style.background = '';
-  try {
-    await renderGraphObj(graphObj);
-  } finally {
-    markRendered();
-  }
-};
-
-async function renderGraphObj(graphObj) {
-  if (usesLegacyFontAwesomeSyntax(graphObj.code)) {
-    await loadFontAwesomeCSS();
-  }
-  await Promise.all(Array.from(document.fonts, (font) => font.load()));
-
-  const code = Array.isArray(graphObj.code) ? graphObj.code[0] : graphObj.code;
-  const theme = graphObj.mermaid?.theme ?? detectThemeFromSource(code);
-  if (isDarkTheme(theme)) {
-    document.body.style.background = '#3f3f3f';
-  }
-  console.log(graphObj);
-  if (Array.isArray(graphObj.code)) {
-    const numCodes = graphObj.code.length;
-    for (let i = 0; i < numCodes; i++) {
-      const div = document.createElement('div');
-      div.id = 'block' + i;
-      div.className = 'mermaid';
-      div.innerHTML = graphObj.code[i];
-      document.getElementsByTagName('body')[0].appendChild(div);
-    }
-  } else {
-    const div = document.createElement('div');
-    div.id = 'block';
-    div.className = 'mermaid';
-    div.innerHTML = graphObj.code;
-    document.getElementsByTagName('body')[0].appendChild(div);
-  }
-
+// Plugins and icon packs live in module-level registries that survive
+// mermaid.initialize, so register them once per page rather than per render.
+let pluginsRegistered;
+async function registerPlugins() {
   await mermaid.registerExternalDiagrams([externalExample, zenUml]);
 
   // ELK is bundled with mermaid and registered automatically. Registering the
@@ -116,7 +73,6 @@ async function renderGraphObj(graphObj) {
   // copy, so the suite would be exercising the plugin build rather than the
   // layout users actually get.
   mermaid.registerLayoutLoaders(tidyTree);
-  mermaid.initialize(graphObj.mermaid);
   /**
    *  CC-BY-4.0
    *  Copyright (c) Fonticons, Inc. - https://fontawesome.com/license/free
@@ -228,6 +184,57 @@ async function renderGraphObj(graphObj) {
       loader: () => staticMaterialIconPack,
     },
   ]);
+}
+
+const initialHead = new Set(document.head.children);
+
+window.renderGraph = async (graphObj) => {
+  window.rendered = false;
+  for (const node of [...document.head.children]) {
+    if (!initialHead.has(node)) {
+      node.remove();
+    }
+  }
+  document.body.replaceChildren();
+  document.body.style.background = '';
+  try {
+    await renderGraphObj(graphObj);
+  } finally {
+    markRendered();
+  }
+};
+
+async function renderGraphObj(graphObj) {
+  if (usesLegacyFontAwesomeSyntax(graphObj.code)) {
+    await loadFontAwesomeCSS();
+  }
+  await Promise.all(Array.from(document.fonts, (font) => font.load()));
+
+  const code = Array.isArray(graphObj.code) ? graphObj.code[0] : graphObj.code;
+  const theme = graphObj.mermaid?.theme ?? detectThemeFromSource(code);
+  if (isDarkTheme(theme)) {
+    document.body.style.background = '#3f3f3f';
+  }
+  console.log(graphObj);
+  if (Array.isArray(graphObj.code)) {
+    const numCodes = graphObj.code.length;
+    for (let i = 0; i < numCodes; i++) {
+      const div = document.createElement('div');
+      div.id = 'block' + i;
+      div.className = 'mermaid';
+      div.innerHTML = graphObj.code[i];
+      document.getElementsByTagName('body')[0].appendChild(div);
+    }
+  } else {
+    const div = document.createElement('div');
+    div.id = 'block';
+    div.className = 'mermaid';
+    div.innerHTML = graphObj.code;
+    document.getElementsByTagName('body')[0].appendChild(div);
+  }
+
+  await (pluginsRegistered ??= registerPlugins());
+  mermaid.initialize(graphObj.mermaid);
   await mermaid.run();
 }
 
