@@ -126,7 +126,7 @@ function getNodeFromBlock(block: Block, db: BlockDB, positioned = false) {
     x: bounds.x,
     y: bounds.y,
     positioned,
-    intersect: undefined,
+    intersect: undefined as Block['intersect'],
     padding: padding ?? getConfig()?.block?.padding ?? 0,
     widthInColumns: vertex.widthInColumns ?? 1,
     colorIndex: vertex.colorIndex,
@@ -181,7 +181,9 @@ export async function insertBlockPositioned(elem: any, block: Block, db: any) {
         config.themeVariables?.borderColorArray
       );
     }
-    block.intersect = node?.intersect;
+    // Shapes such as `question` call `this.calcIntersect`, so keep `this` bound to
+    // the shape node when the layout graph later calls `intersect` on its own node.
+    block.intersect = node?.intersect?.bind(node);
     positionNode(node);
   }
 }
