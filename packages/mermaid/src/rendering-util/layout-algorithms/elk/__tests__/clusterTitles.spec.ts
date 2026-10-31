@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  carryLabelsAlong,
   projectLabelOntoStraightenedRun,
   runElkLayoutCore,
   slideEdgesOffClusterTitles,
@@ -337,7 +338,13 @@ describe('slideEdgesOffClusterTitles', () => {
 
     slide([edge], [stock, node('A', 99), node('B', 450, 'cyl', 250)]);
 
-    expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    const x = clearOfTitle(stock);
+    expect(edge.points).toEqual([
+      { x, y: 135 },
+      { x, y: 340 },
+      { x: 250, y: 340 },
+      { x: 250, y: 400 },
+    ]);
   });
 
   it('takes the left when the leg after the run would turn back on itself', () => {
@@ -379,6 +386,147 @@ describe('slideEdgesOffClusterTitles', () => {
     expect(edge.points[0].x).toBe(leftOfTitle(stock));
   });
 
+  it.each(['rect', 'squareRect', 'rounded', 'roundedRect'])(
+    'slides an edge that ends on a %s node',
+    (shape) => {
+      const stock = frame(101.734375);
+      const edge = labelled(straight());
+
+      slide([edge], [stock, node('A', 99), node('B', 370, shape)]);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    }
+  );
+
+  it('treats an end node without a shape as a rectangle', () => {
+    const stock = frame(101.734375);
+    const edge = labelled(straight());
+
+    slide([edge], [stock, node('A', 99), { ...node('B', 370), shape: undefined }]);
+
+    expect(edge.points[0].x).toBe(clearOfTitle(stock));
+  });
+
+  it('treats a frame without a shape as a plain rectangle', () => {
+    const stock = { ...frame(101.734375), shape: undefined };
+    const edge = labelled(straight());
+
+    slide([edge], [stock, node('A', 99), node('B', 370)]);
+
+    expect(edge.points[0].x).toBe(clearOfTitle(stock));
+  });
+
+  it.each([0.3, 0.5])(
+    'takes the right side when the sides are within a pixel of equally near, %s left of centre',
+    (offset) => {
+      const stock = frame(101.734375);
+      const edge = labelled(straight().map(({ y }) => ({ x: CENTRE - offset, y })));
+
+      slide([edge], [stock, node('A', 99), node('B', 370)]);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(stock));
+    }
+  );
+
+  it('takes the left side when it is more than a pixel nearer', () => {
+    const stock = frame(101.734375);
+    const edge = labelled(straight().map(({ y }) => ({ x: CENTRE - 2, y })));
+
+    slide([edge], [stock, node('A', 99), node('B', 370)]);
+
+    expect(edge.points[0].x).toBe(leftOfTitle(stock));
+  });
+
+  it.each([
+    [40, 170, 170],
+    [54, 190, 54],
+  ])(
+    'joins the nearer of the columns either side of the run, %s and %s',
+    (before, after, joins) => {
+      const stock = frame(101.734375);
+      const edge = labelled([
+        { x: before, y: 135 },
+        { x: before, y: 200 },
+        { x: CENTRE, y: 200 },
+        { x: CENTRE, y: 340 },
+        { x: after, y: 340 },
+        { x: after, y: 400 },
+      ]);
+
+      slide(
+        [edge],
+        [stock, node('A', 99, 'squareRect', before), node('B', 450, 'squareRect', after)]
+      );
+
+      expect(edge.points[2].x).toBe(joins);
+      expect(edge.points).toHaveLength(5);
+    }
+  );
+
+  it('joins the column after the run when nothing leads into it', () => {
+    const stock = frame(101.734375);
+    const column = clearOfTitle(stock) + 3;
+    const edge = labelled([
+      { x: CENTRE, y: 135 },
+      { x: CENTRE, y: 340 },
+      { x: column, y: 340 },
+      { x: column, y: 400 },
+    ]);
+
+    slide([edge], [stock, node('A', 99), node('B', 450, 'squareRect', column)]);
+
+    expect(edge.points).toEqual([
+      { x: column, y: 135 },
+      { x: column, y: 340 },
+      { x: column, y: 400 },
+    ]);
+  });
+
+  it('leaves a route alone when only an end point falls inside the title', () => {
+    const stock = frame(101.734375);
+
+    stays(
+      labelled([
+        { x: 40, y: 295 },
+        { x: 100, y: 295 },
+      ]),
+      [stock, node('A', 99), node('B', 370)]
+    );
+  });
+
+  describe('a leg beside the run that the slide would shorten', () => {
+    const stock = frame(101.734375);
+    const crowdedRight = lane(clearOfTitle(stock) + 5, 250, 330);
+    const withLeg = (length: number) =>
+      labelled([
+        { x: leftOfTitle(stock) - length, y: 135 },
+        { x: leftOfTitle(stock) - length, y: 200 },
+        { x: CENTRE, y: 200 },
+        { x: CENTRE, y: 330 },
+      ]);
+    const nodes = (length: number) => [
+      stock,
+      node('A', 99, 'squareRect', leftOfTitle(stock) - length),
+      node('B', 370, 'squareRect', 125),
+    ];
+
+    it('leaves the edge alone when the leg would be only two arrowheads long', () => {
+      const edge = withLeg(SEPARATION_OF_ARROWHEADS);
+      const points = edge.points;
+
+      expect(slide([edge, crowdedRight], nodes(SEPARATION_OF_ARROWHEADS))).toEqual([]);
+      expect(edge.points).toBe(points);
+    });
+
+    it('slides the edge when the leg stays longer than two arrowheads', () => {
+      const edge = withLeg(SEPARATION_OF_ARROWHEADS + 1);
+
+      slide([edge, crowdedRight], nodes(SEPARATION_OF_ARROWHEADS + 1));
+
+      expect(edge.points.at(-1).x).toBe(leftOfTitle(stock));
+    });
+  });
+
   describe('when the near side is taken', () => {
     const takesTheLeft = (others: any[], nodes: any[] = []) => {
       const stock = frame(101.734375);
@@ -392,7 +540,7 @@ describe('slideEdgesOffClusterTitles', () => {
     const SIDE_CLEAR = SEPARATION_OF_ARROWHEADS;
 
     it('because a node stands in its way', () => {
-      takesTheLeft([], [{ ...node('Z', 240), x: column, width: 30, height: 30 }]);
+      takesTheLeft([], [{ ...node('Z', 240), x: column + 10, width: 30, height: 30 }]);
     });
 
     it('because another edge crosses it', () => {
@@ -439,6 +587,10 @@ describe('slideEdgesOffClusterTitles', () => {
     it('because another edge already runs down that column', () => {
       takesTheLeft([lane(column + SIDE_CLEAR - 1, 250, 330)]);
     });
+
+    it('because another edge already runs down that column from above the run', () => {
+      takesTheLeft([lane(column + 5, 100, 180)]);
+    });
   });
 
   describe('when another edge runs beside the near side', () => {
@@ -458,6 +610,22 @@ describe('slideEdgesOffClusterTitles', () => {
 
     it('on a stretch of the column the edge does not use', () => {
       slidesRight(lane(column + 1, 0, 100));
+    });
+
+    it('which only starts where the run stops', () => {
+      slidesRight(lane(column + 5, 330, 400));
+    });
+
+    it('which only stops where the run starts', () => {
+      slidesRight(lane(column + 5, 60, 135));
+    });
+
+    it.each([
+      ['no text', { label: '', width: 40, height: 20 }],
+      ['no width', { label: 'Packed', width: 0, height: 20 }],
+      ['no height', { label: 'Packed', width: 40, height: 0 }],
+    ])('and has a label with %s', (_, label) => {
+      slidesRight({ ...lane(300, 0, 10), ...label, x: column, y: 210 });
     });
   });
 
@@ -544,5 +712,39 @@ describe('an edge into a titled frame', () => {
     await runElkLayoutCore(data, elkRenderContext);
 
     expect(crossings(data)).toEqual([]);
+  });
+});
+
+describe('carryLabelsAlong', () => {
+  const run = {
+    old: { a: { x: 112, y: 135 }, b: { x: 112, y: 330 } },
+    new: { a: { x: 167, y: 135 }, b: { x: 167, y: 330 } },
+  };
+
+  it('puts the label of a moved edge on the run it moved along', () => {
+    const edge: any = { id: 'e', x: 112, y: 210 };
+
+    carryLabelsAlong([{ edge, runs: [run] }]);
+
+    expect(edge).toMatchObject({ x: 167, y: 210 });
+  });
+
+  it.each([[{ x: 112 }], [{ y: 210 }], [{}]])(
+    'leaves an edge whose label position is only %j alone',
+    (position) => {
+      const edge: any = { id: 'e', ...position };
+
+      carryLabelsAlong([{ edge, runs: [run] }]);
+
+      expect(edge).toEqual({ id: 'e', ...position });
+    }
+  );
+
+  it('leaves a label where it is when no run moved', () => {
+    const edge: any = { id: 'e', x: 112, y: 210 };
+
+    carryLabelsAlong([{ edge, runs: [] }]);
+
+    expect(edge).toMatchObject({ x: 112, y: 210 });
   });
 });
