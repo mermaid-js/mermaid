@@ -1950,7 +1950,7 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
  * projecting it onto the run it was actually riding on keeps it centred on the
  * line instead of beside it (#8292).
  */
-function carryLabelsAlong(moved: { edge: Edge; runs: StraightenedRun[] }[]): void {
+export function carryLabelsAlong(moved: { edge: Edge; runs: StraightenedRun[] }[]): void {
   for (const { edge, runs } of moved) {
     if (edge.x == null || edge.y == null) {
       continue;
@@ -1987,17 +1987,24 @@ interface VerticalRun {
   last: number;
 }
 
+type RoutedEdge = Edge & { points: P[] };
+
+function isRouted(edge: Edge): edge is RoutedEdge {
+  return edge.points !== undefined;
+}
+
 interface TitleSlideContext {
   titles: Box[];
   nodeBoxes: { id: string; box: Box }[];
   nodeById: Map<string, Node>;
-  edges: Edge[];
+  edges: RoutedEdge[];
 }
 
-const placedBox = (node: Node): Box | undefined =>
-  node.x === undefined || node.y === undefined
+function placedBox(node: Node): Box | undefined {
+  return node.x === undefined || node.y === undefined
     ? undefined
     : labelBox({ x: node.x, y: node.y }, { width: node.width ?? 0, height: node.height ?? 0 });
+}
 
 /** The box `rect` in `clusters.js` paints a frame's title in: centred on the frame, `topMargin` below its top. */
 function plainTitleBox(node: Node, topMargin: number): Box | undefined {
@@ -2035,8 +2042,9 @@ function routeHitsBox(route: P[], box: Box): boolean {
   return route.some((point, i) => i < route.length - 1 && segmentHitsBox(point, route[i + 1], box));
 }
 
-const countHits = (route: P[], boxes: Box[]): number =>
-  boxes.filter((box) => routeHitsBox(route, box)).length;
+function countHits(route: P[], boxes: Box[]): number {
+  return boxes.filter((box) => routeHitsBox(route, box)).length;
+}
 
 function runCrossingTitle(
   points: P[],
@@ -2051,39 +2059,43 @@ function runCrossingTitle(
   return undefined;
 }
 
+/** The legs either side of a run, each as its far end and the end of the run it leaves from. */
+function legsOf(points: P[], run: VerticalRun): { far: P; near: P }[] {
+  return [
+    { far: points[run.first - 1], near: points[run.first] },
+    { far: points[run.last + 1], near: points[run.last] },
+  ].filter(({ far }) => far !== undefined);
+}
+
 /**
- * Where a run at `x` can stand clear of `title`, best first: the column of a
- * neighbouring run that is already clear, which removes the jog between them,
- * then the two sides of the title, nearest first with the right side winning a tie.
+ * Where a run at `x` can stand clear of `title`, best first: the columns of the
+ * runs either side of it, nearest first, which removes the jog between them; then
+ * the two sides of the title, nearest first with the right side winning a tie.
  */
 function slideTargets(title: Box, x: number, neighbourColumns: number[]): number[] {
-  const right = title.x2 + TITLE_EDGE_GAP;
-  const left = title.x1 - TITLE_EDGE_GAP;
   const reach = (target: number) => Math.abs(target - x);
-  const sides = [right, left].sort((a, b) => {
+  const sides = [title.x2 + TITLE_EDGE_GAP, title.x1 - TITLE_EDGE_GAP].sort((a, b) => {
     const difference = reach(a) - reach(b);
     return Math.abs(difference) <= 1 ? 0 : difference;
   });
-  const merges = neighbourColumns.filter((column) => column >= right || column <= left);
-  return [...merges.sort((a, b) => reach(a) - reach(b)), ...sides];
+  return [...neighbourColumns.sort((a, b) => reach(a) - reach(b)), ...sides];
 }
 
-const withRunAt = (points: P[], run: VerticalRun, x: number): P[] =>
-  points.map((point, i) => (i >= run.first && i <= run.last ? { x, y: point.y } : point));
+function withRunAt(points: P[], run: VerticalRun, x: number): P[] {
+  return points.map((point, i) => (i >= run.first && i <= run.last ? { x, y: point.y } : point));
+}
 
-/** The columns the legs either side of a run lead to. */
-const neighbourColumns = (points: P[], run: VerticalRun): number[] =>
-  [points[run.first - 1], points[run.last + 1]].flatMap((point) => point?.x ?? []);
-
-const withoutRepeats = (route: P[]): P[] =>
-  route.filter((point, i) => i === 0 || point.x !== route[i - 1].x || point.y !== route[i - 1].y);
+function withoutRepeats(route: P[]): P[] {
+  return route.filter(
+    (point, i) => i === 0 || point.x !== route[i - 1].x || point.y !== route[i - 1].y
+  );
+}
 
 function standsOnFlatSide(node: Node | undefined, x: number): boolean {
   return (
     node?.x !== undefined &&
-    node.width !== undefined &&
     FLAT_SIDED_SHAPES.has(node.shape ?? 'rect') &&
-    Math.abs(x - node.x) <= node.width / 2 - ARROWHEAD_HALF_WIDTH
+    Math.abs(x - node.x) <= (node.width ?? 0) / 2 - ARROWHEAD_HALF_WIDTH
   );
 }
 
@@ -2104,17 +2116,11 @@ function runEndsFit(
 
 /**
  * Whether the legs either side of the run stay horizontal, keep their heading
- * and are either gone or longer than the separation kept between vertical legs.
+ * and are either gone or longer than the separation kept between vertical legs
+ * when it moves to `x`.
  */
 function legsKeepHeading(points: P[], run: VerticalRun, x: number): boolean {
-  const legs: [P | undefined, P][] = [
-    [points[run.first - 1], points[run.first]],
-    [points[run.last + 1], points[run.last]],
-  ];
-  return legs.every(([far, near]) => {
-    if (!far) {
-      return true;
-    }
+  return legsOf(points, run).every(({ far, near }) => {
     const length = Math.abs(x - far.x);
     const keepsHeading = Math.sign(near.x - far.x) === Math.sign(x - far.x);
     return (
@@ -2124,33 +2130,36 @@ function legsKeepHeading(points: P[], run: VerticalRun, x: number): boolean {
   });
 }
 
-function crowdsOtherEdge(a: P, b: P, others: Edge[]): boolean {
+function crowdsOtherEdge(a: P, b: P, others: RoutedEdge[]): boolean {
   const [top, bottom] = [Math.min(a.y, b.y), Math.max(a.y, b.y)];
-  return others.some((other) => {
-    const points = other.points ?? [];
-    return verticalRuns(points).some(({ first, last }) => {
+  return others.some(({ points }) =>
+    verticalRuns(points).some(({ first, last }) => {
       const [p, q] = [points[first], points[last]];
       return (
         Math.abs(p.x - a.x) < SLID_EDGE_SEPARATION &&
         Math.min(p.y, q.y) < bottom &&
         top < Math.max(p.y, q.y)
       );
-    });
-  });
+    })
+  );
 }
 
-const centreLabelBox = (edge: Edge, at?: P): Box | undefined =>
-  edge.label && edge.width && edge.height && edge.x != null && edge.y != null
+function centreLabelBox(edge: Edge, at?: P): Box | undefined {
+  return edge.label && edge.width && edge.height && edge.x != null && edge.y != null
     ? labelBox(at ?? { x: edge.x, y: edge.y }, { width: edge.width, height: edge.height })
     : undefined;
+}
+
+function labelBoxes(edges: Edge[]): Box[] {
+  return edges.map((edge) => centreLabelBox(edge)).filter((box): box is Box => box !== undefined);
+}
 
 /** What `label` sits on: a node, another label, or another edge's route. */
-function labelConflicts(label: Box, others: Edge[], context: TitleSlideContext): number {
-  const otherLabels = others.flatMap((other) => centreLabelBox(other) ?? []);
-  const obstacles = [...context.nodeBoxes.map(({ box }) => box), ...otherLabels];
+function labelConflicts(label: Box, others: RoutedEdge[], context: TitleSlideContext): number {
+  const obstacles = [...context.nodeBoxes.map(({ box }) => box), ...labelBoxes(others)];
   return (
     obstacles.filter((box) => boxesOverlap(label, box)).length +
-    others.filter((other) => routeHitsBox(other.points ?? [], label)).length
+    others.filter(({ points }) => routeHitsBox(points, label)).length
   );
 }
 
@@ -2159,22 +2168,18 @@ function labelConflicts(label: Box, others: Edge[], context: TitleSlideContext):
  * not: a node other than its own ends, another edge's label or route.
  */
 function routeConflicts(
-  edge: Edge,
+  edge: RoutedEdge,
   route: P[],
   label: Box | undefined,
   context: TitleSlideContext
 ): number {
-  const others = context.edges.filter((other) => other !== edge && other.points?.length);
+  const others = context.edges.filter((other) => other !== edge);
   const foreign = context.nodeBoxes
     .filter(({ id }) => id !== edge.start && id !== edge.end)
     .map(({ box }) => box);
-  const otherLabels = others.flatMap((other) => centreLabelBox(other) ?? []);
-  const crossings = others.reduce(
-    (sum, other) => sum + crossingCount(route, other.points ?? []),
-    0
-  );
+  const crossings = others.reduce((sum, other) => sum + crossingCount(route, other.points), 0);
   return (
-    countHits(route, [...foreign, ...otherLabels]) +
+    countHits(route, [...foreign, ...labelBoxes(others)]) +
     crossings +
     (label ? labelConflicts(label, others, context) : 0)
   );
@@ -2182,7 +2187,7 @@ function routeConflicts(
 
 /** A run that crosses a frame title, with what the edge runs into as ELK routed it. */
 interface SlideTarget {
-  edge: Edge;
+  edge: RoutedEdge;
   points: P[];
   run: VerticalRun;
   title: Box;
@@ -2229,16 +2234,15 @@ function slideFits(target: SlideTarget, slid: SlidRoute, context: TitleSlideCont
   );
 }
 
-function slideTargetOf(edge: Edge, context: TitleSlideContext): SlideTarget | undefined {
-  const points = edge.points;
-  const crossed = points && runCrossingTitle(points, context.titles);
-  return points && crossed
+function slideTargetOf(edge: RoutedEdge, context: TitleSlideContext): SlideTarget | undefined {
+  const crossed = runCrossingTitle(edge.points, context.titles);
+  return crossed
     ? {
         edge,
-        points,
+        points: edge.points,
         ...crossed,
-        titlesCrossed: countHits(points, context.titles),
-        conflicts: routeConflicts(edge, points, centreLabelBox(edge), context),
+        titlesCrossed: countHits(edge.points, context.titles),
+        conflicts: routeConflicts(edge, edge.points, centreLabelBox(edge), context),
       }
     : undefined;
 }
@@ -2248,7 +2252,7 @@ function slideTargetOf(edge: Edge, context: TitleSlideContext): SlideTarget | un
  * the title, or return undefined when the edge crosses none or no spot is free.
  */
 function slideRunOffTitle(
-  edge: Edge,
+  edge: RoutedEdge,
   context: TitleSlideContext
 ): { points: P[]; run: StraightenedRun } | undefined {
   const target = slideTargetOf(edge, context);
@@ -2256,7 +2260,8 @@ function slideRunOffTitle(
     return undefined;
   }
   const { points, run, title } = target;
-  for (const x of slideTargets(title, points[run.first].x, neighbourColumns(points, run))) {
+  const neighbourColumns = legsOf(points, run).map(({ far }) => far.x);
+  for (const x of slideTargets(title, points[run.first].x, neighbourColumns)) {
     const slid = slidTo(target, x);
     if (slideFits(target, slid, context)) {
       return { points: slid.route, run: slid.moved };
@@ -2285,6 +2290,7 @@ export function slideEdgesOffClusterTitles(
   if (titles.length === 0) {
     return [];
   }
+  const routed = edges.filter(isRouted);
   const context: TitleSlideContext = {
     titles,
     nodeBoxes: nodes.flatMap((node) => {
@@ -2292,10 +2298,10 @@ export function slideEdgesOffClusterTitles(
       return box ? [{ id: node.id, box }] : [];
     }),
     nodeById: new Map(nodes.map((node) => [node.id, node])),
-    edges,
+    edges: routed,
   };
   const changed: { edge: Edge; runs: StraightenedRun[] }[] = [];
-  for (const edge of edges) {
+  for (const edge of routed) {
     const slid = slideRunOffTitle(edge, context);
     if (slid) {
       edge.points = slid.points;
