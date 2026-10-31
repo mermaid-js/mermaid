@@ -2,4 +2,4 @@
 'mermaid': patch
 ---
 
-fix(xychart): use the data label color of the theme for the labels of line points
+fix(xychart): keep the labels of line points readable when the color of the line is too pale for the background

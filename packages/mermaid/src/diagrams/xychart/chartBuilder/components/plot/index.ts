@@ -65,7 +65,7 @@ export class BasePlot implements Plot {
               this.yAxis,
               this.chartConfig.chartOrientation,
               i,
-              this.chartThemeConfig.dataLabelColor
+              this.chartThemeConfig
             );
             drawableElem.push(...linePlot.getDrawableElement());
           }
