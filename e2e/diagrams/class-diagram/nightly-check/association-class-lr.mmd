@@ -1,0 +1,13 @@
+---
+description: >-
+  Association classes on relations with arrowheads in a left-to-right diagram.
+  Two relations have an association class and one has two.
+---
+classDiagram
+  direction LR
+  Person "1" employment@--> "*" Company : worksFor
+  Contract .. employment
+  Person <|-- Employee
+  Employee other@-- Company
+  Role .. other
+  Bonus .. other

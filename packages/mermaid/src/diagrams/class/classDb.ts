@@ -116,6 +116,9 @@ export class ClassDB implements DiagramDB {
     if (this.classes.has(className)) {
       return;
     }
+    if (this.relations.some((r) => r.id === className)) {
+      throw new Error(`${className} is the edge id of a relation and cannot also be a class`);
+    }
     // alert('Adding class: ' + className);
     const name = common.sanitizeText(className, getConfig());
     // alert('Adding class after: ' + name);
@@ -208,6 +211,13 @@ export class ClassDB implements DiagramDB {
 
   public addRelation(classRelation: ClassRelation) {
     log.debug('Adding relation: ' + JSON.stringify(classRelation));
+    if (classRelation.relation.id !== undefined) {
+      classRelation.id = classRelation.relation.id;
+      delete classRelation.relation.id;
+    }
+    if (this.addAssociationClass(classRelation)) {
+      return;
+    }
     // Due to relationType cannot just check if it is equal to 'none' or it complains, can fix this later
     const invalidTypes = [
       this.relationType.LOLLIPOP,
@@ -249,7 +259,54 @@ export class ClassDB implements DiagramDB {
       getConfig()
     );
 
+    if (classRelation.id !== undefined) {
+      if (this.relations.some((r) => r.id === classRelation.id)) {
+        throw new Error(`Edge id ${classRelation.id} is already used by another relation`);
+      }
+      if (this.classes.has(classRelation.id)) {
+        throw new Error(
+          `Edge id ${classRelation.id} is already a class name. Declare the relation before any \`X .. ${classRelation.id}\` line`
+        );
+      }
+    }
     this.relations.push(classRelation);
+  }
+
+  /**
+   * `AssociationClass .. edgeId` (a plain dotted line to the id of an earlier relation, see
+   * `A edgeId@-- B`) attaches the association class to that relation instead of adding one.
+   *
+   * @returns true if the statement was an association class
+   */
+  private addAssociationClass(classRelation: ClassRelation): boolean {
+    const { id1, id2, relation } = classRelation;
+    const target = this.relations.find((r) => r.id === id2);
+    if (!target) {
+      return false;
+    }
+    if (
+      (relation.type1 as unknown) !== 'none' ||
+      (relation.type2 as unknown) !== 'none' ||
+      relation.lineType !== this.lineType.DOTTED_LINE ||
+      classRelation.id !== undefined ||
+      classRelation.title ||
+      classRelation.relationTitle1 !== 'none' ||
+      classRelation.relationTitle2 !== 'none'
+    ) {
+      throw new Error(
+        `Edge id ${id2} can only be used as \`AssociationClass .. ${id2}\`, without a label or multiplicity`
+      );
+    }
+    this.addClass(id1);
+    const association = this.splitClassNameAndType(id1).className;
+    if (association === target.id1 || association === target.id2) {
+      throw new Error(`Association class ${association} cannot be an end of the relation ${id2}`);
+    }
+    const associations = (target.associationClasses ??= []);
+    if (!associations.includes(association)) {
+      associations.push(association);
+    }
+    return true;
   }
 
   /**
@@ -745,6 +802,20 @@ export class ClassDB implements DiagramDB {
     return undefined;
   }
 
+  /** The namespace that contains both classes, if there is one */
+  private commonParent(a: string, b: string): string | undefined {
+    const ancestors = new Set<string>();
+    for (let p = this.classes.get(a)?.parent; p; p = this.namespaces.get(p)?.parent) {
+      ancestors.add(p);
+    }
+    for (let p = this.classes.get(b)?.parent; p; p = this.namespaces.get(p)?.parent) {
+      if (ancestors.has(p)) {
+        return p;
+      }
+    }
+    return undefined;
+  }
+
   public getData() {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
@@ -844,11 +915,12 @@ export class ClassDB implements DiagramDB {
     let cnt = 0;
     for (const classRelation of this.relations) {
       cnt++;
+      const edgeId = getEdgeId(classRelation.id1, classRelation.id2, {
+        prefix: 'id',
+        counter: cnt,
+      });
       const edge: Edge = {
-        id: getEdgeId(classRelation.id1, classRelation.id2, {
-          prefix: 'id',
-          counter: cnt,
-        }),
+        id: edgeId,
         start: classRelation.id1,
         end: classRelation.id2,
         type: 'normal',
@@ -868,7 +940,52 @@ export class ClassDB implements DiagramDB {
         look: config.look,
         labelType: 'markdown',
       };
-      edges.push(edge);
+      if (classRelation.associationClasses?.length) {
+        // Layout engines cannot attach an edge to another edge, so the relation is split in two
+        // at an invisible waypoint node, and the association classes are linked to that node.
+        let pointId = `associationPoint${cnt}`;
+        while (nodes.some((node) => node.id === pointId)) {
+          pointId += '_';
+        }
+        const parentId = this.commonParent(classRelation.id1, classRelation.id2);
+        nodes.push({
+          id: pointId,
+          label: '',
+          isGroup: false,
+          shape: 'anchor',
+          cssStyles: ['opacity: 0;'],
+          look: config.look,
+          // keep the waypoint inside the namespace both classes share
+          parentId: hierarchical ? parentId : this.resolveExplicitAncestor(parentId),
+        });
+        edges.push(
+          { ...edge, end: pointId, arrowTypeEnd: 'none', endLabelLeft: '' },
+          {
+            ...edge,
+            id: `${edgeId}_end`,
+            start: pointId,
+            arrowTypeStart: 'none',
+            startLabelRight: '',
+            label: '',
+          }
+        );
+        for (const [i, associationClass] of classRelation.associationClasses.entries()) {
+          edges.push({
+            ...edge,
+            id: `${edgeId}_assoc${i}`,
+            start: associationClass,
+            end: pointId,
+            label: '',
+            arrowTypeStart: 'none',
+            arrowTypeEnd: 'none',
+            startLabelRight: '',
+            endLabelLeft: '',
+            pattern: 'dashed',
+          });
+        }
+      } else {
+        edges.push(edge);
+      }
     }
 
     return { nodes, edges, other: {}, config, direction: this.getDirection() };

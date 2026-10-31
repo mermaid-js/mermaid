@@ -2250,3 +2250,70 @@ describe('class db class', () => {
     }
   });
 });
+
+describe('given a class diagram with an association class', function () {
+  const getLayoutData = (text: string) => {
+    const classDb = new ClassDB();
+    parser.yy = classDb;
+    parser.yy.clear();
+    parser.parse(text);
+    return classDb.getData();
+  };
+
+  it('should split the relation at a waypoint that the association class links to', () => {
+    const { nodes, edges } = getLayoutData(
+      `classDiagram
+        Student "1" rel@<|-- "*" Course : takes
+        Enrollment .. rel`
+    );
+    const point = nodes.find((node) => node.id.startsWith('associationPoint'));
+    expect(point).toBeDefined();
+    expect(edges).toHaveLength(3);
+
+    const [first, second, association] = edges;
+    expect([first.start, first.end]).toEqual(['Student', point!.id]);
+    expect([second.start, second.end]).toEqual([point!.id, 'Course']);
+    expect([association.start, association.end]).toEqual(['Enrollment', point!.id]);
+
+    // Ends and labels stay where the relation put them
+    expect(first.arrowTypeStart).toBe('extension');
+    expect(first.arrowTypeEnd).toBe('none');
+    expect(first.startLabelRight).toBe('1');
+    expect(first.label).toBe('takes');
+    expect(second.arrowTypeStart).toBe('none');
+    expect(second.endLabelLeft).toBe('*');
+    expect(association.pattern).toBe('dashed');
+    expect(association.arrowTypeEnd).toBe('none');
+  });
+
+  it('should put the waypoint in the namespace both classes share', () => {
+    const { nodes } = getLayoutData(
+      `classDiagram
+        namespace Outer {
+          class A
+          class B
+        }
+        A rel@-- B
+        C .. rel`
+    );
+    expect(nodes.find((node) => node.id.startsWith('associationPoint'))?.parentId).toBe('Outer');
+  });
+
+  it('should not reuse the id of a class for the waypoint', () => {
+    const { nodes } = getLayoutData(
+      `classDiagram
+        class associationPoint1
+        A rel@-- B
+        C .. rel`
+    );
+    const ids = nodes.map((node) => node.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('should leave relations without an association class as a single edge', () => {
+    const { nodes, edges } = getLayoutData(`classDiagram
+      A rel@<|-- B`);
+    expect(edges).toHaveLength(1);
+    expect(nodes.some((node) => node.id.startsWith('associationPoint'))).toBe(false);
+  });
+});
