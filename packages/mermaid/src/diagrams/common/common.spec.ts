@@ -195,4 +195,13 @@ describe('sanitizeText with the default DOMPurify config', () => {
       expect(sanitizeText(input, config)).toBe(expected);
     }
   });
+
+  it('keeps link targets in loose mode', () => {
+    expect(
+      sanitizeText('<a href="https://mermaid.js.org/" target="_blank">link</a>', {
+        securityLevel: 'loose',
+        htmlLabels: true,
+      })
+    ).toBe('<a href="https://mermaid.js.org/" target="_blank" rel="noopener">link</a>');
+  });
 });

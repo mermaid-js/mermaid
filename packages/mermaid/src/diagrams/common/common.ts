@@ -22,22 +22,16 @@ export const getRows = (s?: string): string[] => {
   return str.split('#br#');
 };
 
-let hooksSetup = false;
-const purifiers = new Map<string, typeof DOMPurify | null>();
+const setupDompurifyHooksIfNotSetup = (() => {
+  let setup = false;
 
-// The shared instance only gets the hooks once a script-removing sanitize has run;
-// the configured instances follow it, so they sanitize exactly as it would.
-const setupDompurifyHooksIfNotSetup = () => {
-  if (!hooksSetup) {
-    setupDompurifyHooks(DOMPurify);
-    for (const purify of purifiers.values()) {
-      if (purify) {
-        setupDompurifyHooks(purify);
-      }
+  return () => {
+    if (!setup) {
+      setupDompurifyHooks(DOMPurify);
+      setup = true;
     }
-    hooksSetup = true;
-  }
-};
+  };
+})();
 
 function setupDompurifyHooks(purify: typeof DOMPurify) {
   const TEMPORARY_ATTRIBUTE = 'data-temp-href-target';
@@ -59,6 +53,20 @@ function setupDompurifyHooks(purify: typeof DOMPurify) {
   });
 }
 
+let scriptPurifier: typeof DOMPurify | undefined;
+let labelPurifier: typeof DOMPurify | undefined;
+
+/**
+ * A DOMPurify instance with `config` set once, so `sanitize` stops re-parsing the
+ * config on every call.
+ */
+const createPurifier = (config: Parameters<typeof DOMPurify.setConfig>[0]) => {
+  const purify = DOMPurify();
+  setupDompurifyHooks(purify);
+  purify.setConfig(config);
+  return purify;
+};
+
 /**
  * Removes script tags from a text
  *
@@ -68,33 +76,8 @@ function setupDompurifyHooks(purify: typeof DOMPurify) {
 export const removeScript = (txt: string): string => {
   setupDompurifyHooksIfNotSetup();
 
-  const sanitizedText = configuredPurifier('script', {})?.sanitize(txt) ?? DOMPurify.sanitize(txt);
-
-  return sanitizedText;
-};
-
-/**
- * A DOMPurify instance with `config` set once, so `sanitize` stops re-parsing the
- * config on every call. It has the same hooks as the shared instance. Returns null
- * where DOMPurify cannot make instances, and callers fall back to the shared one.
- */
-const configuredPurifier = (key: string, config: Parameters<typeof DOMPurify.setConfig>[0]) => {
-  let purify = purifiers.get(key);
-  if (purify === undefined) {
-    purify = null;
-    if (typeof window !== 'undefined' && typeof DOMPurify === 'function') {
-      const instance = DOMPurify(window);
-      if (instance.isSupported) {
-        if (hooksSetup) {
-          setupDompurifyHooks(instance);
-        }
-        instance.setConfig(config);
-        purify = instance;
-      }
-    }
-    purifiers.set(key, purify);
-  }
-  return purify;
+  scriptPurifier ??= createPurifier({});
+  return scriptPurifier.sanitize(txt);
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
@@ -119,11 +102,8 @@ export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
-    const label = sanitizeMore(text, config);
-    text = (
-      configuredPurifier('label', { FORBID_TAGS: ['style'] })?.sanitize(label) ??
-      DOMPurify.sanitize(label, { FORBID_TAGS: ['style'] })
-    ).toString();
+    labelPurifier ??= createPurifier({ FORBID_TAGS: ['style'] });
+    text = labelPurifier.sanitize(sanitizeMore(text, config)).toString();
   }
   return text;
 };
