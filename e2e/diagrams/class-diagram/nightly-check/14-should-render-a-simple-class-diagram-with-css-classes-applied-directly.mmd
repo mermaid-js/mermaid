@@ -1,0 +1,18 @@
+---
+description: >-
+  A class with generic-type members gets a CSS class applied directly on
+  its `class` declaration line via `class Class10:::exClass2 { ... }`
+  (class body and CSS class combined in one statement). Uses
+  classDiagram-v2 syntax with `flowchart.htmlLabels: false`.
+config:
+  logLevel: 1
+  flowchart:
+    htmlLabels: false
+---
+classDiagram-v2
+  class Class10:::exClass2 {
+  int[] id
+  List~int~ ids
+  test(List~int~ ids) List~bool~
+  testArray() bool[]
+  }

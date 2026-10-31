@@ -1,0 +1,22 @@
+---
+description: >-
+  Regression test for GitHub issue #5824: mixes plain quoted-string node/edge
+  labels with markdown-formatted labels (backtick syntax containing bold text)
+  in the same flowchart, including a markdown-formatted subgraph title, to
+  verify both label styles coexist and render correctly.
+config:
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TB
+  mermaid{"What is
+  yourmermaid version?"} --> v10["<11"] --"`<**1**1`"--> fine["No bug"]
+  mermaid --> v11[">= v11"] -- ">= v11" --> broken["Affected by https://github.com/mermaid-js/mermaid/issues/5824"]
+  subgraph subgraph1["`How to fix **fix**`"]
+  broken --> B["B"]
+  end
+  githost["Github, Gitlab, BitBucket, etc."]
+  githost2["`Github, Gitlab, BitBucket, etc.`"]
+  a["1."]
+  b["- x"]

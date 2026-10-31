@@ -1,3 +1,7 @@
+---
+description: 'Overview of Mermaid diagram syntax: diagram type declarations, comments, frontmatter, configuration, and the syntax pitfalls to avoid.'
+---
+
 # Diagram Syntax
 
 Mermaid's syntax is used to create diagrams. You'll find that it is not too tricky and can be learned in a day. The next sections dive deep into the syntax of each diagram type.
@@ -34,13 +38,13 @@ The [Getting Started](./getting-started.md) section can also provide some practi
 
 One should **beware the use of some words or symbols** that can break diagrams. These words or symbols are few and often only affect specific types of diagrams. The table below will continuously be updated.
 
-| Diagram Breakers                                                                     | Reason                                                                  | Solution                                          |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------- |
-| **Comments**                                                                         |                                                                         |                                                   |
-| [`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968)                      | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
-| **Flow-Charts**                                                                      |                                                                         |                                                   |
-| 'end'                                                                                | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
-| [Nodes inside Nodes](../syntax/flowchart.md?id=special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
+| Diagram Breakers                                                                  | Reason                                                                  | Solution                                          |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------- |
+| **Comments**                                                                      |                                                                         |                                                   |
+| [`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968)                   | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
+| **Flow-Charts**                                                                   |                                                                         |                                                   |
+| 'end'                                                                             | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
+| [Nodes inside Nodes](../syntax/flowchart.md#special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
 
 ## Mermaid Live Editor
 
@@ -60,7 +64,7 @@ Here you can edit certain values to change the behavior and appearance of the di
 
 Each of these techniques are functionally equivalent, but better for different deployments.
 
-### [The initialize() call](./getting-started.md#_3-calling-the-javascript-api)
+### [The initialize() call](./getting-started.md#_4-calling-the-mermaid-javascript-api)
 
 Used when Mermaid is called via an API, or through a `<script>` tag.
 
@@ -96,16 +100,19 @@ An application of using Directives to change [Themes](../config/theming.md). `Th
 
 ### Layout and look
 
-We've restructured how Mermaid renders diagrams, enabling new features like selecting layout and look. **Currently, this is supported for flowcharts and state diagrams**, with plans to extend support to all diagram types.
+We've restructured how Mermaid renders diagrams, enabling new features like selecting layout and look. **Currently, this is supported for flowchart, state, class, entity relationship, requirement, use case, and agentflow diagrams**, with plans to extend support to all diagram types. Mindmaps are the exception: they keep their own `cose-bilkent` layout unless a layout is explicitly set (the tiny build, which ships neither ELK nor cose-bilkent, falls back to Dagre).
 
 ### Selecting Diagram Looks
 
-Mermaid offers a variety of styles or “looks” for your diagrams, allowing you to tailor the visual appearance to match your specific needs or preferences. Whether you prefer a hand-drawn or classic style, you can easily customize your diagrams.
+Mermaid offers a variety of styles or “looks” for your diagrams, allowing you to tailor the visual appearance to match your specific needs or preferences.
 
 **Available Looks:**
 
+- Neo Look: A flatter, softer style with rounded corners and subtle shadows, designed to pair with the `redux-color` theme family. It is the default for the diagram types listed under [Per-diagram defaults](../config/theming.md#per-diagram-defaults).
 - Hand-Drawn Look: For a more personal, creative touch, the hand-drawn look brings a sketch-like quality to your diagrams. This style is perfect for informal settings or when you want to add a bit of personality to your diagrams.
-- Classic Look: If you prefer the traditional Mermaid style, the classic look maintains the original appearance that many users are familiar with. It’s great for consistency across projects or when you want to keep the familiar aesthetic.
+- Classic Look: If you prefer the traditional Mermaid style, the classic look maintains the original appearance that many users are familiar with. It’s great for consistency across projects or when you want to keep the familiar aesthetic. It is the default for every other diagram type.
+
+Note that the `neo` look paints node strokes with a gradient when the active theme sets `useGradient`, which `base` does by default. Setting a custom `nodeBorder` on `base` turns the gradient off so your colour is what shows; set `useGradient: true` alongside it if you want to keep the gradient.
 
 **How to Select a Look:**
 
@@ -129,8 +136,12 @@ In addition to customizing the look of your diagrams, Mermaid Chart now allows y
 
 #### Supported Layout Algorithms:
 
-- Dagre (default): This is the classic layout algorithm that has been used in Mermaid for a long time. It provides a good balance of simplicity and visual clarity, making it ideal for most diagrams.
-- ELK: For those who need more sophisticated layout capabilities, especially when working with large or intricate diagrams, the ELK (Eclipse Layout Kernel) layout offers advanced options. It provides a more optimized arrangement, potentially reducing overlapping and improving readability. This is not included out the box but needs to be added when integrating mermaid for sites/applications that want to have elk support.
+- ELK (default): The ELK (Eclipse Layout Kernel) layout offers more sophisticated layout capabilities, especially for large or intricate diagrams, producing a more optimized arrangement with fewer overlaps. It is bundled with Mermaid and needs no setup.
+- Dagre: The classic layout algorithm used by Mermaid for a long time. It provides a good balance of simplicity and visual clarity, and remains available with `layout: dagre`.
+
+> **Note**
+> The `mermaid` **tiny** build omits ELK to stay small. Diagrams asking for an
+> ELK layout there fall back to Dagre.
 
 #### How to Select a Layout Algorithm:
 
@@ -162,12 +173,13 @@ When using the ELK layout, you can further refine the diagram’s configuration,
   - LINEAR_SEGMENTS
   - BRANDES_KOEPF (default)
 - To configure Brandes-Koepf node placement alignment, use nodePlacementAlignment with the following options:
-  - NONE (default)
+  - NONE
   - LEFTUP
   - LEFTDOWN
   - RIGHTUP
   - RIGHTDOWN
   - BALANCED
+- When nodePlacementAlignment is not set, the alignment comes from the `elk.preset` option: BALANCED for the `default` preset, and NONE for the named non-default presets `legacy`, `modelOrder` and `depthFirst`. Use `preset: depthFirst` to get the former default layout, or set nodePlacementAlignment explicitly to override the preset.
 
 **Example configuration:**
 
@@ -208,4 +220,13 @@ B -->|Option 2| D[Path 2]
 
 These options give you the flexibility to create diagrams that not only look great but are also arranged to best suit your data’s structure and flow.
 
-When integrating Mermaid, you can include look and layout configuration with the initialize call. This is also where you add the loading of elk.
+When integrating Mermaid, you can include look and layout configuration with the initialize call:
+
+```js
+mermaid.initialize({ look: 'handDrawn', layout: 'elk' });
+```
+
+ELK ships with Mermaid, so no separate package or registration is needed — the
+`@mermaid-js/layout-elk` dependency and its `registerLayoutLoaders` call can be
+removed. That package is still published for builds that omit ELK, which today
+means the **tiny** build.

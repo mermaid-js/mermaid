@@ -172,6 +172,13 @@ union A, B`,
     service db(database)[DB]
     api:R -- L:db`,
 
+  agentflow: `agentflow-beta TB
+    flow grp["Group"]
+      a["Alpha"]
+      b["Beta"]
+      a --> b
+    end`,
+
   wardley: `wardley-beta
     title Kettle Evolution Pipeline
     size [1100, 800]
@@ -201,6 +208,20 @@ union A, B`,
       "Restart service"
     chaotic
       "Page on-call"`,
+
+  usecase: `usecase-beta
+    actor User
+    Login("Sign in")
+    User --> Login`,
+
+  swimlane: `swimlane-beta LR
+    subgraph sales[Sales]
+      a[Draft quote]
+    end
+    subgraph ops[Fulfilment]
+      b[Ship order]
+    end
+    a --> b`,
 
   eventmodeling: `eventmodeling
     tf 01 evt Start
@@ -281,7 +302,6 @@ describe('Multi-diagram ID uniqueness', () => {
     'state', // legacy alias, covered by stateDiagram
     'flowchart-elk', // ELK layout variant, same renderer as flowchart-v2
     'mindmap', // uses unified pipeline (IDs are prefixed), but cytoscape crashes in JSDOM
-    'swimlane', // reuses the flowchart renderer (createFlowDiagram); IDs covered by flowchart-v2
   ]);
 
   it('"journey" — task line IDs are scoped with the diagram ID', async () => {

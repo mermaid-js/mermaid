@@ -21,7 +21,7 @@ async function createServer() {
   }
   app.use(vite.middlewares);
   app.use(express.static('demos'));
-  app.use(express.static('cypress/platform'));
+  app.use(express.static('e2e/platform'));
 
   app.listen(port, () => {
     // eslint-disable-next-line no-console

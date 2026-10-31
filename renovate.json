@@ -51,6 +51,17 @@
     {
       "matchPackageNames": ["chokidar"],
       "enabled": false
+    },
+    {
+      "description": "langium pins a chevrotain minor; bump langium, langium-cli and chevrotain together so a single chevrotain version stays in the tree.",
+      "groupName": "langium and chevrotain",
+      "matchPackageNames": [
+        "langium",
+        "langium-cli",
+        "chevrotain",
+        "@chevrotain/types",
+        "@chevrotain/regexp-to-ast"
+      ]
     }
   ],
   "dependencyDashboard": false,

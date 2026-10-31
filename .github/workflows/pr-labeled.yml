@@ -1,0 +1,42 @@
+name: PR Labeled
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  e2e_full_argos:
+    # Run the E2E tests, uploading all screenshots to Argos, without grouping them.
+    if: |-
+      github.event.label.name == 'CI: full argos'
+    uses: ./.github/workflows/e2e.yml
+    with:
+      group_argos_images: false
+    # Fork PRs receive no secrets either way; for same-repo PRs this passes
+    # CYPRESS_RECORD_KEY through so Cypress Cloud recording keeps working.
+    secrets: inherit
+
+  remove-label:
+    # Remove the label immediately, so we can re-run the workflow with the same label if needed.
+    if: |-
+      github.event.label.name == 'CI: full argos'
+    runs-on: ubuntu-slim
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Remove one-shot label
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        # If this fails (e.g. PR from fork), we just need to remove the label manually.
+        continue-on-error: true
+        with:
+          script: |
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              name: process.env.LABEL_NAME,
+            });
+        env:
+          LABEL_NAME: ${{ github.event.label.name }}

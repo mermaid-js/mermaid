@@ -47,7 +47,7 @@ Use Mermaid with your favorite applications, check out the list of [Community In
 
 For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/getting-started.md) and [Usage](../config/usage.md).
 
-🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/contributing.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
+🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](./getting-started.md) | 🙌 [Contribution](../community/contributing.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
 
 > 🖖 Keep a steady pulse: [mermaid needs more Collaborators](https://github.com/mermaid-js/mermaid/issues/866).
 
@@ -69,7 +69,7 @@ In our release process we rely heavily on visual regression tests using [applito
 
 ### [Flowchart](../syntax/flowchart.md?id=flowcharts-basic-syntax)
 
-```mermaid-example
+```mermaid
 graph TD;
     A-->B;
     A-->C;
@@ -77,7 +77,7 @@ graph TD;
     C-->D;
 ```
 
-```mermaid
+```mermaid-example
 graph TD;
     A-->B;
     A-->C;
@@ -87,20 +87,6 @@ graph TD;
 
 ### [Sequence diagram](../syntax/sequenceDiagram.md)
 
-```mermaid-example
-sequenceDiagram
-    participant Alice
-    participant Bob
-    Alice->>John: Hello John, how are you?
-    loop HealthCheck
-        John->>John: Fight against hypochondria
-    end
-    Note right of John: Rational thoughts <br/>prevail!
-    John-->>Alice: Great!
-    John->>Bob: How about you?
-    Bob-->>John: Jolly good!
-```
-
 ```mermaid
 sequenceDiagram
     participant Alice
@@ -115,9 +101,41 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-### [Gantt diagram](../syntax/gantt.md)
+```mermaid-example
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>John: Hello John, how are you?
+    loop HealthCheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts <br/>prevail!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+```
+
+### [Use case diagram](../syntax/usecase.md)
+
+```mermaid
+usecase-beta
+direction LR
+actor Customer
+Checkout("Place order")
+Customer --> Checkout
+```
 
 ```mermaid-example
+usecase-beta
+direction LR
+actor Customer
+Checkout("Place order")
+Customer --> Checkout
+```
+
+### [Gantt diagram](../syntax/gantt.md)
+
+```mermaid
 gantt
 dateFormat  YYYY-MM-DD
 title Adding GANTT diagram to mermaid
@@ -130,7 +148,7 @@ Future task               :         des3, after des2, 5d
 Future task2               :         des4, after des3, 5d
 ```
 
-```mermaid
+```mermaid-example
 gantt
 dateFormat  YYYY-MM-DD
 title Adding GANTT diagram to mermaid
@@ -145,7 +163,7 @@ Future task2               :         des4, after des3, 5d
 
 ### [Class diagram](../syntax/classDiagram.md)
 
-```mermaid-example
+```mermaid
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 Class03 *-- Class04
@@ -162,7 +180,7 @@ Class01 : int gorilla
 Class08 <--> C2: Cool label
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 Class03 *-- Class04
@@ -181,7 +199,7 @@ Class08 <--> C2: Cool label
 
 ### [Git graph](../syntax/gitgraph.md)
 
-```mermaid-example
+```mermaid
     gitGraph
        commit
        commit
@@ -194,7 +212,7 @@ Class08 <--> C2: Cool label
        commit
 ```
 
-```mermaid
+```mermaid-example
     gitGraph
        commit
        commit
@@ -209,7 +227,7 @@ Class08 <--> C2: Cool label
 
 ### [Entity Relationship Diagram - :exclamation: experimental](../syntax/entityRelationshipDiagram.md)
 
-```mermaid-example
+```mermaid
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -217,7 +235,7 @@ erDiagram
 
 ```
 
-```mermaid
+```mermaid-example
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -227,7 +245,7 @@ erDiagram
 
 ### [User Journey Diagram](../syntax/userJourney.md)
 
-```mermaid-example
+```mermaid
 journey
     title My working day
     section Go to work
@@ -239,7 +257,7 @@ journey
       Sit down: 5: Me
 ```
 
-```mermaid
+```mermaid-example
 journey
     title My working day
     section Go to work
@@ -253,7 +271,7 @@ journey
 
 ### [Quadrant Chart](../syntax/quadrantChart.md)
 
-```mermaid-example
+```mermaid
 quadrantChart
     title Reach and engagement of campaigns
     x-axis Low Reach --> High Reach
@@ -270,7 +288,7 @@ quadrantChart
     Campaign F: [0.35, 0.78]
 ```
 
-```mermaid
+```mermaid-example
 quadrantChart
     title Reach and engagement of campaigns
     x-axis Low Reach --> High Reach
@@ -289,7 +307,7 @@ quadrantChart
 
 ### [XY Chart](../syntax/xyChart.md)
 
-```mermaid-example
+```mermaid
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -298,7 +316,7 @@ xychart-beta
     line [5000, 6000, 7500, 8200, 9500, 10500, 11000, 10200, 9200, 8500, 7000, 6000]
 ```
 
-```mermaid
+```mermaid-example
 xychart-beta
     title "Sales Revenue"
     x-axis [jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec]
@@ -323,13 +341,13 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@11>
+Latest Version: <https://cdn.jsdelivr.net/npm/mermaid@12>
 
 ## Deploying Mermaid
 
 To Deploy Mermaid:
 
-1. You will need to install node v16, which would have npm
+1. You will need to install Node.js v22.12.0 or later, which comes with npm
 2. Install mermaid
    - NPM: `npm i mermaid`
    - Yarn: `yarn add mermaid`
@@ -341,14 +359,14 @@ To Deploy Mermaid:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```
 
 **Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries to read the diagram/chart definitions and render them into SVG charts.**
 
-**Examples can be found in** [Other examples](../syntax/examples.md)
+**Examples can be found in** [Examples](../syntax/all-examples.md)
 
 ## Sibling projects
 

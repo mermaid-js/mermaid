@@ -1,3 +1,7 @@
+---
+description: 'Draw bar and line charts with categorical or numeric x-axes, titles, horizontal or vertical orientation, and theming.'
+---
+
 # XY Chart
 
 > In the context of mermaid-js, the XY chart is a comprehensive charting module that encompasses various types of charts that utilize both x-axis and y-axis for data representation. Presently, it includes two fundamental chart types: the bar chart and the line chart. These charts are designed to visually display and analyze data that involve two numerical variables.
@@ -86,7 +90,7 @@ A bar chart offers the capability to graphically depict bars.
 1. `bar [2.3, 45, .98, -3.4]` it can have all valid numeric values.
 2. `bar "series name" [2.3, 45, .98, -3.4]` adds the bar to the legend.
 
-### Legend (v<MERMAID_RELEASE_VERSION>+)
+### Legend (v11.17.0+)
 
 Named line and bar plots are automatically shown in a legend. Unnamed plots are omitted from the legend.
 

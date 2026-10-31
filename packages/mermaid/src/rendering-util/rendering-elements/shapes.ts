@@ -3,23 +3,29 @@ import type { D3Selection, MaybePromise } from '../../types.js';
 import type { Node, ShapeRenderOptions } from '../types.js';
 import { anchor } from './shapes/anchor.js';
 import { bowTieRect } from './shapes/bowTieRect.js';
+import { bucket } from './shapes/bucket.js';
 import { collapsedGroup } from './shapes/collapsedGroup.js';
 import { block_arrow } from './shapes/blockArrow.js';
+import { browser } from './shapes/browser.js';
 import { card } from './shapes/card.js';
 import { choice } from './shapes/choice.js';
 import { circle } from './shapes/circle.js';
 import { composite } from './shapes/composite.js';
+import { consoleWindow } from './shapes/console.js';
 import { crossedCircle } from './shapes/crossedCircle.js';
 import { curlyBraceLeft } from './shapes/curlyBraceLeft.js';
 import { curlyBraceRight } from './shapes/curlyBraceRight.js';
 import { curlyBraces } from './shapes/curlyBraces.js';
 import { curvedTrapezoid } from './shapes/curvedTrapezoid.js';
+import { person } from './shapes/person.js';
 import { cylinder } from './shapes/cylinder.js';
 import { datastore } from './shapes/datastore.js';
 import { dividedRectangle } from './shapes/dividedRect.js';
 import { doublecircle } from './shapes/doubleCircle.js';
+import { usecaseEllipse } from './shapes/usecaseEllipse.js';
 import { filledCircle } from './shapes/filledCircle.js';
 import { flippedTriangle } from './shapes/flippedTriangle.js';
+import { folder } from './shapes/folder.js';
 import { forkJoin } from './shapes/forkJoin.js';
 import { halfRoundedRectangle } from './shapes/halfRoundedRectangle.js';
 import { hexagon } from './shapes/hexagon.js';
@@ -36,6 +42,12 @@ import { lean_right } from './shapes/leanRight.js';
 import { lightningBolt } from './shapes/lightningBolt.js';
 import { linedCylinder } from './shapes/linedCylinder.js';
 import { linedWaveEdgedRect } from './shapes/linedWaveEdgedRect.js';
+import { usecaseActor } from './shapes/usecaseActor.js';
+import { usecaseActorAwesome } from './shapes/usecaseActorAwesome.js';
+import { usecaseActorHollow } from './shapes/usecaseActorHollow.js';
+import { usecaseActorIcon } from './shapes/usecaseActorIcon.js';
+import { usecaseBusiness } from './shapes/usecaseBusiness.js';
+import { usecaseJsonTable } from './shapes/usecaseJsonTable.js';
 import { multiRect } from './shapes/multiRect.js';
 import { multiWaveEdgedRectangle } from './shapes/multiWaveEdgedRectangle.js';
 import { note } from './shapes/note.js';
@@ -69,6 +81,15 @@ import { bang } from './shapes/bang.js';
 import { cloud } from './shapes/cloud.js';
 import { defaultMindmapNode } from './shapes/defaultMindmapNode.js';
 import { mindmapCircle } from './shapes/mindmapCircle.js';
+import { bpmnStart } from './shapes/bpmnStart.js';
+import { bpmnIntermediate } from './shapes/bpmnIntermediate.js';
+import { bpmnBoundary } from './shapes/bpmnBoundary.js';
+import { bpmnEnd } from './shapes/bpmnEnd.js';
+import { bpmnGateway } from './shapes/bpmnGateway.js';
+import { bpmnActivity } from './shapes/bpmnActivity.js';
+import { bpmnDataObject } from './shapes/bpmnDataObject.js';
+import { bpmnDataStore } from './shapes/bpmnDataStore.js';
+import { bpmnAnnotation } from './shapes/bpmnAnnotation.js';
 
 type ShapeHandler = <T extends SVGGraphicsElement>(
   parent: D3Selection<T>,
@@ -142,6 +163,42 @@ export const shapesDefs = [
     description: 'Data flow diagram data store',
     aliases: ['data-store'],
     handler: datastore,
+  },
+  {
+    semanticName: 'Folder',
+    name: 'Folder',
+    shortName: 'folder',
+    description: 'Folder or directory',
+    aliases: ['directory'],
+    handler: folder,
+  },
+  {
+    semanticName: 'Bucket',
+    name: 'Bucket',
+    shortName: 'bucket',
+    description: 'Object storage bucket',
+    handler: bucket,
+  },
+  {
+    semanticName: 'Console',
+    name: 'Console (terminal window)',
+    shortName: 'console',
+    description: 'Terminal or console window',
+    handler: consoleWindow,
+  },
+  {
+    semanticName: 'Browser',
+    name: 'Browser',
+    shortName: 'browser',
+    description: 'Browser window',
+    handler: browser,
+  },
+  {
+    semanticName: 'Person',
+    name: 'Person',
+    shortName: 'person',
+    description: 'Person (circular head above a rounded body)',
+    handler: person,
   },
   {
     semanticName: 'Start',
@@ -524,6 +581,25 @@ const generateShapeMap = () => {
 
     // Requirement diagram
     requirementBox,
+
+    // Usecase diagram
+    usecaseActor,
+    usecaseActorHollow,
+    usecaseActorAwesome,
+    usecaseActorIcon,
+    usecaseBusiness,
+    usecaseEllipse,
+    usecaseJsonTable,
+
+    'bpmn-start': bpmnStart,
+    'bpmn-intermediate': bpmnIntermediate,
+    'bpmn-boundary': bpmnBoundary,
+    'bpmn-end': bpmnEnd,
+    'bpmn-gateway': bpmnGateway,
+    'bpmn-activity': bpmnActivity,
+    'bpmn-data': bpmnDataObject,
+    'bpmn-data-store': bpmnDataStore,
+    'bpmn-annotation': bpmnAnnotation,
   } as const;
 
   const entries = [

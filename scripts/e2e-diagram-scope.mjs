@@ -1,31 +1,42 @@
 #!/usr/bin/env node
 /**
- * Detects which Cypress e2e spec files to run based on changed source files.
+ * Detects which Playwright e2e spec files to run based on changed source files.
  *
  * Convention: every diagram type has a matching subfolder under
- * cypress/integration/rendering/<diagram-name>/. Adding a new spec file to
+ * e2e/rendering/<diagram-name>/. Adding a new spec file to
  * that subfolder requires no configuration here — it is discovered at runtime.
+ * Diagram fixtures live under `e2e/diagrams/<area>/*.mmd` and are run by the
+ * global runner e2e/rendering/mmd-snapshots.spec.ts; a fixture-only change
+ * scopes to that runner.
  *
  * CLI usage (reads changed file paths from stdin, one per line):
  *   git diff --name-only <base> HEAD | node scripts/e2e-diagram-scope.mjs
  *
  * Output:
- *   - A comma-separated list of spec patterns (for cypress --spec), OR
+ *   - A comma-separated list of spec patterns (for playwright test), OR
  *   - An empty string if the full suite should run (shared code changed, or
  *     unable to confidently scope the change)
  *
  * Module usage:
  *   import { detectScope } from './e2e-diagram-scope.mjs';
  *   const spec = detectScope(['packages/mermaid/src/diagrams/flowchart/flowchart.ts']);
- *   // => 'cypress/integration/rendering/flowchart/**'
+ *   // => 'e2e/rendering/flowchart/'
  */
 
 import { createInterface } from 'readline';
-import { existsSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 // Base directory where diagram spec subfolders live
-export const SPEC_BASE_DIR = 'cypress/integration/rendering';
+export const SPEC_BASE_DIR = 'e2e/rendering';
+
+// Where the global mmd snapshot runner's fixtures live.
+export const DIAGRAMS_DIR = 'e2e/diagrams';
+
+// Source diagram folders mix kebab- and camelCase (quadrant-chart, treeView)
+// while the fixture folders are kebab (tree-view); compare on a canonical
+// lowercased, hyphen-stripped name.
+const canonicalName = (name) => name.toLowerCase().replace(/-/g, '');
 
 // Sentinel value returned when all changed files are ignorable (e.g.
 // docs-only PRs).  Consumers should skip e2e entirely when they receive this.
@@ -121,10 +132,10 @@ const SHARED_PREFIXES = [
   // Plugin packages (separate bundles but tested in main suite)
   'packages/mermaid-zenuml/',
   'packages/mermaid-example-diagram/',
-  // Cypress: config and cross-cutting test utilities
-  'cypress/integration/other/',
-  'cypress/helpers/',
-  'cypress.config',
+  // Playwright: config and cross-cutting test utilities
+  'e2e/other/',
+  'e2e/helpers/',
+  'playwright.config',
   // Build and tooling (may affect all output)
   '.esbuild/',
   '.vite/',
@@ -142,7 +153,7 @@ const DIAGRAM_PATH_RE = /^packages\/mermaid\/src\/diagrams\/([^/]+)\//;
 
 /**
  * Given a list of changed file paths (relative to repo root), returns the
- * comma-separated spec pattern to pass to `cypress run --spec`, or an empty
+ * comma-separated spec pattern to pass to `playwright test`, or an empty
  * string if the full suite should run.
  *
  * The function uses the filesystem to discover which diagram spec subfolders
@@ -163,6 +174,11 @@ export function detectScope(files, options = {}) {
   /** @type {Set<string>} */
   const diagramNames = new Set();
   let touchesShared = false;
+  // A changed e2e/diagrams/**/*.mmd fixture is exercised by the global mmd
+  // snapshot runner (e2e/rendering/mmd-snapshots.spec.ts), not by a per-diagram
+  // spec — track it so such a change scopes to that runner instead of the full
+  // suite.
+  let touchesMmdFixtures = false;
   /** @type {string[]} */
   const directlyChangedSpecs = [];
 
@@ -205,9 +221,16 @@ export function detectScope(files, options = {}) {
         break;
       }
 
-      // File inside a diagram subfolder → scope to that subfolder.
+      // File inside a diagram subfolder → scope to that subfolder. Playwright
+      // treats CLI filters as regular expressions, so keep this glob-free.
       const subFolder = rest.slice(0, slashIdx);
-      directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/**`);
+      directlyChangedSpecs.push(`${specFolderPrefix}${subFolder}/`);
+      continue;
+    }
+
+    // A diagram fixture (.mmd) consumed by the global mmd snapshot runner.
+    if (trimmed.startsWith('e2e/diagrams/')) {
+      touchesMmdFixtures = true;
       continue;
     }
 
@@ -223,7 +246,7 @@ export function detectScope(files, options = {}) {
       continue;
     }
 
-    // Anything else (root config, CI YAML, cypress/other, etc.) → full suite
+    // Anything else (root config, CI YAML, e2e/other, etc.) → full suite
     touchesShared = true;
     break;
   }
@@ -232,23 +255,50 @@ export function detectScope(files, options = {}) {
     return '';
   }
 
-  // Build spec patterns from diagram names using filesystem discovery
+  // Build regular-expression-safe spec patterns from diagram names using
+  // filesystem discovery. A trailing slash matches every file in the folder.
   const specs = new Set(directlyChangedSpecs);
+
+  /** @type {Set<string> | null} */
+  let fixtureFolders = null;
+  const hasFixtures = (name) => {
+    if (fixtureFolders === null) {
+      try {
+        fixtureFolders = new Set(
+          readdirSync(DIAGRAMS_DIR, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => canonicalName(entry.name))
+        );
+      } catch {
+        fixtureFolders = new Set();
+      }
+    }
+    return fixtureFolders.has(canonicalName(name));
+  };
 
   for (const name of diagramNames) {
     const folder = `${specBaseDir}/${name}`;
-    if (!existsSync(folder)) {
-      // No subfolder exists for this diagram — fall back to full suite so
-      // we don't silently skip tests for diagrams with no spec subfolder
+    if (existsSync(folder)) {
+      specs.add(`${folder}/`);
+    } else if (hasFixtures(name)) {
+      // Fixtures-only diagram (no per-diagram spec subfolder) — the global mmd
+      // snapshot runner exercises it.
+      touchesMmdFixtures = true;
+    } else {
+      // Neither a spec subfolder nor fixtures — be safe and run the full suite
+      // rather than silently skip tests for an unrecognised diagram.
       return '';
     }
-    specs.add(`${folder}/**`);
   }
 
-  if (specs.size === 0) {
+  if (specs.size === 0 && !touchesMmdFixtures) {
     // All files were either ignorable or empty — no e2e tests needed.
     return SKIP;
   }
+
+  // Any scoped diagram run — and any fixture-only change — executes the shared
+  // mmd snapshot runner.
+  specs.add(`${specBaseDir}/mmd-snapshots.spec.ts`);
 
   return [...specs].join(',');
 }

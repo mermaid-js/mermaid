@@ -72,10 +72,15 @@ export async function question<T extends SVGGraphicsElement>(parent: D3Selection
       { x: 0, y: -s / 2 },
     ];
 
-    // Calculate the intersection point
-    const res = intersect.polygon(bounds, points, point);
-
-    return { x: res.x - 0.5, y: res.y - 0.5 }; // Adjusted result
+    // Calculate the intersection point.
+    //
+    // This used to return `res` shifted by a flat -0.5 on both axes, to
+    // compensate for leftover integer-rounding arithmetic in `intersectLine`.
+    // That arithmetic displaced a result by `0.5 * sign(num) * sign(denom)`,
+    // whose sign varies per axis, so a fixed subtraction only cancelled it when
+    // both signs came out positive and doubled it to a full unit when they did
+    // not. The displacement is gone, so the compensation goes with it.
+    return intersect.polygon(bounds, points, point);
   };
 
   node.intersect = function (point) {

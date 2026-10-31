@@ -1,0 +1,14 @@
+---
+description: >-
+  BOOK declares an array-typed attribute (string[] authors) and a
+  generic-typed attribute using tilde syntax (type~T~ type), verifying
+  support for array and generic attribute type annotations.
+config:
+  logLevel: 1
+---
+erDiagram
+    BOOK {
+      string title
+      string[] authors
+      type~T~ type
+    }

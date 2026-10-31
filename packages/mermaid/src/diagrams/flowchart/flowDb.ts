@@ -4,6 +4,7 @@ import { getConfig, defaultConfig } from '../../diagram-api/diagramAPI.js';
 import type { DiagramDB } from '../../diagram-api/types.js';
 import { log } from '../../logger.js';
 import { isValidShape, type ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
+import { getStepDuration, isStepEdge } from '../../rendering-util/edgeStep.js';
 import type { Edge, Node } from '../../rendering-util/types.js';
 import type { EdgeMetaData, NodeMetaData } from '../../types.js';
 import utils, { getEdgeId } from '../../utils.js';
@@ -19,6 +20,7 @@ import {
 } from '../common/commonDb.js';
 import { createTooltip } from '../common/svgDrawCommon.js';
 import type {
+  DroppedSubGraphMember,
   FlowClass,
   FlowEdge,
   FlowLink,
@@ -34,6 +36,20 @@ interface LinkData {
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 
+// Set by a diagram that models pools and lanes itself, never by the author of a `@{ }` block.
+const INTERNAL_METADATA_KEYS = ['laneRole', 'laneIndex', 'drawnExtent'];
+
+function withoutInternalKeys(doc: NodeMetaData): NodeMetaData {
+  if (!doc || typeof doc !== 'object') {
+    return doc;
+  }
+  const kept = { ...doc };
+  for (const key of INTERNAL_METADATA_KEYS) {
+    Reflect.deleteProperty(kept, key);
+  }
+  return kept;
+}
+
 // We are using arrow functions assigned to class instance fields instead of methods as they are required by flow JISON
 export class FlowDB implements DiagramDB {
   private vertexCounter = 0;
@@ -44,6 +60,7 @@ export class FlowDB implements DiagramDB {
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
+  private droppedSubGraphMembers: DroppedSubGraphMember[] = [];
   private tooltips = new Map<string, string>();
   private subCount = 0;
   private firstGraphFlag = true;
@@ -148,7 +165,7 @@ export class FlowDB implements DiagramDB {
       } else {
         yamlData = metadata + '\n';
       }
-      doc = yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData;
+      doc = withoutInternalKeys(yaml.load(yamlData, { schema: yaml.JSON_SCHEMA }) as NodeMetaData);
     }
 
     // Check if this is metadata for an already-declared subgraph
@@ -156,7 +173,9 @@ export class FlowDB implements DiagramDB {
     // route the metadata onto the subgraph instead of creating a vertex.
     const subGraph = this.subGraphLookup.get(id);
     if (subGraph && doc) {
-      subGraph.metadata = { ...subGraph.metadata, ...doc };
+      if (Object.keys(doc).length > 0) {
+        subGraph.metadata = { ...subGraph.metadata, ...doc };
+      }
       return;
     }
 
@@ -172,6 +191,13 @@ export class FlowDB implements DiagramDB {
       }
       if (edgeDoc?.curve !== undefined) {
         edge.interpolate = edgeDoc.curve;
+      }
+      if (edgeDoc?.step !== undefined) {
+        if (isStepEdge(edgeDoc)) {
+          edge.step = edgeDoc.step;
+        } else {
+          log.warn(`Ignoring step on edge ${id}: expected a positive integer`, edgeDoc.step);
+        }
       }
       return;
     }
@@ -655,6 +681,7 @@ You have to call mermaid.initialize.`
     this.diagramId = '';
     this.subGraphs = [];
     this.subGraphLookup = new Map();
+    this.droppedSubGraphMembers = [];
     this.subCount = 0;
     this.tooltips = new Map();
     this.firstGraphFlag = true;
@@ -708,18 +735,10 @@ You have to call mermaid.initialize.`
 
     const result = uniq(list.flat());
     const nodeList = result.nodeList;
-    // Preserve the raw user-authored direction value (e.g. 'TD') on the subGraph
-    // object so that tests and callers see what the user actually wrote.
-    // Normalization to dagre's canonical 'TB' happens in getData() when the dir
-    // is consumed by the layout engine.
-    const rawDir = result.dir;
-    // Capture whether the user explicitly wrote a direction keyword BEFORE any
-    // inheritDir override, so that explicitDir is true only for user-authored
-    // direction statements.
-    const hasExplicitDir = rawDir !== undefined;
+    let dir = result.dir;
     const flowchartConfig = getConfig().flowchart ?? {};
-    const dir =
-      rawDir ??
+    dir =
+      dir ??
       (flowchartConfig.inheritDir
         ? (this.getDirection() ?? (getConfig() as any).direction ?? undefined)
         : undefined);
@@ -741,17 +760,62 @@ You have to call mermaid.initialize.`
       title: title.trim(),
       classes: [],
       dir,
-      hasExplicitDir,
       labelType: this.sanitizeNodeLabelType(_title?.type),
     };
 
     log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
-    // Remove the members in the new subgraph if they already belong to another subgraph
-    subGraph.nodes = this.makeUniq(subGraph, this.subGraphs).nodes;
-    this.subGraphs.push(subGraph);
-    this.subGraphLookup.set(id, subGraph);
+    // Remove the members in the new subgraph if they already belong to another subgraph.
+    // A subgraph never contains itself, so a redeclaration nested in its own body flattens.
+    const uniqueNodes = this.makeUniq(subGraph, this.subGraphs).nodes;
+    this.recordDroppedMembers(subGraph, uniqueNodes);
+    subGraph.nodes = uniqueNodes.filter((nodeId) => nodeId !== id);
+
+    // A repeated id merges its members into the first declaration, which keeps its
+    // title, direction and position, so every layout sees a single subgraph.
+    const existing = this.subGraphs.find((sg) => sg.id === id);
+    if (existing) {
+      existing.nodes.push(...subGraph.nodes);
+    } else {
+      this.subGraphs.push(subGraph);
+    }
+    // The lookup points at the subgraph that is drawn, so classes and metadata such as
+    // `view: collapsed` apply whichever declaration they follow.
+    this.subGraphLookup.set(id, existing ?? subGraph);
     return id;
+  }
+
+  /**
+   * Notes each member `subGraph` listed but lost to an earlier subgraph. An earlier
+   * subgraph nested anywhere inside `subGraph` is not a conflict, and neither is a
+   * repeated id, which is one subgraph.
+   */
+  private recordDroppedMembers(subGraph: FlowSubGraph, uniqueNodes: string[]) {
+    const kept = new Set(uniqueNodes);
+    for (const node of subGraph.nodes) {
+      if (kept.has(node) || node === subGraph.id) {
+        continue;
+      }
+      const owner = this.subGraphs.find((sg) => sg.nodes.includes(node));
+      if (owner && owner.id !== subGraph.id && !this.isNestedIn(owner.id, subGraph)) {
+        this.droppedSubGraphMembers.push({ node, keptBy: owner.id, droppedFrom: subGraph.id });
+      }
+    }
+  }
+
+  /** Whether the subgraph `id` sits under `ancestor`, at any depth, among the subgraphs so far. */
+  private isNestedIn(id: string, ancestor: FlowSubGraph): boolean {
+    const visited = new Set<string>();
+    let current: string | undefined = id;
+    while (current !== undefined && !visited.has(current)) {
+      if (ancestor.nodes.includes(current)) {
+        return true;
+      }
+      visited.add(current);
+      const child: string = current;
+      current = this.subGraphs.find((sg) => sg.nodes.includes(child))?.id;
+    }
+    return false;
   }
 
   private getPosForId(id: string) {
@@ -1083,6 +1147,7 @@ You have to call mermaid.initialize.`
           ...baseNode,
           isGroup: false,
           shape: this.getTypeFromVertex(vertex),
+          minWidth: config.flowchart?.minNodeWidth,
         });
       }
     }
@@ -1127,6 +1192,39 @@ You have to call mermaid.initialize.`
         }
       }
     }
+    /* Colour slots follow the order the subgraphs appear in the source.
+     *
+     * `subGraphs` is not in that order: the grammar reduces a subgraph when it *closes*,
+     * so a nested one lands before its parent -- `Outer { InnerOne, InnerTwo }, Sibling`
+     * arrives as [InnerOne, InnerTwo, Outer, Sibling]. Taking the array index directly
+     * would hand Outer slot 2 while its own children took 0 and 1.
+     *
+     * A pre-order walk of the containment forest recovers source order: roots complete in
+     * source order relative to each other, and a parent is always declared before the
+     * children it contains. Assigned once here so the collapsed and expanded branches
+     * below cannot drift apart.
+     */
+    const declarationIndex = new Map<string, number>();
+    const childrenOf = new Map<string, string[]>();
+    for (const sg of subGraphs) {
+      const parent = subGraphParent.get(sg.id);
+      if (parent !== undefined) {
+        childrenOf.set(parent, [...(childrenOf.get(parent) ?? []), sg.id]);
+      }
+    }
+    let nextDeclarationIndex = 0;
+    const walk = (sgId: string) => {
+      declarationIndex.set(sgId, nextDeclarationIndex++);
+      for (const childId of childrenOf.get(sgId) ?? []) {
+        walk(childId);
+      }
+    };
+    for (const sg of subGraphs) {
+      if (!subGraphParent.has(sg.id)) {
+        walk(sg.id);
+      }
+    }
+
     const isCollapsed = (sgId: string) =>
       this.subGraphLookup.get(sgId)?.metadata?.view === 'collapsed';
     const outermostCollapsed = (sgId: string): string | undefined => {
@@ -1199,9 +1297,12 @@ You have to call mermaid.initialize.`
           cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
           cssClasses: subGraph.classes.join(' '),
           shape: 'collapsedGroup',
-          dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
+          dir: subGraph.dir,
           isGroup: false,
           look: config.look,
+          // A collapsed subgraph still consumes its slot, so the cycle does not shift
+          // when one is collapsed.
+          colorIndex: declarationIndex.get(subGraph.id),
         });
       } else {
         nodes.push({
@@ -1214,10 +1315,16 @@ You have to call mermaid.initialize.`
           cssCompiledStyles: this.getCompiledStyles(subGraph.classes),
           cssClasses: subGraph.classes.join(' '),
           shape: 'rect',
-          dir: subGraph.dir === 'TD' ? 'TB' : subGraph.dir, // normalize TD→TB for dagre
-          explicitDir: subGraph.hasExplicitDir, // true only when the user wrote an explicit 'direction X' keyword
+          dir: subGraph.dir,
           isGroup: true,
           look: config.look,
+          colorIndex: declarationIndex.get(subGraph.id),
+          // Forwarded so layout engines can read per-container settings such as
+          // `@{ algorithm: elk.box }`. `view` is consumed above; everything else
+          // is opaque here and simply passed through. The cast is the
+          // interface-vs-index-signature gap: `NodeMetaData` is an interface, so
+          // it is not structurally assignable to `Record<string, unknown>`.
+          metadata: subGraph.metadata as Record<string, unknown> | undefined,
         });
       }
     }
@@ -1232,6 +1339,12 @@ You have to call mermaid.initialize.`
     });
 
     const e = this.getEdges();
+    const stepCount = e.reduce(
+      (max, rawEdge) => (isStepEdge(rawEdge) ? Math.max(max, rawEdge.step) : max),
+      0
+    );
+    const stepDuration = getStepDuration(config.flowchart?.stepDuration);
+    const stepNumber = config.flowchart?.stepNumbers === true ? { showStepNumber: true } : {};
     e.forEach((rawEdge, index) => {
       const { arrowTypeStart, arrowTypeEnd } = this.destructEdgeType(rawEdge.type);
       const styles = [...(e.defaultStyle ?? [])];
@@ -1281,13 +1394,20 @@ You have to call mermaid.initialize.`
         look: config.look,
         animate: rawEdge.animate,
         animation: rawEdge.animation,
+        ...(isStepEdge(rawEdge)
+          ? { step: rawEdge.step, stepCount, stepDuration, ...stepNumber }
+          : {}),
         curve: rawEdge.interpolate || this.edges.defaultInterpolate || config.flowchart?.curve,
       };
 
       edges.push(edge);
     });
 
-    return { nodes, edges, other: {}, config };
+    const other: { droppedSubGraphMembers?: DroppedSubGraphMember[] } =
+      this.droppedSubGraphMembers.length > 0
+        ? { droppedSubGraphMembers: [...this.droppedSubGraphMembers] }
+        : {};
+    return { nodes, edges, other, config };
   }
 
   public defaultConfig() {

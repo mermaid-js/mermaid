@@ -108,4 +108,26 @@ System(SystemAA, "Internet Banking System")
       },
     });
   });
+
+  // Regression test for #4864: relations may target a boundary, so getC4Shape must resolve
+  // boundary aliases as well as shape aliases (the renderer uses it to find rel endpoints).
+  it('should resolve a boundary alias as a relation endpoint', function () {
+    c4.parser.parse(`C4Context
+${macroName}(b1, "BankBoundary") {
+System(SystemAA, "Internet Banking System")
+}
+Rel(b1, SystemAA, "Contains")`);
+
+    const yy = c4.parser.yy;
+    // Identity rather than a matching alias: this proves the endpoint resolved from the
+    // boundaries array, not from a shape that happens to carry the same alias.
+    const boundary = yy.getBoundaries().find((b: { alias: string }) => b.alias === 'b1');
+    expect(boundary).toBeDefined();
+    expect(yy.getC4Shape('b1')).toBe(boundary);
+    expect(yy.getC4Shape('SystemAA')).toMatchObject({
+      alias: 'SystemAA',
+      typeC4Shape: { text: 'system' },
+    });
+    expect(yy.getC4Shape('missing')).toBeUndefined();
+  });
 });

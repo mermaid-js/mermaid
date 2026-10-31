@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Rubik+Mono+One&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Recursive:wght@300..1000&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .recursive-500 {
+        font-family: 'Recursive', serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings:
+          'slnt' 0,
+          'CASL' 0,
+          'CRSV' 0.5,
+          'MONO' 0;
+      }
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background: #333; */
+        /* font-family: 'Arial'; */
+        font-family: 'Recursive', serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings:
+          'slnt' 0,
+          'CASL' 0,
+          'CRSV' 0.5,
+          'MONO' 0;
+        /* color: white; */
+        /* font-size: 18px !important; */
+      }
+      .gridify.tiny {
+        background-image:
+          linear-gradient(transparent 11px, rgba(220, 220, 200, 0.8) 12px, transparent 12px),
+          linear-gradient(90deg, transparent 11px, rgba(220, 220, 200, 0.8) 12px, transparent 12px);
+        background-size:
+          100% 12px,
+          12px 100%;
+      }
+
+      .gridify.dots {
+        background-image: radial-gradient(
+          circle at center,
+          rgba(220, 220, 200, 0.8) 1px,
+          transparent 1px
+        );
+        background-size: 24px 24px;
+      }
+
+      h1 {
+        color: grey;
+      }
+
+      .mermaid2 {
+        display: none;
+      }
+
+      .mermaid svg {
+        font-size: 16px !important;
+        font-family: 'Recursive', serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        font-variation-settings:
+          'slnt' 0,
+          'CASL' 0,
+          'CRSV' 0.5,
+          'MONO' 0;
+      }
+
+      pre {
+        width: 100%;
+        /*box-shadow: 4px 4px 0px 0px #0000000F;*/
+      }
+    </style>
+  </head>
+
+  <body class="gridify dots">
+    <p class="mb-20">Test Diagram</p>
+    <div class="w-full h-64">
+      <pre id="diagram4" class="mermaid">
+usecase-beta
+direction LR
+        actor User1("Customer")
+        actor User2("Account owner")
+        actor User3("Analyst")
+        actor User4("Auditor")
+        actor Admin1("Module A administrator")
+        actor Admin2("Module B administrator")
+        actor NotificationService("Notification service")@{ icon: "fa:bell" }
+        actor DataService("Data service")@{ icon: "fa:database" }
+
+        systemBoundary "Module A"
+          FeatureA1("Feature A1")
+          FeatureA2("Feature A2")
+          AdminA1("Admin A1")
+        end
+        Module_A@{ type: package }
+
+        systemBoundary "Module B"
+          FeatureB1("Feature B1")
+          FeatureB2("Feature B2")
+          AdminB1("Admin B1")
+        end
+
+        User1 -- "important" --> FeatureA1
+        User2 --> FeatureA2
+        Admin1 --> AdminA1
+        User3 --> FeatureB1
+        User4 --> FeatureB2
+        Admin2 --> AdminB1
+
+        FeatureA1 --> NotificationService
+        FeatureB1 --> NotificationService
+        AdminA1 --> DataService
+        AdminB1 --> DataService
+
+        User1 -- "collaborates" --> User2
+        Admin1 -- "supervises" --> Admin2
+
+    </pre
+      >
+    </div>
+
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
+      import layouts from './mermaid-layout-elk.esm.mjs';
+
+      mermaid.registerIconPacks([
+        {
+          name: 'logos',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/logos@1/icons.json').then((res) => res.json()),
+        },
+        {
+          name: 'fa',
+          loader: () =>
+            fetch('https://unpkg.com/@iconify-json/fa6-solid/icons.json').then((res) => res.json()),
+        },
+      ]);
+      mermaid.registerLayoutLoaders(layouts);
+      mermaid.parseError = function (err, hash) {
+        console.error('Mermaid error: ', err);
+      };
+      window.callback = function () {
+        alert('A callback was triggered');
+      };
+      function callback() {
+        alert('It worked');
+      }
+      await mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        // theme: 'forest',
+        // handDrawnSeed: 12,
+        // 'elk.nodePlacement.strategy': 'NETWORK_SIMPLEX',
+        layout: 'dagre',
+        // layout: 'elk',
+        // layout: 'fixed',
+        // htmlLabels: false,
+        flowchart: { titleTopMargin: 10 },
+
+        // fontFamily: 'Caveat',
+        // fontFamily: 'Kalam',
+        // fontFamily: 'courier',
+        fontFamily: 'Recursive',
+        sequence: {
+          actorFontFamily: 'courier',
+          noteFontFamily: 'courier',
+          messageFontFamily: 'courier',
+        },
+        kanban: {
+          htmlLabels: false,
+        },
+        fontSize: 16,
+        logLevel: 0,
+        securityLevel: 'loose',
+        callback,
+      });
+      // setTimeout(() => {
+      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+      // }, 1000);
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+    </script>
+  </body>
+</html>

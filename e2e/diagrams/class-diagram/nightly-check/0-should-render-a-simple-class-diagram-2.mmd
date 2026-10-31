@@ -1,0 +1,15 @@
+---
+description: >-
+  Minimal classDiagram with four classes joined only by plain `--` link
+  relations (one labeled "Inheritance", one "link", two unlabeled). Uses a
+  top-level `htmlLabels: true` config key.
+config:
+  logLevel: 1
+  htmlLabels: true
+---
+classDiagram
+
+  classA -- classB : Inheritance
+  classA -- classC : link
+  classC -- classD : link
+  classB -- classD

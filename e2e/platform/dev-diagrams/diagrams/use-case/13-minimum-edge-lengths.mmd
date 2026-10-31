@@ -1,0 +1,12 @@
+usecase-beta
+    direction LR
+
+    actor User
+    A("Base length")
+    B("One extra dash")
+    C("Two extra dashes")
+    D("Labelled long edge")
+    User --> A
+    A ---> B
+    B ----> C
+    C -- "longer association" ----> D

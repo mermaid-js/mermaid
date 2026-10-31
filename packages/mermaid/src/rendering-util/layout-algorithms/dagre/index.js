@@ -653,14 +653,20 @@ export const prepareLayoutForDagre = (data4Layout) => {
   })
     .setGraph({
       rankdir: data4Layout.direction,
+      // Precedence: an explicit top-level config override (only present when a
+      // user sets it - it has no schema default) > the value the diagram's own
+      // renderer put on data4Layout (usually derived from that diagram's config)
+      // > the flowchart config as a generic fallback. The flowchart keys have
+      // schema defaults and therefore always exist, so they must come last or
+      // they silently shadow every diagram's own spacing (see #7932).
       nodesep:
         data4Layout.config?.nodeSpacing ||
-        data4Layout.config?.flowchart?.nodeSpacing ||
-        data4Layout.nodeSpacing,
+        data4Layout.nodeSpacing ||
+        data4Layout.config?.flowchart?.nodeSpacing,
       ranksep:
         data4Layout.config?.rankSpacing ||
-        data4Layout.config?.flowchart?.rankSpacing ||
-        data4Layout.rankSpacing,
+        data4Layout.rankSpacing ||
+        data4Layout.config?.flowchart?.rankSpacing,
       marginx: 8,
       marginy: 8,
     })
