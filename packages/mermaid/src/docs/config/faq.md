@@ -1,3 +1,7 @@
+---
+description: 'Answers to frequently asked Mermaid questions, such as adding titles, using custom CSS, fixing tooltips, and handling special characters and newlines.'
+---
+
 # Frequently Asked Questions
 
 1. [How to add title to flowchart?](https://github.com/mermaid-js/mermaid/issues/1433#issuecomment-1991554712)

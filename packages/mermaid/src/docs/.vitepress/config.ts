@@ -1,10 +1,17 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { MarkdownOptions } from 'vitepress';
 import { defineConfig } from 'vitepress';
 import packageJson from '../../../package.json' with { type: 'json' };
-import { addCanonicalUrls } from './canonical-urls.js';
+import { betaSyntaxPages } from './betaDiagrams.js';
 import { getHeaderLogo, getHeaderLogoLink, withConditionalHomeNav } from './headerDomainRules.js';
 import { applyHomePageHeroCopy } from './homepageHeroCopy.js';
 import MermaidExample from './mermaid-markdown-all.js';
+import { addNoindex, isNoindexPage } from './noindexPages.js';
+import { addPageMetadata } from './pageMetadata.js';
+import { getDocsHostname, getSiteBase, getSiteUrl } from './siteUrl.js';
+
+const siteUrl = getSiteUrl();
 
 const allMarkdownTransformers: MarkdownOptions = {
   // the shiki theme to highlight code blocks
@@ -22,36 +29,42 @@ export default defineConfig({
   lang: 'en-US',
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
-  base: '/',
+  base: getSiteBase(siteUrl),
   markdown: allMarkdownTransformers,
+  sitemap: {
+    hostname: siteUrl,
+    transformItems: (items) => items.filter((item) => !isNoindexPage(item.url)),
+  },
+  buildEnd: ({ outDir }) => {
+    writeFileSync(
+      join(outDir, 'robots.txt'),
+      `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}sitemap.xml\n`
+    );
+  },
   ignoreDeadLinks: [
     // ignore all localhost links
     /^https?:\/\/localhost/,
   ],
-  transformPageData: (pageData) => {
-    addCanonicalUrls(pageData);
-    applyHomePageHeroCopy(pageData, docsHostname());
+  transformPageData: (pageData, { siteConfig }) => {
+    addPageMetadata(
+      pageData,
+      readFileSync(join(siteConfig.srcDir, pageData.relativePath), 'utf8'),
+      siteConfig.site.description,
+      siteUrl
+    );
+    applyHomePageHeroCopy(pageData, getDocsHostname());
+    addNoindex(pageData);
   },
   head: [
-    ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-    ['meta', { property: 'og:title', content: 'Mermaid' }],
-    [
-      'meta',
-      {
-        property: 'og:description',
-        content: 'Create diagrams and visualizations using text and code.',
-      },
-    ],
+    ['link', { rel: 'icon', type: 'image/x-icon', href: `${getSiteBase(siteUrl)}favicon.ico` }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:url', content: 'https://mermaid.js.org' }],
-    [
-      'meta',
-      { property: 'og:image', content: 'https://mermaid.js.org/mermaid-logo-horizontal.svg' },
-    ],
+    ['meta', { property: 'og:image', content: `${siteUrl}mermaid-logo-horizontal.png` }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
   ],
   themeConfig: {
-    logo: getHeaderLogo(docsHostname()),
-    logoLink: getHeaderLogoLink(docsHostname()),
+    logo: getHeaderLogo(getDocsHostname()),
+    logoLink: getHeaderLogoLink(getDocsHostname()),
     nav: nav(),
     editLink: {
       pattern: ({ filePath, frontmatter }) => {
@@ -83,16 +96,6 @@ export default defineConfig({
     ],
   },
 });
-
-/**
- * Get the deployment hostname from DOCS_HOSTNAME env var.
- * Defaults to 'mermaid.js.org' if not set.
- */
-function docsHostname(): string {
-  return (
-    ((globalThis as any).process?.env?.DOCS_HOSTNAME as string | undefined) ?? 'mermaid.js.org'
-  );
-}
 
 // Top (across the page) menu
 function nav() {
@@ -135,7 +138,7 @@ function nav() {
     },
   ];
 
-  return withConditionalHomeNav(baseNav, docsHostname());
+  return withConditionalHomeNav(baseNav, getDocsHostname());
 }
 
 function sidebarAll() {
@@ -147,6 +150,7 @@ function sidebarAll() {
         { text: 'About Mermaid', link: '/intro/' },
         { text: 'Getting Started', link: '/intro/getting-started' },
         { text: 'Syntax and Configuration', link: '/intro/syntax-reference' },
+        { text: 'Examples', link: '/syntax/all-examples' },
       ],
     },
     ...sidebarSyntax(),
@@ -163,47 +167,50 @@ function sidebarSyntax() {
       text: '📊 Diagram Syntax',
       collapsed: false,
       items: [
-        { text: 'Flowchart', link: '/syntax/flowchart' },
-        { text: 'Swimlanes Diagram', link: '/syntax/swimlanes' },
-        { text: 'Sequence Diagram', link: '/syntax/sequenceDiagram' },
-        { text: 'Class Diagram', link: '/syntax/classDiagram' },
-        { text: 'State Diagram', link: '/syntax/stateDiagram' },
-        {
-          text: 'Entity Relationship Diagram',
-          link: '/syntax/entityRelationshipDiagram',
-        },
-        { text: 'User Journey', link: '/syntax/userJourney' },
-        { text: 'Gantt', link: '/syntax/gantt' },
-        { text: 'Pie Chart', link: '/syntax/pie' },
-        { text: 'Quadrant Chart', link: '/syntax/quadrantChart' },
-        { text: 'Requirement Diagram', link: '/syntax/requirementDiagram' },
-        { text: 'Use Case Diagram', link: '/syntax/usecase' },
-        { text: 'GitGraph (Git) Diagram', link: '/syntax/gitgraph' },
-        { text: 'C4 Diagram 🦺⚠️', link: '/syntax/c4' },
-        { text: 'Mindmaps', link: '/syntax/mindmap' },
-        { text: 'Timeline', link: '/syntax/timeline' },
-        { text: 'ZenUML', link: '/syntax/zenuml' },
-        { text: 'Sankey 🔥', link: '/syntax/sankey' },
-        { text: 'XY Chart 🔥', link: '/syntax/xyChart' },
-        { text: 'Block Diagram 🔥', link: '/syntax/block' },
-        { text: 'Packet 🔥', link: '/syntax/packet' },
-        { text: 'Kanban 🔥', link: '/syntax/kanban' },
-        { text: 'Architecture 🔥', link: '/syntax/architecture' },
-        { text: 'Radar 🔥', link: '/syntax/radar' },
-        { text: 'Event Modeling 🔥', link: '/syntax/eventmodeling' },
-        { text: 'Treemap 🔥', link: '/syntax/treemap' },
-        { text: 'Venn 🔥', link: '/syntax/venn' },
-        { text: 'Ishikawa 🔥', link: '/syntax/ishikawa' },
-        { text: 'Wardley 🔥', link: '/syntax/wardley' },
-        { text: 'Cynefin 🔥', link: '/syntax/cynefin' },
-        { text: 'TreeView 🔥', link: '/syntax/treeView' },
+        syntaxItem('Flowchart', 'flowchart'),
+        syntaxItem('Swimlanes Diagram', 'swimlanes'),
+        syntaxItem('Sequence Diagram', 'sequenceDiagram'),
+        syntaxItem('Class Diagram', 'classDiagram'),
+        syntaxItem('State Diagram', 'stateDiagram'),
+        syntaxItem('Entity Relationship Diagram', 'entityRelationshipDiagram'),
+        syntaxItem('User Journey', 'userJourney'),
+        syntaxItem('Gantt', 'gantt'),
+        syntaxItem('Pie Chart', 'pie'),
+        syntaxItem('Quadrant Chart', 'quadrantChart'),
+        syntaxItem('Requirement Diagram', 'requirementDiagram'),
+        syntaxItem('Use Case Diagram', 'usecase'),
+        syntaxItem('GitGraph (Git) Diagram', 'gitgraph'),
+        syntaxItem('C4 Diagram', 'c4'),
+        syntaxItem('Mindmaps', 'mindmap'),
+        syntaxItem('Timeline', 'timeline'),
+        syntaxItem('ZenUML', 'zenuml'),
+        syntaxItem('Sankey', 'sankey'),
+        syntaxItem('XY Chart', 'xyChart'),
+        syntaxItem('Block Diagram', 'block'),
+        syntaxItem('Packet', 'packet'),
+        syntaxItem('Kanban', 'kanban'),
+        syntaxItem('Architecture', 'architecture'),
+        syntaxItem('Radar', 'radar'),
+        syntaxItem('Event Modeling', 'eventmodeling'),
+        syntaxItem('Treemap', 'treemap'),
+        syntaxItem('Venn', 'venn'),
+        syntaxItem('Ishikawa', 'ishikawa'),
+        syntaxItem('Wardley', 'wardley'),
+        syntaxItem('Cynefin', 'cynefin'),
+        syntaxItem('TreeView', 'treeView'),
         // Agentflow is deliberately not listed while it is beta. The page at
         // `/syntax/agentflow` still builds and is reachable by URL; it is just
         // not announced in the nav until the syntax is declared stable.
-        { text: 'Other Examples', link: '/syntax/examples' },
       ],
     },
   ];
+}
+
+function syntaxItem(text: string, page: string) {
+  return {
+    text: betaSyntaxPages.has(page) ? `${text} <span class="VPBadge info">Beta</span>` : text,
+    link: `/syntax/${page}`,
+  };
 }
 
 function sidebarConfig() {

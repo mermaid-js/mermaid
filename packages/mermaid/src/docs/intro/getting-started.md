@@ -1,4 +1,5 @@
 ---
+description: 'A beginner’s guide to Mermaid: write your first diagram, use the Live Editor, and add Mermaid to a web page or app with the JavaScript API.'
 outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
 

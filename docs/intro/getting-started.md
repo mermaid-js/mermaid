@@ -43,7 +43,7 @@ In the `Code` panel, write or edit Mermaid code, and instantly `Preview` the ren
 
 Here is an example of Mermaid code and its rendered result:
 
-```mermaid-example
+```mermaid
 graph TD
     A[Enter Chart Definition] --> B(Preview)
     B --> C{decide}
@@ -54,7 +54,7 @@ graph TD
     F --> B
 ```
 
-```mermaid
+```mermaid-example
 graph TD
     A[Enter Chart Definition] --> B(Preview)
     B --> C{decide}

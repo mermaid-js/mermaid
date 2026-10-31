@@ -1,3 +1,7 @@
+---
+description: 'How Mermaid’s end-to-end test suite is organized into tiers, which labels and flags control it in CI, and how to run it locally.'
+---
+
 # E2E Test Suite: Tiers, Folders, and CI
 
 This is a contributor-facing manual for the `e2e/` test suite's tier structure — why it exists, how it's organized, which flags/labels control it, and how to work with it locally.

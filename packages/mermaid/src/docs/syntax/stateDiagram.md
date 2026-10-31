@@ -1,3 +1,7 @@
+---
+description: 'Model state machines with states, transitions, composite states, choice, fork and join, concurrency, and notes.'
+---
+
 # State diagrams
 
 > "A state diagram is a type of diagram used in computer science and related fields to describe the behavior of systems.

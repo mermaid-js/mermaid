@@ -1,3 +1,7 @@
+---
+description: 'Layout algorithms available in Mermaid, including dagre and ELK, and how to select and configure them per diagram or site-wide.'
+---
+
 # Layouts
 
 This page lists the available layout algorithms supported in Mermaid diagrams.

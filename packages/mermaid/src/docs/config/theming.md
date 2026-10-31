@@ -1,3 +1,7 @@
+---
+description: 'Customize Mermaid themes: choose a built-in theme, override theme variables site-wide or per diagram, and derive colors with the base theme.'
+---
+
 # Theme Configuration
 
 Dynamic and integrated theme configuration was introduced in Mermaid version 8.7.0.

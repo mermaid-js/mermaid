@@ -6,6 +6,9 @@
 
 # Cynefin Framework Diagram (v11.16.0+)
 
+> **Warning**
+> Cynefin diagrams are in beta. Diagrams start with the `cynefin-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
 > The Cynefin framework is a sense-making framework created by [Dave Snowden](https://en.wikipedia.org/wiki/Dave_Snowden) that categorizes problems into five complexity domains. It helps teams match their response to the nature of the situation they are facing. The name is Welsh for "place" or "habitat".
 
 You can read more at [The Cynefin Co](https://thecynefin.co/about-us/about-cynefin-framework).
@@ -96,7 +99,7 @@ Common transitions:
 
 ### Basic example
 
-```mermaid-example
+```mermaid
 cynefin-beta
   title Incident Response
 
@@ -119,7 +122,7 @@ cynefin-beta
     "Unknown failure mode"
 ```
 
-```mermaid
+```mermaid-example
 cynefin-beta
   title Incident Response
 
@@ -144,7 +147,7 @@ cynefin-beta
 
 ### With transitions
 
-```mermaid-example
+```mermaid
 cynefin-beta
   title Strategy Categorization
 
@@ -166,7 +169,7 @@ cynefin-beta
   chaotic --> complex : "Stabilized"
 ```
 
-```mermaid
+```mermaid-example
 cynefin-beta
   title Strategy Categorization
 
@@ -192,7 +195,7 @@ cynefin-beta
 
 The domains themselves render even with no items, useful as a teaching or worksheet template.
 
-```mermaid-example
+```mermaid
 cynefin-beta
   title Cynefin Framework
 
@@ -202,7 +205,7 @@ cynefin-beta
   chaotic
 ```
 
-```mermaid
+```mermaid-example
 cynefin-beta
   title Cynefin Framework
 
