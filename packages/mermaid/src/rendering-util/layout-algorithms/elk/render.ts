@@ -13,6 +13,7 @@ import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
+import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import {
   EDGE_ROUTING_OPTIONS,
   PLACEMENT_OPTIONS,
@@ -1942,6 +1943,368 @@ export function straightenEdgeTerminals(edges: Edge[]): { edge: Edge; runs: Stra
   return changed;
 }
 
+/**
+ * Move each edge's main label onto the run its route was just moved along.
+ *
+ * The label's `x`/`y` was set from ELK's placement on the pre-move route;
+ * projecting it onto the run it was actually riding on keeps it centred on the
+ * line instead of beside it (#8292).
+ */
+function carryLabelsAlong(moved: { edge: Edge; runs: StraightenedRun[] }[]): void {
+  for (const { edge, runs } of moved) {
+    if (edge.x == null || edge.y == null) {
+      continue;
+    }
+    const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
+    if (projected) {
+      edge.x = projected.x;
+      edge.y = projected.y;
+    }
+  }
+}
+
+/** Half the base of a point arrowhead: `pointEnd-margin` is drawn 14 tall across the line. */
+const ARROWHEAD_HALF_WIDTH = 7;
+
+/** The gap a slid edge keeps from the title it steps past. */
+const TITLE_EDGE_GAP = 4;
+
+/**
+ * Closest a slid edge may run to a vertical leg, its own or another edge's:
+ * two arrowheads side by side.
+ */
+const SLID_EDGE_SEPARATION = 2 * ARROWHEAD_HALF_WIDTH;
+
+/**
+ * Node shapes whose top and bottom sides are straight across the whole width,
+ * so an edge end that slides along the side stays on the outline.
+ */
+const FLAT_SIDED_SHAPES = new Set(['rect', 'squareRect', 'rounded', 'roundedRect']);
+
+/** A maximal stretch of a route that runs straight down or up, as indices into its points. */
+interface VerticalRun {
+  first: number;
+  last: number;
+}
+
+interface TitleSlideContext {
+  titles: Box[];
+  nodeBoxes: { id: string; box: Box }[];
+  nodeById: Map<string, Node>;
+  edges: Edge[];
+}
+
+const placedBox = (node: Node): Box | undefined =>
+  node.x === undefined || node.y === undefined
+    ? undefined
+    : labelBox({ x: node.x, y: node.y }, { width: node.width ?? 0, height: node.height ?? 0 });
+
+/** The box `rect` in `clusters.js` paints a frame's title in: centred on the frame, `topMargin` below its top. */
+function plainTitleBox(node: Node, topMargin: number): Box | undefined {
+  const label = node.labelBBox;
+  const frame = placedBox(node);
+  if (!node.isGroup || (node.shape ?? 'rect') !== 'rect' || !label?.width || !frame) {
+    return undefined;
+  }
+  const centre = (frame.x1 + frame.x2) / 2;
+  const top = frame.y1 + topMargin;
+  return {
+    x1: centre - label.width / 2,
+    y1: top,
+    x2: centre + label.width / 2,
+    y2: top + label.height,
+  };
+}
+
+function verticalRuns(points: P[]): VerticalRun[] {
+  const runs: VerticalRun[] = [];
+  let first = 0;
+  for (let i = 1; i <= points.length; i++) {
+    if (i < points.length && axisOf(points[i - 1], points[i]) === 'v') {
+      continue;
+    }
+    if (i - 1 > first) {
+      runs.push({ first, last: i - 1 });
+    }
+    first = i;
+  }
+  return runs;
+}
+
+function routeHitsBox(route: P[], box: Box): boolean {
+  return route.some((point, i) => i < route.length - 1 && segmentHitsBox(point, route[i + 1], box));
+}
+
+const countHits = (route: P[], boxes: Box[]): number =>
+  boxes.filter((box) => routeHitsBox(route, box)).length;
+
+function runCrossingTitle(
+  points: P[],
+  titles: Box[]
+): { run: VerticalRun; title: Box } | undefined {
+  for (const run of verticalRuns(points)) {
+    const title = titles.find((box) => segmentHitsBox(points[run.first], points[run.last], box));
+    if (title) {
+      return { run, title };
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Where a run at `x` can stand clear of `title`, best first: the column of a
+ * neighbouring run that is already clear, which removes the jog between them,
+ * then the two sides of the title, nearest first with the right side winning a tie.
+ */
+function slideTargets(title: Box, x: number, neighbourColumns: number[]): number[] {
+  const right = title.x2 + TITLE_EDGE_GAP;
+  const left = title.x1 - TITLE_EDGE_GAP;
+  const reach = (target: number) => Math.abs(target - x);
+  const sides = [right, left].sort((a, b) => {
+    const difference = reach(a) - reach(b);
+    return Math.abs(difference) <= 1 ? 0 : difference;
+  });
+  const merges = neighbourColumns.filter((column) => column >= right || column <= left);
+  return [...merges.sort((a, b) => reach(a) - reach(b)), ...sides];
+}
+
+const withRunAt = (points: P[], run: VerticalRun, x: number): P[] =>
+  points.map((point, i) => (i >= run.first && i <= run.last ? { x, y: point.y } : point));
+
+/** The columns the legs either side of a run lead to. */
+const neighbourColumns = (points: P[], run: VerticalRun): number[] =>
+  [points[run.first - 1], points[run.last + 1]].flatMap((point) => point?.x ?? []);
+
+const withoutRepeats = (route: P[]): P[] =>
+  route.filter((point, i) => i === 0 || point.x !== route[i - 1].x || point.y !== route[i - 1].y);
+
+function standsOnFlatSide(node: Node | undefined, x: number): boolean {
+  return (
+    node?.x !== undefined &&
+    node.width !== undefined &&
+    FLAT_SIDED_SHAPES.has(node.shape ?? 'rect') &&
+    Math.abs(x - node.x) <= node.width / 2 - ARROWHEAD_HALF_WIDTH
+  );
+}
+
+/** Whether the nodes at the ends of the run, if it has any, still have a flat side under `x`. */
+function runEndsFit(
+  edge: Edge,
+  run: VerticalRun,
+  lastIndex: number,
+  x: number,
+  nodeById: Map<string, Node>
+): boolean {
+  const ends = [
+    ...(run.first === 0 ? [edge.start] : []),
+    ...(run.last === lastIndex ? [edge.end] : []),
+  ];
+  return ends.every((id) => standsOnFlatSide(id ? nodeById.get(id) : undefined, x));
+}
+
+/**
+ * Whether the legs either side of the run stay horizontal, keep their heading
+ * and are either gone or longer than the separation kept between vertical legs.
+ */
+function legsKeepHeading(points: P[], run: VerticalRun, x: number): boolean {
+  const legs: [P | undefined, P][] = [
+    [points[run.first - 1], points[run.first]],
+    [points[run.last + 1], points[run.last]],
+  ];
+  return legs.every(([far, near]) => {
+    if (!far) {
+      return true;
+    }
+    const length = Math.abs(x - far.x);
+    const keepsHeading = Math.sign(near.x - far.x) === Math.sign(x - far.x);
+    return (
+      axisOf(far, near) === 'h' &&
+      (length <= JOG_EPS || (keepsHeading && length > SLID_EDGE_SEPARATION))
+    );
+  });
+}
+
+function crowdsOtherEdge(a: P, b: P, others: Edge[]): boolean {
+  const [top, bottom] = [Math.min(a.y, b.y), Math.max(a.y, b.y)];
+  return others.some((other) => {
+    const points = other.points ?? [];
+    return verticalRuns(points).some(({ first, last }) => {
+      const [p, q] = [points[first], points[last]];
+      return (
+        Math.abs(p.x - a.x) < SLID_EDGE_SEPARATION &&
+        Math.min(p.y, q.y) < bottom &&
+        top < Math.max(p.y, q.y)
+      );
+    });
+  });
+}
+
+const centreLabelBox = (edge: Edge, at?: P): Box | undefined =>
+  edge.label && edge.width && edge.height && edge.x != null && edge.y != null
+    ? labelBox(at ?? { x: edge.x, y: edge.y }, { width: edge.width, height: edge.height })
+    : undefined;
+
+/** What `label` sits on: a node, another label, or another edge's route. */
+function labelConflicts(label: Box, others: Edge[], context: TitleSlideContext): number {
+  const otherLabels = others.flatMap((other) => centreLabelBox(other) ?? []);
+  const obstacles = [...context.nodeBoxes.map(({ box }) => box), ...otherLabels];
+  return (
+    obstacles.filter((box) => boxesOverlap(label, box)).length +
+    others.filter((other) => routeHitsBox(other.points ?? [], label)).length
+  );
+}
+
+/**
+ * What `route`, and the label riding on it, runs into that the edge should
+ * not: a node other than its own ends, another edge's label or route.
+ */
+function routeConflicts(
+  edge: Edge,
+  route: P[],
+  label: Box | undefined,
+  context: TitleSlideContext
+): number {
+  const others = context.edges.filter((other) => other !== edge && other.points?.length);
+  const foreign = context.nodeBoxes
+    .filter(({ id }) => id !== edge.start && id !== edge.end)
+    .map(({ box }) => box);
+  const otherLabels = others.flatMap((other) => centreLabelBox(other) ?? []);
+  const crossings = others.reduce(
+    (sum, other) => sum + crossingCount(route, other.points ?? []),
+    0
+  );
+  return (
+    countHits(route, [...foreign, ...otherLabels]) +
+    crossings +
+    (label ? labelConflicts(label, others, context) : 0)
+  );
+}
+
+/** A run that crosses a frame title, with what the edge runs into as ELK routed it. */
+interface SlideTarget {
+  edge: Edge;
+  points: P[];
+  run: VerticalRun;
+  title: Box;
+  titlesCrossed: number;
+  conflicts: number;
+}
+
+/** What sliding a run would leave: the route, the run in both places, and the label's box. */
+interface SlidRoute {
+  route: P[];
+  moved: StraightenedRun;
+  label?: Box;
+}
+
+function slidTo(target: SlideTarget, x: number): SlidRoute {
+  const { edge, points, run } = target;
+  const route = withRunAt(points, run, x);
+  const moved: StraightenedRun = {
+    old: { a: points[run.first], b: points[run.last] },
+    new: { a: route[run.first], b: route[run.last] },
+  };
+  const centre =
+    edge.x == null || edge.y == null
+      ? undefined
+      : projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, [moved]);
+  return {
+    route: withoutRepeats(route),
+    moved,
+    label: centre ? centreLabelBox(edge, centre) : undefined,
+  };
+}
+
+function slideFits(target: SlideTarget, slid: SlidRoute, context: TitleSlideContext): boolean {
+  const { edge, points, run } = target;
+  const { route, moved, label } = slid;
+  const x = moved.new.a.x;
+  const others = context.edges.filter((other) => other !== edge);
+  return (
+    runEndsFit(edge, run, points.length - 1, x, context.nodeById) &&
+    legsKeepHeading(points, run, x) &&
+    countHits(route, context.titles) < target.titlesCrossed &&
+    !crowdsOtherEdge(moved.new.a, moved.new.b, others) &&
+    routeConflicts(edge, route, label, context) <= target.conflicts
+  );
+}
+
+function slideTargetOf(edge: Edge, context: TitleSlideContext): SlideTarget | undefined {
+  const points = edge.points;
+  const crossed = points && runCrossingTitle(points, context.titles);
+  return points && crossed
+    ? {
+        edge,
+        points,
+        ...crossed,
+        titlesCrossed: countHits(points, context.titles),
+        conflicts: routeConflicts(edge, points, centreLabelBox(edge), context),
+      }
+    : undefined;
+}
+
+/**
+ * Move the run of `edge` that crosses a frame title to the nearest spot beside
+ * the title, or return undefined when the edge crosses none or no spot is free.
+ */
+function slideRunOffTitle(
+  edge: Edge,
+  context: TitleSlideContext
+): { points: P[]; run: StraightenedRun } | undefined {
+  const target = slideTargetOf(edge, context);
+  if (!target) {
+    return undefined;
+  }
+  const { points, run, title } = target;
+  for (const x of slideTargets(title, points[run.first].x, neighbourColumns(points, run))) {
+    const slid = slidTo(target, x);
+    if (slideFits(target, slid, context)) {
+      return { points: slid.route, run: slid.moved };
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Slide an edge sideways, along the side of a frame it enters or leaves by,
+ * when its straight run crosses the text of the frame's title.
+ *
+ * The run moves to the nearest spot beside the title, taking its label along.
+ * It stays where ELK put it when no spot is free: the nodes at its ends need a
+ * flat side under the new column, the move may add no bend, leave a leg shorter
+ * than `SLID_EDGE_SEPARATION`, or newly cross or cover anything. Only plain
+ * `rect` frames are looked at, and an edge that crosses two titles gets its
+ * first run moved. Returns each edge whose route changed with the run that moved.
+ */
+export function slideEdgesOffClusterTitles(
+  edges: Edge[],
+  nodes: LayoutData['nodes'],
+  titleTopMargin: number
+): { edge: Edge; runs: StraightenedRun[] }[] {
+  const titles = nodes.flatMap((node) => plainTitleBox(node, titleTopMargin) ?? []);
+  if (titles.length === 0) {
+    return [];
+  }
+  const context: TitleSlideContext = {
+    titles,
+    nodeBoxes: nodes.flatMap((node) => {
+      const box = node.isGroup ? undefined : placedBox(node);
+      return box ? [{ id: node.id, box }] : [];
+    }),
+    nodeById: new Map(nodes.map((node) => [node.id, node])),
+    edges,
+  };
+  const changed: { edge: Edge; runs: StraightenedRun[] }[] = [];
+  for (const edge of edges) {
+    const slid = slideRunOffTitle(edge, context);
+    if (slid) {
+      edge.points = slid.points;
+      changed.push({ edge, runs: [slid.run] });
+    }
+  }
+  return changed;
+}
+
 function applyElkEdgeLayout(
   data4Layout: LayoutData,
   graph: ElkLayoutResult,
@@ -2114,22 +2477,14 @@ function applyElkEdgeLayout(
   });
 
   if (straightenEdges) {
-    const straightened = straightenEdgeTerminals(data4Layout.edges);
-    for (const { edge, runs } of straightened) {
-      // The main label's `x`/`y` was set from ELK's placement on the
-      // pre-straightening route above; project it onto the run it was
-      // actually riding on so it stays centred on the line instead of beside
-      // it (#8292).
-      if (edge.x == null || edge.y == null) {
-        continue;
-      }
-      const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
-      if (projected) {
-        edge.x = projected.x;
-        edge.y = projected.y;
-      }
-    }
+    carryLabelsAlong(straightenEdgeTerminals(data4Layout.edges));
   }
+  const { subGraphTitleTopMargin } = getSubGraphTitleMargins({
+    flowchart: data4Layout.config.flowchart ?? {},
+  });
+  carryLabelsAlong(
+    slideEdgesOffClusterTitles(data4Layout.edges, data4Layout.nodes, subGraphTitleTopMargin)
+  );
   for (const [layoutEdge, ports] of terminalLabelPorts) {
     followMovedEndpoints(layoutEdge, ports);
   }
