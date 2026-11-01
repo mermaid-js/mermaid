@@ -24,11 +24,12 @@ const isMermaidLiveReferrer = (referrer: string | undefined) => {
 
 export const shouldShowLandingPopUp = (params: {
   hostname: string;
+  pathname: string;
   referrer?: string;
   now?: number;
   getLastSeen: () => string | null;
 }) => {
-  if (!isEligibleHost(params.hostname)) {
+  if (!isEligibleHost(params.hostname) || params.pathname !== '/') {
     return false;
   }
   if (isMermaidLiveReferrer(params.referrer)) {

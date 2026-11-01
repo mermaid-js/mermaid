@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref, type Component } from 'vue';
+import { withSiteBase } from '../theme/siteBase.js';
+import { nextTick, onMounted, onUnmounted, ref, type Component } from 'vue';
 import DocsIcon from '~icons/material-symbols/docs-outline-rounded';
 import ArrowForwardIcon from '~icons/material-symbols/arrow-forward-rounded';
 import CodeIcon from '~icons/material-symbols/code-blocks-outline';
@@ -13,6 +14,7 @@ import {
 import { trackPlausibleEvent } from '../theme/plausible.js';
 
 const isVisible = ref(false);
+const dialog = ref<HTMLElement | null>(null);
 
 type LandingOption = {
   choice: Exclude<LandingPopUpChoice, 'skip'>;
@@ -80,9 +82,16 @@ const handleChoice = (choice: LandingPopUpChoice) => {
   window.location.href = links[choice];
 };
 
-onMounted(() => {
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && isVisible.value) {
+    handleChoice('skip');
+  }
+};
+
+onMounted(async () => {
   const visible = shouldShowLandingPopUp({
     hostname: window.location.hostname,
+    pathname: window.location.pathname,
     referrer: document.referrer,
     getLastSeen: () => window.localStorage.getItem(landingPopUpStorageKey),
   });
@@ -92,6 +101,13 @@ onMounted(() => {
   }
 
   isVisible.value = true;
+  document.addEventListener('keydown', handleKeydown);
+  await nextTick();
+  dialog.value?.querySelector('button')?.focus();
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown);
 });
 </script>
 
@@ -102,12 +118,22 @@ onMounted(() => {
     @click.self="handleChoice('skip')"
   >
     <div
+      ref="dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="landing-intent-title"
       class="w-full max-w-[654px] rounded-2xl border border-[#374151] bg-[#1a1625] p-8 text-white shadow-[0_20px_80px_rgba(0,0,0,0.55)]"
     >
       <div class="flex flex-col items-center text-center">
-        <img src="/favicon.svg" alt="Mermaid" class="h-[41px] w-[41px] rounded-[8px]" />
+        <img
+          :src="withSiteBase('/favicon.svg')"
+          alt="Mermaid"
+          class="h-[41px] w-[41px] rounded-[8px]"
+        />
         <div class="h-2 w-px" />
-        <h2 class="mt-2 text-2xl font-bold text-white">What are you looking for?</h2>
+        <h2 id="landing-intent-title" class="mt-2 text-2xl font-bold text-white">
+          What are you looking for?
+        </h2>
       </div>
 
       <div class="mt-5 grid gap-3">
