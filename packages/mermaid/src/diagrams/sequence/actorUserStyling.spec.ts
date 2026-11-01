@@ -50,7 +50,7 @@ const participant = (name: string, extra: Record<string, unknown> = {}) => ({
   ...extra,
 });
 
-const drawRect = async (actor: ReturnType<typeof participant>) => {
+const drawActorElements = async (actor: ReturnType<typeof participant>) => {
   document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"></svg>';
   const svg = select(document.querySelector<SVGSVGElement>('svg')!);
   await svgDraw.drawActor(
@@ -62,7 +62,10 @@ const drawRect = async (actor: ReturnType<typeof participant>) => {
     undefined,
     new Map([[actor.name, 0]])
   );
-  return document.querySelector<SVGRectElement>('rect.actor')!;
+  return {
+    group: document.querySelector<SVGGElement>('svg > g')!,
+    rect: document.querySelector<SVGRectElement>('rect.actor')!,
+  };
 };
 
 beforeEach(() => {
@@ -71,21 +74,26 @@ beforeEach(() => {
 
 describe('participant user styling under a color theme', () => {
   it('keeps the palette inline for an unstyled actor', async () => {
-    const rect = await drawRect(participant('Alice'));
+    const { rect } = await drawActorElements(participant('Alice'));
     expect(rect.style.stroke).not.toBe('');
+    expect(rect.style.fill).not.toBe('');
   });
 
-  it('skips the inline palette when the actor has an inline style', async () => {
-    const rect = await drawRect(
+  it('skips the inline palette and attaches styleClassName when the actor has an inline style', async () => {
+    const { group, rect } = await drawActorElements(
       participant('Alice', { styles: ['fill:#f00'], styleClassName: 'actor-style-x' })
     );
     expect(rect.style.stroke).toBe('');
     expect(rect.style.fill).toBe('');
+    expect(group.classList.contains('actor-style-x')).toBe(true);
   });
 
-  it('skips the inline palette when the actor has a class', async () => {
-    const rect = await drawRect(participant('Alice', { classes: ['highlighted'] }));
+  it('skips the inline palette and attaches custom classes when the actor has a class', async () => {
+    const { group, rect } = await drawActorElements(
+      participant('Alice', { classes: ['highlighted'] })
+    );
     expect(rect.style.stroke).toBe('');
     expect(rect.style.fill).toBe('');
+    expect(group.classList.contains('highlighted')).toBe(true);
   });
 });

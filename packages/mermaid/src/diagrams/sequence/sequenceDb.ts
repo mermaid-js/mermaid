@@ -170,12 +170,17 @@ export class SequenceDB implements DiagramDB {
   //   right brace     - rule terminator, would close the scoped block
   //   left angle      - guards against angle-bracket smuggling
   private sanitizeCssDeclaration(decl: string): string | null {
+    // Reject CSS backslash escapes (e.g. u\72l(...)) since browsers decode them
+    // while literal substring/regex checks below do not. Escaped commas (\,) in
+    // multi-token values are already decoded before this helper runs.
+    if (decl.includes('\\')) {
+      return null;
+    }
     // Strip CSS comments before checking — url/* comment */(evil) is valid
     // CSS but would bypass a naive /url\s*\(/ check.
     const stripped = decl.toLowerCase().replace(/\/\*[\S\s]*?\*\//g, '');
     if (
-      /url\s*\(/.test(stripped) ||
-      /expression\s*\(/.test(stripped) ||
+      /(?:url|image-set|image|src|element|cross-fade|expression)\s*\(/.test(stripped) ||
       /\bbehavior\s*:/.test(stripped) ||
       /\bjavascript\s*:/.test(stripped) ||
       stripped.includes('@import') ||
@@ -213,7 +218,7 @@ export class SequenceDB implements DiagramDB {
     }
 
     const trimmedId = id.trim();
-    if (trimmedId) {
+    if (/^[\w-]+$/.test(trimmedId)) {
       this.state.records.classes.set(trimmedId, {
         id: trimmedId,
         styles: elementStyles,
@@ -259,6 +264,10 @@ export class SequenceDB implements DiagramDB {
    * Arrow function property so JISON's yy can find it.
    */
   public setCssClass = (ids: string, className: string) => {
+    const trimmedClassName = className.trim();
+    if (!/^[\w-]+$/.test(trimmedClassName)) {
+      return;
+    }
     for (const id of ids.split(',')) {
       const trimmedId = id.trim();
       if (!trimmedId) {
@@ -266,7 +275,7 @@ export class SequenceDB implements DiagramDB {
       }
       const actor = this.state.records.actors.get(trimmedId);
       if (actor) {
-        actor.classes = [...(actor.classes ?? []), className];
+        actor.classes = [...(actor.classes ?? []), trimmedClassName];
       }
     }
   };

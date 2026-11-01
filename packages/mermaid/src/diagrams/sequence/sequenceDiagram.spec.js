@@ -3119,6 +3119,44 @@ Bob->>Alice:Got it!
       expect(actors.get('Alice')).toBeDefined();
     });
 
+    it('should parse multi-word actors starting with style/class/classDef across arrow types', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      Style Guide->>Bob: solid
+      Class Room-->>Student: dotted
+      Style Guide-xBob: cross
+      Style Guide-)Bob: async
+      Style Guide/|-Bob: reverse
+      `);
+      const actors = diagram.db.getActors();
+      expect(actors.get('Style Guide')).toBeDefined();
+      expect(actors.get('Class Room')).toBeDefined();
+      expect(actors.get('Bob')).toBeDefined();
+      expect(actors.get('Student')).toBeDefined();
+      expect(diagram.db.getMessages().map((m) => m.message)).toEqual([
+        'solid',
+        'dotted',
+        'cross',
+        'async',
+        'reverse',
+      ]);
+    });
+
+    it('should still support styling and class assignment for actors ending in -x', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef box-x fill:#0f0
+      participant actor-x
+      style actor-x stroke:#333
+      class actor-x box-x
+      actor-x->>actor-x: ok
+      `);
+      const actor = diagram.db.getActors().get('actor-x');
+      expect(actor.styles).toEqual(['stroke:#333']);
+      expect(actor.classes).toEqual(['box-x']);
+      expect(diagram.db.getClasses().get('box-x').styles).toEqual(['fill:#0f0']);
+    });
+
     // The ';' tests below use named colors on purpose: encodeEntities() runs before the
     // parser and turns '#f00;' into an entity placeholder, so a hex color right before
     // ';' never reaches the lexer.
@@ -3250,6 +3288,46 @@ Bob->>Alice:Got it!
       expect(classes.get('ok').styles).toContain('fill:#f00');
       expect(classes.get('bad1').styles.join(',')).not.toContain('url');
       expect(classes.get('bad2').styles.join(',')).not.toContain('expression');
+    });
+
+    it('should reject CSS backslash escapes and string-URL image functions while preserving escaped commas', async () => {
+      const diagram = await Diagram.fromText(
+        [
+          'sequenceDiagram',
+          'classDef escapedUrl fill:u\\72l(//attacker/x.svg)',
+          'classDef imageSet fill:#f00,background:image-set("//attacker/x.png" 1x)',
+          'classDef imageCall fill:#f00,background:image("//attacker/x.png")',
+          'classDef sourceCall fill:#f00,background:src("//attacker/x.png")',
+          'classDef fontFamilyOk fill:#f00,font-family:Arial\\, sans-serif',
+          'participant Alice',
+          'Alice->>Alice: test',
+        ].join('\n')
+      );
+      const classes = diagram.db.getClasses();
+      expect(classes.get('escapedUrl').styles).toEqual([]);
+      expect(classes.get('imageSet').styles).toEqual(['fill:#f00']);
+      expect(classes.get('imageCall').styles).toEqual(['fill:#f00']);
+      expect(classes.get('sourceCall').styles).toEqual(['fill:#f00']);
+      expect(classes.get('fontFamilyOk').styles).toEqual(['fill:#f00']);
+      expect(classes.get('fontFamilyOk').textStyles).toEqual(['font-family:Arial, sans-serif']);
+    });
+
+    it('should reject classDef and class identifiers containing selector or rule syntax', async () => {
+      const diagram = await Diagram.fromText(`
+      sequenceDiagram
+      classDef a,* fill:#f00
+      classDef bad{color:red} fill:#f00
+      classDef valid_class-1 fill:#0f0
+      participant Alice
+      class Alice a,*
+      class Alice valid_class-1
+      Alice->>Alice: test
+      `);
+      const classes = diagram.db.getClasses();
+      expect(classes.has('a,*')).toBe(false);
+      expect(classes.has('bad{color:red}')).toBe(false);
+      expect(classes.has('valid_class-1')).toBe(true);
+      expect(diagram.db.getActors().get('Alice').classes).toEqual(['valid_class-1']);
     });
 
     it('should silently drop style applied to an actor not yet declared', async () => {
