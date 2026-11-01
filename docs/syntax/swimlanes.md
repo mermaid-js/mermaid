@@ -7,7 +7,7 @@
 # Swimlanes Diagram (v11.16.0+)
 
 > **Warning**
-> This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+> Swimlane diagrams are in beta. Diagrams start with the `swimlane-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 
 A swimlane diagram shows a process divided by responsibility. Each lane represents an actor, team, system, or phase, and the nodes inside the lane show the work that happens there. Arrows show the order of work and the handoffs between lanes.
 
@@ -23,7 +23,7 @@ The same diagram, drawn both ways:
 
 ### With the defaults
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph Customer
     Browse[Browse catalogue]
@@ -42,7 +42,7 @@ swimlane-beta LR
   Pay --> Invoice
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph Customer
     Browse[Browse catalogue]
@@ -66,7 +66,7 @@ swimlane-beta LR
 Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
 in a diagram's front matter draws it the way Mermaid did before:
 
-```mermaid-example
+```mermaid
 ---
 config:
   theme: default
@@ -90,7 +90,7 @@ swimlane-beta LR
   Pay --> Invoice
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   theme: default
@@ -120,7 +120,7 @@ does it for that type alone.
 
 ## Basic Example
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph Customer
     request[Request service]
@@ -144,7 +144,7 @@ swimlane-beta LR
   answer --> receive
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph Customer
     request[Request service]
@@ -196,13 +196,7 @@ If no direction is set, the diagram uses `TB`.
 
 Use `subgraph` to create a lane. In a swimlane diagram, top-level subgraphs are rendered as swimlanes. A lane ends with `end`.
 
-```mermaid-example
-swimlane-beta
-  subgraph Sales
-    lead[Qualify lead]
-    quote[Prepare quote]
-  end
-```
+A node belongs to one lane. If two lanes list the same node, it stays in the first lane and is not drawn in the second. The second lane is then removed, because it would be an empty band, but only when the shared node was the reason: the lane lost a member to an earlier lane, it has no nodes left, and no edge points at it. A lane you left empty yourself stays. A subgraph nested inside a lane is drawn as a plain box, not as a lane, and a node in it belongs to the lane around it. Both cases are reported as warnings in the log. Warnings only show when `logLevel` is `warn` or lower, and the default is `fatal`, so set it with `mermaid.initialize({ logLevel: 'warn' })` to see them.
 
 ```mermaid
 swimlane-beta
@@ -212,9 +206,17 @@ swimlane-beta
   end
 ```
 
+```mermaid-example
+swimlane-beta
+  subgraph Sales
+    lead[Qualify lead]
+    quote[Prepare quote]
+  end
+```
+
 You can give a lane an internal id and a display label. This is useful when the label contains spaces or when you want a stable id for styling.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph sales [Sales team]
     lead[Qualify lead]
@@ -229,7 +231,7 @@ swimlane-beta LR
   lead --> quote --> review --> approve
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph sales [Sales team]
     lead[Qualify lead]
@@ -248,7 +250,7 @@ swimlane-beta LR
 
 Nodes use flowchart-style shape syntax. The id is written first, and the label is written inside the shape.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph Intake
     start([Start])
@@ -270,7 +272,7 @@ swimlane-beta LR
   fix --> task
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph Intake
     start([Start])
@@ -308,7 +310,7 @@ For the complete shape catalog, icons, images, markdown strings, classes, and st
 
 Edges also use flowchart-style syntax. They can connect nodes in the same lane or across lanes.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph Buyer
     choose[Choose product]
@@ -325,7 +327,7 @@ swimlane-beta LR
   pay --> ship
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph Buyer
     choose[Choose product]
@@ -358,7 +360,7 @@ For the full edge syntax, including multi-directional arrows and minimum link le
 
 Use `accTitle` and `accDescr` to provide an accessible title and description.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   accTitle: Support escalation
   accDescr: A request starts with the customer, is triaged by support, and may be escalated to engineering.
@@ -378,7 +380,7 @@ swimlane-beta LR
   request --> triage --> resolve
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   accTitle: Support escalation
   accDescr: A request starts with the customer, is triaged by support, and may be escalated to engineering.
@@ -404,7 +406,7 @@ swimlane-beta LR
 
 Choose lanes that answer "who owns this step?" Avoid mixing teams, phases, and statuses in the same diagram unless that distinction is the point of the diagram.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph Customer
     submit[Submit order]
@@ -424,7 +426,7 @@ swimlane-beta LR
   submit --> check --> pack --> collect --> deliver --> confirm
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph Customer
     submit[Submit order]
@@ -448,7 +450,7 @@ swimlane-beta LR
 
 A cross-lane arrow is where responsibility changes. Label the arrow when the handoff depends on a document, decision, message, or condition.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph Applicant
     apply[Submit application]
@@ -471,7 +473,7 @@ swimlane-beta LR
   decide -->|Needs changes| apply
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph Applicant
     apply[Submit application]
@@ -498,7 +500,7 @@ swimlane-beta LR
 
 Split a large process into several diagrams when the lanes or handoffs stop fitting in one view. A useful swimlane diagram is usually readable without tracing every arrow twice.
 
-```mermaid-example
+```mermaid
 swimlane-beta TB
   subgraph Intake
     collect[Collect request]
@@ -520,7 +522,7 @@ swimlane-beta TB
   decide -->|No| collect
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta TB
   subgraph Intake
     collect[Collect request]
@@ -546,7 +548,7 @@ swimlane-beta TB
 
 Use short, meaningful ids for nodes and lanes. The label can change without breaking links, styles, or later references.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph ops [Operations]
     intake[Receive request]
@@ -563,7 +565,7 @@ swimlane-beta LR
   class review attention;
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph ops [Operations]
     intake[Receive request]
@@ -584,7 +586,7 @@ swimlane-beta LR
 
 Place a decision node in the lane that owns the decision. Then route the outcomes to the lanes that act on the result.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   subgraph Support
     classify{Can support solve it?}
@@ -603,7 +605,7 @@ swimlane-beta LR
   classify -->|No| prioritize --> implement --> respond
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   subgraph Support
     classify{Can support solve it?}
