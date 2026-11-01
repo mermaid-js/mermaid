@@ -432,6 +432,38 @@ describe('prepareLayoutForElk', () => {
 });
 
 describe('buildElkGraphFromLayoutData', () => {
+  it('omits unplaced null coordinates without mutating DB data or finite hints', async () => {
+    const data = {
+      config: { elk: {} },
+      nodes: [
+        { id: '0', width: 80, height: 40, x: null, y: null },
+        { id: '1', width: 80, height: 40, x: 0, y: 25 },
+        { id: '2', width: 80, height: 40, x: NaN, y: Infinity },
+      ],
+      edges: [
+        { id: 'e01', start: '0', end: '1' },
+        { id: 'e12', start: '1', end: '2' },
+      ],
+    } as any;
+    const state = buildElkGraphFromLayoutData(data, {
+      algorithm: 'elk.layered',
+      getConfig: () => ({}),
+      log,
+    } as any);
+    expect(state.nodeDb['0']).not.toHaveProperty('x');
+    expect(state.nodeDb['0']).not.toHaveProperty('y');
+    expect(state.nodeDb['1']).toMatchObject({ x: 0, y: 25 });
+    expect(state.nodeDb['2']).not.toHaveProperty('x');
+    expect(state.nodeDb['2']).not.toHaveProperty('y');
+    expect(data.nodes[0]).toMatchObject({ x: null, y: null });
+    // Dynamic import to test lazy loading boundary for elkjs bundled build in test environment
+    const { default: ELK } = await import('elkjs/lib/elk.bundled.js');
+    const result = await new (ELK as any)().layout(state.elkGraph);
+    expect(
+      result.children?.every((node: any) => Number.isFinite(node.x) && Number.isFinite(node.y))
+    ).toBe(true);
+  });
+
   it('builds an ELK graph from measured layout data without DOM handles', () => {
     const data = {
       direction: 'LR',

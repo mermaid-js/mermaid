@@ -180,10 +180,11 @@ export interface MermaidConfig {
      * Renders edge crossings as small arcs ("hops") or visible gaps, so that
      * it is clear which line passes over which where two edges meet.
      *
-     * The edge that gives way loses its corner rounding for the segment
-     * carrying the hop, which is the trade for a readable crossing. Curved
-     * edges are skipped rather than rewritten, to avoid corrupting their
-     * geometry. Set to `false` to draw plain crossings.
+     * Rounded corners are preserved. If the preferred hopping edge has too
+     * little room, the other edge is tried instead. In ELK, remaining crossings
+     * on default rounded routes receive transparent edge-only gap fallbacks.
+     * True smoothing curves and collinear shared paths are not rewritten.
+     * Set to `false` to draw plain crossings.
      *
      */
     lineHops?: boolean | ('arc' | 'gap');

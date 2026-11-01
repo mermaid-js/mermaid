@@ -11,7 +11,26 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
 import { applyElkLineJumps } from './lineHops.js';
+import { protectElkClusterTitles } from './titleProtection.js';
+import { protectElkFrames } from './frameProtection.js';
+import { resolveElkCrossingFallbacks } from './crossingFallback.js';
+import { elkAutomaticTrials, elkLayoutScore, isBetterElkScore } from './layoutQuality.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
+import { addEdgeMarkers } from '../../rendering-elements/edgeMarker.js';
+import {
+  minimumRawLead,
+  readTerminalRunway,
+  reserveTerminalLayoutSpace,
+  ensureStartMarkerSegmentLength,
+  ensureEndMarkerSegmentLength,
+} from './terminalRunway.js';
+export {
+  minimumRawLead,
+  readTerminalRunway,
+  reserveTerminalLayoutSpace,
+  ensureStartMarkerSegmentLength,
+  ensureEndMarkerSegmentLength,
+};
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
   EDGE_ROUTING_OPTIONS,
@@ -26,7 +45,6 @@ import {
   outsideNode,
   computeNodeIntersection,
   outlineAttachPoint,
-  replaceEndpoint,
   onBorder,
 } from './geometry.js';
 
@@ -129,11 +147,7 @@ interface ElkLayoutResult {
   children?: any[];
   edges?: any[];
 }
-
 type Side = 'start' | 'end';
-
-const MIN_END_MARKER_SEGMENT_LENGTH = 8;
-
 /**
  * How far `getLineFunctionsWithOffset` pulls a path end back along its last
  * segment to make room for this marker. Read from the same tables the edge
@@ -691,14 +705,97 @@ export async function runElkLayoutCore(
   context: CommonLayoutRenderContext<ElkPreparedLayout>
 ): Promise<ElkLayoutResult> {
   const elkContext = getElkLayoutContext(context);
-  const layoutState = buildElkGraphFromLayoutData(data4Layout, elkContext);
-
+  // Preserve object identity: measured shape intersection functions may close
+  // over these nodes. Restore their measured inputs before each independent trial.
+  const snapshot = () =>
+    [...data4Layout.nodes, ...data4Layout.edges].map((object) => ({
+      object,
+      values: { ...object },
+    }));
+  const restore = (records: ReturnType<typeof snapshot>) => {
+    for (const { object, values } of records) {
+      for (const key of Object.keys(object)) {
+        if (!(key in values)) {
+          delete (object as unknown as Record<string, unknown>)[key];
+        }
+      }
+      Object.assign(object, values);
+    }
+  };
+  // Measure the same marker definitions and CSS as the renderer before asking
+  // ELK for positions. Post-routing detours cannot manufacture header space.
+  let runway = 0;
+  if (context.element?.node?.()) {
+    const probe = context.element.append('g').attr('class', 'edgePaths').append('path');
+    try {
+      for (const edge of data4Layout.edges) {
+        probe
+          .attr('marker-start', null)
+          .attr('marker-end', null)
+          .attr('class', `flowchart-link edge-thickness-${edge.thickness || 'normal'}`)
+          .attr('style', Array.isArray(edge.style) ? edge.style.join(';') : edge.style || '');
+        addEdgeMarkers(
+          probe as never,
+          edge as never,
+          '',
+          data4Layout.diagramId ?? '',
+          data4Layout.type,
+          !edge.animate && edge.look === 'neo'
+        );
+        const policy = readTerminalRunway(probe.node()!, edge);
+        runway = Math.max(runway, minimumRawLead(policy.start), minimumRawLead(policy.end));
+      }
+    } finally {
+      probe.remove();
+    }
+  }
+  const measured = snapshot();
+  const explicitExperiment =
+    Object.keys(elkContext.rootLayoutOptions ?? {}).length > 0 ||
+    Object.keys(ROOT_EXPERIMENT_OVERRIDES).length > 0;
+  const trials =
+    elkContext.algorithm === 'elk.layered' && !explicitExperiment
+      ? elkAutomaticTrials(data4Layout.nodes.length, data4Layout.edges.length)
+      : 1;
+  const seeds = [1, 2, 5];
+  let best: ReturnType<typeof snapshot> | undefined;
+  let bestScore: number[] | undefined;
+  let graph: ElkLayoutResult = {};
   // @ts-ignore - ELK is not typed
   const elk = new ELK();
-  elkContext.log.info('Drawing flowchart using v4 renderer', elk);
-
-  const graph = await runElkLayout(elk, layoutState.elkGraph, elkContext.log);
-  applyElkLayoutResult(data4Layout, graph, layoutState, elkContext.log);
+  for (let trial = 0; trial < trials; trial++) {
+    restore(measured);
+    const layoutState = buildElkGraphFromLayoutData(data4Layout, elkContext);
+    reserveTerminalLayoutSpace(layoutState.elkGraph, runway);
+    if (trial > 0) {
+      Object.assign(layoutState.elkGraph.layoutOptions, {
+        'elk.layered.thoroughness': 28,
+        'elk.randomSeed': seeds[trial - 1],
+        'elk.layered.crossingMinimization.greedySwitchHierarchical.type': 'TWO_SIDED',
+      });
+    }
+    try {
+      const candidate = await runElkLayout(elk, layoutState.elkGraph, elkContext.log);
+      applyElkLayoutResult(data4Layout, candidate, layoutState, elkContext.log);
+      const score = trials > 1 ? elkLayoutScore(data4Layout) : [];
+      if (!bestScore || isBetterElkScore(score, bestScore)) {
+        bestScore = score;
+        best = snapshot();
+        graph = candidate;
+      }
+    } catch (error) {
+      if (!best) {
+        throw error;
+      }
+      elkContext.log.warn(
+        'An automatic ELK alternative failed; keeping the best successful layout',
+        error
+      );
+    }
+  }
+  if (best) {
+    restore(best);
+  }
   orderNodesForElkPaint(data4Layout.nodes);
   return graph;
 }
@@ -749,7 +846,15 @@ function reverseSubgraphFeedbackEdges(elkGraph: { edges: any[] }, parentLookupDb
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
-  afterPaint: applyElkLineJumps,
+  afterPaint: (data, context) => {
+    // if (context.preparedLayout?.algorithm && context.preparedLayout.algorithm !== 'elk.layered') {
+    //   protectElkNodeText(data, context);
+    // }
+    protectElkClusterTitles(data, context);
+    protectElkFrames(data, context);
+    applyElkLineJumps(data, context);
+    resolveElkCrossingFallbacks(data, context);
+  },
   prepareLayout: prepareLayoutForElk,
   // ELK derives a compound node's minimum size from the measured cluster label,
   // so the label has to be measured the way `insertCluster` paints it —
@@ -1067,6 +1172,13 @@ function addVertex(
 function createElkNode(node: Node): NodeWithVertex {
   const child = { ...node } as NodeWithVertex;
   delete (child as { domId?: unknown }).domId;
+  // Some diagram DBs (notably mindmap) use null for unplaced coordinates.
+  // elkjs treats present null fields as malformed numbers rather than absent hints.
+  for (const axis of ['x', 'y'] as const) {
+    if (!Number.isFinite(child[axis])) {
+      delete child[axis];
+    }
+  }
 
   if (node.isGroup) {
     child.children = [];
@@ -2587,78 +2699,19 @@ function dedupeConsecutivePoints(points: P[], log: ElkLayoutContext['log']): P[]
 }
 
 function getEndMarkerPathOffset(edge: Edge): number {
-  return markerPathOffset((edge as { arrowTypeEnd?: unknown }).arrowTypeEnd);
+  const arrowType =
+    edge && 'arrowTypeEnd' in edge && typeof edge.arrowTypeEnd === 'string'
+      ? edge.arrowTypeEnd
+      : ARROW_MAP[edge.type ?? 'arrow_open']?.[1];
+  return markerPathOffset(arrowType);
 }
 
 function getStartMarkerPathOffset(edge: Edge): number {
-  return markerPathOffset((edge as { arrowTypeStart?: unknown }).arrowTypeStart);
-}
-
-/**
- * Mirror of `ensureEndMarkerSegmentLength` for the start of the path: the
- * start marker's pull-back walks forward along the first segment, so a short
- * on-border stub there flips the start marker the same way.
- */
-export function ensureStartMarkerSegmentLength(
-  points: P[],
-  startBounds: RectLike,
-  markerOffset: number,
-  log: { debug: (...args: unknown[]) => void }
-): P[] {
-  if (markerOffset <= 0 || points.length < 3) {
-    return points;
-  }
-
-  const start = points[0];
-  const exit = points[1];
-  const segmentLength = Math.hypot(exit.x - start.x, exit.y - start.y);
-  if (segmentLength >= Math.max(MIN_END_MARKER_SEGMENT_LENGTH, markerOffset * 2)) {
-    return points;
-  }
-
-  if (!onBorder(startBounds, exit, 1)) {
-    return points;
-  }
-
-  const adjusted = [start, ...points.slice(2)];
-  log.debug('UIO cutter2: removed short start marker segment', {
-    before: points,
-    after: adjusted,
-    markerOffset,
-    segmentLength,
-  });
-  return adjusted;
-}
-
-export function ensureEndMarkerSegmentLength(
-  points: P[],
-  endBounds: RectLike,
-  markerOffset: number,
-  log: { debug: (...args: unknown[]) => void }
-): P[] {
-  if (markerOffset <= 0 || points.length < 3) {
-    return points;
-  }
-
-  const end = points[points.length - 1];
-  const entry = points[points.length - 2];
-  const segmentLength = Math.hypot(end.x - entry.x, end.y - entry.y);
-  if (segmentLength >= Math.max(MIN_END_MARKER_SEGMENT_LENGTH, markerOffset * 2)) {
-    return points;
-  }
-
-  if (!onBorder(endBounds, entry, 1)) {
-    return points;
-  }
-
-  const adjusted = [...points.slice(0, -2), end];
-  log.debug('UIO cutter2: removed short end marker segment', {
-    before: points,
-    after: adjusted,
-    markerOffset,
-    segmentLength,
-  });
-  return adjusted;
+  const arrowType =
+    edge && 'arrowTypeStart' in edge && typeof edge.arrowTypeStart === 'string'
+      ? edge.arrowTypeStart
+      : ARROW_MAP[edge.type ?? 'arrow_open']?.[0];
+  return markerPathOffset(arrowType);
 }
 
 function applyElkEdgeRenderData(data4Layout: LayoutData, elkContext: ElkLayoutContext): void {
@@ -2890,7 +2943,19 @@ function applyStartIntersectionIfNeeded(
       outsidePointForStart,
       startCenter
     );
-    replaceEndpoint(points, 'start', startIntersection);
+    if (firstOutsideStartIndex > 0) {
+      points.splice(0, firstOutsideStartIndex);
+    }
+    if (startIntersection) {
+      if (
+        points.length === 0 ||
+        Math.hypot(points[0].x - startIntersection.x, points[0].y - startIntersection.y) > 0.5
+      ) {
+        points.unshift(startIntersection);
+      } else {
+        points[0] = startIntersection;
+      }
+    }
     log.debug('UIO cutter2: start-only intersection applied', { startIntersection });
   }
 }
@@ -2917,7 +2982,20 @@ function applyEndIntersectionIfNeeded(
       outsidePointForEnd,
       endCenter
     );
-    replaceEndpoint(points, 'end', endIntersection);
+    if (outsideIndexForEnd < points.length - 1) {
+      points.splice(outsideIndexForEnd + 1);
+    }
+    if (endIntersection) {
+      const last = points.length - 1;
+      if (
+        points.length === 0 ||
+        Math.hypot(points[last].x - endIntersection.x, points[last].y - endIntersection.y) > 0.5
+      ) {
+        points.push(endIntersection);
+      } else {
+        points[last] = endIntersection;
+      }
+    }
     log.debug('UIO cutter2: end-only intersection applied', { endIntersection });
   }
 }
@@ -2966,9 +3044,6 @@ function cutter2(
   const startCenter = points[0];
   const endCenter = points[points.length - 1];
 
-  log.debug('PPP cutter2: bounds', { startBounds, endBounds });
-  log.debug('PPP cutter2: original points', originalPoints);
-
   let firstOutsideStartIndex = -1;
 
   for (const [index, point] of points.entries()) {
@@ -2986,9 +3061,20 @@ function cutter2(
       attachAlongDepartureAxis(startNode, startBounds, points, firstOutsideStartIndex, 1) ??
       computeNodeIntersection(startNode, startBounds, outsidePointForStart, startCenter);
     log.debug('UIO cutter2: start intersection', startIntersection);
-    replaceEndpoint(points, 'start', startIntersection);
+    if (firstOutsideStartIndex > 0) {
+      points.splice(0, firstOutsideStartIndex);
+    }
+    if (startIntersection) {
+      if (
+        points.length === 0 ||
+        Math.hypot(points[0].x - startIntersection.x, points[0].y - startIntersection.y) > 0.5
+      ) {
+        points.unshift(startIntersection);
+      } else {
+        points[0] = startIntersection;
+      }
+    }
   }
-
   let outsidePointForEnd = null;
   let outsideIndexForEnd = -1;
 
@@ -3010,9 +3096,21 @@ function cutter2(
       attachAlongDepartureAxis(endNode, endBounds, points, outsideIndexForEnd, -1) ??
       computeNodeIntersection(endNode, endBounds, outsidePointForEnd, endCenter);
     log.debug('UIO cutter2: end intersection', { endIntersection, outsideIndexForEnd });
-    replaceEndpoint(points, 'end', endIntersection);
+    if (outsideIndexForEnd < points.length - 1) {
+      points.splice(outsideIndexForEnd + 1);
+    }
+    if (endIntersection) {
+      const last = points.length - 1;
+      if (
+        points.length === 0 ||
+        Math.hypot(points[last].x - endIntersection.x, points[last].y - endIntersection.y) > 0.5
+      ) {
+        points.push(endIntersection);
+      } else {
+        points[last] = endIntersection;
+      }
+    }
   }
-
   if (points.length > 1) {
     const lastPoint = points[points.length - 1];
     const secondLastPoint = points[points.length - 2];
