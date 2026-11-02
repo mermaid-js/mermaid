@@ -2150,8 +2150,12 @@ function centreLabelBox(edge: Edge, at?: P): Box | undefined {
     : undefined;
 }
 
+function isBox(box: Box | undefined): box is Box {
+  return box !== undefined;
+}
+
 function labelBoxes(edges: Edge[]): Box[] {
-  return edges.map((edge) => centreLabelBox(edge)).filter((box): box is Box => box !== undefined);
+  return edges.map((edge) => centreLabelBox(edge)).filter(isBox);
 }
 
 /** What `label` sits on: a node, another label, or another edge's route. */
@@ -2280,14 +2284,17 @@ export function slideEdgesOffClusterTitles(
   nodes: LayoutData['nodes'],
   titleTopMargin: number
 ): { edge: Edge; runs: StraightenedRun[] }[] {
-  const titles = nodes.flatMap((node) => plainTitleBox(node, titleTopMargin) ?? []);
+  const titles = nodes.map((node) => plainTitleBox(node, titleTopMargin)).filter(isBox);
   if (titles.length === 0) {
     return [];
   }
   const routed = edges.filter(isRouted);
   const context: TitleSlideContext = {
     titles,
-    nodeBoxes: nodes.flatMap((node) => (node.isGroup ? [] : (placedBox(node) ?? []))),
+    nodeBoxes: nodes
+      .filter((node) => !node.isGroup)
+      .map((node) => placedBox(node))
+      .filter(isBox),
     nodeById: new Map(nodes.map((node) => [node.id, node])),
     edges: routed,
   };
