@@ -1095,6 +1095,9 @@ In a `flowchart LR` or `RL`, subgraphs with `direction TB` or `BT` become column
 A link from a node in one of them to a node in another, or to a node outside them, leaves its source on the side facing the target and enters the target on the side facing the source.
 It runs in the gap between the two.
 Each subgraph is shifted so that its first link to something placed before it, in the order the links are written, is a straight line; the other links take at most two turns.
+Links that meet on one side of a node are spread along it, at least an arrowhead apart; a link that can run straight keeps its place, and the others keep their order so they do not cross.
+Their ends stay clear of the title of the subgraph above them when the rest of the side has room.
+Each link that turns in a gap gets a lane of its own.
 Rows that alternate `direction LR` and `direction RL` draw a snake, with each row's last node straight above the next row's first node.
 
 ```mermaid-example
