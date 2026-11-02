@@ -179,6 +179,16 @@ function applyEdgeMove(edge: ElkEdgeLike, [from, to]: [number, number], { pos }:
   }
 }
 
+/** Is `id` the frame `frameId` or anything inside it? */
+function isInside(id: string, frameId: string, tree: TreeData): boolean {
+  for (let current: string | undefined = id; current; current = tree.parentById[current]) {
+    if (current === frameId) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /** The widest main label of a link with an end inside `frameId`, or 0. */
 function widestLabel(
   frameId: string,
@@ -186,14 +196,7 @@ function widestLabel(
   tree: TreeData,
   axis: Axis
 ): number {
-  const inside = (id: string) => {
-    for (let current: string | undefined = id; current; current = tree.parentById[current]) {
-      if (current === frameId) {
-        return true;
-      }
-    }
-    return false;
-  };
+  const inside = (id: string) => isInside(id, frameId, tree);
   const widths = edges
     .filter((edge) => inside(edge.sources[0]) || inside(edge.targets[0]))
     .map((edge) => edge.labels?.[0]?.[axis.size] ?? 0);
@@ -320,19 +323,94 @@ export function justifyFrames(input: JustifyInput): Set<string> {
   );
   const include = input.include ?? (() => true);
   const chosen = rows.filter((row) => include(row.frame.id, row.band));
-  return new Set(
-    chosen.flatMap((row) => (spreadRow(row, [from, size], input.edges, axis) ? [row.frame.id] : []))
+  const spread = (row: Row, moves?: Map<string, number>) =>
+    spreadRow(row, [from, size], input.edges, axis, moves) ? [row.frame.id] : [];
+  const bands = chosen.filter(({ band }) => band).flatMap((row) => spread(row));
+  const plain = chosen
+    .filter(({ band }) => !band)
+    .flatMap((row) => spread(row, columnMoves(row, rows, size, input, axis)));
+  return new Set([...bands, ...plain]);
+}
+
+/** The band stacked right after `row` along the flow, or else the one right before it. */
+function neighbourBand(row: Row, rows: readonly Row[], axis: Axis): Row | undefined {
+  const along = [...rows].sort((a, b) => (a.frame[axis.along] ?? 0) - (b.frame[axis.along] ?? 0));
+  const index = along.indexOf(row);
+  return [along[index + 1], along[index - 1]].find((other) => other?.band);
+}
+
+/**
+ * Where to centre each slot of a row stacked next to a band: over the band's column of the same
+ * place when the row has as many slots as the band has columns, or else over the one column each
+ * slot links to, when every slot links to exactly one and they keep their order.
+ */
+function columnCentres(row: Row, band: Row, input: JustifyInput, axis: Axis): number[] | undefined {
+  const columns = band.slots.map((slot) => slotStart(slot, axis) + slotSize(slot, axis) / 2);
+  if (row.slots.length === columns.length) {
+    return columns;
+  }
+  const linked = row.slots.map((slot) => linkedColumns(slot, band, input));
+  const picks = linked.map((indexes) => (indexes.length === 1 ? indexes[0] : -1));
+  const ordered = picks.every(
+    (pick, index) => pick >= 0 && (index === 0 || pick > picks[index - 1])
+  );
+  return ordered ? picks.map((pick) => columns[pick]) : undefined;
+}
+
+/** The places of the band's columns that a node of `slot` links to. */
+function linkedColumns(slot: readonly JustifyBox[], band: Row, { edges, tree }: JustifyInput) {
+  const inSlot = (id: string) => slot.some((box) => isInside(id, box.id, tree));
+  const columnOf = (id: string) =>
+    band.slots.findIndex((column) => column.some((box) => isInside(id, box.id, tree)));
+  const places = edges.flatMap(({ sources, targets }) => {
+    const [a, b] = [sources[0], targets[0]];
+    return [inSlot(a) ? columnOf(b) : -1, inSlot(b) ? columnOf(a) : -1].filter((at) => at >= 0);
+  });
+  return [...new Set(places)];
+}
+
+/**
+ * The moves that centre a row's slots over the columns of the band next to it, if they keep
+ * every gap at least its least size and the slots inside the frame's padding.
+ */
+function columnMoves(
+  row: Row,
+  rows: readonly Row[],
+  size: number,
+  input: JustifyInput,
+  axis: Axis
+): Map<string, number> | undefined {
+  const band = neighbourBand(row, rows, axis);
+  const centres = band && columnCentres(row, band, input, axis);
+  if (!centres) {
+    return undefined;
+  }
+  const starts = row.slots.map((slot, index) => centres[index] - slotSize(slot, axis) / 2);
+  const ends = row.slots.map((slot, index) => starts[index] + slotSize(slot, axis));
+  const fits =
+    starts[0] >= row.pad - EPS &&
+    ends[ends.length - 1] <= size - row.pad + EPS &&
+    starts.slice(1).every((at, index) => at - ends[index] >= (row.gaps[index] ?? 0) - EPS);
+  return fits ? slotMoves(row.slots, starts, axis) : undefined;
+}
+
+function slotMoves(slots: readonly JustifyBox[][], starts: readonly number[], axis: Axis) {
+  return new Map(
+    slots.flatMap((slot, index) =>
+      slot.map((box) => [box.id, starts[index] - slotStart(slot, axis)] as const)
+    )
   );
 }
 
-/** Spread one row over `span`, unless a link inside it cannot follow its nodes. */
+/** Spread one row over `span`, or move its slots by `moves`, unless a link inside it cannot follow its nodes. */
 function spreadRow(
   { frame, slots, pad, gaps, maxGap }: Row,
   [from, size]: readonly [number, number],
   edges: readonly ElkEdgeLike[],
-  axis: Axis
+  axis: Axis,
+  given?: Map<string, number>
 ): boolean {
-  const moves = justifySlots(slots, size, pad, axis, gaps, maxGap);
+  const moves = given ?? justifySlots(slots, size, pad, axis, gaps, maxGap);
   if (!moveInnerEdges(edges, frame.id, moves, axis)) {
     return false;
   }
