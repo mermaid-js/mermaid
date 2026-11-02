@@ -2,7 +2,8 @@ import type { P } from './geometry.js';
 import type { TreeData } from './find-common-ancestor.js';
 import type { ElkDirection, ElkEdgeLike } from './groupPorts.js';
 import { findCommonAncestor } from './find-common-ancestor.js';
-import { type Channel, type Route, isFree, routeInFlow, routeLength } from './rowRouter.js';
+import { type Channel, type Route, isFree, routeInFlow, routeLength, turns } from './rowRouter.js';
+import { justifyFrames, rowsToJustify } from './rowJustify.js';
 
 /** A box by its top-left corner. */
 export interface Rect {
@@ -184,8 +185,12 @@ export function slideToWishes(
   const slides = [0, ...wishes.map((wish, index) => wish - positions[index])].filter(
     (slide) => least + slide >= low - STRAIGHT_EPS && most + slide <= high + STRAIGHT_EPS
   );
-  const best = slides.reduce((a, b) =>
-    straight(b) > straight(a) || (straight(b) === straight(a) && Math.abs(b) < Math.abs(a)) ? b : a
+  const best = slides.reduce(
+    (a, b) =>
+      straight(b) > straight(a) || (straight(b) === straight(a) && Math.abs(b) < Math.abs(a))
+        ? b
+        : a,
+    0
   );
   return positions.map((position) => position + best);
 }
@@ -1100,8 +1105,11 @@ function spreadChannels(
     const step = (high - low) / (group.length + 1);
     const places = group.map((_, rank) => low + step * (rank + 1));
     for (const { at } of group.filter(({ fixed }) => fixed)) {
-      const nearest = places.reduce((a, b) => (Math.abs(b - at) < Math.abs(a - at) ? b : a));
-      places.splice(places.indexOf(nearest), 1);
+      const nearest = places.reduce(
+        (best, place, index) => (Math.abs(place - at) < Math.abs(places[best] - at) ? index : best),
+        0
+      );
+      places.splice(nearest, 1);
     }
     group
       .filter(({ fixed }) => !fixed)
@@ -1215,7 +1223,7 @@ function shiftChild(child: ElkBox, shift: number, direction: ElkDirection) {
  *
  * @returns the link that decided each shift, in flow order
  */
-function shiftRows(input: AlignInput): Map<string, RowLink> {
+function shiftRows(input: AlignInput, justified: ReadonlySet<string>): Map<string, RowLink> {
   const { graph, separated, direction } = input;
   const children = graph.children ?? [];
   const rects = absoluteRects(children, { x: 0, y: 0 });
@@ -1227,7 +1235,7 @@ function shiftRows(input: AlignInput): Map<string, RowLink> {
           { x: child.x ?? 0, y: child.y ?? 0, width: child.width ?? 0, height: child.height ?? 0 },
           direction
         ),
-        movable: separated.has(child.id),
+        movable: separated.has(child.id) && !justified.has(child.id),
       },
     ])
   );
@@ -1241,6 +1249,101 @@ function shiftRows(input: AlignInput): Map<string, RowLink> {
     shiftChild(child, shifts.get(child.id) ?? 0, direction);
   }
   return decided;
+}
+
+function justifyInput({ graph, separated, groups = [], direction, tree }: AlignInput) {
+  return {
+    children: graph.children ?? [],
+    edges: graph.edges ?? [],
+    separated,
+    groups,
+    direction,
+    tree,
+  };
+}
+
+/** Where every node and link of the laid-out graph lies, to try an arrangement and go back. */
+function snapshotOf({ graph }: AlignInput) {
+  const boxes = new Map<ElkBox, Rect>();
+  const visit = (nodes: readonly ElkBox[]) => {
+    for (const node of nodes) {
+      boxes.set(node, {
+        x: node.x ?? 0,
+        y: node.y ?? 0,
+        width: node.width ?? 0,
+        height: node.height ?? 0,
+      });
+      visit(node.children ?? []);
+    }
+  };
+  visit(graph.children ?? []);
+  const lines = new Map(
+    (graph.edges ?? []).map((edge) => [
+      edge,
+      {
+        sections: edge.sections && JSON.stringify(edge.sections),
+        labels: (edge.labels ?? []).map(({ x, y }) => ({ x, y })),
+      },
+    ])
+  );
+  return { boxes, lines };
+}
+
+function restore({ boxes, lines }: ReturnType<typeof snapshotOf>): void {
+  for (const [node, box] of boxes) {
+    Object.assign(node, box);
+  }
+  for (const [edge, { sections, labels }] of lines) {
+    const kept: ElkEdgeLike['sections'] = sections === undefined ? undefined : JSON.parse(sections);
+    edge.sections = kept;
+    (edge.labels ?? []).forEach((label, index) => Object.assign(label, labels[index]));
+  }
+}
+
+/** Lay the graph back as it was, then spread the chosen frames, shift the rest and route. */
+function arrange(
+  input: AlignInput,
+  snapshot: ReturnType<typeof snapshotOf>,
+  spread: ReadonlySet<string>
+) {
+  restore(snapshot);
+  const justified = justifyFrames({ ...justifyInput(input), include: (id) => spread.has(id) });
+  return refineShifts(input, shiftRows(input, justified));
+}
+
+/** Does a link with an end in `item` turn more often in `trial` than in `base`? */
+function addsTurn(
+  base: ReturnType<typeof routeAll>,
+  trial: ReturnType<typeof routeAll>,
+  item: string,
+  tree: TreeData
+): boolean {
+  const before = new Map(base.routed.map(({ plan, route }) => [plan.edge.id, turns(route.points)]));
+  return trial.routed.some(({ plan, route }) => {
+    const touches = [plan.edge.sources[0], plan.edge.targets[0]].some(
+      (id) => itemOf(id, tree) === item
+    );
+    return touches && turns(route.points) > (before.get(plan.edge.id) ?? Infinity);
+  });
+}
+
+/**
+ * Spread every band of columns over the full span, and every row whose spreading does not make
+ * one of its links turn more often; the other rows keep their first-link alignment.
+ */
+function chooseSpread(input: AlignInput) {
+  const snapshot = snapshotOf(input);
+  const rows = rowsToJustify(justifyInput(input));
+  const spread = new Set(rows.filter(({ band }) => band).map(({ id }) => id));
+  let state = arrange(input, snapshot, spread);
+  for (const { id } of rows.filter(({ band }) => !band)) {
+    const trial = arrange(input, snapshot, new Set([...spread, id]));
+    if (!addsTurn(state, trial, id, input.tree)) {
+      spread.add(id);
+      state = trial;
+    }
+  }
+  return arrange(input, snapshot, spread);
 }
 
 /** Route every link through the arranged frames as the graph now lies, without spreading. */
@@ -1385,7 +1488,7 @@ export function alignDirectedSubgraphs(input: AlignInput): void {
     return;
   }
   restoreProxies(graph.edges ?? []);
-  finishRoutes(refineShifts(input, shiftRows(input)));
+  finishRoutes(chooseSpread(input));
 }
 
 /** The inverse of {@link rectToFlow}. */
