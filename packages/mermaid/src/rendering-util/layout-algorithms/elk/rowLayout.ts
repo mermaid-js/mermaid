@@ -3,7 +3,7 @@ import type { TreeData } from './find-common-ancestor.js';
 import type { ElkDirection, ElkEdgeLike } from './groupPorts.js';
 import { findCommonAncestor } from './find-common-ancestor.js';
 import { type Channel, type Route, isFree, routeInFlow, routeLength, turns } from './rowRouter.js';
-import { justifyFrames, rowsToJustify } from './rowJustify.js';
+import { LABEL_GAP_PADDING, justifyFrames, rowsToJustify } from './rowJustify.js';
 
 /** A box by its top-left corner. */
 export interface Rect {
@@ -41,8 +41,11 @@ const STRAIGHT_EPS = 0.01;
 const ARROWHEAD_WIDTH = 8;
 /** The least distance between two link ends on one side of a node: an arrowhead and a pixel. */
 const END_SPACING = ARROWHEAD_WIDTH + 1;
-/** How far a link end keeps from the edge of a frame's title. */
-const TITLE_CLEARANCE = 1;
+/**
+ * How far a link keeps from the edge of a frame's title: half the room a label keeps beside it in
+ * a gap, so a link past a title reads as passing it rather than touching its text.
+ */
+const TITLE_CLEARANCE = LABEL_GAP_PADDING / 2;
 /** Half the width a line takes when another line or a label must keep off it. */
 const LINE_HALF_WIDTH = 1;
 /** Runs closer than this, side by side, read as one crowded lane: three arrowheads' room. */

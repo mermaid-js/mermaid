@@ -215,6 +215,18 @@ describe('routeInFlow', () => {
     expect(route).toBeUndefined();
   });
 
+  it('runs straight past a title in front of the middle of the target', () => {
+    const title = box(30, 140, 20, 10);
+    const route = routeInFlow({
+      ...plan(box(0, 0), box(0, 200)),
+      obstacles: [box(0, 0), box(0, 200), title],
+    });
+    expect(route?.points).toEqual([
+      { x: 29, y: 40 },
+      { x: 29, y: 200 },
+    ]);
+  });
+
   it('gives up when there is no gap to cross', () => {
     expect(routeInFlow({ ...plan(box(0, 0), box(0, 120)), gaps: [] })).toBeUndefined();
   });
