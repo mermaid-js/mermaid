@@ -59,7 +59,7 @@ graph TD
 
 Configuration options are available in the `Configuration` panel. The options are applied to the diagram in the `Preview` panel.
 
-To learn more, visit the [Configuration Reference](../config/setup/README.md) page
+To learn more, visit the [Configuration Reference](../../../../../README.md) page
 
 ![Code,Config and Preview](./img/Code-Preview-Config.png)
 
