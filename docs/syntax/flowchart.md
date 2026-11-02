@@ -1784,6 +1784,8 @@ In a `flowchart TB` or `BT`, subgraphs with `direction LR` or `RL` become rows o
 In a `flowchart LR` or `RL`, subgraphs with `direction TB` or `BT` become columns of one common height.
 
 A row that holds subgraphs with their own direction is a band: in a `flowchart TB`, a `direction LR` subgraph holding `direction TB` subgraphs draws them as columns side by side, in the order they are written, all of one height.
+The columns of a band are spread over the band's whole width with equal gaps, and each gap is at least as wide as the widest label of a link into the band, so a label never covers a column.
+The nodes of a row are spread over its whole width the same way, unless that would make one of the row's links turn more often; then the row keeps its nodes together and is shifted so its first link runs straight.
 
 ```mermaid-example
 ---
@@ -1842,7 +1844,7 @@ flowchart TB
 ```
 
 A link from a node in one of them to a node in another, or to a node outside them, enters the target on the side facing the source, and leaves its source on the side facing the target unless leaving by a side saves a turn.
-It runs in the gaps between rows and columns, never across a node, a subgraph's title or a link inside a subgraph.
+It runs in the gaps between rows and columns, never across a node or a subgraph's title; it crosses a link inside a subgraph only when that saves a long detour.
 Each subgraph is shifted so that its first link to something placed before it, in the order the links are written, is a straight line.
 A link that cannot reach the facing side of its target, because another node is in the way, runs down the nearest free corridor (the gap between two subgraphs or two nodes, or the margin inside a frame) and enters from the side facing that corridor.
 A link runs straight when its ends line up; otherwise it takes at most two turns into the top or bottom of a node and at most three into a side.
@@ -1902,6 +1904,8 @@ The other exceptions listed above still apply, and the arrangement stops short i
 - a node that sits directly in the diagram is never moved; the subgraph is shifted to line up with it instead;
 - a link with no free way through the gaps and corridors keeps the route ELK drew for it;
 - a link that does not meet a node at the middle of a side ends on the box around the node, which for a round or diamond shape lies a little off the outline;
+- a `flowchart BT` or `RL` keeps its rows and columns where ELK put them, without spreading them over the full width;
+- a row whose links ELK drew with bends between nodes that would move apart keeps its nodes where they are;
 - the end labels of a link, such as multiplicities, are placed along the new route rather than where ELK reserved room for them.
 
 No warning is logged in these cases.
