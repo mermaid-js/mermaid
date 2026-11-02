@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   corridors,
   crosses,
+  crossings,
   isFree,
   routeInFlow,
   routeLength,
@@ -120,6 +121,16 @@ describe('routeInFlow', () => {
       { x: 140, y: 40 },
       { x: 140, y: 260 },
     ]);
+  });
+
+  it('crosses a line drawn inside a frame rather than take a long detour round it', () => {
+    const line = { x: -100, y: 79, width: 380, height: 2 };
+    const route = routeInFlow({ ...plan(box(0, 0), box(0, 120)), crossable: [line] });
+    expect(route?.points).toEqual([
+      { x: 40, y: 40 },
+      { x: 40, y: 120 },
+    ]);
+    expect(crossings(route?.points ?? [], [line])).toBe(1);
   });
 
   it('gives up when there is no gap to cross', () => {
