@@ -60,6 +60,12 @@ export interface ElkEdgeLike {
   splitOf?: SplitMark;
   /** The real ends of an edge handed to ELK between the two items it links. */
   proxyOf?: { sources: string[]; targets: string[] };
+  /** Set on an edge handed to ELK only to order frames; it is never drawn. */
+  ordering?: boolean;
+  /** Set when ELK lays the edge out from its target to its source. */
+  layoutReversed?: boolean;
+  /** Set when the route already starts and ends on its nodes' borders. */
+  endsOnBorder?: boolean;
 }
 
 interface ElkNodeLike {

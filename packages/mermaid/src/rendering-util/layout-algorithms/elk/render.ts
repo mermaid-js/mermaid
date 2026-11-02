@@ -10,7 +10,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
-import { alignDirectedSubgraphs, proxyRowLinks, spanAlignedFrames } from './rowLayout.js';
+import { alignDirectedSubgraphs, arrangeForElk, spanAlignedFrames } from './rowLayout.js';
 import {
   type ElkDirection,
   type ElkEdgeLike,
@@ -133,7 +133,12 @@ interface ElkLayoutState {
   nodeDb: Record<string, NodeWithVertex>;
   parentLookupDb: TreeData;
   /** Set when `elk.directedSubgraphs` is `aligned`: the subgraphs laid out on their own. */
-  aligned?: { separated: ReadonlyMap<string, ElkDirection>; direction: ElkDirection };
+  aligned?: {
+    separated: ReadonlyMap<string, ElkDirection>;
+    direction: ElkDirection;
+    withheld: ElkEdgeLike[];
+    groups: { frames: string[]; direction: ElkDirection }[];
+  };
 }
 
 interface ElkLayoutResult {
@@ -763,10 +768,19 @@ export function buildElkGraphFromLayoutData(
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
   applyCyclicEntryConstraint(data4Layout, nodeDb);
-  routeThroughGroupPorts(elkGraph, nodeDb, parentLookupDb, separated, rootDirection, aligned);
+  const arranged =
+    aligned && separated.size > 0
+      ? arrangeForElk(elkGraph, parentLookupDb, separated, rootDirection)
+      : undefined;
+  routeThroughGroupPorts(elkGraph, nodeDb, parentLookupDb, separated, rootDirection);
 
-  return aligned && separated.size > 0
-    ? { elkGraph, nodeDb, parentLookupDb, aligned: { separated, direction: rootDirection } }
+  return arranged
+    ? {
+        elkGraph,
+        nodeDb,
+        parentLookupDb,
+        aligned: { separated, direction: rootDirection, ...arranged },
+      }
     : { elkGraph, nodeDb, parentLookupDb };
 }
 
@@ -797,14 +811,10 @@ function routeThroughGroupPorts(
   nodeDb: Record<string, NodeWithVertex>,
   parentLookupDb: TreeData,
   separated: ReadonlyMap<string, ElkDirection>,
-  rootDirection: ElkDirection,
-  aligned: boolean
+  rootDirection: ElkDirection
 ): void {
   if (separated.size === 0) {
     return;
-  }
-  if (aligned) {
-    proxyRowLinks(elkGraph.edges, parentLookupDb, separated);
   }
   const { edges, ports } = splitAtGroupPorts(
     elkGraph.edges,
@@ -1456,12 +1466,10 @@ function applyElkLayoutResult(
   // above, and `cutter2` clips an edge that ends on a group against it, so an
   // edge attaching to a frame follows the frame when it moves.
   evenGroupFrames(graph.children ?? [], layoutState, nodeById, graph);
-  if (layoutState.aligned) {
+  for (const { frames, direction } of layoutState.aligned?.groups ?? []) {
     spanAlignedFrames(
-      (graph.children ?? [])
-        .filter((child) => layoutState.aligned?.separated.has(child.id))
-        .map((child) => ({ box: layoutState.nodeDb[child.id], painted: nodeById.get(child.id) })),
-      layoutState.aligned.direction
+      frames.map((id) => ({ box: layoutState.nodeDb[id], painted: nodeById.get(id) })),
+      direction
     );
   }
   applyElkEdgeLayout(data4Layout, graph, layoutState, log);
@@ -2219,15 +2227,7 @@ function applyElkEdgeLayout(
     endNode.x = endNode.offset!.posX + endNode.width! / 2;
     endNode.y = endNode.offset!.posY + endNode.height! / 2;
 
-    if (startNode.shape !== 'rect33') {
-      points.unshift({ x: startNode.x, y: startNode.y });
-    }
-
-    if (endNode.shape !== 'rect33') {
-      points.push({ x: endNode.x, y: endNode.y });
-    }
-
-    const clipped = sanitizeElkEdgePoints(points, startNode, endNode, log);
+    const clipped = clipToNodes(points, startNode, endNode, edge.endsOnBorder === true, log);
     layoutEdge.points = ensureStartMarkerSegmentLength(
       ensureEndMarkerSegmentLength(
         clipped,
@@ -2287,6 +2287,29 @@ function applyElkEdgeLayout(
   slideTerminalLabelsOffFrames(data4Layout.edges, data4Layout.nodes);
   putTerminalLabelsOnTheirSide(data4Layout.edges, data4Layout.nodes);
   separateOppositeEdgeLabels(data4Layout.edges);
+}
+
+/**
+ * Run a route from the centre of each end node and clip it at the node, unless the route was
+ * already ended on the nodes' borders (by the aligned layout), which a centre would bend.
+ */
+function clipToNodes(
+  points: P[],
+  startNode: NodeWithVertex,
+  endNode: NodeWithVertex,
+  endsOnBorder: boolean,
+  log: ElkLayoutContext['log']
+): P[] {
+  if (endsOnBorder) {
+    return points;
+  }
+  if (startNode.shape !== 'rect33') {
+    points.unshift({ x: startNode.x ?? 0, y: startNode.y ?? 0 });
+  }
+  if (endNode.shape !== 'rect33') {
+    points.push({ x: endNode.x ?? 0, y: endNode.y ?? 0 });
+  }
+  return sanitizeElkEdgePoints(points, startNode, endNode, log);
 }
 
 /** Minimum clearance kept between two opposite-direction edges' labels, beyond their own half-widths. */

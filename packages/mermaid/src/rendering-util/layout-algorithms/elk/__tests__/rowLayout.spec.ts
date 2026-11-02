@@ -5,20 +5,16 @@ import {
   type RowItem,
   type RowLink,
   alignDirectedSubgraphs,
-  assignLanes,
   commonSpan,
+  labelSpot,
   fromFlow,
-  labelCentre,
   packAlong,
   pinStraight,
   planRowShifts,
   proxyRowLinks,
   rectToFlow,
-  routeRowLink,
   slideToWishes,
   spanAlignedFrames,
-  spreadSharedEnds,
-  titleSpans,
   toFlow,
 } from '../rowLayout.js';
 import type { TreeData } from '../find-common-ancestor.js';
@@ -257,8 +253,7 @@ const link = (
   order,
   sourceItem,
   targetItem,
-  sourceNode: `${sourceItem}-node`,
-  targetNode: `${targetItem}-node`,
+  id: `${sourceItem}-${targetItem}-${order}`,
   source: rect(sourceX, 20),
   target: rect(targetX, 120),
 });
@@ -308,58 +303,18 @@ describe('planRowShifts', () => {
   });
 });
 
-describe('routeRowLink', () => {
-  const items = new Map([
-    ['top', item(0, 0)],
-    ['below', item(0, 100)],
-  ]);
-
-  it('draws a straight line between lined-up ends', () => {
-    expect(routeRowLink(link(1, 'top', 'below', 30, 30), items, new Map())).toEqual([
-      { x: 35, y: 30 },
-      { x: 35, y: 120 },
-    ]);
-  });
-
-  it('turns twice in the middle of the gap otherwise, after the shifts', () => {
-    expect(routeRowLink(link(1, 'top', 'below', 30, 30), items, new Map([['below', 20]]))).toEqual([
-      { x: 35, y: 30 },
-      { x: 35, y: 75 },
-      { x: 55, y: 75 },
-      { x: 55, y: 120 },
-    ]);
-  });
-
-  it('runs upwards from the top of the source to a target above it', () => {
-    const up = { ...link(1, 'below', 'top', 0, 0), source: rect(30, 120), target: rect(30, 20) };
-    expect(routeRowLink(up, items, new Map())).toEqual([
-      { x: 35, y: 120 },
-      { x: 35, y: 30 },
-    ]);
-  });
-
-  it('leaves a link between items in one band to ELK', () => {
-    const side = new Map([...items, ['beside', item(200, 10)]]);
-    expect(routeRowLink(link(1, 'top', 'beside', 30, 230), side, new Map())).toBeUndefined();
-  });
-});
-
-describe('labelCentre and commonSpan', () => {
-  it('puts a label in the middle of the middle segment', () => {
-    expect(
-      labelCentre([
-        { x: 0, y: 0 },
-        { x: 0, y: 10 },
-        { x: 20, y: 10 },
-        { x: 20, y: 30 },
-      ])
-    ).toEqual({ x: 10, y: 10 });
-    expect(
-      labelCentre([
-        { x: 0, y: 0 },
-        { x: 0, y: 10 },
-      ])
-    ).toEqual({ x: 0, y: 5 });
+describe('labelSpot and commonSpan', () => {
+  it('puts a label in the middle of the longest segment it covers nothing on', () => {
+    const route = [
+      { x: 0, y: 0 },
+      { x: 0, y: 10 },
+      { x: 40, y: 10 },
+      { x: 40, y: 30 },
+    ];
+    expect(labelSpot(route, { width: 4, height: 4 }, [])).toEqual({ x: 20, y: 10 });
+    const blocker = { x: 15, y: 5, width: 10, height: 10 };
+    expect(labelSpot(route, { width: 4, height: 4 }, [blocker])).toEqual({ x: 40, y: 20 });
+    expect(labelSpot(route, { width: 100, height: 100 }, [blocker])).toEqual({ x: 20, y: 10 });
   });
 
   it('spans from the leftmost start to the rightmost end', () => {
@@ -416,8 +371,9 @@ describe('proxyRowLinks', () => {
       edge('b', 'Cart', 'Order'),
       edge('c', 'Buyer', 'Seller'),
     ];
-    proxyRowLinks(edges, tree, new Map([['shop', 'RIGHT' as const]]));
-    expect(edges).toEqual([
+    const graph = { edges };
+    proxyRowLinks(graph, tree, new Map([['shop', 'RIGHT' as const]]));
+    expect(graph.edges).toEqual([
       { ...edge('a', 'Buyer', 'shop'), proxyOf: { sources: ['Buyer'], targets: ['Cart'] } },
       edge('b', 'Cart', 'Order'),
       edge('c', 'Buyer', 'Seller'),
@@ -561,7 +517,7 @@ describe('alignDirectedSubgraphs', () => {
   });
 });
 
-/** Rows of five, two and three steps; the first and last both link into the middle row's first step. */
+/** Rows of five, two and three steps, the middle row's first step linked from the row above. */
 const sharedEnd = (links: [string, string][]): any => ({
   direction: 'TB',
   config: { elk: { directedSubgraphs: 'aligned' } },
@@ -599,7 +555,7 @@ describe('links that end on one side of one node', () => {
   it('spreads two arrowheads apart and keeps the lined-up link straight', async () => {
     const links: [string, string][] = [
       ['A5', 'B1'],
-      ['C3', 'B1'],
+      ['A1', 'B1'],
     ];
     const data = sharedEnd(links);
     await runElkLayoutCore(data, elkRenderContext);
@@ -611,8 +567,8 @@ describe('links that end on one side of one node', () => {
   it('spreads three arrowheads, each pair apart, with every turning link in a lane of its own', async () => {
     const links: [string, string][] = [
       ['A5', 'B1'],
-      ['C3', 'B1'],
-      ['C1', 'B1'],
+      ['A1', 'B1'],
+      ['A3', 'B1'],
     ];
     const data = sharedEnd(links);
     await runElkLayoutCore(data, elkRenderContext);
@@ -645,112 +601,118 @@ describe('spreading link ends', () => {
     expect(positions[0]).toBe(115);
     expect(positions.slice(1).map((p) => Math.round(p * 100) / 100)).toEqual([138.67, 162.33, 186]);
   });
-
-  it('gives turning links of one gap their own lanes, the rightmost start lowest when running left', () => {
-    const ends = (startX: number, endX: number) => ({
-      start: { x: startX, y: 0 },
-      end: { x: endX, y: 100 },
-      gap: 50,
-      gapTop: 20,
-      gapBottom: 80,
-    });
-    const near = ends(100, 10);
-    const far = ends(200, 20);
-    const straight = ends(30, 30);
-    const alone = { ...ends(300, 250), gapTop: 120, gapBottom: 180 };
-    assignLanes([far, near, straight, alone]);
-    expect([near.gap, far.gap, straight.gap, alone.gap]).toEqual([40, 60, 50, 150]);
-  });
 });
 
-describe('spreading around pins and titles', () => {
+describe('spreading around pins', () => {
   it('moves a point that does not fit beside a pin to the nearest free spot', () => {
     expect(pinStraight([50, 10], 45, 100, 20)).toEqual([50, 59]);
   });
+});
 
-  it('keeps spread ends off the title above the side when the rest of the side holds them', () => {
-    const ends = (wish: number) => ({
-      start: { x: wish, y: 0 },
-      end: { x: 100, y: 100 },
-      gap: 50,
-      gapTop: 20,
-      gapBottom: 80,
-    });
-    const node = { x: 0, y: 100, width: 200, height: 40 };
-    const [a, b] = [ends(100), ends(110)];
-    spreadSharedEnds(
-      new Map([
-        [
-          'n',
-          [
-            { ends: a, at: 'end' as const, node, title: [80, 120] as const },
-            { ends: b, at: 'end' as const, node, title: [80, 120] as const },
-          ],
-        ],
-      ])
-    );
-    for (const { end } of [a, b]) {
-      expect(end.x <= 80 || end.x >= 120).toBe(true);
+/** A lead row, a band of three columns written A, C, B, and a row under the band. */
+const bands = (directedSubgraphs?: string): any => ({
+  direction: 'TB',
+  config: { elk: { directedSubgraphs } },
+  nodes: [
+    group('lead', 'LR'),
+    ...['P1', 'P2', 'P3', 'P4'].map((id) => node(id, 'lead')),
+    group('band', 'LR'),
+    ...['colA', 'colC', 'colB'].map((id) => ({ ...group(id, 'TB'), parentId: 'band' })),
+    ...['A1', 'A2', 'A3'].map((id) => node(id, 'colA')),
+    ...['C1', 'C2', 'C3'].map((id) => node(id, 'colC')),
+    ...['B1', 'B2', 'B3'].map((id) => node(id, 'colB')),
+    group('ops', 'LR'),
+    ...['O1', 'O2'].map((id) => node(id, 'ops')),
+  ],
+  edges: [
+    ...chain('P1', 'P2', 'P3'),
+    ...chain('A1', 'A2', 'A3'),
+    ...chain('C1', 'C2', 'C3'),
+    ...chain('B1', 'B2', 'B3'),
+    ...chain('O1', 'O2'),
+    ...chain('P3', 'A1'),
+    ...chain('P3', 'B1'),
+    ...chain('P1', 'C1'),
+    ...chain('P3', 'A2'),
+    ...chain('C3', 'A2'),
+    ...chain('C3', 'B2'),
+    ...chain('P4', 'O1'),
+  ],
+});
+
+const rectOf = (n: any) => ({
+  x: n.x - n.width / 2,
+  y: n.y - n.height / 2,
+  width: n.width,
+  height: n.height,
+});
+const passesThrough = (points: { x: number; y: number }[], n: any) => {
+  const { x, y, width, height } = rectOf(n);
+  return points.slice(1).some((b, index) => {
+    const a = points[index];
+    const [x1, x2] = [Math.min(a.x, b.x), Math.max(a.x, b.x)];
+    const [y1, y2] = [Math.min(a.y, b.y), Math.max(a.y, b.y)];
+    return x1 < x + width - 1 && x2 > x + 1 && y1 < y + height - 1 && y2 > y + 1;
+  });
+};
+
+describe('a band of columns between two rows', () => {
+  it('keeps the rows in the order written, and the columns side by side in it, of one height', async () => {
+    const data = bands('aligned');
+    await runElkLayoutCore(data, elkRenderContext);
+    const nodes = byId(data);
+    const [lead, band, ops] = ['lead', 'band', 'ops'].map((id) => nodes.get(id));
+    expect(lead.y).toBeLessThan(band.y);
+    expect(band.y).toBeLessThan(ops.y);
+    const [a, c, b] = ['colA', 'colC', 'colB'].map((id) => nodes.get(id));
+    expect(a.x).toBeLessThan(c.x);
+    expect(c.x).toBeLessThan(b.x);
+    expect(new Set([a, c, b].map(({ height }) => height)).size).toBe(1);
+  });
+
+  it('drops a link from the lead row straight into the top of a column', async () => {
+    const data = bands('aligned');
+    await runElkLayoutCore(data, elkRenderContext);
+    const { points } = edgeOf(data, 'P3', 'A1');
+    expect(points).toHaveLength(2);
+    expect(isVertical(points)).toBe(true);
+    const enter = edgeOf(data, 'P1', 'C1').points;
+    const [beforeEnd, end] = enter.slice(-2);
+    expect(beforeEnd.x).toBe(end.x);
+    expect(end.y).toBe(byId(data).get('C1').y - NODE_HEIGHT / 2);
+  });
+
+  it('takes a link into a later node of a column down a corridor, past the first node', async () => {
+    const data = bands('aligned');
+    await runElkLayoutCore(data, elkRenderContext);
+    const nodes = byId(data);
+    const { points } = edgeOf(data, 'P3', 'A2');
+    expect(passesThrough(points, nodes.get('A1'))).toBe(false);
+    const [beforeEnd, end] = points.slice(-2);
+    expect(beforeEnd.y).toBe(end.y);
+    const a2 = rectOf(nodes.get('A2'));
+    expect(end.y).toBeGreaterThan(a2.y);
+    expect(end.y).toBeLessThan(a2.y + a2.height);
+  });
+
+  it('runs a link between two columns in the gap between them, side to side', async () => {
+    const data = bands('aligned');
+    await runElkLayoutCore(data, elkRenderContext);
+    const nodes = byId(data);
+    const { points } = edgeOf(data, 'C3', 'A2');
+    const [a, c] = [rectOf(nodes.get('A2')), rectOf(nodes.get('C3'))];
+    expect(points[0].x).toBe(c.x);
+    expect(points.at(-1).x).toBe(a.x + a.width);
+    for (const point of points.slice(1, -1)) {
+      expect(point.x).toBeGreaterThan(a.x + a.width);
+      expect(point.x).toBeLessThan(c.x);
     }
-    expect(Math.abs(a.end.x - b.end.x)).toBeGreaterThanOrEqual(ARROWHEAD_APART);
   });
 
-  it('ignores the title when the rest of the side is too short', () => {
-    const node = { x: 0, y: 100, width: 40, height: 40 };
-    const one = {
-      start: { x: 20, y: 0 },
-      end: { x: 20, y: 100 },
-      gap: 50,
-      gapTop: 20,
-      gapBottom: 80,
-    };
-    const two = { ...one, start: { x: 25, y: 0 }, end: { x: 20, y: 100 } };
-    spreadSharedEnds(
-      new Map([
-        [
-          'n',
-          [
-            { ends: one, at: 'end' as const, node, title: [0, 40] as const },
-            { ends: two, at: 'end' as const, node, title: [0, 40] as const },
-          ],
-        ],
-      ])
-    );
-    expect(Math.abs(one.end.x - two.end.x)).toBeGreaterThanOrEqual(ARROWHEAD_APART);
-  });
-
-  it('centres a title on the common span of stacked frames, and on its own frame otherwise', () => {
-    const children = [
-      { id: 'a', labels: [{ width: 40 }] },
-      { id: 'b', labels: [{ width: 20 }] },
-      { id: 'c', labels: [{ width: 20 }] },
-      { id: 'd', labels: [{ width: 20 }] },
-    ];
-    const frames = new Map([
-      ['a', { x: 0, y: 0, width: 100, height: 50 }],
-      ['b', { x: 50, y: 100, width: 150, height: 50 }],
-      ['c', { x: 0, y: 200, width: 60, height: 50 }],
-      ['d', { x: 100, y: 210, width: 60, height: 50 }],
-    ]);
-    const titles = titleSpans(children, frames, 'DOWN');
-    expect(titles.get('a')).toEqual([79, 121]);
-    expect(titles.get('b')).toEqual([89, 111]);
-    expect(titles.get('c')).toEqual([19, 41]);
-    expect(titleSpans(children, frames, 'RIGHT').size).toBe(0);
-  });
-
-  it('orders lanes for links running right, and puts links running left above them', () => {
-    const ends = (startX: number, endX: number, down = true) => ({
-      start: { x: startX, y: down ? 0 : 100 },
-      end: { x: endX, y: down ? 100 : 0 },
-      gap: 50,
-      gapTop: 20,
-      gapBottom: 100,
-    });
-    const rightNear = ends(10, 100);
-    const rightFar = ends(20, 200);
-    const leftUp = ends(300, 250, false);
-    assignLanes([rightNear, rightFar, leftUp]);
-    expect([leftUp.gap, rightFar.gap, rightNear.gap]).toEqual([40, 60, 80]);
+  it('leaves the band to ELK with the option unset', async () => {
+    const data = bands();
+    await runElkLayoutCore(data, elkRenderContext);
+    const [a, c, b] = ['colA', 'colC', 'colB'].map((id) => byId(data).get(id));
+    expect(a.x < c.x && c.x < b.x).toBe(false);
   });
 });
