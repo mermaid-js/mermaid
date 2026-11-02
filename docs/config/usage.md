@@ -18,7 +18,7 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 ## Using mermaid
 
-For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./setup/README.md).
+For the majority of users, Using the [Live Editor](https://mermaid.live/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](../../../../../README.md).
 
 We have compiled some Video [Tutorials](../ecosystem/tutorials.md) on how to use the Mermaid Live Editor.
 
@@ -432,7 +432,7 @@ bindEventHandler('change', 'code', textFieldUpdated);
 ## Configuration
 
 You can pass the required configuration to the `mermaid.initialize` call. This is the preferred way of configuring mermaid.
-The list of configuration objects are described [in the mermaidAPI documentation](./setup/README.md).
+The list of configuration objects are described [in the mermaidAPI documentation](../../../../../README.md).
 
 ```html
 <script type="module">
