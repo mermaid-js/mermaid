@@ -28,6 +28,11 @@ const AXES: Partial<Record<ElkDirection, Axis>> = {
 
 /** Room kept on each side of a label that sits in the gap between two columns. */
 export const LABEL_GAP_PADDING = 12;
+/**
+ * The widest gap between two nodes of a row that holds a link, in widths of its widest node: a row
+ * spread wider is centred instead, so a short link does not become a line across the diagram.
+ */
+export const MAX_LINKED_GAP_NODE_WIDTHS = 3;
 const EPS = 0.01;
 
 const start = (box: JustifyBox, axis: Axis) => box[axis.pos] ?? 0;
@@ -93,7 +98,9 @@ export function shareGaps(least: readonly number[], room: number): number[] {
 
 /**
  * How far to move each box across the flow so the slots span a frame of `size` with `pad` at both
- * ends and gaps as equal as their least sizes in `gaps` allow; a single slot is centred.
+ * ends and gaps as equal as their least sizes in `gaps` allow. No gap grows past `maxGap` unless
+ * its least size needs it; slots that then fall short of the span are centred in it, as a single
+ * slot is.
  *
  * @returns the move of each box, by its id
  */
@@ -102,13 +109,16 @@ export function justifySlots(
   size: number,
   pad: number,
   axis: Axis,
-  gaps: readonly number[] = []
+  gaps: readonly number[] = [],
+  maxGap = Infinity
 ): Map<string, number> {
   const sizes = slots.map((slot) => slotSize(slot, axis));
   const least = slots.slice(1).map((_, index) => gaps[index] ?? 0);
-  const shared = shareGaps(least, size - 2 * pad - sum(sizes));
+  const shared = shareGaps(least, size - 2 * pad - sum(sizes)).map((gap, index) =>
+    Math.min(gap, Math.max(maxGap, least[index]))
+  );
   const moves = new Map<string, number>();
-  let at = slots.length > 1 ? pad : (size - sum(sizes)) / 2;
+  let at = (size - sum(sizes) - sum(shared)) / 2;
   slots.forEach((slot, index) => {
     const delta = at - slotStart(slot, axis);
     for (const box of slot) {
@@ -245,6 +255,8 @@ interface Row {
   pad: number;
   /** The least gap after each slot but the last. */
   gaps: number[];
+  /** The widest a gap may grow when the row is spread. */
+  maxGap: number;
   needed: number;
 }
 
@@ -264,7 +276,11 @@ function rowOf(frame: JustifyBox, input: JustifyInput, axis: Axis): Row | undefi
         .slice(1)
         .map(() => widestLabel(frame.id, input.edges, input.tree, axis) + 2 * LABEL_GAP_PADDING)
     : labelGaps(frame.id, slots, input.edges, axis);
-  return { frame, band, slots, pad, gaps, needed: neededSize(slots, pad, gaps, axis) };
+  const linked = !band && input.edges.some(({ container }) => container === frame.id);
+  const maxGap = linked
+    ? MAX_LINKED_GAP_NODE_WIDTHS * Math.max(...slots.map((slot) => slotSize(slot, axis)))
+    : Infinity;
+  return { frame, band, slots, pad, gaps, maxGap, needed: neededSize(slots, pad, gaps, axis) };
 }
 
 /** The arranged frames sitting directly in the diagram one under another, as rows to spread. */
@@ -311,12 +327,12 @@ export function justifyFrames(input: JustifyInput): Set<string> {
 
 /** Spread one row over `span`, unless a link inside it cannot follow its nodes. */
 function spreadRow(
-  { frame, slots, pad, gaps }: Row,
+  { frame, slots, pad, gaps, maxGap }: Row,
   [from, size]: readonly [number, number],
   edges: readonly ElkEdgeLike[],
   axis: Axis
 ): boolean {
-  const moves = justifySlots(slots, size, pad, axis, gaps);
+  const moves = justifySlots(slots, size, pad, axis, gaps, maxGap);
   if (!moveInnerEdges(edges, frame.id, moves, axis)) {
     return false;
   }

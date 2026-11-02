@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   LABEL_GAP_PADDING,
+  MAX_LINKED_GAP_NODE_WIDTHS,
   justifyFrames,
   justifySlots,
   moveInnerEdges,
@@ -147,7 +148,49 @@ const labelledRow = (labelWidth: number) => {
   };
 };
 
+/** A row of two nodes over a wide row of one, with or without a link between the two. */
+const pairRow = (linked: boolean) => ({
+  children: [
+    box('pair', 0, 0, 200, 70, [box('a', 20, 20), box('b', 90, 20)]),
+    box('wide', 0, 100, 1000, 70, [box('w', 20, 20, 960, 30)]),
+  ],
+  edges: linked
+    ? ([
+        {
+          id: 'ab',
+          sources: ['a'],
+          targets: ['b'],
+          container: 'pair',
+          sections: [{ startPoint: { x: 70, y: 35 }, endPoint: { x: 90, y: 35 } }],
+        },
+      ] as ElkEdgeLike[])
+    : [],
+  separated: new Map([
+    ['pair', 'RIGHT' as const],
+    ['wide', 'RIGHT' as const],
+  ]),
+  groups: [],
+  direction: 'DOWN' as const,
+  tree: { parentById: { a: 'pair', b: 'pair', w: 'wide' }, childrenById: {} },
+});
+
 describe('justifyFrames', () => {
+  it('spreads two nodes with no link between them to the ends of a wide row', () => {
+    const input = pairRow(false);
+    justifyFrames(input);
+    expect(input.children[0].children?.map(({ x }) => x)).toEqual([20, 930]);
+  });
+
+  it('centres two linked nodes rather than stretch their link past the widest gap', () => {
+    const input = pairRow(true);
+    justifyFrames(input);
+    const [a, b] = input.children[0].children ?? [];
+    const gap = MAX_LINKED_GAP_NODE_WIDTHS * 50;
+    expect(b.x - (a.x + a.width)).toBe(gap);
+    expect(a.x).toBe((1000 - 100 - gap) / 2);
+    expect(input.edges[0].sections?.[0].endPoint.x).toBe(b.x);
+  });
+
   it('keeps the gaps of a row equal while the label between two nodes fits', () => {
     const input = labelledRow(20);
     justifyFrames(input);
