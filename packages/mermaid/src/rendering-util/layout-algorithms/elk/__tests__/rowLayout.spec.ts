@@ -5,14 +5,20 @@ import {
   type RowItem,
   type RowLink,
   alignDirectedSubgraphs,
+  assignLanes,
   commonSpan,
   fromFlow,
   labelCentre,
+  packAlong,
+  pinStraight,
   planRowShifts,
   proxyRowLinks,
   rectToFlow,
   routeRowLink,
+  slideToWishes,
   spanAlignedFrames,
+  spreadSharedEnds,
+  titleSpans,
   toFlow,
 } from '../rowLayout.js';
 import type { TreeData } from '../find-common-ancestor.js';
@@ -251,6 +257,8 @@ const link = (
   order,
   sourceItem,
   targetItem,
+  sourceNode: `${sourceItem}-node`,
+  targetNode: `${targetItem}-node`,
   source: rect(sourceX, 20),
   target: rect(targetX, 120),
 });
@@ -550,5 +558,199 @@ describe('alignDirectedSubgraphs', () => {
       orderOf: () => 0,
     });
     expect(graph).toEqual(laidOut());
+  });
+});
+
+/** Rows of five, two and three steps; the first and last both link into the middle row's first step. */
+const sharedEnd = (links: [string, string][]): any => ({
+  direction: 'TB',
+  config: { elk: { directedSubgraphs: 'aligned' } },
+  nodes: [
+    group('r1', 'LR'),
+    group('r2', 'RL'),
+    group('r3', 'LR'),
+    ...['A1', 'A2', 'A3', 'A4', 'A5'].map((id) => node(id, 'r1')),
+    ...['B1', 'B2'].map((id) => node(id, 'r2')),
+    ...['C1', 'C2', 'C3'].map((id) => node(id, 'r3')),
+  ],
+  edges: [
+    ...chain('A1', 'A2', 'A3', 'A4', 'A5'),
+    ...chain('B1', 'B2'),
+    ...chain('C1', 'C2', 'C3'),
+    ...links.flatMap(([start, end]) => chain(start, end)),
+  ],
+});
+
+/** The minimum arrowhead separation the gate asks for: an arrowhead and a pixel. */
+const ARROWHEAD_APART = 9;
+
+describe('links that end on one side of one node', () => {
+  const tips = (data: any, links: [string, string][]) =>
+    links.map(([start, end]) => edgeOf(data, start, end).points.at(-1));
+
+  it('leaves a single link in the middle of the side', async () => {
+    const data = sharedEnd([['A5', 'B1']]);
+    await runElkLayoutCore(data, elkRenderContext);
+    const [tip] = tips(data, [['A5', 'B1']]);
+    expect(tip.x).toBe(byId(data).get('B1').x);
+    expect(edgeOf(data, 'A5', 'B1').points).toHaveLength(2);
+  });
+
+  it('spreads two arrowheads apart and keeps the lined-up link straight', async () => {
+    const links: [string, string][] = [
+      ['A5', 'B1'],
+      ['C3', 'B1'],
+    ];
+    const data = sharedEnd(links);
+    await runElkLayoutCore(data, elkRenderContext);
+    const [a, c] = tips(data, links);
+    expect(Math.abs(a.x - c.x)).toBeGreaterThanOrEqual(ARROWHEAD_APART);
+    expect(isVertical(edgeOf(data, 'A5', 'B1').points)).toBe(true);
+  });
+
+  it('spreads three arrowheads, each pair apart, with every turning link in a lane of its own', async () => {
+    const links: [string, string][] = [
+      ['A5', 'B1'],
+      ['C3', 'B1'],
+      ['C1', 'B1'],
+    ];
+    const data = sharedEnd(links);
+    await runElkLayoutCore(data, elkRenderContext);
+    const xs = tips(data, links)
+      .map((tip: { x: number }) => tip.x)
+      .sort((p, q) => p - q);
+    expect(xs[1] - xs[0]).toBeGreaterThanOrEqual(ARROWHEAD_APART);
+    expect(xs[2] - xs[1]).toBeGreaterThanOrEqual(ARROWHEAD_APART);
+    const lanes = links
+      .map(([start, end]) => edgeOf(data, start, end).points)
+      .filter((points: unknown[]) => points.length > 2)
+      .map((points: { y: number }[]) => points[1].y);
+    expect(new Set(lanes).size).toBe(lanes.length);
+  });
+});
+
+describe('spreading link ends', () => {
+  it('packs points apart in the order of their wishes', () => {
+    expect(packAlong([50, 50], 0, 100, 20)).toEqual([50, 70]);
+    expect(packAlong([95, 90], 0, 100, 20)).toEqual([100, 80]);
+  });
+
+  it('slides packed points so the most of them sit on their wish', () => {
+    expect(slideToWishes([10, 30], [40, 0], 0, 100)).toEqual([40, 60]);
+    expect(slideToWishes([10, 30], [95, 0], 0, 100)).toEqual([10, 30]);
+  });
+
+  it('pins the points that can run straight and fits the rest between them in order', () => {
+    const positions = pinStraight([115, 300, 415, 485], 44, 186, 35.5);
+    expect(positions[0]).toBe(115);
+    expect(positions.slice(1).map((p) => Math.round(p * 100) / 100)).toEqual([138.67, 162.33, 186]);
+  });
+
+  it('gives turning links of one gap their own lanes, the rightmost start lowest when running left', () => {
+    const ends = (startX: number, endX: number) => ({
+      start: { x: startX, y: 0 },
+      end: { x: endX, y: 100 },
+      gap: 50,
+      gapTop: 20,
+      gapBottom: 80,
+    });
+    const near = ends(100, 10);
+    const far = ends(200, 20);
+    const straight = ends(30, 30);
+    const alone = { ...ends(300, 250), gapTop: 120, gapBottom: 180 };
+    assignLanes([far, near, straight, alone]);
+    expect([near.gap, far.gap, straight.gap, alone.gap]).toEqual([40, 60, 50, 150]);
+  });
+});
+
+describe('spreading around pins and titles', () => {
+  it('moves a point that does not fit beside a pin to the nearest free spot', () => {
+    expect(pinStraight([50, 10], 45, 100, 20)).toEqual([50, 59]);
+  });
+
+  it('keeps spread ends off the title above the side when the rest of the side holds them', () => {
+    const ends = (wish: number) => ({
+      start: { x: wish, y: 0 },
+      end: { x: 100, y: 100 },
+      gap: 50,
+      gapTop: 20,
+      gapBottom: 80,
+    });
+    const node = { x: 0, y: 100, width: 200, height: 40 };
+    const [a, b] = [ends(100), ends(110)];
+    spreadSharedEnds(
+      new Map([
+        [
+          'n',
+          [
+            { ends: a, at: 'end' as const, node, title: [80, 120] as const },
+            { ends: b, at: 'end' as const, node, title: [80, 120] as const },
+          ],
+        ],
+      ])
+    );
+    for (const { end } of [a, b]) {
+      expect(end.x <= 80 || end.x >= 120).toBe(true);
+    }
+    expect(Math.abs(a.end.x - b.end.x)).toBeGreaterThanOrEqual(ARROWHEAD_APART);
+  });
+
+  it('ignores the title when the rest of the side is too short', () => {
+    const node = { x: 0, y: 100, width: 40, height: 40 };
+    const one = {
+      start: { x: 20, y: 0 },
+      end: { x: 20, y: 100 },
+      gap: 50,
+      gapTop: 20,
+      gapBottom: 80,
+    };
+    const two = { ...one, start: { x: 25, y: 0 }, end: { x: 20, y: 100 } };
+    spreadSharedEnds(
+      new Map([
+        [
+          'n',
+          [
+            { ends: one, at: 'end' as const, node, title: [0, 40] as const },
+            { ends: two, at: 'end' as const, node, title: [0, 40] as const },
+          ],
+        ],
+      ])
+    );
+    expect(Math.abs(one.end.x - two.end.x)).toBeGreaterThanOrEqual(ARROWHEAD_APART);
+  });
+
+  it('centres a title on the common span of stacked frames, and on its own frame otherwise', () => {
+    const children = [
+      { id: 'a', labels: [{ width: 40 }] },
+      { id: 'b', labels: [{ width: 20 }] },
+      { id: 'c', labels: [{ width: 20 }] },
+      { id: 'd', labels: [{ width: 20 }] },
+    ];
+    const frames = new Map([
+      ['a', { x: 0, y: 0, width: 100, height: 50 }],
+      ['b', { x: 50, y: 100, width: 150, height: 50 }],
+      ['c', { x: 0, y: 200, width: 60, height: 50 }],
+      ['d', { x: 100, y: 210, width: 60, height: 50 }],
+    ]);
+    const titles = titleSpans(children, frames, 'DOWN');
+    expect(titles.get('a')).toEqual([79, 121]);
+    expect(titles.get('b')).toEqual([89, 111]);
+    expect(titles.get('c')).toEqual([19, 41]);
+    expect(titleSpans(children, frames, 'RIGHT').size).toBe(0);
+  });
+
+  it('orders lanes for links running right, and puts links running left above them', () => {
+    const ends = (startX: number, endX: number, down = true) => ({
+      start: { x: startX, y: down ? 0 : 100 },
+      end: { x: endX, y: down ? 100 : 0 },
+      gap: 50,
+      gapTop: 20,
+      gapBottom: 100,
+    });
+    const rightNear = ends(10, 100);
+    const rightFar = ends(20, 200);
+    const leftUp = ends(300, 250, false);
+    assignLanes([rightNear, rightFar, leftUp]);
+    expect([leftUp.gap, rightFar.gap, rightNear.gap]).toEqual([40, 60, 80]);
   });
 });
