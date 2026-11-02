@@ -1,7 +1,7 @@
 import type { MermaidConfig } from '../../config.type.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
-import type { C4Boundary, C4LabelNudge, C4Rel, C4Shape } from './c4Types.js';
+import type { C4Boundary, C4BoundaryDirection, C4LabelNudge, C4Rel, C4Shape } from './c4Types.js';
 import { asColor, buildC4Node, buildEdgeLabel } from './c4ShapeAdapter.js';
 
 /**
@@ -34,6 +34,19 @@ const IMPLICIT_BOUNDARY_TYPES = new Set(['system', 'container', 'node']);
  */
 const BOUNDARY_TYPE_LABELS: Record<string, string> = { enterprise: 'Enterprise' };
 
+const BOUNDARY_DIRECTIONS: ReadonlySet<unknown> = new Set<C4BoundaryDirection>([
+  'TB',
+  'BT',
+  'LR',
+  'RL',
+]);
+
+const isBoundaryDirection = (value: unknown): value is C4BoundaryDirection =>
+  BOUNDARY_DIRECTIONS.has(value);
+
+const configuredDirection = (value: unknown): C4BoundaryDirection | undefined =>
+  isBoundaryDirection(value) ? value : undefined;
+
 const boundaryLabel = (boundary: C4Boundary): string => {
   const type = boundary.type?.text;
   if (!type || IMPLICIT_BOUNDARY_TYPES.has(type.toLowerCase())) {
@@ -64,6 +77,28 @@ const boundaryCssStyles = (boundary: C4Boundary): string[] => {
   return styles;
 };
 
+const buildBoundaryNode = (
+  boundary: C4Boundary,
+  parentId: string | undefined,
+  look: Node['look'],
+  defaultDirection: C4BoundaryDirection | undefined
+): Node => {
+  const isDeploymentNode = boundary.nodeType !== undefined;
+  return {
+    id: boundary.alias,
+    label: boundaryLabel(boundary),
+    labelType: 'string',
+    isGroup: true,
+    shape: 'rect',
+    parentId,
+    cssClasses: isDeploymentNode ? 'c4-boundary c4-deployment-node' : 'c4-boundary',
+    cssStyles: boundaryCssStyles(boundary),
+    link: boundary.link ?? undefined,
+    dir: boundary.direction ?? defaultDirection,
+    look,
+  };
+};
+
 /**
  * The label nudge an `UpdateRelStyle` asked for.
  *
@@ -91,6 +126,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
   const elementWidth = c4Config.width ?? 216;
   const look = config.look ?? 'classic';
   const useHtmlLabels = getEffectiveHtmlLabels(config);
+  const defaultDirection = configuredDirection(c4Config.boundaryDirection);
   // C4Dynamic numbers each relationship in declaration order (1: ..., 2: ...).
   const isDynamic = db.getC4Type() === 'C4Dynamic';
 
@@ -104,20 +140,9 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       : undefined;
 
   for (const boundary of boundaries) {
-    const isDeploymentNode = boundary.nodeType !== undefined;
-    nodes.push({
-      id: boundary.alias,
-      label: boundaryLabel(boundary),
-      labelType: 'string',
-      isGroup: true,
-      shape: 'rect',
-      parentId: parentIdOf(boundary.parentBoundary),
-      cssClasses: isDeploymentNode ? 'c4-boundary c4-deployment-node' : 'c4-boundary',
-      cssStyles: boundaryCssStyles(boundary),
-      link: boundary.link ?? undefined,
-      dir: boundary.direction,
-      look,
-    });
+    nodes.push(
+      buildBoundaryNode(boundary, parentIdOf(boundary.parentBoundary), look, defaultDirection)
+    );
   }
 
   for (const shape of db.getC4ShapeArray()) {
