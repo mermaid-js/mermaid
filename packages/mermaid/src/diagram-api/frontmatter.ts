@@ -33,8 +33,28 @@ const MAX_SHOWN_SEGMENTS = 4;
 /** One terminal line. A longer key is cut, so a key the author controls cannot flood the log. */
 export const MAX_SHOWN_LENGTH = 80;
 
+const HEX_RADIX = 16;
+const UNICODE_ESCAPE_DIGITS = 4;
+const SHORT_ESCAPES = new Map([
+  ['\n', '\\n'],
+  ['\r', '\\r'],
+  ['\t', '\\t'],
+]);
+
+/** Control characters and the Unicode line breaks, which would split or restyle a log line. */
+const escapeControls = (text: string): string =>
+  text.replace(
+    /[\p{Cc}\u2028\u2029]/gu,
+    (char) =>
+      SHORT_ESCAPES.get(char) ??
+      `\\u${char.charCodeAt(0).toString(HEX_RADIX).padStart(UNICODE_ESCAPE_DIGITS, '0')}`
+  );
+
 const clip = (text: string): string =>
   text.length > MAX_SHOWN_LENGTH ? `${text.slice(0, MAX_SHOWN_LENGTH)}...` : text;
+
+/** Escaped before it is cut, so the shown text is one line of at most the limit. */
+const shown = (text: string): string => clip(escapeControls(text));
 
 /** Writes `['elk', 'mergeEdges']` as `elk: { mergeEdges: ... }`. */
 const nestedForm = (path: string[]): string =>
@@ -45,14 +65,15 @@ const nestedForm = (path: string[]): string =>
 /**
  * The YAML is parsed without expanding dots, so `elk.mergeEdges: true` is one key that no
  * section owns, and the sanitiser drops it. Only the first segment is checked against the
- * sections, so a dotted key of any other shape stays silent. A long key is shown cut short.
+ * sections, so a dotted key of any other shape stays silent. The key is the author's text, so
+ * it is shown cut short and with its control characters escaped.
  */
 const warnAboutDottedKeys = (config: MermaidConfig): void => {
   for (const key of Object.keys(config)) {
     const path = key.split('.');
     if (path.length > 1 && path.every(Boolean) && CONFIG_SECTIONS.has(path[0])) {
-      const shown = nestedForm(path.slice(0, MAX_SHOWN_SEGMENTS).map(clip));
-      log.warn(`config key '${clip(key)}' is ignored; write it nested: ${shown}`);
+      const nested = nestedForm(path.slice(0, MAX_SHOWN_SEGMENTS).map(shown));
+      log.warn(`config key '${shown(key)}' is ignored; write it nested: ${nested}`);
     }
   }
 };

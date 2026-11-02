@@ -240,6 +240,50 @@ describe('dotted config keys in frontmatter', () => {
     );
   });
 
+  describe('a key with control characters', () => {
+    const CONTROL_OR_LINE_BREAK = /[\p{Cc}\u2028\u2029]/u;
+
+    it.each([
+      ['a newline', '\\n', '\\n'],
+      ['a tab', '\\t', '\\t'],
+      ['a carriage return', '\\r', '\\r'],
+      ['an escape character', '\\x1b', '\\u001b'],
+      ['a delete', '\\x7f', '\\u007f'],
+      ['a next line', '\\x85', '\\u0085'],
+      ['a line separator', '\\u2028', '\\u2028'],
+    ])('shows %s as a backslash sequence, on one line', (_name, written, shown) => {
+      const warn = warnSpy();
+      extractFrontMatter(withConfigKey(`"elk.a${written}b"`, 'true'));
+      expect(warn).toHaveBeenCalledExactlyOnceWith(
+        `config key 'elk.a${shown}b' is ignored; write it nested: elk: { a${shown}b: ... }`
+      );
+      expect(String(warn.mock.calls[0][0])).not.toMatch(CONTROL_OR_LINE_BREAK);
+    });
+
+    it('cannot forge a second log line', () => {
+      const warn = warnSpy();
+      extractFrontMatter(withConfigKey('"elk.\\nWARN: forged"', 'true'));
+      expect(String(warn.mock.calls[0][0]).split('\n')).toHaveLength(1);
+    });
+
+    it('leaves a plain key as it is', () => {
+      const warn = warnSpy();
+      extractFrontMatter(withConfigKey('elk.mergeEdges', 'true'));
+      expect(warn).toHaveBeenCalledExactlyOnceWith(
+        `config key 'elk.mergeEdges' is ignored; write it nested: elk: { mergeEdges: ... }`
+      );
+    });
+
+    it('still cuts the escaped text at the limit', () => {
+      const warn = warnSpy();
+      const key = `elk.${'\\n'.repeat(MAX_SHOWN_LENGTH)}`;
+      extractFrontMatter(withConfigKey(`"${key}"`, 'true'));
+      const message = String(warn.mock.calls[0][0]);
+      expect(message).toContain(`'elk.${'\\n'.repeat((MAX_SHOWN_LENGTH - 'elk.'.length) / 2)}...'`);
+      expect(message).not.toMatch(CONTROL_OR_LINE_BREAK);
+    });
+  });
+
   describe('a key the author made very long', () => {
     const RESPONSIVE_MS = 1000;
     const SEGMENTS = 20_000;
