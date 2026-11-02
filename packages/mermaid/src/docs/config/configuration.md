@@ -43,6 +43,7 @@ When a key directly under `config:` contains dots and starts with the name of a 
 A section is any option of the default configuration that holds nested options, so `dompurifyConfig`, which has no default, is not one.
 The key stays ignored.
 The warning shows at most four parts of the key, and cuts the key and each part at 80 characters.
+Control characters in the key, such as a newline or a tab, are shown as backslash sequences like `\n`, so the warning stays on one line.
 
 The default `logLevel` is `fatal`, so the warning is invisible until you lower it to `warn` (or `3`) or below when you initialize mermaid:
 
