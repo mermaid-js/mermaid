@@ -1777,6 +1777,70 @@ The subgraph inherits the direction of the parent graph instead, as it does with
 
 No warning is logged in these cases.
 
+#### Subgraphs as aligned rows or columns (ELK)
+
+Set `elk.directedSubgraphs: aligned` to draw subgraphs with their own direction as aligned rows or columns.
+In a `flowchart TB` or `BT`, subgraphs with `direction LR` or `RL` become rows of one common width, stacked under each other.
+In a `flowchart LR` or `RL`, subgraphs with `direction TB` or `BT` become columns of one common height.
+
+A link from a node in one of them to a node in another, or to a node outside them, leaves its source on the side facing the target and enters the target on the side facing the source.
+It runs in the gap between the two.
+Each subgraph is shifted so that its first link to something placed before it, in the order the links are written, is a straight line; the other links take at most two turns.
+Rows that alternate `direction LR` and `direction RL` draw a snake, with each row's last node straight above the next row's first node.
+
+```mermaid-example
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+flowchart TB
+    Buyer(["Buyer"])
+    subgraph shop ["Web shop"]
+        direction LR
+        Cart --> Order --> Payment --> Receipt
+    end
+    subgraph warehouse ["Warehouse"]
+        direction LR
+        Pick --> Pack --> Ship
+    end
+    Buyer --> Cart
+    Order -- paid --> Pick
+```
+
+```mermaid
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+flowchart TB
+    Buyer(["Buyer"])
+    subgraph shop ["Web shop"]
+        direction LR
+        Cart --> Order --> Payment --> Receipt
+    end
+    subgraph warehouse ["Warehouse"]
+        direction LR
+        Pick --> Pack --> Ship
+    end
+    Buyer --> Cart
+    Order -- paid --> Pick
+```
+
+With this option a subgraph keeps its direction even when no link runs between two nodes inside it.
+The other exceptions listed above still apply, and the arrangement stops short in these cases:
+
+- only subgraphs that sit directly in the diagram are arranged; a subgraph nested in another keeps the default arrangement inside it;
+- a subgraph that ELK places beside another, rather than before or after it, is neither shifted nor widened, and a link between the two keeps ELK's route;
+- a node that sits directly in the diagram is never moved; the subgraph is shifted to line up with it instead;
+- a link between two subgraphs that are not next to each other crosses the ones in between;
+- the end labels of a link, such as multiplicities, are placed along the new route rather than where ELK reserved room for them.
+
+No warning is logged in these cases.
+
 With the dagre layout (`layout: dagre`), if any of a subgraph's nodes are linked to the outside, subgraph direction will be ignored. Instead the subgraph will inherit the direction of the parent graph:
 
 ```mermaid-example
