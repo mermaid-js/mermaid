@@ -1089,15 +1089,48 @@ No warning is logged in these cases.
 #### Subgraphs as aligned rows or columns (ELK)
 
 Set `elk.directedSubgraphs: aligned` to draw subgraphs with their own direction as aligned rows or columns.
-In a `flowchart TB` or `BT`, subgraphs with `direction LR` or `RL` become rows of one common width, stacked under each other.
+In a `flowchart TB` or `BT`, subgraphs with `direction LR` or `RL` become rows of one common width, stacked under each other in the order they are written.
 In a `flowchart LR` or `RL`, subgraphs with `direction TB` or `BT` become columns of one common height.
 
-A link from a node in one of them to a node in another, or to a node outside them, leaves its source on the side facing the target and enters the target on the side facing the source.
-It runs in the gap between the two.
-Each subgraph is shifted so that its first link to something placed before it, in the order the links are written, is a straight line; the other links take at most two turns.
+A row that holds subgraphs with their own direction is a band: in a `flowchart TB`, a `direction LR` subgraph holding `direction TB` subgraphs draws them as columns side by side, in the order they are written, all of one height.
+
+```mermaid-example
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+flowchart TB
+    subgraph plan ["Plan"]
+        direction LR
+        Brief --> Review
+    end
+    subgraph teams [" "]
+        direction LR
+        subgraph a ["Team A"]
+            direction TB
+            A1["Design"] --> A2["Build"]
+        end
+        subgraph b ["Team B"]
+            direction TB
+            B1["Layout"] --> B2["Render"]
+        end
+    end
+    Review --> A1
+    Review --> B1
+    Brief --> A2
+```
+
+A link from a node in one of them to a node in another, or to a node outside them, enters the target on the side facing the source, and leaves its source on the side facing the target unless leaving by a side saves a turn.
+It runs in the gaps between rows and columns, never across a node, a subgraph's title or a link inside a subgraph.
+Each subgraph is shifted so that its first link to something placed before it, in the order the links are written, is a straight line.
+A link that cannot reach the facing side of its target, because another node is in the way, runs down the nearest free corridor (the gap between two subgraphs or two nodes, or the margin inside a frame) and enters from the side facing that corridor.
+A link runs straight when its ends line up; otherwise it takes at most two turns into the top or bottom of a node and at most three into a side.
+Its label goes on its longest segment where the label covers nothing else.
 Links that meet on one side of a node are spread along it, at least an arrowhead apart; a link that can run straight keeps its place, and the others keep their order so they do not cross.
 Their ends stay clear of the title of the subgraph above them when the rest of the side has room.
-Each link that turns in a gap gets a lane of its own.
+Links that would run along the same gap or corridor each get a lane of their own.
 Rows that alternate `direction LR` and `direction RL` draw a snake, with each row's last node straight above the next row's first node.
 
 ```mermaid-example
@@ -1124,10 +1157,11 @@ flowchart TB
 With this option a subgraph keeps its direction even when no link runs between two nodes inside it.
 The other exceptions listed above still apply, and the arrangement stops short in these cases:
 
-- only subgraphs that sit directly in the diagram are arranged; a subgraph nested in another keeps the default arrangement inside it;
+- only the subgraphs that sit directly in the diagram, and the subgraphs directly inside a band, are arranged; a subgraph nested deeper keeps the default arrangement inside it;
 - a subgraph that ELK places beside another, rather than before or after it, is neither shifted nor widened, and a link between the two keeps ELK's route;
 - a node that sits directly in the diagram is never moved; the subgraph is shifted to line up with it instead;
-- a link between two subgraphs that are not next to each other crosses the ones in between;
+- a link with no free way through the gaps and corridors keeps the route ELK drew for it;
+- a link that does not meet a node at the middle of a side ends on the box around the node, which for a round or diamond shape lies a little off the outline;
 - the end labels of a link, such as multiplicities, are placed along the new route rather than where ELK reserved room for them.
 
 No warning is logged in these cases.
