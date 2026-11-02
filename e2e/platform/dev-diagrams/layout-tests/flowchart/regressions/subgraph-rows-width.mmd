@@ -1,0 +1,29 @@
+---
+config:
+  layout: elk
+  flowchart:
+    nodeSpacing: 25
+    rankSpacing: 25
+  elk:
+    directedSubgraphs: aligned
+---
+%% Spreading the first row would shift the rows it leads out past the widest row, so it stays together.
+flowchart TB
+    subgraph top [" "]
+        direction LR
+        A["Request arrives"] --> B["Load saved state"]
+    end
+    subgraph mid [" "]
+        direction LR
+        C["Restore session"]
+        D["Start fresh"]
+        C ~~~ D
+    end
+    subgraph low [" "]
+        direction LR
+        E["State"] --> F["Update"] --> G["Save"] --> H["Cache"]
+    end
+    B -->|"found"| C
+    B -->|"missing"| D
+    C --> E
+    D --> E

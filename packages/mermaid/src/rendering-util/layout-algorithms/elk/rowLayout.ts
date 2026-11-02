@@ -1327,20 +1327,36 @@ function addsTurn(
   });
 }
 
+/** How far the frames and nodes sitting directly in the diagram reach across the flow. */
+function spanAcross({ graph, direction }: AlignInput): number {
+  const rects = (graph.children ?? []).map((child) =>
+    rectToFlow(
+      { x: child.x ?? 0, y: child.y ?? 0, width: child.width ?? 0, height: child.height ?? 0 },
+      direction
+    )
+  );
+  const from = Math.min(...rects.map(({ x }) => x));
+  return Math.max(...rects.map(({ x, width }) => x + width)) - from;
+}
+
 /**
- * Spread every band of columns over the full span, and every row whose spreading does not make
- * one of its links turn more often; the other rows keep their first-link alignment.
+ * Spread every band of columns over the full span, and every row whose spreading neither makes
+ * one of its links turn more often nor shifts another row out past the span the diagram had; the
+ * other rows keep their first-link alignment.
  */
 function chooseSpread(input: AlignInput) {
   const snapshot = snapshotOf(input);
   const rows = rowsToJustify(justifyInput(input));
   const spread = new Set(rows.filter(({ band }) => band).map(({ id }) => id));
   let state = arrange(input, snapshot, spread);
+  let span = spanAcross(input);
   for (const { id } of rows.filter(({ band }) => !band)) {
     const trial = arrange(input, snapshot, new Set([...spread, id]));
-    if (!addsTurn(state, trial, id, input.tree)) {
+    const trialSpan = spanAcross(input);
+    if (trialSpan <= span + STRAIGHT_EPS && !addsTurn(state, trial, id, input.tree)) {
       spread.add(id);
       state = trial;
+      span = trialSpan;
     }
   }
   return arrange(input, snapshot, spread);

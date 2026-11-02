@@ -495,6 +495,77 @@ describe('alignDirectedSubgraphs', () => {
     });
   });
 
+  /**
+   * A row of two steps over a row whose bent inner link keeps it from spreading, so it is shifted
+   * to keep the link from the row above straight.
+   */
+  const followingRows = (linked: boolean) => ({
+    children: [
+      box('top', 0, 0, 400, 80, [box('A', 20, 20, 90, 40), box('B', 130, 20, 90, 40)]),
+      box('mid', 0, 150, 300, 80, [box('C', 20, 20, 90, 40), box('D', 190, 20, 90, 40)]),
+    ],
+    edges: [
+      {
+        id: 'bent',
+        sources: ['C'],
+        targets: ['D'],
+        container: 'mid',
+        sections: [
+          {
+            startPoint: { x: 110, y: 40 },
+            bendPoints: [
+              { x: 150, y: 40 },
+              { x: 150, y: 50 },
+            ],
+            endPoint: { x: 190, y: 50 },
+          },
+        ],
+      },
+      ...(linked
+        ? [
+            {
+              id: 'down',
+              sources: ['top'],
+              targets: ['mid'],
+              container: 'root',
+              proxyOf: { sources: ['B'], targets: ['C'] },
+            },
+          ]
+        : []),
+    ],
+  });
+  const alignRows = (graph: any) =>
+    alignDirectedSubgraphs({
+      graph,
+      tree: {
+        parentById: { A: 'top', B: 'top', C: 'mid', D: 'mid' },
+        childrenById: { top: ['A', 'B'], mid: ['C', 'D'] },
+      },
+      separated: new Map([
+        ['top', 'RIGHT' as const],
+        ['mid', 'RIGHT' as const],
+      ]),
+      direction: 'DOWN',
+      orderOf: () => 0,
+    });
+  const spanOf = ({ children }: { children: { x: number; width: number }[] }) =>
+    Math.max(...children.map(({ x, width }) => x + width)) -
+    Math.min(...children.map(({ x }) => x));
+
+  it('spreads a row whose spreading moves no other row', () => {
+    const graph = followingRows(false);
+    alignRows(graph);
+    expect(graph.children[0].children?.map(({ x }) => x)).toEqual([20, 290]);
+    expect(spanOf(graph)).toBe(400);
+  });
+
+  it('keeps a row together when spreading it would push a row it leads past the span', () => {
+    const graph = followingRows(true);
+    alignRows(graph);
+    expect(graph.children[0].children?.map(({ x }) => x)).toEqual([20, 130]);
+    expect(spanOf(graph)).toBeLessThanOrEqual(410);
+  });
+
   it('leaves a graph without a separated subgraph alone', () => {
     const graph = laidOut();
     alignDirectedSubgraphs({
