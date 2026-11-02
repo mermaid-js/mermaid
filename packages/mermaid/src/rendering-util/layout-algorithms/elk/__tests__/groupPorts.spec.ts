@@ -373,6 +373,17 @@ describe('stitchPortSegments', () => {
     ]);
   });
 
+  it('keeps the main label first, ahead of the end labels', () => {
+    const tail = { x: 1, y: 1, layoutOptions: { 'edgeLabels.placement': 'TAIL' } };
+    const edges = laidOut();
+    edges[0].labels = [tail];
+    const [stitched] = stitchPortSegments(edges, containerOrigins(graph), twoGroups);
+    expect(stitched.labels?.map(({ x, y }) => [x, y])).toEqual([
+      [140, 70],
+      [11, 21],
+    ]);
+  });
+
   it('returns the edges unchanged when nothing was split', () => {
     const edges = [laidOut()[3]];
     expect(stitchPortSegments(edges, containerOrigins(graph), twoGroups)).toEqual(edges);
