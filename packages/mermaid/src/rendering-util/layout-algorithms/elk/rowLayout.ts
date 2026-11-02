@@ -1,6 +1,8 @@
 import type { P } from './geometry.js';
 import type { TreeData } from './find-common-ancestor.js';
 import type { ElkDirection, ElkEdgeLike } from './groupPorts.js';
+import { findCommonAncestor } from './find-common-ancestor.js';
+import { type Channel, type Route, routeInFlow, routeLength } from './rowRouter.js';
 
 /** A box by its top-left corner. */
 export interface Rect {
@@ -20,23 +22,10 @@ export interface RowLink {
   order: number;
   sourceItem: string;
   targetItem: string;
-  /** The ids of the two end nodes, which tell links sharing a side of one node apart. */
-  sourceNode: string;
-  targetNode: string;
+  /** The id of the edge, to find the link again once it is routed. */
+  id: string;
   source: Rect;
   target: Rect;
-}
-
-/**
- * Where a link leaves its source and enters its target, the gap between their items, and the
- * lane in that gap where a link that does not run straight turns.
- */
-export interface LinkEnds {
-  start: P;
-  end: P;
-  gap: number;
-  gapTop: number;
-  gapBottom: number;
 }
 
 export interface RowItem {
@@ -45,6 +34,7 @@ export interface RowItem {
   movable: boolean;
 }
 
+const ROOT = 'root';
 const STRAIGHT_EPS = 0.01;
 /** The width of the arrowhead markers. */
 const ARROWHEAD_WIDTH = 8;
@@ -52,6 +42,10 @@ const ARROWHEAD_WIDTH = 8;
 const END_SPACING = ARROWHEAD_WIDTH + 1;
 /** How far a link end keeps from the edge of a frame's title. */
 const TITLE_CLEARANCE = 1;
+/** Half the width a line takes when another line or a label must keep off it. */
+const LINE_HALF_WIDTH = 1;
+/** Runs closer than this, side by side, read as one crowded lane: three arrowheads' room. */
+const SHARED_RUN_DISTANCE = 3 * END_SPACING;
 
 /** Turn a point into flow coordinates, where the diagram's direction runs down `y`. */
 export function toFlow({ x, y }: P, direction: ElkDirection): P {
@@ -94,7 +88,6 @@ export function rectToFlow(rect: Rect, direction: ElkDirection): Rect {
 
 const bottom = (rect: Rect) => rect.y + rect.height;
 const centreX = (rect: Rect) => rect.x + rect.width / 2;
-const shifted = (rect: Rect, dx: number): Rect => ({ ...rect, x: rect.x + dx });
 
 /** True when the two items overlap along the flow, so neither lies wholly before the other. */
 function shareBand(a: Rect, b: Rect): boolean {
@@ -107,11 +100,13 @@ function shareBand(a: Rect, b: Rect): boolean {
  * when it is a node, when it shares its band with another item (shifting it could make the two
  * overlap), or when none of its links reaches an item placed before it.
  *
+ * @param decided - filled with the link that decided each shift, in flow order
  * @returns the shift of each item that moves; absent items stay
  */
 export function planRowShifts(
   items: ReadonlyMap<string, RowItem>,
-  links: readonly RowLink[]
+  links: readonly RowLink[],
+  decided = new Map<string, RowLink>()
 ): Map<string, number> {
   const shifts = new Map<string, number>();
   const placed = new Set<string>();
@@ -128,6 +123,7 @@ export function planRowShifts(
     );
     if (item.movable && alone && link) {
       shifts.set(id, straighteningShift(link, id, shifts));
+      decided.set(id, link);
     }
     placed.add(id);
   }
@@ -144,76 +140,6 @@ function straighteningShift(
       ? [link.target, link.source, link.sourceItem]
       : [link.source, link.target, link.targetItem];
   return centreX(theirs) + (shifts.get(theirItem) ?? 0) - centreX(mine);
-}
-
-/**
- * The route of a link between two items in different bands, in flow coordinates: from the side
- * of the source facing the target to the side of the target facing the source, straight when the
- * two line up and otherwise with two turns in the middle of the gap. The items' shifts are applied.
- *
- * @returns the route, or `undefined` when the two items share a band
- */
-export function routeRowLink(
-  link: RowLink,
-  items: ReadonlyMap<string, RowItem>,
-  shifts: ReadonlyMap<string, number>
-): P[] | undefined {
-  const ends = linkEnds(link, items, shifts);
-  return ends && routeBetween(ends);
-}
-
-/**
- * The two ends of a link at the middle of the facing sides of its nodes, after the items' shifts.
- *
- * @returns the ends, or `undefined` when the two items share a band
- */
-export function linkEnds(
-  link: RowLink,
-  items: ReadonlyMap<string, RowItem>,
-  shifts: ReadonlyMap<string, number>
-): LinkEnds | undefined {
-  const apart = itemsApart(link, items);
-  if (!apart) {
-    return undefined;
-  }
-  const [sourceItem, targetItem] = apart;
-  const source = shifted(link.source, shifts.get(link.sourceItem) ?? 0);
-  const target = shifted(link.target, shifts.get(link.targetItem) ?? 0);
-  if (targetItem.y >= bottom(sourceItem)) {
-    return {
-      start: { x: centreX(source), y: bottom(source) },
-      end: { x: centreX(target), y: target.y },
-      ...gapBetween(sourceItem, targetItem),
-    };
-  }
-  return {
-    start: { x: centreX(source), y: source.y },
-    end: { x: centreX(target), y: bottom(target) },
-    ...gapBetween(targetItem, sourceItem),
-  };
-}
-
-function gapBetween(upper: Rect, lower: Rect) {
-  const [gapTop, gapBottom] = [bottom(upper), lower.y];
-  return { gap: (gapTop + gapBottom) / 2, gapTop, gapBottom };
-}
-
-/** The boxes of a link's two items, when neither shares its band with the other. */
-function itemsApart(link: RowLink, items: ReadonlyMap<string, RowItem>): [Rect, Rect] | undefined {
-  const source = items.get(link.sourceItem)?.rect;
-  const target = items.get(link.targetItem)?.rect;
-  return source && target && !shareBand(source, target) ? [source, target] : undefined;
-}
-
-const isStraight = ({ start, end }: { start: P; end: P }) =>
-  Math.abs(start.x - end.x) < STRAIGHT_EPS;
-
-/** Straight when the two ends line up, else a Z through the gap. */
-export function routeBetween({ start, end, gap }: LinkEnds): P[] {
-  if (isStraight({ start, end })) {
-    return [start, { x: start.x, y: end.y }];
-  }
-  return [start, { x: start.x, y: gap }, { x: end.x, y: gap }, end];
 }
 
 /**
@@ -374,168 +300,6 @@ function placeBetween(
 const straightCount = (positions: readonly number[], wishes: readonly number[]) =>
   positions.filter((position, index) => Math.abs(position - wishes[index]) < STRAIGHT_EPS).length;
 
-export interface SideEnd {
-  ends: LinkEnds;
-  at: 'start' | 'end';
-  node: Rect;
-  /** The span across the flow that a frame's title takes above this side, if any. */
-  title?: readonly [number, number];
-}
-
-/**
- * The stretch of a node's side the ends may use: clear of its corners, and clear of the title of
- * its frame when the rest of the side still holds them all.
- */
-function freeRange({ x, width }: Rect, count: number, title?: readonly [number, number]) {
-  const side: [number, number] = [x + END_SPACING, x + width - END_SPACING];
-  if (!title || title[1] <= side[0] || title[0] >= side[1]) {
-    return side;
-  }
-  const left: [number, number] = [side[0], Math.min(side[1], title[0])];
-  const right: [number, number] = [Math.max(side[0], title[1]), side[1]];
-  const wider = left[1] - left[0] >= right[1] - right[0] ? left : right;
-  return wider[1] - wider[0] >= (count - 1) * END_SPACING ? wider : side;
-}
-
-/**
- * Spread the ends that meet on one side of one node, so their arrowheads stay apart. Each end
- * wishes to sit opposite the other end of its link, where its line can run straight; the ends are
- * kept at least {@link END_SPACING} apart and further where the side has room, and a node's side
- * with a single end keeps it in the middle.
- */
-export function spreadSharedEnds(sides: ReadonlyMap<string, readonly SideEnd[]>): void {
-  for (const ends of sides.values()) {
-    if (ends.length < 2) {
-      continue;
-    }
-    const [low, high] = freeRange(ends[0].node, ends.length, ends[0].title);
-    const room = Math.max(high - low, 0);
-    const spacing = Math.min(Math.max(END_SPACING, room / ends.length), room / (ends.length - 1));
-    const wishes = ends.map(({ ends: link, at }) => (at === 'start' ? link.end.x : link.start.x));
-    const gap = Math.max(spacing, END_SPACING);
-    const inOrder = slideToWishes(packAlong(wishes, low, high, gap), wishes, low, high);
-    const pinned = pinStraight(wishes, low, high, gap);
-    const best = straightCount(pinned, wishes) > straightCount(inOrder, wishes) ? pinned : inOrder;
-    best.forEach((position, index) => {
-      const { ends: link, at } = ends[index];
-      link[at] = { ...link[at], x: position };
-    });
-  }
-}
-
-/**
- * Orders two turning links of one gap from the upper lane to the lower. A link that runs left
- * turns below one that starts left of it, and a link that runs right below one that starts right
- * of it, so the horizontal run of one never cuts the vertical run of the other; links running
- * left take the upper lanes.
- */
-function byLane(a: LinkEnds, b: LinkEnds): number {
-  const [upperA, lowerA] = a.start.y < a.end.y ? [a.start, a.end] : [a.end, a.start];
-  const [upperB, lowerB] = b.start.y < b.end.y ? [b.start, b.end] : [b.end, b.start];
-  const leftA = lowerA.x < upperA.x;
-  const leftB = lowerB.x < upperB.x;
-  if (leftA !== leftB) {
-    return leftA ? -1 : 1;
-  }
-  return leftA ? upperA.x - upperB.x : upperB.x - upperA.x;
-}
-
-/**
- * Give each link that turns in a gap its own lane, spread evenly across the gap, so no two
- * horizontal runs lie on top of each other. A gap with one turning link keeps it in the middle.
- */
-export function assignLanes(all: readonly LinkEnds[]): void {
-  const bundles = new Map<string, LinkEnds[]>();
-  for (const ends of all.filter((ends) => !isStraight(ends))) {
-    const key = `${ends.gapTop} ${ends.gapBottom}`;
-    bundles.set(key, [...(bundles.get(key) ?? []), ends]);
-  }
-  for (const bundle of bundles.values()) {
-    const { gapTop, gapBottom } = bundle[0];
-    const step = (gapBottom - gapTop) / (bundle.length + 1);
-    [...bundle].sort(byLane).forEach((ends, rank) => {
-      ends.gap = gapTop + step * (rank + 1);
-    });
-  }
-}
-
-/** Group the ends of the links by the node and side they meet. */
-function endsBySide(
-  planned: readonly { link: RowLink; ends: LinkEnds; source: Rect; target: Rect }[],
-  titles: ReadonlyMap<string, readonly [number, number]>
-): Map<string, SideEnd[]> {
-  const sides = new Map<string, SideEnd[]>();
-  const add = (key: string, end: SideEnd) => sides.set(key, [...(sides.get(key) ?? []), end]);
-  const titleOver = (point: P, node: Rect, item: string) =>
-    point.y === node.y ? titles.get(item) : undefined;
-  for (const { link, ends, source, target } of planned) {
-    add(`${link.sourceNode} ${ends.start.y}`, {
-      ends,
-      at: 'start',
-      node: source,
-      title: titleOver(ends.start, source, link.sourceItem),
-    });
-    add(`${link.targetNode} ${ends.end.y}`, {
-      ends,
-      at: 'end',
-      node: target,
-      title: titleOver(ends.end, target, link.targetItem),
-    });
-  }
-  return sides;
-}
-
-/**
- * Where each frame's title will sit across the flow, when titles sit on the side links come in
- * from (a top-to-bottom diagram): centred on the frame as it will be painted, which for stacked
- * frames is their common span.
- */
-export function titleSpans(
-  children: readonly ElkBox[],
-  frames: ReadonlyMap<string, Rect>,
-  direction: ElkDirection
-): Map<string, readonly [number, number]> {
-  const titles = new Map<string, readonly [number, number]>();
-  if (direction !== 'DOWN') {
-    return titles;
-  }
-  const spans = paintedSpans(frames);
-  for (const child of children) {
-    const span = spans.get(child.id);
-    if (span) {
-      const half = (child.labels?.[0]?.width ?? 0) / 2 + TITLE_CLEARANCE;
-      const centre = span.start + span.size / 2;
-      titles.set(child.id, [centre - half, centre + half]);
-    }
-  }
-  return titles;
-}
-
-/** The span each frame will be painted with: the common one for stacked frames, else its own. */
-function paintedSpans(
-  frames: ReadonlyMap<string, Rect>
-): Map<string, { start: number; size: number }> {
-  const stacked = [...frames].filter(([id, rect]) =>
-    [...frames].every(([other, otherRect]) => other === id || !shareBand(rect, otherRect))
-  );
-  const common = stacked.length > 1 ? commonSpan(stacked.map(([, rect]) => rect)) : undefined;
-  return new Map(
-    [...frames].map(([id, rect]) => [
-      id,
-      common && stacked.some(([other]) => other === id)
-        ? common
-        : { start: rect.x, size: rect.width },
-    ])
-  );
-}
-
-/** The midpoint of a route's middle segment, where its label goes. */
-export function labelCentre(route: readonly P[]): P {
-  const middle = Math.floor((route.length - 1) / 2);
-  const [a, b] = [route[middle], route[middle + 1]];
-  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-}
-
 /**
  * The common span of frames stacked along the flow: from the leftmost start to the rightmost end
  * across it.
@@ -553,7 +317,7 @@ interface ElkBox {
   width?: number;
   height?: number;
   children?: ElkBox[];
-  labels?: { width?: number }[];
+  labels?: { x?: number; y?: number; width?: number; height?: number }[];
 }
 
 /** Each node's box in diagram coordinates. */
@@ -580,27 +344,134 @@ function itemOf(id: string, tree: TreeData): string {
   return current;
 }
 
+/** A node of the ELK graph as built, before layout. */
+interface ElkTreeNode {
+  id: string;
+  children?: ElkTreeNode[];
+  /** The subgraph's place in the source, where the diagram records it (a flowchart does). */
+  colorIndex?: number;
+}
+
+/** Frames in the order they are written: by their recorded place, else as listed. */
+function inSourceOrder<T extends ElkTreeNode>(frames: readonly T[]): T[] {
+  return frames
+    .map((frame, index) => ({ frame, rank: frame.colorIndex ?? index }))
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ frame }) => frame);
+}
+
+/**
+ * The groups of frames to arrange: the separated frames sitting directly in the diagram, and the
+ * separated frames inside each separated frame that holds more than one, each group with the
+ * direction it is stacked in.
+ */
+export function arrangedGroups(
+  children: readonly ElkTreeNode[],
+  separated: ReadonlyMap<string, ElkDirection>,
+  direction: ElkDirection
+): { frames: string[]; direction: ElkDirection }[] {
+  const frames = inSourceOrder(children.filter((child) => separated.has(child.id)));
+  const inner = frames.flatMap((frame) =>
+    arrangedGroups(frame.children ?? [], separated, separated.get(frame.id) ?? direction)
+  );
+  return frames.length > 1 ? [{ frames: frames.map(({ id }) => id), direction }, ...inner] : inner;
+}
+
+/**
+ * Edges that only make ELK stack each group of arranged frames in the order they are written:
+ * one from each frame to the next. {@link alignDirectedSubgraphs} drops them after layout.
+ */
+export function orderingEdges(groups: readonly { frames: string[] }[]): ElkEdgeLike[] {
+  return groups.flatMap(({ frames }) =>
+    frames.slice(1).map((frame, index) => ({
+      id: `${frames[index]}--order--${frame}`,
+      sources: [frames[index]],
+      targets: [frame],
+      labels: [],
+      ordering: true,
+    }))
+  );
+}
+
+/** The child of `ancestor` that holds `id`, or `id` itself when it is a direct child. */
+function childOf(id: string, ancestor: string, tree: TreeData): string {
+  let current = id;
+  while (tree.parentById[current] && tree.parentById[current] !== ancestor) {
+    current = tree.parentById[current];
+  }
+  return current;
+}
+
 /**
  * Hand ELK each link between two different items of the diagram as a link between the items
  * themselves, when one of them is laid out on its own. ELK then orders the items by these links,
  * without a port on any frame; {@link alignDirectedSubgraphs} puts the real ends back and routes
- * the link.
+ * the link. A link between two arranged frames of one group is not handed to ELK at all, since
+ * the group is stacked in the order it is written; it is returned to be routed after layout. A
+ * link against that order is handed to ELK reversed, so it does not fight the order.
+ *
+ * @returns the links kept back from ELK
  */
 export function proxyRowLinks(
-  edges: readonly ElkEdgeLike[],
+  graph: { edges: ElkEdgeLike[] },
   tree: TreeData,
-  separated: ReadonlyMap<string, ElkDirection>
-): void {
-  for (const edge of edges) {
-    const sourceItem = itemOf(edge.sources[0], tree);
-    const targetItem = itemOf(edge.targets[0], tree);
-    const touchesFrame = separated.has(sourceItem) || separated.has(targetItem);
-    if (sourceItem !== targetItem && touchesFrame) {
-      edge.proxyOf = { sources: edge.sources, targets: edge.targets };
-      edge.sources = [sourceItem];
-      edge.targets = [targetItem];
+  separated: ReadonlyMap<string, ElkDirection>,
+  groups: readonly { frames: string[] }[] = []
+): ElkEdgeLike[] {
+  const position = new Map(groups.flatMap(({ frames }) => frames.map((id, index) => [id, index])));
+  const sameGroup = (a: string, b: string) =>
+    groups.some(({ frames }) => frames.includes(a) && frames.includes(b));
+  const withheld: ElkEdgeLike[] = [];
+  graph.edges = graph.edges.filter((edge) => {
+    const ancestor = findCommonAncestor(edge.sources[0], edge.targets[0], tree);
+    const sourceFrame = childOf(edge.sources[0], ancestor, tree);
+    const targetFrame = childOf(edge.targets[0], ancestor, tree);
+    if (ancestor !== ROOT && sourceFrame !== targetFrame && sameGroup(sourceFrame, targetFrame)) {
+      withheld.push(edge);
+      return false;
     }
+    proxyRowLink(edge, tree, separated, position);
+    return true;
+  });
+  return withheld;
+}
+
+function proxyRowLink(
+  edge: ElkEdgeLike,
+  tree: TreeData,
+  separated: ReadonlyMap<string, ElkDirection>,
+  position: ReadonlyMap<string, number>
+): void {
+  const sourceItem = itemOf(edge.sources[0], tree);
+  const targetItem = itemOf(edge.targets[0], tree);
+  const touchesFrame = separated.has(sourceItem) || separated.has(targetItem);
+  if (sourceItem === targetItem || !touchesFrame) {
+    return;
   }
+  edge.proxyOf = { sources: edge.sources, targets: edge.targets };
+  edge.sources = [sourceItem];
+  edge.targets = [targetItem];
+  if ((position.get(sourceItem) ?? -1) > (position.get(targetItem) ?? Infinity)) {
+    edge.proxyOf = { sources: edge.proxyOf.targets, targets: edge.proxyOf.sources };
+    [edge.sources, edge.targets] = [edge.targets, edge.sources];
+    edge.layoutReversed = !edge.layoutReversed;
+  }
+}
+
+/**
+ * Prepare an ELK graph for arranged frames: proxy or keep back the links between arranged items,
+ * and add the edges that keep each group of frames in the order it is written.
+ */
+export function arrangeForElk(
+  graph: { children: ElkTreeNode[]; edges: ElkEdgeLike[] },
+  tree: TreeData,
+  separated: ReadonlyMap<string, ElkDirection>,
+  direction: ElkDirection
+): { withheld: ElkEdgeLike[]; groups: { frames: string[]; direction: ElkDirection }[] } {
+  const groups = arrangedGroups(graph.children, separated, direction);
+  const withheld = proxyRowLinks(graph, tree, separated, groups);
+  graph.edges.push(...orderingEdges(groups));
+  return { withheld, groups };
 }
 
 function restoreProxies(edges: readonly ElkEdgeLike[]): void {
@@ -620,6 +491,10 @@ interface AlignInput {
   direction: ElkDirection;
   /** The position of an edge in the source, by its id. */
   orderOf: (id: string) => number;
+  /** The links {@link arrangeForElk} kept back from ELK. */
+  withheld?: readonly ElkEdgeLike[];
+  /** The groups of arranged frames, from {@link arrangedGroups}. */
+  groups?: readonly { frames: string[]; direction: ElkDirection }[];
 }
 
 function rowLinks(
@@ -642,8 +517,7 @@ function rowLinks(
       order: orderOf(edge.id),
       sourceItem,
       targetItem,
-      sourceNode: sourceId,
-      targetNode: targetId,
+      id: edge.id,
       source: flow(source),
       target: flow(target),
     };
@@ -651,49 +525,588 @@ function rowLinks(
   });
 }
 
-/** Where a rerouted link passes the frame it leaves and the frame it enters. */
-function frameCrossings(
-  route: readonly P[],
-  link: RowLink,
-  items: ReadonlyMap<string, RowItem>,
-  separated: ReadonlyMap<string, ElkDirection>
-): { groupId: string; point: P }[] {
-  const start = route[0];
-  const end = route[route.length - 1];
-  const down = end.y > start.y;
-  const ends = [
-    { groupId: link.sourceItem, x: start.x, leaves: true },
-    { groupId: link.targetItem, x: end.x, leaves: false },
+/** The laid-out diagram in diagram coordinates, after the shifts. */
+interface Scene {
+  /** Nodes without children: what a link must not cross. */
+  leaves: Map<string, Rect>;
+  /** Nodes with children, as they will be painted. */
+  frames: Map<string, Rect>;
+  titles: Rect[];
+  /** The links routed by ELK, as thin boxes a rerouted link should not cross. */
+  lines: Rect[];
+}
+
+const OPPOSITE: Record<ElkDirection, ElkDirection> = {
+  DOWN: 'UP',
+  UP: 'DOWN',
+  RIGHT: 'LEFT',
+  LEFT: 'RIGHT',
+};
+
+/** Each frame as it will be painted: the frames of an arranged group share one span. */
+function paintedFrames(
+  rects: ReadonlyMap<string, Rect>,
+  framesOf: readonly string[],
+  groups: readonly { frames: string[]; direction: ElkDirection }[]
+): Map<string, Rect> {
+  const painted = new Map<string, Rect>();
+  for (const id of framesOf) {
+    const rect = rects.get(id);
+    if (rect) {
+      painted.set(id, rect);
+    }
+  }
+  for (const { frames, direction } of groups) {
+    const flowRects = frames.flatMap((id) => {
+      const rect = painted.get(id);
+      return rect ? [{ id, flow: rectToFlow(rect, direction) }] : [];
+    });
+    const stacked = flowRects.filter(({ flow }) =>
+      flowRects.every((other) => other.flow === flow || !shareBand(other.flow, flow))
+    );
+    if (stacked.length > 1) {
+      const { start, size } = commonSpan(stacked.map(({ flow }) => flow));
+      for (const { id, flow } of stacked) {
+        painted.set(id, rectFromFlow({ ...flow, x: start, width: size }, direction));
+      }
+    }
+  }
+  return painted;
+}
+
+/** The box of each frame's title: centred at the top of the frame as painted. */
+function titleBoxes(children: readonly ElkBox[], painted: ReadonlyMap<string, Rect>): Rect[] {
+  return children.flatMap((node): Rect[] => [
+    ...titleBox(painted.get(node.id), node.labels?.[0]),
+    ...titleBoxes(node.children ?? [], painted),
+  ]);
+}
+
+function titleBox(
+  frame: Rect | undefined,
+  label: { y?: number; width?: number; height?: number } | undefined
+): Rect[] {
+  if (!frame || !label?.width) {
+    return [];
+  }
+  return [
+    {
+      x: frame.x + (frame.width - label.width) / 2 - TITLE_CLEARANCE,
+      y: frame.y + (label.y ?? 0),
+      width: label.width + 2 * TITLE_CLEARANCE,
+      height: label.height ?? 0,
+    },
   ];
-  return ends.flatMap(({ groupId, x, leaves }) => {
-    const rect = items.get(groupId)?.rect;
-    if (!rect || !separated.has(groupId)) {
+}
+
+function buildScene(
+  children: readonly ElkBox[],
+  groups: readonly { frames: string[]; direction: ElkDirection }[]
+): Scene {
+  const rects = absoluteRects(children, { x: 0, y: 0 });
+  const withChildren = new Set<string>();
+  const visit = (nodes: readonly ElkBox[]) => {
+    for (const node of nodes) {
+      if (node.children?.length) {
+        withChildren.add(node.id);
+        visit(node.children);
+      }
+    }
+  };
+  visit(children);
+  const leaves = new Map([...rects].filter(([id]) => !withChildren.has(id)));
+  const frames = paintedFrames(rects, [...withChildren], groups);
+  return { leaves, frames, titles: titleBoxes(children, frames), lines: [] };
+}
+
+/** A link to route through the arranged frames, and the frame of reference it is routed in. */
+interface LinkPlan {
+  edge: ElkEdgeLike;
+  /** The lowest common subgraph of the link's ends, which its route is relative to. */
+  container: string;
+  /** The direction from the source's item to the target's. */
+  direction: ElkDirection;
+  sourceItem: string;
+  targetItem: string;
+  /** The items of the group the two items belong to. */
+  members: readonly string[];
+}
+
+/** The items a link runs between and the group they belong to: the diagram's or an arranged one. */
+function linkGroup(
+  edge: ElkEdgeLike,
+  { tree, separated, groups = [], graph }: AlignInput
+): Omit<LinkPlan, 'direction'> | undefined {
+  const [source] = edge.sources;
+  const [target] = edge.targets;
+  const container = findCommonAncestor(source, target, tree);
+  const sourceItem = childOf(source, container, tree);
+  const targetItem = childOf(target, container, tree);
+  if (sourceItem === targetItem) {
+    return undefined;
+  }
+  const members =
+    container === ROOT
+      ? rootMembers(sourceItem, targetItem, separated, graph.children ?? [])
+      : groups.find(({ frames }) => frames.includes(sourceItem) && frames.includes(targetItem))
+          ?.frames;
+  return members && { edge, container, sourceItem, targetItem, members };
+}
+
+/** The items of the diagram, when one of the two linked items is an arranged frame. */
+function rootMembers(
+  sourceItem: string,
+  targetItem: string,
+  separated: ReadonlyMap<string, ElkDirection>,
+  children: readonly ElkBox[]
+): string[] | undefined {
+  const arranged = separated.has(sourceItem) || separated.has(targetItem);
+  return arranged ? children.map(({ id }) => id) : undefined;
+}
+
+/**
+ * How a link is routed, if it runs between two items of the diagram that one arranged frame is
+ * among, or between two frames of one arranged group: in that group's direction, turned round
+ * when the target's item lies before the source's.
+ */
+function planLink(
+  edge: ElkEdgeLike,
+  input: AlignInput,
+  rects: ReadonlyMap<string, Rect>
+): LinkPlan | undefined {
+  const linked = linkGroup(edge, input);
+  const from = linked && rects.get(linked.sourceItem);
+  const to = linked && rects.get(linked.targetItem);
+  if (!linked || !from || !to) {
+    return undefined;
+  }
+  const along = input.separated.get(linked.container) ?? input.direction;
+  const backwards = rectToFlow(to, along).y < rectToFlow(from, along).y;
+  return { ...linked, direction: backwards ? OPPOSITE[along] : along };
+}
+
+/** The free bands across the flow between two items, given the items that may lie between. */
+function gapsBetween(from: Rect, to: Rect, between: readonly Rect[]): [number, number][] {
+  const bands = between
+    .filter((rect) => rect.y >= bottom(from) - STRAIGHT_EPS && bottom(rect) <= to.y + STRAIGHT_EPS)
+    .map((rect): [number, number] => [rect.y, bottom(rect)])
+    .sort((a, b) => a[0] - b[0]);
+  const merged: [number, number][] = [];
+  for (const band of bands) {
+    const last = merged[merged.length - 1];
+    if (last && band[0] <= last[1]) {
+      last[1] = Math.max(last[1], band[1]);
+    } else {
+      merged.push([...band]);
+    }
+  }
+  const edges = [bottom(from), ...merged.flat(), to.y];
+  const gaps: [number, number][] = [];
+  for (let index = 0; index < edges.length; index += 2) {
+    if (edges[index + 1] > edges[index]) {
+      gaps.push([edges[index], edges[index + 1]]);
+    }
+  }
+  return gaps.length === merged.length + 1 ? gaps : [];
+}
+
+function channelFromFlow(channel: Channel, direction: ElkDirection): Channel {
+  const across = direction === 'RIGHT' || direction === 'LEFT' ? 'y' : 'x';
+  const alongAxis = across === 'x' ? 'y' : 'x';
+  if (channel.axis === 'x') {
+    return { ...channel, axis: across };
+  }
+  const negated = direction === 'UP' || direction === 'LEFT';
+  return negated
+    ? { axis: alongAxis, low: -channel.high, high: -channel.low }
+    : { ...channel, axis: alongAxis };
+}
+
+/** The boxes of a link's two ends: a node, or a frame when the link ends on a subgraph. */
+function endBoxes(
+  edge: ElkEdgeLike,
+  scene: Scene,
+  flow: (rect: Rect) => Rect
+): { source: Rect; target: Rect; leaves: Map<string, Rect> } | undefined {
+  const leaves = new Map([...scene.leaves].map(([id, rect]) => [id, flow(rect)]));
+  const box = (id: string) => {
+    const frame = scene.frames.get(id);
+    return leaves.get(id) ?? (frame && flow(frame));
+  };
+  const source = box(edge.sources[0]);
+  const target = box(edge.targets[0]);
+  return source && target ? { source, target, leaves } : undefined;
+}
+
+/** The stretch across the flow a corridor may use: the container's frame, or the items' extent. */
+function limitsOf(extent: readonly Rect[]): [number, number] {
+  return [
+    Math.min(...extent.map((rect) => rect.x)),
+    Math.max(...extent.map((rect) => rect.x + rect.width)),
+  ];
+}
+
+/** Route one planned link through the scene; the route comes back in diagram coordinates. */
+function routePlan(
+  plan: LinkPlan,
+  scene: Scene,
+  rects: ReadonlyMap<string, Rect>
+): Route | undefined {
+  const { direction } = plan;
+  const flow = (rect: Rect) => rectToFlow(rect, direction);
+  const ends = endBoxes(plan.edge, scene, flow);
+  const from = rects.get(plan.sourceItem);
+  const to = rects.get(plan.targetItem);
+  if (!ends || !from || !to) {
+    return undefined;
+  }
+  const members = plan.members
+    .filter((id) => id !== plan.sourceItem && id !== plan.targetItem)
+    .flatMap((id) => {
+      const rect = rects.get(id);
+      return rect ? [flow(rect)] : [];
+    });
+  const frames = [...scene.frames.values()].map(flow);
+  const container = scene.frames.get(plan.container);
+  const route = routeInFlow({
+    source: ends.source,
+    target: ends.target,
+    gaps: gapsBetween(flow(from), flow(to), members),
+    obstacles: [...ends.leaves.values(), ...scene.titles.map(flow), ...scene.lines.map(flow)],
+    walls: frames.flatMap((frame) => [frame.x, frame.x + frame.width]),
+    limits: limitsOf(container ? [flow(container)] : [flow(from), flow(to), ...members]),
+  });
+  return (
+    route && {
+      points: route.points.map((point) => fromFlow(point, direction)),
+      channels: route.channels.map((channel) => channel && channelFromFlow(channel, direction)),
+    }
+  );
+}
+
+type Side = 'top' | 'bottom' | 'left' | 'right';
+
+interface Terminal {
+  route: Route;
+  /** The index of the end point: 0 for the start, the last index for the end. */
+  index: number;
+  node: Rect;
+  key: string;
+  along: 'x' | 'y';
+  wish: number;
+}
+
+/** Which side of its node a route's end touches, and the axis that side runs along. */
+function sideOf(end: P, next: P): { side: Side; along: 'x' | 'y' } {
+  if (Math.abs(end.x - next.x) < STRAIGHT_EPS) {
+    return { side: next.y > end.y ? 'bottom' : 'top', along: 'x' };
+  }
+  return { side: next.x > end.x ? 'right' : 'left', along: 'y' };
+}
+
+function terminalsOf(
+  route: Route,
+  ends: readonly [string, string],
+  nodes: ReadonlyMap<string, Rect>
+): Terminal[] {
+  const { points } = route;
+  const last = points.length - 1;
+  const indices: [number, number] = [0, last];
+  return indices.flatMap((index, which) => {
+    const node = nodes.get(ends[which]);
+    if (!node) {
       return [];
     }
-    return [{ groupId, point: { x, y: leaves === down ? bottom(rect) : rect.y } }];
+    const step = index === 0 ? 1 : -1;
+    const { side, along } = sideOf(points[index], points[index + step]);
+    const beyond = points[index + 2 * step] ?? points[last - index];
+    return [{ route, index, node, key: `${ends[which]} ${side}`, along, wish: beyond[along] }];
   });
+}
+
+/** Move a route's end along its node's side, and the corner after it with it. */
+function moveEnd({ route, index, along }: Terminal, position: number): void {
+  const { points } = route;
+  if (Math.abs(points[index][along] - position) < STRAIGHT_EPS) {
+    return;
+  }
+  const step = index === 0 ? 1 : -1;
+  if (points.length === 2) {
+    const across = along === 'x' ? 'y' : 'x';
+    const mid = (points[0][across] + points[1][across]) / 2;
+    const end = { ...points[index], [along]: position };
+    const bend = { ...end, [across]: mid };
+    const other = points[index + step];
+    const join = { ...other, [across]: mid };
+    route.points = index === 0 ? [end, bend, join, other] : [other, join, bend, end];
+    route.channels = [undefined, undefined, undefined];
+    return;
+  }
+  points[index] = { ...points[index], [along]: position };
+  points[index + step] = { ...points[index + step], [along]: position };
+}
+
+/**
+ * Spread the ends that meet on one side of one node, as {@link pinStraight} and
+ * {@link slideToWishes} place them, clear of a frame title above the side when there is room.
+ */
+function spreadEnds(terminals: readonly Terminal[], titles: readonly Rect[]): void {
+  const sides = new Map<string, Terminal[]>();
+  for (const terminal of terminals) {
+    sides.set(terminal.key, [...(sides.get(terminal.key) ?? []), terminal]);
+  }
+  for (const ends of sides.values()) {
+    if (ends.length < 2) {
+      continue;
+    }
+    const { node, along } = ends[0];
+    const [start, size] = along === 'x' ? [node.x, node.width] : [node.y, node.height];
+    const title = along === 'x' ? titleAbove(node, titles) : undefined;
+    const [low, high] = freeRange(start, size, ends.length, title);
+    const room = Math.max(high - low, 0);
+    const gap = Math.max(END_SPACING, Math.min(room / ends.length, room / (ends.length - 1)));
+    const wishes = ends.map(({ wish }) => wish);
+    const inOrder = slideToWishes(packAlong(wishes, low, high, gap), wishes, low, high);
+    const pinned = pinStraight(wishes, low, high, gap);
+    const best = straightCount(pinned, wishes) > straightCount(inOrder, wishes) ? pinned : inOrder;
+    best.forEach((position, index) => moveEnd(ends[index], position));
+  }
+}
+
+/** The span across a node's top that a title just above it takes, if any. */
+function titleAbove(node: Rect, titles: readonly Rect[]): readonly [number, number] | undefined {
+  const title = titles.find(
+    (box) =>
+      bottom(box) <= node.y + STRAIGHT_EPS &&
+      box.x < node.x + node.width &&
+      box.x + box.width > node.x
+  );
+  return title && [title.x, title.x + title.width];
+}
+
+/**
+ * The stretch of a node's side the ends may use: clear of its corners, and clear of the title of
+ * its frame when the rest of the side still holds them all.
+ */
+function freeRange(start: number, size: number, count: number, title?: readonly [number, number]) {
+  const side: [number, number] = [start + END_SPACING, start + size - END_SPACING];
+  if (!title || title[1] <= side[0] || title[0] >= side[1]) {
+    return side;
+  }
+  const left: [number, number] = [side[0], Math.min(side[1], title[0])];
+  const rightPart: [number, number] = [Math.max(side[0], title[1]), side[1]];
+  const wider = left[1] - left[0] >= rightPart[1] - rightPart[0] ? left : rightPart;
+  return wider[1] - wider[0] >= (count - 1) * END_SPACING ? wider : side;
+}
+
+/**
+ * Orders two segments sharing a channel from its low side to its high side so that neither cuts
+ * the run that leads into the other: of two runs heading the same way, the one that starts
+ * nearer the high side lies further along; runs heading low take the lower part.
+ */
+function byChannel(a: { before: P; after: P }, b: { before: P; after: P }): number {
+  const headsLowA = a.after.x < a.before.x;
+  const headsLowB = b.after.x < b.before.x;
+  if (headsLowA !== headsLowB) {
+    return headsLowA ? -1 : 1;
+  }
+  return headsLowA ? a.before.x - b.before.x : b.before.x - a.before.x;
+}
+
+/** A straight run of a route, and the stretch across it that it may move within. */
+interface Run {
+  route: Route;
+  index: number;
+  /** An end run stays where the ends were spread; it only takes up room. */
+  fixed: boolean;
+  axis: 'x' | 'y';
+  at: number;
+  extent: readonly [number, number];
+  low: number;
+  high: number;
+  before: P;
+  after: P;
+}
+
+/**
+ * The runs of a route that may move across themselves: its middle runs within their channel, and
+ * its first and last runs along the side of their node, as long as the route turns at all.
+ */
+function runsOf(route: Route, ends: readonly [Rect, Rect]): Run[] {
+  const { points } = route;
+  const last = points.length - 2;
+  if (last < 1) {
+    return [];
+  }
+  return points.slice(1).flatMap((to, index) => {
+    const node = index === 0 ? ends[0] : index === last ? ends[1] : undefined;
+    return runAt(route, index, node);
+  });
+}
+
+/** The run from point `index` to the next, if it has room to move: along its node or its channel. */
+function runAt(route: Route, index: number, node: Rect | undefined): Run[] {
+  const { points } = route;
+  const [from, to] = [points[index], points[index + 1]];
+  const axis = Math.abs(from.x - to.x) < STRAIGHT_EPS ? 'x' : 'y';
+  const other = axis === 'x' ? 'y' : 'x';
+  const room = node ? nodeRoom(node, axis) : route.channels[index];
+  if (!room) {
+    return [];
+  }
+  const flip = (p: P): P => (axis === 'y' ? p : { x: p.y, y: p.x });
+  const extent: [number, number] = [
+    Math.min(from[other], to[other]),
+    Math.max(from[other], to[other]),
+  ];
+  return [
+    {
+      route,
+      index,
+      fixed: node !== undefined,
+      axis,
+      at: from[axis],
+      extent,
+      low: room.low,
+      high: room.high,
+      before: flip(points[index - 1] ?? from),
+      after: flip(points[index + 2] ?? to),
+    },
+  ];
+}
+
+/** Where along a node's side a run that ends on it may sit. */
+function nodeRoom(node: Rect, axis: 'x' | 'y') {
+  const [start, size] = axis === 'x' ? [node.x, node.width] : [node.y, node.height];
+  return { low: start + END_SPACING, high: start + size - END_SPACING };
+}
+
+/** Runs that lie on top of each other, or nearly: same axis, close, and overlapping. */
+function close(a: Run, b: Run): boolean {
+  return (
+    a.axis === b.axis &&
+    Math.abs(a.at - b.at) < SHARED_RUN_DISTANCE &&
+    a.extent[0] < b.extent[1] - STRAIGHT_EPS &&
+    b.extent[0] < a.extent[1] - STRAIGHT_EPS
+  );
+}
+
+/** Group runs that lie on top of each other, directly or through a chain of them. */
+function clusters(runs: readonly Run[]): Run[][] {
+  const groups: Run[][] = [];
+  for (const run of runs) {
+    const touching = groups.filter((group) => group.some((other) => close(run, other)));
+    const merged = [run, ...touching.flat()];
+    groups.splice(0, groups.length, ...groups.filter((group) => !touching.includes(group)), merged);
+  }
+  return groups;
+}
+
+/**
+ * Give runs that lie on top of each other, or nearly, a place each across the room they share:
+ * lanes in a gap, corridors beside nodes. The room is cut into even places; an end run keeps its
+ * own spot and takes the place nearest it, and the middle runs take the rest in order. Runs of
+ * one route never move against each other.
+ */
+function spreadChannels(routes: readonly { route: Route; ends: readonly [Rect, Rect] }[]): void {
+  const runs = routes.flatMap(({ route, ends }) => runsOf(route, ends));
+  for (const group of clusters(runs)) {
+    if (group.length < 2 || new Set(group.map(({ route }) => route)).size < group.length) {
+      continue;
+    }
+    const low = Math.max(...group.map((run) => run.low));
+    const high = Math.min(...group.map((run) => run.high));
+    if (high - low < (group.length - 1) * END_SPACING) {
+      continue;
+    }
+    const step = (high - low) / (group.length + 1);
+    const places = group.map((_, rank) => low + step * (rank + 1));
+    for (const { at } of group.filter(({ fixed }) => fixed)) {
+      const nearest = places.reduce((a, b) => (Math.abs(b - at) < Math.abs(a - at) ? b : a));
+      places.splice(places.indexOf(nearest), 1);
+    }
+    group
+      .filter(({ fixed }) => !fixed)
+      .sort(byChannel)
+      .forEach(({ route, index, axis }, rank) => {
+        for (const point of [index, index + 1]) {
+          route.points[point] = { ...route.points[point], [axis]: places[rank] };
+        }
+      });
+  }
+}
+
+/**
+ * Where a label goes on a route: the middle of its longest segment on which the label covers
+ * nothing in `avoid`, else the middle of its longest segment.
+ */
+export function labelSpot(
+  route: readonly P[],
+  { width = 0, height = 0 }: { width?: number; height?: number },
+  avoid: readonly Rect[]
+): P {
+  const middles = route
+    .slice(1)
+    .map((point, index) => ({ a: route[index], b: point }))
+    .sort((p, q) => routeLength([q.a, q.b]) - routeLength([p.a, p.b]))
+    .map(({ a, b }) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }));
+  const free = middles.find((centre) => {
+    const box = { x: centre.x - width / 2, y: centre.y - height / 2, width, height };
+    return avoid.every((other) => !overlaps(box, other));
+  });
+  return free ?? middles[0];
+}
+
+const overlaps = (a: Rect, b: Rect) =>
+  a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+
+/** Where a route passes the border of each frame, relative to `origin`. */
+function frameCrossings(points: readonly P[], frames: ReadonlyMap<string, Rect>, origin: P) {
+  return points.slice(1).flatMap((point, index) => {
+    const from = points[index];
+    return [...frames].flatMap(([groupId, frame]) =>
+      borderHits(from, point, frame).map((hit) => ({
+        groupId,
+        point: { x: hit.x - origin.x, y: hit.y - origin.y },
+      }))
+    );
+  });
+}
+
+function borderHits(a: P, b: P, frame: Rect): P[] {
+  const vertical = Math.abs(a.x - b.x) < STRAIGHT_EPS;
+  const [fixed, from, to] = vertical ? [a.x, a.y, b.y] : [a.y, a.x, b.x];
+  const [low, high] = vertical
+    ? [frame.x, frame.x + frame.width]
+    : [frame.y, frame.y + frame.height];
+  const borders = vertical ? [frame.y, bottom(frame)] : [frame.x, frame.x + frame.width];
+  if (fixed <= low || fixed >= high) {
+    return [];
+  }
+  return borders
+    .filter((border) => border > Math.min(from, to) && border < Math.max(from, to))
+    .map((border) => (vertical ? { x: fixed, y: border } : { x: border, y: fixed }));
 }
 
 /** Give a rerouted edge its route, its main label's place and the frames it passes. */
 function applyRoute(
   edge: ElkEdgeLike,
-  route: P[],
-  crossings: { groupId: string; point: P }[],
-  direction: ElkDirection
+  points: readonly P[],
+  origin: P,
+  frames: ReadonlyMap<string, Rect>,
+  avoid: readonly Rect[]
 ) {
-  const points = route.map((point) => fromFlow(point, direction));
+  const local = points.map((point) => ({ x: point.x - origin.x, y: point.y - origin.y }));
   edge.sections = [
-    { startPoint: points[0], bendPoints: points.slice(1, -1), endPoint: points[points.length - 1] },
+    { startPoint: local[0], bendPoints: local.slice(1, -1), endPoint: local[local.length - 1] },
   ];
-  edge.crossings = crossings.map(({ groupId, point }) => ({
-    groupId,
-    point: fromFlow(point, direction),
-  }));
+  edge.crossings = frameCrossings(points, frames, origin);
+  edge.endsOnBorder = true;
   const [main, ...ends] = edge.labels ?? [];
   if (main) {
-    const centre = fromFlow(labelCentre(route), direction);
-    main.x = centre.x - (main.width ?? 0) / 2;
-    main.y = centre.y - (main.height ?? 0) / 2;
+    const centre = labelSpot(points, main, avoid);
+    main.x = centre.x - origin.x - (main.width ?? 0) / 2;
+    main.y = centre.y - origin.y - (main.height ?? 0) / 2;
   }
   for (const end of ends) {
     end.x = 0;
@@ -707,23 +1120,13 @@ function shiftChild(child: ElkBox, shift: number, direction: ElkDirection) {
 }
 
 /**
- * Arrange the separately laid-out subgraphs sitting directly in the diagram as aligned rows (or
- * columns), after ELK has laid out the graph and before its result is read.
+ * Shift the arranged frames sitting directly in the diagram so their first links run straight.
  *
- * Each such subgraph is shifted across the flow so that its first link, in source order, to an
- * item placed before it runs straight; then every link between two different items that touches
- * such a subgraph is routed again, through the gap between the two, from the side of its source
- * that faces the target to the side of the target that faces the source. A link between items in
- * one band keeps ELK's route. End labels are handed back unplaced, so they take the default
- * placement along the new route.
+ * @returns the link that decided each shift, in flow order
  */
-export function alignDirectedSubgraphs(input: AlignInput): void {
+function shiftRows(input: AlignInput): Map<string, RowLink> {
   const { graph, separated, direction } = input;
   const children = graph.children ?? [];
-  if (!children.some((child) => separated.has(child.id))) {
-    return;
-  }
-  restoreProxies(graph.edges ?? []);
   const rects = absoluteRects(children, { x: 0, y: 0 });
   const items = new Map<string, RowItem>(
     children.map((child) => [
@@ -737,41 +1140,160 @@ export function alignDirectedSubgraphs(input: AlignInput): void {
       },
     ])
   );
-  const links = rowLinks(input, rects);
+  const decided = new Map<string, RowLink>();
   const shifts = planRowShifts(
     items,
-    links.map(({ link }) => link)
+    rowLinks(input, rects).map(({ link }) => link),
+    decided
   );
   for (const child of children) {
     shiftChild(child, shifts.get(child.id) ?? 0, direction);
   }
-  const movedItems = new Map(
-    [...items].map(([id, item]) => [id, { ...item, rect: shifted(item.rect, shifts.get(id) ?? 0) }])
+  return decided;
+}
+
+/** Route every link through the arranged frames as the graph now lies, without spreading. */
+function routeAll(input: AlignInput) {
+  const children = input.graph.children ?? [];
+  const rects = absoluteRects(children, { x: 0, y: 0 });
+  const scene = buildScene(children, input.groups ?? []);
+  const edges = input.graph.edges ?? [];
+  const plans = edges.map((edge) => planLink(edge, input, rects));
+  scene.lines = edges.flatMap((edge, index) =>
+    plans[index] ? [] : thinBoxes(sectionPoints(edge, rects))
   );
-  const planned = links.flatMap(({ link, edge }) => {
-    const ends = linkEnds(link, items, shifts);
-    const at = (rect: Rect, item: string) => shifted(rect, shifts.get(item) ?? 0);
-    return ends
-      ? [
-          {
-            link,
-            edge,
-            ends,
-            source: at(link.source, link.sourceItem),
-            target: at(link.target, link.targetItem),
-          },
-        ]
-      : [];
+  const routed = plans.flatMap((plan) => {
+    const route = plan && routePlan(plan, scene, rects);
+    return plan && route ? [{ plan, route }] : [];
   });
-  const frames = new Map(
-    [...movedItems].filter(([id]) => separated.has(id)).map(([id, { rect }]) => [id, rect])
-  );
-  spreadSharedEnds(endsBySide(planned, titleSpans(children, frames, direction)));
-  assignLanes(planned.map(({ ends }) => ends));
-  for (const { link, edge, ends } of planned) {
-    const route = routeBetween(ends);
-    applyRoute(edge, route, frameCrossings(route, link, movedItems, separated), direction);
+  return { rects, scene, routed };
+}
+
+/** The points of the route ELK gave an edge, in diagram coordinates. */
+function sectionPoints(edge: ElkEdgeLike, rects: ReadonlyMap<string, Rect>): P[] {
+  const origin = rects.get(edge.container ?? ROOT) ?? { x: 0, y: 0 };
+  const section = edge.sections?.[0];
+  return section
+    ? [section.startPoint, ...(section.bendPoints ?? []), section.endPoint].map((point) => ({
+        x: point.x + origin.x,
+        y: point.y + origin.y,
+      }))
+    : [];
+}
+
+/** A route's segments as boxes a line's width thick, so they can be tested like nodes. */
+function thinBoxes(points: readonly P[]): Rect[] {
+  return points.slice(1).map((point, index) => {
+    const from = points[index];
+    return {
+      x: Math.min(from.x, point.x) - LINE_HALF_WIDTH,
+      y: Math.min(from.y, point.y) - LINE_HALF_WIDTH,
+      width: Math.abs(point.x - from.x) + 2 * LINE_HALF_WIDTH,
+      height: Math.abs(point.y - from.y) + 2 * LINE_HALF_WIDTH,
+    };
+  });
+}
+
+/**
+ * How far to shift `item` across the flow so its routed link runs straight into it (or out of
+ * it): the distance from the link's last run along the flow to its end, when the route ends with
+ * a run along the flow, one across it and one along it again.
+ */
+function approachShift(points: readonly P[], atEnd: boolean, direction: ElkDirection): number {
+  const across = direction === 'RIGHT' || direction === 'LEFT' ? 'y' : 'x';
+  const ordered = atEnd ? points : [...points].reverse();
+  if (ordered.length < 4) {
+    return 0;
   }
+  const [approach, turn, corner, end] = ordered.slice(-4);
+  return zShaped([approach, turn, corner, end], across) ? turn[across] - end[across] : 0;
+}
+
+/** Do the four points run along the flow, across it, and along it again? */
+function zShaped([approach, turn, corner, end]: readonly P[], across: 'x' | 'y'): boolean {
+  const along = across === 'x' ? 'y' : 'x';
+  const same = (a: number, b: number) => Math.abs(a - b) < STRAIGHT_EPS;
+  return (
+    same(corner[across], end[across]) &&
+    same(turn[along], corner[along]) &&
+    same(approach[across], turn[across])
+  );
+}
+
+/**
+ * Shift each arranged frame sitting directly in the diagram again, in flow order, so that the
+ * link that decided its first shift runs straight now that it is routed round obstacles, and
+ * route everything again after each shift.
+ */
+function refineShifts(input: AlignInput, decided: ReadonlyMap<string, RowLink>) {
+  let state = routeAll(input);
+  const children = input.graph.children ?? [];
+  for (const [item, link] of decided) {
+    const found = state.routed.find(
+      ({ plan }) => plan.edge.id === link.id && plan.container === ROOT
+    );
+    const shift = found
+      ? approachShift(found.route.points, found.plan.targetItem === item, input.direction)
+      : 0;
+    const child = children.find(({ id }) => id === item);
+    if (child && Math.abs(shift) > STRAIGHT_EPS) {
+      shiftChild(child, shift, input.direction);
+      state = routeAll(input);
+    }
+  }
+  return state;
+}
+
+/** Spread the routes' ends and crowded runs, then hand each route to its edge. */
+function finishRoutes({ rects, scene, routed }: ReturnType<typeof routeAll>): void {
+  const nodes = new Map([...scene.leaves, ...scene.frames]);
+  const ended = routed.flatMap(({ plan, route }) => {
+    const source = nodes.get(plan.edge.sources[0]);
+    const target = nodes.get(plan.edge.targets[0]);
+    const ends: [Rect, Rect] | undefined = source && target ? [source, target] : undefined;
+    return ends ? [{ plan, route, ends }] : [];
+  });
+  spreadEnds(
+    ended.flatMap(({ plan, route }) =>
+      terminalsOf(route, [plan.edge.sources[0], plan.edge.targets[0]], nodes)
+    ),
+    scene.titles
+  );
+  spreadChannels(ended);
+  const fixed = [...scene.leaves.values(), ...scene.titles, ...scene.lines];
+  for (const { plan, route } of routed) {
+    const origin = rects.get(plan.container) ?? { x: 0, y: 0, width: 0, height: 0 };
+    const others = routed.flatMap((other) =>
+      other.route === route ? [] : thinBoxes(other.route.points)
+    );
+    applyRoute(plan.edge, route.points, origin, scene.frames, [...fixed, ...others]);
+  }
+}
+
+/**
+ * Arrange the separately laid-out subgraphs as aligned rows (or columns), after ELK has laid out
+ * the graph and before its result is read.
+ *
+ * Each such subgraph sitting directly in the diagram is shifted across the flow so that its first
+ * link, in source order, to an item placed before it runs straight. Then every link between two
+ * different items of the diagram that touches such a subgraph, and every link between two frames
+ * of one arranged group, is routed again by {@link routeInFlow}, through the gaps between the
+ * items and corridors beside the nodes. The ends that meet on one side of a node are spread along
+ * it, and segments that share a lane or a corridor are spread across it. A link between items in
+ * one band keeps ELK's route. End labels are handed back unplaced, so they take the default
+ * placement along the new route.
+ */
+export function alignDirectedSubgraphs(input: AlignInput): void {
+  const { graph, separated } = input;
+  graph.edges = [
+    ...(graph.edges ?? []).filter((edge) => !edge.ordering),
+    ...(input.withheld ?? []),
+  ];
+  if (!(graph.children ?? []).some((child) => separated.has(child.id))) {
+    return;
+  }
+  restoreProxies(graph.edges ?? []);
+  finishRoutes(refineShifts(input, shiftRows(input)));
 }
 
 /** The inverse of {@link rectToFlow}. */
