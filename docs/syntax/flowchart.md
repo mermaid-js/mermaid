@@ -1786,6 +1786,7 @@ In a `flowchart LR` or `RL`, subgraphs with `direction TB` or `BT` become column
 A row that holds subgraphs with their own direction is a band: in a `flowchart TB`, a `direction LR` subgraph holding `direction TB` subgraphs draws them as columns side by side, in the order they are written, all of one height.
 The columns of a band are spread over the band's whole width with equal gaps, and each gap is at least as wide as the widest label of a link into the band, so a label never covers a column.
 The nodes of a row are spread over its whole width the same way, unless that would make one of the row's links turn more often; then the row keeps its nodes together and is shifted so its first link runs straight.
+A row right above or below a band puts each node over a column: over the column in the same place when the row has as many nodes as the band has columns, or else over the one column each node links to, so a link from a node into its own column runs straight.
 
 ```mermaid-example
 ---
