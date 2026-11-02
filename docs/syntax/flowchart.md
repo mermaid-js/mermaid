@@ -1850,7 +1850,7 @@ Each subgraph is shifted so that its first link to something placed before it, i
 A link that cannot reach the facing side of its target, because another node is in the way, runs down the nearest free corridor (the gap between two subgraphs or two nodes, or the margin inside a frame) and enters from the side facing that corridor.
 A link runs straight when its ends line up; otherwise it takes at most two turns into the top or bottom of a node and at most three into a side.
 Its label goes on its longest segment where the label covers nothing else.
-Links that meet on one side of a node are spread along it, at least an arrowhead apart; a link that can run straight keeps its place, and the others keep their order so they do not cross.
+Links that meet on one side of a node are spread along it, far enough apart that the widest end marker (a circle, 14 px across) does not touch the next one; a link that can run straight keeps its place, and the others keep their order so they do not cross.
 Their ends stay clear of the title of the subgraph above them when the rest of the side has room.
 Links that would run along the same gap or corridor each get a lane of their own.
 Rows that alternate `direction LR` and `direction RL` draw a snake, with each row's last node straight above the next row's first node.

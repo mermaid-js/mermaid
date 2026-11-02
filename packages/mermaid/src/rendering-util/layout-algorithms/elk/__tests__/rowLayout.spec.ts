@@ -18,6 +18,9 @@ import {
   spanAlignedFrames,
   toFlow,
   spreadKeepsTurns,
+  markerReach,
+  END_MARKERS,
+  END_SPACING,
 } from '../rowLayout.js';
 import type { TreeData } from '../find-common-ancestor.js';
 
@@ -383,6 +386,18 @@ describe('proxyRowLinks', () => {
   });
 });
 
+describe('end spacing', () => {
+  it('measures how far each end marker reaches across its link', () => {
+    expect(markerReach(END_MARKERS.point)).toBeCloseTo(12.78, 2);
+    expect(markerReach(END_MARKERS.circle)).toBe(14);
+    expect(markerReach(END_MARKERS.cross)).toBe(12);
+  });
+
+  it('keeps two link ends the widest marker and a pixel apart', () => {
+    expect(END_SPACING).toBe(15);
+  });
+});
+
 describe('spreadKeepsTurns', () => {
   it('lets a link that turned turn once more when its row is spread', () => {
     expect(spreadKeepsTurns(1, 2)).toBe(true);
@@ -612,8 +627,8 @@ const sharedEnd = (links: [string, string][]): any => ({
   ],
 });
 
-/** The minimum arrowhead separation the gate asks for: an arrowhead and a pixel. */
-const ARROWHEAD_APART = 9;
+/** The least distance between two link ends on one side: the widest end marker and a pixel. */
+const ARROWHEAD_APART = END_SPACING;
 
 describe('links that end on one side of one node', () => {
   const tips = (data: any, links: [string, string][]) =>
@@ -680,7 +695,7 @@ describe('spreading link ends', () => {
 
 describe('spreading around pins', () => {
   it('moves a point that does not fit beside a pin to the nearest free spot', () => {
-    expect(pinStraight([50, 10], 45, 100, 20)).toEqual([50, 59]);
+    expect(pinStraight([50, 10], 45, 100, 20)).toEqual([50, 50 + END_SPACING]);
   });
 });
 
