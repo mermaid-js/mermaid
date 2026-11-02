@@ -10,6 +10,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
+import { alignDirectedSubgraphs, proxyRowLinks, spanAlignedFrames } from './rowLayout.js';
 import {
   type ElkDirection,
   type ElkEdgeLike,
@@ -131,6 +132,8 @@ interface ElkLayoutState {
   elkGraph: any;
   nodeDb: Record<string, NodeWithVertex>;
   parentLookupDb: TreeData;
+  /** Set when `elk.directedSubgraphs` is `aligned`: the subgraphs laid out on their own. */
+  aligned?: { separated: ReadonlyMap<string, ElkDirection>; direction: ElkDirection };
 }
 
 interface ElkLayoutResult {
@@ -711,6 +714,15 @@ export async function runElkLayoutCore(
     containerOrigins(graph),
     layoutState.parentLookupDb
   );
+  if (layoutState.aligned) {
+    const order = new Map(data4Layout.edges.map((edge, index) => [edge.id, index]));
+    alignDirectedSubgraphs({
+      graph,
+      tree: layoutState.parentLookupDb,
+      ...layoutState.aligned,
+      orderOf: (id) => order.get(id) ?? order.size,
+    });
+  }
   applyElkLayoutResult(data4Layout, graph, layoutState, elkContext.log);
   orderNodesForElkPaint(data4Layout.nodes);
   return graph;
@@ -735,13 +747,15 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
+  const aligned = data4Layout.config.elk?.directedSubgraphs === 'aligned';
   const separated =
     elkGraph.layoutOptions['elk.algorithm'] === 'elk.layered'
       ? findSeparatedGroups(
           directionGroups(data4Layout.nodes),
           rootDirection,
           edgeEnds(elkGraph, nodeDb),
-          parentLookupDb
+          parentLookupDb,
+          { requireInnerEdge: !aligned }
         )
       : new Map<string, ElkDirection>();
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log, separated);
@@ -749,9 +763,11 @@ export function buildElkGraphFromLayoutData(
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
   applyCyclicEntryConstraint(data4Layout, nodeDb);
-  routeThroughGroupPorts(elkGraph, nodeDb, parentLookupDb, separated, rootDirection);
+  routeThroughGroupPorts(elkGraph, nodeDb, parentLookupDb, separated, rootDirection, aligned);
 
-  return { elkGraph, nodeDb, parentLookupDb };
+  return aligned && separated.size > 0
+    ? { elkGraph, nodeDb, parentLookupDb, aligned: { separated, direction: rootDirection } }
+    : { elkGraph, nodeDb, parentLookupDb };
 }
 
 function directionGroups(nodes: Node[]) {
@@ -781,10 +797,14 @@ function routeThroughGroupPorts(
   nodeDb: Record<string, NodeWithVertex>,
   parentLookupDb: TreeData,
   separated: ReadonlyMap<string, ElkDirection>,
-  rootDirection: ElkDirection
+  rootDirection: ElkDirection,
+  aligned: boolean
 ): void {
   if (separated.size === 0) {
     return;
+  }
+  if (aligned) {
+    proxyRowLinks(elkGraph.edges, parentLookupDb, separated);
   }
   const { edges, ports } = splitAtGroupPorts(
     elkGraph.edges,
@@ -1436,6 +1456,14 @@ function applyElkLayoutResult(
   // above, and `cutter2` clips an edge that ends on a group against it, so an
   // edge attaching to a frame follows the frame when it moves.
   evenGroupFrames(graph.children ?? [], layoutState, nodeById, graph);
+  if (layoutState.aligned) {
+    spanAlignedFrames(
+      (graph.children ?? [])
+        .filter((child) => layoutState.aligned?.separated.has(child.id))
+        .map((child) => ({ box: layoutState.nodeDb[child.id], painted: nodeById.get(child.id) })),
+      layoutState.aligned.direction
+    );
+  }
   applyElkEdgeLayout(data4Layout, graph, layoutState, log);
 }
 
