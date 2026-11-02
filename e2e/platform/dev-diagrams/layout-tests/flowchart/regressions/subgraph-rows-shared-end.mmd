@@ -1,0 +1,22 @@
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+%% Two links end on the top of one node: their arrowheads are spread apart along it, and the lined-up one stays straight.
+flowchart TB
+    subgraph r1 ["Orders"]
+        direction LR
+        A1["Receive"] --> A2["Check"] --> A3["Reserve"] --> A4["Pick"] --> A5["Pack"]
+    end
+    subgraph r2 ["Returns"]
+        direction RL
+        B1["Inspect"] --> B2["Restock"]
+    end
+    subgraph r3 ["Exchanges"]
+        direction LR
+        C1["Request"] --> C2["Approve"] --> C3["Collect"]
+    end
+    A5 --> B1
+    C3 --> B1
