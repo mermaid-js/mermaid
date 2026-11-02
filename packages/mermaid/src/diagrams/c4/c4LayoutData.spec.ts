@@ -4,7 +4,7 @@ import c4Db from './c4Db.js';
 import c4 from './parser/c4Diagram.jison';
 import { getData } from './c4LayoutData.js';
 import type { MermaidConfig } from '../../config.type.js';
-import type { Edge } from '../../rendering-util/types.js';
+import type { Edge, Node } from '../../rendering-util/types.js';
 import type { C4LabelNudge } from './c4Types.js';
 
 setConfig({ securityLevel: 'strict' });
@@ -304,5 +304,55 @@ Rel(a, b, "Uses")`);
     const [edge] = edges as (Edge & C4LabelNudge)[];
     expect(edge.labelOffsetX).toBeUndefined();
     expect(edge.labelOffsetY).toBeUndefined();
+  });
+});
+
+describe('c4LayoutData.getData: boundary direction', () => {
+  const dirOf = (nodes: Node[], id: string) => nodes.find((n) => n.id === id)?.dir;
+
+  it('gives a boundary the direction its statement asks for', () => {
+    const db = parse(`C4Container
+Container_Boundary(shop, "Web shop") {
+  direction LR
+  Container(cart, "Cart")
+}
+Container_Boundary(warehouse, "Warehouse") {
+  direction BT
+  Container(pick, "Pick")
+}`);
+
+    const { nodes } = getData(db, config());
+    expect(dirOf(nodes, 'shop')).toBe('LR');
+    expect(dirOf(nodes, 'warehouse')).toBe('BT');
+  });
+
+  it('leaves dir unset on a boundary without a statement and on every element', () => {
+    const db = parse(`C4Container
+Container_Boundary(shop, "Web shop") {
+  direction LR
+  Container(cart, "Cart")
+}
+Container_Boundary(warehouse, "Warehouse") {
+  Container(pick, "Pick")
+}
+Person(buyer, "Buyer")`);
+
+    const { nodes } = getData(db, config());
+    expect(dirOf(nodes, 'warehouse')).toBeUndefined();
+    expect(nodes.filter((n) => !n.isGroup).map((n) => n.dir)).toEqual([
+      undefined,
+      undefined,
+      undefined,
+    ]);
+  });
+
+  it('sets nothing for a diagram that never asks', () => {
+    const db = parse(`C4Container
+Container_Boundary(shop, "Web shop") {
+  Container(cart, "Cart")
+}`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.every((n) => n.dir === undefined)).toBe(true);
   });
 });

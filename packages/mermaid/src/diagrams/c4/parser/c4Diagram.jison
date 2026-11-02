@@ -296,6 +296,7 @@ diagramStatement
     | COMPONENT_EXT_DB attributes {yy.addComponent('external_component_db', ...$2); $$=$2;}
     | COMPONENT_EXT_QUEUE attributes {yy.addComponent('external_component_queue', ...$2); $$=$2;}
     | boundaryStatement
+    | boundaryDirection
     | REL attributes {yy.addRel('rel', ...$2); $$=$2;}
     | BIREL attributes {yy.addRel('birel', ...$2); $$=$2;}
     | REL_U attributes {yy.addRel('rel_u', ...$2); $$=$2;}
@@ -307,6 +308,17 @@ diagramStatement
     | UPDATE_EL_STYLE attributes {yy.updateElStyle('update_el_style', ...$2); $$=$2;}
     | UPDATE_REL_STYLE attributes {yy.updateRelStyle('update_rel_style', ...$2); $$=$2;}
     | UPDATE_LAYOUT_CONFIG attributes {yy.updateLayoutConfig('update_layout_config', ...$2); $$=$2;}
+    ;
+
+boundaryDirection
+    : direction_tb
+    { yy.setBoundaryDirection('TB');}
+    | direction_bt
+    { yy.setBoundaryDirection('BT');}
+    | direction_rl
+    { yy.setBoundaryDirection('RL');}
+    | direction_lr
+    { yy.setBoundaryDirection('LR');}
     ;
 
 attributes
