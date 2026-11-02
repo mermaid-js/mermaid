@@ -1,0 +1,14 @@
+---
+description: Right-angle self-calls enter nested activations and return to the parent activation.
+config:
+  look: classic
+  sequence:
+    rightAngles: true
+---
+sequenceDiagram
+  Alice->>+Bob: request
+  Bob->>+Bob: A
+  Bob-->>-Bob: return A
+  Bob->>+Bob: B
+  Bob-->>-Bob: return B
+  Bob-->>-Alice: response
