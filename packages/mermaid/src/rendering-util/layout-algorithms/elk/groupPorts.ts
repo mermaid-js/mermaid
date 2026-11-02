@@ -393,7 +393,9 @@ function stitch<E extends ElkEdgeLike>(
         return point ? [{ groupId, point }] : [];
       })
     : [];
-  stitched.labels = segments.flatMap((segment) =>
+  // The renderer reads the main label as the first one, so the middle segment's labels lead.
+  const labelOrder = [segments[middle], ...segments.filter((_, index) => index !== middle)];
+  stitched.labels = labelOrder.flatMap((segment) =>
     (segment.labels ?? []).map((label) => shift(label, offsetOf(segment)))
   );
   const [startPoint] = points;
