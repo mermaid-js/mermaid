@@ -174,6 +174,72 @@ const pairRow = (linked: boolean) => ({
   tree: { parentById: { a: 'pair', b: 'pair', w: 'wide' }, childrenById: {} },
 });
 
+/**
+ * A row of `count` nodes over a band of three columns 100 wide, packed at the left of a 600 wide
+ * frame; `links` joins row nodes to columns by place.
+ */
+const rowOverBand = (count: number, links: [number, number][] = []) => {
+  const nodes = Array.from({ length: count }, (_, index) => box(`n${index}`, 20 + 60 * index, 20));
+  const columns = [0, 1, 2].map((index) =>
+    box(`col${index}`, 20 + 110 * index, 20, 100, 60, [box(`c${index}`, 25, 20)])
+  );
+  return {
+    children: [box('row', 0, 0, 600, 70, nodes), box('band', 0, 100, 600, 100, columns)],
+    edges: links.map(([from, to]) => ({
+      id: `n${from}-c${to}`,
+      sources: [`n${from}`],
+      targets: [`c${to}`],
+    })) as ElkEdgeLike[],
+    separated: new Map([
+      ['row', 'RIGHT' as const],
+      ['band', 'RIGHT' as const],
+      ...columns.map(({ id }) => [id, 'DOWN' as const] as const),
+    ]),
+    groups: [{ frames: columns.map(({ id }) => id) }],
+    direction: 'DOWN' as const,
+    tree: {
+      parentById: {
+        ...Object.fromEntries(nodes.map(({ id }) => [id, 'row'])),
+        ...Object.fromEntries(
+          columns.flatMap(({ id }, index) => [
+            [id, 'band'],
+            [`c${index}`, id],
+          ])
+        ),
+      },
+      childrenById: {},
+    },
+  };
+};
+const centresOf = (frame: { children?: { x?: number; width?: number }[] }) =>
+  frame.children?.map(({ x = 0, width = 0 }) => x + width / 2);
+
+describe('justifyFrames over a band', () => {
+  it('centres each node of a row over the column of the same place', () => {
+    const input = rowOverBand(3);
+    justifyFrames(input);
+    const [row, band] = input.children;
+    expect(centresOf(row)).toEqual(centresOf(band));
+  });
+
+  it('centres each node over the one column it links to, when the counts differ', () => {
+    const input = rowOverBand(2, [
+      [0, 0],
+      [1, 2],
+    ]);
+    justifyFrames(input);
+    const [row, band] = input.children;
+    const columns = centresOf(band) ?? [];
+    expect(centresOf(row)).toEqual([columns[0], columns[2]]);
+  });
+
+  it('spreads a row evenly when its nodes do not each link to one column', () => {
+    const input = rowOverBand(2, [[0, 1]]);
+    justifyFrames(input);
+    expect(input.children[0].children?.map(({ x }) => x)).toEqual([20, 530]);
+  });
+});
+
 describe('justifyFrames', () => {
   it('spreads two nodes with no link between them to the ends of a wide row', () => {
     const input = pairRow(false);
