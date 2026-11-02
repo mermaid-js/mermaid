@@ -1379,17 +1379,19 @@ function spanAcross({ graph, direction }: AlignInput): number {
 }
 
 /**
- * Spread every band of columns over the full span, and every row whose spreading neither makes
+ * Spread every band of columns over the full span and put every row beside a band over its
+ * columns, whatever that does to the turns of its links; then spread every other row whose spreading neither makes
  * one of its links turn more than {@link SPREAD_EXTRA_TURNS} more often nor shifts another row out
  * past the span the diagram had; the other rows keep their first-link alignment.
  */
 function chooseSpread(input: AlignInput) {
   const snapshot = snapshotOf(input);
   const rows = rowsToJustify(justifyInput(input));
-  const spread = new Set(rows.filter(({ band }) => band).map(({ id }) => id));
+  const fixed = rows.filter(({ band, overBand }) => band || overBand);
+  const spread = new Set(fixed.map(({ id }) => id));
   let state = arrange(input, snapshot, spread);
   let span = spanAcross(input);
-  for (const { id } of rows.filter(({ band }) => !band)) {
+  for (const { id } of rows.filter((row) => !fixed.includes(row))) {
     const trial = arrange(input, snapshot, new Set([...spread, id]));
     const trialSpan = spanAcross(input);
     if (trialSpan <= span + STRAIGHT_EPS && !addsTurns(state, trial, id, input.tree)) {

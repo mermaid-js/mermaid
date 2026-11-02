@@ -296,9 +296,20 @@ function stackedRows(input: JustifyInput, axis: Axis): Row[] {
 }
 
 /** The frames {@link justifyFrames} would spread, and whether each is a band of columns. */
-export function rowsToJustify(input: JustifyInput): { id: string; band: boolean }[] {
+/**
+ * The frames {@link justifyFrames} would spread, whether each is a band of columns, and whether
+ * it is a row it would put over the columns of the band beside it.
+ */
+export function rowsToJustify(
+  input: JustifyInput
+): { id: string; band: boolean; overBand: boolean }[] {
   const axis = AXES[input.direction];
-  return axis ? stackedRows(input, axis).map(({ frame, band }) => ({ id: frame.id, band })) : [];
+  const rows = axis ? stackedRows(input, axis) : [];
+  return rows.map((row) => ({
+    id: row.frame.id,
+    band: row.band,
+    overBand: !!axis && !row.band && overBandCentres(row, rows, input, axis) !== undefined,
+  }));
 }
 
 /**
@@ -369,6 +380,12 @@ function linkedColumns(slot: readonly JustifyBox[], band: Row, { edges, tree }: 
   return [...new Set(places)];
 }
 
+/** Where to centre the slots of a row over the band next to it, if it has one. */
+function overBandCentres(row: Row, rows: readonly Row[], input: JustifyInput, axis: Axis) {
+  const band = neighbourBand(row, rows, axis);
+  return band && columnCentres(row, band, input, axis);
+}
+
 /**
  * The moves that centre a row's slots over the columns of the band next to it, if they keep
  * every gap at least its least size and the slots inside the frame's padding.
@@ -380,8 +397,7 @@ function columnMoves(
   input: JustifyInput,
   axis: Axis
 ): Map<string, number> | undefined {
-  const band = neighbourBand(row, rows, axis);
-  const centres = band && columnCentres(row, band, input, axis);
+  const centres = overBandCentres(row, rows, input, axis);
   if (!centres) {
     return undefined;
   }

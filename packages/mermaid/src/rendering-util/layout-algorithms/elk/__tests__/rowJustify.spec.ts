@@ -6,6 +6,7 @@ import {
   justifySlots,
   moveInnerEdges,
   neededSize,
+  rowsToJustify,
   shareGaps,
   slotsOf,
 } from '../rowJustify.js';
@@ -231,6 +232,14 @@ describe('justifyFrames over a band', () => {
     const [row, band] = input.children;
     const columns = centresOf(band) ?? [];
     expect(centresOf(row)).toEqual([columns[0], columns[2]]);
+  });
+
+  it('marks a row it puts over the columns, so its links do not hold it back', () => {
+    expect(rowsToJustify(rowOverBand(3))).toEqual([
+      { id: 'row', band: false, overBand: true },
+      { id: 'band', band: true, overBand: false },
+    ]);
+    expect(rowsToJustify(rowOverBand(2, [[0, 1]]))[0].overBand).toBe(false);
   });
 
   it('spreads a row evenly when its nodes do not each link to one column', () => {
