@@ -178,7 +178,7 @@ const ARROW_MAP: Record<string, [string, string]> = {
  * twice this as having no usable anchor span, so the option string below is
  * built from it — the two must not be able to disagree.
  */
-const PORTS_SURROUNDING_MARGIN = 12;
+export const PORTS_SURROUNDING_MARGIN = 12;
 /** The margin spelled as an ELK margin, because `spacing.portsSurrounding` takes one. */
 const PORTS_SURROUNDING = `[top=${PORTS_SURROUNDING_MARGIN},left=${PORTS_SURROUNDING_MARGIN},bottom=${PORTS_SURROUNDING_MARGIN},right=${PORTS_SURROUNDING_MARGIN}]`;
 /** Padding between a subgraph frame and its children. ELK's own default is 12. */
