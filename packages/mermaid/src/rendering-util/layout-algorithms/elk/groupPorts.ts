@@ -31,6 +31,8 @@ export interface ElkPort {
 interface ElkLabelLike {
   x?: number;
   y?: number;
+  width?: number;
+  height?: number;
   layoutOptions?: Record<string, unknown>;
 }
 
@@ -56,6 +58,8 @@ export interface ElkEdgeLike {
   crossings?: { groupId: string; point: P }[];
   sections?: { startPoint: P; endPoint: P; bendPoints?: P[] }[];
   splitOf?: SplitMark;
+  /** The real ends of an edge handed to ELK between the two items it links. */
+  proxyOf?: { sources: string[]; targets: string[] };
 }
 
 interface ElkNodeLike {
@@ -176,19 +180,21 @@ function groupsTouchedBy({ source, target }: EdgeEnds, tree: TreeData): string[]
  * @param rootDirection - the direction of the diagram
  * @param edges - every edge between two known nodes
  * @param tree - the subgraph parent lookup
+ * @param options - `requireInnerEdge: false` drops the condition on an edge inside the subgraph
  * @returns the subgraphs to lay out on their own, each with its direction; empty when none differs
  */
 export function findSeparatedGroups(
   groups: readonly DirectionGroup[],
   rootDirection: ElkDirection,
   edges: readonly EdgeEnds[],
-  tree: TreeData
+  tree: TreeData,
+  { requireInnerEdge = true }: { requireInnerEdge?: boolean } = {}
 ): Map<string, ElkDirection> {
   const { internal, ownMember } = edgesHeld(edges, tree);
   const directed = findDirectedGroups(
     groups,
     rootDirection,
-    (id) => internal.has(id) && !ownMember.has(id),
+    (id) => (internal.has(id) || !requireInnerEdge) && !ownMember.has(id),
     tree
   );
   if (directed.size === 0) {
