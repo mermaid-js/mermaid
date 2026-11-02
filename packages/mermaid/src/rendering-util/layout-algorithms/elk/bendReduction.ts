@@ -1,5 +1,5 @@
 import { findEdgeIntersections, type Point } from '../../rendering-elements/lineJump.js';
-import { findFrameOverlaps } from './frameProtection.js';
+import { findFrameOverlaps } from './frameOverlap.js';
 import { terminalDeficit, minimumRawLead, type TerminalRunway } from './terminalRunway.js';
 import { segmentHitsTitle, type TitleBox } from './titleProtection.js';
 
