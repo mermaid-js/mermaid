@@ -772,7 +772,8 @@ function routePlan(
     source: ends.source,
     target: ends.target,
     gaps: gapsBetween(flow(from), flow(to), members),
-    obstacles: [...ends.leaves.values(), ...scene.titles.map(flow), ...scene.lines.map(flow)],
+    obstacles: [...ends.leaves.values(), ...scene.titles.map(flow)],
+    crossable: scene.lines.map(flow),
     walls: frames.flatMap((frame) => [frame.x, frame.x + frame.width]),
     limits: limitsOf(container ? [flow(container)] : [flow(from), flow(to), ...members]),
   });

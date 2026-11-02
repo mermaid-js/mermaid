@@ -32,6 +32,8 @@ export interface RouteProblem {
   /** The free bands across the flow between the source's item and the target's, in order. */
   gaps: readonly (readonly [number, number])[];
   obstacles: readonly Box[];
+  /** Lines a route may cross, at a cost: the links ELK drew inside frames. */
+  crossable?: readonly Box[];
   walls: readonly number[];
   /** How far across the flow a corridor may lie: the extent of the arranged frames. */
   limits: readonly [number, number];
@@ -320,11 +322,30 @@ export function routeInFlow(problem: RouteProblem): Route | undefined {
     )
   );
   const free = candidates.filter((route) => isFree(route.points, obstacles));
+  const cost = (route: Route) =>
+    score(route) + crossings(route.points, problem.crossable ?? []) * CROSSING_COST;
   return free.reduce<Route | undefined>(
-    (best, route) => (best === undefined || score(route) < score(best) ? route : best),
+    (best, route) => (best === undefined || cost(route) < cost(best) ? route : best),
     undefined
   );
 }
+
+/** How many times a route crosses the given lines. */
+export function crossings(points: readonly P[], lines: readonly Box[]): number {
+  return points
+    .slice(1)
+    .reduce(
+      (sum, point, index) =>
+        sum + lines.filter((line) => crosses(points[index], point, line)).length,
+      0
+    );
+}
+
+/**
+ * Crossing a link drawn inside a frame costs as much as a detour of this many pixels: enough to
+ * prefer a corridor beside it, little enough that a far corridor never wins over one crossing.
+ */
+const CROSSING_COST = 400;
 
 /** A turn costs more than any length a diagram reaches. */
 const TURN_COST = 1e6;
