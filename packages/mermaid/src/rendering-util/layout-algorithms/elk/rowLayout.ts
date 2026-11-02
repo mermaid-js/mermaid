@@ -2,7 +2,7 @@ import type { P } from './geometry.js';
 import type { TreeData } from './find-common-ancestor.js';
 import type { ElkDirection, ElkEdgeLike } from './groupPorts.js';
 import { findCommonAncestor } from './find-common-ancestor.js';
-import { type Channel, type Route, routeInFlow, routeLength } from './rowRouter.js';
+import { type Channel, type Route, isFree, routeInFlow, routeLength } from './rowRouter.js';
 
 /** A box by its top-left corner. */
 export interface Rect {
@@ -794,6 +794,8 @@ interface Terminal {
   key: string;
   along: 'x' | 'y';
   wish: number;
+  /** The boxes of the route's two end nodes, which its ends may touch. */
+  ends: readonly [Rect, Rect];
 }
 
 /** Which side of its node a route's end touches, and the axis that side runs along. */
@@ -806,22 +808,57 @@ function sideOf(end: P, next: P): { side: Side; along: 'x' | 'y' } {
 
 function terminalsOf(
   route: Route,
-  ends: readonly [string, string],
-  nodes: ReadonlyMap<string, Rect>
+  ids: readonly [string, string],
+  ends: readonly [Rect, Rect]
 ): Terminal[] {
   const { points } = route;
   const last = points.length - 1;
   const indices: [number, number] = [0, last];
-  return indices.flatMap((index, which) => {
-    const node = nodes.get(ends[which]);
-    if (!node) {
-      return [];
-    }
+  return indices.map((index, which) => {
     const step = index === 0 ? 1 : -1;
     const { side, along } = sideOf(points[index], points[index + step]);
     const beyond = points[index + 2 * step] ?? points[last - index];
-    return [{ route, index, node, key: `${ends[which]} ${side}`, along, wish: beyond[along] }];
+    const key = `${ids[which]} ${side}`;
+    return { route, index, node: ends[which], key, along, wish: beyond[along], ends };
   });
+}
+
+/** Move a route's end as {@link moveEnd} does, unless that takes the route through an obstacle. */
+/**
+ * Does a route leave its first node and enter its last one square to the side it touches, with
+ * no segment of zero length? A route that runs along a node's edge does not.
+ */
+export function meetsSquarely(points: readonly P[], [from, to]: readonly [Rect, Rect]): boolean {
+  const last = points.length - 1;
+  const empty = points
+    .slice(1)
+    .some(
+      (point, index) =>
+        Math.abs(point.x - points[index].x) + Math.abs(point.y - points[index].y) < STRAIGHT_EPS
+    );
+  return !empty && square(points[0], points[1], from) && square(points[last], points[last - 1], to);
+}
+
+/** Is the segment from `end`, on the border of `node`, square to the side `end` lies on? */
+function square(end: P, next: P, node: Rect): boolean {
+  const onLeftOrRight =
+    Math.abs(end.x - node.x) < STRAIGHT_EPS ||
+    Math.abs(end.x - (node.x + node.width)) < STRAIGHT_EPS;
+  const horizontal = Math.abs(end.y - next.y) < STRAIGHT_EPS;
+  return onLeftOrRight === horizontal;
+}
+
+function moveIfFree(terminal: Terminal, position: number, obstacles: readonly Rect[]): boolean {
+  const { route, ends } = terminal;
+  const saved = { points: [...route.points], channels: [...route.channels] };
+  moveEnd(terminal, position);
+  const others = obstacles.filter((box) => box !== ends[0] && box !== ends[1]);
+  if (isFree(route.points, others) && meetsSquarely(route.points, ends)) {
+    return true;
+  }
+  route.points = saved.points;
+  route.channels = saved.channels;
+  return false;
 }
 
 /** Move a route's end along its node's side, and the corner after it with it. */
@@ -850,7 +887,11 @@ function moveEnd({ route, index, along }: Terminal, position: number): void {
  * Spread the ends that meet on one side of one node, as {@link pinStraight} and
  * {@link slideToWishes} place them, clear of a frame title above the side when there is room.
  */
-function spreadEnds(terminals: readonly Terminal[], titles: readonly Rect[]): void {
+function spreadEnds(
+  terminals: readonly Terminal[],
+  titles: readonly Rect[],
+  obstacles: readonly Rect[]
+): void {
   const sides = new Map<string, Terminal[]>();
   for (const terminal of terminals) {
     sides.set(terminal.key, [...(sides.get(terminal.key) ?? []), terminal]);
@@ -866,11 +907,43 @@ function spreadEnds(terminals: readonly Terminal[], titles: readonly Rect[]): vo
     const room = Math.max(high - low, 0);
     const gap = Math.max(END_SPACING, Math.min(room / ends.length, room / (ends.length - 1)));
     const wishes = ends.map(({ wish }) => wish);
-    const inOrder = slideToWishes(packAlong(wishes, low, high, gap), wishes, low, high);
-    const pinned = pinStraight(wishes, low, high, gap);
-    const best = straightCount(pinned, wishes) > straightCount(inOrder, wishes) ? pinned : inOrder;
-    best.forEach((position, index) => moveEnd(ends[index], position));
+    const best = bestPositions(wishes, low, high, gap);
+    const stuck = ends.flatMap((end, index) =>
+      moveIfFree(end, best[index], obstacles) ? [] : [index]
+    );
+    if (stuck.length > 0) {
+      spreadAround(ends, stuck, [low, high], gap, obstacles);
+    }
   }
+}
+
+/** Positions packed in order or pinned where links run straight, whichever keeps more straight. */
+function bestPositions(wishes: readonly number[], low: number, high: number, gap: number) {
+  const inOrder = slideToWishes(packAlong(wishes, low, high, gap), wishes, low, high);
+  const pinned = pinStraight(wishes, low, high, gap);
+  return straightCount(pinned, wishes) > straightCount(inOrder, wishes) ? pinned : inOrder;
+}
+
+/**
+ * Spread the ends of one side again around the ends that could not move without their route
+ * crossing an obstacle: those stay where they are, and the others fit around them.
+ */
+function spreadAround(
+  ends: readonly Terminal[],
+  stuck: readonly number[],
+  [low, high]: readonly [number, number],
+  gap: number,
+  obstacles: readonly Rect[]
+): void {
+  const wishes = ends.map((end, index) =>
+    stuck.includes(index) ? end.route.points[end.index][end.along] : end.wish
+  );
+  const again = pinStraight(wishes, low, high, gap);
+  ends.forEach((end, index) => {
+    if (!stuck.includes(index)) {
+      moveIfFree(end, again[index], obstacles);
+    }
+  });
 }
 
 /** The span across a node's top that a title just above it takes, if any. */
@@ -1008,7 +1081,11 @@ function clusters(runs: readonly Run[]): Run[][] {
  * own spot and takes the place nearest it, and the middle runs take the rest in order. Runs of
  * one route never move against each other.
  */
-function spreadChannels(routes: readonly { route: Route; ends: readonly [Rect, Rect] }[]): void {
+function spreadChannels(
+  routes: readonly { route: Route; ends: readonly [Rect, Rect] }[],
+  obstacles: readonly Rect[]
+): void {
+  const endsOf = new Map(routes.map(({ route, ends }) => [route, ends]));
   const runs = routes.flatMap(({ route, ends }) => runsOf(route, ends));
   for (const group of clusters(runs)) {
     if (group.length < 2 || new Set(group.map(({ route }) => route)).size < group.length) {
@@ -1028,11 +1105,24 @@ function spreadChannels(routes: readonly { route: Route; ends: readonly [Rect, R
     group
       .filter(({ fixed }) => !fixed)
       .sort(byChannel)
-      .forEach(({ route, index, axis }, rank) => {
-        for (const point of [index, index + 1]) {
-          route.points[point] = { ...route.points[point], [axis]: places[rank] };
-        }
-      });
+      .forEach((run, rank) => moveRun(run, places[rank], obstacles, endsOf.get(run.route)));
+  }
+}
+
+/** Move a run across itself, unless that takes its route through an obstacle. */
+function moveRun(
+  { route, index, axis }: Run,
+  at: number,
+  obstacles: readonly Rect[],
+  ends: readonly [Rect, Rect] | undefined
+): void {
+  const saved = [...route.points];
+  for (const point of [index, index + 1]) {
+    route.points[point] = { ...route.points[point], [axis]: at };
+  }
+  const others = obstacles.filter((box) => box !== ends?.[0] && box !== ends?.[1]);
+  if (!isFree(route.points, others)) {
+    route.points = saved;
   }
 }
 
@@ -1254,12 +1344,13 @@ function finishRoutes({ rects, scene, routed }: ReturnType<typeof routeAll>): vo
     return ends ? [{ plan, route, ends }] : [];
   });
   spreadEnds(
-    ended.flatMap(({ plan, route }) =>
-      terminalsOf(route, [plan.edge.sources[0], plan.edge.targets[0]], nodes)
+    ended.flatMap(({ plan, route, ends }) =>
+      terminalsOf(route, [plan.edge.sources[0], plan.edge.targets[0]], ends)
     ),
-    scene.titles
+    scene.titles,
+    [...scene.leaves.values(), ...scene.titles]
   );
-  spreadChannels(ended);
+  spreadChannels(ended, [...scene.leaves.values(), ...scene.titles]);
   const fixed = [...scene.leaves.values(), ...scene.titles, ...scene.lines];
   for (const { plan, route } of routed) {
     const origin = rects.get(plan.container) ?? { x: 0, y: 0, width: 0, height: 0 };
