@@ -37,10 +37,31 @@ export interface RowItem {
 
 const ROOT = 'root';
 const STRAIGHT_EPS = 0.01;
-/** The width of the arrowhead markers. */
-const ARROWHEAD_WIDTH = 8;
-/** The least distance between two link ends on one side of a node: an arrowhead and a pixel. */
-const END_SPACING = ARROWHEAD_WIDTH + 1;
+/** A marker's viewBox and the box `markers.js` draws it into, each as width and height. */
+interface MarkerBox {
+  viewBox: readonly [number, number];
+  drawn: readonly [number, number];
+}
+
+/**
+ * How far a marker reaches across the link it ends: the height of its viewBox, scaled to fit the
+ * box it is drawn into while keeping its proportions, as SVG does by default.
+ */
+export function markerReach({ viewBox, drawn }: MarkerBox): number {
+  return viewBox[1] * Math.min(drawn[0] / viewBox[0], drawn[1] / viewBox[1]);
+}
+
+/** The end markers the neo look draws on a link (`*End-margin` in `markers.js`). */
+export const END_MARKERS: Record<'point' | 'circle' | 'cross', MarkerBox> = {
+  point: { viewBox: [11.5, 14], drawn: [10.5, 14] },
+  circle: { viewBox: [10, 10], drawn: [14, 14] },
+  cross: { viewBox: [15, 15], drawn: [12, 12] },
+};
+
+/** How far the widest end marker reaches across its link. */
+const END_MARKER_REACH = Math.max(...Object.values(END_MARKERS).map(markerReach));
+/** The least distance between two link ends on one side of a node: the widest marker and a pixel. */
+export const END_SPACING = END_MARKER_REACH + 1;
 /**
  * How far a link keeps from the edge of a frame's title: half the room a label keeps beside it in
  * a gap, so a link past a title reads as passing it rather than touching its text.
