@@ -78,10 +78,10 @@
 
 %%
 
-.*direction\s+TB[^\n]*                    return 'direction_tb';
-.*direction\s+BT[^\n]*                    return 'direction_bt';
-.*direction\s+RL[^\n]*                    return 'direction_rl';
-.*direction\s+LR[^\n]*                    return 'direction_lr';
+direction[ \t]+TB\b                       return 'direction_tb';
+direction[ \t]+BT\b                       return 'direction_bt';
+direction[ \t]+RL\b                       return 'direction_rl';
+direction[ \t]+LR\b                       return 'direction_lr';
 
 
 "title"\s[^#\n;]+                         return 'title';
