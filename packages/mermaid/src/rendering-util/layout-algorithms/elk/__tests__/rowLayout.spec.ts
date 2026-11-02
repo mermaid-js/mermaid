@@ -7,6 +7,7 @@ import {
   alignDirectedSubgraphs,
   commonSpan,
   labelSpot,
+  meetsSquarely,
   fromFlow,
   packAlong,
   pinStraight,
@@ -714,5 +715,120 @@ describe('a band of columns between two rows', () => {
     await runElkLayoutCore(data, elkRenderContext);
     const [a, c, b] = ['colA', 'colC', 'colB'].map((id) => byId(data).get(id));
     expect(a.x < c.x && c.x < b.x).toBe(false);
+  });
+});
+
+/** A node of a given size: the sizes of the steps of a real four-row pipeline. */
+const sized = (id: string, parentId: string, width: number, height: number) => ({
+  ...node(id, parentId),
+  width,
+  height,
+});
+
+/** Four rows; the second row's last step and the third row's last step both link into the fourth row's first. */
+const stages = (): any => ({
+  direction: 'TB',
+  config: { elk: { directedSubgraphs: 'aligned' } },
+  nodes: [
+    group('r0', 'LR'),
+    sized('S1', 'r0', 152, 72),
+    sized('S2', 'r0', 176, 96),
+    group('r1', 'LR'),
+    sized('A1', 'r1', 152, 120),
+    sized('A2', 'r1', 171, 48),
+    sized('A3', 'r1', 152, 48),
+    sized('A4', 'r1', 185, 72),
+    sized('A5', 'r1', 152, 48),
+    group('r2', 'LR'),
+    sized('B1', 'r2', 152, 120),
+    sized('B2', 'r2', 152, 48),
+    sized('B3', 'r2', 180, 120),
+    group('r3', 'RL'),
+    sized('C1', 'r3', 152, 72),
+    sized('C2', 'r3', 152, 48),
+    sized('C3', 'r3', 174, 72),
+    sized('C4', 'r3', 152, 72),
+    sized('C5', 'r3', 152, 72),
+  ],
+  edges: [
+    ...chain('S1', 'S2'),
+    ...chain('A1', 'A2', 'A3', 'A4', 'A5'),
+    ...chain('B1', 'B2', 'B3'),
+    ...chain('C1', 'C2', 'C3', 'C4', 'C5'),
+    ...chain('S2', 'A4'),
+    ...chain('A5', 'C1'),
+    ...chain('B3', 'C1'),
+  ],
+});
+
+describe('spreading the ends of links that pass a row', () => {
+  it('never moves a link that skips a row into a node of that row', async () => {
+    const data = stages();
+    await runElkLayoutCore(data, elkRenderContext);
+    const nodes = byId(data);
+    const leaves = data.nodes.filter((n: any) => !n.isGroup);
+    for (const [start, end] of [
+      ['A5', 'C1'],
+      ['B3', 'C1'],
+      ['S2', 'A4'],
+    ]) {
+      const { points } = edgeOf(data, start, end);
+      for (const other of leaves.filter((n: any) => n.id !== start && n.id !== end)) {
+        expect(passesThrough(points, nodes.get(other.id)), `${start}->${end} x ${other.id}`).toBe(
+          false
+        );
+      }
+    }
+  });
+});
+
+describe('meetsSquarely', () => {
+  const from = { x: 0, y: 0, width: 100, height: 40 };
+  const to = { x: 0, y: 100, width: 100, height: 40 };
+
+  it('accepts a route that leaves and enters square to the sides it touches', () => {
+    expect(
+      meetsSquarely(
+        [
+          { x: 50, y: 40 },
+          { x: 50, y: 100 },
+        ],
+        [from, to]
+      )
+    ).toBe(true);
+    expect(
+      meetsSquarely(
+        [
+          { x: 100, y: 20 },
+          { x: 120, y: 20 },
+          { x: 120, y: 70 },
+          { x: 50, y: 70 },
+          { x: 50, y: 100 },
+        ],
+        [from, to]
+      )
+    ).toBe(true);
+  });
+
+  it('rejects a route that runs along the edge of the node it leaves, or has an empty segment', () => {
+    expect(
+      meetsSquarely(
+        [
+          { x: 100, y: 20 },
+          { x: 100, y: 100 },
+        ],
+        [from, { ...to, x: 50 }]
+      )
+    ).toBe(false);
+    expect(
+      meetsSquarely(
+        [
+          { x: 50, y: 40 },
+          { x: 50, y: 40 },
+          { x: 50, y: 100 },
+        ],
+        [from, to]
+      )
+    ).toBe(false);
   });
 });
