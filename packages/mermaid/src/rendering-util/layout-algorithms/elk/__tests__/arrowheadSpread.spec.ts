@@ -66,6 +66,8 @@ const link = (start: string, end: string, arrowTypeEnd = 'arrow_point') => ({
 interface FanInOptions {
   direction?: 'LR' | 'RL' | 'TB' | 'BT';
   inputs: number;
+  /** Inputs that draw no arrowhead, as `---` does, after the `inputs` that draw `arrowTypeEnd`. */
+  openInputs?: number;
   hubWidth?: number;
   hubHeight?: number;
   arrowTypeEnd?: string;
@@ -75,21 +77,27 @@ interface FanInOptions {
 const fanIn = ({
   direction = 'LR',
   inputs,
+  openInputs = 0,
   hubWidth = NODE_WIDTH,
   hubHeight = FLOWCHART_NODE_HEIGHT,
   arrowTypeEnd,
 }: FanInOptions) => {
   const sources = Array.from({ length: inputs }, (_, i) => `S${i}`);
+  const open = Array.from({ length: openInputs }, (_, i) => `O${i}`);
   return {
     type: 'flowchart-v2',
     direction,
     config: { elk: elkConfig },
     nodes: [
-      ...sources.map((id) => box(id, NODE_WIDTH, FLOWCHART_NODE_HEIGHT)),
+      ...[...sources, ...open].map((id) => box(id, NODE_WIDTH, FLOWCHART_NODE_HEIGHT)),
       box('Hub', hubWidth, hubHeight),
       box('Sink', NODE_WIDTH, FLOWCHART_NODE_HEIGHT),
     ],
-    edges: [...sources.map((id) => link(id, 'Hub', arrowTypeEnd)), link('Hub', 'Sink')],
+    edges: [
+      ...sources.map((id) => link(id, 'Hub', arrowTypeEnd)),
+      ...open.map((id) => link(id, 'Hub', 'none')),
+      link('Hub', 'Sink'),
+    ],
   } as any;
 };
 
@@ -130,6 +138,13 @@ describe('ELK arrowheads on one side of a node', () => {
     expect(gap).toBeGreaterThanOrEqual(ARROWHEAD_PITCH);
   });
 
+  // ELK gives each open link a port of its own, so the three arrowheads lose the room it takes.
+  it('keeps three arrowheads an arrowhead apart when open links end on the same side', async () => {
+    const data = fanIn({ inputs: 3, openInputs: 2, hubHeight: 72 });
+    const gap = await smallestTipGap(data, false);
+    expect(gap).toBeGreaterThanOrEqual(ARROWHEAD_PITCH);
+  });
+
   describe('chooses the nodes it spreads', () => {
     it.each([
       ['three inputs on a one-line node', fanIn({ inputs: 3 })],
@@ -147,6 +162,10 @@ describe('ELK arrowheads on one side of a node', () => {
         fanIn({ direction: 'TB', inputs: 4, hubWidth: 54 }),
       ],
       ['six inputs on a three-line node', fanIn({ inputs: 6, hubHeight: 80 })],
+      [
+        'three inputs and two open links on a two-line node',
+        fanIn({ inputs: 3, openInputs: 2, hubHeight: 72 }),
+      ],
     ])('spreads %s', (_, data) => {
       expect(spreadsPorts(data)).toBe(true);
     });
@@ -159,6 +178,7 @@ describe('ELK arrowheads on one side of a node', () => {
         fanIn({ inputs: 3, hubHeight: 64 }),
       ],
       ['four inputs that draw no arrowhead', fanIn({ inputs: 4, arrowTypeEnd: 'none' })],
+      ['three inputs on a two-line node, with no open link', fanIn({ inputs: 3, hubHeight: 72 })],
       ['four inputs on a wide node, bottom to top', fanIn({ direction: 'BT', inputs: 4 })],
     ])('leaves %s alone', (_, data) => {
       expect(spreadsPorts(data)).toBe(false);

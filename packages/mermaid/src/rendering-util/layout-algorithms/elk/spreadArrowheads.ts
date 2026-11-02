@@ -24,72 +24,76 @@ interface SpreadContext {
   cornerMargin: number;
 }
 
-type Arrowheads = Map<string, number>;
+/** What ends on one side of a node: every edge takes a port there, the arrowheads are what overlap. */
+interface Side {
+  ports: number;
+  arrowheads: number;
+}
+
+type Sides = Map<string, Side>;
 
 const carriesArrowhead = (arrowType: string | undefined): boolean =>
   arrowType !== undefined && arrowType !== '' && arrowType !== 'none';
 
-const addArrowhead = (tally: Arrowheads, nodeId: string | undefined): void => {
-  if (nodeId !== undefined) {
-    tally.set(nodeId, (tally.get(nodeId) ?? 0) + 1);
+function addEnd(sides: Sides, nodeId: string | undefined, arrowType: string | undefined): void {
+  if (nodeId === undefined) {
+    return;
   }
-};
+  const side = sides.get(nodeId) ?? { ports: 0, arrowheads: 0 };
+  side.ports += 1;
+  if (carriesArrowhead(arrowType)) {
+    side.arrowheads += 1;
+  }
+  sides.set(nodeId, side);
+}
 
-/**
- * The arrowheads on the side each node's edges enter and the side they leave, which
- * are different sides: only an end that carries an arrowhead can overlap another.
- */
-function countArrowheads(
+/** The side each node's edges enter and the side they leave, which are different sides. */
+function sidesOf(
   edges: readonly Pick<Edge, 'start' | 'end' | 'arrowTypeStart' | 'arrowTypeEnd'>[]
 ) {
-  const entering: Arrowheads = new Map();
-  const leaving: Arrowheads = new Map();
+  const entering: Sides = new Map();
+  const leaving: Sides = new Map();
   for (const edge of edges) {
-    if (edge.start === edge.end) {
-      continue;
-    }
-    if (carriesArrowhead(edge.arrowTypeEnd)) {
-      addArrowhead(entering, edge.end);
-    }
-    if (carriesArrowhead(edge.arrowTypeStart)) {
-      addArrowhead(leaving, edge.start);
+    if (edge.start !== edge.end) {
+      addEnd(entering, edge.end, edge.arrowTypeEnd);
+      addEnd(leaving, edge.start, edge.arrowTypeStart);
     }
   }
   return { entering, leaving };
 }
 
-function isCrowded(
-  node: Pick<Node, 'id' | 'width' | 'height'>,
-  arrowheads: number,
-  { directionOf, cornerMargin }: SpreadContext
-): boolean {
-  const direction = directionOf(node.id);
-  const side = direction === 'RIGHT' || direction === 'LEFT' ? node.height : node.width;
-  if (side === undefined || arrowheads < FEWEST_ARROWHEADS_TO_SPREAD) {
-    return false;
-  }
-  return (side - 2 * cornerMargin) / (arrowheads + 1) < ARROWHEAD_PITCH;
+function overlaps(side: Side | undefined, length: number, cornerMargin: number): boolean {
+  return (
+    side !== undefined &&
+    side.arrowheads >= FEWEST_ARROWHEADS_TO_SPREAD &&
+    (length - 2 * cornerMargin) / (side.ports + 1) < ARROWHEAD_PITCH
+  );
 }
 
 /**
  * The ids of the nodes whose attachment points ELK should spread across the side.
  *
- * ELK places `k` implicit ports on a side at least `(side - 2 * margin) / (k + 1)` apart
- * (it keeps them 2px nearer the corners than the margin, so that is a lower bound), which
- * leaves the arrowheads of a fan-in on a short node sitting on top of each other. This
- * names the nodes where that bound falls below `ARROWHEAD_PITCH`, so a diagram without
+ * ELK gives every edge end a port, an open link as much as an arrow, and places `k` of them on
+ * a side at least `(side - 2 * margin) / (k + 1)` apart (it keeps them 2px nearer the corners
+ * than the margin, so that is a lower bound). This names the nodes where that bound falls below
+ * `ARROWHEAD_PITCH` while three or more of the ports carry an arrowhead, so a diagram without
  * such a node is laid out exactly as before.
  */
 export function nodesToSpreadPorts(
   nodes: readonly Pick<Node, 'id' | 'isGroup' | 'width' | 'height'>[],
   edges: readonly Pick<Edge, 'start' | 'end' | 'arrowTypeStart' | 'arrowTypeEnd'>[],
-  context: SpreadContext
+  { directionOf, cornerMargin }: SpreadContext
 ): Set<string> {
-  const { entering, leaving } = countArrowheads(edges);
-  const crowded = nodes.filter(
-    (node) =>
+  const { entering, leaving } = sidesOf(edges);
+  const crowded = nodes.filter((node) => {
+    const direction = directionOf(node.id);
+    const length = direction === 'RIGHT' || direction === 'LEFT' ? node.height : node.width;
+    return (
       !node.isGroup &&
-      isCrowded(node, Math.max(entering.get(node.id) ?? 0, leaving.get(node.id) ?? 0), context)
-  );
+      length !== undefined &&
+      (overlaps(entering.get(node.id), length, cornerMargin) ||
+        overlaps(leaving.get(node.id), length, cornerMargin))
+    );
+  });
   return new Set(crowded.map((node) => node.id));
 }
