@@ -128,6 +128,24 @@ describe('findSeparatedGroups', () => {
       ['inner', 'DOWN'],
     ]);
   });
+
+  it('keeps a nested group with its own algorithm unless an edge crosses its border', () => {
+    const tree = treeOf({ inner: 'outer', c1: 'inner', c2: 'inner', o1: 'outer', o2: 'outer' });
+    const groups = [
+      { id: 'outer', direction: 'DOWN' as const, ownAlgorithm: false },
+      { id: 'inner', parentId: 'outer', ownAlgorithm: true },
+    ];
+    const inside = [
+      { source: 'o1', target: 'o2' },
+      { source: 'c1', target: 'c2' },
+    ];
+    expect([...findSeparatedGroups(groups, 'RIGHT', inside, tree)]).toEqual([['outer', 'DOWN']]);
+    const crossing = [...inside, { source: 'o1', target: 'c1' }];
+    expect([...findSeparatedGroups(groups, 'RIGHT', crossing, tree)]).toEqual([
+      ['outer', 'DOWN'],
+      ['inner', 'DOWN'],
+    ]);
+  });
 });
 
 const elkEdge = (id: string, source: string, target: string, labels = [{}]): ElkEdgeLike => ({

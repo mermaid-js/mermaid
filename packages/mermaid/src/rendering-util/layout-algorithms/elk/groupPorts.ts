@@ -160,14 +160,15 @@ function findDirectedGroups(
   return directed;
 }
 
-/** The subgraphs an edge passes through or runs inside, below the outermost one it leaves. */
-function groupsTouchedBy({ source, target }: EdgeEnds, tree: TreeData): string[] {
+/** The subgraphs whose border an edge passes through. */
+function groupsCrossedBy({ source, target }: EdgeEnds, tree: TreeData): string[] {
   const ancestor = findCommonAncestor(source, target, tree);
-  return [
-    ...ancestorsBelow(source, ancestor, tree),
-    ...ancestorsBelow(target, ancestor, tree),
-    ancestor,
-  ];
+  return [...ancestorsBelow(source, ancestor, tree), ...ancestorsBelow(target, ancestor, tree)];
+}
+
+/** The subgraphs an edge passes through or runs inside, below the outermost one it leaves. */
+function groupsTouchedBy(edge: EdgeEnds, tree: TreeData): string[] {
+  return [...groupsCrossedBy(edge, tree), findCommonAncestor(edge.source, edge.target, tree)];
 }
 
 /**
@@ -180,7 +181,8 @@ function groupsTouchedBy({ source, target }: EdgeEnds, tree: TreeData): string[]
  * own direction enters from.
  * Inside such a subgraph ELK lays out every nested subgraph on its own as well, so each nested one
  * an edge passes through or runs inside joins the result, in its own direction or else in the one
- * around it.
+ * around it. A nested subgraph that runs an algorithm of its own joins only when an edge passes
+ * through its border, so one that only holds edges between its own nodes keeps its algorithm.
  *
  * @param groups - every subgraph
  * @param rootDirection - the direction of the diagram
@@ -208,10 +210,13 @@ export function findSeparatedGroups(
   }
   const insideDirected = (id: string) =>
     ancestorsBelow(id, ROOT, tree).some((ancestor) => directed.has(ancestor));
-  const nested = new Set(
-    edges.flatMap((edge) => groupsTouchedBy(edge, tree)).filter((id) => !directed.has(id))
-  );
   const byId = new Map(groups.map((group) => [group.id, group]));
+  const crossed = new Set(edges.flatMap((edge) => groupsCrossedBy(edge, tree)));
+  const nested = new Set(
+    edges
+      .flatMap((edge) => groupsTouchedBy(edge, tree))
+      .filter((id) => !directed.has(id) && (!byId.get(id)?.ownAlgorithm || crossed.has(id)))
+  );
   const separated = new Map(directed);
   const outermostFirst = [...nested]
     .filter(insideDirected)
