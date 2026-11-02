@@ -310,14 +310,30 @@ describe('ELK spacing from nodeSpacing and rankSpacing', () => {
   });
 
   it.each([
-    { asked: 25, root: 20, group: 25, approach: 15 },
-    { asked: 100, root: 80, group: 100, approach: 60 },
-  ])('scales the gaps with the value asked for, $asked', ({ asked, root, group, approach }) => {
-    const options = build({ nodeSpacing: asked, rankSpacing: asked });
-    expect(options.root['spacing.baseValue']).toBe(root);
-    expect(options.root['spacing.nodeNode']).toBe(root);
-    expect(options.group['spacing.nodeNode']).toBe(group);
-    expect(options.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(approach);
+    { asked: 25, root: 20, group: 25, approach: 15, groupBase: 12 },
+    { asked: 100, root: 80, group: 100, approach: 60, groupBase: 48 },
+  ])(
+    'scales the gaps with the value asked for, $asked',
+    ({ asked, root, group, approach, groupBase }) => {
+      const options = build({ nodeSpacing: asked, rankSpacing: asked });
+      expect(options.root['spacing.baseValue']).toBe(root);
+      expect(options.root['spacing.nodeNode']).toBe(root);
+      expect(options.group['spacing.nodeNode']).toBe(group);
+      expect(options.group['spacing.baseValue']).toBe(groupBase);
+      expect(options.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(approach);
+    }
+  );
+
+  it('never lets the straight run before a node fall below the arrowhead floor', () => {
+    const tight = build({ nodeSpacing: 10, rankSpacing: 10 });
+    expect(tight.root['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(12);
+    expect(tight.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(12);
+    const loose = build({ nodeSpacing: 100, rankSpacing: 100 });
+    expect(loose.root).not.toHaveProperty('elk.layered.spacing.edgeNodeBetweenLayers');
+    expect(loose.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(60);
+    const silent = build({});
+    expect(silent.root).not.toHaveProperty('elk.layered.spacing.edgeNodeBetweenLayers');
+    expect(silent.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(30);
   });
 
   it('keeps the gap within a layer and the gap between layers apart', () => {

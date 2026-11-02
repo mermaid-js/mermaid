@@ -191,6 +191,11 @@ const PORTS_SURROUNDING = `[top=${PORTS_SURROUNDING_MARGIN},left=${PORTS_SURROUN
  * layers, from it: 40 px each.
  */
 const ROOT_SPACING_BASE_VALUE = 40;
+/**
+ * The straight run an edge keeps before a node however tight the rank spacing is. An arrowhead
+ * is 8 px wide, and a run shorter than the head reads as a cropped or bent arrow.
+ */
+const ARROW_APPROACH_FLOOR = 12;
 /** Padding between a subgraph frame and its children. ELK's own default is 12. */
 const SUBGRAPH_PADDING = 24;
 /**
@@ -295,9 +300,12 @@ export function clearContainerAlgorithmOptions(
 /** The spacing of a plain subgraph: its own defaults, scaled by what the diagram asked for. */
 function subgraphSpacingOptions(spacing: SpacingScales): Record<string, number> {
   return {
-    'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE,
+    'spacing.baseValue': DEFAULT_SUBGRAPH_SPACING_BASE_VALUE * spacing.rank,
     'spacing.nodeNode': DEFAULT_SUBGRAPH_NODE_SPACING * spacing.node,
-    'elk.layered.spacing.edgeNodeBetweenLayers': SUBGRAPH_EDGE_NODE_SPACING * spacing.rank,
+    'elk.layered.spacing.edgeNodeBetweenLayers': Math.max(
+      ARROW_APPROACH_FLOOR,
+      SUBGRAPH_EDGE_NODE_SPACING * spacing.rank
+    ),
   };
 }
 
@@ -1029,6 +1037,9 @@ function createRootElkGraph(
       // the rank spacing; the gap within a layer is then stated on its own.
       'spacing.baseValue': ROOT_SPACING_BASE_VALUE * spacing.rank,
       'spacing.nodeNode': ROOT_SPACING_BASE_VALUE * spacing.node,
+      ...(spacing.rank < 1
+        ? { 'elk.layered.spacing.edgeNodeBetweenLayers': ARROW_APPROACH_FLOOR }
+        : {}),
     });
   }
 
