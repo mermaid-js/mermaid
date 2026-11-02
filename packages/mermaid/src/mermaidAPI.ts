@@ -33,6 +33,7 @@ import { attachFunctions } from './interactionDb.js';
 import { log, setLogLevel } from './logger.js';
 import { profiler } from './profiler.js';
 import { preprocessDiagram } from './preprocess.js';
+import { escapeCssIdentifier } from './rendering-util/rendering-elements/edgeStepAnimation.js';
 import getStyles, { cssStyleSheetToString } from './styles.js';
 import theme from './themes/index.js';
 import type {
@@ -504,7 +505,7 @@ const renderDiagram = async function (
     code = { raw: text, cleaned: text };
   }
 
-  const idSelector = `#${id}` as const;
+  const idSelector = `#${escapeCssIdentifier(id)}` as const;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
