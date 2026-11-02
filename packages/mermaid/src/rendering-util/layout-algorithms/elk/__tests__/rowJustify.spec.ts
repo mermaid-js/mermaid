@@ -5,6 +5,7 @@ import {
   justifySlots,
   moveInnerEdges,
   neededSize,
+  shareGaps,
   slotsOf,
 } from '../rowJustify.js';
 import type { ElkEdgeLike } from '../groupPorts.js';
@@ -37,7 +38,18 @@ describe('slots and spacing', () => {
 
   it('measures the room slots need with a gap between them', () => {
     const slots = slotsOf([box('a', 0), box('b', 60)], ACROSS);
-    expect(neededSize(slots, 20, 30, ACROSS)).toBe(170);
+    expect(neededSize(slots, 20, [30], ACROSS)).toBe(170);
+  });
+});
+
+describe('shareGaps', () => {
+  it('gives every gap one size while each least size fits in it', () => {
+    expect(shareGaps([0, 50], 200)).toEqual([100, 100]);
+  });
+
+  it('keeps a gap that needs more than the common size, and shares the rest', () => {
+    expect(shareGaps([0, 150, 0], 300)).toEqual([75, 150, 75]);
+    expect(shareGaps([120, 150], 200)).toEqual([120, 150]);
   });
 });
 
@@ -107,7 +119,56 @@ const twoRows = (labelWidth = 0) => {
   };
 };
 
+/**
+ * One row of three nodes over a narrow second row, with a labelled link between the last two whose
+ * label ELK centred on the gap between them.
+ */
+const labelledRow = (labelWidth: number) => {
+  const row = box('row', 0, 0, 300, 70, [box('a', 20, 20), box('b', 90, 20), box('c', 160, 20)]);
+  const other = box('other', 0, 100, 300, 70, [box('d', 20, 20)]);
+  const link: ElkEdgeLike = {
+    id: 'bc',
+    sources: ['b'],
+    targets: ['c'],
+    container: 'row',
+    sections: [{ startPoint: { x: 140, y: 35 }, endPoint: { x: 160, y: 35 } }],
+    labels: [{ x: 150 - labelWidth / 2, y: 25, width: labelWidth }],
+  };
+  return {
+    children: [row, other],
+    edges: [link],
+    separated: new Map([
+      ['row', 'RIGHT' as const],
+      ['other', 'RIGHT' as const],
+    ]),
+    groups: [],
+    direction: 'DOWN' as const,
+    tree: { parentById: { a: 'row', b: 'row', c: 'row', d: 'other' }, childrenById: {} },
+  };
+};
+
 describe('justifyFrames', () => {
+  it('keeps the gaps of a row equal while the label between two nodes fits', () => {
+    const input = labelledRow(20);
+    justifyFrames(input);
+    const [row] = input.children;
+    expect(row.width).toBe(300);
+    expect(row.children?.map(({ x }) => x)).toEqual([20, 125, 230]);
+  });
+
+  it('widens the gap between two nodes of a row to hold the label of the link between them', () => {
+    const input = labelledRow(200);
+    justifyFrames(input);
+    const [row, other] = input.children;
+    const [a, b, c] = row.children ?? [];
+    expect(c.x - (b.x + b.width)).toBe(200 + 2 * LABEL_GAP_PADDING);
+    expect(b.x - (a.x + a.width)).toBe(0);
+    expect(row.width).toBe(20 + 3 * 50 + 224 + 20);
+    expect(other.width).toBe(row.width);
+    const [label] = input.edges[0].labels ?? [];
+    expect((label.x ?? 0) + 100).toBe((b.x + b.width + c.x) / 2);
+  });
+
   it('spreads the columns of a narrow band over the width of the widest row', () => {
     const input = twoRows();
     expect([...justifyFrames(input)].sort()).toEqual(['band', 'wide']);
