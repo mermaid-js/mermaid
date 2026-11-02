@@ -629,6 +629,49 @@ describe('slideEdgesOffClusterTitles', () => {
     });
   });
 
+  describe('a label that rides another run of the edge and is carried to the moved one', () => {
+    const TALL_LABEL = 120;
+    const withBendAt = (bend: number) => {
+      const stock = frame(101.734375);
+      const edge = {
+        ...labelled([
+          { x: 40, y: 135 },
+          { x: 40, y: bend },
+          { x: CENTRE, y: bend },
+          { x: CENTRE, y: 330 },
+        ]),
+        x: 40,
+        y: 160,
+        height: TALL_LABEL,
+      };
+      const nodes = [stock, node('A', 99, 'squareRect', -200), node('B', 370)];
+      return { stock, edge, nodes };
+    };
+    const titleTop = titleBoxOf(frame(101.734375)).y1;
+
+    it('slides the edge when the carried label stays well clear of the title', () => {
+      const { stock, edge, nodes } = withBendAt(titleTop - TALL_LABEL);
+
+      slide([edge], nodes);
+
+      expect(edge.points.at(-1).x).toBe(clearOfTitle(stock));
+    });
+
+    it('slides the edge when the carried label only touches the title', () => {
+      const { stock, edge, nodes } = withBendAt(titleTop - TALL_LABEL / 2);
+
+      slide([edge], nodes);
+
+      expect(edge.points.at(-1).x).toBe(clearOfTitle(stock));
+    });
+
+    it('leaves the edge alone when the carried label would cover the title', () => {
+      const { edge, nodes } = withBendAt(titleTop - TALL_LABEL / 2 + 1);
+
+      stays(edge, nodes);
+    });
+  });
+
   it('keeps the title where it is when the top margin puts it below the edge', () => {
     const stock = frame(101.734375);
     const points = straight().slice(0, 3);

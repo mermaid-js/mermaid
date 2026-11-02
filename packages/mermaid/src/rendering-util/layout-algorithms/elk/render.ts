@@ -2158,9 +2158,9 @@ function labelBoxes(edges: Edge[]): Box[] {
   return edges.map((edge) => centreLabelBox(edge)).filter(isBox);
 }
 
-/** What `label` sits on: a node, another label, or another edge's route. */
+/** What `label` sits on: a node, a frame title, another label, or another edge's route. */
 function labelConflicts(label: Box, others: RoutedEdge[], context: TitleSlideContext): number {
-  const obstacles = [...context.nodeBoxes, ...labelBoxes(others)];
+  const obstacles = [...context.nodeBoxes, ...context.titles, ...labelBoxes(others)];
   return (
     obstacles.filter((box) => boxesOverlap(label, box)).length +
     others.filter(({ points }) => routeHitsBox(points, label)).length
