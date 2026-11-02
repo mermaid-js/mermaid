@@ -9,7 +9,7 @@ import {
   getAccDescription,
   setAccDescription,
 } from '../common/commonDb.js';
-import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
+import type { C4Boundary, C4BoundaryDirection, C4Rel, C4Shape } from './c4Types.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import { getData as buildLayoutData } from './c4LayoutData.js';
 
@@ -494,6 +494,16 @@ export const addDeploymentNode = function (
   boundaryParseStack.push(parentBoundaryParse);
 };
 
+export const setBoundaryDirection = function (dir: C4BoundaryDirection) {
+  const boundary = boundaries.find(
+    (candidate) => candidate.alias === currentBoundaryParse && candidate.alias !== 'global'
+  );
+  if (boundary === undefined) {
+    throw new Error(`"direction ${dir}" is only allowed inside a boundary, between its braces`);
+  }
+  boundary.direction = dir;
+};
+
 export const popBoundaryParseStack = function () {
   currentBoundaryParse = parentBoundaryParse;
   boundaryParseStack.pop();
@@ -827,6 +837,7 @@ export default {
   addComponent,
   addDeploymentNode,
   popBoundaryParseStack,
+  setBoundaryDirection,
   addRel,
   updateElStyle,
   updateRelStyle,

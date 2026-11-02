@@ -115,6 +115,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
       cssClasses: isDeploymentNode ? 'c4-boundary c4-deployment-node' : 'c4-boundary',
       cssStyles: boundaryCssStyles(boundary),
       link: boundary.link ?? undefined,
+      dir: boundary.direction,
       look,
     });
   }
