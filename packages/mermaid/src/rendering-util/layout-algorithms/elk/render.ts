@@ -9,7 +9,10 @@ import { setConfig } from '../../../diagram-api/diagramAPI.js';
 import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
-import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
+import {
+  findSubgraphFeedbackEdges,
+  orderReversedSubgraphEntries,
+} from './subgraphFeedbackEdges.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
@@ -733,7 +736,8 @@ export function buildElkGraphFromLayoutData(
 /**
  * Hand ELK the edges that re-enter a subgraph the other way round, so ELK sees no cycle through
  * the collapsed subgraph and routes them downstream instead of around it. `applyElkEdgeLayout`
- * restores the direction.
+ * restores the direction. The reversed edges are then reordered so ELK's model order does not
+ * cross them with the edges into the same subgraph (see `orderReversedSubgraphEntries`).
  */
 function reverseSubgraphFeedbackEdges(elkGraph: { edges: any[] }, parentLookupDb: TreeData): void {
   const flags = findSubgraphFeedbackEdges(
@@ -746,6 +750,12 @@ function reverseSubgraphFeedbackEdges(elkGraph: { edges: any[] }, parentLookupDb
       edge.layoutReversed = true;
     }
   });
+  const order = orderReversedSubgraphEntries(
+    elkGraph.edges.map((edge) => edge.targets[0]),
+    flags,
+    parentLookupDb
+  );
+  elkGraph.edges = order.map((index) => elkGraph.edges[index]);
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({

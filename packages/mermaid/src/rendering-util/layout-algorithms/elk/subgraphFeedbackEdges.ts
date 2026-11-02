@@ -111,3 +111,39 @@ export function findSubgraphFeedbackEdges(edges: readonly EdgeEnds[], tree: Tree
 
   return flags;
 }
+
+/**
+ * The order to hand ELK the edges in once the feedback edges are reversed.
+ *
+ * With `considerModelOrder` set, ELK 0.10 and later line up the edges that enter one node in
+ * declaration order, even where that adds a crossing. A reversed edge into a subgraph leaves the
+ * subgraph it really points into, and kept after an edge declared from that same subgraph's
+ * border, the two cross in the gap between the subgraphs (`three --> two`, then `two --> c2` with
+ * `c2` inside `three`). Each reversed edge into a subgraph therefore moves in front of the first
+ * forward edge declared before it that enters the same subgraph. Edges into plain nodes keep their
+ * order.
+ *
+ * @param targets - the target of each edge as ELK is given it, after reversal
+ * @param reversed - one flag per edge, true where the edge is laid out reversed
+ * @param tree - the subgraph parent lookup
+ * @returns the edge indexes in the order to hand them to ELK
+ */
+export function orderReversedSubgraphEntries(
+  targets: readonly string[],
+  reversed: readonly boolean[],
+  tree: TreeData
+): number[] {
+  const order = targets.map((_, index) => index);
+  targets.forEach((target, index) => {
+    if (!reversed[index] || !tree.childrenById[target]?.length) {
+      return;
+    }
+    const to = order.findIndex((other) => !reversed[other] && targets[other] === target);
+    const from = order.indexOf(index);
+    if (to !== -1 && to < from) {
+      order.splice(from, 1);
+      order.splice(to, 0, index);
+    }
+  });
+  return order;
+}

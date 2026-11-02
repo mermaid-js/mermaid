@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { TreeData } from '../find-common-ancestor.js';
-import { findSubgraphFeedbackEdges } from '../subgraphFeedbackEdges.js';
+import {
+  findSubgraphFeedbackEdges,
+  orderReversedSubgraphEntries,
+} from '../subgraphFeedbackEdges.js';
 
 /** Build the parent lookup the renderer derives from `node.parentId`. */
 function tree(parents: Record<string, string>): TreeData {
@@ -78,5 +81,40 @@ describe('findSubgraphFeedbackEdges', () => {
       tree({ A: 'G', B: 'G', C: 'H', D: 'H' })
     );
     expect(flags).toEqual([false, true]);
+  });
+});
+
+describe('orderReversedSubgraphEntries', () => {
+  it('moves a reversed edge into a subgraph in front of the earlier edge into it', () => {
+    // three --> two, then two --> c2 with c2 inside three, handed to ELK as c2 -> two
+    const order = orderReversedSubgraphEntries(
+      ['two', 'two'],
+      [false, true],
+      tree({ b1: 'two', c2: 'three' })
+    );
+    expect(order).toEqual([1, 0]);
+  });
+
+  it('keeps the order of a reversed edge into a plain node', () => {
+    const order = orderReversedSubgraphEntries(['X', 'Y', 'X'], [false, false, true], tree({}));
+    expect(order).toEqual([0, 1, 2]);
+  });
+
+  it('keeps the order when no earlier forward edge enters the same subgraph', () => {
+    const order = orderReversedSubgraphEntries(
+      ['G', 'H', 'G'],
+      [true, false, false],
+      tree({ A: 'G', B: 'H' })
+    );
+    expect(order).toEqual([0, 1, 2]);
+  });
+
+  it('moves only past the edges declared before it', () => {
+    const order = orderReversedSubgraphEntries(
+      ['X', 'G', 'X', 'G', 'G'],
+      [false, false, false, true, false],
+      tree({ A: 'G' })
+    );
+    expect(order).toEqual([0, 3, 1, 2, 4]);
   });
 });
