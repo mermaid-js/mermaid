@@ -20,8 +20,23 @@ export interface RowLink {
   order: number;
   sourceItem: string;
   targetItem: string;
+  /** The ids of the two end nodes, which tell links sharing a side of one node apart. */
+  sourceNode: string;
+  targetNode: string;
   source: Rect;
   target: Rect;
+}
+
+/**
+ * Where a link leaves its source and enters its target, the gap between their items, and the
+ * lane in that gap where a link that does not run straight turns.
+ */
+export interface LinkEnds {
+  start: P;
+  end: P;
+  gap: number;
+  gapTop: number;
+  gapBottom: number;
 }
 
 export interface RowItem {
@@ -31,6 +46,12 @@ export interface RowItem {
 }
 
 const STRAIGHT_EPS = 0.01;
+/** The width of the arrowhead markers. */
+const ARROWHEAD_WIDTH = 8;
+/** The least distance between two link ends on one side of a node: an arrowhead and a pixel. */
+const END_SPACING = ARROWHEAD_WIDTH + 1;
+/** How far a link end keeps from the edge of a frame's title. */
+const TITLE_CLEARANCE = 1;
 
 /** Turn a point into flow coordinates, where the diagram's direction runs down `y`. */
 export function toFlow({ x, y }: P, direction: ElkDirection): P {
@@ -137,6 +158,20 @@ export function routeRowLink(
   items: ReadonlyMap<string, RowItem>,
   shifts: ReadonlyMap<string, number>
 ): P[] | undefined {
+  const ends = linkEnds(link, items, shifts);
+  return ends && routeBetween(ends);
+}
+
+/**
+ * The two ends of a link at the middle of the facing sides of its nodes, after the items' shifts.
+ *
+ * @returns the ends, or `undefined` when the two items share a band
+ */
+export function linkEnds(
+  link: RowLink,
+  items: ReadonlyMap<string, RowItem>,
+  shifts: ReadonlyMap<string, number>
+): LinkEnds | undefined {
   const apart = itemsApart(link, items);
   if (!apart) {
     return undefined;
@@ -144,9 +179,23 @@ export function routeRowLink(
   const [sourceItem, targetItem] = apart;
   const source = shifted(link.source, shifts.get(link.sourceItem) ?? 0);
   const target = shifted(link.target, shifts.get(link.targetItem) ?? 0);
-  return targetItem.y >= bottom(sourceItem)
-    ? zRoute(source, target, (bottom(sourceItem) + targetItem.y) / 2)
-    : zRoute(target, source, (bottom(targetItem) + sourceItem.y) / 2).reverse();
+  if (targetItem.y >= bottom(sourceItem)) {
+    return {
+      start: { x: centreX(source), y: bottom(source) },
+      end: { x: centreX(target), y: target.y },
+      ...gapBetween(sourceItem, targetItem),
+    };
+  }
+  return {
+    start: { x: centreX(source), y: source.y },
+    end: { x: centreX(target), y: bottom(target) },
+    ...gapBetween(targetItem, sourceItem),
+  };
+}
+
+function gapBetween(upper: Rect, lower: Rect) {
+  const [gapTop, gapBottom] = [bottom(upper), lower.y];
+  return { gap: (gapTop + gapBottom) / 2, gapTop, gapBottom };
 }
 
 /** The boxes of a link's two items, when neither shares its band with the other. */
@@ -156,14 +205,328 @@ function itemsApart(link: RowLink, items: ReadonlyMap<string, RowItem>): [Rect, 
   return source && target && !shareBand(source, target) ? [source, target] : undefined;
 }
 
-/** From the bottom of `upper` to the top of `lower`: straight when they line up, else a Z through `gap`. */
-function zRoute(upper: Rect, lower: Rect, gap: number): P[] {
-  const start = { x: centreX(upper), y: bottom(upper) };
-  const end = { x: centreX(lower), y: lower.y };
-  if (Math.abs(start.x - end.x) < STRAIGHT_EPS) {
+const isStraight = ({ start, end }: { start: P; end: P }) =>
+  Math.abs(start.x - end.x) < STRAIGHT_EPS;
+
+/** Straight when the two ends line up, else a Z through the gap. */
+export function routeBetween({ start, end, gap }: LinkEnds): P[] {
+  if (isStraight({ start, end })) {
     return [start, { x: start.x, y: end.y }];
   }
   return [start, { x: start.x, y: gap }, { x: end.x, y: gap }, end];
+}
+
+/**
+ * Place points along one side of a node, each as near its wish as it can be while the points
+ * stay `spacing` apart, between `low` and `high`. The points keep the order of their wishes, so
+ * the links they end do not cross at the node.
+ */
+export function packAlong(
+  wishes: readonly number[],
+  low: number,
+  high: number,
+  spacing: number
+): number[] {
+  const order = wishes.map((_, index) => index).sort((a, b) => wishes[a] - wishes[b] || a - b);
+  const placed: number[] = [];
+  order.forEach((index, rank) => {
+    const wish = Math.min(Math.max(wishes[index], low), high);
+    placed.push(rank === 0 ? wish : Math.max(wish, placed[rank - 1] + spacing));
+  });
+  const overflow = Math.max(placed[placed.length - 1] - high, 0);
+  const positions: number[] = [];
+  order.forEach((index, rank) => {
+    positions[index] = placed[rank] - overflow;
+  });
+  return positions;
+}
+
+/**
+ * Slide packed points together, within `low` and `high`, so that as many as possible sit exactly
+ * on their wish: those links then run straight. With a tie, the smaller slide wins.
+ */
+export function slideToWishes(
+  positions: readonly number[],
+  wishes: readonly number[],
+  low: number,
+  high: number
+): number[] {
+  const [least, most] = [Math.min(...positions), Math.max(...positions)];
+  const straight = (slide: number) =>
+    positions.filter((position, index) => Math.abs(position + slide - wishes[index]) < STRAIGHT_EPS)
+      .length;
+  const slides = [0, ...wishes.map((wish, index) => wish - positions[index])].filter(
+    (slide) => least + slide >= low - STRAIGHT_EPS && most + slide <= high + STRAIGHT_EPS
+  );
+  const best = slides.reduce((a, b) =>
+    straight(b) > straight(a) || (straight(b) === straight(a) && Math.abs(b) < Math.abs(a)) ? b : a
+  );
+  return positions.map((position) => position + best);
+}
+
+const fitsAmong = (taken: readonly number[], spacing: number) => (position: number) =>
+  taken.every((other) => Math.abs(other - position) >= spacing - STRAIGHT_EPS);
+
+/** The free spot nearest `wish` within `low` and `high`, at least `spacing` from every taken one. */
+function nearestFree(
+  wish: number,
+  taken: readonly number[],
+  [low, high]: readonly [number, number],
+  spacing: number
+): number {
+  const want = Math.min(Math.max(wish, low), high);
+  const free = [want, low, high, ...taken.flatMap((other) => [other - spacing, other + spacing])]
+    .filter((spot) => spot >= low - STRAIGHT_EPS && spot <= high + STRAIGHT_EPS)
+    .filter(fitsAmong(taken, spacing));
+  return free.reduce((a, b) => (Math.abs(b - want) < Math.abs(a - want) ? b : a), free[0] ?? want);
+}
+
+/**
+ * The stretch between two pinned points (or a pinned point and an end of the side) that `count`
+ * points must share, and the spacing they can keep there: `spacing` when there is room, less when
+ * there is not.
+ */
+function segment(
+  before: number | undefined,
+  after: number | undefined,
+  [low, high]: readonly [number, number],
+  count: number,
+  spacing: number
+): { lo: number; hi: number; gap: number } {
+  const from = before ?? low;
+  const to = after ?? high;
+  const slots = count + (before === undefined ? 0 : 1) + (after === undefined ? 0 : 1) - 1;
+  const gap = slots > 0 ? Math.min(spacing, (to - from) / slots) : spacing;
+  return {
+    lo: before === undefined ? low : before + gap,
+    hi: after === undefined ? high : after - gap,
+    gap,
+  };
+}
+
+/**
+ * Place the points that can sit on their wish there first, so their links run straight, then the
+ * others between them in the order of their wishes, so their links do not cross. Points that do
+ * not fit between their pinned neighbours, even an arrowhead apart, take the nearest free spot.
+ */
+export function pinStraight(
+  wishes: readonly number[],
+  low: number,
+  high: number,
+  spacing: number
+): number[] {
+  const positions: number[] = [];
+  const pins: number[] = [];
+  const byWish = wishes.map((_, index) => index).sort((a, b) => wishes[a] - wishes[b]);
+  for (const index of byWish) {
+    const wish = wishes[index];
+    if (wish >= low && wish <= high && fitsAmong(pins, spacing)(wish)) {
+      positions[index] = wish;
+      pins.push(wish);
+    }
+  }
+  const rest = byWish.filter((index) => positions[index] === undefined);
+  const taken = [...pins];
+  for (let k = 0; k <= pins.length; k++) {
+    const members = rest.filter((index) => pins.filter((pin) => pin < wishes[index]).length === k);
+    placeBetween(
+      members,
+      wishes,
+      positions,
+      segment(pins[k - 1], pins[k], [low, high], members.length, spacing),
+      taken,
+      [low, high]
+    );
+  }
+  return positions;
+}
+
+function placeBetween(
+  members: readonly number[],
+  wishes: readonly number[],
+  positions: number[],
+  { lo, hi, gap }: { lo: number; hi: number; gap: number },
+  taken: number[],
+  side: readonly [number, number]
+): void {
+  if (members.length === 0) {
+    return;
+  }
+  if (gap >= END_SPACING - STRAIGHT_EPS && hi >= lo - STRAIGHT_EPS) {
+    const packed = packAlong(
+      members.map((index) => wishes[index]),
+      lo,
+      hi,
+      gap
+    );
+    members.forEach((index, rank) => {
+      positions[index] = packed[rank];
+      taken.push(packed[rank]);
+    });
+    return;
+  }
+  for (const index of members) {
+    positions[index] = nearestFree(wishes[index], taken, side, END_SPACING);
+    taken.push(positions[index]);
+  }
+}
+
+const straightCount = (positions: readonly number[], wishes: readonly number[]) =>
+  positions.filter((position, index) => Math.abs(position - wishes[index]) < STRAIGHT_EPS).length;
+
+export interface SideEnd {
+  ends: LinkEnds;
+  at: 'start' | 'end';
+  node: Rect;
+  /** The span across the flow that a frame's title takes above this side, if any. */
+  title?: readonly [number, number];
+}
+
+/**
+ * The stretch of a node's side the ends may use: clear of its corners, and clear of the title of
+ * its frame when the rest of the side still holds them all.
+ */
+function freeRange({ x, width }: Rect, count: number, title?: readonly [number, number]) {
+  const side: [number, number] = [x + END_SPACING, x + width - END_SPACING];
+  if (!title || title[1] <= side[0] || title[0] >= side[1]) {
+    return side;
+  }
+  const left: [number, number] = [side[0], Math.min(side[1], title[0])];
+  const right: [number, number] = [Math.max(side[0], title[1]), side[1]];
+  const wider = left[1] - left[0] >= right[1] - right[0] ? left : right;
+  return wider[1] - wider[0] >= (count - 1) * END_SPACING ? wider : side;
+}
+
+/**
+ * Spread the ends that meet on one side of one node, so their arrowheads stay apart. Each end
+ * wishes to sit opposite the other end of its link, where its line can run straight; the ends are
+ * kept at least {@link END_SPACING} apart and further where the side has room, and a node's side
+ * with a single end keeps it in the middle.
+ */
+export function spreadSharedEnds(sides: ReadonlyMap<string, readonly SideEnd[]>): void {
+  for (const ends of sides.values()) {
+    if (ends.length < 2) {
+      continue;
+    }
+    const [low, high] = freeRange(ends[0].node, ends.length, ends[0].title);
+    const room = Math.max(high - low, 0);
+    const spacing = Math.min(Math.max(END_SPACING, room / ends.length), room / (ends.length - 1));
+    const wishes = ends.map(({ ends: link, at }) => (at === 'start' ? link.end.x : link.start.x));
+    const gap = Math.max(spacing, END_SPACING);
+    const inOrder = slideToWishes(packAlong(wishes, low, high, gap), wishes, low, high);
+    const pinned = pinStraight(wishes, low, high, gap);
+    const best = straightCount(pinned, wishes) > straightCount(inOrder, wishes) ? pinned : inOrder;
+    best.forEach((position, index) => {
+      const { ends: link, at } = ends[index];
+      link[at] = { ...link[at], x: position };
+    });
+  }
+}
+
+/**
+ * Orders two turning links of one gap from the upper lane to the lower. A link that runs left
+ * turns below one that starts left of it, and a link that runs right below one that starts right
+ * of it, so the horizontal run of one never cuts the vertical run of the other; links running
+ * left take the upper lanes.
+ */
+function byLane(a: LinkEnds, b: LinkEnds): number {
+  const [upperA, lowerA] = a.start.y < a.end.y ? [a.start, a.end] : [a.end, a.start];
+  const [upperB, lowerB] = b.start.y < b.end.y ? [b.start, b.end] : [b.end, b.start];
+  const leftA = lowerA.x < upperA.x;
+  const leftB = lowerB.x < upperB.x;
+  if (leftA !== leftB) {
+    return leftA ? -1 : 1;
+  }
+  return leftA ? upperA.x - upperB.x : upperB.x - upperA.x;
+}
+
+/**
+ * Give each link that turns in a gap its own lane, spread evenly across the gap, so no two
+ * horizontal runs lie on top of each other. A gap with one turning link keeps it in the middle.
+ */
+export function assignLanes(all: readonly LinkEnds[]): void {
+  const bundles = new Map<string, LinkEnds[]>();
+  for (const ends of all.filter((ends) => !isStraight(ends))) {
+    const key = `${ends.gapTop} ${ends.gapBottom}`;
+    bundles.set(key, [...(bundles.get(key) ?? []), ends]);
+  }
+  for (const bundle of bundles.values()) {
+    const { gapTop, gapBottom } = bundle[0];
+    const step = (gapBottom - gapTop) / (bundle.length + 1);
+    [...bundle].sort(byLane).forEach((ends, rank) => {
+      ends.gap = gapTop + step * (rank + 1);
+    });
+  }
+}
+
+/** Group the ends of the links by the node and side they meet. */
+function endsBySide(
+  planned: readonly { link: RowLink; ends: LinkEnds; source: Rect; target: Rect }[],
+  titles: ReadonlyMap<string, readonly [number, number]>
+): Map<string, SideEnd[]> {
+  const sides = new Map<string, SideEnd[]>();
+  const add = (key: string, end: SideEnd) => sides.set(key, [...(sides.get(key) ?? []), end]);
+  const titleOver = (point: P, node: Rect, item: string) =>
+    point.y === node.y ? titles.get(item) : undefined;
+  for (const { link, ends, source, target } of planned) {
+    add(`${link.sourceNode} ${ends.start.y}`, {
+      ends,
+      at: 'start',
+      node: source,
+      title: titleOver(ends.start, source, link.sourceItem),
+    });
+    add(`${link.targetNode} ${ends.end.y}`, {
+      ends,
+      at: 'end',
+      node: target,
+      title: titleOver(ends.end, target, link.targetItem),
+    });
+  }
+  return sides;
+}
+
+/**
+ * Where each frame's title will sit across the flow, when titles sit on the side links come in
+ * from (a top-to-bottom diagram): centred on the frame as it will be painted, which for stacked
+ * frames is their common span.
+ */
+export function titleSpans(
+  children: readonly ElkBox[],
+  frames: ReadonlyMap<string, Rect>,
+  direction: ElkDirection
+): Map<string, readonly [number, number]> {
+  const titles = new Map<string, readonly [number, number]>();
+  if (direction !== 'DOWN') {
+    return titles;
+  }
+  const spans = paintedSpans(frames);
+  for (const child of children) {
+    const span = spans.get(child.id);
+    if (span) {
+      const half = (child.labels?.[0]?.width ?? 0) / 2 + TITLE_CLEARANCE;
+      const centre = span.start + span.size / 2;
+      titles.set(child.id, [centre - half, centre + half]);
+    }
+  }
+  return titles;
+}
+
+/** The span each frame will be painted with: the common one for stacked frames, else its own. */
+function paintedSpans(
+  frames: ReadonlyMap<string, Rect>
+): Map<string, { start: number; size: number }> {
+  const stacked = [...frames].filter(([id, rect]) =>
+    [...frames].every(([other, otherRect]) => other === id || !shareBand(rect, otherRect))
+  );
+  const common = stacked.length > 1 ? commonSpan(stacked.map(([, rect]) => rect)) : undefined;
+  return new Map(
+    [...frames].map(([id, rect]) => [
+      id,
+      common && stacked.some(([other]) => other === id)
+        ? common
+        : { start: rect.x, size: rect.width },
+    ])
+  );
 }
 
 /** The midpoint of a route's middle segment, where its label goes. */
@@ -190,6 +553,7 @@ interface ElkBox {
   width?: number;
   height?: number;
   children?: ElkBox[];
+  labels?: { width?: number }[];
 }
 
 /** Each node's box in diagram coordinates. */
@@ -278,6 +642,8 @@ function rowLinks(
       order: orderOf(edge.id),
       sourceItem,
       targetItem,
+      sourceNode: sourceId,
+      targetNode: targetId,
       source: flow(source),
       target: flow(target),
     };
@@ -382,11 +748,29 @@ export function alignDirectedSubgraphs(input: AlignInput): void {
   const movedItems = new Map(
     [...items].map(([id, item]) => [id, { ...item, rect: shifted(item.rect, shifts.get(id) ?? 0) }])
   );
-  for (const { link, edge } of links) {
-    const route = routeRowLink(link, items, shifts);
-    if (route) {
-      applyRoute(edge, route, frameCrossings(route, link, movedItems, separated), direction);
-    }
+  const planned = links.flatMap(({ link, edge }) => {
+    const ends = linkEnds(link, items, shifts);
+    const at = (rect: Rect, item: string) => shifted(rect, shifts.get(item) ?? 0);
+    return ends
+      ? [
+          {
+            link,
+            edge,
+            ends,
+            source: at(link.source, link.sourceItem),
+            target: at(link.target, link.targetItem),
+          },
+        ]
+      : [];
+  });
+  const frames = new Map(
+    [...movedItems].filter(([id]) => separated.has(id)).map(([id, { rect }]) => [id, rect])
+  );
+  spreadSharedEnds(endsBySide(planned, titleSpans(children, frames, direction)));
+  assignLanes(planned.map(({ ends }) => ends));
+  for (const { link, edge, ends } of planned) {
+    const route = routeBetween(ends);
+    applyRoute(edge, route, frameCrossings(route, link, movedItems, separated), direction);
   }
 }
 
