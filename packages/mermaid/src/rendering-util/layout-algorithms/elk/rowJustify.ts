@@ -56,20 +56,44 @@ const slotStart = (slot: readonly JustifyBox[], axis: Axis) =>
 const slotSize = (slot: readonly JustifyBox[], axis: Axis) =>
   Math.max(...slot.map((box) => end(box, axis))) - slotStart(slot, axis);
 
-/** The size a frame needs across the flow to hold its slots `gap` apart inside its padding. */
+const sum = (values: readonly number[]) => values.reduce((total, value) => total + value, 0);
+
+/**
+ * The size a frame needs across the flow to hold its slots inside its padding, with at least
+ * `gaps[i]` between slot `i` and the next; a missing gap is 0.
+ */
 export function neededSize(
   slots: readonly JustifyBox[][],
   pad: number,
-  gap: number,
+  gaps: readonly number[],
   axis: Axis
 ): number {
-  const total = slots.reduce((sum, slot) => sum + slotSize(slot, axis), 0);
-  return total + Math.max(slots.length - 1, 0) * gap + 2 * pad;
+  const inner = sum(gaps.slice(0, Math.max(slots.length - 1, 0)));
+  return sum(slots.map((slot) => slotSize(slot, axis))) + inner + 2 * pad;
 }
 
 /**
- * How far to move each box across the flow so the slots span a frame of `size` with equal gaps
- * between them and `pad` at both ends; a single slot is centred.
+ * Share `room` out over gaps as equally as their least sizes allow: every gap gets one common
+ * size, except a gap whose least size is larger, which keeps that.
+ */
+export function shareGaps(least: readonly number[], room: number): number[] {
+  const fixed = new Set<number>();
+  const commonSize = () => {
+    const free = least.length - fixed.size;
+    return free > 0 ? (room - sum([...fixed].map((index) => least[index]))) / free : 0;
+  };
+  let grown = least.findIndex((size) => size > commonSize());
+  while (grown >= 0) {
+    fixed.add(grown);
+    grown = least.findIndex((size, index) => !fixed.has(index) && size > commonSize());
+  }
+  const common = commonSize();
+  return least.map((size, index) => (fixed.has(index) ? size : common));
+}
+
+/**
+ * How far to move each box across the flow so the slots span a frame of `size` with `pad` at both
+ * ends and gaps as equal as their least sizes in `gaps` allow; a single slot is centred.
  *
  * @returns the move of each box, by its id
  */
@@ -77,19 +101,20 @@ export function justifySlots(
   slots: readonly JustifyBox[][],
   size: number,
   pad: number,
-  axis: Axis
+  axis: Axis,
+  gaps: readonly number[] = []
 ): Map<string, number> {
   const sizes = slots.map((slot) => slotSize(slot, axis));
-  const total = sizes.reduce((sum, value) => sum + value, 0);
-  const gap = slots.length > 1 ? (size - 2 * pad - total) / (slots.length - 1) : 0;
+  const least = slots.slice(1).map((_, index) => gaps[index] ?? 0);
+  const shared = shareGaps(least, size - 2 * pad - sum(sizes));
   const moves = new Map<string, number>();
-  let at = slots.length > 1 ? pad : (size - total) / 2;
+  let at = slots.length > 1 ? pad : (size - sum(sizes)) / 2;
   slots.forEach((slot, index) => {
     const delta = at - slotStart(slot, axis);
     for (const box of slot) {
       moves.set(box.id, delta);
     }
-    at += sizes[index] + gap;
+    at += sizes[index] + (shared[index] ?? 0);
   });
   return moves;
 }
@@ -165,6 +190,35 @@ function widestLabel(
   return Math.max(0, ...widths);
 }
 
+/**
+ * The least gap after each slot of a row: room for the widest label of a link inside the row
+ * between that slot and the next, or 0 where no labelled link joins them.
+ */
+function labelGaps(
+  frameId: string,
+  slots: readonly JustifyBox[][],
+  edges: readonly ElkEdgeLike[],
+  axis: Axis
+): number[] {
+  const slotIndex = new Map(slots.flatMap((slot, index) => slot.map(({ id }) => [id, index])));
+  const gaps = slots.slice(1).map(() => 0);
+  for (const edge of edges.filter(({ container }) => container === frameId)) {
+    const gap = gapBetween(slotIndex.get(edge.sources[0]), slotIndex.get(edge.targets[0]));
+    const width = edge.labels?.[0]?.[axis.size] ?? 0;
+    if (gap !== undefined && width > 0) {
+      gaps[gap] = Math.max(gaps[gap], width + 2 * LABEL_GAP_PADDING);
+    }
+  }
+  return gaps;
+}
+
+/** The gap between two neighbouring slots, by the index of the first; none for any other pair. */
+function gapBetween(from?: number, to?: number): number | undefined {
+  return from !== undefined && to !== undefined && Math.abs(from - to) === 1
+    ? Math.min(from, to)
+    : undefined;
+}
+
 /** Do two boxes overlap along the flow, so that they lie side by side rather than stacked? */
 function sideBySide(a: JustifyBox, b: JustifyBox, axis: Axis): boolean {
   const [a0, a1] = [a[axis.along] ?? 0, (a[axis.along] ?? 0) + (a[axis.depth] ?? 0)];
@@ -189,6 +243,8 @@ interface Row {
   band: boolean;
   slots: JustifyBox[][];
   pad: number;
+  /** The least gap after each slot but the last. */
+  gaps: number[];
   needed: number;
 }
 
@@ -203,10 +259,12 @@ function rowOf(frame: JustifyBox, input: JustifyInput, axis: Axis): Row | undefi
   }
   const slots = slotsOf(children, axis);
   const pad = Math.min(...children.map((child) => start(child, axis)));
-  const gap = band
-    ? widestLabel(frame.id, input.edges, input.tree, axis) + 2 * LABEL_GAP_PADDING
-    : 0;
-  return { frame, band, slots, pad, needed: neededSize(slots, pad, gap, axis) };
+  const gaps = band
+    ? slots
+        .slice(1)
+        .map(() => widestLabel(frame.id, input.edges, input.tree, axis) + 2 * LABEL_GAP_PADDING)
+    : labelGaps(frame.id, slots, input.edges, axis);
+  return { frame, band, slots, pad, gaps, needed: neededSize(slots, pad, gaps, axis) };
 }
 
 /** The arranged frames sitting directly in the diagram one under another, as rows to spread. */
@@ -228,7 +286,8 @@ export function rowsToJustify(input: JustifyInput): { id: string; band: boolean 
  * Spread the arranged frames that sit directly in the diagram, one under another, over one common
  * span across the flow, and spread what each holds over its whole span with equal gaps: the
  * columns of a band, the nodes of a row. A band is widened first, if need be, so that the gap
- * between two of its columns holds the widest label of a link into it. A row whose inner links
+ * between two of its columns holds the widest label of a link into it, and a row so that the gap
+ * between two of its nodes holds the label of the link between them. A row whose inner links
  * cannot follow its nodes keeps its layout.
  *
  * @returns the frames spread; the others are left to be shifted into line with their links
@@ -252,12 +311,12 @@ export function justifyFrames(input: JustifyInput): Set<string> {
 
 /** Spread one row over `span`, unless a link inside it cannot follow its nodes. */
 function spreadRow(
-  { frame, slots, pad }: Row,
+  { frame, slots, pad, gaps }: Row,
   [from, size]: readonly [number, number],
   edges: readonly ElkEdgeLike[],
   axis: Axis
 ): boolean {
-  const moves = justifySlots(slots, size, pad, axis);
+  const moves = justifySlots(slots, size, pad, axis, gaps);
   if (!moveInnerEdges(edges, frame.id, moves, axis)) {
     return false;
   }
