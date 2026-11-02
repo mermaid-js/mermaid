@@ -62,7 +62,7 @@ The `build:mermaid:full` command performs the following steps:
 
 ## Output
 
-After build, the editor is available at [`packages/mermaid/dist/mermaid-local-editor/`](../mermaid/dist/mermaid-local-editor):
+After build, the editor is available at [`packages/mermaid/dist/mermaid-local-editor/`](README.md):
 
 ---
 
