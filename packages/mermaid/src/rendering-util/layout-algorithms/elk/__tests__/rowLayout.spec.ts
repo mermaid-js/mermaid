@@ -17,6 +17,7 @@ import {
   slideToWishes,
   spanAlignedFrames,
   toFlow,
+  spreadKeepsTurns,
 } from '../rowLayout.js';
 import type { TreeData } from '../find-common-ancestor.js';
 
@@ -379,6 +380,18 @@ describe('proxyRowLinks', () => {
       edge('b', 'Cart', 'Order'),
       edge('c', 'Buyer', 'Seller'),
     ]);
+  });
+});
+
+describe('spreadKeepsTurns', () => {
+  it('lets a link that turned turn once more when its row is spread', () => {
+    expect(spreadKeepsTurns(1, 2)).toBe(true);
+    expect(spreadKeepsTurns(1, 3)).toBe(false);
+  });
+
+  it('keeps a straight link straight', () => {
+    expect(spreadKeepsTurns(0, 0)).toBe(true);
+    expect(spreadKeepsTurns(0, 1)).toBe(false);
   });
 });
 

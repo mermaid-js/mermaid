@@ -1311,8 +1311,22 @@ function arrange(
   return refineShifts(input, shiftRows(input, justified));
 }
 
-/** Does a link with an end in `item` turn more often in `trial` than in `base`? */
-function addsTurn(
+/**
+ * How many more turns a link that already turns may take when its row is spread over the full
+ * width: one, so an L may become a Z. A straight link stays straight.
+ */
+const SPREAD_EXTRA_TURNS = 1;
+
+/**
+ * May a link that took `before` turns take `after` once its row is spread? A link that turned may
+ * turn {@link SPREAD_EXTRA_TURNS} more times; a straight one must stay straight.
+ */
+export function spreadKeepsTurns(before: number, after: number): boolean {
+  return after <= (before > 0 ? before + SPREAD_EXTRA_TURNS : 0);
+}
+
+/** Does a link with an end in `item` turn more often in `trial` than {@link spreadKeepsTurns} allows? */
+function addsTurns(
   base: ReturnType<typeof routeAll>,
   trial: ReturnType<typeof routeAll>,
   item: string,
@@ -1323,7 +1337,8 @@ function addsTurn(
     const touches = [plan.edge.sources[0], plan.edge.targets[0]].some(
       (id) => itemOf(id, tree) === item
     );
-    return touches && turns(route.points) > (before.get(plan.edge.id) ?? Infinity);
+    const was = before.get(plan.edge.id) ?? Infinity;
+    return touches && !spreadKeepsTurns(was, turns(route.points));
   });
 }
 
@@ -1341,8 +1356,8 @@ function spanAcross({ graph, direction }: AlignInput): number {
 
 /**
  * Spread every band of columns over the full span, and every row whose spreading neither makes
- * one of its links turn more often nor shifts another row out past the span the diagram had; the
- * other rows keep their first-link alignment.
+ * one of its links turn more than {@link SPREAD_EXTRA_TURNS} more often nor shifts another row out
+ * past the span the diagram had; the other rows keep their first-link alignment.
  */
 function chooseSpread(input: AlignInput) {
   const snapshot = snapshotOf(input);
@@ -1353,7 +1368,7 @@ function chooseSpread(input: AlignInput) {
   for (const { id } of rows.filter(({ band }) => !band)) {
     const trial = arrange(input, snapshot, new Set([...spread, id]));
     const trialSpan = spanAcross(input);
-    if (trialSpan <= span + STRAIGHT_EPS && !addsTurn(state, trial, id, input.tree)) {
+    if (trialSpan <= span + STRAIGHT_EPS && !addsTurns(state, trial, id, input.tree)) {
       spread.add(id);
       state = trial;
       span = trialSpan;
