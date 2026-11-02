@@ -122,18 +122,21 @@ interface Leg {
   channels: (Channel | undefined)[];
 }
 
-/** Places along a node's side where a straight run past `range` clears every other obstacle. */
+/**
+ * Places along a node's side where a straight run past `range` may clear every other obstacle:
+ * its middle, the places in `prefer`, and just beside each obstacle in the way.
+ */
 function clearSpots(
   node: Box,
   range: readonly [number, number],
   obstacles: readonly Box[],
-  prefer?: number
+  prefer: readonly number[] = []
 ): number[] {
   const low = node.x + MIN_TERMINAL_RUN / 2;
   const high = right(node) - MIN_TERMINAL_RUN / 2;
   const spots = [
     centre(node).x,
-    ...(prefer === undefined ? [] : [prefer]),
+    ...prefer,
     ...obstacles
       .filter((box) => box !== node && box.y < range[1] && bottom(box) > range[0])
       .flatMap((box) => [box.x - CLEARANCE, right(box) + CLEARANCE]),
@@ -141,10 +144,15 @@ function clearSpots(
   return spots.filter((spot) => spot >= low && spot <= high);
 }
 
-/** Leave the source downwards, or sideways into a corridor that runs down to the first lane. */
+/**
+ * Leave the source downwards, or sideways into a corridor that runs down to the first lane. A
+ * downward exit may also leave where the target can be entered from above, so a link can run
+ * straight past something in front of the target's middle, such as a frame's title.
+ */
 function exits(problem: RouteProblem, lane: number): Leg[] {
-  const { source, obstacles, walls, limits } = problem;
-  const down = clearSpots(source, [bottom(source), lane], obstacles).map((x) => ({
+  const { source, target, gaps, obstacles, walls, limits } = problem;
+  const into = clearSpots(target, [middle(gaps[gaps.length - 1]), target.y], obstacles);
+  const down = clearSpots(source, [bottom(source), lane], obstacles, into).map((x) => ({
     points: [
       { x, y: bottom(source) },
       { x, y: lane },
@@ -161,7 +169,7 @@ function exits(problem: RouteProblem, lane: number): Leg[] {
 /** Enter the target from above, or from the side out of a corridor that runs down from the last lane. */
 function entries(problem: RouteProblem, lane: number, prefer: number): Leg[] {
   const { target, obstacles, walls, limits } = problem;
-  const down = clearSpots(target, [lane, target.y], obstacles, prefer).map((x) => ({
+  const down = clearSpots(target, [lane, target.y], obstacles, [prefer]).map((x) => ({
     points: [
       { x, y: lane },
       { x, y: target.y },
