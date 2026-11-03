@@ -1,4 +1,12 @@
+---
+description: 'Guide decision-making by placing items in the clear, complicated, complex, chaotic, and confused domains of the Cynefin framework.'
+---
+
 # Cynefin Framework Diagram (v11.16.0+)
+
+```warning
+Cynefin diagrams are in beta. Diagrams start with the `cynefin-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
 
 > The Cynefin framework is a sense-making framework created by [Dave Snowden](https://en.wikipedia.org/wiki/Dave_Snowden) that categorizes problems into five complexity domains. It helps teams match their response to the nature of the situation they are facing. The name is Welsh for "place" or "habitat".
 

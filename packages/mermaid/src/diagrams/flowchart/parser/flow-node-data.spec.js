@@ -1,6 +1,6 @@
 import { FlowDB } from '../flowDb.js';
 import flow from './flowParser.ts';
-import { setConfig } from '../../../config.js';
+import { getConfig, setConfig } from '../../../config.js';
 
 setConfig({
   securityLevel: 'strict',
@@ -398,6 +398,107 @@ describe('when parsing directions', function () {
     expect(data4Layout.edges[1].animate).toEqual(false);
     expect(data4Layout.edges[2].id).toEqual('e3');
     expect(data4Layout.edges[2].animate).toEqual(false);
+  });
+
+  it('should order edges for the step animation', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+     B e2@--> C
+     B e3@--> D
+     C e4@--> E
+    e1@{ step: 1 }
+    e2@{ step: 2 }
+    e3@{ step: 2 }
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.edges.map((edge) => [edge.id, edge.step, edge.stepCount])).toEqual([
+      ['e1', 1, 2],
+      ['e2', 2, 2],
+      ['e3', 2, 2],
+      ['e4', undefined, undefined],
+    ]);
+  });
+
+  it('should give step edges the default step duration', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+     B e2@--> C
+    e1@{ step: 1 }
+      `);
+
+    const [stepped, plain] = flow.parser.yy.getData().edges;
+    expect(stepped.stepDuration).toBe(1);
+    expect('stepDuration' in plain).toBe(false);
+  });
+
+  it('should take the step duration from the flowchart config', function () {
+    const previous = getConfig().flowchart?.stepDuration;
+    setConfig({ flowchart: { stepDuration: 0.5 } });
+    try {
+      flow.parser.parse(`flowchart LR
+     A e1@--> B
+    e1@{ step: 1 }
+      `);
+
+      const [edge] = flow.parser.yy.getData().edges;
+      expect(edge.stepDuration).toBe(0.5);
+    } finally {
+      setConfig({ flowchart: { stepDuration: previous } });
+    }
+  });
+
+  it('should mark step edges for a number badge only when stepNumbers is on', function () {
+    const previous = getConfig().flowchart?.stepNumbers;
+    setConfig({ flowchart: { stepNumbers: true } });
+    try {
+      flow.parser.parse(`flowchart LR
+     A e1@--> B
+     B e2@--> C
+    e1@{ step: 1 }
+      `);
+
+      const [stepped, plain] = flow.parser.yy.getData().edges;
+      expect(stepped.showStepNumber).toBe(true);
+      expect('showStepNumber' in plain).toBe(false);
+    } finally {
+      setConfig({ flowchart: { stepNumbers: previous } });
+    }
+  });
+
+  it('should leave step edges without a number badge by default', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+    e1@{ step: 1 }
+      `);
+
+    const [edge] = flow.parser.yy.getData().edges;
+    expect('showStepNumber' in edge).toBe(false);
+  });
+
+  it('should ignore a step that is not a positive integer', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+     B e2@--> C
+    e1@{ step: 0 }
+    e2@{ step: 1.5 }
+      `);
+
+    const data4Layout = flow.parser.yy.getData();
+    expect(data4Layout.edges.every((edge) => !('step' in edge) && !('stepCount' in edge))).toBe(
+      true
+    );
+  });
+
+  it('should leave edges without a step free of step data', function () {
+    flow.parser.parse(`flowchart LR
+     A e1@--> B
+    e1@{ animate: true }
+      `);
+
+    const [edge] = flow.parser.yy.getData().edges;
+    expect('step' in edge).toBe(false);
+    expect('stepCount' in edge).toBe(false);
   });
 
   it.skip('should be possible to use @  syntax to add labels with trail spaces', function () {
