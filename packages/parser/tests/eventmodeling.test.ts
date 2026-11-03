@@ -477,6 +477,23 @@ tf 01 evt Message "hello"
       );
       expect(result.value.frames[0].dataInlineValue).toBe('"hello"');
     });
+
+    it('should parse a quoted frame-data line after a %% gwt comment as EM_DATA_INLINE', () => {
+      const result = parse(`eventmodeling
+tf 01 evt Message %% gwt 12
+"hello"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames).toHaveLength(1);
+      expect(result.value.frames[0].dataInlineValue).toBe('"hello"');
+    });
   });
 
   describe('GWT scenario label', () => {
@@ -566,6 +583,26 @@ tf 01 evt ProductCountIncrementedEvent \`json\`" { "a": { "c": true } } "
       );
       expect(result.value.frames).toHaveLength(1);
       expect(result.value.frames[0].dataInlineValue).toBe('" { "a": { "c": true } } "');
+    });
+
+    it('should accept a label when a comment sits between the frame id and the label', () => {
+      const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 %% note
+"Add item" given evt ItemAdded then evt ItemAdded %% "comment"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.gwtEntities).toHaveLength(1);
+      expect(result.value.gwtEntities[0].label).toBe('"Add item"');
+      expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
+      expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
     });
   });
 

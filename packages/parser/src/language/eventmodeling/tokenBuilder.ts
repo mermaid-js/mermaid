@@ -1,4 +1,4 @@
-import type { TokenVocabulary } from 'chevrotain';
+import type { IToken, TokenVocabulary } from 'chevrotain';
 import type { Grammar, TokenBuilderOptions } from 'langium';
 import { AbstractMermaidTokenBuilder } from '../common/index.js';
 
@@ -6,19 +6,37 @@ import { AbstractMermaidTokenBuilder } from '../common/index.js';
 // would swallow a GWT label and a later quoted comment unless it declines that position.
 const greedyInline = /{(.*)}|"(.*)"|'(.*)'/y;
 
-// `gwt`, a frame id, then whitespace, ending where the label quote starts.
-const gwtLabelPrefix = /(?:^|\W)gwt\s+\d{1,3}\s*$/;
-
-function isGwtLabelQuote(text: string, offset: number): boolean {
+// A quoted GWT label is preceded by the keyword `gwt` and a frame id.
+// Chevrotain leaves hidden tokens (whitespace and %% comments) out of this list, so a
+// comment cannot fake that pair or hide a real frame id.
+function isGwtLabelQuote(text: string, offset: number, tokens: IToken[]): boolean {
   const start = text[offset];
   if (start !== '"' && start !== "'") {
     return false;
   }
-  return gwtLabelPrefix.test(text.slice(0, offset));
+  const [gwt, frameId] = lastNonHidden(tokens, 2);
+  return gwt?.tokenType.name === 'gwt' && frameId?.tokenType.name === 'EM_FID';
 }
 
-function matchEmDataInline(text: string, offset: number): RegExpExecArray | null {
-  if (isGwtLabelQuote(text, offset)) {
+function lastNonHidden(tokens: IToken[], count: number): IToken[] {
+  const visible: IToken[] = [];
+  for (let index = tokens.length - 1; index >= 0 && visible.length < count; index--) {
+    const token = tokens[index];
+    if (token.tokenType.GROUP !== undefined) {
+      continue;
+    }
+    visible.push(token);
+  }
+  visible.reverse();
+  return visible;
+}
+
+function matchEmDataInline(
+  text: string,
+  offset: number,
+  tokens: IToken[] = []
+): RegExpExecArray | null {
+  if (isGwtLabelQuote(text, offset, tokens)) {
     return null;
   }
   greedyInline.lastIndex = offset;
