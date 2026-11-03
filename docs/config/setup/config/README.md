@@ -26,5 +26,6 @@
 - [sanitize](functions/sanitize.md)
 - [saveConfigFromInitialize](functions/saveConfigFromInitialize.md)
 - [~~setConfig~~](functions/setConfig.md)
+- [setDiagramConfigScope](functions/setDiagramConfigScope.md)
 - [setSiteConfig](functions/setSiteConfig.md)
 - [updateSiteConfig](functions/updateSiteConfig.md)

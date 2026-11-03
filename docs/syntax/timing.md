@@ -11,12 +11,11 @@ They are useful for documenting hardware interfaces, embedded systems, protocols
 time-dependent software behavior.
 
 > **Warning**
-> Timing diagrams are in **beta**. Select this diagram type with the
-> `timingDiagram-beta` keyword. Its syntax may change before it is declared stable.
+> Timing diagrams are in beta. Use the `timingDiagram-beta` keyword; the syntax may change before it is declared stable.
 
 ## Basic example
 
-```mermaid-example
+```mermaid
 timingDiagram-beta
   title Synchronous bus read
   timeUnit ns
@@ -43,7 +42,7 @@ timingDiagram-beta
     V is 5
 ```
 
-```mermaid
+```mermaid-example
 timingDiagram-beta
   title Synchronous bus read
   timeUnit ns
@@ -96,12 +95,12 @@ Clock options are named and comma-separated:
 To keep generated SVGs bounded, a clock can render at most 10,000 cycles. Increase its period or
 shorten the overall timeline if that limit is exceeded.
 
-```mermaid-example
+```mermaid
 timingDiagram-beta
   clock CLK : period 10, duty 30%, offset 2
 ```
 
-```mermaid
+```mermaid-example
 timingDiagram-beta
   clock CLK : period 10, duty 30%, offset 2
 ```
@@ -125,13 +124,13 @@ The optional list on a state declaration documents the expected states and their
 It does not restrict later values, so a state discovered while documenting a system can be used
 without rewriting the declaration.
 
-```mermaid-example
+```mermaid
 timingDiagram-beta
   state MODE : Idle, Starting, Running
   MODE : Idle x2, Starting, Running x3, Fault
 ```
 
-```mermaid
+```mermaid-example
 timingDiagram-beta
   state MODE : Idle, Starting, Running
   MODE : Idle x2, Starting, Running x3, Fault
@@ -143,13 +142,13 @@ Analog values must be numbers. The optional `min` and `max` parameters fix the v
 omitted, Mermaid derives the range from the signal values. `interpolation` can be `linear` (the
 default) or `step`.
 
-```mermaid-example
+```mermaid
 timingDiagram-beta
   analog TEMP as "Temperature" : min -20, max 100, interpolation step
   TEMP : 20 x2, 35 x2, 55 x2, 40 x2
 ```
 
-```mermaid
+```mermaid-example
 timingDiagram-beta
   analog TEMP as "Temperature" : min -20, max 100, interpolation step
   TEMP : 20 x2, 35 x2, 55 x2, 40 x2
@@ -160,7 +159,7 @@ timingDiagram-beta
 Assign a comma-separated value sequence with `SIGNAL : values`. Each value lasts one time unit by
 default. Add `xN` to use run-length encoding and hold a value for `N` units.
 
-```mermaid-example
+```mermaid
 timingDiagram-beta
   binary CS
   bus DATA
@@ -168,7 +167,7 @@ timingDiagram-beta
   DATA : Z x2, "0x2A" x2, "0x7F" x2, Z x2
 ```
 
-```mermaid
+```mermaid-example
 timingDiagram-beta
   binary CS
   bus DATA
@@ -184,7 +183,7 @@ segment boundaries.
 Use an `at` block when several lanes change at the same absolute time. A signal holds its last value
 until its next transition.
 
-```mermaid-example
+```mermaid
 timingDiagram-beta
   state SERVICE : Offline, Starting, Ready
   binary HEALTHY
@@ -199,7 +198,7 @@ timingDiagram-beta
     HEALTHY is 1
 ```
 
-```mermaid
+```mermaid-example
 timingDiagram-beta
   state SERVICE : Offline, Starting, Ready
   binary HEALTHY
@@ -236,7 +235,7 @@ Timing diagrams support Mermaid's standard title, accessibility, frontmatter, an
 
 <!--- cspell:ignore SCLK --->
 
-```mermaid-example
+```mermaid
 ---
 title: SPI transfer
 ---
@@ -249,7 +248,7 @@ timingDiagram-beta
   CS : 1, 0 x8, 1
 ```
 
-```mermaid
+```mermaid-example
 ---
 title: SPI transfer
 ---
@@ -275,7 +274,7 @@ Timing diagram geometry can be adjusted through the `timing` configuration names
 | `axisHeight`  | `36`    | Height reserved for the time axis                   |
 | `useMaxWidth` | `true`  | Scale the SVG to its available container width      |
 
-```mermaid-example
+```mermaid
 ---
 config:
   timing:
@@ -288,7 +287,7 @@ timingDiagram-beta
   READY : 0 x2, 1 x4, 0 x2
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   timing:
@@ -308,3 +307,6 @@ types.
 
 Cross-lane arrows and duration or setup/hold constraints are not part of the beta v1 syntax. The
 arrow forms `-->` and `<-->` remain available for a future timing annotation syntax.
+
+The beta renderer uses precise straight lines for waveforms. Hand-drawn styling is not supported;
+setting `look: handDrawn` still renders timing diagrams with the classic appearance.

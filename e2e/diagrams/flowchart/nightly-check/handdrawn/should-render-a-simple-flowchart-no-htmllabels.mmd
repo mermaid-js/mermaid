@@ -1,0 +1,17 @@
+---
+description:
+  Verifies that a simple flowchart with several node shapes and a FontAwesome
+  icon in a node label renders correctly with HTML labels disabled, under the
+  hand-drawn look.
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph TD
+  A[Christmas] -->|Get money| B(Go shopping)
+  B --> C{Let me think}
+  C -->|One| D[Laptop]
+  C -->|Two| E[iPhone]
+  C -->|Three| F[fa:fa-car Car]

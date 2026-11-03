@@ -1,12 +1,16 @@
+---
+description: 'Timing diagram syntax for clocks, binary signals, state transitions, data buses, and analog signals on a shared time axis.'
+---
+
 # Timing diagrams (v<MERMAID_RELEASE_VERSION>+)
 
 Timing diagrams show how digital, state, bus, and analog signals change over a shared time axis.
 They are useful for documenting hardware interfaces, embedded systems, protocols, and
 time-dependent software behavior.
 
-> **Warning**
-> Timing diagrams are in **beta**. Select this diagram type with the
-> `timingDiagram-beta` keyword. Its syntax may change before it is declared stable.
+```warning
+Timing diagrams are in beta. Use the `timingDiagram-beta` keyword; the syntax may change before it is declared stable.
+```
 
 ## Basic example
 
@@ -209,3 +213,6 @@ types.
 
 Cross-lane arrows and duration or setup/hold constraints are not part of the beta v1 syntax. The
 arrow forms `-->` and `<-->` remain available for a future timing annotation syntax.
+
+The beta renderer uses precise straight lines for waveforms. Hand-drawn styling is not supported;
+setting `look: handDrawn` still renders timing diagrams with the classic appearance.

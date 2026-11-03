@@ -1,0 +1,15 @@
+---
+description:
+  Regression check using a small cyclic graph (work/sleep/eat) that the computed
+  SVG viewBox is wide enough to include edges routed to the left of the
+  left-most node, rather than clipping them.
+config:
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph TD
+  work --> sleep
+  sleep --> work
+  eat --> sleep
+  work --> eat

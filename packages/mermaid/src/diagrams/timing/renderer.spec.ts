@@ -150,6 +150,42 @@ describe('timing diagram renderer', () => {
     }
   });
 
+  it('rejects a clock period lost to rounding at a large offset', () => {
+    document.body.innerHTML = '<svg id="rounded-clock"></svg>';
+    const signals: TimingSignal[] = [
+      {
+        id: 'CLK',
+        label: 'Clock',
+        type: 'clock',
+        clock: { period: 0.6, duty: 50, offset: 1e16 },
+        sequence: [],
+        events: [],
+      },
+    ];
+    expect(() => draw('', 'rounded-clock', '1.0', createDiagram(signals))).toThrow(
+      /period is too small to advance/
+    );
+  });
+
+  it('preserves clock duty at large finite periods without multiplication overflow', async () => {
+    document.body.innerHTML = '<svg id="large-clock"></svg>';
+    const signals: TimingSignal[] = [
+      {
+        id: 'CLK',
+        label: 'Clock',
+        type: 'clock',
+        clock: { period: 1e307, duty: 50, offset: 0 },
+        sequence: [],
+        events: [],
+      },
+    ];
+    await draw('', 'large-clock', '1.0', createDiagram(signals));
+    const path = document.querySelector('.timing-clock')?.getAttribute('d');
+    expect(path).not.toMatch(/NaN|Infinity/);
+    // Four periods fit the 600px timeline; the first high phase is 75px wide.
+    expect(path).toContain('M 136 91 V 61 H 211 V 91 H 286');
+  });
+
   it('rejects configuration whose aggregate layout geometry overflows', () => {
     document.body.innerHTML = '<svg id="overflow-layout"></svg>';
 

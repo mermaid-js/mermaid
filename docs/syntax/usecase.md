@@ -4,13 +4,16 @@
 >
 > ## Please edit the corresponding file in [/packages/mermaid/src/docs/syntax/usecase.md](../../packages/mermaid/src/docs/syntax/usecase.md).
 
-# Use case diagrams (\<MERMAID_RELEASE_VERSION>+)
+# Use case diagrams (12.0.0+)
+
+> **Warning**
+> Use case diagrams are in beta. Diagrams start with the `usecase-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 
 Use case diagrams show how actors interact with a system and its use cases. Start a diagram with the `usecase-beta` keyword. Put each statement on its own physical line.
 
 In UML prose, **use case** is two words. Mermaid's exact syntax keyword is the single token `usecase-beta`; this page uses the two-word form everywhere else.
 
-```mermaid-example
+```mermaid
 usecase-beta
 direction LR
 actor Customer("Customer")
@@ -20,7 +23,7 @@ end
 Customer --> Checkout
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 direction LR
 actor Customer("Customer")
@@ -32,13 +35,120 @@ Customer --> Checkout
 
 Use `direction` with `TD`, `TB`, `BT`, `LR`, or `RL` to choose the layout direction.
 
+## Default theme, look and layout (v12.0.0+)
+
+Use case diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+```mermaid-example
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+usecase-beta
+direction LR
+actor Customer
+actor Support
+systemBoundary Storefront
+  Browse("Browse catalogue")
+  Checkout("Checkout")
+end
+systemBoundary Fulfilment
+  Track("Track delivery")
+end
+Customer --> Browse
+Customer --> Checkout
+Customer --> Track
+Support --> Track
+Checkout ..> : include Browse
+```
+
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', usecase: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
+
 ## Actors and use cases
 
 Actor and use case identifiers match `[A-Za-z0-9_]+`, so they may start with a digit — `1`, `1mg`, and `3rd` are all valid. Identifiers are diagram-wide and are shared by actors, use cases, boundaries, JSON nodes, and explicit edges.
 
 A bare actor uses its identifier as its label. An actor can also have an explicit identifier and display label. Use cases use parentheses for an ellipse and square brackets for a rectangle.
 
-```mermaid-example
+```mermaid
 usecase-beta
 Customer --> Login
 actor Customer
@@ -49,7 +159,7 @@ Report[Generate report]
 Admin --> Report
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 Customer --> Login
 actor Customer
@@ -68,7 +178,7 @@ A relationship endpoint can appear before its declaration. Final declaration ord
 
 Actors support four variants. The normal stick actor is the default. Set `type` to `hollow` or `awesome` for the other built-in variants. Set `icon` to an icon name for an icon actor.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor Normal("Normal actor")
 actor Hollow("Hollow actor")@{ type: hollow }
@@ -82,7 +192,7 @@ Icon --> Manage
 Fallback --> Manage
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor Normal("Normal actor")
 actor Hollow("Hollow actor")@{ type: hollow }
@@ -106,7 +216,7 @@ Set `business: true` to add the conventional business slash to a normal or hollo
 
 An actor or use case can have one visible stereotype. Put `<<...>>` after metadata and before a `:::` class suffix. The stereotype keeps its case and appears above the main label.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor SalesAgent("Sales agent")@{ business: true } <<Employee>>
 actor Broker@{ type: hollow, business: true }
@@ -117,7 +227,7 @@ Broker --> Quote
 Quote --> Archive
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor SalesAgent("Sales agent")@{ business: true } <<Employee>>
 actor Broker@{ type: hollow, business: true }
@@ -136,7 +246,7 @@ Labels can be unquoted text inside parentheses or brackets, a single-line plain 
 
 An unquoted label is taken literally from the source, so it can hold digits, Markdown markers, punctuation, and non-ASCII characters. It has to stay on one physical line, and leading and trailing spaces are dropped. Only what the syntax already reserves stays out: the delimiters `(`, `)`, `[`, `]`, `{`, and `}`, the quote characters `"` and `'`, and the sequences `--`, `-->`, `<--`, `--o`, `--x`, `--|>`, `..>`, `:::`, `@{`, and `<<`. A lone `-`, `.`, `:`, `@`, `<`, or `>` is ordinary text. Quote the label when a reserved character has to appear in it.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor Analyst(*Analyst*)
 Literal(**Literal markers**)
@@ -145,7 +255,7 @@ Analyst -- files R&D report --> Literal
 Analyst --> Priced
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor Analyst(*Analyst*)
 Literal(**Literal markers**)
@@ -156,7 +266,7 @@ Analyst --> Priced
 
 Plain strings remain plain text. Markdown markers in a plain string are displayed literally. Mermaid Markdown strings use an outer pair of double quotes and an inner pair of backticks. Markdown strings can contain physical newlines.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor Reviewer("`*Reviewer*`")
 Literal("**Literal markers**")
@@ -168,7 +278,7 @@ Reviewer --> Literal
 Reviewer --> Quoted
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor Reviewer("`*Reviewer*`")
 Literal("**Literal markers**")
@@ -188,7 +298,7 @@ Each statement occupies one physical line unless it contains a Markdown string, 
 
 After optional indentation, `%%` starts a whole-line comment. Blank lines and comments retain their source order in the public AST.
 
-```mermaid-example
+```mermaid
 usecase-beta
 %% Actors are declared explicitly.
 actor User
@@ -198,7 +308,7 @@ User --> Login
 Login --> Dashboard
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 %% Actors are declared explicitly.
 actor User
@@ -214,7 +324,7 @@ Login --> Dashboard
 
 A `systemBoundary` block groups actor and use case declarations. Give the boundary a short identifier followed by an optional display title, then optional metadata and classes. The suffixes are ordered `systemBoundary <id><title>@{ … }:::<classes>`, the same order actors and use cases use.
 
-```mermaid-example
+```mermaid
 usecase-beta
 systemBoundary sb1["Payment service"]@{ type: package }:::system
   actor Clerk("Payment clerk")
@@ -226,7 +336,7 @@ Authorize --> Receipt
 classDef system stroke:#4b4b7a
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 systemBoundary sb1["Payment service"]@{ type: package }:::system
   actor Clerk("Payment clerk")
@@ -242,7 +352,7 @@ Titles accept the same label forms as use cases — unquoted text, a plain strin
 
 A boundary declared with a quoted title and no identifier gets a deterministic one instead. Below, the title `Payment service` produces the identifier `Payment_service`, which the separate metadata statement then targets.
 
-```mermaid-example
+```mermaid
 usecase-beta
 systemBoundary "Payment service"
   actor Clerk("Payment clerk")
@@ -252,7 +362,7 @@ Payment_service@{ type: package }
 Clerk --> Authorize
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 systemBoundary "Payment service"
   actor Clerk("Payment clerk")
@@ -272,7 +382,7 @@ Boundaries are one level deep. Their contents can contain only actor and use cas
 
 Seven solid association operators are supported. The marker direction and type are preserved.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor User
 actor Support
@@ -287,7 +397,7 @@ User --x Finish
 Finish x-- Support
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor User
 actor Support
@@ -304,14 +414,14 @@ Finish x-- Support
 
 Solid associations can have a label. A label containing `include` or `extend` is still an ordinary association.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor User
 Login
 User -- "include account details" --> Login
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor User
 Login
@@ -324,19 +434,6 @@ JSON nodes can use only point, reversed-point, or markerless solid associations.
 
 Use explicit operators for UML relationship semantics.
 
-```mermaid-example
-usecase-beta
-actor Admin
-actor Person
-Checkout
-Payment
-ApplyCoupon
-Admin --|> Person
-Checkout ..> : include Payment
-ApplyCoupon ..> : extend Checkout
-ApplyCoupon --|> Checkout
-```
-
 ```mermaid
 usecase-beta
 actor Admin
@@ -350,13 +447,28 @@ ApplyCoupon ..> : extend Checkout
 ApplyCoupon --|> Checkout
 ```
 
+```mermaid-example
+usecase-beta
+actor Admin
+actor Person
+Checkout
+Payment
+ApplyCoupon
+Admin --|> Person
+Checkout ..> : include Payment
+ApplyCoupon ..> : extend Checkout
+ApplyCoupon --|> Checkout
+```
+
+Include and extend relationships display the UML labels `«include»` and `«extend»`. The input syntax remains `..> : include` and `..> : extend`.
+
 For include, the source use case includes the target use case. For extend, the source use case extends the target base use case. Generalization points from the specialized actor or use case to the general actor or use case. Include and extend require use case endpoints. Generalization requires two actors or two use cases.
 
 ### Edge IDs, styles, animation, and length
 
 Place an explicit edge ID followed by `@` immediately before an operator. Explicit edge IDs share the diagram-wide ID namespace and can be targeted by `class`, `style`, and metadata statements.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor Customer
 Checkout
@@ -370,7 +482,7 @@ opens@{ animation: fast }
 payment@{ animate: false }
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor Customer
 Checkout
@@ -394,7 +506,7 @@ A note attaches to one actor or use case. The target can be declared after the n
 
 A note is an ordinary node in the graph. The layout algorithm places it together with the actors and use cases, so a note has no fixed side relative to its target: its position follows the diagram direction and the rest of the layout, and adding a note can move the other elements.
 
-```mermaid-example
+```mermaid
 usecase-beta
 note for Login "`Requires an **active session**`"
 note for User "Starts the workflow"
@@ -403,7 +515,7 @@ Login("Sign in")
 User --> Login
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 note for Login "`Requires an **active session**`"
 note for User "Starts the workflow"
@@ -418,7 +530,7 @@ Notes cannot target JSON nodes, boundaries, edges, or other notes. Notes do not 
 
 A top-level JSON declaration creates a table whose title is its identifier. Its body must be a strict JSON object.
 
-```mermaid-example
+```mermaid
 usecase-beta
 Inspect("Inspect payload")
 json Payload@{
@@ -438,7 +550,7 @@ classDef data stroke:#3572a5
 style Payload stroke-width:2px
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 Inspect("Inspect payload")
 json Payload@{
@@ -466,7 +578,7 @@ JSON declarations must stay at the top level. Arrays and scalar values are not v
 
 Actors, use cases, boundaries, JSON nodes, and explicit edges support Mermaid classes and direct styles. Use `classDef` to define one or more classes, `class` to assign them, `style` for direct declarations, or `:::` on an actor, use case, boundary, or JSON declaration.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor Customer:::external
 Checkout("Checkout"):::critical
@@ -485,7 +597,7 @@ style Checkout stroke:#c33,stroke-width:4px
 style Account stroke:#536878
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor Customer:::external
 Checkout("Checkout"):::critical
@@ -510,6 +622,129 @@ Backgrounds come from the active theme, so a hardcoded `fill` is tied to the the
 
 Actor metadata is typed and is not a style map. `fillColor`, `strokeColor`, `strokeWidth`, and arbitrary actor metadata keys are errors. Use `classDef`, `class`, or `style` instead.
 
+## Colors
+
+Colour is keyed to the kind of element, not to the order elements are declared. Actors take
+one colour, use cases another, and system boundaries a third, so the colour of an element
+says what it is and does not change when you edit the diagram around it. Adding a use case
+in the middle of a document leaves every other element exactly as it was, which keeps
+diffs, documentation screenshots, and visual baselines stable.
+
+Each role reads a pair of theme variables. A theme that sets none of them renders as it
+always did, and you can override any of them through `themeVariables`.
+
+| Theme variable          | Applies to                                |
+| ----------------------- | ----------------------------------------- |
+| `usecaseActorBkg`       | Actor glyph fill                          |
+| `usecaseActorBorder`    | Actor glyph stroke                        |
+| `usecaseBkg`            | Use case body fill                        |
+| `usecaseBorder`         | Use case body stroke                      |
+| `usecaseBoundaryBkg`    | System boundary fill, when not numbered   |
+| `usecaseBoundaryBorder` | System boundary stroke, when not numbered |
+| `usecaseIncludeLine`    | `include` relationship stroke             |
+| `usecaseExtendLine`     | `extend` relationship stroke              |
+
+`include` and `extend` are both dashed, which is hard to tell apart at small sizes, so the
+colour themes give them separate hues as well.
+
+System boundaries are the exception to the rule above: they are numbered rather than given
+one shared colour. The first boundary in the document takes the first colour of the theme's
+palette, the second takes the second, and so on, exactly as flowchart subgraphs are
+numbered. For a container the number means something — it says which group an element
+belongs to — and it stays put as long as the order of the boundaries does, so adding an
+actor or a use case anywhere leaves it alone. `usecaseBoundaryBkg` and
+`usecaseBoundaryBorder` are the fallback for themes that carry no palette to number with.
+
+```mermaid
+---
+config:
+  theme: redux-color
+---
+usecase-beta
+direction LR
+actor Customer
+systemBoundary Catalogue
+  Browse("Browse catalogue")
+end
+systemBoundary Payment
+  Checkout("Checkout")
+end
+Customer --> Browse
+Browse --> Checkout
+Checkout ..> : include Browse
+```
+
+```mermaid-example
+---
+config:
+  theme: redux-color
+---
+usecase-beta
+direction LR
+actor Customer
+systemBoundary Catalogue
+  Browse("Browse catalogue")
+end
+systemBoundary Payment
+  Checkout("Checkout")
+end
+Customer --> Browse
+Browse --> Checkout
+Checkout ..> : include Browse
+```
+
+### Per-element colour rotation
+
+Set `colorScheme: rotate` to extend the numbering from the boundaries to the actors and use
+cases as well, so every element takes its own slot from the theme's categorical palette, the
+way entity relationship and class diagrams are coloured. Actors and use cases share one
+cycle, with the actors numbered first and the use cases after them, each in declaration
+order. An `actor A`, `usecase U`, `actor B` written in that order is therefore numbered A,
+B, U rather than A, U, B. This buys per-element variety at the cost of the stability
+described above: inserting an element shifts the colour of every later element of its own
+kind, and inserting an actor shifts the use cases too. Boundaries keep their own numbering
+either way. Only the colour themes (`redux-color` and `redux-dark-color`) carry a palette,
+so on any other theme the two settings render identically.
+
+```mermaid
+---
+config:
+  theme: redux-color
+  usecase:
+    colorScheme: rotate
+---
+usecase-beta
+direction LR
+actor Customer
+actor Auditor
+Browse("Browse catalogue")
+Checkout("Checkout")
+Customer --> Browse
+Browse --> Checkout
+Auditor --> Checkout
+```
+
+```mermaid-example
+---
+config:
+  theme: redux-color
+  usecase:
+    colorScheme: rotate
+---
+usecase-beta
+direction LR
+actor Customer
+actor Auditor
+Browse("Browse catalogue")
+Checkout("Checkout")
+Customer --> Browse
+Browse --> Checkout
+Auditor --> Checkout
+```
+
+`classDef` and `style` override both schemes, so per-element semantic colour stays
+available whichever one is active. See [Styling](#styling).
+
 ## Configuration
 
 Use case diagrams accept these diagram configuration keys:
@@ -525,29 +760,8 @@ Use case diagrams accept these diagram configuration keys:
 | `nodeSpacing`       | `50`                      | Spacing between nodes on the same level       |
 | `rankSpacing`       | `50`                      | Spacing between layout ranks                  |
 | `diagramPadding`    | `20`                      | Padding around the diagram                    |
+| `colorScheme`       | `role`                    | How the diagram takes colour from the theme   |
 | `useMaxWidth`       | `true`                    | Whether the SVG scales to the available width |
-
-```mermaid-example
----
-config:
-  usecase:
-    actorFontSize: 16
-    actorFontFamily: Arial
-    actorFontWeight: bold
-    usecaseFontSize: 14
-    usecaseFontFamily: Georgia
-    usecaseFontWeight: normal
-    nodeSpacing: 60
-    rankSpacing: 70
-    diagramPadding: 24
-    useMaxWidth: false
----
-usecase-beta
-direction LR
-actor Customer
-Browse("Browse catalog")
-Customer --> Browse
-```
 
 ```mermaid
 ---
@@ -562,6 +776,30 @@ config:
     nodeSpacing: 60
     rankSpacing: 70
     diagramPadding: 24
+    colorScheme: role
+    useMaxWidth: false
+---
+usecase-beta
+direction LR
+actor Customer
+Browse("Browse catalog")
+Customer --> Browse
+```
+
+```mermaid-example
+---
+config:
+  usecase:
+    actorFontSize: 16
+    actorFontFamily: Arial
+    actorFontWeight: bold
+    usecaseFontSize: 14
+    usecaseFontFamily: Georgia
+    usecaseFontWeight: normal
+    nodeSpacing: 60
+    rankSpacing: 70
+    diagramPadding: 24
+    colorScheme: role
     useMaxWidth: false
 ---
 usecase-beta
@@ -577,7 +815,7 @@ Classes and direct styles override theme and diagram font configuration for the 
 
 Use `accTitle` and `accDescr` to give the diagram an accessible title and description. `accDescr` accepts a single-line value after `:` or a multiline block.
 
-```mermaid-example
+```mermaid
 usecase-beta
 accTitle: Account access use cases
 accDescr {
@@ -591,7 +829,7 @@ Customer --> SignIn
 Customer --> Reset
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 accTitle: Account access use cases
 accDescr {
@@ -611,7 +849,7 @@ Rendered actors, use cases, boundaries, notes, JSON tables, and relationships in
 
 Features can be combined in one diagram. This example uses accessibility metadata, actor variants, a package boundary, stereotypes, classes, a JSON table, a note, a labelled long association, an include relationship, an animated edge, and a directly styled edge.
 
-```mermaid-example
+```mermaid
 usecase-beta
 direction LR
 accTitle: Online ordering use cases
@@ -645,7 +883,7 @@ starts@{ animation: fast }
 style pays stroke:#6b46c1,stroke-width:2px
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 direction LR
 accTitle: Online ordering use cases
@@ -697,7 +935,7 @@ Unsupported syntax raises a parse error, with two exceptions. These parse withou
 - `A("Line1\nLine2")` keeps the backslash and the `n` as literal text on a single line. Use a Markdown string containing a physical newline for a real line break.
 - `A("Paren \( x")` keeps the backslash as literal text, because a backslash never escapes the character after it. Write the character directly inside a quoted or Markdown string, or use an entity code such as `#40;` and `#41;`.
 
-```mermaid-example
+```mermaid
 usecase-beta
 actor Customer
 Reset("`Reset
@@ -707,7 +945,7 @@ Customer --> Reset
 Customer --> Refund
 ```
 
-```mermaid
+```mermaid-example
 usecase-beta
 actor Customer
 Reset("`Reset

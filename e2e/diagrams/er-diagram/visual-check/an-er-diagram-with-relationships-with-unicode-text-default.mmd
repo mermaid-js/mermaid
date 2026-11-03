@@ -1,0 +1,14 @@
+---
+description: >-
+  Unicode/emoji and markdown emphasis in an entity alias, attribute types, and a
+  relationship label.
+---
+erDiagram
+      person[😀] {
+          string *first*Name
+          string _**last**Name_
+      }
+      a["*Customer Account*"] {
+          **string** ema*i*l
+      }
+      person ||--o| a : __hẽ😀__

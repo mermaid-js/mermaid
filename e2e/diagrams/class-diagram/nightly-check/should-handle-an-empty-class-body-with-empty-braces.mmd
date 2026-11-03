@@ -1,0 +1,13 @@
+---
+description: >-
+  classDiagram covering an empty class body declared with explicit empty braces on a generic
+  class (FooBase~T~ {}), alongside a normally-populated class, connected by an inheritance
+  relationship.
+---
+classDiagram
+  class FooBase~T~ {}
+  class Bar {
+  +Zip
+  +Zap()
+  }
+  FooBase <|-- Ba

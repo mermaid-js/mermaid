@@ -16,6 +16,7 @@ const sanitizeFontFamily = (value: unknown, fallback: string): string => {
   return normalized && FONT_FAMILY_PATTERN.test(normalized) ? normalized : fallback;
 };
 
+/** Accept positive CSS lengths only, so an override cannot inject extra declarations. */
 const sanitizeFontSize = (value: unknown, fallback: string): string => {
   if (typeof value === 'number') {
     return Number.isFinite(value) && value > 0 ? `${value}px` : fallback;
@@ -24,7 +25,9 @@ const sanitizeFontSize = (value: unknown, fallback: string): string => {
     return fallback;
   }
   const normalized = value.trim();
-  return FONT_SIZE_PATTERN.test(normalized) ? normalized : fallback;
+  return FONT_SIZE_PATTERN.test(normalized) && Number.parseFloat(normalized) > 0
+    ? normalized
+    : fallback;
 };
 
 /** Generate theme-aware, CSS-safe styles for timing diagrams. */

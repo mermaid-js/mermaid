@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import type { Graph, EdgeRef, NodeId } from '../helpers.js';
 import { isAcyclic } from '../phase0.helpers.js';
 import { removeCycles_DFS } from '../phase1.cycles.js';
+// cspell:ignore Gansner
 
 interface TestNode {
   id: string;
@@ -104,5 +105,47 @@ describe('Phase 1 — Cycle Removal (DFS)', () => {
     const g = mkGraph(nodes, pairs);
     const { acyclic } = removeCycles_DFS(g);
     expect(isAcyclic(acyclic)).toBe(true);
+  });
+
+  it('Seeds the DFS from true sources, not alphabetical order (16-intake-cycle-lr)', () => {
+    // Regression pin for tmp-v12.0.0-faulty-diags/swimlanes-intake.mmd.
+    // Graph: start -> task -> decision -> fix -> task. `start` is the only
+    // in-degree-0 node. Alphabetically `decision` sorts first; seeding the DFS
+    // there reversed task->decision, made `decision` an artificial source and
+    // placed `fix` between `start` and `task` on the same lane row, so the
+    // start->task edge ran through `fix`. dot (Gansner et al. 1993 §2.1)
+    // starts the search "from source or sink nodes when available", which
+    // finds the natural back edge fix->task instead.
+    const g = mkGraph(
+      ['start', 'task', 'fix', 'decision'],
+      [
+        ['start', 'task'],
+        ['task', 'decision'],
+        ['decision', 'fix'],
+        ['fix', 'task'],
+      ]
+    );
+    const { acyclic, reversed } = removeCycles_DFS(g);
+    expect(isAcyclic(acyclic)).toBe(true);
+    expect(reversed.map((e) => `${e.src}->${e.dst}`)).toEqual(['fix->task']);
+    // `start` must remain the only source after cycle removal.
+    const sources = acyclic.nodes.filter((v) => !acyclic.edges.some((e) => e.dst === v));
+    expect(sources).toEqual(['start']);
+  });
+
+  it('Falls back to declaration order when no node has in-degree 0', () => {
+    // Every node sits on the cycle; there is no source to seed from. Use the
+    // first declared node so the reversed edge is the one closing the loop
+    // back into it (B->A), matching the input-order principle.
+    const g = mkGraph(
+      ['B', 'A'],
+      [
+        ['B', 'A'],
+        ['A', 'B'],
+      ]
+    );
+    const { acyclic, reversed } = removeCycles_DFS(g);
+    expect(isAcyclic(acyclic)).toBe(true);
+    expect(reversed.map((e) => `${e.src}->${e.dst}`)).toEqual(['A->B']);
   });
 });

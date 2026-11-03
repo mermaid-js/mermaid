@@ -1,0 +1,19 @@
+---
+description: >-
+  Regression test for issue #6593: BT gitGraph with explicit branch `order` values (develop order
+  3, release/1.0.0 order 2 branched from develop) where release/1.0.0 is merged into main,
+  checking that branch column ordering and merge-line routing from a right-positioned branch are
+  correct.
+---
+gitGraph BT:
+  commit id: "A"
+  branch develop order: 3
+  checkout develop
+  commit id: "B"
+  branch release/1.0.0 order: 2
+  checkout release/1.0.0
+  commit id: "C"
+  commit id: "D"
+  checkout main
+  merge release/1.0.0 tag: "v1.0.0"
+  checkout develop

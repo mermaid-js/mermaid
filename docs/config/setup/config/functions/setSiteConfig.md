@@ -12,7 +12,7 @@
 
 > **setSiteConfig**(`conf`): [`MermaidConfig`](../../mermaid/interfaces/MermaidConfig.md)
 
-Defined in: [packages/mermaid/src/config.ts:64](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L64)
+Defined in: [packages/mermaid/src/config.ts:164](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L164)
 
 Sets the `siteConfig` to the desired values.
 

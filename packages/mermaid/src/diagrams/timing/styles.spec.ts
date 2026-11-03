@@ -8,6 +8,10 @@ describe('timing diagram styles', () => {
     configApi.setSiteConfig({});
   });
 
+  it('falls back for a zero font size', () => {
+    expect(styles({ fontSize: '0px' })).toContain('font-size: 16px');
+  });
+
   it('derives colors and fonts from active theme variables', () => {
     const themeVariables = themes.dark.getThemeVariables();
     const css = styles(themeVariables);

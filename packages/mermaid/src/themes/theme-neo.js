@@ -1,5 +1,5 @@
 import { darken, lighten, adjust, invert, isDark } from 'khroma';
-import { mkBorder } from './theme-helpers.js';
+import { applyOverride, mkBorder } from './theme-helpers.js';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
@@ -106,7 +106,15 @@ class Theme {
     this.activationBorderColor = this.activationBorderColor || darken(this.secondaryColor, 10);
     this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
     this.sequenceNumberColor = this.sequenceNumberColor || invert(this.lineColor);
-    this.rectBkgColor = this.rectBkgColor || this.tertiaryColor;
+    // Not tertiaryColor here. This theme pins tertiaryColor to its background, so deriving the
+    // `rect` section band from it draws white on white -- present in the DOM, invisible on screen.
+    // Keying it to the background instead keeps the band a shade of whatever the background is,
+    // including when the background is overridden through themeVariables. Direction-aware because
+    // darken() is a no-op at pure black: an override to #000000 needs the shade to go the other
+    // way or the band vanishes exactly as it did on white.
+    this.rectBkgColor =
+      this.rectBkgColor ||
+      (isDark(this.background) ? lighten(this.background, 4) : darken(this.background, 4));
 
     /* Gantt chart variables */
     const primaryColor = '#ECECFE';
@@ -395,7 +403,7 @@ class Theme {
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
     keys.forEach((k) => {
-      this[k] = overrides[k];
+      this[k] = applyOverride(this[k], overrides[k]);
     });
   }
 }

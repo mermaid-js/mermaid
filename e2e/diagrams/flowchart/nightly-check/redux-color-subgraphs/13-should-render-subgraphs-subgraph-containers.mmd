@@ -1,0 +1,28 @@
+---
+description: >-
+  Five sequential subgraphs (Ingest/Transform/Store/Serve/Observe), each
+  expected to take a distinct colour slot, rendered under the "redux-dark"
+  theme.
+config:
+  theme: "redux-dark"
+---
+flowchart TB
+    subgraph Ingest
+      A[Fetch] --> B[Validate]
+    end
+    subgraph Transform
+      C[Normalise] --> D[Enrich]
+    end
+    subgraph Store
+      E[(Warehouse)]
+    end
+    subgraph Serve
+      F[API] --> G[Cache]
+    end
+    subgraph Observe
+      H[Metrics]
+    end
+    B --> C
+    D --> E
+    E --> F
+    F --> H

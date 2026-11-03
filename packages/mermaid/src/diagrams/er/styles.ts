@@ -1,5 +1,12 @@
 import * as khroma from 'khroma';
 import type { DiagramStylesProvider } from '../../diagram-api/types.js';
+import {
+  COLOR_THEMES,
+  hasPalette,
+  isColorTheme,
+  paletteSlotCount,
+  safeLook,
+} from '../common/colorThemeGate.js';
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma
@@ -12,26 +19,31 @@ const fade = (color: string, opacity: number) => {
   // @ts-ignore incorrect types from khroma
   return khroma.rgba(r, g, b, opacity);
 };
-const COLOR_THEMES = new Set(['redux-color', 'redux-dark-color']);
-
 const genColor: DiagramStylesProvider = (options) => {
-  const { theme, look, bkgColorArray, borderColorArray } = options;
-  // Bail on an empty border palette as well as a non-colour theme. Without the second
-  // check `i % borderColorArray.length` is `i % 0` -> NaN, and `[][NaN]` is `undefined`,
-  // so every slot would emit `stroke: undefined` -- the exact symptom this guard exists to
-  // prevent. `requirement/styles.js` already gated on the palette; this brings ER into
-  // line. Reachable through a `themeVariables` override, not just in theory.
-  if (!COLOR_THEMES.has(theme) || !borderColorArray?.length) {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  // `isColorTheme` covers both halves of this gate: the theme has to be a colour theme
+  // *and* the border palette has to be a non-empty array. The palette half matters on its
+  // own -- it is reachable through a `themeVariables` override -- because an empty palette
+  // would otherwise leave every slot emitting `stroke: undefined`.
+  if (!isColorTheme(theme, borderColorArray)) {
     return '';
   }
-  const hasBkgColors = bkgColorArray?.length > 0;
+  // `look` is validated before it reaches the selector -- see `safeLook`.
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
   let sections = '';
 
-  for (let i = 0; i < options.THEME_COLOR_LIMIT; i++) {
-    // Wrap at the palette length rather than indexing raw. The loop runs to
-    // THEME_COLOR_LIMIT, so a palette with fewer entries than that emits
-    // `stroke: undefined` for the overflow slots.
-    const borderColor = borderColorArray[i % borderColorArray.length];
+  // One rule per slot `erBox` can actually stamp. It stamps
+  // `colorIndex % borderColorArray.length`, so the ids it can produce are exactly
+  // `0 .. borderColorArray.length - 1` -- deriving the bound from the same length is what
+  // keeps the two from disagreeing. Looping to `THEME_COLOR_LIMIT` instead left a palette
+  // longer than the limit with stamped entities that had no rule to match, and a shorter
+  // one with dead rules.
+  for (let i = 0; i < paletteSlotCount(borderColorArray); i++) {
+    // `borderColorArray[i]` needs no wrap now the bound is its own length. The background
+    // palette is a separate array that may be shorter, so that one still wraps -- guarded
+    // by `hasBkgColors`, since `i % 0` is NaN and `[][NaN]` is `undefined`.
+    const borderColor = borderColorArray[i];
     const fill = hasBkgColors ? `fill: ${bkgColorArray[i % bkgColorArray.length]};` : '';
     sections += `
 

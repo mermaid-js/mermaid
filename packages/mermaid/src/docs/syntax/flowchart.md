@@ -1,4 +1,5 @@
 ---
+description: 'Build flowcharts from text with nodes, shapes, edges, arrow types, subgraphs, styling, click interactions, and direction.'
 title: Flowcharts Syntax
 ---
 
@@ -101,6 +102,75 @@ Possible FlowChart orientations are:
 - BT - Bottom to top
 - RL - Right to left
 - LR - Left to right
+
+## Default theme, look and layout (v12.0.0+)
+
+Flowcharts use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid-example
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+flowchart LR
+  subgraph Client
+    UI[Web app]
+    Cache[(Local cache)]
+  end
+  subgraph Services
+    API[API gateway]
+    Auth[Auth service]
+    Orders[Order service]
+  end
+  subgraph Storage
+    DB[(Orders DB)]
+  end
+  UI --> API
+  UI --> Cache
+  API --> Auth
+  API --> Orders
+  Orders --> DB
+  Auth -. token .-> UI
+```
+
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', flowchart: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
 
 ## Node shapes
 
@@ -788,6 +858,46 @@ In this snippet:
 **Note on Escaping Commas:**
 When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
 
+### Step-by-step flow animation (v12.3.0+)
+
+Edges can also play in order, which is handy for showing how a request moves through a system. Give an edge a `step` number and a dot travels along it when that step comes up. The dot visits step 1, then step 2, and so on, and starts again after the last step. Edges that share a step number play at the same time.
+
+```mermaid-example
+flowchart LR
+  Client e1@--> API
+  API e2@--> Cache
+  Cache e3@-->|miss| DB
+  DB e4@--> API
+  API e5@--> Client
+  e1@{ step: 1 }
+  e2@{ step: 2 }
+  e3@{ step: 3 }
+  e4@{ step: 4 }
+  e5@{ step: 5 }
+```
+
+- Edges without a `step` are drawn as usual, so a diagram with no `step` looks exactly as before.
+- While its dot travels, the edge is highlighted with a thicker stroke in the edge's colour (v12.3.0+). The highlight has the class `edge-step-highlight`, so it can be restyled with `themeCSS`.
+- Set `flowchart.stepNumbers: true` (v12.3.0+) to show each edge's step number in a small badge, so the order can be read without watching the animation, in print, or when motion is reduced. It is off by default. The badge sits on the edge clear of labels, nodes, arrowheads and other badges (just beside the edge when it is too short), and is drawn above every edge and moving dot. The badge has the class `edge-step-badge`, so it can be restyled with `themeCSS`. Its size is fixed in diagram units, so when the diagram is scaled down to fit its container (`useMaxWidth`) the badge shrinks with it; set `flowchart.useMaxWidth: false` to keep it full size.
+- `step` must be a positive whole number (`1`, `2`, `3`, ...). Other values are ignored.
+- Each step lasts one second by default. Set `flowchart.stepDuration` (in seconds, v12.3.0+) to make the flow faster or slower:
+
+```mermaid-example
+---
+config:
+  flowchart:
+    stepDuration: 0.5
+---
+flowchart LR
+  Client e1@--> API
+  API e2@--> Client
+  e1@{ step: 1 }
+  e2@{ step: 2 }
+```
+
+- When the reader's system asks for reduced motion (`prefers-reduced-motion: reduce`), the dot and the highlight are hidden and the diagram is static.
+- `step` can be combined with `animate` or `animation` if you also want the edge's dashes to move.
+
 ## New arrow types
 
 There are new types of arrows supported:
@@ -1389,22 +1499,25 @@ flowchart LR
 
 ### Renderer
 
-The layout of the diagram is done with the renderer. The default renderer is dagre.
+The layout of the diagram is done with the layout algorithm. The default is
+[ELK](https://www.eclipse.org/elk/), which handles larger and more complex
+diagrams well and is bundled with Mermaid.
 
-Starting with Mermaid version 9.4, you can use an alternate renderer named elk. The elk renderer is better for larger and/or more complex diagrams.
-
-The _elk_ renderer is an experimental feature.
-You can change the renderer to elk by adding this directive:
+To use the classic Dagre layout instead:
 
 ```
 config:
-  flowchart:
-    defaultRenderer: "elk"
+  layout: dagre
 ```
 
-```note
-Note that the site needs to use mermaid version 9.4+ for this to work and have this featured enabled in the lazy-loading configuration.
-```
+The `flowchart-elk` diagram type still works, but is no longer needed — it
+predates `layout` and selected what is now the default.
+
+The `defaultRenderer` option of the `flowchart`, `class` and `state` config
+sections was removed in v12. It named a rendering engine at a time when there
+was more than one; all of its values had come to mean the same renderer, and
+its `elk` value only ever set `layout: elk` on your behalf. Use `layout`
+directly.
 
 ### Width
 

@@ -1,5 +1,7 @@
 import * as khroma from 'khroma';
 import { getIconStyles } from '../globalStyles.js';
+import { colorSlotCount, hasPalette, isColorTheme, safeLook } from '../common/colorThemeGate.js';
+import { KINDS, KIND_SLOT, containerSlot, containerSlotCount, kindClass } from './colorSlots.js';
 
 /** Returns the styles given options */
 export interface AgentflowStyleOptions {
@@ -17,7 +19,92 @@ export interface AgentflowStyleOptions {
   tertiaryColor: string;
   textColor: string;
   titleColor: string;
+  /* Supplied by `createUserStyles`, which spreads `config.themeVariables` and adds the
+     theme name and look. Only the colour themes carry the palette arrays. */
+  theme?: string;
+  look?: string;
+  borderColorArray?: string[];
+  bkgColorArray?: string[];
+  THEME_COLOR_LIMIT?: number;
 }
+
+/**
+ * Palette rules. Two families, matching the two rules in `colorSlots.ts`: one colour per
+ * node KIND from a fixed slot, and a counter over containers from the slots above them.
+ *
+ * `redux-dark-color` carries 12 border colours and no background array, so `hasBkgColors`
+ * is false there and these rules stroke without filling — the node keeps the theme's own
+ * background. That is the palette telling us what it has, not a special case.
+ *
+ * Not `!important`: a node carrying `classDef` or `style` gets an inline `style`
+ * attribute, which has to keep winning over the theme palette.
+ */
+const genColor = (options: AgentflowStyleOptions) => {
+  const { theme, bkgColorArray, borderColorArray } = options;
+  if (!isColorTheme(theme, borderColorArray)) {
+    return '';
+  }
+  const look = safeLook(options.look);
+  const hasBkgColors = hasPalette(bkgColorArray);
+  const paletteLength = colorSlotCount(options.THEME_COLOR_LIMIT, borderColorArray);
+  const border = (slot: number) => borderColorArray![slot % borderColorArray!.length];
+  const fill = (slot: number) =>
+    hasBkgColors ? `fill: ${bkgColorArray[slot % bkgColorArray.length]};` : '';
+
+  let sections = '';
+
+  /* One rule per kind. Every agentflow shape is drawn as a `path` except the rounded
+     `task`, which is a `rect`, so both are named for each kind rather than guessing. */
+  for (const kind of KINDS) {
+    const slot = KIND_SLOT.get(kind)!;
+    /* Compound, not descendant: `insertNode` puts `data-look` on the very element that
+       carries the kind class, so a space would ask for the class on a CHILD and match
+       nothing.
+     *
+     * `.node` is named as well, and it is not decoration. The shared neo stylesheet emits
+     * `[data-look="neo"].node rect, … .node polygon`, which is (0,2,1) — exactly the
+     * specificity of `[data-look][class]` — and it is appended after the diagram's own
+     * styles, so an equal-specificity rule loses on order and the palette never appears.
+     * Adding `.node` makes this (0,3,1) and settles it by weight rather than by luck. */
+    const sel = `[data-look="${look}"].node.${kindClass(kind)}`;
+    sections += `
+
+    ${sel} rect,
+    ${sel} path,
+    ${sel} polygon {
+      stroke: ${border(slot)};
+      ${fill(slot)}
+    }
+`;
+  }
+
+  /* Containers cycle the slots above the kind range, so a frame never matches a node
+     inside it. Keyed on `data-color-id`, the same carrier every other diagram's containers
+     use — `createContainerGroup` stamps the expanded frame, `collapsedGroup` the collapsed
+     one. */
+  for (let i = 0; i < containerSlotCount(paletteLength); i++) {
+    // The same arithmetic the assignment uses, so the selector always names the slot the
+    // stamp actually writes -- see `containerSlot`.
+    const slot = containerSlot(i, paletteLength);
+    /* Both forms of a container. An expanded one is a `.cluster`; a collapsed one is
+       drawn as a single `.node` and still holds its slot, so naming only `.cluster` would
+       leave collapsed containers grey beside their expanded siblings. Each suffix is
+       appended to both prefixes separately: a comma-joined prefix list would attach the
+       suffix to the last item only. */
+    const expanded = `[data-look="${look}"][data-color-id="color-${slot}"].cluster`;
+    const collapsed = `[data-look="${look}"][data-color-id="color-${slot}"].node`;
+    const rule = (suffix: string) => `${expanded} ${suffix}, ${collapsed} ${suffix}`;
+    sections += `
+
+    ${rule('rect')},
+    ${rule('path')} {
+      stroke: ${border(slot)};
+      ${fill(slot)}
+    }
+`;
+  }
+  return sections;
+};
 
 const fade = (color: string, opacity: number) => {
   // @ts-ignore TODO: incorrect types from khroma
@@ -32,7 +119,8 @@ const fade = (color: string, opacity: number) => {
 };
 
 const getStyles = (options: AgentflowStyleOptions) =>
-  `.label {
+  `${genColor(options)}
+  .label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
   }

@@ -10,6 +10,23 @@
 
 Rendering requirements is straightforward.
 
+```mermaid
+    requirementDiagram
+
+    requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+    }
+
+    element test_entity {
+    type: simulation
+    }
+
+    test_entity - satisfies -> test_req
+```
+
 ```mermaid-example
     requirementDiagram
 
@@ -27,22 +44,120 @@ Rendering requirements is straightforward.
     test_entity - satisfies -> test_req
 ```
 
-```mermaid
-    requirementDiagram
+## Default theme, look and layout (v12.0.0+)
 
-    requirement test_req {
+Requirement diagrams use the `redux-color` theme and the `neo` look by default, and are laid out by [ELK](https://www.eclipse.org/elk/) rather than Dagre. Not every diagram type
+does — see [Per-diagram defaults](../config/theming.md#per-diagram-defaults) for the list and
+for the order in which Mermaid decides.
+
+The same diagram, drawn both ways:
+
+### With the defaults
+
+```mermaid
+requirementDiagram
+  requirement checkout_req {
     id: 1
-    text: the test text.
+    text: Orders must be payable online.
     risk: high
     verifymethod: test
-    }
-
-    element test_entity {
-    type: simulation
-    }
-
-    test_entity - satisfies -> test_req
+  }
+  functionalRequirement payment_req {
+    id: 1.1
+    text: Card payments must be authorised.
+    risk: high
+    verifymethod: test
+  }
+  element checkout_service {
+    type: service
+  }
+  checkout_req - contains -> payment_req
+  checkout_service - satisfies -> payment_req
 ```
+
+```mermaid-example
+requirementDiagram
+  requirement checkout_req {
+    id: 1
+    text: Orders must be payable online.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement payment_req {
+    id: 1.1
+    text: Card payments must be authorised.
+    risk: high
+    verifymethod: test
+  }
+  element checkout_service {
+    type: service
+  }
+  checkout_req - contains -> payment_req
+  checkout_service - satisfies -> payment_req
+```
+
+### The previous appearance
+
+Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
+in a diagram's front matter draws it the way Mermaid did before:
+
+```mermaid
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+requirementDiagram
+  requirement checkout_req {
+    id: 1
+    text: Orders must be payable online.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement payment_req {
+    id: 1.1
+    text: Card payments must be authorised.
+    risk: high
+    verifymethod: test
+  }
+  element checkout_service {
+    type: service
+  }
+  checkout_req - contains -> payment_req
+  checkout_service - satisfies -> payment_req
+```
+
+```mermaid-example
+---
+config:
+  theme: default
+  look: classic
+  layout: dagre
+---
+requirementDiagram
+  requirement checkout_req {
+    id: 1
+    text: Orders must be payable online.
+    risk: high
+    verifymethod: test
+  }
+  functionalRequirement payment_req {
+    id: 1.1
+    text: Card payments must be authorised.
+    risk: high
+    verifymethod: test
+  }
+  element checkout_service {
+    type: service
+  }
+  checkout_req - contains -> payment_req
+  checkout_service - satisfies -> payment_req
+```
+
+Passing the same three keys to `mermaid.initialize()` does it for every diagram on the page,
+and scoping the theme and look to one diagram type — `mermaid.initialize({ layout: 'dagre', requirement: { theme: 'default', look: 'classic' } })` —
+does it for that type alone. `layout` is a top-level option, so it applies to every diagram.
 
 ## Syntax
 
@@ -93,7 +208,7 @@ In places where user defined text is possible (like names, requirement text, ele
 
 Example:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement "__test_req__" {
@@ -104,7 +219,7 @@ requirement "__test_req__" {
 }
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement "__test_req__" {
@@ -141,7 +256,7 @@ Each relationship is labeled in the diagram.
 
 This example uses all features of the diagram.
 
-```mermaid-example
+```mermaid
     requirementDiagram
 
     requirement test_req {
@@ -211,7 +326,7 @@ This example uses all features of the diagram.
     test_req <- copies - test_entity2
 ```
 
-```mermaid
+```mermaid-example
     requirementDiagram
 
     requirement test_req {
@@ -292,7 +407,7 @@ The diagram can be rendered in different directions using the `direction` statem
 
 Example:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 direction LR
@@ -311,7 +426,7 @@ element test_entity {
 test_entity - satisfies -> test_req
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 direction LR
@@ -338,7 +453,7 @@ Requirements and elements can be styled using direct styling or classes. As a ru
 
 Use the `style` keyword to apply CSS styles directly:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement test_req {
@@ -356,7 +471,7 @@ style test_req fill:#ffa,stroke:#000, color: green
 style test_entity fill:#f9f,stroke:#333, color: blue
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement test_req {
@@ -378,7 +493,7 @@ style test_entity fill:#f9f,stroke:#333, color: blue
 
 Define reusable styles using `classDef`:
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement test_req {
@@ -396,7 +511,7 @@ classDef important fill:#f96,stroke:#333,stroke-width:4px
 classDef test fill:#ffa,stroke:#000
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement test_req {
@@ -452,7 +567,7 @@ test_elem:::myClass
 
 ### Combined Example
 
-```mermaid-example
+```mermaid
 requirementDiagram
 
 requirement test_req:::important {
@@ -472,7 +587,7 @@ class test_entity important
 style test_entity fill:#f9f,stroke:#333
 ```
 
-```mermaid
+```mermaid-example
 requirementDiagram
 
 requirement test_req:::important {

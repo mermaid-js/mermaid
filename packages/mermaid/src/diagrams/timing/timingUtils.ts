@@ -3,6 +3,7 @@ import type { PositionedTimingSegment, TimingSignal } from './types.js';
 const sequenceDuration = (signal: TimingSignal): number =>
   signal.sequence.reduce((total, segment) => total + segment.duration, 0);
 
+/** Include sequence durations, four clock periods, and a final hold interval for events. */
 export const calculateTimelineEnd = (signals: readonly TimingSignal[]): number => {
   const sequenceEnd = Math.max(0, ...signals.map(sequenceDuration));
   const eventTimes = [
@@ -33,6 +34,7 @@ export const calculateTimelineEnd = (signals: readonly TimingSignal[]): number =
   return timelineEnd;
 };
 
+/** Place explicit-duration sequences or hold each event until the next transition. */
 export const positionSegments = (
   signal: TimingSignal,
   timelineEnd: number
@@ -56,6 +58,7 @@ export const positionSegments = (
     }));
 };
 
+/** Choose readable axis ticks without repeatedly adding floating-point steps. */
 export const niceTicks = (timelineEnd: number, targetCount = 10): number[] => {
   if (!Number.isFinite(timelineEnd) || timelineEnd <= 0) {
     return [0, 1];
@@ -68,7 +71,9 @@ export const niceTicks = (timelineEnd: number, targetCount = 10): number[] => {
   const ticks: number[] = [];
   const precision = Math.max(0, -Math.floor(Math.log10(step)) + 2);
 
-  for (let value = 0; value <= timelineEnd + step / 1000; value += step) {
+  const tickCount = Math.floor(timelineEnd / step);
+  for (let index = 0; index <= tickCount; index++) {
+    const value = index * step;
     ticks.push(Number(value.toFixed(precision)));
   }
   if (timelineEnd - ticks[ticks.length - 1] > step / 4) {

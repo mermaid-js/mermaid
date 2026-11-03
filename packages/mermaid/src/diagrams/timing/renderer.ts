@@ -54,16 +54,21 @@ const drawClock = (
     );
   }
 
-  let cycleStart = clock.offset;
-  while (cycleStart < timelineEnd) {
-    const highEnd = Math.min(cycleStart + (clock.period * clock.duty) / 100, timelineEnd);
-    const cycleEnd = Math.min(cycleStart + clock.period, timelineEnd);
+  for (let cycle = 0; cycle < cycleCount; cycle++) {
+    const cycleStart = clock.offset + cycle * clock.period;
+    if (cycleStart >= timelineEnd) {
+      break;
+    }
+    const cycleEnd = Math.min(clock.offset + (cycle + 1) * clock.period, timelineEnd);
+    if (cycleEnd <= cycleStart) {
+      throw new Error(`Clock "${signal.id}" period is too small to advance at this offset`);
+    }
+    const highEnd = Math.min(cycleStart + clock.period * (clock.duty / 100), cycleEnd);
     path += ` H ${x(highEnd)}`;
     if (highEnd < timelineEnd) {
       path += ` V ${bottom} H ${x(cycleEnd)}`;
     }
-    cycleStart += clock.period;
-    if (cycleStart < timelineEnd) {
+    if (cycleEnd < timelineEnd) {
       path += ` V ${top}`;
     }
   }

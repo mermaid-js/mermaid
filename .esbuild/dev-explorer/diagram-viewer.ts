@@ -12,6 +12,18 @@ import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
 import './code-editor';
+import './compare-panel.js';
+import type { CompareChangeDetail } from './compare-panel.js';
+import {
+  buildRenderConfig,
+  effectiveTheme,
+  isViewerTab,
+  keyboardShortcutAction,
+  parseCompareUrlState,
+  serializeCompareUrlState,
+  type RenderSettings,
+  type ViewerTab,
+} from './compare-versions.js';
 import './console-panel';
 import type { LogEntry, LogLevel } from './console-panel';
 
@@ -103,22 +115,17 @@ type MermaidTheme =
   | 'forest'
   | 'neutral'
   | 'base'
+  | 'neo'
+  | 'neo-dark'
   | 'redux'
   | 'redux-dark'
-  | 'redux-color';
+  | 'redux-color'
+  | 'redux-dark-color';
 type MermaidLayout = 'dagre' | 'elk' | 'domus' | 'hola' | 'swimlane';
 type MermaidLook = 'classic' | 'handDrawn' | 'neo';
 type MermaidLogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
-type ViewerTab = 'diagram' | 'code' | 'profile';
 
 const ALL_LAYOUTS: MermaidLayout[] = ['dagre', 'elk', 'domus', 'hola', 'swimlane'];
-
-// mermaid's `maxTextSize` (default 50_000) and `maxEdges` (default 500) are
-// *secure* config keys, so they can't be raised from a diagram's frontmatter/
-// directives — only via initialize(). The Dev Explorer is for testing large
-// diagrams, so we set generous limits here.
-const DEV_MAX_TEXT_SIZE = 50_000_000;
-const DEV_MAX_EDGES = 1_000_000;
 
 // Phases emitted by the profiler tree, in display order. "total" is taken from
 // the root `render` span. See packages/mermaid/src/profiler.ts.
@@ -247,9 +254,15 @@ function baseName(path: string): string {
   return i === -1 ? path : path.slice(i + 1);
 }
 
-const DEFAULT_THEME: MermaidTheme = 'default';
-const DEFAULT_LAYOUT: MermaidLayout = 'dagre';
-const DEFAULT_LOOK: MermaidLook = 'classic';
+// Theme / layout / look default to "not set": the key is left out of the
+// initialize() config so frontmatter/directives and the mermaid version's own
+// defaults decide. UNSET is the dropdown value for that choice.
+const UNSET = 'unset';
+const DEFAULT_THEME: MermaidTheme | undefined = undefined;
+const DEFAULT_LAYOUT: MermaidLayout | undefined = undefined;
+const DEFAULT_LOOK: MermaidLook | undefined = undefined;
+// Used where a concrete layout is required (profiling with no layout checked).
+const FALLBACK_LAYOUT: MermaidLayout = 'dagre';
 const DEFAULT_MERMAID_LOG_LEVEL: MermaidLogLevel = 'warn';
 
 function readUrlParam(name: string) {
@@ -285,6 +298,15 @@ function writeStorage(key: string, value: string) {
   }
 }
 
+function writeOrRemoveStorage(key: string, value: string | undefined) {
+  try {
+    if (value) localStorage.setItem(key, value);
+    else localStorage.removeItem(key);
+  } catch {
+    // ignore
+  }
+}
+
 function isTheme(v: unknown): v is MermaidTheme {
   return (
     v === 'default' ||
@@ -292,9 +314,12 @@ function isTheme(v: unknown): v is MermaidTheme {
     v === 'forest' ||
     v === 'neutral' ||
     v === 'base' ||
+    v === 'neo' ||
+    v === 'neo-dark' ||
     v === 'redux' ||
     v === 'redux-dark' ||
-    v === 'redux-color'
+    v === 'redux-color' ||
+    v === 'redux-dark-color'
   );
 }
 
@@ -321,7 +346,7 @@ function normalizeLayout(v: unknown): MermaidLayout | null {
   return null;
 }
 
-function sizeCaptureUnavailableReason(layout: MermaidLayout) {
+function sizeCaptureUnavailableReason(layout: MermaidLayout | undefined) {
   if (layout !== 'swimlane') {
     return 'No size data is available for this layout. Select swimlanes to capture DDLT sizes.';
   }
@@ -369,13 +394,16 @@ export class DevDiagramViewer extends LitElement {
     profileError: { state: true },
     profileResults: { state: true },
     profileCopyMsg: { state: true },
+    compareLeft: { state: true },
+    compareRight: { state: true },
+    compareDiff: { state: true },
   };
 
   declare filePath: string;
   declare sseToken: number;
-  declare theme: MermaidTheme;
-  declare layout: MermaidLayout;
-  declare look: MermaidLook;
+  declare theme: MermaidTheme | undefined;
+  declare layout: MermaidLayout | undefined;
+  declare look: MermaidLook | undefined;
   declare mermaidLogLevel: MermaidLogLevel;
   declare useMaxWidth: boolean;
   declare ignoreCrossLaneEdges: boolean;
@@ -402,6 +430,9 @@ export class DevDiagramViewer extends LitElement {
   declare profileError: string;
   declare profileResults: LayoutSetResult[] | null;
   declare profileCopyMsg: string;
+  declare compareLeft: string;
+  declare compareRight: string;
+  declare compareDiff: boolean;
 
   #renderSeq = 0;
   #profileCancel = false;
@@ -478,7 +509,13 @@ export class DevDiagramViewer extends LitElement {
     this.savedSource = '';
     this.editorSource = '';
     this.svg = '';
-    this.activeTab = 'diagram';
+    // tab / left / right / diff live in the URL so a compare setup survives
+    // reloads and fixture navigation (explorer-app keeps unrelated params).
+    const compareState = parseCompareUrlState(new URL(window.location.href).searchParams);
+    this.activeTab = compareState.tab;
+    this.compareLeft = compareState.left;
+    this.compareRight = compareState.right;
+    this.compareDiff = compareState.diff;
     this.dirty = false;
     this.saving = false;
     this.saveMessage = '';
@@ -510,12 +547,45 @@ export class DevDiagramViewer extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.#installConsoleCapture();
+    document.addEventListener('keydown', this.#onKeyDown);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.#restoreConsoleCapture();
+    document.removeEventListener('keydown', this.#onKeyDown);
   }
+
+  // ←/→ step through the folder's fixtures (same as Prev/Next); D toggles the
+  // Compare diff. The guards (modifiers, inputs, CodeMirror, Shoelace
+  // controls, the tab nav) live in keyboardShortcutAction.
+  #onKeyDown = (e: KeyboardEvent) => {
+    const action = keyboardShortcutAction(
+      {
+        key: e.key,
+        altKey: e.altKey,
+        ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
+        shiftKey: e.shiftKey,
+        repeat: e.repeat,
+        defaultPrevented: e.defaultPrevented,
+        path: e
+          .composedPath()
+          .filter((n): n is HTMLElement => n instanceof HTMLElement)
+          .map((el) => ({
+            tag: el.tagName.toLowerCase(),
+            classes: [...el.classList],
+            editable: el.isContentEditable,
+          })),
+      },
+      { compareTab: this.activeTab === 'compare' }
+    );
+    if (!action) return;
+    e.preventDefault();
+    if (action === 'prev') this.#go(-1);
+    else if (action === 'next') this.#go(1);
+    else this.#handleCompareChange({ diff: !this.compareDiff });
+  };
 
   updated(changed: Map<string, unknown>) {
     if (changed.has('filePath')) {
@@ -588,9 +658,10 @@ export class DevDiagramViewer extends LitElement {
   }
 
   #persistSettings() {
-    writeStorage('devExplorer.viewer.theme', this.theme);
-    writeStorage('devExplorer.viewer.layout', this.layout);
-    writeStorage('devExplorer.viewer.look', this.look);
+    writeOrRemoveStorage('devExplorer.viewer.theme', this.theme);
+    writeOrRemoveStorage('devExplorer.viewer.layout', this.layout);
+    writeOrRemoveStorage('devExplorer.viewer.renderer', undefined); // drop legacy key
+    writeOrRemoveStorage('devExplorer.viewer.look', this.look);
     writeStorage('devExplorer.viewer.logLevel', this.mermaidLogLevel);
     writeStorage('devExplorer.viewer.useMaxWidth', String(this.useMaxWidth));
     writeStorage('devExplorer.viewer.ignoreCrossLaneEdges', String(this.ignoreCrossLaneEdges));
@@ -616,8 +687,39 @@ export class DevDiagramViewer extends LitElement {
     writeStorage('devExplorer.viewer.splitPosition', String(this.splitPosition));
   }
 
+  #persistCompareState() {
+    setUrlParams(
+      serializeCompareUrlState({
+        tab: this.activeTab,
+        left: this.compareLeft,
+        right: this.compareRight,
+        diff: this.compareDiff,
+      })
+    );
+  }
+
+  #handleCompareChange(detail: CompareChangeDetail) {
+    if (detail.left) this.compareLeft = detail.left;
+    if (detail.right) this.compareRight = detail.right;
+    if (typeof detail.diff === 'boolean') this.compareDiff = detail.diff;
+    this.#persistCompareState();
+  }
+
+  get #renderSettings(): RenderSettings {
+    return {
+      theme: this.theme,
+      layout: this.layout,
+      look: this.look,
+      logLevel: this.mermaidLogLevel,
+      useMaxWidth: this.useMaxWidth,
+      ignoreCrossLaneEdges: this.ignoreCrossLaneEdges,
+      optimizeRanksByCrossings: this.optimizeRanksByCrossings,
+    };
+  }
+
   #setActiveTab(tab: ViewerTab) {
     this.activeTab = tab;
+    this.#persistCompareState();
     if (tab === 'code') {
       void this.updateComplete.then(() => {
         const editor = this.querySelector('dev-code-editor') as any;
@@ -813,7 +915,7 @@ export class DevDiagramViewer extends LitElement {
         body: JSON.stringify({
           path: this.filePath,
           nodes,
-          capturedFrom: `dev-explorer ${this.filePath} theme=${this.theme} look=${this.look} layout=${this.layout}`,
+          capturedFrom: `dev-explorer ${this.filePath} theme=${this.theme ?? UNSET} look=${this.look ?? UNSET} layout=${this.layout ?? UNSET}`,
         }),
       });
       if (!res.ok) {
@@ -925,8 +1027,8 @@ export class DevDiagramViewer extends LitElement {
       scope: this.profileScope,
       iterations: this.profileIterations,
       aggregation: 'mean of runs after dropping the fastest and slowest; warmup discarded',
-      theme: this.theme,
-      look: this.look,
+      theme: this.theme ?? null,
+      look: this.look ?? null,
       phases: [...PROFILE_PHASES],
       layouts: (this.profileResults ?? []).map((r) => ({
         layout: r.layout,
@@ -960,22 +1062,8 @@ export class DevDiagramViewer extends LitElement {
   }
 
   #profileInitConfig(layout: MermaidLayout) {
-    return {
-      startOnLoad: false,
-      securityLevel: 'strict',
-      maxTextSize: DEV_MAX_TEXT_SIZE,
-      maxEdges: DEV_MAX_EDGES,
-      theme: this.theme,
-      layout,
-      look: this.look,
-      // Quiet the logger during the batch so the console panel stays readable.
-      logLevel: 'error',
-      flowchart: {
-        useMaxWidth: this.useMaxWidth,
-        ignoreCrossLaneEdges: this.ignoreCrossLaneEdges,
-        optimizeRanksByCrossings: this.optimizeRanksByCrossings,
-      },
-    };
+    // Quiet the logger during the batch so the console panel stays readable.
+    return buildRenderConfig({ ...this.#renderSettings, layout, logLevel: 'error' });
   }
 
   // Resolve the set of diagrams to profile: just the current file, or every
@@ -1022,7 +1110,9 @@ export class DevDiagramViewer extends LitElement {
       return;
     }
 
-    const layouts = this.profileLayouts.length ? this.profileLayouts : [this.layout];
+    const layouts = this.profileLayouts.length
+      ? this.profileLayouts
+      : [this.layout ?? FALLBACK_LAYOUT];
     const iterations = Math.max(1, Math.min(50, Math.round(this.profileIterations) || 1));
 
     this.profileError = '';
@@ -1128,21 +1218,7 @@ export class DevDiagramViewer extends LitElement {
       );
     }
 
-    const initConfig = {
-      startOnLoad: false,
-      securityLevel: 'strict',
-      maxTextSize: DEV_MAX_TEXT_SIZE,
-      maxEdges: DEV_MAX_EDGES,
-      theme: this.theme,
-      layout: this.layout,
-      look: this.look,
-      logLevel: this.mermaidLogLevel,
-      flowchart: {
-        useMaxWidth: this.useMaxWidth,
-        ignoreCrossLaneEdges: this.ignoreCrossLaneEdges,
-        optimizeRanksByCrossings: this.optimizeRanksByCrossings,
-      },
-    };
+    const initConfig = buildRenderConfig(this.#renderSettings);
 
     // Debugging aid: log exactly what we are about to initialize/render with.
     // Do it *before* initialize so detector issues can be correlated.
@@ -1197,7 +1273,7 @@ export class DevDiagramViewer extends LitElement {
             size="small"
             variant="default"
             ?disabled=${this.#siblingIndex <= 0}
-            title="Previous diagram in folder"
+            title="Previous diagram in folder (←)"
             @click=${() => this.#go(-1)}
           >
             <sl-icon slot="prefix" name="chevron-left"></sl-icon>
@@ -1207,7 +1283,7 @@ export class DevDiagramViewer extends LitElement {
             size="small"
             variant="default"
             ?disabled=${this.#siblingIndex === -1 || this.#siblingIndex >= this.siblings.length - 1}
-            title="Next diagram in folder"
+            title="Next diagram in folder (→)"
             @click=${() => this.#go(1)}
           >
             Next
@@ -1231,23 +1307,27 @@ export class DevDiagramViewer extends LitElement {
             <span class="label">Theme</span>
             <sl-select
               size="small"
-              value=${this.theme}
+              value=${this.theme ?? UNSET}
               @sl-change=${(e: any) => {
                 const v = e.target?.value;
-                if (isTheme(v)) {
-                  this.theme = v;
+                if (v === UNSET || isTheme(v)) {
+                  this.theme = v === UNSET ? undefined : v;
                   this.#persistSettings();
                 }
               }}
             >
+              <sl-option value=${UNSET}>— not set —</sl-option>
               <sl-option value="default">default</sl-option>
               <sl-option value="dark">dark</sl-option>
               <sl-option value="forest">forest</sl-option>
               <sl-option value="neutral">neutral</sl-option>
               <sl-option value="base">base</sl-option>
+              <sl-option value="neo">neo</sl-option>
+              <sl-option value="neo-dark">neo-dark</sl-option>
               <sl-option value="redux">redux</sl-option>
               <sl-option value="redux-dark">redux-dark</sl-option>
               <sl-option value="redux-color">redux-color</sl-option>
+              <sl-option value="redux-dark-color">redux-dark-color</sl-option>
             </sl-select>
           </div>
 
@@ -1255,15 +1335,16 @@ export class DevDiagramViewer extends LitElement {
             <span class="label">Layout</span>
             <sl-select
               size="small"
-              value=${this.layout}
+              value=${this.layout ?? UNSET}
               @sl-change=${(e: any) => {
                 const v = e.target?.value;
-                if (isLayout(v)) {
-                  this.layout = v;
+                if (v === UNSET || isLayout(v)) {
+                  this.layout = v === UNSET ? undefined : v;
                   this.#persistSettings();
                 }
               }}
             >
+              <sl-option value=${UNSET}>— not set —</sl-option>
               <sl-option value="dagre">dagre</sl-option>
               <sl-option value="elk">elk</sl-option>
               <sl-option value="domus">domus</sl-option>
@@ -1276,15 +1357,16 @@ export class DevDiagramViewer extends LitElement {
             <span class="label">Look</span>
             <sl-select
               size="small"
-              value=${this.look}
+              value=${this.look ?? UNSET}
               @sl-change=${(e: any) => {
                 const v = e.target?.value;
-                if (isLook(v)) {
-                  this.look = v;
+                if (v === UNSET || isLook(v)) {
+                  this.look = v === UNSET ? undefined : v;
                   this.#persistSettings();
                 }
               }}
             >
+              <sl-option value=${UNSET}>— not set —</sl-option>
               <sl-option value="classic">classic</sl-option>
               <sl-option value="handDrawn">handdrawn</sl-option>
               <sl-option value="neo">neo</sl-option>
@@ -1324,25 +1406,28 @@ export class DevDiagramViewer extends LitElement {
       <div class="content">
         <sl-tab-group
           class="viewer-tabs"
-          active-tab=${this.activeTab}
           @sl-tab-show=${(e: any) => {
             const name = e.detail?.name;
-            if (name === 'diagram' || name === 'code' || name === 'profile') {
+            if (isViewerTab(name)) {
               this.#setActiveTab(name);
             }
           }}
         >
-          <sl-tab slot="nav" panel="diagram">
+          <sl-tab slot="nav" panel="diagram" ?active=${this.activeTab === 'diagram'}>
             <sl-icon name="diagram-3"></sl-icon>
             Diagram
           </sl-tab>
-          <sl-tab slot="nav" panel="code">
+          <sl-tab slot="nav" panel="code" ?active=${this.activeTab === 'code'}>
             <sl-icon name="file-earmark-code"></sl-icon>
             Code
           </sl-tab>
-          <sl-tab slot="nav" panel="profile">
+          <sl-tab slot="nav" panel="profile" ?active=${this.activeTab === 'profile'}>
             <sl-icon name="speedometer2"></sl-icon>
             Profile
+          </sl-tab>
+          <sl-tab slot="nav" panel="compare" ?active=${this.activeTab === 'compare'}>
+            <sl-icon name="layout-split"></sl-icon>
+            Compare
           </sl-tab>
 
           <sl-tab-panel name="diagram">
@@ -1355,7 +1440,11 @@ export class DevDiagramViewer extends LitElement {
               }}
             >
               <div slot="start" class="diagram">
-                <div class="diagram-inner" data-theme=${this.theme} .innerHTML=${this.svg}></div>
+                <div
+                  class="diagram-inner"
+                  data-theme=${effectiveTheme(this.theme, this.source) ?? ''}
+                  .innerHTML=${this.svg}
+                ></div>
               </div>
               <div slot="end" style="height: 100%;">
                 <dev-console-panel></dev-console-panel>
@@ -1407,8 +1496,28 @@ export class DevDiagramViewer extends LitElement {
           </sl-tab-panel>
 
           <sl-tab-panel name="profile">${this.#renderProfilePanel()}</sl-tab-panel>
+
+          <sl-tab-panel name="compare">${this.#renderComparePanel()}</sl-tab-panel>
         </sl-tab-group>
       </div>
+    `;
+  }
+
+  #renderComparePanel() {
+    // Only mounted while visible: the panes measure text, which needs layout
+    // (a display:none iframe would render garbage).
+    if (this.activeTab !== 'compare') return nothing;
+    return html`
+      <dev-compare-panel
+        .source=${this.source}
+        .settings=${this.#renderSettings}
+        .sseToken=${this.sseToken}
+        .left=${this.compareLeft}
+        .right=${this.compareRight}
+        .diff=${this.compareDiff}
+        @compare-change=${(e: CustomEvent<CompareChangeDetail>) =>
+          this.#handleCompareChange(e.detail)}
+      ></dev-compare-panel>
     `;
   }
 

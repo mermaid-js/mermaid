@@ -4,14 +4,15 @@ import type { BuildOptions } from 'esbuild';
 import { readFileSync } from 'fs';
 import jsonSchemaPlugin from './jsonSchemaPlugin.js';
 import type { PackageOptions } from '../.build/common.js';
+import { buildTarget } from '../.build/common.js';
 import { jisonPlugin } from './jisonPlugin.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 // For e2e coverage we serve an uninstrumented bundle and collect native V8
 // coverage in the browser (see e2e/helpers/coverage.ts). monocart maps the V8
-// data back to source via the bundle's source map, which must be inline for it
-// to resolve — so the coverage build emits inline maps instead of external ones.
+// data back to source via the bundle's source map, which it finds through the
+// `sourceMappingURL` comment — so the coverage build emits linked maps.
 const coverageBuild = process.env.MERMAID_COVERAGE === 'true';
 
 export interface MermaidBuildOptions extends BuildOptions {
@@ -40,12 +41,13 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     minify: true,
     keepNames: true,
     platform: 'browser',
+    target: [...buildTarget],
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison', '.yaml'],
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
-    sourcemap: coverageBuild ? 'inline' : 'external',
+    sourcemap: coverageBuild ? 'linked' : 'external',
     ...override,
   };
 };
@@ -105,7 +107,8 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
   if (core) {
     // Core build is used to generate file without bundled dependencies.
     // This is used by downstream projects to bundle dependencies themselves.
-    // Ignore dependencies and any dependencies of dependencies
+    // Ignore dependencies and any dependencies of dependencies.
+    // A package may legitimately have none at all.
     //
     // peerDependencies must be external too. The consumer is the one that
     // supplies them, so inlining one ships a second copy of that package —

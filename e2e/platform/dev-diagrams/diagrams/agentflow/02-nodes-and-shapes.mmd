@@ -1,0 +1,9 @@
+agentflow-beta LR
+  brief["Brief"]@{ shape: input }
+  draft["Draft copy"]@{ shape: task }
+  spellcheck["spell_check"]@{ shape: tool }
+  guide["Style guide"]@{ shape: refdoc }
+  publish["Publish"]@{ shape: action }
+
+  brief --> draft --> spellcheck --> publish
+  draft -.- guide

@@ -45,6 +45,14 @@ interface BaseNode {
   width?: number;
   height?: number;
   wrappingWidth?: number;
+  /** Minimum width of the label area; short labels are widened to it (see `minNodeWidth`). */
+  minWidth?: number;
+  /**
+   * Spread the points where edges attach to this node across its side, so end
+   * markers on neighbouring edges overlap as little as the side allows.
+   * Honoured by layouts that place attachment points themselves (ELK).
+   */
+  spreadPorts?: boolean;
   labelBBox?: {
     width: number;
     height: number;
@@ -131,6 +139,13 @@ export interface NonClusterNode extends BaseNode {
 // Common properties for any node in the system
 export type Node = ClusterNode | NonClusterNode;
 
+export type TerminalLabelKey = 'startLeft' | 'startRight' | 'endLeft' | 'endRight';
+
+export interface TerminalLabelSize {
+  width: number;
+  height: number;
+}
+
 // Common properties for any edge in the system
 export interface Edge {
   id: string;
@@ -139,6 +154,14 @@ export interface Edge {
   style?: string[];
   animate?: boolean;
   animation?: 'fast' | 'slow';
+  /** Order in which the step animation dot travels this edge (1 = first). */
+  step?: number;
+  /** Highest `step` in the diagram, so every step edge shares one loop length. */
+  stepCount?: number;
+  /** Seconds the dot spends on each step (`flowchart.stepDuration`). */
+  stepDuration?: number;
+  /** Whether a badge shows this edge's `step` number (`flowchart.stepNumbers`). */
+  showStepNumber?: boolean;
   /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
   metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges
@@ -160,6 +183,10 @@ export interface Edge {
   // Class Diagram specific properties
   startLabelRight?: string;
   endLabelLeft?: string;
+  /** Measured terminal labels, each centred on its label group's origin. */
+  terminalLabelSizes?: Partial<Record<TerminalLabelKey, TerminalLabelSize>>;
+  /** Terminal label centres placed by the layout; preferred over the along-the-path default. */
+  terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
   labelpos?: string;

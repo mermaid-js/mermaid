@@ -85,4 +85,12 @@ describe('timing diagram timeline utilities', () => {
       ])
     ).toThrow(/finite end time/);
   });
+
+  it('keeps ticks finite and bounded at the largest finite end time', () => {
+    const ticks = niceTicks(Number.MAX_VALUE);
+    expect(ticks.length).toBeGreaterThan(1);
+    expect(ticks.length).toBeLessThanOrEqual(12);
+    expect(ticks.every(Number.isFinite)).toBe(true);
+    expect(ticks.at(-1)).toBe(Number.MAX_VALUE);
+  });
 });
