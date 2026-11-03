@@ -12,7 +12,6 @@ import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import { PARTICIPANT_TYPE } from './sequenceDb.js';
-import type { Actor } from './types.js';
 
 let conf = {};
 
@@ -1071,7 +1070,21 @@ export const draw = async function (_text: string, id: string, _version: string,
   const title = diagObj.db.getDiagramTitle();
   const hasBoxes = diagObj.db.hasAtLeastOneBox();
   const hasBoxTitles = diagObj.db.hasAtLeastOneBoxWithTitle();
-  const maxMessageWidthPerActor = await getMaxMessageWidthPerActor(actors, messages, diagObj);
+  if (conf.hideUnusedParticipants === true) {
+    const newActors = new Set();
+    messages.forEach((message) => {
+      newActors.add(message.from);
+      newActors.add(message.to);
+    });
+    actorKeys = actorKeys.filter((actorKey) => newActors.has(actorKey));
+  }
+
+  const maxMessageWidthPerActor = await getMaxMessageWidthPerActor(
+    actors,
+    actorKeys,
+    messages,
+    diagObj
+  );
   conf.height = await calculateActorMargins(actors, maxMessageWidthPerActor, boxes);
 
   svgDraw.insertComputerIcon(diagram, id);
@@ -1083,15 +1096,6 @@ export const draw = async function (_text: string, id: string, _version: string,
     if (hasBoxTitles) {
       bounds.bumpVerticalPos(boxes[0].textMaxHeight);
     }
-  }
-
-  if (conf.hideUnusedParticipants === true) {
-    const newActors = new Set();
-    messages.forEach((message) => {
-      newActors.add(message.from);
-      newActors.add(message.to);
-    });
-    actorKeys = actorKeys.filter((actorKey) => newActors.has(actorKey));
   }
 
   const actorIndexMap = new Map(
@@ -1488,6 +1492,7 @@ export const draw = async function (_text: string, id: string, _version: string,
  */
 async function getMaxMessageWidthPerActor(
   actors: Map<string, any>,
+  actorKeys: string[],
   messages: any[],
   diagObj: Diagram
 ): Promise<Record<string, number>> {
@@ -1568,7 +1573,7 @@ async function getMaxMessageWidthPerActor(
       } else if (msg.placement === diagObj.db.PLACEMENT.OVER && msg.from !== msg.to) {
         // A note spanning several actors is as wide as the gaps between them,
         // so the gaps together have to fit the note text
-        const gaps = getActorsBetween(actors, msg.from, msg.to);
+        const gaps = getActorsBetween(actorKeys, msg.from, msg.to);
         for (const gapActor of gaps) {
           maxMessageWidthPerActor[gapActor] = common.getMax(
             maxMessageWidthPerActor[gapActor] ?? 0,
@@ -1601,8 +1606,7 @@ async function getMaxMessageWidthPerActor(
  * Returns the actors whose gap to the next actor lies between `from` and `to`,
  * in the order the actors are drawn. `from` and `to` may come in either order.
  */
-function getActorsBetween(actors: Map<string, Actor>, from: string, to: string): string[] {
-  const keys = [...actors.keys()];
+function getActorsBetween(keys: string[], from: string, to: string): string[] {
   const [start, end] = [keys.indexOf(from), keys.indexOf(to)].sort((a, b) => a - b);
   return keys.slice(start, end);
 }
