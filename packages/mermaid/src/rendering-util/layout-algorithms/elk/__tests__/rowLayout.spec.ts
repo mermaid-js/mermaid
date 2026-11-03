@@ -717,6 +717,13 @@ describe('spreading link ends', () => {
     expect(slideToWishes([10, 30], [95, 0], 0, 100)).toEqual([10, 30]);
   });
 
+  it('leaves packed points as they are when they are wider than the side', () => {
+    const side = { low: 0, high: 7 };
+    const packed = packAlong([3, 4], side.low, side.high, END_SPACING);
+    expect(packed[1] - packed[0]).toBeGreaterThan(side.high - side.low);
+    expect(slideToWishes(packed, [3, 4], side.low, side.high)).toEqual(packed);
+  });
+
   it('pins the points that can run straight and fits the rest between them in order', () => {
     const positions = pinStraight([115, 300, 415, 485], 44, 186, 35.5);
     expect(positions[0]).toBe(115);
