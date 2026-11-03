@@ -10,6 +10,7 @@ import { curveLinear } from 'd3';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
+import { orderNestedEdgeEnds } from './nestedEdgeOrder.js';
 import { applyElkLineJumps } from './lineHops.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
@@ -725,6 +726,7 @@ export function buildElkGraphFromLayoutData(
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
+  orderEdgesByNesting(elkGraph, parentLookupDb);
   applyCyclicEntryConstraint(data4Layout, nodeDb);
 
   return { elkGraph, nodeDb, parentLookupDb };
@@ -746,6 +748,18 @@ function reverseSubgraphFeedbackEdges(elkGraph: { edges: any[] }, parentLookupDb
       edge.layoutReversed = true;
     }
   });
+}
+
+/**
+ * Hand ELK an edge from inside a subgraph before the edge from that subgraph's border when both
+ * share their other end, so ELK's model order does not cross them (see `orderNestedEdgeEnds`).
+ */
+function orderEdgesByNesting(elkGraph: { edges: any[] }, parentLookupDb: TreeData): void {
+  const order = orderNestedEdgeEnds(
+    elkGraph.edges.map((edge) => ({ source: edge.sources[0], target: edge.targets[0] })),
+    parentLookupDb
+  );
+  elkGraph.edges = order.map((index) => elkGraph.edges[index]);
 }
 
 export const render = createCommonLayoutRenderer<ElkLayoutResult, ElkPreparedLayout>({
