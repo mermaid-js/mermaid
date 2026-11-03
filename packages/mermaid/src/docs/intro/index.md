@@ -1,3 +1,7 @@
+---
+description: 'Learn what Mermaid is, why diagramming and documentation benefit from text-based diagrams, and see examples of the diagram types Mermaid supports.'
+---
+
 # About Mermaid
 
 **Mermaid lets you create diagrams and visualizations using text and code.**
@@ -42,7 +46,7 @@ Use Mermaid with your favorite applications, check out the list of [Community In
 
 For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](../intro/getting-started.md) and [Usage](../config/usage.md).
 
-🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](../community/contributing.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
+🌐 [CDN](https://www.jsdelivr.com/package/npm/mermaid) | 📖 [Documentation](./getting-started.md) | 🙌 [Contribution](../community/contributing.md) | 🔌 [Plug-Ins](../ecosystem/integrations-community.md)
 
 > 🖖 Keep a steady pulse: [mermaid needs more Collaborators](https://github.com/mermaid-js/mermaid/issues/866).
 
@@ -103,7 +107,7 @@ To Deploy Mermaid:
 
 **Doing so commands the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags, mermaid tries to read the diagram/chart definitions and render them into SVG charts.**
 
-**Examples can be found in** [Other examples](../syntax/examples.md)
+**Examples can be found in** [Examples](../syntax/all-examples.md)
 
 ## Sibling projects
 
