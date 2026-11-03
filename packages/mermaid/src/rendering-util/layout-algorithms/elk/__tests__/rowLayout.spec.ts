@@ -594,6 +594,37 @@ describe('alignDirectedSubgraphs', () => {
     expect(spanOf(graph)).toBeLessThanOrEqual(410);
   });
 
+  it('keeps a routed link end clear of a loop ELK drew on the same side', () => {
+    const free = laidOut();
+    align(free);
+    const wh = free.children[3];
+    const straight = (free.edges[4] as any).sections[0].endPoint.x - wh.x;
+    const loop = {
+      id: 'loop',
+      sources: ['Pick'],
+      targets: ['Pick'],
+      container: 'wh',
+      sections: [
+        {
+          startPoint: { x: straight - 5, y: 20 },
+          bendPoints: [
+            { x: straight - 5, y: 10 },
+            { x: straight + 5, y: 10 },
+          ],
+          endPoint: { x: straight + 5, y: 20 },
+        },
+      ],
+    };
+    const graph = { ...laidOut(), edges: [...laidOut().edges, loop] };
+    align(graph);
+    const end = (graph.edges[4] as any).sections[0].endPoint;
+    const origin = graph.children[3].x;
+    expect(end.y).toBe(graph.children[3].y + 20);
+    for (const loopEnd of [straight - 5, straight + 5]) {
+      expect(Math.abs(end.x - origin - loopEnd)).toBeGreaterThanOrEqual(END_SPACING);
+    }
+  });
+
   it('leaves a graph without a separated subgraph alone', () => {
     const graph = laidOut();
     alignDirectedSubgraphs({
