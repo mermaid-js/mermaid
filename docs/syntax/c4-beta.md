@@ -6,16 +6,16 @@
 
 # C4 Diagrams (beta) (v\<MERMAID_RELEASE_VERSION>+)
 
+> **Warning**
+> The `c4-beta` diagram is in beta. Diagrams start with the `c4-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
 > A C4 diagram describes a software system at different zoom levels: System Context, Container, Component, Dynamic and Deployment, following the [C4 model](https://c4model.com/).
 
 The `c4-beta` diagram type is a new, experimental take on C4 diagrams with a compact, Structurizr-inspired syntax, rendered through the unified layout pipeline. It sits alongside the [legacy C4 diagram](c4.md) rather than replacing it: `C4Context`, `C4Container` and the rest of the PlantUML-compatible syntax are unaffected and keep working.
 
-> **Warning**
-> This is an experimental diagram. The syntax may change in future releases.
-
 ## Example
 
-```mermaid-example
+```mermaid
 c4-beta context
 title Internet Banking System - System Context
 
@@ -30,7 +30,7 @@ banking --> email : "Sends e-mail using" "SMTP"
 email --> customer : "Sends e-mails to"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta context
 title Internet Banking System - System Context
 
@@ -66,14 +66,14 @@ person|softwareSystem|container|component|group|deploymentNode|infrastructureNod
 - `person` elements render with the classic C4 person notation (head and body).
 - The element kind keywords above are also valid element ids and relationship endpoints, so `softwareSystem softwareSystem "System"` parses.
 
-```mermaid-example
+```mermaid
 c4-beta container
 person customer "Customer" "A customer of the bank."
 container spa "Single-Page Application" "Provides banking functionality." "JavaScript/Angular"
 softwareSystem mainframe "Mainframe Banking System" :::external
 ```
 
-```mermaid
+```mermaid-example
 c4-beta container
 person customer "Customer" "A customer of the bank."
 container spa "Single-Page Application" "Provides banking functionality." "JavaScript/Angular"
@@ -82,9 +82,9 @@ softwareSystem mainframe "Mainframe Banking System" :::external
 
 ### Nesting and boundaries
 
-Any element can contain other elements using braces. An element with children is rendered as a boundary:
+Any element can contain other elements using braces, and every `{` needs its closing `}`. An element with children is rendered as a boundary. An element cannot be declared inside an element with the same id; the diagram is rejected with an error naming the id:
 
-```mermaid-example
+```mermaid
 c4-beta container
 title Internet Banking System - Containers
 
@@ -100,7 +100,7 @@ spa --> api : "Makes API calls to" "JSON/HTTPS"
 api --> db : "Reads from and writes to" "SQL/TCP"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta container
 title Internet Banking System - Containers
 
@@ -125,7 +125,7 @@ In the C4 model every line is a **unidirectional**, specifically-labelled relati
 (N:)? <sourceId> <-- <targetId> (: "Description" ("Technology")?)? (:::tag)*
 ```
 
-```mermaid-example
+```mermaid
 c4-beta context
 softwareSystem core "Core System"
 softwareSystem partner "Partner System" :::external
@@ -134,7 +134,7 @@ core --> partner : "Pushes settlement records to" "JSON/HTTPS"
 partner --> core : "Returns settlement confirmations to" "JSON/HTTPS"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta context
 softwareSystem core "Core System"
 softwareSystem partner "Partner System" :::external
@@ -147,7 +147,7 @@ Label each relationship with a specific verb phrase that explains _why_ the inte
 
 `<-->` is supported as a shorthand for two relationships drawn in both directions, but it is **discouraged**: a bidirectional arrow hides the two distinct interactions and their separate labels. Prefer two explicit unidirectional relationships instead:
 
-```mermaid-example
+```mermaid
 c4-beta context
 softwareSystem core "Core System"
 softwareSystem partner "Partner System" :::external
@@ -155,7 +155,7 @@ softwareSystem partner "Partner System" :::external
 core <--> partner : "Syncs with"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta context
 softwareSystem core "Core System"
 softwareSystem partner "Partner System" :::external
@@ -169,7 +169,7 @@ In a `dynamic` diagram, relationships are numbered in declaration order and the 
 
 Repeating the same step number on more than one relationship marks them as **parallel interactions** (v\<MERMAID_RELEASE_VERSION>+): they all render with that number, and auto-numbering resumes from the highest number used plus one. For example, steps `1`, `2:`, `2:` leave the next auto-numbered relationship as `3`:
 
-```mermaid-example
+```mermaid
 c4-beta dynamic
 title Internet Banking System - Sign In
 
@@ -184,7 +184,7 @@ db --> api : "Returns user data to"
 api --> spa : "Sends back an authentication token to"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta dynamic
 title Internet Banking System - Sign In
 
@@ -203,7 +203,7 @@ api --> spa : "Sends back an authentication token to"
 
 In a `deployment` diagram, `deploymentNode` elements describe infrastructure. Deployment nodes always render as boundaries, even without children, labeled with the name and, when one is given, a `[Technology]` line beneath it, and can be nested arbitrarily:
 
-```mermaid-example
+```mermaid
 c4-beta deployment
 title Internet Banking System - Deployment
 
@@ -221,7 +221,7 @@ deploymentNode aws "Amazon Web Services" "" "AWS" {
 api --> db : "Reads from and writes to" "SQL/TCP"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta deployment
 title Internet Banking System - Deployment
 
@@ -243,7 +243,7 @@ Relationships should connect leaf elements; a relationship between two boundarie
 
 Use `infrastructureNode` for DNS, load balancers, firewalls, and other supporting infrastructure (v\<MERMAID_RELEASE_VERSION>+). Unlike a `deploymentNode`, an infrastructure node renders as a leaf box rather than a boundary, so it can sit inside a deployment node and act as a relationship endpoint:
 
-```mermaid-example
+```mermaid
 c4-beta deployment
 title Internet Banking System - Deployment
 
@@ -257,7 +257,7 @@ deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
 lb --> app : "Forwards requests to" "HTTPS"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta deployment
 title Internet Banking System - Deployment
 
@@ -273,7 +273,7 @@ lb --> app : "Forwards requests to" "HTTPS"
 
 A deployment node can declare how many instances are deployed with `instances "<count>"` (v\<MERMAID_RELEASE_VERSION>+). The count is rendered as an `xN` badge on the node and accepts a single number or a range such as `1..N`, `0..1` or `5..10`:
 
-```mermaid-example
+```mermaid
 c4-beta deployment
 title Internet Banking System - Deployment
 
@@ -284,7 +284,7 @@ deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
 }
 ```
 
-```mermaid
+```mermaid-example
 c4-beta deployment
 title Internet Banking System - Deployment
 
@@ -299,7 +299,7 @@ deploymentNode dc "Big Bank plc data center" "" "Ubuntu" {
 
 Putting it together, here is the canonical C4 "Live" deployment of the Internet Banking System: the customer's devices, a data center with load-balanced web and API tiers (each a multi-instance `deploymentNode`), an `infrastructureNode` load balancer in front of them, and a primary database replicating to a failover:
 
-```mermaid-example
+```mermaid
 c4-beta deployment
 title Internet Banking System - Live Deployment
 
@@ -343,7 +343,7 @@ apiApp --> dbPrimary : "Reads from and writes to" "JDBC"
 dbPrimary --> dbSecondary : "Replicates data to"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta deployment
 title Internet Banking System - Live Deployment
 
@@ -407,7 +407,7 @@ Supported keys:
 
 Tag styles are applied after the built-in element colors, so they override them. Each tag also adds a `c4-tag-<name>` CSS class for theming with `classDefs` or custom CSS.
 
-```mermaid-example
+```mermaid
 c4-beta container
 style database shape:cylinder
 style async line:dashed
@@ -419,7 +419,7 @@ container db "Database" "Stores user credentials." "Oracle 12c" :::database
 api --> db : "Reads from and writes to" "SQL/TCP" :::async
 ```
 
-```mermaid
+```mermaid-example
 c4-beta container
 style database shape:cylinder
 style async line:dashed
@@ -435,7 +435,7 @@ api --> db : "Reads from and writes to" "SQL/TCP" :::async
 
 The layout direction can be set with `direction TB|BT|LR|RL` (default `TB`):
 
-```mermaid-example
+```mermaid
 c4-beta context
 direction LR
 
@@ -445,7 +445,7 @@ softwareSystem core "Core System"
 user --> core : "Manages accounts using"
 ```
 
-```mermaid
+```mermaid-example
 c4-beta context
 direction LR
 
