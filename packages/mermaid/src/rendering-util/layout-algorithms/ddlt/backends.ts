@@ -14,6 +14,7 @@ import type { LayoutTestBackend, LayoutTestBackendId, OrthogonalTrace } from './
 import {
   applyFixtureContentSizesStrict,
   applyFixtureEdgeLabelSizesStrict,
+  applyFixtureGroupTitleSizes,
   applyFixtureLabelSizesStrict,
 } from './fixtureSizes.js';
 import { parseMmdFileToLayoutData } from './parseToLayoutData.js';
@@ -96,12 +97,14 @@ export function runSwimlanesDdlt(layout: LayoutData, sizes: SizesFixture): void 
 
 /**
  * The size step shared by every backend that measures on the `LayoutData` itself (`layered`,
- * `dagre`): content sizes onto leaf nodes, centre-label sizes onto labelled edges. This stands in
- * for `createGraphWithElements` / dagre's measure in the browser.
+ * `dagre`): content sizes onto leaf nodes, centre-label sizes onto labelled edges and, where the
+ * fixture has them, title sizes onto subgraphs. This stands in for `createGraphWithElements` /
+ * dagre's measure in the browser.
  */
 export function applyMeasuredSizes(layout: LayoutData, sizes: SizesFixture): void {
   applyFixtureContentSizesStrict(layout, sizes);
   applyFixtureEdgeLabelSizesStrict(layout, sizes);
+  applyFixtureGroupTitleSizes(layout, sizes);
 }
 
 /**

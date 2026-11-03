@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
 import type { LayoutData } from '../../types.js';
-import { backendsForProfile, parseApplySizesAndLayout } from './backends.js';
+import { applyMeasuredSizes, backendsForProfile, parseApplySizesAndLayout } from './backends.js';
 import { loadFreshSizesFixture } from './fixtureSizes.js';
 import { layoutTestsDir } from './paths.js';
 
@@ -90,6 +90,44 @@ describe('DDLT layered and dagre backends', () => {
     });
     expect(getConfig().flowchart?.nodeSpacing).toBe(123);
     expect(layout.nodeSpacing).toBe(123);
+  });
+
+  // The other LayoutData diagrams, sized from browser captures of their e2e fixtures.
+  it.each(['class', 'state', 'er', 'requirement', 'mindmap'])(
+    'layered lays out the %s fixture at its captured sizes and routes every edge',
+    async (diagram) => {
+      const { mmdPath, sizes } = fixture(`layered/${diagram}`);
+      const layout = await parseApplySizesAndLayout(mmdPath, sizes, 'layered');
+      const sizeById = new Map(sizes.nodes.map((n) => [n.id, n]));
+      for (const n of leafPositions(layout)) {
+        expect(Number.isFinite(n.x) && Number.isFinite(n.y), n.id).toBe(true);
+        expect(n.width, n.id).toBe(sizeById.get(n.id)!.width);
+      }
+      expect(layout.edges.length).toBeGreaterThan(0);
+      for (const e of layout.edges) {
+        expect(e.points?.length ?? 0, e.id).toBeGreaterThanOrEqual(2);
+      }
+    }
+  );
+
+  it('applies captured subgraph title sizes, leaving groups without one untitled', () => {
+    const layout = {
+      nodes: [
+        { id: 'G', isGroup: true, label: 'Group' },
+        { id: 'H', isGroup: true, label: 'Other' },
+        { id: 'a', isGroup: false, parentId: 'G' },
+      ],
+      edges: [],
+      config: {},
+    } as unknown as LayoutData;
+    applyMeasuredSizes(layout, {
+      nodes: [
+        { id: 'a', width: 60, height: 40 },
+        { id: 'group-title-G', width: 48, height: 24 },
+      ],
+    });
+    expect(layout.nodes[0].labelBBox).toEqual({ width: 48, height: 24 });
+    expect(layout.nodes[1].labelBBox).toBeUndefined();
   });
 
   it('flowchart fixtures sweep both layered and dagre; swimlanes stay on swimlanes', () => {

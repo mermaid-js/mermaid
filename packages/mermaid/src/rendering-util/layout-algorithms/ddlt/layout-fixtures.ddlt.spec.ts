@@ -51,7 +51,8 @@ describe('DDLT layout-test fixture sweep', () => {
 });
 
 /**
- * `layered` and `dagre` side by side on the same flowchart fixtures, through the same parse and
+ * `layered` and `dagre` side by side on the same fixtures — the flowchart ones plus `layered/*`
+ * (class, state, ER, requirement and mindmap, captured under `layout: layered`) — through the same parse and
  * size path. Report-only for now: it prints, per run, the hard-constraint violations by kind and
  * the aggregate score (`DDLT-CMP:`), and fails only when a backend throws unexpectedly or a
  * fixture goes unaccounted for. Score floors come once the layered port settles.

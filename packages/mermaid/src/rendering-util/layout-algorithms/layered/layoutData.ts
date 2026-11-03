@@ -63,6 +63,12 @@ const SPANS = new Map<string, Span>([
     'cross-circ',
     'crossed-circle',
     'summary',
+    // State diagram start, end and choice; mindmap cloud and bang.
+    'stateStart',
+    'stateEnd',
+    'choice',
+    'cloud',
+    'bang',
   ].map((name) => [name, roundSpan] as const),
   ...['stadium', 'terminal', 'pill'].map(
     (name) => [name, ((w, h, s) => (s ? h * 0.6 : w - h)) as Span] as const

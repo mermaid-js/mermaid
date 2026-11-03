@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import type { LayoutData } from '../../types.js';
 import type { SizesFixture } from './types.js';
 import { assertSizesFixtureFresh } from './fixtureFreshness.js';
+import { edgeLabelFixtureId, groupTitleFixtureId } from './captureContract.js';
 
 export function loadSizesFixture(path: string): SizesFixture {
   return JSON.parse(readFileSync(path, 'utf-8')) as SizesFixture;
@@ -148,10 +149,7 @@ export function applyFixtureLabelSizesStrict(layout: LayoutData, fixture: SizesF
   }
 }
 
-/** The `.sizes.json` id of an edge's centre label, as `createEdgeLabelNodes` names it. */
-export function edgeLabelFixtureId(edge: { start?: string; end?: string; id: string }): string {
-  return `edge-label-${edge.start}-${edge.end}-${edge.id}`;
-}
+export { edgeLabelFixtureId, groupTitleFixtureId };
 
 /**
  * Apply captured centre-label sizes straight onto labelled edges (`edge.width` / `edge.height`),
@@ -173,5 +171,22 @@ export function applyFixtureEdgeLabelSizesStrict(layout: LayoutData, fixture: Si
     }
     edge.width = size.width;
     edge.height = size.height;
+  }
+}
+
+/**
+ * Apply captured subgraph title sizes (`group-title-<id>`) as each group's `labelBBox`, where
+ * `measureGroupLabel` writes them during the browser measure. Not strict: fixtures captured
+ * before titles were recorded have none, and those groups stay untitled.
+ */
+export function applyFixtureGroupTitleSizes(layout: LayoutData, fixture: SizesFixture): void {
+  for (const node of layout.nodes) {
+    if (!node.isGroup) {
+      continue;
+    }
+    const size = fixtureSizeById(fixture, groupTitleFixtureId(node));
+    if (size) {
+      node.labelBBox = { width: size.width, height: size.height };
+    }
   }
 }

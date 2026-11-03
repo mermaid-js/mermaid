@@ -66,6 +66,29 @@ describe('layered adapter: LayoutData → LayoutGraph', () => {
   });
 });
 
+describe('layered adapter: shapes of the other diagrams', () => {
+  // A state diagram's choice is a small diamond: with the box's own span (its width less the
+  // corners) both edges leaving it would start from one point.
+  it('spreads the edges leaving a state choice apart, as for a flowchart diamond', () => {
+    const data = layoutData(
+      'TB',
+      [node('c', 28, 28, 'choice'), node('A'), node('B')],
+      [edge('e1', 'c', 'A'), edge('e2', 'c', 'B')]
+    );
+    runLayeredLayoutCore(data);
+    const [p, q] = data.edges.map((e) => e.points![0]);
+    expect(Math.hypot(p.x - q.x, p.y - q.y)).toBeGreaterThan(5);
+  });
+
+  it.each(['stateStart', 'stateEnd', 'choice', 'cloud', 'bang'])(
+    'gives a %s node a span narrower than its box',
+    (shape) => {
+      const graph = toLayoutGraph(layoutData('TB', [node('n', 100, 100, shape)], []));
+      expect(graph.nodes[0].span).toBe(60);
+    }
+  );
+});
+
 describe('layered adapter: config reaching the engine', () => {
   const withConfig = (config: Partial<MermaidConfig>, data = chain('TB')): LayoutData => {
     data.config = config as MermaidConfig;
