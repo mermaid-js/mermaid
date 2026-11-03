@@ -1,3 +1,7 @@
+---
+description: 'A curated list of video and written tutorials for learning Mermaid, using the Live Editor, and embedding Mermaid in HTML and other tools.'
+---
+
 # Tutorials
 
 This is a list of publicly available Tutorials for using Mermaid.JS and is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
