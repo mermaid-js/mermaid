@@ -1,4 +1,5 @@
 ---
+description: 'Announcements from the Mermaid and Mermaid Chart teams about releases, features, and project news.'
 outline: 'deep' # shows all h3 headings in outline in Vitepress
 ---
 
