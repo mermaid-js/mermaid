@@ -13,8 +13,6 @@ export interface ParseToLayoutDataOptions {
    * does before it calls `render()` (e.g. `flowRenderer-v3-unified.ts`, `erRenderer-unified.ts`).
    */
   stampRendererFields?: boolean;
-  /** Older name for {@link ParseToLayoutDataOptions.stampRendererFields}. */
-  stampFlowchartRendererFields?: boolean;
   /**
    * Config applied over the source's own frontmatter, as one more directive, before parsing —
    * e.g. `{ layered: { edgeRouting: 'stepped' } }`. It is also merged onto `layout.config`
@@ -124,7 +122,7 @@ export async function parseMmdTextToLayoutData(
     'TB';
   (layoutData as LayoutData & { direction?: string }).direction = direction;
 
-  if (options.stampRendererFields ?? options.stampFlowchartRendererFields) {
+  if (options.stampRendererFields) {
     stampRendererFields(layoutData, diagram.type);
   }
 
