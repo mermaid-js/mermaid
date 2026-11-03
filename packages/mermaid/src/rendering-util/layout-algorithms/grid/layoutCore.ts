@@ -6,6 +6,8 @@ import {
   resolveGridPlacements,
   validateGridPlacementMap,
 } from './placement.js';
+import { routeGridEdges, type GridRoutingTestOptions } from './router.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import {
   GRID_DEFAULTS,
   ROOT_CONTAINER_ID,
@@ -397,6 +399,15 @@ function commitGridGeometry(source: LayoutData, target: LayoutData): void {
       delete targetNode.groupTitleRect;
     }
   }
+
+  const sourceEdgeById = new Map(source.edges.map((edge) => [edge.id, edge]));
+  for (const targetEdge of target.edges) {
+    const sourceEdge = sourceEdgeById.get(targetEdge.id);
+    if (!sourceEdge) {
+      continue;
+    }
+    targetEdge.points = sourceEdge.points?.map((point) => ({ ...point }));
+  }
 }
 
 function cloneGridLayoutData(data: GridLayoutData): GridLayoutData {
@@ -450,7 +461,10 @@ function rebindGridForest(forest: GridForest, nodes: Node[]): GridForest {
   };
 }
 
-function runGridLayoutCoreInPlace(data: GridLayoutData): GridLayoutResult {
+function runGridLayoutCoreInPlace(
+  data: GridLayoutData,
+  options: GridLayoutCoreInternalOptions
+): GridLayoutResult {
   const forest = buildGridForest(data.nodes);
   const config = readGridConfig(data);
   const sourceOrder = buildGridSourceOrder(data.nodes.filter((node) => !isEdgeLabelNode(node)));
@@ -474,16 +488,28 @@ function runGridLayoutCoreInPlace(data: GridLayoutData): GridLayoutResult {
   }
   layoutContainer(ROOT_CONTAINER_ID, result, result.containers, result.itemMeta);
   materializeAbsoluteGeometry(result);
+  // Routing consumes absolute node bounds and corridor coordinates, so it must run after the
+  // children-first sizing and top-down translation phases have both completed.
+  routeGridEdges(data, result, options.metrics, options.routing);
   return result;
 }
 
-export function runGridLayoutCore(data4Layout: LayoutData): GridLayoutResult {
+/** @internal */
+export interface GridLayoutCoreInternalOptions {
+  metrics?: GridRoutingInstrumentation;
+  routing?: GridRoutingTestOptions;
+}
+
+export function runGridLayoutCore(
+  data4Layout: LayoutData,
+  options: GridLayoutCoreInternalOptions = {}
+): GridLayoutResult {
   const data = data4Layout as GridLayoutData;
 
-  // Geometry is transactional: invalid placement or containment must not leave partial
-  // coordinates on the shared render model.
+  // Geometry and routing are transactional: failed recovery must not leave partial coordinates
+  // on the shared render model.
   const working = cloneGridLayoutData(data);
-  const result = runGridLayoutCoreInPlace(working);
+  const result = runGridLayoutCoreInPlace(working, options);
   commitGridGeometry(working, data);
   return {
     ...result,
