@@ -2277,7 +2277,9 @@ function slideRunOffTitle(
  * flat side under the new column, the move may add no bend, leave a leg shorter
  * than `SLID_EDGE_SEPARATION`, or newly cross or cover anything. Only plain
  * `rect` frames are looked at, and an edge that crosses two titles gets its
- * first run moved. Returns each edge whose route changed with the run that moved.
+ * first run moved. The label is carried as soon as its edge slides, so the next
+ * edge is judged against it where it now is. Returns each edge whose route
+ * changed with the run that moved.
  */
 export function slideEdgesOffClusterTitles(
   edges: Edge[],
@@ -2303,6 +2305,7 @@ export function slideEdgesOffClusterTitles(
     const slid = slideRunOffTitle(edge, context);
     if (slid) {
       edge.points = slid.points;
+      carryLabelsAlong([{ edge, runs: [slid.run] }]);
       changed.push({ edge, runs: [slid.run] });
     }
   }
@@ -2486,9 +2489,7 @@ function applyElkEdgeLayout(
   const { subGraphTitleTopMargin } = getSubGraphTitleMargins({
     flowchart: data4Layout.config.flowchart ?? {},
   });
-  carryLabelsAlong(
-    slideEdgesOffClusterTitles(data4Layout.edges, data4Layout.nodes, subGraphTitleTopMargin)
-  );
+  slideEdgesOffClusterTitles(data4Layout.edges, data4Layout.nodes, subGraphTitleTopMargin);
   for (const [layoutEdge, ports] of terminalLabelPorts) {
     followMovedEndpoints(layoutEdge, ports);
   }

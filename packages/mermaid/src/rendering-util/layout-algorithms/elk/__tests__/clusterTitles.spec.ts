@@ -672,6 +672,57 @@ describe('slideEdgesOffClusterTitles', () => {
     });
   });
 
+  describe('two edges that slide off titles one after the other', () => {
+    const second = (frameX: number, edgeX: number) => {
+      const ship = { ...frame(100), id: 'ship', x: frameX, y: 800 };
+      const edge = {
+        ...labelled([
+          { x: edgeX, y: 135 },
+          { x: edgeX, y: 500 },
+          { x: edgeX, y: 830 },
+        ]),
+        id: 'L_A2_B2_0',
+        start: 'A2',
+        end: 'B2',
+        x: edgeX,
+        y: 210,
+      };
+      const nodes = [
+        node('A2', 99, 'squareRect', edgeX),
+        node('B2', 870, 'squareRect', edgeX),
+        ship,
+      ];
+      return { ship, edge, nodes };
+    };
+    const slideBoth = (frameX: number, edgeX: number) => {
+      const stock = frame(101.734375);
+      const first = labelled(straight());
+      const { ship, edge, nodes } = second(frameX, edgeX);
+
+      slide([first, edge], [stock, node('A', 99), node('B', 370), ...nodes]);
+
+      return { stock, ship, first, edge };
+    };
+
+    it('carries the label of a slid edge before the next edge is looked at', () => {
+      const { stock, first } = slideBoth(262 + 300, 259 + 300);
+
+      expect(first).toMatchObject({ x: clearOfTitle(stock), y: 210 });
+    });
+
+    it('keeps the second edge off the label the first one carried to the right', () => {
+      const { ship, edge } = slideBoth(262, 259);
+
+      expect(edge.points[0].x).toBe(clearOfTitle(ship));
+    });
+
+    it('lets the second edge take the near side when the first edge label is far from it', () => {
+      const { ship, edge } = slideBoth(262 + 300, 259 + 300);
+
+      expect(edge.points[0].x).toBe(leftOfTitle(ship));
+    });
+  });
+
   it('keeps the title where it is when the top margin puts it below the edge', () => {
     const stock = frame(101.734375);
     const points = straight().slice(0, 3);
