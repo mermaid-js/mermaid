@@ -1,3 +1,7 @@
+---
+description: 'How to write a layout algorithm for Mermaid: take a measured graph, return node positions and edge routes, and register it as a layout.'
+---
+
 # The Layout Maker's Guide 🗺️
 
 A layout algorithm decides where nodes sit and how edges get from one to the next. Shapes, themes, markers, and labels are already handled by the shared rendering code.

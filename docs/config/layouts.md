@@ -53,7 +53,7 @@ Since `elk` is the default, a diagram needs no configuration to use it. To pick
 a different layout, set it in your diagram's YAML config or initialization
 options. For example:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: dagre
@@ -63,7 +63,7 @@ graph TD;
   B-->C;
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: dagre
@@ -81,7 +81,7 @@ ELK spaces nodes by its own measure, so the two options are read against their d
 
 The default:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: elk
@@ -93,7 +93,7 @@ flowchart LR
   M --> X[Fulfil]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk
@@ -107,7 +107,7 @@ flowchart LR
 
 Half the gaps:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: elk
@@ -122,7 +122,7 @@ flowchart LR
   M --> X[Fulfil]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk
