@@ -42,6 +42,9 @@ export const C4Module: Module<C4Services, PartialLangiumCoreServices & C4AddedSe
   parser: {
     TokenBuilder: () => new C4TokenBuilder(),
     ValueConverter: () => new C4ValueConverter(),
+    // Chevrotain's in-rule recovery reads past the end of input inside nested `{ }` blocks and
+    // throws a TypeError; without recovery an unclosed brace is one ordinary parse error.
+    ParserConfig: () => ({ recoveryEnabled: false }),
   },
 };
 
