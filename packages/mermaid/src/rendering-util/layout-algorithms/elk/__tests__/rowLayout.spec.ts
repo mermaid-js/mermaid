@@ -25,6 +25,9 @@ import {
   nearestFree,
   endMarks,
   keepOffDrawnEnds,
+  gapsBetween,
+  channelFromFlow,
+  borderHits,
   markerReach,
   END_MARKERS,
   END_SPACING,
@@ -1102,5 +1105,51 @@ describe('ends beside a drawn link', () => {
     const x = moved.route.points[0].x;
     expect(Math.abs(x - 50)).toBeGreaterThanOrEqual(END_SPACING);
     expect(Math.abs(x - 72)).toBeGreaterThanOrEqual(END_SPACING);
+  });
+});
+
+describe('flow geometry helpers', () => {
+  const rect = (y: number, height: number) => ({ x: 0, y, width: 100, height });
+
+  it('finds the free bands between two items, merging the items that overlap between them', () => {
+    const between = [rect(100, 40), rect(120, 60), rect(400, 20), rect(20, 40)];
+    expect(gapsBetween(rect(0, 40), rect(300, 40), between)).toEqual([
+      [40, 100],
+      [180, 300],
+    ]);
+    expect(gapsBetween(rect(0, 40), rect(300, 40), [])).toEqual([[40, 300]]);
+  });
+
+  it('gives no bands when an item between leaves no gap before it', () => {
+    expect(gapsBetween(rect(0, 40), rect(300, 40), [rect(40, 40)])).toEqual([]);
+    expect(gapsBetween(rect(0, 40), rect(300, 40), [rect(100, 200)])).toEqual([]);
+  });
+
+  it('turns a channel from flow coordinates back into the diagram', () => {
+    const across = { axis: 'x' as const, low: 10, high: 20 };
+    const along = { axis: 'y' as const, low: 10, high: 20 };
+    expect(channelFromFlow(across, 'DOWN')).toEqual(across);
+    expect(channelFromFlow(across, 'RIGHT')).toEqual({ ...across, axis: 'y' });
+    expect(channelFromFlow(across, 'LEFT')).toEqual({ ...across, axis: 'y' });
+    expect(channelFromFlow(along, 'DOWN')).toEqual(along);
+    expect(channelFromFlow(along, 'UP')).toEqual({ axis: 'y', low: -20, high: -10 });
+    expect(channelFromFlow(along, 'RIGHT')).toEqual({ axis: 'x', low: 10, high: 20 });
+    expect(channelFromFlow(along, 'LEFT')).toEqual({ axis: 'x', low: -20, high: -10 });
+  });
+
+  it('finds where a segment passes the border of a frame', () => {
+    const frame = { x: 0, y: 50, width: 100, height: 100 };
+    expect(borderHits({ x: 50, y: 0 }, { x: 50, y: 200 }, frame)).toEqual([
+      { x: 50, y: 50 },
+      { x: 50, y: 150 },
+    ]);
+    expect(borderHits({ x: 50, y: 200 }, { x: 50, y: 100 }, frame)).toEqual([{ x: 50, y: 150 }]);
+    expect(borderHits({ x: -20, y: 80 }, { x: 200, y: 80 }, frame)).toEqual([
+      { x: 0, y: 80 },
+      { x: 100, y: 80 },
+    ]);
+    expect(borderHits({ x: 0, y: 0 }, { x: 0, y: 200 }, frame)).toEqual([]);
+    expect(borderHits({ x: 150, y: 0 }, { x: 150, y: 200 }, frame)).toEqual([]);
+    expect(borderHits({ x: -20, y: 30 }, { x: 200, y: 30 }, frame)).toEqual([]);
   });
 });
