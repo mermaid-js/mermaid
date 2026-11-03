@@ -1568,10 +1568,7 @@ async function getMaxMessageWidthPerActor(
       } else if (msg.placement === diagObj.db.PLACEMENT.OVER && msg.from !== msg.to) {
         // A note spanning several actors is as wide as the gaps between them,
         // so the gaps together have to fit the note text
-        let gaps = getActorsBetween(actors, msg.from, msg.to);
-        if (gaps.length === 0) {
-          gaps = getActorsBetween(actors, msg.to, msg.from);
-        }
+        const gaps = getActorsBetween(actors, msg.from, msg.to);
         for (const gapActor of gaps) {
           maxMessageWidthPerActor[gapActor] = common.getMax(
             maxMessageWidthPerActor[gapActor] ?? 0,
@@ -1601,17 +1598,13 @@ async function getMaxMessageWidthPerActor(
 }
 
 /**
- * Returns the actors whose gap to the next actor lies between `left` and `right`,
- * or an empty list when `right` is not to the right of `left`.
+ * Returns the actors whose gap to the next actor lies between `from` and `to`,
+ * in the order the actors are drawn. `from` and `to` may come in either order.
  */
-function getActorsBetween(actors: Map<string, Actor>, left: string, right: string): string[] {
-  const result: string[] = [];
-  let key: string | undefined = left;
-  while (key && key !== right) {
-    result.push(key);
-    key = actors.get(key)?.nextActor;
-  }
-  return key === right ? result : [];
+function getActorsBetween(actors: Map<string, Actor>, from: string, to: string): string[] {
+  const keys = [...actors.keys()];
+  const [start, end] = [keys.indexOf(from), keys.indexOf(to)].sort((a, b) => a - b);
+  return keys.slice(start, end);
 }
 
 const getRequiredPopupWidth = function (actor) {
