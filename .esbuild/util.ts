@@ -11,8 +11,8 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 // For e2e coverage we serve an uninstrumented bundle and collect native V8
 // coverage in the browser (see e2e/helpers/coverage.ts). monocart maps the V8
-// data back to source via the bundle's source map, which must be inline for it
-// to resolve — so the coverage build emits inline maps instead of external ones.
+// data back to source via the bundle's source map, which it finds through the
+// `sourceMappingURL` comment — so the coverage build emits linked maps.
 const coverageBuild = process.env.MERMAID_COVERAGE === 'true';
 
 export interface MermaidBuildOptions extends BuildOptions {
@@ -47,7 +47,7 @@ const buildOptions = (override: BuildOptions): BuildOptions => {
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin, jsonSchemaPlugin],
-    sourcemap: coverageBuild ? 'inline' : 'external',
+    sourcemap: coverageBuild ? 'linked' : 'external',
     ...override,
   };
 };
