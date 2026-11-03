@@ -109,7 +109,8 @@ function drawnCurve(mode: EdgeRouting, curve: Edge['curve']): Edge['curve'] {
 }
 
 // Mermaid draws a subgraph title at the top of its box, `subGraphTitleMargin.top` below the
-// border, so the band above the content holds both margins, the title and a gap.
+// border, so the band above the content holds both margins, the title and a gap. The margin is
+// read from the flowchart config for every diagram, as dagre does (`getSubGraphTitleMargins`).
 function toLayoutGroup(n: Node, data: LayoutData, groupIds: Set<string>): LayoutGroup {
   const margin = data.config?.flowchart?.subGraphTitleMargin;
   const titleWidth = size(n.labelBBox?.width);

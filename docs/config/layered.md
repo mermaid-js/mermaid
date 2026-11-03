@@ -88,7 +88,7 @@ flowchart LR
 
 Spacing comes from the diagram's existing `nodeSpacing` and `rankSpacing` settings, the same values the other layouts use.
 
-If the layered layout fails on a diagram, Mermaid logs a warning and lays that diagram out with dagre instead, so the diagram still renders.
+If the layered layout fails on a diagram, Mermaid logs a warning and lays that diagram out with dagre instead, so the diagram still renders. The rendered `<svg>` then has a `data-layout-fallback="dagre"` attribute, so you can tell which layout drew it.
 
 ## Edge routing
 

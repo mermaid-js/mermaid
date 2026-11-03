@@ -5,6 +5,8 @@
 // The `availableWidth` handling follows Pele's src/diagrams/common/fit-width.ts (`tighten`,
 // then `turnToFit`), applied to the layout instead of to a whole render.
 // cspell:ignore kepano cnode cnodes cedges
+// Kept through minification (esbuild legal comment) so bundles carry the notice.
+/*! Pele (https://github.com/obsidianmd/pele) | Copyright (c) 2026 kepano | MIT License */
 import type {
   Dir,
   LayoutContext,
@@ -202,18 +204,27 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
   });
 
   // A self-loop sits beside its node, across the flow; the box laid out grows to hold it.
+  // Several loops on one node nest outward: each starts where the previous one and its label end.
   const loopSide = new Uint8Array(cnodes.length);
+  const loopCount = new Uint16Array(cnodes.length);
+  const loopReach = new Float64Array(cnodes.length);
+  const loopSlot: { index: number; reach: number }[] = [];
   const cedges: CEdge[] = graph.edges.map((e, k) => {
     const [src, dst] = ends[k]!;
     const labelW = e.label?.width ?? 0;
     const labelH = e.label?.height ?? 0;
     if (src === dst && src < nodeCount) {
       const c = cnodes[src]!;
+      const across = sideways(src) ? labelH : labelW;
+      const grow = LOOP + (across > 0 ? across + LOOP_GAP : 0);
+      loopSlot[k] = { index: loopCount[src]!, reach: loopReach[src]! };
+      loopCount[src]!++;
+      loopReach[src]! += grow;
       if (sideways(src)) {
-        c.h += 2 * (LOOP + (labelH > 0 ? labelH + LOOP_GAP : 0));
+        c.h += 2 * grow;
         loopSide[src] = 2;
       } else {
-        c.w += 2 * (LOOP + (labelW > 0 ? labelW + LOOP_GAP : 0));
+        c.w += 2 * grow;
         loopSide[src] = 1;
       }
     }
@@ -267,7 +278,18 @@ function run(graph: LayoutGraph, rootDir: Dir, tight: boolean): LayoutModel {
     const ce = cedges[k]!;
     const [src, dst] = ends[k]!;
     if (src === dst) {
-      edges.set(e.id, selfLoop(box(src), loopSide[src] === 2, e.label));
+      const slot = loopSlot[k] ?? { index: 0, reach: 0 };
+      edges.set(
+        e.id,
+        selfLoop(
+          box(src),
+          loopSide[src] === 2,
+          e.label,
+          slot.reach,
+          slot.index,
+          loopCount[src] || 1
+        )
+      );
       return;
     }
     const points: RoutePoint[] = [];
@@ -327,17 +349,23 @@ function sideOf(b: LayoutModelNode, p: RoutePoint | undefined, fallback: Side): 
   return dx < 0 ? 'left' : 'right';
 }
 
-// A loop out of one side of a node and back, beside it across the flow.
+// A loop out of one side of a node and back, beside it across the flow. Loop `index` of
+// `count` starts `reach` beyond the loops before it, and leaves and returns further from the
+// middle of the side, so nested loops neither overlap nor share their stubs.
 function selfLoop(
   b: LayoutModelNode,
   below: boolean,
-  label: { width: number; height: number } | undefined
+  label: { width: number; height: number } | undefined,
+  reach = 0,
+  index = 0,
+  count = 1
 ): LayoutModelEdge {
+  const spread = (index + 1) / (count + 1) / 2;
   if (below) {
     const y = b.y + b.height / 2;
-    const out = y + LOOP;
-    const x0 = b.x - b.width / 4;
-    const x1 = b.x + b.width / 4;
+    const out = y + reach + LOOP;
+    const x0 = b.x - b.width * spread;
+    const x1 = b.x + b.width * spread;
     return {
       points: [
         { x: x0, y, axis: 'v' },
@@ -350,9 +378,9 @@ function selfLoop(
     };
   }
   const x = b.x + b.width / 2;
-  const out = x + LOOP;
-  const y0 = b.y - b.height / 4;
-  const y1 = b.y + b.height / 4;
+  const out = x + reach + LOOP;
+  const y0 = b.y - b.height * spread;
+  const y1 = b.y + b.height * spread;
   return {
     points: [
       { x, y: y0, axis: 'h' },

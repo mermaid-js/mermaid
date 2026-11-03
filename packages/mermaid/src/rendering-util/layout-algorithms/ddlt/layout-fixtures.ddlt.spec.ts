@@ -51,13 +51,17 @@ describe('DDLT layout-test fixture sweep', () => {
  * (class, state, ER, requirement and mindmap, captured under `layout: layered`) — through the same parse and
  * size path. It prints, per run, the hard-constraint violations by kind and the aggregate score
  * (`DDLT-CMP:`), and holds the layered merge gate:
- * - `layered` with `edgeRouting: stepped` has no hard-constraint violation on any fixture;
+ * - `layered` with `edgeRouting: stepped` has no hard-constraint violation on any fixture, and its
+ *   aggregate score stays at or above `LAYERED_STEPPED_TOTAL_SCORE_BASELINE`;
  * - `layered` with its default (curved) routing scores at least as much as dagre in aggregate,
  *   both over the whole sweep (a fixture dagre cannot lay out counts 0 for it) and over the
  *   fixtures every run could lay out.
- * Curved routes are not held to zero violations: their diagonal segments trip
- * `edge-non-orthogonal`, as dagre's splines do.
+ * The curved comparison is a smoke check, not a quality measure: an invalid layout scores 0, and
+ * curved routes (like dagre's splines) always trip `edge-non-orthogonal`, so both totals come only
+ * from the few fixtures whose routes happen to be orthogonal. The stepped floor is the real gate.
  */
+const LAYERED_STEPPED_TOTAL_SCORE_BASELINE = 19396;
+
 const COMPARISON_RUNS: {
   name: string;
   backendId: LayoutTestBackendId;
@@ -153,6 +157,9 @@ describe('DDLT layered vs dagre', () => {
           .filter((item) => !item.result.ok)
           .map((item) => `${item.id}: ${item.result.issues.map((i) => i.message).join('; ')}`)
       ).toEqual([]);
+      expect(byRun.get('layered-stepped')!.totalScore).toBeGreaterThanOrEqual(
+        LAYERED_STEPPED_TOTAL_SCORE_BASELINE
+      );
 
       const curved = byRun.get('layered')!;
       const dagre = byRun.get('dagre')!;

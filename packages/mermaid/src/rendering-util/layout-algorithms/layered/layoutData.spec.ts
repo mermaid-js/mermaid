@@ -500,6 +500,36 @@ describe('layered adapter: subgraphs', () => {
     expect(loop.x! + 20).toBeLessThan(g.right);
   });
 
+  it('fans out several self-loops on one node instead of stacking them', () => {
+    const data = layoutData(
+      'TB',
+      [node('A'), node('B')],
+      [
+        edge('l1', 'A', 'A'),
+        edge('l2', 'A', 'A', { label: 'loop', width: 30, height: 18 }),
+        edge('l3', 'A', 'A'),
+        edge('e1', 'A', 'B'),
+      ]
+    );
+    data.config = { layered: { edgeRouting: 'stepped' } } as MermaidConfig;
+    runLayeredLayoutCore(data);
+    const a = byId(data, 'A');
+    const loops = data.edges.slice(0, 3);
+    const paths = loops.map((l) => JSON.stringify(l.points));
+    expect(new Set(paths).size).toBe(3);
+    // Each loop reaches further out than the one before, clearing its label.
+    const reach = loops.map((l) => Math.max(...l.points!.map((p) => p.x - a.x!)));
+    expect(reach[1]).toBeGreaterThan(reach[0]);
+    expect(reach[2]).toBeGreaterThan(reach[1]);
+    expect(reach[2] - reach[1]).toBeGreaterThan(30);
+    // Outer loops leave and return further from the middle, so the stubs don't overlap.
+    const spread = loops.map((l) => Math.abs(l.points![0].y - l.points!.at(-1)!.y));
+    expect(spread[1]).toBeGreaterThan(spread[0]);
+    expect(spread[2]).toBeGreaterThan(spread[1]);
+    expect(spread[2]).toBeLessThan(a.height!);
+    expect(validateLayout(data).issues.map((i) => i.message)).toEqual([]);
+  });
+
   it('gives a longer link (minLen) more ranks inside a subgraph', () => {
     const run = (minlen: number) => {
       const data = layoutData(

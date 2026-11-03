@@ -112,6 +112,19 @@ describe('layered falls back to dagre', () => {
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('dagre'));
   });
 
+  it('marks the svg when it fell back, so visual tests can tell', async () => {
+    setLayeredThrowsOnFailure(false);
+    vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    const svg = svgRoot();
+    await render(layoutData(), svg);
+    expect(svg.attr('data-layout-fallback')).toBe('dagre');
+
+    engineFailure.on = false;
+    const ok = svgRoot();
+    await render(layoutData(), ok);
+    expect(ok.attr('data-layout-fallback')).toBeNull();
+  });
+
   it('hands dagre the diagram as it was before the layered attempt', async () => {
     setLayeredThrowsOnFailure(false);
     vi.spyOn(log, 'warn').mockImplementation(() => undefined);

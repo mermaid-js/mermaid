@@ -39,6 +39,8 @@ function stampRendererFields(layoutData: LayoutData, diagramType: string): void 
   const config = getConfig();
   const neo = config.look === 'neo';
   layoutData.type = diagramType;
+  // Each branch copies its diagram renderer's spacing, `||` or `??` included, so a spacing of 0
+  // behaves here as it does in a real render.
   switch (diagramType) {
     case 'classDiagram': {
       // The class renderer reads the *state* config for spacing.

@@ -9,6 +9,8 @@
 // Draws an edge from axis-tagged route points: one S along the flow between two points not in
 // line, rounded corners where the route turns, and square ends. Any layout whose edges carry
 // axis-tagged points gets this path; it is chosen by the data, not by the layout's name.
+// Kept through minification (esbuild legal comment) so bundles carry the notice.
+/*! Pele (https://github.com/obsidianmd/pele) | Copyright (c) 2026 kepano | MIT License */
 import { markerOffsets } from '../../utils/lineWithOffset.js';
 // The S-curve handle factor and the route point type are shared with the layered engine.
 import { ease, isAxisTaggedRoute, type RoutePoint } from './routeGeometry.js';

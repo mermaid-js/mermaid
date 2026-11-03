@@ -2,8 +2,8 @@
 // layered engine as its layout core. Edges come out with axis-tagged route points, so
 // `insertEdge` draws them with the shared `routePath`.
 //
-// If the engine throws, or gets input it cannot lay out, the diagram is drawn by dagre instead
-// and a warning says why. The unit tests turn that off (`setLayeredThrowsOnFailure`) so bugs
+// If the engine throws, or gets input it cannot lay out, the diagram is drawn by dagre instead,
+// a warning says why and the svg gets `data-layout-fallback="dagre"`. The unit tests turn that off (`setLayeredThrowsOnFailure`) so bugs
 // fail loudly rather than hiding behind the fallback.
 import type { SVG } from '../../../diagram-api/types.js';
 import type { InternalHelpers } from '../../../internals.js';
@@ -37,6 +37,9 @@ function copyPlain<T>(value: T): T {
     if (proto === Object.prototype || proto === null) {
       const out: Record<string, unknown> = {};
       for (const [key, v] of Object.entries(value)) {
+        if (key === '__proto__') {
+          continue;
+        }
         out[key] = copyPlain(v);
       }
       return out as T;
@@ -90,6 +93,8 @@ export async function render(
     restore(data4Layout, before);
     clearLayoutRenderState();
     svg.select('g').selectAll('*').remove();
+    // Lets visual tests check that a layered fixture was really drawn by layered.
+    svg.attr('data-layout-fallback', 'dagre');
     data4Layout.layoutAlgorithm = 'dagre';
     const dagre = await import('../dagre/index.js');
     await dagre.render(data4Layout, svg, helpers, options);
