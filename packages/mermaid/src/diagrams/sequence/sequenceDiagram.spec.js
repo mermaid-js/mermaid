@@ -4,6 +4,7 @@ import mermaidAPI from '../../mermaidAPI.js';
 import { Diagram } from '../../Diagram.js';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration.js';
 import { SequenceDB } from './sequenceDb.js';
+import utils from '../../utils.js';
 
 beforeAll(async () => {
   // Is required to load the sequence diagram
@@ -2117,6 +2118,28 @@ Note over Bob,Alice: Looks back
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastNote().stopy);
+  });
+  it.each([
+    ['Note over Alice,Bob', 'Alice-->Bob: hi'],
+    ['Note over Bob,Alice', 'Alice-->Bob: hi'],
+    ['Note over Alice,Carol', 'Alice-->Bob: hi\nBob-->Carol: hi'],
+  ])('should fit the text of %s into the note (#3229)', async (note, messages) => {
+    const textWidth = 1200;
+    vi.spyOn(utils, 'calculateTextDimensions').mockImplementation((text) =>
+      text.includes('long') ? { width: textWidth, height: 10 } : { width: 20, height: 10 }
+    );
+    const str = `
+sequenceDiagram
+${messages}
+${note}: a long note
+`;
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+
+    const { models } = diagram.renderer.bounds.getBounds();
+    vi.restoreAllMocks();
+    const noteModel = models.lastNote();
+    expect(noteModel.stopx - noteModel.startx).toBeGreaterThanOrEqual(textWidth);
   });
   it('should draw two actors and two messages', async () => {
     const str = `
