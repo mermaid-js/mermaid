@@ -803,6 +803,9 @@ const usecaseSystemBoundary = async (parent, node) => {
 };
 
 const squareRect = rect;
+
+const pool = (elem, node) => swimlane(elem, node, { variant: 'pool' });
+
 const shapes = {
   rect,
   squareRect,
@@ -813,6 +816,7 @@ const shapes = {
   flowGroup,
   usecaseSystemBoundary,
   swimlane,
+  pool,
 };
 
 /**

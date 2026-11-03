@@ -1,3 +1,7 @@
+---
+description: 'Model object-oriented structure with UML classes, members, methods, generics, relationships, cardinality, annotations, and namespaces.'
+---
+
 # Class diagrams
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
