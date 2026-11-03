@@ -229,3 +229,177 @@ describe('layered adapter: route ends on the shape outline', () => {
     });
   }
 });
+
+const group = (id: string, extra: Partial<Node> = {}): Node =>
+  ({
+    id,
+    label: id,
+    shape: 'rect',
+    isGroup: true,
+    padding: 8,
+    labelBBox: { width: 50, height: 20 },
+    ...extra,
+  }) as Node;
+
+const child = (id: string, parentId: string, width = 80, height = 40): Node =>
+  ({ ...node(id, width, height), parentId }) as Node;
+
+describe('layered adapter: subgraphs', () => {
+  it('translates clusters to engine groups with parents, directions and titles', () => {
+    const data = layoutData(
+      'TB',
+      [
+        group('outer'),
+        group('inner', { parentId: 'outer', dir: 'LR', labelBBox: { width: 0, height: 0 } }),
+        child('a', 'inner'),
+        child('b', 'outer'),
+        node('c'),
+      ],
+      [edge('e1', 'a', 'b'), edge('e2', 'c', 'outer')]
+    );
+    const graph = toLayoutGraph(data);
+    expect(graph.nodes.map((n) => [n.id, n.parent])).toEqual([
+      ['a', 'inner'],
+      ['b', 'outer'],
+      ['c', undefined],
+    ]);
+    const [outer, inner] = graph.groups;
+    expect(outer).toMatchObject({ id: 'outer', title: { width: 50, height: 20 } });
+    expect(outer.parent).toBeUndefined();
+    expect(outer.direction).toBeUndefined();
+    expect(inner).toMatchObject({ id: 'inner', parent: 'outer', direction: 'LR' });
+    // An untitled group has no title band.
+    expect(inner.title).toBeUndefined();
+    // Room on every side of each group's content.
+    for (const g of graph.groups) {
+      for (const side of ['top', 'right', 'bottom', 'left'] as const) {
+        expect(g.padding[side]).toBeGreaterThan(0);
+      }
+    }
+    // Edges may end on a group.
+    expect(graph.edges.map((e) => [e.source, e.target])).toEqual([
+      ['a', 'b'],
+      ['c', 'outer'],
+    ]);
+  });
+
+  const byId = (data: LayoutData, id: string) => data.nodes.find((n) => n.id === id)!;
+  const bounds = (n: Node) => ({
+    left: n.x! - n.width! / 2,
+    right: n.x! + n.width! / 2,
+    top: n.y! - n.height! / 2,
+    bottom: n.y! + n.height! / 2,
+  });
+  const contains = (outer: Node, inner: Node) => {
+    const o = bounds(outer);
+    const i = bounds(inner);
+    return o.left < i.left && o.right > i.right && o.top < i.top && o.bottom > i.bottom;
+  };
+
+  it('writes nested cluster geometry back, each cluster holding its content', () => {
+    const data = layoutData(
+      'TB',
+      [
+        group('outer'),
+        group('inner', { parentId: 'outer' }),
+        child('a', 'inner'),
+        child('b', 'inner'),
+        child('c', 'outer'),
+        node('d'),
+      ],
+      [edge('e1', 'a', 'b'), edge('e2', 'b', 'c'), edge('e3', 'c', 'd')]
+    );
+    runLayeredLayoutCore(data);
+    const outer = byId(data, 'outer');
+    const inner = byId(data, 'inner');
+    for (const g of [outer, inner]) {
+      for (const v of [g.x, g.y, g.width, g.height]) {
+        expect(Number.isFinite(v)).toBe(true);
+      }
+    }
+    expect(contains(outer, inner)).toBe(true);
+    expect(contains(inner, byId(data, 'a'))).toBe(true);
+    expect(contains(inner, byId(data, 'b'))).toBe(true);
+    expect(contains(outer, byId(data, 'c'))).toBe(true);
+    expect(contains(inner, byId(data, 'c'))).toBe(false);
+    expect(contains(outer, byId(data, 'd'))).toBe(false);
+    // The title band sits above the content: the title fits between the top border and `a`.
+    expect(bounds(byId(data, 'a')).top - bounds(inner).top).toBeGreaterThan(20);
+    // Clusters are at least as wide as their titles.
+    expect(inner.width).toBeGreaterThanOrEqual(50);
+  });
+
+  it('routes an edge to a subgraph onto its border, and one from it off its border', () => {
+    const data = layoutData(
+      'TB',
+      [node('top'), group('g'), child('a', 'g'), child('b', 'g'), node('bottom')],
+      [edge('in', 'top', 'g'), edge('e1', 'a', 'b'), edge('out', 'g', 'bottom')]
+    );
+    runLayeredLayoutCore(data);
+    const g = bounds(byId(data, 'g'));
+    const into = data.edges.find((e) => e.id === 'in')!.points!;
+    const outOf = data.edges.find((e) => e.id === 'out')!.points!;
+    expect(isAxisTaggedRoute(into)).toBe(true);
+    expect(isAxisTaggedRoute(outOf)).toBe(true);
+    // Into the top border, out of the bottom one.
+    expect(into.at(-1)!.y).toBeCloseTo(g.top, 3);
+    expect(outOf[0].y).toBeCloseTo(g.bottom, 3);
+    expect(bounds(byId(data, 'top')).bottom).toBeLessThan(g.top);
+    expect(bounds(byId(data, 'bottom')).top).toBeGreaterThan(g.bottom);
+  });
+
+  it("lays a subgraph out in its own direction, or its parent's when an edge crosses it", () => {
+    const sub = (crossed: boolean) =>
+      layoutData(
+        'TB',
+        [node('x'), group('g', { dir: 'LR' }), child('a', 'g'), child('b', 'g')],
+        [edge('e1', 'a', 'b'), crossed ? edge('e2', 'x', 'a') : edge('e2', 'x', 'g')]
+      );
+    const own = sub(false);
+    runLayeredLayoutCore(own);
+    expect(byId(own, 'a').y).toBeCloseTo(byId(own, 'b').y!, 3);
+    expect(byId(own, 'b').x).toBeGreaterThan(byId(own, 'a').x!);
+
+    const crossed = sub(true);
+    runLayeredLayoutCore(crossed);
+    expect(byId(crossed, 'a').x).toBeCloseTo(byId(crossed, 'b').x!, 3);
+    expect(byId(crossed, 'b').y).toBeGreaterThan(byId(crossed, 'a').y!);
+  });
+
+  it('routes a self-loop inside its subgraph, beside the node', () => {
+    const data = layoutData(
+      'TB',
+      [group('g'), child('a', 'g')],
+      [edge('loop', 'a', 'a', { label: 'again', width: 40, height: 18 })]
+    );
+    runLayeredLayoutCore(data);
+    const a = byId(data, 'a');
+    const loop = data.edges[0];
+    expect(isAxisTaggedRoute(loop.points)).toBe(true);
+    expect(loop.points!.length).toBeGreaterThan(2);
+    // The node keeps its measured size; the loop goes out beside it and stays in the cluster.
+    expect([a.width, a.height]).toEqual([80, 40]);
+    const reach = Math.max(...loop.points!.map((p) => Math.abs(p.x - a.x!)));
+    expect(reach).toBeGreaterThan(a.width! / 2);
+    const g = bounds(byId(data, 'g'));
+    for (const p of loop.points!) {
+      expect(p.x).toBeGreaterThan(g.left);
+      expect(p.x).toBeLessThan(g.right);
+    }
+    expect(loop.x! - a.x!).toBeGreaterThan(a.width! / 2);
+    expect(loop.x! + 20).toBeLessThan(g.right);
+  });
+
+  it('gives a longer link (minLen) more ranks inside a subgraph', () => {
+    const run = (minlen: number) => {
+      const data = layoutData(
+        'TB',
+        [group('g'), child('a', 'g'), child('b', 'g')],
+        [edge('e1', 'a', 'b', { minlen } as Partial<Edge>)]
+      );
+      runLayeredLayoutCore(data);
+      return byId(data, 'b').y! - byId(data, 'a').y!;
+    };
+    expect(run(3)).toBeGreaterThan(run(1) * 2);
+  });
+});
