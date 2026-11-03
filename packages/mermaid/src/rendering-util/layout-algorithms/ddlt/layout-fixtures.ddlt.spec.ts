@@ -62,7 +62,7 @@ const COMPARISON_RUNS: {
   config?: Record<string, unknown>;
 }[] = [
   { name: 'layered', backendId: 'layered' },
-  // Reaches the engine once the `layered.edgeRouting` config lands; until then it matches `layered`.
+  // `layered.edgeRouting` reaches the engine through `layout.config` (see `toLayoutGraph`).
   {
     name: 'layered-stepped',
     backendId: 'layered',

@@ -72,6 +72,15 @@ describe('DDLT layered and dagre backends', () => {
     });
     const layered = (cfg: unknown) => (cfg as { layered?: { edgeRouting?: string } }).layered;
     expect(layered(layout.config)?.edgeRouting).toBe('stepped');
+    // …and reaches the engine: stepped routes run only across and down.
+    for (const e of layout.edges) {
+      const pts = e.points ?? [];
+      for (let i = 1; i < pts.length; i++) {
+        const square =
+          Math.abs(pts[i].x - pts[i - 1].x) < 0.5 || Math.abs(pts[i].y - pts[i - 1].y) < 0.5;
+        expect(square, `${e.id} segment ${i}`).toBe(true);
+      }
+    }
   });
 
   it('applies the overlay like frontmatter, before the renderer fields are stamped', async () => {
