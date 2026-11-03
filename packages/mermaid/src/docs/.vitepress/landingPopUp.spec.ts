@@ -9,6 +9,7 @@ describe('landingPopUp', () => {
   it('shows on mermaid.js.org when never seen', () => {
     const visible = shouldShowLandingPopUp({
       hostname: 'mermaid.js.org',
+      pathname: '/',
       getLastSeen: () => null,
     });
 
@@ -18,6 +19,7 @@ describe('landingPopUp', () => {
   it('shows on localhost when never seen', () => {
     const visible = shouldShowLandingPopUp({
       hostname: 'localhost',
+      pathname: '/',
       getLastSeen: () => null,
     });
 
@@ -27,15 +29,29 @@ describe('landingPopUp', () => {
   it('does not show on non-mermaid.js hosts', () => {
     const visible = shouldShowLandingPopUp({
       hostname: 'mermaid.ai',
+      pathname: '/',
       getLastSeen: () => null,
     });
 
     expect(visible).toBe(false);
   });
 
+  it('does not show on pages other than the home page', () => {
+    for (const pathname of ['/intro/', '/syntax/sequenceDiagram.html']) {
+      const visible = shouldShowLandingPopUp({
+        hostname: 'mermaid.js.org',
+        pathname,
+        getLastSeen: () => null,
+      });
+
+      expect(visible).toBe(false);
+    }
+  });
+
   it('does not show when coming from mermaid.live', () => {
     const visible = shouldShowLandingPopUp({
       hostname: 'mermaid.js.org',
+      pathname: '/',
       referrer: 'https://mermaid.live/edit',
       getLastSeen: () => null,
     });
@@ -49,6 +65,7 @@ describe('landingPopUp', () => {
 
     const visible = shouldShowLandingPopUp({
       hostname: 'mermaid.js.org',
+      pathname: '/',
       now,
       getLastSeen: () => String(recent),
     });
@@ -62,6 +79,7 @@ describe('landingPopUp', () => {
 
     const visible = shouldShowLandingPopUp({
       hostname: 'mermaid.js.org',
+      pathname: '/',
       now,
       getLastSeen: () => String(stale),
     });
