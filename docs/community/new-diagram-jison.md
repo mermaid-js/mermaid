@@ -139,7 +139,7 @@ Mermaid automatically adds the following accessibility information for the diagr
 
 ### aria-roledescription
 
-The aria-roledescription is automatically set to [the diagram type](#step-3--detection-of-the-new-diagram-type) and inserted into the SVG element.
+The aria-roledescription is automatically set to [the diagram type](#step-3-detection-of-the-new-diagram-type) and inserted into the SVG element.
 
 See [the definition of aria-roledescription](https://www.w3.org/TR/wai-aria-1.1/#aria-roledescription) in [the Accessible Rich Internet Applications W3 standard.](https://www.w3.org/WAI/standards-guidelines/aria/)
 
