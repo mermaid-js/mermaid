@@ -1,4 +1,5 @@
 ---
+description: 'Mermaid is a JavaScript diagramming and charting tool that renders Markdown-inspired text definitions into flowcharts, sequence diagrams, Gantt charts and more.'
 layout: home
 sidebar: false
 
