@@ -1,3 +1,7 @@
+---
+description: 'Model database schemas with entities, attributes, keys, and crow’s foot notation for relationship cardinality.'
+---
+
 # Entity Relationship Diagrams
 
 > An entity–relationship model (or ER model) describes interrelated things of interest in a specific domain of knowledge. A basic ER model is composed of entity types (which classify the things of interest) and specifies relationships that can exist between entities (instances of those entity types) [Wikipedia](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model).
