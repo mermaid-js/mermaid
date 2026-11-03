@@ -7,11 +7,7 @@ import {
   countIssuesByType,
   type NamedValidateResult,
 } from './aggregateValidate.js';
-import {
-  backendsForProfile,
-  DdltUnsupportedFixtureError,
-  parseApplySizesAndLayout,
-} from './backends.js';
+import { DdltUnsupportedFixtureError, parseApplySizesAndLayout } from './backends.js';
 import { discoverLayoutTestFixtures } from './discoverFixtures.js';
 import { loadDdltFixture } from './loadDdltFixture.js';
 import type { LayoutTestBackendId } from './types.js';
@@ -89,9 +85,6 @@ describe('DDLT layered vs dagre', () => {
     async () => {
       const fixtures = discoverLayoutTestFixtures().filter((f) => f.profile === 'flowchart-domus');
       expect(fixtures.length).toBeGreaterThan(0);
-      for (const f of fixtures) {
-        expect(backendsForProfile(f.profile)).toEqual(['layered', 'dagre']);
-      }
 
       const runs: { run: string; items: NamedValidateResult[]; unsupported: string[] }[] = [];
       const errors: string[] = [];

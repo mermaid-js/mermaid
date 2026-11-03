@@ -1,4 +1,3 @@
-import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
 import type { LayoutData } from '../../types.js';
 import {
@@ -140,8 +139,9 @@ export function runDagreDdlt(layout: LayoutData): void {
       `DDLT dagre: subgraph(s) ${recursive.join(', ')} are laid out recursively during the DOM measure`
     );
   }
+  // From the layout's own config, as the layered side reads it.
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins(
-    getConfig() as Parameters<typeof getSubGraphTitleMargins>[0]
+    (layout.config ?? {}) as Parameters<typeof getSubGraphTitleMargins>[0]
   );
   // What `measureDagreLayout` leaves for the core, minus the DOM groups (paint-only).
   prepared.measuredLayout = {
@@ -206,5 +206,5 @@ export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBacke
   if (profile === 'swimlanes') {
     return ['swimlanes'];
   }
-  return ['layered', 'dagre'];
+  return ['domus-orthogonal'];
 }

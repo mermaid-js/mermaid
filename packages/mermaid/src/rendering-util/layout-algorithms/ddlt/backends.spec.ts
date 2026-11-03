@@ -3,9 +3,15 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import { addDiagrams } from '../../../diagram-api/diagram-orchestration.js';
 import type { LayoutData } from '../../types.js';
-import { applyMeasuredSizes, backendsForProfile, parseApplySizesAndLayout } from './backends.js';
+import {
+  applyMeasuredSizes,
+  backendsForProfile,
+  parseApplySizesAndLayout,
+  runDagreDdlt,
+} from './backends.js';
 import { loadFreshSizesFixture } from './fixtureSizes.js';
 import { layoutTestsDir } from './paths.js';
+import { parseMmdFileToLayoutData } from './parseToLayoutData.js';
 
 function fixture(name: string) {
   const mmdPath = resolve(layoutTestsDir(), `${name}.mmd`);
@@ -130,8 +136,34 @@ describe('DDLT layered and dagre backends', () => {
     expect(layout.nodes[1].labelBBox).toBeUndefined();
   });
 
-  it('flowchart fixtures sweep both layered and dagre; swimlanes stay on swimlanes', () => {
-    expect(backendsForProfile('flowchart-domus')).toEqual(['layered', 'dagre']);
+  it("dagre takes the subgraph title margin from the layout's own config", async () => {
+    // An edge from outside reaches into the subgraph, so dagre lays it out with the rest.
+    const { mmdPath, sizes } = fixture('deploy-pipeline-simplified');
+    const groupHeight = async (margin?: { top: number; bottom: number }) => {
+      const layout = await parseMmdFileToLayoutData(mmdPath, { stampRendererFields: true });
+      applyMeasuredSizes(layout, sizes);
+      if (margin) {
+        layout.config = {
+          ...layout.config,
+          flowchart: { ...layout.config.flowchart, subGraphTitleMargin: margin },
+        };
+      }
+      runDagreDdlt(layout);
+      return layout.nodes.find((n) => n.isGroup)!.height!;
+    };
+    // The global config carries no title margin; only the layout's config does.
+    expect(getConfig().flowchart?.subGraphTitleMargin ?? { top: 0, bottom: 0 }).toEqual({
+      top: 0,
+      bottom: 0,
+    });
+    const without = await groupHeight();
+    const withMargin = await groupHeight({ top: 20, bottom: 10 });
+    expect(withMargin - without).toBe(30);
+  });
+
+  // The layered-vs-dagre gate picks its backends itself, so the profiles keep their own mapping.
+  it('profiles keep their original backends', () => {
+    expect(backendsForProfile('flowchart-domus')).toEqual(['domus-orthogonal']);
     expect(backendsForProfile('swimlanes')).toEqual(['swimlanes']);
   });
 });
