@@ -1,4 +1,5 @@
 import type { Edge, Node } from '../../types.js';
+import { drawsMarginMarkers } from '../../rendering-elements/edgeMarker.js';
 
 export type ElkDirection = 'RIGHT' | 'LEFT' | 'DOWN' | 'UP';
 
@@ -52,7 +53,14 @@ const FEWEST_ARROWHEADS_TO_SPREAD = 3;
 
 type EdgeEnds = Pick<
   Edge,
-  'start' | 'end' | 'arrowTypeStart' | 'arrowTypeEnd' | 'look' | 'animate' | 'animation'
+  | 'start'
+  | 'end'
+  | 'arrowTypeStart'
+  | 'arrowTypeEnd'
+  | 'look'
+  | 'animate'
+  | 'animation'
+  | 'cssCompiledStyles'
 >;
 
 interface SpreadContext {
@@ -74,10 +82,6 @@ type Sides = Map<string, Side>;
 
 const carriesArrowhead = (arrowType: string | undefined): arrowType is string =>
   arrowType !== undefined && arrowType !== '' && arrowType !== 'none';
-
-/** `edges.js` draws the margin variant of a marker on a neo edge that is not animated. */
-const drawsMarginMarkers = (edge: EdgeEnds): boolean =>
-  edge.look === 'neo' && edge.animate !== true && !edge.animation;
 
 function addEnd(
   sides: Sides,

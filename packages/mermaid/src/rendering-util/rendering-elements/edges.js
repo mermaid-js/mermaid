@@ -31,8 +31,13 @@ import {
 } from 'd3';
 import rough from 'roughjs';
 import createLabel from './createLabel.js';
-import { addEdgeMarkers } from './edgeMarker.ts';
-import { isLabelStyle, styles2String } from './shapes/handDrawnShapeStyles.js';
+import {
+  addEdgeMarkers,
+  drawsMarginMarkers,
+  edgeClassStyles,
+  isAnimatedEdge,
+} from './edgeMarker.ts';
+import { styles2String } from './shapes/handDrawnShapeStyles.js';
 
 /**
  * Resolve the effective curve type for an edge.
@@ -722,13 +727,7 @@ export const insertEdge = function (
   let pointsHasChanged = false;
   const tail = startNode;
   var head = endNode;
-  const edgeClassStyles = [];
-  for (const key in edge.cssCompiledStyles) {
-    if (isLabelStyle(key)) {
-      continue;
-    }
-    edgeClassStyles.push(edge.cssCompiledStyles[key]);
-  }
+  const classStyles = edgeClassStyles(edge);
 
   // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
   // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
@@ -933,7 +932,7 @@ export const insertEdge = function (
     svgPath.attr('d', d);
     elem.node().appendChild(svgPath.node());
   } else {
-    const stylesFromClasses = edgeClassStyles.join(';');
+    const stylesFromClasses = classStyles.join(';');
     const styles = edgeStyles ? edgeStyles.reduce((acc, style) => acc + style + ';', '') : '';
 
     const pathStyle =
@@ -959,8 +958,7 @@ export const insertEdge = function (
     // Possible fix to remove eslint-disable-next-line
     //strokeColor = /stroke:([^;]+)/.exec(pathStyle)?.[1];
 
-    animatedEdge =
-      edge.animate === true || !!edge.animation || stylesFromClasses.includes('animation');
+    animatedEdge = isAnimatedEdge(edge);
     const pathNode = svgPath.node();
     const len = typeof pathNode.getTotalLength === 'function' ? pathNode.getTotalLength() : 0;
     const oValueS = markerOffsets2[edge.arrowTypeStart] || 0;
@@ -1039,7 +1037,7 @@ export const insertEdge = function (
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  const useMargin = !animatedEdge && edge?.look === 'neo';
+  const useMargin = drawsMarginMarkers(edge);
   addEdgeMarkers(svgPath, edge, url, diagramId, diagramType, useMargin, strokeColor);
   const midIndex = Math.floor(points.length / 2);
   const point = points[midIndex];

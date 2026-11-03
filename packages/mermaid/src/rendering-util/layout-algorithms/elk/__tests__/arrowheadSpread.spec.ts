@@ -244,6 +244,27 @@ describe('ELK arrowheads on one side of a node', () => {
       expect(spreadsPorts(data)).toBe(false);
     });
 
+    // The renderer draws the plain marker on an edge whose class styles mention an animation, as
+    // it does on one that sets `animate`; the plain circle is 11px, so ELK's 13px is enough.
+    it.each([
+      [
+        'animates it, so the edge draws the plain circle',
+        ['animation: dash 25s linear infinite'],
+        false,
+      ],
+      ['only colours it, so the edge draws the margin circle', ['stroke: red'], true],
+    ])('when the class of an edge %s', (_, cssCompiledStyles, spreads) => {
+      const data = fanIn({
+        inputs: 3,
+        hubHeight: TWO_LINE_NODE_HEIGHT,
+        arrowTypeEnd: 'arrow_circle',
+      });
+      data.edges.forEach((edge: any) => {
+        edge.cssCompiledStyles = cssCompiledStyles;
+      });
+      expect(spreadsPorts(data)).toBe(spreads);
+    });
+
     it('leaves the source of a fan-out alone, since its edges carry no arrowhead there', () => {
       const data = fanIn({ inputs: 1 });
       const targets = ['T0', 'T1', 'T2', 'T3'];
