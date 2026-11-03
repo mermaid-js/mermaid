@@ -1,3 +1,7 @@
+---
+description: 'Mermaid Chart, built by the team behind Mermaid: a visual editor, AI diagramming, collaboration, and plugins for creating Mermaid diagrams.'
+---
+
 # Mermaid Chart
 
 The Future of Diagramming & Visual Collaboration
