@@ -2123,6 +2123,7 @@ Note over Bob,Alice: Looks back
     ['Note over Alice,Bob', 'Alice-->Bob: hi'],
     ['Note over Bob,Alice', 'Alice-->Bob: hi'],
     ['Note over Alice,Carol', 'Alice-->Bob: hi\nBob-->Carol: hi'],
+    ['Note over Bob,Alice', 'Alice-->Bob: hi\nparticipant Bob as Robert'],
   ])('should fit the text of %s into the note (#3229)', async (note, messages) => {
     const textWidth = 1200;
     vi.spyOn(utils, 'calculateTextDimensions').mockImplementation((text) =>
