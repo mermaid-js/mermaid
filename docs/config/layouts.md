@@ -141,6 +141,7 @@ Where the options do not apply:
 
 - A value that is not a positive number is ignored, and a value below `10` is read as `10`: below that ELK has no room left to route an edge into a node and the frames of neighbouring subgraphs overlap.
 - However tight `rankSpacing` is, an edge keeps a straight run of at least 12 px before the node it enters, so its arrowhead is not cropped. A very tight diagram is therefore not quite as tight as the ratio alone would give.
+- `elk.rectpacking`, as the top-level layout or as the algorithm of a subgraph, packs rectangles with fixed gaps of its own, so `nodeSpacing` and `rankSpacing` do not change it.
 - A subgraph that selects its own algorithm with `@{ algorithm: ... }` keeps that algorithm's spacing. When an edge crosses its border it falls back to the layered layout and then follows these options.
 - ER diagrams do not read them under `elk`, because their own defaults (`140` and `80`) are not ELK's.
 - The `dagre` layout reads the values as pixels, as before.
