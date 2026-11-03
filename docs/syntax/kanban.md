@@ -12,13 +12,13 @@ Mermaid’s Kanban diagram allows you to create visual representations of tasks 
 
 A Kanban diagram in Mermaid starts with the kanban keyword, followed by the definition of columns (stages) and tasks within those columns.
 
-```mermaid-example
+```mermaid
 kanban
   column1[Column Title]
     task1[Task Description]
 ```
 
-```mermaid
+```mermaid-example
 kanban
   column1[Column Title]
     task1[Task Description]
@@ -72,13 +72,13 @@ You can include additional metadata for each task using the @{ ... } syntax. Met
 •	priority: Indicates the urgency of the task. Allowed values: 'Very High', 'High', 'Low' and 'Very Low'
 ```
 
-```mermaid-example
+```mermaid
 kanban
 todo[Todo]
   id3[Update Database Function]@{ ticket: MC-2037, assigned: 'knsv', priority: 'High' }
 ```
 
-```mermaid
+```mermaid-example
 kanban
 todo[Todo]
   id3[Update Database Function]@{ ticket: MC-2037, assigned: 'knsv', priority: 'High' }
@@ -102,7 +102,7 @@ When the kanban item has an assigned ticket number the ticket number in the diag
 
 Below is the full Kanban diagram based on the provided example:
 
-```mermaid-example
+```mermaid
 ---
 config:
   kanban:
@@ -128,7 +128,7 @@ kanban
     id3[Weird flickering in Firefox]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   kanban:

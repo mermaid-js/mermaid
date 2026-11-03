@@ -8,7 +8,7 @@
 
 ## Introduction to Block Diagrams
 
-```mermaid-example
+```mermaid
 block
 columns 1
   db(("DB"))
@@ -25,7 +25,7 @@ columns 1
   style B fill:#969,stroke:#333,stroke-width:4px
 ```
 
-```mermaid
+```mermaid-example
 block
 columns 1
   db(("DB"))
@@ -79,12 +79,12 @@ At its core, a block diagram consists of blocks representing different entities 
 **Example - Simple Block Diagram**:
 To create a simple block diagram with three blocks labeled 'a', 'b', and 'c', the syntax is as follows:
 
-```mermaid-example
+```mermaid
 block
   a b c
 ```
 
-```mermaid
+```mermaid-example
 block
   a b c
 ```
@@ -100,13 +100,13 @@ While simple block diagrams are linear and straightforward, more complex systems
 **Example - Multi-Column Diagram:**
 In scenarios where you need to distribute blocks across multiple columns, you can specify the number of columns and arrange the blocks accordingly. Here's how to create a block diagram with three columns and four blocks, where the fourth block appears in a second row:
 
-```mermaid-example
+```mermaid
 block
   columns 3
   a b c d
 ```
 
-```mermaid
+```mermaid-example
 block
   columns 3
   a b c d
@@ -129,13 +129,13 @@ In more complex diagrams, you may need blocks that span multiple columns to emph
 **Example - Block Spanning Multiple Columns**:
 To create a block diagram where one block spans across two columns, you can specify the desired width for each block:
 
-```mermaid-example
+```mermaid
 block
   columns 3
   a["A label"] b:2 c:2 d
 ```
 
-```mermaid
+```mermaid-example
 block
   columns 3
   a["A label"] b:2 c:2 d
@@ -152,7 +152,7 @@ Composite blocks, or blocks within blocks, are an advanced feature in Mermaid's 
 **Example - Composite Blocks:**
 Creating a composite block involves defining a parent block and then nesting other blocks within it. Here's how to define a composite block with nested elements:
 
-```mermaid-example
+```mermaid
 block
     block
       D
@@ -160,7 +160,7 @@ block
     A["A: I am a wide one"]
 ```
 
-```mermaid
+```mermaid-example
 block
     block
       D
@@ -179,7 +179,7 @@ Mermaid also allows for dynamic adjustment of column widths based on the content
 **Example - Dynamic Column Widths:**
 In diagrams with varying block sizes, Mermaid automatically adjusts the column widths to fit the largest block in each column. Here's an example:
 
-```mermaid-example
+```mermaid
 block
   columns 3
   a:3
@@ -194,7 +194,7 @@ block
   end
 ```
 
-```mermaid
+```mermaid-example
 block
   columns 3
   a:3
@@ -214,7 +214,7 @@ This example demonstrates how Mermaid dynamically adjusts the width of the colum
 **Merging Blocks Horizontally:**
 In scenarios where you need to stack blocks horizontally, you can use column width to accomplish the task. Blocks can be arranged vertically by putting them in a single column. Here is how you can create a block diagram in which 4 blocks are stacked on top of each other:
 
-```mermaid-example
+```mermaid
 block
   block
     columns 1
@@ -222,7 +222,7 @@ block
   end
 ```
 
-```mermaid
+```mermaid-example
 block
   block
     columns 1
@@ -246,12 +246,12 @@ Mermaid supports a range of block shapes to suit different diagramming needs, fr
 
 To create a block with round edges, which can be used to represent a softer or more flexible component:
 
-```mermaid-example
+```mermaid
 block
     id1("This is the text in the box")
 ```
 
-```mermaid
+```mermaid-example
 block
     id1("This is the text in the box")
 ```
@@ -260,12 +260,12 @@ block
 
 A stadium-shaped block, resembling an elongated circle, can be used for components that are process-oriented:
 
-```mermaid-example
+```mermaid
 block
     id1(["This is the text in the box"])
 ```
 
-```mermaid
+```mermaid-example
 block
     id1(["This is the text in the box"])
 ```
@@ -274,12 +274,12 @@ block
 
 For representing subroutines or contained processes, a block with double vertical lines is useful:
 
-```mermaid-example
+```mermaid
 block
     id1[["This is the text in the box"]]
 ```
 
-```mermaid
+```mermaid-example
 block
     id1[["This is the text in the box"]]
 ```
@@ -288,12 +288,12 @@ block
 
 The cylindrical shape is ideal for representing databases or storage components:
 
-```mermaid-example
+```mermaid
 block
     id1[("Database")]
 ```
 
-```mermaid
+```mermaid-example
 block
     id1[("Database")]
 ```
@@ -302,12 +302,12 @@ block
 
 A circle can be used for centralized or pivotal components:
 
-```mermaid-example
+```mermaid
 block
     id1(("This is the text in the circle"))
 ```
 
-```mermaid
+```mermaid-example
 block
     id1(("This is the text in the circle"))
 ```
@@ -318,36 +318,36 @@ For decision points, use a rhombus, and for unique or specialized processes, asy
 
 **Asymmetric**
 
-```mermaid-example
+```mermaid
 block
   id1>"This is the text in the box"]
 ```
 
-```mermaid
+```mermaid-example
 block
   id1>"This is the text in the box"]
 ```
 
 **Rhombus**
 
-```mermaid-example
+```mermaid
 block
     id1{"This is the text in the box"}
 ```
 
-```mermaid
+```mermaid-example
 block
     id1{"This is the text in the box"}
 ```
 
 **Hexagon**
 
-```mermaid-example
+```mermaid
 block
     id1{{"This is the text in the box"}}
 ```
 
-```mermaid
+```mermaid-example
 block
     id1{{"This is the text in the box"}}
 ```
@@ -356,7 +356,7 @@ block
 
 Parallelogram and trapezoid shapes are perfect for inputs/outputs and transitional processes:
 
-```mermaid-example
+```mermaid
 block
   id1[/"This is the text in the box"/]
   id2[\"This is the text in the box"\]
@@ -364,7 +364,7 @@ block
   B[\"Go shopping"/]
 ```
 
-```mermaid
+```mermaid-example
 block
   id1[/"This is the text in the box"/]
   id2[\"This is the text in the box"\]
@@ -376,12 +376,12 @@ block
 
 For highlighting critical or high-priority components, a double circle can be effective:
 
-```mermaid-example
+```mermaid
 block
     id1((("This is the text in the circle")))
 ```
 
-```mermaid
+```mermaid-example
 block
     id1((("This is the text in the circle")))
 ```
@@ -394,7 +394,7 @@ Mermaid also offers unique shapes like block arrows and space blocks for directi
 
 Block arrows can visually indicate direction or flow within a process:
 
-```mermaid-example
+```mermaid
 block
   blockArrowId<["Label"]>(right)
   blockArrowId2<["Label"]>(left)
@@ -405,7 +405,7 @@ block
   blockArrowId7<["Label"]>(x, down)
 ```
 
-```mermaid
+```mermaid-example
 block
   blockArrowId<["Label"]>(right)
   blockArrowId2<["Label"]>(left)
@@ -420,14 +420,14 @@ block
 
 Space blocks can be used to create intentional empty spaces in the diagram, which is useful for layout and readability:
 
-```mermaid-example
+```mermaid
 block
   columns 3
   a space b
   c   d   e
 ```
 
-```mermaid
+```mermaid-example
 block
   columns 3
   a space b
@@ -436,12 +436,12 @@ block
 
 or
 
-```mermaid-example
+```mermaid
 block
   ida space:3 idb idc
 ```
 
-```mermaid
+```mermaid-example
 block
   ida space:3 idb idc
 ```
@@ -466,13 +466,13 @@ The most fundamental aspect of connecting blocks is the use of arrows or links. 
 
 A simple link with an arrow can be created to show direction or flow from one block to another:
 
-```mermaid-example
+```mermaid
 block
   A space B
   A-->B
 ```
 
-```mermaid
+```mermaid-example
 block
   A space B
   A-->B
@@ -489,13 +489,13 @@ In addition to connecting blocks, it's often necessary to describe or label the 
 Example - Text with Links
 To add text to a link, the syntax includes the text within the link definition:
 
-```mermaid-example
+```mermaid
 block
   A space:2 B
   A-- "X" -->B
 ```
 
-```mermaid
+```mermaid-example
 block
   A space:2 B
   A-- "X" -->B
@@ -505,7 +505,7 @@ This example show how to add descriptive text to the links, enhancing the inform
 
 Example - Edges and Styles:
 
-```mermaid-example
+```mermaid
 block
 columns 1
   db(("DB"))
@@ -522,7 +522,7 @@ columns 1
   style B fill:#939,stroke:#333,stroke-width:4px
 ```
 
-```mermaid
+```mermaid-example
 block
 columns 1
   db(("DB"))
@@ -551,7 +551,7 @@ Mermaid enables detailed styling of individual blocks, allowing you to apply var
 
 To apply custom styles to a block, you can use the `style` keyword followed by the block identifier and the desired CSS properties:
 
-```mermaid-example
+```mermaid
 block
   id1 space id2
   id1("Start")-->id2("Stop")
@@ -559,7 +559,7 @@ block
   style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
+```mermaid-example
 block
   id1 space id2
   id1("Start")-->id2("Stop")
@@ -573,7 +573,7 @@ Mermaid enables applying styling to classes, which could make styling easier if 
 
 #### Example - Styling a Single Class
 
-```mermaid-example
+```mermaid
 block
   A space B
   A-->B
@@ -582,7 +582,7 @@ block
   style B fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
+```mermaid-example
 block
   A space B
   A-->B
@@ -607,7 +607,7 @@ Combining the elements of structure, linking, and styling, we can create compreh
 
 Illustrating a simple software system architecture with interconnected components:
 
-```mermaid-example
+```mermaid
 block
   columns 3
   Frontend blockArrowId6<[" "]>(right) Backend
@@ -620,7 +620,7 @@ block
   class Backend,Database back
 ```
 
-```mermaid
+```mermaid-example
 block
   columns 3
   Frontend blockArrowId6<[" "]>(right) Backend
@@ -639,7 +639,7 @@ This example shows a basic architecture with a frontend, backend, and database. 
 
 Representing a business process flow with decision points and multiple stages:
 
-```mermaid-example
+```mermaid
 block
   columns 3
   Start(("Start")) space:2
@@ -652,7 +652,7 @@ block
   style End fill:#696;
 ```
 
-```mermaid
+```mermaid-example
 block
   columns 3
   Start(("Start")) space:2
@@ -689,13 +689,13 @@ block
 **Correction**:
 Ensure that links between blocks are correctly specified with arrows (--> or ---) to define the direction and type of connection. Also remember that one of the fundamentals for block diagram is to give the author full control of where the boxes are positioned so in the example you need to add a space between the boxes:
 
-```mermaid-example
+```mermaid
 block
   A space B
   A --> B
 ```
 
-```mermaid
+```mermaid-example
 block
   A space B
   A --> B
@@ -705,13 +705,13 @@ block
 
 Applying styles in the wrong context or with incorrect syntax can lead to blocks not being styled as intended:
 
-```mermaid-example
+```mermaid
   block
     A
     style A fill#969;
 ```
 
-```mermaid
+```mermaid-example
   block
     A
     style A fill#969;
@@ -720,14 +720,14 @@ Applying styles in the wrong context or with incorrect syntax can lead to blocks
 **Correction:**
 Correct the syntax by ensuring proper separation of style properties with commas and using the correct CSS property format:
 
-```mermaid-example
+```mermaid
 block
   A
   style A fill:#969,stroke:#333;
 
 ```
 
-```mermaid
+```mermaid-example
 block
   A
   style A fill:#969,stroke:#333;
