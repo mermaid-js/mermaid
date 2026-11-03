@@ -1,5 +1,5 @@
 // Ported from Pele (https://github.com/obsidianmd/pele), src/svg/edges.ts at 3a2f075.
-// Copyright (c) 2026 kepano. MIT License: see THIRD_PARTY_NOTICES.
+// Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/diagram-flowchart/src/render/edges.ts` (`routePath`,
 // `curveKind`). Changes: the SvgWriter is replaced by a local path-string builder, `d` is a plain
 // string, and v13's inline arrowhead drawing is left out (mermaid draws `<marker>`s). The end
@@ -10,13 +10,11 @@
 // line, rounded corners where the route turns, and square ends. Any layout whose edges carry
 // axis-tagged points gets this path; it is chosen by the data, not by the layout's name.
 import { markerOffsets } from '../../utils/lineWithOffset.js';
+// The S-curve handle factor is shared with the layered engine, which uses it to space curves.
+import { ease } from '../layout-algorithms/layered/layered.js';
+import type { RoutePoint } from '../layout-algorithms/layered/types.js';
 
-/** A route point and the axis the route travels along when it arrives there. */
-export interface RoutePoint {
-  x: number;
-  y: number;
-  axis: 'v' | 'h';
-}
+export type { RoutePoint };
 
 /** True when every point of a route carries an axis tag, so `routePath` can draw it. */
 export function isAxisTaggedRoute(points: unknown): points is RoutePoint[] {
@@ -77,11 +75,6 @@ export interface EdgePath {
   edx: number;
   edy: number;
 }
-
-// The S-curve handle factor of the layered engine's `ease`.
-// TODO(layered 03): import `ease` from the ported layered engine and drop this copy.
-const ease = (across: number, along: number): number =>
-  Math.max(0.25, Math.min(0.5, (4 * Math.abs(along)) / (Math.abs(across) || 1)));
 
 // Formats a finite number to at most two decimals, without trailing zeros (v13's `num`).
 function num(value: number): string {
