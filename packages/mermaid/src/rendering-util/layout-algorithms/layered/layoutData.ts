@@ -5,13 +5,27 @@
 // `intersect`, along the flow only, so each end keeps the side and port the engine chose.
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { layered, layoutSettings } from './index.js';
-import type { Dir, LayoutEdge, LayoutGraph, LayoutModel, LayoutNode, RoutePoint } from './types.js';
+import type {
+  Dir,
+  EdgeRouting,
+  LayoutEdge,
+  LayoutGraph,
+  LayoutGroup,
+  LayoutModel,
+  LayoutNode,
+  RoutePoint,
+} from './types.js';
 
 // Room around an edge label, as v13 gives it (`LABEL_W`, `LABEL_H`).
 const LABEL_W = 12;
 const LABEL_H = 4;
 // The room an arrowhead takes at an edge's head (v13 `HEAD_ROOM`).
 const HEAD_ROOM = 7;
+
+// Room between a subgraph's border and its content (v13 `GROUP_PAD`), and between its title
+// and its content.
+const GROUP_PAD = 20;
+const TITLE_GAP = 12;
 
 const DIRS: Record<string, Dir> = { TB: 'TB', TD: 'TB', BT: 'BT', LR: 'LR', RL: 'RL' };
 
@@ -61,19 +75,79 @@ const SPANS = new Map<string, Span>([
 const size = (value: unknown): number =>
   typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : 0;
 
+const ROUTINGS = new Set<string>(['curved', 'stepped', 'straight']);
+
+/** The `layered.edgeRouting` the diagram asks for; anything unknown routes curved. */
+function routing(data: LayoutData): EdgeRouting {
+  const chosen = data.config?.layered?.edgeRouting;
+  return chosen && ROUTINGS.has(chosen) ? chosen : 'curved';
+}
+
+// Curves that already draw a stepped route as steps.
+const STEPS = new Set(['step', 'stepBefore', 'stepAfter']);
+
+/**
+ * The curve an edge is drawn with, so each routing reads as its name: a stepped route as steps
+ * (unless the edge already has a step curve) and a straight route as lines. Curved routing keeps
+ * the edge's own curve.
+ */
+function drawnCurve(mode: EdgeRouting, curve: Edge['curve']): Edge['curve'] {
+  if (mode === 'straight') {
+    return 'linear';
+  }
+  if (mode === 'stepped') {
+    return curve && STEPS.has(curve) ? curve : 'step';
+  }
+  return curve;
+}
+
+// Mermaid draws a subgraph title at the top of its box, `subGraphTitleMargin.top` below the
+// border, so the band above the content holds both margins, the title and a gap.
+function toLayoutGroup(n: Node, data: LayoutData, groupIds: Set<string>): LayoutGroup {
+  const margin = data.config?.flowchart?.subGraphTitleMargin;
+  const titleWidth = size(n.labelBBox?.width);
+  const titleHeight = size(n.labelBBox?.height);
+  const titled = titleWidth > 0 && titleHeight > 0;
+  const group: LayoutGroup = {
+    id: n.id,
+    padding: {
+      top: titled ? size(margin?.top) + size(margin?.bottom) + TITLE_GAP : GROUP_PAD,
+      right: GROUP_PAD,
+      bottom: GROUP_PAD,
+      left: GROUP_PAD,
+    },
+  };
+  if (n.parentId && groupIds.has(n.parentId)) {
+    group.parent = n.parentId;
+  }
+  const dir = n.dir ? DIRS[String(n.dir).toUpperCase()] : undefined;
+  if (dir) {
+    group.direction = dir;
+  }
+  if (titled) {
+    group.title = { width: titleWidth, height: titleHeight };
+  }
+  return group;
+}
+
 function hasLabel(edge: Edge): boolean {
   return typeof edge.label === 'string' ? edge.label.trim().length > 0 : Boolean(edge.label);
 }
 
-/** The engine's input for a measured `LayoutData`. Plain flowcharts only: groups come later. */
+/** The engine's input for a measured `LayoutData`: nodes, subgraphs (as groups) and edges. */
 export function toLayoutGraph(data: LayoutData): LayoutGraph {
   const dir = direction(data);
+  // Spacing as dagre reads it: the renderer's own first, then the `flowchart` section (where
+  // the ER renderer puts its spacing), then v12's defaults.
+  const flowchart = data.config?.flowchart;
   const { spacing } = layoutSettings({
-    nodeSpacing: size(data.nodeSpacing) || undefined,
-    rankSpacing: size(data.rankSpacing) || undefined,
+    nodeSpacing: size(data.nodeSpacing) || size(flowchart?.nodeSpacing) || undefined,
+    rankSpacing: size(data.rankSpacing) || size(flowchart?.rankSpacing) || undefined,
   });
+  const groupIds = new Set(data.nodes.filter((n) => n.isGroup).map((n) => n.id));
+  const groups = data.nodes.filter((n) => n.isGroup).map((n) => toLayoutGroup(n, data, groupIds));
   const nodes: LayoutNode[] = [];
-  const ids = new Set<string>();
+  const ids = new Set<string>(groupIds);
   for (const n of data.nodes) {
     if (n.isGroup) {
       continue;
@@ -82,6 +156,9 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     const width = size(n.width);
     const height = size(n.height);
     const node: LayoutNode = { id: n.id, width, height };
+    if (n.parentId && groupIds.has(n.parentId)) {
+      node.parent = n.parentId;
+    }
     const span = n.shape ? SPANS.get(n.shape) : undefined;
     if (span) {
       node.span = Math.max(0, span(width, height, sideways(dir)));
@@ -105,25 +182,37 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     }
     edges.push(edge);
   }
-  // mermaid adds the diagram padding itself when it sets up the viewport.
+  // v13 hands the engine `diagramPadding` (v12 default 8); mermaid's renderers add that same
+  // padding themselves when they set up the viewport, so the engine adds none.
   return {
     direction: dir,
     nodes,
     edges,
-    groups: [],
+    groups,
     spacing,
     diagramPadding: 0,
+    routing: routing(data),
     headRoom: HEAD_ROOM,
   };
 }
 
 /** Writes the engine's positions, routes and label centres back onto `LayoutData`. */
 export function applyLayoutModel(data: LayoutData, model: LayoutModel): void {
+  const mode = routing(data);
   for (const n of data.nodes) {
     const placed = model.nodes.get(n.id);
     if (placed) {
       n.x = placed.x;
       n.y = placed.y;
+      continue;
+    }
+    // Clusters are sized by the engine; `insertCluster` draws them centred on `x`, `y`.
+    const cluster = n.isGroup ? model.groups.get(n.id) : undefined;
+    if (cluster) {
+      n.x = cluster.x;
+      n.y = cluster.y;
+      n.width = cluster.width;
+      n.height = cluster.height;
     }
   }
   for (const e of data.edges) {
@@ -132,6 +221,7 @@ export function applyLayoutModel(data: LayoutData, model: LayoutModel): void {
       continue;
     }
     e.points = routed.points.map((p) => ({ x: p.x, y: p.y, axis: p.axis }));
+    e.curve = drawnCurve(mode, e.curve);
     if (routed.label) {
       e.x = routed.label.x;
       e.y = routed.label.y;

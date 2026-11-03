@@ -86,6 +86,14 @@ describe('when working with site config', () => {
     expect(currentConfig.railroad?.fontSize).toBe(18);
     expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
   });
+  it('routes layered edges curved by default and keeps a layered.edgeRouting directive', () => {
+    configApi.reset();
+    expect(configApi.getConfig().layered?.edgeRouting).toBe('curved');
+
+    configApi.addDirective({ layered: { edgeRouting: 'stepped' } });
+    expect(configApi.getConfig().layered?.edgeRouting).toBe('stepped');
+    configApi.reset();
+  });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);

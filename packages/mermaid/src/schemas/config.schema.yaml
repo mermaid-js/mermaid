@@ -265,6 +265,25 @@ properties:
           When enabled, such edges are found before layout, on the graph with each subgraph collapsed, and handed to ELK in the other direction. The edge is drawn with its arrowhead at its real target. Cycles between plain nodes are left to `cycleBreakingStrategy`.
         type: boolean
         default: true
+  layered:
+    description: |
+      Options for the `layered` layout (beta), used with `layout: layered`.
+    type: object
+    unevaluatedProperties: false
+    properties:
+      edgeRouting:
+        description: |
+          How the `layered` layout routes edges between nodes.
+
+          - `curved`: each edge runs as smooth curves between ranks.
+          - `stepped`: edges run on tracks between ranks and turn at right angles.
+          - `straight`: each edge runs as straight lines from point to point.
+        type: string
+        enum:
+          - curved
+          - stepped
+          - straight
+        default: curved
   darkMode:
     type: boolean
     default: false
