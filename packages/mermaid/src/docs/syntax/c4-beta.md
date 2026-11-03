@@ -1,12 +1,12 @@
 # C4 Diagrams (beta) (v<MERMAID_RELEASE_VERSION>+)
 
+```warning
+The `c4-beta` diagram is in beta. Diagrams start with the `c4-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
+
 > A C4 diagram describes a software system at different zoom levels: System Context, Container, Component, Dynamic and Deployment, following the [C4 model](https://c4model.com/).
 
 The `c4-beta` diagram type is a new, experimental take on C4 diagrams with a compact, Structurizr-inspired syntax, rendered through the unified layout pipeline. It sits alongside the [legacy C4 diagram](c4.md) rather than replacing it: `C4Context`, `C4Container` and the rest of the PlantUML-compatible syntax are unaffected and keep working.
-
-```warning
-This is an experimental diagram. The syntax may change in future releases.
-```
 
 ## Example
 
