@@ -563,6 +563,12 @@ interface Scene {
   titles: Rect[];
   /** The links routed by ELK, as thin boxes a rerouted link should not cross. */
   lines: Rect[];
+  /** Where the links routed by ELK meet their nodes. */
+  lineEnds: P[];
+  /** The room along a node's side that each of those ends takes, as a thin box on the side. */
+  lineMarks: Rect[];
+  /** The loops ELK drew from a node back to itself, as thin boxes no other link may cross. */
+  loops: Rect[];
 }
 
 const OPPOSITE: Record<ElkDirection, ElkDirection> = {
@@ -645,7 +651,15 @@ function buildScene(
   visit(children);
   const leaves = new Map([...rects].filter(([id]) => !withChildren.has(id)));
   const frames = paintedFrames(rects, [...withChildren], groups);
-  return { leaves, frames, titles: titleBoxes(children, frames), lines: [] };
+  return {
+    leaves,
+    frames,
+    titles: titleBoxes(children, frames),
+    lines: [],
+    lineEnds: [],
+    lineMarks: [],
+    loops: [],
+  };
 }
 
 /** A link to route through the arranged frames, and the frame of reference it is routed in. */
@@ -801,7 +815,12 @@ function routePlan(
     source: ends.source,
     target: ends.target,
     gaps: gapsBetween(flow(from), flow(to), members),
-    obstacles: [...ends.leaves.values(), ...scene.titles.map(flow)],
+    obstacles: [
+      ...ends.leaves.values(),
+      ...scene.titles.map(flow),
+      ...scene.lineMarks.map(flow),
+      ...scene.loops.map(flow),
+    ],
     crossable: scene.lines.map(flow),
     walls: frames.flatMap((frame) => [frame.x, frame.x + frame.width]),
     limits: limitsOf(container ? [flow(container)] : [flow(from), flow(to), ...members]),
@@ -920,31 +939,100 @@ function moveEnd({ route, index, along }: Terminal, position: number): void {
 function spreadEnds(
   terminals: readonly Terminal[],
   titles: readonly Rect[],
-  obstacles: readonly Rect[]
+  obstacles: readonly Rect[],
+  drawnEnds: readonly P[] = []
 ): void {
   const sides = new Map<string, Terminal[]>();
   for (const terminal of terminals) {
     sides.set(terminal.key, [...(sides.get(terminal.key) ?? []), terminal]);
   }
   for (const ends of sides.values()) {
-    if (ends.length < 2) {
-      continue;
+    if (ends.length > 1) {
+      spreadSide(ends, titles, obstacles);
     }
-    const { node, along } = ends[0];
-    const [start, size] = along === 'x' ? [node.x, node.width] : [node.y, node.height];
-    const title = along === 'x' ? titleAbove(node, titles) : undefined;
-    const [low, high] = freeRange(start, size, ends.length, title);
-    const room = Math.max(high - low, 0);
-    const gap = Math.max(END_SPACING, Math.min(room / ends.length, room / (ends.length - 1)));
-    const wishes = ends.map(({ wish }) => wish);
-    const best = bestPositions(wishes, low, high, gap);
-    const stuck = ends.flatMap((end, index) =>
-      moveIfFree(end, best[index], obstacles) ? [] : [index]
-    );
-    if (stuck.length > 0) {
-      spreadAround(ends, stuck, [low, high], gap, obstacles);
-    }
+    keepOffDrawnEnds(ends, drawnEnds, titles, obstacles);
   }
+}
+
+/** Spread the ends on one side of a node along it, in order, around any that cannot move. */
+function spreadSide(
+  ends: readonly Terminal[],
+  titles: readonly Rect[],
+  obstacles: readonly Rect[]
+) {
+  const { node, along } = ends[0];
+  const [start, size] = along === 'x' ? [node.x, node.width] : [node.y, node.height];
+  const title = along === 'x' ? titleAbove(node, titles) : undefined;
+  const [low, high] = freeRange(start, size, ends.length, title);
+  const room = Math.max(high - low, 0);
+  const gap = Math.max(END_SPACING, Math.min(room / ends.length, room / (ends.length - 1)));
+  const wishes = ends.map(({ wish }) => wish);
+  const best = bestPositions(wishes, low, high, gap);
+  const stuck = ends.flatMap((end, index) =>
+    moveIfFree(end, best[index], obstacles) ? [] : [index]
+  );
+  if (stuck.length > 0) {
+    spreadAround(ends, stuck, [low, high], gap, obstacles);
+  }
+}
+
+/**
+ * The room each end of a drawn link takes along its node's side: {@link END_SPACING} either way
+ * along the side, so another link's arrowhead keeps clear of it.
+ */
+function endMarks(points: readonly P[]): Rect[] {
+  const last = points.length - 1;
+  if (last < 1) {
+    return [];
+  }
+  return [endMark(points[0], points[1]), endMark(points[last], points[last - 1])];
+}
+
+function endMark(end: P, next: P): Rect {
+  const alongX = Math.abs(end.x - next.x) < STRAIGHT_EPS;
+  const [halfX, halfY] = alongX ? [END_SPACING, LINE_HALF_WIDTH] : [LINE_HALF_WIDTH, END_SPACING];
+  return { x: end.x - halfX, y: end.y - halfY, width: 2 * halfX, height: 2 * halfY };
+}
+
+/** Where a terminal's end lies along its side. */
+const positionOf = ({ route, index, along }: Terminal) => route.points[index][along];
+
+/**
+ * Move the ends on one side of a node that lie closer than {@link END_SPACING} to where a link
+ * ELK drew meets the same side, to the nearest place clear of those and of each other.
+ */
+function keepOffDrawnEnds(
+  ends: readonly Terminal[],
+  drawnEnds: readonly P[],
+  titles: readonly Rect[],
+  obstacles: readonly Rect[]
+): void {
+  const pinned = drawnOnSide(ends[0], drawnEnds);
+  const crowded = ends.filter((end) =>
+    pinned.some((at) => Math.abs(at - positionOf(end)) < END_SPACING - STRAIGHT_EPS)
+  );
+  if (crowded.length === 0) {
+    return;
+  }
+  const { node, along } = ends[0];
+  const [start, size] = along === 'x' ? [node.x, node.width] : [node.y, node.height];
+  const title = along === 'x' ? titleAbove(node, titles) : undefined;
+  const range = freeRange(start, size, ends.length + pinned.length, title);
+  for (const end of crowded) {
+    const taken = [...pinned, ...ends.filter((other) => other !== end).map(positionOf)];
+    moveIfFree(end, nearestFree(positionOf(end), taken, range, END_SPACING), obstacles);
+  }
+}
+
+/** Where the links ELK drew meet the side of the node a terminal ends on, along that side. */
+function drawnOnSide({ route, index, node, along }: Terminal, drawnEnds: readonly P[]): number[] {
+  const across = along === 'x' ? 'y' : 'x';
+  const line = route.points[index][across];
+  const [start, size] = along === 'x' ? [node.x, node.width] : [node.y, node.height];
+  return drawnEnds
+    .filter((point) => Math.abs(point[across] - line) < LINE_HALF_WIDTH)
+    .map((point) => point[along])
+    .filter((at) => at >= start && at <= start + size);
 }
 
 /** Positions packed in order or pinned where links run straight, whichever keeps more straight. */
@@ -1410,9 +1498,17 @@ function routeAll(input: AlignInput) {
   const scene = buildScene(children, input.groups ?? []);
   const edges = input.graph.edges ?? [];
   const plans = edges.map((edge) => planLink(edge, input, rects));
-  scene.lines = edges.flatMap((edge, index) =>
-    plans[index] ? [] : thinBoxes(sectionPoints(edge, rects))
+  const unplanned = edges.filter((_, index) => !plans[index]);
+  const isLoop = (edge: ElkEdgeLike) => edge.sources[0] === edge.targets[0];
+  const drawn = unplanned.map((edge) => sectionPoints(edge, rects));
+  scene.lines = unplanned
+    .filter((edge) => !isLoop(edge))
+    .flatMap((edge) => thinBoxes(sectionPoints(edge, rects)));
+  scene.loops = unplanned.filter(isLoop).flatMap((edge) => thinBoxes(sectionPoints(edge, rects)));
+  scene.lineEnds = drawn.flatMap((points) =>
+    points.length > 0 ? [points[0], points[points.length - 1]] : []
   );
+  scene.lineMarks = drawn.flatMap(endMarks);
   const routed = plans.flatMap((plan) => {
     const route = plan && routePlan(plan, scene, rects);
     return plan && route ? [{ plan, route }] : [];
@@ -1509,7 +1605,8 @@ function finishRoutes({ rects, scene, routed }: ReturnType<typeof routeAll>): vo
       terminalsOf(route, [plan.edge.sources[0], plan.edge.targets[0]], ends)
     ),
     scene.titles,
-    [...scene.leaves.values(), ...scene.titles]
+    [...scene.leaves.values(), ...scene.titles],
+    scene.lineEnds
   );
   spreadChannels(ended, [...scene.leaves.values(), ...scene.titles]);
   const fixed = [...scene.leaves.values(), ...scene.titles, ...scene.lines];
