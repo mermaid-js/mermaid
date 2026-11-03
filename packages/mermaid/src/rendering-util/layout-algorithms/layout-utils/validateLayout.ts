@@ -125,6 +125,14 @@ export interface Issue {
   details?: Record<string, unknown>;
 }
 
+export interface ValidateLayoutOptions {
+  /**
+   * Whether `nodeId` is drawn attached to `toId`, so covering part of it is the notation
+   * and not an overlap. Asked in both directions for each pair; absent means no node is.
+   */
+  isAttached?: (nodeId: string, toId: string) => boolean;
+}
+
 export interface ValidateLayoutResult {
   ok: boolean;
   issues: Issue[];
@@ -601,7 +609,10 @@ function nearEndpointBandDistance(seg: Segment, side: PortSide, rect: Rect): num
  *
  * Also computes scoring based on bends and crossings.
  */
-export function validateLayout(layout: LayoutData): ValidateLayoutResult {
+export function validateLayout(
+  layout: LayoutData,
+  options: ValidateLayoutOptions = {}
+): ValidateLayoutResult {
   const issues: Issue[] = [];
   const nodes = layout.nodes ?? [];
   const edges = layout.edges ?? [];
@@ -677,6 +688,10 @@ export function validateLayout(layout: LayoutData): ValidateLayoutResult {
       const aContainsB = aNode.isGroup && isAncestorGroup(aId, bNode, byId);
       const bContainsA = bNode.isGroup && isAncestorGroup(bId, aNode, byId);
       if (aContainsB || bContainsA) {
+        continue;
+      }
+
+      if (options.isAttached?.(aId, bId) || options.isAttached?.(bId, aId)) {
         continue;
       }
 
