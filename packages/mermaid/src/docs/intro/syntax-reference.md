@@ -1,3 +1,7 @@
+---
+description: 'Overview of Mermaid diagram syntax: diagram type declarations, comments, frontmatter, configuration, and the syntax pitfalls to avoid.'
+---
+
 # Diagram Syntax
 
 Mermaid's syntax is used to create diagrams. You'll find that it is not too tricky and can be learned in a day. The next sections dive deep into the syntax of each diagram type.
@@ -34,13 +38,13 @@ The [Getting Started](./getting-started.md) section can also provide some practi
 
 One should **beware the use of some words or symbols** that can break diagrams. These words or symbols are few and often only affect specific types of diagrams. The table below will continuously be updated.
 
-| Diagram Breakers                                                                     | Reason                                                                  | Solution                                          |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------- |
-| **Comments**                                                                         |                                                                         |                                                   |
-| [`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968)                      | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
-| **Flow-Charts**                                                                      |                                                                         |                                                   |
-| 'end'                                                                                | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
-| [Nodes inside Nodes](../syntax/flowchart.md?id=special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
+| Diagram Breakers                                                                  | Reason                                                                  | Solution                                          |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------- |
+| **Comments**                                                                      |                                                                         |                                                   |
+| [`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968)                   | Similar to [Directives](../config/directives.md) confuses the renderer. | In comments using `%%`, avoid using "{}".         |
+| **Flow-Charts**                                                                   |                                                                         |                                                   |
+| 'end'                                                                             | The word "End" can cause Flowcharts and Sequence diagrams to break      | Wrap them in quotation marks to prevent breakage. |
+| [Nodes inside Nodes](../syntax/flowchart.md#special-characters-that-break-syntax) | Mermaid gets confused with nested shapes                                | wrap them in quotation marks to prevent breaking  |
 
 ## Mermaid Live Editor
 
