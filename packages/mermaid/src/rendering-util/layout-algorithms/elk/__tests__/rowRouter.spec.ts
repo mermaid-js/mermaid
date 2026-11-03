@@ -131,6 +131,22 @@ describe('routeInFlow', () => {
     expect(turns(points)).toBeLessThanOrEqual(3);
   });
 
+  it('enters from the side straight down the exit when a node blocks the top', () => {
+    const route = routeInFlow(plan(box(0, 0), box(200, 200), [box(200, 120)] as never[]));
+    expect(route?.points).toEqual([
+      { x: 40, y: 40 },
+      { x: 40, y: 220 },
+      { x: 200, y: 220 },
+    ]);
+    expect(route?.channels).toEqual([{ axis: 'x', low: -100, high: 200 }, undefined]);
+  });
+
+  it('leaves by the side and enters by the top when the exit is blocked below', () => {
+    const route = routeInFlow(plan(box(0, 0), box(200, 120), [box(-50, 45, 200, 10)] as never[]));
+    expect(route?.points[0]).toEqual({ x: 80, y: 20 });
+    expect(route?.points.at(-1)).toEqual({ x: 240, y: 120 });
+  });
+
   it('crosses an item in between through a corridor, straight when it can', () => {
     const between = [box(0, 140), box(200, 140)];
     const route = routeInFlow({
