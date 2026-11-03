@@ -8,9 +8,6 @@
 
 > A treemap diagram displays hierarchical data as a set of nested rectangles. Each branch of the tree is represented by a rectangle, which is then tiled with smaller rectangles representing sub-branches.
 
-> **Warning**
-> This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
-
 ## Introduction
 
 Treemap diagrams are an effective way to visualize hierarchical data and show proportions between categories and subcategories. The size of each rectangle is proportional to the value it represents, making it easy to compare different parts of a hierarchy.
@@ -48,7 +45,7 @@ Nodes in a treemap are defined using the following syntax:
 
 ### Basic Treemap
 
-```mermaid-example
+```mermaid
 treemap-beta
 "Category A"
     "Item A1": 10
@@ -58,7 +55,7 @@ treemap-beta
     "Item B2": 25
 ```
 
-```mermaid
+```mermaid-example
 treemap-beta
 "Category A"
     "Item A1": 10
@@ -70,7 +67,7 @@ treemap-beta
 
 ### Hierarchical Treemap
 
-```mermaid-example
+```mermaid
 treemap-beta
 "Products"
     "Electronics"
@@ -82,7 +79,7 @@ treemap-beta
         "Women's": 40
 ```
 
-```mermaid
+```mermaid-example
 treemap-beta
 "Products"
     "Electronics"
@@ -96,7 +93,7 @@ treemap-beta
 
 ### Treemap with Styling
 
-```mermaid-example
+```mermaid
 treemap-beta
 "Section 1"
     "Leaf 1.1": 12
@@ -110,7 +107,7 @@ treemap-beta
 classDef class1 fill:red,color:blue,stroke:#FFD600;
 ```
 
-```mermaid
+```mermaid-example
 treemap-beta
 "Section 1"
     "Leaf 1.1": 12
@@ -132,7 +129,7 @@ Treemap diagrams can be customized using Mermaid's styling and configuration opt
 
 You can define custom styles for nodes using the `classDef` syntax, which is a standard feature across many Mermaid diagram types:
 
-```mermaid-example
+```mermaid
 treemap-beta
 "Main"
     "A": 20
@@ -144,7 +141,7 @@ treemap-beta
 classDef important fill:#f96,stroke:#333,stroke-width:2px;
 ```
 
-```mermaid
+```mermaid-example
 treemap-beta
 "Main"
     "A": 20
@@ -160,7 +157,7 @@ classDef important fill:#f96,stroke:#333,stroke-width:2px;
 
 You can customize the colors of your treemap using the theme configuration:
 
-```mermaid-example
+```mermaid
 ---
 config:
     theme: 'forest'
@@ -174,7 +171,7 @@ treemap-beta
     "Item B2": 25
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
     theme: 'forest'
@@ -192,7 +189,7 @@ treemap-beta
 
 You can adjust the padding around the treemap diagram using the `diagramPadding` configuration option:
 
-```mermaid-example
+```mermaid
 ---
 config:
   treemap:
@@ -207,7 +204,7 @@ treemap-beta
     "Item B2": 25
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   treemap:
@@ -259,7 +256,7 @@ The treemap diagram supports both standard D3 format specifiers and some common 
 
 Example with currency formatting:
 
-```mermaid-example
+```mermaid
 ---
 config:
   treemap:
@@ -276,7 +273,7 @@ treemap-beta
         "Events": 100000
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   treemap:
@@ -295,7 +292,7 @@ treemap-beta
 
 Example with percentage formatting:
 
-```mermaid-example
+```mermaid
 ---
 config:
   treemap:
@@ -309,7 +306,7 @@ treemap-beta
     "Others": 0.25
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   treemap:
