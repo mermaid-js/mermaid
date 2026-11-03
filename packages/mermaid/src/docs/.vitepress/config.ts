@@ -231,6 +231,7 @@ function sidebarConfig() {
         { text: 'Mermaid CLI', link: '/config/mermaidCLI' },
         { text: 'FAQ', link: '/config/faq' },
         { text: 'Layouts', link: '/config/layouts' },
+        { text: 'Layered Layout (beta)', link: '/config/layered' },
       ],
     },
   ];
