@@ -1,3 +1,7 @@
+---
+description: 'Plot data points on a two-axis grid split into four quadrants, with axis labels, point styling, and theming.'
+---
+
 # Quadrant Chart
 
 > A quadrant chart is a visual representation of data that is divided into four quadrants. It is used to plot data points on a two-dimensional grid, with one variable represented on the x-axis and another variable represented on the y-axis. The quadrants are determined by dividing the chart into four equal parts based on a set of criteria that is specific to the data being analyzed. Quadrant charts are often used to identify patterns and trends in data, and to prioritize actions based on the position of data points within the chart. They are commonly used in business, marketing, and risk management, among other fields.
