@@ -1,3 +1,7 @@
+---
+description: 'Register Iconify icon packs in Mermaid, from a CDN or bundled locally, and reference their icons by prefix in diagrams.'
+---
+
 # Registering icon pack in mermaid
 
 The icon packs available can be found at [icones.js.org](https://icones.js.org/).
