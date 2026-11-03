@@ -129,8 +129,9 @@ describe('a subgraph keeps its own direction when an edge crosses its frame', ()
     expect(isColumn(['b1', 'b2', 'b3'].map((id) => nodes.get(id)))).toBe(true);
   });
 
-  it('builds the same ELK graph as before when no edge crosses a directed frame', () => {
-    const { elkGraph } = buildElkGraphFromLayoutData(twoChains({ edges: [] }), {
+  it('builds the same ELK graph as before when no edge crosses a directed frame, with ports', () => {
+    const data = twoChains({ edges: [], elk: { directedSubgraphs: 'ports' } });
+    const { elkGraph } = buildElkGraphFromLayoutData(data, {
       ...elkRenderContext.helpers,
       algorithm: 'elk.layered',
     });

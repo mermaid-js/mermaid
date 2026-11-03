@@ -132,7 +132,7 @@ interface ElkLayoutState {
   elkGraph: any;
   nodeDb: Record<string, NodeWithVertex>;
   parentLookupDb: TreeData;
-  /** Set when `elk.directedSubgraphs` is `aligned`: the subgraphs laid out on their own. */
+  /** Set unless `elk.directedSubgraphs` is `ports`: the subgraphs laid out on their own. */
   aligned?: {
     separated: ReadonlyMap<string, ElkDirection>;
     direction: ElkDirection;
@@ -752,7 +752,7 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
-  const aligned = data4Layout.config.elk?.directedSubgraphs === 'aligned';
+  const aligned = data4Layout.config.elk?.directedSubgraphs !== 'ports';
   const separated =
     elkGraph.layoutOptions['elk.algorithm'] === 'elk.layered'
       ? findSeparatedGroups(

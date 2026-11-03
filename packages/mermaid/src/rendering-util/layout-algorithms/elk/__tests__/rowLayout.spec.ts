@@ -163,8 +163,17 @@ describe('elk.directedSubgraphs: aligned', () => {
     }
   });
 
-  it('leaves the picture as it was with the option unset', async () => {
+  it('aligns the rows with the option unset, as it is by default', async () => {
     const data = shopAndWarehouse('TB', 'LR');
+    await runElkLayoutCore(data, elkRenderContext);
+    const nodes = byId(data);
+
+    expect(nodes.get('Pick').x).toBe(nodes.get('Order').x);
+    expect(nodes.get('wh').width).toBe(nodes.get('shop').width);
+  });
+
+  it('leaves the rows to ELK with the option set to ports', async () => {
+    const data = shopAndWarehouse('TB', 'LR', 'ports');
     await runElkLayoutCore(data, elkRenderContext);
     const nodes = byId(data);
 
@@ -213,10 +222,10 @@ describe('elk.directedSubgraphs: aligned', () => {
 describe('the directedSubgraphs option', () => {
   afterEach(() => configApi.reset());
 
-  it('defaults to default and survives a front-matter directive', () => {
-    expect(configApi.getConfig().elk?.directedSubgraphs).toBe('default');
-    configApi.addDirective({ elk: { directedSubgraphs: 'aligned' } });
+  it('defaults to aligned and survives a front-matter directive', () => {
     expect(configApi.getConfig().elk?.directedSubgraphs).toBe('aligned');
+    configApi.addDirective({ elk: { directedSubgraphs: 'ports' } });
+    expect(configApi.getConfig().elk?.directedSubgraphs).toBe('ports');
   });
 });
 
@@ -839,8 +848,8 @@ describe('a band of columns between two rows', () => {
     }
   });
 
-  it('leaves the band to ELK with the option unset', async () => {
-    const data = bands();
+  it('leaves the band to ELK with the option set to ports', async () => {
+    const data = bands('ports');
     await runElkLayoutCore(data, elkRenderContext);
     const [a, c, b] = ['colA', 'colC', 'colB'].map((id) => byId(data).get(id));
     expect(a.x < c.x && c.x < b.x).toBe(false);

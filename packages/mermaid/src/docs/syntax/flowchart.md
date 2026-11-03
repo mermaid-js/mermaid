@@ -1088,7 +1088,8 @@ No warning is logged in these cases.
 
 #### Subgraphs as aligned rows or columns (ELK)
 
-Set `elk.directedSubgraphs: aligned` to draw subgraphs with their own direction as aligned rows or columns.
+With `layout: elk`, subgraphs with their own direction are drawn as aligned rows or columns (`elk.directedSubgraphs: aligned`, the default).
+Set `elk.directedSubgraphs: ports` to leave them where ELK puts them, with the links passing their frames through ports.
 In a `flowchart TB` or `BT`, subgraphs with `direction LR` or `RL` become rows of one common width, stacked under each other in the order they are written.
 In a `flowchart LR` or `RL`, subgraphs with `direction TB` or `BT` become columns of one common height.
 
