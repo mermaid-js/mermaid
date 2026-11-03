@@ -48,7 +48,7 @@ Takes into consideration the possible existence of an `%%init` directive
 
 The text defining the graph. For example:
 
-```mermaid-example
+```mermaid
   %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
   graph LR
    a-->b
@@ -60,7 +60,7 @@ The text defining the graph. For example:
    g-->h
 ```
 
-```mermaid
+```mermaid-example
   %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
   graph LR
    a-->b
@@ -382,14 +382,14 @@ The function tags the processed attributes with the attribute data-processed and
 elements with the attribute already set. This way the init function can be triggered several
 times.
 
-```mermaid-example
+```mermaid
 graph LR;
  a(Find elements)-->b{Processed}
  b-->|Yes|c(Leave element)
  b-->|No |d(Transform)
 ```
 
-```mermaid
+```mermaid-example
 graph LR;
  a(Find elements)-->b{Processed}
  b-->|Yes|c(Leave element)

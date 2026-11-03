@@ -11,7 +11,7 @@
 Mermaid can render sequence diagrams with [ZenUML](https://zenuml.com). Note that ZenUML uses a different
 syntax than the original Sequence Diagram in mermaid.
 
-```mermaid-example
+```mermaid
 zenuml
     title Demo
     Alice->John: Hello John, how are you?
@@ -19,7 +19,7 @@ zenuml
     Alice->John: See you later!
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     title Demo
     Alice->John: Hello John, how are you?
@@ -36,7 +36,7 @@ rendered in order of appearance in the diagram source text. Sometimes you might 
 different order than how they appear in the first message. It is possible to specify the actor's order of
 appearance by doing the following:
 
-```mermaid-example
+```mermaid
 zenuml
     title Declare participant (optional)
     Bob
@@ -45,7 +45,7 @@ zenuml
     Bob->Alice: Hi Alice
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     title Declare participant (optional)
     Bob
@@ -58,7 +58,7 @@ zenuml
 
 If you specifically want to use symbols instead of just rectangles with text you can do so by using the annotator syntax to declare participants as per below.
 
-```mermaid-example
+```mermaid
 zenuml
     title Annotators
     @Actor Alice
@@ -67,7 +67,7 @@ zenuml
     Bob->Alice: Hi Alice
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     title Annotators
     @Actor Alice
@@ -83,7 +83,7 @@ Here are the available annotators:
 
 The participants can have a convenient identifier and a descriptive label.
 
-```mermaid-example
+```mermaid
 zenuml
     title Aliases
     A as Alice
@@ -92,7 +92,7 @@ zenuml
     J->A: Great!
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     title Aliases
     A as Alice
@@ -114,7 +114,7 @@ Messages can be one of:
 
 You can think of a sync (blocking) method in a programming language.
 
-```mermaid-example
+```mermaid
 zenuml
     title Sync message
     A.SyncMessage
@@ -123,7 +123,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     title Sync message
     A.SyncMessage
@@ -137,13 +137,13 @@ zenuml
 You can think of an async (non-blocking) method in a programming language.
 Fire an event and forget about it.
 
-```mermaid-example
+```mermaid
 zenuml
     title Async message
     Alice->Bob: How are you?
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     title Async message
     Alice->Bob: How are you?
@@ -153,13 +153,13 @@ zenuml
 
 We use `new` keyword to create an object.
 
-```mermaid-example
+```mermaid
 zenuml
     new A1
     new A2(with, parameters)
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     new A1
     new A2(with, parameters)
@@ -169,7 +169,7 @@ zenuml
 
 There are three ways to express a reply message:
 
-```mermaid-example
+```mermaid
 zenuml
     // 1. assign a variable from a sync message.
     a = A.SyncMessage()
@@ -187,7 +187,7 @@ zenuml
     A->B: result
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     // 1. assign a variable from a sync message.
     a = A.SyncMessage()
@@ -207,7 +207,7 @@ zenuml
 
 The third way `@return` is rarely used, but it is useful when you want to return to one level up.
 
-```mermaid-example
+```mermaid
 zenuml
     title Reply message
     Client->A.method() {
@@ -223,7 +223,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     title Reply message
     Client->A.method() {
@@ -243,7 +243,7 @@ zenuml
 
 Sync messages and Creation messages are naturally nestable with `{}`.
 
-```mermaid-example
+```mermaid
 zenuml
     A.method() {
       B.nested_sync_method()
@@ -251,7 +251,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     A.method() {
       B.nested_sync_method()
@@ -267,7 +267,7 @@ are ignored. Markdown is supported.
 
 See the example below:
 
-```mermaid-example
+```mermaid
 zenuml
     // a comment on a participant will not be rendered
     BookService
@@ -276,7 +276,7 @@ zenuml
     BookService.getBook()
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     // a comment on a participant will not be rendered
     BookService
@@ -303,7 +303,7 @@ while(condition) {
 
 See the example below:
 
-```mermaid-example
+```mermaid
 zenuml
     Alice->John: Hello John, how are you?
     while(true) {
@@ -311,7 +311,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     Alice->John: Hello John, how are you?
     while(true) {
@@ -335,7 +335,7 @@ if(condition1) {
 
 See the example below:
 
-```mermaid-example
+```mermaid
 zenuml
     Alice->Bob: Hello Bob, how are you?
     if(is_sick) {
@@ -345,7 +345,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     Alice->Bob: Hello Bob, how are you?
     if(is_sick) {
@@ -367,7 +367,7 @@ opt {
 
 See the example below:
 
-```mermaid-example
+```mermaid
 zenuml
     Alice->Bob: Hello Bob, how are you?
     Bob->Alice: Not so good :(
@@ -376,7 +376,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     Alice->Bob: Hello Bob, how are you?
     Bob->Alice: Not so good :(
@@ -401,7 +401,7 @@ par {
 
 See the example below:
 
-```mermaid-example
+```mermaid
 zenuml
     par {
         Alice->Bob: Hello guys!
@@ -409,7 +409,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     par {
         Alice->Bob: Hello guys!
@@ -435,7 +435,7 @@ try {
 
 See the example below:
 
-```mermaid-example
+```mermaid
 zenuml
     try {
       Consumer->API: Book something
@@ -447,7 +447,7 @@ zenuml
     }
 ```
 
-```mermaid
+```mermaid-example
 zenuml
     try {
       Consumer->API: Book something
@@ -461,14 +461,12 @@ zenuml
 
 ## Integrating with your library/website.
 
-Zenuml uses the experimental lazy loading & async rendering features which could change in the future.
-
-You can use this method to add mermaid including the zenuml diagram to a web page:
+ZenUML is not bundled with mermaid. Load the `@mermaid-js/mermaid-zenuml` package alongside mermaid and register it as an external diagram:
 
 ```html
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  import zenuml from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-zenuml@0.1.0/dist/mermaid-zenuml.esm.min.mjs';
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@12/dist/mermaid.esm.min.mjs';
+  import zenuml from 'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-zenuml@1/dist/mermaid-zenuml.esm.min.mjs';
   await mermaid.registerExternalDiagrams([zenuml]);
 </script>
 ```
