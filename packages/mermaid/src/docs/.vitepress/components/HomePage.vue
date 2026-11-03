@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { withSiteBase } from '../theme/siteBase.js';
 import { VPTeamMembers } from 'vitepress/theme';
 import { teamMembers } from '../contributors';
+
+const members = teamMembers.map((member) => ({ ...member, avatar: withSiteBase(member.avatar) }));
 </script>
 
 <template>
@@ -10,7 +13,7 @@ import { teamMembers } from '../contributors';
         <div class="vp-doc" flex flex-col items-center mt-10>
           <h2 id="meet-the-team" op50 font-normal p="t-10 b-2">Meet The Team</h2>
           <div w-full p-10>
-            <VPTeamMembers size="small" :members="teamMembers" />
+            <VPTeamMembers size="small" :members="members" />
           </div>
           <h2 id="the-team" op50 font-normal pt-5 pb-2>Contributors</h2>
           <p text-lg max-w-200 text-center leading-7>
