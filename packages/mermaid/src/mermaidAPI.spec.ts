@@ -352,11 +352,11 @@ describe('mermaidAPI', () => {
           });
         }
 
-        it('there are htmlLabels in the configuration', () => {
+        describe('there are htmlLabels in the configuration', () => {
           expect_correct_styles_with_htmlElements(mocked_config_with_htmlLabels);
         });
 
-        it('there are flowchart.htmlLabels in the configuration', () => {
+        describe('there are flowchart.htmlLabels in the configuration', () => {
           const mocked_config_flowchart_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
