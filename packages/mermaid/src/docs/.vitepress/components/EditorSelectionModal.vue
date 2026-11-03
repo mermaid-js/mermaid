@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { withSiteBase } from '../theme/siteBase.js';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { trackPlausibleEvent } from '../theme/plausible.js';
 
@@ -116,7 +117,11 @@ onUnmounted(() => {
                 :key="featureName"
                 class="flex items-center gap-2"
               >
-                <img :src="iconUrl" :alt="featureName" class="size-4 shrink-0 opacity-60" />
+                <img
+                  :src="withSiteBase(iconUrl)"
+                  :alt="featureName"
+                  class="size-4 shrink-0 opacity-60"
+                />
                 {{ featureName }}
               </li>
             </ul>
@@ -148,7 +153,11 @@ onUnmounted(() => {
               :key="featureName"
               class="flex items-center gap-2"
             >
-              <img :src="iconUrl" :alt="featureName" class="size-4 shrink-0 opacity-60" />
+              <img
+                :src="withSiteBase(iconUrl)"
+                :alt="featureName"
+                class="size-4 shrink-0 opacity-60"
+              />
               {{ featureName }}
             </li>
           </ul>
