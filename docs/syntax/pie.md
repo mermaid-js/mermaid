@@ -11,14 +11,14 @@
 
 Mermaid can render Pie Chart diagrams.
 
-```mermaid-example
+```mermaid
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
     "Rats" : 15
 ```
 
-```mermaid
+```mermaid-example
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
@@ -64,7 +64,7 @@ By setting `highlightSlice` parameter on config, you can highlight specific slic
 
 ## Example
 
-```mermaid-example
+```mermaid
 ---
 config:
   pie:
@@ -82,7 +82,7 @@ pie showData
     "Iron" :  5
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   pie:

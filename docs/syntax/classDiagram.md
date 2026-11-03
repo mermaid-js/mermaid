@@ -14,7 +14,7 @@ The class diagram is the main building block of object-oriented modeling. It is 
 
 Mermaid can render class diagrams.
 
-```mermaid-example
+```mermaid
 ---
 title: Animal example
 ---
@@ -43,7 +43,7 @@ classDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 ---
 title: Animal example
 ---
@@ -82,7 +82,7 @@ The same diagram, drawn both ways:
 
 ### With the defaults
 
-```mermaid-example
+```mermaid
 classDiagram
   class Customer {
     +String name
@@ -105,7 +105,7 @@ classDiagram
   Order --> Payment : settled by
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
   class Customer {
     +String name
@@ -133,7 +133,7 @@ classDiagram
 Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
 in a diagram's front matter draws it the way Mermaid did before:
 
-```mermaid-example
+```mermaid
 ---
 config:
   theme: default
@@ -162,7 +162,7 @@ classDiagram
   Order --> Payment : settled by
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   theme: default
@@ -206,7 +206,7 @@ A single instance of a class in the diagram contains three compartments:
 - The middle compartment contains the attributes of the class. They are left-aligned and the first letter is lowercase.
 - The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
-```mermaid-example
+```mermaid
 ---
 title: Bank example
 ---
@@ -219,7 +219,7 @@ classDiagram
 
 ```
 
-```mermaid
+```mermaid-example
 ---
 title: Bank example
 ---
@@ -239,13 +239,13 @@ There are two ways to define a class:
 - Explicitly using keyword **class** like `class Animal` which would define the Animal class.
 - Via a **relationship** which defines two classes at a time along with their relationship. For instance, `Vehicle <|-- Car`.
 
-```mermaid-example
+```mermaid
 classDiagram
     class Animal
     Vehicle <|-- Car
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     class Animal
     Vehicle <|-- Car
@@ -257,14 +257,14 @@ Naming convention: a class name should be composed only of alphanumeric characte
 
 In case you need to provide a label for a class, you can use the following syntax:
 
-```mermaid-example
+```mermaid
 classDiagram
     class Animal["Animal with a label"]
     class Car["Car with *! symbols"]
     Animal --> Car
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     class Animal["Animal with a label"]
     class Car["Car with *! symbols"]
@@ -273,14 +273,14 @@ classDiagram
 
 You can also use backticks to escape special characters in the label:
 
-```mermaid-example
+```mermaid
 classDiagram
     class `Animal Class!`
     class `Car Class`
     `Animal Class!` --> `Car Class`
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     class `Animal Class!`
     class `Car Class`
@@ -297,7 +297,7 @@ There are two ways to define the members of a class, and regardless of whichever
 
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
 
-```mermaid-example
+```mermaid
 classDiagram
 class BankAccount
 BankAccount : +String owner
@@ -306,7 +306,7 @@ BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class BankAccount
 BankAccount : +String owner
@@ -317,7 +317,7 @@ BankAccount : +withdrawal(amount)
 
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 
-```mermaid-example
+```mermaid
 classDiagram
 class BankAccount{
     +String owner
@@ -327,7 +327,7 @@ class BankAccount{
 }
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class BankAccount{
     +String owner
@@ -341,7 +341,7 @@ class BankAccount{
 
 Optionally you can end a method/function definition with the data type that will be returned (note: there must be a space between the final `)` and the return type). An example:
 
-```mermaid-example
+```mermaid
 classDiagram
 class BankAccount{
     +String owner
@@ -351,7 +351,7 @@ class BankAccount{
 }
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class BankAccount{
     +String owner
@@ -367,7 +367,7 @@ Generics can be represented as part of a class definition, and for class members
 
 > _note_ when a generic is used within a class definition, the generic type is NOT considered part of the class name. i.e.: for any syntax which required you to reference the class name, you need to drop the type part of the definition. This also means that mermaid does not currently support having two classes with the same name, but different generic types.
 
-```mermaid-example
+```mermaid
 classDiagram
 class Square~Shape~{
     int id
@@ -382,7 +382,7 @@ Square : +getMessages() List~string~
 Square : +getDistanceMatrix() List~List~int~~
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class Square~Shape~{
     int id
@@ -436,7 +436,7 @@ There are eight different types of relations defined for classes under UML which
 | `..\|>` | Realization   |
 | `..`    | Link (Dashed) |
 
-```mermaid-example
+```mermaid
 classDiagram
 classA <|-- classB
 classC *-- classD
@@ -449,7 +449,7 @@ classO .. classP
 
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 classA <|-- classB
 classC *-- classD
@@ -464,7 +464,7 @@ classO .. classP
 
 We can use the labels to describe the nature of the relation between two classes. Also, arrowheads can be used in the opposite direction as well:
 
-```mermaid-example
+```mermaid
 classDiagram
 classA --|> classB : Inheritance
 classC --* classD : Composition
@@ -477,7 +477,7 @@ classO .. classP : Link(Dashed)
 
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 classA --|> classB : Inheritance
 classC --* classD : Composition
@@ -498,14 +498,14 @@ It is possible to add label text to a relation:
 [classA][Arrow][ClassB]:LabelText
 ```
 
-```mermaid-example
+```mermaid
 classDiagram
 classA <|-- classB : implements
 classC *-- classD : composition
 classE o-- classF : aggregation
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 classA <|-- classB : implements
 classC *-- classD : composition
@@ -516,12 +516,12 @@ classE o-- classF : aggregation
 
 Relations can logically represent an N:M association:
 
-```mermaid-example
+```mermaid
 classDiagram
     Animal <|--|> Zebra
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -561,17 +561,17 @@ The interface (bar) with the lollipop connects to the class (foo).
 
 Note: Each interface that is defined is unique and is meant to not be shared between classes / have multiple edges connecting to it.
 
-```mermaid-example
-classDiagram
-  bar ()-- foo
-```
-
 ```mermaid
 classDiagram
   bar ()-- foo
 ```
 
 ```mermaid-example
+classDiagram
+  bar ()-- foo
+```
+
+```mermaid
 classDiagram
   class Class01 {
     int amount
@@ -583,7 +583,7 @@ classDiagram
   foo ()-- Class01
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
   class Class01 {
     int amount
@@ -599,7 +599,7 @@ classDiagram
 
 A namespace groups classes.
 
-```mermaid-example
+```mermaid
 classDiagram
 namespace BaseShapes {
     class Triangle
@@ -610,7 +610,7 @@ namespace BaseShapes {
 }
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 namespace BaseShapes {
     class Triangle
@@ -625,7 +625,7 @@ namespace BaseShapes {
 
 A namespace can be given a display label using square bracket syntax, similar to class labels:
 
-```mermaid-example
+```mermaid
 classDiagram
     namespace Auth["Authentication Service"] {
         class UserService {
@@ -635,7 +635,7 @@ classDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     namespace Auth["Authentication Service"] {
         class UserService {
@@ -653,7 +653,7 @@ Namespaces can be nested to represent hierarchical groupings. There are two ways
 
 **Dot notation** creates intermediate namespaces automatically:
 
-```mermaid-example
+```mermaid
 classDiagram
     namespace Company.Engineering.Backend {
         class Developer {
@@ -674,7 +674,7 @@ classDiagram
     TechLead --> Designer : leads
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     namespace Company.Engineering.Backend {
         class Developer {
@@ -697,7 +697,7 @@ classDiagram
 
 **Syntactic nesting** places namespace blocks inside other namespace blocks:
 
-```mermaid-example
+```mermaid
 classDiagram
     namespace Platform {
         namespace Auth {
@@ -720,7 +720,7 @@ classDiagram
     Gateway --> Repository : delegates
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     namespace Platform {
         namespace Auth {
@@ -751,7 +751,7 @@ By default (`hierarchicalNamespaces: true`), each segment of a dotted or syntact
 
 Setting `hierarchicalNamespaces: false` in the class diagram config switches to **compact mode**: only namespaces the user explicitly declares are drawn — each as a single flat box labelled with its fully-qualified name. Auto-created intermediate ancestors are skipped, and classes inside them are moved to their nearest declared namespace.
 
-```mermaid-example
+```mermaid
 ---
 config:
   class:
@@ -777,7 +777,7 @@ classDiagram
     CEO --> Designer : oversees
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   class:
@@ -825,14 +825,14 @@ Cardinality can be easily defined by placing the text option within quotes `"` b
 [classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
 ```
 
-```mermaid-example
+```mermaid
 classDiagram
     Customer "1" --> "*" Ticket
     Student "1" --> "1..*" Course
     Galaxy --> "many" Star : Contains
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     Customer "1" --> "*" Ticket
     Student "1" --> "1..*" Course
@@ -852,19 +852,19 @@ Annotations are defined within the opening `<<` and closing `>>`. There are thre
 
 - **Inline** with the class definition:
 
-```mermaid-example
+```mermaid
 classDiagram
   class Shape <<interface>>
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
   class Shape <<interface>>
 ```
 
 - In a **_separate line_** after a class is defined:
 
-```mermaid-example
+```mermaid
 classDiagram
 class Shape
 <<interface>> Shape
@@ -872,7 +872,7 @@ Shape : noOfVertices
 Shape : draw()
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class Shape
 <<interface>> Shape
@@ -882,7 +882,7 @@ Shape : draw()
 
 - In a **_nested structure_** along with the class definition:
 
-```mermaid-example
+```mermaid
 classDiagram
 class Shape{
     <<interface>>
@@ -900,7 +900,7 @@ class Color{
 
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class Shape{
     <<interface>>
@@ -922,7 +922,7 @@ class Color{
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
 
-```mermaid-example
+```mermaid
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -932,7 +932,7 @@ class Shape{
 }
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -946,7 +946,7 @@ class Shape{
 
 With class diagrams you can use the direction statement to set the direction in which the diagram will render:
 
-```mermaid-example
+```mermaid
 classDiagram
   direction RL
   class Student {
@@ -964,7 +964,7 @@ classDiagram
   Student "1" --o "1" Bike : rides
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
   direction RL
   class Student {
@@ -1006,7 +1006,7 @@ It is possible to add notes on the diagram using `note "line1\nline2"`. A note c
 
 ### Examples
 
-```mermaid-example
+```mermaid
 classDiagram
     note "This is a general note"
     note for MyClass "This is a note for a class"
@@ -1014,7 +1014,7 @@ classDiagram
     }
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     note "This is a general note"
     note for MyClass "This is a note for a class"
@@ -1024,7 +1024,7 @@ classDiagram
 
 _URL Link:_
 
-```mermaid-example
+```mermaid
 classDiagram
 class Shape
 link Shape "https://www.github.com" "This is a tooltip for a link"
@@ -1032,7 +1032,7 @@ class Shape2
 click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class Shape
 link Shape "https://www.github.com" "This is a tooltip for a link"
@@ -1042,7 +1042,7 @@ click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 
 _Callback:_
 
-```mermaid-example
+```mermaid
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"
@@ -1050,7 +1050,7 @@ class Shape2
 click Shape2 call callbackFunction() "This is a tooltip for a callback"
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"
@@ -1066,7 +1066,7 @@ click Shape2 call callbackFunction() "This is a tooltip for a callback"
 </script>
 ```
 
-```mermaid-example
+```mermaid
 classDiagram
     class Class01
     class Class02
@@ -1078,7 +1078,7 @@ classDiagram
     click Class04 href "https://www.github.com" "This is a link"
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     class Class01
     class Class02
@@ -1144,7 +1144,7 @@ It is possible to apply specific styles such as a thicker border or a different 
 
 Note that notes and namespaces cannot be styled individually but do support themes.
 
-```mermaid-example
+```mermaid
 classDiagram
   class Animal
   class Mineral
@@ -1152,7 +1152,7 @@ classDiagram
   style Mineral fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
   class Animal
   class Mineral
@@ -1191,13 +1191,13 @@ cssClass "nodeId1,nodeId2" className;
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
-```mermaid-example
+```mermaid
 classDiagram
     class Animal:::someclass
     classDef someclass fill:#f96
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     class Animal:::someclass
     classDef someclass fill:#f96
@@ -1205,7 +1205,7 @@ classDiagram
 
 Or:
 
-```mermaid-example
+```mermaid
 classDiagram
     class Animal:::someclass {
         -int sizeInFeet
@@ -1214,7 +1214,7 @@ classDiagram
     classDef someclass fill:#f96
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     class Animal:::someclass {
         -int sizeInFeet
@@ -1231,7 +1231,7 @@ If a class is named default it will be applied to all nodes. Specific styles and
 classDef default fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 
-```mermaid-example
+```mermaid
 classDiagram
   class Animal:::pink
   class Mineral
@@ -1240,7 +1240,7 @@ classDiagram
   classDef pink color:#f9f
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
   class Animal:::pink
   class Mineral
@@ -1268,12 +1268,12 @@ below:
 
 **Example definition**
 
-```mermaid-example
+```mermaid
 classDiagram
     class Animal:::styleClass
 ```
 
-```mermaid
+```mermaid-example
 classDiagram
     class Animal:::styleClass
 ```
@@ -1294,7 +1294,7 @@ This is done by changing the **hideEmptyMembersBox** value of the class diagram 
 | ------------------- | ------------------------------------------------------------ | ------------- |
 | hideEmptyMembersBox | Hides the empty members box of a class node when set to true | false         |
 
-```mermaid-example
+```mermaid
 ---
   config:
     class:
@@ -1304,7 +1304,7 @@ classDiagram
   class Duck
 ```
 
-```mermaid
+```mermaid-example
 ---
   config:
     class:
