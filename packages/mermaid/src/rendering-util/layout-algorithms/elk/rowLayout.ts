@@ -729,7 +729,7 @@ function planLink(
 }
 
 /** The free bands across the flow between two items, given the items that may lie between. */
-function gapsBetween(from: Rect, to: Rect, between: readonly Rect[]): [number, number][] {
+export function gapsBetween(from: Rect, to: Rect, between: readonly Rect[]): [number, number][] {
   const bands = between
     .filter((rect) => rect.y >= bottom(from) - STRAIGHT_EPS && bottom(rect) <= to.y + STRAIGHT_EPS)
     .map((rect): [number, number] => [rect.y, bottom(rect)])
@@ -753,7 +753,7 @@ function gapsBetween(from: Rect, to: Rect, between: readonly Rect[]): [number, n
   return gaps.length === merged.length + 1 ? gaps : [];
 }
 
-function channelFromFlow(channel: Channel, direction: ElkDirection): Channel {
+export function channelFromFlow(channel: Channel, direction: ElkDirection): Channel {
   const across = direction === 'RIGHT' || direction === 'LEFT' ? 'y' : 'x';
   const alongAxis = across === 'x' ? 'y' : 'x';
   if (channel.axis === 'x') {
@@ -1292,7 +1292,7 @@ function frameCrossings(points: readonly P[], frames: ReadonlyMap<string, Rect>,
   });
 }
 
-function borderHits(a: P, b: P, frame: Rect): P[] {
+export function borderHits(a: P, b: P, frame: Rect): P[] {
   const vertical = Math.abs(a.x - b.x) < STRAIGHT_EPS;
   const [fixed, from, to] = vertical ? [a.x, a.y, b.y] : [a.y, a.x, b.x];
   const [low, high] = vertical
