@@ -10,6 +10,7 @@ import type {
   EdgeRouting,
   LayoutEdge,
   LayoutGraph,
+  LayoutGroup,
   LayoutModel,
   LayoutNode,
   RoutePoint,
@@ -20,6 +21,11 @@ const LABEL_W = 12;
 const LABEL_H = 4;
 // The room an arrowhead takes at an edge's head (v13 `HEAD_ROOM`).
 const HEAD_ROOM = 7;
+
+// Room between a subgraph's border and its content (v13 `GROUP_PAD`), and between its title
+// and its content.
+const GROUP_PAD = 20;
+const TITLE_GAP = 12;
 
 const DIRS: Record<string, Dir> = { TB: 'TB', TD: 'TB', BT: 'BT', LR: 'LR', RL: 'RL' };
 
@@ -95,11 +101,40 @@ function drawnCurve(mode: EdgeRouting, curve: Edge['curve']): Edge['curve'] {
   return curve;
 }
 
+// Mermaid draws a subgraph title at the top of its box, `subGraphTitleMargin.top` below the
+// border, so the band above the content holds both margins, the title and a gap.
+function toLayoutGroup(n: Node, data: LayoutData, groupIds: Set<string>): LayoutGroup {
+  const margin = data.config?.flowchart?.subGraphTitleMargin;
+  const titleWidth = size(n.labelBBox?.width);
+  const titleHeight = size(n.labelBBox?.height);
+  const titled = titleWidth > 0 && titleHeight > 0;
+  const group: LayoutGroup = {
+    id: n.id,
+    padding: {
+      top: titled ? size(margin?.top) + size(margin?.bottom) + TITLE_GAP : GROUP_PAD,
+      right: GROUP_PAD,
+      bottom: GROUP_PAD,
+      left: GROUP_PAD,
+    },
+  };
+  if (n.parentId && groupIds.has(n.parentId)) {
+    group.parent = n.parentId;
+  }
+  const dir = n.dir ? DIRS[String(n.dir).toUpperCase()] : undefined;
+  if (dir) {
+    group.direction = dir;
+  }
+  if (titled) {
+    group.title = { width: titleWidth, height: titleHeight };
+  }
+  return group;
+}
+
 function hasLabel(edge: Edge): boolean {
   return typeof edge.label === 'string' ? edge.label.trim().length > 0 : Boolean(edge.label);
 }
 
-/** The engine's input for a measured `LayoutData`. Plain flowcharts only: groups come later. */
+/** The engine's input for a measured `LayoutData`: nodes, subgraphs (as groups) and edges. */
 export function toLayoutGraph(data: LayoutData): LayoutGraph {
   const dir = direction(data);
   // Spacing as dagre reads it: the renderer's own first, then the `flowchart` section (where
@@ -109,8 +144,10 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     nodeSpacing: size(data.nodeSpacing) || size(flowchart?.nodeSpacing) || undefined,
     rankSpacing: size(data.rankSpacing) || size(flowchart?.rankSpacing) || undefined,
   });
+  const groupIds = new Set(data.nodes.filter((n) => n.isGroup).map((n) => n.id));
+  const groups = data.nodes.filter((n) => n.isGroup).map((n) => toLayoutGroup(n, data, groupIds));
   const nodes: LayoutNode[] = [];
-  const ids = new Set<string>();
+  const ids = new Set<string>(groupIds);
   for (const n of data.nodes) {
     if (n.isGroup) {
       continue;
@@ -119,6 +156,9 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     const width = size(n.width);
     const height = size(n.height);
     const node: LayoutNode = { id: n.id, width, height };
+    if (n.parentId && groupIds.has(n.parentId)) {
+      node.parent = n.parentId;
+    }
     const span = n.shape ? SPANS.get(n.shape) : undefined;
     if (span) {
       node.span = Math.max(0, span(width, height, sideways(dir)));
@@ -148,7 +188,7 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     direction: dir,
     nodes,
     edges,
-    groups: [],
+    groups,
     spacing,
     diagramPadding: 0,
     routing: routing(data),
@@ -164,6 +204,15 @@ export function applyLayoutModel(data: LayoutData, model: LayoutModel): void {
     if (placed) {
       n.x = placed.x;
       n.y = placed.y;
+      continue;
+    }
+    // Clusters are sized by the engine; `insertCluster` draws them centred on `x`, `y`.
+    const cluster = n.isGroup ? model.groups.get(n.id) : undefined;
+    if (cluster) {
+      n.x = cluster.x;
+      n.y = cluster.y;
+      n.width = cluster.width;
+      n.height = cluster.height;
     }
   }
   for (const e of data.edges) {
