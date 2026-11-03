@@ -173,7 +173,10 @@ const MAX_GAP = 3;
 
 // Tracks: the room kept clear between a rank and the nearest track, the room between two tracks
 // when the gap has to grow to hold them, and the most they spread to when it has room to spare.
-const TRACK_MARGIN = 18;
+// Diverges from v13 (`pxProfile.engine.trackMargin` 18): mermaid's validateLayout counts a run
+// across within 18px (+1px tolerance) of the node an edge arrives at as a bend at its end, where
+// the arrowhead has no straight run to sit on, so the outer tracks keep 20px from the ranks.
+const TRACK_MARGIN = 20;
 const TRACK_PITCH = 10;
 const TRACK_SPREAD = 14;
 // A curve is one plain S unless it runs more than this many times as far across as the gap is

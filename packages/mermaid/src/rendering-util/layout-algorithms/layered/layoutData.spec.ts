@@ -3,6 +3,7 @@ import type { MermaidConfig } from '../../../config.type.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import intersect from '../../rendering-elements/intersect/index.js';
 import { isAxisTaggedRoute } from '../../rendering-elements/routePath.js';
+import { validateLayout } from '../layout-utils/validateLayout.js';
 import { runLayeredLayoutCore, toLayoutGraph } from './layoutData.js';
 
 const node = (id: string, width = 80, height = 40, shape = 'squareRect'): Node =>
@@ -147,6 +148,31 @@ describe('layered adapter: config reaching the engine', () => {
     // A step the user chose is kept.
     expect(drawn('stepped', 'stepAfter')).toEqual(['stepAfter', 'stepAfter']);
     expect(drawn('straight', 'basis')).toEqual(['linear', 'linear']);
+  });
+
+  it('keeps stepped tracks clear of the node an edge arrives at', () => {
+    // The DDLT `multiple-edges` fixture: parallel and opposite edges between a and b need
+    // several tracks in one gap, so the gap grows until its outer tracks sit at the least
+    // margin from the ranks. That margin must leave the last turn clear of validateLayout's
+    // endpoint band, or the arrowhead has no straight run to sit on.
+    const data = layoutData(
+      'TB',
+      [node('a', 68, 51), node('b', 68, 51), node('c', 67, 51), node('d', 68, 51)],
+      [
+        edge('e1', 'a', 'b'),
+        edge('e2', 'b', 'c'),
+        edge('e3', 'b', 'd'),
+        edge('e4', 'c', 'a'),
+        edge('e5', 'a', 'b'),
+        edge('e6', 'a', 'b'),
+        edge('e7', 'b', 'a'),
+      ]
+    );
+    data.config = { layered: { edgeRouting: 'stepped' } } as MermaidConfig;
+    runLayeredLayoutCore(data);
+    const result = validateLayout(data);
+    expect(result.issues.map((i) => i.message)).toEqual([]);
+    expect(result.ok).toBe(true);
   });
 });
 

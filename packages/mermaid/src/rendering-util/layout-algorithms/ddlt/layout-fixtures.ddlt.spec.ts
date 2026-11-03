@@ -53,9 +53,14 @@ describe('DDLT layout-test fixture sweep', () => {
 /**
  * `layered` and `dagre` side by side on the same fixtures — the flowchart ones plus `layered/*`
  * (class, state, ER, requirement and mindmap, captured under `layout: layered`) — through the same parse and
- * size path. Report-only for now: it prints, per run, the hard-constraint violations by kind and
- * the aggregate score (`DDLT-CMP:`), and fails only when a backend throws unexpectedly or a
- * fixture goes unaccounted for. Score floors come once the layered port settles.
+ * size path. It prints, per run, the hard-constraint violations by kind and the aggregate score
+ * (`DDLT-CMP:`), and holds the layered merge gate:
+ * - `layered` with `edgeRouting: stepped` has no hard-constraint violation on any fixture;
+ * - `layered` with its default (curved) routing scores at least as much as dagre in aggregate,
+ *   both over the whole sweep (a fixture dagre cannot lay out counts 0 for it) and over the
+ *   fixtures every run could lay out.
+ * Curved routes are not held to zero violations: their diagonal segments trip
+ * `edge-non-orthogonal`, as dagre's splines do.
  */
 const COMPARISON_RUNS: {
   name: string;
@@ -78,70 +83,89 @@ describe('DDLT layered vs dagre', () => {
     addDiagrams();
   });
 
-  it('reports hard violations and aggregate score per backend', { timeout: 60_000 }, async () => {
-    const fixtures = discoverLayoutTestFixtures().filter((f) => f.profile === 'flowchart-domus');
-    expect(fixtures.length).toBeGreaterThan(0);
-    for (const f of fixtures) {
-      expect(backendsForProfile(f.profile)).toEqual(['layered', 'dagre']);
-    }
+  it(
+    'meets the merge gate: stepped has no hard violation, curved scores >= dagre',
+    { timeout: 60_000 },
+    async () => {
+      const fixtures = discoverLayoutTestFixtures().filter((f) => f.profile === 'flowchart-domus');
+      expect(fixtures.length).toBeGreaterThan(0);
+      for (const f of fixtures) {
+        expect(backendsForProfile(f.profile)).toEqual(['layered', 'dagre']);
+      }
 
-    const runs: { run: string; items: NamedValidateResult[]; unsupported: string[] }[] = [];
-    const errors: string[] = [];
-    for (const run of COMPARISON_RUNS) {
-      const items: NamedValidateResult[] = [];
-      const unsupported: string[] = [];
-      for (const fixture of fixtures) {
-        try {
-          const layout = await parseApplySizesAndLayout(
-            fixture.mmdPath,
-            fixture.sizes,
-            run.backendId,
-            { config: run.config }
-          );
-          items.push({ id: fixture.id, result: validateLayout(layout) });
-        } catch (e) {
-          if (e instanceof DdltUnsupportedFixtureError) {
-            unsupported.push(fixture.id);
-          } else {
-            errors.push(`${run.name} ${fixture.id}: ${String(e)}`);
+      const runs: { run: string; items: NamedValidateResult[]; unsupported: string[] }[] = [];
+      const errors: string[] = [];
+      for (const run of COMPARISON_RUNS) {
+        const items: NamedValidateResult[] = [];
+        const unsupported: string[] = [];
+        for (const fixture of fixtures) {
+          try {
+            const layout = await parseApplySizesAndLayout(
+              fixture.mmdPath,
+              fixture.sizes,
+              run.backendId,
+              { config: run.config }
+            );
+            items.push({ id: fixture.id, result: validateLayout(layout) });
+          } catch (e) {
+            if (e instanceof DdltUnsupportedFixtureError) {
+              unsupported.push(fixture.id);
+            } else {
+              errors.push(`${run.name} ${fixture.id}: ${String(e)}`);
+            }
           }
         }
+        runs.push({ run: run.name, items, unsupported });
       }
-      runs.push({ run: run.name, items, unsupported });
-    }
-    expect(errors).toEqual([]);
+      expect(errors).toEqual([]);
 
-    // The fixtures every run could lay out, so the totals compare like with like.
-    const common = new Set(
-      fixtures
-        .map((f) => f.id)
-        .filter((id) => runs.every((r) => r.items.some((item) => item.id === id)))
-    );
-    const report = runs.map(({ run, items, unsupported }) => {
-      const shared = items.filter((item) => common.has(item.id));
-      const all = combineValidateLayoutResults(items);
-      const sharedReport = combineValidateLayoutResults(shared);
-      return {
-        run,
-        fixtures: items.length,
-        unsupported,
-        invalidCount: all.invalidCount,
-        hardViolationsByType: countIssuesByType(items),
-        totalScore: all.totalScore,
-        avgScore: all.avgScore,
-        common: {
-          fixtures: common.size,
-          invalidCount: sharedReport.invalidCount,
-          hardViolationsByType: countIssuesByType(shared),
-          totalScore: sharedReport.totalScore,
-        },
-        byCase: all.byCase,
-      };
-    });
-    console.log('DDLT-CMP:', JSON.stringify(report, null, 2));
+      // The fixtures every run could lay out, so the totals compare like with like.
+      const common = new Set(
+        fixtures
+          .map((f) => f.id)
+          .filter((id) => runs.every((r) => r.items.some((item) => item.id === id)))
+      );
+      const report = runs.map(({ run, items, unsupported }) => {
+        const shared = items.filter((item) => common.has(item.id));
+        const all = combineValidateLayoutResults(items);
+        const sharedReport = combineValidateLayoutResults(shared);
+        return {
+          run,
+          fixtures: items.length,
+          unsupported,
+          invalidCount: all.invalidCount,
+          hardViolationsByType: countIssuesByType(items),
+          totalScore: all.totalScore,
+          avgScore: all.avgScore,
+          common: {
+            fixtures: common.size,
+            invalidCount: sharedReport.invalidCount,
+            hardViolationsByType: countIssuesByType(shared),
+            totalScore: sharedReport.totalScore,
+          },
+          byCase: all.byCase,
+        };
+      });
+      console.log('DDLT-CMP:', JSON.stringify(report, null, 2));
 
-    for (const { run, items, unsupported } of runs) {
-      expect(items.length + unsupported.length, run).toBe(fixtures.length);
+      for (const { run, items, unsupported } of runs) {
+        expect(items.length + unsupported.length, run).toBe(fixtures.length);
+      }
+
+      const byRun = new Map(report.map((r) => [r.run, r]));
+      const stepped = runs.find((r) => r.run === 'layered-stepped')!;
+      expect(stepped.unsupported).toEqual([]);
+      expect(
+        stepped.items
+          .filter((item) => !item.result.ok)
+          .map((item) => `${item.id}: ${item.result.issues.map((i) => i.message).join('; ')}`)
+      ).toEqual([]);
+
+      const curved = byRun.get('layered')!;
+      const dagre = byRun.get('dagre')!;
+      expect(curved.unsupported).toEqual([]);
+      expect(curved.totalScore).toBeGreaterThanOrEqual(dagre.totalScore);
+      expect(curved.common.totalScore).toBeGreaterThanOrEqual(dagre.common.totalScore);
     }
-  });
+  );
 });
