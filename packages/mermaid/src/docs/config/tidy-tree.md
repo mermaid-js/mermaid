@@ -1,3 +1,7 @@
+---
+description: 'Use the tidy-tree layout in Mermaid to arrange hierarchical diagrams such as mindmaps as compact, non-overlapping trees.'
+---
+
 # Tidy-tree Layout
 
 The **tidy-tree** layout arranges nodes in a hierarchical, tree-like structure. It is especially useful for diagrams where parent-child relationships are important, such as mindmaps.

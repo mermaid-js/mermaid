@@ -6,10 +6,10 @@
 
 # Agentflow (v12.0.0+)
 
-> An agentflow diagram describes an agentic workflow: the agents that do the work, the flows they run, the tasks and tools inside those flows, and how control and data move between them.
->
 > **Warning**
-> Agentflow is in **beta**. The diagram type is selected with the `agentflow-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+> Agentflow is in beta. Diagrams start with the `agentflow-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
+> An agentflow diagram describes an agentic workflow: the agents that do the work, the flows they run, the tasks and tools inside those flows, and how control and data move between them.
 
 ## Introduction
 
@@ -22,7 +22,7 @@ A flowchart tells you what happens next. An agentflow tells you _who_ is doing i
 
 ## Basic example
 
-```mermaid-example
+```mermaid
 agentflow-beta TB
   flow reviewer["Review Agent"]
     changes["Gather changes"]@{ shape: input }
@@ -34,7 +34,7 @@ agentflow-beta TB
   end
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta TB
   flow reviewer["Review Agent"]
     changes["Gather changes"]@{ shape: input }
@@ -56,7 +56,7 @@ The same diagram, drawn both ways:
 
 ### With the defaults
 
-```mermaid-example
+```mermaid
 agentflow-beta TB
   brief["Release brief"]@{ shape: input }
   flow writer["Drafting Agent"]
@@ -77,7 +77,7 @@ agentflow-beta TB
   ok --> publish
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta TB
   brief["Release brief"]@{ shape: input }
   flow writer["Drafting Agent"]
@@ -103,7 +103,7 @@ agentflow-beta TB
 Both are only defaults, so anything you set yourself wins. Naming the previous theme and look
 in a diagram's front matter draws it the way Mermaid did before:
 
-```mermaid-example
+```mermaid
 ---
 config:
   theme: default
@@ -130,7 +130,7 @@ agentflow-beta TB
   ok --> publish
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   theme: default
@@ -190,7 +190,7 @@ The shape is chosen with the `shape` key in an `@{ … }` block. Agentflow provi
 
 Any canonical Mermaid shape name also works, so the aliases are a convenience rather than a restriction.
 
-```mermaid-example
+```mermaid
 agentflow-beta LR
   brief["Brief"]@{ shape: input }
   draft["Draft copy"]@{ shape: task }
@@ -202,7 +202,7 @@ agentflow-beta LR
   draft -.- guide
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta LR
   brief["Brief"]@{ shape: input }
   draft["Draft copy"]@{ shape: task }
@@ -226,7 +226,7 @@ Agentflow uses three edge operators, each with a distinct meaning:
 
 Labels are written in the middle of the arrow, as in a flowchart:
 
-```mermaid-example
+```mermaid
 agentflow-beta TB
   check["Tests pass?"]@{ shape: decision }
   ship["Ship it"]@{ shape: action }
@@ -239,7 +239,7 @@ agentflow-beta TB
   fix -.- logs
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta TB
   check["Tests pass?"]@{ shape: decision }
   ship["Ship it"]@{ shape: action }
@@ -258,7 +258,7 @@ Chained edges work too: `a --> b --> c`.
 
 A `flow … end` block groups nodes into a container. Containers nest, and a node referenced inside a container belongs to it.
 
-```mermaid-example
+```mermaid
 agentflow-beta TB
   flow team["Content Team"]
     flow researcher["Researcher"]
@@ -273,7 +273,7 @@ agentflow-beta TB
   end
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta TB
   flow team["Content Team"]
     flow researcher["Researcher"]
@@ -292,7 +292,7 @@ agentflow-beta TB
 
 Sometimes a node is shared by several flows and should not be pulled into whichever one happens to mention it first. Declare it inside a `global … end` block and it stays at the top level no matter where it is referenced:
 
-```mermaid-example
+```mermaid
 agentflow-beta TB
   global
     corpus["Shared corpus"]@{ shape: refdoc }
@@ -309,7 +309,7 @@ agentflow-beta TB
   end
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta TB
   global
     corpus["Shared corpus"]@{ shape: refdoc }
@@ -332,7 +332,7 @@ agentflow-beta TB
 
 `@{ view: collapsed }` folds a container down to a single summary node while keeping its edges. Edges that crossed the boundary terminate at the collapsed node instead of disappearing.
 
-```mermaid-example
+```mermaid
 agentflow-beta TB
   flow intake["Intake"]
     receive["Receive request"]@{ shape: input }
@@ -353,7 +353,7 @@ agentflow-beta TB
   enrich --> publish
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta TB
   flow intake["Intake"]
     receive["Receive request"]@{ shape: input }
@@ -420,7 +420,7 @@ The one exception is prototype-shaped keys: `__proto__`, `constructor`, and `pro
 
 A connector describes an external system a tool talks to. Declare it with the `connector` keyword and configure it with metadata; tools then point at one of its capabilities with `connectorRef`.
 
-```mermaid-example
+```mermaid
 agentflow-beta LR
   connector github["GitHub API"]
   github@{ protocol: "http", endpoint: "https://api.github.com" }
@@ -431,7 +431,7 @@ agentflow-beta LR
   title --> create
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta LR
   connector github["GitHub API"]
   github@{ protocol: "http", endpoint: "https://api.github.com" }
@@ -446,7 +446,7 @@ A `connectorRef` value may be a bare node id, a dotted `connector.capability` fo
 
 ## A worked example
 
-```mermaid-example
+```mermaid
 agentflow-beta TB
   connector llm["LLM API"]
   llm@{ protocol: "http", endpoint: "https://api.example.com/chat" }
@@ -471,7 +471,7 @@ agentflow-beta TB
   end
 ```
 
-```mermaid
+```mermaid-example
 agentflow-beta TB
   connector llm["LLM API"]
   llm@{ protocol: "http", endpoint: "https://api.example.com/chat" }
@@ -508,7 +508,7 @@ Agentflow has its own config namespace, so it can be tuned without moving flowch
 | `rankSpacing`    | Spacing between nodes on different levels        | `50`    |
 | `useMaxWidth`    | Scale the diagram to the available width         | `true`  |
 
-```mermaid-example
+```mermaid
 ---
 config:
   agentflow:
@@ -519,7 +519,7 @@ agentflow-beta TB
   a["A"] --> b["B"]
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   agentflow:
@@ -540,7 +540,7 @@ agentflow diagram uses the standard node, edge, and cluster theme variables.
 
 Agentflow renders through the unified renderer, so it works with any registered layout engine. ELK is the default, and an individual container can also select its own ELK algorithm:
 
-```mermaid-example
+```mermaid
 ---
 config:
   layout: elk
@@ -553,7 +553,7 @@ agentflow-beta TB
   tools@{ algorithm: "elk.rectpacking" }
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: elk

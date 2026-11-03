@@ -3,6 +3,7 @@ import type { InternalHelpers } from '../internals.js';
 import { internalHelpers } from '../internals.js';
 import { log } from '../logger.js';
 import { insertLookDefs } from './insertLookDefs.js';
+import { placeQueuedStepBadges } from './rendering-elements/edgeStepAnimation.js';
 import type { LayoutData } from './types.js';
 import { ELK_ALGORITHMS } from './layout-algorithms/elk/algorithms.js';
 
@@ -116,9 +117,11 @@ export const render = async (data4Layout: LayoutData, svg: SVG) => {
 
   insertLookDefs(svg, data4Layout.config);
 
-  return layoutRenderer.render(data4Layout, svg, internalHelpers, {
+  const result = await layoutRenderer.render(data4Layout, svg, internalHelpers, {
     algorithm: layoutDefinition.algorithm,
   });
+  placeQueuedStepBadges(svg.node());
+  return result;
 };
 
 /** Always registered, so the fallback chain can always end. */
