@@ -5,6 +5,7 @@ import type { SVG } from '../../../diagram-api/types.js';
 import { log } from '../../../logger.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import type * as Engine from './index.js';
+import type * as LayoutDataModule from './layoutData.js';
 
 // Makes the engine fail the way a bug, or input it cannot lay out, would.
 const engineFailure = vi.hoisted(() => ({ on: false }));
@@ -17,6 +18,21 @@ vi.mock('./index.js', async (importOriginal) => {
         throw new Error('forced layered failure');
       }
       return actual.layered(...args);
+    },
+  };
+});
+
+// Lets a test make the attempt change the diagram data in place before it fails.
+const beforeCore = vi.hoisted(() => ({
+  hook: undefined as ((data: LayoutData) => void) | undefined,
+}));
+vi.mock('./layoutData.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof LayoutDataModule>();
+  return {
+    ...actual,
+    runLayeredLayoutCore: (data: LayoutData) => {
+      beforeCore.hook?.(data);
+      return actual.runLayeredLayoutCore(data);
     },
   };
 });
@@ -69,6 +85,7 @@ describe('layered falls back to dagre', () => {
   });
   afterEach(() => {
     engineFailure.on = false;
+    beforeCore.hook = undefined;
     // Back to what the unit-test setup sets for every spec.
     setLayeredThrowsOnFailure(true);
   });
@@ -120,6 +137,48 @@ describe('layered falls back to dagre', () => {
     expect(seen?.layoutAlgorithm).toBe('dagre');
     expect(seen?.nodes).toEqual(layoutData().nodes);
     expect(seen?.edges).toEqual(layoutData().edges);
+  });
+
+  it('undoes changes the attempt made inside nested fields', async () => {
+    setLayeredThrowsOnFailure(false);
+    vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    const withNested = (): LayoutData => {
+      const d = layoutData();
+      d.nodes[0].labelBBox = { width: 10, height: 5 };
+      d.nodes[0].cssStyles = ['fill:red'];
+      d.edges[0].points = [
+        { x: 0, y: 0 },
+        { x: 0, y: 40 },
+      ];
+      return d;
+    };
+    const data = withNested();
+    beforeCore.hook = (d) => {
+      d.nodes[0].labelBBox!.width = 99;
+      d.nodes[0].cssStyles!.push('stroke:blue');
+      d.edges[0].points![0].x = 7;
+      d.edges[0].points!.push({ x: 9, y: 9 });
+    };
+    let seen: { nodes: Node[]; edges: Edge[] } | undefined;
+    dagreRender.mockImplementation((d: LayoutData) => {
+      seen = structuredClone({ nodes: d.nodes, edges: d.edges });
+      return Promise.resolve();
+    });
+
+    await render(data, svgRoot());
+
+    expect(seen?.nodes).toEqual(withNested().nodes);
+    expect(seen?.edges).toEqual(withNested().edges);
+  });
+
+  it("passes the caller's render options on to dagre", async () => {
+    setLayeredThrowsOnFailure(false);
+    vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    const options = { algorithm: 'layered' };
+
+    await render(layoutData(), svgRoot(), undefined, options);
+
+    expect(dagreRender.mock.calls[0][3]).toBe(options);
   });
 
   it('lets the error through when the test-only flag is set', async () => {

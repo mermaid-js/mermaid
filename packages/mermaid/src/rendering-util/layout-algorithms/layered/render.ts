@@ -26,15 +26,37 @@ interface Snapshot {
   copies: Map<object, Record<string, unknown>>;
 }
 
-// The layered attempt writes sizes, positions and routes onto the nodes and edges in place.
+// Copies arrays and plain objects all the way down; anything else (functions, DOM nodes, class
+// instances) is kept by reference.
+function copyPlain<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map(copyPlain) as T;
+  }
+  if (value !== null && typeof value === 'object') {
+    const proto = Object.getPrototypeOf(value) as unknown;
+    if (proto === Object.prototype || proto === null) {
+      const out: Record<string, unknown> = {};
+      for (const [key, v] of Object.entries(value)) {
+        out[key] = copyPlain(v);
+      }
+      return out as T;
+    }
+  }
+  return value;
+}
+
+// The layered attempt writes sizes, positions and routes onto the nodes and edges, and may change
+// nested fields (`points`, `labelBBox`, style arrays) in place, so each item is copied deeply.
 function snapshot(data: LayoutData): Snapshot {
   const copies = new Map<object, Record<string, unknown>>();
   for (const item of [...data.nodes, ...data.edges]) {
-    copies.set(item, { ...item });
+    copies.set(item, copyPlain({ ...item }));
   }
   return { nodes: [...data.nodes], edges: [...data.edges], copies };
 }
 
+// Puts every item back as it was, keeping each item's identity. The saved copy is copied again so
+// the snapshot never shares nested data with what dagre then changes.
 function restore(data: LayoutData, { nodes, edges, copies }: Snapshot): void {
   for (const [item, copy] of copies) {
     const target = item as Record<string, unknown>;
@@ -43,7 +65,7 @@ function restore(data: LayoutData, { nodes, edges, copies }: Snapshot): void {
         delete target[key];
       }
     }
-    Object.assign(target, copy);
+    Object.assign(target, copyPlain(copy));
   }
   data.nodes = nodes;
   data.edges = edges;
@@ -70,6 +92,6 @@ export async function render(
     svg.select('g').selectAll('*').remove();
     data4Layout.layoutAlgorithm = 'dagre';
     const dagre = await import('../dagre/index.js');
-    await dagre.render(data4Layout, svg, helpers, {});
+    await dagre.render(data4Layout, svg, helpers, options);
   }
 }
