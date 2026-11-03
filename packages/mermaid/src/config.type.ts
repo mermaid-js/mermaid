@@ -254,6 +254,21 @@ export interface MermaidConfig {
      */
     orientFeedbackEdges?: boolean;
   };
+  /**
+   * Options for the `layered` layout (beta), used with `layout: layered`.
+   *
+   */
+  layered?: {
+    /**
+     * How the `layered` layout routes edges between nodes.
+     *
+     * - `curved`: each edge runs as smooth curves between ranks.
+     * - `stepped`: edges run on tracks between ranks and turn at right angles.
+     * - `straight`: each edge runs as straight lines from point to point.
+     *
+     */
+    edgeRouting?: 'curved' | 'stepped' | 'straight';
+  };
   darkMode?: boolean;
   /**
    * Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.

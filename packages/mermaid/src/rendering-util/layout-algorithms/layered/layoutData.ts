@@ -5,7 +5,15 @@
 // `intersect`, along the flow only, so each end keeps the side and port the engine chose.
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { layered, layoutSettings } from './index.js';
-import type { Dir, LayoutEdge, LayoutGraph, LayoutModel, LayoutNode, RoutePoint } from './types.js';
+import type {
+  Dir,
+  EdgeRouting,
+  LayoutEdge,
+  LayoutGraph,
+  LayoutModel,
+  LayoutNode,
+  RoutePoint,
+} from './types.js';
 
 // Room around an edge label, as v13 gives it (`LABEL_W`, `LABEL_H`).
 const LABEL_W = 12;
@@ -61,6 +69,32 @@ const SPANS = new Map<string, Span>([
 const size = (value: unknown): number =>
   typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : 0;
 
+const ROUTINGS = new Set<string>(['curved', 'stepped', 'straight']);
+
+/** The `layered.edgeRouting` the diagram asks for; anything unknown routes curved. */
+function routing(data: LayoutData): EdgeRouting {
+  const chosen = data.config?.layered?.edgeRouting;
+  return chosen && ROUTINGS.has(chosen) ? chosen : 'curved';
+}
+
+// Curves that already draw a stepped route as steps.
+const STEPS = new Set(['step', 'stepBefore', 'stepAfter']);
+
+/**
+ * The curve an edge is drawn with, so each routing reads as its name: a stepped route as steps
+ * (unless the edge already has a step curve) and a straight route as lines. Curved routing keeps
+ * the edge's own curve.
+ */
+function drawnCurve(mode: EdgeRouting, curve: Edge['curve']): Edge['curve'] {
+  if (mode === 'straight') {
+    return 'linear';
+  }
+  if (mode === 'stepped') {
+    return curve && STEPS.has(curve) ? curve : 'step';
+  }
+  return curve;
+}
+
 function hasLabel(edge: Edge): boolean {
   return typeof edge.label === 'string' ? edge.label.trim().length > 0 : Boolean(edge.label);
 }
@@ -68,9 +102,12 @@ function hasLabel(edge: Edge): boolean {
 /** The engine's input for a measured `LayoutData`. Plain flowcharts only: groups come later. */
 export function toLayoutGraph(data: LayoutData): LayoutGraph {
   const dir = direction(data);
+  // Spacing as dagre reads it: the renderer's own first, then the `flowchart` section (where
+  // the ER renderer puts its spacing), then v12's defaults.
+  const flowchart = data.config?.flowchart;
   const { spacing } = layoutSettings({
-    nodeSpacing: size(data.nodeSpacing) || undefined,
-    rankSpacing: size(data.rankSpacing) || undefined,
+    nodeSpacing: size(data.nodeSpacing) || size(flowchart?.nodeSpacing) || undefined,
+    rankSpacing: size(data.rankSpacing) || size(flowchart?.rankSpacing) || undefined,
   });
   const nodes: LayoutNode[] = [];
   const ids = new Set<string>();
@@ -105,7 +142,8 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     }
     edges.push(edge);
   }
-  // mermaid adds the diagram padding itself when it sets up the viewport.
+  // v13 hands the engine `diagramPadding` (v12 default 8); mermaid's renderers add that same
+  // padding themselves when they set up the viewport, so the engine adds none.
   return {
     direction: dir,
     nodes,
@@ -113,12 +151,14 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     groups: [],
     spacing,
     diagramPadding: 0,
+    routing: routing(data),
     headRoom: HEAD_ROOM,
   };
 }
 
 /** Writes the engine's positions, routes and label centres back onto `LayoutData`. */
 export function applyLayoutModel(data: LayoutData, model: LayoutModel): void {
+  const mode = routing(data);
   for (const n of data.nodes) {
     const placed = model.nodes.get(n.id);
     if (placed) {
@@ -132,6 +172,7 @@ export function applyLayoutModel(data: LayoutData, model: LayoutModel): void {
       continue;
     }
     e.points = routed.points.map((p) => ({ x: p.x, y: p.y, axis: p.axis }));
+    e.curve = drawnCurve(mode, e.curve);
     if (routed.label) {
       e.x = routed.label.x;
       e.y = routed.label.y;

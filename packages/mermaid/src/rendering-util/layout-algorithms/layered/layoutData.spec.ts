@@ -66,6 +66,67 @@ describe('layered adapter: LayoutData → LayoutGraph', () => {
   });
 });
 
+describe('layered adapter: config reaching the engine', () => {
+  const withConfig = (config: Partial<MermaidConfig>, data = chain('TB')): LayoutData => {
+    data.config = config as MermaidConfig;
+    return data;
+  };
+
+  it('routes edges curved unless layered.edgeRouting says otherwise', () => {
+    expect(toLayoutGraph(chain('TB')).routing).toBe('curved');
+    expect(toLayoutGraph(withConfig({ layered: { edgeRouting: 'stepped' } })).routing).toBe(
+      'stepped'
+    );
+    expect(toLayoutGraph(withConfig({ layered: { edgeRouting: 'straight' } })).routing).toBe(
+      'straight'
+    );
+    expect(
+      toLayoutGraph(withConfig({ layered: { edgeRouting: 'wiggly' as 'curved' } })).routing
+    ).toBe('curved');
+  });
+
+  it('takes spacing from the diagram config when the renderer sets none, with v12 defaults', () => {
+    // As dagre does: the renderer's spacing first, then `flowchart` (where ER puts its own).
+    const bare = (): LayoutData => {
+      const data = chain('TB');
+      delete data.nodeSpacing;
+      delete data.rankSpacing;
+      return data;
+    };
+    expect(toLayoutGraph(bare()).spacing).toEqual({ node: 50, rank: 50, edge: 20 });
+    expect(
+      toLayoutGraph(withConfig({ flowchart: { nodeSpacing: 140, rankSpacing: 80 } }, bare()))
+        .spacing
+    ).toEqual({ node: 140, rank: 80, edge: 20 });
+    const set = withConfig({ flowchart: { nodeSpacing: 140, rankSpacing: 80 } });
+    set.nodeSpacing = 30;
+    set.rankSpacing = 70;
+    expect(toLayoutGraph(set).spacing).toEqual({ node: 30, rank: 70, edge: 20 });
+  });
+
+  it('leaves the diagram padding to the viewport, so it is not added twice', () => {
+    const graph = toLayoutGraph(withConfig({ flowchart: { diagramPadding: 30 } }));
+    expect(graph.diagramPadding).toBe(0);
+  });
+
+  it('draws stepped routes as steps and straight routes as lines', () => {
+    const drawn = (edgeRouting?: 'curved' | 'stepped' | 'straight', curve?: string) => {
+      const data = withConfig(edgeRouting ? { layered: { edgeRouting } } : {});
+      if (curve) {
+        data.edges.forEach((e) => (e.curve = curve));
+      }
+      runLayeredLayoutCore(data);
+      return data.edges.map((e) => e.curve);
+    };
+    expect(drawn()).toEqual([undefined, undefined]);
+    expect(drawn('curved', 'linear')).toEqual(['linear', 'linear']);
+    expect(drawn('stepped')).toEqual(['step', 'step']);
+    // A step the user chose is kept.
+    expect(drawn('stepped', 'stepAfter')).toEqual(['stepAfter', 'stepAfter']);
+    expect(drawn('straight', 'basis')).toEqual(['linear', 'linear']);
+  });
+});
+
 describe('layered adapter: LayoutGraph → LayoutData round trip', () => {
   // Along the flow, where each node of the chain A → B → C lies.
   const along: Record<string, (n: Node) => number> = {
