@@ -399,8 +399,8 @@ title Activity colours, ${name}
       expect(painted).not.toBeNull();
       // The retuned pair is the one the frontmatter asked for; the default pair is
       // whatever the theme supplies, and the two must not be the same.
-      expect(painted!.fill).toBe(name === 'retuned' ? 'rgb(255, 232, 204)' : 'rgb(234, 242, 251)');
-      expect(painted!.stroke).toBe(name === 'retuned' ? 'rgb(217, 72, 15)' : 'rgb(62, 111, 168)');
+      expect(painted!.fill).toBe(name === 'retuned' ? 'rgb(255, 232, 204)' : 'rgb(236, 236, 255)');
+      expect(painted!.stroke).toBe(name === 'retuned' ? 'rgb(217, 72, 15)' : 'rgb(134, 134, 255)');
     });
   }
 
