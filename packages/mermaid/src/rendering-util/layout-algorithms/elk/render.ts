@@ -192,6 +192,12 @@ const PORTS_SURROUNDING = `[top=${PORTS_SURROUNDING_MARGIN},left=${PORTS_SURROUN
  */
 const ROOT_SPACING_BASE_VALUE = 40;
 /**
+ * The straight run ELK derives before a node entering a layer, as a share of `spacing.baseValue`
+ * (measured on elkjs 0.12.0: 10 at a base value of 20, 20 at 40, 25 at 50). Needed to tell when
+ * the arrowhead floor overrides what ELK would derive.
+ */
+const ELK_EDGE_NODE_SHARE = 0.5;
+/**
  * The straight run an edge keeps before a node however tight the rank spacing is. An arrowhead
  * is 8 px wide, and a run shorter than the head reads as a cropped or bent arrow.
  */
@@ -1037,7 +1043,9 @@ function createRootElkGraph(
       // the rank spacing; the gap within a layer is then stated on its own.
       'spacing.baseValue': ROOT_SPACING_BASE_VALUE * spacing.rank,
       'spacing.nodeNode': ROOT_SPACING_BASE_VALUE * spacing.node,
-      ...(spacing.rank < 1
+      // Stated only where the floor beats what ELK derives, so the run stays continuous in the
+      // rank spacing.
+      ...(ELK_EDGE_NODE_SHARE * ROOT_SPACING_BASE_VALUE * spacing.rank < ARROW_APPROACH_FLOOR
         ? { 'elk.layered.spacing.edgeNodeBetweenLayers': ARROW_APPROACH_FLOOR }
         : {}),
     });

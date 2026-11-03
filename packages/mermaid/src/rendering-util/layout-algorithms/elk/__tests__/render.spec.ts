@@ -336,6 +336,46 @@ describe('ELK spacing from nodeSpacing and rankSpacing', () => {
     expect(silent.group['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(30);
   });
 
+  describe('the straight run before a node at the top level', () => {
+    // ELK derives the gap between a layer and an edge entering it as half of `spacing.baseValue`
+    // (measured on elkjs 0.12.0: 10 at a base value of 20, 20 at 40, 25 at 50).
+    const ELK_EDGE_NODE_SHARE = 0.5;
+    const FLOOR = 12;
+    const runBefore = (rankSpacing: number) => {
+      const { root } = build({ nodeSpacing: 50, rankSpacing });
+      return (
+        (root['elk.layered.spacing.edgeNodeBetweenLayers'] as number | undefined) ??
+        ELK_EDGE_NODE_SHARE * (root['spacing.baseValue'] as number)
+      );
+    };
+
+    it.each([
+      { asked: 49, run: 19.6 },
+      { asked: 50, run: 20 },
+      { asked: 100, run: 40 },
+      { asked: 35, run: 14 },
+      { asked: 30, run: 12 },
+      { asked: 25, run: 12 },
+      { asked: 10, run: 12 },
+    ])('is $run px at a rank spacing of $asked', ({ asked, run }) => {
+      expect(runBefore(asked)).toBeCloseTo(run, 10);
+    });
+
+    it('does not jump between a rank spacing of 49 and 50', () => {
+      expect(runBefore(50) - runBefore(49)).toBeLessThan(1);
+    });
+
+    it('states the option only where ELK would derive less than the floor', () => {
+      expect(build({ nodeSpacing: 50, rankSpacing: 49 }).root).not.toHaveProperty(
+        'elk.layered.spacing.edgeNodeBetweenLayers'
+      );
+      expect(build({ nodeSpacing: 50, rankSpacing: 25 }).root).toHaveProperty(
+        'elk.layered.spacing.edgeNodeBetweenLayers',
+        FLOOR
+      );
+    });
+  });
+
   it('keeps the gap within a layer and the gap between layers apart', () => {
     const options = build({ nodeSpacing: 100, rankSpacing: 25 });
     expect(options.root['spacing.nodeNode']).toBe(80);
