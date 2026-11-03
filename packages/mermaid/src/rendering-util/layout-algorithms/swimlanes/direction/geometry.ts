@@ -178,6 +178,38 @@ export function countOrthogonalBends(points: Point[], epsilon = EPS): number {
   return bends;
 }
 
+function bendPoints(points: Point[]): Point[] {
+  const segments = orthogonalSegmentsForPoints(dedupeConsecutivePoints(points));
+  return segments.slice(1).flatMap((segment, i) => {
+    return segments[i].horizontal === segment.horizontal ? [] : [segment.a];
+  });
+}
+
+function distanceToSegment(p: Point, segment: OrthogonalSegment): number {
+  const dx = Math.max(
+    Math.min(segment.a.x, segment.b.x) - p.x,
+    0,
+    p.x - Math.max(segment.a.x, segment.b.x)
+  );
+  const dy = Math.max(
+    Math.min(segment.a.y, segment.b.y) - p.y,
+    0,
+    p.y - Math.max(segment.a.y, segment.b.y)
+  );
+  return Math.hypot(dx, dy);
+}
+
+/** True when a bend of one route lies within `tolerance` of the other route. */
+export function routesTouchAtBend(first: Point[], second: Point[], tolerance: number): boolean {
+  const touches = (bendsOf: Point[], path: Point[]): boolean => {
+    const segments = orthogonalSegmentsForPoints(dedupeConsecutivePoints(path));
+    return bendPoints(bendsOf).some((bend) =>
+      segments.some((segment) => distanceToSegment(bend, segment) < tolerance)
+    );
+  };
+  return touches(first, second) || touches(second, first);
+}
+
 export function dedupeConsecutivePoints(points: Point[], epsilon = EPS): Point[] {
   const result: Point[] = [];
   for (const point of points) {
