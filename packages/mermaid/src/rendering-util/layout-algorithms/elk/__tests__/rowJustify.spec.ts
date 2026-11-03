@@ -353,3 +353,92 @@ describe('justifyFrames', () => {
     expect(justifyFrames({ ...twoRows(), direction: 'UP' }).size).toBe(0);
   });
 });
+
+describe('justifyFrames edge cases', () => {
+  it('spreads nothing when the frames lie side by side rather than stacked', () => {
+    const input = twoRows();
+    input.children[1].y = 30;
+    expect(justifyFrames(input).size).toBe(0);
+    expect(input.children[0].children?.map(({ x }) => x)).toEqual([20, 90, 160]);
+  });
+
+  it('sizes a band gap from a label of a link with only one end in the band', () => {
+    const input = twoRows();
+    input.edges = [{ id: 'in', sources: ['a'], targets: ['l1'], labels: [{ width: 400 }] }];
+    justifyFrames(input);
+    const [left, right] = input.children[1].children ?? [];
+    expect(right.x - (left.x + left.width)).toBe(400 + 2 * LABEL_GAP_PADDING);
+  });
+
+  it('sizes a row gap only from a labelled link between neighbouring nodes of that row', () => {
+    for (const edge of [
+      { id: 'ac', sources: ['a'], targets: ['c'], container: 'row', labels: [{ width: 200 }] },
+      { id: 'bc', sources: ['b'], targets: ['c'], container: 'other', labels: [{ width: 200 }] },
+      { id: 'bc', sources: ['b'], targets: ['c'], container: 'row', labels: [{ width: 0 }] },
+      { id: 'bx', sources: ['b'], targets: ['x'], container: 'row', labels: [{ width: 200 }] },
+    ]) {
+      const input = { ...labelledRow(0), edges: [edge] as ElkEdgeLike[] };
+      justifyFrames(input);
+      expect(input.children[0].width).toBe(300);
+      expect(input.children[0].children?.map(({ x }) => x)).toEqual([20, 125, 230]);
+    }
+  });
+
+  it('moves the links of one row only', () => {
+    const input = labelledRow(0);
+    const bent: ElkEdgeLike = {
+      id: 'elsewhere',
+      sources: ['a'],
+      targets: ['b'],
+      container: 'other',
+      sections: [
+        {
+          startPoint: { x: 0, y: 0 },
+          bendPoints: [{ x: 5, y: 5 }],
+          endPoint: { x: 10, y: 0 },
+        },
+      ],
+    };
+    input.edges = [bent];
+    justifyFrames(input);
+    expect(input.children[0].children?.map(({ x }) => x)).toEqual([20, 125, 230]);
+    expect(bent.sections?.[0].endPoint).toEqual({ x: 10, y: 0 });
+  });
+
+  it('puts a row over the band above it too, whatever order the frames come in', () => {
+    const input = rowOverBand(3);
+    const [row, band] = input.children;
+    row.y = 300;
+    input.children = [band, row];
+    justifyFrames(input);
+    expect(centresOf(row)).toEqual(centresOf(band));
+  });
+
+  it('spreads a row evenly when its links to the columns cross or one node feeds two', () => {
+    for (const links of [
+      [
+        [0, 2],
+        [1, 0],
+      ],
+      [
+        [0, 0],
+        [0, 1],
+        [1, 2],
+      ],
+    ] as [number, number][][]) {
+      const input = rowOverBand(2, links);
+      justifyFrames(input);
+      expect(input.children[0].children?.map(({ x }) => x)).toEqual([20, 530]);
+    }
+  });
+
+  it('spreads a row evenly when its nodes are too wide to sit over the columns', () => {
+    const input = rowOverBand(3);
+    (input.children[0].children ?? []).forEach((node, index) => {
+      node.width = 150;
+      node.x = 20 + 180 * index;
+    });
+    justifyFrames(input);
+    expect(input.children[0].children?.map(({ x }) => x)).toEqual([20, 225, 430]);
+  });
+});
