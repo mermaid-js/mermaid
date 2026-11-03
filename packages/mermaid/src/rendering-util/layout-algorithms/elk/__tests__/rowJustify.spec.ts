@@ -249,7 +249,45 @@ describe('justifyFrames over a band', () => {
   });
 });
 
+/**
+ * Two columns side by side in an LR diagram, each three nodes under a title: ELK leaves more room
+ * above the first node, for the title, than below the last.
+ */
+const titledColumns = () => {
+  const column = (id: string, x: number, prefix: string) =>
+    box(id, x, 0, 100, 267, [
+      box(`${prefix}1`, 24, 51, 50, 48),
+      box(`${prefix}2`, 24, 123, 50, 48),
+      box(`${prefix}3`, 24, 195, 50, 48),
+    ]);
+  const chain = (prefix: string, container: string): ElkEdgeLike[] =>
+    [1, 2].map((index) => ({
+      id: `${prefix}${index}`,
+      sources: [`${prefix}${index}`],
+      targets: [`${prefix}${index + 1}`],
+      container,
+      sections: [{ startPoint: { x: 49, y: 99 }, endPoint: { x: 49, y: 123 } }],
+    }));
+  return {
+    children: [column('left', 0, 'a'), column('right', 200, 'b')],
+    edges: [...chain('a', 'left'), ...chain('b', 'right')],
+    separated: new Map([
+      ['left', 'DOWN' as const],
+      ['right', 'DOWN' as const],
+    ]),
+    groups: [],
+    direction: 'RIGHT' as const,
+    tree: { parentById: {}, childrenById: {} },
+  };
+};
+
 describe('justifyFrames', () => {
+  it('keeps the gaps of a column whose title leaves more room above it than below', () => {
+    const input = titledColumns();
+    justifyFrames(input);
+    expect(input.children[0].children?.map(({ y }) => y)).toEqual([51, 123, 195]);
+  });
+
   it('spreads two nodes with no link between them to the ends of a wide row', () => {
     const input = pairRow(false);
     justifyFrames(input);

@@ -63,18 +63,23 @@ const slotSize = (slot: readonly JustifyBox[], axis: Axis) =>
 
 const sum = (values: readonly number[]) => values.reduce((total, value) => total + value, 0);
 
+/** The room kept inside a frame before its first slot and after its last, or one for both. */
+export type Padding = number | readonly [number, number];
+const padsOf = (pad: Padding): readonly [number, number] =>
+  typeof pad === 'number' ? [pad, pad] : pad;
+
 /**
  * The size a frame needs across the flow to hold its slots inside its padding, with at least
  * `gaps[i]` between slot `i` and the next; a missing gap is 0.
  */
 export function neededSize(
   slots: readonly JustifyBox[][],
-  pad: number,
+  pad: Padding,
   gaps: readonly number[],
   axis: Axis
 ): number {
   const inner = sum(gaps.slice(0, Math.max(slots.length - 1, 0)));
-  return sum(slots.map((slot) => slotSize(slot, axis))) + inner + 2 * pad;
+  return sum(slots.map((slot) => slotSize(slot, axis))) + inner + sum(padsOf(pad));
 }
 
 /**
@@ -97,8 +102,8 @@ export function shareGaps(least: readonly number[], room: number): number[] {
 }
 
 /**
- * How far to move each box across the flow so the slots span a frame of `size` with `pad` at both
- * ends and gaps as equal as their least sizes in `gaps` allow. No gap grows past `maxGap` unless
+ * How far to move each box across the flow so the slots span a frame of `size` inside its
+ * padding, with gaps as equal as their least sizes in `gaps` allow. No gap grows past `maxGap` unless
  * its least size needs it; slots that then fall short of the span are centred in it, as a single
  * slot is.
  *
@@ -107,18 +112,20 @@ export function shareGaps(least: readonly number[], room: number): number[] {
 export function justifySlots(
   slots: readonly JustifyBox[][],
   size: number,
-  pad: number,
+  pad: Padding,
   axis: Axis,
   gaps: readonly number[] = [],
   maxGap = Infinity
 ): Map<string, number> {
+  const [before, after] = padsOf(pad);
   const sizes = slots.map((slot) => slotSize(slot, axis));
   const least = slots.slice(1).map((_, index) => gaps[index] ?? 0);
-  const shared = shareGaps(least, size - 2 * pad - sum(sizes)).map((gap, index) =>
+  const room = size - before - after - sum(sizes);
+  const shared = shareGaps(least, room).map((gap, index) =>
     Math.min(gap, Math.max(maxGap, least[index]))
   );
   const moves = new Map<string, number>();
-  let at = (size - sum(sizes) - sum(shared)) / 2;
+  let at = before + (room - sum(shared)) / 2;
   slots.forEach((slot, index) => {
     const delta = at - slotStart(slot, axis);
     for (const box of slot) {
@@ -255,7 +262,12 @@ interface Row {
   frame: JustifyBox;
   band: boolean;
   slots: JustifyBox[][];
-  pad: number;
+  /**
+   * The room ELK left before the first slot, and after the last: no more than before it, since a
+   * frame wider than its slots has slack there, not padding, while a frame's title can make the
+   * room before the first slot the larger.
+   */
+  pad: readonly [number, number];
   /** The least gap after each slot but the last. */
   gaps: number[];
   /** The widest a gap may grow when the row is spread. */
@@ -273,7 +285,9 @@ function rowOf(frame: JustifyBox, input: JustifyInput, axis: Axis): Row | undefi
     return undefined;
   }
   const slots = slotsOf(children, axis);
-  const pad = Math.min(...children.map((child) => start(child, axis)));
+  const before = Math.min(...children.map((child) => start(child, axis)));
+  const left = (frame[axis.size] ?? 0) - Math.max(...children.map((child) => end(child, axis)));
+  const pad: readonly [number, number] = [before, Math.min(before, left)];
   const gaps = band
     ? slots
         .slice(1)
@@ -404,8 +418,8 @@ function columnMoves(
   const starts = row.slots.map((slot, index) => centres[index] - slotSize(slot, axis) / 2);
   const ends = row.slots.map((slot, index) => starts[index] + slotSize(slot, axis));
   const fits =
-    starts[0] >= row.pad - EPS &&
-    ends[ends.length - 1] <= size - row.pad + EPS &&
+    starts[0] >= row.pad[0] - EPS &&
+    ends[ends.length - 1] <= size - row.pad[1] + EPS &&
     starts.slice(1).every((at, index) => at - ends[index] >= (row.gaps[index] ?? 0) - EPS);
   return fits ? slotMoves(row.slots, starts, axis) : undefined;
 }
