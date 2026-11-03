@@ -446,6 +446,39 @@ note 01 {
     });
   });
 
+  describe('quoted frame inline data', () => {
+    it('should keep an interior quote followed by whitespace inside the value', () => {
+      const result = parse(`eventmodeling
+tf 01 evt Message "Say " hello" later"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames).toHaveLength(1);
+      expect(result.value.frames[0].dataInlineValue).toBe('"Say " hello" later"');
+    });
+
+    it('should accept a quoted frame value with no interior quotes', () => {
+      const result = parse(`eventmodeling
+tf 01 evt Message "hello"
+`);
+      assert(
+        result.lexerErrors.length === 0,
+        `lexer errors ${JSON.stringify(result.lexerErrors, null, 2)}`
+      );
+      assert(
+        result.parserErrors.length === 0,
+        `parser errors ${JSON.stringify(result.parserErrors, null, 2)}`
+      );
+      expect(result.value.frames[0].dataInlineValue).toBe('"hello"');
+    });
+  });
+
   describe('GWT scenario label', () => {
     it('should accept a double-quoted label before given', () => {
       const result = parse(`eventmodeling

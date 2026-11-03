@@ -43,7 +43,7 @@ EmNoteEntity:
     'note' sourceFrame=[EmFrame:EM_FI] EmDataBlock;
 
 EmGwt:
-    'gwt' sourceFrame=[EmFrame:EM_FI] (label=EM_DATA_INLINE)? 'given' givenStatements+=EmGwtStatement+ ('when' whenStatements+=EmGwtStatement+)? 'then' thenStatements+=EmGwtStatement+;
+    'gwt' sourceFrame=[EmFrame:EM_FI] (label=EM_GWT_LABEL | label=EM_DATA_INLINE)? 'given' givenStatements+=EmGwtStatement+ ('when' whenStatements+=EmGwtStatement+)? 'then' thenStatements+=EmGwtStatement+;
 
 EmGwtStatement:
     EmModelEntityType entityIdentifier=[EmModelEntity:EM_EID];
@@ -54,7 +54,10 @@ EM_FI returns string: EM_FID;
 terminal EM_ID: /[_a-zA-Z][\w_]*/;
 terminal EM_FID: /\d{1,3}/;
 
-terminal EM_DATA_INLINE: /\{(.*)\}|"(?:[^"\r\n]*"(?=\s|%%|(?![\s\S]))|.*")|'(?:[^'\r\n]*'(?=\s|%%|(?![\s\S]))|.*')/;
+terminal EM_DATA_INLINE: /\{(.*)\}|"(.*)"|'(.*)'/;
+// Quoted GWT labels stop at the first quote. EM_DATA_INLINE stays greedy for frame data;
+// the token builder yields that longer match when the quote is a GWT label.
+terminal EM_GWT_LABEL: /"[^"\r\n]*"|'[^'\r\n]*'/;
 terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:[\S\s]*?\r?\n)?[\t ]*\}[\t ]*(?:\r?\n|(?![\s\S]))/;
 
 terminal EM_ACC_DESCR: /[\t ]*accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
