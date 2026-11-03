@@ -12,6 +12,7 @@ import utils from '../../utils.js';
 import { configureSvgSize } from '../../setupGraphViewbox.js';
 import type { Diagram } from '../../Diagram.js';
 import { PARTICIPANT_TYPE } from './sequenceDb.js';
+import type { Actor } from './types.js';
 
 let conf = {};
 
@@ -1564,6 +1565,19 @@ async function getMaxMessageWidthPerActor(
           maxMessageWidthPerActor[actor.prevActor] || 0,
           messageWidth
         );
+      } else if (msg.placement === diagObj.db.PLACEMENT.OVER && msg.from !== msg.to) {
+        // A note spanning several actors is as wide as the gaps between them,
+        // so the gaps together have to fit the note text
+        let gaps = getActorsBetween(actors, msg.from, msg.to);
+        if (gaps.length === 0) {
+          gaps = getActorsBetween(actors, msg.to, msg.from);
+        }
+        for (const gapActor of gaps) {
+          maxMessageWidthPerActor[gapActor] = common.getMax(
+            maxMessageWidthPerActor[gapActor] ?? 0,
+            messageWidth / gaps.length
+          );
+        }
       } else if (msg.placement === diagObj.db.PLACEMENT.OVER) {
         if (actor.prevActor) {
           maxMessageWidthPerActor[actor.prevActor] = common.getMax(
@@ -1584,6 +1598,20 @@ async function getMaxMessageWidthPerActor(
 
   log.debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
+}
+
+/**
+ * Returns the actors whose gap to the next actor lies between `left` and `right`,
+ * or an empty list when `right` is not to the right of `left`.
+ */
+function getActorsBetween(actors: Map<string, Actor>, left: string, right: string): string[] {
+  const result: string[] = [];
+  let key: string | undefined = left;
+  while (key && key !== right) {
+    result.push(key);
+    key = actors.get(key)?.nextActor;
+  }
+  return key === right ? result : [];
 }
 
 const getRequiredPopupWidth = function (actor) {
