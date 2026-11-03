@@ -2,10 +2,12 @@
 // Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/core/src/layout/layered/layered.ts`.
 // Changes from Pele: `const enum`s are `as const` objects, and index reads carry `!` for
-// noUncheckedIndexedAccess. `NODE_INPUTS`/`EDGE_INPUTS`/`layoutInputs` are new. The algorithm
+// noUncheckedIndexedAccess. `NODE_INPUTS`/`EDGE_INPUTS`/`layoutInputs` are new. `ease` moved to
+// ./ease.ts (re-exported here) so edge drawing can share it without the engine. The algorithm
 // is unchanged.
 // cspell:ignore kepano lnode lnodes indeg topo cand maxs Köpf
-//
+import { ease } from './ease.js';
+
 // Layered (Sugiyama-style) layout of one flat graph. Ranks run down the y axis; callers
 // rotate the result for other directions.
 //
@@ -1170,13 +1172,8 @@ function freeEnds(g: Graph, EFK: Uint8Array, ETK: Uint8Array): [Int32Array, Int3
   return free;
 }
 
-// How far along the flow the handles of a plain S reach, as a share of the way it travels along
-// it. Half gives an even S. One that runs more than eight times as far across as along turns
-// sooner and crosses in a straighter line, down to a quarter at sixteen times. The layout uses
-// this to tell how near two curves will pass, and the drawing to draw them.
-export function ease(across: number, along: number): number {
-  return Math.max(0.25, Math.min(0.5, (4 * Math.abs(along)) / (Math.abs(across) || 1)));
-}
+// `ease` (the S-curve handle factor) lives in ./ease.ts; see the import above.
+export { ease };
 
 // Brings the labels and bends of each edge into line with an end of the edge, so that it runs
 // straight from that end and turns once, at the other: with the end that has fewer edges beside

@@ -11,7 +11,7 @@
 // axis-tagged points gets this path; it is chosen by the data, not by the layout's name.
 import { markerOffsets } from '../../utils/lineWithOffset.js';
 // The S-curve handle factor is shared with the layered engine, which uses it to space curves.
-import { ease } from '../layout-algorithms/layered/layered.js';
+import { ease } from '../layout-algorithms/layered/ease.js';
 import type { RoutePoint } from '../layout-algorithms/layered/types.js';
 
 export type { RoutePoint };
