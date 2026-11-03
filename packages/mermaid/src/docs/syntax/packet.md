@@ -1,3 +1,7 @@
+---
+description: 'Visualize the bit-level structure of network packets and protocol headers by defining fields over bit ranges.'
+---
+
 # Packet Diagram (v11.0.0+)
 
 ## Introduction
