@@ -39,7 +39,7 @@ const config: RequiredDeep<MermaidConfig> = {
     considerModelOrder: 'NODES_AND_EDGES',
     keepEntryNodeOnTop: false,
     orientFeedbackEdges: true,
-    directedSubgraphs: 'default',
+    directedSubgraphs: 'aligned',
   },
   themeCSS: undefined,
 

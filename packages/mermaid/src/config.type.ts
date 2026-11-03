@@ -257,10 +257,7 @@ export interface MermaidConfig {
      * How subgraphs whose `direction` differs from the diagram's are arranged
      * next to each other.
      *
-     * `default` — each subgraph keeps its own direction, and ELK places the
-     * subgraphs and routes the links between them.
-     *
-     * `aligned` — the subgraphs that sit directly in the diagram are stacked
+     * `aligned` (the default) — the subgraphs that sit directly in the diagram are stacked
      * across the diagram's direction at one common width: full-width rows in
      * a `TB` or `BT` flowchart, full-height columns in an `LR` or `RL` one.
      * A link between two of them leaves the side of its source that faces
@@ -269,8 +266,12 @@ export interface MermaidConfig {
      * first link into it, in source order, is a straight line; the other
      * links take at most two turns.
      *
+     * `ports` — each subgraph keeps its own direction, and ELK places the
+     * subgraphs and routes the links between them through ports on their
+     * frames, without aligning them.
+     *
      */
-    directedSubgraphs?: 'default' | 'aligned';
+    directedSubgraphs?: 'aligned' | 'ports';
   };
   darkMode?: boolean;
   /**
