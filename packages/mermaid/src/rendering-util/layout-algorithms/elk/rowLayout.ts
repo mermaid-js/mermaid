@@ -223,7 +223,7 @@ const fitsAmong = (taken: readonly number[], spacing: number) => (position: numb
   taken.every((other) => Math.abs(other - position) >= spacing - STRAIGHT_EPS);
 
 /** The free spot nearest `wish` within `low` and `high`, at least `spacing` from every taken one. */
-function nearestFree(
+export function nearestFree(
   wish: number,
   taken: readonly number[],
   [low, high]: readonly [number, number],
@@ -835,7 +835,7 @@ function routePlan(
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 
-interface Terminal {
+export interface Terminal {
   route: Route;
   /** The index of the end point: 0 for the start, the last index for the end. */
   index: number;
@@ -848,7 +848,7 @@ interface Terminal {
 }
 
 /** Which side of its node a route's end touches, and the axis that side runs along. */
-function sideOf(end: P, next: P): { side: Side; along: 'x' | 'y' } {
+export function sideOf(end: P, next: P): { side: Side; along: 'x' | 'y' } {
   if (Math.abs(end.x - next.x) < STRAIGHT_EPS) {
     return { side: next.y > end.y ? 'bottom' : 'top', along: 'x' };
   }
@@ -980,7 +980,7 @@ function spreadSide(
  * The room each end of a drawn link takes along its node's side: {@link END_SPACING} either way
  * along the side, so another link's arrowhead keeps clear of it.
  */
-function endMarks(points: readonly P[]): Rect[] {
+export function endMarks(points: readonly P[]): Rect[] {
   const last = points.length - 1;
   if (last < 1) {
     return [];
@@ -1001,7 +1001,7 @@ const positionOf = ({ route, index, along }: Terminal) => route.points[index][al
  * Move the ends on one side of a node that lie closer than {@link END_SPACING} to where a link
  * ELK drew meets the same side, to the nearest place clear of those and of each other.
  */
-function keepOffDrawnEnds(
+export function keepOffDrawnEnds(
   ends: readonly Terminal[],
   drawnEnds: readonly P[],
   titles: readonly Rect[],
@@ -1065,7 +1065,10 @@ function spreadAround(
 }
 
 /** The span across a node's top that a title just above it takes, if any. */
-function titleAbove(node: Rect, titles: readonly Rect[]): readonly [number, number] | undefined {
+export function titleAbove(
+  node: Rect,
+  titles: readonly Rect[]
+): readonly [number, number] | undefined {
   const title = titles.find(
     (box) =>
       bottom(box) <= node.y + STRAIGHT_EPS &&
@@ -1079,7 +1082,12 @@ function titleAbove(node: Rect, titles: readonly Rect[]): readonly [number, numb
  * The stretch of a node's side the ends may use: clear of its corners, and clear of the title of
  * its frame when the rest of the side still holds them all.
  */
-function freeRange(start: number, size: number, count: number, title?: readonly [number, number]) {
+export function freeRange(
+  start: number,
+  size: number,
+  count: number,
+  title?: readonly [number, number]
+) {
   const side: [number, number] = [start + END_SPACING, start + size - END_SPACING];
   if (!title || title[1] <= side[0] || title[0] >= side[1]) {
     return side;
@@ -1529,7 +1537,7 @@ function sectionPoints(edge: ElkEdgeLike, rects: ReadonlyMap<string, Rect>): P[]
 }
 
 /** A route's segments as boxes a line's width thick, so they can be tested like nodes. */
-function thinBoxes(points: readonly P[]): Rect[] {
+export function thinBoxes(points: readonly P[]): Rect[] {
   return points.slice(1).map((point, index) => {
     const from = points[index];
     return {

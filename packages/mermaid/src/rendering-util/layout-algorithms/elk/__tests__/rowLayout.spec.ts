@@ -18,10 +18,18 @@ import {
   spanAlignedFrames,
   toFlow,
   spreadKeepsTurns,
+  freeRange,
+  titleAbove,
+  sideOf,
+  thinBoxes,
+  nearestFree,
+  endMarks,
+  keepOffDrawnEnds,
   markerReach,
   END_MARKERS,
   END_SPACING,
 } from '../rowLayout.js';
+import type { Terminal } from '../rowLayout.js';
 import type { TreeData } from '../find-common-ancestor.js';
 
 const log = {
@@ -968,5 +976,131 @@ describe('meetsSquarely', () => {
         [from, to]
       )
     ).toBe(false);
+  });
+});
+
+describe('the room on a node side', () => {
+  it('keeps the ends clear of the corners', () => {
+    expect(freeRange(0, 100, 2)).toEqual([END_SPACING, 100 - END_SPACING]);
+  });
+
+  it('ignores a title that lies beyond the usable side', () => {
+    expect(freeRange(0, 100, 2, [0, 10])).toEqual([END_SPACING, 100 - END_SPACING]);
+    expect(freeRange(0, 100, 2, [90, 100])).toEqual([END_SPACING, 100 - END_SPACING]);
+  });
+
+  it('takes the wider stretch beside a title, the left one on a tie', () => {
+    expect(freeRange(0, 100, 2, [40, 60])).toEqual([END_SPACING, 40]);
+    expect(freeRange(0, 100, 2, [30, 50])).toEqual([50, 100 - END_SPACING]);
+    expect(freeRange(0, 100, 2, [10, 30])).toEqual([30, 100 - END_SPACING]);
+  });
+
+  it('uses the whole side when the stretch beside the title cannot hold every end', () => {
+    expect(freeRange(0, 100, 3, [40, 60])).toEqual([END_SPACING, 100 - END_SPACING]);
+    expect(freeRange(0, 100, 2, [40, 60])).not.toEqual([END_SPACING, 100 - END_SPACING]);
+  });
+
+  it('finds the title right above a node, and only that one', () => {
+    const node = { x: 0, y: 100, width: 100, height: 40 };
+    const title = (x: number, y: number, width = 20) => ({ x, y, width, height: 10 });
+    expect(titleAbove(node, [title(40, 80)])).toEqual([40, 60]);
+    expect(titleAbove(node, [title(40, 90)])).toEqual([40, 60]);
+    expect(titleAbove(node, [title(-10, 80)])).toEqual([-10, 10]);
+    expect(titleAbove(node, [title(40, 150)])).toBeUndefined();
+    expect(titleAbove(node, [title(100, 80)])).toBeUndefined();
+    expect(titleAbove(node, [title(-20, 80)])).toBeUndefined();
+    expect(titleAbove(node, [title(40, 95)])).toBeUndefined();
+  });
+});
+
+describe('end geometry', () => {
+  it('names the side a route end leaves by and the axis along it', () => {
+    const at = { x: 0, y: 0 };
+    expect(sideOf(at, { x: 0, y: 10 })).toEqual({ side: 'bottom', along: 'x' });
+    expect(sideOf(at, { x: 0, y: -10 })).toEqual({ side: 'top', along: 'x' });
+    expect(sideOf(at, { x: 10, y: 0 })).toEqual({ side: 'right', along: 'y' });
+    expect(sideOf(at, { x: -10, y: 0 })).toEqual({ side: 'left', along: 'y' });
+  });
+
+  it('wraps each segment of a line in a box as wide as a line', () => {
+    expect(
+      thinBoxes([
+        { x: 10, y: 0 },
+        { x: 0, y: 0 },
+        { x: 0, y: 20 },
+      ])
+    ).toEqual([
+      { x: -1, y: -1, width: 12, height: 2 },
+      { x: -1, y: -1, width: 2, height: 22 },
+    ]);
+  });
+
+  it('marks the room each end of a drawn link takes along its side', () => {
+    expect(
+      endMarks([
+        { x: 10, y: 0 },
+        { x: 10, y: 20 },
+        { x: 30, y: 20 },
+      ])
+    ).toEqual([
+      { x: 10 - END_SPACING, y: -1, width: 2 * END_SPACING, height: 2 },
+      { x: 29, y: 20 - END_SPACING, width: 2, height: 2 * END_SPACING },
+    ]);
+    expect(endMarks([{ x: 0, y: 0 }])).toEqual([]);
+  });
+
+  it('finds the free spot nearest the wish, apart from the taken ones', () => {
+    expect(nearestFree(50, [], [0, 100], 15)).toBe(50);
+    expect(nearestFree(50, [50], [0, 100], 15)).toBe(35);
+    expect(nearestFree(52, [50], [0, 100], 15)).toBe(65);
+    expect(nearestFree(120, [], [0, 100], 15)).toBe(100);
+    expect(nearestFree(5, [10], [0, 100], 15)).toBe(25);
+    expect(nearestFree(50, [40, 60], [40, 60], 15)).toBe(50);
+  });
+});
+
+describe('ends beside a drawn link', () => {
+  const node = { x: 0, y: 0, width: 100, height: 40 };
+  const above = { x: 0, y: -100, width: 100, height: 40 };
+  const terminal = (x: number): Terminal => ({
+    route: {
+      points: [
+        { x, y: 0 },
+        { x, y: -60 },
+      ],
+      channels: [undefined],
+    },
+    index: 0,
+    node,
+    key: 'n-top',
+    along: 'x',
+    wish: x,
+    ends: [node, above],
+  });
+
+  it('moves an end off a drawn link that meets the same side', () => {
+    const end = terminal(50);
+    keepOffDrawnEnds([end], [{ x: 45, y: 0 }], [], []);
+    expect(end.route.points[0]).toEqual({ x: 60, y: 0 });
+  });
+
+  it('leaves an end alone when the drawn link meets another side or lies far enough', () => {
+    for (const drawn of [
+      { x: 45, y: 40 },
+      { x: 150, y: 0 },
+      { x: 50 - END_SPACING, y: 0 },
+    ]) {
+      const end = terminal(50);
+      keepOffDrawnEnds([end], [drawn], [], []);
+      expect(end.route.points[0]).toEqual({ x: 50, y: 0 });
+    }
+  });
+
+  it('keeps a moved end clear of the other ends on the side too', () => {
+    const [moved, other] = [terminal(50), terminal(72)];
+    keepOffDrawnEnds([moved, other], [{ x: 50, y: 0 }], [], []);
+    const x = moved.route.points[0].x;
+    expect(Math.abs(x - 50)).toBeGreaterThanOrEqual(END_SPACING);
+    expect(Math.abs(x - 72)).toBeGreaterThanOrEqual(END_SPACING);
   });
 });
