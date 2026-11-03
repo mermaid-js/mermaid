@@ -58,4 +58,16 @@ describe('where an edge ends on the node it points at', () => {
     expect(points[1]).toEqual(points[0]);
     expect(points.at(-2)).toEqual(points.at(-1));
   });
+
+  it('8-query-process-2: "No" from "Knows which team?" runs straight down into the diamond below it', async () => {
+    const layout = await layOutFixture('8-query-process-2', VIEWER_SIZES_8_QUERY_PROCESS_2);
+    const byId = new Map(layout.nodes.map((n) => [n.id, n]));
+    const source = byId.get('A2')!;
+    const target = byId.get('E')!;
+    const points = layout.edges.find((e) => e.id === 'L_A2_E_0')?.points ?? [];
+    expect(dedupeConsecutivePoints(points)).toEqual([
+      { x: source.x, y: (source.y ?? 0) + (source.height ?? 0) / 2 },
+      { x: target.x, y: (target.y ?? 0) - (target.height ?? 0) / 2 },
+    ]);
+  });
 });

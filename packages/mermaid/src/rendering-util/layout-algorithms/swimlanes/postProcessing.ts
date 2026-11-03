@@ -23,12 +23,17 @@ import { simplifyDetouredEdges } from './direction/detourSimplification.js';
 import { anchorLabelsToPolyline } from './direction/labelAnchoring.js';
 import { straightenCollinearSiblingDetours } from './direction/siblingSharedFaceRouting.js';
 import { nudgeSharedInteriorSubpaths } from './direction/sharedTrackNudging.js';
+import { straightenAlignedCrossLaneEdges } from './direction/alignedEdgeStraightening.js';
 import { alignTerminalLegsToPorts } from './direction/terminalLegAlignment.js';
 export { validateSwimlanesLayout } from './direction/validation.js';
 
-/** Moves terminal legs onto their ports, then re-anchors labels and endpoints of the moved routes. */
+/**
+ * Straightens edges between aligned nodes in different lanes and moves terminal legs onto their
+ * ports, then re-anchors labels and endpoints of the moved routes.
+ */
 function alignTerminalLegsAndRefresh(edges: Edge[], nodeByIdMap: Map<string, Node>): void {
-  if (alignTerminalLegsToPorts(edges, nodeByIdMap)) {
+  const straightened = straightenAlignedCrossLaneEdges(edges, nodeByIdMap);
+  if (alignTerminalLegsToPorts(edges, nodeByIdMap) || straightened) {
     anchorLabelsToPolyline(edges, nodeByIdMap);
     prepareEdgeEndpointsForRenderer(edges, nodeByIdMap);
   }
@@ -150,8 +155,9 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // more and then re-prepare the endpoints it reshaped.
   finalizeRenderedEdges();
 
-  // The passes above can leave a terminal leg off its node's port: beside a diamond's vertex,
-  // or against a rectangle's corner. Move it onto the port where that is clear.
+  // The passes above can route an edge between two aligned nodes in different lanes around a
+  // corner, or leave a terminal leg off its node's port: beside a diamond's vertex, or against a
+  // rectangle's corner. Straighten the edge, or move the leg onto the port, where that is clear.
   alignTerminalLegsAndRefresh(edges, nodeByIdMap);
 
   // Swimlane title bands are visual headers, not routing obstacles. After all

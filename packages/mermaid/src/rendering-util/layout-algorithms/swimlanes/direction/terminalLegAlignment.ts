@@ -19,21 +19,26 @@ import type { Point, RectBounds, RectEntry, RectSide } from './geometry.js';
 const EPS = 1e-3;
 const OBSTACLE_BUFFER = 2;
 
-interface Terminal {
-  edge: Edge;
+/** One face of a node's bounding box. */
+export interface NodeFace {
   node: Node;
   rect: RectBounds;
   side: RectSide;
+}
+
+interface Terminal extends NodeFace {
+  edge: Edge;
   /** The route ordered from this terminal outward. */
   route: Point[];
 }
 
-interface Obstacles {
+export interface Obstacles {
   realNodeRects: RectEntry[];
   labelNodeRects: RectEntry[];
 }
 
-const isDiamond = (node: Node): boolean => node.shape === 'question' || node.shape === 'diamond';
+export const isDiamond = (node: Node): boolean =>
+  node.shape === 'question' || node.shape === 'diamond';
 
 const runsAlongFace = (side: RectSide): 'x' | 'y' =>
   side === 'top' || side === 'bottom' ? 'x' : 'y';
@@ -130,11 +135,11 @@ function endpointThroughFace(point: Point, rect: RectBounds, side: RectSide): bo
   return outward > -EPS && point[axis] >= lo - EPS && point[axis] <= hi + EPS;
 }
 
-/** No other edge meets the node through the face, so the moved leg cannot land on its port. */
-function faceIsOwn(terminal: Terminal, edges: Edge[]): boolean {
-  const nodeId = terminal.node.id;
+/** No edge but `edge` meets the node through the face, so a route moved there lands on a free port. */
+export function faceIsOwn(face: NodeFace, edge: Edge, edges: Edge[]): boolean {
+  const nodeId = face.node.id;
   return edges.every((other) => {
-    if (other === terminal.edge || other.isLayoutOnly) {
+    if (other === edge || other.isLayoutOnly) {
       return true;
     }
     const points = other.points ?? [];
@@ -143,8 +148,7 @@ function faceIsOwn(terminal: Terminal, edges: Edge[]): boolean {
       [other.end, points.at(-1)],
     ];
     return ends.every(
-      ([id, point]) =>
-        id !== nodeId || !point || !endpointThroughFace(point, terminal.rect, terminal.side)
+      ([id, point]) => id !== nodeId || !point || !endpointThroughFace(point, face.rect, face.side)
     );
   });
 }
@@ -169,7 +173,12 @@ function overlapsAny(route: Point[], other: Point[]): boolean {
 }
 
 /** The moved route keeps clear of every other edge at least as well as the current one. */
-function clearOfOtherEdges(edge: Edge, current: Point[], moved: Point[], edges: Edge[]): boolean {
+export function clearOfOtherEdges(
+  edge: Edge,
+  current: Point[],
+  moved: Point[],
+  edges: Edge[]
+): boolean {
   const tolerance = EDGE_ROUTING.ROUTE_TOUCH_TOLERANCE;
   return edges.every((other) => {
     const points = dedupeConsecutivePoints(other.points ?? [], EPS);
@@ -185,11 +194,10 @@ function clearOfOtherEdges(edge: Edge, current: Point[], moved: Point[], edges: 
   });
 }
 
-function clearOfNodes(terminal: Terminal, moved: Point[], obstacles: Obstacles): boolean {
-  const ownLabel = terminal.edge.labelNodeId;
-  const endpointIds = [terminal.edge.start, terminal.edge.end].filter((id): id is string =>
-    Boolean(id)
-  );
+/** The moved route passes no node but its own endpoints at its ends, and no label but its own. */
+export function clearOfNodes(edge: Edge, moved: Point[], obstacles: Obstacles): boolean {
+  const ownLabel = edge.labelNodeId;
+  const endpointIds = [edge.start, edge.end].filter((id): id is string => Boolean(id));
   const segments = orthogonalSegmentsForPoints(moved, EPS);
   return segments.every((segment) => {
     const touchesEndpoint = segment.index === 0 || segment.index === segments.length - 1;
@@ -220,7 +228,7 @@ function alignTerminal(
   atStart: boolean
 ): boolean {
   const target = alignedCoord(terminal);
-  if (target === undefined || !faceIsOwn(terminal, edges)) {
+  if (target === undefined || !faceIsOwn(terminal, terminal.edge, edges)) {
     return false;
   }
   const axis = runsAlongFace(terminal.side);
@@ -234,7 +242,7 @@ function alignTerminal(
   const current = atStart ? terminal.route : [...terminal.route].reverse();
   const moved = atStart ? movedOutward : [...movedOutward].reverse();
   if (
-    !clearOfNodes(terminal, moved, obstacles) ||
+    !clearOfNodes(terminal.edge, moved, obstacles) ||
     !clearOfOtherEdges(terminal.edge, current, moved, edges)
   ) {
     return false;
