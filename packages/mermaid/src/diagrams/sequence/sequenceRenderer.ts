@@ -1455,10 +1455,14 @@ export const draw = async function (_text: string, id: string, _version: string,
       .attr('y', -25);
   }
 
-  configureSvgSize(diagram, height, width, conf.useMaxWidth);
-
   const extraVertForTitle = title ? 40 : 0;
   const extraHeightForNeoActors = actors.size && look === 'neo' ? 30 : 0;
+  configureSvgSize(
+    diagram,
+    height + extraVertForTitle + extraHeightForNeoActors,
+    width,
+    conf.useMaxWidth
+  );
   diagram.attr(
     'viewBox',
     box.startx -
