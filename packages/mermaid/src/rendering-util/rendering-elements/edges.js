@@ -735,13 +735,12 @@ export const insertEdge = function (
   // route is drawn as given by `routePath`. This is chosen by the data, not the layout name.
   const axisRoute = isAxisTaggedRoute(points);
 
-  // Edge endpoint clipping. The swimlanes layout produces orthogonal edges whose
-  // axis-aligned entry/exit segments must be preserved, so it uses a dedicated
-  // boundary-clipping path. Every other layout (dagre, ELK, …) keeps the original
-  // clipping below, so their edge ports are unaffected by swimlanes.
-  if (axisRoute) {
-    // Ends stay where the layout put them.
-  } else if (layout === 'swimlane') {
+  // Edge endpoint clipping. An axis-tagged route is not clipped at all: its ends stay where
+  // the layout put them. The swimlanes layout produces orthogonal edges whose axis-aligned
+  // entry/exit segments must be preserved, so it uses a dedicated boundary-clipping path.
+  // Every other layout (dagre, ELK, …) keeps the original clipping below, so their edge ports
+  // are unaffected by swimlanes.
+  if (!axisRoute && layout === 'swimlane') {
     if (
       !skipIntersect &&
       head.intersect &&
@@ -789,7 +788,7 @@ export const insertEdge = function (
       }
     }
     points = orthogonalizeToLabelClippedPoints(edge, points);
-  } else if (head.intersect && tail.intersect && !skipIntersect) {
+  } else if (!axisRoute && head.intersect && tail.intersect && !skipIntersect) {
     // Original clipping — unchanged for dagre / ELK / every non-swimlanes layout.
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
