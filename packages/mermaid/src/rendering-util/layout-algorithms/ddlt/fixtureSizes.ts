@@ -147,3 +147,31 @@ export function applyFixtureLabelSizesStrict(layout: LayoutData, fixture: SizesF
     (node as { width: number; height: number }).height = size.height;
   }
 }
+
+/** The `.sizes.json` id of an edge's centre label, as `createEdgeLabelNodes` names it. */
+export function edgeLabelFixtureId(edge: { start?: string; end?: string; id: string }): string {
+  return `edge-label-${edge.start}-${edge.end}-${edge.id}`;
+}
+
+/**
+ * Apply captured centre-label sizes straight onto labelled edges (`edge.width` / `edge.height`),
+ * where `insertEdgeLabel` writes them during the browser measure. For layouts that size edge
+ * labels on the edge rather than through `edge-label-*` dummy nodes (`layered`, `dagre`).
+ * Strict: every edge with a non-empty label must have a fixture row.
+ */
+export function applyFixtureEdgeLabelSizesStrict(layout: LayoutData, fixture: SizesFixture): void {
+  for (const edge of layout.edges) {
+    const label = typeof edge.label === 'string' ? edge.label.trim() : edge.label;
+    if (!label) {
+      continue;
+    }
+    const id = edgeLabelFixtureId(edge);
+    const size = fixtureSizeById(fixture, id);
+    if (!size) {
+      const known = fixture.nodes.map((n) => n.id).join(', ');
+      throw new Error(`Fixture missing edge label size for "${id}". Known ids: ${known}`);
+    }
+    edge.width = size.width;
+    edge.height = size.height;
+  }
+}
