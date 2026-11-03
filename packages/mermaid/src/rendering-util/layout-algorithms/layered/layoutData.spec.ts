@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import intersect from '../../rendering-elements/intersect/index.js';
-import { isAxisTaggedRoute } from '../../rendering-elements/routePath.js';
+import { isAxisTaggedRoute } from '../../rendering-elements/routeGeometry.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { runLayeredLayoutCore, toLayoutGraph } from './layoutData.js';
 

@@ -4,7 +4,9 @@
 // The `layered` engine's input and output contract. Both sides are plain data: the caller
 // measures every box before layout and the engine never measures. In mermaid this is internal
 // to the engine; adapters translate to and from `LayoutData`. v13's grid-quantum mode
-// (`grid`) and unit profiles (`metrics`) are left out.
+// (`grid`) and unit profiles (`metrics`) are left out. `RoutePoint` is imported from the shared
+// route geometry.
+import type { RoutePoint } from '../../rendering-elements/routeGeometry.js';
 
 /** Flow direction: top to bottom, bottom to top, left to right, right to left. */
 export type Dir = 'TB' | 'BT' | 'LR' | 'RL';
@@ -17,13 +19,9 @@ export interface Point {
   y: number;
 }
 
-/**
- * A point on an edge route. `axis` says how the route runs into the point: `'v'` vertically,
- * `'h'` horizontally. Renderers use it to leave and reach nodes square to their sides.
- */
-export interface RoutePoint extends Point {
-  axis: 'v' | 'h';
-}
+// A point on an edge route, tagged with the axis the route runs into it on. Shared with the
+// edge drawing, so it lives in rendering-elements/routeGeometry.ts.
+export type { RoutePoint };
 
 export interface Size {
   width: number;

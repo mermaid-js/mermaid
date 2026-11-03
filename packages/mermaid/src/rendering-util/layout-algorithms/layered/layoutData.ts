@@ -4,6 +4,7 @@
 // the node's bounding box; `clipRouteEnds` moves them onto the drawn shape with the shape's own
 // `intersect`, along the flow only, so each end keeps the side and port the engine chose.
 import type { Edge, LayoutData, Node } from '../../types.js';
+import { isAxisTaggedRoute } from '../../rendering-elements/routeGeometry.js';
 import { layered, layoutSettings } from './index.js';
 import type {
   Dir,
@@ -297,8 +298,8 @@ function onOutline(n: Outline, end: RoutePoint): RoutePoint {
 export function clipRouteEnds(data: LayoutData): void {
   const byId = new Map(data.nodes.map((n) => [n.id, n]));
   for (const e of data.edges) {
-    const points = e.points as RoutePoint[] | undefined;
-    if (!points || points.length < 2 || points.some((p) => p.axis === undefined)) {
+    const points = e.points;
+    if (!isAxisTaggedRoute(points)) {
       continue;
     }
     const src = byId.get(e.start ?? '');

@@ -1,4 +1,4 @@
-// Ported from Pele (https://github.com/obsidianmd/pele), src/svg/edges.ts at 3a2f075.
+// Ported from Pele (https://github.com/obsidianmd/pele), src/svg/edges.ts.
 // Copyright (c) 2026 kepano. MIT License: see packages/mermaid/THIRD_PARTY_NOTICES.
 // Ported from mermaid-v13 `packages/diagram-flowchart/src/render/edges.ts` (`routePath`,
 // `curveKind`). Changes: the SvgWriter is replaced by a local path-string builder, `d` is a plain
@@ -10,25 +10,11 @@
 // line, rounded corners where the route turns, and square ends. Any layout whose edges carry
 // axis-tagged points gets this path; it is chosen by the data, not by the layout's name.
 import { markerOffsets } from '../../utils/lineWithOffset.js';
-// The S-curve handle factor is shared with the layered engine, which uses it to space curves.
-import { ease } from '../layout-algorithms/layered/ease.js';
-import type { RoutePoint } from '../layout-algorithms/layered/types.js';
+// The S-curve handle factor and the route point type are shared with the layered engine.
+import { ease, isAxisTaggedRoute, type RoutePoint } from './routeGeometry.js';
 
+export { isAxisTaggedRoute };
 export type { RoutePoint };
-
-/** True when every point of a route carries an axis tag, so `routePath` can draw it. */
-export function isAxisTaggedRoute(points: unknown): points is RoutePoint[] {
-  return (
-    Array.isArray(points) &&
-    points.length >= 2 &&
-    points.every(
-      (p) =>
-        p !== null &&
-        typeof p === 'object' &&
-        ((p as RoutePoint).axis === 'v' || (p as RoutePoint).axis === 'h')
-    )
-  );
-}
 
 // How far an edge runs straight before a marker at its end, where it has the room.
 const LEAD = 6;

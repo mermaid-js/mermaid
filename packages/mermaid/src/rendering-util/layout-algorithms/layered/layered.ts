@@ -3,10 +3,11 @@
 // Ported from mermaid-v13 `packages/core/src/layout/layered/layered.ts`.
 // Changes from Pele: `const enum`s are `as const` objects, and index reads carry `!` for
 // noUncheckedIndexedAccess. `NODE_INPUTS`/`EDGE_INPUTS`/`layoutInputs` are new. `ease` moved to
-// ./ease.ts (re-exported here) so edge drawing can share it without the engine. The algorithm
+// rendering-elements/routeGeometry.ts (re-exported here) so edge drawing can share it without
+// depending on the engine. The algorithm
 // is unchanged.
 // cspell:ignore kepano lnode lnodes indeg topo cand maxs Köpf
-import { ease } from './ease.js';
+import { ease } from '../../rendering-elements/routeGeometry.js';
 
 // Layered (Sugiyama-style) layout of one flat graph. Ranks run down the y axis; callers
 // rotate the result for other directions.
@@ -1175,7 +1176,8 @@ function freeEnds(g: Graph, EFK: Uint8Array, ETK: Uint8Array): [Int32Array, Int3
   return free;
 }
 
-// `ease` (the S-curve handle factor) lives in ./ease.ts; see the import above.
+// `ease` (the S-curve handle factor) lives in rendering-elements/routeGeometry.ts; see the
+// import above.
 export { ease };
 
 // Brings the labels and bends of each edge into line with an end of the edge, so that it runs
