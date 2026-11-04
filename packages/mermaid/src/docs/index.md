@@ -7,7 +7,7 @@ title: Mermaid
 titleTemplate: Diagramming and charting tool
 hero:
   name: <span class="home-header">Mermaid is going on a diet</span>
-  tagline: '<strong>A v13 proof of concept: plugin-based, so you pick only the pieces you need, and DOM-free. For flowcharts: 80 kB smaller (min+gzip) and 100× faster. Same syntax.</strong><br><br>Getting there means trade-offs between size and features, and between speed and layout quality. Should v13 be this rewrite, or gradual updates? Help us decide.'
+  tagline: '<strong>A v13 proof of concept that is DOM-free and plugin-based, so you pick only the pieces you need. Flowcharts are 80 kB smaller (min+gzip) and 100× faster, with the same syntax.</strong><br><br>Getting there means trade-offs between size and features, and between speed and layout quality. Should v13 be this rewrite, or gradual updates? Help us decide.'
 
   image:
     light: /hero-chart.svg
