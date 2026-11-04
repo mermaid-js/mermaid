@@ -532,7 +532,7 @@ gwt 01 'Add an item' given evt ItemAdded then evt ItemAdded
       expect(result.value.gwtEntities[0].label).toBe("'Add an item'");
     });
 
-    it('should stop a double-quoted label at the first closing quote', () => {
+    it('should stop a double-quoted label before the given clause', () => {
       const result = parse(`eventmodeling
 tf 01 cmd AddItem
 gwt 01 "Add item" given evt ItemAdded then evt ItemAdded %% "comment"
@@ -551,7 +551,7 @@ gwt 01 "Add item" given evt ItemAdded then evt ItemAdded %% "comment"
       expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
     });
 
-    it('should stop a single-quoted label at the first closing quote', () => {
+    it('should stop a single-quoted label before the given clause', () => {
       const result = parse(`eventmodeling
 tf 01 cmd AddItem
 gwt 01 'Add item' given evt ItemAdded then evt ItemAdded %% 'comment'
@@ -568,6 +568,28 @@ gwt 01 'Add item' given evt ItemAdded then evt ItemAdded %% 'comment'
       expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
       expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
     });
+
+    it.each([
+      { label: "'User's cart'", separator: ' ', comment: "'comment'" },
+      { label: '"Say " hello" later"', separator: ' ', comment: '"comment"' },
+      { label: "'User's cart'", separator: " %% 'before given'\n", comment: "'comment'" },
+      { label: '"Say "hello""', separator: ' /* "before\ngiven" */ ', comment: '"comment"' },
+      { label: "'I said 'given' to her'", separator: ' ', comment: "'comment'" },
+    ])(
+      'should preserve interior quotes in $label before $separator',
+      ({ label, separator, comment }) => {
+        const result = parse(`eventmodeling
+tf 01 cmd AddItem
+gwt 01 ${label}${separator}given evt ItemAdded then evt ItemAdded %% ${comment}
+`);
+        expect(result.lexerErrors).toHaveLength(0);
+        expect(result.parserErrors).toHaveLength(0);
+        expect(result.value.gwtEntities).toHaveLength(1);
+        expect(result.value.gwtEntities[0].label).toBe(label);
+        expect(result.value.gwtEntities[0].givenStatements).toHaveLength(1);
+        expect(result.value.gwtEntities[0].thenStatements).toHaveLength(1);
+      }
+    );
 
     it('should still accept quoted inline data that contains quotes', () => {
       const result = parse(`eventmodeling

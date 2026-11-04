@@ -55,8 +55,7 @@ terminal EM_ID: /[_a-zA-Z][\w_]*/;
 terminal EM_FID: /\d{1,3}/;
 
 terminal EM_DATA_INLINE: /\{(.*)\}|"(.*)"|'(.*)'/;
-// Quoted GWT labels stop at the first quote. EM_DATA_INLINE stays greedy for frame data;
-// the token builder yields that longer match when the quote is a GWT label.
+// The token builder finds the closing quote before 'given' and keeps frame data greedy.
 terminal EM_GWT_LABEL: /"[^"\r\n]*"|'[^'\r\n]*'/;
 terminal EM_DATA_BLOCK: /\{[\t ]*\r?\n(?:[\S\s]*?\r?\n)?[\t ]*\}[\t ]*(?:\r?\n|(?![\s\S]))/;
 
