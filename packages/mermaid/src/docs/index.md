@@ -14,10 +14,9 @@ hero:
     dark: /hero-chart-dark.svg
     alt: Mermaid diagram
   actions:
-    # TODO: replace with the v13 discussion URL before merge
     - theme: alt
       text: Join the discussion →
-      link: https://github.com/orgs/mermaid-js/discussions
+      link: https://github.com/orgs/mermaid-js/discussions/8685
       target: _blank
       rel: external
     - theme: brand

@@ -5,10 +5,8 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 # Try the Mermaid v13 alpha
 
-<!-- TODO before merge: replace the discussion URL placeholder (https://github.com/orgs/mermaid-js/discussions) with the v13 discussion. -->
-
 ```tip
-**This alpha is a proof of concept.** It tries one path for Mermaid v13, a full rewrite of the rendering engine. The other path is to bring the same gains to v12 in gradual updates. Your feedback in the [v13 discussion](https://github.com/orgs/mermaid-js/discussions) decides which one we take.
+**This alpha is a proof of concept.** It tries one path for Mermaid v13, a full rewrite of the rendering engine. The other path is to bring the same gains to v12 in gradual updates. Your feedback in the [v13 discussion](https://github.com/orgs/mermaid-js/discussions/8685) decides which one we take.
 ```
 
 The alpha renders without a browser DOM, so it works in Node, Deno, web workers and browsers. Its output is deterministic, and it has no third-party runtime dependencies. We publish alphas while we build the proof of concept. Please try them and tell us what breaks.
@@ -112,7 +110,7 @@ npx mermaid@v13-alpha render diagram.mmd --format svg > diagram.svg
 Most v12 setups render without code changes. Check these first. Like everything on this page, they describe the alpha and may change.
 
 - `mermaidAPI.*` has been removed. Use the top-level functions (`initialize`, `render`, …).
-- Labels are SVG text, not HTML, so `htmlLabels` and `dompurifyConfig` no longer apply. Whether HTML labels come back, for example as an opt-in plugin, is [open for discussion](https://github.com/orgs/mermaid-js/discussions).
+- Labels are SVG text, not HTML, so `htmlLabels` and `dompurifyConfig` no longer apply. Whether HTML labels come back, for example as an opt-in plugin, is [open for discussion](https://github.com/orgs/mermaid-js/discussions/8685).
 - Click callbacks (`click A callback`, `call fn()`) need the `@mermaid-js/plugin-interactions` plugin. Links (`click A "url"`) work without it.
 - `securityLevel: 'loose'` now behaves like `default`.
 - Custom CSS that targets element ids, `<marker>`, `.label-container` or the `<style>` element inside the SVG must move to the kept class names and the `--mermaid-*` CSS variables.
@@ -127,7 +125,7 @@ Report bugs as issues. If a diagram renders differently from v12, or something b
 - the diagram source
 - what you expected, and what you got (a screenshot helps)
 
-Opinions about the direction belong in the [v13 discussion](https://github.com/orgs/mermaid-js/discussions): rewrite or gradual updates, which trade-offs you can live with, and what you would give up for a smaller, faster Mermaid.
+Opinions about the direction belong in the [v13 discussion](https://github.com/orgs/mermaid-js/discussions/8685): rewrite or gradual updates, which trade-offs you can live with, and what you would give up for a smaller, faster Mermaid.
 
 ## Migrating from v12
 
