@@ -1078,9 +1078,14 @@ function addVertex(
   }
 }
 
+/**
+ * Copy a layout node into ELK's graph. ELK reads a coordinate key that is present as a value,
+ * so an `x` or `y` the node leaves undefined is dropped rather than handed over.
+ */
 function createElkNode(node: Node): NodeWithVertex {
   const child = { ...node } as NodeWithVertex;
   delete (child as { domId?: unknown }).domId;
+  dropUnsetCoordinates(child);
 
   if (node.isGroup) {
     child.children = [];
@@ -1103,6 +1108,15 @@ function createElkNode(node: Node): NodeWithVertex {
   }
 
   return child;
+}
+
+function dropUnsetCoordinates(node: { x?: number; y?: number }): void {
+  if (node.x === undefined) {
+    delete node.x;
+  }
+  if (node.y === undefined) {
+    delete node.y;
+  }
 }
 
 function getMeasuredLabelData(node: Node, config: any): LabelData {
