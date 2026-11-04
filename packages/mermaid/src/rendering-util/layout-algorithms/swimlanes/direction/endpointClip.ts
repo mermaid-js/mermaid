@@ -519,6 +519,13 @@ function endpointProfileOf(node: any): 'vertex' | 'flat' | undefined {
   return profile === 'vertex' || profile === 'flat' ? profile : undefined;
 }
 
+/** Whether the producer of a node declared how edges meet it; a plain node declares nothing. */
+export function declaresEndpointProfile(
+  node: { metadata?: Record<string, unknown> } | undefined
+): boolean {
+  return endpointProfileOf(node) !== undefined;
+}
+
 function meetsAtVertices(node: any): boolean {
   return endpointProfileOf(node) === 'vertex' && Boolean(node?.metadata?.drawnExtent);
 }

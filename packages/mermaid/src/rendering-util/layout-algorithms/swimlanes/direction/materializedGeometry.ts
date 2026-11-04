@@ -22,6 +22,7 @@ import {
   simplifyPolyline,
 } from './geometry.js';
 import type { OrthogonalSegment, Point, RectBounds, RectSide } from './geometry.js';
+import { declaresEndpointProfile } from './endpointClip.js';
 import type { Edge, Node } from '../../../types.js';
 import { EDGE_ROUTING } from '../config.js';
 import { buildLaneModel } from '../lanes.js';
@@ -53,10 +54,20 @@ export function separateSharedRenderedTerminalLanes(
   const TRACK_SHIFT = 7;
 
   const FACE_CORNER_INSET = 8;
-  const usableFace = (low: number, high: number) => {
-    const inset = Math.min(FACE_CORNER_INSET, (high - low) / 4);
+  const PLAIN_FACE_MARGIN = 1;
+  /**
+   * The stretch of a face between `low` and `high` that a shifted rail may sit on. A rail on a node
+   * that declares an endpoint profile stays out of the face's corner band; a rail on a plain node
+   * may come within `PLAIN_FACE_MARGIN` of the corner.
+   */
+  const usableFace = (lane: TerminalLane, low: number, high: number) => {
+    const inset = declaresEndpointProfile(nodeByIdMap.get(lane.nodeId))
+      ? Math.min(FACE_CORNER_INSET, (high - low) / 4)
+      : PLAIN_FACE_MARGIN;
     return { low: low + inset, high: high - inset };
   };
+  const within = (value: number, span: { low: number; high: number }) =>
+    value >= span.low && value <= span.high;
 
   interface TerminalLane {
     edge: MaterializedEdge;
@@ -220,24 +231,16 @@ export function separateSharedRenderedTerminalLanes(
         Math.abs(lane.boundary.y - lane.rect.top) < 1 ||
         Math.abs(lane.boundary.y - lane.rect.bottom) < 1
       ) {
-        const span = usableFace(lane.rect.left, lane.rect.right);
-        return (
-          sameY(shiftedBoundary, lane.boundary, EPS_LOCAL) &&
-          shiftedBoundary.x >= span.low &&
-          shiftedBoundary.x <= span.high
-        );
+        const span = usableFace(lane, lane.rect.left, lane.rect.right);
+        return sameY(shiftedBoundary, lane.boundary, EPS_LOCAL) && within(shiftedBoundary.x, span);
       }
 
       if (
         Math.abs(lane.boundary.x - lane.rect.left) < 1 ||
         Math.abs(lane.boundary.x - lane.rect.right) < 1
       ) {
-        const span = usableFace(lane.rect.top, lane.rect.bottom);
-        return (
-          sameX(shiftedBoundary, lane.boundary, EPS_LOCAL) &&
-          shiftedBoundary.y >= span.low &&
-          shiftedBoundary.y <= span.high
-        );
+        const span = usableFace(lane, lane.rect.top, lane.rect.bottom);
+        return sameX(shiftedBoundary, lane.boundary, EPS_LOCAL) && within(shiftedBoundary.y, span);
       }
 
       return false;
