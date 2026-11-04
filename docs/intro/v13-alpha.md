@@ -114,7 +114,7 @@ Most v12 setups render without code changes. Check these first. Like everything 
 - `securityLevel: 'loose'` now behaves like `default`.
 - Custom CSS that targets element ids, `<marker>`, `.label-container` or the `<style>` element inside the SVG must move to the kept class names and the `--mermaid-*` CSS variables.
 
-[Migrating from v12](./v13-migration.md) lists every change, with its replacement.
+For every change and its replacement, see the [v13 migration reference](./v13-migration.md).
 
 ## Give feedback
 
