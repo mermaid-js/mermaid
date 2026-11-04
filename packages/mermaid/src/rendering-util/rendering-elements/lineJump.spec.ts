@@ -673,22 +673,23 @@ describe('lineJump', () => {
         { id: 'horiz', d: 'M0,5 L20,5' },
         { id: 'vert', d: 'M10,0 L10,20' },
       ]);
-      const vertPath = group.node()!.querySelector('path[data-id="vert"]')!;
-      vertPath.setAttribute(
+      const horizPath = group.node()!.querySelector('path[data-id="horiz"]')!;
+      horizPath.setAttribute('data-line-hop-dasharray', 'true');
+      horizPath.setAttribute(
         'style',
         'stroke-dasharray: 0 9 42 9; stroke-dashoffset: 0; stroke: #000;'
       );
       // JSDOM does not implement getTotalLength; stub it so the recompute
       // branch runs. Value is arbitrary but plausible — mirrors post-rewrite
       // length with an arc inserted.
-      (vertPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 60;
+      (horizPath as unknown as { getTotalLength: () => number }).getTotalLength = () => 100;
 
       applyLineJumpsToSvg(group, edges, ARC_CONFIG);
 
-      const style = vertPath.getAttribute('style') ?? '';
+      const style = horizPath.getAttribute('style') ?? '';
       // oValueS (9) and oValueE (9) preserved; the on-portion recomputed to
-      // (60 - 9 - 9) = 42.
-      expect(style).toMatch(/stroke-dasharray:\s*0 9 42 9/);
+      // (100 - 9 - 9) = 82.
+      expect(style).toMatch(/stroke-dasharray:\s*0 9 82 9/);
       // Other declarations survive.
       expect(style).toMatch(/stroke:\s*#000/);
     });
