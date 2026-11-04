@@ -51,9 +51,9 @@ describe('DDLT layout-test fixture sweep', () => {
  * (class, state, ER, requirement and mindmap, captured under `layout: layered`) — through the same parse and
  * size path. It prints, per run, the hard-constraint violations by kind and the aggregate score
  * (`DDLT-CMP:`), and holds the layered merge gate:
- * - `layered` with `edgeRouting: stepped` has no hard-constraint violation on any fixture, and its
+ * - `layered` with default rounded routing or `edgeRouting: stepped` has no hard-constraint violation, and its
  *   aggregate score stays at or above `LAYERED_STEPPED_TOTAL_SCORE_BASELINE`;
- * - `layered` with its default (curved) routing scores at least as much as dagre in aggregate,
+ * - `layered` with explicit curved routing scores at least as much as dagre in aggregate,
  *   both over the whole sweep (a fixture dagre cannot lay out counts 0 for it) and over the
  *   fixtures every run could lay out.
  * The curved comparison is a smoke check, not a quality measure: an invalid layout scores 0, and
@@ -74,6 +74,11 @@ const COMPARISON_RUNS: {
     backendId: 'layered',
     config: { layered: { edgeRouting: 'stepped' } },
   },
+  {
+    name: 'layered-curved',
+    backendId: 'layered',
+    config: { layered: { edgeRouting: 'curved' } },
+  },
   { name: 'dagre', backendId: 'dagre' },
 ];
 
@@ -84,7 +89,7 @@ describe('DDLT layered vs dagre', () => {
   });
 
   it(
-    'meets the merge gate: stepped has no hard violation, curved scores >= dagre',
+    'meets the merge gate: rounded and stepped have no hard violation, curved scores >= dagre',
     { timeout: 60_000 },
     async () => {
       const fixtures = discoverLayoutTestFixtures().filter((f) => f.profile === 'flowchart-domus');
@@ -150,18 +155,20 @@ describe('DDLT layered vs dagre', () => {
       }
 
       const byRun = new Map(report.map((r) => [r.run, r]));
-      const stepped = runs.find((r) => r.run === 'layered-stepped')!;
-      expect(stepped.unsupported).toEqual([]);
-      expect(
-        stepped.items
-          .filter((item) => !item.result.ok)
-          .map((item) => `${item.id}: ${item.result.issues.map((i) => i.message).join('; ')}`)
-      ).toEqual([]);
-      expect(byRun.get('layered-stepped')!.totalScore).toBeGreaterThanOrEqual(
-        LAYERED_STEPPED_TOTAL_SCORE_BASELINE
-      );
+      for (const name of ['layered', 'layered-stepped']) {
+        const run = runs.find((r) => r.run === name)!;
+        expect(run.unsupported).toEqual([]);
+        expect(
+          run.items
+            .filter((item) => !item.result.ok)
+            .map((item) => `${item.id}: ${item.result.issues.map((i) => i.message).join('; ')}`)
+        ).toEqual([]);
+        expect(byRun.get(name)!.totalScore).toBeGreaterThanOrEqual(
+          LAYERED_STEPPED_TOTAL_SCORE_BASELINE
+        );
+      }
 
-      const curved = byRun.get('layered')!;
+      const curved = byRun.get('layered-curved')!;
       const dagre = byRun.get('dagre')!;
       expect(curved.unsupported).toEqual([]);
       expect(curved.totalScore).toBeGreaterThanOrEqual(dagre.totalScore);

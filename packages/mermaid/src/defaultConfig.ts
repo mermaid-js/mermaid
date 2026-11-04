@@ -43,7 +43,7 @@ const config: RequiredDeep<MermaidConfig> = {
   // The schema's nested defaults only apply to sections listed here, so `configKeys` (and with
   // it a `layered:` directive) finds this one.
   layered: {
-    edgeRouting: 'curved',
+    edgeRouting: 'rounded',
   },
   themeCSS: undefined,
 

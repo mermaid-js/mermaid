@@ -82,12 +82,13 @@ const SPANS = new Map<string, Span>([
 const size = (value: unknown): number =>
   typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : 0;
 
-const ROUTINGS = new Set<string>(['curved', 'stepped', 'straight']);
+type Routing = EdgeRouting | 'rounded';
+const ROUTINGS = new Set<string>(['rounded', 'curved', 'stepped', 'straight']);
 
-/** The `layered.edgeRouting` the diagram asks for; anything unknown routes curved. */
-function routing(data: LayoutData): EdgeRouting {
+/** The `layered.edgeRouting` the diagram asks for; anything unknown uses rounded routes. */
+function routing(data: LayoutData): Routing {
   const chosen = data.config?.layered?.edgeRouting;
-  return chosen && ROUTINGS.has(chosen) ? chosen : 'curved';
+  return chosen && ROUTINGS.has(chosen) ? chosen : 'rounded';
 }
 
 // Curves that already draw a stepped route as steps.
@@ -95,10 +96,13 @@ const STEPS = new Set(['step', 'stepBefore', 'stepAfter']);
 
 /**
  * The curve an edge is drawn with, so each routing reads as its name: a stepped route as steps
- * (unless the edge already has a step curve) and a straight route as lines. Curved routing keeps
- * the edge's own curve.
+ * (unless the edge already has a step curve), a rounded route as radius-5 arcs, and a straight
+ * route as lines. Curved routing keeps the edge's own curve.
  */
-function drawnCurve(mode: EdgeRouting, curve: Edge['curve']): Edge['curve'] {
+function drawnCurve(mode: Routing, curve: Edge['curve']): Edge['curve'] {
+  if (mode === 'rounded') {
+    return 'rounded';
+  }
   if (mode === 'straight') {
     return 'linear';
   }
@@ -192,6 +196,7 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
   }
   // v13 hands the engine `diagramPadding` (v12 default 8); mermaid's renderers add that same
   // padding themselves when they set up the viewport, so the engine adds none.
+  const mode = routing(data);
   return {
     direction: dir,
     nodes,
@@ -199,7 +204,8 @@ export function toLayoutGraph(data: LayoutData): LayoutGraph {
     groups,
     spacing,
     diagramPadding: 0,
-    routing: routing(data),
+    // Rounded corners need the same right-angle tracks as stepped routes.
+    routing: mode === 'rounded' ? 'stepped' : mode,
     headRoom: HEAD_ROOM,
   };
 }

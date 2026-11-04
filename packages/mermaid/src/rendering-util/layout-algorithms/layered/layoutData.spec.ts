@@ -3,6 +3,7 @@ import type { MermaidConfig } from '../../../config.type.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import intersect from '../../rendering-elements/intersect/index.js';
 import { isAxisTaggedRoute } from '../../rendering-elements/routeGeometry.js';
+import { curveKind, markerTrim, routePath } from '../../rendering-elements/routePath.js';
 import { validateLayout } from '../layout-utils/validateLayout.js';
 import { runLayeredLayoutCore, toLayoutGraph } from './layoutData.js';
 
@@ -96,8 +97,46 @@ describe('layered adapter: config reaching the engine', () => {
     return data;
   };
 
-  it('routes edges curved unless layered.edgeRouting says otherwise', () => {
-    expect(toLayoutGraph(chain('TB')).routing).toBe('curved');
+  it('draws default routes and self-loops with radius-5 rounded corners', () => {
+    const data = layoutData(
+      'TB',
+      [node('A'), node('B'), node('C'), node('D')],
+      [
+        edge('ab', 'A', 'B'),
+        edge('ac', 'A', 'C'),
+        edge('bd', 'B', 'D'),
+        edge('cd', 'C', 'D'),
+        edge('ad', 'A', 'D'),
+        edge('loop', 'D', 'D'),
+      ]
+    );
+    runLayeredLayoutCore(data);
+    const paths = data.edges.map((e) => {
+      expect(e.curve).toBe('rounded');
+      expect(isAxisTaggedRoute(e.points)).toBe(true);
+      if (!isAxisTaggedRoute(e.points)) {
+        throw new Error('Expected an axis-tagged route');
+      }
+      for (let i = 1; i < e.points.length; i++) {
+        const p = e.points[i - 1];
+        const q = e.points[i];
+        expect(Math.min(Math.abs(p.x - q.x), Math.abs(p.y - q.y))).toBeLessThan(0.01);
+      }
+      return routePath(e.points, curveKind(e.curve), 0, markerTrim(e.arrowTypeEnd)).d;
+    });
+    expect(paths.some((d) => d.includes('A5,5'))).toBe(true);
+    expect(paths.at(-1)).toContain('A5,5');
+    expect(paths.every((d) => !/[CQ]/.test(d))).toBe(true);
+  });
+
+  it('uses stepped tracks by default and honors layered.edgeRouting', () => {
+    expect(toLayoutGraph(chain('TB')).routing).toBe('stepped');
+    expect(toLayoutGraph(withConfig({ layered: { edgeRouting: 'rounded' } })).routing).toBe(
+      'stepped'
+    );
+    expect(toLayoutGraph(withConfig({ layered: { edgeRouting: 'curved' } })).routing).toBe(
+      'curved'
+    );
     expect(toLayoutGraph(withConfig({ layered: { edgeRouting: 'stepped' } })).routing).toBe(
       'stepped'
     );
@@ -106,7 +145,7 @@ describe('layered adapter: config reaching the engine', () => {
     );
     expect(
       toLayoutGraph(withConfig({ layered: { edgeRouting: 'wiggly' as 'curved' } })).routing
-    ).toBe('curved');
+    ).toBe('stepped');
   });
 
   it('takes spacing from the diagram config when the renderer sets none, with v12 defaults', () => {
@@ -134,7 +173,7 @@ describe('layered adapter: config reaching the engine', () => {
   });
 
   it('draws stepped routes as steps and straight routes as lines', () => {
-    const drawn = (edgeRouting?: 'curved' | 'stepped' | 'straight', curve?: string) => {
+    const drawn = (edgeRouting?: 'rounded' | 'curved' | 'stepped' | 'straight', curve?: string) => {
       const data = withConfig(edgeRouting ? { layered: { edgeRouting } } : {});
       if (curve) {
         data.edges.forEach((e) => (e.curve = curve));
@@ -142,8 +181,11 @@ describe('layered adapter: config reaching the engine', () => {
       runLayeredLayoutCore(data);
       return data.edges.map((e) => e.curve);
     };
-    expect(drawn()).toEqual([undefined, undefined]);
+    expect(drawn()).toEqual(['rounded', 'rounded']);
+    expect(drawn('rounded', 'basis')).toEqual(['rounded', 'rounded']);
+    expect(drawn('curved', 'basis')).toEqual(['basis', 'basis']);
     expect(drawn('curved', 'linear')).toEqual(['linear', 'linear']);
+    expect(drawn('curved', 'step')).toEqual(['step', 'step']);
     expect(drawn('stepped')).toEqual(['step', 'step']);
     // A step the user chose is kept.
     expect(drawn('stepped', 'stepAfter')).toEqual(['stepAfter', 'stepAfter']);

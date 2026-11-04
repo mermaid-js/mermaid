@@ -262,12 +262,13 @@ export interface MermaidConfig {
     /**
      * How the `layered` layout routes edges between nodes.
      *
+     * - `rounded`: edges run on tracks between ranks with radius-5 rounded corners (smaller on short segments).
      * - `curved`: each edge runs as smooth curves between ranks.
      * - `stepped`: edges run on tracks between ranks and turn at right angles.
      * - `straight`: each edge runs as straight lines from point to point.
      *
      */
-    edgeRouting?: 'curved' | 'stepped' | 'straight';
+    edgeRouting?: 'rounded' | 'curved' | 'stepped' | 'straight';
   };
   darkMode?: boolean;
   /**
