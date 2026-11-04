@@ -89,6 +89,18 @@ describe('orgchart parser and model', () => {
     expect(labels(root.children)).toEqual(['staffing', 'staff']);
   });
 
+  it('allows staff inside an unquoted label', async () => {
+    await parse(`orgchart-beta
+  CEO
+    Chief of staff "Bob"
+    staff Head of staff "Anna"`);
+
+    expect(labels(db.getRoot()!.children)).toEqual(['Chief of staff']);
+    expect(db.getRoot()!.children[0].secondaryLabel).toBe('Bob');
+    expect(labels(db.getRoot()!.staff)).toEqual(['Head of staff']);
+    expect(db.getRoot()!.staff[0].secondaryLabel).toBe('Anna');
+  });
+
   it('supports optional explicit ids and generates the rest', async () => {
     await parse(`orgchart-beta
   ceo[CEO] "Anna"
@@ -97,6 +109,17 @@ describe('orgchart parser and model', () => {
     expect(db.getNode('ceo')?.label).toBe('CEO');
     expect(db.getNode('cfo')?.kind).toBe('staff');
     expect(db.getRoot()!.children[0].id).toMatch(/^orgchart-node-/);
+  });
+
+  it('keeps quoted title-prefixed labels as nodes', async () => {
+    await parse(`orgchart-beta
+title Company
+  CEO
+    "title Officer" "Bob"`);
+
+    expect(db.getDiagramTitle()).toBe('Company');
+    expect(labels(db.getRoot()!.children)).toEqual(['title Officer']);
+    expect(db.getRoot()!.children[0].secondaryLabel).toBe('Bob');
   });
 
   it('rejects collisions between explicit ids and generated ids', async () => {
@@ -167,8 +190,26 @@ accDescr {
     });
 
     it('rejects a bare staff keyword with a position', async () => {
-      await expect(parse('orgchart-beta\n  A\n    staff')).rejects.toThrow(/line 3/);
+      await expect(parse('orgchart-beta\n  A\n    staff')).rejects.toThrow(
+        /a node label after "staff"; quote "staff" to use it as a label.*line 3/s
+      );
+      expect(db.getNodes()).toEqual([]);
     });
+
+    it.each([
+      ['orgchart-beta\naccDescr {\n  description', 2, 1, 0],
+      ['orgchart-beta\n  CEO\n    accDescr {\n      description', 3, 5, 0],
+      ['orgchart-beta\n  accDescr {', 6, 3, 4],
+    ])(
+      'reports an unterminated accessibility block at its opening',
+      async (input, line, column, offset) => {
+        db.setFrontmatterLineOffset(offset);
+        await expect(parse(input)).rejects.toThrow(
+          `Invalid orgchart at line ${line}, column ${column}: unterminated accDescr block; expected closing "}"`
+        );
+        expect(db.getNodes()).toEqual([]);
+      }
+    );
 
     it('reports the end-of-input position when there is no root node', async () => {
       await expect(parse('orgchart-beta')).rejects.toThrow(/line 1, column 14/);

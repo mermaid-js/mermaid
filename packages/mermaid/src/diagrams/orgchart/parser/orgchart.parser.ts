@@ -49,11 +49,14 @@ class OrgChartCstParser extends CstParser {
   });
 
   private label = this.RULE('label', () => {
-    this.OR([
-      { ALT: () => this.CONSUME(QuotedString) },
-      { ALT: () => this.CONSUME(IdWithLabel) },
-      { ALT: () => this.AT_LEAST_ONE(() => this.CONSUME(Word)) },
-    ]);
+    this.OR({
+      DEF: [
+        { ALT: () => this.CONSUME(QuotedString) },
+        { ALT: () => this.CONSUME(IdWithLabel) },
+        { ALT: () => this.AT_LEAST_ONE(() => this.CONSUME(Word)) },
+      ],
+      ERR_MSG: 'a node label after "staff"; quote "staff" to use it as a label',
+    });
   });
 }
 

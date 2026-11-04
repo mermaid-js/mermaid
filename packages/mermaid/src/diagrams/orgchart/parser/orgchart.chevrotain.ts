@@ -42,6 +42,11 @@ const visitNodeLine = (db: OrgChartDB, nodeLine: CstNode): void => {
     return;
   }
   if (accDescrBlock) {
+    if (!accDescrBlock.image.endsWith('}')) {
+      throw new Error(
+        `Invalid orgchart at line ${(accDescrBlock.startLine ?? 1) + db.getFrontmatterLineOffset()}, column ${accDescrBlock.startColumn ?? 1}: unterminated accDescr block; expected closing "}"`
+      );
+    }
     db.setAccDescription(
       accDescrBlock.image
         .replace(/^accDescr[\t ]*{/, '')

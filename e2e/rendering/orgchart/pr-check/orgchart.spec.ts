@@ -15,7 +15,7 @@ const diagram = `orgchart-beta
         Operations
 `;
 
-for (const look of ['classic', 'handDrawn'] as const) {
+for (const look of ['classic', 'neo', 'handDrawn'] as const) {
   test.describe(`orgchart ${look}`, () => {
     for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
       test(`fits labels and keeps nodes clear in the ${theme} theme`, async ({ page }) => {
@@ -190,8 +190,94 @@ for (const look of ['classic', 'handDrawn'] as const) {
         await expect(svg.locator(connector).first()).toHaveCSS('stroke', 'rgb(101, 67, 33)');
       }
     });
+
+    test('keeps labels and connectors visible within the SVG in print media', async ({
+      page,
+    }, testInfo) => {
+      await page.goto(
+        mermaidUrl(
+          `orgchart-beta
+title Company structure
+  CEO "Anna"
+    staff Finance "Bob"
+    Engineering
+    Sales`,
+          { look, theme: 'default', screenshot: false },
+          false
+        )
+      );
+      const svg = page.locator('svg.orgchart');
+      await expect(svg.locator('g.orgchart-node')).toHaveCount(4);
+      await page.evaluate(() => document.fonts.ready);
+      const screenLabels = await svg.locator('.orgchart-node text').allTextContents();
+
+      await page.emulateMedia({ media: 'print' });
+      await expect(svg).toBeVisible();
+      await expect(svg.locator('.orgchart-title')).toHaveText('Company structure');
+      expect(await svg.locator('.orgchart-node text').allTextContents()).toEqual(screenLabels);
+      for (const element of await svg.locator('.orgchart-node text, .orgchart-title').all()) {
+        await expect(element).toBeVisible();
+      }
+      const connectors = svg.locator('.orgchart-connector');
+      expect(await connectors.count()).toBeGreaterThan(0);
+      for (const connector of await connectors.all()) {
+        // A straight SVG path can have zero height or width despite its visible stroke.
+        await expect(connector).not.toHaveCSS('display', 'none');
+        await expect(connector).toHaveCSS('visibility', 'visible');
+        await expect(connector).not.toHaveCSS('opacity', '0');
+        await expect(connector).toHaveCSS('stroke-width', /[1-9]/);
+        await expect(connector).not.toHaveCSS('stroke', 'none');
+      }
+      const bounds = await svg.evaluate((element) => {
+        const svgBounds = element.getBoundingClientRect();
+        return [
+          ...element.querySelectorAll<SVGGraphicsElement>(
+            'g.orgchart-node, .orgchart-title, .orgchart-connector'
+          ),
+        ].map((graphic) => {
+          const box = graphic.getBoundingClientRect();
+          return {
+            withinSvg:
+              box.left >= svgBounds.left - 1 &&
+              box.top >= svgBounds.top - 1 &&
+              box.right <= svgBounds.right + 1 &&
+              box.bottom <= svgBounds.bottom + 1,
+            width: box.width,
+            height: box.height,
+          };
+        });
+      });
+      expect(
+        bounds.every((box) => box.withinSvg),
+        JSON.stringify(bounds)
+      ).toBe(true);
+      expect(bounds.every((box) => box.width > 0 || box.height > 0)).toBe(true);
+      const screenshot = testInfo.outputPath('orgchart-print-media.png');
+      await svg.screenshot({ path: screenshot });
+      await testInfo.attach('orgchart-print-media', { path: screenshot, contentType: 'image/png' });
+    });
   });
 }
+
+test('provides a computed accessible name and relationship description', async ({ page }) => {
+  const description = 'The CEO manages Engineering. Finance provides staff support to the CEO.';
+  await page.goto(
+    mermaidUrl(
+      `orgchart-beta
+accTitle: Company organization
+accDescr: ${description}
+  CEO
+    staff Finance
+    Engineering`,
+      { screenshot: false },
+      false
+    )
+  );
+  const svg = page.locator('svg.orgchart');
+  await expect(svg).toBeVisible();
+  await expect(svg).toHaveAccessibleName('Company organization');
+  await expect(svg).toHaveAccessibleDescription(description);
+});
 
 test('renders multiple charts without colliding SVG node ids', async ({ page }) => {
   const secondChart = `orgchart-beta
@@ -245,4 +331,92 @@ title Company structure
   expect(titlePosition.x).toBeCloseTo(chartBounds.x + chartBounds.width / 2);
   expect(titlePosition.y).toBeLessThan(chartBounds.y);
   await expect(title).toHaveCSS('fill', 'rgb(16, 32, 48)');
+});
+
+test('renders the manual browser and print-test gallery', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/orgchart.html');
+  const charts = page.locator('svg.orgchart');
+  await expect(charts).toHaveCount(14);
+  await expect(page.locator('.error-icon')).toHaveCount(0);
+  await page.evaluate(() => document.fonts.ready);
+  for (const chart of await charts.all()) {
+    await expect(chart).toBeVisible();
+  }
+
+  const section = (name: string) =>
+    page.locator('section').filter({ has: page.getByRole('heading', { name, exact: true }) });
+  await expect(
+    section('Wide hierarchy: 30 siblings at natural size').locator('.orgchart-node')
+  ).toHaveCount(31);
+  await expect(section('Deep hierarchy: 15 levels').locator('.orgchart-node')).toHaveCount(15);
+  await expect(
+    section('Eight staff nodes under one manager').locator('.orgchart-node-staff')
+  ).toHaveCount(8);
+  const reusedIds = section('Explicit IDs reused across two charts');
+  await expect(reusedIds.locator('svg.orgchart')).toHaveCount(2);
+  await expect(reusedIds.locator('.orgchart-node')).toHaveCount(6);
+  const ids = await charts
+    .locator('.orgchart-node[id]')
+    .evaluateAll((nodes) => nodes.map((node) => node.id));
+  expect(new Set(ids).size).toBe(ids.length);
+
+  const multilingual = section('Multilingual labels').locator('svg.orgchart');
+  await expect(multilingual.locator('.orgchart-node')).toHaveCount(6);
+  const labelsFit = await multilingual.locator('.orgchart-node text').evaluateAll((labels) =>
+    labels.every((label) => {
+      const box = label.parentElement!.querySelector('rect')!.getBBox();
+      const text = (label as SVGTextElement).getBBox();
+      return (
+        text.x >= box.x &&
+        text.y >= box.y &&
+        text.x + text.width <= box.x + box.width &&
+        text.y + text.height <= box.y + box.height
+      );
+    })
+  );
+  expect(labelsFit).toBe(true);
+
+  const accessible = section('Accessible title, description, and text alternative').locator(
+    'svg.orgchart'
+  );
+  await expect(accessible).toHaveAccessibleName('Company organization');
+  await expect(accessible).toHaveAccessibleDescription(/Engineering and Sales report to Anna/);
+  await expect(section('Responsive sizing').locator('svg.orgchart')).toHaveAttribute(
+    'width',
+    '100%'
+  );
+  await expect(section('Natural sizing').locator('svg.orgchart')).not.toHaveAttribute(
+    'width',
+    '100%'
+  );
+
+  const responsive = section('Responsive sizing').locator('svg.orgchart');
+  const natural = section('Natural sizing').locator('svg.orgchart');
+  expect(await responsive.locator('.orgchart-label').allTextContents()).toEqual(
+    await natural.locator('.orgchart-label').allTextContents()
+  );
+  const naturalWidth = Number(await natural.getAttribute('width'));
+  expect(naturalWidth).toBeGreaterThan(1440);
+  for (const width of [1440, 800]) {
+    await page.setViewportSize({ width, height: 1024 });
+    const responsiveBounds = await responsive.boundingBox();
+    const naturalBounds = await natural.boundingBox();
+    expect(responsiveBounds!.width).toBeLessThanOrEqual(width - 64);
+    expect(responsiveBounds!.width).toBeGreaterThan(0);
+    expect(naturalBounds!.width).toBeCloseTo(naturalWidth);
+    expect(naturalBounds!.width).toBeGreaterThan(width);
+  }
+
+  await page.emulateMedia({ media: 'print' });
+  for (const example of await page.locator('section').all()) {
+    await expect(example).toHaveCSS('break-before', 'auto');
+    await expect(example).toHaveCSS('break-after', 'auto');
+    await expect(example).toHaveCSS('overflow', 'visible');
+  }
+  for (const chart of await charts.all()) {
+    await expect(chart).toBeVisible();
+  }
+  expect(errors).toEqual([]);
 });

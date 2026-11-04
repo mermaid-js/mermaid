@@ -40,7 +40,7 @@ export const AccDescrLine = createToken({
 
 export const AccDescrBlock = createToken({
   name: 'AccDescrBlock',
-  pattern: /accDescr[\t ]*{[^]*?}/,
+  pattern: /accDescr[\t ]*{[^}]*}?/,
   line_breaks: true,
 });
 
@@ -52,7 +52,12 @@ export const IdWithLabel = createToken({
 
 export const Word = createToken({ name: 'Word', pattern: /[^\s"]+/ });
 
-export const Staff = createToken({ name: 'Staff', pattern: /staff(?!\S)/, longer_alt: Word });
+export const Staff = createToken({
+  name: 'Staff',
+  pattern: /staff(?!\S)/,
+  longer_alt: Word,
+  categories: Word,
+});
 
 export const orgchartTokens = [
   Newline,

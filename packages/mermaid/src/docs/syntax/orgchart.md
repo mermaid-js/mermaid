@@ -3,7 +3,7 @@
 > An org chart shows who reports to whom. Start a diagram with the `orgchart-beta` keyword and describe the organization with indentation. Mermaid decides where everything goes.
 
 ```warning
-This is a new diagram type in Mermaid. Its syntax may evolve in future versions.
+Org chart diagrams are in beta. Their syntax may evolve in future versions.
 ```
 
 An org chart is not just a tree. It has two kinds of relationships:
@@ -34,7 +34,8 @@ Each line is one node:
 - The **primary label** is the role or unit. It is either quoted, or plain text up to an optional quoted label (`Chief Executive Officer`).
 - The optional **secondary label** is a quoted string, typically a person's name.
 - Indentation defines the hierarchy: a node belongs to the nearest preceding node with less indentation. Any depth is allowed. Use spaces or tabs consistently (a tab counts as four columns).
-- A line starting with the word `staff` makes the node a staff node of its parent. To use the word `staff` as a label, quote it: `"staff"`.
+- A line starting with the word `staff` makes the node a staff node of its parent. To use the word `staff` as a label, quote it: `"staff"`. Elsewhere in a label, `staff` is ordinary text, as in `Chief of staff`.
+- A line starting with `title ` sets the chart title, even when indented. Quote labels that start with this prefix to keep them as nodes: `"title Officer" "Bob"`.
 - There must be exactly one root, and it cannot be a staff node.
 - `%%` comments and blank lines are ignored.
 - An optional `title` line sets the visible chart title. Use `accTitle:` and
@@ -86,9 +87,24 @@ orgchart-beta
         eng[Engineering] "David Dahl"
 ```
 
+## Accessibility
+
+Use `accTitle` to name the chart and `accDescr` to describe its reporting
+relationships and staff functions, as in the example under [Staff nodes](#staff-nodes).
+The chart exposes an accessible SVG title and description, but it does not provide
+keyboard navigation of the hierarchy. Do not rely on the visual connectors alone
+to communicate who reports to whom. For a large organization, provide an equivalent
+text outline alongside the diagram.
+
+Screen-reader announcements depend on the browser and assistive technology.
+Check the title, description, and surrounding text with the screen readers used
+by your audience; SVG accessibility attributes alone do not verify that experience.
+
 ## Theming
 
 Org charts use the standard Mermaid themes.
+`look: neo` currently uses the same boxes and connectors as `look: classic`;
+org charts do not yet have distinct Neo styling.
 
 ```mermaid-example
 %%{init: {'theme': 'forest'}}%%
@@ -98,6 +114,27 @@ orgchart-beta
         Engineering "David Dahl"
         Sales "Greta Gran"
 ```
+
+## Sizing
+
+By default, the chart scales to fit its container. Set `orgchart.useMaxWidth` to `false`
+to use the chart's natural dimensions instead:
+
+```mermaid-example
+---
+config:
+  orgchart:
+    useMaxWidth: false
+---
+orgchart-beta
+    CEO
+        Engineering
+        Sales
+```
+
+When printing, check the page's print preview for clipping and legibility. Wide
+charts may need landscape orientation or a larger paper size. Org charts do not
+automatically split the hierarchy across printed pages.
 
 ## Hand-drawn look
 
@@ -122,5 +159,11 @@ orgchart-beta
 ```
 
 ## Limitations
+
+Labels are single-line plain text. HTML line breaks such as `<br/>` and Markdown
+formatting such as `**Chief**` are displayed literally rather than interpreted.
+All node boxes share the same dimensions, sized to fit the longest primary or
+secondary label. One long label therefore widens every box and can make the chart
+very wide; use short labels where possible.
 
 This first version intentionally leaves out images, multiple managers (matrix reporting), dotted-line or other cross-links, alternative layouts, and org-chart-specific layout options.

@@ -66,7 +66,7 @@ const draw: DrawDefinition = (text, id, _version, diagram) => {
 
   const chart = svg.append('g').attr('class', 'orgchart');
   const size = measureNodes(chart, db.getNodes());
-  const { look, handDrawnSeed } = getConfig();
+  const { look, handDrawnSeed, orgchart } = getConfig();
   const roughSvg = look === 'handDrawn' ? rough.svg(svg.node()!) : undefined;
   const roughOptions = { seed: handDrawnSeed, roughness: 0.7, stroke: 'currentColor' };
   const options: OrgChartLayoutOptions = {
@@ -138,7 +138,7 @@ const draw: DrawDefinition = (text, id, _version, diagram) => {
   }
 
   utils.insertTitle(svg, 'orgchart-title', TITLE_TOP_MARGIN, toPlainText(db.getDiagramTitle()));
-  setupViewPortForSVG(svg, PADDING, 'orgchart', true);
+  setupViewPortForSVG(svg, PADDING, 'orgchart', orgchart?.useMaxWidth ?? true);
 };
 
 export const renderer = { draw };

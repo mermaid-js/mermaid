@@ -75,6 +75,75 @@ title Company &amp; partners
     expect(doc.querySelector('.orgchart-secondary-label')?.textContent).toBe('<i>Bo</i>');
   });
 
+  jsdomIt('removes scripts from primary and secondary labels before storing them', () => {
+    const db = createOrgChartDb();
+    db.addNode({
+      indent: 0,
+      line: 2,
+      column: 1,
+      kind: 'regular',
+      label: 'CEO<script>alert(1)</script>',
+      secondaryLabel: 'Bob<script>alert(2)</script>',
+    });
+
+    expect(db.getRoot()?.label).toBe('CEO');
+    expect(db.getRoot()?.secondaryLabel).toBe('Bob');
+  });
+
+  jsdomIt('keeps script labels inert in rendered SVG', async () => {
+    const { svg } = await mermaidAPI.render(
+      'orgchart-script-labels',
+      `orgchart-beta
+  "CEO<script>alert(1)</script>" "Bob<script>alert(2)</script>"`
+    );
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    expect(doc.querySelector('script')).toBeNull();
+    expect(doc.querySelector('.orgchart-label')?.textContent).toBe('CEO');
+    expect(doc.querySelector('.orgchart-secondary-label')?.textContent).toBe('Bob');
+  });
+
+  jsdomIt('uses responsive sizing by default', async () => {
+    const { svg } = await mermaidAPI.render('orgchart-default-size', example);
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    expect(doc.documentElement.getAttribute('width')).toBe('100%');
+    expect(doc.documentElement.getAttribute('style')).toContain('max-width:');
+  });
+
+  jsdomIt('uses classic geometry for the neo look', async () => {
+    const renderChart = async (look: 'classic' | 'neo') => {
+      mermaidAPI.initialize({ look });
+      const { svg } = await mermaidAPI.render('orgchart-look-fallback', example);
+      const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+      expect(doc.querySelectorAll('.orgchart-node rect')).toHaveLength(7);
+      expect(doc.querySelectorAll('.orgchart-node-shape')).toHaveLength(0);
+      return doc.querySelector('g.orgchart')!.outerHTML;
+    };
+
+    expect(await renderChart('neo')).toBe(await renderChart('classic'));
+  });
+
+  jsdomIt('honors useMaxWidth from initialize and frontmatter', async () => {
+    mermaidAPI.initialize({ orgchart: { useMaxWidth: false } });
+    const { svg } = await mermaidAPI.render('orgchart-natural-size', example);
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    expect(doc.documentElement.getAttribute('width')).not.toBe('100%');
+    expect(Number(doc.documentElement.getAttribute('width'))).toBeGreaterThan(0);
+    expect(doc.documentElement.getAttribute('style') ?? '').not.toContain('max-width:');
+
+    const { svg: responsive } = await mermaidAPI.render(
+      'orgchart-frontmatter-size',
+      `---
+config:
+  orgchart:
+    useMaxWidth: true
+---
+${example}`
+    );
+    const responsiveDoc = new DOMParser().parseFromString(responsive, 'image/svg+xml');
+    expect(responsiveDoc.documentElement.getAttribute('width')).toBe('100%');
+    expect(responsiveDoc.documentElement.getAttribute('style')).toContain('max-width:');
+  });
+
   jsdomIt('rejects rendering when the chart has no root node', () => {
     const id = 'orgchart-no-root';
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
