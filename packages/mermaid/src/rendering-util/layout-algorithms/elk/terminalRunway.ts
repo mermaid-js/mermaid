@@ -140,15 +140,22 @@ export function reserveTerminalLayoutSpace(
     return;
   }
   const options = (graph.layoutOptions ??= {});
-  for (const key of [
-    'elk.layered.spacing.edgeNodeBetweenLayers',
-    'elk.spacing.edgeNode',
-    'elk.spacing.nodeNode',
-    'spacing.nodeNode',
-    'spacing.edgeNode',
-    'elk.layered.spacing.nodeNodeBetweenLayers',
+  const base = Number(options['spacing.baseValue']) || 0;
+  for (const aliases of [
+    ['elk.layered.spacing.edgeNodeBetweenLayers'],
+    ['elk.spacing.edgeNode', 'spacing.edgeNode'],
+    ['elk.spacing.nodeNode', 'spacing.nodeNode'],
+    ['elk.layered.spacing.nodeNodeBetweenLayers'],
   ]) {
-    options[key] = Math.max(Number(options[key]) || 0, runway);
+    const hasExplicit = aliases.some((key) => Object.hasOwn(options, key));
+    const current = Math.max(...aliases.map((key) => Number(options[key]) || 0));
+    if (!hasExplicit && runway <= base) {
+      continue;
+    }
+    const value = Math.max(current, runway);
+    for (const key of aliases) {
+      options[key] = value;
+    }
   }
   if (!root && graph.children?.length) {
     const pad = runway + 16;

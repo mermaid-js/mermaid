@@ -726,7 +726,8 @@ export async function runElkLayoutCore(
   // ELK for positions. Post-routing detours cannot manufacture header space.
   let runway = 0;
   if (context.element?.node?.()) {
-    const probe = context.element.append('g').attr('class', 'edgePaths').append('path');
+    const probeGroup = context.element.append('g').attr('class', 'edgePaths');
+    const probe = probeGroup.append('path');
     try {
       for (const edge of data4Layout.edges) {
         probe
@@ -746,7 +747,7 @@ export async function runElkLayoutCore(
         runway = Math.max(runway, minimumRawLead(policy.start), minimumRawLead(policy.end));
       }
     } finally {
-      probe.remove();
+      probeGroup.remove();
     }
   }
   const measured = snapshot();
