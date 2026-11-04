@@ -298,6 +298,14 @@ describe('[Style] when parsing', () => {
     );
   });
 
+  it('should report an out-of-bounds index that follows a comma', function () {
+    expect(() =>
+      flow.parser.parse(`graph TD
+    A-->B
+    linkStyle 0,3 stroke-width:1px;`)
+    ).toThrow('The index 3 for linkStyle is out of bounds.');
+  });
+
   it('should handle style definitions within number of edges', function () {
     const res = flow.parser.parse(`graph TD
     A-->B
