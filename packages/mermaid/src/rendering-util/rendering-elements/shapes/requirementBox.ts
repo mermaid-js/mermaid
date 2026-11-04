@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import { getNodeClasses, updateNodeBounds } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
@@ -252,7 +253,7 @@ async function addText<T extends SVGGraphicsElement>(
     if (alignment === 'start') {
       select(div).style('text-align', 'left');
     }
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }

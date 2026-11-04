@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import { createText } from '../../createText.js';
 import fastdom from '../../fastdom.js';
 import type { Node } from '../../types.js';
@@ -125,8 +126,8 @@ export const labelHelper = async <T extends SVGGraphicsElement>(
 
     bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
-        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
-        : div.getBoundingClientRect()
+        ? profiler.tickSync('getBoundingClientRect', () => measureHtmlLabel(div))
+        : measureHtmlLabel(div)
     );
     bbox = withMinWidth(bbox, minLabelWidth);
     dv.attr('width', bbox.width);
@@ -192,8 +193,8 @@ export const insertLabel = async <T extends SVGGraphicsElement>(
 
     bbox = await fastdom.measure(() =>
       injected.profiling && profiler.tickSync
-        ? profiler.tickSync('getBoundingClientRect', () => div.getBoundingClientRect())
-        : div.getBoundingClientRect()
+        ? profiler.tickSync('getBoundingClientRect', () => measureHtmlLabel(div))
+        : measureHtmlLabel(div)
     );
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);

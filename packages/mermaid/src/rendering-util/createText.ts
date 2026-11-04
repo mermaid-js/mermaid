@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from './measureHtmlLabel.js';
 import { select } from 'd3';
 import type { MermaidConfig } from '../config.type.js';
 import type { SVGGroup } from '../diagram-api/types.js';
@@ -70,8 +71,9 @@ async function addHtmlSpan(
     div.attr('class', 'labelBkg');
   }
 
-  const bbox = await fastdom.measure(() => div.node()!.getBoundingClientRect());
-  if (bbox.width === width) {
+  const bbox = await fastdom.measure(() => measureHtmlLabel(div.node()!));
+  // Coordinate conversion can introduce sub-pixel floating-point error.
+  if (Math.abs(bbox.width - width) < 0.001) {
     div.style('display', 'table');
     div.style('white-space', 'break-spaces');
     div.style('width', width + 'px');

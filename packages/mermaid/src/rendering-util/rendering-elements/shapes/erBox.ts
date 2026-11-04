@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import { updateNodeBounds, getNodeClasses } from './util.js';
 import intersect from '../intersect/index.js';
 import type { Node } from '../../types.js';
@@ -390,7 +391,7 @@ async function addText<T extends SVGGraphicsElement>(
     const div = text.children[0] as HTMLDivElement;
     div.style.textAlign = 'start';
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }

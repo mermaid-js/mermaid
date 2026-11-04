@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../../measureHtmlLabel.js';
 import type { Node } from '../../types.js';
 import { select } from 'd3';
 import { updateNodeBounds } from './util.js';
@@ -45,7 +46,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   if (getEffectiveHtmlLabels(getConfig())) {
     const div = text.children[0];
     const dv = select(text);
-    bbox = div.getBoundingClientRect();
+    bbox = measureHtmlLabel(div);
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
@@ -63,7 +64,7 @@ export async function rectWithTitle<T extends SVGGraphicsElement>(
   //if (evaluate(getConfig()?.flowchart?.htmlLabels)) {
   const div = descr.children[0];
   const dv = select(descr);
-  bbox = div.getBoundingClientRect();
+  bbox = measureHtmlLabel(div);
   dv.attr('width', bbox.width);
   dv.attr('height', bbox.height);
   // }
