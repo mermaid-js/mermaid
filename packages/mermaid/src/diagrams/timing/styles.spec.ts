@@ -4,6 +4,12 @@ import themes from '../../themes/index.js';
 import { styles } from './styles.js';
 
 describe('timing diagram styles', () => {
+  it.each(['微软雅黑', 'Hiragino Sans 日本語', 'Cafe\u0301'])(
+    'preserves Unicode font %s',
+    (fontFamily) => {
+      expect(styles({ fontFamily })).toContain(`font-family: ${fontFamily}`);
+    }
+  );
   beforeEach(() => {
     configApi.setSiteConfig({});
   });

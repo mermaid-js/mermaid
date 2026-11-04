@@ -27,6 +27,28 @@ const createDiagram = (
   }) as unknown as Diagram;
 
 describe('timing diagram renderer', () => {
+  it('clamps short lanes to a readable height', async () => {
+    document.body.innerHTML = '<svg id="short-lane"></svg>';
+    await draw(
+      '',
+      'short-lane',
+      '1.0',
+      createDiagram(
+        [
+          {
+            id: 'A',
+            label: 'A',
+            type: 'binary',
+            sequence: [{ value: 1, duration: 1 }],
+            events: [],
+          },
+        ],
+        '',
+        { rowHeight: 20 }
+      )
+    );
+    expect(document.querySelector('.timing-lane rect')?.getAttribute('height')).toBe('36');
+  });
   it('renders every v1 signal lane and the time axis', async () => {
     document.body.innerHTML = '<svg id="timing"></svg>';
     const signals: TimingSignal[] = [

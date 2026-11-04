@@ -2971,7 +2971,7 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
       rowHeight:
         description: Height of each signal lane.
         type: number
-        minimum: 20
+        minimum: 36
         maximum: 9007199254740991
         default: 48
       labelWidth:

@@ -5,7 +5,7 @@ import type { TimingStyleOptions } from './types.js';
 
 type ThemeVariables = ReturnType<typeof getThemeVariables>;
 
-const FONT_FAMILY_PATTERN = /^[\w "',.-]+$/;
+const FONT_FAMILY_PATTERN = /^[\p{L}\p{M}\p{N}_ "',.-]+$/u;
 const FONT_SIZE_PATTERN = /^(?:\d+(?:\.\d+)?|\.\d+)(?:px|em|rem|pt|%)$/i;
 
 const sanitizeFontFamily = (value: unknown, fallback: string): string => {

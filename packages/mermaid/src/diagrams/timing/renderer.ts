@@ -241,6 +241,7 @@ const draw: DrawDefinition = (_text, id, _version, diagram: Diagram) => {
   const db = diagram.db as TimingDB;
   const signals = db.getSignals();
   const config: Required<TimingDiagramConfig> = db.getConfig();
+  config.rowHeight = Math.max(36, config.rowHeight);
   const title = db.getDiagramTitle();
   const titleHeight = title ? 30 : 0;
   const timelineEnd = calculateTimelineEnd(signals);

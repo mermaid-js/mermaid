@@ -243,7 +243,7 @@ timingDiagram-beta
   accTitle: SPI transfer timing
   accDescr: Chip select goes low while eight clock pulses transfer one byte.
   %% The clock is generated from its declaration.
-  clock SCLK : period 2
+  clock SCLK : period 1
   binary CS
   CS : 1, 0 x8, 1
 ```
@@ -256,7 +256,7 @@ timingDiagram-beta
   accTitle: SPI transfer timing
   accDescr: Chip select goes low while eight clock pulses transfer one byte.
   %% The clock is generated from its declaration.
-  clock SCLK : period 2
+  clock SCLK : period 1
   binary CS
   CS : 1, 0 x8, 1
 ```
