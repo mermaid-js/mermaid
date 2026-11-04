@@ -756,12 +756,12 @@ export function buildElkGraphFromLayoutData(
   const aligned = data4Layout.config.elk?.directedSubgraphs !== 'ports';
   const separated =
     elkGraph.layoutOptions['elk.algorithm'] === 'elk.layered'
-      ? findSeparatedGroups(
+      ? separatedGroups(
           directionGroups(data4Layout.nodes),
           rootDirection,
           edgeEnds(elkGraph, nodeDb),
           parentLookupDb,
-          { requireInnerEdge: !aligned }
+          aligned
         )
       : new Map<string, ElkDirection>();
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log, separated);
@@ -784,6 +784,32 @@ export function buildElkGraphFromLayoutData(
         aligned: { separated, direction: rootDirection, ...arranged },
       }
     : { elkGraph, nodeDb, parentLookupDb };
+}
+
+/**
+ * The subgraphs ELK lays out on their own. With `aligned`, a subgraph with no edge inside it is
+ * still one when another subgraph beside it, in the same parent, is too, so the two line up as
+ * rows or columns; on its own it has nothing to line up with and is left to ELK, as with `ports`.
+ */
+function separatedGroups(
+  groups: ReturnType<typeof directionGroups>,
+  rootDirection: ElkDirection,
+  edges: ReturnType<typeof edgeEnds>,
+  tree: TreeData,
+  aligned: boolean
+): Map<string, ElkDirection> {
+  if (!aligned) {
+    return findSeparatedGroups(groups, rootDirection, edges, tree);
+  }
+  const relaxed = findSeparatedGroups(groups, rootDirection, edges, tree, {
+    requireInnerEdge: false,
+  });
+  const parentOf = (id: string) => tree.parentById[id];
+  const hasSibling = (id: string) =>
+    [...relaxed.keys()].some((other) => other !== id && parentOf(other) === parentOf(id));
+  return findSeparatedGroups(groups, rootDirection, edges, tree, {
+    requireInnerEdge: (id) => !hasSibling(id),
+  });
 }
 
 function directionGroups(nodes: Node[]) {

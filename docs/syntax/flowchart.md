@@ -1898,7 +1898,7 @@ flowchart TB
     Order -- paid --> Pick
 ```
 
-With this option a subgraph keeps its direction even when no link runs between two nodes inside it.
+With this option a subgraph keeps its direction even when no link runs between two nodes inside it, as long as another subgraph with its own direction sits beside it in the same parent, so the two line up; one on its own is left to ELK, as with `ports`.
 The other exceptions listed above still apply, and the arrangement stops short in these cases:
 
 - only the subgraphs that sit directly in the diagram, and the subgraphs directly inside a band, are arranged; a subgraph nested deeper keeps the default arrangement inside it;

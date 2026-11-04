@@ -171,6 +171,11 @@ function groupsTouchedBy(edge: EdgeEnds, tree: TreeData): string[] {
   return [...groupsCrossedBy(edge, tree), findCommonAncestor(edge.source, edge.target, tree)];
 }
 
+/** Whether a subgraph needs an edge inside it to be laid out on its own, by its id. */
+function innerEdgeRule(rule: boolean | ((id: string) => boolean)): (id: string) => boolean {
+  return typeof rule === 'function' ? rule : () => rule;
+}
+
 /**
  * Decide which subgraphs ELK lays out on their own, and in which direction.
  *
@@ -188,7 +193,8 @@ function groupsTouchedBy(edge: EdgeEnds, tree: TreeData): string[] {
  * @param rootDirection - the direction of the diagram
  * @param edges - every edge between two known nodes
  * @param tree - the subgraph parent lookup
- * @param options - `requireInnerEdge: false` drops the condition on an edge inside the subgraph
+ * @param options - `requireInnerEdge: false` drops the condition on an edge inside the subgraph;
+ *   a function drops it for the subgraphs it returns false for
  * @returns the subgraphs to lay out on their own, each with its direction; empty when none differs
  */
 export function findSeparatedGroups(
@@ -196,13 +202,14 @@ export function findSeparatedGroups(
   rootDirection: ElkDirection,
   edges: readonly EdgeEnds[],
   tree: TreeData,
-  { requireInnerEdge = true }: { requireInnerEdge?: boolean } = {}
+  { requireInnerEdge = true }: { requireInnerEdge?: boolean | ((id: string) => boolean) } = {}
 ): Map<string, ElkDirection> {
   const { internal, ownMember } = edgesHeld(edges, tree);
+  const needsInner = innerEdgeRule(requireInnerEdge);
   const directed = findDirectedGroups(
     groups,
     rootDirection,
-    (id) => (internal.has(id) || !requireInnerEdge) && !ownMember.has(id),
+    (id) => (internal.has(id) || !needsInner(id)) && !ownMember.has(id),
     tree
   );
   if (directed.size === 0) {
