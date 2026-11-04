@@ -1420,7 +1420,7 @@ In this snippet:
 **Note on Escaping Commas:**
 When setting the `stroke-dasharray` property, remember to escape commas as `\,` since commas are used as delimiters in Mermaid’s style definitions.
 
-### Step-by-step flow animation (v\<MERMAID_RELEASE_VERSION>+)
+### Step-by-step flow animation (v12.3.0+)
 
 Edges can also play in order, which is handy for showing how a request moves through a system. Give an edge a `step` number and a dot travels along it when that step comes up. The dot visits step 1, then step 2, and so on, and starts again after the last step. Edges that share a step number play at the same time.
 
@@ -1453,10 +1453,10 @@ flowchart LR
 ```
 
 - Edges without a `step` are drawn as usual, so a diagram with no `step` looks exactly as before.
-- While its dot travels, the edge is highlighted with a thicker stroke in the edge's colour (v\<MERMAID_RELEASE_VERSION>+). The highlight has the class `edge-step-highlight`, so it can be restyled with `themeCSS`.
-- Set `flowchart.stepNumbers: true` (v\<MERMAID_RELEASE_VERSION>+) to show each edge's step number in a small badge, so the order can be read without watching the animation, in print, or when motion is reduced. It is off by default. The badge sits on the edge clear of labels, nodes, arrowheads and other badges (just beside the edge when it is too short), and is drawn above every edge and moving dot. The badge has the class `edge-step-badge`, so it can be restyled with `themeCSS`. Its size is fixed in diagram units, so when the diagram is scaled down to fit its container (`useMaxWidth`) the badge shrinks with it; set `flowchart.useMaxWidth: false` to keep it full size.
+- While its dot travels, the edge is highlighted with a thicker stroke in the edge's colour (v12.3.0+). The highlight has the class `edge-step-highlight`, so it can be restyled with `themeCSS`.
+- Set `flowchart.stepNumbers: true` (v12.3.0+) to show each edge's step number in a small badge, so the order can be read without watching the animation, in print, or when motion is reduced. It is off by default. The badge sits on the edge clear of labels, nodes, arrowheads and other badges (just beside the edge when it is too short), and is drawn above every edge and moving dot. The badge has the class `edge-step-badge`, so it can be restyled with `themeCSS`. Its size is fixed in diagram units, so when the diagram is scaled down to fit its container (`useMaxWidth`) the badge shrinks with it; set `flowchart.useMaxWidth: false` to keep it full size.
 - `step` must be a positive whole number (`1`, `2`, `3`, ...). Other values are ignored.
-- Each step lasts one second by default. Set `flowchart.stepDuration` (in seconds, v\<MERMAID_RELEASE_VERSION>+) to make the flow faster or slower:
+- Each step lasts one second by default. Set `flowchart.stepDuration` (in seconds, v12.3.0+) to make the flow faster or slower:
 
 ```mermaid
 ---
