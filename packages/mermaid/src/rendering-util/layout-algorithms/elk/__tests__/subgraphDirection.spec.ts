@@ -236,3 +236,56 @@ describe('a subgraph keeps its own direction when an edge crosses its frame', ()
     expect(onBorder(nodes.get('x'), points.at(-1))).toBe(true);
   });
 });
+
+/**
+ * A row of three steps in a plain subgraph, each feeding one of three targets in a `TB`
+ * subgraph that has no edge inside it, optionally next to a second such subgraph.
+ */
+const pipeline = (secondColumn: boolean, elk: Record<string, unknown> = {}) =>
+  ({
+    direction: 'LR',
+    config: { elk },
+    nodes: [
+      group('stages'),
+      ...['s1', 's2', 's3'].map((id) => node(id, 'stages')),
+      group('targets', 'TB'),
+      ...['t1', 't2', 't3'].map((id) => node(id, 'targets')),
+      ...(secondColumn ? [group('spares', 'TB'), node('x1', 'spares'), node('x2', 'spares')] : []),
+    ],
+    edges: [
+      edge('s1', 's2'),
+      edge('s2', 's3'),
+      edge('s1', 't1'),
+      edge('s2', 't2'),
+      edge('s3', 't3'),
+      ...(secondColumn ? [edge('t3', 'x1')] : []),
+    ],
+  }) as any;
+
+describe('a directed subgraph with no edge inside it', () => {
+  const handling = (data: any) => {
+    const { elkGraph } = buildElkGraphFromLayoutData(data, {
+      ...elkRenderContext.helpers,
+      algorithm: 'elk.layered',
+    });
+    return new Map(
+      elkGraph.children.map((child: any) => [
+        child.id,
+        child.layoutOptions['elk.hierarchyHandling'],
+      ])
+    );
+  };
+
+  it('is left to ELK when no subgraph beside it is laid out on its own, as with ports', () => {
+    expect(handling(pipeline(false)).get('targets')).not.toBe('SEPARATE_CHILDREN');
+    expect(handling(pipeline(false))).toEqual(
+      handling(pipeline(false, { directedSubgraphs: 'ports' }))
+    );
+  });
+
+  it('is laid out on its own next to another such subgraph, so the two line up', () => {
+    const groups = handling(pipeline(true));
+    expect(groups.get('targets')).toBe('SEPARATE_CHILDREN');
+    expect(groups.get('spares')).toBe('SEPARATE_CHILDREN');
+  });
+});
