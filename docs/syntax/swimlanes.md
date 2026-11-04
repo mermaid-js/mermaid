@@ -250,7 +250,7 @@ swimlane-beta LR
 
 Lanes show who does the work. Phases add a second axis across the lanes that shows the stage the work is in. Declare each phase with `phase`, then name the phase of a node in its `@{ }` metadata.
 
-```mermaid-example
+```mermaid
 swimlane-beta LR
   phase intake["Intake"]
   phase review["Review"]
@@ -270,7 +270,7 @@ swimlane-beta LR
   log --> receive --> assess --> sign --> close
 ```
 
-```mermaid
+```mermaid-example
 swimlane-beta LR
   phase intake["Intake"]
   phase review["Review"]
