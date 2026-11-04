@@ -7,7 +7,7 @@ outline: 'deep' # shows all h3 headings in outline in Vitepress
 
 ## Mermaid is going on a diet: try the v13 alpha
 
-The v13 alpha is a proof of concept of a plugin-based, DOM-free Mermaid. With the same syntax, a flowchart-only bundle is 80 kB (min+gzip) and 100× faster. The alpha tries one path for v13, a full rewrite. The other path is gradual updates to v12, and your feedback decides which one we take.
+The v13 alpha is a proof of concept of a plugin-based, DOM-free Mermaid. With the same syntax, a flowchart-only bundle is about 100 kB (min+gzip) and renders about 50× faster than v12 today. We are aiming for 100×. The alpha tries one path for v13, a full rewrite. The other path is gradual updates to v12, and your feedback decides which one we take.
 
 [Try the alpha](../intro/v13-alpha.md) and [join the discussion](https://github.com/orgs/mermaid-js/discussions/8685).
 

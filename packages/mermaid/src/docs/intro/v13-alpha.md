@@ -33,12 +33,12 @@ pnpm add mermaid@v13-alpha
 
 ### Alpha builds
 
-We publish alpha builds often, numbered `13.0.0-alpha.1`, `13.0.0-alpha.2`, `13.0.0-alpha.3` and so on. The `v13-alpha` tag always points to the newest build.
+We publish alpha builds often, numbered `13.0.0-alpha.0`, `13.0.0-alpha.1` and so on. Each package has its own number, so `mermaid` and `@mermaid-js/diagram-flowchart` can be on different builds. The `v13-alpha` tag always points to the newest build of each package.
 
 - **Pin an exact build.** Any build can change APIs or output, so a version range could pull in a breaking change without you noticing:
 
   ```bash
-  npm install mermaid@13.0.0-alpha.3 --save-exact
+  npm install mermaid@13.0.0-alpha.0 --save-exact
   ```
 
 - **Move to the newest build** when you're ready, and read the release notes for what changed:
@@ -119,7 +119,7 @@ Most v12 setups render without code changes. Check these first. Like everything 
 
 Report bugs as issues. If a diagram renders differently from v12, or something breaks, [open a v13 alpha bug report](https://github.com/mermaid-js/mermaid/issues/new?template=v13_alpha_bug.yml). The template adds the `v13` label and asks for:
 
-- the exact alpha build, e.g. `13.0.0-alpha.3` (`npm ls mermaid` shows it)
+- the exact alpha build, e.g. `13.0.0-alpha.0` (`npm ls mermaid` shows it)
 - the diagram source
 - what you expected, and what you got (a screenshot helps)
 
