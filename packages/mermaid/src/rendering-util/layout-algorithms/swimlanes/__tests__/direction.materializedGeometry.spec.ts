@@ -424,3 +424,106 @@ describe('materialized render geometry cleanup', () => {
     ]);
   });
 });
+
+describe('separating two close terminal tracks on one face', () => {
+  // `fix -> task` is a straight connector between aligned nodes and leaves fix's left face at
+  // its centre; `decision -> fix` arrives on the same face 10 px above it, along the same
+  // stretch, so the two tracks are close enough to separate.
+  const ARRIVAL_Y = -10;
+  const FIX_LEFT = -75;
+  const layout = (fixHeight: number, taskRight: number, arrivalY = ARRIVAL_Y) => {
+    const nodeById = new Map<string, any>([
+      ['task', { id: 'task', x: taskRight - 75, y: 0, width: 150, height: 45 }],
+      ['fix', { id: 'fix', x: 0, y: 0, width: 150, height: fixHeight }],
+      ['decision', { id: 'decision', x: taskRight - 40, y: -130, width: 40, height: 40 }],
+    ]);
+    const fixToTask = {
+      id: 'fix_task',
+      start: 'fix',
+      end: 'task',
+      points: [
+        { x: FIX_LEFT, y: 0 },
+        { x: taskRight, y: 0 },
+      ],
+    };
+    const decisionToFix = {
+      id: 'decision_fix',
+      start: 'decision',
+      end: 'fix',
+      points: [
+        { x: taskRight - 40, y: -110 },
+        { x: taskRight - 40, y: arrivalY },
+        { x: FIX_LEFT, y: arrivalY },
+      ],
+    };
+    separateSharedRenderedTerminalLanes([decisionToFix, fixToTask] as any[], nodeById);
+    return { fixToTask, decisionToFix };
+  };
+
+  it('keeps the straight connector and moves the other track to the end of the face', () => {
+    const { fixToTask, decisionToFix } = layout(45, -125);
+    expect(fixToTask.points.map((p) => p.y)).toEqual([0, 0]);
+    expect(decisionToFix.points.at(-1)?.y).toBe(-22.5 + 8);
+  });
+
+  it('shifts the other track a whole step when the face has room for it', () => {
+    const { fixToTask, decisionToFix } = layout(80, -185);
+    expect(fixToTask.points.map((p) => p.y)).toEqual([0, 0]);
+    expect(decisionToFix.points.at(-1)?.y).toBe(ARRIVAL_Y - 7);
+  });
+
+  it('leaves both tracks when the other track cannot move away on the face', () => {
+    const { fixToTask, decisionToFix } = layout(24, -110);
+    expect(fixToTask.points.map((p) => p.y)).toEqual([0, 0]);
+    expect(decisionToFix.points.at(-1)?.y).toBe(ARRIVAL_Y);
+  });
+
+  it('keeps a quarter of a small face clear at each corner', () => {
+    const { decisionToFix } = layout(24, -110, -4);
+    expect(decisionToFix.points.at(-1)?.y).toBe(-12 + 24 / 4);
+  });
+});
+
+describe('separating two terminal tracks drawn on top of each other', () => {
+  it('moves one of two identical straight connectors, even though both are straight', () => {
+    const nodeById = new Map<string, any>([
+      ['A', { id: 'A', x: -100, y: 0, width: 40, height: 80 }],
+      ['B', { id: 'B', x: 0, y: 0, width: 40, height: 80 }],
+    ]);
+    const straight = () => ({
+      start: 'A',
+      end: 'B',
+      points: [
+        { x: -80, y: 0 },
+        { x: -20, y: 0 },
+      ],
+    });
+    const edges = [
+      { id: 'A_B_1', ...straight() },
+      { id: 'A_B_2', ...straight() },
+    ];
+    separateSharedRenderedTerminalLanes(edges as any[], nodeById);
+    expect(edges[0].points.at(-1)?.y).not.toBe(edges[1].points.at(-1)?.y);
+  });
+
+  it('never moves a track into the corners of narrow faces', () => {
+    const nodeById = new Map<string, any>([
+      ['A', { id: 'A', x: 0, y: -100, width: 20, height: 40 }],
+      ['B', { id: 'B', x: 0, y: 0, width: 20, height: 40 }],
+    ]);
+    const down = (id: string) => ({
+      id,
+      start: 'A',
+      end: 'B',
+      points: [
+        { x: 0, y: -80 },
+        { x: 0, y: -20 },
+      ],
+    });
+    const edges = [down('A_B_1'), down('A_B_2')];
+    separateSharedRenderedTerminalLanes(edges as any[], nodeById);
+    for (const edge of edges) {
+      expect(Math.abs(edge.points.at(-1)?.x ?? 0)).toBeLessThanOrEqual(10 - 20 / 4);
+    }
+  });
+});
