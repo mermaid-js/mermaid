@@ -1,8 +1,10 @@
 // This file should be moved into .vitepress folder once https://github.com/vitest-dev/vitest/issues/2344 is resolved.
 // Update https://github.com/mermaid-js/mermaid/blob/18c27c6f1d0537a738cbd95898df301b83c38ffc/packages/mermaid/src/docs.mts#L246 once fixed
 
+import { existsSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { expect, test } from 'vitest';
-import { getRedirect } from './redirect.js';
+import { getRedirect, idRedirectMap, urlRedirectMap } from './redirect.js';
 
 test.each([
   // Old docs, localhost
@@ -19,8 +21,8 @@ test.each([
     'https://mermaid-js.github.io/mermaid/#/flowchart?another=test&id=my-id&one=more', // with multiple params
     'syntax/flowchart.html#my-id',
   ],
-  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced', 'config/advanced.html'], // without .md
-  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced.md', 'config/advanced.html'], // with .md
+  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced', 'config/configuration.html'], // without .md
+  ['https://mermaid-js.github.io/mermaid/#/n00b-advanced.md', 'config/configuration.html'], // with .md
 
   ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted', 'intro/getting-started.html'],
   ['https://mermaid-js.github.io/mermaid/#/n00b-gettingstarted.md', 'intro/getting-started.html'],
@@ -37,7 +39,8 @@ test.each([
   // Old docs, without base path, new domain
   ['https://mermaid.js.org/#/flowchart.md', 'syntax/flowchart.html'],
   // New docs, without base path, new domain
-  ['https://mermaid.js.org/misc/faq.html', 'configure/faq.html'],
+  ['https://mermaid.js.org/misc/faq.html', 'config/faq.html'],
+  ['https://mermaid.js.org/syntax/examples.html', 'syntax/all-examples.html'],
   ['https://mermaid.js.org/community/newDiagram.html', 'community/new-diagram.html'],
   [
     'https://mermaid.js.org/community/development.html',
@@ -54,8 +57,29 @@ test.each([
   ],
   [
     'https://mermaid.js.org/misc/faq.html#frequently-asked-questions',
-    'configure/faq.html#frequently-asked-questions',
+    'config/faq.html#frequently-asked-questions',
   ], // with hash
 ])('should process url %s to %s', (link: string, path: string) => {
   expect(getRedirect(new URL(link))).toBe(path);
+});
+
+const generatedDocsDir = [
+  resolve(process.cwd(), 'docs'),
+  resolve(process.cwd(), '../../docs'),
+].find((candidate) => existsSync(join(candidate, 'syntax/flowchart.md')))!;
+
+test.each([...Object.values(idRedirectMap), ...Object.values(urlRedirectMap)])(
+  'redirect target %s should exist',
+  (target: string) => {
+    const page = target.split('#')[0].replace(/\.html$/, '');
+    expect(existsSync(join(generatedDocsDir, `${page}.md`))).toBe(true);
+  }
+);
+
+test.each([
+  ['https://mermaid.ai/open-source/misc/faq.html', 'config/faq.html'],
+  ['https://mermaid.ai/open-source/#/flowchart.md?id=my-id', 'syntax/flowchart.html#my-id'],
+  ['https://mermaid.ai/open-source/syntax/flowchart.html', undefined],
+])('should process url %s under the /open-source/ base to %s', (link: string, path) => {
+  expect(getRedirect(new URL(link), '/open-source/')).toBe(path);
 });
