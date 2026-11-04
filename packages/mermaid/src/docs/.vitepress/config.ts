@@ -150,7 +150,6 @@ function sidebarAll() {
         { text: 'About Mermaid', link: '/intro/' },
         { text: 'Getting Started', link: '/intro/getting-started' },
         { text: 'Try the v13 Alpha', link: '/intro/v13-alpha' },
-        { text: 'Migrating to v13', link: '/intro/v13-migration' },
         { text: 'Syntax and Configuration', link: '/intro/syntax-reference' },
         { text: 'Examples', link: '/syntax/all-examples' },
       ],

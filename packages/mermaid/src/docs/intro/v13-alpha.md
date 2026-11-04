@@ -115,8 +115,6 @@ Most v12 setups render without code changes. Check these first. Like everything 
 - `securityLevel: 'loose'` now behaves like `default`.
 - Custom CSS that targets element ids, `<marker>`, `.label-container` or the `<style>` element inside the SVG must move to the kept class names and the `--mermaid-*` CSS variables.
 
-For every change and its replacement, see the [v13 migration reference](./v13-migration.md).
-
 ## Give feedback
 
 Report bugs as issues. If a diagram renders differently from v12, or something breaks, [open a v13 alpha bug report](https://github.com/mermaid-js/mermaid/issues/new?template=v13_alpha_bug.yml). The template adds the `v13` label and asks for:
