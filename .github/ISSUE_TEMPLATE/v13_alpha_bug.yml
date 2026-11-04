@@ -16,7 +16,7 @@ body:
     attributes:
       label: Alpha build
       description: The exact build you used. `npm ls mermaid` shows it.
-      placeholder: 13.0.0-alpha.3
+      placeholder: 13.0.0-alpha.0
     validations:
       required: true
   - type: textarea
