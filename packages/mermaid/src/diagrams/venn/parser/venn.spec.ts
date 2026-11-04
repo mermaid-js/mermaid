@@ -239,25 +239,28 @@ describe('Venn diagram', function () {
     expect(() => venn.parse(str)).toThrow('unknown set identifier');
   });
 
-  test('bare title followed by a newline is a parse error, not a silent title theft', () => {
-    const str = `venn-beta
-title
-set A
-set B
-`;
-    expect(() => venn.parse(str)).toThrow();
+  test.each([
+    ['LF', '\n'],
+    ['CRLF', '\r\n'],
+    ['CR', '\r'],
+  ])('bare title followed by a %s newline is a parse error', (_name, newline) => {
+    const input = ['venn-beta', 'title', 'set A', 'set B'].join(newline);
+    expect(() => venn.parse(input)).toThrow();
   });
 
-  test('title with text on the same line still works', () => {
-    const str = `venn-beta
-title My Diagram
-set A
-set B
-union A,B
-`;
-    venn.parse(str);
+  test.each([
+    ['space', ' '],
+    ['tab', '\t'],
+  ])('title followed by a %s and text parses correctly', (_name, sep) => {
+    const input = `venn-beta\ntitle${sep}My Diagram\nset A\nset B\nunion A,B`;
+    venn.parse(input);
     expect(db.getDiagramTitle()).toBe('My Diagram');
     expect(db.getSubsetData()).toHaveLength(3);
+  });
+
+  test('bare title at end of input is a parse error', () => {
+    const input = 'venn-beta\nset A\ntitle';
+    expect(() => venn.parse(input)).toThrow();
   });
 
   test('quoted identifiers', () => {
