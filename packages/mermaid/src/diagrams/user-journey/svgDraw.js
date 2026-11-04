@@ -189,6 +189,10 @@ export const drawSection = function (elem, section, conf) {
     conf,
     section.colour
   );
+  if (section.styleColour) {
+    g.selectAll('.label').style('color', section.colour);
+    g.selectAll('text').style('fill', section.colour);
+  }
 };
 
 let taskCount = -1;
@@ -265,6 +269,10 @@ export const drawTask = function (elem, task, conf, diagramId) {
     conf,
     task.colour
   );
+  if (task.styleColour) {
+    g.selectAll('.label').style('color', task.colour);
+    g.selectAll('text').style('fill', task.colour);
+  }
 };
 
 /**
