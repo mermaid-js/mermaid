@@ -184,8 +184,10 @@ properties:
           it is clear which line passes over which where two edges meet.
 
           Rounded corners are preserved. If the preferred hopping edge has too
-          little room, the other edge is tried instead. In ELK, remaining crossings
-          on default rounded routes receive transparent edge-only gap fallbacks.
+          little room, the other edge is tried instead. In ELK, eligible crossings
+          on default rounded routes with sufficient clearance receive transparent
+          edge-only gap fallbacks; crossings without terminal clearance or with masks
+          on both edges remain undecorated.
           True smoothing curves and collinear shared paths are not rewritten.
           Set to `false` to draw plain crossings.
         oneOf:

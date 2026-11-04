@@ -90,12 +90,8 @@ horizontally only when a safe position exists inside its frame; otherwise local
 orthogonal edge detours are attempted without moving endpoints or crossing
 adjacent nodes. This does not conceal lines behind opaque title backgrounds.
 
-Non-Layered engines retain their node placements. Their straight or stale routes
-are checked against painted node text; supported routes can be re-clipped and
-locally detoured before title/frame/hop processing. Repaired midpoint labels
-follow the new route. This does not guarantee that every edge label or terminal
-label is collision-free. Unplaced null node coordinates are omitted before
-calling elkjs (including mindmap inputs).
+Non-Layered engines retain their node placements. Unplaced null node coordinates
+are omitted before calling elkjs (including mindmap inputs).
 
 Frame clearance is also checked: sustained parallel runs on a rectangular node
 or subgraph border are moved to a separate lane. A perpendicular boundary

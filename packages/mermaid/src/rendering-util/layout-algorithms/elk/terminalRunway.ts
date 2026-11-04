@@ -141,15 +141,17 @@ export function reserveTerminalLayoutSpace(
   }
   const options = (graph.layoutOptions ??= {});
   const base = Number(options['spacing.baseValue']) || 0;
-  for (const aliases of [
-    ['elk.layered.spacing.edgeNodeBetweenLayers'],
-    ['elk.spacing.edgeNode', 'spacing.edgeNode'],
-    ['elk.spacing.nodeNode', 'spacing.nodeNode'],
-    ['elk.layered.spacing.nodeNodeBetweenLayers'],
+  for (const group of [
+    { aliases: ['elk.layered.spacing.edgeNodeBetweenLayers'], factor: 0.5 },
+    { aliases: ['elk.spacing.edgeNode', 'spacing.edgeNode'], factor: 0.5 },
+    { aliases: ['elk.spacing.nodeNode', 'spacing.nodeNode'], factor: 1.0 },
+    { aliases: ['elk.layered.spacing.nodeNodeBetweenLayers'], factor: 1.0 },
   ]) {
+    const { aliases, factor } = group;
     const hasExplicit = aliases.some((key) => Object.hasOwn(options, key));
     const current = Math.max(...aliases.map((key) => Number(options[key]) || 0));
-    if (!hasExplicit && runway <= base) {
+    const derived = base * factor;
+    if (!hasExplicit && runway <= derived) {
       continue;
     }
     const value = Math.max(current, runway);
