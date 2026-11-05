@@ -10,8 +10,10 @@ import type { Point } from './types.js';
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** General epsilon for coordinate comparisons */
-export const EPS = 1;
+/** One rendered pixel is the tolerance boundary for layout geometry comparisons. */
+export const PIXEL_EPSILON = 1;
+/** @deprecated Use `PIXEL_EPSILON`; retained until validation migrates in the rendering layer. */
+export const EPS = PIXEL_EPSILON;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Segment representation for geometry processing
@@ -37,10 +39,10 @@ export interface NormalizedPolyline {
 export function segmentOrientation(a: Point, b: Point): 'H' | 'V' | 'Z' {
   const dx = Math.abs(b.x - a.x);
   const dy = Math.abs(b.y - a.y);
-  if (dx <= EPS && dy <= EPS) {
+  if (dx <= PIXEL_EPSILON && dy <= PIXEL_EPSILON) {
     return 'Z';
   }
-  if (dy <= EPS) {
+  if (dy <= PIXEL_EPSILON) {
     return 'H';
   }
   return 'V';
@@ -79,8 +81,8 @@ export function mergeCollinear(segments: Segment[]): Segment[] {
     if (current.orientation === next.orientation) {
       if (
         current.orientation === 'H' &&
-        Math.abs(current.b.y - next.a.y) <= EPS &&
-        Math.abs(current.a.y - next.a.y) <= EPS
+        Math.abs(current.b.y - next.a.y) <= PIXEL_EPSILON &&
+        Math.abs(current.a.y - next.a.y) <= PIXEL_EPSILON
       ) {
         // Extend horizontal segment
         current.b = next.b;
@@ -88,8 +90,8 @@ export function mergeCollinear(segments: Segment[]): Segment[] {
       }
       if (
         current.orientation === 'V' &&
-        Math.abs(current.b.x - next.a.x) <= EPS &&
-        Math.abs(current.a.x - next.a.x) <= EPS
+        Math.abs(current.b.x - next.a.x) <= PIXEL_EPSILON &&
+        Math.abs(current.a.x - next.a.x) <= PIXEL_EPSILON
       ) {
         // Extend vertical segment
         current.b = next.b;

@@ -5,44 +5,48 @@ import type { LayoutData, MermaidConfig } from 'mermaid';
 
 // Mock non-layered-tidy-tree-layout
 vi.mock('non-layered-tidy-tree-layout', () => ({
-  BoundingBox: vi.fn().mockImplementation(() => ({})),
-  Layout: vi.fn().mockImplementation(() => ({
-    layout: vi.fn().mockImplementation((treeData) => {
-      const result = { ...treeData };
+  BoundingBox: vi.fn().mockImplementation(function () {
+    return {};
+  }),
+  Layout: vi.fn().mockImplementation(function () {
+    return {
+      layout: vi.fn().mockImplementation((treeData) => {
+        const result = { ...treeData };
 
-      if (result.id?.toString().startsWith('virtual-root')) {
-        result.x = 0;
-        result.y = 0;
-      } else {
-        result.x = 100;
-        result.y = 50;
-      }
+        if (result.id?.toString().startsWith('virtual-root')) {
+          result.x = 0;
+          result.y = 0;
+        } else {
+          result.x = 100;
+          result.y = 50;
+        }
 
-      if (result.children) {
-        result.children.forEach((child: any, index: number) => {
-          child.x = 50 + index * 100;
-          child.y = 100;
+        if (result.children) {
+          result.children.forEach((child: any, index: number) => {
+            child.x = 50 + index * 100;
+            child.y = 100;
 
-          if (child.children) {
-            child.children.forEach((grandchild: any, gIndex: number) => {
-              grandchild.x = 25 + gIndex * 50;
-              grandchild.y = 200;
-            });
-          }
-        });
-      }
+            if (child.children) {
+              child.children.forEach((grandchild: any, gIndex: number) => {
+                grandchild.x = 25 + gIndex * 50;
+                grandchild.y = 200;
+              });
+            }
+          });
+        }
 
-      return {
-        result,
-        boundingBox: {
-          left: 0,
-          right: 200,
-          top: 0,
-          bottom: 250,
-        },
-      };
-    }),
-  })),
+        return {
+          result,
+          boundingBox: {
+            left: 0,
+            right: 200,
+            top: 0,
+            bottom: 250,
+          },
+        };
+      }),
+    };
+  }),
 }));
 
 describe('Tidy-Tree Layout Algorithm', () => {
