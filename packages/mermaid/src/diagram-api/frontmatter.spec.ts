@@ -242,6 +242,7 @@ describe('dotted config keys in frontmatter', () => {
 
   describe('a key with control characters', () => {
     const CONTROL_OR_LINE_BREAK = /[\p{Cc}\u2028\u2029]/u;
+    const BIDI_CONTROL = /[\u202A-\u202E\u2066-\u2069]/u;
 
     it.each([
       ['a newline', '\\n', '\\n'],
@@ -251,13 +252,18 @@ describe('dotted config keys in frontmatter', () => {
       ['a delete', '\\x7f', '\\u007f'],
       ['a next line', '\\x85', '\\u0085'],
       ['a line separator', '\\u2028', '\\u2028'],
+      ['a right-to-left override', '\\u202e', '\\u202e'],
+      ['a left-to-right embedding', '\\u202a', '\\u202a'],
+      ['a right-to-left isolate', '\\u2067', '\\u2067'],
+      ['a pop directional isolate', '\\u2069', '\\u2069'],
     ])('shows %s as a backslash sequence, on one line', (_name, written, shown) => {
       const warn = warnSpy();
       extractFrontMatter(withConfigKey(`"elk.a${written}b"`, 'true'));
       expect(warn).toHaveBeenCalledExactlyOnceWith(
-        `config key 'elk.a${shown}b' is ignored; write it nested: elk: { a${shown}b: ... }`
+        `config key 'elk.a${shown}b' is ignored; write it nested: elk: { "a${shown}b": ... }`
       );
       expect(String(warn.mock.calls[0][0])).not.toMatch(CONTROL_OR_LINE_BREAK);
+      expect(String(warn.mock.calls[0][0])).not.toMatch(BIDI_CONTROL);
     });
 
     it('cannot forge a second log line', () => {
@@ -281,6 +287,27 @@ describe('dotted config keys in frontmatter', () => {
       const message = String(warn.mock.calls[0][0]);
       expect(message).toContain(`'elk.${'\\n'.repeat((MAX_SHOWN_LENGTH - 'elk.'.length) / 2)}...'`);
       expect(message).not.toMatch(CONTROL_OR_LINE_BREAK);
+    });
+  });
+
+  describe('the suggested key', () => {
+    it.each([
+      ['a space', 'elk.a b', 'elk: { "a b": ... }'],
+      ['a colon', 'elk.a:b', 'elk: { "a:b": ... }'],
+      ['a quote', `'elk.a"b'`, 'elk: { "a\\"b": ... }'],
+      ['a backslash', `'elk.a\\b'`, 'elk: { "a\\\\b": ... }'],
+    ])('is quoted when a part holds %s', (_name, written, nested) => {
+      const warn = warnSpy();
+      extractFrontMatter(withConfigKey(written, 'true'));
+      expect(String(warn.mock.calls[0][0]).endsWith(`write it nested: ${nested}`)).toBe(true);
+    });
+
+    it('stays bare when every part is a plain word', () => {
+      const warn = warnSpy();
+      extractFrontMatter(withConfigKey('elk.node-Spacing_2.x', 'true'));
+      expect(String(warn.mock.calls[0][0])).toMatch(
+        /write it nested: elk: { node-Spacing_2: { x: \.\.\. } }$/
+      );
     });
   });
 
