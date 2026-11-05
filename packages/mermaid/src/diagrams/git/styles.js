@@ -140,7 +140,7 @@ const getStyles = (options) => {
   .commit-label { font-size: ${options.commitLabelFontSize}; fill: ${useNeoColorGen ? options.nodeBorder : options.commitLabelColor}; ${useNeoColorGen ? `font-weight:${options.noteFontWeight};` : ''}}
   .commit-label-bkg { font-size: ${options.commitLabelFontSize}; fill: ${useNeoColorGen ? 'transparent' : options.commitLabelBackground}; opacity: ${useNeoColorGen ? '' : 0.5};  }
   .tag-label { font-size: ${options.tagLabelFontSize}; fill: ${options.tagLabelColor};}
-  .tag-label-bkg { fill: ${useNeoColorGen ? options.mainBkg : options.tagLabelBackground}; stroke: ${useNeoColorGen ? options.nodeBorder : options.tagLabelBorder}; ${useNeoColorGen ? `filter:${options.dropShadow}` : ''}  }
+  .tag-label-bkg { fill: ${useNeoColorGen ? options.mainBkg : options.tagLabelBackground}; stroke: ${useNeoColorGen ? options.nodeBorder : options.tagLabelBorder}; ${useNeoColorGen ? `filter:${options.dropShadow?.replace('url(#drop-shadow)', `url(${options.svgId}-drop-shadow)`)}` : ''}  }
   .tag-hole { fill: ${options.textColor}; }
 
   .commit-merge {
