@@ -6,10 +6,10 @@
 
 # BPMN (v\<MERMAID_RELEASE_VERSION>+)
 
-> A BPMN diagram describes a business process in the notation standardised by the OMG: the pools and lanes that say who does the work, the events that start and end it, the activities that carry it out, and the gateways that branch it.
->
 > **Warning**
-> BPMN is in **beta**. The diagram type is selected with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+> BPMN is in beta. Diagrams start with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
+> A BPMN diagram describes a business process in the notation standardised by the OMG: the pools and lanes that say who does the work, the events that start and end it, the activities that carry it out, and the gateways that branch it.
 
 ## Introduction
 
@@ -21,7 +21,7 @@ This page introduces the notation in the order you would draw it. To look up one
 
 ## Basic example
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Order handling"
     start message s1 "Order received"
@@ -31,7 +31,7 @@ bpmn-beta LR
   s1 --> t1 --> gw --> e1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Order handling"
     start message s1 "Order received"
@@ -55,7 +55,7 @@ Comments start with `%%` and run to the end of the line.
 
 A diagram may carry a title, and the text that describes it to a screen reader. Each takes the rest of its line.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
 title Order handling
 accTitle: How an order is handled
@@ -67,7 +67,7 @@ accDescr: An order is received, checked by sales and then filed.
   s1 --> t1 --> e1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
 title Order handling
 accTitle: How an order is handled
@@ -104,7 +104,7 @@ An id is only needed when a flow refers to the element.
 
 A `pool` is a participant in the process; a `lane` divides a pool into roles. Both are containers, so their contents are indented under them. A diagram may use lanes without a pool.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   pool "Order handling"
     lane "Sales"
@@ -116,7 +116,7 @@ bpmn-beta LR
   s1 --> t1 --> t2 --> e1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   pool "Order handling"
     lane "Sales"
@@ -175,7 +175,7 @@ Omitting the trigger gives a plain (`none`) event, which `start`, `throw` and `e
 
 A trigger that _catches_ is drawn as an outline and one that _throws_ is filled, which is why the same keyword produces a different marker on an `intermediate` than on an `end`.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Escalation"
     start timer s1 "Every night"
@@ -185,7 +185,7 @@ bpmn-beta LR
   s1 --> i1 --> x1 --> e1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Escalation"
     start timer s1 "Every night"
@@ -205,7 +205,7 @@ bpmn-beta LR
 | `event-gateway` | Event-based                    |
 | `complex`       | Complex                        |
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Review"
     start s1 "Submitted"
@@ -216,7 +216,7 @@ bpmn-beta LR
   gw1 -- yes --> gw2 --> e1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Review"
     start s1 "Submitted"
@@ -233,7 +233,7 @@ An activity is `task`, `subprocess`, or `call`, optionally preceded by a task ty
 
 A `call` activity invokes a process defined elsewhere and is drawn with a thick border.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Fulfilment"
     user task t1 "Review order"
@@ -244,7 +244,7 @@ bpmn-beta LR
   t1 --> t2 --> t3 --> sp1 --> c1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Fulfilment"
     user task t1 "Review order"
@@ -259,7 +259,7 @@ bpmn-beta LR
 
 A boundary event is attached to an activity by indenting it under that activity. It is drawn on the activity's border, and a flow out of it is the exception path.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Support"
     start s1 "Ticket raised"
@@ -271,7 +271,7 @@ bpmn-beta LR
   b1 --> e2
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Support"
     start s1 "Ticket raised"
@@ -301,7 +301,7 @@ A message flow is drawn as a dashed line with an open arrowhead and a hollow cir
 
 An association is dotted rather than dashed, which is how the notation separates the two. It joins an artifact to what it belongs to and carries no order, so an element that is only associated does not take a place in the sequence.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   pool "Customer"
     lane "Buyer"
@@ -316,7 +316,7 @@ bpmn-beta LR
   t2 --> e1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   pool "Customer"
     lane "Buyer"
@@ -349,7 +349,7 @@ A `group` is a container, so its members are indented under it. It has no execut
 
 An artifact is placed beside the element it is associated with rather than in the flow, so where it is written among the elements does not decide where it is drawn.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Fulfilment"
     start s1 "Begin"
@@ -365,7 +365,7 @@ bpmn-beta LR
   n1 ... t2
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Fulfilment"
     start s1 "Begin"
@@ -383,7 +383,7 @@ bpmn-beta LR
 
 A data object drawn with an input, output or collection marker:
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Sales"
     start s1 "Order received"
@@ -398,7 +398,7 @@ bpmn-beta LR
   many ..> t1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Sales"
     start s1 "Order received"
@@ -427,7 +427,7 @@ The `bpmn` config namespace controls spacing:
 A BPMN process is drawn in pools and lanes, so the diagram is always laid out in swimlanes:
 a `layout` set globally or under `bpmn` has no effect.
 
-```mermaid-example
+```mermaid
 ---
 config:
   bpmn:
@@ -442,7 +442,7 @@ bpmn-beta LR
   s1 --> t1 --> e1
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   bpmn:
@@ -465,7 +465,7 @@ Unless you set one of them, each colour follows the theme: activities take `prim
 
 The BPMN element shapes do not use the hand-drawn renderer, so `look: handDrawn` draws them plain.
 
-```mermaid-example
+```mermaid
 ---
 config:
   themeVariables:
@@ -484,7 +484,7 @@ bpmn-beta LR
   s1 --> t1 --> gw --> e1
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   themeVariables:

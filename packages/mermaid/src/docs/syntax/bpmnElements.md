@@ -1,9 +1,10 @@
 # BPMN element reference (v<MERMAID_RELEASE_VERSION>+)
 
+```warning
+BPMN is in beta. Diagrams start with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
+
 > Every BPMN 2.0.2 element, what to write for it, and what happens when there is nothing to write.
->
-> **Warning**
-> BPMN is in **beta**. The diagram type is selected with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 
 ## Introduction
 

@@ -1,9 +1,10 @@
 # BPMN (v<MERMAID_RELEASE_VERSION>+)
 
+```warning
+BPMN is in beta. Diagrams start with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+```
+
 > A BPMN diagram describes a business process in the notation standardised by the OMG: the pools and lanes that say who does the work, the events that start and end it, the activities that carry it out, and the gateways that branch it.
->
-> **Warning**
-> BPMN is in **beta**. The diagram type is selected with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
 
 ## Introduction
 

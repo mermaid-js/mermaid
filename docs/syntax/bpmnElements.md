@@ -6,10 +6,10 @@
 
 # BPMN element reference (v\<MERMAID_RELEASE_VERSION>+)
 
-> Every BPMN 2.0.2 element, what to write for it, and what happens when there is nothing to write.
->
 > **Warning**
-> BPMN is in **beta**. The diagram type is selected with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+> BPMN is in beta. Diagrams start with the `bpmn-beta` keyword, and the syntax may still change in a backwards-incompatible way before it is declared stable.
+
+> Every BPMN 2.0.2 element, what to write for it, and what happens when there is nothing to write.
 
 ## Introduction
 
@@ -71,14 +71,14 @@ A participant with nothing inside it is legal and useful: a collaboration often 
 message goes to without saying what they do with it. A message flow may name the pools
 themselves as its ends.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   pool buyer "Buyer"
   pool seller "Seller"
   buyer -.-> seller
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   pool buyer "Buyer"
   pool seller "Seller"
@@ -131,7 +131,7 @@ written yet, so both are accepted wherever the enclosing element would otherwise
 A boundary event is attached by indenting it under the activity it interrupts. It is drawn on
 that activity's border, which is the one place two shapes are meant to share space.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Orders"
     user task t1 "Await approval"
@@ -141,7 +141,7 @@ bpmn-beta LR
   b1 --> e1
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Orders"
     user task t1 "Await approval"
@@ -189,7 +189,7 @@ A task takes an optional type in front of it, which selects the glyph in its cor
 
 Note the spelling of the last one: it is `rule task`, not `business-rule task`.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Fulfilment"
     receive task t1 "Receive the order"
@@ -198,7 +198,7 @@ bpmn-beta LR
   t1 --> t2 --> t3
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Fulfilment"
     receive task t1 "Receive the order"
@@ -238,7 +238,7 @@ form, and no labelled form of `-.->`, `..>` or `...`.
 Flows chain, and a chain may mix kinds: `a --> b -.-> c` is a sequence flow followed by a message flow. Both
 ends must be bare ids - an element cannot be declared inside a flow.
 
-```mermaid-example
+```mermaid
 bpmn-beta LR
   lane "Review"
     xor gw "Approved?"
@@ -248,7 +248,7 @@ bpmn-beta LR
   gw -- no --> refund
 ```
 
-```mermaid
+```mermaid-example
 bpmn-beta LR
   lane "Review"
     xor gw "Approved?"
