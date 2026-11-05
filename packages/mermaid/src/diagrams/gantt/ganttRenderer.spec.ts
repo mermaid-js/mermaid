@@ -5,12 +5,7 @@ beforeAll(() => {
   Object.defineProperty(SVGElement.prototype, 'getBBox', {
     configurable: true,
     value(this: SVGElement): SVGRect {
-      return {
-        x: 0,
-        y: 0,
-        width: (this.textContent ?? '').length * 7,
-        height: 14,
-      };
+      return new DOMRect(0, 0, (this.textContent ?? '').length * 7, 14);
     },
   });
 });
