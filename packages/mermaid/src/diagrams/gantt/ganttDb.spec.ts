@@ -31,6 +31,29 @@ describe('when using the ganttDb', function () {
     });
   });
 
+  describe('task label placeholders', function () {
+    it('formats task dates with the chart date format and preserves the specified duration', function () {
+      ganttDb.setDateFormat('DD/MM/YYYY');
+      ganttDb.addTask('Starts %startdate and ends %enddate after %duration', 'task1,20/02/2020,2w');
+
+      expect(ganttDb.getTasks()[0].task).toEqual('Starts 20/02/2020 and ends 05/03/2020 after 2w');
+    });
+
+    it('computes a day duration when the task end is specified as a date', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('Lasts %duration', 'task1,2020-02-20,2020-03-05');
+
+      expect(ganttDb.getTasks()[0].task).toEqual('Lasts 14d');
+    });
+
+    it('leaves unsupported placeholders and ordinary percentage text unchanged', function () {
+      ganttDb.setDateFormat('YYYY-MM-DD');
+      ganttDb.addTask('Progress 50%, %unknown: %duration', 'task1,2020-02-20,2d');
+
+      expect(ganttDb.getTasks()[0].task).toEqual('Progress 50%, %unknown: 2d');
+    });
+  });
+
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
