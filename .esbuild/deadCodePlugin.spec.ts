@@ -5,7 +5,9 @@ import { join } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import { build } from 'esbuild';
 import { afterEach, describe, expect, it } from 'vitest';
-import { deadCodePlugin } from './deadCodePlugin.js';
+import ts from 'typescript';
+import { packageOptions } from '../.build/common.js';
+import { defaultOptions, getBuildConfig } from './util.js';
 
 const helper = `export function toFastProperties(value) {
   function FakeConstructor() {}
@@ -24,6 +26,26 @@ const temporaryDirectories: string[] = [];
 afterEach(async () => {
   await Promise.all(temporaryDirectories.splice(0).map((path) => rm(path, { recursive: true })));
 });
+
+// Check only the small helper output, not Mermaid's multi-megabyte dist bundle.
+// This detects the specific #7953 structure rather than all Firefox warnings.
+const findUnreachableExpressions = (code: string): ts.ExpressionStatement[] => {
+  const sourceFile = ts.createSourceFile('helper.js', code, ts.ScriptTarget.ESNext, false);
+  const unreachable: ts.ExpressionStatement[] = [];
+  const visit = (node: ts.Node) => {
+    if (ts.isBlock(node)) {
+      const returnIndex = node.statements.findIndex(ts.isReturnStatement);
+      if (returnIndex !== -1) {
+        unreachable.push(
+          ...node.statements.slice(returnIndex + 1).filter(ts.isExpressionStatement)
+        );
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sourceFile);
+  return unreachable;
+};
 
 const bundleHelper = async (
   source: string,
@@ -44,11 +66,40 @@ const bundleHelper = async (
     globalName: 'helpers',
     write: false,
     logLevel: 'silent',
-    plugins: usePlugin ? [deadCodePlugin] : [],
+    // Use the production plugin list so removing the build registration also
+    // fails the regression, without requiring a full Mermaid build first.
+    plugins: usePlugin
+      ? getBuildConfig({
+          ...defaultOptions,
+          minify: true,
+          format: 'iife',
+          options: packageOptions.mermaid,
+        }).plugins
+      : [],
   });
 };
 
 describe('deadCodePlugin', () => {
+  it('detects an expression after an unconditional return', () => {
+    expect(findUnreachableExpressions('function f() { return 1; (0, eval)(1); }')).toHaveLength(1);
+  });
+
+  it('does not flag an expression after a conditional return', () => {
+    expect(
+      findUnreachableExpressions('function f() { if (check()) return 1; (0, eval)(1); }')
+    ).toEqual([]);
+  });
+
+  it('guards the retained eval when minifying the helper with the production plugins', async () => {
+    const original = await bundleHelper(helper, '@chevrotain/utils', false);
+    expect(findUnreachableExpressions(original.outputFiles[0].text)).toHaveLength(1);
+
+    const result = await bundleHelper(helper);
+    expect(findUnreachableExpressions(result.outputFiles[0].text)).toEqual([]);
+    expect(result.outputFiles[0].text).toMatch(/\beval\b/);
+    expect(result.warnings).toEqual([]);
+  });
+
   it('preserves the original return value and number of getter accesses', async () => {
     const result = await bundleHelper(helper);
     const context = { helpers: { toFastProperties: (value: object) => value } };
@@ -62,6 +113,7 @@ describe('deadCodePlugin', () => {
     };
     expect(context.helpers.toFastProperties(value)).toBe(value);
     expect(accesses).toBe(2);
+    expect(result.outputFiles[0].text).toMatch(/\beval\b/);
     expect(result.warnings).toEqual([]);
   });
 
