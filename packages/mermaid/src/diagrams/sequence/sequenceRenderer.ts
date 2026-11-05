@@ -1739,12 +1739,21 @@ const buildNoteModel = async function (msg, actors, diagObj) {
         );
     noteModel.startx = startx - noteModel.width + (fromActor.width - conf.actorMargin) / 2;
   } else if (msg.to === msg.from) {
-    textDimensions = utils.calculateTextDimensions(
-      shouldWrap
-        ? utils.wrapLabel(msg.message, common.getMax(conf.width, fromActor.width), noteFont(conf))
-        : msg.message,
-      noteFont(conf)
-    );
+    // KaTeX messages must be measured from the rendered math, not the raw
+    // LaTeX source: measuring the source as plain text inflates the note
+    // (e.g. `$$...$$` markup counts as visible characters).
+    textDimensions = hasKatex(msg.message)
+      ? await calculateMathMLDimensions(msg.message, getConfig())
+      : utils.calculateTextDimensions(
+          shouldWrap
+            ? utils.wrapLabel(
+                msg.message,
+                common.getMax(conf.width, fromActor.width),
+                noteFont(conf)
+              )
+            : msg.message,
+          noteFont(conf)
+        );
     noteModel.width = shouldWrap
       ? common.getMax(conf.width, fromActor.width)
       : common.getMax(fromActor.width, conf.width, textDimensions.width + 2 * conf.noteMargin);
