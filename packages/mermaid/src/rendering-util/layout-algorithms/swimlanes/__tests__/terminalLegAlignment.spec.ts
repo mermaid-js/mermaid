@@ -59,6 +59,15 @@ describe('alignTerminalLegsToPorts', () => {
     ]);
   });
 
+  it.each(['question', 'diamond', 'diam', 'decision'] as const)(
+    'treats a %s node as a diamond, whichever name its author wrote',
+    (shape) => {
+      const { nodes, route } = belowDiamond(-OFF_VERTEX, TARGET_X, shape);
+      expect(alignTerminalLegsToPorts([route], nodes)).toBe(true);
+      expect(route.points?.[0]).toEqual({ x: 0, y: HALF });
+    }
+  );
+
   it('centres a leg that endpoint clipping left against a rectangle corner', () => {
     const cornerX = TARGET_X - HALF + CORNER_CLEARANCE;
     const { nodes, route } = belowDiamond(0, cornerX);

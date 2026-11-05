@@ -37,8 +37,10 @@ export interface Obstacles {
   labelNodeRects: RectEntry[];
 }
 
-export const isDiamond = (node: Node): boolean =>
-  node.shape === 'question' || node.shape === 'diamond';
+/** Every name the shape registry accepts for a diamond: a node keeps the one its author wrote. */
+const DIAMOND_SHAPES = new Set<string>(['question', 'diamond', 'diam', 'decision']);
+
+export const isDiamond = (node: Node): boolean => DIAMOND_SHAPES.has(node.shape ?? '');
 
 const runsAlongFace = (side: RectSide): 'x' | 'y' =>
   side === 'top' || side === 'bottom' ? 'x' : 'y';
