@@ -619,6 +619,50 @@ describe('separating two close terminal tracks on one face', () => {
     );
     expect(decisionToFix.points.at(-1)?.y).toBe(-22.5 + 8);
   });
+
+  it('separates a later pair of tracks after a close pair that cannot move', () => {
+    // The arrival sits at the end of the face's usable span, -6, 6 from the straight connector.
+    const atFaceLimit = -12 + 24 / 4;
+    const nodeById = new Map<string, any>([
+      ['task', { id: 'task', x: -185, y: 0, width: 150, height: 45 }],
+      ['fix', { id: 'fix', x: 0, y: 0, width: 150, height: 24 }],
+      ['decision', { id: 'decision', x: -150, y: -130, width: 40, height: 40 }],
+      ['A', { id: 'A', x: 300, y: 0, width: 40, height: 80 }],
+      ['B', { id: 'B', x: 400, y: 0, width: 40, height: 80 }],
+    ]);
+    const decisionToFix = {
+      id: 'decision_fix',
+      start: 'decision',
+      end: 'fix',
+      points: [
+        { x: -150, y: -110 },
+        { x: -150, y: atFaceLimit },
+        { x: FIX_LEFT, y: atFaceLimit },
+      ],
+    };
+    const fixToTask = {
+      id: 'fix_task',
+      start: 'fix',
+      end: 'task',
+      points: [
+        { x: FIX_LEFT, y: 0 },
+        { x: -110, y: 0 },
+      ],
+    };
+    const straight = (id: string) => ({
+      id,
+      start: 'A',
+      end: 'B',
+      points: [
+        { x: 320, y: 0 },
+        { x: 380, y: 0 },
+      ],
+    });
+    const later = [straight('A_B_1'), straight('A_B_2')];
+    separateSharedRenderedTerminalLanes([decisionToFix, fixToTask, ...later] as any[], nodeById);
+    expect(decisionToFix.points.at(-1)?.y).toBe(atFaceLimit);
+    expect(later[0].points.at(-1)?.y).not.toBe(later[1].points.at(-1)?.y);
+  });
 });
 
 describe('separating two terminal tracks drawn on top of each other', () => {
