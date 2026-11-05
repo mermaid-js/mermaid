@@ -506,7 +506,7 @@ describe('separating two terminal tracks drawn on top of each other', () => {
     expect(edges[0].points.at(-1)?.y).not.toBe(edges[1].points.at(-1)?.y);
   });
 
-  it('never moves a track into the corners of narrow faces', () => {
+  it('separates two tracks on a face too narrow for a whole step, inside its corners', () => {
     const nodeById = new Map<string, any>([
       ['A', { id: 'A', x: 0, y: -100, width: 20, height: 40 }],
       ['B', { id: 'B', x: 0, y: 0, width: 20, height: 40 }],
@@ -522,8 +522,10 @@ describe('separating two terminal tracks drawn on top of each other', () => {
     });
     const edges = [down('A_B_1'), down('A_B_2')];
     separateSharedRenderedTerminalLanes(edges as any[], nodeById);
-    for (const edge of edges) {
-      expect(Math.abs(edge.points.at(-1)?.x ?? 0)).toBeLessThanOrEqual(10 - 20 / 4);
+    const ends = edges.map((edge) => edge.points.at(-1)?.x ?? 0);
+    expect(ends[0]).not.toBe(ends[1]);
+    for (const end of ends) {
+      expect(Math.abs(end)).toBeLessThanOrEqual(10 - 20 / 4);
     }
   });
 });
