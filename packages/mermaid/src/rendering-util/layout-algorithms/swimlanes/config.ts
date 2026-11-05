@@ -9,6 +9,15 @@ const ARROWHEAD_GAP = 4;
 /** Stroke width of an edge line (px); the flowchart `.flowchart-link` style default */
 const EDGE_STROKE_WIDTH = 2;
 
+/** Radius of the hop a crossing edge draws over another (px); the `jumpRadius` in adjustLayout.ts */
+const LINE_HOP_RADIUS = 6;
+
+/** Length of the arrowhead a swimlane edge ends in (px): the `pointEnd-margin` marker in markers.js */
+const SWIMLANE_ARROWHEAD_LENGTH = 10.5;
+
+/** How far an edge stops short of its end for a point arrowhead (px): `markerOffsets` in lineWithOffset.ts */
+const ARROW_POINT_PULL_BACK = 4;
+
 /**
  * Edge routing and spacing constants
  */
@@ -21,6 +30,13 @@ export const EDGE_ROUTING = {
 
   /** Edge of the square the point marker draws an arrowhead in (px); see markers.js */
   ARROWHEAD_SIZE: 8,
+
+  /**
+   * Closest a crossing may come to an end of either edge (px): the pull-back and the arrowhead
+   * there, the hop drawn over the crossing, and `ARROWHEAD_GAP` between them
+   */
+  TERMINAL_HOP_CLEARANCE:
+    ARROW_POINT_PULL_BACK + SWIMLANE_ARROWHEAD_LENGTH + LINE_HOP_RADIUS + ARROWHEAD_GAP,
 
   ARROWHEAD_GAP,
 
