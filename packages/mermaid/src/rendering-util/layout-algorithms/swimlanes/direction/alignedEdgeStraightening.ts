@@ -1,12 +1,14 @@
 import type { Edge, Node } from '../../../types.js';
 import { collectNodeRectEntries, dedupeConsecutivePoints, rectOfNodeBounds } from './geometry.js';
 import type { Point, RectBounds, RectSide } from './geometry.js';
-import { clearOfNodes, clearOfOtherEdges, faceIsOwn } from './terminalLegAlignment.js';
-import type { NodeFace, Obstacles } from './terminalLegAlignment.js';
+import { EPS, clearOfNodes, clearOfOtherEdges, faceIsOwn } from './terminalGeometry.js';
+import type { NodeFace, Obstacles } from './terminalGeometry.js';
 
-const EPS = 1e-3;
-
-/** How far apart two node centres may sit across the line and still count as aligned. */
+/**
+ * How far apart two node centres may sit across the line and still count as aligned. The line is
+ * drawn at the source's centre, so that distance lands on the target end, which the renderer
+ * clips to the target afterwards.
+ */
 export const ALIGNED_CENTRE_TOLERANCE = 1;
 
 interface Placed {
@@ -62,7 +64,7 @@ function horizontalLine(src: Placed, dst: Placed): StraightLine | undefined {
 }
 
 /** The edge's two nodes, when they are distinct nodes in different groups. */
-function crossLanePair(edge: Edge, nodeByIdMap: Map<string, Node>): [Placed, Placed] | undefined {
+function crossGroupPair(edge: Edge, nodeByIdMap: Map<string, Node>): [Placed, Placed] | undefined {
   const src = placed(nodeByIdMap.get(edge.start ?? ''));
   const dst = placed(nodeByIdMap.get(edge.end ?? ''));
   if (!src || !dst || src.node === dst.node) {
@@ -73,7 +75,7 @@ function crossLanePair(edge: Edge, nodeByIdMap: Map<string, Node>): [Placed, Pla
 
 /** The straight line between the facing faces of two aligned nodes in different groups. */
 function straightLineFor(edge: Edge, nodeByIdMap: Map<string, Node>): StraightLine | undefined {
-  const pair = crossLanePair(edge, nodeByIdMap);
+  const pair = crossGroupPair(edge, nodeByIdMap);
   if (!pair) {
     return undefined;
   }
@@ -124,7 +126,7 @@ function straighten(
 }
 
 /**
- * Replaces the route of an edge between two nodes in different groups (lanes) whose centres are
+ * Replaces the route of an edge between two nodes in different groups (lanes, or subgraphs inside them) whose centres are
  * aligned within {@link ALIGNED_CENTRE_TOLERANCE} by one straight segment between their facing
  * faces: a diamond's vertex, a rectangle's face centre. An edge keeps its route when another edge
  * meets either node through those faces, when the segment would pass a node or a label, overlap
