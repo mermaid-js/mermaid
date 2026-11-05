@@ -293,15 +293,23 @@ export function separateSharedRenderedTerminalLanes(
     );
   };
 
+  const usableSpanOf = (lane: TerminalLane) =>
+    lane.orientation === 'H'
+      ? usableFace(lane.rect.top, lane.rect.bottom)
+      : usableFace(lane.rect.left, lane.rect.right);
+
   // The shift that takes a lane to the end of its face's usable span, away from another lane;
   // zero when the lane already sits there.
   const shiftToFaceLimit = (lane: TerminalLane, other: TerminalLane): number => {
-    const span =
-      lane.orientation === 'H'
-        ? usableFace(lane.rect.top, lane.rect.bottom)
-        : usableFace(lane.rect.left, lane.rect.right);
+    const span = usableSpanOf(lane);
     const away = lane.coord < other.coord ? span.low - lane.coord : span.high - lane.coord;
     return Math.sign(away) === Math.sign(lane.coord - other.coord) ? away : 0;
+  };
+
+  // The shifts that take a lane to either end of its face's usable span.
+  const shiftsToFaceEnds = (lane: TerminalLane): number[] => {
+    const span = usableSpanOf(lane);
+    return [span.low - lane.coord, span.high - lane.coord];
   };
 
   const shifts = [
@@ -370,14 +378,19 @@ export function separateSharedRenderedTerminalLanes(
             break;
           }
         }
-        // When no shift clears a near conflict, move the lane as far from the other as its
-        // face allows: the gap between them widens and the lane stays on the face.
-        if (!fixed && fixingNearConflict) {
+        // When no whole step fits on the face, a near conflict moves the lane as far from the
+        // other as the face allows, so the gap widens and the lane stays on the face; two tracks
+        // on top of each other take either end of the face.
+        if (!fixed) {
           for (const lane of movable) {
             const other = lane === first ? second : first;
-            const shift = shiftToFaceLimit(lane, other);
-            fixed =
-              Math.abs(shift) > EPS_LOCAL && accept(lane, shiftedCandidate(lane, shift), false);
+            const faceShifts = fixingNearConflict
+              ? [shiftToFaceLimit(lane, other)]
+              : shiftsToFaceEnds(lane);
+            fixed = faceShifts.some(
+              (shift) =>
+                Math.abs(shift) > EPS_LOCAL && accept(lane, shiftedCandidate(lane, shift), false)
+            );
             if (fixed) {
               break;
             }
