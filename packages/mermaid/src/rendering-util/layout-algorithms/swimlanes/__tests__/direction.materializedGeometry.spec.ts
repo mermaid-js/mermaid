@@ -482,6 +482,143 @@ describe('separating two close terminal tracks on one face', () => {
     const { decisionToFix } = layout(24, -110, -4);
     expect(decisionToFix.points.at(-1)?.y).toBe(-12 + 24 / 4);
   });
+
+  it('does not move a track to the end of the face when that brings it closer to a third track', () => {
+    // Two straight connectors leave fix's left face at -12 and 12; decision -> fix arrives at 5,
+    // close to the one at 12. The end of the face, -14.5, is 2.5 from the one at -12.
+    const nodeById = new Map<string, any>([
+      ['task', { id: 'task', x: -200, y: 0, width: 150, height: 45 }],
+      ['fix', { id: 'fix', x: 0, y: 0, width: 150, height: 45 }],
+      ['decision', { id: 'decision', x: -165, y: -130, width: 40, height: 40 }],
+    ]);
+    const straightAt = (id: string, y: number) => ({
+      id,
+      start: 'fix',
+      end: 'task',
+      points: [
+        { x: FIX_LEFT, y },
+        { x: -125, y },
+      ],
+    });
+    const upper = straightAt('fix_task_1', -12);
+    const lower = straightAt('fix_task_2', 12);
+    const decisionToFix = {
+      id: 'decision_fix',
+      start: 'decision',
+      end: 'fix',
+      points: [
+        { x: -165, y: -110 },
+        { x: -165, y: 5 },
+        { x: FIX_LEFT, y: 5 },
+      ],
+    };
+    separateSharedRenderedTerminalLanes([decisionToFix, upper, lower] as any[], nodeById);
+    expect(upper.points.map((p) => p.y)).toEqual([-12, -12]);
+    expect(lower.points.map((p) => p.y)).toEqual([12, 12]);
+    const arrival = decisionToFix.points.at(-1)?.y ?? 0;
+    const closest = Math.min(Math.abs(arrival + 12), Math.abs(arrival - 12));
+    expect(closest).toBeGreaterThanOrEqual(12 - 5);
+  });
+
+  it('moves a track to the end of the face when its closest track stays as far away', () => {
+    // On a face whose usable span is -6..6, the arrival at -4 is 4 from the straight connector
+    // at 0 and 6 from the arrival at -10; at -6 it is 6 and 4 away.
+    const nodeById = new Map<string, any>([
+      ['task', { id: 'task', x: -185, y: 0, width: 150, height: 45 }],
+      ['fix', { id: 'fix', x: 0, y: 0, width: 150, height: 24 }],
+      ['decision', { id: 'decision', x: -150, y: -130, width: 40, height: 40 }],
+      ['other', { id: 'other', x: -160, y: -230, width: 40, height: 40 }],
+    ]);
+    const arrival = (id: string, start: string, x: number, y: number) => ({
+      id,
+      start,
+      end: 'fix',
+      points: [
+        { x, y: -110 },
+        { x, y },
+        { x: FIX_LEFT, y },
+      ],
+    });
+    const moved = arrival('decision_fix', 'decision', -150, -4);
+    const fixToTask = {
+      id: 'fix_task',
+      start: 'fix',
+      end: 'task',
+      points: [
+        { x: FIX_LEFT, y: 0 },
+        { x: -110, y: 0 },
+      ],
+    };
+    const third = arrival('other_fix', 'other', -160, -10);
+    separateSharedRenderedTerminalLanes([moved, fixToTask, third] as any[], nodeById);
+    expect(moved.points.at(-1)?.y).toBe(-12 + 24 / 4);
+    expect(third.points.at(-1)?.y).toBe(-10);
+  });
+
+  it('moves a track to the end of the face past tracks on another face or another node', () => {
+    const nodeById = new Map<string, any>([
+      ['task', { id: 'task', x: -200, y: 0, width: 150, height: 45 }],
+      ['fix', { id: 'fix', x: 0, y: 0, width: 150, height: 45 }],
+      ['decision', { id: 'decision', x: -165, y: -130, width: 40, height: 40 }],
+      ['right', { id: 'right', x: 200, y: 0, width: 150, height: 45 }],
+      ['above', { id: 'above', x: -90, y: -130, width: 40, height: 40 }],
+      ['up', { id: 'up', x: -14, y: -130, width: 40, height: 40 }],
+    ]);
+    const fixToTask = {
+      id: 'fix_task',
+      start: 'fix',
+      end: 'task',
+      points: [
+        { x: FIX_LEFT, y: 0 },
+        { x: -125, y: 0 },
+      ],
+    };
+    const decisionToFix = {
+      id: 'decision_fix',
+      start: 'decision',
+      end: 'fix',
+      points: [
+        { x: -165, y: -110 },
+        { x: -165, y: ARRIVAL_Y },
+        { x: FIX_LEFT, y: ARRIVAL_Y },
+      ],
+    };
+    // fix's right face and task's right face at the height the arrival moves to, and fix's top
+    // face at that distance from fix's centre.
+    const fixToRight = {
+      id: 'fix_right',
+      start: 'fix',
+      end: 'right',
+      points: [
+        { x: 75, y: -14 },
+        { x: 125, y: -14 },
+      ],
+    };
+    const aboveToTask = {
+      id: 'above_task',
+      start: 'above',
+      end: 'task',
+      points: [
+        { x: -90, y: -110 },
+        { x: -90, y: -14 },
+        { x: -125, y: -14 },
+      ],
+    };
+    const fixToUp = {
+      id: 'fix_up',
+      start: 'fix',
+      end: 'up',
+      points: [
+        { x: -14, y: -22.5 },
+        { x: -14, y: -110 },
+      ],
+    };
+    separateSharedRenderedTerminalLanes(
+      [decisionToFix, fixToTask, fixToRight, aboveToTask, fixToUp] as any[],
+      nodeById
+    );
+    expect(decisionToFix.points.at(-1)?.y).toBe(-22.5 + 8);
+  });
 });
 
 describe('separating two terminal tracks drawn on top of each other', () => {

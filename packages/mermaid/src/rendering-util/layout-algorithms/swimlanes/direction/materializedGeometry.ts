@@ -355,11 +355,34 @@ export function separateSharedRenderedTerminalLanes(
               (exactTerminalLaneConflict(nextLane, other) ||
                 (near && nearTerminalLaneConflict(nextLane, other)))
           );
-        const accept = (lane: TerminalLane, candidate: PointLite[] | undefined, near: boolean) => {
+        // The distance from a lane to the closest other track along the same stretch of its face.
+        const closestTrackGap = (lane: TerminalLane, at: TerminalLane): number =>
+          Math.min(
+            ...lanes
+              .filter(
+                (other) =>
+                  other.edge !== lane.edge &&
+                  other.nodeId === at.nodeId &&
+                  other.orientation === at.orientation &&
+                  projectedOverlapLength(at, other) >= MIN_SHARED
+              )
+              .map((other) => Math.abs(at.coord - other.coord))
+          );
+        const accept = (
+          lane: TerminalLane,
+          candidate: PointLite[] | undefined,
+          near: boolean,
+          keepClosestGap = false
+        ) => {
           const nextLane = candidate
             ? terminalLaneFor({ ...lane.edge, points: candidate }, lane.atStart)
             : undefined;
-          if (!candidate || !nextLane || conflictsWith(lane, nextLane, near)) {
+          if (
+            !candidate ||
+            !nextLane ||
+            conflictsWith(lane, nextLane, near) ||
+            (keepClosestGap && closestTrackGap(lane, nextLane) < closestTrackGap(lane, lane))
+          ) {
             return false;
           }
           (lane.edge as { points: PointLite[] }).points = candidate;
@@ -380,7 +403,8 @@ export function separateSharedRenderedTerminalLanes(
         }
         // When no whole step fits on the face, a near conflict moves the lane as far from the
         // other as the face allows, so the gap widens and the lane stays on the face; two tracks
-        // on top of each other take either end of the face.
+        // on top of each other take either end of the face. Neither move may bring the lane
+        // closer to its closest track than it already is.
         if (!fixed) {
           for (const lane of movable) {
             const other = lane === first ? second : first;
@@ -389,7 +413,8 @@ export function separateSharedRenderedTerminalLanes(
               : shiftsToFaceEnds(lane);
             fixed = faceShifts.some(
               (shift) =>
-                Math.abs(shift) > EPS_LOCAL && accept(lane, shiftedCandidate(lane, shift), false)
+                Math.abs(shift) > EPS_LOCAL &&
+                accept(lane, shiftedCandidate(lane, shift), false, true)
             );
             if (fixed) {
               break;
