@@ -1165,7 +1165,7 @@ The other exceptions listed above still apply, and the arrangement stops short i
 - only the subgraphs that sit directly in the diagram, and the subgraphs directly inside a band, are arranged; a subgraph nested deeper keeps the default arrangement inside it;
 - a subgraph that ELK places beside another, rather than before or after it, is neither shifted nor widened, and a link between the two keeps ELK's route;
 - a node that sits directly in the diagram is never moved; the subgraph is shifted to line up with it instead;
-- a link with no free way through the gaps and corridors keeps the route ELK drew for it;
+- a link with no free way through the gaps and corridors keeps the route ELK drew for it, and a link between two rows of one band, for which ELK drew none, runs straight across the band;
 - a link that does not meet a node at the middle of a side ends on the box around the node, which for a round or diamond shape lies a little off the outline;
 - a `flowchart BT` or `RL` keeps its rows and columns where ELK put them, without spreading them over the full width;
 - a row whose links ELK drew with bends between nodes that would move apart keeps its nodes where they are;
