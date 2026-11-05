@@ -5,8 +5,8 @@ config:
     htmlLabels: false
 ---
 swimlane-beta LR
-  %% "Triage -> Resolve" stays one straight line at the centre of both boxes while the edges
-  %% arriving on the same faces are separated from it
+  %% "Triage -> Resolve" stays one straight line at the centre of both boxes while
+  %% "Resolve -> Triage", which leaves Resolve's left face 10 px above it, is separated from it
   subgraph Ops
   a[Receive]
   b[Triage]
@@ -17,4 +17,4 @@ swimlane-beta LR
   end
   a --> b --> c --> d
   d -->|No| b
-  c --> a
+  c --> b
