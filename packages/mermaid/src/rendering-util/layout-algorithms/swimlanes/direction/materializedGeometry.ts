@@ -18,6 +18,7 @@ import {
   rectOfNodeBounds,
   routesTouchAtBend,
   sameAxisSegmentOverlapLength,
+  segmentBoundsOverlapRect,
   segmentHitsAnyRect,
   simplifyPolyline,
 } from './geometry.js';
@@ -1751,6 +1752,13 @@ export function shortcutRedundantOrthogonalJogs(
       });
   };
 
+  // Whether a route runs through the box of its own start or end, not only touching it. A
+  // shortcut must not make a route do so; one that already does is left as the router made it.
+  const entersEndpointRects = (points: PointLite[], rects: RectLite[]): boolean =>
+    segmentsFor(points).some((segment) =>
+      rects.some((rect) => segmentBoundsOverlapRect(segment.a, segment.b, rect, -BUFFER))
+    );
+
   const candidateIsSafe = (
     edge: MaterializedEdge,
     candidate: PointLite[],
@@ -1771,6 +1779,12 @@ export function shortcutRedundantOrthogonalJogs(
       if (endpointRects.some((rect) => segmentRunsAlongRectBorder(segment, rect))) {
         return false;
       }
+    }
+    if (
+      !entersEndpointRects(pointsFor(edge), endpointRects) &&
+      entersEndpointRects(candidate, endpointRects)
+    ) {
+      return false;
     }
 
     for (const other of visibleEdges) {
