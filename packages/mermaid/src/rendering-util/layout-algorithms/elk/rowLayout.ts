@@ -2,7 +2,15 @@ import type { P } from './geometry.js';
 import type { TreeData } from './find-common-ancestor.js';
 import type { ElkDirection, ElkEdgeLike } from './groupPorts.js';
 import { findCommonAncestor } from './find-common-ancestor.js';
-import { type Channel, type Route, isFree, routeInFlow, routeLength, turns } from './rowRouter.js';
+import {
+  type Channel,
+  type Route,
+  type RouteProblem,
+  isFree,
+  routeInFlow,
+  routeLength,
+  turns,
+} from './rowRouter.js';
 import { LABEL_GAP_PADDING, justifyFrames, rowsToJustify } from './rowJustify.js';
 
 /** A box by its top-left corner. */
@@ -789,6 +797,24 @@ function limitsOf(extent: readonly Rect[]): [number, number] {
   ];
 }
 
+/**
+ * The route of a link {@link proxyRowLinks} kept back from ELK, when none is free: ELK drew
+ * nothing for it, so it goes straight across the one band between the two frames, ignoring what
+ * lies in it, rather than being left without a route. A link ELK did draw keeps that route.
+ */
+function routeWithheld(
+  plan: LinkPlan,
+  problem: RouteProblem,
+  from: Rect,
+  to: Rect
+): Route | undefined {
+  const drawnByElk = plan.edge.sections !== undefined;
+  const band: [number, number] = [bottom(from), to.y];
+  return drawnByElk || band[1] <= band[0]
+    ? undefined
+    : routeInFlow({ ...problem, gaps: [band], obstacles: [] });
+}
+
 /** Route one planned link through the scene; the route comes back in diagram coordinates. */
 function routePlan(
   plan: LinkPlan,
@@ -811,7 +837,7 @@ function routePlan(
     });
   const frames = [...scene.frames.values()].map(flow);
   const container = scene.frames.get(plan.container);
-  const route = routeInFlow({
+  const problem = {
     source: ends.source,
     target: ends.target,
     gaps: gapsBetween(flow(from), flow(to), members),
@@ -824,7 +850,8 @@ function routePlan(
     crossable: scene.lines.map(flow),
     walls: frames.flatMap((frame) => [frame.x, frame.x + frame.width]),
     limits: limitsOf(container ? [flow(container)] : [flow(from), flow(to), ...members]),
-  });
+  };
+  const route = routeInFlow(problem) ?? routeWithheld(plan, problem, flow(from), flow(to));
   return (
     route && {
       points: route.points.map((point) => fromFlow(point, direction)),

@@ -430,6 +430,77 @@ describe('spreadKeepsTurns', () => {
   });
 });
 
+describe('a link between the frames of one group that has no free way through', () => {
+  const tree: TreeData = {
+    parentById: { r1: 'band', mid: 'band', r2: 'band', A: 'r1', M: 'mid', B: 'r2' },
+    childrenById: { band: ['r1', 'mid', 'r2'], r1: ['A'], mid: ['M'], r2: ['B'] },
+  };
+  const frame = (id: string, y: number, leaf: string) => ({
+    id,
+    x: 10,
+    y,
+    width: 380,
+    height: 80,
+    children: [{ id: leaf, x: 150, y: 20, width: 90, height: 40 }],
+  });
+  // The frames touch, so no band lies between them for the link to cross.
+  const touching = () => ({
+    children: [
+      {
+        id: 'band',
+        x: 0,
+        y: 0,
+        width: 400,
+        height: 260,
+        children: [frame('r1', 10, 'A'), frame('mid', 90, 'M'), frame('r2', 170, 'B')],
+      },
+    ],
+    edges: [] as any[],
+  });
+  const withheld = () => ({ id: 'jump', sources: ['A'], targets: ['B'], container: 'band' });
+
+  const align = (graph: ReturnType<typeof touching>, link: any) =>
+    alignDirectedSubgraphs({
+      graph,
+      tree,
+      separated: new Map([
+        ['band', 'DOWN' as const],
+        ...['r1', 'mid', 'r2'].map((id): [string, 'RIGHT'] => [id, 'RIGHT']),
+      ]),
+      direction: 'DOWN',
+      orderOf: () => 0,
+      withheld: [link],
+      groups: [{ frames: ['r1', 'mid', 'r2'], direction: 'DOWN' }],
+    });
+
+  it('is still drawn along the flow, from the side of one frame to the side of the other', () => {
+    const link: any = withheld();
+    align(touching(), link);
+    const [section] = link.sections;
+    expect(link.sections).toHaveLength(1);
+    const points = [section.startPoint, ...section.bendPoints, section.endPoint];
+    expect(
+      points.slice(1).every((p: any, i: number) => p.x === points[i].x || p.y === points[i].y)
+    ).toBe(true);
+    expect(section.startPoint.y).toBeLessThan(section.endPoint.y);
+  });
+
+  it('keeps the route ELK drew for a link it did lay out', () => {
+    const drawn = { startPoint: { x: 1, y: 2 }, bendPoints: [], endPoint: { x: 3, y: 4 } };
+    const link: any = { ...withheld(), sections: [drawn] };
+    align(touching(), link);
+    expect(link.sections).toEqual([drawn]);
+  });
+
+  it('leaves a link between overlapping frames without a route', () => {
+    const graph = touching();
+    graph.children[0].children[2].y = 60;
+    const link: any = withheld();
+    align(graph, link);
+    expect(link.sections).toBeUndefined();
+  });
+});
+
 describe('alignDirectedSubgraphs', () => {
   const tree: TreeData = {
     parentById: { Cart: 'shop', Order: 'shop', Pick: 'wh' },
