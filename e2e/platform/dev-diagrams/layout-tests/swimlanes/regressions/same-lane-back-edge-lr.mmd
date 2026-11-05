@@ -1,0 +1,20 @@
+---
+config:
+  layout: swimlane
+  flowchart:
+    htmlLabels: false
+---
+swimlane-beta LR
+  %% "Resolve -> Receive" stays inside Ops: it runs above the boxes of its own lane and enters
+  %% Receive from above, not round a rail outside every lane
+  subgraph Ops
+  a[Receive]
+  b[Triage]
+  c[Resolve]
+  end
+  subgraph Qa
+  d{Pass?}
+  end
+  a --> b --> c --> d
+  d -->|No| b
+  c --> a

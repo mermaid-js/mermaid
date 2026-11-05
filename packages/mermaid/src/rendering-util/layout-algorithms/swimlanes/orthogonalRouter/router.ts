@@ -11,7 +11,7 @@
  * implementation was developed under, not an external dependency.
  */
 
-import type { LayoutData, Node as MermaidNode } from '../../../types.js';
+import type { Edge as MermaidEdge, LayoutData, Node as MermaidNode } from '../../../types.js';
 import { buildLaneModel } from '../lanes.js';
 import { collectAnchoredIds } from '../anchoredNodes.js';
 import { PRECISION } from '../config.js';
@@ -212,28 +212,34 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     visualXHalfExtent: number;
   }
   const anchoredIds = collectAnchoredIds(nodes);
-  const obstacles: ObstacleRect[] = nodes
-    .filter(
-      (n) => !n.isGroup && !(n as { isEdgeLabel?: boolean }).isEdgeLabel && !anchoredIds.has(n.id)
-    )
-    .map((n) => {
-      const w = n.width ?? 10;
-      const h = n.height ?? 10;
-      const x = n.x ?? 0;
-      const y = n.y ?? 0;
-      // Inflate by configured padding
-      const padding = NODE_PADDING;
+  const obstacleRectsFor = (crossExtentOf: (n: MermaidNode) => number): ObstacleRect[] =>
+    nodes
+      .filter(
+        (n) => !n.isGroup && !(n as { isEdgeLabel?: boolean }).isEdgeLabel && !anchoredIds.has(n.id)
+      )
+      .map((n) => {
+        const w = crossExtentOf(n);
+        const h = n.height ?? 10;
+        const x = n.x ?? 0;
+        const y = n.y ?? 0;
+        // Inflate by configured padding
+        const padding = NODE_PADDING;
 
-      return {
-        nodeId: n.id,
-        minX: x - w / 2 - padding,
-        maxX: x + w / 2 + padding,
-        minY: y - h / 2 - padding,
-        maxY: y + h / 2 + padding,
-        // For LR: TB x becomes LR y, so visual Y extent should be based on height
-        visualXHalfExtent: isLR ? h / 2 + padding : w / 2 + padding,
-      };
-    });
+        return {
+          nodeId: n.id,
+          minX: x - w / 2 - padding,
+          maxX: x + w / 2 + padding,
+          minY: y - h / 2 - padding,
+          maxY: y + h / 2 + padding,
+          // For LR: TB x becomes LR y, so visual Y extent should be based on height
+          visualXHalfExtent: isLR ? h / 2 + padding : w / 2 + padding,
+        };
+      });
+  // Lanes are laid out with each node's width across them. In LR the router works in the TB
+  // frame, where TB x becomes LR y, so across its lane a node only draws its LR height.
+  const laidOutObstacles = obstacleRectsFor((n) => n.width ?? 10);
+  const drawnObstacles = isLR ? obstacleRectsFor((n) => n.height ?? 10) : laidOutObstacles;
+  let obstacles = laidOutObstacles;
 
   // Helper to find or create pipe
   const getOrAddPipe = (
@@ -827,7 +833,31 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     return { pSrcPort, pDstPort, srcSide, dstSide };
   };
 
+  // Whether a rail round the laid-out nodes of a lane, a pipe margin off them, would run
+  // outside the lane's box.
+  const laneLacksRailRoom = (lane: LaneInfo): boolean => {
+    const group = nodeById.get(lane.id);
+    const left = (group?.x ?? 0) - (group?.width ?? 0) / 2;
+    const right = (group?.x ?? 0) + (group?.width ?? 0) / 2;
+    return laidOutObstacles.some(
+      (obs) =>
+        laneByNodeId.get(obs.nodeId) === lane &&
+        (obs.minX - VERTICAL_PIPE_MARGIN < left || obs.maxX + VERTICAL_PIPE_MARGIN > right)
+    );
+  };
+
+  // An edge whose ends share an LR lane with no room for a rail round its laid-out nodes is
+  // routed round what those nodes draw, so it can stay in the lane it never leaves. Every other
+  // edge keeps the laid-out obstacles.
+  const obstaclesFor = (edge: MermaidEdge): ObstacleRect[] => {
+    const lane = edge.start ? laneByNodeId.get(edge.start) : undefined;
+    const sameLane =
+      lane !== undefined && edge.end !== undefined && laneByNodeId.get(edge.end) === lane;
+    return sameLane && laneLacksRailRoom(lane) ? drawnObstacles : laidOutObstacles;
+  };
+
   for (const i of routingOrder) {
+    obstacles = obstaclesFor(edges[i]);
     const e = edges[i];
     edgeSegmentIndices[i] = [];
 
