@@ -64,4 +64,16 @@ describe('anchoring an edge label', () => {
     expect(label.y).toBe(212.5);
     expect(label.x).toBeLessThanOrEqual(360 - bendClearance);
   });
+
+  it('leaves the label where it is when no leg can hold it clear of its bends', () => {
+    // The middle leg is 30 long; a label 21 high needs 10.5 + 5 * sqrt(2) clear of each bend.
+    const label = anchored([
+      [210, 212.5],
+      [232.8, 212.5],
+      [232.8, 242.5],
+      [212.8, 242.5],
+    ]);
+
+    expect(label).toEqual({ x: LABEL.x, y: LABEL.y });
+  });
 });
