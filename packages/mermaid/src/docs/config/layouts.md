@@ -63,7 +63,7 @@ graph TD;
 
 ## Spacing (v\<MERMAID_RELEASE_VERSION>+)
 
-`nodeSpacing` is the gap between two nodes of one layer and `rankSpacing` the gap between two layers. The `elk` layout reads them for flowchart, state, class, requirement, agentflow and use-case diagrams.
+`nodeSpacing` is the gap between two nodes of one layer and `rankSpacing` the gap between two layers. The `elk` layout reads them for flowchart, state, class, requirement, agentflow and use-case diagrams. Class and requirement diagrams read the values of the `state` section (`state.nodeSpacing` and `state.rankSpacing`), not options of their own.
 
 ELK spaces nodes by its own measure, so the two options are read against their default of `50`: the default keeps ELK's gaps, `25` halves them and `100` doubles them. This holds at the top level and inside subgraphs, where the gaps are wider to begin with.
 
