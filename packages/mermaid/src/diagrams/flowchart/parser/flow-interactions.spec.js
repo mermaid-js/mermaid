@@ -183,7 +183,7 @@ describe('[Interactions] click callbacks with securityLevel other than "loose"',
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy).toHaveBeenCalledWith(
-      'Click event callback calls are ignored because securityLevel is not "loose" in the mermaid configuration'
+      'Click event callback calls are ignored because securityLevel is not "loose" in Mermaid config'
     );
   });
 

@@ -603,7 +603,7 @@ You have to call mermaid.initialize.`
       // setClickFun below silently drops the callback; warn once per statement
       // so users know why their click handlers never fire (see #6809).
       log.warn(
-        'Click event callback calls are ignored because securityLevel is not "loose" in the mermaid configuration'
+        'Click event callback calls are ignored because securityLevel is not "loose" in Mermaid config'
       );
     }
     ids.split(',').forEach((id) => {
