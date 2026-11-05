@@ -191,4 +191,18 @@ describe('placement reserves space for real arrow approaches', () => {
     reserveTerminalLayoutSpace(graph, 36);
     expect((graph.layoutOptions as any)['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(100);
   });
+  it('raises edge spacing to the runway when baseValue factor 0.5 undershoots it while node spacing factor 1.0 keeps spacing', () => {
+    const graph = { layoutOptions: { 'spacing.baseValue': 40 } };
+    reserveTerminalLayoutSpace(graph, 36);
+    const options = graph.layoutOptions as Record<string, unknown>;
+    // edgeNode spacing derives from baseValue * 0.5 = 20 < 36, so the runway wins.
+    expect(options['elk.layered.spacing.edgeNodeBetweenLayers']).toBe(36);
+    expect(options['elk.spacing.edgeNode']).toBe(36);
+    expect(options['spacing.edgeNode']).toBe(36);
+    // nodeNode spacing derives from baseValue * 1.0 = 40 >= 36, so spacing is kept untouched.
+    expect(options['elk.spacing.nodeNode']).toBeUndefined();
+    expect(options['spacing.nodeNode']).toBeUndefined();
+    expect(options['elk.layered.spacing.nodeNodeBetweenLayers']).toBeUndefined();
+    expect(options['spacing.baseValue']).toBe(40);
+  });
 });
