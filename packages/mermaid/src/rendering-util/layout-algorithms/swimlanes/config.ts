@@ -31,6 +31,9 @@ export const EDGE_ROUTING = {
   /** Edge of the square the point marker draws an arrowhead in (px); see markers.js */
   ARROWHEAD_SIZE: 8,
 
+  /** Radius the renderer rounds an edge's corners with (px); `generateRoundedPath` in edges.js */
+  CORNER_RADIUS: 5,
+
   /**
    * Closest a crossing may come to an end of either edge (px): the pull-back and the arrowhead
    * there, the hop drawn over the crossing, and `ARROWHEAD_GAP` between them

@@ -11,6 +11,7 @@ import {
 } from './geometry.js';
 import type { RectBounds } from './geometry.js';
 import { buildLaneModel } from '../lanes.js';
+import { EDGE_ROUTING } from '../config.js';
 
 const EPS = 1e-3;
 const MARKER_CLEARANCE_LENGTH = 10;
@@ -151,6 +152,8 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
   // Mermaid's point marker occupies roughly 10u at the edge endpoint; keep
   // labels a little farther away so the arrowhead remains visually readable.
   const LABEL_ENDPOINT_CLEARANCE = 12;
+  // A rounded right-angle corner leaves the polyline this far before and after its bend.
+  const LABEL_BEND_CLEARANCE = EDGE_ROUTING.CORNER_RADIUS * Math.SQRT2;
 
   const labelOverlapsForeignNode = (labelId: string, rect: RectLite): boolean => {
     const buffered = inflateRect(rect, LABEL_PLACEMENT_BUFFER);
@@ -382,7 +385,23 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
           return false;
         }
       }
-      return true;
+      return clearsBends(seg, anchor);
+    };
+    // A label keeps its box off the bends at either end of its segment, where the line turns.
+    const clearsBends = (
+      seg: SegmentCandidate,
+      anchor: { midX: number; midY: number }
+    ): boolean => {
+      const labelHalfExtent = seg.orientation === 'horizontal' ? lw / 2 : lh / 2;
+      const bends = [
+        seg === firstVisibleSegment ? undefined : pts[seg.idx],
+        seg === lastVisibleSegment ? undefined : pts[seg.idx + 1],
+      ];
+      return bends.every(
+        (bend) =>
+          !bend ||
+          distanceAlongSegment(seg, anchor, bend) + EPS >= labelHalfExtent + LABEL_BEND_CLEARANCE
+      );
     };
     const tryPool = (
       pool: SegmentCandidate[]
