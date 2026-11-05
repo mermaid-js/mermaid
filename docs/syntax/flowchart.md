@@ -2240,7 +2240,7 @@ There are two ways to display these FontAwesome icons:
 
 You can register your own FontAwesome icon pack following the ["Registering icon packs" instructions](../config/icons.md).
 
-Supported prefixes: `fa`, `fab`, `fas`, `far`, `fal`, `fad`.
+Supported prefixes: `fa`, `fab`, `fas`, `far`, `fal`, `fad`, `fak`.
 
 For example, this registers the free FontAwesome 6 solid icons under the `fa` and `fas` prefixes:
 
