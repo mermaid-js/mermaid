@@ -81,13 +81,13 @@ Valid Key Value pairs can be found in config.
 
 Example with a simple graph:
 
-```mermaid-example
+```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
 graph LR
 A-->B
 ```
 
-```mermaid
+```mermaid-example
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
 graph LR
 A-->B
@@ -97,13 +97,13 @@ Here the directive declaration will set the `logLevel` to `debug` and the `theme
 
 Note: You can use 'init' or 'initialize' as both are acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed.
 
-```mermaid-example
+```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...
 ```
 
-```mermaid
+```mermaid-example
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...
@@ -136,7 +136,7 @@ Default Value is `default`.
 
 Example:
 
-```mermaid-example
+```mermaid
 %%{init: { "theme": "forest" } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -148,7 +148,7 @@ A --> C[End]
 
 ```
 
-```mermaid
+```mermaid-example
 %%{init: { "theme": "forest" } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -168,7 +168,7 @@ The following code snippet changes fontFamily to Trebuchet MS, Verdana, Arial, S
 
 Example:
 
-```mermaid-example
+```mermaid
 %%{init: { "fontFamily": "Trebuchet MS, Verdana, Arial, Sans-Serif" } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -180,7 +180,7 @@ A --> C[End]
 
 ```
 
-```mermaid
+```mermaid-example
 %%{init: { "fontFamily": "Trebuchet MS, Verdana, Arial, Sans-Serif" } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -210,7 +210,7 @@ Default Value is `5`.
 
 Example:
 
-```mermaid-example
+```mermaid
 %%{init: { "logLevel": 2 } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -221,7 +221,7 @@ A --> C[End]
   end
 ```
 
-```mermaid
+```mermaid-example
 %%{init: { "logLevel": 2 } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -255,7 +255,7 @@ Here we are overriding only the flowchart config, and not the general config, se
 > **Warning**
 > **Deprecated:** `flowchart.htmlLabels` has been deprecated from (v11.12.3+). Use the global `htmlLabels` configuration instead. For example, instead of `"flowchart": { "htmlLabels": true }`, use `"htmlLabels": true` at the top level.
 
-```mermaid-example
+```mermaid
 %%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -266,7 +266,7 @@ A --> C[End]
   end
 ```
 
-```mermaid
+```mermaid-example
 %%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
 graph TD
 A(Forest) --> B[/Another/]
@@ -297,7 +297,7 @@ So, `wrap` by default has a value of `false` for sequence diagrams.
 
 Let us see an example:
 
-```mermaid-example
+```mermaid
 sequenceDiagram
 
 Alice->Bob: Hello Bob, how are you?
@@ -306,7 +306,7 @@ Alice->Bob: Good.
 Bob->Alice: Cool
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
 
 Alice->Bob: Hello Bob, how are you?
@@ -323,7 +323,7 @@ The following code snippet changes sequence diagram config for `wrap` to `true`:
 
 By applying that snippet to the diagram above, `wrap` will be enabled:
 
-```mermaid-example
+```mermaid
 %%{init: { "sequence": { "wrap": true, "width":300 } } }%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -332,7 +332,7 @@ Alice->Bob: Good.
 Bob->Alice: Cool
 ```
 
-```mermaid
+```mermaid-example
 %%{init: { "sequence": { "wrap": true, "width":300 } } }%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?

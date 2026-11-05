@@ -1,8 +1,9 @@
 // cspell:ignore raykov Wybrow
-import type { LayoutData } from '../../types.js';
+import type { Edge, LayoutData, Node } from '../../types.js';
 import {
   clipEdgeEndpointsToNodeBoundaries,
   approachBordersSquarely,
+  anyNodeDeclaresEndpointProfile,
   cropEdgeEndsToShapes,
   meetDiamondsAtTheirVertex,
   prepareEdgeEndpointsForRenderer,
@@ -30,7 +31,36 @@ import { anchorLabelsToPolyline } from './direction/labelAnchoring.js';
 import { straightenCollinearSiblingDetours } from './direction/siblingSharedFaceRouting.js';
 import { nudgeSharedInteriorSubpaths } from './direction/sharedTrackNudging.js';
 import { clearAnchoredOverlaps, pinAnchoredNodes, squareAnchoredEdges } from './anchoredNodes.js';
+import { straightenAlignedCrossLaneEdges } from './direction/alignedEdgeStraightening.js';
+import { alignTerminalLegsToPorts } from './direction/terminalLegAlignment.js';
 export { validateSwimlanesLayout } from './direction/validation.js';
+
+/**
+ * Straightens edges between aligned nodes in different lanes and moves terminal legs onto their
+ * ports, then re-anchors labels and endpoints of the moved routes.
+ */
+function alignTerminalLegsAndRefresh(edges: Edge[], nodeByIdMap: Map<string, Node>): void {
+  const straightened = straightenAlignedCrossLaneEdges(edges, nodeByIdMap);
+  if (alignTerminalLegsToPorts(edges, nodeByIdMap) || straightened) {
+    anchorLabelsToPolyline(edges, nodeByIdMap);
+    prepareEdgeEndpointsForRenderer(edges, nodeByIdMap);
+  }
+}
+
+/**
+ * Anchors the labels to the final routes of a layout whose nodes declare an endpoint profile,
+ * which the passes before it reshape. A layout of plain nodes keeps the label positions the
+ * earlier passes gave it.
+ */
+function anchorLabelsOfDeclaredShapes(
+  edges: Edge[],
+  nodeByIdMap: Map<string, Node>,
+  nodes: Node[]
+): void {
+  if (anyNodeDeclaresEndpointProfile(nodes)) {
+    anchorLabelsToPolyline(edges, nodeByIdMap);
+  }
+}
 
 /** Applies direction transforms and post-routing cleanup to a swimlane layout. */
 export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string): void {
@@ -155,6 +185,11 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   // more and then re-prepare the endpoints it reshaped.
   finalizeRenderedEdges();
 
+  // The passes above can route an edge between two aligned nodes in different lanes around a
+  // corner, or leave a terminal leg off its node's port: beside a diamond's vertex, or against a
+  // rectangle's corner. Straighten the edge, or move the leg onto the port, where that is clear.
+  alignTerminalLegsAndRefresh(edges, nodeByIdMap);
+
   // Swimlane title bands are visual headers, not routing obstacles. After all
   // edge geometry is final, move the aligned title bands out of any clear rail
   // that still crosses the title section.
@@ -170,5 +205,5 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   cropEdgeEndsToShapes(edges, nodeByIdMap);
   meetDiamondsAtTheirVertex(edges, nodeByIdMap);
   approachBordersSquarely(edges, nodeByIdMap);
-  anchorLabelsToPolyline(edges, nodeByIdMap);
+  anchorLabelsOfDeclaredShapes(edges, nodeByIdMap, contentNodes);
 }

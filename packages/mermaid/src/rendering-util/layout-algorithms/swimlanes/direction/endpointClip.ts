@@ -10,10 +10,12 @@ import {
   simplifyPolyline,
 } from './geometry.js';
 import type { Point, RectBounds } from './geometry.js';
+import type { Node } from '../../../types.js';
 
 const EPS = 1e-3;
 const INSIDE_EPS = 0.5;
-const CORNER_CLEARANCE = 4;
+/** How far endpoint clipping keeps a terminal leg from a node's corner. */
+export const CORNER_CLEARANCE = 4;
 
 type NodeRect = RectBounds;
 
@@ -519,6 +521,20 @@ function endpointProfileOf(node: any): 'vertex' | 'flat' | undefined {
   return profile === 'vertex' || profile === 'flat' ? profile : undefined;
 }
 
+/** Whether the producer of a node declared how edges meet it; a plain node declares nothing. */
+export function declaresEndpointProfile(
+  node: { metadata?: Record<string, unknown> } | undefined
+): boolean {
+  return endpointProfileOf(node) !== undefined;
+}
+
+/** Whether the producer of any of the nodes declared how edges meet it. */
+export function anyNodeDeclaresEndpointProfile(
+  nodes: Iterable<{ metadata?: Record<string, unknown> }>
+): boolean {
+  return [...nodes].some((node) => declaresEndpointProfile(node));
+}
+
 function meetsAtVertices(node: any): boolean {
   return endpointProfileOf(node) === 'vertex' && Boolean(node?.metadata?.drawnExtent);
 }
@@ -702,33 +718,44 @@ function cropTail(points: Point[], rect: RectBounds): Point[] {
   return points;
 }
 
+/**
+ * The rect an end of an edge is cropped to: the drawn extent of a node whose producer declared an
+ * endpoint profile. A plain node has none, and its end keeps the point the router drew.
+ */
+function cropRectOf(node: Node | undefined): RectBounds | undefined {
+  return declaresEndpointProfile(node) ? endpointRectOf(node) : undefined;
+}
+
+function cropBothEnds(
+  points: Point[],
+  srcRect: RectBounds | undefined,
+  dstRect: RectBounds | undefined
+): Point[] {
+  const toDestination = dstRect ? cropTail(points, dstRect) : points;
+  const cropped = srcRect
+    ? cropTail([...toDestination].reverse(), srcRect).reverse()
+    : toDestination;
+  return cropped.length >= 2 ? cropped : points;
+}
+
+function hasRoute(edge: EndpointEdge): edge is EndpointEdge & { points: Point[] } {
+  return !edge.isLayoutOnly && edge.points !== undefined && edge.points.length >= 2;
+}
+
+const joinsTwoShapes = (src: Node | undefined, dst: Node | undefined): boolean =>
+  src !== dst && !src?.isGroup && !dst?.isGroup;
+
+/** Cuts each end of an edge back to the border of the node it ends on, for nodes that declare an endpoint profile. */
 export function cropEdgeEndsToShapes(edges: unknown[], nodeByIdMap: Map<string, any>) {
   for (const edge of edges) {
-    const candidate = edge as {
-      points?: Point[];
-      start?: string;
-      end?: string;
-      isLayoutOnly?: boolean;
-    };
-    if (candidate.isLayoutOnly || !candidate.points || candidate.points.length < 2) {
+    const candidate = edge as EndpointEdge;
+    if (!hasRoute(candidate)) {
       continue;
     }
     const src = candidate.start ? nodeByIdMap.get(candidate.start) : undefined;
     const dst = candidate.end ? nodeByIdMap.get(candidate.end) : undefined;
-    if (src === dst || src?.isGroup || dst?.isGroup) {
-      continue;
-    }
-    let points = candidate.points;
-    const dstRect = dst ? endpointRectOf(dst) : undefined;
-    if (dstRect) {
-      points = cropTail(points, dstRect);
-    }
-    const srcRect = src ? endpointRectOf(src) : undefined;
-    if (srcRect) {
-      points = cropTail([...points].reverse(), srcRect).reverse();
-    }
-    if (points.length >= 2) {
-      candidate.points = points;
+    if (joinsTwoShapes(src, dst)) {
+      candidate.points = cropBothEnds(candidate.points, cropRectOf(src), cropRectOf(dst));
     }
   }
 }
