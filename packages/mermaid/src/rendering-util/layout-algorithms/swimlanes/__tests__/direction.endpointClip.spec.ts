@@ -195,6 +195,28 @@ describe('cropping an edge end to the box it reaches', () => {
     expect(points).toEqual([...intoB, { x: -20, y: 20 }]);
   });
 
+  it('leaves an edge whose last segment runs along a face of its box', () => {
+    const alongTop = [
+      { x: 30, y: 100 },
+      { x: 30, y: 60 },
+      { x: -100, y: 60 },
+      { x: -100, y: -20 },
+      { x: 0, y: -20 },
+    ];
+    const alongBottom = [
+      { x: 30, y: 100 },
+      { x: 30, y: 60 },
+      { x: 100, y: 60 },
+      { x: 100, y: 20 },
+      { x: 0, y: 20 },
+    ];
+    const almostAlongTop = [...alongTop.slice(0, -1), { x: 0, y: -20 + 1e-7 }];
+
+    expect(cropped(alongTop)).toEqual(alongTop);
+    expect(cropped(alongBottom)).toEqual(alongBottom);
+    expect(cropped(almostAlongTop)).toEqual(almostAlongTop);
+  });
+
   it('starts an edge that leaves its box from inside where it last meets the box', () => {
     const nodeById = new Map<string, any>([
       ['A', { id: 'A', x: 0, y: 0, width: 100, height: 40 }],

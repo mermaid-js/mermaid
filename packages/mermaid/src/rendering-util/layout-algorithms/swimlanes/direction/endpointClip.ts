@@ -495,15 +495,19 @@ const SQUARE_EPS = 1e-6;
 /** A segment that runs less than this far inside a box only touches it. */
 const MIN_CONTACT_LENGTH = 1;
 
-/** Narrows the parameter range of a segment to where one coordinate lies within [low, high]. */
+/**
+ * Narrows the parameter range of a segment to where one coordinate lies within [low, high].
+ * A segment that keeps that coordinate fixed lies within only when it is strictly between the
+ * two, so one running along a face of the box does not count.
+ */
 function clipAxis(
   start: number,
   delta: number,
   [low, high]: [number, number],
   [from, to]: [number, number]
 ): [number, number] | undefined {
-  if (delta === 0) {
-    return start < low || start > high ? undefined : [from, to];
+  if (Math.abs(delta) <= SQUARE_EPS) {
+    return start > low && start < high ? [from, to] : undefined;
   }
   const a = (low - start) / delta;
   const b = (high - start) / delta;
