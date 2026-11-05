@@ -37,4 +37,18 @@ describe('commonDb plain-text accessors', () => {
     setDiagramTitle('My Pie Chart');
     expect(getDiagramTitle()).toBe('My Pie Chart');
   });
+
+  it('does not need a DOM to store a title', async () => {
+    // entityDecode caches its decoder element, so load fresh modules with no document.
+    vi.resetModules();
+    vi.stubGlobal('document', undefined);
+    try {
+      const db = await import('./commonDb.js');
+      expect(() => db.setDiagramTitle('Q&A < draft')).not.toThrow();
+      expect(() => db.setAccTitle('Latency < 5 ms & throughput')).not.toThrow();
+      expect(() => db.setAccDescription('Requests & replies')).not.toThrow();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });
