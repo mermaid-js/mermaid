@@ -51,7 +51,7 @@ export function elkPortGap(side: number, ports: number, cornerMargin: number): n
  */
 const FEWEST_ARROWHEADS_TO_SPREAD = 3;
 
-type EdgeEnds = Pick<
+export type EdgeEnds = Pick<
   Edge,
   | 'start'
   | 'end'
@@ -61,7 +61,10 @@ type EdgeEnds = Pick<
   | 'animate'
   | 'animation'
   | 'cssCompiledStyles'
->;
+> & {
+  /** ELK was handed the edge from its end to its start, so it meets each node on the other side. */
+  layoutReversed?: boolean;
+};
 
 interface SpreadContext {
   /** The direction the layout around a node runs in, which fixes the side its edges meet. */
@@ -105,14 +108,18 @@ function addEnd(
   sides.set(nodeId, side);
 }
 
-/** The side each node's edges enter and the side they leave, which are different sides. */
+/**
+ * The side each node's edges enter and the side they leave, which are different sides. A reversed
+ * edge enters at its start and leaves at its end, because that is how ELK routes it.
+ */
 function sidesOf(edges: readonly EdgeEnds[]) {
   const entering: Sides = new Map();
   const leaving: Sides = new Map();
   for (const edge of edges) {
     if (edge.start !== edge.end) {
-      addEnd(entering, edge.end, edge.arrowTypeEnd, edge, 'end');
-      addEnd(leaving, edge.start, edge.arrowTypeStart, edge, 'start');
+      const [endSide, startSide] = edge.layoutReversed ? [leaving, entering] : [entering, leaving];
+      addEnd(endSide, edge.end, edge.arrowTypeEnd, edge, 'end');
+      addEnd(startSide, edge.start, edge.arrowTypeStart, edge, 'start');
     }
   }
   return { entering, leaving };

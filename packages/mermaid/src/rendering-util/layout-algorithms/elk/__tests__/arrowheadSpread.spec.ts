@@ -315,6 +315,48 @@ describe('ELK arrowheads on one side of a node', () => {
   });
 });
 
+describe('arrowheads on the side ELK routes a reversed edge to', () => {
+  const startMarked = (start: string, end: string) => ({
+    ...link(start, end, 'none'),
+    arrowTypeStart: 'arrow_point',
+  });
+
+  // `X -> C` closes a cycle through the collapsed subgraph, so ELK is handed it as `C -> X`: its
+  // arrowhead at `C` leaves by the side that `C`'s two start markers already crowd.
+  const feedbackInto = (hub: string) => ({
+    type: 'flowchart-v2',
+    direction: 'LR',
+    config: { elk: elkConfig },
+    nodes: [
+      { id: 'G', isGroup: true, label: 'G', padding: 8 },
+      box('A', NODE_WIDTH, FLOWCHART_NODE_HEIGHT, { parentId: 'G' }),
+      box('B', NODE_WIDTH, FLOWCHART_NODE_HEIGHT, { parentId: 'G' }),
+      box('C', NODE_WIDTH, FLOWCHART_NODE_HEIGHT, { parentId: 'G' }),
+      box('X', NODE_WIDTH, FLOWCHART_NODE_HEIGHT),
+      box('D1', NODE_WIDTH, FLOWCHART_NODE_HEIGHT),
+      box('D2', NODE_WIDTH, FLOWCHART_NODE_HEIGHT),
+    ],
+    edges: [
+      link('A', 'B', 'none'),
+      link('B', 'X', 'none'),
+      link('X', 'C'),
+      startMarked(hub, 'D1'),
+      startMarked(hub, 'D2'),
+    ],
+  });
+
+  it('counts the end marker on the side the reversed edge leaves by', () => {
+    const data = feedbackInto('C') as any;
+    const { elkGraph } = buildElkGraphFromLayoutData(data, buildContext);
+    expect(elkGraph.edges.find((edge: any) => edge.id === 'L_X_C').layoutReversed).toBe(true);
+    expect(spreadsPorts(feedbackInto('C'), 'C')).toBe(true);
+  });
+
+  it('leaves the node alone when the reversed edge ends on another node', () => {
+    expect(spreadsPorts(feedbackInto('D1'), 'D1')).toBe(false);
+  });
+});
+
 describe('what the spread is measured against', () => {
   // `elkPortGap` stands in for ELK's own placement, so it is held to what ELK does.
   it.each([48, TWO_LINE_NODE_HEIGHT, 96])(
