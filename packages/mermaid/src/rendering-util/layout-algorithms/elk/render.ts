@@ -12,7 +12,7 @@ import { type TreeData, findCommonAncestor } from './find-common-ancestor.js';
 import { findSubgraphFeedbackEdges } from './subgraphFeedbackEdges.js';
 import { orderNestedEdgeEnds } from './nestedEdgeOrder.js';
 import { applyElkLineJumps } from './lineHops.js';
-import { type ElkDirection, nodesToSpreadPorts } from './spreadArrowheads.js';
+import { type EdgeEnds, type ElkDirection, nodesToSpreadPorts } from './spreadArrowheads.js';
 import { clusterPaintsTitle } from '../../rendering-elements/clusters.js';
 import { markerOffsets, markerOffsets2 } from '../../../utils/lineWithOffset.js';
 import {
@@ -723,11 +723,11 @@ export function buildElkGraphFromLayoutData(
   addVertices(data4Layout.nodes, elkGraph, nodeDb, elkContext);
   addEdgesToElkGraph(data4Layout, elkGraph, nodeDb, elkContext);
   configureSubgraphNodes(data4Layout, nodeDb, parentLookupDb, elkContext);
-  spreadCrowdedArrowheads(data4Layout, nodeDb, parentLookupDb);
   configureCrossHierarchyEdges(elkGraph, nodeDb, parentLookupDb, elkContext.log);
   if (data4Layout.config.elk?.orientFeedbackEdges !== false) {
     reverseSubgraphFeedbackEdges(elkGraph, parentLookupDb);
   }
+  spreadCrowdedArrowheads(data4Layout, elkGraph.edges, nodeDb, parentLookupDb);
   orderEdgesByNesting(elkGraph, parentLookupDb);
   applyCyclicEntryConstraint(data4Layout, nodeDb);
 
@@ -1135,12 +1135,13 @@ function directionAround(
 /** Spread the ports of every node whose arrowheads ELK would otherwise stack. */
 function spreadCrowdedArrowheads(
   data4Layout: LayoutData,
+  elkEdges: readonly EdgeEnds[],
   nodeDb: Record<string, NodeWithVertex>,
   parentLookupDb: TreeData
 ): void {
   const nodeById = new Map(data4Layout.nodes.map((node) => [node.id, node]));
   const diagramDirection = dir2ElkDirection((data4Layout as { direction?: string }).direction);
-  const crowded = nodesToSpreadPorts(data4Layout.nodes, data4Layout.edges, {
+  const crowded = nodesToSpreadPorts(data4Layout.nodes, elkEdges, {
     directionOf: (id) => directionAround(id, nodeById, parentLookupDb.parentById, diagramDirection),
     cornerMargin: PORTS_SURROUNDING_MARGIN,
   });
