@@ -439,7 +439,10 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
       const rankedPool = rankSegments(pool);
       for (const seg of rankedPool) {
         const anchor = { midX: seg.midX, midY: seg.midY };
-        if (requireEndpointClearance && !labelClearsTerminalEndpoints(seg, anchor)) {
+        const clears = requireEndpointClearance
+          ? labelClearsTerminalEndpoints(seg, anchor)
+          : clearsBends(seg, anchor);
+        if (!clears) {
           continue;
         }
         const placement = placementForAnchor(anchor);
