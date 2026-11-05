@@ -528,6 +528,13 @@ export function declaresEndpointProfile(
   return endpointProfileOf(node) !== undefined;
 }
 
+/** Whether the producer of any of the nodes declared how edges meet it. */
+export function anyNodeDeclaresEndpointProfile(
+  nodes: Iterable<{ metadata?: Record<string, unknown> }>
+): boolean {
+  return [...nodes].some((node) => declaresEndpointProfile(node));
+}
+
 function meetsAtVertices(node: any): boolean {
   return endpointProfileOf(node) === 'vertex' && Boolean(node?.metadata?.drawnExtent);
 }

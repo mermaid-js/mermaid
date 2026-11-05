@@ -3,6 +3,7 @@ import type { Edge, LayoutData, Node } from '../../types.js';
 import {
   clipEdgeEndpointsToNodeBoundaries,
   approachBordersSquarely,
+  anyNodeDeclaresEndpointProfile,
   cropEdgeEndsToShapes,
   meetDiamondsAtTheirVertex,
   prepareEdgeEndpointsForRenderer,
@@ -43,6 +44,21 @@ function alignTerminalLegsAndRefresh(edges: Edge[], nodeByIdMap: Map<string, Nod
   if (alignTerminalLegsToPorts(edges, nodeByIdMap) || straightened) {
     anchorLabelsToPolyline(edges, nodeByIdMap);
     prepareEdgeEndpointsForRenderer(edges, nodeByIdMap);
+  }
+}
+
+/**
+ * Anchors the labels to the final routes of a layout whose nodes declare an endpoint profile,
+ * which the passes before it reshape. A layout of plain nodes keeps the label positions the
+ * earlier passes gave it.
+ */
+function anchorLabelsOfDeclaredShapes(
+  edges: Edge[],
+  nodeByIdMap: Map<string, Node>,
+  nodes: Node[]
+): void {
+  if (anyNodeDeclaresEndpointProfile(nodes)) {
+    anchorLabelsToPolyline(edges, nodeByIdMap);
   }
 }
 
@@ -189,5 +205,5 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   cropEdgeEndsToShapes(edges, nodeByIdMap);
   meetDiamondsAtTheirVertex(edges, nodeByIdMap);
   approachBordersSquarely(edges, nodeByIdMap);
-  anchorLabelsToPolyline(edges, nodeByIdMap);
+  anchorLabelsOfDeclaredShapes(edges, nodeByIdMap, contentNodes);
 }
