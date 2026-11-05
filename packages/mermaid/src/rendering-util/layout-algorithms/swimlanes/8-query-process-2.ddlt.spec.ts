@@ -239,7 +239,8 @@ describe('Swimlanes DDLT — 8-query-process-2.mmd', () => {
     if (DEBUG) {
       console.log('[8_QUERY_PROCESS_2_DDLT] breakdown:', JSON.stringify(breakdown, null, 2));
     }
-    expect.soft(breakdown.crossings).toBeLessThanOrEqual(1);
+    // E -> G stays in its lane at the cost of two crossings it saved by leaving it.
+    expect.soft(breakdown.crossings).toBeLessThanOrEqual(3);
     expect.soft(avgBendsPerEdge).toBeLessThan(5);
     expect.soft(totalBends).toBeLessThanOrEqual(30);
   });
