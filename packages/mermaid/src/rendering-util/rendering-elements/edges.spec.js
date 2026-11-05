@@ -296,6 +296,44 @@ describe('insertEdge swimlane endpoint clipping', () => {
     expect(renderedPoints[0]).toEqual(clippedStart);
   });
 
+  describe('when the first segment leaves its shape along a row', () => {
+    // The layout starts the edge on the shape's right face, below the centre. The ray from
+    // the centre to the first bend meets that face a few pixels above the row.
+    const start = { x: 100, y: 10 };
+    const firstBend = { x: 140, y: 10 };
+
+    const startOf = (intersection) => {
+      document.body.innerHTML = '';
+      const svg = select(document.body).append('svg');
+      const edge = {
+        id: 'L_A8_E_0',
+        cssCompiledStyles: {},
+        style: [],
+        thickness: 'normal',
+        pattern: 'solid',
+        classes: 'flowchart-link',
+        curve: 'rounded',
+        look: 'neo',
+        arrowTypeEnd: 'arrow_point',
+        points: [start, firstBend, { x: 140, y: 80 }],
+      };
+      const tail = { intersect: () => intersection };
+      const head = { intersect: (point) => point };
+
+      insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+      return JSON.parse(atob(svg.select('path').attr('data-points')))[0];
+    };
+
+    it('keeps the start on the row instead of slanting to the intersection', () => {
+      expect(startOf({ x: 100, y: 6.55 })).toEqual(start);
+    });
+
+    it('takes an intersection that stays on the row', () => {
+      expect(startOf({ x: 96, y: 10 })).toEqual({ x: 96, y: 10 });
+    });
+  });
+
   it('leaves exact endpoints alone when the edge skips intersection', () => {
     document.body.innerHTML = '';
     const svg = select(document.body).append('svg');

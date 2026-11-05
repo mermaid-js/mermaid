@@ -431,6 +431,19 @@ function dockFinalPoint(originalLast, lastInner, before, candidate) {
   return snapToArrivalAxis(arrival, lastInner, candidate);
 }
 
+/**
+ * Picks the point where a swimlane edge leaves its tail shape. A first segment the layout ran
+ * along a row or column keeps its start when the shape intersection would slant it.
+ */
+function dockFirstPoint(originalFirst, firstInner, candidate) {
+  const square =
+    !coincides(originalFirst, firstInner) &&
+    (sharesColumn(originalFirst, firstInner) || sharesRow(originalFirst, firstInner));
+  return square && !keepsArrivalAxis(originalFirst, firstInner, candidate)
+    ? originalFirst
+    : candidate;
+}
+
 /** The arrowhead's pull-back for a marker type; a type the table does not own pulls back nothing. */
 function markerPullBack(arrowType) {
   const offset = Object.hasOwn(markerOffsets, arrowType) ? markerOffsets[arrowType] : 0;
@@ -758,7 +771,7 @@ export const insertEdge = function (
         const innerPoints = points.slice(1, -1);
         const firstInner = innerPoints[0];
         const lastInner = innerPoints[innerPoints.length - 1];
-        const newFirst = tail.intersect(firstInner);
+        const newFirst = dockFirstPoint(points[0], firstInner, tail.intersect(firstInner));
 
         const originalLast = points[points.length - 1];
         const candidateLast = head.intersect(lastInner);
