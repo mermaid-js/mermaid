@@ -41,10 +41,13 @@ const SHORT_ESCAPES = new Map([
   ['\t', '\\t'],
 ]);
 
-/** Control characters and the Unicode line breaks, which would split or restyle a log line. */
+/**
+ * Control characters, the Unicode line breaks and the bidirectional format controls
+ * (U+202A-202E, U+2066-2069), which would split a log line or reorder the text around them.
+ */
 const escapeControls = (text: string): string =>
   text.replace(
-    /[\p{Cc}\u2028\u2029]/gu,
+    /[\p{Cc}\u2028\u2029\u202A-\u202E\u2066-\u2069]/gu,
     (char) =>
       SHORT_ESCAPES.get(char) ??
       `\\u${char.charCodeAt(0).toString(HEX_RADIX).padStart(UNICODE_ESCAPE_DIGITS, '0')}`
@@ -56,11 +59,27 @@ const clip = (text: string): string =>
 /** Escaped before it is cut, so the shown text is one line of at most the limit. */
 const shown = (text: string): string => clip(escapeControls(text));
 
+/** A part that YAML reads back as the same key without quotes. */
+const PLAIN_YAML_KEY = /^[\w-]+$/;
+
+/**
+ * Shows one part of the suggested nested form. A part that is not a plain word is written as a
+ * double-quoted YAML string, whose `\n` and `\uXXXX` escapes are the ones `escapeControls` makes,
+ * so the suggestion means the key the author wrote.
+ */
+const suggestedKey = (segment: string): string =>
+  PLAIN_YAML_KEY.test(segment)
+    ? shown(segment)
+    : `"${clip(escapeControls(segment.replace(/["\\]/g, '\\$&')))}"`;
+
 /** Writes `['elk', 'mergeEdges']` as `elk: { mergeEdges: ... }`. */
 const nestedForm = (path: string[]): string =>
   path
     .slice(0, -1)
-    .reduceRight((inner, segment) => `${segment}: { ${inner} }`, `${path.at(-1)}: ...`);
+    .reduceRight(
+      (inner, segment) => `${suggestedKey(segment)}: { ${inner} }`,
+      `${suggestedKey(path.at(-1) ?? '')}: ...`
+    );
 
 /**
  * The YAML is parsed without expanding dots, so `elk.mergeEdges: true` is one key that no
@@ -72,7 +91,7 @@ const warnAboutDottedKeys = (config: MermaidConfig): void => {
   for (const key of Object.keys(config)) {
     const path = key.split('.');
     if (path.length > 1 && path.every(Boolean) && CONFIG_SECTIONS.has(path[0])) {
-      const nested = nestedForm(path.slice(0, MAX_SHOWN_SEGMENTS).map(shown));
+      const nested = nestedForm(path.slice(0, MAX_SHOWN_SEGMENTS));
       log.warn(`config key '${shown(key)}' is ignored; write it nested: ${nested}`);
     }
   }
