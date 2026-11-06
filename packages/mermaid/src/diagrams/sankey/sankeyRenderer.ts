@@ -278,7 +278,7 @@ export const draw = function (text: string, id: string, _version: string, diagOb
     .attr('stroke', coloring)
     .attr('stroke-width', (d: any) => Math.max(1, d.width));
 
-  setupGraphViewbox(undefined, svg, 0, useMaxWidth);
+  setupGraphViewbox(svg, 0, useMaxWidth);
 };
 
 export default {
