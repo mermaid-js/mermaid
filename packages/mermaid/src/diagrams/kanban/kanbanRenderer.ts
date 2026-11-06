@@ -15,8 +15,7 @@ export const draw: DrawDefinition = async (text, id, _version, diagObj) => {
   const db = diagObj.db as KanbanDB;
   const data4Layout = db.getData();
 
-  const conf = getConfig();
-  conf.htmlLabels = false;
+  const conf = { ...getConfig(), htmlLabels: false };
 
   const svg = selectSvgElement(id);
 

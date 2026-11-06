@@ -26,11 +26,11 @@ async function runMessyLayout(autoLaneOrdering?: boolean): Promise<LayoutData> {
   const sizes = loadFreshSizesFixture(sizesPath, mmdPath, FIXTURE_ID);
   const layout = await parseMmdFileToLayoutData(mmdPath, { stampFlowchartRendererFields: true });
   (layout as { layoutAlgorithm?: string }).layoutAlgorithm = 'swimlane';
-  layout.config ??= {};
-  layout.config.swimlane = { ...(layout.config.swimlane ?? {}) };
+  const swimlane = { ...layout.config?.swimlane };
   if (autoLaneOrdering != null) {
-    layout.config.swimlane.automaticLaneOrdering = autoLaneOrdering;
+    swimlane.automaticLaneOrdering = autoLaneOrdering;
   }
+  layout.config = { ...layout.config, swimlane };
   runSwimlanesDdlt(layout, sizes);
   return layout;
 }

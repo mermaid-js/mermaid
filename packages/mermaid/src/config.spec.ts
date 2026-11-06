@@ -367,3 +367,58 @@ describe('getEffectiveHtmlLabels', () => {
     expect(configApi.getEffectiveHtmlLabels(config)).toBe(true);
   });
 });
+
+describe('getConfig snapshot', () => {
+  beforeEach(() => {
+    configApi.setSiteConfig({});
+    configApi.reset();
+  });
+
+  it('returns the same object until the config changes', () => {
+    expect(configApi.getConfig()).toBe(configApi.getConfig());
+  });
+
+  it('returns a deeply frozen object', () => {
+    const config = configApi.getConfig();
+    expect(Object.isFrozen(config)).toBe(true);
+    expect(Object.isFrozen(config.flowchart)).toBe(true);
+    expect(Object.isFrozen(config.themeVariables)).toBe(true);
+    expect(() => {
+      (config.flowchart as { curve?: string }).curve = 'linear';
+    }).toThrow(TypeError);
+  });
+
+  it('does not freeze the stored config', () => {
+    configApi.getConfig();
+    configApi.setConfig({ flowchart: { curve: 'linear' } });
+    expect(configApi.getConfig().flowchart?.curve).toBe('linear');
+  });
+
+  it.each([
+    ['setConfig', () => configApi.setConfig({ fontSize: 99 })],
+    ['addDirective', () => configApi.addDirective({ fontSize: 99 })],
+    ['setSiteConfig', () => configApi.setSiteConfig({ fontSize: 99 })],
+    ['updateSiteConfig', () => configApi.updateSiteConfig({ fontSize: 99 })],
+  ])('reflects %s', (_, update) => {
+    const before = configApi.getConfig();
+    update();
+    const after = configApi.getConfig();
+    expect(after).not.toBe(before);
+    expect(after.fontSize).toBe(99);
+  });
+
+  it('gives the public API a mutable copy', () => {
+    const copy = configApi.getConfigCopy();
+    expect(copy).toEqual(configApi.getConfig());
+    copy.flowchart!.curve = 'linear';
+    expect(configApi.getConfig().flowchart?.curve).not.toBe('linear');
+  });
+
+  it('reflects reset', () => {
+    configApi.addDirective({ fontSize: 99 });
+    const before = configApi.getConfig();
+    configApi.reset();
+    expect(configApi.getConfig()).not.toBe(before);
+    expect(configApi.getConfig().fontSize).toBe(configApi.defaultConfig.fontSize);
+  });
+});

@@ -21,10 +21,15 @@ function domusBackendUnavailable(): never {
 }
 
 function topUpSwimlaneFlowchartConfig(layout: LayoutData): void {
-  const cfg = (layout.config ??= {} as LayoutData['config']);
-  const flowchartCfg = ((cfg as { flowchart?: Record<string, unknown> }).flowchart ??= {});
-  flowchartCfg.nodeSpacing = (flowchartCfg.nodeSpacing as number | undefined) ?? 40;
-  flowchartCfg.rankSpacing = (flowchartCfg.rankSpacing as number | undefined) ?? 100;
+  const flowchart = layout.config?.flowchart;
+  layout.config = {
+    ...layout.config,
+    flowchart: {
+      ...flowchart,
+      nodeSpacing: flowchart?.nodeSpacing ?? 40,
+      rankSpacing: flowchart?.rankSpacing ?? 100,
+    },
+  };
 }
 
 /**
