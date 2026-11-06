@@ -38,11 +38,11 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.1.2",
-    "d3": "^7.9.0",
+    "d3": "^7.9.2",
     "khroma": "^2.1.0"
   },
   "devDependencies": {
-    "concurrently": "^9.2.4",
+    "concurrently": "^9.2.5",
     "mermaid": "workspace:*",
     "rimraf": "^6.0.1"
   },
