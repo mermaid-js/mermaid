@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import ELK from 'elkjs/lib/elk.bundled.js';
+import ELK, { type ELK as ElkInstance, type ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { buildElkGraphFromLayoutData } from '../render.js';
 
 const context = {
@@ -55,7 +55,9 @@ const measuredData = (direction: string, nested: boolean) =>
 describe('ELK self-loop distribution (#8706)', () => {
   it.each(['TB', 'LR'])('separates two labeled self-loops with %s layout', async (direction) => {
     const state = buildElkGraphFromLayoutData(measuredData(direction, false), context);
-    const graph = await new ELK().layout(state.elkGraph);
+    // elkjs exposes a CommonJS constructor whose declaration is a default export.
+    const ElkConstructor = ELK as unknown as new () => ElkInstance;
+    const graph: ElkNode = await new ElkConstructor().layout<ElkNode>(state.elkGraph);
     const node = graph.children!.find((n) => n.id === 'Ready')!;
     const loops = graph.edges!.filter((e) => e.id === 'first' || e.id === 'second');
     const axis = direction === 'TB' ? 'x' : 'y';
