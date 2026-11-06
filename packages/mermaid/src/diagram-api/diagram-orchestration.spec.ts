@@ -1,5 +1,7 @@
 import { it, describe, expect } from 'vitest';
-import { detectType } from './detectType.js';
+import { addDetector, detectors, detectType } from './detectType.js';
+import { cleanupComments } from './comments.js';
+import { directiveRegex, matchFrontMatter, stripAnyComments } from './regexes.js';
 import { addDiagrams } from './diagram-orchestration.js';
 
 describe('diagram-orchestration', () => {
@@ -94,5 +96,102 @@ describe('diagram-orchestration', () => {
       flowchart: 1 "pie" pie: 2 "pie"`)
       ).toBe('pie');
     });
+  });
+});
+
+describe('shared comment stripping in detection', () => {
+  beforeAll(() => addDiagrams());
+
+  it('passes exactly the shared helper output to a detector', () => {
+    const source = '%% leading\ncustom-header %% inline\n  node["%% text"]\n%% trailing';
+    const detector = vi.fn((text: string) => text.startsWith('custom-header'));
+    addDetector('shared-comments-test', detector);
+    try {
+      expect(detectType(source)).toBe('shared-comments-test');
+      expect(detector).toHaveBeenCalledWith(cleanupComments(source), undefined);
+    } finally {
+      delete detectors['shared-comments-test'];
+    }
+  });
+
+  it('does not treat inline text as a whole-line comment for the strict error detector', () => {
+    expect(() => detectType('error %% inline\n')).toThrow();
+    expect(detectType('%% whole-line comment\nerror')).toBe('error');
+  });
+
+  it('keeps every registered detector equivalent on the diagram-header corpus', () => {
+    const headers = [
+      'error',
+      '---',
+      'C4Context',
+      'C4Container',
+      'C4Component',
+      'C4Dynamic',
+      'C4Deployment',
+      'graph TD',
+      'flowchart LR',
+      'flowchart-elk TD',
+      'agentflow-beta',
+      'swimlane-beta',
+      'erDiagram',
+      'gitGraph',
+      'gantt',
+      'info',
+      'pie',
+      'quadrantChart',
+      'xychart',
+      'requirementDiagram',
+      'sequenceDiagram',
+      'classDiagram',
+      'stateDiagram-v2',
+      'journey',
+      'timeline',
+      'mindmap',
+      'kanban',
+      'sankey-beta',
+      'packet-beta',
+      'radar-beta',
+      'block-beta',
+      'treeView-beta',
+      'architecture-beta',
+      'eventmodeling',
+      'ishikawa-beta',
+      'treemap-beta',
+      'railroad-beta',
+      'railroad-ebnf-beta',
+      'railroad-abnf-beta',
+      'railroad-peg-beta',
+      'venn-beta',
+      'wardley-beta',
+      'cynefin-beta',
+      'usecase-beta',
+    ];
+    const covered = new Set<string>();
+    for (const header of headers) {
+      for (const source of [
+        header,
+        ...(header === 'error' || header === '---' ? [] : [`${header} %% inline\n`]),
+        `%% leading\n  ${header}\n%% trailing\n`,
+        `---\ntitle: Example\n---\n%% leading\n${header}\n`,
+        `%%{init: {"theme": "default"}}%%\n${header}\n`,
+      ]) {
+        const frontMatter = matchFrontMatter(source);
+        const stripped = (frontMatter ? source.slice(frontMatter.length) : source).replace(
+          directiveRegex,
+          ''
+        );
+        const oldText = stripAnyComments(stripped);
+        const sharedText = cleanupComments(stripped);
+        for (const [key, { detector }] of Object.entries(detectors)) {
+          const oldResult = detector(oldText, {});
+          expect(Boolean(detector(sharedText, {})), `${key}: ${source}`).toBe(Boolean(oldResult));
+          if (oldResult) {
+            covered.add(key);
+          }
+        }
+        expect(detectType(source)).toBe(detectType(sharedText));
+      }
+    }
+    expect([...covered].sort()).toEqual(Object.keys(detectors).sort());
   });
 });
