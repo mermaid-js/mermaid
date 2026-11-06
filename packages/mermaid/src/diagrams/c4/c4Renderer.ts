@@ -62,6 +62,18 @@ let globalBoundaryMaxX = 0,
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
 
+/**
+ * Width of the widest relationship label between each pair of elements, keyed by
+ * {@link relPairKey}. Filled in by {@link measureRels} before the grid is laid out, so a row
+ * can leave room for the label between two neighbours.
+ */
+let relLabelWidths = new Map<string, number>();
+/** Pairs (keyed by {@link relPairKey}) that the grid placed next to each other on one row. */
+let sameRowPairs = new Set<string>();
+
+/** A key for an unordered pair of element aliases. */
+const relPairKey = (a: string, b: string) => (a < b ? `${a}\0${b}` : `${b}\0${a}`);
+
 parser.yy = c4Db;
 
 let conf = {} as C4DrawConfig;
@@ -110,15 +122,23 @@ class Bounds {
     }
   }
 
-  insert(c4Shape: C4Shape) {
+  /**
+   * Places `c4Shape` on the current row, or starts a new row when it does not fit.
+   *
+   * @param minGap - the least horizontal room to leave between `c4Shape` and the element before
+   * it when both end up on the same row, e.g. for a relationship label drawn between them.
+   * @returns whether `c4Shape` was placed on the same row as the element before it.
+   */
+  insert(c4Shape: C4Shape, minGap = 0): boolean {
     this.nextData.cnt = this.nextData.cnt + 1;
     // `setData()` seeds the bounds before any `insert()` call.
     const nextStopx = this.nextData.stopx!;
     const widthLimit = this.data.widthLimit!;
-    let _startx =
-      this.nextData.startx === this.nextData.stopx
-        ? nextStopx + c4Shape.margin
-        : nextStopx + c4Shape.margin * 2;
+    const isFirst = this.nextData.startx === this.nextData.stopx;
+    let sameRow = !isFirst;
+    let _startx = isFirst
+      ? nextStopx + c4Shape.margin
+      : nextStopx + Math.max(c4Shape.margin * 2, minGap);
     let _stopx = _startx + c4Shape.width;
     let _starty = this.nextData.starty! + c4Shape.margin * 2;
     let _stopy = _starty + c4Shape.height;
@@ -130,6 +150,7 @@ class Bounds {
       this.nextData.starty = this.nextData.stopy;
       this.nextData.stopy = _stopy = _starty + c4Shape.height;
       this.nextData.cnt = 1;
+      sameRow = false;
     }
 
     c4Shape.x = _startx;
@@ -144,6 +165,7 @@ class Bounds {
     this.updateVal(this.nextData, 'starty', _starty, Math.min);
     this.updateVal(this.nextData, 'stopx', _stopx, Math.max);
     this.updateVal(this.nextData, 'stopy', _stopy, Math.max);
+    return sameRow;
   }
 
   init(diagObj: Diagram) {
@@ -320,9 +342,17 @@ export const drawC4ShapeArray = async function (
     })
   );
 
-  // Position with the legacy grid.
+  // Position with the legacy grid. A relationship label between two neighbours on a row is
+  // drawn in the gap between them, so make that gap wide enough to hold it.
+  let previous: C4Shape | undefined;
   for (const c4Shape of c4Shapes) {
-    currentBounds.insert(c4Shape);
+    const pair = previous ? relPairKey(previous.alias, c4Shape.alias) : undefined;
+    const labelWidth = pair ? relLabelWidths.get(pair) : undefined;
+    const minGap = labelWidth === undefined ? 0 : labelWidth + conf.c4ShapeMargin;
+    if (currentBounds.insert(c4Shape, minGap) && pair) {
+      sameRowPairs.add(pair);
+    }
+    previous = c4Shape;
   }
 
   // Pass 2 (draw): render each shape into a group already translated to its grid position
@@ -384,14 +414,13 @@ const getIntersectPoints = function (fromNode: C4Element, endNode: C4Element) {
   return { startPoint: startPoint, endPoint: endPoint };
 };
 
-export const drawRels = function (
-  diagram: SVG,
-  rels: C4Rel[],
-  getC4ShapeObj: (alias: string) => C4Element | undefined,
-  diagObj: Diagram,
-  diagramId: string
-) {
+/**
+ * Measures the relationship labels, and records how wide the label between each pair of
+ * elements is so the grid can leave room for it. Runs before the elements are laid out.
+ */
+export const measureRels = function (rels: C4Rel[], diagObj: Diagram) {
   const diagramType = (diagObj.db as C4DB).getC4Type();
+  relLabelWidths = new Map();
   let i = 0;
   for (const rel of rels) {
     i = i + 1;
@@ -401,17 +430,38 @@ export const drawRels = function (
       rel.label.text = i + ': ' + rel.label.text;
     }
     let textLimitWidth = calculateTextWidth(rel.label.text, relConf as TextDimensionConfig);
-    calcC4ShapeTextWH('label', rel, relTextWrap, relConf, textLimitWidth);
+    let labelWidth = calcC4ShapeTextWH('label', rel, relTextWrap, relConf, textLimitWidth).width;
 
     if (rel.techn && rel.techn.text !== '') {
       textLimitWidth = calculateTextWidth(rel.techn.text, relConf as TextDimensionConfig);
-      calcC4ShapeTextWH('techn', rel, relTextWrap, relConf, textLimitWidth);
+      const techn = calcC4ShapeTextWH('techn', rel, relTextWrap, relConf, textLimitWidth);
+      labelWidth = Math.max(labelWidth, techn.width);
     }
 
     if (rel.descr && rel.descr.text !== '') {
       textLimitWidth = calculateTextWidth(rel.descr.text, relConf as TextDimensionConfig);
       calcC4ShapeTextWH('descr', rel, relTextWrap, relConf, textLimitWidth);
     }
+
+    // A label moved by hand with UpdateRelStyle keeps the layout it was positioned against.
+    if (rel.offsetX || rel.offsetY) {
+      continue;
+    }
+    const pair = relPairKey(rel.from, rel.to);
+    relLabelWidths.set(pair, Math.max(labelWidth, relLabelWidths.get(pair) ?? 0));
+  }
+};
+
+export const drawRels = function (
+  diagram: SVG,
+  rels: C4Rel[],
+  getC4ShapeObj: (alias: string) => C4Element | undefined,
+  diagramId: string
+) {
+  for (const rel of rels) {
+    // The grid left room for this label between the two neighbours, so centre it there.
+    rel.centerLabel =
+      !rel.offsetX && !rel.offsetY && sameRowPairs.has(relPairKey(rel.from, rel.to));
 
     const fromNode = getC4ShapeObj(rel.from);
     const endNode = getC4ShapeObj(rel.to);
@@ -598,6 +648,9 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   const title = db.getTitle();
   const currentBoundaries = db.getBoundaries('');
+  const rels = db.getRels();
+  sameRowPairs = new Set();
+  measureRels(rels, diagObj);
   // switch (c4type) {
   //   case 'C4Context':
   await drawInsideBoundary(diagram, '', screenBounds, currentBoundaries, diagObj);
@@ -610,7 +663,7 @@ export const draw = async function (_text: string, id: string, _version: string,
   svgDraw.insertArrowCrossHead(diagram, id);
   svgDraw.insertArrowFilledHead(diagram, id);
 
-  drawRels(diagram, db.getRels(), db.getC4Shape, diagObj, id);
+  drawRels(diagram, rels, db.getC4Shape, id);
 
   screenBounds.data.stopx = globalBoundaryMaxX;
   screenBounds.data.stopy = globalBoundaryMaxY;
