@@ -173,6 +173,7 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   liftTopLaneTitleBandsAboveRails(edges, nodeByIdMap, direction);
   shiftLeftLaneTitleBandsLeftOfRails(edges, nodeByIdMap, direction);
 
-  cropEdgeEndsToShapes(edges, nodeByIdMap);
-  anchorLabelsToPolyline(edges, nodeByIdMap);
+  if (cropEdgeEndsToShapes(edges, nodeByIdMap)) {
+    anchorLabelsToPolyline(edges, nodeByIdMap);
+  }
 }
