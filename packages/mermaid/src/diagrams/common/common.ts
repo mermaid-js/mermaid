@@ -342,7 +342,7 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
       .split(lineBreakRegex)
       .map((line) =>
         hasKatex(line)
-          ? `<div style="display: flex; align-items: center; justify-content: center; white-space: nowrap;">${line}</div>`
+          ? `<div style="display: block; white-space: normal;">${line}</div>`
           : `<div>${line}</div>`
       )
       .join('')
@@ -355,6 +355,11 @@ const renderKatexUnsanitized = async (text: string, config: MermaidConfig): Prom
           })
           .replace(/\n/g, ' ')
           .replace(/<annotation.*<\/annotation>/g, '')
+          .replace(
+            /class="katex-display"/g,
+            'class="katex-display" style="display: inline-block; margin: 0;"'
+          )
+          .replace(/<math /g, '<math style="display: inline-block;" ')
       );
   }
 
