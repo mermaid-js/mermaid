@@ -156,8 +156,9 @@ export const PLACEMENT_OPTIONS: Record<string, unknown> = {
  * layering, both of which live in {@link PLACEMENT_OPTIONS}.
  *
  * MUST be fully commented out on `develop`. The routing options actually in
- * force ship in `createRootElkGraph`: `edgeRouting.selfLoopDistribution`,
- * `unnecessaryBendpoints` and `mergeHierarchyEdges`.
+ * force ship in `createRootElkGraph`: `unnecessaryBendpoints` and
+ * `mergeHierarchyEdges`. Self-loop distribution is set on each loop's node
+ * in `buildElkGraphFromLayoutData`, because it is not a parent-graph option.
  */
 export const EDGE_ROUTING_OPTIONS: Record<string, unknown> = {
   // Shape of every edge. ORTHOGONAL is ELK's default and what the adapter expects.
@@ -185,7 +186,8 @@ export const EDGE_ROUTING_OPTIONS: Record<string, unknown> = {
   // 'elk.layered.priority.shortness': 0,
   // 'elk.layered.priority.direction': 1,
   // ─── Self loops ───
-  // Which sides a node's self loops are spread across. EQUALLY ships below.
+  // These are NODE options: set them on the loop's node, not in this root map.
+  // Which sides a node's self loops are spread across. EQUALLY is the adapter default.
   // 'elk.layered.edgeRouting.selfLoopDistribution': 'EQUALLY',
   // 'elk.layered.edgeRouting.selfLoopDistribution': 'NORTH',
   // 'elk.layered.edgeRouting.selfLoopDistribution': 'NORTH_SOUTH',
