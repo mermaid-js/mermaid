@@ -14,6 +14,34 @@ describe('state parser can parse...', () => {
     stateDiagram.parser.yy.clear();
   });
 
+  describe('bare state declarations', () => {
+    it('should keep a bare state inside and after a composite state', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        state A {
+          state B
+        }
+        state C`);
+
+      const states = stateDb.getStates();
+      expect(states.get('A').doc).toEqual([
+        { stmt: 'state', id: 'B', type: 'default', description: '' },
+      ]);
+      expect(states.has('C')).toBe(true);
+    });
+
+    it('should allow a bare state before a composite state', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+        state A
+        state B {
+          C
+        }`);
+
+      const states = stateDb.getStates();
+      expect(states.has('A')).toBe(true);
+      expect(states.has('B')).toBe(true);
+    });
+  });
+
   describe('invalid name between state and curly bracket', () => {
     describe('valid syntax', () => {
       it('should only accept 1 word', () => {
