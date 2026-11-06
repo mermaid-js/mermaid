@@ -26,6 +26,16 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+### [Use case diagram](../syntax/usecase.md)
+
+```mermaid-example
+usecase-beta
+direction LR
+actor Customer
+Checkout("Place order")
+Customer --> Checkout
+```
+
 ### [Gantt diagram](../syntax/gantt.md)
 
 ```mermaid-example

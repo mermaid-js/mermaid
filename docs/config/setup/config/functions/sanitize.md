@@ -12,16 +12,9 @@
 
 > **sanitize**(`options`): `void`
 
-Defined in: [packages/mermaid/src/config.ts:155](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L155)
+Defined in: [packages/mermaid/src/config.ts:235](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/config.ts#L235)
 
-## sanitize
-
-| Function | Description                            | Type        | Values |
-| -------- | -------------------------------------- | ----------- | ------ |
-| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
-
-Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
-options in-place
+Ensures options parameter does not attempt to override `siteConfig` secure keys.
 
 ## Parameters
 
@@ -29,8 +22,12 @@ options in-place
 
 `any`
 
-The potential setConfig parameter
+The potential `setConfig` parameter
 
 ## Returns
 
 `void`
+
+## Remarks
+
+Modifies options in-place.

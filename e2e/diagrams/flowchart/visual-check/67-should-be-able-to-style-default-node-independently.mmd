@@ -1,0 +1,16 @@
+---
+description:
+  Verifies that a `style` statement targeting the node id 'default' can add
+  stroke and stroke-width on top of the fill already set by a separate `classDef
+  default` rule, confirming style and classDef contributions for the special
+  'default' node/class merge rather than one overriding the other.
+config:
+  flowchart:
+    htmlLabels: true
+  securityLevel: loose
+---
+flowchart TD
+  classDef default fill:#a34
+  hello --> default
+
+  style default stroke:#000,stroke-width:4px

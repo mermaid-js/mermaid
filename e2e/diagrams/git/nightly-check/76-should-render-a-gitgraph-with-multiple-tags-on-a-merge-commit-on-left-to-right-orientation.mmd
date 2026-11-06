@@ -1,0 +1,18 @@
+---
+description: >-
+  Default left-to-right counterpart to the BT version of the multiple-tags-on-a-merge-commit test
+  — a merge commit with two tags, a custom id, and HIGHLIGHT type.
+---
+gitGraph
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  merge develop id:"Release 1.0" type:HIGHLIGHT tag: "SAML v2.0" tag: "OpenID v1.1"
+  commit id:"TWO"
+  checkout develop
+  commit id:"C"

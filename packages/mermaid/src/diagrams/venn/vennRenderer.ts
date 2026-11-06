@@ -123,8 +123,10 @@ export const draw: DrawDefinition = (
     const data = d as VennData;
     const setsKey = stableSetsKey([...data.sets].sort());
     const customStyle = styleByKey.get(setsKey);
-    const baseColor =
-      customStyle?.fill || themeColors[i % themeColors.length] || themeVariables.primaryColor;
+    // Empty for themes that define no `venn*`; the flat fallback is intended for those.
+    // Spelled out because the old route to it was `i % 0` being NaN.
+    const paletteColor = themeColors.length > 0 ? themeColors[i % themeColors.length] : undefined;
+    const baseColor = customStyle?.fill || paletteColor || themeVariables.primaryColor;
     group.classed(`venn-set-${i % 8}`, true);
     const fillOpacity = customStyle?.['fill-opacity'] ?? 0.1;
     const strokeColor = customStyle?.stroke || baseColor;

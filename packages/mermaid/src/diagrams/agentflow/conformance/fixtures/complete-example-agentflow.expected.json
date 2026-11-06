@@ -1,0 +1,15 @@
+{
+  "outcome": "valid",
+  "diagnostics": [],
+  "semanticAssertions": {
+    "vertices": [
+      { "id": "city", "vertexKind": "input" },
+      { "id": "research_loc", "vertexKind": "tool" },
+      { "id": "write_copy", "vertexKind": "tool" },
+      { "id": "translate_sv", "vertexKind": "tool" },
+      { "id": "gen_html", "vertexKind": "tool" },
+      { "id": "style_guide", "vertexKind": "refdoc" }
+    ],
+    "edges": [{ "start": "gen_html", "end": "style_guide", "edgeSemantic": "reference" }]
+  }
+}

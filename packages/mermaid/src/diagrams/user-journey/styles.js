@@ -51,7 +51,7 @@ const getStyles = (options) =>
     fill: ${options.arrowheadColor};
   }
 
-  .edgePath .path {
+  .edgePaths .path {
     stroke: ${options.lineColor};
     stroke-width: 1.5px;
   }

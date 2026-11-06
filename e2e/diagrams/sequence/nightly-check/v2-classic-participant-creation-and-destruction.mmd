@@ -1,0 +1,45 @@
+---
+description: >-
+  Participants A/B redeclared under every type in turn, each iteration creating
+  (and every other iteration destroying) a new uniquely-named participant —
+  stress-tests create/destroy across all 8 participant types.
+config:
+  look: classic
+---
+sequenceDiagram
+  participant A@{ "type" : "participant" }
+  participant B@{ "type" : "participant" }
+  create participant participant0@{ "type" : "participant" }
+  A ->> participant0: Hello participant
+  destroy participant0
+  participant A@{ "type" : "actor" }
+  participant B@{ "type" : "actor" }
+  create participant actor1@{ "type" : "actor" }
+  A ->> actor1: Hello actor
+  participant A@{ "type" : "boundary" }
+  participant B@{ "type" : "boundary" }
+  create participant boundary2@{ "type" : "boundary" }
+  A ->> boundary2: Hello boundary
+  destroy boundary2
+  participant A@{ "type" : "control" }
+  participant B@{ "type" : "control" }
+  create participant control3@{ "type" : "control" }
+  A ->> control3: Hello control
+  participant A@{ "type" : "entity" }
+  participant B@{ "type" : "entity" }
+  create participant entity4@{ "type" : "entity" }
+  A ->> entity4: Hello entity
+  destroy entity4
+  participant A@{ "type" : "database" }
+  participant B@{ "type" : "database" }
+  create participant database5@{ "type" : "database" }
+  A ->> database5: Hello database
+  participant A@{ "type" : "collections" }
+  participant B@{ "type" : "collections" }
+  create participant collections6@{ "type" : "collections" }
+  A ->> collections6: Hello collections
+  destroy collections6
+  participant A@{ "type" : "queue" }
+  participant B@{ "type" : "queue" }
+  create participant queue7@{ "type" : "queue" }
+  A ->> queue7: Hello queue

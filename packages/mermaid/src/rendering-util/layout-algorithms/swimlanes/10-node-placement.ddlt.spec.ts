@@ -7,7 +7,7 @@ import { validateLayout } from '../layout-utils/validateLayout.js';
 const FIXTURE_ID = 'swimlanes/10-node-placement';
 const FIXTURE_PATH = resolve(
   process.cwd(),
-  'cypress/platform/dev-diagrams/layout-tests/swimlanes/10-node-placement.mmd'
+  'e2e/platform/dev-diagrams/layout-tests/swimlanes/10-node-placement.mmd'
 );
 
 async function runSwimlanes() {

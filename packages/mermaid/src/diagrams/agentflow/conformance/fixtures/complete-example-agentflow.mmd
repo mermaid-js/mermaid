@@ -1,0 +1,35 @@
+%% §17 Complete Example — Coffee Team coffee-website builder (v0.8.1).
+agentflow-beta TB
+  connector llm_api["LLM API"]
+  llm_api@{ protocol: "http", endpoint: "https://api.example.com/chat" }
+
+  flow coffee_team["Coffee Team"]
+    city["city"]
+    city@{ shape: input, type: "String", value: "Stockholm" }
+
+    flow researcher["Researcher"]
+      research_loc["research_location"]
+      research_loc@{ shape: tool, params: "city :: String", returns: "String", cache: "24h" }
+      write_copy["write_copy"]
+      write_copy@{ shape: tool, connectorRef: "llm_api.chat", params: "brief :: String", returns: "CoffeeCopy", retry: 2 }
+      city --> research_loc --> write_copy
+    end
+    researcher@{ model: "claude-sonnet-4-20250514", instruction: "Research the city and draft English coffee copy citing sources." }
+
+    flow translator["Translator"]
+      translate_sv["translate_to_swedish"]
+      translate_sv@{ shape: tool, connectorRef: "llm_api.chat", params: "english :: CoffeeCopy", returns: "BilingualPage" }
+    end
+    translator@{ model: "claude-sonnet-4-20250514" }
+
+    flow designer["Designer"]
+      gen_html["generate_html"]
+      gen_html@{ shape: tool, connectorRef: "llm_api.chat", params: "page :: BilingualPage", returns: "String" }
+      style_guide["Nordic Brand Guide"]
+      style_guide@{ shape: refdoc }
+      gen_html -.- style_guide
+    end
+    designer@{ model: "claude-sonnet-4-20250514", instruction: "Render the bilingual page as semantic HTML following the brand guide." }
+
+    researcher --> translator --> designer
+  end

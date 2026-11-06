@@ -23,7 +23,7 @@ ignorePaths:
   - '*.csv'
   - '*.patch'
   - 'docs/**/*.html'
-  - 'cypress/platform/**'
+  - 'e2e/platform/**'
 dictionaries:
   - misc-terms
 overrides:

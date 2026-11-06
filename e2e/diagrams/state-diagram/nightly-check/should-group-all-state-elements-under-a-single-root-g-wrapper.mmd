@@ -1,0 +1,16 @@
+---
+description: >-
+  Legacy v1 state diagram with a small traffic-light-style state machine
+  (Still/Moving/Crash) used to verify that all rendered state elements are
+  grouped under a single root SVG `g` wrapper.
+config:
+  logLevel: 0
+  fontFamily: courier
+---
+stateDiagram
+  [*] --> Still
+  Still --> [*]
+  Still --> Moving
+  Moving --> Still
+  Moving --> Crash
+  Crash --> [*]

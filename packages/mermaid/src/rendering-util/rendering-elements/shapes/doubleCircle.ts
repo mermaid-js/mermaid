@@ -16,9 +16,15 @@ export async function doublecircle<T extends SVGGraphicsElement>(
   node.labelStyle = labelStyles;
   const padding = node.padding ?? 0;
   const labelPadding = node.look === 'neo' ? 16 : padding;
-  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node));
-  const outerRadius = (node?.width ? node?.width / 2 : bbox.width / 2) + (labelPadding ?? 0);
-  const innerRadius = outerRadius - gap;
+  // Sized from the label alone; see circle.ts for why the min width is skipped.
+  const { shapeSvg, bbox } = await labelHelper(parent, node, getNodeClasses(node), {
+    ignoreMinWidth: true,
+  });
+  // The label sits inside the *inner* ring, so that is the circle sized from the label
+  // box's diagonal; the outer ring is the gap beyond it.
+  const labelRadius = Math.sqrt(bbox.width ** 2 + bbox.height ** 2) / 2;
+  const innerRadius = (node?.width ? node?.width / 2 : labelRadius) + (labelPadding ?? 0);
+  const outerRadius = innerRadius + gap;
 
   let circleGroup;
   const { cssStyles } = node;

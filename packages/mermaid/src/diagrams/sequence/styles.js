@@ -103,10 +103,17 @@ const getStyles = (options) => {
     fill: ${options.noteBkgColor};
   }
 
+  /*
+   * No font-weight here, deliberately. Note text renders inside tspan elements, and a weight emitted at
+   * tspan level outranks the inline style drawText puts on the parent text element from the
+   * sequence.noteFontWeight config key -- so that documented key would never reach the glyphs.
+   * The theme variable formerly emitted here is a different value from that config key, and
+   * git/styles.js reads it as its own bold-label weight under redux and neo, so it cannot be
+   * lowered there either.
+   */
   .noteText, .noteText > tspan {
     fill: ${options.noteTextColor};
     stroke: none;
-    ${options.noteFontWeight ? `font-weight: ${options.noteFontWeight};` : ''}
   }
 
   .activation0 {

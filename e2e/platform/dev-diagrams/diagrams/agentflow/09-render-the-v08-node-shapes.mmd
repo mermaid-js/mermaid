@@ -1,0 +1,18 @@
+agentflow-beta TB
+  city["City Input"]
+  research["research_location"]
+  brief["Research Brief"]
+  style_ref["Nordic Design"]
+  check["Quality OK?"]
+  post["post_results"]
+
+  city --> research --> brief
+  research -.- style_ref
+  brief --> check
+  check -- yes --> post
+
+  city@{ shape: input }
+  research@{ shape: tool }
+  style_ref@{ shape: refdoc }
+  check@{ shape: decision }
+  post@{ shape: action }

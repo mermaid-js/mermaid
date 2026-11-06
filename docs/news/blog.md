@@ -108,19 +108,19 @@ October 24, 2024 · 4 mins
 
 An entity relationship (ER) diagram acts like a blueprint for your database. This makes ER diagrams effective tools for anyone dealing with complex databases, data modeling, and AI model training.
 
-## [Expanding the Horizons of Mermaid Flowcharts: Introducing 30 New Shapes!](https://mermaid.ai/blog/posts/new-mermaid-flowchart-shapes/)
+## [Expanding the Horizons of Mermaid Flowcharts: Introducing 30 New Shapes!](https://mermaid.ai/blog/posts/expanding-the-horizons-of-mermaid-flowcharts-introducing-30-new-shapes/)
 
 24 September 2024 · 5 mins
 
 Discover 30 new shapes in Mermaid flowcharts, offering enhanced clarity, customization, and versatility for more dynamic and expressive visualizations.
 
-## [Introducing Architecture Diagrams in Mermaid](https://mermaid.ai/blog/posts/mermaid-supports-architecture-diagrams/)
+## [Introducing Architecture Diagrams in Mermaid](https://mermaid.ai/blog/posts/introducing-architecture-diagrams-in-mermaid/)
 
 2 September 2024 · 2 mins
 
 Discover the fresh new and unique Neo and Hand-Drawn looks for Mermaid Diagrams, while still offering the classic look you love.
 
-## [Mermaid v11 is out!](https://mermaid.ai/blog/posts/mermaid-v11/)
+## [Mermaid v11 is out!](https://mermaid.ai/blog/posts/mermaid-v11-is-out/)
 
 23 August 2024 · 2 mins
 
@@ -132,7 +132,7 @@ Mermaid v11 introduces advanced layout options, new diagram types, and enhanced 
 
 Discover the fresh new and unique Neo and Hand-Drawn looks for Mermaid Diagrams, while still offering the classic look you love.
 
-## [The Mermaid Chart Plugin for Jira: A How-To User Guide](https://mermaid.ai/blog/posts/the-mermaid-chart-plugin-for-jira-a-how-to-user-guide/)
+## [The Mermaid Chart Plugin for Jira: A How-To User Guide](https://mermaid.ai/blog/posts/the-mermaid-chart-plugin-for-jira/)
 
 31 July 2024 · 5 mins
 
@@ -144,7 +144,7 @@ The Mermaid Chart plugin for Jira has arrived!
 
 The Mermaid AI chat interface
 
-## [How to Make a Sequence Diagram with Mermaid Chart](https://mermaid.ai/blog/posts/how-to-make-a-sequence-diagram-in-mermaid-chart-step-by-step-guide/)
+## [How to Make a Sequence Diagram with Mermaid Chart](https://mermaid.ai/blog/posts/how-to-make-a-sequence-diagram-with-mermaid-chart/)
 
 8 July 2024 · 6 mins
 
@@ -180,13 +180,13 @@ Artificial intelligence (AI) tools are changing the way developers work.
 
 Sequence diagrams are excellent tools for communication and documentation.
 
-## [Modeling system states: It starts with a Turing machine](https://mermaid.ai/blog/posts/modeling-system-states/)
+## [Modeling system states: It starts with a Turing machine](https://mermaid.ai/blog/posts/modeling-system-states-it-starts-with-a-turing-machine/)
 
 27 March 2024 · 12 mins
 
 In computer science, there are a few fundamental papers that, without exaggeration, changed everything.
 
-## [Mermaid Chart Raises $7.5M to Reinvent Visual Collaboration for Enterprises](https://mermaid.ai/blog/posts/mermaid-chart-raises-7.5m-to-reinvent-visual-collaoration-for-enterprises/)
+## [Mermaid Chart Raises $7.5M to Reinvent Visual Collaboration for Enterprises](https://mermaid.ai/blog/posts/mermaid-chart-raises-7-5m-to-reinvent-visual-collaboration-for-enterprises/)
 
 20 March 2024 · 4 mins
 
@@ -198,13 +198,13 @@ Mermaid Chart, the company offering text-based diagramming and workflow manageme
 
 Mermaid Chart GPT is Now Available In the GPT Store!
 
-## [How to Make a Flowchart with Mermaid Chart](https://mermaid.ai/blog/posts/how-to-make-flowcharts-with-mermaid-chart/)
+## [How to Make a Flowchart with Mermaid Chart](https://mermaid.ai/blog/posts/how-to-make-a-flowchart-with-mermaid-chart/)
 
 30 January 2024 · 6 mins
 
 Learn how to make a flowchart with Mermaid Chart, the leading text-to-diagram platform for both developers and non-developers.
 
-## [How one data scientist uses Mermaid Chart to quickly and easily build flowcharts](https://mermaid.ai/blog/posts/customer-spotlight-ari-tal/)
+## [How one data scientist uses Mermaid Chart to quickly and easily build flowcharts](https://mermaid.ai/blog/posts/how-one-data-scientist-uses-mermaid-chart-to-quickly-and-easily-build-flowcharts/)
 
 23 January 2024 · 4 mins
 
@@ -222,7 +222,7 @@ Diagrams are essential for documenting your code.
 
 Mermaid Chart introduces a new Visual Editor for flowcharts, enabling users of all skill levels to create diagrams easily and efficiently, with both GUI and code-based editing options.
 
-## [7 best practices (+ examples) for good developer documentation](https://mermaid.ai/blog/posts/7-best-practices-for-good-documentation/)
+## [7 best practices (+ examples) for good developer documentation](https://mermaid.ai/blog/posts/7-best-practices-examples-for-good-developer-documentation/)
 
 4 December 2023 · 11 min
 
@@ -240,7 +240,7 @@ Mermaid Chart, a user-friendly, code-based diagram generator with AI integration
 
 Would an AI diagram generator make your life easier?
 
-## [Diagrams, Made Even Easier: Introducing “Code Snippets” in the Mermaid Chart Editor](https://mermaid.ai/blog/posts/easier-diagram-editing-with-code-snippets/)
+## [Diagrams, Made Even Easier: Introducing “Code Snippets” in the Mermaid Chart Editor](https://mermaid.ai/blog/posts/diagrams-made-even-easier-introducing-code-snippets-in-the-mermaid-chart-editor/)
 
 12 October 2023 · 4 mins
 
@@ -252,7 +252,7 @@ Mermaid Chart introduces Code Snippets in its editor, streamlining the diagrammi
 
 A git graph is one of the more useful forms of diagrams for developers and DevOps professionals.
 
-## [Present flow data using Sankey diagrams in Mermaid, thanks to Nikolay Rozhkov](https://mermaid.ai/blog/posts/present-flow-data-using-sankey-diagrams/)
+## [Present flow data using Sankey diagrams in Mermaid, thanks to Nikolay Rozhkov](https://mermaid.ai/blog/posts/present-flow-data-using-sankey-diagrams-in-mermaid-thanks-to-nikolay-rozhkov/)
 
 8 September 2023 · 4 mins
 
@@ -264,13 +264,13 @@ Sankey diagrams are a powerful tool for visualizing flow data.
 
 Read about the pitfalls of special cases in programming, illustrating how they can lead to complexity, diminish readability, and create maintenance challenges.
 
-## [New AI chatbot now available on Mermaid Chart to simplify text-based diagram creation](https://mermaid.ai/blog/posts/ai-chatbot-now-available-on-mermaid-chart-to-simplify-text-based-diagram-creation/)
+## [New AI chatbot now available on Mermaid Chart to simplify text-based diagram creation](https://mermaid.ai/blog/posts/new-ai-chatbot-now-available-on-mermaid-chart-to-simplify-text-based-diagram-creation/)
 
 14 August 2023 · 4 mins
 
 Introducing Mermaid Chart’s new AI chatbot, a diagramming assistant that simplifies text-based diagram creation for everyone, from developers to educators, offering features to start, edit, and fix diagrams, and embodying our vision to make diagramming accessible, user-friendly, and fun.
 
-## [Believe It or Not, You Still Need an Online UML Diagram Tool](https://mermaid.ai/blog/posts/uml-diagram-tool/)
+## [Believe It or Not, You Still Need an Online UML Diagram Tool](https://mermaid.ai/blog/posts/believe-it-or-not-you-still-need-an-online-uml-diagram-tool/)
 
 14 August 2023 · 8 mins
 
@@ -282,13 +282,13 @@ A UML diagram tool helps developers and other professionals quickly create and s
 
 Introducing the concept of mind mapping as a tool for organizing complex information, and highlights Mermaid as a user-friendly software that simplifies the creation and editing of mind maps for applications in IT solution design, business decision-making, and knowledge organization.
 
-## [Mermaid Chart Announces Visual Studio Code Plugin to Simplify Development Workflows](https://mermaid.ai/blog/posts/mermaid-chart-announces-visual-studio-code-plugin)
+## [Mermaid Chart Announces Visual Studio Code Plugin to Simplify Development Workflows](https://mermaid.ai/blog/posts/mermaid-chart-announces-visual-studio-code-plugin-to-simplify-development-workflows)
 
 17 July 2023 · 3 mins
 
 New Integration Enhances Workflows By Enabling Developers To Reference And Edit Diagrams Within Visual Studio Code.
 
-## [Mermaid Chart’s ChatGPT Plugin Combines Generative AI and Smart Diagramming For Users](https://mermaid.ai/blog/posts/mermaid-chart-chatgpt-plugin-combines-generative-ai-and-smart-diagramming)
+## [Mermaid Chart’s ChatGPT Plugin Combines Generative AI and Smart Diagramming For Users](https://mermaid.ai/blog/posts/mermaid-charts-chatgpt-plugin-combines-generative-ai-and-smart-diagramming-for-users)
 
 29 June 2023 · 4 mins
 
@@ -324,7 +324,7 @@ Markdown Strings reduce the hassle # Starting from v10.
 
 Exciting news for all Mermaid OSS fans: Mermaid Chart has officially launched with Mermaid Chart!
 
-## [If you're not excited about ChatGPT, then you're not being creative](https://mermaid.ai/blog/posts/if-youre-not-excited-about-chatgpt-then-youre-not-being-creative-enough/)
+## [If you're not excited about ChatGPT, then you're not being creative](https://mermaid.ai/blog/posts/if-youre-not-excited-about-chatgpt-then-youre-not-being-creative/)
 
 8 March 2023 · 9 mins
 

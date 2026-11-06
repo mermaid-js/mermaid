@@ -3,7 +3,7 @@ import { cp } from 'fs/promises';
 
 const main = async () => {
   const coverageDir = 'coverage';
-  const coverageFiles = ['vitest', 'cypress'].map(
+  const coverageFiles = ['vitest', 'playwright'].map(
     (dir) => `${coverageDir}/${dir}/coverage-final.json`
   );
 
