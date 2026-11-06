@@ -151,6 +151,25 @@ test('markdownToLines - Only italic formatting', () => {
   expect(output).toEqual(expectedOutput);
 });
 
+test('markdownToLines - Nested bold and italic formatting', () => {
+  const input = `***Both*** **Bold *Both* Bold** *Italic **Both** Italic*`;
+
+  const expectedOutput = [
+    [
+      { content: 'Both', type: 'strongEm' },
+      { content: 'Bold', type: 'strong' },
+      { content: 'Both', type: 'strongEm' },
+      { content: 'Bold', type: 'strong' },
+      { content: 'Italic', type: 'em' },
+      { content: 'Both', type: 'strongEm' },
+      { content: 'Italic', type: 'em' },
+    ],
+  ];
+
+  const output = markdownToLines(input);
+  expect(output).toEqual(expectedOutput);
+});
+
 it('markdownToLines - Mixed formatting', () => {
   let input = `*Italic* and **bold** formatting`;
   let expected = [

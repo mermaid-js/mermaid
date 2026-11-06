@@ -99,4 +99,24 @@ describe('createText', () => {
       expect(output.textContent).toEqual(expected);
     }
   );
+
+  it('renders nested bold and italic as both when useHtmlLabels is false', async () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svgGroup = svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'g'));
+    const output = await createText(select(svgGroup), '**Bold *Both* Bold**', {
+      useHtmlLabels: false,
+      markdown: true,
+    });
+
+    const words = [...output.querySelectorAll('tspan.text-inner-tspan')].map((tspan) => [
+      tspan.textContent?.trim(),
+      tspan.getAttribute('font-weight'),
+      tspan.getAttribute('font-style'),
+    ]);
+    expect(words).toEqual([
+      ['Bold', 'bold', 'normal'],
+      ['Both', 'bold', 'italic'],
+      ['Bold', 'bold', 'normal'],
+    ]);
+  });
 });
