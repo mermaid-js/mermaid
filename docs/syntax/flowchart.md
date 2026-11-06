@@ -2223,7 +2223,7 @@ flowchart LR
 Each arrow of a chain takes its own class, and an edge ID can come first (`A e1@-->:::hot B`). The class is applied as the styles of its `classDef`, as `class e1 hot` does for an edge with an ID. The class name itself is not added to the edge's SVG path, so page CSS such as `.hot` does not match it.
 
 - Write one class per arrow: `:::a:::b` is a syntax error, for an arrow as it is for a node.
-- Put a space between the class name and the destination node, on the same line (`A -->:::hot B`). A destination on the next line is not accepted after a class or a label.
+- Put a space between the class name and the destination node, on the same line (`A -->:::hot B`). After a class the destination cannot move to the next line, with any label form. Without a class, the next line is accepted after a plain arrow and after an inline label (`A -- text -->`), but not after a pipe label (`A -->|text|`).
 - A label can sit between the arrow's ends (`A -- text -->:::hot B`) or in pipes (`A -->|text|:::hot B`). Write the class after the whole arrow.
 - `A --:::hot--> B` is still an edge labelled `:::hot`, and `A --:::hot B` is a syntax error, because `--` followed by text opens a label.
 
