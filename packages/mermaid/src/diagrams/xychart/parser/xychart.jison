@@ -7,6 +7,7 @@
 %x acc_title
 %x acc_descr
 %x acc_descr_multiline
+%s chart_config
 %s axis_data
 %s axis_band_data
 %s data
@@ -14,6 +15,7 @@
 %%
 \%\%(?!\{)[^\n]*                          /* skip comments */
 [^\}]\%\%[^\n]*                           /* skip comments */
+<chart_config>(\r?\n)                     { this.popState(); return 'NEWLINE'; }
 <axis_data>(\r?\n)                        { this.popState(); return 'NEWLINE'; }
 <data>(\r?\n)                             { this.popState(); return 'NEWLINE'; }
 [\n\r]+                                   return 'NEWLINE';
@@ -29,9 +31,9 @@
 <acc_descr_multiline>"}"                 { this.popState(); }
 <acc_descr_multiline>[^\}]*               { return "acc_descr_multiline_value"; }
 
-"xychart-beta"                            {return 'XYCHART';}
-"xychart"                                 {return 'XYCHART';}
-(?:"vertical"|"horizontal")               {return 'CHART_ORIENTATION'}
+"xychart-beta"                            { this.pushState("chart_config"); return 'XYCHART'; }
+"xychart"                                 { this.pushState("chart_config"); return 'XYCHART'; }
+<chart_config>(?:"vertical"|"horizontal")\b { this.popState(); return 'CHART_ORIENTATION'; }
 
 "x-axis"                                  { this.pushState("axis_data"); return "X_AXIS"; }
 "y-axis"                                  { this.pushState("axis_data"); return "Y_AXIS"; }
