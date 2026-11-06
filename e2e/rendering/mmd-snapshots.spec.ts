@@ -1,5 +1,4 @@
 import { readFileSync } from 'node:fs';
-import { test } from '@playwright/test';
 import {
   assertUniqueSnapshotNames,
   buildFixtureTree,
@@ -10,7 +9,7 @@ import {
   readFixtureMetadata,
   type FixtureTree,
 } from '../helpers/mmd-snapshots.ts';
-import { imgSnapshotTest } from '../helpers/util.ts';
+import { test } from '../helpers/workerPage.ts';
 
 // Set by CI (.github/workflows/e2e.yml, .github/workflows/nightly-e2e.yml)
 // to a comma-separated tier list (e.g. 'pr' or 'pr,nightly') when a run is
@@ -26,6 +25,31 @@ const fixtures = await collectMmdFixtures(
 // Fail fast if two fixtures would share a screenshot baseline (see helper).
 assertUniqueSnapshotNames(fixtures);
 const fixtureTree = buildFixtureTree(fixtures);
+
+// Fixtures share a page per worker, so run them in a shuffled order to surface
+// any render that depends on what came before. Every shard of a CI run must see
+// the same order, hence the run id; set E2E_ORDER_SEED to replay an order.
+const orderSeed = Number(
+  process.env.E2E_ORDER_SEED ?? process.env.GITHUB_RUN_ID ?? Math.floor(Math.random() * 2 ** 31)
+);
+const shuffled = (() => {
+  let state = orderSeed >>> 0;
+  const random = () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 2 ** 32;
+  };
+  return <T>(items: T[]): T[] => {
+    const result = [...items].sort();
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  };
+})();
 
 // Gantt fixtures are dated around 1010-10-10 and several of them exercise the
 // today marker, which the renderer places at `new Date()`. Pin the browser
@@ -44,20 +68,26 @@ const fixedClockFor = (relativePath: string): string | undefined =>
   FIXED_CLOCKS[relativePath] ?? FIXED_CLOCKS[relativePath.split('/')[0]];
 
 const registerFixtureNode = (node: FixtureTree): void => {
-  for (const segment of [...node.children.keys()].sort()) {
+  for (const segment of shuffled([...node.children.keys()])) {
     test.describe(segment, () => {
       registerFixtureNode(node.children.get(segment)!);
     });
   }
 
-  for (const relativePath of [...node.fixtures].sort()) {
+  for (const relativePath of shuffled([...node.fixtures])) {
     // Read at registration time (sync, like the fixture file itself below):
     // `tag` has to be a static option on the `test()` call, not something
     // decided from inside the async test body.
     const metadata = readFixtureMetadata(relativePath);
     const tags = metadata?.tags?.map((tag) => (tag.startsWith('@') ? tag : `@${tag}`));
 
-    test(fixtureBaseName(relativePath), { tag: tags }, async ({ page }, testInfo) => {
+    // Mirror the fixture's storage path so Argos sheets group by diagram
+    // folder (e.g. diagrams/packet) rather than the runner spec file.
+    const screenshotPath = `diagrams/${relativePath.replace(/\.mmd$/i, '')}`;
+    const clock = fixedClockFor(relativePath);
+
+    test(fixtureBaseName(relativePath), { tag: tags }, async ({ renderShared }, testInfo) => {
+      testInfo.annotations.push({ type: 'order-seed', description: String(orderSeed) });
       if (metadata?.description) {
         testInfo.annotations.push({ type: 'description', description: metadata.description });
       } else {
@@ -75,19 +105,7 @@ const registerFixtureNode = (node: FixtureTree): void => {
           `Failed to read mmd fixture ${relativePath}: ${error instanceof Error ? error.message : String(error)}`
         );
       }
-      const fixedClock = fixedClockFor(relativePath);
-      if (fixedClock) {
-        // setFixedTime over install: never advances, so a diagram whose own
-        // date parsing defaults to "now" can't resolve to a slightly later
-        // instant than a render-time `new Date()` call (e.g. the today
-        // marker) just because rendering took some real time to run.
-        await page.clock.setFixedTime(new Date(fixedClock));
-      }
-      // Mirror the fixture's storage path so Argos sheets group by diagram
-      // folder (e.g. diagrams/packet) rather than the runner spec file.
-      await imgSnapshotTest(page, testInfo, source, {
-        screenshotPath: `diagrams/${relativePath.replace(/\.mmd$/i, '')}`,
-      });
+      await renderShared(source, { screenshotPath, clock });
     });
   }
 };

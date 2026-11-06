@@ -1,6 +1,4 @@
-import { test } from '@playwright/test';
-
-import { imgSnapshotTest } from './util.ts';
+import { test } from './workerPage.ts';
 
 const looks = ['classic', 'handDrawn'] as const;
 const directions = [
@@ -29,17 +27,17 @@ export function registerIconShapeTests(forms: readonly IconShapeForm[]): void {
       forms.forEach((form) => {
         labelPos.forEach((pos) => {
           test.describe(`Test iconShape in ${form ? `${form} form,` : ''} ${look} look and dir ${direction} with label position ${pos ? pos : 'not defined'}`, () => {
-            test(`without label`, async ({ page }, testInfo) => {
+            test(`without label`, async ({ renderShared }) => {
               let flowchartCode = `flowchart ${direction}\n`;
               flowchartCode += `  nA --> nAA@{ icon: 'fa:bell'`;
               if (form) {
                 flowchartCode += `, form: '${form}'`;
               }
               flowchartCode += ` }\n`;
-              await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+              await renderShared(flowchartCode, { look });
             });
 
-            test(`with label`, async ({ page }, testInfo) => {
+            test(`with label`, async ({ renderShared }) => {
               let flowchartCode = `flowchart ${direction}\n`;
               flowchartCode += `  nA --> nAA@{ icon: 'fa:bell', label: 'This is a label for icon shape'`;
               if (form) {
@@ -49,10 +47,10 @@ export function registerIconShapeTests(forms: readonly IconShapeForm[]): void {
                 flowchartCode += `, pos: '${pos}'`;
               }
               flowchartCode += ` }\n`;
-              await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+              await renderShared(flowchartCode, { look });
             });
 
-            test(`with very long label`, async ({ page }, testInfo) => {
+            test(`with very long label`, async ({ renderShared }) => {
               let flowchartCode = `flowchart ${direction}\n`;
               flowchartCode += `  nA --> nAA@{ icon: 'fa:bell', label: 'This is a very very very very very long long long label for icon shape'`;
               if (form) {
@@ -62,10 +60,10 @@ export function registerIconShapeTests(forms: readonly IconShapeForm[]): void {
                 flowchartCode += `, pos: '${pos}'`;
               }
               flowchartCode += ` }\n`;
-              await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+              await renderShared(flowchartCode, { look });
             });
 
-            test(`with markdown htmlLabels:true`, async ({ page }, testInfo) => {
+            test(`with markdown htmlLabels:true`, async ({ renderShared }) => {
               let flowchartCode = `flowchart ${direction}\n`;
               flowchartCode += `  nA --> nAA@{ icon: 'fa:bell', label: 'This is **bold** </br>and <strong>strong</strong> for icon shape'`;
               if (form) {
@@ -75,10 +73,10 @@ export function registerIconShapeTests(forms: readonly IconShapeForm[]): void {
                 flowchartCode += `, pos: '${pos}'`;
               }
               flowchartCode += ` }\n`;
-              await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+              await renderShared(flowchartCode, { look });
             });
 
-            test(`with markdown htmlLabels:false`, async ({ page }, testInfo) => {
+            test(`with markdown htmlLabels:false`, async ({ renderShared }) => {
               let flowchartCode = `flowchart ${direction}\n`;
               flowchartCode += `  nA --> nAA@{ icon: 'fa:bell', label: 'This is **bold** </br>and <strong>strong</strong> for icon shape'`;
               if (form) {
@@ -88,14 +86,14 @@ export function registerIconShapeTests(forms: readonly IconShapeForm[]): void {
                 flowchartCode += `, pos: '${pos}'`;
               }
               flowchartCode += ` }\n`;
-              await imgSnapshotTest(page, testInfo, flowchartCode, {
+              await renderShared(flowchartCode, {
                 look,
                 htmlLabels: false,
                 flowchart: { htmlLabels: false },
               });
             });
 
-            test(`with styles`, async ({ page }, testInfo) => {
+            test(`with styles`, async ({ renderShared }) => {
               let flowchartCode = `flowchart ${direction}\n`;
               flowchartCode += `  nA --> nAA@{ icon: 'fa:bell', label: 'new icon shape'`;
               if (form) {
@@ -106,10 +104,10 @@ export function registerIconShapeTests(forms: readonly IconShapeForm[]): void {
               }
               flowchartCode += ` }\n`;
               flowchartCode += `  style nAA fill:#f9f,stroke:#333,stroke-width:4px \n`;
-              await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+              await renderShared(flowchartCode, { look });
             });
 
-            test(`with classDef`, async ({ page }, testInfo) => {
+            test(`with classDef`, async ({ renderShared }) => {
               let flowchartCode = `flowchart ${direction}\n`;
               flowchartCode += `  classDef customClazz fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n`;
               flowchartCode += `  nA --> nAA@{ icon: 'fa:bell', label: 'new icon shape'`;
@@ -121,7 +119,7 @@ export function registerIconShapeTests(forms: readonly IconShapeForm[]): void {
               }
               flowchartCode += ` }\n`;
               flowchartCode += `  nAA:::customClazz\n`;
-              await imgSnapshotTest(page, testInfo, flowchartCode, { look });
+              await renderShared(flowchartCode, { look });
             });
           });
         });

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { CoverageReport, type CoverageReportOptions } from 'monocart-coverage-reports';
-import type { Page, TestInfo } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 const COVERAGE = process.env.E2E_COVERAGE === 'true';
 
@@ -51,13 +51,29 @@ export async function startCoverage(page: Page): Promise<void> {
   await page.coverage.startJSCoverage({ resetOnNavigation: false });
 }
 
-/** Stop coverage and cache the raw V8 data; global-teardown emits the lcov. */
-export async function collectCoverage(page: Page, _testInfo: TestInfo): Promise<void> {
+const isCollecting = (page: Page): boolean => {
   const state = page as unknown as CoverageState;
-  if (!COVERAGE || !state.__covStarted || state.__covDone) {
+  return COVERAGE && !!state.__covStarted && !state.__covDone;
+};
+
+const cacheCoverage = async (page: Page): Promise<void> => {
+  await new CoverageReport(coverageOptions).add(await page.coverage.stopJSCoverage());
+};
+
+/** Stop coverage and cache the raw V8 data; global-teardown emits the lcov. */
+export async function collectCoverage(page: Page): Promise<void> {
+  if (!isCollecting(page)) {
     return;
   }
-  state.__covDone = true;
-  const coverage = await page.coverage.stopJSCoverage();
-  await new CoverageReport(coverageOptions).add(coverage);
+  (page as unknown as CoverageState).__covDone = true;
+  await cacheCoverage(page);
+}
+
+/** Cache what has run so far and keep collecting, e.g. before a reload discards the page's scripts. */
+export async function flushCoverage(page: Page): Promise<void> {
+  if (!isCollecting(page)) {
+    return;
+  }
+  await cacheCoverage(page);
+  await page.coverage.startJSCoverage({ resetOnNavigation: false });
 }
