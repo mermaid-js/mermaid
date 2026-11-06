@@ -53,6 +53,7 @@ export const clear = function () {
   lastTask = undefined;
   lastTaskID = undefined;
   rawTasks = [];
+  taskDb = {};
   dateFormat = '';
   axisFormat = '';
   displayMode = '';
@@ -592,7 +593,7 @@ const parseData = function (prevTaskId, dataStr) {
 let lastTask;
 let lastTaskID;
 let rawTasks = [];
-const taskDb = {};
+let taskDb = {};
 export const addTask = function (descr, data) {
   const rawTask = {
     section: currentSection,
