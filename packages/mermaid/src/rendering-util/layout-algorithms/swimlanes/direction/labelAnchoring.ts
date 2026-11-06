@@ -9,7 +9,7 @@ import {
   rectsOverlap,
   segmentBoundsOverlapRect,
 } from './geometry.js';
-import type { RectBounds } from './geometry.js';
+import type { Point, RectBounds } from './geometry.js';
 import { buildLaneModel } from '../lanes.js';
 import { EDGE_ROUTING } from '../config.js';
 
@@ -62,6 +62,24 @@ function markerClearanceRectFor(
     top: Math.min(tip.y, inner.y),
     bottom: Math.max(tip.y, inner.y),
   };
+}
+
+/** Whether `b` lies on a straight run from `a` to `c`: the line neither turns there nor doubles back. */
+function isStraightJoin(a: Point, b: Point, c: Point): boolean {
+  const first = { x: b.x - a.x, y: b.y - a.y };
+  const second = { x: c.x - b.x, y: c.y - b.y };
+  return (
+    Math.abs(first.x * second.y - first.y * second.x) < EPS &&
+    first.x * second.x + first.y * second.y > 0
+  );
+}
+
+/** The route without the points where it runs straight on, so each segment ends at a bend. */
+function withoutStraightJoins(points: Point[]): Point[] {
+  return points.filter(
+    (point, i) =>
+      i === 0 || i === points.length - 1 || !isStraightJoin(points[i - 1], point, points[i + 1])
+  );
 }
 
 function normalizeRect(rect: RectBounds): RectBounds {
@@ -220,7 +238,7 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
     if (!labelNode) {
       continue;
     }
-    const pts = edge.points;
+    const pts = edge.points ? withoutStraightJoins(edge.points) : undefined;
     if (!pts || pts.length < 2) {
       continue;
     }

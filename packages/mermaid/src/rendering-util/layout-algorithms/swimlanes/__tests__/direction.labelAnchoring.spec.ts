@@ -89,6 +89,23 @@ describe('anchoring an edge label', () => {
     }
   });
 
+  it('places a label on a straight leg that arrives split into short collinear pieces', () => {
+    // The middle leg runs straight from y 212.5 to 455.5, but every 20 px it carries a point
+    // where it does not turn. None of those points is a bend.
+    const joins = Array.from({ length: 11 }, (_, i): [number, number] => [232.8, 232.5 + 20 * i]);
+    const label = anchored([
+      [210, 212.5],
+      [232.8, 212.5],
+      ...joins,
+      [232.8, 455.5],
+      [212.8, 455.5],
+    ]);
+
+    expect(label.x).toBe(232.8);
+    expect(label.y).toBeGreaterThan(212.5 + LABEL.height / 2 + EDGE_ROUTING.CORNER_RADIUS);
+    expect(label.y).toBeLessThan(455.5 - LABEL.height / 2 - EDGE_ROUTING.CORNER_RADIUS);
+  });
+
   it('leaves the label where it is when no leg can hold it clear of its bends', () => {
     // The middle leg is 30 long; a label 21 high needs 10.5 + 5 * sqrt(2) clear of each bend.
     const label = anchored([
