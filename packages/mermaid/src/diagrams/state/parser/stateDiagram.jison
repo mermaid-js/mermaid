@@ -127,7 +127,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 
 <STATE>["]                 { /* console.log('Starting STATE_STRING'); */ this.pushState("STATE_STRING"); }
 <STATE>\s*"as"\s+          { this.pushState('STATE_ID'); /* console.log('pushState(STATE_ID)'); */ return "AS"; }
-<STATE_ID>[^\n\{]*         { if (!processId()) return; this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
+<STATE_ID>[^\n\{]+         { if (!processId()) return; this.popState(); /* console.log('STATE_ID', yytext); */ return "ID"; }
 <STATE_STRING>["]          { this.popState(); }
 <STATE_STRING>[^"]*        { /* console.log('Long description:', yytext); */ return "STATE_DESCR"; }
 <STATE>\w+\s+\w+.*?\{      { throw new Error('Error: State name must be a single word. Found: "' + yytext.trim() + '"'); }
