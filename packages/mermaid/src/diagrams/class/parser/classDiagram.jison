@@ -94,6 +94,8 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 <*>"note"                       return 'NOTE';
 <*>"<<"                         return 'ANNOTATION_START';
 <*>">>"                         return 'ANNOTATION_END';
+<INITIAL,class,namespace-body>("«"|"&laquo;"|"&#"0*"171;"|"&#"[xX]0*[aA][bB]";") return 'ANNOTATION_START';
+<INITIAL,class,namespace-body>("»"|"&raquo;"|"&#"0*"187;"|"&#"[xX]0*[bB][bB]";") return 'ANNOTATION_END';
 
 /*
 ---interactivity command---

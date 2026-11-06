@@ -1090,6 +1090,68 @@ foo()
       parser.yy = classDb;
     });
 
+    describe.each([
+      ['angle brackets', '<<', '>>'],
+      ['Unicode', '«', '»'],
+      ['named entities', '&laquo;', '&raquo;'],
+      ['decimal entities', '&#171;', '&#187;'],
+      ['hexadecimal entities', '&#xAB;', '&#xBB;'],
+      ['hexadecimal entities with leading zeros', '&#X00ab;', '&#X00bb;'],
+    ])('annotation delimiters: %s', (_name, open, close) => {
+      it.each([
+        ['standalone', `class Service\n${open}interface${close} Service`],
+        ['inline', `class Service ${open}interface${close}`],
+        ['class body', `class Service {\n${open}interface${close}\n+run()\n}`],
+      ])('recognizes a %s annotation', (_placement, definition) => {
+        parser.parse(`classDiagram\n${definition}`);
+
+        const service = classDb.getClass('Service');
+        expect(service.annotations).toEqual(['interface']);
+        expect(service.members).toHaveLength(0);
+      });
+
+      it('recognizes annotations inside a namespace', () => {
+        parser.parse(`classDiagram
+          namespace API {
+            class Service ${open}interface${close} {
+              +run()
+            }
+          }`);
+
+        const service = classDb.getClass('Service');
+        expect(service.annotations).toEqual(['interface']);
+        expect(service.parent).toBe('API');
+        expect(service.methods).toHaveLength(1);
+        expect(service.members).toHaveLength(0);
+      });
+    });
+
+    it('preserves nested generic types alongside Unicode annotations', () => {
+      parser.parse(`classDiagram
+        class Container~T~ «interface» {
+          +List~List~String~~ values
+          +get() List~List~String~~
+        }`);
+
+      const container = classDb.getClass('Container');
+      expect(container.annotations).toEqual(['interface']);
+      expect(container.type).toBe('T');
+      expect(container.members[0].getDisplayDetails().displayText).toBe(
+        '+List<List<String>> values'
+      );
+      expect(container.methods[0].getDisplayDetails().displayText).toBe(
+        '+get() : List<List<String>>'
+      );
+    });
+
+    it('preserves Unicode delimiters in quoted class names and generic parameters', () => {
+      parser.parse('classDiagram\nclass `«Literal»`\nclass Container~«Value»~');
+
+      expect(classDb.getClass('«Literal»').annotations).toEqual([]);
+      expect(classDb.getClass('Container').type).toBe('«Value»');
+      expect(classDb.getClass('Container').annotations).toEqual([]);
+    });
+
     it('should handle class annotations', function () {
       const str = 'classDiagram\n' + 'class Class1\n' + '<<interface>> Class1';
       parser.parse(str);

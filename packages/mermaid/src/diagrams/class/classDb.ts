@@ -33,6 +33,8 @@ const MERMAID_DOM_ID_PREFIX = 'classId-';
 let classCounter = 0;
 
 const sanitizeText = (txt: string) => common.sanitizeText(txt, getConfig());
+const annotationPattern =
+  /^(?:<<([\S\s]*)>>|(?:«|&laquo;|&#0*171;|&#[Xx]0*[Aa][Bb];)([\S\s]*)(?:»|&raquo;|&#0*187;|&#[Xx]0*[Bb][Bb];))$/;
 
 export class ClassDB implements DiagramDB {
   private relations: ClassRelation[] = [];
@@ -269,7 +271,7 @@ export class ClassDB implements DiagramDB {
    * Adds a member to the specified class
    *
    * @param className - The class name
-   * @param member - The full name of the member. If the member is enclosed in `<<brackets>>` it is
+   * @param member - The full name of the member. If the member is enclosed in annotation delimiters it is
    *   treated as an annotation If the member is ending with a closing bracket ) it is treated as a
    *   method Otherwise the member will be treated as a normal property
    * @public
@@ -283,10 +285,11 @@ export class ClassDB implements DiagramDB {
     if (typeof member === 'string') {
       // Member can contain white spaces, we trim them out
       const memberString = member.trim();
+      const annotation = annotationPattern.exec(memberString);
 
-      if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
+      if (annotation) {
         // its an annotation
-        theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
+        theClass.annotations.push(sanitizeText(annotation[1] ?? annotation[2]));
       } else if (memberString.indexOf(')') > 0) {
         //its a method
         theClass.methods.push(new ClassMember(memberString, 'method'));
