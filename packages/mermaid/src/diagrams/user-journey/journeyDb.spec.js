@@ -43,6 +43,40 @@ describe('when using the journeyDb', function () {
     });
   });
 
+  it('should return each task once across repeated reads and additions', function () {
+    journeyDb.addSection('Morning');
+    journeyDb.addTask('Make tea', ':5:Me');
+
+    expect(journeyDb.getTasks()).toHaveLength(1);
+    expect(journeyDb.getTasks()).toHaveLength(1);
+
+    journeyDb.addTask('Drink tea', ':4:Me, You');
+    expect(journeyDb.getTasks().map((task) => task.task)).toEqual(['Make tea', 'Drink tea']);
+    expect(journeyDb.getTasks()).toHaveLength(2);
+    expect(journeyDb.getActors()).toEqual(['Me', 'You']);
+  });
+
+  it('should preserve tasks added directly before and after a read', function () {
+    journeyDb.addTaskOrg('First');
+    journeyDb.addTask('Make tea', ':5:Me');
+    expect(journeyDb.getTasks()).toHaveLength(2);
+
+    journeyDb.addTaskOrg('Last');
+    expect(journeyDb.getTasks().map((task) => task.task)).toEqual(['First', 'Make tea', 'Last']);
+  });
+
+  it('should include new tasks after clearing previously read tasks', function () {
+    journeyDb.addTask('Old task', ':1:Me');
+    journeyDb.getTasks();
+    journeyDb.clear();
+    journeyDb.addSection('Morning');
+    journeyDb.addTask('Make tea', ':5:You');
+
+    expect(journeyDb.getTasks().map((task) => task.task)).toEqual(['Make tea']);
+    expect(journeyDb.getTasks()).toHaveLength(1);
+    expect(journeyDb.getActors()).toEqual(['You']);
+  });
+
   it('tasks and actors should be added', function () {
     journeyDb.setAccTitle('Shopping');
     journeyDb.setAccDescription('A user journey for family shopping');
