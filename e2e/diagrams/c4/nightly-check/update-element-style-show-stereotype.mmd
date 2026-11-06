@@ -1,0 +1,11 @@
+---
+description: >-
+  Two systems, one of which opts out of its stereotype line with
+  UpdateElementStyle($showStereotype="false"). Only the second keeps no
+  [Software System] line; the first still shows it.
+---
+C4Context
+title One element opts out of its stereotype
+System(a, "Shown", "desc")
+System(b, "Hidden", "desc")
+UpdateElementStyle(b, $showStereotype="false")
