@@ -312,8 +312,9 @@ const getStartDate = function (prevTime, dateFormat, str) {
   };
 
   // Handle timestamp formats (x, X) with numeric strings
+  // `x` is in milliseconds, `X` is in seconds
   if (isTimestampFormat(dateFormat) && /^\d+$/.test(str)) {
-    return new Date(Number(str));
+    return new Date(Number(str) * (dateFormat.trim() === 'X' ? 1000 : 1));
   }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
