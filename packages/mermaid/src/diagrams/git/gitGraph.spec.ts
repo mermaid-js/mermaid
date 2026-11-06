@@ -1387,5 +1387,11 @@ describe('when parsing a gitGraph', function () {
       expect(config).toBeDefined();
       expect(config).toHaveProperty('parallelCommits');
     });
+
+    it('should return config with reuseBranchLanes property', () => {
+      const config = db.getConfig();
+      expect(config).toBeDefined();
+      expect(config).toHaveProperty('reuseBranchLanes');
+    });
   });
 });
