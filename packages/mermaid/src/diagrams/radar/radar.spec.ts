@@ -181,6 +181,15 @@ describe('radar diagrams', () => {
         expect(relativeRadius(5, 0, 10, 100)).toBe(50);
       });
 
+      it.each([
+        [1e308, 100],
+        [5e307, 50],
+        [Number.MAX_VALUE, 100],
+        [-1, 0],
+      ])('keeps the radius finite for value %s', (value, expected) => {
+        expect(relativeRadius(value, 0, 1e308, 100)).toBe(expected);
+      });
+
       it('should handle min value', () => {
         expect(relativeRadius(0, 0, 10, 100)).toBe(0);
       });
@@ -195,6 +204,10 @@ describe('radar diagrams', () => {
 
       it('should clip values above max', () => {
         expect(relativeRadius(15, 0, 10, 100)).toBe(100);
+      });
+
+      it('should preserve a subnormal radius when the normalized ratio underflows', () => {
+        expect(relativeRadius(1e-18, 0, 1e308, 300)).toBe(Number.MIN_VALUE);
       });
 
       it('should handle negative min', () => {
