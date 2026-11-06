@@ -67,6 +67,7 @@ roughjs
 rscratch
 scanline
 shiki
+Sirena
 Slidev
 sparkline
 speccharts
