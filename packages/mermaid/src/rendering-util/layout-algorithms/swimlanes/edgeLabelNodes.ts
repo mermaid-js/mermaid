@@ -100,6 +100,11 @@ export function createEdgeLabelNodes(data: LayoutData): LayoutData {
     edge.label = undefined;
     (edge as Edge & { text?: unknown }).text = undefined;
 
+    // Self-loop labels are placed next to their node, not in a layer of their own
+    if (edge.start === edge.end) {
+      continue;
+    }
+
     // Layout-only virtual edges: Sugiyama uses these to place the label node
     // between source and target. They are not routed or rendered — consumers
     // must skip any edge with `isLayoutOnly: true`.
