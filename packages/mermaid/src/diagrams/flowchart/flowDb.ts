@@ -57,6 +57,7 @@ export class FlowDB implements DiagramDB {
   private diagramId = '';
   private vertices = new Map<string, FlowVertex>();
   private edges: FlowEdge[] & { defaultInterpolate?: string; defaultStyle?: string[] } = [];
+  private linkTextStyles = new Map<string, string[]>();
   private classes = new Map<string, FlowClass>();
   private subGraphs: FlowSubGraph[] = [];
   private subGraphLookup = new Map<string, FlowSubGraph>();
@@ -83,6 +84,7 @@ export class FlowDB implements DiagramDB {
     this.addLink = this.addLink.bind(this);
     this.setLink = this.setLink.bind(this);
     this.updateLink = this.updateLink.bind(this);
+    this.updateLinkByText = this.updateLinkByText.bind(this);
     this.addClass = this.addClass.bind(this);
     this.setClass = this.setClass.bind(this);
     this.destructLink = this.destructLink.bind(this);
@@ -438,6 +440,20 @@ You have to call mermaid.initialize.`
     });
   }
 
+  /**
+   * Updates every link whose text matches with a style
+   *
+   * The style is resolved in getData, so a style set for the same link by its
+   * index with updateLink takes precedence.
+   */
+  public updateLinkByText(text: string, style: string[]) {
+    const styles = [...style];
+    if (!styles.some((s) => s?.startsWith('fill'))) {
+      styles.push('fill:none');
+    }
+    this.linkTextStyles.set(this.sanitizeText(text), styles);
+  }
+
   public addClass(ids: string, _style: string[]) {
     const style = _style
       .join()
@@ -677,6 +693,7 @@ You have to call mermaid.initialize.`
     this.vertices = new Map();
     this.classes = new Map();
     this.edges = [];
+    this.linkTextStyles = new Map();
     this.funs = [this.setupToolTips.bind(this)];
     this.diagramId = '';
     this.subGraphs = [];
@@ -1362,8 +1379,9 @@ You have to call mermaid.initialize.`
         return;
       }
 
-      if (rawEdge.style) {
-        styles.push(...rawEdge.style);
+      const linkStyle = rawEdge.style ?? this.linkTextStyles.get(rawEdge.text);
+      if (linkStyle) {
+        styles.push(...linkStyle);
       }
       const edge: Edge = {
         id: getEdgeId(start, end, { counter: index, prefix: 'L' }, rawEdge.id),
