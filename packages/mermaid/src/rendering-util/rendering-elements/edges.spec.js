@@ -14,6 +14,7 @@ vi.mock('../../diagram-api/diagramAPI.js', () => ({
 import { insertEdge, resolveEdgeCurveType, setTerminalWidth } from './edges.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { computeLabelTransform } from '../labelTransform.js';
+import intersectCircle from './intersect/intersect-circle.js';
 import intersectRect from './intersect/intersect-rect.js';
 
 describe('insertEdge clips for the engine that drew the edge', () => {
@@ -294,6 +295,53 @@ describe('insertEdge swimlane endpoint clipping', () => {
 
     expect(tail.intersect).toHaveBeenCalledWith({ x: 10, y: 14 });
     expect(renderedPoints[0]).toEqual(clippedStart);
+  });
+
+  describe('when the first segment leaves its shape along a row', () => {
+    // The layout starts the edge on the right face of the shape's box, below the centre.
+    const start = { x: 100, y: 10 };
+    const firstBend = { x: 140, y: 10 };
+
+    const startOf = (intersect) => {
+      document.body.innerHTML = '';
+      const svg = select(document.body).append('svg');
+      const edge = {
+        id: 'L_A8_E_0',
+        cssCompiledStyles: {},
+        style: [],
+        thickness: 'normal',
+        pattern: 'solid',
+        classes: 'flowchart-link',
+        curve: 'rounded',
+        look: 'neo',
+        arrowTypeEnd: 'arrow_point',
+        points: [start, firstBend, { x: 140, y: 80 }],
+      };
+      const tail = { intersect };
+      const head = { intersect: (point) => point };
+
+      insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+
+      return JSON.parse(atob(svg.select('path').attr('data-points')))[0];
+    };
+
+    it('keeps the start on the row instead of slanting to the intersection', () => {
+      // The ray from the centre to the first bend meets the right face at y = 5.
+      const box = { x: 60, y: 0, width: 80, height: 60 };
+      expect(startOf((point) => intersectRect(box, point))).toEqual(start);
+    });
+
+    it('takes an intersection that stays on the row', () => {
+      const box = { x: 56, y: 10, width: 80, height: 60 };
+      expect(startOf((point) => intersectRect(box, point))).toEqual({ x: 96, y: 10 });
+    });
+
+    it('takes the intersection when the start is off the drawn shape', () => {
+      // A circle drawn in a 100 x 100 box: (100, 10) is on the box but outside the circle.
+      const circle = { x: 50, y: 0 };
+      const intersect = (point) => intersectCircle(circle, 50, point);
+      expect(startOf(intersect)).toEqual(intersect(firstBend));
+    });
   });
 
   it('leaves exact endpoints alone when the edge skips intersection', () => {
