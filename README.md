@@ -479,6 +479,10 @@ A quick note from Knut Sveidqvist:
 >
 > _Thank you to the ever-growing list of [contributors](https://github.com/mermaid-js/mermaid/graphs/contributors) that brought the project this far!_
 
+<a href="https://www.blacksmith.sh/">
+  <img src="./img/blacksmith-powered.png" alt="CI powered by Blacksmith" width="240" />
+</a>
+
 ---
 
 _Mermaid was created by Knut Sveidqvist for easier documentation._
