@@ -7,6 +7,13 @@ import defaultConfig from '../../defaultConfig.js';
 import type { LayoutData, Node, Edge } from '../../rendering-util/types.js';
 import { getUserDefinedConfig } from '../../config.js';
 import { MAX_SECTIONS } from './svgDraw.js';
+import {
+  clear as commonClear,
+  getAccDescription,
+  getAccTitle,
+  setAccDescription,
+  setAccTitle,
+} from '../common/commonDb.js';
 
 // Extend Node type for mindmap-specific properties
 export type MindmapLayoutNode = Node & {
@@ -56,6 +63,7 @@ export class MindmapDB {
     this.count = 0;
     this.elements = {};
     this.baseLevel = undefined;
+    commonClear();
   }
 
   public getParent(level: number): MindmapNode | null {
@@ -419,4 +427,9 @@ export class MindmapDB {
   public getLogger() {
     return log;
   }
+
+  public setAccTitle = setAccTitle;
+  public getAccTitle = getAccTitle;
+  public setAccDescription = setAccDescription;
+  public getAccDescription = getAccDescription;
 }
