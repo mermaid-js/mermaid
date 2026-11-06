@@ -176,6 +176,9 @@ export const getTasks = function () {
   }
 
   tasks = rawTasks;
+  for (const task of tasks) {
+    task.task = formatTaskLabel(task);
+  }
 
   return tasks;
 };
@@ -406,6 +409,30 @@ const parseDuration = function (str) {
   return [NaN, 'ms'];
 };
 
+const taskLabelPlaceholderPattern = /%(startdate|enddate|duration)\b/g;
+const formatTaskLabel = function (task) {
+  const configuredDateFormat = dateFormat.trim();
+  const taskDateFormat = configuredDateFormat.length > 0 ? configuredDateFormat : 'YYYY-MM-DD';
+  return task.taskTemplate.replace(taskLabelPlaceholderPattern, (placeholder) => {
+    if (placeholder === '%startdate' || placeholder === '%enddate') {
+      const taskDate = dayjs(placeholder === '%startdate' ? task.startTime : task.endTime);
+      return taskDate.isValid() ? taskDate.format(taskDateFormat) : placeholder;
+    }
+
+    const rawDuration = task.raw.endTime.data.trim();
+    const [durationValue] = parseDuration(rawDuration);
+    if (!Number.isNaN(durationValue)) {
+      return rawDuration;
+    }
+
+    const startTime = dayjs(task.startTime);
+    const endTime = dayjs(task.endTime);
+    return startTime.isValid() && endTime.isValid()
+      ? `${endTime.diff(startTime, 'day', true)}d`
+      : placeholder;
+  });
+};
+
 const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
   str = str.trim();
 
@@ -602,6 +629,7 @@ export const addTask = function (descr, data) {
     renderEndTime: null,
     raw: { data: data },
     task: descr,
+    taskTemplate: descr,
     classes: [],
   };
   const taskInfo = parseData(lastTaskID, data);
