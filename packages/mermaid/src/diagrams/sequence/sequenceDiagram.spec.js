@@ -3149,7 +3149,6 @@ Bob->>Alice:Got it!
       participant actor-x
       style actor-x stroke:#333
       class actor-x box-x
-      actor-x->>actor-x: ok
       `);
       const actor = diagram.db.getActors().get('actor-x');
       expect(actor.styles).toEqual(['stroke:#333']);

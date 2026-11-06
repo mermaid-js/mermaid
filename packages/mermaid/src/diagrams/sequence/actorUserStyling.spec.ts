@@ -62,10 +62,10 @@ const drawActorElements = async (actor: ReturnType<typeof participant>) => {
     undefined,
     new Map([[actor.name, 0]])
   );
-  return {
-    group: document.querySelector<SVGGElement>('svg > g')!,
-    rect: document.querySelector<SVGRectElement>('rect.actor')!,
-  };
+  const rect = document.querySelector<SVGRectElement>('rect.actor')!;
+  // the actor box sits in its own <g> under the lifeline group, and that
+  // inner group is where user classes are attached
+  return { group: rect.parentNode as SVGGElement, rect };
 };
 
 beforeEach(() => {
