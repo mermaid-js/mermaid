@@ -54,6 +54,7 @@ export interface CommonLayoutPaintContext<
 
 export interface CommonLayoutPaintOptions {
   clusterDb?: ClusterDb;
+  edgeLabelOffsetY?: number;
   getNodes?: (
     data4Layout: LayoutData,
     context: CommonLayoutPaintContext<unknown, CommonLayoutMeasure>
@@ -307,7 +308,7 @@ async function paintLayoutEdge(
     if (!edgeLabels.has(edge.id)) {
       await insertEdgeLabel(groups.edgeLabels, edge);
     }
-    positionRenderedEdgeLabel(edge, paths);
+    positionRenderedEdgeLabel(edge, paths, options.edgeLabelOffsetY);
   }
 }
 
@@ -327,16 +328,21 @@ function shouldSkipIntersect(edge: Edge, options: CommonLayoutPaintOptions): boo
     : (options.skipIntersect ?? false);
 }
 
-function positionRenderedEdgeLabel(edge: RenderedEdge, paths?: EdgeRenderPaths): void {
+function positionRenderedEdgeLabel(
+  edge: RenderedEdge,
+  paths?: EdgeRenderPaths,
+  configuredOffsetY?: number
+): void {
   const path = paths?.updatedPath ?? paths?.originalPath;
   const siteConfig = getConfig();
   const { subGraphTitleTotalMargin } = getSubGraphTitleMargins({
     flowchart: siteConfig.flowchart ?? {},
   });
+  const labelOffsetY = configuredOffsetY ?? subGraphTitleTotalMargin / 2;
   if (edge.label) {
     const el = edgeLabels.get(edge.id);
     const { x, y } = resolveEdgeLabelPosition(edge, paths);
-    el.attr('transform', `translate(${x}, ${y! + subGraphTitleTotalMargin / 2})`);
+    el.attr('transform', `translate(${x}, ${y! + labelOffsetY})`);
   }
 
   for (const [key, text] of [
