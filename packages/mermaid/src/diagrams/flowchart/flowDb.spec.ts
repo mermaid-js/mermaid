@@ -535,3 +535,49 @@ describe('flow db keys only a diagram with pools may set', () => {
     expect(nodes.find((n) => n.id === 'L1')?.metadata).toEqual({ algorithm: 'elk.box' });
   });
 });
+
+describe('flow db subgraphs that list an enclosing subgraph (issue #8473)', () => {
+  let flowDb: FlowDB;
+  beforeEach(() => {
+    flowDb = new FlowDB();
+    flowDb.setGen('gen-2');
+    flow.parser.yy = flowDb;
+  });
+
+  const parse = (text: string) => flow.parser.parse(text);
+  const subGraph = (id: string) => flowDb.getSubGraphs().find((sg) => sg.id === id);
+  const parentOf = (id: string) => flowDb.getData().nodes.find((n) => n.id === id)?.parentId;
+
+  it('keeps the lexical nesting when a nested subgraph lists its parent', () => {
+    parse(
+      'flowchart TB\n  b-->B\n  a-->c\n  subgraph B\n    c\n    subgraph A\n      a\n      b\n      B\n    end\n  end'
+    );
+
+    expect(subGraph('A')?.nodes).toEqual(['a', 'b']);
+    expect(subGraph('B')?.nodes).toEqual(['c', 'A']);
+    expect(parentOf('B')).toBeUndefined();
+    expect(parentOf('A')).toBe('B');
+    expect(parentOf('a')).toBe('A');
+    expect(parentOf('c')).toBe('B');
+  });
+
+  it('breaks the cycle when a deeper subgraph lists an ancestor', () => {
+    parse(
+      'flowchart TB\n  subgraph C\n    subgraph B\n      subgraph A\n        a\n        C\n      end\n    end\n  end'
+    );
+
+    expect(subGraph('A')?.nodes).toEqual(['a']);
+    expect(subGraph('B')?.nodes).toEqual(['A']);
+    expect(subGraph('C')?.nodes).toEqual(['B']);
+    expect(parentOf('C')).toBeUndefined();
+  });
+
+  it('breaks the cycle when two top-level subgraphs list each other', () => {
+    parse('flowchart TB\n  subgraph A\n    B\n  end\n  subgraph B\n    A\n  end');
+
+    expect(subGraph('A')?.nodes).toEqual([]);
+    expect(subGraph('B')?.nodes).toEqual(['A']);
+    expect(parentOf('B')).toBeUndefined();
+    expect(parentOf('A')).toBe('B');
+  });
+});
