@@ -247,6 +247,29 @@ export default tseslint.config(
     },
   },
   {
+    files: ['packages/mermaid/src/**/*.{ts,js}'],
+    // The legacy C4 grid still seeds its row budget from the display; the unified layout
+    // that replaces it does not.
+    ignores: ['packages/mermaid/src/diagrams/c4/c4Renderer.ts'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        {
+          globals: [
+            {
+              name: 'screen',
+              message:
+                'Rendered geometry must not depend on the display size, or the same diagram lays out differently on different machines.',
+            },
+          ],
+          // Also rejects `window.screen`, `globalThis.screen` and `self.screen`, which
+          // the bare-name form lets through.
+          checkGlobalObject: true,
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.spec.{ts,js}', 'e2e/**', 'demos/**', '**/docs/**'],
     rules: {
       'jsdoc/require-jsdoc': 'off',
