@@ -86,6 +86,22 @@ describe('when working with site config', () => {
     expect(currentConfig.railroad?.fontSize).toBe(18);
     expect(currentConfig.railroad?.fontFamily).toBe('Courier New');
   });
+
+  it('should retain wardley-beta directives after sanitization', () => {
+    configApi.saveConfigFromInitialize({});
+    configApi.addDirective({
+      'wardley-beta': {
+        showGrid: true,
+        nodeRadius: 9,
+      },
+    });
+
+    const currentConfig = configApi.getConfig();
+    expect(currentConfig['wardley-beta']?.showGrid).toBe(true);
+    expect(currentConfig['wardley-beta']?.nodeRadius).toBe(9);
+    // Unset options keep their schema defaults
+    expect(currentConfig['wardley-beta']?.width).toBe(900);
+  });
   it('should set reset config properly', () => {
     const config_0 = { fontFamily: 'foo-font', fontSize: 150 };
     configApi.setSiteConfig(config_0);
