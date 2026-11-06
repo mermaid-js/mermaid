@@ -42,6 +42,16 @@ Defined in: [packages/mermaid/src/rendering-util/types.ts:246](https://github.co
 
 ---
 
+### laneLayering?
+
+> `optional` **laneLayering**: `"branches"`
+
+Defined in: [packages/mermaid/src/rendering-util/types.ts:250](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/rendering-util/types.ts#L250)
+
+`branches` asks a swimlane layout to layer each branch of the flow on its own.
+
+---
+
 ### nodes
 
 > **nodes**: `Node`\[]

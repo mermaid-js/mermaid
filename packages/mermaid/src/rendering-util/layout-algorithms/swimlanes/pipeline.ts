@@ -21,6 +21,10 @@ export interface LayoutOptions {
   nodeGap?: number;
   // Direction (for proper spacing calculation)
   direction?: 'TB' | 'LR' | 'BT' | 'RL';
+
+  spreadByOwnExtent?: boolean;
+
+  gapIsRoomBetween?: boolean;
 }
 
 export interface LayoutResult {
@@ -65,6 +69,8 @@ export function sugiyamaLayout(g: Graph, opts?: LayoutOptions): LayoutResult {
     nodeGap: opts?.nodeGap,
     direction: opts?.direction,
     laneOrder,
+    spreadByOwnExtent: opts?.spreadByOwnExtent ?? false,
+    gapIsRoomBetween: opts?.gapIsRoomBetween ?? false,
   });
 
   return {

@@ -526,6 +526,9 @@ describe('flow db keys only a diagram with pools may set', () => {
     ['laneRole', 'P|laneRole: pool'],
     ['laneIndex', 'L1|laneIndex: 1'],
     ['drawnExtent', 'L1|drawnExtent: { width: 5, height: 5 }'],
+    ['endpointProfile', 'L1|endpointProfile: vertex'],
+    ['oneLinePerVertex', 'L1|oneLinePerVertex: true'],
+    ['captionBelow', 'L1|captionBelow: true'],
   ])('drops %s from the metadata of a subgraph', (_key, meta) => {
     expect(build(meta)).toEqual(build());
   });

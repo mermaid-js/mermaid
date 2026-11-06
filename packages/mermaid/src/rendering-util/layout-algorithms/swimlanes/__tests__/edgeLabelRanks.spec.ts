@@ -16,12 +16,16 @@ const SHORT_LABEL_SIZE = { width: 14, height: 21 };
 const TALL_LABEL_SIZE = { width: 40, height: 130 };
 // Wider than the nodes, so counting it would raise the average node width.
 const WIDE_LABEL_SIZE = { width: 400, height: 21 };
+// A boundary event: small and square, pinned to the border of the node it is anchored to.
+const ANCHORED_SIZE = { width: 36, height: 36 };
+const ANCHOR_HOST_ID = 'B';
 
 function layOut(
   direction: Direction,
   lanes: Record<string, string[]>,
   edges: EdgeSpec[],
-  labelSize = SHORT_LABEL_SIZE
+  labelSize = SHORT_LABEL_SIZE,
+  anchoredCount = 0
 ): LayoutData {
   const nodes: LayoutData['nodes'] = [];
   for (const [lane, ids] of Object.entries(lanes)) {
@@ -37,6 +41,18 @@ function layOut(
         ...NODE_SIZE,
       });
     }
+  }
+  for (let i = 0; i < anchoredCount; i++) {
+    nodes.push({
+      id: `anchored${i}`,
+      label: `anchored${i}`,
+      parentId: Object.keys(lanes)[0],
+      isGroup: false,
+      shape: 'rect',
+      padding: 15,
+      ...ANCHORED_SIZE,
+      metadata: { anchorTo: { hostId: ANCHOR_HOST_ID } },
+    });
   }
   const data = {
     nodes,
@@ -180,6 +196,23 @@ describe('swimlane edge labels do not change node ranks (#8327)', () => {
     const reserved = WIDE_LABEL_SIZE.width + 2 * COORDINATES.EDGE_LABEL_CLEARANCE;
     expect(gap(labelled)).toBeCloseTo(gap(plain) + reserved, 0);
   });
+
+  it.each([1, 4])(
+    'gives an LR label the same room with %i anchored nodes as without any',
+    (anchoredCount) => {
+      const edges: EdgeSpec[] = [
+        ['A', 'B', 'wide'],
+        ['B', 'C'],
+      ];
+      const lanes = { s1: ['A', 'B', 'C'] };
+      const labelled = layOut('LR', lanes, edges, WIDE_LABEL_SIZE, anchoredCount);
+      const plain = layOut('LR', lanes, withoutLabels(edges), WIDE_LABEL_SIZE, anchoredCount);
+
+      const gap = (data: LayoutData) => alongFlow(data, 'LR').C - alongFlow(data, 'LR').A;
+      const reserved = WIDE_LABEL_SIZE.width + 2 * COORDINATES.EDGE_LABEL_CLEARANCE;
+      expect(gap(labelled)).toBeCloseTo(gap(plain) + reserved, 0);
+    }
+  );
 
   it('gives a label a finite position when an endpoint has no rank', () => {
     const labelled = layOut('TB', { s1: ['A'] }, [['A', 'Missing', 'x']]);
