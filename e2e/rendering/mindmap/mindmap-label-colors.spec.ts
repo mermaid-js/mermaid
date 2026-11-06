@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { renderGraph } from '../../helpers/util.ts';
 
+const customPalette = { gitBranchLabel0: '#123456', cScaleLabel1: '#654321' };
+
 for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
   for (const look of ['classic', 'neo'] as const) {
     test(`${theme}/${look}: mindmap label colors survive host color and standalone SVG`, async ({
@@ -16,7 +18,12 @@ for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
       (Отчёт о настройке Ai агента)
       (Инструкция по использованию CV Assistant)
       (Инструкция по использованию файлов)`,
-        { screenshot: false, theme, look }
+        {
+          screenshot: false,
+          theme,
+          look,
+          ...(theme === 'base' && { themeVariables: customPalette }),
+        }
       );
 
       const labels = page.locator('svg .mindmap-node foreignObject span.nodeLabel');
@@ -31,6 +38,16 @@ for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
       });
       const blueHost = await colors();
       expect(blueHost).toEqual(redHost);
+      if (theme === 'base') {
+        await expect(labels.and(page.locator('.section-root span.nodeLabel'))).toHaveCSS(
+          'color',
+          'rgb(18, 52, 86)'
+        );
+        await expect(labels.and(page.locator('.section-0 span.nodeLabel'))).toHaveCSS(
+          'color',
+          'rgb(101, 67, 33)'
+        );
+      }
 
       const svg = await page
         .locator('svg[aria-roledescription]')
