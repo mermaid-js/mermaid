@@ -21,27 +21,26 @@ const taglines: Taglines[] = [
 const isRotationEnabled = false;
 const index: Ref<number> = ref(0);
 const isPaused: Ref<boolean> = ref(false);
-const isInitialized: Ref<boolean> = ref(false);
+const isMermaidAi: Ref<boolean> = ref(false);
 const route = useRoute();
 
 const isHomePage = computed(() => {
   return route.path === '/';
 });
 
-const currentUrl = computed(() => {
-  const isMermaidAi = window?.location.hostname.endsWith('mermaid.ai');
+const urlFor = (tagline: Taglines) => {
   const params = new URLSearchParams({
     utm_medium: 'banner_ad',
-    utm_campaign: taglines[index.value].campaign,
-    utm_source: isMermaidAi ? 'ai_open_source' : 'mermaid_js',
-    ...taglines[index.value].params,
+    utm_campaign: tagline.campaign,
+    utm_source: isMermaidAi.value ? 'ai_open_source' : 'mermaid_js',
+    ...tagline.params,
   });
   return `https://mermaid.ai/app/user/billing/checkout?${params.toString()}`;
-});
+};
 
 onMounted(() => {
+  isMermaidAi.value = window.location.hostname.endsWith('mermaid.ai');
   index.value = Math.floor(Math.random() * taglines.length);
-  isInitialized.value = true;
 
   if (isRotationEnabled) {
     setInterval(() => {
@@ -55,44 +54,46 @@ onMounted(() => {
 </script>
 
 <template>
+  <!--
+    The bar is rendered on the server and every tagline is stacked in the same grid cell, so the
+    bar is as tall as its longest tagline from the start: neither showing the bar nor switching
+    taglines moves the page below it.
+  -->
   <div
-    v-if="isInitialized"
     class="mb-4 w-full top-bar flex p-2 bg-[#E0095F]"
     @mouseenter="isPaused = true"
     @mouseleave="isPaused = false"
   >
-    <p class="w-full tracking-wide fade-text" :class="isHomePage ? 'text-lg' : 'text-sm'">
-      <transition name="fade" mode="out-in">
-        <a
-          :key="index"
-          :href="currentUrl"
-          target="_blank"
-          class="unstyled flex justify-center items-center gap-4 no-tooltip text-white tracking-wide plausible-event-name=bannerClick"
+    <p class="w-full grid tracking-wide fade-text" :class="isHomePage ? 'text-lg' : 'text-sm'">
+      <a
+        v-for="(tagline, i) in taglines"
+        :key="tagline.campaign"
+        :href="urlFor(tagline)"
+        target="_blank"
+        class="tagline unstyled flex justify-center items-center gap-4 no-tooltip text-white tracking-wide plausible-event-name=bannerClick"
+        :class="{ 'tagline-hidden': i !== index }"
+      >
+        <span class="font-semibold">{{ tagline.label }}</span>
+        <button
+          class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide"
+          :class="isHomePage ? 'text-lg' : 'text-sm'"
         >
-          <span class="font-semibold">{{ taglines[index].label }}</span>
-          <button
-            class="bg-[#1E1A2E] shrink-0 rounded-lg p-1.5 px-4 font-semibold tracking-wide"
-            :class="isHomePage ? 'text-lg' : 'text-sm'"
-          >
-            {{ taglines[index].button }}
-          </button>
-        </a>
-      </transition>
+          {{ tagline.button }}
+        </button>
+      </a>
     </p>
   </div>
 </template>
 
 <style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s;
+.top-bar .tagline {
+  grid-area: 1 / 1;
+  transition:
+    opacity 1s,
+    visibility 1s;
 }
-.fade-enter-from,
-.fade-leave-to {
+.top-bar .tagline-hidden {
   opacity: 0;
-}
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
+  visibility: hidden;
 }
 </style>
