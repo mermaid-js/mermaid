@@ -132,4 +132,11 @@ describe('[Flowchart] a class on an edge: A -->:::name B', function () {
   it('does not accept a second class on one arrow', function () {
     expect(() => flow.parser.parse('flowchart TD;\nA -->:::a:::b B;')).toThrow();
   });
+
+  it('keeps the next-line destination of an inline label without a class, and refuses it with one', function () {
+    flow.parser.parse('flowchart TD;\nA -- text -->\n B;');
+    expect(flow.parser.yy.getEdges()[0].end).toBe('B');
+    flow.parser.yy.clear();
+    expect(() => flow.parser.parse('flowchart TD;\nA -- text -->:::hot\n B;')).toThrow();
+  });
 });
