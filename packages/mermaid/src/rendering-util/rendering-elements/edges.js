@@ -1,3 +1,4 @@
+import { measureHtmlLabel } from '../measureHtmlLabel.js';
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import { log } from '../../logger.js';
@@ -112,7 +113,7 @@ export const insertEdgeLabel = async (elem, edge) => {
   if (useHtmlLabels) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
-    bbox = await fastdom.measure(() => div.getBoundingClientRect());
+    bbox = await fastdom.measure(() => measureHtmlLabel(div));
     transformBbox = bbox;
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
@@ -154,7 +155,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (useHtmlLabels) {
       const div = startLabelElement.children[0];
       const dv = select(startLabelElement);
-      slBox = div.getBoundingClientRect();
+      slBox = measureHtmlLabel(div);
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
@@ -181,7 +182,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (useHtmlLabels) {
       const div = startLabelElement.children[0];
       const dv = select(startLabelElement);
-      slBox = div.getBoundingClientRect();
+      slBox = measureHtmlLabel(div);
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
@@ -209,7 +210,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (useHtmlLabels) {
       const div = endLabelElement.children[0];
       const dv = select(endLabelElement);
-      slBox = div.getBoundingClientRect();
+      slBox = measureHtmlLabel(div);
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
@@ -237,7 +238,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     if (useHtmlLabels) {
       const div = endLabelElement.children[0];
       const dv = select(endLabelElement);
-      slBox = div.getBoundingClientRect();
+      slBox = measureHtmlLabel(div);
       dv.attr('width', slBox.width);
       dv.attr('height', slBox.height);
     }
