@@ -79,7 +79,7 @@ function setTmpSVGG(SVGG: SVGGroup) {
   tmpSVGGroup = SVGG;
 }
 function setOrientation(orientation: string) {
-  if (orientation === 'horizontal') {
+  if (orientation.toLowerCase() === 'horizontal') {
     xyChartConfig.chartOrientation = 'horizontal';
   } else {
     xyChartConfig.chartOrientation = 'vertical';

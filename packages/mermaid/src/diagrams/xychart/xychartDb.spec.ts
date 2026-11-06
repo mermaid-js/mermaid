@@ -39,6 +39,19 @@ describe('xychartDb', () => {
     ]);
   });
 
+  it.each(['horizontal', 'HORIZONTAL', 'Horizontal'])(
+    'treats orientation %s as horizontal regardless of case',
+    (orientation) => {
+      db.setOrientation(orientation);
+      expect(db.getChartConfig().chartOrientation).toBe('horizontal');
+    }
+  );
+
+  it('falls back to vertical for vertical orientation in any case', () => {
+    db.setOrientation('VERTICAL');
+    expect(db.getChartConfig().chartOrientation).toBe('vertical');
+  });
+
   describe('data length validation with band axis', () => {
     it('should truncate bar data when it exceeds the number of x-axis categories', () => {
       // Set up 3 categories but provide 5 data points
