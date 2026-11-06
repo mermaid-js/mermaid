@@ -4,6 +4,7 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { manhattanLength, polylineIntersectsRect, rectForNode } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
 import { isAncestorGroup } from './groups.js';
+import { GRID_LABEL_CLEARANCE, type GridLabelSpanRequirement } from './labelGeometry.js';
 import type { GridRoutingTestOptions } from './router.js';
 import {
   routerRect,
@@ -479,6 +480,134 @@ function routeSelfLoop(owner: Node, side: GridSide, index: number, demandCoord: 
   }
 }
 
+export function labelAwareSelfLoopCandidates(
+  owner: Node,
+  side: GridSide,
+  index: number,
+  demandCoord: number,
+  requirement: GridLabelSpanRequirement
+): Point[][] {
+  const rect = rectForNode(owner);
+  const baseDepth = SELF_LOOP_APPROACH + (index + 1) * SELF_LOOP_TRACK_GAP;
+  const portOffset = index * SELF_LOOP_PORT_OFFSET_STEP;
+  const baseSpan = SELF_LOOP_PORT_GAP + portOffset * 2;
+  const verticalSide = side === 'left' || side === 'right';
+  const span = Math.max(
+    baseSpan,
+    (verticalSide ? requirement.cross : requirement.along) + GRID_LABEL_CLEARANCE * 2
+  );
+  const depth = Math.max(
+    baseDepth,
+    (verticalSide ? requirement.along : requirement.cross) / 2 + GRID_LABEL_CLEARANCE
+  );
+  const interval = verticalSide ? [rect.top, rect.bottom] : [rect.left, rect.right];
+  const directStart = demandCoord - span / 2;
+  const directEnd = demandCoord + span / 2;
+
+  if (directStart >= interval[0] && directEnd <= interval[1]) {
+    switch (side) {
+      case 'right':
+        return [
+          normalizePolyline([
+            { x: rect.right, y: directStart },
+            { x: rect.right + depth, y: directStart },
+            { x: rect.right + depth, y: directEnd },
+            { x: rect.right, y: directEnd },
+          ]).points,
+        ];
+      case 'left':
+        return [
+          normalizePolyline([
+            { x: rect.left, y: directStart },
+            { x: rect.left - depth, y: directStart },
+            { x: rect.left - depth, y: directEnd },
+            { x: rect.left, y: directEnd },
+          ]).points,
+        ];
+      case 'top':
+        return [
+          normalizePolyline([
+            { x: directStart, y: rect.top },
+            { x: directStart, y: rect.top - depth },
+            { x: directEnd, y: rect.top - depth },
+            { x: directEnd, y: rect.top },
+          ]).points,
+        ];
+      case 'bottom':
+        return [
+          normalizePolyline([
+            { x: directStart, y: rect.bottom },
+            { x: directStart, y: rect.bottom + depth },
+            { x: directEnd, y: rect.bottom + depth },
+            { x: directEnd, y: rect.bottom },
+          ]).points,
+        ];
+    }
+  }
+
+  const portStart = demandCoord - SELF_LOOP_PORT_GAP / 2 - portOffset;
+  const portEnd = demandCoord + SELF_LOOP_PORT_GAP / 2 + portOffset;
+  if (portStart < interval[0] || portEnd > interval[1]) {
+    return [];
+  }
+  const outerStart = demandCoord - span / 2;
+  const outerEnd = demandCoord + span / 2;
+  switch (side) {
+    case 'right':
+      return [
+        normalizePolyline([
+          { x: rect.right, y: portStart },
+          { x: rect.right + SELF_LOOP_APPROACH, y: portStart },
+          { x: rect.right + SELF_LOOP_APPROACH, y: outerStart },
+          { x: rect.right + depth, y: outerStart },
+          { x: rect.right + depth, y: outerEnd },
+          { x: rect.right + SELF_LOOP_APPROACH, y: outerEnd },
+          { x: rect.right + SELF_LOOP_APPROACH, y: portEnd },
+          { x: rect.right, y: portEnd },
+        ]).points,
+      ];
+    case 'left':
+      return [
+        normalizePolyline([
+          { x: rect.left, y: portStart },
+          { x: rect.left - SELF_LOOP_APPROACH, y: portStart },
+          { x: rect.left - SELF_LOOP_APPROACH, y: outerStart },
+          { x: rect.left - depth, y: outerStart },
+          { x: rect.left - depth, y: outerEnd },
+          { x: rect.left - SELF_LOOP_APPROACH, y: outerEnd },
+          { x: rect.left - SELF_LOOP_APPROACH, y: portEnd },
+          { x: rect.left, y: portEnd },
+        ]).points,
+      ];
+    case 'top':
+      return [
+        normalizePolyline([
+          { x: portStart, y: rect.top },
+          { x: portStart, y: rect.top - SELF_LOOP_APPROACH },
+          { x: outerStart, y: rect.top - SELF_LOOP_APPROACH },
+          { x: outerStart, y: rect.top - depth },
+          { x: outerEnd, y: rect.top - depth },
+          { x: outerEnd, y: rect.top - SELF_LOOP_APPROACH },
+          { x: portEnd, y: rect.top - SELF_LOOP_APPROACH },
+          { x: portEnd, y: rect.top },
+        ]).points,
+      ];
+    case 'bottom':
+      return [
+        normalizePolyline([
+          { x: portStart, y: rect.bottom },
+          { x: portStart, y: rect.bottom + SELF_LOOP_APPROACH },
+          { x: outerStart, y: rect.bottom + SELF_LOOP_APPROACH },
+          { x: outerStart, y: rect.bottom + depth },
+          { x: outerEnd, y: rect.bottom + depth },
+          { x: outerEnd, y: rect.bottom + SELF_LOOP_APPROACH },
+          { x: portEnd, y: rect.bottom + SELF_LOOP_APPROACH },
+          { x: portEnd, y: rect.bottom },
+        ]).points,
+      ];
+  }
+}
+
 export function orderedSelfLoopSides(
   node: Node,
   counts: Map<string, number>,
@@ -522,7 +651,9 @@ export function routeObstacleClearSelfLoop(
   owner: Node,
   ownerSideCounts: Map<string, number>,
   selfLoopCounts: Map<string, number>,
-  result: GridLayoutResult
+  result: GridLayoutResult,
+  labelRequirement?: GridLabelSpanRequirement,
+  metrics?: GridRoutingInstrumentation
 ): { points: Point[]; side: GridSide; index: number } {
   // Side load determines preference, but fixed side ordering breaks ties deterministically.
   const rect = rectForNode(owner);
@@ -531,9 +662,16 @@ export function routeObstacleClearSelfLoop(
     const countKey = `${owner.id}:${side}`;
     const index = selfLoopCounts.get(countKey) ?? 0;
     const demandCoord = side === 'left' || side === 'right' ? rect.cy : rect.cx;
-    const points = routeSelfLoop(owner, side, index, demandCoord);
-    if (!obstacles.some((obstacle) => polylineIntersectsRect(points, obstacle))) {
-      return { points, side, index };
+    const candidates = labelRequirement
+      ? labelAwareSelfLoopCandidates(owner, side, index, demandCoord, labelRequirement)
+      : [routeSelfLoop(owner, side, index, demandCoord)];
+    if (labelRequirement && metrics) {
+      metrics.labelAwareSelfLoopCandidates += candidates.length;
+    }
+    for (const points of candidates) {
+      if (!obstacles.some((obstacle) => polylineIntersectsRect(points, obstacle))) {
+        return { points, side, index };
+      }
     }
   }
   throw gridError('GRID_ROUTE_NOT_FOUND', `No obstacle-clear self-loop route for "${owner.id}"`, {

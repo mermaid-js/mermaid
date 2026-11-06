@@ -4,7 +4,7 @@
  * This module contains geometry helpers, distance calculations, and other
  * low-level utilities used across the routing stages.
  */
-import type { Node } from '../../types.js';
+import type { Edge, Node } from '../../types.js';
 import type { Point, Rect, PortSide } from './types.js';
 
 /**
@@ -34,6 +34,79 @@ export function rectForNode(node: Node): Rect {
 }
 
 /**
+ * Reserve the marker-facing portion of an orthogonal terminal segment.
+ *
+ * Placement and validation share this geometry so a label accepted during routing cannot later
+ * fail because the validator modeled the arrowhead clearance differently.
+ */
+export function terminalMarkerClearanceRect(
+  points: Point[],
+  terminal: 'start' | 'end',
+  length: number,
+  halfWidth: number,
+  tolerance = 0
+): Rect | null {
+  if (points.length < 2) {
+    return null;
+  }
+
+  const tip = terminal === 'end' ? points[points.length - 1] : points[0];
+  const inner = terminal === 'end' ? points[points.length - 2] : points[1];
+  const dx = inner.x - tip.x;
+  const dy = inner.y - tip.y;
+
+  if (Math.abs(dx) <= tolerance && Math.abs(dy) <= tolerance) {
+    return null;
+  }
+  if (Math.abs(dy) <= tolerance) {
+    const innerX = tip.x + Math.sign(dx) * length;
+    const left = Math.min(tip.x, innerX);
+    const right = Math.max(tip.x, innerX);
+    return {
+      cx: (left + right) / 2,
+      cy: tip.y,
+      left,
+      right,
+      top: tip.y - halfWidth,
+      bottom: tip.y + halfWidth,
+    };
+  }
+  if (Math.abs(dx) <= tolerance) {
+    const innerY = tip.y + Math.sign(dy) * length;
+    const top = Math.min(tip.y, innerY);
+    const bottom = Math.max(tip.y, innerY);
+    return {
+      cx: tip.x,
+      cy: (top + bottom) / 2,
+      left: tip.x - halfWidth,
+      right: tip.x + halfWidth,
+      top,
+      bottom,
+    };
+  }
+  return null;
+}
+
+export function hasTerminalMarker(edge: Edge, terminal: 'start' | 'end'): boolean {
+  const markerType = terminal === 'start' ? edge.arrowTypeStart : edge.arrowTypeEnd;
+  if (typeof markerType === 'string') {
+    const trimmed = markerType.trim();
+    if (trimmed.length > 0) {
+      return trimmed !== 'none' && trimmed !== 'arrow_open';
+    }
+  }
+
+  if (typeof edge.type !== 'string') {
+    return false;
+  }
+  // Flowchart/swimlane edges often carry marker semantics in `type`.
+  if (terminal === 'start' && edge.type.startsWith('double_')) {
+    return true;
+  }
+  return terminal === 'end' && /arrow_(point|cross|circle|barb)|double_arrow/.test(edge.type);
+}
+
+/**
  * Check if a point is strictly inside a rectangle (not on the boundary).
  */
 export function pointInRectInterior(p: Point, rect: Rect): boolean {
@@ -45,6 +118,35 @@ export function pointInRectInterior(p: Point, rect: Rect): boolean {
  */
 export function approxEqual(a: number, b: number, tol = 1e-6): boolean {
   return Math.abs(a - b) <= tol;
+}
+
+export function orthogonalPolylineContainsPoint(
+  points: Point[],
+  point: Point,
+  tolerance = 1e-6
+): boolean {
+  for (let index = 1; index < points.length; index++) {
+    const a = points[index - 1];
+    const b = points[index];
+    if (approxEqual(a.y, b.y, tolerance) && !approxEqual(a.x, b.x, tolerance)) {
+      if (
+        approxEqual(point.y, a.y, tolerance) &&
+        point.x >= Math.min(a.x, b.x) - tolerance &&
+        point.x <= Math.max(a.x, b.x) + tolerance
+      ) {
+        return true;
+      }
+    } else if (approxEqual(a.x, b.x, tolerance) && !approxEqual(a.y, b.y, tolerance)) {
+      if (
+        approxEqual(point.x, a.x, tolerance) &&
+        point.y >= Math.min(a.y, b.y) - tolerance &&
+        point.y <= Math.max(a.y, b.y) + tolerance
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /**
