@@ -65,6 +65,30 @@ describe('anchoring an edge label', () => {
     expect(label.x).toBeLessThanOrEqual(360 - bendClearance);
   });
 
+  it('keeps a label clear of a bend after pulling it back inside the lane', () => {
+    // The leg from (360, 300) to (430, 300) leaves the lane at x 400. Its midpoint, 35 from the
+    // bend, is clear of it, but a label 40 wide centred there sticks out of the lane, and pulling
+    // it back in puts its centre 19 from the bend.
+    const wide = { ...LABEL, width: 40 };
+    const route: [number, number][] = [
+      [210, 212.5],
+      [360, 212.5],
+      [360, 300],
+      [430, 300],
+      [430, 455.5],
+      [210, 455.5],
+    ];
+    const label = anchored(route, wide);
+
+    for (const [x, y] of route.slice(1, -1)) {
+      const clearX =
+        Math.abs(label.x - x) >= wide.width / 2 + EDGE_ROUTING.CORNER_RADIUS * Math.SQRT2;
+      const clearY =
+        Math.abs(label.y - y) >= wide.height / 2 + EDGE_ROUTING.CORNER_RADIUS * Math.SQRT2;
+      expect(clearX || clearY).toBe(true);
+    }
+  });
+
   it('leaves the label where it is when no leg can hold it clear of its bends', () => {
     // The middle leg is 30 long; a label 21 high needs 10.5 + 5 * sqrt(2) clear of each bend.
     const label = anchored([

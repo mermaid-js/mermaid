@@ -409,12 +409,8 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
       const rankedPool = rankSegments(pool);
       for (const seg of rankedPool) {
         for (const t of ALONG_SEGMENT_TS) {
-          const anchor = anchorAtT(seg, t);
-          if (!labelClearsTerminalEndpoints(seg, anchor)) {
-            continue;
-          }
-          const placement = placementForAnchor(anchor);
-          if (!placement) {
+          const placement = placementForAnchor(anchorAtT(seg, t));
+          if (!placement || !labelClearsTerminalEndpoints(seg, placement.anchor)) {
             continue;
           }
           if (labelOverlapsOwnMarker(placement.rect, pts)) {
@@ -438,16 +434,15 @@ export function anchorLabelsToPolyline(edges: Edge[], nodeByIdMap: Map<string, N
     ): { laneId: string; anchor: { midX: number; midY: number } } | undefined => {
       const rankedPool = rankSegments(pool);
       for (const seg of rankedPool) {
-        const anchor = { midX: seg.midX, midY: seg.midY };
-        const clears = requireEndpointClearance
-          ? labelClearsTerminalEndpoints(seg, anchor)
-          : clearsBends(seg, anchor);
-        if (!clears) {
-          continue;
-        }
-        const placement = placementForAnchor(anchor);
+        const placement = placementForAnchor({ midX: seg.midX, midY: seg.midY });
+        const clears =
+          placement &&
+          (requireEndpointClearance
+            ? labelClearsTerminalEndpoints(seg, placement.anchor)
+            : clearsBends(seg, placement.anchor));
         if (
           placement &&
+          clears &&
           !labelOverlapsOwnMarker(placement.rect, pts) &&
           !overlapsPlacedLabel(labelId, placement.rect) &&
           !labelOverlapsForeignNode(labelId, placement.rect) &&
