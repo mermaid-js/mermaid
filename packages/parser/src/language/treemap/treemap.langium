@@ -54,6 +54,9 @@ terminal STYLE_SEPARATOR: ':::';
 terminal SEPARATOR: ':';
 terminal COMMA: ',';
 
+// Spaces or tabs at the end of a line are not indentation, so skip them before INDENTATION can match
+hidden terminal TRAILING_WS: /[ \t]+(?![^\r\n])/;
+
 // This should be processed before whitespace is ignored
 terminal INDENTATION: /[ \t]{1,}/;  // One or more spaces/tabs for indentation
 
