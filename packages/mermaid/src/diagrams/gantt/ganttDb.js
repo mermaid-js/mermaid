@@ -584,6 +584,9 @@ const parseData = function (prevTaskId, dataStr) {
       };
       break;
     default:
+      throw new Error(
+        `Invalid Gantt task data: expected 1 to 3 comma-separated values, received ${data.length}: ${ds.trim()}`
+      );
   }
 
   return task;
