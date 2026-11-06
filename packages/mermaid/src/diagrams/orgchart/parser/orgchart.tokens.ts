@@ -1,4 +1,21 @@
 import { createToken, Lexer } from 'chevrotain';
+import type { CustomPatternMatcherFunc } from 'chevrotain';
+
+const atLineStart =
+  (pattern: RegExp): CustomPatternMatcherFunc =>
+  (text, offset) => {
+    for (let index = offset - 1; index >= 0; index--) {
+      const character = text[index];
+      if (character === '\n' || character === '\r') {
+        break;
+      }
+      if (character !== ' ' && character !== '\t') {
+        return null;
+      }
+    }
+    pattern.lastIndex = offset;
+    return pattern.exec(text);
+  };
 
 /** Line breaks (including blank and comment-only lines) plus the indentation of the next line. */
 export const Newline = createToken({
@@ -25,22 +42,29 @@ export const QuotedString = createToken({ name: 'QuotedString', pattern: /"[^\n\
 
 export const TitleLine = createToken({
   name: 'TitleLine',
-  pattern: /title[\t ]+[^\n\r]*/,
+  pattern: atLineStart(/title[\t ]+[^\n\r]*/y),
+  start_chars_hint: ['t'],
+  line_breaks: false,
 });
 
 export const AccTitleLine = createToken({
   name: 'AccTitleLine',
-  pattern: /accTitle[\t ]*:[^\n\r]*/,
+  pattern: atLineStart(/accTitle[\t ]*:[^\n\r]*/y),
+  start_chars_hint: ['a'],
+  line_breaks: false,
 });
 
 export const AccDescrLine = createToken({
   name: 'AccDescrLine',
-  pattern: /accDescr[\t ]*:[^\n\r]*/,
+  pattern: atLineStart(/accDescr[\t ]*:[^\n\r]*/y),
+  start_chars_hint: ['a'],
+  line_breaks: false,
 });
 
 export const AccDescrBlock = createToken({
   name: 'AccDescrBlock',
-  pattern: /accDescr[\t ]*{[^}]*}?/,
+  pattern: atLineStart(/accDescr[\t ]*{[^}]*}?/y),
+  start_chars_hint: ['a'],
   line_breaks: true,
 });
 

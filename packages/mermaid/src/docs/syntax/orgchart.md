@@ -35,7 +35,7 @@ Each line is one node:
 - The optional **secondary label** is a quoted string, typically a person's name.
 - Indentation defines the hierarchy: a node belongs to the nearest preceding node with less indentation. Any depth is allowed. Use spaces or tabs consistently (a tab counts as four columns).
 - A line starting with the word `staff` makes the node a staff node of its parent. To use the word `staff` as a label, quote it: `"staff"`. Elsewhere in a label, `staff` is ordinary text, as in `Chief of staff`.
-- A line starting with `title ` sets the chart title, even when indented. Quote labels that start with this prefix to keep them as nodes: `"title Officer" "Bob"`.
+- A line starting with `title ` sets the chart title, even when indented. Quote labels that start with this prefix to keep them as nodes: `"title Officer" "Bob"`. Metadata keywords elsewhere in a label are ordinary text, as in `Chief title Officer`.
 - There must be exactly one root, and it cannot be a staff node.
 - `%%` comments and blank lines are ignored.
 - An optional `title` line sets the visible chart title. Use `accTitle:` and

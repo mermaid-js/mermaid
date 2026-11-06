@@ -122,6 +122,44 @@ title Company
     expect(db.getRoot()!.children[0].secondaryLabel).toBe('Bob');
   });
 
+  it.each([
+    'Chief title Officer',
+    'Chief accTitle: Officer',
+    'Chief accDescr: Officer',
+    'Chief accDescr { Officer }',
+  ])('keeps metadata text inside the unquoted label %s', async (label) => {
+    await parse(`orgchart-beta
+  CEO
+    ${label} "Bob"`);
+
+    expect(labels(db.getRoot()!.children)).toEqual([label]);
+    expect(db.getRoot()!.children[0].secondaryLabel).toBe('Bob');
+    expect(db.getDiagramTitle()).toBe('');
+    expect(db.getAccTitle()).toBe('');
+    expect(db.getAccDescription()).toBe('');
+  });
+
+  it.each(['\n', '\r\n'])('recognizes indented metadata after %j line breaks', async (newline) => {
+    await parse(
+      [
+        'orgchart-beta',
+        ' \ttitle Company',
+        '\taccTitle: Organization',
+        '  accDescr: Initial description',
+        ' \taccDescr {',
+        '  Final description',
+        '}',
+        '  CEO',
+        '    Officer',
+      ].join(newline)
+    );
+
+    expect(db.getDiagramTitle()).toBe('Company');
+    expect(db.getAccTitle()).toBe('Organization');
+    expect(db.getAccDescription()).toBe('Final description');
+    expect(labels(db.getRoot()!.children)).toEqual(['Officer']);
+  });
+
   it('rejects collisions between explicit ids and generated ids', async () => {
     await expect(
       parse(`orgchart-beta
