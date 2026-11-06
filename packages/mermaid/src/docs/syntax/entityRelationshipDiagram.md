@@ -261,6 +261,20 @@ erDiagram
     }
 ```
 
+#### Escaping attribute types and names (v11.16.0+)
+
+To use spaces or other special characters (such as `:` or `.`) in an attribute `type` or `name`, wrap the value in backticks. The backticks are not shown in the rendered diagram, and the escaped value can contain any character except a backtick. Escaped values can be combined with keys and comments as usual.
+
+```mermaid-example
+erDiagram
+    CUSTOMER {
+        `std::string` name
+        `integer ARRAY` orderIds
+        string `geo.accuracy`
+        `unsigned long` `customer id` PK "Internal identifier"
+    }
+```
+
 ### Entity Name Aliases
 
 An alias can be added to an entity using square brackets. If provided, the alias will be showed in the diagram instead of the entity name. Alias names follow all of the same rules as entity names.

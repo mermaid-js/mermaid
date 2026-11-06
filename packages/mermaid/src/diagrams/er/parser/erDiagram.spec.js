@@ -281,6 +281,58 @@ describe('when parsing ER diagram it...', function () {
       expect(entities.get(entity).attributes[0].name).toBe('address');
     });
 
+    it('should allow a multi-word backtick-escaped attribute type', function () {
+      const entity = 'CUSTOMER';
+      const attribute = '`integer ARRAY` ids';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].type).toBe('integer ARRAY');
+      expect(entities.get(entity).attributes[0].name).toBe('ids');
+    });
+
+    it('should allow colons in a backtick-escaped attribute type', function () {
+      const entity = 'CUSTOMER';
+      const attribute = '`std::string` name';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].type).toBe('std::string');
+      expect(entities.get(entity).attributes[0].name).toBe('name');
+    });
+
+    it('should allow spaces in a backtick-escaped attribute name', function () {
+      const entity = 'CUSTOMER';
+      const attribute = 'string `first name`';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].type).toBe('string');
+      expect(entities.get(entity).attributes[0].name).toBe('first name');
+    });
+
+    it('should allow both type and name to be backtick-escaped with multiple keys and a comment', function () {
+      const entity = 'ORDER_LINE';
+      const attribute = '`unsigned long` `order id` PK, FK "references ORDER"';
+
+      erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+      const entities = erDb.getEntities();
+      expect(entities.get(entity).attributes.length).toBe(1);
+      expect(entities.get(entity).attributes[0].type).toBe('unsigned long');
+      expect(entities.get(entity).attributes[0].name).toBe('order id');
+      expect(entities.get(entity).attributes[0].keys).toEqual(['PK', 'FK']);
+      expect(entities.get(entity).attributes[0].comment).toBe('references ORDER');
+    });
+
+    it('should not accept unescaped colons in an attribute type', function () {
+      expect(() => {
+        erDiagram.parser.parse('erDiagram\nCUSTOMER {\nstd::string name\n}');
+      }).toThrow();
+    });
+
     it('should allow a question mark suffix on an attribute type', function () {
       const entity = 'PERSON';
       const attribute = 'string? alias';
