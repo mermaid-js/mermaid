@@ -244,4 +244,58 @@ ${prop} --> [*]`);
       expect(noteState?.note?.text).toContain('end note as part of the note text');
     });
   });
+
+  describe('"state" as a state name (issue #3152)', () => {
+    it('should parse a transition into State before the State composite is declared', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+    [*] --> [*]
+    [*] --> State
+
+    state State{
+        [*] --> [*]
+    }
+    State --> [*]
+`);
+
+      const states = stateDiagram.parser.yy.getStates();
+      expect(states.get('State')?.doc).toHaveLength(1);
+      expect(
+        stateDiagram.parser.yy.getRelations().map(({ id1, id2 }) => `${id1} --> ${id2}`)
+      ).toEqual(['root_start --> root_end', 'root_start --> State', 'State --> root_end']);
+    });
+
+    it.each([
+      ['State', 'State'],
+      ['state', 'state'],
+      ['State with trailing spaces', 'State   '],
+      ['STATE before CRLF', 'STATE\r'],
+    ])('should parse %s at the end of a transition line', (_, name) => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+    [*] --> ${name}
+    A --> B
+`);
+
+      expect(
+        stateDiagram.parser.yy.getRelations().map(({ id1, id2 }) => `${id1} --> ${id2}`)
+      ).toEqual([`root_start --> ${name.trim()}`, 'A --> B']);
+    });
+
+    it('should parse state as the source of a transition', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+    state --> B
+`);
+
+      expect(
+        stateDiagram.parser.yy.getRelations().map(({ id1, id2 }) => `${id1} --> ${id2}`)
+      ).toEqual(['state --> B']);
+    });
+
+    it('should parse state with a description', () => {
+      stateDiagram.parser.parse(`stateDiagram-v2
+    state : desc
+`);
+
+      expect(stateDiagram.parser.yy.getStates().get('state')?.descriptions).toEqual(['desc']);
+    });
+  });
 });
