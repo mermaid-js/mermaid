@@ -400,16 +400,16 @@ shapeData:
     { $$ = $1; }
     ;
 
-vertexStatement: vertexStatement link node shapeData
-        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+vertexStatement: vertexStatement styledLink node shapeData
+        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$styledLink); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     // Same action as the rule above: `spaceList` cannot be empty (spaceList: SPACE spaceList | SPACE),
     // so making the trailing spaces optional in a single rule would introduce a grammar conflict.
-    | vertexStatement link node shapeData spaceList
-        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    | vertexStatement link node
-        { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
-    |  vertexStatement link node spaceList
-        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$link); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    | vertexStatement styledLink node shapeData spaceList
+        { /* console.warn('vs shapeData',$vertexStatement.stmt,$node, $shapeData);*/ yy.addVertex($node[$node.length-1],undefined,undefined,undefined, undefined,undefined, undefined,$shapeData); yy.addLink($vertexStatement.stmt,$node,$styledLink); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    | vertexStatement styledLink node
+        { /*console.warn('vs',$vertexStatement.stmt,$node);*/ yy.addLink($vertexStatement.stmt,$node,$styledLink); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
+    |  vertexStatement styledLink node spaceList
+        { /* console.warn('vs',$vertexStatement.stmt,$node); */ yy.addLink($vertexStatement.stmt,$node,$styledLink); $$ = { stmt: $node, nodes: $node.concat($vertexStatement.nodes) } }
     |node spaceList { /*console.warn('vertexStatement: node spaceList', $node);*/ $$ = {stmt: $node, nodes:$node }}
     |node shapeData {
         /*console.warn('vertexStatement: node shapeData', $node[0], $shapeData);*/
@@ -477,6 +477,12 @@ vertex:  idString SQS text SQE
     ;
 
 
+
+styledLink: link
+        {$$ = $link;}
+    | link STYLE_SEPARATOR idString spaceList
+        {$link.classes = [$idString]; $$ = $link;}
+    ;
 
 link: linkStatement arrowText
     {$linkStatement.text = $arrowText;$$ = $linkStatement;}
