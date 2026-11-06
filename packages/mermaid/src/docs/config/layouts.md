@@ -60,3 +60,62 @@ graph TD;
   A-->B;
   B-->C;
 ```
+
+## Automatic ELK readability (v<MERMAID_RELEASE_VERSION>+)
+
+Selecting `layout: elk` automatically compares a bounded, deterministic set of
+ELK Layered layouts, including the ordinary layout. Candidates are scored after
+accounting for measured subgraph titles: node safety first, then crossings,
+hop feasibility and route complexity. No extra optimization settings are needed.
+Smaller graphs try four candidates, medium graphs two, and large graphs retain a
+single pass to bound rendering cost. Other ELK algorithms keep their own layout
+semantics; the common painted-edge/title protection still applies.
+
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+  subgraph Workers
+    A --> B
+    C --> D
+  end
+  A --> D
+  C --> B
+```
+
+After painting, actual SVG/HTML title bounds are checked. A title is shifted
+horizontally only when a safe position exists inside its frame; otherwise local
+orthogonal edge detours are attempted without moving endpoints or crossing
+adjacent nodes. This does not conceal lines behind opaque title backgrounds.
+
+Non-Layered engines retain their node placements. Unplaced null node coordinates
+are omitted before calling elkjs (including mindmap inputs).
+
+Frame clearance is also checked: sustained parallel runs on a rectangular node
+or subgraph border are moved to a separate lane. A perpendicular boundary
+crossing is a valid entry/exit, not a border-overlap violation. Titles use an
+invisible geometric exclusion region; no extra title box, fill, stroke or opaque
+background is inserted. Fallback detours are localized so distant conservative
+shape bounds do not block an otherwise safe repair.
+
+Arcs are preferred at remaining crossings. When neither edge can accommodate an
+arc, or a crossing lies on a rounded corner, a transparent edge-only gap is used
+as a fallback. Dash styles and marker clearance are preserved. Existing
+`elk.lineHops: false` still disables crossing decoration; title protection remains
+active. Existing `arc` and `gap` choices remain supported.
+
+Crossing minimization is heuristic, **not a guarantee of the global minimum**.
+Collinear shared paths are not point crossings. Arbitrary smoothing curves,
+hand-drawn paths, impossible title clearances and author-owned SVG masks may
+require diagram-specific routing; the default rounded ELK routes are the primary
+supported geometry. Changes in fonts or ELK versions can change layout choices.
+
+A bounded whole-route bend-reduction pass runs after a complete feasible frame
+routing pass, not against stale peer routes. It compares shortcuts/shared lanes
+while preserving signed port headings and existing edge-label attachment. It
+rejects new node/title/frame violations, additional rounded-path point crossings,
+self crossings and immediate stroke retracing. Bend count is compared before
+length; an already safe route is not lengthened. Existing feasible routes remain
+the fallback. This is not a certificate of minimum bends over all possible layouts.
