@@ -210,6 +210,32 @@ describe('Testing quadrantChart jison file', () => {
     expect(mockDB.setDiagramTitle).toHaveBeenCalledWith('"this is title (* +=[❤"');
   });
 
+  it.each(['[0x1, 0.5]', '[0e5, 0.5]', '[0,5, 0.5]', '[0a5, 0.5]', '[0.5, 0x9]'])(
+    'should throw for a malformed point coordinate %s',
+    (point) => {
+      expect(parserFnConstructor(`quadrantChart\npoint1: ${point}`)).toThrow();
+    }
+  );
+
+  it('should parse a point with 0 as x and no space after the comma', () => {
+    const str = 'quadrantChart\npoint1: [0,1]\npoint2: [0,0.5]';
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'point1', type: 'text' },
+      '',
+      '0',
+      '1',
+      []
+    );
+    expect(mockDB.addPoint).toHaveBeenCalledWith(
+      { text: 'point2', type: 'text' },
+      '',
+      '0',
+      '0.5',
+      []
+    );
+  });
+
   it('should be able to parse points', () => {
     let str = 'quadrantChart\npoint1: [0.1, 0.4]';
     expect(parserFnConstructor(str)).not.toThrow();
