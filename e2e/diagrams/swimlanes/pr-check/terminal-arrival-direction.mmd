@@ -1,0 +1,27 @@
+---
+description: >-
+  Routes with bends that arrive at a node from above, so the arrowhead is
+  pulled back along the way the line arrives. The layout hands the renderer
+  each end of such a route twice; the pull-back used to go rightwards whichever
+  way the line arrived and left a short sideways leg at the arrowhead.
+config:
+  logLevel: 0
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta TB
+  subgraph Intake
+    Start
+    Check
+  end
+  subgraph Review
+    Approve
+    Reject
+  end
+  subgraph Archive
+    Done
+  end
+  Start --> Check --> Approve --> Done
+  Start --> Approve
+  Check --> Reject --> Done
