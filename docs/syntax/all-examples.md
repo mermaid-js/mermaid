@@ -3075,6 +3075,43 @@ treeView-beta
 
 </details>
 
+## Org Chart
+
+Show reporting lines and staff functions in an organization
+
+### Organization with staff functions
+
+```mermaid
+orgchart-beta
+    CEO "Anna Andersson"
+        staff CFO "Bo Berg"
+        staff HR "Carina Carlson"
+        Engineering "David Dahl"
+            Development "Eva Ek"
+            Systems "Fred Ford"
+        Sales "Greta Gran"
+            Europe "Helena Holm"
+
+```
+
+<details>
+<summary>Code</summary>
+
+```mermaid-example
+orgchart-beta
+    CEO "Anna Andersson"
+        staff CFO "Bo Berg"
+        staff HR "Carina Carlson"
+        Engineering "David Dahl"
+            Development "Eva Ek"
+            Systems "Fred Ford"
+        Sales "Greta Gran"
+            Europe "Helena Holm"
+
+```
+
+</details>
+
 ## Wardley Maps
 
 Visualize business strategy and value chains with component evolution

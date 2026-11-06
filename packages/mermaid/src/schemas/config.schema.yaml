@@ -59,6 +59,7 @@ required:
   - eventmodeling
   - radar
   - usecase
+  - orgchart
   - venn
 properties:
   theme:
@@ -444,6 +445,8 @@ properties:
     $ref: '#/$defs/RadarDiagramConfig'
   usecase:
     $ref: '#/$defs/UsecaseDiagramConfig'
+  orgchart:
+    $ref: '#/$defs/OrgChartDiagramConfig'
   venn:
     $ref: '#/$defs/VennDiagramConfig'
   wardley-beta:
@@ -2952,6 +2955,19 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         minimum: 0
         maximum: 1
         default: 0.17
+
+  OrgChartDiagramConfig:
+    title: Org Chart Diagram Config
+    allOf: [{ $ref: '#/$defs/BaseDiagramConfig' }]
+    description: The object containing configurations specific for org chart diagrams.
+    type: object
+    unevaluatedProperties: false
+    required:
+      - useMaxWidth
+    properties:
+      useMaxWidth:
+        $ref: '#/$defs/BaseDiagramConfig/properties/useMaxWidth'
+        default: true
 
   UsecaseDiagramConfig:
     title: Usecase Diagram Config

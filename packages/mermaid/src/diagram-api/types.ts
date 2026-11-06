@@ -124,6 +124,8 @@ export interface DiagramDefinition {
   db: DiagramDB;
   renderer: DiagramRenderer;
   parser: ParserDefinition;
+  /** Create isolated parser and DB state for each parsed diagram instance. */
+  createInstance?: () => DiagramDefinition;
   styles?: any;
   init?: (config: MermaidConfig) => void;
   injectUtils?: (

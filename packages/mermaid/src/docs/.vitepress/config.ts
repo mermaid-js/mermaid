@@ -199,6 +199,7 @@ function sidebarSyntax() {
         syntaxItem('Wardley', 'wardley'),
         syntaxItem('Cynefin', 'cynefin'),
         syntaxItem('TreeView', 'treeView'),
+        syntaxItem('Org Chart', 'orgchart'),
         // Agentflow is deliberately not listed while it is beta. The page at
         // `/syntax/agentflow` still builds and is reachable by URL; it is just
         // not announced in the nav until the syntax is declared stable.

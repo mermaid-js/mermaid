@@ -16,6 +16,13 @@ export type ParseErrorFunction = (err: string | DetailedError | unknown, hash?: 
  * @privateRemarks This is exported as part of the public mermaidAPI.
  */
 export class Diagram {
+  /**
+   * Detects and parses a diagram, creating isolated parser and database state when supported.
+   *
+   * @param codeObjectOrText - Raw diagram text or preprocessed diagram source.
+   * @param metadata - Optional metadata to apply to the parsed diagram.
+   * @returns The parsed diagram instance.
+   */
   public static async fromText(
     codeObjectOrText: DiagramCode | string,
     metadata: Pick<DiagramMetadata, 'title'> = {}
@@ -41,7 +48,8 @@ export class Diagram {
       const { id, diagram } = await loader();
       registerDiagram(id, diagram);
     }
-    const { db, parser, renderer, init } = getDiagram(type);
+    const definition = getDiagram(type);
+    const { db, parser, renderer, init } = definition.createInstance?.() ?? definition;
     if (parser.parser) {
       // The parser.parser.yy is only present in JISON parsers. So, we'll only set if required.
       parser.parser.yy = db;
