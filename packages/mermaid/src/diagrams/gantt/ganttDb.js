@@ -254,7 +254,10 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
 };
 
 /**
- * TODO: what does this function do?
+ * Given a task's start and (naive, pre-exclusion) end time, pushes `endTime`
+ * forward one day at a time past any excluded (e.g. weekend) days so the
+ * task's effective duration, measured in non-excluded days, matches what was
+ * requested.
  *
  * @param {dayjs.Dayjs} startTime - The start time.
  * @param {dayjs.Dayjs} endTime - The original end time (will return a different end time if it's invalid).
@@ -266,14 +269,12 @@ const checkTaskDates = function (task, dateFormat, excludes, includes) {
  * @throws {Error} If a valid end time cannot be found after 10,000 iterations.
  */
 const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
-  let invalid = false;
-  let renderEndTime = null;
+  // `renderEndTime` should only be populated if the loop below runs at least
+  // once (i.e. `startTime` is not already past `endTime`).
+  const ranAtLeastOnce = startTime <= endTime;
   const maxEndTime = endTime.add(10000, 'd');
   while (startTime <= endTime) {
-    if (!invalid) {
-      renderEndTime = endTime.toDate();
-    }
-    invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
+    const invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
     if (invalid) {
       endTime = endTime.add(1, 'd');
       if (endTime > maxEndTime) {
@@ -284,6 +285,9 @@ const fixTaskDates = function (startTime, endTime, dateFormat, excludes, include
     }
     startTime = startTime.add(1, 'd');
   }
+  // `endTime` here is already fully adjusted to skip every excluded day, so
+  // it is always a valid (non-excluded) date to render up to.
+  const renderEndTime = ranAtLeastOnce ? endTime.toDate() : null;
   return [endTime, renderEndTime];
 };
 
