@@ -58,19 +58,19 @@
 
 "["                                       return 'SQUARE_BRACES_START'
 "]"                                       return 'SQUARE_BRACES_END'
-[A-Za-z]+                                 return 'ALPHA';
+[A-Za-z]+                                 { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'ALPHA'; }
 ":"                                       return 'COLON';
-\+                                        return 'PLUS';
+\+                                        { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'PLUS'; }
 ","                                       return 'COMMA';
-\=                                        return 'EQUALS';
-"*"                                       return 'MULT';
-\#                                        return 'BRKT';
-[\_]                                      return 'UNDERSCORE';
-"."                                       return 'DOT';
-"&"                                       return 'AMP';
-\-                                        return 'MINUS';
-[0-9]+                                    return 'NUM';
-\s+                                       /* skip */
+\=                                        { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'EQUALS'; }
+"*"                                       { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'MULT'; }
+\#                                        { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'BRKT'; }
+[\_]                                      { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'UNDERSCORE'; }
+"."                                       { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'DOT'; }
+"&"                                       { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'AMP'; }
+\-                                        { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'MINUS'; }
+[0-9]+                                    { yytext = (this.gap ? ' ' : '') + yytext; this.gap = false; return 'NUM'; }
+\s+                                       { this.gap = true; }
 ";"                                       return 'SEMI';
 <<EOF>>                                   return 'EOF';
 
@@ -167,7 +167,7 @@ text: alphaNum { $$={text:$alphaNum, type: 'text'};}
   ;
 
 alphaNum
-  : alphaNumToken {$$=$alphaNumToken;}
+  : alphaNumToken {$$=$alphaNumToken.trimStart();}
   | alphaNum alphaNumToken {$$=$alphaNum+''+$alphaNumToken;}
   ;
 
