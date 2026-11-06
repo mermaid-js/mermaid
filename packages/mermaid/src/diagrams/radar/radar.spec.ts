@@ -181,6 +181,14 @@ describe('radar diagrams', () => {
         expect(relativeRadius(5, 0, 10, 100)).toBe(50);
       });
 
+      it('should place an all-zero curve at the center', () => {
+        expect(relativeRadius(0, 0, 0, 100)).toBe(0);
+      });
+
+      it('should place a curve with equal nonzero bounds at the center', () => {
+        expect(relativeRadius(5, 5, 5, 100)).toBe(0);
+      });
+
       it('should handle min value', () => {
         expect(relativeRadius(0, 0, 10, 100)).toBe(0);
       });
@@ -243,6 +251,24 @@ describe('radar diagrams', () => {
     });
 
     describe('draw', () => {
+      it.each(['circle', 'polygon'])(
+        'should draw all-zero data with a %s grid',
+        async (graticule) => {
+          const str = `radar-beta
+        axis A,B,C
+        curve zeros{0,0,0}
+        graticule ${graticule}`;
+          const { svg } = await mermaidAPI.render(`zero-${graticule}`, str);
+          const rendered = new DOMParser().parseFromString(svg, 'image/svg+xml');
+          const curve = rendered.querySelector('.radarCurve-0');
+
+          expect(curve).not.toBeNull();
+          expect(curve?.getAttribute(graticule === 'circle' ? 'd' : 'points')).toBe(
+            graticule === 'circle' ? 'M0,0 C0,0 0,0 0,0 C0,0 0,0 0,0 C0,0 0,0 0,0 Z' : '0,0 0,0 0,0'
+          );
+        }
+      );
+
       it('should draw a simple radar diagram', async () => {
         const str = `radar-beta
         axis A,B,C
