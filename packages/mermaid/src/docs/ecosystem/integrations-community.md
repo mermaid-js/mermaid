@@ -270,6 +270,7 @@ Communication tools and platforms
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Blazorade Mermaid: Render Mermaid diagrams in Blazor applications](https://github.com/Blazorade/Blazorade-Mermaid/wiki)
 - [Codemia: A tool to practice system design problems](https://codemia.io) ✅
+- [DESIGN:OS code2flow: Generate Mermaid user-flow graphs from a Next.js codebase](https://github.com/jangtrinh/design-os-code2flow) - Free, source-available (PolyForm Shield) CLI and agent skill that also flags dead-end screens and unguarded routes.
 - [ExDoc](https://github.com/elixir-lang/ex_doc)
   - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
 - [MarkChart: Preview Mermaid diagrams on macOS](https://markchart.app/)
