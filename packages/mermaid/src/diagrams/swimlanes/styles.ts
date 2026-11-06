@@ -1,6 +1,9 @@
 import getFlowchartStyles from '../flowchart/styles.js';
 import type { FlowChartStyleOptions } from '../flowchart/styles.js';
 
+/** Dash and gap, in px, of the line between two phase bands: dashed so it reads as a guide. */
+const PHASE_SEPARATOR_DASH = '6 4';
+
 /**
  * Swimlanes reuses the flowchart styles and appends the lane-specific rule.
  *
@@ -22,6 +25,14 @@ const getStyles = (options: FlowChartStyleOptions): string =>
   }
   [data-look="neo"].cluster rect {
     filter: none;
+  }
+  .swimlane-phase-title {
+    fill: ${options.clusterBkg};
+    stroke: ${options.clusterBorder};
+  }
+  .swimlane-phase-separator {
+    stroke: ${options.clusterBorder};
+    stroke-dasharray: ${PHASE_SEPARATOR_DASH};
   }
 `;
 

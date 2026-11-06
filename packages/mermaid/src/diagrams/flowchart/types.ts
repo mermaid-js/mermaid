@@ -91,6 +91,12 @@ export interface FlowSubGraph {
   metadata?: NodeMetaData;
 }
 
+/** A swimlane phase: a band across the lanes, declared with `phase id["Title"]`. */
+export interface FlowPhase {
+  id: string;
+  label: string;
+}
+
 /** A node a subgraph listed but lost to an earlier, unrelated subgraph that lists it too. */
 export interface DroppedSubGraphMember {
   node: string;
