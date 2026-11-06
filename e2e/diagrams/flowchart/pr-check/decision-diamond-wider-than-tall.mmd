@@ -1,0 +1,16 @@
+---
+description: >-
+  Decision diamonds are drawn 1.6 times as wide as they are tall, with the label
+  inside and edges ending on the outline, instead of as square rhombi that are
+  much taller than the nodes around them.
+---
+flowchart TD
+  A[User opens Markdown file] --> B{Contains mermaid block?}
+  B -->|Yes| C[Parse diagram source]
+  B -->|No| D[Render plain Markdown]
+  C --> E[Layout graph]
+  C -.->|Syntax error| H[Show error message]
+  subgraph Webview
+    E --> F[Render SVG]
+    F --> G[Attach pan and zoom]
+  end
