@@ -553,12 +553,11 @@ stateDiagram-v2
 As with other diagrams (like flowcharts), you can define a style in the diagram itself and apply that named style to a
 state or states in the diagram.
 
-**These are the current limitations with state diagram classDefs:**
+**This is the current limitation with state diagram classDefs:**
 
 1. Cannot be applied to start or end states
-2. Cannot be applied to or within composite states
 
-_These are in development and will be available in a future version._
+_This is in development and will be available in a future version._
 
 You define a style using the `classDef` keyword, which is short for "class definition" (where "class" means something
 like a _CSS class_)
