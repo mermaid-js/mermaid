@@ -1,0 +1,50 @@
+{
+  "name": "@mermaid-js/syntax-metadata",
+  "version": "0.0.0",
+  "description": "Syntax metadata extracted from mermaid's own grammars (experimental).",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist/"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./diagrams/*": {
+      "types": "./dist/generated/*.d.ts",
+      "default": "./dist/generated/*.js"
+    },
+    "./flowchart": {
+      "types": "./dist/generated/flow.d.ts",
+      "default": "./dist/generated/flow.js"
+    },
+    "./quadrant-chart": {
+      "types": "./dist/generated/quadrantChart.d.ts",
+      "default": "./dist/generated/quadrantChart.js"
+    }
+  },
+  "scripts": {
+    "build": "tsx scripts/generate.mts && tsc -p tsconfig.build.json",
+    "clean": "rimraf dist src/generated",
+    "prepack": "pnpm build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mermaid-js/mermaid.git",
+    "directory": "packages/syntax-metadata"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "jison": "^0.4.18",
+    "tsx": "^4.20.6",
+    "typescript": "~5.8.3"
+  }
+}
