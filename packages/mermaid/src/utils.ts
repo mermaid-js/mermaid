@@ -33,7 +33,7 @@ import { memoize, merge } from 'es-toolkit/compat';
 import { directiveRegex } from './diagram-api/regexes.js';
 import type { D3Element, Point, TextDimensionConfig, TextDimensions } from './types.js';
 
-export const ZERO_WIDTH_SPACE = '\u200b';
+export const NON_BREAKING_SPACE = '\u00a0';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -715,7 +715,8 @@ export const calculateTextDimensions: (
       const dim = { width: 0, height: 0, lineHeight: 0 };
       for (const line of lines) {
         const textObj = getTextObj();
-        textObj.text = line || ZERO_WIDTH_SPACE;
+        const isBlankLine = line.trim() === '';
+        textObj.text = isBlankLine ? NON_BREAKING_SPACE : line;
         // @ts-ignore TODO: Fix D3 types
         const textElem = drawSimpleText(g, textObj)
           // @ts-ignore TODO: Fix D3 types
@@ -727,7 +728,9 @@ export const calculateTextDimensions: (
         if (bBox.width === 0 && bBox.height === 0) {
           throw new Error('svg element not in render tree');
         }
-        dim.width = Math.round(Math.max(dim.width, bBox.width));
+        if (!isBlankLine) {
+          dim.width = Math.round(Math.max(dim.width, bBox.width));
+        }
         cHeight = Math.round(bBox.height);
         dim.height += cHeight;
         dim.lineHeight = Math.round(Math.max(dim.lineHeight, cHeight));

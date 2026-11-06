@@ -1,7 +1,8 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
 
 const getStyles = (options) => {
-  const dropShadow = options.dropShadow ?? 'none';
+  const dropShadow =
+    !options.dropShadow || options.dropShadow === 'url(#drop-shadow)' ? 'none' : options.dropShadow;
   const { look } = getConfig();
 
   return `.actor {
