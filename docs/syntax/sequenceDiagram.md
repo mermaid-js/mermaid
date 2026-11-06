@@ -168,7 +168,7 @@ Rules:
 - The `create` kind must match the future declaration kind.
 - Messages cannot involve a future participant before it is created.
 
-```mermaid-example
+```mermaid
 sequenceDiagram
     participant Alice
     future participant Carol
@@ -179,7 +179,7 @@ sequenceDiagram
     Bob->>Carol: Welcome Carol
 ```
 
-```mermaid
+```mermaid-example
 sequenceDiagram
     participant Alice
     future participant Carol
