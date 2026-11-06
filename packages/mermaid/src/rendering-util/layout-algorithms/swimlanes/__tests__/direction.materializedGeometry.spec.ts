@@ -424,3 +424,41 @@ describe('materialized render geometry cleanup', () => {
     ]);
   });
 });
+
+describe('shortcutting a jog next to the boxes an edge joins', () => {
+  // Check sits above Report in one lane; the edge leaves Check's right face, runs down past
+  // Report and enters it from below.
+  const nodeById = new Map<string, any>([
+    ['d', { id: 'd', x: 50, y: 27, width: 180, height: 54 }],
+    ['e', { id: 'e', x: 50, y: 131, width: 180, height: 54 }],
+  ]);
+  const shortcut = (points: { x: number; y: number }[]) => {
+    const edges: any[] = [{ id: 'L_d_e_0', start: 'd', end: 'e', points }];
+    shortcutRedundantOrthogonalJogs(edges, nodeById);
+    return edges[0].points;
+  };
+
+  it('keeps the jog when the shortcut would run through the boxes the edge joins', () => {
+    const route = [
+      { x: 140, y: 27 },
+      { x: 180, y: 27 },
+      { x: 180, y: 178 },
+      { x: 50, y: 178 },
+      { x: 50, y: 158 },
+    ];
+
+    expect(shortcut(structuredClone(route))).toEqual(route);
+  });
+
+  it('still shortcuts a route that already starts inside its box', () => {
+    const route = [
+      { x: 50, y: 27 },
+      { x: 180, y: 27 },
+      { x: 180, y: 178 },
+      { x: 50, y: 178 },
+      { x: 50, y: 158 },
+    ];
+
+    expect(shortcut(structuredClone(route))).not.toEqual(route);
+  });
+});

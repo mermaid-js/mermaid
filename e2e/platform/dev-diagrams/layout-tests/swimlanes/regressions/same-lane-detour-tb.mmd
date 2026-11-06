@@ -1,0 +1,25 @@
+---
+config:
+  layout: swimlane
+  flowchart:
+    htmlLabels: false
+---
+swimlane-beta TB
+  %% "Check -> Report" stays inside Qa, even though leaving it would save a crossing
+  subgraph Ops
+  a[Receive]
+  b[Triage]
+  c[Resolve]
+  end
+  subgraph Qa
+  d[Check]
+  e[Report]
+  end
+  subgraph Legal
+  f[Approve]
+  end
+  a --> b --> c
+  c --> a
+  a --> d --> e
+  b --> f
+  f --> e
