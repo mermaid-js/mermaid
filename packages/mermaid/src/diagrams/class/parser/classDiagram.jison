@@ -38,6 +38,9 @@ accDescr\s*"{"\s*                            { this.begin("acc_descr_multiline")
 \s*(\r?\n)+                     return 'NEWLINE';
 \s+                             /* skip whitespace */
 
+/* edge id for a relation, e.g. `A rel@-- B`. Before the keyword rules so `class1@--` is an id. `@` was a lexer error before. */
+[\w-]+\@(?=\s*[-.<>|*o(])        return 'LINK_ID';
+
 "classDiagram-v2"               return 'CLASS_DIAGRAM';
 "classDiagram"                  return 'CLASS_DIAGRAM';
 "[*]"                           return 'EDGE_STATE';
@@ -369,6 +372,11 @@ direction
     ;
 
 relation
+    : relationBody
+    | LINK_ID relationBody { $$ = $2; $$.id = $1.slice(0, -1); }
+    ;
+
+relationBody
     : relationType lineType relationType { $$={type1:$1,type2:$3,lineType:$2}; }
     | lineType relationType { $$={type1:'none',type2:$2,lineType:$1}; }
     | relationType lineType { $$={type1:$1,type2:'none',lineType:$2}; }
