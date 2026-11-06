@@ -1,9 +1,10 @@
 // @vitest-environment node
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, realpath, rm, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { runInNewContext } from 'node:vm';
-import { build } from 'esbuild';
+import { build, type Plugin } from 'esbuild';
 import { afterEach, describe, expect, it } from 'vitest';
 import ts from 'typescript';
 import { packageOptions } from '../.build/common.js';
@@ -47,6 +48,16 @@ const findUnreachableExpressions = (code: string): ts.ExpressionStatement[] => {
   return unreachable;
 };
 
+// Use the production plugin list so removing the build registration also
+// fails the regression, without requiring a full Mermaid build first.
+const productionPlugins = (): Plugin[] =>
+  getBuildConfig({
+    ...defaultOptions,
+    minify: true,
+    format: 'iife',
+    options: packageOptions.mermaid,
+  }).plugins ?? [];
+
 const bundleHelper = async (
   source: string,
   packageName = '@chevrotain/utils',
@@ -66,16 +77,7 @@ const bundleHelper = async (
     globalName: 'helpers',
     write: false,
     logLevel: 'silent',
-    // Use the production plugin list so removing the build registration also
-    // fails the regression, without requiring a full Mermaid build first.
-    plugins: usePlugin
-      ? getBuildConfig({
-          ...defaultOptions,
-          minify: true,
-          format: 'iife',
-          options: packageOptions.mermaid,
-        }).plugins
-      : [],
+    plugins: usePlugin ? productionPlugins() : [],
   });
 };
 
@@ -98,6 +100,63 @@ describe('deadCodePlugin', () => {
     expect(findUnreachableExpressions(result.outputFiles[0].text)).toEqual([]);
     expect(result.outputFiles[0].text).toMatch(/\beval\b/);
     expect(result.warnings).toEqual([]);
+  });
+
+  it('guards the eval inside the installed @chevrotain/utils helper', async () => {
+    // Resolve the real dependency instead of the local fixture. chevrotain's
+    // entry gives a starting directory that can see its own dependencies
+    // (pnpm's layout places @chevrotain/utils beside it in the store); the
+    // helper itself is a deep path not exported by the package's exports map.
+    const requireMermaid = createRequire(
+      new URL('../packages/mermaid/package.json', import.meta.url)
+    );
+    const chevrotainEntry = await realpath(requireMermaid.resolve('chevrotain'));
+    const helperEntry = await realpath(
+      join(
+        dirname(chevrotainEntry),
+        '..', // lib/
+        '..', // chevrotain/
+        '..', // node_modules/
+        '@chevrotain',
+        'utils',
+        'lib',
+        'src',
+        'to-fast-properties.js'
+      )
+    );
+    const bundleInstalled = (plugins: Plugin[]) =>
+      build({
+        entryPoints: [helperEntry],
+        bundle: true,
+        minify: true,
+        format: 'iife',
+        globalName: 'helpers',
+        write: false,
+        logLevel: 'silent',
+        plugins,
+      });
+
+    const original = await bundleInstalled([]);
+    expect(findUnreachableExpressions(original.outputFiles[0].text)).toHaveLength(1);
+
+    const result = await bundleInstalled(productionPlugins());
+    expect(findUnreachableExpressions(result.outputFiles[0].text)).toEqual([]);
+    expect(result.outputFiles[0].text).toMatch(/\beval\b/);
+    // Non-empty means upstream changed the helper and the rewrite did not
+    // apply — that warning, not silence, is the intended signal.
+    expect(result.warnings).toEqual([]);
+
+    const context = { helpers: { toFastProperties: (value: object) => value } };
+    runInNewContext(result.outputFiles[0].text, context);
+    let accesses = 0;
+    const value = {
+      get bar() {
+        accesses++;
+        return undefined;
+      },
+    };
+    expect(context.helpers.toFastProperties(value)).toBe(value);
+    expect(accesses).toBe(2);
   });
 
   it('preserves the original return value and number of getter accesses', async () => {
