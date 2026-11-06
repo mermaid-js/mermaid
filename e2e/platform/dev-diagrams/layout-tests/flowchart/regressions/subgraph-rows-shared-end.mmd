@@ -1,0 +1,22 @@
+---
+config:
+  layout: elk
+  elk:
+    directedSubgraphs: aligned
+---
+%% Rows stay in the order written, so the last row links up into the middle one; links that meet on one side of a node are spread apart.
+flowchart TB
+    subgraph r1 ["Orders"]
+        direction LR
+        A1["Receive"] --> A2["Check"] --> A3["Reserve"] --> A4["Pick"] --> A5["Pack"]
+    end
+    subgraph r2 ["Returns"]
+        direction RL
+        B1["Inspect"] --> B2["Restock"]
+    end
+    subgraph r3 ["Exchanges"]
+        direction LR
+        C1["Request"] --> C2["Approve"] --> C3["Collect"]
+    end
+    A5 --> B1
+    C3 --> B1
