@@ -1,7 +1,10 @@
-import { cleanupComments } from './diagram-api/comments.js';
+import { removeComments } from './diagram-api/comments.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
+import { directiveRegex } from './diagram-api/regexes.js';
+import type { TrackedText } from './diagram-api/sourceLines.js';
+import { keepSuffix, removeMatches, trackLines } from './diagram-api/sourceLines.js';
 import type { DiagramCode, DiagramMetadata } from './diagram-api/types.js';
-import utils, { cleanAndMerge, removeDirectives } from './utils.js';
+import utils, { cleanAndMerge } from './utils.js';
 
 const cleanupText = (code: string) => {
   return (
@@ -30,16 +33,16 @@ const processFrontmatter = (code: string) => {
   return { title, config, text };
 };
 
-const processDirectives = (code: string) => {
-  const initDirective = utils.detectInit(code) ?? {};
-  const wrapDirectives = utils.detectDirective(code, 'wrap');
+const processDirectives = (code: TrackedText) => {
+  const initDirective = utils.detectInit(code.text) ?? {};
+  const wrapDirectives = utils.detectDirective(code.text, 'wrap');
   if (Array.isArray(wrapDirectives)) {
     initDirective.wrap = wrapDirectives.some(({ type }) => type === 'wrap');
   } else if (wrapDirectives?.type === 'wrap') {
     initDirective.wrap = true;
   }
   return {
-    text: removeDirectives(code),
+    code: removeMatches(code, directiveRegex),
     directive: initDirective,
   };
 };
@@ -49,8 +52,9 @@ const processDirectives = (code: string) => {
  * cleaning and merging configuration, and removing comments.
  *
  * Returns a {@link DiagramCode} object exposing `raw`, `cleaned`, `withComments`,
- * and `frontmatterLineOffset`. Diagrams that do not opt into inline-position
- * capture continue to use `cleaned` and see no behavioural change.
+ * `frontmatterLineOffset`, and the source line of each line of `cleaned` and
+ * `withComments`. Diagrams that do not opt into inline-position capture continue
+ * to use `cleaned` and see no behavioural change.
  *
  * @param code - The code to preprocess.
  * @returns The object containing the preprocessed code, title, and configuration.
@@ -59,10 +63,12 @@ export function preprocessDiagram(code: string) {
   const rawCode = code;
   const normalizedCode = cleanupText(code);
   const frontMatterResult = processFrontmatter(normalizedCode);
-  const directiveResult = processDirectives(frontMatterResult.text);
+  const directiveResult = processDirectives(
+    keepSuffix(trackLines(normalizedCode), frontMatterResult.text)
+  );
   const config = cleanAndMerge(frontMatterResult.config, directiveResult.directive);
-  const withComments = directiveResult.text;
-  const cleanedCode = cleanupComments(withComments);
+  const withComments = directiveResult.code;
+  const cleaned = removeComments(withComments);
 
   // Compute the number of lines occupied by frontmatter so that Jison @$ positions
   // (which are relative to the post-frontmatter text) can be mapped back to the
@@ -81,9 +87,11 @@ export function preprocessDiagram(code: string) {
   return {
     code: {
       raw: rawCode,
-      cleaned: cleanedCode,
-      withComments,
+      cleaned: cleaned.text,
+      withComments: withComments.text,
       frontmatterLineOffset,
+      cleanedSourceLines: cleaned.sourceLines,
+      withCommentsSourceLines: withComments.sourceLines,
     },
     title: frontMatterResult.title,
     config,

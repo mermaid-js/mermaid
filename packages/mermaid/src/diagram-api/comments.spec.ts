@@ -1,4 +1,5 @@
-import { cleanupComments } from './comments.js';
+import { cleanupComments, removeComments } from './comments.js';
+import { trackLines } from './sourceLines.js';
 import { describe, it, expect } from 'vitest';
 
 describe('comments', () => {
@@ -88,5 +89,11 @@ graph TD
           A-->B
       "
     `);
+  });
+
+  it('keeps the source line of each line left', () => {
+    const { text, sourceLines } = removeComments(trackLines('\n\npie\n\n%% note\n  "a": 1'));
+    expect(text).toBe('pie\n  "a": 1');
+    expect(sourceLines).toEqual([3, 6]);
   });
 });
