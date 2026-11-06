@@ -20,8 +20,17 @@ vi.mock('../../utils.js', async (importOriginal) => {
   };
 });
 
+vi.mock('../common/common.js', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    calculateMathMLDimensions: vi.fn(() => Promise.resolve({ width: 80, height: 20 })),
+  };
+});
+
 import * as svgDraw from './svgDraw.js';
-import { drawMessage, setConf } from './sequenceRenderer.js';
+import { calculateMathMLDimensions } from '../common/common.js';
+import { buildNoteModel, drawMessage, setConf } from './sequenceRenderer.js';
 
 function mockDiagram(name = 'svg') {
   const children = [];
@@ -92,5 +101,37 @@ describe('drawMessage (#3594)', () => {
     const textObj = messageTextCalls[0][1];
     expect(textObj.x).toBe(Math.min(startx, stopx));
     expect(textObj.width).toBe(Math.abs(stopx - startx));
+  });
+});
+
+describe('buildNoteModel (#6993)', () => {
+  beforeEach(() => {
+    setConf({
+      width: 30,
+      noteMargin: 5,
+      noteFontFamily: 'sans-serif',
+      noteFontSize: 14,
+      noteFontWeight: '400',
+    });
+    vi.mocked(calculateMathMLDimensions).mockClear();
+  });
+
+  it('uses rendered MathML dimensions for a KaTeX note over one participant', async () => {
+    const sequenceDb = new SequenceDB();
+    const actor = { x: 20, width: 50 };
+    const actors = new Map([['Alice', actor]]);
+    const message = {
+      from: 'Alice',
+      to: 'Alice',
+      placement: sequenceDb.PLACEMENT.OVER,
+      message: '$$x^2$$',
+      wrap: false,
+    };
+
+    const noteModel = await buildNoteModel(message, actors, { db: sequenceDb });
+
+    expect(calculateMathMLDimensions).toHaveBeenCalledWith('$$x^2$$', expect.any(Object));
+    expect(noteModel.width).toBe(90);
+    expect(noteModel.startx).toBe(0);
   });
 });
