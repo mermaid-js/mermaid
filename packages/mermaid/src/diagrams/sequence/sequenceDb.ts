@@ -19,6 +19,7 @@ import type { ParticipantMetaData } from '../../types.js';
 interface SequenceState {
   prevActor?: string;
   actors: Map<string, Actor>;
+  futureActors: Set<Actor>;
   createdActors: Map<string, number>;
   destroyedActors: Map<string, number>;
   boxes: Box[];
@@ -116,6 +117,7 @@ export class SequenceDB implements DiagramDB {
   private readonly state = new ImperativeState<SequenceState>(() => ({
     prevActor: undefined,
     actors: new Map(),
+    futureActors: new Set(),
     createdActors: new Map(),
     destroyedActors: new Map(),
     boxes: [],
@@ -277,6 +279,17 @@ export class SequenceDB implements DiagramDB {
     activate = false,
     centralConnection?: number
   ) {
+    if (this.isFutureActor(idFrom)) {
+      throw new Error(
+        `Future participant ${idFrom} must be created with a matching create directive before it can be used.`
+      );
+    }
+    if (this.isFutureActor(idTo)) {
+      throw new Error(
+        `Future participant ${idTo} must be created with a matching create directive before it can be used.`
+      );
+    }
+
     if (messageType === this.LINETYPE.ACTIVE_END) {
       const cnt = this.activationCount(idFrom ?? '');
       if (cnt < 1) {
@@ -337,6 +350,53 @@ export class SequenceDB implements DiagramDB {
   }
   public getActorKeys() {
     return [...this.state.records.actors.keys()];
+  }
+
+  private findFutureActorByName(name: string) {
+    for (const actor of this.state.records.futureActors) {
+      if (actor.name === name) {
+        return actor;
+      }
+    }
+    return undefined;
+  }
+
+  private isFutureActor(name?: string) {
+    if (!name) {
+      return false;
+    }
+    return Boolean(this.findFutureActorByName(name));
+  }
+
+  private getActorOrNameRef(name: string): Actor {
+    const actor = this.state.records.actors.get(name);
+    if (actor) {
+      return actor;
+    }
+
+    return {
+      name,
+      description: name,
+      wrap: this.autoWrap(),
+      links: {},
+      properties: {},
+      actorCnt: null,
+      rectData: null,
+      type: 'participant',
+    };
+  }
+
+  private validateFutureParticipantsResolved() {
+    if (this.state.records.futureActors.size === 0) {
+      return;
+    }
+
+    const unresolvedParticipants = [...this.state.records.futureActors]
+      .map((actor) => actor.name)
+      .join(', ');
+    throw new Error(
+      `Future participant declarations must be resolved using matching create directives. Unresolved participants: ${unresolvedParticipants}.`
+    );
   }
   public enableSequenceNumbers() {
     this.state.records.sequenceNumbersEnabled = true;
@@ -553,167 +613,210 @@ export class SequenceDB implements DiagramDB {
     return undefined;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
-  public apply(param: any | AddMessageParams | AddMessageParams[]) {
+  public apply(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
+    param: any | AddMessageParams | AddMessageParams[]
+  ) {
     if (Array.isArray(param)) {
       param.forEach((item) => {
-        this.apply(item);
+        this.applyItem(item);
       });
+      this.validateFutureParticipantsResolved();
     } else {
-      switch (param.type) {
-        case 'sequenceIndex':
-          this.state.records.messages.push({
-            id: this.state.records.messages.length.toString(),
-            from: undefined,
-            to: undefined,
-            message: {
-              start: param.sequenceIndex,
-              step: param.sequenceIndexStep,
-              visible: param.sequenceVisible,
-            },
-            wrap: false,
-            type: param.signalType,
-          });
-          break;
-        case 'addParticipant':
-          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
-          break;
-        case 'createParticipant':
-          if (this.state.records.actors.has(param.actor)) {
+      this.applyItem(param);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
+  private applyItem(param: any | AddMessageParams) {
+    if (Array.isArray(param)) {
+      param.forEach((item) => this.applyItem(item));
+      return;
+    }
+    switch (param.type) {
+      case 'sequenceIndex':
+        this.state.records.messages.push({
+          id: this.state.records.messages.length.toString(),
+          from: undefined,
+          to: undefined,
+          message: {
+            start: param.sequenceIndex,
+            step: param.sequenceIndexStep,
+            visible: param.sequenceVisible,
+          },
+          wrap: false,
+          type: param.signalType,
+        });
+        break;
+      case 'addParticipant':
+        this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
+        break;
+      case 'addFutureParticipant':
+        this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
+        {
+          const futureActor = this.state.records.actors.get(param.actor);
+          if (futureActor) {
+            this.state.records.futureActors.add(futureActor);
+          }
+        }
+        break;
+      case 'createParticipant':
+        if (this.state.records.actors.has(param.actor)) {
+          const futureActor = this.findFutureActorByName(param.actor);
+          if (!futureActor) {
             throw new Error(
               "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
             );
           }
-          this.state.records.lastCreated = param.actor;
-          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
+
+          const actor = this.state.records.actors.get(param.actor);
+          if (actor && actor.type !== param.draw) {
+            throw new Error(
+              `Future ${actor.type} ${param.actor} must be created using 'create ${actor.type} ${param.actor}'.`
+            );
+          }
+
+          this.state.records.futureActors.delete(futureActor);
+          this.state.records.lastCreated = actor;
           this.state.records.createdActors.set(param.actor, this.state.records.messages.length);
           break;
-        case 'destroyParticipant':
-          this.state.records.lastDestroyed = param.actor;
-          this.state.records.destroyedActors.set(param.actor, this.state.records.messages.length);
-          break;
-        case 'activeStart':
-          this.addSignal(param.actor, undefined, undefined, param.signalType);
-          break;
-        case 'centralConnection':
-          this.addSignal(param.actor, undefined, undefined, param.signalType);
-          break;
-        case 'centralConnectionReverse':
-          this.addSignal(param.actor, undefined, undefined, param.signalType);
-          break;
-        case 'activeEnd':
-          this.addSignal(param.actor, undefined, undefined, param.signalType);
-          break;
-        case 'addNote':
-          this.addNote(param.actor, param.placement, param.text);
-          break;
-        case 'addLinks':
-          this.addLinks(param.actor, param.text);
-          break;
-        case 'addALink':
-          this.addALink(param.actor, param.text);
-          break;
-        case 'addProperties':
-          this.addProperties(param.actor, param.text);
-          break;
-        case 'addDetails':
-          this.addDetails(param.actor, param.text);
-          break;
-        case 'addMessage':
-          if (this.state.records.lastCreated) {
-            if (param.to !== this.state.records.lastCreated) {
-              throw new Error(
-                'The created participant ' +
-                  this.state.records.lastCreated.name +
-                  ' does not have an associated creating message after its declaration. Please check the sequence diagram.'
-              );
-            } else {
-              this.state.records.lastCreated = undefined;
-            }
-          } else if (this.state.records.lastDestroyed) {
-            if (
-              param.to !== this.state.records.lastDestroyed &&
-              param.from !== this.state.records.lastDestroyed
-            ) {
-              throw new Error(
-                'The destroyed participant ' +
-                  this.state.records.lastDestroyed.name +
-                  ' does not have an associated destroying message after its declaration. Please check the sequence diagram.'
-              );
-            } else {
-              this.state.records.lastDestroyed = undefined;
-            }
+        }
+        this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
+        this.state.records.lastCreated = this.state.records.actors.get(param.actor);
+        this.state.records.createdActors.set(param.actor, this.state.records.messages.length);
+        break;
+      case 'destroyParticipant':
+        this.state.records.lastDestroyed = this.getActorOrNameRef(param.actor);
+        this.state.records.destroyedActors.set(param.actor, this.state.records.messages.length);
+        break;
+      case 'activeStart':
+        this.addSignal(param.actor, undefined, undefined, param.signalType);
+        break;
+      case 'centralConnection':
+        this.addSignal(param.actor, undefined, undefined, param.signalType);
+        break;
+      case 'centralConnectionReverse':
+        this.addSignal(param.actor, undefined, undefined, param.signalType);
+        break;
+      case 'activeEnd':
+        this.addSignal(param.actor, undefined, undefined, param.signalType);
+        break;
+      case 'addNote':
+        this.addNote(param.actor, param.placement, param.text);
+        break;
+      case 'addLinks':
+        this.addLinks(param.actor, param.text);
+        break;
+      case 'addALink':
+        this.addALink(param.actor, param.text);
+        break;
+      case 'addProperties':
+        this.addProperties(param.actor, param.text);
+        break;
+      case 'addDetails':
+        this.addDetails(param.actor, param.text);
+        break;
+      case 'addMessage':
+        if (this.state.records.lastCreated) {
+          if (param.to !== this.state.records.lastCreated.name) {
+            throw new Error(
+              'The created participant ' +
+                this.state.records.lastCreated.name +
+                ' does not have an associated creating message after its declaration. Please check the sequence diagram.'
+            );
+          } else {
+            // Update createdActors to the actual index of the create message, which may
+            // differ from the index recorded in createParticipant if intervening signals
+            // (e.g. rectStart) were added to the messages array in between.
+            this.state.records.createdActors.set(
+              this.state.records.lastCreated.name,
+              this.state.records.messages.length
+            );
+            this.state.records.lastCreated = undefined;
           }
-          this.addSignal(
-            param.from,
-            param.to,
-            param.msg,
-            param.signalType,
-            param.activate,
-            param.centralConnection
-          );
-          break;
-        case 'boxStart':
-          this.addBox(param.boxData);
-          break;
-        case 'boxEnd':
-          this.boxEnd();
-          break;
-        case 'loopStart':
-          this.addSignal(undefined, undefined, param.loopText, param.signalType);
-          break;
-        case 'loopEnd':
-          this.addSignal(undefined, undefined, undefined, param.signalType);
-          break;
-        case 'rectStart':
-          this.addSignal(undefined, undefined, param.color, param.signalType);
-          break;
-        case 'rectEnd':
-          this.addSignal(undefined, undefined, undefined, param.signalType);
-          break;
-        case 'optStart':
-          this.addSignal(undefined, undefined, param.optText, param.signalType);
-          break;
-        case 'optEnd':
-          this.addSignal(undefined, undefined, undefined, param.signalType);
-          break;
-        case 'altStart':
-          this.addSignal(undefined, undefined, param.altText, param.signalType);
-          break;
-        case 'else':
-          this.addSignal(undefined, undefined, param.altText, param.signalType);
-          break;
-        case 'altEnd':
-          this.addSignal(undefined, undefined, undefined, param.signalType);
-          break;
-        case 'setAccTitle':
-          setAccTitle(param.text);
-          break;
-        case 'parStart':
-          this.addSignal(undefined, undefined, param.parText, param.signalType);
-          break;
-        case 'and':
-          this.addSignal(undefined, undefined, param.parText, param.signalType);
-          break;
-        case 'parEnd':
-          this.addSignal(undefined, undefined, undefined, param.signalType);
-          break;
-        case 'criticalStart':
-          this.addSignal(undefined, undefined, param.criticalText, param.signalType);
-          break;
-        case 'option':
-          this.addSignal(undefined, undefined, param.optionText, param.signalType);
-          break;
-        case 'criticalEnd':
-          this.addSignal(undefined, undefined, undefined, param.signalType);
-          break;
-        case 'breakStart':
-          this.addSignal(undefined, undefined, param.breakText, param.signalType);
-          break;
-        case 'breakEnd':
-          this.addSignal(undefined, undefined, undefined, param.signalType);
-          break;
-      }
+        } else if (this.state.records.lastDestroyed) {
+          if (
+            param.to !== this.state.records.lastDestroyed.name &&
+            param.from !== this.state.records.lastDestroyed.name
+          ) {
+            throw new Error(
+              'The destroyed participant ' +
+                this.state.records.lastDestroyed.name +
+                ' does not have an associated destroying message after its declaration. Please check the sequence diagram.'
+            );
+          } else {
+            this.state.records.lastDestroyed = undefined;
+          }
+        }
+        this.addSignal(
+          param.from,
+          param.to,
+          param.msg,
+          param.signalType,
+          param.activate,
+          param.centralConnection
+        );
+        break;
+      case 'boxStart':
+        this.addBox(param.boxData);
+        break;
+      case 'boxEnd':
+        this.boxEnd();
+        break;
+      case 'loopStart':
+        this.addSignal(undefined, undefined, param.loopText, param.signalType);
+        break;
+      case 'loopEnd':
+        this.addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'rectStart':
+        this.addSignal(undefined, undefined, param.color, param.signalType);
+        break;
+      case 'rectEnd':
+        this.addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'optStart':
+        this.addSignal(undefined, undefined, param.optText, param.signalType);
+        break;
+      case 'optEnd':
+        this.addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'altStart':
+        this.addSignal(undefined, undefined, param.altText, param.signalType);
+        break;
+      case 'else':
+        this.addSignal(undefined, undefined, param.altText, param.signalType);
+        break;
+      case 'altEnd':
+        this.addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'setAccTitle':
+        setAccTitle(param.text);
+        break;
+      case 'parStart':
+        this.addSignal(undefined, undefined, param.parText, param.signalType);
+        break;
+      case 'and':
+        this.addSignal(undefined, undefined, param.parText, param.signalType);
+        break;
+      case 'parEnd':
+        this.addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'criticalStart':
+        this.addSignal(undefined, undefined, param.criticalText, param.signalType);
+        break;
+      case 'option':
+        this.addSignal(undefined, undefined, param.optionText, param.signalType);
+        break;
+      case 'criticalEnd':
+        this.addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'breakStart':
+        this.addSignal(undefined, undefined, param.breakText, param.signalType);
+        break;
+      case 'breakEnd':
+        this.addSignal(undefined, undefined, undefined, param.signalType);
+        break;
     }
   }
 
