@@ -955,6 +955,15 @@ treeView-beta
       expect(dom.window.document.querySelector('use')).toBeNull();
     });
 
+    jsdomIt('escapes an id starting with a digit in the scoped styles', async () => {
+      const { svg } = await mermaidAPI.render('02_test', 'erDiagram\n  A ||--o{ B : has');
+
+      const dom = new JSDOM(svg);
+      const styleNode = ensureNodeFromSelector('style', dom.window.document);
+      expect(styleNode.innerHTML).toMatch(/^#\\30 2_test /);
+      expect(styleNode.innerHTML).not.toContain('#02_test');
+    });
+
     jsdomIt('shows the actual parse error message in the error diagram', async () => {
       const edges = Array.from({ length: 501 }, (_, index) => `N${index} --> N${index + 1}`).join(
         '\n'
