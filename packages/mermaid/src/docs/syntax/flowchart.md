@@ -1389,6 +1389,34 @@ flowchart LR
     classDef foobar stroke:#00f
 ```
 
+#### Classes on edges
+
+A class can be attached to an edge in the same way, by writing `:::` and the class name straight after the arrow:
+
+```mermaid-example
+flowchart LR
+    A -->:::hot B
+    A ==>:::hot C
+    B -.->:::muted D
+    C -->|slow|:::muted D
+    classDef hot stroke:#f66,stroke-width:3px
+    classDef muted stroke:#999,stroke-dasharray:3
+```
+
+The class goes on every edge the arrow draws, so one suffix styles a whole group:
+
+```mermaid-example
+flowchart LR
+    A & B -->:::hot C & D
+    classDef hot stroke:#f66,stroke-width:3px
+```
+
+Each arrow of a chain takes its own class, and an edge ID can come first (`A e1@-->:::hot B`). The class is applied as styles, as `class e1 hot` does for an edge with an ID.
+
+- Write one class per arrow. Unlike a node, an arrow does not take a second `:::`.
+- A label can sit between the arrow's ends (`A -- text -->:::hot B`) or in pipes (`A -->|text|:::hot B`). Write the class after the whole arrow.
+- `A --:::hot--> B` is still an edge labelled `:::hot`, and `A --:::hot B` is a syntax error, because `--` followed by text opens a label.
+
 ### CSS classes
 
 > **Note:** Applying styles to Mermaid nodes via external CSS (e.g., `.cssClass > rect { fill: ... }`) does **not** work reliably. Mermaid's internal styles are injected with `!important` and scoped to the SVG element ID, giving them higher specificity than external CSS rules. External CSS will be silently overridden.
