@@ -237,6 +237,61 @@ export function interpolateToCurve(
   return d3CurveTypes[curveName as keyof typeof d3CurveTypes] ?? defaultCurve;
 }
 
+// `sanitizeUrl` (from `@braintree/sanitize-url`) repeatedly URL-decodes its input to catch
+// obfuscated `javascript:`/`data:`/`vbscript:` links, and along the way it deletes any
+// control characters the decoding reveals (e.g. `%0A` becomes a newline, which is then
+// stripped outright rather than re-encoded). That silently destroys legitimate encoded
+// newlines/carriage returns in a link's query string or fragment, such as a GitHub "new
+// issue" URL whose `body` parameter is meant to contain line breaks.
+// See https://github.com/mermaid-js/mermaid/issues/7378 and the upstream report at
+// https://github.com/braintree/sanitize-url/issues/75.
+//
+// To avoid that, we hide `%0A`/`%0D` sequences behind placeholders before sanitizing and
+// restore them afterwards. Only sequences at or after the URL's first `?`/`#` are touched,
+// i.e. only inside the query string or fragment: this is exactly where the affected content
+// lives, and it keeps the change from ever altering the scheme portion of the URL that
+// `sanitizeUrl` inspects for dangerous protocols.
+//
+// The placeholders are generated fresh on every call (a random token appended to a fixed
+// label) rather than reusing fixed marker text. A fixed marker could collide with text the
+// URL already contains -- e.g. a search link whose query literally includes that marker
+// text -- and the restoration step would then corrupt that unrelated, pre-existing text
+// instead of only the `%0A`/`%0D` sequences this call itself masked. A fresh random token
+// makes such a collision astronomically unlikely.
+const ENCODED_LF_REGEX = /%0[Aa]/g;
+const ENCODED_CR_REGEX = /%0[Dd]/g;
+
+function createEncodedNewlinePlaceholders(): { lf: string; cr: string } {
+  // Plain alphanumerics only: `sanitizeUrl` strips control characters and decodes HTML/URL
+  // entities while it runs, so the token must not resemble any of those or it could be
+  // mangled (or stripped) before we get a chance to restore it.
+  const token = `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+  return {
+    lf: `MERMAID_PRESERVED_ENCODED_LF_${token}`,
+    cr: `MERMAID_PRESERVED_ENCODED_CR_${token}`,
+  };
+}
+
+function sanitizeUrlPreservingEncodedNewlines(url: string): string {
+  const splitIndex = url.search(/[#?]/);
+  if (splitIndex === -1) {
+    return sanitizeUrl(url);
+  }
+
+  const head = url.slice(0, splitIndex);
+  const { lf: lfPlaceholder, cr: crPlaceholder } = createEncodedNewlinePlaceholders();
+  const tail = url
+    .slice(splitIndex)
+    .replace(ENCODED_LF_REGEX, lfPlaceholder)
+    .replace(ENCODED_CR_REGEX, crPlaceholder);
+
+  return sanitizeUrl(head + tail)
+    .split(lfPlaceholder)
+    .join('%0A')
+    .split(crPlaceholder)
+    .join('%0D');
+}
+
 /**
  * Formats a URL string
  *
@@ -252,7 +307,7 @@ export function formatUrl(linkStr: string, config: MermaidConfig): string | unde
   }
 
   if (config.securityLevel !== 'loose') {
-    return sanitizeUrl(url);
+    return sanitizeUrlPreservingEncodedNewlines(url);
   }
 
   return url;
