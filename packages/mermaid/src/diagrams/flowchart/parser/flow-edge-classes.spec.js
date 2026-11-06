@@ -124,4 +124,12 @@ describe('[Flowchart] a class on an edge: A -->:::name B', function () {
   it('keeps `A --:::hot B` as a parse error, not a class', function () {
     expect(() => flow.parser.parse('flowchart TD;\nA --:::hot B;')).toThrow();
   });
+
+  it('does not accept the destination on the next line after a class', function () {
+    expect(() => flow.parser.parse('flowchart TD;\nA -->:::hot\n B;')).toThrow();
+  });
+
+  it('does not accept a second class on one arrow', function () {
+    expect(() => flow.parser.parse('flowchart TD;\nA -->:::a:::b B;')).toThrow();
+  });
 });
