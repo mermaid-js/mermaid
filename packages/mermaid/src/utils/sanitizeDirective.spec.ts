@@ -8,6 +8,12 @@ describe('sanitizeDirective', () => {
     expect(args).toEqual({ fontSize: 12 });
   });
 
+  it('keeps config keys whose default is undefined', () => {
+    const args = { elk: { wrappingStrategy: 'MULTI_EDGE', aspectRatio: 1.78 } };
+    sanitizeDirective(args);
+    expect(args).toEqual({ elk: { wrappingStrategy: 'MULTI_EDGE', aspectRatio: 1.78 } });
+  });
+
   describe('dictionary-style configs', () => {
     it('preserves treeView filenameIcons and extensionIcons entries', () => {
       const args = {

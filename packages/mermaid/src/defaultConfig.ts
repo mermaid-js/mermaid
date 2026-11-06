@@ -34,6 +34,9 @@ const config: RequiredDeep<MermaidConfig> = {
     cycleBreakingStrategy: undefined,
     layeringLayerBound: 4,
     nodePlacementAlignment: undefined,
+    // Left undefined so ELK's own defaults apply, and listed for `configKeys`.
+    wrappingStrategy: undefined,
+    aspectRatio: undefined,
 
     forceNodeModelOrder: false,
     considerModelOrder: 'NODES_AND_EDGES',
