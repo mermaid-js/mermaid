@@ -1,0 +1,16 @@
+%% A class written after the arrow, A -->:::name B, styles that edge: every arrow form, a pipe label, a group, a chain.
+%% Before the change `-->:::name` was a parse error. `--:::note--> ` stays an edge labelled ":::note".
+flowchart LR
+  A -->:::hot B
+  A ==>:::hot C
+  B -.->:::muted D
+  C -->|slow|:::muted D
+  D -- retry -->:::hot E
+  F & G -->:::warm H & I
+  E -->:::hot J -->:::muted K
+  A --:::note--> L
+  M e1@-->:::hot N
+
+  classDef hot stroke:#e5484d,stroke-width:3px;
+  classDef muted stroke:#8b8d98,stroke-width:2px,stroke-dasharray:4;
+  classDef warm stroke:#f5a623,stroke-width:3px;
