@@ -195,6 +195,11 @@ describe('EBNF standard line', () => {
       expect(types()).toEqual(['nonterminal', 'terminal', 'special', 'nonterminal']);
     });
 
+    it('keeps accepting whitespace concatenation without a standard line', () => {
+      void parser.parse('railroad-ebnf-beta\nfoo = a b ( c d ) ;');
+      expect(types()).toEqual(['nonterminal', 'nonterminal', 'sequence']);
+    });
+
     it('keeps accepting both "," and whitespace, and the postfix operators', () => {
       void parser.parse('railroad-ebnf-beta\nfoo = bar , baz qux* ;');
       expect(types()).toEqual(['nonterminal', 'nonterminal', 'repetition']);
@@ -259,6 +264,24 @@ describe('EBNF standard line', () => {
       expect(() => parser.parse('railroad-ebnf-beta\nstandard iso\nfoo = ( a* ) ;')).toThrow(
         /line 3, column 10/
       );
+    });
+
+    it.each([
+      ['a missing comma', 'foo = a b ;', /line 3, column 7: ISO 14977 notation separates/],
+      ['one comma of three missing', 'foo = a, b c ;', /line 3, column 7/],
+      ['a missing comma after a group', 'foo = ( a | b ) c ;', /line 3, column 7/],
+      ['a missing comma around an optional', 'foo = a [ b ] ;', /line 3, column 7/],
+      ['a missing comma around a repetition', 'foo = { a } b ;', /line 3, column 7/],
+      ['a missing comma in a nested sequence', 'foo = a, ( b c ) ;', /line 3, column 12/],
+      ['a trailing comma', 'foo = a, ;', /Parse error/],
+      ['a doubled comma', 'foo = a,, b ;', /Parse error/],
+    ])('refuses %s', (_name, rule, message) => {
+      expect(() => parser.parse(`railroad-ebnf-beta\nstandard iso\n${rule}`)).toThrow(message);
+    });
+
+    it('accepts commas between groups, optionals and repetitions', () => {
+      void parser.parse('railroad-ebnf-beta\nstandard iso\nfoo = ( a | b ), [ c ], { d }, e ;');
+      expect(types()).toEqual(['choice', 'optional', 'repetition', 'nonterminal']);
     });
 
     it('accepts [ ], { } and ","', () => {

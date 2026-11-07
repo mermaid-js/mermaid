@@ -58,10 +58,10 @@ foo = bar " "? baz " "? qux ;
 | Line           | `? ... ?`              | `A?`, `A*`, `A+`                             | `,` between elements                       |
 | -------------- | ---------------------- | -------------------------------------------- | ------------------------------------------ |
 | `standard w3c` | not a special sequence | postfix operators                            | refused, separate elements with whitespace |
-| `standard iso` | a special sequence     | refused, use `[ A ]`, `{ A }` or `A , { A }` | accepted                                   |
+| `standard iso` | a special sequence     | refused, use `[ A ]`, `{ A }` or `A , { A }` | required between elements                  |
 | no `standard`  | a special sequence     | postfix operators                            | accepted                                   |
 
-Without a `standard` line nothing changes, so existing diagrams render as before. A refused construct is reported with its line and column. An unknown value, or a second `standard` line, is an error. The line belongs to one diagram, so a page can hold a W3C diagram and an ISO diagram side by side.
+Without a `standard` line nothing changes, so existing diagrams render as before. With `standard iso` a sequence without its commas (`a b` instead of `a, b`) is refused. A refused construct is reported with its line and column. An unknown value, or a second `standard` line, is an error. The line belongs to one diagram, so a page can hold a W3C diagram and an ISO diagram side by side.
 
 ```mermaid-example
 railroad-ebnf-beta

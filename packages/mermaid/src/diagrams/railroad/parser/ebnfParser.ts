@@ -90,6 +90,14 @@ const collectChoice = (
         );
       }
     }
+    if (standard === 'iso' && sequence.commas.length < sequence.elements.length - 1) {
+      errors.push(
+        diagnostic(
+          locate(sequence),
+          'ISO 14977 notation separates the elements of a sequence with ",", add the missing ","'
+        )
+      );
+    }
     for (const term of sequence.elements) {
       collectPrimary(term.base, standard, errors);
       for (const postfix of term.postfixes) {
