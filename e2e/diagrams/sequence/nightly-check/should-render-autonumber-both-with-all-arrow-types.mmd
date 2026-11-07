@@ -1,0 +1,34 @@
+---
+description: >-
+  Every arrow type with `autonumber both`, in both directions. Arrowheads have
+  to stay visible next to the receiver number, and on reverse half-arrows the
+  lower number goes on the tail.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber both
+  participant Alice
+  participant Bob
+  Alice->>Bob: Solid
+  Bob-->>Alice: Dotted
+  Alice->Bob: Open
+  Bob-->Alice: Open dotted
+  Alice-xBob: Cross
+  Bob--xAlice: Cross dotted
+  Alice-)Bob: Async
+  Bob--)Alice: Async dotted
+  Alice<<->>Bob: Bidirectional
+  Bob<<-->>Alice: Bidirectional dotted
+  Alice-|\Bob: Half top
+  Bob-|/Alice: Half bottom
+  Alice-\\Bob: Stick top
+  Bob-//Alice: Stick bottom
+  Alice/|-Bob: Reverse top
+  Bob\|-Alice: Reverse bottom
+  Alice//-Bob: Reverse stick top
+  Bob\\-Alice: Reverse stick bottom
+  Alice/|--Bob: Reverse top dotted

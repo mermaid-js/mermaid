@@ -570,6 +570,7 @@ export class SequenceDB implements DiagramDB {
               start: param.sequenceIndex,
               step: param.sequenceIndexStep,
               visible: param.sequenceVisible,
+              both: param.sequenceBoth,
             },
             wrap: false,
             type: param.signalType,

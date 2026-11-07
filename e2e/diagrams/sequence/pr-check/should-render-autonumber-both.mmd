@@ -1,0 +1,18 @@
+---
+description: >-
+  `autonumber both` gives the sender and the receiver of a message their own
+  number in both directions, and a message to self a single number.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  autonumber both
+  participant Alice
+  participant Bob
+  Alice->>Bob: Sender gets 1, receiver gets 2
+  Bob->>Bob: A message to self gets 3
+  Bob-->>Alice: Right to left gets 4 and 5
+  Alice->>Bob: Next message continues at 6
