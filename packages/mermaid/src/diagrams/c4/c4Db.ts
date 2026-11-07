@@ -2,13 +2,14 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { getRequiredConfig } from '../../diagram-api/requiredConfig.js';
 import { sanitizeText } from '../common/common.js';
 import { formatUrl } from '../../utils.js';
+import { log } from '../../logger.js';
 import {
   setAccTitle,
   getAccTitle,
   getAccDescription,
   setAccDescription,
 } from '../common/commonDb.js';
-import type { C4Boundary, C4Rel, C4Shape } from './c4Types.js';
+import type { C4Boundary, C4BoundaryDirection, C4Rel, C4Shape } from './c4Types.js';
 import type { LayoutData } from '../../rendering-util/types.js';
 import { getData as buildLayoutData } from './c4LayoutData.js';
 
@@ -493,6 +494,18 @@ export const addDeploymentNode = function (
   boundaryParseStack.push(parentBoundaryParse);
 };
 
+/** Sets the enclosing boundary's direction, or the diagram's when no boundary encloses the statement. */
+export const setBoundaryDirection = function (dir: C4BoundaryDirection) {
+  const boundary = boundaries.find(
+    (candidate) => candidate.alias === currentBoundaryParse && candidate.alias !== 'global'
+  );
+  if (boundary === undefined) {
+    setDirection(dir);
+    return;
+  }
+  boundary.direction = dir;
+};
+
 export const popBoundaryParseStack = function () {
   currentBoundaryParse = parentBoundaryParse;
   boundaryParseStack.pop();
@@ -653,6 +666,9 @@ export const updateLayoutConfig = function (
   c4ShapeInRowParam: ParserAttribute,
   c4BoundaryInRowParam: ParserAttribute
 ) {
+  log.warn(
+    'UpdateLayoutConfig is accepted so that PlantUML sources parse, but it has no effect: the layout engine decides how many shapes and boundaries share a row.'
+  );
   let c4ShapeInRowValue = c4ShapeInRow;
   let c4BoundaryInRowValue = c4BoundaryInRow;
 
@@ -823,6 +839,7 @@ export default {
   addComponent,
   addDeploymentNode,
   popBoundaryParseStack,
+  setBoundaryDirection,
   addRel,
   updateElStyle,
   updateRelStyle,
