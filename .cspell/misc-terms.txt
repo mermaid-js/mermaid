@@ -11,3 +11,4 @@ neato
 newbranch
 renovatebot
 validify
+WCAG
