@@ -913,6 +913,10 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
    */
   sectionFontSize?: string | number;
   /**
+   * Font size of the axis tick labels (v<MERMAID_RELEASE_VERSION>+)
+   */
+  axisFontSize?: number;
+  /**
    * The number of alternating section styles
    */
   numberSectionStyles?: number;
