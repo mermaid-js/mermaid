@@ -1389,10 +1389,14 @@ You have to call mermaid.initialize.`
         labelpos: 'c',
         thickness: rawEdge.stroke,
         minlen: rawEdge.length,
-        classes:
+        classes: [
           rawEdge?.stroke === 'invisible'
             ? ''
             : 'edge-thickness-normal edge-pattern-solid flowchart-link',
+          ...rawEdge.classes,
+        ]
+          .filter(Boolean)
+          .join(' '),
         arrowTypeStart:
           rawEdge?.stroke === 'invisible' || rawEdge?.type === 'arrow_open'
             ? 'none'
