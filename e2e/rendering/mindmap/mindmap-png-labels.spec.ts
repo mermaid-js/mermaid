@@ -26,6 +26,12 @@ for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
           const width = Math.ceil(vb[2]);
           const height = Math.ceil(vb[3]);
           const bg = theme === 'dark' ? '#333333' : '#ffffff';
+          /**
+           * Rasterize a standalone copy of the SVG, optionally hiding one label.
+           *
+           * @param hidden - Index of the label to hide, or null to keep all labels.
+           * @returns The canvas pixels and encoded PNG.
+           */
           async function raster(hidden: number | null) {
             const clone = svg.cloneNode(true) as SVGElement;
             clone.setAttribute('width', String(width));
@@ -55,6 +61,13 @@ for (const theme of ['default', 'dark', 'forest', 'neutral', 'base'] as const) {
           const red = await raster(null);
           document.body.style.color = 'rgb(0, 0, 255)';
           const blue = await raster(null);
+          /**
+           * Count pixels whose RGBA channels differ between equal-sized exports.
+           *
+           * @param a - The first export's pixel data.
+           * @param b - The second export's pixel data.
+           * @returns The number of changed pixels.
+           */
           function diff(a: Uint8ClampedArray, b: Uint8ClampedArray) {
             let count = 0;
             for (let i = 0; i < a.length; i += 4)
