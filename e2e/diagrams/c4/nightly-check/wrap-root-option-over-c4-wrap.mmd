@@ -1,0 +1,14 @@
+---
+description: >-
+  The root wrap option set to false: it takes precedence over c4.wrap
+  (here left at its default), so no label wraps.
+config:
+  wrap: false
+---
+C4Container
+  title Order handling, with the root wrap option set to false
+  Person(customer, "Personal Banking Customer", "A customer of the bank, with personal bank accounts and a long description")
+  Container(web, "Internet Banking Web Application", "TypeScript, React", "Delivers the static content and the single page internet banking application to the customer")
+  ContainerDb(db, "Accounts Database", "PostgreSQL", "Stores user registration information, hashed credentials, access logs and account balances")
+  Rel(customer, web, "Views account balances and makes payments using the web browser")
+  Rel(web, db, "Reads and writes account records, and reports every failed login attempt")

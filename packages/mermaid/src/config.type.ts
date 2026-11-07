@@ -1785,6 +1785,13 @@ export interface C4DiagramConfig extends BaseDiagramConfig {
    */
   c4BoundaryInRow?: number;
   /**
+   * The direction in which the elements of every boundary run.
+   * A `direction` statement inside a boundary's braces overrides it for that boundary.
+   * When neither is set, the layout engine decides.
+   *
+   */
+  boundaryDirection?: 'TB' | 'BT' | 'LR' | 'RL';
+  /**
    * This sets the font size of Person shape for the diagram
    */
   personFontSize?: string | number;
