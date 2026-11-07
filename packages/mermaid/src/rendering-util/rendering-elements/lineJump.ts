@@ -70,6 +70,9 @@ export interface EdgeGeom {
   arrowTypeStart?: string;
   /** Arrow type at the end (last point). */
   arrowTypeEnd?: string;
+  /** Keep bends/hops outside the straight marker lead-in (painted SVG units). */
+  terminalClearanceStart?: number;
+  terminalClearanceEnd?: number;
 }
 
 export interface LineJumpConfig {
@@ -86,6 +89,9 @@ export interface Crossing {
   /** Position of the crossing along the jumping edge's segment, 0..1. */
   t: number;
   point: Point;
+  /** Segment and position on the other edge, used when the preferred edge has no room. */
+  otherSegIndex: number;
+  otherT: number;
 }
 
 const ENDPOINT_EPSILON = 1e-6;
@@ -202,6 +208,11 @@ function crossingSitsInRoundedCorner(edge: EdgeGeom, segIndex: number, t: number
   return leaving !== null && segLen - d < leaving.cutLen;
 }
 
+/**
+ * Finds all interior segment-pair crossings across `edges`, skipping any
+ * intersection that falls inside a rounded bend and assigning the preferred
+ * jump to the horizontally dominant segment when the pair is orthogonal.
+ */
 export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
   const crossings: Crossing[] = [];
 
@@ -244,6 +255,8 @@ export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
               otherEdgeId: edgeB.id,
               segIndex: si,
               t: hit.tA,
+              otherSegIndex: sj,
+              otherT: hit.tB,
               point: hit.point,
             });
           } else {
@@ -252,6 +265,8 @@ export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
               otherEdgeId: edgeA.id,
               segIndex: sj,
               t: hit.tB,
+              otherSegIndex: si,
+              otherT: hit.tA,
               point: hit.point,
             });
           }
@@ -263,12 +278,14 @@ export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
   return crossings;
 }
 
+/** Formats a coordinate to at most 3 decimal places without trailing zeros. */
 function fmt(n: number): string {
   // Strip trailing zeros so "5.00" → "5"; keep up to 3 decimals otherwise.
   const rounded = Math.round(n * 1000) / 1000;
   return Number.isInteger(rounded) ? `${rounded}` : `${rounded}`;
 }
 
+/** Formats a 2D point as an `"x,y"` SVG coordinate pair. */
 function pointToString(p: Point): string {
   return `${fmt(p.x)},${fmt(p.y)}`;
 }
@@ -300,6 +317,7 @@ interface JumpOnSegment {
   d: number;
   /** Effective radius after boundary + adjacency clamping. */
   r: number;
+  crossing: Crossing;
 }
 
 /**
@@ -413,7 +431,12 @@ function computeRoundedCorner(
   };
 }
 
-function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConfig): string {
+function rewriteEdgePath(
+  edge: EdgeGeom,
+  jumps: Crossing[],
+  config: LineJumpConfig,
+  emitted?: Crossing[]
+): string {
   const rawPoints = edge.points;
   if (rawPoints.length < 2) {
     return '';
@@ -423,10 +446,8 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
   const points = applyMarkerOffsets(rawPoints, edge);
   const rounded = edge.curve === 'rounded';
 
-  // Jumps are indexed into the ORIGINAL (un-offset) segment list. For mid-
-  // segments (i > 0 and i < n-2) the offsets don't change anything, and for
-  // the first/last segment the shift is tiny compared to jump radius so
-  // reusing the same (segIndex, t) is fine.
+  // Segment indices survive marker offsets, but t does not: project the
+  // crossing onto the shortened segment so terminal clearance stays correct.
   const segments = buildSegmentList(points);
   const bySeg = new Map<number, JumpOnSegment[]>();
   for (const j of jumps) {
@@ -434,13 +455,13 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
     if (!seg) {
       continue;
     }
-    const segLen = Math.hypot(seg.b.x - seg.a.x, seg.b.y - seg.a.y);
     const list = bySeg.get(j.segIndex) ?? [];
     list.push({
       t: j.t,
       point: j.point,
-      d: j.t * segLen,
+      d: crossingDistance(seg, j.point),
       r: config.jumpRadius,
+      crossing: j,
     });
     bySeg.set(j.segIndex, list);
   }
@@ -486,6 +507,13 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
       }
     }
 
+    if (i === 0) {
+      segStartConsumed = Math.max(segStartConsumed, edge.terminalClearanceStart || 0);
+    }
+    if (i === segments.length - 1) {
+      segEndStop = Math.min(segEndStop, segLen - (edge.terminalClearanceEnd || 0));
+    }
+
     // Clamp each jump to the room between the bends at either end of the
     // segment, then drop the ones with too little room to be worth drawing.
     // Dropping happens BEFORE the adjacency pass below so that a hop being
@@ -516,6 +544,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
         continue;
       }
       parts.push(...emitJump(j, ux, uy, sweep, config.jumpStyle));
+      emitted?.push(j.crossing);
     }
 
     // End of segment: either a straight L to seg.b (last segment or linear),
@@ -533,6 +562,7 @@ function rewriteEdgePath(edge: EdgeGeom, jumps: Crossing[], config: LineJumpConf
   return parts.join(' ');
 }
 
+/** Builds a straight `M ... L ...` SVG path string from an ordered point list. */
 function plainPath(points: Point[]): string {
   if (points.length === 0) {
     return '';
@@ -544,6 +574,132 @@ function plainPath(points: Point[]): string {
   return parts.join(' ');
 }
 
+/** Distance along a segment, measured in the geometry actually painted. */
+function crossingDistance(seg: Segment, point: Point): number {
+  const dx = seg.b.x - seg.a.x;
+  const dy = seg.b.y - seg.a.y;
+  const length = Math.hypot(dx, dy);
+  return length === 0 ? 0 : ((point.x - seg.a.x) * dx + (point.y - seg.a.y) * dy) / length;
+}
+
+/** Groups crossings by the ID of the edge scheduled to carry the jump. */
+function groupCrossings(crossings: Crossing[]): Map<string, Crossing[]> {
+  const grouped = new Map<string, Crossing[]>();
+  for (const crossing of crossings) {
+    const list = grouped.get(crossing.jumpEdgeId) ?? [];
+    list.push(crossing);
+    grouped.set(crossing.jumpEdgeId, list);
+  }
+  return grouped;
+}
+
+/** Mirrors the boundary and adjacency clamps in rewriteEdgePath. */
+function availableJumpRadius(
+  edge: EdgeGeom,
+  crossing: Crossing,
+  neighbours: Crossing[],
+  radius: number
+): number {
+  if (!curveSupportsLineHops(edge.curve)) {
+    return 0;
+  }
+  const points = applyMarkerOffsets(edge.points, edge);
+  const i = crossing.segIndex;
+  const a = points[i];
+  const b = points[i + 1];
+  if (!a || !b) {
+    return 0;
+  }
+  const segment = { a, b };
+  const length = Math.hypot(b.x - a.x, b.y - a.y);
+  const d = crossingDistance(segment, crossing.point);
+  const entering =
+    edge.curve === 'rounded' && i > 0
+      ? computeRoundedCorner(points[i - 1], a, b, ROUNDED_CORNER_RADIUS)
+      : null;
+  const leaving =
+    edge.curve === 'rounded' && i + 2 < points.length
+      ? computeRoundedCorner(a, b, points[i + 2], ROUNDED_CORNER_RADIUS)
+      : null;
+  let available = Math.min(
+    radius,
+    d -
+      Math.max(entering?.cutLen ?? 0, i === 0 ? edge.terminalClearanceStart || 0 : 0) -
+      CORNER_JUMP_CLEARANCE,
+    length -
+      Math.max(leaving?.cutLen ?? 0, i === points.length - 2 ? edge.terminalClearanceEnd || 0 : 0) -
+      d -
+      CORNER_JUMP_CLEARANCE
+  );
+  for (const neighbour of neighbours) {
+    if (neighbour === crossing || neighbour.segIndex !== i) {
+      continue;
+    }
+    const otherD = crossingDistance(segment, neighbour.point);
+    available = Math.min(available, Math.abs(otherD - d) / 2);
+  }
+  return available;
+}
+
+/**
+ * Keep the horizontal-over-vertical convention whenever it fits. A crossing
+ * squeezed out by a bend or another hop can instead go on the other edge.
+ * Decide which preferred hops are crowded BEFORE moving any of them, so an
+ * earlier fallback cannot make a later crossing change its preferred choice.
+ */
+function planLineJumps(edges: EdgeGeom[], config: LineJumpConfig): Map<string, Crossing[]> {
+  const crossings = findEdgeIntersections(edges);
+  const original = groupCrossings(crossings);
+  const planned = groupCrossings(crossings);
+  const edgeById = new Map(edges.map((edge) => [edge.id, edge]));
+  const minimum = config.jumpRadius * MIN_USEFUL_RADIUS_RATIO;
+  for (const crossing of crossings) {
+    const preferred = edgeById.get(crossing.jumpEdgeId)!;
+    if (
+      availableJumpRadius(
+        preferred,
+        crossing,
+        original.get(preferred.id) ?? [],
+        config.jumpRadius
+      ) >= minimum
+    ) {
+      continue;
+    }
+    const other = edgeById.get(crossing.otherEdgeId)!;
+    // Do not infer a crossing from the control polyline of a smoothing curve.
+    if (!curveSupportsLineHops(preferred.curve) || !curveSupportsLineHops(other.curve)) {
+      continue;
+    }
+    const alternative: Crossing = {
+      jumpEdgeId: crossing.otherEdgeId,
+      otherEdgeId: crossing.jumpEdgeId,
+      segIndex: crossing.otherSegIndex,
+      t: crossing.otherT,
+      otherSegIndex: crossing.segIndex,
+      otherT: crossing.t,
+      point: crossing.point,
+    };
+    const neighbours = planned.get(other.id) ?? [];
+    // Leave enough room for the full requested radius on the fallback edge.
+    // Otherwise moving a crossing could shrink an existing, readable hop.
+    if (
+      availableJumpRadius(other, alternative, neighbours, config.jumpRadius) < config.jumpRadius
+    ) {
+      continue;
+    }
+    planned.set(
+      preferred.id,
+      planned.get(preferred.id)!.filter((item) => item !== crossing)
+    );
+    planned.set(other.id, [...neighbours, alternative]);
+  }
+  return planned;
+}
+
+/**
+ * Rewrites each edge's polyline into an SVG path string with arc or gap hops
+ * at planned crossings, or plain straight segments when `config.enabled` is false.
+ */
 export function processEdgesWithJumps(
   edges: EdgeGeom[],
   config: LineJumpConfig
@@ -557,13 +713,7 @@ export function processEdgesWithJumps(
     return result;
   }
 
-  const crossings = findEdgeIntersections(edges);
-  const jumpsByEdge = new Map<string, Crossing[]>();
-  for (const c of crossings) {
-    const list = jumpsByEdge.get(c.jumpEdgeId) ?? [];
-    list.push(c);
-    jumpsByEdge.set(c.jumpEdgeId, list);
-  }
+  const jumpsByEdge = planLineJumps(edges, config);
 
   for (const edge of edges) {
     const jumps = jumpsByEdge.get(edge.id);
@@ -690,17 +840,7 @@ export function applyLineJumpsToSvg(
     renderedEdges.push({ ...e, points });
   }
 
-  const crossings = findEdgeIntersections(renderedEdges);
-  if (crossings.length === 0) {
-    return;
-  }
-
-  const jumpsByEdge = new Map<string, Crossing[]>();
-  for (const c of crossings) {
-    const list = jumpsByEdge.get(c.jumpEdgeId) ?? [];
-    list.push(c);
-    jumpsByEdge.set(c.jumpEdgeId, list);
-  }
+  const jumpsByEdge = planLineJumps(renderedEdges, config);
 
   for (const renderedEdge of renderedEdges) {
     const jumps = jumpsByEdge.get(renderedEdge.id);
@@ -725,35 +865,43 @@ export function applyLineJumpsToSvg(
       }
     }
 
-    // Read the ORIGINAL stroke-dasharray before rewriting so we can
-    // recompute it against the new total length. The `neo` look emits:
-    //   stroke-dasharray: 0 <oValueS> <len - oValueS - oValueE> <oValueE>;
-    // which hides the first oValueS and last oValueE pixels of the stroke
-    // — this is what actually prevents the stroke from poking into the arrow
-    // marker body. Our rewritten path has a different length, so without
-    // updating the "on" portion the hidden tail ends up in the wrong place.
-    const originalStyle = pathEl.getAttribute('style') ?? '';
-    const dasharrayMatch = /stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)/.exec(
-      originalStyle
-    );
-    const preservedOValueS = dasharrayMatch ? Number.parseFloat(dasharrayMatch[1]) : null;
-    const preservedOValueE = dasharrayMatch ? Number.parseFloat(dasharrayMatch[2]) : null;
+    const emitted: Crossing[] = [];
+    replaceEdgePath(pathEl, rewriteEdgePath(renderedEdge, jumps, config, emitted));
+  }
+}
 
-    const newD = rewriteEdgePath(renderedEdge, jumps, config);
-    pathEl.setAttribute('d', newD);
+/** Replace painted geometry without losing renderer-owned marker clearance. */
+export function replaceEdgePath(pathEl: Element, newD: string): void {
+  // Read the ORIGINAL stroke-dasharray before rewriting so we can
+  // recompute it against the new total length. The `neo` look emits:
+  //   stroke-dasharray: 0 <oValueS> <len - oValueS - oValueE> <oValueE>;
+  // which hides the first oValueS and last oValueE pixels of the stroke
+  // — this is what actually prevents the stroke from poking into the arrow
+  // marker body. Our rewritten path has a different length, so without
+  // updating the "on" portion the hidden tail ends up in the wrong place.
+  const originalStyle = pathEl.getAttribute('style') ?? '';
+  // Only the renderer-owned solid clearance array may be recalculated.
+  // Dashed, dotted, animated and user-authored arrays must remain intact.
+  const dasharrayMatch =
+    pathEl.getAttribute('data-line-hop-dasharray') === 'true'
+      ? /^stroke-dasharray\s*:\s*0\s+([\d.]+)\s+[\d.]+\s+([\d.]+)\s*(?:;|$)/.exec(originalStyle)
+      : null;
+  const preservedOValueS = dasharrayMatch ? Number.parseFloat(dasharrayMatch[1]) : null;
+  const preservedOValueE = dasharrayMatch ? Number.parseFloat(dasharrayMatch[2]) : null;
 
-    if (
-      preservedOValueS !== null &&
-      preservedOValueE !== null &&
-      typeof (pathEl as SVGPathElement).getTotalLength === 'function'
-    ) {
-      const newLen = (pathEl as SVGPathElement).getTotalLength();
-      const onLen = Math.max(0, newLen - preservedOValueS - preservedOValueE);
-      const newDasharray = `0 ${preservedOValueS} ${onLen} ${preservedOValueE}`;
-      const cleaned = originalStyle
-        .replace(/stroke-dasharray\s*:[^;]*;?/g, `stroke-dasharray: ${newDasharray};`)
-        .replace(/;\s*;+/g, ';');
-      pathEl.setAttribute('style', cleaned);
-    }
+  pathEl.setAttribute('d', newD);
+
+  if (
+    preservedOValueS !== null &&
+    preservedOValueE !== null &&
+    typeof (pathEl as SVGPathElement).getTotalLength === 'function'
+  ) {
+    const newLen = (pathEl as SVGPathElement).getTotalLength();
+    const onLen = Math.max(0, newLen - preservedOValueS - preservedOValueE);
+    const newDasharray = `0 ${preservedOValueS} ${onLen} ${preservedOValueE}`;
+    const cleaned = originalStyle
+      .replace(/^stroke-dasharray\s*:[^;]*;?/, `stroke-dasharray: ${newDasharray};`)
+      .replace(/;\s*;+/g, ';');
+    pathEl.setAttribute('style', cleaned);
   }
 }
