@@ -4,7 +4,7 @@ import c4Db from './c4Db.js';
 import c4 from './parser/c4Diagram.jison';
 import { getData } from './c4LayoutData.js';
 import type { MermaidConfig } from '../../config.type.js';
-import type { Edge } from '../../rendering-util/types.js';
+import type { Edge, Node } from '../../rendering-util/types.js';
 import type { C4LabelNudge } from './c4Types.js';
 
 setConfig({ securityLevel: 'strict' });
@@ -335,6 +335,124 @@ Rel(a, b, "Uses")`);
     it('lets the root wrap: false win over an explicit c4.wrap: true', () => {
       const { edges } = getData(db(), { ...config(), wrap: false, c4: { wrap: true } });
       expect(edges[0].labelWrapWidth).toBe(Number.POSITIVE_INFINITY);
+    });
+  });
+});
+
+describe('c4LayoutData.getData: boundary direction', () => {
+  const dirOf = (nodes: Node[], id: string) => nodes.find((n) => n.id === id)?.dir;
+
+  it('gives a boundary the direction its statement asks for', () => {
+    const db = parse(`C4Container
+Container_Boundary(shop, "Web shop") {
+  direction LR
+  Container(cart, "Cart")
+}
+Container_Boundary(warehouse, "Warehouse") {
+  direction BT
+  Container(pick, "Pick")
+}`);
+
+    const { nodes } = getData(db, config());
+    expect(dirOf(nodes, 'shop')).toBe('LR');
+    expect(dirOf(nodes, 'warehouse')).toBe('BT');
+  });
+
+  it('leaves dir unset on a boundary without a statement and on every element', () => {
+    const db = parse(`C4Container
+Container_Boundary(shop, "Web shop") {
+  direction LR
+  Container(cart, "Cart")
+}
+Container_Boundary(warehouse, "Warehouse") {
+  Container(pick, "Pick")
+}
+Person(buyer, "Buyer")`);
+
+    const { nodes } = getData(db, config());
+    expect(dirOf(nodes, 'warehouse')).toBeUndefined();
+    expect(nodes.filter((n) => !n.isGroup).map((n) => n.dir)).toEqual([
+      undefined,
+      undefined,
+      undefined,
+    ]);
+  });
+
+  it('sets nothing for a diagram that never asks', () => {
+    const db = parse(`C4Container
+Container_Boundary(shop, "Web shop") {
+  Container(cart, "Cart")
+}`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.every((n) => n.dir === undefined)).toBe(true);
+  });
+});
+
+describe('c4LayoutData.getData: c4.boundaryDirection', () => {
+  const dirsOf = (nodes: Node[]) =>
+    Object.fromEntries(nodes.filter((n) => n.isGroup).map((n) => [n.id, n.dir]));
+
+  const nested = `C4Container
+Container_Boundary(shop, "Web shop") {
+  Container(cart, "Cart")
+  Container_Boundary(checkout, "Checkout") {
+    Container(order, "Order")
+  }
+}
+Container_Boundary(warehouse, "Warehouse") {
+  Container(pick, "Pick")
+}`;
+
+  it.each([['LR'], ['RL'], ['BT'], ['TB']] as const)(
+    'gives every boundary %s, nested ones included',
+    (boundaryDirection) => {
+      const { nodes } = getData(parse(nested), {
+        ...config(),
+        c4: { ...config().c4, boundaryDirection },
+      });
+
+      expect(dirsOf(nodes)).toEqual({
+        shop: boundaryDirection,
+        checkout: boundaryDirection,
+        warehouse: boundaryDirection,
+      });
+    }
+  );
+
+  it('does not give an element a dir', () => {
+    const { nodes } = getData(parse(nested), {
+      ...config(),
+      c4: { ...config().c4, boundaryDirection: 'LR' },
+    });
+
+    expect(nodes.filter((n) => !n.isGroup).map((n) => n.dir)).toEqual([
+      undefined,
+      undefined,
+      undefined,
+    ]);
+  });
+
+  it('yields to the statement of a boundary that has one', () => {
+    const db = parse(`C4Container
+Container_Boundary(shop, "Web shop") {
+  direction TB
+  Container(cart, "Cart")
+}
+Container_Boundary(warehouse, "Warehouse") {
+  Container(pick, "Pick")
+}`);
+
+    const { nodes } = getData(db, { ...config(), c4: { ...config().c4, boundaryDirection: 'LR' } });
+
+    expect(dirsOf(nodes)).toEqual({ shop: 'TB', warehouse: 'LR' });
+  });
+
+  it('sets nothing when the key is absent', () => {
+    expect(dirsOf(getData(parse(nested), config()).nodes)).toEqual({
+      shop: undefined,
+      checkout: undefined,
+      warehouse: undefined,
     });
   });
 });
