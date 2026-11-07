@@ -1788,8 +1788,10 @@ $defs: # JSON Schema definition (maybe we should move these to a separate file)
         type: number
         default: 10
       padding:
+        description: |
+          Override the padding for class boxes, namespaces, and notes.
+          When omitted, class boxes use 12, namespaces use 16, and notes use 6.
         type: number
-        default: 5
       textHeight:
         type: number
         default: 10
