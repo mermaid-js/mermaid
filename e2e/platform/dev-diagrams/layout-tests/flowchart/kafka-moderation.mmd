@@ -1,0 +1,65 @@
+---
+config:
+  layout: elk
+---
+flowchart TD
+    subgraph Ingress["Event Ingress Topics"]
+        Producer["Client Producer"] -->|"1. events.review.request"| Coordinator
+        Producer -->|"2. events.content.evaluate<br/>(Create / Update)"| Coordinator
+    end
+
+    subgraph Routing["Workflow Coordination"]
+        Coordinator["Pipeline Coordinator<br/>(Orchestrator Service)"]
+    end
+
+    subgraph Workers["Stage Workers"]
+        TextWorker["Text Analysis Worker<br/>(Lexical & Rule Engine)"]
+        HashWorker["Digest Match Worker<br/>(Perceptual & Exact Hash)"]
+        VectorWorker["Similarity Search Worker<br/>(ANN Query Service)"]
+        ModelService["Embedding Inference Service<br/>(Vector Encoder API)"]
+    end
+
+    subgraph Storage["State & Storage Backends"]
+        CacheStore[("In-Memory Cache<br/>- Idempotency & Job State<br/>- Rule Prefix Trie<br/>- Digest & Policy Cache")]
+        SqlStore[("Relational Store<br/>- Digest & Category Tables<br/>- Threshold Policies")]
+        BlobStore[("Object Storage<br/>- Media Payload Bucket")]
+        VectorStore[("Vector Index Store<br/>- Embedding Collection")]
+    end
+
+    subgraph Egress["Egress & Outcome Topics"]
+        ResultTopic["events.stage.result<br/>(Aggregate stage outcomes)"]
+        FeedTopic["events.delivery.stream<br/>(Publish to subscriber feed)"]
+        EventTopic["events.entity.lifecycle<br/>(Created / Updated notifications)"]
+        ReviewTopic["events.manual.queue<br/>(Escalate for review)"]
+    end
+
+    Coordinator -->|"events.stage.hash"| HashWorker
+    Coordinator -.->|"events.stage.text"| TextWorker
+
+    HashWorker -->|"On digest match:<br/>REJECTED"| ResultTopic
+    HashWorker -->|"On clean digest:<br/>events.stage.vector"| VectorWorker
+    VectorWorker <-->|"POST /v1/embeddings"| ModelService
+    VectorWorker -->|"Similarity verdict:<br/>ACCEPTED / REJECTED / PENDING"| ResultTopic
+
+    TextWorker -.->|"TEXT_STAGE_RESULT"| ResultTopic
+
+    ResultTopic --> Coordinator
+
+    Coordinator <-->|"Idempotency & job state"| CacheStore
+
+    TextWorker <-->|"Read rule trie & cache"| CacheStore
+    TextWorker -.->|"Read payload"| BlobStore
+
+    HashWorker <-->|"Read/write digest cache"| CacheStore
+    HashWorker <-->|"Query digest table"| SqlStore
+    HashWorker <-->|"Fetch media object"| BlobStore
+
+    VectorWorker <-->|"Cache-aside policy"| CacheStore
+    VectorWorker <-->|"Read threshold policy"| SqlStore
+    VectorWorker <-->|"Fetch media object"| BlobStore
+    VectorWorker <-->|"ANN vector search"| VectorStore
+
+    Coordinator -->|"APPROVED"| FeedTopic
+    Coordinator -->|"APPROVED"| EventTopic
+    Coordinator -->|"PENDING"| ReviewTopic
+    Coordinator -->|"PENDING (Retain existing)"| FeedTopic

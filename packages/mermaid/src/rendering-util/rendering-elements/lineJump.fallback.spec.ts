@@ -135,7 +135,7 @@ describe('line jump fallback', () => {
 });
 
 describe('Kafka moderation regression geometry', () => {
-  // Captured from Chromium rendering elk-edge-cases/kafka-moderation.mmd.
+  // Captured from Chromium rendering e2e/platform/dev-diagrams/layout-tests/flowchart/kafka-moderation.mmd.
   // This pins the line-hop stage independently of fonts and ELK version.
   const edges = kafkaGeometry as EdgeGeom[];
 

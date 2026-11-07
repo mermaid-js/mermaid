@@ -1,6 +1,6 @@
 [
   {
-    "id": "L_UserPost_Orch_0",
+    "id": "L_Producer_Coordinator_0",
     "points": [
       {
         "x": 2243.3760416666664,
@@ -32,7 +32,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_UserPost_Orch_2",
+    "id": "L_Producer_Coordinator_2",
     "points": [
       {
         "x": 2286.842708333333,
@@ -64,7 +64,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_Orch_ImageScan_0",
+    "id": "L_Coordinator_HashWorker_0",
     "points": [
       {
         "x": 2228.887152777778,
@@ -96,7 +96,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_Orch_PostScan_0",
+    "id": "L_Coordinator_TextWorker_0",
     "points": [
       {
         "x": 2243.376041666667,
@@ -128,7 +128,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_ImageScan_T_Result_0",
+    "id": "L_HashWorker_ResultTopic_0",
     "points": [
       {
         "x": 1130.0369791666665,
@@ -176,7 +176,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_ImageScan_SemanticSearch_0",
+    "id": "L_HashWorker_VectorWorker_0",
     "points": [
       {
         "x": 1086.5703125,
@@ -200,7 +200,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_SemanticSearch_Embedding_0",
+    "id": "L_VectorWorker_ModelService_0",
     "points": [
       {
         "x": 1086.2792410714287,
@@ -224,7 +224,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_SemanticSearch_T_Result_0",
+    "id": "L_VectorWorker_ResultTopic_0",
     "points": [
       {
         "x": 1123.5363839285712,
@@ -272,7 +272,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_PostScan_T_Result_0",
+    "id": "L_TextWorker_ResultTopic_0",
     "points": [
       {
         "x": 1370.6265624999999,
@@ -312,7 +312,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_T_Result_Orch_0",
+    "id": "L_ResultTopic_Coordinator_0",
     "points": [
       {
         "x": 2238.8803125,
@@ -364,7 +364,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_Orch_Redis_0",
+    "id": "L_Coordinator_CacheStore_0",
     "points": [
       {
         "x": 2214.398263888889,
@@ -420,7 +420,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_PostScan_Redis_0",
+    "id": "L_TextWorker_CacheStore_0",
     "points": [
       {
         "x": 1305.4265624999998,
@@ -476,7 +476,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_PostScan_MinIO_0",
+    "id": "L_TextWorker_BlobStore_0",
     "points": [
       {
         "x": 1338.0265625,
@@ -516,7 +516,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_ImageScan_Redis_0",
+    "id": "L_HashWorker_CacheStore_0",
     "points": [
       {
         "x": 1064.8369791666664,
@@ -564,7 +564,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_ImageScan_TiDB_0",
+    "id": "L_HashWorker_SqlStore_0",
     "points": [
       {
         "x": 1043.1036458333333,
@@ -612,7 +612,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_ImageScan_MinIO_0",
+    "id": "L_HashWorker_BlobStore_0",
     "points": [
       {
         "x": 1108.3036458333331,
@@ -660,7 +660,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_SemanticSearch_Redis_0",
+    "id": "L_VectorWorker_CacheStore_0",
     "points": [
       {
         "x": 1067.6506696428569,
@@ -716,7 +716,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_SemanticSearch_TiDB_0",
+    "id": "L_VectorWorker_SqlStore_0",
     "points": [
       {
         "x": 1030.3935267857141,
@@ -772,7 +772,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_SemanticSearch_MinIO_0",
+    "id": "L_VectorWorker_BlobStore_0",
     "points": [
       {
         "x": 1104.9078124999999,
@@ -820,7 +820,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_SemanticSearch_Milvus_0",
+    "id": "L_VectorWorker_VectorStore_0",
     "points": [
       {
         "x": 1049.0220982142855,
@@ -868,7 +868,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_Orch_Timeline_0",
+    "id": "L_Coordinator_FeedTopic_0",
     "points": [
       {
         "x": 2301.331597222222,
@@ -916,7 +916,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_Orch_SocialPost_0",
+    "id": "L_Coordinator_EventTopic_0",
     "points": [
       {
         "x": 2286.8427083333336,
@@ -964,7 +964,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_Orch_Admin_0",
+    "id": "L_Coordinator_ReviewTopic_0",
     "points": [
       {
         "x": 2272.3538194444445,
@@ -1012,7 +1012,7 @@
     "arrowTypeEnd": "arrow_point"
   },
   {
-    "id": "L_Orch_Timeline_2",
+    "id": "L_Coordinator_FeedTopic_2",
     "points": [
       {
         "x": 2315.820486111111,

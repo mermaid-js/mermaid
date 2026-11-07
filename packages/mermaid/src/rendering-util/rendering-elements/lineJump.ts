@@ -208,6 +208,11 @@ function crossingSitsInRoundedCorner(edge: EdgeGeom, segIndex: number, t: number
   return leaving !== null && segLen - d < leaving.cutLen;
 }
 
+/**
+ * Finds all interior segment-pair crossings across `edges`, skipping any
+ * intersection that falls inside a rounded bend and assigning the preferred
+ * jump to the horizontally dominant segment when the pair is orthogonal.
+ */
 export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
   const crossings: Crossing[] = [];
 
@@ -273,12 +278,14 @@ export function findEdgeIntersections(edges: EdgeGeom[]): Crossing[] {
   return crossings;
 }
 
+/** Formats a coordinate to at most 3 decimal places without trailing zeros. */
 function fmt(n: number): string {
   // Strip trailing zeros so "5.00" → "5"; keep up to 3 decimals otherwise.
   const rounded = Math.round(n * 1000) / 1000;
   return Number.isInteger(rounded) ? `${rounded}` : `${rounded}`;
 }
 
+/** Formats a 2D point as an `"x,y"` SVG coordinate pair. */
 function pointToString(p: Point): string {
   return `${fmt(p.x)},${fmt(p.y)}`;
 }
@@ -555,6 +562,7 @@ function rewriteEdgePath(
   return parts.join(' ');
 }
 
+/** Builds a straight `M ... L ...` SVG path string from an ordered point list. */
 function plainPath(points: Point[]): string {
   if (points.length === 0) {
     return '';
@@ -574,6 +582,7 @@ function crossingDistance(seg: Segment, point: Point): number {
   return length === 0 ? 0 : ((point.x - seg.a.x) * dx + (point.y - seg.a.y) * dy) / length;
 }
 
+/** Groups crossings by the ID of the edge scheduled to carry the jump. */
 function groupCrossings(crossings: Crossing[]): Map<string, Crossing[]> {
   const grouped = new Map<string, Crossing[]>();
   for (const crossing of crossings) {
@@ -687,6 +696,10 @@ function planLineJumps(edges: EdgeGeom[], config: LineJumpConfig): Map<string, C
   return planned;
 }
 
+/**
+ * Rewrites each edge's polyline into an SVG path string with arc or gap hops
+ * at planned crossings, or plain straight segments when `config.enabled` is false.
+ */
 export function processEdgesWithJumps(
   edges: EdgeGeom[],
   config: LineJumpConfig
