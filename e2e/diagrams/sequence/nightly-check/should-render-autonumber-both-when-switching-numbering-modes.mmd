@@ -1,0 +1,31 @@
+---
+description: >-
+  Switching between `autonumber both`, `autonumber off` and `autonumber`, which
+  keeps counting unless a new start is given, together with decimals and the
+  smaller font for long numbers.
+config:
+  sequence:
+    diagramMarginX: 50
+    diagramMarginY: 10
+---
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+  participant Alice
+  participant Bob
+  Alice->>Bob: Not numbered yet
+  autonumber both 10 5
+  Alice->>Bob: 10 and 15
+  Bob->>Bob: 20
+  autonumber off
+  Alice->>Bob: Not numbered
+  autonumber
+  Alice->>Bob: One number
+  autonumber both
+  Bob->>Alice: Two numbers again
+  autonumber both 1.1 0.1
+  Alice->>Bob: 1.1 and 1.2
+  Bob->>Alice: 1.3 and 1.4
+  autonumber both 999
+  Alice->>Bob: 999 and 1000
+  autonumber both 99999
+  Bob->>Alice: 99999 and 100000

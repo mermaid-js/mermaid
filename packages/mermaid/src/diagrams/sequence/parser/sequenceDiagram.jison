@@ -77,6 +77,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <acc_descr_multiline>[\}]                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 "sequenceDiagram"                                               return 'SD';
+"autonumber"[ \t]+"both"                                        return 'autonumber_both';
 "autonumber"                                                    return 'autonumber';
 "off"															return 'off';
 ","                                                             return ',';
@@ -176,6 +177,9 @@ statement
 	| autonumber NUM 'NEWLINE' { $$ = {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:1, sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
 	| autonumber off 'NEWLINE' { $$ = {type:'sequenceIndex', sequenceVisible:false, signalType:yy.LINETYPE.AUTONUMBER};}
 	| autonumber 'NEWLINE'  {$$ = {type:'sequenceIndex', sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER}; }
+	| autonumber_both NUM NUM 'NEWLINE' { $$= {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:Number($3), sequenceVisible:true, sequenceBoth:true, signalType:yy.LINETYPE.AUTONUMBER};}
+	| autonumber_both NUM 'NEWLINE' { $$ = {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:1, sequenceVisible:true, sequenceBoth:true, signalType:yy.LINETYPE.AUTONUMBER};}
+	| autonumber_both 'NEWLINE' { $$ = {type:'sequenceIndex', sequenceVisible:true, sequenceBoth:true, signalType:yy.LINETYPE.AUTONUMBER}; }
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2.actor};}
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2.actor};}
 	| note_statement 'NEWLINE'

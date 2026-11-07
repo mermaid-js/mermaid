@@ -517,6 +517,66 @@ Bob-->Alice: I am good thanks!`;
     expect(error).toBe(true);
   });
 
+  it('should parse autonumber both', async () => {
+    const str = `
+      sequenceDiagram
+      autonumber both
+      Alice->Bob:Hello Bob, how are you?
+    `;
+
+    const diagram = await Diagram.fromText(str);
+
+    expect(diagram.db.getMessages()[0].type).toBe(diagram.db.LINETYPE.AUTONUMBER);
+    expect(diagram.db.getMessages()[0].message).toEqual({ visible: true, both: true });
+  });
+
+  it.each([
+    ['autonumber both 10', { start: 10, step: 1 }],
+    ['autonumber both 10 5', { start: 10, step: 5 }],
+    ['autonumber both 1.5 .25', { start: 1.5, step: 0.25 }],
+    ['autonumber   both   10   5', { start: 10, step: 5 }],
+    ['autonumber\tboth 10 5', { start: 10, step: 5 }],
+    ['AUTONUMBER BOTH 10 5', { start: 10, step: 5 }],
+  ])('should parse "%s"', async (statement, expected) => {
+    const str = `
+      sequenceDiagram
+      ${statement}
+      Alice->Bob:Hello Bob, how are you?
+    `;
+
+    const diagram = await Diagram.fromText(str);
+
+    expect(diagram.db.getMessages()[0].message).toEqual({ ...expected, visible: true, both: true });
+  });
+
+  it.each(['autonumber', 'autonumber 10 5', 'autonumber off'])(
+    'should not number both ends with "%s"',
+    async (statement) => {
+      const str = `
+      sequenceDiagram
+      ${statement}
+      Alice->Bob:Hello Bob, how are you?
+    `;
+
+      const diagram = await Diagram.fromText(str);
+
+      expect(diagram.db.getMessages()[0].message.both).toBeUndefined();
+    }
+  );
+
+  it.each(['autonumber bothways', 'autonumber both off', 'autonumber both 10.001'])(
+    'should not parse "%s"',
+    async (statement) => {
+      const str = `
+      sequenceDiagram
+      ${statement}
+      Alice->Bob:Hello Bob, how are you?
+    `;
+
+      await expect(Diagram.fromText(str)).rejects.toThrow();
+    }
+  );
+
   it('should handle a sequenceDiagram definition with a title:', async () => {
     const diagram = await Diagram.fromText(`
 sequenceDiagram
@@ -2331,6 +2391,153 @@ end`;
     expect(diagram.db.getMessages()[2].msgModel.sequenceIndex).toBe(10.2);
     expect(diagram.db.getMessages()[3].msgModel.sequenceIndex).toBe(10.3);
   });
+
+  describe('with autonumber both', () => {
+    const drawnDiagram = async (str) => {
+      const diagram = await Diagram.fromText(str);
+      await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+      return diagram;
+    };
+    /** The `[sender, receiver]` numbers of every message */
+    const numbersOf = async (str) => {
+      const diagram = await drawnDiagram(str);
+      return diagram.db
+        .getMessages()
+        .filter(({ msgModel }) => msgModel?.from)
+        .map(({ msgModel }) => [msgModel.sequenceIndex, msgModel.receiverSequenceIndex]);
+    };
+
+    it('should give the sender and the receiver their own number', async () => {
+      const numbers = await numbersOf(`
+        sequenceDiagram
+        autonumber both
+        Alice->>Bob: one
+        Bob->>Alice: two
+        Alice->>Bob: three
+      `);
+
+      expect(numbers).toEqual([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ]);
+    });
+
+    it('should only use one number for a message to self', async () => {
+      const numbers = await numbersOf(`
+        sequenceDiagram
+        autonumber both
+        Alice->>Bob: one
+        Bob->>Bob: self
+        Bob->>Alice: two
+      `);
+
+      expect(numbers).toEqual([
+        [1, 2],
+        [3, undefined],
+        [4, 5],
+      ]);
+    });
+
+    it('should use the start and the step', async () => {
+      const numbers = await numbersOf(`
+        sequenceDiagram
+        autonumber both 10 5
+        Alice->>Bob: one
+        Bob->>Bob: self
+        Bob->>Alice: two
+      `);
+
+      expect(numbers).toEqual([
+        [10, 15],
+        [20, undefined],
+        [25, 30],
+      ]);
+    });
+
+    it('should round decimals to the hundredths place', async () => {
+      const numbers = await numbersOf(`
+        sequenceDiagram
+        autonumber both 1.1 .1
+        Alice->>Bob: one
+        Bob->>Alice: two
+      `);
+
+      expect(numbers).toEqual([
+        [1.1, 1.2],
+        [1.3, 1.4],
+      ]);
+    });
+
+    it('should not give notes and blocks a number', async () => {
+      const numbers = await numbersOf(`
+        sequenceDiagram
+        autonumber both
+        Note over Alice,Bob: a note
+        loop Every minute
+          Alice->>Bob: one
+        end
+        activate Bob
+        alt good
+          Bob->>Alice: two
+        end
+        deactivate Bob
+      `);
+
+      expect(numbers).toEqual([
+        [1, 2],
+        [3, 4],
+      ]);
+    });
+
+    it('should go back to one number per message and keep counting', async () => {
+      const diagram = await drawnDiagram(`
+        sequenceDiagram
+        Alice->>Bob: not numbered yet
+        autonumber both 10 5
+        Alice->>Bob: both
+        autonumber off
+        Alice->>Bob: off
+        autonumber
+        Alice->>Bob: one number
+        autonumber both
+        Alice->>Bob: both again
+        autonumber 100
+        Alice->>Bob: restarted
+      `);
+      const models = diagram.db
+        .getMessages()
+        .filter(({ msgModel }) => msgModel?.from)
+        .map(({ msgModel }) => [
+          msgModel.sequenceVisible,
+          msgModel.sequenceIndex,
+          msgModel.receiverSequenceIndex,
+        ]);
+
+      expect(models).toEqual([
+        [false, 1, undefined],
+        [true, 10, 15],
+        [false, 20, undefined],
+        [true, 25, undefined],
+        [true, 30, 35],
+        [true, 100, undefined],
+      ]);
+    });
+
+    it('should move the receiver number next to the box of a created participant', async () => {
+      const diagram = await drawnDiagram(`
+        sequenceDiagram
+        autonumber both
+        participant Alice
+        create participant Bob
+        Alice->>Bob: created
+      `);
+      const { msgModel } = diagram.db.getMessages().at(-1);
+
+      expect(msgModel.toNumberInset).toBe(conf.width / 2 + 3 + 12);
+      expect(msgModel.fromNumberInset).toBeUndefined();
+    });
+  });
 });
 
 describe('when rendering a sequenceDiagram with actor mirror activated', () => {
@@ -2391,6 +2598,32 @@ participant Alice`;
 sequenceDiagram
 ${prop}-->>A: Hello, how are you?`)
     ).resolves.toBeDefined();
+  });
+
+  it('should move the numbers next to the box of a destroyed participant', async () => {
+    const str = `
+      sequenceDiagram
+      autonumber both
+      participant Alice
+      participant Bob
+      participant Carl
+      destroy Bob
+      Bob->>Alice: destroyed sender
+      destroy Carl
+      Alice->>Carl: destroyed receiver
+    `;
+
+    const diagram = await Diagram.fromText(str);
+    await diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
+    const [sender, receiver] = diagram.db
+      .getMessages()
+      .filter(({ msgModel }) => msgModel?.from)
+      .map(({ msgModel }) => msgModel);
+
+    expect(sender.fromNumberInset).toBe(conf.width / 2 + 3 + 12);
+    expect(sender.toNumberInset).toBeUndefined();
+    expect(receiver.toNumberInset).toBe(conf.width / 2 + 3 + 12);
+    expect(receiver.fromNumberInset).toBeUndefined();
   });
 });
 
