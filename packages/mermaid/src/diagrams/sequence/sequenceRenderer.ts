@@ -512,10 +512,10 @@ const getBothEndsLayout = function (msgModel, msg, diagObj: Diagram) {
 
   let lineStartX = startx;
   if (isReverse || isBidirectionalArrowType(msg, diagObj)) {
-    const gap =
-      numberClearance(
-        [CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL].includes(msg.centralConnection)
-      ) + 2;
+    const hasCircle = [CENTRAL_CONNECTION_REVERSE, CENTRAL_CONNECTION_DUAL].includes(
+      msg.centralConnection
+    );
+    const gap = numberClearance(hasCircle) + 2;
     lineStartX = isLeftToRight
       ? Math.max(startx, fromNumberX + gap)
       : Math.min(startx, fromNumberX - gap);
@@ -523,11 +523,12 @@ const getBothEndsLayout = function (msgModel, msg, diagObj: Diagram) {
 
   let lineStopX = stopx;
   if (!isReverse && ![SOLID_OPEN, DOTTED_OPEN].includes(msg.type)) {
+    const hasCircle = [CENTRAL_CONNECTION, CENTRAL_CONNECTION_DUAL].includes(msg.centralConnection);
     // The cross and async markers scale with the line width, so they reach further than the others
-    const gap =
-      numberClearance(
-        [CENTRAL_CONNECTION, CENTRAL_CONNECTION_DUAL].includes(msg.centralConnection)
-      ) + ([SOLID_CROSS, DOTTED_CROSS, SOLID_POINT, DOTTED_POINT].includes(msg.type) ? 5 : 2);
+    const hasLongArrowhead = [SOLID_CROSS, DOTTED_CROSS, SOLID_POINT, DOTTED_POINT].includes(
+      msg.type
+    );
+    const gap = numberClearance(hasCircle) + (hasLongArrowhead ? 5 : 2);
     lineStopX = isLeftToRight ? Math.min(stopx, toNumberX - gap) : Math.max(stopx, toNumberX + gap);
   }
 
