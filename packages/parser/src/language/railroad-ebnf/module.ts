@@ -12,7 +12,7 @@ import {
   inject,
 } from 'langium';
 
-import { RailroadEbnfTokenBuilder } from './tokenBuilder.js';
+import { RailroadEbnfTokenBuilder, type RailroadEbnfStandard } from './tokenBuilder.js';
 import { RailroadEbnfValueConverter } from './valueConverter.js';
 import {
   MermaidGeneratedSharedModule,
@@ -28,18 +28,23 @@ interface RailroadEbnfAddedServices {
 
 export type RailroadEbnfServices = LangiumCoreServices & RailroadEbnfAddedServices;
 
-export const RailroadEbnfModule: Module<
+type RailroadEbnfModuleType = Module<
   RailroadEbnfServices,
   PartialLangiumCoreServices & RailroadEbnfAddedServices
-> = {
+>;
+
+const createRailroadEbnfModule = (standard?: RailroadEbnfStandard): RailroadEbnfModuleType => ({
   parser: {
-    TokenBuilder: () => new RailroadEbnfTokenBuilder(),
+    TokenBuilder: () => new RailroadEbnfTokenBuilder(standard),
     ValueConverter: () => new RailroadEbnfValueConverter(),
   },
-};
+});
+
+export const RailroadEbnfModule: RailroadEbnfModuleType = createRailroadEbnfModule();
 
 export function createRailroadEbnfServices(
-  context: DefaultSharedCoreModuleContext = EmptyFileSystem
+  context: DefaultSharedCoreModuleContext = EmptyFileSystem,
+  standard?: RailroadEbnfStandard
 ): {
   shared: LangiumSharedCoreServices;
   RailroadEbnf: RailroadEbnfServices;
@@ -51,7 +56,7 @@ export function createRailroadEbnfServices(
   const RailroadEbnf: RailroadEbnfServices = inject(
     createDefaultCoreModule({ shared }),
     RailroadEbnfGeneratedModule,
-    RailroadEbnfModule
+    createRailroadEbnfModule(standard)
   );
   shared.ServiceRegistry.register(RailroadEbnf);
   return { shared, RailroadEbnf };

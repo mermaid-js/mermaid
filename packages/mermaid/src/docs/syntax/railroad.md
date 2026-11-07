@@ -43,6 +43,32 @@ The rule assignment operator and the operators used inside a definition depend o
 
 EBNF (Extended Backus-Naur Form) is the most common notation. Mermaid supports both W3C and ISO 14977 EBNF styles. Rules are written as `rule_name = definition ;` (the `::=` assignment operator is also accepted).
 
+### Choosing the notation with `standard`
+
+W3C and ISO 14977 use some of the same characters for different things: `?` ends an optional element in W3C and delimits a special sequence in ISO, and `,` separates elements in ISO but is not part of W3C. By default Mermaid accepts both styles at once, which is why `bar " "? baz " "? qux` reads as `bar`, `" "`, and a special sequence `? baz " "?`, followed by `qux`.
+
+Add a `standard` line after the diagram keyword (next to `title`, before the first rule) to read the diagram in one notation only:
+
+```mermaid-example
+railroad-ebnf-beta
+standard w3c
+foo = bar " "? baz " "? qux ;
+```
+
+| Line           | `? ... ?`              | `A?`, `A*`, `A+`                             | `,` between elements                       |
+| -------------- | ---------------------- | -------------------------------------------- | ------------------------------------------ |
+| `standard w3c` | not a special sequence | postfix operators                            | refused, separate elements with whitespace |
+| `standard iso` | a special sequence     | refused, use `[ A ]`, `{ A }` or `A , { A }` | required between elements                  |
+| no `standard`  | a special sequence     | postfix operators                            | accepted                                   |
+
+Without a `standard` line nothing changes, so existing diagrams render as before. With `standard iso` a sequence without its commas (`a b` instead of `a, b`) is refused. A refused construct is reported with its line and column. An unknown value, or a second `standard` line, is an error. The line belongs to one diagram, so a page can hold a W3C diagram and an ISO diagram side by side.
+
+```mermaid-example
+railroad-ebnf-beta
+standard iso
+foo = bar, ? any visible character ?, [ baz ], { qux } ;
+```
+
 ### Terminals and Non-terminals
 
 Terminals are literal strings enclosed in quotes; non-terminals are identifiers that reference other rules:

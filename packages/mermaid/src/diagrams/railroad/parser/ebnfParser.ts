@@ -1,6 +1,7 @@
 import {
   MermaidParseError,
   createRailroadEbnfServices,
+  type RailroadEbnfStandard,
   type RailroadEbnf,
   type EbnfChoice,
   type EbnfExceptionPostfix,
@@ -23,7 +24,121 @@ import { populateCommonDb } from '../../common/populateCommonDb.js';
 import { db } from '../railroadDb.js';
 import type { ASTNode, RailroadRule } from '../railroadTypes.js';
 
-const langiumParser = createRailroadEbnfServices().RailroadEbnf.parser.LangiumParser;
+const defaultServices = createRailroadEbnfServices().RailroadEbnf;
+// `iso` lexes like the default; only `w3c` needs its own lexer (no `? ... ?` token).
+const w3cServices = createRailroadEbnfServices(undefined, 'w3c').RailroadEbnf;
+
+const STANDARDS: readonly RailroadEbnfStandard[] = ['w3c', 'iso'];
+
+interface Located {
+  line: number;
+  column: number;
+}
+
+const diagnostic = (at: Located | undefined, message: string): string =>
+  `Parse error on line ${at?.line ?? '?'}, column ${at?.column ?? '?'}: ${message}`;
+
+const locate = (
+  node: { $cstNode?: { range: { start: { line: number; character: number } } } } | undefined
+): Located | undefined => {
+  const start = node?.$cstNode?.range.start;
+  return start ? { line: start.line + 1, column: start.character + 1 } : undefined;
+};
+
+/**
+ * Read the `standard` lines from the header. The choice has to be known before parsing because
+ * W3C and ISO tokenize `? ... ?` differently, so this runs the default lexer, which reads the
+ * header the same way under both.
+ */
+const readStandard = (input: string): { standard?: RailroadEbnfStandard; errors: string[] } => {
+  const errors: string[] = [];
+  let standard: RailroadEbnfStandard | undefined;
+  let seen = 0;
+  for (const token of defaultServices.parser.Lexer.tokenize(input).tokens) {
+    if (token.tokenType.name !== 'STANDARD') {
+      continue;
+    }
+    seen++;
+    const at = { line: token.startLine ?? 0, column: token.startColumn ?? 0 };
+    const value = token.image.slice('standard'.length).trim();
+    if (seen > 1) {
+      errors.push(diagnostic(at, 'only one `standard` line is allowed'));
+    } else if ((STANDARDS as readonly string[]).includes(value)) {
+      standard = value as RailroadEbnfStandard;
+    } else {
+      errors.push(
+        diagnostic(at, `unknown standard "${value}", expected one of: ${STANDARDS.join(', ')}`)
+      );
+    }
+  }
+  return { standard, errors };
+};
+
+const collectChoice = (
+  choice: EbnfChoice,
+  standard: RailroadEbnfStandard | undefined,
+  errors: string[]
+): void => {
+  for (const sequence of choice.alternatives) {
+    if (standard === 'w3c') {
+      for (const comma of sequence.commas) {
+        errors.push(
+          diagnostic(
+            locate(comma),
+            'the "," separator is not W3C notation, separate elements with whitespace'
+          )
+        );
+      }
+    }
+    if (standard === 'iso' && sequence.commas.length < sequence.elements.length - 1) {
+      errors.push(
+        diagnostic(
+          locate(sequence),
+          'ISO 14977 notation separates the elements of a sequence with ",", add the missing ","'
+        )
+      );
+    }
+    for (const term of sequence.elements) {
+      collectPrimary(term.base, standard, errors);
+      for (const postfix of term.postfixes) {
+        collectPostfix(postfix, standard, errors);
+      }
+    }
+  }
+};
+
+const collectPrimary = (
+  primary: EbnfPrimary,
+  standard: RailroadEbnfStandard | undefined,
+  errors: string[]
+): void => {
+  if (
+    primary.$type === 'EbnfGroup' ||
+    primary.$type === 'EbnfOptional' ||
+    primary.$type === 'EbnfRepetition'
+  ) {
+    collectChoice((primary as EbnfGroup).element, standard, errors);
+  }
+};
+
+const ISO_POSTFIX_HINTS: Record<string, string> = {
+  EbnfOptionalPostfix: '?: use [ ... ]',
+  EbnfZeroOrMorePostfix: '*: use { ... }',
+  EbnfOneOrMorePostfix: '+: use "x, { x }"',
+};
+
+const collectPostfix = (
+  postfix: EbnfPostfix,
+  standard: RailroadEbnfStandard | undefined,
+  errors: string[]
+): void => {
+  if (postfix.$type === 'EbnfExceptionPostfix') {
+    collectPrimary((postfix as EbnfExceptionPostfix).except, standard, errors);
+  } else if (standard === 'iso') {
+    const hint = ISO_POSTFIX_HINTS[postfix.$type];
+    errors.push(diagnostic(locate(postfix), `the postfix operator ${hint} (ISO 14977 notation)`));
+  }
+};
 
 const transformChoice = (choice: EbnfChoice): ASTNode => {
   const alternatives = choice.alternatives.map(transformSequence);
@@ -150,12 +265,23 @@ export const parser: ParserDefinition = {
     db.clear();
     log.debug('[EBNF Parser] Starting Langium parse');
 
-    const result = langiumParser.parse<RailroadEbnf>(input);
+    const header = readStandard(input);
+    if (header.errors.length > 0) {
+      throw new Error(`Parsing failed: ${header.errors.join('\n')}`);
+    }
+
+    const services = header.standard === 'w3c' ? w3cServices : defaultServices;
+    const result = services.parser.LangiumParser.parse<RailroadEbnf>(input);
     if (result.lexerErrors.length > 0 || result.parserErrors.length > 0) {
       throw new MermaidParseError(result);
     }
 
     const ast = result.value;
+    const notation: string[] = [];
+    ast.rules.forEach((rule) => collectChoice(rule.definition, header.standard, notation));
+    if (notation.length > 0) {
+      throw new Error(`Parsing failed: ${notation.join('\n')}`);
+    }
     log.debug('[EBNF Parser] Parsed rules:', ast.rules.length);
 
     populateDb(ast);

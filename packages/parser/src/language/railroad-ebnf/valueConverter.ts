@@ -63,6 +63,10 @@ export class RailroadEbnfValueConverter extends AbstractMermaidValueConverter {
       return decodeEscapedString(input);
     }
 
+    if (rule.name === 'STANDARD') {
+      return input.slice('standard'.length).trim();
+    }
+
     if (rule.name === 'EBNF_SPECIAL_SEQUENCE') {
       return input.slice(1, -1).trim();
     }

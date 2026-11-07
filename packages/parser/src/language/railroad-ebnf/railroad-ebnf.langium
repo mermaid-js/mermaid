@@ -1,6 +1,10 @@
 grammar RailroadEbnfGrammar
 
-terminal TITLE: /title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*|)/;
+terminal TITLE: /title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*)/;
+// `standard w3c|iso` picks the notation. The value is checked after lexing, so an unknown one gets a
+// diagnostic listing the valid values. The token builder lexes it only in the header, and the
+// lookahead keeps a first rule named `standard` a rule.
+terminal STANDARD: /standard(?![\t ]*(?:::=|=))(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*)/;
 terminal ACC_TITLE: /accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
 terminal ACC_DESCR: /accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
 
@@ -21,6 +25,7 @@ hidden terminal EBNF_ISO_COMMENT: /\(\*[\s\S]*?\*\)/;
 
 interface RailroadEbnf {
     title?: string
+    standards: string[]
     accTitle?: string
     accDescr?: string
     rules: EbnfRule[]
@@ -37,6 +42,11 @@ interface EbnfChoice {
 
 interface EbnfSequence {
     elements: EbnfTerm[]
+    commas: EbnfComma[]
+}
+
+interface EbnfComma {
+    operator: string
 }
 
 interface EbnfTerm {
@@ -89,7 +99,7 @@ interface EbnfExceptionPostfix extends EbnfPostfix {
 
 entry RailroadEbnf returns RailroadEbnf:
     'railroad-ebnf-beta'
-    ((title=TITLE | accTitle=ACC_TITLE | accDescr=ACC_DESCR))*
+    ((title=TITLE | accTitle=ACC_TITLE | accDescr=ACC_DESCR | standards+=STANDARD))*
     rules+=EbnfRule*
 ;
 
@@ -102,7 +112,11 @@ EbnfChoice returns EbnfChoice:
 ;
 
 EbnfSequence returns EbnfSequence:
-    elements+=EbnfTerm (','? elements+=EbnfTerm)*
+    elements+=EbnfTerm (commas+=EbnfComma? elements+=EbnfTerm)*
+;
+
+EbnfComma returns EbnfComma:
+    operator=','
 ;
 
 EbnfTerm returns EbnfTerm:
