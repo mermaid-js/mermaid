@@ -10,7 +10,7 @@
 
 # Interface: UnknownDiagramError
 
-Defined in: packages/mermaid/src/errors.ts:1
+Defined in: [packages/mermaid/src/errors.ts:1](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/errors.ts#L1)
 
 ## Extends
 
