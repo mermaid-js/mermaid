@@ -1,0 +1,24 @@
+C4Container
+    title Boundary direction - both boundaries ask for LR
+
+    Person(buyer, "Buyer")
+
+    Container_Boundary(shop, "Web shop") {
+        direction LR
+        Container(cart, "Cart", "Python", "Holds the items")
+        Container(order, "Order", "Python", "Creates the order")
+        Container(pay, "Payment", "Python", "Takes the payment")
+        Rel(cart, order, "Checks out")
+        Rel(order, pay, "Charges")
+    }
+
+    Container_Boundary(wh, "Warehouse") {
+        direction LR
+        Container(pick, "Pick", "Go", "Collects the items")
+        Container(pack, "Pack", "Go", "Packs the parcel")
+        Container(ship, "Ship", "Go", "Books the carrier")
+        Rel(pick, pack, "Hands over")
+        Rel(pack, ship, "Hands over")
+    }
+
+    Rel(buyer, pick, "Orders")
