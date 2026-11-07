@@ -112,6 +112,7 @@ describe('drawMessage with autonumber both (#6988)', () => {
 
   const attrsOf = (elem) => Object.fromEntries(elem.attr.mock.calls);
 
+  /** Draws a message between Alice and Bob and returns the parts of it that the tests look at */
   const draw = async ({ msg = {}, ...model }) => {
     const diagram = mockDiagram();
     const isLeftToRight = (model.from ?? 'Alice') === 'Alice';
@@ -372,6 +373,46 @@ describe('drawMessage with autonumber both (#6988)', () => {
       { index: 999, fontSize: '12px' },
       { index: 1000, fontSize: '9px' },
     ]);
+  });
+
+  it('uses the smallest font for a number of more than five digits', async () => {
+    const { numbers } = await draw({ sequenceIndex: 99999, receiverSequenceIndex: 100000 });
+
+    expect(numbers).toMatchObject([
+      { index: 99999, fontSize: '9px' },
+      { index: 100000, fontSize: '7px' },
+    ]);
+  });
+
+  describe('with a single number and central connections', () => {
+    it.each([
+      ['CENTRAL_CONNECTION', 'SOLID', [BOB]],
+      ['CENTRAL_CONNECTION', 'SOLID_ARROW_TOP_REVERSE', [BOB - 16.5]],
+      ['CENTRAL_CONNECTION_REVERSE', 'SOLID', [ALICE + 16.5]],
+      ['CENTRAL_CONNECTION_REVERSE', 'SOLID_ARROW_TOP_REVERSE', [ALICE]],
+      ['CENTRAL_CONNECTION_DUAL', 'SOLID', [ALICE + 16.5, BOB]],
+      ['CENTRAL_CONNECTION_DUAL', 'SOLID_ARROW_TOP_REVERSE', [ALICE, BOB - 16.5]],
+    ])('only moves the circle that shares its end with the number: %s %s', async (...args) => {
+      const [centralConnection, type, expected] = args;
+      const { circles } = await draw({
+        type: LINETYPE[type],
+        receiverSequenceIndex: undefined,
+        msg: { centralConnection: LINETYPE[centralConnection] },
+      });
+
+      expect(circles).toEqual(expected);
+    });
+
+    it('leaves the circles on the lifelines without numbers', async () => {
+      const { circles } = await draw({
+        type: LINETYPE.SOLID,
+        receiverSequenceIndex: undefined,
+        sequenceVisible: false,
+        msg: { centralConnection: LINETYPE.CENTRAL_CONNECTION_DUAL },
+      });
+
+      expect(circles).toEqual([ALICE, BOB]);
+    });
   });
 
   it('keeps a single number on the lifeline', async () => {

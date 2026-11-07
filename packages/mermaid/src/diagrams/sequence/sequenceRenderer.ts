@@ -291,6 +291,18 @@ const SEQUENCE_NUMBER_DRAWN_RADIUS = SEQUENCE_NUMBER_RADIUS * 2;
 const CENTRAL_CONNECTION_CIRCLE_OFFSET = 16.5;
 const CENTRAL_CONNECTION_CIRCLE_RADIUS = 5;
 
+/**
+ * Draws the circles of a central connection. When a number sits at the same end of the line as a
+ * circle, the circle moves next to the number.
+ *
+ * @param elem - The parent of the circles
+ * @param msg - The message
+ * @param msgModel - The model containing fields describing a message
+ * @param diagObj - The diagram object.
+ * @param startx - The X coordinate at which the message line starts
+ * @param stopx - The X coordinate at which the message line stops
+ * @param lineStartY - The Y coordinate of the message line
+ */
 const drawCentralConnection = function (
   elem: any,
   msg: any,
@@ -492,6 +504,7 @@ const getBothEndsLayout = function (msgModel, msg, diagObj: Diagram) {
   const fromNumberX = (isLeftToRight ? fromBounds + 1 : toBounds - 1) + direction * fromNumberInset;
   const toNumberX = (isLeftToRight ? toBounds - 1 : fromBounds + 1) - direction * toNumberInset;
 
+  /** How far a line end has to stay from the number at that end, not counting the arrowhead */
   const numberClearance = (hasCentralCircle: boolean) =>
     hasCentralCircle
       ? CENTRAL_CONNECTION_CIRCLE_OFFSET + CENTRAL_CONNECTION_CIRCLE_RADIUS
@@ -789,6 +802,7 @@ export const drawMessage = async function (
       autonumberX = isLeftToRight ? msgModel.fromBounds + 1 : msgModel.toBounds - 1;
     }
 
+    /** Draws a number at the given position, with a smaller font the longer the number gets */
     const drawSequenceNumber = (numberX: number, index: number) => {
       let fontSize = '12px';
       const indexLength = index.toString().length;
@@ -1047,6 +1061,12 @@ function adjustCreatedDestroyedData(
   createdActors,
   destroyedActors
 ) {
+  /**
+   * Stops the message at the edge of the receiver's box and makes room for the box in the bounds.
+   *
+   * @param actor - The receiver
+   * @param adjustment - The distance from the lifeline to where the message has to stop
+   */
   function receiverAdjustment(actor, adjustment) {
     if (actor.x < actors.get(msg.from).x) {
       bounds.insert(
@@ -1068,6 +1088,12 @@ function adjustCreatedDestroyedData(
     msgModel.toNumberInset = adjustment + SEQUENCE_NUMBER_DRAWN_RADIUS;
   }
 
+  /**
+   * Starts the message at the edge of the sender's box and makes room for the box in the bounds.
+   *
+   * @param actor - The sender
+   * @param adjustment - The distance from the lifeline to where the message has to start
+   */
   function senderAdjustment(actor, adjustment) {
     if (actor.x < actors.get(msg.to).x) {
       bounds.insert(
