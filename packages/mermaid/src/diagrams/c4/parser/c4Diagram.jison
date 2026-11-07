@@ -78,10 +78,10 @@
 
 %%
 
-.*direction\s+TB[^\n]*                    return 'direction_tb';
-.*direction\s+BT[^\n]*                    return 'direction_bt';
-.*direction\s+RL[^\n]*                    return 'direction_rl';
-.*direction\s+LR[^\n]*                    return 'direction_lr';
+direction[ \t]+TB\b                       return 'direction_tb';
+direction[ \t]+BT\b                       return 'direction_bt';
+direction[ \t]+RL\b                       return 'direction_rl';
+direction[ \t]+LR\b                       return 'direction_lr';
 
 
 "title"\s[^#\n;]+                         return 'title';
@@ -156,6 +156,8 @@ accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
 
 "UpdateElementStyle"                      { this.begin("update_el_style"); return 'UPDATE_EL_STYLE';}
 "UpdateRelStyle"                          { this.begin("update_rel_style"); return 'UPDATE_REL_STYLE';}
+"AddElementTag"                           { this.begin("update_el_style"); return 'ADD_ELEMENT_TAG';}
+"AddRelTag"                               { this.begin("update_rel_style"); return 'ADD_REL_TAG';}
 "UpdateLayoutConfig"                      { this.begin("update_layout_config"); return 'UPDATE_LAYOUT_CONFIG';}
 
 <person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext_queue,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext_queue,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config><<EOF>>                return "EOF_IN_STRUCT";
@@ -296,6 +298,7 @@ diagramStatement
     | COMPONENT_EXT_DB attributes {yy.addComponent('external_component_db', ...$2); $$=$2;}
     | COMPONENT_EXT_QUEUE attributes {yy.addComponent('external_component_queue', ...$2); $$=$2;}
     | boundaryStatement
+    | boundaryDirection
     | REL attributes {yy.addRel('rel', ...$2); $$=$2;}
     | BIREL attributes {yy.addRel('birel', ...$2); $$=$2;}
     | REL_U attributes {yy.addRel('rel_u', ...$2); $$=$2;}
@@ -306,7 +309,20 @@ diagramStatement
     | REL_INDEX attributes {$2.splice(0, 1); yy.addRel('rel', ...$2); $$=$2;}
     | UPDATE_EL_STYLE attributes {yy.updateElStyle('update_el_style', ...$2); $$=$2;}
     | UPDATE_REL_STYLE attributes {yy.updateRelStyle('update_rel_style', ...$2); $$=$2;}
+    | ADD_ELEMENT_TAG attributes {yy.addElementTag(...$2); $$=$2;}
+    | ADD_REL_TAG attributes {yy.addRelTag(...$2); $$=$2;}
     | UPDATE_LAYOUT_CONFIG attributes {yy.updateLayoutConfig('update_layout_config', ...$2); $$=$2;}
+    ;
+
+boundaryDirection
+    : direction_tb
+    { yy.setBoundaryDirection('TB');}
+    | direction_bt
+    { yy.setBoundaryDirection('BT');}
+    | direction_rl
+    { yy.setBoundaryDirection('RL');}
+    | direction_lr
+    { yy.setBoundaryDirection('LR');}
     ;
 
 attributes
