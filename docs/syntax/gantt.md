@@ -552,6 +552,7 @@ mermaid.ganttConfig = {
   gridLineStartPadding: 10, // Vertical starting position of the grid lines
   fontSize: 12, // Font size
   sectionFontSize: 24, // Font size for sections
+  axisFontSize: 14, // Font size of the axis tick labels (v<MERMAID_RELEASE_VERSION>+)
   numberSectionStyles: 1, // The number of alternating section styles
   axisFormat: '%d/%m', // Date/time format of the axis
   tickInterval: '1week', // Axis ticks
