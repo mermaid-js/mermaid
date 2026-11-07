@@ -578,9 +578,68 @@ describe('[Text] when parsing', () => {
     expect(edges[0].text).toBe(',.?!+-*');
   });
 
-  it('should throw error at nested set of brackets', function () {
-    const str = 'graph TD; A[This is a () in text];';
-    expect(() => flow.parser.parse(str)).toThrowError("got 'PS'");
+  it('should handle parentheses in square bracket node text (#7002)', function () {
+    const res = flow.parser.parse('graph TD; A[This is a () in text];');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('This is a () in text');
+  });
+
+  it('should handle parentheses and apostrophes in node text (#7002)', function () {
+    const res = flow.parser.parse(
+      "graph TD;\nA[Métabolisme] --> B[Catabolisme (Démolition pour produire de l'énergie)];\nA --> C[Anabolisme (Construction qui consomme de l'énergie)];"
+    );
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('B').text).toBe("Catabolisme (Démolition pour produire de l'énergie)");
+    expect(vert.get('C').text).toBe("Anabolisme (Construction qui consomme de l'énergie)");
+  });
+
+  it('should handle parentheses at the start and nested parentheses in node text (#7002)', function () {
+    // Note: `A[(hello) world]` is cylinder syntax (`[(`), not a square node, so
+    // the leading parenthesis case is written with text before the group.
+    const res = flow.parser.parse('graph TD; A[x(hello) world]; B[x (a (b)) y];');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').text).toBe('x(hello) world');
+    expect(vert.get('B').text).toBe('x (a (b)) y');
+  });
+
+  it('should handle parentheses in round, diamond and cylinder node text (#7002)', function () {
+    const res = flow.parser.parse(
+      'graph TD; A(x (y)); B{Hello (world)}; C[(x (y))]; D((x)); E(((x)));'
+    );
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('round');
+    expect(vert.get('A').text).toBe('x (y)');
+    expect(vert.get('B').type).toBe('diamond');
+    expect(vert.get('B').text).toBe('Hello (world)');
+    expect(vert.get('C').type).toBe('cylinder');
+    expect(vert.get('C').text).toBe('x (y)');
+    // ((x)) is still a circle, not a round node with the text '(x)'
+    expect(vert.get('D').type).toBe('circle');
+    expect(vert.get('D').text).toBe('x');
+    expect(vert.get('E').type).toBe('doublecircle');
+    expect(vert.get('E').text).toBe('x');
+  });
+
+  it('should handle parentheses in edge labels (#7002)', function () {
+    const res = flow.parser.parse('graph TD; A-->|x (y)|B;');
+
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].text).toBe('x (y)');
+  });
+
+  it('should throw error for unbalanced parentheses in node text (#7002)', function () {
+    const str = 'graph TD; A[Hello (world];';
+    expect(() => flow.parser.parse(str)).toThrowError();
   });
 
   it('should throw error for strings and text at the same time', function () {
