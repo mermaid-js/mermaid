@@ -16,19 +16,6 @@ The **tidy-tree** layout arranges nodes in a hierarchical, tree-like structure. 
 
 ## Example Usage
 
-```mermaid-example
----
-config:
-  layout: tidy-tree
----
-mindmap
-root((mindmap is a long thing))
-  A
-  B
-  C
-  D
-```
-
 ```mermaid
 ---
 config:
@@ -43,6 +30,19 @@ root((mindmap is a long thing))
 ```
 
 ```mermaid-example
+---
+config:
+  layout: tidy-tree
+---
+mindmap
+root((mindmap is a long thing))
+  A
+  B
+  C
+  D
+```
+
+```mermaid
 ---
 config:
   layout: tidy-tree
@@ -63,7 +63,7 @@ root((mindmap))
             Argument mapping
 ```
 
-```mermaid
+```mermaid-example
 ---
 config:
   layout: tidy-tree
