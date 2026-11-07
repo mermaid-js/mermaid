@@ -25,7 +25,9 @@ const nudgeRelationshipLabels = (svg: D3Selection<SVGGElement>, data4Layout: Lay
     if (!dx && !dy) {
       continue;
     }
-    const inner = svg.select<SVGGElement>(`[data-id="${edge.id}"]`);
+    // The edge's <path> carries the same data-id and comes first in the document, so the
+    // lookup is anchored to the label's own group.
+    const inner = svg.select<SVGGElement>(`g.edgeLabel > g.label[data-id="${edge.id}"]`);
     const group = inner.empty() ? null : inner.node()?.closest('g.edgeLabel');
     if (!group) {
       continue;
