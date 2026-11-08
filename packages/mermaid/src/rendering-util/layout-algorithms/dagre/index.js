@@ -111,74 +111,78 @@ const getSelfLoopSide = (graph, node, segments, originalNodeId, rankdir) => {
   return getDefaultSelfLoopSide(rankdir);
 };
 
-// Extra distance applied per additional self-loop stacked on the same side of a node.
+// Clearance between a stacked self-loop and the label of the loop inside it.
 const SELF_LOOP_STACK_GAP = 12;
 
 // Build a compact loop around the node instead of rendering dagre's long dummy-edge route.
-const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0, loopIndex = 0) => {
+// `stack` places a loop outside the loops already drawn on the same side of the node (see #6888):
+// `offset` pushes its far edge out, and `minSpan` widens it so its legs pass beside the inner
+// loops' labels instead of through them. The legs still start and end on the node border.
+const getSelfLoopPoints = (node, side = 'top', yOffset = 0, labelWidth = 0, stack = {}) => {
   const x = node.x;
   const y = node.y - yOffset;
   const halfWidth = node.width / 2;
   const halfHeight = node.height / 2;
   const maxSpan = Math.max(36, Math.min(100, node.width * 0.8));
-  const span = clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan);
-  const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48);
+  const span = Math.max(
+    clamp(Math.max(labelWidth, node.width * 0.35), 36, maxSpan),
+    stack.minSpan ?? 0
+  );
+  const depth = clamp(Math.min(node.width, node.height) * 0.45, 24, 48) + (stack.offset ?? 0);
 
-  let points;
   switch (side) {
     case 'bottom': {
       const bottom = y + halfHeight;
-      points = [
+      return [
         { x: x - span / 2, y: bottom },
         { x: x - span / 2, y: bottom + depth },
         { x: x + span / 2, y: bottom + depth },
         { x: x + span / 2, y: bottom },
       ];
-      break;
     }
     case 'right': {
       const right = x + halfWidth;
-      points = [
+      return [
         { x: right, y: y - span / 2 },
         { x: right + depth, y: y - span / 2 },
         { x: right + depth, y: y + span / 2 },
         { x: right, y: y + span / 2 },
       ];
-      break;
     }
     case 'left': {
       const left = x - halfWidth;
-      points = [
+      return [
         { x: left, y: y - span / 2 },
         { x: left - depth, y: y - span / 2 },
         { x: left - depth, y: y + span / 2 },
         { x: left, y: y + span / 2 },
       ];
-      break;
     }
     case 'top':
     default: {
       const top = y - halfHeight;
-      points = [
+      return [
         { x: x - span / 2, y: top },
         { x: x - span / 2, y: top - depth },
         { x: x + span / 2, y: top - depth },
         { x: x + span / 2, y: top },
       ];
-      break;
     }
   }
+};
 
-  // A node can carry several self-loops on the same side. Push each additional
-  // loop further out so they don't render exactly on top of each other (see #6888).
-  if (loopIndex > 0) {
-    const shift = loopIndex * SELF_LOOP_STACK_GAP;
-    const dx = side === 'right' ? shift : side === 'left' ? -shift : 0;
-    const dy = side === 'bottom' ? shift : side === 'top' ? -shift : 0;
-    points = points.map((point) => ({ x: point.x + dx, y: point.y + dy }));
-  }
-
-  return points;
+// Where the next self-loop on the same side has to go so that it clears this loop and its label.
+const getNextSelfLoopStack = (stack, points, side, label) => {
+  const horizontal = side === 'left' || side === 'right';
+  // Outward extent of the label (it sits just beyond the loop's far edge) and its size along the node.
+  const labelDepth = (horizontal ? label.width : label.height) ?? 0;
+  const labelSpan = (horizontal ? label.height : label.width) ?? 0;
+  const coords = points.map((point) => (horizontal ? point.y : point.x));
+  const span = Math.max(...coords) - Math.min(...coords);
+  return {
+    offset: (stack.offset ?? 0) + labelDepth + SELF_LOOP_STACK_GAP,
+    minSpan: Math.max(span, labelSpan) + 2 * SELF_LOOP_STACK_GAP,
+  };
 };
 
 const getSelfLoopLabelPosition = (node, points, side = 'top', yOffset = 0, label = {}) => {
@@ -220,7 +224,7 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     }
   });
 
-  const selfLoopCountsByNodeAndSide = new Map();
+  const selfLoopStacksByNodeAndSide = new Map();
   selfLoopEdgeGroups.forEach((segments) => {
     if (segments.length !== 3) {
       // Unexpected self-loop state: preserve the old rendering behavior rather than dropping edges.
@@ -247,9 +251,9 @@ export const getEdgesToRender = (graph, yOffset = 0, { mergeSelfLoops = true } =
     // Dagre uses the dummy route for layout; the SVG output should still be one logical edge.
     const side = getSelfLoopSide(graph, node, segments, originalEdge.start, rankdir);
     const sideKey = `${originalEdge.start}|${side}`;
-    const loopIndex = selfLoopCountsByNodeAndSide.get(sideKey) ?? 0;
-    selfLoopCountsByNodeAndSide.set(sideKey, loopIndex + 1);
-    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0, loopIndex);
+    const stack = selfLoopStacksByNodeAndSide.get(sideKey) ?? {};
+    const points = getSelfLoopPoints(node, side, yOffset, label.width ?? 0, stack);
+    selfLoopStacksByNodeAndSide.set(sideKey, getNextSelfLoopStack(stack, points, side, label));
     const labelPosition = getSelfLoopLabelPosition(node, points, side, yOffset, label);
     const mergedEdge = {
       ...middleSegment.edge,

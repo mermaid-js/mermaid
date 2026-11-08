@@ -489,18 +489,23 @@ describe('getEdgesToRender', () => {
   });
 
   it.each([
-    ['TB', 0, -12],
-    ['BT', 0, 12],
-    ['LR', 12, 0],
-    ['RL', -12, 0],
-  ])('stacks self-loops outward without shifting along the node in %s', (rankdir, dx, dy) => {
+    ['TB', 'top'],
+    ['BT', 'bottom'],
+    ['LR', 'right'],
+    ['RL', 'left'],
+  ])('stacks self-loops so their labels stay apart in %s', (rankdir, side) => {
     // https://github.com/mermaid-js/mermaid/issues/6888 — a node can carry
-    // several self-loops; they must not all render on exactly the same path.
+    // several self-loops; every arc and label must stay readable.
     const graph = new Graph({ multigraph: true, compound: true });
     graph.setGraph({ rankdir });
-    graph.setNode('A', { id: 'A', x: 10, y: 10, width: 20, height: 20 });
+    graph.setNode('A', { id: 'A', x: 100, y: 100, width: 40, height: 30 });
 
-    const makeSelfLoopSegments = (edgeId, label) => {
+    const loops = [
+      ['A-A-one', 'one', 30, 18],
+      ['A-A-two', 'two', 60, 18],
+      ['A-A-three', 'three', 44, 24],
+    ];
+    loops.forEach(([edgeId, label, width, height]) => {
       const originalEdge = {
         id: edgeId,
         start: 'A',
@@ -512,44 +517,54 @@ describe('getEdgesToRender', () => {
       const segment = (id, order) => ({
         ...originalEdge,
         id,
+        width,
+        height,
         selfLoop: { id: edgeId, order },
         originalEdge,
       });
-      return [
-        segment(`${edgeId}-cyclic-special-1`, 0),
-        segment(`${edgeId}-cyclic-special-mid`, 1),
-        segment(`${edgeId}-cyclic-special-2`, 2),
-      ];
-    };
+      const dummy1 = `A---${edgeId}---1`;
+      const dummy2 = `A---${edgeId}---2`;
+      graph.setNode(dummy1, { id: dummy1 });
+      graph.setNode(dummy2, { id: dummy2 });
+      graph.setEdge('A', dummy1, segment(`${edgeId}-cyclic-special-1`, 0), `${edgeId}-0`);
+      graph.setEdge(dummy1, dummy2, segment(`${edgeId}-cyclic-special-mid`, 1), `${edgeId}-1`);
+      graph.setEdge(dummy2, 'A', segment(`${edgeId}-cyclic-special-2`, 2), `${edgeId}-2`);
+    });
 
-    const [first1, firstMid, first2] = makeSelfLoopSegments('A-A-first', 'first');
-    const [second1, secondMid, second2] = makeSelfLoopSegments('A-A-second', 'second');
+    const edges = getEdgesToRender(graph).map(({ edge }) => edge);
+    expect(edges.map((edge) => edge.label)).toEqual(['one', 'two', 'three']);
 
-    graph.setNode('A---A---1', { id: 'A---A---1' });
-    graph.setNode('A---A---2', { id: 'A---A---2' });
-    graph.setEdge('A', 'A---A---1', first1, 'A-A-first-cyclic-special-0');
-    graph.setEdge('A---A---1', 'A---A---2', firstMid, 'A-A-first-cyclic-special-1');
-    graph.setEdge('A---A---2', 'A', first2, 'A-A-first-cyclic-special-2');
-    graph.setEdge('A', 'A---A---1', second1, 'A-A-second-cyclic-special-0');
-    graph.setEdge('A---A---1', 'A---A---2', secondMid, 'A-A-second-cyclic-special-1');
-    graph.setEdge('A---A---2', 'A', second2, 'A-A-second-cyclic-special-2');
+    const horizontal = side === 'left' || side === 'right';
+    const border = { top: 85, bottom: 115, left: 80, right: 120 }[side];
+    const labelBox = (edge) => ({
+      left: edge.x - edge.width / 2,
+      right: edge.x + edge.width / 2,
+      top: edge.y - edge.height / 2,
+      bottom: edge.y + edge.height / 2,
+    });
+    const overlaps = (a, b) =>
+      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    // A segment crosses a box if it is inside the box on both axes for some stretch.
+    const crosses = (p, q, box) =>
+      Math.min(p.x, q.x) < box.right &&
+      Math.max(p.x, q.x) > box.left &&
+      Math.min(p.y, q.y) < box.bottom &&
+      Math.max(p.y, q.y) > box.top;
 
-    const edgesToRender = getEdgesToRender(graph);
-
-    expect(edgesToRender).toHaveLength(2);
-    const [first, second] = edgesToRender;
-    expect(first.edge.id).toBe('A-A-first');
-    expect(second.edge.id).toBe('A-A-second');
-    expect(first.edge.label).toBe('first');
-    expect(second.edge.label).toBe('second');
-    // With no layout hints, the direction selects the side. Move the second loop
-    // outward on that side without moving it or its label along the node.
-    expect(second.edge.points).not.toEqual(first.edge.points);
-    expect(second.edge.points).toEqual(
-      first.edge.points.map(({ x, y }) => ({ x: x + dx, y: y + dy }))
-    );
-    expect(second.edge.x).toBe(first.edge.x + dx);
-    expect(second.edge.y).toBe(first.edge.y + dy);
+    edges.forEach((edge, i) => {
+      // Every loop starts and ends on the node border, on the side picked for it.
+      const [first, , , last] = edge.points;
+      expect(horizontal ? first.x : first.y).toBe(border);
+      expect(horizontal ? last.x : last.y).toBe(border);
+      // Each loop, and its label, must clear every label of the loops stacked inside it.
+      edges.slice(0, i).forEach((inner) => {
+        const box = labelBox(inner);
+        expect(overlaps(labelBox(edge), box)).toBe(false);
+        edge.points.slice(1).forEach((point, j) => {
+          expect(crosses(edge.points[j], point, box)).toBe(false);
+        });
+      });
+    });
   });
 
   it('renders one arc per self-loop through the full DAGRE pipeline', async () => {
