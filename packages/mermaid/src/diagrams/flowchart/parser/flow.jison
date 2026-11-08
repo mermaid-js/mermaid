@@ -171,7 +171,11 @@ that id.
 
 <ellipseText>[-/\)][\)]         { this.popState(); return '-)'; }
 <ellipseText>[^\(\)\[\]\{\}]|-\!\)+       return "TEXT"
-<*>"(-"                         { this.pushState("ellipseText"); return '(-'; }
+/* Ellipse and double-circle openers only start a shape right after a node id
+   (INITIAL state). Inside a label (`text`/`ptext` states) `(-` and `(((` are
+   plain parenthesised text, e.g. `A[Temperature (-5 C)]` — matching them as
+   shape openers there made the label fail to parse (#8724). */
+<INITIAL>"(-"                       { this.pushState("ellipseText"); return '(-'; }
 
 <text>"])"                { this.popState(); return 'STADIUMEND'; }
 <*>"(["                   { this.pushState("text"); return 'STADIUMSTART'; }
@@ -187,7 +191,7 @@ that id.
 <*>"[("                   { this.pushState("text") ;return 'CYLINDERSTART'; }
 
 <text>")))"               { this.popState(); return 'DOUBLECIRCLEEND'; }
-<*>"((("                  { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
+<INITIAL>"((("                { this.pushState("text"); return 'DOUBLECIRCLESTART'; }
 
 <trapText>[\\(?=\])][\]]  { this.popState(); return 'TRAPEND'; }
 <trapText>\/(?=\])\]     { this.popState(); return 'INVTRAPEND'; }

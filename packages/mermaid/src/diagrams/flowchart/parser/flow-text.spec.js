@@ -637,6 +637,19 @@ describe('[Text] when parsing', () => {
     expect(edges[0].text).toBe('x (y)');
   });
 
+  it('should handle parentheses that look like shape openers in node text (#8724)', function () {
+    // `(-` is the ellipse opener and `(((` the double-circle opener; inside
+    // a label they must be plain text, not shape openers.
+    const res = flow.parser.parse('graph TD; A[Temperature (-5 C)]; B[x (((y))) z];');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert.get('A').type).toBe('square');
+    expect(vert.get('A').text).toBe('Temperature (-5 C)');
+    expect(vert.get('B').type).toBe('square');
+    expect(vert.get('B').text).toBe('x (((y))) z');
+  });
+
   it('should throw error for unbalanced parentheses in node text (#7002)', function () {
     const str = 'graph TD; A[Hello (world];';
     expect(() => flow.parser.parse(str)).toThrowError();
