@@ -130,6 +130,62 @@ export const getDateFormat = function () {
   return dateFormat;
 };
 
+/**
+ * `dateFormat relative <unit>` makes task dates plain numbers counted from the start of the
+ * project, e.g. `3` is "3 months after the start" with `dateFormat relative month`.
+ * See https://github.com/mermaid-js/mermaid/issues/2850.
+ */
+const relativeDateFormatRegex =
+  /^relative(?:\s+(millisecond|second|minute|hour|day|week|month|year)s?)?$/i;
+const relativeNumberRegex = /^\d+(?:\.\d+)?$/;
+
+// Relative dates are stored as real dates counted from this fixed, local start date.
+const RELATIVE_START = new Date(2006, 0, 1);
+
+/**
+ * @returns {dayjs.UnitType | undefined} The unit of a relative `dateFormat`, or `undefined` if
+ * `dateFormat` is not relative.
+ */
+export const getRelativeDateUnit = function () {
+  const match = relativeDateFormatRegex.exec(dateFormat.trim());
+  if (match === null) {
+    return undefined;
+  }
+  return match[1]?.toLowerCase() ?? 'day';
+};
+
+/**
+ * @returns {Date} The date that relative dates count from.
+ */
+export const getRelativeStart = function () {
+  return new Date(RELATIVE_START);
+};
+
+/**
+ * Converts a date back into a relative number, e.g. for axis labels.
+ *
+ * @param {Date} date - The date to convert.
+ * @param {dayjs.UnitType} [unit] - The unit to count in, defaults to the `dateFormat` unit.
+ * @returns {number} The number of units between the relative start and `date`.
+ */
+export const getRelativeOffset = function (date, unit = getRelativeDateUnit() ?? 'day') {
+  const offset = dayjs(date).diff(RELATIVE_START, unit, true);
+  return Math.round(offset * 1000) / 1000;
+};
+
+/**
+ * @param {string} str - A task start or end value.
+ * @returns {dayjs.Dayjs | undefined} The date for a relative number, or `undefined` if `str` is
+ * not a relative number or `dateFormat` is not relative.
+ */
+const parseRelativeDate = function (str) {
+  const unit = getRelativeDateUnit();
+  if (unit === undefined || !relativeNumberRegex.test(str)) {
+    return undefined;
+  }
+  return dayjs(RELATIVE_START).add(Number(str), unit);
+};
+
 const mergeTokens = (existing, txt) => {
   const tokens = txt
     .toLowerCase()
@@ -315,6 +371,10 @@ const getStartDate = function (prevTime, dateFormat, str) {
   if (isTimestampFormat(dateFormat) && /^\d+$/.test(str)) {
     return new Date(Number(str));
   }
+  const relativeDate = parseRelativeDate(str);
+  if (relativeDate !== undefined) {
+    return relativeDate.toDate();
+  }
   // Test for after
   const afterRePattern = /^after\s+(?<ids>[\d\w- ]+)/;
   const afterStatement = afterRePattern.exec(str);
@@ -439,6 +499,11 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive = false) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today;
+  }
+
+  const relativeDate = parseRelativeDate(str);
+  if (relativeDate !== undefined) {
+    return (inclusive ? relativeDate.add(1, getRelativeDateUnit()) : relativeDate).toDate();
   }
 
   // check for actual date
@@ -837,6 +902,9 @@ export default {
   clear,
   setDateFormat,
   getDateFormat,
+  getRelativeDateUnit,
+  getRelativeStart,
+  getRelativeOffset,
   enableInclusiveEndDates,
   endDatesAreInclusive,
   enableTopAxis,

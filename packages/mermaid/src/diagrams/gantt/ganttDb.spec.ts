@@ -617,4 +617,90 @@ describe('when using the ganttDb', function () {
       warnSpy.mockRestore();
     });
   });
+
+  describe('when using a relative dateFormat (issue #2850)', function () {
+    const relativeStart = () => dayjs(ganttDb.getRelativeStart());
+
+    it.each(convert`
+      format                      | expected
+      ${'relative'}               | ${'day'}
+      ${'relative day'}           | ${'day'}
+      ${'relative months'}        | ${'month'}
+      ${' Relative Week '}        | ${'week'}
+      ${'relative hour'}          | ${'hour'}
+      ${'YYYY-MM-DD'}             | ${undefined}
+      ${'relative fortnight'}     | ${undefined}
+    `)('should read the unit of $format as $expected', ({ format, expected }) => {
+      ganttDb.setDateFormat(format);
+      expect(ganttDb.getRelativeDateUnit()).toBe(expected);
+    });
+
+    it('should count start and end numbers from the relative start', function () {
+      ganttDb.setDateFormat('relative month');
+      ganttDb.addTask('WP1', 'wp1, 0, 36');
+      ganttDb.addTask('WP2', 'wp2, 9, 14');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].startTime).toEqual(relativeStart().toDate());
+      expect(tasks[0].endTime).toEqual(relativeStart().add(36, 'month').toDate());
+      expect(tasks[1].startTime).toEqual(relativeStart().add(9, 'month').toDate());
+      expect(tasks[1].endTime).toEqual(relativeStart().add(14, 'month').toDate());
+    });
+
+    it('should still treat values with a unit as durations', function () {
+      ganttDb.setDateFormat('relative month');
+      ganttDb.addTask('Design', 'a1, 2, 3M');
+      ganttDb.addTask('Build', 'a2, after a1, 2w');
+      ganttDb.addTask('Test', '10d');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].startTime).toEqual(relativeStart().add(2, 'month').toDate());
+      expect(tasks[0].endTime).toEqual(relativeStart().add(5, 'month').toDate());
+      expect(tasks[1].startTime).toEqual(tasks[0].endTime);
+      expect(tasks[1].endTime).toEqual(dayjs(tasks[0].endTime).add(2, 'week').toDate());
+      expect(tasks[2].startTime).toEqual(tasks[1].endTime);
+      expect(tasks[2].endTime).toEqual(dayjs(tasks[1].endTime).add(10, 'day').toDate());
+    });
+
+    it('should count in days when no unit is given', function () {
+      ganttDb.setDateFormat('relative');
+      ganttDb.addTask('Task', '3, 5');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].startTime).toEqual(relativeStart().add(3, 'day').toDate());
+      expect(tasks[0].endTime).toEqual(relativeStart().add(5, 'day').toDate());
+    });
+
+    it('should add one unit to relative end dates when they are inclusive', function () {
+      ganttDb.setDateFormat('relative week');
+      ganttDb.enableInclusiveEndDates();
+      ganttDb.addTask('Task', '1, 2');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].startTime).toEqual(relativeStart().add(1, 'week').toDate());
+      expect(tasks[0].endTime).toEqual(relativeStart().add(3, 'week').toDate());
+    });
+
+    it('should convert dates back into relative numbers', function () {
+      ganttDb.setDateFormat('relative month');
+
+      expect(ganttDb.getRelativeOffset(relativeStart().toDate())).toBe(0);
+      expect(ganttDb.getRelativeOffset(relativeStart().add(14, 'month').toDate())).toBe(14);
+      expect(ganttDb.getRelativeOffset(relativeStart().add(3, 'week').toDate(), 'day')).toBe(21);
+    });
+
+    it('should not change how numbers are read with other date formats', function () {
+      ganttDb.setDateFormat('YYYY');
+      ganttDb.addTask('Task', '2020, 2022');
+
+      const tasks = ganttDb.getTasks();
+
+      expect(tasks[0].startTime).toEqual(new Date(2020, 0, 1));
+      expect(tasks[0].endTime).toEqual(new Date(2022, 0, 1));
+    });
+  });
 });

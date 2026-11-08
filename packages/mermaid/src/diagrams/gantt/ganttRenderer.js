@@ -641,6 +641,62 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
+   * Formats axis ticks for a relative `dateFormat`: `%R` is replaced with the number of
+   * `dateFormat` units since the start, and the rest of the format is passed to d3.
+   *
+   * @param {string} axisFormat - The axis format, e.g. `M%R`.
+   * @returns {(date: Date) => string} The tick formatter.
+   */
+  function getRelativeTickFormat(axisFormat) {
+    return (date) =>
+      timeFormat(
+        axisFormat.replace(/%%|%R/g, (match) =>
+          match === '%%' ? match : String(diagObj.db.getRelativeOffset(date))
+        )
+      )(date);
+  }
+
+  /**
+   * Places axis ticks on whole relative numbers. With a `tickInterval`, a tick is placed
+   * every `tickInterval` counted from the start; otherwise d3 picks round numbers.
+   *
+   * @param {string} relativeUnit - The unit of the relative `dateFormat`.
+   * @param {RegExpExecArray | null} resultTickInterval - The parsed `tickInterval`, if any.
+   * @returns {Date[]} The tick dates.
+   */
+  function getRelativeTicks(relativeUnit, resultTickInterval) {
+    const [minTime, maxTime] = timeScale.domain();
+    if (isNaN(minTime) || isNaN(maxTime)) {
+      return [];
+    }
+    const start = dayjs(diagObj.db.getRelativeStart());
+    if (resultTickInterval !== null) {
+      const every = parseInt(resultTickInterval[1], 10);
+      const interval = resultTickInterval[2];
+      const first = Math.ceil(diagObj.db.getRelativeOffset(minTime, interval) / every);
+      const last = Math.floor(diagObj.db.getRelativeOffset(maxTime, interval) / every);
+      if (last - first < MAX_TICK_COUNT) {
+        const ticks = [];
+        for (let i = first; i <= last; i++) {
+          ticks.push(start.add(i * every, interval).toDate());
+        }
+        return ticks;
+      }
+      log.warn(
+        `The tick interval "${every}${interval}" would generate more than ${MAX_TICK_COUNT} ticks. Skipping custom tick interval.`
+      );
+    }
+    return scaleLinear()
+      .domain([
+        diagObj.db.getRelativeOffset(minTime, relativeUnit),
+        diagObj.db.getRelativeOffset(maxTime, relativeUnit),
+      ])
+      .ticks()
+      .filter((offset) => Number.isInteger(offset))
+      .map((offset) => start.add(offset, relativeUnit).toDate());
+  }
+
+  /**
    * @param theSidePad
    * @param theTopPad
    * @param w
@@ -648,26 +704,35 @@ export const draw = function (text, id, version, diagObj) {
    */
   function makeGrid(theSidePad, theTopPad, w, h) {
     const dateFormat = diagObj.db.getDateFormat();
+    const relativeUnit = diagObj.db.getRelativeDateUnit();
     const userAxisFormat = diagObj.db.getAxisFormat();
     let axisFormat;
     if (userAxisFormat) {
       axisFormat = userAxisFormat;
+    } else if (relativeUnit) {
+      axisFormat = '%R';
     } else if (dateFormat === 'D') {
       axisFormat = '%d';
     } else {
       axisFormat = conf.axisFormat ?? '%Y-%m-%d';
     }
+    const tickFormat = relativeUnit ? getRelativeTickFormat(axisFormat) : timeFormat(axisFormat);
 
     let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(timeFormat(axisFormat));
+      .tickFormat(tickFormat);
 
     const reTickInterval = /^([1-9]\d*)(millisecond|second|minute|hour|day|week|month)$/;
     const resultTickInterval = reTickInterval.exec(
       diagObj.db.getTickInterval() || conf.tickInterval
     );
+    const relativeTicks = relativeUnit
+      ? getRelativeTicks(relativeUnit, resultTickInterval)
+      : undefined;
 
-    if (resultTickInterval !== null) {
+    if (relativeTicks) {
+      bottomXAxis.tickValues(relativeTicks);
+    } else if (resultTickInterval !== null) {
       const every = parseInt(resultTickInterval[1], 10);
       if (isNaN(every) || every <= 0) {
         log.warn(
@@ -734,9 +799,11 @@ export const draw = function (text, id, version, diagObj) {
     if (diagObj.db.topAxisEnabled() || conf.topAxis) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-        .tickFormat(timeFormat(axisFormat));
+        .tickFormat(tickFormat);
 
-      if (resultTickInterval !== null) {
+      if (relativeTicks) {
+        topXAxis.tickValues(relativeTicks);
+      } else if (resultTickInterval !== null) {
         const every = parseInt(resultTickInterval[1], 10);
         if (isNaN(every) || every <= 0) {
           log.warn(
@@ -859,7 +926,8 @@ export const draw = function (text, id, version, diagObj) {
    */
   function drawToday(theSidePad, theTopPad, w, h) {
     const todayMarker = diagObj.db.getTodayMarker();
-    if (todayMarker === 'off') {
+    // Relative dates are not tied to the calendar, so there is no "today" to mark
+    if (todayMarker === 'off' || diagObj.db.getRelativeDateUnit()) {
       return;
     }
 
