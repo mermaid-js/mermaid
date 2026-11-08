@@ -1503,6 +1503,19 @@ The layout of the diagram is done with the layout algorithm. The default is
 [ELK](https://www.eclipse.org/elk/), which handles larger and more complex
 diagrams well and is bundled with Mermaid.
 
+The ELK layout is bundled with the standard `mermaid` build and registered
+automatically. The exception is the tiny build (`mermaid.tiny.js`), which
+ships without it. To use ELK there, install
+[`@mermaid-js/layout-elk`](https://www.npmjs.com/package/@mermaid-js/layout-elk)
+and register it before rendering:
+
+```js
+import mermaid from 'mermaid';
+import elkLayouts from '@mermaid-js/layout-elk';
+
+mermaid.registerLayoutLoaders(elkLayouts);
+```
+
 To use the classic Dagre layout instead:
 
 ```
