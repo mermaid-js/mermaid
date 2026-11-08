@@ -392,6 +392,42 @@ gantt
 > **Warning**
 > `millisecond` and `second` support was added in v10.3.0
 
+### Relative dates (v\<MERMAID_RELEASE_VERSION>+)
+
+When the start date of a project is not known yet, for example in a research proposal, you can plan in units since the start instead of in calendar dates. Set `dateFormat` to `relative` followed by a unit: `millisecond`, `second`, `minute`, `hour`, `day`, `week`, `month` or `year`. Without a unit, `day` is used.
+
+Task start and end dates are then plain numbers counted from the start of the project, which is `0`. Values with a unit suffix, such as `12M`, are still durations, and `after` and `until` work as usual.
+
+On the axis, `%R` is the number of units since the start. It is the default `axisFormat` for relative dates, and you can put text around it, like `M%R`. Use `tickInterval` to place a tick every few units. The today marker is not drawn for relative dates.
+
+```mermaid
+gantt
+    title Research proposal (months since project start)
+    dateFormat relative month
+    axisFormat M%R
+    tickInterval 3month
+    section Work packages
+    WP1 Management      : wp1, 0, 36
+    WP2 Research        : wp2, 0, 18
+    WP3 Pilot           : wp3, after wp2, 12M
+    WP4 Dissemination   : wp4, 9, 36
+    Mid-term review     : milestone, 18, 0d
+```
+
+```mermaid-example
+gantt
+    title Research proposal (months since project start)
+    dateFormat relative month
+    axisFormat M%R
+    tickInterval 3month
+    section Work packages
+    WP1 Management      : wp1, 0, 36
+    WP2 Research        : wp2, 0, 18
+    WP3 Pilot           : wp3, after wp2, 12M
+    WP4 Dissemination   : wp4, 9, 36
+    Mid-term review     : milestone, 18, 0d
+```
+
 ## Output in compact mode
 
 The compact mode allows you to display multiple tasks in the same row. Compact mode can be enabled for a gantt chart by setting the display mode of the graph via preceding YAML settings.
