@@ -1,4 +1,4 @@
-import { renderToSvg } from '@zenuml/core';
+import { ensureDiagramFontsLoaded, renderToSvg } from '@zenuml/core';
 import { getConfig, log } from './mermaidUtils.js';
 
 const regexp = /^\s*zenuml/;
@@ -60,7 +60,7 @@ const configureSvgSize = (
  * @param text - The text of the diagram
  * @param id - The id of the diagram which will be used as a DOM element id
  */
-export const draw = function (text: string, id: string): Promise<void> {
+export const draw = async function (text: string, id: string): Promise<void> {
   log.info('draw with ZenUML native SVG renderer');
 
   const code = text.replace(regexp, '');
@@ -71,16 +71,17 @@ export const draw = function (text: string, id: string): Promise<void> {
 
   if (!svgEl) {
     log.error('Cannot find svg element');
-    return Promise.resolve();
+    return;
   }
+
+  // renderToSvg measures text synchronously, so the font must be loaded first.
+  await ensureDiagramFontsLoaded();
 
   const result = renderToSvg(code);
 
   configureSvgSize(svgEl, result.width, result.height, useMaxWidth);
   svgEl.setAttribute('viewBox', result.viewBox);
   svgEl.innerHTML = result.innerSvg;
-
-  return Promise.resolve();
 };
 
 export default {

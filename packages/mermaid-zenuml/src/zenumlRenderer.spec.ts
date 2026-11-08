@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 import { calculateSvgSizeAttrs } from './zenumlRenderer.js';
 
 vi.mock('@zenuml/core', () => ({
+  ensureDiagramFontsLoaded: vi.fn(() => Promise.resolve()),
   renderToSvg: vi.fn((code: string) => ({
     innerSvg: `<text>${code.trim()}</text>`,
     width: 400,
@@ -40,6 +41,29 @@ describe('draw', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     document.body.innerHTML = '';
+  });
+
+  it('should wait for the diagram fonts before measuring text', async () => {
+    const { ensureDiagramFontsLoaded, renderToSvg } = await import('@zenuml/core');
+    let fontsLoaded: () => void = vi.fn();
+    vi.mocked(ensureDiagramFontsLoaded).mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        fontsLoaded = resolve;
+      })
+    );
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'test-fonts';
+    document.body.appendChild(svg);
+
+    const { draw } = await import('./zenumlRenderer.js');
+    const drawn = draw('zenuml\n    A->B: msg', 'test-fonts');
+
+    await Promise.resolve();
+    expect(renderToSvg).not.toHaveBeenCalled();
+
+    fontsLoaded();
+    await drawn;
+    expect(renderToSvg).toHaveBeenCalledOnce();
   });
 
   it('should render SVG content into the target element', async () => {
