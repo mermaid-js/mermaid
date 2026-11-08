@@ -658,7 +658,8 @@ export const draw = function (text, id, version, diagObj) {
 
   /**
    * Places axis ticks on whole relative numbers. With a `tickInterval`, a tick is placed
-   * every `tickInterval` counted from the start; otherwise d3 picks round numbers.
+   * every `tickInterval` counted from the start; otherwise d3 picks round numbers, and
+   * fractional ones (e.g. `0.1, 0.2`) when the chart is shorter than about two units.
    *
    * @param {string} relativeUnit - The unit of the relative `dateFormat`.
    * @param {RegExpExecArray | null} resultTickInterval - The parsed `tickInterval`, if any.
@@ -686,14 +687,16 @@ export const draw = function (text, id, version, diagObj) {
         `The tick interval "${every}${interval}" would generate more than ${MAX_TICK_COUNT} ticks. Skipping custom tick interval.`
       );
     }
-    return scaleLinear()
+    const offsets = scaleLinear()
       .domain([
         diagObj.db.getRelativeOffset(minTime, relativeUnit),
         diagObj.db.getRelativeOffset(maxTime, relativeUnit),
       ])
-      .ticks()
-      .filter((offset) => Number.isInteger(offset))
-      .map((offset) => start.add(offset, relativeUnit).toDate());
+      .ticks();
+    const wholeOffsets = offsets.filter((offset) => Number.isInteger(offset));
+    return (wholeOffsets.length >= 2 ? wholeOffsets : offsets).map((offset) =>
+      diagObj.db.getRelativeDate(offset, relativeUnit).toDate()
+    );
   }
 
   /**

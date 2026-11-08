@@ -306,7 +306,7 @@ gantt
 
 When the start date of a project is not known yet, for example in a research proposal, you can plan in units since the start instead of in calendar dates. Set `dateFormat` to `relative` followed by a unit: `millisecond`, `second`, `minute`, `hour`, `day`, `week`, `month` or `year`. Without a unit, `day` is used.
 
-Task start and end dates are then plain numbers counted from the start of the project, which is `0`. Values with a unit suffix, such as `12M`, are still durations, and `after` and `until` work as usual.
+Task start and end dates are then plain numbers counted from the start of the project, which is `0`. Numbers can have a fraction: `1.5` with `dateFormat relative month` is halfway through the second month. Values with a unit suffix, such as `12M`, are still durations, and `after` and `until` work as usual.
 
 On the axis, `%R` is the number of units since the start. It is the default `axisFormat` for relative dates, and you can put text around it, like `M%R`. Use `tickInterval` to place a tick every few units. The today marker is not drawn for relative dates.
 

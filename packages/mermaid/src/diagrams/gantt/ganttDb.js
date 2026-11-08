@@ -169,8 +169,41 @@ export const getRelativeStart = function () {
  * @returns {number} The number of units between the relative start and `date`.
  */
 export const getRelativeOffset = function (date, unit = getRelativeDateUnit() ?? 'day') {
-  const offset = dayjs(date).diff(RELATIVE_START, unit, true);
+  // The inverse of `getRelativeDate`: whole units, plus the share of the unit the date is into.
+  const start = dayjs(RELATIVE_START);
+  const time = dayjs(date).valueOf();
+  let whole = Math.floor(dayjs(date).diff(start, unit, true));
+  while (start.add(whole + 1, unit).valueOf() <= time) {
+    whole++;
+  }
+  while (start.add(whole, unit).valueOf() > time) {
+    whole--;
+  }
+  const base = start.add(whole, unit).valueOf();
+  const next = start.add(whole + 1, unit).valueOf();
+  const offset = whole + (time - base) / (next - base);
   return Math.round(offset * 1000) / 1000;
+};
+
+/**
+ * Converts a relative number into a date. Day.js rounds fractional days and weeks and drops
+ * fractional months and years, so the whole part is added in `unit` and the fraction is taken
+ * as that share of the next unit, e.g. `1.5` months is halfway through the second month.
+ *
+ * @param {number} offset - The number of units since the relative start.
+ * @param {dayjs.UnitType} [unit] - The unit to count in, defaults to the `dateFormat` unit.
+ * @returns {dayjs.Dayjs} The date `offset` units after the relative start.
+ */
+export const getRelativeDate = function (offset, unit = getRelativeDateUnit() ?? 'day') {
+  const start = dayjs(RELATIVE_START);
+  const whole = Math.floor(offset);
+  const fraction = offset - whole;
+  const base = start.add(whole, unit);
+  if (fraction === 0) {
+    return base;
+  }
+  const next = start.add(whole + 1, unit);
+  return dayjs(base.valueOf() + fraction * (next.valueOf() - base.valueOf()));
 };
 
 /**
@@ -183,7 +216,7 @@ const parseRelativeDate = function (str) {
   if (unit === undefined || !relativeNumberRegex.test(str)) {
     return undefined;
   }
-  return dayjs(RELATIVE_START).add(Number(str), unit);
+  return getRelativeDate(Number(str), unit);
 };
 
 const mergeTokens = (existing, txt) => {
@@ -905,6 +938,7 @@ export default {
   getRelativeDateUnit,
   getRelativeStart,
   getRelativeOffset,
+  getRelativeDate,
   enableInclusiveEndDates,
   endDatesAreInclusive,
   enableTopAxis,

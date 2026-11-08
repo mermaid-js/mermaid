@@ -68,6 +68,24 @@ describe('when rendering a gantt diagram with a relative dateFormat (issue #2850
     ]);
   });
 
+  it('should fall back to fractional ticks when the chart is shorter than one unit', () => {
+    const svg = render(`gantt
+      dateFormat relative hour
+      Task : 0.1, 0.5`);
+
+    expect(axisLabels(svg)).toEqual([
+      '0.1',
+      '0.15',
+      '0.2',
+      '0.25',
+      '0.3',
+      '0.35',
+      '0.4',
+      '0.45',
+      '0.5',
+    ]);
+  });
+
   it('should place ticks in the tickInterval unit', () => {
     const svg = render(`gantt
       dateFormat relative day

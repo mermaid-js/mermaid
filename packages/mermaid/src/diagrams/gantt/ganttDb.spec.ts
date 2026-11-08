@@ -693,6 +693,37 @@ describe('when using the ganttDb', function () {
       expect(ganttDb.getRelativeOffset(relativeStart().add(3, 'week').toDate(), 'day')).toBe(21);
     });
 
+    it.each(convert`
+      unit         | value
+      ${'day'}     | ${0.1}
+      ${'day'}     | ${0.4}
+      ${'week'}    | ${1.5}
+      ${'month'}   | ${2.25}
+      ${'year'}    | ${0.5}
+      ${'hour'}    | ${0.1}
+    `)(
+      'should keep the fraction of $value $unit',
+      ({ unit, value }: { unit: string; value: number }) => {
+        ganttDb.setDateFormat(`relative ${unit}`);
+        ganttDb.addTask('Task', `${value}, ${value + 1}`);
+
+        const [task] = ganttDb.getTasks();
+
+        expect(ganttDb.getRelativeOffset(task.startTime)).toBe(value);
+        expect(ganttDb.getRelativeOffset(task.endTime)).toBe(value + 1);
+      }
+    );
+
+    it('should place fractional days apart', function () {
+      ganttDb.setDateFormat('relative day');
+      ganttDb.addTask('A', 'a, 0.1, 1');
+      ganttDb.addTask('B', 'b, 0.4, 1');
+
+      const [a, b] = ganttDb.getTasks();
+
+      expect(b.startTime.getTime() - a.startTime.getTime()).toBeCloseTo(0.3 * 24 * 60 * 60 * 1000);
+    });
+
     it('should not change how numbers are read with other date formats', function () {
       ganttDb.setDateFormat('YYYY');
       ganttDb.addTask('Task', '2020, 2022');
