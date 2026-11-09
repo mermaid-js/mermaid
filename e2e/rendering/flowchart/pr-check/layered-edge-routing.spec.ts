@@ -8,10 +8,15 @@ const graph = (direction = 'TD') => `flowchart ${direction}
   A --> D
   D --> D`;
 
+// These tests assert on the drawn `d` paths, so they take no screenshots: the layered
+// `.mmd` fixtures already hold the visual baselines.
 test.describe('layered edge routing', () => {
   for (const direction of ['TD', 'BT', 'LR', 'RL']) {
     test(`rounds default edges and self-loops in ${direction}`, async ({ page }, testInfo) => {
-      await renderGraph(page, testInfo, graph(direction), { layout: 'layered' });
+      await renderGraph(page, testInfo, graph(direction), {
+        layout: 'layered',
+        screenshot: false,
+      });
       const svg = diagramSvg(page);
       await expect(svg).not.toHaveAttribute('data-layout-fallback');
       const paths = await svg.locator('path[data-edge="true"]').evaluateAll((edges) =>
@@ -52,6 +57,7 @@ test.describe('layered edge routing', () => {
         layout: 'layered',
         layered: { edgeRouting },
         flowchart: { curve },
+        screenshot: false,
       });
       await expect(diagramSvg(page)).not.toHaveAttribute('data-layout-fallback');
       const paths = await diagramSvg(page)
