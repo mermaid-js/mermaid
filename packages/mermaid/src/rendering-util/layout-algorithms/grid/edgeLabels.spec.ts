@@ -225,10 +225,11 @@ describe('grid edge label helpers', () => {
     runGridLayoutCore(data, { metrics });
 
     expect(data.edges[0].points).toBeDefined();
-    expect(normalizePolyline(data.edges[0].points!).segments).toHaveLength(3);
+    expect(normalizePolyline(data.edges[0].points!).segments).toHaveLength(7);
     expectNoNonAdjacentConflicts(data.edges[0].points!);
     expect(labelNode.x).toBeLessThan((data.nodes[0].x ?? 0) - (data.nodes[0].width ?? 0) / 2);
     expect(labelNode.y).toBe(20);
+    expect(labelNode.x! + labelNode.width / 2).toBeLessThanOrEqual(data.edges[0].points![1].x - 6);
     expect(metrics.labelAwareSelfLoopCandidates).toBe(1);
     expect(metrics.labelAwareSelfLoopsCommitted).toBe(1);
     expect(metrics.labelAwareSelfLoopFallbacks).toBe(0);
@@ -265,7 +266,9 @@ describe('grid edge label helpers', () => {
       routing: { topologyCaps: { maxVertices: 1 } },
     });
 
-    expect(normalizePolyline(data.edges[0].points ?? []).segments).toHaveLength(3);
+    expect(normalizePolyline(data.edges[0].points ?? []).segments).toHaveLength(7);
+    expectNoNonAdjacentConflicts(data.edges[0].points!);
+    expect(labelNode.x! + labelNode.width / 2).toBeLessThanOrEqual(data.edges[0].points![1].x - 6);
     expect(metrics.resourceLimitFallbacks).toBe(1);
     expect(metrics.labelAwareSelfLoopsCommitted).toBe(1);
     expect(validateLayout(data).ok).toBe(true);

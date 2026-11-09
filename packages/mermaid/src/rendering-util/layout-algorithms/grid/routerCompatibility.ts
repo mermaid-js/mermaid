@@ -53,6 +53,9 @@ export const SELF_LOOP_PORT_GAP = 18;
 
 const SELF_LOOP_APPROACH = 14;
 
+// validateLayout rejects endpoints within 3 px of a node corner.
+const SELF_LOOP_CORNER_CLEARANCE = 4;
+
 const SELF_LOOP_TRACK_GAP = 18;
 
 export const SELF_LOOP_PORT_OFFSET_STEP = 4;
@@ -508,7 +511,10 @@ export function labelAwareSelfLoopCandidates(
   const directStart = demandCoord - span / 2;
   const directEnd = demandCoord + span / 2;
 
-  if (directStart >= interval[0] && directEnd <= interval[1]) {
+  if (
+    directStart - interval[0] >= SELF_LOOP_CORNER_CLEARANCE &&
+    interval[1] - directEnd >= SELF_LOOP_CORNER_CLEARANCE
+  ) {
     switch (side) {
       case 'right':
         return [
@@ -556,6 +562,13 @@ export function labelAwareSelfLoopCandidates(
   }
   const outerStart = demandCoord - span / 2;
   const outerEnd = demandCoord + span / 2;
+  // Keep the label clear of the return shoulders as well as the owner.
+  const shoulderDepth = Math.max(
+    depth,
+    SELF_LOOP_APPROACH +
+      (verticalSide ? requirement.along : requirement.cross) / 2 +
+      GRID_LABEL_CLEARANCE
+  );
   switch (side) {
     case 'right':
       return [
@@ -563,8 +576,8 @@ export function labelAwareSelfLoopCandidates(
           { x: rect.right, y: portStart },
           { x: rect.right + SELF_LOOP_APPROACH, y: portStart },
           { x: rect.right + SELF_LOOP_APPROACH, y: outerStart },
-          { x: rect.right + depth, y: outerStart },
-          { x: rect.right + depth, y: outerEnd },
+          { x: rect.right + shoulderDepth, y: outerStart },
+          { x: rect.right + shoulderDepth, y: outerEnd },
           { x: rect.right + SELF_LOOP_APPROACH, y: outerEnd },
           { x: rect.right + SELF_LOOP_APPROACH, y: portEnd },
           { x: rect.right, y: portEnd },
@@ -576,8 +589,8 @@ export function labelAwareSelfLoopCandidates(
           { x: rect.left, y: portStart },
           { x: rect.left - SELF_LOOP_APPROACH, y: portStart },
           { x: rect.left - SELF_LOOP_APPROACH, y: outerStart },
-          { x: rect.left - depth, y: outerStart },
-          { x: rect.left - depth, y: outerEnd },
+          { x: rect.left - shoulderDepth, y: outerStart },
+          { x: rect.left - shoulderDepth, y: outerEnd },
           { x: rect.left - SELF_LOOP_APPROACH, y: outerEnd },
           { x: rect.left - SELF_LOOP_APPROACH, y: portEnd },
           { x: rect.left, y: portEnd },
@@ -589,8 +602,8 @@ export function labelAwareSelfLoopCandidates(
           { x: portStart, y: rect.top },
           { x: portStart, y: rect.top - SELF_LOOP_APPROACH },
           { x: outerStart, y: rect.top - SELF_LOOP_APPROACH },
-          { x: outerStart, y: rect.top - depth },
-          { x: outerEnd, y: rect.top - depth },
+          { x: outerStart, y: rect.top - shoulderDepth },
+          { x: outerEnd, y: rect.top - shoulderDepth },
           { x: outerEnd, y: rect.top - SELF_LOOP_APPROACH },
           { x: portEnd, y: rect.top - SELF_LOOP_APPROACH },
           { x: portEnd, y: rect.top },
@@ -602,8 +615,8 @@ export function labelAwareSelfLoopCandidates(
           { x: portStart, y: rect.bottom },
           { x: portStart, y: rect.bottom + SELF_LOOP_APPROACH },
           { x: outerStart, y: rect.bottom + SELF_LOOP_APPROACH },
-          { x: outerStart, y: rect.bottom + depth },
-          { x: outerEnd, y: rect.bottom + depth },
+          { x: outerStart, y: rect.bottom + shoulderDepth },
+          { x: outerEnd, y: rect.bottom + shoulderDepth },
           { x: outerEnd, y: rect.bottom + SELF_LOOP_APPROACH },
           { x: portEnd, y: rect.bottom + SELF_LOOP_APPROACH },
           { x: portEnd, y: rect.bottom },

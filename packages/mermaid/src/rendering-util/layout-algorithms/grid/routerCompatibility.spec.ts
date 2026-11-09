@@ -26,12 +26,12 @@ describe('grid router compatibility', () => {
     expect(areExactlyAxisAligned({ x: 0, y: 0 }, { x: 0, y: 10 })).toBe(true);
   });
 
-  it.each<{ side: GridSide; boundaryX: number; outerX: number }>([
-    { side: 'left', boundaryX: 0, outerX: -51 },
-    { side: 'right', boundaryX: 80, outerX: 131 },
+  it.each<{ side: GridSide; boundaryX: number; shoulderX: number; outerX: number }>([
+    { side: 'left', boundaryX: 0, shoulderX: -14, outerX: -65 },
+    { side: 'right', boundaryX: 80, shoulderX: 94, outerX: 145 },
   ])(
-    'expands a labelled $side loop as one U with label-placement slack',
-    ({ side, boundaryX, outerX }) => {
+    'keeps a labelled $side loop clear of corners and return shoulders',
+    ({ side, boundaryX, shoulderX, outerX }) => {
       const owner = {
         id: 'owner',
         isGroup: false,
@@ -49,7 +49,59 @@ describe('grid router compatibility', () => {
           endInset: 12,
           requiredAlongSpan: 116,
         })
-      ).toEqual([[point(boundaryX, 3), point(outerX, 3), point(outerX, 37), point(boundaryX, 37)]]);
+      ).toEqual([
+        [
+          point(boundaryX, 11),
+          point(shoulderX, 11),
+          point(shoulderX, 3),
+          point(outerX, 3),
+          point(outerX, 37),
+          point(shoulderX, 37),
+          point(shoulderX, 29),
+          point(boundaryX, 29),
+        ],
+      ]);
+    }
+  );
+
+  describe.each<GridSide>(['left', 'right', 'top', 'bottom'])(
+    'labelled %s loop corner clearance',
+    (side) => {
+      it.each([
+        { demandCoord: 20, portStart: 11, portEnd: 29, pointCount: 8 },
+        { demandCoord: 22, portStart: 13, portEnd: 31, pointCount: 8 },
+        { demandCoord: 21, portStart: 4, portEnd: 38, pointCount: 4 },
+      ])(
+        'uses safe ports for demand coordinate $demandCoord',
+        ({ demandCoord, portStart, portEnd, pointCount }) => {
+          const verticalSide = side === 'left' || side === 'right';
+          const width = verticalSide ? 80 : 42;
+          const height = verticalSide ? 42 : 80;
+          const owner = {
+            id: 'owner',
+            isGroup: false,
+            x: width / 2,
+            y: height / 2,
+            width,
+            height,
+          } as Node;
+          const [candidate] = labelAwareSelfLoopCandidates(owner, side, 0, demandCoord, {
+            along: 20,
+            cross: 20,
+            startInset: 12,
+            endInset: 12,
+            requiredAlongSpan: 46,
+          });
+          const portPoint = (coordinate: number) =>
+            verticalSide
+              ? point(side === 'left' ? 0 : width, coordinate)
+              : point(coordinate, side === 'top' ? 0 : height);
+
+          expect(candidate).toHaveLength(pointCount);
+          expect(candidate[0]).toEqual(portPoint(portStart));
+          expect(candidate[candidate.length - 1]).toEqual(portPoint(portEnd));
+        }
+      );
     }
   );
 
