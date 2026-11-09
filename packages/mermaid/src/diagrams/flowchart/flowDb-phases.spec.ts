@@ -127,8 +127,7 @@ describe('the phase keyword outside a declaration', () => {
     (line) => {
       const { other } = parse(`swimlane-beta LR\n${line}`).getData();
 
-      expect(other.phases).toHaveLength(1);
-      expect(other.phases[0].id).toBe(line.split(/[\s[]/)[1]);
+      expect(other.phases?.map(({ id }) => id)).toEqual([line.split(/[\s[]/)[1]]);
     }
   );
 
