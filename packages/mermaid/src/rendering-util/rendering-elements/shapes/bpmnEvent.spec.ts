@@ -1,8 +1,8 @@
 import { select } from 'd3';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { reset, setConfig } from '../../../config.js';
+import { getConfig, reset, setConfig } from '../../../config.js';
 import type { Node } from '../../types.js';
-import { renderBpmnEvent } from './bpmnEvent.js';
+import { renderBpmnEvent, THEME_DEFAULT_RING_WIDTH } from './bpmnEvent.js';
 import { EVENT_RINGS, type EventPosition } from './bpmnShapeCore.js';
 
 const PX_PER_CHAR = 7;
@@ -77,5 +77,32 @@ describe('bpmn event ring weight', () => {
   ])('falls back to the notation default for %s', async (_case, value) => {
     const [fallback] = await ringWidthsOf('end', { endEventStrokeWidth: value });
     expect(fallback).toBe(`${EVENT_RINGS.end.strokeWidth}px`);
+  });
+
+  it.each([
+    ['start', ['1.6px']],
+    ['intermediate', ['1.4px', '1.4px']],
+    ['boundary', ['1.4px', '1.4px']],
+    ['end', ['3.4px']],
+  ] as const)(
+    'draws a %s event at its notation weight with the theme defaults',
+    async (position, widths) => {
+      expect(await ringWidthsOf(position)).toEqual(widths);
+    }
+  );
+
+  it.each(['start', 'intermediate', 'boundary', 'end'] as const)(
+    'draws a %s event at 0px when the theme sets 0',
+    async (position) => {
+      const widths = await ringWidthsOf(position, { eventStrokeWidth: 0, endEventStrokeWidth: 0 });
+      expect(new Set(widths)).toEqual(new Set(['0px']));
+    }
+  );
+
+  it('matches the ring-width defaults of the theme', () => {
+    setConfig({});
+    const bpmn = getConfig().themeVariables?.bpmn;
+    expect(bpmn?.eventStrokeWidth).toBe(THEME_DEFAULT_RING_WIDTH.eventStrokeWidth);
+    expect(bpmn?.endEventStrokeWidth).toBe(THEME_DEFAULT_RING_WIDTH.endEventStrokeWidth);
   });
 });

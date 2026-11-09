@@ -25,18 +25,34 @@ const RING_WIDTH_VARIABLE = {
 } as const satisfies Record<EventPosition, string>;
 
 /**
+ * The value each ring-width variable has in every built-in theme: the weight of a start ring
+ * and of an end ring. A double ring is drawn lighter than either, so only a value other than
+ * this default stands for the author's choice.
+ */
+export const THEME_DEFAULT_RING_WIDTH = {
+  eventStrokeWidth: EVENT_RINGS.start.strokeWidth,
+  endEventStrokeWidth: EVENT_RINGS.end.strokeWidth,
+} as const;
+
+/**
  * The ring weight of an event: the theme's `bpmn.eventStrokeWidth` (`bpmn.endEventStrokeWidth`
- * for an end event), a number in pixels or a CSS length, else the notation default in
- * {@link EVENT_RINGS}. It is set inline because a flowchart that uses these shapes does not
- * load the bpmn stylesheet, and its own `.node circle` rules would otherwise win.
+ * for an end event), a number in pixels or a CSS length, when it differs from the theme
+ * default; otherwise the notation weight of that kind of ring in {@link EVENT_RINGS}. It is
+ * set inline because a flowchart that uses these shapes does not load the bpmn stylesheet,
+ * and its own `.node circle` rules would otherwise win.
  */
 const ringWidth = (position: EventPosition): string => {
+  const variable = RING_WIDTH_VARIABLE[position];
   const themeBpmn: unknown = getConfig().themeVariables?.bpmn;
   const value =
     typeof themeBpmn === 'object' && themeBpmn !== null
-      ? Reflect.get(themeBpmn, RING_WIDTH_VARIABLE[position])
+      ? Reflect.get(themeBpmn, variable)
       : undefined;
-  if (typeof value === 'number' && Number.isFinite(value)) {
+  if (
+    typeof value === 'number' &&
+    Number.isFinite(value) &&
+    value !== THEME_DEFAULT_RING_WIDTH[variable]
+  ) {
     return `${value}px`;
   }
   if (typeof value === 'string' && value !== '') {
