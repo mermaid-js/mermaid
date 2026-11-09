@@ -87,6 +87,18 @@ describe('swimlane phases', () => {
     }
   );
 
+  it.each(['état', '阶段', 'Überprüfung', 'phaseÄ'])(
+    'declares a phase whose id has letters outside ASCII, %s, and assigns nodes to it',
+    (id) => {
+      const flowDb = parse(
+        `swimlane-beta LR\nphase ${id}["Review"]\nsubgraph l1\n  a@{ phase: ${id} }\nend`
+      );
+
+      expect(flowDb.getData().other.phases).toEqual([{ id, label: 'Review' }]);
+      expect(flowDb.getData().other.nodePhases).toEqual({ a: id });
+    }
+  );
+
   it('forgets phases when the database is cleared', () => {
     const flowDb = parse(SWIMLANE_WITH_PHASES);
 

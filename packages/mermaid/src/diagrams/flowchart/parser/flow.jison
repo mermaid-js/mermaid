@@ -120,10 +120,11 @@ that id.
 "subgraph"               return 'subgraph';
 "end"\b\s*               return 'end';
 /*
-'phase' opens a declaration when an id follows it. A link from a node named phase can start
-with an o or x marker (o--o, x==x, o-.-o) or an edge id (e1@-->), so those keep it a node id.
+'phase' opens a declaration when an id follows it, starting with a word character or a letter
+outside ASCII. A link from a node named phase can start with an o or x marker (o--o, x==x,
+o-.-o) or an edge id (e1@-->), so those keep it a node id.
 */
-"phase"(?=[^\S\n\r]+(?![xo](?:\-\-|\=\=|\-?\.))(?![^\s\"\[\]\(\)\{\}\|]+\@[^\{\"])\w)  { if (yy.lex.allowsPhases() && /(^|[\n\r;])[^\S\n\r]*$/.test(this.matched.slice(0, -yytext.length))) { return 'PHASE'; } return 'NODE_STRING'; }
+"phase"(?=[^\S\n\r]+(?![xo](?:\-\-|\=\=|\-?\.))(?![^\s\"\[\]\(\)\{\}\|]+\@[^\{\"])(?:\w|[^\u0000-\u007F]))  { if (yy.lex.allowsPhases() && /(^|[\n\r;])[^\S\n\r]*$/.test(this.matched.slice(0, -yytext.length))) { return 'PHASE'; } return 'NODE_STRING'; }
 
 "_self"                  return 'LINK_TARGET';
 "_blank"                 return 'LINK_TARGET';
