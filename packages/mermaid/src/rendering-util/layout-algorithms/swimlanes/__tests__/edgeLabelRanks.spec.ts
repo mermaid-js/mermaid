@@ -16,16 +16,15 @@ const SHORT_LABEL_SIZE = { width: 14, height: 21 };
 const TALL_LABEL_SIZE = { width: 40, height: 130 };
 // Wider than the nodes, so counting it would raise the average node width.
 const WIDE_LABEL_SIZE = { width: 400, height: 21 };
-// A boundary event: small and square, pinned to the border of the node it is anchored to.
+// Squarer than the nodes, so counting one would lower the average node width.
 const ANCHORED_SIZE = { width: 36, height: 36 };
-const ANCHOR_HOST_ID = 'B';
 
 function layOut(
   direction: Direction,
   lanes: Record<string, string[]>,
   edges: EdgeSpec[],
   labelSize = SHORT_LABEL_SIZE,
-  anchoredCount = 0
+  anchoredToB = 0
 ): LayoutData {
   const nodes: LayoutData['nodes'] = [];
   for (const [lane, ids] of Object.entries(lanes)) {
@@ -42,16 +41,16 @@ function layOut(
       });
     }
   }
-  for (let i = 0; i < anchoredCount; i++) {
+  for (let i = 0; i < anchoredToB; i++) {
     nodes.push({
-      id: `anchored${i}`,
-      label: `anchored${i}`,
+      id: `N${i}`,
+      label: `N${i}`,
       parentId: Object.keys(lanes)[0],
       isGroup: false,
       shape: 'rect',
       padding: 15,
       ...ANCHORED_SIZE,
-      metadata: { anchorTo: { hostId: ANCHOR_HOST_ID } },
+      metadata: { anchorTo: { hostId: 'B' } },
     });
   }
   const data = {
@@ -197,8 +196,8 @@ describe('swimlane edge labels do not change node ranks (#8327)', () => {
     expect(gap(labelled)).toBeCloseTo(gap(plain) + reserved, 0);
   });
 
-  it.each([1, 4])(
-    'gives an LR label the same room with %i anchored nodes as without any',
+  it.each([0, 1, 4])(
+    'gives an LR label the same room with %i anchored nodes in the lane',
     (anchoredCount) => {
       const edges: EdgeSpec[] = [
         ['A', 'B', 'wide'],
@@ -210,7 +209,7 @@ describe('swimlane edge labels do not change node ranks (#8327)', () => {
 
       const gap = (data: LayoutData) => alongFlow(data, 'LR').C - alongFlow(data, 'LR').A;
       const reserved = WIDE_LABEL_SIZE.width + 2 * COORDINATES.EDGE_LABEL_CLEARANCE;
-      expect(gap(labelled)).toBeCloseTo(gap(plain) + reserved, 0);
+      expect(gap(labelled) - gap(plain)).toBeCloseTo(reserved, 0);
     }
   );
 
