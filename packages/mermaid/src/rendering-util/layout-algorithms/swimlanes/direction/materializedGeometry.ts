@@ -54,6 +54,12 @@ export function separateSharedRenderedTerminalLanes(
   const MIN_FACE_CLEARANCE = 16;
   const TRACK_SHIFT = 7;
 
+  const FACE_CORNER_INSET = 8;
+  const usableFace = (low: number, high: number) => {
+    const inset = Math.min(FACE_CORNER_INSET, (high - low) / 4);
+    return { low: low + inset, high: high - inset };
+  };
+
   interface TerminalLane {
     edge: MaterializedEdge;
     edgeId: string;
@@ -216,10 +222,11 @@ export function separateSharedRenderedTerminalLanes(
         Math.abs(lane.boundary.y - lane.rect.top) < 1 ||
         Math.abs(lane.boundary.y - lane.rect.bottom) < 1
       ) {
+        const span = usableFace(lane.rect.left, lane.rect.right);
         return (
           sameY(shiftedBoundary, lane.boundary, EPS_LOCAL) &&
-          shiftedBoundary.x >= lane.rect.left + 1 &&
-          shiftedBoundary.x <= lane.rect.right - 1
+          shiftedBoundary.x >= span.low &&
+          shiftedBoundary.x <= span.high
         );
       }
 
@@ -227,10 +234,11 @@ export function separateSharedRenderedTerminalLanes(
         Math.abs(lane.boundary.x - lane.rect.left) < 1 ||
         Math.abs(lane.boundary.x - lane.rect.right) < 1
       ) {
+        const span = usableFace(lane.rect.top, lane.rect.bottom);
         return (
           sameX(shiftedBoundary, lane.boundary, EPS_LOCAL) &&
-          shiftedBoundary.y >= lane.rect.top + 1 &&
-          shiftedBoundary.y <= lane.rect.bottom - 1
+          shiftedBoundary.y >= span.low &&
+          shiftedBoundary.y <= span.high
         );
       }
 
@@ -287,6 +295,25 @@ export function separateSharedRenderedTerminalLanes(
     );
   };
 
+  const usableSpanOf = (lane: TerminalLane) =>
+    lane.orientation === 'H'
+      ? usableFace(lane.rect.top, lane.rect.bottom)
+      : usableFace(lane.rect.left, lane.rect.right);
+
+  // The shift that takes a lane to the end of its face's usable span, away from another lane;
+  // zero when the lane already sits there.
+  const shiftToFaceLimit = (lane: TerminalLane, other: TerminalLane): number => {
+    const span = usableSpanOf(lane);
+    const away = lane.coord < other.coord ? span.low - lane.coord : span.high - lane.coord;
+    return Math.sign(away) === Math.sign(lane.coord - other.coord) ? away : 0;
+  };
+
+  // The shifts that take a lane to either end of its face's usable span.
+  const shiftsToFaceEnds = (lane: TerminalLane): number[] => {
+    const span = usableSpanOf(lane);
+    return [span.low - lane.coord, span.high - lane.coord];
+  };
+
   const shifts = [
     -TRACK_SHIFT,
     TRACK_SHIFT,
@@ -323,31 +350,77 @@ export function separateSharedRenderedTerminalLanes(
           }
           return Number(!b.atStart) - Number(!a.atStart);
         });
-        for (const lane of candidates) {
-          for (const shift of shifts) {
-            const candidate = shiftedCandidate(lane, shift);
-            if (!candidate) {
-              continue;
-            }
-            const nextLane = terminalLaneFor({ ...lane.edge, points: candidate }, lane.atStart);
-            if (
-              !nextLane ||
-              lanes.some(
+        const conflictsWith = (lane: TerminalLane, nextLane: TerminalLane, near: boolean) =>
+          lanes.some(
+            (other) =>
+              other.edge !== lane.edge &&
+              (exactTerminalLaneConflict(nextLane, other) ||
+                (near && nearTerminalLaneConflict(nextLane, other)))
+          );
+        // The distance from a lane to the closest other track along the same stretch of its face.
+        const closestTrackGap = (lane: TerminalLane, at: TerminalLane): number =>
+          Math.min(
+            ...lanes
+              .filter(
                 (other) =>
                   other.edge !== lane.edge &&
-                  (exactTerminalLaneConflict(nextLane, other) ||
-                    (fixingNearConflict && nearTerminalLaneConflict(nextLane, other)))
+                  other.nodeId === at.nodeId &&
+                  other.orientation === at.orientation &&
+                  projectedOverlapLength(at, other) >= MIN_SHARED
               )
-            ) {
-              continue;
-            }
-
-            (lane.edge as { points: PointLite[] }).points = candidate;
-            fixed = true;
-            break;
+              .map((other) => Math.abs(at.coord - other.coord))
+          );
+        const accept = (
+          lane: TerminalLane,
+          candidate: PointLite[] | undefined,
+          near: boolean,
+          keepClosestGap = false
+        ) => {
+          const nextLane = candidate
+            ? terminalLaneFor({ ...lane.edge, points: candidate }, lane.atStart)
+            : undefined;
+          if (
+            !candidate ||
+            !nextLane ||
+            conflictsWith(lane, nextLane, near) ||
+            (keepClosestGap && closestTrackGap(lane, nextLane) < closestTrackGap(lane, lane))
+          ) {
+            return false;
           }
+          (lane.edge as { points: PointLite[] }).points = candidate;
+          return true;
+        };
+        // Two tracks that are merely close leave a straight connector between aligned nodes
+        // where it is; only two tracks drawn on top of each other may move it.
+        const movable = fixingNearConflict
+          ? candidates.filter((lane) => !laneIsStraightCollinearConnector(lane))
+          : candidates;
+        for (const lane of movable) {
+          fixed = shifts.some((shift) =>
+            accept(lane, shiftedCandidate(lane, shift), fixingNearConflict)
+          );
           if (fixed) {
             break;
+          }
+        }
+        // When no whole step fits on the face, a near conflict moves the lane as far from the
+        // other as the face allows, so the gap widens and the lane stays on the face; two tracks
+        // on top of each other take either end of the face. Neither move may bring the lane
+        // closer to its closest track than it already is.
+        if (!fixed) {
+          for (const lane of movable) {
+            const other = lane === first ? second : first;
+            const faceShifts = fixingNearConflict
+              ? [shiftToFaceLimit(lane, other)]
+              : shiftsToFaceEnds(lane);
+            fixed = faceShifts.some(
+              (shift) =>
+                Math.abs(shift) > EPS_LOCAL &&
+                accept(lane, shiftedCandidate(lane, shift), false, true)
+            );
+            if (fixed) {
+              break;
+            }
           }
         }
       }
