@@ -119,6 +119,9 @@ describe('when parsing a kanban ', function () {
         .nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
       expect(children.map((n: KanbanNode) => n.label)).toEqual(['task']);
     });
+    it('KNBN-39 should still accept a header followed only by blank lines', function () {
+      expect(() => kanban.parse('kanban\n   \n\n')).not.toThrow();
+    });
   });
   describe('nodes', function () {
     it('KNBN-7 should handle an id and type for a node definition', function () {

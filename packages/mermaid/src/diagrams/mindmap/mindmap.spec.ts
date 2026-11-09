@@ -88,6 +88,9 @@ describe('when parsing a mindmap ', function () {
       expect(mm.children.length).toEqual(1);
       expect(mm.children[0].descr).toEqual('child');
     });
+    it('MMP-27 should still accept a header followed only by blank lines', function () {
+      expect(() => mindmap.parse('mindmap\n   \n\n')).not.toThrow();
+    });
   });
   describe('nodes', function () {
     it('MMP-7 should handle an id and type for a node definition', function () {

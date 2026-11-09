@@ -43,6 +43,9 @@ describe('when parsing an Ishikawa diagram', function () {
     expect(root?.text).toEqual('Problem');
     expect(root?.children.map((c: { text: string }) => c.text)).toEqual(['Cause']);
   });
+  it('should still accept a header followed only by blank lines', function () {
+    expect(() => ishikawa.parse('ishikawa-beta\n   \n\n')).not.toThrow();
+  });
 
   it('should support an unindented root with nested causes', function () {
     const str = `ishikawa-beta
