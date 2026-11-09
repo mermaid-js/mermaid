@@ -3,6 +3,7 @@ import { evaluate, getConfig } from '../../../config.js';
 import type { D3Selection } from '../../../types.js';
 import { createText } from '../../createText.js';
 import type { LayoutData } from '../../types.js';
+import { applyLrDirectionTransform, flowAxisStretch } from './direction/lrTransform.js';
 import type { PhaseGrowth, SwimlanePhase } from './phases.js';
 import { readPhaseAssignment } from './phases.js';
 
@@ -159,17 +160,37 @@ export function computePhaseBands(layout: LayoutData): PhaseBand[] {
 /** Smallest shortfall, in px, worth another layout pass: below it a title fits to the pixel. */
 const SHORTFALL_TOLERANCE = 0.5;
 
-/** How much longer each band must get, along the flow, to hold its measured title. */
+/**
+ * The placed layout the way it will be drawn, and how much the drawing stretches the flow
+ * axis. Placement runs top to bottom; LR and RL turn it afterwards, so their bands are
+ * measured on a turned copy, and a length on that copy is `stretch` times a placement length.
+ */
+function asDrawn(layout: LayoutData): { drawn: LayoutData; stretch: number } {
+  const { direction } = layout;
+  if (direction !== 'LR' && direction !== 'RL') {
+    return { drawn: layout, stretch: 1 };
+  }
+  const nodes = layout.nodes ?? [];
+  const drawn: LayoutData = { ...layout, nodes: nodes.map((node) => ({ ...node })), edges: [] };
+  applyLrDirectionTransform(drawn, direction);
+  return { drawn, stretch: flowAxisStretch(nodes) };
+}
+
+/**
+ * How much longer each band must get, along the flow, to hold its measured title. Runs on a
+ * placed layout before it is turned for LR or RL, and answers in placement units.
+ */
 export function phaseShortfalls(layout: LayoutData): PhaseGrowth {
   const titleExtents = new Map(
     (readPhaseAssignment(layout)?.phases ?? []).map((phase) => [phase.id, phase.titleExtent])
   );
+  const { drawn, stretch } = asDrawn(layout);
   const shortfalls = new Map<string, number>();
-  for (const band of computePhaseBands(layout)) {
+  for (const band of computePhaseBands(drawn)) {
     const extent = band.titleReadsUpward ? band.title.height : band.title.width;
     const shortfall = (titleExtents.get(band.id) ?? 0) - extent;
     if (shortfall > SHORTFALL_TOLERANCE) {
-      shortfalls.set(band.id, shortfall);
+      shortfalls.set(band.id, shortfall / stretch);
     }
   }
   return shortfalls;

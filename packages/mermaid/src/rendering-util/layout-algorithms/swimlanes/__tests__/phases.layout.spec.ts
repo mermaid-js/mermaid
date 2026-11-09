@@ -406,6 +406,64 @@ describe('phase bands that must hold a title', () => {
     }
   );
 
+  // b1, b2 and b3 share a rank across three lanes, so the middle band is one rank long along
+  // the flow and three lanes wide across it.
+  const acrossLanes = (direction: string) =>
+    [
+      `swimlane-beta ${direction}`,
+      'phase p1["Intake"]',
+      'phase p2["Review"]',
+      'phase p3["Closeout"]',
+      'subgraph l1',
+      '  a@{ phase: p1 }',
+      '  b1@{ phase: p2 }',
+      'end',
+      'subgraph l2',
+      '  b2@{ phase: p2 }',
+      'end',
+      'subgraph l3',
+      '  b3@{ phase: p2 }',
+      '  c@{ phase: p3 }',
+      'end',
+      'a --> b1',
+      'a --> b2',
+      'a --> b3',
+      'b3 --> c',
+    ].join('\n');
+  const TITLE_OVERHANG = 10;
+
+  // Bands are measured before the edges are routed, and routing can still move a lane title
+  // outward, which lengthens an outer band; a title half as long as its band fits either way.
+  it.each(DIRECTIONS)(
+    'lays a diagram out as before in %s when every title fits its band',
+    (direction) => {
+      for (const text of [source(direction), acrossLanes(direction)]) {
+        const plain = laidOut(text);
+        const fitting = Object.fromEntries(
+          computePhaseBands(plain).map((band) => [band.id, extentOf(band) / 2])
+        );
+
+        const laid = laidOut(text, {}, fitting);
+
+        expect(laid.nodes.map(({ id, x, y }) => [id, x, y])).toEqual(
+          plain.nodes.map(({ id, x, y }) => [id, x, y])
+        );
+      }
+    }
+  );
+
+  it.each(DIRECTIONS)(
+    'grows a band spanning several lanes by just what its title lacks in %s',
+    (direction) => {
+      const plain = computePhaseBands(laidOut(acrossLanes(direction)));
+      const title = extentOf(plain.find(({ id }) => id === 'p2')!) + TITLE_OVERHANG;
+
+      const grown = computePhaseBands(laidOut(acrossLanes(direction), {}, { p2: title }));
+
+      expect(extentOf(grown.find(({ id }) => id === 'p2')!)).toBeCloseTo(title, 0);
+    }
+  );
+
   it('lays out the same diagram twice with the same result', () => {
     const once = laidOut(source('LR'), {}, { p2: LONG_TITLE });
     const twice = laidOut(source('LR'), {}, { p2: LONG_TITLE });
