@@ -947,23 +947,27 @@ export function validateLayout(
 
     // Check edge-label-off-edge. Most layouts require the owning edge to intersect the rendered
     // label rectangle; grid opts into the stricter center-anchor contract.
-    if (ownLabelId) {
-      const labelRect = nodeRects.get(ownLabelId);
-      const labelIsAnchored =
-        labelRect &&
-        (options.requireEdgeLabelCenter
-          ? orthogonalPolylineContainsPoint(
-              points,
-              { x: labelRect.cx, y: labelRect.cy },
-              PIXEL_EPSILON
-            )
-          : polylineIntersectsRect(points, labelRect));
-      if (labelRect && !labelIsAnchored) {
+    const labelRect = ownLabelId
+      ? nodeRects.get(ownLabelId)
+      : options.requireEdgeLabelCenter
+        ? labelRectForEdge(e)
+        : null;
+    if (labelRect) {
+      const labelIsAnchored = options.requireEdgeLabelCenter
+        ? orthogonalPolylineContainsPoint(
+            points,
+            { x: labelRect.cx, y: labelRect.cy },
+            PIXEL_EPSILON
+          )
+        : polylineIntersectsRect(points, labelRect);
+      if (!labelIsAnchored) {
         issues.push({
           type: 'edge-label-off-edge',
-          message: `Edge "${edgeId}" does not pass through its label node "${ownLabelId}"`,
+          message: ownLabelId
+            ? `Edge "${edgeId}" does not pass through its label node "${ownLabelId}"`
+            : `Edge "${edgeId}" does not pass through its overlay label center`,
           edgeId,
-          nodeIds: [ownLabelId],
+          nodeIds: ownLabelId ? [ownLabelId] : undefined,
           details: { labelRect, points },
         });
       }

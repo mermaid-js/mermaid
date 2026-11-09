@@ -836,6 +836,40 @@ describe('validateLayout new geometric issues', () => {
     }
   );
 
+  it.each([
+    { name: 'centered on the edge', y: 0, anchored: true },
+    { name: 'intersecting the edge away from its center', y: 5, anchored: false },
+    { name: 'entirely off the edge', y: 30, anchored: false },
+  ])('validates an overlay label $name only in strict mode', ({ y, anchored }) => {
+    const edge: Edge = {
+      ...mkEdge('e1', 'A', 'B', [
+        { x: 20, y: 0 },
+        { x: 180, y: 0 },
+      ]),
+      label: 'overlay label',
+      x: 70,
+      y,
+      width: 30,
+      height: 20,
+    };
+    const layout: LayoutData = {
+      nodes: [mkNode('A', 0, 0), mkNode('B', 200, 0)],
+      edges: [edge],
+      config: {},
+    };
+
+    expect(validateLayout(layout).ok).toBe(true);
+    expect(validateLayout(layout, { requireEdgeLabelCenter: false }).ok).toBe(true);
+
+    const result = validateLayout(layout, { requireEdgeLabelCenter: true });
+    expect(result.ok).toBe(anchored);
+    if (!anchored) {
+      expect(result.issues).toEqual([
+        expect.objectContaining({ type: 'edge-label-off-edge', edgeId: 'e1' }),
+      ]);
+    }
+  });
+
   it('flags edge-endpoint-inside-node when an edge endpoint sits inside a non-endpoint node', () => {
     // Edge from S to T, but its end point lands inside an unrelated obstacle
     // node O rather than on T's boundary.
