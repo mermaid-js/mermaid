@@ -104,7 +104,7 @@ export const clipOrthogonalEndpointsToNodeOutlines = (points, tail, head) => {
     if (!vertical && !horizontal) {
       return points;
     }
-    // Add a midpoint dogleg so clipping differently shaped endpoints cannot create a diagonal.
+    // Retain the midpoint subdivision; terminal-axis checks above reject off-axis clipping.
     appendDistinctPoint(clipped, clippedFirst);
     if (vertical) {
       const middleY = (clippedFirst.y + clippedLast.y) / 2;
