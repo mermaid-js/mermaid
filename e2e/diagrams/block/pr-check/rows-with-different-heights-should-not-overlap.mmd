@@ -1,0 +1,19 @@
+---
+description: >-
+  Two sibling composite blocks placed in the same outer 3-column grid: group1
+  spans 2 columns and lays out 4 items across its own 2-column grid (2
+  internal rows), while group2 spans all 3 columns and lays out 7 items
+  across 3 internal columns (3 internal rows) — verifying rows with
+  different resulting heights don't overlap vertically.
+---
+block
+  columns 3
+  a:3
+  block:group1:2
+  columns 2
+  h i j k
+  end
+  g
+  block:group2:3
+  l m n o p q r
+  end

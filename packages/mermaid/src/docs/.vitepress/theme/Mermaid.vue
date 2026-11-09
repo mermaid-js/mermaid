@@ -1,23 +1,25 @@
 <template>
-  <div v-if="props.showCode">
-    <h5>Code:</h5>
+  <div ref="diagram" class="mermaid-diagram" :class="{ pending: !svg }" v-html="svg"></div>
+  <component :is="props.collapsed ? 'details' : 'div'" v-if="props.showCode">
+    <summary v-if="props.collapsed">Code</summary>
+    <h5 v-else>Code:</h5>
     <div class="language-mermaid">
       <button class="copy"></button>
       <span class="lang">mermaid</span>
-      <pre><code :contenteditable="contentEditable" @input="updateCode"  @keydown.meta.enter="renderChart" @keydown.ctrl.enter="renderChart" ref="editableContent" class="editable-code"></code></pre>
+      <pre><code :contenteditable="contentEditable" @input="updateCode"  @keydown.meta.enter="renderChart" @keydown.ctrl.enter="renderChart" class="editable-code">{{ initialCode }}</code></pre>
       <div class="buttons-container">
         <span>{{ ctrlSymbol }} + Enter</span><span>|</span>
         <button @click="renderChart">Run ▶</button>
       </div>
     </div>
-  </div>
-  <div class="mermaid-diagram" v-html="svg"></div>
+  </component>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import { render } from './mermaid';
 import { buildExampleConfig } from './exampleConfig';
+import { watchColorScheme } from './colorScheme';
 import '@fontsource/open-sans/400.css';
 import '@fontsource/open-sans/400-italic.css';
 import '@fontsource-variable/recursive/index.css';
@@ -35,32 +37,58 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  collapsed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const svg = ref('');
-const code = ref(decodeURIComponent(props.graph));
-const ctrlSymbol = ref(navigator.platform.includes('Mac') ? '⌘' : 'Ctrl');
-const editableContent = ref(null);
-const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
-const contentEditable = ref(isFirefox ? 'true' : 'plaintext-only');
+const initialCode = decodeURIComponent(props.graph);
+const code = ref(initialCode);
+const ctrlSymbol = ref('Ctrl');
+const contentEditable = ref('plaintext-only');
+const diagram = ref(null);
 
-let mut = null;
+let stopWatching = null;
+let observer = null;
 
 const updateCode = (event) => {
   code.value = event.target.innerText;
 };
 
 onMounted(async () => {
-  mut = new MutationObserver(() => renderChart());
-  mut.observe(document.documentElement, { attributes: true });
-
-  if (editableContent.value) {
-    // Set the initial value of the contenteditable element
-    // We cannot bind using `{{ code }}` because it will rerender the whole component
-    // when the value changes, shifting the cursor when enter is used
-    editableContent.value.textContent = code.value;
+  if (navigator.platform.includes('Mac')) {
+    ctrlSymbol.value = '⌘';
   }
+  if (navigator.userAgent.toLowerCase().includes('firefox')) {
+    contentEditable.value = 'true';
+  }
+  stopWatching = watchColorScheme(() => {
+    if (svg.value) {
+      void renderChart();
+    }
+  });
 
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        observer?.disconnect();
+        observer = null;
+        void renderFirstTime();
+      }
+    },
+    { rootMargin: '1000px 0px' }
+  );
+  observer.observe(diagram.value);
+});
+
+onUnmounted(() => {
+  stopWatching?.();
+  observer?.disconnect();
+});
+
+const renderFirstTime = async () => {
   await renderChart();
 
   //refresh images on first render
@@ -84,12 +112,9 @@ onMounted(async () => {
         });
       }
     }, 100);
-});
-
-onUnmounted(() => mut.disconnect());
+};
 
 const renderChart = async () => {
-  console.log('rendering chart' + props.id + code.value);
   const hasDarkClass = document.documentElement.classList.contains('dark');
   const mermaidConfig = buildExampleConfig(code.value, hasDarkClass);
   let svgCode = await render(props.id, code.value, mermaidConfig);
@@ -104,6 +129,10 @@ const renderChart = async () => {
 </script>
 
 <style>
+.mermaid-diagram.pending {
+  min-height: 150px;
+}
+
 .editable-code:focus {
   outline: none; /* Removes the default focus indicator */
 }

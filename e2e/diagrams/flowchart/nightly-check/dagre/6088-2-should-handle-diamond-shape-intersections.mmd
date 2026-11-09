@@ -1,0 +1,30 @@
+---
+description:
+  Regression test for a node that is first referenced as a plain node inside one
+  nested subgraph and then given an explicit diamond shape in an enclosing
+  subgraph, verifying dagre resolves it to a single diamond-shaped node and
+  routes multiple duplicate edges into it correctly despite the deep nesting.
+config:
+  layout: dagre
+  flowchart:
+    titleTopMargin: 0
+---
+flowchart LR
+  a
+  subgraph s0["APA"]
+  subgraph s8["APA"]
+  subgraph s1["APA"]
+  D{"X"}
+  E[Q]
+  end
+  subgraph s3["BAPA"]
+  F[Q]
+  I
+  end
+      D --> I
+      D --> I
+      D --> I
+
+  I{"X"}
+  end
+  end

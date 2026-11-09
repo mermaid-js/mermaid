@@ -1,0 +1,10 @@
+---
+description: >-
+  No-frontmatter sequence diagram using the per-note `:wrap:` inline text
+  modifier on a very long `Note right of` text, checking that the inline
+  wrap directive forces wrapping for that one note.
+---
+sequenceDiagram
+  Alice->>Bob: Hola
+  Note right of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+  Bob->>Alice: I'm short though

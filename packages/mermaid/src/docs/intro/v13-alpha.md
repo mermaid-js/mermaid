@@ -1,0 +1,251 @@
+---
+description: 'Try the Mermaid v13 alpha: a plugin-based, DOM-free proof of concept of a rewritten rendering engine. Install it, render diagrams in Node, workers or the browser, and tell us what breaks.'
+outline: 'deep' # shows all h3 headings in outline in Vitepress
+---
+
+# Try the Mermaid v13 alpha
+
+```tip
+**This alpha is a proof of concept.** It tries one path for Mermaid v13, a full rewrite of the rendering engine. The other path is to bring the same gains to v12 in gradual updates. Your feedback in the [v13 discussion](https://github.com/orgs/mermaid-js/discussions/8685) decides which one we take.
+```
+
+The alpha renders without a browser DOM, so it works in Node, Deno, web workers and browsers. Its output is deterministic, and it has no third-party runtime dependencies. We publish alphas while we build the proof of concept. Please try them and tell us what breaks.
+
+```warning
+This is an **alpha**. Don't use it in production. APIs, output and defaults can change between alpha releases.
+```
+
+## What works in the alpha
+
+- **22 diagram types.** Flowchart, sequence, ER, class, state, pie, quadrant chart, user journey, timeline, Gantt, gitGraph, mindmap, kanban, packet, radar, Sankey, treemap, Venn, Wardley map, XY chart, Cynefin and info have v13 renderers. Other v12 diagram types (C4, architecture, block, requirement, ZenUML, …) are not ported yet. Mermaid still recognizes them, but rendering one fails with an `UNSUPPORTED_DIAGRAM` error.
+- **ESM only, Node 20 or newer.** The alpha ships no `mermaid.min.js`, IIFE or "tiny" build. Bundle it with your own bundler (Vite, webpack, esbuild, Rollup, …).
+- **New output formats.** Every diagram renders to SVG. Flowchart, sequence, ER, kanban, packet and info diagrams also render to text (ASCII or Unicode box drawing).
+- **Split into packages.** Most people only need `mermaid`: it includes the core and every diagram type, and loads each diagram the first time a page uses it. Icons, math, the hand-drawn look, ELK layouts and v12 click callbacks are optional plugins. See [Packages](#packages).
+
+## Install
+
+All v13 packages share one dist-tag, `v13-alpha`, which always points to the newest alpha build. `mermaid@latest` stays on v12:
+
+```bash
+npm install mermaid@v13-alpha --save-exact
+# or
+pnpm add mermaid@v13-alpha --save-exact
+```
+
+```warning
+When you add an optional package, install the `v13-alpha` build of it together with the newest `mermaid@v13-alpha`.
+```
+
+### Alpha builds
+
+We publish alpha builds often, numbered `13.0.0-alpha.0`, `13.0.0-alpha.1` and so on. Each package has its own alpha number. A change to one package also re-releases the packages that depend on it, so `mermaid@v13-alpha` always pulls in a matching set. Mermaid's own packages depend on each other at exact versions.
+
+| Build            | Released        | Packages                                                                                                                                                                                                                                                 |
+| ---------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `13.0.0-alpha.2` | 9 November 2026 | 34 packages. 13 diagram packages are new: Gantt, gitGraph, mindmap, kanban, packet, radar, Sankey, treemap, Venn, Wardley map, XY chart and info start at `13.0.0-alpha.1`, and Cynefin at `13.0.0-alpha.2`. All other packages are at `13.0.0-alpha.2`. |
+| `13.0.0-alpha.1` | 6 November 2026 | 21 packages. 17 are new in this build.                                                                                                                                                                                                                   |
+| `13.0.0-alpha.0` | 4 November 2026 | `mermaid`, `@mermaid-js/core`, `@mermaid-js/diagram-flowchart` and `@mermaid-js/plugin-interactions`. The flowchart was the only diagram type.                                                                                                           |
+
+- **Pin an exact build.** Any build can change APIs or output, so a version range could pull in a breaking change without you noticing:
+
+  ```bash
+  npm install mermaid@13.0.0-alpha.2 --save-exact
+  ```
+
+- **Move to the newest build** when you're ready, and read the release notes for what changed:
+
+  ```bash
+  npm install mermaid@v13-alpha --save-exact
+  ```
+
+- **See which builds exist:**
+
+  ```bash
+  npm view mermaid versions --json | grep 13.0.0-alpha
+  ```
+
+- **Retest on the newest build before you report a problem.** It may already be fixed.
+
+## Render a diagram
+
+`render`, `parse`, `initialize` and `run` take the same arguments as in v12. Existing code like this keeps working:
+
+```js
+import mermaid from 'mermaid';
+
+mermaid.initialize({ theme: 'default' });
+
+const { svg } = await mermaid.render(
+  'my-diagram',
+  `flowchart LR
+    A[Start] --> B{Works?}
+    B -- Yes --> C[Ship it]
+    B -- No --> D[File an issue]`
+);
+document.querySelector('#container').innerHTML = svg;
+```
+
+`run()` and `startOnLoad` still render every `.mermaid` element on the page.
+
+## Things you can only do in v13
+
+**Render on the server, with no DOM or jsdom:**
+
+```js
+// Node script, no browser needed
+import mermaid from 'mermaid';
+
+const { svg, width, height, warnings } = await mermaid.render('id', 'flowchart LR\n  A --> B');
+```
+
+**Render to text:**
+
+```js
+const { text } = await mermaid.render('id', 'flowchart LR\n  A --> B', { format: 'ascii' });
+console.log(text);
+```
+
+**Use the command line:**
+
+```bash
+npx mermaid@v13-alpha render diagram.mmd --format ascii
+npx mermaid@v13-alpha render diagram.mmd --format svg > diagram.svg
+```
+
+**Use structured errors.** A failed render rejects with a `MermaidError` that has a `code` (`SYNTAX`, `UNSUPPORTED_DIAGRAM`, `LIMIT`, …) plus `line` and `column`, instead of raw parser text.
+
+**Keep a diagram live:** `mermaid.mount(element, text)` renders into an element and gives you `update(text)` and `destroy()`.
+
+## Packages
+
+Mermaid v13 is split into small packages. Most people only need `mermaid`. The other packages are optional add-ons, or building blocks for smaller bundles and editors. Each package has its own alpha number: twelve of the diagram packages first published in `13.0.0-alpha.2` are at `13.0.0-alpha.1` (see [Alpha builds](#alpha-builds)), and every other package is at `13.0.0-alpha.2`. `npm install mermaid@v13-alpha` pulls in a matching set.
+
+### Which packages do I need?
+
+| You want to…                                             | Install                                                                                    |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Render diagrams on a site or in an app                   | `mermaid`                                                                                  |
+| Render on a server or in a script, with no browser       | `mermaid` (no jsdom or headless browser needed)                                            |
+| Render from the command line, as SVG or text             | `npx mermaid@v13-alpha render diagram.mmd --format ascii`                                  |
+| Keep a bundle small, with only some diagram types        | `mermaid` (import `mermaid/slim`) + the `@mermaid-js/diagram-*` packages you need          |
+| Keep v12 click callbacks or actor menus                  | `mermaid` + `@mermaid-js/plugin-interactions`                                              |
+| Draw icons, math, the hand-drawn look or ELK layouts     | `mermaid` + `@mermaid-js/plugin-icons`, `plugin-math`, `plugin-hand-drawn` or `layout-elk` |
+| Let your bundler pick up installed plugins automatically | `@mermaid-js/bundler-plugin`                                                               |
+| Add Mermaid editing to CodeMirror or Monaco              | `@mermaid-js/language-service-codemirror` or `@mermaid-js/language-service-monaco`         |
+| Add Mermaid editing to any LSP editor                    | `@mermaid-js/language-server`                                                              |
+
+`mermaid`, the core and the diagram packages have no third-party runtime dependencies. A few add-ons have one: `roughjs` (hand-drawn look), `elkjs` (ELK), `unplugin` (bundler plugin) and `vscode-languageserver` (language server). The CodeMirror and Monaco packages use the editor you already have, as a peer dependency.
+
+### The main package
+
+| Package            | What it does                                                                                                                                                                                                                                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mermaid`          | The API (`render`, `parse`, `initialize`, `run`, `mount`) and every diagram type listed below. Renders in browsers, Node, Deno and workers without a DOM. It also includes the `mermaid` command line (`mermaid render file.mmd --format svg\|ascii`) and `mermaid/slim`, the API without any diagrams. |
+| `@mermaid-js/core` | The shared engine: parsing tools, text measurement, layout, the SVG writer, themes and config. `mermaid` includes it. You only install it directly when you build a diagram plugin or use the language service.                                                                                         |
+
+### Diagram types
+
+`mermaid` already includes all of these. Install one yourself only when you use `mermaid/slim`:
+
+```js
+import { createMermaid } from 'mermaid/slim';
+import { flowchart } from '@mermaid-js/diagram-flowchart';
+
+const mermaid = createMermaid({ diagrams: [flowchart] });
+```
+
+| Package                         | Diagram                           | Text output (`format: 'ascii'`) |
+| ------------------------------- | --------------------------------- | ------------------------------- |
+| `@mermaid-js/diagram-flowchart` | `flowchart`, `graph`              | Yes                             |
+| `@mermaid-js/diagram-sequence`  | `sequenceDiagram`                 | Yes                             |
+| `@mermaid-js/diagram-er`        | `erDiagram`                       | Yes                             |
+| `@mermaid-js/diagram-class`     | `classDiagram`, `classDiagram-v2` | Not yet                         |
+| `@mermaid-js/diagram-state`     | `stateDiagram`, `stateDiagram-v2` | Not yet                         |
+| `@mermaid-js/diagram-pie`       | `pie`                             | No                              |
+| `@mermaid-js/diagram-quadrant`  | `quadrantChart`                   | No                              |
+| `@mermaid-js/diagram-journey`   | `journey`                         | No                              |
+| `@mermaid-js/diagram-timeline`  | `timeline`                        | No                              |
+| `@mermaid-js/diagram-gantt`     | `gantt`                           | No                              |
+| `@mermaid-js/diagram-gitgraph`  | `gitGraph`                        | No                              |
+| `@mermaid-js/diagram-mindmap`   | `mindmap`                         | No                              |
+| `@mermaid-js/diagram-kanban`    | `kanban`                          | Yes                             |
+| `@mermaid-js/diagram-packet`    | `packet`, `packet-beta`           | Yes                             |
+| `@mermaid-js/diagram-radar`     | `radar-beta`                      | No                              |
+| `@mermaid-js/diagram-sankey`    | `sankey`, `sankey-beta`           | No                              |
+| `@mermaid-js/diagram-treemap`   | `treemap`, `treemap-beta`         | No                              |
+| `@mermaid-js/diagram-venn`      | `venn-beta`                       | No                              |
+| `@mermaid-js/diagram-wardley`   | `wardley-beta`                    | No                              |
+| `@mermaid-js/diagram-xychart`   | `xychart`, `xychart-beta`         | No                              |
+| `@mermaid-js/diagram-cynefin`   | `cynefin-beta`                    | No                              |
+| `@mermaid-js/diagram-info`      | `info`                            | Yes                             |
+
+Each diagram package also has a `/language` entry with its editor support (see [Editor tooling](#editor-tooling)).
+
+### Optional plugins
+
+These add features that are not in `mermaid` by default. Install the ones you need. In Node they are found in `node_modules` automatically. In a browser bundle, register them in code, or use [`@mermaid-js/bundler-plugin`](#build-tools).
+
+| Package                           | What it does                                                                                                                                                                                                                                        | Third-party dependency                                    |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `@mermaid-js/plugin-interactions` | Brings back v12 click callbacks (`click A callback`, `call fn()`, including on Gantt tasks) and the sequence diagram actor menus. Plain links and tooltips work without it.                                                                         | none                                                      |
+| `@mermaid-js/plugin-icons`        | Draws Iconify icon packs: label icons such as `fa:fa-car`, the flowchart icon shapes and mindmap `::icon()`. You register the packs with `registerIconPacks`, and each pack is loaded only when a diagram uses it.                                  | none (you supply the packs)                               |
+| `@mermaid-js/plugin-math`         | TeX math in labels: `$$…$$` is typeset by MathJax into SVG. MathJax loads only for diagrams that contain math.                                                                                                                                      | none at install (MathJax is bundled and loaded on demand) |
+| `@mermaid-js/plugin-hand-drawn`   | The hand-drawn look (`handDrawn: true`, or v12's `look: handDrawn`). It draws the same sketch every time for the same diagram.                                                                                                                      | `roughjs`                                                 |
+| `@mermaid-js/layout-elk`          | ELK layouts: `elk`, `elk.layered`, `elk.stress`, `elk.force`, `elk.mrtree`, `elk.sporeOverlap`, `elk.box`, `elk.rectpacking`, `elk.radial`. Works for flowchart, class, state and ER diagrams. It keeps its v12 name and its v12 registration code. | `elkjs`                                                   |
+
+```js
+import mermaid from 'mermaid';
+import { interactions } from '@mermaid-js/plugin-interactions';
+import { icons } from '@mermaid-js/plugin-icons';
+import elkLayouts from '@mermaid-js/layout-elk';
+
+await mermaid.registerExternalDiagrams([interactions, icons]);
+mermaid.registerLayoutLoaders(elkLayouts);
+```
+
+```note
+`@mermaid-js/layout-elk` also has v12 releases. `npm install @mermaid-js/layout-elk` (`latest`) still installs the v12 package (1.0.x). For v13, install `@mermaid-js/layout-elk@v13-alpha`.
+```
+
+### Build tools
+
+`@mermaid-js/bundler-plugin` is one line in your Vite, webpack, Rollup or esbuild config, and the Mermaid plugins in your app's `node_modules` work with no registration code. Each diagram is still split into its own chunk that loads on first use.
+
+```js
+// vite.config.js (likewise /webpack, /rollup and /esbuild)
+import mermaid from '@mermaid-js/bundler-plugin/vite';
+
+export default { plugins: [mermaid()] };
+```
+
+### Editor tooling
+
+New in v13: language support for editors that edit Mermaid text, with errors, completion, hover, go to definition, rename, folding and highlighting.
+
+| Package                                   | What it does                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@mermaid-js/language-service`            | The language support itself, for any editor: diagnostics, completion (including `config:` in front matter), hover, go to definition, references, rename, folding, semantic tokens, and a link between the cursor and the matching element in a live preview. Each diagram type's support comes from its diagram package and loads on demand. |
+| `@mermaid-js/language-service-codemirror` | All of the above for CodeMirror 6, as one `mermaid()` extension.                                                                                                                                                                                                                                                                             |
+| `@mermaid-js/language-service-monaco`     | All of the above for the Monaco editor, in one call: `registerMermaid(monaco)`.                                                                                                                                                                                                                                                              |
+| `@mermaid-js/language-server`             | A language server (LSP over stdio) for `.mmd` and `.mermaid` files, for any editor with an LSP client. Run it with `mermaid-language-server --stdio`.                                                                                                                                                                                        |
+
+## Before you upgrade an existing site
+
+Most v12 setups render without code changes. Check these first. Like everything on this page, they describe the alpha and may change.
+
+- `mermaidAPI.*` has been removed. Use the top-level functions (`initialize`, `render`, …).
+- Labels are SVG text, not HTML, so `htmlLabels` and `dompurifyConfig` no longer apply. Whether HTML labels come back, for example as an opt-in plugin, is [open for discussion](https://github.com/orgs/mermaid-js/discussions/8685).
+- Click callbacks (`click A callback`, `call fn()`) and sequence diagram actor menus need the `@mermaid-js/plugin-interactions` plugin. Links (`click A "url"`) and tooltips work without it.
+- Icons (`fa:fa-car`, icon shapes), math (`$$…$$`), the hand-drawn look and ELK layouts each need their plugin. See [Optional plugins](#optional-plugins).
+- `securityLevel: 'loose'` now behaves like `default`.
+- Custom CSS that targets element ids, `<marker>`, `.label-container` or the `<style>` element inside the SVG must move to the kept class names and the `--mermaid-*` CSS variables.
+
+## Give feedback
+
+Report bugs as issues. If a diagram renders differently from v12, or something breaks, [open a v13 alpha bug report](https://github.com/mermaid-js/mermaid/issues/new?template=v13_alpha_bug.yml). The template adds the `v13` label and asks for:
+
+- the exact alpha build, e.g. `13.0.0-alpha.2` (`npm ls mermaid` shows it)
+- the diagram source
+- what you expected, and what you got (a screenshot helps)
+
+Opinions about the direction belong in the [v13 discussion](https://github.com/orgs/mermaid-js/discussions/8685): rewrite or gradual updates, which trade-offs you can live with, and what you would give up for a smaller, faster Mermaid.

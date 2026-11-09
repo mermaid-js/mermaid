@@ -154,6 +154,14 @@ export interface Edge {
   style?: string[];
   animate?: boolean;
   animation?: 'fast' | 'slow';
+  /** Order in which the step animation dot travels this edge (1 = first). */
+  step?: number;
+  /** Highest `step` in the diagram, so every step edge shares one loop length. */
+  stepCount?: number;
+  /** Seconds the dot spends on each step (`flowchart.stepDuration`). */
+  stepDuration?: number;
+  /** Whether a badge shows this edge's `step` number (`flowchart.stepNumbers`). */
+  showStepNumber?: boolean;
   /** Domain metadata carried from the parser (e.g. agentflow edge `instruction`). */
   metadata?: Record<string, unknown>;
   // Properties common to both Flowchart and State Diagram edges
@@ -181,6 +189,12 @@ export interface Edge {
   terminalLabelCenters?: Partial<Record<TerminalLabelKey, Point>>;
   // Rendering specific properties
   curve?: string;
+  /** Corner radius shared by initial path generation and later generic path rewrites. */
+  cornerRadius?: number;
+  /** Selects shape-aware clipping without coupling the shared renderer to a layout name. */
+  portClipping?: 'outline-orthogonal';
+  /** Preserves router-owned terminal and bend invariants during shared rendering. */
+  skipCornerFix?: boolean;
   labelpos?: string;
   labelStyle?: string[];
   minlen?: number;

@@ -1,0 +1,19 @@
+---
+description: >-
+  BT gitGraph identical to the basic cherry-pick test but the cherry-pick statement carries an
+  explicit custom tag ('snapshot'), verifying tagged cherry-pick commits render correctly.
+---
+gitGraph BT:
+  commit id: "ZERO"
+  branch develop
+  commit id:"A"
+  checkout main
+  commit id:"ONE"
+  checkout develop
+  commit id:"B"
+  checkout main
+  commit id:"TWO"
+  cherry-pick id:"A" tag: "snapshot"
+  commit id:"THREE"
+  checkout develop
+  commit id:"C"
