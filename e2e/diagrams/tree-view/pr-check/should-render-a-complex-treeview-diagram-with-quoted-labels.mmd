@@ -1,0 +1,20 @@
+---
+description: >-
+  Renders a deeper, multi-level nested tree-view (four levels of folder
+  nesting) using quoted string labels throughout, exercising
+  indentation-based hierarchy with more depth than the simpler quoted-label
+  smoke tests.
+---
+treeView-beta
+  "root"
+  "folder1"
+      "file1.js"
+      "file2.ts"
+  "folder2"
+      "file3.spec.ts"
+      "folder3"
+          "file4.ts"
+          "file5.ts"
+          "folder4"
+              "file6.ts"
+  "file7.ts"

@@ -1,0 +1,14 @@
+---
+description: >-
+  Class diagram under the dagre layout where a class (Duck) is given a text
+  label via `class Duck["..."]` after it has already been referenced in an
+  inheritance relationship, verifying the label still applies to the
+  previously-declared node.
+config:
+  logLevel: 1
+  htmlLabels: true
+  layout: dagre
+---
+classDiagram
+  Animal <|-- Duck
+  class Duck["Duck with text label"]

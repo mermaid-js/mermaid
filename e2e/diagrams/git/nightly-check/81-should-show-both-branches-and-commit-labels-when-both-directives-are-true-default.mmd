@@ -1,0 +1,22 @@
+---
+description: >-
+  Same develop-branch scenario as the showBranches/showCommitLabel tests, but with both
+  `showBranches` and `showCommitLabel` explicitly set to true (the default combination), verifying
+  both directives together.
+config:
+  gitGraph:
+    showBranches: true
+    showCommitLabel: true
+    rotateCommitLabel: false
+    parallelCommits: false
+---
+ gitGraph
+  commit id: "1"
+  commit id: "2"
+  branch develop
+  checkout develop
+  commit id: "3"
+  commit id: "4"
+  checkout main
+  commit id: "5"
+  commit id: "6"
