@@ -2583,9 +2583,13 @@ export function resolveRenderedOrthogonalCrossings(
     return candidates;
   };
 
-  // A lane's own outer tracks run just outside the nodes it holds, inside its box.
-  const laneTracks = (band: RectBounds): Record<RectSide, number> => {
+  // A lane's own outer tracks run just outside the nodes it holds, inside its box. A lane that
+  // holds no node has none.
+  const laneTracks = (band: RectBounds): Record<RectSide, number> | undefined => {
     const inside = realNodes.filter((node) => staysInsideBand([{ x: node.cx, y: node.cy }], band));
+    if (inside.length === 0) {
+      return undefined;
+    }
     return {
       top: Math.min(...inside.map((node) => node.rect.top)) - ANCHOR,
       bottom: Math.max(...inside.map((node) => node.rect.bottom)) + ANCHOR,
@@ -2598,9 +2602,15 @@ export function resolveRenderedOrthogonalCrossings(
   // outer tracks, those on the lane's own, and the route the edge had before this pass.
   const inLaneCandidatesFor = (edge: MaterializedEdge, band: RectBounds): PointLite[][] => {
     const candidates = candidatePathsFor(edge);
-    activeTracks = laneTracks(band);
-    candidates.push(...candidatePathsFor(edge));
-    activeTracks = outsideTracks;
+    const tracks = laneTracks(band);
+    if (tracks) {
+      activeTracks = tracks;
+      try {
+        candidates.push(...candidatePathsFor(edge));
+      } finally {
+        activeTracks = outsideTracks;
+      }
+    }
     candidates.push(routedBefore.get(edge) ?? []);
     return candidates
       .map((candidate) => simplifyPolyline(dedupeConsecutivePoints(candidate)))

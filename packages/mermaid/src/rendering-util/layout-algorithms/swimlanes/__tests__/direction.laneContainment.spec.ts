@@ -217,4 +217,63 @@ describe('resolving crossings keeps an edge inside the lane both its ends share'
     expect(staysInsideBand(points, band)).toBe(true);
     expect(crossingPointsBetween(points, across.points)).toEqual([]);
   });
+
+  it('leaves the route of an edge whose lane box holds none of its nodes', () => {
+    // A and B belong to lane L but sit outside its box, so L has no tracks of its own.
+    const away = laneBox('L', 200, 500, 400, 200);
+    const edge = outside();
+    const before = structuredClone(edge.points);
+
+    const points = run([away, node('A', 50, 0), node('B', 350, 0)], [edge]);
+
+    expect(points).toEqual(before);
+  });
+
+  it('brings an edge back into its lane as it would alone, after one in another lane', () => {
+    // Each lane holds an edge that runs out of the diagram. The one in Bottom comes back first;
+    // the one in Top must still be built on the diagram's tracks and its own lane's.
+    const sized = (id: string, parentId: string, x: number, y: number, w: number, h: number) => ({
+      ...node(id, x, y, parentId),
+      width: w,
+      height: h,
+    });
+    const nodes = [
+      laneBox('Top', 300, 0, 700, 212),
+      sized('A', 'Top', 19, 27, 59, 26),
+      sized('B', 'Top', -1, -34, 56, 25),
+      sized('C', 'Top', 19, -23, 59, 39),
+      laneBox('Bottom', 300, 300, 700, 124),
+      sized('D', 'Bottom', 65, 323, 73, 28),
+      sized('E', 'Bottom', 422, 323, 60, 29),
+    ];
+    const outOfTop = () => ({
+      id: 'A_B',
+      start: 'A',
+      end: 'B',
+      points: pathOf([
+        [19, 27],
+        [19, 1500],
+        [-1, 1500],
+        [-1, -34],
+      ]),
+    });
+    const outOfBottom = {
+      id: 'D_E',
+      start: 'D',
+      end: 'E',
+      points: pathOf([
+        [65, 323],
+        [65, 1500],
+        [422, 1500],
+        [422, 323],
+      ]),
+    };
+    const alone = outOfTop();
+    resolveRenderedOrthogonalCrossings([alone], mapOf(nodes));
+    const second = outOfTop();
+
+    resolveRenderedOrthogonalCrossings([outOfBottom, second], mapOf(nodes));
+
+    expect(second.points).toEqual(alone.points);
+  });
 });
