@@ -37,6 +37,28 @@ const EDGE_PATTERNS: Record<ParsedFlow['kind'], Edge['pattern']> = {
   association: 'dotted',
 };
 
+/** How many edges a diagram may have when the site config does not set `maxEdges`. */
+const DEFAULT_MAX_EDGES = 500;
+
+/**
+ * Rejects a diagram with more flows than the secure `maxEdges` setting allows (500 unless
+ * `mermaid.initialize` sets it; 0 rejects every flow), with the error a flowchart gives.
+ */
+function checkEdgeLimit(flowCount: number): void {
+  const { maxEdges } = getGlobalConfig();
+  const limit = maxEdges ?? DEFAULT_MAX_EDGES;
+  if (flowCount <= limit) {
+    return;
+  }
+  throw new Error(
+    `Edge limit exceeded. ${limit} edges found, but the limit is ${maxEdges}.
+
+Initialize mermaid with maxEdges set to a higher number to allow more edges.
+You cannot set this config via configuration inside the diagram as it is a secure config.
+You have to call mermaid.initialize.`
+  );
+}
+
 /** How edges meet each drawn shape; the layout reads these keys without knowing a BPMN shape. */
 const POINTED: NodeMetadata = { endpointProfile: 'vertex' };
 const FLAT_SIDED: NodeMetadata = { endpointProfile: 'flat' };
@@ -110,6 +132,7 @@ export class BpmnDb {
 
   public parse(input: string) {
     this.parsed = parseBpmn(input, this.frontmatterLineOffset);
+    checkEdgeLimit(this.parsed.flows.length);
     if (this.parsed.title) {
       setDiagramTitle(this.parsed.title);
     }

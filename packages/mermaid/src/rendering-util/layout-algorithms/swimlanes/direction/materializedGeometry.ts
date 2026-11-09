@@ -25,6 +25,7 @@ import type { OrthogonalSegment, Point, RectBounds, RectSide } from './geometry.
 import type { Edge, Node } from '../../../types.js';
 import { EDGE_ROUTING } from '../config.js';
 import { buildLaneModel } from '../lanes.js';
+import { crosses, foreignParticipantBoxes } from './participantLinks.js';
 
 const EPS_LOCAL = 1e-3;
 const MIN_SHARED = 8;
@@ -450,8 +451,12 @@ export function collapseRedundantRectangularDoglegs(
     }
 
     const endpointIds = [sourceId, targetId].filter((id): id is string => Boolean(id));
+    const participants = foreignParticipantBoxes([...nodeByIdMap.values()], sourceId, targetId);
     for (const segment of candidateSegments) {
       if (segmentHitsAnyRect(segment.a, segment.b, realNodeRects, endpointIds, -BUFFER)) {
+        return false;
+      }
+      if (participants.some((box) => crosses(segment.a, segment.b, box))) {
         return false;
       }
       if (segmentHitsAnyRect(segment.a, segment.b, labelRects, [], -BUFFER)) {
