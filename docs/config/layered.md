@@ -98,7 +98,7 @@ If the layered layout fails on a diagram, Mermaid logs a warning and lays that d
 | ------------------- | --------------------------------------------------------------------------------- |
 | `rounded` (default) | Edges run on tracks with circular corners of radius 5, reduced on short segments. |
 | `curved`            | Each edge runs as smooth curves between ranks.                                    |
-| `stepped`           | Edges run on tracks between ranks and turn at right angles.                       |
+| `stepped`           | Edges run on tracks between ranks; each turn is softened over at most 12 px.      |
 | `straight`          | Each edge runs as straight lines from point to point.                             |
 
 ```mermaid
@@ -133,7 +133,7 @@ flowchart TD
   D --> E
 ```
 
-With `rounded`, edges and self-loops have small circular bends, with the radius reduced where a segment is too short. Set `layered.edgeRouting: curved` for the previous smooth curves. With `curved`, an edge keeps its own curve, so `linkStyle 0 interpolate linear` still gives a straight line. With `rounded`, `stepped` or `straight`, the routing mode applies to every edge and replaces the edge's own `interpolate` / `curve` setting.
+With `rounded`, edges and self-loops have small circular bends, with the radius reduced where a segment is too short. `stepped` uses the same tracks, but softens each turn with a wider curve of up to 12 px. Set `layered.edgeRouting: curved` for the previous smooth curves. With `curved`, an edge keeps its own curve, so `linkStyle 0 interpolate linear` still gives a straight line. With `rounded`, `stepped` or `straight`, the routing mode applies to every edge and replaces the edge's own `interpolate` / `curve` setting.
 
 ## Parity with dagre
 

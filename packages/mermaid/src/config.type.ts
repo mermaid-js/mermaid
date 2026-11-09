@@ -264,7 +264,7 @@ export interface MermaidConfig {
      *
      * - `rounded`: edges run on tracks between ranks with radius-5 rounded corners (smaller on short segments).
      * - `curved`: each edge runs as smooth curves between ranks.
-     * - `stepped`: edges run on tracks between ranks and turn at right angles.
+     * - `stepped`: edges run on tracks between ranks; each turn is softened over at most 12 px.
      * - `straight`: each edge runs as straight lines from point to point.
      *
      */
