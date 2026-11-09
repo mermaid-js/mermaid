@@ -9,7 +9,8 @@ export type GridRoutingFallbackReason =
   | 'adjacency_cap'
   | 'estimated_memory_cap'
   | 'search_state_cap'
-  | 'label_index_work_cap';
+  | 'label_index_work_cap'
+  | 'label_placement_exhausted';
 
 export class GridRoutingResourceLimitError extends Error {
   constructor(
@@ -216,6 +217,7 @@ export function createGridRoutingInstrumentation(): GridRoutingInstrumentation {
       estimated_memory_cap: 0,
       search_state_cap: 0,
       label_index_work_cap: 0,
+      label_placement_exhausted: 0,
     },
     fallbackValidationFailures: 0,
     compatibilitySegments: 0,

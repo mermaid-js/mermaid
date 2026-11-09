@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { log } from '../../../logger.js';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
-import { rectForNode } from '../layout-utils/helpers.js';
+import * as layoutHelpers from '../layout-utils/helpers.js';
 import { validateLayout as validateSharedLayout } from '../layout-utils/validateLayout.js';
 import {
   createGridEdgeLabelInstrumentation,
@@ -570,9 +571,13 @@ describe('grid edge label helpers', () => {
     expect(metrics.rerouteRejectedProtectedObstacle).toBeGreaterThan(0);
   });
 
-  it('rolls every route and label position back after two-pass non-convergence', () => {
+  it('restores routes and warns before using anchored midpoints after both label searches exhaust', () => {
     const data: LayoutData = {
       nodes: [
+        manualNode('start', 600, 100),
+        manualNode('target', 880, 100),
+        manualNode('crossing-start', 740, -40),
+        manualNode('crossing-target', 740, 240),
         manualNode('a', 200, 200),
         manualNode('left', 95, 200, 110, 180),
         manualNode('right', 305, 200, 110, 180),
@@ -580,6 +585,20 @@ describe('grid edge label helpers', () => {
         manualNode('bottom', 200, 305, 180, 110),
       ],
       edges: [
+        manualEdge(
+          'fits',
+          'start',
+          'target',
+          [
+            { x: 640, y: 100 },
+            { x: 840, y: 100 },
+          ],
+          'fits'
+        ),
+        manualEdge('crossing', 'crossing-start', 'crossing-target', [
+          { x: 740, y: -20 },
+          { x: 740, y: 220 },
+        ]),
         manualEdge(
           'loop',
           'a',
@@ -596,25 +615,52 @@ describe('grid edge label helpers', () => {
       config: { layout: 'grid' } as LayoutData['config'],
     };
     prepareGridLayout(data);
-    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    const firstLabel = data.nodes.find((item) => item.id === data.edges[0].labelNodeId)!;
+    firstLabel.width = 120;
+    firstLabel.height = 20;
+    const loopEdge = data.edges[2];
+    const labelNode = data.nodes.find((item) => item.id === loopEdge.labelNodeId)!;
     labelNode.width = 260;
     labelNode.height = 180;
     labelNode.x = 123;
     labelNode.y = 456;
-    const originalPoints = structuredClone(data.edges[0].points);
+    const originalPoints = structuredClone(data.edges.map((edge) => edge.points));
     const metrics = createGridEdgeLabelInstrumentation();
     const routingMetrics = createGridRoutingInstrumentation();
 
-    expect(() => positionGridEdgeLabels(data, metrics, routingMetrics)).toThrowError(
-      expect.objectContaining({ code: 'GRID_ROUTE_NOT_FOUND' })
-    );
-    expect(data.edges[0].points).toEqual(originalPoints);
-    expect(labelNode.x).toBe(123);
-    expect(labelNode.y).toBe(456);
-    expect(metrics.labelPasses).toBe(2);
-    expect(metrics.rollbacks).toBe(1);
-    expect(routingMetrics.resourceLimitFallbacks).toBe(0);
-    expect(routingMetrics.fallbackValidationFailures).toBe(0);
+    const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+    try {
+      positionGridEdgeLabels(data, metrics, routingMetrics);
+
+      expect(data.edges.map((edge) => edge.points)).toEqual(originalPoints);
+      expect(firstLabel).toMatchObject({ x: 740, y: 100 });
+      expect(labelNode).toMatchObject({ x: 260, y: 190 });
+      expect(
+        layoutHelpers.orthogonalPolylineContainsPoint(loopEdge.points!, {
+          x: labelNode.x,
+          y: labelNode.y,
+        })
+      ).toBe(true);
+      expect(metrics.labelPasses).toBe(2);
+      expect(metrics.rerouteCandidatesEvaluated).toBeGreaterThan(0);
+      expect(metrics.placementSearchFallbacks).toBe(1);
+      expect(routingMetrics.fallbackReasons.label_placement_exhausted).toBe(1);
+      expect(routingMetrics.resourceLimitFallbacks).toBe(0);
+      expect(warn).toHaveBeenCalledExactlyOnceWith(
+        '[grid]',
+        expect.stringContaining('Labels may overlap'),
+        expect.objectContaining({
+          reason: 'label_placement_exhausted',
+          edgeIds: ['fits', 'loop'],
+          failures: [
+            expect.objectContaining({ edgeId: 'loop' }),
+            expect.objectContaining({ edgeId: 'loop' }),
+          ],
+        })
+      );
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it('creates measurable label nodes without leaving duplicate edge labels behind', () => {
@@ -694,49 +740,73 @@ describe('grid edge label helpers', () => {
     ).toHaveLength(2);
   });
 
-  it('throws GRID_ROUTE_NOT_FOUND when no safe label placement exists', () => {
-    const data: LayoutData = {
-      nodes: [
-        manualNode('a', 200, 200),
-        manualNode('left', 95, 200, 110, 180),
-        manualNode('right', 305, 200, 110, 180),
-        manualNode('top', 200, 95, 180, 110),
-        manualNode('bottom', 200, 305, 180, 110),
-      ],
-      edges: [
-        manualEdge(
-          'loop',
-          'a',
-          'a',
-          [
-            { x: 240, y: 190 },
-            { x: 280, y: 190 },
-            { x: 280, y: 160 },
-            { x: 320, y: 160 },
-            { x: 320, y: 240 },
-            { x: 280, y: 240 },
-            { x: 280, y: 210 },
-            { x: 240, y: 210 },
-          ],
-          'loop label'
-        ),
-      ],
-      config: {
-        layout: 'grid',
-      } as LayoutData['config'],
-    };
+  it.each(['lost anchor', 'failed validation', 'unexpected error'] as const)(
+    'rolls back and throws rather than degrading after a %s',
+    (failureMode) => {
+      const data: LayoutData = {
+        nodes: [manualNode('a', 40, 100), manualNode('b', 360, 100)],
+        edges: [
+          manualEdge(
+            'labelled',
+            'a',
+            'b',
+            [
+              { x: 80, y: 100 },
+              { x: 320, y: 100 },
+            ],
+            'label'
+          ),
+        ],
+        config: { layout: 'grid' } as LayoutData['config'],
+      };
 
-    prepareGridLayout(data);
-    const labelNode = data.nodes.find((item) => item.id === data.edges[0].labelNodeId);
-    if (labelNode) {
-      labelNode.width = 260;
-      labelNode.height = 180;
+      prepareGridLayout(data);
+      const labelNode = data.nodes.find((node) => node.id === data.edges[0].labelNodeId)!;
+      labelNode.width = 80;
+      labelNode.height = 20;
+      labelNode.x = 123;
+      labelNode.y = 456;
+      const originalPoints = structuredClone(data.edges[0].points);
+      const metrics = createGridEdgeLabelInstrumentation();
+      const routingMetrics = createGridRoutingInstrumentation();
+      const failure = new Error('Unexpected label failure');
+      const anchorCheck = vi.spyOn(layoutHelpers, 'orthogonalPolylineContainsPoint');
+      const warn = vi.spyOn(log, 'warn').mockImplementation(() => undefined);
+      if (failureMode === 'lost anchor') {
+        anchorCheck.mockReturnValue(false);
+      } else if (failureMode === 'failed validation') {
+        anchorCheck.mockReturnValueOnce(true).mockReturnValue(false);
+      } else {
+        anchorCheck.mockImplementation(() => {
+          throw failure;
+        });
+      }
+
+      try {
+        expect(() => positionGridEdgeLabels(data, metrics, routingMetrics)).toThrowError(
+          failureMode === 'unexpected error'
+            ? failure
+            : expect.objectContaining({
+                code: 'GRID_ROUTE_NOT_FOUND',
+                message: expect.stringContaining(
+                  failureMode === 'lost anchor'
+                    ? 'Label anchor was lost'
+                    : 'Label pass 1 did not validate'
+                ),
+              })
+        );
+        expect(data.edges[0].points).toEqual(originalPoints);
+        expect(labelNode).toMatchObject({ x: 123, y: 456 });
+        expect(metrics.rollbacks).toBe(1);
+        expect(metrics.placementSearchFallbacks).toBe(0);
+        expect(routingMetrics.fallbackReasons.label_placement_exhausted).toBe(0);
+        expect(warn).not.toHaveBeenCalled();
+      } finally {
+        anchorCheck.mockRestore();
+        warn.mockRestore();
+      }
     }
-
-    expect(() => positionGridEdgeLabels(data)).toThrowError(
-      expect.objectContaining({ code: 'GRID_ROUTE_NOT_FOUND' })
-    );
-  });
+  );
 
   it('reroutes crossing vertical edges around a horizontal edge label', () => {
     const data: LayoutData = {
@@ -864,7 +934,7 @@ describe('grid edge label helpers', () => {
       positionGridEdgeLabels(data);
 
       expect(data.edges[1].points).not.toEqual(originalCrossing);
-      const rect = rectForNode(labelNode);
+      const rect = layoutHelpers.rectForNode(labelNode);
       const gaps = normalizePolyline(data.edges[1].points!)
         .segments.filter((segment) =>
           orientation === 'horizontal'

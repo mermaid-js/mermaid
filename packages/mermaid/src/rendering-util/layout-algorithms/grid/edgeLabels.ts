@@ -1,4 +1,5 @@
 import type { Point } from '../../../types.js';
+import { log } from '../../../logger.js';
 import type { Edge, LayoutData, Node, NonClusterNode } from '../../types.js';
 import { normalizePolyline, segmentsCross, type Segment } from '../layout-utils/geometry.js';
 import {
@@ -169,6 +170,7 @@ export interface GridEdgeLabelInstrumentation {
   unmeasuredLabelsSkipped: number;
   indexWorkUnits: number;
   indexWorkLimitFallbacks: number;
+  placementSearchFallbacks: number;
   rollbacks: number;
   indexCoordinateCount: number;
 }
@@ -224,9 +226,17 @@ export function createGridEdgeLabelInstrumentation(): GridEdgeLabelInstrumentati
     unmeasuredLabelsSkipped: 0,
     indexWorkUnits: 0,
     indexWorkLimitFallbacks: 0,
+    placementSearchFallbacks: 0,
     rollbacks: 0,
     indexCoordinateCount: 0,
   };
+}
+
+class LabelPlacementSearchExhaustedError extends Error {
+  constructor(public readonly details: Record<string, unknown> & { edgeId: string }) {
+    super(`Could not place label for edge "${details.edgeId}"`);
+    this.name = 'LabelPlacementSearchExhaustedError';
+  }
 }
 
 /**
@@ -2227,8 +2237,7 @@ export function positionGridEdgeLabels(
     return;
   }
 
-  // The outer snapshot is the transaction boundary for the whole label phase. If both placement
-  // passes fail, restore every route and label coordinate exactly as routing produced them.
+  // Keep the routed geometry for midpoint degradation and the full snapshot for error rollback.
   const baseEdgePoints = new Map<string, Point[] | undefined>(
     data.edges.map((edge) => [edge.id, edge.points?.map((point) => ({ ...point }))])
   );
@@ -2271,13 +2280,20 @@ export function positionGridEdgeLabels(
   if (workItems.length === 0) {
     return;
   }
+  const placeLabelsAtRouteMidpoints = (): void => {
+    restoreBaseEdgePoints();
+    for (const { edge, labelNode } of workItems) {
+      placeLabelAtRouteMidpoint(edge, labelNode, nodeById);
+    }
+  };
+
   const configuredIndexWork = options.maxIndexWork ?? DEFAULT_MAX_INDEX_WORK;
   const indexWorkLimit =
     Number.isFinite(configuredIndexWork) && configuredIndexWork >= 0
       ? Math.floor(configuredIndexWork)
       : DEFAULT_MAX_INDEX_WORK;
   const indexWorkBudget = new LabelIndexWorkBudget(indexWorkLimit, instrumentation);
-  let lastError: unknown;
+  const placementFailures: LabelPlacementSearchExhaustedError[] = [];
   for (let pass = 1; pass <= 2; pass++) {
     // Pass 1 prefers existing segments and foreign-edge reroutes. Pass 2 additionally permits
     // owner-edge detours, rebuilding every route from the original routing result.
@@ -2358,7 +2374,7 @@ export function positionGridEdgeLabels(
         }
 
         if (!labelCenter) {
-          throw gridError('GRID_ROUTE_NOT_FOUND', `Could not place label for edge "${edge.id}"`, {
+          throw new LabelPlacementSearchExhaustedError({
             edgeId: edge.id,
             labelNodeId: labelNode.id,
             labelWidth: labelNode.width,
@@ -2551,10 +2567,7 @@ export function positionGridEdgeLabels(
       return;
     } catch (error) {
       if (error instanceof LabelIndexWorkLimitError) {
-        restoreBaseEdgePoints();
-        for (const { edge, labelNode } of workItems) {
-          placeLabelAtRouteMidpoint(edge, labelNode, nodeById);
-        }
+        placeLabelsAtRouteMidpoints();
         incrementMetric(instrumentation, 'indexWorkLimitFallbacks');
         if (routingInstrumentation) {
           routingInstrumentation.resourceLimitFallbacks++;
@@ -2562,7 +2575,12 @@ export function positionGridEdgeLabels(
         }
         return;
       }
-      lastError = error;
+      if (!(error instanceof LabelPlacementSearchExhaustedError)) {
+        restoreBaseState();
+        incrementMetric(instrumentation, 'rollbacks');
+        throw error;
+      }
+      placementFailures.push(error);
       // A failed pass may contain detours around provisional label positions. Restore routing
       // before retrying so the next pass depends only on the labels it successfully places.
       restoreBaseEdgePoints();
@@ -2573,10 +2591,18 @@ export function positionGridEdgeLabels(
     }
   }
 
-  restoreBaseState();
-  incrementMetric(instrumentation, 'rollbacks');
-  if (lastError instanceof Error) {
-    throw lastError;
+  placeLabelsAtRouteMidpoints();
+  incrementMetric(instrumentation, 'placementSearchFallbacks');
+  if (routingInstrumentation) {
+    routingInstrumentation.fallbackReasons.label_placement_exhausted++;
   }
-  throw gridError('GRID_ROUTE_NOT_FOUND', 'Could not place one or more grid edge labels');
+  log.warn(
+    '[grid]',
+    'Label placement search exhausted; using route midpoints. Labels may overlap.',
+    {
+      reason: 'label_placement_exhausted',
+      edgeIds: workItems.map(({ edge }) => edge.id),
+      failures: placementFailures.map(({ details }) => details),
+    }
+  );
 }
