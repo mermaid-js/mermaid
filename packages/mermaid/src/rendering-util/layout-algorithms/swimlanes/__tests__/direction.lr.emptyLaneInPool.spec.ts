@@ -104,8 +104,14 @@ describe.each(['LR', 'RL'])('an empty lane in a pool laid out %s', (direction) =
       const [top, bottom] = span(lane);
       expect(lane?.groupTitleRect?.top).toBeCloseTo(top);
       expect(lane?.groupTitleRect?.bottom).toBeCloseTo(bottom);
-      expect(lane?.swimlaneContentTop ?? Number.NaN).toBeGreaterThanOrEqual(top - 0.5);
-      expect(lane?.swimlaneContentTop ?? Number.NaN).toBeLessThanOrEqual(bottom + 0.5);
+      // The swimlane engine adds `swimlaneContentTop` to the lane; the Node type does not carry it.
+      const contentTop: unknown = lane ? Reflect.get(lane, 'swimlaneContentTop') : undefined;
+      expect(typeof contentTop === 'number' ? contentTop : Number.NaN).toBeGreaterThanOrEqual(
+        top - 0.5
+      );
+      expect(typeof contentTop === 'number' ? contentTop : Number.NaN).toBeLessThanOrEqual(
+        bottom + 0.5
+      );
     }
   });
 
