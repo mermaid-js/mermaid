@@ -129,7 +129,7 @@ describe('domus/core/helpers', () => {
     expect(hasTerminalMarker(edge, 'start')).toBe(false);
     expect(hasTerminalMarker(edge, 'end')).toBe(true);
     expect(
-      hasTerminalMarker({ ...edge, arrowTypeEnd: 'arrow_open', type: undefined } as Edge, 'end')
+      hasTerminalMarker({ ...edge, arrowTypeEnd: 'arrow_open', type: 'arrow_point' } as Edge, 'end')
     ).toBe(false);
     expect(
       hasTerminalMarker(

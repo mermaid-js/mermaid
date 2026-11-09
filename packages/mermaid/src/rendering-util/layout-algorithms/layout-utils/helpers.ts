@@ -89,6 +89,7 @@ export function terminalMarkerClearanceRect(
 
 export function hasTerminalMarker(edge: Edge, terminal: 'start' | 'end'): boolean {
   const markerType = terminal === 'start' ? edge.arrowTypeStart : edge.arrowTypeEnd;
+  // Explicit terminal settings override edge.type, including values that disable markers.
   if (typeof markerType === 'string') {
     const trimmed = markerType.trim();
     if (trimmed.length > 0) {
