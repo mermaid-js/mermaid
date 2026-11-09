@@ -247,6 +247,23 @@ export const updateNodeBounds = <T extends SVGGraphicsElement>(
 };
 
 /**
+ * Inline paint for a rectangle that only sets a node's bounds and hit area. A class
+ * assigned to the node emits `.<name> path { fill: ...!important; stroke: ...!important }`
+ * when labels are SVG text, and only an inline `!important` declaration outranks it.
+ * The fill stays `transparent` rather than `none` so the rectangle still takes pointer
+ * events.
+ */
+export const BOUNDS_ONLY_PATH_STYLE = 'fill: transparent !important; stroke: none !important;';
+
+/**
+ * Keeps every path of a bounds-only rough.js group unpainted, whatever classes the node
+ * carries. A hand-drawn rectangle has more than one path, so all of them are covered.
+ */
+export const keepBoundsUnpainted = (bounds: D3Selection<SVGGElement>) => {
+  bounds.selectAll('path').attr('style', BOUNDS_ONLY_PATH_STYLE);
+};
+
+/**
  * @param parent - Parent element to append the polygon to
  * @param w - Width of the polygon
  * @param h - Height of the polygon

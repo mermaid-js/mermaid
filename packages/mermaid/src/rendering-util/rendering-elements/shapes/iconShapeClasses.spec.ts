@@ -11,7 +11,12 @@ import { JSDOM } from 'jsdom';
 import { describe, it, expect } from 'vitest';
 import { mermaidAPI } from '../../../mermaidAPI.js';
 
-const renderNodeClasses = async (id: string, code: string): Promise<string[]> => {
+const renderNodeClasses = async (id: string, code: string): Promise<string[]> =>
+  [...(await renderToHolder(id, code)).querySelectorAll('g[class]')]
+    .map((element) => element.getAttribute('class') ?? '')
+    .filter((classes) => classes.includes('icon-shape') || /(^|\s)node(\s|$)/.test(classes));
+
+const renderToHolder = async (id: string, code: string): Promise<Element> => {
   const oldWindow = global.window;
   const oldDocument = global.document;
   const oldMutationObserver = global.MutationObserver;
@@ -35,10 +40,7 @@ const renderNodeClasses = async (id: string, code: string): Promise<string[]> =>
     const { svg } = await mermaidAPI.render(id, code);
     const holder = dom.window.document.createElement('div');
     holder.innerHTML = svg;
-
-    return [...holder.querySelectorAll('g[class]')]
-      .map((element) => element.getAttribute('class') ?? '')
-      .filter((classes) => classes.includes('icon-shape') || /(^|\s)node(\s|$)/.test(classes));
+    return holder;
   } finally {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global as any).window = oldWindow;
@@ -112,4 +114,68 @@ describe('icon shapes and node classes', () => {
       expect(iconNode?.split(/\s+/)).not.toContain('node');
     }
   );
+});
+
+/**
+ * Each icon shape draws a bounds-only rectangle around the icon and its label, which
+ * sets the node's size and hit area and is meant to stay invisible. With SVG labels a
+ * class emits `.<name> path { fill: ... !important; stroke: ... !important }`, which
+ * beats the rectangle's `fill`/`stroke` attributes, so the rectangle has to declare its
+ * own paint with `!important` inline. jsdom does not apply the diagram's stylesheet, so
+ * these tests check the declarations that a browser resolves against that rule.
+ */
+describe('icon shapes keep their bounds rectangle unpainted', () => {
+  const classedIcon = (form: string | undefined, look: string) => `---
+config:
+  htmlLabels: false
+  look: ${look}
+  handDrawnSeed: 1
+---
+flowchart TD
+  A@{ icon: "fa:bell", label: "Iconic"${form ? `, form: "${form}"` : ''} }
+  classDef hot fill:#f96,stroke:#333
+  class A hot`;
+
+  // The drawn shape is the first child; the bounds rectangle is the other rough.js group,
+  // the one that holds nothing but paths. The label and the icon hold nested elements.
+  const shapeParts = (holder: Element) => {
+    const [shape, ...rest] = [...(holder.querySelector('g.icon-shape')?.children ?? [])];
+    const bounds = rest.filter(
+      (child) =>
+        child.tagName === 'g' &&
+        !child.classList.contains('label') &&
+        child.children.length > 0 &&
+        [...child.children].every((grandchild) => grandchild.tagName === 'path')
+    );
+    return { shape, bounds };
+  };
+
+  const paintOf = (path: Element) => (path.getAttribute('style') ?? '').replaceAll(/\s+/g, ' ');
+
+  it.each(
+    [undefined, 'rounded', 'square', 'circle'].flatMap((form) =>
+      ['classic', 'handDrawn'].map((look) => ({ form, look }))
+    )
+  )('form=$form look=$look: the bounds paths win over the class paint', async ({ form, look }) => {
+    const holder = await renderToHolder(
+      `icon-bounds-${form ?? 'default'}-${look}`,
+      classedIcon(form, look)
+    );
+    const { shape, bounds } = shapeParts(holder);
+
+    expect(bounds).toHaveLength(1);
+    const boundsPaths = [...bounds[0].querySelectorAll('path')];
+    expect(boundsPaths.length).toBeGreaterThan(0);
+    for (const path of boundsPaths) {
+      expect(paintOf(path)).toContain('fill: transparent !important');
+      expect(paintOf(path)).toContain('stroke: none !important');
+    }
+
+    // the drawn shape is left to the class: it must not carry the override
+    const shapePaths = [...(shape?.querySelectorAll('path') ?? [])];
+    expect(shapePaths.length).toBeGreaterThan(0);
+    for (const path of shapePaths) {
+      expect(paintOf(path)).not.toContain('!important');
+    }
+  });
 });

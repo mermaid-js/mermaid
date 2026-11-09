@@ -5,7 +5,7 @@ import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { keepBoundsUnpainted, labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
 
 export async function iconSquare<T extends SVGGraphicsElement>(
@@ -62,6 +62,7 @@ export async function iconSquare<T extends SVGGraphicsElement>(
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   const outerShape = shapeSvg.insert(() => outerNode);
+  keepBoundsUnpainted(outerShape);
 
   if (node.icon) {
     const iconElem = shapeSvg.append('g');

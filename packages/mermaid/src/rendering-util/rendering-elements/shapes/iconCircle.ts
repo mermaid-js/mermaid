@@ -4,7 +4,7 @@ import { getIconSVG } from '../../icons.js';
 import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
-import { labelHelper, updateNodeBounds } from './util.js';
+import { keepBoundsUnpainted, labelHelper, updateNodeBounds } from './util.js';
 import type { D3Selection } from '../../../types.js';
 
 export async function iconCircle<T extends SVGGraphicsElement>(
@@ -73,6 +73,7 @@ export async function iconCircle<T extends SVGGraphicsElement>(
 
   const iconShape = shapeSvg.insert(() => iconNode, ':first-child');
   const outerShape = shapeSvg.insert(() => outerNode);
+  keepBoundsUnpainted(outerShape);
   iconElem.attr(
     'transform',
     `translate(${-iconWidth / 2 - iconX},${
