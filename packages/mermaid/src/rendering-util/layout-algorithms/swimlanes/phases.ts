@@ -8,6 +8,8 @@ export interface SwimlanePhase {
   label: string;
   /** Room the drawn title needs along the flow, in px; set once the title is measured. */
   titleExtent?: number;
+  /** Room the drawn title needs across the flow, in px; set once the title is measured. */
+  titleThickness?: number;
 }
 
 /** Extra room, in px, a phase asks for along the flow, by phase id. */

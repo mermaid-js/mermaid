@@ -10,6 +10,7 @@ import { log } from '../../../../logger.js';
 import { reset, setConfig } from '../../../../config.js';
 import { createText } from '../../../createText.js';
 import {
+  PHASE_TITLE_INSET,
   PHASE_TITLE_MARGIN,
   PHASE_TITLE_THICKNESS,
   computePhaseBands,
@@ -254,6 +255,63 @@ describe('phase bands', () => {
       bottom: Math.max(...lanes.map((lane) => (lane.y ?? 0) + (lane.height ?? 0) / 2)),
     };
   };
+
+  // A title of several lines, or in a larger font, is thicker across the flow than the strip.
+  const withThickness = (layout: LayoutData, thickness: Record<string, number>) => {
+    layout.other.phases = layout.other.phases.map((phase: { id: string }) => ({
+      ...phase,
+      titleThickness: new Map(Object.entries(thickness)).get(phase.id),
+    }));
+    return layout;
+  };
+  const THICK_TITLE = 70;
+  const crossOf = (band: ReturnType<typeof computePhaseBands>[number]) =>
+    band.titleReadsUpward ? band.title.width : band.title.height;
+
+  it.each(DIRECTIONS)(
+    'makes the whole title strip as thick as its thickest title in %s',
+    (direction, alongX) => {
+      const layout = withThickness(laidOut(source(direction)), { p2: THICK_TITLE });
+      const lanes = laneBox(layout);
+
+      const bands = computePhaseBands(layout);
+
+      expect(bands.map(crossOf)).toEqual(bands.map(() => THICK_TITLE));
+      for (const band of bands) {
+        const [outer, inner] = alongX
+          ? [band.title.y, band.title.y + band.title.height]
+          : [band.title.x, band.title.x + band.title.width];
+        expect(inner).toBeCloseTo(alongX ? lanes.top : lanes.left);
+        if (band.separator) {
+          expect(alongX ? band.separator.y1 : band.separator.x1).toBeCloseTo(outer);
+        }
+      }
+    }
+  );
+
+  it.each(DIRECTIONS)('keeps the strip at its own thickness for thin titles in %s', (direction) => {
+    const layout = withThickness(laidOut(source(direction)), { p1: 10, p2: 20, p3: 1 });
+
+    expect(computePhaseBands(layout).map(crossOf)).toEqual([
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+    ]);
+  });
+
+  it('lets only phases that draw a band thicken the strip', () => {
+    const text = source('TB').replace(
+      'phase p3["Closeout"]',
+      'phase p3["Closeout"]\nphase p4["Spare"]'
+    );
+    const layout = withThickness(laidOut(text), { p4: THICK_TITLE });
+
+    expect(computePhaseBands(layout).map(crossOf)).toEqual([
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+      PHASE_TITLE_THICKNESS,
+    ]);
+  });
 
   it('lists a band per phase that has nodes, in order, with the trailing band last', () => {
     const bands = computePhaseBands(laidOut(source('TB', 'subgraph l3\n  z\nend')));
@@ -604,7 +662,7 @@ describe('painting phase bands', () => {
     expect(all(root, '.swimlane-phases')).toHaveLength(0);
   });
 
-  it('measures each title as its width and a margin at both ends', async () => {
+  it('measures each title as its width with a margin and its height with an inset', async () => {
     const layout = laidOut(source('TB'));
     document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"><g id="root"></g></svg>';
     const root = document.querySelector<SVGGElement>('#root')!;
@@ -616,6 +674,9 @@ describe('painting phase bands', () => {
         (title) => title.length * CHAR_WIDTH + 2 * PHASE_TITLE_MARGIN
       )
     );
+    expect(
+      layout.other.phases.map((phase: { titleThickness: number }) => phase.titleThickness)
+    ).toEqual([1, 2, 3].map(() => CHAR_HEIGHT + 2 * PHASE_TITLE_INSET));
     expect(root.children).toHaveLength(0);
   });
 

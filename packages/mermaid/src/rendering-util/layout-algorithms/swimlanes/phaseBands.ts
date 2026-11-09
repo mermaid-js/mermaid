@@ -7,8 +7,14 @@ import { applyLrDirectionTransform, flowAxisStretch } from './direction/lrTransf
 import type { PhaseGrowth, SwimlanePhase } from './phases.js';
 import { readPhaseAssignment } from './phases.js';
 
-/** The title strip is as thick as a lane title band plus the room a rotated label needs. */
+/**
+ * The title strip is as thick as a lane title band plus the room a rotated label needs. It is
+ * the least thickness: a thicker title, of several lines or in a larger font, thickens it.
+ */
 export const PHASE_TITLE_THICKNESS = 28;
+
+/** Clear space kept at each side of a title across the strip: what a 24 px line leaves in 28 px. */
+export const PHASE_TITLE_INSET = 2;
 
 /** Clear space kept at each end of a title along the flow: half the strip's thickness. */
 export const PHASE_TITLE_MARGIN = PHASE_TITLE_THICKNESS / 2;
@@ -91,25 +97,26 @@ function bandSpans(
   return [...spans.entries()].sort(([, a], [, b]) => a.start - b.start);
 }
 
-const titleCell = (box: LaneBox, alongX: boolean, start: number, end: number): Rect =>
-  alongX
-    ? {
-        x: start,
-        y: box.top - PHASE_TITLE_THICKNESS,
-        width: end - start,
-        height: PHASE_TITLE_THICKNESS,
-      }
-    : {
-        x: box.left - PHASE_TITLE_THICKNESS,
-        y: start,
-        width: PHASE_TITLE_THICKNESS,
-        height: end - start,
-      };
+/** Where the title strip lies along the lanes and how thick it is across the flow. */
+interface Strip {
+  box: LaneBox;
+  alongX: boolean;
+  thickness: number;
+}
 
-const separatorAt = (box: LaneBox, alongX: boolean, end: number): Segment =>
+const titleCell = ({ box, alongX, thickness }: Strip, start: number, end: number): Rect =>
   alongX
-    ? { x1: end, y1: box.top - PHASE_TITLE_THICKNESS, x2: end, y2: box.bottom }
-    : { x1: box.left - PHASE_TITLE_THICKNESS, y1: end, x2: box.right, y2: end };
+    ? { x: start, y: box.top - thickness, width: end - start, height: thickness }
+    : { x: box.left - thickness, y: start, width: thickness, height: end - start };
+
+const separatorAt = ({ box, alongX, thickness }: Strip, end: number): Segment =>
+  alongX
+    ? { x1: end, y1: box.top - thickness, x2: end, y2: box.bottom }
+    : { x1: box.left - thickness, y1: end, x2: box.right, y2: end };
+
+/** The strip is shared, so it is as thick as the thickest title of a band that is drawn. */
+const stripThickness = (phases: (SwimlanePhase | undefined)[]): number =>
+  Math.max(PHASE_TITLE_THICKNESS, ...phases.map((phase) => phase?.titleThickness ?? 0));
 
 /** Where a band starts and ends: mid-gap towards a neighbour, the lane edge where there is none. */
 const bandEnds = (
@@ -142,6 +149,11 @@ export function computePhaseBands(layout: LayoutData): PhaseBand[] {
   const box = laneBoxOf(lanes);
   const flow = alongX ? { start: box.left, end: box.right } : { start: box.top, end: box.bottom };
   const ordered = bandSpans(nodes, assignment, alongX);
+  const strip: Strip = {
+    box,
+    alongX,
+    thickness: stripThickness(ordered.map(([band]) => assignment.phases[band])),
+  };
 
   return ordered.map(([band, span], index) => {
     const next = ordered[index + 1]?.[1];
@@ -150,9 +162,9 @@ export function computePhaseBands(layout: LayoutData): PhaseBand[] {
     return {
       id: phase?.id ?? '',
       label: phase?.label ?? '',
-      title: titleCell(box, alongX, start, end),
+      title: titleCell(strip, start, end),
       titleReadsUpward: !alongX,
-      separator: next ? separatorAt(box, alongX, end) : undefined,
+      separator: next ? separatorAt(strip, end) : undefined,
     };
   });
 }
@@ -286,8 +298,12 @@ export async function measurePhaseTitles<T extends SVGElement>(
   const scratch = element.append('g');
   const measured: SwimlanePhase[] = [];
   for (const phase of phases) {
-    const { width } = await createPhaseTitle(scratch, phase.label);
-    measured.push({ ...phase, titleExtent: width + 2 * PHASE_TITLE_MARGIN });
+    const { width, height } = await createPhaseTitle(scratch, phase.label);
+    measured.push({
+      ...phase,
+      titleExtent: width + 2 * PHASE_TITLE_MARGIN,
+      titleThickness: height + 2 * PHASE_TITLE_INSET,
+    });
   }
   scratch.remove();
   layout.other = { ...layout.other, phases: measured };
