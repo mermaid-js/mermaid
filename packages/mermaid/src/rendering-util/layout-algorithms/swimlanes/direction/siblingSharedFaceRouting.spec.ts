@@ -23,6 +23,12 @@ const WIDE_LABEL = { width: 60, height: 20 };
 const NARROW_NODE_WIDTH = EDGE_ROUTING.MIN_ARROWHEAD_SPACING * 2 - 1;
 /** A column for which `(x + 12) - x` evaluates just below 12 in floating point. */
 const DRIFTING_COLUMN_X = 127.33749827435226;
+/** Less than an arrowhead spacing, so a third edge ending this far past a shifted line crowds it. */
+const THIRD_EDGE_OFFSET = 8;
+/** Where two nodes sit side by side in one row. */
+const LEFT_X = 0;
+const RIGHT_X = 200;
+const ROW_Y = 0;
 
 function box(id: string, x: number, y: number, width = NODE_WIDTH): Node {
   return { id, isGroup: false, x, y, width, height: NODE_HEIGHT };
@@ -107,6 +113,27 @@ describe('straightenCollinearSiblingDetours', () => {
     expect(xsOf(back)).toEqual([COLUMN_X, COLUMN_X]);
   });
 
+  it('moves the back edge to the other side when a third edge ends too close to the first side', () => {
+    const { nodes, down, back } = oppositePair();
+    const side = box('side', SIDE_NODE_X, MIDDLE_Y);
+    const closeEndX = COLUMN_X + EDGE_ROUTING.MIN_ARROWHEAD_SPACING + THIRD_EDGE_OFFSET;
+    const fanIn: Edge = {
+      id: 'fan-in',
+      start: 'side',
+      end: 'assess',
+      points: [
+        { x: SIDE_NODE_X - NODE_WIDTH / 2, y: MIDDLE_Y },
+        { x: closeEndX, y: MIDDLE_Y },
+        { x: closeEndX, y: UPPER_Y + NODE_HEIGHT / 2 },
+      ],
+    };
+
+    straightenCollinearSiblingDetours([down, fanIn, back], [...nodes, side]);
+
+    const shiftedX = COLUMN_X - EDGE_ROUTING.MIN_ARROWHEAD_SPACING;
+    expect(xsOf(back)).toEqual([shiftedX, shiftedX]);
+  });
+
   it('keeps the port shift beside an edge that leaves the face for a different node', () => {
     const { nodes, back } = oppositePair();
     const side = box('side', SIDE_NODE_X, MIDDLE_Y);
@@ -134,6 +161,46 @@ describe('straightenCollinearSiblingDetours', () => {
     const labelShift = WIDE_LABEL.width / 2 + LABEL_CLEARANCE_BUFFER;
     expect(labelShift).toBeGreaterThan(EDGE_ROUTING.MIN_ARROWHEAD_SPACING);
     expect(xsOf(back)).toEqual([COLUMN_X + labelShift, COLUMN_X + labelShift]);
+  });
+
+  it('shifts a pair side by side in one row past the label height', () => {
+    const halfWidth = NODE_WIDTH / 2;
+    const halfHeight = NODE_HEIGHT / 2;
+    const nodes = [
+      box('left', LEFT_X, ROW_Y),
+      box('right', RIGHT_X, ROW_Y),
+      { ...edgeLabel('label-back', (LEFT_X + RIGHT_X) / 2, WIDE_LABEL), y: ROW_Y },
+    ];
+    const across: Edge = {
+      id: 'across',
+      start: 'left',
+      end: 'right',
+      points: [
+        { x: LEFT_X + halfWidth, y: ROW_Y },
+        { x: RIGHT_X - halfWidth, y: ROW_Y },
+      ],
+    };
+    const back: Edge = {
+      id: 'back',
+      start: 'right',
+      end: 'left',
+      labelNodeId: 'label-back',
+      points: [
+        { x: RIGHT_X, y: ROW_Y + halfHeight },
+        { x: RIGHT_X, y: ROW_Y + halfHeight + DETOUR_OFFSET },
+        { x: LEFT_X, y: ROW_Y + halfHeight + DETOUR_OFFSET },
+        { x: LEFT_X, y: ROW_Y + halfHeight },
+      ],
+    };
+
+    straightenCollinearSiblingDetours([across, back], nodes);
+
+    const labelShift = WIDE_LABEL.height / 2 + LABEL_CLEARANCE_BUFFER;
+    expect(labelShift).toBeGreaterThan(EDGE_ROUTING.MIN_ARROWHEAD_SPACING);
+    expect(back.points).toEqual([
+      { x: RIGHT_X - halfWidth, y: ROW_Y + labelShift },
+      { x: LEFT_X + halfWidth, y: ROW_Y + labelShift },
+    ]);
   });
 
   it('ignores the label of a layout-only edge between the same two nodes', () => {
