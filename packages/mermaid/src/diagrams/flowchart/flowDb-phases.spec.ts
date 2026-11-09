@@ -72,6 +72,21 @@ describe('swimlane phases', () => {
     );
   });
 
+  it.each([
+    ['spaces after its title', 'phase p1["Intake"]   ', 'Intake'],
+    ['spaces after its id', 'phase p1   ', 'p1'],
+    ['a tab after its title', 'phase p1["Intake"]\t', 'Intake'],
+  ])(
+    'declares a phase with %s, before a newline, a semicolon and the end',
+    (_name, declaration, label) => {
+      for (const after of ['\nsubgraph l1\n  a@{ phase: p1 }\nend', ';a@{ phase: p1 }', '']) {
+        const { other } = parse(`swimlane-beta LR\n${declaration}${after}`).getData();
+
+        expect(other.phases, JSON.stringify(after)).toEqual([{ id: 'p1', label }]);
+      }
+    }
+  );
+
   it('forgets phases when the database is cleared', () => {
     const flowDb = parse(SWIMLANE_WITH_PHASES);
 

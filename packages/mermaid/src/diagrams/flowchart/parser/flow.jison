@@ -392,7 +392,11 @@ statement
     {$$=yy.addSubGraph(undefined,$document,undefined);}
     | PHASE SPACE idString SQS text SQE separator
     {yy.addPhase($idString,$text);$$=[];}
+    | PHASE SPACE idString SQS text SQE spaceList separator
+    {yy.addPhase($idString,$text);$$=[];}
     | PHASE SPACE idString separator
+    {yy.addPhase($idString);$$=[];}
+    | PHASE SPACE idString spaceList separator
     {yy.addPhase($idString);$$=[];}
     | direction
     | acc_title acc_title_value  { $$=$acc_title_value.trim();yy.setAccTitle($$); }
