@@ -57,3 +57,30 @@ describe('the swimlane engine reads its options from the layout data', () => {
     expect(rowsOf(layout)).toBe(2);
   });
 });
+
+/** The distance between the first two rows of the chain, laid out one step per row. */
+function rowStep(config: Record<string, unknown>, extra: Record<string, unknown> = {}): number {
+  const layout = chain({ ignoreCrossLaneEdges: false }, extra);
+  layout.config = { ...layout.config, ...config };
+  runSwimlaneLayoutCore(layout);
+  const y = (id: string) => layout.nodes.find((node) => node.id === id)?.y ?? Number.NaN;
+  return y('b') - y('a');
+}
+
+describe('the swimlane engine reads its spacing from the layout data', () => {
+  const ZERO = { flowchart: { nodeSpacing: 0, rankSpacing: 0 } };
+  const DEFAULTS = { flowchart: {} };
+
+  it('takes a rank spacing of zero as written rather than falling back', () => {
+    expect(rowStep(ZERO)).toBeLessThan(rowStep(DEFAULTS));
+  });
+
+  it('takes a rank spacing of zero from the layout data itself', () => {
+    expect(rowStep(DEFAULTS, { rankSpacing: 0 })).toBe(rowStep(ZERO));
+  });
+
+  it('falls back for a negative or non-finite spacing', () => {
+    expect(rowStep({ flowchart: { rankSpacing: -10 } })).toBe(rowStep(DEFAULTS));
+    expect(rowStep({ flowchart: { rankSpacing: Number.NaN } })).toBe(rowStep(DEFAULTS));
+  });
+});
