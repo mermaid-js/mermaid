@@ -7,7 +7,7 @@ import { setupViewPortForSVG } from '../../rendering-util/setupViewPortForSVG.js
 import utils from '../../utils.js';
 import type { Diagram } from '../../Diagram.js';
 import type { D3Selection } from '../../types.js';
-import type { Edge, LayoutData } from '../../rendering-util/types.js';
+import type { Edge } from '../../rendering-util/types.js';
 import type { C4LabelNudge } from './c4Types.js';
 import type c4Db from './c4Db.js';
 
@@ -18,8 +18,11 @@ type C4DB = typeof c4Db;
  * which is how an author untangles two relationships that would otherwise print on top of each
  * other. The unified pipeline places labels, so the nudge is applied to what it placed.
  */
-const nudgeRelationshipLabels = (svg: D3Selection<SVGGElement>, data4Layout: LayoutData) => {
-  for (const edge of data4Layout.edges as (Edge & C4LabelNudge)[]) {
+const nudgeRelationshipLabels = (
+  svg: D3Selection<SVGGElement>,
+  relationships: readonly (Edge & C4LabelNudge)[]
+) => {
+  for (const edge of relationships) {
     const dx = edge.labelOffsetX ?? 0;
     const dy = edge.labelOffsetY ?? 0;
     if (!dx && !dy) {
@@ -60,9 +63,14 @@ export const draw = async function (_text: string, id: string, _version: string,
 
   log.debug('c4 layout data', data4Layout);
 
+  // The layout may replace `data4Layout.edges` with only the edges it routed at the top level
+  // (dagre lays out a boundary nothing crosses as a graph of its own), so the relationships
+  // are taken before it runs and each label is nudged exactly once.
+  const relationships: (Edge & C4LabelNudge)[] = [...data4Layout.edges];
+
   await render(data4Layout, svg);
 
-  nudgeRelationshipLabels(svg, data4Layout);
+  nudgeRelationshipLabels(svg, relationships);
 
   utils.insertTitle(svg, 'c4TitleText', conf?.diagramMarginY ?? 10, db.getTitle());
 

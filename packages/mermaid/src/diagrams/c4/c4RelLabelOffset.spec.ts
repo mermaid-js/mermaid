@@ -46,4 +46,22 @@ describe('UpdateRelStyle label offsets in the unified renderer', () => {
     expect(nudged.x - plain.x).toBe(LABEL_OFFSET_X);
     expect(nudged.y - plain.y).toBe(LABEL_OFFSET_Y);
   });
+
+  // dagre lays out a boundary that no relationship crosses as a graph of its own and
+  // returns only the top-level edges, so the nudge has to come from the diagram's own
+  // relationships rather than from what the layout handed back.
+  it('moves the label of a relationship inside a boundary nothing else connects to', async () => {
+    const isolated = (offsets: string) =>
+      source(offsets).replace(
+        'System(a, "A")\nSystem(b, "B")\nRel(a, b, "Uses")',
+        'System_Boundary(sb, "Boundary") {\nSystem(a, "A")\nSystem(b, "B")\nRel(a, b, "Uses")\n}'
+      );
+    const plain = await labelTranslate(isolated(''));
+    const nudged = await labelTranslate(
+      isolated(`UpdateRelStyle(a, b, $offsetX="${LABEL_OFFSET_X}", $offsetY="${LABEL_OFFSET_Y}")`)
+    );
+
+    expect(nudged.x - plain.x).toBe(LABEL_OFFSET_X);
+    expect(nudged.y - plain.y).toBe(LABEL_OFFSET_Y);
+  });
 });
