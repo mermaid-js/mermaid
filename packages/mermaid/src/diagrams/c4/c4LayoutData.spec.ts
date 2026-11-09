@@ -226,13 +226,45 @@ UpdateRelStyle(a, b, $lineColor="red;background:url(x)", $textColor="blue;conten
     expect(nodes.find((node) => node.id === 'a')?.link).toBe('about:blank');
   });
 
+  // A named `$link` can land in any optional slot, not only the one declared for it, and
+  // `UpdateElementStyle` accepts it as well, so every route has to come out sanitized.
+  it.each([
+    ['the description slot of a person', 'Person(a, "A", $link="javascript:alert(1)")'],
+    ['the technology slot of a container', 'Container(a, "A", $link="javascript:alert(1)")'],
+    ['the technology slot of a component', 'Component(a, "A", $link="javascript:alert(1)")'],
+    [
+      'an UpdateElementStyle attribute',
+      'Person(a, "A")\nUpdateElementStyle(a, $link="javascript:alert(1)")',
+    ],
+    [
+      'the type slot of a boundary',
+      'Boundary(a, "A", $link="javascript:alert(1)") {\nPerson(p, "P")\n}',
+    ],
+    [
+      'the description slot of a deployment node',
+      'Node(a, "A", "t", $link="javascript:alert(1)") {\nContainer(c, "C")\n}',
+    ],
+  ])('neutralises a javascript: $link given through %s', (_route, statements) => {
+    const db = parse(`C4Context\n${statements}`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.find((node) => node.id === 'a')?.link).toBe('about:blank');
+  });
+
+  it('keeps a safe $link given through the description slot', () => {
+    const db = parse(`C4Context\nPerson(a, "A", $link="https://example.com")`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.find((node) => node.id === 'a')?.link).toBe('https://example.com/');
+  });
+
   // Like a flowchart link, `securityLevel: 'loose'` is the author's explicit trust choice.
   it('keeps a $link as written at securityLevel loose', () => {
     setSiteConfig({ securityLevel: 'loose' });
     try {
       const db = parse(`C4Context\nPerson(a, "A", "desc", $link="javascript:alert(1)")`);
 
-      const { nodes } = getData(db, config());
+      const { nodes } = getData(db, { ...config(), securityLevel: 'loose' });
       expect(nodes.find((node) => node.id === 'a')?.link).toBe('javascript:alert(1)');
     } finally {
       setSiteConfig({ securityLevel: 'strict' });
