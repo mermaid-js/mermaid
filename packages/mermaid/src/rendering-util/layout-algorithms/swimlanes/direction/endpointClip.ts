@@ -555,6 +555,10 @@ function endsToCrop(edge: EndpointEdge, nodeByIdMap: Map<string, EndpointNode>) 
 const samePolyline = (a: Point[], b: Point[]): boolean =>
   a.length === b.length && a.every((point, i) => samePoint(point, b[i], SQUARE_EPS));
 
+/** Whether a route has anything to draw: two of its points apart. */
+const hasLength = (points: Point[]): boolean =>
+  points.some((point, i) => i > 0 && !samePoint(point, points[i - 1], SQUARE_EPS));
+
 /** Cuts each end of a route where it first meets the box of the node at that end. */
 function cropEnds(points: Point[], src?: EndpointNode, dst?: EndpointNode): Point[] {
   const dstRect = dst ? endpointRectOf(dst) : undefined;
@@ -566,7 +570,8 @@ function cropEnds(points: Point[], src?: EndpointNode, dst?: EndpointNode): Poin
 /**
  * Ends every edge between two nodes where it first meets each node's box (its drawn extent
  * when the shape sets one), so an arrowhead is never drawn inside, and hidden by, the box.
- * Self-loops, edges to groups and slanted segments are left as they are.
+ * Self-loops, edges to groups and slanted segments are left as they are, and so is a route
+ * that cropping would leave with nothing to draw.
  *
  * @returns whether any route was cut.
  */
@@ -579,7 +584,7 @@ export function cropEdgeEndsToShapes(
     const ends = candidate.isLayoutOnly ? undefined : endsToCrop(candidate, nodeByIdMap);
     const before = candidate.points ?? [];
     const points = ends ? cropEnds(before, ends.src, ends.dst) : [];
-    if (points.length >= 2 && !samePolyline(points, before)) {
+    if (hasLength(points) && !samePolyline(points, before)) {
       candidate.points = points;
       cropped = true;
     }

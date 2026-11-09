@@ -267,6 +267,25 @@ describe('cropping an edge end to the box it reaches', () => {
     expect(cropped(loop, nodes(), 'A')).toEqual(loop);
   });
 
+  it('leaves a route that cropping would leave with nothing to draw', () => {
+    // A and B share the face at x 50, and the route runs from centre to centre.
+    const touching = new Map([
+      ['A', { id: 'A', x: 0, y: 0, width: 100, height: 40 }],
+      ['B', { id: 'B', x: 100, y: 0, width: 100, height: 40 }],
+    ]);
+    const centreToCentre = [
+      { x: 0, y: 0 },
+      { x: 100, y: 0 },
+    ];
+    const startsInsideB = [
+      { x: 0, y: 10 },
+      { x: 0, y: 0 },
+    ];
+
+    expect(cropped(centreToCentre, touching)).toEqual(centreToCentre);
+    expect(cropped(startsInsideB)).toEqual(startsInsideB);
+  });
+
   it('leaves an edge into a group', () => {
     const route = [...intoB, { x: -20, y: 0 }];
 
