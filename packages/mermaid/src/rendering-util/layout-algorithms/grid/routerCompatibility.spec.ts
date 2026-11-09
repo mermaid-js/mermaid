@@ -26,56 +26,68 @@ describe('grid router compatibility', () => {
     expect(areExactlyAxisAligned({ x: 0, y: 0 }, { x: 0, y: 10 })).toBe(true);
   });
 
-  it('expands a labelled loop as one U when the owner side can hold the ports', () => {
-    const owner = {
-      id: 'owner',
-      isGroup: false,
-      x: 40,
-      y: 20,
-      width: 80,
-      height: 40,
-    } as Node;
+  it.each<{ side: GridSide; boundaryX: number; outerX: number }>([
+    { side: 'left', boundaryX: 0, outerX: -51 },
+    { side: 'right', boundaryX: 80, outerX: 131 },
+  ])(
+    'expands a labelled $side loop as one U with label-placement slack',
+    ({ side, boundaryX, outerX }) => {
+      const owner = {
+        id: 'owner',
+        isGroup: false,
+        x: 40,
+        y: 20,
+        width: 80,
+        height: 40,
+      } as Node;
 
-    expect(
-      labelAwareSelfLoopCandidates(owner, 'left', 0, 20, {
+      expect(
+        labelAwareSelfLoopCandidates(owner, side, 0, 20, {
+          along: 90,
+          cross: 20,
+          startInset: 12,
+          endInset: 12,
+          requiredAlongSpan: 116,
+        })
+      ).toEqual([[point(boundaryX, 3), point(outerX, 3), point(outerX, 37), point(boundaryX, 37)]]);
+    }
+  );
+
+  it.each<{ side: GridSide; boundaryY: number; shoulderY: number; outerY: number }>([
+    { side: 'top', boundaryY: 0, shoulderY: -14, outerY: -32 },
+    { side: 'bottom', boundaryY: 40, shoulderY: 54, outerY: 72 },
+  ])(
+    'uses one symmetric $side shoulder with label-placement slack',
+    ({ side, boundaryY, shoulderY, outerY }) => {
+      const owner = {
+        id: 'owner',
+        isGroup: false,
+        x: 40,
+        y: 20,
+        width: 80,
+        height: 40,
+      } as Node;
+
+      const [candidate] = labelAwareSelfLoopCandidates(owner, side, 0, 40, {
         along: 90,
         cross: 20,
         startInset: 12,
         endInset: 12,
         requiredAlongSpan: 116,
-      })
-    ).toEqual([[point(0, 4), point(-51, 4), point(-51, 36), point(0, 36)]]);
-  });
+      });
 
-  it('uses one symmetric shoulder when the label span exceeds the owner side', () => {
-    const owner = {
-      id: 'owner',
-      isGroup: false,
-      x: 40,
-      y: 20,
-      width: 80,
-      height: 40,
-    } as Node;
-
-    const [candidate] = labelAwareSelfLoopCandidates(owner, 'top', 0, 40, {
-      along: 90,
-      cross: 20,
-      startInset: 12,
-      endInset: 12,
-      requiredAlongSpan: 116,
-    });
-
-    expect(candidate).toEqual([
-      point(31, 0),
-      point(31, -14),
-      point(-11, -14),
-      point(-11, -32),
-      point(91, -32),
-      point(91, -14),
-      point(49, -14),
-      point(49, 0),
-    ]);
-  });
+      expect(candidate).toEqual([
+        point(31, boundaryY),
+        point(31, shoulderY),
+        point(-12, shoulderY),
+        point(-12, outerY),
+        point(92, outerY),
+        point(92, shoulderY),
+        point(49, shoulderY),
+        point(49, boundaryY),
+      ]);
+    }
+  );
 
   it.each([
     {

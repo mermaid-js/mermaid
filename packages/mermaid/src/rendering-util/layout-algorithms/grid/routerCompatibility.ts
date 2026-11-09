@@ -4,7 +4,11 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { manhattanLength, polylineIntersectsRect, rectForNode } from '../layout-utils/helpers.js';
 import type { Rect } from '../layout-utils/types.js';
 import { isAncestorGroup } from './groups.js';
-import { GRID_LABEL_CLEARANCE, type GridLabelSpanRequirement } from './labelGeometry.js';
+import {
+  GRID_LABEL_CLEARANCE,
+  GRID_LABEL_SPAN_MARGIN,
+  type GridLabelSpanRequirement,
+} from './labelGeometry.js';
 import type { GridRoutingTestOptions } from './router.js';
 import {
   routerRect,
@@ -494,7 +498,9 @@ export function labelAwareSelfLoopCandidates(
   const verticalSide = side === 'left' || side === 'right';
   const span = Math.max(
     baseSpan,
-    (verticalSide ? requirement.cross : requirement.along) + GRID_LABEL_CLEARANCE * 2
+    (verticalSide ? requirement.cross : requirement.along) +
+      GRID_LABEL_CLEARANCE * 2 +
+      GRID_LABEL_SPAN_MARGIN
   );
   const depth = Math.max(
     baseDepth,
