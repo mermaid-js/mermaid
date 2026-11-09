@@ -270,7 +270,10 @@ describe('grid edge label helpers', () => {
     expectNoNonAdjacentConflicts(data.edges[0].points!);
     expect(labelNode.x! + labelNode.width / 2).toBeLessThanOrEqual(data.edges[0].points![1].x - 6);
     expect(metrics.resourceLimitFallbacks).toBe(1);
+    expect(metrics.fallbackValidationFailures).toBe(0);
+    expect(metrics.labelAwareSelfLoopCandidates).toBe(1);
     expect(metrics.labelAwareSelfLoopsCommitted).toBe(1);
+    expect(metrics.labelAwareSelfLoopFallbacks).toBe(0);
     expect(validateLayout(data).ok).toBe(true);
   });
 

@@ -562,10 +562,11 @@ export function labelAwareSelfLoopCandidates(
   }
   const outerStart = demandCoord - span / 2;
   const outerEnd = demandCoord + span / 2;
+  const shoulderApproach = Math.max(SELF_LOOP_APPROACH, TERMINAL_APPROACH_PX);
   // Keep the label clear of the return shoulders as well as the owner.
   const shoulderDepth = Math.max(
     depth,
-    SELF_LOOP_APPROACH +
+    shoulderApproach +
       (verticalSide ? requirement.along : requirement.cross) / 2 +
       GRID_LABEL_CLEARANCE
   );
@@ -574,12 +575,12 @@ export function labelAwareSelfLoopCandidates(
       return [
         normalizePolyline([
           { x: rect.right, y: portStart },
-          { x: rect.right + SELF_LOOP_APPROACH, y: portStart },
-          { x: rect.right + SELF_LOOP_APPROACH, y: outerStart },
+          { x: rect.right + shoulderApproach, y: portStart },
+          { x: rect.right + shoulderApproach, y: outerStart },
           { x: rect.right + shoulderDepth, y: outerStart },
           { x: rect.right + shoulderDepth, y: outerEnd },
-          { x: rect.right + SELF_LOOP_APPROACH, y: outerEnd },
-          { x: rect.right + SELF_LOOP_APPROACH, y: portEnd },
+          { x: rect.right + shoulderApproach, y: outerEnd },
+          { x: rect.right + shoulderApproach, y: portEnd },
           { x: rect.right, y: portEnd },
         ]).points,
       ];
@@ -587,12 +588,12 @@ export function labelAwareSelfLoopCandidates(
       return [
         normalizePolyline([
           { x: rect.left, y: portStart },
-          { x: rect.left - SELF_LOOP_APPROACH, y: portStart },
-          { x: rect.left - SELF_LOOP_APPROACH, y: outerStart },
+          { x: rect.left - shoulderApproach, y: portStart },
+          { x: rect.left - shoulderApproach, y: outerStart },
           { x: rect.left - shoulderDepth, y: outerStart },
           { x: rect.left - shoulderDepth, y: outerEnd },
-          { x: rect.left - SELF_LOOP_APPROACH, y: outerEnd },
-          { x: rect.left - SELF_LOOP_APPROACH, y: portEnd },
+          { x: rect.left - shoulderApproach, y: outerEnd },
+          { x: rect.left - shoulderApproach, y: portEnd },
           { x: rect.left, y: portEnd },
         ]).points,
       ];
@@ -600,12 +601,12 @@ export function labelAwareSelfLoopCandidates(
       return [
         normalizePolyline([
           { x: portStart, y: rect.top },
-          { x: portStart, y: rect.top - SELF_LOOP_APPROACH },
-          { x: outerStart, y: rect.top - SELF_LOOP_APPROACH },
+          { x: portStart, y: rect.top - shoulderApproach },
+          { x: outerStart, y: rect.top - shoulderApproach },
           { x: outerStart, y: rect.top - shoulderDepth },
           { x: outerEnd, y: rect.top - shoulderDepth },
-          { x: outerEnd, y: rect.top - SELF_LOOP_APPROACH },
-          { x: portEnd, y: rect.top - SELF_LOOP_APPROACH },
+          { x: outerEnd, y: rect.top - shoulderApproach },
+          { x: portEnd, y: rect.top - shoulderApproach },
           { x: portEnd, y: rect.top },
         ]).points,
       ];
@@ -613,12 +614,12 @@ export function labelAwareSelfLoopCandidates(
       return [
         normalizePolyline([
           { x: portStart, y: rect.bottom },
-          { x: portStart, y: rect.bottom + SELF_LOOP_APPROACH },
-          { x: outerStart, y: rect.bottom + SELF_LOOP_APPROACH },
+          { x: portStart, y: rect.bottom + shoulderApproach },
+          { x: outerStart, y: rect.bottom + shoulderApproach },
           { x: outerStart, y: rect.bottom + shoulderDepth },
           { x: outerEnd, y: rect.bottom + shoulderDepth },
-          { x: outerEnd, y: rect.bottom + SELF_LOOP_APPROACH },
-          { x: portEnd, y: rect.bottom + SELF_LOOP_APPROACH },
+          { x: outerEnd, y: rect.bottom + shoulderApproach },
+          { x: portEnd, y: rect.bottom + shoulderApproach },
           { x: portEnd, y: rect.bottom },
         ]).points,
       ];

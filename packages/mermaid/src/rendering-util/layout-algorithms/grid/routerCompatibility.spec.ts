@@ -8,7 +8,7 @@ import {
   orderedSelfLoopSides,
   reversePoints,
 } from './routerCompatibility.js';
-import { ownerSideKey } from './routerPlanning.js';
+import { ownerSideKey, TERMINAL_APPROACH_PX } from './routerPlanning.js';
 import type { GridSide } from './types.js';
 
 const point = (x: number, y: number): { x: number; y: number } => ({ x, y });
@@ -27,8 +27,8 @@ describe('grid router compatibility', () => {
   });
 
   it.each<{ side: GridSide; boundaryX: number; shoulderX: number; outerX: number }>([
-    { side: 'left', boundaryX: 0, shoulderX: -14, outerX: -65 },
-    { side: 'right', boundaryX: 80, shoulderX: 94, outerX: 145 },
+    { side: 'left', boundaryX: 0, shoulderX: -20, outerX: -71 },
+    { side: 'right', boundaryX: 80, shoulderX: 100, outerX: 151 },
   ])(
     'keeps a labelled $side loop clear of corners and return shoulders',
     ({ side, boundaryX, shoulderX, outerX }) => {
@@ -100,14 +100,22 @@ describe('grid router compatibility', () => {
           expect(candidate).toHaveLength(pointCount);
           expect(candidate[0]).toEqual(portPoint(portStart));
           expect(candidate[candidate.length - 1]).toEqual(portPoint(portEnd));
+          for (const [start, end] of [
+            [candidate[0], candidate[1]],
+            [candidate[candidate.length - 2], candidate[candidate.length - 1]],
+          ]) {
+            expect(Math.abs(end.x - start.x) + Math.abs(end.y - start.y)).toBeGreaterThanOrEqual(
+              TERMINAL_APPROACH_PX
+            );
+          }
         }
       );
     }
   );
 
   it.each<{ side: GridSide; boundaryY: number; shoulderY: number; outerY: number }>([
-    { side: 'top', boundaryY: 0, shoulderY: -14, outerY: -32 },
-    { side: 'bottom', boundaryY: 40, shoulderY: 54, outerY: 72 },
+    { side: 'top', boundaryY: 0, shoulderY: -20, outerY: -36 },
+    { side: 'bottom', boundaryY: 40, shoulderY: 60, outerY: 76 },
   ])(
     'uses one symmetric $side shoulder with label-placement slack',
     ({ side, boundaryY, shoulderY, outerY }) => {
