@@ -83,4 +83,12 @@ describe('the swimlane engine reads its spacing from the layout data', () => {
     expect(rowStep({ flowchart: { rankSpacing: -10 } })).toBe(rowStep(DEFAULTS));
     expect(rowStep({ flowchart: { rankSpacing: Number.NaN } })).toBe(rowStep(DEFAULTS));
   });
+
+  it('falls back to the defaults when the layout data has no flowchart config', () => {
+    const layout = chain({ ignoreCrossLaneEdges: false });
+    layout.config = { swimlane: { ignoreCrossLaneEdges: false } };
+    runSwimlaneLayoutCore(layout);
+    const y = (id: string) => layout.nodes.find((node) => node.id === id)?.y ?? Number.NaN;
+    expect(y('b') - y('a')).toBe(rowStep(DEFAULTS));
+  });
 });
