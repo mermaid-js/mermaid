@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { evaluate, getConfig } from '../../../config.js';
+import { getConfig, getEffectiveHtmlLabels } from '../../../config.js';
 import type { D3Selection } from '../../../types.js';
 import { createText } from '../../createText.js';
 import type { LayoutData } from '../../types.js';
@@ -204,7 +204,7 @@ export async function createPhaseTitle(
   parent: D3Selection<SVGGElement>,
   label: string
 ): Promise<{ element: D3Selection<SVGGElement>; width: number; height: number }> {
-  const useHtmlLabels = evaluate(getConfig().flowchart?.htmlLabels);
+  const useHtmlLabels = getEffectiveHtmlLabels(getConfig());
   const element = parent.append('g').attr('class', 'cluster-label swimlane-phase-label');
   const text = await createText(element, label, {
     useHtmlLabels,

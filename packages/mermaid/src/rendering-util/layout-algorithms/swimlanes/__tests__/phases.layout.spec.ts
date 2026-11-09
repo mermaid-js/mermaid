@@ -619,6 +619,25 @@ describe('painting phase bands', () => {
     expect(root.children).toHaveLength(0);
   });
 
+  it.each([
+    ['root htmlLabels false', { htmlLabels: false }, false],
+    ['root htmlLabels true', { htmlLabels: true }, true],
+    [
+      'root htmlLabels false over flowchart true',
+      { htmlLabels: false, flowchart: { htmlLabels: true } },
+      false,
+    ],
+    ['flowchart htmlLabels false alone', { flowchart: { htmlLabels: false } }, false],
+    ['no htmlLabels setting', {}, true],
+  ])('draws the titles as HTML or as SVG text by the %s', async (_name, config, html) => {
+    setConfig(config);
+
+    const labels = all(await paint(source('TB')), '.swimlane-phase-label');
+
+    expect(labels).toHaveLength(3);
+    expect(labels.every((label) => label.querySelector('foreignObject') !== null)).toBe(html);
+  });
+
   describe.each([true, false])('with htmlLabels %s', (htmlLabels) => {
     beforeEach(() => {
       setConfig({ flowchart: { htmlLabels } });
