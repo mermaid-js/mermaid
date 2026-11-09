@@ -1,0 +1,21 @@
+---
+description:
+  Checks that node and edge labels containing line breaks written as <br>,
+  <br/>, and <br /> all render correctly across rectangle and round node shapes,
+  with custom link colors, under the hand-drawn look.
+config:
+  look: handDrawn
+  flowchart:
+    htmlLabels: false
+  fontFamily: courier
+---
+graph LR
+  A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
+  C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
+  E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
+  A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
+  C2[Multi<br/>Line] -->|Multi<br/>Line| D2(Multi<br/>Line)
+  E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
+  linkStyle 0 stroke:DarkGray,stroke-width:2px
+  linkStyle 1 stroke:DarkGray,stroke-width:2px
+  linkStyle 2 stroke:DarkGray,stroke-width:2px

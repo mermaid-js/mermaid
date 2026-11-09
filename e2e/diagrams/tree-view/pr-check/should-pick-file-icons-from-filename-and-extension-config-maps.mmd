@@ -1,0 +1,25 @@
+---
+description: >-
+  Tests icon resolution priority via config maps: an explicit filenameIcons
+  override for README.md, extensionIcons mappings for .ts/.py/.xyz (with .py
+  deliberately mapped to "none" to suppress its icon), and an unmapped .bin
+  extension falling back to the configured default icon pack
+  (material-icon-theme).
+config:
+  treeView:
+    showIcons: true
+    defaultIconPack: material-icon-theme
+    filenameIcons:
+      README.md: 'fa:bell'
+    extensionIcons:
+      .ts: typescript
+      .py: none
+      .xyz: javascript
+---
+treeView-beta
+  src/
+      main.py
+      data.xyz
+      index.ts
+      unmapped.bin
+  README.md

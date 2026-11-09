@@ -1,0 +1,20 @@
+---
+description: >-
+  Requirement diagram covering a single requirement, a single element, and one
+  satisfies relationship, rendered under the "neo" look with the "redux-color"
+  theme.
+config:
+  look: neo
+  theme: redux-color
+---
+requirementDiagram
+    requirement test_req {
+        id: 1
+        text: the test text.
+        risk: high
+        verifymethod: test
+    }
+    element test_entity {
+        type: simulation
+    }
+    test_entity - satisfies -> test_req

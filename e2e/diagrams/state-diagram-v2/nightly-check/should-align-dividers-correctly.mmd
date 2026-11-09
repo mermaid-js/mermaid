@@ -1,0 +1,15 @@
+---
+description: >-
+  Composite state s2 split into three concurrent regions via two `--`
+  dividers (s3, s4, and 55), checking that the divider lines align
+  correctly across all regions including one named with a numeric-looking
+  id.
+---
+stateDiagram-v2
+  state s2 {
+  s3
+  --
+  s4
+  --
+  55
+  }

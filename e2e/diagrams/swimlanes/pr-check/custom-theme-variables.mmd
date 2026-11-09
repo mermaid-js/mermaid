@@ -1,0 +1,21 @@
+---
+description: >-
+  A single lane (ThemeLane) with two connected nodes, rendered with a
+  custom "base" theme and themeVariables overriding the node background,
+  border, and line colors.
+config:
+  theme: base
+  themeVariables:
+    mainBkg: '#ffe1ef'
+    nodeBorder: '#225577'
+    lineColor: '#118844'
+  flowchart:
+    htmlLabels: false
+    useMaxWidth: false
+---
+swimlane-beta LR
+  subgraph ThemeLane
+    A[Themed node]
+    B[Next node]
+  end
+  A --> B

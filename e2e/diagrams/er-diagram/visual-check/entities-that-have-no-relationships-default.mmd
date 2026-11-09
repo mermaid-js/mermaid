@@ -1,0 +1,11 @@
+---
+description: >-
+  A mix of fully standalone entities (DEAD_PARROT, HERMIT) alongside related
+  ones, including a self-referential SOCIALITE relationship.
+---
+erDiagram
+    DEAD_PARROT
+    HERMIT
+    RECLUSE
+    SOCIALITE }o--o{ SOCIALITE : "interacts with"
+    RECLUSE }o--o{ SOCIALITE : avoids

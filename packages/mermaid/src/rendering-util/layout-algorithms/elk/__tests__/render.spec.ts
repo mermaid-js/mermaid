@@ -18,6 +18,7 @@ import {
   straightenEdgeTerminals,
 } from '../render.js';
 import { onBorder, type P } from '../geometry.js';
+import intersect from '../../../rendering-elements/intersect/index.js';
 
 const log = {
   debug: () => undefined,
@@ -837,6 +838,192 @@ describe('straightenEdgeTerminals label projection (#8292)', () => {
       best = Math.min(best, Math.hypot(dx, dy));
     }
     expect(best).toBeLessThan(0.5);
+  });
+});
+
+describe('straightenEdgeTerminals keeps labels off other edges (#8368)', () => {
+  // Independent of the implementation's clip: every route here is orthogonal.
+  const segmentHitsBox = (a: P, b: P, box: { x1: number; y1: number; x2: number; y2: number }) =>
+    Math.max(a.x, b.x) >= box.x1 &&
+    Math.min(a.x, b.x) <= box.x2 &&
+    Math.max(a.y, b.y) >= box.y1 &&
+    Math.min(a.y, b.y) <= box.y2;
+
+  /** Ids of the edges whose route passes through `labelled`'s label box. */
+  const edgesUnderLabel = (edges: any[], labelled: any) => {
+    const box = {
+      x1: labelled.x - labelled.width / 2,
+      y1: labelled.y - labelled.height / 2,
+      x2: labelled.x + labelled.width / 2,
+      y2: labelled.y + labelled.height / 2,
+    };
+    return edges
+      .filter(
+        (other) =>
+          other !== labelled &&
+          other.points.some(
+            (p: P, i: number, all: P[]) => i < all.length - 1 && segmentHitsBox(p, all[i + 1], box)
+          )
+      )
+      .map((other) => other.id);
+  };
+
+  /** What `applyElkEdgeLayout` does: straighten, then carry each label along. */
+  const straightenAndProject = (edges: any[]) => {
+    for (const { edge, runs } of straightenEdgeTerminals(edges)) {
+      if (edge.x == null || edge.y == null) {
+        continue;
+      }
+      const projected = projectLabelOntoStraightenedRun({ x: edge.x, y: edge.y }, runs);
+      if (projected) {
+        edge.x = projected.x;
+        edge.y = projected.y;
+      }
+    }
+  };
+
+  // The routes ELK produced for the issue diagram, before straightening. Both
+  // Draft <-> Review edges carry a 12px jog at Draft; straightening both pulls
+  // them to within 7px of each other, under the 20px-high `changes` label.
+  const forward = () => ({
+    id: 'L_A_B_0',
+    points: [
+      { x: 74.34375, y: 54.61979166666667 },
+      { x: 94.34375, y: 54.61979166666667 },
+      { x: 94.34375, y: 42.203125 },
+      { x: 142.8125, y: 42.203125 },
+      { x: 191.28125, y: 42.203125 },
+      { x: 191.28125, y: 45.96875 },
+      { x: 211.28125, y: 45.96875 },
+      { x: 223.26566632092, y: 45.96875 },
+    ],
+  });
+  const back = () => ({
+    id: 'L_B_A_0',
+    label: 'changes',
+    x: 142.8125,
+    y: 73.203125,
+    width: 56.9375,
+    height: 20,
+    points: [
+      { x: 223.26566632092, y: 69.9375 },
+      { x: 211.28125, y: 69.9375 },
+      { x: 191.28125, y: 69.9375 },
+      { x: 191.28125, y: 73.703125 },
+      { x: 94.34375, y: 73.703125 },
+      { x: 94.34375, y: 61.28645833333333 },
+      { x: 74.34375, y: 61.28645833333333 },
+    ],
+  });
+
+  it('does not straighten a labelled edge onto a route its label would then cover', () => {
+    const edges = [forward(), back()];
+    straightenAndProject(edges);
+
+    expect(edgesUnderLabel(edges, edges[1])).toEqual([]);
+    expect(edges[0].points).not.toEqual(forward().points);
+    expect(edges[1].points).toEqual(back().points);
+  });
+
+  it('does not straighten an edge through a label placed before it', () => {
+    const edges = [back(), forward()];
+    straightenAndProject(edges);
+
+    expect(edgesUnderLabel(edges, edges[0])).toEqual([]);
+    expect(edges[0].points).not.toEqual(back().points);
+    expect(edges[1].points).toEqual(forward().points);
+  });
+
+  it('keeps the edge label of the issue diagram clear of the parallel edge after a real ELK layout', async () => {
+    // The `intersect` the DOM renderer installs on each shape: ELK's ports
+    // attach to the outline through it, and that is what leaves the jogs.
+    const rect = function (this: any, p: P) {
+      return intersect.rect(this, p);
+    };
+    const diamond = function (this: any, p: P) {
+      const s = this.width;
+      const corners = [
+        { x: s / 2, y: 0 },
+        { x: s, y: -s / 2 },
+        { x: s / 2, y: -s },
+        { x: 0, y: -s / 2 },
+      ];
+      return intersect.polygon(this, corners, p);
+    };
+    const data = {
+      direction: 'LR',
+      config: {
+        elk: {
+          mergeEdges: false,
+          straightenEdges: true,
+          lineHops: true,
+          preset: 'default',
+          layeringLayerBound: 4,
+          forceNodeModelOrder: false,
+          considerModelOrder: 'NODES_AND_EDGES',
+          keepEntryNodeOnTop: false,
+          orientFeedbackEdges: true,
+        },
+      },
+      nodes: [
+        {
+          id: 'A',
+          isGroup: false,
+          width: 62.34375,
+          height: 40,
+          label: 'Draft',
+          shape: 'squareRect',
+          intersect: rect,
+        },
+        {
+          id: 'B',
+          isGroup: false,
+          width: 91.90625,
+          height: 91.90625,
+          label: 'Review',
+          shape: 'diamond',
+          intersect: diamond,
+        },
+        {
+          id: 'C',
+          isGroup: false,
+          width: 93.5,
+          height: 40,
+          label: 'Published',
+          shape: 'squareRect',
+          intersect: rect,
+        },
+      ],
+      edges: [
+        { id: 'L_A_B_0', start: 'A', end: 'B', type: 'arrow_point' },
+        {
+          id: 'L_B_C_0',
+          start: 'B',
+          end: 'C',
+          type: 'arrow_point',
+          label: 'approved',
+          width: 62.390625,
+          height: 20,
+        },
+        {
+          id: 'L_B_A_0',
+          start: 'B',
+          end: 'A',
+          type: 'arrow_point',
+          label: 'changes',
+          width: 56.9375,
+          height: 20,
+        },
+      ],
+    } as any;
+
+    await runElkLayoutCore(data, elkRenderContext);
+
+    const changes = data.edges.find((e: any) => e.id === 'L_B_A_0');
+    expect(edgesUnderLabel(data.edges, changes)).toEqual([]);
+    // Straightening still applies where it is harmless: A --> B leaves Draft without a jog.
+    const [start, , third] = data.edges[0].points;
+    expect(third.y).toBe(start.y);
   });
 });
 

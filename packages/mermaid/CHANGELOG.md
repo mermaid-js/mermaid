@@ -1,5 +1,83 @@
 # mermaid
 
+## 12.3.0
+
+### Minor Changes
+
+- [#8164](https://github.com/mermaid-js/mermaid/pull/8164) [`592d0e4`](https://github.com/mermaid-js/mermaid/commit/592d0e407d557b501d9f273ed18c7c62b1b9f48b) Thanks [@filipsajdak](https://github.com/filipsajdak)! - feat: add the open-arrow and hollow-circle edge markers, so a notation can tell two kinds of flow apart by whether the head is filled
+
+- [#8165](https://github.com/mermaid-js/mermaid/pull/8165) [`5c8aa5d`](https://github.com/mermaid-js/mermaid/commit/5c8aa5d834b7090258259eaf8b827cbefd6ff40f) Thanks [@filipsajdak](https://github.com/filipsajdak)! - feat: add the BPMN element shapes - events, gateways, activities, data objects, data stores and text annotations - each reporting where a line meets what is drawn
+
+- [#8470](https://github.com/mermaid-js/mermaid/pull/8470) [`692d22a`](https://github.com/mermaid-js/mermaid/commit/692d22a3ec9cf235cecf17013160f14dafb42999) Thanks [@openmindednewby](https://github.com/openmindednewby)! - feat: flowchart edges accept a `step` number (`e1@{ step: 1 }`); a dot travels the edges in step order and loops, hidden under `prefers-reduced-motion`
+
+- [#8478](https://github.com/mermaid-js/mermaid/pull/8478) [`56aa105`](https://github.com/mermaid-js/mermaid/commit/56aa10536075a320c084087478c468553b923e6e) Thanks [@openmindednewby](https://github.com/openmindednewby)! - feat: add `flowchart.stepDuration` to set how many seconds each step of the flowchart step animation lasts
+
+- [#8479](https://github.com/mermaid-js/mermaid/pull/8479) [`800f7ef`](https://github.com/mermaid-js/mermaid/commit/800f7efb1c7e80cf56478507808c744a1d07e1c1) Thanks [@openmindednewby](https://github.com/openmindednewby)! - feat: highlight the flowchart edge whose step is playing, in sync with the step animation dot
+
+- [#8480](https://github.com/mermaid-js/mermaid/pull/8480) [`50d6294`](https://github.com/mermaid-js/mermaid/commit/50d6294dab27123d7ecc1301c2c861bfe7ef4dce) Thanks [@openmindednewby](https://github.com/openmindednewby)! - feat: add `flowchart.stepNumbers` to show each step edge's number in a badge
+
+### Patch Changes
+
+- [#8443](https://github.com/mermaid-js/mermaid/pull/8443) [`2ff8286`](https://github.com/mermaid-js/mermaid/commit/2ff8286f9aa82b89aefe26c575c49a575fa518c1) Thanks [@knsv-bot](https://github.com/knsv-bot)! - fix: agentflow renders the `a[/…/]` short form as an input instead of falling back to a task with a SHAPE_UNSUPPORTED warning
+
+- [#8661](https://github.com/mermaid-js/mermaid/pull/8661) [`b200b27`](https://github.com/mermaid-js/mermaid/commit/b200b270f5e51d9199c5263dc402f4a6fe4fa33a) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix: Bump DOMPurify to 3.4.17 to address GHSA-55q2-fjhq-7xh7 and GHSA-6688-9rhm-gjv2
+
+- [#8633](https://github.com/mermaid-js/mermaid/pull/8633) [`686f350`](https://github.com/mermaid-js/mermaid/commit/686f350e8c7627dfcc6b0035f237f76bca1152b2) Thanks [@sidharthv96](https://github.com/sidharthv96)! - chore: Remove the `uuid` dependency and the unused legacy ER diagram renderer
+
+- [#8661](https://github.com/mermaid-js/mermaid/pull/8661) [`7eec083`](https://github.com/mermaid-js/mermaid/commit/7eec083adcaba707257795feb937f2274c990713) Thanks [@pbrolin47](https://github.com/pbrolin47)! - fix: Stop an edge from a node inside a subgraph from crossing an edge from the subgraph itself to the same node with ELK 0.10+ (e.g. `outer --> a` with `da --> a`, or `three --> two` with `two --> c2`)
+
+- [#8532](https://github.com/mermaid-js/mermaid/pull/8532) [`42d3760`](https://github.com/mermaid-js/mermaid/commit/42d37602aed5ddbfb2674b78e08336fa5f3fb548) Thanks [@Devehab](https://github.com/Devehab)! - fix: upgrade bundled elkjs from 0.9.3 to 0.12.0, which is licensed `EPL-2.0 OR GPL-3.0-or-later`, so GPL-3.0 projects can ship mermaid with ELK
+
+- [#8162](https://github.com/mermaid-js/mermaid/pull/8162) [`d5ca27a`](https://github.com/mermaid-js/mermaid/commit/d5ca27a636a2a5b65768c8ef3f847601dac055a9) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): size a lane that holds a nested subgraph (TB drew it as an empty 0x0 box, and likewise an outer group holding lanes), and grow LR and RL lanes by the nested group's padding
+
+- [#8405](https://github.com/mermaid-js/mermaid/pull/8405) [`b4299f2`](https://github.com/mermaid-js/mermaid/commit/b4299f2f440e63092caab6fdfe2d1b6cc19308a8) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix: do not draw a stray empty swimlane when a node is listed in two lanes, and warn about it and about a subgraph nested in a lane
+
+- [#8385](https://github.com/mermaid-js/mermaid/pull/8385) [`37d0ace`](https://github.com/mermaid-js/mermaid/commit/37d0aceb1e435490a7614299d035c7dc91729282) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): keep two arrowheads that land on one face of a node apart when a sibling edge is straightened
+
+- [#8385](https://github.com/mermaid-js/mermaid/pull/8385) [`38e810a`](https://github.com/mermaid-js/mermaid/commit/38e810afe946ac4ebf48b7274c02689e032c51db) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): an edge routed round the outside of a diamond now arrives at one of its vertices instead of ending in empty space beside it
+
+- [#8385](https://github.com/mermaid-js/mermaid/pull/8385) [`25d7e31`](https://github.com/mermaid-js/mermaid/commit/25d7e314d143efb31b5f0813f9ee5fb7b50bd19b) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): a second edge leaving a diamond on the same level as its target now leaves from a free vertex instead of running beside the first
+
+- [#8171](https://github.com/mermaid-js/mermaid/pull/8171) [`a4750b4`](https://github.com/mermaid-js/mermaid/commit/a4750b42aa697b2fed476cdfb297407b70b61e8e) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix: dock a swimlane edge on the shape it points at, so a line reaches an event's ring instead of stopping at the room its caption reserves
+
+- [#8385](https://github.com/mermaid-js/mermaid/pull/8385) [`67315b9`](https://github.com/mermaid-js/mermaid/commit/67315b937147ad06ce202dd9bdaaa219697b55d4) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix: an edge label no longer pushes the nodes it joins a rank apart
+
+- [#8385](https://github.com/mermaid-js/mermaid/pull/8385) [`21a1f5c`](https://github.com/mermaid-js/mermaid/commit/21a1f5c11de99daef5dae6639c9cd4649ae62efd) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): stop the crossing cleanup from joining two routes at a corner so they read as one line
+
+- [#8385](https://github.com/mermaid-js/mermaid/pull/8385) [`e14bc3a`](https://github.com/mermaid-js/mermaid/commit/e14bc3a752b1c18e01fef3e849ae83bc0f35417f) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): an edge no longer arrives at the vertex of a hexagon that another edge leaves from
+
+- [#8459](https://github.com/mermaid-js/mermaid/pull/8459) [`edd162f`](https://github.com/mermaid-js/mermaid/commit/edd162f3f052649709a660cff4b511ed45584d7f) Thanks [@Yun-seoung](https://github.com/Yun-seoung)! - fix: Allow flowchart edge IDs regardless of whitespace after the node shape
+
+  Edge IDs may no longer contain `[ ] ( ) { } |`.
+
+- [#8402](https://github.com/mermaid-js/mermaid/pull/8402) [`4f2bade`](https://github.com/mermaid-js/mermaid/commit/4f2bade8434bf25e9b3daf3fdd873515ae70ce23) Thanks [@pcp-cmd](https://github.com/pcp-cmd)! - fix: Render use case include and extend relationship labels with UML guillemets.
+
+## 12.2.0
+
+### Minor Changes
+
+- [#8394](https://github.com/mermaid-js/mermaid/pull/8394) [`6ac38cb`](https://github.com/mermaid-js/mermaid/commit/6ac38cb4441f67a29336cb3039c1a63e7a87d969) Thanks [@jackroberts236](https://github.com/jackroberts236)! - feat: Add opt-in mindmap coloring by hierarchy depth using `mindmap.colorBy: depth` and the existing theme palette.
+
+### Patch Changes
+
+- [#8409](https://github.com/mermaid-js/mermaid/pull/8409) [`419ee68`](https://github.com/mermaid-js/mermaid/commit/419ee6855da1ee1170445164e8ba9850ef279568) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: size circle and double-circle nodes from their label instead of `minNodeWidth`, and trim neo circle padding
+
+- [#8395](https://github.com/mermaid-js/mermaid/pull/8395) [`2fb3ff1`](https://github.com/mermaid-js/mermaid/commit/2fb3ff1d9f4f74478f28096e3e38565378b9f686) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: ELK no longer straightens an edge terminal when that would put a label over another edge, or an edge through a label
+
+- [#8394](https://github.com/mermaid-js/mermaid/pull/8394) [`cbf89ab`](https://github.com/mermaid-js/mermaid/commit/cbf89ab1377a8e7febff2614d7cbd5f78dd3d87c) Thanks [@jackroberts236](https://github.com/jackroberts236)! - fix: Keep mindmap HTML labels readable in the neo look on themes that repaint node backgrounds
+
+- [#8390](https://github.com/mermaid-js/mermaid/pull/8390) [`430ac9b`](https://github.com/mermaid-js/mermaid/commit/430ac9b4de28ec360df92df0adf998523a57ce4d) Thanks [@ashishjain0512](https://github.com/ashishjain0512)! - fix: Centre mindmap node labels when `htmlLabels` is false
+
+- [#8161](https://github.com/mermaid-js/mermaid/pull/8161) [`d7532ed`](https://github.com/mermaid-js/mermaid/commit/d7532edcc2d8dbb7563469884ebdfda4fe85994b) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix: scope a swimlane cluster's DOM id like every other cluster, so two diagrams on one page do not collide
+
+- [#8270](https://github.com/mermaid-js/mermaid/pull/8270) [`ad8d61a`](https://github.com/mermaid-js/mermaid/commit/ad8d61ad3fe2a2262970e3a9059e308a99680891) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(rendering): clip an edge for the layout engine that drew it, so a diagram pinning its own engine (bpmn, swimlanes) still renders when the configured default is another one
+
+- [#8383](https://github.com/mermaid-js/mermaid/pull/8383) [`9d41c0f`](https://github.com/mermaid-js/mermaid/commit/9d41c0fbf856fc71aff93e4ed55a38c9cc932a76) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): split shared terminal lanes again after crossing cleanup, so an edge that detours around another lane no longer ends on the same attachment point as a neighbouring edge
+
+- [#8384](https://github.com/mermaid-js/mermaid/pull/8384) [`6c67397`](https://github.com/mermaid-js/mermaid/commit/6c67397dee4422a07646dd0b8960f1fcf64849e8) Thanks [@filipsajdak](https://github.com/filipsajdak)! - fix(swimlanes): move a lane's title band clear of an edge that crosses it, in LR diagrams whose lanes carry no direction of their own and when the edge runs along the band's border
+
+- [#8366](https://github.com/mermaid-js/mermaid/pull/8366) [`40124c3`](https://github.com/mermaid-js/mermaid/commit/40124c3a471040cdf92269dda43c737d7431f8f2) Thanks [@SwastikTripathi](https://github.com/SwastikTripathi)! - fix: swimlane nodes with no edges keep their source order inside a lane instead of being sorted by ID
+
 ## 12.1.0
 
 ### Minor Changes
