@@ -257,7 +257,7 @@ export const BOUNDS_ONLY_PATH_STYLE = 'fill: transparent !important; stroke: non
 
 /**
  * Keeps every path of a bounds-only rough.js group unpainted, whatever classes the node
- * carries. A hand-drawn rectangle has more than one path, so all of them are covered.
+ * carries, so the result does not depend on how many paths rough.js emits for the look.
  */
 export const keepBoundsUnpainted = (bounds: D3Selection<SVGGElement>) => {
   bounds.selectAll('path').attr('style', BOUNDS_ONLY_PATH_STYLE);
