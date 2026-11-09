@@ -94,6 +94,17 @@ Container(proxy, "Proxy")
     expect(labelOf('n3')).toBe('Edge [Linux]');
   });
 
+  it('shows a named $descr on any boundary', () => {
+    const db = parse(`C4Context
+System_Boundary(s1, "Shop", $descr="Sells books") {
+System(web, "Web")
+}`);
+
+    expect(getData(db, config()).nodes.find((n) => n.id === 's1')?.label).toBe(
+      'Shop<br/>Sells books'
+    );
+  });
+
   it('never emits the implicit global boundary as a node', () => {
     const db = parse(`C4Context\nPerson(a, "A")`);
     const { nodes } = getData(db, config());
