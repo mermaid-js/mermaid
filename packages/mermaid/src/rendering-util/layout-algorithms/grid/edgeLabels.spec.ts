@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Edge, LayoutData, Node } from '../../types.js';
 import { normalizePolyline } from '../layout-utils/geometry.js';
+import { rectForNode } from '../layout-utils/helpers.js';
 import { validateLayout as validateSharedLayout } from '../layout-utils/validateLayout.js';
 import {
   createGridEdgeLabelInstrumentation,
@@ -812,6 +813,78 @@ describe('grid edge label helpers', () => {
     expect(labelNode?.x).toEqual(expect.any(Number));
     expect(labelNode?.y).toEqual(expect.any(Number));
   });
+
+  it.each(['horizontal', 'vertical'] as const)(
+    'keeps a 14-pixel side gutter when rerouting an unrelated edge around a %s label',
+    (orientation) => {
+      const data: LayoutData = {
+        nodes: [
+          manualNode('owner-start', 100, 120, 20, 20),
+          manualNode('owner-end', 300, 180, 20, 20),
+          manualNode('crossing-start', 200, 0, 20, 20),
+          manualNode('crossing-end', 200, 300, 20, 20),
+          // Without the gutter, this obstacle supplies a lane only 6 pixels from the label.
+          manualNode('nearby-obstacle', 138, 80, 8, 8),
+        ],
+        edges: [
+          manualEdge(
+            'owner',
+            'owner-start',
+            'owner-end',
+            [
+              { x: 100, y: 130 },
+              { x: 100, y: 150 },
+              { x: 300, y: 150 },
+              { x: 300, y: 170 },
+            ],
+            'label'
+          ),
+          manualEdge('crossing', 'crossing-start', 'crossing-end', [
+            { x: 200, y: 10 },
+            { x: 200, y: 290 },
+          ]),
+        ],
+        config: { layout: 'grid' } as LayoutData['config'],
+      };
+      if (orientation === 'vertical') {
+        for (const node of data.nodes) {
+          [node.x, node.y] = [node.y, node.x];
+          [node.width, node.height] = [node.height, node.width];
+        }
+        for (const edge of data.edges) {
+          edge.points = edge.points!.map(({ x, y }) => ({ x: y, y: x }));
+        }
+      }
+      prepareGridLayout(data);
+      const labelNode = data.nodes.find((node) => node.id === data.edges[0].labelNodeId)!;
+      labelNode.width = orientation === 'horizontal' ? 120 : 20;
+      labelNode.height = orientation === 'horizontal' ? 20 : 120;
+      const originalCrossing = structuredClone(data.edges[1].points);
+
+      positionGridEdgeLabels(data);
+
+      expect(data.edges[1].points).not.toEqual(originalCrossing);
+      const rect = rectForNode(labelNode);
+      const gaps = normalizePolyline(data.edges[1].points!)
+        .segments.filter((segment) =>
+          orientation === 'horizontal'
+            ? segment.orientation === 'V' &&
+              Math.min(segment.a.y, segment.b.y) < rect.bottom &&
+              Math.max(segment.a.y, segment.b.y) > rect.top
+            : segment.orientation === 'H' &&
+              Math.min(segment.a.x, segment.b.x) < rect.right &&
+              Math.max(segment.a.x, segment.b.x) > rect.left
+        )
+        .map((segment) =>
+          orientation === 'horizontal'
+            ? Math.max(rect.left - segment.a.x, segment.a.x - rect.right, 0)
+            : Math.max(rect.top - segment.a.y, segment.a.y - rect.bottom, 0)
+        );
+      expect(gaps.length).toBeGreaterThan(0);
+      expect(Math.min(...gaps)).toBeGreaterThanOrEqual(14);
+      expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+    }
+  );
 
   it('scopes reroute lanes to the blocking label and detour side', () => {
     const crossingCount = 40;
