@@ -21,8 +21,10 @@ import {
 import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import { GRID_LABEL_PREFIX, gridError, isEdgeLabelNode, isFinitePositiveNumber } from './types.js';
 
-// Label placement is a post-routing transaction: reserve label rectangles, reroute affected
-// orthogonal edges, then publish only a pass whose labels and preserved anchors all validate.
+// prepareGridLayout moves edge label text into helper nodes linked to their owners by labelNodeId.
+// The caller measures those nodes before grid layout, but they stay out of normal node placement.
+// After routing, positionGridEdgeLabels uses their measured bounds to place labels on their owning
+// edges, rerouting affected edges as needed and storing the final helper-node positions for rendering.
 const LABEL_CLEARANCE = GRID_LABEL_CLEARANCE;
 const LABEL_GUTTER = 14;
 const LABEL_GUTTER_STEP = 18;
