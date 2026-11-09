@@ -1,10 +1,15 @@
-# Grid edge routing
+# Grid edge routing implementation notes
 
-Grid layout calculates edge paths automatically after it measures and positions the diagram. Users control item placement and spacing; they do not provide absolute edge coordinates or waypoints.
+This is an internal reference for routing invariants, algorithm migration, search budgets, and
+validation.
 
-For grid syntax and configuration, see the [grid layout documentation](../../../docs/syntax/grid-layout.md).
+When public grid registration and syntax documentation land, move the user-facing routing behavior,
+configuration, and troubleshooting guidance into the grid syntax page under
+`packages/mermaid/src/docs/syntax/`. Keep algorithm migration, instrumentation, and test notes here.
 
 ## Routing behavior
+
+Grid layout calculates edge paths automatically after it measures and positions the diagram. Users control item placement and spacing; they do not provide absolute edge coordinates or waypoints.
 
 The calculated route is an orthogonal polyline made from horizontal and vertical segments. The router:
 
