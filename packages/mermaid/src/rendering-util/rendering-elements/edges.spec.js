@@ -23,6 +23,7 @@ import { computeLabelTransform } from '../labelTransform.js';
 import intersectCircle from './intersect/intersect-circle.js';
 import intersectPolygon from './intersect/intersect-polygon.js';
 import intersectRect from './intersect/intersect-rect.js';
+import { cropEdgeEndsToShapes } from '../layout-algorithms/swimlanes/direction/endpointClip.js';
 
 // Tests that pin a layout with mockReturnValue must not leak it into later tests, which
 // rely on the swimlane default above. mockReset restores that factory implementation.
@@ -505,6 +506,59 @@ describe('insertEdge swimlane endpoint clipping', () => {
     expect(head.intersect).not.toHaveBeenCalled();
     expect(renderedPoints[0]).toEqual(first);
     expect(renderedPoints.at(-1)).toEqual(last);
+  });
+});
+
+describe('a swimlane edge cropped to its end shapes, then drawn', () => {
+  // C sits in a 100 x 100 box around the origin. The route passes the top right corner of
+  // that box and ends on the middle of its right side.
+  const route = () => [
+    { x: 80, y: 120 },
+    { x: 40, y: 120 },
+    { x: 40, y: 40 },
+    { x: 100, y: 40 },
+    { x: 100, y: 0 },
+    { x: 50, y: 0 },
+  ];
+  const tailBox = { x: 80, y: 140, width: 40, height: 40 };
+  const drawnEnd = (shape, intersect) => {
+    const routed = [{ id: 'L_A_C_0', start: 'A', end: 'C', points: route() }];
+    cropEdgeEndsToShapes(
+      routed,
+      new Map([
+        ['A', { id: 'A', ...tailBox }],
+        ['C', { id: 'C', x: 0, y: 0, width: 100, height: 100, shape }],
+      ])
+    );
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'L_A_C_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points: routed[0].points,
+    };
+    const tail = { intersect: (point) => intersectRect(tailBox, point) };
+    insertEdge(svg, edge, null, 'swimlane', tail, { intersect }, 'diagram');
+    return JSON.parse(atob(svg.select('path').attr('data-points'))).at(-1);
+  };
+
+  it('ends on a circle it passes outside of, within its box', () => {
+    const end = drawnEnd('circle', (point) => intersectCircle({ x: 0, y: 0 }, 50, point));
+
+    expect(Math.hypot(end.x, end.y)).toBeCloseTo(50);
+  });
+
+  it('ends where it is cut on a box', () => {
+    const box = { x: 0, y: 0, width: 100, height: 100 };
+
+    expect(drawnEnd('squareRect', (point) => intersectRect(box, point))).toEqual({ x: 40, y: 50 });
   });
 });
 

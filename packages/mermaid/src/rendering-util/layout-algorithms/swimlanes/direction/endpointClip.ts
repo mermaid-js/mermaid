@@ -33,8 +33,40 @@ interface EndpointNode {
   width?: number;
   height?: number;
   isGroup?: boolean;
+  shape?: string;
   metadata?: { drawnExtent?: { width?: unknown; height?: unknown } };
 }
+
+/**
+ * The shapes whose outline is their box, each under every name the shape registry gives it. A
+ * node with no shape is its box too.
+ */
+const BOX_SHAPES = new Set<string>([
+  'rect',
+  'squareRect',
+  'proc',
+  'process',
+  'rectangle',
+  'rounded',
+  'roundedRect',
+  'event',
+  'fr-rect',
+  'subroutine',
+  'subprocess',
+  'subproc',
+  'framed-rectangle',
+  'lin-rect',
+  'lined-rectangle',
+  'lined-process',
+  'lin-proc',
+  'shaded-process',
+  'fork',
+  'join',
+]);
+
+/** Whether a route cut where it meets the node's box ends on what the node draws. */
+const drawsItsBox = (node: EndpointNode): boolean =>
+  node.shape === undefined || BOX_SHAPES.has(node.shape);
 
 const isFiniteNumber = (value: unknown): value is number =>
   typeof value === 'number' && Number.isFinite(value);
@@ -559,19 +591,23 @@ const samePolyline = (a: Point[], b: Point[]): boolean =>
 const hasLength = (points: Point[]): boolean =>
   points.some((point, i) => i > 0 && !samePoint(point, points[i - 1], SQUARE_EPS));
 
-/** Cuts each end of a route where it first meets the box of the node at that end. */
+/**
+ * Cuts each end of a route where it first meets the box of the node at that end. An end at a
+ * shape that draws less than its box, such as a circle or a diamond, is not cut: where the
+ * route meets the box can lie outside what the shape draws.
+ */
 function cropEnds(points: Point[], src?: EndpointNode, dst?: EndpointNode): Point[] {
-  const dstRect = dst ? endpointRectOf(dst) : undefined;
+  const dstRect = dst && drawsItsBox(dst) ? endpointRectOf(dst) : undefined;
   const toEnd = dstRect ? cropTail(points, dstRect) : points;
-  const srcRect = src ? endpointRectOf(src) : undefined;
+  const srcRect = src && drawsItsBox(src) ? endpointRectOf(src) : undefined;
   return srcRect ? cropTail([...toEnd].reverse(), srcRect).reverse() : toEnd;
 }
 
 /**
  * Ends every edge between two nodes where it first meets each node's box (its drawn extent
  * when the shape sets one), so an arrowhead is never drawn inside, and hidden by, the box.
- * Self-loops, edges to groups and slanted segments are left as they are, and so is a route
- * that cropping would leave with nothing to draw.
+ * Self-loops, edges to groups, slanted segments and ends at shapes that draw less than their
+ * box are left as they are, and so is a route that cropping would leave with nothing to draw.
  *
  * @returns whether any route was cut.
  */
