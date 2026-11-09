@@ -464,6 +464,39 @@ describe('phase bands that must hold a title', () => {
     }
   );
 
+  // A band grows by widening the gaps to its neighbours, and a lone band has none. When lanes
+  // can grow along the flow this limit goes, and this test must be rewritten to expect growth.
+  it.each(['TB', 'LR'])(
+    'leaves a long title overflowing when every node is in one phase in %s (not yet handled)',
+    (direction) => {
+      const lone = (titleExtent: number) =>
+        laidOut(
+          `swimlane-beta ${direction}\nphase p1["Intake"]\nsubgraph l1\n  a@{ phase: p1 }\nend`,
+          {},
+          { p1: titleExtent }
+        );
+      const plain = extentOf(computePhaseBands(lone(0))[0]);
+
+      const [band] = computePhaseBands(lone(LONG_TITLE));
+
+      expect(extentOf(band)).toBe(plain);
+      expect(extentOf(band)).toBeLessThan(LONG_TITLE);
+    }
+  );
+
+  it.each(['TB', 'LR'])(
+    'grows the same long title once a second phase has a node in %s',
+    (direction) => {
+      const text = `swimlane-beta ${direction}\nphase p1["Intake"]\nphase p2["Review"]\nsubgraph l1\n  a@{ phase: p1 }\n  b@{ phase: p2 }\nend\na --> b`;
+
+      const band = computePhaseBands(laidOut(text, {}, { p1: LONG_TITLE })).find(
+        ({ id }) => id === 'p1'
+      )!;
+
+      expect(extentOf(band)).toBeGreaterThanOrEqual(LONG_TITLE - 0.5);
+    }
+  );
+
   it('lays out the same diagram twice with the same result', () => {
     const once = laidOut(source('LR'), {}, { p2: LONG_TITLE });
     const twice = laidOut(source('LR'), {}, { p2: LONG_TITLE });
