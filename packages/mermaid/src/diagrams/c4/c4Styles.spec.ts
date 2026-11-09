@@ -54,4 +54,28 @@ describe('c4 styles: boundary and relationship fonts', () => {
     setConfig({ c4: { personFontSize: 18 } });
     expect(styles()).toMatch(/\.c4-shape\.c4-person \.label {[^}]*font-size: 18px;/);
   });
+
+  // An HTML label nests the text inside the label group, and both match a selector that
+  // names the two; a relative size set on both would apply twice.
+  it.each([
+    ['boundary', 'boundaryFontSize', '.cluster.c4-boundary .cluster-label', '.nodeLabel'],
+    ['message', 'messageFontSize', 'g.edgeLabel', '.edgeLabel'],
+  ])(
+    'sets a relative %s size once and lets the nested label inherit it',
+    (_kind, key, outer, nested) => {
+      setConfig({ c4: { [key]: '1.5em' } });
+      const rules = styles()
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.startsWith(outer));
+      const sizes = rules.map((rule) => {
+        const [selectors, body] = rule.split('{');
+        const size = /font-size: ([^;]+);/.exec(body)?.[1];
+        return { nestedOnly: selectors.trim() === `${outer} ${nested}`, size };
+      });
+      expect(sizes).toContainEqual({ nestedOnly: false, size: '1.5em' });
+      expect(sizes).toContainEqual({ nestedOnly: true, size: 'inherit' });
+      expect(sizes.filter((entry) => entry.size === '1.5em')).toHaveLength(1);
+    }
+  );
 });

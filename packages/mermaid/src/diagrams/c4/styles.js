@@ -35,16 +35,13 @@ const elementFontStyles = () => {
 };
 
 /**
- * Label groups whose font the c4 config can change from the stylesheet default. Each
- * selector also names the nested element the stylesheet sizes in `em`, so a configured size
- * applies once instead of being scaled again inside the label.
+ * Label groups whose font the c4 config can change from the stylesheet default. The value
+ * goes on the outer group; the label nested in it, which the stylesheet sizes on its own in
+ * `em`, inherits instead, so a relative size applies once.
  */
 const LABEL_FONT_RULES = [
-  {
-    selector: '.cluster.c4-boundary .cluster-label, .cluster.c4-boundary .cluster-label .nodeLabel',
-    prefix: 'boundary',
-  },
-  { selector: 'g.edgeLabel, g.edgeLabel .edgeLabel', prefix: 'message' },
+  { outer: '.cluster.c4-boundary .cluster-label', nested: '.nodeLabel', prefix: 'boundary' },
+  { outer: 'g.edgeLabel', nested: '.edgeLabel', prefix: 'message' },
 ];
 
 /** A number font size is taken as pixels. */
@@ -65,13 +62,16 @@ const labelFontStyles = () => {
   const c4 = getConfig().c4 ?? {};
   const defaults = defaultConfig.c4;
   const sheet = new CSSStyleSheet();
-  for (const { selector, prefix } of LABEL_FONT_RULES) {
-    const rule = sheet.cssRules[sheet.insertRule(`${selector} {}`, sheet.cssRules.length)];
+  for (const { outer, nested, prefix } of LABEL_FONT_RULES) {
+    const outerRule = sheet.cssRules[sheet.insertRule(`${outer} {}`, sheet.cssRules.length)];
+    const nestedRule =
+      sheet.cssRules[sheet.insertRule(`${outer} ${nested} {}`, sheet.cssRules.length)];
     for (const { suffix, property, toCss } of FONT_PROPERTIES) {
       const key = `${prefix}${suffix}`;
       const value = c4[key];
       if (value !== undefined && value !== null && value !== '' && value !== defaults[key]) {
-        rule.style.setProperty(property, toCss(value));
+        outerRule.style.setProperty(property, toCss(value));
+        nestedRule.style.setProperty(property, 'inherit');
       }
     }
   }
