@@ -1,7 +1,5 @@
-import {
-  GridRoutingResourceLimitError,
-  type GridRoutingInstrumentation,
-} from './routerInstrumentation.js';
+import { GridRoutingResourceLimitError } from './routerErrors.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import type {
   ContainerRoutingTopology,
   GridOrientation,
