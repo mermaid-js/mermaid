@@ -208,6 +208,9 @@ statement
 	| idStatement DESCR {
             const stateStmt = $1;
             stateStmt.description = yy.trimColon($2);
+            // An explicit description makes the statement explicit: it is no
+            // longer just the implicit label of a quoted transition endpoint.
+            delete stateStmt.implicit;
             $$ = stateStmt;
 	    }
 	| idStatement '-->' idStatement
@@ -334,6 +337,17 @@ idStatement
     | EDGE_STATE
         {   /* console.log('idStatement id: ', $1); */
             $$={ stmt: 'state', id: $1.trim(), type: 'default', description: '' };
+        }
+    | STRING
+        {   /* console.log('idStatement STRING: ', $1); */
+            // Quoted state name, e.g. "multi spaced": treat it as an implicit
+            // `state "multi spaced" as multi_spaced` declaration.
+            var descr = $1.slice(1, -1).trim();
+            if (!descr) { throw new Error('Error: Quoted state name must not be empty.'); }
+            var id = descr.replace(/\s+/g, '_');
+            // `implicit` lets the db attach the description only once, so
+            // repeated references do not duplicate the rendered label.
+            $$={ stmt: 'state', id: id, type: 'default', description: descr, implicit: true };
         }
     | ID STYLE_SEPARATOR ID
         {   /*console.log('idStatement ID STYLE_SEPARATOR ID'); */

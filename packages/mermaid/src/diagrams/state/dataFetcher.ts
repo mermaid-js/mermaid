@@ -299,9 +299,14 @@ export const dataFetcher = (
     // Build of the array of description strings
     if (parsedItem.description) {
       if (Array.isArray(newNode.description)) {
-        // There already is an array of strings,add to it
-        newNode.shape = SHAPE_STATE_WITH_DESC;
-        newNode.description.push(parsedItem.description);
+        // There already is an array of strings, add to it. Statements implicitly
+        // declared by a quoted state name repeat the same description on every
+        // transition; only add those once so the rendered label is not duplicated.
+        // Explicitly written descriptions are always kept, duplicates included.
+        if (!parsedItem.implicit || !newNode.description.includes(parsedItem.description)) {
+          newNode.shape = SHAPE_STATE_WITH_DESC;
+          newNode.description.push(parsedItem.description);
+        }
       } else {
         if (newNode.description?.length && newNode.description.length > 0) {
           // if there is a description already transform it to an array
