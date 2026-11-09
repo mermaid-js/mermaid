@@ -25,10 +25,8 @@ import {
   type EdgeRoutePlan,
   type PreparedEdgeRoutes,
 } from './routerPlanning.js';
-import {
-  GridRoutingResourceLimitError,
-  type GridRoutingInstrumentation,
-} from './routerInstrumentation.js';
+import { GridRoutingResourceLimitError } from './routerErrors.js';
+import type { GridRoutingInstrumentation } from './routerInstrumentation.js';
 import {
   buildContainerRoutingTopology,
   DEFAULT_MAX_ROUTING_ESTIMATED_BYTES,

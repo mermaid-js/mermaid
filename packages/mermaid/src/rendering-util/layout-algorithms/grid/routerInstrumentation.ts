@@ -12,17 +12,6 @@ export type GridRoutingFallbackReason =
   | 'label_index_work_cap'
   | 'label_placement_exhausted';
 
-export class GridRoutingResourceLimitError extends Error {
-  constructor(
-    public readonly reason: GridRoutingFallbackReason,
-    message: string,
-    public readonly searchStateScope?: 'edge' | 'invocation'
-  ) {
-    super(message);
-    this.name = 'GridRoutingResourceLimitError';
-  }
-}
-
 export interface GridRouteInstrumentation {
   edgeId: string;
   routeOrder: number;

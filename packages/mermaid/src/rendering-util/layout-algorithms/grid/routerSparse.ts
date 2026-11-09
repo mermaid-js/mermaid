@@ -30,10 +30,8 @@ import {
   type EdgeRoutePlan,
   type EndpointCandidate,
 } from './routerPlanning.js';
-import {
-  GridRoutingResourceLimitError,
-  type GridRoutingFallbackReason,
-} from './routerInstrumentation.js';
+import { GridRoutingResourceLimitError } from './routerErrors.js';
+import type { GridRoutingFallbackReason } from './routerInstrumentation.js';
 import {
   assertSearchBudgetAvailable,
   compareTupleCost,
