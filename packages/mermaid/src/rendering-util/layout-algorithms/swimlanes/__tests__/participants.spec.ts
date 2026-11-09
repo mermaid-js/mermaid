@@ -197,3 +197,93 @@ describe('a link ending on a participant', () => {
     expect(layout.edges[0].points).toHaveLength(2);
   });
 });
+
+/** Whether any segment of `points` passes through the inside of `box`. */
+const crossesInside = (points: { x: number; y: number }[], box: Node): boolean => {
+  const left = box.x! - box.width! / 2;
+  const right = box.x! + box.width! / 2;
+  const top = box.y! - box.height! / 2;
+  const bottom = box.y! + box.height! / 2;
+  return points.slice(1).some((end, i) => {
+    const start = points[i];
+    const low = { x: Math.min(start.x, end.x), y: Math.min(start.y, end.y) };
+    const high = { x: Math.max(start.x, end.x), y: Math.max(start.y, end.y) };
+    return low.x < right && high.x > left && low.y < bottom && high.y > top;
+  });
+};
+
+const isOrthogonal = (points: { x: number; y: number }[]): boolean =>
+  points.slice(1).every((end, i) => end.x === points[i].x || end.y === points[i].y);
+
+describe('a link between participants with another one between them', () => {
+  // p1 spans 0..80, p2 116..196 and p3 232..312 on one axis, and all share the width.
+  const stacked = () => [
+    band('p1', 40, 80, 'pool'),
+    band('p2', 156, 80, 'pool'),
+    band('p3', 272, 80, 'pool'),
+  ];
+
+  it('goes round the participant in between instead of through it', () => {
+    const layout = asLayout(stacked(), [link('m', 'p1', 'p3')]);
+    linkParticipantBands(layout);
+    const points = layout.edges[0].points!;
+    expect(crossesInside(points, layout.nodes[1])).toBe(false);
+    expect(isOrthogonal(points)).toBe(true);
+    expect(points[0].y).toBe(80);
+    expect(points.at(-1)!.y).toBe(232);
+    expect(points[0].x).toBe(points.at(-1)!.x);
+  });
+
+  it('goes round in the other direction too', () => {
+    const layout = asLayout(stacked(), [link('m', 'p3', 'p1')]);
+    linkParticipantBands(layout);
+    const points = layout.edges[0].points!;
+    expect(crossesInside(points, layout.nodes[1])).toBe(false);
+    expect(points[0].y).toBe(232);
+    expect(points.at(-1)!.y).toBe(80);
+  });
+
+  it('goes round a participant in between side by side', () => {
+    const side = (id: string, x: number): Node =>
+      ({ ...band(id, 100, 80, 'pool'), x, width: 80 }) as Node;
+    const layout = asLayout(
+      [side('p1', 40), side('p2', 156), side('p3', 272)],
+      [link('m', 'p1', 'p3')]
+    );
+    linkParticipantBands(layout);
+    const points = layout.edges[0].points!;
+    expect(crossesInside(points, layout.nodes[1])).toBe(false);
+    expect(isOrthogonal(points)).toBe(true);
+    expect(points[0].x).toBe(80);
+    expect(points.at(-1)!.x).toBe(232);
+  });
+
+  it('keeps the straight run between neighbours', () => {
+    const layout = asLayout(stacked(), [link('m', 'p1', 'p2')]);
+    linkParticipantBands(layout);
+    expect(layout.edges[0].points).toEqual([
+      { x: 100, y: 80 },
+      { x: 100, y: 116 },
+    ]);
+  });
+
+  it('crosses the lanes of the pool it ends in rather than going round them', () => {
+    const lane = (id: string, y: number) =>
+      ({ ...band(id, y, 40, 'lane'), parentId: 'p3' }) as Node;
+    const layout = asLayout(
+      [
+        band('p1', 40, 80, 'pool'),
+        band('p3', 156, 80, 'pool'),
+        lane('l1', 136),
+        lane('l2', 176),
+        inside('a', 'p1', 40),
+      ],
+      [link('toLane', 'p1', 'l2')]
+    );
+    linkParticipantBands(layout);
+    expect(layout.edges[0].points).toEqual([
+      { x: 100, y: 80 },
+      { x: 100, y: 156 },
+    ]);
+  });
+});
