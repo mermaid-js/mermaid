@@ -288,7 +288,7 @@ describe('cropping an edge end to the box it reaches', () => {
   });
 
   it('leaves an end at a shape that draws less than its box, and cuts the same route at a box', () => {
-    // C is 100 x 100 around the origin. The route passes the top right corner of that box,
+    // B is 100 x 100 around the origin. The route passes the top right corner of that box,
     // outside a circle drawn in it, and ends on the circle's right side at (50, 0).
     const route = [
       { x: 80, y: 120 },
@@ -310,6 +310,30 @@ describe('cropping an edge end to the box it reaches', () => {
       { x: 80, y: 120 },
       { x: 40, y: 120 },
       { x: 40, y: 50 },
+    ]);
+  });
+
+  it('leaves a start at a shape that draws less than its box, and cuts the same route at a box', () => {
+    // The same route the other way: it leaves the circle's right side and passes the corner.
+    const route = [
+      { x: 50, y: 0 },
+      { x: 100, y: 0 },
+      { x: 100, y: 40 },
+      { x: 40, y: 40 },
+      { x: 40, y: 120 },
+      { x: 80, y: 120 },
+    ];
+    const startingAt = (shape?: string) =>
+      new Map([
+        ['A', { id: 'A', x: 0, y: 0, width: 100, height: 100, shape }],
+        ['B', { id: 'B', x: 80, y: 140, width: 40, height: 40 }],
+      ]);
+
+    expect(cropped(structuredClone(route), startingAt('circle'))).toEqual(route);
+    expect(cropped(structuredClone(route), startingAt('squareRect'))).toEqual([
+      { x: 40, y: 50 },
+      { x: 40, y: 120 },
+      { x: 80, y: 120 },
     ]);
   });
 
