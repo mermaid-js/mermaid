@@ -256,12 +256,13 @@ describe('cropping an edge end to the box it reaches', () => {
     expect(cropped(slanted)).toEqual(slanted);
   });
 
-  it('leaves a self-loop', () => {
+  it('leaves a self-loop, even one that comes back into its box', () => {
+    // The loop leaves A's top face at y 100 and comes back 10 px into A.
     const loop = [
       { x: 30, y: 100 },
       { x: 30, y: 60 },
       { x: 20, y: 60 },
-      { x: 20, y: 100 },
+      { x: 20, y: 110 },
     ];
 
     expect(cropped(loop, nodes(), 'A')).toEqual(loop);
