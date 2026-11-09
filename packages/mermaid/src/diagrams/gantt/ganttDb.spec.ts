@@ -674,6 +674,20 @@ describe('when using the ganttDb', function () {
       expect(tasks[0].endTime).toEqual(relativeStart().add(5, 'day').toDate());
     });
 
+    it.each(convert`
+      dates              | offset
+      ${'1000000000, 1'} | ${'1000000000'}
+      ${'0, 4000000'}    | ${'4000000'}
+    `)(
+      'should reject the out-of-range relative date in "$dates"',
+      ({ dates, offset }: { dates: string; offset: string }) => {
+        ganttDb.setDateFormat('relative day');
+        ganttDb.addTask('Task', dates);
+
+        expect(() => ganttDb.getTasks()).toThrowError('Invalid date:' + offset);
+      }
+    );
+
     it('should add one unit to relative end dates when they are inclusive', function () {
       ganttDb.setDateFormat('relative week');
       ganttDb.enableInclusiveEndDates();

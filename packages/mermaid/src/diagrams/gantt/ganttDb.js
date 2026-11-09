@@ -216,7 +216,13 @@ const parseRelativeDate = function (str) {
   if (unit === undefined || !relativeNumberRegex.test(str)) {
     return undefined;
   }
-  return getRelativeDate(Number(str), unit);
+  const date = getRelativeDate(Number(str), unit);
+  // Same bound as absolute dates in `getStartDate`: a huge offset gives an
+  // invalid date, or one so far away that rendering loops for a very long time.
+  if (!date.isValid() || date.year() < -10000 || date.year() > 10000) {
+    throw new Error('Invalid date:' + str);
+  }
+  return date;
 };
 
 const mergeTokens = (existing, txt) => {
