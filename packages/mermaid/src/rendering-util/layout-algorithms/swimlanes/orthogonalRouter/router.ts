@@ -49,6 +49,8 @@ interface Pipe {
   spanMin: number;
   spanMax: number;
   tracks: Track[];
+  /** Added round drawn boxes: only the edges routed round drawn boxes search along it. */
+  roundDrawnBoxes?: boolean;
 }
 
 interface Track {
@@ -259,6 +261,10 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
         tracks: [],
       };
       pipes.push(pipe);
+    } else if (obstacles === laidOutObstacles) {
+      // An edge routed round the laid-out boxes asks for this pipe itself, so from now on it is
+      // shared like any pipe that edge adds.
+      pipe.roundDrawnBoxes = false;
     }
     // Extend span
     pipe.spanMin = Math.min(pipe.spanMin, spanMin);
@@ -1185,6 +1191,8 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
       }
     }
 
+    const routesRoundDrawnBoxes = obstacles !== laidOutObstacles;
+
     // Snap anchors to nearest pipe (create lazily).
     const srcPipe = getOrAddPipe('vertical', pSrcAnchor.x, pSrcAnchor.y, pSrcAnchor.y);
     pSrcAnchor.x = srcPipe.coord;
@@ -1232,8 +1240,14 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
 
       // Add vertical pipes around obstacle - ONLY at safe zone positions (with margins)
       const vMargin = VERTICAL_PIPE_MARGIN;
+      const pipesBeforeRails = pipes.length;
       getOrAddPipe('vertical', obs.minX - vMargin, bbMinY, bbMaxY); // Left of obstacle (safe zone)
       getOrAddPipe('vertical', obs.maxX + vMargin, bbMinY, bbMaxY); // Right of obstacle (safe zone)
+      if (routesRoundDrawnBoxes) {
+        for (const rail of pipes.slice(pipesBeforeRails)) {
+          rail.roundDrawnBoxes = true;
+        }
+      }
     }
 
     // Ensure start/end horizontal pipes exist
@@ -1244,8 +1258,14 @@ export function routeEdgesOrthogonal(data: LayoutData, direction?: string): Layo
     const hPipes = pipes.filter(
       (p) => p.orientation === 'horizontal' && p.coord >= bbMinY && p.coord <= bbMaxY
     );
+    // The rails added round drawn boxes are for the edges routed round them: every other edge
+    // keeps the rails of the laid-out boxes.
     const vPipes = pipes.filter(
-      (p) => p.orientation === 'vertical' && p.coord >= bbMinX && p.coord <= bbMaxX
+      (p) =>
+        p.orientation === 'vertical' &&
+        p.coord >= bbMinX &&
+        p.coord <= bbMaxX &&
+        (routesRoundDrawnBoxes || !p.roundDrawnBoxes)
     );
 
     // Vertices: All intersections of hPipes and vPipes
