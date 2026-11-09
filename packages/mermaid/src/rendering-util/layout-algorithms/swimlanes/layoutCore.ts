@@ -56,7 +56,7 @@ function placeNodes(data4Layout: LayoutData, direction: SwimlaneDirection): void
   warnUnusedPhases(data4Layout);
   place();
   const shortfalls = phaseShortfalls(data4Layout);
-  if (Object.keys(shortfalls).length > 0) {
+  if (shortfalls.size > 0) {
     place(shortfalls);
   }
 }

@@ -161,12 +161,12 @@ export function phaseShortfalls(layout: LayoutData): PhaseGrowth {
   const titleExtents = new Map(
     (readPhaseAssignment(layout)?.phases ?? []).map((phase) => [phase.id, phase.titleExtent])
   );
-  const shortfalls: PhaseGrowth = {};
+  const shortfalls = new Map<string, number>();
   for (const band of computePhaseBands(layout)) {
     const extent = band.titleReadsUpward ? band.title.height : band.title.width;
     const shortfall = (titleExtents.get(band.id) ?? 0) - extent;
     if (shortfall > SHORTFALL_TOLERANCE) {
-      shortfalls[band.id] = shortfall;
+      shortfalls.set(band.id, shortfall);
     }
   }
   return shortfalls;

@@ -11,7 +11,7 @@ export interface SwimlanePhase {
 }
 
 /** Extra room, in px, a phase asks for along the flow, by phase id. */
-export type PhaseGrowth = Record<string, number>;
+export type PhaseGrowth = ReadonlyMap<string, number>;
 
 export interface PhaseAssignment {
   phases: SwimlanePhase[];
@@ -153,7 +153,7 @@ export function growPhaseGaps(
   for (const [band, phase] of assignment.phases.entries()) {
     const range = layerRange(bandOfLayer, band);
     for (const [gap, share] of range
-      ? gapRequests(range, layers.length, growth[phase.id] ?? 0)
+      ? gapRequests(range, layers.length, growth.get(phase.id) ?? 0)
       : []) {
       requested[gap] = Math.max(requested[gap], share);
     }

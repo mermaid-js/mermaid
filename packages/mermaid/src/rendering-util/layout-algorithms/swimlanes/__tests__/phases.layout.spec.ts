@@ -65,7 +65,7 @@ const laidOut = (
     ...layout.other,
     phases: layout.other?.phases?.map((phase: { id: string }) => ({
       ...phase,
-      titleExtent: titleExtents[phase.id],
+      titleExtent: new Map(Object.entries(titleExtents)).get(phase.id),
     })),
   };
   prepareLayoutForSwimlanes(layout);
@@ -343,6 +343,36 @@ describe('phase bands that must hold a title', () => {
       plain.nodes.map(({ id, x, y }) => [id, x, y])
     );
   });
+
+  // A phase id is any word, so one that names a property every object inherits is a phase like
+  // any other.
+  it.each(['constructor', '__proto__', 'toString'])(
+    'lays out a phase named %s like any other phase',
+    (id) => {
+      const text = source('TB').replaceAll('p1', id);
+      const fitting = laidOut(
+        text,
+        {},
+        Object.fromEntries([
+          [id, 10],
+          ['p2', LONG_TITLE],
+        ])
+      );
+      const long = laidOut(
+        text,
+        {},
+        Object.fromEntries([
+          [id, LONG_TITLE],
+          ['p2', 10],
+        ])
+      );
+
+      const placed = fitting.nodes.filter((node) => !node.isGroup);
+      expect(placed.every((node) => Number.isFinite(node.x) && Number.isFinite(node.y))).toBe(true);
+      const band = computePhaseBands(long).find((candidate) => candidate.id === id)!;
+      expect(extentOf(band)).toBeGreaterThanOrEqual(LONG_TITLE - 0.5);
+    }
+  );
 
   it('lays out the same diagram twice with the same result', () => {
     const once = laidOut(source('LR'), {}, { p2: LONG_TITLE });
