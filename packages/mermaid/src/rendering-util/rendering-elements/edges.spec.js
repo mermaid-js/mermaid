@@ -510,19 +510,19 @@ describe('insertEdge swimlane endpoint clipping', () => {
 });
 
 describe('a swimlane edge cropped to its end shapes, then drawn', () => {
-  // C sits in a 100 x 100 box around the origin. The route passes the top right corner of
-  // that box and ends on the middle of its right side.
-  const route = () => [
+  // C sits in a 100 x 100 box around the origin. The route comes down the column `x` past the
+  // top right corner of that box and ends on the middle of its right side.
+  const route = (x) => [
     { x: 80, y: 120 },
-    { x: 40, y: 120 },
-    { x: 40, y: 40 },
+    { x, y: 120 },
+    { x, y: 40 },
     { x: 100, y: 40 },
     { x: 100, y: 0 },
     { x: 50, y: 0 },
   ];
   const tailBox = { x: 80, y: 140, width: 40, height: 40 };
-  const drawnEnd = (shape, intersect) => {
-    const routed = [{ id: 'L_A_C_0', start: 'A', end: 'C', points: route() }];
+  const drawnEnd = (shape, intersect, x = 40) => {
+    const routed = [{ id: 'L_A_C_0', start: 'A', end: 'C', points: route(x) }];
     cropEdgeEndsToShapes(
       routed,
       new Map([
@@ -559,6 +559,20 @@ describe('a swimlane edge cropped to its end shapes, then drawn', () => {
     const box = { x: 0, y: 0, width: 100, height: 100 };
 
     expect(drawnEnd('squareRect', (point) => intersectRect(box, point))).toEqual({ x: 40, y: 50 });
+  });
+
+  it('ends on the outline of a rounded box it passes the corner of', () => {
+    // The default theme's corner radius. A rounded box docks as a rectangle; the column 49 runs
+    // through its top right corner, where the drawn outline curves away from the box.
+    const radius = 5;
+    const box = { x: 0, y: 0, width: 100, height: 100 };
+    const end = drawnEnd('roundedRect', (point) => intersectRect(box, point), 49);
+    const straight = box.width / 2 - radius;
+    const offOutline =
+      Math.hypot(Math.max(Math.abs(end.x) - straight, 0), Math.max(Math.abs(end.y) - straight, 0)) -
+      radius;
+
+    expect(offOutline).toBeCloseTo(0);
   });
 });
 

@@ -38,8 +38,10 @@ interface EndpointNode {
 }
 
 /**
- * The shapes whose outline is their box, each under every name the shape registry gives it. A
- * node with no shape is its box too.
+ * The shapes whose outline is their box, each under every name the shape registry gives it: a
+ * rectangle with square corners, framed or lined, but never rounded. A fork or join bar is
+ * drawn inside a box grown by the state padding, so it is not one. A node with no shape is its
+ * box too.
  */
 const BOX_SHAPES = new Set<string>([
   'rect',
@@ -47,9 +49,6 @@ const BOX_SHAPES = new Set<string>([
   'proc',
   'process',
   'rectangle',
-  'rounded',
-  'roundedRect',
-  'event',
   'fr-rect',
   'subroutine',
   'subprocess',
@@ -60,8 +59,6 @@ const BOX_SHAPES = new Set<string>([
   'lined-process',
   'lin-proc',
   'shaded-process',
-  'fork',
-  'join',
 ]);
 
 /** Whether a route cut where it meets the node's box ends on what the node draws. */

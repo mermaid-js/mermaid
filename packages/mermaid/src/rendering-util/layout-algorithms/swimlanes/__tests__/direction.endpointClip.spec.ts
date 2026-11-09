@@ -306,6 +306,9 @@ describe('cropping an edge end to the box it reaches', () => {
 
     expect(cropped(structuredClone(route), endingAt('circle'))).toEqual(route);
     expect(cropped(structuredClone(route), endingAt('diamond'))).toEqual(route);
+    // Rounded corners curve away from the box, and a fork or join bar is drawn inside its box.
+    expect(cropped(structuredClone(route), endingAt('roundedRect'))).toEqual(route);
+    expect(cropped(structuredClone(route), endingAt('fork'))).toEqual(route);
     expect(cropped(structuredClone(route), endingAt('squareRect'))).toEqual([
       { x: 80, y: 120 },
       { x: 40, y: 120 },
