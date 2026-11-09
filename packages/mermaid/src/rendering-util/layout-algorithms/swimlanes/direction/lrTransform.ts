@@ -222,38 +222,115 @@ export function flowAxisStretch(nodes: LayoutNode[]): number {
 
 const LANE_TITLE_BAND = 36;
 
-function stackEmptyBands(
-  bands: LayoutNode[],
-  opts: {
-    top: number;
-    centerX: number;
-    laneLeft: number;
-    laneWidth: number;
-    titleBandSize: number;
-    fontSize: number;
-  }
-): void {
+interface EmptyBandOptions {
+  centerX: number;
+  laneLeft: number;
+  laneWidth: number;
+  titleBandSize: number;
+  fontSize: number;
+}
+
+/** Room an empty band needs: two title bands, its padding, or the run of its title. */
+function emptyBandHeight(band: LayoutNode, opts: EmptyBandOptions): number {
+  const titleRun = (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
+  return Math.max(2 * opts.titleBandSize, 2 * (band.padding ?? 0), titleRun + opts.titleBandSize);
+}
+
+function placeEmptyBand(band: LayoutNode, top: number, opts: EmptyBandOptions): number {
+  const height = emptyBandHeight(band, opts);
+  band.x = opts.centerX;
+  band.y = top + height / 2;
+  band.width = opts.laneWidth;
+  band.height = height;
+  band.swimlaneContentTop = top;
+  band.groupTitleRect = {
+    left: opts.laneLeft,
+    right: opts.laneLeft + opts.titleBandSize,
+    top,
+    bottom: top + height,
+  };
+  return height;
+}
+
+function stackEmptyBands(bands: LayoutNode[], opts: EmptyBandOptions & { top: number }): void {
   let top = opts.top;
   for (const band of bands) {
-    const titleRun =
-      (typeof band.label === 'string' ? band.label.length : 0) * opts.fontSize * 0.55;
-    const height = Math.max(
-      2 * opts.titleBandSize,
-      2 * (band.padding ?? 0),
-      titleRun + opts.titleBandSize
-    );
-    band.x = opts.centerX;
-    band.y = top + height / 2;
-    band.width = opts.laneWidth;
-    band.height = height;
-    band.swimlaneContentTop = top;
-    band.groupTitleRect = {
-      left: opts.laneLeft,
-      right: opts.laneLeft + opts.titleBandSize,
-      top,
-      bottom: top + height,
-    };
-    top += height;
+    top += placeEmptyBand(band, top, opts);
+  }
+}
+
+/**
+ * Moves everything at or below `line` down by `by`: lanes that start there, every other node
+ * whose centre is below it, and every edge point below it. Pools are framed afterwards.
+ */
+function openRowAt(
+  nodes: LayoutNode[],
+  edges: LayoutData['edges'],
+  laneModel: ReturnType<typeof buildLaneModel>,
+  line: number,
+  by: number
+): void {
+  const BOUNDARY_TOLERANCE = 0.5;
+  for (const node of nodes) {
+    if (laneModel.isPool(node.id) || typeof node.y !== 'number') {
+      continue;
+    }
+    const reference = laneModel.isLane(node.id) ? node.y - (node.height ?? 0) / 2 : node.y;
+    if (reference < line - BOUNDARY_TOLERANCE) {
+      continue;
+    }
+    node.y += by;
+    if (node.swimlaneContentTop !== undefined) {
+      node.swimlaneContentTop += by;
+    }
+    if (node.groupTitleRect) {
+      node.groupTitleRect.top += by;
+      node.groupTitleRect.bottom += by;
+    }
+  }
+  for (const edge of edges ?? []) {
+    for (const point of edge.points ?? []) {
+      if (point.y >= line) {
+        point.y += by;
+      }
+    }
+  }
+}
+
+/**
+ * Places the empty lanes of each pool inside that pool, in the order they were declared:
+ * after the nearest populated lane declared before it, or before the nearest one after it,
+ * opening a row there for it. A lane whose pool has no populated lane is left unplaced, to
+ * be stacked after everything else.
+ */
+function placeEmptyLanesInPools(
+  nodes: LayoutNode[],
+  edges: LayoutData['edges'],
+  laneModel: ReturnType<typeof buildLaneModel>,
+  placed: Set<LayoutNode>,
+  opts: EmptyBandOptions
+): void {
+  const byId = buildNodeMap(nodes);
+  const bottomOf = (lane: LayoutNode) => (lane.y ?? 0) + (lane.height ?? 0) / 2;
+  const topOf = (lane: LayoutNode) => (lane.y ?? 0) - (lane.height ?? 0) / 2;
+  for (const laneIds of laneModel.lanesByPool.values()) {
+    const lanes = laneIds
+      .map((id) => byId.get(id))
+      .filter((lane): lane is LayoutNode => lane !== undefined);
+    lanes.forEach((lane, index) => {
+      if (placed.has(lane)) {
+        return;
+      }
+      const before = lanes.slice(0, index).findLast((other) => placed.has(other));
+      const after = lanes.slice(index + 1).find((other) => placed.has(other));
+      const line = before ? bottomOf(before) : after ? topOf(after) : undefined;
+      if (line === undefined) {
+        return;
+      }
+      openRowAt(nodes, edges, laneModel, line, emptyBandHeight(lane, opts));
+      placeEmptyBand(lane, line, opts);
+      placed.add(lane);
+    });
   }
 }
 
@@ -560,18 +637,22 @@ export function applyLrDirectionTransform(
   }
 
   const placed = new Set(laneBounds.map((entry) => entry.lane));
+  const bandOptions: EmptyBandOptions = {
+    centerX,
+    laneLeft,
+    laneWidth,
+    titleBandSize,
+    fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
+  };
+  placeEmptyLanesInPools(nodes, edges, laneModel, placed, bandOptions);
   stackEmptyBands(
     laneNodes.filter((lane) => !placed.has(lane)),
     {
-      top: laneBounds.reduce(
-        (lowest, entry) => Math.max(lowest, (entry.lane.y ?? 0) + (entry.lane.height ?? 0) / 2),
-        laneBounds.length > 0 ? Number.NEGATIVE_INFINITY : 0
+      ...bandOptions,
+      top: [...placed].reduce(
+        (lowest, lane) => Math.max(lowest, (lane.y ?? 0) + (lane.height ?? 0) / 2),
+        placed.size > 0 ? Number.NEGATIVE_INFINITY : 0
       ),
-      centerX,
-      laneLeft,
-      laneWidth,
-      titleBandSize,
-      fontSize: Number.parseFloat(String(layout.config?.fontSize ?? 16)) || 16,
     }
   );
 
