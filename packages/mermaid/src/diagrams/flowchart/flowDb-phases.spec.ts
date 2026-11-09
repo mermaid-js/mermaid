@@ -93,6 +93,45 @@ describe('the phase keyword outside a declaration', () => {
     }
   );
 
+  // A link may start with an `o` or `x` marker or an edge id, so `phase` followed by one is a
+  // node named phase that starts an edge.
+  const LINKS_FROM_PHASE = [
+    'phase o--o next',
+    'phase x--x next',
+    'phase o==o next',
+    'phase x==x next',
+    'phase o-.-o next',
+    'phase x-.-x next',
+    'phase o-->next',
+    'phase e1@--> next',
+  ];
+
+  it.each(['swimlane-beta', 'flowchart'])(
+    'keeps phase as a node id when a link starting with a marker or an id follows it in %s',
+    (header) => {
+      for (const line of LINKS_FROM_PHASE) {
+        const flowDb = parse(`${header} LR\n${line}`);
+
+        expect([...flowDb.getVertices().keys()], line).toEqual(['phase', 'next']);
+        expect(flowDb.getEdges(), line).toHaveLength(1);
+      }
+    }
+  );
+
+  it('names the edge when the link from phase has an id', () => {
+    expect(parse('swimlane-beta LR\nphase e1@--> next').getEdges()[0].id).toBe('e1');
+  });
+
+  it.each(['phase o["Ops"]', 'phase ops["Ops"]', 'phase x1', 'phase x', 'phase e1["Edge"]'])(
+    'still declares a phase whose id looks like the start of a link: %s',
+    (line) => {
+      const { other } = parse(`swimlane-beta LR\n${line}`).getData();
+
+      expect(other.phases).toHaveLength(1);
+      expect(other.phases[0].id).toBe(line.split(/[\s[]/)[1]);
+    }
+  );
+
   it('does not turn a flowchart line starting with phase into a declaration', () => {
     expect(() => parse('flowchart LR\nphase p1["Intake"]')).toThrow();
   });
