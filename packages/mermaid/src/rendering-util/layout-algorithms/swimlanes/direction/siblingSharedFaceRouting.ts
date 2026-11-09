@@ -100,48 +100,29 @@ export function straightenCollinearSiblingDetours(edges: Edge[], nodes: Node[]):
     }
   }
 
-  // For a given (this-edge, axis) pair, find the largest label half-extent
-  // among any edge sharing the same node pair (anti-parallel siblings) plus
-  // this edge's own label. Used to grow the rescue shift past the label so
-  // anchorLabelsToPolyline can place the label clear of the sibling.
-  const labelClearanceFor = (
-    thisEdge: Edge,
-    thisSrcId: string,
-    thisDstId: string,
-    axis: 'x' | 'y'
-  ): number => {
+  // The other edges joining the same two nodes as `thisEdge`, in either direction.
+  const pairSiblingsOf = (thisEdge: Edge, thisSrcId: string, thisDstId: string): Edge[] => {
     const targetPair = pairKey(thisSrcId, thisDstId);
+    return edges.filter(
+      (other) =>
+        other !== thisEdge &&
+        !other.isLayoutOnly &&
+        other.start &&
+        other.end &&
+        pairKey(other.start, other.end) === targetPair
+    );
+  };
+
+  // The largest label half-extent along `axis` among this edge and its pair
+  // siblings. Used to grow the rescue shift past the label so
+  // anchorLabelsToPolyline can place the label clear of the sibling.
+  const labelClearanceFor = (thisEdge: Edge, siblings: Edge[], axis: 'x' | 'y'): number => {
     let maxHalf = 0;
-    const consider = (labelId: string | undefined) => {
-      if (!labelId) {
-        return;
+    for (const { labelNodeId } of [thisEdge, ...siblings]) {
+      const dim = labelNodeId ? labelDimById.get(labelNodeId) : undefined;
+      if (dim) {
+        maxHalf = Math.max(maxHalf, axis === 'x' ? dim.w / 2 : dim.h / 2);
       }
-      const dim = labelDimById.get(labelId);
-      if (!dim) {
-        return;
-      }
-      const half = axis === 'x' ? dim.w / 2 : dim.h / 2;
-      if (half > maxHalf) {
-        maxHalf = half;
-      }
-    };
-    consider(thisEdge.labelNodeId);
-    for (const other of edges) {
-      if (other === thisEdge) {
-        continue;
-      }
-      if (other.isLayoutOnly) {
-        continue;
-      }
-      const oSrc = other.start;
-      const oDst = other.end;
-      if (!oSrc || !oDst) {
-        continue;
-      }
-      if (pairKey(oSrc, oDst) !== targetPair) {
-        continue;
-      }
-      consider(other.labelNodeId);
     }
     return maxHalf > 0 ? maxHalf + LABEL_CLEARANCE_BUFFER : 0;
   };
@@ -193,7 +174,8 @@ export function straightenCollinearSiblingDetours(edges: Edge[], nodes: Node[]):
     // without rescuing, which keeps the original 4-point detour — also
     // correct, since the detour routes far away from the label.
     const shiftAxis: 'x' | 'y' = collinearX ? 'x' : 'y';
-    const labelShift = labelClearanceFor(edge, srcId, dstId, shiftAxis);
+    const siblings = pairSiblingsOf(edge, srcId, dstId);
+    const labelShift = labelClearanceFor(edge, siblings, shiftAxis);
     const effectiveShift = labelShift > PORT_SHIFT ? labelShift : PORT_SHIFT;
     const deltas = [0, effectiveShift, -effectiveShift];
     // A line that would sit too close to a sibling's arrowhead is the last resort.
