@@ -69,7 +69,10 @@ const widen = (span: Span | undefined, start: number, end: number): Span => ({
   end: Math.max(span?.end ?? end, end),
 });
 
-/** The stretch of the flow axis each band's nodes cover, in flow order. */
+/**
+ * The stretch of the flow axis each band's nodes cover, in flow order. Edge labels do not
+ * count: a label sits on its routed edge, which can run through a later band.
+ */
 function bandSpans(
   nodes: LayoutData['nodes'],
   assignment: NonNullable<ReturnType<typeof readPhaseAssignment>>,
@@ -77,7 +80,7 @@ function bandSpans(
 ): [number, Span][] {
   const spans = new Map<number, Span>();
   for (const node of nodes) {
-    if (node.isGroup || !hasBox(node)) {
+    if (node.isGroup || node.isEdgeLabel || !hasBox(node)) {
       continue;
     }
     const start = alongX ? node.x - node.width / 2 : node.y - node.height / 2;

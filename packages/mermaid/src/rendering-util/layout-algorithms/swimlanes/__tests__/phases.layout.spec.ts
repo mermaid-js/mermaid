@@ -203,6 +203,38 @@ describe('phases in the swimlane layout', () => {
     expect(third.title.y).toBeGreaterThanOrEqual(middleNodes.end);
   });
 
+  it.each(DIRECTIONS)(
+    'keeps every node inside its own band when a labelled edge jumps over a phase in another lane in %s',
+    (direction, alongX) => {
+      const text = [
+        `swimlane-beta ${direction}`,
+        'phase p1["Intake"]',
+        'phase p2["Review"]',
+        'phase p3["Closeout"]',
+        'subgraph l1',
+        '  a@{ phase: p1 }',
+        '  c@{ phase: p3 }',
+        'end',
+        'subgraph l2',
+        '  b@{ phase: p2 }',
+        '  b2@{ phase: p2 }',
+        'end',
+        'a -- "a fairly long label" --> c',
+        'a --> b --> b2 --> c',
+      ].join('\n');
+      const layout = laidOut(text);
+      const bands = new Map(computePhaseBands(layout).map((band) => [band.id, band.title]));
+
+      for (const [id, phase] of Object.entries<string>(layout.other.nodePhases)) {
+        const title = bands.get(phase)!;
+        const [start, extent] = alongX ? [title.x, title.width] : [title.y, title.height];
+        const nodeSpan = span(layout, [id], alongX);
+        expect(nodeSpan.start, `${id} in ${phase}`).toBeGreaterThanOrEqual(start);
+        expect(nodeSpan.end, `${id} in ${phase}`).toBeLessThanOrEqual(start + extent);
+      }
+    }
+  );
+
   it('puts a node that names no phase after every phase', () => {
     const layout = laidOut(source('TB', 'subgraph l3\n  z\nend'));
 

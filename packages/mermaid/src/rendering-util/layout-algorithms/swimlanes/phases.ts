@@ -22,22 +22,6 @@ export interface PhaseAssignment {
   bandOf: (id: NodeId) => number;
 }
 
-/** The phase of every node; an edge label is a layout node of its own and stays with its source. */
-function withEdgeLabelPhases(
-  layout: LayoutData,
-  nodePhases: Record<string, string>
-): Map<string, string> {
-  const phaseOfNode = new Map<string, string>(Object.entries(nodePhases));
-  for (const edge of layout.edges ?? []) {
-    const labelNodeId = (edge as { labelNodeId?: string }).labelNodeId;
-    const sourcePhase = phaseOfNode.get(edge.start ?? '');
-    if (labelNodeId && sourcePhase !== undefined) {
-      phaseOfNode.set(labelNodeId, sourcePhase);
-    }
-  }
-  return phaseOfNode;
-}
-
 /** The phases the flowchart database handed over, or undefined when no node has one. */
 export function readPhaseAssignment(layout: LayoutData): PhaseAssignment | undefined {
   const phases: unknown = layout.other?.phases;
@@ -46,7 +30,7 @@ export function readPhaseAssignment(layout: LayoutData): PhaseAssignment | undef
     return undefined;
   }
   const indexOfPhase = new Map<string, number>(phases.map((phase, index) => [phase.id, index]));
-  const phaseOfNode = withEdgeLabelPhases(layout, nodePhases);
+  const phaseOfNode = new Map<string, string>(Object.entries(nodePhases));
   return {
     phases,
     bandOf: (id) => indexOfPhase.get(phaseOfNode.get(id) ?? '') ?? phases.length,
