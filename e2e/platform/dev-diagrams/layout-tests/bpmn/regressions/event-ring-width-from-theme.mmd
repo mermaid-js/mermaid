@@ -1,0 +1,17 @@
+---
+description: >-
+  The theme sets the ring weight of every event: bpmn.eventStrokeWidth for the
+  start and intermediate events, bpmn.endEventStrokeWidth for the end event.
+config:
+  themeVariables:
+    bpmn:
+      eventStrokeWidth: 4
+      endEventStrokeWidth: 8
+---
+bpmn-beta LR
+  lane "Orders"
+    start s1 "Order received"
+    intermediate timer i1 "Wait a day"
+    end e1 "Order closed"
+  s1 --> i1
+  i1 --> e1
