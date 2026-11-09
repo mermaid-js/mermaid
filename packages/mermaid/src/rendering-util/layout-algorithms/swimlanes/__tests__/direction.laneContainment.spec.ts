@@ -218,6 +218,35 @@ describe('resolving crossings keeps an edge inside the lane both its ends share'
     expect(crossingPointsBetween(points, across.points)).toEqual([]);
   });
 
+  it('leaves the route of an edge whose only in-lane route hops next to an end', () => {
+    // The lane is too shallow for a rail, so the only route inside it runs straight from A's
+    // right face at x 70. P runs across the lane and its ends lie far off that row; it crosses
+    // the row at `x`, where 10 px from A's face is under the hop clearance and 50 px is not.
+    const shallow = laneBox('L', 200, 0, 400, 50);
+    const routeWithCrossingAt = (x: number) => {
+      const across = {
+        id: 'P',
+        points: pathOf([
+          [x, -60],
+          [x, 60],
+        ]),
+      };
+      return run([shallow, node('A', 50, 0), node('B', 350, 0)], [outside(), across]);
+    };
+    const nearTip = 80;
+    const clearOfTips = 120;
+    expect(nearTip - 70).toBeLessThan(EDGE_ROUTING.TERMINAL_HOP_CLEARANCE);
+    expect(clearOfTips - 70).toBeGreaterThan(EDGE_ROUTING.TERMINAL_HOP_CLEARANCE);
+
+    expect(routeWithCrossingAt(nearTip)).toEqual(outside().points);
+    expect(routeWithCrossingAt(clearOfTips)).toEqual(
+      pathOf([
+        [70, 0],
+        [330, 0],
+      ])
+    );
+  });
+
   it('leaves the route of an edge whose lane box holds none of its nodes', () => {
     // A and B belong to lane L but sit outside its box, so L has no tracks of its own.
     const away = laneBox('L', 200, 500, 400, 200);

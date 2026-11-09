@@ -2657,18 +2657,18 @@ export function resolveRenderedOrthogonalCrossings(
     return first < 0 ? 0 : a[first] - b[first];
   };
 
-  // The in-lane candidate with no hop under an arrowhead, then fewest crossings, then fewest
-  // bends, then the shortest.
+  // Of the in-lane candidates with no hop under an arrowhead, the one with the fewest crossings,
+  // then the fewest bends, then the shortest. None when every candidate has such a hop.
   const bestInLaneCandidate = (
     edge: MaterializedEdge,
     band: RectBounds
   ): PointLite[] | undefined => {
     const current = crossingSnapshot();
     return inLaneCandidatesFor(edge, band)
+      .filter((candidate) => crossingsNearTips(edge, candidate) === 0)
       .map((candidate) => ({
         candidate,
         score: [
-          crossingsNearTips(edge, candidate),
           crossingCountWithSingleReplacement(current, edge, candidate),
           countOrthogonalBends(candidate, EPS_LOCAL),
           pathLength(candidate),
