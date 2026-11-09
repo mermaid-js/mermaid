@@ -3,7 +3,7 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { reset, setConfig } from '../../../config.js';
 import type { Node } from '../../types.js';
 import { renderBpmnEvent } from './bpmnEvent.js';
-import type { EventPosition } from './bpmnShapeCore.js';
+import { EVENT_RINGS, type EventPosition } from './bpmnShapeCore.js';
 
 const PX_PER_CHAR = 7;
 const LINE_HEIGHT = 20;
@@ -69,5 +69,13 @@ describe('bpmn event ring weight', () => {
     const [start] = await ringWidthsOf('start');
     const [end] = await ringWidthsOf('end');
     expect(Number.parseFloat(end)).toBeGreaterThan(Number.parseFloat(start));
+  });
+
+  it.each([
+    ['an empty string', ''],
+    ['a number that is not finite', Number.NaN],
+  ])('falls back to the notation default for %s', async (_case, value) => {
+    const [fallback] = await ringWidthsOf('end', { endEventStrokeWidth: value });
+    expect(fallback).toBe(`${EVENT_RINGS.end.strokeWidth}px`);
   });
 });
