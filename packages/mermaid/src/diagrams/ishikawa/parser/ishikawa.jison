@@ -4,8 +4,8 @@
 %%
 
 \s*\%\%.*          { return 'SPACELINE'; }
-"ishikawa-beta"     { return 'ISHIKAWA'; }
-"ishikawa"          { return 'ISHIKAWA'; }
+"ishikawa-beta"(?:[^\S\n]*\n)*     { return 'ISHIKAWA'; }
+"ishikawa"(?:[^\S\n]*\n)*          { return 'ISHIKAWA'; }
 [\s]+[\n]          { return 'SPACELINE'; }
 [\n]+               { return 'NL'; }
 [\s]+               { return 'SPACELIST'; }

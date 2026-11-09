@@ -29,6 +29,21 @@ describe('when parsing an Ishikawa diagram', function () {
     expect(root?.children[1].children[0].text).toEqual('Shaky hands');
   });
 
+  it.each([
+    ['trailing spaces on the header', 'ishikawa-beta   \n    Problem\n        Cause'],
+    ['a blank line after the header', 'ishikawa-beta\n\n    Problem\n        Cause'],
+    ['a whitespace-only line after the header', 'ishikawa-beta\n   \n    Problem\n        Cause'],
+    [
+      'a comment and a blank line after the header',
+      'ishikawa-beta\n%% comment\n\n    Problem\n        Cause',
+    ],
+  ])('should handle %s', function (_, str) {
+    ishikawa.parse(str);
+    const root = ishikawa.yy.getRoot();
+    expect(root?.text).toEqual('Problem');
+    expect(root?.children.map((c: { text: string }) => c.text)).toEqual(['Cause']);
+  });
+
   it('should support an unindented root with nested causes', function () {
     const str = `ishikawa-beta
 Problem

@@ -104,6 +104,21 @@ describe('when parsing a kanban ', function () {
         'Items without section detected, found section ("fakeRoot")'
       );
     });
+    it.each([
+      ['trailing spaces on the header', 'kanban   \n  todo\n    task'],
+      ['a blank line after the header', 'kanban\n\n  todo\n    task'],
+      ['a whitespace-only line after the header', 'kanban\n   \n  todo\n    task'],
+      ['a comment and a blank line after the header', 'kanban\n%% comment\n\n  todo\n    task'],
+    ])('KNBN-38 should handle %s', function (_, str) {
+      kanban.parse(str);
+      const sections = kanban.yy.getSections();
+      expect(sections.length).toEqual(1);
+      expect(sections[0].label).toEqual('todo');
+      const children = kanban.yy
+        .getData()
+        .nodes.filter((n: KanbanNode) => n.parentId === sections[0].id);
+      expect(children.map((n: KanbanNode) => n.label)).toEqual(['task']);
+    });
   });
   describe('nodes', function () {
     it('KNBN-7 should handle an id and type for a node definition', function () {
