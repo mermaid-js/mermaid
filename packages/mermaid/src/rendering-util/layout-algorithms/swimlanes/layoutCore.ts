@@ -7,9 +7,10 @@ import { pinAnchoredNodes } from './anchoredNodes.js';
 
 export type SwimlaneDirection = 'TB' | 'LR' | 'BT' | 'RL';
 
+/** A spacing the layout data sets at `key`: any finite number of zero or more, zero included. */
 function numberAt(source: object | undefined, key: string): number | undefined {
   const value = source === undefined ? undefined : Reflect.get(source, key);
-  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : undefined;
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : undefined;
 }
 
 function spacing(layout: LayoutData, key: 'nodeSpacing' | 'rankSpacing', fallback: number) {

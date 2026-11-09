@@ -1,0 +1,11 @@
+---
+title: Orders - this heading comes from the front matter
+---
+bpmn-beta LR
+  pool "Shop"
+    lane "Sales"
+      start s1 "Order received"
+      task t1 "Check stock"
+      end e1 "Order shipped"
+  s1 --> t1
+  t1 --> e1
