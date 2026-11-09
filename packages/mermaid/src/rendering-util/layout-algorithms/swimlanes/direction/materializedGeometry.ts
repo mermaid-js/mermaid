@@ -1826,11 +1826,11 @@ export function shortcutRedundantOrthogonalJogs(
       });
   };
 
-  // Whether a route runs through the box of its own start or end, not only touching it. A
-  // shortcut must not make a route do so; one that already does is left as the router made it.
-  const entersEndpointRects = (points: PointLite[], rects: RectLite[]): boolean =>
+  // Whether a route runs through `rect`, the box of its own start or end, not only touching it.
+  // A shortcut must not make a route run through either box it did not already run through.
+  const entersRect = (points: PointLite[], rect: RectLite): boolean =>
     segmentsFor(points).some((segment) =>
-      rects.some((rect) => segmentBoundsOverlapRect(segment.a, segment.b, rect, -BUFFER))
+      segmentBoundsOverlapRect(segment.a, segment.b, rect, -BUFFER)
     );
 
   const candidateIsSafe = (
@@ -1855,8 +1855,9 @@ export function shortcutRedundantOrthogonalJogs(
       }
     }
     if (
-      !entersEndpointRects(pointsFor(edge), endpointRects) &&
-      entersEndpointRects(candidate, endpointRects)
+      endpointRects.some(
+        (rect) => !entersRect(pointsFor(edge), rect) && entersRect(candidate, rect)
+      )
     ) {
       return false;
     }

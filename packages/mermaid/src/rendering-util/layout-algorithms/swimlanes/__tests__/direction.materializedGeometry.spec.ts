@@ -432,9 +432,9 @@ describe('shortcutting a jog next to the boxes an edge joins', () => {
     ['d', { id: 'd', x: 50, y: 27, width: 180, height: 54 }],
     ['e', { id: 'e', x: 50, y: 131, width: 180, height: 54 }],
   ]);
-  const shortcut = (points: { x: number; y: number }[]) => {
+  const shortcut = (points: { x: number; y: number }[], nodes = nodeById) => {
     const edges: any[] = [{ id: 'L_d_e_0', start: 'd', end: 'e', points }];
-    shortcutRedundantOrthogonalJogs(edges, nodeById);
+    shortcutRedundantOrthogonalJogs(edges, nodes);
     return edges[0].points;
   };
 
@@ -450,7 +450,8 @@ describe('shortcutting a jog next to the boxes an edge joins', () => {
     expect(shortcut(structuredClone(route))).toEqual(route);
   });
 
-  it('still shortcuts a route that already starts inside its box', () => {
+  it('keeps the jog when the shortcut would newly run through one box, though the route starts inside the other', () => {
+    // The route starts at Check's centre; the shortcut would run straight down through Report.
     const route = [
       { x: 50, y: 27 },
       { x: 180, y: 27 },
@@ -459,7 +460,31 @@ describe('shortcutting a jog next to the boxes an edge joins', () => {
       { x: 50, y: 158 },
     ];
 
-    expect(shortcut(structuredClone(route))).not.toEqual(route);
+    expect(shortcut(structuredClone(route))).toEqual(route);
+  });
+
+  it('still shortcuts a route that already starts inside its box', () => {
+    // Report sits to the lower left, so the shortcut down from Check's centre passes beside it
+    // and meets its right face.
+    const besideReport = new Map(nodeById).set('e', {
+      id: 'e',
+      x: -150,
+      y: 178,
+      width: 100,
+      height: 40,
+    });
+    const route = [
+      { x: 50, y: 27 },
+      { x: 180, y: 27 },
+      { x: 180, y: 178 },
+      { x: -100, y: 178 },
+    ];
+
+    expect(shortcut(route, besideReport)).toEqual([
+      { x: 50, y: 27 },
+      { x: 50, y: 178 },
+      { x: -100, y: 178 },
+    ]);
   });
 });
 
