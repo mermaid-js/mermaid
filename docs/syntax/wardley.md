@@ -292,7 +292,7 @@ Highlight rectangular regions of the map with the **Pioneers / Settlers / Town P
 - `explorers` - Alias for `pioneers`
 - `villagers` - Alias for `settlers`
 
-```mermaid-example
+```mermaid
 wardley-beta
 title Pioneers, Settlers, Town Planners
 
@@ -305,7 +305,7 @@ component Product [0.55, 0.50]
 component Commodity Service [0.30, 0.85]
 ```
 
-```mermaid
+```mermaid-example
 wardley-beta
 title Pioneers, Settlers, Town Planners
 
