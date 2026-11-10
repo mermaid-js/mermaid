@@ -47,6 +47,18 @@ Here is a line *with an italic* section`;
   expect(output).toEqual(expectedOutput);
 });
 
+test('markdownToLines - code span', () => {
+  expect(markdownToLines('Run `a <b> **c**` now')).toEqual([
+    [
+      { content: 'Run', type: 'normal' },
+      { content: 'a', type: 'code' },
+      { content: '&lt;b&gt;', type: 'code' },
+      { content: '**c**', type: 'code' },
+      { content: 'now', type: 'normal' },
+    ],
+  ]);
+});
+
 test('markdownToLines - Empty input', () => {
   const input = '';
   const expectedOutput = [[]];

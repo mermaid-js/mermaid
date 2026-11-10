@@ -68,6 +68,15 @@ export function markdownToLines(markdown: string, config: MermaidConfig = {}): M
       node.tokens.forEach((contentNode) => {
         processNode(contentNode as MarkedToken, node.type);
       });
+    } else if (node.type === 'codespan') {
+      // The renderer decodes the entities of a word, thus escape the literal text.
+      escapeHtml(node.text)
+        .split(/\s+/)
+        .forEach((word) => {
+          if (word) {
+            lines[currentLine].push({ content: word, type: 'code' });
+          }
+        });
     } else if (node.type === 'html') {
       lines[currentLine].push({ content: node.text, type: 'normal' });
     }

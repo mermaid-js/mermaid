@@ -246,6 +246,9 @@ function updateTextContentAndStyles(
       .attr('font-style', word.type === 'em' ? 'italic' : 'normal')
       .attr('class', 'text-inner-tspan')
       .attr('font-weight', word.type === 'strong' ? 'bold' : 'normal');
+    if (word.type === 'code') {
+      innerTspan.attr('font-family', 'monospace');
+    }
     if (index === 0) {
       innerTspan.text(decodeHTMLEntities(word.content));
     } else {
