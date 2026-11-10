@@ -4,6 +4,7 @@ import { detectType, getDiagramLoader } from './diagram-api/detectType.js';
 import { UnknownDiagramError } from './errors.js';
 import defaultConfig from './defaultConfig.js';
 import { log } from './logger.js';
+import type { LineJoin } from './diagram-api/sourceLines.js';
 import { remapParseErrorLines } from './diagram-api/sourceLines.js';
 import { encodeEntities } from './utils.js';
 import type { DetailedError } from './utils.js';
@@ -47,7 +48,21 @@ const prepareDb = (
 };
 
 /**
- * The text the parser of a diagram with `db` reads, and the source line of each of its lines.
+ * `joins` of `text`, moved to the columns of `encodeEntities(text)`, which the parser reports.
+ * The encoding works within a line, so a join keeps its line and moves by what the encoding
+ * adds before it.
+ */
+const encodedJoins = (text: string, joins: readonly LineJoin[]): LineJoin[] => {
+  const lines = text.split('\n');
+  return joins.map((join) => ({
+    ...join,
+    column: encodeEntities(lines[join.line - 1].slice(0, join.column - 1)).length + 1,
+  }));
+};
+
+/**
+ * The text the parser of a diagram with `db` reads, the source line of each of its lines, and
+ * where a line goes on with text from another source line.
  *
  * Diagrams that report source positions set `preserveCommentsWhenParsing`
  * so that parser positions stay meaningful in original-source space. Every
@@ -62,7 +77,11 @@ const prepareDb = (
  * truncation path.
  */
 const selectSource = (code: DiagramCode, db: DiagramDefinition['db'], config: MermaidConfig) => {
-  const cleaned = { text: code.cleaned, sourceLines: code.cleanedSourceLines ?? [] };
+  const cleaned = {
+    text: code.cleaned,
+    sourceLines: code.cleanedSourceLines ?? [],
+    joins: code.cleanedJoins ?? [],
+  };
   if (!db.preserveCommentsWhenParsing || !code.withComments) {
     return cleaned;
   }
@@ -73,7 +92,11 @@ const selectSource = (code: DiagramCode, db: DiagramDefinition['db'], config: Me
     );
     return cleaned;
   }
-  return { text: code.withComments, sourceLines: code.withCommentsSourceLines ?? [] };
+  return {
+    text: code.withComments,
+    sourceLines: code.withCommentsSourceLines ?? [],
+    joins: code.withCommentsJoins ?? [],
+  };
 };
 
 /**
@@ -107,7 +130,7 @@ export class Diagram {
     try {
       await parser.parse(textToParse);
     } catch (error) {
-      remapParseErrorLines(error, source.sourceLines);
+      remapParseErrorLines(error, source.sourceLines, encodedJoins(source.text, source.joins));
       throw error;
     }
     return new Diagram(type, textToParse, db, parser, renderer);

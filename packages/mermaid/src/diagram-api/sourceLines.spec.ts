@@ -50,6 +50,42 @@ describe('removeMatches', () => {
     expect(sourceLines).toEqual([4, 9]);
   });
 
+  it('joins a line where it goes on with text from a later source line', () => {
+    const { text, sourceLines, joins } = removeMatches(
+      trackLines('a %%{x\ny\n}%%b c\nd'),
+      directiveRegex
+    );
+    expect(text).toBe('a b c\nd');
+    expect(sourceLines).toEqual([1, 4]);
+    expect(joins).toEqual([{ line: 1, column: 3, sourceLine: 3 }]);
+  });
+
+  it.each([
+    { case: 'a removal within one line', text: 'a %%{x}%%b\nc', pattern: directiveRegex },
+    { case: 'a line break alone', text: 'a\n\nb', pattern: /\n(?=\n)/g },
+    { case: 'a removal that starts a line', text: 'a\n%%{x\n}%%b', pattern: directiveRegex },
+  ])('joins no line after $case', ({ text, pattern }) => {
+    expect(removeMatches(trackLines(text), pattern).joins).toEqual([]);
+  });
+
+  it('stays quick through a text with many joins', () => {
+    const RESPONSIVE_MS = 1000;
+    const JOINED = 40_000;
+    const joined = removeMatches(trackLines(`pie\n${'a%%{x\n}%%'.repeat(JOINED)}`), directiveRegex);
+    const started = performance.now();
+    const { joins } = removeMatches(joined, commentLines);
+    expect(performance.now() - started).toBeLessThan(RESPONSIVE_MS);
+    expect(joins).toHaveLength(JOINED - 1);
+  });
+
+  it('moves the joins it is given with the lines removed before them', () => {
+    const { joins } = removeMatches(
+      removeMatches(trackLines('%% x\na %%{x\n}%%b'), directiveRegex),
+      commentLines
+    );
+    expect(joins).toEqual([{ line: 1, column: 3, sourceLine: 3 }]);
+  });
+
   it('starts at the beginning whatever lastIndex holds, like replace', () => {
     const pattern = /b/g;
     pattern.lastIndex = 2;
@@ -63,7 +99,29 @@ describe('keepSuffix', () => {
   });
 });
 
+describe('keepSuffix', () => {
+  it('moves a join of the first line left by what it cuts', () => {
+    const joined = removeMatches(trackLines('  a %%{x\n}%%b'), directiveRegex);
+    expect(keepSuffix(joined, 'a b').joins).toEqual([{ line: 1, column: 3, sourceLine: 2 }]);
+  });
+});
+
 describe('toSourceLine', () => {
+  const joins = [{ line: 1, column: 3, sourceLine: 7 }];
+
+  it.each([
+    { case: 'a column left of the join', column: 2, expected: 3 },
+    { case: 'the column of the join', column: 3, expected: 7 },
+    { case: 'a column right of the join', column: 9, expected: 7 },
+    { case: 'no column', column: undefined, expected: 3 },
+  ])('maps a joined line by $case', ({ column, expected }) => {
+    expect(toSourceLine([3, 5], 1, column, joins)).toBe(expected);
+  });
+
+  it('maps a line without a join by its start', () => {
+    expect(toSourceLine([3, 5], 2, 9, joins)).toBe(5);
+  });
+
   it.each([
     { case: 'a mapped line', line: 2, expected: 5 },
     { case: 'a line past the last one', line: 4, expected: 7 },
@@ -200,6 +258,64 @@ describe('remapParseErrorLines', () => {
     expect(error.stack).toBe(
       'at Parse error on line 2 (file.js)\nError: Parse error on line 4:\n    at x'
     );
+  });
+
+  describe('on a joined line', () => {
+    const joins = [{ line: 2, column: 5, sourceLine: 5 }];
+
+    it.each([
+      { case: 'left of the join', column: 4, expected: 4 },
+      { case: 'at the join', column: 5, expected: 5 },
+    ])(
+      'picks the source line of each Langium error by its column, $case',
+      ({ column, expected }) => {
+        const error = langiumError([], [{ line: 2, column, message: 'b' }]);
+        remapParseErrorLines(error, sourceLines, joins);
+        expect(error.message).toBe(
+          `Parsing failed:  Parse error on line ${expected}, column ${column}: b`
+        );
+      }
+    );
+
+    it('picks the source line of each of several errors on the line', () => {
+      const error = langiumError(
+        [{ line: 2, column: 1, message: 'a' }],
+        [{ line: 2, column: 6, message: 'b' }]
+      );
+      remapParseErrorLines(error, sourceLines, joins);
+      expect(error.message).toBe(
+        'Parsing failed: Lexer error on line 4, column 1: a Parse error on line 5, column 6: b'
+      );
+    });
+
+    it('picks the source lines of a jison error by the columns of its loc, which count from 0', () => {
+      const error = Object.assign(new Error('Parse error on line 2:'), {
+        hash: { line: 1, loc: { first_line: 2, last_line: 2, first_column: 4, last_column: 6 } },
+      });
+      remapParseErrorLines(error, sourceLines, joins);
+      expect(error.message).toBe('Parse error on line 5:');
+      expect(error.hash).toEqual({
+        line: 4,
+        loc: { first_line: 5, last_line: 5, first_column: 4, last_column: 6 },
+      });
+    });
+
+    it('maps a jison loc that ends where the join starts by its last character', () => {
+      const error = Object.assign(new Error('Parse error on line 2:'), {
+        hash: { line: 1, loc: { first_line: 2, last_line: 2, first_column: 2, last_column: 4 } },
+      });
+      remapParseErrorLines(error, sourceLines, joins);
+      expect(error.hash).toMatchObject({ line: 3, loc: { first_line: 4, last_line: 4 } });
+    });
+
+    it('maps a jison lexical error, which has no column, by the start of its line', () => {
+      const error = Object.assign(new Error('Lexical error on line 2. Unrecognized text.'), {
+        hash: { text: '', line: 1 },
+      });
+      remapParseErrorLines(error, sourceLines, joins);
+      expect(error.message).toBe('Lexical error on line 4. Unrecognized text.');
+      expect(error.hash).toEqual({ text: '', line: 3 });
+    });
   });
 
   it('leaves other line formats alone', () => {

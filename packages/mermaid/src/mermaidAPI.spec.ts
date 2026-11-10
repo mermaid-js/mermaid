@@ -926,6 +926,31 @@ graph TD;A--x|text including URL space|B;`)
           line: 6,
         },
         { case: 'a leading blank line', text: '\nsankey-beta\na,b,1\nc d', line: 4 },
+        {
+          case: 'a directive across lines inside a line, Langium',
+          text: 'pie\n  "a": %%{init:\n{"theme":"dark"}\n}%%x',
+          line: 4,
+        },
+        {
+          case: 'a directive across lines inside a line, Langium, with the error left of it',
+          text: 'pie\n  "a"; %%{init:\n{"theme":"dark"}\n}%% : 1',
+          line: 2,
+        },
+        {
+          case: 'a directive across lines inside a line, Langium, with entities before it',
+          text: 'pie\n  "a#quot;#quot;b"; %%{init:\n{"theme":"dark"}\n}%% : 1',
+          line: 2,
+        },
+        {
+          case: 'a directive across lines inside a line, Langium, with an entity before it',
+          text: 'pie\n  "a#quot;": %%{init:\n{"theme":"dark"}\n}%%x',
+          line: 4,
+        },
+        {
+          case: 'a directive across lines inside a line, jison',
+          text: 'xychart-beta\n  x-axis [a, b]\n  bar [1, %%{init:\n{"theme":"dark"}\n}%% 2, ]',
+          line: 5,
+        },
       ])('in the message after $case', async ({ text, line }) => {
         const error = await parseError(text);
         const lines = reportedLines(error);
@@ -959,6 +984,11 @@ graph TD;A--x|text including URL space|B;`)
           case: 'sankey blank lines',
           text: 'sankey-beta\n\na,b,1\n\n\nc d',
           hash: { line: 5, loc: { first_line: 6, last_line: 6 } },
+        },
+        {
+          case: 'a directive across lines inside a line',
+          text: 'xychart-beta\n  x-axis [a, b]\n  bar [1, %%{init:\n{"theme":"dark"}\n}%% 2, ]',
+          hash: { line: 4, loc: { first_line: 5, last_line: 5 } },
         },
       ])('in the jison hash after $case', async ({ text, hash }) => {
         expect(await parseError(text)).toMatchObject({ hash });
