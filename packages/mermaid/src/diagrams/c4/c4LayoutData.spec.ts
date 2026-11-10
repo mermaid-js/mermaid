@@ -75,6 +75,23 @@ Container(store, "Store")
     expect(labelOf('n2')).toBe('Host [Ubuntu 22.04]');
   });
 
+  // The stylesheet draws a deployment node solid and every other boundary dashed, keyed on
+  // this class.
+  it('marks a deployment node, and only a deployment node, with c4-deployment-node', () => {
+    const db = parse(`C4Deployment
+Node(n1, "Server") {
+Container(api, "API")
+}
+System_Boundary(b1, "Shop") {
+System(cart, "Cart")
+}`);
+
+    const classesOf = (id: string) =>
+      getData(db, config()).nodes.find((n) => n.id === id)?.cssClasses;
+    expect(classesOf('n1')).toBe('c4-boundary c4-deployment-node');
+    expect(classesOf('b1')).toBe('c4-boundary');
+  });
+
   it('shows a deployment node description on a line under its name', () => {
     const db = parse(`C4Deployment
 Node(n1, "Host", "Linux", "Runs the API") {
