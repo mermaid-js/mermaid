@@ -57,8 +57,9 @@ const boundaryHeading = (boundary: C4Boundary): string => {
 };
 
 /**
- * A boundary's title: its name and type, then its description (only a deployment node
- * takes one) on a line of its own.
+ * A boundary's title: its name and type, then its description, if it has one, on a line of
+ * its own. A deployment node takes the description as an argument; any boundary takes it
+ * as a named `$descr`.
  */
 const boundaryLabel = (boundary: C4Boundary): string => {
   const heading = boundaryHeading(boundary);
