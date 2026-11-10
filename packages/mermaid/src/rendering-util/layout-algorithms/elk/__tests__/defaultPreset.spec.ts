@@ -208,6 +208,18 @@ describe('ELK graph wrapping configuration', () => {
     }
   );
 
+  it.each([
+    [undefined, '1.6'],
+    [4, 4],
+  ])('gives a rectpacking root the aspect ratio %s as %s', (aspectRatio, expected) => {
+    mermaidAPI.initialize({ elk: { aspectRatio } });
+    const { elkGraph } = buildElkGraphFromLayoutData(
+      { direction: 'TB', config: getConfig(), edges: [], nodes: [] } as any,
+      { ...context, algorithm: 'elk.rectpacking' }
+    );
+    expect(elkGraph.layoutOptions['elk.aspectRatio']).toBe(expected);
+  });
+
   const nestedEmptySubgraphs = () => ({
     direction: 'LR',
     config: getConfig(),

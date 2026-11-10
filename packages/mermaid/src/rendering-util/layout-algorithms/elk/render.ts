@@ -1066,6 +1066,8 @@ function createRootElkGraph(
   // Optimize spacing when rectpacking is the root algorithm.
   if (algorithm === 'elk.rectpacking') {
     Object.assign(graph.layoutOptions, RECTPACKING_OPTIONS, {
+      'elk.aspectRatio':
+        data4Layout.config.elk?.aspectRatio ?? RECTPACKING_OPTIONS['elk.aspectRatio'],
       'elk.contentAlignment': 'H_CENTER V_TOP',
       'elk.padding': '[top=15,left=15,bottom=15,right=15]',
     });
