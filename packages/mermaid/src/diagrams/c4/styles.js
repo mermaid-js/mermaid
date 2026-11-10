@@ -122,6 +122,11 @@ ${labelFontStyles()}
     stroke-width: 1px;
     stroke-dasharray: 8 4;
   }
+  /* A deployment node is infrastructure rather than a logical grouping, so its outline is
+     solid, as the legacy renderer drew it. */
+  .cluster.c4-deployment-node > rect {
+    stroke-dasharray: none;
+  }
   .cluster .cluster-label,
   .cluster .nodeLabel {
     color: ${options.textColor ?? '#333333'};
@@ -140,9 +145,11 @@ ${labelFontStyles()}
     fill: ${options.lineColor ?? '#666666'};
     stroke: ${options.lineColor ?? '#666666'};
   }
-  /* Relationship labels: smaller, on an opaque background so they stay legible over lines. */
+  /* Relationship labels: smaller, on an opaque background so they stay legible over lines.
+     An HTML label takes its text colour from color, which SVG fill does not set. */
   .edgeLabel {
     font-size: 0.85em;
+    color: ${options.textColor ?? '#333333'};
     background-color: ${options.background ?? '#ffffff'};
   }
   .edgeLabel .label foreignObject {
