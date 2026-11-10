@@ -6,6 +6,14 @@ import { readableOn } from './c4Colors.js';
 // the `component` shape keyword (`fr-rect`) a polygon.
 const SHAPE_PARTS = ['rect', 'path', 'circle', 'ellipse', 'line', 'polygon'];
 
+// The paint rules skip elements drawn in the `handDrawn` look, which the shape renderer
+// marks `rough-node`. RoughJS draws its fill as hatching paths and takes the colours as
+// path attributes, which any stylesheet rule would override, so a hand-drawn element
+// keeps the colours RoughJS gave it: the theme's defaults, or an explicit
+// `UpdateElementStyle` colour. `:where` adds no specificity, so the rules rank against the
+// rest of the stylesheet exactly as they would without the exclusion.
+const PAINTED = ':where(:not(.rough-node))';
+
 // Per-element-type font rules from the c4 config (personFontFamily and friends).
 // Built through the CSSOM so config values are parsed as CSS values: a value
 // that does not fit the property's grammar (e.g. one smuggling extra
@@ -53,7 +61,7 @@ const elementColorStyles = (options) => {
       continue;
     }
     const identity = readableOn(paletteColor, surface);
-    const parts = SHAPE_PARTS.map((part) => `.c4-shape.c4-${type} ${part}`).join(', ');
+    const parts = SHAPE_PARTS.map((part) => `.c4-shape.c4-${type}${PAINTED} ${part}`).join(', ');
     const strokeRule = sheet.cssRules[sheet.insertRule(`${parts} {}`, sheet.cssRules.length)];
     strokeRule.style.setProperty('stroke', identity);
     // Set on the group so the label inherits it and `fill: currentColor` picks it up.
@@ -71,7 +79,7 @@ const getStyles = (options) =>
   `${elementFontStyles()}
 ${elementColorStyles(options)}
 
-  ${SHAPE_PARTS.map((part) => `.c4-shape ${part}`).join(',\n  ')} {
+  ${SHAPE_PARTS.map((part) => `.c4-shape${PAINTED} ${part}`).join(',\n  ')} {
     fill: ${options.background};
     stroke-width: 2px;
   }
