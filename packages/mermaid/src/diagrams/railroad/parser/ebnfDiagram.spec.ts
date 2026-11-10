@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { parse } from '@mermaid-js/parser';
 import { parser } from './ebnfParser.js';
 import { db } from '../railroadDb.js';
 
@@ -209,6 +210,23 @@ describe('EBNF standard line', () => {
       void parser.parse('railroad-ebnf-beta\nstandard = other ;\nother = standard "x" ;');
       expect(db.getRules().map((r) => r.name)).toEqual(['standard', 'other']);
     });
+
+    it.each([
+      ['a comment', 'standard (* note *) = "x" ;'],
+      ['a line break', 'standard \n= "x" ;'],
+      ['a block comment and ::=', 'standard /* note */ ::= "x" ;'],
+      ['a %% comment and a line break', 'standard %% note\n= "x" ;'],
+    ])(
+      'keeps a first rule named `standard` a rule when %s comes before its assignment',
+      async (_between, rule) => {
+        const input = `railroad-ebnf-beta\n${rule}`;
+        void parser.parse(input);
+        expect(db.getRules().map((r) => r.name)).toEqual(['standard']);
+        const ast = await parse('railroadEbnf', input);
+        expect(ast.standards).toEqual([]);
+        expect(ast.rules.map((r) => r.name)).toEqual(['standard']);
+      }
+    );
 
     it('keeps `standard` usable as a reference in the first rule', () => {
       void parser.parse('railroad-ebnf-beta\nfoo = standard bar ;');

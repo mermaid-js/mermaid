@@ -3,8 +3,9 @@ grammar RailroadEbnfGrammar
 terminal TITLE: /title(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*)/;
 // `standard w3c|iso` picks the notation. The value is checked after lexing, so an unknown one gets a
 // diagnostic listing the valid values. The token builder lexes it only in the header, and the
-// lookahead keeps a first rule named `standard` a rule.
-terminal STANDARD: /standard(?![\t ]*(?:::=|=))(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*)/;
+// lookahead keeps a first rule named `standard` a rule: it skips whitespace, line breaks and
+// `%%`, `/* */` and `(* *)` comments before looking for `=` or `::=`.
+terminal STANDARD: /standard(?!(?:[\t \r\n]|%%[^\n\r]*|\/\*[\s\S]*?\*\/|\(\*[\s\S]*?\*\))*(?:::=|=))(?:[\t ][^\n\r]*?(?=%%)|[\t ][^\n\r]*)/;
 terminal ACC_TITLE: /accTitle[\t ]*:(?:[^\n\r]*?(?=%%)|[^\n\r]*)/;
 terminal ACC_DESCR: /accDescr(?:[\t ]*:([^\n\r]*?(?=%%)|[^\n\r]*)|\s*{([^}]*)})/;
 
