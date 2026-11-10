@@ -52,7 +52,7 @@ test('markdownToLines - code span', () => {
     [
       { content: 'Run', type: 'normal' },
       { content: 'a', type: 'code' },
-      { content: '&lt;b&gt;', type: 'code' },
+      { content: '<b>', type: 'code' },
       { content: '**c**', type: 'code' },
       { content: 'now', type: 'normal' },
     ],
@@ -301,7 +301,21 @@ test('markdownToHTML - Code span', () => {
 
 test('markdownToHTML - Code span with HTML special characters', () => {
   const input = 'The unit `<name>-migrate & *pre*`';
-  const expectedOutput = '<p>The unit <code>&lt;name&gt;-migrate &amp; *pre*</code></p>';
+  const expectedOutput = '<p>The unit <code>&lt;name&gt;-migrate & *pre*</code></p>';
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Code span with entities from `sanitizeText`', () => {
+  const input = 'Use `a &lt; b &amp;&amp; c`';
+  const expectedOutput = '<p>Use <code>a &lt; b &amp;&amp; c</code></p>';
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Code span with icon syntax', () => {
+  const input = 'fa:fa-home is `fa:fa-home`';
+  const expectedOutput = '<p>fa:fa-home is <code>fa&#58;fa-home</code></p>';
   const output = markdownToHTML(input);
   expect(output).toEqual(expectedOutput);
 });
