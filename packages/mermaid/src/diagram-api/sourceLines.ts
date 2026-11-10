@@ -74,11 +74,107 @@ export const keepSuffix = ({ sourceLines }: TrackedText, suffix: string): Tracke
   sourceLines: sourceLines.slice(sourceLines.length - countLines(suffix)),
 });
 
-/** `line N` as jison (`Parse error`, `Lexical error`) and Langium (`Lexer error`) write it. */
-const lineInMessage = /((?:Parse|Lexical|Lexer) error on line )(\d+)/g;
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
+
+/** A line number written in the message of a parse error: at `index`, `length` characters long. */
+interface ReportedLine {
+  readonly index: number;
+  readonly length: number;
+  readonly line: number;
+}
+
+/** The header jison writes at the start of a parse or lexical error. */
+const jisonHeader = /^(?:Parse|Lexical) error on line (\d+)/;
+
+const jisonLines = (message: string): ReportedLine[] => {
+  const match = jisonHeader.exec(message);
+  if (!match) {
+    return [];
+  }
+  const [header, digits] = match;
+  return [{ index: header.length - digits.length, length: digits.length, line: Number(digits) }];
+};
+
+/** One error of a Langium parse result, with the kind of error `MermaidParseError` names it by. */
+interface LangiumError {
+  readonly kind: 'Lexer' | 'Parse';
+  readonly line: unknown;
+  readonly column: unknown;
+  readonly message: unknown;
+}
+
+/** The errors of a Langium parse result, lexer errors first, as `MermaidParseError` lists them. */
+const langiumErrors = (result: Record<string, unknown>): LangiumError[] | undefined => {
+  const { lexerErrors, parserErrors } = result;
+  if (
+    !Array.isArray(lexerErrors) ||
+    !Array.isArray(parserErrors) ||
+    !lexerErrors.every(isRecord) ||
+    !parserErrors.every(isRecord)
+  ) {
+    return undefined;
+  }
+  return [
+    ...lexerErrors.map(
+      ({ line, column, message }): LangiumError => ({
+        kind: 'Lexer',
+        line,
+        column,
+        message,
+      })
+    ),
+    ...parserErrors.map(
+      ({ token, message }): LangiumError => ({
+        kind: 'Parse',
+        line: isRecord(token) ? token.startLine : undefined,
+        column: isRecord(token) ? token.startColumn : undefined,
+        message,
+      })
+    ),
+  ];
+};
+
+const isLocation = (value: unknown): value is number => typeof value === 'number' && value >= 0;
+
+/** A line or column as `MermaidParseError` writes it. */
+const formatLocation = (value: unknown): string => (isLocation(value) ? String(value) : '?');
+
+/**
+ * The line numbers in the headers `MermaidParseError` writes, one for each error, found in order
+ * past the text of the error before; none when any error is not where it is expected.
+ */
+const langiumLines = (message: string, errors: LangiumError[]): ReportedLine[] => {
+  const lines: ReportedLine[] = [];
+  let cursor = 0;
+  for (const { kind, line, column, message: text } of errors) {
+    const header = `${kind} error on line `;
+    const written = `${header}${formatLocation(line)}, column ${formatLocation(column)}: ${String(text)}`;
+    const index = message.indexOf(written, cursor);
+    if (index < 0) {
+      return [];
+    }
+    if (isLocation(line)) {
+      lines.push({ index: index + header.length, length: String(line).length, line });
+    }
+    cursor = index + written.length;
+  }
+  return lines;
+};
+
+const rewriteLines = (
+  message: string,
+  lines: ReportedLine[],
+  toSource: (line: number) => number
+): string => {
+  let rewritten = '';
+  let cursor = 0;
+  for (const { index, length, line } of lines) {
+    rewritten += `${message.slice(cursor, index)}${toSource(line)}`;
+    cursor = index + length;
+  }
+  return rewritten + message.slice(cursor);
+};
 
 const remapHash = (hash: Record<string, unknown>, toSource: (line: number) => number) => {
   // Jison counts `hash.line` from 0, and `hash.loc` from 1 like its message.
@@ -94,27 +190,33 @@ const remapHash = (hash: Record<string, unknown>, toSource: (line: number) => nu
 /**
  * Rewrites, in place, the lines a jison or Langium parse error reports in the text it parsed
  * into the source lines they come from: the message, the stack and jison's `hash.line` and
- * `hash.loc`. The hash is rewritten only when the message named such a line: an error whose
- * message names none has had its hash written in source lines by the diagram. Columns, and
- * errors in any other format, are left as they are.
+ * `hash.loc`. Only the line a parser writes in its own header is rewritten: the header jison
+ * starts its message with, and the header `MermaidParseError` writes for each error of its
+ * `result`. Text quoted from the diagram is left as it is, even where it reads like a header.
+ * The hash is rewritten only when the message starts with a jison header: an error whose message
+ * has none has had its hash written in source lines by the diagram. Columns, and errors in any
+ * other format, are left as they are.
  */
 export const remapParseErrorLines = (error: unknown, sourceLines: SourceLines): void => {
   if (!(error instanceof Error)) {
     return;
   }
   const toSource = (line: number) => toSourceLine(sourceLines, line);
-  const remapMessage = (text: string) =>
-    text.replace(
-      lineInMessage,
-      (_match, prefix: string, line: string) => `${prefix}${toSource(Number(line))}`
-    );
-  // V8 formats `stack` from the message on its first read, so it is read before the message changes.
-  if (error.stack) {
-    error.stack = remapMessage(error.stack);
+  const errors =
+    'result' in error && isRecord(error.result) ? langiumErrors(error.result) : undefined;
+  const { message } = error;
+  const lines = errors ? langiumLines(message, errors) : jisonLines(message);
+  if (lines.length === 0) {
+    return;
   }
-  const namesParsedLine = error.message.search(lineInMessage) >= 0;
-  error.message = remapMessage(error.message);
-  if (namesParsedLine && 'hash' in error && isRecord(error.hash)) {
+  // V8 formats `stack` from the message on its first read, so it is read before the message changes.
+  const { stack } = error;
+  error.message = rewriteLines(message, lines, toSource);
+  const at = stack?.indexOf(message) ?? -1;
+  if (stack && at >= 0) {
+    error.stack = `${stack.slice(0, at)}${error.message}${stack.slice(at + message.length)}`;
+  }
+  if (!errors && 'hash' in error && isRecord(error.hash)) {
     remapHash(error.hash, toSource);
   }
 };

@@ -964,6 +964,24 @@ graph TD;A--x|text including URL space|B;`)
         expect(await parseError(text)).toMatchObject({ hash });
       });
 
+      it.each([
+        {
+          case: 'jison',
+          text: '---\ntitle: x\n---\nagentflow-beta TB\n  a@{ shape: procs,* type: "Parse error on line 2" }\n',
+          quoted: '"Parse error on line 2"',
+        },
+        {
+          case: 'Langium',
+          text: '---\ntitle: x\n---\npie\n  "a": "Parse error on line 2, column 3: x"\n',
+          quoted: '"Parse error on line 2, column 3: x"',
+        },
+      ])(
+        'keeps diagram text that reads like a header as written, $case',
+        async ({ text, quoted }) => {
+          expect(getErrorMessage(await parseError(text))).toContain(quoted);
+        }
+      );
+
       // The agentflow db writes source lines into the `hash` of its own `@{ }` errors, so the
       // remap leaves a hash alone when the message names no line of the parsed text.
       const AGENTFLOW_SHAPE_ERROR =
@@ -976,6 +994,11 @@ graph TD;A--x|text including URL space|B;`)
           case: 'front matter and a comment',
           text: `---\ntitle: x\n---\n%% note\n${AGENTFLOW_SHAPE_ERROR}`,
           line: 7,
+        },
+        {
+          case: 'front matter, with a shape that quotes a parser header',
+          text: '---\ntitle: x\n---\nagentflow-beta TB\n  a@{ shape: procs,* type: "Parse error on line 2" }\n',
+          line: 5,
         },
       ])(
         'keeps the source lines an agentflow shape error already has after $case',

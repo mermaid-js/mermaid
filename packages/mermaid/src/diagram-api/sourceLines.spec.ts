@@ -113,13 +113,92 @@ describe('remapParseErrorLines', () => {
     expect(error.hash).toEqual({ text: '', line: 3 });
   });
 
+  /** A Langium error as `MermaidParseError` builds it from its parse result. */
+  const langiumError = (
+    lexerErrors: { line: number; column: number; message: string }[],
+    parserErrors: { line: number; column: number; message: string }[]
+  ) => {
+    const lexer = lexerErrors.map(
+      ({ line, column, message }) => `Lexer error on line ${line}, column ${column}: ${message}`
+    );
+    const parser = parserErrors.map(
+      ({ line, column, message }) => `Parse error on line ${line}, column ${column}: ${message}`
+    );
+    return Object.assign(new Error(`Parsing failed: ${lexer.join('\n')} ${parser.join('\n')}`), {
+      result: {
+        lexerErrors,
+        parserErrors: parserErrors.map(({ line, column, message }) => ({
+          token: { startLine: line, startColumn: column },
+          message,
+        })),
+      },
+    });
+  };
+
   it('rewrites every line of a Langium error', () => {
-    const error = new Error(
-      'Parsing failed: Lexer error on line 2, column 8: a Parse error on line 3, column 9: b'
+    const error = langiumError(
+      [{ line: 2, column: 8, message: 'a' }],
+      [{ line: 3, column: 9, message: 'b' }]
     );
     remapParseErrorLines(error, sourceLines);
     expect(error.message).toBe(
       'Parsing failed: Lexer error on line 4, column 8: a Parse error on line 6, column 9: b'
+    );
+  });
+
+  it('leaves a Langium error message that quotes a header from the diagram', () => {
+    const quoted = 'found `"Parse error on line 2, column 1: x"`';
+    const error = langiumError(
+      [],
+      [
+        { line: 2, column: 8, message: quoted },
+        { line: 3, column: 1, message: 'b' },
+      ]
+    );
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe(
+      `Parsing failed:  Parse error on line 4, column 8: ${quoted}\nParse error on line 6, column 1: b`
+    );
+  });
+
+  it('leaves a Langium error whose message does not list its result', () => {
+    const error = Object.assign(new Error('Parsing failed: Lexer error on line 2, column 8: a '), {
+      result: { lexerErrors: [{ line: 3, column: 8, message: 'a' }], parserErrors: [] },
+    });
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe('Parsing failed: Lexer error on line 2, column 8: a ');
+  });
+
+  it.each([
+    {
+      case: 'a header in the excerpt',
+      message: 'Parse error on line 2:\nParse error on line 2\n^',
+    },
+    {
+      case: 'a lexical header in the excerpt',
+      message: 'Lexical error on line 2. Lexical error on line 2',
+    },
+  ])('rewrites only the header jison starts its message with, with $case', ({ message }) => {
+    const error = new Error(message);
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe(message.replace('2', '4'));
+  });
+
+  it('leaves a message and its hash alone when a header appears only inside the message', () => {
+    const hash = { line: 4, loc: { first_line: 5, last_line: 5, first_column: 4, last_column: 5 } };
+    const message = 'bad shape data (5:5)\n 5 | type: "Parse error on line 2"';
+    const error = Object.assign(new Error(message), { hash: structuredClone(hash) });
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe(message);
+    expect(error.hash).toEqual(hash);
+  });
+
+  it('rewrites the message in the stack, and leaves the rest of the stack', () => {
+    const error = new Error('Parse error on line 2:');
+    error.stack = 'at Parse error on line 2 (file.js)\nError: Parse error on line 2:\n    at x';
+    remapParseErrorLines(error, sourceLines);
+    expect(error.stack).toBe(
+      'at Parse error on line 2 (file.js)\nError: Parse error on line 4:\n    at x'
     );
   });
 
