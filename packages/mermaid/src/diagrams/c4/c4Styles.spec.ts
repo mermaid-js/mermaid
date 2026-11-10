@@ -58,4 +58,14 @@ describe('c4 styles: relationship fonts', () => {
     expect(sizes).toContainEqual({ nestedOnly: true, size: 'inherit' });
     expect(sizes.filter((entry) => entry.size === '1.5em')).toHaveLength(1);
   });
+
+  // An HTML label sits in a foreignObject, where the SVG `fill` of its ancestors does not
+  // colour text; without `color` it took the host page's text colour.
+  it.each([
+    ['the theme text colour', { textColor: '#ccc', background: '#333' }, '#ccc'],
+    ['a fallback without a theme', {}, '#333333'],
+  ])('gives relationship labels %s', (_case, options, expected) => {
+    const [, declarations] = /\n {2}\.edgeLabel {([^}]*)}/.exec(getStyles(options)) ?? [];
+    expect(declarations).toContain(`color: ${expected};`);
+  });
 });
