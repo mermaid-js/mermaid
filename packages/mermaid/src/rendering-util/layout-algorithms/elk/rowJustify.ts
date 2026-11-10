@@ -61,6 +61,9 @@ const slotStart = (slot: readonly JustifyBox[], axis: Axis) =>
 const slotSize = (slot: readonly JustifyBox[], axis: Axis) =>
   Math.max(...slot.map((box) => end(box, axis))) - slotStart(slot, axis);
 
+const slotEnd = (slot: readonly JustifyBox[], axis: Axis) =>
+  slotStart(slot, axis) + slotSize(slot, axis);
+
 const sum = (values: readonly number[]) => values.reduce((total, value) => total + value, 0);
 
 /** The room kept inside a frame before its first slot and after its last, or one for both. */
@@ -221,7 +224,8 @@ function widestLabel(
 
 /**
  * The least gap after each slot of a row: room for the widest label of a link inside the row
- * between that slot and the next, or 0 where no labelled link joins them.
+ * between that slot and the next, and never less than the narrowest gap ELK left between two of
+ * its slots, so a label that takes the room of the row does not push the other nodes together.
  */
 function labelGaps(
   frameId: string,
@@ -230,7 +234,13 @@ function labelGaps(
   axis: Axis
 ): number[] {
   const slotIndex = new Map(slots.flatMap((slot, index) => slot.map(({ id }) => [id, index])));
-  const gaps = slots.slice(1).map(() => 0);
+  const clearance = Math.max(
+    0,
+    Math.min(
+      ...slots.slice(1).map((slot, index) => slotStart(slot, axis) - slotEnd(slots[index], axis))
+    )
+  );
+  const gaps = slots.slice(1).map(() => clearance);
   for (const edge of edges.filter(({ container }) => container === frameId)) {
     const gap = gapBetween(slotIndex.get(edge.sources[0]), slotIndex.get(edge.targets[0]));
     const width = edge.labels?.[0]?.[axis.size] ?? 0;

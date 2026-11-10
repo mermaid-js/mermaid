@@ -335,11 +335,21 @@ describe('justifyFrames', () => {
     const [row, other] = input.children;
     const [a, b, c] = row.children ?? [];
     expect(c.x - (b.x + b.width)).toBe(200 + 2 * LABEL_GAP_PADDING);
-    expect(b.x - (a.x + a.width)).toBe(0);
-    expect(row.width).toBe(20 + 3 * 50 + 224 + 20);
+    expect(b.x - (a.x + a.width)).toBe(20);
+    expect(row.width).toBe(20 + 3 * 50 + 20 + 224 + 20);
     expect(other.width).toBe(row.width);
     const [label] = input.edges[0].labels ?? [];
     expect((label.x ?? 0) + 100).toBe((b.x + b.width + c.x) / 2);
+  });
+
+  it('keeps the narrowest gap ELK left, not the widest, when a label widens another gap', () => {
+    const input = labelledRow(200);
+    const [row] = input.children;
+    row.children = [box('a', 20, 20), box('b', 80, 20), box('c', 160, 20)];
+    justifyFrames(input);
+    const [a, b, c] = row.children;
+    expect(b.x - (a.x + a.width)).toBe(10);
+    expect(c.x - (b.x + b.width)).toBe(200 + 2 * LABEL_GAP_PADDING);
   });
 
   it('spreads the columns of a narrow band over the width of the widest row', () => {
