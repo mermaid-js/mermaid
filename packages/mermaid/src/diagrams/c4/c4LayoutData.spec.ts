@@ -75,6 +75,36 @@ Container(store, "Store")
     expect(labelOf('n2')).toBe('Host [Ubuntu 22.04]');
   });
 
+  it('shows a deployment node description on a line under its name', () => {
+    const db = parse(`C4Deployment
+Node(n1, "Host", "Linux", "Runs the API") {
+Container(api, "API")
+}
+Node(n2, "Server", $descr="Hosts the store") {
+Container(store, "Store")
+}
+Node(n3, "Edge", "Linux") {
+Container(proxy, "Proxy")
+}`);
+
+    const labelOf = (id: string) => getData(db, config()).nodes.find((n) => n.id === id)?.label;
+    expect(labelOf('n1')).toBe('Host [Linux]<br/>Runs the API');
+    expect(labelOf('n2')).toBe('Server<br/>Hosts the store');
+    // without a description the label is the name and type alone
+    expect(labelOf('n3')).toBe('Edge [Linux]');
+  });
+
+  it('shows a named $descr on any boundary', () => {
+    const db = parse(`C4Context
+System_Boundary(s1, "Shop", $descr="Sells books") {
+System(web, "Web")
+}`);
+
+    expect(getData(db, config()).nodes.find((n) => n.id === 's1')?.label).toBe(
+      'Shop<br/>Sells books'
+    );
+  });
+
   it('never emits the implicit global boundary as a node', () => {
     const db = parse(`C4Context\nPerson(a, "A")`);
     const { nodes } = getData(db, config());
@@ -226,13 +256,45 @@ UpdateRelStyle(a, b, $lineColor="red;background:url(x)", $textColor="blue;conten
     expect(nodes.find((node) => node.id === 'a')?.link).toBe('about:blank');
   });
 
+  // A named `$link` can land in any optional slot, not only the one declared for it, and
+  // `UpdateElementStyle` accepts it as well, so every route has to come out sanitized.
+  it.each([
+    ['the description slot of a person', 'Person(a, "A", $link="javascript:alert(1)")'],
+    ['the technology slot of a container', 'Container(a, "A", $link="javascript:alert(1)")'],
+    ['the technology slot of a component', 'Component(a, "A", $link="javascript:alert(1)")'],
+    [
+      'an UpdateElementStyle attribute',
+      'Person(a, "A")\nUpdateElementStyle(a, $link="javascript:alert(1)")',
+    ],
+    [
+      'the type slot of a boundary',
+      'Boundary(a, "A", $link="javascript:alert(1)") {\nPerson(p, "P")\n}',
+    ],
+    [
+      'the description slot of a deployment node',
+      'Node(a, "A", "t", $link="javascript:alert(1)") {\nContainer(c, "C")\n}',
+    ],
+  ])('neutralises a javascript: $link given through %s', (_route, statements) => {
+    const db = parse(`C4Context\n${statements}`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.find((node) => node.id === 'a')?.link).toBe('about:blank');
+  });
+
+  it('keeps a safe $link given through the description slot', () => {
+    const db = parse(`C4Context\nPerson(a, "A", $link="https://example.com")`);
+
+    const { nodes } = getData(db, config());
+    expect(nodes.find((node) => node.id === 'a')?.link).toBe('https://example.com/');
+  });
+
   // Like a flowchart link, `securityLevel: 'loose'` is the author's explicit trust choice.
   it('keeps a $link as written at securityLevel loose', () => {
     setSiteConfig({ securityLevel: 'loose' });
     try {
       const db = parse(`C4Context\nPerson(a, "A", "desc", $link="javascript:alert(1)")`);
 
-      const { nodes } = getData(db, config());
+      const { nodes } = getData(db, { ...config(), securityLevel: 'loose' });
       expect(nodes.find((node) => node.id === 'a')?.link).toBe('javascript:alert(1)');
     } finally {
       setSiteConfig({ securityLevel: 'strict' });
