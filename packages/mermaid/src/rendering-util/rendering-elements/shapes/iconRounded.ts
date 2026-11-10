@@ -5,7 +5,12 @@ import type { Node, ShapeRenderOptions } from '../../types.js';
 import intersect from '../intersect/index.js';
 import { compileStyles, styles2String, userNodeOverrides } from './handDrawnShapeStyles.js';
 import { createRoundedRectPathD } from './roundedRectPath.js';
-import { keepBoundsUnpainted, labelHelper, updateNodeBounds } from './util.js';
+import {
+  keepBoundsUnpainted,
+  keepIconArtworkPaint,
+  labelHelper,
+  updateNodeBounds,
+} from './util.js';
 import type { D3Selection } from '../../../types.js';
 
 export async function iconRounded<T extends SVGGraphicsElement>(
@@ -73,6 +78,7 @@ export async function iconRounded<T extends SVGGraphicsElement>(
         fallbackPrefix: '',
       })}</g>`
     );
+    keepIconArtworkPaint(iconElem);
     const iconBBox = iconElem.node()!.getBBox();
     const iconWidth = iconBBox.width;
     const iconHeight = iconBBox.height;

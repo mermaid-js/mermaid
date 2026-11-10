@@ -10,6 +10,7 @@
 import { JSDOM } from 'jsdom';
 import { describe, it, expect } from 'vitest';
 import { mermaidAPI } from '../../../mermaidAPI.js';
+import { registerIconPacks } from '../../icons.js';
 
 const renderNodeClasses = async (id: string, code: string): Promise<string[]> =>
   [...(await renderToHolder(id, code)).querySelectorAll('g[class]')]
@@ -178,4 +179,61 @@ flowchart TD
       expect(paintOf(path)).not.toContain('!important');
     }
   });
+});
+
+/**
+ * The same class rule matches the elements of the embedded icon, so each one restates
+ * its own paint inline with `!important`. Like the bounds tests above this checks the
+ * declarations, not the cascade; the browser outcome is covered by
+ * `e2e/rendering/flowchart/pr-check/flowchart-icon-class-paint.spec.ts`.
+ */
+describe('icon shapes keep their artwork out of class paint', () => {
+  registerIconPacks([
+    {
+      name: 'artwork',
+      icons: {
+        prefix: 'artwork',
+        icons: {
+          mixed: {
+            body: '<path fill="currentColor" d="M0 0h8v8H0z"/><rect width="4" height="4" style="fill: #087ebf; stroke-width: 0px;"/><circle cx="2" cy="2" r="1" stroke="#123456"/>',
+            width: 24,
+            height: 24,
+          },
+        },
+      },
+    },
+  ]);
+
+  const iconDiagram = (form: string | undefined) => `---
+config:
+  htmlLabels: false
+---
+flowchart TD
+  A@{ icon: "artwork:mixed", label: "Iconic"${form ? `, form: "${form}"` : ''} }
+  classDef hot fill:#f96,stroke:#333
+  class A hot`;
+
+  const declarations = (element: Element | null | undefined) =>
+    (element?.getAttribute('style') ?? '').replaceAll(/\s+/g, ' ');
+
+  it.each([undefined, 'rounded', 'square', 'circle'])(
+    'form=%s: each icon element restates its own fill and stroke',
+    async (form) => {
+      const holder = await renderToHolder(`icon-artwork-${form ?? 'default'}`, iconDiagram(form));
+      const icon = holder.querySelector('g.icon-shape svg');
+
+      expect(declarations(icon?.querySelector('path'))).toContain('fill: currentColor !important');
+      expect(declarations(icon?.querySelector('path'))).toContain('stroke: inherit !important');
+      expect(declarations(icon?.querySelector('rect'))).toContain('fill: #087ebf !important');
+      expect(declarations(icon?.querySelector('rect'))).toContain('stroke-width: 0px');
+      expect(declarations(icon?.querySelector('circle'))).toContain('fill: inherit !important');
+      expect(declarations(icon?.querySelector('circle'))).toContain('stroke: #123456 !important');
+
+      // the drawn shape around the icon is left to the class
+      const shape = holder.querySelector('g.icon-shape')?.children[0];
+      for (const path of shape?.querySelectorAll('path') ?? []) {
+        expect(declarations(path)).not.toContain('!important');
+      }
+    }
+  );
 });
