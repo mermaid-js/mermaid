@@ -37,6 +37,21 @@ A["\`The cat in **the** hat\`"]-- "\`The *bat* in the chat\`" -->B["The dog in t
     expect(edges[1].text).toBe('The rat in the mat');
     expect(edges[1].labelType).toBe('string');
   });
+  it('code spans in nodes and labels', function () {
+    flow.parser.parse(`flowchart
+A["\`Run \`backup\` **now**\`"]-- "\`Then \`steps\`\`" -->B["\`\`code\` only\`"];`);
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert.get('A').text).toBe('Run `backup` **now**');
+    expect(vert.get('A').labelType).toBe('markdown');
+    expect(vert.get('B').text).toBe('`code` only');
+    expect(vert.get('B').labelType).toBe('markdown');
+    expect(edges.length).toBe(1);
+    expect(edges[0].text).toBe('Then `steps`');
+    expect(edges[0].labelType).toBe('markdown');
+  });
   it('markdown formatting in subgraphs', function () {
     const res = flow.parser.parse(`flowchart LR
 subgraph "One"

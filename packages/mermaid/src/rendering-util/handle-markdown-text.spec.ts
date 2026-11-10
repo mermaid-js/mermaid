@@ -280,6 +280,20 @@ test('markdownToHTML - Mixed formatting', () => {
   expect(output).toEqual(expectedOutput);
 });
 
+test('markdownToHTML - Code span', () => {
+  const input = 'Run `backup`, then **`steps`**';
+  const expectedOutput = '<p>Run <code>backup</code>, then <strong><code>steps</code></strong></p>';
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
+test('markdownToHTML - Code span with HTML special characters', () => {
+  const input = 'The unit `<name>-migrate & *pre*`';
+  const expectedOutput = '<p>The unit <code>&lt;name&gt;-migrate &amp; *pre*</code></p>';
+  const output = markdownToHTML(input);
+  expect(output).toEqual(expectedOutput);
+});
+
 test('markdownToHTML - Unsupported formatting', () => {
   expect(
     markdownToHTML(`Hello

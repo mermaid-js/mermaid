@@ -117,6 +117,14 @@ export function nonMarkdownToHTML(text: string) {
   }</p>`;
 }
 
+/**
+ * @param text - Literal text.
+ * @returns The text with the HTML special characters as entities.
+ */
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidConfig = {}) {
   const nodes = marked.lexer(markdown);
 
@@ -138,6 +146,9 @@ export function markdownToHTML(markdown: string, { markdownAutoWrap }: MermaidCo
       return `${node.text}`;
     } else if (node.type === 'escape') {
       return node.text;
+    } else if (node.type === 'codespan') {
+      // The text of a code span is literal, thus it must not become markup.
+      return `<code>${escapeHtml(node.text)}</code>`;
     }
     log.warn(`Unsupported markdown: ${node.type}`);
     return node.raw;
