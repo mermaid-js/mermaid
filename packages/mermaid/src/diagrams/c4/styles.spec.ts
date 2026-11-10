@@ -153,4 +153,18 @@ describe('c4 styles', () => {
       expect(painted.length).toBe(shapeParts.length);
     });
   });
+
+  it.each(['rect', 'path', 'circle', 'ellipse', 'line', 'polygon'])(
+    'paints every %s a shape can draw',
+    (part) => {
+      const css = getStyles({ background: '#ffffff' });
+      const hasPart = (selectorText: string) => (selector: string) =>
+        selector.split(',').some((one) => one.trim() === selectorText);
+
+      expect(valueFor(css, hasPart(`.c4-shape${PAINTED} ${part}`), 'fill')).toBe('#ffffff');
+      expect(valueFor(css, hasPart(`.c4-shape.c4-person${PAINTED} ${part}`), 'stroke')).toBe(
+        valueFor(css, parts(`.c4-shape.c4-person${PAINTED} rect`), 'stroke')
+      );
+    }
+  );
 });

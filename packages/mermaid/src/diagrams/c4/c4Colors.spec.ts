@@ -1,5 +1,5 @@
 // @ts-expect-error Incorrect khroma types
-import { luminance } from 'khroma';
+import { darken, lighten, luminance } from 'khroma';
 import { describe, it, expect } from 'vitest';
 import { readableOn } from './c4Colors.js';
 
@@ -78,6 +78,18 @@ describe('readableOn', () => {
   ])('reaches the target for %s on %s, which needs more than twelve steps', (color, surface) => {
     expect(ratio(color, surface)).toBeLessThan(4.5);
     expect(ratio(readableOn(color, surface), surface)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  // The shift stops at the first step that reads, so the colour stays as close to the
+  // palette as the background allows: one step back no longer reaches the target.
+  it.each([
+    ['darkens', '#85BBF0', '#ffffff', lighten],
+    ['lightens', '#08427B', '#333333', darken],
+  ])('%s %s on %s no further than it needs to', (_way, color, surface, stepBack) => {
+    const readable = readableOn(color, surface);
+
+    expect(ratio(readable, surface)).toBeGreaterThanOrEqual(4.5);
+    expect(ratio(stepBack(readable, 5), surface)).toBeLessThan(4.5);
   });
 
   it('returns a value it cannot parse untouched', () => {
