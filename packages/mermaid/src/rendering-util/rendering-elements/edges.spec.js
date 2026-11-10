@@ -576,6 +576,76 @@ describe('a swimlane edge cropped to its end shapes, then drawn', () => {
   });
 });
 
+describe('a swimlane edge cropped to a leg shorter than its arrowhead pull-back', () => {
+  // D is 100 x 40 around the origin; A sits below it, its top face at y 40. The route runs 2 px
+  // below D's bottom face, turns up into D at x -20 and runs on inside it, so the crop leaves a
+  // 2 px leg, shorter than the 4 px an `arrow_point` end is pulled back. Leaving such a route
+  // uncropped is worse: its tip is drawn inside D. Drawing the short leg towards the box is the
+  // job of `finalDockPoint` in edges.js.
+  const route = () => [
+    { x: 80, y: 40 },
+    { x: 80, y: 22 },
+    { x: -20, y: 22 },
+    { x: -20, y: 0 },
+    { x: 50, y: 0 },
+  ];
+  const tailBox = { x: 80, y: 60, width: 40, height: 40 };
+  const headBox = { x: 0, y: 0, width: 100, height: 40 };
+  /** The last two points of the drawn path, read from its `d`. */
+  const drawnTip = (points) => {
+    document.body.innerHTML = '';
+    const svg = select(document.body).append('svg');
+    const edge = {
+      id: 'L_A_D_0',
+      cssCompiledStyles: {},
+      style: [],
+      thickness: 'normal',
+      pattern: 'solid',
+      classes: 'flowchart-link',
+      curve: 'rounded',
+      look: 'neo',
+      arrowTypeEnd: 'arrow_point',
+      points,
+    };
+    const tail = { intersect: (point) => intersectRect(tailBox, point) };
+    const head = { intersect: (point) => intersectRect(headBox, point) };
+    insertEdge(svg, edge, null, 'swimlane', tail, head, 'diagram');
+    const numbers = svg
+      .select('path')
+      .attr('d')
+      .match(/-?\d+(\.\d+)?/g)
+      .map(Number);
+    const [fromX, fromY, toX, toY] = numbers.slice(-4);
+    return { from: { x: fromX, y: fromY }, to: { x: toX, y: toY } };
+  };
+  const bottomFace = headBox.y + headBox.height / 2;
+
+  it('is drawn running away from the box (known limit: a cropped terminal leg shorter than the arrowhead pull-back is drawn backwards)', () => {
+    const routed = [{ id: 'L_A_D_0', start: 'A', end: 'D', points: route() }];
+    cropEdgeEndsToShapes(
+      routed,
+      new Map([
+        ['A', { id: 'A', ...tailBox }],
+        ['D', { id: 'D', ...headBox, shape: 'squareRect' }],
+      ])
+    );
+    expect(routed[0].points.at(-1)).toEqual({ x: -20, y: bottomFace });
+
+    const { from, to } = drawnTip(routed[0].points);
+
+    // The last segment heads down, away from D, and ends below its bottom face.
+    expect(to.y).toBeGreaterThan(from.y);
+    expect(to.y).toBeGreaterThan(bottomFace);
+  });
+
+  it('ends inside the box when the same route is left uncropped', () => {
+    const { to } = drawnTip(route());
+
+    expect(to.y).toBeLessThan(bottomFace);
+    expect(Math.abs(to.x)).toBeLessThan(headBox.width / 2);
+  });
+});
+
 describe('insertEdge orthogonal endpoint clipping', () => {
   it('clips offset polygon ports along the terminal axis without adding a backtrack', () => {
     vi.mocked(getConfig).mockReturnValue({
