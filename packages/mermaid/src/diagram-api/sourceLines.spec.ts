@@ -86,6 +86,42 @@ describe('removeMatches', () => {
     expect(joins).toEqual([{ line: 1, column: 3, sourceLine: 3 }]);
   });
 
+  it.each([
+    {
+      case: 'within a line',
+      text: 'a %%{x\n}%%b c',
+      pattern: / (?=b)/g,
+      expected: { text: 'ab c', joins: [{ line: 1, column: 2, sourceLine: 2 }] },
+    },
+    {
+      case: 'across lines',
+      text: 'q\naaa %%{x\n}%%bbb %%{x\n}%%c',
+      pattern: /\naaa /g,
+      expected: {
+        text: 'qbbb c',
+        joins: [
+          { line: 1, column: 2, sourceLine: 3 },
+          { line: 1, column: 6, sourceLine: 4 },
+        ],
+      },
+    },
+    {
+      case: 'that ends past a join',
+      text: 'a %%{x\n}%%b\nc %%{x\n}%%d',
+      pattern: / b\n/g,
+      expected: {
+        text: 'ac d',
+        joins: [
+          { line: 1, column: 2, sourceLine: 3 },
+          { line: 1, column: 4, sourceLine: 4 },
+        ],
+      },
+    },
+  ])('keeps the joins it is given after a removal $case', ({ text, pattern, expected }) => {
+    const joined = removeMatches(trackLines(text), directiveRegex);
+    expect(removeMatches(joined, pattern)).toMatchObject(expected);
+  });
+
   it('starts at the beginning whatever lastIndex holds, like replace', () => {
     const pattern = /b/g;
     pattern.lastIndex = 2;
@@ -205,7 +241,7 @@ describe('remapParseErrorLines', () => {
   });
 
   it('leaves a Langium error message that quotes a header from the diagram', () => {
-    const quoted = 'found `"Parse error on line 2, column 1: x"`';
+    const quoted = 'found `"Parse error on line 3, column 1: b"`';
     const error = langiumError(
       [],
       [
@@ -219,12 +255,103 @@ describe('remapParseErrorLines', () => {
     );
   });
 
-  it('leaves a Langium error whose message does not list its result', () => {
-    const error = Object.assign(new Error('Parsing failed: Lexer error on line 2, column 8: a '), {
+  it.each([
+    {
+      case: 'another line',
+      message: 'Parsing failed: Lexer error on line 2, column 8: a ',
       result: { lexerErrors: [{ line: 3, column: 8, message: 'a' }], parserErrors: [] },
+    },
+    {
+      case: 'a lexer error as a parse error',
+      message: 'Parsing failed: Parse error on line 2, column 8: a ',
+      result: { lexerErrors: [{ line: 2, column: 8, message: 'a' }], parserErrors: [] },
+    },
+    {
+      case: 'a parse error as a lexer error',
+      message: 'Parsing failed:  Lexer error on line 2, column 8: a',
+      result: {
+        lexerErrors: [],
+        parserErrors: [{ token: { startLine: 2, startColumn: 8 }, message: 'a' }],
+      },
+    },
+  ])('leaves a Langium error whose message lists $case', ({ message, result }) => {
+    const error = Object.assign(new Error(message), { result });
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe(message);
+  });
+
+  it.each([
+    { case: 'no line', line: undefined, written: '?' },
+    { case: 'a negative line', line: -1, written: '?' },
+    { case: 'line 0', line: 0, written: '0' },
+  ])('finds a Langium error with $case, and the errors after it', ({ line, written }) => {
+    const message = `Parsing failed: Lexer error on line ${written}, column 1: a Parse error on line 2, column 1: b`;
+    const error = Object.assign(new Error(message), {
+      result: {
+        lexerErrors: [{ line, column: 1, message: 'a' }],
+        parserErrors: [{ token: { startLine: 2, startColumn: 1 }, message: 'b' }],
+      },
     });
     remapParseErrorLines(error, sourceLines);
-    expect(error.message).toBe('Parsing failed: Lexer error on line 2, column 8: a ');
+    expect(error.message).toBe(message.replace('line 2', 'line 4'));
+  });
+
+  it.each([
+    { case: 'null', result: null },
+    { case: 'an object without lists', result: {} },
+    {
+      case: 'holding parser errors that are no list',
+      result: { lexerErrors: [], parserErrors: {} },
+    },
+    {
+      case: 'holding a lexer error that is no record',
+      result: { lexerErrors: [{}, 1], parserErrors: [] },
+    },
+    {
+      case: 'holding a parser error that is no record',
+      result: { lexerErrors: [], parserErrors: [{}, 1] },
+    },
+  ])('reads an error as a jison error when its result is $case', ({ result }) => {
+    const error = Object.assign(new Error('Parse error on line 2:'), { result });
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe('Parse error on line 4:');
+  });
+
+  it('rewrites a line of more than one digit', () => {
+    const error = new Error('Parse error on line 12:');
+    remapParseErrorLines(
+      error,
+      Array.from({ length: 12 }, (_, index) => index + 3)
+    );
+    expect(error.message).toBe('Parse error on line 14:');
+  });
+
+  it.each([
+    { case: 'no line', hash: { loc: { first_column: 0, last_column: 1 } } },
+    { case: 'no last line', hash: { loc: { first_line: 2, first_column: 0 } } },
+    { case: 'no first line', hash: { loc: { last_line: 2, last_column: 1 } } },
+  ])('leaves a jison hash with $case as it is', ({ hash }) => {
+    const error = Object.assign(new Error('Parse error on line 2:'), {
+      hash: structuredClone(hash),
+    });
+    remapParseErrorLines(error, sourceLines);
+    expect(error.hash).toEqual(hash);
+  });
+
+  it.each([
+    {
+      case: 'starts with the message',
+      stack: 'Parse error on line 2:\n    at x',
+      expected: 'Parse error on line 4:\n    at x',
+    },
+    { case: 'does not hold the message', stack: '@file.js:2:1', expected: '@file.js:2:1' },
+    { case: 'is missing', stack: undefined, expected: undefined },
+  ])('rewrites the message, and leaves a stack that $case', ({ stack, expected }) => {
+    const error = new Error('Parse error on line 2:');
+    error.stack = stack;
+    remapParseErrorLines(error, sourceLines);
+    expect(error.message).toBe('Parse error on line 4:');
+    expect(error.stack).toBe(expected);
   });
 
   it.each([
