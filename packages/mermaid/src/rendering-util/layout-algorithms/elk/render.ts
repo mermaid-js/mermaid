@@ -784,6 +784,10 @@ export function applyFrameWrappingCorrection(elkGraph: {
     return;
   }
   const bare = nodes.reduce((sum, node) => sum + leafArea(node), 0);
+  // Frames with no sized leaf (only empty subgraphs) leave nothing to scale.
+  if (!(bare > 0 && Number.isFinite(bare))) {
+    return;
+  }
   const framed = nodes.reduce((sum, node) => sum + laidOutArea(node), 0);
   elkGraph.layoutOptions['elk.layered.wrapping.correctionFactor'] = Math.sqrt(framed / bare);
 }

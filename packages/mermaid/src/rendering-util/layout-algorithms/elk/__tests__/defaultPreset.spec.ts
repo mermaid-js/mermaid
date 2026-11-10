@@ -207,6 +207,32 @@ describe('ELK graph wrapping configuration', () => {
       expect(ratio).toBeGreaterThan(atLeast);
     }
   );
+
+  const nestedEmptySubgraphs = () => ({
+    direction: 'LR',
+    config: getConfig(),
+    edges: [],
+    nodes: [
+      { id: 'outer', isGroup: true, label: 'Outer', padding: 8 },
+      { id: 'inner', parentId: 'outer', isGroup: true, label: 'Inner', padding: 8 },
+    ],
+  });
+
+  it('leaves the wrapping correction unset for nested empty subgraphs', () => {
+    mermaidAPI.initialize({ elk: { wrappingStrategy: 'MULTI_EDGE', aspectRatio: 2 } });
+    const { elkGraph } = buildElkGraphFromLayoutData(nestedEmptySubgraphs() as any, context);
+    expect(elkGraph.layoutOptions).not.toHaveProperty('elk.layered.wrapping.correctionFactor');
+  });
+
+  it('sets a finite wrapping correction above 1 for a chain of framed steps', () => {
+    mermaidAPI.initialize({ elk: { wrappingStrategy: 'MULTI_EDGE', aspectRatio: 2 } });
+    const { elkGraph } = buildElkGraphFromLayoutData(
+      { ...framedChain(), direction: 'LR', config: getConfig() } as any,
+      context
+    );
+    const factor = elkGraph.layoutOptions['elk.layered.wrapping.correctionFactor'];
+    expect(Number.isFinite(factor) && factor > 1).toBe(true);
+  });
 });
 
 // Measurements from the courier-font TV/Console fixture. Run the real ELK core;
