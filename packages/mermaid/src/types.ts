@@ -6,12 +6,7 @@ export type GridVerticalAlign = 'top' | 'center' | 'bottom';
  * Omitted coordinates remain eligible for automatic placement.
  * Only occupied rows and columns create tracks; empty indices contribute no size or additional gap.
  */
-export interface GridPlacement {
-  row?: number;
-  column?: number;
-  horizontalAlign?: GridHorizontalAlign;
-  verticalAlign?: GridVerticalAlign;
-}
+export type { GridPlacement } from './config.type.js';
 
 export interface NodeMetaData {
   shape?: string;

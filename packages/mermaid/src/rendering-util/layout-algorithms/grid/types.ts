@@ -1,4 +1,3 @@
-import type { MermaidConfig } from '../../../config.type.js';
 import type { GridHorizontalAlign, GridPlacement, GridVerticalAlign } from '../../../types.js';
 import type { LayoutData, Node } from '../../types.js';
 import type { Point } from '../../../types.js';
@@ -288,24 +287,7 @@ export const GRID_DEFAULTS = {
   edgeCornerRadius: DEFAULT_EDGE_CORNER_RADIUS,
 };
 
-export type GridLayoutData = LayoutData & {
-  // Use the public config contract here so grid does not grow a parallel internal config schema.
-  config: MermaidConfig & {
-    grid?: {
-      placements?: Record<string, GridPlacement>;
-      columns?: number;
-      rowGap?: number;
-      columnGap?: number;
-      cellGap?: number;
-      containerPadding?: number;
-      titleGap?: number;
-      horizontalAlign?: GridHorizontalAlign;
-      verticalAlign?: GridVerticalAlign;
-      curve?: GridCurve;
-      edgeCornerRadius?: number;
-    };
-  };
-};
+export type GridLayoutData = LayoutData;
 
 export function isEdgeLabelNode(node: Node): boolean {
   return Boolean((node as { isEdgeLabel?: boolean }).isEdgeLabel);

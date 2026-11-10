@@ -276,15 +276,17 @@ describe('grid placement', () => {
     const gridConfig = readGridConfig({
       nodes: [],
       edges: [],
-      config: config({
-        placements: {
-          service: [
-            { row: 1, column: 1 },
-            { row: 1, column: 2 },
-          ],
+      config: {
+        grid: {
+          placements: {
+            service: [
+              { row: 1, column: 1 },
+              { row: 1, column: 2 },
+            ],
+          },
         },
-      }),
-    } as LayoutData);
+      },
+    });
 
     const { placements } = resolveGridPlacements(items, sourceOrder, gridConfig);
     const byId = new Map(placements.map((placement) => [placement.item.id, placement]));
