@@ -5,7 +5,9 @@ import { normalizePolyline } from '../layout-utils/geometry.js';
 import { validateLayout as validateSharedLayout } from '../layout-utils/validateLayout.js';
 import { prepareGridLayout } from './edgeLabels.js';
 import { runGridLayoutCore } from './layoutCore.js';
+import { GridRoutingResourceLimitError } from './routerErrors.js';
 import { createGridRoutingInstrumentation } from './routerInstrumentation.js';
+import * as routerSearch from './routerSearch.js';
 import { ROOT_CONTAINER_ID } from './types.js';
 
 const validateLayout = (data: LayoutData) =>
@@ -1123,6 +1125,65 @@ describe('grid router', () => {
       expect(metrics.bendCount).toBe(metrics.routes[0].bendCount);
       expect(metrics.crossingCount).toBe(metrics.routes[0].crossingCount);
       expect(metrics.sharedLength).toBe(metrics.routes[0].sharedLength);
+    }
+  );
+
+  it.each(['estimated_memory_cap', 'search_state_cap'] as const)(
+    'keeps a sparse route found after the preferred pass hits %s',
+    (reason) => {
+      const data = baseLayout(
+        [
+          leaf('a', 80, 40, { row: 1, column: 1 }),
+          leaf('b', 80, 40, { row: 2, column: 2 }),
+          leaf('c', 80, 40, { row: 1, column: 3 }),
+        ],
+        [edge('a-b', 'a', 'b'), edge('a-c', 'a', 'c')],
+        { rowGap: 40, columnGap: 60 }
+      );
+      const metrics = createGridRoutingInstrumentation();
+      const comparison = vi.fn();
+      const findShortestRoute = routerSearch.findShortestRoute;
+      let cappedPreferredPair = false;
+      const search = vi
+        .spyOn(routerSearch, 'findShortestRoute')
+        .mockImplementation((topology, sourceId, targetId, options) => {
+          const source = topology.getVertex?.(sourceId) ?? topology.vertices[sourceId];
+          const target = topology.getVertex?.(targetId) ?? topology.vertices[targetId];
+          if (
+            !cappedPreferredPair &&
+            options?.endpointCandidateRank === 0 &&
+            source.point.x !== target.point.x &&
+            source.point.y !== target.point.y
+          ) {
+            cappedPreferredPair = true;
+            throw new GridRoutingResourceLimitError(
+              reason,
+              'Preferred pair exceeded its resource cap',
+              reason === 'search_state_cap' ? 'edge' : undefined
+            );
+          }
+          return findShortestRoute(topology, sourceId, targetId, options);
+        });
+
+      try {
+        runGridLayoutCore(data, {
+          metrics,
+          routing: { onDualRouteComparison: comparison },
+        });
+
+        expect(cappedPreferredPair).toBe(true);
+        expect(comparison).toHaveBeenCalledWith(
+          expect.objectContaining({
+            edgeId: 'a-b',
+            sparse: expect.objectContaining({ valid: true }),
+          })
+        );
+        expect(validateLayout(data)).toMatchObject({ ok: true, issues: [] });
+        expect(metrics.resourceLimitFallbacks).toBe(0);
+        expect(metrics.fallbackReasons[reason]).toBe(0);
+      } finally {
+        search.mockRestore();
+      }
     }
   );
 

@@ -340,6 +340,7 @@ export function sparseSameContainerRoute(
         }
         if (!best || compareTupleCost(resultForPair.cost, best.result.cost) < 0) {
           best = { result: resultForPair, points };
+          searchCap = undefined;
         }
       } catch (error) {
         if (!(error instanceof GridRoutingResourceLimitError)) {
