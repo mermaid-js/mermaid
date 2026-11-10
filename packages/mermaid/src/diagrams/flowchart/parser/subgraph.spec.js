@@ -460,4 +460,56 @@ describe('when parsing subgraphs', function () {
     expect(nodes.find((node) => node.id === inner.id)).toBeUndefined();
     expect(edges.find((edge) => edge.start === 'c' && edge.end === 'subGraph0')).toBeDefined();
   });
+  const parentOf = (subgraphs, id) => subgraphs.find((subgraph) => subgraph.nodes.includes(id))?.id;
+  it('should keep a renamed subgraph in its open parent when an explicit sibling claims its id', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph Outer\n\tsubgraph\n\t\ta\n\tend\n\tsubgraph subGraph0\n\t\tb\n\tend\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    const anonymous = subgraphs.find((subgraph) => subgraph.nodes.includes('a'));
+    expect(anonymous.id).not.toBe('subGraph0');
+    expect(parentOf(subgraphs, anonymous.id)).toBe('Outer');
+    expect(parentOf(subgraphs, 'subGraph0')).toBe('Outer');
+  });
+  it('should keep a renamed subgraph in its open parent when the explicit id is nested deeper', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph Outer\n\tsubgraph\n\t\ta\n\tend\n\tsubgraph Mid\n\t\tsubgraph subGraph0\n\t\t\tb\n\t\tend\n\tend\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    const anonymous = subgraphs.find((subgraph) => subgraph.nodes.includes('a'));
+    expect(anonymous.id).not.toBe('subGraph0');
+    expect(parentOf(subgraphs, anonymous.id)).toBe('Outer');
+    expect(parentOf(subgraphs, 'subGraph0')).toBe('Mid');
+    expect(parentOf(subgraphs, 'Mid')).toBe('Outer');
+  });
+  it('should leave an explicit child alone when the renamed subgraph sits outside its parent', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph Outer\n\tsubgraph\n\t\ta\n\tend\n\tsubgraph Mid\n\t\tsubgraph subGraph0\n\t\t\tb\n\t\tend\n\t\tsubgraph subGraph1\n\t\t\tc\n\t\tend\n\tend\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    const anonymous = subgraphs.find((subgraph) => subgraph.nodes.includes('a'));
+    expect(['subGraph0', 'subGraph1']).not.toContain(anonymous.id);
+    expect(parentOf(subgraphs, anonymous.id)).toBe('Outer');
+    expect(parentOf(subgraphs, 'subGraph0')).toBe('Mid');
+    expect(parentOf(subgraphs, 'subGraph1')).toBe('Mid');
+  });
+  it('should keep a renamed subgraph in its open parent after an unrelated sibling closes', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph Outer\n\tsubgraph\n\t\ta\n\tend\n\tsubgraph Mid\n\t\tsubgraph subGraph0\n\t\t\tb\n\t\tend\n\tend\n\tsubgraph Other\n\t\tc\n\tend\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    const anonymous = subgraphs.find((subgraph) => subgraph.nodes.includes('a'));
+    expect(anonymous.id).not.toBe('subGraph0');
+    expect(parentOf(subgraphs, anonymous.id)).toBe('Outer');
+    expect(parentOf(subgraphs, 'Other')).toBe('Outer');
+  });
+  it('should keep an explicit direct child when the renamed subgraph is outside the parent', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph\n\ta\nend\nsubgraph Outer\n\tsubgraph subGraph0\n\t\tb\n\tend\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    const anonymous = subgraphs.find((subgraph) => subgraph.nodes.includes('a'));
+    expect(parentOf(subgraphs, anonymous.id)).toBeUndefined();
+    expect(subgraphs.find((subgraph) => subgraph.id === 'Outer').nodes).toEqual(['subGraph0']);
+  });
 });

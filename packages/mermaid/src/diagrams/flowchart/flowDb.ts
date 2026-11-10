@@ -62,6 +62,11 @@ export class FlowDB implements DiagramDB {
   private subGraphLookup = new Map<string, FlowSubGraph>();
   /** Ids given to subgraphs declared without one; an explicit declaration may claim them. */
   private generatedSubGraphIds = new Set<string>();
+  /**
+   * Subgraphs moved off a generated id, keyed by each id they gave up. The id the parser was given
+   * for one stays in an open parent's member list until that parent closes.
+   */
+  private movedSubGraphs = new Map<string, FlowSubGraph>();
   private droppedSubGraphMembers: DroppedSubGraphMember[] = [];
   private tooltips = new Map<string, string>();
   private subCount = 0;
@@ -684,6 +689,7 @@ You have to call mermaid.initialize.`
     this.subGraphs = [];
     this.subGraphLookup = new Map();
     this.generatedSubGraphIds = new Set();
+    this.movedSubGraphs = new Map();
     this.droppedSubGraphMembers = [];
     this.subCount = 0;
     this.tooltips = new Map();
@@ -712,6 +718,26 @@ You have to call mermaid.initialize.`
       this.subCount = this.subCount + 1;
     }
     return 'subGraph' + this.subCount;
+  }
+
+  /**
+   * Replaces an id the parser was given for a subgraph that has since moved with the subgraph's
+   * current id, as long as no closed subgraph holds the moved one. The explicit subgraph that took
+   * the id over may be listed under the same id: if it already has a parent, the listed id is the
+   * moved subgraph; otherwise the moved one is listed only when the id appears twice.
+   */
+  private restoreMovedSubGraphIds(members: string[]): string[] {
+    const isPlaced = (id: string) => this.subGraphs.some((subGraph) => subGraph.nodes.includes(id));
+    for (const [given, moved] of this.movedSubGraphs) {
+      const at = members.indexOf(given);
+      if (at === -1 || isPlaced(moved.id)) {
+        continue;
+      }
+      if (isPlaced(given) || members.includes(given, at + 1)) {
+        members[at] = moved.id;
+      }
+    }
+    return members;
   }
 
   public addSubGraph(
@@ -749,7 +775,7 @@ You have to call mermaid.initialize.`
       return { nodeList, dir };
     };
 
-    const result = uniq(list.flat());
+    const result = uniq(this.restoreMovedSubGraphIds(list.flat()));
     const nodeList = result.nodeList;
     let dir = result.dir;
     const flowchartConfig = getConfig().flowchart ?? {};
@@ -771,6 +797,7 @@ You have to call mermaid.initialize.`
       const renamed = this.nextGeneratedSubGraphId();
       const subGraph = this.subGraphLookup.get(id);
       if (subGraph) {
+        this.movedSubGraphs.set(id, subGraph);
         subGraph.id = renamed;
         this.subGraphLookup.delete(id);
         this.subGraphLookup.set(renamed, subGraph);
