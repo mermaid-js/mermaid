@@ -49,15 +49,26 @@ const prepareDb = (
 
 /**
  * `joins` of `text`, moved to the columns of `encodeEntities(text)`, which the parser reports.
- * The encoding works within a line, so a join keeps its line and moves by what the encoding
- * adds before it.
+ * The encoding works within a line, so a join keeps its line and moves by what the encoding adds
+ * before it. Each part of a line between joins is encoded once, so an entity that a join splits
+ * is not counted.
  */
 const encodedJoins = (text: string, joins: readonly LineJoin[]): LineJoin[] => {
   const lines = text.split('\n');
-  return joins.map((join) => ({
-    ...join,
-    column: encodeEntities(lines[join.line - 1].slice(0, join.column - 1)).length + 1,
-  }));
+  // The line and column of the join before, and its column in the encoded text.
+  let line = 0;
+  let column = 1;
+  let encodedColumn = 1;
+  return joins.map((join) => {
+    if (join.line !== line) {
+      line = join.line;
+      column = 1;
+      encodedColumn = 1;
+    }
+    encodedColumn += encodeEntities(lines[line - 1].slice(column - 1, join.column - 1)).length;
+    column = join.column;
+    return { ...join, column: encodedColumn };
+  });
 };
 
 /**

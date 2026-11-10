@@ -32,19 +32,53 @@ export const trackLines = (text: string): TrackedText => ({
   sourceLines: Array.from({ length: countLines(text) }, (_, index) => index + 1),
 });
 
-/** The source line of the last join of `line` at or before `column`, if it has one. */
-const joinedSourceLine = (
-  joins: readonly LineJoin[],
-  line: number,
-  column: number
-): number | undefined => {
-  let sourceLine: number | undefined;
+/** The line of the source that a line of a derived text starts on, without its joins. */
+const startSourceLine = (sourceLines: SourceLines, line: number): number => {
+  const last = sourceLines.length;
+  if (line < 1 || last === 0) {
+    return line;
+  }
+  return line <= last ? sourceLines[line - 1] : sourceLines[last - 1] + line - last;
+};
+
+/** Maps a line of a derived text, and the column in it when known, to its source line. */
+export type ToSourceLine = (line: number, column?: number) => number;
+
+/**
+ * {@link toSourceLine} for many lookups: the joins are grouped by line once, and a lookup
+ * finds its join by binary search, so it costs the logarithm of the joins of its line.
+ */
+export const sourceLineMap = (
+  sourceLines: SourceLines,
+  joins: readonly LineJoin[] = []
+): ToSourceLine => {
+  const joinsByLine = new Map<number, LineJoin[]>();
   for (const join of joins) {
-    if (join.line === line && join.column <= column) {
-      sourceLine = join.sourceLine;
+    const lineJoins = joinsByLine.get(join.line);
+    if (lineJoins) {
+      lineJoins.push(join);
+    } else {
+      joinsByLine.set(join.line, [join]);
     }
   }
-  return sourceLine;
+  return (line, column) => {
+    const lineJoins = joinsByLine.get(line);
+    if (column === undefined || lineJoins === undefined) {
+      return startSourceLine(sourceLines, line);
+    }
+    // The number of joins of the line at or before `column`, which are in column order.
+    let low = 0;
+    let high = lineJoins.length;
+    while (low < high) {
+      const middle = (low + high) >>> 1;
+      if (lineJoins[middle].column <= column) {
+        low = middle + 1;
+      } else {
+        high = middle;
+      }
+    }
+    return low > 0 ? lineJoins[low - 1].sourceLine : startSourceLine(sourceLines, line);
+  };
 };
 
 /**
@@ -58,17 +92,7 @@ export const toSourceLine = (
   line: number,
   column?: number,
   joins: readonly LineJoin[] = []
-): number => {
-  const joined = column === undefined ? undefined : joinedSourceLine(joins, line, column);
-  if (joined !== undefined) {
-    return joined;
-  }
-  const last = sourceLines.length;
-  if (line < 1 || last === 0) {
-    return line;
-  }
-  return line <= last ? sourceLines[line - 1] : sourceLines[last - 1] + line - last;
-};
+): number => sourceLineMap(sourceLines, joins)(line, column);
 
 /** A part of a text to remove: `removed`, which starts at `index`. */
 interface Span {
@@ -108,7 +132,7 @@ const removeSpans = (
       nextJoin++;
     }
     const passed = nextJoin > 0 ? joins[nextJoin - 1] : undefined;
-    return passed?.line === line ? passed.sourceLine : toSourceLine(sourceLines, line);
+    return passed?.line === line ? passed.sourceLine : startSourceLine(sourceLines, line);
   };
   const pass = (char: string) => {
     if (char === '\n') {
@@ -186,8 +210,6 @@ interface ReportedLine {
   readonly line: number;
   readonly column?: number;
 }
-
-type ToSource = (line: number, column?: number) => number;
 
 /** The header jison writes at the start of a parse or lexical error. */
 const jisonHeader = /^(?:Parse|Lexical) error on line (\d+)/;
@@ -287,7 +309,7 @@ const langiumLines = (message: string, errors: LangiumError[]): ReportedLine[] =
   return lines;
 };
 
-const rewriteLines = (message: string, lines: ReportedLine[], toSource: ToSource): string => {
+const rewriteLines = (message: string, lines: ReportedLine[], toSource: ToSourceLine): string => {
   let rewritten = '';
   let cursor = 0;
   for (const { index, length, line, column } of lines) {
@@ -297,7 +319,7 @@ const rewriteLines = (message: string, lines: ReportedLine[], toSource: ToSource
   return rewritten + message.slice(cursor);
 };
 
-const remapHash = (hash: Record<string, unknown>, toSource: ToSource) => {
+const remapHash = (hash: Record<string, unknown>, toSource: ToSourceLine) => {
   // Jison counts `hash.line` and the columns of `hash.loc` from 0, and its lines from 1 like
   // its message. `last_column` is past the last character, so it is that character from 1.
   const loc = jisonLocation(hash);
@@ -335,7 +357,7 @@ export const remapParseErrorLines = (
   if (!(error instanceof Error)) {
     return;
   }
-  const toSource: ToSource = (line, column) => toSourceLine(sourceLines, line, column, joins);
+  const toSource = sourceLineMap(sourceLines, joins);
   const errors =
     'result' in error && isRecord(error.result) ? langiumErrors(error.result) : undefined;
   const { message } = error;

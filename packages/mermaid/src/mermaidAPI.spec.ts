@@ -1012,6 +1012,15 @@ graph TD;A--x|text including URL space|B;`)
         }
       );
 
+      it('stays quick on a line that many directives across lines join', async () => {
+        const RESPONSIVE_MS = 2000;
+        const JOINS = 128_000;
+        const started = performance.now();
+        const error = await parseError(`pie\n  "a": ${'b%%{x\n}%%'.repeat(JOINS)} ;`);
+        expect(performance.now() - started).toBeLessThan(RESPONSIVE_MS);
+        expect(reportedLines(error)[0]).toBe(2);
+      });
+
       // The agentflow db writes source lines into the `hash` of its own `@{ }` errors, so the
       // remap leaves a hash alone when the message names no line of the parsed text.
       const AGENTFLOW_SHAPE_ERROR =

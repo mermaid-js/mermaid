@@ -4,6 +4,7 @@ import {
   keepSuffix,
   remapParseErrorLines,
   removeMatches,
+  sourceLineMap,
   toSourceLine,
   trackLines,
 } from './sourceLines.js';
@@ -152,6 +153,23 @@ describe('toSourceLine', () => {
     { case: 'no column', column: undefined, expected: 3 },
   ])('maps a joined line by $case', ({ column, expected }) => {
     expect(toSourceLine([3, 5], 1, column, joins)).toBe(expected);
+  });
+
+  it.each([
+    { column: 1, expected: 3 },
+    { column: 2, expected: 6 },
+    { column: 4, expected: 6 },
+    { column: 5, expected: 7 },
+    { column: 7, expected: 8 },
+    { column: 99, expected: 8 },
+  ])('maps column $column of a line with three joins to line $expected', ({ column, expected }) => {
+    const threeJoins = [
+      { line: 1, column: 2, sourceLine: 6 },
+      { line: 1, column: 5, sourceLine: 7 },
+      { line: 1, column: 7, sourceLine: 8 },
+      { line: 2, column: 3, sourceLine: 9 },
+    ];
+    expect(sourceLineMap([3, 5], threeJoins)(1, column)).toBe(expected);
   });
 
   it('maps a line without a join by its start', () => {
