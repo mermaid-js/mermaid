@@ -9,7 +9,7 @@ import type { EntityNode } from '../../../diagrams/er/erTypes.js';
 import { createText } from '../../createText.js';
 import { evaluate, parseGenericTypes } from '../../../diagrams/common/common.js';
 import { select } from 'd3';
-import { calculateTextWidth } from '../../../utils.js';
+import { calculateTextHeight, calculateTextWidth } from '../../../utils.js';
 import type { MermaidConfig } from '../../../config.type.js';
 import type { D3Selection } from '../../../types.js';
 
@@ -63,6 +63,12 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
       config.er!.minEntityWidth!
     ) {
       node.width = config.er!.minEntityWidth;
+    }
+    if (
+      calculateTextHeight(node.label, config) + options.labelPaddingY * 2 <
+      config.er!.minEntityHeight!
+    ) {
+      node.height = config.er!.minEntityHeight;
     }
     const shapeSvg = await drawRect(parent, node, options);
     if (theme != null && COLOR_THEMES.has(theme)) {
@@ -168,13 +174,10 @@ export async function erBox<T extends SVGGraphicsElement>(parent: D3Selection<T>
   }
 
   const shapeBBox = shapeSvg.node()!.getBBox();
+  const minWidth = Math.max(nameBBox.width + PADDING * 2, config.er?.minEntityWidth ?? 0);
   // Add extra padding to attribute components to accommodate for difference in width
-  if (
-    nameBBox.width + PADDING * 2 - (maxTypeWidth + maxNameWidth + maxKeysWidth + maxCommentWidth) >
-    0
-  ) {
-    const difference =
-      nameBBox.width + PADDING * 2 - (maxTypeWidth + maxNameWidth + maxKeysWidth + maxCommentWidth);
+  if (minWidth - (maxTypeWidth + maxNameWidth + maxKeysWidth + maxCommentWidth) > 0) {
+    const difference = minWidth - (maxTypeWidth + maxNameWidth + maxKeysWidth + maxCommentWidth);
     maxTypeWidth += difference / totalWidthSections;
     maxNameWidth += difference / totalWidthSections;
     if (maxKeysWidth > 0) {
