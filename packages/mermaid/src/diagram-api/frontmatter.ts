@@ -77,16 +77,37 @@ const shownWith = (text: string, escape: (char: string) => string): string => {
 /** Escaped before it is cut, so the shown text is one line of at most the limit. */
 const shown = (text: string): string => shownWith(text, escapeControl);
 
-/** A part that YAML reads back as the same key without quotes. */
+/** The schema the front matter is read with, and a suggested key is read back with. */
+const FRONT_MATTER_SCHEMA = yaml.JSON_SCHEMA;
+
+/** A part made only of the characters a plain YAML key may hold. */
 const PLAIN_YAML_KEY = /^[\w-]+$/;
 
+/** Whether `segment`, written without quotes, reads back as the same key. */
+const readsBackAsItself = (segment: string): boolean => {
+  try {
+    // A mapping key is the string of the value its text reads as.
+    return String(yaml.load(segment, { schema: FRONT_MATTER_SCHEMA })) === segment;
+  } catch {
+    return false;
+  }
+};
+
 /**
- * Shows one part of the suggested nested form. A part that is not a plain word is written as a
- * double-quoted YAML string, whose `\n` and `\uXXXX` escapes are the ones `escapeControl` makes,
- * so the suggestion means the key the author wrote.
+ * A part written without quotes: plain characters that read back as the same key. A part longer
+ * than the limit is shown cut, so it is written without quotes and without being read back.
+ */
+const isPlainKey = (segment: string): boolean =>
+  PLAIN_YAML_KEY.test(segment) && (segment.length > MAX_SHOWN_LENGTH || readsBackAsItself(segment));
+
+/**
+ * Shows one part of the suggested nested form. A part that is not a plain key, such as one with
+ * a space or one YAML reads as a number (`0x10`), is written as a double-quoted YAML string,
+ * whose `\n` and `\uXXXX` escapes are the ones `escapeControl` makes, so the suggestion means
+ * the key the author wrote.
  */
 const suggestedKey = (segment: string): string =>
-  PLAIN_YAML_KEY.test(segment) ? shown(segment) : `"${shownWith(segment, escapeQuoted)}"`;
+  isPlainKey(segment) ? shown(segment) : `"${shownWith(segment, escapeQuoted)}"`;
 
 /** Writes `['elk', 'mergeEdges']` as `elk: { mergeEdges: ... }`. */
 const nestedForm = (path: string[]): string =>
@@ -141,7 +162,7 @@ export function extractFrontMatter(text: string): FrontMatterResult {
     yaml.load(yamlBody, {
       // To support config, we need JSON schema.
       // https://www.yaml.org/spec/1.2/spec.html#id2803231
-      schema: yaml.JSON_SCHEMA,
+      schema: FRONT_MATTER_SCHEMA,
     }) ?? {};
 
   // To handle runtime data type changes

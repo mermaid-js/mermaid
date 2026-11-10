@@ -315,6 +315,49 @@ describe('dotted config keys in frontmatter', () => {
       );
     };
 
+    it.each([
+      ['a hexadecimal number', '0x10'],
+      ['a number with a leading zero', '010'],
+      ['a number with an exponent', '1e3'],
+      ['a negative zero', '-0'],
+    ])('is quoted when a part reads as %s, so it reads back as the key', (_name, part) => {
+      const warn = warnSpy();
+      extractFrontMatter(withConfigKey(`treeView.filenameIcons.${part}`, 'x'));
+      const message = String(warn.mock.calls[0][0]);
+      expect(message).toMatch(`write it nested: treeView: { filenameIcons: { "${part}": ... } }`);
+      expect(readBack(message, 1)).toEqual({ treeView: { filenameIcons: { [part]: 1 } } });
+    });
+
+    it.each([
+      ['a decimal number', '12'],
+      ['null', 'null'],
+      ['true', 'true'],
+      ['a word with a dash', 'a-b'],
+      ['a date, which the front matter schema reads as a string', '2001-12-14'],
+    ])('stays bare when a part is %s, which reads back as the key', (_name, part) => {
+      const warn = warnSpy();
+      extractFrontMatter(withConfigKey(`treeView.filenameIcons.${part}`, 'x'));
+      const message = String(warn.mock.calls[0][0]);
+      expect(message).toMatch(`write it nested: treeView: { filenameIcons: { ${part}: ... } }`);
+      expect(readBack(message, 1)).toEqual({ treeView: { filenameIcons: { [part]: 1 } } });
+    });
+
+    it('is quoted when a part that reads as a number is exactly the limit long', () => {
+      const warn = warnSpy();
+      const digits = '1'.repeat(MAX_SHOWN_LENGTH);
+      extractFrontMatter(withConfigKey(`elk.${digits}`, 'x'));
+      expect(String(warn.mock.calls[0][0])).toMatch(`write it nested: elk: { "${digits}": ... }`);
+    });
+
+    it('stays bare, cut, when a plain part is longer than the limit', () => {
+      const warn = warnSpy();
+      const digits = '1'.repeat(MAX_SHOWN_LENGTH + 1);
+      extractFrontMatter(withConfigKey(`elk.${digits}`, 'x'));
+      expect(String(warn.mock.calls[0][0])).toMatch(
+        `write it nested: elk: { ${digits.slice(0, MAX_SHOWN_LENGTH)}...: ... }`
+      );
+    });
+
     describe('cut at the limit', () => {
       const BELOW_LIMIT = MAX_SHOWN_LENGTH - 1;
       it.each([

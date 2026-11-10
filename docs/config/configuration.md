@@ -63,7 +63,7 @@ A section is any option of the default configuration that holds nested options, 
 The key stays ignored.
 The warning shows at most four parts of the key, and cuts the key and each part at 80 characters, never inside a backslash sequence.
 Control characters in the key, such as a newline or a tab, and the bidirectional format controls (U+202A to U+202E and U+2066 to U+2069) are shown as backslash sequences like `\n`, so the warning stays on one line.
-A part of the suggested form that is not a plain word is written in double quotes, as YAML needs.
+A part of the suggested form that is not a plain word, or that YAML reads as something else, such as the number `0x10`, is written in double quotes, as YAML needs.
 
 The default `logLevel` is `fatal`, so the warning is invisible until you lower it to `warn` (or `3`) or below when you initialize mermaid:
 
