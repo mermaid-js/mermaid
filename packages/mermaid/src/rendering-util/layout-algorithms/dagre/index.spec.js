@@ -1213,6 +1213,45 @@ ${rest}`
     }
   });
 
+  it('reserves no title for a state note group, which paints only an invisible frame', async () => {
+    const restoreDom = setupDom();
+
+    try {
+      // setupDom stubs every getBBox to 50 high, so the note text is taller than the margin.
+      const nodeYs = async (margin) => {
+        const { svg } = await mermaidAPI.render(
+          'note-group-title-test',
+          `%%{init: {"layout": "dagre", "htmlLabels": false, "flowchart": {"subGraphTitleMargin": {"top": ${margin}, "bottom": ${margin}}}}}%%
+stateDiagram-v2
+  A --> B
+  note right of A
+    one
+    two
+  end note`
+        );
+        const document = new JSDOM(svg).window.document;
+        return new Map(
+          [...document.querySelectorAll('.node')].map((node) => [
+            node.id.replace(/^.*-state-/, ''),
+            Number(/translate\([^,]+,\s*([^)]+)\)/.exec(node.getAttribute('transform'))[1]),
+          ])
+        );
+      };
+
+      const atDefault = await nodeYs(0);
+      const withMargin = await nodeYs(5);
+      // The flat margin moves every node alike; the note gets no title reserve on top.
+      const moved = [...withMargin].map(([id, y]) => [id, y - atDefault.get(id)]);
+      expect(moved).toEqual([
+        ['A-1', 5],
+        ['B-0', 5],
+        ['A----note-1', 5],
+      ]);
+    } finally {
+      restoreDom();
+    }
+  });
+
   it('renders hand-drawn class diagrams with nested namespaces', async () => {
     const restoreDom = setupDom();
 

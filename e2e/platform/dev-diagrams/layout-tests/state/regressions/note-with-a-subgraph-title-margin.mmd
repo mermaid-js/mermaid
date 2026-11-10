@@ -1,0 +1,18 @@
+---
+config:
+  layout: dagre
+  flowchart:
+    subGraphTitleMargin:
+      top: 0
+      bottom: 10
+---
+stateDiagram-v2
+  %% The note is wrapped in a group that paints no title, so the note sits beside A
+  %% whatever the margin, rather than below a header for its own text.
+  A --> B
+  note right of A
+    one
+    two
+    three
+    four
+  end note

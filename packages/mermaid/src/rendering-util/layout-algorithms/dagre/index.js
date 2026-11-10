@@ -16,7 +16,7 @@ import {
   sortNodesByHierarchy,
 } from './mermaid-graphlib.js';
 import { positionNode, setNodeElem } from '../../rendering-elements/nodes.js';
-import { insertCluster } from '../../rendering-elements/clusters.js';
+import { clusterPaintsTitle, insertCluster } from '../../rendering-elements/clusters.js';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge } from '../../rendering-elements/edges.js';
 import { log } from '../../../logger.js';
 import { getSubGraphTitleMargins } from '../../../utils/subGraphTitleMargins.js';
@@ -305,7 +305,7 @@ const measureDagreGraph = async ({
   // where the reserve is 0 whatever the label, and for a shape that paints no title,
   // which keeps the flat margin.
   const measureClusterTitle = async (clusterNode) => {
-    if (subGraphTitleTotalMargin > 0) {
+    if (subGraphTitleTotalMargin > 0 && clusterPaintsTitle(clusterNode.shape)) {
       const unwrap = clusterNode.labelType !== 'markdown';
       await measureGroupLabel(nodes, clusterNode, unwrap ? Number.POSITIVE_INFINITY : undefined);
     }
