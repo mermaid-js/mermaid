@@ -2,8 +2,9 @@ import { getConfig } from '../../diagram-api/diagramAPI.js';
 import { C4_ELEMENT_TYPES } from './c4ShapeAdapter.js';
 import { readableOn } from './c4Colors.js';
 
-// The elements each C4 shape draws; `person` contributes both a rect and a circle.
-const SHAPE_PARTS = ['rect', 'path', 'circle', 'ellipse', 'line'];
+// The elements each C4 shape draws; `person` contributes both a rect and a circle, and
+// the `component` shape keyword (`fr-rect`) a polygon.
+const SHAPE_PARTS = ['rect', 'path', 'circle', 'ellipse', 'line', 'polygon'];
 
 // Per-element-type font rules from the c4 config (personFontFamily and friends).
 // Built through the CSSOM so config values are parsed as CSS values: a value

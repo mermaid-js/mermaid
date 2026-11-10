@@ -79,4 +79,17 @@ describe('c4 styles', () => {
     );
     expect(valueFor(css, parts('.c4-shape .label'), 'fill')).toBe('currentColor');
   });
+
+  // `$shape="component"` draws the framed rectangle as a polygon, which has no inline
+  // colours of its own.
+  it('paints the polygon of a component-shaped element like the other shape parts', () => {
+    const css = getStyles({ background: '#ffffff' });
+    const hasPart = (part: string) => (selector: string) =>
+      selector.split(',').some((one) => one.trim() === part);
+
+    expect(valueFor(css, hasPart('.c4-shape polygon'), 'fill')).toBe('#ffffff');
+    expect(valueFor(css, hasPart('.c4-shape.c4-component polygon'), 'stroke')).toBe(
+      valueFor(css, parts('.c4-shape.c4-component rect'), 'stroke')
+    );
+  });
 });
