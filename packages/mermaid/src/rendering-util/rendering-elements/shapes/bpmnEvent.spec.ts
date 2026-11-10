@@ -1,6 +1,13 @@
 import { select } from 'd3';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { getConfig, reset, setConfig } from '../../../config.js';
+import {
+  addDirective,
+  getConfig,
+  reset,
+  saveConfigFromInitialize,
+  setConfig,
+  setSiteConfig,
+} from '../../../config.js';
 import type { Node } from '../../types.js';
 import { renderBpmnEvent, THEME_DEFAULT_RING_WIDTH } from './bpmnEvent.js';
 import { EVENT_RINGS, type EventPosition } from './bpmnShapeCore.js';
@@ -98,6 +105,68 @@ describe('bpmn event ring weight', () => {
       expect(new Set(widths)).toEqual(new Set(['0px']));
     }
   );
+
+  describe('a width the author set', () => {
+    const NOTATION_WEIGHTS = {
+      start: ['1.6px'],
+      intermediate: ['1.4px', '1.4px'],
+      boundary: ['1.4px', '1.4px'],
+      end: ['3.4px'],
+    } as const satisfies Record<EventPosition, readonly string[]>;
+
+    const inDirective = async (position: EventPosition, bpmn?: Record<string, unknown>) => {
+      if (bpmn) {
+        addDirective({ themeVariables: { bpmn } });
+      }
+      return ringWidthsOf(position);
+    };
+
+    const inInitialize = async (position: EventPosition, bpmn: Record<string, unknown>) => {
+      const conf = { themeVariables: { bpmn } };
+      saveConfigFromInitialize(conf);
+      setSiteConfig(conf);
+      try {
+        return await ringWidthsOf(position);
+      } finally {
+        saveConfigFromInitialize({});
+        setSiteConfig({});
+      }
+    };
+
+    const widthOf = (position: EventPosition, width: number | string) =>
+      position === 'end' ? { endEventStrokeWidth: width } : { eventStrokeWidth: width };
+
+    const drawnAs = (position: EventPosition, css: string) =>
+      NOTATION_WEIGHTS[position].map(() => css);
+
+    describe.each(['start', 'intermediate', 'boundary', 'end'] as const)('%s', (position) => {
+      const themeDefault =
+        THEME_DEFAULT_RING_WIDTH[position === 'end' ? 'endEventStrokeWidth' : 'eventStrokeWidth'];
+
+      it.each([
+        ['the theme default as a number', themeDefault, `${themeDefault}px`],
+        ['the theme default as a CSS length', `${themeDefault}px`, `${themeDefault}px`],
+        ['0', 0, '0px'],
+        ['another number', HEAVY, `${HEAVY}px`],
+      ])('draws %s in a directive as written', async (_case, width, css) => {
+        expect(await inDirective(position, widthOf(position, width))).toEqual(
+          drawnAs(position, css)
+        );
+      });
+
+      it('draws the theme default as a number given to initialize as written', async () => {
+        expect(await inInitialize(position, widthOf(position, themeDefault))).toEqual(
+          drawnAs(position, `${themeDefault}px`)
+        );
+      });
+
+      it('keeps its notation weight when the directive sets another variable', async () => {
+        expect(await inDirective(position, { eventFill: 'white' })).toEqual(
+          NOTATION_WEIGHTS[position]
+        );
+      });
+    });
+  });
 
   it('matches the ring-width defaults of the theme', () => {
     setConfig({});
