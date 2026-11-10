@@ -4,6 +4,7 @@ import {
   isGridVerticalAlign,
   isValidGridCoordinate,
   validateGridCoordinate,
+  validateGridPlacementCoordinates,
 } from './gridPlacement.js';
 
 describe('grid placement validation', () => {
@@ -59,4 +60,17 @@ describe('grid placement validation', () => {
     expect(isGridVerticalAlign('bottom')).toBe(true);
     expect(isGridVerticalAlign('middle')).toBe(false);
   });
+
+  it.each([{ malformed: null }, { malformed: 'invalid' }, { malformed: [] }])(
+    'skips malformed occurrences but validates later placement coordinates %#',
+    ({ malformed }) => {
+      expect(() =>
+        validateGridPlacementCoordinates({ service: [malformed, { row: 1, column: 2 }] }, [])
+      ).not.toThrow();
+
+      expect(() =>
+        validateGridPlacementCoordinates({ service: [malformed, { column: 'invalid' }] }, [])
+      ).toThrow('Invalid column for placement "service[1]"');
+    }
+  );
 });
