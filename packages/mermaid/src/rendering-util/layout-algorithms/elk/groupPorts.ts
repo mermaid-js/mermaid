@@ -28,7 +28,7 @@ export interface ElkPort {
   layoutOptions: { 'elk.port.side': PortSide };
 }
 
-interface ElkLabelLike {
+export interface ElkLabelLike {
   x?: number;
   y?: number;
   width?: number;

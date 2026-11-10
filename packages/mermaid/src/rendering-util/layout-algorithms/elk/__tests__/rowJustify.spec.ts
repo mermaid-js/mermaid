@@ -78,6 +78,23 @@ describe('moveInnerEdges', () => {
     expect(link.labels?.[0].x).toBe(70);
   });
 
+  it('keeps an end label at its own end and moves only the centre label halfway', () => {
+    const link = {
+      ...edge('e', 'a', 'b'),
+      labels: [
+        { x: 55, y: 5 },
+        { x: 50, y: 5, layoutOptions: { 'edgeLabels.placement': 'TAIL' } },
+        { x: 64, y: 5, layoutOptions: { 'edgeLabels.placement': 'HEAD' } },
+      ],
+    };
+    const moves = new Map([
+      ['a', 10],
+      ['b', 40],
+    ]);
+    expect(moveInnerEdges([link], 'row', moves, ACROSS)).toBe(true);
+    expect(link.labels.map(({ x }) => x)).toEqual([80, 60, 104]);
+  });
+
   it('refuses a bent link whose ends move apart, and moves nothing', () => {
     const bent = edge('e', 'a', 'b', 1);
     const straight = edge('f', 'a', 'b');

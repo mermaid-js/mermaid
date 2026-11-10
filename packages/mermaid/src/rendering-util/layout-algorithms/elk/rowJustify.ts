@@ -1,5 +1,5 @@
 import type { TreeData } from './find-common-ancestor.js';
-import type { ElkDirection, ElkEdgeLike } from './groupPorts.js';
+import type { ElkDirection, ElkEdgeLike, ElkLabelLike } from './groupPorts.js';
 
 /** A node of the laid-out ELK graph, by its position relative to its parent. */
 export interface JustifyBox {
@@ -182,8 +182,17 @@ function applyEdgeMove(edge: ElkEdgeLike, [from, to]: [number, number], { pos }:
     }));
   }
   for (const label of edge.labels ?? []) {
-    label[pos] = (label[pos] ?? 0) + (from + to) / 2;
+    label[pos] = (label[pos] ?? 0) + labelMove(label, from, to);
   }
+}
+
+/** An end label moves with its own end, any other label by the mean of the two. */
+function labelMove({ layoutOptions }: ElkLabelLike, from: number, to: number): number {
+  const placement = layoutOptions?.['edgeLabels.placement'];
+  if (placement === 'TAIL') {
+    return from;
+  }
+  return placement === 'HEAD' ? to : (from + to) / 2;
 }
 
 /** Is `id` the frame `frameId` or anything inside it? */
