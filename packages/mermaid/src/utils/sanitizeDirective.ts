@@ -31,8 +31,11 @@ const sanitizeDictionaryConfig = (dict: Record<string, unknown>, valuePattern: R
   }
 };
 
-// Track the containing config section because `placements` contains authored node IDs that are not
-// present in configKeys and therefore needs shape validation instead of normal key recursion.
+/**
+ * Sanitizes directive values in place, removing unsupported keys and filtering CSS options.
+ * Tracks the parent section so grid placements use shape validation instead of treating authored
+ * node IDs as config keys. Invalid placement coordinates propagate as errors.
+ */
 const sanitizeDirectiveValue = (args: any, parentKey?: string): void => {
   log.debug('sanitizeDirective called with', args);
 

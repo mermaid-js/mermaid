@@ -71,6 +71,10 @@ const elkLayoutLoaders = (): LayoutLoaderDefinition[] => {
 };
 
 // TODO: Should we load dagre without lazy loading?
+/**
+ * Registers built-in layout names without eagerly importing their implementations.
+ * Large-feature loaders are omitted from tiny builds.
+ */
 const registerDefaultLayoutLoaders = () => {
   registerLayoutLoaders([
     {

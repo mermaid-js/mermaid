@@ -20,18 +20,24 @@ export function isValidGridCoordinate(value: unknown): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value);
 }
 
+/** Narrows untrusted alignment values to the supported horizontal cell alignments. */
 export function isGridHorizontalAlign(value: unknown): value is GridHorizontalAlign {
   return (
     typeof value === 'string' && (GRID_HORIZONTAL_ALIGNMENTS as readonly string[]).includes(value)
   );
 }
 
+/** Narrows untrusted alignment values to the supported vertical stack alignments. */
 export function isGridVerticalAlign(value: unknown): value is GridVerticalAlign {
   return (
     typeof value === 'string' && (GRID_VERTICAL_ALIGNMENTS as readonly string[]).includes(value)
   );
 }
 
+/**
+ * Accepts an omitted coordinate or a safe integer without coercing authored values.
+ * Throws `GRID_INVALID_COORDINATE` with placement, node, field, and value details otherwise.
+ */
 export function validateGridCoordinate(
   placementId: string,
   field: 'row' | 'column',
@@ -75,6 +81,11 @@ export function validateGridCoordinate(
   }
 }
 
+/**
+ * Validates own row and column properties in placement-map occurrences and inline item metadata.
+ * Ignores malformed container shapes; invalid coordinates throw, with array indexes identifying
+ * the offending occurrence.
+ */
 export function validateGridPlacementCoordinates(
   placements: unknown,
   items: Iterable<{ id: string; metadata?: unknown }>
@@ -164,6 +175,10 @@ export function sanitizeGridPlacements(dict: Record<string, unknown>): void {
   }
 }
 
+/**
+ * Checks non-coordinate placement properties against the alignment allowlist.
+ * Coordinates are validated separately so invalid values throw instead of being deleted.
+ */
 function isValidGridPlacementProperty(key: string, value: unknown): boolean {
   switch (key) {
     case 'horizontalAlign':

@@ -127,6 +127,11 @@ export const assertDiagramNotError = async (page: Page): Promise<void> => {
   await expect(svg.locator('.error-icon')).toHaveCount(0);
 };
 
+/**
+ * Opens a diagram URL, waits for rendering, and runs optional validation and screenshot checks.
+ * Rejects executed XSS payloads and, by default, error-diagram fallbacks. Sandbox validation
+ * receives the iframe instead of the diagram SVG; browser errors supplement render timeouts.
+ */
 export const openURLAndVerifyRendering = async (
   page: Page,
   testInfo: TestInfo,

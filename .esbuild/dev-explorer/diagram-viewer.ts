@@ -323,6 +323,7 @@ function isTheme(v: unknown): v is MermaidTheme {
   );
 }
 
+/** Narrows persisted viewer settings to layout names supported by the explorer. */
 function isLayout(v: unknown): v is MermaidLayout {
   return (
     v === 'dagre' ||
@@ -344,10 +345,11 @@ function isMermaidLogLevel(v: unknown): v is MermaidLogLevel {
   );
 }
 
+/**
+ * Maps legacy `dagre-d3` and `dagre-wrapper` renderer settings to `dagre`.
+ * Current layout names pass through; unsupported values return `null`.
+ */
 function normalizeLayout(v: unknown): MermaidLayout | null {
-  // Back-compat:
-  // - older UI used `renderer=dagre-d3|dagre-wrapper|elk`
-  // - new UI uses `layout=dagre|elk|domus`
   if (
     v === 'dagre' ||
     v === 'elk' ||

@@ -56,8 +56,10 @@ const FLOWCHART_METADATA_KEYS = new Set<string>([
   ...GRID_LAYOUT_METADATA_KEYS,
 ] satisfies (keyof NodeMetaData)[]);
 
-// Flowchart metadata is a broad author-facing object. Forward only the fields understood by layout
-// code so renderer nodes do not become a second, unsanitized metadata API.
+/**
+ * Projects only own grid-placement properties into renderer metadata, or returns `undefined`.
+ * Container callers may also forward `algorithm`; unrelated author metadata stays in the DB.
+ */
 function pickFlowchartLayoutMetadata(
   metadata: NodeMetaData | undefined,
   includeContainerAlgorithm = false
@@ -1142,6 +1144,10 @@ You have to call mermaid.initialize.`
     return { arrowTypeStart, arrowTypeEnd };
   }
 
+  /**
+   * Adds a renderer node with parent, shape, style, and filtered layout metadata.
+   * Existing nodes receive style updates rather than being duplicated.
+   */
   private addNodeFromVertex(
     vertex: FlowVertex,
     nodes: Node[],
@@ -1214,6 +1220,11 @@ You have to call mermaid.initialize.`
     return compiledStyles;
   }
 
+  /**
+   * Projects the database into renderer nodes and edges using the current configuration.
+   * Hides collapsed descendants, redirects boundary edges, and forwards only supported
+   * layout metadata for visible vertices and expanded subgraphs.
+   */
   public getData() {
     const config = getConfig();
     const nodes: Node[] = [];
@@ -1452,6 +1463,10 @@ You have to call mermaid.initialize.`
     return { nodes, edges, other, config };
   }
 
+  /**
+   * Rejects invalid inline coordinates and warns about unknown metadata when grid is selected.
+   * Expanded subgraph metadata may additionally specify a container `algorithm`.
+   */
   public validate() {
     const config = getConfig();
     if (config.layout !== 'grid') {

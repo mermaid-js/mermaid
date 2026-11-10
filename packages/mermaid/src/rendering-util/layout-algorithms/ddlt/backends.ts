@@ -114,6 +114,10 @@ export function getLayoutTestBackend(_id: LayoutTestBackendId): LayoutTestBacken
   domusBackendUnavailable();
 }
 
+/**
+ * Selects the layout backend for a fixture profile.
+ * Legacy flowchart profiles retain DOMUS rather than silently switching to a newer backend.
+ */
 export function backendsForProfile(profile: DdltFixtureProfile): LayoutTestBackendId[] {
   if (profile === 'swimlanes') {
     return ['swimlanes'];

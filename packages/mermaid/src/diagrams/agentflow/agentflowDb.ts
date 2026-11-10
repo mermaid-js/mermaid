@@ -1946,6 +1946,10 @@ You have to call mermaid.initialize.`
     };
   }
 
+  /**
+   * Rejects invalid inline grid coordinates on vertices and subgraphs when grid is selected.
+   * Other layouts leave grid placement metadata uninterpreted.
+   */
   public validate() {
     if (getConfig().layout !== 'grid') {
       return;

@@ -76,6 +76,11 @@ export function buildGridSourceOrder(nodes: Node[]): Map<string, number> {
   return order;
 }
 
+/**
+ * Normalizes public grid options, applying defaults to unsupported spacing and rendering values.
+ * Placement objects become occurrence arrays; authored coordinates remain unchanged so
+ * placement resolution can reject invalid values rather than silently moving nodes.
+ */
 export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized {
   const raw = isObjectRecord(data.config?.grid) ? data.config.grid : {};
   const placementsRaw = isObjectRecord(raw.placements) ? raw.placements : {};
@@ -132,6 +137,10 @@ export function readGridConfig(data: GridLayoutData): GridLayoutConfigNormalized
   };
 }
 
+/**
+ * Warns about unknown placement targets and entries exceeding the number of matching nodes.
+ * Matches authored placement IDs when available, otherwise emitted IDs; does not mutate the map.
+ */
 export function validateGridPlacementMap(
   items: Iterable<Node>,
   config: GridLayoutConfigNormalized
@@ -169,6 +178,10 @@ function itemComparator(sourceOrder: Map<string, number>) {
   };
 }
 
+/**
+ * Resolves one authored-ID occurrence, with inline metadata overriding placement-map fields.
+ * Validates coordinates before supplying placeholders for axes left to automatic placement.
+ */
 function resolveItemPlacement(
   item: Node,
   sourceOrder: Map<string, number>,
@@ -260,6 +273,11 @@ function nextAutoCell(
   }
 }
 
+/**
+ * Assigns sibling nodes to cells in source order, reserving explicit cells before auto-placement.
+ * Repeated authored IDs consume successive map entries. Explicit cell occupants form stacks,
+ * but conflicting vertical alignments throw `GRID_CELL_ALIGNMENT_CONFLICT`.
+ */
 export function resolveGridPlacements(
   items: Node[],
   sourceOrder: Map<string, number>,

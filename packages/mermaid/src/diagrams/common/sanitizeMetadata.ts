@@ -7,6 +7,10 @@
 export function stripPrototypeKeys<T>(value: T): T {
   const copies = new WeakMap<object, unknown>();
 
+  /**
+   * Copies metadata without prototype-shaped keys, reusing copies for aliases and cycles.
+   * Registers each container before visiting its children so self-references terminate.
+   */
   function sanitize(value: unknown): unknown {
     if (value === null || typeof value !== 'object') {
       return value;
