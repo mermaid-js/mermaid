@@ -1,4 +1,4 @@
-import { evaluate } from '../../../config.js';
+import { getEffectiveHtmlLabels } from '../../../config.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import type { D3Selection } from '../../../types.js';
 import { getIconSVG, isIconAvailable } from '../../icons.js';
@@ -20,7 +20,7 @@ export async function setIconContent<T extends SVGGElement>(
 ): Promise<void> {
   const iconName = node.icon ?? '';
   const fontAwesome = FONT_AWESOME_ICON.exec(iconName);
-  const useHtmlLabels = node.useHtmlLabels === true || evaluate(getConfig()?.htmlLabels);
+  const useHtmlLabels = node.useHtmlLabels === true || getEffectiveHtmlLabels(getConfig());
 
   if (fontAwesome && useHtmlLabels && !(await isIconAvailable(iconName))) {
     const [, prefix, name] = fontAwesome;

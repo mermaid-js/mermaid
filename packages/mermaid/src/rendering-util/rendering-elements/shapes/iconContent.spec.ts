@@ -155,6 +155,24 @@ describe('setIconContent', () => {
     expect(fontAwesomeGlyph()?.getAttribute('class')).toBe('fas fa-tag');
   });
 
+  it.each([
+    [false, 'keeps the unknown-icon placeholder'],
+    [true, 'draws the Font Awesome glyph'],
+  ])(
+    'follows flowchart.htmlLabels %s when the root setting is unset: %s',
+    async (flowchartHtmlLabels) => {
+      configApi.setSiteConfig({ flowchart: { htmlLabels: flowchartHtmlLabels } });
+      try {
+        await setIconContent(iconHost(), iconNode(), ICON_SIZE);
+      } finally {
+        configApi.setSiteConfig({});
+      }
+
+      expect(fontAwesomeGlyph() !== null).toBe(flowchartHtmlLabels);
+      expect(unknownIconMark()).toBe(!flowchartHtmlLabels);
+    }
+  );
+
   it('keeps the unknown-icon placeholder for an unregistered name that is not Font Awesome', async () => {
     await setIconContent(iconHost(), iconNode({ icon: 'missing:tag' }), ICON_SIZE);
 
