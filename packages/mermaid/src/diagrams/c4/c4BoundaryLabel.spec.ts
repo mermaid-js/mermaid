@@ -51,3 +51,40 @@ describe('a boundary title with UpdateElementStyle($fontColor)', () => {
     expect(await titleStyle(false, '')).not.toMatch(new RegExp(FONT_COLOR));
   });
 });
+
+describe('a boundary whose title is wider than its contents', () => {
+  const CHAR_WIDTH = 7;
+  const TITLE = 'A very long boundary title that is wider than its only element';
+
+  beforeAll(() => {
+    Object.assign(SVGElement.prototype, {
+      getComputedTextLength(this: SVGElement) {
+        return (this.textContent ?? '').length * CHAR_WIDTH;
+      },
+      getBBox(this: SVGElement) {
+        const width = (this.textContent ?? '').length * CHAR_WIDTH;
+        return { x: 0, y: 0, width, height: STUB_TEXT_HEIGHT };
+      },
+    });
+  });
+
+  it.each(['dagre', 'elk'])('grows to fit the title under %s', async (layout) => {
+    const { svg } = await mermaidAPI.render(
+      'c4-boundary-wide-title',
+      `---
+config:
+  layout: ${layout}
+  htmlLabels: false
+---
+C4Context
+System_Boundary(sb, "${TITLE}") {
+System(a, "A")
+}`
+    );
+    const host = document.createElement('div');
+    host.innerHTML = svg;
+    const width = Number(host.querySelector('.cluster.c4-boundary > rect')?.getAttribute('width'));
+
+    expect(width).toBeGreaterThanOrEqual(TITLE.length * CHAR_WIDTH);
+  });
+});

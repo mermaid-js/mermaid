@@ -98,6 +98,12 @@ const boundaryCssStyles = (boundary: C4Boundary): string[] => {
 const nodeLink = (link: string | null | undefined, config: MermaidConfig): string | undefined =>
   typeof link === 'string' ? formatUrl(link, config) : undefined;
 
+/**
+ * Space the shared cluster renderer adds around a boundary title wider than its contents.
+ * None: the box grows to the title and no other boundary moves.
+ */
+const BOUNDARY_TITLE_PADDING = 0;
+
 const buildBoundaryNode = (
   boundary: C4Boundary,
   parentId: string | undefined,
@@ -114,6 +120,7 @@ const buildBoundaryNode = (
     label: boundaryLabel(boundary),
     labelStyle: fontColor ? `color:${fontColor}` : undefined,
     labelType: 'string',
+    padding: BOUNDARY_TITLE_PADDING,
     isGroup: true,
     shape: 'rect',
     parentId,
