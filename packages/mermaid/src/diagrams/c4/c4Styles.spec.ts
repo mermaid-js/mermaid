@@ -88,4 +88,14 @@ describe('c4 styles: boundary and relationship fonts', () => {
     const [, declarations] = /\n {2}\.edgeLabel {([^}]*)}/.exec(getStyles(options)) ?? [];
     expect(declarations).toContain(`color: ${expected};`);
   });
+
+  // The legacy renderer drew a deployment node with a solid outline and every other
+  // boundary dashed.
+  it('draws a deployment node solid and leaves other boundaries dashed', () => {
+    const css = styles();
+    const [, deployment] = /\.cluster\.c4-deployment-node > rect {([^}]*)}/.exec(css) ?? [];
+    expect(deployment).toContain('stroke-dasharray: none;');
+    const [, boundary] = /\n {2}\.cluster rect {([^}]*)}/.exec(css) ?? [];
+    expect(boundary).toContain('stroke-dasharray: 8 4;');
+  });
 });

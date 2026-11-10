@@ -1,0 +1,10 @@
+C4Deployment
+    title A deployment node has a solid outline, a boundary a dashed one
+
+    Deployment_Node(dc, "Data centre", "Rack") {
+        Container(api, "API", "Go")
+    }
+    System_Boundary(shop, "Web shop") {
+        System(cart, "Cart")
+    }
+    Rel(cart, api, "Calls")

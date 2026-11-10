@@ -122,6 +122,11 @@ ${labelFontStyles()}
     stroke-width: 1px;
     stroke-dasharray: 8 4;
   }
+  /* A deployment node is infrastructure rather than a logical grouping, so its outline is
+     solid, as the legacy renderer drew it. */
+  .cluster.c4-deployment-node > rect {
+    stroke-dasharray: none;
+  }
   .cluster .cluster-label,
   .cluster .nodeLabel {
     color: ${options.textColor ?? '#333333'};
