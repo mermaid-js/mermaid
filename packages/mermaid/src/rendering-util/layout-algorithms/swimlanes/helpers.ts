@@ -1,9 +1,12 @@
+import { log } from '../../../logger.js';
 import type {
   LayoutData,
   Node as MermaidNode,
   Edge as MermaidEdge,
   ClusterNode,
 } from '../../types.js';
+import { buildLaneModel, type LaneModel } from './lanes.js';
+import { collectAnchoredIds, resolveAnchorHostId } from './anchoredNodes.js';
 
 export type Layout = LayoutData;
 export type Node = MermaidNode;
@@ -95,15 +98,82 @@ function assignTopLaneTitleRect(lane: Node): void {
   };
 }
 
+// Mirrors DroppedSubGraphMember in the flowchart types, which a rendering-util module must not import.
+interface SharedMember {
+  node: string;
+  keptBy: string;
+  droppedFrom: string;
+}
+
+function sharedMembers(layout: LayoutData): SharedMember[] {
+  const members: unknown = layout.other?.droppedSubGraphMembers;
+  return Array.isArray(members) ? members : [];
+}
+
+const isEmptyLane = (layout: LayoutData, nodes: Node[], laneId: string): boolean =>
+  !nodes.some((node) => node.parentId === laneId) &&
+  !(layout.edges ?? []).some((edge) => edge.start === laneId || edge.end === laneId);
+
+/** The lane a node sits in, or the node itself when it is a lane; undefined outside every lane. */
+function laneIdOrSelf(model: LaneModel, id: string): string | undefined {
+  return model.isLane(id) ? id : (model.laneIdOf(id) ?? undefined);
+}
+
+function removeEmptyLanes(layout: LayoutData, nodes: Node[], laneIds: Set<string>): void {
+  for (const laneId of laneIds) {
+    const index = nodes.findIndex((node) => node.id === laneId);
+    if (index >= 0 && isEmptyLane(layout, nodes, laneId)) {
+      nodes.splice(index, 1);
+    }
+  }
+}
+
+/**
+ * A node listed in two lanes stays in the first, so the second can end up with nothing.
+ * Warns for each such node and removes the lanes it emptied. A lane the author left empty
+ * lost no member and stays, and so does one an edge points at. The lane that kept the node
+ * can be the one around a subgraph nested in it, so `keptBy` is resolved up to its lane.
+ */
+function dropLanesEmptiedBySharedNodes(layout: LayoutData, nodes: Node[]): void {
+  const model = buildLaneModel(nodes);
+  const laneIds = new Set(nodes.filter((node) => model.isLane(node.id)).map((lane) => lane.id));
+  const emptied = new Set<string>();
+  for (const { node, keptBy, droppedFrom } of sharedMembers(layout)) {
+    const keptByLane = laneIdOrSelf(model, keptBy);
+    if (keptByLane && keptByLane !== droppedFrom && laneIds.has(droppedFrom)) {
+      log.warn(
+        `Swimlane node "${node}" is listed in lanes "${keptByLane}" and "${droppedFrom}"; it is drawn in "${keptByLane}" only.`
+      );
+      emptied.add(droppedFrom);
+    }
+  }
+  removeEmptyLanes(layout, nodes, emptied);
+}
+
+function warnAboutNestedGroups(nodes: Node[], model: LaneModel): void {
+  for (const node of nodes) {
+    if (node.isGroup && !model.isLane(node.id) && !model.isPool(node.id)) {
+      log.warn(
+        `Swimlane subgraph "${node.id}" is nested in "${node.parentId}"; only top-level subgraphs are lanes, so it is drawn as a plain box.`
+      );
+    }
+  }
+}
+
 export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   const direction = (layout as any).direction;
   const nodes = (layout.nodes ??= []);
-  for (const node of layout.nodes ?? []) {
-    if (node.isGroup && !node.parentId) {
-      node.shape = 'swimlane';
-      if (direction) {
-        (node as any).direction = direction;
-      }
+  dropLanesEmptiedBySharedNodes(layout, nodes);
+  const laneModel = buildLaneModel(nodes);
+  warnAboutNestedGroups(nodes, laneModel);
+  for (const node of nodes) {
+    const isLane = laneModel.isLane(node.id);
+    if (!isLane && !laneModel.isPool(node.id)) {
+      continue;
+    }
+    node.shape = isLane ? 'swimlane' : 'pool';
+    if (direction) {
+      (node as any).direction = direction;
     }
   }
 
@@ -139,36 +209,67 @@ export function prepareLayoutForSwimlanes(layout: LayoutData): void {
   }
 }
 
+/**
+ * The graph the Sugiyama phases lay out. Edge-label nodes and their layout-only
+ * edges are left out, and a labelled edge takes part as itself, so a label never
+ * changes a node's rank. `assignCoordinates` places the labels.
+ */
 export function toGraphView(layout: LayoutData): Graph {
+  const allNodes = (layout.nodes ?? []).filter((n) => !n.isEdgeLabel);
+  const byId = new Map<NodeId, Node>(allNodes.map((n) => [n.id, n]));
+
+  const anchoredIds = collectAnchoredIds(allNodes);
+  const hostOf = (id: NodeId): NodeId =>
+    anchoredIds.has(id) ? (resolveAnchorHostId(id, byId) ?? id) : id;
+
   const nodeById = new Map<NodeId, Node>();
-  for (const n of layout.nodes ?? []) {
-    nodeById.set(n.id, n);
+  for (const n of allNodes) {
+    if (!anchoredIds.has(n.id)) {
+      nodeById.set(n.id, n);
+    }
   }
 
   const edges: EdgeRef[] = [];
   for (const e of layout.edges ?? []) {
-    const src = typeof e.start === 'string' ? e.start : undefined;
-    const dst = typeof e.end === 'string' ? e.end : undefined;
-    if (!src || !dst) {
+    const rawSrc = typeof e.start === 'string' ? e.start : undefined;
+    const rawDst = typeof e.end === 'string' ? e.end : undefined;
+    if (!rawSrc || !rawDst || e.isLayoutOnly) {
       continue;
     }
-    // Exclude labelled originals from Sugiyama: their routing is carried by
-    // the two layout-only virtual edges A→label and label→B, which create the
-    // correct layer/ordering constraints. Including the original as well would
-    // double-count rank pressure and inflate crossing penalties.
-    if ((e as MermaidEdge & { labelNodeId?: string }).labelNodeId) {
+    const src = hostOf(rawSrc);
+    const dst = hostOf(rawDst);
+    if (src === dst) {
       continue;
     }
     edges.push({ id: e.id, src, dst, ref: e });
   }
 
-  const allNodes = layout.nodes ?? [];
-  const groupNodes = allNodes.filter((n) => n.isGroup);
-  const nonGroupNodes = allNodes.filter((n) => !n.isGroup);
+  const groupNodes = allNodes.filter((n) => n.isGroup && !anchoredIds.has(n.id));
+  const nonGroupNodes = allNodes.filter((n) => !n.isGroup && !anchoredIds.has(n.id));
 
   const nodesInGroupOrder = [...groupNodes].reverse();
   const nodes: NodeId[] = [...nodesInGroupOrder, ...nonGroupNodes].map((n) => n.id);
   return { nodes, edges, layout, nodeById };
+}
+
+function groupsDeepestFirst(allNodes: Node[]): Node[] {
+  const byId = new Map(allNodes.map((n) => [n.id, n]));
+  const depthOf = (node: Node) => {
+    let depth = 0;
+    let parentId = node.parentId;
+    const seen = new Set<NodeId>([node.id]);
+    while (parentId != null && !seen.has(parentId)) {
+      seen.add(parentId);
+      depth++;
+      parentId = byId.get(parentId)?.parentId;
+    }
+    return depth;
+  };
+  return allNodes
+    .filter((n) => n?.isGroup)
+    .map((n) => ({ node: n, depth: depthOf(n) }))
+    .sort((a, b) => b.depth - a.depth)
+    .map((entry) => entry.node);
 }
 
 export function writeBackToLayoutData(
@@ -203,16 +304,27 @@ export function writeBackToLayoutData(
   }
 
   const allNodes = layout.nodes ?? [];
-  const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
-  const topLevelGroups: Node[] = [];
-  for (const group of allNodes) {
-    if (!group?.isGroup) {
-      continue;
+  const anchoredIds = collectAnchoredIds(allNodes);
+  // Edge labels have no rank; their seed position comes from the coordinates.
+  // Anchoring moves them onto the routed edge later.
+  for (const label of allNodes) {
+    if (label.isEdgeLabel && coords.x[label.id] != null && coords.y[label.id] != null) {
+      label.x = coords.x[label.id];
+      label.y = coords.y[label.id];
     }
-    if (!group.parentId) {
+  }
+  const groupBounds = new Map<NodeId, { minX: number; maxX: number; minY: number; maxY: number }>();
+  const laneModel = buildLaneModel(allNodes);
+  const topLevelGroups: Node[] = [];
+  for (const group of groupsDeepestFirst(allNodes)) {
+    if (laneModel.isLane(group.id)) {
       topLevelGroups.push(group);
     }
-    const children = allNodes.filter((n) => n.parentId === group.id);
+    // A lane is sized across the flow by its nodes: the room reserved for edge labels
+    // reaches it through the column spacing, and anchoring moves each label onto its
+    // edge later. Along the flow it also holds the labels, which can be taller than
+    // the row of nodes they sit beside.
+    const children = allNodes.filter((n) => n.parentId === group.id && !anchoredIds.has(n.id));
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
@@ -223,8 +335,10 @@ export function writeBackToLayoutData(
       const cw = child.width ?? 0;
       const ch = child.height ?? 0;
       if (cx != null && cy != null) {
-        minX = Math.min(minX, cx - cw / 2);
-        maxX = Math.max(maxX, cx + cw / 2);
+        if (!child.isEdgeLabel) {
+          minX = Math.min(minX, cx - cw / 2);
+          maxX = Math.max(maxX, cx + cw / 2);
+        }
         minY = Math.min(minY, cy - ch / 2);
         maxY = Math.max(maxY, cy + ch / 2);
       }
