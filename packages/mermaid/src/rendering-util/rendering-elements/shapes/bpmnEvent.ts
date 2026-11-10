@@ -1,3 +1,4 @@
+import { getUserDefinedConfig } from '../../../config.js';
 import { getConfig } from '../../../diagram-api/diagramAPI.js';
 import type { D3Selection } from '../../../types.js';
 import type { Node } from '../../types.js';
@@ -34,31 +35,46 @@ export const THEME_DEFAULT_RING_WIDTH = {
   endEventStrokeWidth: EVENT_RINGS.end.strokeWidth,
 } as const;
 
+/** A ring width as CSS: a finite number in pixels or a non-empty CSS length, else `undefined`. */
+const ringWidthCss = (value: unknown): string | undefined => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return `${value}px`;
+  }
+  return typeof value === 'string' && value !== '' ? value : undefined;
+};
+
+const bpmnVariable = (themeVariables: unknown, variable: string): unknown => {
+  const themeBpmn: unknown =
+    typeof themeVariables === 'object' && themeVariables !== null
+      ? Reflect.get(themeVariables, 'bpmn')
+      : undefined;
+  return typeof themeBpmn === 'object' && themeBpmn !== null
+    ? Reflect.get(themeBpmn, variable)
+    : undefined;
+};
+
 /**
- * The ring weight of an event: the theme's `bpmn.eventStrokeWidth` (`bpmn.endEventStrokeWidth`
- * for an end event), a number in pixels or a CSS length, when it differs from the theme
- * default; otherwise the notation weight of that kind of ring in {@link EVENT_RINGS}. It is
- * set inline because a flowchart that uses these shapes does not load the bpmn stylesheet,
- * and its own `.node circle` rules would otherwise win.
+ * The ring weight of an event, from `bpmn.eventStrokeWidth` (`bpmn.endEventStrokeWidth` for an
+ * end event), a finite number in pixels or a non-empty CSS length:
+ *
+ * 1. the value the author set through `initialize` or a diagram directive, the theme default
+ *    included;
+ * 2. otherwise the theme's value, when it differs from the theme default;
+ * 3. otherwise the notation weight of that kind of ring in {@link EVENT_RINGS}.
+ *
+ * It is set inline because a flowchart that uses these shapes does not load the bpmn
+ * stylesheet, and its own `.node circle` rules would otherwise win.
  */
 const ringWidth = (position: EventPosition): string => {
   const variable = RING_WIDTH_VARIABLE[position];
-  const themeBpmn: unknown = getConfig().themeVariables?.bpmn;
-  const value =
-    typeof themeBpmn === 'object' && themeBpmn !== null
-      ? Reflect.get(themeBpmn, variable)
-      : undefined;
-  if (
-    typeof value === 'number' &&
-    Number.isFinite(value) &&
-    value !== THEME_DEFAULT_RING_WIDTH[variable]
-  ) {
-    return `${value}px`;
+  const authored = ringWidthCss(bpmnVariable(getUserDefinedConfig().themeVariables, variable));
+  if (authored !== undefined) {
+    return authored;
   }
-  if (typeof value === 'string' && value !== '') {
-    return value;
-  }
-  return `${EVENT_RINGS[position].strokeWidth}px`;
+  const themed = bpmnVariable(getConfig().themeVariables, variable);
+  const themedCss =
+    themed === THEME_DEFAULT_RING_WIDTH[variable] ? undefined : ringWidthCss(themed);
+  return themedCss ?? `${EVENT_RINGS[position].strokeWidth}px`;
 };
 
 export async function renderBpmnEvent<T extends SVGGraphicsElement>(
