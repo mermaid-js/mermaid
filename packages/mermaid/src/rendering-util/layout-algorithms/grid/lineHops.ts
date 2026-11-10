@@ -1,4 +1,8 @@
-import { applyLineJumpsToSvg, type EdgeGeom } from '../../rendering-elements/lineJump.js';
+import {
+  applyLineJumpsToSvg,
+  normalizeLineHops,
+  type EdgeGeom,
+} from '../../rendering-elements/lineJump.js';
 import type { LayoutData } from '../../types.js';
 import type { CommonLayoutPaintContext } from '../common/index.js';
 
@@ -10,7 +14,7 @@ export function applyGridLineJumps(
   data: LayoutData,
   { measure }: CommonLayoutPaintContext<unknown, EdgePaintGroups>
 ): void {
-  const lineHops = data.config.grid?.lineHops;
+  const lineHops = normalizeLineHops(data.config.grid?.lineHops);
   if (lineHops === false) {
     return;
   }
@@ -32,6 +36,6 @@ export function applyGridLineJumps(
   applyLineJumpsToSvg(measure.groups.edgePaths, edges, {
     enabled: true,
     jumpRadius: 6,
-    jumpStyle: lineHops === 'gap' ? 'gap' : 'arc',
+    jumpStyle: lineHops,
   });
 }
