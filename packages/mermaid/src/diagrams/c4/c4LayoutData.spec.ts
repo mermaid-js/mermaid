@@ -478,8 +478,8 @@ Rel(a, b, "queued", $tags="v1.0+async")`);
       expect(edges[0].style).toEqual(expect.arrayContaining(['stroke:green']));
     });
 
-    it('takes a shape keyword from a list joined with +', () => {
-      const db = parse(`C4Context\nSystem(a, "A", $tags="v1.0+cylinder")`);
+    it('takes a shape keyword from a list joined with +, spaces around it ignored', () => {
+      const db = parse(`C4Context\nSystem(a, "A", $tags="v1.0 + cylinder")`);
 
       expect(getData(db, config()).nodes.find((n) => n.id === 'a')?.shape).toBe('cylinder');
     });
