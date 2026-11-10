@@ -388,4 +388,76 @@ describe('when parsing subgraphs', function () {
     expect(subgraph.id).not.toBe('subGraph0');
     expect(subgraph.nodes).toEqual(['c1']);
   });
+  it('should not merge an explicit subGraph<N> into an earlier subgraph without an id', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph\n\ta1\nend\nsubgraph subGraph0\n\tb1\nend\nc --> subGraph0'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+    expect(new Set(subgraphs.map((subgraph) => subgraph.id)).size).toBe(2);
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph0').nodes).toEqual(['b1']);
+    expect(subgraphs.find((subgraph) => subgraph.id !== 'subGraph0').nodes).toEqual(['a1']);
+  });
+  it('should keep a subgraph without an id inside an enclosing explicit subGraph<N>', function () {
+    flow.parser.parse('graph TB\nsubgraph subGraph0\n\tsubgraph\n\t\ta1\n\tend\n\tb1\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+    const inner = subgraphs.find((subgraph) => subgraph.id !== 'subGraph0');
+    expect(inner.nodes).toEqual(['a1']);
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph0').nodes).toEqual([
+      inner.id,
+      'b1',
+    ]);
+  });
+  it('should rename a generated id inside every subgraph that lists it', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph\n\tsubgraph\n\t\ta1\n\tend\nend\nsubgraph subGraph0\n\tb1\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(3);
+    expect(new Set(subgraphs.map((subgraph) => subgraph.id)).size).toBe(3);
+    const inner = subgraphs.find((subgraph) => subgraph.nodes.includes('a1'));
+    const outer = subgraphs.find((subgraph) => subgraph.nodes.includes(inner.id));
+    expect(outer.id).not.toBe('subGraph0');
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph0').nodes).toEqual(['b1']);
+  });
+  it('should keep the generated ids when no explicit id collides', function () {
+    flow.parser.parse('graph TB\nsubgraph\n\ta1\nend\nsubgraph subGraph5\n\tb1\nend');
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.map((subgraph) => subgraph.id)).toEqual(['subGraph0', 'subGraph5']);
+  });
+  it('should give a subgraph without an id the next free subGraph<N>', function () {
+    flow.parser.parse('graph TB\nsubGraph0 --> b1\nsubgraph\n\tc1\nend');
+    expect(flow.parser.yy.getSubGraphs().map((subgraph) => subgraph.id)).toEqual(['subGraph1']);
+  });
+  it('should move a generated id again when a later explicit id claims the new one', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph\n\ta1\nend\nsubgraph subGraph0\n\tb1\nend\nsubgraph subGraph1\n\tc1\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(3);
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph0').nodes).toEqual(['b1']);
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph1').nodes).toEqual(['c1']);
+    const anonymous = subgraphs.find((subgraph) => subgraph.nodes.includes('a1'));
+    expect(anonymous.id).toMatch(/^subGraph\d+$/);
+    expect(['subGraph0', 'subGraph1']).not.toContain(anonymous.id);
+  });
+  it('should merge a repeated explicit subGraph<N> into itself, not rename it', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph\n\ta1\nend\nsubgraph subGraph0\n\tb1\nend\nsubgraph subGraph0\n\tc1\nend'
+    );
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+    expect(subgraphs.find((subgraph) => subgraph.id === 'subGraph0').nodes).toEqual(['b1', 'c1']);
+  });
+  it('should hide a renamed subgraph inside a collapsed explicit subGraph<N>', function () {
+    flow.parser.parse(
+      'graph TB\nsubgraph subGraph0\n\tsubgraph\n\t\ta1\n\tend\n\tb1\nend\nsubGraph0@{ view: collapsed }\nc --> a1'
+    );
+    const inner = flow.parser.yy.getSubGraphs().find((subgraph) => subgraph.nodes.includes('a1'));
+    const { nodes, edges } = flow.parser.yy.getData();
+    expect(nodes.find((node) => node.id === 'subGraph0')?.shape).toBe('collapsedGroup');
+    expect(nodes.find((node) => node.id === inner.id)).toBeUndefined();
+    expect(edges.find((edge) => edge.start === 'c' && edge.end === 'subGraph0')).toBeDefined();
+  });
 });

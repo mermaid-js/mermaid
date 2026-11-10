@@ -1,0 +1,15 @@
+---
+description: >-
+  A subgraph with no id, followed by one declared with the id subGraph0: both
+  are drawn as separate boxes, and the edge reaches the explicit one. The
+  explicit declaration used to be merged into the first box.
+---
+flowchart LR
+  subgraph
+    a1 --> a2
+  end
+  subgraph subGraph0 [Explicit]
+    b1 --> b2
+  end
+  a2 --> b1
+  c --> subGraph0
