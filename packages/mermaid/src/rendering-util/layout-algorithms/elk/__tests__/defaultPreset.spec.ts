@@ -257,6 +257,24 @@ describe('ELK graph wrapping configuration', () => {
     expect(elkGraph.layoutOptions['elk.aspectRatio']).toBe(expected);
   });
 
+  it('falls back to the default aspect ratios when the config has no elk section', () => {
+    const { elkGraph, nodeDb } = buildElkGraphFromLayoutData(
+      {
+        direction: 'TB',
+        config: {},
+        edges: [{ id: 'e0', start: 'outside', end: 'child' }],
+        nodes: [
+          { id: 'group', isGroup: true, label: 'Group', metadata: { algorithm: 'elk.box' } },
+          { id: 'child', parentId: 'group', label: 'Child', width: 100, height: 40 },
+          { id: 'outside', label: 'Outside', width: 100, height: 40 },
+        ],
+      } as any,
+      { ...context, algorithm: 'elk.rectpacking' }
+    );
+    expect(elkGraph.layoutOptions['elk.aspectRatio']).toBe('1.6');
+    expect(nodeDb.group.layoutOptions).not.toHaveProperty('elk.aspectRatio');
+  });
+
   const nestedEmptySubgraphs = () => ({
     direction: 'LR',
     config: getConfig(),
