@@ -258,6 +258,22 @@ describe('EBNF standard line', () => {
       );
     });
 
+    it.each([
+      [
+        '[ ... ]',
+        'foo = [ a ] ;',
+        /line 3, column 7: the \[ \.{3} ] optional is not W3C notation, use the postfix \?/,
+      ],
+      [
+        '{ ... }',
+        'foo = { a } ;',
+        /line 3, column 7: the { \.{3} } repetition is not W3C notation, use the postfix \*/,
+      ],
+      ['a nested [ ... ]', 'foo = ( b [ a ] ) ;', /line 3, column 11: the \[ \.{3} ] optional/],
+    ])('refuses %s and names the postfix that replaces it', (_construct, rule, message) => {
+      expect(() => parser.parse(`railroad-ebnf-beta\nstandard w3c\n${rule}`)).toThrow(message);
+    });
+
     it('still accepts *, +, - and groups', () => {
       void parser.parse('railroad-ebnf-beta\nstandard w3c\nfoo = a* b+ ( c | d ) - e ;');
       expect(db.getRules()).toHaveLength(1);

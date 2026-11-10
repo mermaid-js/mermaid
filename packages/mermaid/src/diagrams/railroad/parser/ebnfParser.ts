@@ -107,11 +107,21 @@ const collectChoice = (
   }
 };
 
+/** ISO brackets refused under `standard w3c`, with the W3C postfix that replaces each. */
+const W3C_BRACKET_HINTS: Record<string, string> = {
+  EbnfOptional: '[ ... ] optional is not W3C notation, use the postfix ?',
+  EbnfRepetition: '{ ... } repetition is not W3C notation, use the postfix *',
+};
+
 const collectPrimary = (
   primary: EbnfPrimary,
   standard: RailroadEbnfStandard | undefined,
   errors: string[]
 ): void => {
+  const w3cHint = standard === 'w3c' ? W3C_BRACKET_HINTS[primary.$type] : undefined;
+  if (w3cHint) {
+    errors.push(diagnostic(locate(primary), `the ${w3cHint}`));
+  }
   if (
     primary.$type === 'EbnfGroup' ||
     primary.$type === 'EbnfOptional' ||
