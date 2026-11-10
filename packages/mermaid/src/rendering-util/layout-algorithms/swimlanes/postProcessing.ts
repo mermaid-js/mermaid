@@ -80,6 +80,10 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
     return;
   }
 
+  // Participants move apart first, so an anchored node outside every participant is pinned
+  // beside where its host ends up rather than where it was before the move.
+  separateParticipants(layout, direction);
+
   const pins = pinAnchoredNodes(layout, {
     space: 'final',
     direction: direction === 'LR' || direction === 'RL' || direction === 'BT' ? direction : 'TB',
@@ -87,7 +91,6 @@ export function postProcessSwimlaneLayout(layout: LayoutData, direction?: string
   const settledPins = clearAnchoredOverlaps(layout, pins);
   squareAnchoredEdges(layout, settledPins);
 
-  separateParticipants(layout, direction);
   linkParticipantBands(layout);
 
   for (const edge of edges) {
