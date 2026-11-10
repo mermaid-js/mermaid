@@ -5,18 +5,34 @@
  * `__proto__` property as merge instructions. Values otherwise remain opaque to diagram adapters.
  */
 export function stripPrototypeKeys<T>(value: T): T {
-  if (Array.isArray(value)) {
-    return value.map((entry) => stripPrototypeKeys(entry)) as T;
-  }
-  if (value === null || typeof value !== 'object') {
-    return value;
-  }
-  const clean: Record<string, unknown> = {};
-  for (const key of Object.keys(value)) {
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
-      continue;
+  const copies = new WeakMap<object, unknown>();
+
+  function sanitize(value: unknown): unknown {
+    if (value === null || typeof value !== 'object') {
+      return value;
     }
-    clean[key] = stripPrototypeKeys((value as Record<string, unknown>)[key]);
+    const existing = copies.get(value);
+    if (existing !== undefined) {
+      return existing;
+    }
+    if (Array.isArray(value)) {
+      const clean = new Array<unknown>(value.length);
+      copies.set(value, clean);
+      value.forEach((entry, index) => {
+        clean[index] = sanitize(entry);
+      });
+      return clean;
+    }
+    const clean: Record<string, unknown> = {};
+    copies.set(value, clean);
+    for (const key of Object.keys(value)) {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        continue;
+      }
+      clean[key] = sanitize((value as Record<string, unknown>)[key]);
+    }
+    return clean;
   }
-  return clean as T;
+
+  return sanitize(value) as T;
 }
