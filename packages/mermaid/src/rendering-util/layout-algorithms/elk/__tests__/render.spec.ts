@@ -266,7 +266,11 @@ describe('buildSubgraphLayoutOptions', () => {
 });
 
 describe('ELK spacing from nodeSpacing and rankSpacing', () => {
-  const build = (extra: Record<string, unknown>, group: Record<string, unknown> = {}) => {
+  const build = (
+    extra: Record<string, unknown>,
+    group: Record<string, unknown> = {},
+    algorithm = 'layered'
+  ) => {
     const data = {
       direction: 'LR',
       config: { elk: {} },
@@ -286,7 +290,7 @@ describe('ELK spacing from nodeSpacing and rankSpacing', () => {
       ...extra,
     } as any;
     const { elkGraph } = buildElkGraphFromLayoutData(data, {
-      algorithm: 'layered',
+      algorithm,
       common: { lineBreakRegex: /<br\s*\/?>/gi },
       getConfig: () => ({ flowchart: { wrappingWidth: 100 } }),
       interpolateToCurve: (curve: unknown) => curve,
@@ -396,6 +400,23 @@ describe('ELK spacing from nodeSpacing and rankSpacing', () => {
       { metadata: { algorithm: 'elk.rectpacking' } }
     );
     expect(rectpacked.group['spacing.nodeNode']).toBe(15);
+  });
+
+  it('leaves a directional subgraph that inherits the top-level rectpacking with its packing gaps', () => {
+    const silent = build({ edges: [] }, { dir: 'TB' }, 'elk.rectpacking');
+    const asked = build(
+      { nodeSpacing: 25, rankSpacing: 100, edges: [] },
+      { dir: 'TB' },
+      'elk.rectpacking'
+    );
+    expect(asked.group['elk.algorithm']).toBe('elk.rectpacking');
+    expect(asked.group).toEqual(silent.group);
+  });
+
+  it('scales a directional subgraph that inherits the top-level layered layout', () => {
+    const asked = build({ nodeSpacing: 25, rankSpacing: 25, edges: [] }, { dir: 'TB' });
+    expect(asked.group['elk.algorithm']).toBe('layered');
+    expect(asked.group['spacing.nodeNode']).toBe(25);
   });
 
   it('scales the spacing of a subgraph that falls back to the plain layout because an edge crosses it', () => {

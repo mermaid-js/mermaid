@@ -534,7 +534,9 @@ export function buildSubgraphLayoutOptions(
     layoutOptions['elk.hierarchyHandling'] = 'SEPARATE_CHILDREN';
   }
 
-  if (!algo && changesSpacing(spacing)) {
+  // A rectpacking container keeps its packing gaps, whether it asked for the algorithm or a
+  // direction made it run the top-level one.
+  if (!algo && layoutOptions['elk.algorithm'] !== 'elk.rectpacking' && changesSpacing(spacing)) {
     Object.assign(layoutOptions, subgraphSpacingOptions(spacing));
   }
 
