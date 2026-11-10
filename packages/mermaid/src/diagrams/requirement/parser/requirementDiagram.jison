@@ -81,7 +81,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <style>"%" return 'PERCENT';
 <style>"-" return 'MINUS';
 <style>"#" return 'BRKT';
-<style>" "                             /* skip spaces */
+<style>[^\S\n]+                        /* skip spaces, tabs and \r */
 <style>["] { this.begin("string"); }
 <style>\n { this.popState(); }
 

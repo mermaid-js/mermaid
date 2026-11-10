@@ -79,6 +79,32 @@ describe('when parsing requirement diagram it...', function () {
     ]);
   });
 
+  it.each([
+    ['spaces', '  '],
+    ['a tab', '\t'],
+    ['a carriage return', '\r'],
+  ])('will accept %s at the end of style, classDef and class lines', function (_, ws) {
+    reqDiagram.parser.parse(
+      [
+        'requirementDiagram',
+        'requirement test_req {',
+        'id: test_id',
+        '}',
+        'element test_el {',
+        '}',
+        `style test_req fill:#f00${ws}`,
+        `classDef foo stroke:#333${ws}`,
+        `class test_el foo${ws}`,
+        'test_el - satisfies -> test_req',
+      ].join('\n')
+    );
+
+    expect(requirementDb.getRequirements().get('test_req').cssStyles).toEqual(['fill:#f00']);
+    expect(requirementDb.getClasses().get('foo').styles).toEqual(['stroke:#333']);
+    expect(requirementDb.getElements().get('test_el').classes).toContain('foo');
+    expect(requirementDb.getRelationships()).toHaveLength(1);
+  });
+
   it('will accept full element definition', function () {
     const expectedName = 'test_el';
     const expectedType = 'test_type';
