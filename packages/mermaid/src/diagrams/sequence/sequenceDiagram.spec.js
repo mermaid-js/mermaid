@@ -1814,6 +1814,37 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(actors.get('Alice').prevActor).toEqual('D');
     expect(actors.get('Alice').nextActor).toBeUndefined();
   });
+  it('should use the type of a create directive for an actor declared earlier', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant Carl
+  participant D as Donald
+  participant Alice
+  Alice->>Alice: Thinking
+  create actor Carl
+  Alice->>Carl: Hi Carl!
+  create actor D
+  Alice->>D: Hi Donald!
+  `);
+    const actors = diagram.db.getActors();
+    expect(diagram.db.getActorKeys()).toEqual(['Carl', 'D', 'Alice']);
+    expect(actors.get('Carl').type).toEqual('actor');
+    expect(actors.get('Carl').description).toEqual('Carl');
+    expect(actors.get('D').type).toEqual('actor');
+    expect(actors.get('D').description).toEqual('Donald');
+  });
+  it('should use the configuration of a create directive for an actor declared earlier', async () => {
+    const diagram = await Diagram.fromText(`
+  sequenceDiagram
+  participant DB
+  participant Alice
+  Alice->>Alice: Thinking
+  create participant DB@{ "type" : "database" }
+  Alice->>DB: Store this
+  `);
+    expect(diagram.db.getActorKeys()).toEqual(['DB', 'Alice']);
+    expect(diagram.db.getActors().get('DB').type).toEqual('database');
+  });
   it('should not create an actor that was already used in a message', async () => {
     await expect(
       Diagram.fromText(`

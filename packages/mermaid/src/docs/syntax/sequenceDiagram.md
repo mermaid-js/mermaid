@@ -265,7 +265,7 @@ sequenceDiagram
     Bob->>Alice: I agree
 ```
 
-A created actor is placed after the actors declared before it. To choose its position (v<MERMAID_RELEASE_VERSION>+), declare it together with the other actors first. The create directive then only sets when it appears. This works as long as the actor isn't used in a message or note before it is created.
+A created actor is placed after the actors declared before it. To choose its position (v<MERMAID_RELEASE_VERSION>+), declare it together with the other actors first. The create directive still sets when it appears and its type, and if it has no alias, the alias from the declaration is used. This works as long as the actor isn't used in a message or note before it is created.
 
 ```mermaid-example
 sequenceDiagram

@@ -596,18 +596,28 @@ export class SequenceDB implements DiagramDB {
         case 'addParticipant':
           this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
           break;
-        case 'createParticipant':
+        case 'createParticipant': {
           // An actor that has only been declared so far can be created later on,
           // so that its declaration sets its position among the other actors.
-          if (this.state.records.actors.has(param.actor) && !this.isOnlyDeclared(param.actor)) {
+          const declaredActor = this.state.records.actors.get(param.actor);
+          if (declaredActor && !this.isOnlyDeclared(param.actor)) {
             throw new Error(
               "It is not possible to have actors with the same id, even if one is destroyed before the next is created. Use 'AS' aliases to simulate the behavior"
             );
           }
           this.state.records.lastCreated = param.actor;
-          this.addActor(param.actor, param.actor, param.description, param.draw, param.config);
+          // The create directive sets the type, and the declared alias is kept if it has none
+          const description =
+            param.description ??
+            (declaredActor && {
+              text: declaredActor.description,
+              wrap: declaredActor.wrap,
+              type: param.draw,
+            });
+          this.addActor(param.actor, param.actor, description, param.draw, param.config);
           this.state.records.createdActors.set(param.actor, this.state.records.messages.length);
           break;
+        }
         case 'destroyParticipant':
           this.state.records.lastDestroyed = param.actor;
           this.state.records.destroyedActors.set(param.actor, this.state.records.messages.length);
