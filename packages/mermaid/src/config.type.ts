@@ -103,6 +103,18 @@ export interface MermaidConfig {
    */
   layout?: string;
   /**
+   * Configuration for the grid layout renderer.
+   */
+  grid?: {
+    /**
+     * Draws grid edge crossings as arcs or visible gaps. Set to `false` for
+     * plain crossings. Corner radii and arrowhead offsets are preserved.
+     * Smoothing curves such as `basis` are left unchanged.
+     *
+     */
+    lineHops?: false | 'arc' | 'gap';
+  };
+  /**
    * The maximum allowed size of the users text diagram
    */
   maxTextSize?: number;

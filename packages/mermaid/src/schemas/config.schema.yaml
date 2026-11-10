@@ -84,6 +84,20 @@ properties:
       Defaults to `elk`, which is bundled with mermaid. The `tiny` build omits
       ELK to stay small and falls back to `dagre`.
     default: 'elk'
+  grid:
+    description: Configuration for the grid layout renderer.
+    type: object
+    additionalProperties: false
+    properties:
+      lineHops:
+        description: |
+          Draws grid edge crossings as arcs or visible gaps. Set to `false` for
+          plain crossings. Corner radii and arrowhead offsets are preserved.
+          Smoothing curves such as `basis` are left unchanged.
+        type: [boolean, string]
+        enum: [false, 'arc', 'gap']
+        default: 'arc'
+    default: {}
   maxTextSize:
     description: The maximum allowed size of the users text diagram
     type: number

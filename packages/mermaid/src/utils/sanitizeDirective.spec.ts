@@ -8,6 +8,14 @@ describe('sanitizeDirective', () => {
     expect(args).toEqual({ fontSize: 12 });
   });
 
+  it.each([false, 'arc', 'gap'])('preserves grid.lineHops=%s', (lineHops) => {
+    const args = { grid: { lineHops } };
+
+    sanitizeDirective(args);
+
+    expect(args).toEqual({ grid: { lineHops } });
+  });
+
   describe('dictionary-style configs', () => {
     it('preserves treeView filenameIcons and extensionIcons entries', () => {
       const args = {
