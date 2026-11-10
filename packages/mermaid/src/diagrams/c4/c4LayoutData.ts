@@ -2,6 +2,7 @@ import type { MermaidConfig } from '../../config.type.js';
 import { getEffectiveHtmlLabels } from '../../config.js';
 import type { Edge, LayoutData, Node } from '../../rendering-util/types.js';
 import type { C4Boundary, C4BoundaryDirection, C4LabelNudge, C4Rel, C4Shape } from './c4Types.js';
+import { formatUrl } from '../../utils.js';
 import { asColor, buildC4Node, buildEdgeLabel } from './c4ShapeAdapter.js';
 
 /**
@@ -77,11 +78,21 @@ const boundaryCssStyles = (boundary: C4Boundary): string[] => {
   return styles;
 };
 
+/**
+ * The `xlink:href` a node is rendered with. A named `$link` can arrive through any optional
+ * slot or through `UpdateElementStyle`, so the db does not guarantee it was sanitized; this
+ * applies the flowchart rule to whatever the db holds: sanitized unless `securityLevel` is
+ * `loose`, where it is kept as written.
+ */
+const nodeLink = (link: string | null | undefined, config: MermaidConfig): string | undefined =>
+  typeof link === 'string' ? formatUrl(link, config) : undefined;
+
 const buildBoundaryNode = (
   boundary: C4Boundary,
   parentId: string | undefined,
   look: Node['look'],
-  defaultDirection: C4BoundaryDirection | undefined
+  defaultDirection: C4BoundaryDirection | undefined,
+  config: MermaidConfig
 ): Node => {
   const isDeploymentNode = boundary.nodeType !== undefined;
   return {
@@ -93,7 +104,7 @@ const buildBoundaryNode = (
     parentId,
     cssClasses: isDeploymentNode ? 'c4-boundary c4-deployment-node' : 'c4-boundary',
     cssStyles: boundaryCssStyles(boundary),
-    link: boundary.link ?? undefined,
+    link: nodeLink(boundary.link, config),
     dir: boundary.direction ?? defaultDirection,
     look,
   };
@@ -141,7 +152,13 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
 
   for (const boundary of boundaries) {
     nodes.push(
-      buildBoundaryNode(boundary, parentIdOf(boundary.parentBoundary), look, defaultDirection)
+      buildBoundaryNode(
+        boundary,
+        parentIdOf(boundary.parentBoundary),
+        look,
+        defaultDirection,
+        config
+      )
     );
   }
 
@@ -149,7 +166,7 @@ export const getData = (db: C4Db, config: MermaidConfig): LayoutData => {
     nodes.push({
       ...buildC4Node(shape, c4Config, padding, look, elementWidth),
       parentId: parentIdOf(shape.parentBoundary),
-      link: shape.link,
+      link: nodeLink(shape.link, config),
     });
   }
 
