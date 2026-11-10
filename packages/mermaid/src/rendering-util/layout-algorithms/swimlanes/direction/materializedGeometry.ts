@@ -26,7 +26,12 @@ import type { OrthogonalSegment, Point, RectBounds, RectSide } from './geometry.
 import type { Edge, Node } from '../../../types.js';
 import { EDGE_ROUTING } from '../config.js';
 import { buildLaneModel } from '../lanes.js';
-import { crossingPointsBetween, sharedLaneBand, staysInsideBand } from './laneContainment.js';
+import {
+  crossingPointsBetween,
+  hopsStayInsideBand,
+  sharedLaneBand,
+  staysInsideBand,
+} from './laneContainment.js';
 
 const EPS_LOCAL = 1e-3;
 const MIN_SHARED = 8;
@@ -2599,8 +2604,9 @@ export function resolveRenderedOrthogonalCrossings(
     };
   };
 
-  // The candidates of an edge whose ends share a lane that stay in it: those on the diagram's
-  // outer tracks, those on the lane's own, and the route the edge had before this pass.
+  // The candidates of an edge whose ends share a lane that stay in it, with every hop they draw
+  // over the other edges: those on the diagram's outer tracks, those on the lane's own, and the
+  // route the edge had before this pass.
   const inLaneCandidatesFor = (edge: MaterializedEdge, band: RectBounds): PointLite[][] => {
     const candidates = candidatePathsFor(edge);
     const tracks = laneTracks(band);
@@ -2613,9 +2619,17 @@ export function resolveRenderedOrthogonalCrossings(
       }
     }
     candidates.push(routedBefore.get(edge) ?? []);
+    const others = visibleEdges
+      .filter((other) => other !== edge)
+      .map((other) => dedupeConsecutivePoints(replacementPointsFor(other)));
     return candidates
       .map((candidate) => simplifyPolyline(dedupeConsecutivePoints(candidate)))
-      .filter((candidate) => candidate.length >= 2 && staysInsideBand(candidate, band))
+      .filter(
+        (candidate) =>
+          candidate.length >= 2 &&
+          staysInsideBand(candidate, band) &&
+          hopsStayInsideBand(candidate, others, band, EDGE_ROUTING.LINE_HOP_RADIUS)
+      )
       .filter(
         (candidate) =>
           !pathHitsNode(edge, candidate) &&

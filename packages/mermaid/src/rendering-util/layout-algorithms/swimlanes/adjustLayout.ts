@@ -1,6 +1,7 @@
 import type { LayoutData } from '../../types.js';
 import { applyLineJumpsToSvg } from '../../rendering-elements/lineJump.js';
 import type { CommonLayoutPaintContext } from '../common/index.js';
+import { EDGE_ROUTING } from './config.js';
 
 export function applySwimlaneLineJumps(
   data4Layout: LayoutData,
@@ -26,7 +27,7 @@ export function applySwimlaneLineJumps(
 
   applyLineJumpsToSvg(measure.groups.edgePaths, edgeGeometries, {
     enabled: true,
-    jumpRadius: 6,
+    jumpRadius: EDGE_ROUTING.LINE_HOP_RADIUS,
     jumpStyle,
   });
 }

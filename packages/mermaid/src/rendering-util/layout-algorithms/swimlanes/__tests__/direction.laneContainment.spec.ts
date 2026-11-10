@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { resolveRenderedOrthogonalCrossings } from '../direction/materializedGeometry.js';
 import {
   crossingPointsBetween,
+  hopsStayInsideBand,
   sharedLaneBand,
   staysInsideBand,
 } from '../direction/laneContainment.js';
@@ -127,6 +128,51 @@ describe('where two routes cross', () => {
   });
 });
 
+describe('the hops a route draws', () => {
+  const band = { left: 0, right: 400, top: -100, bottom: 100 };
+  const down = pathOf([
+    [50, -150],
+    [50, 0],
+  ]);
+  const acrossAt = (y: number) =>
+    pathOf([
+      [0, y],
+      [100, y],
+    ]);
+  const hop = EDGE_ROUTING.LINE_HOP_RADIUS;
+
+  it('stay inside the band when the row lies a full hop below its top', () => {
+    expect(hopsStayInsideBand(acrossAt(-100 + hop), [down], band, hop)).toBe(true);
+  });
+
+  it('leave the band from a row less than a hop below its top', () => {
+    expect(hopsStayInsideBand(acrossAt(-100 + hop - 1), [down], band, hop)).toBe(false);
+  });
+
+  it('stay inside the band when they reach its top within the tolerance of its border', () => {
+    expect(hopsStayInsideBand(acrossAt(-100 + hop - 0.5), [down], band, hop)).toBe(true);
+  });
+
+  it('leave the band when any one of the other routes is crossed there', () => {
+    const elsewhere = pathOf([
+      [200, -150],
+      [200, 0],
+    ]);
+
+    expect(hopsStayInsideBand(acrossAt(-100), [elsewhere, down], band, hop)).toBe(false);
+  });
+
+  it('are none on a row that crosses nothing, or on a vertical segment', () => {
+    const elsewhere = pathOf([
+      [200, -150],
+      [200, 0],
+    ]);
+
+    expect(hopsStayInsideBand(acrossAt(-100), [elsewhere], band, hop)).toBe(true);
+    expect(hopsStayInsideBand(down, [acrossAt(-100)], band, hop)).toBe(true);
+  });
+});
+
 describe('resolving crossings keeps an edge inside the lane both its ends share', () => {
   const run = (nodes: any[], edges: any[]) => {
     resolveRenderedOrthogonalCrossings(edges, mapOf(nodes));
@@ -245,6 +291,59 @@ describe('resolving crossings keeps an edge inside the lane both its ends share'
         [330, 0],
       ])
     );
+  });
+
+  it('leaves the route of an edge whose only in-lane route hops out of its lane', () => {
+    // C blocks the row, and the lane ends 5 px below the boxes, so the only route inside it is
+    // the rail over C on the lane's own top track. P runs down across that rail far from every
+    // end, and the rail hops over it, rising a hop's radius above its row.
+    const railRow = -35;
+    const hopOverP = (laneTop: number) => {
+      const bottom = 20;
+      const lane = laneBox('L', 200, (laneTop + bottom) / 2, 400, bottom - laneTop);
+      const across = {
+        id: 'P',
+        points: pathOf([
+          [120, -90],
+          [120, 20],
+        ]),
+      };
+      const nodes = [lane, node('A', 50, 0), node('B', 350, 0), node('C', 200, 0)];
+      return run(nodes, [outside(), across]);
+    };
+
+    // The rows the route runs along: the outer route's, not the rail's.
+    expect(hopOverP(railRow).map(({ y }) => y)).toEqual([-15, -150, -150, -15]);
+    expect(hopOverP(railRow - EDGE_ROUTING.LINE_HOP_RADIUS)).toEqual(
+      pathOf([
+        [50, -15],
+        [50, railRow],
+        [350, railRow],
+        [350, -15],
+      ])
+    );
+  });
+
+  it('takes an in-lane route across the route the edge leaves behind', () => {
+    // The edge's own route runs out of the lane and down across the rail at x 120. It is not
+    // drawn once the edge moves onto the rail, so the rail draws no hop over it.
+    const lane = laneBox('L', 200, -7.5, 400, 55);
+    const nodes = [lane, node('A', 50, 0), node('B', 350, 0), node('C', 200, 0)];
+    const throughRail = {
+      id: 'A_B',
+      start: 'A',
+      end: 'B',
+      points: pathOf([
+        [50, -15],
+        [50, -150],
+        [120, -150],
+        [120, 60],
+        [350, 60],
+        [350, 15],
+      ]),
+    };
+
+    expect(run(nodes, [throughRail]).map(({ y }) => y)).toEqual([-15, -35, -35, -15]);
   });
 
   it('leaves the route of an edge whose lane box holds none of its nodes', () => {

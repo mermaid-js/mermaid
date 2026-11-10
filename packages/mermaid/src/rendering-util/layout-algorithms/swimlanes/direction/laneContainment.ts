@@ -53,6 +53,38 @@ function crossingOf(flat: [Point, Point], upright: [Point, Point]): Point | unde
     : undefined;
 }
 
+/** Whether the horizontal segment `flat` crosses a vertical segment of any of `others`. */
+const crossesUpright = (flat: [Point, Point], others: Point[][]): boolean =>
+  others.some((other) =>
+    other.some(
+      (point, j) =>
+        j > 0 &&
+        isUpright(other[j - 1], point) &&
+        crossingOf(flat, [other[j - 1], point]) !== undefined
+    )
+  );
+
+/**
+ * Whether every hop `route` draws over `others` stays inside `band`. The renderer draws a hop of
+ * `hopRadius` on a horizontal segment where it crosses a vertical one, rising above the
+ * segment's row; a vertical segment never hops over a horizontal one.
+ */
+export function hopsStayInsideBand(
+  route: Point[],
+  others: Point[][],
+  band: RectBounds,
+  hopRadius: number
+): boolean {
+  for (let i = 0; i < route.length - 1; i++) {
+    const flat: [Point, Point] = [route[i], route[i + 1]];
+    const hopTop = flat[0].y - hopRadius;
+    if (isFlat(...flat) && hopTop < band.top - BAND_TOLERANCE && crossesUpright(flat, others)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /** Every point where a segment of route `a` crosses a segment of route `b` at a right angle. */
 export function crossingPointsBetween(a: Point[], b: Point[]): Point[] {
   const points: Point[] = [];
