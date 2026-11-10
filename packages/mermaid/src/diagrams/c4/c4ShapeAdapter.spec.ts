@@ -49,4 +49,20 @@ describe('buildEdgeLabel', () => {
     expect(label).toBe('<small><i>[HTTPS]</i></small>');
     expect(buildEdgeLabel({ label: { text: '' } }, true)).toBe('');
   });
+
+  it('keeps an explicit line break in every part of an HTML label', () => {
+    const label = buildEdgeLabel(
+      rel('Reads<br/>accounts', 'HTTP<br>JSON', 'first<BR />second'),
+      true
+    );
+    expect(label).toBe(
+      '<b>Reads<br/>accounts</b><br/><small><i>[HTTP<br/>JSON]</i></small><br/><small>first<br/>second</small>'
+    );
+  });
+
+  it('still escapes the text on either side of a line break', () => {
+    expect(buildEdgeLabel(rel('<i>a</i><br/><script>b</script>'), true)).toBe(
+      '<b>&lt;i&gt;a&lt;/i&gt;<br/>&lt;script&gt;b&lt;/script&gt;</b>'
+    );
+  });
 });

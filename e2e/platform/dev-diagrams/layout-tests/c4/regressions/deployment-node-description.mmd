@@ -1,0 +1,12 @@
+C4Deployment
+    title Deployment node description - shown under the node's name
+
+    Deployment_Node(host, "Host", "Ubuntu 22.04", "Runs the API") {
+        Container(api, "API", "Go", "Serves the orders")
+    }
+
+    Deployment_Node(edge, "Edge", "nginx") {
+        Container(proxy, "Proxy", "nginx", "Terminates TLS")
+    }
+
+    Rel(proxy, api, "Forwards to", "HTTP")

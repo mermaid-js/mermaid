@@ -1,4 +1,5 @@
 import { getConfig } from '../../diagram-api/diagramAPI.js';
+import defaultConfig from '../../defaultConfig.js';
 import { C4_ELEMENT_TYPES } from './c4ShapeAdapter.js';
 
 // Per-element-type font rules from the c4 config (personFontFamily and friends).
@@ -33,12 +34,60 @@ const elementFontStyles = () => {
     .join('\n');
 };
 
+/**
+ * Label groups whose font the c4 config can change from the stylesheet default. The value
+ * goes on the outer group; the label nested in it, which the stylesheet sizes on its own in
+ * `em`, inherits instead, so a relative size applies once.
+ */
+const LABEL_FONT_RULES = [
+  { outer: '.cluster.c4-boundary .cluster-label', nested: '.nodeLabel', prefix: 'boundary' },
+  { outer: 'g.edgeLabel', nested: '.edgeLabel', prefix: 'message' },
+];
+
+/** A number font size is taken as pixels. */
+const FONT_PROPERTIES = [
+  { suffix: 'FontFamily', property: 'font-family', toCss: String },
+  {
+    suffix: 'FontSize',
+    property: 'font-size',
+    toCss: (value) => (typeof value === 'number' ? `${value}px` : String(value)),
+  },
+  { suffix: 'FontWeight', property: 'font-weight', toCss: String },
+];
+
+// Boundary titles (`boundaryFont*`) and relationship labels (`messageFont*`) keep the
+// stylesheet's own typography unless the config sets a value other than its default; only
+// such a value gets a rule, built through the CSSOM like the element rules above.
+const labelFontStyles = () => {
+  const c4 = getConfig().c4 ?? {};
+  const defaults = defaultConfig.c4;
+  const sheet = new CSSStyleSheet();
+  for (const { outer, nested, prefix } of LABEL_FONT_RULES) {
+    const outerRule = sheet.cssRules[sheet.insertRule(`${outer} {}`, sheet.cssRules.length)];
+    const nestedRule =
+      sheet.cssRules[sheet.insertRule(`${outer} ${nested} {}`, sheet.cssRules.length)];
+    for (const { suffix, property, toCss } of FONT_PROPERTIES) {
+      const key = `${prefix}${suffix}`;
+      const value = c4[key];
+      if (value !== undefined && value !== null && value !== '' && value !== defaults[key]) {
+        outerRule.style.setProperty(property, toCss(value));
+        nestedRule.style.setProperty(property, 'inherit');
+      }
+    }
+  }
+  return [...sheet.cssRules]
+    .filter((rule) => rule.style.length > 0)
+    .map((rule) => `  ${rule.cssText}`)
+    .join('\n');
+};
+
 const getStyles = (options) =>
   `.person {
     stroke: ${options.personBorder};
     fill: ${options.personBkg};
   }
 ${elementFontStyles()}
+${labelFontStyles()}
 
   /* The element font colour is set inline per element (default white); the
      label text takes it via currentColor. */
