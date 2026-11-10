@@ -462,8 +462,9 @@ export const drawRels = async function (
       label: buildEdgeLabel(rel, useHtmlLabels),
       labelType: 'string',
       classes: 'c4-rel',
-      arrowTypeEnd: 'arrow_point',
-      arrowTypeStart: rel.type === 'birel' ? 'arrow_point' : undefined,
+      // `Rel_Back` points at its first element, as the legacy renderer drew it.
+      arrowTypeEnd: rel.type === 'rel_b' ? undefined : 'arrow_point',
+      arrowTypeStart: rel.type === 'birel' || rel.type === 'rel_b' ? 'arrow_point' : undefined,
       thickness: 'normal',
       pattern: 'dashed',
       curve: 'linear',
