@@ -42,7 +42,7 @@ import { Diagram } from './Diagram.js';
 import { ClassDB } from './diagrams/class/classDb.js';
 import { FlowDB } from './diagrams/flowchart/flowDb.js';
 import { SequenceDB } from './diagrams/sequence/sequenceDb.js';
-import { decodeEntities, encodeEntities, getErrorMessage } from './utils.js';
+import { decodeEntities, encodeColumns, encodeEntities, getErrorMessage } from './utils.js';
 import { toBase64 } from './utils/base64.js';
 import { StateDB } from './diagrams/state/stateDb.js';
 import { ensureNodeFromSelector, jsdomIt } from './tests/util.js';
@@ -82,6 +82,10 @@ describe('mermaidAPI', () => {
         expect(result.substring(6, result.length)).toEqual('ﬂ°°77653¶ß');
       });
 
+      it.each(['a1', '1a'])('prefix is ﬂ° for %s, which is not all digits', (inner) => {
+        expect(encodeEntities(`#${inner};`)).toBe(`ﬂ°${inner}¶ß`);
+      });
+
       it('prefix is ﬂ° if is not all digits', () => {
         const result = encodeEntities(testStr);
         expect(result.substring(6, result.length)).toEqual('ﬂ°there¶ß');
@@ -90,6 +94,34 @@ describe('mermaidAPI', () => {
         const result = encodeEntities(testStr);
         expect(result.substring(result.length - 2, result.length)).toEqual('¶ß');
       });
+    });
+
+    it.each([
+      { case: 'before any replacement', text: 'ab #quot;', columns: [1, 3], expected: [1, 3] },
+      { case: 'after an entity', text: 'a #quot; b', columns: [10], expected: [12] },
+      { case: 'after a numeric entity', text: '#123; x', columns: [7], expected: [10] },
+      { case: 'after two entities', text: '#a;#b;x', columns: [4, 7], expected: [6, 11] },
+      { case: 'inside an entity', text: 'a#quot;b', columns: [6, 8], expected: [6, 10] },
+      {
+        case: 'after a style with a colour',
+        text: 'style a fill:#f00;b',
+        columns: [19],
+        expected: [18],
+      },
+      {
+        case: 'on the semicolon a style drops',
+        text: 'style a fill:#f00;b',
+        columns: [18],
+        expected: [18],
+      },
+      {
+        case: 'after a style whose colour reads like an entity',
+        text: 'style:#a;bcdefghijk',
+        columns: [19],
+        expected: [18],
+      },
+    ])('encodeColumns moves columns $case', ({ text, columns, expected }) => {
+      expect(encodeColumns(text, columns)).toEqual(expected);
     });
 
     it('does all the replacements on the given text', () => {
@@ -950,6 +982,16 @@ graph TD;A--x|text including URL space|B;`)
           case: 'a directive across lines inside a line, jison',
           text: 'xychart-beta\n  x-axis [a, b]\n  bar [1, %%{init:\n{"theme":"dark"}\n}%% 2, ]',
           line: 5,
+        },
+        {
+          case: 'directives across two lines, each joining its line, after entities on the first',
+          text: 'pie\n  "a#quot;#quot;#quot;b%%{x\n}%%c": 1\n  "d" %%{x\n}%%; : 1',
+          line: 5,
+        },
+        {
+          case: 'a directive across lines inside an entity, which the join completes',
+          text: 'pie\n  "a#quo%%{x\n}%%t;";%%{x\n}%%: 1',
+          line: 3,
         },
         {
           case: 'a directive across lines inside the last line, at the end of input',

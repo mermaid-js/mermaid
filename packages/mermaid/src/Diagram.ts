@@ -6,7 +6,7 @@ import defaultConfig from './defaultConfig.js';
 import { log } from './logger.js';
 import type { LineJoin } from './diagram-api/sourceLines.js';
 import { remapParseErrorLines } from './diagram-api/sourceLines.js';
-import { encodeEntities } from './utils.js';
+import { encodeColumns, encodeEntities } from './utils.js';
 import type { DetailedError } from './utils.js';
 import type { DiagramCode, DiagramDefinition, DiagramMetadata } from './diagram-api/types.js';
 import type { MermaidConfig } from './config.type.js';
@@ -49,26 +49,27 @@ const prepareDb = (
 
 /**
  * `joins` of `text`, moved to the columns of `encodeEntities(text)`, which the parser reports.
- * The encoding works within a line, so a join keeps its line and moves by what the encoding adds
- * before it. Each part of a line between joins is encoded once, so an entity that a join splits
- * is not counted.
+ * The encoding works within a line, so a join keeps its line and moves with the character it
+ * starts at; each line with joins is encoded once.
  */
 const encodedJoins = (text: string, joins: readonly LineJoin[]): LineJoin[] => {
   const lines = text.split('\n');
-  // The line and column of the join before, and its column in the encoded text.
-  let line = 0;
-  let column = 1;
-  let encodedColumn = 1;
-  return joins.map((join) => {
-    if (join.line !== line) {
-      line = join.line;
-      column = 1;
-      encodedColumn = 1;
+  const encoded: LineJoin[] = [];
+  for (let first = 0; first < joins.length; ) {
+    const { line } = joins[first];
+    let end = first;
+    while (end < joins.length && joins[end].line === line) {
+      end++;
     }
-    encodedColumn += encodeEntities(lines[line - 1].slice(column - 1, join.column - 1)).length;
-    column = join.column;
-    return { ...join, column: encodedColumn };
-  });
+    const lineJoins = joins.slice(first, end);
+    const columns = encodeColumns(
+      lines[line - 1],
+      lineJoins.map(({ column }) => column)
+    );
+    lineJoins.forEach((join, index) => encoded.push({ ...join, column: columns[index] }));
+    first = end;
+  }
+  return encoded;
 };
 
 /**
