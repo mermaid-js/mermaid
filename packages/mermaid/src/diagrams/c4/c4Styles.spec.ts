@@ -78,4 +78,24 @@ describe('c4 styles: boundary and relationship fonts', () => {
       expect(sizes.filter((entry) => entry.size === '1.5em')).toHaveLength(1);
     }
   );
+
+  // An HTML label sits in a foreignObject, where the SVG `fill` of its ancestors does not
+  // colour text; without `color` it took the host page's text colour.
+  it.each([
+    ['the theme text colour', { textColor: '#ccc', background: '#333' }, '#ccc'],
+    ['a fallback without a theme', {}, '#333333'],
+  ])('gives relationship labels %s', (_case, options, expected) => {
+    const [, declarations] = /\n {2}\.edgeLabel {([^}]*)}/.exec(getStyles(options)) ?? [];
+    expect(declarations).toContain(`color: ${expected};`);
+  });
+
+  // The legacy renderer drew a deployment node with a solid outline and every other
+  // boundary dashed.
+  it('draws a deployment node solid and leaves other boundaries dashed', () => {
+    const css = styles();
+    const [, deployment] = /\.cluster\.c4-deployment-node > rect {([^}]*)}/.exec(css) ?? [];
+    expect(deployment).toContain('stroke-dasharray: none;');
+    const [, boundary] = /\n {2}\.cluster rect {([^}]*)}/.exec(css) ?? [];
+    expect(boundary).toContain('stroke-dasharray: 8 4;');
+  });
 });

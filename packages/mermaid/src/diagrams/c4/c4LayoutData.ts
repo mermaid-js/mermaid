@@ -107,9 +107,13 @@ const buildBoundaryNode = (
   config: MermaidConfig
 ): Node => {
   const isDeploymentNode = boundary.nodeType !== undefined;
+  // The cluster renderer colours an HTML title from `cssStyles` but an SVG title only from
+  // `labelStyle`, so an explicit font colour goes into both.
+  const fontColor = asColor(boundary.fontColor);
   return {
     id: boundary.alias,
     label: boundaryLabel(boundary),
+    labelStyle: fontColor ? `color:${fontColor}` : undefined,
     labelType: 'string',
     isGroup: true,
     shape: 'rect',
