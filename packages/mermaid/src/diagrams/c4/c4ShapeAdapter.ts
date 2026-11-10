@@ -1,6 +1,7 @@
 import type { C4DiagramConfig } from '../../config.type.js';
 import type { ShapeID } from '../../rendering-util/rendering-elements/shapes.js';
 import type { NonClusterNode } from '../../rendering-util/types.js';
+import { lineBreakRegex } from '../common/common.js';
 
 /**
  * Builds a unified-renderer {@link Node} from a legacy C4 shape so the legacy
@@ -122,6 +123,14 @@ const escapeHtml = (txt: string): string =>
     .replaceAll("'", '&#39;');
 
 /**
+ * Escapes user text for an HTML label while keeping its explicit line breaks: each fragment
+ * between two `<br>` tags (any spelling `lineBreakRegex` accepts) is escaped, and the
+ * fragments are rejoined with `<br/>`.
+ */
+const escapeLabelText = (txt: string): string =>
+  txt.split(lineBreakRegex).map(escapeHtml).join('<br/>');
+
+/**
  * A C4 relationship label: name, then optional `[technology]` and description, one per
  * line. `<br/>` separates the lines either way, since it is a line break in an HTML
  * label and a line delimiter in a plain SVG one. The emphasis tags only render as
@@ -144,13 +153,13 @@ export const buildEdgeLabel = (
   // every later part up whenever an earlier one was empty.
   const lines: string[] = [];
   if (name) {
-    lines.push(`<b>${escapeHtml(name)}</b>`);
+    lines.push(`<b>${escapeLabelText(name)}</b>`);
   }
   if (techn) {
-    lines.push(`<small><i>[${escapeHtml(techn)}]</i></small>`);
+    lines.push(`<small><i>[${escapeLabelText(techn)}]</i></small>`);
   }
   if (descr) {
-    lines.push(`<small>${escapeHtml(descr)}</small>`);
+    lines.push(`<small>${escapeLabelText(descr)}</small>`);
   }
   return lines.join('<br/>');
 };
