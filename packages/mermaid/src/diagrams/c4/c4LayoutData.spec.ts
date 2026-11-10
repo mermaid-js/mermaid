@@ -75,6 +75,25 @@ Container(store, "Store")
     expect(labelOf('n2')).toBe('Host [Ubuntu 22.04]');
   });
 
+  it('shows a deployment node description on a line under its name', () => {
+    const db = parse(`C4Deployment
+Node(n1, "Host", "Linux", "Runs the API") {
+Container(api, "API")
+}
+Node(n2, "Server", $descr="Hosts the store") {
+Container(store, "Store")
+}
+Node(n3, "Edge", "Linux") {
+Container(proxy, "Proxy")
+}`);
+
+    const labelOf = (id: string) => getData(db, config()).nodes.find((n) => n.id === id)?.label;
+    expect(labelOf('n1')).toBe('Host [Linux]<br/>Runs the API');
+    expect(labelOf('n2')).toBe('Server<br/>Hosts the store');
+    // without a description the label is the name and type alone
+    expect(labelOf('n3')).toBe('Edge [Linux]');
+  });
+
   it('never emits the implicit global boundary as a node', () => {
     const db = parse(`C4Context\nPerson(a, "A")`);
     const { nodes } = getData(db, config());

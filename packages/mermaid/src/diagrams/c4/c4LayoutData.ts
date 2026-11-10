@@ -48,12 +48,22 @@ const isBoundaryDirection = (value: unknown): value is C4BoundaryDirection =>
 const configuredDirection = (value: unknown): C4BoundaryDirection | undefined =>
   isBoundaryDirection(value) ? value : undefined;
 
-const boundaryLabel = (boundary: C4Boundary): string => {
+const boundaryHeading = (boundary: C4Boundary): string => {
   const type = boundary.type?.text;
   if (!type || IMPLICIT_BOUNDARY_TYPES.has(type.toLowerCase())) {
     return boundary.label.text;
   }
   return `${boundary.label.text} [${BOUNDARY_TYPE_LABELS[type.toLowerCase()] ?? type}]`;
+};
+
+/**
+ * A boundary's title: its name and type, then its description (only a deployment node
+ * takes one) on a line of its own.
+ */
+const boundaryLabel = (boundary: C4Boundary): string => {
+  const heading = boundaryHeading(boundary);
+  const descr = boundary.descr?.text;
+  return descr ? `${heading}<br/>${descr}` : heading;
 };
 
 /**
