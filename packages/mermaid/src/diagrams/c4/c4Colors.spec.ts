@@ -69,6 +69,17 @@ describe('readableOn', () => {
     }
   });
 
+  // Black on #666666 needs lightening past #999999 (twelve 5-point steps) before it clears
+  // the target; the bound covers the full lightness range so it gets there.
+  it.each([
+    ['#000000', '#666666'],
+    ['#000000', '#333333'],
+    ['#ffffff', '#999999'],
+  ])('reaches the target for %s on %s, which needs more than twelve steps', (color, surface) => {
+    expect(ratio(color, surface)).toBeLessThan(4.5);
+    expect(ratio(readableOn(color, surface), surface)).toBeGreaterThanOrEqual(4.5);
+  });
+
   it('returns a value it cannot parse untouched', () => {
     // An unusable config value reaches CSS as-is and is dropped there, rather than
     // becoming NaN and painting nothing.

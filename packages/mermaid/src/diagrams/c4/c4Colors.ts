@@ -4,6 +4,12 @@ import { darken, isValid, lighten, luminance } from 'khroma';
 /** WCAG AA for normal text. */
 const CONTRAST_TARGET = 4.5;
 
+/** Percentage points of HSL lightness each shift moves a colour. */
+const SHIFT_STEP = 5;
+
+/** Enough steps to take any colour all the way to black or to white. */
+const MAX_SHIFT_STEPS = Math.ceil(100 / SHIFT_STEP);
+
 /**
  * WCAG relative-contrast ratio. khroma's own `contrast` omits the `+ 0.05` terms and
  * clamps the result to 10, which saturates for most real colour pairs, so it cannot
@@ -16,8 +22,8 @@ const contrastRatio = (one: string, other: string): number => {
 
 /**
  * `color` shifted one way until it reads against `background`, or as far as shifting
- * that way gets. Bounded at 12 steps of 5%, and stops early on a colour that has run
- * into black or white.
+ * that way gets: at most the steps that reach black or white, and fewer once a step no
+ * longer changes the colour.
  */
 const shiftUntilReadable = (
   color: string,
@@ -25,8 +31,12 @@ const shiftUntilReadable = (
   shift: (color: string, amount: number) => string
 ): string => {
   let candidate = color;
-  for (let step = 0; step < 12 && contrastRatio(candidate, background) < CONTRAST_TARGET; step++) {
-    const next = shift(candidate, 5);
+  for (
+    let step = 0;
+    step < MAX_SHIFT_STEPS && contrastRatio(candidate, background) < CONTRAST_TARGET;
+    step++
+  ) {
+    const next = shift(candidate, SHIFT_STEP);
     if (next === candidate) {
       break;
     }
