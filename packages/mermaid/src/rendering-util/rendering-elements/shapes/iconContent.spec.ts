@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as configApi from '../../../config.js';
 import type { D3Selection } from '../../../types.js';
 import { registerIconPacks } from '../../icons.js';
@@ -12,6 +12,10 @@ import { iconSquare } from './iconSquare.js';
 
 const ICON_SIZE = 48;
 const GLYPH_WIDTH = 7;
+/** Glyph boxes around an `ICON_SIZE` icon: Font Awesome's widest glyphs are 1.25 em wide. */
+const WIDE_GLYPH_WIDTH = 60;
+const TALL_GLYPH_HEIGHT = 64;
+const NARROW_GLYPH_WIDTH = 42;
 const UNKNOWN_ICON_MARK = '?';
 /** The Font Awesome prefix a test pack is registered under, so it is not in the unregistered list. */
 const REGISTERED_PREFIX = 'fak';
@@ -60,6 +64,32 @@ const iconHost = () => {
   document.body.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg"><g id="host"></g></svg>';
   return select<SVGGElement, unknown>(document.querySelector<SVGGElement>('#host')!);
 };
+
+interface Size {
+  width: number;
+  height: number;
+}
+
+const ICON_BOX: Size = { width: ICON_SIZE, height: ICON_SIZE };
+const UNLAID_OUT: Size = { width: 0, height: 0 };
+
+/** Draws an unregistered wide icon while the layout reports `glyphSize()` for the `<i>`. */
+const renderMeasured = async (glyphSize: () => Size, boxSize: Size = ICON_BOX) => {
+  const measure = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (
+    this: Element
+  ) {
+    const { width, height } = this.tagName.toLowerCase() === 'i' ? glyphSize() : boxSize;
+    return new DOMRect(0, 0, width, height);
+  });
+  try {
+    await setIconContent(iconHost(), iconNode({ icon: 'fas:users' }), ICON_SIZE);
+  } finally {
+    measure.mockRestore();
+  }
+};
+
+const glyphFontSize = () =>
+  Number.parseFloat(fontAwesomeGlyph()?.parentElement?.style.fontSize ?? '');
 
 const svgRoot = () => select(document.querySelector<SVGSVGElement>('svg')!);
 
@@ -170,6 +200,63 @@ describe('setIconContent', () => {
 
       expect(fontAwesomeGlyph() !== null).toBe(flowchartHtmlLabels);
       expect(unknownIconMark()).toBe(!flowchartHtmlLabels);
+    }
+  );
+
+  it.each([
+    [
+      'wider',
+      { width: WIDE_GLYPH_WIDTH, height: ICON_SIZE },
+      (ICON_SIZE * ICON_SIZE) / WIDE_GLYPH_WIDTH,
+    ],
+    [
+      'taller',
+      { width: ICON_SIZE, height: TALL_GLYPH_HEIGHT },
+      (ICON_SIZE * ICON_SIZE) / TALL_GLYPH_HEIGHT,
+    ],
+    ['no larger', { width: NARROW_GLYPH_WIDTH, height: ICON_SIZE }, ICON_SIZE],
+  ])(
+    'scales a glyph %s than the icon to fit it, keeping its aspect ratio',
+    async (_shape, glyphSize, expectedFontSize) => {
+      await renderMeasured(() => glyphSize);
+
+      expect(glyphFontSize()).toBeCloseTo(expectedFontSize);
+    }
+  );
+
+  it('leaves the font size alone while the box is not laid out', async () => {
+    await renderMeasured(() => ({ width: WIDE_GLYPH_WIDTH, height: ICON_SIZE }), UNLAID_OUT);
+
+    expect(glyphFontSize()).toBe(ICON_SIZE);
+  });
+
+  it.each([
+    ['loading', (ICON_SIZE * ICON_SIZE) / WIDE_GLYPH_WIDTH],
+    ['loaded', ICON_SIZE],
+  ])(
+    'measures the glyph again after the fonts arrive only while they are %s',
+    async (status, expectedFontSize) => {
+      let fontsArrived = false;
+      Object.defineProperty(document, 'fonts', {
+        configurable: true,
+        value: {
+          status,
+          get ready() {
+            fontsArrived = true;
+            return Promise.resolve();
+          },
+        },
+      });
+      try {
+        await renderMeasured(() => ({
+          width: fontsArrived ? WIDE_GLYPH_WIDTH : NARROW_GLYPH_WIDTH,
+          height: ICON_SIZE,
+        }));
+      } finally {
+        Reflect.deleteProperty(document, 'fonts');
+      }
+
+      expect(glyphFontSize()).toBeCloseTo(expectedFontSize);
     }
   );
 
